@@ -4,7 +4,7 @@ Based on nodejs, express and knex.js and objections.js.
 
 ## Library Version Control
 
-Project uses `npm` as management tool for libraries version control, look file is available in the repository.
+Project uses `yarn` as management tool for libraries version control, look file is available in the repository.
 
 ## Database Migration
 
