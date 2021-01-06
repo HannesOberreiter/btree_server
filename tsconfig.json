@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "outDir": "./dist/",
+    "baseUrl": "./src/",
+    "sourceMap": true,
+    "paths": {
+      "@root/*": ["./*"]
+    },
+    "lib": ["dom", "es5", "es6", "es7"],
+    "target": "es2017",
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "resolveJsonModule": true
+  },
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "**/**/node_modules",
+    "node_modules",
+    "dist"
+  ]
+}
