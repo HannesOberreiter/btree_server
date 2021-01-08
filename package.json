@@ -8,15 +8,32 @@
   "main": "./dist/api/app.bootstrap.js",
   "lint": "tslint --project tslint.json",
   "scripts": {
-    "kick:directories": "mkdir -p ./dist/logs ./dist/uploads/archives ./dist/uploads/documents ./dist/uploads/images/master-copy ./dist/uploads/images/rescale/extra-small ./dist/uploads/images/rescale/medium ./dist/uploads/images/rescale/extra-large",
-    "kick:env": "cp -r ./src/env ./dist/",
+    "create:directories": "mkdir -p ./dist/logs ./dist/uploads/archives ./dist/uploads/documents ./dist/uploads/images/master-copy ./dist/uploads/images/rescale/extra-small ./dist/uploads/images/rescale/medium ./dist/uploads/images/rescale/extra-large",
 
-    "dev": "ENVIRONMENT=development nodemon",
+    "dev:node": "ENVIRONMENT=development nodemon",
+    "dev:tsc": "tsc -watch",
+    "dev:knex": "ENVIRONMENT=development knex"
 
-    "dev-knex": "cp -r ./src/db/seeds/data ./dist/db/seeds/ && knex --env development --knexfile dist/config/knexfile.js"
   },
   "_moduleAliases": {
-    "@root"      : "dist/"
+      "@":              "dist",
+      "@api":           "dist/api",
+
+      "@controllers":   "dist/api/controllers",
+      "@middlewares":   "dist/api/middlewares",
+      "@models":        "dist/api/models",
+      "@repostiroies":  "dist/api/repostiroies",
+      "@routes":        "dist/api/routes",
+      "@services":      "dist/api/services",
+
+      "@classes":       "dist/api/types/classes",
+      "@enums":         "dist/api/types/enums",
+      "@errors":        "dist/api/types/errors",
+      "@interfaces":    "dist/api/types/interfaces",
+    
+      "@utils":         "dist/api/utils",
+      "@config":        "dist/config",
+      "@servers":       "dist/servers"
   },
   "dependencies": {
     "knex": "^0.21.15",

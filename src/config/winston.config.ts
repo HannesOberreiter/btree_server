@@ -1,4 +1,4 @@
-import { env } from "@root/config/environment.config";
+import { env } from "@base/config/environment.config";
 import * as Winston from "winston";
 import { format } from "winston";
 

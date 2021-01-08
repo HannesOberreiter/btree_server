@@ -1,7 +1,7 @@
 import { badData, badImplementation, conflict, notFound } from "boom";
 
-import { IError } from "@root/api/types/interfaces/IError.interface";
-import { UploadError } from "@root/api/types/errors/upload-error";
+import { IError } from "@base/api/types/interfaces/IError.interface";
+import { UploadError } from "@base/api/types/errors/upload-error";
 
 /**
  * @description Fallback error function when creating / updating fail

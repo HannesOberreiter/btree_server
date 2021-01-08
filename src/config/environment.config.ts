@@ -1,6 +1,6 @@
-import { ENVIRONMENT } from '@root/api/types/enums/environment.enum';
-import { list } from '@root/api/utils/enum.util';
-import { UPLOAD_MIME_TYPE } from '@root/api/types/enums/mime-type.enum';
+import { ENVIRONMENT } from '@enums/environment.enum';
+import { list } from '@utils/enum.util';
+import { UPLOAD_MIME_TYPE } from '@enums/mime-type.enum';
 import { path } from 'filenamify';
 import p from 'path';
 
@@ -25,7 +25,6 @@ class EnvironmentConfiguration {
   static set() {
     if (process.argv[2] && process.argv[2] === '--env' && process.argv[3] && ENVIRONMENT.hasOwnProperty(process.argv[3]) ) {
       this.environment = ENVIRONMENT[process.argv[3]];
-      console.log(this.environment);
     }
     if (process.env.ENVIRONMENT && ENVIRONMENT.hasOwnProperty(process.env.ENVIRONMENT) ) {
       this.environment = process.env.ENVIRONMENT as ENVIRONMENT;
@@ -39,7 +38,7 @@ class EnvironmentConfiguration {
     this.set();
     // https://www.npmjs.com/package/dotenv
     const dotenv = require('dotenv');
-    const result = dotenv.config( { path : p.join(__dirname, `../env/${this.environment}.env`) } );
+    const result = dotenv.config( { path : p.join(__dirname, `../../env/${this.environment}.env`) } );
     if (result.error) {
       throw result.error
     }
@@ -74,11 +73,11 @@ const knexConfig =  {
       max: parseInt(process.env.DB_POOL_MAX)
     },
     migrations: {
-      directory: '../db/migrations',
+      directory: 'db/migrations',
       tableName: 'KnexMigrations',
     },
     seeds: {
-      directory: '../db/seeds',
+      directory: 'db/seeds',
     }
   };
 

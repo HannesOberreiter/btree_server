@@ -1,5 +1,5 @@
-import { ENVIRONMENT } from '@root/api/types/enums/environment.enum';
-import { httpLogs, authorized, version, env, contentType } from "@root/config/environment.config";
+import { ENVIRONMENT } from '@enums/environment.enum';
+import { httpLogs, authorized, version, env, contentType } from "@config/environment.config";
 
 import Express from "express";
 import Hpp from "hpp";
@@ -13,15 +13,15 @@ import { createWriteStream } from "fs";
 //import { initialize as PassportInitialize, use as PassportUse } from "passport";
 import { notAcceptable } from "boom";
 
-import { Container } from "@root/config/container.config";
+import { Container } from "@config/container.config";
 
-import { HelmetConfiguration } from "@root/config/helmet.config";
+import { HelmetConfiguration } from "@config/helmet.config";
 
 //import { PassportConfiguration } from "@config/passport.config";
 
-import { Header } from "@root/api/middlewares/header.middleware";
-import { Resolver } from "@root/api/middlewares/resolver.middleware";
-import { Catcher } from "@root/api/middlewares/catcher.middleware";
+import { Header } from "@middlewares/header.middleware";
+import { Resolver } from "@middlewares/resolver.middleware";
+import { Catcher } from "@middlewares/catcher.middleware";
 
 /**
  * Instanciate and set Express application.

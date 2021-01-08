@@ -1,6 +1,6 @@
-import { ENVIRONMENT } from '@root/api/types/enums/environment.enum';
-import { env, knexConfig } from "@root/config/environment.config";
-import { Container } from "@root/config/container.config";
+import { ENVIRONMENT } from '@enums/environment.enum';
+import { env, knexConfig } from "@config/environment.config";
+import { Container } from "@config/container.config";
 import Knex from 'knex';
 import { Model } from 'objection';
 

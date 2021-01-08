@@ -1,13 +1,13 @@
 require('module-alias/register');
 
-import { MySQLServer } from "@root/servers/mysql.server";
+import { MySQLServer } from "@servers/mysql.server";
 
 const dbServer = new MySQLServer();
 
 dbServer.start();
 
-import { Application } from "@root/config/app.config";
-import { HTTPServer } from "@root/servers/http.server";
+import { Application } from "@config/app.config";
+import { HTTPServer } from "@servers/http.server";
 
 const application = new Application();
 const httpServer = new HTTPServer(application.app);

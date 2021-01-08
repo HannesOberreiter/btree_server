@@ -1,4 +1,4 @@
-import { UPLOAD_MIME_TYPE } from "@root/api/types/enums/mime-type.enum";
+import { UPLOAD_MIME_TYPE } from "@base/api/types/enums/mime-type.enum";
 
 /**
  * Define allowed properties for upload options configuration

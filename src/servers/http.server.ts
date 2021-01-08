@@ -1,5 +1,5 @@
-import { ENVIRONMENT } from "@root/api/types/enums/environment.enum";
-import { env, ssl, port } from "@root/config/environment.config";
+import { ENVIRONMENT } from "@enums/environment.enum";
+import { env, ssl, port } from "@config/environment.config";
 
 import * as Express from "express";
 
@@ -7,7 +7,7 @@ import { readFileSync } from "fs";
 import { Server as HttpServer } from "http";
 import { Server as HttpsServer, createServer } from "https";
 
-import { Container } from "@root/config/container.config";
+import { Container } from "@config/container.config";
 
 /**
  * Application server wrapper instance

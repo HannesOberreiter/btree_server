@@ -1,8 +1,8 @@
 import { Router } from "express";
 
-import { IRoute } from "@root/api/types/interfaces/IRoute.interface";
+import { IRoute } from "@base/api/types/interfaces/IRoute.interface";
 
-import { RootRouter } from "@root/api/routes/v1/root.route";
+import { RootRouter } from "@base/api/routes/v1/root.route";
 //import { AuthRouter } from "@routes/auth.route";
 //import { DocumentRouter } from "@routes/document.route";
 //import { UserRouter } from "@routes/user.route"; 
