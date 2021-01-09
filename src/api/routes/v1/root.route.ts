@@ -1,5 +1,5 @@
-import { Router } from "@base/api/types/classes/router.class";
-import { Container } from "@base/config/container.config";
+import { Router } from "@classes/router.class";
+import { Container } from "@config/container.config";
 
 export class RootRouter extends Router {
 

@@ -2,8 +2,8 @@ import { Request, Response } from "express";
 import { notify } from "node-notifier";
 import { notFound } from "boom";
 
-import { Container } from "@base/config/container.config";
-import { getErrorStatusCode, getErrorOutput } from "@base/api/utils/error.util";
+import { Container } from "@config/container.config";
+import { getErrorStatusCode, getErrorOutput } from "@utils/error.util";
 
 /**
  * Error catch/output middleware

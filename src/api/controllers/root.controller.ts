@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { OK } from "http-status";
-import { Container } from "@base/config/container.config";
-import { Controller } from "@base/api/types/classes/controller.class";
+import { Container } from "@config/container.config";
+import { Controller } from "@classes/controller.class";
 
 /**
  * Manage incoming requests from api/{version}/.

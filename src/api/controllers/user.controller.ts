@@ -4,7 +4,7 @@ import { Request, Response } from "express";
 import { getRepository, getCustomRepository } from "typeorm";
 import { CREATED, NO_CONTENT } from "http-status";
 
-import { Controller } from "@bases/controller.class";
+import { Controller } from "@classes/controller.class";
 import { User } from "@models/user.model";
 import { UserRepository } from "@repositories/user.repository";
 import { checkMySQLError } from "@utils/error.util";

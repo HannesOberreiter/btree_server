@@ -1,6 +1,6 @@
 import * as Multer from "multer";
-import * as Pluralize from "pluralize";
-import * as filenamify from "filenamify";
+//import * as Pluralize from "pluralize";
+import filenamify from "filenamify";
 
 import { unsupportedMediaType, expectationFailed, entityTooLarge } from "boom";
 import { IUpload } from "@interfaces/IUpload.interface";

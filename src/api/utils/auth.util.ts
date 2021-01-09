@@ -4,7 +4,7 @@ import { getCustomRepository, getRepository } from "typeorm";
 import { User } from "@models/user.model";
 import { RefreshToken } from "@models/refresh-token.model";
 
-import * as Moment from "moment-timezone";
+import Moment from "moment-timezone";
 
 /**
  * @description Build a token response and return it

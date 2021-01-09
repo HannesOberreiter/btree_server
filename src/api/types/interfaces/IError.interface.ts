@@ -1,4 +1,4 @@
-import { IFieldError } from "@base/api/types/interfaces/IFieldError.interface";
+import { IFieldError } from "@interfaces/IFieldError.interface";
 
 /**
  * Define error output format

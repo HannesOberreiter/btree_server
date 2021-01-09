@@ -1,4 +1,4 @@
-import { WinstonConfiguration } from "@base/config/winston.config";
+import { WinstonConfiguration } from "@config/winston.config";
 
 /**
  * Log service

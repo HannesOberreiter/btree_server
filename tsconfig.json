@@ -13,7 +13,7 @@
       "@controllers/*":   ["src/api/controllers/*"],
       "@middlewares/*":   ["src/api/middlewares/*"],
       "@models/*":        ["src/api/models/*"],
-      "@repostiroies/*":  ["src/api/repostiroies/*"],
+      "@repositories/*":  ["src/api/repositories/*"],
       "@routes/*":        ["src/api/routes/*"],
       "@services/*":      ["src/api/services/*"],
 

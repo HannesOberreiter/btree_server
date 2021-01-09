@@ -9,7 +9,7 @@ import { Document } from "@models/document.model";
 
 import { getRepository, getCustomRepository } from "typeorm";
 import { DocumentRepository } from "@repositories/document.repository";
-import { Controller } from "@bases/controller.class";
+import { Controller } from "@classes/controller.class";
 
 import { checkMySQLError } from "@utils/error.util";
 

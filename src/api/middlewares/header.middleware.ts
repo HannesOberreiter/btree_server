@@ -1,6 +1,6 @@
 import { notAcceptable } from "boom";
 import { Request, Response } from "express";
-import { APPLICATION_MIME_TYPE } from "@base/api/types/enums/mime-type.enum";
+import { APPLICATION_MIME_TYPE } from "@enums/mime-type.enum";
 
 /**
  * Header validation middleware

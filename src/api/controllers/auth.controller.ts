@@ -3,7 +3,7 @@ import { getRepository, getCustomRepository } from "typeorm";
 import { CREATED } from "http-status";
 import { notFound } from "boom";
 
-import { Controller } from "@bases/controller.class";
+import { Controller } from "@classes/controller.class";
 import { User } from "@models/user.model";
 import { RefreshToken } from "@models/refresh-token.model";
 import { UserRepository } from "@repositories/user.repository";

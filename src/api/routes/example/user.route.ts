@@ -1,4 +1,4 @@
-import { Router } from "@bases/router.class";
+import { Router } from "@classes/router.class";
 import { Container } from "@config/container.config";
 import { Guard, ADMIN, LOGGED_USER } from "@middlewares/guard.middleware";
 import { Validator } from "@middlewares/validator.middleware";

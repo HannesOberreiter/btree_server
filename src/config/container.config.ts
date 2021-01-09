@@ -1,14 +1,14 @@
 import * as awilix from "awilix";
 
-import { RootController } from "@base/api/controllers/root.controller";
+import { RootController } from "@controllers/root.controller";
 /*import { AuthController } from "@controllers/auth.controller";
 import { UserController } from "@controllers/user.controller";
 
 import { AuthProvider } from "@services/auth-provider.service";
 */
-import { Can } from "@base/api/services/can.service";
-import { Logger } from "@base/api/services/logger.service";
-import { ProxyRouter } from "@base/api/services/proxy-router.service";
+import { Can } from "@services/can.service";
+import { Logger } from "@services/logger.service";
+import { ProxyRouter } from "@services/proxy-router.service";
 
 /**
  * Dependencies container

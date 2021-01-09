@@ -1,6 +1,6 @@
 import { getRepository } from "typeorm";
 import { Container } from "@config/container.config";
-import { Router } from "@bases/router.class";
+import { Router } from "@classes/router.class";
 import { Guard, ADMIN, LOGGED_USER } from "@middlewares/guard.middleware";
 import { Validator } from "@middlewares/validator.middleware";
 import { Uploader } from "@middlewares/uploader.middleware";

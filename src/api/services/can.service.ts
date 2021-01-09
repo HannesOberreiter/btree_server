@@ -1,5 +1,5 @@
 import { forbidden } from "boom";
-import { ROLE } from "@base/api/types/enums/role.enum";
+import { ROLE } from "@enums/role.enum";
 /*import { User } from "@models/user.model";
 
 /**

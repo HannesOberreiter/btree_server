@@ -1,5 +1,5 @@
-import { IError } from "@base/api/types/interfaces/IError.interface";
-import { IFieldError } from "@base/api/types/interfaces/IFieldError.interface";
+import { IError } from "@interfaces/IError.interface";
+import { IFieldError } from "@interfaces/IFieldError.interface";
 
 /**
  * Type upload error
