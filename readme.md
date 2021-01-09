@@ -1,6 +1,6 @@
 # REST API for b.tree Beekeeping Webapplication
 
-Based on nodejs, express and knex.js and objections.js.
+Typescript, based on nodejs, express and knex.js, objections.js and datatables.net. The folder structure is based on <https://github.com/konfer-be/ts-express-typeorm-boilerplate>.
 
 ## Dev - Typescript and Watch
 
@@ -11,13 +11,16 @@ npm i -g nodemon
 npm i -g typescript
 ```
 
-Then you can compile and watch.
+- Create Directories
+- Compile and Watch Typescript
+- Start nodemon
+- Run knex commands (migrate, seed etc.)
 
 ```bash
-// Typescript Compile and Watch for Changes
-tsc -watch
-// Node, Watch Dist Folder
-npm run dev
+npm run create:directories 
+npm run dev:tsc 
+npm run dev:node
+npm run dev:knex <options>
 ```
 
 ## Datatables
@@ -32,10 +35,8 @@ Project uses `npm` as management tool for libraries version control, look file i
 
 We use knex CLI, <http://knexjs.org/#Migrations-API>.
 
-As we use TS and different folder structure the knex command is defined in the package.json
-
 ```bash
- npm run dev-knex <options>
+npm run dev:knex <options>
 ```
 
 ## MySQL
