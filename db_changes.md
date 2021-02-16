@@ -26,6 +26,9 @@ Changes are logged because later migration of the live database.
 
 - tables renamed to apiaries
 - adress, zip, city -- combined to field "description"
+- created renamed to created_at
+- added updated_at
+- deleted_date renamed to deleted_at
 
 ## treatment_type & disease
 
@@ -80,8 +83,114 @@ Changes are logged because later migration of the live database.
 
 - table renamed to treatment_vets
 - vet renamed to name
+- added created_at & updated_at
 
 ## mating
 
 - table renamed to queen_matings
-- mating_place rennamed to name
+- mating_place renamed to name
+- added created_at & updated_at
+
+## charge_control
+
+- table renamed to charges
+- amount changed to float
+- price changed to float
+- ct_id renamed to type_id
+- created renamed to created_at
+- added updated_at
+- deleted_date renamed to deleted_at
+
+## hive
+
+- table renamed to hives
+- created renamed to created_at
+- edited renamed to updated_at
+- deleted_date renamed to deleted_at
+
+## movedate
+
+- table renamed to movedates
+- created renamed to created_at
+- edited renamed to updated_at
+
+## feed
+
+- table renamed to feeds
+- ft_id renamed to type_id
+- created renamed to created_at
+- edited renamed to updated_at
+- deleted_date renamed to deleted_at
+
+## harvest
+
+- table renamed to harvests
+- hs_id renamed to type_id
+- created renamed to created_at
+- edited renamed to updated_at
+- deleted_date renamed to deleted_at
+
+## treatment
+
+- table renamed to treatments
+- tt_type renamed to type_id
+- created renamed to created_at
+- edited renamed to updated_at
+- deleted_date renamed to deleted_at
+
+## checkup
+
+- table renamed to checkups
+- queen, eggs, capped_brood, queen_cells changed to boolean
+- varroa changed to float
+- ct_id renamed to type_id
+- created renamed to created_at
+- edited renamed to updated_at
+- deleted_date renamed to deleted_at
+
+## queens
+
+- table renamed to queens
+- created renamed to created_at
+- edited renamed to updated_at
+- deleted_date renamed to deleted_at
+
+## customEvent
+
+- table renamed to reminders
+- added deleted
+- added deleted_at
+- created renamed to created_at
+- edited renamed to updated_at
+
+## promo
+
+- table renamed to promos
+- used changed to boolean
+
+## rear_detail
+
+- table renamed to rearing_details
+
+## rear_type
+
+- table renamed to rearing_types
+
+## rear_mn
+
+- table renamed to rearing_steps
+## rear
+
+- table renamed to rearings
+
+## scale
+
+- table renamed to scales
+
+## login_attempts
+
+- added PK id
+- added FK bee_id
+- removed user_id
+- time changed to datetime
+

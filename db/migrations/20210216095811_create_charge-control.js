@@ -1,15 +1,25 @@
 
 exports.up = function(knex) {
-    return knex.schema.createTable('apiaries', t => {
+    return knex.schema.createTable('charges', t => {
         t.increments('id').primary().unsigned();
-        t.string('name', 45);
-        t.string('description', 512);
-        t.float('latitude', 14, 10).notNullable();
-        t.float('longitude', 14, 10).notNullable();
-        t.string('note', 2000);
-        t.string('url', 512).comment('Connected Image Url or Webcam Url');
-        t.boolean('modus').defaultTo(1).comment('Active/Inactive');
 
+        t.date('date');
+        t.string('bez', 255);
+        t.string('charge', 255);
+        t.date('bestbefore');
+        t.string('calibrate', 45);
+        t.float('amount', 45);
+        t.float('price', 45);
+        t.string('unit', 45);
+        t.string('note', 2000);
+        t.string('url', 512);
+        t.string('kind', 45).comment("out or in, for outgoing or incoming");
+
+        t.integer('type_id').unsigned().nullable();
+        t.foreign('type_id').
+          references('charge_types.id').
+          onDelete('SET NULL').onUpdate('CASCADE');
+        
         t.boolean('deleted').defaultTo(0).comment('if element is deleted (soft delete)');
         t.timestamp('deleted_at').nullable().defaultTo(knex.fn.now());
         
@@ -34,11 +44,11 @@ exports.up = function(knex) {
 };
 
 exports.down = function(knex) {
-    knex.schema.alterTable("apiaries", t => {
+    knex.schema.alterTable("charges", t => {
         t.dropForeign("bee_id");
         t.dropForeign("edit_id");
         t.dropForeign("user_id");
+        t.dropForeign("type_id");    
     });
-    return knex.schema.dropTable("apiaries");
+    return knex.schema.dropTable("charges");
 };
-

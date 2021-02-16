@@ -12,7 +12,7 @@ exports.up = function(knex) {
         t.boolean('state').defaultTo(0).comment('Variable to close Accounts without deleting user for history (multiple user in one company)');
 
         // user settings
-        t.string('lang',3);
+        t.string('lang', 3);
         t.boolean('format').defaultTo(1).comment('User Time and Date Format');
         t.boolean('acdate').defaultTo(1).comment('If VIS Date (AUSTRIA) is shown in calendar or not, also for newsletter reminder');
         t.boolean('newsletter').defaultTo(1);
