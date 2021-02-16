@@ -27,7 +27,7 @@ Changes are logged because later migration of the live database.
 - tables renamed to apiaries
 - adress, zip, city -- combined to field "description"
 - created renamed to created_at
-- added updated_at
+- edited renamed to updated_at
 - deleted_date renamed to deleted_at
 
 ## treatment_type & disease
@@ -107,6 +107,8 @@ Changes are logged because later migration of the live database.
 - created renamed to created_at
 - edited renamed to updated_at
 - deleted_date renamed to deleted_at
+
+table hive_group is not anymore, need to get amount and save into grouphive field
 
 ## movedate
 

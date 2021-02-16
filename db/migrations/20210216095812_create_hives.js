@@ -4,7 +4,7 @@ exports.up = function(knex) {
         t.increments('id').primary().unsigned();
 
         t.string('name', 24);
-        t.integer('grouphive', 2);
+        t.integer('grouphive', 11);
         t.integer('position', 11);
 
         t.string('note', 2000);

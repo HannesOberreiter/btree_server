@@ -7,7 +7,7 @@ exports.up = function(knex) {
         t.string('mark_colour', 24);
         t.string('mother', 24);
         t.date('date');
-        t.date('movedate');
+        t.date('move_date');
 
         t.string('note', 2000);
         t.string('url', 512);
@@ -32,11 +32,6 @@ exports.up = function(knex) {
         t.integer('user_id').unsigned().nullable();
         t.foreign('user_id').
           references('companies.id').
-          onDelete('SET NULL').onUpdate('CASCADE');
-
-        t.integer('hive_types_id').unsigned().nullable();
-        t.foreign('hive_types_id').
-          references('hive_types.id').
           onDelete('SET NULL').onUpdate('CASCADE');
         
         t.boolean('deleted').defaultTo(0).comment('if element is deleted (soft delete)');
