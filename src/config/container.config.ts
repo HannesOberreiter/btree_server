@@ -1,9 +1,9 @@
 import * as awilix from "awilix";
 
 import { RootController } from "@controllers/root.controller";
-/*import { AuthController } from "@controllers/auth.controller";
+import { CompanyController } from "@controllers/company.controller";
+/*
 import { UserController } from "@controllers/user.controller";
-
 import { AuthProvider } from "@services/auth-provider.service";
 */
 import { Can } from "@services/can.service";
@@ -33,6 +33,7 @@ export class Container {
 
     this.container
       .register({ RootController : awilix.asClass(RootController).singleton() })
+      .register({ CompanyController : awilix.asClass(CompanyController).singleton() })
       //.register({ AuthController : awilix.asClass(AuthController).singleton() })
       //.register({ UserController : awilix.asClass(UserController).singleton() })
       //.register({ AuthProvider : awilix.asClass(AuthProvider).singleton() })          

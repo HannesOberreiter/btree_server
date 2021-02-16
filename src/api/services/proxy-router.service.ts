@@ -3,6 +3,8 @@ import { Router } from "express";
 import { IRoute } from "@interfaces/IRoute.interface";
 
 import { RootRouter } from "@routes/v1/root.route";
+import { CompanyRouter } from "@routes/v1/company.route";
+
 //import { AuthRouter } from "@routes/auth.route";
 //import { DocumentRouter } from "@routes/document.route";
 //import { UserRouter } from "@routes/user.route"; 
@@ -23,6 +25,7 @@ export class ProxyRouter {
    */
   private routes = [
     { segment: '', router: RootRouter, serializable: false },
+    { segment: '/company/', router: CompanyRouter, serializable: false },
     //{ segment: '/auth/', router: AuthRouter, serializable: false },
     //{ segment: '/documents/', router: DocumentRouter, serializable: true },
     //{ segment: '/users/', router: UserRouter, serializable: true }
