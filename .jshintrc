@@ -1,6 +1,0 @@
-{
-    "node": true,
-    "esversion": 8,
-    "-W032": true,
-    "-W033": true
-}

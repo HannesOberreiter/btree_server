@@ -1,0 +1,51 @@
+{
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "dist",
+    "baseUrl": "./",
+    "sourceMap": false,
+    "paths": {
+
+
+      "@/*":              [ "src/*" ],
+      "@api/*":           ["src/api/*"],
+
+      "@controllers/*":   ["src/api/controllers/*"],
+      "@middlewares/*":   ["src/api/middlewares/*"],
+      "@models/*":        ["src/api/models/*"],
+      "@repositories/*":  ["src/api/repositories/*"],
+      "@routes/*":        ["src/api/routes/*"],
+      "@services/*":      ["src/api/services/*"],
+
+      "@classes/*":       ["src/api/types/classes/*"],
+      "@enums/*":         ["src/api/types/enums/*"],
+      "@errors/*":        ["src/api/types/errors/*"],
+      "@interfaces/*":    ["src/api/types/interfaces/*"],
+
+      "@utils/*":         ["src/api/utils/*"],
+
+      "@config/*":        ["src/config/*"],
+      "@servers/*":       ["src/servers/*"],
+
+    },
+    "lib": ["dom", "es5", "es6", "es7"],
+    "target": "es2017",
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "resolveJsonModule": true
+  },
+  "include": [
+    "src/**/*",
+    "env"
+    ],
+  "exclude": [
+    "**/**/node_modules",
+    "node_modules",
+    "dist", 
+    "db",
+    "env"
+  ]
+}
