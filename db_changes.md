@@ -143,8 +143,7 @@ table hive_group is not anymore, need to get amount and save into grouphive fiel
 ## checkup
 
 - table renamed to checkups
-- queen, eggs, capped_brood, queen_cells changed to boolean
-- varroa changed to float
+- queen, eggs, capped_brood, queencells changed to boolean
 - ct_id renamed to type_id
 - created renamed to created_at
 - edited renamed to updated_at

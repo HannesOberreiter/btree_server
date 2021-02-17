@@ -7,7 +7,7 @@ exports.up = function(knex) {
         t.date('enddate');
 
         t.boolean('queen');
-        t.boolean('queen_cells');
+        t.boolean('queencells');
         t.boolean('eggs');
         t.boolean('capped_brood');
 
@@ -18,7 +18,7 @@ exports.up = function(knex) {
         t.float('calm_comb');
         t.float('swarm');
 
-        t.float('varroa');
+        t.string('varroa', 12).comment('Varchar old system had strings in it needs to be cleaned out.');
         t.integer('strong', 12);
 
         t.float('temp');

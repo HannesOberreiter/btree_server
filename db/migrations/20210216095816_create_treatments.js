@@ -27,8 +27,8 @@ exports.up = function(knex) {
           references('treatment_diseases.id').
           onDelete('SET NULL').onUpdate('CASCADE');
         
-        t.integer('treatment_vet_id').unsigned().nullable();
-        t.foreign('treatment_vet_id').
+        t.integer('vet_id').unsigned().nullable();
+        t.foreign('vet_id').
           references('treatment_vets.id').
           onDelete('SET NULL').onUpdate('CASCADE');
         

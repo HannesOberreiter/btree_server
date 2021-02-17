@@ -12,7 +12,7 @@ exports.up = function(knex) {
         t.string('note', 2000);
         t.string('url', 512);
         t.boolean('modus').defaultTo(1);
-        t.date('modus_date').comment('Keep track of when queen was set inactive.');
+        t.date('modus_date').nullable().comment('Keep track of when queen was set inactive.');
 
         t.integer('hive_id').unsigned().nullable();
         t.foreign('hive_id').
