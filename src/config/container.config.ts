@@ -2,6 +2,9 @@ import * as awilix from "awilix";
 
 import { RootController } from "@controllers/root.controller";
 import { CompanyController } from "@controllers/company.controller";
+import { HiveController } from "@controllers/hive.controller";
+import { OptionController } from "@controllers/options.controller";
+
 /*
 import { UserController } from "@controllers/user.controller";
 import { AuthProvider } from "@services/auth-provider.service";
@@ -34,6 +37,8 @@ export class Container {
     this.container
       .register({ RootController : awilix.asClass(RootController).singleton() })
       .register({ CompanyController : awilix.asClass(CompanyController).singleton() })
+      .register({ HiveController : awilix.asClass(HiveController).singleton() })
+      .register({ OptionController : awilix.asClass(OptionController).singleton() })
       //.register({ AuthController : awilix.asClass(AuthController).singleton() })
       //.register({ UserController : awilix.asClass(UserController).singleton() })
       //.register({ AuthProvider : awilix.asClass(AuthProvider).singleton() })          

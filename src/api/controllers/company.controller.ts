@@ -10,9 +10,10 @@ export class CompanyController extends Controller {
 
     constructor() { super(); }
 
-    static table() { 
-        const db: any = Knex(knexConfig as Knex.Config);
-        let editor = new Editor(db, 'companies').fields(
+	private static db:any = Knex(knexConfig as Knex.Config);
+
+    private static table() { 
+        let editor = new Editor(this.db, 'companies').fields(
 
 			new Field('name')
 			.validator(Validate.notEmpty()),
@@ -52,7 +53,8 @@ export class CompanyController extends Controller {
 		try {
 			let editor = CompanyController.table();
 			await editor.process(req.body);
-		    res.json(editor.data());
+		    res.locals.data = editor.data();
+			next();
     	} 
     	catch (e) { 
 			next( checkMySQLError( e ) ); 
