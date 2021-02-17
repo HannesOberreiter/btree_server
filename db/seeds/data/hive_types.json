@@ -1,0 +1,51 @@
+[
+  {
+    "id": 179,
+    "name": "2/3 Langstroth",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 418,
+    "name": "Begattungskasten",
+    "favorite": 0,
+    "modus": 0,
+    "user_id": 1
+  },
+  {
+    "id": 9398,
+    "name": "Aufgelöst - Königinnen Problem",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 9399,
+    "name": "Aufgelöst - Vereinigt",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 9400,
+    "name": "Aufgelöst - Drohnenbrütig",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 9401,
+    "name": "Verkauft",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 11116,
+    "name": "Aufgelöst - Krankheit ",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  }
+]

@@ -1,0 +1,182 @@
+[
+  {
+    "id": 53,
+    "larvae": 10,
+    "hatch": 0,
+    "note": "Zu gute Tracht, Zuchtlatte komplett verbaut. Eine WZ übersehen\n",
+    "date": "2016-05-29 11:21:45",
+    "type_id": 1,
+    "detail_id": 1,
+    "user_id": 1
+  },
+  {
+    "id": 62,
+    "larvae": 27,
+    "hatch": 0,
+    "note": "",
+    "date": "2016-06-18 19:02:18",
+    "type_id": 1,
+    "detail_id": 3,
+    "user_id": 1
+  },
+  {
+    "id": 67,
+    "larvae": 18,
+    "hatch": 0,
+    "note": "Rieger Ex Umbra\n",
+    "date": "2016-06-23 14:24:32",
+    "type_id": 1,
+    "detail_id": 3,
+    "user_id": 1
+  },
+  {
+    "id": 69,
+    "larvae": 9,
+    "hatch": 0,
+    "note": "",
+    "date": "2016-07-06 13:19:52",
+    "type_id": 334,
+    "detail_id": 1931,
+    "user_id": 1
+  },
+  {
+    "id": 71,
+    "larvae": 18,
+    "hatch": 0,
+    "note": "",
+    "date": "2016-07-09 13:11:07",
+    "type_id": 334,
+    "detail_id": 1931,
+    "user_id": 1
+  },
+  {
+    "id": 115,
+    "larvae": 0,
+    "hatch": 0,
+    "note": "",
+    "date": "2017-05-27 08:36:26",
+    "type_id": 334,
+    "detail_id": 1930,
+    "user_id": 1
+  },
+  {
+    "id": 122,
+    "larvae": 0,
+    "hatch": 0,
+    "note": "",
+    "date": "2017-06-03 07:30:56",
+    "type_id": 1,
+    "detail_id": 1,
+    "user_id": 1
+  },
+  {
+    "id": 201,
+    "larvae": 0,
+    "hatch": 0,
+    "note": "A003  Zuchtstoff\n",
+    "date": "2018-05-20 15:10:52",
+    "type_id": 334,
+    "detail_id": 1930,
+    "user_id": 1
+  },
+  {
+    "id": 230,
+    "larvae": 19,
+    "hatch": 10,
+    "note": "Mutter: 99-120-71237-2015 (49)\n\nGroßmutter: 99-120-71445-2013\n",
+    "date": "2018-06-21 13:59:53",
+    "type_id": 334,
+    "detail_id": 1930,
+    "user_id": 1
+  },
+  {
+    "id": 232,
+    "larvae": 0,
+    "hatch": 0,
+    "note": "A001 - Bretstein\n\nGroßmutter K1 2013 Perner\n",
+    "date": "2018-07-01 16:01:25",
+    "type_id": 334,
+    "detail_id": 1930,
+    "user_id": 1
+  },
+  {
+    "id": 238,
+    "larvae": 8,
+    "hatch": 0,
+    "note": "QK3484/06-2017 (28)\n",
+    "date": "2018-07-04 15:22:50",
+    "type_id": 334,
+    "detail_id": 1931,
+    "user_id": 1
+  },
+  {
+    "id": 274,
+    "larvae": 0,
+    "hatch": 3,
+    "note": "Stock: 1701\n\nMutter: 99-71799-2018 (21), Pusterwald 2018\nGroßmutter: 99-120-71667-2016\n",
+    "date": "2019-05-11 15:48:51",
+    "type_id": 1,
+    "detail_id": 1,
+    "user_id": 1
+  },
+  {
+    "id": 277,
+    "larvae": 12,
+    "hatch": 0,
+    "note": "2. Serie\nStock: 1701\n\nMutter: 99-71799-2018 (21), Pusterwald 2018\nGroßmutter: 99-120-71667-2016\n",
+    "date": "2019-05-29 12:25:49",
+    "type_id": 1,
+    "detail_id": 1,
+    "user_id": 1
+  },
+  {
+    "id": 309,
+    "larvae": 22,
+    "hatch": 5,
+    "note": "3. Serie \nStock: 1701 \nMutter: 99-71799-2018 (21), Pusterwald 2018 \nGroßmutter: 99-120-71667-2016",
+    "date": "2019-06-17 11:58:52",
+    "type_id": 334,
+    "detail_id": 1930,
+    "user_id": 1
+  },
+  {
+    "id": 321,
+    "larvae": 22,
+    "hatch": 0,
+    "note": "4. Serie\nStock: 1603\nMutter: Reinzucht-2018 (20) \nBelegstelle: ACA Perner Karl \nGroßmutter: 99-120-71237-2015 (49)",
+    "date": "2019-06-29 12:58:44",
+    "type_id": 334,
+    "detail_id": 1930,
+    "user_id": 1
+  },
+  {
+    "id": 403,
+    "larvae": 45,
+    "hatch": 22,
+    "note": "QK3484/06-2019 (9)\nGitter 6/0 Plastik 6/2 Wachs\nOffen 6/2 Plastik 5/3 Wachs\nDoppelt 10/9 Plastik 12/6 Wachs",
+    "date": "2020-05-31 12:40:59",
+    "type_id": 334,
+    "detail_id": 1930,
+    "user_id": 1
+  },
+  {
+    "id": 418,
+    "larvae": 23,
+    "hatch": 0,
+    "note": "3t.  99-120-71237-2015 (49)\nGitter 6/3 Plastik 6/2 Wachs\nOffen 5/4 Plastik 6/3 Wachs",
+    "date": "2020-06-07 12:51:56",
+    "type_id": 334,
+    "detail_id": 1930,
+    "user_id": 1
+  },
+  {
+    "id": 426,
+    "larvae": 0,
+    "hatch": 0,
+    "note": "1603/1604\n\n1. Teil\nDoppelt - 11/4 Wachs 11/5 Plastik",
+    "date": "2020-06-12 07:20:49",
+    "type_id": 334,
+    "detail_id": 1930,
+    "user_id": 1
+  }
+]

@@ -1,0 +1,58 @@
+[
+  {
+    "id": 3,
+    "name": "ACA Perner Karl",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 7,
+    "name": "ACA Bretstein",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 78,
+    "name": "Gaberl (Standbegattung)",
+    "favorite": 1,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 3620,
+    "name": "Glein (Standbegattung)",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 4074,
+    "name": "NÖ Hirschgrund Mistelbach",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 7848,
+    "name": "Tirol (Hohen Munde)",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 8083,
+    "name": "ACA Pusterwald",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 10794,
+    "name": "Gaberl (Gach)",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  }
+]

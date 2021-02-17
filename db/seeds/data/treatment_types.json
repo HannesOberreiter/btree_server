@@ -1,0 +1,86 @@
+[
+  {
+    "id": 292,
+    "name": "Wabenentnahme",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 293,
+    "name": "Ableger (Bauerneuerung)",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 294,
+    "name": "Abschwefeln",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 868,
+    "name": "AS 75%",
+    "favorite": 0,
+    "modus": 0,
+    "user_id": 1
+  },
+  {
+    "id": 869,
+    "name": "Milchsäure",
+    "favorite": 0,
+    "modus": 0,
+    "user_id": 1
+  },
+  {
+    "id": 870,
+    "name": "Drohnenbrutentnahme",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 1134,
+    "name": "MW Abkehren",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 1216,
+    "name": "Bienenwohl Oxalsäure",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 1394,
+    "name": "AMO-Varroxal 85% AS",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 7521,
+    "name": "ApiBioxal (Träufeln)",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 11897,
+    "name": "ApiBioxal (Sublimieren)",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 123,
+    "name": "Bannwabe +",
+    "favorite": 1,
+    "modus": 1,
+    "user_id": 1
+  }
+]

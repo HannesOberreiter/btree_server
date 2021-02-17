@@ -1,4 +1,4 @@
 [
-{"id": 1, "name": "PremiumCompany", "paid": "2100-01-01"},
-{"id": 2, "name": "BasicCompany", "paid": "1989-01-05"}
+  { "id": 1, "name": "PremiumCompany", "paid": "2100-01-01" },
+  { "id": 2, "name": "BasicCompany", "paid": "1989-01-05" }
 ]

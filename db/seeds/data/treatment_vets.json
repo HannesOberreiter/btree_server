@@ -1,0 +1,18 @@
+[
+  {
+    "id": 3,
+    "name": "-",
+    "note": "",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 9,
+    "name": "Dr. Christian Pollhammer",
+    "note": "Zeltwegerstraße 19, 8741 Weißkirchen",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  }
+]

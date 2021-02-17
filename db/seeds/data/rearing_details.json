@@ -1,0 +1,72 @@
+[
+  {
+    "id": 1,
+    "job": "Sammelableger",
+    "hour": 0,
+    "note": "Erstellen des Sammelablegers mit verdeckelte Brutwaben, aufsitzenden\nBienen von offener Brut und Pollen und Futterwaben.\n\n3 BW, 2 HW, 1 POLLEN, 4 MW\n\nSofort Füttern!\n\nZuchtlatte reinhängen\n",
+    "user_id": 1
+  },
+  {
+    "id": 2,
+    "job": "Weiselzellen brechen",
+    "hour": 195,
+    "note": "Weiselzellen suchen und wenn vorhanden brechen.\n",
+    "user_id": 1
+  },
+  {
+    "id": 3,
+    "job": "Umlarven",
+    "hour": 24,
+    "note": "Maximal einen Tag alte verwenden! (Anm. 3 Tage Ei Stadium).\n",
+    "user_id": 1
+  },
+  {
+    "id": 4,
+    "job": "Finisher",
+    "hour": 48,
+    "note": "Weiselloses Volk wieder mit Muttervolk vereinigen, Zuchtrahmen in\nWabentasche oder über Absperrgitter.\n",
+    "user_id": 1
+  },
+  {
+    "id": 5,
+    "job": "Käfig",
+    "hour": 120,
+    "note": "Schlupfkäfig über Weiselzellen anbringen.\n",
+    "user_id": 1
+  },
+  {
+    "id": 6,
+    "job": "Schlupf",
+    "hour": 120,
+    "note": "Königinnen schlüpfen (12 Tage nach dem Umlarven).\n",
+    "user_id": 1
+  },
+  {
+    "id": 1930,
+    "job": "Weiselloses Volk erstellen",
+    "hour": 0,
+    "note": "Vollvolk Königin mit Brutzargen wegstellen.\n",
+    "user_id": 1
+  },
+  {
+    "id": 1931,
+    "job": "Umlarven (1h)",
+    "hour": 1,
+    "note": "Maximal einen Tag alte verwenden! (Anm. 3 Tage Ei Stadium).\n",
+    "user_id": 1
+  },
+  {
+    "id": 2096,
+    "job": "Belegstelle",
+    "hour": 72,
+    "note": "Apidea 3 Tage in Dunkelhaft geben, Kontrolle ob WZ geschlüpft sind.\nBelegstelle auffahren, Abends wenn möglich.\n",
+    "user_id": 1
+  },
+  {
+    "id": 2097,
+    "job": "Belegstelle Abholen",
+    "hour": 336,
+    "note": "Kontrolle ob Königin Sifte legt, von Belegstelle abholen.\n",
+    "user_id": 1
+  }
+]
