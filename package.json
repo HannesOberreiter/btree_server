@@ -8,7 +8,7 @@
   "main": "./dist/api/app.bootstrap.js",
   "lint": "tslint --project tslint.json",
   "scripts": {
-    "create:directories": "mkdir -p ./dist/logs ./dist/uploads/archives ./dist/uploads/documents ./dist/uploads/images/master-copy ./dist/uploads/images/rescale/extra-small ./dist/uploads/images/rescale/medium ./dist/uploads/images/rescale/extra-large",
+    "create:directories": "mkdir -p ./dist/logs",
     "dev:node": "ENVIRONMENT=development nodemon",
     "dev:tsc": "tsc -watch",
     "dev:knex": "ENVIRONMENT=development knex"
@@ -49,7 +49,6 @@
     "express-hbs": "^2.3.4",
     "express-rate-limit": "^5.2.5",
     "express-validator": "^6.9.2",
-    "filenamify": "^4.2.0",
     "helmet": "^4.4.1",
     "hpp": "^0.2.3",
     "http-status": "^1.5.0",
