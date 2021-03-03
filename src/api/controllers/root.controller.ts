@@ -31,7 +31,7 @@ export class RootController extends Controller {
    * @param {Function} next Callback function
    */
   report = (req: Request, res: Response, next: Function) => {
-    const message = req.body ? 'CSP Violation: ' + req.body : 'CSP Violation';
+    const message = req.body.violation ? 'CSP Violation: ' + req.body.violation : 'CSP Violation';
     Container.resolve('Logger').log('error', message, { label: 'CSP violation' });
     res.status(OK);
     res.end();
