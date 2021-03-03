@@ -4,7 +4,7 @@ import * as BearerStrategy from "passport-http-bearer";
 
 import { Strategy as JwtStrategy } from "passport-jwt";
 import { ExtractJwt } from "passport-jwt";
-import { getCustomRepository, getRepository } from "typeorm";
+import { getCustomRepository, getRepository } from "code_pieces/example/node_modules/typeorm";
 
 import { Container } from "@config/container.config";
 

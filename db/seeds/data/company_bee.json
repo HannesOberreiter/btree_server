@@ -1,0 +1,14 @@
+[
+  {
+    "id": 1,
+    "user_id": 1,
+    "bee_id": 1,
+    "rank": 1
+  },
+  {
+    "id": 2,
+    "user_id": 2,
+    "bee_id": 1,
+    "rank": 3
+  }
+]

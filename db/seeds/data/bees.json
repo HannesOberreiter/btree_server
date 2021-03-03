@@ -4,7 +4,7 @@
     "firstname": "Max",
     "lastname": "Muster",
     "email": "max@muster.at",
-    "password": "admin",
+    "password": "admin12",
     "lang": "de",
     "salt": "salt",
     "saved_company": 1,

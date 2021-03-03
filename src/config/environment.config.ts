@@ -1,7 +1,5 @@
 import { ENVIRONMENT } from '@enums/environment.enum';
 import { list } from '@utils/enum.util';
-import { UPLOAD_MIME_TYPE } from '@enums/mime-type.enum';
-import { path } from 'filenamify';
 import p from 'path';
 
 /**
@@ -81,22 +79,11 @@ const knexConfig =  {
     }
   };
 
-const upload                = {
-  path: process.cwd() + '/dist/' + process.env.UPLOAD_PATH,
-  maxFileSize: parseInt(process.env.UPLOAD_MAX_FILE_SIZE, 10),
-  wildcards: list(UPLOAD_MIME_TYPE) as UPLOAD_MIME_TYPE[],
-  maxFiles: parseInt(process.env.UPLOAD_MAX_FILES, 10)
-};
-const jimp                  = {
-  isActive: parseInt(process.env.JIMP_IS_ACTIVE, 10),
-  xs: parseInt(process.env.JIMP_SIZE_XS, 10),
-  md: parseInt(process.env.JIMP_SIZE_MD, 10),
-  xl: parseInt(process.env.JIMP_SIZE_XL, 10),
-};
+
 const ssl                 = {
   isActive: parseInt(process.env.HTTPS_IS_ACTIVE, 10),
   key: process.env.HTTPS_KEY,
   cert: process.env.HTTPS_CERT
 };
 
-export { knexConfig, env, port, url, authorized, contentType, ssl, jwtSecret, jwtExpirationInterval, version, logs, httpLogs, upload, jimp };
+export { knexConfig, env, port, url, authorized, contentType, ssl, jwtSecret, jwtExpirationInterval, version, logs, httpLogs };

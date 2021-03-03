@@ -1,6 +1,6 @@
 import { RefreshTokenRepository } from "@repositories/refresh-token.repository";
 import { jwtExpirationInterval } from "@config/environment.config";
-import { getCustomRepository, getRepository } from "typeorm";
+import { getCustomRepository, getRepository } from "code_pieces/example/node_modules/typeorm";
 import { User } from "@models/user.model";
 import { RefreshToken } from "@models/refresh-token.model";
 
