@@ -41,7 +41,7 @@ export class Application {
     cors: {
       origin: (origin, callback) => {
         if (authorized.indexOf(origin) !== -1) { callback(null, true); }
-        else { callback( notAcceptable('Domain not allowed by CORS') ); }
+        else { callback( notAcceptable(`Domain not allowed by CORS: ${origin}`) ); }
       },
       methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
       allowedHeaders: ["Accept", "Content-Type", "Authorization", "Origin", "From"]
