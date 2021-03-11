@@ -1,25 +1,25 @@
 import { BaseModel } from '@models/base.model';
 import { Company } from '@models/company.model';
 import { CompanyBee } from '@models/company_bee.model';
+import Bcrypt from 'bcrypt';
 
 export class User extends BaseModel {
 
+  id!: number;
   password!: string;
   reset!: string;
   salt!: string;
 
-  static get tableName() {
-    return 'bees';
-  }
-
-  static get idColumn() {
-    return 'id';
-  }
+  company_bee?: CompanyBee[]
 
 
-  static get jsonSchema() {
-    return {
-      properties: {
+  static tableName = 'bees';
+  static idColumn = 'id';
+
+
+  static jsonSchema = {
+    type: 'object',
+    properties: {
         id: { type: 'integer' },
         firstName: { type: 'string', minLength: 1, maxLength: 45 },
         lastName: { type: 'string', minLength: 1, maxLength: 45 },
@@ -47,11 +47,10 @@ export class User extends BaseModel {
         created_at: { type: 'date-time' },
         updated_at: { type: 'date-time' }
       }
-    };
   }
 
 
-    // Omit fields for json response from model
+  // Omit fields for json response from model
   $formatJson(user: User): User {
 
     super.$formatJson(user);
@@ -64,22 +63,20 @@ export class User extends BaseModel {
 
   }
 
-  static get relationMappings() {
-    return {
-      company: {
-        relation: BaseModel.ManyToManyRelation,
-        modelClass: Company,
-        join: {
-          from: 'bees.id',
-          through: {
-            modelClass: CompanyBee,
-            from: 'company_bee.bee_id',
-            to: 'company_bee.user_id'
-          },
-          to: 'companies.id'
-        }
+  static relationMappings = () => ({
+    company: {
+      relation: BaseModel.ManyToManyRelation,
+      modelClass: Company,
+      join: {
+        from: 'bees.id',
+        through: {
+          modelClass: CompanyBee,
+          from: 'company_bee.bee_id',
+          to: 'company_bee.user_id'
+        },
+        to: 'companies.id'
       }
     }
-  }
+  });
 
 }

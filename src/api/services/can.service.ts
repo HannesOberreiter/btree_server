@@ -1,6 +1,6 @@
 import { forbidden } from "boom";
-import { ROLE } from "@enums/role.enum";
-/*import { User } from "@models/user.model";
+import { ROLES } from "@enums/role.enum";
+import { User } from "@models/user.model";
 
 /**
  * Manage entities access rights
@@ -19,7 +19,7 @@ export class Can {
    */
   check(user: User, entity: any) {
     const checkOn = entity.hasOwnProperty('owner') ? entity['owner'].id : entity.createdBy;
-    if (user.role !== ROLE.admin && user.id !== checkOn) {
+    if (user.role !== ROLES.admin && user.id !== checkOn) {
       throw forbidden('You can\'t access to this ressource');
     }
   };
@@ -33,7 +33,7 @@ export class Can {
   filter(user: User, data: any[]) {
     return [].concat(data).filter( (entry: any) => { 
       const checkOn = entry.hasOwnProperty('owner') ? entry['owner'].id : entry.createdBy;
-      if ( user.role === ROLE.admin ) { return entry; } 
+      if ( user.role === ROLES.admin ) { return entry; } 
       else if (checkOn === user.id) { return entry; }
     });
   }

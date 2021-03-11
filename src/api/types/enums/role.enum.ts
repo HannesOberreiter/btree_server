@@ -1,8 +1,9 @@
 /**
  * @description Define supported roles
  */
-export enum ROLE {
-  admin = "admin", 
-  user = "user",
-  ghost = "ghost"
+export enum ROLES {
+  admin = "1", 
+  user = "2",
+  read = "3",
+  ghost = "4"
 };

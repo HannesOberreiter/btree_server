@@ -10,14 +10,14 @@ import RateLimit from "express-rate-limit";
 import Morgan from "morgan";
 
 import { createWriteStream } from "fs";
-//import { initialize as PassportInitialize, use as PassportUse } from "passport";
+import { initialize as PassportInitialize, use as PassportUse } from "passport";
 import { notAcceptable } from "boom";
 
 import { Container } from "@config/container.config";
 
 import { HelmetConfiguration } from "@config/helmet.config";
 
-//import { PassportConfiguration } from "@config/passport.config";
+import { PassportConfiguration } from "@config/passport.config";
 
 import { Header } from "@middlewares/header.middleware";
 import { Resolver } from "@middlewares/resolver.middleware";
@@ -118,12 +118,8 @@ export class Application {
      * 
      * @see http://www.passportjs.org/
      */
-    /*this.app.use( PassportInitialize() );
-
+    this.app.use( PassportInitialize() );
     PassportUse('jwt', PassportConfiguration.factory('jwt'));
-    PassportUse('facebook', PassportConfiguration.factory('facebook'));
-    PassportUse('google', PassportConfiguration.factory('google'));
-    */
 
     /**
      * Request logging with Morgan
@@ -155,13 +151,6 @@ export class Application {
      * - Resolver
      */
     this.app.use(`/api/${version}`, RateLimit(this.options.rate), Container.resolve('ProxyRouter').router, Resolver.resolve);
-
-    /**
-     * Errors handlers
-     */
-    if( [ENVIRONMENT.development].includes(env as ENVIRONMENT) ) {
-      this.app.use( Catcher.notification ); // Notify in dev
-    } 
 
     this.app.use( Catcher.log, Catcher.exit, Catcher.notFound ); // Log, exit with error || exit with 404
 
