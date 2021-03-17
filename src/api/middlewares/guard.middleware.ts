@@ -25,24 +25,26 @@ export class Guard {
    */
   static authorize = (roles = list(ROLES)) => (req: IUserRequest, res: IResponse, next: (e?: Error) => void): void => authenticate( 'jwt', { session: false }, Guard.handleJWT(req, res, next, roles) )(req, res, next);
 
-  private static handleJWT = (req: IUserRequest, res: IResponse, next: (error?: Error) => void, roles: string) => async (err: Error, payload: any, info: string) => {
+  private static handleJWT = (req: IUserRequest, res: IResponse, next: (error?: Error) => void, roles: string) => async (err: Error, user: any, info: any) => {
 
     const error = err || info;
 
-    if (error || !payload) throw error;
+    if (error || !user) {
+      return next( badRequest(info?.name) );
+    } 
     
-    console.log(payload);
-    console.log(req.params);
+    console.log(user);
+    console.log(req.body);
 
-    if (roles === ROLES.admin && payload.rank !== ROLES.admin && parseInt(req.params.bee_id, 10) !== payload.bee_id ) {
+    if (roles === ROLES.admin && user.rank !== ROLES.admin && parseInt(req.params.bee_id, 10) !== user.bee_id ) {
       return next( forbidden('Forbidden area') );
-    } else if (!roles.includes(payload.rank)) {
+    } else if (!roles.includes(user.rank)) {
       return next( forbidden('Forbidden area') );
-    } else if (err || !payload) {
+    } else if (err || !user) {
       return next( badRequest(err?.message) );
     }
 
-    req.payload = payload;
+    req.payload = user;
 
     return next();
   }

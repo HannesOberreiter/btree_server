@@ -1,7 +1,6 @@
 import { BaseModel } from '@models/base.model';
 import { Company } from '@models/company.model';
 import { CompanyBee } from '@models/company_bee.model';
-import Bcrypt from 'bcrypt';
 
 export class User extends BaseModel {
 
@@ -9,13 +8,16 @@ export class User extends BaseModel {
   password!: string;
   reset!: string;
   salt!: string;
+  state!: number;
+  saved_company!: number;
 
+  last_visit!: Date;
+
+  company?: Company[]
   company_bee?: CompanyBee[]
-
 
   static tableName = 'bees';
   static idColumn = 'id';
-
 
   static jsonSchema = {
     type: 'object',
@@ -47,8 +49,7 @@ export class User extends BaseModel {
         created_at: { type: 'date-time' },
         updated_at: { type: 'date-time' }
       }
-  }
-
+  };
 
   // Omit fields for json response from model
   $formatJson(user: User): User {
@@ -61,7 +62,7 @@ export class User extends BaseModel {
 
     return user;
 
-  }
+  };
 
   static relationMappings = () => ({
     company: {
@@ -75,6 +76,14 @@ export class User extends BaseModel {
           to: 'company_bee.user_id'
         },
         to: 'companies.id'
+      }
+    },
+    company_bee: {
+      relation: BaseModel.HasManyRelation,
+      modelClass: CompanyBee,
+      join: {
+        from: 'bees.id',
+        to: 'company_bee.id'
       }
     }
   });

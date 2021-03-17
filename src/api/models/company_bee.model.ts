@@ -32,7 +32,7 @@ export class CompanyBee extends BaseModel {
       modelClass: Company,
       join: {
         from: 'company_bee.user_id',
-        to: 'company.id'
+        to: 'companies.id'
       }
     },
     user: {
