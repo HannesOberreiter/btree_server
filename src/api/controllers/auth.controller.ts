@@ -1,16 +1,19 @@
 import { Request, Response } from "express";
-import { CREATED } from "http-status";
-import { notFound } from "boom";
+import { CREATED, OK } from "http-status";
 import { IResponse } from '@interfaces/IResponse.interface';
 
 import useragent from 'express-useragent'
 
 import { Controller } from "@classes/controller.class";
-import { User } from "@models/user.model";
 import { RefreshToken } from "@models/refresh_token.model";
 import { checkMySQLError } from "@utils/error.util";
-import { generateTokenResponse } from "@utils/auth.util";
+
+import { generateTokenResponse, checkRefreshToken } from "@utils/auth.util";
+import { loginCheck } from "@utils/login.util";
+
+
 import { safe } from "@api/decorators/safe.decorator";
+import { badRequest, expectationFailed, unauthorized } from "@hapi/boom";
 
 export class AuthController extends Controller {
 
@@ -29,54 +32,40 @@ export class AuthController extends Controller {
     } 
     catch (e) { next( checkMySQLError(e) ); }
   } */
-  @safe
-  static async login(req: Request, res: IResponse): Promise<void> {
+  async login(req: Request, res : IResponse, next: Function) {
+
+    const { email, password } = req.body;
+
     // Build a userAgent string to identify devices and users  
     let userAgent = useragent.parse(req.headers['user-agent']);
     userAgent = userAgent.os + userAgent.platform + userAgent.browser
     userAgent = userAgent.length > 50 ? userAgent.substring(0,49) : userAgent;
 
-    //const { user, accessToken } = await repository.findAndGenerateToken(req.body, req.headers.from);
-    const token = await generateTokenResponse(1, 1, userAgent);
-    //console.log(token);
-    res.locals.data = {token};
-    //res.locals.data = { token, user: user.whitelist() };
-  }
-/* 
-  async authorize (req: Request, res : Response, next: Function) {
     try {
-      const user = req.body;
-      const accessToken = user.token();
-      const token = generateTokenResponse(user, accessToken);
-      res.locals.data = { token, user: user.whitelist() };
+      const { bee_id, user_id, data } = await loginCheck(email, password);
+      const token = await generateTokenResponse(bee_id, user_id, userAgent);
+      res.locals.data = { token, data };
       next();
-    } catch (e) { next( checkMySQLError(e) ); }
+    } catch( e ) {
+      next(e);
+    }
+    
   }
-*/
+
   async refresh(req: Request, res : Response, next: Function) {
-
-    try {
-
-      const { token } = req.body;
-
-      const refreshObject = await refreshTokenRepository.findOne({
-        where : { token: token.refreshToken }
-      });
-
-      if(typeof(refreshObject) === 'undefined') { 
-        return next( notFound('RefreshObject not found') );
-      };
-
-      await refreshTokenRepository.remove(refreshObject);
-
-      // Get owner user of the token
-      const { user, accessToken } = await userRepository.findAndGenerateToken({ email: refreshObject.user.email , refreshObject });
-      const response = await generateTokenResponse(user, accessToken);
-
-      res.locals.data = { token: response };
-
-      next();
-      
-    } catch (e) { next( checkMySQLError( e ) ); }
-  }
+      let accessToken:string;
+      const authHeader = String(req.headers['authorization'] || '');
+      if (authHeader.startsWith("Bearer ")){
+        accessToken = authHeader.substring(7, authHeader.length);
+      } else {
+        return next( badRequest('Old Access Token not found') );
+      }
+      try {
+        const { token, expires } = req.body;
+        const result = await checkRefreshToken(accessToken, token, expires);
+        res.locals.data = { result };
+        next();
+      } catch (e) { next( e ); }
+  };
+  
 };

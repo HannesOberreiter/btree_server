@@ -12,7 +12,23 @@ export class AuthRouter extends Router {
 
     this.router
       .route('/login')
-        .post(AuthController.login);
+        .post(
+          Validator.validate([
+            body('email').isEmail(),
+            body('password').isLength({ min: 6 })
+          ]),
+          Container.resolve('AuthController').login
+      );
+
+    this.router
+      .route('/refresh')
+        .post(
+          Validator.validate([
+            body('token'),
+            body('expires').isISO8601()
+          ]),
+          Container.resolve('AuthController').refresh
+        );
 
   }
 

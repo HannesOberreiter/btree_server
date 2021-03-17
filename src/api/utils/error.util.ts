@@ -1,39 +1,129 @@
-import { badData, badImplementation, conflict, notFound } from "boom";
+import { badData, badImplementation, conflict, notFound, badRequest} from "boom";
+
+const {
+  ValidationError,
+  NotFoundError,
+  DBError,
+  ConstraintViolationError,
+  UniqueViolationError,
+  NotNullViolationError,
+  ForeignKeyViolationError,
+  CheckViolationError,
+  DataError
+} = require('objection');
 
 import { IError } from "@interfaces/IError.interface";
 
-const checkMySQLError = (error: any) => {
-  if (error.name === 'QueryFailedError') { 
-    if([1052, 1062, 1452].includes(error.errno)) {
-      return conflict( 'MySQL validation error', { // 409
-        errors: [{
-          field: getErrorColumnName(error),
-          location: 'body',
-          messages: [error.sqlMessage],
-        }]
-      });
+const checkMySQLError = (err: any) => {
+  // https://vincit.github.io/objection.js/recipes/error-handling.html#examples
+  let error;
+  if (err instanceof ValidationError) {
+    switch (err.type) {
+      case 'ModelValidation':
+        error = badRequest(err.message);
+        error.output.payload.message = {
+          "type": err.type, 
+          "data": err.data
+          };
+        break;
+      case 'RelationExpression':
+        error = badRequest(err.message);
+        error.output.payload.message = {
+          "type": 'RelationExpression', 
+          "data": {}
+          };
+        break;
+      case 'UnallowedRelation':
+        error = badRequest(err.message);
+        error.output.payload.message = {
+          "type": err.type, 
+          "data": {}
+          };
+        break;
+      case 'InvalidGraph':
+        error = badRequest(err.message);
+        error.output.payload.message = {
+          "type": err.type, 
+          "data": {}
+          };
+        break;
+      default:
+        error = badRequest(err.message);
+        error.output.payload.message = {
+          "type": "UnknownValidationError",
+          "data": {}
+          };
+        break;
     }
-    if([1364, 1406].includes(error.errno)) {
-      return badData( 'MySQL validation error', { // 422
-        errors: [{
-          field: getErrorColumnName(error),
-          location: 'body',
-          messages: [error.sqlMessage],
-        }]
-      });
-    }
+  } else if (err instanceof NotFoundError) {
+    error = notFound(err.message);
+    error.output.payload.message = {
+      "type": "NotFound",
+      "data": {}
+    };
+  } else if (err instanceof UniqueViolationError) {
+    error = conflict(err.message);
+    error.output.payload.message = {
+      "type": "UniqueViolation",
+      "data": {
+        "columns": err.columns,
+        "table": err.table,
+        "constriant": err.constraint
+      }
+    };
+  } else if (err instanceof NotNullViolationError) {
+    error = badRequest(err.message);
+    error.output.payload.message = {
+      "type": "NotNullViolation",
+      "data": {
+        "columns": err.columns,
+        "table": err.table
+      }
+    };
+  } else if (err instanceof ForeignKeyViolationError) {
+    error = conflict(err.message);
+    error.output.payload.message = {
+      "type": "ForeignKeyViolation",
+      "data": {
+        "table": err.table,
+        "constriant": err.constraint
+      }
+    };
+  } else if (err instanceof CheckViolationError) {
+    error = badRequest(err.message);
+    error.output.payload.message = {
+      "type": "CheckViolation",
+      "data": {
+        "table": err.table,
+        "constriant": err.constraint
+      }
+    };
+  } else if (err instanceof DataError) {
+    error = badRequest(err.message);
+    error.output.payload.message = {
+      "type": "InvalidData",
+      "data": {
+      }
+    };
+  } else if (err instanceof DBError) {
+    error = badImplementation(err.message);
+    error.output.payload.message = {
+      "type": "UnknownDatabaseError",
+      "data": {
+      }
+    };
+  } else {
+    error = badImplementation(err.message);
+    error.output.payload.message = {
+      "type": "UnknownError",
+      "data": {
+      }
+    };
   }
-  if (error.name === 'EntityNotFound') {
-    return notFound(error.message)
-  }
+  
   return error;
 }
 
-const getErrorColumnName = (error): string => {
-  const start = parseInt(error.sqlMessage.indexOf("'"), 10);
-  const restart = parseInt(error.sqlMessage.substring(start + 1).indexOf("'"), 10);
-  return error.sqlMessage.substring(start + 1, start + restart + 1);
-};
 
 /**
  * @description Get error status code
@@ -56,6 +146,7 @@ const getErrorOutput = (error): IError => {
 
   // JS native ( Error | EvalError | RangeError | SyntaxError | TypeError | URIError )
   if (!error.httpStatusCode && !error.statusCode && !error.status && !error.isBoom) { 
+  console.log("test");
     switch(error.constructor.name) {
       case 'Error': 
       case 'EvalError': 
@@ -69,7 +160,7 @@ const getErrorOutput = (error): IError => {
         error = badImplementation(error.message);
     }
   }
-  
+
   if (error.isBoom) {
     return {
       statusCode: getErrorStatusCode(error),
@@ -81,4 +172,4 @@ const getErrorOutput = (error): IError => {
 
 };
 
-export { checkMySQLError, getErrorColumnName, getErrorStatusCode, getErrorOutput };
+export { checkMySQLError, getErrorStatusCode, getErrorOutput };

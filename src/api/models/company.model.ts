@@ -1,11 +1,13 @@
 import { BaseModel } from '@models/base.model';
 import { User } from '@models/user.model';
 import { CompanyBee } from '@models/company_bee.model';
-
+import Moment from 'moment';
 export class Company extends BaseModel {
 
+  id!: number;
   dropbox_auth!: string;
   image!: string;
+  paid!: string;
 
   static get tableName() {
     return 'companies';
@@ -15,11 +17,16 @@ export class Company extends BaseModel {
     return 'id';
   }
 
+  isPaid(): boolean {
+    return Moment(this.paid) > Moment();
+  }
+
   static get jsonSchema() {
     return {
       properties: {
         id: { type: 'integer' },
         name: { type: 'string', minLength: 1, maxLength: 45 },
+        paid: { type: 'date' },
 
         image: { type: 'string', minLength: 1, maxLength: 65 },
         api_key: { type: 'string', minLength: 1, maxLength: 65 },
