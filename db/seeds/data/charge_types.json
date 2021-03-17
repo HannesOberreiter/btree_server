@@ -1,0 +1,242 @@
+[
+  {
+    "id": 1,
+    "name": "P - Honig sonstige",
+    "unit": "",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 2,
+    "name": "F - Futter sonstige",
+    "unit": "",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 3,
+    "name": "B - Behandlungsmittel sonstige",
+    "unit": "",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 556,
+    "name": "P - Met sonstige 0,35L",
+    "unit": "Fl.",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 557,
+    "name": "Z - Einkauf Sonstiges",
+    "unit": "",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 744,
+    "name": "P - Met sonstige 0,70L",
+    "unit": "Fl.",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 745,
+    "name": "P - Met sonstige 0,20L",
+    "unit": "Fl.",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 823,
+    "name": "P - Honig \"Forest\"",
+    "unit": "(450g)",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 824,
+    "name": "P - Honig \"Tily\"",
+    "unit": "(450g)",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 825,
+    "name": "P - Honig \"Lion\"",
+    "unit": "(450g)",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 826,
+    "name": "P - Honig \"Creme\"",
+    "unit": "(450g)",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 827,
+    "name": "P - Met \"Sweet\" 0,35L",
+    "unit": "Fl.",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 828,
+    "name": "F - Agenabon",
+    "unit": "kg (1L = 1,5kg)",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 829,
+    "name": "F - Futterteig",
+    "unit": "kg",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 830,
+    "name": "B - 85% Ameisensäure",
+    "unit": "Fl. (1L)",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 831,
+    "name": "B - Oxalsäure Dihydrat",
+    "unit": "Pkg (35g/10 Stöcke)",
+    "favorite": 0,
+    "modus": 0,
+    "user_id": 1
+  },
+  {
+    "id": 832,
+    "name": "Z - Wachs",
+    "unit": "kg",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 833,
+    "name": "F - Bio Kistallzucker",
+    "unit": "kg",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 834,
+    "name": "F - Bio Staubzucker",
+    "unit": "kg",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 835,
+    "name": "B - Oxalsäure Bienenwohl\t",
+    "unit": "",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 836,
+    "name": "P - Produkte sonstige",
+    "unit": "",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 862,
+    "name": "P - Met \"Strawberry\" 0,35L",
+    "unit": "Fl.",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 863,
+    "name": "P - Met \"Strawberry\" 0,70L",
+    "unit": "Fl.",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 864,
+    "name": "P - Met \"Gingerbread\" 0,70L",
+    "unit": "Fl.",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 865,
+    "name": "P - Met \"Gingerbread\" 0,35L",
+    "unit": "Fl.",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 866,
+    "name": "P - Met \"Sweet\" 0,70L",
+    "unit": "Fl.",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 867,
+    "name": "P - Met \"Pure\" 0,70L",
+    "unit": "Fl.",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 868,
+    "name": "P - Met \"Pure\" 0,35L",
+    "unit": "Fl.",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 1010,
+    "name": "P - Met \"Pinus\" 0,35L",
+    "unit": "Fl.",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 3110,
+    "name": "B - Oxalsäure Dihydrat\t",
+    "unit": "g",
+    "favorite": 1,
+    "modus": 1,
+    "user_id": 1
+  }
+]

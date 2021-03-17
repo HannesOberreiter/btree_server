@@ -1,5 +1,6 @@
 require('module-alias/register');
 
+const { stream } = require('winston');
 const { env } = require("../../dist/config/environment.config");
 
 if(env === "production"){
@@ -11,7 +12,12 @@ if(env === "production"){
   exports.seed = function(knex) {
     const fs = require('fs');
     
-    const tables = ['companies', 'bees'];
+    let tables = [];
+    fs.readdirSync(__dirname+`/data/`).forEach(file => {
+      file = file.replace(".json", "");
+      tables.push(file)
+    });
+
     const promises = [];
 
     // First we clear all tables with truncate

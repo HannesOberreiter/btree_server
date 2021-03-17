@@ -4,12 +4,12 @@ exports.up = function(knex) {
         t.increments('id').primary().unsigned();
 
         t.string('name', 24);
-        t.integer('grouphive', 2);
+        t.integer('grouphive', 11);
         t.integer('position', 11);
 
         t.string('note', 2000);
         t.boolean('modus').defaultTo(1);
-        t.date('modus_date').comment('Date keeps track when modus changes to inactive.');
+        t.date('modus_date').nullable().comment('Date keeps track when modus changes to inactive.');
 
         t.integer('source_id').unsigned().nullable();
         t.foreign('source_id').

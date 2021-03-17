@@ -4,8 +4,11 @@ import { IRoute } from "@interfaces/IRoute.interface";
 
 import { RootRouter } from "@routes/v1/root.route";
 import { CompanyRouter } from "@routes/v1/company.route";
+import { UserRouter } from "@routes/v1/user.route";
+import { HiveRouter } from "@routes/v1/hive.route";
+import { OptionRouter } from "@routes/v1/option.route";
+import { AuthRouter } from "@routes/v1/auth.route";
 
-//import { AuthRouter } from "@routes/auth.route";
 //import { DocumentRouter } from "@routes/document.route";
 //import { UserRouter } from "@routes/user.route"; 
 
@@ -26,9 +29,11 @@ export class ProxyRouter {
   private routes = [
     { segment: '', router: RootRouter, serializable: false },
     { segment: '/company/', router: CompanyRouter, serializable: false },
-    //{ segment: '/auth/', router: AuthRouter, serializable: false },
+    { segment: '/hive/', router: HiveRouter, serializable: false },
+    { segment: '/option/', router: OptionRouter, serializable: false },
+    { segment: '/user/', router: UserRouter, serializable: false },
+    { segment: '/auth/', router: AuthRouter, serializable: false },
     //{ segment: '/documents/', router: DocumentRouter, serializable: true },
-    //{ segment: '/users/', router: UserRouter, serializable: true }
   ];
 
   constructor() {

@@ -1,80 +1,43 @@
 import { jwtSecret } from "@config/environment.config";
 
-import * as BearerStrategy from "passport-http-bearer";
+import BearerStrategy from "passport-http-bearer";
 
 import { Strategy as JwtStrategy } from "passport-jwt";
 import { ExtractJwt } from "passport-jwt";
-import { getCustomRepository, getRepository } from "typeorm";
 
 import { Container } from "@config/container.config";
 
-import { UserRepository } from "@repositories/user.repository";
 import { User } from "@models/user.model";
 
-/**
- * Passport configuration
- */
+const ExtractJwtAlias = ExtractJwt as { fromAuthHeaderWithScheme: (type: string) => string };
+
 export class PassportConfiguration {
 
-  /**
-   * @description Default options
-   */
+
   private static options = {
     jwt: {
       secretOrKey: jwtSecret,
-      jwtFromRequest: ExtractJwt.fromAuthHeaderWithScheme('Bearer')
+      jwtFromRequest: ExtractJwtAlias.fromAuthHeaderWithScheme('Bearer')
     }
   };
   
   constructor() {}
 
-  /**
-   * @description Authentication by oAuth middleware function
-   * @async
-   */
-  private static oAuth = service => async (token, next: Function) => {
-    try {
-      const userRepository = getCustomRepository(UserRepository);
-      const userData = await Container.resolve('AuthProvider')[service](token);
-      const user = await userRepository.oAuthLogin(userData);
-      next(null, user);
-    } catch (err) { return next(err); }
+  static factory (strategy: string): JwtStrategy|BearerStrategy {
+    return new JwtStrategy( PassportConfiguration.options.jwt, PassportConfiguration.jwt );
   }
 
-  /**
-   * @description Authentication by JWT middleware function
-   * @async
-   */
-  private static jwt = async (payload, next: Function) => {
+  private static jwt = async (payload, next: (e?: Error, v?: any|boolean) => void) => {
     try {
-      const userRepository = getRepository(User);
-      const user = await userRepository.findOne( payload.sub );
-      if (user) {
-        return next(null, user);
+      //console.log(payload);
+      //const user = await User.query().findById( payload.bee_id );
+      if (payload.bee_id & payload.user_id & payload.rank) {
+        return next(null, payload);
       }
       return next(null, false);
-    } catch (error) { return next(error, false); }
-  }
-
-  /**
-   * @description Provide a passport strategy instance
-   * 
-   * @param {string} strategy Strategy to instanciate
-   */
-  static factory (strategy: string): any {
-    let instance;
-    switch(strategy) {
-      case 'jwt': 
-        instance = new JwtStrategy(this.options.jwt, this.jwt);
-      break;
-      case 'facebook': 
-        instance = new BearerStrategy(this.oAuth('facebook'));
-      break;
-      case 'google': 
-        instance = new BearerStrategy(this.oAuth('google'));
-      break;
+    } catch (error) {
+      return next(error, false);
     }
-    return instance;
   }
 
 }

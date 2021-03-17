@@ -1,5 +1,4 @@
 import { readFileSync, writeFileSync } from "fs";
-import { DOCUMENT_MIME_TYPE, ARCHIVE_MIME_TYPE, IMAGE_MIME_TYPE } from "@enums/mime-type.enum";
 
 const chars   = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'];
 const numbers = ['0','1','2','3','4','5','6','7','8','9'];
@@ -82,23 +81,6 @@ const extension = (filename: string, include = false) => {
   return filename.lastIndexOf('.') !== -1 ? include === true ? filename.substring(filename.lastIndexOf('.')) : filename.substring(filename.lastIndexOf('.') + 1) : filename;
 };
 
-/**
- * @description Determine document type from mime type
- * @param {string} mimetype 
- */
-const fieldname = (mimetype: string) => {
-  const mimes = {
-    document: DOCUMENT_MIME_TYPE,
-    archive: ARCHIVE_MIME_TYPE,
-    image: IMAGE_MIME_TYPE
-  };
-  let is = null;
-  for(let key in mimes) {
-    if (typeof mimes[key][mimetype] !== 'undefined') {
-      is = key;
-    }
-  }
-  return is;
-};
 
-export { shuffle, hash, crypt, base64Encode, base64Decode, filename, extension, fieldname };
+
+export { shuffle, hash, crypt, base64Encode, base64Decode, filename, extension };

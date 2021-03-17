@@ -1,0 +1,37 @@
+[
+  {
+    "id": 172,
+    "name": "3:2 Zuckerwasser",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 173,
+    "name": "1:1 Zuckerwasser",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 174,
+    "name": "Futterteig",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 998,
+    "name": "Agenabon",
+    "favorite": 1,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 4521,
+    "name": "Sonstiges",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  }
+]

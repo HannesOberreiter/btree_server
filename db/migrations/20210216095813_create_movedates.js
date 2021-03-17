@@ -3,7 +3,7 @@ exports.up = function(knex) {
     return knex.schema.createTable('movedates', t => {
         t.increments('id').primary().unsigned();
 
-        t.date('date');
+        t.datetime('date');
 
         t.integer('apiary_id').unsigned().nullable();
         t.foreign('apiary_id').

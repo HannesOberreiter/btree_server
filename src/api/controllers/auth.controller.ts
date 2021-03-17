@@ -1,30 +1,23 @@
 import { Request, Response } from "express";
-import { getRepository, getCustomRepository } from "typeorm";
 import { CREATED } from "http-status";
 import { notFound } from "boom";
+import { IResponse } from '@interfaces/IResponse.interface';
+
+import useragent from 'express-useragent'
 
 import { Controller } from "@classes/controller.class";
 import { User } from "@models/user.model";
-import { RefreshToken } from "@models/refresh-token.model";
-import { UserRepository } from "@repositories/user.repository";
+import { RefreshToken } from "@models/refresh_token.model";
 import { checkMySQLError } from "@utils/error.util";
 import { generateTokenResponse } from "@utils/auth.util";
+import { safe } from "@api/decorators/safe.decorator";
 
-/**
- * Manage incoming requests from api/{version}/auth 
- */
 export class AuthController extends Controller {
 
   constructor() { super(); }
 
-  /**
-   * @description Creates and save new user
-   * 
-   * @param {Request} req Express request object derived from http.incomingMessage
-   * @param {Response} res Express response object
-   * @param {Function} next Callback function
-   */
-  async register(req: Request, res : Response, next: Function) { 
+/*   async register(req: Request, res : Response, next: Function) { 
+
     try {
       const repository = getRepository(User);
       const user = new User(req.body);
@@ -35,49 +28,21 @@ export class AuthController extends Controller {
       next();
     } 
     catch (e) { next( checkMySQLError(e) ); }
-  }
+  } */
+  @safe
+  static async login(req: Request, res: IResponse): Promise<void> {
+    // Build a userAgent string to identify devices and users  
+    let userAgent = useragent.parse(req.headers['user-agent']);
+    userAgent = userAgent.os + userAgent.platform + userAgent.browser
+    userAgent = userAgent.length > 50 ? userAgent.substring(0,49) : userAgent;
 
-  /**
-   * @description Login with an existing user or creates a new one if valid accessToken token
-   * 
-   * @param {Request} req Express request object derived from http.incomingMessage
-   * @param {Response} res Express response object
-   * @param {Function} next Callback function
-   */
-  async login(req: Request, res : Response, next: Function) {
-    try {
-      const repository = getCustomRepository(UserRepository);
-      const { user, accessToken } = await repository.findAndGenerateToken(req.body, req.headers.from);
-      const token = await generateTokenResponse(user, accessToken);
-      res.locals.data = { token, user: user.whitelist() };
-      next();
-    } catch (e) { next( checkMySQLError(e) ); }
+    //const { user, accessToken } = await repository.findAndGenerateToken(req.body, req.headers.from);
+    const token = await generateTokenResponse(1, 1, userAgent);
+    //console.log(token);
+    res.locals.data = {token};
+    //res.locals.data = { token, user: user.whitelist() };
   }
-
-  /**
-   * @description Login with an existing user or creates a new one if valid accessToken token
-   * 
-   * @param {Request} req Express request object derived from http.incomingMessage
-   * @param {Response} res Express response object
-   * @param {Function} next Callback function
-   */
-  async oAuth (req: Request, res : Response, next: Function) {
-    try {
-      const user = req.body;
-      const accessToken = user.token();
-      const token = generateTokenResponse(user, accessToken);
-      res.locals.data = { token, user: user.whitelist() };
-      next();
-    } catch (e) { next( checkMySQLError(e) ); }
-  }
-
-  /**
-   * @description Login with an existing user or creates a new one if valid accessToken token
-   * 
-   * @param {Request} req Express request object derived from http.incomingMessage
-   * @param {Response} res Express response object
-   * @param {Function} next Callback function
-   */
+/* 
   async authorize (req: Request, res : Response, next: Function) {
     try {
       const user = req.body;
@@ -87,20 +52,10 @@ export class AuthController extends Controller {
       next();
     } catch (e) { next( checkMySQLError(e) ); }
   }
-
-  /**
-   * @description Refresh JWT token by RefreshToken removing, and re-creating 
-   * 
-   * @param {Request} req Express request object derived from http.incomingMessage
-   * @param {Response} res Express response object
-   * @param {Function} next Callback function
-   */
+*/
   async refresh(req: Request, res : Response, next: Function) {
 
     try {
-
-      const refreshTokenRepository = getRepository(RefreshToken);
-      const userRepository = getCustomRepository(UserRepository);
 
       const { token } = req.body;
 

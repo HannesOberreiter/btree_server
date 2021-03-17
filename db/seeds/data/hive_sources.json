@@ -1,0 +1,37 @@
+[
+  {
+    "id": 239,
+    "name": "Kunstschwarm",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 240,
+    "name": "Schwarm",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 241,
+    "name": "Ableger",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 715,
+    "name": "Flugling",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 4758,
+    "name": "Verkauft",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  }
+]

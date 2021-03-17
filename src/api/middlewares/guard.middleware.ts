@@ -1,20 +1,16 @@
-import { authenticate } from "passport";
-import { promisify } from "es6-promisify";
-import { forbidden, badRequest } from "boom";
+import { authenticate } from 'passport';
+import { promisify } from 'es6-promisify';
+import { forbidden, badRequest } from '@hapi/boom';
 
-import { User } from "@models/user.model";
-import { ROLE } from "@enums/role.enum";
-import { list } from "@utils/enum.util";
-
-const ADMIN = ROLE.admin;
-const LOGGED_USER = ROLE.user;
-const GHOST = ROLE.ghost;
-
-export { ADMIN, LOGGED_USER, GHOST };
+import { User } from '@models/user.model';
+import { ROLES } from '@enums/role.enum';
+import { list } from '@utils/enum.util';
+import { IUserRequest } from '@interfaces/IUserRequest.interface';
+import { IResponse } from '@interfaces/IResponse.interface';
 
 /**
  * Authentication middleware
- * 
+ *
  * @dependency passport
  * @see http://www.passportjs.org/
  */
@@ -23,51 +19,31 @@ export class Guard {
   constructor() {}
 
   /**
-   * @description Callback function provided to passport.authenticate when authentication strategy is JWT
-   * 
-   * @param {Request} req Express request object derived from http.incomingMessage
-   * @param {Response} res Express response object
-   * @param {Function} next Callback function
-   * @param {ROLE[]} roles Authorized roles
+   * @description Authorize user access according to role(s) in arguments
+   *
+   * @param roles
    */
-  private static handleJWT = (req, res, next: Function, roles) => async (err: Error, user: User, info) => {
+  static authorize = (roles = list(ROLES)) => (req: IUserRequest, res: IResponse, next: (e?: Error) => void): void => authenticate( 'jwt', { session: false }, Guard.handleJWT(req, res, next, roles) )(req, res, next);
+
+  private static handleJWT = (req: IUserRequest, res: IResponse, next: (error?: Error) => void, roles: string) => async (err: Error, payload: any, info: string) => {
 
     const error = err || info;
 
-    const logIn = promisify(req.logIn);
-  
-    try {
-      if (error || !user) throw error;
-      await logIn(user, { session: false });
-    } 
-    catch (e) { return next( forbidden(e) ); }
+    if (error || !payload) throw error;
     
-    if (roles === LOGGED_USER && user.role !== "admin" && req.params.userId !== user.id.toString() ) {
+    console.log(payload);
+    console.log(req.params);
+
+    if (roles === ROLES.admin && payload.rank !== ROLES.admin && parseInt(req.params.bee_id, 10) !== payload.bee_id ) {
       return next( forbidden('Forbidden area') );
-    } 
-    else if (!roles.includes(user.role)) {
+    } else if (!roles.includes(payload.rank)) {
       return next( forbidden('Forbidden area') );
-    } 
-    else if (err || !user) {
-      return next( badRequest(err) );
+    } else if (err || !payload) {
+      return next( badRequest(err?.message) );
     }
-    
-    // req.user = user.whitelist(); // TODO: deprecated ?
-    req.user = user;
-  
+
+    req.payload = payload;
+
     return next();
   }
-
-  /**
-   * @description Authorize user access according to role(s) in arguments
-   * 
-   * @param {ROLE[]} roles 
-   */
-  static authorize = (roles = list(ROLE)) => (req, res, next) => authenticate( 'jwt', { session: false }, Guard.handleJWT(req, res, next, roles) ) (req, res, next);
-
-  /**
-   * @description Authorize user access according to service.access_token
-   * @param {object} service Service to use for authentication 
-   */
-  static oauth = service => authenticate(service, { session: false });
 }

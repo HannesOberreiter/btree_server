@@ -27,7 +27,7 @@ Changes are logged because later migration of the live database.
 - tables renamed to apiaries
 - adress, zip, city -- combined to field "description"
 - created renamed to created_at
-- added updated_at
+- edited renamed to updated_at
 - deleted_date renamed to deleted_at
 
 ## treatment_type & disease
@@ -108,6 +108,8 @@ Changes are logged because later migration of the live database.
 - edited renamed to updated_at
 - deleted_date renamed to deleted_at
 
+table hive_group is not anymore, need to get amount and save into grouphive field
+
 ## movedate
 
 - table renamed to movedates
@@ -141,8 +143,7 @@ Changes are logged because later migration of the live database.
 ## checkup
 
 - table renamed to checkups
-- queen, eggs, capped_brood, queen_cells changed to boolean
-- varroa changed to float
+- queen, eggs, capped_brood, queencells changed to boolean
 - ct_id renamed to type_id
 - created renamed to created_at
 - edited renamed to updated_at

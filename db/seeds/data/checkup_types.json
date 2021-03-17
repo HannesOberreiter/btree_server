@@ -1,0 +1,79 @@
+[
+  {
+    "id": 1,
+    "name": "Kontrolle",
+    "favorite": 1,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 258,
+    "name": "Zargenwechsel",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 259,
+    "name": "Erweitern",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 848,
+    "name": "Varroakontr.",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 883,
+    "name": "Umweiseln",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 1564,
+    "name": "Erster Polleneintrag",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 2096,
+    "name": "Drohnenrahmen ",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 3570,
+    "name": "WZ gebrochen",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 4676,
+    "name": "Aufgelöst",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 7155,
+    "name": "AFB Probe",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 7309,
+    "name": "Schied",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  }
+]

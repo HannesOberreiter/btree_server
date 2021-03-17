@@ -1,0 +1,79 @@
+[
+  {
+    "id": 3,
+    "name": "A. m. Carnica",
+    "favorite": 1,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 7,
+    "name": "L561-K4303",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 4079,
+    "name": "H47",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 4080,
+    "name": "G10",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 4081,
+    "name": "926",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 7870,
+    "name": "Zucht",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 7871,
+    "name": "NZ",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 7872,
+    "name": "Stille Umw.",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 7873,
+    "name": "Schwarm",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 7874,
+    "name": "Gekauft",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 8046,
+    "name": "99-13",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  }
+]
