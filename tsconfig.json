@@ -16,11 +16,13 @@
       "@repositories/*":  ["src/api/repositories/*"],
       "@routes/*":        ["src/api/routes/*"],
       "@services/*":      ["src/api/services/*"],
+      "@validations/*":    ["src/api/validations/*"],
 
       "@classes/*":       ["src/api/types/classes/*"],
       "@enums/*":         ["src/api/types/enums/*"],
       "@errors/*":        ["src/api/types/errors/*"],
       "@interfaces/*":    ["src/api/types/interfaces/*"],
+      "@schemas/*":       ["src/api/types/schemas/*"],
 
       "@utils/*":         ["src/api/utils/*"],
 
