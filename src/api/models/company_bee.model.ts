@@ -3,7 +3,7 @@ import { User } from '@models/user.model';
 import { Company } from '@models/company.model';
 import { Model } from 'objection';
 
-export class CompanyBee extends BaseModel {
+export class CompanyBee extends Model {
 
   id!: number;
   user_id!: number;
