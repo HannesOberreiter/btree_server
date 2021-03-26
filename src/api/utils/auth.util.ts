@@ -5,7 +5,8 @@ import { RefreshToken } from "@models/refresh_token.model";
 import { expectationFailed, unauthorized } from '@hapi/boom';
 import Moment from "moment";
 
-import { randomBytes } from 'crypto';
+import { randomBytes, createHash } from 'crypto';
+
 import jwt from 'jsonwebtoken';
 
 import { jwtSecret, jwtExpirationInterval } from '@config/environment.config';
@@ -179,4 +180,20 @@ const generateTokenResponse = async (bee_id : number, user_id : number, userAgen
 
 
 
-export { generateTokenResponse, checkRefreshToken };
+const createHashedPassword = ( password: string, hash: string = 'sha512' ) => {
+
+    // We first need to hash the inputPassword, this is due to an old code 
+    // in my first app I did hash the password on login page before sending to server
+    const hexInputPassword = createHash(hash).update(password).digest('hex');
+    
+    const salt = randomBytes(40).toString('hex');
+    
+    const saltedPassword = hexInputPassword + salt;
+    const hashedPassword = createHash(hash).update(saltedPassword).digest('hex');
+
+    return { salt: salt, password: hashedPassword }
+}
+
+
+
+export { generateTokenResponse, checkRefreshToken, createHashedPassword };

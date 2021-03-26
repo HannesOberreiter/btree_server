@@ -1,37 +1,52 @@
+
+import { Controller } from "@classes/controller.class";
 import { Request, Response } from "express";
-import { CREATED, OK } from "http-status";
 import { IResponse } from '@interfaces/IResponse.interface';
 
 import useragent from 'express-useragent'
 
-import { Controller } from "@classes/controller.class";
-import { RefreshToken } from "@models/refresh_token.model";
+import { User } from '@models/user.model';
+import { Company } from '@models/company.model';
+import { CompanyBee } from '@models/company_bee.model';
+
 import { checkMySQLError } from "@utils/error.util";
 
-import { generateTokenResponse, checkRefreshToken } from "@utils/auth.util";
+import { generateTokenResponse, checkRefreshToken, createHashedPassword } from "@utils/auth.util";
 import { loginCheck } from "@utils/login.util";
+import { autoFill } from "@utils/autofill.util";
 
-
-import { safe } from "@api/decorators/safe.decorator";
 import { badRequest, expectationFailed, unauthorized } from "@hapi/boom";
 
 export class AuthController extends Controller {
 
   constructor() { super(); }
 
-/*   async register(req: Request, res : Response, next: Function) { 
+  async register(req: Request, res : Response, next: Function) { 
+    
+    let inputCompany = req.body.name;
+    
+    let inputUser = req.body;
+    delete inputUser['name'];
+
+    // create hashed password and salt
+    const hash = createHashedPassword(inputUser.password);
+    inputUser.password = hash.password;
+    inputUser.salt = hash.salt;
 
     try {
-      const repository = getRepository(User);
-      const user = new User(req.body);
-      await repository.insert(user);
-      const token = await generateTokenResponse(user, user.token());
-      res.status(CREATED);
-      res.locals.data = { token, user: user.whitelist() };
+      const company_bee = await User.transaction(async trx =>  {
+        const u = await User.query(trx).insert(inputUser);
+        const c = await Company.query(trx).insert({'name': inputCompany});
+        await CompanyBee.query(trx).insert({'bee_id': u.id, 'user_id': c.id});
+        await autoFill(trx, c.id);
+      });
+      res.locals.data = { company_bee };
       next();
-    } 
-    catch (e) { next( checkMySQLError(e) ); }
-  } */
+    } catch (e) {
+      next( checkMySQLError( e ) ); 
+    }
+  }
+
   async login(req: Request, res : IResponse, next: Function) {
 
     const { email, password } = req.body;

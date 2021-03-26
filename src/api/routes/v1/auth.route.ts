@@ -11,6 +11,20 @@ export class AuthRouter extends Router {
   define() {
 
     this.router
+      .route('/register')
+        .post(
+          Validator.validate([
+            body('email').isEmail(),
+            body('password').isLength({ min: 6 }),
+            body('name').isString().isLength({ min: 3 }),
+            body('lang').isString().isLength({ min: 2, max: 2 }),
+            body('newsletter').isBoolean(),
+            body('source').isString()
+          ]),
+          Container.resolve('AuthController').register
+      );
+
+    this.router
       .route('/login')
         .post(
           Validator.validate([
