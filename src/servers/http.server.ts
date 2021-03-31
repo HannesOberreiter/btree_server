@@ -28,10 +28,6 @@ export class HTTPServer {
    * 
    */
   private options = {
-    credentials: {
-      key: ssl.isActive === 1 ? readFileSync(ssl.key, "utf8") : null,
-      cert: ssl.isActive === 1 ? readFileSync(ssl.cert, "utf8") : null,
-    },
     port: port
   }
 
@@ -44,7 +40,7 @@ export class HTTPServer {
    */
   start(): void {
     try {
-      const server = ssl.isActive === 1 ? createServer(this.options.credentials, this.app) : this.app;
+      const server = this.app;
       this.http = server.listen(port, function() {
         if(env !== ENVIRONMENT.test) {
           Container.resolve('Logger').log('info', `HTTP(S) server is now running on port ${port} (${env})`, { label: 'Server' } );
