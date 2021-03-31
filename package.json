@@ -11,7 +11,8 @@
     "create:directories": "mkdir -p ./dist/logs",
     "dev:node": "ENVIRONMENT=development nodemon",
     "dev:tsc": "tsc -watch",
-    "dev:knex": "ENVIRONMENT=development knex"
+    "dev:knex": "ENVIRONMENT=development knex",
+    "prettier-format": "prettier --config .prettierrc 'src/**/*.ts' --write"
   },
   "_moduleAliases": {
     "@": "dist",
@@ -45,6 +46,7 @@
     "compression": "^1.7.4",
     "cors": "^2.8.5",
     "datatables.net-editor-server": "^1.9.6",
+    "dayjs": "^1.10.4",
     "dotenv": "^8.2.0",
     "errorhandler": "^1.5.1",
     "es6-promisify": "^6.1.1",
@@ -61,7 +63,6 @@
     "knex": "^0.21.17",
     "lodash": "^4.17.20",
     "module-alias": "^2.2.2",
-    "moment-timezone": "^0.5.33",
     "morgan": "^1.10.0",
     "mysql": "^2.18.1",
     "objection": "^2.2.14",
@@ -70,6 +71,7 @@
     "winston": "^3.3.3"
   },
   "devDependencies": {
+    "prettier": "2.2.1",
     "typescript": "^4.1.5"
   },
   "description": "Typescript, based on nodejs, express and knex.js, objections.js and datatables.net. The folder structure is based on <https://github.com/konfer-be/ts-express-typeorm-boilerplate>.",
