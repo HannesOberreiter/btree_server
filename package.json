@@ -48,7 +48,6 @@
     "errorhandler": "^1.5.1",
     "es6-promisify": "^6.1.1",
     "express": "^4.17.1",
-    "express-hbs": "^2.3.4",
     "express-rate-limit": "^5.2.5",
     "express-useragent": "^1.0.15",
     "express-validator": "^6.9.2",
@@ -67,7 +66,6 @@
     "objection": "^2.2.14",
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",
-    "uuid": "^8.3.2",
     "winston": "^3.3.3"
   },
   "devDependencies": {
