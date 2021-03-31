@@ -1,6 +1,7 @@
 import { BaseModel } from '@models/base.model';
 import { Company } from '@models/company.model';
 import { CompanyBee } from '@models/company_bee.model';
+import { ModelObject } from "objection";
 
 export class User extends BaseModel {
 
@@ -90,3 +91,6 @@ export class User extends BaseModel {
   });
 
 }
+
+type UserShape = ModelObject<User>;
+
