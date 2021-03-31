@@ -2,6 +2,7 @@
  * @description Dropdown / Option tables available for Endpoint /option/:table
  */
 export enum OPTION {
+    charge_types       = "charge_types",
     hive_sources       = "hive_sources",
     hive_types         = "hive_types",
     feed_types         = "feed_types",
