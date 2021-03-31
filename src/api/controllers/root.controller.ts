@@ -1,22 +1,26 @@
-import { Request, Response } from "express";
-import { OK } from "http-status";
-import { Container } from "@config/container.config";
-import { Controller } from "@classes/controller.class";
+import { Request, Response } from 'express';
+import { OK } from 'http-status';
+import { Container } from '@config/container.config';
+import { Controller } from '@classes/controller.class';
 
 export class RootController extends Controller {
+  constructor() {
+    super();
+  }
 
-  constructor() { super(); }
-
-  status = (req: Request, res: Response, next: Function) => { 
-    res.status(OK); 
-    res.end(); 
-  };
-
-  report = (req: Request, res: Response, next: Function) => {
-    const message = req.body.violation ? 'CSP Violation: ' + req.body.violation : 'CSP Violation';
-    Container.resolve('Logger').log('error', message, { label: 'CSP violation' });
+  status = (req: Request, res: Response, next: Function) => {
     res.status(OK);
     res.end();
   };
 
+  report = (req: Request, res: Response, next: Function) => {
+    const message = req.body.violation
+      ? 'CSP Violation: ' + req.body.violation
+      : 'CSP Violation';
+    Container.resolve('Logger').log('error', message, {
+      label: 'CSP violation'
+    });
+    res.status(OK);
+    res.end();
+  };
 }

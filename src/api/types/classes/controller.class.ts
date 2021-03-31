@@ -1,8 +1,4 @@
 /**
  * Main controller contains properties/methods
  */
-export abstract class Controller {
-
-
-
-};
+export abstract class Controller {}

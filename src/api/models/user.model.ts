@@ -1,10 +1,9 @@
 import { BaseModel } from '@models/base.model';
 import { Company } from '@models/company.model';
 import { CompanyBee } from '@models/company_bee.model';
-import { ModelObject } from "objection";
+import { ModelObject } from 'objection';
 
 export class User extends BaseModel {
-
   id!: number;
   password!: string;
   reset!: string;
@@ -14,8 +13,8 @@ export class User extends BaseModel {
 
   last_visit!: Date;
 
-  company?: Company[]
-  company_bee?: CompanyBee[]
+  company?: Company[];
+  company_bee?: CompanyBee[];
 
   static tableName = 'bees';
   static idColumn = 'id';
@@ -24,38 +23,37 @@ export class User extends BaseModel {
     type: 'object',
     required: ['email', 'password', 'salt'],
     properties: {
-        id: { type: 'integer' },
-        firstName: { type: 'string', minLength: 1, maxLength: 45 },
-        lastName: { type: 'string', minLength: 1, maxLength: 45 },
-        email: { type: 'string', format: 'email', minLength: 1, maxLength: 100 },
+      id: { type: 'integer' },
+      firstName: { type: 'string', minLength: 1, maxLength: 45 },
+      lastName: { type: 'string', minLength: 1, maxLength: 45 },
+      email: { type: 'string', format: 'email', minLength: 1, maxLength: 100 },
 
-        password: { type: 'string', minLength: 1, maxLength: 128 },
-        salt: { type: 'string', minLength: 1, maxLength: 128 },
+      password: { type: 'string', minLength: 1, maxLength: 128 },
+      salt: { type: 'string', minLength: 1, maxLength: 128 },
 
-        reset: { type: 'string', minLength: 1, maxLength: 128 },
-        reset_timestamp: { type: 'date-time' },
+      reset: { type: 'string', minLength: 1, maxLength: 128 },
+      reset_timestamp: { type: 'date-time' },
 
-        state: { type: 'integer' },
-        lang: { type: 'string', minLength: 1, maxLength:3 },
-        acdate: { type: 'boolean' },
-        newsletter: { type: 'boolean' },
-        todo: { type: 'boolean' },
-        sound: { type: 'boolean' },
-        tablexscroll: { type: 'boolean' },
+      state: { type: 'integer' },
+      lang: { type: 'string', minLength: 1, maxLength: 3 },
+      acdate: { type: 'boolean' },
+      newsletter: { type: 'boolean' },
+      todo: { type: 'boolean' },
+      sound: { type: 'boolean' },
+      tablexscroll: { type: 'boolean' },
 
-        source: { type: 'string', minLength: 1, maxLength: 45 },
+      source: { type: 'string', minLength: 1, maxLength: 45 },
 
-        saved_company: { type: 'integer' },
+      saved_company: { type: 'integer' },
 
-        last_visit: { type: 'date-time' },
-        created_at: { type: 'date-time' },
-        updated_at: { type: 'date-time' }
-      }
+      last_visit: { type: 'date-time' },
+      created_at: { type: 'date-time' },
+      updated_at: { type: 'date-time' }
+    }
   };
 
   // Omit fields for json response from model
   $formatJson(user: User): User {
-
     super.$formatJson(user);
 
     delete user.password;
@@ -63,8 +61,7 @@ export class User extends BaseModel {
     delete user.reset;
 
     return user;
-
-  };
+  }
 
   static relationMappings = () => ({
     company: {
@@ -89,8 +86,6 @@ export class User extends BaseModel {
       }
     }
   });
-
 }
 
 type UserShape = ModelObject<User>;
-

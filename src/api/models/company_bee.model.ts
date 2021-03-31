@@ -4,14 +4,13 @@ import { Company } from '@models/company.model';
 import { Model } from 'objection';
 
 export class CompanyBee extends Model {
-
   id!: number;
   user_id!: number;
   bee_id!: number;
   rank!: number;
 
-  company?: Company
-  user?: User
+  company?: Company;
+  user?: User;
 
   static tableName = 'company_bee';
   static idColumn = 'id';
@@ -24,9 +23,9 @@ export class CompanyBee extends Model {
       bee_id: { type: 'integer' }, // User FK
       rank: { type: 'integer' }
     }
-  }
+  };
 
- static relationMappings = () => ({
+  static relationMappings = () => ({
     company: {
       relation: Model.BelongsToOneRelation,
       modelClass: Company,
@@ -42,8 +41,6 @@ export class CompanyBee extends Model {
         from: 'company_bee.bee_id',
         to: 'user.id'
       }
-    },
-  })
-
-
+    }
+  });
 }

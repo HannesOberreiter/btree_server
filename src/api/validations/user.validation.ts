@@ -14,7 +14,7 @@ const updateUser = {
     newsletter: boolean(),
     todo: boolean(),
     sound: boolean(),
-    tablexscroll: boolean(),
+    tablexscroll: boolean()
   })
 };
 

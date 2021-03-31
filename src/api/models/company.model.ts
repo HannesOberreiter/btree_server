@@ -1,22 +1,21 @@
 import { BaseModel } from '@models/base.model';
 import { User } from '@models/user.model';
 import { CompanyBee } from '@models/company_bee.model';
-import Moment from 'moment';
+import dayjs from 'dayjs';
 export class Company extends BaseModel {
-
   id!: number;
   name!: string;
   dropbox_auth!: string;
   image!: string;
   paid!: string;
 
-  static tableName = "companies";
-  static idColumn = "id";
+  static tableName = 'companies';
+  static idColumn = 'id';
 
-  user?: User[]
+  user?: User[];
 
   isPaid(): boolean {
-    return Moment(this.paid) > Moment();
+    return dayjs(this.paid) > dayjs();
   }
 
   static jsonSchema = {
@@ -38,14 +37,12 @@ export class Company extends BaseModel {
 
   // Omit fields for json response from model
   $formatJson(company: Company): Company {
-
     super.$formatJson(company);
 
     delete company.dropbox_auth;
     delete company.image;
 
     return company;
-
   }
 
   static relationMappings = () => ({
@@ -63,5 +60,4 @@ export class Company extends BaseModel {
       }
     }
   });
-
 }
