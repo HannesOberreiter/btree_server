@@ -17,6 +17,7 @@
     "@": "dist",
     "@api": "dist/api",
     "@controllers": "dist/api/controllers",
+    "@datatables": "dist/api/datatables",
     "@middlewares": "dist/api/middlewares",
     "@models": "dist/api/models",
     "@repostiroies": "dist/api/repostiroies",

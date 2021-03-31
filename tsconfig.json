@@ -11,6 +11,7 @@
       "@api/*":           ["src/api/*"],
 
       "@controllers/*":   ["src/api/controllers/*"],
+      "@datatables/*":    ["src/api/datatables/*"],
       "@middlewares/*":   ["src/api/middlewares/*"],
       "@models/*":        ["src/api/models/*"],
       "@repositories/*":  ["src/api/repositories/*"],
