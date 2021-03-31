@@ -7,6 +7,7 @@ export class BaseOptionModel extends BaseModel {
   modus!: boolean;
   favorite!: boolean;
   deleted!: boolean;
+  user_id!: number;
 
   company?: Company;
 

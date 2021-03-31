@@ -12,7 +12,8 @@ export class Apiary extends BaseModel {
   url!: string;
   modus!: boolean;
   deleted!: boolean;
-
+  user_id!: number;
+  
   static tableName = 'apiaries';
   static idColumn = 'id';
 

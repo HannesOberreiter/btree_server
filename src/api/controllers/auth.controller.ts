@@ -36,12 +36,15 @@ export class AuthController extends Controller {
     inputUser.password = hash.password;
     inputUser.salt = hash.salt;
 
+    // we only have german or english available for autofill
+    const autofillLang = inputUser.lang == 'de' ? 'de' : 'en';
+
     try {
       const company_bee = await User.transaction(async (trx) => {
         const u = await User.query(trx).insert(inputUser);
         const c = await Company.query(trx).insert({ name: inputCompany });
         await CompanyBee.query(trx).insert({ bee_id: u.id, user_id: c.id });
-        await autoFill(trx, c.id);
+        await autoFill(trx, c.id, autofillLang);
       });
       res.locals.data = { company_bee };
       next();
