@@ -10,6 +10,8 @@ import { CompanyBee } from '@models/company_bee.model';
 
 import { checkMySQLError } from '@utils/error.util';
 
+import { OK } from 'http-status';
+
 import {
   generateTokenResponse,
   checkRefreshToken,
@@ -18,7 +20,7 @@ import {
 import { loginCheck } from '@utils/login.util';
 import { autoFill } from '@utils/autofill.util';
 
-import { badRequest, expectationFailed, unauthorized } from '@hapi/boom';
+import { badRequest, unauthorized } from '@hapi/boom';
 
 export class AuthController extends Controller {
   constructor() {
@@ -40,14 +42,15 @@ export class AuthController extends Controller {
     const autofillLang = inputUser.lang == 'de' ? 'de' : 'en';
 
     try {
-      const company_bee = await User.transaction(async (trx) => {
+      await User.transaction(async (trx) => {
         const u = await User.query(trx).insert(inputUser);
         const c = await Company.query(trx).insert({ name: inputCompany });
         await CompanyBee.query(trx).insert({ bee_id: u.id, user_id: c.id });
         await autoFill(trx, c.id, autofillLang);
       });
-      res.locals.data = { company_bee };
-      next();
+      // TODO Send Email
+      res.status(OK);
+      res.end();
     } catch (e) {
       next(checkMySQLError(e));
     }
