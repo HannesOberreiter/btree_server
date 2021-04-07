@@ -46,7 +46,7 @@ export class Hive extends BaseModel {
       relation: BaseModel.HasOneRelation,
       modelClass: User,
       join: {
-        from: ['apiaries.bee_id'],
+        from: ['hive.bee_id'],
         to: ['bees.id']
       }
     },
@@ -54,7 +54,7 @@ export class Hive extends BaseModel {
       relation: BaseModel.HasOneRelation,
       modelClass: User,
       join: {
-        from: ['apiaries.edit_id'],
+        from: ['hive.edit_id'],
         to: ['bees.id']
       }
     }
