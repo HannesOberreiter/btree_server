@@ -6,9 +6,12 @@ import { ModelObject } from 'objection';
 export class User extends BaseModel {
   id!: number;
   email!: string;
+  lastname!: string;
+  firstname!: string;
   password!: string;
   reset!: string;
   salt!: string;
+  lang!: string;
   state!: number;
   saved_company!: number;
   reset_timestamp!: Date;

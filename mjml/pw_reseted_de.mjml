@@ -1,0 +1,23 @@
+<mjml>
+  <mj-head>
+
+    <mj-title>Neues Passwort erfolgreich gespeichert</mj-title>
+
+    <mj-include path="./partials/style.mjml" />
+  </mj-head>
+  <mj-body background-color="#F2F2F2">
+    <mj-include path="./partials/header.mjml" />
+
+     <mj-section padding="0 20px 20px 20px" background-color="#FFFFFF">
+      <mj-column>
+        <mj-text align="left" padding-top="10px" font-weight="300" padding="0px">
+          Liebe/r Imker/in, <br/><br/>
+          <strong>Dein Passwort wurde erfolgreich geändert.</strong>
+          <p>Wurde diese Änderung nicht von dir durchgeführt, kontaktiere bitte unverzüglich uns per Mail <a href="mailto:office@btree.at">office@btree.at</a></p>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+    
+    <mj-include path="./partials/footer.mjml" />
+  </mj-body>
+</mjml>

@@ -1,5 +1,5 @@
 import { ENVIRONMENT } from '@enums/environment.enum';
-import { env, port } from '@config/environment.config';
+import { env, port, mailConfig } from '@config/environment.config';
 
 import * as Express from 'express';
 

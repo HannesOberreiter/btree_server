@@ -1,6 +1,7 @@
 import { ENVIRONMENT } from '@enums/environment.enum';
 import { list } from '@utils/enum.util';
 import p from 'path';
+import * as nodemailer from 'nodemailer';
 
 /**
  * Configure dotenv with variables.env file before app, to allow process.env accessibility in
@@ -50,6 +51,26 @@ class EnvironmentConfiguration {
       throw result.error;
     }
   }
+
+  static async mail() {
+    let mailConfig = {
+        host: process.env.MAIL_SMTP,
+        port: Number(process.env.MAIL_PORT),
+        secure: true,
+        auth: {
+            user: process.env.MAIL_FROM,
+            pass: process.env.MAIL_PASSWORD
+        }
+    };
+    if(this.environment !== 'production'){
+      let testAccount = await nodemailer.createTestAccount();
+      mailConfig.secure = false;
+      mailConfig.auth.user = testAccount.user;
+      mailConfig.auth.pass = testAccount.pass;
+    }
+    return mailConfig;
+  }
+
 }
 
 EnvironmentConfiguration.load();
@@ -90,6 +111,8 @@ const knexConfig = {
   }
 };
 
+const mailConfig = EnvironmentConfiguration.mail();
+
 export {
   knexConfig,
   env,
@@ -101,5 +124,6 @@ export {
   jwtExpirationInterval,
   version,
   logs,
-  httpLogs
+  httpLogs,
+  mailConfig
 };

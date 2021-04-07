@@ -1,7 +1,7 @@
 import { Controller } from '@classes/controller.class';
 import { Request, Response } from 'express';
 import { IResponse } from '@interfaces/IResponse.interface';
-
+import { MailService } from '@services/mail.service'
 import useragent from 'express-useragent';
 
 import { User } from '@models/user.model';
@@ -54,10 +54,20 @@ export class AuthController extends Controller {
       email: email
     });
     if (!u) {
-      return next(badRequest('E-Mail not found!'));
+      return next(badRequest('User not found!'));
     }
     try {
       const result = await resetMail(u.id);
+
+      const mailer = new MailService();
+      await mailer.sendMail(
+        result.email,
+        result.lang, 
+        "pw_reset", 
+        result.firstname+" "+result.lastname, 
+        result.reset
+        );
+
       // TODO Send Email, with rest key
       console.log(result.reset);
       res.locals.data = { email: result.email };

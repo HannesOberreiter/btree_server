@@ -1,0 +1,40 @@
+<mjml>
+  <mj-head>
+
+    <mj-title>Your Account is temporarily closed!</mj-title>
+
+    <mj-include path="./partials/style.mjml" />
+  </mj-head>
+  <mj-body background-color="#F2F2F2">
+    <mj-include path="./partials/header.mjml" />
+
+     <mj-section padding="0 20px 20px 20px" background-color="#FFFFFF">
+      <mj-column>
+        <mj-text align="left" padding-top="10px" font-weight="300" padding="0px">
+          Dear Beekeeper, <br/><br/>
+          your b.tree Account had to many failed Logins. As security measure <strong>we locked your account for two hours.</strong>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+    <mj-wrapper border="1px solid #000000" padding="0px 0px" background-color="#FFD700">
+      <mj-section>
+        <mj-column>
+          <mj-text align="center" padding="20px 20px 20px 20px" font-weight="500">
+            If you forgot your password, please use following link:
+            <b><a href="%base_url%recover/">%base_url%recover/</a></b>
+          </mj-text>
+        </mj-column>
+      </mj-section>
+    </mj-wrapper>
+
+    <mj-section padding="0 20px 20px 20px" background-color="#FFFFFF">
+      <mj-column>
+        <mj-text align="left" padding-top="10px" font-weight="300" padding="0px">
+        If you still have problems with your login or other questions, please feel free to contact us <a href="mailto:office@btree.at">office@btree.at</a>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <mj-include path="./partials/footer.mjml" />
+  </mj-body>
+</mjml>

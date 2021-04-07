@@ -1,0 +1,43 @@
+<mjml>
+  <mj-head>
+
+    <mj-title>Willkommen bei b.tree</mj-title>
+
+    <mj-include path="./partials/style.mjml" />
+  </mj-head>
+  <mj-body background-color="#F2F2F2">
+    <mj-include path="./partials/header.mjml" />
+
+     <mj-section padding="0 20px 20px 20px" background-color="#FFFFFF">
+      <mj-column>
+        <mj-text align="left" padding-top="10px" font-weight="300" padding="0px">
+          Liebe/r Imker/in, <br/><br/>
+          willkommen bei b.tree, die Webapplikation für Hobby und auch Berufsimker.<br/>
+          Als kleines Dankeschön, für dein Interesse an unserer App, hat dein Account automatisch <b>einen Monat Premium Mitgliedschaft</b> gutgeschrieben bekommen!
+        </mj-text>
+      </mj-column>
+    </mj-section>
+    <mj-wrapper border="1px solid #000000" padding="0px 0px" background-color="#FFD700">
+      <mj-section>
+        <mj-column>
+          <mj-text align="left" padding="20px 20px 20px 20px" font-weight="500">
+            Bitte aktiviere deinen Account vor dem ersten Login!<br/><br/>
+            <b>Username:</b> %mail%<br/>
+            <b>Aktivierung:</b> <a href="%base_url%login/%mail%">%base_url%login/%mail%</a><br/>
+            <b>Login:</b> <a href="%base_url%">%base_url%</a>
+          </mj-text>
+        </mj-column>
+      </mj-section>
+    </mj-wrapper>
+
+    <mj-section padding="0 20px 20px 20px" background-color="#FFFFFF">
+      <mj-column>
+        <mj-text align="left" padding-top="10px" font-weight="300" padding="0px">
+          In der Webapplikation findest du eine <a href="%base_url%documentation/">Dokumentation</a>, welche dir bei den ersten Schritten helfen soll! Ansonsten stehen wir die gerne jederzeit zur Verfügung <a href="mailto:office@btree.at">office@btree.at</a>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <mj-include path="./partials/footer.mjml" />
+  </mj-body>
+</mjml>
