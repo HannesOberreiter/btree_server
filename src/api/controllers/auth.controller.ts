@@ -9,23 +9,85 @@ import { Company } from '@models/company.model';
 import { CompanyBee } from '@models/company_bee.model';
 
 import { checkMySQLError } from '@utils/error.util';
-
-import { OK } from 'http-status';
+import { randomBytes } from 'crypto';
 
 import {
   generateTokenResponse,
   checkRefreshToken,
-  createHashedPassword
+  createHashedPassword,
+  confirmAccount,
+  resetMail,
+  resetPassword,
 } from '@utils/auth.util';
+
 import { loginCheck } from '@utils/login.util';
 import { autoFill } from '@utils/autofill.util';
 
 import { badRequest, unauthorized } from '@hapi/boom';
+import dayjs from 'dayjs';
 
 export class AuthController extends Controller {
   constructor() {
     super();
   }
+
+  async confirmMail(req: Request, res: Response, next: Function) {
+    const key = req.body.confirm;
+    const u = await User.query().findOne({
+      reset: key
+    });
+    if (!u) {
+      return next(badRequest('Confirm Key not found'));
+    }
+    try {
+      const result = await confirmAccount(u.id);
+      res.locals.data = { email: result };
+      next();
+    } catch (e) {
+      next(e);
+    }
+  };
+
+  async resetRequest(req: Request, res: Response, next: Function) {
+    const email = req.body.email;
+    const u = await User.query().findOne({
+      email: email
+    });
+    if (!u) {
+      return next(badRequest('E-Mail not found!'));
+    }
+    try {
+      const result = await resetMail(u.id);
+      // TODO Send Email, with rest key
+      console.log(result.reset);
+      res.locals.data = { email: result.email };
+      next();
+    } catch (e) {
+      next(e);
+    }
+  };
+
+  async resetPassword(req: Request, res: Response, next: Function) {
+    const { key, password } = req.body;
+    const u = await User.query().findOne({
+      reset: key
+    });
+    if (!u) {
+      return next(badRequest('Reset key not found!'));
+    }
+    if (dayjs().diff(u.reset_timestamp, 'hours') > 24) {
+      return next(badRequest('Reset key too old!'));
+    };
+    try {
+      const result = await resetPassword(u.id, password);
+      // TODO Send Email, that password got changed
+      console.log(result);
+      res.locals.data = { email: result.email };
+      next();
+    } catch (e) {
+      next(e);
+    }
+  };
 
   async register(req: Request, res: Response, next: Function) {
     let inputCompany = req.body.name;
@@ -37,7 +99,10 @@ export class AuthController extends Controller {
     const hash = createHashedPassword(inputUser.password);
     inputUser.password = hash.password;
     inputUser.salt = hash.salt;
-
+    // We use the password reset key for email confirmation
+    // if the user did not get it he can choose "forgot password"
+    // which will also activate the user
+    inputUser.reset = randomBytes(64).toString('hex');
     // we only have german or english available for autofill
     const autofillLang = inputUser.lang == 'de' ? 'de' : 'en';
 
@@ -49,8 +114,10 @@ export class AuthController extends Controller {
         await autoFill(trx, c.id, autofillLang);
       });
       // TODO Send Email
-      res.status(OK);
-      res.end();
+      res.locals.data = {
+       confirm: inputUser.reset
+      };
+      next();
     } catch (e) {
       next(checkMySQLError(e));
     }

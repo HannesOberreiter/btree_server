@@ -5,12 +5,13 @@ import { ModelObject } from 'objection';
 
 export class User extends BaseModel {
   id!: number;
+  email!: string;
   password!: string;
   reset!: string;
   salt!: string;
   state!: number;
   saved_company!: number;
-
+  reset_timestamp!: Date;
   last_visit!: Date;
 
   company?: Company[];
@@ -31,7 +32,7 @@ export class User extends BaseModel {
       password: { type: 'string', minLength: 1, maxLength: 128 },
       salt: { type: 'string', minLength: 1, maxLength: 128 },
 
-      reset: { type: 'string', minLength: 1, maxLength: 128 },
+      reset: { type: 'string', maxLength: 128 },
       reset_timestamp: { type: 'date-time' },
 
       state: { type: 'integer' },

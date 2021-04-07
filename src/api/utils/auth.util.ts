@@ -11,6 +11,9 @@ import jwt from 'jsonwebtoken';
 
 import { jwtSecret, jwtExpirationInterval } from '@config/environment.config';
 
+import { checkMySQLError } from '@utils/error.util';
+
+
 const generateRefreshToken = async (
   bee_id: number,
   user_id: number,
@@ -195,4 +198,60 @@ const createHashedPassword = (password: string, hash: string = 'sha512') => {
   return { salt: salt, password: hashedPassword };
 };
 
-export { generateTokenResponse, checkRefreshToken, createHashedPassword };
+const confirmAccount = async (id: number) => {
+    try {
+      const u = await User.transaction(async (trx) => {
+        const u = await User
+        .query(trx)
+        .patchAndFetchById(
+          id, {
+            state: 1,
+            reset: ''
+        });
+        return u.email;
+      });
+      return u;
+    } catch (e) {
+      throw checkMySQLError(e);
+    }
+}
+
+const resetMail = async(id: number) => {
+    try {
+      const u = await User.transaction(async (trx) => {
+        const u = await User
+        .query(trx)
+        .patchAndFetchById(
+          id, {
+            reset: randomBytes(64).toString('hex'),
+            reset_timestamp: dayjs().toDate(),
+        });
+        return u;
+      });
+      return u;
+    } catch (e) {
+      throw checkMySQLError(e);
+    }
+}
+
+const resetPassword = async(id: number, inputPassword: string) => {
+    const { salt, password } = createHashedPassword(inputPassword);
+    try {
+      const u = await User.transaction(async (trx) => {
+        const u = await User
+        .query(trx)
+        .patchAndFetchById(
+          id, {
+            reset: "",
+            password: password,
+            salt: salt,
+        });
+        return u;
+      });
+      return u;
+    } catch (e) {
+      throw checkMySQLError(e);
+    }
+}
+
+export { generateTokenResponse, checkRefreshToken, createHashedPassword, confirmAccount, resetMail, resetPassword };
