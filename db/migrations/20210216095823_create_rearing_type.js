@@ -4,7 +4,7 @@ exports.up = function(knex) {
         t.increments('id').primary().unsigned();
 
         t.string('name', 24);
-        t.text('note', 'mediumtext');
+        t.text('note', 2000);
 
         t.integer('user_id').unsigned().nullable();
         t.foreign('user_id').
