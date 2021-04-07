@@ -34,23 +34,23 @@ export class Movedate extends BaseModel {
       relation: Model.BelongsToOneRelation,
       modelClass: Apiary,
       join: {
-        from: 'movedate.apiary_id',
-        to: 'apiary.id'
+        from: 'movedates.apiary_id',
+        to: 'apiaries.id'
       }
     },
     hive: {
       relation: Model.BelongsToOneRelation,
       modelClass: Hive,
       join: {
-        from: 'movedate.hive_id',
-        to: 'hive.id'
+        from: 'movedates.hive_id',
+        to: 'hives.id'
       }
     },
     creator: {
       relation: BaseModel.HasOneRelation,
       modelClass: User,
       join: {
-        from: ['checkups.bee_id'],
+        from: ['movedates.bee_id'],
         to: ['bees.id']
       }
     },
@@ -58,7 +58,7 @@ export class Movedate extends BaseModel {
       relation: BaseModel.HasOneRelation,
       modelClass: User,
       join: {
-        from: ['checkups.edit_id'],
+        from: ['movedates.edit_id'],
         to: ['bees.id']
       }
     }

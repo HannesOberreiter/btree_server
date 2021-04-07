@@ -1,6 +1,7 @@
 import { BaseModel } from '@models/base.model';
 import { User } from '@models/user.model';
-
+import { Apiary } from '@models/apiary.model';
+import { Movedate } from '@models/movedate.model';
 export class Hive extends BaseModel {
   id!: number;
   name!: string;
@@ -17,6 +18,8 @@ export class Hive extends BaseModel {
 
   creator?: User;
   editor?: User;
+  movedates?: Movedate[];
+  apiares?: Apiary[];
 
   static jsonSchema = {
     type: 'object',
@@ -46,7 +49,7 @@ export class Hive extends BaseModel {
       relation: BaseModel.HasOneRelation,
       modelClass: User,
       join: {
-        from: ['hive.bee_id'],
+        from: ['hives.bee_id'],
         to: ['bees.id']
       }
     },
@@ -54,8 +57,29 @@ export class Hive extends BaseModel {
       relation: BaseModel.HasOneRelation,
       modelClass: User,
       join: {
-        from: ['hive.edit_id'],
+        from: ['hives.edit_id'],
         to: ['bees.id']
+      }
+    },
+    movedates: {
+      relation: Hive.HasManyRelation,
+      modelClass: Movedate,
+      join: {
+        from: ['hives.id'],
+        to: ['movedates.hive_id']
+      }
+    },
+    apiaries: {
+      relation: Hive.ManyToManyRelation,
+      modelClass: Apiary,
+      join: {
+        from: 'hives.id',
+        through: {
+          modelClass: Movedate,
+          from: 'movedates.hive_id',
+          to: 'movedates.apiary_id'
+        },
+        to: 'apiaries.id'
       }
     }
   });
