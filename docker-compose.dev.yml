@@ -5,7 +5,7 @@ services:
     build:
       dockerfile: Dockerfile.dev
     environment:
-      ENVIRONMENT: development
+      NODE_ENV: development
     ports:
       - 8101:8101
     volumes:

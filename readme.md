@@ -11,13 +11,39 @@ For ease of development and deploying into production, a Dockerfile and docker-c
 
 ```bash
 # Build Local Docker Image
-docker compose -f docker-compose-dev.yml build
+docker compose -f docker-compose.dev.yml build
 # Run Container
-docker compose -f docker-compose-dev.yml up
+docker compose -f docker-compose.dev.yml up
 # Stop Container 
 docker compose -f docker-compose-dev.yml down
+# Start Container
+docker compose -f docker-compose-dev.yml start
+docker compose -f docker-compose-dev.yml attach
+
 # Access Container Bash for npm run commands
-docker exec -it btree_api bash
+docker exec -it btree_api /bin/sh
+# Start TypeScript Dev
+docker exec -it btree_api npm run dev:tsc
+```
+
+### Production
+
+Needs already prebuild dist and mails folder to run correctly.
+
+```bash
+docker compose -f docker-compose.prod.yml build
+docker compose -f docker-compose.prod.yml up -d
+docker exec -it btree_api_production /bin/sh
+# Generate Local Image
+docker save btree_server_btree_api_production | gzip > btree_server_btree_api_production.tar.gz
+# Load Image on Server
+docker load < btree_server_btree_api_production.tar.gz
+```
+
+### Clear Container
+
+```bash
+docker compose -f docker-compose-*.yml rm
 ```
 
 ## Local

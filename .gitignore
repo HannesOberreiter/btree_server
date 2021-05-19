@@ -49,6 +49,8 @@ typings/
 
 # Output of 'npm pack'
 *.tgz
+# exports of docker container
+*.tar.gz
 
 # dotenv environment variables file
 .env
