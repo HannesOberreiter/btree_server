@@ -6,6 +6,7 @@ import {
   env,
   contentType
 } from '@config/environment.config';
+import p from 'path';
 
 import Express from 'express';
 import Hpp from 'hpp';
@@ -62,7 +63,7 @@ export class Application {
     },
     stream:
       env === ENVIRONMENT.production
-        ? createWriteStream(`${process.cwd()}/dist/logs/access.log`, {
+        ? createWriteStream(p.join(__dirname, `../../logs/access.log`), {
             flags: 'a+'
           })
         : Container.resolve('Logger').get('stream'),

@@ -1,6 +1,7 @@
 import { env } from '@config/environment.config';
 import * as Winston from 'winston';
 import { format } from 'winston';
+import p from 'path';
 
 /**
  * This logger implements Winston module for writing custom logs
@@ -38,7 +39,7 @@ export class WinstonConfiguration {
     error: {
       level: 'error',
       format: format.combine(format.timestamp(), this.formater),
-      filename: `${process.cwd()}/${this.output}/logs/error.log`,
+      filename: p.join(__dirname, `../../logs/error-${this.output}.log`),
       handleException: true,
       json: true,
       maxSize: 5242880, // 5MB
@@ -48,7 +49,7 @@ export class WinstonConfiguration {
     info: {
       level: 'info',
       format: format.combine(format.timestamp(), this.formater),
-      filename: `${process.cwd()}/${this.output}/logs/combined.log`,
+      filename: p.join(__dirname, `../../logs/combined-${this.output}.log`),
       handleException: false,
       json: true,
       maxSize: 5242880, // 5MB

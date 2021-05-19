@@ -1,0 +1,14 @@
+# Volumes we bind
+mjml
+src
+# Folder we don't want
+node_modules
+mysql
+# Files not needed inside Docker Container
+.gitignore
+.gitattributes
+*.md
+docker-compose-*.yml
+Dockerfile*
+Insomnia.json
+LICENSE

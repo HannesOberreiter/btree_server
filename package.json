@@ -9,6 +9,7 @@
   "lint": "tslint --project tslint.json",
   "scripts": {
     "create:directories": "mkdir -p ./dist/logs",
+    "nodemon": "nodemon",
     "dev:node": "ENVIRONMENT=development nodemon",
     "dev:tsc": "tsc -watch",
     "dev:knex": "ENVIRONMENT=development knex",
@@ -22,7 +23,7 @@
     "@datatables": "dist/api/datatables",
     "@middlewares": "dist/api/middlewares",
     "@models": "dist/api/models",
-    "@repostiroies": "dist/api/repostiroies",
+    "@repositories": "dist/api/repositories",
     "@routes": "dist/api/routes",
     "@services": "dist/api/services",
     "@validations": "dist/api/validations",
@@ -75,6 +76,7 @@
   },
   "devDependencies": {
     "mjml": "^4.9.0",
+    "nodemon": "^2.0.7",
     "prettier": "2.2.1",
     "typescript": "^4.1.5"
   },
