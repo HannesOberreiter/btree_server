@@ -1,9 +1,10 @@
-version: '3'
+version: "3.3"
 services:
   btree_api:
     container_name: btree_api
     build:
       dockerfile: Dockerfile.dev
+    restart: unless-stopped
     environment:
       NODE_ENV: development
     ports:
@@ -16,18 +17,7 @@ services:
       - ./mails:/usr/src/app/mails
       - ./mjml:/usr/src/app/mjml
       - ./src:/usr/src/app/src
-    depends_on:
-      - btree_mysql
-
-  btree_mysql:
-    container_name: btree_mysql
-    image: mysql:5.7
-    restart: always
-    command: --default-authentication-plugin=mysql_native_password
-    environment:
-      MYSQL_DATABASE: btree_node
-      MYSQL_USER: nodemaster
-      MYSQL_PASSWORD: nodemaster
-      MYSQL_ROOT_PASSWORD: nodemaster
-    volumes:
-      - ./mysql:/var/lib/mysql
+networks:
+  default:
+    external: true
+    name: btree-docker-mysql_btree-db-network
