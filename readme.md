@@ -4,21 +4,18 @@ Typescript, based on nodejs, express and knex.js, objections.js and datatables.n
 
 ## Docker
 
-For ease of development and deploying into production, a Dockerfile and docker-compose file can be used.
-
-<https://docs.docker.com/compose/>
-### Dev
+For ease of development and deploying into production, you can use Docker: <https://docs.docker.com/compose/>
 
 ```bash
 # Build Local Docker Image
-docker compose -f docker-compose.dev.yml build
+docker-compose -f docker-compose.dev.yml build
 # Run Container
-docker compose -f docker-compose.dev.yml up
+docker-compose -f docker-compose.dev.yml up
 # Stop Container 
-docker compose -f docker-compose-dev.yml down
+docker-compose -f docker-compose-dev.yml down
 # Start Container
-docker compose -f docker-compose-dev.yml start
-docker compose -f docker-compose-dev.yml attach
+docker-compose -f docker-compose-dev.yml start
+docker-compose -f docker-compose-dev.yml attach
 
 # Access Container Bash for npm run commands
 docker exec -it btree_api /bin/sh
@@ -31,8 +28,8 @@ docker exec -it btree_api npm run dev:tsc
 Needs already prebuild dist and mails folder to run correctly.
 
 ```bash
-docker compose -f docker-compose.prod.yml build
-docker compose -f docker-compose.prod.yml up -d
+docker-compose -f docker-compose.prod.yml build
+docker-compose -f docker-compose.prod.yml up -d
 docker exec -it btree_api_production /bin/sh
 # Generate Local Image
 docker save btree_server_btree_api_production | gzip > btree_server_btree_api_production.tar.gz
@@ -43,12 +40,10 @@ docker load < btree_server_btree_api_production.tar.gz
 ### Clear Container
 
 ```bash
-docker compose -f docker-compose-*.yml rm
+docker-compose -f docker-compose-*.yml rm
 ```
 
-## Local
-
-### Dev - Typescript and Watch
+## Local w/o Docker
 
 Typescript and Nodemon needs to be installed globally.
 
@@ -69,9 +64,11 @@ npm run dev:node
 npm run dev:knex <options>
 ```
 
-### MySQL
+## MySQL
 
- On Mac best to install it with Homebrew, you can use the latest or specify the version with `@5.7`.
+I use Docker with MySQL and network to connect multiple docker instances, see GitHub Repo: <https://github.com/HannesOberreiter/btree-docker-mysql>
+
+You can also install MySQL on your computer and run it locally. On Mac best to install it with Homebrew, you can use the latest or specify the version with `@5.7`.
 
 ```bash
 brew install mysql
@@ -83,7 +80,6 @@ Common problems when authentication fails on local machine:
 
 - <https://stackoverflow.com/questions/1559955/host-xxx-xx-xxx-xxx-is-not-allowed-to-connect-to-this-mysql-server>
 - <https://stackoverflow.com/questions/50093144/mysql-8-0-client-does-not-support-authentication-protocol-requested-by-server>
-
 
 ## Datatables
 
@@ -98,8 +94,9 @@ Project uses `npm` as management tool for libraries version control, look file i
 We use knex CLI, <http://knexjs.org/#Migrations-API>.
 
 ```bash
-npm run dev:knex <options>
+npm run dev:knex <options> # eg. migrate:latest
 ```
+
 ## Thanks to
 
 The folder structure is based on <https://github.com/konfer-be/ts-express-typeorm-boilerplate>.
