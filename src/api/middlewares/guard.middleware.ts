@@ -1,4 +1,4 @@
-import { authenticate } from 'passport';
+import passport from 'passport';
 import { forbidden, badRequest } from '@hapi/boom';
 
 import { ROLES } from '@enums/role.enum';
@@ -25,7 +25,7 @@ export class Guard {
     res: IResponse,
     next: (e?: Error) => void
   ): void =>
-    authenticate(
+    passport.authenticate(
       'jwt',
       { session: false },
       Guard.handleJWT(req, res, next, roles)

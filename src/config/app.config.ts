@@ -17,7 +17,10 @@ import RateLimit from 'express-rate-limit';
 import Morgan from 'morgan';
 
 import { createWriteStream } from 'fs';
-import { initialize as PassportInitialize, use as PassportUse } from 'passport';
+//import { initialize as PassportInitialize, use as PassportUse } from 'passport';
+//import * as Passport from 'passport';
+import passport from 'passport';
+
 import { notAcceptable } from 'boom';
 
 import { Container } from '@config/container.config';
@@ -137,8 +140,10 @@ export class Application {
      *
      * @see http://www.passportjs.org/
      */
-    this.app.use(PassportInitialize());
-    PassportUse('jwt', PassportConfiguration.factory('jwt'));
+    //this.app.use(PassportInitialize());
+    //PassportUse('jwt', PassportConfiguration.factory('jwt'));
+    this.app.use(passport.initialize());
+    passport.use('jwt', PassportConfiguration.factory('jwt'));
 
     /**
      * Request logging with Morgan
