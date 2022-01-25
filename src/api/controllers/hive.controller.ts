@@ -20,7 +20,7 @@ export class HiveController extends Controller {
     } catch (e) {
       next(checkMySQLError(e));
     }
-  };
+  }
 
   async getTable(req: Request, res: Response, next: Function) {
     try {

@@ -7,6 +7,8 @@ export class TreatmentRouter extends Router {
   }
 
   define() {
-    this.router.route('/table').get(Container.resolve('TreatmentController').getTable);
+    this.router
+      .route('/table')
+      .get(Container.resolve('TreatmentController').getTable);
   }
 }

@@ -3,7 +3,7 @@ import { Controller } from '@classes/controller.class';
 import { checkMySQLError } from '@utils/error.util';
 import { OptionTable } from '@datatables/option.table';
 import { IUserRequest } from '@interfaces/IUserRequest.interface';
-import { Company } from '@models/company.model'
+import { Company } from '@models/company.model';
 import { ChargeType } from '@models/option/charge_type.model';
 import { CheckupType } from '@models/option/checkup_type.model';
 import dayjs from 'dayjs';
@@ -30,21 +30,32 @@ export class OptionController extends Controller {
     } catch (e) {
       next(checkMySQLError(e));
     }
-  };
+  }
 
   async getDropdowns(req: IUserRequest, res: Response, next: Function) {
-    const types = [ChargeType, CheckupType, FeedType, HarvestType, TreatmentDisease, TreatmentType, TreatmentVet];
+    const types = [
+      ChargeType,
+      CheckupType,
+      FeedType,
+      HarvestType,
+      TreatmentDisease,
+      TreatmentType,
+      TreatmentVet
+    ];
     let results = {};
-    for(let i of types){
-      const result = await i.query().where({user_id: req.user.user_id, modus: 1}).orderBy([{column: 'favorite', order: 'desc'}, {column: 'name'}]);
+    for (let i of types) {
+      const result = await i
+        .query()
+        .where({ user_id: req.user.user_id, modus: 1 })
+        .orderBy([{ column: 'favorite', order: 'desc' }, { column: 'name' }]);
       results[i.name] = result;
     }
     res.locals.data = {
-     data: results,
-     meta: {
-      timestamp: dayjs()
-     }
-    }
+      data: results,
+      meta: {
+        timestamp: dayjs()
+      }
+    };
     next();
   }
 }

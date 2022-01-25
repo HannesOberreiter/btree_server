@@ -7,6 +7,8 @@ export class CheckupRouter extends Router {
   }
 
   define() {
-    this.router.route('/table').get(Container.resolve('CheckupController').getTable);
+    this.router
+      .route('/table')
+      .get(Container.resolve('CheckupController').getTable);
   }
 }

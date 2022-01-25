@@ -9,13 +9,15 @@ export class HiveRouter extends Router {
   }
 
   define() {
+    this.router
+      .route('/')
+      .get(
+        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+        Container.resolve('HiveController').getHives
+      );
 
-    this.router.route('/').get(
-      Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-      Container.resolve('HiveController').getHives
-    );
-    
-    this.router.route('/table').get(Container.resolve('HiveController').getTable);
+    this.router
+      .route('/table')
+      .get(Container.resolve('HiveController').getTable);
   }
-
 }

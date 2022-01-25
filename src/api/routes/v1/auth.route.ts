@@ -19,7 +19,7 @@ export class AuthRouter extends Router {
           body('name').isString().isLength({ min: 3, max: 128 }),
           body('lang').isString().isLength({ min: 2, max: 2 }),
           body('newsletter').isBoolean(),
-          body('source').isString(),
+          body('source').isString()
         ]),
         Container.resolve('AuthController').register
       );
@@ -37,27 +37,23 @@ export class AuthRouter extends Router {
     this.router
       .route('/confirm')
       .post(
-        Validator.validate([
-          body('confirm').isLength({min: 128, max: 128}),
-        ]),
+        Validator.validate([body('confirm').isLength({ min: 128, max: 128 })]),
         Container.resolve('AuthController').confirmMail
       );
 
     this.router
       .route('/reset')
       .get(
-        Validator.validate([
-          body('email').isEmail(),
-        ]),
+        Validator.validate([body('email').isEmail()]),
         Container.resolve('AuthController').resetRequest
       );
-    
+
     this.router
       .route('/reset')
       .patch(
         Validator.validate([
           body('key').isLength({ min: 128, max: 128 }),
-          body('password').isLength({ min: 6, max: 128 }),
+          body('password').isLength({ min: 6, max: 128 })
         ]),
         Container.resolve('AuthController').resetPassword
       );

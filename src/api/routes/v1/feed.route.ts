@@ -7,6 +7,8 @@ export class FeedRouter extends Router {
   }
 
   define() {
-    this.router.route('/table').get(Container.resolve('FeedController').getTable);
+    this.router
+      .route('/table')
+      .get(Container.resolve('FeedController').getTable);
   }
 }

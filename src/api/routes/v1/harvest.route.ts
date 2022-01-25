@@ -7,6 +7,8 @@ export class HarvestRouter extends Router {
   }
 
   define() {
-    this.router.route('/table').get(Container.resolve('HarvestController').getTable);
+    this.router
+      .route('/table')
+      .get(Container.resolve('HarvestController').getTable);
   }
 }

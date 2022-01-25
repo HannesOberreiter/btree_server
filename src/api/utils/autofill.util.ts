@@ -75,13 +75,7 @@ const standardValues = {
     charge: ['Sugar', 'kg', 'Glasses', 'Stk.'],
     feed: ['3:2 Sugarwater', '1:1 Sugarwater', 'Sugarfond'],
     harvest: ['Flower Honey', 'Rapeseed', 'Acacia', 'Honeydew'],
-    disease: [
-      'AFB',
-      'Mold Fungi',
-      'Dysentery',
-      'Chalk Brood',
-      'Varroa'
-    ],
+    disease: ['AFB', 'Mold Fungi', 'Dysentery', 'Chalk Brood', 'Varroa'],
     treatment: ['Comb Removal', 'Split', 'Sulphurizing', 'Formic Acid'],
     vet: ['-'],
     race: ['A.m.Carnica', 'A.m.Ligustica', 'A.m.Mellifera'],
@@ -116,45 +110,45 @@ const autoFill = async (trx: Transaction, id: number, lang: string) => {
   const val = standardValues[lang];
 
   // We use MySQL we cannot use patch insert
-  for(let source of val.source){
-   await HiveSource.query(trx).insert({name: source, user_id: id});
+  for (let source of val.source) {
+    await HiveSource.query(trx).insert({ name: source, user_id: id });
   }
-  for(let type of val.type){
-   await HiveType.query(trx).insert({name: type, user_id: id});
+  for (let type of val.type) {
+    await HiveType.query(trx).insert({ name: type, user_id: id });
   }
-  for(let charge of val.charge){
-   await ChargeType.query(trx).insert({name: charge, user_id: id});
+  for (let charge of val.charge) {
+    await ChargeType.query(trx).insert({ name: charge, user_id: id });
   }
-  for(let checkup of val.checkup){
-   await CheckupType.query(trx).insert({name: checkup, user_id: id});
+  for (let checkup of val.checkup) {
+    await CheckupType.query(trx).insert({ name: checkup, user_id: id });
   }
-  for(let feed of val.feed){
-   await FeedType.query(trx).insert({name: feed, user_id: id});
+  for (let feed of val.feed) {
+    await FeedType.query(trx).insert({ name: feed, user_id: id });
   }
-  for(let harvest of val.harvest){
-   await HarvestType.query(trx).insert({name: harvest, user_id: id});
+  for (let harvest of val.harvest) {
+    await HarvestType.query(trx).insert({ name: harvest, user_id: id });
   }
-  for(let disease of val.disease){
-   await TreatmentDisease.query(trx).insert({name: disease, user_id: id});
+  for (let disease of val.disease) {
+    await TreatmentDisease.query(trx).insert({ name: disease, user_id: id });
   }
-  for(let treatment of val.treatment){
-   await TreatmentType.query(trx).insert({name: treatment, user_id: id});
+  for (let treatment of val.treatment) {
+    await TreatmentType.query(trx).insert({ name: treatment, user_id: id });
   }
-  for(let vet of val.vet){
-   await TreatmentVet.query(trx).insert({name: vet, user_id: id});
+  for (let vet of val.vet) {
+    await TreatmentVet.query(trx).insert({ name: vet, user_id: id });
   }
-  for(let race of val.race){
-   await QueenRace.query(trx).insert({name: race, user_id: id});
+  for (let race of val.race) {
+    await QueenRace.query(trx).insert({ name: race, user_id: id });
   }
-  for(let mating of val.mating){
-   await QueenMating.query(trx).insert({name: mating, user_id: id});
+  for (let mating of val.mating) {
+    await QueenMating.query(trx).insert({ name: mating, user_id: id });
   }
 
   // Rearing we need to get always the last inserted id
   const rearType = await RearingType.query(trx).insert({
-      name: val.reartype.name,
-      note: val.reartype.note,
-      user_id: id
+    name: val.reartype.name,
+    note: val.reartype.note,
+    user_id: id
   });
   for (let i = 0; i < val.reardetail.job.length; i++) {
     let rearingDetail = await RearingDetail.query(trx).insert({
@@ -171,12 +165,11 @@ const autoFill = async (trx: Transaction, id: number, lang: string) => {
   }
 
   await Apiary.query(trx).insert({
-    name: val.apiary.name, 
-    longitude: val.apiary.longitude, 
-    latitude: val.apiary.latitude, 
+    name: val.apiary.name,
+    longitude: val.apiary.longitude,
+    latitude: val.apiary.latitude,
     user_id: id
   });
-  
 
   return;
 };

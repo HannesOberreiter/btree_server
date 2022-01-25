@@ -29,10 +29,17 @@ export class TreatmentTable extends BaseTable {
         new Field('treatments.url'),
         new Field('treatments.done').validator(Validate.boolean()),
         new Field('treatments.type_id').options(
-          <any>new Options().table('treatment_types').value('id').label(['name'])
+          <any>(
+            new Options().table('treatment_types').value('id').label(['name'])
+          )
         ),
         new Field('treatments.disease_id').options(
-          <any>new Options().table('treatment_diseases').value('id').label(['name'])
+          <any>(
+            new Options()
+              .table('treatment_diseases')
+              .value('id')
+              .label(['name'])
+          )
         ),
         new Field('treatments.vet_id').options(
           <any>new Options().table('treatment_vets').value('id').label(['name'])
@@ -48,9 +55,24 @@ export class TreatmentTable extends BaseTable {
           .getFormatter(Format.sqlDateToFormat('YYYY-MM-DD HH:mm:ss'))
           .setFormatter(Format.formatToSqlDate('YYYY-MM-DD HH:mm:ss'))
       )
-      .leftJoin('treatment_types', 'treatment_types.id', '=', 'treatments.type_id')
-      .leftJoin('treatment_diseases', 'treatment_diseases.id', '=', 'treatments.disease_id')
-      .leftJoin('treatment_vets', 'treatment_vets.id', '=', 'treatments.vet_id');
+      .leftJoin(
+        'treatment_types',
+        'treatment_types.id',
+        '=',
+        'treatments.type_id'
+      )
+      .leftJoin(
+        'treatment_diseases',
+        'treatment_diseases.id',
+        '=',
+        'treatments.disease_id'
+      )
+      .leftJoin(
+        'treatment_vets',
+        'treatment_vets.id',
+        '=',
+        'treatments.vet_id'
+      );
 
     return editor;
   }

@@ -1,7 +1,7 @@
 import { Controller } from '@classes/controller.class';
 import { Request, Response } from 'express';
 import { IResponse } from '@interfaces/IResponse.interface';
-import { MailService } from '@services/mail.service'
+import { MailService } from '@services/mail.service';
 import useragent from 'express-useragent';
 
 import { User } from '@models/user.model';
@@ -17,7 +17,7 @@ import {
   createHashedPassword,
   confirmAccount,
   resetMail,
-  resetPassword,
+  resetPassword
 } from '@utils/auth.util';
 
 import { loginCheck } from '@utils/login.util';
@@ -46,7 +46,7 @@ export class AuthController extends Controller {
     } catch (e) {
       next(e);
     }
-  };
+  }
 
   async resetRequest(req: Request, res: Response, next: Function) {
     const email = req.body.email;
@@ -62,11 +62,11 @@ export class AuthController extends Controller {
       const mailer = new MailService();
       await mailer.sendMail(
         result.email,
-        result.lang, 
-        "pw_reset", 
-        result.firstname+" "+result.lastname, 
+        result.lang,
+        'pw_reset',
+        result.firstname + ' ' + result.lastname,
         result.reset
-        );
+      );
 
       // TODO Send Email, with rest key
       console.log(result.reset);
@@ -75,7 +75,7 @@ export class AuthController extends Controller {
     } catch (e) {
       next(e);
     }
-  };
+  }
 
   async resetPassword(req: Request, res: Response, next: Function) {
     const { key, password } = req.body;
@@ -87,7 +87,7 @@ export class AuthController extends Controller {
     }
     if (dayjs().diff(u.reset_timestamp, 'hours') > 24) {
       return next(badRequest('Reset key too old!'));
-    };
+    }
     try {
       const result = await resetPassword(u.id, password);
       // TODO Send Email, that password got changed
@@ -97,7 +97,7 @@ export class AuthController extends Controller {
     } catch (e) {
       next(e);
     }
-  };
+  }
 
   async register(req: Request, res: Response, next: Function) {
     let inputCompany = req.body.name;
@@ -125,7 +125,7 @@ export class AuthController extends Controller {
       });
       // TODO Send Email
       res.locals.data = {
-       confirm: inputUser.reset
+        confirm: inputUser.reset
       };
       next();
     } catch (e) {

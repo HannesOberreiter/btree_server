@@ -41,8 +41,7 @@ export class ProxyRouter {
 
     { segment: '/option/', router: OptionRouter, serializable: false },
     { segment: '/user/', router: UserRouter, serializable: false },
-    { segment: '/auth/', router: AuthRouter, serializable: false },
-
+    { segment: '/auth/', router: AuthRouter, serializable: false }
   ];
 
   constructor() {

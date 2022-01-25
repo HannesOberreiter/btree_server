@@ -7,6 +7,8 @@ export class ChargeRouter extends Router {
   }
 
   define() {
-    this.router.route('/table').get(Container.resolve('ChargeController').getTable);
+    this.router
+      .route('/table')
+      .get(Container.resolve('ChargeController').getTable);
   }
 }
