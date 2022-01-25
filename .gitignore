@@ -1,5 +1,4 @@
 # Logs
-logs
 *.log
 npm-debug.log*
 yarn-debug.log*
@@ -50,28 +49,8 @@ typings/
 
 # Output of 'npm pack'
 *.tgz
-
-# Yarn Integrity file
-.yarn-integrity
+# exports of docker container
+*.tar.gz
 
 # dotenv environment variables file
 .env
-
-# next.js build output
-.next
-
-# NVM local directory
-nvm/
-
-# Dist directory
-dist/
-
-# Docs directory
-docs/
-
-# Reports directory
-reports/
-
-# .env files
-/**/env/production.env
-/**/env/staging.env

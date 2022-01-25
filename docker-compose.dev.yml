@@ -1,0 +1,23 @@
+version: "3.3"
+services:
+  btree_api:
+    container_name: btree_api
+    build:
+      dockerfile: Dockerfile.dev
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+    ports:
+      - 8101:8101
+    volumes:
+      - ./db:/usr/src/app/db
+      - ./dist:/usr/src/app/dist
+      - ./env:/usr/src/app/env
+      - ./logs:/usr/src/app/logs
+      - ./mails:/usr/src/app/mails
+      - ./mjml:/usr/src/app/mjml
+      - ./src:/usr/src/app/src
+networks:
+  default:
+    external: true
+    name: btree-docker-mysql_btree-db-network

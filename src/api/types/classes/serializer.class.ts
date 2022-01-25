@@ -1,18 +1,17 @@
-import { Request } from "express";
+import { Request } from 'express';
 import { Serializer as JsonApiSerializer } from 'jsonapi-serializer';
-import { Deserializer as JsonApiDeserializer } from "jsonapi-serializer";
-import { expectationFailed } from "boom";
+import { Deserializer as JsonApiDeserializer } from 'jsonapi-serializer';
+import { expectationFailed } from 'boom';
 
 /**
- * Implements json-api serializing / unserializing process 
+ * Implements json-api serializing / unserializing process
  */
 export abstract class Serializer {
-
   /**
    * @description Object instance type
    */
   protected type;
-  
+
   /**
    * @description List of authorized fields to include
    */
@@ -24,12 +23,12 @@ export abstract class Serializer {
   protected relationships;
 
   /**
-   * 
+   *
    */
   private serializes: Function;
 
   /**
-   * 
+   *
    */
   private deserializes: Function;
 
@@ -37,10 +36,14 @@ export abstract class Serializer {
    * @param {String} type Object instance type
    * @param {Array<String>} whitelist List of authorized fields to include
    * @param {Object} relations Description of embeded relations
-   * @param {Object} relationships 
+   * @param {Object} relationships
    */
-  constructor(type: String, whitelist: Array<String>, relations: Object, relationships: Object) {  
-
+  constructor(
+    type: String,
+    whitelist: Array<String>,
+    relations: Object,
+    relationships: Object
+  ) {
     this.type = type;
     this.withelist = whitelist;
     this.relationships = relationships;
@@ -50,51 +53,54 @@ export abstract class Serializer {
       attributes: whitelist
     };
 
-    for(let key in relations)
-    {
+    for (let key in relations) {
       serializerOptions[key] = relations[key];
     }
-    
+
     this.serializes = new JsonApiSerializer(type, serializerOptions).serialize;
 
     let deserializerOptions = {
       attributes: whitelist,
-      keyForAttribute: "underscore_case"
+      keyForAttribute: 'underscore_case'
     };
 
-    for(let key in relationships)
-    {
+    for (let key in relationships) {
       deserializerOptions[key] = relationships[key];
     }
 
-    this.deserializes = new JsonApiDeserializer(deserializerOptions).deserialize;
+    this.deserializes = new JsonApiDeserializer(
+      deserializerOptions
+    ).deserialize;
   }
 
   /**
    * @description Serialize an entity for output according to json-api
-   * 
+   *
    * @param {Object} payload Data to serialize
    * @throws {Error} Expectation failed (417)
    */
   public serialize = async (payload: any) => {
     try {
-      if(Array.isArray(payload)) { return payload.map( entry => this.serializes(entry)); }
+      if (Array.isArray(payload)) {
+        return payload.map((entry) => this.serializes(entry));
+      }
       return await this.serializes(payload);
+    } catch (e) {
+      throw expectationFailed(e.message);
     }
-    catch(e) { throw expectationFailed(e.message) }
-  }
+  };
 
   /**
    * @description Unserialize a payload according to json-api from HTTP request
-   * 
+   *
    * @param {Request} req Current request object
    * @throws {Error} Expectation failed (417)
    */
-  public deserialize = async(req: Request) => {
+  public deserialize = async (req: Request) => {
     try {
       return await this.deserializes(req.body);
-    } 
-    catch (e) { throw expectationFailed(e.message); }
-  }
-
+    } catch (e) {
+      throw expectationFailed(e.message);
+    }
+  };
 }

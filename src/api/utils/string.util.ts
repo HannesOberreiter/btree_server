@@ -1,13 +1,66 @@
-import { readFileSync, writeFileSync } from "fs";
+import { readFileSync, writeFileSync } from 'fs';
 
-const chars   = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'];
-const numbers = ['0','1','2','3','4','5','6','7','8','9'];
-const symbols = ['@','#','&','$','.'];
+const chars = [
+  'a',
+  'b',
+  'c',
+  'd',
+  'e',
+  'f',
+  'g',
+  'h',
+  'i',
+  'j',
+  'k',
+  'l',
+  'm',
+  'n',
+  'o',
+  'p',
+  'q',
+  'r',
+  's',
+  't',
+  'u',
+  'v',
+  'w',
+  'x',
+  'y',
+  'z',
+  'A',
+  'B',
+  'C',
+  'D',
+  'E',
+  'F',
+  'G',
+  'H',
+  'I',
+  'J',
+  'K',
+  'L',
+  'M',
+  'N',
+  'O',
+  'P',
+  'Q',
+  'R',
+  'S',
+  'T',
+  'U',
+  'V',
+  'W',
+  'X',
+  'Y',
+  'Z'
+];
+const numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+const symbols = ['@', '#', '&', '$', '.'];
 
 /**
  * @decription Shuffle an array | string as array of chars
- * 
- * @param {Array} a 
+ *
+ * @param {Array} a
  */
 const shuffle = (a: any[]) => {
   for (let i = a.length - 1; i > 0; i--) {
@@ -19,7 +72,7 @@ const shuffle = (a: any[]) => {
 
 /**
  * @description Hash a string
- * 
+ *
  * @param {string} str Base string to hash
  * @param {number} length Number of chars to return
  */
@@ -30,7 +83,7 @@ const hash = (str: string, length: number): string => {
 
 /**
  * @description Crypt a string
- * 
+ *
  * @param {string} str Base string to crypt
  * @param {number} length Number of chars to return
  */
@@ -38,7 +91,7 @@ const crypt = (str: string, length: number): string => {
   const table = [].concat(chars).concat(numbers).concat(symbols);
   return str
     .split('')
-    .map( (letter: string) => {
+    .map((letter: string) => {
       const index = table.lastIndexOf(letter);
       return table.reverse()[index];
     })
@@ -48,7 +101,7 @@ const crypt = (str: string, length: number): string => {
 
 /**
  * @description Encode binary file in base64
- * @param {string} path 
+ * @param {string} path
  */
 const base64Encode = (path: string): string => {
   const stream = readFileSync(path);
@@ -57,7 +110,7 @@ const base64Encode = (path: string): string => {
 
 /**
  * @description Decode base64 encoded stream and write binary file
- * @param {string} path 
+ * @param {string} path
  */
 const base64Decode = (stream: Buffer, path: string): void => {
   const size = stream.toString('ascii').length;
@@ -69,7 +122,9 @@ const base64Decode = (stream: Buffer, path: string): void => {
  * @param {string} filename Filename to parse
  */
 const filename = (filename: string) => {
-  return filename.lastIndexOf('.') !== -1 ? filename.substring(0, filename.lastIndexOf('.')) : filename;
+  return filename.lastIndexOf('.') !== -1
+    ? filename.substring(0, filename.lastIndexOf('.'))
+    : filename;
 };
 
 /**
@@ -78,9 +133,19 @@ const filename = (filename: string) => {
  * @param {boolean} include Get extension with . if true, without . else
  */
 const extension = (filename: string, include = false) => {
-  return filename.lastIndexOf('.') !== -1 ? include === true ? filename.substring(filename.lastIndexOf('.')) : filename.substring(filename.lastIndexOf('.') + 1) : filename;
+  return filename.lastIndexOf('.') !== -1
+    ? include === true
+      ? filename.substring(filename.lastIndexOf('.'))
+      : filename.substring(filename.lastIndexOf('.') + 1)
+    : filename;
 };
 
-
-
-export { shuffle, hash, crypt, base64Encode, base64Decode, filename, extension };
+export {
+  shuffle,
+  hash,
+  crypt,
+  base64Encode,
+  base64Decode,
+  filename,
+  extension
+};

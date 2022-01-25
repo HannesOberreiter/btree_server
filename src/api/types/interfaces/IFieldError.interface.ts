@@ -2,7 +2,6 @@
  * Define field error format
  */
 export interface IFieldError {
-  
   /**
    * @description Field name|path
    */
@@ -16,10 +15,10 @@ export interface IFieldError {
   /**
    * @description Error message(s)
    */
-  messages: string|string[];
+  messages: string | string[];
 
   /**
    * @description Help link
    */
   help?: string;
-};
+}

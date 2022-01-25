@@ -1,49 +1,50 @@
-import { Request, Response } from "express";
-import { Controller } from "@classes/controller.class";
-import { checkMySQLError } from "@utils/error.util";
-import { Editor, Field, Validate, Format, Options } from "datatables.net-editor-server";
-
-import { knexConfig } from "@config/environment.config";
-import Knex from 'knex';
-
+import { Request, Response } from 'express';
+import { Controller } from '@classes/controller.class';
+import { checkMySQLError } from '@utils/error.util';
+import { OptionTable } from '@datatables/option.table';
+import { IUserRequest } from '@interfaces/IUserRequest.interface';
+import { Company } from '@models/company.model'
+import { ChargeType } from '@models/option/charge_type.model';
+import { CheckupType } from '@models/option/checkup_type.model';
+import dayjs from 'dayjs';
+import { FeedType } from '@models/option/feed_type.model';
+import { HarvestType } from '@models/option/harvest_type.model';
+import { HiveSource } from '@models/option/hive_source.model';
+import { HiveType } from '@models/option/hive_type.mode';
+import { QueenMating } from '@models/option/queen_mating.model';
+import { QueenRace } from '@models/option/queen_race.model';
+import { TreatmentType } from '@models/option/treatment_type.model';
+import { TreatmentDisease } from '@models/option/treatment_disease.model';
+import { TreatmentVet } from '@models/option/treatment_vet.model';
 export class OptionController extends Controller {
-    
-    constructor() { super(); }
+  constructor() {
+    super();
+  }
 
-	static db:any = Knex(knexConfig as Knex.Config);
-    
-    private static table(table){
-        let editor = new Editor(this.db, table)
-        .fields(
-            new Field(table+'.name'),
-            new Field(table+'.modus')
-                .validator(Validate.boolean()),
-            new Field(table+'.favorite')
-                .validator(Validate.boolean()),
-            new Field(table+'.created_at')
-                .getFormatter(Format.sqlDateToFormat('YYYY-MM-DD HH:mm:ss'))
-                .setFormatter(Format.formatToSqlDate('YYYY-MM-DD HH:mm:ss')),
-            new Field(table+'.updated_at')
-                .getFormatter(Format.sqlDateToFormat('YYYY-MM-DD HH:mm:ss'))
-                .setFormatter(Format.formatToSqlDate('YYYY-MM-DD HH:mm:ss')),		
-        )
-        return editor;
+  async getTable(req: IUserRequest, res: Response, next: Function) {
+    try {
+      let editor = OptionTable.table(req.params.table);
+      await editor.process(req.body);
+      res.locals.data = editor.data();
+      next();
+    } catch (e) {
+      next(checkMySQLError(e));
     }
+  };
 
-    async get(req: Request, res: Response, next: Function) { 
-        try {
-			let editor = OptionController.table(req.params.table);
-            // Additional Note Field for Vets Table
-            if(req.params.table == "treatment_vets"){
-                editor.field(new Field("treatment_vets.note"));
-            }
-			await editor.process(req.body);
-		    res.locals.data = editor.data();
-			next();
-    	} 
-    	catch (e) { 
-			next( checkMySQLError( e ) ); 
-		}
-	}
-
+  async getDropdowns(req: IUserRequest, res: Response, next: Function) {
+    const types = [ChargeType, CheckupType, FeedType, HarvestType, TreatmentDisease, TreatmentType, TreatmentVet];
+    let results = {};
+    for(let i of types){
+      const result = await i.query().where({user_id: req.user.user_id, modus: 1}).orderBy([{column: 'favorite', order: 'desc'}, {column: 'name'}]);
+      results[i.name] = result;
+    }
+    res.locals.data = {
+     data: results,
+     meta: {
+      timestamp: dayjs()
+     }
+    }
+    next();
+  }
 }

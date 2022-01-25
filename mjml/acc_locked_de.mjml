@@ -1,0 +1,40 @@
+<mjml>
+  <mj-head>
+
+    <mj-title>Dein Account wurde gesperrt!</mj-title>
+
+    <mj-include path="./partials/style.mjml" />
+  </mj-head>
+  <mj-body background-color="#F2F2F2">
+    <mj-include path="./partials/header.mjml" />
+
+     <mj-section padding="0 20px 20px 20px" background-color="#FFFFFF">
+      <mj-column>
+        <mj-text align="left" padding-top="10px" font-weight="300" padding="0px">
+          Liebe/r Imker/in, <br/><br/>
+          mit deinem b.tree Account gab es zuviele fehlgeschlagene Login versuche. Aus Sicherheitsgründen ist <strong>dein Account für zwei Stunden gesperrt.</strong>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+    <mj-wrapper border="1px solid #000000" padding="0px 0px" background-color="#FFD700">
+      <mj-section>
+        <mj-column>
+          <mj-text align="center" padding="20px 20px 20px 20px" font-weight="500">
+            Wenn du dein Passwort vergessen hast, benütze bitte folgenden Link:
+            <b><a href="%base_url%recover/">%base_url%recover/</a></b>
+          </mj-text>
+        </mj-column>
+      </mj-section>
+    </mj-wrapper>
+
+    <mj-section padding="0 20px 20px 20px" background-color="#FFFFFF">
+      <mj-column>
+        <mj-text align="left" padding-top="10px" font-weight="300" padding="0px">
+          Solltest du noch immer Login Probleme haben oder eine andere Frage, bitte kontaktiere uns per Mail <a href="mailto:office@btree.at">office@btree.at</a>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <mj-include path="./partials/footer.mjml" />
+  </mj-body>
+</mjml>

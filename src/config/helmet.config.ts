@@ -1,12 +1,11 @@
-import Helmet from "helmet";
+import Helmet from 'helmet';
 
 /**
  * Set Helmet security middleware
- * 
+ *
  * @see https://github.com/helmetjs/helmet
  */
 export class HelmetConfiguration {
-
   /**
    * @description Wrapped Helmet instance
    */
@@ -45,8 +44,9 @@ export class HelmetConfiguration {
    * @description Helmet instance getter as Singleton
    */
   static get(): Function {
-    if (!this.helmet) { return this.plug(); }
+    if (!this.helmet) {
+      return this.plug();
+    }
     return this.helmet;
   }
-
-};
+}
