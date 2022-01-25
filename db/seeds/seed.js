@@ -1,6 +1,6 @@
 require('module-alias/register');
-import { env } from "../../dist/config/environment.config";
-import fs from 'fs';
+const env = require("../../dist/config/environment.config");
+const fs = require('fs');
 
 if(env === "production"){
   console.log("No seeding allowed in production environment!")
