@@ -10,7 +10,6 @@ export class BaseModel extends Model {
   $beforeValidate(jsonSchema, json, opt) {
     Object.keys(jsonSchema.properties).map(function (key, index) {
       const format = jsonSchema.properties[key].format;
-      console.log(format);
       if (format && typeof format !== 'undefined' && format === 'date-time') {
         const valueToValidate = json[key];
         if (valueToValidate !== null && valueToValidate instanceof Date) {
