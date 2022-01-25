@@ -10,7 +10,7 @@ import { Model } from 'objection';
 export class MySQLServer {
   start(): void {
     try {
-      const knex = Knex(knexConfig as Knex.Config);
+      const knex = Knex(knexConfig);
       Model.knex(knex);
 
       if (env !== ENVIRONMENT.test) {
