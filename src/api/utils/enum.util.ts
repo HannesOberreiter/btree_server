@@ -4,7 +4,7 @@
  */
 const list = (en: any): string[] => {
   const list = [];
-  for (let item in en) {
+  for (const item in en) {
     list.push(en[item]);
   }
   return list;
@@ -12,7 +12,7 @@ const list = (en: any): string[] => {
 
 const listNumber = (en: any): number[] => {
   const list = [];
-  for (let item in en) {
+  for (const item in en) {
     list.push(en[item]);
   }
   return list;

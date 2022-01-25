@@ -1,4 +1,4 @@
-import { Response } from 'express';
+import { NextFunction, Response } from 'express';
 import { Controller } from '@classes/controller.class';
 import { checkMySQLError } from '@utils/error.util';
 import { CheckupTable } from '@datatables/checkup.table';
@@ -9,7 +9,7 @@ export class CheckupController extends Controller {
     super();
   }
 
-  async getTable(req: IUserRequest, res: Response, next: Function) {
+  async getTable(req: IUserRequest, res: Response, next: NextFunction) {
     try {
       let editor = CheckupTable.table();
       await editor.process(req.body);

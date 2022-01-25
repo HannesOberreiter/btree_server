@@ -3,7 +3,6 @@ import { mailConfig } from '@config/environment.config';
 import { readFileSync } from 'fs';
 import p from 'path';
 import { badImplementation, notFound } from '@hapi/boom';
-import { string } from 'joi';
 
 export class MailService {
   private _transporter: nodemailer.Transporter;
@@ -58,7 +57,7 @@ export class MailService {
       htmlMail = htmlMail.replace('%key%', key);
     }
 
-    let options = {
+    const options = {
       from: 'no-reply@btree.at',
       to: to,
       subject: title,

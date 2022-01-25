@@ -8,12 +8,12 @@ export class RootController extends Controller {
     super();
   }
 
-  status = (req: Request, res: Response, next: Function) => {
+  status = (req: Request, res: Response, _next) => {
     res.status(OK);
     res.end();
   };
 
-  report = (req: Request, res: Response, next: Function) => {
+  report = (req: Request, res: Response, _next) => {
     const message = req.body.violation
       ? 'CSP Violation: ' + req.body.violation
       : 'CSP Violation';

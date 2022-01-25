@@ -184,7 +184,7 @@ const generateTokenResponse = async (
   return { tokenType, accessToken, refreshToken, expiresIn };
 };
 
-const createHashedPassword = (password: string, hash: string = 'sha512') => {
+const createHashedPassword = (password: string, hash = 'sha512') => {
   // We first need to hash the inputPassword, this is due to an old code
   // in my first app I did hash the password on login page before sending to server
   const hexInputPassword = createHash(hash).update(password).digest('hex');

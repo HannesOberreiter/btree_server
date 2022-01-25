@@ -19,8 +19,6 @@ import { ProxyRouter } from '@services/proxy-router.service';
 export class Container {
   private static container: any;
 
-  constructor() {}
-
   private static init(): any {
     this.container = awilix.createContainer({
       injectionMode: awilix.InjectionMode.PROXY
@@ -36,12 +34,20 @@ export class Container {
         OptionController: awilix.asClass(OptionController).singleton()
       })
 
-      .register({ ChargeController: awilix.asClass(ChargeController).singleton() })
-      .register({ CheckupController: awilix.asClass(CheckupController).singleton() })
+      .register({
+        ChargeController: awilix.asClass(ChargeController).singleton()
+      })
+      .register({
+        CheckupController: awilix.asClass(CheckupController).singleton()
+      })
       .register({ FeedController: awilix.asClass(FeedController).singleton() })
-      .register({ HarvestController: awilix.asClass(HarvestController).singleton() })
-      .register({ TreatmentController: awilix.asClass(TreatmentController).singleton() })
-      
+      .register({
+        HarvestController: awilix.asClass(HarvestController).singleton()
+      })
+      .register({
+        TreatmentController: awilix.asClass(TreatmentController).singleton()
+      })
+
       .register({ UserController: awilix.asClass(UserController).singleton() })
       .register({ AuthController: awilix.asClass(AuthController).singleton() })
       .register({ Logger: awilix.asClass(Logger).singleton() })

@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { NO_CONTENT } from 'http-status';
 import { expectationFailed } from 'boom';
 
@@ -6,8 +6,6 @@ import { expectationFailed } from 'boom';
  * Resolver middleware that close all requests by response sending (404 except)
  */
 export class Resolver {
-  constructor() {}
-
   /**
    * @description Resolve the current request and get output
    *
@@ -15,13 +13,11 @@ export class Resolver {
    * @param {Response} res Express response object
    * @param {Function} next Callback function
    *
-   * FIXME: The check on id parameter should be on validation -> change doRequest by doQueryRequest allow 400, by validation error.
-   * For other methods (PUP, PATCH, DELETE), find other solution
    */
-  static resolve = (req: Request, res: Response, next: Function) => {
+  static resolve = (req: Request, res: Response, next: NextFunction) => {
     const cond =
       typeof res.locals['data'] !== 'undefined' &&
-      res.locals['data'].hasOwnProperty('statusCode');
+      Object.prototype.hasOwnProperty.call(res.locals['data'], 'statusCode');
 
     // Success DELETE request which have 204 statusCode : we get out
     if (req.method === 'DELETE') {

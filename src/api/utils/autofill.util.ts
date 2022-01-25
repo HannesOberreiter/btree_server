@@ -110,37 +110,37 @@ const autoFill = async (trx: Transaction, id: number, lang: string) => {
   const val = standardValues[lang];
 
   // We use MySQL we cannot use patch insert
-  for (let source of val.source) {
+  for (const source of val.source) {
     await HiveSource.query(trx).insert({ name: source, user_id: id });
   }
-  for (let type of val.type) {
+  for (const type of val.type) {
     await HiveType.query(trx).insert({ name: type, user_id: id });
   }
-  for (let charge of val.charge) {
+  for (const charge of val.charge) {
     await ChargeType.query(trx).insert({ name: charge, user_id: id });
   }
-  for (let checkup of val.checkup) {
+  for (const checkup of val.checkup) {
     await CheckupType.query(trx).insert({ name: checkup, user_id: id });
   }
-  for (let feed of val.feed) {
+  for (const feed of val.feed) {
     await FeedType.query(trx).insert({ name: feed, user_id: id });
   }
-  for (let harvest of val.harvest) {
+  for (const harvest of val.harvest) {
     await HarvestType.query(trx).insert({ name: harvest, user_id: id });
   }
-  for (let disease of val.disease) {
+  for (const disease of val.disease) {
     await TreatmentDisease.query(trx).insert({ name: disease, user_id: id });
   }
-  for (let treatment of val.treatment) {
+  for (const treatment of val.treatment) {
     await TreatmentType.query(trx).insert({ name: treatment, user_id: id });
   }
-  for (let vet of val.vet) {
+  for (const vet of val.vet) {
     await TreatmentVet.query(trx).insert({ name: vet, user_id: id });
   }
-  for (let race of val.race) {
+  for (const race of val.race) {
     await QueenRace.query(trx).insert({ name: race, user_id: id });
   }
-  for (let mating of val.mating) {
+  for (const mating of val.mating) {
     await QueenMating.query(trx).insert({ name: mating, user_id: id });
   }
 
@@ -151,7 +151,7 @@ const autoFill = async (trx: Transaction, id: number, lang: string) => {
     user_id: id
   });
   for (let i = 0; i < val.reardetail.job.length; i++) {
-    let rearingDetail = await RearingDetail.query(trx).insert({
+    const rearingDetail = await RearingDetail.query(trx).insert({
       job: val.reardetail.job[i],
       hour: val.reardetail.time[i],
       note: val.reardetail.note[i],

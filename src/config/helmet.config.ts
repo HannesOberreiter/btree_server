@@ -9,7 +9,7 @@ export class HelmetConfiguration {
   /**
    * @description Wrapped Helmet instance
    */
-  private static helmet: Function;
+  private static helmet;
 
   /**
    * @description Plugins options. Add options to activate a specific plugin.
@@ -23,14 +23,12 @@ export class HelmetConfiguration {
     referrerPolicy: { policy: 'no-referrer' }
   };
 
-  constructor() {}
-
   /**
    * @description Set plugins according to scope options
    */
-  private static plug(): Function {
+  private static plug() {
     this.helmet = Helmet;
-    for (let key of Object.keys(this.options)) {
+    for (const key of Object.keys(this.options)) {
       this.helmet[key](this.options[key]);
     }
 
@@ -43,7 +41,7 @@ export class HelmetConfiguration {
   /**
    * @description Helmet instance getter as Singleton
    */
-  static get(): Function {
+  static get() {
     if (!this.helmet) {
       return this.plug();
     }

@@ -13,7 +13,7 @@ export class TreatmentTable extends BaseTable {
   }
 
   static table() {
-    let editor = new Editor(this.db, 'treatments')
+    const editor = new Editor(this.db, 'treatments')
       .fields(
         new Field('treatments.date')
           .getFormatter(Format.sqlDateToFormat('YYYY-MM-DD'))

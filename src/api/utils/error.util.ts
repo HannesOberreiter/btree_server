@@ -1,22 +1,15 @@
-import {
-  badData,
-  badImplementation,
-  conflict,
-  notFound,
-  badRequest
-} from 'boom';
+import { badImplementation, conflict, notFound, badRequest } from 'boom';
 
-const {
+import {
   ValidationError,
   NotFoundError,
   DBError,
-  ConstraintViolationError,
   UniqueViolationError,
   NotNullViolationError,
   ForeignKeyViolationError,
   CheckViolationError,
   DataError
-} = require('objection');
+} from 'objection';
 
 import { IError } from '@interfaces/IError.interface';
 
@@ -82,7 +75,7 @@ const checkMySQLError = (err: any) => {
     error.output.payload.message = {
       type: 'NotNullViolation',
       data: {
-        columns: err.columns,
+        columns: err.column,
         table: err.table
       }
     };

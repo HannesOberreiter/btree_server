@@ -9,7 +9,7 @@ export class HarvestController extends Controller {
     super();
   }
 
-  async getTable(req: IUserRequest, res: Response, next: Function) {
+  async getTable(req: IUserRequest, res: Response, next) {
     try {
       let editor = HarvestTable.table();
       await editor.process(req.body);

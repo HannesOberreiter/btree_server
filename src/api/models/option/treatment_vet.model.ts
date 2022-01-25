@@ -5,7 +5,7 @@ export class TreatmentVet extends BaseOptionModel {
 
   constructor() {
     super();
-    let newSchema: any = BaseOptionModel.jsonSchema;
+    const newSchema: any = BaseOptionModel.jsonSchema;
     newSchema.properties.note = { type: 'string' };
     TreatmentVet.jsonSchema = newSchema;
   }

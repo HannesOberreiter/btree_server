@@ -5,7 +5,7 @@ export class ChargeType extends BaseOptionModel {
 
   constructor() {
     super();
-    let newSchema: any = BaseOptionModel.jsonSchema;
+    const newSchema: any = BaseOptionModel.jsonSchema;
     newSchema.properties.unit = { type: 'string' };
     ChargeType.jsonSchema = newSchema;
   }

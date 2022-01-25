@@ -2,7 +2,6 @@ import { Router } from '@classes/router.class';
 import { Container } from '@config/container.config';
 import { Validator } from '@middlewares/validator.middleware';
 
-import { body } from 'express-validator';
 import { Guard } from '@middlewares/guard.middleware';
 import { updateUser } from '@validations/user.validation';
 import { ROLES } from '@enums/role.enum';

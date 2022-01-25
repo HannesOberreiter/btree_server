@@ -9,7 +9,7 @@ export class FeedController extends Controller {
     super();
   }
 
-  async getTable(req: IUserRequest, res: Response, next: Function) {
+  async getTable(req: IUserRequest, res: Response, next) {
     try {
       let editor = FeedTable.table();
       await editor.process(req.body);

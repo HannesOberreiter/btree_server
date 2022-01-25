@@ -4,14 +4,13 @@ import { checkMySQLError } from '@utils/error.util';
 import { HiveTable } from '@datatables/hive.table';
 import { IUserRequest } from '@interfaces/IUserRequest.interface';
 import { Hive } from '../models/hive.model';
-import { Movedate } from '../models/movedate.model';
 
 export class HiveController extends Controller {
   constructor() {
     super();
   }
 
-  async getHives(req: IUserRequest, res: Response, next: Function) {
+  async getHives(req: IUserRequest, res: Response, next) {
     // TODO use View
     try {
       let hives = await Hive.query();
@@ -22,7 +21,7 @@ export class HiveController extends Controller {
     }
   }
 
-  async getTable(req: Request, res: Response, next: Function) {
+  async getTable(req: Request, res: Response, next) {
     try {
       let editor = HiveTable.table();
       await editor.process(req.body);

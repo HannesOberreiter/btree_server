@@ -1,18 +1,13 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { Controller } from '@classes/controller.class';
 import { checkMySQLError } from '@utils/error.util';
 import { OptionTable } from '@datatables/option.table';
 import { IUserRequest } from '@interfaces/IUserRequest.interface';
-import { Company } from '@models/company.model';
 import { ChargeType } from '@models/option/charge_type.model';
 import { CheckupType } from '@models/option/checkup_type.model';
 import dayjs from 'dayjs';
 import { FeedType } from '@models/option/feed_type.model';
 import { HarvestType } from '@models/option/harvest_type.model';
-import { HiveSource } from '@models/option/hive_source.model';
-import { HiveType } from '@models/option/hive_type.mode';
-import { QueenMating } from '@models/option/queen_mating.model';
-import { QueenRace } from '@models/option/queen_race.model';
 import { TreatmentType } from '@models/option/treatment_type.model';
 import { TreatmentDisease } from '@models/option/treatment_disease.model';
 import { TreatmentVet } from '@models/option/treatment_vet.model';
@@ -21,7 +16,7 @@ export class OptionController extends Controller {
     super();
   }
 
-  async getTable(req: IUserRequest, res: Response, next: Function) {
+  async getTable(req: IUserRequest, res: Response, next) {
     try {
       let editor = OptionTable.table(req.params.table);
       await editor.process(req.body);
@@ -32,7 +27,7 @@ export class OptionController extends Controller {
     }
   }
 
-  async getDropdowns(req: IUserRequest, res: Response, next: Function) {
+  async getDropdowns(req: IUserRequest, res: Response, next) {
     const types = [
       ChargeType,
       CheckupType,

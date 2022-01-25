@@ -9,9 +9,7 @@ export class PassportConfiguration {
     }
   };
 
-  constructor() {}
-
-  static factory(strategy: string): JwtStrategy {
+  static factory(_strategy: string): JwtStrategy {
     return new JwtStrategy(
       PassportConfiguration.options.jwt,
       PassportConfiguration.jwt

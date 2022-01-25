@@ -1,4 +1,5 @@
 import { Model } from 'objection';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const AjvValidator = require('objection').AjvValidator;
 import addFormats from 'ajv-formats';
 
@@ -7,8 +8,8 @@ export class BaseModel extends Model {
     super();
   }
   // Fix to change date-time from ISOFormat to MySQL Format
-  $beforeValidate(jsonSchema, json, opt) {
-    Object.keys(jsonSchema.properties).map(function (key, index) {
+  $beforeValidate(jsonSchema, json, _opt) {
+    Object.keys(jsonSchema.properties).map(function (key, _index) {
       const format = jsonSchema.properties[key].format;
       if (format && typeof format !== 'undefined' && format === 'date-time') {
         const valueToValidate = json[key];

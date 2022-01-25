@@ -164,13 +164,9 @@ export class Application {
     /**
      * Set global middlewares on Express Application
      *
-     * Note that after router, and before resolver, some routes pass by the Serializer middleware
-     * See services/proxy-router.service.ts to check which route serializes her data before exiting
-     *
      * Note also that middlewares are implemented in each route file (Guard, Validation, Upload, ...)
      *
      * - RateLimit
-     * - Deserializer (if Content-Type is application/vnd.api+json)
      * - Router(s)
      * - Resolver
      */

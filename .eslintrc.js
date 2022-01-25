@@ -4,6 +4,8 @@ module.exports = {
     node: true
   },
   rules: {
+    "prefer-const": "off",
+    "@typescript-eslint/no-explicit-any": "off",
     "no-unused-vars": "off",
      // note you must disable the base rule as it can report incorrect errors
     '@typescript-eslint/no-unused-vars': [
