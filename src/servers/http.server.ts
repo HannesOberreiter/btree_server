@@ -1,11 +1,10 @@
 import { ENVIRONMENT } from '@enums/environment.enum';
-import { env, port, mailConfig } from '@config/environment.config';
+import { env, port } from '@config/environment.config';
 
 import * as Express from 'express';
 
-import { readFileSync } from 'fs';
 import { Server as HttpServer } from 'http';
-import { Server as HttpsServer, createServer } from 'https';
+import { Server as HttpsServer } from 'https';
 
 import { Container } from '@config/container.config';
 

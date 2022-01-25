@@ -54,15 +54,15 @@ class EnvironmentConfiguration {
 
   static async mail() {
     let mailConfig = {
-        host: process.env.MAIL_SMTP,
-        port: Number(process.env.MAIL_PORT),
-        secure: true,
-        auth: {
-            user: process.env.MAIL_FROM,
-            pass: process.env.MAIL_PASSWORD
-        }
+      host: process.env.MAIL_SMTP,
+      port: Number(process.env.MAIL_PORT),
+      secure: true,
+      auth: {
+        user: process.env.MAIL_FROM,
+        pass: process.env.MAIL_PASSWORD
+      }
     };
-    if(this.environment !== 'production'){
+    if (this.environment !== 'production') {
       let testAccount = await nodemailer.createTestAccount();
       mailConfig.secure = false;
       mailConfig.auth.user = testAccount.user;
@@ -70,7 +70,6 @@ class EnvironmentConfiguration {
     }
     return mailConfig;
   }
-
 }
 
 EnvironmentConfiguration.load();
@@ -85,6 +84,7 @@ const jwtExpirationInterval: number = parseInt(
   process.env.JWT_EXPIRATION_MINUTES
 );
 const logs = process.env.NODE_ENV === 'production' ? 'combined' : 'development';
+// https://github.com/expressjs/morgan
 const httpLogs = process.env.NODE_ENV === 'production' ? 'combined' : 'dev';
 const contentType = process.env.CONTENT_TYPE;
 

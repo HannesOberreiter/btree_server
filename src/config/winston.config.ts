@@ -12,7 +12,7 @@ export class WinstonConfiguration {
   /**
    * @description Wrapped Winston instance
    */
-  private logger: any;
+  private logger: Winston.Logger;
 
   /**
    * @description Wrap and expose Winston.logger.stream
@@ -57,7 +57,8 @@ export class WinstonConfiguration {
       colorize: false
     },
     console: {
-      format: Winston.format.simple(),
+      // format: Winston.format.simple(),
+      format: format.combine(format.timestamp(), this.formater),
       level: 'debug',
       handleExceptions: true,
       json: false,
@@ -66,7 +67,7 @@ export class WinstonConfiguration {
   };
 
   constructor() {
-    let logger = Winston.createLogger({
+    const logger = Winston.createLogger({
       level: 'info',
       transports: [
         //
@@ -85,8 +86,10 @@ export class WinstonConfiguration {
     }
 
     logger.stream = {
-      write: function (message, encoding) {
-        logger.info(message.trim());
+      write: function (message: string, _encoding: string) {
+        logger.info(message.trim(), {
+          label: 'Stream'
+        });
       }
     } as any;
 
