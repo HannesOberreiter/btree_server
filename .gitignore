@@ -54,9 +54,3 @@ typings/
 
 # dotenv environment variables file
 .env
-
-# .env files
-env/production.env
-env/staging.env
-env/development.env
-env/test.env
