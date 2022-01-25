@@ -1,8 +1,8 @@
-import { BaseModel } from '@models/base.model';
+import { ExtModel } from '@models/base.model';
 import { User } from '@models/user.model';
 import { Apiary } from '@models/apiary.model';
 import { Movedate } from '@models/movedate.model';
-export class Hive extends BaseModel {
+export class Hive extends ExtModel {
   id!: number;
   name!: string;
   grouphive!: number;
@@ -32,12 +32,12 @@ export class Hive extends BaseModel {
       note: { type: 'string', maxLength: 2000 },
 
       modus: { type: 'boolean' },
-      modus_date: { type: 'date' },
+      modus_date: { type: 'string', format: 'date' },
       deleted: { type: 'boolean' },
-      deleted_at: { type: 'date-time' },
+      deleted_at: { type: 'string', format: 'date-time' },
 
-      created_at: { type: 'date-time' },
-      updated_at: { type: 'date-time' },
+      created_at: { type: 'string', format: 'date-time' },
+      updated_at: { type: 'string', format: 'date-time' },
 
       bee_id: { type: 'integer' }, // Creator Bee FK
       edit_id: { type: 'integer' } // Updater Bee FK
@@ -46,7 +46,7 @@ export class Hive extends BaseModel {
 
   static relationMappings = () => ({
     creator: {
-      relation: BaseModel.HasOneRelation,
+      relation: ExtModel.HasOneRelation,
       modelClass: User,
       join: {
         from: ['hives.bee_id'],
@@ -54,7 +54,7 @@ export class Hive extends BaseModel {
       }
     },
     editor: {
-      relation: BaseModel.HasOneRelation,
+      relation: ExtModel.HasOneRelation,
       modelClass: User,
       join: {
         from: ['hives.edit_id'],

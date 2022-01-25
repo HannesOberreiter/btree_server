@@ -1,9 +1,9 @@
-import { BaseModel } from '@models/base.model';
+import { ExtModel } from '@models/base.model';
 import { Hive } from '@models/hive.model';
 import { User } from '@models/user.model';
 import { FeedType } from '@models/option/feed_type.model';
 
-export class Feed extends BaseModel {
+export class Feed extends ExtModel {
   id!: number;
   date!: Date;
   enddate!: Date;
@@ -26,8 +26,8 @@ export class Feed extends BaseModel {
     required: ['date', 'hive_id'],
     properties: {
       id: { type: 'integer' },
-      date: { type: 'date' },
-      enddate: { type: 'date' },
+      date: { type: 'string', format: 'date' },
+      enddate: { type: 'string', format: 'date' },
       amount: { type: 'number' },
       note: { type: 'string', maxLength: 2000 },
       url: { type: 'string', maxLength: 512 },
@@ -35,9 +35,9 @@ export class Feed extends BaseModel {
       done: { type: 'boolean' },
 
       deleted: { type: 'boolean' },
-      deleted_at: { type: 'date-time' },
-      created_at: { type: 'date-time' },
-      updated_at: { type: 'date-time' },
+      deleted_at: { type: 'string', format: 'date-time' },
+      created_at: { type: 'string', format: 'date-time' },
+      updated_at: { type: 'string', format: 'date-time' },
 
       type_id: { type: 'integer' }, // Type FK
       user_id: { type: 'integer' }, // Company FK
@@ -48,7 +48,7 @@ export class Feed extends BaseModel {
 
   static relationMappings = () => ({
     type: {
-      relation: BaseModel.HasOneRelation,
+      relation: ExtModel.HasOneRelation,
       modelClass: FeedType,
       join: {
         from: ['feeds.type_id'],
@@ -56,7 +56,7 @@ export class Feed extends BaseModel {
       }
     },
     hive: {
-      relation: BaseModel.HasOneRelation,
+      relation: ExtModel.HasOneRelation,
       modelClass: Hive,
       join: {
         from: ['feeds.hive_id'],
@@ -64,7 +64,7 @@ export class Feed extends BaseModel {
       }
     },
     creator: {
-      relation: BaseModel.HasOneRelation,
+      relation: ExtModel.HasOneRelation,
       modelClass: User,
       join: {
         from: ['feeds.bee_id'],
@@ -72,7 +72,7 @@ export class Feed extends BaseModel {
       }
     },
     editor: {
-      relation: BaseModel.HasOneRelation,
+      relation: ExtModel.HasOneRelation,
       modelClass: User,
       join: {
         from: ['feeds.edit_id'],

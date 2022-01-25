@@ -1,8 +1,8 @@
-import { BaseModel } from '@models/base.model';
+import { ExtModel } from '@models/base.model';
 import { User } from '@models/user.model';
 import { Company } from '@models/company.model';
 
-export class Apiary extends BaseModel {
+export class Apiary extends ExtModel {
   id!: number;
   name!: string;
   description!: string;
@@ -35,10 +35,10 @@ export class Apiary extends BaseModel {
 
       modus: { type: 'boolean' },
       deleted: { type: 'boolean' },
-      deleted_at: { type: 'date-time' },
+      deleted_at: { type: 'string', format: 'date-time' },
 
-      created_at: { type: 'date-time' },
-      updated_at: { type: 'date-time' },
+      created_at: { type: 'string', format: 'date-time' },
+      updated_at: { type: 'string', format: 'date-time' },
 
       user_id: { type: 'integer' }, // Company FK
       bee_id: { type: 'integer' }, // Creator Bee FK
@@ -48,7 +48,7 @@ export class Apiary extends BaseModel {
 
   static relationMappings = () => ({
     company: {
-      relation: BaseModel.HasOneRelation,
+      relation: ExtModel.HasOneRelation,
       modelClass: Company,
       join: {
         from: ['apiaries.user_id'],
@@ -56,7 +56,7 @@ export class Apiary extends BaseModel {
       }
     },
     creator: {
-      relation: BaseModel.HasOneRelation,
+      relation: ExtModel.HasOneRelation,
       modelClass: User,
       join: {
         from: ['apiaries.bee_id'],
@@ -64,7 +64,7 @@ export class Apiary extends BaseModel {
       }
     },
     editor: {
-      relation: BaseModel.HasOneRelation,
+      relation: ExtModel.HasOneRelation,
       modelClass: User,
       join: {
         from: ['apiaries.edit_id'],

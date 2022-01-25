@@ -1,11 +1,11 @@
-import { BaseModel } from '@models/base.model';
+import { ExtModel } from '@models/base.model';
 import { Hive } from '@models/hive.model';
 import { User } from '@models/user.model';
 import { TreatmentType } from '@models/option/treatment_type.model';
 import { TreatmentDisease } from '@models/option/treatment_disease.model';
 import { TreatmentVet } from '@models/option/treatment_vet.model';
 
-export class Harvest extends BaseModel {
+export class Harvest extends ExtModel {
   id!: number;
   date!: Date;
   enddate!: Date;
@@ -31,8 +31,8 @@ export class Harvest extends BaseModel {
     required: ['date', 'hive_id'],
     properties: {
       id: { type: 'integer' },
-      date: { type: 'date' },
-      enddate: { type: 'date' },
+      date: { type: 'string', format: 'date' },
+      enddate: { type: 'string', format: 'date' },
       amount: { type: 'number' },
       wait: { type: 'number' },
 
@@ -42,9 +42,9 @@ export class Harvest extends BaseModel {
       done: { type: 'boolean' },
 
       deleted: { type: 'boolean' },
-      deleted_at: { type: 'date-time' },
-      created_at: { type: 'date-time' },
-      updated_at: { type: 'date-time' },
+      deleted_at: { type: 'string', format: 'date-time' },
+      created_at: { type: 'string', format: 'date-time' },
+      updated_at: { type: 'string', format: 'date-time' },
 
       type_id: { type: 'integer' }, // Type FK
       vet_id: { type: 'integer' }, // Vets FK
@@ -57,7 +57,7 @@ export class Harvest extends BaseModel {
 
   static relationMappings = () => ({
     type: {
-      relation: BaseModel.HasOneRelation,
+      relation: ExtModel.HasOneRelation,
       modelClass: TreatmentType,
       join: {
         from: ['treatments.type_id'],
@@ -65,7 +65,7 @@ export class Harvest extends BaseModel {
       }
     },
     disease: {
-      relation: BaseModel.HasOneRelation,
+      relation: ExtModel.HasOneRelation,
       modelClass: TreatmentDisease,
       join: {
         from: ['treatments.disease_id'],
@@ -73,7 +73,7 @@ export class Harvest extends BaseModel {
       }
     },
     vet: {
-      relation: BaseModel.HasOneRelation,
+      relation: ExtModel.HasOneRelation,
       modelClass: TreatmentVet,
       join: {
         from: ['treatments.vet_id'],
@@ -81,7 +81,7 @@ export class Harvest extends BaseModel {
       }
     },
     hive: {
-      relation: BaseModel.HasOneRelation,
+      relation: ExtModel.HasOneRelation,
       modelClass: Hive,
       join: {
         from: ['treatments.hive_id'],
@@ -89,7 +89,7 @@ export class Harvest extends BaseModel {
       }
     },
     creator: {
-      relation: BaseModel.HasOneRelation,
+      relation: ExtModel.HasOneRelation,
       modelClass: User,
       join: {
         from: ['treatments.bee_id'],
@@ -97,7 +97,7 @@ export class Harvest extends BaseModel {
       }
     },
     editor: {
-      relation: BaseModel.HasOneRelation,
+      relation: ExtModel.HasOneRelation,
       modelClass: User,
       join: {
         from: ['treatments.edit_id'],

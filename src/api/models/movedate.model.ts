@@ -1,10 +1,10 @@
-import { BaseModel } from '@models/base.model';
+import { ExtModel } from '@models/base.model';
 import { User } from '@models/user.model';
 import { Model } from 'objection';
 import { Apiary } from '@models/apiary.model';
 import { Hive } from '@models/hive.model';
 
-export class Movedate extends BaseModel {
+export class Movedate extends ExtModel {
   id!: number;
   date!: Date;
   apiary_id!: number;
@@ -23,7 +23,7 @@ export class Movedate extends BaseModel {
     required: ['date', 'apiary_id', 'hive_id'],
     properties: {
       id: { type: 'integer' },
-      date: { type: 'date' },
+      date: { type: 'string', format: 'date' },
       apiary_id: { type: 'integer' }, // Apiary FK
       hive_id: { type: 'integer' } // Hive FK
     }
@@ -47,7 +47,7 @@ export class Movedate extends BaseModel {
       }
     },
     creator: {
-      relation: BaseModel.HasOneRelation,
+      relation: ExtModel.HasOneRelation,
       modelClass: User,
       join: {
         from: ['movedates.bee_id'],
@@ -55,7 +55,7 @@ export class Movedate extends BaseModel {
       }
     },
     editor: {
-      relation: BaseModel.HasOneRelation,
+      relation: ExtModel.HasOneRelation,
       modelClass: User,
       join: {
         from: ['movedates.edit_id'],

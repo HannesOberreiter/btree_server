@@ -1,9 +1,9 @@
-import { BaseModel } from '@models/base.model';
+import { ExtModel } from '@models/base.model';
 import { Hive } from '@models/hive.model';
 import { User } from '@models/user.model';
 import { HarvestType } from '@models/option/harvest_type.model';
 
-export class Harvest extends BaseModel {
+export class Harvest extends ExtModel {
   id!: number;
   date!: Date;
   enddate!: Date;
@@ -29,8 +29,8 @@ export class Harvest extends BaseModel {
     required: ['date', 'hive_id'],
     properties: {
       id: { type: 'integer' },
-      date: { type: 'date' },
-      enddate: { type: 'date' },
+      date: { type: 'string', format: 'date' },
+      enddate: { type: 'string', format: 'date' },
       amount: { type: 'number' },
       water: { type: 'number' },
       frames: { type: 'integer' },
@@ -41,9 +41,9 @@ export class Harvest extends BaseModel {
       done: { type: 'boolean' },
 
       deleted: { type: 'boolean' },
-      deleted_at: { type: 'date-time' },
-      created_at: { type: 'date-time' },
-      updated_at: { type: 'date-time' },
+      deleted_at: { type: 'string', format: 'date-time' },
+      created_at: { type: 'string', format: 'date-time' },
+      updated_at: { type: 'string', format: 'date-time' },
 
       type_id: { type: 'integer' }, // Type FK
       user_id: { type: 'integer' }, // Company FK
@@ -54,7 +54,7 @@ export class Harvest extends BaseModel {
 
   static relationMappings = () => ({
     type: {
-      relation: BaseModel.HasOneRelation,
+      relation: ExtModel.HasOneRelation,
       modelClass: HarvestType,
       join: {
         from: ['harvests.type_id'],
@@ -62,7 +62,7 @@ export class Harvest extends BaseModel {
       }
     },
     hive: {
-      relation: BaseModel.HasOneRelation,
+      relation: ExtModel.HasOneRelation,
       modelClass: Hive,
       join: {
         from: ['harvests.hive_id'],
@@ -70,7 +70,7 @@ export class Harvest extends BaseModel {
       }
     },
     creator: {
-      relation: BaseModel.HasOneRelation,
+      relation: ExtModel.HasOneRelation,
       modelClass: User,
       join: {
         from: ['harvests.bee_id'],
@@ -78,7 +78,7 @@ export class Harvest extends BaseModel {
       }
     },
     editor: {
-      relation: BaseModel.HasOneRelation,
+      relation: ExtModel.HasOneRelation,
       modelClass: User,
       join: {
         from: ['harvests.edit_id'],

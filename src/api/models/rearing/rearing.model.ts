@@ -31,7 +31,7 @@ export class Rearing extends Model {
       id: { type: 'integer' },
       larvae: { type: 'integer' },
       hatch: { type: 'integer' },
-      date: { type: 'date-time' },
+      date: { type: 'string', format: 'date-time' },
       note: { type: 'string', maxLength: 2000 },
       type_id: { type: 'integer' },
       detail_id: { type: 'integer' },

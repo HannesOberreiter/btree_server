@@ -1,4 +1,3 @@
-import { BaseModel } from '@models/base.model';
 import { User } from '@models/user.model';
 import { Company } from '@models/company.model';
 import { Model } from 'objection';

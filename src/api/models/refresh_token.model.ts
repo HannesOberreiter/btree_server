@@ -1,7 +1,8 @@
 import { CompanyBee } from '@models/company_bee.model';
 import { Model } from 'objection';
+import { BaseModel } from '@models/base.model';
 
-export class RefreshToken extends Model {
+export class RefreshToken extends BaseModel {
   token!: string;
   expires!: Date;
   user_id!: number;
@@ -21,7 +22,7 @@ export class RefreshToken extends Model {
       id: { type: 'integer' },
 
       token: { type: 'string', minLength: 10 },
-      expires: { type: 'date-time' },
+      expires: { type: 'string', format: 'date-time' },
       'user-agent': { type: 'string', minLength: 1, maxLength: 50 },
 
       user_id: { type: 'integer' }, // Company FK

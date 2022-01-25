@@ -1,8 +1,8 @@
-import { BaseModel } from '@models/base.model';
+import { ExtModel } from '@models/base.model';
 import { User } from '@models/user.model';
 import { CompanyBee } from '@models/company_bee.model';
 import dayjs from 'dayjs';
-export class Company extends BaseModel {
+export class Company extends ExtModel {
   id!: number;
   name!: string;
   dropbox_auth!: string;
@@ -24,14 +24,14 @@ export class Company extends BaseModel {
     properties: {
       id: { type: 'integer' },
       name: { type: 'string', minLength: 1, maxLength: 45 },
-      paid: { type: 'date' },
+      paid: { type: 'string', format: 'date' },
 
       image: { type: 'string', minLength: 1, maxLength: 65 },
       api_key: { type: 'string', minLength: 1, maxLength: 65 },
       dropbox_auth: { type: 'string', minLength: 1, maxLength: 65 },
 
-      created_at: { type: 'date-time' },
-      updated_at: { type: 'date-time' }
+      created_at: { type: 'string', format: 'date-time' },
+      updated_at: { type: 'string', format: 'date-time' }
     }
   };
 
@@ -47,7 +47,7 @@ export class Company extends BaseModel {
 
   static relationMappings = () => ({
     user: {
-      relation: BaseModel.ManyToManyRelation,
+      relation: ExtModel.ManyToManyRelation,
       modelClass: User,
       join: {
         from: 'companies.id',

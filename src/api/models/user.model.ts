@@ -1,9 +1,9 @@
-import { BaseModel } from '@models/base.model';
+import { ExtModel } from '@models/base.model';
 import { Company } from '@models/company.model';
 import { CompanyBee } from '@models/company_bee.model';
 import { ModelObject } from 'objection';
 
-export class User extends BaseModel {
+export class User extends ExtModel {
   id!: number;
   email!: string;
   lastname!: string;
@@ -36,7 +36,7 @@ export class User extends BaseModel {
       salt: { type: 'string', minLength: 1, maxLength: 128 },
 
       reset: { type: 'string', maxLength: 128 },
-      reset_timestamp: { type: 'date-time' },
+      reset_timestamp: { type: 'string', format: 'date-time' },
 
       state: { type: 'integer' },
       lang: { type: 'string', minLength: 1, maxLength: 3 },
@@ -50,9 +50,9 @@ export class User extends BaseModel {
 
       saved_company: { type: 'integer' },
 
-      last_visit: { type: 'date-time' },
-      created_at: { type: 'date-time' },
-      updated_at: { type: 'date-time' }
+      last_visit: { type: 'string', format: 'date-time' },
+      created_at: { type: 'string', format: 'date-time' },
+      updated_at: { type: 'string', format: 'date-time' }
     }
   };
 
@@ -69,7 +69,7 @@ export class User extends BaseModel {
 
   static relationMappings = () => ({
     company: {
-      relation: BaseModel.ManyToManyRelation,
+      relation: ExtModel.ManyToManyRelation,
       modelClass: Company,
       join: {
         from: 'bees.id',
@@ -82,7 +82,7 @@ export class User extends BaseModel {
       }
     },
     company_bee: {
-      relation: BaseModel.HasManyRelation,
+      relation: ExtModel.HasManyRelation,
       modelClass: CompanyBee,
       join: {
         from: 'bees.id',

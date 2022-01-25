@@ -1,9 +1,9 @@
-import { BaseModel } from '@models/base.model';
+import { ExtModel } from '@models/base.model';
 import { Hive } from '@models/hive.model';
 import { User } from '@models/user.model';
 import { CheckupType } from '@models/option/checkup_type.model';
 
-export class Checkup extends BaseModel {
+export class Checkup extends ExtModel {
   id!: number;
   date!: Date;
   enddate!: Date;
@@ -45,8 +45,8 @@ export class Checkup extends BaseModel {
     required: ['date', 'hive_id'],
     properties: {
       id: { type: 'integer' },
-      date: { type: 'date' },
-      enddate: { type: 'date' },
+      date: { type: 'string', format: 'date' },
+      enddate: { type: 'string', format: 'date' },
       queen: { type: 'boolean' },
       queencells: { type: 'boolean' },
       eggs: { type: 'boolean' },
@@ -61,7 +61,7 @@ export class Checkup extends BaseModel {
       strong: { type: 'integer' },
       temp: { type: 'number' },
       weight: { type: 'number' },
-      time: { type: 'time' },
+      time: { type: 'string', format: 'time' },
       broodframes: { type: 'integer' },
       honeyframes: { type: 'integer' },
       foundation: { type: 'integer' },
@@ -73,9 +73,9 @@ export class Checkup extends BaseModel {
       done: { type: 'boolean' },
 
       deleted: { type: 'boolean' },
-      deleted_at: { type: 'date-time' },
-      created_at: { type: 'date-time' },
-      updated_at: { type: 'date-time' },
+      deleted_at: { type: 'string', format: 'date-time' },
+      created_at: { type: 'string', format: 'date-time' },
+      updated_at: { type: 'string', format: 'date-time' },
 
       type_id: { type: 'integer' }, // Type FK
       user_id: { type: 'integer' }, // Company FK
@@ -86,7 +86,7 @@ export class Checkup extends BaseModel {
 
   static relationMappings = () => ({
     type: {
-      relation: BaseModel.HasOneRelation,
+      relation: ExtModel.HasOneRelation,
       modelClass: CheckupType,
       join: {
         from: ['checkups.type_id'],
@@ -94,7 +94,7 @@ export class Checkup extends BaseModel {
       }
     },
     hive: {
-      relation: BaseModel.HasOneRelation,
+      relation: ExtModel.HasOneRelation,
       modelClass: Hive,
       join: {
         from: ['checkups.hive_id'],
@@ -102,7 +102,7 @@ export class Checkup extends BaseModel {
       }
     },
     creator: {
-      relation: BaseModel.HasOneRelation,
+      relation: ExtModel.HasOneRelation,
       modelClass: User,
       join: {
         from: ['checkups.bee_id'],
@@ -110,7 +110,7 @@ export class Checkup extends BaseModel {
       }
     },
     editor: {
-      relation: BaseModel.HasOneRelation,
+      relation: ExtModel.HasOneRelation,
       modelClass: User,
       join: {
         from: ['checkups.edit_id'],

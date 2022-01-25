@@ -1,7 +1,7 @@
-import { BaseModel } from '@models/base.model';
+import { ExtModel } from '@models/base.model';
 import { Company } from '@models/company.model';
 
-export class BaseOptionModel extends BaseModel {
+export class BaseOptionModel extends ExtModel {
   id!: number;
   name!: string;
   modus!: boolean;
@@ -25,14 +25,14 @@ export class BaseOptionModel extends BaseModel {
       name: { type: 'string', minLength: 1, maxLength: 45 },
       favorite: { type: 'favorite' },
       modus: { type: 'boolean' },
-      created_at: { type: 'date-time' },
-      updated_at: { type: 'date-time' }
+      created_at: { type: 'string', format: 'date-time' },
+      updated_at: { type: 'string', format: 'date-time' }
     }
   };
 
   static relationMappings = () => ({
     company: {
-      relation: BaseModel.HasOneRelation,
+      relation: ExtModel.HasOneRelation,
       modelClass: Company,
       join: {
         from: ['user_id'],
