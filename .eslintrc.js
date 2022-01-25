@@ -5,7 +5,15 @@ module.exports = {
   },
   rules: {
     "no-unused-vars": "off",
-    "@typescript-eslint/no-unused-vars": ["warn"]
+     // note you must disable the base rule as it can report incorrect errors
+    '@typescript-eslint/no-unused-vars': [
+      'warn', 
+      {
+        argsIgnorePattern: '^_',
+        varsIgnorePattern: '^_',
+        caughtErrorsIgnorePattern: '^_',
+      },
+    ]
   },
   parser: '@typescript-eslint/parser',
   plugins: [
