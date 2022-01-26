@@ -27,7 +27,11 @@ export class TreatmentTable extends BaseTable {
 
         new Field('treatments.note').validator(Validate.xss()),
         new Field('treatments.url'),
-        new Field('treatments.done').validator(Validate.boolean()),
+        new Field('treatments.done').setFormatter(<any>(
+          function (val, _data, _opts) {
+            return !val ? 0 : 1;
+          }
+        )),
         new Field('treatments.type_id').options(
           <any>(
             new Options().table('treatment_types').value('id').label(['name'])

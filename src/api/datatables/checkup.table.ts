@@ -22,10 +22,26 @@ export class CheckupTable extends BaseTable {
           .getFormatter(Format.sqlDateToFormat('YYYY-MM-DD'))
           .setFormatter(Format.formatToSqlDate('YYYY-MM-DD')),
 
-        new Field('checkups.queen').validator(Validate.boolean()),
-        new Field('checkups.queencells').validator(Validate.boolean()),
-        new Field('checkups.eggs').validator(Validate.boolean()),
-        new Field('checkups.capped_brood').validator(Validate.boolean()),
+        new Field('checkups.queen').setFormatter(<any>(
+          function (val, _data, _opts) {
+            return !val ? 0 : 1;
+          }
+        )),
+        new Field('checkups.queencells').setFormatter(<any>(
+          function (val, _data, _opts) {
+            return !val ? 0 : 1;
+          }
+        )),
+        new Field('checkups.eggs').setFormatter(<any>(
+          function (val, _data, _opts) {
+            return !val ? 0 : 1;
+          }
+        )),
+        new Field('checkups.capped_brood').setFormatter(<any>(
+          function (val, _data, _opts) {
+            return !val ? 0 : 1;
+          }
+        )),
 
         new Field('checkups.brood').validator(Validate.numeric()),
         new Field('checkups.pollen').validator(Validate.numeric()),
@@ -45,7 +61,11 @@ export class CheckupTable extends BaseTable {
         new Field('checkups.emptyframes'),
         new Field('checkups.note').validator(Validate.xss()),
         new Field('checkups.url'),
-        new Field('checkups.done').validator(Validate.boolean()),
+        new Field('checkups.done').setFormatter(<any>(
+          function (val, _data, _opts) {
+            return !val ? 0 : 1;
+          }
+        )),
         new Field('checkups.type_id').options(
           <any>new Options().table('checkup_types').value('id').label(['name'])
         ),

@@ -19,7 +19,11 @@ export class HiveTable extends BaseTable {
         new Field('hives.grouphive').validator(Validate.numeric()),
         new Field('hives.position').validator(Validate.numeric()),
         new Field('hives.note').validator(Validate.xss()),
-        new Field('hives.modus').validator(Validate.boolean()),
+        new Field('hives.modus').setFormatter(<any>(
+          function (val, _data, _opts) {
+            return !val ? 0 : 1;
+          }
+        )),
         new Field('hives.modus_date')
           .getFormatter(Format.sqlDateToFormat('YYYY-MM-DD'))
           .setFormatter(Format.formatToSqlDate('YYYY-MM-DD')),

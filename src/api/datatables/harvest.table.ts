@@ -29,7 +29,11 @@ export class HarvestTable extends BaseTable {
 
         new Field('harvests.note').validator(Validate.xss()),
         new Field('harvests.url'),
-        new Field('harvests.done').validator(Validate.boolean()),
+        new Field('harvests.done').setFormatter(<any>(
+          function (val, _data, _opts) {
+            return !val ? 0 : 1;
+          }
+        )),
         new Field('harvests.type_id').options(
           <any>new Options().table('harvest_types').value('id').label(['name'])
         ),
