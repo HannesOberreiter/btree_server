@@ -5,7 +5,7 @@ import * as Express from 'express';
 
 import { Server as HttpServer } from 'http';
 import { Server as HttpsServer } from 'https';
-
+import { task } from '@cron/scheduler';
 import { Container } from '@config/container.config';
 
 /**
@@ -48,6 +48,10 @@ export class HTTPServer {
           );
         }
       });
+      /**
+       * @description Start Cron Jobs
+       */
+      task.start();
     } catch (error) {
       Container.resolve('Logger').log(
         'error',
