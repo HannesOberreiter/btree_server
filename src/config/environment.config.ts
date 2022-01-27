@@ -1,7 +1,7 @@
 import { ENVIRONMENT } from '@enums/environment.enum';
-import { list } from '@utils/enum.util';
 import p from 'path';
 import * as nodemailer from 'nodemailer';
+import dotenv from 'dotenv';
 
 /**
  * Configure dotenv with variables.env file before app, to allow process.env accessibility in
@@ -25,12 +25,14 @@ class EnvironmentConfiguration {
       process.argv[2] &&
       process.argv[2] === '--env' &&
       process.argv[3] &&
+      // eslint-disable-next-line no-prototype-builtins
       ENVIRONMENT.hasOwnProperty(process.argv[3])
     ) {
       this.environment = ENVIRONMENT[process.argv[3]];
     }
     if (
       process.env.ENVIRONMENT &&
+      // eslint-disable-next-line no-prototype-builtins
       ENVIRONMENT.hasOwnProperty(process.env.ENVIRONMENT)
     ) {
       this.environment = process.env.ENVIRONMENT as ENVIRONMENT;
@@ -43,7 +45,6 @@ class EnvironmentConfiguration {
   static load() {
     this.set();
     // https://www.npmjs.com/package/dotenv
-    const dotenv = require('dotenv');
     const result = dotenv.config({
       path: p.join(__dirname, `../../env/${this.environment}.env`)
     });
@@ -53,24 +54,23 @@ class EnvironmentConfiguration {
   }
 
   static async mail() {
-    let mailConfig = {
-        host: process.env.MAIL_SMTP,
-        port: Number(process.env.MAIL_PORT),
-        secure: true,
-        auth: {
-            user: process.env.MAIL_FROM,
-            pass: process.env.MAIL_PASSWORD
-        }
+    const mailConfig = {
+      host: process.env.MAIL_SMTP,
+      port: Number(process.env.MAIL_PORT),
+      secure: true,
+      auth: {
+        user: process.env.MAIL_FROM,
+        pass: process.env.MAIL_PASSWORD
+      }
     };
-    if(this.environment !== 'production'){
-      let testAccount = await nodemailer.createTestAccount();
+    if (this.environment !== 'production') {
+      const testAccount = await nodemailer.createTestAccount();
       mailConfig.secure = false;
       mailConfig.auth.user = testAccount.user;
       mailConfig.auth.pass = testAccount.pass;
     }
     return mailConfig;
   }
-
 }
 
 EnvironmentConfiguration.load();
@@ -85,6 +85,7 @@ const jwtExpirationInterval: number = parseInt(
   process.env.JWT_EXPIRATION_MINUTES
 );
 const logs = process.env.NODE_ENV === 'production' ? 'combined' : 'development';
+// https://github.com/expressjs/morgan
 const httpLogs = process.env.NODE_ENV === 'production' ? 'combined' : 'dev';
 const contentType = process.env.CONTENT_TYPE;
 

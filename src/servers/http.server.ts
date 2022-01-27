@@ -1,12 +1,11 @@
 import { ENVIRONMENT } from '@enums/environment.enum';
-import { env, port, mailConfig } from '@config/environment.config';
+import { env, port } from '@config/environment.config';
 
 import * as Express from 'express';
 
-import { readFileSync } from 'fs';
 import { Server as HttpServer } from 'http';
-import { Server as HttpsServer, createServer } from 'https';
-
+import { Server as HttpsServer } from 'https';
+import { task } from '@cron/scheduler';
 import { Container } from '@config/container.config';
 
 /**
@@ -49,6 +48,10 @@ export class HTTPServer {
           );
         }
       });
+      /**
+       * @description Start Cron Jobs
+       */
+      task.start();
     } catch (error) {
       Container.resolve('Logger').log(
         'error',

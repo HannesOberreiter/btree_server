@@ -11,7 +11,10 @@ export class OptionRouter extends Router {
   define() {
     this.router
       .route('/table/:table')
-      .get(Validator.handleOption, Container.resolve('OptionController').getTable);
+      .get(
+        Validator.handleOption,
+        Container.resolve('OptionController').getTable
+      );
 
     // Get Task Dropdowns for QuickTool
     // also returns a timestamp, as we don't need really to fetch it every time
@@ -22,7 +25,5 @@ export class OptionRouter extends Router {
         Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
         Container.resolve('OptionController').getDropdowns
       );
-  
   }
-
 }

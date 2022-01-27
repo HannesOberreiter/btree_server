@@ -17,5 +17,6 @@ export abstract class Router {
   /**
    * @description Plug routes definitions
    */
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   protected define(): void {}
 }

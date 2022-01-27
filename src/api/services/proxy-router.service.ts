@@ -29,20 +29,19 @@ export class ProxyRouter {
    * @description Routes descriptions
    */
   private routes = [
-    { segment: '', router: RootRouter, serializable: false },
-    { segment: '/company/', router: CompanyRouter, serializable: false },
-    { segment: '/hive/', router: HiveRouter, serializable: false },
+    { segment: '', router: RootRouter },
+    { segment: '/company/', router: CompanyRouter },
+    { segment: '/hive/', router: HiveRouter },
 
-    { segment: '/charge/', router: ChargeRouter, serializable: false },
-    { segment: '/checkup/', router: CheckupRouter, serializable: false },
-    { segment: '/feed/', router: FeedRouter, serializable: false },
-    { segment: '/harvest/', router: HarvestRouter, serializable: false },
-    { segment: '/treatment/', router: TreatmentRouter, serializable: false },
+    { segment: '/charge/', router: ChargeRouter },
+    { segment: '/checkup/', router: CheckupRouter },
+    { segment: '/feed/', router: FeedRouter },
+    { segment: '/harvest/', router: HarvestRouter },
+    { segment: '/treatment/', router: TreatmentRouter },
 
-    { segment: '/option/', router: OptionRouter, serializable: false },
-    { segment: '/user/', router: UserRouter, serializable: false },
-    { segment: '/auth/', router: AuthRouter, serializable: false },
-
+    { segment: '/option/', router: OptionRouter },
+    { segment: '/user/', router: UserRouter },
+    { segment: '/auth/', router: AuthRouter }
   ];
 
   constructor() {
@@ -56,8 +55,6 @@ export class ProxyRouter {
   private plug() {
     this.routes.forEach((route: IRoute) => {
       const router = new route.router().router;
-      //const alternatives = route.serializable ? [ router, Serializer.serialize ] : router;
-      //this.router.use( route.segment, alternatives );
       this.router.use(route.segment, router);
     });
   }

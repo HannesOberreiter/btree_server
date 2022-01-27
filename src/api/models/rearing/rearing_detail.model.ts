@@ -28,7 +28,7 @@ export class RearingDetail extends Model {
       job: { type: 'string', minLength: 1, maxLength: 50 },
       hour: { type: 'integer' },
       note: { type: 'string', maxLength: 2000 },
-      user_id: { type: 'integer' }, // Company FK
+      user_id: { type: 'integer' } // Company FK
     }
   };
 

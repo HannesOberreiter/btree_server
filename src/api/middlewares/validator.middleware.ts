@@ -6,9 +6,7 @@ import { validationResult, ValidationChain } from 'express-validator';
 import { OPTION } from '@enums/options.enum';
 
 export class Validator {
-  constructor() {}
-
-  static handleOption = (req: Request, res: Response, next: Function) => {
+  static handleOption = (req: Request, res: Response, next) => {
     if (!(req.params.table in OPTION)) {
       return next(notFound());
     }
@@ -16,7 +14,7 @@ export class Validator {
   };
 
   static validate = (validations: ValidationChain[]) => {
-    return async (req: Request, res: Response, next: Function) => {
+    return async (req: Request, res: Response, next) => {
       await Promise.all(validations.map((validation) => validation.run(req)));
 
       const errors = validationResult(req);
@@ -30,31 +28,29 @@ export class Validator {
     };
   };
 
-  static check = (schema: Record<string, ObjectSchema>) => (
-    req: Request,
-    res: Response,
-    next: (e?: Error) => void
-  ): void => {
-    const error = ['query', 'body', 'params']
-      .filter((property: string) => schema[property] && req[property])
-      .map(
-        (property: string): { error: any } =>
-          schema[property].validate(req[property], {
-            abortEarly: true,
-            allowUnknown: false
-          }) as { error: any }
-      )
-      .filter((result) => result.error)
-      .map((result) => result.error as Error)
-      .slice()
-      .shift();
+  static check =
+    (schema: Record<string, ObjectSchema>) =>
+    (req: Request, res: Response, next: (e?: Error) => void): void => {
+      const error = ['query', 'body', 'params']
+        .filter((property: string) => schema[property] && req[property])
+        .map(
+          (property: string): { error: any } =>
+            schema[property].validate(req[property], {
+              abortEarly: true,
+              allowUnknown: false
+            }) as { error: any }
+        )
+        .filter((result) => result.error)
+        .map((result) => result.error as Error)
+        .slice()
+        .shift();
 
-    if (error) {
-      const err = badRequest();
-      err.output.payload.message = error['details'];
-      return next(err);
-    }
+      if (error) {
+        const err = badRequest();
+        err.output.payload.message = error['details'];
+        return next(err);
+      }
 
-    next();
-  };
+      next();
+    };
 }

@@ -5,8 +5,6 @@ import { Container } from '@config/container.config';
 import { getErrorStatusCode, getErrorOutput } from '@utils/error.util';
 
 export class Catcher {
-  constructor() {}
-
   /**
    * @description Write errors in a log file
    *
@@ -15,7 +13,7 @@ export class Catcher {
    * @param {Response} res Express response object
    * @param {Function} next Callback function
    */
-  static log = (err: Error, req: Request, res: Response, next: Function) => {
+  static log = (err: Error, req: Request, res: Response, next) => {
     const message =
       req.method +
       ' ' +
@@ -38,7 +36,7 @@ export class Catcher {
    * @param {Response} res Express response object
    * @param {Function} next Callback function
    */
-  static exit = (err: any, req: Request, res: Response, next: Function) => {
+  static exit = (err: any, req: Request, res: Response, _next) => {
     res.status(getErrorStatusCode(err));
     res.json(getErrorOutput(err));
   };
@@ -50,7 +48,7 @@ export class Catcher {
    * @param {Response} res Express response object
    * @param {Function} next Callback function
    */
-  static notFound = (req: Request, res: Response, next: Function) => {
+  static notFound = (req: Request, res: Response, _next) => {
     res.status(404);
     res.json(getErrorOutput(notFound('End point not found')));
   };

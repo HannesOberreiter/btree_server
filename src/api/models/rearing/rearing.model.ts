@@ -63,6 +63,6 @@ export class Rearing extends Model {
         from: ['rearings.type_id'],
         to: ['rearing_types.id']
       }
-    },
+    }
   });
 }

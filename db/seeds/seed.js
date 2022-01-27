@@ -1,16 +1,14 @@
 require('module-alias/register');
-
-const { stream } = require('winston');
-const { env } = require("../../dist/config/environment.config");
+const env = require("../../dist/config/environment.config");
+const fs = require('fs');
 
 if(env === "production"){
   console.log("No seeding allowed in production environment!")
-  exports.seed = function(knex) {
+  exports.seed = function(_knex) {
     return false;
   }
 } else {
   exports.seed = function(knex) {
-    const fs = require('fs');
     
     let tables = [];
     fs.readdirSync(__dirname+`/data/`).forEach(file => {

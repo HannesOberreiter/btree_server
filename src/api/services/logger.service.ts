@@ -41,6 +41,6 @@ export class Logger {
    * @param {object} scope
    */
   log(level: string, message: string, scope: { label: string }) {
-    this.logger[level](message, scope.label);
+    this.logger[level](message, { label: scope.label });
   }
 }

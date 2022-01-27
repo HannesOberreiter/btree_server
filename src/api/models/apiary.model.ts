@@ -13,7 +13,7 @@ export class Apiary extends ExtModel {
   modus!: boolean;
   deleted!: boolean;
   user_id!: number;
-  
+
   static tableName = 'apiaries';
   static idColumn = 'id';
 

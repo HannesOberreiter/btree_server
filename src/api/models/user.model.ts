@@ -92,4 +92,5 @@ export class User extends ExtModel {
   });
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type UserShape = ModelObject<User>;

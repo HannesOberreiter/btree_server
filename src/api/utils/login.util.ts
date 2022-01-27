@@ -2,13 +2,7 @@ import { User } from '@models/user.model';
 import { LoginAttemp } from '@models/login_attempt.model';
 
 import { checkMySQLError } from '@utils/error.util';
-import {
-  badRequest,
-  expectationFailed,
-  locked,
-  notFound,
-  unauthorized
-} from '@hapi/boom';
+import { locked, notFound, unauthorized } from '@hapi/boom';
 
 import dayjs from 'dayjs';
 import { createHash } from 'crypto';
@@ -82,7 +76,7 @@ const checkPassword = (
   inputPassword: string,
   dbPassword: string,
   salt: string,
-  hash: string = 'sha512'
+  hash = 'sha512'
 ) => {
   // We first need to hash the inputPassword, this is due to an old code
   // in my first app I did hash the password on login page before sending to server

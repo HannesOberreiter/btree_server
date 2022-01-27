@@ -1,33 +1,34 @@
 import { Model } from 'objection';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const AjvValidator = require('objection').AjvValidator;
-import addFormats from "ajv-formats";
+import addFormats from 'ajv-formats';
 
 export class BaseModel extends Model {
   constructor() {
     super();
   }
   // Fix to change date-time from ISOFormat to MySQL Format
-  $beforeValidate(jsonSchema, json, opt) {
-    Object.keys(jsonSchema.properties).map(function(key, index) {
+  $beforeValidate(jsonSchema, json, _opt) {
+    Object.keys(jsonSchema.properties).map(function (key, _index) {
       const format = jsonSchema.properties[key].format;
-      console.log(format)
-      if(format && typeof format !== "undefined" &&
-        format === "date-time"
-        ){
-          const valueToValidate = json[key];
-          if (valueToValidate !== null && (valueToValidate instanceof Date)) {
-            json[key] = valueToValidate.toISOString().slice(0, 19).replace('T', ' ');
-          }
+      if (format && typeof format !== 'undefined' && format === 'date-time') {
+        const valueToValidate = json[key];
+        if (valueToValidate !== null && valueToValidate instanceof Date) {
+          json[key] = valueToValidate
+            .toISOString()
+            .slice(0, 19)
+            .replace('T', ' ');
         }
+      }
     });
-  return jsonSchema;
+    return jsonSchema;
   }
   // Using formats package to evaluate json type formats
   // https://ajv.js.org/options.html#usage
   static createValidator() {
     return new AjvValidator({
-      onCreateAjv: ajv => {
-        addFormats(ajv)
+      onCreateAjv: (ajv) => {
+        addFormats(ajv);
       },
       options: {
         allErrors: true,

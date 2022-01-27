@@ -26,7 +26,7 @@ export class RearingType extends Model {
       id: { type: 'integer' },
       name: { type: 'string', minLength: 1, maxLength: 45 },
       note: { type: 'string', maxLength: 2000 },
-      user_id: { type: 'integer' }, // Company FK
+      user_id: { type: 'integer' } // Company FK
     }
   };
 

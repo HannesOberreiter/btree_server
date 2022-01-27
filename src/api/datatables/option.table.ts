@@ -12,8 +12,16 @@ export class OptionTable extends BaseTable {
       new Field(option + '.name')
         .validator(Validate.required())
         .validator(Validate.notEmpty()),
-      new Field(option + '.modus').validator(Validate.boolean()),
-      new Field(option + '.favorite').validator(Validate.boolean()),
+      new Field(option + '.modus').setFormatter(<any>(
+        function (val, _data, _opts) {
+          return !val ? 0 : 1;
+        }
+      )),
+      new Field(option + '.favorite').setFormatter(<any>(
+        function (val, _data, _opts) {
+          return !val ? 0 : 1;
+        }
+      )),
       new Field(option + '.user_id').validator(Validate.required()),
       new Field(option + '.created_at')
         .getFormatter(Format.sqlDateToFormat('YYYY-MM-DD HH:mm:ss'))

@@ -8,7 +8,7 @@ export class CompanyController extends Controller {
     super();
   }
 
-  async get(req: Request, res: Response, next: Function) {
+  async get(req: Request, res: Response, next) {
     try {
       let editor = ApiaryTable.table();
       await editor.process(req.body);
