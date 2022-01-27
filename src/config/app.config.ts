@@ -104,9 +104,14 @@ export class Application {
      *
      * @see https://www.npmjs.com/package/body-parser
      */
-    this.app.use(BodyParser.urlencoded({ extended: false }));
-    this.app.use(BodyParser.json({ type: contentType }));
-
+    this.app.use(
+      BodyParser.urlencoded({
+        limit: '50mb',
+        extended: true,
+        parameterLimit: 10000
+      })
+    );
+    this.app.use(BodyParser.json({ type: contentType, limit: '50mb' }));
     /**
      * Prevent request parameter pollution
      *
