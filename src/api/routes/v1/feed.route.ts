@@ -14,5 +14,11 @@ export class FeedRouter extends Router {
         Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
         Container.resolve('FeedController').getTable
       );
+    this.router
+      .route('/table')
+      .post(
+        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+        Container.resolve('FeedController').getTable
+      );
   }
 }
