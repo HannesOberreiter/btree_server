@@ -31,22 +31,60 @@ export class FeedTable extends BaseTable {
           return !val ? 0 : 1;
         }),
         new Field('feed_types.name').set(false),
-        new Field('feeds.type_id').options(
-          <any>new Options()
-            .table('feed_types')
-            .value('id')
-            .label(['name'])
-            .order('favorite desc, name')
-            .where(function () {
-              this.where('modus', 1);
-              this.where('user_id', user.user_id);
-            })
-        ),
+        new Field('feeds.type_id')
+          .validator(Validate.notEmpty())
+          .validator(
+            Validate.dbValues(
+              new Validate.Options({
+                empty: false
+              })
+            )
+          )
+          .options(
+            <any>new Options()
+              .table('feed_types')
+              .value('id')
+              .label(['name', 'modus'])
+              .order('modus desc, favorite desc, name')
+              .where(function () {
+                this.where('user_id', user.user_id);
+              })
+              .render((row: any) => {
+                const isInactive = row.modus === 0 ? '(Inactive)' : '';
+                return `${row.name} ${isInactive}`;
+              })
+          ),
 
         new Field('feeds.deleted').validator(Validate.boolean()),
         new Field('feeds.deleted_at')
           .getFormatter(Format.sqlDateToFormat('YYYY-MM-DD HH:mm:ss'))
           .setFormatter(Format.formatToSqlDate('YYYY-MM-DD HH:mm:ss')),
+
+        // Hives
+        new Field('hives.name').set(false),
+        new Field('feeds.hive_id')
+          .validator(Validate.notEmpty())
+          .validator(
+            Validate.dbValues(
+              new Validate.Options({
+                empty: false
+              })
+            )
+          )
+          .options(
+            <any>new Options()
+              .table('hives_locations')
+              .value('hive_id')
+              .label(['hive_name', 'hive_modus', 'apiary_name'])
+              .order('hive_modus desc, hive_name')
+              .where(function () {
+                this.where('user_id', user.user_id);
+              })
+              .render((row: any) => {
+                const isInactive = row.hive_modus === 0 ? '(Inactive)' : '';
+                return `${row.hive_name} [${row.apiary_name}] ${isInactive}`;
+              })
+          ),
 
         // View
         new Field('feeds_apiaries.apiary_name').set(false),
@@ -76,16 +114,14 @@ export class FeedTable extends BaseTable {
       .leftJoin('bees as bees2', 'feeds.edit_id', '=', 'bees2.id')
       .on('preCreate', (editor, _values) => {
         editor.field('feeds.bee_id').setValue(user.bee_id);
-        //editor.field('feeds.created_at').setValue(dayjs().toISOString());
+        editor.field('feeds.created_at').setValue(dayjs().toISOString());
       })
       .on('preEdit', (editor, _values) => {
         editor.field('feeds.edit_id').setValue(user.bee_id);
         editor.field('feeds.updated_at').setValue(dayjs().toISOString());
       });
 
-    editor.where(function () {
-      this.where('apiaries.user_id', user.bee_id);
-    });
+    editor.where('apiaries.user_id', user.bee_id);
 
     return editor;
   }

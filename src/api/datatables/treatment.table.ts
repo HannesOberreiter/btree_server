@@ -1,4 +1,5 @@
 import { BaseTable } from '@datatables/base.table';
+import dayjs from 'dayjs';
 import {
   Editor,
   Field,
@@ -12,7 +13,7 @@ export class TreatmentTable extends BaseTable {
     super();
   }
 
-  static table() {
+  static table({ user }) {
     const editor = new Editor(this.db, 'treatments')
       .fields(
         new Field('treatments.date')
@@ -32,30 +33,127 @@ export class TreatmentTable extends BaseTable {
             return !val ? 0 : 1;
           }
         )),
-        new Field('treatments.type_id').options(
-          <any>(
-            new Options().table('treatment_types').value('id').label(['name'])
+        new Field('treatment_diseases.name').set(false),
+        new Field('treatments.disease_id')
+          .validator(Validate.notEmpty())
+          .validator(
+            Validate.dbValues(
+              new Validate.Options({
+                empty: false
+              })
+            )
           )
-        ),
-        new Field('treatments.disease_id').options(
-          <any>(
-            new Options()
+          .options(
+            <any>new Options()
               .table('treatment_diseases')
               .value('id')
-              .label(['name'])
+              .label(['name', 'modus'])
+              .order('modus desc, favorite desc, name')
+              .where(function () {
+                this.where('user_id', user.user_id);
+              })
+              .render((row: any) => {
+                const isInactive = row.modus === 0 ? '(Inactive)' : '';
+                return `${row.name} ${isInactive}`;
+              })
+          ),
+
+        new Field('treatment_vets.name').set(false),
+        new Field('treatments.vet_id')
+          .validator(Validate.notEmpty())
+          .validator(
+            Validate.dbValues(
+              new Validate.Options({
+                empty: false
+              })
+            )
           )
-        ),
-        new Field('treatments.vet_id').options(
-          <any>new Options().table('treatment_vets').value('id').label(['name'])
-        ),
+          .options(
+            <any>new Options()
+              .table('treatment_vets')
+              .value('id')
+              .label(['name', 'modus'])
+              .order('modus desc, favorite desc, name')
+              .where(function () {
+                this.where('user_id', user.user_id);
+              })
+              .render((row: any) => {
+                const isInactive = row.modus === 0 ? '(Inactive)' : '';
+                return `${row.name} ${isInactive}`;
+              })
+          ),
+
+        new Field('treatment_types.name').set(false),
+        new Field('treatments.type_id')
+          .validator(Validate.notEmpty())
+          .validator(
+            Validate.dbValues(
+              new Validate.Options({
+                empty: false
+              })
+            )
+          )
+          .options(
+            <any>new Options()
+              .table('treatment_types')
+              .value('id')
+              .label(['name', 'modus'])
+              .order('modus desc, favorite desc, name')
+              .where(function () {
+                this.where('user_id', user.user_id);
+              })
+              .render((row: any) => {
+                const isInactive = row.modus === 0 ? '(Inactive)' : '';
+                return `${row.name} ${isInactive}`;
+              })
+          ),
+
         new Field('treatments.deleted').validator(Validate.boolean()),
         new Field('treatments.deleted_at')
           .getFormatter(Format.sqlDateToFormat('YYYY-MM-DD HH:mm:ss'))
           .setFormatter(Format.formatToSqlDate('YYYY-MM-DD HH:mm:ss')),
+        // Hives
+        new Field('hives.name').set(false),
+        new Field('treatments.hive_id')
+          .validator(Validate.notEmpty())
+          .validator(
+            Validate.dbValues(
+              new Validate.Options({
+                empty: false
+              })
+            )
+          )
+          .options(
+            <any>new Options()
+              .table('hives_locations')
+              .value('hive_id')
+              .label(['hive_name', 'hive_modus', 'apiary_name'])
+              .order('hive_modus desc, hive_name')
+              .where(function () {
+                this.where('user_id', user.user_id);
+              })
+              .render((row: any) => {
+                const isInactive = row.hive_modus === 0 ? '(Inactive)' : '';
+                return `${row.hive_name} [${row.apiary_name}] ${isInactive}`;
+              })
+          ),
+        // View
+        new Field('treatments_apiaries.apiary_name').set(false),
+        new Field('treatments_apiaries.apiary_id').set(false),
+        new Field('apiaries.modus').set(false),
+        // User Data
+        new Field('bees.email').set(false),
+        new Field('bees.lastname').set(false),
+        new Field('treatments.bee_id').set(Field.SetType.Create),
         new Field('treatments.created_at')
+          .set(Field.SetType.Create)
           .getFormatter(Format.sqlDateToFormat('YYYY-MM-DD HH:mm:ss'))
           .setFormatter(Format.formatToSqlDate('YYYY-MM-DD HH:mm:ss')),
+        new Field('bees2.email').set(false),
+        new Field('bees2.lastname').set(false),
+        new Field('treatments.edit_id').set(Field.SetType.Edit),
         new Field('treatments.updated_at')
+          .set(Field.SetType.Edit)
           .getFormatter(Format.sqlDateToFormat('YYYY-MM-DD HH:mm:ss'))
           .setFormatter(Format.formatToSqlDate('YYYY-MM-DD HH:mm:ss'))
       )
@@ -71,12 +169,27 @@ export class TreatmentTable extends BaseTable {
         '=',
         'treatments.disease_id'
       )
+      .leftJoin('treatment_vets', 'treatment_vets.id', '=', 'treatments.vet_id')
       .leftJoin(
-        'treatment_vets',
-        'treatment_vets.id',
+        'treatments_apiaries',
+        'treatments_apiaries.treatment_id',
         '=',
-        'treatments.vet_id'
-      );
+        'treatments.id'
+      )
+      .leftJoin('apiaries', 'apiaries.id', '=', 'treatments_apiaries.apiary_id')
+      .leftJoin('hives', 'hives.id', '=', 'treatments.hive_id')
+      .leftJoin('bees', 'treatments.bee_id', '=', 'bees.id')
+      .leftJoin('bees as bees2', 'treatments.edit_id', '=', 'bees2.id')
+      .on('preCreate', (editor, _values) => {
+        editor.field('treatments.bee_id').setValue(user.bee_id);
+        editor.field('treatments.created_at').setValue(dayjs().toISOString());
+      })
+      .on('preEdit', (editor, _values) => {
+        editor.field('treatments.edit_id').setValue(user.bee_id);
+        editor.field('treatments.updated_at').setValue(dayjs().toISOString());
+      });
+
+    editor.where('apiaries.user_id', user.bee_id);
 
     return editor;
   }
