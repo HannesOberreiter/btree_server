@@ -1,18 +1,28 @@
-import cron from 'node-cron';
+import cron from 'node-schedule';
 import { Container } from '@config/container.config';
 
-const task = cron.schedule(
-  // https://crontab.guru/
-  '*/10 * * * *',
-  () => {
-    Container.resolve('Logger').log('info', `Test Cron-Job`, {
-      label: 'CronJob'
-    });
+const task = {
+  start: () => {
+    const rule = '0 */12 * * *';
+    Container.resolve('Logger').log(
+      'info',
+      `Test Cron-Job is starting with rule: ${rule}`,
+      { label: 'Server' }
+    );
+    cron.scheduleJob(
+      {
+        // https://crontab.guru/
+        rule: rule,
+        tz: 'Europe/Vienna'
+      },
+      function () {
+        Container.resolve('Logger').log('info', `Test Cron-Job`, {
+          label: 'CronJob'
+        });
+      }
+    );
   },
-  {
-    scheduled: true,
-    timezone: 'Europe/Vienna'
-  }
-);
+  stop: () => cron.gracefulShutdown()
+};
 
 export { task };
