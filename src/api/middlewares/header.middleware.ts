@@ -18,7 +18,7 @@ export class Header {
       if (!req.headers['content-type']) {
         return next(
           notAcceptable(
-            `Content-Type header must be ${contentType} or 'multipart/form-data`
+            `Content-Type header must be ${contentType} or multipart/form-data`
           )
         );
       }
