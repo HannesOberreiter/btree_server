@@ -23,7 +23,7 @@ export class BaseOptionModel extends ExtModel {
     properties: {
       id: { type: 'integer' },
       name: { type: 'string', minLength: 1, maxLength: 45 },
-      favorite: { type: 'favorite' },
+      favorite: { type: 'boolean' },
       modus: { type: 'boolean' },
       created_at: { type: 'string', format: 'date-time' },
       updated_at: { type: 'string', format: 'date-time' }

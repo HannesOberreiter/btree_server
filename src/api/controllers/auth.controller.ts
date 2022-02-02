@@ -60,13 +60,13 @@ export class AuthController extends Controller {
       const result = await resetMail(u.id);
 
       const mailer = new MailService();
-      await mailer.sendMail(
-        result.email,
-        result.lang,
-        'pw_reset',
-        result.firstname + ' ' + result.lastname,
-        result.reset
-      );
+      await mailer.sendMail({
+        to: result.email,
+        lang: result.lang,
+        subject: 'pw_reset',
+        name: result.firstname + ' ' + result.lastname,
+        key: result.reset
+      });
 
       // TODO Send Email, with rest key
       console.log(result.reset);
@@ -123,11 +123,22 @@ export class AuthController extends Controller {
         await CompanyBee.query(trx).insert({ bee_id: u.id, user_id: c.id });
         await autoFill(trx, c.id, autofillLang);
       });
-      // TODO Send Email
-      res.locals.data = {
-        confirm: inputUser.reset
-      };
-      next();
+
+      try {
+        const mailer = new MailService();
+        await mailer.sendMail({
+          to: inputUser.email,
+          lang: inputUser.lang,
+          subject: 'register',
+          email: inputUser.email,
+          key: inputUser.reset
+        });
+
+        res.locals.data = { email: inputUser.email, activate: inputUser.reset };
+        next();
+      } catch (e) {
+        next(e);
+      }
     } catch (e) {
       next(checkMySQLError(e));
     }

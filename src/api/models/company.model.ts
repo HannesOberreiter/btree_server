@@ -23,7 +23,7 @@ export class Company extends ExtModel {
     required: ['name'],
     properties: {
       id: { type: 'integer' },
-      name: { type: 'string', minLength: 1, maxLength: 45 },
+      name: { type: 'string', minLength: 3, maxLength: 45 },
       paid: { type: 'string', format: 'date' },
 
       image: { type: 'string', minLength: 1, maxLength: 65 },

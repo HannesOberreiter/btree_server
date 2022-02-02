@@ -38,12 +38,35 @@ const updateLastLogin = async (bee_id: number) => {
 const fetchUser = async (email: string) => {
   try {
     const user = await User.query()
+      .select(
+        'id',
+        'email',
+        'saved_company',
+        'lastname',
+        'password',
+        'salt',
+        'firstname',
+        'state',
+        'lang',
+        'format',
+        'sound',
+        'todo',
+        'acdate'
+      )
       .findOne({
         'bees.email': email
       })
-      .withGraphJoined('company')
-      .withGraphJoined('company_bee');
-
+      .withGraphFetched('company(cm)')
+      .modifiers({
+        cm(builder) {
+          builder.select(
+            'companies.id',
+            'companies.name',
+            'companies.paid',
+            'company_bee.rank'
+          );
+        }
+      });
     return user;
   } catch (e) {
     throw checkMySQLError(e);

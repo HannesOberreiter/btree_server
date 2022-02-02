@@ -1,7 +1,7 @@
 <mjml>
   <mj-head>
 
-    <mj-title>Willkommen bei b.tree</mj-title>
+    <mj-title>Welcome to b.tree</mj-title>
 
     <mj-include path="./partials/style.mjml" />
   </mj-head>
@@ -11,9 +11,9 @@
      <mj-section padding="0 20px 20px 20px" background-color="#FFFFFF">
       <mj-column>
         <mj-text align="left" padding-top="10px" font-weight="300" padding="0px">
-          Liebe/r Imker/in, <br/><br/>
-          willkommen bei b.tree, die Webapplikation für Hobby und auch Berufsimker.<br/>
-          Als kleines Dankeschön, für dein Interesse an unserer App, hat dein Account automatisch <b>einen Monat Premium Mitgliedschaft</b> gutgeschrieben bekommen!
+          Dear Beekeeper!<br/><br/>
+          Welcome to b.tree, the online beekeeping webapplication for hobby and commercial beekeeper!
+          As small welcome present, your account received <b> one month of premium membership for free.</b>
         </mj-text>
       </mj-column>
     </mj-section>
@@ -21,9 +21,9 @@
       <mj-section>
         <mj-column>
           <mj-text align="left" padding="20px 20px 20px 20px" font-weight="500">
-            Bitte aktiviere deinen Account vor dem ersten Login!<br/><br/>
+            Please activate your account before you login!<br/><br/>
             <b>Username:</b> %mail%<br/>
-            <b>Aktivierung:</b> <a href="%base_url%login/%mail%">%base_url%login/%mail%</a><br/>
+            <b>Activate:</b> <a href="%base_url%login/%key%">%base_url%login/%key%</a><br/>
             <b>Login:</b> <a href="%base_url%">%base_url%</a>
           </mj-text>
         </mj-column>
@@ -33,7 +33,7 @@
     <mj-section padding="0 20px 20px 20px" background-color="#FFFFFF">
       <mj-column>
         <mj-text align="left" padding-top="10px" font-weight="300" padding="0px">
-          In der Webapplikation findest du eine <a href="%base_url%documentation/">Dokumentation</a>, welche dir bei den ersten Schritten helfen soll! Ansonsten stehen wir die gerne jederzeit zur Verfügung <a href="mailto:office@btree.at">office@btree.at</a>
+          Inside the webapplication you find the <a href="%base_url%documentation/">documentation</a>, wich should help you with your first steps. If you have more questions feel free to contact us <a href="mailto:office@btree.at">office@btree.at</a>
         </mj-text>
       </mj-column>
     </mj-section>
