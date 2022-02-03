@@ -49,7 +49,7 @@ export class Application {
   private options = {
     cors: {
       origin: (origin, callback) => {
-        if (authorized.indexOf(origin) !== -1) {
+        if (authorized.indexOf(origin) !== -1 || !origin) {
           callback(null, true);
         } else {
           callback(notAcceptable(`Domain not allowed by CORS: ${origin}`));
