@@ -23,7 +23,7 @@ import {
 import { loginCheck } from '@utils/login.util';
 import { autoFill } from '@utils/autofill.util';
 
-import { badRequest } from '@hapi/boom';
+import { badRequest, forbidden } from '@hapi/boom';
 import dayjs from 'dayjs';
 
 export class AuthController extends Controller {
@@ -54,7 +54,10 @@ export class AuthController extends Controller {
       email: email
     });
     if (!u) {
-      return next(badRequest('User not found!'));
+      // "Best Practice" don't tell anyone if the user exists
+      // return next(badRequest('User not found!'));
+      res.locals.data = { email: email };
+      next();
     }
     try {
       const result = await resetMail(u.id);
@@ -68,8 +71,6 @@ export class AuthController extends Controller {
         key: result.reset
       });
 
-      // TODO Send Email, with rest key
-      console.log(result.reset);
       res.locals.data = { email: result.email };
       next();
     } catch (e) {
@@ -83,15 +84,19 @@ export class AuthController extends Controller {
       reset: key
     });
     if (!u) {
-      return next(badRequest('Reset key not found!'));
+      return next(forbidden('Reset key not found!'));
     }
     if (dayjs().diff(u.reset_timestamp, 'hours') > 24) {
-      return next(badRequest('Reset key too old!'));
+      return next(forbidden('Reset key too old!'));
     }
     try {
       const result = await resetPassword(u.id, password);
-      // TODO Send Email, that password got changed
-      console.log(result);
+      const mailer = new MailService();
+      await mailer.sendMail({
+        to: result.email,
+        lang: result.lang,
+        subject: 'pw_reseted'
+      });
       res.locals.data = { email: result.email };
       next();
     } catch (e) {

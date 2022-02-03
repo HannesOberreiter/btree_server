@@ -42,7 +42,7 @@ export class AuthRouter extends Router {
 
     this.router
       .route('/reset')
-      .get(
+      .post(
         Validator.validate([body('email').isEmail()]),
         Container.resolve('AuthController').resetRequest
       );
@@ -51,7 +51,7 @@ export class AuthRouter extends Router {
       .route('/reset')
       .patch(
         Validator.validate([
-          body('key').isLength({ min: 128, max: 128 }),
+          body('key').isLength({ min: 100, max: 128 }),
           body('password').isLength({ min: 6, max: 128 })
         ]),
         Container.resolve('AuthController').resetPassword
