@@ -91,7 +91,7 @@ const checkRefreshToken = async (
   expires: string
 ) => {
   if (dayjs(expires) < dayjs()) {
-    throw badRequest('Refresh Token expired');
+    throw unauthorized('Refresh Token expired');
   }
 
   // Use the old accessToken as additional security measure to check if refresh token, user_id and bee_id is connected
@@ -99,7 +99,7 @@ const checkRefreshToken = async (
   jwt.verify(oldAccessToken, jwtSecret, (err) => {
     if (err) {
       if (err.name !== 'TokenExpiredError') {
-        throw badRequest(err.name);
+        throw unauthorized(err.name);
       }
     }
   });
@@ -116,7 +116,7 @@ const checkRefreshToken = async (
   if (dbCheck) {
     refreshToken = await updateRefreshToken(dbCheck, decoded.user_id);
   } else {
-    throw badRequest('Refresh Token not found!');
+    throw unauthorized('Refresh Token not found!');
   }
 
   const companyBee = await CompanyBee.query()
@@ -128,7 +128,7 @@ const checkRefreshToken = async (
 
   if (!companyBee) {
     // User could be removed from company
-    throw badRequest('Invalid Company / Bee Connection');
+    throw unauthorized('Invalid Company / Bee Connection');
   }
 
   const { accessToken, expiresIn } = createAccessToken(
