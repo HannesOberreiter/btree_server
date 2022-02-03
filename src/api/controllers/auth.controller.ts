@@ -38,7 +38,7 @@ export class AuthController extends Controller {
       reset: key
     });
     if (!u) {
-      return next(badRequest('Confirm Key not found'));
+      return next(forbidden('Confirm Key not found'));
     }
     try {
       const result = await confirmAccount(u.id);

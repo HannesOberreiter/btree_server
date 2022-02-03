@@ -35,8 +35,8 @@ export class AuthRouter extends Router {
 
     this.router
       .route('/confirm')
-      .post(
-        Validator.validate([body('confirm').isLength({ min: 128, max: 128 })]),
+      .patch(
+        Validator.validate([body('confirm').isLength({ min: 100, max: 128 })]),
         Container.resolve('AuthController').confirmMail
       );
 

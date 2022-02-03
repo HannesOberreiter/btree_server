@@ -245,8 +245,13 @@ const resetPassword = async (id: number, inputPassword: string) => {
   const { salt, password } = createHashedPassword(inputPassword);
   try {
     const u = await User.transaction(async (trx) => {
+      /*
+      We also activate the account, this is so that we can tell our customers if they did not recive an
+      activation email they can use the password reset function
+      */
       const u = await User.query(trx).patchAndFetchById(id, {
         reset: '',
+        state: 1,
         password: password,
         salt: salt
       });

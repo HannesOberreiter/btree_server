@@ -8,11 +8,11 @@
   <mj-body background-color="#F2F2F2">
     <mj-include path="./partials/header.mjml" />
 
-     <mj-section padding="0 20px 20px 20px" background-color="#FFFFFF">
+    <mj-section padding="0 20px 20px 20px" background-color="#FFFFFF">
       <mj-column>
         <mj-text align="left" padding-top="10px" font-weight="300" padding="0px">
-          Liebe/r Imker/in, <br/><br/>
-          willkommen bei b.tree, die Webapplikation für Hobby und auch Berufsimker.<br/>
+          Liebe/r Imker/in, <br /><br />
+          willkommen bei b.tree, die Webapplikation für Hobby und auch Berufsimker.<br />
           Als kleines Dankeschön, für dein Interesse an unserer App, hat dein Account automatisch <b>einen Monat Premium Mitgliedschaft</b> gutgeschrieben bekommen!
         </mj-text>
       </mj-column>
@@ -21,9 +21,9 @@
       <mj-section>
         <mj-column>
           <mj-text align="left" padding="20px 20px 20px 20px" font-weight="500">
-            Bitte aktiviere deinen Account vor dem ersten Login!<br/><br/>
-            <b>Username:</b> %mail%<br/>
-            <b>Aktivierung:</b> <a href="%base_url%login/%key%">%base_url%login/%key%</a><br/>
+            Bitte aktiviere deinen Account vor dem ersten Login!<br /><br />
+            <b>Username:</b> %mail%<br />
+            <b>Aktivierung:</b> <a href="%base_url%activate/%key%">%base_url%login/%key%</a><br />
             <b>Login:</b> <a href="%base_url%">%base_url%</a>
           </mj-text>
         </mj-column>
