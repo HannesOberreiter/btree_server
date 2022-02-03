@@ -13,6 +13,8 @@ export class User extends ExtModel {
   salt!: string;
   lang!: string;
   state!: number;
+  acdate!: boolean;
+  newsletter!: boolean;
   saved_company!: number;
   reset_timestamp!: Date;
   last_visit!: Date;

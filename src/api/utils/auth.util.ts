@@ -212,6 +212,20 @@ const confirmAccount = async (id: number) => {
   }
 };
 
+const unsubscribeMail = async (id: number) => {
+  try {
+    const u = await User.transaction(async (trx) => {
+      const u = await User.query(trx).patchAndFetchById(id, {
+        newsletter: false
+      });
+      return u.email;
+    });
+    return u;
+  } catch (e) {
+    throw checkMySQLError(e);
+  }
+};
+
 const resetMail = async (id: number) => {
   try {
     const u = await User.transaction(async (trx) => {
@@ -250,5 +264,6 @@ export {
   createHashedPassword,
   confirmAccount,
   resetMail,
-  resetPassword
+  resetPassword,
+  unsubscribeMail
 };

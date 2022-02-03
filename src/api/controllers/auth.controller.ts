@@ -17,7 +17,8 @@ import {
   createHashedPassword,
   confirmAccount,
   resetMail,
-  resetPassword
+  resetPassword,
+  unsubscribeMail
 } from '@utils/auth.util';
 
 import { loginCheck } from '@utils/login.util';
@@ -72,6 +73,26 @@ export class AuthController extends Controller {
       });
 
       res.locals.data = { email: result.email };
+      next();
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  async unsubscribeRequest(req: Request, res: Response, next: NextFunction) {
+    const email = req.body.email;
+    const u = await User.query().findOne({
+      email: email
+    });
+    if (!u) {
+      // "Best Practice" don't tell anyone if the user exists
+      // return next(badRequest('User not found!'));
+      res.locals.data = { email: email };
+      next();
+    }
+    try {
+      const result = await unsubscribeMail(u.id);
+      res.locals.data = { email: result };
       next();
     } catch (e) {
       next(e);

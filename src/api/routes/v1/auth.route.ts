@@ -58,6 +58,13 @@ export class AuthRouter extends Router {
       );
 
     this.router
+      .route('/unsubscribe')
+      .patch(
+        Validator.validate([body('email').isEmail()]),
+        Container.resolve('AuthController').unsubscribeRequest
+      );
+
+    this.router
       .route('/refresh')
       .post(
         Validator.validate([body('token'), body('expires').isISO8601()]),
