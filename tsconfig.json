@@ -64,18 +64,16 @@
       ],
     },
     "lib": [
-      "dom",
-      "es5",
-      "es6",
-      "es7"
+      "es2021"
     ],
-    "target": "es2017",
+    "target": "es2021",
     "module": "commonjs",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
   },
   "include": [
     "src/**/*",

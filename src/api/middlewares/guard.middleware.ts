@@ -1,5 +1,5 @@
 import passport from 'passport';
-import { forbidden, badRequest } from '@hapi/boom';
+import { forbidden, badRequest, unauthorized } from '@hapi/boom';
 
 import { ROLES } from '@enums/role.enum';
 import { listNumber } from '@utils/enum.util';
@@ -38,7 +38,7 @@ export class Guard {
       const error = err || info;
 
       if (error || !user) {
-        return next(badRequest(info?.name));
+        return next(unauthorized(info?.name));
       }
 
       if (

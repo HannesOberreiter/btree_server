@@ -17,13 +17,14 @@ import {
   createHashedPassword,
   confirmAccount,
   resetMail,
-  resetPassword
+  resetPassword,
+  unsubscribeMail
 } from '@utils/auth.util';
 
 import { loginCheck } from '@utils/login.util';
 import { autoFill } from '@utils/autofill.util';
 
-import { badRequest } from '@hapi/boom';
+import { badRequest, forbidden } from '@hapi/boom';
 import dayjs from 'dayjs';
 
 export class AuthController extends Controller {
@@ -37,7 +38,7 @@ export class AuthController extends Controller {
       reset: key
     });
     if (!u) {
-      return next(badRequest('Confirm Key not found'));
+      return next(forbidden('Confirm Key not found'));
     }
     try {
       const result = await confirmAccount(u.id);
@@ -54,23 +55,44 @@ export class AuthController extends Controller {
       email: email
     });
     if (!u) {
-      return next(badRequest('User not found!'));
+      // "Best Practice" don't tell anyone if the user exists
+      // return next(badRequest('User not found!'));
+      res.locals.data = { email: email };
+      next();
     }
     try {
       const result = await resetMail(u.id);
 
       const mailer = new MailService();
-      await mailer.sendMail(
-        result.email,
-        result.lang,
-        'pw_reset',
-        result.firstname + ' ' + result.lastname,
-        result.reset
-      );
+      await mailer.sendMail({
+        to: result.email,
+        lang: result.lang,
+        subject: 'pw_reset',
+        name: result.firstname + ' ' + result.lastname,
+        key: result.reset
+      });
 
-      // TODO Send Email, with rest key
-      console.log(result.reset);
       res.locals.data = { email: result.email };
+      next();
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  async unsubscribeRequest(req: Request, res: Response, next: NextFunction) {
+    const email = req.body.email;
+    const u = await User.query().findOne({
+      email: email
+    });
+    if (!u) {
+      // "Best Practice" don't tell anyone if the user exists
+      // return next(badRequest('User not found!'));
+      res.locals.data = { email: email };
+      next();
+    }
+    try {
+      const result = await unsubscribeMail(u.id);
+      res.locals.data = { email: result };
       next();
     } catch (e) {
       next(e);
@@ -83,15 +105,19 @@ export class AuthController extends Controller {
       reset: key
     });
     if (!u) {
-      return next(badRequest('Reset key not found!'));
+      return next(forbidden('Reset key not found!'));
     }
     if (dayjs().diff(u.reset_timestamp, 'hours') > 24) {
-      return next(badRequest('Reset key too old!'));
+      return next(forbidden('Reset key too old!'));
     }
     try {
       const result = await resetPassword(u.id, password);
-      // TODO Send Email, that password got changed
-      console.log(result);
+      const mailer = new MailService();
+      await mailer.sendMail({
+        to: result.email,
+        lang: result.lang,
+        subject: 'pw_reseted'
+      });
       res.locals.data = { email: result.email };
       next();
     } catch (e) {
@@ -123,11 +149,22 @@ export class AuthController extends Controller {
         await CompanyBee.query(trx).insert({ bee_id: u.id, user_id: c.id });
         await autoFill(trx, c.id, autofillLang);
       });
-      // TODO Send Email
-      res.locals.data = {
-        confirm: inputUser.reset
-      };
-      next();
+
+      try {
+        const mailer = new MailService();
+        await mailer.sendMail({
+          to: inputUser.email,
+          lang: inputUser.lang,
+          subject: 'register',
+          email: inputUser.email,
+          key: inputUser.reset
+        });
+
+        res.locals.data = { email: inputUser.email, activate: inputUser.reset };
+        next();
+      } catch (e) {
+        next(e);
+      }
     } catch (e) {
       next(checkMySQLError(e));
     }

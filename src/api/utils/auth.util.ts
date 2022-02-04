@@ -2,7 +2,7 @@ import { CompanyBee } from '@models/company_bee.model';
 import { User } from '@models/user.model';
 import { RefreshToken } from '@models/refresh_token.model';
 
-import { expectationFailed, unauthorized } from '@hapi/boom';
+import { expectationFailed, unauthorized, badRequest } from '@hapi/boom';
 import dayjs from 'dayjs';
 
 import { randomBytes, createHash } from 'crypto';
@@ -98,7 +98,7 @@ const checkRefreshToken = async (
   // only allow expired tokens
   jwt.verify(oldAccessToken, jwtSecret, (err) => {
     if (err) {
-      if (err.name != 'TokenExpiredError') {
+      if (err.name !== 'TokenExpiredError') {
         throw unauthorized(err.name);
       }
     }
@@ -212,6 +212,20 @@ const confirmAccount = async (id: number) => {
   }
 };
 
+const unsubscribeMail = async (id: number) => {
+  try {
+    const u = await User.transaction(async (trx) => {
+      const u = await User.query(trx).patchAndFetchById(id, {
+        newsletter: false
+      });
+      return u.email;
+    });
+    return u;
+  } catch (e) {
+    throw checkMySQLError(e);
+  }
+};
+
 const resetMail = async (id: number) => {
   try {
     const u = await User.transaction(async (trx) => {
@@ -231,8 +245,13 @@ const resetPassword = async (id: number, inputPassword: string) => {
   const { salt, password } = createHashedPassword(inputPassword);
   try {
     const u = await User.transaction(async (trx) => {
+      /*
+      We also activate the account, this is so that we can tell our customers if they did not recive an
+      activation email they can use the password reset function
+      */
       const u = await User.query(trx).patchAndFetchById(id, {
         reset: '',
+        state: 1,
         password: password,
         salt: salt
       });
@@ -250,5 +269,6 @@ export {
   createHashedPassword,
   confirmAccount,
   resetMail,
-  resetPassword
+  resetPassword,
+  unsubscribeMail
 };

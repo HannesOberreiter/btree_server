@@ -13,6 +13,8 @@ export class User extends ExtModel {
   salt!: string;
   lang!: string;
   state!: number;
+  acdate!: boolean;
+  newsletter!: boolean;
   saved_company!: number;
   reset_timestamp!: Date;
   last_visit!: Date;
@@ -30,23 +32,23 @@ export class User extends ExtModel {
       id: { type: 'integer' },
       firstName: { type: 'string', minLength: 1, maxLength: 45 },
       lastName: { type: 'string', minLength: 1, maxLength: 45 },
-      email: { type: 'string', format: 'email', minLength: 1, maxLength: 100 },
+      email: { type: 'string', format: 'email', minLength: 5, maxLength: 100 },
 
-      password: { type: 'string', minLength: 1, maxLength: 128 },
-      salt: { type: 'string', minLength: 1, maxLength: 128 },
+      password: { type: 'string', minLength: 6, maxLength: 128 },
+      salt: { type: 'string', minLength: 10, maxLength: 128 },
 
       reset: { type: 'string', maxLength: 128 },
       reset_timestamp: { type: 'string', format: 'date-time' },
 
       state: { type: 'integer' },
-      lang: { type: 'string', minLength: 1, maxLength: 3 },
+      lang: { type: 'string', minLength: 2, maxLength: 3 },
       acdate: { type: 'boolean' },
       newsletter: { type: 'boolean' },
       todo: { type: 'boolean' },
       sound: { type: 'boolean' },
       tablexscroll: { type: 'boolean' },
 
-      source: { type: 'string', minLength: 1, maxLength: 45 },
+      source: { type: 'string', minLength: 1, maxLength: 20 },
 
       saved_company: { type: 'integer' },
 
@@ -86,7 +88,7 @@ export class User extends ExtModel {
       modelClass: CompanyBee,
       join: {
         from: 'bees.id',
-        to: 'company_bee.id'
+        to: 'company_bee.bee_id'
       }
     }
   });

@@ -15,15 +15,12 @@ export class Header {
   static check =
     ({ contentType }) =>
     (req: Request, res: Response, next) => {
-      if (!req.headers['content-type']) {
+      if (!req.headers['content-type'] && req.method !== 'GET') {
         return next(
           notAcceptable(
-            `Content-Type header must be ${contentType} or 'multipart/form-data`
+            `Content-Type header must be ${contentType} or multipart/form-data`
           )
         );
-      }
-      if (!req.headers['origin']) {
-        return next(notAcceptable(`Origin header must be specified`));
       }
       next();
     };

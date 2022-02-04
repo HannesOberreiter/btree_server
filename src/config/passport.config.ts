@@ -21,7 +21,7 @@ export class PassportConfiguration {
     next: (e?: Error, v?: any | boolean) => void
   ) => {
     try {
-      if (user.bee_id & user.user_id & user.rank) {
+      if (user.bee_id && user.user_id && user.rank) {
         return next(null, user);
       }
       return next(null, false);

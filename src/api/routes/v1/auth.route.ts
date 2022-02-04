@@ -35,14 +35,14 @@ export class AuthRouter extends Router {
 
     this.router
       .route('/confirm')
-      .post(
-        Validator.validate([body('confirm').isLength({ min: 128, max: 128 })]),
+      .patch(
+        Validator.validate([body('confirm').isLength({ min: 100, max: 128 })]),
         Container.resolve('AuthController').confirmMail
       );
 
     this.router
       .route('/reset')
-      .get(
+      .post(
         Validator.validate([body('email').isEmail()]),
         Container.resolve('AuthController').resetRequest
       );
@@ -51,10 +51,17 @@ export class AuthRouter extends Router {
       .route('/reset')
       .patch(
         Validator.validate([
-          body('key').isLength({ min: 128, max: 128 }),
+          body('key').isLength({ min: 100, max: 128 }),
           body('password').isLength({ min: 6, max: 128 })
         ]),
         Container.resolve('AuthController').resetPassword
+      );
+
+    this.router
+      .route('/unsubscribe')
+      .patch(
+        Validator.validate([body('email').isEmail()]),
+        Container.resolve('AuthController').unsubscribeRequest
       );
 
     this.router
