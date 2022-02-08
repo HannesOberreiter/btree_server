@@ -14,7 +14,7 @@ export class TreatmentController extends Controller {
     try {
       let editor = TreatmentTable.table(req);
 
-      editor.on('preDelete', (_editor, _values) => {
+      editor.on('preRemove', (_editor, _values) => {
         Guard.authorize([ROLES.admin])(req, res, next);
       });
       editor.on('preCreate', (_editor, _values) => {

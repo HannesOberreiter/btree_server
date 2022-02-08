@@ -5,6 +5,7 @@ import { CheckupTable } from '@datatables/checkup.table';
 import { IUserRequest } from '@interfaces/IUserRequest.interface';
 import { Guard } from '@middlewares/guard.middleware';
 import { ROLES } from '@enums/role.enum';
+import { checkItemUser } from '@utils/datatables.util';
 
 export class CheckupController extends Controller {
   constructor() {
@@ -15,14 +16,24 @@ export class CheckupController extends Controller {
     try {
       let editor = CheckupTable.table(req);
 
-      editor.on('preDelete', (_editor, _values) => {
-        Guard.authorize([ROLES.admin])(req, res, next);
-      });
-      editor.on('preCreate', (_editor, _values) => {
-        Guard.authorize([ROLES.user, ROLES.admin])(req, res, next);
-      });
-      editor.on('preEdit', (_editor, _values) => {
-        Guard.authorize([ROLES.user, ROLES.admin])(req, res, next);
+      editor.validator(async (editor, action, data) => {
+        let allowed = true;
+        if (action !== undefined && action !== 'remove') {
+          allowed = Guard.authorizeDataTables([ROLES.user, ROLES.admin])(
+            req,
+            res
+          );
+          if (!allowed) {
+            return 'Not enough rights!';
+          }
+        }
+        if (action === 'remove') {
+          const check = await checkItemUser(data.data, req);
+          allowed = Guard.authorizeDataTables([ROLES.admin])(req, res);
+          if (!check || !allowed) {
+            return 'Not allowed to delete or modify data!';
+          }
+        }
       });
 
       await editor.process(req.body);
