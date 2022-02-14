@@ -21,5 +21,11 @@ export class CheckupRouter extends Router {
         Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
         Container.resolve('CheckupController').getTable
       );
+    this.router
+      .route('/status')
+      .patch(
+        Guard.authorize([ROLES.admin, ROLES.user]),
+        Container.resolve('CheckupController').updateStatus
+      );
   }
 }

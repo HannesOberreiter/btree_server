@@ -2,7 +2,7 @@ import { ExtModel } from '@models/base.model';
 import { Hive } from '@models/hive.model';
 import { User } from '@models/user.model';
 import { CheckupType } from '@models/option/checkup_type.model';
-
+import { CheckupApiary } from '@models//checkup_apiary.model';
 export class Checkup extends ExtModel {
   id!: number;
   date!: Date;
@@ -32,11 +32,14 @@ export class Checkup extends ExtModel {
   done!: boolean;
   deleted!: boolean;
 
+  edit_id!: number;
+
   static tableName = 'checkups';
   static idColumn = 'id';
 
   type?: CheckupType;
-  company?: Hive;
+  hive?: Hive;
+  checkup_apiary?: CheckupApiary;
   creator?: User;
   editor?: User;
 
@@ -99,6 +102,14 @@ export class Checkup extends ExtModel {
       join: {
         from: ['checkups.hive_id'],
         to: ['hives.id']
+      }
+    },
+    checkup_apiary: {
+      relation: ExtModel.HasOneRelation,
+      modelClass: CheckupApiary,
+      join: {
+        from: ['checkups_apiaries.checkup_id'],
+        to: ['checkups.id']
       }
     },
     creator: {

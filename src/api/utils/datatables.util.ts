@@ -8,8 +8,9 @@ const filterIds = (obj) => {
   return ids;
 };
 
-const checkItemUser = async (obj, { user }) => {
-  const ids = filterIds(obj);
+const checkItemUser = async (obj, { user }, datatable = true) => {
+  let ids = obj;
+  if (datatable) ids = filterIds(obj);
   const dbCheck = await CheckupApiary.query()
     .findByIds(ids)
     .where('user_id', user.user_id);

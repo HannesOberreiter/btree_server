@@ -9,7 +9,6 @@ export class CalendarRouter extends Router {
   constructor() {
     super();
   }
-
   define() {
     this.router
       .route('/checkups')
@@ -23,6 +22,45 @@ export class CalendarRouter extends Router {
         ]),
         Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
         Container.resolve('CalendarController').getCheckups
+      );
+    this.router
+      .route('/treatments')
+      .get(
+        Validator.validate([
+          query('start').isString(),
+          query('end').isString(),
+          query('startStr').isString(),
+          query('endStr').isString(),
+          query('timeZone').isString()
+        ]),
+        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+        Container.resolve('CalendarController').getTreatments
+      );
+    this.router
+      .route('/harvests')
+      .get(
+        Validator.validate([
+          query('start').isString(),
+          query('end').isString(),
+          query('startStr').isString(),
+          query('endStr').isString(),
+          query('timeZone').isString()
+        ]),
+        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+        Container.resolve('CalendarController').getHarvests
+      );
+    this.router
+      .route('/feeds')
+      .get(
+        Validator.validate([
+          query('start').isString(),
+          query('end').isString(),
+          query('startStr').isString(),
+          query('endStr').isString(),
+          query('timeZone').isString()
+        ]),
+        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+        Container.resolve('CalendarController').getFeeds
       );
   }
 }
