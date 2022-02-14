@@ -5,6 +5,8 @@ import { CompanyController } from '@controllers/company.controller';
 import { UserController } from '@controllers/user.controller';
 import { AuthController } from '@controllers/auth.controller';
 
+import { CalendarController } from '@controllers/calendar.controller';
+
 import { ChargeController } from '@controllers/charge.controller';
 import { CheckupController } from '@controllers/checkup.controller';
 import { FeedController } from '@controllers/feed.controller';
@@ -32,6 +34,10 @@ export class Container {
       .register({ HiveController: awilix.asClass(HiveController).singleton() })
       .register({
         OptionController: awilix.asClass(OptionController).singleton()
+      })
+
+      .register({
+        CalendarController: awilix.asClass(CalendarController).singleton()
       })
 
       .register({

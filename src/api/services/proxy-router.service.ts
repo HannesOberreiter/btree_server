@@ -6,6 +6,8 @@ import { RootRouter } from '@routes/v1/root.route';
 import { CompanyRouter } from '@routes/v1/company.route';
 import { UserRouter } from '@routes/v1/user.route';
 
+import { CalendarRouter } from '@routes/v1/calendar.route';
+
 import { ChargeRouter } from '@routes/v1/charge.route';
 import { CheckupRouter } from '@routes/v1/checkup.route';
 import { FeedRouter } from '@routes/v1/feed.route';
@@ -32,6 +34,8 @@ export class ProxyRouter {
     { segment: '', router: RootRouter },
     { segment: '/company/', router: CompanyRouter },
     { segment: '/hive/', router: HiveRouter },
+
+    { segment: '/calendar/', router: CalendarRouter },
 
     { segment: '/charge/', router: ChargeRouter },
     { segment: '/checkup/', router: CheckupRouter },
