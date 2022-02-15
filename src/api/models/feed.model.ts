@@ -2,6 +2,7 @@ import { ExtModel } from '@models/base.model';
 import { Hive } from '@models/hive.model';
 import { User } from '@models/user.model';
 import { FeedType } from '@models/option/feed_type.model';
+import { FeedApiary } from '@models/feed_apiary.model';
 
 export class Feed extends ExtModel {
   id!: number;
@@ -12,11 +13,13 @@ export class Feed extends ExtModel {
   url!: string;
   done!: boolean;
   deleted!: boolean;
+  edit_id!: number;
 
   static tableName = 'feeds';
   static idColumn = 'id';
 
   type?: FeedType;
+  feed_apiary?: FeedApiary;
   company?: Hive;
   creator?: User;
   editor?: User;
@@ -61,6 +64,14 @@ export class Feed extends ExtModel {
       join: {
         from: ['feeds.hive_id'],
         to: ['hives.id']
+      }
+    },
+    feed_apiary: {
+      relation: ExtModel.HasOneRelation,
+      modelClass: FeedApiary,
+      join: {
+        from: ['feeds_apiaries.feed_id'],
+        to: ['feeds.id']
       }
     },
     creator: {

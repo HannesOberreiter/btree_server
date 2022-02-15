@@ -21,5 +21,17 @@ export class HarvestRouter extends Router {
         Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
         Container.resolve('HarvestController').getTable
       );
+    this.router
+      .route('/status')
+      .patch(
+        Guard.authorize([ROLES.admin, ROLES.user]),
+        Container.resolve('HarvestController').updateStatus
+      );
+    this.router
+      .route('/date')
+      .patch(
+        Guard.authorize([ROLES.admin, ROLES.user]),
+        Container.resolve('HarvestController').updateDate
+      );
   }
 }

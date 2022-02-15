@@ -8,6 +8,7 @@ import { Model } from 'objection';
  * Database connection manager for MySQL server
  */
 export class MySQLServer {
+  static knex = Knex(knexConfig);
   start(): void {
     try {
       const knex = Knex(knexConfig);

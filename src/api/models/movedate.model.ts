@@ -9,6 +9,7 @@ export class Movedate extends ExtModel {
   date!: Date;
   apiary_id!: number;
   hive_id!: number;
+  edit_id!: number;
 
   apiary?: Apiary;
   hive?: Hive;
@@ -24,6 +25,7 @@ export class Movedate extends ExtModel {
     properties: {
       id: { type: 'integer' },
       date: { type: 'string', format: 'date' },
+      edit_id: { type: 'integer' },
       apiary_id: { type: 'integer' }, // Apiary FK
       hive_id: { type: 'integer' } // Hive FK
     }

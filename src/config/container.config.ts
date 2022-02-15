@@ -5,12 +5,15 @@ import { CompanyController } from '@controllers/company.controller';
 import { UserController } from '@controllers/user.controller';
 import { AuthController } from '@controllers/auth.controller';
 
+import { CalendarController } from '@controllers/calendar.controller';
+
 import { ChargeController } from '@controllers/charge.controller';
 import { CheckupController } from '@controllers/checkup.controller';
 import { FeedController } from '@controllers/feed.controller';
 import { HarvestController } from '@controllers/harvest.controller';
 import { TreatmentController } from '@controllers/treatment.controller';
 
+import { MovedateController } from '@controllers/movedate.controller';
 import { HiveController } from '@controllers/hive.controller';
 import { OptionController } from '@controllers/options.controller';
 
@@ -35,6 +38,10 @@ export class Container {
       })
 
       .register({
+        CalendarController: awilix.asClass(CalendarController).singleton()
+      })
+
+      .register({
         ChargeController: awilix.asClass(ChargeController).singleton()
       })
       .register({
@@ -47,7 +54,9 @@ export class Container {
       .register({
         TreatmentController: awilix.asClass(TreatmentController).singleton()
       })
-
+      .register({
+        MovedateController: awilix.asClass(MovedateController).singleton()
+      })
       .register({ UserController: awilix.asClass(UserController).singleton() })
       .register({ AuthController: awilix.asClass(AuthController).singleton() })
       .register({ Logger: awilix.asClass(Logger).singleton() })
