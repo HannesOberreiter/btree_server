@@ -4,8 +4,8 @@ import { User } from '@models/user.model';
 import { TreatmentType } from '@models/option/treatment_type.model';
 import { TreatmentDisease } from '@models/option/treatment_disease.model';
 import { TreatmentVet } from '@models/option/treatment_vet.model';
-
-export class Harvest extends ExtModel {
+import { TreatmentApiary } from '@models/treatment_apiary.model';
+export class Treatment extends ExtModel {
   id!: number;
   date!: Date;
   enddate!: Date;
@@ -15,6 +15,7 @@ export class Harvest extends ExtModel {
   url!: string;
   done!: boolean;
   deleted!: boolean;
+  edit_id!: number;
 
   static tableName = 'treatments';
   static idColumn = 'id';
@@ -22,6 +23,7 @@ export class Harvest extends ExtModel {
   type?: TreatmentType;
   disease?: TreatmentDisease;
   vet?: TreatmentVet;
+  treatment_apiary?: TreatmentApiary;
   company?: Hive;
   creator?: User;
   editor?: User;
@@ -86,6 +88,14 @@ export class Harvest extends ExtModel {
       join: {
         from: ['treatments.hive_id'],
         to: ['hives.id']
+      }
+    },
+    treatment_apiary: {
+      relation: ExtModel.HasOneRelation,
+      modelClass: TreatmentApiary,
+      join: {
+        from: ['treatments_apiaries.treatment_id'],
+        to: ['treatments.id']
       }
     },
     creator: {

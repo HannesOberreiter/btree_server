@@ -2,7 +2,7 @@ import { ExtModel } from '@models/base.model';
 import { Hive } from '@models/hive.model';
 import { User } from '@models/user.model';
 import { CheckupType } from '@models/option/checkup_type.model';
-import { CheckupApiary } from '@models//checkup_apiary.model';
+import { CheckupApiary } from '@models/checkup_apiary.model';
 export class Checkup extends ExtModel {
   id!: number;
   date!: Date;

@@ -21,5 +21,17 @@ export class TreatmentRouter extends Router {
         Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
         Container.resolve('TreatmentController').getTable
       );
+    this.router
+      .route('/status')
+      .patch(
+        Guard.authorize([ROLES.admin, ROLES.user]),
+        Container.resolve('TreatmentController').updateStatus
+      );
+    this.router
+      .route('/date')
+      .patch(
+        Guard.authorize([ROLES.admin, ROLES.user]),
+        Container.resolve('TreatmentController').updateDate
+      );
   }
 }

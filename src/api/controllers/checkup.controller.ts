@@ -62,4 +62,23 @@ export class CheckupController extends Controller {
       next(checkMySQLError(e));
     }
   }
+  async updateDate(req: IUserRequest, res: Response, next: NextFunction) {
+    try {
+      const result = await Checkup.transaction(async (trx) => {
+        return Checkup.query(trx)
+          .patch({
+            edit_id: req.user.bee_id,
+            date: req.body.start,
+            enddate: req.body.end
+          })
+          .findByIds(req.body.ids)
+          .leftJoinRelated('checkup_apiary')
+          .where('user_id', req.user.user_id);
+      });
+      res.locals.data = result;
+      next();
+    } catch (e) {
+      next(checkMySQLError(e));
+    }
+  }
 }

@@ -2,6 +2,7 @@ import { ExtModel } from '@models/base.model';
 import { Hive } from '@models/hive.model';
 import { User } from '@models/user.model';
 import { HarvestType } from '@models/option/harvest_type.model';
+import { HarvestApiary } from '@models/harvest_apiary.model';
 
 export class Harvest extends ExtModel {
   id!: number;
@@ -15,11 +16,13 @@ export class Harvest extends ExtModel {
   url!: string;
   done!: boolean;
   deleted!: boolean;
+  edit_id!: number;
 
   static tableName = 'harvests';
   static idColumn = 'id';
 
   type?: HarvestType;
+  harvest_apiary?: HarvestApiary;
   company?: Hive;
   creator?: User;
   editor?: User;
@@ -67,6 +70,14 @@ export class Harvest extends ExtModel {
       join: {
         from: ['harvests.hive_id'],
         to: ['hives.id']
+      }
+    },
+    harvest_apiary: {
+      relation: ExtModel.HasOneRelation,
+      modelClass: HarvestApiary,
+      join: {
+        from: ['harvests_apiaries.harvest_id'],
+        to: ['harvests.id']
       }
     },
     creator: {
