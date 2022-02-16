@@ -2,10 +2,35 @@ import { NextFunction, Response } from 'express';
 import { Controller } from '@classes/controller.class';
 import { checkMySQLError } from '@utils/error.util';
 import { IUserRequest } from '@interfaces/IUserRequest.interface';
-import { getTask, getMovements } from '@utils/calendar.util';
+import {
+  getTask,
+  getMovements,
+  getTodos,
+  getRearings
+} from '@utils/calendar.util';
 export class CalendarController extends Controller {
   constructor() {
     super();
+  }
+
+  async getRearings(req: IUserRequest, res: Response, next: NextFunction) {
+    try {
+      const result = await getRearings(req);
+      res.locals.data = result;
+    } catch (e) {
+      next(checkMySQLError(e));
+    }
+    next();
+  }
+
+  async getTodos(req: IUserRequest, res: Response, next: NextFunction) {
+    try {
+      const result = await getTodos(req);
+      res.locals.data = result;
+    } catch (e) {
+      next(checkMySQLError(e));
+    }
+    next();
   }
 
   async getMovements(req: IUserRequest, res: Response, next: NextFunction) {

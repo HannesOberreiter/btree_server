@@ -8,6 +8,8 @@ import { AuthController } from '@controllers/auth.controller';
 import { CalendarController } from '@controllers/calendar.controller';
 
 import { ChargeController } from '@controllers/charge.controller';
+import { TodoController } from '@controllers/todo.controller';
+
 import { CheckupController } from '@controllers/checkup.controller';
 import { FeedController } from '@controllers/feed.controller';
 import { HarvestController } from '@controllers/harvest.controller';
@@ -43,6 +45,9 @@ export class Container {
 
       .register({
         ChargeController: awilix.asClass(ChargeController).singleton()
+      })
+      .register({
+        TodoController: awilix.asClass(TodoController).singleton()
       })
       .register({
         CheckupController: awilix.asClass(CheckupController).singleton()
