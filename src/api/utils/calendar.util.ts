@@ -2,12 +2,91 @@ import dayjs from 'dayjs';
 import { intersection } from 'lodash';
 import { MySQLServer } from '@servers/mysql.server';
 import { Todo } from '@models/todo.model';
+import { Rearing } from '@models/rearing/rearing.model';
+import { RearingStep } from '@models/rearing/rearing_step.model';
 
 const convertDate = ({ start, end }) => {
   return {
     start: dayjs(start).toISOString(),
     end: dayjs(end).toISOString()
   };
+};
+
+const getRearings = async ({ query, user }) => {
+  // Because Rearings could goes over multiple months we add / substract here to catch them
+  const start = dayjs(query.start).subtract(2, 'month').toISOString();
+  const end = dayjs(query.end).add(2, 'month').toISOString();
+
+  /*
+   * Fetching Rearings and corresponding steps
+   */
+  const rearings: any = await Rearing.query()
+    .where('rearings.user_id', user.user_id)
+    .where('date', '>=', start)
+    .where('date', '<=', end)
+    .withGraphFetched('start')
+    .withGraphFetched('type');
+  const rearingsSteps = [];
+  for (const i in rearings) {
+    const res = rearings[i];
+    const steps: any = await RearingStep.query()
+      .where('type_id', res.type_id)
+      .withGraphFetched('detail')
+      .orderBy('position', 'asc');
+    res.steps = { ...steps };
+    for (const j in steps) {
+      if (steps[j].detail_id === res.start.id)
+        res.startPosition = steps[j].position;
+    }
+    rearingsSteps.push(res);
+  }
+  console.log(rearingsSteps);
+  /*
+   * Create ordered calendar events from starting step
+   */
+  const results = [];
+  for (const i in rearingsSteps) {
+    // addDate is helper for steps after selected step
+    let addDate = dayjs(rearingsSteps[i].date);
+    for (const j in rearingsSteps[i].steps) {
+      const result = { ...rearingsSteps[i] };
+      result.currentStep = { ...result.steps[j] };
+      if (result.startPosition === result.currentStep.position) {
+        console.log('test');
+        // Current Step is actual Start Step
+        result.start = dayjs(result.date).format('YYYY-MM-DD HH:00:00');
+      } else {
+        if (result.currentStep.position > result.startPosition) {
+          // Step comes behind Start Step, we can simply add up the hours
+          addDate = addDate.add(result.currentStep.detail.hour, 'hour');
+          result.start = addDate.format('YYYY-MM-DD HH:00:00');
+        } else {
+          // Step comes before Start Step, this is more complicated as
+          // we need to account for the steps which are coming before it
+          const steps_before =
+            result.startPosition - result.currentStep.position;
+          // subDate is helper to calculate the date
+          let subDate = dayjs(result.date);
+          for (let k = 0; k < steps_before; k++) {
+            subDate = subDate.subtract(result.steps[k].detail.hour, 'hour');
+          }
+          result.start = subDate.format('YYYY-MM-DD HH:00:00');
+        }
+      }
+      result.title = `${result.currentStep.detail.job} ID: ${result.id}`;
+      result.table = 'rearings';
+      result.allDay = false;
+      result.icon = 'venus';
+      result.color = '#f5dfef';
+      result.textColor = 'black';
+      result.end = result.start;
+      result.groupId = `Q${result.id}`;
+      result.durationEditable = false;
+      result.displayEventTime = true;
+      results.push(result);
+    }
+  }
+  return results;
 };
 
 const getTodos = async ({ query, user }) => {
@@ -19,7 +98,6 @@ const getTodos = async ({ query, user }) => {
     .where('date', '<=', end)
     .withGraphJoined('editor')
     .withGraphJoined('creator');
-  console.log(results);
   let result = [];
   for (const i in results) {
     const res = results[i];
@@ -140,4 +218,4 @@ const getTask = async ({ query, user }, task: string) => {
   return result;
 };
 
-export { getTask, getMovements, getTodos };
+export { getTask, getMovements, getTodos, getRearings };
