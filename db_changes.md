@@ -195,3 +195,8 @@ table hive_group is not anymore, need to get amount and save into grouphive fiel
 - removed user_id
 - time changed to datetime
 
+## customEvent
+
+- table renamed to todos
+- created renamed to created_at
+- edited renamed to edited_at

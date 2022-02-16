@@ -9,6 +9,7 @@ import { UserRouter } from '@routes/v1/user.route';
 import { CalendarRouter } from '@routes/v1/calendar.route';
 
 import { ChargeRouter } from '@routes/v1/charge.route';
+import { TodoRouter } from '@routes/v1/todo.route';
 import { CheckupRouter } from '@routes/v1/checkup.route';
 import { FeedRouter } from '@routes/v1/feed.route';
 import { HarvestRouter } from '@routes/v1/harvest.route';
@@ -39,6 +40,7 @@ export class ProxyRouter {
     { segment: '/calendar/', router: CalendarRouter },
 
     { segment: '/charge/', router: ChargeRouter },
+    { segment: '/todo/', router: TodoRouter },
     { segment: '/checkup/', router: CheckupRouter },
     { segment: '/feed/', router: FeedRouter },
     { segment: '/harvest/', router: HarvestRouter },

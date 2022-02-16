@@ -46,11 +46,18 @@ export class CalendarRouter extends Router {
         Container.resolve('CalendarController').getFeeds
       );
     this.router
-      .route('/movements')
+      .route('/movedates')
       .get(
         Validator.validate(CalendarParams),
         Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
         Container.resolve('CalendarController').getMovements
+      );
+    this.router
+      .route('/todos')
+      .get(
+        Validator.validate(CalendarParams),
+        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+        Container.resolve('CalendarController').getTodos
       );
   }
 }

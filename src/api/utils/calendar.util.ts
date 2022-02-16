@@ -1,12 +1,53 @@
 import dayjs from 'dayjs';
 import { intersection } from 'lodash';
 import { MySQLServer } from '@servers/mysql.server';
+import { Todo } from '@models/todo.model';
 
 const convertDate = ({ start, end }) => {
   return {
     start: dayjs(start).toISOString(),
     end: dayjs(end).toISOString()
   };
+};
+
+const getTodos = async ({ query, user }) => {
+  const { start, end } = convertDate(query);
+
+  const results: any = await Todo.query()
+    .where('user_id', user.user_id)
+    .where('date', '>=', start)
+    .where('date', '<=', end)
+    .withGraphJoined('editor')
+    .withGraphJoined('creator');
+  console.log(results);
+  let result = [];
+  for (const i in results) {
+    const res = results[i];
+    res.allDay = true;
+    res.task_ids = res.id;
+
+    res.start = dayjs(res.date).format('YYYY-MM-DD');
+    res.title = res.name;
+    res.icon = 'clipboard-list';
+    if (res.done === 1) {
+      res.color = 'green';
+    } else {
+      res.color = 'red';
+    }
+    res.table = 'todos';
+    if (res.editor) {
+      res.editors = res.editor.email;
+    } else {
+      res.editors = '';
+    }
+    if (res.creator) {
+      res.editors = res.creator.email;
+    } else {
+      res.creators = '';
+    }
+    result.push(res);
+  }
+  return result;
 };
 
 const getMovements = async ({ query, user }) => {
@@ -99,4 +140,4 @@ const getTask = async ({ query, user }, task: string) => {
   return result;
 };
 
-export { getTask, getMovements };
+export { getTask, getMovements, getTodos };
