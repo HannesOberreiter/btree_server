@@ -108,14 +108,14 @@ const getTask = async ({ query, user }, task: string) => {
     }
     if (task === 'checkups') {
       res.icon = 'search';
-      res.color = 'green';
+      res.color = '#067558';
     } else if (task === 'treatments') {
       res.icon = 'plus';
-      res.color = 'violet';
+      res.color = '#cc5b9a';
       res.title += ` (${res.disease_name})`;
     } else if (task === 'feeds') {
       res.icon = 'cube';
-      res.color = 'orange';
+      res.color = '#d55e00';
     } else if (task === 'harvests') {
       res.icon = 'tint';
       res.color = 'yellow';
