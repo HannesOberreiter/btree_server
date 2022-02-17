@@ -15,6 +15,8 @@ import { FeedRouter } from '@routes/v1/feed.route';
 import { HarvestRouter } from '@routes/v1/harvest.route';
 import { TreatmentRouter } from '@routes/v1/treatment.route';
 
+import { RearingRouter } from '@routes/v1/rearing.route';
+
 import { MovedateRouter } from '@routes/v1/movedate.route';
 import { HiveRouter } from '@routes/v1/hive.route';
 import { OptionRouter } from '@routes/v1/option.route';
@@ -45,6 +47,8 @@ export class ProxyRouter {
     { segment: '/feed/', router: FeedRouter },
     { segment: '/harvest/', router: HarvestRouter },
     { segment: '/treatment/', router: TreatmentRouter },
+
+    { segment: '/rearing/', router: RearingRouter },
 
     { segment: '/movedate/', router: MovedateRouter },
     { segment: '/option/', router: OptionRouter },

@@ -183,6 +183,8 @@ table hive_group is not anymore, need to get amount and save into grouphive fiel
 ## rear
 
 - table renamed to rearings
+- added FK bee_id, edit_id
+- added created_at timestamp and updated_at timestamp
 
 ## scale
 

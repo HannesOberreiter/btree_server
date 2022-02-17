@@ -15,6 +15,8 @@ import { FeedController } from '@controllers/feed.controller';
 import { HarvestController } from '@controllers/harvest.controller';
 import { TreatmentController } from '@controllers/treatment.controller';
 
+import { RearingController } from '@controllers/rearing.controller';
+
 import { MovedateController } from '@controllers/movedate.controller';
 import { HiveController } from '@controllers/hive.controller';
 import { OptionController } from '@controllers/options.controller';
@@ -37,6 +39,10 @@ export class Container {
       .register({ HiveController: awilix.asClass(HiveController).singleton() })
       .register({
         OptionController: awilix.asClass(OptionController).singleton()
+      })
+
+      .register({
+        RearingController: awilix.asClass(RearingController).singleton()
       })
 
       .register({

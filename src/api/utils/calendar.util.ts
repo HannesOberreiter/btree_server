@@ -40,7 +40,6 @@ const getRearings = async ({ query, user }) => {
     }
     rearingsSteps.push(res);
   }
-  console.log(rearingsSteps);
   /*
    * Create ordered calendar events from starting step
    */
@@ -50,9 +49,9 @@ const getRearings = async ({ query, user }) => {
     let addDate = dayjs(rearingsSteps[i].date);
     for (const j in rearingsSteps[i].steps) {
       const result = { ...rearingsSteps[i] };
+      result.steps = rearingsSteps[i].steps;
       result.currentStep = { ...result.steps[j] };
       if (result.startPosition === result.currentStep.position) {
-        console.log('test');
         // Current Step is actual Start Step
         result.start = dayjs(result.date).format('YYYY-MM-DD HH:00:00');
       } else {
@@ -73,6 +72,9 @@ const getRearings = async ({ query, user }) => {
           result.start = subDate.format('YYYY-MM-DD HH:00:00');
         }
       }
+      result.steps[j].date = result.start;
+      result.currentStep.date = result.start;
+
       result.title = `${result.currentStep.detail.job} ID: ${result.id}`;
       result.table = 'rearings';
       result.allDay = false;
@@ -81,8 +83,9 @@ const getRearings = async ({ query, user }) => {
       result.textColor = 'black';
       result.end = result.start;
       result.groupId = `Q${result.id}`;
-      result.durationEditable = false;
       result.displayEventTime = true;
+      result.durationEditable = false;
+
       results.push(result);
     }
   }
@@ -107,6 +110,8 @@ const getTodos = async ({ query, user }) => {
     res.start = dayjs(res.date).format('YYYY-MM-DD');
     res.title = res.name;
     res.icon = 'clipboard-list';
+    res.durationEditable = false;
+
     if (res.done === 1) {
       res.color = 'green';
     } else {
@@ -123,6 +128,7 @@ const getTodos = async ({ query, user }) => {
     } else {
       res.creators = '';
     }
+
     result.push(res);
   }
   return result;
@@ -150,6 +156,7 @@ const getMovements = async ({ query, user }) => {
     res.icon = 'truck-fast';
     res.color = 'gray';
     res.table = 'movedates';
+    res.durationEditable = false;
     if (res.editors) {
       res.editors = String(intersection(res.editors.split(',')));
     } else {
