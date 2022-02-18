@@ -1,7 +1,7 @@
 import { ExtModel } from '@models/base.model';
 import { User } from '@models/user.model';
 import { Company } from '@models/company.model';
-
+import { HiveCount } from '@models/hive_count.model';
 export class Apiary extends ExtModel {
   id!: number;
   name!: string;
@@ -20,6 +20,7 @@ export class Apiary extends ExtModel {
   company?: Company;
   creator?: User;
   editor?: User;
+  hive_count?: HiveCount;
 
   static jsonSchema = {
     type: 'object',
@@ -53,6 +54,14 @@ export class Apiary extends ExtModel {
       join: {
         from: ['apiaries.user_id'],
         to: ['company.id']
+      }
+    },
+    hive_count: {
+      relation: ExtModel.HasOneRelation,
+      modelClass: HiveCount,
+      join: {
+        from: ['hives_counts.id'],
+        to: ['apiaries.id']
       }
     },
     creator: {

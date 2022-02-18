@@ -19,6 +19,8 @@ import { RearingRouter } from '@routes/v1/rearing.route';
 
 import { MovedateRouter } from '@routes/v1/movedate.route';
 import { HiveRouter } from '@routes/v1/hive.route';
+import { ApiaryRouter } from '@routes/v1/apiary.route';
+
 import { OptionRouter } from '@routes/v1/option.route';
 import { AuthRouter } from '@routes/v1/auth.route';
 
@@ -38,6 +40,7 @@ export class ProxyRouter {
     { segment: '', router: RootRouter },
     { segment: '/company/', router: CompanyRouter },
     { segment: '/hive/', router: HiveRouter },
+    { segment: '/apiary/', router: ApiaryRouter },
 
     { segment: '/calendar/', router: CalendarRouter },
 

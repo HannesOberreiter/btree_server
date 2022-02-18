@@ -19,6 +19,8 @@ import { RearingController } from '@controllers/rearing.controller';
 
 import { MovedateController } from '@controllers/movedate.controller';
 import { HiveController } from '@controllers/hive.controller';
+import { ApiaryController } from '@controllers/apiary.controller';
+
 import { OptionController } from '@controllers/options.controller';
 
 import { Logger } from '@services/logger.service';
@@ -37,6 +39,10 @@ export class Container {
         CompanyController: awilix.asClass(CompanyController).singleton()
       })
       .register({ HiveController: awilix.asClass(HiveController).singleton() })
+      .register({
+        ApiaryController: awilix.asClass(ApiaryController).singleton()
+      })
+
       .register({
         OptionController: awilix.asClass(OptionController).singleton()
       })
