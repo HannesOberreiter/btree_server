@@ -26,13 +26,17 @@ export class CompanyController extends Controller {
 
   async patch(req: IUserRequest, res: Response, next: NextFunction) {
     try {
-      if (req.body.password)
+      if ('password' in req.body) {
         await reviewPassword(req.user.bee_id, req.body.password);
+        delete req.body.password;
+      }
       const result = await Company.transaction(async (trx) => {
         const company = await Company.query(trx).findById(req.user.user_id);
-        const api_change = req.body.api_change ? true : false;
-        delete req.body.password;
-        delete req.body.api_change;
+        let api_change = false;
+        if ('api_change' in req.body) {
+          api_change = req.body.api_change ? true : false;
+          delete req.body.api_change;
+        }
 
         const res = await company.$query().patchAndFetch({ ...req.body });
 
