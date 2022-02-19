@@ -63,6 +63,7 @@ const fetchUser = async (email: string) => {
             'companies.id',
             'companies.name',
             'companies.paid',
+            'companies.api_active',
             'company_bee.rank'
           );
         }
@@ -115,6 +116,14 @@ const checkPassword = (
   }
 };
 
+const reviewPassword = async (bee_id, password: string) => {
+  const user = await User.query().select('salt', 'password').findById(bee_id);
+  if (!checkPassword(password, user.password, user.salt)) {
+    throw unauthorized('invalid password');
+  }
+  return true;
+};
+
 const loginCheck = async (email: string, password: string) => {
   const user = await fetchUser(email);
   if (!user) {
@@ -156,4 +165,4 @@ const loginCheck = async (email: string, password: string) => {
   return { bee_id: user.id, user_id: company, data: user };
 };
 
-export { loginCheck };
+export { loginCheck, reviewPassword };

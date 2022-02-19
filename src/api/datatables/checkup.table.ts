@@ -25,41 +25,97 @@ export class CheckupTable extends BaseTable {
 
         new Field('checkups.queen').setFormatter(<any>(
           function (val, _data, _opts) {
-            return !val ? 0 : 1;
+            return val ? 0 : 1;
           }
         )),
         new Field('checkups.queencells').setFormatter(<any>(
           function (val, _data, _opts) {
-            return !val ? 0 : 1;
+            return val ? 0 : 1;
           }
         )),
         new Field('checkups.eggs').setFormatter(<any>(
           function (val, _data, _opts) {
-            return !val ? 0 : 1;
+            return val ? 0 : 1;
           }
         )),
         new Field('checkups.capped_brood').setFormatter(<any>(
           function (val, _data, _opts) {
-            return !val ? 0 : 1;
+            return val ? 0 : 1;
           }
         )),
 
-        new Field('checkups.brood').validator(Validate.numeric()),
-        new Field('checkups.pollen').validator(Validate.numeric()),
-        new Field('checkups.comb').validator(Validate.numeric()),
-        new Field('checkups.temper').validator(Validate.numeric()),
-        new Field('checkups.calm_comb').validator(Validate.numeric()),
-        new Field('checkups.swarm').validator(Validate.numeric()),
+        new Field('checkups.brood')
+          .validator(Validate.numeric())
+          .setFormatter(<any>function (val, _data, _opts) {
+            return !val ? 0 : val;
+          }),
+        new Field('checkups.pollen')
+          .validator(Validate.numeric())
+          .setFormatter(<any>function (val, _data, _opts) {
+            return !val ? 0 : val;
+          }),
+        new Field('checkups.comb')
+          .validator(Validate.numeric())
+          .setFormatter(<any>function (val, _data, _opts) {
+            return !val ? 0 : val;
+          }),
+        new Field('checkups.temper')
+          .validator(Validate.numeric())
+          .setFormatter(<any>function (val, _data, _opts) {
+            return !val ? 0 : val;
+          }),
+        new Field('checkups.calm_comb')
+          .validator(Validate.numeric())
+          .setFormatter(<any>function (val, _data, _opts) {
+            return !val ? 0 : val;
+          }),
+        new Field('checkups.swarm')
+          .validator(Validate.numeric())
+          .setFormatter(<any>function (val, _data, _opts) {
+            return !val ? 0 : val;
+          }),
 
-        new Field('checkups.varroa'),
-        new Field('checkups.strong').validator(Validate.numeric()),
-        new Field('checkups.temp').validator(Validate.numeric()),
-        new Field('checkups.weight').validator(Validate.numeric()),
+        new Field('checkups.varroa').setFormatter(<any>(
+          function (val, _data, _opts) {
+            return !val ? 0 : val;
+          }
+        )),
+        new Field('checkups.strong')
+          .validator(Validate.numeric())
+          .setFormatter(<any>function (val, _data, _opts) {
+            return !val ? 0 : val;
+          }),
+        new Field('checkups.temp')
+          .validator(Validate.numeric())
+          .setFormatter(<any>function (val, _data, _opts) {
+            return !val ? 0 : val;
+          }),
+        new Field('checkups.weight')
+          .validator(Validate.numeric())
+          .setFormatter(<any>function (val, _data, _opts) {
+            return !val ? 0 : val;
+          }),
         new Field('checkups.time'),
-        new Field('checkups.broodframes').validator(Validate.numeric()),
-        new Field('checkups.honeyframes').validator(Validate.numeric()),
-        new Field('checkups.foundation').validator(Validate.numeric()),
-        new Field('checkups.emptyframes'),
+        new Field('checkups.broodframes')
+          .validator(Validate.numeric())
+          .setFormatter(<any>function (val, _data, _opts) {
+            return !val ? 0 : val;
+          }),
+        new Field('checkups.honeyframes')
+          .validator(Validate.numeric())
+          .setFormatter(<any>function (val, _data, _opts) {
+            return !val ? 0 : val;
+          }),
+        new Field('checkups.foundation')
+          .validator(Validate.numeric())
+          .setFormatter(<any>function (val, _data, _opts) {
+            return !val ? 0 : val;
+          }),
+        new Field('checkups.emptyframes')
+          .validator(Validate.numeric())
+          .setFormatter(<any>function (val, _data, _opts) {
+            return !val ? 0 : val;
+          }),
         new Field('checkups.note').validator(Validate.xss()),
         new Field('checkups.url'),
         new Field('checkups.done').setFormatter(<any>(

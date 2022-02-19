@@ -14,6 +14,9 @@ export class Apiary extends ExtModel {
   deleted!: boolean;
   user_id!: number;
 
+  bee_id!: number;
+  edit_id!: number;
+
   static tableName = 'apiaries';
   static idColumn = 'id';
 
