@@ -112,7 +112,7 @@ const getTodos = async ({ query, user }) => {
     res.icon = 'clipboard-list';
     res.durationEditable = false;
 
-    if (res.done === 1) {
+    if (res.done) {
       res.color = 'green';
     } else {
       res.color = 'red';
@@ -206,7 +206,7 @@ const getTask = async ({ query, user }, task: string) => {
       res.color = 'yellow';
       res.textColor = 'black';
     }
-    if (res.done === 0) res.color = 'red';
+    if (res.done) res.color = 'red';
     res.table = task;
     if (res.editors) {
       res.editors = String(intersection(res.editors.split(',')));

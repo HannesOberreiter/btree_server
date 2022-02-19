@@ -30,19 +30,21 @@ export class UserController extends Controller {
   async patch(req: IUserRequest, res: Response, next) {
     const trx = await User.startTransaction();
     try {
-      await reviewPassword(req.user.bee_id, req.body.password);
-      delete req.body.password;
-      if ('email' in req.body) {
-        if (req.body.email === '') delete req.body.email;
-      }
-      if ('newPassword' in req.body) {
-        if (req.body.newPassword === '') {
-          delete req.body.newPassword;
-        } else {
-          const password = createHashedPassword(req.body.newPassword);
-          delete req.body.newPassword;
-          req.body.password = password.password;
-          req.body.salt = password.salt;
+      if ('password' in req.body) {
+        await reviewPassword(req.user.bee_id, req.body.password);
+        delete req.body.password;
+        if ('email' in req.body) {
+          if (req.body.email === '') delete req.body.email;
+        }
+        if ('newPassword' in req.body) {
+          if (req.body.newPassword === '') {
+            delete req.body.newPassword;
+          } else {
+            const password = createHashedPassword(req.body.newPassword);
+            delete req.body.newPassword;
+            req.body.password = password.password;
+            req.body.salt = password.salt;
+          }
         }
       }
 
