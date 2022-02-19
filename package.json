@@ -67,6 +67,7 @@
     "helmet": "^5.0.2",
     "hpp": "^0.2.3",
     "http-status": "^1.5.0",
+    "ical-generator": "^3.2.1",
     "joi": "^17.5.0",
     "jsonwebtoken": "^8.5.1",
     "knex": "^1.0.1",

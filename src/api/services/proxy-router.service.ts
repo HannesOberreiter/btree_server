@@ -3,6 +3,8 @@ import { Router } from 'express';
 import { IRoute } from '@interfaces/IRoute.interface';
 
 import { RootRouter } from '@routes/v1/root.route';
+import { ExternalRoute } from '@routes/v1/external.route';
+
 import { CompanyRouter } from '@routes/v1/company.route';
 import { UserRouter } from '@routes/v1/user.route';
 
@@ -38,6 +40,8 @@ export class ProxyRouter {
    */
   private routes = [
     { segment: '', router: RootRouter },
+    { segment: '/external/', router: ExternalRoute },
+
     { segment: '/company/', router: CompanyRouter },
     { segment: '/hive/', router: HiveRouter },
     { segment: '/apiary/', router: ApiaryRouter },

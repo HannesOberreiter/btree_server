@@ -1,6 +1,8 @@
 import * as awilix from 'awilix';
 
 import { RootController } from '@controllers/root.controller';
+import { ExternalController } from '@controllers/external.controller';
+
 import { CompanyController } from '@controllers/company.controller';
 import { UserController } from '@controllers/user.controller';
 import { AuthController } from '@controllers/auth.controller';
@@ -35,6 +37,10 @@ export class Container {
 
     this.container
       .register({ RootController: awilix.asClass(RootController).singleton() })
+      .register({
+        ExternalController: awilix.asClass(ExternalController).singleton()
+      })
+
       .register({
         CompanyController: awilix.asClass(CompanyController).singleton()
       })
