@@ -15,6 +15,7 @@ export class User extends ExtModel {
   state!: number;
   acdate!: boolean;
   newsletter!: boolean;
+  sound!: boolean;
   saved_company!: number;
   reset_timestamp!: Date;
   last_visit!: Date;

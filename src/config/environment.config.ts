@@ -96,7 +96,16 @@ const knexConfig = {
     database: process.env.DB_NAME,
     user: process.env.DB_USERNAME,
     password: process.env.DB_PASSWORD,
-    port: parseInt(process.env.DB_PORT)
+    port: parseInt(process.env.DB_PORT),
+    typeCast(field, next) {
+      // https://github.com/Vincit/objection.js/issues/174#issuecomment-424873063
+      // Convert 1 to true, 0 to false, and leave null alone
+      if (field.type === 'TINY' && field.length === 1) {
+        const value = field.string();
+        return value ? value === '1' : null;
+      }
+      return next();
+    }
   },
   debug: process.env.NODE_ENV === ENVIRONMENT.production ? false : true,
   pool: {

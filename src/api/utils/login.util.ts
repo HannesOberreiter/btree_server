@@ -51,7 +51,8 @@ const fetchUser = async (email: string) => {
         'format',
         'sound',
         'todo',
-        'acdate'
+        'acdate',
+        'newsletter'
       )
       .findOne({
         'bees.email': email
