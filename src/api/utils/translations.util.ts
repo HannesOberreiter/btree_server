@@ -23,6 +23,10 @@ const fieldTranslation = {
   email: {
     de: 'E-Mail',
     en: 'email'
+  },
+  key: {
+    de: 'Schlüssel',
+    en: 'Key'
   }
 };
 

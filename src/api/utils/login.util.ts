@@ -2,16 +2,14 @@ import { User } from '@models/user.model';
 import { LoginAttemp } from '@models/login_attempt.model';
 
 import { checkMySQLError } from '@utils/error.util';
-import { messageTranslation } from '@utils/translations.util';
-import { locked, notFound, unauthorized } from '@hapi/boom';
-
+import { forbidden, locked, unauthorized } from '@hapi/boom';
 import dayjs from 'dayjs';
 import { createHash } from 'crypto';
 
 const insertWrongPasswordTry = async (bee_id: number) => {
   const trx = await LoginAttemp.startTransaction();
   try {
-    const now: Date = dayjs().toDate();
+    const now = dayjs.utc().toISOString().slice(0, 19).replace('T', ' ');
     await LoginAttemp.query(trx).insert({
       time: now,
       bee_id: bee_id
@@ -79,13 +77,17 @@ const fetchUser = async (email: string) => {
 const checkBruteForce = async (bee_id: number) => {
   try {
     // All login attempts are counted from the past 2 hours.
-    const validAttempts = dayjs().hour(-2).format();
+    const validAttempts = dayjs
+      .utc()
+      .subtract(2, 'hour')
+      .toISOString()
+      .slice(0, 19)
+      .replace('T', ' ');
     const bruteForce = await LoginAttemp.query()
       .count('id as count')
       .where('bee_id', bee_id)
       .where('time', '>', validAttempts)
       .orderBy('time');
-
     // ToDo send user E-Mail that the account is bruteForced
 
     if (bruteForce[0]['count'] < 10) {
@@ -121,7 +123,7 @@ const checkPassword = (
 const reviewPassword = async (bee_id, password: string) => {
   const user = await User.query().select('salt', 'password').findById(bee_id);
   if (!checkPassword(password, user.password, user.salt)) {
-    throw unauthorized('Invalid password');
+    throw forbidden('Wrong password');
   }
   return true;
 };
@@ -129,7 +131,7 @@ const reviewPassword = async (bee_id, password: string) => {
 const loginCheck = async (email: string, password: string) => {
   const user = await fetchUser(email);
   if (!user) {
-    throw notFound();
+    throw unauthorized('no user');
   }
   if (user.state != 1) {
     throw unauthorized('inactive account');

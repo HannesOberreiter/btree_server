@@ -31,7 +31,12 @@ export class UserController extends Controller {
     const trx = await User.startTransaction();
     try {
       if ('password' in req.body) {
-        await reviewPassword(req.user.bee_id, req.body.password);
+        try {
+          await reviewPassword(req.user.bee_id, req.body.password);
+        } catch (e) {
+          next(e);
+        }
+
         delete req.body.password;
         if ('email' in req.body) {
           if (req.body.email === '') delete req.body.email;

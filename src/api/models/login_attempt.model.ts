@@ -3,7 +3,7 @@ import { BaseModel } from '@models/base.model';
 
 export class LoginAttemp extends BaseModel {
   id!: number;
-  time!: Date;
+  time!: string;
   bee_id!: number;
 
   user?: User;
