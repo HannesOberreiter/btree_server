@@ -2,6 +2,9 @@ import { Model } from 'objection';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const AjvValidator = require('objection').AjvValidator;
 import addFormats from 'ajv-formats';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+dayjs.extend(utc);
 
 export class BaseModel extends Model {
   constructor() {
@@ -50,12 +53,12 @@ export class ExtModel extends BaseModel {
 
   // https://github.com/Vincit/objection.js/issues/647
   $beforeInsert() {
-    this.created_at = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    this.created_at = dayjs.utc().toISOString().slice(0, 19).replace('T', ' ');
     delete this.updated_at;
   }
 
   $beforeUpdate() {
-    this.updated_at = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    this.updated_at = dayjs.utc().toISOString().slice(0, 19).replace('T', ' ');
     delete this.created_at;
   }
 }

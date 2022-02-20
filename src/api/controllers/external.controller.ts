@@ -4,7 +4,6 @@ import { checkMySQLError } from '@utils/error.util';
 import { IUserRequest } from '@interfaces/IUserRequest.interface';
 import ical, { ICalCalendarMethod } from 'ical-generator';
 import dayjs from 'dayjs';
-import { setFlagsFromString } from 'v8';
 
 export class ExternalController extends Controller {
   constructor() {

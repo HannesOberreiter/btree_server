@@ -7,8 +7,8 @@ import { RearingStep } from '@models/rearing/rearing_step.model';
 
 const convertDate = ({ start, end }) => {
   return {
-    start: dayjs(start).toISOString(),
-    end: dayjs(end).toISOString()
+    start: dayjs(start).toISOString().slice(0, 19).replace('T', ' '),
+    end: dayjs(end).toISOString().slice(0, 19).replace('T', ' ')
   };
 };
 

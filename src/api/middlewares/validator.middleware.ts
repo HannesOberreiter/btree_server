@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { notFound, badRequest } from 'boom';
 import { ObjectSchema } from 'joi';
 import { validationResult, ValidationChain } from 'express-validator';
-
+import { translateMessages } from '@utils/translations.util';
 import { OPTION } from '@enums/options.enum';
 
 export class Validator {
@@ -23,7 +23,7 @@ export class Validator {
       }
       // https://github.com/hapijs/hapi/blob/master/API.md#error-transformation
       const err = badRequest();
-      err.output.payload.message = errors.array();
+      err.output.payload.message = translateMessages(errors.array());
       return next(err);
     };
   };

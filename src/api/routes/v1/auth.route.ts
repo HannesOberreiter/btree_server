@@ -27,7 +27,7 @@ export class AuthRouter extends Router {
       .route('/login')
       .post(
         Validator.validate([
-          body('email').isEmail(),
+          body('email').exists().withMessage('requiredField').isEmail(),
           body('password').isLength({ min: 6 })
         ]),
         Container.resolve('AuthController').login

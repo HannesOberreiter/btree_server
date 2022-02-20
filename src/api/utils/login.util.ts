@@ -2,6 +2,7 @@ import { User } from '@models/user.model';
 import { LoginAttemp } from '@models/login_attempt.model';
 
 import { checkMySQLError } from '@utils/error.util';
+import { messageTranslation } from '@utils/translations.util';
 import { locked, notFound, unauthorized } from '@hapi/boom';
 
 import dayjs from 'dayjs';
@@ -120,7 +121,7 @@ const checkPassword = (
 const reviewPassword = async (bee_id, password: string) => {
   const user = await User.query().select('salt', 'password').findById(bee_id);
   if (!checkPassword(password, user.password, user.salt)) {
-    throw unauthorized('invalid password');
+    throw unauthorized('Invalid password');
   }
   return true;
 };
@@ -158,7 +159,7 @@ const loginCheck = async (email: string, password: string) => {
 
   if (!checkPassword(password, user.password, user.salt)) {
     await insertWrongPasswordTry(user.id);
-    throw unauthorized('invalid password');
+    throw unauthorized('Invalid password');
   }
 
   await updateLastLogin(user.id);
