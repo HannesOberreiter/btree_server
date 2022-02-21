@@ -13,9 +13,9 @@ export class AuthRouter extends Router {
       .route('/register')
       .post(
         Validator.validate([
-          body('email').isEmail(),
-          body('password').isLength({ min: 6, max: 128 }),
-          body('name').isString().isLength({ min: 3, max: 128 }),
+          body('email').isEmail().normalizeEmail(),
+          body('password').isLength({ min: 6, max: 128 }).trim(),
+          body('name').isString().isLength({ min: 3, max: 128 }).trim(),
           body('lang').isString().isLength({ min: 2, max: 2 }),
           body('newsletter').isBoolean(),
           body('source').isString()
@@ -27,8 +27,12 @@ export class AuthRouter extends Router {
       .route('/login')
       .post(
         Validator.validate([
-          body('email').exists().withMessage('requiredField').isEmail(),
-          body('password').isLength({ min: 6 })
+          body('email')
+            .exists()
+            .withMessage('requiredField')
+            .isEmail()
+            .normalizeEmail(),
+          body('password').isLength({ min: 6 }).trim()
         ]),
         Container.resolve('AuthController').login
       );
@@ -43,7 +47,7 @@ export class AuthRouter extends Router {
     this.router
       .route('/reset')
       .post(
-        Validator.validate([body('email').isEmail()]),
+        Validator.validate([body('email').isEmail().normalizeEmail()]),
         Container.resolve('AuthController').resetRequest
       );
 
@@ -52,7 +56,7 @@ export class AuthRouter extends Router {
       .patch(
         Validator.validate([
           body('key').isLength({ min: 100, max: 128 }),
-          body('password').isLength({ min: 6, max: 128 })
+          body('password').isLength({ min: 6, max: 128 }).trim()
         ]),
         Container.resolve('AuthController').resetPassword
       );
@@ -60,7 +64,7 @@ export class AuthRouter extends Router {
     this.router
       .route('/unsubscribe')
       .patch(
-        Validator.validate([body('email').isEmail()]),
+        Validator.validate([body('email').isEmail().normalizeEmail()]),
         Container.resolve('AuthController').unsubscribeRequest
       );
 

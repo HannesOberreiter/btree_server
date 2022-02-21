@@ -23,6 +23,7 @@ import { MovedateRouter } from '@routes/v1/movedate.route';
 import { HiveRouter } from '@routes/v1/hive.route';
 import { ApiaryRouter } from '@routes/v1/apiary.route';
 
+import { FieldSettingRouter } from '@routes/v1/field_setting.route';
 import { OptionRouter } from '@routes/v1/option.route';
 import { AuthRouter } from '@routes/v1/auth.route';
 
@@ -58,6 +59,7 @@ export class ProxyRouter {
     { segment: '/rearing/', router: RearingRouter },
 
     { segment: '/movedate/', router: MovedateRouter },
+    { segment: '/fieldsetting/', router: FieldSettingRouter },
     { segment: '/option/', router: OptionRouter },
     { segment: '/user/', router: UserRouter },
     { segment: '/auth/', router: AuthRouter }

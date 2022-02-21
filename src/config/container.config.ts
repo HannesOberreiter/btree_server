@@ -24,6 +24,7 @@ import { HiveController } from '@controllers/hive.controller';
 import { ApiaryController } from '@controllers/apiary.controller';
 
 import { OptionController } from '@controllers/options.controller';
+import { FieldSettingController } from '@controllers/field_setting.controller';
 
 import { Logger } from '@services/logger.service';
 import { ProxyRouter } from '@services/proxy-router.service';
@@ -79,6 +80,11 @@ export class Container {
       })
       .register({
         MovedateController: awilix.asClass(MovedateController).singleton()
+      })
+      .register({
+        FieldSettingController: awilix
+          .asClass(FieldSettingController)
+          .singleton()
       })
       .register({ UserController: awilix.asClass(UserController).singleton() })
       .register({ AuthController: awilix.asClass(AuthController).singleton() })
