@@ -34,9 +34,9 @@ const updateLastLogin = async (bee_id: number) => {
   }
 };
 
-const fetchUser = async (email: string) => {
+const fetchUser = async (email: string, bee_id = 0) => {
   try {
-    const user = await User.query()
+    const user = User.query()
       .select(
         'id',
         'email',
@@ -53,9 +53,6 @@ const fetchUser = async (email: string) => {
         'acdate',
         'newsletter'
       )
-      .findOne({
-        'bees.email': email
-      })
       .withGraphFetched('company(cm)')
       .modifiers({
         cm(builder) {
@@ -68,7 +65,14 @@ const fetchUser = async (email: string) => {
           );
         }
       });
-    return user;
+    if (bee_id === 0) {
+      user.findOne({
+        'bees.email': email
+      });
+    } else {
+      user.findById(bee_id);
+    }
+    return await user;
   } catch (e) {
     throw checkMySQLError(e);
   }
@@ -169,4 +173,4 @@ const loginCheck = async (email: string, password: string) => {
   return { bee_id: user.id, user_id: company, data: user };
 };
 
-export { loginCheck, reviewPassword };
+export { loginCheck, reviewPassword, fetchUser };
