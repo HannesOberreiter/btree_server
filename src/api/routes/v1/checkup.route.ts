@@ -33,5 +33,11 @@ export class CheckupRouter extends Router {
         Guard.authorize([ROLES.admin, ROLES.user]),
         Container.resolve('CheckupController').updateDate
       );
+    this.router
+      .route('/batchDelete')
+      .patch(
+        Guard.authorize([ROLES.admin]),
+        Container.resolve('CheckupController').batchDelete
+      );
   }
 }

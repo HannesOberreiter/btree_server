@@ -33,4 +33,21 @@ export class MovedateController extends Controller {
       next(checkMySQLError(e));
     }
   }
+
+  async batchDelete(req: IUserRequest, res: Response, next: NextFunction) {
+    try {
+      const result = await Movedate.transaction(async (trx) => {
+        return await Movedate.query(trx)
+          .deleteById(req.body.ids)
+          .withGraphJoined('apiary')
+          .withGraphJoined('movedate_count')
+          .where('user_id', req.user.user_id)
+          .where('count', '>', 1);
+      });
+      res.locals.data = result;
+      next();
+    } catch (e) {
+      next(checkMySQLError(e));
+    }
+  }
 }

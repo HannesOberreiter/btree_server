@@ -6,7 +6,7 @@ import { IUserRequest } from '@interfaces/IUserRequest.interface';
 import { Guard } from '@middlewares/guard.middleware';
 import { ROLES } from '@enums/role.enum';
 import { Feed } from '@models/feed.model';
-
+import { map } from 'lodash';
 export class FeedController extends Controller {
   constructor() {
     super();
@@ -63,6 +63,40 @@ export class FeedController extends Controller {
           .findByIds(req.body.ids)
           .leftJoinRelated('feed_apiary')
           .where('user_id', req.user.user_id);
+      });
+      res.locals.data = result;
+      next();
+    } catch (e) {
+      next(checkMySQLError(e));
+    }
+  }
+
+  async batchDelete(req: IUserRequest, res: Response, next: NextFunction) {
+    try {
+      const result = await Feed.transaction(async (trx) => {
+        const res = await Feed.query(trx)
+          .findByIds(req.body.ids)
+          .select('id', 'deleted')
+          .withGraphJoined('feed_apiary')
+          .where('user_id', req.user.user_id);
+
+        const softIds = [];
+        const hardIds = [];
+        map(res, (obj) => {
+          if (obj.deleted) hardIds.push(obj.id);
+          else softIds.push(obj.id);
+        });
+
+        if (hardIds.length > 0) await Feed.query(trx).deleteById(hardIds);
+        if (softIds.length > 0)
+          await Feed.query(trx)
+            .patch({
+              deleted: true,
+              edit_id: req.user.bee_id
+            })
+            .findByIds(softIds);
+
+        return res;
       });
       res.locals.data = result;
       next();

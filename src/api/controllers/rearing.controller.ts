@@ -26,4 +26,18 @@ export class RearingController extends Controller {
       next(checkMySQLError(e));
     }
   }
+
+  async batchDelete(req: IUserRequest, res: Response, next: NextFunction) {
+    try {
+      const result = await Rearing.transaction(async (trx) => {
+        return Rearing.query(trx)
+          .deleteById(req.body.ids)
+          .where('user_id', req.user.user_id);
+      });
+      res.locals.data = result;
+      next();
+    } catch (e) {
+      next(checkMySQLError(e));
+    }
+  }
 }

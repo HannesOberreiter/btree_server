@@ -21,7 +21,7 @@ export class Todo extends ExtModel {
 
   static jsonSchema = {
     type: 'object',
-    required: ['kind'],
+    required: ['date', 'name'],
     properties: {
       id: { type: 'integer' },
       name: { type: 'string', maxLength: 48 },

@@ -14,5 +14,11 @@ export class MovedateRouter extends Router {
         Guard.authorize([ROLES.admin, ROLES.user]),
         Container.resolve('MovedateController').updateDate
       );
+    this.router
+      .route('/batchDelete')
+      .patch(
+        Guard.authorize([ROLES.admin]),
+        Container.resolve('MovedateController').batchDelete
+      );
   }
 }

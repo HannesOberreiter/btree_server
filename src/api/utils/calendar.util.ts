@@ -78,7 +78,7 @@ const getRearings = async ({ query, user }) => {
       result.title = `${result.currentStep.detail.job} ID: ${result.id}`;
       result.table = 'rearings';
       result.allDay = false;
-      result.icon = 'venus';
+      result.icon = 'fas fa-venus';
       result.color = '#f5dfef';
       result.textColor = 'black';
       result.end = result.start;
@@ -109,7 +109,7 @@ const getTodos = async ({ query, user }) => {
 
     res.start = dayjs(res.date).format('YYYY-MM-DD');
     res.title = res.name;
-    res.icon = 'clipboard-list';
+    res.icon = 'fas fa-clipboard';
     res.durationEditable = false;
 
     if (res.done) {
@@ -153,7 +153,7 @@ const getMovements = async ({ query, user }) => {
     } else {
       res.title = `${count}x ${res.apiary_name}`;
     }
-    res.icon = 'truck-fast';
+    res.icon = 'fas fa-truck';
     res.color = 'gray';
     res.table = 'movedates';
     res.durationEditable = false;
@@ -192,21 +192,22 @@ const getTask = async ({ query, user }, task: string) => {
       res.title = `${count}x ${res.type_name} - ${res.apiary_name}`;
     }
     if (task === 'checkups') {
-      res.icon = 'search';
+      res.icon = 'fas fa-search';
       res.color = '#067558';
     } else if (task === 'treatments') {
-      res.icon = 'plus';
+      res.icon = 'fas fa-plus';
       res.color = '#cc5b9a';
       res.title += ` (${res.disease_name})`;
     } else if (task === 'feeds') {
-      res.icon = 'cube';
+      res.icon = 'fas fa-cube';
       res.color = '#d55e00';
     } else if (task === 'harvests') {
-      res.icon = 'tint';
+      res.icon = 'fas fa-tint';
       res.color = 'yellow';
       res.textColor = 'black';
     }
-    if (res.done) res.color = 'red';
+
+    if (!res.done) res.color = 'red';
     res.table = task;
     if (res.editors) {
       res.editors = String(intersection(res.editors.split(',')));

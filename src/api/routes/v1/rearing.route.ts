@@ -14,5 +14,11 @@ export class RearingRouter extends Router {
         Guard.authorize([ROLES.admin, ROLES.user]),
         Container.resolve('RearingController').updateDate
       );
+    this.router
+      .route('/batchDelete')
+      .patch(
+        Guard.authorize([ROLES.admin]),
+        Container.resolve('RearingController').batchDelete
+      );
   }
 }

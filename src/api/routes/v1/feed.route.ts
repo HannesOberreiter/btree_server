@@ -32,5 +32,11 @@ export class FeedRouter extends Router {
         Guard.authorize([ROLES.admin, ROLES.user]),
         Container.resolve('FeedController').updateDate
       );
+    this.router
+      .route('/batchDelete')
+      .patch(
+        Guard.authorize([ROLES.admin]),
+        Container.resolve('FeedController').batchDelete
+      );
   }
 }
