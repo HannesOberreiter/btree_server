@@ -109,6 +109,8 @@ const checkMySQLError = (err: any) => {
       type: 'UnknownDatabaseError',
       data: {}
     };
+  } else if (err instanceof Error) {
+    return err;
   } else {
     error = badImplementation(err.message);
     error.output.payload.message = {

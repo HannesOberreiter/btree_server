@@ -3,7 +3,7 @@ import { Container } from '@config/container.config';
 import { Guard } from '@middlewares/guard.middleware';
 import { ROLES } from '@enums/role.enum';
 import { Validator } from '@middlewares/validator.middleware';
-import { body } from 'express-validator';
+import { param } from 'express-validator';
 
 export class ApiaryRouter extends Router {
   constructor() {
@@ -28,6 +28,13 @@ export class ApiaryRouter extends Router {
       .patch(
         Guard.authorize([ROLES.admin]),
         Container.resolve('ApiaryController').updateApiary
+      );
+    this.router
+      .route('/:id')
+      .delete(
+        Guard.authorize([ROLES.admin]),
+        Validator.validate([param('id').isNumeric()]),
+        Container.resolve('ApiaryController').deleteApiary
       );
   }
 }
