@@ -27,8 +27,7 @@ const setup = () => {
     (config) => {
       const token = storeToken.getAccessToken;
       if (token) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        config.headers['Authorization'] = 'Bearer ' + token;
+        if (config.headers) config.headers['Authorization'] = 'Bearer ' + token;
       }
       return config;
     },
