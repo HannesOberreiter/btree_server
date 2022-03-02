@@ -44,6 +44,7 @@ export default {
   api: 'API',
   credentials: 'Credentials',
   user: 'User',
+  error404: 'Oops. Nothing here...',
 
   soundHint: 'Play sound on notifications.',
   visHint:
