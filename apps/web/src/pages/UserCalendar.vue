@@ -28,7 +28,7 @@ import { api } from 'boot/axios';
 import { useQuasar } from 'quasar';
 import { onKeyStroke } from '@vueuse/core';
 import dayjs from 'dayjs';
-import { ref, watch, reactive, computed, onMounted } from 'vue';
+import { ref, watch, reactive } from 'vue';
 import { useAuthUserStore } from '../stores/auth';
 import { useCalendarStore } from '../stores/calendar';
 import '@fullcalendar/core/vdom'; // solve problem with Vite
@@ -242,7 +242,7 @@ function onResize(_size: any) {
   cal.value.getApi().updateSize();
 }
 
-async function handleEventsChange(changeInfo: EventChangeArg) {
+function handleEventsChange(changeInfo: EventChangeArg) {
   // Single Day Events no Enddate possible
   if (
     changeInfo.event.extendedProps.table === 'todos' ||
@@ -250,7 +250,7 @@ async function handleEventsChange(changeInfo: EventChangeArg) {
   ) {
     if (changeInfo.event.end) {
       changeInfo.revert();
-      return;
+      return void 0;
     }
   }
 
@@ -291,16 +291,16 @@ async function handleEventsChange(changeInfo: EventChangeArg) {
     0,
     -1
   ) as string;
-  await api.patch(`/v1/${sourceName}/date`, data).then(
+  api.patch(`/v1/${sourceName}/date`, data).then(
     (_response: any) => {
       notification.open('positive', '');
-      return true;
     },
     (error) => {
       notification.open('negative', error);
       changeInfo.revert();
     }
   );
+  return void 0;
 }
 function handleDateSelect(selectInfo: DateSelectArg) {
   if ($q.platform.is.mobile) {
