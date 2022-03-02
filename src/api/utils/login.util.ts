@@ -133,7 +133,8 @@ const reviewPassword = async (bee_id, password: string) => {
 };
 
 const loginCheck = async (email: string, password: string) => {
-  const user = await fetchUser(email);
+  const res = await fetchUser(email);
+  const user = res[0];
   if (!user) {
     throw unauthorized('no user');
   }
