@@ -3,7 +3,7 @@
     <q-card>
       <q-card-section>
         <div class="text-h6">
-          {{ t('setting', 2) }} {{ t('calendarTitle') }}
+          {{ t('setting.name', 2) }} {{ t('calendar.name') }}
         </div>
       </q-card-section>
 

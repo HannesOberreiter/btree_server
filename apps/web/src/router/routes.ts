@@ -30,6 +30,12 @@ const routes: RouteRecordRaw[] = [
         component: () => import('src/pages/UserSettingProfile.vue'),
       },
       {
+        path: '/setting/company/:tab?',
+        name: 'settingCompany',
+        props: true,
+        component: () => import('src/pages/UserSettingCompany.vue'),
+      },
+      {
         path: '/setting/field',
         name: 'settingField',
         component: () => import('src/pages/UserSettingField.vue'),

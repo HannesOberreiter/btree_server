@@ -1,6 +1,6 @@
 <template>
   <q-card-section>
-    <div class="text-h6 text-center">{{ t('resetTitle') }}</div>
+    <div class="text-h6 text-center">{{ t('resetUser.title') }}</div>
     <form-error-max v-if="submitCount >= 15"></form-error-max>
     <q-form v-else @submit="onSubmit" class="q-gutter-md">
       <q-input
@@ -8,7 +8,7 @@
         :error="v.resetKey.$error"
         :error-messages="validationErrors(v.resetKey)"
         name="resetKey"
-        :label="t('resetLabel')"
+        :label="t('resetUser.label')"
         required
         disabled
         readonly
@@ -97,7 +97,7 @@ async function sendForm(values: any) {
     (data) => {
       const email = data.data.email;
 
-      message.value = t('resetSuccess', { msg: email });
+      message.value = t('resetUser.success', { msg: email });
 
       isSubmitting.value = false;
       btnLabel.value = 'success';

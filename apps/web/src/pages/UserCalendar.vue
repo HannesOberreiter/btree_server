@@ -16,7 +16,7 @@
           </template>
         </full-calendar>
       </div>
-      <dialog-hint :hint="`calendarHint`" v-model="showInfo"></dialog-hint>
+      <dialog-hint :hint="t('calendar.hint')" v-model="showInfo"></dialog-hint>
       <calendar-setting v-model="showSetting"></calendar-setting>
     </div>
   </div>
@@ -43,7 +43,7 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import listPlugin from '@fullcalendar/list';
 import interactionPlugin from '@fullcalendar/interaction';
 import allLocales from '@fullcalendar/core/locales-all';
-
+import { useI18n } from 'vue-i18n';
 import useCalendarVis from '../composables/useCalendarVis';
 import { useNotification } from '../composables/useResponseText';
 import { CALENDAR } from '../constants/';
@@ -52,6 +52,7 @@ import DialogForm from 'src/components/DialogForm.vue';
 import DialogHint from 'src/components/DialogHint.vue';
 import DialogEvent from 'src/components/DialogEvent.vue';
 
+const { t } = useI18n();
 const $q = useQuasar();
 const notification = useNotification();
 const storeUser = useAuthUserStore();
@@ -134,7 +135,7 @@ const calendarOptions = reactive({
   plugins: [dayGridPlugin, listPlugin, interactionPlugin],
   customButtons: {
     sources: {
-      text: 'Settings',
+      text: t('setting.name', 2),
       click: function () {
         showSetting.value = true;
       },

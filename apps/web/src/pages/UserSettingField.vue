@@ -3,7 +3,7 @@
     <div class="row q-pa-sm">
       <div class="col-12 col-sm-10 col-md-8">
         <div class="text-body2 q-pb-sm text-center">
-          {{ t('settingTitle') }}
+          {{ t('setting.title') }}
         </div>
         <template v-for="(setting, index) in settings" :key="setting">
           <span class="text-h6">{{ t(index) }}</span>
@@ -13,7 +13,7 @@
               <div class="col-12">
                 <q-toggle
                   v-model="settings[index][j]"
-                  :label="t('settingHint' + capitalize(index) + capitalize(j))"
+                  :label="t('setting.hint' + capitalize(index) + capitalize(j))"
                 />
               </div>
             </template>

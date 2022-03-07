@@ -1,6 +1,6 @@
 <template>
   <q-card-section>
-    <div class="text-h6 text-center">{{ t('unsubscribeTitle') }}</div>
+    <div class="text-h6 text-center">{{ t('unsubscribe.name') }}</div>
     <form-error-max v-if="submitCount >= 15"></form-error-max>
     <q-form v-else @submit="onSubmit" class="q-gutter-md">
       <form-user-email v-model="state.email"></form-user-email>
@@ -35,7 +35,7 @@ import { useI18n } from 'vue-i18n';
 const notification = useNotification();
 const { t } = useI18n();
 const message = ref('');
-const btnLabel = ref('unsubscribeBtn');
+const btnLabel = ref('unsubscribe.btn');
 const isSubmitting = ref(false);
 const submitCount = ref(0);
 
@@ -64,7 +64,7 @@ async function sendForm(from: any) {
   await AuthService.unsubscribe(from).then(
     (data) => {
       const email = data.data.email;
-      message.value = t('unsubscribeSuccess', { msg: email });
+      message.value = t('unsubscribe.success', { msg: email });
 
       isSubmitting.value = false;
       btnLabel.value = 'success';

@@ -1,10 +1,10 @@
 <template>
   <q-card-section>
-    <div class="text-h6 text-center">{{ t('recoverTitle') }}</div>
+    <div class="text-h6 text-center">{{ t('recoverUser.title') }}</div>
     <form-error-max v-if="submitCount >= 15"></form-error-max>
     <q-form v-else @submit="onSubmit" class="q-gutter-md">
       <p class="text-center">
-        {{ t('recoverText') }}
+        {{ t('recoverUser.text') }}
       </p>
       <form-user-email v-model="state.email"></form-user-email>
       <q-card-actions class="">
@@ -66,7 +66,7 @@ async function sendForm(from: any) {
   await AuthService.resetMail(from).then(
     (data) => {
       const email = data.data.email;
-      message.value = t('recoverSuccess', { msg: email });
+      message.value = t('recoverUser.success', { msg: email });
 
       isSubmitting.value = false;
       btnLabel.value = 'success';

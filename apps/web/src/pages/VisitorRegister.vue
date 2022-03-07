@@ -19,7 +19,7 @@
         option-value="value"
         option-label="label"
         hide-details
-        :label="t('signupSource')"
+        :label="t('signup.source')"
         filled
         :dense="true"
       >
@@ -54,7 +54,7 @@
         <slot>
           {{ t('signupAgree') }}
           <q-btn @click="terms = true" flat color="secondary">
-            {{ t('signupTerms') }}
+            {{ t('signup.terms') }}
           </q-btn>
         </slot>
       </q-checkbox>
@@ -73,7 +73,7 @@
           :loading="isSubmitting"
         />
         <div class="text-center text-primary">
-          {{ t('signupHintPremium') }}
+          {{ t('signup.hintPremium') }}
         </div>
       </q-card-actions>
     </q-form>
@@ -84,7 +84,7 @@
   <q-dialog v-model="terms">
     <q-card>
       <q-card-section>
-        <div class="text-h6">{{ t('signupTerms') }}</div>
+        <div class="text-h6">{{ t('signup.terms') }}</div>
       </q-card-section>
       <q-card-section class="q-pt-none">
         {{ state.lang.value == 'de' ? termsDE : termsEN }}
@@ -153,8 +153,7 @@ async function onSubmit() {
     return;
   }
   if (state.terms === false) {
-    notification.open('negative', 'Please accept the terms first!');
-
+    notification.open('negative', t('singup.accept'));
     isSubmitting.value = false;
     return;
   }
@@ -176,7 +175,7 @@ async function sendForm(user: any) {
   await AuthService.register(user).then(
     (data) => {
       const email = data.data.email as string;
-      message.value = t('signupSuccess', { msg: email });
+      message.value = t('signup.success', { msg: email });
 
       isSubmitting.value = false;
       btnLabel.value = 'success';

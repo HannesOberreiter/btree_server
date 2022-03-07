@@ -148,6 +148,12 @@ const links = ref([
         icon: 'fas fa-cog',
         menu: [] as any,
       },
+      {
+        label: 'Company',
+        route: 'settingCompany',
+        icon: 'fas fa-warehouse',
+        menu: [] as any,
+      },
     ],
   },
 ]);

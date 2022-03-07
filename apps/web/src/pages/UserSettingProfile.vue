@@ -20,7 +20,7 @@
         <div class="row">
           <div class="col-12 col-sm-10 col-md-8">
             <div class="text-body2 q-pb-sm text-center">
-              {{ t('profileUserTitle') }}
+              {{ t('profile.userTitle') }}
             </div>
 
             <form-main-user></form-main-user>
@@ -32,7 +32,7 @@
         <div class="row">
           <div class="col-12 col-sm-10 col-md-8">
             <div class="text-body2 q-pb-sm text-center">
-              {{ t('profileCredentialTitle') }}
+              {{ t('profile.credentialTitle') }}
             </div>
 
             <form-main-credential></form-main-credential>
@@ -44,7 +44,7 @@
         <div class="row">
           <div class="col-12 col-sm-10 col-md-8">
             <div class="text-body2 q-pb-sm text-center">
-              {{ t('profileApiTitle') }}
+              {{ t('profile.apiTitle') }}
             </div>
             <form-main-api></form-main-api>
           </div>

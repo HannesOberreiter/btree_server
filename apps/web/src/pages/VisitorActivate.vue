@@ -1,6 +1,6 @@
 <template>
   <q-card-section>
-    <div class="text-h6 text-center">{{ t('activateTitle') }}</div>
+    <div class="text-h6 text-center">{{ t('activateUser.title') }}</div>
     <form-error-max v-if="submitCount >= 15"></form-error-max>
 
     <q-form v-else @submit="onSubmit" class="q-gutter-md">
@@ -13,7 +13,7 @@
         :error="v.resetKey.$error"
         :error-messages="validationErrors(v.resetKey)"
         name="resetKey"
-        :label="t('activateLabel')"
+        :label="t('activateUser.label')"
         required
         disabled
         readonly
@@ -94,8 +94,8 @@ async function sendForm(value: any) {
   await AuthService.activate(value).then(
     async (reponse) => {
       btnLabel.value = 'success';
-      message.value = t('activateSuccess');
-      notification.open('positive', t('activateSuccess'));
+      message.value = t('activateUser.success');
+      notification.open('positive', t('activateUser.success'));
       isSubmitting.value = false;
       await router.push({
         name: 'login',
@@ -104,8 +104,7 @@ async function sendForm(value: any) {
     },
     (error) => {
       if (error.response.status === 403) {
-        const message =
-          "The activation key is not valid anymore. You can also activate your account with the 'Forgot your password' link below.";
+        const message = t('activateUser.notValid');
         notification.open('negative', message);
       } else {
         notification.open('negative', error.response);

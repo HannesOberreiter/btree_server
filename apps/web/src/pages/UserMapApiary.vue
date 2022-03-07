@@ -50,7 +50,7 @@
               :min="0"
               :max="4000"
               :step="50"
-              :label-value="t('mapRadius') + ' ' + circleRadius + 'm'"
+              :label-value="t('map.radius') + ' ' + circleRadius + 'm'"
               label-always
               style="min-width: 20vh"
             >
@@ -157,7 +157,7 @@
       </div>
     </div>
   </div>
-  <dialog-hint :hint="`mapHint`" v-model="showInfo"></dialog-hint>
+  <dialog-hint :hint="t('map.hint')" v-model="showInfo"></dialog-hint>
 </template>
 
 <script setup lang="ts">
@@ -276,7 +276,7 @@ function moveApiaryEnd(e: any) {
   });
   $q.dialog({
     title: t('confirm'),
-    message: t('mapMove', { msg: dragObject.name }),
+    message: t('map.move', { msg: dragObject.name }),
     cancel: true,
     persistent: true,
   })

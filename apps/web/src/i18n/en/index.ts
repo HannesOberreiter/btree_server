@@ -24,7 +24,6 @@ export default {
   reset: 'Reset',
   save: 'Save',
   activate: 'Activate',
-  setting: 'Setting | Settings',
   new: 'New',
   edit: 'Edit',
   edited: 'Edited',
@@ -38,12 +37,11 @@ export default {
   url: 'Url',
   latitude: 'Latitude',
   longitude: 'Longitude',
-  profile: 'Profile',
   firstname: 'Firstname',
   lastname: 'Lastname',
   api: 'API',
   credentials: 'Credentials',
-  user: 'User',
+  user: 'User | Users',
   error404: 'Oops. Nothing here...',
 
   soundHint: 'Play sound on notifications.',
@@ -55,8 +53,8 @@ export default {
   changeStatus: 'Change Status',
 
   hive: 'Hive | Hives',
-  colony: 'Colony | Colonies',
-  apiary: 'Apiary | Apiaries',
+  colony: 'Colony | Colonies',
+  apiary: 'Apiary | Apiaries',
   newApiary: 'Create Apiary',
   checkup: 'Checkup | Checkups',
   feed: 'Feeding | Feedings',
@@ -77,80 +75,99 @@ export default {
   icalUrl: 'ICal Url',
   icalSource: 'ICal Source',
 
-  signup: 'Sign Up',
-  signupText: "Don't have an account?",
-  signupHintPremium:
-    'Hint: When you register, you get one month free premium access to test the entire app. Afterwards you can still use it but with limited functionality.',
-  signupSource: 'How did you find us?',
-  signupAgree: 'Do you agree with the',
-  signupTerms: 'Terms and Conditions',
-  signupSuccess:
-    'Successfully registered, we send you an e-mail ({msg}) to activate your account.',
-
-  recoverTitle: 'Recover lost password',
-  recoverText:
-    'Enter the e-mail address by which you registered your user account. You will receive an email with instructions on how to reset your password.',
-  recoverSuccess:
-    "We send you an e-mail ({msg}) to reset your password, if you dont get the mail in a few minutes it could be that no account with this address is registered. Otherwise please feel free to contact us at {'office@btree.at'}",
-
-  resetTitle: 'Create new password',
-  resetSuccess:
-    'Your password was successfully changed, we sent a confirmation mail to {msg}.',
-  resetLabel: 'Reset Key',
-
-  activateTitle: 'Please confirm your email!',
-  activateSuccess: 'Account activated you can now login.',
-  activateLabel: 'Confirm Key',
-
-  unsubscribeTitle: 'Unsubscribe',
-  unsubscribeSuccess:
-    "We removed {msg} from our mailing list, if it is registered. Otherwise please feel free to contact us at {'office@btree.at'}",
-  unsubscribeBtn: 'Remove my email.',
-
   newsletterText:
     'Get notifications per email (eg. premium reminder), no newsletter only if something important changes!',
 
-  profileUserTitle: 'Here you can update your user settings.',
-  profileCredentialTitle:
-    'Update your login credentials, for security reasons please also insert your old password.',
-  profileApiTitle:
-    'Premium members can access the API, please see documentation for more information.',
+  signup: {
+    name: 'Sign Up',
+    text: "Don't have an account?",
+    hintPremium:
+      'Hint: When you register, you get one month free premium access to test the entire app. Afterwards you can still use it but with limited functionality.',
+    source: 'How did you find us?',
+    agree: 'Do you agree with the',
+    accept: 'Please accept the terms first!',
+    terms: 'Terms and Conditions',
+    success:
+      'Successfully registered, we send you an e-mail ({msg}) to activate your account.',
+  },
 
-  calendarTitle: 'Calendar',
-  calendarHint:
-    'On the calendar you can move your events and task. Task can in addition be extended if you grab the event at the end. If you double click on a date you can create new ToDo. If you click on an event you get more info and can set the status.',
+  recoverUser: {
+    title: 'Recover lost password',
+    text: 'Enter the e-mail address by which you registered your user account. You will receive an email with instructions on how to reset your password.',
+    success:
+      "We send you an e-mail ({msg}) to reset your password, if you dont get the mail in a few minutes it could be that no account with this address is registered. Otherwise please feel free to contact us at {'office@btree.at'}",
+  },
 
-  mapHint:
-    'You can move your apiary to a new location by drag and drop! Double click on map to create a new apiary!',
-  mapRadius: 'Radius',
-  mapMove:
-    'Are you sure you want to move your apiary ({msg}) to a new location?',
+  resetUser: {
+    title: 'Create new password',
+    success:
+      'Your password was successfully changed, we sent a confirmation mail to {msg}.',
+    label: 'Reset Key',
+  },
 
-  settingTitle:
-    'Here you can select or deselect fields you want to be shown in your Quicktool!',
-  settingHintCheckupRating:
-    'Rating: 6 Input Fields - Brood, Pollen, Comb Building, Temper, Calm Comb, Swarm',
-  settingHintCheckupQueen:
-    'Queen: 4 Checkboxes - Queen, Queen Cells, Eggs, Capped Brood',
-  settingHintCheckupStrength: 'Strength: 1 Input Field - Strength',
-  settingHintCheckupWeight: 'Weight: 1 Input and Time Field for weight value',
-  settingHintCheckupTemperature:
-    'Temperature: 1 Input Field, for Premium user it will load automatically the current temperature on select hive or apiary',
-  settingHintCheckupVarroa: 'Varroa: 1 Input Field for Varroa Count',
-  settingHintCheckupFrames:
-    'Frames: 4 Input Fields - Broodframes, Honeyframes, Foundationframes, Emptyframes',
-  settingHintHarvestWater: 'Water: 1 Input Field for water content %',
-  settingHintHarvestFrames:
-    'Frames: 1 Input Field for how many frames you harvested.',
-  settingHintTreatmentWait:
-    'Wait: 1 Input Field, for waiting time after treatment',
-  settingHintTreatmentVet:
-    'Vet: 1 Dropdown, in the Options you can define the values for this dropdown',
-  settingHintChargePrice: 'Price: 1 Input Field, for a price',
-  settingHintChargeBestbefore:
-    'Best before: 1 Date Field, to be used for best before date',
-  settingHintChargeCalibrate:
-    'Calibrate: 1 Input Field, if you want to keep a calibrate list for you charges',
+  activateUser: {
+    title: 'Please confirm your email!',
+    success: 'Account activated you can now login.',
+    label: 'Confirm Key',
+    notValid:
+      "The activation key is not valid anymore. You can also activate your account with the 'Forgot your password' link below.",
+  },
+
+  unsubscribe: {
+    name: 'Unsubscribe',
+    success:
+      "We removed {msg} from our mailing list, if it is registered. Otherwise please feel free to contact us at {'office@btree.at'}",
+    btn: 'Remove my email.',
+  },
+
+  profile: {
+    name: 'Profile | Profiles',
+    userTitle: 'Here you can update your user settings.',
+    credentialTitle:
+      'Update your login credentials, for security reasons please also insert your old password.',
+    apiTitle:
+      'Premium members can access the API, please see documentation for more information.',
+  },
+
+  calendar: {
+    name: 'Calendar | Calendars',
+    hint: 'On the calendar you can move your events and task. Task can in addition be extended if you grab the event at the end. If you double click on a date you can create new ToDo. If you click on an event you get more info and can set the status.',
+  },
+
+  map: {
+    name: 'Map | Maps',
+    hint: 'You can move your apiary to a new location by drag and drop! Double click on map to create a new apiary!',
+    radius: 'Radius',
+    move: 'Are you sure you want to move your apiary ({msg}) to a new location?',
+  },
+
+  setting: {
+    name: 'Setting | Settings',
+    title:
+      'Here you can select or deselect fields you want to be shown in your Quicktool!',
+    hintCheckupRating:
+      'Rating: 6 Input Fields - Brood, Pollen, Comb Building, Temper, Calm Comb, Swarm',
+    hintCheckupQueen:
+      'Queen: 4 Checkboxes - Queen, Queen Cells, Eggs, Capped Brood',
+    hintCheckupStrength: 'Strength: 1 Input Field - Strength',
+    hintCheckupWeight: 'Weight: 1 Input and Time Field for weight value',
+    hintCheckupTemperature:
+      'Temperature: 1 Input Field, for Premium user it will load automatically the current temperature on select hive or apiary',
+    hintCheckupVarroa: 'Varroa: 1 Input Field for Varroa Count',
+    hintCheckupFrames:
+      'Frames: 4 Input Fields - Broodframes, Honeyframes, Foundationframes, Emptyframes',
+    hintHarvestWater: 'Water: 1 Input Field for water content %',
+    hintHarvestFrames:
+      'Frames: 1 Input Field for how many frames you harvested.',
+    hintTreatmentWait: 'Wait: 1 Input Field, for waiting time after treatment',
+    hintTreatmentVet:
+      'Vet: 1 Dropdown, in the Options you can define the values for this dropdown',
+    hintChargePrice: 'Price: 1 Input Field, for a price',
+    hintChargeBestbefore:
+      'Best before: 1 Date Field, to be used for best before date',
+    hintChargeCalibrate:
+      'Calibrate: 1 Input Field, if you want to keep a calibrate list for you charges',
+  },
 
   validations: {
     required: 'The field {property} is required.',
