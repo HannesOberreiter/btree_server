@@ -4,13 +4,13 @@
     :error="v.company.$error"
     :error-message="validationErrors(v.company)"
     :no-error-icon="true"
-    :label="t('company')"
+    :label="t('company.name')"
     name="company"
     required
     filled
   >
     <template v-slot:prepend>
-      <q-icon name="fas fa-id-card" />
+      <q-icon name="fas fa-warehouse" />
     </template>
   </q-input>
 </template>
