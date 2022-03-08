@@ -14,6 +14,8 @@
                 <q-toggle
                   v-model="settings[index][j]"
                   :label="t('setting.hint' + capitalize(index) + capitalize(j))"
+                  :disable="isSubmitting"
+                  @update:model-value="onSubmit"
                 />
               </div>
             </template>
@@ -26,13 +28,12 @@
 
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
-import { Fieldsetting, useFieldsettingStore } from 'src/stores/fieldsetting';
-import { ref, watch } from 'vue';
+import { useFieldsettingStore } from 'src/stores/fieldsetting';
+import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { api } from 'src/boot/axios';
 import { useNotification } from 'src/composables/useResponseText';
 import { capitalize } from 'lodash';
-import { sleep } from 'src/helpers';
 
 const { t } = useI18n();
 const notification = useNotification();
@@ -41,16 +42,9 @@ const { settings } = storeToRefs(storeFields);
 
 const isSubmitting = ref(false);
 
-// Small logical helper to prevent overloading our api and only submit the latest one
-watch(storeFields.$state, async (cur) => {
-  const current = JSON.stringify(cur.settings);
-  await sleep(500);
-  if (current === JSON.stringify(settings.value)) await onSubmit(cur.settings);
-});
-
-const onSubmit = async (cur: Fieldsetting) => {
+const onSubmit = async () => {
   isSubmitting.value = true;
-  const rawObject = JSON.stringify(cur);
+  const rawObject = JSON.stringify(settings.value);
   await api.patch('/v1/fieldsetting', { settings: rawObject }).then(
     () => {
       notification.open('positive', '');
