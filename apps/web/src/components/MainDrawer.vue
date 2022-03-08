@@ -47,19 +47,7 @@
     </q-list>
     <div class="fixed-bottom">
       <btn-refresh></btn-refresh>
-      <q-item>
-        <q-item-section avatar>
-          <q-icon :name="getPaidStatus.icon"></q-icon>
-        </q-item-section>
-
-        <q-item-section>
-          {{ t('paid') }}: {{ getPaidStatus.date }}
-          <br />
-          {{ t('status') }}: {{ getPaidStatus.name }}
-          <br />
-          {{ t('rank') }}: {{ getPaidStatus.rank.name }}
-        </q-item-section>
-      </q-item>
+      <item-company></item-company>
       <q-item clickable v-ripple @click="onLogout">
         <q-item-section avatar>
           <q-icon name="fas fa-sign-out-alt" />
@@ -71,16 +59,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref } from 'vue';
 import { useAuthUserStore } from 'src/stores/auth';
 import { useI18n } from 'vue-i18n';
 import BtnRefresh from './BtnRefresh.vue';
+import ItemCompany from './ItemCompany.vue';
 
 const { t } = useI18n();
 const storeUser = useAuthUserStore();
-const getPaidStatus = computed(() => {
-  return storeUser.getPaidStatus;
-});
 
 const onLogout = async () => {
   await storeUser.logout();

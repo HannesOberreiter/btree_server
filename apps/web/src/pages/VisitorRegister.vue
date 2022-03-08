@@ -145,7 +145,6 @@ const v$ = useVuelidate(rules, state);
 
 async function onSubmit() {
   isSubmitting.value = true;
-  console.log(state);
   const isFormCorrect = await v$.value.$validate();
 
   if (!isFormCorrect) {
