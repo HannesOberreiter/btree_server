@@ -2,7 +2,7 @@ import { LoadingBar } from 'quasar';
 
 export default () => {
   LoadingBar.setDefaults({
-    color: 'accent',
+    color: 'primary',
     size: '10px',
     position: 'bottom',
   });
