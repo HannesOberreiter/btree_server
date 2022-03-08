@@ -42,11 +42,15 @@ import MainNavbar from 'src/components/MainNavbar.vue';
 import MainDrawer from 'src/components/MainDrawer.vue';
 import GlobalSound from 'src/components/GlobalSound.vue';
 import { ref } from 'vue';
+import { useQuasarLang } from 'src/composables/useQuasarLang';
+import { useQuasar } from 'quasar';
 
-//import { useQuasar } from 'quasar';
 const leftDrawerOpen = ref(false);
 const storeUser = useAuthUserStore();
+const $q = useQuasar();
+
 storeUser.updateLang();
+useQuasarLang($q);
 
 const toggleLeftDrawer = () => {
   leftDrawerOpen.value = !leftDrawerOpen.value;

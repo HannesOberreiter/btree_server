@@ -81,12 +81,14 @@ import { reactive, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useAuthUserStore } from 'src/stores/auth';
 import { storeToRefs } from 'pinia';
-
+import { useQuasarLang } from '../composables/useQuasarLang';
 import FormUserLanguage from './FormUserLanguage.vue';
 import FormUserNewsletter from './FormUserNewsletter.vue';
 import { LANGUAGES } from 'src/constants';
+import { useQuasar } from 'quasar';
 
 const { t } = useI18n();
+const $q = useQuasar();
 const notification = useNotification();
 const storeUser = useAuthUserStore();
 const { user } = storeToRefs(storeUser);
@@ -134,6 +136,7 @@ async function onSubmit() {
   await api.patch('/v1/user', data).then(
     (response: any) => {
       useAuthUserStore().refresh(response.data);
+      useQuasarLang($q);
       notification.open('positive', '');
     },
     (error) => {
