@@ -34,6 +34,7 @@ const useNotification = () => {
     Notify.create({
       message: m,
       type: type,
+      position: 'top',
       actions: [
         {
           label: 'X',
