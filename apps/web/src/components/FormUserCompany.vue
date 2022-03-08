@@ -35,7 +35,7 @@ const rules = {
   company: {
     required,
     alphaNum,
-    minLengthValue: minLength(2),
+    minLengthValue: minLength(5),
     maxLengthValue: maxLength(45),
   },
 };

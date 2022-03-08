@@ -51,6 +51,7 @@
                 :loading="isSubmitting"
                 :label="t('new')"
                 class="full-width"
+                @click="newCompany"
               />
               <q-btn
                 v-if="storeUser.isAdmin"
@@ -72,6 +73,7 @@
                 :loading="isSubmitting"
                 :label="t('delete')"
                 class="full-width"
+                @click="deleteCompany"
               />
             </q-btn-group>
           </div>
@@ -102,6 +104,7 @@ import { storeToRefs } from 'pinia';
 import ItemCompany from 'src/components/ItemCompany.vue';
 import { api } from 'src/boot/axios';
 import { useNotification } from '../composables/useResponseText';
+import { findIndex } from 'lodash';
 
 const prop = defineProps({
   tab: {
@@ -138,34 +141,84 @@ const changeCompany = (value: any) => {
   isSubmitting.value = false;
 };
 
+const checkCompanyName = (val: string) => {
+  return (
+    val.length >= 5 &&
+    val.length <= 45 &&
+    findIndex(options.value, { name: val }) === -1
+  );
+};
+
 const editCompany = () => {
   $q.dialog({
     title: t('edit'),
     message: t('company.changeName') + ':',
     prompt: {
       model: model.value.name,
+      isValid: checkCompanyName,
       type: 'text', // optional
     },
     cancel: true,
+    persistent: false,
+  }).onOk((data) => {
+    api.patch('/v1/company', { name: data }).then(
+      async (_response: any) => {
+        await storeRefresh.refresh();
+        notification.open('positive', '');
+      },
+      (error) => {
+        notification.open('negative', error.response);
+      }
+    );
+  });
+};
+
+const newCompany = () => {
+  $q.dialog({
+    title: t('new'),
+    message: t('company.new'),
+    prompt: {
+      model: '',
+      isValid: checkCompanyName,
+      type: 'text',
+    },
+    cancel: true,
     persistent: true,
-  })
-    .onOk((data) => {
-      api.patch('/v1/company', { name: data }).then(
-        async (_response: any) => {
-          await storeRefresh.refresh();
-          notification.open('positive', '');
-        },
-        (error) => {
-          notification.open('negative', error.response);
-        }
-      );
-      // console.log('>>>> OK, received', data)
-    })
-    .onCancel(() => {
-      // console.log('>>>> Cancel')
-    })
-    .onDismiss(() => {
-      // console.log('I am triggered on both OK and Cancel')
-    });
+  }).onOk((data) => {
+    api.post('/v1/company', { name: data }).then(
+      async (_response: any) => {
+        await storeRefresh.refresh();
+        notification.open('positive', '');
+      },
+      (error) => {
+        notification.open('negative', error.response);
+      }
+    );
+  });
+};
+
+const deleteCompany = () => {
+  $q.dialog({
+    title: t('delete') + ' ' + model.value.name,
+    class: 'bg-lime-12',
+    message: t('company.delete'),
+    prompt: {
+      model: '',
+      isValid: (val) => val === model.value.name,
+      type: 'text',
+    },
+    cancel: true,
+    persistent: true,
+  }).onOk(() => {
+    api.delete(`/v1/company/${model.value.id}`).then(
+      async (_response: any) => {
+        await storeRefresh.refresh();
+        notification.open('positive', '');
+      },
+      (error) => {
+        notification.open('negative', error.response);
+      }
+    );
+  });
 };
 </script>

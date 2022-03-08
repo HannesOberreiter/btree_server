@@ -146,7 +146,10 @@ export default {
     title:
       'Here you can change your between your companies or create new ones. As admin you can also edit the name of your company or delete one.',
     active: 'Your active company',
-    changeName: 'Enter a new name for your company',
+    changeName: 'Enter a new name for your company (min: 5, max: 45)',
+    new: 'Enter name for your new company (min: 5, max: 45). Note: You will need to pay for each new company premium access separately.',
+    delete:
+      'Are you sure you want to delete the company? This is only possible if it is not your last company and no other users are registered with this company. For security please repeat the name of the company:',
   },
 
   setting: {
