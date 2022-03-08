@@ -139,7 +139,6 @@ async function deleteEvent() {
   const nameSource = props.eventInfo.table.slice(0, -1) as string;
   await api.patch(`/v1/${nameSource}/batchDelete`, data).then(
     (response: any) => {
-      console.log(response);
       if (response.data === 0) notification.open('warning', t('notAllowed'));
       else notification.open('positive', t('deleted'));
       onDialogOK(props.eventInfo.table);

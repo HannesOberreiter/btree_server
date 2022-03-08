@@ -146,6 +146,7 @@ export default {
     title:
       'Here you can change your between your companies or create new ones. As admin you can also edit the name of your company or delete one.',
     active: 'Your active company',
+    changeName: 'Enter a new name for your company',
   },
 
   setting: {

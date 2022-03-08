@@ -65,11 +65,10 @@ export const useFieldsettingStore = defineStore('fieldsetting', {
     get: (state) => state.settings,
   },
   actions: {
-    patch(payload: any) {
-      console.log(payload);
+    patch(_payload: any) {
+      // console.log(payload);
     },
     refresh(data: any) {
-      console.log(data.settings);
       if (data) {
         this.settings = data.settings;
       }

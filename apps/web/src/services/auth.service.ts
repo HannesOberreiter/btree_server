@@ -1,6 +1,6 @@
 import { api } from 'boot/axios';
 import { RegisterUser, User } from '../types';
-import _ from 'lodash';
+import { find } from 'lodash';
 import { useAuthTokenStore } from '../stores/token';
 import { useAuthUserStore } from '../stores/auth';
 
@@ -72,11 +72,7 @@ class AuthService {
     const companies = user.company;
     let currentCompany: any = companies[0];
     if (curId !== 0) {
-      currentCompany = _.map(companies, function (company) {
-        if (company.id === curId) {
-          return company;
-        }
-      })[0];
+      currentCompany = find(companies, { id: curId });
     }
     // In case the user got removed from the saved company
     if (!currentCompany) {
