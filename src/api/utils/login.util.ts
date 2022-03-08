@@ -64,13 +64,14 @@ const fetchUser = async (email: string, bee_id = 0) => {
             'company_bee.rank'
           );
         }
-      });
+      })
+      .first();
     if (bee_id === 0) {
       user.findOne({
         'bees.email': email
       });
     } else {
-      user.findById(bee_id);
+      user.findOne({ 'bees.id': bee_id });
     }
     return await user;
   } catch (e) {
@@ -133,8 +134,7 @@ const reviewPassword = async (bee_id, password: string) => {
 };
 
 const loginCheck = async (email: string, password: string) => {
-  const res = await fetchUser(email);
-  const user = res[0];
+  const user = await fetchUser(email);
   if (!user) {
     throw unauthorized('no user');
   }

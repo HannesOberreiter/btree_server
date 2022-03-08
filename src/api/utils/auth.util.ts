@@ -1,6 +1,7 @@
 import { CompanyBee } from '@models/company_bee.model';
 import { User } from '@models/user.model';
 import { RefreshToken } from '@models/refresh_token.model';
+import useragent from 'express-useragent';
 
 import { expectationFailed, unauthorized, badRequest } from '@hapi/boom';
 import dayjs from 'dayjs';
@@ -12,6 +13,7 @@ import jwt from 'jsonwebtoken';
 import { jwtSecret, jwtExpirationInterval } from '@config/environment.config';
 
 import { checkMySQLError } from '@utils/error.util';
+import { Request } from 'express';
 
 const generateRefreshToken = async (
   bee_id: number,
@@ -142,6 +144,12 @@ const checkRefreshToken = async (
   return { tokenType, accessToken, refreshToken, expiresIn };
 };
 
+const buildUserAgent = (req: Request) => {
+  let userAgent = useragent.parse(req.headers['user-agent']);
+  userAgent = userAgent.os + userAgent.platform + userAgent.browser;
+  return userAgent.length > 50 ? userAgent.substring(0, 49) : userAgent;
+};
+
 const generateTokenResponse = async (
   bee_id: number,
   user_id: number,
@@ -270,5 +278,6 @@ export {
   confirmAccount,
   resetMail,
   resetPassword,
-  unsubscribeMail
+  unsubscribeMail,
+  buildUserAgent
 };

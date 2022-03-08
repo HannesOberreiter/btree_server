@@ -4,10 +4,15 @@ import { Controller } from '@classes/controller.class';
 import { checkMySQLError } from '@utils/error.util';
 
 import { User } from '@models/user.model';
+import { CompanyBee } from '@models/company_bee.model';
 
 import { IUserRequest } from '@interfaces/IUserRequest.interface';
 import { reviewPassword, fetchUser } from '@utils/login.util';
-import { createHashedPassword } from '@utils/auth.util';
+import {
+  buildUserAgent,
+  createHashedPassword,
+  generateTokenResponse
+} from '@utils/auth.util';
 import { MailService } from '@services/mail.service';
 export class UserController extends Controller {
   constructor() {
@@ -66,6 +71,33 @@ export class UserController extends Controller {
         }
       }
       res.locals.data = user;
+      next();
+    } catch (e) {
+      await trx.rollback();
+      next(checkMySQLError(e));
+    }
+  }
+
+  async changeCompany(req: IUserRequest, res: Response, next) {
+    const trx = await User.startTransaction();
+    try {
+      await CompanyBee.query()
+        .where('bee_id', req.user.bee_id)
+        .where('user_id', req.body.saved_company)
+        .throwIfNotFound();
+
+      const result = await User.query(trx).findById(req.user.bee_id).patch({
+        saved_company: req.body.saved_company
+      });
+      await trx.commit();
+
+      const userAgent = buildUserAgent(req);
+      const token = await generateTokenResponse(
+        req.user.bee_id,
+        req.body.saved_company,
+        userAgent
+      );
+      res.locals.data = { token, result };
       next();
     } catch (e) {
       await trx.rollback();

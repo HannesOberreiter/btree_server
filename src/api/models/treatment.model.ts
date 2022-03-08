@@ -24,7 +24,7 @@ export class Treatment extends ExtModel {
   disease?: TreatmentDisease;
   vet?: TreatmentVet;
   treatment_apiary?: TreatmentApiary;
-  company?: Hive;
+  hive?: Hive;
   creator?: User;
   editor?: User;
 
@@ -51,7 +51,6 @@ export class Treatment extends ExtModel {
       type_id: { type: 'integer' }, // Type FK
       vet_id: { type: 'integer' }, // Vets FK
       disease_id: { type: 'integer' }, // Diseases FK
-      user_id: { type: 'integer' }, // Company FK
       bee_id: { type: 'integer' }, // Creator Bee FK
       edit_id: { type: 'integer' } // Updater Bee FK
     }

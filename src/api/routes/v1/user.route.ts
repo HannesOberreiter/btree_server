@@ -2,6 +2,8 @@ import { Router } from '@classes/router.class';
 import { Container } from '@config/container.config';
 import { Guard } from '@middlewares/guard.middleware';
 import { ROLES } from '@enums/role.enum';
+import { Validator } from '@/api/middlewares/validator.middleware';
+import { body } from 'express-validator';
 
 export class UserRouter extends Router {
   constructor() {
@@ -21,6 +23,14 @@ export class UserRouter extends Router {
       .patch(
         Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
         Container.resolve('UserController').patch
+      );
+
+    this.router
+      .route('/company')
+      .patch(
+        Validator.validate([body('saved_company').exists()]),
+        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+        Container.resolve('UserController').changeCompany
       );
   }
 }

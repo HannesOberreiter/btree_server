@@ -11,6 +11,7 @@ export class Todo extends ExtModel {
   done!: boolean;
   edit_id!: number;
   bee_id!: number;
+  user_id!: number;
 
   static tableName = 'todos';
   static idColumn = 'id';

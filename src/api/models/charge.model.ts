@@ -16,6 +16,7 @@ export class Charge extends ExtModel {
   url!: string;
   kind!: string;
   deleted!: boolean;
+  user_id!: number;
 
   static tableName = 'charges';
   static idColumn = 'id';

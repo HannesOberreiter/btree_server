@@ -18,7 +18,8 @@ import {
   confirmAccount,
   resetMail,
   resetPassword,
-  unsubscribeMail
+  unsubscribeMail,
+  buildUserAgent
 } from '@utils/auth.util';
 
 import { loginCheck } from '@utils/login.util';
@@ -173,10 +174,7 @@ export class AuthController extends Controller {
   async login(req: Request, res: IResponse, next: NextFunction) {
     const { email, password } = req.body;
 
-    // Build a userAgent string to identify devices and users
-    let userAgent = useragent.parse(req.headers['user-agent']);
-    userAgent = userAgent.os + userAgent.platform + userAgent.browser;
-    userAgent = userAgent.length > 50 ? userAgent.substring(0, 49) : userAgent;
+    const userAgent = buildUserAgent(req);
 
     try {
       const { bee_id, user_id, data } = await loginCheck(email, password);

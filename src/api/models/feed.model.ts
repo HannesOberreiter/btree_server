@@ -20,7 +20,7 @@ export class Feed extends ExtModel {
 
   type?: FeedType;
   feed_apiary?: FeedApiary;
-  company?: Hive;
+  hive?: Hive;
   creator?: User;
   editor?: User;
 
@@ -43,7 +43,6 @@ export class Feed extends ExtModel {
       updated_at: { type: 'string', format: 'date-time' },
 
       type_id: { type: 'integer' }, // Type FK
-      user_id: { type: 'integer' }, // Company FK
       bee_id: { type: 'integer' }, // Creator Bee FK
       edit_id: { type: 'integer' } // Updater Bee FK
     }
