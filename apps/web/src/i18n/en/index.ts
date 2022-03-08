@@ -34,6 +34,7 @@ export default {
   description: 'Description',
   delete: 'Delete',
   deleted: 'Deleted',
+  remove: 'Remove',
   name: 'Name',
   url: 'Url',
   latitude: 'Latitude',
@@ -44,6 +45,7 @@ export default {
   credentials: 'Credentials',
   user: 'User | Users',
   error404: 'Oops. Nothing here...',
+  removeAccess: 'Remove access',
 
   soundHint: 'Play sound on notifications.',
   visHint:
@@ -145,11 +147,15 @@ export default {
     name: 'Company | Companies',
     title:
       'Here you can change your between your companies or create new ones. As admin you can also edit the name of your company or delete one.',
+    titleUser:
+      'Here you can see a list of users who have access to the current company. Remove them, change access rights or add new ones.',
     active: 'Your active company',
     changeName: 'Enter a new name for your company (min: 5, max: 45)',
     new: 'Enter name for your new company (min: 5, max: 45). Note: You will need to pay for each new company premium access separately.',
     delete:
       'Are you sure you want to delete the company? This is only possible if it is not your last company and no other users are registered with this company. For security please repeat the name of the company:',
+    removeAccess:
+      'Are you sure you want to remove your access to this company? This is only possible if you are not the sole user in this company and if it is not your only company. For security please repeat the name of the company:',
   },
 
   setting: {
