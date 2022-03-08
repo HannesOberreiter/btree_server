@@ -7,6 +7,7 @@ export default {
   oldPassword: 'Old Password',
   confirmPassword: 'Confirm password',
 
+  active: 'Active',
   deactivate: 'Deactivate',
   generateNewKey: 'Generate new Key',
   copiedToClipboard: 'Copied to the clipboard.',
@@ -70,7 +71,6 @@ export default {
 
   forgot: 'Forgot your password?',
   premiumPartner: 'Our premium supporter:',
-  company: 'Company',
 
   icalUrl: 'ICal Url',
   icalSource: 'ICal Source',
@@ -139,6 +139,13 @@ export default {
     hint: 'You can move your apiary to a new location by drag and drop! Double click on map to create a new apiary!',
     radius: 'Radius',
     move: 'Are you sure you want to move your apiary ({msg}) to a new location?',
+  },
+
+  company: {
+    name: 'Company | Companies',
+    title:
+      'Here you can change your between your companies or create new ones. As admin you can also edit the name of your company or delete one.',
+    active: 'Your active company',
   },
 
   setting: {

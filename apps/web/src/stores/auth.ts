@@ -9,6 +9,7 @@ import AuthService from '../services/auth.service';
 import { useAuthTokenStore } from './token';
 import { Router } from 'src/router';
 import { useRefreshStore } from './refresh';
+import { getLocale, i18n, setLocale } from 'src/boot/i18n';
 
 export const useAuthUserStore = defineStore('auth/user', {
   state: () => ({
@@ -65,6 +66,10 @@ export const useAuthUserStore = defineStore('auth/user', {
     },
   },
   actions: {
+    updateLang() {
+      setLocale(i18n, this.getLanguage);
+      console.log(getLocale(i18n));
+    },
     login(user: User) {
       return AuthService.login(user).then(
         async (res: any) => {
@@ -90,6 +95,7 @@ export const useAuthUserStore = defineStore('auth/user', {
       const curCompany = AuthService.getCurrentCompany(data);
       this.user = data;
       this.company = curCompany;
+      this.updateLang();
     },
   },
 });

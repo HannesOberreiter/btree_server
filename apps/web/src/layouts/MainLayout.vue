@@ -36,31 +36,19 @@
   </q-layout>
 </template>
 
-<script>
-import { ref } from 'vue';
+<script setup lang="ts">
+import { useAuthUserStore } from 'src/stores/auth';
 import MainNavbar from 'src/components/MainNavbar.vue';
 import MainDrawer from 'src/components/MainDrawer.vue';
 import GlobalSound from 'src/components/GlobalSound.vue';
-//import { useQuasar } from 'quasar';
+import { ref } from 'vue';
 
-export default {
-  setup() {
-    //const $q = useQuasar();
-    const leftDrawerOpen = ref(false);
-    /*
-    Removed re-calculation of window as it broke fullcalendar
-    const reCalc = computed(() => {
-      if ($q.platform.is.mobile) return true;
-      return leftDrawerOpen.value;
-    });*/
-    return {
-      //reCalc,
-      leftDrawerOpen,
-      toggleLeftDrawer() {
-        leftDrawerOpen.value = !leftDrawerOpen.value;
-      },
-    };
-  },
-  components: { MainNavbar, MainDrawer, GlobalSound },
+//import { useQuasar } from 'quasar';
+const leftDrawerOpen = ref(false);
+const storeUser = useAuthUserStore();
+storeUser.updateLang();
+
+const toggleLeftDrawer = () => {
+  leftDrawerOpen.value = !leftDrawerOpen.value;
 };
 </script>
