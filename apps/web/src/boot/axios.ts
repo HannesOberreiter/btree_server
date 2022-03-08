@@ -23,6 +23,7 @@ const api = axios.create({
 // https://www.bezkoder.com/vue-3-refresh-token/
 const setup = () => {
   const storeToken = useAuthTokenStore();
+
   api.interceptors.request.use(
     (config) => {
       const token = storeToken.getAccessToken;
@@ -37,7 +38,6 @@ const setup = () => {
   );
 
   let retry = false;
-
   api.interceptors.response.use(
     (res) => {
       return res;
