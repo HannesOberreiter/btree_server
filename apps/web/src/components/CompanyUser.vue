@@ -67,29 +67,23 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
-import { useI18n } from 'vue-i18n';
-import { useAuthUserStore } from 'src/stores/auth';
-import { useAuthTokenStore } from 'src/stores/token';
-import { useRefreshStore } from '../stores/refresh';
-import { useQuasar } from 'quasar';
-import { storeToRefs } from 'pinia';
-import ItemCompany from 'src/components/ItemCompany.vue';
 import { api } from 'src/boot/axios';
-import { useNotification } from '../composables/useResponseText';
 import { findIndex } from 'lodash';
-import { greatestDurationDenominator } from '@fullcalendar/core';
+import { ref } from 'vue';
+import { storeToRefs } from 'pinia';
+import { useAuthUserStore } from 'src/stores/auth';
+import { useI18n } from 'vue-i18n';
+import { useNotification } from '../composables/useResponseText';
+import { useQuasar } from 'quasar';
 import dayjs from 'dayjs';
 
 const notification = useNotification();
 const { t, locale } = useI18n();
 const $q = useQuasar();
 const storeUser = useAuthUserStore();
-const storeToken = useAuthTokenStore();
-const storeRefresh = useRefreshStore();
 const newUser = ref('');
 
-const { user, company } = storeToRefs(storeUser);
+const { user } = storeToRefs(storeUser);
 const isSubmitting = ref(false);
 
 const usersPromise = async () =>

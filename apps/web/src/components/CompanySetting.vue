@@ -63,17 +63,17 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
-import { useI18n } from 'vue-i18n';
-import { useAuthUserStore } from 'src/stores/auth';
-import { useAuthTokenStore } from 'src/stores/token';
-import { useRefreshStore } from '../stores/refresh';
-import { useQuasar } from 'quasar';
-import { storeToRefs } from 'pinia';
-import ItemCompany from 'src/components/ItemCompany.vue';
 import { api } from 'src/boot/axios';
-import { useNotification } from '../composables/useResponseText';
+import { computed, ref } from 'vue';
 import { findIndex } from 'lodash';
+import { storeToRefs } from 'pinia';
+import { useAuthTokenStore } from 'src/stores/token';
+import { useAuthUserStore } from 'src/stores/auth';
+import { useI18n } from 'vue-i18n';
+import { useNotification } from '../composables/useResponseText';
+import { useQuasar } from 'quasar';
+import { useRefreshStore } from '../stores/refresh';
+import ItemCompany from 'src/components/ItemCompany.vue';
 
 const notification = useNotification();
 const { t } = useI18n();

@@ -1,98 +1,105 @@
 export default {
-  login: 'Login',
-  email: 'Email',
-
-  password: 'Password',
-  newPassword: 'New Password',
-  oldPassword: 'Old Password',
-  confirmPassword: 'Confirm password',
-
+  activate: 'Activate',
   active: 'Active',
   add: 'Add',
-  deactivate: 'Deactivate',
-  generateNewKey: 'Generate new Key',
-  copiedToClipboard: 'Copied to the clipboard.',
-  formMaxCount: 'Sorry but you have attempted to submit too many times.',
-  language: 'Language',
-  success: 'Success!',
-  refresh: 'Refresh',
-  refreshData: 'Refresh Data',
-  paid: 'Paid',
-  logout: 'Logout',
-  status: 'Status',
-  rank: 'Rank',
-  confirm: 'Confirm',
-  notAllowed: 'Not allowed!',
-  reset: 'Reset',
-  save: 'Save',
-  activate: 'Activate',
-  new: 'New',
-  edit: 'Edit',
-  edited: 'Edited',
-  created: 'Created',
+  api: 'API',
+  apiary: 'Apiary | Apiaries',
+  changeStatus: 'Change Status',
+  charge: 'Charge Control | Charge Controls',
+  checkup: 'Checkup | Checkups',
   close: 'Close',
-  note: 'Note',
-  description: 'Description',
+  colony: 'Colony | Colonies',
+  confirm: 'Confirm',
+  confirmPassword: 'Confirm password',
+  copiedToClipboard: 'Copied to the clipboard.',
+  created: 'Created',
+  credentials: 'Credentials',
+  deactivate: 'Deactivate',
   delete: 'Delete',
   deleted: 'Deleted',
-  remove: 'Remove',
-  name: 'Name',
-  url: 'Url',
-  latitude: 'Latitude',
-  longitude: 'Longitude',
-  firstname: 'Firstname',
-  lastname: 'Lastname',
-  api: 'API',
-  credentials: 'Credentials',
-  user: 'User | Users',
+  description: 'Description',
+  edit: 'Edit',
+  edited: 'Edited',
+  email: 'Email',
   error404: 'Oops. Nothing here...',
-  removeAccess: 'Remove access',
-  lastVisit: 'Last visit',
-  pending: 'Pending',
-  soundHint: 'Play sound on notifications.',
-  visHint:
-    'Send email for Austria VIS deadlines date (Only of interesting for Austrian beekeepers).',
-  larvae: 'Larvae',
-  hatch: 'Hatch',
-
-  changeStatus: 'Change Status',
-
-  hive: 'Hive | Hives',
-  colony: 'Colony | Colonies',
-  apiary: 'Apiary | Apiaries',
-  newApiary: 'Create Apiary',
-  checkup: 'Checkup | Checkups',
   feed: 'Feeding | Feedings',
-  harvest: 'Harvest | Harvests',
-  treatment: 'Treatment | Treatments',
-  rearing: 'Queen rearing | Queen rearings',
-  vis: 'VIS (Austria)',
-  movedate: 'Migration | Migrations',
-  charge: 'Charge Control | Charge Controls',
-
-  todo: "ToDo | ToDo's",
-  newTodo: 'New Todo',
-
+  firstname: 'Firstname',
   forgot: 'Forgot your password?',
-  premiumPartner: 'Our premium supporter:',
-
-  icalUrl: 'ICal Url',
+  formMaxCount: 'Sorry but you have attempted to submit too many times.',
+  generateNewKey: 'Generate new Key',
+  harvest: 'Harvest | Harvests',
+  hatch: 'Hatch',
+  hive: 'Hive | Hives',
   icalSource: 'ICal Source',
-
+  icalUrl: 'ICal Url',
+  language: 'Language',
+  larvae: 'Larvae',
+  lastname: 'Lastname',
+  lastVisit: 'Last visit',
+  latitude: 'Latitude',
+  login: 'Login',
+  logout: 'Logout',
+  longitude: 'Longitude',
+  movedate: 'Migration | Migrations',
+  name: 'Name',
+  new: 'New',
+  newApiary: 'Create Apiary',
+  newPassword: 'New Password',
   newsletterText:
     'Get notifications per email (eg. premium reminder), no newsletter only if something important changes!',
+  newTodo: 'New Todo',
+  notAllowed: 'Not allowed!',
+  note: 'Note',
+  oldPassword: 'Old Password',
+  paid: 'Paid',
+  password: 'Password',
+  pending: 'Pending',
+  premiumPartner: 'Our premium supporter:',
+  rank: 'Rank',
+  rearing: 'Queen rearing | Queen rearings',
+  refresh: 'Refresh',
+  refreshData: 'Refresh Data',
+  remove: 'Remove',
+  removeAccess: 'Remove access',
+  reset: 'Reset',
+  save: 'Save',
+  soundHint: 'Play sound on notifications.',
+  status: 'Status',
+  success: 'Success!',
+  todo: "ToDo | ToDo's",
+  treatment: 'Treatment | Treatments',
+  url: 'Url',
+  user: 'User | Users',
+  vis: 'VIS (Austria)',
+  visHint:
+    'Send email for Austria VIS deadlines date (Only of interesting for Austrian beekeepers).',
 
-  signup: {
-    name: 'Sign Up',
-    text: "Don't have an account?",
-    hintPremium:
-      'Hint: When you register, you get one month free premium access to test the entire app. Afterwards you can still use it but with limited functionality.',
-    source: 'How did you find us?',
-    agree: 'Do you agree with the',
-    accept: 'Please accept the terms first!',
-    terms: 'Terms and Conditions',
-    success:
-      'Successfully registered, we send you an e-mail ({msg}) to activate your account.',
+  activateUser: {
+    title: 'Please confirm your email!',
+    success: 'Account activated you can now login.',
+    label: 'Confirm Key',
+    notValid:
+      "The activation key is not valid anymore. You can also activate your account with the 'Forgot your password' link below.",
+  },
+
+  calendar: {
+    name: 'Calendar | Calendars',
+    hint: 'On the calendar you can move your events and task. Task can in addition be extended if you grab the event at the end. If you double click on a date you can create new ToDo. If you click on an event you get more info and can set the status.',
+  },
+
+  company: {
+    name: 'Company | Companies',
+    title:
+      'Here you can change your between your companies or create new ones. As admin you can also edit the name of your company or delete one.',
+    titleUser:
+      'Here you can see a list of users who have access to the current company. Remove them, change access rights or add new ones.',
+    active: 'Your active company',
+    changeName: 'Enter a new name for your company (min: 5, max: 45)',
+    new: 'Enter name for your new company (min: 5, max: 45). Note: You will need to pay for each new company premium access separately.',
+    delete:
+      'Are you sure you want to delete the company? This is only possible if it is not your last company and no other users are registered with this company. For security please repeat the name of the company:',
+    removeAccess:
+      'Are you sure you want to remove your access to this company? This is only possible if you are not the sole user in this company and if it is not your only company. For security please repeat the name of the company:',
   },
 
   recoverUser: {
@@ -107,14 +114,6 @@ export default {
     success:
       'Your password was successfully changed, we sent a confirmation mail to {msg}.',
     label: 'Reset Key',
-  },
-
-  activateUser: {
-    title: 'Please confirm your email!',
-    success: 'Account activated you can now login.',
-    label: 'Confirm Key',
-    notValid:
-      "The activation key is not valid anymore. You can also activate your account with the 'Forgot your password' link below.",
   },
 
   unsubscribe: {
@@ -133,31 +132,11 @@ export default {
       'Premium members can access the API, please see documentation for more information.',
   },
 
-  calendar: {
-    name: 'Calendar | Calendars',
-    hint: 'On the calendar you can move your events and task. Task can in addition be extended if you grab the event at the end. If you double click on a date you can create new ToDo. If you click on an event you get more info and can set the status.',
-  },
-
   map: {
     name: 'Map | Maps',
     hint: 'You can move your apiary to a new location by drag and drop! Double click on map to create a new apiary!',
     radius: 'Radius',
     move: 'Are you sure you want to move your apiary ({msg}) to a new location?',
-  },
-
-  company: {
-    name: 'Company | Companies',
-    title:
-      'Here you can change your between your companies or create new ones. As admin you can also edit the name of your company or delete one.',
-    titleUser:
-      'Here you can see a list of users who have access to the current company. Remove them, change access rights or add new ones.',
-    active: 'Your active company',
-    changeName: 'Enter a new name for your company (min: 5, max: 45)',
-    new: 'Enter name for your new company (min: 5, max: 45). Note: You will need to pay for each new company premium access separately.',
-    delete:
-      'Are you sure you want to delete the company? This is only possible if it is not your last company and no other users are registered with this company. For security please repeat the name of the company:',
-    removeAccess:
-      'Are you sure you want to remove your access to this company? This is only possible if you are not the sole user in this company and if it is not your only company. For security please repeat the name of the company:',
   },
 
   setting: {
@@ -186,6 +165,19 @@ export default {
       'Best before: 1 Date Field, to be used for best before date',
     hintChargeCalibrate:
       'Calibrate: 1 Input Field, if you want to keep a calibrate list for you charges',
+  },
+
+  signup: {
+    name: 'Sign Up',
+    text: "Don't have an account?",
+    hintPremium:
+      'Hint: When you register, you get one month free premium access to test the entire app. Afterwards you can still use it but with limited functionality.',
+    source: 'How did you find us?',
+    agree: 'Do you agree with the',
+    accept: 'Please accept the terms first!',
+    terms: 'Terms and Conditions',
+    success:
+      'Successfully registered, we send you an e-mail ({msg}) to activate your account.',
   },
 
   validations: {
