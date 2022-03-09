@@ -1,19 +1,14 @@
-import { CompanyBee } from '@models/company_bee.model';
-import { User } from '@models/user.model';
-import { RefreshToken } from '@models/refresh_token.model';
-import useragent from 'express-useragent';
-
-import { expectationFailed, unauthorized, badRequest } from '@hapi/boom';
-import dayjs from 'dayjs';
-
-import { randomBytes, createHash } from 'crypto';
-
-import jwt from 'jsonwebtoken';
-
-import { jwtSecret, jwtExpirationInterval } from '@config/environment.config';
-
 import { checkMySQLError } from '@utils/error.util';
+import { CompanyBee } from '@models/company_bee.model';
+import { expectationFailed, unauthorized } from '@hapi/boom';
+import { jwtSecret, jwtExpirationInterval } from '@config/environment.config';
+import { randomBytes, createHash } from 'crypto';
+import { RefreshToken } from '@models/refresh_token.model';
 import { Request } from 'express';
+import { User } from '@models/user.model';
+import dayjs from 'dayjs';
+import jwt from 'jsonwebtoken';
+import useragent from 'express-useragent';
 
 const generateRefreshToken = async (
   bee_id: number,

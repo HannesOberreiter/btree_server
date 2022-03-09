@@ -1,32 +1,52 @@
-import { Company } from '@models/company.model';
-import { checkMySQLError } from '@utils/error.util';
 import { Apiary } from '../models/apiary.model';
 import { Charge } from '../models/charge.model';
-import { Checkup } from '../models/checkup.model';
-import { Feed } from '../models/feed.model';
-import { Harvest } from '../models/harvest.model';
-import { Hive } from '../models/hive.model';
-import { Movedate } from '../models/movedate.model';
 import { ChargeType } from '../models/option/charge_type.model';
+import { checkMySQLError } from '@utils/error.util';
+import { Checkup } from '../models/checkup.model';
 import { CheckupType } from '../models/option/checkup_type.model';
+import { Company } from '@models/company.model';
+import { CompanyBee } from '../models/company_bee.model';
+import { Feed } from '../models/feed.model';
 import { FeedType } from '../models/option/feed_type.model';
+import { FieldSetting } from '../models/field_setting.model';
+import { Harvest } from '../models/harvest.model';
 import { HarvestType } from '../models/option/harvest_type.model';
+import { Hive } from '../models/hive.model';
 import { HiveSource } from '../models/option/hive_source.model';
 import { HiveType } from '../models/option/hive_type.mode';
+import { Movedate } from '../models/movedate.model';
 import { QueenMating } from '../models/option/queen_mating.model';
 import { QueenRace } from '../models/option/queen_race.model';
-import { TreatmentDisease } from '../models/option/treatment_disease.model';
-import { TreatmentType } from '../models/option/treatment_type.model';
-import { TreatmentVet } from '../models/option/treatment_vet.model';
 import { Rearing } from '../models/rearing/rearing.model';
 import { RearingDetail } from '../models/rearing/rearing_detail.model';
 import { RearingStep } from '../models/rearing/rearing_step.model';
 import { RearingType } from '../models/rearing/rearing_type.model';
-
+import { RefreshToken } from '../models/refresh_token.model';
 import { Todo } from '../models/todo.model';
 import { Treatment } from '../models/treatment.model';
+import { TreatmentDisease } from '../models/option/treatment_disease.model';
+import { TreatmentType } from '../models/option/treatment_type.model';
+import { TreatmentVet } from '../models/option/treatment_vet.model';
+import { User } from '../models/user.model';
+
+export const deleteUser = async (bee_id: number) => {
+  console.log(bee_id);
+  try {
+    const result = await User.transaction(async (trx) => {
+      await CompanyBee.query(trx).delete().where({ bee_id: bee_id });
+      await FieldSetting.query(trx).delete().where({ bee_id: bee_id });
+      await RefreshToken.query(trx).delete().where({ bee_id: bee_id });
+      await User.query(trx).deleteById(bee_id);
+      return true;
+    });
+    return result;
+  } catch (e) {
+    throw checkMySQLError(e);
+  }
+};
 
 export const deleteCompany = async (company_id: number) => {
+  console.log(company_id);
   try {
     const result = await Company.transaction(async (trx) => {
       await Rearing.query(trx).delete().where({ user_id: company_id });

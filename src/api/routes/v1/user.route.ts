@@ -26,6 +26,16 @@ export class UserRouter extends Router {
       );
 
     this.router
+      .route('/delete')
+      .patch(
+        Validator.validate([
+          body('password').exists().withMessage('requiredField').trim()
+        ]),
+        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+        Container.resolve('UserController').delete
+      );
+
+    this.router
       .route('/company')
       .patch(
         Validator.validate([body('saved_company').exists()]),

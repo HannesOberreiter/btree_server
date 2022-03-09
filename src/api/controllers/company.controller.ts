@@ -40,7 +40,6 @@ export class CompanyController extends Controller {
         .where({
           'companies.id': req.params.id
         });
-      console.log(otherUser);
       if (otherUser.length > 0)
         throw forbidden('Other user(s) found, please remove them first.');
 
@@ -53,7 +52,6 @@ export class CompanyController extends Controller {
         .whereNot({
           'companies.id': req.params.id
         });
-      console.log(otherCompanies);
       if (otherCompanies.length === 0)
         throw forbidden('This is your last company, you cannot delete it.');
       req.body.saved_company = otherCompanies[0].id;

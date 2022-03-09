@@ -14,6 +14,8 @@ import {
   generateTokenResponse
 } from '@utils/auth.util';
 import { MailService } from '@services/mail.service';
+import { map } from 'lodash';
+import { deleteCompany, deleteUser } from '../utils/delete.util';
 export class UserController extends Controller {
   constructor() {
     super();
@@ -25,6 +27,33 @@ export class UserController extends Controller {
       next();
     } catch (e) {
       next();
+    }
+  }
+
+  async delete(req: IUserRequest, res: Response, next) {
+    try {
+      await reviewPassword(req.user.bee_id, req.body.password);
+      const companies = await CompanyBee.query().where({
+        bee_id: req.user.bee_id
+      });
+      await Promise.all(
+        map(companies, async (company) => {
+          const count = await CompanyBee.query().select('id').where({
+            user_id: company.user_id
+          });
+          if (count.length === 1 && company.user_id) {
+            await deleteCompany(company.user_id);
+          }
+          return true;
+        })
+      );
+
+      const result = await deleteUser(req.user.bee_id);
+      console.log(result);
+      res.locals.data = result;
+      next();
+    } catch (e) {
+      next(checkMySQLError(e));
     }
   }
 
