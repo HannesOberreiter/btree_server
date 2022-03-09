@@ -116,9 +116,6 @@ const state = reactive({
 const rules = {
   firstname: { maxLengthValue: maxLength(45) },
   lastname: { maxLengthValue: maxLength(45) },
-  format: {
-    required,
-  },
   lang: {
     required,
   },
@@ -134,7 +131,7 @@ async function onSubmit() {
     isSubmitting.value = false;
     return;
   }
-
+  console.log('test');
   const data = {
     firstname: state.firstname,
     lastname: state.lastname,

@@ -26,8 +26,10 @@
 
     <q-footer class="bg-grey-8 text-white">
       <q-toolbar dense style="max-height: 30px; min-height: 30px">
-        Version: 5.X.X &nbsp;
-        <router-link to="news" class="text-white">News</router-link>
+        Version: {{ news.aaData[0].version }}, {{ news.aaData[0].date }} &nbsp;
+        <router-link :to="{ name: 'news' }" class="text-white">
+          {{ t('news') }}
+        </router-link>
         <q-space></q-space>
         <strong>b.tree</strong>
       </q-toolbar>
@@ -37,17 +39,20 @@
 </template>
 
 <script setup lang="ts">
-import { useAuthUserStore } from 'src/stores/auth';
-import MainNavbar from 'src/components/MainNavbar.vue';
-import MainDrawer from 'src/components/MainDrawer.vue';
-import GlobalSound from 'src/components/GlobalSound.vue';
 import { ref } from 'vue';
-import { useQuasarLang } from 'src/composables/useQuasarLang';
+import { useAuthUserStore } from 'src/stores/auth';
+import { useI18n } from 'vue-i18n';
 import { useQuasar } from 'quasar';
+import { useQuasarLang } from 'src/composables/useQuasarLang';
+import GlobalSound from 'src/components/GlobalSound.vue';
+import MainDrawer from 'src/components/MainDrawer.vue';
+import MainNavbar from 'src/components/MainNavbar.vue';
+import news from 'src/assets/news.json';
 
 const leftDrawerOpen = ref(false);
 const storeUser = useAuthUserStore();
 const $q = useQuasar();
+const { t } = useI18n();
 
 storeUser.updateLang();
 useQuasarLang($q);
