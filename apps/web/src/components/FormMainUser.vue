@@ -59,16 +59,25 @@
       </div>
     </div>
   </q-form>
-  <q-btn
-    unelevated
-    @click="onSubmit"
-    size="lg"
-    color="secondary"
-    type="submit"
-    :loading="isSubmitting"
-    :label="t('save')"
-    class="full-width text-white"
-  />
+  <q-btn-group spread>
+    <q-btn
+      unelevated
+      @click="onSubmit"
+      size="lg"
+      color="secondary"
+      type="submit"
+      :loading="isSubmitting"
+      :label="t('save')"
+    />
+    <q-btn
+      unelevated
+      @click="onDelete"
+      size="lg"
+      color="negative"
+      :loading="isSubmitting"
+      :label="t('delete') + ' ' + t('account')"
+    />
+  </q-btn-group>
 </template>
 
 <script setup lang="ts">
@@ -145,4 +154,34 @@ async function onSubmit() {
   );
   isSubmitting.value = false;
 }
+
+const onDelete = () => {
+  isSubmitting.value = true;
+
+  $q.dialog({
+    // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
+    title: t('delete') + ' ' + user.value.email,
+    message: t('profile.userDeleteText'),
+    cancel: true,
+    persistent: false,
+    prompt: {
+      model: '',
+      isValid: (val) => val.length > 4 && val.length <= 100,
+      type: 'password',
+      label: t('password'),
+    },
+  })
+    .onOk((value) => {
+      api.patch('/v1/user/delete', { password: value }).then(
+        async (_response: any) => {
+          notification.open('positive', '');
+          await storeUser.logout();
+        },
+        (error) => {
+          notification.open('negative', error.response);
+        }
+      );
+    })
+    .onDismiss(() => (isSubmitting.value = false));
+};
 </script>
