@@ -15,9 +15,5 @@ export class HiveRouter extends Router {
         Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
         Container.resolve('HiveController').getHives
       );
-
-    this.router
-      .route('/table')
-      .get(Container.resolve('HiveController').getTable);
   }
 }

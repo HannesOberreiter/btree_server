@@ -9,13 +9,6 @@ export class OptionRouter extends Router {
   }
 
   define() {
-    this.router
-      .route('/table/:table')
-      .get(
-        Validator.handleOption,
-        Container.resolve('OptionController').getTable
-      );
-
     // Get Task Dropdowns for QuickTool
     // also returns a timestamp, as we don't need really to fetch it every time
     // only if user edits any of the task dropdowns or after X minutes

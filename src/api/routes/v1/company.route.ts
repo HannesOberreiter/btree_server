@@ -10,7 +10,6 @@ export class CompanyRouter extends Router {
   }
 
   define() {
-    this.router.route('/').get(Container.resolve('CompanyController').get);
     this.router
       .route('/apikey')
       .get(

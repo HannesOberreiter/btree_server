@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { Controller } from '@classes/controller.class';
 import { checkMySQLError } from '@utils/error.util';
-import { ApiaryTable } from '@datatables/company.table';
 import { Company } from '@models/company.model';
 import { IUserRequest } from '@interfaces/IUserRequest.interface';
 import { randomBytes } from 'crypto';
@@ -126,17 +125,6 @@ export class CompanyController extends Controller {
         return res;
       });
       res.locals.data = result;
-      next();
-    } catch (e) {
-      next(checkMySQLError(e));
-    }
-  }
-
-  async get(req: Request, res: Response, next) {
-    try {
-      let editor = ApiaryTable.table();
-      await editor.process(req.body);
-      res.locals.data = editor.data();
       next();
     } catch (e) {
       next(checkMySQLError(e));

@@ -1,7 +1,6 @@
 import { NextFunction, Response } from 'express';
 import { Controller } from '@classes/controller.class';
 import { checkMySQLError } from '@utils/error.util';
-import { HarvestTable } from '@datatables/harvest.table';
 import { IUserRequest } from '@interfaces/IUserRequest.interface';
 import { Guard } from '@middlewares/guard.middleware';
 import { ROLES } from '@enums/role.enum';
@@ -12,27 +11,6 @@ export class HarvestController extends Controller {
     super();
   }
 
-  async getTable(req: IUserRequest, res: Response, next: NextFunction) {
-    try {
-      let editor = HarvestTable.table(req);
-
-      editor.on('preDelete', (_editor, _values) => {
-        Guard.authorize([ROLES.admin])(req, res, next);
-      });
-      editor.on('preCreate', (_editor, _values) => {
-        Guard.authorize([ROLES.user, ROLES.admin])(req, res, next);
-      });
-      editor.on('preEdit', (_editor, _values) => {
-        Guard.authorize([ROLES.user, ROLES.admin])(req, res, next);
-      });
-
-      await editor.process(req.body);
-      res.locals.data = editor.data();
-      next();
-    } catch (e) {
-      next(checkMySQLError(e));
-    }
-  }
   async updateStatus(req: IUserRequest, res: Response, next: NextFunction) {
     try {
       const result = await Harvest.transaction(async (trx) => {

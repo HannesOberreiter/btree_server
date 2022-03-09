@@ -5,10 +5,4 @@ export class ChargeRouter extends Router {
   constructor() {
     super();
   }
-
-  define() {
-    this.router
-      .route('/table')
-      .get(Container.resolve('ChargeController').getTable);
-  }
 }

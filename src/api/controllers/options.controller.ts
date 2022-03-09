@@ -1,7 +1,6 @@
 import { Response } from 'express';
 import { Controller } from '@classes/controller.class';
 import { checkMySQLError } from '@utils/error.util';
-import { OptionTable } from '@datatables/option.table';
 import { IUserRequest } from '@interfaces/IUserRequest.interface';
 import { ChargeType } from '@models/option/charge_type.model';
 import { CheckupType } from '@models/option/checkup_type.model';
@@ -14,17 +13,6 @@ import { TreatmentVet } from '@models/option/treatment_vet.model';
 export class OptionController extends Controller {
   constructor() {
     super();
-  }
-
-  async getTable(req: IUserRequest, res: Response, next) {
-    try {
-      let editor = OptionTable.table(req.params.table);
-      await editor.process(req.body);
-      res.locals.data = editor.data();
-      next();
-    } catch (e) {
-      next(checkMySQLError(e));
-    }
   }
 
   async getDropdowns(req: IUserRequest, res: Response, next) {

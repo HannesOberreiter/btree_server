@@ -10,18 +10,6 @@ export class HarvestRouter extends Router {
 
   define() {
     this.router
-      .route('/table')
-      .get(
-        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Container.resolve('HarvestController').getTable
-      );
-    this.router
-      .route('/table')
-      .post(
-        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Container.resolve('HarvestController').getTable
-      );
-    this.router
       .route('/status')
       .patch(
         Guard.authorize([ROLES.admin, ROLES.user]),
