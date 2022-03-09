@@ -5,6 +5,8 @@ import { ExternalController } from '@controllers/external.controller';
 
 import { CompanyController } from '@controllers/company.controller';
 import { UserController } from '@controllers/user.controller';
+import { CompanyUserController } from '@controllers/company_user.controller';
+
 import { AuthController } from '@controllers/auth.controller';
 
 import { CalendarController } from '@controllers/calendar.controller';
@@ -49,7 +51,9 @@ export class Container {
       .register({
         ApiaryController: awilix.asClass(ApiaryController).singleton()
       })
-
+      .register({
+        CompanyUserController: awilix.asClass(CompanyUserController).singleton()
+      })
       .register({
         OptionController: awilix.asClass(OptionController).singleton()
       })

@@ -23,19 +23,19 @@ export class AuthRouter extends Router {
         Container.resolve('AuthController').register
       );
 
-    this.router
-      .route('/login')
-      .post(
-        Validator.validate([
-          body('email')
-            .exists()
-            .withMessage('requiredField')
-            .isEmail()
-            .normalizeEmail(),
-          body('password').isLength({ min: 6 }).trim()
-        ]),
-        Container.resolve('AuthController').login
-      );
+    this.router.route('/login').post(
+      Validator.validate([
+        body('email')
+          .exists()
+          .withMessage('requiredField')
+          .isEmail()
+          .normalizeEmail({
+            gmail_remove_subaddress: false
+          }),
+        body('password').isLength({ min: 6 }).trim()
+      ]),
+      Container.resolve('AuthController').login
+    );
 
     this.router
       .route('/confirm')

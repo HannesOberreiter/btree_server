@@ -38,7 +38,7 @@ export class CompanyBee extends Model {
       modelClass: User,
       join: {
         from: 'company_bee.bee_id',
-        to: 'user.id'
+        to: 'bees.id'
       }
     }
   });

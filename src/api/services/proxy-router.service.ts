@@ -7,6 +7,7 @@ import { ExternalRoute } from '@routes/v1/external.route';
 
 import { CompanyRouter } from '@routes/v1/company.route';
 import { UserRouter } from '@routes/v1/user.route';
+import { CompanyUserRouter } from '@routes/v1/company_user.route';
 
 import { CalendarRouter } from '@routes/v1/calendar.route';
 
@@ -44,6 +45,8 @@ export class ProxyRouter {
     { segment: '/external/', router: ExternalRoute },
 
     { segment: '/company/', router: CompanyRouter },
+    { segment: '/company_user/', router: CompanyUserRouter },
+
     { segment: '/hive/', router: HiveRouter },
     { segment: '/apiary/', router: ApiaryRouter },
 
