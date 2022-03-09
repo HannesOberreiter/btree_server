@@ -1,6 +1,6 @@
-# b.tree (btree_vue)
+# Frontend for b.tree Beekeeping Webapplication
 
-Beekeeping Database frontend application for managing your colonies in a modern way. More infos <https://info.btree.at>.
+Written in typescript build with Vue.js and Quasar. The b.tree application is for managing your honeybee colonies in a modern way. More infos at <https://info.btree.at>.
 
 ## Install the dependencies
 
