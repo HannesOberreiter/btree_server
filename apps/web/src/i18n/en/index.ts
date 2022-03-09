@@ -1,6 +1,7 @@
 export default {
   activate: 'Activate',
   active: 'Active',
+  account: 'Account',
   add: 'Add',
   api: 'API',
   apiary: 'Apiary | Apiaries',
@@ -130,6 +131,8 @@ export default {
       'Update your login credentials, for security reasons please also insert your old password.',
     apiTitle:
       'Premium members can access the API, please see documentation for more information.',
+    userDeleteText:
+      'Are you sure you want to delete your account? This action cannot be undone. Note: If there are another user in the current company the company data wont be deleted otherwise all data will be removed. For security please enter your current password.',
   },
 
   map: {

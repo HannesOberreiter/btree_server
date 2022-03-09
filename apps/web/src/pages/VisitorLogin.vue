@@ -3,7 +3,10 @@
     <div class="text-h6 text-center">{{ t('login') }}</div>
     <form-error-max v-if="submitCount >= 15"></form-error-max>
     <q-form v-else @submit="onSubmit" class="q-gutter-md">
-      <form-user-email v-model="state.email"></form-user-email>
+      <form-user-email
+        v-model:modelMail="state.email"
+        @update:modelMail="(value) => (state.email = value)"
+      ></form-user-email>
       <form-user-password
         v-model:modelPassword="state.password"
       ></form-user-password>

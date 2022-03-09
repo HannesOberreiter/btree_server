@@ -152,7 +152,7 @@ async function onSubmit() {
     return;
   }
   if (state.terms === false) {
-    notification.open('negative', t('singup.accept'));
+    notification.open('negative', t('signup.accept'));
     isSubmitting.value = false;
     return;
   }
