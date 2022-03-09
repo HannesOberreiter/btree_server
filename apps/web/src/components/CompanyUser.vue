@@ -1,14 +1,19 @@
 <template>
   <q-list bordered class="rounded-borders">
-    <q-item v-for="value in usersPromise" :key="value.id">
-      <q-item-section avatar top>
-        <q-icon
+    <q-item v-for="value in usersData" :key="value.id">
+      <q-item-section avatar>
+        <q-btn
           v-if="value.user.id === user.id"
-          name="fas fa-crown"
-          color="black"
-          size="34px"
+          flat
+          icon="fas fa-crown"
+          :disable="true"
         />
-        <q-icon v-else name="fas fa-user" color="black" size="34px" />
+        <q-btn
+          v-else
+          flat
+          icon="fas fa-user-minus"
+          @click="removeAccess(value.id, value.user.email)"
+        />
       </q-item-section>
 
       <q-item-section top>
@@ -22,34 +27,31 @@
 
       <q-item-section top>
         <q-item-label lines="1">
-          <span class="text-grey-8">
-            Last visit:
+          <span
+            v-if="dayjs(value.user.last_visit).year() === 1989"
+            class="text-red-8"
+          >
+            {{ t('pending') }} ...
+          </span>
+          <span v-else class="text-grey-8">
+            {{ t('lastVisit') }}:
             {{ dayjs(value.user.last_visit).locale(locale).format() }}
           </span>
         </q-item-label>
         <q-item-label lines="1" class="text-weight-medium">
-          <span v-if="value.rank === 1">Admin</span>
-          <span v-else-if="value.rank === 2">User</span>
-          <span v-else>Read-Only</span>
+          <q-btn
+            flat
+            @click="changeAccess(value.id, value.rank)"
+            icon="fas fa-user-shield"
+            :disable="value.user.id === user.id"
+          >
+            <span v-if="value.rank === 1" class="q-ml-sm">Admin</span>
+            <span v-else-if="value.rank === 2" class="q-ml-sm">User</span>
+            <span v-else class="q-ml-sm">Read-Only</span>
+          </q-btn>
         </q-item-label>
       </q-item-section>
-
-      <q-item-section top side>
-        <div class="text-grey-8 q-gutter-xs">
-          <q-btn
-            class="gt-xs"
-            size="12px"
-            flat
-            dense
-            round
-            icon="fas fa-user-minus"
-          />
-          <q-btn class="gt-xs" size="12px" flat dense round icon="fas fa-up" />
-        </div>
-      </q-item-section>
     </q-item>
-
-    <q-separator spaced />
   </q-list>
   <q-btn-group class="q-mt-lg" spread>
     <q-btn
@@ -58,7 +60,7 @@
       color="primary"
       type="submit"
       :loading="isSubmitting"
-      :label="t('add') + '' + t('user')"
+      :label="t('add') + ' ' + t('user')"
       @click="addUser"
     />
   </q-btn-group>
@@ -85,20 +87,97 @@ const $q = useQuasar();
 const storeUser = useAuthUserStore();
 const storeToken = useAuthTokenStore();
 const storeRefresh = useRefreshStore();
+const newUser = ref('');
 
 const { user, company } = storeToRefs(storeUser);
 const isSubmitting = ref(false);
 
-const usersPromise = await api.get('/v1/company_user/user').then(
-  (response: any) => {
-    return response.data;
-  },
-  (error) => {
-    notification.open('negative', error.response);
-  }
-);
+const usersPromise = async () =>
+  api.get('/v1/company_user/user').then(
+    (response: any) => {
+      return response.data;
+    },
+    (error) => {
+      notification.open('negative', error.response);
+    }
+  );
+
+const usersData = ref(await usersPromise());
+
+const checkDuplicate = (val: string) => {
+  return (
+    val.length >= 5 &&
+    val.length <= 100 &&
+    findIndex(usersData.value, function (o: any) {
+      return o.user.email == val;
+    }) === -1
+  );
+};
+
+const changeAccess = (id: number, rank: number) => {
+  if (rank === 1) rank = 3;
+  else if (rank === 2) rank = 1;
+  else rank = 2;
+  api
+    .patch(`/v1/company_user/${id}`, {
+      rank: rank,
+    })
+    .then(
+      async (_response: any) => {
+        usersData.value = await usersPromise();
+        notification.open('positive', '');
+      },
+      (error) => {
+        notification.open('negative', error.response);
+      }
+    );
+};
+
+const removeAccess = (id: number, email: string) => {
+  $q.dialog({
+    title: t('remove') + ' ' + email,
+    message: t('company.removeUser'),
+    cancel: true,
+    persistent: true,
+  }).onOk(() => {
+    api.delete(`/v1/company_user/remove_user/${id}`).then(
+      async (_response: any) => {
+        usersData.value = await usersPromise();
+        notification.open('positive', '');
+      },
+      (error) => {
+        notification.open('negative', error.response);
+      }
+    );
+  });
+};
 
 const addUser = () => {
-  console.log('t');
+  $q.dialog({
+    title: t('add') + ' ' + t('user'),
+    message: t('company.addUser'),
+    prompt: {
+      model: newUser.value,
+      isValid: checkDuplicate,
+      type: 'email',
+      label: t('email'),
+    },
+    cancel: true,
+    persistent: true,
+  }).onOk((data) => {
+    api
+      .post('/v1/company_user/add_user', {
+        email: data,
+      })
+      .then(
+        async (_response: any) => {
+          usersData.value = await usersPromise();
+          notification.open('positive', '');
+        },
+        (error) => {
+          notification.open('negative', error.response);
+        }
+      );
+  });
 };
 </script>

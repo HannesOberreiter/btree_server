@@ -8,6 +8,7 @@ export default {
   confirmPassword: 'Confirm password',
 
   active: 'Active',
+  add: 'Add',
   deactivate: 'Deactivate',
   generateNewKey: 'Generate new Key',
   copiedToClipboard: 'Copied to the clipboard.',
@@ -46,7 +47,8 @@ export default {
   user: 'User | Users',
   error404: 'Oops. Nothing here...',
   removeAccess: 'Remove access',
-
+  lastVisit: 'Last visit',
+  pending: 'Pending',
   soundHint: 'Play sound on notifications.',
   visHint:
     'Send email for Austria VIS deadlines date (Only of interesting for Austrian beekeepers).',
