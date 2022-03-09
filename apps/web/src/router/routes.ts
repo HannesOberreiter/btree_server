@@ -43,7 +43,7 @@ const routes: RouteRecordRaw[] = [
       {
         path: '/news',
         name: 'news',
-        component: () => import('pages/UserNews.vue'),
+        component: () => import('pages/NewsTable.vue'),
       },
     ],
   },
