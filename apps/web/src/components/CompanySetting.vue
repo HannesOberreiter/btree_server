@@ -88,30 +88,12 @@ const isSubmitting = ref(false);
 const model = company;
 const options = computed(() => user.value.company);
 
-const removeAccess = () => {
-  $q.dialog({
-    title: t('remove') + ' ' + model.value.name,
-    class: 'bg-lime-12',
-    message: t('company.removeAccess'),
-    prompt: {
-      model: '',
-      isValid: (val) => val === model.value.name,
-      type: 'text',
-      label: model.value.name,
-    },
-    cancel: true,
-    persistent: true,
-  }).onOk(() => {
-    api.delete(`/v1/company_user/${model.value.id}`).then(
-      async (_response: any) => {
-        await storeRefresh.refresh();
-        notification.open('positive', '');
-      },
-      (error) => {
-        notification.open('negative', error.response);
-      }
-    );
-  });
+const checkCompanyName = (val: string) => {
+  return (
+    val.length >= 5 &&
+    val.length <= 45 &&
+    findIndex(options.value, { name: val }) === -1
+  );
 };
 
 const changeCompany = (value: any) => {
@@ -129,12 +111,31 @@ const changeCompany = (value: any) => {
   isSubmitting.value = false;
 };
 
-const checkCompanyName = (val: string) => {
-  return (
-    val.length >= 5 &&
-    val.length <= 45 &&
-    findIndex(options.value, { name: val }) === -1
-  );
+const removeAccess = () => {
+  $q.dialog({
+    title: t('remove') + ' ' + model.value.name,
+    class: 'bg-lime-12',
+    message: t('company.removeAccess'),
+    prompt: {
+      model: '',
+      isValid: (val) => val === model.value.name,
+      type: 'text',
+      label: model.value.name,
+    },
+    cancel: true,
+    persistent: true,
+  }).onOk(() => {
+    api.delete(`/v1/company_user/${model.value.id}`).then(
+      async (response: any) => {
+        storeToken.refreshToken(response.data.token);
+        await storeRefresh.refresh();
+        notification.open('positive', '');
+      },
+      (error) => {
+        notification.open('negative', error.response);
+      }
+    );
+  });
 };
 
 const editCompany = () => {
@@ -201,7 +202,8 @@ const deleteCompany = () => {
     persistent: true,
   }).onOk(() => {
     api.delete(`/v1/company/${model.value.id}`).then(
-      async (_response: any) => {
+      async (response: any) => {
+        storeToken.refreshToken(response.data.token);
         await storeRefresh.refresh();
         notification.open('positive', '');
       },
