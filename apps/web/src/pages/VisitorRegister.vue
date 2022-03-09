@@ -1,6 +1,6 @@
 <template>
   <q-card-section>
-    <div class="text-h6 text-center">{{ t('signup') }}</div>
+    <div class="text-h6 text-center">{{ t('signup.name') }}</div>
     <form-error-max v-if="submitCount >= 15"></form-error-max>
     <q-form v-else @submit="onSubmit" class="q-gutter-md">
       <form-user-company v-model="state.company"></form-user-company>
@@ -52,7 +52,7 @@
         :false-value="false"
       >
         <slot>
-          {{ t('signupAgree') }}
+          {{ t('signup.agree') }}
           <q-btn @click="terms = true" flat color="secondary">
             {{ t('signup.terms') }}
           </q-btn>
@@ -120,7 +120,7 @@ const { t } = useI18n();
 
 const terms = ref(false);
 const message = ref('');
-const btnLabel = ref('signup');
+const btnLabel = ref(t('signup.name'));
 const isSubmitting = ref(false);
 const submitCount = ref(0);
 const languages = usePreferredLanguages();
@@ -177,7 +177,7 @@ async function sendForm(user: any) {
       message.value = t('signup.success', { msg: email });
 
       isSubmitting.value = false;
-      btnLabel.value = 'success';
+      btnLabel.value = t('success');
       notification.open('positive', message.value);
     },
     (error) => {
