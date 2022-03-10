@@ -23,7 +23,7 @@
   <q-btn
     unelevated
     @click.prevent.stop="onSubmit"
-    size="lg"
+    size="md"
     color="secondary"
     type="submit"
     :loading="isSubmitting"

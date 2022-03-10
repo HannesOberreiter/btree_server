@@ -81,7 +81,6 @@ async function onSubmit() {
     email: state.email,
     password: state.password,
   };
-
   await sendForm(form);
   return;
 }

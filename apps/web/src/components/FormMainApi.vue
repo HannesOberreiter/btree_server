@@ -62,7 +62,7 @@
         v-if="!storeUser.company.api_active"
         @click.prevent.stop="changeApiStatus(true)"
         unelevated
-        size="lg"
+        size="md"
         color="secondary"
       >
         {{ t('activate') }}
@@ -71,7 +71,7 @@
         v-if="storeUser.company.api_active"
         @click.prevent.stop="changeApiStatus(false)"
         unelevated
-        size="lg"
+        size="md"
         color="negative"
       >
         {{ t('deactivate') }}
@@ -80,8 +80,8 @@
         v-if="storeUser.company.api_active"
         @click.prevent.stop="changeApiStatus(true, true)"
         unelevated
-        size="lg"
-        color="warning"
+        size="md"
+        color="secondary"
       >
         {{ t('generateNewKey') }}
       </q-btn>

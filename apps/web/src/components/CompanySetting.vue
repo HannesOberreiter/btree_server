@@ -21,7 +21,7 @@
   <q-btn-group class="q-mt-lg" spread>
     <q-btn
       unelevated
-      size="lg"
+      size="md"
       color="primary"
       type="submit"
       :loading="isSubmitting"
@@ -31,7 +31,7 @@
     <q-btn
       v-if="storeUser.isAdmin"
       unelevated
-      size="lg"
+      size="md"
       color="secondary"
       type="submit"
       :loading="isSubmitting"
@@ -42,7 +42,7 @@
   <q-btn-group class="q-mt-md" spread>
     <q-btn
       unelevated
-      size="lg"
+      size="md"
       color="red-10"
       type="submit"
       :loading="isSubmitting"
@@ -52,7 +52,7 @@
     <q-btn
       v-if="storeUser.isAdmin"
       unelevated
-      size="lg"
+      size="md"
       color="negative"
       type="submit"
       :loading="isSubmitting"

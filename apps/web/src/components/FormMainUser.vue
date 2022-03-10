@@ -63,7 +63,7 @@
     <q-btn
       unelevated
       @click="onSubmit"
-      size="lg"
+      size="md"
       color="secondary"
       type="submit"
       :loading="isSubmitting"
@@ -72,7 +72,7 @@
     <q-btn
       unelevated
       @click="onDelete"
-      size="lg"
+      size="md"
       color="negative"
       :loading="isSubmitting"
       :label="t('delete') + ' ' + t('account')"

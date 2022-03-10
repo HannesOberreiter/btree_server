@@ -7,7 +7,7 @@
   <q-btn
     unelevated
     @click="onSubmit"
-    size="lg"
+    size="md"
     color="secondary"
     type="submit"
     :loading="isSubmitting"

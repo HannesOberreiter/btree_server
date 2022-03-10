@@ -56,7 +56,7 @@
   <q-btn-group class="q-mt-lg" spread>
     <q-btn
       unelevated
-      size="lg"
+      size="md"
       color="primary"
       type="submit"
       :loading="isSubmitting"

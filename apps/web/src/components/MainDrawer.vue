@@ -80,6 +80,12 @@ const links = ref([
     menu: [] as any,
   },
   {
+    label: 'Quicktool',
+    route: 'quicktool',
+    icon: 'fas fa-magic',
+    menu: [] as any,
+  },
+  {
     label: 'Maps',
     route: '',
     icon: 'fas fa-globe',
