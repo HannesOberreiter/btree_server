@@ -1,6 +1,6 @@
 <template>
   <q-input
-    v-model="v.email.$model"
+    v-model="state.email"
     :error="v.email.$error"
     :error-message="validationErrors(v.email)"
     :no-error-icon="true"
@@ -59,5 +59,5 @@ watch(state, (curr) => {
 const rules = {
   email: { required, email, maxLengthValue: maxLength(50) },
 };
-const v = useVuelidate(rules, state);
+const v = useVuelidate(rules, state, { $autoDirty: true });
 </script>

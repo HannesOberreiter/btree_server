@@ -29,7 +29,6 @@
     multiple
     use-chips
     use-input
-    style="max-height: 10em; overflow-y: auto"
   >
   </q-select>
 </template>
@@ -121,3 +120,10 @@ const rules = {
 };
 const v = useVuelidate(rules, state);
 </script>
+
+<style>
+.q-field__native {
+  max-height: 100px;
+  overflow: auto;
+}
+</style>
