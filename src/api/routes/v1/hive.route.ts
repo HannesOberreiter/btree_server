@@ -13,7 +13,7 @@ export class HiveRouter extends Router {
       .route('/')
       .get(
         Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Container.resolve('HiveController').getHives
+        Container.resolve('HiveController').get
       );
   }
 }

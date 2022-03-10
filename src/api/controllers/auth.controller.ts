@@ -193,7 +193,7 @@ export class AuthController extends Controller {
     }
     try {
       const { token, expires } = req.body;
-      const result = await checkRefreshToken(accessToken, token, expires);
+      const result = await checkRefreshToken(accessToken, token, expires, req);
       res.locals.data = { result };
       next();
     } catch (e) {

@@ -85,7 +85,8 @@ const createAccessToken = (bee_id, user_id, rank, paid: boolean) => {
 const checkRefreshToken = async (
   oldAccessToken: string,
   token: string,
-  expires: string
+  expires: string,
+  req: Request
 ) => {
   if (dayjs(expires) < dayjs()) {
     throw unauthorized('Refresh Token expired');
@@ -102,11 +103,11 @@ const checkRefreshToken = async (
   });
 
   const decoded = jwt.decode(oldAccessToken, jwtSecret);
-
   const dbCheck = await RefreshToken.query().findOne({
     'refresh_tokens.bee_id': decoded.bee_id,
     'refresh_tokens.user_id': decoded.user_id,
-    'refresh_tokens.token': token
+    'refresh_tokens.token': token,
+    'refresh_token.user-agent': buildUserAgent(req)
   });
 
   let refreshToken;

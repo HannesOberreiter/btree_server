@@ -52,7 +52,7 @@ export class CompanyUserController extends Controller {
       if (userExists) {
         const duplicate = await CompanyBee.query()
           .select('id')
-          .findOne({ bee_id: userExists.id });
+          .findOne({ bee_id: userExists.id, user_id: req.user.user_id });
         if (duplicate) {
           res.locals.data = userExists;
           next();
