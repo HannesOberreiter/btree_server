@@ -1,0 +1,27 @@
+import { boot } from 'quasar/wrappers';
+import { QueryCache, VueQueryPlugin, VueQueryPluginOptions } from 'vue-query';
+
+export const queryCache = new QueryCache({
+  onError: (error) => {
+    console.log(error);
+  },
+  onSuccess: (data) => {
+    console.log(data);
+  },
+});
+
+// https://vue-query.vercel.app/
+const vueQueryPluginOptions: VueQueryPluginOptions = {
+  queryClientConfig: {
+    queryCache: queryCache,
+    defaultOptions: {
+      queries: {
+        staleTime: 1000 * 60 * 30, // stale (refetching), after 30 minutes
+        cacheTime: 1000 * 60 * 60 * 12, // garbage collector, every 12 hours
+      },
+    },
+  },
+};
+export default boot(({ app }) => {
+  app.use(VueQueryPlugin, vueQueryPluginOptions);
+});
