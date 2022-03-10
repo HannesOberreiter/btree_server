@@ -52,11 +52,9 @@ const fieldStatus = ref(props.disableMail);
 const state = reactive({
   email: modelMail.value,
 });
-if (modelMail.value !== '') {
-  watch(state, (curr) => {
-    emit('update:modelMail', curr.email);
-  });
-}
+watch(state, (curr) => {
+  emit('update:modelMail', curr.email);
+});
 
 const rules = {
   email: { required, email, maxLengthValue: maxLength(50) },
