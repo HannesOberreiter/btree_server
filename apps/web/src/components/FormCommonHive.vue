@@ -1,18 +1,35 @@
 <template>
   <q-select
-    v-model="v.hive.$model"
-    @filter="filterFn"
-    :label="t('hive')"
-    name="hive"
-    :loading="loading"
-    :disable="loading"
-    :options="hives"
+    v-model="apiary"
+    @filter="filterApiary"
+    @update:model-value="selectApiary"
+    :label="t('quicktool.apiary')"
+    name="apiary"
+    :loading="isLoadingApiary && isLoadingHive"
+    :disable="isLoadingApiary && isLoadingHive"
+    :options="optionsApiary"
     clearable
     counter
     multiple
     options-dense
     use-chips
     use-input
+  >
+  </q-select>
+  <q-select
+    v-model="v.hive.$model"
+    @update:model-value="selectHive"
+    @filter="filterHive"
+    :label="t('hive')"
+    :loading="isLoadingApiary && isLoadingHive"
+    :disable="isLoadingApiary && isLoadingHive"
+    :options="optionsHive"
+    clearable
+    counter
+    multiple
+    use-chips
+    use-input
+    style="max-height: 10em; overflow-y: auto"
   >
   </q-select>
 </template>
@@ -24,46 +41,80 @@ import { computed, reactive, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { api } from 'src/boot/axios';
 import { useNotification } from 'src/composables/useResponseText';
+import { useApiariesQuery, useHivesQuery } from 'src/query';
+import _ from 'lodash';
 
 const { t } = useI18n();
-const loading = ref(true);
 const notification = useNotification();
-const hives = reactive(async () => {
-  return await loadHives();
-});
-const options = ref(hives);
+const { isLoading: isLoadingHive, data: hives } = useHivesQuery();
+const { isLoading: isLoadingApiary, data: apiaries } = useApiariesQuery();
 
-async function loadHives() {
-  let result: { label: string; value: number }[] = [];
-  await api.get('/v1/hive').then(
-    (response: any) => {
-      loading.value = false;
-      console.log(response.data);
-      result = [{ label: 'test', value: 1 }];
-    },
-    (error) => {
-      notification.open('negative', error);
-      result = [];
-    }
+const apiary = ref(null);
+
+const optionsHive = ref([] as any);
+const optionsApiary = ref([] as any);
+
+function selectApiary(val: any) {
+  const data = _.filter(
+    hives.value,
+    (obj) => obj.hive_modus && !obj.hive_deleted
   );
-  return result;
+  _.map(val, (v) => {
+    const res = _.filter(data, (obj) => obj.apiary_name === v.name);
+    if (!state.hive) state.hive = [];
+    if (res.length > 0) state.hive = _.unionBy(state.hive, res, 'hive_id');
+  });
 }
 
-const model = ref(null);
+function selectHive() {
+  apiary.value = null;
+}
 
-function filterFn(val: any, update: any, _abort: any) {
-  if (options.value !== null) {
+function filterHive(val: any, update: any, _abort: any) {
+  const data = _.filter(
+    hives.value,
+    (obj) => obj.hive_modus && !obj.hive_deleted
+  );
+  if (hives.value !== null) {
     update(() => {
-      const needle = val.toLowerCase();
-      options.value = hives.value.filter(
-        (v: any) => v.label.toLowerCase().indexOf(needle) > -1
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      const needle = new RegExp(`(${val.toLowerCase()})`);
+      optionsHive.value = _.filter(data, (obj) =>
+        needle.test(obj.label.toLowerCase())
       );
     });
+  }
+  if (val === '') {
+    update(() => {
+      optionsHive.value = data;
+    });
+    return;
+  }
+}
+
+function filterApiary(val: any, update: any, _abort: any) {
+  const data = _.filter(apiaries.value, (obj) => obj.hive_count !== null);
+
+  if (apiaries.value !== null) {
+    update(() => {
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      const needle = new RegExp(`(${val.toLowerCase()})`);
+      optionsApiary.value = _.filter(data, (obj) =>
+        needle.test(obj.label.toLowerCase())
+      );
+    });
+  }
+  if (val === '') {
+    console.log(apiaries.value);
+    update(() => {
+      optionsApiary.value = data;
+    });
+    return;
   }
 }
 
 const state = reactive({
-  hive: [],
+  hive: [] as any,
 });
 const rules = {
   hive: { required },
