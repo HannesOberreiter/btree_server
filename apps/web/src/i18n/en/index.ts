@@ -34,6 +34,7 @@ export default {
   hive: 'Hive | Hives',
   icalSource: 'ICal Source',
   icalUrl: 'ICal Url',
+  inactive: 'Inactive',
   language: 'Language',
   latest: 'Latest',
   larvae: 'Larvae',
@@ -186,6 +187,11 @@ export default {
     terms: 'Terms and Conditions',
     success:
       'Successfully registered, we send you an e-mail ({msg}) to activate your account.',
+  },
+
+  quicktool: {
+    name: 'Quicktool',
+    apiary: 'Select hives based on current apiary location.',
   },
 
   validations: {
