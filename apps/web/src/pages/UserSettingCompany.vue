@@ -16,7 +16,7 @@
 
     <q-tab-panels v-model="activeTab" animated>
       <q-tab-panel name="company">
-        <div class="row">
+        <div class="row justify-center">
           <div class="col-12 col-sm-10 col-md-8">
             <div class="text-body2 q-pb-sm text-center">
               {{ t('company.title') }}
@@ -27,7 +27,7 @@
       </q-tab-panel>
 
       <q-tab-panel name="users">
-        <div class="row">
+        <div class="row justify-center">
           <div class="col-12 col-sm-10 col-md-8">
             <div class="text-body2 q-pb-sm text-center">
               {{ t('company.titleUser') }}

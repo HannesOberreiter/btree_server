@@ -1,6 +1,6 @@
 <template>
   <q-card>
-    <div class="row q-pa-sm">
+    <div class="row q-pa-sm justify-center">
       <div class="col-12 col-sm-10 col-md-8">
         <div class="text-body2 q-pb-sm text-center">
           {{ t('setting.title') }}

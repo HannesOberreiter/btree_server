@@ -131,7 +131,6 @@ async function onSubmit() {
     isSubmitting.value = false;
     return;
   }
-  console.log('test');
   const data = {
     firstname: state.firstname,
     lastname: state.lastname,

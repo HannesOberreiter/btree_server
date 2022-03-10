@@ -1,6 +1,6 @@
 <template>
-  <div class="row">
-    <div v-if="isLoading" class="col-12 fixed-center">
+  <div class="row justify-center">
+    <div v-if="isLoading" class="col-1">
       <q-spinner-pie color="orange" size="5.5em" />
     </div>
     <div v-else class="col-12">

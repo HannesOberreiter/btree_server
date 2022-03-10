@@ -17,7 +17,7 @@
 
     <q-tab-panels v-model="activeTab" animated>
       <q-tab-panel name="user">
-        <div class="row">
+        <div class="row justify-center">
           <div class="col-12 col-sm-10 col-md-8">
             <div class="text-body2 q-pb-sm text-center">
               {{ t('profile.userTitle') }}
@@ -29,7 +29,7 @@
       </q-tab-panel>
 
       <q-tab-panel name="credentials">
-        <div class="row">
+        <div class="row justify-center">
           <div class="col-12 col-sm-10 col-md-8">
             <div class="text-body2 q-pb-sm text-center">
               {{ t('profile.credentialTitle') }}
@@ -41,7 +41,7 @@
       </q-tab-panel>
 
       <q-tab-panel name="api">
-        <div class="row">
+        <div class="row justify-center">
           <div class="col-12 col-sm-10 col-md-8">
             <div class="text-body2 q-pb-sm text-center">
               {{ t('profile.apiTitle') }}
