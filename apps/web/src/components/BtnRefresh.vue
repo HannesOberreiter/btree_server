@@ -13,6 +13,7 @@
 </template>
 
 <script setup lang="ts">
+import { clearCache } from 'src/query';
 import { useI18n } from 'vue-i18n';
 import { useRefreshStore } from '../stores/refresh';
 
@@ -20,6 +21,7 @@ const storeRefresh = useRefreshStore();
 
 const onRefresh = async () => {
   await storeRefresh.refresh();
+  clearCache();
 };
 const { t } = useI18n();
 </script>

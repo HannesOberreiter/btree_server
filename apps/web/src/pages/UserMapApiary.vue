@@ -1,11 +1,18 @@
 <template>
   <div class="row">
-    <div class="col-12">
+    <div v-if="isLoading" class="col-12 fixed-center">
+      <q-spinner-pie color="orange" size="5.5em" />
+    </div>
+    <div v-else class="col-12">
       <div class="map">
         <l-map
           ref="mapRef"
-          v-model:zoom="zoom"
-          :center="center"
+          :zoom="apiaries.length > 0 ? 10 : zoom"
+          :center="
+            apiaries.length > 0
+              ? [apiaries[0].latitude, apiaries[0].longitude]
+              : center
+          "
           loading-control="true"
           @ready="onMapReady"
           @locationfound="onLocationFound"
@@ -162,10 +169,16 @@
 
 <script setup lang="ts">
 import 'leaflet/dist/leaflet.css';
-import { useQuasar } from 'quasar';
+import { api } from 'boot/axios';
 import { computed, ref } from 'vue';
-import { useI18n } from 'vue-i18n';
 import { remove } from 'lodash';
+import { useApiariesQuery } from 'src/query';
+import { useAuthUserStore } from '../stores/auth';
+import { useI18n } from 'vue-i18n';
+import { useNotification } from '../composables/useResponseText';
+import { useQuasar } from 'quasar';
+import DialogForm from 'src/components/DialogForm.vue';
+import DialogHint from 'src/components/DialogHint.vue';
 import {
   LMap,
   LTileLayer,
@@ -177,13 +190,8 @@ import {
   LFeatureGroup,
   LMarker,
 } from '@vue-leaflet/vue-leaflet';
-import { api } from 'boot/axios';
 
-import { useNotification } from '../composables/useResponseText';
-import { useAuthUserStore } from '../stores/auth';
-import DialogHint from 'src/components/DialogHint.vue';
-import DialogForm from 'src/components/DialogForm.vue';
-
+const { isLoading, data: apiaries } = useApiariesQuery();
 const { t } = useI18n();
 const $q = useQuasar();
 const userStore = useAuthUserStore();
@@ -200,14 +208,12 @@ const location = ref(null as any);
 const userLocationLoading = ref(false);
 const showInactive = ref(false);
 const showInfo = ref(false);
-const apiaries = ref({} as any);
 let map = {} as any;
 let dragObject = {} as any;
 let oldLocation = {} as any;
 
-const onMapReady = async () => {
+const onMapReady = () => {
   map = mapRef.value.leafletObject;
-  await loadApiaries();
   map.doubleClickZoom.disable();
   map.scrollWheelZoom.enable();
   map.on('dblclick', function (e: any) {
@@ -257,7 +263,6 @@ function deleteApiary(value: string) {
       notification.open('positive', '');
     },
     (error) => {
-      console.log(error);
       notification.open('negative', error);
     }
   );
@@ -296,22 +301,6 @@ function moveApiaryEnd(e: any) {
     .onCancel(() => {
       apiaries.value = oldLocation.value;
     });
-}
-
-async function loadApiaries() {
-  await api.get('/v1/apiary').then(
-    (response: any) => {
-      apiaries.value = response.data;
-      if (apiaries.value.length > 0)
-        map.setView(
-          [apiaries.value[0].latitude, apiaries.value[0].longitude],
-          10
-        );
-    },
-    (error) => {
-      notification.open('negative', error);
-    }
-  );
 }
 </script>
 

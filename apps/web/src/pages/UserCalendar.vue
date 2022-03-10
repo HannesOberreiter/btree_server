@@ -51,6 +51,7 @@ import CalendarSetting from '../components/CalendarSetting.vue';
 import DialogForm from 'src/components/DialogForm.vue';
 import DialogHint from 'src/components/DialogHint.vue';
 import DialogEvent from 'src/components/DialogEvent.vue';
+import { QueryClient } from 'vue-query';
 
 const { t } = useI18n();
 const $q = useQuasar();
@@ -67,6 +68,7 @@ const dateClicked = ref(dayjs().format('YYYY-MM-DD'));
 const cal = ref();
 const showInfo = ref(false);
 const showSetting = ref(false);
+const client = new QueryClient(); // need to use the queryclient here and not the useQuery as it wont work with full calendar
 
 const formDialog = () =>
   $q
@@ -108,14 +110,21 @@ CALENDAR.map(function (source, _index) {
   } else {
     eventsSourceList.push({
       events: function (fetchInfo, successCallback, failureCallback) {
-        api.get(`/v1/calendar/${source}`, { params: fetchInfo }).then(
-          (response: any) => {
-            successCallback(response.data);
-          },
-          (error) => {
-            failureCallback(error);
-          }
-        );
+        const queryKey = ['calendar', source, fetchInfo];
+        try {
+          const _response = client
+            .fetchQuery(
+              queryKey,
+              () => api.get(`/v1/calendar/${source}`, { params: fetchInfo }),
+              {
+                staleTime: 1000 * 60 * 5,
+                cacheTime: 1000 * 60 * 5,
+              }
+            )
+            .then((response) => successCallback(response.data));
+        } catch (err: any) {
+          failureCallback(err);
+        }
       },
       id: source,
     });
@@ -227,6 +236,7 @@ watch(storeCalendar, (currentValue) => {
 const refetchSource = (event: string) => {
   const calendarApi = cal.value.getApi();
   const source = calendarApi.getEventSourceById(event);
+  client.clear();
   source.refetch();
 };
 
@@ -295,6 +305,7 @@ function handleEventsChange(changeInfo: EventChangeArg) {
   api.patch(`/v1/${sourceName}/date`, data).then(
     (_response: any) => {
       notification.open('positive', '');
+      client.clear();
     },
     (error) => {
       notification.open('negative', error);
