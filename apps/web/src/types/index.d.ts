@@ -71,6 +71,33 @@ declare interface Apiary {
   longitude: number;
   note: string;
   url: string;
+  modus: boolean;
 }
 
-export { User, Company, Status, State, RegisterUser, Token, Todo, Apiary };
+type Option =
+  | 'charge_types'
+  | 'hive_sources'
+  | 'hive_types'
+  | 'feed_types'
+  | 'harvest_types'
+  | 'checkup_types'
+  | 'queen_matings'
+  | 'queen_races'
+  | 'treatment_diseases'
+  | 'treatment_types'
+  | 'treatment_vets';
+
+type Task = 'feed' | 'harvest' | 'treatment' | 'checkup';
+
+export {
+  User,
+  Company,
+  Status,
+  State,
+  RegisterUser,
+  Token,
+  Task,
+  Todo,
+  Apiary,
+  Option,
+};

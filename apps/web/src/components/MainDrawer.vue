@@ -13,7 +13,7 @@
           <template v-for="(sublink, subindex) in link.menu" :key="subindex">
             <q-item
               clickable
-              :to="{ name: sublink.route }"
+              :to="{ name: sublink.route, params: { task: sublink.param } }"
               v-ripple
               exact
               active-class="text-yellow"
@@ -31,7 +31,7 @@
         <q-item
           v-else
           clickable
-          :to="{ name: link.route }"
+          :to="{ name: link.route, params: { task: link.param } }"
           v-ripple
           exact
           active-class="text-yellow"
@@ -84,6 +84,7 @@ const links = ref([
     route: 'quicktool',
     icon: 'fas fa-magic',
     menu: [] as any,
+    param: 'checkup',
   },
   {
     label: 'Maps',

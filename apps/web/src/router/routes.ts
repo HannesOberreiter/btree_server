@@ -14,7 +14,7 @@ const routes: RouteRecordRaw[] = [
         component: () => import('pages/UserCalendar.vue'),
       },
       {
-        path: '/quicktool/:task?',
+        path: '/quicktool/:task',
         name: 'quicktool',
         props: true,
         component: () => import('pages/UserQuicktool.vue'),

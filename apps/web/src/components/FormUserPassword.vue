@@ -1,6 +1,6 @@
 <template>
   <q-input
-    v-model="v.password.$model"
+    v-model="state.password"
     :error="v.password.$error"
     :error-message="validationErrors(v.password)"
     :type="passwordField"
@@ -23,7 +23,7 @@
   </q-input>
   <q-input
     v-if="confirm"
-    v-model="v.confirmPassword.$model"
+    v-model="state.confirmPassword"
     :error="v.confirmPassword.$error"
     :error-message="validationErrors(v.confirmPassword)"
     :type="passwordField"
@@ -110,5 +110,5 @@ const changePasswordField = () => {
   passwordIcon.value =
     passwordField.value == 'text' ? 'fas fa-eye' : 'fas fa-eye-slash';
 };
-const v = useVuelidate(rules, state);
+const v = useVuelidate(rules, state, { $autoDirty: true });
 </script>

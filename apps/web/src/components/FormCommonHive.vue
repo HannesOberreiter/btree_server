@@ -28,6 +28,7 @@
     multiple
     use-chips
     use-input
+    filled
     behavior="dialog"
     class="hive-select"
   >
@@ -102,7 +103,6 @@ function filterApiary(val: any, update: any, _abort: any) {
     });
   }
   if (val === '') {
-    console.log(apiaries.value);
     update(() => {
       optionsApiary.value = data;
     });

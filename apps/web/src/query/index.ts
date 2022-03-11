@@ -6,9 +6,18 @@ import { useNotification } from '../composables/useResponseText';
 import { queryCache } from 'src/boot/vue-query';
 import { map } from 'lodash';
 import { i18n } from 'src/boot/i18n';
+import { MaybeRef } from '@vueuse/core';
+import { Option } from 'src/types';
 
 const notification = useNotification();
 const { t } = i18n.global;
+
+export function useOptionsQuery(table: Option) {
+  return useQuery(['option', table], () => api.get(`/v1/option/${table}`), {
+    select: (response) => response.data,
+    onError: (error) => notification.open('negative', error),
+  });
+}
 
 export function useApiariesQuery() {
   return useQuery(['apiaries'], () => api.get('/v1/apiary'), {
@@ -24,6 +33,17 @@ export function useApiariesQuery() {
       });
       return result ? result : ([] as any);
     },
+    onError: (error) => notification.open('negative', error),
+  });
+}
+
+export function useApiaryQuery(
+  id: number,
+  { enabled = undefined as MaybeRef<boolean | undefined> }
+) {
+  return useQuery(['apiaries', id], () => api.get(`/v1/apiary/${id}`), {
+    enabled,
+    select: (response) => response.data,
     onError: (error) => notification.open('negative', error),
   });
 }

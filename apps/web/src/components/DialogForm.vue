@@ -16,12 +16,13 @@
         </div>
         <div class="row full-width">
           <form-main-todo
-            v-if="todo"
+            v-if="form === 'todo'"
             :form-data="todo"
             @onSuccess="onDialogOK()"
           ></form-main-todo>
           <form-main-apiary
-            v-if="apiary"
+            v-if="form === 'apiary'"
+            :edit-id="editId"
             :form-data="apiary"
             @onSuccess="(value) => onDialogOK(value)"
           ></form-main-apiary>
@@ -46,6 +47,14 @@ defineProps({
   title: {
     type: String,
     required: true,
+  },
+  form: {
+    type: String,
+    required: true,
+  },
+  editId: {
+    type: Number,
+    default: 0,
   },
   todo: {
     type: Object as PropType<Todo>,

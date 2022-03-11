@@ -37,10 +37,11 @@
         :label="t('interval')"
         :hint="t('intervalText')"
         input-class="text-right"
+        filled
       >
       </q-input>
     </div>
-    <div class="col-6">
+    <div class="col-6 q-pl-sm">
       <q-input
         v-model.number="state.repeat"
         type="number"
@@ -50,6 +51,7 @@
         :label="t('repeat')"
         :hint="t('repeatText')"
         input-class="text-right"
+        filled
       >
       </q-input>
     </div>

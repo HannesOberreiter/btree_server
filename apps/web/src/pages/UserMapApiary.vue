@@ -1,7 +1,7 @@
 <template>
   <div class="row justify-center">
     <div v-if="isLoading" class="col-1">
-      <q-spinner-pie color="orange" size="5.5em" />
+      <global-loading></global-loading>
     </div>
     <div v-else class="col-12">
       <div class="map">
@@ -113,8 +113,8 @@
               color="black"
             />
           </template>
-          <l-feature-group>
-            <template v-for="value in apiaries" :key="value.id">
+          <l-feature-group v-if="apiaryMarker">
+            <template v-for="value in apiaryMarker" :key="value.id">
               <l-marker
                 v-if="value.modus || showInactive"
                 :lat-lng="[value.latitude, value.longitude]"
@@ -123,32 +123,41 @@
                 @dragend="moveApiaryEnd"
               >
                 <l-popup>
-                  <b>{{ value.name }}</b> [
-                  <span v-if="value.hive_count">{{
-                    value.hive_count.count + value.hive_count.grouphivescount
-                  }}</span>
-                  <span v-else>0</span>
-                  ]
-                  <br />
-                  <small>{{ value.description }}</small>
-                  <br />
-                  <small>{{ value.note }}</small>
-                  <br />
-                  <q-btn
-                    flat
-                    dense
-                    size="xs"
-                    text-color="negative"
-                    v-if="!value.hive_count && userStore.isAdmin"
-                    @click="deleteApiary(value.id)"
-                    >{{ t('delete') }}
-                  </q-btn>
+                  <div class="text-h6">
+                    <b>{{ value.name }}</b> [
+                    <span v-if="value.hive_count">{{
+                      value.hive_count.count + value.hive_count.grouphivescount
+                    }}</span>
+                    <span v-else>0</span>
+                    ]
+                  </div>
+                  <div v-if="value.description" class="text-caption">
+                    {{ value.description }}
+                  </div>
+                  <div v-if="value.note">{{ value.note }}</div>
+                  <q-btn-group v-if="userStore.isAdmin" spread class="q-mt-sm">
+                    <q-btn
+                      unelevated
+                      size="sm"
+                      color="secondary"
+                      @click="editApiaryForm(value.id)"
+                      >{{ t('edit') }}
+                    </q-btn>
+                    <q-btn
+                      unelevated
+                      size="sm"
+                      color="negative"
+                      v-if="!value.hive_count"
+                      @click="deleteApiary(value.id)"
+                      >{{ t('delete') }}
+                    </q-btn>
+                  </q-btn-group>
                 </l-popup>
               </l-marker>
             </template>
           </l-feature-group>
-          <l-feature-group>
-            <template v-for="value in apiaries" :key="value.id">
+          <l-feature-group v-if="apiaryMarker">
+            <template v-for="value in apiaryMarker" :key="value.id">
               <l-circle
                 v-if="value.modus || showInactive"
                 :lat-lng="[value.latitude, value.longitude]"
@@ -190,8 +199,9 @@ import {
   LFeatureGroup,
   LMarker,
 } from '@vue-leaflet/vue-leaflet';
+import GlobalLoading from 'src/components/GlobalLoading.vue';
 
-const { isLoading, data: apiaries } = useApiariesQuery();
+const { isLoading, data: apiaries, refetch } = useApiariesQuery();
 const { t } = useI18n();
 const $q = useQuasar();
 const userStore = useAuthUserStore();
@@ -211,9 +221,11 @@ const showInfo = ref(false);
 let map = {} as any;
 let dragObject = {} as any;
 let oldLocation = {} as any;
+const apiaryMarker = ref([]) as any;
 
 const onMapReady = () => {
   map = mapRef.value.leafletObject;
+  apiaryMarker.value = apiaries.value;
   map.doubleClickZoom.disable();
   map.scrollWheelZoom.enable();
   map.on('dblclick', function (e: any) {
@@ -241,6 +253,7 @@ function createApiaryForm(e: any) {
       component: DialogForm,
       componentProps: {
         title: 'newApiary',
+        form: 'apiary',
         apiary: {
           name: '',
           description: '',
@@ -251,15 +264,38 @@ function createApiaryForm(e: any) {
         },
       },
     }).onOk((e) => {
-      apiaries.value.push(e);
+      apiaryMarker.value.push(e);
+      refetch.value().then(
+        () => (apiaryMarker.value = apiaries.value),
+        (error) => console.log(error)
+      );
+    });
+  }
+}
+
+function editApiaryForm(e: any) {
+  if (userStore.isAdmin) {
+    $q.dialog({
+      component: DialogForm,
+      componentProps: {
+        title: 'apiaryEdit',
+        form: 'apiary',
+        editId: e,
+      },
+    }).onOk((e) => {
+      refetch.value().then(
+        () => (apiaryMarker.value = apiaries.value),
+        (error) => console.log(error)
+      );
     });
   }
 }
 
 function deleteApiary(value: string) {
   api.delete('/v1/apiary/' + value).then(
-    (_response: any) => {
-      remove(apiaries.value, { id: value });
+    async (_response: any) => {
+      remove(apiaryMarker.value, { id: value });
+      await refetch.value();
       notification.open('positive', '');
     },
     (error) => {
@@ -270,7 +306,7 @@ function deleteApiary(value: string) {
 
 function moveApiaryStart(value: any) {
   dragObject = value;
-  oldLocation.value = { ...apiaries.value };
+  oldLocation.value = { ...apiaryMarker.value };
   map.closePopup();
 }
 function moveApiaryEnd(e: any) {
@@ -287,19 +323,20 @@ function moveApiaryEnd(e: any) {
   })
     .onOk(() => {
       api.patch('/v1/apiary', data).then(
-        (response: any) => {
-          remove(apiaries.value, { id: response.data.id });
-          apiaries.value.push(response.data);
+        async (response: any) => {
+          remove(apiaryMarker.value, { id: response.data.id });
+          apiaryMarker.value.push(response.data);
+          await refetch.value();
           notification.open('positive', '');
         },
         (error) => {
-          apiaries.value = oldLocation.value;
+          apiaryMarker.value = oldLocation.value;
           notification.open('negative', error);
         }
       );
     })
     .onCancel(() => {
-      apiaries.value = oldLocation.value;
+      apiaryMarker.value = oldLocation.value;
     });
 }
 </script>

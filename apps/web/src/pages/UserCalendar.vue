@@ -76,6 +76,7 @@ const formDialog = () =>
       component: DialogForm,
       componentProps: {
         title: 'newTodo',
+        form: 'todo',
         todo: {
           date: dateClicked.value,
           name: '',

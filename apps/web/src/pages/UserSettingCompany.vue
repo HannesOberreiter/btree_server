@@ -35,9 +35,7 @@
             <Suspense>
               <company-user></company-user>
               <template #fallback>
-                <div class="text-center">
-                  <q-spinner-hourglass color="purple" size="4em" />
-                </div>
+                <global-loading></global-loading>
               </template>
             </Suspense>
           </div>
@@ -53,6 +51,7 @@ import { useAuthUserStore } from 'src/stores/auth';
 import { useI18n } from 'vue-i18n';
 import CompanySetting from 'src/components/CompanySetting.vue';
 import CompanyUser from 'src/components/CompanyUser.vue';
+import GlobalLoading from 'src/components/GlobalLoading.vue';
 
 const prop = defineProps({
   tab: {
