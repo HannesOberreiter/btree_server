@@ -21,6 +21,19 @@ export class ApiaryController extends Controller {
       next(checkMySQLError(e));
     }
   }
+  async getApiary(req: IUserRequest, res: Response, next) {
+    try {
+      const result = await Apiary.query()
+        .findById(req.params.id)
+        .withGraphFetched('hive_count')
+        .where('deleted', 0)
+        .where('user_id', req.user.user_id);
+      res.locals.data = result;
+      next();
+    } catch (e) {
+      next(checkMySQLError(e));
+    }
+  }
 
   async createApiary(req: IUserRequest, res: Response, next) {
     try {

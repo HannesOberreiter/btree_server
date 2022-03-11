@@ -18,6 +18,12 @@ export class ApiaryRouter extends Router {
         Container.resolve('ApiaryController').getApiaries
       );
     this.router
+      .route('/:id')
+      .get(
+        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+        Container.resolve('ApiaryController').getApiary
+      );
+    this.router
       .route('/')
       .post(
         Guard.authorize([ROLES.admin]),
