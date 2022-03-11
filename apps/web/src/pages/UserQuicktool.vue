@@ -17,7 +17,7 @@ import FormCommonHive from 'src/components/FormCommonHive.vue';
 import { useI18n } from 'vue-i18n';
 import FormCommonDates from 'src/components/FormCommonDates.vue';
 
-const props = defineProps({
+defineProps({
   task: {
     type: String,
     default: 'checkup',

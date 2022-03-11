@@ -28,6 +28,14 @@ export const sameAs = withI18nMessage(validators.sameAs, {
 
 export const alphaNum = withI18nMessage(validators.alphaNum);
 export const numeric = withI18nMessage(validators.numeric);
+export const integer = withI18nMessage(validators.integer);
+
+export const minValue = withI18nMessage(validators.minValue, {
+  withArguments: true,
+});
+export const maxValue = withI18nMessage(validators.maxValue, {
+  withArguments: true,
+});
 
 export const between = withI18nMessage(validators.between, {
   withArguments: true,

@@ -5,14 +5,13 @@
     @update:model-value="selectApiary"
     :label="t('quicktool.apiary')"
     name="apiary"
-    :loading="isLoadingApiary && isLoadingHive"
-    :disable="isLoadingApiary && isLoadingHive"
+    :loading="isLoadingApiary || isLoadingHive"
+    :disable="isLoadingApiary || isLoadingHive"
     :options="optionsApiary"
     clearable
     counter
     multiple
     options-dense
-    use-chips
     use-input
   >
   </q-select>
@@ -29,6 +28,8 @@
     multiple
     use-chips
     use-input
+    behavior="dialog"
+    class="hive-select"
   >
   </q-select>
 </template>
@@ -36,15 +37,12 @@
 <script setup lang="ts">
 import useVuelidate from '@vuelidate/core';
 import { required } from '../helpers/i18n-validators';
-import { computed, reactive, ref } from 'vue';
+import { reactive, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { api } from 'src/boot/axios';
-import { useNotification } from 'src/composables/useResponseText';
 import { useApiariesQuery, useHivesQuery } from 'src/query';
 import _ from 'lodash';
 
 const { t } = useI18n();
-const notification = useNotification();
 const { isLoading: isLoadingHive, data: hives } = useHivesQuery();
 const { isLoading: isLoadingApiary, data: apiaries } = useApiariesQuery();
 
@@ -122,8 +120,12 @@ const v = useVuelidate(rules, state);
 </script>
 
 <style>
-.q-field__native {
-  max-height: 100px;
-  overflow: auto;
+.hive-select .q-field__native {
+  max-height: 120px;
+  overflow-y: auto;
+}
+.q-dialog--modal .q-field__native {
+  max-height: 120px;
+  overflow-y: auto;
 }
 </style>
