@@ -14,12 +14,10 @@
 </template>
 
 <script setup lang="ts">
-import useVuelidate from '@vuelidate/core';
-import { required } from '../helpers/i18n-validators';
-import { PropType, reactive, ref, watch } from 'vue';
+import { PropType, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useOptionsQuery } from 'src/query';
-import _ from 'lodash';
+import { filter } from 'lodash';
 import { Option } from 'src/types';
 
 const { t } = useI18n();
@@ -32,11 +30,8 @@ const props = defineProps({
     required: true,
   },
 });
-
 const { isLoading, data } = useOptionsQuery(props.table);
-
 const option = ref(null);
-
 const options = ref([] as any);
 
 if (data.value) {
@@ -48,7 +43,8 @@ if (data.value) {
 }
 
 function setOptions() {
-  const temp = _.filter(data.value, (obj) => obj.modus);
+  const temp = filter(data.value, (obj) => obj.modus);
   options.value = temp;
+  option.value = temp[0];
 }
 </script>

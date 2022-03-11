@@ -282,7 +282,7 @@ function editApiaryForm(e: any) {
         form: 'apiary',
         editId: e,
       },
-    }).onOk((e) => {
+    }).onOk(() => {
       refetch.value().then(
         () => (apiaryMarker.value = apiaries.value),
         (error) => console.log(error)

@@ -17,12 +17,18 @@ export default {
   created: 'Created',
   credentials: 'Credentials',
   date: 'Date',
+  egg: 'Egg | Eggs',
+
+  cappedBrood: 'Capped brood',
+  queencell: 'Queencell | Queencells',
+  queen: 'Queen | Queens',
   dateStart: 'Start date',
   dateEnd: 'End date',
   deactivate: 'Deactivate',
   delete: 'Delete',
   deleted: 'Deleted',
   description: 'Description',
+  disease: 'Disease',
   edit: 'Edit',
   edited: 'Edited',
   email: 'Email',
@@ -95,6 +101,24 @@ export default {
     label: 'Confirm Key',
     notValid:
       "The activation key is not valid anymore. You can also activate your account with the 'Forgot your password' link below.",
+  },
+
+  rating: {
+    text: 'Rating low to high',
+    brood: 'Brood',
+    swarm: 'Swarm',
+    pollen: 'Pollen',
+    comb: 'Comb',
+    temper: 'Temper',
+    calm_comb: 'Calm on comb',
+  },
+
+  frames: {
+    text: 'Number of frames',
+    broodframes: 'Broodframes',
+    honeyframes: 'Honeyframes',
+    foundation: 'Foundation',
+    emptyframes: 'Empty',
   },
 
   calendar: {
@@ -200,6 +224,7 @@ export default {
   quicktool: {
     name: 'Quicktool',
     apiary: 'Select hives based on current apiary location.',
+    taskDropdown: 'Select type of task you want to add.',
   },
 
   validations: {

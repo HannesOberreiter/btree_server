@@ -7,16 +7,19 @@
         </div>
         <q-select
           v-model="taskSelect"
-          :label="t('task')"
+          :label="t('quicktool.taskDropdown')"
           name="taskSelect"
           :options="options"
-          filled
+          rounded
+          class="q-mb-sm text-center"
         >
         </q-select>
-        <form-main-task :task="taskForm"></form-main-task>
+        <form-main-task
+          v-if="taskSelect"
+          :task="(taskForm as any)"
+        ></form-main-task>
       </div>
     </div>
-    {{ taskSelect }}
   </q-card>
 </template>
 
@@ -25,7 +28,9 @@ import { useI18n } from 'vue-i18n';
 import FormMainTask from 'src/components/FormMainTask.vue';
 import { PropType, ref, watch } from 'vue';
 import { Task } from 'src/types';
+import { find } from 'lodash';
 
+const { t } = useI18n();
 const props = defineProps({
   task: {
     type: String as PropType<Task>,
@@ -36,35 +41,29 @@ const props = defineProps({
     default: '',
   },
 });
-
-const taskForm = ref(null) as any;
-const taskSelect = ref({
-  label: 'Checkup',
-  value: 'checkup',
-});
-
-watch(taskSelect, (cur) => {
-  taskForm.value = cur.value;
-});
-
 const options = [
   {
-    label: 'Checkup',
+    label: t('checkup'),
     value: 'checkup',
   },
   {
-    label: 'Treatment',
+    label: t('treatment'),
     value: 'treatment',
   },
   {
-    label: 'Feed',
+    label: t('feed'),
     value: 'feed',
   },
   {
-    label: 'Harvest',
+    label: t('harvest'),
     value: 'harvest',
   },
 ];
 
-const { t } = useI18n();
+const taskSelect = ref(find(options, { value: props.task }));
+const taskForm = ref(taskSelect.value ? taskSelect.value.value : '');
+
+watch(taskSelect, (cur) => {
+  if (cur) taskForm.value = cur.value;
+});
 </script>

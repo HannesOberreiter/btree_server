@@ -9,7 +9,6 @@
     :disable="isLoadingApiary || isLoadingHive"
     :options="optionsApiary"
     clearable
-    counter
     multiple
     options-dense
     use-input
@@ -29,7 +28,6 @@
     use-chips
     use-input
     filled
-    behavior="dialog"
     class="hive-select"
   >
   </q-select>
