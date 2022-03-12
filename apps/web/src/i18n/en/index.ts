@@ -45,11 +45,22 @@ export default {
   interval: 'Interval',
   intervalText: 'Days between repeats',
   repeat: 'Repeat',
+  varroa: 'Varroa',
+  copy: 'Copy',
+  temperature: 'Temperature',
+  solution: 'Solution',
+  count: 'Count',
+  day: 'Day | Days',
+  time: 'Time',
+  weight: 'Weight',
+  strong: 'Strength',
+  calculateVarroa: 'Varroa count per day',
   repeatText: 'Times the task should be repeated',
   icalUrl: 'ICal Url',
   inactive: 'Inactive',
   language: 'Language',
   latest: 'Latest',
+  max: 'Max.',
   larvae: 'Larvae',
   lastname: 'Lastname',
   lastVisit: 'Last visit',
@@ -104,6 +115,7 @@ export default {
   },
 
   rating: {
+    name: 'Rating',
     text: 'Rating low to high',
     brood: 'Brood',
     swarm: 'Swarm',
@@ -115,6 +127,7 @@ export default {
 
   frames: {
     text: 'Number of frames',
+    extend: 'Add more frames',
     broodframes: 'Broodframes',
     honeyframes: 'Honeyframes',
     foundation: 'Foundation',
@@ -238,6 +251,7 @@ export default {
     sameAs: 'The value must be equal to the {otherName} value.',
     numeric: 'The value must be numeric.',
     alphaNum: 'The value must be alpha-numeric.',
-    betweenValue: 'The value must be between {min} and {max}',
+    betweenValue: 'The value must be between {min} and {max}.',
+    decimal: 'Value must be decimal.',
   },
 };

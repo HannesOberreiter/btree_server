@@ -39,6 +39,26 @@
         input-class="text-right"
         filled
       >
+        <template v-slot:append>
+          <q-btn
+            round
+            flat
+            dense
+            icon="fas fa-plus"
+            style="cursor: pointer"
+            :disable="state.interval >= 365"
+            @click="state.interval++"
+          ></q-btn>
+          <q-btn
+            round
+            flat
+            dense
+            icon="fas fa-minus"
+            style="cursor: pointer"
+            :disable="state.interval <= 0"
+            @click="state.interval--"
+          ></q-btn>
+        </template>
       </q-input>
     </div>
     <div class="col-6 q-pl-sm">
@@ -53,6 +73,26 @@
         input-class="text-right"
         filled
       >
+        <template v-slot:append>
+          <q-btn
+            round
+            flat
+            dense
+            icon="fas fa-plus"
+            style="cursor: pointer"
+            :disable="state.repeat >= 50"
+            @click="state.repeat++"
+          ></q-btn>
+          <q-btn
+            round
+            flat
+            dense
+            icon="fas fa-minus"
+            style="cursor: pointer"
+            :disable="state.repeat <= 0"
+            @click="state.repeat--"
+          ></q-btn>
+        </template>
       </q-input>
     </div>
   </div>

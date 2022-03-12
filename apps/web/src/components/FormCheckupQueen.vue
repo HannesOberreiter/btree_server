@@ -1,5 +1,5 @@
 <template>
-  <div class="row q-pb-sm">
+  <div class="row q-pb-sm q-pt-sm">
     <q-option-group
       name="accepted_genres"
       v-model="queen"

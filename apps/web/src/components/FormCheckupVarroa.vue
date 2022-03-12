@@ -12,19 +12,38 @@
     <template v-slot:before>
       <q-icon name="fas fa-bug"></q-icon>
     </template>
-    <template v-slot:append>
+    <template v-slot:after>
       <q-icon
         name="fas fa-calculator"
         style="cursor: pointer"
         @click="openCalculator"
       ></q-icon>
     </template>
+    <template v-slot:append>
+      <q-btn
+        round
+        flat
+        dense
+        icon="fas fa-plus"
+        style="cursor: pointer"
+        @click="state.varroa++"
+      ></q-btn>
+      <q-btn
+        round
+        flat
+        dense
+        icon="fas fa-minus"
+        style="cursor: pointer"
+        :disable="state.varroa <= 0"
+        @click="state.varroa--"
+      ></q-btn>
+    </template>
   </q-input>
 </template>
 
 <script setup lang="ts">
 import useVuelidate from '@vuelidate/core';
-import { minValue, maxValue, integer } from '../helpers/i18n-validators';
+import { minValue, maxValue, numeric } from '../helpers/i18n-validators';
 import { reactive, watch } from 'vue';
 import { validationErrors } from '../helpers';
 import { useI18n } from 'vue-i18n';
@@ -36,7 +55,7 @@ const { t } = useI18n();
 const $q = useQuasar();
 const props = defineProps({
   modelValue: {
-    default: null,
+    default: 0,
   },
 });
 const emit = defineEmits(['update:modelValue']);
@@ -46,7 +65,7 @@ const state = reactive({
   varroa: modelValue.value,
 });
 const rules = {
-  varroa: { minValue: minValue(0), maxValue: maxValue(100), integer: integer },
+  varroa: { minValue: minValue(0), maxValue: maxValue(100), numeric: numeric },
 };
 const v = useVuelidate(rules, state, { $autoDirty: true });
 

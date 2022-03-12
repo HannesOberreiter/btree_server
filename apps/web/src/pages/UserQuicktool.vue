@@ -9,6 +9,7 @@
           v-model="taskSelect"
           :label="t('quicktool.taskDropdown')"
           name="taskSelect"
+          standout
           :options="options"
           rounded
           class="q-mb-sm text-center"

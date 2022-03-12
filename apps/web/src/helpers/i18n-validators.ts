@@ -29,6 +29,7 @@ export const sameAs = withI18nMessage(validators.sameAs, {
 export const alphaNum = withI18nMessage(validators.alphaNum);
 export const numeric = withI18nMessage(validators.numeric);
 export const integer = withI18nMessage(validators.integer);
+export const decimal = withI18nMessage(validators.decimal);
 
 export const minValue = withI18nMessage(validators.minValue, {
   withArguments: true,

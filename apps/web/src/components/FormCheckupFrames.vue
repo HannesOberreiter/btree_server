@@ -1,18 +1,44 @@
 <template>
   <div class="row q-pb-sm">
-    <template v-for="(_value, index) of state" :key="index">
-      <q-input
-        v-model="state[index]"
-        :label="t('frames.' + index)"
-        :error="v[index].$error"
-        type="number"
-        filled
-        no-error-icon
-        :shadow-text="' ' + t('frames.text')"
-        class="col-6 col-sm-3 col-lg-2 q-pa-xs"
-      >
-      </q-input>
-    </template>
+    <q-expansion-item
+      v-model="expanded"
+      icon="fas fa-window-maximize"
+      class="full-width"
+      :label="t('frames.text')"
+      :class="some(state, (val) => val > 0) ? 'bg-orange' : ''"
+    >
+      <q-card>
+        <q-card-section>
+          <template v-for="(_value, index) of state" :key="index">
+            <div class="row q-pb-xs">
+              <div class="col-3">{{ t('frames.' + index) }}</div>
+              <div class="col-9">
+                <q-slider
+                  v-model="state[index]"
+                  :error="v[index].$error"
+                  :step="1"
+                  :min="0"
+                  :max="max"
+                  size="sm"
+                >
+                </q-slider>
+                {{ state[index] }}
+              </div>
+            </div>
+          </template>
+          <div class="row q-pb-xs">
+            <div class="col-12">
+              <q-btn @click="max = max + 10" class="float-right" no-caps>
+                {{ t('frames.extend') }} ({{ t('max') }}: {{ max }})
+              </q-btn>
+              <q-btn @click="max = 20" class="float-right" no-caps>
+                {{ t('reset') }}
+              </q-btn>
+            </div>
+          </div>
+        </q-card-section>
+      </q-card>
+    </q-expansion-item>
   </div>
 </template>
 
@@ -21,13 +47,16 @@ import { integer, maxValue, minValue } from 'src/helpers/i18n-validators';
 import { ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import useVuelidate from '@vuelidate/core';
+import { some } from 'lodash';
 
 const { t } = useI18n();
+const expanded = ref(false);
+const max = ref(20);
 const state = ref({
-  broodframes: null,
-  honeyframes: null,
-  foundation: null,
-  emptyframes: null,
+  broodframes: 0,
+  honeyframes: 0,
+  foundation: 0,
+  emptyframes: 0,
 });
 
 const rules = {

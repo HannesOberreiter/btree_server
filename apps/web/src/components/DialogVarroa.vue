@@ -3,7 +3,7 @@
     <q-card>
       <q-card-section class="">
         <div class="row">
-          <div class="text-h6">{{ t('varroa per day') }}</div>
+          <div class="text-h6">{{ t('calculateVarroa') }}</div>
           <q-space />
           <q-btn
             ref="closeBtn"

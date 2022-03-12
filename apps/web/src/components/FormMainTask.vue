@@ -1,6 +1,6 @@
 <template>
+  <form-common-hive v-model="state.hive"></form-common-hive>
   <form-common-dates></form-common-dates>
-  <form-common-hive></form-common-hive>
   <div class="q-mb-sm q-mt-sm">
     <div v-if="task === 'checkup'">
       <form-common-dropdown
@@ -10,7 +10,28 @@
       <form-checkup-queen></form-checkup-queen>
       <form-checkup-rating></form-checkup-rating>
       <form-checkup-frames></form-checkup-frames>
-      <form-checkup-varroa></form-checkup-varroa>
+      <div class="row q-pt-sm q-pb-sm">
+        <div class="col-12 col-md-6">
+          <form-checkup-varroa></form-checkup-varroa>
+        </div>
+      </div>
+      <div class="row q-pt-sm q-pb-sm">
+        <div class="col-12 col-md-6">
+          <form-checkup-strength></form-checkup-strength>
+        </div>
+      </div>
+      <div class="row q-pt-sm q-pb-sm">
+        <div class="col-12 col-md-10">
+          <form-checkup-weight></form-checkup-weight>
+        </div>
+      </div>
+      <div class="row q-pt-sm q-pb-sm">
+        <div class="col-12 col-md-6">
+          <form-checkup-temperature
+            :hive="state.hive"
+          ></form-checkup-temperature>
+        </div>
+      </div>
     </div>
     <form-common-dropdown
       v-else-if="task === 'harvest'"
@@ -34,6 +55,11 @@
   </div>
   <form-common-url></form-common-url>
   <form-common-note></form-common-note>
+
+  <q-btn-group>
+    <q-btn>{{ t('save') }}</q-btn>
+    <q-btn>{{ t('reset') }}</q-btn>
+  </q-btn-group>
 </template>
 
 <script setup lang="ts">
@@ -44,13 +70,15 @@ import FormCommonDropdown from 'src/components/FormCommonDropdown.vue';
 import FormCommonDropdown2 from 'src/components/FormCommonDropdown.vue';
 import FormCommonNote from 'src/components/FormCommonNote.vue';
 import FormCommonUrl from 'src/components/FormCommonUrl.vue';
-
-import { PropType } from 'vue';
+import { PropType, ref } from 'vue';
 import { Task } from 'src/types';
 import FormCheckupQueen from './FormCheckupQueen.vue';
 import FormCheckupRating from './FormCheckupRating.vue';
 import FormCheckupFrames from './FormCheckupFrames.vue';
 import FormCheckupVarroa from './FormCheckupVarroa.vue';
+import FormCheckupStrength from './FormCheckupStrength.vue';
+import FormCheckupWeight from './FormCheckupWeight.vue';
+import FormCheckupTemperature from './FormCheckupTemperature.vue';
 
 const props = defineProps({
   task: {
@@ -58,5 +86,11 @@ const props = defineProps({
     required: true,
   },
 });
+
+const state = ref({
+  hive: [],
+});
+
+const { t } = useI18n();
 console.log(props.task);
 </script>

@@ -15,9 +15,12 @@
   >
   </q-select>
   <q-select
-    v-model="v.hive.$model"
+    v-model="state.hive"
     @update:model-value="selectHive"
     @filter="filterHive"
+    :error="v.hive.$error"
+    :error-message="validationErrors(v.hive)"
+    :no-error-icon="true"
     :label="t('hive')"
     :loading="isLoadingApiary && isLoadingHive"
     :disable="isLoadingApiary && isLoadingHive"
@@ -36,17 +39,27 @@
 <script setup lang="ts">
 import useVuelidate from '@vuelidate/core';
 import { required } from '../helpers/i18n-validators';
-import { reactive, ref } from 'vue';
+import { reactive, ref, watch } from 'vue';
+import { validationErrors } from '../helpers';
 import { useI18n } from 'vue-i18n';
 import { useApiariesQuery, useHivesQuery } from 'src/query';
 import _ from 'lodash';
+import { useVModels } from '@vueuse/core';
 
 const { t } = useI18n();
 const { isLoading: isLoadingHive, data: hives } = useHivesQuery();
 const { isLoading: isLoadingApiary, data: apiaries } = useApiariesQuery();
 
-const apiary = ref(null);
+const props = defineProps({
+  modelValue: {
+    default: [],
+  },
+});
 
+const emit = defineEmits(['update:modelValue']);
+const { modelValue } = useVModels(props, emit);
+
+const apiary = ref(null);
 const optionsHive = ref([] as any);
 const optionsApiary = ref([] as any);
 
@@ -109,12 +122,17 @@ function filterApiary(val: any, update: any, _abort: any) {
 }
 
 const state = reactive({
-  hive: [] as any,
+  hive: modelValue.value,
 });
 const rules = {
   hive: { required },
 };
 const v = useVuelidate(rules, state);
+
+watch(state, (cur) => {
+  console.log(cur.hive);
+  emit('update:modelValue', cur.hive);
+});
 </script>
 
 <style>
