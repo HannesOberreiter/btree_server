@@ -107,7 +107,7 @@ const checkRefreshToken = async (
     'refresh_tokens.bee_id': decoded.bee_id,
     'refresh_tokens.user_id': decoded.user_id,
     'refresh_tokens.token': token,
-    'refresh_token.user-agent': buildUserAgent(req)
+    'refresh_tokens.user-agent': buildUserAgent(req)
   });
 
   let refreshToken;
