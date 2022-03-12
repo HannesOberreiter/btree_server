@@ -43,7 +43,7 @@ export function useTemperatureQuery(
   { enabled = undefined as MaybeRef<boolean | undefined> }
 ) {
   return useQuery(
-    ['temperature', id.value],
+    ['temperature', id],
     () => api.get(`/v1/checkup/temperature/${id.value}`),
     {
       enabled,

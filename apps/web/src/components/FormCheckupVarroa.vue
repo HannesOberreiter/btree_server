@@ -13,11 +13,13 @@
       <q-icon name="fas fa-bug"></q-icon>
     </template>
     <template v-slot:after>
-      <q-icon
-        name="fas fa-calculator"
+      <q-btn
+        flat
+        round
+        icon="fas fa-calculator"
         style="cursor: pointer"
         @click="openCalculator"
-      ></q-icon>
+      ></q-btn>
     </template>
     <template v-slot:append>
       <q-btn

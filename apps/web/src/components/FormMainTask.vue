@@ -20,10 +20,8 @@
           <form-checkup-strength></form-checkup-strength>
         </div>
       </div>
-      <div class="row q-pt-sm q-pb-sm">
-        <div class="col-12 col-md-10">
-          <form-checkup-weight></form-checkup-weight>
-        </div>
+      <div class="q-pt-sm q-pb-sm">
+        <form-checkup-weight></form-checkup-weight>
       </div>
       <div class="row q-pt-sm q-pb-sm">
         <div class="col-12 col-md-6">
