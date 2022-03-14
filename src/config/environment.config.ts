@@ -88,6 +88,7 @@ const logs = process.env.NODE_ENV === 'production' ? 'combined' : 'development';
 // https://github.com/expressjs/morgan
 const httpLogs = process.env.NODE_ENV === 'production' ? 'combined' : 'dev';
 const contentType = process.env.CONTENT_TYPE;
+const meteoblueKey = process.env.METEOBLUE_KEY;
 
 const knexConfig = {
   client: process.env.DB_TYPE,
@@ -128,6 +129,7 @@ export {
   env,
   port,
   url,
+  meteoblueKey,
   authorized,
   contentType,
   jwtSecret,

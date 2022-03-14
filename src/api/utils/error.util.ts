@@ -147,7 +147,6 @@ const getErrorOutput = (error): IError => {
     !error.status &&
     !error.isBoom
   ) {
-    console.log('test');
     switch (error.constructor.name) {
       case 'Error':
       case 'EvalError':

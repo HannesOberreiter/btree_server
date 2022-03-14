@@ -3,10 +3,10 @@ import { Controller } from '@classes/controller.class';
 import { checkMySQLError } from '@utils/error.util';
 import { Checkup } from '@models/checkup.model';
 import { IUserRequest } from '@interfaces/IUserRequest.interface';
-import { Guard } from '@middlewares/guard.middleware';
-import { ROLES } from '@enums/role.enum';
-import { checkItemUser } from '@utils/datatables.util';
 import { map } from 'lodash';
+import { randomInt } from 'crypto';
+import { Apiary } from '../models/apiary.model';
+import { getTemperature } from '../utils/temperature.util';
 export class CheckupController extends Controller {
   constructor() {
     super();
