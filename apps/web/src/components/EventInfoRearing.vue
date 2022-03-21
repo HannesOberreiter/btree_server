@@ -24,9 +24,9 @@
 </template>
 
 <script setup lang="ts">
-import dayjs from 'dayjs';
-import { useI18n } from 'vue-i18n';
 import 'dayjs/locale/de';
+import { useI18n } from 'vue-i18n';
+import dayjs from 'dayjs';
 
 const { t, locale } = useI18n();
 

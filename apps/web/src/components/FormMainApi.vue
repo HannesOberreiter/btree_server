@@ -90,18 +90,17 @@
 </template>
 
 <script setup lang="ts">
-import useVuelidate from '@vuelidate/core';
-import { useNotification } from '~/composables/useResponseText';
 import { api } from '~/boot/axios';
+import { CALENDAR } from '~/constants';
 import { computed, reactive, ref } from 'vue';
-import { useAuthUserStore } from '~/stores/auth';
-import { useI18n } from 'vue-i18n';
-import { useClipboard } from '@vueuse/core';
 import { map } from 'lodash';
 import { QInputProps } from 'quasar';
-import { CALENDAR } from '~/constants';
-
+import { useAuthUserStore } from '~/stores/auth';
+import { useClipboard } from '@vueuse/core';
+import { useI18n } from 'vue-i18n';
+import { useNotification } from '~/composables/useResponseText';
 import FormUserPassword from './FormUserPassword.vue';
+import useVuelidate from '@vuelidate/core';
 
 const { t } = useI18n();
 const storeUser = useAuthUserStore();

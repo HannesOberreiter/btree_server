@@ -56,11 +56,11 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { useI18n } from 'vue-i18n';
-import FormMainUser from '~/components/FormMainUser.vue';
-import FormMainCredential from '~/components/FormMainCredential.vue';
-import FormMainApi from '~/components/FormMainApi.vue';
 import { useAuthUserStore } from '~/stores/auth';
+import { useI18n } from 'vue-i18n';
+import FormMainApi from '~/components/FormMainApi.vue';
+import FormMainCredential from '~/components/FormMainCredential.vue';
+import FormMainUser from '~/components/FormMainUser.vue';
 
 const prop = defineProps({
   tab: {

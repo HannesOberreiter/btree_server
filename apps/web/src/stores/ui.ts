@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia';
 import { useStorage } from '@vueuse/core';
-
 interface Ui {
   sidebar: boolean;
   overlay: boolean;

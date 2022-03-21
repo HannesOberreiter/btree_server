@@ -83,15 +83,15 @@
 </template>
 
 <script setup lang="ts">
-import { useDialogPluginComponent } from 'quasar';
-import { useNotification } from '~/composables/useResponseText';
-import { useI18n } from 'vue-i18n';
 import { api } from '../boot/axios';
-import dayjs from 'dayjs';
-import { truncate } from 'lodash';
 import { computed } from 'vue';
-import EventInfoVis from './EventInfoVis.vue';
+import { truncate } from 'lodash';
+import { useDialogPluginComponent } from 'quasar';
+import { useI18n } from 'vue-i18n';
+import { useNotification } from '~/composables/useResponseText';
+import dayjs from 'dayjs';
 import EventInfoRearing from './EventInfoRearing.vue';
+import EventInfoVis from './EventInfoVis.vue';
 
 const notification = useNotification();
 const { dialogRef, onDialogHide, onDialogOK } = useDialogPluginComponent();

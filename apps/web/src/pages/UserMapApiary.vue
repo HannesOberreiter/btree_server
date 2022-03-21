@@ -184,6 +184,7 @@ import { useNotification } from '~/composables/useResponseText';
 import { useQuasar } from 'quasar';
 import DialogForm from '~/components/DialogForm.vue';
 import DialogHint from '~/components/DialogHint.vue';
+import GlobalLoading from '~/components/GlobalLoading.vue';
 import {
   LMap,
   LTileLayer,
@@ -195,7 +196,6 @@ import {
   LFeatureGroup,
   LMarker,
 } from '@vue-leaflet/vue-leaflet';
-import GlobalLoading from '~/components/GlobalLoading.vue';
 
 const { isLoading, data: apiaries, refetch } = useApiariesQuery();
 const { t } = useI18n();

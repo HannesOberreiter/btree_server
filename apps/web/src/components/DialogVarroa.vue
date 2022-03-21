@@ -43,8 +43,8 @@
 </template>
 
 <script setup lang="ts">
-import { useDialogPluginComponent } from 'quasar';
 import { ref, watch } from 'vue';
+import { useDialogPluginComponent } from 'quasar';
 import { useI18n } from 'vue-i18n';
 
 const { dialogRef, onDialogHide, onDialogOK } = useDialogPluginComponent();

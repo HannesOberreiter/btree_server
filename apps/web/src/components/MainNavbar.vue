@@ -60,12 +60,12 @@
 </template>
 
 <script setup lang="ts">
-import { storeToRefs } from 'pinia';
-import { useAuthUserStore } from '../stores/auth';
 import { ref } from 'vue';
+import { storeToRefs } from 'pinia';
+import { useAuthUserStore } from '~/stores/auth';
+
 const storeUser = useAuthUserStore();
 const { company } = storeToRefs(storeUser);
-
 const search = ref('');
 
 function onSubmit() {

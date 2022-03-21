@@ -27,16 +27,16 @@
 </template>
 
 <script setup lang="ts">
-import useVuelidate from '@vuelidate/core';
 import { onMounted, reactive, ref } from 'vue';
 import { useAuthUserStore } from '~/stores/auth';
+import { useI18n } from 'vue-i18n';
+import { useNotification } from '~/composables/useResponseText';
 import { User } from '~/types';
 import { useRouter } from 'vue-router';
-import { useNotification } from '~/composables/useResponseText';
-import { useI18n } from 'vue-i18n';
+import FormErrorMax from '~/components/FormErrorMax.vue';
 import FormUserEmail from '~/components/FormUserEmail.vue';
 import FormUserPassword from '~/components/FormUserPassword.vue';
-import FormErrorMax from '~/components/FormErrorMax.vue';
+import useVuelidate from '@vuelidate/core';
 
 const router = useRouter();
 const prop = defineProps({

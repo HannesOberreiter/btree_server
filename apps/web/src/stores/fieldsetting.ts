@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia';
 import { useStorage } from '@vueuse/core';
-
 interface Checkup {
   rating: boolean;
   queen: boolean;

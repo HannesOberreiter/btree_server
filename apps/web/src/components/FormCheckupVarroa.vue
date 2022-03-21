@@ -44,14 +44,14 @@
 </template>
 
 <script setup lang="ts">
-import useVuelidate from '@vuelidate/core';
-import { minValue, maxValue, numeric } from '../helpers/i18n-validators';
+import { minValue, maxValue, numeric } from '~/helpers/i18n-validators';
 import { reactive, watch } from 'vue';
-import { validationErrors } from '../helpers';
 import { useI18n } from 'vue-i18n';
-import { useVModels } from '@vueuse/core';
 import { useQuasar } from 'quasar';
+import { useVModels } from '@vueuse/core';
+import { validationErrors } from '~/helpers';
 import DialogVarroa from './DialogVarroa.vue';
+import useVuelidate from '@vuelidate/core';
 
 const { t } = useI18n();
 const $q = useQuasar();

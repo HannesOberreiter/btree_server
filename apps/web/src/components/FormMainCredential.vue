@@ -10,7 +10,7 @@
         <form-user-email
           v-model:modelMail="state.email"
           :disable-mail="true"
-          @update:modelMail="(value) => (state.email = value)"
+          @update:model-mail="(value) => (state.email = value)"
         ></form-user-email>
         <form-user-password
           v-model:modelPassword="state.newPassword"
@@ -33,16 +33,15 @@
 </template>
 
 <script setup lang="ts">
-import useVuelidate from '@vuelidate/core';
-import { useNotification } from '~/composables/useResponseText';
-import { api } from 'boot/axios';
+import { api } from '~/boot/axios';
 import { reactive, ref } from 'vue';
+import { useAuthUserStore } from '~/stores/auth';
 import { useI18n } from 'vue-i18n';
-import { useAuthUserStore } from 'src/stores/auth';
-
+import { useNotification } from '~/composables/useResponseText';
 import FormUserEmail from './FormUserEmail.vue';
 import FormUserPassword from './FormUserPassword.vue';
 import FormUserPassword1 from './FormUserPassword.vue';
+import useVuelidate from '@vuelidate/core';
 
 const { t } = useI18n();
 const notification = useNotification();

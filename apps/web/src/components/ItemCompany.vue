@@ -15,8 +15,8 @@
 </template>
 
 <script setup lang="ts">
-import { useAuthUserStore } from 'src/stores/auth';
 import { computed } from 'vue';
+import { useAuthUserStore } from '~/stores/auth';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();

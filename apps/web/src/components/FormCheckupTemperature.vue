@@ -64,14 +64,14 @@
 </template>
 
 <script setup lang="ts">
-import useVuelidate from '@vuelidate/core';
-import { minValue, maxValue, decimal } from '../helpers/i18n-validators';
 import { computed, reactive, ref, watch } from 'vue';
-import { validationErrors } from '../helpers';
+import { minValue, maxValue, decimal } from '~/helpers/i18n-validators';
+import { useAuthUserStore } from '~/stores/auth';
 import { useI18n } from 'vue-i18n';
+import { useTemperatureQuery } from '~/query';
 import { useVModels } from '@vueuse/core';
-import { useTemperatureQuery } from 'src/query';
-import { useAuthUserStore } from 'src/stores/auth';
+import { validationErrors } from '~/helpers';
+import useVuelidate from '@vuelidate/core';
 
 const storeUser = useAuthUserStore();
 const { t } = useI18n();

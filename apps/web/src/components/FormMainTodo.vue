@@ -17,17 +17,16 @@
 </template>
 
 <script setup lang="ts">
-import useVuelidate from '@vuelidate/core';
-import { useNotification } from '~/composables/useResponseText';
 import { api } from '~/boot/axios';
-import dayjs from 'dayjs';
 import { PropType, ref, watch } from 'vue';
-import { useI18n } from 'vue-i18n';
 import { Todo } from '~/types';
-
+import { useI18n } from 'vue-i18n';
+import { useNotification } from '~/composables/useResponseText';
+import dayjs from 'dayjs';
 import FormCommonDate from './FormCommonDate.vue';
 import FormCommonName from './FormCommonName.vue';
 import FormCommonNote from './FormCommonNote.vue';
+import useVuelidate from '@vuelidate/core';
 
 const { t } = useI18n();
 const notification = useNotification();

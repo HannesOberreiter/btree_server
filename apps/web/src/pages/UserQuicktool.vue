@@ -25,11 +25,11 @@
 </template>
 
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n';
-import FormMainTask from '~/components/FormMainTask.vue';
+import { find } from 'lodash';
 import { PropType, ref, watch } from 'vue';
 import { Task } from '~/types';
-import { find } from 'lodash';
+import { useI18n } from 'vue-i18n';
+import FormMainTask from '~/components/FormMainTask.vue';
 
 const { t } = useI18n();
 const props = defineProps({

@@ -56,10 +56,9 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import SupporterImages from '~/components/SupporterImages.vue';
 import { useRouter } from 'vue-router';
+import SupporterImages from '~/components/SupporterImages.vue';
 
 const router = useRouter();
-
 const path = computed(() => router.currentRoute.value);
 </script>

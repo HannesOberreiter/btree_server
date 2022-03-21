@@ -40,6 +40,11 @@
 </template>
 
 <script setup lang="ts">
+import { computed, ref, reactive, watch } from 'vue';
+import { QInputProps } from 'quasar';
+import { useI18n } from 'vue-i18n';
+import { useVModels } from '@vueuse/core';
+import { validationErrors } from '~/helpers';
 import useVuelidate from '@vuelidate/core';
 import {
   sameAs,
@@ -47,11 +52,7 @@ import {
   minLength,
   maxLength,
 } from '../helpers/i18n-validators';
-import { computed, ref, reactive, watch } from 'vue';
-import { validationErrors } from '../helpers';
-import { QInputProps } from 'quasar';
-import { useI18n } from 'vue-i18n';
-import { useVModels } from '@vueuse/core';
+
 const { t } = useI18n();
 const props = defineProps({
   confirm: {

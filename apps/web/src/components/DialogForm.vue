@@ -33,12 +33,12 @@
 </template>
 
 <script setup lang="ts">
-import { useDialogPluginComponent } from 'quasar';
-import { PropType } from 'vue';
-import { useI18n } from 'vue-i18n';
 import { Apiary, Todo } from '~/types';
-import FormMainTodo from './FormMainTodo.vue';
+import { PropType } from 'vue';
+import { useDialogPluginComponent } from 'quasar';
+import { useI18n } from 'vue-i18n';
 import FormMainApiary from './FormMainApiary.vue';
+import FormMainTodo from './FormMainTodo.vue';
 
 const { dialogRef, onDialogHide, onDialogOK } = useDialogPluginComponent();
 const { t } = useI18n();

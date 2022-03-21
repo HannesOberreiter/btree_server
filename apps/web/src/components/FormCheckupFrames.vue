@@ -43,11 +43,11 @@
 </template>
 
 <script setup lang="ts">
-import { integer, maxValue, minValue } from '../helpers/i18n-validators';
+import { integer, maxValue, minValue } from '~/helpers/i18n-validators';
 import { ref } from 'vue';
+import { some } from 'lodash';
 import { useI18n } from 'vue-i18n';
 import useVuelidate from '@vuelidate/core';
-import { some } from 'lodash';
 
 const { t } = useI18n();
 const expanded = ref(false);

@@ -1,15 +1,14 @@
-import { isEmpty } from 'lodash';
-import dayjs from 'dayjs';
-import { usePreferredLanguages } from '@vueuse/core';
 import { acceptHMRUpdate, defineStore } from 'pinia';
-
+import { i18n, setLocale } from '~/boot/i18n';
+import { isEmpty } from 'lodash';
+import { Router } from '~/router';
+import { useAuthTokenStore } from './token';
+import { usePreferredLanguages } from '@vueuse/core';
 import { User, Company } from '~/types';
+import { useRefreshStore } from './refresh';
 import { useStorage } from '@vueuse/core';
 import AuthService from '~/services/auth.service';
-import { useAuthTokenStore } from './token';
-import { Router } from '~/router';
-import { useRefreshStore } from './refresh';
-import { i18n, setLocale } from '~/boot/i18n';
+import dayjs from 'dayjs';
 
 export const useAuthUserStore = defineStore('auth/user', {
   state: () => ({

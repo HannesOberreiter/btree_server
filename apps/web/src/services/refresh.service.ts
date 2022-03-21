@@ -1,8 +1,6 @@
-import { api } from 'boot/axios';
-
-import _ from 'lodash';
-import { useAuthUserStore } from '../stores/auth';
-import { useFieldsettingStore } from '../stores/fieldsetting';
+import { api } from '~/boot/axios';
+import { useAuthUserStore } from '~/stores/auth';
+import { useFieldsettingStore } from '~/stores/fieldsetting';
 
 class RefreshService {
   async refreshAll() {

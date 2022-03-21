@@ -67,11 +67,11 @@
 </template>
 
 <script setup lang="ts">
-import { api } from '../boot/axios';
+import { api } from '~/boot/axios';
 import { findIndex } from 'lodash';
 import { ref } from 'vue';
 import { storeToRefs } from 'pinia';
-import { useAuthUserStore } from '../stores/auth';
+import { useAuthUserStore } from '~/stores/auth';
 import { useI18n } from 'vue-i18n';
 import { useNotification } from '~/composables/useResponseText';
 import { useQuasar } from 'quasar';

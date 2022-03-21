@@ -13,12 +13,13 @@
 </template>
 
 <script setup lang="ts">
-import useVuelidate from '@vuelidate/core';
-import { required, maxLength } from '../helpers/i18n-validators';
 import { reactive, watch } from 'vue';
-import { validationErrors } from '../helpers';
+import { required, maxLength } from '~/helpers/i18n-validators';
 import { useI18n } from 'vue-i18n';
 import { useVModels } from '@vueuse/core';
+import { validationErrors } from '~/helpers';
+import useVuelidate from '@vuelidate/core';
+
 const { t } = useI18n();
 const props = defineProps({
   modelValue: {

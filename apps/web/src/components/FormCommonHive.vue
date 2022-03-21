@@ -37,14 +37,14 @@
 </template>
 
 <script setup lang="ts">
-import useVuelidate from '@vuelidate/core';
-import { required } from '../helpers/i18n-validators';
-import { reactive, ref, watch } from 'vue';
-import { validationErrors } from '../helpers';
-import { useI18n } from 'vue-i18n';
-import { useApiariesQuery, useHivesQuery } from 'src/query';
 import _ from 'lodash';
+import { reactive, ref, watch } from 'vue';
+import { required } from '~/helpers/i18n-validators';
+import { useApiariesQuery, useHivesQuery } from '~/query';
+import { useI18n } from 'vue-i18n';
 import { useVModels } from '@vueuse/core';
+import { validationErrors } from '~/helpers';
+import useVuelidate from '@vuelidate/core';
 
 const { t } = useI18n();
 const { isLoading: isLoadingHive, data: hives } = useHivesQuery();

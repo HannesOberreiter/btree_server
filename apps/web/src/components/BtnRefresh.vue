@@ -13,9 +13,9 @@
 </template>
 
 <script setup lang="ts">
-import { clearCache } from '../query';
+import { clearCache } from '~/query';
 import { useI18n } from 'vue-i18n';
-import { useRefreshStore } from '../stores/refresh';
+import { useRefreshStore } from '~/stores/refresh';
 
 const storeRefresh = useRefreshStore();
 

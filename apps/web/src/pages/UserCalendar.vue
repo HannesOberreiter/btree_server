@@ -22,16 +22,29 @@
   </div>
 </template>
 <script setup lang="ts">
-import { storeToRefs } from 'pinia';
 import _ from 'lodash';
+import '@fullcalendar/core/vdom'; // solve problem with Vite
 import { api } from '~/boot/axios';
-import { useQuasar } from 'quasar';
+import { CALENDAR } from '~/constants';
 import { onKeyStroke } from '@vueuse/core';
-import dayjs from 'dayjs';
+import { QueryClient } from 'vue-query';
 import { ref, watch, reactive, onMounted } from 'vue';
+import { storeToRefs } from 'pinia';
 import { useAuthUserStore } from '~/stores/auth';
 import { useCalendarStore } from '~/stores/calendar';
-import '@fullcalendar/core/vdom'; // solve problem with Vite
+import { useI18n } from 'vue-i18n';
+import { useNotification } from '~/composables/useResponseText';
+import { useQuasar } from 'quasar';
+import allLocales from '@fullcalendar/core/locales-all';
+import CalendarSetting from '~/components/CalendarSetting.vue';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import dayjs from 'dayjs';
+import DialogEvent from '~/components/DialogEvent.vue';
+import DialogForm from '~/components/DialogForm.vue';
+import DialogHint from '~/components/DialogHint.vue';
+import interactionPlugin from '@fullcalendar/interaction';
+import listPlugin from '@fullcalendar/list';
+import useCalendarVis from '~/composables/useCalendarVis';
 import FullCalendar, {
   CalendarOptions,
   DateSelectArg,
@@ -39,19 +52,6 @@ import FullCalendar, {
   EventChangeArg,
   EventSourceInput,
 } from '@fullcalendar/vue3';
-import dayGridPlugin from '@fullcalendar/daygrid';
-import listPlugin from '@fullcalendar/list';
-import interactionPlugin from '@fullcalendar/interaction';
-import allLocales from '@fullcalendar/core/locales-all';
-import { useI18n } from 'vue-i18n';
-import useCalendarVis from '~/composables/useCalendarVis';
-import { useNotification } from '~/composables/useResponseText';
-import { CALENDAR } from '~/constants';
-import CalendarSetting from '~/components/CalendarSetting.vue';
-import DialogForm from '~/components/DialogForm.vue';
-import DialogHint from '~/components/DialogHint.vue';
-import DialogEvent from '~/components/DialogEvent.vue';
-import { QueryClient } from 'vue-query';
 
 const { t } = useI18n();
 const $q = useQuasar();

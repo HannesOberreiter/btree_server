@@ -24,13 +24,13 @@
 </template>
 
 <script setup lang="ts">
-import useVuelidate from '@vuelidate/core';
 import { reactive, ref } from 'vue';
-import AuthService from '~/services/auth.service';
-import FormUserEmail from '~/components/FormUserEmail.vue';
-import FormErrorMax from '~/components/FormErrorMax.vue';
-import { useNotification } from '~/composables/useResponseText';
 import { useI18n } from 'vue-i18n';
+import { useNotification } from '~/composables/useResponseText';
+import AuthService from '~/services/auth.service';
+import FormErrorMax from '~/components/FormErrorMax.vue';
+import FormUserEmail from '~/components/FormUserEmail.vue';
+import useVuelidate from '@vuelidate/core';
 
 const notification = useNotification();
 const { t } = useI18n();

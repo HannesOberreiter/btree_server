@@ -99,13 +99,13 @@
 </template>
 
 <script setup lang="ts">
+import { minValue, maxValue, integer } from '~/helpers/i18n-validators';
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { validationErrors } from '~/helpers';
 import dayjs from 'dayjs';
-import FormCommonStart from './FormCommonDate.vue';
 import FormCommonEnd from './FormCommonDate.vue';
-import { minValue, maxValue, integer } from '../helpers/i18n-validators';
-import { validationErrors } from '../helpers';
+import FormCommonStart from './FormCommonDate.vue';
 import useVuelidate from '@vuelidate/core';
 
 const { t } = useI18n();

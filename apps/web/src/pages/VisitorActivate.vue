@@ -41,15 +41,16 @@
 </template>
 
 <script setup lang="ts">
-import useVuelidate from '@vuelidate/core';
-import { required, maxLength, alphaNum } from '@vuelidate/validators';
 import { reactive, ref } from 'vue';
-import AuthService from '~/services/auth.service';
+import { required, maxLength, alphaNum } from '@vuelidate/validators';
+import { useI18n } from 'vue-i18n';
+import { useNotification } from '~/composables/useResponseText';
 import { useRouter } from 'vue-router';
 import { validationErrors } from '~/helpers';
-import { useNotification } from '~/composables/useResponseText';
+import AuthService from '~/services/auth.service';
 import FormErrorMax from '~/components/FormErrorMax.vue';
-import { useI18n } from 'vue-i18n';
+import useVuelidate from '@vuelidate/core';
+
 const notification = useNotification();
 const { t } = useI18n();
 const router = useRouter();

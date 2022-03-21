@@ -27,13 +27,13 @@
 </template>
 
 <script setup lang="ts">
-import { storeToRefs } from 'pinia';
-import { useFieldsettingStore } from 'src/stores/fieldsetting';
-import { ref } from 'vue';
-import { useI18n } from 'vue-i18n';
-import { api } from 'src/boot/axios';
-import { useNotification } from '~/composables/useResponseText';
+import { api } from '~/boot/axios';
 import { capitalize } from 'lodash';
+import { ref } from 'vue';
+import { storeToRefs } from 'pinia';
+import { useFieldsettingStore } from '~/stores/fieldsetting';
+import { useI18n } from 'vue-i18n';
+import { useNotification } from '~/composables/useResponseText';
 
 const { t } = useI18n();
 const notification = useNotification();

@@ -62,23 +62,23 @@
 </template>
 
 <script setup lang="ts">
-import FormCommonHive from '~/components/FormCommonHive.vue';
-import { useI18n } from 'vue-i18n';
-import FormCommonDates from '~/components/FormCommonDates.vue';
-import FormCommonDropdown from '~/components/FormCommonDropdown.vue';
-import FormCommonDropdown2 from '~/components/FormCommonDropdown.vue';
-import FormCommonNote from '~/components/FormCommonNote.vue';
-import FormCommonUrl from '~/components/FormCommonUrl.vue';
 import { PropType, ref } from 'vue';
 import { Task } from '~/types';
+import { useI18n } from 'vue-i18n';
+import FormCheckupFrames from './FormCheckupFrames.vue';
 import FormCheckupQueen from './FormCheckupQueen.vue';
 import FormCheckupRating from './FormCheckupRating.vue';
-import FormCheckupFrames from './FormCheckupFrames.vue';
-import FormCheckupVarroa from './FormCheckupVarroa.vue';
 import FormCheckupStrength from './FormCheckupStrength.vue';
-import FormCheckupWeight from './FormCheckupWeight.vue';
 import FormCheckupTemperature from './FormCheckupTemperature.vue';
+import FormCheckupVarroa from './FormCheckupVarroa.vue';
+import FormCheckupWeight from './FormCheckupWeight.vue';
+import FormCommonDates from '~/components/FormCommonDates.vue';
 import FormCommonDone from './FormCommonDone.vue';
+import FormCommonDropdown from '~/components/FormCommonDropdown.vue';
+import FormCommonDropdown2 from '~/components/FormCommonDropdown.vue';
+import FormCommonHive from '~/components/FormCommonHive.vue';
+import FormCommonNote from '~/components/FormCommonNote.vue';
+import FormCommonUrl from '~/components/FormCommonUrl.vue';
 
 const props = defineProps({
   task: {

@@ -1,5 +1,5 @@
-import { Token } from '~/types';
 import { defineStore } from 'pinia';
+import { Token } from '~/types';
 import { useStorage } from '@vueuse/core';
 
 export const useAuthTokenStore = defineStore('auth/token', {

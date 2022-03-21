@@ -28,8 +28,8 @@
 </template>
 
 <script setup lang="ts">
-import { useCalendarStore } from '~/stores/calendar';
 import { CALENDAR } from '~/constants';
+import { useCalendarStore } from '~/stores/calendar';
 import { useI18n } from 'vue-i18n';
 const { t } = useI18n();
 const storeCalendar = useCalendarStore();

@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { useStorage } from '@vueuse/core';
-import refreshService from '../services/refresh.service';
 import dayjs from 'dayjs';
+import refreshService from '~/services/refresh.service';
 
 export const useRefreshStore = defineStore('refresh', {
   state: () => ({

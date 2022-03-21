@@ -1,14 +1,12 @@
-/* eslint-disable @typescript-eslint/restrict-template-expressions */
-/* eslint-disable @typescript-eslint/restrict-plus-operands */
-import { useQuery } from 'vue-query';
 import { api } from '~/boot/axios';
-import { useNotification } from '~/composables/useResponseText';
-import { queryCache } from '~/boot/vue-query';
-import { map } from 'lodash';
 import { i18n } from '~/boot/i18n';
+import { map } from 'lodash';
 import { MaybeRef } from '@vueuse/core';
 import { Option } from '~/types';
+import { queryCache } from '~/boot/vue-query';
 import { Ref } from 'vue';
+import { useNotification } from '~/composables/useResponseText';
+import { useQuery } from 'vue-query';
 
 const notification = useNotification();
 const { t } = i18n.global;

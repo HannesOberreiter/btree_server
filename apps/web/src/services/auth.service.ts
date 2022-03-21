@@ -1,6 +1,6 @@
 import { api } from '~/boot/axios';
-import { RegisterUser, User } from '~/types';
 import { find } from 'lodash';
+import { RegisterUser, User } from '~/types';
 import { useAuthTokenStore } from '~/stores/token';
 import { useAuthUserStore } from '~/stores/auth';
 

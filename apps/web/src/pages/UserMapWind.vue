@@ -18,8 +18,8 @@
 </template>
 
 <script setup lang="ts">
-import { useAuthUserStore } from '~/stores/auth';
 import { computed } from 'vue';
+import { useAuthUserStore } from '~/stores/auth';
 const storeUser = useAuthUserStore();
 const url = computed(() =>
   storeUser.user.lang === 'de' ? 'de/wetter' : 'en/weather'

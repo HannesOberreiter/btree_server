@@ -81,20 +81,20 @@
 </template>
 
 <script setup lang="ts">
-import useVuelidate from '@vuelidate/core';
-import { required, maxLength } from '~/helpers/i18n-validators';
-import { validationErrors } from '~/helpers';
-import { useNotification } from '~/composables/useResponseText';
 import { api } from '~/boot/axios';
+import { LANGUAGES } from '~/constants';
 import { reactive, ref } from 'vue';
-import { useI18n } from 'vue-i18n';
-import { useAuthUserStore } from '~/stores/auth';
+import { required, maxLength } from '~/helpers/i18n-validators';
 import { storeToRefs } from 'pinia';
+import { useAuthUserStore } from '~/stores/auth';
+import { useI18n } from 'vue-i18n';
+import { useNotification } from '~/composables/useResponseText';
+import { useQuasar } from 'quasar';
 import { useQuasarLang } from '~/composables/useQuasarLang';
+import { validationErrors } from '~/helpers';
 import FormUserLanguage from './FormUserLanguage.vue';
 import FormUserNewsletter from './FormUserNewsletter.vue';
-import { LANGUAGES } from '~/constants';
-import { useQuasar } from 'quasar';
+import useVuelidate from '@vuelidate/core';
 
 const { t } = useI18n();
 const $q = useQuasar();

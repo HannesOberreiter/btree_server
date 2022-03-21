@@ -35,14 +35,15 @@
 </template>
 
 <script setup lang="ts">
-import useVuelidate from '@vuelidate/core';
-import { required } from '../helpers/i18n-validators';
 import { reactive, ref, watch } from 'vue';
-import { validationErrors } from '../helpers';
+import { required } from '~/helpers/i18n-validators';
 import { useI18n } from 'vue-i18n';
-import dayjs from 'dayjs';
-import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { useVModels } from '@vueuse/core';
+import { validationErrors } from '~/helpers';
+import dayjs from 'dayjs';
+import useVuelidate from '@vuelidate/core';
+
+import customParseFormat from 'dayjs/plugin/customParseFormat';
 dayjs.extend(customParseFormat); // Needed to validate if date is even possible
 
 const { t } = useI18n();

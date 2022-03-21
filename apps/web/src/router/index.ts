@@ -1,14 +1,14 @@
+import { Loading } from 'quasar';
 import { route } from 'quasar/wrappers';
+import { useAuthUserStore } from '~/stores/auth';
+import { useRefreshStore } from '~/stores/refresh';
+import routes from './routes';
 import {
   createMemoryHistory,
   createRouter,
   createWebHashHistory,
   createWebHistory,
 } from 'vue-router';
-import routes from './routes';
-import { useAuthUserStore } from '~/stores/auth';
-import { useRefreshStore } from '~/stores/refresh';
-import { Loading } from 'quasar';
 
 /*
  * If not building with SSR mode, you can

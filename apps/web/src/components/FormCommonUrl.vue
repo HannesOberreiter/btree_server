@@ -9,7 +9,7 @@
     type="text"
     readonly
   >
-    <template v-slot:append>
+    <template #append>
       <q-icon name="fab fa-dropbox" style="cursor: pointer"></q-icon>
     </template>
   </q-input>
@@ -17,9 +17,9 @@
 
 <script setup lang="ts">
 import useVuelidate from '@vuelidate/core';
-import { required, maxLength } from '../helpers/i18n-validators';
+import { maxLength } from '~/helpers/i18n-validators';
 import { reactive, watch } from 'vue';
-import { validationErrors } from '../helpers';
+import { validationErrors } from '~/helpers';
 import { useI18n } from 'vue-i18n';
 import { useVModels } from '@vueuse/core';
 const { t } = useI18n();

@@ -15,9 +15,9 @@
 </template>
 
 <script setup lang="ts">
+import { LANGUAGES } from '~/constants';
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { LANGUAGES } from '~/constants';
 import { usePreferredLanguages } from '@vueuse/core';
 
 const { t } = useI18n();

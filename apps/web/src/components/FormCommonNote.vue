@@ -13,11 +13,12 @@
 </template>
 
 <script setup lang="ts">
-import useVuelidate from '@vuelidate/core';
-import { maxLength } from '../helpers/i18n-validators';
+import { maxLength } from '~/helpers/i18n-validators';
 import { reactive } from 'vue';
-import { validationErrors } from '../helpers';
 import { useI18n } from 'vue-i18n';
+import { validationErrors } from '~/helpers';
+import useVuelidate from '@vuelidate/core';
+
 const { t } = useI18n();
 const state = reactive({
   note: '',
