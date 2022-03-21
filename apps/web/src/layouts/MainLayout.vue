@@ -8,9 +8,9 @@
     </q-header>
 
     <q-drawer
+      v-model="leftDrawerOpen"
       dark
       show-if-above
-      v-model="leftDrawerOpen"
       side="left"
       :width="200"
       class="bg-blue-grey-9"
@@ -40,14 +40,14 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { useAuthUserStore } from 'src/stores/auth';
+import { useAuthUserStore } from '~/stores/auth';
 import { useI18n } from 'vue-i18n';
 import { useQuasar } from 'quasar';
-import { useQuasarLang } from 'src/composables/useQuasarLang';
-import GlobalSound from 'src/components/GlobalSound.vue';
-import MainDrawer from 'src/components/MainDrawer.vue';
-import MainNavbar from 'src/components/MainNavbar.vue';
-import news from 'src/assets/news.json';
+import { useQuasarLang } from '~/composables/useQuasarLang';
+import GlobalSound from '~/components/GlobalSound.vue';
+import MainDrawer from '~/components/MainDrawer.vue';
+import MainNavbar from '~/components/MainNavbar.vue';
+import news from '~/assets/news.json';
 
 const leftDrawerOpen = ref(false);
 const storeUser = useAuthUserStore();

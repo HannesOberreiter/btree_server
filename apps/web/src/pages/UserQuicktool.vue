@@ -26,9 +26,9 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
-import FormMainTask from 'src/components/FormMainTask.vue';
+import FormMainTask from '~/components/FormMainTask.vue';
 import { PropType, ref, watch } from 'vue';
-import { Task } from 'src/types';
+import { Task } from '~/types';
 import { find } from 'lodash';
 
 const { t } = useI18n();

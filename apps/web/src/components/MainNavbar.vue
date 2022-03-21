@@ -7,19 +7,19 @@
     </div>
     <div class="col-4 col-sm-6 col-md-6 col-lg-4">
       <q-select
+        v-model="search"
         dense
         clearable
-        v-model="search"
         standout="bg-secondary text-white"
         placeholder="Search you colonies and apiaries"
       >
-        <template v-slot:prepend>
+        <template #prepend>
           <q-btn
+            v-close-popup
             flat
             dense
             color="white"
             size="md"
-            v-close-popup
             icon="fas fa-search"
             @click="onSubmit"
           />
@@ -30,11 +30,11 @@
     <div class="col-6 col-sm-4 col-md-auto">
       <div class="q-gutter-md text-right">
         <q-btn
+          v-close-popup
           flat
           dense
           color="white"
           size="md"
-          v-close-popup
           icon="fas fa-microphone"
           @click="onSpeak"
         />
@@ -43,16 +43,16 @@
           dense
           color="white"
           size="md"
-          @click="$q.fullscreen.toggle()"
           :icon="$q.fullscreen.isActive ? 'fas fa-compress' : 'fas fa-expand'"
+          @click="$q.fullscreen.toggle()"
         />
         <q-btn
           flat
           dense
           color="white"
           size="md"
-          @click="$q.dark.toggle()"
           :icon="$q.dark.isActive ? 'fas fa-moon' : 'fas fa-sun'"
+          @click="$q.dark.toggle()"
         />
       </div>
     </div>

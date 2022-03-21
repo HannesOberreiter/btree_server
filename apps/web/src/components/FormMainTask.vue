@@ -53,6 +53,7 @@
   </div>
   <form-common-url></form-common-url>
   <form-common-note></form-common-note>
+  <form-common-done></form-common-done>
 
   <q-btn-group>
     <q-btn>{{ t('save') }}</q-btn>
@@ -61,15 +62,15 @@
 </template>
 
 <script setup lang="ts">
-import FormCommonHive from 'src/components/FormCommonHive.vue';
+import FormCommonHive from '~/components/FormCommonHive.vue';
 import { useI18n } from 'vue-i18n';
-import FormCommonDates from 'src/components/FormCommonDates.vue';
-import FormCommonDropdown from 'src/components/FormCommonDropdown.vue';
-import FormCommonDropdown2 from 'src/components/FormCommonDropdown.vue';
-import FormCommonNote from 'src/components/FormCommonNote.vue';
-import FormCommonUrl from 'src/components/FormCommonUrl.vue';
+import FormCommonDates from '~/components/FormCommonDates.vue';
+import FormCommonDropdown from '~/components/FormCommonDropdown.vue';
+import FormCommonDropdown2 from '~/components/FormCommonDropdown.vue';
+import FormCommonNote from '~/components/FormCommonNote.vue';
+import FormCommonUrl from '~/components/FormCommonUrl.vue';
 import { PropType, ref } from 'vue';
-import { Task } from 'src/types';
+import { Task } from '~/types';
 import FormCheckupQueen from './FormCheckupQueen.vue';
 import FormCheckupRating from './FormCheckupRating.vue';
 import FormCheckupFrames from './FormCheckupFrames.vue';
@@ -77,6 +78,7 @@ import FormCheckupVarroa from './FormCheckupVarroa.vue';
 import FormCheckupStrength from './FormCheckupStrength.vue';
 import FormCheckupWeight from './FormCheckupWeight.vue';
 import FormCheckupTemperature from './FormCheckupTemperature.vue';
+import FormCommonDone from './FormCommonDone.vue';
 
 const props = defineProps({
   task: {

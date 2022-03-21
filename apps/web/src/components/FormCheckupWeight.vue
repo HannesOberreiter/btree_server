@@ -11,10 +11,10 @@
         type="number"
         filled
       >
-        <template v-slot:before>
+        <template #before>
           <q-icon name="fas fa-weight"></q-icon>
         </template>
-        <template v-slot:append>
+        <template #append>
           <q-btn
             round
             flat
@@ -37,8 +37,8 @@
     </div>
     <div class="col-12 col-md-6">
       <q-input
-        filled
         v-model="state.time"
+        filled
         :label="t('time')"
         name="time"
         type="time"
@@ -47,7 +47,7 @@
         :no-error-icon="true"
         readonly
       >
-        <template v-slot:append>
+        <template #append>
           <q-icon name="fas fa-clock" class="cursor-pointer">
             <q-popup-proxy
               cover

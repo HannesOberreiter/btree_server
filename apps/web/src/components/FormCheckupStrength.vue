@@ -9,10 +9,10 @@
     type="number"
     filled
   >
-    <template v-slot:before>
+    <template #before>
       <q-icon name="fas fa-dumbbell"></q-icon>
     </template>
-    <template v-slot:append>
+    <template #append>
       <q-btn
         round
         flat
@@ -45,6 +45,7 @@ import { useVModels } from '@vueuse/core';
 const { t } = useI18n();
 const props = defineProps({
   modelValue: {
+    type: Number,
     default: 0,
   },
 });

@@ -7,24 +7,24 @@
           <q-space />
           <q-btn
             ref="closeBtn"
+            v-close-popup
             icon="fas fa-times"
             flat
             round
             dense
-            v-close-popup
           />
         </div>
         <div class="row full-width">
           <form-main-todo
             v-if="form === 'todo'"
             :form-data="todo"
-            @onSuccess="onDialogOK()"
+            @on-success="onDialogOK()"
           ></form-main-todo>
           <form-main-apiary
             v-if="form === 'apiary'"
             :edit-id="editId"
             :form-data="apiary"
-            @onSuccess="(value) => onDialogOK(value)"
+            @on-success="(value) => onDialogOK(value)"
           ></form-main-apiary>
         </div>
       </q-card-section>
@@ -36,7 +36,7 @@
 import { useDialogPluginComponent } from 'quasar';
 import { PropType } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { Apiary, Todo } from '../types';
+import { Apiary, Todo } from '~/types';
 import FormMainTodo from './FormMainTodo.vue';
 import FormMainApiary from './FormMainApiary.vue';
 

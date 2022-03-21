@@ -62,38 +62,38 @@
   <q-btn-group spread>
     <q-btn
       unelevated
-      @click="onSubmit"
       size="md"
       color="secondary"
       type="submit"
       :loading="isSubmitting"
       :label="t('save')"
+      @click="onSubmit"
     />
     <q-btn
       unelevated
-      @click="onDelete"
       size="md"
       color="negative"
       :loading="isSubmitting"
       :label="t('delete') + ' ' + t('account')"
+      @click="onDelete"
     />
   </q-btn-group>
 </template>
 
 <script setup lang="ts">
 import useVuelidate from '@vuelidate/core';
-import { required, maxLength } from '../helpers/i18n-validators';
-import { validationErrors } from '../helpers';
-import { useNotification } from '../composables/useResponseText';
-import { api } from 'boot/axios';
+import { required, maxLength } from '~/helpers/i18n-validators';
+import { validationErrors } from '~/helpers';
+import { useNotification } from '~/composables/useResponseText';
+import { api } from '~/boot/axios';
 import { reactive, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useAuthUserStore } from 'src/stores/auth';
+import { useAuthUserStore } from '~/stores/auth';
 import { storeToRefs } from 'pinia';
-import { useQuasarLang } from '../composables/useQuasarLang';
+import { useQuasarLang } from '~/composables/useQuasarLang';
 import FormUserLanguage from './FormUserLanguage.vue';
 import FormUserNewsletter from './FormUserNewsletter.vue';
-import { LANGUAGES } from 'src/constants';
+import { LANGUAGES } from '~/constants';
 import { useQuasar } from 'quasar';
 
 const { t } = useI18n();

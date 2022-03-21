@@ -32,7 +32,7 @@ import { useFieldsettingStore } from 'src/stores/fieldsetting';
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { api } from 'src/boot/axios';
-import { useNotification } from 'src/composables/useResponseText';
+import { useNotification } from '~/composables/useResponseText';
 import { capitalize } from 'lodash';
 
 const { t } = useI18n();

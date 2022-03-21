@@ -1,29 +1,29 @@
 <template>
-  <q-form @submit.prevent.stop="onSubmit" class="full-width">
+  <q-form class="full-width" @submit.prevent.stop="onSubmit">
     <form-common-date v-model="state.date"></form-common-date>
     <form-common-name v-model="state.name"></form-common-name>
     <form-common-note v-model="state.note"></form-common-note>
   </q-form>
   <q-btn
     unelevated
-    @click="onSubmit"
     size="md"
     color="secondary"
     type="submit"
     :loading="isSubmitting"
     :label="t('save')"
     class="full-width text-white"
+    @click="onSubmit"
   />
 </template>
 
 <script setup lang="ts">
 import useVuelidate from '@vuelidate/core';
-import { useNotification } from '../composables/useResponseText';
-import { api } from 'boot/axios';
+import { useNotification } from '~/composables/useResponseText';
+import { api } from '~/boot/axios';
 import dayjs from 'dayjs';
 import { PropType, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { Todo } from '../types';
+import { Todo } from '~/types';
 
 import FormCommonDate from './FormCommonDate.vue';
 import FormCommonName from './FormCommonName.vue';

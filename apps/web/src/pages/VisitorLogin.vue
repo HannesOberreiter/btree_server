@@ -2,10 +2,10 @@
   <q-card-section>
     <div class="text-h6 text-center">{{ t('login') }}</div>
     <form-error-max v-if="submitCount >= 15"></form-error-max>
-    <q-form v-else @submit="onSubmit" class="q-gutter-md">
+    <q-form v-else class="q-gutter-md" @submit="onSubmit">
       <form-user-email
         v-model:modelMail="state.email"
-        @update:modelMail="(value) => (state.email = value)"
+        @update:model-mail="(value) => (state.email = value)"
       ></form-user-email>
       <form-user-password
         v-model:modelPassword="state.password"
@@ -29,14 +29,14 @@
 <script setup lang="ts">
 import useVuelidate from '@vuelidate/core';
 import { onMounted, reactive, ref } from 'vue';
-import { useAuthUserStore } from '../stores/auth';
-import { User } from '../types';
+import { useAuthUserStore } from '~/stores/auth';
+import { User } from '~/types';
 import { useRouter } from 'vue-router';
-import { useNotification } from '../composables/useResponseText';
+import { useNotification } from '~/composables/useResponseText';
 import { useI18n } from 'vue-i18n';
-import FormUserEmail from 'src/components/FormUserEmail.vue';
-import FormUserPassword from 'src/components/FormUserPassword.vue';
-import FormErrorMax from '../components/FormErrorMax.vue';
+import FormUserEmail from '~/components/FormUserEmail.vue';
+import FormUserPassword from '~/components/FormUserPassword.vue';
+import FormErrorMax from '~/components/FormErrorMax.vue';
 
 const router = useRouter();
 const prop = defineProps({

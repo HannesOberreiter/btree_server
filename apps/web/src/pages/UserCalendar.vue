@@ -16,7 +16,7 @@
           </template>
         </full-calendar>
       </div>
-      <dialog-hint :hint="t('calendar.hint')" v-model="showInfo"></dialog-hint>
+      <dialog-hint v-model="showInfo" :hint="t('calendar.hint')"></dialog-hint>
       <calendar-setting v-model="showSetting"></calendar-setting>
     </div>
   </div>
@@ -24,13 +24,13 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
 import _ from 'lodash';
-import { api } from 'boot/axios';
+import { api } from '~/boot/axios';
 import { useQuasar } from 'quasar';
 import { onKeyStroke } from '@vueuse/core';
 import dayjs from 'dayjs';
-import { ref, watch, reactive } from 'vue';
-import { useAuthUserStore } from '../stores/auth';
-import { useCalendarStore } from '../stores/calendar';
+import { ref, watch, reactive, onMounted } from 'vue';
+import { useAuthUserStore } from '~/stores/auth';
+import { useCalendarStore } from '~/stores/calendar';
 import '@fullcalendar/core/vdom'; // solve problem with Vite
 import FullCalendar, {
   CalendarOptions,
@@ -44,13 +44,13 @@ import listPlugin from '@fullcalendar/list';
 import interactionPlugin from '@fullcalendar/interaction';
 import allLocales from '@fullcalendar/core/locales-all';
 import { useI18n } from 'vue-i18n';
-import useCalendarVis from '../composables/useCalendarVis';
-import { useNotification } from '../composables/useResponseText';
-import { CALENDAR } from '../constants/';
-import CalendarSetting from '../components/CalendarSetting.vue';
-import DialogForm from 'src/components/DialogForm.vue';
-import DialogHint from 'src/components/DialogHint.vue';
-import DialogEvent from 'src/components/DialogEvent.vue';
+import useCalendarVis from '~/composables/useCalendarVis';
+import { useNotification } from '~/composables/useResponseText';
+import { CALENDAR } from '~/constants';
+import CalendarSetting from '~/components/CalendarSetting.vue';
+import DialogForm from '~/components/DialogForm.vue';
+import DialogHint from '~/components/DialogHint.vue';
+import DialogEvent from '~/components/DialogEvent.vue';
 import { QueryClient } from 'vue-query';
 
 const { t } = useI18n();
@@ -116,7 +116,10 @@ CALENDAR.map(function (source, _index) {
           const _response = client
             .fetchQuery(
               queryKey,
-              () => api.get(`/v1/calendar/${source}`, { params: fetchInfo }),
+              () =>
+                api.get(`/v1/calendar/${source}`, {
+                  params: fetchInfo,
+                }),
               {
                 staleTime: 1000 * 60 * 5,
                 cacheTime: 1000 * 60 * 5,
@@ -210,27 +213,29 @@ const calendarOptions = reactive({
   eventChange: handleEventsChange,
 } as CalendarOptions);
 
-watch(storeCalendar, (currentValue) => {
-  const calendarApi = cal.value.getApi();
-  const addSources = _.difference(
-    currentValue.calendar,
-    eventsSourceActiveWatcher
-  );
-  const removeSources = _.difference(
-    eventsSourceActiveWatcher,
-    currentValue.calendar
-  );
-  eventsSourceActiveWatcher = currentValue.calendar;
-  eventsSourceList.map(function (source: any) {
-    if (addSources.includes(source.id)) {
-      eventsSourceActive.push(source);
-      _.remove(eventsSourceInactive, { id: source.id });
-      calendarApi.addEventSource(source);
-    } else if (removeSources.includes(source.id)) {
-      eventsSourceInactive.push(source);
-      _.remove(eventsSourceActive, { id: source.id });
-      calendarApi.getEventSourceById(source.id).remove();
-    }
+onMounted(() => {
+  watch(storeCalendar, (currentValue) => {
+    const calendarApi = cal.value.getApi();
+    const addSources = _.difference(
+      currentValue.calendar,
+      eventsSourceActiveWatcher
+    );
+    const removeSources = _.difference(
+      eventsSourceActiveWatcher,
+      currentValue.calendar
+    );
+    eventsSourceActiveWatcher = currentValue.calendar;
+    eventsSourceList.map(function (source: any) {
+      if (addSources.includes(source.id)) {
+        eventsSourceActive.push(source);
+        _.remove(eventsSourceInactive, { id: source.id });
+        calendarApi.addEventSource(source);
+      } else if (removeSources.includes(source.id)) {
+        eventsSourceInactive.push(source);
+        _.remove(eventsSourceActive, { id: source.id });
+        calendarApi.getEventSourceById(source.id).remove();
+      }
+    });
   });
 });
 

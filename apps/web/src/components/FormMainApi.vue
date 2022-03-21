@@ -46,12 +46,12 @@
         <q-btn
           flat
           :disabled="apiField === 'password'"
+          icon="fas fa-copy"
           @click="
             copy(icalUrl).then(() =>
               notification.open('info', t('copiedToClipboard'))
             )
           "
-          icon="fas fa-copy"
         />
       </template>
     </q-input>
@@ -60,28 +60,28 @@
     <q-btn-group spread>
       <q-btn
         v-if="!storeUser.company.api_active"
-        @click.prevent.stop="changeApiStatus(true)"
         unelevated
         size="md"
         color="secondary"
+        @click.prevent.stop="changeApiStatus(true)"
       >
         {{ t('activate') }}
       </q-btn>
       <q-btn
         v-if="storeUser.company.api_active"
-        @click.prevent.stop="changeApiStatus(false)"
         unelevated
         size="md"
         color="negative"
+        @click.prevent.stop="changeApiStatus(false)"
       >
         {{ t('deactivate') }}
       </q-btn>
       <q-btn
         v-if="storeUser.company.api_active"
-        @click.prevent.stop="changeApiStatus(true, true)"
         unelevated
         size="md"
         color="secondary"
+        @click.prevent.stop="changeApiStatus(true, true)"
       >
         {{ t('generateNewKey') }}
       </q-btn>
@@ -91,15 +91,15 @@
 
 <script setup lang="ts">
 import useVuelidate from '@vuelidate/core';
-import { useNotification } from '../composables/useResponseText';
-import { api } from 'boot/axios';
+import { useNotification } from '~/composables/useResponseText';
+import { api } from '~/boot/axios';
 import { computed, reactive, ref } from 'vue';
-import { useAuthUserStore } from 'src/stores/auth';
+import { useAuthUserStore } from '~/stores/auth';
 import { useI18n } from 'vue-i18n';
 import { useClipboard } from '@vueuse/core';
 import { map } from 'lodash';
 import { QInputProps } from 'quasar';
-import { CALENDAR } from '../constants';
+import { CALENDAR } from '~/constants';
 
 import FormUserPassword from './FormUserPassword.vue';
 

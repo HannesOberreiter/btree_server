@@ -8,7 +8,7 @@
     filled
     :dense="true"
   >
-    <template v-slot:prepend>
+    <template #prepend>
       <q-icon name="fas fa-language" />
     </template>
   </q-select>
@@ -17,7 +17,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { LANGUAGES } from '../constants';
+import { LANGUAGES } from '~/constants';
 import { usePreferredLanguages } from '@vueuse/core';
 
 const { t } = useI18n();

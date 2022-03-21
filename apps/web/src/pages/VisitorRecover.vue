@@ -2,7 +2,7 @@
   <q-card-section>
     <div class="text-h6 text-center">{{ t('recoverUser.title') }}</div>
     <form-error-max v-if="submitCount >= 15"></form-error-max>
-    <q-form v-else @submit="onSubmit" class="q-gutter-md">
+    <q-form v-else class="q-gutter-md" @submit="onSubmit">
       <p class="text-center">
         {{ t('recoverUser.text') }}
       </p>
@@ -30,9 +30,9 @@
 import useVuelidate from '@vuelidate/core';
 import { reactive, ref } from 'vue';
 import AuthService from '../services/auth.service';
-import FormUserEmail from 'src/components/FormUserEmail.vue';
-import FormErrorMax from 'src/components/FormErrorMax.vue';
-import { useNotification } from '../composables/useResponseText';
+import FormUserEmail from '~/components/FormUserEmail.vue';
+import FormErrorMax from '~/components/FormErrorMax.vue';
+import { useNotification } from '~/composables/useResponseText';
 import { useI18n } from 'vue-i18n';
 
 const notification = useNotification();

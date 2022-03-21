@@ -5,12 +5,12 @@
     :error-messages="validationErrors(v.date)"
     :label="t(label)"
     input-class="text-center"
-    @click="qDateProxy = !qDateProxy"
     type="date"
     readonly
     filled
+    @click="qDateProxy = !qDateProxy"
   >
-    <template v-slot:append>
+    <template #append>
       <q-icon name="fas fa-calendar" class="cursor-pointer">
         <q-popup-proxy
           v-model="qDateProxy"

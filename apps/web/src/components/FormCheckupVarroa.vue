@@ -9,10 +9,10 @@
     type="number"
     filled
   >
-    <template v-slot:before>
+    <template #before>
       <q-icon name="fas fa-bug"></q-icon>
     </template>
-    <template v-slot:after>
+    <template #after>
       <q-btn
         flat
         round
@@ -21,7 +21,7 @@
         @click="openCalculator"
       ></q-btn>
     </template>
-    <template v-slot:append>
+    <template #append>
       <q-btn
         round
         flat

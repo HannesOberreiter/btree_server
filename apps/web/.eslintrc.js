@@ -1,4 +1,5 @@
 const { resolve } = require('path');
+
 module.exports = {
   // https://eslint.org/docs/user-guide/configuring#configuration-cascading-and-hierarchy
   // This option interrupts the configuration hierarchy at this file
@@ -22,6 +23,8 @@ module.exports = {
 
   env: {
     browser: true,
+    es2021: true,
+    node: true,
   },
 
   // Rules order is important, please avoid shuffling them
@@ -32,15 +35,13 @@ module.exports = {
     // https://github.com/typescript-eslint/typescript-eslint/tree/master/packages/eslint-plugin#usage
     // ESLint typescript rules
     'plugin:@typescript-eslint/recommended',
-    // consider disabling this class of rules if linting takes too long
-    'plugin:@typescript-eslint/recommended-requiring-type-checking',
 
     // Uncomment any of the lines below to choose desired strictness,
     // but leave only one uncommented!
     // See https://eslint.vuejs.org/rules/#available-rules
-    'plugin:vue/vue3-essential', // Priority A: Essential (Error Prevention)
+    //'plugin:vue/vue3-essential', // Priority A: Essential (Error Prevention)
     // 'plugin:vue/vue3-strongly-recommended', // Priority B: Strongly Recommended (Improving Readability)
-    // 'plugin:vue/vue3-recommended', // Priority C: Recommended (Minimizing Arbitrary Choices and Cognitive Overhead)
+    'plugin:vue/vue3-recommended', // Priority C: Recommended (Minimizing Arbitrary Choices and Cognitive Overhead)
 
     // https://github.com/prettier/eslint-config-prettier#installation
     // usage with Prettier, provided by 'eslint-config-prettier'.
@@ -77,10 +78,19 @@ module.exports = {
   // add your custom rules here
   rules: {
     'prefer-promise-reject-errors': 'off',
+
+    // The core 'no-unused-vars' rules (in the eslint:recommeded ruleset)
+    // does not work with type definitions
     'no-unused-vars': 'off',
 
-    // TypeScript
     quotes: ['warn', 'single', { avoidEscape: true }],
+
+    // this rule, if on, would require explicit return type on the `render` function
+    '@typescript-eslint/explicit-function-return-type': 'off',
+
+    // in plain CommonJS modules, you can't use `import foo = require('foo')` to pass this rule, so it has to be disabled
+    '@typescript-eslint/no-var-requires': 'off',
+
     'no-unsafe-any': 0,
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/no-explicit-any': 'off',
@@ -92,6 +102,9 @@ module.exports = {
     // error with vue i18n
     '@typescript-eslint/unbound-method': 'off',
 
+    // disable some vue recommended
+    'vue/require-prop-types': 'off',
+
     // note you must disable the base rule as it can report incorrect errors
     '@typescript-eslint/no-unused-vars': [
       'warn',
@@ -101,6 +114,7 @@ module.exports = {
         caughtErrorsIgnorePattern: '^_',
       },
     ],
+
     // allow debugger during development only
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
   },

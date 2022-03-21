@@ -3,17 +3,18 @@
 </template>
 
 <script setup lang="ts">
-/* eslint-disable @typescript-eslint/no-var-requires */
 import { useSound } from '@vueuse/sound';
-import { useNotification } from '../composables/useResponseText';
+import { useNotification } from '~/composables/useResponseText';
 import { watch } from 'vue';
 import { useAuthUserStore } from '../stores/auth';
 import { storeToRefs } from 'pinia';
+import ErrorSound from 'assets/audio/error.mp3';
+import SuccessSound from 'assets/audio/success.mp3';
 
 const { user } = storeToRefs(useAuthUserStore());
 const notification = useNotification();
-const errorSound = useSound(require('assets/audio/error.mp3'));
-const successSound = useSound(require('assets/audio/success.mp3'));
+const errorSound = useSound(ErrorSound);
+const successSound = useSound(SuccessSound);
 
 watch(notification.state, (currentValue) => {
   if (currentValue.show === true && user.value.sound) {

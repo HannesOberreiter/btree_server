@@ -4,17 +4,17 @@
       <div class="col-12">
         <form-user-password1
           v-model:modelPassword="state.oldPassword"
-          :passwordLabel="`oldPassword`"
+          :password-label="`oldPassword`"
           :confirm="false"
         ></form-user-password1>
         <form-user-email
           v-model:modelMail="state.email"
+          :disable-mail="true"
           @update:modelMail="(value) => (state.email = value)"
-          :disableMail="true"
         ></form-user-email>
         <form-user-password
           v-model:modelPassword="state.newPassword"
-          :passwordLabel="`newPassword`"
+          :password-label="`newPassword`"
           :confirm="true"
         ></form-user-password>
       </div>
@@ -22,19 +22,19 @@
   </q-form>
   <q-btn
     unelevated
-    @click.prevent.stop="onSubmit"
     size="md"
     color="secondary"
     type="submit"
     :loading="isSubmitting"
     :label="t('save')"
     class="full-width text-white"
+    @click.prevent.stop="onSubmit"
   />
 </template>
 
 <script setup lang="ts">
 import useVuelidate from '@vuelidate/core';
-import { useNotification } from '../composables/useResponseText';
+import { useNotification } from '~/composables/useResponseText';
 import { api } from 'boot/axios';
 import { reactive, ref } from 'vue';
 import { useI18n } from 'vue-i18n';

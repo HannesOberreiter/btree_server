@@ -1,15 +1,15 @@
 import { isEmpty } from 'lodash';
 import dayjs from 'dayjs';
 import { usePreferredLanguages } from '@vueuse/core';
-import { defineStore } from 'pinia';
+import { acceptHMRUpdate, defineStore } from 'pinia';
 
-import { User, Company } from '../types';
+import { User, Company } from '~/types';
 import { useStorage } from '@vueuse/core';
-import AuthService from '../services/auth.service';
+import AuthService from '~/services/auth.service';
 import { useAuthTokenStore } from './token';
-import { Router } from 'src/router';
+import { Router } from '~/router';
 import { useRefreshStore } from './refresh';
-import { i18n, setLocale } from 'src/boot/i18n';
+import { i18n, setLocale } from '~/boot/i18n';
 
 export const useAuthUserStore = defineStore('auth/user', {
   state: () => ({
@@ -98,3 +98,7 @@ export const useAuthUserStore = defineStore('auth/user', {
     },
   },
 });
+
+if (import.meta.hot) {
+  import.meta.hot.accept(acceptHMRUpdate(useAuthUserStore, import.meta.hot));
+}

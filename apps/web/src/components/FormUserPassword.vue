@@ -10,14 +10,14 @@
     required
     filled
   >
-    <template v-slot:prepend>
+    <template #prepend>
       <q-icon name="fas fa-lock" />
     </template>
-    <template v-slot:append>
+    <template #append>
       <q-icon
-        @click="changePasswordField"
         :name="passwordIcon"
         style="cursor: pointer"
+        @click="changePasswordField"
       />
     </template>
   </q-input>
@@ -33,7 +33,7 @@
     required
     filled
   >
-    <template v-slot:prepend>
+    <template #prepend>
       <q-icon name="fas fa-lock" />
     </template>
   </q-input>

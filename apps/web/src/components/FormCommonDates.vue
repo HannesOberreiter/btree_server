@@ -21,8 +21,8 @@
         flat
         round
         icon="fas fa-retweet"
-        @click="changeInterval"
         :color="showInterval ? 'secondary' : 'grey'"
+        @click="changeInterval"
       ></q-btn>
     </div>
   </div>
@@ -39,7 +39,7 @@
         input-class="text-right"
         filled
       >
-        <template v-slot:append>
+        <template #append>
           <q-btn
             round
             flat
@@ -73,7 +73,7 @@
         input-class="text-right"
         filled
       >
-        <template v-slot:append>
+        <template #append>
           <q-btn
             round
             flat

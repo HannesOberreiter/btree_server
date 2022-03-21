@@ -9,7 +9,7 @@
     required
     filled
   >
-    <template v-slot:prepend>
+    <template #prepend>
       <q-icon name="fas fa-warehouse" />
     </template>
   </q-input>
@@ -22,9 +22,9 @@ import {
   minLength,
   required,
   maxLength,
-} from '../helpers/i18n-validators';
+} from '~/helpers/i18n-validators';
 import { reactive } from 'vue';
-import { validationErrors } from '../helpers';
+import { validationErrors } from '~/helpers';
 import { useI18n } from 'vue-i18n';
 const { t } = useI18n();
 

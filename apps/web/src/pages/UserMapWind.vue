@@ -18,7 +18,7 @@
 </template>
 
 <script setup lang="ts">
-import { useAuthUserStore } from '../stores/auth';
+import { useAuthUserStore } from '~/stores/auth';
 import { computed } from 'vue';
 const storeUser = useAuthUserStore();
 const url = computed(() =>

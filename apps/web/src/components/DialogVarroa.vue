@@ -7,11 +7,11 @@
           <q-space />
           <q-btn
             ref="closeBtn"
+            v-close-popup
             icon="fas fa-times"
             flat
             round
             dense
-            v-close-popup
           />
         </div>
         <div class="row full-width">

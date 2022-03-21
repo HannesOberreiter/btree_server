@@ -11,7 +11,7 @@
     standout="bg-blue text-white"
     @update:model-value="changeCompany"
   >
-    <template v-slot:prepend>
+    <template #prepend>
       <q-icon name="fas fa-warehouse" />
     </template>
   </q-select>
@@ -63,17 +63,17 @@
 </template>
 
 <script setup lang="ts">
-import { api } from 'src/boot/axios';
+import { api } from '../boot/axios';
 import { computed, ref } from 'vue';
 import { findIndex } from 'lodash';
 import { storeToRefs } from 'pinia';
-import { useAuthTokenStore } from 'src/stores/token';
-import { useAuthUserStore } from 'src/stores/auth';
+import { useAuthTokenStore } from '../stores/token';
+import { useAuthUserStore } from '../stores/auth';
 import { useI18n } from 'vue-i18n';
-import { useNotification } from '../composables/useResponseText';
+import { useNotification } from '~/composables/useResponseText';
 import { useQuasar } from 'quasar';
 import { useRefreshStore } from '../stores/refresh';
-import ItemCompany from 'src/components/ItemCompany.vue';
+import ItemCompany from '~/components/ItemCompany.vue';
 
 const notification = useNotification();
 const { t } = useI18n();

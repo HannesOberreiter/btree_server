@@ -7,12 +7,8 @@
       <div class="map">
         <l-map
           ref="mapRef"
-          :zoom="apiaries.length > 0 ? 10 : zoom"
-          :center="
-            apiaries.length > 0
-              ? [apiaries[0].latitude, apiaries[0].longitude]
-              : center
-          "
+          :zoom="apiaries.length > 0 ? 9 : zoom"
+          :center="center"
           loading-control="true"
           @ready="onMapReady"
           @locationfound="onLocationFound"
@@ -26,8 +22,8 @@
               fab-mini
               flat
               :loading="userLocationLoading"
-              @click="loadLocation"
               icon="fas fa-map-marker-alt"
+              @click="loadLocation"
             >
             </q-btn>
             <q-btn
@@ -36,8 +32,8 @@
               class="bg-white"
               fab-mini
               flat
-              @click="showInactive = !showInactive"
               :icon="!showInactive ? `fas fa-eye` : `fas fa-eye-slash`"
+              @click="showInactive = !showInactive"
             >
             </q-btn>
             <q-btn
@@ -81,7 +77,7 @@
           ></l-tile-layer>
           <template v-if="paidStatus.status">
             <l-tile-layer
-              url="//tile.openweathermap.org/map/precipitation_new/{z}/{x}/{y}.png?appid=fb76a3b8e45a7fc6b60d9b9767a88966"
+              :url="`//tile.openweathermap.org/map/precipitation_new/{z}/{x}/{y}.png?appid=${OPENWEATHER_API}`"
               name="Perception"
               attribution="| Weather data &copy; <a href='https://openweathermap.org'>OpenWeatherMap</a>"
               layer-type="overlay"
@@ -89,7 +85,7 @@
               :visible="false"
             ></l-tile-layer>
             <l-tile-layer
-              url="//tile.openweathermap.org/map/temp_new/{z}/{x}/{y}.png?appid=fb76a3b8e45a7fc6b60d9b9767a88966"
+              :url="`//tile.openweathermap.org/map/temp_new/{z}/{x}/{y}.png?appid=${OPENWEATHER_API}`"
               name="Temperature"
               attribution="| Weather data &copy; <a href='https://openweathermap.org'>OpenWeatherMap</a>"
               layer-type="overlay"
@@ -144,10 +140,10 @@
                       >{{ t('edit') }}
                     </q-btn>
                     <q-btn
+                      v-if="!value.hive_count"
                       unelevated
                       size="sm"
                       color="negative"
-                      v-if="!value.hive_count"
                       @click="deleteApiary(value.id)"
                       >{{ t('delete') }}
                     </q-btn>
@@ -173,21 +169,21 @@
       </div>
     </div>
   </div>
-  <dialog-hint :hint="t('map.hint')" v-model="showInfo"></dialog-hint>
+  <dialog-hint v-model="showInfo" :hint="t('map.hint')"></dialog-hint>
 </template>
 
 <script setup lang="ts">
 import 'leaflet/dist/leaflet.css';
-import { api } from 'boot/axios';
+import { api } from '~/boot/axios';
 import { computed, ref } from 'vue';
 import { remove } from 'lodash';
-import { useApiariesQuery } from 'src/query';
-import { useAuthUserStore } from '../stores/auth';
+import { useApiariesQuery } from '~/query';
+import { useAuthUserStore } from '~/stores/auth';
 import { useI18n } from 'vue-i18n';
-import { useNotification } from '../composables/useResponseText';
+import { useNotification } from '~/composables/useResponseText';
 import { useQuasar } from 'quasar';
-import DialogForm from 'src/components/DialogForm.vue';
-import DialogHint from 'src/components/DialogHint.vue';
+import DialogForm from '~/components/DialogForm.vue';
+import DialogHint from '~/components/DialogHint.vue';
 import {
   LMap,
   LTileLayer,
@@ -199,7 +195,7 @@ import {
   LFeatureGroup,
   LMarker,
 } from '@vue-leaflet/vue-leaflet';
-import GlobalLoading from 'src/components/GlobalLoading.vue';
+import GlobalLoading from '~/components/GlobalLoading.vue';
 
 const { isLoading, data: apiaries, refetch } = useApiariesQuery();
 const { t } = useI18n();
@@ -210,7 +206,11 @@ const notification = useNotification();
 const paidStatus = computed(() => userStore.getPaidStatus);
 const zoom = 2;
 const zoomMax = 18;
-const center = [47.4751336, 13.5968839];
+
+const center =
+  apiaries.value.length > 0
+    ? [apiaries.value[0].latitude, apiaries.value[0].longitude]
+    : [47.4751336, 13.5968839];
 const circleRadius = ref(1000);
 const circleOpacity = 0.3;
 const mapRef = ref(null as any);
@@ -222,7 +222,7 @@ let map = {} as any;
 let dragObject = {} as any;
 let oldLocation = {} as any;
 const apiaryMarker = ref([]) as any;
-
+const OPENWEATHER_API = process.env.OPENWEATHER_APP_ID;
 const onMapReady = () => {
   map = mapRef.value.leafletObject;
   apiaryMarker.value = apiaries.value;

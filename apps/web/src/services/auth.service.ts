@@ -1,8 +1,8 @@
-import { api } from 'boot/axios';
-import { RegisterUser, User } from '../types';
+import { api } from '~/boot/axios';
+import { RegisterUser, User } from '~/types';
 import { find } from 'lodash';
-import { useAuthTokenStore } from '../stores/token';
-import { useAuthUserStore } from '../stores/auth';
+import { useAuthTokenStore } from '~/stores/token';
+import { useAuthUserStore } from '~/stores/auth';
 
 class AuthService {
   login(user: User) {

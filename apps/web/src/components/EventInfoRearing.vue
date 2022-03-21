@@ -3,7 +3,7 @@
     <div class="col-12 text-weight-bold text-justify">
       {{ eventInfo.note }}
     </div>
-    <div class="col-12 text-center" v-if="eventInfo.larvae || eventInfo.hatch">
+    <div v-if="eventInfo.larvae || eventInfo.hatch" class="col-12 text-center">
       {{ t('larvae') }}: {{ eventInfo.larvae }} {{ t('hatch') }}:
       {{ eventInfo.hatch }}
     </div>

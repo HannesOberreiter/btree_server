@@ -1,12 +1,13 @@
 import { boot } from 'quasar/wrappers';
 import { Composer, createI18n, Locale, VueI18n } from 'vue-i18n';
 import { useAuthUserStore } from '../stores/auth';
-import messages from 'src/i18n';
+import messages from '../i18n';
 
 export const i18n = createI18n({
   legacy: false, // you must set `false`, to use Composition API
   fallbackLocale: 'en', // set fallback locale
   sync: true,
+  globalInjection: true,
   messages,
 });
 

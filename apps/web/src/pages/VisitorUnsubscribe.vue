@@ -2,7 +2,7 @@
   <q-card-section>
     <div class="text-h6 text-center">{{ t('unsubscribe.name') }}</div>
     <form-error-max v-if="submitCount >= 15"></form-error-max>
-    <q-form v-else @submit="onSubmit" class="q-gutter-md">
+    <q-form v-else class="q-gutter-md" @submit="onSubmit">
       <form-user-email v-model="state.email"></form-user-email>
       <q-card-actions class="">
         <q-btn
@@ -26,10 +26,10 @@
 <script setup lang="ts">
 import useVuelidate from '@vuelidate/core';
 import { reactive, ref } from 'vue';
-import AuthService from '../services/auth.service';
-import FormUserEmail from 'src/components/FormUserEmail.vue';
-import FormErrorMax from 'src/components/FormErrorMax.vue';
-import { useNotification } from '../composables/useResponseText';
+import AuthService from '~/services/auth.service';
+import FormUserEmail from '~/components/FormUserEmail.vue';
+import FormErrorMax from '~/components/FormErrorMax.vue';
+import { useNotification } from '~/composables/useResponseText';
 import { useI18n } from 'vue-i18n';
 
 const notification = useNotification();

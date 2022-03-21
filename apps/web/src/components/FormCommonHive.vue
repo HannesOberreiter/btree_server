@@ -1,8 +1,6 @@
 <template>
   <q-select
     v-model="apiary"
-    @filter="filterApiary"
-    @update:model-value="selectApiary"
     :label="t('quicktool.apiary')"
     name="apiary"
     :loading="isLoadingApiary || isLoadingHive"
@@ -12,12 +10,12 @@
     multiple
     options-dense
     use-input
+    @filter="filterApiary"
+    @update:model-value="selectApiary"
   >
   </q-select>
   <q-select
     v-model="state.hive"
-    @update:model-value="selectHive"
-    @filter="filterHive"
     :error="v.hive.$error"
     :error-message="validationErrors(v.hive)"
     :no-error-icon="true"
@@ -32,6 +30,8 @@
     use-input
     filled
     class="hive-select"
+    @update:model-value="selectHive"
+    @filter="filterHive"
   >
   </q-select>
 </template>
@@ -71,7 +71,8 @@ function selectApiary(val: any) {
   _.map(val, (v) => {
     const res = _.filter(data, (obj) => obj.apiary_name === v.name);
     if (!state.hive) state.hive = [];
-    if (res.length > 0) state.hive = _.unionBy(state.hive, res, 'hive_id');
+    if (res.length > 0)
+      state.hive = _.unionBy(state.hive, res, 'hive_id') as [];
   });
 }
 
@@ -130,7 +131,7 @@ const rules = {
 const v = useVuelidate(rules, state);
 
 watch(state, (cur) => {
-  console.log(cur.hive);
+  if (cur.hive === null) cur.hive = [];
   emit('update:modelValue', cur.hive);
 });
 </script>

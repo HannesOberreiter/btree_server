@@ -23,10 +23,10 @@
             size="35px"
             round
             :color="eventInfo.done ? 'positive' : 'negative'"
-            @click="updateStatus()"
             :icon="
               !eventInfo.done ? 'fas fa-times-circle' : 'fas fa-check-circle'
             "
+            @click="updateStatus()"
           >
           </q-btn>
         </p>
@@ -84,9 +84,9 @@
 
 <script setup lang="ts">
 import { useDialogPluginComponent } from 'quasar';
-import { useNotification } from 'src/composables/useResponseText';
+import { useNotification } from '~/composables/useResponseText';
 import { useI18n } from 'vue-i18n';
-import { api } from 'boot/axios';
+import { api } from '../boot/axios';
 import dayjs from 'dayjs';
 import { truncate } from 'lodash';
 import { computed } from 'vue';

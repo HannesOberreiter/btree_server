@@ -1,20 +1,20 @@
 <template>
   <q-scroll-area class="fit">
     <q-list>
-      <template v-for="(link, index) in links" :key="index">
+      <template v-for="(link, _index) in links" :key="_index">
         <q-expansion-item
-          :content-inset-level="0.3"
           v-if="link.menu.length > 0"
+          :content-inset-level="0.3"
           expand-separator
           :icon="link.icon"
           :label="link.label"
           dark
         >
-          <template v-for="(sublink, subindex) in link.menu" :key="subindex">
+          <template v-for="(sublink, _subindex) in link.menu" :key="_subindex">
             <q-item
+              v-ripple
               clickable
               :to="{ name: sublink.route, params: { task: sublink.param } }"
-              v-ripple
               exact
               active-class="text-yellow"
             >
@@ -30,9 +30,9 @@
 
         <q-item
           v-else
+          v-ripple
           clickable
           :to="{ name: link.route, params: { task: link.param } }"
-          v-ripple
           exact
           active-class="text-yellow"
         >
@@ -48,7 +48,7 @@
     <div class="fixed-bottom">
       <btn-refresh></btn-refresh>
       <item-company></item-company>
-      <q-item clickable v-ripple @click="onLogout">
+      <q-item v-ripple clickable @click="onLogout">
         <q-item-section avatar>
           <q-icon name="fas fa-sign-out-alt" />
         </q-item-section>
@@ -74,31 +74,31 @@ const onLogout = async () => {
 
 const links = ref([
   {
-    label: 'Calendar',
+    label: t('calendar.name'),
     route: 'calendar',
     icon: 'far fa-calendar-alt',
     menu: [] as any,
   },
   {
-    label: 'Quicktool',
+    label: t('quicktool.name'),
     route: 'quicktool',
     icon: 'fas fa-magic',
     menu: [] as any,
     param: 'checkup',
   },
   {
-    label: 'Maps',
+    label: t('map.name', 2),
     route: '',
     icon: 'fas fa-globe',
     menu: [
       {
-        label: 'Apiary',
+        label: t('apiary', 2),
         route: 'map-apiary',
         icon: 'fas fa-map-marker-alt',
         menu: false,
       },
       {
-        label: 'Wind',
+        label: t('wind'),
         route: 'map-wind',
         icon: 'fas fa-wind',
         menu: false,
@@ -106,18 +106,18 @@ const links = ref([
     ],
   },
   {
-    label: 'Tables',
+    label: t('table', 2),
     route: '',
     icon: 'fas fa-table',
     menu: [
       {
-        label: 'Apiaries',
+        label: t('apiary', 2),
         route: 'table-apiary',
         icon: 'fas fa-location-dot',
         menu: false,
       },
       {
-        label: 'Checkups',
+        label: t('checkup', 2),
         route: 'table-checkup',
         icon: 'fas fa-search-plus',
         menu: false,
@@ -125,26 +125,32 @@ const links = ref([
     ],
   },
   {
-    label: 'Settings',
+    label: t('setting.name', 2),
     route: '',
     icon: 'fas fa-cogs',
     menu: [
       {
-        label: 'Profile',
+        label: t('profile.name'),
         route: 'settingProfile',
         icon: 'far fa-id-card',
         menu: [] as any,
       },
       {
-        label: 'Fields',
+        label: t('field', 2),
         route: 'settingField',
         icon: 'fas fa-cog',
         menu: [] as any,
       },
       {
-        label: 'Company',
+        label: t('company.name'),
         route: 'settingCompany',
         icon: 'fas fa-warehouse',
+        menu: [] as any,
+      },
+      {
+        label: 'Dropbox',
+        route: 'settingDropbox',
+        icon: 'fab fa-dropbox',
         menu: [] as any,
       },
     ],

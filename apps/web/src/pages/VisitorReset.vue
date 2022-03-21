@@ -2,7 +2,7 @@
   <q-card-section>
     <div class="text-h6 text-center">{{ t('resetUser.title') }}</div>
     <form-error-max v-if="submitCount >= 15"></form-error-max>
-    <q-form v-else @submit="onSubmit" class="q-gutter-md">
+    <q-form v-else class="q-gutter-md" @submit="onSubmit">
       <q-input
         v-model="v.resetKey.$model"
         :error="v.resetKey.$error"
@@ -17,7 +17,7 @@
       </q-input>
       <form-user-password
         v-model:modelPassword="state.password"
-        passwordLabel="newPassword"
+        password-label="newPassword"
         :confirm="true"
       ></form-user-password>
 
@@ -44,11 +44,11 @@
 import useVuelidate from '@vuelidate/core';
 import { required, maxLength, alphaNum } from '@vuelidate/validators';
 import { reactive, ref } from 'vue';
-import AuthService from '../services/auth.service';
-import { validationErrors } from '../helpers';
-import { useNotification } from '../composables/useResponseText';
-import FormUserPassword from 'src/components/FormUserPassword.vue';
-import FormErrorMax from 'src/components/FormErrorMax.vue';
+import AuthService from '~/services/auth.service';
+import { validationErrors } from '~/helpers';
+import { useNotification } from '~/composables/useResponseText';
+import FormUserPassword from '~/components/FormUserPassword.vue';
+import FormErrorMax from '~/components/FormErrorMax.vue';
 import { useI18n } from 'vue-i18n';
 const notification = useNotification();
 const { t } = useI18n();

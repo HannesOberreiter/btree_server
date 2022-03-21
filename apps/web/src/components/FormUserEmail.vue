@@ -11,10 +11,10 @@
     filled
     :readonly="fieldStatus"
   >
-    <template v-slot:prepend>
+    <template #prepend>
       <q-icon name="fas fa-at" />
     </template>
-    <template v-slot:append>
+    <template #append>
       <q-btn
         v-if="fieldStatus"
         icon="fas fa-edit"

@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
 /* eslint-disable @typescript-eslint/restrict-plus-operands */
 import { useQuery } from 'vue-query';
-import { api } from 'src/boot/axios';
-import { useNotification } from '../composables/useResponseText';
-import { queryCache } from 'src/boot/vue-query';
+import { api } from '~/boot/axios';
+import { useNotification } from '~/composables/useResponseText';
+import { queryCache } from '~/boot/vue-query';
 import { map } from 'lodash';
-import { i18n } from 'src/boot/i18n';
+import { i18n } from '~/boot/i18n';
 import { MaybeRef } from '@vueuse/core';
-import { Option } from 'src/types';
+import { Option } from '~/types';
 import { Ref } from 'vue';
 
 const notification = useNotification();
@@ -39,12 +39,12 @@ export function useApiariesQuery() {
 }
 
 export function useTemperatureQuery(
-  id: Ref<number>,
+  apiary_id: Ref<number>,
   { enabled = undefined as MaybeRef<boolean | undefined> }
 ) {
   return useQuery(
-    ['temperature', id],
-    () => api.get(`/v1/checkup/temperature/${id.value}`),
+    ['temperature', apiary_id],
+    () => api.get(`/v1/service/temperature/${apiary_id.value}`),
     {
       enabled,
       select: (response) => response.data,

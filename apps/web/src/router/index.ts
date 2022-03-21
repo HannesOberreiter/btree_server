@@ -6,8 +6,8 @@ import {
   createWebHistory,
 } from 'vue-router';
 import routes from './routes';
-import { useAuthUserStore } from 'src/stores/auth';
-import { useRefreshStore } from 'src/stores/refresh';
+import { useAuthUserStore } from '~/stores/auth';
+import { useRefreshStore } from '~/stores/refresh';
 import { Loading } from 'quasar';
 
 /*
@@ -18,6 +18,7 @@ import { Loading } from 'quasar';
  * async/await or return a Promise which resolves
  * with the Router instance.
  */
+
 const createHistory = process.env.SERVER
   ? createMemoryHistory
   : process.env.VUE_ROUTER_MODE === 'history'
@@ -31,10 +32,9 @@ const Router = createRouter({
   // Leave this as is and make changes in quasar.conf.js instead!
   // quasar.conf.js -> build -> vueRouterMode
   // quasar.conf.js -> build -> publicPath
-  history: createHistory(
-    process.env.MODE === 'ssr' ? void 0 : process.env.VUE_ROUTER_BASE
-  ),
+  history: createHistory(process.env.VUE_ROUTER_BASE),
 });
+
 export default route(function ({ store }) {
   const storeUser = useAuthUserStore(store);
   const refreshStore = useRefreshStore(store);

@@ -47,11 +47,11 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { useAuthUserStore } from 'src/stores/auth';
+import { useAuthUserStore } from '~/stores/auth';
 import { useI18n } from 'vue-i18n';
-import CompanySetting from 'src/components/CompanySetting.vue';
-import CompanyUser from 'src/components/CompanyUser.vue';
-import GlobalLoading from 'src/components/GlobalLoading.vue';
+import CompanySetting from '~/components/CompanySetting.vue';
+import CompanyUser from '~/components/CompanyUser.vue';
+import GlobalLoading from '~/components/GlobalLoading.vue';
 
 const prop = defineProps({
   tab: {

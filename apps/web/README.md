@@ -6,6 +6,8 @@ Written in typescript build with Vue.js and Quasar. The b.tree application is fo
 
 ```bash
 yarn
+# or
+npm install
 ```
 
 ### Start the app in development mode (hot-code reloading, error reporting, etc.)
@@ -18,12 +20,16 @@ quasar dev
 
 ```bash
 yarn lint
+# or
+npm run lint
 ```
 
 ### Format the files
 
 ```bash
 yarn format
+# or
+npm run format
 ```
 
 ### Build the app for production
@@ -34,4 +40,4 @@ quasar build
 
 ### Customize the configuration
 
-See [Configuring quasar.conf.js](https://quasar.dev/quasar-cli/quasar-conf-js).
+See [Configuring quasar.config.js](https://v2.quasar.dev/quasar-cli-vite/quasar-config-js).

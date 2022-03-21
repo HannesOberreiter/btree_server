@@ -28,10 +28,10 @@
           </template>
           <div class="row q-pb-xs">
             <div class="col-12">
-              <q-btn @click="max = max + 10" class="float-right" no-caps>
+              <q-btn class="float-right" no-caps @click="max = max + 10">
                 {{ t('frames.extend') }} ({{ t('max') }}: {{ max }})
               </q-btn>
-              <q-btn @click="max = 20" class="float-right" no-caps>
+              <q-btn class="float-right" no-caps @click="max = 20">
                 {{ t('reset') }}
               </q-btn>
             </div>
@@ -43,8 +43,8 @@
 </template>
 
 <script setup lang="ts">
-import { integer, maxValue, minValue } from 'src/helpers/i18n-validators';
-import { ref, watch } from 'vue';
+import { integer, maxValue, minValue } from '../helpers/i18n-validators';
+import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import useVuelidate from '@vuelidate/core';
 import { some } from 'lodash';

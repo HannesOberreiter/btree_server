@@ -33,7 +33,7 @@
 
 <script setup lang="ts">
 import { integer, maxValue, minValue } from 'src/helpers/i18n-validators';
-import { ref, watch } from 'vue';
+import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import useVuelidate from '@vuelidate/core';
 import { some } from 'lodash';

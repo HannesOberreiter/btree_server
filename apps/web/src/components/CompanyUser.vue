@@ -41,9 +41,9 @@
         <q-item-label lines="1" class="text-weight-medium">
           <q-btn
             flat
-            @click="changeAccess(value.id, value.rank)"
-            icon="fas fa-user-shield"
             :disable="value.user.id === user.id"
+            icon="fas fa-user-shield"
+            @click="changeAccess(value.id, value.rank)"
           >
             <span v-if="value.rank === 1" class="q-ml-sm">Admin</span>
             <span v-else-if="value.rank === 2" class="q-ml-sm">User</span>
@@ -67,13 +67,13 @@
 </template>
 
 <script setup lang="ts">
-import { api } from 'src/boot/axios';
+import { api } from '../boot/axios';
 import { findIndex } from 'lodash';
 import { ref } from 'vue';
 import { storeToRefs } from 'pinia';
-import { useAuthUserStore } from 'src/stores/auth';
+import { useAuthUserStore } from '../stores/auth';
 import { useI18n } from 'vue-i18n';
-import { useNotification } from '../composables/useResponseText';
+import { useNotification } from '~/composables/useResponseText';
 import { useQuasar } from 'quasar';
 import dayjs from 'dayjs';
 

@@ -1,5 +1,5 @@
 import * as validators from '@vuelidate/validators';
-import { i18n } from '../boot/i18n';
+import { i18n } from '~/boot/i18n';
 
 // or import { createI18nMessage } from '@vuelidate/validators'
 const { createI18nMessage } = validators;

@@ -56,7 +56,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import SupporterImages from 'src/components/SupporterImages.vue';
+import SupporterImages from '~/components/SupporterImages.vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();

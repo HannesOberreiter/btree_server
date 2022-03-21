@@ -1,4 +1,4 @@
-import { Token } from '../types';
+import { Token } from '~/types';
 import { defineStore } from 'pinia';
 import { useStorage } from '@vueuse/core';
 

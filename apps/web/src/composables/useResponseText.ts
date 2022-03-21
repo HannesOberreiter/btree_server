@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-import { useAuthUserStore } from '../stores/auth';
+import { useAuthUserStore } from '~/stores/auth';
 import { reactive } from 'vue';
 import { Notify } from 'quasar';
 
@@ -59,14 +58,16 @@ const useNotification = () => {
 
 const checkStatus = (statusCode: number) => {
   let displayMessage = '';
-  if (statusCode === 423)
-    displayMessage = 'Account locked! (too many login attempts?)';
-  else if (statusCode === 401)
+
+  if (statusCode === 401)
     displayMessage = 'Access not allowed or wrong password!';
-  else if (statusCode === 409)
-    displayMessage = 'Beekeeping name or e-mail already registered.';
+  else if (statusCode === 402) displayMessage = 'Premium only feature!';
   else if (statusCode === 403)
     displayMessage = 'Access forbidden or not allowed!';
+  else if (statusCode === 409)
+    displayMessage = 'Beekeeping name or e-mail already registered.';
+  else if (statusCode === 423)
+    displayMessage = 'Account locked! (too many login attempts?)';
 
   return displayMessage;
 };

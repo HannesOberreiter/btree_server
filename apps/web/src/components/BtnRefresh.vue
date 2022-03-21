@@ -1,9 +1,9 @@
 <template>
   <q-item
-    clickable
     v-ripple
-    @click="onRefresh"
+    clickable
     :class="storeRefresh.indicatorColor"
+    @click="onRefresh"
   >
     <q-item-section avatar>
       <q-icon name="fas fa-sync" />
@@ -13,7 +13,7 @@
 </template>
 
 <script setup lang="ts">
-import { clearCache } from 'src/query';
+import { clearCache } from '../query';
 import { useI18n } from 'vue-i18n';
 import { useRefreshStore } from '../stores/refresh';
 

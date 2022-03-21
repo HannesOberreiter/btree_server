@@ -1,6 +1,7 @@
 <!-- This would need some love, as I use my very old news file I need this to clean up the mess a little bit -->
 
 <template>
+  <!-- eslint-disable-next-line vue/no-v-html -->
   <div v-html="value"></div>
 </template>
 

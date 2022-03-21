@@ -3,7 +3,7 @@
     <global-loading></global-loading>
   </div>
   <div v-else>
-    <q-form @submit.prevent.stop="onSubmit" class="full-width">
+    <q-form class="full-width" @submit.prevent.stop="onSubmit">
       <div class="row">
         <div class="col-12">
           <form-common-name v-model="state.name"></form-common-name>
@@ -59,42 +59,42 @@
     <q-btn
       v-if="editId === 0"
       unelevated
-      @click="onSubmit"
       size="md"
       color="secondary"
       type="submit"
       :loading="isSubmitting"
       :label="t('save')"
       class="full-width text-white"
+      @click="onSubmit"
     />
     <q-btn-group v-else spread>
       <q-btn
         unelevated
-        @click="onEdit"
         size="md"
         color="secondary"
         :loading="isSubmitting"
         :label="t('save')"
         class="full-width text-white"
+        @click="onEdit"
       />
       <q-btn
         unelevated
-        @click="onModus"
         size="md"
         :color="state.modus ? 'orange' : 'primary'"
         :loading="isSubmitting"
         :label="state.modus ? t('deactivate') : t('activate')"
         class="full-width text-white"
+        @click="onModus"
       />
       <q-btn
         v-if="!apiary.hive_count"
         unelevated
-        @click="onDelete"
         size="md"
         color="negative"
         :loading="isSubmitting"
         :label="t('delete')"
         class="full-width text-white"
+        @click="onDelete"
       />
     </q-btn-group>
   </div>
@@ -102,17 +102,17 @@
 
 <script setup lang="ts">
 import useVuelidate from '@vuelidate/core';
-import { required, maxLength, between } from '../helpers/i18n-validators';
-import { validationErrors } from '../helpers';
-import { useNotification } from '../composables/useResponseText';
-import { api } from 'boot/axios';
+import { required, maxLength, between } from '~/helpers/i18n-validators';
+import { validationErrors } from '~/helpers';
+import { useNotification } from '~/composables/useResponseText';
+import { api } from '~/boot/axios';
 import { computed, PropType, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { Apiary } from '../types';
+import { Apiary } from '~/types';
 
 import FormCommonName from './FormCommonName.vue';
 import FormCommonNote from './FormCommonNote.vue';
-import { useApiaryQuery } from 'src/query';
+import { useApiaryQuery } from '~/query';
 import GlobalLoading from './GlobalLoading.vue';
 
 const { t } = useI18n();

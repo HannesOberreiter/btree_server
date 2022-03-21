@@ -2,7 +2,7 @@
   <q-card-section>
     <div class="text-h6 text-center">{{ t('signup.name') }}</div>
     <form-error-max v-if="submitCount >= 15"></form-error-max>
-    <q-form v-else @submit="onSubmit" class="q-gutter-md">
+    <q-form v-else class="q-gutter-md" @submit="onSubmit">
       <form-user-company v-model="state.company"></form-user-company>
       <form-user-email v-model="state.email"></form-user-email>
       <form-user-password
@@ -23,7 +23,7 @@
         filled
         :dense="true"
       >
-        <template v-slot:prepend>
+        <template #prepend>
           <q-icon name="fas fa-question" />
         </template>
       </q-select>
@@ -38,7 +38,7 @@
         name="other"
         filled
       >
-        <template v-slot:prepend>
+        <template #prepend>
           <q-icon name="fas fa-question-circle" />
         </template>
       </q-input>
@@ -53,7 +53,7 @@
       >
         <slot>
           {{ t('signup.agree') }}
-          <q-btn @click="terms = true" flat color="secondary">
+          <q-btn flat color="secondary" @click="terms = true">
             {{ t('signup.terms') }}
           </q-btn>
         </slot>
@@ -90,7 +90,7 @@
         {{ state.lang.value == 'de' ? termsDE : termsEN }}
       </q-card-section>
       <q-card-actions align="right">
-        <q-btn flat label="OK" color="primary" v-close-popup />
+        <q-btn v-close-popup flat label="OK" color="primary" />
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -98,25 +98,60 @@
 
 <script setup lang="ts">
 import useVuelidate from '@vuelidate/core';
-import { required, maxLength } from '../helpers/i18n-validators';
+import { required, maxLength } from '~/helpers/i18n-validators';
 import { reactive, ref } from 'vue';
-import AuthService from '../services/auth.service';
-import { validationErrors } from '../helpers';
-import { LANGUAGES, SOURCES } from '../constants';
+import AuthService from '~/services/auth.service';
+import { validationErrors } from '~/helpers';
+import { LANGUAGES } from '~/constants';
 import { usePreferredLanguages } from '@vueuse/core';
-import { useNotification } from '../composables/useResponseText';
+import { useNotification } from '~/composables/useResponseText';
 import { useI18n } from 'vue-i18n';
-import { terms as termsDE } from '../i18n/de/terms';
-import { terms as termsEN } from '../i18n/en/terms';
-import FormErrorMax from 'src/components/FormErrorMax.vue';
-import FormUserEmail from 'src/components/FormUserEmail.vue';
-import FormUserPassword from 'src/components/FormUserPassword.vue';
-import FormUserCompany from '../components/FormUserCompany.vue';
-import FormUserLanguage from 'src/components/FormUserLanguage.vue';
-import FormUserNewsletter from 'src/components/FormUserNewsletter.vue';
+import termsDE from '~/i18n/de/terms.txt?raw';
+import termsEN from '~/i18n/en/terms.txt?raw';
+import FormErrorMax from '~/components/FormErrorMax.vue';
+import FormUserEmail from '~/components/FormUserEmail.vue';
+import FormUserPassword from '~/components/FormUserPassword.vue';
+import FormUserCompany from '~/components/FormUserCompany.vue';
+import FormUserLanguage from '~/components/FormUserLanguage.vue';
+import FormUserNewsletter from '~/components/FormUserNewsletter.vue';
 
 const notification = useNotification();
 const { t } = useI18n();
+
+const SOURCES = [
+  {
+    label: '-',
+    value: 1,
+  },
+  {
+    label: t('registerSources.recommended'),
+    value: 2,
+  },
+  {
+    label: t('registerSources.search'),
+    value: 3,
+  },
+  {
+    label: t('registerSources.socialMedia'),
+    value: 4,
+  },
+  {
+    label: t('registerSources.ads'),
+    value: 5,
+  },
+  {
+    label: t('registerSources.journal'),
+    value: 6,
+  },
+  {
+    label: t('registerSources.appStore'),
+    value: 7,
+  },
+  {
+    label: t('registerSources.other'),
+    value: 0,
+  },
+];
 
 const terms = ref(false);
 const message = ref('');
@@ -162,7 +197,6 @@ async function onSubmit() {
     email: state.email,
     password: state.password,
     lang: state.lang.value,
-    // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
     source: state.source.value === 0 ? state.other : state.source + '',
     newsletter: state.newsletter,
   };

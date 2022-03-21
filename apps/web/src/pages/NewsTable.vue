@@ -6,7 +6,7 @@
     :filter="filter"
     :rows-per-page-options="[10]"
   >
-    <template v-slot:item="props">
+    <template #item="props">
       <div class="q-pa-xs col-12">
         <q-card
           flat
@@ -29,8 +29,8 @@
               {{ t('latest') }}
             </q-chip>
             <news-directive
-              :news="props.row.news.toString()"
               :key="props.row.date"
+              :news="props.row.news.toString()"
             ></news-directive>
           </q-card-section>
 
@@ -43,9 +43,9 @@
         </q-card>
       </div>
     </template>
-    <template v-slot:top-right>
-      <q-input dense debounce="300" v-model="filter" :placeholder="t('search')">
-        <template v-slot:append>
+    <template #top-right>
+      <q-input v-model="filter" dense debounce="300" :placeholder="t('search')">
+        <template #append>
           <q-icon name="fas fa-search" />
         </template>
       </q-input>
@@ -55,9 +55,9 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n';
-import news from 'src/assets/news.json';
+import news from '~/assets/news.json';
 import { ref } from 'vue';
-import NewsDirective from 'src/components/NewsDirective.vue';
+import NewsDirective from '~/components/NewsDirective.vue';
 
 const { t } = useI18n();
 const filter = ref('');
