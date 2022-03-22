@@ -1,6 +1,6 @@
 <template>
   <q-input
-    v-model="state.url"
+    v-model="modelValue"
     :error="v.url.$error"
     :error-message="validationErrors(v.url)"
     :no-error-icon="true"
@@ -18,7 +18,6 @@
 <script setup lang="ts">
 import useVuelidate from '@vuelidate/core';
 import { maxLength } from '~/helpers/i18n-validators';
-import { reactive, watch } from 'vue';
 import { validationErrors } from '~/helpers';
 import { useI18n } from 'vue-i18n';
 import { useVModels } from '@vueuse/core';
@@ -31,19 +30,11 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue']);
 const { modelValue } = useVModels(props, emit);
 
-const state = reactive({
-  url: modelValue.value,
-});
+const state = {
+  url: modelValue,
+};
 const rules = {
   url: { maxLengthValue: maxLength(512) },
 };
 const v = useVuelidate(rules, state, { $autoDirty: true });
-
-watch(props, (cur) => {
-  state.url = cur.modelValue;
-});
-
-watch(state, (cur) => {
-  emit('update:modelValue', cur.url);
-});
 </script>

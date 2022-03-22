@@ -1,6 +1,6 @@
 <template>
   <q-input
-    v-model="v.note.$model"
+    v-model="state.note"
     :error="v.note.$error"
     :error-message="validationErrors(v.note)"
     :no-error-icon="true"
@@ -26,5 +26,5 @@ const state = reactive({
 const rules = {
   note: { maxLengthValue: maxLength(2000) },
 };
-const v = useVuelidate(rules, state);
+const v = useVuelidate(rules, state, { $autoDirty: true });
 </script>

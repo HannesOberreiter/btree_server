@@ -1,11 +1,14 @@
+import useVuelidate from '@vuelidate/core';
 <template>
   <form-common-hive v-model="state.hive"></form-common-hive>
-  <form-common-dates
-    v-model:start-value="state.date"
-    v-model:end-value="state.enddate"
-    v-model:model-interval="state.interval"
-    v-model:model-repeat="state.repeat"
-  ></form-common-dates>
+  <div class="q-pt-xs">
+    <form-common-dates
+      v-model:start-value="state.date"
+      v-model:end-value="state.enddate"
+      v-model:model-interval="state.interval"
+      v-model:model-repeat="state.repeat"
+    ></form-common-dates>
+  </div>
   <div class="q-mb-sm q-mt-sm">
     <!-- Main Dropdowns -->
     <div v-if="task === 'checkup'">
@@ -72,27 +75,33 @@
         v-model="state.checkup_frames"
       ></form-checkup-frames>
       <div class="row q-pt-sm q-pb-sm">
-        <div class="col-12 col-md-6">
+        <div class="col-12 col-md-7">
           <form-checkup-varroa
             v-if="fields.settings.checkup.varroa"
-            v-model="state.varroa"
+            v-model="state.checkup_varroa"
           ></form-checkup-varroa>
         </div>
       </div>
       <div v-if="fields.settings.checkup.strength" class="row q-pt-sm q-pb-sm">
         <div class="col-12 col-md-6">
-          <form-checkup-strength></form-checkup-strength>
+          <form-checkup-strength
+            v-model="state.checkup_strong"
+          ></form-checkup-strength>
         </div>
       </div>
       <div v-if="fields.settings.checkup.weight" class="q-pt-sm q-pb-sm">
-        <form-checkup-weight></form-checkup-weight>
+        <form-checkup-weight
+          v-model="state.checkup_weight_amount"
+          v-model:model-time="state.checkup_weight_time"
+        ></form-checkup-weight>
       </div>
       <div
         v-if="fields.settings.checkup.temperature"
         class="row q-pt-sm q-pb-sm"
       >
-        <div class="col-12 col-md-6">
+        <div class="col-12 col-md-7">
           <form-checkup-temperature
+            v-model="state.checkup_temp"
             :hive="state.hive"
           ></form-checkup-temperature>
         </div>
@@ -127,9 +136,9 @@
       </div>
     </div>
   </div>
-  <form-common-url></form-common-url>
-  <form-common-note></form-common-note>
-  <form-common-done></form-common-done>
+  <form-common-url v-model="state.url"></form-common-url>
+  <form-common-note v-model="state.note"></form-common-note>
+  <form-common-done v-model="state.done"></form-common-done>
 
   <q-btn-group>
     <q-btn @click="onSubmit">{{ t('save') }}</q-btn>
@@ -163,9 +172,12 @@ import FormHarvestWater from './FormHarvestWater.vue';
 import FormTreatmentWait from './FormTreatmentWait.vue';
 import { useFieldsettingStore } from '~/stores/fieldsetting';
 import dayjs from 'dayjs';
+import useVuelidate from '@vuelidate/core';
 
 const fields = useFieldsettingStore();
-
+const { t } = useI18n();
+const isSubmitting = ref(false);
+const v = useVuelidate();
 const props = defineProps({
   task: {
     type: String as PropType<Task>,
@@ -184,6 +196,9 @@ const state = ref({
   amount: 0,
   amount_type: 'single',
   amount_calc: 0,
+  url: '',
+  note: '',
+  done: true,
 
   checkup_queen: [],
   checkup_rating: {
@@ -201,14 +216,20 @@ const state = ref({
     emptyframes: 0,
   },
   checkup_varroa: 0,
+  checkup_strong: 0,
+  checkup_weight_amount: 0,
+  checkup_weight_time: dayjs().format('HH:mm'),
+  checkup_temp: 0,
 });
 
-const { t } = useI18n();
-console.log(props.task);
-
-function onSubmit() {
+async function onSubmit() {
+  isSubmitting.value = true;
+  const isFormCorrect = await v.value.$validate();
+  if (!isFormCorrect) {
+    isSubmitting.value = false;
+    return;
+  }
+  console.log(props.task);
   console.log(state.value);
-  console.log(state.value.amount);
-  console.log(state.value.amount_type);
 }
 </script>

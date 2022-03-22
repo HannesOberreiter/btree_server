@@ -2,7 +2,7 @@
   <div class="row">
     <div class="col-12 col-md-6">
       <q-input
-        v-model="state.weight"
+        v-model="modelValue"
         :error="v.weight.$error"
         :error-message="validationErrors(v.weight)"
         :no-error-icon="true"
@@ -21,7 +21,7 @@
             dense
             icon="fas fa-plus"
             style="cursor: pointer"
-            @click="state.weight++"
+            @click="modelValue++"
           ></q-btn>
           <q-btn
             round
@@ -29,15 +29,15 @@
             dense
             icon="fas fa-minus"
             style="cursor: pointer"
-            :disable="state.weight <= 0"
-            @click="state.weight--"
+            :disable="modelValue <= 0"
+            @click="modelValue--"
           ></q-btn>
         </template>
       </q-input>
     </div>
     <div class="col-12 col-md-6">
       <q-input
-        v-model="state.time"
+        v-model="modelTime"
         filled
         :label="t('time')"
         name="time"
@@ -54,7 +54,7 @@
               transition-show="scale"
               transition-hide="scale"
             >
-              <q-time v-model="state.time" mask="HH:mm" format24h>
+              <q-time v-model="modelTime" mask="HH:mm" format24h>
                 <div class="row items-center justify-end">
                   <q-btn
                     v-close-popup
@@ -74,7 +74,6 @@
 
 <script setup lang="ts">
 import { minValue, maxValue, numeric } from '~/helpers/i18n-validators';
-import { reactive, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useVModels } from '@vueuse/core';
 import { validationErrors } from '~/helpers';
@@ -96,10 +95,10 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue', 'update:modelTime']);
 const { modelValue, modelTime } = useVModels(props, emit);
 
-const state = reactive({
-  weight: modelValue.value,
-  time: modelTime.value,
-});
+const state = {
+  weight: modelValue,
+  time: modelTime,
+};
 const rules = {
   weight: {
     minValue: minValue(0),
@@ -113,14 +112,4 @@ const rules = {
   },
 };
 const v = useVuelidate(rules, state, { $autoDirty: true });
-
-watch(props, (cur) => {
-  state.weight = cur.modelValue;
-  state.time = cur.modelTime;
-});
-
-watch(state, (cur) => {
-  emit('update:modelValue', cur.weight);
-  emit('update:modelTime', cur.time);
-});
 </script>

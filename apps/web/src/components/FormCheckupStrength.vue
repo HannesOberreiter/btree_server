@@ -1,6 +1,6 @@
 <template>
   <q-input
-    v-model="state.strong"
+    v-model="modelValue"
     :error="v.strong.$error"
     :error-message="validationErrors(v.strong)"
     :no-error-icon="true"
@@ -19,7 +19,7 @@
         dense
         icon="fas fa-plus"
         style="cursor: pointer"
-        @click="state.strong++"
+        @click="modelValue++"
       ></q-btn>
       <q-btn
         round
@@ -27,8 +27,8 @@
         dense
         icon="fas fa-minus"
         style="cursor: pointer"
-        :disable="state.strong <= 0"
-        @click="state.strong--"
+        :disable="modelValue <= 0"
+        @click="modelValue--"
       ></q-btn>
     </template>
   </q-input>
@@ -36,7 +36,6 @@
 
 <script setup lang="ts">
 import { minValue, maxValue, numeric } from '~/helpers/i18n-validators';
-import { reactive, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useVModels } from '@vueuse/core';
 import { validationErrors } from '~/helpers';
@@ -52,9 +51,9 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue']);
 const { modelValue } = useVModels(props, emit);
 
-const state = reactive({
-  strong: modelValue.value,
-});
+const state = {
+  strong: modelValue,
+};
 const rules = {
   strong: {
     minValue: minValue(0),
@@ -63,12 +62,4 @@ const rules = {
   },
 };
 const v = useVuelidate(rules, state, { $autoDirty: true });
-
-watch(props, (cur) => {
-  state.strong = cur.modelValue;
-});
-
-watch(state, (cur) => {
-  emit('update:modelValue', cur.strong);
-});
 </script>

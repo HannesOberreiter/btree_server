@@ -9,7 +9,6 @@ import { useNotification } from '~/composables/useResponseText';
 import { useQuery } from 'vue-query';
 
 const notification = useNotification();
-const { t } = i18n.global;
 
 export function useOptionsQuery(table: Option) {
   return useQuery(['option', table], () => api.get(`/v1/option/${table}`), {
@@ -73,6 +72,7 @@ export function useApiaryQuery(
 export function useHivesQuery() {
   return useQuery(['hives'], () => api.get('/v1/hive'), {
     select: (response) => {
+      const { t } = i18n.global;
       const result = map(response.data, (value) => {
         const modus = value.hive_modus ? '' : t('inactive');
         value.label = `${value.hive_name} (${value.apiary_name}) ${modus}`;

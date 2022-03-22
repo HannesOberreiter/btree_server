@@ -103,9 +103,12 @@ function filterHive(val: any, update: any, _abort: any) {
 }
 
 function filterApiary(val: any, update: any, _abort: any) {
-  const data = _.filter(apiaries.value, (obj) => obj.hive_count !== null);
+  const data = _.filter(
+    apiaries.value.result,
+    (obj) => obj.hive_count !== null
+  );
 
-  if (apiaries.value !== null) {
+  if (apiaries.value.result.length > 0 && val) {
     update(() => {
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       const needle = new RegExp(`(${val.toLowerCase()})`);

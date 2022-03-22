@@ -7,11 +7,11 @@
         </q-item-section>
         <q-item-section avatar>
           <q-toggle
-            v-model="state"
+            v-model="modelValue"
             color="blue"
             val="true"
             size="lg"
-            :label="state === false ? t('open') : t('done')"
+            :label="modelValue === false ? t('open') : t('done')"
           ></q-toggle>
         </q-item-section>
       </q-item>
@@ -20,7 +20,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { useVModels } from '@vueuse/core';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
@@ -31,5 +31,6 @@ const props = defineProps({
   },
 });
 
-const state = ref(props.modelValue);
+const emit = defineEmits(['update:modelValue']);
+const { modelValue } = useVModels(props, emit);
 </script>
