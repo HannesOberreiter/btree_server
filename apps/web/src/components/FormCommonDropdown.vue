@@ -1,6 +1,6 @@
 <template>
   <q-select
-    v-model="option"
+    v-model="modelValue"
     :label="t(label)"
     name="option"
     :loading="isLoading"
@@ -19,9 +19,13 @@ import { Option } from '~/types';
 import { PropType, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useOptionsQuery } from '~/query';
+import { useVModels } from '@vueuse/core';
 
 const { t } = useI18n();
 const props = defineProps({
+  modelValue: {
+    default: null,
+  },
   label: {
     default: 'type',
   },
@@ -31,7 +35,9 @@ const props = defineProps({
   },
 });
 const { isLoading, data } = useOptionsQuery(props.table);
-const option = ref(null);
+const emit = defineEmits(['update:modelValue']);
+const { modelValue } = useVModels(props, emit);
+
 const options = ref([] as any);
 
 if (data.value) {
@@ -45,6 +51,6 @@ if (data.value) {
 function setOptions() {
   const temp = filter(data.value, (obj) => obj.modus);
   options.value = temp;
-  option.value = temp[0];
+  modelValue.value = temp[0];
 }
 </script>

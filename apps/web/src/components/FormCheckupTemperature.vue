@@ -104,7 +104,6 @@ const rules = {
 };
 const v = useVuelidate(rules, state, { $autoDirty: true });
 
-console.log(props.hive);
 if (props.hive.length > 0 && storeUser.getPaidStatus.status === true)
   getTemperature();
 

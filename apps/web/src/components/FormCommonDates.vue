@@ -2,17 +2,17 @@
   <div class="row">
     <div class="col-xs-12 col-sm-5 q-pr-sm">
       <form-common-start
-        v-model="state.start"
+        v-model="startValue"
         label="dateStart"
-        :mark="state.end"
+        :mark="endValue"
         @update:model-value="updateStart"
       ></form-common-start>
     </div>
     <div class="col-xs-11 col-sm-5">
       <form-common-end
-        v-model="state.end"
+        v-model="endValue"
         label="dateEnd"
-        :mark="state.start"
+        :mark="startValue"
         @update:model-value="updateEnd"
       ></form-common-end>
     </div>
@@ -107,6 +107,7 @@ import dayjs from 'dayjs';
 import FormCommonEnd from './FormCommonDate.vue';
 import FormCommonStart from './FormCommonDate.vue';
 import useVuelidate from '@vuelidate/core';
+import { useVModels } from '@vueuse/core';
 
 const { t } = useI18n();
 const props = defineProps({
@@ -119,12 +120,12 @@ const props = defineProps({
     default: dayjs().format('YYYY-MM-DD'),
   },
 });
+const emit = defineEmits(['update:startValue', 'update:endValue']);
+const { startValue, endValue } = useVModels(props, emit);
 
 const showInterval = ref(false);
 
 const state = ref({
-  start: props.startValue,
-  end: props.endValue,
   interval: 0,
   repeat: 0,
 });
@@ -144,13 +145,11 @@ const rules = {
 
 const v = useVuelidate(rules, state, { $autoDirty: true });
 
-function updateStart() {
-  if (dayjs(state.value.start) > dayjs(state.value.end))
-    state.value.end = state.value.start;
+function updateStart(val: string) {
+  if (dayjs(val) > dayjs(endValue.value)) endValue.value = val;
 }
-function updateEnd() {
-  if (dayjs(state.value.start) > dayjs(state.value.end))
-    state.value.start = state.value.end;
+function updateEnd(val: string) {
+  if (dayjs(startValue.value) > dayjs(val)) startValue.value = val;
 }
 
 function changeInterval() {

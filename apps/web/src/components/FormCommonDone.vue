@@ -27,7 +27,7 @@ const { t } = useI18n();
 const props = defineProps({
   modelValue: {
     type: Boolean,
-    default: false,
+    default: true,
   },
 });
 

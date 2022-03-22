@@ -1,6 +1,6 @@
 <template>
   <q-input
-    v-model="state.date"
+    v-model="modelValue"
     :error="v.date.$error"
     :error-messages="validationErrors(v.date)"
     :label="t(label)"
@@ -8,6 +8,7 @@
     type="date"
     readonly
     filled
+    no-error-icon
     @click="qDateProxy = !qDateProxy"
   >
     <template #append>
@@ -19,7 +20,7 @@
           transition-hide="scale"
         >
           <q-date
-            v-model="state.date"
+            v-model="modelValue"
             :events="markDate"
             mask="YYYY-MM-DD"
             today-btn
@@ -35,7 +36,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, watch } from 'vue';
+import { ref } from 'vue';
 import { required } from '~/helpers/i18n-validators';
 import { useI18n } from 'vue-i18n';
 import { useVModels } from '@vueuse/core';
@@ -63,17 +64,9 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue']);
 const { modelValue } = useVModels(props, emit);
 
-watch(props, (cur) => {
-  state.date = cur.modelValue;
-});
-
-const state = reactive({
-  date: modelValue.value,
-});
-
-watch(state, (cur) => {
-  emit('update:modelValue', cur.date);
-});
+const state = {
+  date: modelValue,
+};
 
 const rules = {
   date: {

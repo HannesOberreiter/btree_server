@@ -44,6 +44,7 @@
 
 <script setup lang="ts">
 import { ref, watch } from 'vue';
+import { round } from 'lodash';
 import { useDialogPluginComponent } from 'quasar';
 import { useI18n } from 'vue-i18n';
 
@@ -63,13 +64,11 @@ const solution = ref(sum.value / days.value);
 
 watch(sum, () => {
   if (days.value <= 0) days.value = 1;
-  solution.value =
-    Math.round((sum.value / days.value + Number.EPSILON) * 10) / 10;
+  solution.value = round(sum.value / days.value, 1);
 });
 watch(days, () => {
   if (days.value <= 0) days.value = 1;
-  solution.value =
-    Math.round((sum.value / days.value + Number.EPSILON) * 10) / 10;
+  solution.value = round(sum.value / days.value, 1);
 });
 
 defineEmits([...useDialogPluginComponent.emits, 'onSuccess']);
