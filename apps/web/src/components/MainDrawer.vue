@@ -14,7 +14,7 @@
             <q-item
               v-ripple
               clickable
-              :to="{ name: sublink.route, params: { task: sublink.param } }"
+              :to="{ name: sublink.route }"
               exact
               active-class="text-yellow"
             >
@@ -32,7 +32,12 @@
           v-else
           v-ripple
           clickable
-          :to="{ name: link.route, params: { task: link.param } }"
+          :to="{
+            name: link.route,
+            params: {
+              task: link.route === 'quicktool' ? storeQuicktool.getLink : '',
+            },
+          }"
           exact
           active-class="text-yellow"
         >
@@ -64,9 +69,11 @@ import { useAuthUserStore } from '~/stores/auth';
 import { useI18n } from 'vue-i18n';
 import BtnRefresh from './BtnRefresh.vue';
 import ItemCompany from './ItemCompany.vue';
+import { useQuicktoolStore } from '~/stores/quicktool';
 
 const { t } = useI18n();
 const storeUser = useAuthUserStore();
+const storeQuicktool = useQuicktoolStore();
 
 const onLogout = async () => {
   await storeUser.logout();
@@ -84,7 +91,6 @@ const links = ref([
     route: 'quicktool',
     icon: 'fas fa-magic',
     menu: [] as any,
-    param: 'checkup',
   },
   {
     label: t('map.name', 2),

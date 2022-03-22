@@ -30,8 +30,12 @@ import { PropType, ref, watch } from 'vue';
 import { Task } from '~/types';
 import { useI18n } from 'vue-i18n';
 import FormMainTask from '~/components/FormMainTask.vue';
+import { useQuicktoolStore } from '~/stores/quicktool';
+import { useRouter } from 'vue-router';
 
 const { t } = useI18n();
+const storeQuicktool = useQuicktoolStore();
+const router = useRouter();
 const props = defineProps({
   task: {
     type: String as PropType<Task>,
@@ -66,5 +70,11 @@ const taskForm = ref(taskSelect.value ? taskSelect.value.value : '');
 
 watch(taskSelect, (cur) => {
   if (cur) taskForm.value = cur.value;
+  // Helper for sidebar link to use latest quicktool setting and update url
+  storeQuicktool.$state.link = cur?.value as Task;
+  router.replace({
+    name: 'quicktool',
+    params: { task: cur?.value },
+  });
 });
 </script>
