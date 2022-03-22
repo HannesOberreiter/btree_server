@@ -20,6 +20,7 @@ export function useOptionsQuery(table: Option) {
 
 export function useApiariesQuery() {
   return useQuery(['apiaries'], () => api.get('/v1/apiary'), {
+    placeholderData: { result: [], center: [47.4751336, 13.5968839, 2] } as any,
     select: (response) => {
       const result = map(response.data, (value) => {
         const hive_count = value.hive_count
@@ -30,7 +31,14 @@ export function useApiariesQuery() {
         value.value = value.id;
         return value;
       });
-      return result ? result : ([] as any);
+      const center =
+        result.length > 0
+          ? [result[0].latitude, result[0].longitude, 9]
+          : [47.4751336, 13.5968839, 2];
+      return {
+        result: result,
+        center: center,
+      } as any;
     },
     onError: (error: any) => notification.open('negative', error.response),
   });

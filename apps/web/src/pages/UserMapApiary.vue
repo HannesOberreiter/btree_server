@@ -6,9 +6,10 @@
     <div v-else class="col-12">
       <div class="map">
         <l-map
+          v-if="!isLoading"
           ref="mapRef"
-          :zoom="apiaries.length > 0 ? 9 : zoom"
-          :center="center"
+          :zoom="zoom"
+          :center="apiaries.center"
           loading-control="true"
           @ready="onMapReady"
           @locationfound="onLocationFound"
@@ -203,14 +204,9 @@ const $q = useQuasar();
 const userStore = useAuthUserStore();
 const notification = useNotification();
 
-const paidStatus = computed(() => userStore.getPaidStatus);
-const zoom = 2;
 const zoomMax = 18;
-
-const center =
-  apiaries.value.length > 0
-    ? [apiaries.value[0].latitude, apiaries.value[0].longitude]
-    : [47.4751336, 13.5968839];
+const paidStatus = computed(() => userStore.getPaidStatus);
+const zoom = ref(apiaries.value.result.length > 0 ? 9 : 2);
 const circleRadius = ref(1000);
 const circleOpacity = 0.3;
 const mapRef = ref(null as any);
@@ -221,11 +217,12 @@ const showInfo = ref(false);
 let map = {} as any;
 let dragObject = {} as any;
 let oldLocation = {} as any;
-const apiaryMarker = ref([]) as any;
+const apiaryMarker = ref(apiaries.value.result);
 const OPENWEATHER_API = process.env.OPENWEATHER_APP_ID;
 const onMapReady = () => {
+  zoom.value = apiaries.value.result.length > 0 ? 9 : 2;
   map = mapRef.value.leafletObject;
-  apiaryMarker.value = apiaries.value;
+  apiaryMarker.value = apiaries.value.result;
   map.doubleClickZoom.disable();
   map.scrollWheelZoom.enable();
   map.on('dblclick', function (e: any) {
@@ -266,7 +263,7 @@ function createApiaryForm(e: any) {
     }).onOk((e) => {
       apiaryMarker.value.push(e);
       refetch.value().then(
-        () => (apiaryMarker.value = apiaries.value),
+        () => (apiaryMarker.value = apiaries.value.result),
         (error) => console.log(error)
       );
     });
@@ -284,7 +281,7 @@ function editApiaryForm(e: any) {
       },
     }).onOk(() => {
       refetch.value().then(
-        () => (apiaryMarker.value = apiaries.value),
+        () => (apiaryMarker.value = apiaries.value.result),
         (error) => console.log(error)
       );
     });

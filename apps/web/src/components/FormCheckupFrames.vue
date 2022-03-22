@@ -5,16 +5,16 @@
       icon="fas fa-window-maximize"
       class="full-width"
       :label="t('frames.text')"
-      :class="some(state, (val) => val > 0) ? 'bg-orange' : ''"
+      :class="some(modelValue, (val) => val > 0) ? 'bg-orange' : ''"
     >
       <q-card>
         <q-card-section>
-          <template v-for="(_value, index) of state" :key="index">
+          <template v-for="(_value, index) of modelValue" :key="index">
             <div class="row q-pb-xs">
               <div class="col-3">{{ t('frames.' + index) }}</div>
               <div class="col-9">
                 <q-slider
-                  v-model="state[index]"
+                  v-model="modelValue[index]"
                   :error="v[index].$error"
                   :step="1"
                   :min="0"
@@ -22,7 +22,7 @@
                   size="sm"
                 >
                 </q-slider>
-                {{ state[index] }}
+                {{ modelValue[index] }}
               </div>
             </div>
           </template>
@@ -48,16 +48,24 @@ import { ref } from 'vue';
 import { some } from 'lodash';
 import { useI18n } from 'vue-i18n';
 import useVuelidate from '@vuelidate/core';
+import { useVModels } from '@vueuse/core';
 
 const { t } = useI18n();
 const expanded = ref(false);
 const max = ref(20);
-const state = ref({
-  broodframes: 0,
-  honeyframes: 0,
-  foundation: 0,
-  emptyframes: 0,
+const props = defineProps({
+  modelValue: {
+    default: {
+      broodframes: 0,
+      honeyframes: 0,
+      foundation: 0,
+      emptyframes: 0,
+    },
+  },
 });
+
+const emit = defineEmits(['update:modelValue']);
+const { modelValue } = useVModels(props, emit);
 
 const rules = {
   broodframes: {
@@ -82,5 +90,5 @@ const rules = {
   },
 };
 
-const v = useVuelidate(rules, state, { $autoDirty: true });
+const v = useVuelidate(rules, modelValue, { $autoDirty: true });
 </script>

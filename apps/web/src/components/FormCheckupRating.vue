@@ -5,23 +5,23 @@
       icon="fas fa-star"
       class="full-width"
       :label="t('rating.name')"
-      :class="some(state, (val) => val > 0) ? 'bg-orange' : ''"
+      :class="some(modelValue, (val) => val > 0) ? 'bg-orange' : ''"
     >
       <q-card>
         <q-card-section>
-          <template v-for="(_value, index) of state" :key="index">
+          <template v-for="(_value, index) of modelValue" :key="index">
             <div class="row q-pb-xs">
               <div class="col-3">{{ t('rating.' + index) }}</div>
               <div class="col-9">
                 <q-rating
-                  v-model="state[index]"
+                  v-model="modelValue[index]"
                   :error="v[index].$error"
                   color-selected="positive"
                   color="grey"
                   size="sm"
                 >
                 </q-rating>
-                {{ state[index] }}
+                {{ modelValue[index] }}
               </div>
             </div>
           </template>
@@ -37,17 +37,25 @@ import { ref } from 'vue';
 import { some } from 'lodash';
 import { useI18n } from 'vue-i18n';
 import useVuelidate from '@vuelidate/core';
+import { useVModels } from '@vueuse/core';
 
 const { t } = useI18n();
 const expanded = ref(false);
-const state = ref({
-  brood: 0,
-  pollen: 0,
-  comb: 0,
-  temper: 0,
-  calm_comb: 0,
-  swarm: 0,
+const props = defineProps({
+  modelValue: {
+    default: {
+      brood: 0,
+      pollen: 0,
+      comb: 0,
+      temper: 0,
+      calm_comb: 0,
+      swarm: 0,
+    },
+  },
 });
+
+const emit = defineEmits(['update:modelValue']);
+const { modelValue } = useVModels(props, emit);
 
 const rules = {
   brood: {
@@ -82,5 +90,5 @@ const rules = {
   },
 };
 
-const v = useVuelidate(rules, state, { $autoDirty: true });
+const v = useVuelidate(rules, modelValue, { $autoDirty: true });
 </script>

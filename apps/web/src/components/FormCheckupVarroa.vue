@@ -1,6 +1,6 @@
 <template>
   <q-input
-    v-model="state.varroa"
+    v-model.number="modelValue"
     :error="v.varroa.$error"
     :error-message="validationErrors(v.varroa)"
     :no-error-icon="true"
@@ -28,7 +28,7 @@
         dense
         icon="fas fa-plus"
         style="cursor: pointer"
-        @click="state.varroa++"
+        @click="modelValue++"
       ></q-btn>
       <q-btn
         round
@@ -36,8 +36,8 @@
         dense
         icon="fas fa-minus"
         style="cursor: pointer"
-        :disable="state.varroa <= 0"
-        @click="state.varroa--"
+        :disable="modelValue <= 0"
+        @click="modelValue--"
       ></q-btn>
     </template>
   </q-input>
@@ -45,7 +45,6 @@
 
 <script setup lang="ts">
 import { minValue, maxValue, numeric } from '~/helpers/i18n-validators';
-import { reactive, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useQuasar } from 'quasar';
 import { useVModels } from '@vueuse/core';
@@ -63,30 +62,22 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue']);
 const { modelValue } = useVModels(props, emit);
 
-const state = reactive({
-  varroa: modelValue.value,
-});
+const state = {
+  varroa: modelValue,
+};
 const rules = {
   varroa: { minValue: minValue(0), maxValue: maxValue(100), numeric: numeric },
 };
 const v = useVuelidate(rules, state, { $autoDirty: true });
 
-watch(props, (cur) => {
-  state.varroa = cur.modelValue;
-});
-
-watch(state, (cur) => {
-  emit('update:modelValue', cur.varroa);
-});
-
 function openCalculator() {
   $q.dialog({
     component: DialogVarroa,
     componentProps: {
-      value: state.varroa,
+      value: modelValue.value,
     },
   }).onOk((e) => {
-    state.varroa = e;
+    modelValue.value = e;
   });
 }
 </script>

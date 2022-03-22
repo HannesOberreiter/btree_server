@@ -3,6 +3,8 @@
   <form-common-dates
     v-model:start-value="state.date"
     v-model:end-value="state.enddate"
+    v-model:model-interval="state.interval"
+    v-model:model-repeat="state.repeat"
   ></form-common-dates>
   <div class="q-mb-sm q-mt-sm">
     <!-- Main Dropdowns -->
@@ -59,17 +61,21 @@
     <div v-if="task === 'checkup'">
       <form-checkup-queen
         v-if="fields.settings.checkup.queen"
+        v-model="state.checkup_queen"
       ></form-checkup-queen>
       <form-checkup-rating
         v-if="fields.settings.checkup.rating"
+        v-model="state.checkup_rating"
       ></form-checkup-rating>
       <form-checkup-frames
         v-if="fields.settings.checkup.frames"
+        v-model="state.checkup_frames"
       ></form-checkup-frames>
       <div class="row q-pt-sm q-pb-sm">
         <div class="col-12 col-md-6">
           <form-checkup-varroa
             v-if="fields.settings.checkup.varroa"
+            v-model="state.varroa"
           ></form-checkup-varroa>
         </div>
       </div>
@@ -170,12 +176,31 @@ const props = defineProps({
 const state = ref({
   date: dayjs().format('YYYY-MM-DD'),
   enddate: dayjs().format('YYYY-MM-DD'),
+  interval: 0,
+  repeat: 0,
   hive: [],
   type: null,
   disease: null,
   amount: 0,
   amount_type: 'single',
   amount_calc: 0,
+
+  checkup_queen: [],
+  checkup_rating: {
+    brood: 0,
+    pollen: 0,
+    comb: 0,
+    temper: 0,
+    calm_comb: 0,
+    swarm: 0,
+  },
+  checkup_frames: {
+    broodframes: 0,
+    honeyframes: 0,
+    foundation: 0,
+    emptyframes: 0,
+  },
+  checkup_varroa: 0,
 });
 
 const { t } = useI18n();

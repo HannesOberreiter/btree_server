@@ -13,35 +13,19 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, watch } from 'vue';
+import { reactive } from 'vue';
 import { required, maxLength } from '~/helpers/i18n-validators';
 import { useI18n } from 'vue-i18n';
-import { useVModels } from '@vueuse/core';
 import { validationErrors } from '~/helpers';
 import useVuelidate from '@vuelidate/core';
 
 const { t } = useI18n();
-const props = defineProps({
-  modelValue: {
-    default: '',
-  },
-});
-const emit = defineEmits(['update:modelValue']);
-const { modelValue } = useVModels(props, emit);
 
 const state = reactive({
-  name: modelValue.value,
+  name: '',
 });
 const rules = {
   name: { required, maxLengthValue: maxLength(48) },
 };
 const v = useVuelidate(rules, state, { $autoDirty: true });
-
-watch(props, (cur) => {
-  state.name = cur.modelValue;
-});
-
-watch(state, (cur) => {
-  emit('update:modelValue', cur.name);
-});
 </script>

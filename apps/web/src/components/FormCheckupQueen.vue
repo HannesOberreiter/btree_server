@@ -1,22 +1,22 @@
+import { ref } from 'vue';
 <template>
-  <div class="row q-pb-sm q-pt-sm">
-    <q-option-group
-      v-model="queen"
-      name="accepted_genres"
-      :options="options"
-      type="checkbox"
-      color="primary"
-      inline
-    >
-    </q-option-group>
-  </div>
+  <q-option-group
+    v-model="queen"
+    name="accepted_genres"
+    :options="options"
+    type="checkbox"
+    color="primary"
+    inline
+  >
+  </q-option-group>
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
+
 const queen = ref([]);
 const options = [
   { label: t('queen'), value: 'queen', trueValue: true },
@@ -24,8 +24,4 @@ const options = [
   { label: t('egg', 2), value: 'eggs', trueValue: true },
   { label: t('cappedBrood'), value: 'capped_brood', trueValue: true },
 ];
-
-watch(queen, (cur) => {
-  console.log(cur);
-});
 </script>

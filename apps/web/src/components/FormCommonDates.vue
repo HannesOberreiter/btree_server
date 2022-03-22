@@ -29,14 +29,14 @@
   <div v-if="showInterval" class="row">
     <div class="col-6">
       <q-input
-        v-model.number="state.interval"
+        v-model.number="modelInterval"
         type="number"
         :error="v.interval.$error"
         :error-message="validationErrors(v.interval)"
         :no-error-icon="true"
         :label="t('interval')"
         :hint="t('intervalText')"
-        input-class="text-right"
+        :shadow-text="t('day', 2)"
         filled
       >
         <template #append>
@@ -46,8 +46,8 @@
             dense
             icon="fas fa-plus"
             style="cursor: pointer"
-            :disable="state.interval >= 365"
-            @click="state.interval++"
+            :disable="modelInterval >= 365"
+            @click="modelInterval++"
           ></q-btn>
           <q-btn
             round
@@ -55,22 +55,22 @@
             dense
             icon="fas fa-minus"
             style="cursor: pointer"
-            :disable="state.interval <= 0"
-            @click="state.interval--"
+            :disable="modelInterval <= 0"
+            @click="modelInterval--"
           ></q-btn>
         </template>
       </q-input>
     </div>
     <div class="col-6 q-pl-sm">
       <q-input
-        v-model.number="state.repeat"
+        v-model.number="modelRepeat"
         type="number"
         :error="v.repeat.$error"
         :error-message="validationErrors(v.repeat)"
         :no-error-icon="true"
         :label="t('repeat')"
         :hint="t('repeatText')"
-        input-class="text-right"
+        shadow-text="x"
         filled
       >
         <template #append>
@@ -80,8 +80,8 @@
             dense
             icon="fas fa-plus"
             style="cursor: pointer"
-            :disable="state.repeat >= 50"
-            @click="state.repeat++"
+            :disable="modelRepeat >= 50"
+            @click="modelRepeat++"
           ></q-btn>
           <q-btn
             round
@@ -89,8 +89,8 @@
             dense
             icon="fas fa-minus"
             style="cursor: pointer"
-            :disable="state.repeat <= 0"
-            @click="state.repeat--"
+            :disable="modelRepeat <= 0"
+            @click="modelRepeat--"
           ></q-btn>
         </template>
       </q-input>
@@ -119,16 +119,30 @@ const props = defineProps({
     type: String,
     default: dayjs().format('YYYY-MM-DD'),
   },
+  modelInterval: {
+    default: 0,
+  },
+  modelRepeat: {
+    default: 0,
+  },
 });
-const emit = defineEmits(['update:startValue', 'update:endValue']);
-const { startValue, endValue } = useVModels(props, emit);
+const emit = defineEmits([
+  'update:startValue',
+  'update:endValue',
+  'update:modelInterval',
+  'update:modelRepeat',
+]);
+const { startValue, endValue, modelInterval, modelRepeat } = useVModels(
+  props,
+  emit
+);
 
 const showInterval = ref(false);
 
-const state = ref({
-  interval: 0,
-  repeat: 0,
-});
+const state = {
+  interval: modelInterval,
+  repeat: modelRepeat,
+};
 
 const rules = {
   interval: {
@@ -154,8 +168,8 @@ function updateEnd(val: string) {
 
 function changeInterval() {
   if (showInterval.value) {
-    state.value.interval = 0;
-    state.value.repeat = 0;
+    modelInterval.value = 0;
+    modelRepeat.value = 0;
   }
   showInterval.value = !showInterval.value;
 }

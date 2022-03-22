@@ -16,16 +16,20 @@
         </div>
         <div class="row full-width">
           <div class="col-12">
-            <q-input v-model="sum" type="number" :label="t('count')"></q-input>
             <q-input
-              v-model="days"
+              v-model.number="sum"
+              type="number"
+              :label="t('count')"
+            ></q-input>
+            <q-input
+              v-model.number="days"
               type="number"
               :rules="[(val) => val > 0]"
               no-error-icon
               :label="t('day', 2)"
             ></q-input>
             <q-input
-              v-model="solution"
+              v-model.number="solution"
               type="number"
               :label="t('solution')"
               readonly
