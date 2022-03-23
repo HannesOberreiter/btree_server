@@ -2,6 +2,8 @@ import { Router } from '@classes/router.class';
 import { Container } from '@config/container.config';
 import { Guard } from '@middlewares/guard.middleware';
 import { ROLES } from '@enums/role.enum';
+import { Validator } from '@/api/middlewares/validator.middleware';
+import { body } from 'express-validator';
 
 export class TodoRouter extends Router {
   constructor() {
@@ -13,6 +15,10 @@ export class TodoRouter extends Router {
     this.router
       .route('/')
       .post(
+        Validator.validate([
+          body('interval').optional().isInt({ max: 365, min: 0 }),
+          body('repeat').optional().isInt({ max: 30, min: 0 })
+        ]),
         Guard.authorize([ROLES.admin, ROLES.user]),
         Container.resolve('TodoController').post
       );

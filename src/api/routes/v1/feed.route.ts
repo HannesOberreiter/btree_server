@@ -2,6 +2,8 @@ import { Router } from '@classes/router.class';
 import { Container } from '@config/container.config';
 import { Guard } from '@middlewares/guard.middleware';
 import { ROLES } from '@enums/role.enum';
+import { Validator } from '@/api/middlewares/validator.middleware';
+import { body } from 'express-validator';
 export class FeedRouter extends Router {
   constructor() {
     super();
@@ -29,6 +31,11 @@ export class FeedRouter extends Router {
     this.router
       .route('/')
       .post(
+        Validator.validate([
+          body('hive').isArray(),
+          body('interval').isInt({ max: 365, min: 0 }),
+          body('repeat').isInt({ max: 30, min: 0 })
+        ]),
         Guard.authorize([ROLES.admin, ROLES.user]),
         Container.resolve('FeedController').post
       );

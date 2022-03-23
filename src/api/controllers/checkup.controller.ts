@@ -5,6 +5,7 @@ import { Checkup } from '@models/checkup.model';
 import { IUserRequest } from '@interfaces/IUserRequest.interface';
 import { map, includes } from 'lodash';
 import { Hive } from '../models/hive.model';
+import dayjs from 'dayjs';
 
 export class CheckupController extends Controller {
   constructor() {
@@ -13,6 +14,8 @@ export class CheckupController extends Controller {
 
   async post(req: IUserRequest, res: Response, next: NextFunction) {
     const hive_ids = req.body.hive;
+    const interval = req.body.interval;
+    const repeat = req.body.repeat;
 
     const insert = {
       date: req.body.date,
@@ -64,6 +67,23 @@ export class CheckupController extends Controller {
             bee_id: req.user.bee_id
           });
           result.push(res.id);
+
+          if (repeat > 0) {
+            for (let i = 0; i < repeat; i++) {
+              insert.date = dayjs(insert.date)
+                .add(interval, 'days')
+                .format('YYYY-MM-DD');
+              insert.enddate = dayjs(insert.enddate)
+                .add(interval, 'days')
+                .format('YYYY-MM-DD');
+              const res = await Checkup.query(trx).insert({
+                ...insert,
+                hive_id: hives[hive].id,
+                bee_id: req.user.bee_id
+              });
+              result.push(res.id);
+            }
+          }
         }
         return result;
       });
