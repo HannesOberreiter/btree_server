@@ -18,11 +18,11 @@ export class Checkup extends ExtModel {
   temper!: number;
   calm_comb!: number;
   swarm!: number;
-  varroa!: string;
+  varroa!: number;
   strong!: number;
   temp!: number;
   weight!: number;
-  time!: Date;
+  time!: string;
   broodframes!: number;
   honeyframes!: number;
   foundation!: number;
@@ -33,6 +33,8 @@ export class Checkup extends ExtModel {
   deleted!: boolean;
 
   edit_id!: number;
+  bee_id!: number;
+  hive_id!: number;
 
   static tableName = 'checkups';
   static idColumn = 'id';
@@ -60,7 +62,7 @@ export class Checkup extends ExtModel {
       temper: { type: 'number' },
       calm_comb: { type: 'number' },
       swarm: { type: 'number' },
-      varroa: { type: 'string', maxLength: 12 },
+      varroa: { type: 'number' },
       strong: { type: 'integer' },
       temp: { type: 'number' },
       weight: { type: 'number' },
@@ -80,6 +82,7 @@ export class Checkup extends ExtModel {
       created_at: { type: 'string', format: 'date-time' },
       updated_at: { type: 'string', format: 'date-time' },
 
+      hive_id: { type: 'integer' }, // Hive FK
       type_id: { type: 'integer' }, // Type FK
       bee_id: { type: 'integer' }, // Creator Bee FK
       edit_id: { type: 'integer' } // Updater Bee FK

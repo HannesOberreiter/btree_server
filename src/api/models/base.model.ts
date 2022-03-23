@@ -1,4 +1,4 @@
-import { Model, ModelOptions, Pojo } from 'objection';
+import { Model } from 'objection';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const AjvValidator = require('objection').AjvValidator;
 import addFormats from 'ajv-formats';

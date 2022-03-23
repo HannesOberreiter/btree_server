@@ -27,5 +27,11 @@ export class TreatmentRouter extends Router {
         Guard.authorize([ROLES.admin]),
         Container.resolve('TreatmentController').batchDelete
       );
+    this.router
+      .route('/')
+      .post(
+        Guard.authorize([ROLES.admin, ROLES.user]),
+        Container.resolve('TreatmentController').post
+      );
   }
 }

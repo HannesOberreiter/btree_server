@@ -26,5 +26,11 @@ export class FeedRouter extends Router {
         Guard.authorize([ROLES.admin]),
         Container.resolve('FeedController').batchDelete
       );
+    this.router
+      .route('/')
+      .post(
+        Guard.authorize([ROLES.admin, ROLES.user]),
+        Container.resolve('FeedController').post
+      );
   }
 }

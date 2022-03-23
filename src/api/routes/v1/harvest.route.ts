@@ -27,5 +27,11 @@ export class HarvestRouter extends Router {
         Guard.authorize([ROLES.admin]),
         Container.resolve('HarvestController').batchDelete
       );
+    this.router
+      .route('/')
+      .post(
+        Guard.authorize([ROLES.admin, ROLES.user]),
+        Container.resolve('HarvestController').post
+      );
   }
 }

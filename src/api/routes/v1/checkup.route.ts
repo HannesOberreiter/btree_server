@@ -27,5 +27,11 @@ export class CheckupRouter extends Router {
         Guard.authorize([ROLES.admin]),
         Container.resolve('CheckupController').batchDelete
       );
+    this.router
+      .route('/')
+      .post(
+        Guard.authorize([ROLES.admin, ROLES.user]),
+        Container.resolve('CheckupController').post
+      );
   }
 }

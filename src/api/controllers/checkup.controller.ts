@@ -3,13 +3,75 @@ import { Controller } from '@classes/controller.class';
 import { checkMySQLError } from '@utils/error.util';
 import { Checkup } from '@models/checkup.model';
 import { IUserRequest } from '@interfaces/IUserRequest.interface';
-import { map } from 'lodash';
-import { randomInt } from 'crypto';
-import { Apiary } from '../models/apiary.model';
-import { getTemperature } from '../utils/temperature.util';
+import { map, includes } from 'lodash';
+import { Hive } from '../models/hive.model';
+
 export class CheckupController extends Controller {
   constructor() {
     super();
+  }
+
+  async post(req: IUserRequest, res: Response, next: NextFunction) {
+    const hive_ids = req.body.hive;
+
+    const insert = {
+      date: req.body.date,
+      enddate: req.body.enddate,
+
+      type_id: req.body.type,
+
+      queen: includes(req.body.checkup_queen, 'queen'),
+      queencells: includes(req.body.checkup_queen, 'queencells'),
+      eggs: includes(req.body.checkup_queen, 'eggs'),
+      capped_brood: includes(req.body.checkup_queen, 'capped_brood'),
+
+      brood: req.body.checkup_rating.brood,
+      pollen: req.body.checkup_rating.pollen,
+      comb: req.body.checkup_rating.comb,
+      temper: req.body.checkup_rating.temper,
+      calm_comb: req.body.checkup_rating.calm_comb,
+      swarm: req.body.checkup_rating.swarm,
+
+      varroa: req.body.checkup_varroa,
+      strong: req.body.checkup_strong,
+      temp: req.body.checkup_temp,
+      weight: req.body.checkup_weight_amount,
+      time: req.body.checkup_weight_time,
+
+      broodframes: req.body.checkup_frames.broodframes,
+      honeyframes: req.body.checkup_frames.honeyframes,
+      foundation: req.body.checkup_frames.foundation,
+      emptyframes: req.body.checkup_frames.emptyframes,
+
+      url: req.body.url,
+      note: req.body.note,
+      done: req.body.done
+    };
+
+    try {
+      const result = await Checkup.transaction(async (trx) => {
+        const hives = await Hive.query(trx)
+          .distinct('hives.id')
+          .findByIds(hive_ids)
+          .leftJoinRelated('apiaries')
+          .where('apiaries.user_id', req.user.user_id);
+
+        const result = [];
+        for (const hive in hives) {
+          const res = await Checkup.query(trx).insert({
+            ...insert,
+            hive_id: hives[hive].id,
+            bee_id: req.user.bee_id
+          });
+          result.push(res.id);
+        }
+        return result;
+      });
+      res.locals.data = result;
+      next();
+    } catch (e) {
+      next(checkMySQLError(e));
+    }
   }
 
   async updateStatus(req: IUserRequest, res: Response, next: NextFunction) {

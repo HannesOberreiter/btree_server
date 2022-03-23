@@ -2,13 +2,53 @@ import { NextFunction, Response } from 'express';
 import { Controller } from '@classes/controller.class';
 import { checkMySQLError } from '@utils/error.util';
 import { IUserRequest } from '@interfaces/IUserRequest.interface';
-import { Guard } from '@middlewares/guard.middleware';
-import { ROLES } from '@enums/role.enum';
 import { Feed } from '@models/feed.model';
 import { map } from 'lodash';
+import { Hive } from '../models/hive.model';
 export class FeedController extends Controller {
   constructor() {
     super();
+  }
+
+  async post(req: IUserRequest, res: Response, next: NextFunction) {
+    const hive_ids = req.body.hive;
+
+    const insert = {
+      date: req.body.date,
+      enddate: req.body.enddate,
+
+      type_id: req.body.type,
+      amount: req.body.amount_calc,
+
+      url: req.body.url,
+      note: req.body.note,
+      done: req.body.done
+    };
+
+    try {
+      const result = await Feed.transaction(async (trx) => {
+        const hives = await Hive.query(trx)
+          .distinct('hives.id')
+          .findByIds(hive_ids)
+          .leftJoinRelated('apiaries')
+          .where('apiaries.user_id', req.user.user_id);
+
+        const result = [];
+        for (const hive in hives) {
+          const res = await Feed.query(trx).insert({
+            ...insert,
+            hive_id: hives[hive].id,
+            bee_id: req.user.bee_id
+          });
+          result.push(res.id);
+        }
+        return result;
+      });
+      res.locals.data = result;
+      next();
+    } catch (e) {
+      next(checkMySQLError(e));
+    }
   }
 
   async updateStatus(req: IUserRequest, res: Response, next: NextFunction) {

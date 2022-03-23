@@ -16,7 +16,10 @@ export class Harvest extends ExtModel {
   url!: string;
   done!: boolean;
   deleted!: boolean;
+
   edit_id!: number;
+  bee_id!: number;
+  hive_id!: number;
 
   static tableName = 'harvests';
   static idColumn = 'id';
@@ -36,7 +39,7 @@ export class Harvest extends ExtModel {
       enddate: { type: 'string', format: 'date' },
       amount: { type: 'number' },
       water: { type: 'number' },
-      frames: { type: 'integer' },
+      frames: { type: 'number' },
       charge: { type: 'string', maxLength: 24 },
       note: { type: 'string', maxLength: 2000 },
       url: { type: 'string', maxLength: 512 },
@@ -48,6 +51,7 @@ export class Harvest extends ExtModel {
       created_at: { type: 'string', format: 'date-time' },
       updated_at: { type: 'string', format: 'date-time' },
 
+      hive_id: { type: 'integer' }, // Hive FK
       type_id: { type: 'integer' }, // Type FK
       bee_id: { type: 'integer' }, // Creator Bee FK
       edit_id: { type: 'integer' } // Updater Bee FK
