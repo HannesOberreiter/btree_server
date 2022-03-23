@@ -53,6 +53,7 @@ Changes are logged because later migration of the live database.
 
 - table renamed to checkup_types
 - type renamed to name
+- varroa to decimal (see alter table function)
 - added created_at & updated_at
 
 ## charge_type
@@ -180,6 +181,7 @@ table hive_group is not anymore, need to get amount and save into grouphive fiel
 ## rear_mn
 
 - table renamed to rearing_steps
+
 ## rear
 
 - table renamed to rearings
