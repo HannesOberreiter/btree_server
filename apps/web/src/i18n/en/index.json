@@ -53,6 +53,7 @@
   "interval": "Interval",
   "intervalText": "Days between repeats",
   "repeat": "Repeat",
+  "undo": "Undo",
   "varroa": "Varroa",
   "copy": "Copy",
   "temperature": "Temperature",

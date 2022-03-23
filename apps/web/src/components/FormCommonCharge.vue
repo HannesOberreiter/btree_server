@@ -1,6 +1,6 @@
 <template>
   <q-input
-    v-model="state.charge"
+    v-model="modelValue"
     :error="v.charge.$error"
     :error-message="validationErrors(v.charge)"
     :no-error-icon="true"
@@ -14,7 +14,6 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, watch } from 'vue';
 import { maxLength } from '~/helpers/i18n-validators';
 import { useI18n } from 'vue-i18n';
 import { useVModels } from '@vueuse/core';
@@ -30,19 +29,11 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue']);
 const { modelValue } = useVModels(props, emit);
 
-const state = reactive({
-  charge: modelValue.value,
-});
+const state = {
+  charge: modelValue,
+};
 const rules = {
   charge: { maxLengthValue: maxLength(48) },
 };
 const v = useVuelidate(rules, state, { $autoDirty: true });
-
-watch(props, (cur) => {
-  state.charge = cur.modelValue;
-});
-
-watch(state, (cur) => {
-  emit('update:modelValue', cur.charge);
-});
 </script>

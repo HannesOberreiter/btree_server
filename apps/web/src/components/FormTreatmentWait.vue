@@ -1,6 +1,6 @@
 <template>
   <q-input
-    v-model="state.wait"
+    v-model.number="modelValue"
     :error="v.wait.$error"
     :error-message="validationErrors(v.wait)"
     :no-error-icon="true"
@@ -20,7 +20,7 @@
         dense
         icon="fas fa-plus"
         style="cursor: pointer"
-        @click="state.wait++"
+        @click="modelValue++"
       ></q-btn>
       <q-btn
         round
@@ -28,8 +28,8 @@
         dense
         icon="fas fa-minus"
         style="cursor: pointer"
-        :disable="state.wait <= 0"
-        @click="state.wait--"
+        :disable="modelValue <= 0"
+        @click="modelValue--"
       ></q-btn>
     </template>
   </q-input>
@@ -37,7 +37,6 @@
 
 <script setup lang="ts">
 import { minValue, maxValue, integer } from '~/helpers/i18n-validators';
-import { reactive, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useVModels } from '@vueuse/core';
 import { validationErrors } from '~/helpers';
@@ -53,9 +52,9 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue']);
 const { modelValue } = useVModels(props, emit);
 
-const state = reactive({
-  wait: modelValue.value,
-});
+const state = {
+  wait: modelValue,
+};
 const rules = {
   wait: {
     minValue: minValue(0),
@@ -64,12 +63,4 @@ const rules = {
   },
 };
 const v = useVuelidate(rules, state, { $autoDirty: true });
-
-watch(props, (cur) => {
-  state.wait = cur.modelValue;
-});
-
-watch(state, (cur) => {
-  emit('update:modelValue', cur.wait);
-});
 </script>

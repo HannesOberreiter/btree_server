@@ -1,23 +1,29 @@
-import { ref } from 'vue';
 <template>
   <q-option-group
-    v-model="queen"
-    name="accepted_genres"
+    v-model="modelValue"
     :options="options"
     type="checkbox"
     color="primary"
+    name="queen"
     inline
   >
   </q-option-group>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { useVModels } from '@vueuse/core';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
+const props = defineProps({
+  modelValue: {
+    default: [],
+  },
+});
 
-const queen = ref([]);
+const emit = defineEmits(['update:modelValue']);
+const { modelValue } = useVModels(props, emit);
+
 const options = [
   { label: t('queen'), value: 'queen', trueValue: true },
   { label: t('queencell', 2), value: 'queencells', trueValue: true },

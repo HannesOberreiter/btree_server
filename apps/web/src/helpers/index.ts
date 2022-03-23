@@ -15,7 +15,4 @@ const includesValue = (val: string, obj: any) =>
 // https://stackoverflow.com/a/39914235/5316675
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-// https://stackoverflow.com/a/12830454/5316675
-const round = (num: number) => Math.round((num + Number.EPSILON) * 100) / 100;
-
-export { validationErrors, includesValue, sleep, round };
+export { validationErrors, includesValue, sleep };

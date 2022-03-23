@@ -1,6 +1,6 @@
 <template>
   <q-input
-    v-model="state.water"
+    v-model="modelValue"
     :error="v.water.$error"
     :error-message="validationErrors(v.water)"
     :no-error-icon="true"
@@ -20,7 +20,8 @@
         dense
         icon="fas fa-plus"
         style="cursor: pointer"
-        @click="state.water++"
+        :disable="modelValue > 100"
+        @click="modelValue++"
       ></q-btn>
       <q-btn
         round
@@ -28,8 +29,8 @@
         dense
         icon="fas fa-minus"
         style="cursor: pointer"
-        :disable="state.water <= 0"
-        @click="state.water--"
+        :disable="modelValue <= 0"
+        @click="modelValue--"
       ></q-btn>
     </template>
   </q-input>
@@ -37,7 +38,6 @@
 
 <script setup lang="ts">
 import { minValue, maxValue, numeric } from '~/helpers/i18n-validators';
-import { reactive, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useVModels } from '@vueuse/core';
 import { validationErrors } from '~/helpers';
@@ -53,9 +53,9 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue']);
 const { modelValue } = useVModels(props, emit);
 
-const state = reactive({
-  water: modelValue.value,
-});
+const state = {
+  water: modelValue,
+};
 const rules = {
   water: {
     minValue: minValue(0),
@@ -64,12 +64,4 @@ const rules = {
   },
 };
 const v = useVuelidate(rules, state, { $autoDirty: true });
-
-watch(props, (cur) => {
-  state.water = cur.modelValue;
-});
-
-watch(state, (cur) => {
-  emit('update:modelValue', cur.water);
-});
 </script>

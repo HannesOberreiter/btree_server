@@ -1,4 +1,3 @@
-import useVuelidate from '@vuelidate/core';
 <template>
   <form-common-hive v-model="state.hive"></form-common-hive>
   <div class="q-pt-xs">
@@ -51,7 +50,7 @@ import useVuelidate from '@vuelidate/core';
     </div>
     <!-- Main Amount Field -->
     <div v-if="task !== 'checkup'" class="row">
-      <div class="col-12 col-md-6 q-pt-sm">
+      <div class="col-12 col-md-7 q-pt-sm">
         <form-common-amount
           v-model="state.amount"
           v-model:model-type="state.amount_type"
@@ -107,32 +106,48 @@ import useVuelidate from '@vuelidate/core';
         </div>
       </div>
     </div>
-    <div v-else-if="task === 'harvest'" class="row">
-      <div v-if="fields.settings.harvest.frames" class="col-12 col-md-6">
-        <form-common-amount-frames
-          :hive-count="state.hive.length"
-          label="frame"
-        ></form-common-amount-frames>
+    <div v-else-if="task === 'harvest'">
+      <div v-if="fields.settings.harvest.frames" class="row">
+        <div class="col-12 col-md-7">
+          <form-common-amount-frames
+            v-model="state.harvest_frames"
+            v-model:model-type="state.harvest_amount_type"
+            v-model:model-calc="state.harvest_amount_calc"
+            :hive-count="state.hive.length"
+            label="frame"
+          ></form-common-amount-frames>
+        </div>
       </div>
-      <div v-if="fields.settings.harvest.water" class="col-12 col-md-6">
-        <form-harvest-water></form-harvest-water>
+      <div v-if="fields.settings.harvest.water" class="row">
+        <div class="col-12 col-md-6">
+          <form-harvest-water
+            v-model="state.harvest_water"
+          ></form-harvest-water>
+        </div>
       </div>
-      <div class="col-12 col-md-6">
-        <form-common-charge></form-common-charge>
+      <div class="row">
+        <div class="col-12 col-md-6">
+          <form-common-charge
+            v-model="state.harvest_charge"
+          ></form-common-charge>
+        </div>
       </div>
     </div>
     <div v-else-if="task === 'treatment'" class="row">
       <div v-if="fields.settings.treatment.vet" class="col-12 q-pb-sm">
         <form-common-dropdown-vet
+          v-model="state.treatment_vet"
           table="treatment_vets"
           label="vet"
         ></form-common-dropdown-vet>
       </div>
       <div
         v-if="fields.settings.treatment.wait"
-        class="col-12 col-md-5 q-pb-sm"
+        class="col-12 col-md-6 q-pb-sm"
       >
-        <form-treatment-wait></form-treatment-wait>
+        <form-treatment-wait
+          v-model="state.treatment_wait"
+        ></form-treatment-wait>
       </div>
     </div>
   </div>
@@ -142,14 +157,18 @@ import useVuelidate from '@vuelidate/core';
 
   <q-btn-group>
     <q-btn @click="onSubmit">{{ t('save') }}</q-btn>
-    <q-btn>{{ t('reset') }}</q-btn>
+    <q-btn @click="onReset">{{ t('reset') }}</q-btn>
+    <q-btn v-if="lastInsert" @click="onUndo">{{ t('undo') }}</q-btn>
   </q-btn-group>
 </template>
 
 <script setup lang="ts">
 import { PropType, ref } from 'vue';
 import { Task } from '~/types';
+import { useFieldsettingStore } from '~/stores/fieldsetting';
 import { useI18n } from 'vue-i18n';
+import { merge } from 'lodash';
+import dayjs from 'dayjs';
 import FormCheckupFrames from './FormCheckupFrames.vue';
 import FormCheckupQueen from './FormCheckupQueen.vue';
 import FormCheckupRating from './FormCheckupRating.vue';
@@ -170,14 +189,17 @@ import FormCommonNote from '~/components/FormCommonNote.vue';
 import FormCommonUrl from '~/components/FormCommonUrl.vue';
 import FormHarvestWater from './FormHarvestWater.vue';
 import FormTreatmentWait from './FormTreatmentWait.vue';
-import { useFieldsettingStore } from '~/stores/fieldsetting';
-import dayjs from 'dayjs';
 import useVuelidate from '@vuelidate/core';
+import { api } from '~/boot/axios';
+import { useNotification } from '~/composables/useResponseText';
 
 const fields = useFieldsettingStore();
 const { t } = useI18n();
 const isSubmitting = ref(false);
 const v = useVuelidate();
+const notification = useNotification();
+const lastInsert = ref(null);
+const lastInsertTable = ref(null);
 const props = defineProps({
   task: {
     type: String as PropType<Task>,
@@ -185,14 +207,11 @@ const props = defineProps({
   },
 });
 
-const state = ref({
+const stateDefault = {
   date: dayjs().format('YYYY-MM-DD'),
   enddate: dayjs().format('YYYY-MM-DD'),
   interval: 0,
   repeat: 0,
-  hive: [],
-  type: null,
-  disease: null,
   amount: 0,
   amount_type: 'single',
   amount_calc: 0,
@@ -220,7 +239,83 @@ const state = ref({
   checkup_weight_amount: 0,
   checkup_weight_time: dayjs().format('HH:mm'),
   checkup_temp: 0,
+
+  harvest_frames: 0,
+  harvest_amount_type: 'single',
+  harvest_amount_calc: 0,
+  harvest_water: 0,
+  harvest_charge: '',
+
+  treatment_wait: 0,
+};
+
+const state = ref({
+  date: dayjs().format('YYYY-MM-DD'),
+  enddate: dayjs().format('YYYY-MM-DD'),
+  interval: 0,
+  repeat: 0,
+  hive: [] as any,
+  type: null as any,
+  disease: null as any,
+  amount: 0,
+  amount_type: 'single',
+  amount_calc: 0,
+  url: '',
+  note: '',
+  done: true,
+
+  checkup_queen: [],
+  checkup_rating: {
+    brood: 0,
+    pollen: 0,
+    comb: 0,
+    temper: 0,
+    calm_comb: 0,
+    swarm: 0,
+  },
+  checkup_frames: {
+    broodframes: 0,
+    honeyframes: 0,
+    foundation: 0,
+    emptyframes: 0,
+  },
+  checkup_varroa: 0,
+  checkup_strong: 0,
+  checkup_weight_amount: 0,
+  checkup_weight_time: dayjs().format('HH:mm'),
+  checkup_temp: 0,
+
+  harvest_frames: 0,
+  harvest_amount_type: 'single',
+  harvest_amount_calc: 0,
+  harvest_water: 0,
+  harvest_charge: '',
+
+  treatment_vet: null as any,
+  treatment_wait: 0,
 });
+
+function onReset() {
+  merge(state.value, stateDefault);
+  state.value.checkup_queen = []; // merge seems to not clear the array so we manually reset it here
+}
+
+async function onUndo() {
+  isSubmitting.value = true;
+  const data = JSON.stringify({ ids: lastInsert.value });
+  await api.patch(`/v1/${lastInsertTable.value}/batchDelete`, data).then(
+    (_response: any) => {
+      lastInsert.value = null;
+      lastInsertTable.value = null;
+      notification.open('positive', '');
+    },
+    (error) => {
+      notification.open('negative', error.response);
+    }
+  );
+
+  isSubmitting.value = false;
+}
 
 async function onSubmit() {
   isSubmitting.value = true;
@@ -229,7 +324,27 @@ async function onSubmit() {
     isSubmitting.value = false;
     return;
   }
-  console.log(props.task);
-  console.log(state.value);
+  const hive_ids = state.value.hive.map((obj: any) => obj.hive_id);
+
+  let data = { ...state.value };
+  delete data.hive;
+  data.hive = hive_ids;
+  data.type = data.type ? data.type.id : 0;
+  data.disease = data.disease ? data.disease.id : 0;
+  data.treatment_vet = data.treatment_vet ? data.treatment_vet.id : 0;
+  data.checkup_weight_time = dayjs(data.checkup_weight_time, 'HH:mm').format(
+    'HH:MM:ss'
+  );
+  await api.post(`/v1/${props.task}`, JSON.stringify(data)).then(
+    (response: any) => {
+      lastInsert.value = response.data;
+      lastInsertTable.value = props.task as any;
+      notification.open('positive', '');
+    },
+    (error) => {
+      notification.open('negative', error.response);
+    }
+  );
+  isSubmitting.value = false;
 }
 </script>
