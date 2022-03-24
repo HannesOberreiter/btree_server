@@ -39,7 +39,7 @@ const emit = defineEmits(['update:modelValue']);
 const { modelValue } = useVModels(props, emit);
 
 const state = {
-  edit: modelValue.value,
+  edit: modelValue,
 };
 
 const rules = {
