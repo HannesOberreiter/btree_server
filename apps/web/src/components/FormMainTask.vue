@@ -279,6 +279,7 @@ const v = useVuelidate();
 const lastInsert = ref(null);
 const lastInsertTable = ref(null);
 const router = useRouter();
+
 const props = defineProps({
   task: {
     type: String as PropType<Task>,
@@ -335,7 +336,6 @@ const multipleValues = ref({
   treatment_wait: false,
 });
 let multipleValuesCopy = {};
-
 const stateDefault = {
   date: dayjs().format('YYYY-MM-DD'),
   enddate: dayjs().format('YYYY-MM-DD'),
@@ -425,8 +425,8 @@ async function getEdit() {
       editOptions.value = flatten(editIds);
       editOptionsCopy.value = flatten(editIds);
 
-      setValues(response.data, 'date');
       setValues(response.data, 'date', 'enddate'); // Dirty workaround as I block date change if date or enddate is different
+      setValues(response.data, 'date');
       setValues(response.data, 'enddate', 'enddate');
 
       setValues(response.data, 'type');
@@ -471,6 +471,8 @@ async function getEdit() {
         setValues(response.data, 'harvest_water', 'water');
         setValues(response.data, 'harvest_charge', 'charge');
       }
+
+      console.log(state.value);
 
       if (props.task !== 'checkup')
         setValues(response.data, 'amount', 'amount');
@@ -522,6 +524,30 @@ async function onUpdate() {
     isSubmitting.value = false;
     return;
   }
+
+  const ids = editOptions.value.map((obj: any) => obj.value);
+
+  let data = { ids: ids, ...state.value, ignore: { ...multipleValues.value } };
+  delete data.hive;
+  data.type = data.type ? data.type.id : 0;
+  data.disease = data.disease ? data.disease.id : 0;
+  data.treatment_vet = data.treatment_vet ? data.treatment_vet.id : 0;
+  data.checkup_weight_time = dayjs(data.checkup_weight_time, 'HH:mm').format(
+    'HH:MM:ss'
+  );
+  await api.patch(`/v1/${props.task}`, JSON.stringify(data)).then(
+    (response: any) => {
+      console.log(response);
+      lastInsert.value = response.data;
+      lastInsertTable.value = props.task as any;
+      notification.open('positive', '');
+    },
+    (error) => {
+      notification.open('negative', error.response);
+    }
+  );
+  isSubmitting.value = false;
+
   isSubmitting.value = false;
   return;
 }

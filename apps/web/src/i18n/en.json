@@ -55,7 +55,7 @@
   "successReset": "Successful reset",
   "interval": "Interval",
   "intervalText": "Days between repeats",
-  "multipleValues": "Warning: editing multiple values",
+  "multipleValues": "Warning: editing multiple values, this will overwrite all task with the same value.",
   "repeat": "Repeat",
   "undo": "Undo",
   "varroa": "Varroa",
@@ -173,7 +173,8 @@
     "changeName": "Enter a new name for your company (min: 5, max: 45)",
     "new": "Enter name for your new company (min: 5, max: 45). Note: You will need to pay for each new company premium access separately.",
     "delete": "Are you sure you want to delete the company? This is only possible if it is not your last company and no other users are registered with this company. For security please repeat the name of the company:",
-    "removeAccess": "Are you sure you want to remove your access to this company? This is only possible if you are not the sole user in this company and if it is not your only company. For security please repeat the name of the company:"
+    "removeAccess": "Are you sure you want to remove your access to this company? This is only possible if you are not the sole user in this company and if it is not your only company. For security please repeat the name of the company:",
+    "addUser": "Enter email of user. If the new user is not already registered, she/he will receive an email to reset her/his password to successfully login."
   },
 
   "recoverUser": {
