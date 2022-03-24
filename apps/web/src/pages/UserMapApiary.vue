@@ -110,8 +110,8 @@
               color="black"
             />
           </template>
-          <l-feature-group v-if="apiaryMarker">
-            <template v-for="value in apiaryMarker" :key="value.id">
+          <l-feature-group v-if="apiaries" :key="updateTimestamp">
+            <template v-for="value in apiaries.result" :key="value.id">
               <l-marker
                 v-if="value.modus || showInactive"
                 :lat-lng="[value.latitude, value.longitude]"
@@ -153,8 +153,8 @@
               </l-marker>
             </template>
           </l-feature-group>
-          <l-feature-group v-if="apiaryMarker">
-            <template v-for="value in apiaryMarker" :key="value.id">
+          <l-feature-group v-if="apiaries">
+            <template v-for="value in apiaries.result" :key="value.id">
               <l-circle
                 v-if="value.modus || showInactive"
                 :lat-lng="[value.latitude, value.longitude]"
@@ -177,7 +177,6 @@
 import 'leaflet/dist/leaflet.css';
 import { api } from '~/boot/axios';
 import { computed, ref } from 'vue';
-import { remove } from 'lodash';
 import { useApiariesQuery } from '~/query';
 import { useAuthUserStore } from '~/stores/auth';
 import { useI18n } from 'vue-i18n';
@@ -199,6 +198,8 @@ import {
 } from '@vue-leaflet/vue-leaflet';
 
 const { isLoading, data: apiaries, refetch } = useApiariesQuery();
+const updateTimestamp = ref(Date()); // helper to update layer
+
 const { t } = useI18n();
 const $q = useQuasar();
 const userStore = useAuthUserStore();
@@ -216,13 +217,11 @@ const showInactive = ref(false);
 const showInfo = ref(false);
 let map = {} as any;
 let dragObject = {} as any;
-let oldLocation = {} as any;
-const apiaryMarker = ref(apiaries.value.result);
+
 const OPENWEATHER_API = process.env.OPENWEATHER_APP_ID;
 const onMapReady = () => {
   zoom.value = apiaries.value.result.length > 0 ? 9 : 2;
   map = mapRef.value.leafletObject;
-  apiaryMarker.value = apiaries.value.result;
   map.doubleClickZoom.disable();
   map.scrollWheelZoom.enable();
   map.on('dblclick', function (e: any) {
@@ -261,15 +260,13 @@ function createApiaryForm(e: any) {
         },
       },
     }).onOk((e) => {
-      apiaryMarker.value.push(e);
       refetch.value().then(
-        () => (apiaryMarker.value = apiaries.value.result),
+        () => console.log(e),
         (error) => console.log(error)
       );
     });
   }
 }
-
 function editApiaryForm(e: any) {
   if (userStore.isAdmin) {
     $q.dialog({
@@ -279,19 +276,17 @@ function editApiaryForm(e: any) {
         form: 'apiary',
         editId: e,
       },
-    }).onOk(() => {
+    }).onOk((e) => {
       refetch.value().then(
-        () => (apiaryMarker.value = apiaries.value.result),
+        () => console.log(e),
         (error) => console.log(error)
       );
     });
   }
 }
-
 function deleteApiary(value: string) {
   api.delete('/v1/apiary/' + value).then(
     async (_response: any) => {
-      remove(apiaryMarker.value, { id: value });
       await refetch.value();
       notification.open('positive', '');
     },
@@ -303,7 +298,6 @@ function deleteApiary(value: string) {
 
 function moveApiaryStart(value: any) {
   dragObject = value;
-  oldLocation.value = { ...apiaryMarker.value };
   map.closePopup();
 }
 function moveApiaryEnd(e: any) {
@@ -320,20 +314,18 @@ function moveApiaryEnd(e: any) {
   })
     .onOk(() => {
       api.patch('/v1/apiary', data).then(
-        async (response: any) => {
-          remove(apiaryMarker.value, { id: response.data.id });
-          apiaryMarker.value.push(response.data);
+        async (_response: any) => {
           await refetch.value();
           notification.open('positive', '');
         },
         (error) => {
-          apiaryMarker.value = oldLocation.value;
+          updateTimestamp.value = Date();
           notification.open('negative', error);
         }
       );
     })
-    .onCancel(() => {
-      apiaryMarker.value = oldLocation.value;
+    .onCancel(async () => {
+      updateTimestamp.value = Date();
     });
 }
 </script>
