@@ -19,10 +19,15 @@
                   :step="1"
                   :min="0"
                   :max="max"
+                  :disable="modelMultiple[index]"
                   size="sm"
                 >
                 </q-slider>
                 {{ modelValue[index] }}
+                <btn-multiple-values
+                  v-if="modelMultiple[index]"
+                  @click="modelMultiple[index] = !modelMultiple[index]"
+                ></btn-multiple-values>
               </div>
             </div>
           </template>
@@ -49,6 +54,7 @@ import { some } from 'lodash';
 import { useI18n } from 'vue-i18n';
 import useVuelidate from '@vuelidate/core';
 import { useVModels } from '@vueuse/core';
+import BtnMultipleValues from './BtnMultipleValues.vue';
 
 const { t } = useI18n();
 const expanded = ref(false);
@@ -62,10 +68,18 @@ const props = defineProps({
       emptyframes: 0,
     },
   },
+  modelMultiple: {
+    default: {
+      broodframes: false,
+      honeyframes: false,
+      foundation: false,
+      emptyframes: false,
+    },
+  },
 });
 
-const emit = defineEmits(['update:modelValue']);
-const { modelValue } = useVModels(props, emit);
+const emit = defineEmits(['update:modelValue', 'update:modelMultiple']);
+const { modelValue, modelMultiple } = useVModels(props, emit);
 
 const rules = {
   broodframes: {

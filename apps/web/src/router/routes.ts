@@ -20,6 +20,12 @@ const routes: RouteRecordRaw[] = [
         component: () => import('pages/UserQuicktool.vue'),
       },
       {
+        path: '/edit/:task',
+        name: 'quicktool_edit',
+        props: true,
+        component: () => import('pages/UserQuicktool.vue'),
+      },
+      {
         path: '/map/apiary',
         name: 'map-apiary',
         component: () => import('pages/UserMapApiary.vue'),

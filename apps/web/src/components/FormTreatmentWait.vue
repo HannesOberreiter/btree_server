@@ -6,12 +6,17 @@
     :no-error-icon="true"
     :label="t('waitTime')"
     :shadow-text="t('day', 2)"
+    :disable="modelMultiple"
     name="wait"
     type="number"
     filled
   >
     <template #before>
-      <q-icon name="fas fa-circle-pause"></q-icon>
+      <q-icon v-if="!modelMultiple" name="fas fa-circle-pause"></q-icon>
+      <btn-multiple-values
+        v-else
+        @click="modelMultiple = !modelMultiple"
+      ></btn-multiple-values>
     </template>
     <template #append>
       <q-btn
@@ -41,6 +46,7 @@ import { useI18n } from 'vue-i18n';
 import { useVModels } from '@vueuse/core';
 import { validationErrors } from '~/helpers';
 import useVuelidate from '@vuelidate/core';
+import BtnMultipleValues from './BtnMultipleValues.vue';
 
 const { t } = useI18n();
 const props = defineProps({
@@ -48,9 +54,12 @@ const props = defineProps({
     type: Number,
     default: 0,
   },
+  modelMultiple: {
+    default: false,
+  },
 });
-const emit = defineEmits(['update:modelValue']);
-const { modelValue } = useVModels(props, emit);
+const emit = defineEmits(['update:modelValue', 'update:modelMultiple']);
+const { modelValue, modelMultiple } = useVModels(props, emit);
 
 const state = {
   wait: modelValue,

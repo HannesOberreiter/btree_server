@@ -6,11 +6,16 @@
     :no-error-icon="true"
     :label="t('varroa')"
     name="varroa"
+    :disable="modelMultiple"
     type="number"
     filled
   >
     <template #before>
-      <q-icon name="fas fa-bug"></q-icon>
+      <q-icon v-if="!modelMultiple" name="fas fa-bug"></q-icon>
+      <btn-multiple-values
+        v-else
+        @click="modelMultiple = !modelMultiple"
+      ></btn-multiple-values>
     </template>
     <template #after>
       <q-btn
@@ -51,6 +56,7 @@ import { useVModels } from '@vueuse/core';
 import { validationErrors } from '~/helpers';
 import DialogVarroa from './DialogVarroa.vue';
 import useVuelidate from '@vuelidate/core';
+import BtnMultipleValues from './BtnMultipleValues.vue';
 
 const { t } = useI18n();
 const $q = useQuasar();
@@ -58,9 +64,12 @@ const props = defineProps({
   modelValue: {
     default: 0,
   },
+  modelMultiple: {
+    default: false,
+  },
 });
-const emit = defineEmits(['update:modelValue']);
-const { modelValue } = useVModels(props, emit);
+const emit = defineEmits(['update:modelValue', 'update:modelMultiple']);
+const { modelValue, modelMultiple } = useVModels(props, emit);
 
 const state = {
   varroa: modelValue,

@@ -5,6 +5,7 @@
         v-model="startValue"
         label="dateStart"
         :mark="endValue"
+        :disable="modelMultiple"
         @update:model-value="updateStart"
       ></form-common-start>
     </div>
@@ -13,10 +14,16 @@
         v-model="endValue"
         label="dateEnd"
         :mark="startValue"
+        :disable="modelMultiple"
         @update:model-value="updateEnd"
       ></form-common-end>
     </div>
-    <div class="col-1 text-center">
+    <div v-if="modelMultiple" class="col-1 text-center">
+      <btn-multiple-values
+        @click="modelMultiple = !modelMultiple"
+      ></btn-multiple-values>
+    </div>
+    <div v-if="!edit" class="col-1 text-center">
       <q-btn
         flat
         round
@@ -108,6 +115,7 @@ import FormCommonEnd from './FormCommonDate.vue';
 import FormCommonStart from './FormCommonDate.vue';
 import useVuelidate from '@vuelidate/core';
 import { useVModels } from '@vueuse/core';
+import BtnMultipleValues from './BtnMultipleValues.vue';
 
 const { t } = useI18n();
 const props = defineProps({
@@ -125,17 +133,22 @@ const props = defineProps({
   modelRepeat: {
     default: 0,
   },
+  modelMultiple: {
+    default: false,
+  },
+  edit: {
+    default: false,
+  },
 });
 const emit = defineEmits([
   'update:startValue',
   'update:endValue',
   'update:modelInterval',
   'update:modelRepeat',
+  'update:modelMultiple',
 ]);
-const { startValue, endValue, modelInterval, modelRepeat } = useVModels(
-  props,
-  emit
-);
+const { startValue, endValue, modelInterval, modelRepeat, modelMultiple } =
+  useVModels(props, emit);
 
 const showInterval = ref(false);
 

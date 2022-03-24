@@ -113,7 +113,7 @@ CALENDAR.map(function (source, _index) {
       events: function (fetchInfo, successCallback, failureCallback) {
         const queryKey = ['calendar', source, fetchInfo];
         try {
-          const _response = client
+          client
             .fetchQuery(
               queryKey,
               () =>

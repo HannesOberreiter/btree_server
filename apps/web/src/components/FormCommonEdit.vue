@@ -1,0 +1,60 @@
+<template>
+  <q-select
+    v-model="modelValue"
+    :error="v.edit.$error"
+    :error-message="validationErrors(v.edit)"
+    :no-error-icon="true"
+    :label="`${t('edit')} ID / (${t('hive')})`"
+    :options="options"
+    counter
+    multiple
+    use-chips
+    filled
+    class="hive-select"
+  >
+  </q-select>
+</template>
+
+<script setup lang="ts">
+import { required } from '~/helpers/i18n-validators';
+import { useI18n } from 'vue-i18n';
+import { useVModels } from '@vueuse/core';
+import { validationErrors } from '~/helpers';
+import useVuelidate from '@vuelidate/core';
+
+const { t } = useI18n();
+
+const props = defineProps({
+  modelValue: {
+    type: Object,
+    required: true,
+  },
+  options: {
+    type: Array,
+    required: true,
+  },
+});
+
+const emit = defineEmits(['update:modelValue']);
+const { modelValue } = useVModels(props, emit);
+
+const state = {
+  edit: modelValue.value,
+};
+
+const rules = {
+  edit: { required },
+};
+const v = useVuelidate(rules, state);
+</script>
+
+<style>
+.hive-select .q-field__native {
+  max-height: 120px;
+  overflow-y: auto;
+}
+.q-dialog--modal .q-field__native {
+  max-height: 120px;
+  overflow-y: auto;
+}
+</style>

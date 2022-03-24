@@ -5,13 +5,17 @@
     :error-message="validationErrors(v.water)"
     :no-error-icon="true"
     :label="t('water')"
+    :disable="modelMultiple"
     name="water"
     type="number"
     shadow-text="%"
     filled
   >
     <template #before>
-      <q-icon name="fas fa-droplet"></q-icon>
+      <q-icon v-if="!modelMultiple" name="fas fa-droplet"></q-icon>
+      <btn-multiple-values
+        @click="modelMultiple = !modelMultiple"
+      ></btn-multiple-values>
     </template>
     <template #append>
       <q-btn
@@ -42,6 +46,7 @@ import { useI18n } from 'vue-i18n';
 import { useVModels } from '@vueuse/core';
 import { validationErrors } from '~/helpers';
 import useVuelidate from '@vuelidate/core';
+import BtnMultipleValues from './BtnMultipleValues.vue';
 
 const { t } = useI18n();
 const props = defineProps({
@@ -49,9 +54,12 @@ const props = defineProps({
     type: Number,
     default: 0,
   },
+  modelMultiple: {
+    default: false,
+  },
 });
-const emit = defineEmits(['update:modelValue']);
-const { modelValue } = useVModels(props, emit);
+const emit = defineEmits(['update:modelValue', 'update:modelMultiple']);
+const { modelValue, modelMultiple } = useVModels(props, emit);
 
 const state = {
   water: modelValue,

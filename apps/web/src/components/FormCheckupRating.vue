@@ -18,10 +18,15 @@
                   :error="v[index].$error"
                   color-selected="positive"
                   color="grey"
+                  :disable="modelMultiple[index]"
                   size="sm"
                 >
                 </q-rating>
                 {{ modelValue[index] }}
+                <btn-multiple-values
+                  v-if="modelMultiple[index]"
+                  @click="modelMultiple[index] = !modelMultiple[index]"
+                ></btn-multiple-values>
               </div>
             </div>
           </template>
@@ -38,6 +43,7 @@ import { some } from 'lodash';
 import { useI18n } from 'vue-i18n';
 import useVuelidate from '@vuelidate/core';
 import { useVModels } from '@vueuse/core';
+import BtnMultipleValues from './BtnMultipleValues.vue';
 
 const { t } = useI18n();
 const expanded = ref(false);
@@ -52,10 +58,20 @@ const props = defineProps({
       swarm: 0,
     },
   },
+  modelMultiple: {
+    default: {
+      brood: false,
+      pollen: false,
+      comb: false,
+      temper: false,
+      calm_comb: false,
+      swarm: false,
+    },
+  },
 });
 
-const emit = defineEmits(['update:modelValue']);
-const { modelValue } = useVModels(props, emit);
+const emit = defineEmits(['update:modelValue', 'update:modelMultiple']);
+const { modelValue, modelMultiple } = useVModels(props, emit);
 
 const rules = {
   brood: {

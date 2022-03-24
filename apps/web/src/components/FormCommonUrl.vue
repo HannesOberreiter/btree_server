@@ -5,11 +5,17 @@
     :error-message="validationErrors(v.url)"
     :no-error-icon="true"
     :label="t('url')"
+    :disable="modelMultiple"
     name="url"
     type="text"
     readonly
   >
-    <template #append>
+    <template v-if="modelMultiple" #before>
+      <btn-multiple-values
+        @click="modelMultiple = !modelMultiple"
+      ></btn-multiple-values>
+    </template>
+    <template v-if="!modelMultiple" #append>
       <q-icon name="fab fa-dropbox" style="cursor: pointer"></q-icon>
     </template>
   </q-input>
@@ -21,14 +27,19 @@ import { maxLength } from '~/helpers/i18n-validators';
 import { validationErrors } from '~/helpers';
 import { useI18n } from 'vue-i18n';
 import { useVModels } from '@vueuse/core';
+import BtnMultipleValues from './BtnMultipleValues.vue';
+
 const { t } = useI18n();
 const props = defineProps({
   modelValue: {
     default: '',
   },
+  modelMultiple: {
+    default: false,
+  },
 });
-const emit = defineEmits(['update:modelValue']);
-const { modelValue } = useVModels(props, emit);
+const emit = defineEmits(['update:modelValue', 'update:modelMultiple']);
+const { modelValue, modelMultiple } = useVModels(props, emit);
 
 const state = {
   url: modelValue,

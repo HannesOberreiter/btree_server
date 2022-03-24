@@ -7,12 +7,17 @@
         :error-message="validationErrors(v.weight)"
         :no-error-icon="true"
         :label="t('weight')"
+        :disable="modelMultiple"
         name="weight"
         type="number"
         filled
       >
         <template #before>
-          <q-icon name="fas fa-weight"></q-icon>
+          <q-icon v-if="!modelMultiple" name="fas fa-weight"></q-icon>
+          <btn-multiple-values
+            v-else
+            @click="modelMultiple = !modelMultiple"
+          ></btn-multiple-values>
         </template>
         <template #append>
           <q-btn
@@ -42,11 +47,17 @@
         :label="t('time')"
         name="time"
         type="time"
+        :disable="modelMultipleTime"
         :error="v.weight.$error"
         :error-message="validationErrors(v.time)"
         :no-error-icon="true"
         readonly
       >
+        <template v-if="modelMultipleTime" #before>
+          <btn-multiple-values
+            @click="modelMultipleTime = !modelMultipleTime"
+          ></btn-multiple-values>
+        </template>
         <template #append>
           <q-icon name="fas fa-clock" class="cursor-pointer">
             <q-popup-proxy
@@ -81,6 +92,7 @@ import dayjs from 'dayjs';
 import useVuelidate from '@vuelidate/core';
 
 import customParseFormat from 'dayjs/plugin/customParseFormat';
+import BtnMultipleValues from './BtnMultipleValues.vue';
 dayjs.extend(customParseFormat); // Needed to validate if date is even possible
 
 const { t } = useI18n();
@@ -91,9 +103,23 @@ const props = defineProps({
   modelTime: {
     default: dayjs().format('HH:mm'),
   },
+  modelMultiple: {
+    default: false,
+  },
+  modelMultipleTime: {
+    default: false,
+  },
 });
-const emit = defineEmits(['update:modelValue', 'update:modelTime']);
-const { modelValue, modelTime } = useVModels(props, emit);
+const emit = defineEmits([
+  'update:modelValue',
+  'update:modelTime',
+  'update:modelMultiple',
+  'update:modelMultipleTime',
+]);
+const { modelValue, modelTime, modelMultiple, modelMultipleTime } = useVModels(
+  props,
+  emit
+);
 
 const state = {
   weight: modelValue,

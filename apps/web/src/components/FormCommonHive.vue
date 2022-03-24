@@ -23,6 +23,12 @@
     :loading="isLoadingApiary && isLoadingHive"
     :disable="isLoadingApiary && isLoadingHive"
     :options="optionsHive"
+    :option-label="
+      (val) => {
+        const modus = val.hive_modus ? '' : t('inactive');
+        return val.label + ' ' + modus;
+      }
+    "
     clearable
     counter
     multiple

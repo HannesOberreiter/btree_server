@@ -6,6 +6,7 @@
     :label="t(label)"
     input-class="text-center"
     type="date"
+    :disable="disable"
     readonly
     filled
     no-error-icon
@@ -59,6 +60,9 @@ const props = defineProps({
   label: {
     type: String,
     default: 'date',
+  },
+  disable: {
+    default: false,
   },
 });
 const emit = defineEmits(['update:modelValue']);

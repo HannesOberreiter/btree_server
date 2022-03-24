@@ -4,12 +4,17 @@
     :label="t(label)"
     name="option"
     :loading="isLoading"
-    :disable="isLoading"
+    :disable="isLoading || modelMultiple"
     :options="options"
     option-label="name"
     options-value="id"
     filled
   >
+    <template v-if="modelMultiple" #before>
+      <btn-multiple-values
+        @click="modelMultiple = !modelMultiple"
+      ></btn-multiple-values>
+    </template>
   </q-select>
 </template>
 
@@ -20,6 +25,7 @@ import { PropType, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useOptionsQuery } from '~/query';
 import { useVModels } from '@vueuse/core';
+import BtnMultipleValues from './BtnMultipleValues.vue';
 
 const { t } = useI18n();
 const props = defineProps({
@@ -33,10 +39,13 @@ const props = defineProps({
     type: String as PropType<Option>,
     required: true,
   },
+  modelMultiple: {
+    default: false,
+  },
 });
 const { isLoading, data } = useOptionsQuery(props.table);
-const emit = defineEmits(['update:modelValue']);
-const { modelValue } = useVModels(props, emit);
+const emit = defineEmits(['update:modelValue', 'update:modelMultiple']);
+const { modelValue, modelMultiple } = useVModels(props, emit);
 
 const options = ref([] as any);
 

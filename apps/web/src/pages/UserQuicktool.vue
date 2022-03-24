@@ -2,22 +2,30 @@
   <q-card>
     <div class="row q-pa-sm justify-center">
       <div class="col-12 col-sm-10 col-md-8">
-        <div class="text-body2 q-pb-sm text-center">
+        <div v-if="!ids" class="text-body2 q-pb-sm text-center">
           {{ t('quicktool.name') }}
         </div>
+        <div v-else class="text-h5 q-pb-sm text-center">
+          {{ t('edit') }} {{ t(task) }}
+        </div>
         <q-select
+          v-if="ids ? false : true"
           v-model="taskSelect"
           :label="t('quicktool.taskDropdown')"
           name="taskSelect"
           standout
           :options="options"
+          :disable="ids ? true : false"
+          :readonly="ids ? true : false"
           rounded
           class="q-mb-sm text-center"
         >
         </q-select>
         <form-main-task
           v-if="taskSelect"
+          :key="router.currentRoute.value"
           :task="(taskForm as any)"
+          :ids="ids ? ids : undefined"
         ></form-main-task>
       </div>
     </div>
@@ -41,11 +49,11 @@ const props = defineProps({
     type: String as PropType<Task>,
     required: true,
   },
-  id: {
-    type: String,
-    default: '',
+  ids: {
+    default: null,
   },
 });
+
 const options = [
   {
     label: t('checkup'),

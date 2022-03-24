@@ -8,7 +8,7 @@
     name="temp"
     type="number"
     shadow-text=" C°"
-    :disable="isLoading"
+    :disable="isLoading || modelMultiple"
     :hint="
       isSuccess && hive.length > 0
         ? t('temperatureHint', {
@@ -21,9 +21,13 @@
     filled
   >
     <template #before>
-      <q-icon name="fas fa-temperature-high"></q-icon>
+      <q-icon v-if="!modelMultiple" name="fas fa-temperature-high"></q-icon>
+      <btn-multiple-values
+        v-else
+        @click="modelMultiple = !modelMultiple"
+      ></btn-multiple-values>
     </template>
-    <template #after>
+    <template v-if="!edit" #after>
       <q-spinner-hourglass v-if="isLoading" flat round></q-spinner-hourglass>
       <q-btn
         v-else
@@ -73,19 +77,13 @@ import { useVModels } from '@vueuse/core';
 import { validationErrors } from '~/helpers';
 import useVuelidate from '@vuelidate/core';
 import { round } from 'lodash';
+import BtnMultipleValues from './BtnMultipleValues.vue';
 
 const storeUser = useAuthUserStore();
 const { t } = useI18n();
 const loadTemp = ref(false);
 const select = ref(0);
-const {
-  isLoading,
-  isSuccess,
-  data: temperature,
-  refetch,
-} = useTemperatureQuery(select, {
-  enabled: computed(() => select.value != 0 && loadTemp.value),
-});
+
 const props = defineProps({
   modelValue: {
     default: 0,
@@ -93,9 +91,25 @@ const props = defineProps({
   hive: {
     default: [] as any,
   },
+  modelMultiple: {
+    default: false,
+  },
+  edit: {
+    default: false,
+  },
 });
-const emit = defineEmits(['update:modelValue']);
-const { modelValue } = useVModels(props, emit);
+const {
+  isLoading,
+  isSuccess,
+  data: temperature,
+  refetch,
+} = useTemperatureQuery(select, {
+  enabled: computed(
+    () => select.value != 0 && loadTemp.value && props.edit === false
+  ),
+});
+const emit = defineEmits(['update:modelValue', 'update:modelMultiple']);
+const { modelValue, modelMultiple } = useVModels(props, emit);
 
 const state = {
   temp: modelValue.value,

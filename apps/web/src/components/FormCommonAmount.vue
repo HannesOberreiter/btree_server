@@ -9,6 +9,7 @@
         :label="t(label, 2)"
         name="amount"
         type="number"
+        :disable="modelMultiple"
         :hint="
           hiveCount > 0 && modelType === 'total'
             ? t('totalAmount', { msg: modelCalc })
@@ -17,7 +18,11 @@
         filled
       >
         <template #before>
-          <q-icon name="fas fa-bucket"></q-icon>
+          <q-icon v-if="!modelMultiple" name="fas fa-bucket"></q-icon>
+          <btn-multiple-values
+            v-else
+            @click="modelMultiple = !modelMultiple"
+          ></btn-multiple-values>
         </template>
         <template #append>
           <q-btn
@@ -40,7 +45,7 @@
         </template>
       </q-input>
     </div>
-    <div class="col-2 q-pl-xs">
+    <div v-if="!edit" class="col-2 q-pl-xs">
       <q-select
         v-model="modelType"
         :options="OPTIONS"
@@ -60,6 +65,7 @@ import { useVModels } from '@vueuse/core';
 import { validationErrors } from '~/helpers';
 import useVuelidate from '@vuelidate/core';
 import { watch } from 'vue';
+import BtnMultipleValues from './BtnMultipleValues.vue';
 
 const { t } = useI18n();
 const props = defineProps({
@@ -81,13 +87,19 @@ const props = defineProps({
     type: String,
     default: 'amount',
   },
+  edit: { default: false },
+  modelMultiple: { default: false },
 });
 const emit = defineEmits([
   'update:modelValue',
   'update:modelType',
   'update:modelCalc',
+  'update:modelMultiple',
 ]);
-const { modelValue, modelType, modelCalc } = useVModels(props, emit);
+const { modelValue, modelType, modelCalc, modelMultiple } = useVModels(
+  props,
+  emit
+);
 
 const OPTIONS = ['single', 'total'];
 

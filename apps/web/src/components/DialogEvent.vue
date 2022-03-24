@@ -73,7 +73,7 @@
         <q-btn
           v-if="!isVis && !isRearings"
           color="green darken-1"
-          @click="onDialogHide"
+          @click="editTask()"
         >
           {{ t('edit') }}
         </q-btn>
@@ -92,10 +92,12 @@ import { useNotification } from '~/composables/useResponseText';
 import dayjs from 'dayjs';
 import EventInfoRearing from './EventInfoRearing.vue';
 import EventInfoVis from './EventInfoVis.vue';
+import { useRouter } from 'vue-router';
 
 const notification = useNotification();
 const { dialogRef, onDialogHide, onDialogOK } = useDialogPluginComponent();
 const { t } = useI18n();
+const router = useRouter();
 
 const props = defineProps({
   eventInfo: {
@@ -147,5 +149,11 @@ async function deleteEvent() {
       notification.open('negative', error.response);
     }
   );
+}
+
+function editTask() {
+  const task = props.eventInfo.table.slice(0, -1) as string;
+  const ids = props.eventInfo.task_ids.toString().split(',');
+  router.push({ name: 'quicktool_edit', params: { task: task, ids: ids } });
 }
 </script>

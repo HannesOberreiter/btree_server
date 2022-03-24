@@ -1,5 +1,4 @@
 import { api } from '~/boot/axios';
-import { i18n } from '~/boot/i18n';
 import { map } from 'lodash';
 import { MaybeRef } from '@vueuse/core';
 import { Option } from '~/types';
@@ -72,10 +71,8 @@ export function useApiaryQuery(
 export function useHivesQuery() {
   return useQuery(['hives'], () => api.get('/v1/hive'), {
     select: (response) => {
-      const { t } = i18n.global;
       const result = map(response.data, (value) => {
-        const modus = value.hive_modus ? '' : t('inactive');
-        value.label = `${value.hive_name} (${value.apiary_name}) ${modus}`;
+        value.label = `${value.hive_name} (${value.apiary_name})`;
         value.value = value.hive_id;
         return value;
       });

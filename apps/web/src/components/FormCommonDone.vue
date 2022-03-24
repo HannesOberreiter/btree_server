@@ -3,14 +3,21 @@
     <div class="col-8 col-md-5 col-lg-3">
       <q-item v-ripple tag="label">
         <q-item-section>
-          <q-item-label>{{ t('status') }}:</q-item-label>
+          <q-item-label>
+            <btn-multiple-values
+              v-if="modelMultiple"
+              @click="modelMultiple = modelMultiple"
+            ></btn-multiple-values>
+            {{ t('status') }}:</q-item-label
+          >
         </q-item-section>
-        <q-item-section avatar>
+        <q-item-section>
           <q-toggle
             v-model="modelValue"
             color="blue"
             val="true"
             size="lg"
+            :disable="modelMultiple"
             :label="modelValue === false ? t('open') : t('done')"
           ></q-toggle>
         </q-item-section>
@@ -22,15 +29,17 @@
 <script setup lang="ts">
 import { useVModels } from '@vueuse/core';
 import { useI18n } from 'vue-i18n';
+import BtnMultipleValues from './BtnMultipleValues.vue';
 
 const { t } = useI18n();
 const props = defineProps({
   modelValue: {
-    type: Boolean,
-    default: true,
+    default: false,
+  },
+  modelMultiple: {
+    default: false,
   },
 });
-
-const emit = defineEmits(['update:modelValue']);
-const { modelValue } = useVModels(props, emit);
+const emit = defineEmits(['update:modelValue', 'update:modelMultiple']);
+const { modelValue, modelMultiple } = useVModels(props, emit);
 </script>

@@ -36,6 +36,7 @@
             name: link.route,
             params: {
               task: link.route === 'quicktool' ? storeQuicktool.getLink : '',
+              ids: null,
             },
           }"
           exact
