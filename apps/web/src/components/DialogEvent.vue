@@ -154,6 +154,6 @@ async function deleteEvent() {
 function editTask() {
   const task = props.eventInfo.table.slice(0, -1) as string;
   const ids = props.eventInfo.task_ids.toString().split(',');
-  router.push({ name: 'quicktool_edit', params: { task: task, ids: ids } });
+  router.push({ name: 'quicktool-edit', params: { task: task, ids: ids } });
 }
 </script>

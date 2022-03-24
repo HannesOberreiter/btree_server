@@ -8,7 +8,7 @@
               v-if="modelMultiple"
               @click="modelMultiple = modelMultiple"
             ></btn-multiple-values>
-            {{ t('status') }}:</q-item-label
+            {{ t(label) }}:</q-item-label
           >
         </q-item-section>
         <q-item-section>
@@ -18,7 +18,7 @@
             val="true"
             size="lg"
             :disable="modelMultiple"
-            :label="modelValue === false ? t('open') : t('done')"
+            :label="modelValue === false ? t(statusInactive) : t(statusActive)"
           ></q-toggle>
         </q-item-section>
       </q-item>
@@ -38,6 +38,15 @@ const props = defineProps({
   },
   modelMultiple: {
     default: false,
+  },
+  label: {
+    default: 'status',
+  },
+  statusActive: {
+    default: 'open',
+  },
+  statusInactive: {
+    default: 'done',
   },
 });
 const emit = defineEmits(['update:modelValue', 'update:modelMultiple']);

@@ -50,8 +50,6 @@
           </q-item-section>
         </q-item>
       </template>
-    </q-list>
-    <div class="fixed-bottom">
       <btn-refresh></btn-refresh>
       <item-company></item-company>
       <q-item v-ripple clickable @click="onLogout">
@@ -60,7 +58,7 @@
         </q-item-section>
         <q-item-section> {{ t('logout') }} </q-item-section>
       </q-item>
-    </div>
+    </q-list>
   </q-scroll-area>
 </template>
 
@@ -94,6 +92,37 @@ const links = ref([
     menu: [] as any,
   },
   {
+    label: t('new', 2),
+    route: '',
+    icon: 'fas fa-circle-plus',
+    menu: [
+      {
+        label: t('hive'),
+        route: 'new-hive',
+        icon: 'fas fa-house',
+        menu: false,
+      },
+      {
+        label: t('apiary'),
+        route: 'map-apiary',
+        icon: 'fas fa-map-marker-alt',
+        menu: false,
+      },
+      {
+        label: t('movement'),
+        route: 'table-apiary',
+        icon: 'fas fa-truck',
+        menu: false,
+      },
+      {
+        label: t('todo'),
+        route: 'table-apiary',
+        icon: 'fas fa-clipboard-check',
+        menu: false,
+      },
+    ],
+  },
+  {
     label: t('map.name', 2),
     route: '',
     icon: 'fas fa-globe',
@@ -112,6 +141,7 @@ const links = ref([
       },
     ],
   },
+
   {
     label: t('table', 2),
     route: '',
@@ -121,6 +151,18 @@ const links = ref([
         label: t('apiary', 2),
         route: 'table-apiary',
         icon: 'fas fa-location-dot',
+        menu: false,
+      },
+      {
+        label: t('hive', 2),
+        route: 'table-apiary',
+        icon: 'fas fa-house',
+        menu: false,
+      },
+      {
+        label: t('movement', 2),
+        route: 'table-table',
+        icon: 'fas fa-truck',
         menu: false,
       },
       {

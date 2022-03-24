@@ -14,6 +14,7 @@
     <template #before>
       <q-icon v-if="!modelMultiple" name="fas fa-droplet"></q-icon>
       <btn-multiple-values
+        v-else
         @click="modelMultiple = !modelMultiple"
       ></btn-multiple-values>
     </template>

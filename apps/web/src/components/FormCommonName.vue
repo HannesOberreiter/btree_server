@@ -1,10 +1,11 @@
 <template>
   <q-input
-    v-model="state.name"
+    v-model="modelValue"
     :error="v.name.$error"
     :error-message="validationErrors(v.name)"
     :no-error-icon="true"
-    :label="t('name')"
+    :label="$t('name')"
+    :disable="modelMultiple"
     name="name"
     type="text"
     filled
@@ -13,17 +14,25 @@
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue';
 import { required, maxLength } from '~/helpers/i18n-validators';
-import { useI18n } from 'vue-i18n';
 import { validationErrors } from '~/helpers';
 import useVuelidate from '@vuelidate/core';
+import { useVModels } from '@vueuse/core';
 
-const { t } = useI18n();
-
-const state = reactive({
-  name: '',
+const props = defineProps({
+  modelValue: {
+    default: '',
+  },
+  modelMultiple: {
+    default: false,
+  },
 });
+const emit = defineEmits(['update:modelValue', 'update:modelMultiple']);
+const { modelValue, modelMultiple } = useVModels(props, emit);
+
+const state = {
+  name: modelValue,
+};
 const rules = {
   name: { required, maxLengthValue: maxLength(48) },
 };

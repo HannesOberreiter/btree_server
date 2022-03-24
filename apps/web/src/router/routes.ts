@@ -21,10 +21,17 @@ const routes: RouteRecordRaw[] = [
       },
       {
         path: '/edit/:task',
-        name: 'quicktool_edit',
+        name: 'quicktool-edit',
         props: true,
         component: () => import('pages/UserQuicktool.vue'),
       },
+
+      {
+        path: '/new/hive',
+        name: 'new-hive',
+        component: () => import('pages/UserNewHive.vue'),
+      },
+
       {
         path: '/map/apiary',
         name: 'map-apiary',

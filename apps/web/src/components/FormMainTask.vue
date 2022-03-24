@@ -261,9 +261,9 @@ import FormCommonAmountFrames from './FormCommonAmount.vue';
 import FormCommonCharge from './FormCommonCharge.vue';
 import FormCommonDates from './FormCommonDates.vue';
 import FormCommonDone from './FormCommonDone.vue';
-import FormCommonDropdown from './FormCommonDropdown.vue';
-import FormCommonDropdownDisease from './FormCommonDropdown.vue';
-import FormCommonDropdownVet from './FormCommonDropdown.vue';
+import FormCommonDropdown from './FormCommonDropdownOption.vue';
+import FormCommonDropdownDisease from './FormCommonDropdownOption.vue';
+import FormCommonDropdownVet from './FormCommonDropdownOption.vue';
 import FormCommonHive from './FormCommonHive.vue';
 import FormCommonNote from './FormCommonNote.vue';
 import FormCommonUrl from './FormCommonUrl.vue';
@@ -292,7 +292,7 @@ const props = defineProps({
 });
 
 if (props.ids) getEdit();
-if (props.ids === null && router.currentRoute.value.name === 'quicktool_edit')
+if (props.ids === null && router.currentRoute.value.name === 'quicktool-edit')
   router.replace({ name: 'quicktool' });
 
 const editOptions = ref([]) as any;
