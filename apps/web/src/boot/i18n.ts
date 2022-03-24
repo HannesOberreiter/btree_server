@@ -24,13 +24,13 @@ export function setLocale(i18n: any, locale: Locale): void {
   } else {
     (i18n.global as unknown as Composer).locale.value = locale;
   }
+  i18n.locale = locale;
 }
 
 export default boot(({ app }) => {
   const storeUser = useAuthUserStore();
   const lang = storeUser.getLanguage;
   setLocale(i18n, lang);
-
   // Set i18n instance on app
   app.use(i18n);
 });

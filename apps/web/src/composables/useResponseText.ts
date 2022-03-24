@@ -1,8 +1,10 @@
 import { useAuthUserStore } from '~/stores/auth';
 import { reactive } from 'vue';
 import { Notify } from 'quasar';
+import { i18n } from '~/boot/i18n';
 
 type Type = 'positive' | 'negative' | 'warning' | 'info';
+const { t } = i18n.global;
 
 const state = reactive({
   show: false,
@@ -16,9 +18,9 @@ const useNotification = () => {
     let m = '';
     if (!message) {
       if (type === 'negative') {
-        m = 'An error occurred!';
+        m = t('error.unknown');
       } else if (type === 'positive') {
-        m = 'Success!';
+        m = t('success');
       }
     } else {
       if (type === 'negative' && message) {
@@ -56,18 +58,15 @@ const useNotification = () => {
   };
 };
 
-const checkStatus = (statusCode: number) => {
+const checkStatus = (statusCode: number, errorField = '') => {
   let displayMessage = '';
 
-  if (statusCode === 401)
-    displayMessage = 'Access not allowed or wrong password!';
-  else if (statusCode === 402) displayMessage = 'Premium only feature!';
-  else if (statusCode === 403)
-    displayMessage = 'Access forbidden or not allowed!';
+  if (statusCode === 401) displayMessage = t('error.access');
+  else if (statusCode === 402) displayMessage = t('error.premium');
+  else if (statusCode === 403) displayMessage = t('error.forbidden');
   else if (statusCode === 409)
-    displayMessage = 'Beekeeping name or e-mail already registered.';
-  else if (statusCode === 423)
-    displayMessage = 'Account locked! (too many login attempts?)';
+    displayMessage = `${t('error.duplicate')} (${t(errorField)})`;
+  else if (statusCode === 423) displayMessage = t('error.locked');
 
   return displayMessage;
 };
@@ -76,20 +75,21 @@ const useHandleError = (error: any) => {
   const storeUser = useAuthUserStore();
   const lang = storeUser.getLanguage;
   let displayMessage = '';
+  console.log(error);
   if (typeof error === 'string') return error;
   if ('data' in error === false) {
     displayMessage = checkStatus(error.response.status);
   } else {
     if ('errors' in error.data) {
       if (typeof error.data.errors === 'string') {
-        displayMessage = checkStatus(error.data.statusCode);
+        displayMessage = checkStatus(error.data.statusCode, error.data.errors);
       } else if ('type' in error.data.errors) {
         // This error comes from Ajv Schema error
         // we actually want to prevent this in our backend
         // as the types should be already checked on the route
         // with express.validate
         displayMessage = checkStatus(error.data.statusCode);
-        if (displayMessage === '') displayMessage = 'Validation error!';
+        if (displayMessage === '') displayMessage = t('error.validation');
       } else {
         if ('msgTranslation' in error.data.errors[0]) {
           displayMessage = error.data.errors[0].msgTranslation[lang];
@@ -97,13 +97,13 @@ const useHandleError = (error: any) => {
             // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
             displayMessage = `${displayMessage} (${error.data.errors[0].paramTranslation[lang]})`;
           if (error.data.errors.length > 1)
-            displayMessage = 'One of the errors' + ': ' + displayMessage;
+            displayMessage = t('error.more') + ': ' + displayMessage;
         }
       }
     }
   }
 
-  if (displayMessage === '') displayMessage = 'Another error did occur.';
+  if (displayMessage === '') displayMessage = t('error.unknown');
 
   return displayMessage;
 };

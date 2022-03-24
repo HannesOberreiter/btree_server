@@ -143,6 +143,17 @@
     "notValid": "The activation key is not valid anymore. You can also activate your account with the 'Forgot your password' link below."
   },
 
+  "error": {
+    "unknown": "An error occurred!",
+    "access": "Access not allowed or wrong password!",
+    "premium": "Premium only feature!",
+    "forbidden": "Access forbidden or not allowed!",
+    "duplicate": "Conflict, duplicate entry!",
+    "locked": "Account locked! (too many login attempts?)",
+    "validation": "Validation error!",
+    "more": "One of errors"
+  },
+
   "rating": {
     "name": "Rating",
     "text": "Rating low to high",
