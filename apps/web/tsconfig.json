@@ -18,6 +18,7 @@
     "forceConsistentCasingInFileNames": true,
     "types": [
       "vite/client",
+      "@intlify/vite-plugin-vue-i18n/client"
     ],
     "paths": {
       "~/*": [

@@ -84,7 +84,7 @@ module.exports = configure(function (/* ctx */) {
           '@intlify/vite-plugin-vue-i18n',
           {
             /* options */
-            include: path.resolve(__dirname, './src/i18n/**'),
+            include: path.resolve(__dirname, 'src/i18n/*.json'),
           },
         ],
       ],

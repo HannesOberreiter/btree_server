@@ -1,7 +1,7 @@
 import { boot } from 'quasar/wrappers';
 import { Composer, createI18n, Locale, VueI18n } from 'vue-i18n';
 import { useAuthUserStore } from '~/stores/auth';
-import messages from '~/i18n';
+import messages from '@intlify/vite-plugin-vue-i18n/messages';
 
 export const i18n = createI18n({
   legacy: false, // you must set `false`, to use Composition API

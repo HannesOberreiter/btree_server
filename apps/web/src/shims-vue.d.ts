@@ -5,8 +5,16 @@
 
 // Mocks all files ending in `.vue` showing them as plain Vue instances
 declare module '*.vue' {
-  import type { DefineComponent } from 'vue'
+  import type { DefineComponent } from 'vue';
   // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/ban-types
-  const component: DefineComponent<{}, {}, any>
-  export default component
+  const component: DefineComponent<{}, {}, any>;
+  export default component;
+}
+
+// https://github.com/intlify/vite-plugin-vue-i18n/issues/63
+declare module '@intlify/vite-plugin-vue-i18n/messages' {
+  import { LocaleMessages } from '@intlify/core-base';
+  import { VueMessageType } from 'vue-i18n';
+  const messages: LocaleMessages<VueMessageType>;
+  export default messages;
 }
