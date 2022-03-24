@@ -1,11 +1,12 @@
 <template>
   <q-input
-    v-model="modelValue"
+    v-model.trim="modelValue"
     :error="v.name.$error"
     :error-message="validationErrors(v.name)"
     :no-error-icon="true"
     :label="$t('name')"
     :disable="modelMultiple"
+    autocomplete="hhh3|hhh33|ichbineinspatz"
     name="name"
     type="text"
     filled

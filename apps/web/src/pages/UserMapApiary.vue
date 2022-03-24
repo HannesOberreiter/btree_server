@@ -99,15 +99,7 @@
             <l-circle-marker
               :lat-lng="location.latlng"
               color="black"
-              :fill-opacity="0.9"
-              :radius="1"
-            />
-            <l-circle-marker
-              :lat-lng="location.latlng"
-              :radius="location.accuracy / 2"
-              :stroke="false"
-              :fill-opacity="0.3"
-              color="black"
+              :radius="location.accuracy ? location.accuracy : 50"
             />
           </template>
           <l-feature-group v-if="apiaries" :key="updateTimestamp">
@@ -153,7 +145,7 @@
               </l-marker>
             </template>
           </l-feature-group>
-          <l-feature-group v-if="apiaries">
+          <l-feature-group v-if="apiaries" :key="updateTimestamp + 'radius'">
             <template v-for="value in apiaries.result" :key="value.id">
               <l-circle
                 v-if="value.modus || showInactive"

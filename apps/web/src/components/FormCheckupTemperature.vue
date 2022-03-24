@@ -1,6 +1,6 @@
 <template>
   <q-input
-    v-model="modelValue"
+    v-model.number="modelValue"
     :error="v.temp.$error"
     :error-message="validationErrors(v.temp)"
     :no-error-icon="true"

@@ -1,18 +1,17 @@
 <template>
   <q-input
-    v-model="modelValue"
-    :error="v.water.$error"
-    :error-message="validationErrors(v.water)"
+    v-model.number="modelValue"
+    :error="v.num.$error"
+    :error-message="validationErrors(v.num)"
     :no-error-icon="true"
-    :label="t('water')"
+    :label="$t(label)"
     :disable="modelMultiple"
-    name="water"
+    :name="label"
     type="number"
-    shadow-text="%"
     filled
   >
-    <template #before>
-      <q-icon v-if="!modelMultiple" name="fas fa-droplet"></q-icon>
+    <template v-if="icon !== ''" #before>
+      <q-icon v-if="!modelMultiple" :name="icon"></q-icon>
       <btn-multiple-values
         v-else
         @click="modelMultiple = !modelMultiple"
@@ -25,7 +24,7 @@
         dense
         icon="fas fa-plus"
         style="cursor: pointer"
-        :disable="modelValue > 100"
+        :disable="modelValue > maxValid"
         @click="modelValue++"
       ></q-btn>
       <q-btn
@@ -42,14 +41,17 @@
 </template>
 
 <script setup lang="ts">
-import { minValue, maxValue, numeric } from '~/helpers/i18n-validators';
-import { useI18n } from 'vue-i18n';
+import {
+  minValue,
+  maxValue,
+  numeric,
+  integer,
+} from '~/helpers/i18n-validators';
 import { useVModels } from '@vueuse/core';
 import { validationErrors } from '~/helpers';
 import useVuelidate from '@vuelidate/core';
 import BtnMultipleValues from './BtnMultipleValues.vue';
 
-const { t } = useI18n();
 const props = defineProps({
   modelValue: {
     type: Number,
@@ -58,19 +60,46 @@ const props = defineProps({
   modelMultiple: {
     default: false,
   },
+  label: {
+    type: String,
+    required: true,
+  },
+  icon: {
+    type: String,
+    required: true,
+  },
+  maxValid: {
+    default: 100,
+  },
+  numericValid: {
+    default: 'numeric',
+  },
 });
 const emit = defineEmits(['update:modelValue', 'update:modelMultiple']);
 const { modelValue, modelMultiple } = useVModels(props, emit);
 
 const state = {
-  water: modelValue,
+  num: modelValue,
 };
-const rules = {
-  water: {
-    minValue: minValue(0),
-    maxValue: maxValue(100),
-    numeric: numeric,
-  },
-};
-const v = useVuelidate(rules, state, { $autoDirty: true });
+let rules = {};
+
+if (props.numericValid === 'numeric') {
+  rules = {
+    num: {
+      minValue: minValue(0),
+      maxValue: maxValue(props.maxValid),
+      numeric: numeric,
+    },
+  };
+} else {
+  rules = {
+    num: {
+      minValue: minValue(0),
+      maxValue: maxValue(props.maxValid),
+      integer: integer,
+    },
+  };
+}
+
+const v = useVuelidate(rules as any, state, { $autoDirty: true });
 </script>

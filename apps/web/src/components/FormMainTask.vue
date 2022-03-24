@@ -1,5 +1,8 @@
 <template>
-  <form-common-hive v-if="!ids" v-model="state.hive"></form-common-hive>
+  <form-common-dropdown-hive
+    v-if="!ids"
+    v-model="state.hive"
+  ></form-common-dropdown-hive>
   <form-common-edit
     v-else
     v-model="editOptions"
@@ -101,10 +104,13 @@
       </div>
       <div v-if="fields.settings.checkup.strength" class="row q-pt-sm q-pb-sm">
         <div class="col-12 col-md-6">
-          <form-checkup-strength
+          <form-common-numeric-strength
             v-model="state.checkup_strong"
             v-model:model-multiple="multipleValues.checkup_strong"
-          ></form-checkup-strength>
+            label="strong"
+            icon="fas fa-dumbbell"
+          >
+          </form-common-numeric-strength>
         </div>
       </div>
       <div v-if="fields.settings.checkup.weight" class="q-pt-sm q-pb-sm">
@@ -145,10 +151,12 @@
       </div>
       <div v-if="fields.settings.harvest.water" class="row">
         <div class="col-12 col-md-6">
-          <form-harvest-water
+          <form-common-numeric-water
             v-model="state.harvest_water"
-            v-model:model-multiple="multipleValues.harvest_water"
-          ></form-harvest-water>
+            label="water"
+            icon="fas fa-droplet"
+            shadow-text="%"
+          ></form-common-numeric-water>
         </div>
       </div>
       <div class="row">
@@ -173,10 +181,14 @@
         v-if="fields.settings.treatment.wait"
         class="col-12 col-md-6 q-pb-sm"
       >
-        <form-treatment-wait
+        <form-common-numeric-wait
           v-model="state.treatment_wait"
           v-model:model-multiple="multipleValues.treatment_wait"
-        ></form-treatment-wait>
+          label="waitTime"
+          :shadow-text="t('day', 2)"
+          icon="fas fa-circle-pause"
+          :max-valid="365"
+        ></form-common-numeric-wait>
       </div>
     </div>
   </div>
@@ -218,7 +230,7 @@
       @click="onUndo"
     />
   </q-btn-group>
-  <q-btn-group v-else>
+  <q-btn-group v-else spread>
     <q-btn
       unelevated
       size="md"
@@ -252,7 +264,7 @@ import { useRouter } from 'vue-router';
 import FormCheckupFrames from './FormCheckupFrames.vue';
 import FormCheckupQueen from './FormCheckupQueen.vue';
 import FormCheckupRating from './FormCheckupRating.vue';
-import FormCheckupStrength from './FormCheckupStrength.vue';
+
 import FormCheckupTemperature from './FormCheckupTemperature.vue';
 import FormCheckupVarroa from './FormCheckupVarroa.vue';
 import FormCheckupWeight from './FormCheckupWeight.vue';
@@ -264,12 +276,13 @@ import FormCommonDone from './FormCommonDone.vue';
 import FormCommonDropdown from './FormCommonDropdownOption.vue';
 import FormCommonDropdownDisease from './FormCommonDropdownOption.vue';
 import FormCommonDropdownVet from './FormCommonDropdownOption.vue';
-import FormCommonHive from './FormCommonHive.vue';
+import FormCommonDropdownHive from './FormCommonDropdownHive.vue';
 import FormCommonNote from './FormCommonNote.vue';
 import FormCommonUrl from './FormCommonUrl.vue';
-import FormHarvestWater from './FormHarvestWater.vue';
-import FormTreatmentWait from './FormTreatmentWait.vue';
 import FormCommonEdit from './FormCommonEdit.vue';
+import FormCommonNumericWater from './FormCommonNumeric.vue';
+import FormCommonNumericStrength from './FormCommonNumeric.vue';
+import FormCommonNumericWait from './FormCommonNumeric.vue';
 
 const fields = useFieldsettingStore();
 const notification = useNotification();
@@ -503,16 +516,18 @@ function onReset() {
 async function onUndo() {
   isSubmitting.value = true;
   const data = JSON.stringify({ ids: lastInsert.value });
-  await api.patch(`/v1/${lastInsertTable.value}/batchDelete`, data).then(
-    (_response: any) => {
-      lastInsert.value = null;
-      lastInsertTable.value = null;
-      notification.open('positive', '');
-    },
-    (error) => {
-      notification.open('negative', error.response);
-    }
-  );
+  await api
+    .patch(`/v1/${lastInsertTable.value}/batchDelete?hard=true`, data)
+    .then(
+      (_response: any) => {
+        lastInsert.value = null;
+        lastInsertTable.value = null;
+        notification.open('positive', '');
+      },
+      (error) => {
+        notification.open('negative', error.response);
+      }
+    );
 
   isSubmitting.value = false;
 }

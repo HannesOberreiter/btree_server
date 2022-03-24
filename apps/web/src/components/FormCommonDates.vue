@@ -35,89 +35,40 @@
   </div>
   <div v-if="showInterval" class="row">
     <div class="col-6">
-      <q-input
+      <form-common-numeric-interval
         v-model.number="modelInterval"
-        type="number"
-        :error="v.interval.$error"
-        :error-message="validationErrors(v.interval)"
-        :no-error-icon="true"
-        :label="t('interval')"
-        :hint="t('intervalText')"
-        :shadow-text="t('day', 2)"
-        filled
-      >
-        <template #append>
-          <q-btn
-            round
-            flat
-            dense
-            icon="fas fa-plus"
-            style="cursor: pointer"
-            :disable="modelInterval >= 365"
-            @click="modelInterval++"
-          ></q-btn>
-          <q-btn
-            round
-            flat
-            dense
-            icon="fas fa-minus"
-            style="cursor: pointer"
-            :disable="modelInterval <= 0"
-            @click="modelInterval--"
-          ></q-btn>
-        </template>
-      </q-input>
+        label="interval"
+        :hint="$t('intervalText')"
+        :shadow-text="$t('day', 2)"
+        :max-valid="365"
+        icon=""
+        numeric-valid="integer"
+      ></form-common-numeric-interval>
     </div>
     <div class="col-6 q-pl-sm">
-      <q-input
+      <form-common-numeric-repeat
         v-model.number="modelRepeat"
-        type="number"
-        :error="v.repeat.$error"
-        :error-message="validationErrors(v.repeat)"
-        :no-error-icon="true"
-        :label="t('repeat')"
-        :hint="t('repeatText')"
+        label="repeat"
+        :hint="$t('repeatText')"
         shadow-text="x"
-        filled
-      >
-        <template #append>
-          <q-btn
-            round
-            flat
-            dense
-            icon="fas fa-plus"
-            style="cursor: pointer"
-            :disable="modelRepeat >= 50"
-            @click="modelRepeat++"
-          ></q-btn>
-          <q-btn
-            round
-            flat
-            dense
-            icon="fas fa-minus"
-            style="cursor: pointer"
-            :disable="modelRepeat <= 0"
-            @click="modelRepeat--"
-          ></q-btn>
-        </template>
-      </q-input>
+        icon=""
+        numeric-valid="integer"
+      ></form-common-numeric-repeat>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { minValue, maxValue, integer } from '~/helpers/i18n-validators';
 import { ref } from 'vue';
-import { useI18n } from 'vue-i18n';
-import { validationErrors } from '~/helpers';
 import dayjs from 'dayjs';
 import FormCommonEnd from './FormCommonDate.vue';
 import FormCommonStart from './FormCommonDate.vue';
 import useVuelidate from '@vuelidate/core';
 import { useVModels } from '@vueuse/core';
 import BtnMultipleValues from './BtnMultipleValues.vue';
+import FormCommonNumericInterval from './FormCommonNumeric.vue';
+import FormCommonNumericRepeat from './FormCommonNumeric.vue';
 
-const { t } = useI18n();
 const props = defineProps({
   startValue: {
     type: String,
@@ -151,26 +102,6 @@ const { startValue, endValue, modelInterval, modelRepeat, modelMultiple } =
   useVModels(props, emit);
 
 const showInterval = ref(false);
-
-const state = {
-  interval: modelInterval,
-  repeat: modelRepeat,
-};
-
-const rules = {
-  interval: {
-    minValue: minValue(0),
-    maxValue: maxValue(365),
-    integer: integer,
-  },
-  repeat: {
-    minValue: minValue(0),
-    maxValue: maxValue(50),
-    integer: integer,
-  },
-};
-
-const v = useVuelidate(rules, state, { $autoDirty: true });
 
 function updateStart(val: string) {
   if (dayjs(val) > dayjs(endValue.value)) endValue.value = val;

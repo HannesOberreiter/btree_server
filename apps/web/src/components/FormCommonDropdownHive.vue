@@ -43,7 +43,7 @@
 </template>
 
 <script setup lang="ts">
-import _ from 'lodash';
+import { filter, map, unionBy } from 'lodash';
 import { reactive, ref, watch } from 'vue';
 import { required } from '~/helpers/i18n-validators';
 import { useApiariesQuery, useHivesQuery } from '~/query';
@@ -70,15 +70,14 @@ const optionsHive = ref([] as any);
 const optionsApiary = ref([] as any);
 
 function selectApiary(val: any) {
-  const data = _.filter(
+  const data = filter(
     hives.value,
     (obj) => obj.hive_modus && !obj.hive_deleted
   );
-  _.map(val, (v) => {
-    const res = _.filter(data, (obj) => obj.apiary_name === v.name);
+  map(val, (v) => {
+    const res = filter(data, (obj) => obj.apiary_name === v.name);
     if (!state.hive) state.hive = [];
-    if (res.length > 0)
-      state.hive = _.unionBy(state.hive, res, 'hive_id') as [];
+    if (res.length > 0) state.hive = unionBy(state.hive, res, 'hive_id') as [];
   });
 }
 
@@ -87,7 +86,7 @@ function selectHive() {
 }
 
 function filterHive(val: any, update: any, _abort: any) {
-  const data = _.filter(
+  const data = filter(
     hives.value,
     (obj) => obj.hive_modus && !obj.hive_deleted
   );
@@ -95,7 +94,7 @@ function filterHive(val: any, update: any, _abort: any) {
     update(() => {
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       const needle = new RegExp(`(${val.toLowerCase()})`);
-      optionsHive.value = _.filter(data, (obj) =>
+      optionsHive.value = filter(data, (obj) =>
         needle.test(obj.label.toLowerCase())
       );
     });
@@ -109,16 +108,13 @@ function filterHive(val: any, update: any, _abort: any) {
 }
 
 function filterApiary(val: any, update: any, _abort: any) {
-  const data = _.filter(
-    apiaries.value.result,
-    (obj) => obj.hive_count !== null
-  );
+  const data = filter(apiaries.value.result, (obj) => obj.hive_count !== null);
 
   if (apiaries.value.result.length > 0 && val) {
     update(() => {
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       const needle = new RegExp(`(${val.toLowerCase()})`);
-      optionsApiary.value = _.filter(data, (obj) =>
+      optionsApiary.value = filter(data, (obj) =>
         needle.test(obj.label.toLowerCase())
       );
     });

@@ -2,7 +2,7 @@
   <div class="row">
     <div class="col-12 col-md-6">
       <q-input
-        v-model="modelValue"
+        v-model.number="modelValue"
         :error="v.weight.$error"
         :error-message="validationErrors(v.weight)"
         :no-error-icon="true"
