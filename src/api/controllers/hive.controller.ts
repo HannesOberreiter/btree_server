@@ -6,6 +6,7 @@ import { Hive } from '../models/hive.model';
 import { HiveLocation } from '../models/hive_location.model';
 import { Movedate } from '../models/movedate.model';
 import { Apiary } from '../models/apiary.model';
+import { conflict } from '@hapi/boom';
 
 export class HiveController extends Controller {
   constructor() {
@@ -13,8 +14,9 @@ export class HiveController extends Controller {
   }
 
   async post(req: IUserRequest, res: Response, next: NextFunction) {
-    const start = req.body.start;
-    const repeat = req.body.repeat > 1 ? req.body.repeat : 1;
+    const start = parseInt(req.body.start);
+    const repeat =
+      parseInt(req.body.repeat) > 1 ? parseInt(req.body.repeat) : 1;
 
     const insertMovement = {
       apiary_id: req.body.apiary,
@@ -22,7 +24,6 @@ export class HiveController extends Controller {
     };
 
     const insert = {
-      name: req.body.name,
       position: req.body.position,
       type_id: req.body.type,
       source_id: req.body.source,
@@ -40,9 +41,16 @@ export class HiveController extends Controller {
 
         const result = [];
         for (let i = 0; i < repeat; i++) {
-          if (repeat > 1) insert.name = insert.name + (start + i);
+          const name = repeat > 1 ? req.body.name + (start + i) : req.body.name;
+          const checkDuplicate = await await HiveLocation.query().where({
+            user_id: req.user.user_id,
+            hive_name: name
+          });
+          if (checkDuplicate.length > 0) throw conflict('name');
+
           const res = await Hive.query(trx).insert({
             ...insert,
+            name: name,
             bee_id: req.user.bee_id
           });
           await Movedate.query(trx).insert({
