@@ -30,6 +30,13 @@ export class CheckupRouter extends Router {
         Container.resolve('CheckupController').batchDelete
       );
     this.router
+      .route('/batchGet')
+      .post(
+        Validator.validate([body('ids').isArray()]),
+        Guard.authorize([ROLES.admin, ROLES.user]),
+        Container.resolve('CheckupController').batchGet
+      );
+    this.router
       .route('/')
       .post(
         Validator.validate([
@@ -39,6 +46,13 @@ export class CheckupRouter extends Router {
         ]),
         Guard.authorize([ROLES.admin, ROLES.user]),
         Container.resolve('CheckupController').post
+      );
+    this.router
+      .route('/')
+      .patch(
+        Validator.validate([body('ids').isArray()]),
+        Guard.authorize([ROLES.admin, ROLES.user]),
+        Container.resolve('CheckupController').patch
       );
   }
 }

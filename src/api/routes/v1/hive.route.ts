@@ -2,6 +2,8 @@ import { Router } from '@classes/router.class';
 import { Container } from '@config/container.config';
 import { Guard } from '@middlewares/guard.middleware';
 import { ROLES } from '@enums/role.enum';
+import { Validator } from '@/api/middlewares/validator.middleware';
+import { body } from 'express-validator';
 
 export class HiveRouter extends Router {
   constructor() {
@@ -14,6 +16,17 @@ export class HiveRouter extends Router {
       .get(
         Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
         Container.resolve('HiveController').get
+      );
+
+    this.router
+      .route('/')
+      .post(
+        Validator.validate([
+          body('start').isInt({ max: 10000, min: 0 }),
+          body('repeat').isInt({ max: 100, min: 0 })
+        ]),
+        Guard.authorize([ROLES.admin]),
+        Container.resolve('HiveController').post
       );
   }
 }

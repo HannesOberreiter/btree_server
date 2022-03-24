@@ -30,6 +30,13 @@ export class HarvestRouter extends Router {
         Container.resolve('HarvestController').batchDelete
       );
     this.router
+      .route('/batchGet')
+      .post(
+        Validator.validate([body('ids').isArray()]),
+        Guard.authorize([ROLES.admin, ROLES.user]),
+        Container.resolve('HarvestController').batchGet
+      );
+    this.router
       .route('/')
       .post(
         Validator.validate([
@@ -39,6 +46,13 @@ export class HarvestRouter extends Router {
         ]),
         Guard.authorize([ROLES.admin, ROLES.user]),
         Container.resolve('HarvestController').post
+      );
+    this.router
+      .route('/')
+      .patch(
+        Validator.validate([body('ids').isArray()]),
+        Guard.authorize([ROLES.admin, ROLES.user]),
+        Container.resolve('HarvestController').patch
       );
   }
 }

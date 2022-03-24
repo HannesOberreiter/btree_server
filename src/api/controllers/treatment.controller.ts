@@ -11,6 +11,59 @@ export class TreatmentController extends Controller {
     super();
   }
 
+  async patch(req: IUserRequest, res: Response, next: NextFunction) {
+    const ids = req.body.ids;
+    const ignore = req.body.ignore;
+    const insert = {};
+
+    if (!ignore.date) insert['date'] = req.body.date;
+    if (!ignore.date) insert['enddate'] = req.body.enddate;
+    if (!ignore.type) insert['type_id'] = req.body.type;
+    if (!ignore.amount) insert['amount'] = req.body.amount_calc;
+
+    if (!ignore.treatment_vet) insert['vet_id'] = req.body.treatment_vet;
+    if (!ignore.disease) insert['disease_id'] = req.body.disease;
+    if (!ignore.treatment_wait) insert['wait'] = req.body.treatment_wait;
+
+    if (!ignore.url) insert['url'] = req.body.url;
+    if (!ignore.note) insert['note'] = req.body.note;
+    if (!ignore.done) insert['done'] = req.body.done;
+
+    try {
+      const result = await Treatment.transaction(async (trx) => {
+        return await Treatment.query(trx)
+          .patch(insert)
+          .findByIds(ids)
+          .leftJoinRelated('treatment_apiary')
+          .where('treatment_apiary.user_id', req.user.user_id);
+      });
+      res.locals.data = result;
+      next();
+    } catch (e) {
+      next(checkMySQLError(e));
+    }
+  }
+
+  async batchGet(req: IUserRequest, res: Response, next: NextFunction) {
+    try {
+      const result = await Treatment.transaction(async (trx) => {
+        const res = await Treatment.query(trx)
+          .findByIds(req.body.ids)
+          .withGraphJoined('treatment_apiary')
+          .withGraphJoined('type')
+          .withGraphJoined('disease')
+          .withGraphJoined('vet')
+          .withGraphJoined('hive')
+          .where('treatment_apiary.user_id', req.user.user_id);
+        return res;
+      });
+      res.locals.data = result;
+      next();
+    } catch (e) {
+      next(checkMySQLError(e));
+    }
+  }
+
   async post(req: IUserRequest, res: Response, next: NextFunction) {
     const hive_ids = req.body.hive;
     const interval = req.body.interval;
@@ -112,6 +165,8 @@ export class TreatmentController extends Controller {
     }
   }
   async batchDelete(req: IUserRequest, res: Response, next: NextFunction) {
+    const hardDelete = req.query.hard ? true : false;
+
     try {
       const result = await Treatment.transaction(async (trx) => {
         const res = await Treatment.query(trx)
@@ -123,11 +178,11 @@ export class TreatmentController extends Controller {
         const softIds = [];
         const hardIds = [];
         map(res, (obj) => {
-          if (obj.deleted) hardIds.push(obj.id);
+          if (obj.deleted || hardDelete) hardIds.push(obj.id);
           else softIds.push(obj.id);
         });
 
-        if (hardIds.length > 0) await Treatment.query(trx).deleteById(hardIds);
+        if (hardIds.length > 0) await Treatment.delete().whereIn('id', hardIds);
         if (softIds.length > 0)
           await Treatment.query(trx)
             .patch({

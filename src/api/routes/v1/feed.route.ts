@@ -29,6 +29,13 @@ export class FeedRouter extends Router {
         Container.resolve('FeedController').batchDelete
       );
     this.router
+      .route('/batchGet')
+      .post(
+        Validator.validate([body('ids').isArray()]),
+        Guard.authorize([ROLES.admin, ROLES.user]),
+        Container.resolve('FeedController').batchGet
+      );
+    this.router
       .route('/')
       .post(
         Validator.validate([
@@ -38,6 +45,13 @@ export class FeedRouter extends Router {
         ]),
         Guard.authorize([ROLES.admin, ROLES.user]),
         Container.resolve('FeedController').post
+      );
+    this.router
+      .route('/')
+      .patch(
+        Validator.validate([body('ids').isArray()]),
+        Guard.authorize([ROLES.admin, ROLES.user]),
+        Container.resolve('FeedController').patch
       );
   }
 }

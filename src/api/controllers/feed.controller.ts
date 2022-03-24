@@ -11,6 +11,53 @@ export class FeedController extends Controller {
     super();
   }
 
+  async patch(req: IUserRequest, res: Response, next: NextFunction) {
+    const ids = req.body.ids;
+    const ignore = req.body.ignore;
+    const insert = {};
+
+    if (!ignore.date) insert['date'] = req.body.date;
+    if (!ignore.date) insert['enddate'] = req.body.enddate;
+    if (!ignore.type) insert['type_id'] = req.body.type;
+    if (!ignore.amount) insert['amount'] = req.body.amount_calc;
+
+    if (!ignore.url) insert['url'] = req.body.url;
+    if (!ignore.note) insert['note'] = req.body.note;
+    if (!ignore.done) insert['done'] = req.body.done;
+
+    try {
+      const result = await Feed.transaction(async (trx) => {
+        return await Feed.query(trx)
+          .patch(insert)
+          .findByIds(ids)
+          .leftJoinRelated('feed_apiary')
+          .where('feed_apiary.user_id', req.user.user_id);
+      });
+      res.locals.data = result;
+      next();
+    } catch (e) {
+      next(checkMySQLError(e));
+    }
+  }
+
+  async batchGet(req: IUserRequest, res: Response, next: NextFunction) {
+    try {
+      const result = await Feed.transaction(async (trx) => {
+        const res = await Feed.query(trx)
+          .findByIds(req.body.ids)
+          .withGraphJoined('feed_apiary')
+          .withGraphJoined('type')
+          .withGraphJoined('hive')
+          .where('feed_apiary.user_id', req.user.user_id);
+        return res;
+      });
+      res.locals.data = result;
+      next();
+    } catch (e) {
+      next(checkMySQLError(e));
+    }
+  }
+
   async post(req: IUserRequest, res: Response, next: NextFunction) {
     const hive_ids = req.body.hive;
     const interval = req.body.interval;
@@ -110,6 +157,8 @@ export class FeedController extends Controller {
   }
 
   async batchDelete(req: IUserRequest, res: Response, next: NextFunction) {
+    const hardDelete = req.query.hard ? true : false;
+
     try {
       const result = await Feed.transaction(async (trx) => {
         const res = await Feed.query(trx)
@@ -121,11 +170,12 @@ export class FeedController extends Controller {
         const softIds = [];
         const hardIds = [];
         map(res, (obj) => {
-          if (obj.deleted) hardIds.push(obj.id);
+          if (obj.deleted || hardDelete) hardIds.push(obj.id);
           else softIds.push(obj.id);
         });
 
-        if (hardIds.length > 0) await Feed.query(trx).deleteById(hardIds);
+        if (hardIds.length > 0)
+          await Feed.query(trx).delete().whereIn('id', hardIds);
         if (softIds.length > 0)
           await Feed.query(trx)
             .patch({

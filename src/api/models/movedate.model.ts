@@ -11,6 +11,7 @@ export class Movedate extends ExtModel {
   apiary_id!: number;
   hive_id!: number;
   edit_id!: number;
+  bee_id!: number;
 
   apiary?: Apiary;
   hive?: Hive;

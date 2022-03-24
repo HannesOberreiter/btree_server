@@ -12,6 +12,89 @@ export class CheckupController extends Controller {
     super();
   }
 
+  async patch(req: IUserRequest, res: Response, next: NextFunction) {
+    const ids = req.body.ids;
+    const ignore = req.body.ignore;
+    const insert = {};
+
+    if (!ignore.date) insert['date'] = req.body.date;
+    if (!ignore.date) insert['enddate'] = req.body.enddate;
+    if (!ignore.type) insert['type_id'] = req.body.type;
+
+    if (!ignore.url) insert['url'] = req.body.url;
+    if (!ignore.note) insert['note'] = req.body.note;
+    if (!ignore.done) insert['done'] = req.body.done;
+
+    if (!ignore.queen) {
+      insert['queen'] = includes(req.body.checkup_queen, 'queen');
+      insert['queencells'] = includes(req.body.checkup_queen, 'queencells');
+      insert['eggs'] = includes(req.body.checkup_queen, 'eggs');
+      insert['capped_brood'] = includes(req.body.checkup_queen, 'capped_brood');
+    }
+
+    if (!ignore.checkup_rating.brood)
+      insert['brood'] = req.body.checkup_rating.brood;
+    if (!ignore.checkup_rating.pollen)
+      insert['pollen'] = req.body.checkup_rating.pollen;
+    if (!ignore.checkup_rating.comb)
+      insert['comb'] = req.body.checkup_rating.comb;
+    if (!ignore.checkup_rating.temper)
+      insert['temper'] = req.body.checkup_rating.temper;
+    if (!ignore.checkup_rating.calm_comb)
+      insert['calm_comb'] = req.body.checkup_rating.calm_comb;
+    if (!ignore.checkup_rating.swarm)
+      insert['swarm'] = req.body.checkup_rating.swarm;
+
+    if (!ignore.checkup_frames.broodframes)
+      insert['broodframes'] = req.body.checkup_frames.broodframes;
+    if (!ignore.checkup_frames.honeyframes)
+      insert['honeyframes'] = req.body.checkup_frames.honeyframes;
+    if (!ignore.checkup_frames.foundation)
+      insert['foundation'] = req.body.checkup_frames.foundation;
+    if (!ignore.checkup_frames.emptyframes)
+      insert['emptyframes'] = req.body.checkup_frames.emptyframes;
+
+    if (!ignore.checkup_varroa) insert['varroa'] = req.body.checkup_varroa;
+    if (!ignore.checkup_strong) insert['strong'] = req.body.checkup_strong;
+    if (!ignore.checkup_temp) insert['temp'] = req.body.checkup_temp;
+    if (!ignore.checkup_weight_amount)
+      insert['weight'] = req.body.checkup_weight_amount;
+    if (!ignore.checkup_weight_time)
+      insert['time'] = req.body.checkup_weight_time;
+
+    try {
+      const result = await Checkup.transaction(async (trx) => {
+        return await Checkup.query(trx)
+          .patch(insert)
+          .findByIds(ids)
+          .leftJoinRelated('checkup_apiary')
+          .where('checkup_apiary.user_id', req.user.user_id);
+      });
+      res.locals.data = result;
+      next();
+    } catch (e) {
+      next(checkMySQLError(e));
+    }
+  }
+
+  async batchGet(req: IUserRequest, res: Response, next: NextFunction) {
+    try {
+      const result = await Checkup.transaction(async (trx) => {
+        const res = await Checkup.query(trx)
+          .findByIds(req.body.ids)
+          .withGraphJoined('checkup_apiary')
+          .withGraphJoined('type')
+          .withGraphJoined('hive')
+          .where('checkup_apiary.user_id', req.user.user_id);
+        return res;
+      });
+      res.locals.data = result;
+      next();
+    } catch (e) {
+      next(checkMySQLError(e));
+    }
+  }
+
   async post(req: IUserRequest, res: Response, next: NextFunction) {
     const hive_ids = req.body.hive;
     const interval = req.body.interval;
@@ -133,6 +216,8 @@ export class CheckupController extends Controller {
   }
 
   async batchDelete(req: IUserRequest, res: Response, next: NextFunction) {
+    const hardDelete = req.query.hard ? true : false;
+
     try {
       const result = await Checkup.transaction(async (trx) => {
         const res = await Checkup.query(trx)
@@ -144,11 +229,12 @@ export class CheckupController extends Controller {
         const softIds = [];
         const hardIds = [];
         map(res, (obj) => {
-          if (obj.deleted) hardIds.push(obj.id);
+          if (obj.deleted || hardDelete) hardIds.push(obj.id);
           else softIds.push(obj.id);
         });
 
-        if (hardIds.length > 0) await Checkup.query(trx).deleteById(hardIds);
+        if (hardIds.length > 0)
+          await Checkup.query(trx).delete().whereIn('id', hardIds);
         if (softIds.length > 0)
           await Checkup.query(trx)
             .patch({

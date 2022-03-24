@@ -30,6 +30,14 @@ export class TreatmentRouter extends Router {
         Container.resolve('TreatmentController').batchDelete
       );
     this.router
+      .route('/batchGet')
+      .post(
+        Validator.validate([body('ids').isArray()]),
+        Guard.authorize([ROLES.admin, ROLES.user]),
+        Container.resolve('TreatmentController').batchGet
+      );
+
+    this.router
       .route('/')
       .post(
         Validator.validate([
@@ -39,6 +47,14 @@ export class TreatmentRouter extends Router {
         ]),
         Guard.authorize([ROLES.admin, ROLES.user]),
         Container.resolve('TreatmentController').post
+      );
+
+    this.router
+      .route('/')
+      .patch(
+        Validator.validate([body('ids').isArray()]),
+        Guard.authorize([ROLES.admin, ROLES.user]),
+        Container.resolve('TreatmentController').patch
       );
   }
 }
