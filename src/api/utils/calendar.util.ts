@@ -207,7 +207,10 @@ const getTask = async ({ query, user }, task: string) => {
       res.textColor = 'black';
     }
 
-    if (!res.done) res.color = 'red';
+    if (!res.done) {
+      res.color = 'red';
+      res.textColor = 'white';
+    }
     res.table = task;
     if (res.editors) {
       res.editors = String(intersection(res.editors.split(',')));
