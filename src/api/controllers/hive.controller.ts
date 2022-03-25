@@ -43,7 +43,7 @@ export class HiveController extends Controller {
         const result = [];
         for (let i = 0; i < repeat; i++) {
           const name = repeat > 1 ? req.body.name + (start + i) : req.body.name;
-          const checkDuplicate = await await HiveLocation.query().where({
+          const checkDuplicate = await HiveLocation.query().where({
             user_id: req.user.user_id,
             hive_name: name
           });

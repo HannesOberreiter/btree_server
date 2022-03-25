@@ -19,7 +19,7 @@ export class CheckupController extends Controller {
 
     if (!ignore.date) insert['date'] = req.body.date;
     if (!ignore.date) insert['enddate'] = req.body.enddate;
-    if (!ignore.type) insert['type_id'] = req.body.type;
+    if (!ignore.type_id) insert['type_id'] = req.body.type;
 
     if (!ignore.url) insert['url'] = req.body.url;
     if (!ignore.note) insert['note'] = req.body.note;

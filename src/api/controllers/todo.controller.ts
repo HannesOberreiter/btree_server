@@ -14,7 +14,8 @@ export class TodoController extends Controller {
     const insert = {
       date: req.body.date,
       name: req.body.name,
-      note: req.body.note
+      note: req.body.note,
+      done: req.body.done
     };
     const repeat = req.body.repeat ? req.body.repeat : 0;
     const interval = req.body.interval ? req.body.interval : 0;
@@ -25,7 +26,6 @@ export class TodoController extends Controller {
 
         const res = await Todo.query(trx).insert({
           ...insert,
-          done: false,
           user_id: req.user.user_id,
           bee_id: req.user.bee_id
         });
@@ -37,7 +37,6 @@ export class TodoController extends Controller {
               .format('YYYY-MM-DD');
             const res = await Todo.query(trx).insert({
               ...insert,
-              done: false,
               user_id: req.user.user_id,
               bee_id: req.user.bee_id
             });
@@ -61,6 +60,7 @@ export class TodoController extends Controller {
     if (!ignore.date) insert['date'] = req.body.date;
     if (!ignore.name) insert['name'] = req.body.name;
     if (!ignore.note) insert['note'] = req.body.note;
+    if (!ignore.done) insert['done'] = req.body.done;
 
     try {
       const result = await Todo.transaction(async (trx) => {

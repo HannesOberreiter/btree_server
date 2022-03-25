@@ -18,11 +18,11 @@ export class TreatmentController extends Controller {
 
     if (!ignore.date) insert['date'] = req.body.date;
     if (!ignore.date) insert['enddate'] = req.body.enddate;
-    if (!ignore.type) insert['type_id'] = req.body.type;
+    if (!ignore.type_id) insert['type_id'] = req.body.type;
     if (!ignore.amount) insert['amount'] = req.body.amount_calc;
 
-    if (!ignore.treatment_vet) insert['vet_id'] = req.body.treatment_vet;
-    if (!ignore.disease) insert['disease_id'] = req.body.disease;
+    if (!ignore.vet_id) insert['vet_id'] = req.body.treatment_vet;
+    if (!ignore.disease_id) insert['disease_id'] = req.body.disease;
     if (!ignore.treatment_wait) insert['wait'] = req.body.treatment_wait;
 
     if (!ignore.url) insert['url'] = req.body.url;

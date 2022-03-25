@@ -18,7 +18,7 @@ export class HarvestController extends Controller {
 
     if (!ignore.date) insert['date'] = req.body.date;
     if (!ignore.date) insert['enddate'] = req.body.enddate;
-    if (!ignore.type) insert['type_id'] = req.body.type;
+    if (!ignore.type_id) insert['type_id'] = req.body.type;
     if (!ignore.amount) insert['amount'] = req.body.amount_calc;
 
     if (!ignore.harvest_frames) insert['frames'] = req.body.harvest_amount_calc;

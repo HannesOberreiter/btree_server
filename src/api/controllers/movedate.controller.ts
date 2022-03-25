@@ -3,10 +3,77 @@ import { Controller } from '@classes/controller.class';
 import { checkMySQLError } from '@utils/error.util';
 import { Movedate } from '@models/Movedate.model';
 import { IUserRequest } from '@interfaces/IUserRequest.interface';
+import { Apiary } from '../models/apiary.model';
+import { HiveLocation } from '../models/hive_location.model';
 
 export class MovedateController extends Controller {
   constructor() {
     super();
+  }
+
+  async patch(req: IUserRequest, res: Response, next: NextFunction) {
+    const ids = req.body.ids;
+    const ignore = req.body.ignore;
+    const insert = {};
+
+    if (!ignore.date) insert['date'] = req.body.date;
+    if (!ignore.apiary_id) insert['apiary_id'] = req.body.apiary;
+
+    try {
+      const result = await Movedate.transaction(async (trx) => {
+        return await Movedate.query(trx)
+          .patch(insert)
+          .findByIds(ids)
+          .leftJoinRelated('apiary')
+          .where('apiary.user_id', req.user.user_id);
+      });
+      res.locals.data = result;
+      next();
+    } catch (e) {
+      next(checkMySQLError(e));
+    }
+  }
+
+  async post(req: IUserRequest, res: Response, next: NextFunction) {
+    const hive_ids = req.body.hive;
+
+    const insert = {
+      apiary_id: req.body.apiary,
+      date: req.body.date
+    };
+
+    try {
+      const result = await Movedate.transaction(async (trx) => {
+        await Apiary.query(trx)
+          .findByIds(insert.apiary_id)
+          .throwIfNotFound()
+          .where('user_id', req.user.user_id);
+
+        const result = [];
+        for (let i = 0; i < hive_ids.length; i++) {
+          const id = hive_ids[i];
+
+          await HiveLocation.query()
+            .where({
+              user_id: req.user.user_id,
+              hive_id: id
+            })
+            .throwIfNotFound();
+
+          const res = await Movedate.query(trx).insert({
+            ...insert,
+            hive_id: id,
+            bee_id: req.user.bee_id
+          });
+          result.push(res.id);
+        }
+        return result;
+      });
+      res.locals.data = result;
+      next();
+    } catch (e) {
+      next(checkMySQLError(e));
+    }
   }
 
   async updateDate(req: IUserRequest, res: Response, next: NextFunction) {
@@ -34,10 +101,28 @@ export class MovedateController extends Controller {
     }
   }
 
+  async batchGet(req: IUserRequest, res: Response, next: NextFunction) {
+    try {
+      const result = await Movedate.transaction(async (trx) => {
+        const res = await Movedate.query(trx)
+          .findByIds(req.body.ids)
+          .withGraphJoined('hive')
+          .withGraphJoined('apiary')
+          .where('apiary.user_id', req.user.user_id);
+        return res;
+      });
+      res.locals.data = result;
+      next();
+    } catch (e) {
+      next(checkMySQLError(e));
+    }
+  }
+
   async batchDelete(req: IUserRequest, res: Response, next: NextFunction) {
     try {
       const result = await Movedate.transaction(async (trx) => {
         return await Movedate.query(trx)
+          .delete()
           .withGraphJoined('apiary')
           .withGraphJoined('movedate_count')
           .whereIn('movedates.id', req.body.ids)

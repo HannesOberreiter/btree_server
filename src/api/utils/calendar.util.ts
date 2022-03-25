@@ -124,7 +124,7 @@ const getTodos = async ({ query, user }) => {
       res.editors = '';
     }
     if (res.creator) {
-      res.editors = res.creator.email;
+      res.creators = res.creator.email;
     } else {
       res.creators = '';
     }
