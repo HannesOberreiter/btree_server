@@ -153,6 +153,7 @@ table hive_group is not anymore, need to get amount and save into grouphive fiel
 ## queens
 
 - table renamed to queens
+- renamed column beebreed_nr to name
 - created renamed to created_at
 - edited renamed to updated_at
 - deleted_date renamed to deleted_at
