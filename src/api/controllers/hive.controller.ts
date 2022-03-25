@@ -7,6 +7,7 @@ import { HiveLocation } from '../models/hive_location.model';
 import { Movedate } from '../models/movedate.model';
 import { Apiary } from '../models/apiary.model';
 import { conflict } from '@hapi/boom';
+import { map } from 'lodash';
 
 export class HiveController extends Controller {
   constructor() {
@@ -61,6 +62,44 @@ export class HiveController extends Controller {
           result.push(res.id);
         }
         return result;
+      });
+      res.locals.data = result;
+      next();
+    } catch (e) {
+      next(checkMySQLError(e));
+    }
+  }
+
+  async batchDelete(req: IUserRequest, res: Response, next: NextFunction) {
+    const hardDelete = req.query.hard ? true : false;
+
+    try {
+      const result = await Hive.transaction(async (trx) => {
+        const res = await HiveLocation.query()
+          .select('hive_id', 'hive_deleted')
+          .where('user_id', req.user.user_id)
+          .whereIn('hive_id', req.body.ids);
+
+        const softIds = [];
+        const hardIds = [];
+        map(res, (obj) => {
+          if (obj.hive_deleted || hardDelete) hardIds.push(obj.hive_id);
+          else softIds.push(obj.hive_id);
+        });
+
+        if (hardIds.length > 0) {
+          await Hive.query(trx).delete().whereIn('id', hardIds);
+          await Movedate.query(trx).delete().whereIn('hive_id', hardIds);
+        }
+        if (softIds.length > 0)
+          await Hive.query(trx)
+            .patch({
+              deleted: true,
+              edit_id: req.user.bee_id
+            })
+            .findByIds(softIds);
+
+        return res;
       });
       res.locals.data = result;
       next();

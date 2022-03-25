@@ -19,6 +19,13 @@ export class HiveRouter extends Router {
       );
 
     this.router
+      .route('/batchDelete')
+      .patch(
+        Guard.authorize([ROLES.admin]),
+        Container.resolve('HiveController').batchDelete
+      );
+
+    this.router
       .route('/')
       .post(
         Validator.validate([

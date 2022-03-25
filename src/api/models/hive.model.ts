@@ -14,6 +14,7 @@ export class Hive extends ExtModel {
   deleted!: boolean;
 
   bee_id!: number;
+  edit_id!: number;
 
   static tableName = 'hives';
   static idColumn = 'id';
