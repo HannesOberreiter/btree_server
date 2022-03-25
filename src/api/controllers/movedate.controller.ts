@@ -38,9 +38,9 @@ export class MovedateController extends Controller {
     try {
       const result = await Movedate.transaction(async (trx) => {
         return await Movedate.query(trx)
-          .deleteById(req.body.ids)
           .withGraphJoined('apiary')
           .withGraphJoined('movedate_count')
+          .whereIn('movedates.id', req.body.ids)
           .where('user_id', req.user.user_id)
           .where('count', '>', 1);
       });
