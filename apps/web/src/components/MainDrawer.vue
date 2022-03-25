@@ -104,6 +104,12 @@ const links = ref([
         menu: false,
       },
       {
+        label: t('queen'),
+        route: 'new-queen',
+        icon: 'fas fa-venus',
+        menu: false,
+      },
+      {
         label: t('apiary'),
         route: 'map-apiary',
         icon: 'fas fa-map-marker-alt',
@@ -111,7 +117,7 @@ const links = ref([
       },
       {
         label: t('movement'),
-        route: 'table-apiary',
+        route: 'new-movement',
         icon: 'fas fa-truck',
         menu: false,
       },

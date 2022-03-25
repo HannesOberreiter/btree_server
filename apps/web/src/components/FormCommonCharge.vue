@@ -10,12 +10,13 @@
     type="text"
     filled
   >
-    <template v-if="modelMultiple" #before>
+    <template #before>
+      <q-icon v-if="!modelMultiple">L</q-icon>
       <btn-multiple-values
+        v-else
         @click="modelMultiple = !modelMultiple"
       ></btn-multiple-values>
     </template>
-    <template #prepend> L </template>
   </q-input>
 </template>
 

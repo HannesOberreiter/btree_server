@@ -25,11 +25,10 @@ const routes: RouteRecordRaw[] = [
         props: true,
         component: () => import('pages/UserQuicktool.vue'),
       },
-
       {
         path: '/new/hive',
         name: 'new-hive',
-        component: () => import('pages/UserNewHive.vue'),
+        component: () => import('pages/UserHive.vue'),
       },
       {
         path: '/new/todo',
@@ -41,6 +40,28 @@ const routes: RouteRecordRaw[] = [
         name: 'edit-todo',
         props: true,
         component: () => import('pages/UserTodo.vue'),
+      },
+      {
+        path: '/new/movement',
+        name: 'new-movement',
+        component: () => import('pages/UserMovement.vue'),
+      },
+      {
+        path: '/edit/movement',
+        name: 'edit-movement',
+        props: true,
+        component: () => import('pages/UserMovement.vue'),
+      },
+
+      {
+        path: '/new/queen',
+        name: 'new-queen',
+        component: () => import('pages/UserQueen.vue'),
+      },
+      {
+        path: '/edit/queen',
+        name: 'edit-queen',
+        component: () => import('pages/UserQueen.vue'),
       },
 
       {

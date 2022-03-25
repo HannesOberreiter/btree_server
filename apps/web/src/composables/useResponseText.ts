@@ -64,6 +64,7 @@ const useNotification = () => {
     if (statusCode === 401) displayMessage = t('error.access');
     else if (statusCode === 402) displayMessage = t('error.premium');
     else if (statusCode === 403) displayMessage = t('error.forbidden');
+    else if (statusCode === 404) displayMessage = t('error.notFound');
     else if (statusCode === 409)
       displayMessage = `${t('error.duplicate')} (${t(errorField)})`;
     else if (statusCode === 423) displayMessage = t('error.locked');

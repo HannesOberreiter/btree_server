@@ -161,7 +161,11 @@ function editTask() {
   } else {
     const task = props.eventInfo.table.slice(0, -1) as string;
     const ids = props.eventInfo.task_ids.toString().split(',');
-    router.push({ name: 'edit-quicktool', params: { task: task, ids: ids } });
+    if (isMovement.value) {
+      router.push({ name: 'edit-movement', params: { ids: ids } });
+    } else {
+      router.push({ name: 'edit-quicktool', params: { task: task, ids: ids } });
+    }
   }
 }
 </script>

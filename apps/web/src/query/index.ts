@@ -16,6 +16,23 @@ export function useOptionsQuery(table: Option) {
   });
 }
 
+export function useQueensQuery(
+  offset = 0 as MaybeRef<number>,
+  limit = 20 as MaybeRef<number>,
+  order = 'id' as MaybeRef<string>
+) {
+  return useQuery(
+    ['queens', offset, limit, order],
+    () => api.get(`/v1/queens?limit=${limit}&offset=${offset}&order=${order}`),
+    {
+      select: (response) => response.data,
+      onError: (error: any) => {
+        useNotification().open('negative', error.response);
+      },
+    }
+  );
+}
+
 export function useApiariesQuery() {
   return useQuery(['apiaries'], () => api.get('/v1/apiary'), {
     placeholderData: { result: [], center: [47.4751336, 13.5968839, 2] } as any,

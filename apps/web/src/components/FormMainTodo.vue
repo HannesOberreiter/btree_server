@@ -45,6 +45,7 @@
     </div>
     <form-common-name v-model="state.name"></form-common-name>
     <form-common-note v-model="state.note"></form-common-note>
+    <form-common-done v-model="state.done"></form-common-done>
   </q-form>
   <q-btn-group v-if="!ids" spread>
     <q-btn
@@ -103,6 +104,7 @@ import FormCommonNote from './FormCommonNote.vue';
 import FormCommonEdit from './FormCommonEdit.vue';
 import FormCommonNumericRepeat from './FormCommonNumeric.vue';
 import FormCommonNumericInterval from './FormCommonNumeric.vue';
+import FormCommonDone from './FormCommonDone.vue';
 import useVuelidate from '@vuelidate/core';
 import { flatten, map, merge, uniq } from 'lodash';
 import { useRouter } from 'vue-router';
@@ -139,6 +141,7 @@ const multipleValues = ref({
   date: false,
   name: false,
   note: false,
+  done: false,
 });
 let multipleValuesCopy = {};
 
@@ -146,6 +149,7 @@ const stateDefault = {
   date: props.date,
   name: '',
   note: '',
+  done: false,
   interval: 0,
   repeat: 0,
 };
@@ -210,6 +214,7 @@ async function getEdit() {
       setValues(response.data, 'name');
       setValues(response.data, 'date');
       setValues(response.data, 'note');
+      setValues(response.data, 'done');
 
       notification.open('info', t('dataLoaded'));
 

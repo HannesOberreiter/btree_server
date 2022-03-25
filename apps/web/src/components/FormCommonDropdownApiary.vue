@@ -9,6 +9,7 @@
     :loading="isLoading"
     :disable="isLoading || modelMultiple"
     :options="options"
+    option-value="id"
     filled
   >
     <template v-if="modelMultiple" #before>

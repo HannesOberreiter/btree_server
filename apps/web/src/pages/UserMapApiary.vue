@@ -162,7 +162,7 @@
       </div>
     </div>
   </div>
-  <dialog-hint v-model="showInfo" :hint="t('map.hint')"></dialog-hint>
+  <dialog-hint v-model="showInfo" hint="map.hint"></dialog-hint>
 </template>
 
 <script setup lang="ts">

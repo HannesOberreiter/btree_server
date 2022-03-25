@@ -16,7 +16,7 @@
           </template>
         </full-calendar>
       </div>
-      <dialog-hint v-model="showInfo" :hint="t('calendar.hint')"></dialog-hint>
+      <dialog-hint v-model="showInfo" hint="calendar.hint"></dialog-hint>
       <calendar-setting v-model="showSetting"></calendar-setting>
     </div>
   </div>

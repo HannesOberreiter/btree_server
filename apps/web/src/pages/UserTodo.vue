@@ -19,11 +19,9 @@ import { useRouter } from 'vue-router';
 import FormMainTodo from '~/components/FormMainTodo.vue';
 
 const router = useRouter();
-const props = defineProps({
+defineProps({
   ids: {
     default: null,
   },
 });
-
-console.log(props.ids);
 </script>

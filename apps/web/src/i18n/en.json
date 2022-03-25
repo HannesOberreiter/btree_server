@@ -152,7 +152,8 @@
     "duplicate": "Conflict, duplicate entry!",
     "locked": "Account locked! (too many login attempts?)",
     "validation": "Validation error!",
-    "more": "One of errors"
+    "more": "One of errors",
+    "notFound": "Route or server not found! (Offline?)"
   },
 
   "rating": {
