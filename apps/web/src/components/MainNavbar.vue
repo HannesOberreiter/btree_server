@@ -39,6 +39,7 @@
           @click="onSpeak"
         />
         <q-btn
+          v-if="!$q.platform.is.mobile"
           flat
           dense
           color="white"
@@ -54,6 +55,18 @@
           :icon="$q.dark.isActive ? 'fas fa-moon' : 'fas fa-sun'"
           @click="$q.dark.toggle()"
         />
+        <q-btn
+          v-close-popup
+          :disable="!storeRouter.isPrevious"
+          flat
+          dense
+          color="white"
+          size="md"
+          icon="fas fa-backward-step"
+          @click="router.replace({name: storeRouter.$state.previous as any,  params: storeRouter.$state.params as any})"
+        >
+          <q-tooltip>{{ $t('previousPage') }}</q-tooltip>
+        </q-btn>
       </div>
     </div>
   </div>
@@ -63,8 +76,12 @@
 import { ref } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useAuthUserStore } from '~/stores/auth';
+import { useRouter } from 'vue-router';
+import { useRouterStore } from '~/stores/router';
 
+const router = useRouter();
 const storeUser = useAuthUserStore();
+const storeRouter = useRouterStore();
 const { company } = storeToRefs(storeUser);
 const search = ref('');
 

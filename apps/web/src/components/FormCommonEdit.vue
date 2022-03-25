@@ -4,7 +4,7 @@
     :error="v.edit.$error"
     :error-message="validationErrors(v.edit)"
     :no-error-icon="true"
-    :label="`${t('edit')} ID / (${t('hive')})`"
+    :label="`${t('edit')} ID / (${t(offLabel)})`"
     :options="options"
     counter
     multiple
@@ -32,6 +32,10 @@ const props = defineProps({
   options: {
     type: Array,
     required: true,
+  },
+  offLabel: {
+    type: String,
+    default: 'hive',
   },
 });
 

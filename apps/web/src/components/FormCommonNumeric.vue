@@ -8,6 +8,8 @@
     :disable="modelMultiple"
     :name="label"
     type="number"
+    :min="0"
+    :max="maxValid"
     filled
   >
     <template v-if="icon !== ''" #before>

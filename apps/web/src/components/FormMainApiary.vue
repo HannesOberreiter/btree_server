@@ -57,7 +57,7 @@
       </div>
     </q-form>
     <q-btn
-      v-if="editId === 0"
+      v-if="id === 0"
       unelevated
       size="md"
       color="secondary"
@@ -102,8 +102,7 @@
 
 <script setup lang="ts">
 import { api } from '~/boot/axios';
-import { Apiary } from '~/types';
-import { computed, PropType, ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { required, maxLength, between } from '~/helpers/i18n-validators';
 import { useApiaryQuery } from '~/query';
 import { useI18n } from 'vue-i18n';
@@ -118,23 +117,13 @@ const { t } = useI18n();
 const notification = useNotification();
 
 const props = defineProps({
-  editId: {
+  id: {
     type: Number,
     default: 0,
   },
-  formData: {
-    type: Object as PropType<Apiary>,
-    default: () => {
-      return {
-        name: '',
-        description: '',
-        latitude: 0,
-        longitude: 0,
-        note: '',
-        url: '',
-        modus: true,
-      };
-    },
+  latlng: {
+    type: Object,
+    default: null,
   },
 });
 const emit = defineEmits(['onSuccess']);
@@ -144,29 +133,31 @@ const {
   data: apiary,
   isError,
   refetch,
-} = useApiaryQuery(props.editId, {
-  enabled: computed(() => props.editId !== 0),
+} = useApiaryQuery(props.id, {
+  enabled: computed(() => props.id !== 0),
 });
+
+console.log(props.latlng);
 
 const state = ref({
-  ...props.formData,
+  name: apiary.value ? apiary.value.name : '',
+  description: apiary.value ? apiary.value.description : '',
+  latitude: apiary.value
+    ? apiary.value.latitude
+    : props.latlng
+    ? props.latlng.lat
+    : 0,
+  longitude: apiary.value
+    ? apiary.value.longitude
+    : props.latlng
+    ? props.latlng.lng
+    : 0,
+  note: apiary.value ? apiary.value.note : '',
+  url: apiary.value ? apiary.value.url : '',
+  modus: apiary.value ? apiary.value.modus : true,
 });
 
-watch(props, (cur) => {
-  state.value = cur.formData;
-});
-
-if (apiary.value) {
-  state.value = {
-    name: apiary.value.name,
-    description: apiary.value.description,
-    latitude: apiary.value.latitude,
-    longitude: apiary.value.longitude,
-    note: apiary.value.note,
-    url: apiary.value.url,
-    modus: apiary.value.modus,
-  };
-} else {
+if (!apiary.value) {
   watch(apiary, () => {
     state.value = {
       name: apiary.value.name,
@@ -198,7 +189,7 @@ async function onEdit() {
     return;
   }
   let data = { ...state.value } as any;
-  data.id = props.editId;
+  data.id = props.id;
   await api.patch('/v1/apiary', JSON.stringify(data)).then(
     async (response: any) => {
       notification.open('positive', '');
@@ -215,7 +206,7 @@ async function onEdit() {
 async function onModus() {
   isSubmitting.value = true;
   const data = {
-    id: props.editId,
+    id: props.id,
     modus: !state.value.modus,
   };
   await api.patch('/v1/apiary', data).then(
@@ -232,7 +223,7 @@ async function onModus() {
 }
 
 function onDelete() {
-  api.delete(`/v1/apiary/${props.editId}`).then(
+  api.delete(`/v1/apiary/${props.id}`).then(
     (response: any) => {
       notification.open('positive', '');
       emit('onSuccess', response.data);
@@ -260,5 +251,6 @@ async function onSubmit() {
       notification.open('negative', error.response);
     }
   );
+  isSubmitting.value = false;
 }
 </script>

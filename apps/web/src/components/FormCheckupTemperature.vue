@@ -29,11 +29,9 @@
     </template>
     <template v-if="!edit" #after>
       <q-spinner-hourglass v-if="isLoading" flat round></q-spinner-hourglass>
-      <q-btn
+      <q-icon
         v-else
-        flat
-        round
-        icon="fas fa-broadcast-tower"
+        name="fas fa-broadcast-tower"
         style="cursor: pointer"
         :disable="hive.length === 0 || storeUser.getPaidStatus.status === false"
         :color="
@@ -42,7 +40,7 @@
             : 'orange'
         "
         @click="getTemperature(true)"
-      ></q-btn>
+      ></q-icon>
     </template>
     <template #append>
       <q-btn

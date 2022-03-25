@@ -23,7 +23,6 @@
               v-model.number="state.start"
               label="start"
               :hint="$t('startNumberNote')"
-              :shadow-text="$t('day', 2)"
               :max-valid="10000"
               icon=""
               numeric-valid="integer"
@@ -44,7 +43,7 @@
       </div>
     </div>
 
-    <div class="row q-pt-sm q-pb-md">
+    <div class="row q-pt-md q-pb-md">
       <div class="col-12 col-md-6">
         <form-common-dropdown-apiary
           v-model="state.apiary"
@@ -133,6 +132,7 @@
       unelevated
       size="md"
       color="info"
+      :loading="isSubmitting"
       :label="$t('undo')"
       @click="onUndo"
     />
@@ -294,7 +294,7 @@ async function onUpdate() {
 async function onUndo() {
   isSubmitting.value = true;
   const data = JSON.stringify({ ids: lastInsert.value });
-  await api.patch('/v1/hive/batchDelete', data).then(
+  await api.patch('/v1/hive/batchDelete?hard=true', data).then(
     (_response: any) => {
       lastInsert.value = null;
       notification.open('positive', '');

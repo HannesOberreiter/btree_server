@@ -77,11 +77,7 @@ const formDialog = () =>
       componentProps: {
         title: 'newTodo',
         form: 'todo',
-        todo: {
-          date: dateClicked.value,
-          name: '',
-          note: '',
-        },
+        date: dateClicked.value,
       },
     })
     .onOk(() => {
@@ -214,6 +210,14 @@ const calendarOptions = reactive({
 } as CalendarOptions);
 
 onMounted(() => {
+  onKeyStroke('ArrowLeft', (e) => {
+    e.preventDefault();
+    if (cal.value.getApi()) cal.value.getApi().prev();
+  });
+  onKeyStroke('ArrowRight', (e) => {
+    e.preventDefault();
+    if (cal.value.getApi()) cal.value.getApi().next();
+  });
   watch(storeCalendar, (currentValue) => {
     const calendarApi = cal.value.getApi();
     const addSources = _.difference(
@@ -240,20 +244,12 @@ onMounted(() => {
 });
 
 const refetchSource = (event: string) => {
+  if (!cal.value) return;
   const calendarApi = cal.value.getApi();
   const source = calendarApi.getEventSourceById(event);
   client.clear();
   source.refetch();
 };
-
-onKeyStroke('ArrowLeft', (e) => {
-  e.preventDefault();
-  cal.value.getApi().prev();
-});
-onKeyStroke('ArrowRight', (e) => {
-  e.preventDefault();
-  cal.value.getApi().next();
-});
 
 function onResize(_size: any) {
   cal.value.getApi().updateSize();

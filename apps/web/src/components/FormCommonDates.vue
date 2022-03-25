@@ -63,7 +63,6 @@ import { ref } from 'vue';
 import dayjs from 'dayjs';
 import FormCommonEnd from './FormCommonDate.vue';
 import FormCommonStart from './FormCommonDate.vue';
-import useVuelidate from '@vuelidate/core';
 import { useVModels } from '@vueuse/core';
 import BtnMultipleValues from './BtnMultipleValues.vue';
 import FormCommonNumericInterval from './FormCommonNumeric.vue';

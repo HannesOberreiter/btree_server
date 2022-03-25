@@ -8,6 +8,8 @@
     name="varroa"
     :disable="modelMultiple"
     type="number"
+    min="0"
+    max="100"
     filled
   >
     <template #before>
@@ -18,13 +20,11 @@
       ></btn-multiple-values>
     </template>
     <template #after>
-      <q-btn
-        flat
-        round
-        icon="fas fa-calculator"
+      <q-icon
+        name="fas fa-calculator"
         style="cursor: pointer"
         @click="openCalculator"
-      ></q-btn>
+      ></q-icon>
     </template>
     <template #append>
       <q-btn

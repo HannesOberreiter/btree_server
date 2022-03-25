@@ -242,14 +242,7 @@ function createApiaryForm(e: any) {
       componentProps: {
         title: 'newApiary',
         form: 'apiary',
-        apiary: {
-          name: '',
-          description: '',
-          latitude: e.latlng.lat,
-          longitude: e.latlng.lng,
-          url: '',
-          note: '',
-        },
+        latlng: e.latlng,
       },
     }).onOk((e) => {
       refetch.value().then(
@@ -266,7 +259,7 @@ function editApiaryForm(e: any) {
       componentProps: {
         title: 'apiaryEdit',
         form: 'apiary',
-        editId: e,
+        id: e,
       },
     }).onOk((e) => {
       refetch.value().then(

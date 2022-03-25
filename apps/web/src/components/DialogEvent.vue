@@ -83,7 +83,7 @@
 </template>
 
 <script setup lang="ts">
-import { api } from '../boot/axios';
+import { api } from '~/boot/axios';
 import { computed } from 'vue';
 import { truncate } from 'lodash';
 import { useDialogPluginComponent } from 'quasar';
@@ -152,8 +152,16 @@ async function deleteEvent() {
 }
 
 function editTask() {
-  const task = props.eventInfo.table.slice(0, -1) as string;
-  const ids = props.eventInfo.task_ids.toString().split(',');
-  router.push({ name: 'quicktool-edit', params: { task: task, ids: ids } });
+  console.log(props.eventInfo.publicId);
+  if (isTodo.value) {
+    router.push({
+      name: 'edit-todo',
+      params: { ids: props.eventInfo.publicId.split(',') },
+    });
+  } else {
+    const task = props.eventInfo.table.slice(0, -1) as string;
+    const ids = props.eventInfo.task_ids.toString().split(',');
+    router.push({ name: 'edit-quicktool', params: { task: task, ids: ids } });
+  }
 }
 </script>

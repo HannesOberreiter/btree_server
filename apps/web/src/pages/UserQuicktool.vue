@@ -23,7 +23,7 @@
         </q-select>
         <form-main-task
           v-if="taskSelect"
-          :key="router.currentRoute.value"
+          :key="router.currentRoute.value + ''"
           :task="(taskForm as any)"
           :ids="ids ? ids : undefined"
         ></form-main-task>
@@ -81,7 +81,7 @@ watch(taskSelect, (cur) => {
   // Helper for sidebar link to use latest quicktool setting and update url
   storeQuicktool.$state.link = cur?.value as Task;
   router.replace({
-    name: 'quicktool',
+    name: 'new-quicktool',
     params: { task: cur?.value },
   });
 });

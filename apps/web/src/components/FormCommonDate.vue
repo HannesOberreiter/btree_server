@@ -12,7 +12,7 @@
     no-error-icon
     @click="qDateProxy = !qDateProxy"
   >
-    <template #append>
+    <template #before>
       <q-icon name="fas fa-calendar" class="cursor-pointer">
         <q-popup-proxy
           v-model="qDateProxy"

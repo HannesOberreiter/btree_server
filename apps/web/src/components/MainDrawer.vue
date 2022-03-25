@@ -35,7 +35,8 @@
           :to="{
             name: link.route,
             params: {
-              task: link.route === 'quicktool' ? storeQuicktool.getLink : '',
+              task:
+                link.route === 'new-quicktool' ? storeQuicktool.getLink : '',
               ids: null,
             },
           }"
@@ -87,7 +88,7 @@ const links = ref([
   },
   {
     label: t('quicktool.name'),
-    route: 'quicktool',
+    route: 'new-quicktool',
     icon: 'fas fa-magic',
     menu: [] as any,
   },
@@ -116,7 +117,7 @@ const links = ref([
       },
       {
         label: t('todo'),
-        route: 'table-apiary',
+        route: 'new-todo',
         icon: 'fas fa-clipboard-check',
         menu: false,
       },

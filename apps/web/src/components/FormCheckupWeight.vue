@@ -52,15 +52,16 @@
         :error-message="validationErrors(v.time)"
         :no-error-icon="true"
         readonly
+        @click="qDateProxy = !qDateProxy"
       >
-        <template v-if="modelMultipleTime" #before>
-          <btn-multiple-values
-            @click="modelMultipleTime = !modelMultipleTime"
-          ></btn-multiple-values>
-        </template>
-        <template #append>
-          <q-icon name="fas fa-clock" class="cursor-pointer">
+        <template #before>
+          <q-icon
+            v-if="!modelMultipleTime"
+            name="fas fa-clock"
+            class="cursor-pointer"
+          >
             <q-popup-proxy
+              v-model="qDateProxy"
               cover
               transition-show="scale"
               transition-hide="scale"
@@ -77,6 +78,10 @@
               </q-time>
             </q-popup-proxy>
           </q-icon>
+          <btn-multiple-values
+            v-else
+            @click="modelMultipleTime = !modelMultipleTime"
+          ></btn-multiple-values>
         </template>
       </q-input>
     </div>
@@ -90,12 +95,14 @@ import { useVModels } from '@vueuse/core';
 import { validationErrors } from '~/helpers';
 import dayjs from 'dayjs';
 import useVuelidate from '@vuelidate/core';
-
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import BtnMultipleValues from './BtnMultipleValues.vue';
+import { ref } from 'vue';
 dayjs.extend(customParseFormat); // Needed to validate if date is even possible
 
 const { t } = useI18n();
+const qDateProxy = ref(false);
+
 const props = defineProps({
   modelValue: {
     default: 0,

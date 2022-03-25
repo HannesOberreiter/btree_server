@@ -7,12 +7,12 @@ import { Ref } from 'vue';
 import { useNotification } from '~/composables/useResponseText';
 import { useQuery } from 'vue-query';
 
-const notification = useNotification();
-
 export function useOptionsQuery(table: Option) {
   return useQuery(['option', table], () => api.get(`/v1/option/${table}`), {
     select: (response) => response.data,
-    onError: (error: any) => notification.open('negative', error.response),
+    onError: (error: any) => {
+      useNotification().open('negative', error.response);
+    },
   });
 }
 
@@ -38,7 +38,7 @@ export function useApiariesQuery() {
         center: center,
       } as any;
     },
-    onError: (error: any) => notification.open('negative', error.response),
+    onError: (error: any) => useNotification().open('negative', error.response),
   });
 }
 
@@ -52,7 +52,8 @@ export function useTemperatureQuery(
     {
       enabled,
       select: (response) => response.data,
-      onError: (error: any) => notification.open('negative', error.response),
+      onError: (error: any) =>
+        useNotification().open('negative', error.response),
     }
   );
 }
@@ -64,7 +65,7 @@ export function useApiaryQuery(
   return useQuery(['apiaries', id], () => api.get(`/v1/apiary/${id}`), {
     enabled,
     select: (response) => response.data,
-    onError: (error: any) => notification.open('negative', error.response),
+    onError: (error: any) => useNotification().open('negative', error.response),
   });
 }
 
@@ -78,7 +79,7 @@ export function useHivesQuery() {
       });
       return result ? result : ([] as any);
     },
-    onError: (error: any) => notification.open('negative', error.response),
+    onError: (error: any) => useNotification().open('negative', error.response),
   });
 }
 

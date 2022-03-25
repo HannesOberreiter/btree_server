@@ -2,6 +2,7 @@ import { Loading } from 'quasar';
 import { route } from 'quasar/wrappers';
 import { useAuthUserStore } from '~/stores/auth';
 import { useRefreshStore } from '~/stores/refresh';
+import { useRouterStore } from '~/stores/router';
 import routes from './routes';
 import {
   createMemoryHistory,
@@ -36,10 +37,11 @@ const Router = createRouter({
 });
 
 export default route(function ({ store }) {
+  const routerStore = useRouterStore(store);
   const storeUser = useAuthUserStore(store);
   const refreshStore = useRefreshStore(store);
 
-  Router.beforeEach(async (to, _from, next) => {
+  Router.beforeEach(async (to, from, next) => {
     if (
       to.matched.some((record) => record.meta.auth && !storeUser.isLoggedIn)
     ) {
@@ -55,7 +57,8 @@ export default route(function ({ store }) {
         await refreshStore.refresh();
         Loading.hide();
       }
-
+      routerStore.previous = from.name as any;
+      routerStore.params = from.params as any;
       next();
     }
   });

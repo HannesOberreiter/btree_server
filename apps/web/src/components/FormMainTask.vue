@@ -305,8 +305,8 @@ const props = defineProps({
 });
 
 if (props.ids) getEdit();
-if (props.ids === null && router.currentRoute.value.name === 'quicktool-edit')
-  router.replace({ name: 'quicktool' });
+if (props.ids === null && router.currentRoute.value.name === 'edit-quicktool')
+  router.replace({ name: 'new-quicktool' });
 
 const editOptions = ref([]) as any;
 const editOptionsCopy = ref([]) as any;
@@ -485,8 +485,6 @@ async function getEdit() {
         setValues(response.data, 'harvest_charge', 'charge');
       }
 
-      console.log(state.value);
-
       if (props.task !== 'checkup')
         setValues(response.data, 'amount', 'amount');
 
@@ -561,8 +559,6 @@ async function onUpdate() {
       notification.open('negative', error.response);
     }
   );
-  isSubmitting.value = false;
-
   isSubmitting.value = false;
   return;
 }

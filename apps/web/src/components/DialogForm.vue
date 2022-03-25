@@ -1,6 +1,6 @@
 <template>
   <q-dialog ref="dialogRef" @hide="onDialogHide">
-    <q-card>
+    <q-card style="width: 700px">
       <q-card-section class="">
         <div class="row">
           <div class="text-h6">{{ t(title) }}</div>
@@ -17,13 +17,14 @@
         <div class="row full-width">
           <form-main-todo
             v-if="form === 'todo'"
-            :form-data="todo"
+            :ids="ids"
+            :date="date"
             @on-success="onDialogOK()"
           ></form-main-todo>
           <form-main-apiary
             v-if="form === 'apiary'"
-            :edit-id="editId"
-            :form-data="apiary"
+            :id="id"
+            :latlng="latlng"
             @on-success="(value) => onDialogOK(value)"
           ></form-main-apiary>
         </div>
@@ -33,12 +34,11 @@
 </template>
 
 <script setup lang="ts">
-import { Apiary, Todo } from '~/types';
-import { PropType } from 'vue';
 import { useDialogPluginComponent } from 'quasar';
 import { useI18n } from 'vue-i18n';
 import FormMainApiary from './FormMainApiary.vue';
 import FormMainTodo from './FormMainTodo.vue';
+import dayjs from 'dayjs';
 
 const { dialogRef, onDialogHide, onDialogOK } = useDialogPluginComponent();
 const { t } = useI18n();
@@ -52,18 +52,23 @@ defineProps({
     type: String,
     required: true,
   },
-  editId: {
+  ids: {
+    type: Array,
+    default: null,
+  },
+  id: {
     type: Number,
     default: 0,
   },
-  todo: {
-    type: Object as PropType<Todo>,
-    default: null,
+  date: {
+    type: String,
+    default: dayjs().format('YYYY-MM-DD'),
   },
-  apiary: {
-    type: Object as PropType<Apiary>,
+  latlng: {
+    type: Object,
     default: null,
   },
 });
+
 defineEmits([...useDialogPluginComponent.emits, 'onSuccess']);
 </script>

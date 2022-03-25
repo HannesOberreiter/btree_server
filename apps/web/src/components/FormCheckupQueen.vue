@@ -1,19 +1,24 @@
 <template>
-  <div class="row">
-    <btn-multiple-values
-      v-if="modelMultiple"
-      @click="modelMultiple = !modelMultiple"
-    ></btn-multiple-values>
-    <q-option-group
-      v-model="modelValue"
-      :options="options"
-      :disable="modelMultiple"
-      type="checkbox"
-      color="primary"
-      name="queen"
-      inline
-    >
-    </q-option-group>
+  <div class="row q-field q-field--labeled">
+    <div class="q-field__before q-field__marginal items-center">
+      <q-icon v-if="!modelMultiple" name="fas fa-venus"></q-icon>
+      <btn-multiple-values
+        v-else
+        @click="modelMultiple = !modelMultiple"
+      ></btn-multiple-values>
+    </div>
+    <div>
+      <q-option-group
+        v-model="modelValue"
+        :options="options"
+        :disable="modelMultiple"
+        type="checkbox"
+        color="primary"
+        name="queen"
+        inline
+      >
+      </q-option-group>
+    </div>
   </div>
 </template>
 
