@@ -10,10 +10,6 @@ export class TodoController extends Controller {
     super();
   }
 
-  async get(req: IUserRequest, res: Response, next: NextFunction) {
-    next();
-  }
-
   async post(req: IUserRequest, res: Response, next: NextFunction) {
     const insert = {
       date: req.body.date,
@@ -57,11 +53,50 @@ export class TodoController extends Controller {
     }
   }
 
+  async patch(req: IUserRequest, res: Response, next: NextFunction) {
+    const ids = req.body.ids;
+    const ignore = req.body.ignore;
+    const insert = {};
+
+    if (!ignore.date) insert['date'] = req.body.date;
+    if (!ignore.name) insert['name'] = req.body.name;
+    if (!ignore.note) insert['note'] = req.body.note;
+
+    try {
+      const result = await Todo.transaction(async (trx) => {
+        return await Todo.query(trx)
+          .patch({ ...insert, bee_id: req.user.bee_id })
+          .findByIds(ids)
+          .where('user_id', req.user.user_id);
+      });
+      res.locals.data = result;
+      next();
+    } catch (e) {
+      next(checkMySQLError(e));
+    }
+  }
+
+  async batchGet(req: IUserRequest, res: Response, next: NextFunction) {
+    try {
+      const result = await Todo.transaction(async (trx) => {
+        const res = await Todo.query(trx)
+          .findByIds(req.body.ids)
+          .where('user_id', req.user.user_id);
+        return res;
+      });
+      res.locals.data = result;
+      next();
+    } catch (e) {
+      next(checkMySQLError(e));
+    }
+  }
+
   async batchDelete(req: IUserRequest, res: Response, next: NextFunction) {
     try {
       const result = await Todo.transaction(async (trx) => {
         return Todo.query(trx)
-          .deleteById(req.body.ids)
+          .delete()
+          .whereIn('id', req.body.ids)
           .where('user_id', req.user.user_id);
       });
       res.locals.data = result;

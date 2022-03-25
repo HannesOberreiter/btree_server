@@ -11,7 +11,13 @@ export class TodoRouter extends Router {
   }
 
   define() {
-    this.router.route('/').get(Container.resolve('TodoController').get);
+    this.router
+      .route('/')
+      .patch(
+        Validator.validate([body('ids').isArray()]),
+        Guard.authorize([ROLES.admin, ROLES.user]),
+        Container.resolve('TodoController').patch
+      );
     this.router
       .route('/')
       .post(
@@ -27,6 +33,13 @@ export class TodoRouter extends Router {
       .patch(
         Guard.authorize([ROLES.admin, ROLES.user]),
         Container.resolve('TodoController').updateStatus
+      );
+    this.router
+      .route('/batchGet')
+      .post(
+        Validator.validate([body('ids').isArray()]),
+        Guard.authorize([ROLES.admin, ROLES.user]),
+        Container.resolve('TodoController').batchGet
       );
     this.router
       .route('/batchDelete')

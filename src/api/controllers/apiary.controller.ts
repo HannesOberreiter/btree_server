@@ -3,7 +3,7 @@ import { Controller } from '@classes/controller.class';
 import { checkMySQLError } from '@utils/error.util';
 import { IUserRequest } from '@interfaces/IUserRequest.interface';
 import { Apiary } from '../models/apiary.model';
-import { forbidden } from '@hapi/boom';
+import { conflict, forbidden } from '@hapi/boom';
 export class ApiaryController extends Controller {
   constructor() {
     super();
@@ -38,6 +38,12 @@ export class ApiaryController extends Controller {
   async createApiary(req: IUserRequest, res: Response, next) {
     try {
       const result = await Apiary.transaction(async (trx) => {
+        const checkDuplicate = await Apiary.query().where({
+          user_id: req.user.user_id,
+          name: req.body.name
+        });
+
+        if (checkDuplicate.length > 0) throw conflict('name');
         return Apiary.query(trx).insertAndFetch({
           bee_id: req.user.bee_id,
           user_id: req.user.user_id,
@@ -53,6 +59,13 @@ export class ApiaryController extends Controller {
   async updateApiary(req: IUserRequest, res: Response, next) {
     try {
       const result = await Apiary.transaction(async (trx) => {
+        if (req.body.name) {
+          const checkDuplicate = await Apiary.query()
+            .where('user_id', req.user.user_id)
+            .where('name', req.body.name)
+            .whereNot('id', req.body.id);
+          if (checkDuplicate.length > 0) throw conflict('name');
+        }
         return Apiary.query(trx)
           .patchAndFetchById(req.body.id, {
             edit_id: req.user.bee_id,
