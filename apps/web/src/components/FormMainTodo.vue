@@ -8,7 +8,7 @@
     ></form-common-edit>
     <div class="row">
       <div class="col-11">
-        <form-common-date v-model="state.date"></form-common-date>
+        <input-date v-model="state.date"></input-date>
       </div>
       <div class="col-1 text-center items-center">
         <q-btn
@@ -22,7 +22,7 @@
     </div>
     <div v-if="showInterval" class="row q-pb-xs">
       <div class="col-6">
-        <form-common-numeric-interval
+        <form-numeric-interval
           v-model.number="state.interval"
           label="interval"
           :hint="$t('intervalText')"
@@ -30,21 +30,21 @@
           :max-valid="365"
           icon=""
           numeric-valid="integer"
-        ></form-common-numeric-interval>
+        ></form-numeric-interval>
       </div>
       <div class="col-6 q-pl-sm">
-        <form-common-numeric-repeat
+        <form-numeric-repeat
           v-model.number="state.repeat"
           label="repeat"
           :hint="$t('repeatText')"
           shadow-text="x"
           icon=""
           numeric-valid="integer"
-        ></form-common-numeric-repeat>
+        ></form-numeric-repeat>
       </div>
     </div>
-    <form-common-name v-model="state.name"></form-common-name>
-    <form-common-note v-model="state.note"></form-common-note>
+    <input-name v-model="state.name"></input-name>
+    <input-note v-model="state.note"></input-note>
     <form-common-done v-model="state.done"></form-common-done>
   </q-form>
   <q-btn-group v-if="!ids" spread>
@@ -98,12 +98,12 @@ import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useNotification } from '~/composables/useResponseText';
 import dayjs from 'dayjs';
-import FormCommonDate from './FormCommonDate.vue';
-import FormCommonName from './FormCommonName.vue';
-import FormCommonNote from './FormCommonNote.vue';
+import InputDate from './FormInputDate.vue';
+import InputName from './FormInputName.vue';
+import InputNote from './FormInputNote.vue';
 import FormCommonEdit from './FormCommonEdit.vue';
-import FormCommonNumericRepeat from './FormCommonNumeric.vue';
-import FormCommonNumericInterval from './FormCommonNumeric.vue';
+import FormNumericRepeat from './FormInputNumeric.vue';
+import FormNumericInterval from './FormInputNumeric.vue';
 import FormCommonDone from './FormCommonDone.vue';
 import useVuelidate from '@vuelidate/core';
 import { flatten, map, merge, uniq } from 'lodash';

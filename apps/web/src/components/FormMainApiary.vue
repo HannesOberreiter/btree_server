@@ -6,7 +6,7 @@
     <q-form class="full-width" @submit.prevent.stop="onSubmit">
       <div class="row">
         <div class="col-12">
-          <form-common-name v-model="state.name"></form-common-name>
+          <input-name v-model="state.name"></input-name>
         </div>
         <div class="col-12">
           <q-input
@@ -52,7 +52,7 @@
           </q-input>
         </div>
         <div class="col-12">
-          <form-common-note v-model="state.note"></form-common-note>
+          <input-note v-model="state.note"></input-note>
         </div>
       </div>
     </q-form>
@@ -108,8 +108,8 @@ import { useApiaryQuery } from '~/query';
 import { useI18n } from 'vue-i18n';
 import { useNotification } from '~/composables/useResponseText';
 import { validationErrors } from '~/helpers';
-import FormCommonName from './FormCommonName.vue';
-import FormCommonNote from './FormCommonNote.vue';
+import InputName from './FormInputName.vue';
+import InputNote from './FormInputNote.vue';
 import GlobalLoading from './GlobalLoading.vue';
 import useVuelidate from '@vuelidate/core';
 

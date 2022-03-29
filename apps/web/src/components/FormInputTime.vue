@@ -1,0 +1,107 @@
+<template>
+  <q-input
+    v-model="modelValue"
+    filled
+    :label="disable ? $t('time') + ' - ' + $t('multipleValues') : $t('time')"
+    name="time"
+    type="time"
+    :disable="disable"
+    :error="v.time.$error"
+    :error-message="validationErrors(v.time)"
+    :no-error-icon="true"
+    readonly
+    @click="qDateProxy = !qDateProxy"
+  >
+    <template #before>
+      <btn-multiple-values
+        v-if="multipleValues"
+        :disable="disable"
+        @click="editValues(!disable)"
+      ></btn-multiple-values>
+      <q-icon
+        v-if="!disable"
+        name="fas fa-clock"
+        class="cursor-pointer"
+        :class="disable ? '' : 'q-pl-xs'"
+      >
+        <q-popup-proxy
+          v-model="qDateProxy"
+          cover
+          transition-show="scale"
+          transition-hide="scale"
+        >
+          <q-time v-model="modelValue" mask="HH:mm" format24h>
+            <div class="row items-center justify-end">
+              <q-btn v-close-popup :label="$t('close')" color="primary" flat />
+            </div>
+          </q-time>
+        </q-popup-proxy>
+      </q-icon>
+    </template>
+  </q-input>
+</template>
+
+<script setup lang="ts">
+import { useVModels } from '@vueuse/core';
+import { formCheckMultipleValues, validationErrors } from '~/helpers';
+import dayjs from 'dayjs';
+import useVuelidate from '@vuelidate/core';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+import BtnMultipleValues from './BtnMultipleValues.vue';
+import { computed, PropType, ref, toRefs, unref, watch } from 'vue';
+
+dayjs.extend(customParseFormat); // Needed to validate if date is even possible
+const qDateProxy = ref(false);
+const props = defineProps({
+  modelValue: {
+    type: null as unknown as PropType<string | null>,
+    validator: (v: any) => typeof v === 'string' || v === null,
+    default: dayjs().format('HH:mm'),
+  },
+  reset: {
+    type: Number,
+    default: 0,
+  },
+  values: {
+    type: Object,
+    default: null,
+  },
+});
+const emit = defineEmits(['update:modelValue']);
+const { modelValue } = useVModels(props, emit);
+const resetValue = unref(modelValue.value);
+const { values, reset } = toRefs(props);
+const multipleValues = computed(() =>
+  formCheckMultipleValues(values.value, 'time')
+);
+const disable = ref(multipleValues.value);
+modelValue.value = disable.value ? null : modelValue.value;
+const state = {
+  time: modelValue,
+};
+const rules = {
+  time: {
+    minValue: (value: string) => {
+      if (value === null) return true;
+      return dayjs(value, 'HH:mm', true).isValid();
+    },
+  },
+};
+const v = useVuelidate(rules, state, { $autoDirty: true });
+
+watch(multipleValues, () => {
+  editValues(multipleValues.value);
+});
+
+watch(reset, () => {
+  if (multipleValues.value) editValues(true);
+  else if (values.value)
+    modelValue.value = dayjs(values.value[0].time, 'HH:mm:ss').format('HH:mm');
+  else modelValue.value = resetValue;
+});
+
+function editValues(val: boolean) {
+  disable.value = val;
+  modelValue.value = disable.value ? null : dayjs().format('HH:mm');
+}
+</script>

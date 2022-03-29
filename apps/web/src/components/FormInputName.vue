@@ -6,7 +6,6 @@
     :no-error-icon="true"
     :label="$t('name')"
     :disable="modelMultiple"
-    autocomplete="hhh3|hhh33|ichbineinspatz"
     name="name"
     type="text"
     filled

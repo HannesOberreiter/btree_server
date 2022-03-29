@@ -1,11 +1,11 @@
 <template>
   <q-form class="full-width" @submit.prevent.stop="onSubmit">
     <div class="row">
-      <form-common-name
+      <input-name
         v-model="state.name"
         class="col-11"
         :hint="$t('lastAdded') + ': ' + lastNames"
-      ></form-common-name>
+      ></input-name>
       <div class="col-1 text-center">
         <q-btn
           flat
@@ -19,17 +19,17 @@
       <div v-if="showInterval" class="col-12">
         <div v-if="showInterval" class="row">
           <div class="col-6">
-            <form-common-numeric-start
+            <input-numeric-start
               v-model.number="state.start"
               label="start"
               :hint="$t('startNumberNote')"
               :max-valid="10000"
               icon=""
               numeric-valid="integer"
-            ></form-common-numeric-start>
+            ></input-numeric-start>
           </div>
           <div class="col-6 q-pl-sm">
-            <form-common-numeric-repeat
+            <input-numeric-repeat
               v-model.number="state.repeat"
               label="numberHives"
               :hint="sampleName"
@@ -37,7 +37,7 @@
               icon=""
               :max-valid="100"
               numeric-valid="integer"
-            ></form-common-numeric-repeat>
+            ></input-numeric-repeat>
           </div>
         </div>
       </div>
@@ -50,11 +50,11 @@
         ></form-common-dropdown-apiary>
       </div>
       <div class="col-12 col-md-6">
-        <form-common-date
+        <input-date
           v-model="state.date"
           label="movedate"
           :hint="$t('movementInfo')"
-        ></form-common-date>
+        ></input-date>
       </div>
     </div>
 
@@ -72,26 +72,26 @@
     </div>
 
     <div class="col-12 col-md-6 q-pt-sm q-pb-sm">
-      <form-common-numeric-position
+      <input-numeric-position
         v-model="state.position"
         label="position"
         :hint="$t('positionNote')"
         icon="fas fa-arrow-down-1-9"
         numeric-valid="integer"
       >
-      </form-common-numeric-position>
+      </input-numeric-position>
     </div>
     <div class="col-12 col-md-6 q-pt-sm q-pb-sm">
-      <form-common-numeric-grouphive
+      <input-numeric-grouphive
         v-model="state.grouphive"
         label="grouphive"
         :hint="$t('grouphiveNote')"
         icon="fas fa-city"
         numeric-valid="integer"
-      ></form-common-numeric-grouphive>
+      ></input-numeric-grouphive>
     </div>
 
-    <form-common-note v-model="state.note" class="q-pt-sm"></form-common-note>
+    <input-note v-model="state.note" class="q-pt-sm"></input-note>
     <div class="row q-pt-sm q-pb-md">
       <div class="col-12 col-md-6">
         <form-common-done
@@ -161,17 +161,17 @@ import { api } from '~/boot/axios';
 import { computed, ref } from 'vue';
 import { useNotification } from '~/composables/useResponseText';
 import dayjs from 'dayjs';
-import FormCommonDate from './FormCommonDate.vue';
+import InputDate from './FormInputDate.vue';
 import FormCommonDone from './FormCommonDone.vue';
 import FormCommonDropdownApiary from './FormCommonDropdownApiary.vue';
 import FormCommonDropdownSource from './FormCommonDropdownOption.vue';
 import FormCommonDropdownType from './FormCommonDropdownOption.vue';
-import FormCommonName from './FormCommonName.vue';
-import FormCommonNote from './FormCommonNote.vue';
-import FormCommonNumericStart from './FormCommonNumeric.vue';
-import FormCommonNumericRepeat from './FormCommonNumeric.vue';
-import FormCommonNumericGrouphive from './FormCommonNumeric.vue';
-import FormCommonNumericPosition from './FormCommonNumeric.vue';
+import InputName from './FormInputName.vue';
+import InputNote from './FormInputNote.vue';
+import InputNumericStart from './FormInputNumeric.vue';
+import InputNumericRepeat from './FormInputNumeric.vue';
+import InputNumericGrouphive from './FormInputNumeric.vue';
+import InputNumericPosition from './FormInputNumeric.vue';
 import useVuelidate from '@vuelidate/core';
 import { useHivesQuery } from '~/query';
 import { filter, merge, orderBy } from 'lodash';

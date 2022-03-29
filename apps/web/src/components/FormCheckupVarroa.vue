@@ -1,83 +1,43 @@
 <template>
-  <q-input
-    v-model.number="modelValue"
-    :error="v.varroa.$error"
-    :error-message="validationErrors(v.varroa)"
-    :no-error-icon="true"
-    :label="t('varroa')"
-    name="varroa"
-    :disable="modelMultiple"
-    type="number"
-    min="0"
-    max="100"
-    filled
+  <input-numeric
+    v-model="modelValue"
+    :values="values"
+    :reset="reset"
+    icon="fas fa-bug"
+    label="varroa"
   >
-    <template #before>
-      <q-icon v-if="!modelMultiple" name="fas fa-bug"></q-icon>
-      <btn-multiple-values
-        v-else
-        @click="modelMultiple = !modelMultiple"
-      ></btn-multiple-values>
-    </template>
-    <template #after>
-      <q-icon
+    <template #deepAfter
+      ><q-icon
         name="fas fa-calculator"
         style="cursor: pointer"
         @click="openCalculator"
-      ></q-icon>
-    </template>
-    <template #append>
-      <q-btn
-        round
-        flat
-        dense
-        icon="fas fa-plus"
-        style="cursor: pointer"
-        @click="modelValue++"
-      ></q-btn>
-      <q-btn
-        round
-        flat
-        dense
-        icon="fas fa-minus"
-        style="cursor: pointer"
-        :disable="modelValue <= 0"
-        @click="modelValue--"
-      ></q-btn>
-    </template>
-  </q-input>
+      ></q-icon
+    ></template>
+  </input-numeric>
 </template>
 
 <script setup lang="ts">
-import { minValue, maxValue, numeric } from '~/helpers/i18n-validators';
-import { useI18n } from 'vue-i18n';
 import { useQuasar } from 'quasar';
 import { useVModels } from '@vueuse/core';
-import { validationErrors } from '~/helpers';
 import DialogVarroa from './DialogVarroa.vue';
-import useVuelidate from '@vuelidate/core';
-import BtnMultipleValues from './BtnMultipleValues.vue';
+import InputNumeric from './FormInputNumeric.vue';
 
-const { t } = useI18n();
 const $q = useQuasar();
 const props = defineProps({
   modelValue: {
     default: 0,
   },
-  modelMultiple: {
-    default: false,
+  reset: {
+    type: Number,
+    default: 0,
+  },
+  values: {
+    type: Object,
+    default: null,
   },
 });
-const emit = defineEmits(['update:modelValue', 'update:modelMultiple']);
-const { modelValue, modelMultiple } = useVModels(props, emit);
-
-const state = {
-  varroa: modelValue,
-};
-const rules = {
-  varroa: { minValue: minValue(0), maxValue: maxValue(100), numeric: numeric },
-};
-const v = useVuelidate(rules, state, { $autoDirty: true });
+const emit = defineEmits(['update:modelValue']);
+const { modelValue } = useVModels(props, emit);
 
 function openCalculator() {
   $q.dialog({

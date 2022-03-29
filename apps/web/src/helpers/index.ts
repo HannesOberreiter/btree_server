@@ -15,4 +15,13 @@ const includesValue = (val: string, obj: any) =>
 // https://stackoverflow.com/a/39914235/5316675
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-export { validationErrors, includesValue, sleep };
+// Evaluation if multiple values are present
+// data = response.data from server
+// name = object name of interest
+function formCheckMultipleValues(data: any, name: string) {
+  const r = _.map(data, (row: any) => row[name]);
+  const u = _.uniq(r);
+  return u.length > 1;
+}
+
+export { validationErrors, includesValue, sleep, formCheckMultipleValues };

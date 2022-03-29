@@ -3,7 +3,7 @@
     v-model="modelValue"
     :error="v.date.$error"
     :error-messages="validationErrors(v.date)"
-    :label="t(label)"
+    :label="disable ? $t('multipleValues') : $t(label)"
     input-class="text-center"
     type="date"
     :disable="disable"
@@ -13,7 +13,11 @@
     @click="qDateProxy = !qDateProxy"
   >
     <template #before>
-      <q-icon name="fas fa-calendar" class="cursor-pointer">
+      <q-icon
+        v-if="!multipleValues"
+        name="fas fa-calendar"
+        class="cursor-pointer"
+      >
         <q-popup-proxy
           v-model="qDateProxy"
           cover
@@ -32,18 +36,24 @@
           </q-date>
         </q-popup-proxy>
       </q-icon>
+      <btn-multiple-values
+        v-else
+        :disable="disable"
+        @click="editValues(!disable)"
+      ></btn-multiple-values>
     </template>
   </q-input>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref, toRefs, unref, watch } from 'vue';
 import { required } from '~/helpers/i18n-validators';
 import { useI18n } from 'vue-i18n';
 import { useVModels } from '@vueuse/core';
-import { validationErrors } from '~/helpers';
+import { formCheckMultipleValues, validationErrors } from '~/helpers';
 import dayjs from 'dayjs';
 import useVuelidate from '@vuelidate/core';
+import BtnMultipleValues from '~/components/BtnMultipleValues.vue';
 
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 dayjs.extend(customParseFormat); // Needed to validate if date is even possible
@@ -61,12 +71,24 @@ const props = defineProps({
     type: String,
     default: 'date',
   },
-  disable: {
-    default: false,
+  reset: {
+    type: Number,
+    default: 0,
+  },
+  values: {
+    type: Object,
+    default: null,
   },
 });
 const emit = defineEmits(['update:modelValue']);
 const { modelValue } = useVModels(props, emit);
+const resetValue = unref(modelValue.value);
+const { values, reset } = toRefs(props);
+const multipleValues = computed(() =>
+  formCheckMultipleValues(values.value, props.label)
+);
+const disable = ref(multipleValues.value);
+modelValue.value = disable.value ? null : modelValue.value;
 
 const state = {
   date: modelValue,
@@ -83,6 +105,21 @@ const rules = {
 
 const v = useVuelidate(rules, state, { $autoDirty: true });
 
+watch(multipleValues, () => {
+  editValues(multipleValues.value);
+});
+
+watch(reset, () => {
+  if (multipleValues.value) editValues(true);
+  else if (values.value)
+    modelValue.value = dayjs(values.value[0][props.label]).format('YYYY-MM-DD');
+  else modelValue.value = resetValue;
+});
+
+function editValues(val: boolean) {
+  disable.value = val;
+  modelValue.value = disable.value ? null : modelValue.value;
+}
 function markDate(date: string) {
   return dayjs(date).isSame(props.mark);
 }

@@ -1,29 +1,30 @@
 <template>
   <div class="row">
     <div class="col-xs-12 col-sm-5 q-pr-sm">
-      <form-common-start
+      <date-start
         v-model="startValue"
         label="dateStart"
         :mark="endValue"
-        :disable="modelMultiple"
+        :disable="disable"
         @update:model-value="updateStart"
-      ></form-common-start>
+      ></date-start>
     </div>
     <div class="col-xs-11 col-sm-5">
-      <form-common-end
+      <date-end
         v-model="endValue"
         label="dateEnd"
         :mark="startValue"
-        :disable="modelMultiple"
+        :disable="disable"
         @update:model-value="updateEnd"
-      ></form-common-end>
+      ></date-end>
     </div>
-    <div v-if="modelMultiple" class="col-1 text-center">
+    <div v-if="!values" class="col-1 text-center">
       <btn-multiple-values
-        @click="modelMultiple = !modelMultiple"
+        :disable="disable"
+        @click="editValues(!disable)"
       ></btn-multiple-values>
     </div>
-    <div v-if="!edit" class="col-1 text-center">
+    <div v-if="multipleValues" class="col-1 text-center">
       <q-btn
         flat
         round
@@ -35,7 +36,7 @@
   </div>
   <div v-if="showInterval" class="row">
     <div class="col-6">
-      <form-common-numeric-interval
+      <input-interval
         v-model.number="modelInterval"
         label="interval"
         :hint="$t('intervalText')"
@@ -43,30 +44,31 @@
         :max-valid="365"
         icon=""
         numeric-valid="integer"
-      ></form-common-numeric-interval>
+      ></input-interval>
     </div>
     <div class="col-6 q-pl-sm">
-      <form-common-numeric-repeat
+      <input-repeat
         v-model.number="modelRepeat"
         label="repeat"
         :hint="$t('repeatText')"
         shadow-text="x"
         icon=""
         numeric-valid="integer"
-      ></form-common-numeric-repeat>
+      ></input-repeat>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref, toRefs, unref, watch } from 'vue';
 import dayjs from 'dayjs';
-import FormCommonEnd from './FormCommonDate.vue';
-import FormCommonStart from './FormCommonDate.vue';
+import DateEnd from './FormInputDate.vue';
+import DateStart from './FormInputDate.vue';
 import { useVModels } from '@vueuse/core';
 import BtnMultipleValues from './BtnMultipleValues.vue';
-import FormCommonNumericInterval from './FormCommonNumeric.vue';
-import FormCommonNumericRepeat from './FormCommonNumeric.vue';
+import InputInterval from './FormInputNumeric.vue';
+import InputRepeat from './FormInputNumeric.vue';
+import { formCheckMultipleValues } from '~/helpers';
 
 const props = defineProps({
   startValue: {
@@ -83,11 +85,13 @@ const props = defineProps({
   modelRepeat: {
     default: 0,
   },
-  modelMultiple: {
-    default: false,
+  reset: {
+    type: Number,
+    default: 0,
   },
-  edit: {
-    default: false,
+  values: {
+    type: Object,
+    default: null,
   },
 });
 const emit = defineEmits([
@@ -95,12 +99,41 @@ const emit = defineEmits([
   'update:endValue',
   'update:modelInterval',
   'update:modelRepeat',
-  'update:modelMultiple',
 ]);
-const { startValue, endValue, modelInterval, modelRepeat, modelMultiple } =
-  useVModels(props, emit);
-
+const { startValue, endValue, modelInterval, modelRepeat } = useVModels(
+  props,
+  emit
+);
 const showInterval = ref(false);
+const resetStart = unref(startValue.value);
+const resetEnd = unref(endValue.value);
+const { values, reset } = toRefs(props);
+const multipleValues = computed(
+  () =>
+    formCheckMultipleValues(values.value, 'date') ||
+    formCheckMultipleValues(values.value, 'enddate')
+);
+const disable = ref(multipleValues.value);
+startValue.value = disable.value ? null : startValue.value;
+endValue.value = disable.value ? null : endValue.value;
+
+watch(multipleValues, () => {
+  editValues(multipleValues.value);
+});
+
+watch(reset, () => {
+  if (multipleValues.value) editValues(true);
+  else {
+    startValue.value = resetStart;
+    endValue.value = resetEnd;
+  }
+});
+
+function editValues(val: boolean) {
+  disable.value = val;
+  startValue.value = disable.value ? null : startValue.value;
+  endValue.value = disable.value ? null : endValue.value;
+}
 
 function updateStart(val: string) {
   if (dayjs(val) > dayjs(endValue.value)) endValue.value = val;

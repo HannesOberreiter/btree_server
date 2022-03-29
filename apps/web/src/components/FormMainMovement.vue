@@ -10,7 +10,7 @@
       :options="editOptionsCopy"
     ></form-common-edit>
 
-    <form-common-date v-model="state.date" label="movedate"></form-common-date>
+    <input-date v-model="state.date" label="movedate"></input-date>
 
     <form-common-dropdown-apiary
       v-model="state.apiary"
@@ -67,7 +67,7 @@ import { api } from '~/boot/axios';
 import { ref } from 'vue';
 import { useNotification } from '~/composables/useResponseText';
 import dayjs from 'dayjs';
-import FormCommonDate from './FormCommonDate.vue';
+import InputDate from './FormInputDate.vue';
 import FormCommonDropdownApiary from './FormCommonDropdownApiary.vue';
 import FormCommonEdit from './FormCommonEdit.vue';
 import FormCommonDropdownHive from './FormCommonDropdownHive.vue';

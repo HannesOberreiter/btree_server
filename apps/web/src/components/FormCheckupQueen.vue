@@ -1,5 +1,8 @@
 <template>
-  <div class="row q-field q-field--labeled">
+  <div
+    class="row q-field--labeled"
+    :class="$q.dark.isActive ? 'q-field--dark' : 'q-field'"
+  >
     <div class="q-field__before q-field__marginal items-center">
       <q-icon v-if="!modelMultiple" name="fas fa-venus"></q-icon>
       <btn-multiple-values
@@ -26,7 +29,9 @@
 import { useVModels } from '@vueuse/core';
 import { useI18n } from 'vue-i18n';
 import BtnMultipleValues from './BtnMultipleValues.vue';
+import { useQuasar } from 'quasar';
 
+const $q = useQuasar();
 const { t } = useI18n();
 const props = defineProps({
   modelValue: {
@@ -36,7 +41,6 @@ const props = defineProps({
     default: false,
   },
 });
-
 const emit = defineEmits(['update:modelValue', 'update:modelMultiple']);
 const { modelValue, modelMultiple } = useVModels(props, emit);
 

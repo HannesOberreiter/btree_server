@@ -9,14 +9,14 @@
     :options="editOptionsCopy"
   ></form-common-edit>
   <div class="q-pt-xs">
-    <form-common-dates
+    <input-dates
       v-model:start-value="state.date"
       v-model:end-value="state.enddate"
       v-model:model-interval="state.interval"
       v-model:model-repeat="state.repeat"
-      v-model:model-multiple="multipleValues.date"
-      :edit="ids !== null"
-    ></form-common-dates>
+      :values="values"
+      :reset="reset"
+    ></input-dates>
   </div>
   <div class="q-mb-sm q-mt-sm">
     <!-- Main Dropdowns -->
@@ -98,27 +98,29 @@
           <form-checkup-varroa
             v-if="fields.settings.checkup.varroa"
             v-model="state.checkup_varroa"
-            v-model:model-multiple="multipleValues.checkup_varroa"
+            :reset="reset"
+            :values="values"
           ></form-checkup-varroa>
         </div>
       </div>
       <div v-if="fields.settings.checkup.strength" class="row q-pt-sm q-pb-sm">
         <div class="col-12 col-md-6">
-          <form-common-numeric-strength
+          <input-numeric-strength
             v-model="state.checkup_strong"
-            v-model:model-multiple="multipleValues.checkup_strong"
+            :values="values"
+            :reset="reset"
             label="strong"
             icon="fas fa-dumbbell"
           >
-          </form-common-numeric-strength>
+          </input-numeric-strength>
         </div>
       </div>
       <div v-if="fields.settings.checkup.weight" class="q-pt-sm q-pb-sm">
         <form-checkup-weight
           v-model="state.checkup_weight_amount"
           v-model:model-time="state.checkup_weight_time"
-          v-model:model-multiple="multipleValues.checkup_weight_amount"
-          v-model:model-multiple-time="multipleValues.checkup_weight_time"
+          :reset="reset"
+          :values="values"
         ></form-checkup-weight>
       </div>
       <div
@@ -151,12 +153,14 @@
       </div>
       <div v-if="fields.settings.harvest.water" class="row">
         <div class="col-12 col-md-6">
-          <form-common-numeric-water
+          <input-numeric-water
             v-model="state.harvest_water"
+            :values="values"
+            :reset="reset"
             label="water"
             icon="fas fa-droplet"
             shadow-text="%"
-          ></form-common-numeric-water>
+          ></input-numeric-water>
         </div>
       </div>
       <div class="row">
@@ -181,14 +185,15 @@
         v-if="fields.settings.treatment.wait"
         class="col-12 col-md-6 q-pb-sm"
       >
-        <form-common-numeric-wait
+        <input-numeric-wait
           v-model="state.treatment_wait"
-          v-model:model-multiple="multipleValues.treatment_wait"
+          :values="values"
+          :reset="reset"
           label="waitTime"
           :shadow-text="t('day', 2)"
           icon="fas fa-circle-pause"
           :max-valid="365"
-        ></form-common-numeric-wait>
+        ></input-numeric-wait>
       </div>
     </div>
   </div>
@@ -196,10 +201,7 @@
     v-model="state.url"
     v-model:model-multiple="multipleValues.url"
   ></form-common-url>
-  <form-common-note
-    v-model="state.note"
-    v-model:model-multiple="multipleValues.note"
-  ></form-common-note>
+  <input-note v-model="state.note" :values="values" :reset="reset"></input-note>
   <form-common-done
     v-model="state.done"
     v-model:model-multiple="multipleValues.done"
@@ -271,18 +273,18 @@ import FormCheckupWeight from './FormCheckupWeight.vue';
 import FormCommonAmount from './FormCommonAmount.vue';
 import FormCommonAmountFrames from './FormCommonAmount.vue';
 import FormCommonCharge from './FormCommonCharge.vue';
-import FormCommonDates from './FormCommonDates.vue';
+import InputDates from './FormInputDates.vue';
 import FormCommonDone from './FormCommonDone.vue';
 import FormCommonDropdown from './FormCommonDropdownOption.vue';
 import FormCommonDropdownDisease from './FormCommonDropdownOption.vue';
 import FormCommonDropdownVet from './FormCommonDropdownOption.vue';
 import FormCommonDropdownHive from './FormCommonDropdownHive.vue';
-import FormCommonNote from './FormCommonNote.vue';
+import InputNote from './FormInputNote.vue';
 import FormCommonUrl from './FormCommonUrl.vue';
 import FormCommonEdit from './FormCommonEdit.vue';
-import FormCommonNumericWater from './FormCommonNumeric.vue';
-import FormCommonNumericStrength from './FormCommonNumeric.vue';
-import FormCommonNumericWait from './FormCommonNumeric.vue';
+import InputNumericWater from './FormInputNumeric.vue';
+import InputNumericStrength from './FormInputNumeric.vue';
+import InputNumericWait from './FormInputNumeric.vue';
 
 const fields = useFieldsettingStore();
 const notification = useNotification();
@@ -292,7 +294,8 @@ const v = useVuelidate();
 const lastInsert = ref(null);
 const lastInsertTable = ref(null);
 const router = useRouter();
-
+const values = ref({});
+const reset = ref(0);
 const props = defineProps({
   task: {
     type: String as PropType<Task>,
@@ -438,6 +441,10 @@ async function getEdit() {
       editOptions.value = flatten(editIds);
       editOptionsCopy.value = flatten(editIds);
 
+      values.value = response.data;
+
+      console.log(values.value);
+
       setValues(response.data, 'date', 'enddate'); // Dirty workaround as I block date change if date or enddate is different
       setValues(response.data, 'date');
       setValues(response.data, 'enddate', 'enddate');
@@ -509,6 +516,7 @@ function onReset() {
     merge(multipleValues.value, multipleValuesCopy);
   }
   notification.open('positive', t('successReset'));
+  reset.value++;
 }
 
 async function onUndo() {
