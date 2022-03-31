@@ -4,28 +4,29 @@
       v-model="expanded"
       icon="fas fa-star"
       class="full-width"
-      :label="t('rating.name')"
+      :label="$t('rating.name')"
       :class="some(modelValue, (val) => val > 0) ? 'bg-orange' : ''"
     >
       <q-card>
         <q-card-section>
           <template v-for="(_value, index) of modelValue" :key="index">
             <div class="row q-pb-xs">
-              <div class="col-3">{{ t('rating.' + index) }}</div>
+              <div class="col-3">{{ $t('rating.' + index) }}</div>
               <div class="col-9">
                 <q-rating
                   v-model="modelValue[index]"
                   :error="v[index].$error"
                   color-selected="positive"
                   color="grey"
-                  :disable="modelMultiple[index]"
+                  :disable="disable[index]"
                   size="sm"
                 >
                 </q-rating>
                 {{ modelValue[index] }}
                 <btn-multiple-values
-                  v-if="modelMultiple[index]"
-                  @click="modelMultiple[index] = !modelMultiple[index]"
+                  v-if="multipleValues[index]"
+                  :disable="disable[index]"
+                  @click="editValues(!disable[index], index)"
                 ></btn-multiple-values>
               </div>
             </div>
@@ -38,14 +39,13 @@
 
 <script setup lang="ts">
 import { integer, maxValue, minValue } from '~/helpers/i18n-validators';
-import { ref } from 'vue';
-import { some } from 'lodash';
-import { useI18n } from 'vue-i18n';
+import { computed, ref, toRefs, unref, watch } from 'vue';
+import { isEmpty, some } from 'lodash';
 import useVuelidate from '@vuelidate/core';
 import { useVModels } from '@vueuse/core';
 import BtnMultipleValues from './BtnMultipleValues.vue';
+import { formCheckMultipleValues } from '~/helpers';
 
-const { t } = useI18n();
 const expanded = ref(false);
 const props = defineProps({
   modelValue: {
@@ -58,20 +58,34 @@ const props = defineProps({
       swarm: 0,
     },
   },
-  modelMultiple: {
-    default: {
-      brood: false,
-      pollen: false,
-      comb: false,
-      temper: false,
-      calm_comb: false,
-      swarm: false,
-    },
+  reset: {
+    type: Number,
+    default: 0,
+  },
+  values: {
+    type: Object,
+    default: null,
   },
 });
 
-const emit = defineEmits(['update:modelValue', 'update:modelMultiple']);
-const { modelValue, modelMultiple } = useVModels(props, emit);
+const emit = defineEmits(['update:modelValue']);
+const { modelValue } = useVModels(props, emit);
+const resetValue = { ...unref(modelValue.value) };
+const { values, reset } = toRefs(props);
+const multipleValues = computed(() => {
+  return {
+    brood: formCheckMultipleValues(values.value, 'brood'),
+    pollen: formCheckMultipleValues(values.value, 'pollen'),
+    comb: formCheckMultipleValues(values.value, 'comb'),
+    temper: formCheckMultipleValues(values.value, 'temper'),
+    calm_comb: formCheckMultipleValues(values.value, 'calm_comb'),
+    swarm: formCheckMultipleValues(values.value, 'swarm'),
+  };
+});
+const disable = ref(multipleValues.value);
+for (const [key, value] of Object.entries(multipleValues.value)) {
+  editValues(value, key);
+}
 
 const rules = {
   brood: {
@@ -107,4 +121,31 @@ const rules = {
 };
 
 const v = useVuelidate(rules, modelValue, { $autoDirty: true });
+
+watch(multipleValues, () => {
+  for (const [key, value] of Object.entries(multipleValues.value)) {
+    editValues(value, key);
+  }
+});
+
+watch(reset, () => {
+  for (const [key, value] of Object.entries(multipleValues.value)) {
+    if (value) editValues(true, key);
+    else if (values.value && !isEmpty(values.value))
+      modelValue.value[key as keyof typeof modelValue.value] =
+        values.value[0][key];
+    else
+      modelValue.value[key as keyof typeof modelValue.value] =
+        resetValue[key as keyof typeof resetValue];
+  }
+});
+
+function editValues(val: boolean, key: string) {
+  disable.value[key as keyof typeof disable.value] = val;
+  modelValue.value[key as keyof typeof modelValue.value] = disable.value[
+    key as keyof typeof disable.value
+  ]
+    ? null
+    : modelValue.value[key as keyof typeof modelValue.value];
+}
 </script>

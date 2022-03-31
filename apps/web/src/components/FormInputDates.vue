@@ -1,6 +1,6 @@
 <template>
   <div class="row">
-    <div class="col-xs-12 col-sm-5 q-pr-sm">
+    <div class="col-xs-12 col-sm-6 q-pr-sm">
       <date-start
         v-model="startValue"
         label="dateStart"
@@ -9,29 +9,32 @@
         @update:model-value="updateStart"
       ></date-start>
     </div>
-    <div class="col-xs-11 col-sm-5">
+    <div class="col-xs-11 col-sm-6">
       <date-end
         v-model="endValue"
         label="dateEnd"
         :mark="startValue"
         :disable="disable"
         @update:model-value="updateEnd"
-      ></date-end>
-    </div>
-    <div v-if="!values" class="col-1 text-center">
-      <btn-multiple-values
-        :disable="disable"
-        @click="editValues(!disable)"
-      ></btn-multiple-values>
-    </div>
-    <div v-if="multipleValues" class="col-1 text-center">
-      <q-btn
-        flat
-        round
-        icon="fas fa-retweet"
-        :color="showInterval ? 'secondary' : 'grey'"
-        @click="changeInterval"
-      ></q-btn>
+      >
+        <template #deepAfter>
+          <div v-if="!values || !isEmpty(values)">
+            <btn-multiple-values
+              v-if="multipleValues"
+              :disable="disable"
+              @click="editValues(!disable)"
+            ></btn-multiple-values>
+          </div>
+          <div v-else>
+            <q-icon
+              style="cursor: pointer"
+              name="fas fa-retweet"
+              :color="showInterval ? 'secondary' : 'grey'"
+              @click="changeInterval"
+            ></q-icon>
+          </div>
+        </template>
+      </date-end>
     </div>
   </div>
   <div v-if="showInterval" class="row">
@@ -69,6 +72,7 @@ import BtnMultipleValues from './BtnMultipleValues.vue';
 import InputInterval from './FormInputNumeric.vue';
 import InputRepeat from './FormInputNumeric.vue';
 import { formCheckMultipleValues } from '~/helpers';
+import { isEmpty } from 'lodash';
 
 const props = defineProps({
   startValue: {
@@ -123,7 +127,10 @@ watch(multipleValues, () => {
 
 watch(reset, () => {
   if (multipleValues.value) editValues(true);
-  else {
+  else if (values.value && !isEmpty(values.value)) {
+    startValue.value = dayjs(values.value[0]['date']).format('YYYY-MM-DD');
+    endValue.value = dayjs(values.value[0]['enddate']).format('YYYY-MM-DD');
+  } else {
     startValue.value = resetStart;
     endValue.value = resetEnd;
   }

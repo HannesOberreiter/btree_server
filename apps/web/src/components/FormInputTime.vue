@@ -49,6 +49,7 @@ import useVuelidate from '@vuelidate/core';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import BtnMultipleValues from './BtnMultipleValues.vue';
 import { computed, PropType, ref, toRefs, unref, watch } from 'vue';
+import { isEmpty } from 'lodash';
 
 dayjs.extend(customParseFormat); // Needed to validate if date is even possible
 const qDateProxy = ref(false);
@@ -95,7 +96,7 @@ watch(multipleValues, () => {
 
 watch(reset, () => {
   if (multipleValues.value) editValues(true);
-  else if (values.value)
+  else if (values.value && !isEmpty(values.value))
     modelValue.value = dayjs(values.value[0].time, 'HH:mm:ss').format('HH:mm');
   else modelValue.value = resetValue;
 });

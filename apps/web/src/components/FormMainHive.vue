@@ -45,9 +45,7 @@
 
     <div class="row q-pt-md q-pb-md">
       <div class="col-12 col-md-6">
-        <form-common-dropdown-apiary
-          v-model="state.apiary"
-        ></form-common-dropdown-apiary>
+        <form-dropdown-apiary v-model="state.apiary"></form-dropdown-apiary>
       </div>
       <div class="col-12 col-md-6">
         <input-date
@@ -58,17 +56,17 @@
       </div>
     </div>
 
-    <form-common-dropdown-type
+    <form-dropdown-type
       v-model="state.type"
       table="hive_types"
       label="status"
-    ></form-common-dropdown-type>
+    ></form-dropdown-type>
     <div class="col-12 q-pb-sm">
-      <form-common-dropdown-source
+      <form-dropdown-source
         v-model="state.source"
         table="hive_sources"
         label="source"
-      ></form-common-dropdown-source>
+      ></form-dropdown-source>
     </div>
 
     <div class="col-12 col-md-6 q-pt-sm q-pb-sm">
@@ -163,9 +161,9 @@ import { useNotification } from '~/composables/useResponseText';
 import dayjs from 'dayjs';
 import InputDate from './FormInputDate.vue';
 import FormCommonDone from './FormCommonDone.vue';
-import FormCommonDropdownApiary from './FormCommonDropdownApiary.vue';
-import FormCommonDropdownSource from './FormCommonDropdownOption.vue';
-import FormCommonDropdownType from './FormCommonDropdownOption.vue';
+import FormDropdownApiary from './FormDropdownApiary.vue';
+import FormDropdownSource from './FormDropdownOption.vue';
+import FormDropdownType from './FormDropdownOption.vue';
 import InputName from './FormInputName.vue';
 import InputNote from './FormInputNote.vue';
 import InputNumericStart from './FormInputNumeric.vue';

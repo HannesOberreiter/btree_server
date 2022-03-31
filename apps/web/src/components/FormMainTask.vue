@@ -1,8 +1,5 @@
 <template>
-  <form-common-dropdown-hive
-    v-if="!ids"
-    v-model="state.hive"
-  ></form-common-dropdown-hive>
+  <form-dropdown-hive v-if="!ids" v-model="state.hive"></form-dropdown-hive>
   <form-common-edit
     v-else
     v-model="editOptions"
@@ -21,46 +18,51 @@
   <div class="q-mb-sm q-mt-sm">
     <!-- Main Dropdowns -->
     <div v-if="task === 'checkup'">
-      <form-common-dropdown
+      <form-dropdown-option
         v-if="task === 'checkup'"
         v-model="state.type"
-        v-model:model-multiple="multipleValues.type_id"
+        :values="values"
+        :reset="reset"
         table="checkup_types"
-      ></form-common-dropdown>
+      ></form-dropdown-option>
     </div>
     <div v-else-if="task === 'harvest'" class="row">
       <div class="col-12 q-pb-sm">
-        <form-common-dropdown
+        <form-dropdown-option
           v-model="state.type"
-          v-model:model-multiple="multipleValues.type_id"
+          :values="values"
+          :reset="reset"
           table="harvest_types"
-        ></form-common-dropdown>
+        ></form-dropdown-option>
       </div>
     </div>
     <div v-else-if="task === 'treatment'" class="row">
-      <div class="col-12 col-md-6 q-pb-sm">
-        <form-common-dropdown
+      <div class="col-12 q-pb-sm">
+        <form-dropdown-option
           v-model="state.type"
-          v-model:model-multiple="multipleValues.type_id"
+          :values="values"
+          :reset="reset"
           table="treatment_types"
-        ></form-common-dropdown>
+        ></form-dropdown-option>
       </div>
-      <div class="col-12 col-md-6 q-pb-sm">
-        <form-common-dropdown-disease
+      <div class="col-12 q-pb-sm">
+        <form-dropdown-disease
           v-model="state.disease"
-          v-model:model-multiple="multipleValues.disease_id"
+          :values="values"
+          :reset="reset"
           table="treatment_diseases"
           label="disease"
-        ></form-common-dropdown-disease>
+        ></form-dropdown-disease>
       </div>
     </div>
     <div v-else-if="task === 'feed'" class="row">
       <div class="col-12 q-pb-sm">
-        <form-common-dropdown
+        <form-dropdown-option
           v-model="state.type"
-          v-model:model-multiple="multipleValues.type_id"
+          :values="values"
+          :reset="reset"
           table="feed_types"
-        ></form-common-dropdown>
+        ></form-dropdown-option>
       </div>
     </div>
     <!-- Main Amount Field -->
@@ -81,17 +83,20 @@
       <form-checkup-queen
         v-if="fields.settings.checkup.queen"
         v-model="state.checkup_queen"
-        v-model:model-multiple="multipleValues.checkup_queen"
+        :values="values"
+        :reset="reset"
       ></form-checkup-queen>
       <form-checkup-rating
         v-if="fields.settings.checkup.rating"
         v-model="state.checkup_rating"
-        v-model:model-multiple="multipleValues.checkup_rating"
+        :reset="reset"
+        :values="values"
       ></form-checkup-rating>
       <form-checkup-frames
         v-if="fields.settings.checkup.frames"
         v-model="state.checkup_frames"
-        v-model:model-multiple="multipleValues.checkup_frames"
+        :values="values"
+        :reset="reset"
       ></form-checkup-frames>
       <div class="row q-pt-sm q-pb-sm">
         <div class="col-12 col-md-7">
@@ -174,12 +179,12 @@
     </div>
     <div v-else-if="task === 'treatment'" class="row">
       <div v-if="fields.settings.treatment.vet" class="col-12 q-pb-sm">
-        <form-common-dropdown-vet
+        <form-dropdown-vet
           v-model="state.treatment_vet"
           v-model:model-multiple="multipleValues.vet_id"
           table="treatment_vets"
           label="vet"
-        ></form-common-dropdown-vet>
+        ></form-dropdown-vet>
       </div>
       <div
         v-if="fields.settings.treatment.wait"
@@ -275,10 +280,10 @@ import FormCommonAmountFrames from './FormCommonAmount.vue';
 import FormCommonCharge from './FormCommonCharge.vue';
 import InputDates from './FormInputDates.vue';
 import FormCommonDone from './FormCommonDone.vue';
-import FormCommonDropdown from './FormCommonDropdownOption.vue';
-import FormCommonDropdownDisease from './FormCommonDropdownOption.vue';
-import FormCommonDropdownVet from './FormCommonDropdownOption.vue';
-import FormCommonDropdownHive from './FormCommonDropdownHive.vue';
+import FormDropdownOption from './FormDropdownOption.vue';
+import FormDropdownDisease from './FormDropdownOption.vue';
+import FormDropdownVet from './FormDropdownOption.vue';
+import FormDropdownHive from './FormDropdownHive.vue';
 import InputNote from './FormInputNote.vue';
 import FormCommonUrl from './FormCommonUrl.vue';
 import FormCommonEdit from './FormCommonEdit.vue';

@@ -42,6 +42,7 @@
         @click="editValues(!disable)"
       ></btn-multiple-values>
     </template>
+    <template #after><slot name="deepAfter"></slot></template>
   </q-input>
 </template>
 
@@ -56,6 +57,7 @@ import useVuelidate from '@vuelidate/core';
 import BtnMultipleValues from '~/components/BtnMultipleValues.vue';
 
 import customParseFormat from 'dayjs/plugin/customParseFormat';
+import { isEmpty } from 'lodash';
 dayjs.extend(customParseFormat); // Needed to validate if date is even possible
 
 const { t } = useI18n();
@@ -111,9 +113,10 @@ watch(multipleValues, () => {
 
 watch(reset, () => {
   if (multipleValues.value) editValues(true);
-  else if (values.value)
+  else if (values.value && !isEmpty(values.value)) {
+    console.log(values.value[0][props.label]);
     modelValue.value = dayjs(values.value[0][props.label]).format('YYYY-MM-DD');
-  else modelValue.value = resetValue;
+  } else modelValue.value = resetValue;
 });
 
 function editValues(val: boolean) {

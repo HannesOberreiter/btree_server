@@ -1,9 +1,6 @@
 <template>
   <q-form class="full-width" @submit.prevent.stop="onSubmit">
-    <form-common-dropdown-hive
-      v-if="!ids"
-      v-model="state.hive"
-    ></form-common-dropdown-hive>
+    <form-dropdown-hive v-if="!ids" v-model="state.hive"></form-dropdown-hive>
     <form-common-edit
       v-else
       v-model="editOptions"
@@ -12,9 +9,7 @@
 
     <input-date v-model="state.date" label="movedate"></input-date>
 
-    <form-common-dropdown-apiary
-      v-model="state.apiary"
-    ></form-common-dropdown-apiary>
+    <form-dropdown-apiary v-model="state.apiary"></form-dropdown-apiary>
   </q-form>
 
   <q-btn-group v-if="!ids" spread>
@@ -68,9 +63,9 @@ import { ref } from 'vue';
 import { useNotification } from '~/composables/useResponseText';
 import dayjs from 'dayjs';
 import InputDate from './FormInputDate.vue';
-import FormCommonDropdownApiary from './FormCommonDropdownApiary.vue';
+import FormDropdownApiary from './FormDropdownApiary.vue';
 import FormCommonEdit from './FormCommonEdit.vue';
-import FormCommonDropdownHive from './FormCommonDropdownHive.vue';
+import FormDropdownHive from './FormDropdownHive.vue';
 import useVuelidate from '@vuelidate/core';
 import { flatten, map, merge, uniq } from 'lodash';
 import { useI18n } from 'vue-i18n';
