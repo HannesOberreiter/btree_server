@@ -87,6 +87,19 @@ type Option =
   | 'treatment_types'
   | 'treatment_vets';
 
+type TextField =
+  | 'number'
+  | 'search'
+  | 'textarea'
+  | 'time'
+  | 'text'
+  | 'password'
+  | 'email'
+  | 'tel'
+  | 'file'
+  | 'url'
+  | 'date';
+
 type Task = 'feed' | 'harvest' | 'treatment' | 'checkup';
 
 export {
@@ -100,4 +113,5 @@ export {
   Todo,
   Apiary,
   Option,
+  TextField,
 };

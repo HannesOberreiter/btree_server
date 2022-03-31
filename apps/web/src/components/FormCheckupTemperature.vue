@@ -3,7 +3,7 @@
     v-model="modelValue"
     :values="values"
     :reset="reset"
-    label="temperature"
+    label="temp"
     icon="fas fa-temperature-high"
     :min-valid="-100"
     :max-valid="100"
@@ -18,7 +18,7 @@
         : ''
     "
   >
-    <template v-if="values || isEmpty(values)" #deepAfter>
+    <template v-if="!values || isEmpty(values)" #deepAfter>
       <q-spinner-hourglass v-if="isLoading" flat round></q-spinner-hourglass>
       <q-icon
         v-else
@@ -97,6 +97,7 @@ watch(
 watch(
   () => modelValue.value,
   (cur) => {
+    console.log(cur);
     modelValue.value = round(cur, 1);
   }
 );

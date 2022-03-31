@@ -1,11 +1,11 @@
 <template>
   <q-form class="full-width" @submit.prevent.stop="onSubmit">
     <form-dropdown-hive v-if="!ids" v-model="state.hive"></form-dropdown-hive>
-    <form-common-edit
+    <form-dropdown-edit
       v-else
       v-model="editOptions"
       :options="editOptionsCopy"
-    ></form-common-edit>
+    ></form-dropdown-edit>
 
     <input-date v-model="state.date" label="movedate"></input-date>
 
@@ -64,7 +64,7 @@ import { useNotification } from '~/composables/useResponseText';
 import dayjs from 'dayjs';
 import InputDate from './FormInputDate.vue';
 import FormDropdownApiary from './FormDropdownApiary.vue';
-import FormCommonEdit from './FormCommonEdit.vue';
+import FormDropdownEdit from './FormDropdownEdit.vue';
 import FormDropdownHive from './FormDropdownHive.vue';
 import useVuelidate from '@vuelidate/core';
 import { flatten, map, merge, uniq } from 'lodash';

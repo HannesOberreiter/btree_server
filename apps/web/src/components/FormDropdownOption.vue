@@ -59,7 +59,6 @@ const props = defineProps({
 const { isLoading, data } = useOptionsQuery(props.table);
 const emit = defineEmits(['update:modelValue']);
 const { modelValue } = useVModels(props, emit);
-const resetValue = unref(modelValue.value);
 const { values, reset } = toRefs(props);
 const multipleValues = computed(() =>
   formCheckMultipleValues(
@@ -86,7 +85,7 @@ watch(reset, () => {
     setOptions(
       values.value[0][props.label === 'disease' ? 'disease_id' : 'type_id']
     );
-  } else modelValue.value = resetValue;
+  } else setOptions();
 });
 
 function setOptions(id = 0) {

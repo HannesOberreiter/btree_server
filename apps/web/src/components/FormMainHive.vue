@@ -48,11 +48,11 @@
         <form-dropdown-apiary v-model="state.apiary"></form-dropdown-apiary>
       </div>
       <div class="col-12 col-md-6">
-        <input-date
+        <form-input-movedate
           v-model="state.date"
           label="movedate"
           :hint="$t('movementInfo')"
-        ></input-date>
+        ></form-input-movedate>
       </div>
     </div>
 
@@ -92,19 +92,19 @@
     <input-note v-model="state.note" class="q-pt-sm"></input-note>
     <div class="row q-pt-sm q-pb-md">
       <div class="col-12 col-md-6">
-        <form-common-done
+        <form-input-checkbox
           v-model="state.modus"
           label="modus"
           status-active="active"
           status-inactive="inactive"
-        ></form-common-done>
+        ></form-input-checkbox>
       </div>
       <div class="col-12 col-md-6">
-        <form-common-date
+        <form-input-modusdate
           v-if="!state.modus"
           v-model="state.modusDate"
           label="modusDate"
-        ></form-common-date>
+        ></form-input-modusdate>
       </div>
     </div>
   </q-form>
@@ -159,8 +159,9 @@ import { api } from '~/boot/axios';
 import { computed, ref } from 'vue';
 import { useNotification } from '~/composables/useResponseText';
 import dayjs from 'dayjs';
-import InputDate from './FormInputDate.vue';
-import FormCommonDone from './FormCommonDone.vue';
+import FormInputMovedate from './FormInputDate.vue';
+import FormInputModusdate from './FormInputDate.vue';
+import FormInputCheckbox from './FormInputCheckbox.vue';
 import FormDropdownApiary from './FormDropdownApiary.vue';
 import FormDropdownSource from './FormDropdownOption.vue';
 import FormDropdownType from './FormDropdownOption.vue';

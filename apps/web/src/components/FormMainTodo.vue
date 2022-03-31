@@ -1,11 +1,11 @@
 <template>
   <q-form class="full-width" @submit.prevent.stop="onSubmit">
-    <form-common-edit
+    <form-dropdown-edit
       v-if="ids"
       v-model="editOptions"
       :options="editOptionsCopy"
       off-label="name"
-    ></form-common-edit>
+    ></form-dropdown-edit>
     <div class="row">
       <div class="col-11">
         <input-date v-model="state.date"></input-date>
@@ -43,9 +43,13 @@
         ></form-numeric-repeat>
       </div>
     </div>
-    <input-name v-model="state.name"></input-name>
-    <input-note v-model="state.note"></input-note>
-    <form-common-done v-model="state.done"></form-common-done>
+    <form-input-name
+      v-model="state.name"
+      label="name"
+      :required="true"
+    ></form-input-name>
+    <form-input-note v-model="state.note"></form-input-note>
+    <form-input-checkbox v-model="state.done"></form-input-checkbox>
   </q-form>
   <q-btn-group v-if="!ids" spread>
     <q-btn
@@ -99,12 +103,12 @@ import { useI18n } from 'vue-i18n';
 import { useNotification } from '~/composables/useResponseText';
 import dayjs from 'dayjs';
 import InputDate from './FormInputDate.vue';
-import InputName from './FormInputName.vue';
-import InputNote from './FormInputNote.vue';
-import FormCommonEdit from './FormCommonEdit.vue';
+import FormInputName from './FormInputText.vue';
+import FormInputNote from './FormInputNote.vue';
+import FormDropdownEdit from './FormDropdownEdit.vue';
 import FormNumericRepeat from './FormInputNumeric.vue';
 import FormNumericInterval from './FormInputNumeric.vue';
-import FormCommonDone from './FormCommonDone.vue';
+import FormInputCheckbox from './FormInputCheckbox.vue';
 import useVuelidate from '@vuelidate/core';
 import { flatten, map, merge, uniq } from 'lodash';
 import { useRouter } from 'vue-router';

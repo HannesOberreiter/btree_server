@@ -1,19 +1,19 @@
 <template>
   <form-dropdown-hive v-if="!ids" v-model="state.hive"></form-dropdown-hive>
-  <form-common-edit
+  <form-dropdown-edit
     v-else
     v-model="editOptions"
     :options="editOptionsCopy"
-  ></form-common-edit>
+  ></form-dropdown-edit>
   <div class="q-pt-xs">
-    <input-dates
+    <form-input-dates
       v-model:start-value="state.date"
       v-model:end-value="state.enddate"
       v-model:model-interval="state.interval"
       v-model:model-repeat="state.repeat"
       :values="values"
       :reset="reset"
-    ></input-dates>
+    ></form-input-dates>
   </div>
   <div class="q-mb-sm q-mt-sm">
     <!-- Main Dropdowns -->
@@ -68,14 +68,14 @@
     <!-- Main Amount Field -->
     <div v-if="task !== 'checkup'" class="row">
       <div class="col-12 col-md-7 q-pt-sm">
-        <form-common-amount
+        <form-input-amount
           v-model="state.amount"
           v-model:model-type="state.amount_type"
           v-model:model-calc="state.amount_calc"
           :hive-count="state.hive.length"
           :reset="reset"
           :values="values"
-        ></form-common-amount>
+        ></form-input-amount>
       </div>
     </div>
     <!-- Additional optional fields -->
@@ -145,7 +145,7 @@
     <div v-else-if="task === 'harvest'">
       <div v-if="fields.settings.harvest.frames" class="row">
         <div class="col-12 col-md-7">
-          <form-common-amount-frames
+          <form-input-frames
             v-model="state.harvest_frames"
             v-model:model-type="state.harvest_amount_type"
             v-model:model-calc="state.harvest_amount_calc"
@@ -153,7 +153,7 @@
             :values="values"
             :hive-count="state.hive.length"
             label="frame"
-          ></form-common-amount-frames>
+          ></form-input-frames>
         </div>
       </div>
       <div v-if="fields.settings.harvest.water" class="row">
@@ -170,10 +170,13 @@
       </div>
       <div class="row">
         <div class="col-12 col-md-6">
-          <form-common-charge
+          <form-input-charge
             v-model="state.harvest_charge"
-            v-model:model-multiple="multipleValues.harvest_charge"
-          ></form-common-charge>
+            label="charge"
+            icon="fas fa-receipt"
+            :values="values"
+            :reset="reset"
+          ></form-input-charge>
         </div>
       </div>
     </div>
@@ -181,7 +184,8 @@
       <div v-if="fields.settings.treatment.vet" class="col-12 q-pb-sm">
         <form-dropdown-vet
           v-model="state.treatment_vet"
-          v-model:model-multiple="multipleValues.vet_id"
+          :values="values"
+          :reset="reset"
           table="treatment_vets"
           label="vet"
         ></form-dropdown-vet>
@@ -202,15 +206,21 @@
       </div>
     </div>
   </div>
-  <form-common-url
+  <form-input-url
     v-model="state.url"
-    v-model:model-multiple="multipleValues.url"
-  ></form-common-url>
-  <input-note v-model="state.note" :values="values" :reset="reset"></input-note>
-  <form-common-done
+    :values="values"
+    :reset="reset"
+  ></form-input-url>
+  <form-input-note
+    v-model="state.note"
+    :values="values"
+    :reset="reset"
+  ></form-input-note>
+  <form-input-checkbox
     v-model="state.done"
-    v-model:model-multiple="multipleValues.done"
-  ></form-common-done>
+    :values="values"
+    :reset="reset"
+  ></form-input-checkbox>
 
   <q-btn-group v-if="!ids" spread>
     <q-btn
@@ -275,18 +285,18 @@ import FormCheckupRating from './FormCheckupRating.vue';
 import FormCheckupTemperature from './FormCheckupTemperature.vue';
 import FormCheckupVarroa from './FormCheckupVarroa.vue';
 import FormCheckupWeight from './FormCheckupWeight.vue';
-import FormCommonAmount from './FormCommonAmount.vue';
-import FormCommonAmountFrames from './FormCommonAmount.vue';
-import FormCommonCharge from './FormCommonCharge.vue';
-import InputDates from './FormInputDates.vue';
-import FormCommonDone from './FormCommonDone.vue';
+import FormInputAmount from './FormInputAmount.vue';
+import FormInputFrames from './FormInputAmount.vue';
+import FormInputCharge from './FormInputText.vue';
+import FormInputDates from './FormInputDates.vue';
+import FormInputCheckbox from './FormInputCheckbox.vue';
 import FormDropdownOption from './FormDropdownOption.vue';
 import FormDropdownDisease from './FormDropdownOption.vue';
 import FormDropdownVet from './FormDropdownOption.vue';
 import FormDropdownHive from './FormDropdownHive.vue';
-import InputNote from './FormInputNote.vue';
-import FormCommonUrl from './FormCommonUrl.vue';
-import FormCommonEdit from './FormCommonEdit.vue';
+import FormInputUrl from './FormInputUrl.vue';
+import FormDropdownEdit from './FormDropdownEdit.vue';
+import FormInputNote from './FormInputNote.vue';
 import InputNumericWater from './FormInputNumeric.vue';
 import InputNumericStrength from './FormInputNumeric.vue';
 import InputNumericWait from './FormInputNumeric.vue';

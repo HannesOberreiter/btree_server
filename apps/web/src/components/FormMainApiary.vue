@@ -6,7 +6,11 @@
     <q-form class="full-width" @submit.prevent.stop="onSubmit">
       <div class="row">
         <div class="col-12">
-          <input-name v-model="state.name"></input-name>
+          <form-input-name
+            v-model="state.name"
+            label="name"
+            :required="true"
+          ></form-input-name>
         </div>
         <div class="col-12">
           <q-input
@@ -108,7 +112,7 @@ import { useApiaryQuery } from '~/query';
 import { useI18n } from 'vue-i18n';
 import { useNotification } from '~/composables/useResponseText';
 import { validationErrors } from '~/helpers';
-import InputName from './FormInputName.vue';
+import FormInputName from './FormInputText.vue';
 import InputNote from './FormInputNote.vue';
 import GlobalLoading from './GlobalLoading.vue';
 import useVuelidate from '@vuelidate/core';
@@ -136,8 +140,6 @@ const {
 } = useApiaryQuery(props.id, {
   enabled: computed(() => props.id !== 0),
 });
-
-console.log(props.latlng);
 
 const state = ref({
   name: apiary.value ? apiary.value.name : '',

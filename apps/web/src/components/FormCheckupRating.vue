@@ -39,7 +39,7 @@
 
 <script setup lang="ts">
 import { integer, maxValue, minValue } from '~/helpers/i18n-validators';
-import { computed, ref, toRefs, unref, watch } from 'vue';
+import { computed, PropType, ref, toRefs, unref, watch } from 'vue';
 import { isEmpty, some } from 'lodash';
 import useVuelidate from '@vuelidate/core';
 import { useVModels } from '@vueuse/core';
@@ -49,6 +49,8 @@ import { formCheckMultipleValues } from '~/helpers';
 const expanded = ref(false);
 const props = defineProps({
   modelValue: {
+    type: null as unknown as PropType<unknown | null>,
+    validator: (v: any) => typeof v === 'object' || v === null,
     default: {
       brood: 0,
       pollen: 0,
