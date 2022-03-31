@@ -4,7 +4,11 @@
     :error="v.num.$error"
     :error-message="validationErrors(v.num)"
     :no-error-icon="true"
-    :label="disable ? $t(label) + ' - ' + $t('multipleValues') : $t(label)"
+    :label="
+      disable
+        ? $t(label, labelPlural) + ' - ' + $t('multipleValues')
+        : $t(label, labelPlural)
+    "
     :disable="disable"
     :name="label"
     type="number"
@@ -27,7 +31,7 @@
         dense
         icon="fas fa-plus"
         style="cursor: pointer"
-        :disable="modelValue > maxValid"
+        :disable="modelValue >= maxValid"
         @click="modelValue++"
       ></q-btn>
       <q-btn
@@ -36,7 +40,7 @@
         dense
         icon="fas fa-minus"
         style="cursor: pointer"
-        :disable="modelValue <= 0"
+        :disable="modelValue <= minValid"
         @click="modelValue--"
       ></q-btn>
     </template>
@@ -50,12 +54,14 @@ import {
   maxValue,
   numeric,
   integer,
+  decimal,
 } from '~/helpers/i18n-validators';
 import { useVModels } from '@vueuse/core';
 import { validationErrors, formCheckMultipleValues } from '~/helpers';
 import useVuelidate from '@vuelidate/core';
 import BtnMultipleValues from './BtnMultipleValues.vue';
 import { computed, PropType, ref, toRefs, unref, watch } from 'vue';
+import { isEmpty } from 'lodash';
 
 const props = defineProps({
   modelValue: {
@@ -74,6 +80,10 @@ const props = defineProps({
   label: {
     type: String,
     required: true,
+  },
+  labelPlural: {
+    type: Number,
+    default: 1,
   },
   icon: {
     type: String,
@@ -110,6 +120,14 @@ const rules = computed(() => {
         numeric: numeric,
       },
     };
+  } else if (props.numericValid === 'decimal') {
+    return {
+      num: {
+        minValue: minValue(props.minValid),
+        maxValue: maxValue(props.maxValid),
+        decimal: decimal,
+      },
+    };
   } else {
     return {
       num: {
@@ -128,8 +146,12 @@ watch(multipleValues, () => {
 
 watch(reset, () => {
   if (multipleValues.value) editValues(true);
-  else if (values.value) modelValue.value = values.value[0][props.label];
-  else modelValue.value = resetValue;
+  else if (values.value && !isEmpty(values.value)) {
+    modelValue.value =
+      values.value[0][
+        props.label === 'frame' ? props.label + 's' : props.label
+      ];
+  } else modelValue.value = resetValue;
 });
 
 function editValues(val: boolean) {

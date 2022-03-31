@@ -6,13 +6,13 @@
     icon="fas fa-bug"
     label="varroa"
   >
-    <template #deepAfter
-      ><q-icon
+    <template #deepAfter>
+      <q-icon
         name="fas fa-calculator"
         style="cursor: pointer"
         @click="openCalculator"
-      ></q-icon
-    ></template>
+      ></q-icon>
+    </template>
   </input-numeric>
 </template>
 

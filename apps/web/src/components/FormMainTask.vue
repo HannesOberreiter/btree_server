@@ -70,9 +70,9 @@
           v-model="state.amount"
           v-model:model-type="state.amount_type"
           v-model:model-calc="state.amount_calc"
-          v-model:model-multiple="multipleValues.amount"
           :hive-count="state.hive.length"
-          :edit="ids !== null"
+          :reset="reset"
+          :values="values"
         ></form-common-amount>
       </div>
     </div>
@@ -130,9 +130,9 @@
         <div class="col-12 col-md-7">
           <form-checkup-temperature
             v-model="state.checkup_temp"
-            v-model:model-multiple="multipleValues.checkup_temp"
             :hive="state.hive"
-            :edit="ids !== null"
+            :reset="reset"
+            :values="values"
           ></form-checkup-temperature>
         </div>
       </div>
@@ -144,8 +144,8 @@
             v-model="state.harvest_frames"
             v-model:model-type="state.harvest_amount_type"
             v-model:model-calc="state.harvest_amount_calc"
-            v-model:model-multiple="multipleValues.harvest_frames"
-            :edit="ids !== null"
+            :reset="reset"
+            :values="values"
             :hive-count="state.hive.length"
             label="frame"
           ></form-common-amount-frames>

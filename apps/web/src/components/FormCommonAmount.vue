@@ -1,55 +1,26 @@
 <template>
   <div class="row">
     <div class="col-10">
-      <q-input
-        v-model.number="modelValue"
-        :error="v.amount.$error"
-        :error-message="validationErrors(v.amount)"
-        :no-error-icon="true"
-        :label="t(label, 2)"
-        name="amount"
-        type="number"
-        :disable="modelMultiple"
+      <form-input-numeric
+        v-model="modelValue"
+        :label="label"
+        :label-plural="2"
+        :values="values"
+        :reset="reset"
+        :max-valid="10000"
+        icon="fas fa-bucket"
         :hint="
           hiveCount > 0 && modelType === 'total'
-            ? t('totalAmount', { msg: modelCalc })
+            ? $t('totalAmount', { msg: modelCalc })
             : ''
         "
-        filled
-      >
-        <template #before>
-          <q-icon v-if="!modelMultiple" name="fas fa-bucket"></q-icon>
-          <btn-multiple-values
-            v-else
-            @click="modelMultiple = !modelMultiple"
-          ></btn-multiple-values>
-        </template>
-        <template #append>
-          <q-btn
-            round
-            flat
-            dense
-            icon="fas fa-plus"
-            style="cursor: pointer"
-            @click="modelValue++"
-          ></q-btn>
-          <q-btn
-            round
-            flat
-            dense
-            icon="fas fa-minus"
-            style="cursor: pointer"
-            :disable="modelValue <= 0"
-            @click="modelValue--"
-          ></q-btn>
-        </template>
-      </q-input>
+      ></form-input-numeric>
     </div>
-    <div v-if="!edit" class="col-2 q-pl-xs">
+    <div v-if="!values || isEmpty(values)" class="col-2 q-pl-xs">
       <q-select
         v-model="modelType"
         :options="OPTIONS"
-        :option-label="(val) => t(val)"
+        :option-label="(val) => $t(val)"
         borderless
         hide-dropdown-icon
       ></q-select>
@@ -58,16 +29,12 @@
 </template>
 
 <script setup lang="ts">
-import { minValue, maxValue, numeric } from '~/helpers/i18n-validators';
 import { round } from 'lodash';
-import { useI18n } from 'vue-i18n';
 import { useVModels } from '@vueuse/core';
-import { validationErrors } from '~/helpers';
-import useVuelidate from '@vuelidate/core';
 import { watch } from 'vue';
-import BtnMultipleValues from './BtnMultipleValues.vue';
+import FormInputNumeric from './FormInputNumeric.vue';
+import { isEmpty } from 'lodash';
 
-const { t } = useI18n();
 const props = defineProps({
   modelValue: {
     default: 0,
@@ -87,35 +54,23 @@ const props = defineProps({
     type: String,
     default: 'amount',
   },
-  edit: { default: false },
-  modelMultiple: { default: false },
+  reset: {
+    type: Number,
+    default: 0,
+  },
+  values: {
+    type: Object,
+    default: null,
+  },
 });
 const emit = defineEmits([
   'update:modelValue',
   'update:modelType',
   'update:modelCalc',
-  'update:modelMultiple',
 ]);
-const { modelValue, modelType, modelCalc, modelMultiple } = useVModels(
-  props,
-  emit
-);
+const { modelValue, modelType, modelCalc } = useVModels(props, emit);
 
 const OPTIONS = ['single', 'total'];
-
-const state = {
-  amount: modelValue,
-  type: modelType,
-};
-const rules = {
-  amount: {
-    minValue: minValue(0),
-    maxValue: maxValue(10000),
-    numeric: numeric,
-  },
-  type: {},
-};
-const v = useVuelidate(rules, state, { $autoDirty: true });
 
 watch(props, () => {
   if (props.hiveCount > 0 && modelType.value === 'total')

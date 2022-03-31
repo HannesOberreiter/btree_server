@@ -137,6 +137,7 @@
   "totalAmount": "Amount per hive: {msg}",
 
   "temperatureHint": "Elevation {height}m, Lat. {lat} Lon. {lon}",
+  "temperatureTooltip": "Load current temperature for apiary location.",
 
   "activateUser": {
     "title": "Please confirm your email!",

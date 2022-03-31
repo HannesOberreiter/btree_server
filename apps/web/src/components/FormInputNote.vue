@@ -26,6 +26,7 @@ import useVuelidate from '@vuelidate/core';
 import { useVModels } from '@vueuse/core';
 import BtnMultipleValues from './BtnMultipleValues.vue';
 import { computed, ref, toRefs, unref, watch } from 'vue';
+import { isEmpty } from 'lodash';
 
 const props = defineProps({
   modelValue: {
@@ -63,7 +64,8 @@ watch(multipleValues, () => {
 
 watch(reset, () => {
   if (multipleValues.value) editValues(true);
-  else if (values.value) modelValue.value = values.value[0].note;
+  else if (values.value && !isEmpty(values.value))
+    modelValue.value = values.value[0].note;
   else modelValue.value = resetValue;
 });
 

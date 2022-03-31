@@ -1,38 +1,33 @@
 <template>
-  <q-input
-    v-model.number="modelValue"
-    :error="v.temp.$error"
-    :error-message="validationErrors(v.temp)"
-    :no-error-icon="true"
-    :label="t('temperature')"
-    name="temp"
-    type="number"
-    shadow-text=" C°"
-    :disable="isLoading || modelMultiple"
+  <form-input-numeric
+    v-model="modelValue"
+    :values="values"
+    :reset="reset"
+    label="temperature"
+    icon="fas fa-temperature-high"
+    :min-valid="-100"
+    :max-valid="100"
+    numeric-valid="decimal"
     :hint="
       isSuccess && hive.length > 0
-        ? t('temperatureHint', {
+        ? $t('temperatureHint', {
             height: temperature.metadata.height,
             lat: temperature.metadata.latitude,
             lon: temperature.metadata.longitude,
           })
         : ''
     "
-    filled
   >
-    <template #before>
-      <q-icon v-if="!modelMultiple" name="fas fa-temperature-high"></q-icon>
-      <btn-multiple-values
-        v-else
-        @click="modelMultiple = !modelMultiple"
-      ></btn-multiple-values>
-    </template>
-    <template v-if="!edit" #after>
+    <template v-if="values || isEmpty(values)" #deepAfter>
       <q-spinner-hourglass v-if="isLoading" flat round></q-spinner-hourglass>
       <q-icon
         v-else
         name="fas fa-broadcast-tower"
-        style="cursor: pointer"
+        :style="
+          hive.length === 0 || storeUser.getPaidStatus.status === false
+            ? ''
+            : 'cursor: pointer'
+        "
         :disable="hive.length === 0 || storeUser.getPaidStatus.status === false"
         :color="
           hive.length === 0 || storeUser.getPaidStatus.status === false
@@ -40,45 +35,23 @@
             : 'orange'
         "
         @click="getTemperature(true)"
-      ></q-icon>
+      >
+        <q-tooltip> {{ $t('temperatureTooltip') }} </q-tooltip>
+      </q-icon>
     </template>
-    <template #append>
-      <q-btn
-        round
-        flat
-        dense
-        icon="fas fa-plus"
-        style="cursor: pointer"
-        :disable="modelValue >= 100"
-        @click="modelValue++"
-      ></q-btn>
-      <q-btn
-        round
-        flat
-        dense
-        icon="fas fa-minus"
-        style="cursor: pointer"
-        :disable="modelValue <= -100"
-        @click="modelValue--"
-      ></q-btn>
-    </template>
-  </q-input>
+  </form-input-numeric>
 </template>
 
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
-import { minValue, maxValue, decimal } from '~/helpers/i18n-validators';
 import { useAuthUserStore } from '~/stores/auth';
-import { useI18n } from 'vue-i18n';
 import { useTemperatureQuery } from '~/query';
 import { useVModels } from '@vueuse/core';
-import { validationErrors } from '~/helpers';
-import useVuelidate from '@vuelidate/core';
 import { round } from 'lodash';
-import BtnMultipleValues from './BtnMultipleValues.vue';
+import FormInputNumeric from './FormInputNumeric.vue';
+import { isEmpty } from 'lodash';
 
 const storeUser = useAuthUserStore();
-const { t } = useI18n();
 const loadTemp = ref(false);
 const select = ref(0);
 
@@ -89,11 +62,13 @@ const props = defineProps({
   hive: {
     default: [] as any,
   },
-  modelMultiple: {
-    default: false,
+  reset: {
+    type: Number,
+    default: 0,
   },
-  edit: {
-    default: false,
+  values: {
+    type: Object,
+    default: null,
   },
 });
 const {
@@ -103,19 +78,11 @@ const {
   refetch,
 } = useTemperatureQuery(select, {
   enabled: computed(
-    () => select.value != 0 && loadTemp.value && props.edit === false
+    () => select.value != 0 && loadTemp.value && props.values !== null
   ),
 });
-const emit = defineEmits(['update:modelValue', 'update:modelMultiple']);
-const { modelValue, modelMultiple } = useVModels(props, emit);
-
-const state = {
-  temp: modelValue.value,
-};
-const rules = {
-  temp: { minValue: minValue(-100), maxValue: maxValue(100), decimal: decimal },
-};
-const v = useVuelidate(rules, state, { $autoDirty: true });
+const emit = defineEmits(['update:modelValue']);
+const { modelValue } = useVModels(props, emit);
 
 if (props.hive.length > 0 && storeUser.getPaidStatus.status === true)
   getTemperature();
