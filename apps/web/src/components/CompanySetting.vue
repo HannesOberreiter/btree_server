@@ -64,12 +64,9 @@
 
 <script setup lang="ts">
 import { api } from '~/boot/axios';
-import { computed, ref } from 'vue';
 import { findIndex } from 'lodash';
-import { storeToRefs } from 'pinia';
 import { useAuthTokenStore } from '~/stores/token';
 import { useAuthUserStore } from '~/stores/auth';
-import { useI18n } from 'vue-i18n';
 import { useNotification } from '~/composables/useResponseText';
 import { useQuasar } from 'quasar';
 import { useRefreshStore } from '~/stores/refresh';

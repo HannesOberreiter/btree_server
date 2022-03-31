@@ -25,6 +25,7 @@
       ></btn-multiple-values>
     </template>
     <template #after><slot name="deepAfter"></slot></template>
+    <template #prepend><slot name="deepPrepend"></slot></template>
   </q-input>
 </template>
 
@@ -34,7 +35,7 @@ import { useVModels } from '@vueuse/core';
 import { validationErrors, formCheckMultipleValues } from '~/helpers';
 import useVuelidate from '@vuelidate/core';
 import BtnMultipleValues from './BtnMultipleValues.vue';
-import { computed, PropType, ref, toRefs, unref, watch } from 'vue';
+import { PropType } from 'vue';
 import { isEmpty } from 'lodash';
 import { TextField } from '~/types';
 

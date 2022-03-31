@@ -22,7 +22,6 @@
 
 <script setup lang="ts">
 import { filter } from 'lodash';
-import { computed } from 'vue';
 import { useApiariesQuery } from '~/query';
 import { useVModels } from '@vueuse/core';
 import BtnMultipleValues from './BtnMultipleValues.vue';

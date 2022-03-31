@@ -98,8 +98,6 @@
 
 <script setup lang="ts">
 import { api } from '~/boot/axios';
-import { ref } from 'vue';
-import { useI18n } from 'vue-i18n';
 import { useNotification } from '~/composables/useResponseText';
 import dayjs from 'dayjs';
 import InputDate from './FormInputDate.vue';
@@ -111,7 +109,6 @@ import FormNumericInterval from './FormInputNumeric.vue';
 import FormInputCheckbox from './FormInputCheckbox.vue';
 import useVuelidate from '@vuelidate/core';
 import { flatten, map, merge, uniq } from 'lodash';
-import { useRouter } from 'vue-router';
 
 const { t } = useI18n();
 const notification = useNotification();

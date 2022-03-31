@@ -47,20 +47,16 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, toRefs, unref, watch } from 'vue';
 import { required } from '~/helpers/i18n-validators';
-import { useI18n } from 'vue-i18n';
 import { useVModels } from '@vueuse/core';
 import { formCheckMultipleValues, validationErrors } from '~/helpers';
 import dayjs from 'dayjs';
 import useVuelidate from '@vuelidate/core';
 import BtnMultipleValues from '~/components/BtnMultipleValues.vue';
-
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { isEmpty } from 'lodash';
-dayjs.extend(customParseFormat); // Needed to validate if date is even possible
 
-const { t } = useI18n();
+dayjs.extend(customParseFormat); // Needed to validate if date is even possible
 const qDateProxy = ref(false);
 const props = defineProps({
   modelValue: {

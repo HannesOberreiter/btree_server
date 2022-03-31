@@ -43,13 +43,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
 import { useAuthUserStore } from '~/stores/auth';
 import { useTemperatureQuery } from '~/query';
 import { useVModels } from '@vueuse/core';
-import { round } from 'lodash';
+import { round, isEmpty } from 'lodash';
 import FormInputNumeric from './FormInputNumeric.vue';
-import { isEmpty } from 'lodash';
 
 const storeUser = useAuthUserStore();
 const loadTemp = ref(false);

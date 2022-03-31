@@ -29,11 +29,9 @@
 </template>
 
 <script setup lang="ts">
-import { round } from 'lodash';
+import { round, isEmpty } from 'lodash';
 import { useVModels } from '@vueuse/core';
-import { watch } from 'vue';
 import FormInputNumeric from './FormInputNumeric.vue';
-import { isEmpty } from 'lodash';
 
 const props = defineProps({
   modelValue: {

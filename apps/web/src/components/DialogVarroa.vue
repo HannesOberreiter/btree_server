@@ -3,7 +3,7 @@
     <q-card>
       <q-card-section class="">
         <div class="row">
-          <div class="text-h6">{{ t('calculateVarroa') }}</div>
+          <div class="text-h6">{{ $t('calculateVarroa') }}</div>
           <q-space />
           <q-btn
             ref="closeBtn"
@@ -19,19 +19,19 @@
             <q-input
               v-model.number="sum"
               type="number"
-              :label="t('count')"
+              :label="$t('count')"
             ></q-input>
             <q-input
               v-model.number="days"
               type="number"
               :rules="[(val) => val > 0]"
               no-error-icon
-              :label="t('day', 2)"
+              :label="$t('day', 2)"
             ></q-input>
             <q-input
               v-model.number="solution"
               type="number"
-              :label="t('solution')"
+              :label="$t('solution')"
               readonly
             ></q-input>
           </div>
@@ -39,7 +39,7 @@
       </q-card-section>
       <q-card-actions>
         <q-btn color="secondary" @click="onDialogOK(solution)">
-          {{ t('copy') }}
+          {{ $t('copy') }}
         </q-btn>
       </q-card-actions>
     </q-card>
@@ -47,21 +47,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
 import { round } from 'lodash';
-import { useDialogPluginComponent } from 'quasar';
-import { useI18n } from 'vue-i18n';
 
 const { dialogRef, onDialogHide, onDialogOK } = useDialogPluginComponent();
-const { t } = useI18n();
-
 const props = defineProps({
   value: {
     type: Number,
     default: 0,
   },
 });
-
 const sum = ref(props.value);
 const days = ref(1);
 const solution = ref(sum.value / days.value);

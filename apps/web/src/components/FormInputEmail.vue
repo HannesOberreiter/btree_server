@@ -1,10 +1,10 @@
 <template>
   <q-input
-    v-model="state.email"
+    v-model="modelMail"
     :error="v.email.$error"
     :error-message="validationErrors(v.email)"
     :no-error-icon="true"
-    :label="t('email')"
+    :label="$t('email')"
     name="email"
     type="email"
     required
@@ -15,9 +15,10 @@
       <q-icon name="fas fa-at" />
     </template>
     <template #append>
-      <q-btn
+      <q-icon
         v-if="fieldStatus"
-        icon="fas fa-edit"
+        style="cursor: pointer"
+        name="fas fa-edit"
         @click="fieldStatus = !fieldStatus"
       />
     </template>
@@ -26,13 +27,9 @@
 
 <script setup lang="ts">
 import { email, required, maxLength } from '~/helpers/i18n-validators';
-import { reactive, ref, watch } from 'vue';
-import { useI18n } from 'vue-i18n';
 import { useVModels } from '@vueuse/core';
 import { validationErrors } from '~/helpers';
 import useVuelidate from '@vuelidate/core';
-
-const { t } = useI18n();
 
 const props = defineProps({
   modelMail: {
@@ -47,16 +44,10 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelMail']);
 const { modelMail } = useVModels(props, emit);
-
 const fieldStatus = ref(props.disableMail);
-
-const state = reactive({
-  email: modelMail.value,
-});
-watch(state, (curr) => {
-  emit('update:modelMail', curr.email);
-});
-
+const state = {
+  email: modelMail,
+};
 const rules = {
   email: { required, email, maxLengthValue: maxLength(50) },
 };

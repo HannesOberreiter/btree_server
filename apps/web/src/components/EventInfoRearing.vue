@@ -25,11 +25,8 @@
 
 <script setup lang="ts">
 import 'dayjs/locale/de';
-import { useI18n } from 'vue-i18n';
 import dayjs from 'dayjs';
-
 const { t, locale } = useI18n();
-
 defineProps({
   eventInfo: {
     type: Object as any,

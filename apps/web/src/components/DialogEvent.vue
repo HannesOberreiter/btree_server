@@ -84,15 +84,11 @@
 
 <script setup lang="ts">
 import { api } from '~/boot/axios';
-import { computed } from 'vue';
 import { truncate } from 'lodash';
-import { useDialogPluginComponent } from 'quasar';
-import { useI18n } from 'vue-i18n';
 import { useNotification } from '~/composables/useResponseText';
 import dayjs from 'dayjs';
 import EventInfoRearing from './EventInfoRearing.vue';
 import EventInfoVis from './EventInfoVis.vue';
-import { useRouter } from 'vue-router';
 
 const notification = useNotification();
 const { dialogRef, onDialogHide, onDialogOK } = useDialogPluginComponent();

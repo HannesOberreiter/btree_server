@@ -3,7 +3,7 @@
     <q-card style="width: 700px">
       <q-card-section class="">
         <div class="row">
-          <div class="text-h6">{{ t(title) }}</div>
+          <div class="text-h6">{{ $t(title) }}</div>
           <q-space />
           <q-btn
             ref="closeBtn"
@@ -34,14 +34,11 @@
 </template>
 
 <script setup lang="ts">
-import { useDialogPluginComponent } from 'quasar';
-import { useI18n } from 'vue-i18n';
 import FormMainApiary from './FormMainApiary.vue';
 import FormMainTodo from './FormMainTodo.vue';
 import dayjs from 'dayjs';
 
 const { dialogRef, onDialogHide, onDialogOK } = useDialogPluginComponent();
-const { t } = useI18n();
 
 defineProps({
   title: {

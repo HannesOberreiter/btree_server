@@ -4,17 +4,17 @@
       <div class="col-12">
         <form-user-password1
           v-model:modelPassword="state.oldPassword"
-          :password-label="`oldPassword`"
+          password-label="oldPassword"
           :confirm="false"
         ></form-user-password1>
-        <form-user-email
+        <form-input-email
           v-model:modelMail="state.email"
           :disable-mail="true"
           @update:model-mail="(value) => (state.email = value)"
-        ></form-user-email>
+        ></form-input-email>
         <form-user-password
           v-model:modelPassword="state.newPassword"
-          :password-label="`newPassword`"
+          password-label="newPassword"
           :confirm="true"
         ></form-user-password>
       </div>
@@ -26,7 +26,7 @@
     color="secondary"
     type="submit"
     :loading="isSubmitting"
-    :label="t('save')"
+    :label="$t('save')"
     class="full-width text-white"
     @click.prevent.stop="onSubmit"
   />
@@ -34,16 +34,13 @@
 
 <script setup lang="ts">
 import { api } from '~/boot/axios';
-import { reactive, ref } from 'vue';
 import { useAuthUserStore } from '~/stores/auth';
-import { useI18n } from 'vue-i18n';
 import { useNotification } from '~/composables/useResponseText';
-import FormUserEmail from './FormUserEmail.vue';
+import FormInputEmail from './FormInputEmail.vue';
 import FormUserPassword from './FormUserPassword.vue';
 import FormUserPassword1 from './FormUserPassword.vue';
 import useVuelidate from '@vuelidate/core';
 
-const { t } = useI18n();
 const notification = useNotification();
 const storeUser = useAuthUserStore();
 const isSubmitting = ref(false);

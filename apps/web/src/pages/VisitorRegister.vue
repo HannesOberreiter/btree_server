@@ -3,8 +3,18 @@
     <div class="text-h6 text-center">{{ t('signup.name') }}</div>
     <form-error-max v-if="submitCount >= 15"></form-error-max>
     <q-form v-else class="q-gutter-md" @submit="onSubmit">
-      <form-user-company v-model="state.company"></form-user-company>
-      <form-user-email v-model="state.email"></form-user-email>
+      <form-input-company
+        v-model="state.company"
+        label="company.name"
+        :max-valid="45"
+        :min-valid="5"
+        :required="true"
+      >
+        <template #deepPrepend
+          ><q-icon name="fas fa-warehouse"></q-icon
+        ></template>
+      </form-input-company>
+      <form-input-email v-model="state.email"></form-input-email>
       <form-user-password
         v-model:modelPassword="state.password"
         :confirm="true"
@@ -98,16 +108,14 @@
 
 <script setup lang="ts">
 import { LANGUAGES } from '~/constants';
-import { reactive, ref } from 'vue';
 import { required, maxLength } from '~/helpers/i18n-validators';
-import { useI18n } from 'vue-i18n';
 import { useNotification } from '~/composables/useResponseText';
 import { usePreferredLanguages } from '@vueuse/core';
 import { validationErrors } from '~/helpers';
 import AuthService from '~/services/auth.service';
 import FormErrorMax from '~/components/FormErrorMax.vue';
-import FormUserCompany from '~/components/FormUserCompany.vue';
-import FormUserEmail from '~/components/FormUserEmail.vue';
+import FormInputCompany from '~/components/FormInputText.vue';
+import FormInputEmail from '~/components/FormInputEmail.vue';
 import FormUserLanguage from '~/components/FormUserLanguage.vue';
 import FormUserNewsletter from '~/components/FormUserNewsletter.vue';
 import FormUserPassword from '~/components/FormUserPassword.vue';

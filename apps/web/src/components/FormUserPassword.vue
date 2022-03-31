@@ -40,9 +40,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, reactive, watch } from 'vue';
 import { QInputProps } from 'quasar';
-import { useI18n } from 'vue-i18n';
 import { useVModels } from '@vueuse/core';
 import { validationErrors } from '~/helpers';
 import useVuelidate from '@vuelidate/core';

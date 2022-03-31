@@ -22,7 +22,7 @@
           icon="fas fa-copy"
           @click="
             copy(apiValue).then(() =>
-              notification.open('info', t('copiedToClipboard'))
+              notification.open('info', $t('copiedToClipboard'))
             )
           "
         />
@@ -31,14 +31,14 @@
 
     <q-select
       v-model="ical"
-      :label="t('icalSource')"
+      :label="$t('icalSource')"
       :options="icals"
-      :option-label="(opt) => t(opt)"
+      :option-label="(opt) => $t(opt)"
     >
     </q-select>
     <q-input
       v-model="icalUrl"
-      :label="t('icalUrl')"
+      :label="$t('icalUrl')"
       :type="apiField"
       :readonly="true"
     >
@@ -49,7 +49,7 @@
           icon="fas fa-copy"
           @click="
             copy(icalUrl).then(() =>
-              notification.open('info', t('copiedToClipboard'))
+              notification.open('info', $t('copiedToClipboard'))
             )
           "
         />
@@ -65,7 +65,7 @@
         color="secondary"
         @click.prevent.stop="changeApiStatus(true)"
       >
-        {{ t('activate') }}
+        {{ $t('activate') }}
       </q-btn>
       <q-btn
         v-if="storeUser.company.api_active"
@@ -74,7 +74,7 @@
         color="negative"
         @click.prevent.stop="changeApiStatus(false)"
       >
-        {{ t('deactivate') }}
+        {{ $t('deactivate') }}
       </q-btn>
       <q-btn
         v-if="storeUser.company.api_active"
@@ -83,7 +83,7 @@
         color="secondary"
         @click.prevent.stop="changeApiStatus(true, true)"
       >
-        {{ t('generateNewKey') }}
+        {{ $t('generateNewKey') }}
       </q-btn>
     </q-btn-group>
   </div>
@@ -92,17 +92,14 @@
 <script setup lang="ts">
 import { api } from '~/boot/axios';
 import { CALENDAR } from '~/constants';
-import { computed, reactive, ref } from 'vue';
 import { map } from 'lodash';
 import { QInputProps } from 'quasar';
 import { useAuthUserStore } from '~/stores/auth';
 import { useClipboard } from '@vueuse/core';
-import { useI18n } from 'vue-i18n';
 import { useNotification } from '~/composables/useResponseText';
 import FormUserPassword from './FormUserPassword.vue';
 import useVuelidate from '@vuelidate/core';
 
-const { t } = useI18n();
 const storeUser = useAuthUserStore();
 const { copy } = useClipboard();
 const notification = useNotification();

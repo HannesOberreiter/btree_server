@@ -1,7 +1,7 @@
 <template>
   <q-select
     v-model="modelValue"
-    :label="t(label)"
+    :label="$t(label)"
     name="option"
     :loading="isLoading"
     :disable="isLoading || modelMultiple"
@@ -25,14 +25,12 @@
 <script setup lang="ts">
 import { filter, isEmpty } from 'lodash';
 import { Option } from '~/types';
-import { computed, PropType, ref, toRefs, unref, watch } from 'vue';
-import { useI18n } from 'vue-i18n';
+import { PropType } from 'vue';
 import { useOptionsQuery } from '~/query';
 import { useVModels } from '@vueuse/core';
 import BtnMultipleValues from './BtnMultipleValues.vue';
 import { formCheckMultipleValues } from '~/helpers';
 
-const { t } = useI18n();
 const props = defineProps({
   modelValue: {
     default: null,

@@ -87,6 +87,24 @@ module.exports = configure(function (/* ctx */) {
             include: path.resolve(__dirname, 'src/i18n/*.json'),
           },
         ],
+        [
+          'unplugin-auto-import/vite',
+          {
+            include: [
+              /\.[tj]sx?$/, // .ts, .tsx, .js, .jsx
+              /\.vue$/,
+              /\.vue\?vue/, // .vue
+              /\.md$/, // .md
+            ],
+            imports: ['vue', 'vue-router', 'pinia', 'quasar', 'vue-i18n'],
+            eslintrc: {
+              enabled: true,
+              filepath: './.eslintrc-auto-import.json',
+              globalsPropValue: true,
+            },
+            dts: 'src/auto-imports.d.ts',
+          },
+        ],
       ],
 
       extendViteConf(viteConf, {}) {

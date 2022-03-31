@@ -3,7 +3,7 @@
     <q-card>
       <q-card-section>
         <div class="text-h6">
-          {{ t('setting.name', 2) }} {{ t('calendar.name') }}
+          {{ $t('setting.name', 2) }} {{ $t('calendar.name') }}
         </div>
       </q-card-section>
 
@@ -14,7 +14,7 @@
           v-model="storeCalendar.calendar"
           size="lg"
           :val="value"
-          :label="value.length > 3 ? t(value.replace(/s$/, ''), 2) : t(value)"
+          :label="value.length > 3 ? $t(value.replace(/s$/, ''), 2) : $t(value)"
           type="toggle"
         >
         </q-toggle>
@@ -30,7 +30,5 @@
 <script setup lang="ts">
 import { CALENDAR } from '~/constants';
 import { useCalendarStore } from '~/stores/calendar';
-import { useI18n } from 'vue-i18n';
-const { t } = useI18n();
 const storeCalendar = useCalendarStore();
 </script>

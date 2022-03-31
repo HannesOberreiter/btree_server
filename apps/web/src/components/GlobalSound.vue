@@ -3,11 +3,9 @@
 </template>
 
 <script setup lang="ts">
-import { storeToRefs } from 'pinia';
 import { useAuthUserStore } from '~/stores/auth';
 import { useNotification } from '~/composables/useResponseText';
 import { useSound } from '@vueuse/sound';
-import { watch } from 'vue';
 import ErrorSound from '~/assets/audio/error.mp3';
 import SuccessSound from '~/assets/audio/success.mp3';
 

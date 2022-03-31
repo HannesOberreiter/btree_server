@@ -59,7 +59,6 @@
 
 <script setup lang="ts">
 import { api } from '~/boot/axios';
-import { ref } from 'vue';
 import { useNotification } from '~/composables/useResponseText';
 import dayjs from 'dayjs';
 import InputDate from './FormInputDate.vue';
@@ -68,8 +67,6 @@ import FormDropdownEdit from './FormDropdownEdit.vue';
 import FormDropdownHive from './FormDropdownHive.vue';
 import useVuelidate from '@vuelidate/core';
 import { flatten, map, merge, uniq } from 'lodash';
-import { useI18n } from 'vue-i18n';
-import { useRouter } from 'vue-router';
 
 const { t } = useI18n();
 const notification = useNotification();

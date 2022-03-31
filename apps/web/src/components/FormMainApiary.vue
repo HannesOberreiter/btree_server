@@ -18,7 +18,7 @@
             :error="v.description.$error"
             :error-message="validationErrors(v.description)"
             :no-error-icon="true"
-            :label="t('description')"
+            :label="$t('description')"
             name="description"
             type="text"
             filled
@@ -31,7 +31,7 @@
             :error="v.latitude.$error"
             :error-message="validationErrors(v.latitude)"
             :no-error-icon="true"
-            :label="t('latitude')"
+            :label="$t('latitude')"
             name="latitude"
             :min="-90"
             :max="90"
@@ -46,7 +46,7 @@
             :error="v.longitude.$error"
             :error-message="validationErrors(v.longitude)"
             :no-error-icon="true"
-            :label="t('longitude')"
+            :label="$t('longitude')"
             :min="-90"
             :max="90"
             name="longitude"
@@ -67,7 +67,7 @@
       color="secondary"
       type="submit"
       :loading="isSubmitting"
-      :label="t('save')"
+      :label="$t('save')"
       class="full-width text-white"
       @click="onSubmit"
     />
@@ -77,7 +77,7 @@
         size="md"
         color="secondary"
         :loading="isSubmitting"
-        :label="t('save')"
+        :label="$t('save')"
         class="full-width text-white"
         @click="onEdit"
       />
@@ -86,7 +86,7 @@
         size="md"
         :color="state.modus ? 'orange' : 'primary'"
         :loading="isSubmitting"
-        :label="state.modus ? t('deactivate') : t('activate')"
+        :label="state.modus ? $t('deactivate') : $t('activate')"
         class="full-width text-white"
         @click="onModus"
       />
@@ -96,7 +96,7 @@
         size="md"
         color="negative"
         :loading="isSubmitting"
-        :label="t('delete')"
+        :label="$t('delete')"
         class="full-width text-white"
         @click="onDelete"
       />
@@ -106,10 +106,8 @@
 
 <script setup lang="ts">
 import { api } from '~/boot/axios';
-import { computed, ref, watch } from 'vue';
 import { required, maxLength, between } from '~/helpers/i18n-validators';
 import { useApiaryQuery } from '~/query';
-import { useI18n } from 'vue-i18n';
 import { useNotification } from '~/composables/useResponseText';
 import { validationErrors } from '~/helpers';
 import FormInputName from './FormInputText.vue';
@@ -117,9 +115,7 @@ import InputNote from './FormInputNote.vue';
 import GlobalLoading from './GlobalLoading.vue';
 import useVuelidate from '@vuelidate/core';
 
-const { t } = useI18n();
 const notification = useNotification();
-
 const props = defineProps({
   id: {
     type: Number,

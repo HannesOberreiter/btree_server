@@ -268,20 +268,17 @@
 
 <script setup lang="ts">
 import { api } from '~/boot/axios';
-import { PropType, ref } from 'vue';
+import { PropType } from 'vue';
 import useVuelidate from '@vuelidate/core';
 import { useNotification } from '~/composables/useResponseText';
 import { Task } from '~/types';
 import { useFieldsettingStore } from '~/stores/fieldsetting';
-import { useI18n } from 'vue-i18n';
 import { flatten, map, merge, uniq } from 'lodash';
 import dayjs from 'dayjs';
-import { useRouter } from 'vue-router';
 
 import FormCheckupFrames from './FormCheckupFrames.vue';
 import FormCheckupQueen from './FormCheckupQueen.vue';
 import FormCheckupRating from './FormCheckupRating.vue';
-
 import FormCheckupTemperature from './FormCheckupTemperature.vue';
 import FormCheckupVarroa from './FormCheckupVarroa.vue';
 import FormCheckupWeight from './FormCheckupWeight.vue';

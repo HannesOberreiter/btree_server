@@ -4,7 +4,7 @@
     :options="LANGUAGES"
     option-value="value"
     option-label="label"
-    :label="t('language')"
+    :label="$t('language')"
     filled
     :dense="true"
   >
@@ -16,12 +16,8 @@
 
 <script setup lang="ts">
 import { LANGUAGES } from '~/constants';
-import { ref } from 'vue';
-import { useI18n } from 'vue-i18n';
 import { usePreferredLanguages } from '@vueuse/core';
 
-const { t } = useI18n();
 const languages = usePreferredLanguages();
-
 const lang = ref(languages.value[0] === 'de' ? LANGUAGES[1] : LANGUAGES[0]);
 </script>

@@ -3,10 +3,10 @@
     <div class="text-h6 text-center">{{ t('login') }}</div>
     <form-error-max v-if="submitCount >= 15"></form-error-max>
     <q-form v-else class="q-gutter-md" @submit="onSubmit">
-      <form-user-email
+      <form-input-email
         v-model:modelMail="state.email"
         @update:model-mail="(value) => (state.email = value)"
-      ></form-user-email>
+      ></form-input-email>
       <form-user-password
         v-model:modelPassword="state.password"
       ></form-user-password>
@@ -27,18 +27,17 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, reactive, ref } from 'vue';
 import { useAuthUserStore } from '~/stores/auth';
-import { useI18n } from 'vue-i18n';
 import { useNotification } from '~/composables/useResponseText';
 import { User } from '~/types';
-import { useRouter } from 'vue-router';
 import FormErrorMax from '~/components/FormErrorMax.vue';
-import FormUserEmail from '~/components/FormUserEmail.vue';
+import FormInputEmail from '~/components/FormInputEmail.vue';
 import FormUserPassword from '~/components/FormUserPassword.vue';
 import useVuelidate from '@vuelidate/core';
 
 const router = useRouter();
+const { t } = useI18n();
+const notification = useNotification();
 const prop = defineProps({
   activate: {
     type: String,
@@ -46,10 +45,8 @@ const prop = defineProps({
   },
 });
 
-const notification = useNotification();
 const isSubmitting = ref(false);
 const submitCount = ref(0);
-const { t } = useI18n();
 
 const store = useAuthUserStore();
 const state = reactive({

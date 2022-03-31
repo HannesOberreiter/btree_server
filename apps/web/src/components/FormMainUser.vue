@@ -3,7 +3,7 @@
     <div class="row">
       <div class="col-6 q-pr-sm">
         <q-input
-          v-model="v.firstname.$model"
+          v-model="state.firstname"
           :error="v.firstname.$error"
           :error-message="validationErrors(v.firstname)"
           :no-error-icon="true"
@@ -16,7 +16,7 @@
       </div>
       <div class="col-6">
         <q-input
-          v-model="v.lastname.$model"
+          v-model="state.lastname"
           :error="v.lastname.$error"
           :error-message="validationErrors(v.lastname)"
           :no-error-icon="true"
@@ -83,13 +83,9 @@
 <script setup lang="ts">
 import { api } from '~/boot/axios';
 import { LANGUAGES } from '~/constants';
-import { reactive, ref } from 'vue';
 import { required, maxLength } from '~/helpers/i18n-validators';
-import { storeToRefs } from 'pinia';
 import { useAuthUserStore } from '~/stores/auth';
-import { useI18n } from 'vue-i18n';
 import { useNotification } from '~/composables/useResponseText';
-import { useQuasar } from 'quasar';
 import { useQuasarLang } from '~/composables/useQuasarLang';
 import { validationErrors } from '~/helpers';
 import FormUserLanguage from './FormUserLanguage.vue';
@@ -122,7 +118,7 @@ const rules = {
   sound: {},
   acdate: {},
 };
-const v = useVuelidate(rules, state);
+const v = useVuelidate(rules, state, { $autoDirty: true });
 
 async function onSubmit() {
   isSubmitting.value = true;

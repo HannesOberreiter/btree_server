@@ -48,7 +48,7 @@ import dayjs from 'dayjs';
 import useVuelidate from '@vuelidate/core';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import BtnMultipleValues from './BtnMultipleValues.vue';
-import { computed, PropType, ref, toRefs, unref, watch } from 'vue';
+import { PropType } from 'vue';
 import { isEmpty } from 'lodash';
 
 dayjs.extend(customParseFormat); // Needed to validate if date is even possible

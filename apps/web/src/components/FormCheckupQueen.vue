@@ -28,10 +28,7 @@
 
 <script setup lang="ts">
 import { useVModels } from '@vueuse/core';
-import { useI18n } from 'vue-i18n';
 import BtnMultipleValues from './BtnMultipleValues.vue';
-import { useQuasar } from 'quasar';
-import { computed, ref, toRefs, unref, watch } from 'vue';
 import { formCheckMultipleValues } from '~/helpers';
 import { isEmpty } from 'lodash';
 

@@ -17,7 +17,6 @@
 </template>
 
 <script setup lang="ts">
-import { useQuasar } from 'quasar';
 import { useVModels } from '@vueuse/core';
 import DialogVarroa from './DialogVarroa.vue';
 import InputNumeric from './FormInputNumeric.vue';

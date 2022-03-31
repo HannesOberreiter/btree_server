@@ -1,7 +1,7 @@
 <template>
   <q-select
     v-model="apiary"
-    :label="t('quicktool.apiary')"
+    :label="$t('quicktool.apiary')"
     name="apiary"
     :loading="isLoadingApiary || isLoadingHive"
     :disable="isLoadingApiary || isLoadingHive"
@@ -19,13 +19,13 @@
     :error="v.hive.$error"
     :error-message="validationErrors(v.hive)"
     :no-error-icon="true"
-    :label="t('hive')"
+    :label="$t('hive')"
     :loading="isLoadingApiary && isLoadingHive"
     :disable="isLoadingApiary && isLoadingHive"
     :options="optionsHive"
     :option-label="
       (val) => {
-        const modus = val.hive_modus ? '' : t('inactive');
+        const modus = val.hive_modus ? '' : $t('inactive');
         return val.label + ' ' + modus;
       }
     "
@@ -44,15 +44,12 @@
 
 <script setup lang="ts">
 import { filter, map, unionBy } from 'lodash';
-import { reactive, ref, watch } from 'vue';
 import { required } from '~/helpers/i18n-validators';
 import { useApiariesQuery, useHivesQuery } from '~/query';
-import { useI18n } from 'vue-i18n';
 import { useVModels } from '@vueuse/core';
 import { validationErrors } from '~/helpers';
 import useVuelidate from '@vuelidate/core';
 
-const { t } = useI18n();
 const { isLoading: isLoadingHive, data: hives } = useHivesQuery();
 const { isLoading: isLoadingApiary, data: apiaries } = useApiariesQuery();
 

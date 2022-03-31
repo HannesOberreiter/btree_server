@@ -73,10 +73,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { storeToRefs } from 'pinia';
 import { useAuthUserStore } from '~/stores/auth';
-import { useRouter } from 'vue-router';
 import { useRouterStore } from '~/stores/router';
 
 const router = useRouter();

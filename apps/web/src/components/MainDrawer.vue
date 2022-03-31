@@ -64,9 +64,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
 import { useAuthUserStore } from '~/stores/auth';
-import { useI18n } from 'vue-i18n';
 import BtnRefresh from './BtnRefresh.vue';
 import ItemCompany from './ItemCompany.vue';
 import { useQuicktoolStore } from '~/stores/quicktool';

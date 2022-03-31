@@ -6,7 +6,7 @@
       <p class="text-center">
         {{ t('recoverUser.text') }}
       </p>
-      <form-user-email v-model="state.email"></form-user-email>
+      <form-input-email v-model="state.email"></form-input-email>
       <q-card-actions class="">
         <q-btn
           type="submit"
@@ -27,12 +27,10 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue';
-import { useI18n } from 'vue-i18n';
 import { useNotification } from '~/composables/useResponseText';
 import AuthService from '~/services/auth.service';
 import FormErrorMax from '~/components/FormErrorMax.vue';
-import FormUserEmail from '~/components/FormUserEmail.vue';
+import FormInputEmail from '~/components/FormInputEmail.vue';
 import useVuelidate from '@vuelidate/core';
 
 const notification = useNotification();

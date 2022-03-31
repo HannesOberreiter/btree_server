@@ -39,7 +39,7 @@
 
 <script setup lang="ts">
 import { integer, maxValue, minValue } from '~/helpers/i18n-validators';
-import { computed, PropType, ref, toRefs, unref, watch } from 'vue';
+import { PropType } from 'vue';
 import { isEmpty, some } from 'lodash';
 import useVuelidate from '@vuelidate/core';
 import { useVModels } from '@vueuse/core';
