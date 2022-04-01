@@ -92,19 +92,11 @@ watch(
   }
 );
 
-watch(
-  () => modelValue.value,
-  (cur) => {
-    console.log(cur);
-    modelValue.value = round(cur, 1);
-  }
-);
-
 watch(temperature, (cur) => {
   if (!props.hive) return;
   if (props.hive.length === 0) return;
   if (cur) {
-    modelValue.value = cur.data_current.temperature;
+    modelValue.value = round(cur.data_current.temperature, 1);
     loadTemp.value = false;
   }
 });
@@ -114,8 +106,8 @@ function getTemperature(click = false) {
   if (props.hive.length === 0) return;
   select.value = props.hive.length === 0 ? 0 : props.hive[0].apiary_id;
   modelValue.value = temperature.value
-    ? temperature.value.data_current.temperature
-    : modelValue.value;
+    ? round(temperature.value.data_current.temperature, 1)
+    : round(modelValue.value, 1);
 
   loadTemp.value = true;
   if (click)

@@ -103,11 +103,11 @@ const emit = defineEmits(['update:modelValue']);
 const { modelValue } = useVModels(props, emit);
 const resetValue = unref(modelValue.value);
 const { values, reset } = toRefs(props);
-const multipleValues = computed(() =>
-  formCheckMultipleValues(values.value, props.label)
-);
+const multipleValues = computed(() => {
+  return formCheckMultipleValues(values.value, props.label);
+});
 const disable = ref(multipleValues.value);
-modelValue.value = disable.value ? null : modelValue.value;
+
 const state = {
   num: modelValue,
 };
@@ -140,11 +140,16 @@ const rules = computed(() => {
 });
 const v = useVuelidate(rules as any, state, { $autoDirty: true });
 
-watch(multipleValues, () => {
-  editValues(multipleValues.value);
+watch(values, () => {
+  setValues();
 });
 
 watch(reset, () => {
+  setValues();
+});
+
+function setValues() {
+  disable.value = multipleValues.value;
   if (multipleValues.value) editValues(true);
   else if (values.value && !isEmpty(values.value)) {
     modelValue.value =
@@ -152,7 +157,7 @@ watch(reset, () => {
         props.label === 'frame' ? props.label + 's' : props.label
       ];
   } else modelValue.value = resetValue;
-});
+}
 
 function editValues(val: boolean) {
   disable.value = val;

@@ -124,13 +124,16 @@ const rules = {
 
 const v = useVuelidate(rules, modelValue, { $autoDirty: true });
 
-watch(multipleValues, () => {
-  for (const [key, value] of Object.entries(multipleValues.value)) {
-    editValues(value, key);
-  }
+watch(values, () => {
+  setValues();
 });
 
 watch(reset, () => {
+  setValues();
+});
+
+function setValues() {
+  disable.value = multipleValues.value;
   for (const [key, value] of Object.entries(multipleValues.value)) {
     if (value) editValues(true, key);
     else if (values.value && !isEmpty(values.value))
@@ -140,7 +143,7 @@ watch(reset, () => {
       modelValue.value[key as keyof typeof modelValue.value] =
         resetValue[key as keyof typeof resetValue];
   }
-});
+}
 
 function editValues(val: boolean, key: string) {
   disable.value[key as keyof typeof disable.value] = val;

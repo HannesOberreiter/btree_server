@@ -90,16 +90,21 @@ const rules = {
 };
 const v = useVuelidate(rules, state, { $autoDirty: true });
 
-watch(multipleValues, () => {
-  editValues(multipleValues.value);
+watch(values, () => {
+  setValues();
 });
 
 watch(reset, () => {
+  setValues();
+});
+
+function setValues() {
+  disable.value = multipleValues.value;
   if (multipleValues.value) editValues(true);
   else if (values.value && !isEmpty(values.value))
     modelValue.value = dayjs(values.value[0].time, 'HH:mm:ss').format('HH:mm');
   else modelValue.value = resetValue;
-});
+}
 
 function editValues(val: boolean) {
   disable.value = val;

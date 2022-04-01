@@ -117,14 +117,18 @@ const multipleValues = computed(
     formCheckMultipleValues(values.value, 'enddate')
 );
 const disable = ref(multipleValues.value);
-startValue.value = disable.value ? null : startValue.value;
-endValue.value = disable.value ? null : endValue.value;
 
-watch(multipleValues, () => {
-  editValues(multipleValues.value);
+watch(values, () => {
+  setValues();
 });
 
 watch(reset, () => {
+  setValues();
+});
+
+function setValues() {
+  disable.value = multipleValues.value;
+
   if (multipleValues.value) editValues(true);
   else if (values.value && !isEmpty(values.value)) {
     startValue.value = dayjs(values.value[0]['date']).format('YYYY-MM-DD');
@@ -133,7 +137,7 @@ watch(reset, () => {
     startValue.value = resetStart;
     endValue.value = resetEnd;
   }
-});
+}
 
 function editValues(val: boolean) {
   disable.value = val;

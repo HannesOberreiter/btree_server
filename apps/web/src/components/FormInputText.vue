@@ -111,11 +111,16 @@ const rules = computed(() => {
 });
 const v = useVuelidate(rules as any, state, { $autoDirty: true });
 
-watch(multipleValues, () => {
-  editValues(multipleValues.value);
+watch(values, () => {
+  setValues();
 });
 
 watch(reset, () => {
+  setValues();
+});
+
+function setValues() {
+  disable.value = multipleValues.value;
   if (multipleValues.value) editValues(true);
   else if (values.value && !isEmpty(values.value)) {
     modelValue.value =
@@ -123,7 +128,7 @@ watch(reset, () => {
         props.label === 'frame' ? props.label + 's' : props.label
       ];
   } else modelValue.value = resetValue;
-});
+}
 
 function editValues(val: boolean) {
   disable.value = val;

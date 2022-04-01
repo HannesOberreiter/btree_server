@@ -65,8 +65,6 @@ const multipleValues = computed(() =>
   )
 );
 const disable = ref(multipleValues.value);
-modelValue.value = disable.value ? null : modelValue.value;
-
 const options = ref([] as any);
 
 if (data.value) {
@@ -77,14 +75,23 @@ if (data.value) {
   });
 }
 
+watch(values, () => {
+  setValues();
+});
+
 watch(reset, () => {
+  setValues();
+});
+
+function setValues() {
+  disable.value = multipleValues.value;
   if (multipleValues.value) editValues(true);
   else if (values.value && !isEmpty(values.value)) {
     setOptions(
       values.value[0][props.label === 'disease' ? 'disease_id' : 'type_id']
     );
   } else setOptions();
-});
+}
 
 function setOptions(id = 0) {
   const temp = filter(data.value, (obj) => obj.modus);

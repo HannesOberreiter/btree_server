@@ -66,19 +66,23 @@ const multipleValues = computed(() =>
   formCheckMultipleValues(values.value, props.label)
 );
 const disable = ref(multipleValues.value);
-modelValue.value = disable.value ? null : modelValue.value;
 
-watch(multipleValues, () => {
-  editValues(multipleValues.value);
+watch(values, () => {
+  setValues();
 });
 
 watch(reset, () => {
+  setValues();
+});
+
+function setValues() {
+  disable.value = multipleValues.value;
   if (multipleValues.value) editValues(true);
   else if (values.value && !isEmpty(values.value)) {
     modelValue.value =
       values.value[0][props.label === 'status' ? 'done' : props.label];
   } else modelValue.value = resetValue;
-});
+}
 
 function editValues(val: boolean) {
   disable.value = val;

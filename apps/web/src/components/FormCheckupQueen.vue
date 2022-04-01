@@ -59,7 +59,6 @@ const multipleValues = computed(
     formCheckMultipleValues(values.value, 'eggs')
 );
 const disable = ref(multipleValues.value);
-modelValue.value = disable.value ? [null] : modelValue.value;
 
 const options = [
   { label: t('queen'), value: 'queen', trueValue: true },
@@ -67,11 +66,17 @@ const options = [
   { label: t('egg', 2), value: 'eggs', trueValue: true },
   { label: t('cappedBrood'), value: 'capped_brood', trueValue: true },
 ];
-watch(multipleValues, () => {
-  editValues(multipleValues.value);
+
+watch(values, () => {
+  setValues();
 });
 
 watch(reset, () => {
+  setValues();
+});
+
+function setValues() {
+  disable.value = multipleValues.value;
   if (multipleValues.value) editValues(true);
   else if (values.value && !isEmpty(values.value)) {
     const original = [];
@@ -80,7 +85,7 @@ watch(reset, () => {
     }
     modelValue.value = original;
   } else modelValue.value = resetValue;
-});
+}
 
 function editValues(val: boolean) {
   disable.value = val;

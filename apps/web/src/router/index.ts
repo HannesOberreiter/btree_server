@@ -47,7 +47,6 @@ export default route(function ({ store }) {
     ) {
       next({ name: 'login', query: { next: to.fullPath } });
     } else {
-      console.log(refreshStore.lastHour);
       if (
         to.matched.some((record) => record.meta.auth) &&
         (refreshStore.lastHour < -1 || isNaN(refreshStore.lastHour))

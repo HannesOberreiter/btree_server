@@ -31,7 +31,7 @@
             today-btn
           >
             <div class="row items-center justify-end">
-              <q-btn v-close-popup :label="t('close')" color="primary" flat />
+              <q-btn v-close-popup :label="$t('close')" color="primary" flat />
             </div>
           </q-date>
         </q-popup-proxy>
@@ -86,7 +86,6 @@ const multipleValues = computed(() =>
   formCheckMultipleValues(values.value, props.label)
 );
 const disable = ref(multipleValues.value);
-modelValue.value = disable.value ? null : modelValue.value;
 
 const state = {
   date: modelValue,
@@ -103,17 +102,21 @@ const rules = {
 
 const v = useVuelidate(rules, state, { $autoDirty: true });
 
-watch(multipleValues, () => {
-  editValues(multipleValues.value);
+watch(reset, () => {
+  setValues();
 });
 
-watch(reset, () => {
+watch(values, () => {
+  setValues();
+});
+
+function setValues() {
+  disable.value = multipleValues.value;
   if (multipleValues.value) editValues(true);
   else if (values.value && !isEmpty(values.value)) {
-    console.log(values.value[0][props.label]);
     modelValue.value = dayjs(values.value[0][props.label]).format('YYYY-MM-DD');
   } else modelValue.value = resetValue;
-});
+}
 
 function editValues(val: boolean) {
   disable.value = val;

@@ -1,10 +1,11 @@
 <template>
-  <form-dropdown-hive v-if="!ids" v-model="state.hive"></form-dropdown-hive>
   <form-dropdown-edit
-    v-else
+    v-if="isEdit"
     v-model="editOptions"
     :options="editOptionsCopy"
   ></form-dropdown-edit>
+  <form-dropdown-hive v-else v-model="state.hive"></form-dropdown-hive>
+
   <div class="q-pt-xs">
     <form-input-dates
       v-model:start-value="state.date"
@@ -222,7 +223,7 @@
     :reset="reset"
   ></form-input-checkbox>
 
-  <q-btn-group v-if="!ids" spread>
+  <q-btn-group v-if="!isEdit" spread>
     <q-btn
       unelevated
       size="md"
@@ -273,7 +274,7 @@ import useVuelidate from '@vuelidate/core';
 import { useNotification } from '~/composables/useResponseText';
 import { Task } from '~/types';
 import { useFieldsettingStore } from '~/stores/fieldsetting';
-import { flatten, map, merge, uniq } from 'lodash';
+import { flatten, includes, isNil, map, merge, omitBy } from 'lodash';
 import dayjs from 'dayjs';
 
 import FormCheckupFrames from './FormCheckupFrames.vue';
@@ -318,52 +319,20 @@ const props = defineProps({
     default: null,
   },
 });
+const ids = ref(props.ids);
+const isEdit = computed(() => {
+  if (ids.value === null) return false;
+  if (ids.value.length === 0) return false;
+  return true;
+});
 
-if (props.ids) getEdit();
-if (props.ids === null && router.currentRoute.value.name === 'edit-quicktool')
+if (isEdit.value) getEdit(unref(ids.value));
+if (isEdit.value && router.currentRoute.value.name === 'edit-quicktool')
   router.replace({ name: 'new-quicktool' });
 
 const editOptions = ref([]) as any;
 const editOptionsCopy = ref([]) as any;
 
-const multipleValues = ref({
-  date: false,
-  enddate: false,
-  amount: false,
-  type_id: false,
-  disease_id: false,
-  vet_id: false,
-  url: false,
-  note: false,
-  done: false,
-  checkup_queen: false,
-  checkup_rating: {
-    brood: false,
-    pollen: false,
-    comb: false,
-    temper: false,
-    calm_comb: false,
-    swarm: false,
-  },
-  checkup_frames: {
-    broodframes: false,
-    honeyframes: false,
-    foundation: false,
-    emptyframes: false,
-  },
-  checkup_varroa: false,
-  checkup_strong: false,
-  checkup_weight_amount: false,
-  checkup_weight_time: false,
-  checkup_temp: false,
-
-  harvest_frames: false,
-  harvest_water: false,
-  harvest_charge: false,
-
-  treatment_wait: false,
-});
-let multipleValuesCopy = {};
 const stateDefault = {
   date: dayjs().format('YYYY-MM-DD'),
   enddate: dayjs().format('YYYY-MM-DD'),
@@ -405,8 +374,6 @@ const stateDefault = {
 
   treatment_wait: 0,
 };
-let editDefault = {};
-
 const state = ref({
   hive: [] as any,
   type: null as any,
@@ -415,103 +382,16 @@ const state = ref({
   ...stateDefault,
 });
 
-function setValues(data: any, state_name: string, response_name = '') {
-  if (response_name === '') response_name = state_name;
-  const state_array = state_name.split('.');
-  const r = map(data, (row: any) => row[response_name]);
-  const u = uniq(r);
-  if (u.length > 1)
-    if (state_array.length > 1)
-      (multipleValues.value as any)[state_array[0]][state_array[1]] = true;
-    else (multipleValues.value as any)[state_array[0]] = true;
-
-  if (['queen', 'queencells', 'capped_brood', 'eggs'].includes(response_name)) {
-    if (u.length > 1 || (u[0] && u.length === 1))
-      state.value.checkup_queen.push(response_name);
-  } else {
-    let value = u[0] as any;
-    if (response_name === 'date' || response_name === 'enddate') {
-      value = dayjs(value).format('YYYY-MM-DD');
-    }
-    if (response_name === 'time') {
-      value = dayjs(value, 'HH:mm:ss').format('HH:mm');
-    }
-    if (state_array.length > 1)
-      (state.value as any)[state_array[0]][state_array[1]] = value;
-    else (state.value as any)[state_array[0]] = value;
-  }
-
-  return;
-}
-
-async function getEdit() {
-  return await api.post(`/v1/${props.task}/batchGet`, { ids: props.ids }).then(
+async function getEdit(id: unknown[]) {
+  return await api.post(`/v1/${props.task}/batchGet`, { ids: id }).then(
     (response: any) => {
       const editIds = map(response.data, (row: any) => [
         { value: row.id, label: `ID: ${row.id} / (${row.hive.name})` },
       ]);
       editOptions.value = flatten(editIds);
       editOptionsCopy.value = flatten(editIds);
-
       values.value = response.data;
-
-      console.log(values.value);
-
-      setValues(response.data, 'date', 'enddate'); // Dirty workaround as I block date change if date or enddate is different
-      setValues(response.data, 'date');
-      setValues(response.data, 'enddate', 'enddate');
-
-      setValues(response.data, 'type');
-      setValues(response.data, 'type_id');
-
-      setValues(response.data, 'done');
-      setValues(response.data, 'note');
-
-      if (props.task === 'checkup') {
-        setValues(response.data, 'checkup_frames.broodframes', 'broodframes');
-        setValues(response.data, 'checkup_frames.honeyframes', 'honeyframes');
-        setValues(response.data, 'checkup_frames.foundation', 'foundation');
-        setValues(response.data, 'checkup_frames.emptyframes', 'emptyframes');
-
-        setValues(response.data, 'checkup_rating.brood', 'brood');
-        setValues(response.data, 'checkup_rating.calm_comb', 'calm_comb');
-        setValues(response.data, 'checkup_rating.comb', 'comb');
-        setValues(response.data, 'checkup_rating.pollen', 'pollen');
-        setValues(response.data, 'checkup_rating.swarm', 'swarm');
-        setValues(response.data, 'checkup_rating.temper', 'temper');
-
-        setValues(response.data, 'checkup_temp', 'temp');
-        setValues(response.data, 'checkup_varroa', 'varroa');
-        setValues(response.data, 'checkup_strong', 'strong');
-        setValues(response.data, 'checkup_weight_amount', 'weight');
-        setValues(response.data, 'checkup_weight_time', 'time');
-
-        setValues(response.data, 'checkup_weight_time', 'time');
-
-        setValues(response.data, 'checkup_queen', 'queen');
-        setValues(response.data, 'checkup_queen', 'queencells');
-        setValues(response.data, 'checkup_queen', 'eggs');
-        setValues(response.data, 'checkup_queen', 'capped_brood');
-      } else if (props.task === 'treatment') {
-        setValues(response.data, 'disease', 'disease');
-        setValues(response.data, 'disease_id', 'disease_id');
-        setValues(response.data, 'treatment_vet', 'vet');
-        setValues(response.data, 'vet_id', 'vet_id');
-        setValues(response.data, 'treatment_wait', 'wait');
-      } else if (props.task === 'harvest') {
-        setValues(response.data, 'harvest_frames', 'frames');
-        setValues(response.data, 'harvest_water', 'water');
-        setValues(response.data, 'harvest_charge', 'charge');
-      }
-
-      if (props.task !== 'checkup')
-        setValues(response.data, 'amount', 'amount');
-
-      notification.open('info', t('dataLoaded'));
-
-      // Copies so we can reset it
-      multipleValuesCopy = { ...multipleValues.value };
-      editDefault = { ...state.value };
+      //notification.open('info', t('dataLoaded'));
     },
     (error) => {
       notification.open('negative', error.response);
@@ -520,12 +400,9 @@ async function getEdit() {
 }
 
 function onReset() {
-  if (!props.ids) {
+  if (!isEdit.value) {
     merge(state.value, stateDefault);
     state.value.checkup_queen = []; // merge seems to not clear the array so we manually reset it here
-  } else {
-    merge(state.value, editDefault);
-    merge(multipleValues.value, multipleValuesCopy);
   }
   notification.open('positive', t('successReset'));
   reset.value++;
@@ -550,6 +427,100 @@ async function onUndo() {
   isSubmitting.value = false;
 }
 
+function cleanupData() {
+  let result = {
+    date: state.value.date ? state.value.date : null,
+    enddate: state.value.enddate ? state.value.enddate : null,
+    type_id: state.value.type ? state.value.type.id : null,
+    url: state.value.url ? state.value.url : null,
+    note: state.value.note ? state.value.note : null,
+    done: state.value.done ? state.value.done : null,
+  } as any;
+
+  if (!isEdit.value) {
+    result['interval'] = state.value.interval;
+    result['repeat'] = state.value.repeat;
+  }
+
+  if (props.task === 'checkup') {
+    result['strong'] = state.value.checkup_strong
+      ? state.value.checkup_strong
+      : null;
+    result['varroa'] = state.value.checkup_varroa
+      ? state.value.checkup_varroa
+      : null;
+    result['weight'] = state.value.checkup_weight_amount
+      ? state.value.checkup_weight_amount
+      : null;
+    result['time'] = state.value.checkup_weight_time
+      ? dayjs(state.value.checkup_weight_time, 'HH:mm').format('HH:MM:ss')
+      : null;
+    result['temp'] = state.value.checkup_temp ? state.value.checkup_temp : null;
+
+    result['broodframes'] = state.value.checkup_frames.broodframes
+      ? state.value.checkup_frames.broodframes
+      : null;
+    result['emptyframes'] = state.value.checkup_frames.emptyframes
+      ? state.value.checkup_frames.emptyframes
+      : null;
+    result['foundation'] = state.value.checkup_frames.foundation
+      ? state.value.checkup_frames.foundation
+      : null;
+    result['honeyframes'] = state.value.checkup_frames.honeyframes
+      ? state.value.checkup_frames.honeyframes
+      : null;
+
+    result['brood'] = state.value.checkup_rating.brood
+      ? state.value.checkup_rating.brood
+      : null;
+    result['calm_comb'] = state.value.checkup_rating.calm_comb
+      ? state.value.checkup_rating.calm_comb
+      : null;
+    result['comb'] = state.value.checkup_rating.comb
+      ? state.value.checkup_rating.comb
+      : null;
+    result['pollen'] = state.value.checkup_rating.pollen
+      ? state.value.checkup_rating.pollen
+      : null;
+    result['swarm'] = state.value.checkup_rating.swarm
+      ? state.value.checkup_rating.swarm
+      : null;
+    result['temper'] = state.value.checkup_rating.temper
+      ? state.value.checkup_rating.temper
+      : null;
+    if (state.value.checkup_queen[0]) {
+      result['queen'] = includes(state.value.checkup_queen, 'queen');
+      result['queencells'] = includes(state.value.checkup_queen, 'queencells');
+      result['eggs'] = includes(state.value.checkup_queen, 'eggs');
+      result['capped_brood'] = includes(
+        state.value.checkup_queen,
+        'capped_brood'
+      );
+    }
+  } else {
+    result['amount'] = state.value.amount_calc ? state.value.amount_calc : null;
+    if (props.task === 'treatment') {
+      result['vet_id'] = state.value.treatment_vet
+        ? state.value.treatment_vet.id
+        : null;
+      result['wait'] = state.value.treatment_wait
+        ? state.value.treatment_wait
+        : null;
+    } else if (props.task === 'harvest') {
+      result['frames'] = state.value.harvest_amount_calc
+        ? state.value.amount_calc
+        : null;
+      result['water'] = state.value.harvest_water
+        ? state.value.harvest_water
+        : null;
+      result['charge'] = state.value.harvest_charge
+        ? state.value.harvest_charge
+        : null;
+    }
+  }
+  return omitBy(result, isNil);
+}
+
 async function onUpdate() {
   isSubmitting.value = true;
   const isFormCorrect = await v.value.$validate();
@@ -557,22 +528,16 @@ async function onUpdate() {
     isSubmitting.value = false;
     return;
   }
-
-  const ids = editOptions.value.map((obj: any) => obj.value);
-
-  let data = { ids: ids, ...state.value, ignore: { ...multipleValues.value } };
-  delete data.hive;
-  data.type = data.type ? data.type.id : 0;
-  data.disease = data.disease ? data.disease.id : 0;
-  data.treatment_vet = data.treatment_vet ? data.treatment_vet.id : 0;
-  data.checkup_weight_time = dayjs(data.checkup_weight_time, 'HH:mm').format(
-    'HH:MM:ss'
-  );
+  const id = editOptions.value.map((obj: any) => obj.value);
+  let data = {
+    ids: id,
+    data: cleanupData(),
+  };
   await api.patch(`/v1/${props.task}`, JSON.stringify(data)).then(
     (response: any) => {
-      console.log(response);
       lastInsert.value = response.data;
       lastInsertTable.value = props.task as any;
+      getEdit(id);
       notification.open('positive', '');
     },
     (error) => {
