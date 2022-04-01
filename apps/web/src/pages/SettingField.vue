@@ -12,7 +12,7 @@
             <template v-for="(_value, j) in setting" :key="j">
               <div class="col-12">
                 <q-toggle
-                  v-model="settings[index][j]"
+                  v-model="settings[index as keyof typeof settings][index as keyof typeof setting]"
                   :label="t('setting.hint' + capitalize(index) + capitalize(j))"
                   :disable="isSubmitting"
                   @update:model-value="onSubmit"

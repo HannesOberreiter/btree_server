@@ -6,6 +6,7 @@ import { queryCache } from '~/boot/vue-query';
 import { Ref } from 'vue';
 import { useNotification } from '~/composables/useResponseText';
 import { useQuery } from 'vue-query';
+// import { stringify } from 'query-string';
 
 export function useOptionsQuery(table: Option) {
   return useQuery(['option', table], () => api.get(`/v1/option/${table}`), {
@@ -59,6 +60,17 @@ export function useApiariesQuery() {
   });
 }
 
+export function useApiaryQuery(
+  id: number,
+  { enabled = undefined as MaybeRef<boolean | undefined> }
+) {
+  return useQuery(['apiaries', id], () => api.get(`/v1/apiary/${id}`), {
+    enabled,
+    select: (response) => response.data,
+    onError: (error: any) => useNotification().open('negative', error.response),
+  });
+}
+
 export function useTemperatureQuery(
   apiary_id: Ref<number>,
   { enabled = undefined as MaybeRef<boolean | undefined> }
@@ -75,29 +87,41 @@ export function useTemperatureQuery(
   );
 }
 
-export function useApiaryQuery(
-  id: number,
-  { enabled = undefined as MaybeRef<boolean | undefined> }
-) {
-  return useQuery(['apiaries', id], () => api.get(`/v1/apiary/${id}`), {
-    enabled,
-    select: (response) => response.data,
-    onError: (error: any) => useNotification().open('negative', error.response),
-  });
-}
-
-export function useHivesQuery() {
-  return useQuery(['hives'], () => api.get('/v1/hive'), {
-    select: (response) => {
-      const result = map(response.data, (value) => {
-        value.label = `${value.hive_name} (${value.apiary_name})`;
-        value.value = value.hive_id;
-        return value;
-      });
-      return result ? result : ([] as any);
-    },
-    onError: (error: any) => useNotification().open('negative', error.response),
-  });
+export function useHivesQuery({
+  offset = 0 as MaybeRef<number>,
+  limit = 10000 as MaybeRef<number>,
+  order = 'name' as MaybeRef<string>,
+  direction = 'asc' as MaybeRef<string>,
+  modus = true as MaybeRef<boolean>,
+  deleted = false as MaybeRef<boolean>,
+  q = '' as MaybeRef<string>,
+}) {
+  return useQuery(
+    ['hives', offset, limit, order, direction, modus, deleted, q],
+    () =>
+      api.get(
+        `/v1/hive?offset=${unref(offset)}&limit=${unref(limit)}&order=${unref(
+          order
+        )}&direction=${unref(direction)}&modus=${unref(modus)}&deleted=${unref(
+          deleted
+        )}&q=${unref(q)}`
+      ),
+    {
+      keepPreviousData: true,
+      select: (response) => {
+        const result = map(response.data.results, (value) => {
+          value.label = `${value.name} (${value.hive_location.apiary_name})`;
+          value.value = value.id;
+          return value;
+        });
+        return result
+          ? { results: result, total: response.data.total }
+          : ([] as any);
+      },
+      onError: (error: any) =>
+        useNotification().open('negative', error.response),
+    }
+  );
 }
 
 export function clearCache() {

@@ -22,29 +22,22 @@
   </div>
 </template>
 <script setup lang="ts">
-import _ from 'lodash';
-import '@fullcalendar/core/vdom'; // solve problem with Vite
+import { remove, map, difference, merge } from 'lodash';
+import dayjs from 'dayjs';
 import { api } from '~/boot/axios';
 import { CALENDAR } from '~/constants';
 import { onKeyStroke } from '@vueuse/core';
 import { QueryClient } from 'vue-query';
-import { ref, watch, reactive, onMounted } from 'vue';
-import { storeToRefs } from 'pinia';
 import { useAuthUserStore } from '~/stores/auth';
 import { useCalendarStore } from '~/stores/calendar';
-import { useI18n } from 'vue-i18n';
+import useCalendarVis from '~/composables/useCalendarVis';
 import { useNotification } from '~/composables/useResponseText';
-import { useQuasar } from 'quasar';
-import allLocales from '@fullcalendar/core/locales-all';
 import CalendarSetting from '~/components/CalendarSetting.vue';
-import dayGridPlugin from '@fullcalendar/daygrid';
-import dayjs from 'dayjs';
+
 import DialogEvent from '~/components/DialogEvent.vue';
 import DialogForm from '~/components/DialogForm.vue';
 import DialogHint from '~/components/DialogHint.vue';
-import interactionPlugin from '@fullcalendar/interaction';
-import listPlugin from '@fullcalendar/list';
-import useCalendarVis from '~/composables/useCalendarVis';
+
 import FullCalendar, {
   CalendarOptions,
   DateSelectArg,
@@ -52,6 +45,11 @@ import FullCalendar, {
   EventChangeArg,
   EventSourceInput,
 } from '@fullcalendar/vue3';
+import '@fullcalendar/core/vdom'; // solve problem with Vite
+import allLocales from '@fullcalendar/core/locales-all';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import interactionPlugin from '@fullcalendar/interaction';
+import listPlugin from '@fullcalendar/list';
 
 const { t } = useI18n();
 const $q = useQuasar();
@@ -139,6 +137,137 @@ eventsSourceList.map(function (source: any) {
   }
 });
 
+onMounted(() => {
+  onKeyStroke('ArrowLeft', (e) => {
+    e.preventDefault();
+    if (cal.value.getApi()) cal.value.getApi().prev();
+  });
+  onKeyStroke('ArrowRight', (e) => {
+    e.preventDefault();
+    if (cal.value.getApi()) cal.value.getApi().next();
+  });
+  watch(storeCalendar, (currentValue) => {
+    const calendarApi = cal.value.getApi();
+    const addSources = difference(
+      currentValue.calendar,
+      eventsSourceActiveWatcher
+    );
+    const removeSources = difference(
+      eventsSourceActiveWatcher,
+      currentValue.calendar
+    );
+    eventsSourceActiveWatcher = currentValue.calendar;
+    eventsSourceList.map(function (source: any) {
+      if (addSources.includes(source.id)) {
+        eventsSourceActive.push(source);
+        remove(eventsSourceInactive, { id: source.id });
+        calendarApi.addEventSource(source);
+      } else if (removeSources.includes(source.id)) {
+        eventsSourceInactive.push(source);
+        remove(eventsSourceActive, { id: source.id });
+        calendarApi.getEventSourceById(source.id).remove();
+      }
+    });
+  });
+});
+
+const refetchSource = (event: string) => {
+  if (!cal.value) return;
+  const calendarApi = cal.value.getApi();
+  const source = calendarApi.getEventSourceById(event);
+  client.clear();
+  source.refetch();
+};
+
+function onResize(_size: any) {
+  cal.value.getApi().updateSize();
+}
+
+const handleEventsChange = (changeInfo: EventChangeArg) => {
+  // Single Day Events no Enddate possible
+  if (
+    changeInfo.event.extendedProps.table === 'todos' ||
+    changeInfo.event.extendedProps.table === 'movedates'
+  ) {
+    if (changeInfo.event.end) {
+      changeInfo.revert();
+      return void 0;
+    }
+  }
+
+  let ids = '';
+  let start = '';
+  if (changeInfo.event.extendedProps.table === 'rearings') {
+    // For Queen Rearing Events
+    // we need to find out which is the starting step
+    // and how it will be changed based on the difference if the moved event is not the starting step
+    ids = changeInfo.event.groupId.replace('Q', '');
+    const startPosition = changeInfo.event.extendedProps.startPosition;
+    const currentPosition = changeInfo.event.extendedProps.currentStep.position;
+    if (startPosition === currentPosition) {
+      start = dayjs(changeInfo.event.start).format('YYYY-MM-DD HH:mm:ss');
+    } else {
+      const difference = dayjs(changeInfo.event.start).diff(
+        dayjs(changeInfo.event.extendedProps.currentStep.date)
+      );
+      let startStep: any = '';
+      map(changeInfo.event.extendedProps.steps, function (value) {
+        if (value.position === startPosition) startStep = value;
+      });
+      start = dayjs(startStep.date)
+        .add(difference, 'miliseconds')
+        .format('YYYY-MM-DD HH:mm:ss');
+    }
+  } else {
+    ids = changeInfo.event.extendedProps.task_ids.toString().split(',');
+    start = dayjs(changeInfo.event.start).format('YYYY-MM-DD');
+  }
+
+  const data = JSON.stringify({
+    start: start,
+    end: dayjs(changeInfo.event.end).subtract(1, 'day').format('YYYY-MM-DD'),
+    ids: ids,
+  });
+  const sourceName = changeInfo.event.extendedProps.table.slice(
+    0,
+    -1
+  ) as string;
+  api.patch(`/v1/${sourceName}/date`, data).then(
+    (_response: any) => {
+      notification.open('positive', '');
+      client.clear();
+    },
+    (error) => {
+      notification.open('negative', error);
+      changeInfo.revert();
+    }
+  );
+  return true;
+};
+const handleDateSelect = (selectInfo: DateSelectArg) => {
+  if ($q.platform.is.mobile) {
+    dateClicked.value = dayjs(selectInfo.start).format('YYYY-MM-DD');
+    formDialog();
+  } else if (
+    dateClicked.value === dayjs(selectInfo.start).format('YYYY-MM-DD')
+  ) {
+    formDialog();
+  }
+  dateClicked.value = dayjs(selectInfo.start).format('YYYY-MM-DD');
+};
+const handleEventClick = (clickInfo: EventClickArg) => {
+  clickInfo.jsEvent.preventDefault(); // don't let the browser navigate
+
+  const event = {
+    ...merge(
+      clickInfo.event._instance?.range,
+      clickInfo.event._def,
+      clickInfo.event.extendedProps
+    ),
+  };
+  eventDialog(event);
+};
+
 const calendarOptions = reactive({
   eventSources: eventsSourceActive,
   plugins: [dayGridPlugin, listPlugin, interactionPlugin],
@@ -208,137 +337,6 @@ const calendarOptions = reactive({
   eventClick: handleEventClick,
   eventChange: handleEventsChange,
 } as CalendarOptions);
-
-onMounted(() => {
-  onKeyStroke('ArrowLeft', (e) => {
-    e.preventDefault();
-    if (cal.value.getApi()) cal.value.getApi().prev();
-  });
-  onKeyStroke('ArrowRight', (e) => {
-    e.preventDefault();
-    if (cal.value.getApi()) cal.value.getApi().next();
-  });
-  watch(storeCalendar, (currentValue) => {
-    const calendarApi = cal.value.getApi();
-    const addSources = _.difference(
-      currentValue.calendar,
-      eventsSourceActiveWatcher
-    );
-    const removeSources = _.difference(
-      eventsSourceActiveWatcher,
-      currentValue.calendar
-    );
-    eventsSourceActiveWatcher = currentValue.calendar;
-    eventsSourceList.map(function (source: any) {
-      if (addSources.includes(source.id)) {
-        eventsSourceActive.push(source);
-        _.remove(eventsSourceInactive, { id: source.id });
-        calendarApi.addEventSource(source);
-      } else if (removeSources.includes(source.id)) {
-        eventsSourceInactive.push(source);
-        _.remove(eventsSourceActive, { id: source.id });
-        calendarApi.getEventSourceById(source.id).remove();
-      }
-    });
-  });
-});
-
-const refetchSource = (event: string) => {
-  if (!cal.value) return;
-  const calendarApi = cal.value.getApi();
-  const source = calendarApi.getEventSourceById(event);
-  client.clear();
-  source.refetch();
-};
-
-function onResize(_size: any) {
-  cal.value.getApi().updateSize();
-}
-
-function handleEventsChange(changeInfo: EventChangeArg) {
-  // Single Day Events no Enddate possible
-  if (
-    changeInfo.event.extendedProps.table === 'todos' ||
-    changeInfo.event.extendedProps.table === 'movedates'
-  ) {
-    if (changeInfo.event.end) {
-      changeInfo.revert();
-      return void 0;
-    }
-  }
-
-  let ids = '';
-  let start = '';
-  if (changeInfo.event.extendedProps.table === 'rearings') {
-    // For Queen Rearing Events
-    // we need to find out which is the starting step
-    // and how it will be changed based on the difference if the moved event is not the starting step
-    ids = changeInfo.event.groupId.replace('Q', '');
-    const startPosition = changeInfo.event.extendedProps.startPosition;
-    const currentPosition = changeInfo.event.extendedProps.currentStep.position;
-    if (startPosition === currentPosition) {
-      start = dayjs(changeInfo.event.start).format('YYYY-MM-DD HH:mm:ss');
-    } else {
-      const difference = dayjs(changeInfo.event.start).diff(
-        dayjs(changeInfo.event.extendedProps.currentStep.date)
-      );
-      let startStep: any = '';
-      _.map(changeInfo.event.extendedProps.steps, function (value) {
-        if (value.position === startPosition) startStep = value;
-      });
-      start = dayjs(startStep.date)
-        .add(difference, 'miliseconds')
-        .format('YYYY-MM-DD HH:mm:ss');
-    }
-  } else {
-    ids = changeInfo.event.extendedProps.task_ids.toString().split(',');
-    start = dayjs(changeInfo.event.start).format('YYYY-MM-DD');
-  }
-
-  const data = JSON.stringify({
-    start: start,
-    end: dayjs(changeInfo.event.end).subtract(1, 'day').format('YYYY-MM-DD'),
-    ids: ids,
-  });
-  const sourceName = changeInfo.event.extendedProps.table.slice(
-    0,
-    -1
-  ) as string;
-  api.patch(`/v1/${sourceName}/date`, data).then(
-    (_response: any) => {
-      notification.open('positive', '');
-      client.clear();
-    },
-    (error) => {
-      notification.open('negative', error);
-      changeInfo.revert();
-    }
-  );
-  return void 0;
-}
-function handleDateSelect(selectInfo: DateSelectArg) {
-  if ($q.platform.is.mobile) {
-    dateClicked.value = dayjs(selectInfo.start).format('YYYY-MM-DD');
-    formDialog();
-  } else if (
-    dateClicked.value === dayjs(selectInfo.start).format('YYYY-MM-DD')
-  ) {
-    formDialog();
-  }
-  dateClicked.value = dayjs(selectInfo.start).format('YYYY-MM-DD');
-}
-function handleEventClick(clickInfo: EventClickArg) {
-  clickInfo.jsEvent.preventDefault(); // don't let the browser navigate
-
-  const event = {
-    ..._.merge(
-      clickInfo.event._instance?.range,
-      clickInfo.event._def,
-      clickInfo.event.extendedProps
-    ),
-  };
-  eventDialog(event);
-}
 </script>
 
 <style>

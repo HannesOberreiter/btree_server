@@ -1,7 +1,7 @@
 import { api } from '~/boot/axios';
 import { useAuthUserStore } from '~/stores/auth';
 import { useFieldsettingStore } from '~/stores/fieldsetting';
-import { clearCache } from '~/query';
+import { clearCache } from '~/composables/useQuery';
 
 class RefreshService {
   async refreshAll() {

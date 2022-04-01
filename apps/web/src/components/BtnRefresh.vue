@@ -13,7 +13,7 @@
 </template>
 
 <script setup lang="ts">
-import { clearCache } from '~/query';
+import { clearCache } from '~/composables/useQuery';
 import { useRefreshStore } from '~/stores/refresh';
 
 const storeRefresh = useRefreshStore();

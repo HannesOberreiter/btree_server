@@ -26,7 +26,7 @@
 import { filter, isEmpty } from 'lodash';
 import { Option } from '~/types';
 import { PropType } from 'vue';
-import { useOptionsQuery } from '~/query';
+import { useOptionsQuery } from '~/composables/useQuery';
 import { useVModels } from '@vueuse/core';
 import BtnMultipleValues from './BtnMultipleValues.vue';
 import { formCheckMultipleValues } from '~/helpers';

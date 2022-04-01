@@ -22,7 +22,7 @@
 
 <script setup lang="ts">
 import { filter } from 'lodash';
-import { useApiariesQuery } from '~/query';
+import { useApiariesQuery } from '~/composables/useQuery';
 import { useVModels } from '@vueuse/core';
 import BtnMultipleValues from './BtnMultipleValues.vue';
 import useVuelidate from '@vuelidate/core';

@@ -25,8 +25,8 @@
     :options="optionsHive"
     :option-label="
       (val) => {
-        const modus = val.hive_modus ? '' : $t('inactive');
-        return val.label + ' ' + modus;
+        const modus = val.modus ? '' : $t('inactive');
+        return val.label + ' ' + modus + val.modus;
       }
     "
     clearable
@@ -45,12 +45,11 @@
 <script setup lang="ts">
 import { filter, map, unionBy } from 'lodash';
 import { required } from '~/helpers/i18n-validators';
-import { useApiariesQuery, useHivesQuery } from '~/query';
+import { useApiariesQuery, useHivesQuery } from '~/composables/useQuery';
 import { useVModels } from '@vueuse/core';
 import { validationErrors } from '~/helpers';
 import useVuelidate from '@vuelidate/core';
-
-const { isLoading: isLoadingHive, data: hives } = useHivesQuery();
+const { isLoading: isLoadingHive, data: hives } = useHivesQuery({});
 const { isLoading: isLoadingApiary, data: apiaries } = useApiariesQuery();
 
 const props = defineProps({
@@ -67,14 +66,13 @@ const optionsHive = ref([] as any);
 const optionsApiary = ref([] as any);
 
 function selectApiary(val: any) {
-  const data = filter(
-    hives.value,
-    (obj) => obj.hive_modus && !obj.hive_deleted
-  );
   map(val, (v) => {
-    const res = filter(data, (obj) => obj.apiary_name === v.name);
+    const res = filter(
+      hives.value.results,
+      (obj) => obj.hive_location.apiary_name === v.name
+    );
     if (!state.hive) state.hive = [];
-    if (res.length > 0) state.hive = unionBy(state.hive, res, 'hive_id') as [];
+    if (res.length > 0) state.hive = unionBy(state.hive, res, 'id') as [];
   });
 }
 
@@ -83,22 +81,18 @@ function selectHive() {
 }
 
 function filterHive(val: any, update: any, _abort: any) {
-  const data = filter(
-    hives.value,
-    (obj) => obj.hive_modus && !obj.hive_deleted
-  );
   if (hives.value !== null) {
     update(() => {
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       const needle = new RegExp(`(${val.toLowerCase()})`);
-      optionsHive.value = filter(data, (obj) =>
+      optionsHive.value = filter(hives.value.results, (obj) =>
         needle.test(obj.label.toLowerCase())
       );
     });
   }
   if (val === '') {
     update(() => {
-      optionsHive.value = data;
+      optionsHive.value = hives.value.results;
     });
     return;
   }

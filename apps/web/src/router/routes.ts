@@ -6,141 +6,146 @@ const routes: RouteRecordRaw[] = [
     meta: {
       auth: true,
     },
-    component: () => import('layouts/MainLayout.vue'),
+    component: () => import('~/layouts/MainLayout.vue'),
     children: [
       {
         path: '',
         name: 'calendar',
-        component: () => import('pages/UserCalendar.vue'),
+        component: () => import('~/pages/Calendar.vue'),
       },
       {
         path: '/quicktool/:task',
         name: 'new-quicktool',
         props: true,
-        component: () => import('pages/UserQuicktoolNew.vue'),
+        component: () => import('~/pages/QuicktoolNew.vue'),
       },
       {
         path: '/edit/:task',
         name: 'edit-quicktool',
         props: true,
-        component: () => import('pages/UserQuicktoolEdit.vue'),
+        component: () => import('~/pages/QuicktoolEdit.vue'),
       },
       {
         path: '/new/hive',
         name: 'new-hive',
-        component: () => import('pages/UserHive.vue'),
+        component: () => import('~/pages/HiveNew.vue'),
+      },
+      {
+        path: '/table/hive',
+        name: 'table-hive',
+        component: () => import('~/pages/HiveTable.vue'),
       },
       {
         path: '/new/todo',
         name: 'new-todo',
-        component: () => import('pages/UserTodoNew.vue'),
+        component: () => import('~/pages/TodoNew.vue'),
       },
       {
         path: '/edit/todo',
         name: 'edit-todo',
         props: true,
-        component: () => import('pages/UserTodoEdit.vue'),
+        component: () => import('~/pages/TodoEdit.vue'),
       },
       {
         path: '/new/movement',
         name: 'new-movement',
-        component: () => import('pages/UserMovement.vue'),
+        component: () => import('~/pages/MovementNew.vue'),
       },
       {
         path: '/edit/movement',
         name: 'edit-movement',
         props: true,
-        component: () => import('pages/UserMovement.vue'),
+        component: () => import('~/pages/MovementEdit.vue'),
       },
 
       {
         path: '/new/queen',
         name: 'new-queen',
-        component: () => import('pages/UserQueen.vue'),
+        component: () => import('~/pages/Queen.vue'),
       },
       {
         path: '/edit/queen',
         name: 'edit-queen',
-        component: () => import('pages/UserQueen.vue'),
+        component: () => import('~/pages/Queen.vue'),
       },
 
       {
         path: '/map/apiary',
         name: 'map-apiary',
-        component: () => import('pages/UserMapApiary.vue'),
+        component: () => import('~/pages/MapApiary.vue'),
       },
       {
         path: '/map/wind',
         name: 'map-wind',
-        component: () => import('pages/UserMapWind.vue'),
+        component: () => import('~/pages/MapWind.vue'),
       },
       {
         path: '/setting/profile/:tab?',
         name: 'settingProfile',
         props: true,
-        component: () => import('src/pages/UserSettingProfile.vue'),
+        component: () => import('~/pages/SettingProfile.vue'),
       },
       {
         path: '/setting/company/:tab?',
         name: 'settingCompany',
         props: true,
-        component: () => import('src/pages/UserSettingCompany.vue'),
+        component: () => import('~/pages/SettingCompany.vue'),
       },
       {
         path: '/setting/field',
         name: 'settingField',
-        component: () => import('src/pages/UserSettingField.vue'),
+        component: () => import('~/pages/SettingField.vue'),
       },
       {
         path: '/setting/dropbox/:token?',
         props: true,
         name: 'settingDropbox',
-        component: () => import('src/pages/UserSettingDropbox.vue'),
+        component: () => import('~/pages/SettingDropbox.vue'),
       },
       {
         path: '/news',
         name: 'news',
-        component: () => import('pages/NewsTable.vue'),
+        component: () => import('~/pages/News.vue'),
       },
     ],
   },
   {
     path: '/visitor',
     name: 'visitorTemplate',
-    component: () => import('layouts/VisitorLayout.vue'),
+    component: () => import('~/layouts/VisitorLayout.vue'),
     children: [
       {
         path: '/login',
         name: 'login',
         props: true,
-        component: () => import('src/pages/VisitorLogin.vue'),
+        component: () => import('~/pages/VisitorLogin.vue'),
       },
       {
         path: '/register',
         name: 'register',
-        component: () => import('src/pages/VisitorRegister.vue'),
+        component: () => import('~/pages/VisitorRegister.vue'),
       },
       {
         path: '/recover',
         name: 'recover',
-        component: () => import('src/pages/VisitorRecover.vue'),
+        component: () => import('~/pages/VisitorRecover.vue'),
       },
       {
         path: '/reset/:reset',
         name: 'reset',
         props: true,
-        component: () => import('src/pages/VisitorReset.vue'),
+        component: () => import('~/pages/VisitorReset.vue'),
       },
       {
         path: '/activate/:activate',
         name: 'activate',
         props: true,
-        component: () => import('src/pages/VisitorActivate.vue'),
+        component: () => import('~/pages/VisitorActivate.vue'),
       },
       {
         path: '/unsubscribe',
         name: 'unsubscribe',
-        component: () => import('src/pages/VisitorUnsubscribe.vue'),
+        component: () => import('~/pages/VisitorUnsubscribe.vue'),
       },
     ],
   },
@@ -149,7 +154,7 @@ const routes: RouteRecordRaw[] = [
   // but you can also remove it
   {
     path: '/:catchAll(.*)*',
-    component: () => import('pages/Error404.vue'),
+    component: () => import('~/pages/Error404.vue'),
   },
 ];
 

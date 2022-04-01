@@ -107,7 +107,7 @@
 <script setup lang="ts">
 import { api } from '~/boot/axios';
 import { required, maxLength, between } from '~/helpers/i18n-validators';
-import { useApiaryQuery } from '~/query';
+import { useApiaryQuery } from '~/composables/useQuery';
 import { useNotification } from '~/composables/useResponseText';
 import { validationErrors } from '~/helpers';
 import FormInputName from './FormInputText.vue';

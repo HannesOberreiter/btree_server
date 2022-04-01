@@ -160,7 +160,7 @@ const links = ref([
       },
       {
         label: t('hive', 2),
-        route: 'table-apiary',
+        route: 'table-hive',
         icon: 'fas fa-house',
         menu: false,
       },

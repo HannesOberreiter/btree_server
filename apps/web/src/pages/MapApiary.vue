@@ -169,7 +169,7 @@
 import 'leaflet/dist/leaflet.css';
 import { api } from '~/boot/axios';
 import { computed, ref } from 'vue';
-import { useApiariesQuery } from '~/query';
+import { useApiariesQuery } from '~/composables/useQuery';
 import { useAuthUserStore } from '~/stores/auth';
 import { useI18n } from 'vue-i18n';
 import { useNotification } from '~/composables/useResponseText';

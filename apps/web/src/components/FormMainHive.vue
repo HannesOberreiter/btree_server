@@ -172,13 +172,13 @@ import InputNumericRepeat from './FormInputNumeric.vue';
 import InputNumericGrouphive from './FormInputNumeric.vue';
 import InputNumericPosition from './FormInputNumeric.vue';
 import useVuelidate from '@vuelidate/core';
-import { useHivesQuery } from '~/query';
+import { useHivesQuery } from '~/composables/useQuery';
 import { filter, merge, orderBy } from 'lodash';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 const notification = useNotification();
-const { data: hives } = useHivesQuery();
+const { data: hives } = useHivesQuery({});
 const isSubmitting = ref(false);
 const lastInsert = ref(null);
 const lastNames = computed(() => (hives ? getNames(hives.value) : ''));

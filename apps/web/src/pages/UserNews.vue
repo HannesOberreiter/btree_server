@@ -1,1 +1,0 @@
-<template>News Table</template>

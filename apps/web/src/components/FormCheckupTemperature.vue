@@ -44,7 +44,7 @@
 
 <script setup lang="ts">
 import { useAuthUserStore } from '~/stores/auth';
-import { useTemperatureQuery } from '~/query';
+import { useTemperatureQuery } from '~/composables/useQuery';
 import { useVModels } from '@vueuse/core';
 import { round, isEmpty } from 'lodash';
 import FormInputNumeric from './FormInputNumeric.vue';
