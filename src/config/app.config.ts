@@ -107,7 +107,7 @@ export class Application {
     this.app.use(
       BodyParser.urlencoded({
         limit: '50mb',
-        extended: true,
+        extended: false,
         parameterLimit: 10000
       })
     );

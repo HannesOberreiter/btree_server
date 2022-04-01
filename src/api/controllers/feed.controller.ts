@@ -13,18 +13,7 @@ export class FeedController extends Controller {
 
   async patch(req: IUserRequest, res: Response, next: NextFunction) {
     const ids = req.body.ids;
-    const ignore = req.body.ignore;
-    const insert = {};
-
-    if (!ignore.date) insert['date'] = req.body.date;
-    if (!ignore.date) insert['enddate'] = req.body.enddate;
-    if (!ignore.type_id) insert['type_id'] = req.body.type;
-    if (!ignore.amount) insert['amount'] = req.body.amount_calc;
-
-    if (!ignore.url) insert['url'] = req.body.url;
-    if (!ignore.note) insert['note'] = req.body.note;
-    if (!ignore.done) insert['done'] = req.body.done;
-
+    const insert = { ...req.body.data };
     try {
       const result = await Feed.transaction(async (trx) => {
         return await Feed.query(trx)

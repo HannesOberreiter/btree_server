@@ -2,6 +2,9 @@ import { ExtModel } from '@models/base.model';
 import { User } from '@models/user.model';
 import { Apiary } from '@models/apiary.model';
 import { Movedate } from '@models/movedate.model';
+import { HiveLocation } from './hive_location.model';
+import { HiveType } from './option/hive_type.mode';
+import { HiveSource } from './option/hive_source.model';
 export class Hive extends ExtModel {
   id!: number;
   name!: string;
@@ -23,6 +26,9 @@ export class Hive extends ExtModel {
   editor?: User;
   movedates?: Movedate[];
   apiares?: Apiary[];
+  hive_location?: HiveLocation;
+  hive_type?: HiveType;
+  hive_source?: HiveSource;
 
   static jsonSchema = {
     type: 'object',
@@ -62,6 +68,30 @@ export class Hive extends ExtModel {
       join: {
         from: ['hives.edit_id'],
         to: ['bees.id']
+      }
+    },
+    hive_location: {
+      relation: Hive.HasOneRelation,
+      modelClass: HiveLocation,
+      join: {
+        from: ['hives.id'],
+        to: ['hives_locations.hive_id']
+      }
+    },
+    hive_type: {
+      relation: Hive.HasOneRelation,
+      modelClass: HiveType,
+      join: {
+        from: ['hives.type_id'],
+        to: ['hive_types.id']
+      }
+    },
+    hive_source: {
+      relation: Hive.HasOneRelation,
+      modelClass: HiveSource,
+      join: {
+        from: ['hives.source_id'],
+        to: ['hive_sources.id']
       }
     },
     movedates: {

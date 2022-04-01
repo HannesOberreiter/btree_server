@@ -13,22 +13,7 @@ export class TreatmentController extends Controller {
 
   async patch(req: IUserRequest, res: Response, next: NextFunction) {
     const ids = req.body.ids;
-    const ignore = req.body.ignore;
-    const insert = {};
-
-    if (!ignore.date) insert['date'] = req.body.date;
-    if (!ignore.date) insert['enddate'] = req.body.enddate;
-    if (!ignore.type_id) insert['type_id'] = req.body.type;
-    if (!ignore.amount) insert['amount'] = req.body.amount_calc;
-
-    if (!ignore.vet_id) insert['vet_id'] = req.body.treatment_vet;
-    if (!ignore.disease_id) insert['disease_id'] = req.body.disease;
-    if (!ignore.treatment_wait) insert['wait'] = req.body.treatment_wait;
-
-    if (!ignore.url) insert['url'] = req.body.url;
-    if (!ignore.note) insert['note'] = req.body.note;
-    if (!ignore.done) insert['done'] = req.body.done;
-
+    const insert = { ...req.body.data };
     try {
       const result = await Treatment.transaction(async (trx) => {
         return await Treatment.query(trx)

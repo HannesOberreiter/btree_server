@@ -1,6 +1,7 @@
 import { Apiary } from '@models/apiary.model';
 import { Model } from 'objection';
 import { Hive } from './hive.model';
+import { Movedate } from './movedate.model';
 
 export class HiveLocation extends Model {
   apiary_id!: number;
@@ -14,6 +15,7 @@ export class HiveLocation extends Model {
 
   apiary?: Apiary;
   hive?: Hive;
+  movedate?: Movedate;
 
   static tableName = 'hives_locations';
   static idColumn = 'move_id';
@@ -35,6 +37,14 @@ export class HiveLocation extends Model {
       join: {
         from: 'hives.id',
         to: 'hives_locations.hive_id'
+      }
+    },
+    movedate: {
+      relation: Model.BelongsToOneRelation,
+      modelClass: Movedate,
+      join: {
+        from: 'movedates.id',
+        to: 'hives_locations.move_id'
       }
     }
   });

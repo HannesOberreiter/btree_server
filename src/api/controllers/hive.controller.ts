@@ -109,10 +109,28 @@ export class HiveController extends Controller {
   }
 
   async get(req: IUserRequest, res: Response, next: NextFunction) {
+    const { order, direction, offset, limit, modus, deleted, q } =
+      req.query as any;
     try {
-      const result = await HiveLocation.query().where({
-        user_id: req.user.user_id
-      });
+      const query = Hive.query()
+        .withGraphJoined('hive_location.[movedate]')
+        .withGraphJoined('hive_source')
+        .withGraphJoined('hive_type')
+        .where({
+          'hive_location.user_id': req.user.user_id,
+          'hives.modus': modus === 'true',
+          'hives.deleted': deleted === 'true'
+        })
+        .orderBy(order, direction)
+        .page(offset, parseInt(limit) === 0 ? 10 : limit);
+      if (q.trim() !== '') {
+        query.where((builder) => {
+          builder
+            .orWhere('name', 'like', `%${q}%`)
+            .orWhere('apiary_name', 'like', `%${q}%`);
+        });
+      }
+      const result = await query;
       res.locals.data = result;
       next();
     } catch (e) {

@@ -54,14 +54,7 @@ export class TodoController extends Controller {
 
   async patch(req: IUserRequest, res: Response, next: NextFunction) {
     const ids = req.body.ids;
-    const ignore = req.body.ignore;
-    const insert = {};
-
-    if (!ignore.date) insert['date'] = req.body.date;
-    if (!ignore.name) insert['name'] = req.body.name;
-    if (!ignore.note) insert['note'] = req.body.note;
-    if (!ignore.done) insert['done'] = req.body.done;
-
+    const insert = { ...req.body.data };
     try {
       const result = await Todo.transaction(async (trx) => {
         return await Todo.query(trx)
