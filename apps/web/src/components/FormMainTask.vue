@@ -321,9 +321,6 @@ function cleanupData(state: State, task: Task, isEdit: boolean) {
     done: state.done,
   } as any;
 
-  console.log(result);
-  console.log(state);
-
   if (!isEdit) {
     result['interval'] = state.interval;
     result['repeat'] = state.repeat;
@@ -431,8 +428,8 @@ const isEdit = computed(() => {
 });
 
 if (isEdit.value) getEdit(unref(ids.value));
-if (isEdit.value && router.currentRoute.value.name === 'edit-quicktool')
-  router.replace({ name: 'new-quicktool' });
+if (!isEdit.value && router.currentRoute.value.name === 'edit-quicktool')
+  router.push({ name: 'new-quicktool' });
 
 const editOptions = ref([]) as any;
 const editOptionsCopy = ref([]) as any;

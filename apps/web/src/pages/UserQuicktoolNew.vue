@@ -2,30 +2,22 @@
   <q-card>
     <div class="row q-pa-sm justify-center">
       <div class="col-12 col-sm-10 col-md-8">
-        <div v-if="!ids" class="text-body2 q-pb-sm text-center">
-          {{ t('quicktool.name') }}
-        </div>
-        <div v-else class="text-h5 q-pb-sm text-center">
-          {{ t('edit') }} {{ t(task) }}
+        <div class="text-body2 q-pb-sm text-center">
+          {{ $t('quicktool.name') }}
         </div>
         <q-select
-          v-if="ids ? false : true"
           v-model="taskSelect"
-          :label="t('quicktool.taskDropdown')"
+          :label="$t('quicktool.taskDropdown')"
           name="taskSelect"
           standout
           :options="options"
-          :disable="ids ? true : false"
-          :readonly="ids ? true : false"
           rounded
           class="q-mb-sm text-center"
         >
         </q-select>
         <form-main-task
           v-if="taskSelect"
-          :key="router.currentRoute.value + ''"
           :task="(taskForm as any)"
-          :ids="ids ? ids : undefined"
         ></form-main-task>
       </div>
     </div>
@@ -34,12 +26,10 @@
 
 <script setup lang="ts">
 import { find } from 'lodash';
-import { PropType, ref, watch } from 'vue';
+import { PropType } from 'vue';
 import { Task } from '~/types';
-import { useI18n } from 'vue-i18n';
 import FormMainTask from '~/components/FormMainTask.vue';
 import { useQuicktoolStore } from '~/stores/quicktool';
-import { useRouter } from 'vue-router';
 
 const { t } = useI18n();
 const storeQuicktool = useQuicktoolStore();
@@ -48,9 +38,6 @@ const props = defineProps({
   task: {
     type: String as PropType<Task>,
     required: true,
-  },
-  ids: {
-    default: null,
   },
 });
 

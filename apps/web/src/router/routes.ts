@@ -17,13 +17,13 @@ const routes: RouteRecordRaw[] = [
         path: '/quicktool/:task',
         name: 'new-quicktool',
         props: true,
-        component: () => import('pages/UserQuicktool.vue'),
+        component: () => import('pages/UserQuicktoolNew.vue'),
       },
       {
         path: '/edit/:task',
         name: 'edit-quicktool',
         props: true,
-        component: () => import('pages/UserQuicktool.vue'),
+        component: () => import('pages/UserQuicktoolEdit.vue'),
       },
       {
         path: '/new/hive',
@@ -33,13 +33,13 @@ const routes: RouteRecordRaw[] = [
       {
         path: '/new/todo',
         name: 'new-todo',
-        component: () => import('pages/UserTodo.vue'),
+        component: () => import('pages/UserTodoNew.vue'),
       },
       {
         path: '/edit/todo',
         name: 'edit-todo',
         props: true,
-        component: () => import('pages/UserTodo.vue'),
+        component: () => import('pages/UserTodoEdit.vue'),
       },
       {
         path: '/new/movement',

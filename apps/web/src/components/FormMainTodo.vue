@@ -1,14 +1,18 @@
 <template>
   <q-form class="full-width" @submit.prevent.stop="onSubmit">
     <form-dropdown-edit
-      v-if="ids"
+      v-if="isEdit"
       v-model="editOptions"
       :options="editOptionsCopy"
       off-label="name"
     ></form-dropdown-edit>
     <div class="row">
       <div class="col-11">
-        <input-date v-model="state.date"></input-date>
+        <input-date
+          v-model="state.date"
+          :values="values"
+          :reset="reset"
+        ></input-date>
       </div>
       <div class="col-1 text-center items-center">
         <q-btn
@@ -46,12 +50,22 @@
     <form-input-name
       v-model="state.name"
       label="name"
+      :values="values"
+      :reset="reset"
       :required="true"
     ></form-input-name>
-    <form-input-note v-model="state.note"></form-input-note>
-    <form-input-checkbox v-model="state.done"></form-input-checkbox>
+    <form-input-note
+      v-model="state.note"
+      :values="values"
+      :reset="reset"
+    ></form-input-note>
+    <form-input-checkbox
+      v-model="state.done"
+      :values="values"
+      :reset="reset"
+    ></form-input-checkbox>
   </q-form>
-  <q-btn-group v-if="!ids" spread>
+  <q-btn-group v-if="!isEdit" spread>
     <q-btn
       unelevated
       size="md"
@@ -108,13 +122,15 @@ import FormNumericRepeat from './FormInputNumeric.vue';
 import FormNumericInterval from './FormInputNumeric.vue';
 import FormInputCheckbox from './FormInputCheckbox.vue';
 import useVuelidate from '@vuelidate/core';
-import { flatten, map, merge, uniq } from 'lodash';
+import { flatten, isNil, map, merge, omitBy } from 'lodash';
 
 const { t } = useI18n();
 const notification = useNotification();
 const showInterval = ref(false);
 const lastInsert = ref(null);
 const router = useRouter();
+const values = ref({});
+const reset = ref(0);
 const props = defineProps({
   ids: {
     type: Array,
@@ -129,22 +145,21 @@ const emit = defineEmits<{
   (e: 'onSuccess', value: boolean): void;
 }>();
 
-if (props.ids) getEdit();
-if (props.ids === null && router.currentRoute.value.name === 'edit-todo')
-  router.replace({ name: 'new-todo' });
+const ids = ref(props.ids);
+const isEdit = computed(() => {
+  if (ids.value === null) return false;
+  if (ids.value.length === 0) return false;
+  return true;
+});
+
+if (isEdit.value) getEdit(unref(ids.value));
+if (isEdit.value && router.currentRoute.value.name === 'edit-todo')
+  router.push({ name: 'new-todo' });
 
 const v = useVuelidate();
 
 const editOptions = ref([]) as any;
 const editOptionsCopy = ref([]) as any;
-let editDefault = {};
-const multipleValues = ref({
-  date: false,
-  name: false,
-  note: false,
-  done: false,
-});
-let multipleValuesCopy = {};
 
 const stateDefault = {
   date: props.date,
@@ -182,46 +197,16 @@ async function onSubmit() {
   isSubmitting.value = false;
 }
 
-function setValues(data: any, state_name: string, response_name = '') {
-  if (response_name === '') response_name = state_name;
-  const state_array = state_name.split('.');
-  const r = map(data, (row: any) => row[response_name]);
-  const u = uniq(r);
-  if (u.length > 1)
-    if (state_array.length > 1)
-      (multipleValues.value as any)[state_array[0]][state_array[1]] = true;
-    else (multipleValues.value as any)[state_array[0]] = true;
-
-  let value = u[0] as any;
-  if (response_name === 'date') {
-    value = dayjs(value).format('YYYY-MM-DD');
-  }
-  if (state_array.length > 1)
-    (state.value as any)[state_array[0]][state_array[1]] = value;
-  else (state.value as any)[state_array[0]] = value;
-
-  return;
-}
-
-async function getEdit() {
-  return await api.post('/v1/todo/batchGet', { ids: props.ids }).then(
+async function getEdit(id: unknown[]) {
+  return await api.post('/v1/todo/batchGet', { ids: id }).then(
     (response: any) => {
       const editIds = map(response.data, (row: any) => [
         { value: row.id, label: `ID: ${row.id} / (${row.name})` },
       ]);
       editOptions.value = flatten(editIds);
       editOptionsCopy.value = flatten(editIds);
-
-      setValues(response.data, 'name');
-      setValues(response.data, 'date');
-      setValues(response.data, 'note');
-      setValues(response.data, 'done');
-
-      notification.open('info', t('dataLoaded'));
-
-      // Copies so we can reset it
-      multipleValuesCopy = { ...multipleValues.value };
-      editDefault = { ...state.value };
+      values.value = response.data;
+      //notification.open('info', t('dataLoaded'));
     },
     (error) => {
       notification.open('negative', error.response);
@@ -252,11 +237,17 @@ async function onUpdate() {
     isSubmitting.value = false;
     return;
   }
-  const ids = editOptions.value.map((obj: any) => obj.value);
-  let data = { ids: ids, ...state.value, ignore: { ...multipleValues.value } };
-  await api.patch('/v1/todo', JSON.stringify(data)).then(
+  const id = editOptions.value.map((obj: any) => obj.value);
+  const data = omitBy(state.value, isNil);
+
+  const result = { ids: id, data };
+  delete result.data.interval;
+  delete result.data.repeat;
+
+  await api.patch('/v1/todo', JSON.stringify(result)).then(
     (response: any) => {
       lastInsert.value = response.data;
+      getEdit(id);
       notification.open('positive', '');
     },
     (error) => {
@@ -268,14 +259,12 @@ async function onUpdate() {
 }
 
 function onReset() {
-  if (!props.ids) {
+  if (!isEdit.value) {
     merge(state.value, stateDefault);
-  } else {
-    merge(state.value, editDefault);
-    merge(multipleValues.value, multipleValuesCopy);
   }
   if (showInterval.value) repeatTask();
   notification.open('positive', t('successReset'));
+  reset.value++;
 }
 
 function repeatTask() {
