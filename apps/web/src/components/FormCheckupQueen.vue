@@ -89,6 +89,6 @@ function setValues() {
 
 function editValues(val: boolean) {
   disable.value = val;
-  modelValue.value = disable.value ? [null] : modelValue.value;
+  modelValue.value = disable.value ? [null] : resetValue;
 }
 </script>

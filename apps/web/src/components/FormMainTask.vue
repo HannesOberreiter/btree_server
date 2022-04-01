@@ -267,6 +267,110 @@
   </q-btn-group>
 </template>
 
+<script lang="ts">
+interface State {
+  date: string;
+  enddate: string;
+  interval: number;
+  repeat: number;
+  amount: number;
+  amount_type: string;
+  amount_calc: number;
+  url: string;
+  note: string;
+  done: boolean;
+  checkup_queen: any;
+  checkup_rating: {
+    brood: number;
+    pollen: number;
+    comb: number;
+    temper: number;
+    calm_comb: number;
+    swarm: number;
+  };
+  checkup_frames: {
+    broodframes: number;
+    honeyframes: number;
+    foundation: number;
+    emptyframes: number;
+  };
+  checkup_varroa: number;
+  checkup_strong: number;
+  checkup_weight_amount: number;
+  checkup_weight_time: string;
+  checkup_temp: number;
+  harvest_frames: number;
+  harvest_amount_type: string;
+  harvest_amount_calc: number;
+  harvest_water: number;
+  harvest_charge: string;
+  treatment_wait: number;
+  hive: any;
+  type: any;
+  disease: any;
+  treatment_vet: any;
+}
+
+function cleanupData(state: State, task: Task, isEdit: boolean) {
+  let result = {
+    date: state.date,
+    enddate: state.enddate,
+    type_id: state.type ? state.type.id : null,
+    url: state.url,
+    note: state.note,
+    done: state.done,
+  } as any;
+
+  console.log(result);
+  console.log(state);
+
+  if (!isEdit) {
+    result['interval'] = state.interval;
+    result['repeat'] = state.repeat;
+  }
+
+  if (task === 'checkup') {
+    result['strong'] = state.checkup_strong;
+    result['varroa'] = state.checkup_varroa;
+    result['weight'] = state.checkup_weight_amount;
+    result['time'] = state.checkup_weight_time
+      ? dayjs(state.checkup_weight_time, 'HH:mm').format('HH:MM:ss')
+      : null;
+    result['temp'] = state.checkup_temp;
+
+    result['broodframes'] = state.checkup_frames.broodframes;
+    result['emptyframes'] = state.checkup_frames.emptyframes;
+    result['foundation'] = state.checkup_frames.foundation;
+    result['honeyframes'] = state.checkup_frames.honeyframes;
+
+    result['brood'] = state.checkup_rating.brood;
+    result['calm_comb'] = state.checkup_rating.calm_comb;
+    result['comb'] = state.checkup_rating.comb;
+    result['pollen'] = state.checkup_rating.pollen;
+    result['swarm'] = state.checkup_rating.swarm;
+    result['temper'] = state.checkup_rating.temper;
+    if (state.checkup_queen[0]) {
+      result['queen'] = includes(state.checkup_queen, 'queen');
+      result['queencells'] = includes(state.checkup_queen, 'queencells');
+      result['eggs'] = includes(state.checkup_queen, 'eggs');
+      result['capped_brood'] = includes(state.checkup_queen, 'capped_brood');
+    }
+  } else {
+    result['amount'] = state.amount_calc;
+
+    if (task === 'treatment') {
+      result['vet_id'] = state.treatment_vet ? state.treatment_vet.id : null;
+      result['wait'] = state.treatment_wait;
+    } else if (task === 'harvest') {
+      result['frames'] = state.harvest_amount_calc;
+      result['water'] = state.harvest_water;
+      result['charge'] = state.harvest_charge;
+    }
+  }
+  return omitBy(result, isNil);
+}
+</script>
+
 <script setup lang="ts">
 import { api } from '~/boot/axios';
 import { PropType } from 'vue';
@@ -427,100 +531,6 @@ async function onUndo() {
   isSubmitting.value = false;
 }
 
-function cleanupData() {
-  let result = {
-    date: state.value.date ? state.value.date : null,
-    enddate: state.value.enddate ? state.value.enddate : null,
-    type_id: state.value.type ? state.value.type.id : null,
-    url: state.value.url ? state.value.url : null,
-    note: state.value.note ? state.value.note : null,
-    done: state.value.done ? state.value.done : null,
-  } as any;
-
-  if (!isEdit.value) {
-    result['interval'] = state.value.interval;
-    result['repeat'] = state.value.repeat;
-  }
-
-  if (props.task === 'checkup') {
-    result['strong'] = state.value.checkup_strong
-      ? state.value.checkup_strong
-      : null;
-    result['varroa'] = state.value.checkup_varroa
-      ? state.value.checkup_varroa
-      : null;
-    result['weight'] = state.value.checkup_weight_amount
-      ? state.value.checkup_weight_amount
-      : null;
-    result['time'] = state.value.checkup_weight_time
-      ? dayjs(state.value.checkup_weight_time, 'HH:mm').format('HH:MM:ss')
-      : null;
-    result['temp'] = state.value.checkup_temp ? state.value.checkup_temp : null;
-
-    result['broodframes'] = state.value.checkup_frames.broodframes
-      ? state.value.checkup_frames.broodframes
-      : null;
-    result['emptyframes'] = state.value.checkup_frames.emptyframes
-      ? state.value.checkup_frames.emptyframes
-      : null;
-    result['foundation'] = state.value.checkup_frames.foundation
-      ? state.value.checkup_frames.foundation
-      : null;
-    result['honeyframes'] = state.value.checkup_frames.honeyframes
-      ? state.value.checkup_frames.honeyframes
-      : null;
-
-    result['brood'] = state.value.checkup_rating.brood
-      ? state.value.checkup_rating.brood
-      : null;
-    result['calm_comb'] = state.value.checkup_rating.calm_comb
-      ? state.value.checkup_rating.calm_comb
-      : null;
-    result['comb'] = state.value.checkup_rating.comb
-      ? state.value.checkup_rating.comb
-      : null;
-    result['pollen'] = state.value.checkup_rating.pollen
-      ? state.value.checkup_rating.pollen
-      : null;
-    result['swarm'] = state.value.checkup_rating.swarm
-      ? state.value.checkup_rating.swarm
-      : null;
-    result['temper'] = state.value.checkup_rating.temper
-      ? state.value.checkup_rating.temper
-      : null;
-    if (state.value.checkup_queen[0]) {
-      result['queen'] = includes(state.value.checkup_queen, 'queen');
-      result['queencells'] = includes(state.value.checkup_queen, 'queencells');
-      result['eggs'] = includes(state.value.checkup_queen, 'eggs');
-      result['capped_brood'] = includes(
-        state.value.checkup_queen,
-        'capped_brood'
-      );
-    }
-  } else {
-    result['amount'] = state.value.amount_calc ? state.value.amount_calc : null;
-    if (props.task === 'treatment') {
-      result['vet_id'] = state.value.treatment_vet
-        ? state.value.treatment_vet.id
-        : null;
-      result['wait'] = state.value.treatment_wait
-        ? state.value.treatment_wait
-        : null;
-    } else if (props.task === 'harvest') {
-      result['frames'] = state.value.harvest_amount_calc
-        ? state.value.amount_calc
-        : null;
-      result['water'] = state.value.harvest_water
-        ? state.value.harvest_water
-        : null;
-      result['charge'] = state.value.harvest_charge
-        ? state.value.harvest_charge
-        : null;
-    }
-  }
-  return omitBy(result, isNil);
-}
-
 async function onUpdate() {
   isSubmitting.value = true;
   const isFormCorrect = await v.value.$validate();
@@ -531,7 +541,7 @@ async function onUpdate() {
   const id = editOptions.value.map((obj: any) => obj.value);
   let data = {
     ids: id,
-    data: cleanupData(),
+    data: cleanupData(state.value, props.task, isEdit.value),
   };
   await api.patch(`/v1/${props.task}`, JSON.stringify(data)).then(
     (response: any) => {

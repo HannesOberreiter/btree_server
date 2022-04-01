@@ -13,6 +13,7 @@
             <div class="row q-pb-xs">
               <div class="col-3">{{ $t('frames.' + index) }}</div>
               <div class="col-9">
+                {{ index }}
                 <q-slider
                   v-model="modelValue[index]"
                   :error="v[index].$error"
@@ -88,7 +89,7 @@ const multipleValues = computed(() => {
     emptyframes: formCheckMultipleValues(values.value, 'emptyframes'),
   };
 });
-const disable = ref(multipleValues.value);
+const disable = ref({ ...unref(multipleValues.value) });
 
 const rules = {
   broodframes: {
@@ -124,7 +125,7 @@ watch(reset, () => {
 });
 
 function setValues() {
-  disable.value = multipleValues.value;
+  disable.value = { ...unref(multipleValues.value) };
   for (const [key, value] of Object.entries(multipleValues.value)) {
     if (value) editValues(true, key);
     else if (values.value && !isEmpty(values.value))
@@ -138,10 +139,8 @@ function setValues() {
 
 function editValues(val: boolean, key: string) {
   disable.value[key as keyof typeof disable.value] = val;
-  modelValue.value[key as keyof typeof modelValue.value] = disable.value[
-    key as keyof typeof disable.value
-  ]
+  modelValue.value[key as keyof typeof modelValue.value] = val
     ? null
-    : modelValue.value[key as keyof typeof modelValue.value];
+    : resetValue[key as keyof typeof resetValue];
 }
 </script>
