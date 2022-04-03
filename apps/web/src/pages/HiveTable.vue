@@ -50,6 +50,7 @@
             class="q-mr-sm"
             color="secondary"
             unelevated
+            :disable="selected.length > 0 ? false : true"
             :label="$t('edit')"
             @click="onEdit"
           />
@@ -64,7 +65,12 @@
 
           <q-btn-dropdown unelevated color="info" :label="$t('more')">
             <q-list>
-              <q-item v-close-popup clickable @click="onDelete">
+              <q-item
+                v-close-popup
+                clickable
+                :disable="selected.length > 0 ? false : true"
+                @click="onDelete"
+              >
                 <q-item-section>
                   <q-item-label>{{ $t('delete') }}</q-item-label>
                 </q-item-section>
@@ -270,7 +276,7 @@ function onNew() {
   $q.dialog({
     component: DialogForm,
     componentProps: {
-      title: 'hive',
+      title: 'new',
       form: 'hive',
       maximized: true,
       ids: null,
@@ -288,7 +294,7 @@ function onEdit() {
   $q.dialog({
     component: DialogForm,
     componentProps: {
-      title: 'hive',
+      title: 'edit',
       form: 'hive',
       maximized: true,
       ids: ids,

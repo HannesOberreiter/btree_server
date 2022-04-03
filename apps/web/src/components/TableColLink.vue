@@ -1,6 +1,10 @@
 <template>
   <q-td>
-    <router-link :to="`detail/${link}/${id}`">
+    <router-link
+      :to="`detail/${link}/${id}`"
+      class="text-bold"
+      style="text-decoration: none; color: inherit"
+    >
       {{ label }}
     </router-link>
   </q-td>
