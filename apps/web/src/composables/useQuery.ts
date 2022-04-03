@@ -95,6 +95,7 @@ export function useHivesQuery({
   modus = true as MaybeRef<boolean>,
   deleted = false as MaybeRef<boolean>,
   q = '' as MaybeRef<string>,
+  enabled = true as MaybeRef<boolean>,
 }) {
   return useQuery(
     ['hives', offset, limit, order, direction, modus, deleted, q],
@@ -117,6 +118,7 @@ export function useHivesQuery({
     },
 
     {
+      enabled: enabled,
       keepPreviousData: true,
       select: (response) => {
         const result = map(response.data.results, (value) => {

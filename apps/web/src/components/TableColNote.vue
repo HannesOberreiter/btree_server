@@ -22,6 +22,7 @@ const props = defineProps({
 });
 
 function show() {
+  if (!props.value) return;
   if (props.value.length > 50)
     $q.dialog({ title: t('note'), message: props.value, html: true });
 }

@@ -1,7 +1,7 @@
 <template>
-  <q-dialog ref="dialogRef" @hide="onDialogHide">
+  <q-dialog ref="dialogRef" :maximized="maximized" @hide="onDialogHide">
     <q-card style="width: 700px">
-      <q-card-section class="">
+      <q-card-section>
         <div class="row">
           <div class="text-h6">{{ $t(title) }}</div>
           <q-space />
@@ -22,11 +22,16 @@
             @on-success="onDialogOK()"
           ></form-main-todo>
           <form-main-apiary
-            v-if="form === 'apiary'"
+            v-else-if="form === 'apiary'"
             :id="id"
             :latlng="latlng"
             @on-success="(value) => onDialogOK(value)"
           ></form-main-apiary>
+          <form-main-hive
+            v-else-if="form === 'hive'"
+            :ids="ids"
+            @on-success="(value) => onDialogOK(value)"
+          ></form-main-hive>
         </div>
       </q-card-section>
     </q-card>
@@ -36,6 +41,8 @@
 <script setup lang="ts">
 import FormMainApiary from './FormMainApiary.vue';
 import FormMainTodo from './FormMainTodo.vue';
+import FormMainHive from '~/components/FormMainHive.vue';
+
 import dayjs from 'dayjs';
 
 const { dialogRef, onDialogHide, onDialogOK } = useDialogPluginComponent();
@@ -64,6 +71,10 @@ defineProps({
   latlng: {
     type: Object,
     default: null,
+  },
+  maximized: {
+    type: Boolean,
+    default: false,
   },
 });
 

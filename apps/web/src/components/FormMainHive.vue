@@ -1,12 +1,17 @@
 <template>
   <q-form class="full-width" @submit.prevent.stop="onSubmit">
     <div class="row">
-      <input-name
+      {{ ids }}
+      <form-input-text
         v-model="state.name"
+        :values="values"
+        :reset="reset"
         class="col-11"
+        label="name"
         :hint="$t('lastAdded') + ': ' + lastNames"
-      ></input-name>
-      <div class="col-1 text-center">
+        :max-valid="24"
+      ></form-input-text>
+      <div v-if="!isEdit" class="col-1 text-center">
         <q-btn
           flat
           round
@@ -16,8 +21,8 @@
         ></q-btn>
       </div>
 
-      <div v-if="showInterval" class="col-12">
-        <div v-if="showInterval" class="row">
+      <div v-if="showInterval && !isEdit" class="col-12">
+        <div class="row">
           <div class="col-6">
             <input-numeric-start
               v-model.number="state.start"
@@ -43,7 +48,7 @@
       </div>
     </div>
 
-    <div class="row q-pt-md q-pb-md">
+    <div v-if="!isEdit" class="row q-pt-md q-pb-md">
       <div class="col-12 col-md-6">
         <form-dropdown-apiary v-model="state.apiary"></form-dropdown-apiary>
       </div>
@@ -60,12 +65,16 @@
       v-model="state.type"
       table="hive_types"
       label="status"
+      :values="values"
+      :reset="reset"
     ></form-dropdown-type>
     <div class="col-12 q-pb-sm">
       <form-dropdown-source
         v-model="state.source"
         table="hive_sources"
         label="source"
+        :values="values"
+        :reset="reset"
       ></form-dropdown-source>
     </div>
 
@@ -76,6 +85,8 @@
         :hint="$t('positionNote')"
         icon="fas fa-arrow-down-1-9"
         numeric-valid="integer"
+        :values="values"
+        :reset="reset"
       >
       </input-numeric-position>
     </div>
@@ -86,6 +97,8 @@
         :hint="$t('grouphiveNote')"
         icon="fas fa-city"
         numeric-valid="integer"
+        :values="values"
+        :reset="reset"
       ></input-numeric-grouphive>
     </div>
 
@@ -97,12 +110,16 @@
           label="modus"
           status-active="active"
           status-inactive="inactive"
+          :values="values"
+          :reset="reset"
         ></form-input-checkbox>
       </div>
       <div class="col-12 col-md-6">
         <form-input-modusdate
           v-if="!state.modus"
           v-model="state.modusDate"
+          :values="values"
+          :reset="reset"
           label="modusDate"
         ></form-input-modusdate>
       </div>
@@ -154,9 +171,14 @@
   </q-btn-group>
 </template>
 
+<script lang="ts">
+function getNames(v: any) {
+  return v.map((o: any) => o.name).join(', ');
+}
+</script>
+
 <script setup lang="ts">
 import { api } from '~/boot/axios';
-import { computed, ref } from 'vue';
 import { useNotification } from '~/composables/useResponseText';
 import dayjs from 'dayjs';
 import FormInputMovedate from './FormInputDate.vue';
@@ -165,7 +187,7 @@ import FormInputCheckbox from './FormInputCheckbox.vue';
 import FormDropdownApiary from './FormDropdownApiary.vue';
 import FormDropdownSource from './FormDropdownOption.vue';
 import FormDropdownType from './FormDropdownOption.vue';
-import InputName from './FormInputName.vue';
+import FormInputText from './FormInputText.vue';
 import InputNote from './FormInputNote.vue';
 import InputNumericStart from './FormInputNumeric.vue';
 import InputNumericRepeat from './FormInputNumeric.vue';
@@ -173,15 +195,43 @@ import InputNumericGrouphive from './FormInputNumeric.vue';
 import InputNumericPosition from './FormInputNumeric.vue';
 import useVuelidate from '@vuelidate/core';
 import { useHivesQuery } from '~/composables/useQuery';
-import { filter, merge, orderBy } from 'lodash';
-import { useI18n } from 'vue-i18n';
+import { flatten, map, merge } from 'lodash';
 
 const { t } = useI18n();
 const notification = useNotification();
-const { data: hives } = useHivesQuery({});
+
 const isSubmitting = ref(false);
 const lastInsert = ref(null);
-const lastNames = computed(() => (hives ? getNames(hives.value) : ''));
+const showInterval = ref(false);
+const values = ref({});
+const reset = ref(0);
+const editOptions = ref([]) as any;
+const editOptionsCopy = ref([]) as any;
+
+const props = defineProps({
+  ids: {
+    type: Array,
+    default: null,
+  },
+});
+
+const ids = ref(props.ids);
+const isEdit = computed(() => {
+  if (ids.value === null) return false;
+  if (ids.value.length === 0) return false;
+  return true;
+});
+if (isEdit.value) getEdit(unref(ids.value));
+
+const { data: hives } = useHivesQuery({
+  limit: 3,
+  order: ['id'],
+  direction: ['desc'],
+  enabled: !isEdit.value,
+});
+const lastNames = computed(() =>
+  hives.value ? getNames(hives.value.results) : ''
+);
 const sampleName = computed(() => {
   let hintText = '';
   if (state.value.name !== '' && state.value.repeat > 0) {
@@ -195,30 +245,6 @@ const sampleName = computed(() => {
   }
   return hintText;
 });
-
-const showInterval = ref(false);
-
-const props = defineProps({
-  ids: {
-    type: Array,
-    default: null,
-  },
-});
-
-const editOptions = ref([]) as any;
-const editOptionsCopy = ref([]) as any;
-let editDefault = {};
-const multipleValues = ref({
-  date: false,
-  type_id: false,
-  source_id: false,
-  position: false,
-  grouphive: false,
-  note: false,
-  modus: false,
-  modusDate: false,
-});
-let multipleValuesCopy = {};
 
 const stateDefault = {
   name: '',
@@ -245,23 +271,31 @@ function changeInterval() {
   showInterval.value = !showInterval.value;
 }
 
-function getNames(v: any) {
-  const data = filter(v, (obj) => !obj.hive_deleted);
-  return orderBy(data, 'hive_id', 'desc')
-    .slice(0, 3)
-    .map((o) => o.hive_name)
-    .join(', ');
-}
-
 function onReset() {
-  if (!props.ids) {
+  if (!isEdit.value) {
     merge(state.value, stateDefault);
-  } else {
-    merge(state.value, editDefault);
-    merge(multipleValues.value, multipleValuesCopy);
   }
   if (showInterval.value) changeInterval();
+
   notification.open('positive', t('successReset'));
+  reset.value++;
+}
+
+async function getEdit(id: unknown[]) {
+  return await api.post('/v1/hive/batchGet', { ids: id }).then(
+    (response: any) => {
+      const editIds = map(response.data, (row: any) => [
+        { value: row.id, label: `ID: ${row.id} / (${row.name})` },
+      ]);
+      editOptions.value = flatten(editIds);
+      editOptionsCopy.value = flatten(editIds);
+      values.value = response.data;
+      //notification.open('info', t('dataLoaded'));
+    },
+    (error) => {
+      notification.open('negative', error.response);
+    }
+  );
 }
 
 async function onUpdate() {

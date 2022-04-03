@@ -39,13 +39,38 @@
         </template>
 
         <template #top-left>
-          <q-btn color="primary" :label="$t('new')" @click="addRow" />
           <q-btn
-            class="q-ml-sm"
+            class="q-mr-sm"
             color="primary"
-            :label="$t('remove')"
-            @click="removeRow"
+            unelevated
+            :label="$t('new')"
+            @click="onNew"
           />
+          <q-btn
+            class="q-mr-sm"
+            color="secondary"
+            unelevated
+            :label="$t('edit')"
+            @click="onEdit"
+          />
+
+          <q-btn
+            class="q-mr-sm"
+            color="warning"
+            unelevated
+            :label="modus ? $t('showInactive') : $t('showActive')"
+            @click="modus = !modus"
+          />
+
+          <q-btn-dropdown unelevated color="info" :label="$t('more')">
+            <q-list>
+              <q-item v-close-popup clickable @click="onDelete">
+                <q-item-section>
+                  <q-item-label>{{ $t('delete') }}</q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-btn-dropdown>
         </template>
         <template #top-right>
           <q-input
@@ -79,14 +104,28 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts">
 import dayjs from 'dayjs';
+
+function rowTableMeta(date: string, name: any) {
+  if (dayjs(date).isValid() === false) return '';
+  if (name) {
+    return `${name.email} (${dayjs(date).format('YYYY-MM-DD HH:mm')})`;
+  } else {
+    return dayjs(date).format('YYYY-MM-DD HH:mm');
+  }
+}
+</script>
+
+<script setup lang="ts">
 import { useHivesQuery } from '~/composables/useQuery';
 import { useTablesStore } from '~/stores/tables';
 import TableColLink from '~/components/TableColLink.vue';
 import TableColNote from '~/components/TableColNote.vue';
+import DialogForm from '~/components/DialogForm.vue';
 
 const storeTable = useTablesStore();
+const $q = useQuasar();
 const {
   visibleHive: visibleColumns,
   lengthHive: lengthTable,
@@ -96,7 +135,7 @@ const {
 
 const { t } = useI18n();
 const selected = ref([]);
-
+const modus = ref(true);
 const columns = [
   {
     name: 'id',
@@ -158,6 +197,29 @@ const columns = [
     field: (row: any) => row.note,
     sortable: false,
   },
+  {
+    name: 'modus',
+    label: t('Active'),
+    align: 'center',
+    field: (row: any) => row.modus,
+    sortable: true,
+  },
+  {
+    name: 'created_at',
+    label: t('Created'),
+    align: 'center',
+    field: (row: any) => row.created_at,
+    format: (val: string, row: any) => rowTableMeta(val, row.creator),
+    sortable: true,
+  },
+  {
+    name: 'updated_at',
+    label: t('Updated'),
+    align: 'center',
+    field: (row: any) => row.updated_at,
+    format: (val: string, row: any) => rowTableMeta(val, row.editor),
+    sortable: true,
+  },
 ];
 
 const optionColumns = columns.filter((obj) => (!obj.required ? obj : null));
@@ -171,12 +233,17 @@ const pagination = ref({
 });
 const filter = ref('');
 
-const { isLoading: isLoadingTable, data: hives } = useHivesQuery({
+const {
+  isLoading: isLoadingTable,
+  data: hives,
+  refetch,
+} = useHivesQuery({
   order: computed(() => [pagination.value.sortBy]),
   direction: computed(() => (pagination.value.descending ? ['asc'] : ['desc'])),
   offset: computed(() => pagination.value.page - 1),
   limit: computed(() => pagination.value.rowsPerPage),
   q: computed(() => (filter.value ? filter.value : '')),
+  modus: modus,
 });
 
 function onRequest(props: any) {
@@ -199,11 +266,42 @@ watch(hives, () => {
   pagination.value.rowsNumber = hives.value.total;
 });
 
-function addRow() {
-  console.log('add');
+function onNew() {
+  $q.dialog({
+    component: DialogForm,
+    componentProps: {
+      title: 'hive',
+      form: 'hive',
+      maximized: true,
+      ids: null,
+    },
+  }).onDismiss(() => {
+    refetch.value().then(
+      () => console.log('Reloaded Table'),
+      (error) => console.log(error)
+    );
+  });
 }
 
-function removeRow() {
+function onEdit() {
+  const ids = selected.value.map((o) => o.id);
+  $q.dialog({
+    component: DialogForm,
+    componentProps: {
+      title: 'hive',
+      form: 'hive',
+      maximized: true,
+      ids: ids,
+    },
+  }).onDismiss(() => {
+    refetch.value().then(
+      () => console.log('Reloaded Table'),
+      (error) => console.log(error)
+    );
+  });
+}
+
+function onDelete() {
   console.log('remove');
 }
 </script>
