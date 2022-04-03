@@ -117,7 +117,7 @@ export class Application {
      *
      * @see https://www.npmjs.com/package/hpp
      */
-    this.app.use(Hpp({ checkBody: false }));
+    this.app.use(Hpp({ checkBody: false, whitelist: ['order', 'direction'] }));
 
     /**
      * GZIP compression
