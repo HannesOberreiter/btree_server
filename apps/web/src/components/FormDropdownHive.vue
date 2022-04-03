@@ -26,7 +26,7 @@
     :option-label="
       (val) => {
         const modus = val.modus ? '' : $t('inactive');
-        return val.label + ' ' + modus + val.modus;
+        return val.label + ' ' + modus;
       }
     "
     clearable

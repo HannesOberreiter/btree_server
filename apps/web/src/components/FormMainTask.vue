@@ -562,7 +562,7 @@ async function onSubmit() {
     isSubmitting.value = false;
     return;
   }
-  const hive_ids = state.value.hive.map((obj: any) => obj.hive_id);
+  const hive_ids = state.value.hive.map((obj: any) => obj.id);
 
   let data = { ...state.value };
   delete data.hive;

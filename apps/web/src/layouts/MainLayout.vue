@@ -1,6 +1,6 @@
 <template>
   <q-layout view="hhh LpR fff">
-    <q-header class="bg-primary text-white">
+    <q-header class="bg-primary text-white print-hide">
       <q-toolbar>
         <q-btn dense flat round icon="fas fa-bars" @click="toggleLeftDrawer" />
         <main-navbar></main-navbar>
@@ -13,7 +13,7 @@
       show-if-above
       side="left"
       :width="200"
-      class="bg-blue-grey-9"
+      class="bg-blue-grey-9 print-hide"
     >
       <main-drawer></main-drawer>
     </q-drawer>
@@ -24,7 +24,7 @@
       </div>
     </q-page-container>
 
-    <q-footer class="bg-grey-8 text-white">
+    <q-footer class="bg-grey-8 text-white print-hide">
       <q-toolbar dense style="max-height: 30px; min-height: 30px">
         Version: {{ news.aaData[0].version }}, {{ news.aaData[0].date }} &nbsp;
         <router-link :to="{ name: 'news' }" class="text-white">

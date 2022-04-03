@@ -6,7 +6,7 @@ import { queryCache } from '~/boot/vue-query';
 import { Ref } from 'vue';
 import { useNotification } from '~/composables/useResponseText';
 import { useQuery } from 'vue-query';
-// import { stringify } from 'query-string';
+import { stringify } from 'query-string';
 
 export function useOptionsQuery(table: Option) {
   return useQuery(['option', table], () => api.get(`/v1/option/${table}`), {
@@ -90,22 +90,32 @@ export function useTemperatureQuery(
 export function useHivesQuery({
   offset = 0 as MaybeRef<number>,
   limit = 10000 as MaybeRef<number>,
-  order = 'name' as MaybeRef<string>,
-  direction = 'asc' as MaybeRef<string>,
+  order = ['name', 'modus'] as MaybeRef<Array<string>>,
+  direction = ['asc', 'asc'] as MaybeRef<Array<string>>,
   modus = true as MaybeRef<boolean>,
   deleted = false as MaybeRef<boolean>,
   q = '' as MaybeRef<string>,
 }) {
   return useQuery(
     ['hives', offset, limit, order, direction, modus, deleted, q],
-    () =>
-      api.get(
-        `/v1/hive?offset=${unref(offset)}&limit=${unref(limit)}&order=${unref(
-          order
-        )}&direction=${unref(direction)}&modus=${unref(modus)}&deleted=${unref(
-          deleted
-        )}&q=${unref(q)}`
-      ),
+    () => {
+      let url = `/v1/hive?offset=${unref(offset)}`;
+      url += `&limit=${unref(limit)}`;
+      url += `&${stringify(
+        { order: unref(order) },
+        { arrayFormat: 'bracket' }
+      )}`;
+      url += `&${stringify(
+        { direction: unref(direction) },
+        {
+          arrayFormat: 'bracket',
+        }
+      )}`;
+      url += `&modus=${unref(modus)}&deleted=${unref(deleted)}`;
+      url += `&q=${unref(q)}`;
+      return api.get(url);
+    },
+
     {
       keepPreviousData: true,
       select: (response) => {

@@ -20,7 +20,7 @@ const routes: RouteRecordRaw[] = [
         component: () => import('~/pages/QuicktoolNew.vue'),
       },
       {
-        path: '/edit/:task',
+        path: '/edit/:task/:ids*',
         name: 'edit-quicktool',
         props: true,
         component: () => import('~/pages/QuicktoolEdit.vue'),

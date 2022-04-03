@@ -104,7 +104,8 @@ watch(temperature, (cur) => {
 function getTemperature(click = false) {
   if (!props.hive) return;
   if (props.hive.length === 0) return;
-  select.value = props.hive.length === 0 ? 0 : props.hive[0].apiary_id;
+  select.value =
+    props.hive.length === 0 ? 0 : props.hive[0].hive_location.apiary_id;
   modelValue.value = temperature.value
     ? round(temperature.value.data_current.temperature, 1)
     : round(modelValue.value, 1);

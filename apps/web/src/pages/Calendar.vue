@@ -38,6 +38,7 @@ import DialogEvent from '~/components/DialogEvent.vue';
 import DialogForm from '~/components/DialogForm.vue';
 import DialogHint from '~/components/DialogHint.vue';
 
+import '@fullcalendar/core/vdom'; // solve problem with Vite
 import FullCalendar, {
   CalendarOptions,
   DateSelectArg,
@@ -45,7 +46,6 @@ import FullCalendar, {
   EventChangeArg,
   EventSourceInput,
 } from '@fullcalendar/vue3';
-import '@fullcalendar/core/vdom'; // solve problem with Vite
 import allLocales from '@fullcalendar/core/locales-all';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';

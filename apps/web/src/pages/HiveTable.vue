@@ -86,8 +86,8 @@ const pagination = ref({
 const filter = ref('');
 
 const { isLoading: isLoadingTable, data: hives } = useHivesQuery({
-  order: computed(() => pagination.value.sortBy),
-  direction: computed(() => (pagination.value.descending ? 'asc' : 'desc')),
+  order: computed(() => [pagination.value.sortBy]),
+  direction: computed(() => (pagination.value.descending ? ['asc'] : ['desc'])),
   offset: computed(() => pagination.value.page - 1),
   limit: computed(() => pagination.value.rowsPerPage),
   q: computed(() => (filter.value ? filter.value : '')),
