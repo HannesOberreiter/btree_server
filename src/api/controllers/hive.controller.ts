@@ -121,8 +121,14 @@ export class HiveController extends Controller {
           'hives.modus': modus === 'true',
           'hives.deleted': deleted === 'true'
         })
-        .orderBy(order, direction)
         .page(offset, parseInt(limit) === 0 ? 10 : limit);
+
+      if (Array.isArray(order)) {
+        order.forEach((field, index) => query.orderBy(field, direction[index]));
+      } else {
+        query.orderBy(order, direction);
+      }
+
       if (q.trim() !== '') {
         query.where((builder) => {
           builder
