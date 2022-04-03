@@ -111,7 +111,13 @@ const knexConfig = {
   debug: process.env.NODE_ENV === ENVIRONMENT.production ? false : true,
   pool: {
     min: parseInt(process.env.DB_POOL_MIN),
-    max: parseInt(process.env.DB_POOL_MAX)
+    max: parseInt(process.env.DB_POOL_MAX),
+    afterCreate: function (conn, done) {
+      // Extend max group concant mainly for calendar view if many ids are concated
+      conn.query('SET SESSION group_concat_max_len = 100000;', function (err) {
+        done(err, conn);
+      });
+    }
   },
   migrations: {
     directory: 'db/migrations',
