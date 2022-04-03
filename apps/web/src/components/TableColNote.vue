@@ -1,6 +1,6 @@
 <template>
   <q-td @click="show">
-    {{ trunc ? truncate(value, { length: 50 }) : value }}
+    {{ trunc ? truncate(value ? value : '', { length: 50 }) : value }}
   </q-td>
 </template>
 
@@ -14,7 +14,7 @@ const { t } = useI18n();
 const props = defineProps({
   value: {
     type: String,
-    required: true,
+    default: '',
   },
   trunc: {
     default: true,

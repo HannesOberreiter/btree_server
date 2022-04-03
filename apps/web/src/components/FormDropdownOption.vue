@@ -1,10 +1,10 @@
 <template>
   <q-select
     v-model="modelValue"
-    :label="$t(label)"
+    :label="disable ? $t(label) + ' - ' + $t('multipleValues') : $t(label)"
     name="option"
     :loading="isLoading"
-    :disable="isLoading || modelMultiple"
+    :disable="isLoading || disable"
     :options="options"
     option-label="name"
     options-value="id"
@@ -42,6 +42,9 @@ const props = defineProps({
     type: String as PropType<Option>,
     required: true,
   },
+  tableId: {
+    default: 'type_id',
+  },
   reset: {
     type: Number,
     default: 0,
@@ -50,19 +53,13 @@ const props = defineProps({
     type: Object,
     default: null,
   },
-  modelMultiple: {
-    default: false,
-  },
 });
 const { isLoading, data } = useOptionsQuery(props.table);
 const emit = defineEmits(['update:modelValue']);
 const { modelValue } = useVModels(props, emit);
 const { values, reset } = toRefs(props);
 const multipleValues = computed(() =>
-  formCheckMultipleValues(
-    values.value,
-    props.label === 'disease' ? 'disease_id' : 'type_id'
-  )
+  formCheckMultipleValues(values.value, props.tableId)
 );
 const disable = ref(multipleValues.value);
 const options = ref([] as any);
@@ -87,9 +84,7 @@ function setValues() {
   disable.value = multipleValues.value;
   if (multipleValues.value) editValues(true);
   else if (values.value && !isEmpty(values.value)) {
-    setOptions(
-      values.value[0][props.label === 'disease' ? 'disease_id' : 'type_id']
-    );
+    setOptions(values.value[0][props.tableId]);
   } else setOptions();
 }
 

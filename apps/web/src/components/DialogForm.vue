@@ -30,7 +30,6 @@
           <form-main-hive
             v-else-if="form === 'hive'"
             :ids="ids"
-            @on-success="(value) => onDialogOK(value)"
           ></form-main-hive>
         </div>
       </q-card-section>

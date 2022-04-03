@@ -53,6 +53,7 @@
           :reset="reset"
           table="treatment_diseases"
           label="disease"
+          table-id="disease_id"
         ></form-dropdown-disease>
       </div>
     </div>

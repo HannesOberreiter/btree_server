@@ -1,14 +1,21 @@
 <template>
   <q-form class="full-width" @submit.prevent.stop="onSubmit">
     <div class="row">
-      {{ ids }}
+      <form-dropdown-edit
+        :is="isEdit"
+        v-model="editOptions"
+        class="col-12"
+        :options="editOptionsCopy"
+      ></form-dropdown-edit>
+
       <form-input-text
         v-model="state.name"
         :values="values"
         :reset="reset"
-        class="col-11"
+        :class="isEdit ? 'col-12' : 'col-11'"
         label="name"
-        :hint="$t('lastAdded') + ': ' + lastNames"
+        icon="fas fa-passport"
+        :hint="isEdit ? '' : $t('lastAdded') + ': ' + lastNames"
         :max-valid="24"
       ></form-input-text>
       <div v-if="!isEdit" class="col-1 text-center">
@@ -64,7 +71,7 @@
     <form-dropdown-type
       v-model="state.type"
       table="hive_types"
-      label="status"
+      label="type"
       :values="values"
       :reset="reset"
     ></form-dropdown-type>
@@ -72,6 +79,7 @@
       <form-dropdown-source
         v-model="state.source"
         table="hive_sources"
+        table-id="source_id"
         label="source"
         :values="values"
         :reset="reset"
@@ -102,7 +110,12 @@
       ></input-numeric-grouphive>
     </div>
 
-    <input-note v-model="state.note" class="q-pt-sm"></input-note>
+    <input-note
+      v-model="state.note"
+      class="q-pt-sm"
+      :values="values"
+      :reset="reset"
+    ></input-note>
     <div class="row q-pt-sm q-pb-md">
       <div class="col-12 col-md-6">
         <form-input-checkbox
@@ -196,6 +209,7 @@ import InputNumericPosition from './FormInputNumeric.vue';
 import useVuelidate from '@vuelidate/core';
 import { useHivesQuery } from '~/composables/useQuery';
 import { flatten, map, merge } from 'lodash';
+import FormDropdownEdit from './FormDropdownEdit.vue';
 
 const { t } = useI18n();
 const notification = useNotification();
@@ -288,9 +302,8 @@ async function getEdit(id: unknown[]) {
         { value: row.id, label: `ID: ${row.id} / (${row.name})` },
       ]);
       editOptions.value = flatten(editIds);
-      editOptionsCopy.value = flatten(editIds);
+      editOptionsCopy.value = [...unref(editOptions.value)];
       values.value = response.data;
-      //notification.open('info', t('dataLoaded'));
     },
     (error) => {
       notification.open('negative', error.response);

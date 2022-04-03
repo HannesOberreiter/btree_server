@@ -241,7 +241,7 @@ const filter = ref('');
 
 const {
   isLoading: isLoadingTable,
-  data: hives,
+  data,
   refetch,
 } = useHivesQuery({
   order: computed(() => [pagination.value.sortBy]),
@@ -262,15 +262,23 @@ function onRequest(props: any) {
 
 const rows = ref([]);
 
-if (hives.value) {
+if (data.value) {
   // Data already in cache
-  rows.value = hives.value.results;
-  pagination.value.rowsNumber = hives.value.total;
+  rows.value = data.value.results;
+  pagination.value.rowsNumber = data.value.total;
 }
-watch(hives, () => {
-  rows.value = hives.value.results;
-  pagination.value.rowsNumber = hives.value.total;
+watch(data, () => {
+  rows.value = data.value.results;
+  pagination.value.rowsNumber = data.value.total;
+  selected.value = checkSelected(selected.value, rows.value);
 });
+
+function checkSelected(selected: any[], rows: any) {
+  const rowIds = rows.map((o: any) => o.id);
+  console.log(rowIds);
+  console.log(selected);
+  return selected.filter((o: any) => rowIds.includes(o.id));
+}
 
 function onNew() {
   $q.dialog({
@@ -282,10 +290,7 @@ function onNew() {
       ids: null,
     },
   }).onDismiss(() => {
-    refetch.value().then(
-      () => console.log('Reloaded Table'),
-      (error) => console.log(error)
-    );
+    refetch.value().then();
   });
 }
 
@@ -300,10 +305,7 @@ function onEdit() {
       ids: ids,
     },
   }).onDismiss(() => {
-    refetch.value().then(
-      () => console.log('Reloaded Table'),
-      (error) => console.log(error)
-    );
+    refetch.value().then();
   });
 }
 

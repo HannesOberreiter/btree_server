@@ -25,7 +25,9 @@
       ></btn-multiple-values>
     </template>
     <template #after><slot name="deepAfter"></slot></template>
-    <template #prepend><slot name="deepPrepend"></slot></template>
+    <template v-if="$slots.deepPrepend" #prepend
+      ><slot name="deepPrepend"></slot
+    ></template>
   </q-input>
 </template>
 

@@ -4,6 +4,9 @@
     label="note"
     type="textarea"
     :max-valid="2000"
+    icon="fas fa-align-left"
+    :reset="reset"
+    :values="values"
   ></form-input-text>
 </template>
 
