@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express';
+import { NextFunction, Response } from 'express';
 import { Controller } from '@classes/controller.class';
 import { checkMySQLError } from '@utils/error.util';
 import { IUserRequest } from '@interfaces/IUserRequest.interface';
@@ -116,6 +116,9 @@ export class HiveController extends Controller {
         .withGraphJoined('hive_location.[movedate]')
         .withGraphJoined('hive_source')
         .withGraphJoined('hive_type')
+        .withGraphJoined('creator')
+        .withGraphJoined('editor')
+
         .where({
           'hive_location.user_id': req.user.user_id,
           'hives.modus': modus === 'true',
