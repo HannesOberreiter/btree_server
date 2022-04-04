@@ -1,4 +1,4 @@
-import { Response } from 'express';
+import { NextFunction, Response } from 'express';
 import { Controller } from '@classes/controller.class';
 import { checkMySQLError } from '@utils/error.util';
 import { IUserRequest } from '@interfaces/IUserRequest.interface';
@@ -9,18 +9,45 @@ export class ApiaryController extends Controller {
     super();
   }
 
-  async getApiaries(req: IUserRequest, res: Response, next) {
+  async get(req: IUserRequest, res: Response, next: NextFunction) {
     try {
-      const result = await Apiary.query()
+      const { order, direction, offset, limit, modus, deleted, q, details } =
+        req.query as any;
+      const query = Apiary.query()
         .withGraphFetched('hive_count')
-        .where('deleted', 0)
-        .where('user_id', req.user.user_id);
+        .where({
+          'apiaries.user_id': req.user.user_id,
+          'apiaries.deleted': deleted === 'true'
+        })
+        .page(offset, parseInt(limit) === 0 ? 10 : limit);
+
+      if (modus !== 'null') {
+        query.where('apiaries.modus', modus === 'true');
+      }
+
+      if (details === 'true') {
+        query.withGraphJoined('creator').withGraphJoined('editor');
+      }
+
+      if (Array.isArray(order)) {
+        order.forEach((field, index) => query.orderBy(field, direction[index]));
+      } else {
+        query.orderBy(order, direction);
+      }
+
+      if (q.trim() !== '') {
+        query.where((builder) => {
+          builder.orWhere('name', 'like', `%${q}%`);
+        });
+      }
+      const result = await query.orderBy('id');
       res.locals.data = result;
       next();
     } catch (e) {
       next(checkMySQLError(e));
     }
   }
+
   async getApiary(req: IUserRequest, res: Response, next) {
     try {
       const result = await Apiary.query()

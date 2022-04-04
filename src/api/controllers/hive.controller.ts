@@ -74,9 +74,9 @@ export class HiveController extends Controller {
   }
 
   async get(req: IUserRequest, res: Response, next: NextFunction) {
-    const { order, direction, offset, limit, modus, deleted, q, details } =
-      req.query as any;
     try {
+      const { order, direction, offset, limit, modus, deleted, q, details } =
+        req.query as any;
       const query = Hive.query()
         .withGraphJoined('hive_location.[movedate]')
         .where({

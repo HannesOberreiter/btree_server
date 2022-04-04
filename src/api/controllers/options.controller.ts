@@ -33,17 +33,29 @@ export class OptionController extends Controller {
   };
 
   async get(req: IUserRequest, res: Response, next) {
-    console.log(req.params);
-    const table = Object(OptionController.tables)[req.params.table];
-    const result = await table
-      .query()
-      .where({ user_id: req.user.user_id })
-      .orderBy([
-        { column: 'modus' },
-        { column: 'favorite', order: 'desc' },
-        { column: 'name' }
-      ]);
-    res.locals.data = result;
-    next();
+    try {
+      const { order, direction, modus, q } = req.query as any;
+      const table = Object(OptionController.tables)[req.params.table];
+      const query = table
+        .query()
+        .where({ user_id: req.user.user_id, modus: modus === 'true' });
+
+      if (Array.isArray(order)) {
+        order.forEach((field, index) => query.orderBy(field, direction[index]));
+      } else {
+        query.orderBy(order, direction);
+      }
+
+      if (q.trim() !== '') {
+        query.where((builder) => {
+          builder.orWhere('name', 'like', `%${q}%`);
+        });
+      }
+
+      res.locals.data = await query;
+      next();
+    } catch (e) {
+      next(checkMySQLError(e));
+    }
   }
 }

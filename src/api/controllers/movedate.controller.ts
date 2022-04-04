@@ -12,17 +12,15 @@ export class MovedateController extends Controller {
   }
 
   async patch(req: IUserRequest, res: Response, next: NextFunction) {
-    const ids = req.body.ids;
-    const ignore = req.body.ignore;
-    const insert = {};
-
-    if (!ignore.date) insert['date'] = req.body.date;
-    if (!ignore.apiary_id) insert['apiary_id'] = req.body.apiary;
-
     try {
+      const ids = req.body.ids;
+      const insert = { ...req.body.data };
       const result = await Movedate.transaction(async (trx) => {
         return await Movedate.query(trx)
-          .patch(insert)
+          .patch({
+            ...insert,
+            'movedates.edit_id': req.user.bee_id
+          })
           .findByIds(ids)
           .leftJoinRelated('apiary')
           .where('apiary.user_id', req.user.user_id);
@@ -35,14 +33,12 @@ export class MovedateController extends Controller {
   }
 
   async post(req: IUserRequest, res: Response, next: NextFunction) {
-    const hive_ids = req.body.hive;
-
-    const insert = {
-      apiary_id: req.body.apiary,
-      date: req.body.date
-    };
-
     try {
+      const hive_ids = req.body.hive_ids;
+      const insert = {
+        apiary_id: req.body.apiary_id,
+        date: req.body.date
+      };
       const result = await Movedate.transaction(async (trx) => {
         await Apiary.query(trx)
           .findByIds(insert.apiary_id)

@@ -15,7 +15,7 @@ export class ApiaryRouter extends Router {
       .route('/')
       .get(
         Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Container.resolve('ApiaryController').getApiaries
+        Container.resolve('ApiaryController').get
       );
     this.router
       .route('/:id')
