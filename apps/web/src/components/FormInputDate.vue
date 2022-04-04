@@ -69,6 +69,9 @@ const props = defineProps({
     type: String,
     default: 'date',
   },
+  tableId: {
+    default: null,
+  },
   reset: {
     type: Number,
     default: 0,
@@ -114,7 +117,9 @@ function setValues() {
   disable.value = multipleValues.value;
   if (multipleValues.value) editValues(true);
   else if (values.value && !isEmpty(values.value)) {
-    modelValue.value = dayjs(values.value[0][props.label]).format('YYYY-MM-DD');
+    modelValue.value = dayjs(
+      values.value[0][props.tableId ? props.tableId : props.label]
+    ).format('YYYY-MM-DD');
   } else modelValue.value = resetValue;
 }
 

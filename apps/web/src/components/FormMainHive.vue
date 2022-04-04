@@ -58,7 +58,12 @@
 
     <div v-if="!isEdit" class="row q-pt-md q-pb-md">
       <div class="col-12 col-md-6">
-        <form-dropdown-apiary v-model="state.apiary"></form-dropdown-apiary>
+        <form-dropdown-option
+          v-model="state.apiary"
+          label="apiary"
+          table="apiary"
+          table-id="apiary_id"
+        ></form-dropdown-option>
       </div>
       <div class="col-12 col-md-6">
         <form-input-movedate
@@ -176,7 +181,6 @@ import { useNotification } from '~/composables/useResponseText';
 import FormInputMovedate from './FormInputDate.vue';
 import FormInputModusdate from './FormInputDate.vue';
 import FormInputCheckbox from './FormInputCheckbox.vue';
-import FormDropdownApiary from './FormDropdownApiary.vue';
 import FormDropdownSource from './FormDropdownOption.vue';
 import FormDropdownType from './FormDropdownOption.vue';
 import FormInputText from './FormInputText.vue';
@@ -190,6 +194,7 @@ import { useHivesQuery } from '~/composables/useQuery';
 import FormDropdownEdit from './FormDropdownEdit.vue';
 import FormButtons from './FormButtons.vue';
 import { FormHive } from '~/types';
+import FormDropdownOption from './FormDropdownOption.vue';
 
 const notification = useNotification();
 const showInterval = ref(false);

@@ -1,0 +1,74 @@
+<template>
+  <l-control position="bottomleft" class="d-print-none">
+    <q-btn
+      size="sm"
+      color="black"
+      class="bg-white"
+      fab-mini
+      flat
+      :loading="userLocationLoading"
+      icon="fas fa-map-marker-alt"
+      @click="emit('locate')"
+    >
+    </q-btn>
+    <q-btn
+      size="sm"
+      color="black"
+      class="bg-white"
+      fab-mini
+      flat
+      :icon="!showInactive ? `fas fa-eye` : `fas fa-eye-slash`"
+      @click="toggleInactive"
+    >
+    </q-btn>
+    <q-btn
+      size="sm"
+      color="black"
+      class="bg-white"
+      fab-mini
+      flat
+      icon="fas fa-question"
+      @click="showInfo = !showInfo"
+    ></q-btn>
+  </l-control>
+  <l-control position="bottomright">
+    <q-slider
+      v-model="modelRadius"
+      color="secondary"
+      :min="0"
+      :max="4000"
+      :step="50"
+      :label-value="$t('map.radius') + ' ' + modelRadius + 'm'"
+      label-always
+      style="min-width: 20vh"
+    >
+    </q-slider>
+  </l-control>
+  <dialog-hint v-model="showInfo" hint="map.hint"></dialog-hint>
+</template>
+
+<script setup lang="ts">
+import { useVModels } from '@vueuse/core';
+import DialogHint from './DialogHint.vue';
+import { LControl } from '@vue-leaflet/vue-leaflet';
+
+const showInfo = ref(false);
+const showInactive = ref(false);
+const props = defineProps({
+  userLocationLoading: {
+    type: Boolean,
+    required: true,
+  },
+  modelRadius: {
+    type: Number,
+    required: true,
+  },
+});
+const emit = defineEmits(['update:modelRadius', 'locate', 'toggle']);
+const { modelRadius } = useVModels(props, emit);
+const userLocationLoading = toRef(props, 'userLocationLoading');
+function toggleInactive() {
+  showInactive.value = !showInactive.value;
+  emit('toggle', showInactive.value);
+}
+</script>

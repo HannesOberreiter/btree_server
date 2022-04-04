@@ -6,7 +6,6 @@
     <div v-else class="col-12">
       <div class="map">
         <l-map
-          v-if="!isLoading"
           ref="mapRef"
           :zoom="zoom"
           :center="apiaries.center"
@@ -15,95 +14,32 @@
           @locationfound="onLocationFound"
           @locationerror="onLocationError"
         >
-          <l-control position="bottomleft" class="d-print-none">
-            <q-btn
-              size="sm"
-              color="black"
-              class="bg-white"
-              fab-mini
-              flat
-              :loading="userLocationLoading"
-              icon="fas fa-map-marker-alt"
-              @click="loadLocation"
-            >
-            </q-btn>
-            <q-btn
-              size="sm"
-              color="black"
-              class="bg-white"
-              fab-mini
-              flat
-              :icon="!showInactive ? `fas fa-eye` : `fas fa-eye-slash`"
-              @click="showInactive = !showInactive"
-            >
-            </q-btn>
-            <q-btn
-              size="sm"
-              color="black"
-              class="bg-white"
-              fab-mini
-              flat
-              icon="fas fa-question"
-              @click="showInfo = !showInfo"
-            ></q-btn>
-          </l-control>
-          <l-control position="bottomright">
-            <q-slider
-              v-model="circleRadius"
-              color="secondary"
-              :min="0"
-              :max="4000"
-              :step="50"
-              :label-value="t('map.radius') + ' ' + circleRadius + 'm'"
-              label-always
-              style="min-width: 20vh"
-            >
-            </q-slider>
-          </l-control>
+          <map-buttons
+            v-model:modelRadius="circleRadius"
+            :user-location-loading="userLocationLoading"
+            @locate="loadLocation"
+            @toggle="(v) => (showInactive = v)"
+          >
+          </map-buttons>
+          <map-overlay></map-overlay>
 
-          <l-tile-layer
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            layer-type="base"
-            name="OpenStreetMap"
-            attribution="Map data &copy; <a href='http://openstreetmap.org'>OpenStreetMap</a> contributors, <a href='http://creativecommons.org/licenses/by-sa/2.0/''>CC-BY-SA</a>"
-            :max-zoom="zoomMax"
-          ></l-tile-layer>
-          <l-tile-layer
-            url="//server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-            layer-type="base"
-            name="Esri"
-            attribution="&copy; <a href='http://www.esri.com/'>Esri</a>, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community"
-            :max-zoom="zoomMax"
-            :visible="false"
-          ></l-tile-layer>
-          <template v-if="paidStatus.status">
-            <l-tile-layer
-              :url="`//tile.openweathermap.org/map/precipitation_new/{z}/{x}/{y}.png?appid=${OPENWEATHER_API}`"
-              name="Perception"
-              attribution="| Weather data &copy; <a href='https://openweathermap.org'>OpenWeatherMap</a>"
-              layer-type="overlay"
-              :max-zoom="zoomMax"
-              :visible="false"
-            ></l-tile-layer>
-            <l-tile-layer
-              :url="`//tile.openweathermap.org/map/temp_new/{z}/{x}/{y}.png?appid=${OPENWEATHER_API}`"
-              name="Temperature"
-              attribution="| Weather data &copy; <a href='https://openweathermap.org'>OpenWeatherMap</a>"
-              layer-type="overlay"
-              :max-zoom="zoomMax"
-              :visible="false"
-            ></l-tile-layer>
-          </template>
-          <l-control-layers />
-          <template v-if="location">
-            <l-circle-marker
-              :lat-lng="location.latlng"
-              color="black"
-              :radius="location.accuracy ? location.accuracy : 50"
-            />
-          </template>
+          <l-circle-marker
+            v-if="location"
+            :lat-lng="location.latlng"
+            color="black"
+            :radius="location.accuracy ? location.accuracy : 50"
+          />
           <l-feature-group v-if="apiaries" :key="updateTimestamp">
-            <template v-for="value in apiaries.result" :key="value.id">
+            <template v-for="value in apiaries.results" :key="value.id">
+              <l-circle
+                v-if="value.modus || showInactive"
+                :lat-lng="[value.latitude, value.longitude]"
+                :radius="circleRadius"
+                :fill="true"
+                :color="value.modus ? 'green' : 'red'"
+                :fill-opacity="circleOpacity"
+              >
+              </l-circle>
               <l-marker
                 v-if="value.modus || showInactive"
                 :lat-lng="[value.latitude, value.longitude]"
@@ -145,51 +81,36 @@
               </l-marker>
             </template>
           </l-feature-group>
-          <l-feature-group v-if="apiaries" :key="updateTimestamp + 'radius'">
-            <template v-for="value in apiaries.result" :key="value.id">
-              <l-circle
-                v-if="value.modus || showInactive"
-                :lat-lng="[value.latitude, value.longitude]"
-                :radius="circleRadius"
-                :fill="true"
-                :color="value.modus ? 'green' : 'red'"
-                :fill-opacity="circleOpacity"
-              >
-              </l-circle>
-            </template>
-          </l-feature-group>
         </l-map>
       </div>
     </div>
   </div>
-  <dialog-hint v-model="showInfo" hint="map.hint"></dialog-hint>
 </template>
 
 <script setup lang="ts">
 import 'leaflet/dist/leaflet.css';
 import { api } from '~/boot/axios';
-import { computed, ref } from 'vue';
 import { useApiariesQuery } from '~/composables/useQuery';
 import { useAuthUserStore } from '~/stores/auth';
-import { useI18n } from 'vue-i18n';
 import { useNotification } from '~/composables/useResponseText';
-import { useQuasar } from 'quasar';
 import DialogForm from '~/components/DialogForm.vue';
-import DialogHint from '~/components/DialogHint.vue';
 import GlobalLoading from '~/components/GlobalLoading.vue';
 import {
   LMap,
-  LTileLayer,
   LPopup,
-  LControlLayers,
   LCircle,
   LCircleMarker,
-  LControl,
   LFeatureGroup,
   LMarker,
 } from '@vue-leaflet/vue-leaflet';
+import MapOverlay from '~/components/MapOverlay.vue';
+import MapButtons from '~/components/MapButtons.vue';
 
-const { isLoading, data: apiaries, refetch } = useApiariesQuery();
+const {
+  isLoading,
+  data: apiaries,
+  refetch,
+} = useApiariesQuery({ modus: null });
 const updateTimestamp = ref(Date()); // helper to update layer
 
 const { t } = useI18n();
@@ -197,22 +118,17 @@ const $q = useQuasar();
 const userStore = useAuthUserStore();
 const notification = useNotification();
 
-const zoomMax = 18;
-const paidStatus = computed(() => userStore.getPaidStatus);
-const zoom = ref(apiaries.value.result.length > 0 ? 9 : 2);
+const zoom = computed(() => (isLoading.value ? 2 : 9));
 const circleRadius = ref(1000);
 const circleOpacity = 0.3;
 const mapRef = ref(null as any);
 const location = ref(null as any);
 const userLocationLoading = ref(false);
 const showInactive = ref(false);
-const showInfo = ref(false);
 let map = {} as any;
 let dragObject = {} as any;
 
-const OPENWEATHER_API = process.env.OPENWEATHER_APP_ID;
 const onMapReady = () => {
-  zoom.value = apiaries.value.result.length > 0 ? 9 : 2;
   map = mapRef.value.leafletObject;
   map.doubleClickZoom.disable();
   map.scrollWheelZoom.enable();
@@ -280,7 +196,6 @@ function deleteApiary(value: string) {
     }
   );
 }
-
 function moveApiaryStart(value: any) {
   dragObject = value;
   map.closePopup();

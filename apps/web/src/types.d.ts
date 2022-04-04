@@ -85,7 +85,8 @@ type Option =
   | 'queen_races'
   | 'treatment_diseases'
   | 'treatment_types'
-  | 'treatment_vets';
+  | 'treatment_vets'
+  | 'apiary';
 
 type TextField =
   | 'number'

@@ -16,6 +16,8 @@ export const useFormCleanup = (
       ['feed', 'checkup', 'treatment', 'harvest'].includes(unref(table))
     ) {
       return cleanupQuicktool(state.value, isEdit, unref(table));
+    } else if (unref(table) === 'movedate') {
+      return cleanupMovement(state.value, isEdit);
     }
   }
 
@@ -97,6 +99,17 @@ function cleanupQuicktool(state: FormQuicktool, isEdit: boolean, task: string) {
       result['water'] = state.harvest_water;
       result['charge'] = state.harvest_charge;
     }
+  }
+  return omitBy(result, isNil);
+}
+
+function cleanupMovement(state: any, isEdit: boolean) {
+  const result = {
+    date: state.date,
+    apiary_id: state.apiary ? state.apiary.id : null,
+  } as any;
+  if (!isEdit) {
+    result['hive_ids'] = state.hive.map((obj: any) => obj.id);
   }
   return omitBy(result, isNil);
 }

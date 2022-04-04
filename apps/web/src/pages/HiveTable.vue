@@ -128,6 +128,7 @@ import TableColLink from '~/components/TableColLink.vue';
 import TableColNote from '~/components/TableColNote.vue';
 import TableColStatus from '~/components/TableColStatus.vue';
 import TableButtons from '~/components/TableButtons.vue';
+import { QTableProps } from 'quasar';
 
 const storeTable = useTablesStore();
 const $q = useQuasar();
@@ -253,7 +254,7 @@ const columns = [
       row.deleted ? rowTableMeta(val, row.editor) : '',
     sortable: true,
   },
-];
+] as QTableProps['columns'];
 
 const optionColumns = columns.filter((obj) => (!obj.required ? obj : null));
 

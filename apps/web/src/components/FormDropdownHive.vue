@@ -50,7 +50,7 @@ import { useVModels } from '@vueuse/core';
 import { validationErrors } from '~/helpers';
 import useVuelidate from '@vuelidate/core';
 const { isLoading: isLoadingHive, data: hives } = useHivesQuery({});
-const { isLoading: isLoadingApiary, data: apiaries } = useApiariesQuery();
+const { isLoading: isLoadingApiary, data: apiaries } = useApiariesQuery({});
 
 const props = defineProps({
   modelValue: {
@@ -99,9 +99,9 @@ function filterHive(val: any, update: any, _abort: any) {
 }
 
 function filterApiary(val: any, update: any, _abort: any) {
-  const data = filter(apiaries.value.result, (obj) => obj.hive_count !== null);
+  const data = filter(apiaries.value.results, (obj) => obj.hive_count !== null);
 
-  if (apiaries.value.result.length > 0 && val) {
+  if (apiaries.value.results.length > 0 && val) {
     update(() => {
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       const needle = new RegExp(`(${val.toLowerCase()})`);

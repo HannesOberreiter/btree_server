@@ -41,7 +41,7 @@ const routes: RouteRecordRaw[] = [
         component: () => import('~/pages/TodoNew.vue'),
       },
       {
-        path: '/edit/todo',
+        path: '/edit/todo/:ids*',
         name: 'edit-todo',
         props: true,
         component: () => import('~/pages/TodoEdit.vue'),
@@ -52,7 +52,7 @@ const routes: RouteRecordRaw[] = [
         component: () => import('~/pages/MovementNew.vue'),
       },
       {
-        path: '/edit/movement',
+        path: '/edit/movement/:ids*',
         name: 'edit-movement',
         props: true,
         component: () => import('~/pages/MovementEdit.vue'),
@@ -64,8 +64,9 @@ const routes: RouteRecordRaw[] = [
         component: () => import('~/pages/Queen.vue'),
       },
       {
-        path: '/edit/queen',
+        path: '/edit/queen/:ids*',
         name: 'edit-queen',
+        props: true,
         component: () => import('~/pages/Queen.vue'),
       },
 
