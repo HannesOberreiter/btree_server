@@ -4,6 +4,7 @@ CREATE VIEW queens_locations AS
         hives.name AS hive_name,
         qt.name AS queen_name,
         qt.modus AS queen_modus,
+        qt.move_date AS queen_move_date,
         qt.modus_date AS queen_modus_date,
         qt.mark_colour AS queen_mark_colour,
         qt.id AS queen_id
