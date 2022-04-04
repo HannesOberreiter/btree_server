@@ -8,6 +8,7 @@ import { Movedate } from '../models/movedate.model';
 import { Apiary } from '../models/apiary.model';
 import { conflict } from '@hapi/boom';
 import { map } from 'lodash';
+import dayjs from 'dayjs';
 
 export class HiveController extends Controller {
   constructor() {
@@ -72,22 +73,26 @@ export class HiveController extends Controller {
   }
 
   async get(req: IUserRequest, res: Response, next: NextFunction) {
-    const { order, direction, offset, limit, modus, deleted, q } =
+    const { order, direction, offset, limit, modus, deleted, q, details } =
       req.query as any;
     try {
       const query = Hive.query()
         .withGraphJoined('hive_location.[movedate]')
-        .withGraphJoined('hive_source')
-        .withGraphJoined('hive_type')
-        .withGraphJoined('creator')
-        .withGraphJoined('editor')
-
         .where({
           'hive_location.user_id': req.user.user_id,
           'hives.modus': modus === 'true',
           'hives.deleted': deleted === 'true'
         })
         .page(offset, parseInt(limit) === 0 ? 10 : limit);
+
+      if (details === 'true') {
+        query
+          .withGraphJoined('queen_location')
+          .withGraphJoined('hive_source')
+          .withGraphJoined('hive_type')
+          .withGraphJoined('creator')
+          .withGraphJoined('editor');
+      }
 
       if (Array.isArray(order)) {
         order.forEach((field, index) => query.orderBy(field, direction[index]));
@@ -127,6 +132,26 @@ export class HiveController extends Controller {
         return await Hive.query(trx)
           .patch(insert)
           .findByIds(ids)
+          .leftJoinRelated('hive_location')
+          .where('hive_location.user_id', req.user.user_id);
+      });
+      res.locals.data = result;
+      next();
+    } catch (e) {
+      next(checkMySQLError(e));
+    }
+  }
+
+  async updateStatus(req: IUserRequest, res: Response, next: NextFunction) {
+    try {
+      const result = await Hive.transaction(async (trx) => {
+        return Hive.query(trx)
+          .patch({
+            edit_id: req.user.bee_id,
+            modus: req.body.status,
+            modus_date: dayjs().format('YYYY-MM-DD')
+          })
+          .findByIds(req.body.ids)
           .leftJoinRelated('hive_location')
           .where('hive_location.user_id', req.user.user_id);
       });

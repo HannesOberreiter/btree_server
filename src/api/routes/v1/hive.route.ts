@@ -47,5 +47,11 @@ export class HiveRouter extends Router {
         Guard.authorize([ROLES.admin, ROLES.user]),
         Container.resolve('HiveController').batchGet
       );
+    this.router
+      .route('/status')
+      .patch(
+        Guard.authorize([ROLES.admin]),
+        Container.resolve('HiveController').updateStatus
+      );
   }
 }
