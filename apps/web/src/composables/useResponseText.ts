@@ -14,7 +14,7 @@ const useNotification = () => {
   const { t } = useI18n();
 
   function useHandleSuccess(value: any) {
-    const displayMessage = value ? value : '';
+    const displayMessage = value ? t(value) : '';
     return displayMessage;
   }
 
@@ -22,8 +22,8 @@ const useNotification = () => {
     const storeUser = useAuthUserStore();
     const lang = storeUser.getLanguage;
     let displayMessage = '';
-    console.log(error);
-    if (typeof error === 'string') return error;
+
+    if (typeof error === 'string') return t(error);
     if ('data' in error === false) {
       displayMessage = checkStatus(error.response.status);
     } else {
@@ -88,7 +88,7 @@ const useNotification = () => {
       } else if (type === 'positive' && message) {
         m = useHandleSuccess(message);
       } else {
-        m = message;
+        m = t(message);
       }
     }
 

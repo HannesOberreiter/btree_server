@@ -1,5 +1,5 @@
 <template>
-  <q-form class="full-width" @submit.prevent.stop="onSubmit">
+  <q-form class="full-width" @submit.prevent.stop="">
     <div class="row">
       <form-dropdown-edit
         v-if="isEdit"
@@ -13,6 +13,7 @@
         :values="values"
         :reset="reset"
         :class="isEdit ? 'col-12' : 'col-11'"
+        :required="isEdit ? false : true"
         label="name"
         icon="fas fa-passport"
         :hint="isEdit ? '' : $t('lastAdded') + ': ' + lastNames"
@@ -139,69 +140,20 @@
     </div>
   </q-form>
 
-  <q-btn-group v-if="!ids" spread>
-    <q-btn
-      unelevated
-      size="md"
-      color="secondary"
-      :loading="isSubmitting"
-      :label="$t('save')"
-      @click="onSubmit"
-    />
-    <q-btn
-      unelevated
-      size="md"
-      color="warning"
-      :label="$t('reset')"
-      @click="onReset"
-    />
-    <q-btn
-      v-if="lastInsert"
-      unelevated
-      size="md"
-      color="info"
-      :loading="isSubmitting"
-      :label="$t('undo')"
-      @click="onUndo"
-    />
-  </q-btn-group>
-  <q-btn-group v-else spread>
-    <q-btn
-      unelevated
-      size="md"
-      color="secondary"
-      :loading="isSubmitting"
-      :label="$t('update')"
-      @click="onUpdate"
-    ></q-btn>
-    <q-btn
-      unelevated
-      size="md"
-      color="warning"
-      :label="$t('reset')"
-      @click="onReset"
-    />
-  </q-btn-group>
+  <form-buttons
+    :state="state"
+    :is-edit="isEdit"
+    :edit-ids="editOptions"
+    :v="v"
+    form="hive"
+    @reset="onReset"
+    @change="refetch"
+  ></form-buttons>
 </template>
 
 <script lang="ts">
-import { flatten, isNil, map, merge, omitBy } from 'lodash';
+import { flatten, map, merge } from 'lodash';
 import dayjs from 'dayjs';
-
-interface State {
-  name: string;
-  date: string;
-  position: number;
-  grouphive: number;
-  note: string;
-  modus: boolean;
-  modusDate: string;
-  start: number;
-  repeat: number;
-  apiary: any;
-  type: any;
-  source: any;
-}
 
 function getNames(v: any) {
   return v.map((o: any) => o.name).join(', ');
@@ -216,26 +168,6 @@ const stateDefault = {
   modus: true,
   modusDate: dayjs().format('YYYY-MM-DD'),
 };
-
-function cleanupData(state: State, isEdit: boolean) {
-  let result = {
-    name: state.name,
-    position: state.position,
-    grouphive: state.grouphive,
-    note: state.note,
-    modus: state.modus,
-    modus_date: state.modusDate,
-    type_id: state.type ? state.type.id : null,
-    source_id: state.source ? state.source.id : null,
-  } as any;
-  if (!isEdit) {
-    result['start'] = state.start;
-    result['repeat'] = state.repeat;
-    result['apiary_id'] = state.apiary ? state.apiary.id : null;
-    result['date'] = state.date;
-  }
-  return omitBy(result, isNil);
-}
 </script>
 
 <script setup lang="ts">
@@ -256,18 +188,15 @@ import InputNumericPosition from './FormInputNumeric.vue';
 import useVuelidate from '@vuelidate/core';
 import { useHivesQuery } from '~/composables/useQuery';
 import FormDropdownEdit from './FormDropdownEdit.vue';
+import FormButtons from './FormButtons.vue';
+import { FormHive } from '~/types';
 
-const { t } = useI18n();
 const notification = useNotification();
-
-const isSubmitting = ref(false);
-const lastInsert = ref(null);
 const showInterval = ref(false);
 const values = ref({});
 const reset = ref(0);
 const editOptions = ref([]) as any;
 const editOptionsCopy = ref([]) as any;
-
 const props = defineProps({
   ids: {
     type: Array,
@@ -306,7 +235,7 @@ const sampleName = computed(() => {
   return hintText;
 });
 
-const state = ref<State>({
+const state = ref<FormHive>({
   start: 0,
   repeat: 0,
   apiary: undefined as any,
@@ -343,71 +272,6 @@ function onReset() {
   }
   if (showInterval.value) changeInterval();
   reset.value++;
-  notification.open('positive', t('successReset'));
-}
-
-async function onUpdate() {
-  isSubmitting.value = true;
-  const isFormCorrect = await v.value.$validate();
-  if (!isFormCorrect) {
-    isSubmitting.value = false;
-    return;
-  }
-
-  const id = editOptions.value.map((obj: any) => obj.value);
-  let data = {
-    ids: id,
-    data: cleanupData(state.value, isEdit.value),
-  };
-
-  await api.patch('/v1/hive', JSON.stringify(data)).then(
-    async (response: any) => {
-      lastInsert.value = response.data;
-      await refetch.value;
-      notification.open('positive', '');
-    },
-    (error) => {
-      notification.open('negative', error.response);
-    }
-  );
-  isSubmitting.value = false;
-  return;
-}
-
-async function onUndo() {
-  isSubmitting.value = true;
-  const data = JSON.stringify({ ids: lastInsert.value });
-  await api.patch('/v1/hive/batchDelete?hard=true', data).then(
-    (_response: any) => {
-      lastInsert.value = null;
-      notification.open('positive', '');
-    },
-    (error) => {
-      notification.open('negative', error.response);
-    }
-  );
-  isSubmitting.value = false;
-  return;
-}
-
-async function onSubmit() {
-  isSubmitting.value = true;
-  const isFormCorrect = await v.value.$validate();
-  if (!isFormCorrect) {
-    isSubmitting.value = false;
-    return;
-  }
-  const data = cleanupData(state.value, false);
-  await api.post('/v1/hive', JSON.stringify(data)).then(
-    async (response: any) => {
-      lastInsert.value = response.data;
-      await refetch.value();
-      notification.open('positive', '');
-    },
-    (error) => {
-      notification.open('negative', error.response);
-    }
-  );
-  isSubmitting.value = false;
+  notification.open('info', 'successReset');
 }
 </script>

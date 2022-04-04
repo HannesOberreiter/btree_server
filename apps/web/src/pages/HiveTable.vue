@@ -1,7 +1,6 @@
 <template>
   <div class="row q-pa-sm justify-center">
     <div class="col-12">
-      {{ $t('hive', 2) }}
       <q-table
         v-model:pagination="pagination"
         v-model:selected="selected"
@@ -31,14 +30,16 @@
           </table-col-link>
         </template>
 
-        <template #body-cell-queen="props">
+        <!-- eslint-disable-next-line vue/valid-v-slot -->
+        <template #body-cell-queen_location.queen_name="props">
           <table-col-link
             v-if="props.value"
-            :id="props.value.queen_id"
+            :id="props.row.queen_location.queen_id"
             :label="props.value"
             link="queen"
           >
           </table-col-link>
+          <q-td v-else>{{ $t('noQueen') }}</q-td>
         </template>
 
         <template #body-cell-note="props">
@@ -58,44 +59,13 @@
         </template>
 
         <template #top-left>
-          <q-btn
-            class="q-mr-sm"
-            color="primary"
-            unelevated
-            :label="$t('new')"
-            @click="onNew"
-          />
-          <q-btn
-            class="q-mr-sm"
-            color="secondary"
-            unelevated
-            :disable="selected.length > 0 ? false : true"
-            :label="$t('edit')"
-            @click="onEdit"
-          />
-
-          <q-btn
-            class="q-mr-sm"
-            color="warning"
-            unelevated
-            :label="modus ? $t('showInactive') : $t('showActive')"
-            @click="modus = !modus"
-          />
-
-          <q-btn-dropdown unelevated color="info" :label="$t('more')">
-            <q-list>
-              <q-item
-                v-close-popup
-                clickable
-                :disable="selected.length > 0 ? false : true"
-                @click="onDelete"
-              >
-                <q-item-section>
-                  <q-item-label>{{ $t('delete') }}</q-item-label>
-                </q-item-section>
-              </q-item>
-            </q-list>
-          </q-btn-dropdown>
+          <table-buttons
+            v-model:deleted="deleted"
+            v-model:modus="modus"
+            :selected="selected"
+            table="hive"
+            @change="refetch"
+          ></table-buttons>
         </template>
         <template #top-right>
           <q-input
@@ -143,7 +113,7 @@ function rowTableMeta(date: string, name: any) {
 
 function queenTableCol(queen: any) {
   if (!queen) return '';
-  if (queen.modus)
+  if (queen.queen_modus)
     return `${queen.queen_name} (${dayjs(queen.queen_move_date).format(
       'YYYY-MM-DD'
     )})`;
@@ -156,8 +126,8 @@ import { useHivesQuery } from '~/composables/useQuery';
 import { useTablesStore } from '~/stores/tables';
 import TableColLink from '~/components/TableColLink.vue';
 import TableColNote from '~/components/TableColNote.vue';
-import DialogForm from '~/components/DialogForm.vue';
 import TableColStatus from '~/components/TableColStatus.vue';
+import TableButtons from '~/components/TableButtons.vue';
 
 const storeTable = useTablesStore();
 const $q = useQuasar();
@@ -170,7 +140,9 @@ const {
 
 const { t } = useI18n();
 const selected = ref([]);
+const rows = ref([]);
 const modus = ref(true);
+const deleted = ref(false);
 const columns = [
   {
     name: 'id',
@@ -197,7 +169,7 @@ const columns = [
     sortable: true,
   },
   {
-    name: 'queen_location',
+    name: 'queen_location.queen_name',
     label: t('queen'),
     align: 'left',
     field: (row: any) => row.queen_location,
@@ -249,7 +221,7 @@ const columns = [
   },
   {
     name: 'modus_date',
-    label: t('change'),
+    label: t('inactiveDate'),
     align: 'center',
     field: (row: any) => row.modus_date,
     format: (val: string, row: any) =>
@@ -270,6 +242,15 @@ const columns = [
     align: 'center',
     field: (row: any) => row.updated_at,
     format: (val: string, row: any) => rowTableMeta(val, row.editor),
+    sortable: true,
+  },
+  {
+    name: 'deleted_at',
+    label: t('deleted'),
+    align: 'center',
+    field: (row: any) => row.deleted_at,
+    format: (val: string, row: any) =>
+      row.deleted ? rowTableMeta(val, row.editor) : '',
     sortable: true,
   },
 ];
@@ -295,19 +276,10 @@ const {
   offset: computed(() => pagination.value.page - 1),
   limit: computed(() => pagination.value.rowsPerPage),
   q: computed(() => (filter.value ? filter.value : '')),
+  deleted: deleted,
   modus: modus,
   details: true,
 });
-
-function onRequest(props: any) {
-  filter.value = props.filter;
-  lengthTable.value = props.pagination.rowsPerPage;
-  sortBy.value = props.pagination.sortBy;
-  descending.value = props.pagination.descending;
-  pagination.value = props.pagination;
-}
-
-const rows = ref([]);
 
 if (data.value) {
   // Data already in cache
@@ -322,41 +294,13 @@ watch(data, () => {
 
 function checkSelected(selected: any[], rows: any) {
   const rowIds = rows.map((o: any) => o.id);
-  console.log(rowIds);
-  console.log(selected);
   return selected.filter((o: any) => rowIds.includes(o.id));
 }
-
-function onNew() {
-  $q.dialog({
-    component: DialogForm,
-    componentProps: {
-      title: 'new',
-      form: 'hive',
-      maximized: true,
-      ids: null,
-    },
-  }).onDismiss(() => {
-    refetch.value().then();
-  });
-}
-
-function onEdit() {
-  const ids = selected.value.map((o) => o.id);
-  $q.dialog({
-    component: DialogForm,
-    componentProps: {
-      title: 'edit',
-      form: 'hive',
-      maximized: true,
-      ids: ids,
-    },
-  }).onDismiss(() => {
-    refetch.value().then();
-  });
-}
-
-function onDelete() {
-  console.log('remove');
+function onRequest(props: any) {
+  filter.value = props.filter;
+  lengthTable.value = props.pagination.rowsPerPage;
+  sortBy.value = props.pagination.sortBy;
+  descending.value = props.pagination.descending;
+  pagination.value = props.pagination;
 }
 </script>

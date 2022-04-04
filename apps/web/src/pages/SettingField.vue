@@ -3,17 +3,19 @@
     <div class="row q-pa-sm justify-center">
       <div class="col-12 col-sm-10 col-md-8">
         <div class="text-body2 q-pb-sm text-center">
-          {{ t('setting.title') }}
+          {{ $t('setting.title') }}
         </div>
         <template v-for="(setting, index) in settings" :key="setting">
-          <span class="text-h6">{{ t(index) }}</span>
+          <span class="text-h6">{{ $t(index) }}</span>
           <q-separator color="secondary" inset />
           <div class="q-pa-md">
             <template v-for="(_value, j) in setting" :key="j">
               <div class="col-12">
                 <q-toggle
-                  v-model="settings[index as keyof typeof settings][index as keyof typeof setting]"
-                  :label="t('setting.hint' + capitalize(index) + capitalize(j))"
+                  v-model="settings[index as keyof typeof settings][j as keyof typeof setting]"
+                  :label="
+                    $t('setting.hint' + capitalize(index) + capitalize(j))
+                  "
                   :disable="isSubmitting"
                   @update:model-value="onSubmit"
                 />
@@ -29,17 +31,14 @@
 <script setup lang="ts">
 import { api } from '~/boot/axios';
 import { capitalize } from 'lodash';
-import { ref } from 'vue';
-import { storeToRefs } from 'pinia';
 import { useFieldsettingStore } from '~/stores/fieldsetting';
-import { useI18n } from 'vue-i18n';
 import { useNotification } from '~/composables/useResponseText';
 
-const { t } = useI18n();
 const notification = useNotification();
 const storeFields = useFieldsettingStore();
 const { settings } = storeToRefs(storeFields);
 
+console.log(settings.value);
 const isSubmitting = ref(false);
 
 const onSubmit = async () => {

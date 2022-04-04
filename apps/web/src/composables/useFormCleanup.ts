@@ -1,0 +1,102 @@
+import { MaybeRef } from '@vueuse/core';
+import dayjs from 'dayjs';
+import { includes, isNil, omitBy } from 'lodash';
+import { Ref } from 'vue';
+import { FormHive, FormQuicktool } from '~/types';
+
+export const useFormCleanup = (
+  table: MaybeRef<string>,
+  state: Ref,
+  isEdit: boolean
+) => {
+  function cleanup() {
+    if (unref(table) === 'hive') {
+      return cleanupHive(state.value, isEdit);
+    } else if (
+      ['feed', 'checkup', 'treatment', 'harvest'].includes(unref(table))
+    ) {
+      return cleanupQuicktool(state.value, isEdit, unref(table));
+    }
+  }
+
+  return {
+    cleanup,
+  };
+};
+
+function cleanupHive(state: FormHive, isEdit: boolean) {
+  const result = {
+    name: state.name,
+    position: state.position,
+    grouphive: state.grouphive,
+    note: state.note,
+    modus: state.modus,
+    modus_date: state.modusDate,
+    type_id: state.type ? state.type.id : null,
+    source_id: state.source ? state.source.id : null,
+  } as any;
+  if (!isEdit) {
+    result['start'] = state.start;
+    result['repeat'] = state.repeat;
+    result['apiary_id'] = state.apiary ? state.apiary.id : null;
+    result['date'] = state.date;
+  }
+  return omitBy(result, isNil);
+}
+
+function cleanupQuicktool(state: FormQuicktool, isEdit: boolean, task: string) {
+  const result = {
+    date: state.date,
+    enddate: state.enddate,
+    type_id: state.type ? state.type.id : null,
+    url: state.url,
+    note: state.note,
+    done: state.done,
+  } as any;
+
+  if (!isEdit) {
+    result['hive_ids'] = state.hive.map((obj: any) => obj.id);
+    result['interval'] = state.interval ? state.interval : 0;
+    result['repeat'] = state.repeat ? state.repeat : 0;
+  }
+
+  if (task === 'checkup') {
+    result['strong'] = state.checkup_strong;
+    result['varroa'] = state.checkup_varroa;
+    result['weight'] = state.checkup_weight_amount;
+    result['time'] = state.checkup_weight_time
+      ? dayjs(state.checkup_weight_time, 'HH:mm').format('HH:MM:ss')
+      : null;
+    result['temp'] = state.checkup_temp;
+
+    result['broodframes'] = state.checkup_frames.broodframes;
+    result['emptyframes'] = state.checkup_frames.emptyframes;
+    result['foundation'] = state.checkup_frames.foundation;
+    result['honeyframes'] = state.checkup_frames.honeyframes;
+
+    result['brood'] = state.checkup_rating.brood;
+    result['calm_comb'] = state.checkup_rating.calm_comb;
+    result['comb'] = state.checkup_rating.comb;
+    result['pollen'] = state.checkup_rating.pollen;
+    result['swarm'] = state.checkup_rating.swarm;
+    result['temper'] = state.checkup_rating.temper;
+    if (state.checkup_queen[0]) {
+      result['queen'] = includes(state.checkup_queen, 'queen');
+      result['queencells'] = includes(state.checkup_queen, 'queencells');
+      result['eggs'] = includes(state.checkup_queen, 'eggs');
+      result['capped_brood'] = includes(state.checkup_queen, 'capped_brood');
+    }
+  } else {
+    result['amount'] = state.amount_calc;
+
+    if (task === 'treatment') {
+      result['vet_id'] = state.treatment_vet ? state.treatment_vet.id : null;
+      result['wait'] = state.treatment_wait;
+    } else if (task === 'harvest') {
+      result['frames'] = state.harvest_amount_calc;
+      result['water'] = state.harvest_water;
+      result['charge'] = state.harvest_charge;
+    }
+  }
+  return omitBy(result, isNil);
+}

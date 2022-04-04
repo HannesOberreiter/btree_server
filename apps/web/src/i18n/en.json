@@ -1,5 +1,7 @@
 {
   "account": "Account",
+  "inactive": "Inactive",
+  "noQueen": "No Queen",
   "activate": "Activate",
   "activateUser": {
     "label": "Confirm Key",
@@ -48,8 +50,11 @@
   "dateStart": "Start date",
   "day": "Day | Days",
   "deactivate": "Deactivate",
+  "inactiveDate": "Inactive Date",
   "delete": "Delete",
   "deleted": "Deleted",
+  "deleteConfirmRow": "Are you sure you want to delete {count} row(s)?",
+  "deteConfirmHive": "All connected data will also be removed, eg. feedings, checkups, harvests.",
   "description": "Description",
   "disease": "Disease",
   "done": "Done",
@@ -92,7 +97,6 @@
   "icalSource": "ICal Source",
   "icalUrl": "ICal Url",
   "id": "ID",
-  "inactive": "Inactive",
   "interval": "Interval",
   "intervalText": "Days between repeats",
   "language": "Language",
@@ -193,6 +197,7 @@
   },
   "save": "Save",
   "search": "Search",
+  "restore": "Restore",
   "setting": {
     "hintChargeBestbefore": "Best before: 1 Date Field, to be used for best before date",
     "hintChargeCalibrate": "Calibrate: 1 Input Field, if you want to keep a calibrate list for you charges",
@@ -211,8 +216,6 @@
     "name": "Setting | Settings",
     "title": "Here you can select or deselect fields you want to be shown in your Quicktool!"
   },
-  "showActive": "Show active",
-  "showInactive": "Show inactive",
   "signup": {
     "accept": "Please accept the terms first!",
     "agree": "Do you agree with the",

@@ -102,6 +102,64 @@ type TextField =
 
 type Task = 'feed' | 'harvest' | 'treatment' | 'checkup';
 
+declare interface FormHive {
+  name: string;
+  date: string;
+  position: number;
+  grouphive: number;
+  note: string;
+  modus: boolean;
+  modusDate: string;
+  start: number;
+  repeat: number;
+  apiary: any;
+  type: any;
+  source: any;
+}
+
+declare interface FormQuicktool {
+  date: string;
+  enddate: string;
+  interval: number;
+  repeat: number;
+  amount: number;
+  amount_type: string;
+  amount_calc: number;
+  url: string;
+  note: string;
+  done: boolean;
+  checkup_queen: any;
+  checkup_rating: {
+    brood: number;
+    pollen: number;
+    comb: number;
+    temper: number;
+    calm_comb: number;
+    swarm: number;
+  };
+  checkup_frames: {
+    broodframes: number;
+    honeyframes: number;
+    foundation: number;
+    emptyframes: number;
+  };
+  checkup_varroa: number;
+  checkup_strong: number;
+  checkup_weight_amount: number;
+  checkup_weight_time: string;
+  checkup_temp: number;
+  harvest_frames: number;
+  harvest_amount_type: string;
+  harvest_amount_calc: number;
+  harvest_water: number;
+  harvest_charge: string;
+  treatment_wait: number;
+  hive: any;
+  type: any;
+  disease: any;
+  treatment_vet: any;
+}
+
 export {
   User,
   Company,
@@ -114,4 +172,6 @@ export {
   Apiary,
   Option,
   TextField,
+  FormHive,
+  FormQuicktool,
 };

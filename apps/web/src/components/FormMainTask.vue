@@ -201,7 +201,7 @@
           :values="values"
           :reset="reset"
           label="waitTime"
-          :shadow-text="t('day', 2)"
+          :shadow-text="$t('day', 2)"
           icon="fas fa-circle-pause"
           :max-valid="365"
         ></input-numeric-wait>
@@ -224,97 +224,20 @@
     :reset="reset"
   ></form-input-checkbox>
 
-  <q-btn-group v-if="!isEdit" spread>
-    <q-btn
-      unelevated
-      size="md"
-      color="secondary"
-      :loading="isSubmitting"
-      :label="t('save')"
-      @click="onSubmit"
-    />
-    <q-btn
-      unelevated
-      size="md"
-      color="warning"
-      :label="t('reset')"
-      @click="onReset"
-    />
-    <q-btn
-      v-if="lastInsert"
-      unelevated
-      size="md"
-      color="info"
-      :label="t('undo')"
-      @click="onUndo"
-    />
-  </q-btn-group>
-  <q-btn-group v-else spread>
-    <q-btn
-      unelevated
-      size="md"
-      color="secondary"
-      :loading="isSubmitting"
-      :label="t('update')"
-      @click="onUpdate"
-    ></q-btn>
-    <q-btn
-      unelevated
-      size="md"
-      color="warning"
-      :label="t('reset')"
-      @click="onReset"
-    />
-  </q-btn-group>
+  <form-buttons
+    :state="state"
+    :is-edit="isEdit"
+    :edit-ids="editOptions"
+    :v="v"
+    :form="props.task"
+    @reset="onReset"
+  ></form-buttons>
 </template>
 
 <script lang="ts">
-import { flatten, includes, isNil, map, merge, omitBy } from 'lodash';
+import { flatten, map, merge } from 'lodash';
 import dayjs from 'dayjs';
 import { Task } from '~/types';
-
-interface State {
-  date: string;
-  enddate: string;
-  interval: number;
-  repeat: number;
-  amount: number;
-  amount_type: string;
-  amount_calc: number;
-  url: string;
-  note: string;
-  done: boolean;
-  checkup_queen: any;
-  checkup_rating: {
-    brood: number;
-    pollen: number;
-    comb: number;
-    temper: number;
-    calm_comb: number;
-    swarm: number;
-  };
-  checkup_frames: {
-    broodframes: number;
-    honeyframes: number;
-    foundation: number;
-    emptyframes: number;
-  };
-  checkup_varroa: number;
-  checkup_strong: number;
-  checkup_weight_amount: number;
-  checkup_weight_time: string;
-  checkup_temp: number;
-  harvest_frames: number;
-  harvest_amount_type: string;
-  harvest_amount_calc: number;
-  harvest_water: number;
-  harvest_charge: string;
-  treatment_wait: number;
-  hive: any;
-  type: any;
-  disease: any;
-  treatment_vet: any;
-}
 
 const stateDefault = {
   date: dayjs().format('YYYY-MM-DD'),
@@ -357,63 +280,6 @@ const stateDefault = {
 
   treatment_wait: 0,
 };
-
-function cleanupData(state: State, task: Task, isEdit: boolean) {
-  let result = {
-    date: state.date,
-    enddate: state.enddate,
-    type_id: state.type ? state.type.id : null,
-    url: state.url,
-    note: state.note,
-    done: state.done,
-  } as any;
-
-  if (!isEdit) {
-    result['hive_ids'] = state.hive.map((obj: any) => obj.id);
-    result['interval'] = state.interval ? state.interval : 0;
-    result['repeat'] = state.repeat ? state.repeat : 0;
-  }
-
-  if (task === 'checkup') {
-    result['strong'] = state.checkup_strong;
-    result['varroa'] = state.checkup_varroa;
-    result['weight'] = state.checkup_weight_amount;
-    result['time'] = state.checkup_weight_time
-      ? dayjs(state.checkup_weight_time, 'HH:mm').format('HH:MM:ss')
-      : null;
-    result['temp'] = state.checkup_temp;
-
-    result['broodframes'] = state.checkup_frames.broodframes;
-    result['emptyframes'] = state.checkup_frames.emptyframes;
-    result['foundation'] = state.checkup_frames.foundation;
-    result['honeyframes'] = state.checkup_frames.honeyframes;
-
-    result['brood'] = state.checkup_rating.brood;
-    result['calm_comb'] = state.checkup_rating.calm_comb;
-    result['comb'] = state.checkup_rating.comb;
-    result['pollen'] = state.checkup_rating.pollen;
-    result['swarm'] = state.checkup_rating.swarm;
-    result['temper'] = state.checkup_rating.temper;
-    if (state.checkup_queen[0]) {
-      result['queen'] = includes(state.checkup_queen, 'queen');
-      result['queencells'] = includes(state.checkup_queen, 'queencells');
-      result['eggs'] = includes(state.checkup_queen, 'eggs');
-      result['capped_brood'] = includes(state.checkup_queen, 'capped_brood');
-    }
-  } else {
-    result['amount'] = state.amount_calc;
-
-    if (task === 'treatment') {
-      result['vet_id'] = state.treatment_vet ? state.treatment_vet.id : null;
-      result['wait'] = state.treatment_wait;
-    } else if (task === 'harvest') {
-      result['frames'] = state.harvest_amount_calc;
-      result['water'] = state.harvest_water;
-      result['charge'] = state.harvest_charge;
-    }
-  }
-  return omitBy(result, isNil);
-}
 </script>
 
 <script setup lang="ts">
@@ -444,14 +310,11 @@ import FormInputNote from './FormInputNote.vue';
 import InputNumericWater from './FormInputNumeric.vue';
 import InputNumericStrength from './FormInputNumeric.vue';
 import InputNumericWait from './FormInputNumeric.vue';
+import FormButtons from './FormButtons.vue';
 
 const fields = useFieldsettingStore();
 const notification = useNotification();
-const { t } = useI18n();
-const isSubmitting = ref(false);
 const v = useVuelidate();
-const lastInsert = ref(null);
-const lastInsertTable = ref(null);
 const router = useRouter();
 const values = ref({});
 const reset = ref(0);
@@ -496,7 +359,6 @@ async function getEdit(id: unknown[]) {
       editOptions.value = flatten(editIds);
       editOptionsCopy.value = flatten(editIds);
       values.value = response.data;
-      //notification.open('info', t('dataLoaded'));
     },
     (error) => {
       notification.open('negative', error.response);
@@ -510,73 +372,6 @@ function onReset() {
     state.value.checkup_queen = []; // merge seems to not clear the array so we manually reset it here
   }
   reset.value++;
-  notification.open('positive', t('successReset'));
-}
-
-async function onUndo() {
-  isSubmitting.value = true;
-  const data = JSON.stringify({ ids: lastInsert.value });
-  await api
-    .patch(`/v1/${lastInsertTable.value}/batchDelete?hard=true`, data)
-    .then(
-      (_response: any) => {
-        lastInsert.value = null;
-        lastInsertTable.value = null;
-        notification.open('positive', '');
-      },
-      (error) => {
-        notification.open('negative', error.response);
-      }
-    );
-
-  isSubmitting.value = false;
-}
-
-async function onUpdate() {
-  isSubmitting.value = true;
-  const isFormCorrect = await v.value.$validate();
-  if (!isFormCorrect) {
-    isSubmitting.value = false;
-    return;
-  }
-  const id = editOptions.value.map((obj: any) => obj.value);
-  let data = {
-    ids: id,
-    data: cleanupData(state.value, props.task, isEdit.value),
-  };
-  await api.patch(`/v1/${props.task}`, JSON.stringify(data)).then(
-    (response: any) => {
-      lastInsert.value = response.data;
-      lastInsertTable.value = props.task as any;
-      getEdit(id);
-      notification.open('positive', '');
-    },
-    (error) => {
-      notification.open('negative', error.response);
-    }
-  );
-  isSubmitting.value = false;
-  return;
-}
-
-async function onSubmit() {
-  isSubmitting.value = true;
-  const isFormCorrect = await v.value.$validate();
-  if (!isFormCorrect) {
-    isSubmitting.value = false;
-    return;
-  }
-  const data = cleanupData(state.value, props.task, false);
-  await api.post(`/v1/${props.task}`, JSON.stringify(data)).then(
-    (response: any) => {
-      lastInsert.value = response.data;
-      lastInsertTable.value = props.task as any;
-      notification.open('positive', '');
-    },
-    (error) => {
-      notification.open('negative', error.response);
-    }
-  );
-  isSubmitting.value = false;
+  notification.open('positive', 'successReset');
 }
 </script>
