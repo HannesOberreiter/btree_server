@@ -12,7 +12,7 @@
 
 <script lang="ts">
 import { PropType } from 'vue';
-type Link = 'hive' | 'apiary';
+type Link = 'hive' | 'apiary' | 'queen';
 </script>
 
 <script setup lang="ts">

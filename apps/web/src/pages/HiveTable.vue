@@ -31,11 +31,30 @@
           </table-col-link>
         </template>
 
+        <template #body-cell-queen="props">
+          <table-col-link
+            v-if="props.value"
+            :id="props.value.queen_id"
+            :label="props.value"
+            link="queen"
+          >
+          </table-col-link>
+        </template>
+
         <template #body-cell-note="props">
           <table-col-note
             :value="props.value"
             :trunc="visibleColumns.length > 4"
           ></table-col-note>
+        </template>
+
+        <template #body-cell-modus="props">
+          <table-col-status
+            :id="props.row.id"
+            :value="props.value"
+            table="hive"
+            @change="refetch"
+          ></table-col-status>
         </template>
 
         <template #top-left>
@@ -121,6 +140,15 @@ function rowTableMeta(date: string, name: any) {
     return dayjs(date).format('YYYY-MM-DD HH:mm');
   }
 }
+
+function queenTableCol(queen: any) {
+  if (!queen) return '';
+  if (queen.modus)
+    return `${queen.queen_name} (${dayjs(queen.queen_move_date).format(
+      'YYYY-MM-DD'
+    )})`;
+  return `R.I.P  (${dayjs(queen.queen_modus_date).format('YYYY-MM-DD')})`;
+}
 </script>
 
 <script setup lang="ts">
@@ -129,6 +157,7 @@ import { useTablesStore } from '~/stores/tables';
 import TableColLink from '~/components/TableColLink.vue';
 import TableColNote from '~/components/TableColNote.vue';
 import DialogForm from '~/components/DialogForm.vue';
+import TableColStatus from '~/components/TableColStatus.vue';
 
 const storeTable = useTablesStore();
 const $q = useQuasar();
@@ -165,6 +194,14 @@ const columns = [
     field: (row: any) => row.hive_location.apiary_name,
     format: (val: string, row: any) =>
       `${val} (${dayjs(row.hive_location.movedate.date).format('YYYY-MM-DD')})`,
+    sortable: true,
+  },
+  {
+    name: 'queen_location',
+    label: t('queen'),
+    align: 'left',
+    field: (row: any) => row.queen_location,
+    format: (val: string) => queenTableCol(val),
     sortable: true,
   },
   {
@@ -205,14 +242,23 @@ const columns = [
   },
   {
     name: 'modus',
-    label: t('Active'),
+    label: t('active'),
     align: 'center',
     field: (row: any) => row.modus,
     sortable: true,
   },
   {
+    name: 'modus_date',
+    label: t('change'),
+    align: 'center',
+    field: (row: any) => row.modus_date,
+    format: (val: string, row: any) =>
+      row.modus ? '' : dayjs(val).format('YYYY-MM-DD'),
+    sortable: true,
+  },
+  {
     name: 'created_at',
-    label: t('Created'),
+    label: t('created'),
     align: 'center',
     field: (row: any) => row.created_at,
     format: (val: string, row: any) => rowTableMeta(val, row.creator),
@@ -220,7 +266,7 @@ const columns = [
   },
   {
     name: 'updated_at',
-    label: t('Updated'),
+    label: t('updated'),
     align: 'center',
     field: (row: any) => row.updated_at,
     format: (val: string, row: any) => rowTableMeta(val, row.editor),
@@ -250,6 +296,7 @@ const {
   limit: computed(() => pagination.value.rowsPerPage),
   q: computed(() => (filter.value ? filter.value : '')),
   modus: modus,
+  details: true,
 });
 
 function onRequest(props: any) {

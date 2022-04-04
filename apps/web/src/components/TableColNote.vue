@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts">
-import { truncate } from 'lodash';
+import { truncate, escape } from 'lodash';
 </script>
 
 <script setup lang="ts">
@@ -23,7 +23,10 @@ const props = defineProps({
 
 function show() {
   if (!props.value) return;
-  if (props.value.length > 50)
-    $q.dialog({ title: t('note'), message: props.value, html: true });
+  $q.dialog({
+    title: t('note'),
+    message: `<pre>${escape(props.value)}</pre>`,
+    html: true,
+  });
 }
 </script>

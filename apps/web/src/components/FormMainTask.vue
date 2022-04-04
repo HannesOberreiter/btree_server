@@ -269,6 +269,10 @@
 </template>
 
 <script lang="ts">
+import { flatten, includes, isNil, map, merge, omitBy } from 'lodash';
+import dayjs from 'dayjs';
+import { Task } from '~/types';
+
 interface State {
   date: string;
   enddate: string;
@@ -312,6 +316,48 @@ interface State {
   treatment_vet: any;
 }
 
+const stateDefault = {
+  date: dayjs().format('YYYY-MM-DD'),
+  enddate: dayjs().format('YYYY-MM-DD'),
+  interval: 0,
+  repeat: 0,
+  amount: 0,
+  amount_type: 'single',
+  amount_calc: 0,
+  url: '',
+  note: '',
+  done: true,
+
+  checkup_queen: [] as any,
+  checkup_rating: {
+    brood: 0,
+    pollen: 0,
+    comb: 0,
+    temper: 0,
+    calm_comb: 0,
+    swarm: 0,
+  },
+  checkup_frames: {
+    broodframes: 0,
+    honeyframes: 0,
+    foundation: 0,
+    emptyframes: 0,
+  },
+  checkup_varroa: 0,
+  checkup_strong: 0,
+  checkup_weight_amount: 0,
+  checkup_weight_time: dayjs().format('HH:mm'),
+  checkup_temp: 0,
+
+  harvest_frames: 0,
+  harvest_amount_type: 'single',
+  harvest_amount_calc: 0,
+  harvest_water: 0,
+  harvest_charge: '',
+
+  treatment_wait: 0,
+};
+
 function cleanupData(state: State, task: Task, isEdit: boolean) {
   let result = {
     date: state.date,
@@ -323,8 +369,9 @@ function cleanupData(state: State, task: Task, isEdit: boolean) {
   } as any;
 
   if (!isEdit) {
-    result['interval'] = state.interval;
-    result['repeat'] = state.repeat;
+    result['hive_ids'] = state.hive.map((obj: any) => obj.id);
+    result['interval'] = state.interval ? state.interval : 0;
+    result['repeat'] = state.repeat ? state.repeat : 0;
   }
 
   if (task === 'checkup') {
@@ -374,10 +421,7 @@ import { api } from '~/boot/axios';
 import { PropType } from 'vue';
 import useVuelidate from '@vuelidate/core';
 import { useNotification } from '~/composables/useResponseText';
-import { Task } from '~/types';
 import { useFieldsettingStore } from '~/stores/fieldsetting';
-import { flatten, includes, isNil, map, merge, omitBy } from 'lodash';
-import dayjs from 'dayjs';
 
 import FormCheckupFrames from './FormCheckupFrames.vue';
 import FormCheckupQueen from './FormCheckupQueen.vue';
@@ -435,47 +479,6 @@ if (!isEdit.value && router.currentRoute.value.name === 'edit-quicktool')
 const editOptions = ref([]) as any;
 const editOptionsCopy = ref([]) as any;
 
-const stateDefault = {
-  date: dayjs().format('YYYY-MM-DD'),
-  enddate: dayjs().format('YYYY-MM-DD'),
-  interval: 0,
-  repeat: 0,
-  amount: 0,
-  amount_type: 'single',
-  amount_calc: 0,
-  url: '',
-  note: '',
-  done: true,
-
-  checkup_queen: [] as any,
-  checkup_rating: {
-    brood: 0,
-    pollen: 0,
-    comb: 0,
-    temper: 0,
-    calm_comb: 0,
-    swarm: 0,
-  },
-  checkup_frames: {
-    broodframes: 0,
-    honeyframes: 0,
-    foundation: 0,
-    emptyframes: 0,
-  },
-  checkup_varroa: 0,
-  checkup_strong: 0,
-  checkup_weight_amount: 0,
-  checkup_weight_time: dayjs().format('HH:mm'),
-  checkup_temp: 0,
-
-  harvest_frames: 0,
-  harvest_amount_type: 'single',
-  harvest_amount_calc: 0,
-  harvest_water: 0,
-  harvest_charge: '',
-
-  treatment_wait: 0,
-};
 const state = ref({
   hive: [] as any,
   type: null as any,
@@ -506,8 +509,8 @@ function onReset() {
     merge(state.value, stateDefault);
     state.value.checkup_queen = []; // merge seems to not clear the array so we manually reset it here
   }
-  notification.open('positive', t('successReset'));
   reset.value++;
+  notification.open('positive', t('successReset'));
 }
 
 async function onUndo() {
@@ -563,17 +566,7 @@ async function onSubmit() {
     isSubmitting.value = false;
     return;
   }
-  const hive_ids = state.value.hive.map((obj: any) => obj.id);
-
-  let data = { ...state.value };
-  delete data.hive;
-  data.hive = hive_ids;
-  data.type = data.type ? data.type.id : 0;
-  data.disease = data.disease ? data.disease.id : 0;
-  data.treatment_vet = data.treatment_vet ? data.treatment_vet.id : 0;
-  data.checkup_weight_time = dayjs(data.checkup_weight_time, 'HH:mm').format(
-    'HH:MM:ss'
-  );
+  const data = cleanupData(state.value, props.task, false);
   await api.post(`/v1/${props.task}`, JSON.stringify(data)).then(
     (response: any) => {
       lastInsert.value = response.data;

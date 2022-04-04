@@ -96,21 +96,15 @@ const links = ref([
     icon: 'fas fa-circle-plus',
     menu: [
       {
+        label: t('todo'),
+        route: 'new-todo',
+        icon: 'fas fa-clipboard-check',
+        menu: false,
+      },
+      {
         label: t('hive'),
         route: 'new-hive',
         icon: 'fas fa-house',
-        menu: false,
-      },
-      {
-        label: t('queen'),
-        route: 'new-queen',
-        icon: 'fas fa-venus',
-        menu: false,
-      },
-      {
-        label: t('apiary'),
-        route: 'map-apiary',
-        icon: 'fas fa-map-marker-alt',
         menu: false,
       },
       {
@@ -120,9 +114,15 @@ const links = ref([
         menu: false,
       },
       {
-        label: t('todo'),
-        route: 'new-todo',
-        icon: 'fas fa-clipboard-check',
+        label: t('apiary'),
+        route: 'map-apiary',
+        icon: 'fas fa-map-marker-alt',
+        menu: false,
+      },
+      {
+        label: t('queen'),
+        route: 'new-queen',
+        icon: 'fas fa-venus',
         menu: false,
       },
     ],
@@ -153,11 +153,36 @@ const links = ref([
     icon: 'fas fa-table',
     menu: [
       {
-        label: t('apiary', 2),
-        route: 'table-apiary',
-        icon: 'fas fa-location-dot',
+        label: t('checkup', 2),
+        route: 'table-checkup',
+        icon: 'fas fa-search-plus',
         menu: false,
       },
+      {
+        label: t('treatment', 2),
+        route: 'table-treatment',
+        icon: 'fas fa-kit-medical',
+        menu: false,
+      },
+      {
+        label: t('harvest', 2),
+        route: 'table-harvest',
+        icon: 'fas fa-droplet',
+        menu: false,
+      },
+      {
+        label: t('feed', 2),
+        route: 'table-cube',
+        icon: 'fas fa-cube',
+        menu: false,
+      },
+      {
+        label: t('todo', 2),
+        route: 'table-checkup',
+        icon: 'fas fa-clipboard-check',
+        menu: false,
+      },
+
       {
         label: t('hive', 2),
         route: 'table-hive',
@@ -171,9 +196,15 @@ const links = ref([
         menu: false,
       },
       {
-        label: t('checkup', 2),
-        route: 'table-checkup',
-        icon: 'fas fa-search-plus',
+        label: t('apiary', 2),
+        route: 'table-apiary',
+        icon: 'fas fa-location-dot',
+        menu: false,
+      },
+      {
+        label: t('queen', 2),
+        route: 'table-queen',
+        icon: 'fas fa-venus',
         menu: false,
       },
     ],

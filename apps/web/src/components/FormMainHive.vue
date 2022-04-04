@@ -2,7 +2,7 @@
   <q-form class="full-width" @submit.prevent.stop="onSubmit">
     <div class="row">
       <form-dropdown-edit
-        :is="isEdit"
+        v-if="isEdit"
         v-model="editOptions"
         class="col-12"
         :options="editOptionsCopy"
@@ -185,15 +185,62 @@
 </template>
 
 <script lang="ts">
+import { flatten, isNil, map, merge, omitBy } from 'lodash';
+import dayjs from 'dayjs';
+
+interface State {
+  name: string;
+  date: string;
+  position: number;
+  grouphive: number;
+  note: string;
+  modus: boolean;
+  modusDate: string;
+  start: number;
+  repeat: number;
+  apiary: any;
+  type: any;
+  source: any;
+}
+
 function getNames(v: any) {
   return v.map((o: any) => o.name).join(', ');
+}
+
+const stateDefault = {
+  name: '',
+  date: dayjs().format('YYYY-MM-DD'),
+  position: 0,
+  grouphive: 0,
+  note: '',
+  modus: true,
+  modusDate: dayjs().format('YYYY-MM-DD'),
+};
+
+function cleanupData(state: State, isEdit: boolean) {
+  let result = {
+    name: state.name,
+    position: state.position,
+    grouphive: state.grouphive,
+    note: state.note,
+    modus: state.modus,
+    modus_date: state.modusDate,
+    type_id: state.type ? state.type.id : null,
+    source_id: state.source ? state.source.id : null,
+  } as any;
+  if (!isEdit) {
+    result['start'] = state.start;
+    result['repeat'] = state.repeat;
+    result['apiary_id'] = state.apiary ? state.apiary.id : null;
+    result['date'] = state.date;
+  }
+  return omitBy(result, isNil);
 }
 </script>
 
 <script setup lang="ts">
 import { api } from '~/boot/axios';
 import { useNotification } from '~/composables/useResponseText';
-import dayjs from 'dayjs';
 import FormInputMovedate from './FormInputDate.vue';
 import FormInputModusdate from './FormInputDate.vue';
 import FormInputCheckbox from './FormInputCheckbox.vue';
@@ -208,7 +255,6 @@ import InputNumericGrouphive from './FormInputNumeric.vue';
 import InputNumericPosition from './FormInputNumeric.vue';
 import useVuelidate from '@vuelidate/core';
 import { useHivesQuery } from '~/composables/useQuery';
-import { flatten, map, merge } from 'lodash';
 import FormDropdownEdit from './FormDropdownEdit.vue';
 
 const { t } = useI18n();
@@ -237,7 +283,7 @@ const isEdit = computed(() => {
 });
 if (isEdit.value) getEdit(unref(ids.value));
 
-const { data: hives } = useHivesQuery({
+const { data: hives, refetch } = useHivesQuery({
   limit: 3,
   order: ['id'],
   direction: ['desc'],
@@ -260,17 +306,7 @@ const sampleName = computed(() => {
   return hintText;
 });
 
-const stateDefault = {
-  name: '',
-  date: dayjs().format('YYYY-MM-DD'),
-  position: 0,
-  grouphive: 0,
-  note: '',
-  modus: true,
-  modusDate: dayjs().format('YYYY-MM-DD'),
-};
-
-const state = ref({
+const state = ref<State>({
   start: 0,
   repeat: 0,
   apiary: undefined as any,
@@ -280,20 +316,6 @@ const state = ref({
 });
 const rules = {};
 const v = useVuelidate(rules, state, { $autoDirty: true });
-
-function changeInterval() {
-  showInterval.value = !showInterval.value;
-}
-
-function onReset() {
-  if (!isEdit.value) {
-    merge(state.value, stateDefault);
-  }
-  if (showInterval.value) changeInterval();
-
-  notification.open('positive', t('successReset'));
-  reset.value++;
-}
 
 async function getEdit(id: unknown[]) {
   return await api.post('/v1/hive/batchGet', { ids: id }).then(
@@ -311,6 +333,19 @@ async function getEdit(id: unknown[]) {
   );
 }
 
+function changeInterval() {
+  showInterval.value = !showInterval.value;
+}
+
+function onReset() {
+  if (!isEdit.value) {
+    merge(state.value, stateDefault);
+  }
+  if (showInterval.value) changeInterval();
+  reset.value++;
+  notification.open('positive', t('successReset'));
+}
+
 async function onUpdate() {
   isSubmitting.value = true;
   const isFormCorrect = await v.value.$validate();
@@ -318,15 +353,17 @@ async function onUpdate() {
     isSubmitting.value = false;
     return;
   }
-  const ids = editOptions.value.map((obj: any) => obj.value);
-  let data = { ids: ids, ...state.value, ignore: { ...multipleValues.value } };
-  data.type = data.type ? data.type.id : 0;
-  data.source = data.source ? data.source.id : 0;
+
+  const id = editOptions.value.map((obj: any) => obj.value);
+  let data = {
+    ids: id,
+    data: cleanupData(state.value, isEdit.value),
+  };
 
   await api.patch('/v1/hive', JSON.stringify(data)).then(
-    (response: any) => {
-      console.log(response);
+    async (response: any) => {
       lastInsert.value = response.data;
+      await refetch.value;
       notification.open('positive', '');
     },
     (error) => {
@@ -360,14 +397,11 @@ async function onSubmit() {
     isSubmitting.value = false;
     return;
   }
-  const data = { ...state.value };
-  data.type = data.type ? data.type.id : 0;
-  data.source = data.source ? data.source.id : 0;
-  data.apiary = data.apiary ? data.apiary.id : 0;
-
+  const data = cleanupData(state.value, false);
   await api.post('/v1/hive', JSON.stringify(data)).then(
-    (response: any) => {
+    async (response: any) => {
       lastInsert.value = response.data;
+      await refetch.value();
       notification.open('positive', '');
     },
     (error) => {
