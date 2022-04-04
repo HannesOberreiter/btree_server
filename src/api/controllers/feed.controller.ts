@@ -29,42 +29,17 @@ export class FeedController extends Controller {
     }
   }
 
-  async batchGet(req: IUserRequest, res: Response, next: NextFunction) {
-    try {
-      const result = await Feed.transaction(async (trx) => {
-        const res = await Feed.query(trx)
-          .findByIds(req.body.ids)
-          .withGraphJoined('feed_apiary')
-          .withGraphJoined('type')
-          .withGraphJoined('hive')
-          .where('feed_apiary.user_id', req.user.user_id);
-        return res;
-      });
-      res.locals.data = result;
-      next();
-    } catch (e) {
-      next(checkMySQLError(e));
-    }
-  }
-
   async post(req: IUserRequest, res: Response, next: NextFunction) {
-    const hive_ids = req.body.hive;
-    const interval = req.body.interval;
-    const repeat = req.body.repeat;
-
-    const insert = {
-      date: req.body.date,
-      enddate: req.body.enddate,
-
-      type_id: req.body.type,
-      amount: req.body.amount_calc,
-
-      url: req.body.url,
-      note: req.body.note,
-      done: req.body.done
-    };
-
     try {
+      const hive_ids = req.body.hive_ids;
+      const interval = req.body.interval;
+      const repeat = req.body.repeat;
+
+      const insert = req.body;
+      delete insert.hive_ids;
+      delete insert.interval;
+      delete insert.repeat;
+
       const result = await Feed.transaction(async (trx) => {
         const hives = await Hive.query(trx)
           .distinct('hives.id')
@@ -125,6 +100,7 @@ export class FeedController extends Controller {
       next(checkMySQLError(e));
     }
   }
+
   async updateDate(req: IUserRequest, res: Response, next: NextFunction) {
     try {
       const result = await Feed.transaction(async (trx) => {
@@ -137,6 +113,24 @@ export class FeedController extends Controller {
           .findByIds(req.body.ids)
           .leftJoinRelated('feed_apiary')
           .where('user_id', req.user.user_id);
+      });
+      res.locals.data = result;
+      next();
+    } catch (e) {
+      next(checkMySQLError(e));
+    }
+  }
+
+  async batchGet(req: IUserRequest, res: Response, next: NextFunction) {
+    try {
+      const result = await Feed.transaction(async (trx) => {
+        const res = await Feed.query(trx)
+          .findByIds(req.body.ids)
+          .withGraphJoined('feed_apiary')
+          .withGraphJoined('type')
+          .withGraphJoined('hive')
+          .where('feed_apiary.user_id', req.user.user_id);
+        return res;
       });
       res.locals.data = result;
       next();

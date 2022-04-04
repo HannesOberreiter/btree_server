@@ -3,7 +3,7 @@ import { Controller } from '@classes/controller.class';
 import { checkMySQLError } from '@utils/error.util';
 import { Checkup } from '@models/checkup.model';
 import { IUserRequest } from '@interfaces/IUserRequest.interface';
-import { map, includes } from 'lodash';
+import { map } from 'lodash';
 import { Hive } from '../models/hive.model';
 import dayjs from 'dayjs';
 
@@ -30,64 +30,17 @@ export class CheckupController extends Controller {
     }
   }
 
-  async batchGet(req: IUserRequest, res: Response, next: NextFunction) {
-    try {
-      const result = await Checkup.transaction(async (trx) => {
-        const res = await Checkup.query(trx)
-          .findByIds(req.body.ids)
-          .withGraphJoined('checkup_apiary')
-          .withGraphJoined('type')
-          .withGraphJoined('hive')
-          .where('checkup_apiary.user_id', req.user.user_id);
-        return res;
-      });
-      res.locals.data = result;
-      next();
-    } catch (e) {
-      next(checkMySQLError(e));
-    }
-  }
-
   async post(req: IUserRequest, res: Response, next: NextFunction) {
-    const hive_ids = req.body.hive;
-    const interval = req.body.interval;
-    const repeat = req.body.repeat;
-
-    const insert = {
-      date: req.body.date,
-      enddate: req.body.enddate,
-
-      type_id: req.body.type,
-
-      queen: includes(req.body.checkup_queen, 'queen'),
-      queencells: includes(req.body.checkup_queen, 'queencells'),
-      eggs: includes(req.body.checkup_queen, 'eggs'),
-      capped_brood: includes(req.body.checkup_queen, 'capped_brood'),
-
-      brood: req.body.checkup_rating.brood,
-      pollen: req.body.checkup_rating.pollen,
-      comb: req.body.checkup_rating.comb,
-      temper: req.body.checkup_rating.temper,
-      calm_comb: req.body.checkup_rating.calm_comb,
-      swarm: req.body.checkup_rating.swarm,
-
-      varroa: req.body.checkup_varroa,
-      strong: req.body.checkup_strong,
-      temp: req.body.checkup_temp,
-      weight: req.body.checkup_weight_amount,
-      time: req.body.checkup_weight_time,
-
-      broodframes: req.body.checkup_frames.broodframes,
-      honeyframes: req.body.checkup_frames.honeyframes,
-      foundation: req.body.checkup_frames.foundation,
-      emptyframes: req.body.checkup_frames.emptyframes,
-
-      url: req.body.url,
-      note: req.body.note,
-      done: req.body.done
-    };
-
     try {
+      const hive_ids = req.body.hive_ids;
+      const interval = req.body.interval;
+      const repeat = req.body.repeat;
+
+      const insert = req.body;
+      delete insert.hive_ids;
+      delete insert.interval;
+      delete insert.repeat;
+
       const result = await Checkup.transaction(async (trx) => {
         const hives = await Hive.query(trx)
           .distinct('hives.id')
@@ -148,6 +101,7 @@ export class CheckupController extends Controller {
       next(checkMySQLError(e));
     }
   }
+
   async updateDate(req: IUserRequest, res: Response, next: NextFunction) {
     try {
       const result = await Checkup.transaction(async (trx) => {
@@ -160,6 +114,24 @@ export class CheckupController extends Controller {
           .findByIds(req.body.ids)
           .leftJoinRelated('checkup_apiary')
           .where('user_id', req.user.user_id);
+      });
+      res.locals.data = result;
+      next();
+    } catch (e) {
+      next(checkMySQLError(e));
+    }
+  }
+
+  async batchGet(req: IUserRequest, res: Response, next: NextFunction) {
+    try {
+      const result = await Checkup.transaction(async (trx) => {
+        const res = await Checkup.query(trx)
+          .findByIds(req.body.ids)
+          .withGraphJoined('checkup_apiary')
+          .withGraphJoined('type')
+          .withGraphJoined('hive')
+          .where('checkup_apiary.user_id', req.user.user_id);
+        return res;
       });
       res.locals.data = result;
       next();

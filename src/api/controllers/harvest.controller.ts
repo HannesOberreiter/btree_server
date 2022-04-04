@@ -29,46 +29,17 @@ export class HarvestController extends Controller {
     }
   }
 
-  async batchGet(req: IUserRequest, res: Response, next: NextFunction) {
-    try {
-      const result = await Harvest.transaction(async (trx) => {
-        const res = await Harvest.query(trx)
-          .findByIds(req.body.ids)
-          .withGraphJoined('harvest_apiary')
-          .withGraphJoined('type')
-          .withGraphJoined('hive')
-          .where('harvest_apiary.user_id', req.user.user_id);
-        return res;
-      });
-      res.locals.data = result;
-      next();
-    } catch (e) {
-      next(checkMySQLError(e));
-    }
-  }
-
   async post(req: IUserRequest, res: Response, next: NextFunction) {
-    const hive_ids = req.body.hive;
-    const interval = req.body.interval;
-    const repeat = req.body.repeat;
-
-    const insert = {
-      date: req.body.date,
-      enddate: req.body.enddate,
-
-      type_id: req.body.type,
-      amount: req.body.amount_calc,
-      frames: req.body.harvest_amount_calc,
-
-      water: req.body.harvest_water,
-      charge: req.body.harvest_charge,
-
-      url: req.body.url,
-      note: req.body.note,
-      done: req.body.done
-    };
-
     try {
+      const hive_ids = req.body.hive_ids;
+      const interval = req.body.interval;
+      const repeat = req.body.repeat;
+
+      const insert = req.body;
+      delete insert.hive_ids;
+      delete insert.interval;
+      delete insert.repeat;
+
       const result = await Harvest.transaction(async (trx) => {
         const hives = await Hive.query(trx)
           .distinct('hives.id')
@@ -128,6 +99,7 @@ export class HarvestController extends Controller {
       next(checkMySQLError(e));
     }
   }
+
   async updateDate(req: IUserRequest, res: Response, next: NextFunction) {
     try {
       const result = await Harvest.transaction(async (trx) => {
@@ -147,6 +119,25 @@ export class HarvestController extends Controller {
       next(checkMySQLError(e));
     }
   }
+
+  async batchGet(req: IUserRequest, res: Response, next: NextFunction) {
+    try {
+      const result = await Harvest.transaction(async (trx) => {
+        const res = await Harvest.query(trx)
+          .findByIds(req.body.ids)
+          .withGraphJoined('harvest_apiary')
+          .withGraphJoined('type')
+          .withGraphJoined('hive')
+          .where('harvest_apiary.user_id', req.user.user_id);
+        return res;
+      });
+      res.locals.data = result;
+      next();
+    } catch (e) {
+      next(checkMySQLError(e));
+    }
+  }
+
   async batchDelete(req: IUserRequest, res: Response, next: NextFunction) {
     const hardDelete = req.query.hard ? true : false;
 

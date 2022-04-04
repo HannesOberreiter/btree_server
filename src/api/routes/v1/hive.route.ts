@@ -17,14 +17,13 @@ export class HiveRouter extends Router {
         Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
         Container.resolve('HiveController').get
       );
-
     this.router
-      .route('/batchDelete')
+      .route('/')
       .patch(
-        Guard.authorize([ROLES.admin]),
-        Container.resolve('HiveController').batchDelete
+        Validator.validate([body('ids').isArray()]),
+        Guard.authorize([ROLES.admin, ROLES.user]),
+        Container.resolve('HiveController').patch
       );
-
     this.router
       .route('/')
       .post(
@@ -34,6 +33,19 @@ export class HiveRouter extends Router {
         ]),
         Guard.authorize([ROLES.admin]),
         Container.resolve('HiveController').post
+      );
+    this.router
+      .route('/batchDelete')
+      .patch(
+        Guard.authorize([ROLES.admin]),
+        Container.resolve('HiveController').batchDelete
+      );
+    this.router
+      .route('/batchGet')
+      .post(
+        Validator.validate([body('ids').isArray()]),
+        Guard.authorize([ROLES.admin, ROLES.user]),
+        Container.resolve('HiveController').batchGet
       );
   }
 }

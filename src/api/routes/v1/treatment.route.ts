@@ -41,7 +41,7 @@ export class TreatmentRouter extends Router {
       .route('/')
       .post(
         Validator.validate([
-          body('hive').isArray(),
+          body('hive_ids').isArray(),
           body('interval').isInt({ max: 365, min: 0 }),
           body('repeat').isInt({ max: 30, min: 0 })
         ]),
