@@ -16,6 +16,7 @@ export class Hive extends ExtModel {
   url!: string;
   modus!: boolean;
   modus_date!: string;
+  deleted_at!: string;
   deleted!: boolean;
 
   bee_id!: number;

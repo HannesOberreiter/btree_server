@@ -9,6 +9,7 @@ import { Apiary } from '../models/apiary.model';
 import { conflict } from '@hapi/boom';
 import { map } from 'lodash';
 import dayjs from 'dayjs';
+import { deleteHiveConnections } from '../utils/delete.util';
 
 export class HiveController extends Controller {
   constructor() {
@@ -164,6 +165,7 @@ export class HiveController extends Controller {
 
   async batchDelete(req: IUserRequest, res: Response, next: NextFunction) {
     const hardDelete = req.query.hard ? true : false;
+    const restoreDelete = req.query.restore ? true : false;
 
     try {
       const result = await Hive.transaction(async (trx) => {
@@ -175,18 +177,24 @@ export class HiveController extends Controller {
         const softIds = [];
         const hardIds = [];
         map(res, (obj) => {
-          if (obj.hive_deleted || hardDelete) hardIds.push(obj.hive_id);
+          if ((obj.hive_deleted || hardDelete) && !restoreDelete)
+            hardIds.push(obj.hive_id);
           else softIds.push(obj.hive_id);
         });
 
         if (hardIds.length > 0) {
           await Hive.query(trx).delete().whereIn('id', hardIds);
-          await Movedate.query(trx).delete().whereIn('hive_id', hardIds);
+          await deleteHiveConnections(hardIds, trx);
         }
         if (softIds.length > 0)
           await Hive.query(trx)
             .patch({
-              deleted: true,
+              deleted: restoreDelete ? false : true,
+              deleted_at: dayjs()
+                .utc()
+                .toISOString()
+                .slice(0, 19)
+                .replace('T', ' '),
               edit_id: req.user.bee_id
             })
             .findByIds(softIds);
