@@ -67,20 +67,40 @@ export class QueenController extends Controller {
       delete insert.start;
       delete insert.repeat;
       delete insert.name;
+      delete insert.hive_id;
 
       const result = await Queen.transaction(async (trx) => {
         const result = [];
         for (let i = 0; i < repeat; i++) {
           const name = repeat > 1 ? req.body.name + (start + i) : req.body.name;
+          const hive_id = req.body.hive_id ? req.body.hive_id[i] : null;
           const res = await Queen.query(trx).insert({
             ...insert,
             name: name,
+            hive_id: hive_id,
             user_id: req.user.user_id,
             bee_id: req.user.bee_id
           });
           result.push(res.id);
         }
         return result;
+      });
+      res.locals.data = result;
+      next();
+    } catch (e) {
+      next(checkMySQLError(e));
+    }
+  }
+
+  async patch(req: IUserRequest, res: Response, next: NextFunction) {
+    try {
+      const ids = req.body.ids;
+      const insert = { ...req.body.data };
+      const result = await Queen.transaction(async (trx) => {
+        return await Queen.query(trx)
+          .patch(insert)
+          .findByIds(ids)
+          .where('user_id', req.user.user_id);
       });
       res.locals.data = result;
       next();
@@ -125,6 +145,18 @@ export class QueenController extends Controller {
             .findByIds(softIds);
 
         return res;
+      });
+      res.locals.data = result;
+      next();
+    } catch (e) {
+      next(checkMySQLError(e));
+    }
+  }
+
+  async batchGet(req: IUserRequest, res: Response, next: NextFunction) {
+    try {
+      const result = await Queen.query().findByIds(req.body.ids).where({
+        user_id: req.user.user_id
       });
       res.locals.data = result;
       next();

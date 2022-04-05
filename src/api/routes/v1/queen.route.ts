@@ -28,10 +28,24 @@ export class QueenRouter extends Router {
         Container.resolve('QueenController').post
       );
     this.router
+      .route('/')
+      .patch(
+        Validator.validate([body('ids').isArray()]),
+        Guard.authorize([ROLES.admin, ROLES.user]),
+        Container.resolve('QueenController').patch
+      );
+    this.router
       .route('/batchDelete')
       .patch(
         Guard.authorize([ROLES.admin, ROLES.user]),
         Container.resolve('QueenController').batchDelete
+      );
+    this.router
+      .route('/batchGet')
+      .post(
+        Validator.validate([body('ids').isArray()]),
+        Guard.authorize([ROLES.admin, ROLES.user]),
+        Container.resolve('QueenController').batchGet
       );
   }
 }

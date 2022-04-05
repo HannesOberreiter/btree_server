@@ -35,7 +35,7 @@ export class Queen extends ExtModel {
   hive?: Hive;
   race?: QueenRace[];
   mating?: QueenMating[];
-  mothers?: Queen;
+  own_mother?: Queen;
   queen_location?: QueenLocation;
 
   static jsonSchema = {
@@ -59,10 +59,10 @@ export class Queen extends ExtModel {
       created_at: { type: 'string', format: 'date-time' },
       updated_at: { type: 'string', format: 'date-time' },
 
-      hive_id: { type: 'integer' },
+      hive_id: { type: ['integer', 'null'] },
       race_id: { type: 'integer' },
       mating_id: { type: 'integer' },
-      queen_id: { type: 'integer' }, // Self-Join ID
+      mother_id: { type: ['integer', 'null'] }, // Self-Join ID
       user_id: { type: 'integer' },
       bee_id: { type: 'integer' }, // Creator Bee FK
       edit_id: { type: 'integer' } // Updater Bee FK
@@ -124,6 +124,14 @@ export class Queen extends ExtModel {
       join: {
         from: ['queens.user_id'],
         to: ['company.id']
+      }
+    },
+    own_mother: {
+      relation: ExtModel.HasOneRelation,
+      modelClass: Queen,
+      join: {
+        from: ['queens.mother_id'],
+        to: ['queen.id']
       }
     }
   });

@@ -17,26 +17,26 @@ export class HiveController extends Controller {
   }
 
   async post(req: IUserRequest, res: Response, next: NextFunction) {
-    const start = parseInt(req.body.start);
-    const repeat =
-      parseInt(req.body.repeat) > 1 ? parseInt(req.body.repeat) : 1;
-
-    const insertMovement = {
-      apiary_id: req.body.apiary_id,
-      date: req.body.date
-    };
-
-    const insert = {
-      position: req.body.position,
-      type_id: req.body.type_id,
-      source_id: req.body.source_id,
-      grouphive: req.body.grouphive,
-      note: req.body.note,
-      modus: req.body.modus,
-      modus_date: req.body.modus_date
-    };
-
     try {
+      const start = parseInt(req.body.start);
+      const repeat =
+        parseInt(req.body.repeat) > 1 ? parseInt(req.body.repeat) : 1;
+
+      const insertMovement = {
+        apiary_id: req.body.apiary_id,
+        date: req.body.date
+      };
+
+      const insert = {
+        position: req.body.position,
+        type_id: req.body.type_id,
+        source_id: req.body.source_id,
+        grouphive: req.body.grouphive,
+        note: req.body.note,
+        modus: req.body.modus,
+        modus_date: req.body.modus_date
+      };
+
       const result = await Hive.transaction(async (trx) => {
         await Apiary.query(trx)
           .findByIds(insertMovement.apiary_id)
@@ -104,8 +104,8 @@ export class HiveController extends Controller {
       if (q.trim() !== '') {
         query.where((builder) => {
           builder
-            .orWhere('name', 'like', `%${q}%`)
-            .orWhere('apiary_name', 'like', `%${q}%`);
+            .orWhere('hives.name', 'like', `%${q}%`)
+            .orWhere('hive_location.apiary_name', 'like', `%${q}%`);
         });
       }
       const result = await query.orderBy('id');
@@ -117,9 +117,9 @@ export class HiveController extends Controller {
   }
 
   async patch(req: IUserRequest, res: Response, next: NextFunction) {
-    const ids = req.body.ids;
-    const insert = { ...req.body.data };
     try {
+      const ids = req.body.ids;
+      const insert = { ...req.body.data };
       const result = await Hive.transaction(async (trx) => {
         if ('name' in req.body.data) {
           if (ids.length > 1) throw conflict('name');
