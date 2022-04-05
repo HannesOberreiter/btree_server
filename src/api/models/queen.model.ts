@@ -4,6 +4,7 @@ import { Hive } from './hive.model';
 import { QueenRace } from './option/queen_race.model';
 import { QueenMating } from './option/queen_mating.model';
 import { Company } from './company.model';
+import { QueenLocation } from './queen_location.model';
 
 export class Queen extends ExtModel {
   id!: number;
@@ -18,6 +19,7 @@ export class Queen extends ExtModel {
   modus!: boolean;
   modus_date!: Date;
   deleted!: boolean;
+  deleted_at!: string;
 
   bee_id!: number;
   edit_id!: number;
@@ -30,10 +32,11 @@ export class Queen extends ExtModel {
   creator?: User;
   editor?: User;
   company?: Company;
-  hive?: Hive[];
+  hive?: Hive;
   race?: QueenRace[];
   mating?: QueenMating[];
   mothers?: Queen;
+  queen_location?: QueenLocation;
 
   static jsonSchema = {
     type: 'object',
@@ -84,11 +87,19 @@ export class Queen extends ExtModel {
       }
     },
     hive: {
-      relation: Hive.HasOneRelation,
+      relation: Queen.HasOneRelation,
       modelClass: Hive,
       join: {
         from: ['queens.hive_id'],
-        to: ['hives.hive_id']
+        to: ['hives.id']
+      }
+    },
+    queen_location: {
+      relation: Queen.HasOneRelation,
+      modelClass: QueenLocation,
+      join: {
+        from: ['queens.id'],
+        to: ['queens_locations.queen_id']
       }
     },
     race: {

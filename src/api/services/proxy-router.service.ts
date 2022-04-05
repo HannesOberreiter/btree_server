@@ -14,6 +14,7 @@ import { FeedRouter } from '@routes/v1/feed.route';
 import { FieldSettingRouter } from '@routes/v1/field_setting.route';
 import { HarvestRouter } from '@routes/v1/harvest.route';
 import { HiveRouter } from '@routes/v1/hive.route';
+import { QueenRouter } from '@routes/v1/queen.route';
 import { MovedateRouter } from '@routes/v1/movedate.route';
 import { OptionRouter } from '@routes/v1/option.route';
 import { RearingRouter } from '@routes/v1/rearing.route';
@@ -49,6 +50,7 @@ export class ProxyRouter {
     { segment: '/fieldsetting/', router: FieldSettingRouter },
     { segment: '/harvest/', router: HarvestRouter },
     { segment: '/hive/', router: HiveRouter },
+    { segment: '/queen/', router: QueenRouter },
     { segment: '/movedate/', router: MovedateRouter },
     { segment: '/option/', router: OptionRouter },
     { segment: '/rearing/', router: RearingRouter },
