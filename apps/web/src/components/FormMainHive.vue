@@ -37,7 +37,7 @@
               label="start"
               :hint="$t('startNumberNote')"
               :max-valid="10000"
-              icon=""
+              icon="fas fa-arrow-down-1-9"
               numeric-valid="integer"
             ></input-numeric-start>
           </div>
@@ -47,7 +47,7 @@
               label="numberHives"
               :hint="sampleName"
               shadow-text="x"
-              icon=""
+              icon="fas fa-infinity"
               :max-valid="100"
               numeric-valid="integer"
             ></input-numeric-repeat>

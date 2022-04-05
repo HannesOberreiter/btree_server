@@ -34,6 +34,7 @@ import FormMainTodo from './FormMainTodo.vue';
 import FormMainHive from '~/components/FormMainHive.vue';
 import dayjs from 'dayjs';
 import FormMainMovement from './FormMainMovement.vue';
+import FormMainQueen from './FormMainQueen.vue';
 
 const { dialogRef, onDialogHide, onDialogOK } = useDialogPluginComponent();
 
@@ -85,6 +86,12 @@ const layouts = {
   hive: {
     comp: FormMainHive,
     props: {},
+  },
+  queen: {
+    comp: FormMainQueen,
+    props: {
+      selected: props.selected,
+    },
   },
   movedate: {
     comp: FormMainMovement,

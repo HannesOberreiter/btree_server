@@ -1,6 +1,6 @@
 import { MaybeRef } from '@vueuse/core';
 import dayjs from 'dayjs';
-import { includes, isNil, omitBy } from 'lodash';
+import { includes, isNil, map, omitBy } from 'lodash';
 import { Ref } from 'vue';
 import { FormHive, FormQueen, FormQuicktool } from '~/types';
 
@@ -124,7 +124,11 @@ function cleanupQueen(state: FormQueen, isEdit: boolean) {
     move_date: state.move_date,
     mother: state.mother,
 
-    hive_id: state.hive ? state.hive.id : null,
+    hive_id: state.hive
+      ? state.hive.length !== undefined
+        ? state.hive.map((o: any) => o.id)
+        : state.hive.id
+      : null,
     mother_id: state.mother_id ? state.mother_id.id : null,
     race_id: state.race ? state.race.id : null,
     mating_id: state.mating ? state.mating.id : null,

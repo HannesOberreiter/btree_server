@@ -24,6 +24,7 @@
     "@vueuse/core": "^8.1.2",
     "@vueuse/sound": "^1.1.7",
     "axios": "^0.26.1",
+    "csv-stringify": "^6.0.5",
     "dayjs": "^1.11.0",
     "leaflet": "^1.7.1",
     "lodash": "^4.17.21",

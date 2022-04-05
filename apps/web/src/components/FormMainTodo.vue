@@ -32,7 +32,7 @@
           :hint="$t('intervalText')"
           :shadow-text="$t('day', 2)"
           :max-valid="365"
-          icon=""
+          icon="fas fa-arrow-down-1-9"
           numeric-valid="integer"
         ></form-numeric-interval>
       </div>
@@ -42,7 +42,7 @@
           label="repeat"
           :hint="$t('repeatText')"
           shadow-text="x"
-          icon=""
+          icon="fas fa-infinity"
           numeric-valid="integer"
         ></form-numeric-repeat>
       </div>

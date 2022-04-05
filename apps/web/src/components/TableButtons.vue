@@ -25,15 +25,34 @@
   />
 
   <q-btn-dropdown unelevated color="info" :label="$t('more')">
-    <q-list dense>
+    <q-list>
+      <q-item v-close-popup clickable @click="onAddQueen">
+        <q-item-section>
+          <q-item-label>{{ $t('queenAdd') }}</q-item-label>
+        </q-item-section>
+      </q-item>
+
       <q-item v-close-popup clickable @click="onMove">
+        <q-item-section>
+          <q-item-label>{{ $t('movement') }}</q-item-label>
+        </q-item-section>
+      </q-item>
+
+      <q-separator />
+
+      <q-item
+        v-close-popup
+        clickable
+        :disable="selected.length > 0 ? false : true"
+        @click="onExport"
+      >
         <q-item-section avatar>
           <q-avatar>
             {{ selected.length }}
           </q-avatar>
         </q-item-section>
         <q-item-section>
-          <q-item-label>{{ $t('movement') }}</q-item-label>
+          <q-item-label>{{ $t('exportCSV') }}</q-item-label>
         </q-item-section>
       </q-item>
 
@@ -89,6 +108,9 @@
 
 <script setup lang="ts">
 import { useVModels } from '@vueuse/core';
+import { stringify } from 'csv-stringify/browser/esm/sync';
+import dayjs from 'dayjs';
+import { exportFile } from 'quasar';
 import { api } from '~/boot/axios';
 import { clearCache } from '~/composables/useQuery';
 import { useNotification } from '~/composables/useResponseText';
@@ -151,6 +173,11 @@ function onMove() {
   dialogForm('movement', null, 'movedate', ids);
 }
 
+function onAddQueen() {
+  const ids = selected.value.map((o: any) => o.id);
+  dialogForm('queen', null, 'queen', ids);
+}
+
 function onRestore() {
   const ids = selected.value.map((o: any) => o.id);
   api.patch(`/v1/${props.table}/batchDelete?restore=true`, { ids: ids }).then(
@@ -190,5 +217,23 @@ function onDelete() {
 function onEmit() {
   clearCache(props.table);
   emit('change');
+}
+
+function onExport() {
+  $q.loading.show({ delay: 200 });
+  const csv = stringify(unref(selected.value), { header: true });
+  const status = exportFile(
+    `${props.table}-export-${dayjs().toISOString()}.csv`,
+    csv,
+    'text/csv'
+  );
+  $q.loading.hide();
+  if (status !== true) {
+    $q.notify({
+      message: t('failedDownload'),
+      color: 'negative',
+      icon: 'warning',
+    });
+  }
 }
 </script>

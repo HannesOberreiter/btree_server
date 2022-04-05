@@ -13,6 +13,9 @@
     @filter="filterApiary"
     @update:model-value="selectApiary"
   >
+    <template #before>
+      <q-icon name="fas fa-location-dot"></q-icon>
+    </template>
   </q-select>
   <q-select
     v-model="state.hive"
@@ -39,6 +42,9 @@
     @update:model-value="selectHive"
     @filter="filterHive"
   >
+    <template #before>
+      <q-icon name="fas fa-house"></q-icon>
+    </template>
   </q-select>
 </template>
 
@@ -59,6 +65,10 @@ const props = defineProps({
   selected: {
     type: Array,
     default: null,
+  },
+  required: {
+    type: Boolean,
+    default: true,
   },
 });
 
@@ -132,9 +142,15 @@ function filterApiary(val: any, update: any, _abort: any) {
 const state = reactive({
   hive: modelValue.value,
 });
-const rules = {
-  hive: { required },
-};
+const rules = computed(() => {
+  if (props.required) {
+    return {
+      hive: { required },
+    };
+  } else {
+    return { hive: {} };
+  }
+});
 const v = useVuelidate(rules, state);
 
 watch(state, (cur) => {

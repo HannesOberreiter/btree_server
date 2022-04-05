@@ -7,13 +7,13 @@
         :rows="rows"
         :columns="columns"
         :visible-columns="visibleColumns"
+        :loading="isLoadingTable"
+        :dense="$q.screen.lt.md"
+        :rows-per-page-options="[10, 50, 100, 500, 10000]"
         separator="vertical"
         row-key="id"
         selection="multiple"
-        :loading="isLoadingTable"
         binary-state-sort
-        :dense="$q.screen.lt.md"
-        :rows-per-page-options="[10, 50, 100, 500, 10000]"
         @request="onRequest"
       >
         <template #body-cell-name="props">
@@ -32,14 +32,12 @@
 
         <!-- eslint-disable-next-line vue/valid-v-slot -->
         <template #body-cell-queen_location.queen_name="props">
-          <table-col-link
-            v-if="props.value"
-            :id="props.row.queen_location.queen_id"
+          <table-col-queen
+            :id="props.value ? props.row.queen_location.queen_id : 0"
             :label="props.value"
-            link="queen"
+            @change="refetch"
           >
-          </table-col-link>
-          <q-td v-else>{{ $t('noQueen') }}</q-td>
+          </table-col-queen>
         </template>
 
         <template #body-cell-note="props">
@@ -128,6 +126,7 @@ import TableColLink from '~/components/TableColLink.vue';
 import TableColNote from '~/components/TableColNote.vue';
 import TableColStatus from '~/components/TableColStatus.vue';
 import TableButtons from '~/components/TableButtons.vue';
+import TableColQueen from '~/components/TableColQueen.vue';
 import { QTableProps } from 'quasar';
 
 const storeTable = useTablesStore();
@@ -144,6 +143,7 @@ const selected = ref([]);
 const rows = ref([]);
 const modus = ref(true);
 const deleted = ref(false);
+
 const columns = [
   {
     name: 'id',

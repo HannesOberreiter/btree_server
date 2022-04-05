@@ -24,12 +24,12 @@
           flat
           round
           icon="fas fa-retweet"
-          :color="showInterval ? 'secondary' : 'grey'"
+          :color="showInterval || forceInterval ? 'secondary' : 'grey'"
           @click="changeInterval"
         ></q-btn>
       </div>
 
-      <div v-if="showInterval && !isEdit" class="col-12">
+      <div v-if="(showInterval || forceInterval) && !isEdit" class="col-12">
         <div class="row">
           <div class="col-6">
             <input-numeric-start
@@ -37,7 +37,7 @@
               label="start"
               :hint="$t('startNumberNote')"
               :max-valid="10000"
-              icon=""
+              icon="fas fa-arrow-down-1-9"
               numeric-valid="integer"
             ></input-numeric-start>
           </div>
@@ -46,8 +46,9 @@
               v-model.number="state.repeat"
               label="numberQueens"
               :hint="sampleName"
+              :disable="forceInterval"
               shadow-text="x"
-              icon=""
+              icon="fas fa-infinity"
               :max-valid="100"
               numeric-valid="integer"
             ></input-numeric-repeat>
@@ -76,28 +77,33 @@
       ></form-queen-markcolour>
     </div>
 
-    <div class="row q-pt-md q-pb-md">
-      <div class="col-12 col-md-6 q-pb-md">
-        <form-dropdown-option
-          v-model="state.hive"
-          label="hive"
-          table="hive"
-          table-id="hive_id"
-          :values="values"
-          :reset="reset"
-          allow-empty="noHive"
-          :hint="$t('queenHiveInfo')"
-        ></form-dropdown-option>
-      </div>
-      <div class="col-12 col-md-6">
-        <form-input-movedate
-          v-model="state.move_date"
-          :values="values"
-          :reset="reset"
-          label="queenMovedate"
-          :hint="$t('queenMovedateInfo')"
-        ></form-input-movedate>
-      </div>
+    <div class="col-12 q-pb-sm">
+      <form-dropdown-option
+        v-if="isEdit"
+        v-model="state.hive"
+        label="hive"
+        table="hive"
+        table-id="hive_id"
+        :values="values"
+        :reset="reset"
+        allow-empty="noHive"
+        :hint="$t('queenHiveInfo')"
+      ></form-dropdown-option>
+      <form-dropdown-hive
+        v-else
+        v-model="state.hive"
+        :selected="selected"
+        :required="false"
+      ></form-dropdown-hive>
+    </div>
+    <div class="col-12 col-md-6 q-pt-sm">
+      <form-input-movedate
+        v-model="state.move_date"
+        :values="values"
+        :reset="reset"
+        label="queenMovedate"
+        :hint="$t('queenMovedateInfo')"
+      ></form-input-movedate>
     </div>
 
     <form-dropdown-race
@@ -224,6 +230,7 @@ import FormDropdownEdit from './FormDropdownEdit.vue';
 import FormButtons from './FormButtons.vue';
 import FormDropdownOption from './FormDropdownOption.vue';
 import FormDropdownMother from './FormDropdownOption.vue';
+import FormDropdownHive from './FormDropdownHive.vue';
 import FormInputDate from './FormInputDate.vue';
 import FormQueenMarkcolour from './FormQueenMarkcolour.vue';
 import FormInputUrl from './FormInputUrl.vue';
@@ -231,6 +238,7 @@ import { FormQueen } from '~/types';
 
 const notification = useNotification();
 const showInterval = ref(false);
+const forceInterval = ref(false);
 const values = ref({});
 const reset = ref(0);
 const editOptions = ref([]) as any;
@@ -238,6 +246,10 @@ const editOptionsCopy = ref([]) as any;
 const emit = defineEmits(['onSuccess']);
 const props = defineProps({
   ids: {
+    type: Array,
+    default: null,
+  },
+  selected: {
     type: Array,
     default: null,
   },
@@ -285,6 +297,20 @@ const state = ref<FormQueen>({
 });
 const rules = {};
 const v = useVuelidate(rules, state, { $autoDirty: true });
+
+watch(
+  () => state.value.hive,
+  (cur) => {
+    if (isEdit.value) return;
+    console.log(cur.length);
+    if (cur.length > 0) {
+      state.value.repeat = cur.length;
+      forceInterval.value = true;
+    } else {
+      forceInterval.value = false;
+    }
+  }
+);
 
 async function getEdit(id: unknown[]) {
   return await api.post('/v1/queen/batchGet', { ids: id }).then(

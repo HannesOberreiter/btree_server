@@ -83,10 +83,10 @@ const multipleValues = computed(() =>
 const disable = ref(multipleValues.value);
 const options = ref([] as any);
 
-if (data.value) setOptions();
+if (values.value) setValues();
 
 watch(data, () => {
-  setOptions();
+  setValues();
 });
 
 watch(values, () => {
