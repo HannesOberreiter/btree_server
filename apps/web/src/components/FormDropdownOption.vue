@@ -25,10 +25,17 @@
 import { filter, isEmpty } from 'lodash';
 import { Option } from '~/types';
 import { PropType } from 'vue';
-import { useApiariesQuery, useOptionsQuery } from '~/composables/useQuery';
+import {
+  useApiariesQuery,
+  useHivesQuery,
+  useOptionsQuery,
+  useQueensQuery,
+} from '~/composables/useQuery';
 import { useVModels } from '@vueuse/core';
 import BtnMultipleValues from './BtnMultipleValues.vue';
 import { formCheckMultipleValues } from '~/helpers';
+
+const { t } = useI18n();
 
 const props = defineProps({
   modelValue: {
@@ -52,11 +59,19 @@ const props = defineProps({
     type: Object,
     default: null,
   },
+  allowEmpty: {
+    type: String,
+    default: '',
+  },
 });
 
 const { isLoading, data } =
   props.table === 'apiary'
     ? useApiariesQuery({})
+    : props.table === 'hive'
+    ? useHivesQuery({})
+    : props.table === 'queen'
+    ? useQueensQuery({ modus: null })
     : useOptionsQuery(props.table, {});
 
 const emit = defineEmits(['update:modelValue']);
@@ -68,7 +83,7 @@ const multipleValues = computed(() =>
 const disable = ref(multipleValues.value);
 const options = ref([] as any);
 
-if (!isLoading.value) setOptions();
+if (data.value) setOptions();
 
 watch(data, () => {
   setOptions();
@@ -91,7 +106,16 @@ function setValues() {
 }
 
 function setOptions(id = 0) {
-  options.value = data.value.results;
+  if (!data.value) return;
+  if (props.allowEmpty !== '') {
+    options.value = [
+      { label: t(props.allowEmpty), value: null },
+      ...data.value.results,
+    ];
+  } else {
+    options.value = data.value.results;
+  }
+
   if (id === 0) modelValue.value = options.value[0];
   else {
     const res = filter(data.value.results, (obj) => obj.id === id);

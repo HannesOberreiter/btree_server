@@ -152,7 +152,7 @@
     :v="v"
     form="hive"
     @reset="onReset"
-    @change="refetch"
+    @change="onChange"
   ></form-buttons>
 </template>
 
@@ -163,7 +163,6 @@ import dayjs from 'dayjs';
 function getNames(v: any) {
   return v.map((o: any) => o.name).join(', ');
 }
-
 const stateDefault = {
   name: '',
   date: dayjs().format('YYYY-MM-DD'),
@@ -202,6 +201,7 @@ const values = ref({});
 const reset = ref(0);
 const editOptions = ref([]) as any;
 const editOptionsCopy = ref([]) as any;
+const emit = defineEmits(['onSuccess']);
 const props = defineProps({
   ids: {
     type: Array,
@@ -278,5 +278,10 @@ function onReset() {
   if (showInterval.value) changeInterval();
   reset.value++;
   notification.open('info', 'successReset');
+}
+
+async function onChange() {
+  emit('onSuccess', true);
+  refetch.value();
 }
 </script>

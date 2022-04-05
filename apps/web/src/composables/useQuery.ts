@@ -7,23 +7,7 @@ import { Ref } from 'vue';
 import { useNotification } from '~/composables/useResponseText';
 import { useQuery } from 'vue-query';
 import { stringify } from 'query-string';
-
-export function useQueensQuery(
-  offset = 0 as MaybeRef<number>,
-  limit = 20 as MaybeRef<number>,
-  order = 'id' as MaybeRef<string>
-) {
-  return useQuery(
-    ['queens', offset, limit, order],
-    () => api.get(`/v1/queens?limit=${limit}&offset=${offset}&order=${order}`),
-    {
-      select: (response) => response.data,
-      onError: (error: any) => {
-        useNotification().open('negative', error.response);
-      },
-    }
-  );
-}
+import dayjs from 'dayjs';
 
 export function useApiaryQuery(
   id: number,
@@ -109,6 +93,60 @@ export function useApiariesQuery({
   );
 }
 
+export function useQueensQuery({
+  offset = 0 as MaybeRef<number>,
+  limit = 10000 as MaybeRef<number>,
+  order = ['name', 'date'] as MaybeRef<Array<string>>,
+  direction = ['asc', 'asc'] as MaybeRef<Array<string>>,
+  modus = true as MaybeRef<boolean>,
+  deleted = false as MaybeRef<boolean>,
+  q = '' as MaybeRef<string>,
+  enabled = true as MaybeRef<boolean>,
+  details = false,
+}) {
+  return useQuery(
+    ['queen', offset, limit, order, direction, modus, deleted, q, details],
+    () => {
+      let url = `/v1/queen?offset=${unref(offset)}`;
+      url += `&limit=${unref(limit)}`;
+      url += `&${stringify(
+        { order: unref(order) },
+        { arrayFormat: 'bracket' }
+      )}`;
+      url += `&${stringify(
+        { direction: unref(direction) },
+        {
+          arrayFormat: 'bracket',
+        }
+      )}`;
+      url += `&modus=${unref(modus)}&deleted=${unref(deleted)}`;
+      url += `&details=${details}`;
+      url += `&q=${unref(q)}`;
+      return api.get(url);
+    },
+
+    {
+      enabled: enabled,
+      keepPreviousData: true,
+      select: (response) => {
+        const result = map(response.data.results, (value) => {
+          value.label = `${value.name} (${dayjs(value.date).format(
+            'YYYY-MM-DD'
+          )})`;
+          if (value.hive) value.label += ` [${value.hive.name}]`;
+          value.value = value.id;
+          return value;
+        });
+        return result
+          ? { results: result, total: response.data.total }
+          : ([] as any);
+      },
+      onError: (error: any) =>
+        useNotification().open('negative', error.response),
+    }
+  );
+}
+
 export function useHivesQuery({
   offset = 0 as MaybeRef<number>,
   limit = 10000 as MaybeRef<number>,
@@ -121,7 +159,7 @@ export function useHivesQuery({
   details = false,
 }) {
   return useQuery(
-    ['hives', offset, limit, order, direction, modus, deleted, q, details],
+    ['hive', offset, limit, order, direction, modus, deleted, q, details],
     () => {
       let url = `/v1/hive?offset=${unref(offset)}`;
       url += `&limit=${unref(limit)}`;
@@ -204,6 +242,10 @@ export function useOptionsQuery(
   );
 }
 
-export function clearCache() {
-  queryCache.clear();
+export function clearCache(q = '') {
+  if (q.trim() === '') queryCache.clear();
+  else {
+    const queries = queryCache.findAll(q);
+    queries.forEach((query) => query.invalidate());
+  }
 }

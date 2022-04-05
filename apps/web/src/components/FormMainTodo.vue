@@ -50,6 +50,7 @@
     <form-input-name
       v-model="state.name"
       label="name"
+      icon="fas fa-passport"
       :values="values"
       :reset="reset"
       :required="true"
@@ -124,7 +125,6 @@ import FormInputCheckbox from './FormInputCheckbox.vue';
 import useVuelidate from '@vuelidate/core';
 import { flatten, isNil, map, merge, omitBy } from 'lodash';
 
-const { t } = useI18n();
 const notification = useNotification();
 const showInterval = ref(false);
 const lastInsert = ref(null);
@@ -206,7 +206,6 @@ async function getEdit(id: unknown[]) {
       editOptions.value = flatten(editIds);
       editOptionsCopy.value = flatten(editIds);
       values.value = response.data;
-      //notification.open('info', t('dataLoaded'));
     },
     (error) => {
       notification.open('negative', error.response);
@@ -263,7 +262,7 @@ function onReset() {
     merge(state.value, stateDefault);
   }
   if (showInterval.value) repeatTask();
-  notification.open('positive', t('successReset'));
+  notification.open('positive', 'successReset');
   reset.value++;
 }
 

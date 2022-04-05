@@ -16,8 +16,8 @@ const vueQueryPluginOptions: VueQueryPluginOptions = {
     queryCache: queryCache,
     defaultOptions: {
       queries: {
-        staleTime: 1000 * 60 * 30, // stale (refetching), after 30 minutes
-        cacheTime: 1000 * 60 * 60 * 12, // garbage collector, every 12 hours
+        staleTime: 1000 * 60 * 1, // stale (refetching), after 1 minute
+        cacheTime: 1000 * 60 * 60 * 24, // garbage collector, every 24 hours
       },
     },
   },

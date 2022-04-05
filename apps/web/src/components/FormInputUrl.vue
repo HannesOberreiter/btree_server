@@ -4,6 +4,7 @@
     :values="values"
     :reset="reset"
     label="url"
+    icon="fas fa-cloud-arrow-up"
     readonly
     :max-valid="512"
   >

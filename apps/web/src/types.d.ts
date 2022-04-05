@@ -86,7 +86,9 @@ type Option =
   | 'treatment_diseases'
   | 'treatment_types'
   | 'treatment_vets'
-  | 'apiary';
+  | 'apiary'
+  | 'hive'
+  | 'queen';
 
 type TextField =
   | 'number'
@@ -116,6 +118,24 @@ declare interface FormHive {
   apiary: any;
   type: any;
   source: any;
+}
+
+declare interface FormQueen {
+  name: string;
+  date: string;
+  mark_colour: string;
+  move_date: string;
+  mother: string;
+  note: string;
+  url: string;
+  modus: boolean;
+  modusDate: string;
+  start: number;
+  repeat: number;
+  hive: any;
+  mating: any;
+  race: any;
+  mother_id: any;
 }
 
 declare interface FormQuicktool {
@@ -174,5 +194,6 @@ export {
   Option,
   TextField,
   FormHive,
+  FormQueen,
   FormQuicktool,
 };

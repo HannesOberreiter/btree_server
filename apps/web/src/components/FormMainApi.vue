@@ -22,7 +22,7 @@
           icon="fas fa-copy"
           @click="
             copy(apiValue).then(() =>
-              notification.open('info', $t('copiedToClipboard'))
+              notification.open('info', 'copiedToClipboard')
             )
           "
         />
@@ -49,7 +49,7 @@
           icon="fas fa-copy"
           @click="
             copy(icalUrl).then(() =>
-              notification.open('info', $t('copiedToClipboard'))
+              notification.open('info', 'copiedToClipboard')
             )
           "
         />

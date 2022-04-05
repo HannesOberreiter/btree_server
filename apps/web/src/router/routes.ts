@@ -61,13 +61,13 @@ const routes: RouteRecordRaw[] = [
       {
         path: '/new/queen',
         name: 'new-queen',
-        component: () => import('~/pages/Queen.vue'),
+        component: () => import('~/pages/QueenNew.vue'),
       },
       {
         path: '/edit/queen/:ids*',
         name: 'edit-queen',
         props: true,
-        component: () => import('~/pages/Queen.vue'),
+        component: () => import('~/pages/QueenEdit.vue'),
       },
 
       {

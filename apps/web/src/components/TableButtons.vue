@@ -26,6 +26,17 @@
 
   <q-btn-dropdown unelevated color="info" :label="$t('more')">
     <q-list dense>
+      <q-item v-close-popup clickable @click="onMove">
+        <q-item-section avatar>
+          <q-avatar>
+            {{ selected.length }}
+          </q-avatar>
+        </q-item-section>
+        <q-item-section>
+          <q-item-label>{{ $t('movement') }}</q-item-label>
+        </q-item-section>
+      </q-item>
+
       <q-separator />
 
       <q-item
@@ -79,6 +90,7 @@
 <script setup lang="ts">
 import { useVModels } from '@vueuse/core';
 import { api } from '~/boot/axios';
+import { clearCache } from '~/composables/useQuery';
 import { useNotification } from '~/composables/useResponseText';
 import DialogForm from './DialogForm.vue';
 
@@ -105,40 +117,45 @@ const emit = defineEmits(['update:deleted', 'update:modus', 'change']);
 const { deleted, modus } = useVModels(props, emit);
 const selected = toRef(props, 'selected');
 
-function onNew() {
+const dialogForm = (
+  title: string,
+  ids: any[],
+  form = props.table,
+  selected = null as any
+) => {
   $q.dialog({
     component: DialogForm,
     componentProps: {
-      title: 'new',
-      form: 'hive',
+      title: title,
+      form: form,
       maximized: true,
-      ids: null,
+      selected: selected,
+      ids: ids,
     },
-  }).onDismiss(() => {
-    emit('change');
+  }).onOk(() => {
+    onEmit();
   });
+};
+
+function onNew() {
+  dialogForm('new', null);
 }
 
 function onEdit() {
   const ids = selected.value.map((o: any) => o.id);
-  $q.dialog({
-    component: DialogForm,
-    componentProps: {
-      title: 'edit',
-      form: 'hive',
-      maximized: true,
-      ids: ids,
-    },
-  }).onDismiss(() => {
-    emit('change');
-  });
+  dialogForm('edit', ids);
+}
+
+function onMove() {
+  const ids = selected.value.map((o: any) => o.id);
+  dialogForm('movement', null, 'movedate', ids);
 }
 
 function onRestore() {
   const ids = selected.value.map((o: any) => o.id);
   api.patch(`/v1/${props.table}/batchDelete?restore=true`, { ids: ids }).then(
     (_response: any) => {
-      emit('change');
+      onEmit();
       notification.open('positive', '');
     },
     (error) => {
@@ -168,5 +185,10 @@ function onDelete() {
       }
     );
   });
+}
+
+function onEmit() {
+  clearCache(props.table);
+  emit('change');
 }
 </script>

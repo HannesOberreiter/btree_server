@@ -56,6 +56,10 @@ const props = defineProps({
   modelValue: {
     default: [],
   },
+  selected: {
+    type: Array,
+    default: null,
+  },
 });
 
 const emit = defineEmits(['update:modelValue']);
@@ -98,6 +102,13 @@ function filterHive(val: any, update: any, _abort: any) {
   }
 }
 
+function setSelected() {
+  if (props.selected)
+    state.hive = filter(hives.value.results, (obj) =>
+      props.selected.includes(obj.id)
+    );
+}
+
 function filterApiary(val: any, update: any, _abort: any) {
   const data = filter(apiaries.value.results, (obj) => obj.hive_count !== null);
 
@@ -129,6 +140,11 @@ const v = useVuelidate(rules, state);
 watch(state, (cur) => {
   if (cur.hive === null) cur.hive = [];
   emit('update:modelValue', cur.hive);
+});
+
+if (!isLoadingHive.value && props.selected) setSelected();
+watch(hives, () => {
+  setSelected();
 });
 </script>
 

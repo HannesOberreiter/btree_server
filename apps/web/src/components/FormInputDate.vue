@@ -13,11 +13,7 @@
     @click="qDateProxy = !qDateProxy"
   >
     <template #before>
-      <q-icon
-        v-if="!multipleValues"
-        name="fas fa-calendar"
-        class="cursor-pointer"
-      >
+      <q-icon v-if="!multipleValues" :name="icon" class="cursor-pointer">
         <q-popup-proxy
           v-model="qDateProxy"
           cover
@@ -80,13 +76,20 @@ const props = defineProps({
     type: Object,
     default: null,
   },
+  icon: {
+    type: String,
+    default: 'fas fa-calendar',
+  },
 });
 const emit = defineEmits(['update:modelValue']);
 const { modelValue } = useVModels(props, emit);
 const resetValue = unref(modelValue.value);
 const { values, reset } = toRefs(props);
 const multipleValues = computed(() =>
-  formCheckMultipleValues(values.value, props.label)
+  formCheckMultipleValues(
+    values.value,
+    props.tableId ? props.tableId : props.label
+  )
 );
 const disable = ref(multipleValues.value);
 

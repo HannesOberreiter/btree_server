@@ -5,7 +5,11 @@
       v-model="editOptions"
       :options="editOptionsCopy"
     ></form-dropdown-edit>
-    <form-dropdown-hive v-else v-model="state.hive"></form-dropdown-hive>
+    <form-dropdown-hive
+      v-else
+      v-model="state.hive"
+      :selected="selected"
+    ></form-dropdown-hive>
 
     <input-date
       v-model="state.date"
@@ -32,6 +36,7 @@
     :v="v"
     form="movedate"
     @reset="onReset"
+    @change="emit('onSuccess', true)"
   >
   </form-buttons>
 </template>
@@ -52,8 +57,13 @@ const notification = useNotification();
 const values = ref({});
 const reset = ref(0);
 const router = useRouter();
+const emit = defineEmits(['onSuccess']);
 const props = defineProps({
   ids: {
+    type: Array,
+    default: null,
+  },
+  selected: {
     type: Array,
     default: null,
   },

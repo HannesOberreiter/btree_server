@@ -2,7 +2,7 @@ import { MaybeRef } from '@vueuse/core';
 import dayjs from 'dayjs';
 import { includes, isNil, omitBy } from 'lodash';
 import { Ref } from 'vue';
-import { FormHive, FormQuicktool } from '~/types';
+import { FormHive, FormQueen, FormQuicktool } from '~/types';
 
 export const useFormCleanup = (
   table: MaybeRef<string>,
@@ -18,6 +18,8 @@ export const useFormCleanup = (
       return cleanupQuicktool(state.value, isEdit, unref(table));
     } else if (unref(table) === 'movedate') {
       return cleanupMovement(state.value, isEdit);
+    } else if (unref(table) === 'queen') {
+      return cleanupQueen(state.value, isEdit);
     }
   }
 
@@ -110,6 +112,31 @@ function cleanupMovement(state: any, isEdit: boolean) {
   } as any;
   if (!isEdit) {
     result['hive_ids'] = state.hive.map((obj: any) => obj.id);
+  }
+  return omitBy(result, isNil);
+}
+
+function cleanupQueen(state: FormQueen, isEdit: boolean) {
+  const result = {
+    name: state.name,
+    mark_colour: state.mark_colour,
+    date: state.date,
+    move_date: state.move_date,
+    mother: state.mother,
+
+    hive_id: state.hive ? state.hive.id : null,
+    mother_id: state.mother_id ? state.mother_id.id : null,
+    race_id: state.race ? state.race.id : null,
+    mating_id: state.mating ? state.mating.id : null,
+
+    url: state.url,
+    note: state.note,
+    modus: state.modus,
+    modus_date: state.modusDate,
+  } as any;
+  if (!isEdit) {
+    result['start'] = state.start;
+    result['repeat'] = state.repeat;
   }
   return omitBy(result, isNil);
 }

@@ -96,7 +96,7 @@ async function sendForm(value: any) {
     async (reponse) => {
       btnLabel.value = 'success';
       message.value = t('activateUser.success');
-      notification.open('positive', t('activateUser.success'));
+      notification.open('positive', 'activateUser.success');
       isSubmitting.value = false;
       await router.push({
         name: 'login',

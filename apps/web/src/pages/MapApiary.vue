@@ -175,7 +175,7 @@ function editApiaryForm(e: any) {
       componentProps: {
         title: 'apiaryEdit',
         form: 'apiary',
-        id: e,
+        ids: [e],
       },
     }).onOk((e) => {
       refetch.value().then(

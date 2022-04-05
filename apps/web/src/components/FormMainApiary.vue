@@ -117,9 +117,9 @@ import useVuelidate from '@vuelidate/core';
 
 const notification = useNotification();
 const props = defineProps({
-  id: {
-    type: Number,
-    default: 0,
+  ids: {
+    type: Array,
+    default: null,
   },
   latlng: {
     type: Object,
@@ -127,14 +127,14 @@ const props = defineProps({
   },
 });
 const emit = defineEmits(['onSuccess']);
-
+const id = computed(() => (props.ids ? (props.ids[0] as number) : 0));
 const {
   isLoading,
   data: apiary,
   isError,
   refetch,
-} = useApiaryQuery(props.id, {
-  enabled: computed(() => props.id !== 0),
+} = useApiaryQuery(id.value, {
+  enabled: computed(() => id.value !== 0),
 });
 
 const state = ref({
@@ -187,7 +187,7 @@ async function onEdit() {
     return;
   }
   let data = { ...state.value } as any;
-  data.id = props.id;
+  data.id = id.value;
   await api.patch('/v1/apiary', JSON.stringify(data)).then(
     async (response: any) => {
       notification.open('positive', '');
@@ -204,7 +204,7 @@ async function onEdit() {
 async function onModus() {
   isSubmitting.value = true;
   const data = {
-    id: props.id,
+    id: id.value,
     modus: !state.value.modus,
   };
   await api.patch('/v1/apiary', data).then(
@@ -221,7 +221,7 @@ async function onModus() {
 }
 
 function onDelete() {
-  api.delete(`/v1/apiary/${props.id}`).then(
+  api.delete(`/v1/apiary/${id.value}`).then(
     (response: any) => {
       notification.open('positive', '');
       emit('onSuccess', response.data);

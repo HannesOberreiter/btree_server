@@ -15,22 +15,13 @@
           />
         </div>
         <div class="row full-width">
-          <form-main-todo
-            v-if="form === 'todo'"
+          <component
+            :is="layout.comp"
             :ids="ids"
-            :date="date"
-            @on-success="onDialogOK()"
-          ></form-main-todo>
-          <form-main-apiary
-            v-else-if="form === 'apiary'"
-            :id="id"
-            :latlng="latlng"
-            @on-success="(value) => onDialogOK(value)"
-          ></form-main-apiary>
-          <form-main-hive
-            v-else-if="form === 'hive'"
-            :ids="ids"
-          ></form-main-hive>
+            v-bind="layout.props"
+            @on-success="(value: any) => onDialogOK(value)"
+          >
+          </component>
         </div>
       </q-card-section>
     </q-card>
@@ -42,10 +33,11 @@ import FormMainApiary from './FormMainApiary.vue';
 import FormMainTodo from './FormMainTodo.vue';
 import FormMainHive from '~/components/FormMainHive.vue';
 import dayjs from 'dayjs';
+import FormMainMovement from './FormMainMovement.vue';
 
 const { dialogRef, onDialogHide, onDialogOK } = useDialogPluginComponent();
 
-defineProps({
+const props = defineProps({
   title: {
     type: String,
     required: true,
@@ -58,9 +50,14 @@ defineProps({
     type: Array,
     default: null,
   },
-  id: {
-    type: Number,
-    default: 0,
+
+  maximized: {
+    type: Boolean,
+    default: false,
+  },
+  selected: {
+    type: Array,
+    default: null,
   },
   date: {
     type: String,
@@ -70,11 +67,34 @@ defineProps({
     type: Object,
     default: null,
   },
-  maximized: {
-    type: Boolean,
-    default: false,
-  },
 });
+
+const layouts = {
+  todo: {
+    comp: FormMainTodo,
+    props: {
+      date: props.date,
+    },
+  },
+  apiary: {
+    comp: FormMainApiary,
+    props: {
+      latlng: props.latlng,
+    },
+  },
+  hive: {
+    comp: FormMainHive,
+    props: {},
+  },
+  movedate: {
+    comp: FormMainMovement,
+    props: {
+      selected: props.selected,
+    },
+  },
+} as any;
+
+const layout = computed(() => layouts[props.form]);
 
 defineEmits([...useDialogPluginComponent.emits, 'onSuccess']);
 </script>
