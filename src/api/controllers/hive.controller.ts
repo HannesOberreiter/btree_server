@@ -7,7 +7,7 @@ import { HiveLocation } from '../models/hive_location.model';
 import { Movedate } from '../models/movedate.model';
 import { Apiary } from '../models/apiary.model';
 import { conflict } from '@hapi/boom';
-import { map, flatten } from 'lodash';
+import { map } from 'lodash';
 import dayjs from 'dayjs';
 import { deleteHiveConnections } from '../utils/delete.util';
 
