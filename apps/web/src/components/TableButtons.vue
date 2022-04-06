@@ -202,7 +202,7 @@ function onDelete() {
     persistent: true,
   }).onOk(() => {
     const ids = selected.value.map((o: any) => o.id);
-    api.patch('/v1/${props.table}/batchDelete', { ids: ids }).then(
+    api.patch(`/v1/${props.table}/batchDelete`, { ids: ids }).then(
       (_response: any) => {
         emit('change');
         notification.open('positive', '');
