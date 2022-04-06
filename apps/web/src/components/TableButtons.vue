@@ -1,118 +1,111 @@
 <template>
-  <q-btn
-    class="q-mr-sm"
-    color="primary"
-    unelevated
-    :label="$t('new')"
-    @click="onNew"
-  />
-  <q-btn
-    class="q-mr-sm"
-    color="secondary"
-    unelevated
-    :disable="selected.length > 0 ? false : true"
-    :label="$t('edit')"
-    @click="onEdit"
-  />
+  <q-btn-group unelevated size="sm">
+    <q-btn color="primary" no-caps :label="$t('new')" @click="onNew" />
+    <q-btn
+      color="secondary"
+      no-caps
+      :disable="selected.length > 0 ? false : true"
+      :label="$t('edit')"
+      @click="onEdit"
+    />
 
-  <q-btn
-    class="q-mr-sm"
-    color="warning"
-    unelevated
-    :icon-right="modus ? 'fas fa-eye' : 'fas fa-eye-slash'"
-    :label="$t('inactive')"
-    @click="modus = !modus"
-  />
+    <q-btn
+      color="warning"
+      no-caps
+      :icon-right="modus ? 'fas fa-eye' : 'fas fa-eye-slash'"
+      :label="$t('inactive')"
+      @click="modus = !modus"
+    />
 
-  <q-btn
-    class="q-mr-sm"
-    color="warning"
-    unelevated
-    :label="$t('filter')"
-    :icon-right="filter ? 'fas fa-filter' : 'fas fa-filter-circle-xmark'"
-    @click="openFilter"
-  />
+    <q-btn
+      color="warning"
+      no-caps
+      :label="$t('filter')"
+      :icon-right="filter ? 'fas fa-filter' : 'fas fa-filter-circle-xmark'"
+      @click="openFilter"
+    />
 
-  <q-btn-dropdown unelevated color="info" :label="$t('more')">
-    <q-list>
-      <q-item v-close-popup clickable @click="onAddQueen">
-        <q-item-section>
-          <q-item-label>{{ $t('queenAdd') }}</q-item-label>
-        </q-item-section>
-      </q-item>
+    <q-btn-dropdown no-caps color="info" label="...">
+      <q-list>
+        <q-item v-close-popup clickable @click="onAddQueen">
+          <q-item-section>
+            <q-item-label>{{ $t('queenAdd') }}</q-item-label>
+          </q-item-section>
+        </q-item>
 
-      <q-item v-close-popup clickable @click="onMove">
-        <q-item-section>
-          <q-item-label>{{ $t('movement') }}</q-item-label>
-        </q-item-section>
-      </q-item>
+        <q-item v-close-popup clickable @click="onMove">
+          <q-item-section>
+            <q-item-label>{{ $t('movement') }}</q-item-label>
+          </q-item-section>
+        </q-item>
 
-      <q-separator />
+        <q-separator />
 
-      <q-item
-        v-close-popup
-        clickable
-        :disable="selected.length > 0 ? false : true"
-        @click="onExport"
-      >
-        <q-item-section avatar>
-          <q-avatar>
-            {{ selected.length }}
-          </q-avatar>
-        </q-item-section>
-        <q-item-section>
-          <q-item-label>{{ $t('exportCSV') }}</q-item-label>
-        </q-item-section>
-      </q-item>
+        <q-item
+          v-close-popup
+          clickable
+          :disable="selected.length > 0 ? false : true"
+          @click="onExport"
+        >
+          <q-item-section avatar>
+            <q-avatar>
+              {{ selected.length }}
+            </q-avatar>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>{{ $t('exportCSV') }}</q-item-label>
+          </q-item-section>
+        </q-item>
 
-      <q-separator />
+        <q-separator />
 
-      <q-item
-        v-close-popup
-        clickable
-        :disable="selected.length > 0 ? false : true"
-        @click="onDelete"
-      >
-        <q-item-section avatar>
-          <q-avatar>
-            {{ selected.length }}
-          </q-avatar>
-        </q-item-section>
-        <q-item-section>
-          <q-item-label>{{ $t('delete') }}</q-item-label>
-        </q-item-section>
-      </q-item>
-      <q-item
-        v-close-popup
-        clickable
-        :disable="selected.length > 0 && deleted ? false : true"
-        @click="onRestore"
-      >
-        <q-item-section avatar>
-          <q-avatar>
-            {{ deleted ? selected.length : 0 }}
-          </q-avatar>
-        </q-item-section>
-        <q-item-section>
-          <q-item-label>{{ $t('restore') }}</q-item-label>
-        </q-item-section>
-      </q-item>
-      <q-item v-close-popup clickable @click="deleted = !deleted">
-        <q-item-section avatar>
-          <q-avatar>
-            <q-icon
-              :name="deleted ? 'fas fa-eye' : 'fas fa-eye-slash'"
-            ></q-icon>
-          </q-avatar>
-        </q-item-section>
-        <q-item-section>
-          <q-item-label>
-            {{ $t('deleted') }}
-          </q-item-label>
-        </q-item-section>
-      </q-item>
-    </q-list>
-  </q-btn-dropdown>
+        <q-item
+          v-close-popup
+          clickable
+          :disable="selected.length > 0 ? false : true"
+          @click="onDelete"
+        >
+          <q-item-section avatar>
+            <q-avatar>
+              {{ selected.length }}
+            </q-avatar>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>{{ $t('delete') }}</q-item-label>
+          </q-item-section>
+        </q-item>
+        <q-item
+          v-close-popup
+          clickable
+          :disable="selected.length > 0 && deleted ? false : true"
+          @click="onRestore"
+        >
+          <q-item-section avatar>
+            <q-avatar>
+              {{ deleted ? selected.length : 0 }}
+            </q-avatar>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>{{ $t('restore') }}</q-item-label>
+          </q-item-section>
+        </q-item>
+        <q-item v-close-popup clickable @click="deleted = !deleted">
+          <q-item-section avatar>
+            <q-avatar>
+              <q-icon
+                :name="deleted ? 'fas fa-eye' : 'fas fa-eye-slash'"
+              ></q-icon>
+            </q-avatar>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>
+              {{ $t('deleted') }}
+            </q-item-label>
+          </q-item-section>
+        </q-item>
+      </q-list>
+    </q-btn-dropdown>
+  </q-btn-group>
 </template>
 
 <script setup lang="ts">

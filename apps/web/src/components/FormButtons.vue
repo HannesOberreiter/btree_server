@@ -1,46 +1,28 @@
 <template>
-  <q-btn-group v-if="!isEdit" spread>
+  <q-btn-group v-if="!isEdit" size="md" unelevated spread>
     <q-btn
-      unelevated
-      size="md"
       color="secondary"
       :loading="isSubmitting"
       :label="$t('save')"
       @click="onSubmit"
     />
-    <q-btn
-      unelevated
-      size="md"
-      color="warning"
-      :label="$t('reset')"
-      @click="emit('reset')"
-    />
+    <q-btn color="warning" :label="$t('reset')" @click="emit('reset')" />
     <q-btn
       v-if="lastInsert"
-      unelevated
-      size="md"
       color="info"
       :loading="isSubmitting"
       :label="$t('undo')"
       @click="onUndo"
     />
   </q-btn-group>
-  <q-btn-group v-else spread>
+  <q-btn-group v-else unelevated spread>
     <q-btn
-      unelevated
-      size="md"
       color="secondary"
       :loading="isSubmitting"
       :label="$t('update')"
       @click="onUpdate"
     ></q-btn>
-    <q-btn
-      unelevated
-      size="md"
-      color="warning"
-      :label="$t('reset')"
-      @click="emit('reset')"
-    />
+    <q-btn color="warning" :label="$t('reset')" @click="emit('reset')" />
   </q-btn-group>
 </template>
 
@@ -128,6 +110,7 @@ async function onSubmit() {
   isSubmitting.value = true;
   const isFormCorrect = await v.value.$validate();
   if (!isFormCorrect) {
+    notification.open('negative', v.value.$errors[0].$message, true);
     isSubmitting.value = false;
     return;
   }

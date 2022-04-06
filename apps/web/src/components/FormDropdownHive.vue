@@ -55,6 +55,8 @@ import { useApiariesQuery, useHivesQuery } from '~/composables/useQuery';
 import { useVModels } from '@vueuse/core';
 import { validationErrors } from '~/helpers';
 import useVuelidate from '@vuelidate/core';
+
+const { t } = useI18n();
 const { isLoading: isLoadingHive, data: hives } = useHivesQuery({});
 const { isLoading: isLoadingApiary, data: apiaries } = useApiariesQuery({});
 
@@ -145,7 +147,7 @@ const state = reactive({
 const rules = computed(() => {
   if (props.required) {
     return {
-      hive: { required },
+      hive: { required: required(t('hive')) },
     };
   } else {
     return { hive: {} };

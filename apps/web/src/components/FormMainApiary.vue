@@ -116,6 +116,7 @@ import GlobalLoading from './GlobalLoading.vue';
 import useVuelidate from '@vuelidate/core';
 
 const notification = useNotification();
+const { t } = useI18n();
 const props = defineProps({
   ids: {
     type: Array,
@@ -171,8 +172,14 @@ if (!apiary.value) {
 
 const rules = {
   description: { maxLengthValue: maxLength(512) },
-  latitude: { required, betweenValue: between(-90, 90) },
-  longitude: { required, betweenValue: between(-90, 90) },
+  latitude: {
+    required: required(t('latitude')),
+    betweenValue: between(-90, 90),
+  },
+  longitude: {
+    required: required(t('longitude')),
+    betweenValue: between(-90, 90),
+  },
   note: { maxLengthValue: maxLength(2000) },
 };
 const v = useVuelidate(rules, state, { $autoDirty: true });

@@ -181,8 +181,8 @@ const state = reactive({
 });
 const rules = reactive({
   other: { maxLengthValue: maxLength(45) },
-  source: { required },
-  terms: { required },
+  source: { required: required(t('source')) },
+  terms: { required: required(t('terms')) },
 });
 const v$ = useVuelidate(rules, state);
 

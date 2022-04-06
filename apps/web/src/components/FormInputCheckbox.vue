@@ -1,6 +1,6 @@
 <template>
   <div class="row">
-    <div class="col-8 col-md-5 col-lg-3">
+    <div class="col-8 col-md-5">
       <q-item v-ripple tag="label">
         <q-item-section>
           <q-item-label>

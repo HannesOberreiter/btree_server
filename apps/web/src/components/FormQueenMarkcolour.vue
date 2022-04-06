@@ -8,7 +8,7 @@
     icon="fas fa-marker"
   >
     <template #deepAfter>
-      <div class="bg-black q-pl-xs q-pr-xs">
+      <div class="bg-dark q-pl-xs q-pr-xs">
         <q-icon
           :color="color"
           name="fas fa-circle"

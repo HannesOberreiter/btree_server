@@ -1,8 +1,8 @@
 <template>
   <q-input
     v-model.trim="modelValue"
-    :error="v.text.$error"
-    :error-message="validationErrors(v.text)"
+    :error="v[label]['$error']"
+    :error-message="validationErrors(v[label])"
     :no-error-icon="true"
     :label="
       disable
@@ -40,6 +40,8 @@ import BtnMultipleValues from './BtnMultipleValues.vue';
 import { PropType } from 'vue';
 import { isEmpty } from 'lodash';
 import { TextField } from '~/types';
+
+const { t } = useI18n();
 
 const props = defineProps({
   modelValue: {
@@ -91,20 +93,20 @@ const multipleValues = computed(() =>
 const disable = ref(multipleValues.value);
 modelValue.value = disable.value ? null : modelValue.value;
 const state = {
-  text: modelValue,
+  [props.label]: modelValue,
 };
 const rules = computed(() => {
   if (props.required) {
     return {
-      text: {
-        required,
+      [props.label]: {
+        required: required(t(props.label)),
         maxLengthValue: maxLength(props.maxValid),
         minLengthValue: minLength(props.minValid),
       },
     };
   } else {
     return {
-      text: {
+      [props.label]: {
         maxLengthValue: maxLength(props.maxValid),
         minLengthValue: minLength(props.minValid),
       },

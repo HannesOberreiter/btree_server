@@ -5,6 +5,7 @@
 
     <q-form v-else class="q-gutter-md" @submit="onSubmit">
       <p class="text-center">
+        {{ t('activateUser.message') }}
         Vielen Dank für deine Registrierung, bitte aktiviere noch deinen
         Account.
       </p>
@@ -42,7 +43,6 @@
 
 <script setup lang="ts">
 import { reactive, ref } from 'vue';
-import { required, maxLength, alphaNum } from '@vuelidate/validators';
 import { useI18n } from 'vue-i18n';
 import { useNotification } from '~/composables/useResponseText';
 import { useRouter } from 'vue-router';
@@ -50,6 +50,7 @@ import { validationErrors } from '~/helpers';
 import AuthService from '~/services/auth.service';
 import FormErrorMax from '~/components/FormErrorMax.vue';
 import useVuelidate from '@vuelidate/core';
+import { maxLength, required, alphaNum } from '~/helpers/i18n-validators';
 
 const notification = useNotification();
 const { t } = useI18n();
@@ -71,7 +72,11 @@ const state = reactive({
   resetKey: prop.activate ? prop.activate : '',
 });
 const rules = {
-  resetKey: { required, alphaNum, maxLengthValue: maxLength(200) },
+  resetKey: {
+    required: required(t('key')),
+    alphaNum,
+    maxLengthValue: maxLength(200),
+  },
 };
 
 const v = useVuelidate(rules, state);

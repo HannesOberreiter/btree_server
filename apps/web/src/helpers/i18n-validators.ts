@@ -4,16 +4,19 @@ import { i18n } from '~/boot/i18n';
 // or import { createI18nMessage } from '@vuelidate/validators'
 const { createI18nMessage } = validators;
 
-// extract the `t` helper, should work for both Vue 2 and Vue 3 versions of vue-i18n
-// eslint-disable-next-line @typescript-eslint/unbound-method
-const { t } = i18n.global || i18n;
+// Create your i18n message instance. Used for vue-i18n@9
+const withI18nMessage = createI18nMessage({ t: i18n.global.t.bind(i18n) });
 
-// pass `t` and create your i18n message instance
-const withI18nMessage = createI18nMessage({ t });
+import { helpers } from '@vuelidate/validators';
 
-// wrap each validator.
-export const required = withI18nMessage(validators.required);
-// validators that expect a parameter should have `{ withArguments: true }` passed as a second parameter, to annotate they should be wrapped
+// Using custom "required" validator, to add params
+const requiredCustom = (field: string) =>
+  helpers.withParams({ field: field }, (value) => helpers.req(value));
+
+export const required = withI18nMessage(requiredCustom, {
+  withArguments: true,
+});
+
 export const minLength = withI18nMessage(validators.minLength, {
   withArguments: true,
 });

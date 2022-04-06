@@ -83,7 +83,7 @@ const editOptions = ref([]) as any;
 const editOptionsCopy = ref([]) as any;
 
 const stateDefault = {
-  date: useDate.getCurrent(),
+  date: useDate.isoFormat(useDate.getCurrent()),
 };
 const state = ref({
   hive: [] as any,

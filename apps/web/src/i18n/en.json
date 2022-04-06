@@ -8,9 +8,10 @@
   "filterRemove": "Remove active filter",
   "activateUser": {
     "label": "Confirm Key",
-    "notValid": "The activation key is not valid anymore. You can also activate your account with the 'Forgot your password' link below.",
+    "notValid": "The activation key is not valid any more. You can also activate your account with the 'Forgot your password' link below.",
     "success": "Account activated you can now login.",
-    "title": "Please confirm your email!"
+    "title": "Please confirm your email!",
+    "message": "Thank you for your registration, please activate your account as last step."
   },
   "active": "Active",
   "add": "Add",
@@ -291,7 +292,7 @@
     "minLengthValue": "The minimum length is {min}.",
     "minValue": "The minimum value is {min}.",
     "numeric": "The value must be numeric.",
-    "required": "This field is required.",
+    "required": "{field} field is required.",
     "sameAs": "The value must be equal to the password value."
   },
   "varroa": "Varroa",

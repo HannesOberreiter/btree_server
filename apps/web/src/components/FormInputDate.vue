@@ -53,6 +53,7 @@ import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { isEmpty } from 'lodash';
 
 dayjs.extend(customParseFormat); // Needed to validate if date is even possible
+const { t } = useI18n();
 const qDateProxy = ref(false);
 const props = defineProps({
   modelValue: {
@@ -99,7 +100,7 @@ const state = {
 
 const rules = {
   date: {
-    required,
+    required: required(t(label)),
     minValue: (value: string) => {
       return dayjs(value, 'YYYY-MM-DD', true).isValid();
     },

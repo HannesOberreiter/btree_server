@@ -31,6 +31,7 @@ import { useVModels } from '@vueuse/core';
 import { validationErrors } from '~/helpers';
 import useVuelidate from '@vuelidate/core';
 
+const { t } = useI18n();
 const props = defineProps({
   modelMail: {
     type: String,
@@ -49,7 +50,11 @@ const state = {
   email: modelMail,
 };
 const rules = {
-  email: { required, email, maxLengthValue: maxLength(50) },
+  email: {
+    required: required(t('email')),
+    email,
+    maxLengthValue: maxLength(50),
+  },
 };
 const v = useVuelidate(rules, state, { $autoDirty: true });
 </script>

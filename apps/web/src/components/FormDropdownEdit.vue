@@ -44,7 +44,7 @@ const state = {
 };
 
 const rules = {
-  edit: { required },
+  edit: { required: required('ID') },
 };
 const v = useVuelidate(rules, state);
 </script>

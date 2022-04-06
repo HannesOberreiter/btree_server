@@ -72,23 +72,29 @@ const useNotification = () => {
     return displayMessage;
   }
 
-  function open(type: Type, message: any) {
+  function open(type: Type, message: any, translation = false) {
     state.show = true;
     state.error = type === 'negative' ? true : false;
     let m = '';
-    if (!message) {
-      if (type === 'negative') {
-        m = t('error.unknown');
-      } else if (type === 'positive') {
-        m = t('success');
-      }
+
+    if (translation) {
+      // We already received a translated message, not need to translate it.
+      m = message;
     } else {
-      if (type === 'negative' && message) {
-        m = useHandleError(message);
-      } else if (type === 'positive' && message) {
-        m = useHandleSuccess(message);
+      if (!message) {
+        if (type === 'negative') {
+          m = t('error.unknown');
+        } else if (type === 'positive') {
+          m = t('success');
+        }
       } else {
-        m = t(message);
+        if (type === 'negative' && message) {
+          m = useHandleError(message);
+        } else if (type === 'positive' && message) {
+          m = useHandleSuccess(message);
+        } else {
+          m = t(message);
+        }
       }
     }
 
