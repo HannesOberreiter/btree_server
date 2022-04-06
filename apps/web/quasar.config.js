@@ -11,7 +11,7 @@
 const { configure } = require('quasar/wrappers');
 const path = require('path');
 
-module.exports = configure(function (/* ctx */) {
+module.exports = configure(function (ctx) {
   return {
     eslint: {
       // fix: true,
@@ -124,7 +124,7 @@ module.exports = configure(function (/* ctx */) {
           // rewrite: (path) => path.replace(/^\/api/, ""),
         },
       },
-      port: 9000,
+      port: ctx.mode.spa ? 9000 : 9100,
       https: false,
       open: false, // opens browser window automatically
     },

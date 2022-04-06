@@ -1,5 +1,3 @@
-const { resolve } = require('path');
-
 module.exports = {
   // https://eslint.org/docs/user-guide/configuring#configuration-cascading-and-hierarchy
   // This option interrupts the configuration hierarchy at this file
@@ -10,21 +8,15 @@ module.exports = {
   // Must use parserOptions instead of "parser" to allow vue-eslint-parser to keep working
   // `parser: 'vue-eslint-parser'` is already included with any 'plugin:vue/**' config and should be omitted
   parserOptions: {
-    // https://github.com/typescript-eslint/typescript-eslint/tree/master/packages/parser#configuration
-    // https://github.com/TypeStrong/fork-ts-checker-webpack-plugin#eslint
-    // Needed to make the parser take into account 'vue' files
+    parser: require.resolve('@typescript-eslint/parser'),
     extraFileExtensions: ['.vue'],
-    parser: '@typescript-eslint/parser',
-    project: resolve(__dirname, './tsconfig.json'),
-    tsconfigRootDir: __dirname,
-    ecmaVersion: 2018, // Allows for the parsing of modern ECMAScript features
-    sourceType: 'module', // Allows for the use of imports
   },
 
   env: {
     browser: true,
     es2021: true,
     node: true,
+    'vue/setup-compiler-macros': true,
   },
 
   // Rules order is important, please avoid shuffling them
@@ -46,6 +38,7 @@ module.exports = {
     // https://github.com/prettier/eslint-config-prettier#installation
     // usage with Prettier, provided by 'eslint-config-prettier'.
     'prettier',
+
     // https://github.com/antfu/unplugin-auto-import#eslint---eslintno-undef
     './.eslintrc-auto-import.json',
   ],

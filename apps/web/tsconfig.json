@@ -1,28 +1,41 @@
 {
+  "extends": "@quasar/app-vite/tsconfig-preset",
   "compilerOptions": {
-    "baseUrl": ".",
-    "module": "ESNext",
-    "target": "es2016",
-    "lib": [
-      "DOM",
-      "ESNext"
-    ],
-    "strict": true,
-    "esModuleInterop": true,
-    "incremental": false,
     "skipLibCheck": true,
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
     "noUnusedLocals": true,
     "strictNullChecks": false,
     "forceConsistentCasingInFileNames": true,
     "types": [
-      "vite/client",
       "@intlify/vite-plugin-vue-i18n/client"
     ],
+    "baseUrl": ".",
     "paths": {
       "~/*": [
         "src/*"
+      ],
+      "src/*": [
+        "src/*"
+      ],
+      "app/*": [
+        "*"
+      ],
+      "components/*": [
+        "src/components/*"
+      ],
+      "layouts/*": [
+        "src/layouts/*"
+      ],
+      "pages/*": [
+        "src/pages/*"
+      ],
+      "assets/*": [
+        "src/assets/*"
+      ],
+      "boot/*": [
+        "src/boot/*"
+      ],
+      "stores/*": [
+        "src/stores/*"
       ]
     }
   },
@@ -34,8 +47,6 @@
     "test/**.ts"
   ],
   "exclude": [
-    "dist",
-    "node_modules",
     "cypress"
   ]
 }
