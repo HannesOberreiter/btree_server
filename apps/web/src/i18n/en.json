@@ -3,6 +3,9 @@
   "inactive": "Inactive",
   "noQueen": "No Queen",
   "activate": "Activate",
+  "filter": "Filter",
+  "filterEmpty": "No filter",
+  "filterRemove": "Remove active filter",
   "activateUser": {
     "label": "Confirm Key",
     "notValid": "The activation key is not valid anymore. You can also activate your account with the 'Forgot your password' link below.",

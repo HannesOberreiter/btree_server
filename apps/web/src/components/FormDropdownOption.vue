@@ -83,15 +83,19 @@ const multipleValues = computed(() =>
 const disable = ref(multipleValues.value);
 const options = ref([] as any);
 
-if (values.value) setValues();
-
 watch(data, () => {
   setValues();
 });
 
-watch(values, () => {
-  setValues();
-});
+watch(
+  values,
+  () => {
+    setValues();
+  },
+  {
+    immediate: true,
+  }
+);
 
 watch(reset, () => {
   setValues();
@@ -102,6 +106,8 @@ function setValues() {
   if (multipleValues.value) editValues(true);
   else if (values.value && !isEmpty(values.value)) {
     setOptions(values.value[0][props.tableId]);
+  } else if (modelValue.value) {
+    setOptions(modelValue.value);
   } else setOptions();
 }
 

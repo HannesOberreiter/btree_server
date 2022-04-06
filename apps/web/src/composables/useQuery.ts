@@ -155,11 +155,23 @@ export function useHivesQuery({
   modus = true as MaybeRef<boolean>,
   deleted = false as MaybeRef<boolean>,
   q = '' as MaybeRef<string>,
+  filters = '' as MaybeRef<string>,
   enabled = true as MaybeRef<boolean>,
   details = false,
 }) {
   return useQuery(
-    ['hive', offset, limit, order, direction, modus, deleted, q, details],
+    [
+      'hive',
+      offset,
+      limit,
+      order,
+      direction,
+      modus,
+      deleted,
+      q,
+      details,
+      filters,
+    ],
     () => {
       let url = `/v1/hive?offset=${unref(offset)}`;
       url += `&limit=${unref(limit)}`;
@@ -176,6 +188,8 @@ export function useHivesQuery({
       url += `&modus=${unref(modus)}&deleted=${unref(deleted)}`;
       url += `&details=${details}`;
       url += `&q=${unref(q)}`;
+      url += `&filters=${unref(filters)}`;
+
       return api.get(url);
     },
 

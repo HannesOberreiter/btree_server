@@ -24,6 +24,15 @@
     @click="modus = !modus"
   />
 
+  <q-btn
+    class="q-mr-sm"
+    color="warning"
+    unelevated
+    :label="$t('filter')"
+    :icon-right="filter ? 'fas fa-filter' : 'fas fa-filter-circle-xmark'"
+    @click="openFilter"
+  />
+
   <q-btn-dropdown unelevated color="info" :label="$t('more')">
     <q-list>
       <q-item v-close-popup clickable @click="onAddQueen">
@@ -114,7 +123,11 @@ import { api } from '~/boot/axios';
 import { useDateFormat } from '~/composables/useDate';
 import { clearCache } from '~/composables/useQuery';
 import { useNotification } from '~/composables/useResponseText';
+import { useTableFilterStore } from '~/stores/tableFilter';
+import DialogFilter from './DialogFilter.vue';
 import DialogForm from './DialogForm.vue';
+
+const storeFilter = useTableFilterStore();
 
 const useDate = useDateFormat();
 const { t } = useI18n();
@@ -139,6 +152,7 @@ const props = defineProps({
 const emit = defineEmits(['update:deleted', 'update:modus', 'change']);
 const { deleted, modus } = useVModels(props, emit);
 const selected = toRef(props, 'selected');
+const filter = computed(() => storeFilter.table(props.table) !== '');
 
 const dialogForm = (
   title: string,
@@ -159,6 +173,15 @@ const dialogForm = (
     onEmit();
   });
 };
+
+function openFilter() {
+  $q.dialog({
+    component: DialogFilter,
+    componentProps: {
+      form: props.table,
+    },
+  });
+}
 
 function onNew() {
   dialogForm('new', null);

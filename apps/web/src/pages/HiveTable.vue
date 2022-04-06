@@ -71,31 +71,11 @@
           ></table-buttons>
         </template>
         <template #top-right>
-          <q-input
-            v-model="filter"
-            borderless
-            dense
-            debounce="300"
-            placeholder="Search"
-          >
-            <template #append>
-              <q-icon name="fas fa-magnifier" />
-            </template>
-          </q-input>
-          <q-select
-            v-model="visibleColumns"
-            multiple
-            outlined
-            dense
-            options-dense
-            emit-value
-            :options="optionColumns"
-            option-label="label"
-            option-value="name"
-            :display-value="$q.lang.table.columns"
-            options-cover
-            style="min-width: 150px"
-          />
+          <table-filter
+            v-model:modelFilter="filter"
+            v-model:modelVisible="visibleColumns"
+            :columns="columns"
+          ></table-filter>
         </template>
       </q-table>
     </div>
@@ -103,7 +83,7 @@
 </template>
 
 <script lang="ts">
-import { rowTableMeta } from '~/helpers';
+import { tableCheckSelected, tableMeta } from '~/helpers';
 </script>
 
 <script setup lang="ts">
@@ -116,21 +96,24 @@ import TableButtons from '~/components/TableButtons.vue';
 import TableColQueen from '~/components/TableColQueen.vue';
 import { QTableProps } from 'quasar';
 import { useDateFormat } from '~/composables/useDate';
+import TableFilter from '~/components/TableFilter.vue';
+import { useTableFilterStore } from '~/stores/tableFilter';
 
-const useDate = useDateFormat();
-const storeTable = useTablesStore();
 const $q = useQuasar();
-const {
-  visibleHive: visibleColumns,
-  lengthHive: lengthTable,
-  sortHive: sortBy,
-  directionHive: descending,
-} = storeToRefs(storeTable);
+const useDate = useDateFormat();
+
+const storeTable = useTablesStore();
+const storeFilter = useTableFilterStore();
+const { hive: store } = storeToRefs(storeTable);
+const { hive: filters } = storeToRefs(storeFilter);
+
+const visibleColumns = ref(store.value.visible);
 
 const selected = ref([]);
 const rows = ref([]);
 const modus = ref(true);
 const deleted = ref(false);
+const filter = ref('');
 
 const columns = [
   {
@@ -222,7 +205,7 @@ const columns = [
     label: 'created',
     align: 'center',
     field: (row: any) => row.created_at,
-    format: (val: string, row: any) => rowTableMeta(val, row.creator),
+    format: (val: string, row: any) => tableMeta(val, row.creator),
     sortable: true,
   },
   {
@@ -230,7 +213,7 @@ const columns = [
     label: 'updated',
     align: 'center',
     field: (row: any) => row.updated_at,
-    format: (val: string, row: any) => rowTableMeta(val, row.editor),
+    format: (val: string, row: any) => tableMeta(val, row.editor),
     sortable: true,
   },
   {
@@ -239,21 +222,18 @@ const columns = [
     align: 'center',
     field: (row: any) => row.deleted_at,
     format: (val: string, row: any) =>
-      row.deleted ? rowTableMeta(val, row.editor) : '',
+      row.deleted ? tableMeta(val, row.editor) : '',
     sortable: true,
   },
 ] as QTableProps['columns'];
 
-const optionColumns = columns.filter((obj) => (!obj.required ? obj : null));
-
 const pagination = ref({
-  sortBy: sortBy.value,
-  descending: descending.value,
+  sortBy: store.value.sort,
+  descending: store.value.direction,
   page: 1,
-  rowsPerPage: lengthTable.value,
+  rowsPerPage: store.value.length,
   rowsNumber: 0,
 });
-const filter = ref('');
 
 const {
   isLoading: isLoadingTable,
@@ -265,31 +245,34 @@ const {
   offset: computed(() => pagination.value.page - 1),
   limit: computed(() => pagination.value.rowsPerPage),
   q: computed(() => (filter.value ? filter.value : '')),
+  filters: computed(() => (filters.value ? filters.value : '')),
   deleted: deleted,
   modus: modus,
   details: true,
 });
 
-if (data.value) {
-  // Data already in cache
-  rows.value = data.value.results;
-  pagination.value.rowsNumber = data.value.total;
-}
-watch(data, () => {
-  rows.value = data.value.results;
-  pagination.value.rowsNumber = data.value.total;
-  selected.value = checkSelected(selected.value, rows.value);
+watch(visibleColumns, (cur) => {
+  store.value.visible = cur;
 });
 
-function checkSelected(selected: any[], rows: any) {
-  const rowIds = rows.map((o: any) => o.id);
-  return selected.filter((o: any) => rowIds.includes(o.id));
-}
+watch(
+  data,
+  () => {
+    if (data.value) {
+      rows.value = data.value.results;
+      pagination.value.rowsNumber = data.value.total;
+      selected.value = tableCheckSelected(selected.value, rows.value);
+    }
+  },
+  {
+    immediate: true,
+  }
+);
+
 function onRequest(props: any) {
-  filter.value = props.filter;
-  lengthTable.value = props.pagination.rowsPerPage;
-  sortBy.value = props.pagination.sortBy;
-  descending.value = props.pagination.descending;
+  store.value.length = props.pagination.rowsPerPage;
+  store.value.sort = props.pagination.sortBy;
+  store.value.direction = props.pagination.descending;
   pagination.value = props.pagination;
 }
 

@@ -27,11 +27,17 @@ export const formCheckMultipleValues = (data: any, name: string) => {
 };
 
 // Create combined field eg. test@test.com (1982-04-01 05:11) || 1982-04-01 05:11
-export const rowTableMeta = (date: string, name: any) => {
+export const tableMeta = (date: string, name: any) => {
   if (dayjs(date).isValid() === false) return '';
   if (name) {
     return `${name.email} (${dayjs(date).format('YYYY-MM-DD HH:mm')})`;
   } else {
     return dayjs(date).format('YYYY-MM-DD HH:mm');
   }
+};
+
+// Check table if all selected rows are actually visible on the table (happens when the data updates and moves the pages)
+export const tableCheckSelected = (selected: any[], rows: any) => {
+  const rowIds = rows.map((o: any) => o.id);
+  return selected.filter((o: any) => rowIds.includes(o.id));
 };
