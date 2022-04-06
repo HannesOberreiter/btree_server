@@ -7,7 +7,7 @@ import { HiveLocation } from '../models/hive_location.model';
 import { Movedate } from '../models/movedate.model';
 import { Apiary } from '../models/apiary.model';
 import { conflict } from '@hapi/boom';
-import { map } from 'lodash';
+import { map, flatten } from 'lodash';
 import dayjs from 'dayjs';
 import { deleteHiveConnections } from '../utils/delete.util';
 
@@ -24,7 +24,7 @@ export class HiveController extends Controller {
 
       const insertMovement = {
         apiary_id: req.body.apiary_id,
-        date: req.body.date
+        date: req.body.date,
       };
 
       const insert = {
@@ -34,7 +34,7 @@ export class HiveController extends Controller {
         grouphive: req.body.grouphive,
         note: req.body.note,
         modus: req.body.modus,
-        modus_date: req.body.modus_date
+        modus_date: req.body.modus_date,
       };
 
       const result = await Hive.transaction(async (trx) => {
@@ -48,19 +48,19 @@ export class HiveController extends Controller {
           const name = repeat > 1 ? req.body.name + (start + i) : req.body.name;
           const checkDuplicate = await HiveLocation.query().where({
             user_id: req.user.user_id,
-            hive_name: name
+            hive_name: name,
           });
           if (checkDuplicate.length > 0) throw conflict('name');
 
           const res = await Hive.query(trx).insert({
             ...insert,
             name: name,
-            bee_id: req.user.bee_id
+            bee_id: req.user.bee_id,
           });
           await Movedate.query(trx).insert({
             ...insertMovement,
             hive_id: res.id,
-            bee_id: req.user.bee_id
+            bee_id: req.user.bee_id,
           });
           result.push(res.id);
         }
@@ -75,14 +75,23 @@ export class HiveController extends Controller {
 
   async get(req: IUserRequest, res: Response, next: NextFunction) {
     try {
-      const { order, direction, offset, limit, modus, deleted, q, details } =
-        req.query as any;
+      const {
+        order,
+        direction,
+        offset,
+        limit,
+        modus,
+        deleted,
+        q,
+        details,
+        filters,
+      } = req.query as any;
       const query = Hive.query()
         .withGraphJoined('hive_location.[movedate]')
         .where({
           'hive_location.user_id': req.user.user_id,
           'hives.modus': modus === 'true',
-          'hives.deleted': deleted === 'true'
+          'hives.deleted': deleted === 'true',
         })
         .page(offset, parseInt(limit) === 0 ? 10 : limit);
 
@@ -93,6 +102,19 @@ export class HiveController extends Controller {
           .withGraphJoined('hive_type')
           .withGraphJoined('creator')
           .withGraphJoined('editor');
+      }
+
+      if (filters) {
+        try {
+          const filtering = JSON.parse(filters);
+          if (Array.isArray(filtering)) {
+            filtering.forEach((v) => {
+              query.where(v);
+            });
+          }
+        } catch (e) {
+          console.log(e);
+        }
       }
 
       if (Array.isArray(order)) {
@@ -125,7 +147,7 @@ export class HiveController extends Controller {
           if (ids.length > 1) throw conflict('name');
           const checkDuplicate = await HiveLocation.query().where({
             user_id: req.user.user_id,
-            hive_name: req.body.data.name
+            hive_name: req.body.data.name,
           });
           if (checkDuplicate.length > 1) throw conflict('name');
         }
@@ -150,7 +172,7 @@ export class HiveController extends Controller {
           .patch({
             edit_id: req.user.bee_id,
             modus: req.body.status,
-            modus_date: dayjs().format('YYYY-MM-DD')
+            modus_date: dayjs().format('YYYY-MM-DD'),
           })
           .findByIds(req.body.ids)
           .leftJoinRelated('hive_location')
@@ -195,7 +217,7 @@ export class HiveController extends Controller {
                 .toISOString()
                 .slice(0, 19)
                 .replace('T', ' '),
-              edit_id: req.user.bee_id
+              edit_id: req.user.bee_id,
             })
             .findByIds(softIds);
 
@@ -214,7 +236,7 @@ export class HiveController extends Controller {
         .withGraphJoined('hive_location')
         .findByIds(req.body.ids)
         .where({
-          'hive_location.user_id': req.user.user_id
+          'hive_location.user_id': req.user.user_id,
         });
       res.locals.data = result;
       next();
