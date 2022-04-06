@@ -1,6 +1,6 @@
 import { MaybeRef } from '@vueuse/core';
 import dayjs from 'dayjs';
-import { includes, isNil, map, omitBy } from 'lodash';
+import { includes, isNil, omitBy } from 'lodash';
 import { Ref } from 'vue';
 import { FormHive, FormQueen, FormQuicktool } from '~/types';
 
