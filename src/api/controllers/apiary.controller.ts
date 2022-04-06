@@ -4,9 +4,36 @@ import { checkMySQLError } from '@utils/error.util';
 import { IUserRequest } from '@interfaces/IUserRequest.interface';
 import { Apiary } from '../models/apiary.model';
 import { conflict, forbidden } from '@hapi/boom';
+import { map } from 'lodash';
+import dayjs from 'dayjs';
 export class ApiaryController extends Controller {
   constructor() {
     super();
+  }
+
+  async patch(req: IUserRequest, res: Response, next) {
+    try {
+      const ids = req.body.ids;
+      const insert = { ...req.body.data };
+      const result = await Apiary.transaction(async (trx) => {
+        if (req.body.name) {
+          if (ids.length > 1) throw conflict('name');
+          const checkDuplicate = await Apiary.query()
+            .where('user_id', req.user.user_id)
+            .where('name', req.body.name);
+          if (checkDuplicate.length > 1) throw conflict('name');
+        }
+        return await Apiary.query(trx)
+          .patch({ ...insert, edit_id: req.user.bee_id })
+          .findByIds(ids)
+          .withGraphFetched('hive_count')
+          .where('user_id', req.user.user_id);
+      });
+      res.locals.data = result;
+      next();
+    } catch (e) {
+      next(checkMySQLError(e));
+    }
   }
 
   async get(req: IUserRequest, res: Response, next: NextFunction) {
@@ -17,7 +44,7 @@ export class ApiaryController extends Controller {
         .withGraphFetched('hive_count')
         .where({
           'apiaries.user_id': req.user.user_id,
-          'apiaries.deleted': deleted === 'true'
+          'apiaries.deleted': deleted === 'true',
         })
         .page(offset, parseInt(limit) === 0 ? 10 : limit);
 
@@ -48,33 +75,19 @@ export class ApiaryController extends Controller {
     }
   }
 
-  async getApiary(req: IUserRequest, res: Response, next) {
-    try {
-      const result = await Apiary.query()
-        .findById(req.params.id)
-        .withGraphFetched('hive_count')
-        .where('deleted', 0)
-        .where('user_id', req.user.user_id);
-      res.locals.data = result;
-      next();
-    } catch (e) {
-      next(checkMySQLError(e));
-    }
-  }
-
-  async createApiary(req: IUserRequest, res: Response, next) {
+  async post(req: IUserRequest, res: Response, next) {
     try {
       const result = await Apiary.transaction(async (trx) => {
         const checkDuplicate = await Apiary.query().where({
           user_id: req.user.user_id,
-          name: req.body.name
+          name: req.body.name,
         });
 
         if (checkDuplicate.length > 0) throw conflict('name');
         return Apiary.query(trx).insertAndFetch({
           bee_id: req.user.bee_id,
           user_id: req.user.user_id,
-          ...req.body
+          ...req.body,
         });
       });
       res.locals.data = result;
@@ -83,23 +96,46 @@ export class ApiaryController extends Controller {
       next(checkMySQLError(e));
     }
   }
-  async updateApiary(req: IUserRequest, res: Response, next) {
+
+  async batchDelete(req: IUserRequest, res: Response, next: NextFunction) {
     try {
+      const hardDelete = req.query.hard ? true : false;
+      const restoreDelete = req.query.restore ? true : false;
+
       const result = await Apiary.transaction(async (trx) => {
-        if (req.body.name) {
-          const checkDuplicate = await Apiary.query()
-            .where('user_id', req.user.user_id)
-            .where('name', req.body.name)
-            .whereNot('id', req.body.id);
-          if (checkDuplicate.length > 0) throw conflict('name');
-        }
-        return Apiary.query(trx)
-          .patchAndFetchById(req.body.id, {
-            edit_id: req.user.bee_id,
-            ...req.body
-          })
+        const res = await Apiary.query()
           .withGraphFetched('hive_count')
-          .where('user_id', req.user.user_id);
+          .where('user_id', req.user.user_id)
+          .whereIn('id', req.body.ids);
+
+        const softIds = [];
+        const hardIds = [];
+        map(res, (obj) => {
+          if (obj.hive_count) throw forbidden();
+
+          if ((obj.deleted || hardDelete) && !restoreDelete)
+            hardIds.push(obj.id);
+          else softIds.push(obj.id);
+        });
+
+        if (hardIds.length > 0) {
+          await Apiary.query(trx).delete().whereIn('id', hardIds);
+        }
+
+        if (softIds.length > 0)
+          await Apiary.query(trx)
+            .patch({
+              deleted: restoreDelete ? false : true,
+              deleted_at: dayjs()
+                .utc()
+                .toISOString()
+                .slice(0, 19)
+                .replace('T', ' '),
+              edit_id: req.user.bee_id,
+            })
+            .findByIds(softIds);
+
+        return res;
       });
       res.locals.data = result;
       next();
@@ -108,24 +144,10 @@ export class ApiaryController extends Controller {
     }
   }
 
-  async deleteApiary(req: IUserRequest, res: Response, next) {
+  async batchGet(req: IUserRequest, res: Response, next: NextFunction) {
     try {
-      const result = await Apiary.transaction(async (trx) => {
-        const res = await Apiary.query(trx)
-          .findById(req.params.id)
-          .withGraphFetched('hive_count')
-          .where('user_id', req.user.user_id);
-        if (res.hive_count) throw forbidden();
-        if (res.deleted) {
-          return await Apiary.query(trx).deleteById(res.id);
-        } else {
-          return await Apiary.query(trx)
-            .patch({
-              deleted: true,
-              edit_id: req.user.bee_id
-            })
-            .findById(res.id);
-        }
+      const result = await Apiary.query().findByIds(req.body.ids).where({
+        user_id: req.user.user_id,
       });
       res.locals.data = result;
       next();

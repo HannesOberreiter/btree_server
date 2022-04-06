@@ -12,6 +12,7 @@ export class Apiary extends ExtModel {
   url!: string;
   modus!: boolean;
   deleted!: boolean;
+  deleted_at!: string;
   user_id!: number;
 
   bee_id!: number;
@@ -46,8 +47,8 @@ export class Apiary extends ExtModel {
 
       user_id: { type: 'integer' }, // Company FK
       bee_id: { type: 'integer' }, // Creator Bee FK
-      edit_id: { type: 'integer' } // Updater Bee FK
-    }
+      edit_id: { type: 'integer' }, // Updater Bee FK
+    },
   };
 
   static relationMappings = () => ({
@@ -56,32 +57,32 @@ export class Apiary extends ExtModel {
       modelClass: Company,
       join: {
         from: ['apiaries.user_id'],
-        to: ['company.id']
-      }
+        to: ['company.id'],
+      },
     },
     hive_count: {
       relation: ExtModel.HasOneRelation,
       modelClass: HiveCount,
       join: {
         from: ['hives_counts.id'],
-        to: ['apiaries.id']
-      }
+        to: ['apiaries.id'],
+      },
     },
     creator: {
       relation: ExtModel.HasOneRelation,
       modelClass: User,
       join: {
         from: ['apiaries.bee_id'],
-        to: ['bees.id']
-      }
+        to: ['bees.id'],
+      },
     },
     editor: {
       relation: ExtModel.HasOneRelation,
       modelClass: User,
       join: {
         from: ['apiaries.edit_id'],
-        to: ['bees.id']
-      }
-    }
+        to: ['bees.id'],
+      },
+    },
   });
 }
