@@ -100,7 +100,7 @@ const state = {
 
 const rules = {
   date: {
-    required: required(t(label)),
+    required: required(t(props.label)),
     minValue: (value: string) => {
       return dayjs(value, 'YYYY-MM-DD', true).isValid();
     },

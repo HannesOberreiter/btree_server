@@ -186,13 +186,13 @@ function editApiaryForm(e: any) {
   }
 }
 function deleteApiary(value: string) {
-  api.delete('/v1/apiary/' + value).then(
+  api.patch('/v1/apiary/batchDelete', { ids: [value] }).then(
     async (_response: any) => {
       await refetch.value();
       notification.open('positive', '');
     },
     (error) => {
-      notification.open('negative', error);
+      notification.open('negative', error.response);
     }
   );
 }
@@ -202,9 +202,11 @@ function moveApiaryStart(value: any) {
 }
 function moveApiaryEnd(e: any) {
   const data = JSON.stringify({
-    id: dragObject.id,
-    latitude: e.target._latlng.lat,
-    longitude: e.target._latlng.lng,
+    ids: [dragObject.id],
+    data: {
+      latitude: e.target._latlng.lat,
+      longitude: e.target._latlng.lng,
+    },
   });
   $q.dialog({
     title: t('confirm'),

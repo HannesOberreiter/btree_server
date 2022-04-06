@@ -20,6 +20,8 @@ export const useFormCleanup = (
       return cleanupMovement(state.value, isEdit);
     } else if (unref(table) === 'queen') {
       return cleanupQueen(state.value, isEdit);
+    } else if (unref(table) === 'apiary') {
+      return cleanupApiary(state.value);
     }
   }
 
@@ -142,5 +144,12 @@ function cleanupQueen(state: FormQueen, isEdit: boolean) {
     result['start'] = state.start;
     result['repeat'] = state.repeat;
   }
+  return omitBy(result, isNil);
+}
+
+function cleanupApiary(state: any) {
+  const result = {
+    ...state,
+  } as any;
   return omitBy(result, isNil);
 }

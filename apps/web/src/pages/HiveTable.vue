@@ -17,10 +17,9 @@
         @request="onRequest"
       >
         <template #header-cell="props">
-          <q-th :props="props">
-            {{ $t(props.col.label) }}
-          </q-th>
+          <table-th :props="props"></table-th>
         </template>
+
         <template #body-cell-name="props">
           <table-col-link :id="props.row.id" :label="props.value" link="hive">
           </table-col-link>
@@ -98,6 +97,7 @@ import { QTableProps } from 'quasar';
 import { useDateFormat } from '~/composables/useDate';
 import TableFilter from '~/components/TableFilter.vue';
 import { useTableFilterStore } from '~/stores/tableFilter';
+import TableTh from '~/components/TableTh.vue';
 
 const $q = useQuasar();
 const useDate = useDateFormat();

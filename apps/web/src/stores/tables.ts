@@ -6,8 +6,14 @@ export const useTablesStore = defineStore('tables', {
     hive: {
       visible: useStorage('table-visible-hive', ['apiary_name']),
       length: useStorage('table-length-hive', 10),
-      sort: useStorage('table-sort-col', 'name'),
-      direction: useStorage('table-sort-direction', false),
+      sort: useStorage('table-sort-col-hive', 'name'),
+      direction: useStorage('table-sort-direction-hive', false),
+    },
+    apiary: {
+      visible: useStorage('table-visible-apiary', ['name', 'description']),
+      length: useStorage('table-length-apiary', 10),
+      sort: useStorage('table-sort-col-apiary', 'name'),
+      direction: useStorage('table-sort-direction-apiary', false),
     },
   }),
   getters: {},

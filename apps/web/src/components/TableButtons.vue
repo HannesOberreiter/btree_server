@@ -18,6 +18,7 @@
     />
 
     <q-btn
+      v-if="['hive'].includes(table)"
       color="warning"
       no-caps
       :label="$t('filter')"
@@ -27,7 +28,12 @@
 
     <q-btn-dropdown no-caps color="info" label="...">
       <q-list>
-        <q-item v-close-popup clickable @click="onAddQueen">
+        <q-item
+          v-if="table === 'hive'"
+          v-close-popup
+          clickable
+          @click="onAddQueen"
+        >
           <q-item-section>
             <q-item-label>{{ $t('queenAdd') }}</q-item-label>
           </q-item-section>
@@ -209,12 +215,11 @@ function onRestore() {
 }
 
 function onDelete() {
+  let message = t('deleteConfirmRow', { count: selected.value.length });
+  message += props.table === 'hive' ? ' ' + t('deleteConfirmHive') : '';
   $q.dialog({
     title: t('delete'),
-    message:
-      t('deleteConfirmRow', { count: selected.value.length }) +
-      ' ' +
-      t('deteConfirmHive'),
+    message: message,
     cancel: true,
     persistent: true,
   }).onOk(() => {
