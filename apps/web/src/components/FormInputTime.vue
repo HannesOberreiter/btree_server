@@ -44,20 +44,19 @@
 <script setup lang="ts">
 import { useVModels } from '@vueuse/core';
 import { formCheckMultipleValues, validationErrors } from '~/helpers';
-import dayjs from 'dayjs';
 import useVuelidate from '@vuelidate/core';
-import customParseFormat from 'dayjs/plugin/customParseFormat';
 import BtnMultipleValues from './BtnMultipleValues.vue';
 import { PropType } from 'vue';
 import { isEmpty } from 'lodash';
+import { useDateFormat } from '~/composables/useDate';
 
-dayjs.extend(customParseFormat); // Needed to validate if date is even possible
 const qDateProxy = ref(false);
+const useDate = useDateFormat();
 const props = defineProps({
   modelValue: {
     type: null as unknown as PropType<string | null>,
     validator: (v: any) => typeof v === 'string' || v === null,
-    default: dayjs().format('HH:mm'),
+    required: true,
   },
   reset: {
     type: Number,
@@ -84,7 +83,7 @@ const rules = {
   time: {
     minValue: (value: string) => {
       if (value === null) return true;
-      return dayjs(value, 'HH:mm', true).isValid();
+      return useDate.validateFormat(value, 'HH:mm');
     },
   },
 };
@@ -102,12 +101,18 @@ function setValues() {
   disable.value = multipleValues.value;
   if (multipleValues.value) editValues(true);
   else if (values.value && !isEmpty(values.value))
-    modelValue.value = dayjs(values.value[0].time, 'HH:mm:ss').format('HH:mm');
+    modelValue.value = useDate.isoFormat(
+      values.value[0].time,
+      'time',
+      'HH:mm:ss'
+    );
   else modelValue.value = resetValue;
 }
 
 function editValues(val: boolean) {
   disable.value = val;
-  modelValue.value = disable.value ? null : dayjs().format('HH:mm');
+  modelValue.value = disable.value
+    ? null
+    : useDate.isoFormat(useDate.getCurrent(), 'time');
 }
 </script>

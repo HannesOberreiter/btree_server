@@ -5,7 +5,7 @@
     </q-item-section>
 
     <q-item-section>
-      {{ $t('paid') }}: {{ getPaidStatus.date }}
+      {{ $t('paid') }}: {{ useDate.displayFormat(getPaidStatus.date) }}
       <br />
       {{ $t('status') }}: {{ getPaidStatus.name }}
       <br />
@@ -15,7 +15,9 @@
 </template>
 
 <script setup lang="ts">
+import { useDateFormat } from '~/composables/useDate';
 import { useAuthUserStore } from '~/stores/auth';
+const useDate = useDateFormat();
 const storeUser = useAuthUserStore();
 const getPaidStatus = computed(() => {
   return storeUser.getPaidStatus;

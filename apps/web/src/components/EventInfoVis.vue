@@ -2,7 +2,7 @@
   <q-separator />
   <ul>
     <li v-for="(item, index) in eventInfo.info" :key="index">
-      {{ dayjs(item.date).format('YYYY-MM-DD') }} - {{ item.text }}
+      {{ useDate.displayFormat(item.date) }} - {{ item.text }}
       <p v-if="index == 1">
         <q-separator />
       </p>
@@ -14,8 +14,9 @@
 </template>
 
 <script setup lang="ts">
-import dayjs from 'dayjs';
+import { useDateFormat } from '~/composables/useDate';
 
+const useDate = useDateFormat();
 defineProps({
   eventInfo: {
     type: Object as any,

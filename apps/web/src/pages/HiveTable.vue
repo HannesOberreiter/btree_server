@@ -16,6 +16,11 @@
         binary-state-sort
         @request="onRequest"
       >
+        <template #header-cell="props">
+          <q-th :props="props">
+            {{ $t(props.col.label) }}
+          </q-th>
+        </template>
         <template #body-cell-name="props">
           <table-col-link :id="props.row.id" :label="props.value" link="hive">
           </table-col-link>
@@ -98,25 +103,7 @@
 </template>
 
 <script lang="ts">
-import dayjs from 'dayjs';
-
-function rowTableMeta(date: string, name: any) {
-  if (dayjs(date).isValid() === false) return '';
-  if (name) {
-    return `${name.email} (${dayjs(date).format('YYYY-MM-DD HH:mm')})`;
-  } else {
-    return dayjs(date).format('YYYY-MM-DD HH:mm');
-  }
-}
-
-function queenTableCol(queen: any) {
-  if (!queen) return '';
-  if (queen.queen_modus)
-    return `${queen.queen_name} (${dayjs(queen.queen_move_date).format(
-      'YYYY-MM-DD'
-    )})`;
-  return `R.I.P  (${dayjs(queen.queen_modus_date).format('YYYY-MM-DD')})`;
-}
+import { rowTableMeta } from '~/helpers';
 </script>
 
 <script setup lang="ts">
@@ -128,7 +115,9 @@ import TableColStatus from '~/components/TableColStatus.vue';
 import TableButtons from '~/components/TableButtons.vue';
 import TableColQueen from '~/components/TableColQueen.vue';
 import { QTableProps } from 'quasar';
+import { useDateFormat } from '~/composables/useDate';
 
+const useDate = useDateFormat();
 const storeTable = useTablesStore();
 const $q = useQuasar();
 const {
@@ -138,7 +127,6 @@ const {
   directionHive: descending,
 } = storeToRefs(storeTable);
 
-const { t } = useI18n();
 const selected = ref([]);
 const rows = ref([]);
 const modus = ref(true);
@@ -147,7 +135,7 @@ const deleted = ref(false);
 const columns = [
   {
     name: 'id',
-    label: t('id'),
+    label: 'id',
     align: 'right',
     field: (row: any) => row.id,
     sortable: true,
@@ -155,23 +143,23 @@ const columns = [
   {
     name: 'name',
     required: true,
-    label: t('hive'),
+    label: 'hive',
     align: 'left',
     field: (row: any) => row.name,
     sortable: true,
   },
   {
     name: 'apiary_name',
-    label: t('apiary'),
+    label: 'apiary',
     align: 'left',
     field: (row: any) => row.hive_location.apiary_name,
     format: (val: string, row: any) =>
-      `${val} (${dayjs(row.hive_location.movedate.date).format('YYYY-MM-DD')})`,
+      `${val} (${useDate.displayFormat(row.hive_location.movedate.date)})`,
     sortable: true,
   },
   {
     name: 'queen_location.queen_name',
-    label: t('queen'),
+    label: 'queen',
     align: 'left',
     field: (row: any) => row.queen_location,
     format: (val: string) => queenTableCol(val),
@@ -179,14 +167,14 @@ const columns = [
   },
   {
     name: 'hive_source.name',
-    label: t('source'),
+    label: 'source',
     align: 'left',
     field: (row: any) => row.hive_source.name,
     sortable: true,
   },
   {
     name: 'hive_type.name',
-    label: t('type'),
+    label: 'type',
     align: 'left',
     field: (row: any) => row.hive_type.name,
     format: (val: string) => val,
@@ -194,44 +182,44 @@ const columns = [
   },
   {
     name: 'position',
-    label: t('position'),
+    label: 'position',
     align: 'right',
     field: (row: any) => row.position,
     sortable: true,
   },
   {
     name: 'grouphive',
-    label: t('grouphive'),
+    label: 'grouphive',
     align: 'right',
     field: (row: any) => row.grouphive,
     sortable: true,
   },
   {
     name: 'note',
-    label: t('note'),
+    label: 'note',
     align: 'left',
     field: (row: any) => row.note,
     sortable: false,
   },
   {
     name: 'modus',
-    label: t('active'),
+    label: 'active',
     align: 'center',
     field: (row: any) => row.modus,
     sortable: true,
   },
   {
     name: 'modus_date',
-    label: t('inactiveDate'),
+    label: 'inactiveDate',
     align: 'center',
     field: (row: any) => row.modus_date,
     format: (val: string, row: any) =>
-      row.modus ? '' : dayjs(val).format('YYYY-MM-DD'),
+      row.modus ? '' : useDate.displayFormat(val),
     sortable: true,
   },
   {
     name: 'created_at',
-    label: t('created'),
+    label: 'created',
     align: 'center',
     field: (row: any) => row.created_at,
     format: (val: string, row: any) => rowTableMeta(val, row.creator),
@@ -239,7 +227,7 @@ const columns = [
   },
   {
     name: 'updated_at',
-    label: t('updated'),
+    label: 'updated',
     align: 'center',
     field: (row: any) => row.updated_at,
     format: (val: string, row: any) => rowTableMeta(val, row.editor),
@@ -247,7 +235,7 @@ const columns = [
   },
   {
     name: 'deleted_at',
-    label: t('deleted'),
+    label: 'deleted',
     align: 'center',
     field: (row: any) => row.deleted_at,
     format: (val: string, row: any) =>
@@ -303,5 +291,14 @@ function onRequest(props: any) {
   sortBy.value = props.pagination.sortBy;
   descending.value = props.pagination.descending;
   pagination.value = props.pagination;
+}
+
+function queenTableCol(queen: any) {
+  if (!queen) return '';
+  if (queen.queen_modus)
+    return `${queen.queen_name} (${useDate.displayFormat(
+      queen.queen_modus_date
+    )})`;
+  return `R.I.P  (${useDate.displayFormat(queen.queen_modus_date)})`;
 }
 </script>

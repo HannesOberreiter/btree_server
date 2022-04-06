@@ -109,13 +109,14 @@
 <script setup lang="ts">
 import { useVModels } from '@vueuse/core';
 import { stringify } from 'csv-stringify/browser/esm/sync';
-import dayjs from 'dayjs';
 import { exportFile } from 'quasar';
 import { api } from '~/boot/axios';
+import { useDateFormat } from '~/composables/useDate';
 import { clearCache } from '~/composables/useQuery';
 import { useNotification } from '~/composables/useResponseText';
 import DialogForm from './DialogForm.vue';
 
+const useDate = useDateFormat();
 const { t } = useI18n();
 const $q = useQuasar();
 const notification = useNotification();
@@ -223,7 +224,7 @@ function onExport() {
   $q.loading.show({ delay: 200 });
   const csv = stringify(unref(selected.value), { header: true });
   const status = exportFile(
-    `${props.table}-export-${dayjs().toISOString()}.csv`,
+    `${props.table}-export-${useDate.getCurrent()}.csv`,
     csv,
     'text/csv'
   );

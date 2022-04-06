@@ -1,4 +1,4 @@
-import dayjs from 'dayjs';
+import { useDateFormat } from './useDate';
 
 interface fetchInfo {
   start: Date;
@@ -9,27 +9,29 @@ interface fetchInfo {
 }
 
 const useCalendarVis = (info: fetchInfo) => {
-  const start = dayjs(info.start);
-  const end = dayjs(info.end);
+  const useDate = useDateFormat();
+
+  const start = useDate.toDayjs(info.start);
+  const end = useDate.toDayjs(info.end);
   const year = start.year();
   const visDates = [
     {
-      date: dayjs(`${year}-04-30`),
+      date: useDate.toDayjs(`${year}-04-30`),
       title: '(VIS) Stichtag, Frühjahr',
       text: 'Stichtag Zählung',
     },
     {
-      date: dayjs(`${year}-06-30`),
+      date: useDate.toDayjs(`${year}-06-30`),
       title: '(VIS) Meldedatum, Frühjahr',
       text: 'Letzte Meldedatum',
     },
     {
-      date: dayjs(`${year}-10-31`),
+      date: useDate.toDayjs(`${year}-10-31`),
       title: '(VIS) Stichtag, Herbst',
       text: 'Stichtag Zählung',
     },
     {
-      date: dayjs(`${year}-12-31`),
+      date: useDate.toDayjs(`${year}-12-31`),
       title: '(VIS) Meldedatum, Herbst',
       text: 'Letzte Meldedatum',
     },
@@ -37,7 +39,7 @@ const useCalendarVis = (info: fetchInfo) => {
   const result = visDates.map((value) => {
     const res: any = [];
     if (value.date >= start && value.date <= end) {
-      res.start = value.date.format('YYYY-MM-DD');
+      res.start = useDate.isoFormat(value.date.toISOString());
       res.fullday = true;
       res.title = value.title;
       res.editable = false;

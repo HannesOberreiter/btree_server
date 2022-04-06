@@ -21,18 +21,16 @@
 
 <script setup lang="ts">
 import { useVModels } from '@vueuse/core';
-import dayjs from 'dayjs';
-import customParseFormat from 'dayjs/plugin/customParseFormat';
 import FormInputNumeric from './FormInputNumeric.vue';
 import FormInputTime from './FormInputTime.vue';
 
-dayjs.extend(customParseFormat); // Needed to validate if date is even possible
 const props = defineProps({
   modelValue: {
     default: 0,
   },
   modelTime: {
-    default: dayjs().format('HH:mm'),
+    type: String,
+    required: true,
   },
   reset: {
     type: Number,

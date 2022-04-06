@@ -32,7 +32,6 @@
 import FormMainApiary from './FormMainApiary.vue';
 import FormMainTodo from './FormMainTodo.vue';
 import FormMainHive from '~/components/FormMainHive.vue';
-import dayjs from 'dayjs';
 import FormMainMovement from './FormMainMovement.vue';
 import FormMainQueen from './FormMainQueen.vue';
 
@@ -62,7 +61,7 @@ const props = defineProps({
   },
   date: {
     type: String,
-    default: dayjs().format('YYYY-MM-DD'),
+    default: '',
   },
   latlng: {
     type: Object,

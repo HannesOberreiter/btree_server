@@ -4,7 +4,7 @@
       {{ eventInfo.note }}
     </div>
     <div v-if="eventInfo.larvae || eventInfo.hatch" class="col-12 text-center">
-      {{ t('larvae') }}: {{ eventInfo.larvae }} {{ t('hatch') }}:
+      {{ $t('larvae') }}: {{ eventInfo.larvae }} {{ $t('hatch') }}:
       {{ eventInfo.hatch }}
     </div>
     <div class="col-12">
@@ -12,7 +12,7 @@
         <li v-for="(item, index) in eventInfo.steps" :key="index">
           <span class="text-weight-bold q-pr-sm">{{ item.detail.job }}</span>
           <span class="float-right">
-            {{ dayjs(item.date).locale(locale).format('YYYY-MM-DD dd HH') }}h
+            {{ useDate.displayFormat(item.date, 'date-time') }}
           </span>
           <div class="text-grey">
             {{ item.detail.note }}
@@ -24,9 +24,8 @@
 </template>
 
 <script setup lang="ts">
-import 'dayjs/locale/de';
-import dayjs from 'dayjs';
-const { t, locale } = useI18n();
+import { useDateFormat } from '~/composables/useDate';
+const useDate = useDateFormat();
 defineProps({
   eventInfo: {
     type: Object as any,

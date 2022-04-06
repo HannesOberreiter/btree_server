@@ -44,7 +44,6 @@
 <script setup lang="ts">
 import { api } from '~/boot/axios';
 import { useNotification } from '~/composables/useResponseText';
-import dayjs from 'dayjs';
 import InputDate from './FormInputDate.vue';
 import FormDropdownEdit from './FormDropdownEdit.vue';
 import FormDropdownHive from './FormDropdownHive.vue';
@@ -52,7 +51,9 @@ import useVuelidate from '@vuelidate/core';
 import { flatten, map, merge } from 'lodash';
 import FormButtons from './FormButtons.vue';
 import FormDropdownOption from './FormDropdownOption.vue';
+import { useDateFormat } from '~/composables/useDate';
 
+const useDate = useDateFormat();
 const notification = useNotification();
 const values = ref({});
 const reset = ref(0);
@@ -82,7 +83,7 @@ const editOptions = ref([]) as any;
 const editOptionsCopy = ref([]) as any;
 
 const stateDefault = {
-  date: dayjs().format('YYYY-MM-DD'),
+  date: useDate.getCurrent(),
 };
 const state = ref({
   hive: [] as any,

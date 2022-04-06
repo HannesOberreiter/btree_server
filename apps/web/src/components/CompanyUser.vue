@@ -28,14 +28,14 @@
       <q-item-section top>
         <q-item-label lines="1">
           <span
-            v-if="dayjs(value.user.last_visit).year() === 1989"
+            v-if="useDate.getYear(value.user.last_visit) === 1989"
             class="text-red-8"
           >
             {{ t('pending') }} ...
           </span>
           <span v-else class="text-grey-8">
             {{ t('lastVisit') }}:
-            {{ dayjs(value.user.last_visit).locale(locale).format() }}
+            {{ useDate.displayFormat(value.user.last_visit, 'date-time') }}
           </span>
         </q-item-label>
         <q-item-label lines="1" class="text-weight-medium">
@@ -72,10 +72,12 @@ import { findIndex } from 'lodash';
 import { useAuthUserStore } from '~/stores/auth';
 import { useNotification } from '~/composables/useResponseText';
 import { useQuasar } from 'quasar';
-import dayjs from 'dayjs';
+import { useDateFormat } from '~/composables/useDate';
 
 const notification = useNotification();
-const { t, locale } = useI18n();
+const { t } = useI18n();
+const useDate = useDateFormat();
+
 const $q = useQuasar();
 const storeUser = useAuthUserStore();
 const newUser = ref('');

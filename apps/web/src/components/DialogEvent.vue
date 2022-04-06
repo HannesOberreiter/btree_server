@@ -31,10 +31,14 @@
           </q-btn>
         </p>
         <p class="text-center pb-2">
-          {{ dayjs(eventInfo.start).format('YYYY-MM-DD') }}
+          {{ useDate.displayFormat(eventInfo.start) }}
           <span v-if="!isMovement && !isTodo">
             -
-            {{ dayjs(eventInfo.end).subtract(1, 'day').format('YYYY-MM-DD') }}
+            {{
+              useDate.displayFormat(
+                useDate.toDayjs(eventInfo.end).subtract(1, 'day').toISOString()
+              )
+            }}
           </span>
         </p>
         <div v-if="!isTodo">
@@ -86,10 +90,11 @@
 import { api } from '~/boot/axios';
 import { truncate } from 'lodash';
 import { useNotification } from '~/composables/useResponseText';
-import dayjs from 'dayjs';
 import EventInfoRearing from './EventInfoRearing.vue';
 import EventInfoVis from './EventInfoVis.vue';
+import { useDateFormat } from '~/composables/useDate';
 
+const useDate = useDateFormat();
 const notification = useNotification();
 const { dialogRef, onDialogHide, onDialogOK } = useDialogPluginComponent();
 const { t } = useI18n();
