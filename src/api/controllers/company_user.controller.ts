@@ -11,7 +11,6 @@ import { AuthController } from './auth.controller';
 
 import { User } from '../models/user.model';
 import { randomBytes } from 'crypto';
-import dayjs from 'dayjs';
 
 export class CompanyUserController extends Controller {
   constructor() {
@@ -60,7 +59,7 @@ export class CompanyUserController extends Controller {
           await CompanyBee.query().insert({
             bee_id: userExists.id,
             user_id: req.user.user_id,
-            rank: 3
+            rank: 3,
           });
           res.locals.data = userExists;
           next();
@@ -74,12 +73,12 @@ export class CompanyUserController extends Controller {
           lang: inviter.lang,
           password: randomBytes(40).toString('hex'),
           salt: randomBytes(40).toString('hex'),
-          last_visit: new Date('1989-01-05')
+          last_visit: new Date('1989-01-05'),
         });
         await CompanyBee.query().insert({
           bee_id: newUser.id,
           user_id: req.user.user_id,
-          rank: 3
+          rank: 3,
         });
 
         const auth = new AuthController();
@@ -108,10 +107,10 @@ export class CompanyUserController extends Controller {
         .select('user.id')
         .withGraphJoined('user')
         .whereNot({
-          'user.id': req.user.bee_id
+          'user.id': req.user.bee_id,
         })
         .where({
-          'companies.id': req.params.company_id
+          'companies.id': req.params.company_id,
         });
       if (otherUser.length === 0)
         throw forbidden('No other users found, cannot remove your access.');
@@ -120,10 +119,10 @@ export class CompanyUserController extends Controller {
         .select('companies.id as id')
         .withGraphJoined('user')
         .where({
-          'user.id': req.user.bee_id
+          'user.id': req.user.bee_id,
         })
         .whereNot({
-          'companies.id': req.params.company_id
+          'companies.id': req.params.company_id,
         });
 
       if (otherCompanies.length === 0)

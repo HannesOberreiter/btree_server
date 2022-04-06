@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import { Response, NextFunction } from 'express';
 import { Controller } from '@classes/controller.class';
 import { checkMySQLError } from '@utils/error.util';
 import { Company } from '@models/company.model';
@@ -8,7 +8,7 @@ import { reviewPassword } from '@utils/login.util';
 import { CompanyBee } from '@models/company_bee.model';
 import { autoFill } from '@utils/autofill.util';
 import { User } from '@models/user.model';
-import { Boom, forbidden, notFound } from '@hapi/boom';
+import { Boom, forbidden } from '@hapi/boom';
 import { UserController } from '@controllers/user.controller';
 import { deleteCompany } from '../utils/delete.util';
 export class CompanyController extends Controller {
@@ -34,10 +34,10 @@ export class CompanyController extends Controller {
         .select('user.id')
         .withGraphJoined('user')
         .whereNot({
-          'user.id': req.user.bee_id
+          'user.id': req.user.bee_id,
         })
         .where({
-          'companies.id': req.params.id
+          'companies.id': req.params.id,
         });
       if (otherUser.length > 0)
         throw forbidden('Other user(s) found, please remove them first.');
@@ -46,10 +46,10 @@ export class CompanyController extends Controller {
         .select('companies.id as id')
         .withGraphJoined('user')
         .where({
-          'user.id': req.user.bee_id
+          'user.id': req.user.bee_id,
         })
         .whereNot({
-          'companies.id': req.params.id
+          'companies.id': req.params.id,
         });
       if (otherCompanies.length === 0)
         throw forbidden('This is your last company, you cannot delete it.');
@@ -72,11 +72,11 @@ export class CompanyController extends Controller {
           .withGraphJoined('user')
           .where({
             name: req.body.name,
-            'user.id': req.user.bee_id
+            'user.id': req.user.bee_id,
           });
         if (check.length > 0)
           throw new Boom('Company name already exists', {
-            statusCode: 409
+            statusCode: 409,
           });
         const c = await Company.query(trx).insert({ name: req.body.name });
         const u = await User.query(trx)
@@ -84,7 +84,7 @@ export class CompanyController extends Controller {
           .findById(req.user.bee_id);
         await CompanyBee.query(trx).insert({
           bee_id: req.user.bee_id,
-          user_id: c.id
+          user_id: c.id,
         });
         await autoFill(trx, c.id, u.lang);
         return c;
@@ -118,7 +118,7 @@ export class CompanyController extends Controller {
         ) {
           const apiKey = await randomBytes(25).toString('hex');
           await company.$query().patch({
-            api_key: apiKey
+            api_key: apiKey,
           });
         }
         delete res.api_key;
