@@ -11,6 +11,60 @@ export class MovedateController extends Controller {
     super();
   }
 
+  async get(req: IUserRequest, res: Response, next: NextFunction) {
+    try {
+      const { order, direction, offset, limit, q, filters } = req.query as any;
+      const query = Movedate.query()
+        .withGraphJoined('hive')
+        .withGraphJoined('apiary')
+        .withGraphJoined('creator')
+        .withGraphJoined('editor')
+        .where({
+          'apiary.user_id': req.user.user_id,
+        })
+        // Security as we may still have some unclean data in the database were linked apiary or hive does not exist anymore
+        .whereNotNull('apiary.id')
+        .whereNotNull('hive.id')
+        .page(offset, parseInt(limit) === 0 ? 10 : limit);
+
+      if (filters) {
+        try {
+          const filtering = JSON.parse(filters);
+          if (Array.isArray(filtering)) {
+            filtering.forEach((v) => {
+              if ('date' in v && typeof v['date'] === 'object') {
+                query.whereBetween('date', [v.date.from, v.date.to]);
+              } else {
+                query.where(v);
+              }
+            });
+          }
+        } catch (e) {
+          console.log(e);
+        }
+      }
+
+      if (Array.isArray(order)) {
+        order.forEach((field, index) => query.orderBy(field, direction[index]));
+      } else {
+        query.orderBy(order, direction);
+      }
+
+      if (q.trim() !== '') {
+        query.where((builder) => {
+          builder
+            .orWhere('hive.name', 'like', `%${q}%`)
+            .orWhere('apiary.name', 'like', `%${q}%`);
+        });
+      }
+      const result = await query.orderBy('id');
+      res.locals.data = result;
+      next();
+    } catch (e) {
+      next(checkMySQLError(e));
+    }
+  }
+
   async patch(req: IUserRequest, res: Response, next: NextFunction) {
     try {
       const ids = req.body.ids;
@@ -19,7 +73,7 @@ export class MovedateController extends Controller {
         return await Movedate.query(trx)
           .patch({
             ...insert,
-            'movedates.edit_id': req.user.bee_id
+            'movedates.edit_id': req.user.bee_id,
           })
           .findByIds(ids)
           .leftJoinRelated('apiary')
@@ -37,7 +91,7 @@ export class MovedateController extends Controller {
       const hive_ids = req.body.hive_ids;
       const insert = {
         apiary_id: req.body.apiary_id,
-        date: req.body.date
+        date: req.body.date,
       };
       const result = await Movedate.transaction(async (trx) => {
         await Apiary.query(trx)
@@ -52,14 +106,14 @@ export class MovedateController extends Controller {
           await HiveLocation.query()
             .where({
               user_id: req.user.user_id,
-              hive_id: id
+              hive_id: id,
             })
             .throwIfNotFound();
 
           const res = await Movedate.query(trx).insert({
             ...insert,
             hive_id: id,
-            bee_id: req.user.bee_id
+            bee_id: req.user.bee_id,
           });
           result.push(res.id);
         }
@@ -86,7 +140,7 @@ export class MovedateController extends Controller {
         return Movedate.query(trx)
           .patch({
             edit_id: req.user.bee_id,
-            date: req.body.start
+            date: req.body.start,
           })
           .findByIds(ids_array);
       });

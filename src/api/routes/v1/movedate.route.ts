@@ -11,10 +11,16 @@ export class MovedateRouter extends Router {
   }
   define() {
     this.router
-      .route('/date')
-      .patch(
+      .route('/')
+      .get(
+        Guard.authorize([ROLES.admin, ROLES.user, ROLES.read]),
+        Container.resolve('MovedateController').get
+      );
+    this.router
+      .route('/')
+      .post(
         Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('MovedateController').updateDate
+        Container.resolve('MovedateController').post
       );
     this.router
       .route('/')
@@ -37,11 +43,12 @@ export class MovedateRouter extends Router {
         Guard.authorize([ROLES.admin]),
         Container.resolve('MovedateController').batchDelete
       );
+
     this.router
-      .route('/')
-      .post(
+      .route('/date')
+      .patch(
         Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('MovedateController').post
+        Container.resolve('MovedateController').updateDate
       );
   }
 }

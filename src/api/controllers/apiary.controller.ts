@@ -97,6 +97,24 @@ export class ApiaryController extends Controller {
     }
   }
 
+  async updateStatus(req: IUserRequest, res: Response, next: NextFunction) {
+    try {
+      const result = await Apiary.transaction(async (trx) => {
+        return Apiary.query(trx)
+          .patch({
+            edit_id: req.user.bee_id,
+            modus: req.body.status,
+          })
+          .findByIds(req.body.ids)
+          .where('user_id', req.user.user_id);
+      });
+      res.locals.data = result;
+      next();
+    } catch (e) {
+      next(checkMySQLError(e));
+    }
+  }
+
   async batchDelete(req: IUserRequest, res: Response, next: NextFunction) {
     try {
       const hardDelete = req.query.hard ? true : false;

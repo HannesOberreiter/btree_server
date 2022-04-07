@@ -44,5 +44,11 @@ export class ApiaryRouter extends Router {
         Guard.authorize([ROLES.admin, ROLES.user]),
         Container.resolve('ApiaryController').batchGet
       );
+    this.router
+      .route('/status')
+      .patch(
+        Guard.authorize([ROLES.admin]),
+        Container.resolve('ApiaryController').updateStatus
+      );
   }
 }
