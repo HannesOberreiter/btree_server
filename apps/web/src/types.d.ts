@@ -120,6 +120,15 @@ declare interface FormHive {
   source: any;
 }
 
+declare interface FormTodo {
+  date: string;
+  name: string;
+  note: string;
+  done: boolean;
+  interval: number;
+  repeat: number;
+}
+
 declare interface FormQueen {
   name: string;
   date: string;
@@ -196,4 +205,5 @@ export {
   FormHive,
   FormQueen,
   FormQuicktool,
+  FormTodo,
 };
