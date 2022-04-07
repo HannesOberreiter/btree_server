@@ -64,13 +64,16 @@ import TableButtons from '~/components/TableButtons.vue';
 import { QTableProps } from 'quasar';
 import TableFilter from '~/components/TableFilter.vue';
 import { useDateFormat } from '~/composables/useDate';
+import { useTableFilterStore } from '~/stores/tableFilter';
 
 const $q = useQuasar();
-const storeTable = useTablesStore();
 const useDate = useDateFormat();
 const { t } = useI18n();
 
+const storeTable = useTablesStore();
+const storeFilter = useTableFilterStore();
 const { movedate: store } = storeToRefs(storeTable);
+const { movedate: filters } = storeToRefs(storeFilter);
 
 const visibleColumns = ref(store.value.visible);
 
@@ -153,6 +156,7 @@ const {
   offset: computed(() => pagination.value.page - 1),
   limit: computed(() => pagination.value.rowsPerPage),
   q: computed(() => (filter.value ? filter.value : '')),
+  filters: computed(() => (filters.value ? filters.value : '')),
 });
 
 watch(visibleColumns, (cur) => {

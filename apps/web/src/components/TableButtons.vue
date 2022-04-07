@@ -10,8 +10,9 @@
     />
 
     <q-btn
-      color="warning"
+      v-if="['hive', 'apiary'].includes(table)"
       no-caps
+      :color="modus ? 'warning' : 'negative'"
       :icon-right="modus ? 'fas fa-eye' : 'fas fa-eye-slash'"
       :label="$t('inactive')"
       @click="modus = !modus"
@@ -19,7 +20,7 @@
 
     <q-btn
       v-if="['hive', 'movedate'].includes(table)"
-      color="warning"
+      :color="filter ? 'negative' : 'warning'"
       no-caps
       :label="$t('filter')"
       :icon-right="filter ? 'fas fa-filter' : 'fas fa-filter-circle-xmark'"
@@ -222,12 +223,18 @@ function onRestore() {
 
 function onDelete() {
   let message = t('deleteConfirmRow', { count: selected.value.length });
-  message += props.table === 'hive' ? ' ' + t('deleteConfirmHive') : '';
+  if (props.table === 'hive') message += ' ' + t('deleteConfirmHive');
+  if (props.table === 'apiary') message += ' ' + t('deleteApiary');
+
+  if (['movedate'].includes(props.table) || deleted.value)
+    message += ' <b>' + t('warningNoUndo') + '</b>';
+
   $q.dialog({
     title: t('delete'),
     message: message,
     cancel: true,
     persistent: true,
+    html: true,
   }).onOk(() => {
     const ids = selected.value.map((o: any) => o.id);
     api.patch(`/v1/${props.table}/batchDelete`, { ids: ids }).then(

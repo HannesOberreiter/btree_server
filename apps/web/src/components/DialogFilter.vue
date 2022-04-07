@@ -15,21 +15,10 @@
           />
         </div>
         <div class="row full-width">
-          <div class="col-12">
-            <form-dropdown-type
-              v-model="state.type_id"
-              table="hive_types"
-              label="type"
-              allow-empty="filterEmpty"
-            ></form-dropdown-type>
-          </div>
-          <div class="col-12">
-            <form-dropdown-type
-              v-model="state.source_id"
-              table="hive_sources"
-              label="source"
-              allow-empty="filterEmpty"
-            ></form-dropdown-type>
+          {{ state.type_id }}
+          <div v-for="(o, i) in layout" :key="i" class="col-12">
+            <component :is="o.comp" v-model="state[o.model]" v-bind="o.props">
+            </component>
           </div>
         </div>
       </q-card-section>
@@ -48,6 +37,7 @@
 <script setup lang="ts">
 import { useTableFilterStore } from '~/stores/tableFilter';
 import FormDropdownType from './FormDropdownOption.vue';
+import FormInputDateRange from './FormInputDateRange.vue';
 
 const storeFilter = useTableFilterStore();
 
@@ -63,7 +53,62 @@ const props = defineProps({
 const state = reactive({
   type_id: storeFilter.field(props.form, 'type_id'),
   source_id: storeFilter.field(props.form, 'source_id'),
+  apiary_id: storeFilter.field(props.form, 'apiary_id'),
+  hive_id: storeFilter.field(props.form, 'hive_id'),
+  date: storeFilter.field(props.form, 'date'),
 });
+
+const layouts = {
+  hive: [
+    {
+      comp: FormDropdownType,
+      model: 'type_id',
+      props: {
+        table: 'hive_types',
+        label: 'type',
+        'allow-empty': 'filterEmpty',
+      },
+    },
+    {
+      comp: FormDropdownType,
+      model: 'source_id',
+      props: {
+        table: 'hive_sources',
+        label: 'source',
+        'allow-empty': 'filterEmpty',
+      },
+    },
+  ],
+  movedate: [
+    {
+      comp: FormDropdownType,
+      model: 'hive_id',
+      props: {
+        table: 'hive',
+        label: 'hive',
+        'allow-empty': 'filterEmpty',
+      },
+    },
+    {
+      comp: FormDropdownType,
+      model: 'apiary_id',
+      props: {
+        table: 'apiary',
+        label: 'apiary',
+        'allow-empty': 'filterEmpty',
+      },
+    },
+    {
+      comp: FormInputDateRange,
+      model: 'date',
+      props: {
+        label: 'daterange',
+      },
+    },
+  ],
+} as any;
+
+const layout = computed(() => layouts[props.form]);
 
 watch(state, (cur) => {
   storeFilter.update(props.form, cur);

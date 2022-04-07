@@ -31,6 +31,7 @@
             mask="YYYY-MM-DD"
             :disable="disable"
             today-btn
+            no-unset
           >
             <div class="row items-center justify-end">
               <q-btn v-close-popup :label="$t('close')" color="primary" flat />

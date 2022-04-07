@@ -99,12 +99,8 @@ function setValues() {
 
   if (values.value && !isEmpty(values.value)) {
     setOptions(values.value[0][props.tableId]);
-    /*} else if (modelValue.value) {
-    if (typeof modelValue.value === 'object') {
-      setOptions(modelValue.value.id);
-    } else {
-      setOptions(modelValue.value);
-    }*/
+  } else if (modelValue.value && typeof modelValue.value !== 'object') {
+    setOptions(modelValue.value);
   } else setOptions();
 }
 
@@ -121,7 +117,6 @@ function setOptions(id = 0) {
   if (multipleValues.value) editValues(true);
   else if (id === 0) modelValue.value = options.value[0];
   else {
-    console.log(id);
     const res = filter(data.value.results, (obj) => {
       return obj.id === id;
     });

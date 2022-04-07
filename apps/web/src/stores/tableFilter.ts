@@ -10,6 +10,7 @@ export const useTableFilterStore = defineStore('tableFilter', {
   state: () =>
     ({
       hive: '',
+      movedate: '',
     } as State),
   getters: {
     field: (state) => {
@@ -17,6 +18,7 @@ export const useTableFilterStore = defineStore('tableFilter', {
         try {
           const values = JSON.parse(state[table]);
           const fil = map(values, (o) => {
+            if (key === 'date') return o[key];
             if (key in o) return o[key];
             return null;
           });
@@ -38,9 +40,8 @@ export const useTableFilterStore = defineStore('tableFilter', {
       if (payload) {
         const array = map(payload, (o, key) => {
           if (!o) return null;
-          if ('id' in o) {
-            return { [key]: o.id };
-          }
+          if (key === 'date') return { [key]: o };
+          if ('id' in o) return { [key]: o.id };
         });
         const clean = compact(array);
         if (isEmpty(clean)) {

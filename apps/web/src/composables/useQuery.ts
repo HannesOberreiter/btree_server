@@ -42,10 +42,11 @@ export function useMovementsQuery({
   order = ['date'] as MaybeRef<Array<string>>,
   direction = ['asc'] as MaybeRef<Array<string>>,
   q = '' as MaybeRef<string>,
+  filters = '' as MaybeRef<string>,
   enabled = true as MaybeRef<boolean>,
 }) {
   return useQuery(
-    ['movedate', offset, limit, order, direction, q],
+    ['movedate', offset, limit, order, direction, q, filters],
     () => {
       let url = `/v1/movedate?offset=${unref(offset)}`;
       url += `&limit=${unref(limit)}`;
@@ -60,6 +61,8 @@ export function useMovementsQuery({
         }
       )}`;
       url += `&q=${unref(q)}`;
+      url += `&filters=${unref(filters)}`;
+
       return api.get(url);
     },
     {
