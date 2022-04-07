@@ -36,6 +36,42 @@ export function useTemperatureQuery(
   );
 }
 
+export function useMovementsQuery({
+  offset = 0 as MaybeRef<number>,
+  limit = 10000 as MaybeRef<number>,
+  order = ['date'] as MaybeRef<Array<string>>,
+  direction = ['asc'] as MaybeRef<Array<string>>,
+  q = '' as MaybeRef<string>,
+  enabled = true as MaybeRef<boolean>,
+}) {
+  return useQuery(
+    ['movedate', offset, limit, order, direction, q],
+    () => {
+      let url = `/v1/movedate?offset=${unref(offset)}`;
+      url += `&limit=${unref(limit)}`;
+      url += `&${stringify(
+        { order: unref(order) },
+        { arrayFormat: 'bracket' }
+      )}`;
+      url += `&${stringify(
+        { direction: unref(direction) },
+        {
+          arrayFormat: 'bracket',
+        }
+      )}`;
+      url += `&q=${unref(q)}`;
+      return api.get(url);
+    },
+    {
+      enabled: enabled,
+      keepPreviousData: true,
+      select: (response) => response.data,
+      onError: (error: any) =>
+        useNotification().open('negative', error.response),
+    }
+  );
+}
+
 export function useApiariesQuery({
   offset = 0 as MaybeRef<number>,
   limit = 10000 as MaybeRef<number>,

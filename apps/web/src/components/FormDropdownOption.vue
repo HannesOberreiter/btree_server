@@ -6,6 +6,7 @@
     :loading="isLoading"
     :disable="isLoading || disable"
     :options="options"
+    :hint="hint"
     option-value="id"
     filled
     class="q-pb-sm"
@@ -36,7 +37,7 @@ import BtnMultipleValues from './BtnMultipleValues.vue';
 import { formCheckMultipleValues } from '~/helpers';
 
 const { t } = useI18n();
-
+const hint = ref('');
 const props = defineProps({
   modelValue: {
     default: null,
@@ -83,12 +84,8 @@ const multipleValues = computed(() =>
 const disable = ref(multipleValues.value);
 const options = ref([] as any);
 
-watch(data, () => {
-  setValues();
-});
-
 watch(
-  values,
+  [data, values, reset],
   () => {
     setValues();
   },
@@ -97,17 +94,17 @@ watch(
   }
 );
 
-watch(reset, () => {
-  setValues();
-});
-
 function setValues() {
   disable.value = multipleValues.value;
-  if (multipleValues.value) editValues(true);
-  else if (values.value && !isEmpty(values.value)) {
+
+  if (values.value && !isEmpty(values.value)) {
     setOptions(values.value[0][props.tableId]);
-  } else if (modelValue.value) {
-    setOptions(modelValue.value);
+    /*} else if (modelValue.value) {
+    if (typeof modelValue.value === 'object') {
+      setOptions(modelValue.value.id);
+    } else {
+      setOptions(modelValue.value);
+    }*/
   } else setOptions();
 }
 
@@ -121,10 +118,14 @@ function setOptions(id = 0) {
   } else {
     options.value = data.value.results;
   }
-
-  if (id === 0) modelValue.value = options.value[0];
+  if (multipleValues.value) editValues(true);
+  else if (id === 0) modelValue.value = options.value[0];
   else {
-    const res = filter(data.value.results, (obj) => obj.id === id);
+    console.log(id);
+    const res = filter(data.value.results, (obj) => {
+      return obj.id === id;
+    });
+    if (res.length === 0) hint.value = t('dropdownNotAvailable');
     modelValue.value = res[0];
   }
 }

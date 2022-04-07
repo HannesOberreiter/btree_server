@@ -115,7 +115,7 @@ function filterHive(val: any, update: any, _abort: any) {
 }
 
 function setSelected() {
-  if (props.selected)
+  if (props.selected && hives.value)
     state.hive = filter(hives.value.results, (obj) =>
       props.selected.includes(obj.id)
     );
@@ -160,10 +160,13 @@ watch(state, (cur) => {
   emit('update:modelValue', cur.hive);
 });
 
-if (!isLoadingHive.value && props.selected) setSelected();
-watch(hives, () => {
-  setSelected();
-});
+watch(
+  hives,
+  () => {
+    setSelected();
+  },
+  { immediate: true }
+);
 </script>
 
 <style>

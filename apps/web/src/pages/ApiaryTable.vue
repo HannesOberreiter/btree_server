@@ -16,10 +16,6 @@
         binary-state-sort
         @request="onRequest"
       >
-        <template #header-cell="props">
-          <table-th :props="props"></table-th>
-        </template>
-
         <template #body-cell-name="props">
           <table-col-link :id="props.row.id" :label="props.value" link="apiary">
           </table-col-link>
@@ -41,7 +37,7 @@
           <table-col-status
             :id="props.row.id"
             :value="props.value"
-            table="hive"
+            table="apiary"
             @change="refetch"
           ></table-col-status>
         </template>
@@ -71,7 +67,6 @@
 import { tableCheckSelected, tableMeta } from '~/helpers';
 import { useApiariesQuery } from '~/composables/useQuery';
 import { useTablesStore } from '~/stores/tables';
-import TableTh from '~/components/TableTh.vue';
 import TableColLink from '~/components/TableColLink.vue';
 import TableColNote from '~/components/TableColNote.vue';
 import TableColStatus from '~/components/TableColStatus.vue';
@@ -82,6 +77,7 @@ import TableColHivecount from '~/components/TableColHivecount.vue';
 
 const $q = useQuasar();
 const storeTable = useTablesStore();
+const { t } = useI18n();
 const { apiary: store } = storeToRefs(storeTable);
 
 const visibleColumns = ref(store.value.visible);
@@ -95,7 +91,7 @@ const filter = ref('');
 const columns = [
   {
     name: 'id',
-    label: 'id',
+    label: t('id'),
     align: 'right',
     field: (row: any) => row.id,
     sortable: true,
@@ -103,7 +99,7 @@ const columns = [
   {
     name: 'name',
     required: true,
-    label: 'apiary',
+    label: t('apiary'),
     align: 'left',
     field: (row: any) => row.name,
     sortable: true,
@@ -111,7 +107,7 @@ const columns = [
   {
     name: 'hive_count.count',
     required: false,
-    label: 'count',
+    label: t('count'),
     align: 'left',
     field: (row: any) => row.hive_count,
     sortable: true,
@@ -119,7 +115,7 @@ const columns = [
   {
     name: 'description',
     required: false,
-    label: 'description',
+    label: t('description'),
     align: 'left',
     field: (row: any) => row.description,
     sortable: false,
@@ -127,7 +123,7 @@ const columns = [
   {
     name: 'latitude',
     required: false,
-    label: 'latitude',
+    label: t('latitude'),
     align: 'center',
     field: (row: any) => row.latitude,
     sortable: false,
@@ -135,7 +131,7 @@ const columns = [
   {
     name: 'longitude',
     required: false,
-    label: 'longitude',
+    label: t('longitude'),
     align: 'center',
     field: (row: any) => row.longitude,
     sortable: false,
@@ -143,28 +139,28 @@ const columns = [
   {
     name: 'url',
     required: false,
-    label: 'url',
+    label: t('url'),
     align: 'left',
     field: (row: any) => row.url,
     sortable: false,
   },
   {
     name: 'note',
-    label: 'note',
+    label: t('note'),
     align: 'left',
     field: (row: any) => row.note,
     sortable: false,
   },
   {
     name: 'modus',
-    label: 'active',
+    label: t('active'),
     align: 'center',
     field: (row: any) => row.modus,
     sortable: true,
   },
   {
     name: 'created_at',
-    label: 'created',
+    label: t('created'),
     align: 'center',
     field: (row: any) => row.created_at,
     format: (val: string, row: any) => tableMeta(val, row.creator),
@@ -172,7 +168,7 @@ const columns = [
   },
   {
     name: 'updated_at',
-    label: 'updated',
+    label: t('updated'),
     align: 'center',
     field: (row: any) => row.updated_at,
     format: (val: string, row: any) => tableMeta(val, row.editor),
@@ -180,7 +176,7 @@ const columns = [
   },
   {
     name: 'deleted_at',
-    label: 'deleted',
+    label: t('deleted'),
     align: 'center',
     field: (row: any) => row.deleted_at,
     format: (val: string, row: any) =>

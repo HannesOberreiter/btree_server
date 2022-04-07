@@ -1,16 +1,16 @@
 <template>
   <div class="row">
     <div class="col-xs-12 col-sm-6 q-pr-sm">
-      <date-start
+      <form-input-date
         v-model="startValue"
         label="dateStart"
         :mark="endValue"
         :disable="disable"
         @update:model-value="updateStart"
-      ></date-start>
+      ></form-input-date>
     </div>
     <div class="col-xs-11 col-sm-6">
-      <date-end
+      <form-input-date
         v-model="endValue"
         label="dateEnd"
         :mark="startValue"
@@ -34,44 +34,42 @@
             ></q-icon>
           </div>
         </template>
-      </date-end>
+      </form-input-date>
     </div>
   </div>
   <div v-if="showInterval" class="row">
     <div class="col-6">
-      <input-interval
+      <form-input-numeric
         v-model.number="modelInterval"
         label="interval"
         :hint="$t('intervalText')"
         :shadow-text="$t('day', 2)"
         :max-valid="365"
-        icon=""
+        icon="fas fa-calendar-week"
         numeric-valid="integer"
-      ></input-interval>
+      ></form-input-numeric>
     </div>
     <div class="col-6 q-pl-sm">
-      <input-repeat
+      <form-input-numeric
         v-model.number="modelRepeat"
         label="repeat"
         :hint="$t('repeatText')"
         shadow-text="x"
-        icon=""
+        icon="fas fa-infinity"
         numeric-valid="integer"
-      ></input-repeat>
+      ></form-input-numeric>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import dayjs from 'dayjs';
-import DateEnd from './FormInputDate.vue';
-import DateStart from './FormInputDate.vue';
 import { useVModels } from '@vueuse/core';
 import BtnMultipleValues from './BtnMultipleValues.vue';
-import InputInterval from './FormInputNumeric.vue';
-import InputRepeat from './FormInputNumeric.vue';
 import { formCheckMultipleValues } from '~/helpers';
 import { isEmpty } from 'lodash';
+import FormInputDate from './FormInputDate.vue';
+import FormInputNumeric from './FormInputNumeric.vue';
 
 const props = defineProps({
   startValue: {

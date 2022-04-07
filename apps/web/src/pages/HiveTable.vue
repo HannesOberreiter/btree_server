@@ -16,10 +16,6 @@
         binary-state-sort
         @request="onRequest"
       >
-        <template #header-cell="props">
-          <table-th :props="props"></table-th>
-        </template>
-
         <template #body-cell-name="props">
           <table-col-link :id="props.row.id" :label="props.value" link="hive">
           </table-col-link>
@@ -97,11 +93,10 @@ import { QTableProps } from 'quasar';
 import { useDateFormat } from '~/composables/useDate';
 import TableFilter from '~/components/TableFilter.vue';
 import { useTableFilterStore } from '~/stores/tableFilter';
-import TableTh from '~/components/TableTh.vue';
 
 const $q = useQuasar();
 const useDate = useDateFormat();
-
+const { t } = useI18n();
 const storeTable = useTablesStore();
 const storeFilter = useTableFilterStore();
 const { hive: store } = storeToRefs(storeTable);
@@ -118,7 +113,7 @@ const filter = ref('');
 const columns = [
   {
     name: 'id',
-    label: 'id',
+    label: t('id'),
     align: 'right',
     field: (row: any) => row.id,
     sortable: true,
@@ -126,14 +121,14 @@ const columns = [
   {
     name: 'name',
     required: true,
-    label: 'hive',
+    label: t('hive'),
     align: 'left',
     field: (row: any) => row.name,
     sortable: true,
   },
   {
     name: 'apiary_name',
-    label: 'apiary',
+    label: t('apiary'),
     align: 'left',
     field: (row: any) => row.hive_location.apiary_name,
     format: (val: string, row: any) =>
@@ -142,7 +137,7 @@ const columns = [
   },
   {
     name: 'queen_location.queen_name',
-    label: 'queen',
+    label: t('queen'),
     align: 'left',
     field: (row: any) => row.queen_location,
     format: (val: string) => queenTableCol(val),
@@ -150,14 +145,14 @@ const columns = [
   },
   {
     name: 'hive_source.name',
-    label: 'source',
+    label: t('source'),
     align: 'left',
     field: (row: any) => row.hive_source.name,
     sortable: true,
   },
   {
     name: 'hive_type.name',
-    label: 'type',
+    label: t('type'),
     align: 'left',
     field: (row: any) => row.hive_type.name,
     format: (val: string) => val,
@@ -165,35 +160,35 @@ const columns = [
   },
   {
     name: 'position',
-    label: 'position',
+    label: t('position'),
     align: 'right',
     field: (row: any) => row.position,
     sortable: true,
   },
   {
     name: 'grouphive',
-    label: 'grouphive',
+    label: t('grouphive'),
     align: 'right',
     field: (row: any) => row.grouphive,
     sortable: true,
   },
   {
     name: 'note',
-    label: 'note',
+    label: t('note'),
     align: 'left',
     field: (row: any) => row.note,
     sortable: false,
   },
   {
     name: 'modus',
-    label: 'active',
+    label: t('active'),
     align: 'center',
     field: (row: any) => row.modus,
     sortable: true,
   },
   {
     name: 'modus_date',
-    label: 'inactiveDate',
+    label: t('inactiveDate'),
     align: 'center',
     field: (row: any) => row.modus_date,
     format: (val: string, row: any) =>
@@ -210,7 +205,7 @@ const columns = [
   },
   {
     name: 'updated_at',
-    label: 'updated',
+    label: t('updated'),
     align: 'center',
     field: (row: any) => row.updated_at,
     format: (val: string, row: any) => tableMeta(val, row.editor),
@@ -218,7 +213,7 @@ const columns = [
   },
   {
     name: 'deleted_at',
-    label: 'deleted',
+    label: t('deleted'),
     align: 'center',
     field: (row: any) => row.deleted_at,
     format: (val: string, row: any) =>

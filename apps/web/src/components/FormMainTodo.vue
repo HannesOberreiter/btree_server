@@ -1,5 +1,5 @@
 <template>
-  <q-form class="full-width" @submit.prevent.stop="onSubmit">
+  <q-form class="full-width" @submit.prevent.stop="">
     <form-dropdown-edit
       v-if="isEdit"
       v-model="editOptions"
@@ -8,11 +8,11 @@
     ></form-dropdown-edit>
     <div class="row">
       <div class="col-11">
-        <input-date
+        <form-input-date
           v-model="state.date"
           :values="values"
           :reset="reset"
-        ></input-date>
+        ></form-input-date>
       </div>
       <div class="col-1 text-center items-center">
         <q-btn
@@ -26,7 +26,7 @@
     </div>
     <div v-if="showInterval" class="row q-pb-xs">
       <div class="col-6">
-        <form-numeric-interval
+        <form-input-numeric
           v-model.number="state.interval"
           label="interval"
           :hint="$t('intervalText')"
@@ -34,27 +34,27 @@
           :max-valid="365"
           icon="fas fa-arrow-down-1-9"
           numeric-valid="integer"
-        ></form-numeric-interval>
+        ></form-input-numeric>
       </div>
       <div class="col-6 q-pl-sm">
-        <form-numeric-repeat
+        <form-input-numeric
           v-model.number="state.repeat"
           label="repeat"
           :hint="$t('repeatText')"
           shadow-text="x"
           icon="fas fa-infinity"
           numeric-valid="integer"
-        ></form-numeric-repeat>
+        ></form-input-numeric>
       </div>
     </div>
-    <form-input-name
+    <form-input-text
       v-model="state.name"
       label="name"
       icon="fas fa-passport"
       :values="values"
       :reset="reset"
       :required="true"
-    ></form-input-name>
+    ></form-input-text>
     <form-input-note
       v-model="state.note"
       :values="values"
@@ -66,69 +66,36 @@
       :reset="reset"
     ></form-input-checkbox>
   </q-form>
-  <q-btn-group v-if="!isEdit" spread>
-    <q-btn
-      unelevated
-      size="md"
-      color="secondary"
-      :loading="isSubmitting"
-      :label="$t('save')"
-      @click="onSubmit"
-    />
-    <q-btn
-      unelevated
-      size="md"
-      color="warning"
-      :label="$t('reset')"
-      @click="onReset"
-    />
-    <q-btn
-      v-if="lastInsert"
-      unelevated
-      size="md"
-      color="info"
-      :loading="isSubmitting"
-      :label="$t('undo')"
-      @click="onUndo"
-    />
-  </q-btn-group>
-  <q-btn-group v-else spread>
-    <q-btn
-      unelevated
-      size="md"
-      color="secondary"
-      :loading="isSubmitting"
-      :label="$t('update')"
-      @click="onUpdate"
-    ></q-btn>
-    <q-btn
-      unelevated
-      size="md"
-      color="warning"
-      :label="$t('reset')"
-      @click="onReset"
-    />
-  </q-btn-group>
+  <form-buttons
+    class="q-pt-md"
+    :state="state"
+    :is-edit="isEdit"
+    :edit-ids="editOptions"
+    :v="v"
+    form="todo"
+    @reset="onReset"
+    @change="emit('onSuccess', true)"
+  >
+  </form-buttons>
 </template>
 
 <script setup lang="ts">
 import { api } from '~/boot/axios';
 import { useNotification } from '~/composables/useResponseText';
 import dayjs from 'dayjs';
-import InputDate from './FormInputDate.vue';
-import FormInputName from './FormInputText.vue';
+import FormInputDate from './FormInputDate.vue';
+import FormInputNumeric from './FormInputNumeric.vue';
+import FormInputText from './FormInputText.vue';
 import FormInputNote from './FormInputNote.vue';
 import FormDropdownEdit from './FormDropdownEdit.vue';
-import FormNumericRepeat from './FormInputNumeric.vue';
-import FormNumericInterval from './FormInputNumeric.vue';
 import FormInputCheckbox from './FormInputCheckbox.vue';
+import FormButtons from './FormButtons.vue';
 import useVuelidate from '@vuelidate/core';
-import { flatten, isNil, map, merge, omitBy } from 'lodash';
+import { flatten, map, merge } from 'lodash';
+import { FormTodo } from '~/types';
 
 const notification = useNotification();
 const showInterval = ref(false);
-const lastInsert = ref(null);
-const router = useRouter();
 const values = ref({});
 const reset = ref(0);
 const props = defineProps({
@@ -151,10 +118,7 @@ const isEdit = computed(() => {
   if (ids.value.length === 0) return false;
   return true;
 });
-
 if (isEdit.value) getEdit(unref(ids.value));
-if (isEdit.value && router.currentRoute.value.name === 'edit-todo')
-  router.push({ name: 'new-todo' });
 
 const v = useVuelidate();
 
@@ -170,32 +134,9 @@ const stateDefault = {
   repeat: 0,
 };
 
-const state = ref({
+const state = ref<FormTodo>({
   ...stateDefault,
 });
-
-const isSubmitting = ref(false);
-
-async function onSubmit() {
-  isSubmitting.value = true;
-  const isFormCorrect = await v.value.$validate();
-  if (!isFormCorrect) {
-    isSubmitting.value = false;
-    return;
-  }
-  const data = JSON.stringify({ ...state.value });
-  await api.post('/v1/todo', data).then(
-    (response: any) => {
-      lastInsert.value = response.data;
-      notification.open('positive', '');
-      emit('onSuccess', true);
-    },
-    (error) => {
-      notification.open('negative', error.response);
-    }
-  );
-  isSubmitting.value = false;
-}
 
 async function getEdit(id: unknown[]) {
   return await api.post('/v1/todo/batchGet', { ids: id }).then(
@@ -211,50 +152,6 @@ async function getEdit(id: unknown[]) {
       notification.open('negative', error.response);
     }
   );
-}
-
-async function onUndo() {
-  isSubmitting.value = true;
-  const data = JSON.stringify({ ids: lastInsert.value });
-  await api.patch('/v1/todo/batchDelete?hard=true', data).then(
-    (_response: any) => {
-      lastInsert.value = null;
-      notification.open('positive', '');
-    },
-    (error) => {
-      notification.open('negative', error.response);
-    }
-  );
-  isSubmitting.value = false;
-  return;
-}
-
-async function onUpdate() {
-  isSubmitting.value = true;
-  const isFormCorrect = await v.value.$validate();
-  if (!isFormCorrect) {
-    isSubmitting.value = false;
-    return;
-  }
-  const id = editOptions.value.map((obj: any) => obj.value);
-  const data = omitBy(state.value, isNil);
-
-  const result = { ids: id, data };
-  delete result.data.interval;
-  delete result.data.repeat;
-
-  await api.patch('/v1/todo', JSON.stringify(result)).then(
-    (response: any) => {
-      lastInsert.value = response.data;
-      getEdit(id);
-      notification.open('positive', '');
-    },
-    (error) => {
-      notification.open('negative', error.response);
-    }
-  );
-  isSubmitting.value = false;
-  return;
 }
 
 function onReset() {

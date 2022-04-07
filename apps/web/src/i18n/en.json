@@ -53,6 +53,7 @@
   "dateEnd": "End date",
   "dateStart": "Start date",
   "day": "Day | Days",
+  "dropdownNotAvailable": "Original selected option is inactive and cannot be selected!",
   "deactivate": "Deactivate",
   "inactiveDate": "Inactive Date",
   "delete": "Delete",

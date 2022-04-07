@@ -32,17 +32,17 @@
       <div v-if="(showInterval || forceInterval) && !isEdit" class="col-12">
         <div class="row">
           <div class="col-6">
-            <input-numeric-start
+            <form-input-numeric
               v-model.number="state.start"
               label="start"
               :hint="$t('startNumberNote')"
               :max-valid="10000"
               icon="fas fa-arrow-down-1-9"
               numeric-valid="integer"
-            ></input-numeric-start>
+            ></form-input-numeric>
           </div>
           <div class="col-6 q-pl-sm">
-            <input-numeric-repeat
+            <form-input-numeric
               v-model.number="state.repeat"
               label="numberQueens"
               :hint="sampleName"
@@ -51,7 +51,7 @@
               icon="fas fa-infinity"
               :max-valid="100"
               numeric-valid="integer"
-            ></input-numeric-repeat>
+            ></form-input-numeric>
           </div>
         </div>
       </div>
@@ -97,32 +97,32 @@
       ></form-dropdown-hive>
     </div>
     <div class="col-12 col-md-6 q-pt-sm">
-      <form-input-movedate
+      <form-input-date
         v-model="state.move_date"
         :values="values"
         :reset="reset"
         label="queenMovedate"
         :hint="$t('queenMovedateInfo')"
-      ></form-input-movedate>
+      ></form-input-date>
     </div>
 
-    <form-dropdown-race
+    <form-dropdown-option
       v-model="state.race"
       table="queen_races"
       label="race"
       table-id="race_id"
       :values="values"
       :reset="reset"
-    ></form-dropdown-race>
+    ></form-dropdown-option>
     <div class="col-12 q-pb-sm">
-      <form-dropdown-mating
+      <form-dropdown-option
         v-model="state.mating"
         table="queen_matings"
         table-id="mating_id"
         label="mating"
         :values="values"
         :reset="reset"
-      ></form-dropdown-mating>
+      ></form-dropdown-option>
     </div>
 
     <div class="col-12 col-md-6 q-pt-sm q-pb-sm">
@@ -137,13 +137,13 @@
     </div>
 
     <div class="col-12 q-pb-sm">
-      <form-dropdown-mother
+      <form-dropdown-option
         v-model="state.mother_id"
         label="mother"
         table="queen"
         table-id="mother_id"
         allow-empty="noMother"
-      ></form-dropdown-mother>
+      ></form-dropdown-option>
     </div>
 
     <form-input-url
@@ -152,12 +152,12 @@
       :reset="reset"
     ></form-input-url>
 
-    <input-note
+    <form-input-note
       v-model="state.note"
       class="q-pt-sm"
       :values="values"
       :reset="reset"
-    ></input-note>
+    ></form-input-note>
     <div class="row q-pt-sm q-pb-md">
       <div class="col-12 col-md-6">
         <form-input-checkbox
@@ -170,13 +170,13 @@
         ></form-input-checkbox>
       </div>
       <div class="col-12 col-md-6">
-        <form-input-modusdate
+        <form-input-date
           v-if="!state.modus"
           v-model="state.modusDate"
           :values="values"
           :reset="reset"
           label="modusDate"
-        ></form-input-modusdate>
+        ></form-input-date>
       </div>
     </div>
   </q-form>
@@ -215,25 +215,19 @@ const stateDefault = {
 <script setup lang="ts">
 import { api } from '~/boot/axios';
 import { useNotification } from '~/composables/useResponseText';
-import FormInputMovedate from './FormInputDate.vue';
-import FormInputModusdate from './FormInputDate.vue';
-import FormInputCheckbox from './FormInputCheckbox.vue';
-import FormDropdownMating from './FormDropdownOption.vue';
-import FormDropdownRace from './FormDropdownOption.vue';
-import FormInputText from './FormInputText.vue';
-import InputNote from './FormInputNote.vue';
-import InputNumericStart from './FormInputNumeric.vue';
-import InputNumericRepeat from './FormInputNumeric.vue';
-import useVuelidate from '@vuelidate/core';
-import { useQueensQuery } from '~/composables/useQuery';
-import FormDropdownEdit from './FormDropdownEdit.vue';
-import FormButtons from './FormButtons.vue';
-import FormDropdownOption from './FormDropdownOption.vue';
-import FormDropdownMother from './FormDropdownOption.vue';
-import FormDropdownHive from './FormDropdownHive.vue';
 import FormInputDate from './FormInputDate.vue';
+import FormInputCheckbox from './FormInputCheckbox.vue';
+import FormDropdownOption from './FormDropdownOption.vue';
+import FormInputText from './FormInputText.vue';
+import FormInputNote from './FormInputNote.vue';
+import FormInputNumeric from './FormInputNumeric.vue';
+import FormDropdownHive from './FormDropdownHive.vue';
+import FormDropdownEdit from './FormDropdownEdit.vue';
 import FormQueenMarkcolour from './FormQueenMarkcolour.vue';
 import FormInputUrl from './FormInputUrl.vue';
+import FormButtons from './FormButtons.vue';
+import useVuelidate from '@vuelidate/core';
+import { useQueensQuery } from '~/composables/useQuery';
 import { FormQueen } from '~/types';
 
 const notification = useNotification();

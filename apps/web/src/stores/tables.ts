@@ -15,6 +15,16 @@ export const useTablesStore = defineStore('tables', {
       sort: useStorage('table-sort-col-apiary', 'name'),
       direction: useStorage('table-sort-direction-apiary', false),
     },
+    movedate: {
+      visible: useStorage('table-visible-movedate', [
+        'date',
+        'hive.name',
+        'apiary.name',
+      ]),
+      length: useStorage('table-length-movedate', 10),
+      sort: useStorage('table-sort-col-movedate', 'date'),
+      direction: useStorage('table-sort-direction-movedate', false),
+    },
   }),
   getters: {},
   actions: {},

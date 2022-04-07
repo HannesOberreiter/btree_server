@@ -2,30 +2,20 @@
   <q-form @submit.prevent.stop="onSubmit">
     <div class="row">
       <div class="col-6 q-pr-sm">
-        <q-input
+        <form-input-text
           v-model="state.firstname"
-          :error="v.firstname.$error"
-          :error-message="validationErrors(v.firstname)"
-          :no-error-icon="true"
-          :label="t('firstname')"
-          name="firstname"
-          type="text"
-          filled
+          label="firstname"
+          :max-valid="45"
         >
-        </q-input>
+        </form-input-text>
       </div>
       <div class="col-6">
-        <q-input
+        <form-input-text
           v-model="state.lastname"
-          :error="v.lastname.$error"
-          :error-message="validationErrors(v.lastname)"
-          :no-error-icon="true"
-          :label="t('lastname')"
-          name="lastname"
-          type="text"
-          filled
+          label="lastname"
+          :max-valid="45"
         >
-        </q-input>
+        </form-input-text>
       </div>
       <div class="col-12">
         <form-user-language v-model="state.lang"></form-user-language>
@@ -87,10 +77,10 @@ import { required, maxLength } from '~/helpers/i18n-validators';
 import { useAuthUserStore } from '~/stores/auth';
 import { useNotification } from '~/composables/useResponseText';
 import { useQuasarLang } from '~/composables/useQuasarLang';
-import { validationErrors } from '~/helpers';
 import FormUserLanguage from './FormUserLanguage.vue';
 import FormUserNewsletter from './FormUserNewsletter.vue';
 import useVuelidate from '@vuelidate/core';
+import FormInputText from './FormInputText.vue';
 
 const { t } = useI18n();
 const $q = useQuasar();
@@ -110,8 +100,6 @@ const state = reactive({
 });
 
 const rules = {
-  firstname: { maxLengthValue: maxLength(45) },
-  lastname: { maxLengthValue: maxLength(45) },
   lang: {
     required,
   },

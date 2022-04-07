@@ -1,8 +1,8 @@
 <template>
   <q-input
     v-model.number="modelValue"
-    :error="v.num.$error"
-    :error-message="validationErrors(v.num)"
+    :error="v[props.label]['$error']"
+    :error-message="validationErrors(v[props.label])"
     :no-error-icon="true"
     :label="
       disable
@@ -109,12 +109,12 @@ const multipleValues = computed(() => {
 const disable = ref(multipleValues.value);
 
 const state = {
-  num: modelValue,
+  [props.label]: modelValue,
 };
 const rules = computed(() => {
   if (props.numericValid === 'numeric') {
     return {
-      num: {
+      [props.label]: {
         minValue: minValue(props.minValid),
         maxValue: maxValue(props.maxValid),
         numeric: numeric,
@@ -122,7 +122,7 @@ const rules = computed(() => {
     };
   } else if (props.numericValid === 'decimal') {
     return {
-      num: {
+      [props.label]: {
         minValue: minValue(props.minValid),
         maxValue: maxValue(props.maxValid),
         decimal: decimal,
@@ -130,7 +130,7 @@ const rules = computed(() => {
     };
   } else {
     return {
-      num: {
+      [props.label]: {
         minValue: minValue(props.minValid),
         maxValue: maxValue(props.maxValid),
         integer: integer,

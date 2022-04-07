@@ -2,11 +2,11 @@
   <q-form @submit.prevent.stop="onSubmit">
     <div class="row">
       <div class="col-12">
-        <form-user-password1
+        <form-user-password
           v-model:modelPassword="state.oldPassword"
           password-label="oldPassword"
           :confirm="false"
-        ></form-user-password1>
+        ></form-user-password>
         <form-input-email
           v-model:modelMail="state.email"
           :disable-mail="true"
@@ -38,7 +38,6 @@ import { useAuthUserStore } from '~/stores/auth';
 import { useNotification } from '~/composables/useResponseText';
 import FormInputEmail from './FormInputEmail.vue';
 import FormUserPassword from './FormUserPassword.vue';
-import FormUserPassword1 from './FormUserPassword.vue';
 import useVuelidate from '@vuelidate/core';
 
 const notification = useNotification();

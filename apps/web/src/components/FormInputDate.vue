@@ -1,8 +1,8 @@
 <template>
   <q-input
     v-model="modelValue"
-    :error="v.date.$error"
-    :error-messages="validationErrors(v.date)"
+    :error="v[props.label]['$error']"
+    :error-messages="validationErrors(v[props.label])"
     :label="disable ? $t('multipleValues') : $t(label)"
     input-class="text-center"
     type="date"
@@ -13,7 +13,12 @@
     @click="qDateProxy = !qDateProxy"
   >
     <template #before>
-      <q-icon v-if="!multipleValues" :name="icon" class="cursor-pointer">
+      <btn-multiple-values
+        v-if="multipleValues"
+        :disable="disable"
+        @click="editValues(!disable)"
+      ></btn-multiple-values>
+      <q-icon :name="icon" class="cursor-pointer">
         <q-popup-proxy
           v-model="qDateProxy"
           cover
@@ -24,6 +29,7 @@
             v-model="modelValue"
             :events="markDate"
             mask="YYYY-MM-DD"
+            :disable="disable"
             today-btn
           >
             <div class="row items-center justify-end">
@@ -32,11 +38,6 @@
           </q-date>
         </q-popup-proxy>
       </q-icon>
-      <btn-multiple-values
-        v-else
-        :disable="disable"
-        @click="editValues(!disable)"
-      ></btn-multiple-values>
     </template>
     <template #after><slot name="deepAfter"></slot></template>
   </q-input>
@@ -81,6 +82,10 @@ const props = defineProps({
     type: String,
     default: 'fas fa-calendar',
   },
+  required: {
+    type: Boolean,
+    default: false,
+  },
 });
 const emit = defineEmits(['update:modelValue']);
 const { modelValue } = useVModels(props, emit);
@@ -95,25 +100,33 @@ const multipleValues = computed(() =>
 const disable = ref(multipleValues.value);
 
 const state = {
-  date: modelValue,
+  [props.label]: modelValue,
 };
 
-const rules = {
-  date: {
-    required: required(t(props.label)),
-    minValue: (value: string) => {
-      return dayjs(value, 'YYYY-MM-DD', true).isValid();
-    },
-  },
-};
+const rules = computed(() => {
+  if (props.required) {
+    return {
+      [props.label]: {
+        required: required(t(props.label)),
+        minValue: (value: string) => {
+          return dayjs(value, 'YYYY-MM-DD', true).isValid();
+        },
+      },
+    };
+  } else {
+    return {
+      [props.label]: {
+        minValue: (value: string) => {
+          return value === null || dayjs(value, 'YYYY-MM-DD', true).isValid();
+        },
+      },
+    };
+  }
+});
 
 const v = useVuelidate(rules, state, { $autoDirty: true });
 
-watch(reset, () => {
-  setValues();
-});
-
-watch(values, () => {
+watch([reset, values], () => {
   setValues();
 });
 

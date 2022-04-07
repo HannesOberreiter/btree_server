@@ -32,17 +32,17 @@
       <div v-if="showInterval && !isEdit" class="col-12">
         <div class="row">
           <div class="col-6">
-            <input-numeric-start
+            <form-input-numeric
               v-model.number="state.start"
               label="start"
               :hint="$t('startNumberNote')"
               :max-valid="10000"
               icon="fas fa-arrow-down-1-9"
               numeric-valid="integer"
-            ></input-numeric-start>
+            ></form-input-numeric>
           </div>
           <div class="col-6 q-pl-sm">
-            <input-numeric-repeat
+            <form-input-numeric
               v-model.number="state.repeat"
               label="numberHives"
               :hint="sampleName"
@@ -50,7 +50,7 @@
               icon="fas fa-infinity"
               :max-valid="100"
               numeric-valid="integer"
-            ></input-numeric-repeat>
+            ></form-input-numeric>
           </div>
         </div>
       </div>
@@ -66,34 +66,34 @@
         ></form-dropdown-option>
       </div>
       <div class="col-12 col-md-6">
-        <form-input-movedate
+        <form-input-date
           v-model="state.date"
           label="movedate"
           :hint="$t('movementInfo')"
-        ></form-input-movedate>
+        ></form-input-date>
       </div>
     </div>
 
-    <form-dropdown-type
+    <form-dropdown-option
       v-model="state.type"
       table="hive_types"
       label="type"
       :values="values"
       :reset="reset"
-    ></form-dropdown-type>
+    ></form-dropdown-option>
     <div class="col-12 q-pb-sm">
-      <form-dropdown-source
+      <form-dropdown-option
         v-model="state.source"
         table="hive_sources"
         table-id="source_id"
         label="source"
         :values="values"
         :reset="reset"
-      ></form-dropdown-source>
+      ></form-dropdown-option>
     </div>
 
     <div class="col-12 col-md-6 q-pt-sm q-pb-sm">
-      <input-numeric-position
+      <form-input-numeric
         v-model="state.position"
         label="position"
         :hint="$t('positionNote')"
@@ -102,10 +102,10 @@
         :values="values"
         :reset="reset"
       >
-      </input-numeric-position>
+      </form-input-numeric>
     </div>
     <div class="col-12 col-md-6 q-pt-sm q-pb-sm">
-      <input-numeric-grouphive
+      <form-input-numeric
         v-model="state.grouphive"
         label="grouphive"
         :hint="$t('grouphiveNote')"
@@ -113,15 +113,15 @@
         numeric-valid="integer"
         :values="values"
         :reset="reset"
-      ></input-numeric-grouphive>
+      ></form-input-numeric>
     </div>
 
-    <input-note
+    <form-input-note
       v-model="state.note"
       class="q-pt-sm"
       :values="values"
       :reset="reset"
-    ></input-note>
+    ></form-input-note>
     <div class="row q-pt-sm q-pb-md">
       <div class="col-12 col-md-6">
         <form-input-checkbox
@@ -134,13 +134,13 @@
         ></form-input-checkbox>
       </div>
       <div class="col-12 col-md-6">
-        <form-input-modusdate
+        <form-input-date
           v-if="!state.modus"
           v-model="state.modusDate"
           :values="values"
           :reset="reset"
           label="modusDate"
-        ></form-input-modusdate>
+        ></form-input-date>
       </div>
     </div>
   </q-form>
@@ -177,23 +177,17 @@ const stateDefault = {
 <script setup lang="ts">
 import { api } from '~/boot/axios';
 import { useNotification } from '~/composables/useResponseText';
-import FormInputMovedate from './FormInputDate.vue';
-import FormInputModusdate from './FormInputDate.vue';
+import FormInputDate from './FormInputDate.vue';
 import FormInputCheckbox from './FormInputCheckbox.vue';
-import FormDropdownSource from './FormDropdownOption.vue';
-import FormDropdownType from './FormDropdownOption.vue';
+import FormDropdownOption from './FormDropdownOption.vue';
 import FormInputText from './FormInputText.vue';
-import InputNote from './FormInputNote.vue';
-import InputNumericStart from './FormInputNumeric.vue';
-import InputNumericRepeat from './FormInputNumeric.vue';
-import InputNumericGrouphive from './FormInputNumeric.vue';
-import InputNumericPosition from './FormInputNumeric.vue';
+import FormInputNote from './FormInputNote.vue';
+import FormInputNumeric from './FormInputNumeric.vue';
+import FormDropdownEdit from './FormDropdownEdit.vue';
 import useVuelidate from '@vuelidate/core';
 import { useHivesQuery } from '~/composables/useQuery';
-import FormDropdownEdit from './FormDropdownEdit.vue';
 import FormButtons from './FormButtons.vue';
 import { FormHive } from '~/types';
-import FormDropdownOption from './FormDropdownOption.vue';
 
 const notification = useNotification();
 const showInterval = ref(false);

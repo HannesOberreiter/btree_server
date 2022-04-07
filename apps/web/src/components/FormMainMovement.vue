@@ -15,6 +15,7 @@
       v-model="state.date"
       label="movedate"
       table-id="date"
+      :required="isEdit ? false : true"
       :values="values"
       :reset="reset"
     ></input-date>
@@ -30,6 +31,7 @@
   </q-form>
 
   <form-buttons
+    class="q-pt-md"
     :state="state"
     :is-edit="isEdit"
     :edit-ids="editOptions"

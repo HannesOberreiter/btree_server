@@ -18,7 +18,6 @@
     options-dense
     emit-value
     :options="optionColumns"
-    :option-label="(o) => $t(o.label)"
     option-value="name"
     :display-value="$q.lang.table.columns"
     options-cover

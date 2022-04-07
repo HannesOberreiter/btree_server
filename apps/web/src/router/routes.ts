@@ -43,6 +43,11 @@ const routes: RouteRecordRaw[] = [
         name: 'table-apiary',
         component: () => import('~/pages/ApiaryTable.vue'),
       },
+      {
+        path: 'movement',
+        name: 'table-movement',
+        component: () => import('~/pages/MovementTable.vue'),
+      },
     ],
   },
   /***

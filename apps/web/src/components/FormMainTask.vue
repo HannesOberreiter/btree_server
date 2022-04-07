@@ -47,14 +47,14 @@
         ></form-dropdown-option>
       </div>
       <div class="col-12 q-pb-sm">
-        <form-dropdown-disease
+        <form-dropdown-option
           v-model="state.disease"
           :values="values"
           :reset="reset"
           table="treatment_diseases"
           label="disease"
           table-id="disease_id"
-        ></form-dropdown-disease>
+        ></form-dropdown-option>
       </div>
     </div>
     <div v-else-if="task === 'feed'" class="row">
@@ -112,14 +112,14 @@
       </div>
       <div v-if="fields.settings.checkup.strength" class="row q-pt-sm q-pb-sm">
         <div class="col-12 col-md-6">
-          <input-numeric-strength
+          <form-input-numeric
             v-model="state.checkup_strong"
             :values="values"
             :reset="reset"
             label="strong"
             icon="fas fa-dumbbell"
           >
-          </input-numeric-strength>
+          </form-input-numeric>
         </div>
       </div>
       <div v-if="fields.settings.checkup.weight" class="q-pt-sm q-pb-sm">
@@ -147,7 +147,7 @@
     <div v-else-if="task === 'harvest'">
       <div v-if="fields.settings.harvest.frames" class="row">
         <div class="col-12 col-md-7">
-          <form-input-frames
+          <form-input-amount
             v-model="state.harvest_frames"
             v-model:model-type="state.harvest_amount_type"
             v-model:model-calc="state.harvest_amount_calc"
@@ -155,48 +155,48 @@
             :values="values"
             :hive-count="state.hive.length"
             label="frame"
-          ></form-input-frames>
+          ></form-input-amount>
         </div>
       </div>
       <div v-if="fields.settings.harvest.water" class="row">
         <div class="col-12 col-md-6">
-          <input-numeric-water
+          <form-input-numeric
             v-model="state.harvest_water"
             :values="values"
             :reset="reset"
             label="water"
             icon="fas fa-droplet"
             shadow-text="%"
-          ></input-numeric-water>
+          ></form-input-numeric>
         </div>
       </div>
       <div class="row">
         <div class="col-12 col-md-6">
-          <form-input-charge
+          <form-input-text
             v-model="state.harvest_charge"
             label="charge"
             icon="fas fa-receipt"
             :values="values"
             :reset="reset"
-          ></form-input-charge>
+          ></form-input-text>
         </div>
       </div>
     </div>
     <div v-else-if="task === 'treatment'" class="row">
       <div v-if="fields.settings.treatment.vet" class="col-12 q-pb-sm">
-        <form-dropdown-vet
+        <form-dropdown-option
           v-model="state.treatment_vet"
           :values="values"
           :reset="reset"
           table="treatment_vets"
           label="vet"
-        ></form-dropdown-vet>
+        ></form-dropdown-option>
       </div>
       <div
         v-if="fields.settings.treatment.wait"
         class="col-12 col-md-6 q-pb-sm"
       >
-        <input-numeric-wait
+        <form-input-numeric
           v-model="state.treatment_wait"
           :values="values"
           :reset="reset"
@@ -204,7 +204,7 @@
           :shadow-text="$t('day', 2)"
           icon="fas fa-circle-pause"
           :max-valid="365"
-        ></input-numeric-wait>
+        ></form-input-numeric>
       </div>
     </div>
   </div>
@@ -296,20 +296,15 @@ import FormCheckupTemperature from './FormCheckupTemperature.vue';
 import FormCheckupVarroa from './FormCheckupVarroa.vue';
 import FormCheckupWeight from './FormCheckupWeight.vue';
 import FormInputAmount from './FormInputAmount.vue';
-import FormInputFrames from './FormInputAmount.vue';
-import FormInputCharge from './FormInputText.vue';
+import FormInputText from './FormInputText.vue';
 import FormInputDates from './FormInputDates.vue';
 import FormInputCheckbox from './FormInputCheckbox.vue';
 import FormDropdownOption from './FormDropdownOption.vue';
-import FormDropdownDisease from './FormDropdownOption.vue';
-import FormDropdownVet from './FormDropdownOption.vue';
 import FormDropdownHive from './FormDropdownHive.vue';
 import FormInputUrl from './FormInputUrl.vue';
 import FormDropdownEdit from './FormDropdownEdit.vue';
 import FormInputNote from './FormInputNote.vue';
-import InputNumericWater from './FormInputNumeric.vue';
-import InputNumericStrength from './FormInputNumeric.vue';
-import InputNumericWait from './FormInputNumeric.vue';
+import FormInputNumeric from './FormInputNumeric.vue';
 import FormButtons from './FormButtons.vue';
 
 const fields = useFieldsettingStore();

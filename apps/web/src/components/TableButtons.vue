@@ -18,7 +18,7 @@
     />
 
     <q-btn
-      v-if="['hive'].includes(table)"
+      v-if="['hive', 'movedate'].includes(table)"
       color="warning"
       no-caps
       :label="$t('filter')"
@@ -39,7 +39,12 @@
           </q-item-section>
         </q-item>
 
-        <q-item v-close-popup clickable @click="onMove">
+        <q-item
+          v-if="['hive', 'apiary'].includes(table)"
+          v-close-popup
+          clickable
+          @click="onMove"
+        >
           <q-item-section>
             <q-item-label>{{ $t('movement') }}</q-item-label>
           </q-item-section>
@@ -192,7 +197,8 @@ function onEdit() {
 }
 
 function onMove() {
-  const ids = selected.value.map((o: any) => o.id);
+  const ids =
+    props.table === 'hive' ? selected.value.map((o: any) => o.id) : null;
   dialogForm('movement', null, 'movedate', ids);
 }
 

@@ -2,7 +2,7 @@ import { MaybeRef } from '@vueuse/core';
 import dayjs from 'dayjs';
 import { includes, isNil, omitBy } from 'lodash';
 import { Ref } from 'vue';
-import { FormHive, FormQueen, FormQuicktool } from '~/types';
+import { FormHive, FormQueen, FormQuicktool, FormTodo } from '~/types';
 
 export const useFormCleanup = (
   table: MaybeRef<string>,
@@ -12,6 +12,8 @@ export const useFormCleanup = (
   function cleanup() {
     if (unref(table) === 'hive') {
       return cleanupHive(state.value, isEdit);
+    } else if (unref(table) === 'todo') {
+      return cleanupTodo(state.value, isEdit);
     } else if (
       ['feed', 'checkup', 'treatment', 'harvest'].includes(unref(table))
     ) {
@@ -151,5 +153,20 @@ function cleanupApiary(state: any) {
   const result = {
     ...state,
   } as any;
+  return omitBy(result, isNil);
+}
+
+function cleanupTodo(state: FormTodo, isEdit: boolean) {
+  const result = {
+    date: state.date,
+    done: state.done,
+    name: state.name,
+    note: state.note,
+  } as any;
+
+  if (!isEdit) {
+    result['start'] = state.interval;
+    result['repeat'] = state.repeat;
+  }
   return omitBy(result, isNil);
 }

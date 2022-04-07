@@ -2,25 +2,25 @@
   <q-form class="full-width" @submit.prevent.stop="">
     <div class="row">
       <div class="col-12">
-        <form-input-name
+        <form-input-text
           v-model="state.name"
           label="name"
-          :required="true"
+          :required="isEdit ? false : true"
           :values="values"
           :reset="reset"
-        ></form-input-name>
+        ></form-input-text>
       </div>
       <div class="col-12">
-        <form-input-description
+        <form-input-text
           v-model="state.description"
           label="description"
           :values="values"
           :reset="reset"
           :max-valid="512"
-        ></form-input-description>
+        ></form-input-text>
       </div>
       <div class="col-6">
-        <form-input-latitude
+        <form-input-numeric
           v-model="state.latitude"
           label="latitude"
           :values="values"
@@ -29,10 +29,10 @@
           :min-valid="-90"
           :max-valid="90"
           numeric-valid="decimal"
-        ></form-input-latitude>
+        ></form-input-numeric>
       </div>
       <div class="col-6">
-        <form-input-longitude
+        <form-input-numeric
           v-model="state.longitude"
           label="longitude"
           :values="values"
@@ -41,14 +41,14 @@
           :min-valid="-90"
           :max-valid="90"
           numeric-valid="decimal"
-        ></form-input-longitude>
+        ></form-input-numeric>
       </div>
       <div class="col-12">
-        <input-note
+        <form-input-note
           v-model="state.note"
           :values="values"
           :reset="reset"
-        ></input-note>
+        ></form-input-note>
       </div>
       <div class="col-12">
         <form-input-checkbox
@@ -89,15 +89,14 @@ const stateDefault = {
 import { api } from '~/boot/axios';
 import { required } from '~/helpers/i18n-validators';
 import { useNotification } from '~/composables/useResponseText';
-import FormInputName from './FormInputText.vue';
-import FormInputDescription from './FormInputText.vue';
-import FormInputLatitude from './FormInputNumeric.vue';
-import FormInputLongitude from './FormInputNumeric.vue';
-import InputNote from './FormInputNote.vue';
+import FormInputText from './FormInputText.vue';
+import FormInputNumeric from './FormInputNumeric.vue';
+import FormInputNote from './FormInputNote.vue';
+import FormInputCheckbox from './FormInputCheckbox.vue';
+
 import useVuelidate from '@vuelidate/core';
 import { flatten, map, merge } from 'lodash';
 import FormButtons from './FormButtons.vue';
-import FormInputCheckbox from './FormInputCheckbox.vue';
 
 const notification = useNotification();
 const { t } = useI18n();

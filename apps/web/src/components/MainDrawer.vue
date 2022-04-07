@@ -191,7 +191,7 @@ const links = ref([
       },
       {
         label: t('movement', 2),
-        route: 'table-table',
+        route: 'table-movement',
         icon: 'fas fa-truck',
         menu: false,
       },
