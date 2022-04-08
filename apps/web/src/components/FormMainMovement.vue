@@ -44,19 +44,20 @@
 </template>
 
 <script setup lang="ts">
-import { api } from '~/boot/axios';
 import { useNotification } from '~/composables/useResponseText';
 import InputDate from './FormInputDate.vue';
 import FormDropdownEdit from './FormDropdownEdit.vue';
 import FormDropdownHive from './FormDropdownHive.vue';
 import useVuelidate from '@vuelidate/core';
-import { flatten, map, merge } from 'lodash';
+import { flatten, map, merge } from 'lodash-es';
 import FormButtons from './FormButtons.vue';
 import FormDropdownOption from './FormDropdownOption.vue';
 import { useDateFormat } from '~/composables/useDate';
+import { useApiFetch } from '~/composables/useApi';
 
 const useDate = useDateFormat();
 const notification = useNotification();
+const api = useApiFetch();
 const values = ref({});
 const reset = ref(0);
 const router = useRouter();
@@ -107,16 +108,16 @@ function onReset() {
 async function getEdit(id: unknown[]) {
   return await api.post('/v1/movedate/batchGet', { ids: id }).then(
     (response: any) => {
-      const editIds = map(response.data, (row: any) => [
+      const editIds = map(response, (row: any) => [
         { value: row.id, label: `ID: ${row.id} / (${row.hive.name})` },
       ]);
       editOptions.value = flatten(editIds);
       editOptionsCopy.value = flatten(editIds);
       editOptionsCopy.value = [...unref(editOptions.value)];
-      values.value = response.data;
+      values.value = response;
     },
     (error) => {
-      notification.open('negative', error.response);
+      notification.open('negative', error);
     }
   );
 }

@@ -89,7 +89,7 @@ async function sendForm(user: User) {
       await router.push({ name: 'calendar' });
     },
     (error) => {
-      notification.open('negative', error.response);
+      notification.open('negative', error);
     }
   );
   isSubmitting.value = false;

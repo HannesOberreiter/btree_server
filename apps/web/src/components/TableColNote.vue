@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts">
-import { truncate, escape } from 'lodash';
+import { truncate, escape } from 'lodash-es';
 </script>
 
 <script setup lang="ts">

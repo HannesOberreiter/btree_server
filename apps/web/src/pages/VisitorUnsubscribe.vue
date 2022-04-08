@@ -60,8 +60,8 @@ async function onSubmit() {
 
 async function sendForm(from: any) {
   await AuthService.unsubscribe(from).then(
-    (data) => {
-      const email = data.data.email;
+    (response) => {
+      const email = response.email;
       message.value = t('unsubscribe.success', { msg: email });
 
       isSubmitting.value = false;
@@ -69,7 +69,7 @@ async function sendForm(from: any) {
       notification.open('positive', message.value);
     },
     (error) => {
-      notification.open('negative', error.response);
+      notification.open('negative', error);
       isSubmitting.value = false;
     }
   );

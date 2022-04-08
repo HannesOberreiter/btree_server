@@ -90,18 +90,19 @@
 </template>
 
 <script setup lang="ts">
-import { api } from '~/boot/axios';
 import { CALENDAR } from '~/constants';
-import { map } from 'lodash';
+import { map } from 'lodash-es';
 import { QInputProps } from 'quasar';
 import { useAuthUserStore } from '~/stores/auth';
 import { useClipboard } from '@vueuse/core';
 import { useNotification } from '~/composables/useResponseText';
 import FormUserPassword from './FormUserPassword.vue';
 import useVuelidate from '@vuelidate/core';
+import { useApiFetch } from '~/composables/useApi';
 
 const storeUser = useAuthUserStore();
 const { copy } = useClipboard();
+const api = useApiFetch();
 const notification = useNotification();
 
 const isSubmitting = ref(false);
@@ -138,16 +139,16 @@ async function changeApiStatus(value = true, change = false) {
     })
     .then(
       async (response: any) => {
-        storeUser.$state.company.api_active = response.data.api_active;
+        storeUser.$state.company.api_active = response.api_active;
         map(storeUser.$state.user.company, (value) => {
-          if (response.data.id === value.id) {
-            value.api_active = response.data.api_active;
+          if (response.id === value.id) {
+            value.api_active = response.api_active;
           }
         });
         if (change) await loadApiValue();
       },
       (error) => {
-        notification.open('negative', error.response);
+        notification.open('negative', error);
       }
     );
   isSubmitting.value = false;
@@ -159,11 +160,11 @@ async function loadApiValue() {
   if (apiField.value === 'text') {
     await api.get('/v1/company/apikey').then(
       (response: any) => {
-        apiValue.value = response.data.api_key;
+        apiValue.value = response.api_key;
         notification.open('positive', '');
       },
       (error) => {
-        notification.open('negative', error.response);
+        notification.open('negative', error);
       }
     );
   }

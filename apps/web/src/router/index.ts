@@ -53,7 +53,11 @@ export default route(function ({ store }) {
       ) {
         Loading.show();
         console.log('Updating local storage values');
-        await refreshStore.refresh();
+        try {
+          await refreshStore.refresh();
+        } catch (e) {
+          console.log(e);
+        }
         Loading.hide();
       }
       routerStore.previous = from.name as any;

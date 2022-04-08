@@ -27,12 +27,13 @@
 </template>
 
 <script setup lang="ts">
-import { api } from '~/boot/axios';
+import { useApiFetch } from '~/composables/useApi';
 import { useFormCleanup } from '~/composables/useFormCleanup';
 import { useNotification } from '~/composables/useResponseText';
 
 const notification = useNotification();
 const isSubmitting = ref(false);
+const api = useApiFetch();
 const lastInsert = ref(null);
 const lastInsertTable = ref(null); // needed on quicktool form to handle multiple "forms"
 const emit = defineEmits(['change', 'reset']);
@@ -75,12 +76,12 @@ async function onUpdate() {
 
   await api.patch(`/v1/${form.value}`, JSON.stringify(data)).then(
     async (response: any) => {
-      lastInsert.value = response.data;
+      lastInsert.value = response;
       emit('change');
       notification.open('positive', '');
     },
     (error) => {
-      notification.open('negative', error.response);
+      notification.open('negative', error);
     }
   );
   isSubmitting.value = false;
@@ -99,7 +100,7 @@ async function onUndo() {
         notification.open('positive', '');
       },
       (error) => {
-        notification.open('negative', error.response);
+        notification.open('negative', error);
       }
     );
   isSubmitting.value = false;
@@ -117,13 +118,13 @@ async function onSubmit() {
   const data = cleanup.cleanup();
   await api.post(`/v1/${form.value}`, JSON.stringify(data)).then(
     async (response: any) => {
-      lastInsert.value = response.data;
+      lastInsert.value = response;
       lastInsertTable.value = unref(form.value);
       emit('change');
       notification.open('positive', '');
     },
     (error) => {
-      notification.open('negative', error.response);
+      notification.open('negative', error);
     }
   );
   isSubmitting.value = false;

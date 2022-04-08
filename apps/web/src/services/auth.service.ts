@@ -1,21 +1,22 @@
-import { api } from '~/boot/axios';
-import { find } from 'lodash';
+import { find } from 'lodash-es';
 import { RegisterUser, User } from '~/types';
 import { useAuthTokenStore } from '~/stores/token';
 import { useAuthUserStore } from '~/stores/auth';
+import { useApiFetch } from '~/composables/useApi';
 
 class AuthService {
   login(user: User) {
+    const api = useApiFetch();
     const data = JSON.stringify({
       email: user.email,
       password: user.password,
     });
     return api.post('/v1/auth/login', data).then((response: any) => {
-      if (response.data.token.accessToken) {
+      if (response.token.accessToken) {
         const storeToken = useAuthTokenStore();
-        storeToken.refreshToken(response.data.token);
+        storeToken.refreshToken(response.token);
       }
-      return response.data;
+      return response;
     });
   }
 
@@ -27,6 +28,8 @@ class AuthService {
   }
 
   register(user: RegisterUser) {
+    const api = useApiFetch();
+
     const data = JSON.stringify({
       name: user.company,
       email: user.email,
@@ -39,6 +42,7 @@ class AuthService {
   }
 
   resetMail(mail: any) {
+    const api = useApiFetch();
     const data = JSON.stringify({
       email: mail.email,
     });
@@ -46,6 +50,7 @@ class AuthService {
   }
 
   resetPassword(values: any) {
+    const api = useApiFetch();
     const data = JSON.stringify({
       key: values.resetKey,
       password: values.password,
@@ -54,6 +59,7 @@ class AuthService {
   }
 
   activate(value: any) {
+    const api = useApiFetch();
     const data = JSON.stringify({
       confirm: value.resetKey,
     });
@@ -61,6 +67,7 @@ class AuthService {
   }
 
   unsubscribe(mail: any) {
+    const api = useApiFetch();
     const data = JSON.stringify({
       email: mail.email,
     });

@@ -22,9 +22,8 @@
   </div>
 </template>
 <script setup lang="ts">
-import { remove, map, difference, merge } from 'lodash';
+import { remove, map, difference, merge } from 'lodash-es';
 import dayjs from 'dayjs';
-import { api } from '~/boot/axios';
 import { CALENDAR } from '~/constants';
 import { onKeyStroke } from '@vueuse/core';
 import { QueryClient } from 'vue-query';
@@ -50,10 +49,13 @@ import allLocales from '@fullcalendar/core/locales-all';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import listPlugin from '@fullcalendar/list';
+import { useApiFetch } from '~/composables/useApi';
 
 const { t } = useI18n();
 const $q = useQuasar();
+const api = useApiFetch();
 const notification = useNotification();
+const vis = useCalendarVis();
 const storeUser = useAuthUserStore();
 const { getPaidStatus, getUser } = storeToRefs(storeUser);
 const storeCalendar = useCalendarStore();
@@ -97,7 +99,7 @@ CALENDAR.map(function (source, _index) {
   if (source === 'vis') {
     eventsSourceList.push({
       events: function (fetchInfo, successCallback, _failureCallback) {
-        const result = useCalendarVis(fetchInfo);
+        const result = vis.render(fetchInfo);
         successCallback(result);
       },
       id: source,
@@ -106,23 +108,28 @@ CALENDAR.map(function (source, _index) {
     eventsSourceList.push({
       events: function (fetchInfo, successCallback, failureCallback) {
         const queryKey = ['calendar', source, fetchInfo];
-        try {
-          client
-            .fetchQuery(
-              queryKey,
-              () =>
-                api.get(`/v1/calendar/${source}`, {
-                  params: fetchInfo,
-                }),
-              {
-                staleTime: 1000 * 60 * 5,
-                cacheTime: 1000 * 60 * 5,
-              }
-            )
-            .then((response) => successCallback(response.data));
-        } catch (err: any) {
-          failureCallback(err);
-        }
+        client
+          .fetchQuery(
+            queryKey,
+            () =>
+              api.get(`/v1/calendar/${source}`, {
+                start: fetchInfo.start,
+                end: fetchInfo.end,
+              }),
+            {
+              staleTime: 1000 * 60 * 5,
+              cacheTime: 1000 * 60 * 5,
+            }
+          )
+          .then(
+            (response: any) => {
+              successCallback(response);
+            },
+            (error) => {
+              notification.open('negative', error);
+              failureCallback(error);
+            }
+          );
       },
       id: source,
     });

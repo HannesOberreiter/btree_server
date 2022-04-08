@@ -124,7 +124,7 @@
 import { useVModels } from '@vueuse/core';
 import { stringify } from 'csv-stringify/browser/esm/sync';
 import { exportFile } from 'quasar';
-import { api } from '~/boot/axios';
+import { useApiFetch } from '~/composables/useApi';
 import { useDateFormat } from '~/composables/useDate';
 import { clearCache } from '~/composables/useQuery';
 import { useNotification } from '~/composables/useResponseText';
@@ -133,8 +133,8 @@ import DialogFilter from './DialogFilter.vue';
 import DialogForm from './DialogForm.vue';
 
 const storeFilter = useTableFilterStore();
-
 const useDate = useDateFormat();
+const api = useApiFetch();
 const { t } = useI18n();
 const $q = useQuasar();
 const notification = useNotification();
@@ -216,7 +216,7 @@ function onRestore() {
       notification.open('positive', '');
     },
     (error) => {
-      notification.open('negative', error.response);
+      notification.open('negative', error);
     }
   );
 }
@@ -243,7 +243,7 @@ function onDelete() {
         notification.open('positive', '');
       },
       (error) => {
-        notification.open('negative', error.response);
+        notification.open('negative', error);
       }
     );
   });

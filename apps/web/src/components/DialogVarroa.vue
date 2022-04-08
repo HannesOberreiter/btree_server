@@ -47,7 +47,7 @@
 </template>
 
 <script setup lang="ts">
-import { round } from 'lodash';
+import { round } from 'lodash-es';
 
 const { dialogRef, onDialogHide, onDialogOK } = useDialogPluginComponent();
 const props = defineProps({

@@ -99,8 +99,8 @@ async function onSubmit() {
 
 async function sendForm(values: any) {
   await AuthService.resetPassword(values).then(
-    (data) => {
-      const email = data.data.email;
+    (response) => {
+      const email = response.email;
 
       message.value = t('resetUser.success', { msg: email });
 
@@ -109,7 +109,7 @@ async function sendForm(values: any) {
       notification.open('positive', message.value);
     },
     (error) => {
-      notification.open('negative', error.response);
+      notification.open('negative', error);
       isSubmitting.value = false;
     }
   );

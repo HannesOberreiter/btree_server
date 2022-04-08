@@ -12,10 +12,11 @@
 </template>
 
 <script setup lang="ts">
-import { api } from '~/boot/axios';
+import { useApiFetch } from '~/composables/useApi';
 import { useNotification } from '~/composables/useResponseText';
 
 const notification = useNotification();
+const api = useApiFetch();
 const emit = defineEmits(['change']);
 const props = defineProps({
   id: {
@@ -43,7 +44,7 @@ async function changeStatus() {
       emit('change', true);
     },
     (error) => {
-      notification.open('negative', error.response);
+      notification.open('negative', error);
     }
   );
 }

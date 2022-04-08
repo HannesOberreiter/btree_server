@@ -25,7 +25,7 @@
 </template>
 
 <script setup lang="ts">
-import { find } from 'lodash';
+import { find } from 'lodash-es';
 import { PropType } from 'vue';
 import { Task } from '~/types';
 import FormMainTask from '~/components/FormMainTask.vue';

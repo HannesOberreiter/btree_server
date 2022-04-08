@@ -193,7 +193,7 @@
 </template>
 
 <script lang="ts">
-import { flatten, map, merge } from 'lodash';
+import { flatten, map, merge } from 'lodash-es';
 import dayjs from 'dayjs';
 
 function getNames(v: any) {
@@ -213,7 +213,6 @@ const stateDefault = {
 </script>
 
 <script setup lang="ts">
-import { api } from '~/boot/axios';
 import { useNotification } from '~/composables/useResponseText';
 import FormInputDate from './FormInputDate.vue';
 import FormInputCheckbox from './FormInputCheckbox.vue';
@@ -229,9 +228,11 @@ import FormButtons from './FormButtons.vue';
 import useVuelidate from '@vuelidate/core';
 import { useQueensQuery } from '~/composables/useQuery';
 import { FormQueen } from '~/types';
+import { useApiFetch } from '~/composables/useApi';
 
 const notification = useNotification();
 const showInterval = ref(false);
+const api = useApiFetch();
 const forceInterval = ref(false);
 const values = ref({});
 const reset = ref(0);
@@ -309,15 +310,15 @@ watch(
 async function getEdit(id: unknown[]) {
   return await api.post('/v1/queen/batchGet', { ids: id }).then(
     (response: any) => {
-      const editIds = map(response.data, (row: any) => [
+      const editIds = map(response, (row: any) => [
         { value: row.id, label: `ID: ${row.id} / (${row.name})` },
       ]);
       editOptions.value = flatten(editIds);
       editOptionsCopy.value = [...unref(editOptions.value)];
-      values.value = response.data;
+      values.value = response;
     },
     (error) => {
-      notification.open('negative', error.response);
+      notification.open('negative', error);
     }
   );
 }

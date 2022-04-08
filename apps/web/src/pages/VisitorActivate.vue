@@ -109,11 +109,11 @@ async function sendForm(value: any) {
       });
     },
     (error) => {
-      if (error.response.status === 403) {
+      if (error.statusCode === 403) {
         const message = t('activateUser.notValid');
         notification.open('negative', message);
       } else {
-        notification.open('negative', error.response);
+        notification.open('negative', error);
       }
       isSubmitting.value = false;
     }

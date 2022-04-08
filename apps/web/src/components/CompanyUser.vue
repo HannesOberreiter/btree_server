@@ -67,14 +67,15 @@
 </template>
 
 <script setup lang="ts">
-import { api } from '~/boot/axios';
-import { findIndex } from 'lodash';
+import { findIndex } from 'lodash-es';
 import { useAuthUserStore } from '~/stores/auth';
 import { useNotification } from '~/composables/useResponseText';
 import { useQuasar } from 'quasar';
 import { useDateFormat } from '~/composables/useDate';
+import { useApiFetch } from '~/composables/useApi';
 
 const notification = useNotification();
+const api = useApiFetch();
 const { t } = useI18n();
 const useDate = useDateFormat();
 
@@ -88,10 +89,10 @@ const isSubmitting = ref(false);
 const usersPromise = async () =>
   api.get('/v1/company_user/user').then(
     (response: any) => {
-      return response.data;
+      return response;
     },
     (error) => {
-      notification.open('negative', error.response);
+      notification.open('negative', error);
     }
   );
 
@@ -121,7 +122,7 @@ const changeAccess = (id: number, rank: number) => {
         notification.open('positive', '');
       },
       (error) => {
-        notification.open('negative', error.response);
+        notification.open('negative', error);
       }
     );
 };
@@ -133,13 +134,13 @@ const removeAccess = (id: number, email: string) => {
     cancel: true,
     persistent: true,
   }).onOk(() => {
-    api.delete(`/v1/company_user/remove_user/${id}`).then(
+    api.deleting(`/v1/company_user/remove_user/${id}`).then(
       async (_response: any) => {
         usersData.value = await usersPromise();
         notification.open('positive', '');
       },
       (error) => {
-        notification.open('negative', error.response);
+        notification.open('negative', error);
       }
     );
   });
@@ -168,7 +169,7 @@ const addUser = () => {
           notification.open('positive', '');
         },
         (error) => {
-          notification.open('negative', error.response);
+          notification.open('negative', error);
         }
       );
   });

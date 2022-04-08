@@ -49,7 +49,7 @@
 </template>
 
 <script setup lang="ts">
-import { filter, map, unionBy } from 'lodash';
+import { filter, map, unionBy } from 'lodash-es';
 import { required } from '~/helpers/i18n-validators';
 import { useApiariesQuery, useHivesQuery } from '~/composables/useQuery';
 import { useVModels } from '@vueuse/core';

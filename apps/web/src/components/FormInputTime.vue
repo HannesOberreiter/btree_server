@@ -47,7 +47,7 @@ import { formCheckMultipleValues, validationErrors } from '~/helpers';
 import useVuelidate from '@vuelidate/core';
 import BtnMultipleValues from './BtnMultipleValues.vue';
 import { PropType } from 'vue';
-import { isEmpty } from 'lodash';
+import { isEmpty } from 'lodash-es';
 import { useDateFormat } from '~/composables/useDate';
 
 const qDateProxy = ref(false);

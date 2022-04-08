@@ -89,7 +89,6 @@
 
 <script setup lang="ts">
 import 'leaflet/dist/leaflet.css';
-import { api } from '~/boot/axios';
 import { useApiariesQuery } from '~/composables/useQuery';
 import { useAuthUserStore } from '~/stores/auth';
 import { useNotification } from '~/composables/useResponseText';
@@ -105,7 +104,9 @@ import {
 } from '@vue-leaflet/vue-leaflet';
 import MapOverlay from '~/components/MapOverlay.vue';
 import MapButtons from '~/components/MapButtons.vue';
+import { useApiFetch } from '~/composables/useApi';
 
+const api = useApiFetch();
 const {
   isLoading,
   data: apiaries,
@@ -192,7 +193,7 @@ function deleteApiary(value: string) {
       notification.open('positive', '');
     },
     (error) => {
-      notification.open('negative', error.response);
+      notification.open('negative', error);
     }
   );
 }

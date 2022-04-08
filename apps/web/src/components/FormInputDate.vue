@@ -52,7 +52,7 @@ import dayjs from 'dayjs';
 import useVuelidate from '@vuelidate/core';
 import BtnMultipleValues from '~/components/BtnMultipleValues.vue';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
-import { isEmpty } from 'lodash';
+import { isEmpty } from 'lodash-es';
 
 dayjs.extend(customParseFormat); // Needed to validate if date is even possible
 const { t } = useI18n();

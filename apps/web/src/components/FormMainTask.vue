@@ -235,7 +235,7 @@
 </template>
 
 <script lang="ts">
-import { flatten, map, merge } from 'lodash';
+import { flatten, map, merge } from 'lodash-es';
 import dayjs from 'dayjs';
 import { Task } from '~/types';
 
@@ -283,12 +283,10 @@ const stateDefault = {
 </script>
 
 <script setup lang="ts">
-import { api } from '~/boot/axios';
 import { PropType } from 'vue';
 import useVuelidate from '@vuelidate/core';
 import { useNotification } from '~/composables/useResponseText';
 import { useFieldsettingStore } from '~/stores/fieldsetting';
-
 import FormCheckupFrames from './FormCheckupFrames.vue';
 import FormCheckupQueen from './FormCheckupQueen.vue';
 import FormCheckupRating from './FormCheckupRating.vue';
@@ -306,10 +304,12 @@ import FormDropdownEdit from './FormDropdownEdit.vue';
 import FormInputNote from './FormInputNote.vue';
 import FormInputNumeric from './FormInputNumeric.vue';
 import FormButtons from './FormButtons.vue';
+import { useApiFetch } from '~/composables/useApi';
 
 const fields = useFieldsettingStore();
 const notification = useNotification();
 const v = useVuelidate();
+const api = useApiFetch();
 const router = useRouter();
 const values = ref({});
 const reset = ref(0);
@@ -348,15 +348,15 @@ const state = ref({
 async function getEdit(id: unknown[]) {
   return await api.post(`/v1/${props.task}/batchGet`, { ids: id }).then(
     (response: any) => {
-      const editIds = map(response.data, (row: any) => [
+      const editIds = map(response, (row: any) => [
         { value: row.id, label: `ID: ${row.id} / (${row.hive.name})` },
       ]);
       editOptions.value = flatten(editIds);
       editOptionsCopy.value = flatten(editIds);
-      values.value = response.data;
+      values.value = response;
     },
     (error) => {
-      notification.open('negative', error.response);
+      notification.open('negative', error);
     }
   );
 }

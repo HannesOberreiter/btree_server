@@ -67,7 +67,7 @@ import dayjs from 'dayjs';
 import { useVModels } from '@vueuse/core';
 import BtnMultipleValues from './BtnMultipleValues.vue';
 import { formCheckMultipleValues } from '~/helpers';
-import { isEmpty } from 'lodash';
+import { isEmpty } from 'lodash-es';
 import FormInputDate from './FormInputDate.vue';
 import FormInputNumeric from './FormInputNumeric.vue';
 

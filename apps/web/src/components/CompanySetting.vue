@@ -51,16 +51,17 @@
 </template>
 
 <script setup lang="ts">
-import { api } from '~/boot/axios';
-import { findIndex } from 'lodash';
+import { findIndex } from 'lodash-es';
 import { useAuthTokenStore } from '~/stores/token';
 import { useAuthUserStore } from '~/stores/auth';
 import { useNotification } from '~/composables/useResponseText';
 import { useQuasar } from 'quasar';
 import { useRefreshStore } from '~/stores/refresh';
 import ItemCompany from '~/components/ItemCompany.vue';
+import { useApiFetch } from '~/composables/useApi';
 
 const notification = useNotification();
+const api = useApiFetch();
 const { t } = useI18n();
 const $q = useQuasar();
 const storeUser = useAuthUserStore();
@@ -85,12 +86,12 @@ const changeCompany = (value: any) => {
   isSubmitting.value = true;
   api.patch('/v1/user/company', { saved_company: value.id }).then(
     async (response: any) => {
-      storeToken.refreshToken(response.data.token);
+      storeToken.refreshToken(response.token);
       await storeRefresh.refresh();
       notification.open('positive', '');
     },
     (error) => {
-      notification.open('negative', error.response);
+      notification.open('negative', error);
     }
   );
   isSubmitting.value = false;
@@ -110,14 +111,14 @@ const removeAccess = () => {
     cancel: true,
     persistent: true,
   }).onOk(() => {
-    api.delete(`/v1/company_user/${model.value.id}`).then(
+    api.deleting(`/v1/company_user/${model.value.id}`).then(
       async (response: any) => {
-        storeToken.refreshToken(response.data.token);
+        storeToken.refreshToken(response.token);
         await storeRefresh.refresh();
         notification.open('positive', '');
       },
       (error) => {
-        notification.open('negative', error.response);
+        notification.open('negative', error);
       }
     );
   });
@@ -142,7 +143,7 @@ const editCompany = () => {
         notification.open('positive', '');
       },
       (error) => {
-        notification.open('negative', error.response);
+        notification.open('negative', error);
       }
     );
   });
@@ -166,7 +167,7 @@ const newCompany = () => {
         notification.open('positive', '');
       },
       (error) => {
-        notification.open('negative', error.response);
+        notification.open('negative', error);
       }
     );
   });
@@ -186,14 +187,14 @@ const deleteCompany = () => {
     cancel: true,
     persistent: true,
   }).onOk(() => {
-    api.delete(`/v1/company/${model.value.id}`).then(
+    api.deleting(`/v1/company/${model.value.id}`).then(
       async (response: any) => {
-        storeToken.refreshToken(response.data.token);
+        storeToken.refreshToken(response.token);
         await storeRefresh.refresh();
         notification.open('positive', '');
       },
       (error) => {
-        notification.open('negative', error.response);
+        notification.open('negative', error);
       }
     );
   });

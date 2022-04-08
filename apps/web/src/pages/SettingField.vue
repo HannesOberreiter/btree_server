@@ -29,16 +29,16 @@
 </template>
 
 <script setup lang="ts">
-import { api } from '~/boot/axios';
-import { capitalize } from 'lodash';
+import { capitalize } from 'lodash-es';
 import { useFieldsettingStore } from '~/stores/fieldsetting';
 import { useNotification } from '~/composables/useResponseText';
+import { useApiFetch } from '~/composables/useApi';
 
 const notification = useNotification();
 const storeFields = useFieldsettingStore();
 const { settings } = storeToRefs(storeFields);
+const api = useApiFetch();
 
-console.log(settings.value);
 const isSubmitting = ref(false);
 
 const onSubmit = async () => {
@@ -49,7 +49,7 @@ const onSubmit = async () => {
       notification.open('positive', '');
     },
     (error) => {
-      notification.open('negative', error.response);
+      notification.open('negative', error);
     }
   );
   isSubmitting.value = false;

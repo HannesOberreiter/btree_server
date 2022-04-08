@@ -71,9 +71,8 @@
 </template>
 
 <script setup lang="ts">
-import { api } from '~/boot/axios';
 import { LANGUAGES } from '~/constants';
-import { required, maxLength } from '~/helpers/i18n-validators';
+import { required } from '~/helpers/i18n-validators';
 import { useAuthUserStore } from '~/stores/auth';
 import { useNotification } from '~/composables/useResponseText';
 import { useQuasarLang } from '~/composables/useQuasarLang';
@@ -81,9 +80,11 @@ import FormUserLanguage from './FormUserLanguage.vue';
 import FormUserNewsletter from './FormUserNewsletter.vue';
 import useVuelidate from '@vuelidate/core';
 import FormInputText from './FormInputText.vue';
+import { useApiFetch } from '~/composables/useApi';
 
 const { t } = useI18n();
 const $q = useQuasar();
+const api = useApiFetch();
 const notification = useNotification();
 const storeUser = useAuthUserStore();
 const { user } = storeToRefs(storeUser);
@@ -124,12 +125,12 @@ async function onSubmit() {
   };
   await api.patch('/v1/user', data).then(
     (response: any) => {
-      useAuthUserStore().refresh(response.data);
+      useAuthUserStore().refresh(response);
       useQuasarLang($q);
       notification.open('positive', '');
     },
     (error) => {
-      notification.open('negative', error.response);
+      notification.open('negative', error);
     }
   );
   isSubmitting.value = false;
@@ -158,7 +159,7 @@ const onDelete = () => {
           await storeUser.logout();
         },
         (error) => {
-          notification.open('negative', error.response);
+          notification.open('negative', error);
         }
       );
     })

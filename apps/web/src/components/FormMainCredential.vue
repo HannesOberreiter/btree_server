@@ -33,16 +33,17 @@
 </template>
 
 <script setup lang="ts">
-import { api } from '~/boot/axios';
 import { useAuthUserStore } from '~/stores/auth';
 import { useNotification } from '~/composables/useResponseText';
 import FormInputEmail from './FormInputEmail.vue';
 import FormUserPassword from './FormUserPassword.vue';
 import useVuelidate from '@vuelidate/core';
+import { useApiFetch } from '~/composables/useApi';
 
 const notification = useNotification();
 const storeUser = useAuthUserStore();
 const isSubmitting = ref(false);
+const api = useApiFetch();
 
 const state = reactive({
   email: storeUser.getUser.email,
@@ -66,12 +67,12 @@ async function onSubmit() {
     newPassword: state.newPassword,
   };
   await api.patch('/v1/user', data).then(
-    (data) => {
-      storeUser.$state.user.email = data.data.email;
+    (response) => {
+      storeUser.$state.user.email = response.email;
       notification.open('positive', '');
     },
     (error) => {
-      notification.open('negative', error.response);
+      notification.open('negative', error);
     }
   );
   isSubmitting.value = false;

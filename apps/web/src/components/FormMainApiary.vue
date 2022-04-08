@@ -86,7 +86,6 @@ const stateDefault = {
 </script>
 
 <script setup lang="ts">
-import { api } from '~/boot/axios';
 import { required } from '~/helpers/i18n-validators';
 import { useNotification } from '~/composables/useResponseText';
 import FormInputText from './FormInputText.vue';
@@ -95,9 +94,11 @@ import FormInputNote from './FormInputNote.vue';
 import FormInputCheckbox from './FormInputCheckbox.vue';
 
 import useVuelidate from '@vuelidate/core';
-import { flatten, map, merge } from 'lodash';
+import { flatten, map, merge } from 'lodash-es';
 import FormButtons from './FormButtons.vue';
+import { useApiFetch } from '~/composables/useApi';
 
+const api = useApiFetch();
 const notification = useNotification();
 const { t } = useI18n();
 const emit = defineEmits(['onSuccess']);
@@ -155,15 +156,15 @@ watch(
 async function getEdit(id: unknown[]) {
   return await api.post('/v1/apiary/batchGet', { ids: id }).then(
     (response: any) => {
-      const editIds = map(response.data, (row: any) => [
+      const editIds = map(response, (row: any) => [
         { value: row.id, label: `ID: ${row.id} / (${row.name})` },
       ]);
       editOptions.value = flatten(editIds);
       editOptionsCopy.value = [...unref(editOptions.value)];
-      values.value = response.data;
+      values.value = response;
     },
     (error) => {
-      notification.open('negative', error.response);
+      notification.open('negative', error);
     }
   );
 }

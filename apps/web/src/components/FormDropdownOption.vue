@@ -23,7 +23,7 @@
 </template>
 
 <script setup lang="ts">
-import { filter, isEmpty } from 'lodash';
+import { filter, isEmpty } from 'lodash-es';
 import { Option } from '~/types';
 import { PropType } from 'vue';
 import {

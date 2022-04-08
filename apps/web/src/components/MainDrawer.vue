@@ -1,126 +1,102 @@
 <template>
   <q-scroll-area class="fit">
     <q-list>
-      <template v-for="(link, _index) in links" :key="_index">
-        <q-expansion-item
-          v-if="link.menu.length > 0"
-          :content-inset-level="0.3"
-          expand-separator
-          :icon="link.icon"
-          :label="link.label"
-          dark
-        >
-          <template v-for="(sublink, _subindex) in link.menu" :key="_subindex">
-            <q-item
-              v-ripple
-              clickable
-              :to="{ name: sublink.route }"
-              exact
-              active-class="text-yellow"
-            >
-              <q-item-section avatar>
-                <q-icon :name="sublink.icon" />
-              </q-item-section>
-              <q-item-section>
-                {{ sublink.label }}
-              </q-item-section>
-            </q-item>
-          </template>
-        </q-expansion-item>
+      <q-item
+        v-ripple
+        :to="{
+          name: 'calendar',
+        }"
+        clickable
+        exact
+        active-class="text-yellow"
+      >
+        <q-item-section avatar>
+          <q-icon name="far fa-calendar-alt" />
+        </q-item-section>
+        <q-item-section>
+          {{ $t('calendar.name') }}
+        </q-item-section>
+      </q-item>
+      <q-item
+        v-ripple
+        :to="{
+          name: 'new-quicktool',
+          params: {
+            task: storeQuicktool.getLink,
+          },
+        }"
+        clickable
+        exact
+        active-class="text-yellow"
+      >
+        <q-item-section avatar>
+          <q-icon name="fas fa-magic" />
+        </q-item-section>
+        <q-item-section>
+          {{ $t('quicktool.name') }}
+        </q-item-section>
+      </q-item>
+      <q-expansion-item
+        v-for="(link, index) in links"
+        :key="index"
+        :content-inset-level="0.3"
+        expand-separator
+        :icon="link.icon"
+        :label="$t(link.label, 2)"
+        dark
+      >
+        <drawer-item
+          v-for="(sublink, subindex) in link.menu"
+          :key="subindex"
+          :link="sublink"
+        ></drawer-item>
+      </q-expansion-item>
 
-        <q-item
-          v-else
-          v-ripple
-          clickable
-          :to="{
-            name: link.route,
-            params: {
-              task:
-                link.route === 'new-quicktool' ? storeQuicktool.getLink : '',
-              ids: null,
-            },
-          }"
-          exact
-          active-class="text-yellow"
-        >
-          <q-item-section avatar>
-            <q-icon :name="link.icon" />
-          </q-item-section>
-          <q-item-section>
-            {{ link.label }}
-          </q-item-section>
-        </q-item>
-      </template>
       <btn-refresh></btn-refresh>
       <item-company></item-company>
       <q-item v-ripple clickable @click="onLogout">
         <q-item-section avatar>
           <q-icon name="fas fa-sign-out-alt" />
         </q-item-section>
-        <q-item-section> {{ t('logout') }} </q-item-section>
+        <q-item-section> {{ $t('logout') }} </q-item-section>
       </q-item>
     </q-list>
   </q-scroll-area>
 </template>
 
-<script setup lang="ts">
-import { useAuthUserStore } from '~/stores/auth';
-import BtnRefresh from './BtnRefresh.vue';
-import ItemCompany from './ItemCompany.vue';
-import { useQuicktoolStore } from '~/stores/quicktool';
-
-const { t } = useI18n();
-const storeUser = useAuthUserStore();
-const storeQuicktool = useQuicktoolStore();
-
-const onLogout = async () => {
-  await storeUser.logout();
-};
-
-const links = ref([
+<script lang="ts">
+const links = [
   {
-    label: t('calendar.name'),
-    route: 'calendar',
-    icon: 'far fa-calendar-alt',
-    menu: [] as any,
-  },
-  {
-    label: t('quicktool.name'),
-    route: 'new-quicktool',
-    icon: 'fas fa-magic',
-    menu: [] as any,
-  },
-  {
-    label: t('new', 2),
+    label: 'new',
     route: '',
     icon: 'fas fa-circle-plus',
     menu: [
       {
-        label: t('todo'),
+        label: 'todo',
         route: 'new-todo',
         icon: 'fas fa-clipboard-check',
         menu: false,
       },
       {
-        label: t('hive'),
+        label: 'hive',
         route: 'new-hive',
         icon: 'fas fa-house',
         menu: false,
       },
       {
-        label: t('movement'),
+        label: 'movement',
         route: 'new-movement',
         icon: 'fas fa-truck',
         menu: false,
       },
       {
-        label: t('apiary'),
+        label: 'apiary',
         route: 'map-apiary',
         icon: 'fas fa-map-marker-alt',
         menu: false,
       },
       {
-        label: t('queen'),
+        label: 'queen',
         route: 'new-queen',
         icon: 'fas fa-venus',
         menu: false,
@@ -128,18 +104,18 @@ const links = ref([
     ],
   },
   {
-    label: t('map.name', 2),
+    label: 'map.name',
     route: '',
     icon: 'fas fa-globe',
     menu: [
       {
-        label: t('apiary', 2),
+        label: 'apiary',
         route: 'map-apiary',
         icon: 'fas fa-map-marker-alt',
         menu: false,
       },
       {
-        label: t('wind'),
+        label: 'wind',
         route: 'map-wind',
         icon: 'fas fa-wind',
         menu: false,
@@ -148,61 +124,61 @@ const links = ref([
   },
 
   {
-    label: t('table', 2),
+    label: 'table',
     route: '',
     icon: 'fas fa-table',
     menu: [
       {
-        label: t('checkup', 2),
+        label: 'checkup',
         route: 'table-checkup',
         icon: 'fas fa-search-plus',
         menu: false,
       },
       {
-        label: t('treatment', 2),
+        label: 'treatment',
         route: 'table-treatment',
         icon: 'fas fa-kit-medical',
         menu: false,
       },
       {
-        label: t('harvest', 2),
+        label: 'harvest',
         route: 'table-harvest',
         icon: 'fas fa-droplet',
         menu: false,
       },
       {
-        label: t('feed', 2),
+        label: 'feed',
         route: 'table-cube',
         icon: 'fas fa-cube',
         menu: false,
       },
       {
-        label: t('todo', 2),
+        label: 'todo',
         route: 'table-checkup',
         icon: 'fas fa-clipboard-check',
         menu: false,
       },
 
       {
-        label: t('hive', 2),
+        label: 'hive',
         route: 'table-hive',
         icon: 'fas fa-house',
         menu: false,
       },
       {
-        label: t('movement', 2),
+        label: 'movement',
         route: 'table-movement',
         icon: 'fas fa-truck',
         menu: false,
       },
       {
-        label: t('apiary', 2),
+        label: 'apiary',
         route: 'table-apiary',
         icon: 'fas fa-location-dot',
         menu: false,
       },
       {
-        label: t('queen', 2),
+        label: 'queen',
         route: 'table-queen',
         icon: 'fas fa-venus',
         menu: false,
@@ -210,24 +186,24 @@ const links = ref([
     ],
   },
   {
-    label: t('setting.name', 2),
+    label: 'setting.name',
     route: '',
     icon: 'fas fa-cogs',
     menu: [
       {
-        label: t('profile.name'),
+        label: 'profile.name',
         route: 'settingProfile',
         icon: 'far fa-id-card',
         menu: [] as any,
       },
       {
-        label: t('field', 2),
+        label: 'field',
         route: 'settingField',
         icon: 'fas fa-cog',
         menu: [] as any,
       },
       {
-        label: t('company.name'),
+        label: 'company.name',
         route: 'settingCompany',
         icon: 'fas fa-warehouse',
         menu: [] as any,
@@ -240,5 +216,20 @@ const links = ref([
       },
     ],
   },
-]);
+];
+</script>
+
+<script setup lang="ts">
+import { useAuthUserStore } from '~/stores/auth';
+import { useQuicktoolStore } from '~/stores/quicktool';
+import BtnRefresh from './BtnRefresh.vue';
+import ItemCompany from './ItemCompany.vue';
+import DrawerItem from './DrawerItem.vue';
+
+const storeUser = useAuthUserStore();
+const storeQuicktool = useQuicktoolStore();
+
+const onLogout = async () => {
+  await storeUser.logout();
+};
 </script>

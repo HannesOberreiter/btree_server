@@ -1,4 +1,4 @@
-import { compact, isEmpty, isNil, map, omitBy } from 'lodash';
+import { compact, isEmpty, isNil, map, omitBy } from 'lodash-es';
 import { defineStore } from 'pinia';
 
 interface State {

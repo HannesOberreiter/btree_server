@@ -22,33 +22,27 @@ const useNotification = () => {
     const storeUser = useAuthUserStore();
     const lang = storeUser.getLanguage;
     let displayMessage = '';
-
+    console.log(error);
     if (typeof error === 'string') return t(error);
-    if ('data' in error === false) {
-      displayMessage = checkStatus(error.response.status);
-    } else {
-      if ('errors' in error.data) {
-        if (typeof error.data.errors === 'string') {
-          displayMessage = checkStatus(
-            error.data.statusCode,
-            error.data.errors
-          );
-        } else if ('type' in error.data.errors) {
-          // This error comes from Ajv Schema error
-          // we actually want to prevent this in our backend
-          // as the types should be already checked on the route
-          // with express.validate
-          displayMessage = checkStatus(error.data.statusCode);
-          if (displayMessage === '') displayMessage = t('error.validation');
-        } else {
-          if ('msgTranslation' in error.data.errors[0]) {
-            displayMessage = error.data.errors[0].msgTranslation[lang];
-            if ('paramTranslation' in error.data.errors[0])
-              // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-              displayMessage = `${displayMessage} (${error.data.errors[0].paramTranslation[lang]})`;
-            if (error.data.errors.length > 1)
-              displayMessage = t('error.more') + ': ' + displayMessage;
-          }
+
+    if ('errors' in error) {
+      if (typeof error.errors === 'string') {
+        displayMessage = checkStatus(error.statusCode, error.errors);
+      } else if ('type' in error.errors) {
+        // This error comes from Ajv Schema error
+        // we actually want to prevent this in our backend
+        // as the types should be already checked on the route
+        // with express.validate
+        displayMessage = checkStatus(error.statusCode);
+        if (displayMessage === '') displayMessage = t('error.validation');
+      } else {
+        if ('msgTranslation' in error.errors[0]) {
+          displayMessage = error.errors[0].msgTranslation[lang];
+          if ('paramTranslation' in error.errors[0])
+            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+            displayMessage = `${displayMessage} (${error.errors[0].paramTranslation[lang]})`;
+          if (error.errors.length > 1)
+            displayMessage = t('error.more') + ': ' + displayMessage;
         }
       }
     }

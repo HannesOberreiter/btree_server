@@ -6,7 +6,7 @@
 </template>
 
 <script setup lang="ts">
-import { replace } from 'lodash';
+import { replace } from 'lodash-es';
 const props = defineProps({
   news: {
     type: String,

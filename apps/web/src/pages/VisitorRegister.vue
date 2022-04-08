@@ -214,8 +214,8 @@ async function onSubmit() {
 
 async function sendForm(user: any) {
   await AuthService.register(user).then(
-    (data) => {
-      const email = data.data.email as string;
+    (response) => {
+      const email = response.email as string;
       message.value = t('signup.success', { msg: email });
 
       isSubmitting.value = false;
@@ -223,7 +223,7 @@ async function sendForm(user: any) {
       notification.open('positive', message.value);
     },
     (error) => {
-      notification.open('negative', error.response);
+      notification.open('negative', error);
       isSubmitting.value = false;
     }
   );

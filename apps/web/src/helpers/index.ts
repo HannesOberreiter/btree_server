@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import _ from 'lodash';
+import { map, some, uniq, includes } from 'lodash-es';
 
 /*
     Helper function for validating forms returns array
@@ -8,21 +8,21 @@ import _ from 'lodash';
 */
 export const validationErrors = (validation: any) => {
   if (!validation.$error) return '';
-  return _.map(validation.$errors, '$message').join(', ');
+  return map(validation.$errors, '$message').join(', ');
 };
 // https://stackoverflow.com/a/56363526/5316675
 export const includesValue = (val: string, obj: any) =>
-  _.some(obj, (v) => _.includes(v, val));
+  some(obj, (v) => includes(v, val));
 
 // https://stackoverflow.com/a/39914235/5316675
 export const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 // Evaluation if multiple values are present
-// data = response.data from server
+// data = response from server
 // name = object name of interest
 export const formCheckMultipleValues = (data: any, name: string) => {
-  const r = _.map(data, (row: any) => row[name]);
-  const u = _.uniq(r);
+  const r = map(data, (row: any) => row[name]);
+  const u = uniq(r);
   return u.length > 1;
 };
 

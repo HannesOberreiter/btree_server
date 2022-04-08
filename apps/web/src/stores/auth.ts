@@ -1,6 +1,6 @@
 import { acceptHMRUpdate, defineStore } from 'pinia';
 import { i18n, setLocale } from '~/boot/i18n';
-import { isEmpty } from 'lodash';
+import { isEmpty } from 'lodash-es';
 import { Router } from '~/router';
 import { useAuthTokenStore } from './token';
 import { usePreferredLanguages } from '@vueuse/core';
