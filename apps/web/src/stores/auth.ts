@@ -87,7 +87,10 @@ export const useAuthUserStore = defineStore('auth/user', {
       this.company = {};
       localStorage.removeItem('token');
       localStorage.removeItem('refresh');
-      await Router.push({ name: 'login' });
+      await Router.push({
+        name: 'login',
+        query: { next: Router.currentRoute.value.fullPath },
+      });
     },
     refresh(data: any) {
       const curCompany = AuthService.getCurrentCompany(data);

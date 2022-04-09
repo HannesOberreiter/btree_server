@@ -29,3 +29,7 @@ export const useTablesStore = defineStore('tables', {
   getters: {},
   actions: {},
 });
+
+if (import.meta.hot) {
+  import.meta.hot.accept(acceptHMRUpdate(useTablesStore, import.meta.hot));
+}

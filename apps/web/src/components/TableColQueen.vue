@@ -6,6 +6,7 @@
 </template>
 
 <script setup lang="ts">
+import { useQuasar } from 'quasar';
 import DialogForm from './DialogForm.vue';
 
 const $q = useQuasar();

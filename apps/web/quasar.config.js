@@ -90,7 +90,7 @@ module.exports = configure(function (ctx) {
               /\.vue\?vue/, // .vue
               /\.md$/, // .md
             ],
-            imports: ['vue', 'vue-router', 'pinia', 'quasar', 'vue-i18n'],
+            imports: ['vue', 'vue-router', 'pinia', 'vue-i18n'],
             eslintrc: {
               enabled: true,
               filepath: './.eslintrc-auto-import.json',

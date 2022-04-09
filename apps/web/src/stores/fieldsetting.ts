@@ -77,3 +77,9 @@ export const useFieldsettingStore = defineStore('fieldsetting', {
 
 export type useFieldsettingStore = ReturnType<typeof useFieldsettingStore>;
 export type { Fieldsetting };
+
+if (import.meta.hot) {
+  import.meta.hot.accept(
+    acceptHMRUpdate(useFieldsettingStore, import.meta.hot)
+  );
+}

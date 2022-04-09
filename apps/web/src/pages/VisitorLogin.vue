@@ -1,6 +1,6 @@
 <template>
   <q-card-section>
-    <div class="text-h6 text-center">{{ t('login') }}</div>
+    <div class="text-h6 text-center">{{ $t('login') }}</div>
     <form-error-max v-if="submitCount >= 15"></form-error-max>
     <q-form v-else class="q-gutter-md" @submit="onSubmit">
       <form-input-email
@@ -17,7 +17,7 @@
           size="lg"
           color="secondary"
           class="full-width text-white"
-          :label="t('login')"
+          :label="$t('login')"
           :disable="isSubmitting"
           :loading="isSubmitting"
         />
@@ -34,11 +34,12 @@ import FormErrorMax from '~/components/FormErrorMax.vue';
 import FormInputEmail from '~/components/FormInputEmail.vue';
 import FormUserPassword from '~/components/FormUserPassword.vue';
 import useVuelidate from '@vuelidate/core';
+import { RouteLocationRaw } from 'vue-router';
 
 const router = useRouter();
-const { t } = useI18n();
+const lastUrl = router.currentRoute.value.query.next;
 const notification = useNotification();
-const prop = defineProps({
+const props = defineProps({
   activate: {
     type: String,
     default: '',
@@ -58,10 +59,9 @@ const state = reactive({
 const v = useVuelidate();
 
 function accountActivated() {
-  const param = prop.activate ? prop.activate : '';
+  const param = props.activate ? props.activate : '';
   if (param) {
-    const message = 'You account was successfully activated!';
-    notification.open('positive', message);
+    notification.open('positive', 'accountActivated');
   }
   return param;
 }
@@ -82,11 +82,11 @@ async function onSubmit() {
   return;
 }
 
-async function sendForm(user: User) {
-  await store.login(user).then(
-    async () => {
+function sendForm(user: User) {
+  store.login(user).then(
+    () => {
       notification.open('positive', '');
-      await router.push({ name: 'calendar' });
+      redirect();
     },
     (error) => {
       notification.open('negative', error);
@@ -95,9 +95,17 @@ async function sendForm(user: User) {
   isSubmitting.value = false;
 }
 
-onMounted(async () => {
+onMounted(() => {
   if (store.isLoggedIn) {
-    await router.push({ name: 'calendar' });
+    redirect;
   }
 });
+
+async function redirect() {
+  if (lastUrl) {
+    await router.push(lastUrl as RouteLocationRaw);
+  } else {
+    await router.push({ name: 'calendar' });
+  }
+}
 </script>

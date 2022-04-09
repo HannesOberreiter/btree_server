@@ -9,6 +9,8 @@ import { truncate, escape } from 'lodash-es';
 </script>
 
 <script setup lang="ts">
+import { useQuasar } from 'quasar';
+
 const $q = useQuasar();
 const { t } = useI18n();
 const props = defineProps({

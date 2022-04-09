@@ -25,34 +25,22 @@
     </q-page-container>
 
     <q-footer class="bg-grey-8 text-white print-hide">
-      <q-toolbar dense style="max-height: 30px; min-height: 30px">
-        Version: {{ news.aaData[0].version }}, {{ news.aaData[0].date }} &nbsp;
-        <router-link :to="{ name: 'news' }" class="text-white">
-          {{ t('news') }}
-        </router-link>
-        <q-space></q-space>
-        <strong>b.tree</strong>
-      </q-toolbar>
-      <global-sound></global-sound>
+      <main-footer></main-footer>
     </q-footer>
   </q-layout>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
 import { useAuthUserStore } from '~/stores/auth';
-import { useI18n } from 'vue-i18n';
 import { useQuasar } from 'quasar';
 import { useQuasarLang } from '~/composables/useQuasarLang';
-import GlobalSound from '~/components/GlobalSound.vue';
 import MainDrawer from '~/components/MainDrawer.vue';
 import MainNavbar from '~/components/MainNavbar.vue';
-import news from '~/assets/news.json';
+import MainFooter from '~/components/MainFooter.vue';
 
 const leftDrawerOpen = ref(false);
 const storeUser = useAuthUserStore();
 const $q = useQuasar();
-const { t } = useI18n();
 
 storeUser.updateLang();
 useQuasarLang($q);

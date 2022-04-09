@@ -63,3 +63,7 @@ export const useTableFilterStore = defineStore('tableFilter', {
     },
   },
 });
+
+if (import.meta.hot) {
+  import.meta.hot.accept(acceptHMRUpdate(useTableFilterStore, import.meta.hot));
+}

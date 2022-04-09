@@ -28,3 +28,7 @@ export const useRefreshStore = defineStore('refresh', {
     },
   },
 });
+
+if (import.meta.hot) {
+  import.meta.hot.accept(acceptHMRUpdate(useRefreshStore, import.meta.hot));
+}

@@ -81,6 +81,7 @@ import FormUserNewsletter from './FormUserNewsletter.vue';
 import useVuelidate from '@vuelidate/core';
 import FormInputText from './FormInputText.vue';
 import { useApiFetch } from '~/composables/useApi';
+import { useQuasar } from 'quasar';
 
 const { t } = useI18n();
 const $q = useQuasar();

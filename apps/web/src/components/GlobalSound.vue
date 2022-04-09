@@ -9,7 +9,8 @@ import { useSound } from '@vueuse/sound';
 import ErrorSound from '~/assets/audio/error.mp3';
 import SuccessSound from '~/assets/audio/success.mp3';
 
-const { user } = storeToRefs(useAuthUserStore());
+const storeUser = useAuthUserStore();
+const { user } = storeToRefs(storeUser);
 const notification = useNotification();
 const errorSound = useSound(ErrorSound);
 const successSound = useSound(SuccessSound);

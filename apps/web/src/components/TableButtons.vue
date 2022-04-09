@@ -123,7 +123,7 @@
 <script setup lang="ts">
 import { useVModels } from '@vueuse/core';
 import { stringify } from 'csv-stringify/browser/esm/sync';
-import { exportFile } from 'quasar';
+import { exportFile, useQuasar } from 'quasar';
 import { useApiFetch } from '~/composables/useApi';
 import { useDateFormat } from '~/composables/useDate';
 import { clearCache } from '~/composables/useQuery';

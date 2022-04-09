@@ -89,7 +89,7 @@ import TableColNote from '~/components/TableColNote.vue';
 import TableColStatus from '~/components/TableColStatus.vue';
 import TableButtons from '~/components/TableButtons.vue';
 import TableColQueen from '~/components/TableColQueen.vue';
-import { QTableProps } from 'quasar';
+import { QTableProps, useQuasar } from 'quasar';
 import { useDateFormat } from '~/composables/useDate';
 import TableFilter from '~/components/TableFilter.vue';
 import { useTableFilterStore } from '~/stores/tableFilter';

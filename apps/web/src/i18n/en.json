@@ -119,6 +119,7 @@
   "latest": "Latest",
   "latitude": "Latitude",
   "login": "Login",
+  "accountActivated": "You account was successfully activated!",
   "logout": "Logout",
   "longitude": "Longitude",
   "map": {

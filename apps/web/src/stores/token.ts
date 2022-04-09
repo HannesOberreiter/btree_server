@@ -22,3 +22,7 @@ export const useAuthTokenStore = defineStore('auth/token', {
 });
 
 export type useAuthTokenStore = ReturnType<typeof useAuthTokenStore>;
+
+if (import.meta.hot) {
+  import.meta.hot.accept(acceptHMRUpdate(useAuthTokenStore, import.meta.hot));
+}

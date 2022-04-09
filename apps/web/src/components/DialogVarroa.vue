@@ -48,6 +48,7 @@
 
 <script setup lang="ts">
 import { round } from 'lodash-es';
+import { useDialogPluginComponent } from 'quasar';
 
 const { dialogRef, onDialogHide, onDialogOK } = useDialogPluginComponent();
 const props = defineProps({

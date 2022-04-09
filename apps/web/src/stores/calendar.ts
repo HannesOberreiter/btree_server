@@ -15,3 +15,7 @@ export const useCalendarStore = defineStore('calendar', {
     },
   },
 });
+
+if (import.meta.hot) {
+  import.meta.hot.accept(acceptHMRUpdate(useCalendarStore, import.meta.hot));
+}

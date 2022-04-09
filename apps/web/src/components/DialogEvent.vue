@@ -93,6 +93,7 @@ import EventInfoRearing from './EventInfoRearing.vue';
 import EventInfoVis from './EventInfoVis.vue';
 import { useDateFormat } from '~/composables/useDate';
 import { useApiFetch } from '~/composables/useApi';
+import { useDialogPluginComponent } from 'quasar';
 
 const useDate = useDateFormat();
 const notification = useNotification();

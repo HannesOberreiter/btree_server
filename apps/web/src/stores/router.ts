@@ -7,3 +7,7 @@ export const useRouterStore = defineStore('router', {
   },
   actions: {},
 });
+
+if (import.meta.hot) {
+  import.meta.hot.accept(acceptHMRUpdate(useRouterStore, import.meta.hot));
+}

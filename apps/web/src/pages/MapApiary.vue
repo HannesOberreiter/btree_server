@@ -105,6 +105,7 @@ import {
 import MapOverlay from '~/components/MapOverlay.vue';
 import MapButtons from '~/components/MapButtons.vue';
 import { useApiFetch } from '~/composables/useApi';
+import { useQuasar } from 'quasar';
 
 const api = useApiFetch();
 const {

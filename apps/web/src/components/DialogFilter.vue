@@ -35,6 +35,7 @@
 </template>
 
 <script setup lang="ts">
+import { useDialogPluginComponent } from 'quasar';
 import { useTableFilterStore } from '~/stores/tableFilter';
 import FormDropdownType from './FormDropdownOption.vue';
 import FormInputDateRange from './FormInputDateRange.vue';

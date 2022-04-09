@@ -50,6 +50,7 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import listPlugin from '@fullcalendar/list';
 import { useApiFetch } from '~/composables/useApi';
+import { useQuasar } from 'quasar';
 
 const { t } = useI18n();
 const $q = useQuasar();

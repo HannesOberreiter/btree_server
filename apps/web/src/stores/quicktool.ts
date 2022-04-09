@@ -11,3 +11,7 @@ export const useQuicktoolStore = defineStore('quicktool', {
   },
   actions: {},
 });
+
+if (import.meta.hot) {
+  import.meta.hot.accept(acceptHMRUpdate(useQuicktoolStore, import.meta.hot));
+}

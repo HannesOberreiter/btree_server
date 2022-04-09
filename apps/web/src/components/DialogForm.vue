@@ -34,6 +34,7 @@ import FormMainTodo from './FormMainTodo.vue';
 import FormMainHive from '~/components/FormMainHive.vue';
 import FormMainMovement from './FormMainMovement.vue';
 import FormMainQueen from './FormMainQueen.vue';
+import { useDialogPluginComponent } from 'quasar';
 
 const { dialogRef, onDialogHide, onDialogOK } = useDialogPluginComponent();
 
