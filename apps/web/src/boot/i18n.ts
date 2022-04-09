@@ -2,6 +2,7 @@ import { boot } from 'quasar/wrappers';
 import { Composer, createI18n, Locale, VueI18n as VueI18nType } from 'vue-i18n';
 import { useAuthUserStore } from '~/stores/auth';
 
+// using single import of json and not message auto import as it broke my vite HSMR and resulted in full page reloads
 import de from 'src/i18n/de.json';
 import en from 'src/i18n/en.json';
 
