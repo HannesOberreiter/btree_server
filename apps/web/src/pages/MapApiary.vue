@@ -150,7 +150,7 @@ function onLocationFound(e: any) {
 }
 function onLocationError() {
   userLocationLoading.value = false;
-  console.log('Could not access User Location');
+  notification.open('negative', 'locationError');
 }
 
 function createApiaryForm(e: any) {
@@ -165,7 +165,7 @@ function createApiaryForm(e: any) {
     }).onOk((e) => {
       refetch.value().then(
         () => console.log(e),
-        (error) => console.log(error)
+        (error) => console.error(error)
       );
     });
   }
@@ -182,7 +182,7 @@ function editApiaryForm(e: any) {
     }).onOk((e) => {
       refetch.value().then(
         () => console.log(e),
-        (error) => console.log(error)
+        (error) => console.error(error)
       );
     });
   }

@@ -77,7 +77,6 @@ export const useApiFetch = () => {
       headers: buildHeader(),
       body: isString(payload) ? (payload as string) : JSON.stringify(payload),
     });
-    console.log(JSON.stringify(payload));
     return await fetching(originalRequest);
   };
 

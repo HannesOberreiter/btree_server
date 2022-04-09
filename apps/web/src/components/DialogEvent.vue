@@ -153,7 +153,6 @@ async function deleteEvent() {
 }
 
 function editTask() {
-  console.log(props.eventInfo.publicId);
   if (isTodo.value) {
     router.push({
       name: 'edit-todo',

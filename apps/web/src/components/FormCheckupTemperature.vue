@@ -114,7 +114,7 @@ function getTemperature(click = false) {
   if (click)
     refetch.value().then(
       () => console.log('Loading new temperature from service'),
-      (e) => console.log(e)
+      (e) => console.error(e)
     );
 }
 </script>

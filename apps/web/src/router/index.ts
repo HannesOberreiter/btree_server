@@ -52,11 +52,11 @@ export default route(function ({ store }) {
         (refreshStore.lastHour < -1 || isNaN(refreshStore.lastHour))
       ) {
         Loading.show();
-        console.log('Updating local storage values');
+        console.info('Updating local storage values');
         try {
           await refreshStore.refresh();
         } catch (e) {
-          console.log(e);
+          console.error(e);
         }
         Loading.hide();
       }

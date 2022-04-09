@@ -24,7 +24,6 @@
 import dayjs from 'dayjs';
 
 function queenColor(cur: string) {
-  console.log(cur);
   const last = dayjs(cur).format('YYYY').slice(-1);
 
   if (last == '0' || last == '5') {

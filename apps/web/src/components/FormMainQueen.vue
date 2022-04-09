@@ -297,7 +297,6 @@ watch(
   () => state.value.hive,
   (cur) => {
     if (isEdit.value) return;
-    console.log(cur.length);
     if (cur.length > 0) {
       state.value.repeat = cur.length;
       forceInterval.value = true;

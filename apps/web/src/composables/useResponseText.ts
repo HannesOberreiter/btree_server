@@ -22,7 +22,6 @@ const useNotification = () => {
     const storeUser = useAuthUserStore();
     const lang = storeUser.getLanguage;
     let displayMessage = '';
-    console.log(error);
     if (typeof error === 'string') return t(error);
 
     if ('errors' in error) {

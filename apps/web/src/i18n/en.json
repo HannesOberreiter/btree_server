@@ -6,6 +6,7 @@
   "filter": "Filter",
   "filterEmpty": "No filter",
   "filterRemove": "Remove active filter",
+  "locationError": "Could not access your location.",
   "activateUser": {
     "label": "Confirm Key",
     "notValid": "The activation key is not valid any more. You can also activate your account with the 'Forgot your password' link below.",
