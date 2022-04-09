@@ -111,20 +111,18 @@ const props = defineProps({
 defineEmits([...useDialogPluginComponent.emits]);
 
 const isMovement = computed(
-  () => props.eventInfo.table === 'movedates' || false
+  () => props.eventInfo.table === 'movedate' || false
 );
-const isTodo = computed(() => props.eventInfo.table === 'todos' || false);
+const isTodo = computed(() => props.eventInfo.table === 'todo' || false);
 const isVis = computed(() => props.eventInfo.table === 'vis' || false);
-const isRearings = computed(
-  () => props.eventInfo.table === 'rearings' || false
-);
+const isRearings = computed(() => props.eventInfo.table === 'rearing' || false);
 
 async function updateStatus() {
   const data = JSON.stringify({
     status: !props.eventInfo.done,
     ids: props.eventInfo.task_ids.toString().split(','),
   });
-  const nameSource = props.eventInfo.table.slice(0, -1) as string;
+  const nameSource = props.eventInfo.table as string;
   await api.patch(`/v1/${nameSource}/status`, data).then(
     (_response: any) => {
       notification.open('positive', '');
@@ -141,7 +139,7 @@ async function deleteEvent() {
       ? props.eventInfo.publicId
       : props.eventInfo.task_ids.toString().split(','),
   });
-  const nameSource = props.eventInfo.table.slice(0, -1) as string;
+  const nameSource = props.eventInfo.table as string;
   await api.patch(`/v1/${nameSource}/batchDelete`, data).then(
     (response: any) => {
       if (response === 0) notification.open('warning', 'notAllowed');
@@ -162,7 +160,7 @@ function editTask() {
       params: { ids: props.eventInfo.publicId.split(',') },
     });
   } else {
-    const task = props.eventInfo.table.slice(0, -1) as string;
+    const task = props.eventInfo.table;
     const ids = props.eventInfo.task_ids.toString().split(',');
     if (isMovement.value) {
       router.push({ name: 'edit-movement', params: { ids: ids } });

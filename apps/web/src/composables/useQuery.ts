@@ -4,9 +4,37 @@ import { Option } from '~/types';
 import { queryCache } from '~/boot/vue-query';
 import { Ref } from 'vue';
 import { useNotification } from '~/composables/useResponseText';
-import { useQuery } from 'vue-query';
+import { QueryClient, useQuery } from 'vue-query';
 import dayjs from 'dayjs';
 import { useApiFetch } from './useApi';
+
+export function useCalendarQuery() {
+  const client = new QueryClient({ queryCache: queryCache }); // need to use the queryclient here and not the useQuery as it wont work with full calendar
+  const api = useApiFetch();
+  function fetchQuery(source: string, start: Date, end: Date) {
+    return client.fetchQuery(
+      ['calendar', source, start, end],
+      () => {
+        const payload = {
+          start: unref(start),
+          end: unref(end),
+        };
+        return api.get(`/v1/calendar/${unref(source)}`, payload);
+      },
+      {
+        staleTime: 1000 * 60 * 1, // stale (refetching), after 1 minute
+        cacheTime: 1000 * 60 * 60 * 24, // garbage collector, every 24 hours
+      }
+    );
+  }
+
+  function invalidate(source: string) {
+    const queries = queryCache.findAll(['calendar', source]);
+    queries.forEach((query) => query.invalidate());
+  }
+
+  return { fetchQuery, invalidate };
+}
 
 export function useApiaryQuery(
   id: number,

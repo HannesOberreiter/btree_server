@@ -6,7 +6,7 @@
         <full-calendar ref="cal" :options="calendarOptions">
           <template #eventContent="{ timeText, event }">
             <i
-              v-if="event.extendedProps.table === 'rearings'"
+              v-if="event.extendedProps.table === 'rearing'"
               :style="`background-color: ${event.backgroundColor}`"
               :class="event.extendedProps.icon"
             ></i>
@@ -26,7 +26,6 @@ import { remove, map, difference, merge } from 'lodash-es';
 import dayjs from 'dayjs';
 import { CALENDAR } from '~/constants';
 import { onKeyStroke } from '@vueuse/core';
-import { QueryClient } from 'vue-query';
 import { useAuthUserStore } from '~/stores/auth';
 import { useCalendarStore } from '~/stores/calendar';
 import useCalendarVis from '~/composables/useCalendarVis';
@@ -51,7 +50,9 @@ import interactionPlugin from '@fullcalendar/interaction';
 import listPlugin from '@fullcalendar/list';
 import { useApiFetch } from '~/composables/useApi';
 import { useQuasar } from 'quasar';
+import { useCalendarQuery } from '~/composables/useQuery';
 
+const useQuery = useCalendarQuery();
 const { t } = useI18n();
 const $q = useQuasar();
 const api = useApiFetch();
@@ -69,7 +70,6 @@ const dateClicked = ref(dayjs().format('YYYY-MM-DD'));
 const cal = ref();
 const showInfo = ref(false);
 const showSetting = ref(false);
-const client = new QueryClient(); // need to use the queryclient here and not the useQuery as it wont work with full calendar
 
 const formDialog = () =>
   $q
@@ -108,29 +108,15 @@ CALENDAR.map(function (source, _index) {
   } else {
     eventsSourceList.push({
       events: function (fetchInfo, successCallback, failureCallback) {
-        const queryKey = ['calendar', source, fetchInfo];
-        client
-          .fetchQuery(
-            queryKey,
-            () =>
-              api.get(`/v1/calendar/${source}`, {
-                start: fetchInfo.start,
-                end: fetchInfo.end,
-              }),
-            {
-              staleTime: 1000 * 60 * 5,
-              cacheTime: 1000 * 60 * 5,
-            }
-          )
-          .then(
-            (response: any) => {
-              successCallback(response);
-            },
-            (error) => {
-              notification.open('negative', error);
-              failureCallback(error);
-            }
-          );
+        useQuery.fetchQuery(source, fetchInfo.start, fetchInfo.end).then(
+          (response: any) => {
+            successCallback(response);
+          },
+          (error) => {
+            notification.open('negative', error);
+            failureCallback(error);
+          }
+        );
       },
       id: source,
     });
@@ -183,7 +169,8 @@ const refetchSource = (event: string) => {
   if (!cal.value) return;
   const calendarApi = cal.value.getApi();
   const source = calendarApi.getEventSourceById(event);
-  client.clear();
+  useQuery.invalidate(event);
+  //client.clear();
   source.refetch();
 };
 
@@ -194,8 +181,8 @@ function onResize(_size: any) {
 const handleEventsChange = (changeInfo: EventChangeArg) => {
   // Single Day Events no Enddate possible
   if (
-    changeInfo.event.extendedProps.table === 'todos' ||
-    changeInfo.event.extendedProps.table === 'movedates'
+    changeInfo.event.extendedProps.table === 'todo' ||
+    changeInfo.event.extendedProps.table === 'movedate'
   ) {
     if (changeInfo.event.end) {
       changeInfo.revert();
@@ -205,7 +192,7 @@ const handleEventsChange = (changeInfo: EventChangeArg) => {
 
   let ids = '';
   let start = '';
-  if (changeInfo.event.extendedProps.table === 'rearings') {
+  if (changeInfo.event.extendedProps.table === 'rearing') {
     // For Queen Rearing Events
     // we need to find out which is the starting step
     // and how it will be changed based on the difference if the moved event is not the starting step
@@ -236,14 +223,11 @@ const handleEventsChange = (changeInfo: EventChangeArg) => {
     end: dayjs(changeInfo.event.end).subtract(1, 'day').format('YYYY-MM-DD'),
     ids: ids,
   });
-  const sourceName = changeInfo.event.extendedProps.table.slice(
-    0,
-    -1
-  ) as string;
+  const sourceName = changeInfo.event.extendedProps.table;
   api.patch(`/v1/${sourceName}/date`, data).then(
     (_response: any) => {
       notification.open('positive', '');
-      client.clear();
+      useQuery.invalidate(sourceName);
     },
     (error) => {
       notification.open('negative', error);

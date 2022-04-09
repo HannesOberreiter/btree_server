@@ -99,6 +99,7 @@ export const useApiFetch = () => {
           try {
             const token = await refreshToken();
             storeToken.refreshToken(token.result);
+            LoadingBar.stop();
             return fetching(copy, true);
           } catch (e) {
             throw e;
@@ -109,6 +110,7 @@ export const useApiFetch = () => {
             await new Promise((r) => setTimeout(r, 500));
           }
           if (state.logout === true) return Promise.reject();
+          LoadingBar.stop();
           return fetching(copy, true);
         }
       }

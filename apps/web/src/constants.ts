@@ -8,13 +8,13 @@ const FORMATS = [
 ];
 
 const CALENDAR = [
-  'rearings',
-  'checkups',
-  'feeds',
-  'treatments',
-  'harvests',
-  'todos',
-  'movedates',
+  'rearing',
+  'checkup',
+  'feed',
+  'treatment',
+  'harvest',
+  'todo',
+  'movedate',
   'vis',
 ];
 
