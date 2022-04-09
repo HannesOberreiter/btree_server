@@ -1,7 +1,9 @@
 import { boot } from 'quasar/wrappers';
 import { Composer, createI18n, Locale, VueI18n as VueI18nType } from 'vue-i18n';
 import { useAuthUserStore } from '~/stores/auth';
-import messages from '@intlify/vite-plugin-vue-i18n/messages';
+
+import de from 'src/i18n/de.json';
+import en from 'src/i18n/en.json';
 
 const i18n = createI18n({
   legacy: false, // you must set `false`, to use Composition API
@@ -9,7 +11,10 @@ const i18n = createI18n({
   fallbackLocale: 'en', // set fallback locale
   sync: true,
   globalInjection: true,
-  messages,
+  messages: {
+    en: en,
+    de: de,
+  },
 });
 
 export function getLocale(i18n: any): string {
