@@ -2,6 +2,7 @@ import { useAuthTokenStore } from '~/stores/token';
 import { useNeedAuth } from './useNeedAuth';
 import { stringify } from 'query-string';
 import { isString } from 'lodash-es';
+import { LoadingBar } from 'quasar';
 
 const baseUrl = '/api';
 const state = reactive({
@@ -25,7 +26,7 @@ export const useApiFetch = () => {
     return false;
   };
 
-  const buildUrl = (url, param = '' as unknown) => {
+  const buildUrl = (url: string, param = '' as unknown) => {
     if (param === '') return baseUrl + url;
     else
       return baseUrl + url + '?' + stringify(param, { arrayFormat: 'bracket' });
@@ -81,12 +82,11 @@ export const useApiFetch = () => {
   };
 
   async function fetching(request: Request, recursive = false): Promise<any> {
+    LoadingBar.start();
     const token = buildToken();
     const copy = request.clone();
     if (token) request.headers.append('Authorization', token.Authorization);
-
     const response = await fetch(request);
-
     if (!response.ok) {
       if (
         ![baseUrl + '/v1/auth/login', baseUrl + '/v1/auth/refresh'].includes(
@@ -112,8 +112,10 @@ export const useApiFetch = () => {
           return fetching(copy, true);
         }
       }
-      throw response.json();
+      LoadingBar.stop();
+      throw await response.json();
     }
+    LoadingBar.stop();
 
     return response.json();
   }
