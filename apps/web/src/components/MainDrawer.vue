@@ -1,22 +1,7 @@
 <template>
   <q-scroll-area class="fit">
     <q-list>
-      <q-item
-        v-ripple
-        :to="{
-          name: 'calendar',
-        }"
-        clickable
-        exact
-        active-class="text-yellow"
-      >
-        <q-item-section avatar>
-          <q-icon name="far fa-calendar-alt" />
-        </q-item-section>
-        <q-item-section>
-          {{ $t('calendar.name') }}
-        </q-item-section>
-      </q-item>
+      <drawer-item :link="calendar"></drawer-item>
       <q-item
         v-ripple
         :to="{
@@ -65,6 +50,12 @@
 </template>
 
 <script lang="ts">
+const calendar = {
+  label: 'calendar.name',
+  route: 'calendar',
+  icon: 'far fa-calendar-alt',
+};
+
 const links = [
   {
     label: 'new',

@@ -15,7 +15,6 @@
           />
         </div>
         <div class="row full-width">
-          {{ state.type_id }}
           <div v-for="(o, i) in layout" :key="i" class="col-12">
             <component :is="o.comp" v-model="state[o.model]" v-bind="o.props">
             </component>

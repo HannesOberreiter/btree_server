@@ -76,6 +76,7 @@ export const useAuthUserStore = defineStore('auth/user', {
           return Promise.resolve(user);
         },
         (error: any) => {
+          console.log(error);
           this.user = {};
           this.company = {};
           return Promise.reject(error);
