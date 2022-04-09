@@ -56,7 +56,7 @@ const state = reactive({
   apiary_id: storeFilter.field(props.form, 'apiary_id'),
   hive_id: storeFilter.field(props.form, 'hive_id'),
   date: storeFilter.field(props.form, 'date'),
-});
+}) as any;
 
 const layouts = {
   hive: [
