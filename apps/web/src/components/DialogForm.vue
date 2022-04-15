@@ -35,6 +35,7 @@ import FormMainHive from '~/components/FormMainHive.vue';
 import FormMainMovement from './FormMainMovement.vue';
 import FormMainQueen from './FormMainQueen.vue';
 import { useDialogPluginComponent } from 'quasar';
+import dayjs from 'dayjs';
 
 const { dialogRef, onDialogHide, onDialogOK } = useDialogPluginComponent();
 
@@ -62,7 +63,7 @@ const props = defineProps({
   },
   date: {
     type: String,
-    default: '',
+    default: dayjs().format('YYYY-MM-DD'),
   },
   latlng: {
     type: Object,

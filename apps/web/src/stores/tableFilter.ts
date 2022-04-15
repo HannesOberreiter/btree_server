@@ -11,6 +11,7 @@ export const useTableFilterStore = defineStore('tableFilter', {
     ({
       hive: '',
       movedate: '',
+      todo: '',
     } as State),
   getters: {
     field: (state) => {

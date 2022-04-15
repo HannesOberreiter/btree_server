@@ -82,7 +82,7 @@ const formDialog = () =>
       },
     })
     .onOk(() => {
-      refetchSource('todos');
+      refetchSource('todo');
     });
 const eventDialog = (event: any) =>
   $q

@@ -107,6 +107,40 @@ export function useMovementsQuery({
   );
 }
 
+export function useTodosQuery({
+  offset = 0 as MaybeRef<number>,
+  limit = 10000 as MaybeRef<number>,
+  order = ['date'] as MaybeRef<Array<string>>,
+  direction = ['asc'] as MaybeRef<Array<string>>,
+  deleted = false as MaybeRef<boolean>,
+  q = '' as MaybeRef<string>,
+  filters = '' as MaybeRef<string>,
+  enabled = true as MaybeRef<boolean>,
+}) {
+  const notification = useNotification();
+  const api = useApiFetch();
+  return useQuery(
+    ['todo', offset, limit, order, direction, q, filters],
+    () => {
+      const payload = {
+        offset: unref(offset),
+        limit: unref(limit),
+        order: unref(order),
+        direction: unref(direction),
+        q: unref(q),
+        filters: unref(filters),
+      };
+      return api.get('/v1/todo', payload);
+    },
+    {
+      enabled: enabled,
+      keepPreviousData: true,
+      select: (response) => response,
+      onError: (error: any) => notification.open('negative', error),
+    }
+  );
+}
+
 export function useApiariesQuery({
   offset = 0 as MaybeRef<number>,
   limit = 10000 as MaybeRef<number>,

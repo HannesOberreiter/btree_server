@@ -25,6 +25,17 @@ export const useTablesStore = defineStore('tables', {
       sort: useStorage('table-sort-col-movedate', 'date'),
       direction: useStorage('table-sort-direction-movedate', false),
     },
+    todo: {
+      visible: useStorage('table-visible-todo', [
+        'date',
+        'name',
+        'note',
+        'done',
+      ]),
+      length: useStorage('table-length-todo', 10),
+      sort: useStorage('table-sort-col-todo', 'date'),
+      direction: useStorage('table-sort-direction-todo', false),
+    },
   }),
   getters: {},
   actions: {},

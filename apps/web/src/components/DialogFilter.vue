@@ -106,6 +106,15 @@ const layouts = {
       },
     },
   ],
+  todo: [
+    {
+      comp: FormInputDateRange,
+      model: 'date',
+      props: {
+        label: 'daterange',
+      },
+    },
+  ],
 } as any;
 
 const layout = computed(() => layouts[props.form]);

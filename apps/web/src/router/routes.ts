@@ -48,6 +48,11 @@ const routes: RouteRecordRaw[] = [
         name: 'table-movement',
         component: () => import('~/pages/MovementTable.vue'),
       },
+      {
+        path: 'todo',
+        name: 'table-todo',
+        component: () => import('~/pages/TodoTable.vue'),
+      },
     ],
   },
   /***

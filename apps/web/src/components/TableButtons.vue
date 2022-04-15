@@ -19,7 +19,7 @@
     />
 
     <q-btn
-      v-if="['hive', 'movedate'].includes(table)"
+      v-if="['hive', 'movedate', 'todo'].includes(table)"
       :color="filter ? 'negative' : 'warning'"
       no-caps
       :label="$t('filter')"

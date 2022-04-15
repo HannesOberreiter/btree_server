@@ -145,7 +145,7 @@ const links = [
       },
       {
         label: 'todo',
-        route: 'table-checkup',
+        route: 'table-todo',
         icon: 'fas fa-clipboard-check',
         menu: false,
       },
