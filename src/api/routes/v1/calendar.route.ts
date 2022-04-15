@@ -5,62 +5,56 @@ import { ROLES } from '@enums/role.enum';
 import { Validator } from '@middlewares/validator.middleware';
 import { query } from 'express-validator';
 
-const CalendarParams = [
-  query('start').isString(),
-  query('end').isString(),
-  query('startStr').isString(),
-  query('endStr').isString(),
-  query('timeZone').isString()
-];
+const CalendarParams = [query('start').isString(), query('end').isString()];
 export class CalendarRouter extends Router {
   constructor() {
     super();
   }
   define() {
     this.router
-      .route('/checkups')
+      .route('/checkup')
       .get(
         Validator.validate(CalendarParams),
         Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
         Container.resolve('CalendarController').getCheckups
       );
     this.router
-      .route('/treatments')
+      .route('/treatment')
       .get(
         Validator.validate(CalendarParams),
         Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
         Container.resolve('CalendarController').getTreatments
       );
     this.router
-      .route('/harvests')
+      .route('/harvest')
       .get(
         Validator.validate(CalendarParams),
         Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
         Container.resolve('CalendarController').getHarvests
       );
     this.router
-      .route('/feeds')
+      .route('/feed')
       .get(
         Validator.validate(CalendarParams),
         Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
         Container.resolve('CalendarController').getFeeds
       );
     this.router
-      .route('/movedates')
+      .route('/movedate')
       .get(
         Validator.validate(CalendarParams),
         Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
         Container.resolve('CalendarController').getMovements
       );
     this.router
-      .route('/todos')
+      .route('/todo')
       .get(
         Validator.validate(CalendarParams),
         Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
         Container.resolve('CalendarController').getTodos
       );
     this.router
-      .route('/rearings')
+      .route('/rearing')
       .get(
         Validator.validate(CalendarParams),
         Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),

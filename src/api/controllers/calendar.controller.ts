@@ -6,7 +6,7 @@ import {
   getTask,
   getMovements,
   getTodos,
-  getRearings
+  getRearings,
 } from '@utils/calendar.util';
 export class CalendarController extends Controller {
   constructor() {
@@ -45,7 +45,7 @@ export class CalendarController extends Controller {
 
   async getCheckups(req: IUserRequest, res: Response, next: NextFunction) {
     try {
-      const result = await getTask(req, 'checkups');
+      const result = await getTask(req, 'checkup');
       res.locals.data = result;
     } catch (e) {
       next(checkMySQLError(e));
@@ -54,7 +54,7 @@ export class CalendarController extends Controller {
   }
   async getTreatments(req: IUserRequest, res: Response, next: NextFunction) {
     try {
-      const result = await getTask(req, 'treatments');
+      const result = await getTask(req, 'treatment');
       res.locals.data = result;
     } catch (e) {
       next(checkMySQLError(e));
@@ -63,7 +63,7 @@ export class CalendarController extends Controller {
   }
   async getHarvests(req: IUserRequest, res: Response, next: NextFunction) {
     try {
-      const result = await getTask(req, 'harvests');
+      const result = await getTask(req, 'harvest');
       res.locals.data = result;
     } catch (e) {
       next(checkMySQLError(e));
@@ -72,7 +72,7 @@ export class CalendarController extends Controller {
   }
   async getFeeds(req: IUserRequest, res: Response, next: NextFunction) {
     try {
-      const result = await getTask(req, 'feeds');
+      const result = await getTask(req, 'feed');
       res.locals.data = result;
     } catch (e) {
       next(checkMySQLError(e));
