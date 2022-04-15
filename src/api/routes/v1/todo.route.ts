@@ -13,6 +13,12 @@ export class TodoRouter extends Router {
   define() {
     this.router
       .route('/')
+      .get(
+        Guard.authorize([ROLES.admin, ROLES.user, ROLES.read]),
+        Container.resolve('TodoController').get
+      );
+    this.router
+      .route('/')
       .patch(
         Validator.validate([body('ids').isArray()]),
         Guard.authorize([ROLES.admin, ROLES.user]),
@@ -23,7 +29,7 @@ export class TodoRouter extends Router {
       .post(
         Validator.validate([
           body('interval').optional().isInt({ max: 365, min: 0 }),
-          body('repeat').optional().isInt({ max: 30, min: 0 })
+          body('repeat').optional().isInt({ max: 30, min: 0 }),
         ]),
         Guard.authorize([ROLES.admin, ROLES.user]),
         Container.resolve('TodoController').post

@@ -31,14 +31,14 @@ export class Todo extends ExtModel {
       url: { type: 'string', maxLength: 512 },
 
       done: { type: 'boolean' },
-      deleted_at: { type: 'string', format: 'date-time' },
+
       created_at: { type: 'string', format: 'date-time' },
       updated_at: { type: 'string', format: 'date-time' },
 
       user_id: { type: 'integer' }, // Company FK
       bee_id: { type: 'integer' }, // Creator Bee FK
-      edit_id: { type: 'integer' } // Updater Bee FK
-    }
+      edit_id: { type: 'integer' }, // Updater Bee FK
+    },
   };
 
   static relationMappings = () => ({
@@ -47,24 +47,24 @@ export class Todo extends ExtModel {
       modelClass: Company,
       join: {
         from: ['todos.user_id'],
-        to: ['company.id']
-      }
+        to: ['company.id'],
+      },
     },
     creator: {
       relation: ExtModel.HasOneRelation,
       modelClass: User,
       join: {
         from: ['todos.bee_id'],
-        to: ['bees.id']
-      }
+        to: ['bees.id'],
+      },
     },
     editor: {
       relation: ExtModel.HasOneRelation,
       modelClass: User,
       join: {
         from: ['todos.edit_id'],
-        to: ['bees.id']
-      }
-    }
+        to: ['bees.id'],
+      },
+    },
   });
 }
