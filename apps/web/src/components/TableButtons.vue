@@ -86,35 +86,38 @@
             <q-item-label>{{ $t('delete') }}</q-item-label>
           </q-item-section>
         </q-item>
-        <q-item
-          v-close-popup
-          clickable
-          :disable="selected.length > 0 && deleted ? false : true"
-          @click="onRestore"
-        >
-          <q-item-section avatar>
-            <q-avatar>
-              {{ deleted ? selected.length : 0 }}
-            </q-avatar>
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>{{ $t('restore') }}</q-item-label>
-          </q-item-section>
-        </q-item>
-        <q-item v-close-popup clickable @click="deleted = !deleted">
-          <q-item-section avatar>
-            <q-avatar>
-              <q-icon
-                :name="deleted ? 'fas fa-eye' : 'fas fa-eye-slash'"
-              ></q-icon>
-            </q-avatar>
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>
-              {{ $t('deleted') }}
-            </q-item-label>
-          </q-item-section>
-        </q-item>
+        <!-- Restoring of deleted rows is not possible for every table -->
+        <div v-if="['hive', 'apiary'].includes(table)">
+          <q-item
+            v-close-popup
+            clickable
+            :disable="selected.length > 0 && deleted ? false : true"
+            @click="onRestore"
+          >
+            <q-item-section avatar>
+              <q-avatar>
+                {{ deleted ? selected.length : 0 }}
+              </q-avatar>
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>{{ $t('restore') }}</q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-item v-close-popup clickable @click="deleted = !deleted">
+            <q-item-section avatar>
+              <q-avatar>
+                <q-icon
+                  :name="deleted ? 'fas fa-eye' : 'fas fa-eye-slash'"
+                ></q-icon>
+              </q-avatar>
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>
+                {{ $t('deleted') }}
+              </q-item-label>
+            </q-item-section>
+          </q-item>
+        </div>
       </q-list>
     </q-btn-dropdown>
   </q-btn-group>
