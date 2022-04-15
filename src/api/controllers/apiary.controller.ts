@@ -48,7 +48,7 @@ export class ApiaryController extends Controller {
         })
         .page(offset, parseInt(limit) === 0 ? 10 : limit);
 
-      if (modus !== 'null') {
+      if (modus) {
         query.where('apiaries.modus', modus === 'true');
       }
 
