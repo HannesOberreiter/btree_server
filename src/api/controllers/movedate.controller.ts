@@ -5,6 +5,7 @@ import { Movedate } from '@models/Movedate.model';
 import { IUserRequest } from '@interfaces/IUserRequest.interface';
 import { Apiary } from '../models/apiary.model';
 import { HiveLocation } from '../models/hive_location.model';
+import { forbidden } from '@hapi/boom';
 
 export class MovedateController extends Controller {
   constructor() {
@@ -179,6 +180,7 @@ export class MovedateController extends Controller {
           .where('user_id', req.user.user_id)
           .where('count', '>', 1);
       });
+      if (result === 0) throw forbidden();
       res.locals.data = result;
       next();
     } catch (e) {
