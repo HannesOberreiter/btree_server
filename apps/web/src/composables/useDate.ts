@@ -35,7 +35,7 @@ export const useDateFormat = () => {
     inputFormat = ''
   ) => {
     const formats = {
-      date: 'L',
+      date: 'YYYY-MM-DD',
       'date-time': 'lll',
       time: 'LT',
       'date-time-seconds': 'L LTS',
