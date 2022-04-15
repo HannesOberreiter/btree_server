@@ -178,7 +178,7 @@ export class MovedateController extends Controller {
           .withGraphJoined('movedate_count')
           .whereIn('movedates.id', req.body.ids)
           .where('user_id', req.user.user_id)
-          .where('count', '>', 1);
+          .where('count', '>', 1); // User is not allowed to delete the last movedate
       });
       if (result === 0) throw forbidden();
       res.locals.data = result;
