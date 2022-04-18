@@ -149,6 +149,48 @@ const layouts = {
       },
     },
   ],
+  treatment: [
+    {
+      comp: FormDropdownType,
+      model: 'treatments.type_id',
+      props: {
+        table: 'treatment_types',
+        'allow-empty': 'filterEmpty',
+      },
+    },
+    {
+      comp: FormDropdownType,
+      model: 'treatments.disease_id',
+      props: {
+        table: 'treatment_diseases',
+        'allow-empty': 'filterEmpty',
+      },
+    },
+    {
+      comp: FormInputDateRange,
+      model: 'date',
+      props: {
+        label: 'daterange',
+      },
+    },
+  ],
+  checkup: [
+    {
+      comp: FormDropdownType,
+      model: 'checkups.type_id',
+      props: {
+        table: 'checkup_types',
+        'allow-empty': 'filterEmpty',
+      },
+    },
+    {
+      comp: FormInputDateRange,
+      model: 'date',
+      props: {
+        label: 'daterange',
+      },
+    },
+  ],
 } as any;
 
 const layout = computed(() => layouts[props.form]);

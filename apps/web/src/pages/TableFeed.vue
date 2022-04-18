@@ -92,7 +92,6 @@ const columns = [
   },
   {
     name: 'date',
-    required: true,
     label: t('date'),
     align: 'left',
     field: (row: any) => row.date,
@@ -101,7 +100,6 @@ const columns = [
   },
   {
     name: 'enddate',
-    required: true,
     label: t('dateEnd'),
     align: 'left',
     field: (row: any) => row.enddate,
@@ -109,10 +107,18 @@ const columns = [
     sortable: true,
   },
   {
+    name: 'amount',
+    label: t('amount'),
+    align: 'right',
+    field: (row: any) => row.amount,
+    format: (val: string) => val,
+    sortable: true,
+  },
+  {
     name: 'type.name',
     label: t('type'),
     align: 'left',
-    field: (row: any) => row.type.name,
+    field: (row: any) => (row.type ? row.type.name : ''),
     format: (val: string) => val,
     sortable: true,
   },

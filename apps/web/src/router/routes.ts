@@ -63,6 +63,16 @@ const routes: RouteRecordRaw[] = [
         name: 'table-harvest',
         component: () => import('~/pages/TableHarvest.vue'),
       },
+      {
+        path: 'treatment',
+        name: 'table-treatment',
+        component: () => import('~/pages/TableTreatment.vue'),
+      },
+      {
+        path: 'checkup',
+        name: 'table-checkup',
+        component: () => import('~/pages/TableCheckup.vue'),
+      },
     ],
   },
   /***
