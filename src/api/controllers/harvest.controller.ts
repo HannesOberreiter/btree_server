@@ -71,7 +71,7 @@ export class HarvestController extends Controller {
     try {
       const result = await Harvest.transaction(async (trx) => {
         return await Harvest.query(trx)
-          .patch(insert)
+          .patch({ ...insert, edit_id: req.user.bee_id })
           .findByIds(ids)
           .leftJoinRelated('harvest_apiary')
           .where('harvest_apiary.user_id', req.user.user_id);

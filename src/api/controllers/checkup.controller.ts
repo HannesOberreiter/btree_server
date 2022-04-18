@@ -18,7 +18,7 @@ export class CheckupController extends Controller {
     try {
       const result = await Checkup.transaction(async (trx) => {
         return await Checkup.query(trx)
-          .patch(insert)
+          .patch({ ...insert, edit_id: req.user.bee_id })
           .findByIds(ids)
           .leftJoinRelated('checkup_apiary')
           .where('checkup_apiary.user_id', req.user.user_id);
@@ -53,7 +53,7 @@ export class CheckupController extends Controller {
           const res = await Checkup.query(trx).insert({
             ...insert,
             hive_id: hives[hive].id,
-            bee_id: req.user.bee_id
+            bee_id: req.user.bee_id,
           });
           result.push(res.id);
 
@@ -68,7 +68,7 @@ export class CheckupController extends Controller {
               const res = await Checkup.query(trx).insert({
                 ...insert,
                 hive_id: hives[hive].id,
-                bee_id: req.user.bee_id
+                bee_id: req.user.bee_id,
               });
               result.push(res.id);
             }
@@ -89,7 +89,7 @@ export class CheckupController extends Controller {
         return Checkup.query(trx)
           .patch({
             edit_id: req.user.bee_id,
-            done: req.body.status
+            done: req.body.status,
           })
           .findByIds(req.body.ids)
           .leftJoinRelated('checkup_apiary')
@@ -109,7 +109,7 @@ export class CheckupController extends Controller {
           .patch({
             edit_id: req.user.bee_id,
             date: req.body.start,
-            enddate: req.body.end
+            enddate: req.body.end,
           })
           .findByIds(req.body.ids)
           .leftJoinRelated('checkup_apiary')
@@ -164,7 +164,7 @@ export class CheckupController extends Controller {
           await Checkup.query(trx)
             .patch({
               deleted: true,
-              edit_id: req.user.bee_id
+              edit_id: req.user.bee_id,
             })
             .findByIds(softIds);
 

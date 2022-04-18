@@ -71,7 +71,7 @@ export class FeedController extends Controller {
     try {
       const result = await Feed.transaction(async (trx) => {
         return await Feed.query(trx)
-          .patch(insert)
+          .patch({ ...insert, edit_id: req.user.bee_id })
           .findByIds(ids)
           .leftJoinRelated('feed_apiary')
           .where('feed_apiary.user_id', req.user.user_id);
