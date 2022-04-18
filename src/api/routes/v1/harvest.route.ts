@@ -12,6 +12,31 @@ export class HarvestRouter extends Router {
 
   define() {
     this.router
+      .route('/')
+      .get(
+        Guard.authorize([ROLES.admin, ROLES.user, ROLES.read]),
+        Container.resolve('HarvestController').get
+      );
+
+    this.router
+      .route('/')
+      .post(
+        Validator.validate([
+          body('hive_ids').isArray(),
+          body('interval').isInt({ max: 365, min: 0 }),
+          body('repeat').isInt({ max: 30, min: 0 }),
+        ]),
+        Guard.authorize([ROLES.admin, ROLES.user]),
+        Container.resolve('HarvestController').post
+      );
+    this.router
+      .route('/')
+      .patch(
+        Validator.validate([body('ids').isArray()]),
+        Guard.authorize([ROLES.admin, ROLES.user]),
+        Container.resolve('HarvestController').patch
+      );
+    this.router
       .route('/status')
       .patch(
         Guard.authorize([ROLES.admin, ROLES.user]),
@@ -35,24 +60,6 @@ export class HarvestRouter extends Router {
         Validator.validate([body('ids').isArray()]),
         Guard.authorize([ROLES.admin, ROLES.user]),
         Container.resolve('HarvestController').batchGet
-      );
-    this.router
-      .route('/')
-      .post(
-        Validator.validate([
-          body('hive_ids').isArray(),
-          body('interval').isInt({ max: 365, min: 0 }),
-          body('repeat').isInt({ max: 30, min: 0 })
-        ]),
-        Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('HarvestController').post
-      );
-    this.router
-      .route('/')
-      .patch(
-        Validator.validate([body('ids').isArray()]),
-        Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('HarvestController').patch
       );
   }
 }
