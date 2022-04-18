@@ -11,6 +11,62 @@ export class TreatmentController extends Controller {
     super();
   }
 
+  async get(req: IUserRequest, res: Response, next: NextFunction) {
+    try {
+      const { order, direction, offset, limit, q, filters, deleted } =
+        req.query as any;
+      const query = Treatment.query()
+        .withGraphJoined('treatment_apiary')
+        .withGraphJoined('creator')
+        .withGraphJoined('editor')
+        .withGraphJoined('type')
+        .withGraphJoined('disease')
+        .withGraphJoined('hive')
+        .where({
+          'treatment_apiary.user_id': req.user.user_id,
+          'treatments.deleted': deleted === 'true',
+        })
+        .page(offset, parseInt(limit) === 0 ? 10 : limit);
+
+      if (filters) {
+        try {
+          const filtering = JSON.parse(filters);
+          if (Array.isArray(filtering)) {
+            filtering.forEach((v) => {
+              if ('date' in v && typeof v['date'] === 'object') {
+                query.whereBetween('date', [v.date.from, v.date.to]);
+              } else {
+                query.where(v);
+              }
+            });
+          }
+        } catch (e) {
+          console.log(e);
+        }
+      }
+
+      if (Array.isArray(order)) {
+        order.forEach((field, index) => query.orderBy(field, direction[index]));
+      } else {
+        query.orderBy(order, direction);
+      }
+
+      if (q.trim() !== '') {
+        query.where((builder) => {
+          builder
+            .orWhere('hive.name', 'like', `%${q}%`)
+            .orWhere('disease.name', 'like', `%${q}%`)
+            .orWhere('type.name', 'like', `%${q}%`);
+        });
+      }
+      const result = await query.orderBy('id');
+      res.locals.data = result;
+      next();
+    } catch (e) {
+      next(checkMySQLError(e));
+    }
+  }
+
   async patch(req: IUserRequest, res: Response, next: NextFunction) {
     const ids = req.body.ids;
     const insert = { ...req.body.data };
@@ -141,6 +197,7 @@ export class TreatmentController extends Controller {
 
   async batchDelete(req: IUserRequest, res: Response, next: NextFunction) {
     const hardDelete = req.query.hard ? true : false;
+    const restoreDelete = req.query.restore ? true : false;
 
     try {
       const result = await Treatment.transaction(async (trx) => {
@@ -153,7 +210,8 @@ export class TreatmentController extends Controller {
         const softIds = [];
         const hardIds = [];
         map(res, (obj) => {
-          if (obj.deleted || hardDelete) hardIds.push(obj.id);
+          if ((obj.deleted || hardDelete) && !restoreDelete)
+            hardIds.push(obj.id);
           else softIds.push(obj.id);
         });
 
@@ -162,7 +220,7 @@ export class TreatmentController extends Controller {
         if (softIds.length > 0)
           await Treatment.query(trx)
             .patch({
-              deleted: true,
+              deleted: restoreDelete ? false : true,
               edit_id: req.user.bee_id,
             })
             .findByIds(softIds);
