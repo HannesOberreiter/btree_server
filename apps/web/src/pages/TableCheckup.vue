@@ -33,11 +33,48 @@
           ></table-filter>
         </template>
 
+        <template #header-cell="props">
+          <q-th :props="props">
+            <table-header-icon
+              v-if="props.col.headerClasses === 'rating'"
+              icon="fas fa-star"
+              :label="props.col.label"
+            >
+            </table-header-icon>
+            <table-header-icon
+              v-else-if="props.col.headerClasses === 'queen'"
+              icon="fas fa-venus"
+              :label="props.col.label"
+            >
+            </table-header-icon>
+            <table-header-icon
+              v-else-if="props.col.headerClasses === 'frames'"
+              icon="fas fa-window-maximize"
+              :label="props.col.label"
+            >
+            </table-header-icon>
+            <span v-else>{{ props.col.label }}</span>
+          </q-th>
+        </template>
+
         <template #body-cell-note="props">
           <table-col-note
             :value="props.value"
             :trunc="visibleColumns.length > 4"
           ></table-col-note>
+        </template>
+
+        <template #body-cell-queen="props">
+          <table-col-boolean :value="props.value"></table-col-boolean>
+        </template>
+        <template #body-cell-capped_brood="props">
+          <table-col-boolean :value="props.value"></table-col-boolean>
+        </template>
+        <template #body-cell-eggs="props">
+          <table-col-boolean :value="props.value"></table-col-boolean>
+        </template>
+        <template #body-cell-queencells="props">
+          <table-col-boolean :value="props.value"></table-col-boolean>
         </template>
 
         <template #body-cell-done="props">
@@ -64,6 +101,8 @@ import { useDateFormat } from '~/composables/useDate';
 import { useTableFilterStore } from '~/stores/tableFilter';
 import TableColNote from '~/components/TableColNote.vue';
 import TableColStatus from '~/components/TableColStatus.vue';
+import TableColBoolean from '~/components/TableColBoolean.vue';
+import TableHeaderIcon from '~/components/TableHeaderIcon.vue';
 
 const $q = useQuasar();
 const useDate = useDateFormat();
@@ -123,10 +162,172 @@ const columns = [
     sortable: true,
   },
   {
-    name: 'treatment_apiary.apiary_name',
+    name: 'checkup_apiary.apiary_name',
     label: t('apiary'),
     align: 'left',
-    field: (row: any) => row.treatment_apiary.apiary_name,
+    field: (row: any) => row.checkup_apiary.apiary_name,
+    sortable: true,
+  },
+  /***
+      "Seen" booleans
+      queen, eggs, capped_brood, queencells
+   */
+  {
+    name: 'queen',
+    label: t('queen'),
+    align: 'center',
+    field: (row: any) => row.queen,
+    sortable: true,
+    headerClasses: 'queen',
+  },
+  {
+    name: 'eggs',
+    label: t('egg', 2),
+    align: 'center',
+    field: (row: any) => row.eggs,
+    sortable: true,
+    headerClasses: 'queen',
+  },
+  {
+    name: 'capped_brood',
+    label: t('cappedBrood'),
+    align: 'center',
+    field: (row: any) => row.capped_brood,
+    sortable: true,
+    headerClasses: 'queen',
+  },
+  {
+    name: 'queencells',
+    label: t('queencell', 2),
+    align: 'center',
+    field: (row: any) => row.queencells,
+    sortable: true,
+    headerClasses: 'queen',
+  },
+  /**
+    Ratings
+    brood, pollen, comb, temper, calm_comb, swarm
+   */
+  {
+    name: 'brood',
+    label: t('rating.brood'),
+    align: 'right',
+    field: (row: any) => row.brood,
+    sortable: true,
+    headerClasses: 'rating',
+  },
+  {
+    name: 'pollen',
+    label: t('rating.pollen'),
+    align: 'right',
+    field: (row: any) => row.pollen,
+    sortable: true,
+    headerClasses: 'rating',
+  },
+  {
+    name: 'comb',
+    label: t('rating.comb'),
+    align: 'right',
+    field: (row: any) => row.comb,
+    sortable: true,
+    headerClasses: 'rating',
+  },
+  {
+    name: 'temper',
+    label: t('rating.temper'),
+    align: 'right',
+    field: (row: any) => row.temper,
+    sortable: true,
+    headerClasses: 'rating',
+  },
+  {
+    name: 'calm_comb',
+    label: t('rating.calm_comb'),
+    align: 'right',
+    field: (row: any) => row.calm_comb,
+    sortable: true,
+    headerClasses: 'rating',
+  },
+  {
+    name: 'swarm',
+    label: t('rating.swarm'),
+    align: 'right',
+    field: (row: any) => row.swarm,
+    sortable: true,
+    headerClasses: 'rating',
+  },
+  /**
+    Frames
+    broodframes, honeyframes, foundation, empty
+   */
+  {
+    name: 'broodframes',
+    label: t('frames.broodframes'),
+    align: 'right',
+    field: (row: any) => row.broodframes,
+    sortable: true,
+    headerClasses: 'frames',
+  },
+
+  {
+    name: 'honeyframes',
+    label: t('frames.honeyframes'),
+    align: 'right',
+    field: (row: any) => row.honeyframes,
+    sortable: true,
+    headerClasses: 'frames',
+  },
+  {
+    name: 'foundation',
+    label: t('frames.foundation'),
+    align: 'right',
+    field: (row: any) => row.foundation,
+    sortable: true,
+    headerClasses: 'frames',
+  },
+  {
+    name: 'emptyframes',
+    label: t('frames.emptyframes'),
+    align: 'right',
+    field: (row: any) => row.emptyframes,
+    sortable: true,
+    headerClasses: 'frames',
+  },
+  {
+    name: 'varroa',
+    label: t('varroa'),
+    align: 'right',
+    field: (row: any) => row.varroa,
+    sortable: true,
+  },
+  {
+    name: 'strong',
+    label: t('strong'),
+    align: 'right',
+    field: (row: any) => row.strong,
+    sortable: true,
+  },
+  {
+    name: 'temp',
+    label: t('temperature'),
+    align: 'right',
+    field: (row: any) => row.temp,
+    format: (val: string) => val + ' °C',
+    sortable: true,
+  },
+  {
+    name: 'weight',
+    label: t('weight'),
+    align: 'right',
+    field: (row: any) => row.weight,
+    sortable: true,
+  },
+  {
+    name: 'time',
+    label: t('time'),
+    align: 'right',
+    field: (row: any) => row.time,
+    format: (val: string) => useDate.displayFormat(val, 'time', 'HH:mm:ss'),
     sortable: true,
   },
   {
