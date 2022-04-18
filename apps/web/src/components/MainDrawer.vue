@@ -139,7 +139,7 @@ const links = [
       },
       {
         label: 'feed',
-        route: 'table-cube',
+        route: 'table-feed',
         icon: 'fas fa-cube',
         menu: false,
       },

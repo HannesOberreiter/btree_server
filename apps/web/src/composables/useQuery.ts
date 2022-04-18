@@ -1,6 +1,6 @@
 import { map } from 'lodash-es';
 import { MaybeRef } from '@vueuse/core';
-import { Option } from '~/types';
+import { Option, Task } from '~/types';
 import { queryCache } from '~/boot/vue-query';
 import { Ref } from 'vue';
 import { useNotification } from '~/composables/useResponseText';
@@ -112,7 +112,6 @@ export function useTodosQuery({
   limit = 10000 as MaybeRef<number>,
   order = ['date'] as MaybeRef<Array<string>>,
   direction = ['asc'] as MaybeRef<Array<string>>,
-  deleted = false as MaybeRef<boolean>,
   q = '' as MaybeRef<string>,
   filters = '' as MaybeRef<string>,
   enabled = true as MaybeRef<boolean>,
@@ -131,6 +130,46 @@ export function useTodosQuery({
         filters: unref(filters),
       };
       return api.get('/v1/todo', payload);
+    },
+    {
+      enabled: enabled,
+      keepPreviousData: true,
+      select: (response) => response,
+      onError: (error: any) => notification.open('negative', error),
+    }
+  );
+}
+
+export function useTasksQuery(
+  task: Task,
+  {
+    offset = 0 as MaybeRef<number>,
+    limit = 10000 as MaybeRef<number>,
+    order = ['date', 'done'] as MaybeRef<Array<string>>,
+    direction = ['asc', 'asc'] as MaybeRef<Array<string>>,
+    deleted = false as MaybeRef<boolean>,
+    q = '' as MaybeRef<string>,
+    enabled = true as MaybeRef<boolean>,
+    details = false,
+    filters = '' as MaybeRef<string>,
+  }
+) {
+  const notification = useNotification();
+  const api = useApiFetch();
+  return useQuery(
+    [task, offset, limit, order, direction, deleted, q, details, filters],
+    () => {
+      const payload = {
+        offset: unref(offset),
+        limit: unref(limit),
+        order: unref(order),
+        direction: unref(direction),
+        deleted: unref(deleted),
+        q: unref(q),
+        details: unref(details),
+        filters: unref(filters),
+      };
+      return api.get(`/v1/${task}`, payload);
     },
     {
       enabled: enabled,

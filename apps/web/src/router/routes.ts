@@ -53,6 +53,11 @@ const routes: RouteRecordRaw[] = [
         name: 'table-todo',
         component: () => import('~/pages/TableTodo.vue'),
       },
+      {
+        path: 'feed',
+        name: 'table-feed',
+        component: () => import('~/pages/TableFeed.vue'),
+      },
     ],
   },
   /***

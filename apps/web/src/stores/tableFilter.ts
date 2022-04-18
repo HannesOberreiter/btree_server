@@ -3,6 +3,9 @@ import { defineStore } from 'pinia';
 
 interface State {
   hive: string;
+  movedate: string;
+  todo: string;
+  feed: string;
   [key: string]: string;
 }
 
@@ -12,6 +15,7 @@ export const useTableFilterStore = defineStore('tableFilter', {
       hive: '',
       movedate: '',
       todo: '',
+      feed: '',
     } as State),
   getters: {
     field: (state) => {

@@ -34,6 +34,7 @@ import FormMainTodo from './FormMainTodo.vue';
 import FormMainHive from '~/components/FormMainHive.vue';
 import FormMainMovement from './FormMainMovement.vue';
 import FormMainQueen from './FormMainQueen.vue';
+import FormMainTask from './FormMainTask.vue';
 import { useDialogPluginComponent } from 'quasar';
 import dayjs from 'dayjs';
 
@@ -98,6 +99,12 @@ const layouts = {
     comp: FormMainMovement,
     props: {
       selected: props.selected,
+    },
+  },
+  feed: {
+    comp: FormMainTask,
+    props: {
+      task: props.form,
     },
   },
 } as any;

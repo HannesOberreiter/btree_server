@@ -1,228 +1,233 @@
 <template>
-  <form-dropdown-edit
-    v-if="isEdit"
-    v-model="editOptions"
-    :options="editOptionsCopy"
-  ></form-dropdown-edit>
-  <form-dropdown-hive v-else v-model="state.hive"></form-dropdown-hive>
+  <q-form class="full-width" @submit.prevent.stop="">
+    <form-dropdown-edit
+      v-if="isEdit"
+      v-model="editOptions"
+      :options="editOptionsCopy"
+    ></form-dropdown-edit>
+    <form-dropdown-hive v-else v-model="state.hive"></form-dropdown-hive>
 
-  <div class="q-pt-xs">
-    <form-input-dates
-      v-model:start-value="state.date"
-      v-model:end-value="state.enddate"
-      v-model:model-interval="state.interval"
-      v-model:model-repeat="state.repeat"
-      :values="values"
-      :reset="reset"
-    ></form-input-dates>
-  </div>
-  <div class="q-mb-sm q-mt-sm">
-    <!-- Main Dropdowns -->
-    <div v-if="task === 'checkup'">
-      <form-dropdown-option
-        v-if="task === 'checkup'"
-        v-model="state.type"
+    <div class="q-pt-xs">
+      <form-input-dates
+        v-model:start-value="state.date"
+        v-model:end-value="state.enddate"
+        v-model:model-interval="state.interval"
+        v-model:model-repeat="state.repeat"
         :values="values"
         :reset="reset"
-        table="checkup_types"
-      ></form-dropdown-option>
+      ></form-input-dates>
     </div>
-    <div v-else-if="task === 'harvest'" class="row">
-      <div class="col-12 q-pb-sm">
+    <div class="q-mb-sm q-mt-sm">
+      <!-- Main Dropdowns -->
+      <div v-if="task === 'checkup'">
         <form-dropdown-option
+          v-if="task === 'checkup'"
           v-model="state.type"
           :values="values"
           :reset="reset"
-          table="harvest_types"
+          table="checkup_types"
         ></form-dropdown-option>
       </div>
-    </div>
-    <div v-else-if="task === 'treatment'" class="row">
-      <div class="col-12 q-pb-sm">
-        <form-dropdown-option
-          v-model="state.type"
-          :values="values"
-          :reset="reset"
-          table="treatment_types"
-        ></form-dropdown-option>
-      </div>
-      <div class="col-12 q-pb-sm">
-        <form-dropdown-option
-          v-model="state.disease"
-          :values="values"
-          :reset="reset"
-          table="treatment_diseases"
-          label="disease"
-          table-id="disease_id"
-        ></form-dropdown-option>
-      </div>
-    </div>
-    <div v-else-if="task === 'feed'" class="row">
-      <div class="col-12 q-pb-sm">
-        <form-dropdown-option
-          v-model="state.type"
-          :values="values"
-          :reset="reset"
-          table="feed_types"
-        ></form-dropdown-option>
-      </div>
-    </div>
-    <!-- Main Amount Field -->
-    <div v-if="task !== 'checkup'" class="row">
-      <div class="col-12 col-md-7 q-pt-sm">
-        <form-input-amount
-          v-model="state.amount"
-          v-model:model-type="state.amount_type"
-          v-model:model-calc="state.amount_calc"
-          :hive-count="state.hive.length"
-          :reset="reset"
-          :values="values"
-        ></form-input-amount>
-      </div>
-    </div>
-    <!-- Additional optional fields -->
-    <div v-if="task === 'checkup'">
-      <form-checkup-queen
-        v-if="fields.settings.checkup.queen"
-        v-model="state.checkup_queen"
-        :values="values"
-        :reset="reset"
-      ></form-checkup-queen>
-      <form-checkup-rating
-        v-if="fields.settings.checkup.rating"
-        v-model="state.checkup_rating"
-        :reset="reset"
-        :values="values"
-      ></form-checkup-rating>
-      <form-checkup-frames
-        v-if="fields.settings.checkup.frames"
-        v-model="state.checkup_frames"
-        :values="values"
-        :reset="reset"
-      ></form-checkup-frames>
-      <div class="row q-pt-sm q-pb-sm">
-        <div class="col-12 col-md-7">
-          <form-checkup-varroa
-            v-if="fields.settings.checkup.varroa"
-            v-model="state.checkup_varroa"
-            :reset="reset"
-            :values="values"
-          ></form-checkup-varroa>
-        </div>
-      </div>
-      <div v-if="fields.settings.checkup.strength" class="row q-pt-sm q-pb-sm">
-        <div class="col-12 col-md-6">
-          <form-input-numeric
-            v-model="state.checkup_strong"
+      <div v-else-if="task === 'harvest'" class="row">
+        <div class="col-12 q-pb-sm">
+          <form-dropdown-option
+            v-model="state.type"
             :values="values"
             :reset="reset"
-            label="strong"
-            icon="fas fa-dumbbell"
-          >
-          </form-input-numeric>
+            table="harvest_types"
+          ></form-dropdown-option>
         </div>
       </div>
-      <div v-if="fields.settings.checkup.weight" class="q-pt-sm q-pb-sm">
-        <form-checkup-weight
-          v-model="state.checkup_weight_amount"
-          v-model:model-time="state.checkup_weight_time"
-          :reset="reset"
-          :values="values"
-        ></form-checkup-weight>
-      </div>
-      <div
-        v-if="fields.settings.checkup.temperature"
-        class="row q-pt-sm q-pb-sm"
-      >
-        <div class="col-12 col-md-7">
-          <form-checkup-temperature
-            v-model="state.checkup_temp"
-            :hive="state.hive"
-            :reset="reset"
+      <div v-else-if="task === 'treatment'" class="row">
+        <div class="col-12 q-pb-sm">
+          <form-dropdown-option
+            v-model="state.type"
             :values="values"
-          ></form-checkup-temperature>
+            :reset="reset"
+            table="treatment_types"
+          ></form-dropdown-option>
+        </div>
+        <div class="col-12 q-pb-sm">
+          <form-dropdown-option
+            v-model="state.disease"
+            :values="values"
+            :reset="reset"
+            table="treatment_diseases"
+            label="disease"
+            table-id="disease_id"
+          ></form-dropdown-option>
         </div>
       </div>
-    </div>
-    <div v-else-if="task === 'harvest'">
-      <div v-if="fields.settings.harvest.frames" class="row">
-        <div class="col-12 col-md-7">
+      <div v-else-if="task === 'feed'" class="row">
+        <div class="col-12 q-pb-sm">
+          <form-dropdown-option
+            v-model="state.type"
+            :values="values"
+            :reset="reset"
+            table="feed_types"
+          ></form-dropdown-option>
+        </div>
+      </div>
+      <!-- Main Amount Field -->
+      <div v-if="task !== 'checkup'" class="row">
+        <div class="col-12 col-md-7 q-pt-sm">
           <form-input-amount
-            v-model="state.harvest_frames"
-            v-model:model-type="state.harvest_amount_type"
-            v-model:model-calc="state.harvest_amount_calc"
+            v-model="state.amount"
+            v-model:model-type="state.amount_type"
+            v-model:model-calc="state.amount_calc"
+            :hive-count="state.hive.length"
             :reset="reset"
             :values="values"
-            :hive-count="state.hive.length"
-            label="frame"
           ></form-input-amount>
         </div>
       </div>
-      <div v-if="fields.settings.harvest.water" class="row">
-        <div class="col-12 col-md-6">
-          <form-input-numeric
-            v-model="state.harvest_water"
+      <!-- Additional optional fields -->
+      <div v-if="task === 'checkup'">
+        <form-checkup-queen
+          v-if="fields.settings.checkup.queen"
+          v-model="state.checkup_queen"
+          :values="values"
+          :reset="reset"
+        ></form-checkup-queen>
+        <form-checkup-rating
+          v-if="fields.settings.checkup.rating"
+          v-model="state.checkup_rating"
+          :reset="reset"
+          :values="values"
+        ></form-checkup-rating>
+        <form-checkup-frames
+          v-if="fields.settings.checkup.frames"
+          v-model="state.checkup_frames"
+          :values="values"
+          :reset="reset"
+        ></form-checkup-frames>
+        <div class="row q-pt-sm q-pb-sm">
+          <div class="col-12 col-md-7">
+            <form-checkup-varroa
+              v-if="fields.settings.checkup.varroa"
+              v-model="state.checkup_varroa"
+              :reset="reset"
+              :values="values"
+            ></form-checkup-varroa>
+          </div>
+        </div>
+        <div
+          v-if="fields.settings.checkup.strength"
+          class="row q-pt-sm q-pb-sm"
+        >
+          <div class="col-12 col-md-6">
+            <form-input-numeric
+              v-model="state.checkup_strong"
+              :values="values"
+              :reset="reset"
+              label="strong"
+              icon="fas fa-dumbbell"
+            >
+            </form-input-numeric>
+          </div>
+        </div>
+        <div v-if="fields.settings.checkup.weight" class="q-pt-sm q-pb-sm">
+          <form-checkup-weight
+            v-model="state.checkup_weight_amount"
+            v-model:model-time="state.checkup_weight_time"
+            :reset="reset"
+            :values="values"
+          ></form-checkup-weight>
+        </div>
+        <div
+          v-if="fields.settings.checkup.temperature"
+          class="row q-pt-sm q-pb-sm"
+        >
+          <div class="col-12 col-md-7">
+            <form-checkup-temperature
+              v-model="state.checkup_temp"
+              :hive="state.hive"
+              :reset="reset"
+              :values="values"
+            ></form-checkup-temperature>
+          </div>
+        </div>
+      </div>
+      <div v-else-if="task === 'harvest'">
+        <div v-if="fields.settings.harvest.frames" class="row">
+          <div class="col-12 col-md-7">
+            <form-input-amount
+              v-model="state.harvest_frames"
+              v-model:model-type="state.harvest_amount_type"
+              v-model:model-calc="state.harvest_amount_calc"
+              :reset="reset"
+              :values="values"
+              :hive-count="state.hive.length"
+              label="frame"
+            ></form-input-amount>
+          </div>
+        </div>
+        <div v-if="fields.settings.harvest.water" class="row">
+          <div class="col-12 col-md-6">
+            <form-input-numeric
+              v-model="state.harvest_water"
+              :values="values"
+              :reset="reset"
+              label="water"
+              icon="fas fa-droplet"
+              shadow-text="%"
+            ></form-input-numeric>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12 col-md-6">
+            <form-input-text
+              v-model="state.harvest_charge"
+              label="charge"
+              icon="fas fa-receipt"
+              :values="values"
+              :reset="reset"
+            ></form-input-text>
+          </div>
+        </div>
+      </div>
+      <div v-else-if="task === 'treatment'" class="row">
+        <div v-if="fields.settings.treatment.vet" class="col-12 q-pb-sm">
+          <form-dropdown-option
+            v-model="state.treatment_vet"
             :values="values"
             :reset="reset"
-            label="water"
-            icon="fas fa-droplet"
-            shadow-text="%"
+            table="treatment_vets"
+            label="vet"
+          ></form-dropdown-option>
+        </div>
+        <div
+          v-if="fields.settings.treatment.wait"
+          class="col-12 col-md-6 q-pb-sm"
+        >
+          <form-input-numeric
+            v-model="state.treatment_wait"
+            :values="values"
+            :reset="reset"
+            label="waitTime"
+            :shadow-text="$t('day', 2)"
+            icon="fas fa-circle-pause"
+            :max-valid="365"
           ></form-input-numeric>
         </div>
       </div>
-      <div class="row">
-        <div class="col-12 col-md-6">
-          <form-input-text
-            v-model="state.harvest_charge"
-            label="charge"
-            icon="fas fa-receipt"
-            :values="values"
-            :reset="reset"
-          ></form-input-text>
-        </div>
-      </div>
     </div>
-    <div v-else-if="task === 'treatment'" class="row">
-      <div v-if="fields.settings.treatment.vet" class="col-12 q-pb-sm">
-        <form-dropdown-option
-          v-model="state.treatment_vet"
-          :values="values"
-          :reset="reset"
-          table="treatment_vets"
-          label="vet"
-        ></form-dropdown-option>
-      </div>
-      <div
-        v-if="fields.settings.treatment.wait"
-        class="col-12 col-md-6 q-pb-sm"
-      >
-        <form-input-numeric
-          v-model="state.treatment_wait"
-          :values="values"
-          :reset="reset"
-          label="waitTime"
-          :shadow-text="$t('day', 2)"
-          icon="fas fa-circle-pause"
-          :max-valid="365"
-        ></form-input-numeric>
-      </div>
-    </div>
-  </div>
-  <form-input-url
-    v-model="state.url"
-    :values="values"
-    :reset="reset"
-  ></form-input-url>
-  <form-input-note
-    v-model="state.note"
-    :values="values"
-    :reset="reset"
-  ></form-input-note>
-  <form-input-checkbox
-    v-model="state.done"
-    :values="values"
-    :reset="reset"
-  ></form-input-checkbox>
+    <form-input-url
+      v-model="state.url"
+      :values="values"
+      :reset="reset"
+    ></form-input-url>
+    <form-input-note
+      v-model="state.note"
+      :values="values"
+      :reset="reset"
+    ></form-input-note>
+    <form-input-checkbox
+      v-model="state.done"
+      :values="values"
+      :reset="reset"
+    ></form-input-checkbox>
+  </q-form>
 
   <form-buttons
     :state="state"
@@ -231,6 +236,7 @@
     :v="v"
     :form="props.task"
     @reset="onReset"
+    @change="onChange"
   ></form-buttons>
 </template>
 
@@ -313,6 +319,7 @@ const api = useApiFetch();
 const router = useRouter();
 const values = ref({});
 const reset = ref(0);
+const emit = defineEmits(['onSuccess']);
 const props = defineProps({
   task: {
     type: String as PropType<Task>,
@@ -368,5 +375,9 @@ function onReset() {
   }
   reset.value++;
   notification.open('positive', 'successReset');
+}
+
+async function onChange() {
+  emit('onSuccess', true);
 }
 </script>

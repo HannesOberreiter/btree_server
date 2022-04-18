@@ -36,6 +36,12 @@ export const useTablesStore = defineStore('tables', {
       sort: useStorage('table-sort-col-todo', 'date'),
       direction: useStorage('table-sort-direction-todo', false),
     },
+    feed: {
+      visible: useStorage('table-visible-feed', ['date', 'hive', 'done']),
+      length: useStorage('table-length-feed', 10),
+      sort: useStorage('table-sort-col-feed', 'date'),
+      direction: useStorage('table-sort-direction-feed', false),
+    },
   }),
   getters: {},
   actions: {},

@@ -115,6 +115,23 @@ const layouts = {
       },
     },
   ],
+  feed: [
+    {
+      comp: FormDropdownType,
+      model: 'feeds.type_id',
+      props: {
+        table: 'feed_types',
+        'allow-empty': 'filterEmpty',
+      },
+    },
+    {
+      comp: FormInputDateRange,
+      model: 'date',
+      props: {
+        label: 'daterange',
+      },
+    },
+  ],
 } as any;
 
 const layout = computed(() => layouts[props.form]);
