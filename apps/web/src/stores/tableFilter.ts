@@ -6,6 +6,9 @@ interface State {
   movedate: string;
   todo: string;
   feed: string;
+  harvest: string;
+  treatment: string;
+  checkup: string;
   [key: string]: string;
 }
 
@@ -16,6 +19,9 @@ export const useTableFilterStore = defineStore('tableFilter', {
       movedate: '',
       todo: '',
       feed: '',
+      harvest: '',
+      treatment: '',
+      checkup: '',
     } as State),
   getters: {
     field: (state) => {

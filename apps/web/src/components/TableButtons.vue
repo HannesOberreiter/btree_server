@@ -19,7 +19,7 @@
     />
 
     <q-btn
-      v-if="['hive', 'movedate', 'todo', 'feed'].includes(table)"
+      v-if="['hive', 'movedate', 'todo', 'feed', 'harvest'].includes(table)"
       :color="filter ? 'negative' : 'warning'"
       no-caps
       :label="$t('filter')"
@@ -87,7 +87,7 @@
           </q-item-section>
         </q-item>
         <!-- Restoring of deleted rows is not possible for every table -->
-        <div v-if="['hive', 'apiary', 'feed'].includes(table)">
+        <div v-if="['hive', 'apiary', 'feed', 'harvest'].includes(table)">
           <q-item
             v-close-popup
             clickable

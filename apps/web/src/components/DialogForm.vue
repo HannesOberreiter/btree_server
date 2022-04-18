@@ -107,6 +107,24 @@ const layouts = {
       task: props.form,
     },
   },
+  harvest: {
+    comp: FormMainTask,
+    props: {
+      task: props.form,
+    },
+  },
+  checkup: {
+    comp: FormMainTask,
+    props: {
+      task: props.form,
+    },
+  },
+  treatment: {
+    comp: FormMainTask,
+    props: {
+      task: props.form,
+    },
+  },
 } as any;
 
 const layout = computed(() => layouts[props.form]);

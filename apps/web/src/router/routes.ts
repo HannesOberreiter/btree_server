@@ -58,6 +58,11 @@ const routes: RouteRecordRaw[] = [
         name: 'table-feed',
         component: () => import('~/pages/TableFeed.vue'),
       },
+      {
+        path: 'harvest',
+        name: 'table-harvest',
+        component: () => import('~/pages/TableHarvest.vue'),
+      },
     ],
   },
   /***
