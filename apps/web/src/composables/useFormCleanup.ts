@@ -184,7 +184,6 @@ function cleanupCharge(state: FormCharge) {
     name: state.name,
     price: state.price,
     amount: state.amount,
-    unit: state.unit,
     url: state.url,
     note: state.note,
     date: state.date,

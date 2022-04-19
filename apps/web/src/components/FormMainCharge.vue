@@ -41,28 +41,18 @@
       :values="values"
       :reset="reset"
     ></form-input-text>
-    <div class="row">
-      <div class="col-9">
-        <form-input-numeric
-          v-model="state.amount"
-          :values="values"
-          :reset="reset"
-          label="amount"
-          icon="fas fa-database"
-          numeric-valid="decimal"
-          :max-valid="100000"
-        ></form-input-numeric>
-      </div>
-      <div class="col-3">
-        <form-input-text
-          v-model="state.unit"
-          label="unit"
-          icon=""
-          :values="values"
-          :reset="reset"
-        ></form-input-text>
-      </div>
-    </div>
+    <form-input-numeric
+      v-model="state.amount"
+      :values="values"
+      :reset="reset"
+      :shadow-text="
+        !state.type ? '' : state.type.unit ? ' ' + state.type.unit : ''
+      "
+      label="amount"
+      icon="fas fa-database"
+      numeric-valid="decimal"
+      :max-valid="100000"
+    ></form-input-numeric>
     <form-input-numeric
       v-if="fields.settings.charge.price"
       v-model="state.price"
@@ -163,7 +153,6 @@ const stateDefault = {
   name: '',
   charge: '',
   amount: 0,
-  unit: '',
   price: 0,
   url: '',
   note: '',

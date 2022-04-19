@@ -136,7 +136,6 @@ declare interface FormCharge {
   charge: string;
   price: number;
   amount: number;
-  unit: string;
   note: string;
   url: string;
   kind: 'in' | 'out';

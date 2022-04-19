@@ -418,6 +418,8 @@ export function useOptionsQuery(
       select: (response) => {
         const result = map(response, (value) => {
           value.label = `${value.name}`;
+          if (table === 'charge_types' && value.unit)
+            value.label += ` (${value.unit})`;
           return value;
         });
         return result ? { results: result } : ([] as any);

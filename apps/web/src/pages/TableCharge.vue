@@ -109,7 +109,8 @@ const columns = [
     label: t('type'),
     align: 'left',
     field: (row: any) => (row.type ? row.type.name : ''),
-    format: (val: string) => val,
+    format: (val: string, row: any) =>
+      !row.type ? val : row.type.unit ? val + ' (' + row.type.unit + ')' : val,
     sortable: true,
   },
   {
@@ -125,7 +126,8 @@ const columns = [
     label: t('amount'),
     align: 'right',
     field: (row: any) => row.amount,
-    format: (val: string, row: any) => (row.unit ? val + ' ' + row.unit : val),
+    format: (val: string, row: any) =>
+      !row.type ? val : row.type.unit ? val + ' ' + row.type.unit : val,
     sortable: true,
   },
   {
