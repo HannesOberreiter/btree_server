@@ -44,7 +44,7 @@ export class Charge extends ExtModel {
       unit: { type: 'string' },
       note: { type: 'string', maxLength: 2000 },
       url: { type: 'string', maxLength: 512 },
-      kind: { type: 'string', maxLength: 45 },
+      kind: { type: 'string', maxLength: 45, enum: ['in', 'out'] },
 
       deleted: { type: 'boolean' },
       deleted_at: { type: 'string', format: 'date-time' },
