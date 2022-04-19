@@ -240,6 +240,7 @@ export function useQueensQuery({
   direction = ['asc', 'asc'] as MaybeRef<Array<string>>,
   modus = true as MaybeRef<boolean>,
   deleted = false as MaybeRef<boolean>,
+  filters = '' as MaybeRef<string>,
   q = '' as MaybeRef<string>,
   enabled = true as MaybeRef<boolean>,
   details = false,
@@ -247,7 +248,18 @@ export function useQueensQuery({
   const notification = useNotification();
   const api = useApiFetch();
   return useQuery(
-    ['queen', offset, limit, order, direction, modus, deleted, q, details],
+    [
+      'queen',
+      offset,
+      limit,
+      order,
+      direction,
+      modus,
+      deleted,
+      q,
+      details,
+      filters,
+    ],
     () => {
       const payload = {
         offset: unref(offset),
@@ -256,6 +268,7 @@ export function useQueensQuery({
         direction: unref(direction),
         modus: unref(modus),
         deleted: unref(deleted),
+        filters: unref(filters),
         q: unref(q),
         details: unref(details),
       };
@@ -269,7 +282,8 @@ export function useQueensQuery({
           value.label = `${value.name} (${dayjs(value.date).format(
             'YYYY-MM-DD'
           )})`;
-          if (value.hive) value.label += ` [${value.hive.name}]`;
+          if (value.hive_location)
+            value.label += ` [${value.hive_location.name}]`;
           value.value = value.id;
           return value;
         });

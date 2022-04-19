@@ -8,7 +8,7 @@
         :columns="columns"
         :visible-columns="visibleColumns"
         :loading="isLoadingTable"
-        :dense="$q.screen.lt.md"
+        :dense="true"
         :rows-per-page-options="[10, 50, 100, 500, 10000]"
         separator="vertical"
         row-key="id"
@@ -103,7 +103,8 @@ const columns = [
     label: t('dateEnd'),
     align: 'left',
     field: (row: any) => row.enddate,
-    format: (val: string) => useDate.displayFormat(val),
+    format: (val: string, row: any) =>
+      row.date === row.enddate ? '-' : useDate.displayFormat(val),
     sortable: true,
   },
   {

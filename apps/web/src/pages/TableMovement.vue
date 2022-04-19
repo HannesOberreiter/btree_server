@@ -8,7 +8,7 @@
         :columns="columns"
         :visible-columns="visibleColumns"
         :loading="isLoadingTable"
-        :dense="$q.screen.lt.md"
+        :dense="true"
         :rows-per-page-options="[10, 50, 100, 500, 10000]"
         separator="vertical"
         row-key="id"

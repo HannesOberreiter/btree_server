@@ -2,7 +2,6 @@
   <form-input-text
     v-model="modelValue"
     label="markColor"
-    table-id="mark_colour"
     :values="values"
     :reset="reset"
     icon="fas fa-marker"

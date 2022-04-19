@@ -51,6 +51,24 @@ const props = defineProps({
 });
 
 const state = reactive({
+  'checkups.type_id': storeFilter.field(props.form, 'checkups.type_id'),
+  'treatments.type_id': storeFilter.field(props.form, 'treatments.type_id'),
+  'treatments.disease_id': storeFilter.field(
+    props.form,
+    'treatments.disease_id'
+  ),
+  'feeds.type_id': storeFilter.field(props.form, 'feeds.type_id'),
+  'harvests.type_id': storeFilter.field(props.form, 'harvests.type_id'),
+
+  'queens.mating_id': storeFilter.field(props.form, 'queens.mating_id'),
+  'queens.race_id': storeFilter.field(props.form, 'queens.race_id'),
+  'queens.date': storeFilter.field(props.form, 'queens.date'),
+  'queens.hive_id': storeFilter.field(props.form, 'queens.hive_id'),
+  'hive_location.apiary_id': storeFilter.field(
+    props.form,
+    'hive_location.apiary_id'
+  ),
+
   type_id: storeFilter.field(props.form, 'type_id'),
   source_id: storeFilter.field(props.form, 'source_id'),
   apiary_id: storeFilter.field(props.form, 'apiary_id'),
@@ -76,6 +94,51 @@ const layouts = {
         table: 'hive_sources',
         label: 'source',
         'allow-empty': 'filterEmpty',
+      },
+    },
+  ],
+  queen: [
+    {
+      comp: FormDropdownType,
+      model: 'queens.mating_id',
+      props: {
+        table: 'queen_matings',
+        label: 'mating',
+        'allow-empty': 'filterEmpty',
+      },
+    },
+    {
+      comp: FormDropdownType,
+      model: 'queens.race_id',
+      props: {
+        table: 'queen_races',
+        label: 'race',
+        'allow-empty': 'filterEmpty',
+      },
+    },
+    {
+      comp: FormDropdownType,
+      model: 'queens.hive_id',
+      props: {
+        table: 'hive',
+        label: 'hive',
+        'allow-empty': 'filterEmpty',
+      },
+    },
+    {
+      comp: FormDropdownType,
+      model: 'hive_location.apiary_id',
+      props: {
+        table: 'apiary',
+        label: 'apiary',
+        'allow-empty': 'filterEmpty',
+      },
+    },
+    {
+      comp: FormInputDateRange,
+      model: 'queens.date',
+      props: {
+        label: 'daterange',
       },
     },
   ],

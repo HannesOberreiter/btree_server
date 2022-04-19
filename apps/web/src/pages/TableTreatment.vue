@@ -8,7 +8,7 @@
         :columns="columns"
         :visible-columns="visibleColumns"
         :loading="isLoadingTable"
-        :dense="$q.screen.lt.md"
+        :dense="true"
         :rows-per-page-options="[10, 50, 100, 500, 10000]"
         separator="vertical"
         row-key="id"
@@ -58,14 +58,13 @@ import { tableCheckSelected, tableMeta } from '~/helpers';
 import { useTasksQuery } from '~/composables/useQuery';
 import { useTablesStore } from '~/stores/tables';
 import TableButtons from '~/components/TableButtons.vue';
-import { QTableProps, useQuasar } from 'quasar';
+import { QTableProps } from 'quasar';
 import TableFilter from '~/components/TableFilter.vue';
 import { useDateFormat } from '~/composables/useDate';
 import { useTableFilterStore } from '~/stores/tableFilter';
 import TableColNote from '~/components/TableColNote.vue';
 import TableColStatus from '~/components/TableColStatus.vue';
 
-const $q = useQuasar();
 const useDate = useDateFormat();
 const { t } = useI18n();
 
@@ -103,7 +102,8 @@ const columns = [
     label: t('dateEnd'),
     align: 'left',
     field: (row: any) => row.enddate,
-    format: (val: string) => useDate.displayFormat(val),
+    format: (val: string, row: any) =>
+      row.date === row.enddate ? '-' : useDate.displayFormat(val),
     sortable: true,
   },
   {

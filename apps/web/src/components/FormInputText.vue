@@ -129,7 +129,11 @@ function setValues() {
   else if (values.value && !isEmpty(values.value)) {
     modelValue.value =
       values.value[0][
-        props.label === 'frame' ? props.label + 's' : props.label
+        props.label === 'frame'
+          ? props.label + 's'
+          : props.label === 'markColor'
+          ? 'mark_colour'
+          : props.label
       ];
   } else modelValue.value = resetValue;
 }

@@ -3,6 +3,7 @@ import { defineStore } from 'pinia';
 
 interface State {
   hive: string;
+  queen: string;
   movedate: string;
   todo: string;
   feed: string;
@@ -22,6 +23,7 @@ export const useTableFilterStore = defineStore('tableFilter', {
       harvest: '',
       treatment: '',
       checkup: '',
+      queen: '',
     } as State),
   getters: {
     field: (state) => {
@@ -29,7 +31,7 @@ export const useTableFilterStore = defineStore('tableFilter', {
         try {
           const values = JSON.parse(state[table]);
           const fil = map(values, (o) => {
-            if (key === 'date') return o[key];
+            if (key === 'date' || key === 'queens.date') return o[key];
             if (key in o) return o[key];
             return null;
           });
@@ -51,7 +53,7 @@ export const useTableFilterStore = defineStore('tableFilter', {
       if (payload) {
         const array = map(payload, (o, key) => {
           if (!o) return null;
-          if (key === 'date') return { [key]: o };
+          if (key === 'date' || key === 'queens.date') return { [key]: o };
           if ('id' in o) return { [key]: o.id };
         });
         const clean = compact(array);

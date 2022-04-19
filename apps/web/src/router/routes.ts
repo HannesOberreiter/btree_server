@@ -39,6 +39,11 @@ const routes: RouteRecordRaw[] = [
         component: () => import('~/pages/TableHive.vue'),
       },
       {
+        path: 'queen',
+        name: 'table-queen',
+        component: () => import('~/pages/TableQueen.vue'),
+      },
+      {
         path: 'apiary',
         name: 'table-apiary',
         component: () => import('~/pages/TableApiary.vue'),

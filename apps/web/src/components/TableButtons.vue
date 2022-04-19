@@ -22,6 +22,7 @@
       v-if="
         [
           'hive',
+          'queen',
           'movedate',
           'todo',
           'feed',
@@ -101,6 +102,7 @@
           v-if="
             [
               'hive',
+              'queen',
               'apiary',
               'feed',
               'harvest',
