@@ -1,5 +1,4 @@
 import { Response } from 'express';
-
 import { Controller } from '@classes/controller.class';
 import { checkMySQLError } from '@utils/error.util';
 import { IUserRequest } from '@interfaces/IUserRequest.interface';
@@ -24,6 +23,7 @@ export class FieldSettingController extends Controller {
     const trx = await FieldSetting.startTransaction();
     try {
       const settings = JSON.parse(req.body.settings);
+      console.log(settings);
       const current = await FieldSetting.query().findById(req.user.bee_id);
       if (current) {
         await FieldSetting.query(trx)
@@ -32,26 +32,12 @@ export class FieldSettingController extends Controller {
       } else {
         await FieldSetting.query(trx).insert({
           bee_id: req.user.bee_id,
-          settings: settings
+          settings: settings,
         });
       }
-      await trx.commit();
-      res.status(OK);
-      res.end();
-    } catch (e) {
-      await trx.rollback();
-      next(checkMySQLError(e));
-    }
-  }
-  async post(req: IUserRequest, res: Response, next) {
-    const trx = await FieldSetting.startTransaction();
-    try {
-      const settings = JSON.parse(req.body.settings);
-      await FieldSetting.query(trx).insert({
-        bee_id: req.user.bee_id,
-        settings: settings
-      });
-      await trx.commit();
+      const result = await trx.commit();
+      res.locals.data = result;
+      next();
     } catch (e) {
       await trx.rollback();
       next(checkMySQLError(e));

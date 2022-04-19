@@ -23,13 +23,5 @@ export class FieldSettingRouter extends Router {
         Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
         Container.resolve('FieldSettingController').patch
       );
-
-    this.router
-      .route('/')
-      .post(
-        Validator.validate([body('settings').isJSON()]),
-        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Container.resolve('FieldSettingController').post
-      );
   }
 }

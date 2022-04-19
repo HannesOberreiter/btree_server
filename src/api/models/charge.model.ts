@@ -5,9 +5,9 @@ import { ChargeType } from '@/api/models/option/charge_type.model';
 
 export class Charge extends ExtModel {
   id!: number;
-  bez!: string;
+  name!: string;
   charge!: string;
-  bestbefore!: Date;
+  bestbefore!: string;
   calibrate!: string;
   amount!: number;
   price!: number;
@@ -16,12 +16,16 @@ export class Charge extends ExtModel {
   url!: string;
   kind!: string;
   deleted!: boolean;
+  deleted_at!: string;
   user_id!: number;
+
+  edit_id!: number;
+  bee_id!: number;
 
   static tableName = 'charges';
   static idColumn = 'id';
 
-  charge_types?: ChargeType;
+  type?: ChargeType;
   company?: Company;
   creator?: User;
   editor?: User;
@@ -31,7 +35,7 @@ export class Charge extends ExtModel {
     required: ['kind'],
     properties: {
       id: { type: 'integer' },
-      bez: { type: 'string', maxLength: 255 },
+      name: { type: 'string', maxLength: 255 },
       charge: { type: 'string', maxLength: 255 },
       bestbefore: { type: 'string', format: 'date' },
       calibrate: { type: 'string', maxLength: 45 },
@@ -50,42 +54,42 @@ export class Charge extends ExtModel {
       type_id: { type: 'integer' }, // Type FK
       user_id: { type: 'integer' }, // Company FK
       bee_id: { type: 'integer' }, // Creator Bee FK
-      edit_id: { type: 'integer' } // Updater Bee FK
-    }
+      edit_id: { type: 'integer' }, // Updater Bee FK
+    },
   };
 
   static relationMappings = () => ({
-    charge_types: {
+    type: {
       relation: ExtModel.HasOneRelation,
       modelClass: ChargeType,
       join: {
         from: ['charges.type_id'],
-        to: ['charge_types.id']
-      }
+        to: ['charge_types.id'],
+      },
     },
     company: {
       relation: ExtModel.HasOneRelation,
       modelClass: Company,
       join: {
         from: ['charges.user_id'],
-        to: ['company.id']
-      }
+        to: ['company.id'],
+      },
     },
     creator: {
       relation: ExtModel.HasOneRelation,
       modelClass: User,
       join: {
         from: ['charges.bee_id'],
-        to: ['bees.id']
-      }
+        to: ['bees.id'],
+      },
     },
     editor: {
       relation: ExtModel.HasOneRelation,
       modelClass: User,
       join: {
         from: ['charges.edit_id'],
-        to: ['bees.id']
-      }
-    }
+        to: ['bees.id'],
+      },
+    },
   });
 }

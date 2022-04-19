@@ -95,6 +95,7 @@ Changes are logged because later migration of the live database.
 ## charge_control
 
 - table renamed to charges
+- bez renamed to name
 - amount changed to float
 - price changed to float
 - ct_id renamed to type_id
