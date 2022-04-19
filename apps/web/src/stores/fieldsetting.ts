@@ -23,7 +23,6 @@ interface Treatment {
 interface Charge {
   price: boolean;
   bestbefore: boolean;
-  calibrate: boolean;
 }
 
 interface Fieldsetting {
@@ -56,7 +55,6 @@ export const useFieldsettingStore = defineStore('fieldsetting', {
       charge: {
         price: true,
         bestbefore: true,
-        calibrate: true,
       },
     }),
   }),

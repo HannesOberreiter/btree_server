@@ -29,6 +29,7 @@
           'harvest',
           'treatment',
           'checkup',
+          'charge',
         ].includes(table)
       "
       :color="filter ? 'negative' : 'warning'"
@@ -108,6 +109,7 @@
               'harvest',
               'treatment',
               'checkup',
+              'charge',
             ].includes(table)
           "
         >

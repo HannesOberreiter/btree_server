@@ -129,6 +129,20 @@ declare interface FormTodo {
   repeat: number;
 }
 
+declare interface FormCharge {
+  bestbefore: string;
+  date: string;
+  name: string;
+  charge: string;
+  price: number;
+  amount: number;
+  unit: string;
+  note: string;
+  url: string;
+  kind: 'in' | 'out';
+  type: any;
+}
+
 declare interface FormQueen {
   name: string;
   date: string;
@@ -203,6 +217,7 @@ export {
   Option,
   TextField,
   FormHive,
+  FormCharge,
   FormQueen,
   FormQuicktool,
   FormTodo,

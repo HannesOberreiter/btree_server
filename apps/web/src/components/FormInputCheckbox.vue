@@ -17,7 +17,8 @@
           <q-toggle
             v-model="modelValue"
             color="blue"
-            val="true"
+            :false-value="falseValue"
+            :true-value="trueValue"
             size="lg"
             :disable="disable"
             :label="
@@ -38,10 +39,19 @@ import BtnMultipleValues from './BtnMultipleValues.vue';
 
 const props = defineProps({
   modelValue: {
+    type: Boolean,
     default: false,
   },
   label: {
     default: 'status',
+  },
+  falseValue: {
+    type: Boolean,
+    default: false,
+  },
+  trueValue: {
+    type: Boolean,
+    default: true,
   },
   statusActive: {
     default: 'open',

@@ -43,15 +43,16 @@ const isSubmitting = ref(false);
 
 const onSubmit = async () => {
   isSubmitting.value = true;
-  const rawObject = JSON.stringify(settings.value);
-  await api.patch('/v1/fieldsetting', { settings: rawObject }).then(
-    () => {
-      notification.open('positive', '');
-    },
-    (error) => {
-      notification.open('negative', error);
-    }
-  );
+  await api
+    .patch('/v1/fieldsetting', { settings: JSON.stringify(settings.value) })
+    .then(
+      () => {
+        notification.open('positive', '');
+      },
+      (error) => {
+        notification.open('negative', error);
+      }
+    );
   isSubmitting.value = false;
 };
 </script>

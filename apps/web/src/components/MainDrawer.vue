@@ -92,6 +92,12 @@ const links = [
         icon: 'fas fa-venus',
         menu: false,
       },
+      {
+        label: 'charge',
+        route: 'new-charge',
+        icon: 'fas fa-database',
+        menu: false,
+      },
     ],
   },
   {
@@ -172,6 +178,12 @@ const links = [
         label: 'queen',
         route: 'table-queen',
         icon: 'fas fa-venus',
+        menu: false,
+      },
+      {
+        label: 'charge',
+        route: 'table-charge',
+        icon: 'fas fa-database',
         menu: false,
       },
     ],

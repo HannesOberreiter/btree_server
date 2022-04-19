@@ -296,6 +296,41 @@ export function useQueensQuery({
   );
 }
 
+export function useChargeQuery({
+  offset = 0 as MaybeRef<number>,
+  limit = 10000 as MaybeRef<number>,
+  order = ['id', 'bez'] as MaybeRef<Array<string>>,
+  direction = ['asc', 'asc'] as MaybeRef<Array<string>>,
+  deleted = false as MaybeRef<boolean>,
+  filters = '' as MaybeRef<string>,
+  q = '' as MaybeRef<string>,
+  enabled = true as MaybeRef<boolean>,
+}) {
+  const notification = useNotification();
+  const api = useApiFetch();
+  return useQuery(
+    ['charge', offset, limit, order, direction, deleted, q, filters],
+    () => {
+      const payload = {
+        offset: unref(offset),
+        limit: unref(limit),
+        order: unref(order),
+        direction: unref(direction),
+        deleted: unref(deleted),
+        filters: unref(filters),
+        q: unref(q),
+      };
+      return api.get('/v1/charge', payload);
+    },
+    {
+      enabled: enabled,
+      keepPreviousData: true,
+      select: (response) => response,
+      onError: (error: any) => notification.open('negative', error),
+    }
+  );
+}
+
 export function useHivesQuery({
   offset = 0 as MaybeRef<number>,
   limit = 10000 as MaybeRef<number>,

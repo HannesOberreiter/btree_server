@@ -37,6 +37,7 @@ import FormMainQueen from './FormMainQueen.vue';
 import FormMainTask from './FormMainTask.vue';
 import { useDialogPluginComponent } from 'quasar';
 import dayjs from 'dayjs';
+import FormMainCharge from './FormMainCharge.vue';
 
 const { dialogRef, onDialogHide, onDialogOK } = useDialogPluginComponent();
 
@@ -124,6 +125,10 @@ const layouts = {
     props: {
       task: props.form,
     },
+  },
+  charge: {
+    comp: FormMainCharge,
+    props: {},
   },
 } as any;
 

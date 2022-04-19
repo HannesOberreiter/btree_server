@@ -86,6 +86,12 @@ export const useTablesStore = defineStore('tables', {
       sort: useStorage('table-sort-col-checkup', 'date'),
       direction: useStorage('table-sort-direction-checkup', false),
     },
+    charge: {
+      visible: useStorage('table-visible-charge', ['date', 'name', 'amount']),
+      length: useStorage('table-length-charge', 10),
+      sort: useStorage('table-sort-col-charge', 'date'),
+      direction: useStorage('table-sort-direction-charge', false),
+    },
   }),
   getters: {},
   actions: {},

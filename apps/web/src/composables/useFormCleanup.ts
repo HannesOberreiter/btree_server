@@ -2,7 +2,13 @@ import { MaybeRef } from '@vueuse/core';
 import dayjs from 'dayjs';
 import { includes, isNil, omitBy } from 'lodash-es';
 import { Ref } from 'vue';
-import { FormHive, FormQueen, FormQuicktool, FormTodo } from '~/types';
+import {
+  FormCharge,
+  FormHive,
+  FormQueen,
+  FormQuicktool,
+  FormTodo,
+} from '~/types';
 
 export const useFormCleanup = (
   table: MaybeRef<string>,
@@ -24,6 +30,8 @@ export const useFormCleanup = (
       return cleanupQueen(state.value, isEdit);
     } else if (unref(table) === 'apiary') {
       return cleanupApiary(state.value);
+    } else if (unref(table) === 'charge') {
+      return cleanupCharge(state.value);
     }
   }
 
@@ -168,5 +176,21 @@ function cleanupTodo(state: FormTodo, isEdit: boolean) {
     result['start'] = state.interval;
     result['repeat'] = state.repeat;
   }
+  return omitBy(result, isNil);
+}
+
+function cleanupCharge(state: FormCharge) {
+  const result = {
+    name: state.name,
+    price: state.price,
+    amount: state.amount,
+    unit: state.unit,
+    url: state.url,
+    note: state.note,
+    date: state.date,
+    bestbefore: state.bestbefore,
+    kind: state.kind,
+    type_id: state.type ? state.type.id : null,
+  } as any;
   return omitBy(result, isNil);
 }

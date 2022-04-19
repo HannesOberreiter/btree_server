@@ -10,6 +10,7 @@ interface State {
   harvest: string;
   treatment: string;
   checkup: string;
+  charge: string;
   [key: string]: string;
 }
 
@@ -24,6 +25,7 @@ export const useTableFilterStore = defineStore('tableFilter', {
       treatment: '',
       checkup: '',
       queen: '',
+      charge: '',
     } as State),
   getters: {
     field: (state) => {

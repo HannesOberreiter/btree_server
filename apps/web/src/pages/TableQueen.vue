@@ -21,7 +21,8 @@
           </table-col-link>
         </template>
 
-        <template #body-cell-apiary_name="props">
+        <!-- eslint-disable-next-line vue/valid-v-slot -->
+        <template #body-cell-hive_location.apiary_name="props">
           <table-col-link
             :id="props.row.hive_location.apiary_id"
             :label="props.value"
@@ -31,13 +32,13 @@
         </template>
 
         <!-- eslint-disable-next-line vue/valid-v-slot -->
-        <template #body-cell-queen_location.queen_name="props">
-          <table-col-queen
-            :id="props.value ? props.row.queen_location.queen_id : 0"
+        <template #body-cell-hive_location.hive_name="props">
+          <table-col-link
+            :id="props.row.hive_location.hive_id"
             :label="props.value"
-            @change="refetch"
+            link="hive"
           >
-          </table-col-queen>
+          </table-col-link>
         </template>
 
         <template #body-cell-note="props">
@@ -88,7 +89,6 @@ import TableColLink from '~/components/TableColLink.vue';
 import TableColNote from '~/components/TableColNote.vue';
 import TableColStatus from '~/components/TableColStatus.vue';
 import TableButtons from '~/components/TableButtons.vue';
-import TableColQueen from '~/components/TableColQueen.vue';
 import { QTableProps } from 'quasar';
 import { useDateFormat } from '~/composables/useDate';
 import TableFilter from '~/components/TableFilter.vue';

@@ -78,6 +78,11 @@ const routes: RouteRecordRaw[] = [
         name: 'table-checkup',
         component: () => import('~/pages/TableCheckup.vue'),
       },
+      {
+        path: 'charge',
+        name: 'table-charge',
+        component: () => import('~/pages/TableCharge.vue'),
+      },
     ],
   },
   /***
@@ -115,6 +120,11 @@ const routes: RouteRecordRaw[] = [
         path: 'movement',
         name: 'new-movement',
         component: () => import('~/pages/NewMovement.vue'),
+      },
+      {
+        path: 'charge',
+        name: 'new-charge',
+        component: () => import('~/pages/NewCharge.vue'),
       },
     ],
   },
