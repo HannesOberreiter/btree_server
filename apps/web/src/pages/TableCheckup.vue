@@ -95,7 +95,7 @@ import { tableCheckSelected, tableMeta } from '~/helpers';
 import { useTasksQuery } from '~/composables/useQuery';
 import { useTablesStore } from '~/stores/tables';
 import TableButtons from '~/components/TableButtons.vue';
-import { QTableProps, useQuasar } from 'quasar';
+import { QTableProps } from 'quasar';
 import TableFilter from '~/components/TableFilter.vue';
 import { useDateFormat } from '~/composables/useDate';
 import { useTableFilterStore } from '~/stores/tableFilter';
@@ -104,7 +104,6 @@ import TableColStatus from '~/components/TableColStatus.vue';
 import TableColBoolean from '~/components/TableColBoolean.vue';
 import TableHeaderIcon from '~/components/TableHeaderIcon.vue';
 
-const $q = useQuasar();
 const useDate = useDateFormat();
 const { t } = useI18n();
 
