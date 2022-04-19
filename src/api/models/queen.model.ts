@@ -1,23 +1,23 @@
 import { ExtModel } from '@models/base.model';
 import { User } from '@models/user.model';
-import { Hive } from './hive.model';
 import { QueenRace } from './option/queen_race.model';
 import { QueenMating } from './option/queen_mating.model';
 import { Company } from './company.model';
 import { QueenLocation } from './queen_location.model';
+import { HiveLocation } from './hive_location.model';
 
 export class Queen extends ExtModel {
   id!: number;
   name!: string;
   mark_colour!: number;
   mother!: string;
-  date!: Date;
-  move_date!: Date;
+  date!: string;
+  move_date!: string;
   note!: string;
   url!: string;
 
   modus!: boolean;
-  modus_date!: Date;
+  modus_date!: string;
   deleted!: boolean;
   deleted_at!: string;
 
@@ -32,9 +32,9 @@ export class Queen extends ExtModel {
   creator?: User;
   editor?: User;
   company?: Company;
-  hive?: Hive;
-  race?: QueenRace[];
-  mating?: QueenMating[];
+  hive_location?: HiveLocation;
+  race?: QueenRace;
+  mating?: QueenMating;
   own_mother?: Queen;
   queen_location?: QueenLocation;
 
@@ -65,8 +65,8 @@ export class Queen extends ExtModel {
       mother_id: { type: ['integer', 'null'] }, // Self-Join ID
       user_id: { type: 'integer' },
       bee_id: { type: 'integer' }, // Creator Bee FK
-      edit_id: { type: 'integer' } // Updater Bee FK
-    }
+      edit_id: { type: 'integer' }, // Updater Bee FK
+    },
   };
 
   static relationMappings = () => ({
@@ -75,64 +75,64 @@ export class Queen extends ExtModel {
       modelClass: User,
       join: {
         from: ['queens.bee_id'],
-        to: ['bees.id']
-      }
+        to: ['bees.id'],
+      },
     },
     editor: {
       relation: ExtModel.HasOneRelation,
       modelClass: User,
       join: {
         from: ['queens.edit_id'],
-        to: ['bees.id']
-      }
+        to: ['bees.id'],
+      },
     },
-    hive: {
+    hive_location: {
       relation: Queen.HasOneRelation,
-      modelClass: Hive,
+      modelClass: HiveLocation,
       join: {
         from: ['queens.hive_id'],
-        to: ['hives.id']
-      }
+        to: ['hives_locations.hive_id'],
+      },
     },
     queen_location: {
       relation: Queen.HasOneRelation,
       modelClass: QueenLocation,
       join: {
         from: ['queens.id'],
-        to: ['queens_locations.queen_id']
-      }
+        to: ['queens_locations.queen_id'],
+      },
     },
     race: {
       relation: ExtModel.HasOneRelation,
       modelClass: QueenRace,
       join: {
         from: ['queens.race_id'],
-        to: ['queen_races.id']
-      }
+        to: ['queen_races.id'],
+      },
     },
     mating: {
       relation: ExtModel.HasOneRelation,
       modelClass: QueenMating,
       join: {
-        from: ['queens.race_id'],
-        to: ['queen_matings.id']
-      }
+        from: ['queens.mating_id'],
+        to: ['queen_matings.id'],
+      },
     },
     company: {
       relation: ExtModel.HasOneRelation,
       modelClass: Company,
       join: {
         from: ['queens.user_id'],
-        to: ['company.id']
-      }
+        to: ['company.id'],
+      },
     },
     own_mother: {
       relation: ExtModel.HasOneRelation,
       modelClass: Queen,
       join: {
         from: ['queens.mother_id'],
-        to: ['queen.id']
-      }
-    }
+        to: ['queens.id'],
+      },
+    },
   });
 }

@@ -22,7 +22,7 @@ export class QueenRouter extends Router {
       .post(
         Validator.validate([
           body('start').isInt({ max: 10000, min: 0 }),
-          body('repeat').isInt({ max: 100, min: 0 })
+          body('repeat').isInt({ max: 100, min: 0 }),
         ]),
         Guard.authorize([ROLES.admin, ROLES.user]),
         Container.resolve('QueenController').post
@@ -33,6 +33,12 @@ export class QueenRouter extends Router {
         Validator.validate([body('ids').isArray()]),
         Guard.authorize([ROLES.admin, ROLES.user]),
         Container.resolve('QueenController').patch
+      );
+    this.router
+      .route('/status')
+      .patch(
+        Guard.authorize([ROLES.admin, ROLES.user]),
+        Container.resolve('QueenController').updateStatus
       );
     this.router
       .route('/batchDelete')

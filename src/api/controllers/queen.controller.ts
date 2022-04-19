@@ -13,17 +13,26 @@ export class QueenController extends Controller {
 
   async get(req: IUserRequest, res: Response, next: NextFunction) {
     try {
-      const { order, direction, offset, limit, modus, deleted, q, details } =
-        req.query as any;
+      const {
+        order,
+        direction,
+        offset,
+        limit,
+        modus,
+        deleted,
+        q,
+        details,
+        filters,
+      } = req.query as any;
       const query = Queen.query()
-        .withGraphFetched('hive')
+        .withGraphFetched('hive_location')
         .where({
           'queens.user_id': req.user.user_id,
-          'queens.deleted': deleted === 'true'
+          'queens.deleted': deleted === 'true',
         })
         .page(offset, parseInt(limit) === 0 ? 10 : limit);
 
-      if (modus !== 'null') {
+      if (modus) {
         query.where('queens.modus', modus === 'true');
       }
 
@@ -32,7 +41,7 @@ export class QueenController extends Controller {
           .withGraphJoined('queen_location')
           .withGraphJoined('race')
           .withGraphJoined('mating')
-          .withGraphJoined('mothers')
+          .withGraphJoined('own_mother')
           .withGraphJoined('creator')
           .withGraphJoined('editor');
       }
@@ -43,9 +52,30 @@ export class QueenController extends Controller {
         query.orderBy(order, direction);
       }
 
+      if (filters) {
+        try {
+          const filtering = JSON.parse(filters);
+          if (Array.isArray(filtering)) {
+            filtering.forEach((v) => {
+              if ('queens.date' in v && typeof v['queens.date'] === 'object') {
+                query.whereBetween('queens.date', [
+                  v['queens.date'].from,
+                  v['queens.date'].to,
+                ]);
+              } else {
+                query.where(v);
+              }
+            });
+          }
+        } catch (e) {
+          console.log(e);
+        }
+      }
+
       if (q.trim() !== '') {
         query.where((builder) => {
-          builder.orWhere('name', 'like', `%${q}%`);
+          builder.orWhere('queens.name', 'like', `%${q}%`);
+          builder.orWhere('hive.name', 'like', `%${q}%`);
         });
       }
 
@@ -79,7 +109,7 @@ export class QueenController extends Controller {
             name: name,
             hive_id: hive_id,
             user_id: req.user.user_id,
-            bee_id: req.user.bee_id
+            bee_id: req.user.bee_id,
           });
           result.push(res.id);
         }
@@ -100,6 +130,25 @@ export class QueenController extends Controller {
         return await Queen.query(trx)
           .patch(insert)
           .findByIds(ids)
+          .where('user_id', req.user.user_id);
+      });
+      res.locals.data = result;
+      next();
+    } catch (e) {
+      next(checkMySQLError(e));
+    }
+  }
+
+  async updateStatus(req: IUserRequest, res: Response, next: NextFunction) {
+    try {
+      const result = await Queen.transaction(async (trx) => {
+        return Queen.query(trx)
+          .patch({
+            edit_id: req.user.bee_id,
+            modus: req.body.status,
+            modus_date: dayjs().format('YYYY-MM-DD'),
+          })
+          .findByIds(req.body.ids)
           .where('user_id', req.user.user_id);
       });
       res.locals.data = result;
@@ -140,7 +189,7 @@ export class QueenController extends Controller {
                 .toISOString()
                 .slice(0, 19)
                 .replace('T', ' '),
-              edit_id: req.user.bee_id
+              edit_id: req.user.bee_id,
             })
             .findByIds(softIds);
 
@@ -156,7 +205,7 @@ export class QueenController extends Controller {
   async batchGet(req: IUserRequest, res: Response, next: NextFunction) {
     try {
       const result = await Queen.query().findByIds(req.body.ids).where({
-        user_id: req.user.user_id
+        user_id: req.user.user_id,
       });
       res.locals.data = result;
       next();
