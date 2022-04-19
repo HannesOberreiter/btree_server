@@ -19,7 +19,7 @@ CREATE VIEW queens_locations AS
             q.id = (
                 SELECT qs.id FROM queens as qs 
                 WHERE qs.hive_id = q.hive_id AND qs.deleted = 0
-                ORDER BY qs.move_date ASC, qs.modus DESC, qs.id DESC
+                ORDER BY qs.move_date DESC, qs.modus DESC, qs.id DESC
                 LIMIT 1
             )
         ) as qt ON qt.hive_id = hives.id
