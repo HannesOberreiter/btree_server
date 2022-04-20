@@ -25,7 +25,7 @@ export class QueenController extends Controller {
         filters,
       } = req.query as any;
       const query = Queen.query()
-        .withGraphFetched('hive_location')
+        .withGraphJoined('hive_location')
         .where({
           'queens.user_id': req.user.user_id,
           'queens.deleted': deleted === 'true',
