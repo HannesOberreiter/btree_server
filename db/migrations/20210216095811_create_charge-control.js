@@ -9,7 +9,6 @@ exports.up = function (knex) {
     t.string('calibrate', 45);
     t.float('amount', 45);
     t.float('price', 45);
-    t.string('unit', 45);
     t.string('note', 2000);
     t.string('url', 512);
     t.string('kind', 45).comment('out or in, for outgoing or incoming');
