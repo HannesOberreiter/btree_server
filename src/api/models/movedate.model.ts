@@ -3,6 +3,7 @@ import { User } from '@models/user.model';
 import { Model } from 'objection';
 import { Apiary } from '@models/apiary.model';
 import { Hive } from '@models/hive.model';
+import { MovedateCount } from './movedate_count.model';
 
 export class Movedate extends ExtModel {
   id!: number;
@@ -10,11 +11,13 @@ export class Movedate extends ExtModel {
   apiary_id!: number;
   hive_id!: number;
   edit_id!: number;
+  bee_id!: number;
 
   apiary?: Apiary;
   hive?: Hive;
   creator?: User;
   editor?: User;
+  movedate_count?: MovedateCount;
 
   static tableName = 'movedates';
   static idColumn = 'id';
@@ -46,6 +49,14 @@ export class Movedate extends ExtModel {
       join: {
         from: 'movedates.hive_id',
         to: 'hives.id'
+      }
+    },
+    movedate_count: {
+      relation: Model.BelongsToOneRelation,
+      modelClass: MovedateCount,
+      join: {
+        from: 'movedates.hive_id',
+        to: 'movedates_counts.hive_id'
       }
     },
     creator: {

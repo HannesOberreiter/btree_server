@@ -46,7 +46,7 @@ class EnvironmentConfiguration {
     this.set();
     // https://www.npmjs.com/package/dotenv
     const result = dotenv.config({
-      path: p.join(__dirname, `../../env/${this.environment}.env`)
+      path: p.join(__dirname, `../../env/${this.environment}.env`),
     });
     if (result.error) {
       throw result.error;
@@ -60,8 +60,8 @@ class EnvironmentConfiguration {
       secure: true,
       auth: {
         user: process.env.MAIL_FROM,
-        pass: process.env.MAIL_PASSWORD
-      }
+        pass: process.env.MAIL_PASSWORD,
+      },
     };
     if (this.environment !== 'production') {
       const testAccount = await nodemailer.createTestAccount();
@@ -88,6 +88,7 @@ const logs = process.env.NODE_ENV === 'production' ? 'combined' : 'development';
 // https://github.com/expressjs/morgan
 const httpLogs = process.env.NODE_ENV === 'production' ? 'combined' : 'dev';
 const contentType = process.env.CONTENT_TYPE;
+const meteoblueKey = process.env.METEOBLUE_KEY;
 
 const knexConfig = {
   client: process.env.DB_TYPE,
@@ -96,20 +97,35 @@ const knexConfig = {
     database: process.env.DB_NAME,
     user: process.env.DB_USERNAME,
     password: process.env.DB_PASSWORD,
-    port: parseInt(process.env.DB_PORT)
+    port: parseInt(process.env.DB_PORT),
+    typeCast(field, next) {
+      // https://github.com/Vincit/objection.js/issues/174#issuecomment-424873063
+      // Convert 1 to true, 0 to false, and leave null alone
+      if (field.type === 'TINY' && field.length === 1) {
+        const value = field.string();
+        return value ? value === '1' : null;
+      }
+      return next();
+    },
   },
-  debug: process.env.NODE_ENV === ENVIRONMENT.production ? false : true,
+  debug: process.env.NODE_ENV === ENVIRONMENT.development ? true : false,
   pool: {
     min: parseInt(process.env.DB_POOL_MIN),
-    max: parseInt(process.env.DB_POOL_MAX)
+    max: parseInt(process.env.DB_POOL_MAX),
+    afterCreate: function (conn, done) {
+      // Extend max group concant mainly for calendar view if many ids are concated
+      conn.query('SET SESSION group_concat_max_len = 100000;', function (err) {
+        done(err, conn);
+      });
+    },
   },
   migrations: {
     directory: 'db/migrations',
-    tableName: 'KnexMigrations'
+    tableName: 'KnexMigrations',
   },
   seeds: {
-    directory: 'db/seeds'
-  }
+    directory: 'db/seeds',
+  },
 };
 
 const mailConfig = EnvironmentConfiguration.mail();
@@ -119,6 +135,7 @@ export {
   env,
   port,
   url,
+  meteoblueKey,
   authorized,
   contentType,
   jwtSecret,
@@ -126,5 +143,5 @@ export {
   version,
   logs,
   httpLogs,
-  mailConfig
+  mailConfig,
 };

@@ -8,6 +8,8 @@ export class Company extends ExtModel {
   dropbox_auth!: string;
   image!: string;
   paid!: string;
+  api_active!: boolean;
+  api_key!: string;
 
   static tableName = 'companies';
   static idColumn = 'id';
@@ -27,6 +29,7 @@ export class Company extends ExtModel {
       paid: { type: 'string', format: 'date' },
 
       image: { type: 'string', minLength: 1, maxLength: 65 },
+      api_active: { type: 'boolean' },
       api_key: { type: 'string', minLength: 1, maxLength: 65 },
       dropbox_auth: { type: 'string', minLength: 1, maxLength: 65 },
 

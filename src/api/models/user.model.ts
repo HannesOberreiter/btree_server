@@ -14,7 +14,9 @@ export class User extends ExtModel {
   lang!: string;
   state!: number;
   acdate!: boolean;
+  format!: number;
   newsletter!: boolean;
+  sound!: boolean;
   saved_company!: number;
   reset_timestamp!: Date;
   last_visit!: Date;
@@ -41,7 +43,8 @@ export class User extends ExtModel {
       reset_timestamp: { type: 'string', format: 'date-time' },
 
       state: { type: 'integer' },
-      lang: { type: 'string', minLength: 2, maxLength: 3 },
+      lang: { type: 'string', minLength: 2, maxLength: 3, enum: ['de', 'en'] },
+      format: { type: 'number', maxLength: 1, enum: [1, 2] },
       acdate: { type: 'boolean' },
       newsletter: { type: 'boolean' },
       todo: { type: 'boolean' },

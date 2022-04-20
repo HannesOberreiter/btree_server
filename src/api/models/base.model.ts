@@ -2,6 +2,9 @@ import { Model } from 'objection';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const AjvValidator = require('objection').AjvValidator;
 import addFormats from 'ajv-formats';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+dayjs.extend(utc);
 
 export class BaseModel extends Model {
   constructor() {
@@ -44,18 +47,32 @@ export class ExtModel extends BaseModel {
   created_at!: string;
   updated_at!: string;
 
+  // small helper to prevent error on timestamp if tables are joined
+  // eg. ER_NON_UNIQ_ERROR: Column 'updated_at' in field list is ambiguous
+  getTablename() {
+    return this.constructor['tableName'];
+  }
+
   constructor() {
     super();
   }
 
   // https://github.com/Vincit/objection.js/issues/647
   $beforeInsert() {
-    this.created_at = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    this[`${this.getTablename()}.created_at`] = dayjs
+      .utc()
+      .toISOString()
+      .slice(0, 19)
+      .replace('T', ' ');
     delete this.updated_at;
   }
 
   $beforeUpdate() {
-    this.updated_at = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    this[`${this.getTablename()}.updated_at`] = dayjs
+      .utc()
+      .toISOString()
+      .slice(0, 19)
+      .replace('T', ' ');
     delete this.created_at;
   }
 }

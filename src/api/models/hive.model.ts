@@ -2,6 +2,11 @@ import { ExtModel } from '@models/base.model';
 import { User } from '@models/user.model';
 import { Apiary } from '@models/apiary.model';
 import { Movedate } from '@models/movedate.model';
+import { HiveLocation } from './hive_location.model';
+import { HiveType } from './option/hive_type.mode';
+import { HiveSource } from './option/hive_source.model';
+import { QueenLocation } from './queen_location.model';
+import { Queen } from './queen.model';
 export class Hive extends ExtModel {
   id!: number;
   name!: string;
@@ -10,8 +15,12 @@ export class Hive extends ExtModel {
   note!: string;
   url!: string;
   modus!: boolean;
-  modus_date!: Date;
+  modus_date!: string;
+  deleted_at!: string;
   deleted!: boolean;
+
+  bee_id!: number;
+  edit_id!: number;
 
   static tableName = 'hives';
   static idColumn = 'id';
@@ -20,6 +29,11 @@ export class Hive extends ExtModel {
   editor?: User;
   movedates?: Movedate[];
   apiares?: Apiary[];
+  queens?: Queen[];
+  hive_location?: HiveLocation;
+  hive_type?: HiveType;
+  hive_source?: HiveSource;
+  queen_location?: QueenLocation;
 
   static jsonSchema = {
     type: 'object',
@@ -61,12 +75,52 @@ export class Hive extends ExtModel {
         to: ['bees.id']
       }
     },
+    hive_location: {
+      relation: Hive.HasOneRelation,
+      modelClass: HiveLocation,
+      join: {
+        from: ['hives.id'],
+        to: ['hives_locations.hive_id']
+      }
+    },
+    queen_location: {
+      relation: Hive.HasOneRelation,
+      modelClass: QueenLocation,
+      join: {
+        from: ['hives.id'],
+        to: ['queens_locations.hive_id']
+      }
+    },
+    hive_type: {
+      relation: Hive.HasOneRelation,
+      modelClass: HiveType,
+      join: {
+        from: ['hives.type_id'],
+        to: ['hive_types.id']
+      }
+    },
+    hive_source: {
+      relation: Hive.HasOneRelation,
+      modelClass: HiveSource,
+      join: {
+        from: ['hives.source_id'],
+        to: ['hive_sources.id']
+      }
+    },
     movedates: {
       relation: Hive.HasManyRelation,
       modelClass: Movedate,
       join: {
         from: ['hives.id'],
         to: ['movedates.hive_id']
+      }
+    },
+    queens: {
+      relation: Hive.HasManyRelation,
+      modelClass: Queen,
+      join: {
+        from: ['hives.id'],
+        to: ['queens.hive_id']
       }
     },
     apiaries: {

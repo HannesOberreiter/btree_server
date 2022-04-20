@@ -15,7 +15,10 @@ export class Treatment extends ExtModel {
   url!: string;
   done!: boolean;
   deleted!: boolean;
+
   edit_id!: number;
+  bee_id!: number;
+  hive_id!: number;
 
   static tableName = 'treatments';
   static idColumn = 'id';
@@ -24,7 +27,7 @@ export class Treatment extends ExtModel {
   disease?: TreatmentDisease;
   vet?: TreatmentVet;
   treatment_apiary?: TreatmentApiary;
-  company?: Hive;
+  hive?: Hive;
   creator?: User;
   editor?: User;
 
@@ -48,10 +51,10 @@ export class Treatment extends ExtModel {
       created_at: { type: 'string', format: 'date-time' },
       updated_at: { type: 'string', format: 'date-time' },
 
+      hive_id: { type: 'integer' }, // Hive FK
       type_id: { type: 'integer' }, // Type FK
       vet_id: { type: 'integer' }, // Vets FK
       disease_id: { type: 'integer' }, // Diseases FK
-      user_id: { type: 'integer' }, // Company FK
       bee_id: { type: 'integer' }, // Creator Bee FK
       edit_id: { type: 'integer' } // Updater Bee FK
     }

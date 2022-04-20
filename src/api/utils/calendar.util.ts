@@ -7,8 +7,8 @@ import { RearingStep } from '@models/rearing/rearing_step.model';
 
 const convertDate = ({ start, end }) => {
   return {
-    start: dayjs(start).toISOString(),
-    end: dayjs(end).toISOString()
+    start: dayjs(start).toISOString().slice(0, 19).replace('T', ' '),
+    end: dayjs(end).toISOString().slice(0, 19).replace('T', ' '),
   };
 };
 
@@ -40,7 +40,6 @@ const getRearings = async ({ query, user }) => {
     }
     rearingsSteps.push(res);
   }
-  console.log(rearingsSteps);
   /*
    * Create ordered calendar events from starting step
    */
@@ -50,9 +49,9 @@ const getRearings = async ({ query, user }) => {
     let addDate = dayjs(rearingsSteps[i].date);
     for (const j in rearingsSteps[i].steps) {
       const result = { ...rearingsSteps[i] };
+      result.steps = rearingsSteps[i].steps;
       result.currentStep = { ...result.steps[j] };
       if (result.startPosition === result.currentStep.position) {
-        console.log('test');
         // Current Step is actual Start Step
         result.start = dayjs(result.date).format('YYYY-MM-DD HH:00:00');
       } else {
@@ -73,16 +72,20 @@ const getRearings = async ({ query, user }) => {
           result.start = subDate.format('YYYY-MM-DD HH:00:00');
         }
       }
+      result.steps[j].date = result.start;
+      result.currentStep.date = result.start;
+
       result.title = `${result.currentStep.detail.job} ID: ${result.id}`;
-      result.table = 'rearings';
+      result.table = 'rearing';
       result.allDay = false;
-      result.icon = 'venus';
+      result.icon = 'fas fa-venus';
       result.color = '#f5dfef';
       result.textColor = 'black';
       result.end = result.start;
       result.groupId = `Q${result.id}`;
-      result.durationEditable = false;
       result.displayEventTime = true;
+      result.durationEditable = false;
+
       results.push(result);
     }
   }
@@ -106,23 +109,26 @@ const getTodos = async ({ query, user }) => {
 
     res.start = dayjs(res.date).format('YYYY-MM-DD');
     res.title = res.name;
-    res.icon = 'clipboard-list';
-    if (res.done === 1) {
+    res.icon = 'fas fa-clipboard';
+    res.durationEditable = false;
+
+    if (res.done) {
       res.color = 'green';
     } else {
       res.color = 'red';
     }
-    res.table = 'todos';
+    res.table = 'todo';
     if (res.editor) {
       res.editors = res.editor.email;
     } else {
       res.editors = '';
     }
     if (res.creator) {
-      res.editors = res.creator.email;
+      res.creators = res.creator.email;
     } else {
       res.creators = '';
     }
+
     result.push(res);
   }
   return result;
@@ -147,9 +153,10 @@ const getMovements = async ({ query, user }) => {
     } else {
       res.title = `${count}x ${res.apiary_name}`;
     }
-    res.icon = 'truck-fast';
+    res.icon = 'fas fa-truck';
     res.color = 'gray';
-    res.table = 'movedates';
+    res.table = 'movedate';
+    res.durationEditable = false;
     if (res.editors) {
       res.editors = String(intersection(res.editors.split(',')));
     } else {
@@ -167,7 +174,7 @@ const getMovements = async ({ query, user }) => {
 
 const getTask = async ({ query, user }, task: string) => {
   const { start, end } = convertDate(query);
-  const results = await MySQLServer.knex(`calendar_${task}`)
+  const results = await MySQLServer.knex(`calendar_${task}s`)
     .where('user_id', user.user_id)
     .where('date', '>=', start)
     .where('enddate', '<=', end);
@@ -184,22 +191,26 @@ const getTask = async ({ query, user }, task: string) => {
     } else {
       res.title = `${count}x ${res.type_name} - ${res.apiary_name}`;
     }
-    if (task === 'checkups') {
-      res.icon = 'search';
+    if (task === 'checkup') {
+      res.icon = 'fas fa-search';
       res.color = '#067558';
-    } else if (task === 'treatments') {
-      res.icon = 'plus';
+    } else if (task === 'treatment') {
+      res.icon = 'fas fa-plus';
       res.color = '#cc5b9a';
       res.title += ` (${res.disease_name})`;
-    } else if (task === 'feeds') {
-      res.icon = 'cube';
+    } else if (task === 'feed') {
+      res.icon = 'fas fa-cube';
       res.color = '#d55e00';
-    } else if (task === 'harvests') {
-      res.icon = 'tint';
+    } else if (task === 'harvest') {
+      res.icon = 'fas fa-tint';
       res.color = 'yellow';
       res.textColor = 'black';
     }
-    if (res.done === 0) res.color = 'red';
+
+    if (!res.done) {
+      res.color = 'red';
+      res.textColor = 'white';
+    }
     res.table = task;
     if (res.editors) {
       res.editors = String(intersection(res.editors.split(',')));

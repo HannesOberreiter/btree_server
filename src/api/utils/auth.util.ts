@@ -1,17 +1,14 @@
-import { CompanyBee } from '@models/company_bee.model';
-import { User } from '@models/user.model';
-import { RefreshToken } from '@models/refresh_token.model';
-
-import { expectationFailed, unauthorized, badRequest } from '@hapi/boom';
-import dayjs from 'dayjs';
-
-import { randomBytes, createHash } from 'crypto';
-
-import jwt from 'jsonwebtoken';
-
-import { jwtSecret, jwtExpirationInterval } from '@config/environment.config';
-
 import { checkMySQLError } from '@utils/error.util';
+import { CompanyBee } from '@models/company_bee.model';
+import { expectationFailed, unauthorized } from '@hapi/boom';
+import { jwtSecret, jwtExpirationInterval } from '@config/environment.config';
+import { randomBytes, createHash } from 'crypto';
+import { RefreshToken } from '@models/refresh_token.model';
+import { Request } from 'express';
+import { User } from '@models/user.model';
+import dayjs from 'dayjs';
+import jwt from 'jsonwebtoken';
+import useragent from 'express-useragent';
 
 const generateRefreshToken = async (
   bee_id: number,
@@ -88,7 +85,8 @@ const createAccessToken = (bee_id, user_id, rank, paid: boolean) => {
 const checkRefreshToken = async (
   oldAccessToken: string,
   token: string,
-  expires: string
+  expires: string,
+  req: Request
 ) => {
   if (dayjs(expires) < dayjs()) {
     throw unauthorized('Refresh Token expired');
@@ -105,11 +103,11 @@ const checkRefreshToken = async (
   });
 
   const decoded = jwt.decode(oldAccessToken, jwtSecret);
-
   const dbCheck = await RefreshToken.query().findOne({
     'refresh_tokens.bee_id': decoded.bee_id,
     'refresh_tokens.user_id': decoded.user_id,
-    'refresh_tokens.token': token
+    'refresh_tokens.token': token,
+    'refresh_tokens.user-agent': buildUserAgent(req)
   });
 
   let refreshToken;
@@ -140,6 +138,12 @@ const checkRefreshToken = async (
 
   const tokenType = 'Bearer';
   return { tokenType, accessToken, refreshToken, expiresIn };
+};
+
+const buildUserAgent = (req: Request) => {
+  let userAgent = useragent.parse(req.headers['user-agent']);
+  userAgent = userAgent.os + userAgent.platform + userAgent.browser;
+  return userAgent.length > 50 ? userAgent.substring(0, 49) : userAgent;
 };
 
 const generateTokenResponse = async (
@@ -270,5 +274,6 @@ export {
   confirmAccount,
   resetMail,
   resetPassword,
-  unsubscribeMail
+  unsubscribeMail,
+  buildUserAgent
 };

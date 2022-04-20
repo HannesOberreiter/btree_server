@@ -1,6 +1,6 @@
-# REST API for b.tree Beekeeping Webapplication
+# Backend API for b.tree Beekeeping Webapplication
 
-Typescript, based on nodejs, express and knex.js, objections.js and datatables.net.
+Written in typescript build with nodejs, express, knex.js and objections.js.
 
 ## Docker
 
@@ -80,10 +80,6 @@ Common problems when authentication fails on local machine:
 
 - <https://stackoverflow.com/questions/1559955/host-xxx-xx-xxx-xxx-is-not-allowed-to-connect-to-this-mysql-server>
 - <https://stackoverflow.com/questions/50093144/mysql-8-0-client-does-not-support-authentication-protocol-requested-by-server>
-
-## Datatables
-
-The REST API relies on [datatables.net](https://editor.datatables.net/) and you will need a licence for it, if you host it for yourself.
 
 ## Library Version Control
 

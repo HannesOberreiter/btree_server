@@ -13,14 +13,17 @@ export class Feed extends ExtModel {
   url!: string;
   done!: boolean;
   deleted!: boolean;
+
   edit_id!: number;
+  bee_id!: number;
+  hive_id!: number;
 
   static tableName = 'feeds';
   static idColumn = 'id';
 
   type?: FeedType;
   feed_apiary?: FeedApiary;
-  company?: Hive;
+  hive?: Hive;
   creator?: User;
   editor?: User;
 
@@ -42,8 +45,8 @@ export class Feed extends ExtModel {
       created_at: { type: 'string', format: 'date-time' },
       updated_at: { type: 'string', format: 'date-time' },
 
+      hive_id: { type: 'integer' }, // Hive FK
       type_id: { type: 'integer' }, // Type FK
-      user_id: { type: 'integer' }, // Company FK
       bee_id: { type: 'integer' }, // Creator Bee FK
       edit_id: { type: 'integer' } // Updater Bee FK
     }

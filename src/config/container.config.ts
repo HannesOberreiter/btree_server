@@ -1,26 +1,29 @@
 import * as awilix from 'awilix';
-
-import { RootController } from '@controllers/root.controller';
-import { CompanyController } from '@controllers/company.controller';
-import { UserController } from '@controllers/user.controller';
-import { AuthController } from '@controllers/auth.controller';
-
-import { CalendarController } from '@controllers/calendar.controller';
-
-import { ChargeController } from '@controllers/charge.controller';
-import { TodoController } from '@controllers/todo.controller';
-
-import { CheckupController } from '@controllers/checkup.controller';
-import { FeedController } from '@controllers/feed.controller';
-import { HarvestController } from '@controllers/harvest.controller';
-import { TreatmentController } from '@controllers/treatment.controller';
-
-import { MovedateController } from '@controllers/movedate.controller';
-import { HiveController } from '@controllers/hive.controller';
-import { OptionController } from '@controllers/options.controller';
-
 import { Logger } from '@services/logger.service';
 import { ProxyRouter } from '@services/proxy-router.service';
+
+import { ApiaryController } from '@controllers/apiary.controller';
+import { AuthController } from '@controllers/auth.controller';
+import { CalendarController } from '@controllers/calendar.controller';
+import { ChargeController } from '@controllers/charge.controller';
+import { CheckupController } from '@controllers/checkup.controller';
+import { CompanyController } from '@controllers/company.controller';
+import { CompanyUserController } from '@controllers/company_user.controller';
+import { ExternalController } from '@controllers/external.controller';
+import { FeedController } from '@controllers/feed.controller';
+import { FieldSettingController } from '@controllers/field_setting.controller';
+import { HarvestController } from '@controllers/harvest.controller';
+import { HiveController } from '@controllers/hive.controller';
+import { QueenController } from '@controllers/queen.controller';
+import { MovedateController } from '@controllers/movedate.controller';
+import { OptionController } from '@controllers/options.controller';
+import { RearingController } from '@controllers/rearing.controller';
+import { RootController } from '@controllers/root.controller';
+import { ServiceController } from '@/api/controllers/service.controller';
+import { TodoController } from '@controllers/todo.controller';
+import { TreatmentController } from '@controllers/treatment.controller';
+import { UserController } from '@controllers/user.controller';
+
 export class Container {
   private static container: any;
 
@@ -32,11 +35,31 @@ export class Container {
     this.container
       .register({ RootController: awilix.asClass(RootController).singleton() })
       .register({
+        ExternalController: awilix.asClass(ExternalController).singleton()
+      })
+      .register({
+        ServiceController: awilix.asClass(ServiceController).singleton()
+      })
+
+      .register({
         CompanyController: awilix.asClass(CompanyController).singleton()
       })
       .register({ HiveController: awilix.asClass(HiveController).singleton() })
       .register({
+        QueenController: awilix.asClass(QueenController).singleton()
+      })
+      .register({
+        ApiaryController: awilix.asClass(ApiaryController).singleton()
+      })
+      .register({
+        CompanyUserController: awilix.asClass(CompanyUserController).singleton()
+      })
+      .register({
         OptionController: awilix.asClass(OptionController).singleton()
+      })
+
+      .register({
+        RearingController: awilix.asClass(RearingController).singleton()
       })
 
       .register({
@@ -61,6 +84,11 @@ export class Container {
       })
       .register({
         MovedateController: awilix.asClass(MovedateController).singleton()
+      })
+      .register({
+        FieldSettingController: awilix
+          .asClass(FieldSettingController)
+          .singleton()
       })
       .register({ UserController: awilix.asClass(UserController).singleton() })
       .register({ AuthController: awilix.asClass(AuthController).singleton() })

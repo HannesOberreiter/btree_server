@@ -107,7 +107,7 @@ export class Application {
     this.app.use(
       BodyParser.urlencoded({
         limit: '50mb',
-        extended: true,
+        extended: false,
         parameterLimit: 10000
       })
     );
@@ -117,7 +117,7 @@ export class Application {
      *
      * @see https://www.npmjs.com/package/hpp
      */
-    this.app.use(Hpp({ checkBody: false }));
+    this.app.use(Hpp({ checkBody: false, whitelist: ['order', 'direction'] }));
 
     /**
      * GZIP compression

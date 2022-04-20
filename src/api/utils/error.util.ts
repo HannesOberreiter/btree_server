@@ -109,6 +109,8 @@ const checkMySQLError = (err: any) => {
       type: 'UnknownDatabaseError',
       data: {}
     };
+  } else if (err instanceof Error) {
+    return err;
   } else {
     error = badImplementation(err.message);
     error.output.payload.message = {
@@ -145,7 +147,6 @@ const getErrorOutput = (error): IError => {
     !error.status &&
     !error.isBoom
   ) {
-    console.log('test');
     switch (error.constructor.name) {
       case 'Error':
       case 'EvalError':

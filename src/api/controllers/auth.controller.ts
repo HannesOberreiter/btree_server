@@ -1,16 +1,16 @@
-import { Controller } from '@classes/controller.class';
-import { NextFunction, Request, Response } from 'express';
-import { IResponse } from '@interfaces/IResponse.interface';
-import { MailService } from '@services/mail.service';
-import useragent from 'express-useragent';
-
-import { User } from '@models/user.model';
+import { autoFill } from '@utils/autofill.util';
+import { badRequest, forbidden } from '@hapi/boom';
+import { checkMySQLError } from '@utils/error.util';
 import { Company } from '@models/company.model';
 import { CompanyBee } from '@models/company_bee.model';
-
-import { checkMySQLError } from '@utils/error.util';
+import { Controller } from '@classes/controller.class';
+import { IResponse } from '@interfaces/IResponse.interface';
+import { loginCheck } from '@utils/login.util';
+import { MailService } from '@services/mail.service';
+import { NextFunction, Request, Response } from 'express';
 import { randomBytes } from 'crypto';
-
+import { User } from '@models/user.model';
+import dayjs from 'dayjs';
 import {
   generateTokenResponse,
   checkRefreshToken,
@@ -18,14 +18,9 @@ import {
   confirmAccount,
   resetMail,
   resetPassword,
-  unsubscribeMail
+  unsubscribeMail,
+  buildUserAgent
 } from '@utils/auth.util';
-
-import { loginCheck } from '@utils/login.util';
-import { autoFill } from '@utils/autofill.util';
-
-import { badRequest, forbidden } from '@hapi/boom';
-import dayjs from 'dayjs';
 
 export class AuthController extends Controller {
   constructor() {
@@ -145,7 +140,10 @@ export class AuthController extends Controller {
     try {
       await User.transaction(async (trx) => {
         const u = await User.query(trx).insert(inputUser);
-        const c = await Company.query(trx).insert({ name: inputCompany });
+        const c = await Company.query(trx).insert({
+          name: inputCompany,
+          paid: dayjs().add(31, 'day').format('YYYY-MM-DD')
+        });
         await CompanyBee.query(trx).insert({ bee_id: u.id, user_id: c.id });
         await autoFill(trx, c.id, autofillLang);
       });
@@ -173,10 +171,7 @@ export class AuthController extends Controller {
   async login(req: Request, res: IResponse, next: NextFunction) {
     const { email, password } = req.body;
 
-    // Build a userAgent string to identify devices and users
-    let userAgent = useragent.parse(req.headers['user-agent']);
-    userAgent = userAgent.os + userAgent.platform + userAgent.browser;
-    userAgent = userAgent.length > 50 ? userAgent.substring(0, 49) : userAgent;
+    const userAgent = buildUserAgent(req);
 
     try {
       const { bee_id, user_id, data } = await loginCheck(email, password);
@@ -198,7 +193,7 @@ export class AuthController extends Controller {
     }
     try {
       const { token, expires } = req.body;
-      const result = await checkRefreshToken(accessToken, token, expires);
+      const result = await checkRefreshToken(accessToken, token, expires, req);
       res.locals.data = { result };
       next();
     } catch (e) {

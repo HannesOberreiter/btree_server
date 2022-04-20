@@ -2,15 +2,14 @@ import { User } from '@models/user.model';
 import { LoginAttemp } from '@models/login_attempt.model';
 
 import { checkMySQLError } from '@utils/error.util';
-import { locked, notFound, unauthorized } from '@hapi/boom';
-
+import { forbidden, locked, unauthorized } from '@hapi/boom';
 import dayjs from 'dayjs';
 import { createHash } from 'crypto';
 
 const insertWrongPasswordTry = async (bee_id: number) => {
   const trx = await LoginAttemp.startTransaction();
   try {
-    const now: Date = dayjs().toDate();
+    const now = dayjs.utc().toISOString().slice(0, 19).replace('T', ' ');
     await LoginAttemp.query(trx).insert({
       time: now,
       bee_id: bee_id
@@ -35,9 +34,9 @@ const updateLastLogin = async (bee_id: number) => {
   }
 };
 
-const fetchUser = async (email: string) => {
+const fetchUser = async (email: string, bee_id = 0) => {
   try {
-    const user = await User.query()
+    const user = User.query()
       .select(
         'id',
         'email',
@@ -51,11 +50,9 @@ const fetchUser = async (email: string) => {
         'format',
         'sound',
         'todo',
-        'acdate'
+        'acdate',
+        'newsletter'
       )
-      .findOne({
-        'bees.email': email
-      })
       .withGraphFetched('company(cm)')
       .modifiers({
         cm(builder) {
@@ -63,11 +60,20 @@ const fetchUser = async (email: string) => {
             'companies.id',
             'companies.name',
             'companies.paid',
+            'companies.api_active',
             'company_bee.rank'
           );
         }
+      })
+      .first();
+    if (bee_id === 0) {
+      user.findOne({
+        'bees.email': email
       });
-    return user;
+    } else {
+      user.findOne({ 'bees.id': bee_id });
+    }
+    return await user;
   } catch (e) {
     throw checkMySQLError(e);
   }
@@ -76,13 +82,17 @@ const fetchUser = async (email: string) => {
 const checkBruteForce = async (bee_id: number) => {
   try {
     // All login attempts are counted from the past 2 hours.
-    const validAttempts = dayjs().hour(-2).format();
+    const validAttempts = dayjs
+      .utc()
+      .subtract(2, 'hour')
+      .toISOString()
+      .slice(0, 19)
+      .replace('T', ' ');
     const bruteForce = await LoginAttemp.query()
       .count('id as count')
       .where('bee_id', bee_id)
       .where('time', '>', validAttempts)
       .orderBy('time');
-
     // ToDo send user E-Mail that the account is bruteForced
 
     if (bruteForce[0]['count'] < 10) {
@@ -115,10 +125,18 @@ const checkPassword = (
   }
 };
 
+const reviewPassword = async (bee_id, password: string) => {
+  const user = await User.query().select('salt', 'password').findById(bee_id);
+  if (!checkPassword(password, user.password, user.salt)) {
+    throw forbidden('Wrong password');
+  }
+  return true;
+};
+
 const loginCheck = async (email: string, password: string) => {
   const user = await fetchUser(email);
   if (!user) {
-    throw notFound();
+    throw unauthorized('no user');
   }
   if (user.state != 1) {
     throw unauthorized('inactive account');
@@ -148,7 +166,7 @@ const loginCheck = async (email: string, password: string) => {
 
   if (!checkPassword(password, user.password, user.salt)) {
     await insertWrongPasswordTry(user.id);
-    throw unauthorized('invalid password');
+    throw unauthorized('Invalid password');
   }
 
   await updateLastLogin(user.id);
@@ -156,4 +174,4 @@ const loginCheck = async (email: string, password: string) => {
   return { bee_id: user.id, user_id: company, data: user };
 };
 
-export { loginCheck };
+export { loginCheck, reviewPassword, fetchUser };

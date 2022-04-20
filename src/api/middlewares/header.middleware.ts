@@ -15,7 +15,11 @@ export class Header {
   static check =
     ({ contentType }) =>
     (req: Request, res: Response, next) => {
-      if (!req.headers['content-type'] && req.method !== 'GET') {
+      if (
+        !req.headers['content-type'] &&
+        req.method !== 'GET' &&
+        req.method !== 'DELETE'
+      ) {
         return next(
           notAcceptable(
             `Content-Type header must be ${contentType} or multipart/form-data`

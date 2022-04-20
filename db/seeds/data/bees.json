@@ -4,6 +4,7 @@
     "firstname": "Max",
     "lastname": "Muster",
     "email": "demo_en@btree.at",
+    "state": 1,
     "password": "73bf496063e6f79fc6b385bf259233d84aad86f1598fa204fe1007f6659dfafbd566e60faf0a6281c154d6753e95160d02ffa86e5dea815f831008f8de6b7fef",
     "lang": "de",
     "salt": "f9acd75c97e666fd79268a416f2dad10e3ad5f612969e8db34c2b322e7d02bb1d7738f3d2f74ca4764d76502a96837e5d422f20434ec47660abc77d9ac67d60d",
