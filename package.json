@@ -23,7 +23,7 @@
     "dev:node": "ENVIRONMENT=development nodemon",
     "dev:tsc": "tsc -watch",
     "dev:knex": "ENVIRONMENT=development knex",
-    "dev:knex-seed": "ENVIRONMENT=seed knex",
+    "dev:knex-seed": "ENVIRONMENT=staging knex seed:run",
     "dev:mail": "mjml mjml/* -o mails/ --config.beautify true --config.minify true",
     "prettier-format": "prettier --config .prettierrc 'src/**/*.ts' --write"
   },

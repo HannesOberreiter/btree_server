@@ -46,7 +46,7 @@ class EnvironmentConfiguration {
     this.set();
     // https://www.npmjs.com/package/dotenv
     const result = dotenv.config({
-      path: p.join(__dirname, `../../env/${this.environment}.env`)
+      path: p.join(__dirname, `../../env/${this.environment}.env`),
     });
     if (result.error) {
       throw result.error;
@@ -60,8 +60,8 @@ class EnvironmentConfiguration {
       secure: true,
       auth: {
         user: process.env.MAIL_FROM,
-        pass: process.env.MAIL_PASSWORD
-      }
+        pass: process.env.MAIL_PASSWORD,
+      },
     };
     if (this.environment !== 'production') {
       const testAccount = await nodemailer.createTestAccount();
@@ -106,9 +106,9 @@ const knexConfig = {
         return value ? value === '1' : null;
       }
       return next();
-    }
+    },
   },
-  debug: process.env.NODE_ENV === ENVIRONMENT.production ? false : true,
+  debug: process.env.NODE_ENV === ENVIRONMENT.development ? true : false,
   pool: {
     min: parseInt(process.env.DB_POOL_MIN),
     max: parseInt(process.env.DB_POOL_MAX),
@@ -117,15 +117,15 @@ const knexConfig = {
       conn.query('SET SESSION group_concat_max_len = 100000;', function (err) {
         done(err, conn);
       });
-    }
+    },
   },
   migrations: {
     directory: 'db/migrations',
-    tableName: 'KnexMigrations'
+    tableName: 'KnexMigrations',
   },
   seeds: {
-    directory: 'db/seeds'
-  }
+    directory: 'db/seeds',
+  },
 };
 
 const mailConfig = EnvironmentConfiguration.mail();
@@ -143,5 +143,5 @@ export {
   version,
   logs,
   httpLogs,
-  mailConfig
+  mailConfig,
 };
