@@ -6,8 +6,8 @@ CREATE VIEW calendar_checkups AS
         GROUP_CONCAT(hives.name) as hive_names,
         task_type.id as type_id,
         task_type.name as type_name,
-        GROUP_CONCAT(created.email) as creators,
-        GROUP_CONCAT(edited.email) as editors
+        GROUP_CONCAT(DISTINCT created.email) as creators,
+        GROUP_CONCAT(DISTINCT edited.email) as editors
     FROM checkups_apiaries as ta 
     LEFT JOIN checkups as task
         ON task.id = ta.checkup_id

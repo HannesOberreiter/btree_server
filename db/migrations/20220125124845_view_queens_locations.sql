@@ -11,7 +11,7 @@ CREATE VIEW queens_locations AS
     FROM
         hives
     LEFT JOIN  (
-        SELECT *
+        SELECT name, modus, move_date, modus_date, mark_colour, id, hive_id
         FROM queens as q
         WHERE
             q.deleted = 0

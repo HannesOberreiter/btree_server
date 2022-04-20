@@ -4,8 +4,8 @@ CREATE VIEW calendar_movements AS
         GROUP_CONCAT(movedates.id) as move_ids,
         GROUP_CONCAT(hive_id) as hive_ids,
         GROUP_CONCAT(hives.name) as hive_names,
-        GROUP_CONCAT(created.email) as creators,
-        GROUP_CONCAT(edited.email) as editors
+        GROUP_CONCAT(DISTINCT created.email) as creators,
+        GROUP_CONCAT(DISTINCT edited.email) as editors
     FROM movedates
     LEFT JOIN hives
         ON hives.id = movedates.hive_id

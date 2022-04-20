@@ -8,8 +8,8 @@ CREATE VIEW calendar_treatments AS
         task_type.name as type_name,
         disease_id,
         treatment_diseases.name as disease_name,
-        GROUP_CONCAT(created.email) as creators,
-        GROUP_CONCAT(edited.email) as editors
+        GROUP_CONCAT(DISTINCT created.email) as creators,
+        GROUP_CONCAT(DISTINCT edited.email) as editors
     FROM treatments_apiaries as ta 
     LEFT JOIN treatments as task
         ON task.id = ta.treatment_id
