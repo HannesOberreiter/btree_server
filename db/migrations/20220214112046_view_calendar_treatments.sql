@@ -2,8 +2,8 @@ CREATE VIEW calendar_treatments AS
     SELECT
         apiary_id, apiary_name, date, enddate, done, ta.user_id,
         GROUP_CONCAT(task.id) as task_ids,
-        GROUP_CONCAT(hive_id) as hive_ids,
-        GROUP_CONCAT(hives.name) as hive_names,
+        GROUP_CONCAT(DISTINCT hive_id) as hive_ids,
+        GROUP_CONCAT(DISTINCT hives.name) as hive_names,
         task_type.id as type_id,
         task_type.name as type_name,
         disease_id,

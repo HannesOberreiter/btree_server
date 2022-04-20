@@ -2,8 +2,8 @@ CREATE VIEW calendar_movements AS
     SELECT
 		date, apiary_id, apiaries.name as apiary_name, user_id,
         GROUP_CONCAT(movedates.id) as move_ids,
-        GROUP_CONCAT(hive_id) as hive_ids,
-        GROUP_CONCAT(hives.name) as hive_names,
+        GROUP_CONCAT(DISTINCT hive_id) as hive_ids,
+        GROUP_CONCAT(DISTINCT hives.name) as hive_names,
         GROUP_CONCAT(DISTINCT created.email) as creators,
         GROUP_CONCAT(DISTINCT edited.email) as editors
     FROM movedates
