@@ -4,6 +4,7 @@ const fs = require('fs');
 var map = require('lodash/map');
 var filter = require('lodash/filter');
 var omit = require('lodash/omit');
+var cloneDeep = require('lodash/cloneDeep');
 
 if (env.env === 'production') {
   console.log('No seeding allowed in production environment!');
@@ -402,20 +403,40 @@ if (env.env === 'production') {
       const jsonData = JSON.parse(
         fs.readFileSync(__dirname + `/data/${table}.json`, 'utf-8')
       );
-      promises.push(
-        knex.transaction(function (trx) {
-          knex
-            .raw('SET FOREIGN_KEY_CHECKS=0')
-            .transacting(trx)
-            .then(function () {
-              return knex(table).transacting(trx).truncate();
-            })
-            .then(function () {
-              return knex(table).transacting(trx).insert(jsonData);
-            })
-            .finally(trx.commit);
-        })
-      );
+      let duplicates = 1;
+      if (['checkups', 'feeds', 'treatments', 'queens'].includes(table)) {
+        duplicates = 100;
+      }
+      let newData = cloneDeep(jsonData);
+
+      if (table === 'checkups') {
+        newData = map(newData, (d) => {
+          return {
+            varroa: isNaN(d.varroa) ? 0 : Number(d.varroa),
+            ...omit(d, 'varroa'),
+          };
+        });
+      }
+
+      for (let i = 1; i <= duplicates; i++) {
+        if (i > 1) {
+          newData = map(cloneDeep(newData), (d) => omit(d, ['id']));
+        }
+        promises.push(
+          knex.transaction(function (trx) {
+            knex
+              .raw('SET FOREIGN_KEY_CHECKS=0')
+              .transacting(trx)
+              .then(function () {
+                return knex(table).transacting(trx).truncate();
+              })
+              .then(function () {
+                return knex(table).transacting(trx).insert(cloneDeep(newData));
+              })
+              .finally(trx.commit);
+          })
+        );
+      }
     });
 
     return Promise.all(promises);
