@@ -21,7 +21,8 @@ export class CheckupController extends Controller {
           '[checkup_apiary, type, hive, creator(identifier), editor(identifier)]'
         )
         .where({
-          'checkup_apiary.user_id': req.user.user_id,
+          'hive.deleted': false,
+          'checkups.user_id': req.user.user_id,
           'checkups.deleted': deleted === 'true',
         })
         .page(offset, parseInt(limit) === 0 ? 10 : limit);
@@ -71,7 +72,7 @@ export class CheckupController extends Controller {
           .patch({ ...insert, edit_id: req.user.bee_id })
           .findByIds(ids)
           .leftJoinRelated('checkup_apiary')
-          .where('checkup_apiary.user_id', req.user.user_id);
+          .where('checkups.user_id', req.user.user_id);
       });
       res.locals.data = result;
       next();
@@ -104,6 +105,7 @@ export class CheckupController extends Controller {
             ...insert,
             hive_id: hives[hive].id,
             bee_id: req.user.bee_id,
+            user_id: req.user.user_id,
           });
           result.push(res.id);
 
@@ -142,7 +144,6 @@ export class CheckupController extends Controller {
             done: req.body.status,
           })
           .findByIds(req.body.ids)
-          .leftJoinRelated('checkup_apiary')
           .where('user_id', req.user.user_id);
       });
       res.locals.data = result;
@@ -162,7 +163,6 @@ export class CheckupController extends Controller {
             enddate: req.body.end,
           })
           .findByIds(req.body.ids)
-          .leftJoinRelated('checkup_apiary')
           .where('user_id', req.user.user_id);
       });
       res.locals.data = result;
@@ -177,8 +177,8 @@ export class CheckupController extends Controller {
       const result = await Checkup.transaction(async (trx) => {
         const res = await Checkup.query(trx)
           .findByIds(req.body.ids)
-          .withGraphJoined('[checkup_apiary, type, hive]')
-          .where('checkup_apiary.user_id', req.user.user_id);
+          .withGraphJoined('[type, hive]')
+          .where('checkups.user_id', req.user.user_id);
         return res;
       });
       res.locals.data = result;
@@ -197,7 +197,6 @@ export class CheckupController extends Controller {
         const res = await Checkup.query(trx)
           .findByIds(req.body.ids)
           .select('id', 'deleted')
-          .withGraphJoined('checkup_apiary')
           .where('user_id', req.user.user_id);
 
         const softIds = [];

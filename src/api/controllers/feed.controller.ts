@@ -20,7 +20,8 @@ export class FeedController extends Controller {
           '[feed_apiary, type, hive, creator(identifier), editor(identifier)]'
         )
         .where({
-          'feed_apiary.user_id': req.user.user_id,
+          'hive.deleted': false,
+          'feeds.user_id': req.user.user_id,
           'feeds.deleted': deleted === 'true',
         })
         .page(offset, parseInt(limit) === 0 ? 10 : limit);
@@ -72,7 +73,7 @@ export class FeedController extends Controller {
           .patch({ ...insert, edit_id: req.user.bee_id })
           .findByIds(ids)
           .leftJoinRelated('feed_apiary')
-          .where('feed_apiary.user_id', req.user.user_id);
+          .where('feeds.user_id', req.user.user_id);
       });
       res.locals.data = result;
       next();
@@ -105,6 +106,7 @@ export class FeedController extends Controller {
             ...insert,
             hive_id: hives[hive].id,
             bee_id: req.user.bee_id,
+            user_id: req.user.user_id,
           });
           result.push(res.id);
 
@@ -143,7 +145,6 @@ export class FeedController extends Controller {
             done: req.body.status,
           })
           .findByIds(req.body.ids)
-          .leftJoinRelated('feed_apiary')
           .where('user_id', req.user.user_id);
       });
       res.locals.data = result;
@@ -163,7 +164,6 @@ export class FeedController extends Controller {
             enddate: req.body.end,
           })
           .findByIds(req.body.ids)
-          .leftJoinRelated('feed_apiary')
           .where('user_id', req.user.user_id);
       });
       res.locals.data = result;
@@ -178,8 +178,8 @@ export class FeedController extends Controller {
       const result = await Feed.transaction(async (trx) => {
         const res = await Feed.query(trx)
           .findByIds(req.body.ids)
-          .withGraphJoined('[feed_apiary, type, hive]')
-          .where('feed_apiary.user_id', req.user.user_id);
+          .withGraphJoined('[type, hive]')
+          .where('feeds.user_id', req.user.user_id);
         return res;
       });
       res.locals.data = result;
@@ -198,7 +198,6 @@ export class FeedController extends Controller {
         const res = await Feed.query(trx)
           .findByIds(req.body.ids)
           .select('id', 'deleted')
-          .withGraphJoined('feed_apiary')
           .where('user_id', req.user.user_id);
 
         const softIds = [];

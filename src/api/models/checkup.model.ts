@@ -32,6 +32,7 @@ export class Checkup extends ExtModel {
   done!: boolean;
   deleted!: boolean;
 
+  user_id!: number;
   edit_id!: number;
   bee_id!: number;
   hive_id!: number;
@@ -82,11 +83,12 @@ export class Checkup extends ExtModel {
       created_at: { type: 'string', format: 'date-time' },
       updated_at: { type: 'string', format: 'date-time' },
 
+      user_id: { type: 'integer' }, // Company FK
       hive_id: { type: 'integer' }, // Hive FK
       type_id: { type: 'integer' }, // Type FK
       bee_id: { type: 'integer' }, // Creator Bee FK
-      edit_id: { type: 'integer' } // Updater Bee FK
-    }
+      edit_id: { type: 'integer' }, // Updater Bee FK
+    },
   };
 
   static relationMappings = () => ({
@@ -95,40 +97,40 @@ export class Checkup extends ExtModel {
       modelClass: CheckupType,
       join: {
         from: ['checkups.type_id'],
-        to: ['checkup_types.id']
-      }
+        to: ['checkup_types.id'],
+      },
     },
     hive: {
       relation: ExtModel.HasOneRelation,
       modelClass: Hive,
       join: {
         from: ['checkups.hive_id'],
-        to: ['hives.id']
-      }
+        to: ['hives.id'],
+      },
     },
     checkup_apiary: {
       relation: ExtModel.HasOneRelation,
       modelClass: CheckupApiary,
       join: {
         from: ['checkups_apiaries.checkup_id'],
-        to: ['checkups.id']
-      }
+        to: ['checkups.id'],
+      },
     },
     creator: {
       relation: ExtModel.HasOneRelation,
       modelClass: User,
       join: {
         from: ['checkups.bee_id'],
-        to: ['bees.id']
-      }
+        to: ['bees.id'],
+      },
     },
     editor: {
       relation: ExtModel.HasOneRelation,
       modelClass: User,
       join: {
         from: ['checkups.edit_id'],
-        to: ['bees.id']
-      }
-    }
+        to: ['bees.id'],
+      },
+    },
   });
 }

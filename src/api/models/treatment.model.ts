@@ -5,8 +5,6 @@ import { TreatmentType } from '@models/option/treatment_type.model';
 import { TreatmentDisease } from '@models/option/treatment_disease.model';
 import { TreatmentVet } from '@models/option/treatment_vet.model';
 import { TreatmentApiary } from '@models/treatment_apiary.model';
-import { Apiary } from './apiary.model';
-import { Movedate } from './movedate.model';
 export class Treatment extends ExtModel {
   id!: number;
   date!: Date;
@@ -18,6 +16,7 @@ export class Treatment extends ExtModel {
   done!: boolean;
   deleted!: boolean;
 
+  user_id!: number;
   edit_id!: number;
   bee_id!: number;
   hive_id!: number;
@@ -30,7 +29,6 @@ export class Treatment extends ExtModel {
   vet?: TreatmentVet;
   treatment_apiary?: TreatmentApiary;
   hive?: Hive;
-  apiary?: Apiary;
   creator?: User;
   editor?: User;
 
@@ -54,6 +52,7 @@ export class Treatment extends ExtModel {
       created_at: { type: 'string', format: 'date-time' },
       updated_at: { type: 'string', format: 'date-time' },
 
+      user_id: { type: 'integer' }, // Company FK
       hive_id: { type: 'integer' }, // Hive FK
       type_id: { type: 'integer' }, // Type FK
       vet_id: { type: 'integer' }, // Vets FK
@@ -78,30 +77,6 @@ export class Treatment extends ExtModel {
       join: {
         from: ['treatments.disease_id'],
         to: ['treatment_diseases.id'],
-      },
-    },
-    apiary: {
-      relation: ExtModel.ManyToManyRelation,
-      modelClass: Apiary,
-      join: {
-        from: 'treatments.hive_id',
-        through: {
-          from: 'movedates.hive_id',
-          to: 'movedates.apiary_id',
-
-          // If you have a model class for the join table
-          // you can specify it like this:
-          //
-          //modelClass: Movedate,
-
-          // Columns listed here are automatically joined
-          // to the related models on read and written to
-          // the join table instead of the related table
-          // on insert/update.
-          //
-          //extra: ['apiary_id'],
-        },
-        to: 'apiaries.id',
       },
     },
     vet: {

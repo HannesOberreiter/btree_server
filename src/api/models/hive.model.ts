@@ -19,6 +19,7 @@ export class Hive extends ExtModel {
   deleted_at!: string;
   deleted!: boolean;
 
+  user_id!: number;
   bee_id!: number;
   edit_id!: number;
 
@@ -53,9 +54,10 @@ export class Hive extends ExtModel {
       created_at: { type: 'string', format: 'date-time' },
       updated_at: { type: 'string', format: 'date-time' },
 
+      user_id: { type: 'integer' }, // Company FK
       bee_id: { type: 'integer' }, // Creator Bee FK
-      edit_id: { type: 'integer' } // Updater Bee FK
-    }
+      edit_id: { type: 'integer' }, // Updater Bee FK
+    },
   };
 
   static relationMappings = () => ({
@@ -64,64 +66,64 @@ export class Hive extends ExtModel {
       modelClass: User,
       join: {
         from: ['hives.bee_id'],
-        to: ['bees.id']
-      }
+        to: ['bees.id'],
+      },
     },
     editor: {
       relation: ExtModel.HasOneRelation,
       modelClass: User,
       join: {
         from: ['hives.edit_id'],
-        to: ['bees.id']
-      }
+        to: ['bees.id'],
+      },
     },
     hive_location: {
       relation: Hive.HasOneRelation,
       modelClass: HiveLocation,
       join: {
         from: ['hives.id'],
-        to: ['hives_locations.hive_id']
-      }
+        to: ['hives_locations.hive_id'],
+      },
     },
     queen_location: {
       relation: Hive.HasOneRelation,
       modelClass: QueenLocation,
       join: {
         from: ['hives.id'],
-        to: ['queens_locations.hive_id']
-      }
+        to: ['queens_locations.hive_id'],
+      },
     },
     hive_type: {
       relation: Hive.HasOneRelation,
       modelClass: HiveType,
       join: {
         from: ['hives.type_id'],
-        to: ['hive_types.id']
-      }
+        to: ['hive_types.id'],
+      },
     },
     hive_source: {
       relation: Hive.HasOneRelation,
       modelClass: HiveSource,
       join: {
         from: ['hives.source_id'],
-        to: ['hive_sources.id']
-      }
+        to: ['hive_sources.id'],
+      },
     },
     movedates: {
       relation: Hive.HasManyRelation,
       modelClass: Movedate,
       join: {
         from: ['hives.id'],
-        to: ['movedates.hive_id']
-      }
+        to: ['movedates.hive_id'],
+      },
     },
     queens: {
       relation: Hive.HasManyRelation,
       modelClass: Queen,
       join: {
         from: ['hives.id'],
-        to: ['queens.hive_id']
-      }
+        to: ['queens.hive_id'],
+      },
     },
     apiaries: {
       relation: Hive.ManyToManyRelation,
@@ -131,10 +133,10 @@ export class Hive extends ExtModel {
         through: {
           modelClass: Movedate,
           from: 'movedates.hive_id',
-          to: 'movedates.apiary_id'
+          to: 'movedates.apiary_id',
         },
-        to: 'apiaries.id'
-      }
-    }
+        to: 'apiaries.id',
+      },
+    },
   });
 }
