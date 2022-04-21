@@ -13,13 +13,11 @@ export class ScaleController extends Controller {
   async get(req: IUserRequest, res: Response, next) {
     try {
       const query = Scale.query()
-        .select('settings')
+        .withGraphFetched('hive')
         .where('user_id', req.user.user_id);
-
       if (req.params.id) {
         query.findById(req.params.id);
       }
-
       res.locals.data = await query;
       next();
     } catch (e) {
@@ -68,13 +66,10 @@ export class ScaleController extends Controller {
   async delete(req: IUserRequest, res: Response, next) {
     try {
       const result = await Scale.transaction(async (trx) => {
-        await ScaleData.query(trx)
-          .delete()
-          .joinRelated('scale')
-          .where({
-            scale_id: req.body.params.id,
-            'scale.user_id': req.user.user_id,
-          });
+        await ScaleData.query(trx).delete().joinRelated('scale').where({
+          scale_id: req.body.params.id,
+          'scale.user_id': req.user.user_id,
+        });
         return await Scale.query(trx)
           .deleteById(req.body.params.id)
           .where('user_id', req.user.user_id);

@@ -33,7 +33,7 @@ export class ScaleRouter extends Router {
       .post(
         Validator.validate([
           body('name').isString().isLength({ min: 1, max: 45 }).trim(),
-          body('hive_id').isNumeric().optional().trim(),
+          body('hive_id').isNumeric(),
         ]),
         Guard.authorize([ROLES.admin]),
         Container.resolve('ScaleController').post

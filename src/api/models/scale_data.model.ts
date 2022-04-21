@@ -1,7 +1,7 @@
-import { Model } from 'objection';
+import { BaseModel } from './base.model';
 import { Scale } from './scale.model';
 
-export class ScaleData extends Model {
+export class ScaleData extends BaseModel {
   id!: number;
   datetime!: string;
   weight: number;
@@ -34,7 +34,7 @@ export class ScaleData extends Model {
   };
   static relationMappings = () => ({
     scale: {
-      relation: Model.BelongsToOneRelation,
+      relation: BaseModel.BelongsToOneRelation,
       modelClass: Scale,
       join: {
         from: 'scale_data.scale_id',

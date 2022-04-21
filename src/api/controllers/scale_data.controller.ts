@@ -13,7 +13,7 @@ export class ScaleDataController extends Controller {
     try {
       const { order, direction, offset, limit, q, filters } = req.query as any;
       const query = ScaleData.query()
-        .withGraphJoined('[scale:hive]')
+        .withGraphJoined('[scale.hive]')
         .where({
           'scale.user_id': req.user.user_id,
         })
@@ -25,7 +25,7 @@ export class ScaleDataController extends Controller {
           if (Array.isArray(filtering)) {
             filtering.forEach((v) => {
               if ('date' in v && typeof v['date'] === 'object') {
-                query.whereBetween('date', [v.date.from, v.date.to]);
+                query.whereBetween('datetime', [v.date.from, v.date.to]);
               } else {
                 query.where(v);
               }
