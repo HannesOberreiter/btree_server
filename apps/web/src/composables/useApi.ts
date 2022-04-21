@@ -96,11 +96,13 @@ export const useApiFetch = () => {
         if (response.status === 401 && !state.retry) {
           state.retry = true;
           try {
+            console.log('refresh');
             const token = await refreshToken();
             storeToken.refreshToken(token.result);
             LoadingBar.stop();
             return fetching(copy, true);
           } catch (e) {
+            LoadingBar.stop();
             throw e;
           }
         } else if (response.status === 401) {
@@ -108,7 +110,10 @@ export const useApiFetch = () => {
             // Wait till first request finish refresh token, request
             await new Promise((r) => setTimeout(r, 500));
           }
-          if (state.logout === true) return Promise.reject();
+          if (state.logout === true) {
+            LoadingBar.stop();
+            return Promise.reject();
+          }
           LoadingBar.stop();
           return fetching(copy, true);
         }
@@ -117,7 +122,6 @@ export const useApiFetch = () => {
       throw await response.json();
     }
     LoadingBar.stop();
-
     return response.json();
   }
 
