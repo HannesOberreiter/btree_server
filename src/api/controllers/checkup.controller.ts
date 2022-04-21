@@ -71,8 +71,7 @@ export class CheckupController extends Controller {
         return await Checkup.query(trx)
           .patch({ ...insert, edit_id: req.user.bee_id })
           .findByIds(ids)
-          .leftJoinRelated('checkup_apiary')
-          .where('checkups.user_id', req.user.user_id);
+          .where('user_id', req.user.user_id);
       });
       res.locals.data = result;
       next();

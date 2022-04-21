@@ -73,8 +73,7 @@ export class TreatmentController extends Controller {
         return await Treatment.query(trx)
           .patch({ ...insert, edit_id: req.user.bee_id })
           .findByIds(ids)
-          .leftJoinRelated('treatment_apiary')
-          .where('treatments.user_id', req.user.user_id);
+          .where('user_id', req.user.user_id);
       });
       res.locals.data = result;
       next();

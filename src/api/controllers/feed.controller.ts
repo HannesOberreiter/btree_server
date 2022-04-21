@@ -72,8 +72,7 @@ export class FeedController extends Controller {
         return await Feed.query(trx)
           .patch({ ...insert, edit_id: req.user.bee_id })
           .findByIds(ids)
-          .leftJoinRelated('feed_apiary')
-          .where('feeds.user_id', req.user.user_id);
+          .where('user_id', req.user.user_id);
       });
       res.locals.data = result;
       next();

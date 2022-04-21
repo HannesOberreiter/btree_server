@@ -72,8 +72,7 @@ export class HarvestController extends Controller {
         return await Harvest.query(trx)
           .patch({ ...insert, edit_id: req.user.bee_id })
           .findByIds(ids)
-          .leftJoinRelated('harvest_apiary')
-          .where('harvests.user_id', req.user.user_id);
+          .where('user_id', req.user.user_id);
       });
       res.locals.data = result;
       next();
