@@ -96,12 +96,9 @@ export class HiveController extends Controller {
         .page(offset, parseInt(limit) === 0 ? 10 : limit);
 
       if (details === 'true') {
-        query
-          .withGraphJoined('queen_location')
-          .withGraphJoined('hive_source')
-          .withGraphJoined('hive_type')
-          .withGraphFetched('creator(identifier)')
-          .withGraphFetched('editor(identifier)');
+        query.withGraphJoined(
+          '[queen_location, hive_source, hive_type, creator(identifier), editor(identifier)]'
+        );
       }
 
       if (filters) {

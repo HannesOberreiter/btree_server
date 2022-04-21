@@ -16,11 +16,9 @@ export class FeedController extends Controller {
       const { order, direction, offset, limit, q, filters, deleted } =
         req.query as any;
       const query = Feed.query()
-        .withGraphJoined('feed_apiary')
-        .withGraphFetched('creator(identifier)')
-        .withGraphFetched('editor(identifier)')
-        .withGraphJoined('type')
-        .withGraphJoined('hive')
+        .withGraphJoined(
+          '[feed_apiary, type, hive, creator(identifier), editor(identifier)]'
+        )
         .where({
           'feed_apiary.user_id': req.user.user_id,
           'feeds.deleted': deleted === 'true',
@@ -180,9 +178,7 @@ export class FeedController extends Controller {
       const result = await Feed.transaction(async (trx) => {
         const res = await Feed.query(trx)
           .findByIds(req.body.ids)
-          .withGraphJoined('feed_apiary')
-          .withGraphJoined('type')
-          .withGraphJoined('hive')
+          .withGraphJoined('[feed_apiary, type, hive]')
           .where('feed_apiary.user_id', req.user.user_id);
         return res;
       });

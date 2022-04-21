@@ -99,8 +99,7 @@ const getTodos = async ({ query, user }) => {
     .where('user_id', user.user_id)
     .where('date', '>=', start)
     .where('date', '<=', end)
-    .withGraphFetched('editor(identifier)')
-    .withGraphFetched('creator(identifier)');
+    .withGraphJoined('[creator(identifier), editor(identifier)]');
   let result = [];
   for (const i in results) {
     const res = results[i];

@@ -16,11 +16,9 @@ export class HarvestController extends Controller {
       const { order, direction, offset, limit, q, filters, deleted } =
         req.query as any;
       const query = Harvest.query()
-        .withGraphJoined('harvest_apiary')
-        .withGraphFetched('creator(identifier)')
-        .withGraphFetched('editor(identifier)')
-        .withGraphJoined('type')
-        .withGraphJoined('hive')
+        .withGraphJoined(
+          '[harvest_apiary, type, hive, creator(identifier), editor(identifier)]'
+        )
         .where({
           'harvest_apiary.user_id': req.user.user_id,
           'harvests.deleted': deleted === 'true',
@@ -179,9 +177,7 @@ export class HarvestController extends Controller {
       const result = await Harvest.transaction(async (trx) => {
         const res = await Harvest.query(trx)
           .findByIds(req.body.ids)
-          .withGraphJoined('harvest_apiary')
-          .withGraphJoined('type')
-          .withGraphJoined('hive')
+          .withGraphJoined('[harvest_apiary, type, hive]')
           .where('harvest_apiary.user_id', req.user.user_id);
         return res;
       });

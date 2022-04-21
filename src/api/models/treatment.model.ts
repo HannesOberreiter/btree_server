@@ -5,6 +5,8 @@ import { TreatmentType } from '@models/option/treatment_type.model';
 import { TreatmentDisease } from '@models/option/treatment_disease.model';
 import { TreatmentVet } from '@models/option/treatment_vet.model';
 import { TreatmentApiary } from '@models/treatment_apiary.model';
+import { Apiary } from './apiary.model';
+import { Movedate } from './movedate.model';
 export class Treatment extends ExtModel {
   id!: number;
   date!: Date;
@@ -28,6 +30,7 @@ export class Treatment extends ExtModel {
   vet?: TreatmentVet;
   treatment_apiary?: TreatmentApiary;
   hive?: Hive;
+  apiary?: Apiary;
   creator?: User;
   editor?: User;
 
@@ -56,8 +59,8 @@ export class Treatment extends ExtModel {
       vet_id: { type: 'integer' }, // Vets FK
       disease_id: { type: 'integer' }, // Diseases FK
       bee_id: { type: 'integer' }, // Creator Bee FK
-      edit_id: { type: 'integer' } // Updater Bee FK
-    }
+      edit_id: { type: 'integer' }, // Updater Bee FK
+    },
   };
 
   static relationMappings = () => ({
@@ -66,56 +69,80 @@ export class Treatment extends ExtModel {
       modelClass: TreatmentType,
       join: {
         from: ['treatments.type_id'],
-        to: ['treatment_types.id']
-      }
+        to: ['treatment_types.id'],
+      },
     },
     disease: {
       relation: ExtModel.HasOneRelation,
       modelClass: TreatmentDisease,
       join: {
         from: ['treatments.disease_id'],
-        to: ['treatment_diseases.id']
-      }
+        to: ['treatment_diseases.id'],
+      },
+    },
+    apiary: {
+      relation: ExtModel.ManyToManyRelation,
+      modelClass: Apiary,
+      join: {
+        from: 'treatments.hive_id',
+        through: {
+          from: 'movedates.hive_id',
+          to: 'movedates.apiary_id',
+
+          // If you have a model class for the join table
+          // you can specify it like this:
+          //
+          //modelClass: Movedate,
+
+          // Columns listed here are automatically joined
+          // to the related models on read and written to
+          // the join table instead of the related table
+          // on insert/update.
+          //
+          //extra: ['apiary_id'],
+        },
+        to: 'apiaries.id',
+      },
     },
     vet: {
       relation: ExtModel.HasOneRelation,
       modelClass: TreatmentVet,
       join: {
         from: ['treatments.vet_id'],
-        to: ['treatment_vets.id']
-      }
+        to: ['treatment_vets.id'],
+      },
     },
     hive: {
       relation: ExtModel.HasOneRelation,
       modelClass: Hive,
       join: {
         from: ['treatments.hive_id'],
-        to: ['hives.id']
-      }
+        to: ['hives.id'],
+      },
     },
     treatment_apiary: {
       relation: ExtModel.HasOneRelation,
       modelClass: TreatmentApiary,
       join: {
-        from: ['treatments_apiaries.treatment_id'],
-        to: ['treatments.id']
-      }
+        from: ['treatments.id'],
+        to: ['treatments_apiaries.treatment_id'],
+      },
     },
     creator: {
       relation: ExtModel.HasOneRelation,
       modelClass: User,
       join: {
         from: ['treatments.bee_id'],
-        to: ['bees.id']
-      }
+        to: ['bees.id'],
+      },
     },
     editor: {
       relation: ExtModel.HasOneRelation,
       modelClass: User,
       join: {
         from: ['treatments.edit_id'],
-        to: ['bees.id']
-      }
-    }
+        to: ['bees.id'],
+      },
+    },
   });
 }

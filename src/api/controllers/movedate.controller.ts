@@ -16,10 +16,9 @@ export class MovedateController extends Controller {
     try {
       const { order, direction, offset, limit, q, filters } = req.query as any;
       const query = Movedate.query()
-        .withGraphJoined('hive')
-        .withGraphJoined('apiary')
-        .withGraphFetched('creator(identifier)')
-        .withGraphFetched('editor(identifier)')
+        .withGraphJoined(
+          '[hive, apiary, creator(identifier), editor(identifier)]'
+        )
         .where({
           'apiary.user_id': req.user.user_id,
         })

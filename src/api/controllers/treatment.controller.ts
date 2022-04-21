@@ -16,12 +16,9 @@ export class TreatmentController extends Controller {
       const { order, direction, offset, limit, q, filters, deleted } =
         req.query as any;
       const query = Treatment.query()
-        .withGraphJoined('treatment_apiary')
-        .withGraphFetched('creator(identifier)')
-        .withGraphFetched('editor(identifier)')
-        .withGraphJoined('type')
-        .withGraphJoined('disease')
-        .withGraphJoined('hive')
+        .withGraphJoined(
+          '[treatment_apiary, type, disease, hive, creator(identifier), editor(identifier)]'
+        )
         .where('treatment_apiary.user_id', req.user.user_id)
         .where({
           'treatments.deleted': deleted === 'true',
@@ -180,11 +177,7 @@ export class TreatmentController extends Controller {
       const result = await Treatment.transaction(async (trx) => {
         const res = await Treatment.query(trx)
           .findByIds(req.body.ids)
-          .withGraphJoined('treatment_apiary')
-          .withGraphJoined('type')
-          .withGraphJoined('disease')
-          .withGraphJoined('vet')
-          .withGraphJoined('hive')
+          .withGraphJoined('[treatment_apiary, type, disease, vet, hive]')
           .where('treatment_apiary.user_id', req.user.user_id);
         return res;
       });

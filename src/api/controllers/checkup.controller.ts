@@ -17,11 +17,9 @@ export class CheckupController extends Controller {
       const { order, direction, offset, limit, q, filters, deleted } =
         req.query as any;
       const query = Checkup.query()
-        .withGraphJoined('checkup_apiary')
-        .withGraphFetched('creator(identifier)')
-        .withGraphFetched('editor(identifier)')
-        .withGraphJoined('type')
-        .withGraphJoined('hive')
+        .withGraphJoined(
+          '[checkup_apiary, type, hive, creator(identifier), editor(identifier)]'
+        )
         .where({
           'checkup_apiary.user_id': req.user.user_id,
           'checkups.deleted': deleted === 'true',
@@ -179,9 +177,7 @@ export class CheckupController extends Controller {
       const result = await Checkup.transaction(async (trx) => {
         const res = await Checkup.query(trx)
           .findByIds(req.body.ids)
-          .withGraphJoined('checkup_apiary')
-          .withGraphJoined('type')
-          .withGraphJoined('hive')
+          .withGraphJoined('[checkup_apiary, type, hive]')
           .where('checkup_apiary.user_id', req.user.user_id);
         return res;
       });
