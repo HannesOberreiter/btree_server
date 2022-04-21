@@ -33,6 +33,12 @@ exports.up = function (knex) {
     t.timestamp('created_at').nullable().defaultTo(knex.fn.now());
     t.timestamp('updated_at').nullable().defaultTo(knex.fn.now());
 
+    t.integer('user_id').unsigned().nullable().comment('Company');
+    t.foreign('user_id')
+      .references('companies.id')
+      .onDelete('SET NULL')
+      .onUpdate('CASCADE');
+
     t.integer('bee_id').unsigned().nullable().comment('Creator');
     t.integer('edit_id').unsigned().nullable().comment('Editor');
 
@@ -49,6 +55,7 @@ exports.up = function (knex) {
 
 exports.down = function (knex) {
   knex.schema.alterTable('hives', (t) => {
+    t.dropForeign('user_id');
     t.dropForeign('bee_id');
     t.dropForeign('edit_id');
     t.dropForeign('source_id');

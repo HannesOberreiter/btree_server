@@ -1,6 +1,6 @@
 CREATE VIEW calendar_movements AS
     SELECT
-		date, apiary_id, apiaries.name as apiary_name, user_id,
+		date, apiary_id, apiaries.name as apiary_name, apiaries.user_id,
         GROUP_CONCAT(movedates.id) as move_ids,
         GROUP_CONCAT(DISTINCT hive_id) as hive_ids,
         GROUP_CONCAT(DISTINCT hives.name) as hive_names,
@@ -16,4 +16,4 @@ CREATE VIEW calendar_movements AS
     LEFT JOIN bees as edited
         ON edited.id = movedates.edit_id
     WHERE hives.deleted = 0 AND apiaries.deleted = 0
-    GROUP BY apiary_id, date, apiary_name, user_id
+    GROUP BY apiary_id, date, apiary_name, apiaries.user_id
