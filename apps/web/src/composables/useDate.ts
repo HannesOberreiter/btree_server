@@ -20,9 +20,9 @@ export const useDateFormat = () => {
   ) => {
     const formats = {
       date: 'YYYY-MM-DD',
-      'date-time': 'YYY-MM-DD HH:mm',
+      'date-time': 'YYYY-MM-DD HH:mm',
       time: 'HH:mm',
-      'date-time-seconds': 'YYY-MM-DD HH:mm:ss',
+      'date-time-seconds': 'YYYY-MM-DD HH:mm:ss',
     };
     if (inputFormat !== '')
       return dayjs(date, inputFormat).format(formats[type]);

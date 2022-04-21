@@ -7,6 +7,8 @@ import {
   FormHive,
   FormQueen,
   FormQuicktool,
+  FormScale,
+  FormScaleData,
   FormTodo,
 } from '~/types';
 
@@ -32,6 +34,10 @@ export const useFormCleanup = (
       return cleanupApiary(state.value);
     } else if (unref(table) === 'charge') {
       return cleanupCharge(state.value);
+    } else if (unref(table) === 'scale_data') {
+      return cleanupScaleData(state.value);
+    } else if (unref(table) === 'scale') {
+      return cleanupScale(state.value);
     }
   }
 
@@ -177,7 +183,7 @@ function cleanupTodo(state: FormTodo, isEdit: boolean) {
   } as any;
 
   if (!isEdit) {
-    result['start'] = state.interval;
+    result['interval'] = state.interval;
     result['repeat'] = state.repeat;
   }
   return omitBy(result, isNil);
@@ -194,6 +200,28 @@ function cleanupCharge(state: FormCharge) {
     bestbefore: state.bestbefore,
     kind: state.kind,
     type_id: state.type ? state.type.id : null,
+  } as any;
+  return omitBy(result, isNil);
+}
+
+function cleanupScaleData(state: FormScaleData) {
+  const result = {
+    weight: state.weight,
+    temp1: state.temp1,
+    temp2: state.temp2,
+    humidity: state.humidity,
+    rain: state.rain,
+    note: state.note,
+    datetime: state.datetime,
+    scale_id: state.scale ? state.scale.id : null,
+  } as any;
+  return omitBy(result, isNil);
+}
+
+function cleanupScale(state: FormScale) {
+  const result = {
+    name: state.name,
+    hive_id: state.hive ? state.hive.id : null,
   } as any;
   return omitBy(result, isNil);
 }

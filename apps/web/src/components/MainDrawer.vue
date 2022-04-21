@@ -186,6 +186,12 @@ const links = [
         icon: 'fas fa-database',
         menu: false,
       },
+      {
+        label: 'scale.name',
+        route: 'table-scale_data',
+        icon: 'fas fa-scale',
+        menu: false,
+      },
     ],
   },
   {

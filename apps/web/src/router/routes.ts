@@ -83,6 +83,11 @@ const routes: RouteRecordRaw[] = [
         name: 'table-charge',
         component: () => import('~/pages/TableCharge.vue'),
       },
+      {
+        path: 'scale_data',
+        name: 'table-scale_data',
+        component: () => import('~/pages/TableScaleData.vue'),
+      },
     ],
   },
   /***

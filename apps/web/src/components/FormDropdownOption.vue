@@ -31,6 +31,7 @@ import {
   useHivesQuery,
   useOptionsQuery,
   useQueensQuery,
+  useScaleQuery,
 } from '~/composables/useQuery';
 import { useVModels } from '@vueuse/core';
 import BtnMultipleValues from './BtnMultipleValues.vue';
@@ -73,6 +74,8 @@ const { isLoading, data } =
     ? useHivesQuery({})
     : props.table === 'queen'
     ? useQueensQuery({ modus: null })
+    : props.table === 'scale'
+    ? useScaleQuery({})
     : useOptionsQuery(props.table, {});
 
 const emit = defineEmits(['update:modelValue']);

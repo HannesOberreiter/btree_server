@@ -88,7 +88,8 @@ type Option =
   | 'treatment_vets'
   | 'apiary'
   | 'hive'
-  | 'queen';
+  | 'queen'
+  | 'scale';
 
 type TextField =
   | 'number'
@@ -160,6 +161,22 @@ declare interface FormQueen {
   mother_id: any;
 }
 
+declare interface FormScale {
+  name: string;
+  hive: any;
+}
+
+declare interface FormScaleData {
+  datetime: string;
+  weight: number;
+  temp1: number;
+  temp2: number;
+  rain: number;
+  humidity: number;
+  note: string;
+  scale: any;
+}
+
 declare interface FormQuicktool {
   date: string;
   enddate: string;
@@ -221,4 +238,6 @@ export {
   FormQueen,
   FormQuicktool,
   FormTodo,
+  FormScale,
+  FormScaleData,
 };

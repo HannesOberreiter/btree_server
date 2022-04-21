@@ -30,6 +30,7 @@
           'treatment',
           'checkup',
           'charge',
+          'scale_data',
         ].includes(table)
       "
       :color="filter ? 'negative' : 'warning'"
@@ -38,6 +39,8 @@
       :icon-right="filter ? 'fas fa-filter' : 'fas fa-filter-circle-xmark'"
       @click="openFilter"
     />
+
+    <table-button-scale v-if="table === 'scale_data'"> </table-button-scale>
 
     <q-btn-dropdown no-caps color="info" label="...">
       <q-list>
@@ -159,6 +162,7 @@ import { useNotification } from '~/composables/useResponseText';
 import { useTableFilterStore } from '~/stores/tableFilter';
 import DialogFilter from './DialogFilter.vue';
 import DialogForm from './DialogForm.vue';
+import TableButtonScale from './TableButtonScale.vue';
 
 const storeFilter = useTableFilterStore();
 const useDate = useDateFormat();

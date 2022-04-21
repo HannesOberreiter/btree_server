@@ -35,9 +35,11 @@ import FormMainHive from '~/components/FormMainHive.vue';
 import FormMainMovement from './FormMainMovement.vue';
 import FormMainQueen from './FormMainQueen.vue';
 import FormMainTask from './FormMainTask.vue';
+import FormMainScaleData from './FormMainScaleData.vue';
 import { useDialogPluginComponent } from 'quasar';
 import dayjs from 'dayjs';
 import FormMainCharge from './FormMainCharge.vue';
+import FormMainScale from './FormMainScale.vue';
 
 const { dialogRef, onDialogHide, onDialogOK } = useDialogPluginComponent();
 
@@ -128,6 +130,14 @@ const layouts = {
   },
   charge: {
     comp: FormMainCharge,
+    props: {},
+  },
+  scale_data: {
+    comp: FormMainScaleData,
+    props: {},
+  },
+  scale: {
+    comp: FormMainScale,
     props: {},
   },
 } as any;

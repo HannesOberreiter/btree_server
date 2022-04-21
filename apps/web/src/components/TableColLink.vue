@@ -18,7 +18,7 @@ type Link = 'hive' | 'apiary' | 'queen';
 <script setup lang="ts">
 defineProps({
   id: {
-    type: Number,
+    type: [Number, String],
     required: true,
   },
   label: {

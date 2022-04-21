@@ -5,7 +5,7 @@
     :error-messages="validationErrors(v[props.label])"
     :label="disable ? $t('multipleValues') : $t(label)"
     input-class="text-center"
-    type="date"
+    type="text"
     :disable="disable"
     readonly
     filled
@@ -21,22 +21,37 @@
       <q-icon :name="icon" class="cursor-pointer">
         <q-popup-proxy
           v-model="qDateProxy"
-          cover
           transition-show="scale"
           transition-hide="scale"
         >
-          <q-date
-            v-model="modelValue"
-            :events="markDate"
-            mask="YYYY-MM-DD"
-            :disable="disable"
-            today-btn
-            no-unset
-          >
-            <div class="row items-center justify-end">
-              <q-btn v-close-popup :label="$t('close')" color="primary" flat />
-            </div>
-          </q-date>
+          <div class="row">
+            <q-date
+              v-model="modelValue"
+              :events="markDate"
+              :mask="dateFormat"
+              :disable="disable"
+              today-btn
+              no-unset
+            >
+              <div class="row items-center justify-end">
+                <q-btn
+                  v-close-popup
+                  :label="$t('close')"
+                  color="primary"
+                  flat
+                />
+              </div>
+            </q-date>
+            <q-time
+              v-if="dateFormat === 'YYYY-MM-DD HH:mm:ss'"
+              v-model="modelValue"
+              :mask="dateFormat"
+              :with-seconds="true"
+              :format24h="true"
+              color="purple"
+            >
+            </q-time>
+          </div>
         </q-popup-proxy>
       </q-icon>
     </template>
@@ -58,6 +73,10 @@ dayjs.extend(customParseFormat); // Needed to validate if date is even possible
 const { t } = useI18n();
 const qDateProxy = ref(false);
 const props = defineProps({
+  dateFormat: {
+    type: String,
+    default: 'YYYY-MM-DD',
+  },
   modelValue: {
     default: dayjs().format('YYYY-MM-DD'),
   },
@@ -110,7 +129,7 @@ const rules = computed(() => {
       [props.label]: {
         required: required(t(props.label)),
         minValue: (value: string) => {
-          return dayjs(value, 'YYYY-MM-DD', true).isValid();
+          return dayjs(value, props.dateFormat, true).isValid();
         },
       },
     };
@@ -118,7 +137,9 @@ const rules = computed(() => {
     return {
       [props.label]: {
         minValue: (value: string) => {
-          return value === null || dayjs(value, 'YYYY-MM-DD', true).isValid();
+          return (
+            value === null || dayjs(value, props.dateFormat, true).isValid()
+          );
         },
       },
     };
@@ -137,7 +158,7 @@ function setValues() {
   else if (values.value && !isEmpty(values.value)) {
     modelValue.value = dayjs(
       values.value[0][props.tableId ? props.tableId : props.label]
-    ).format('YYYY-MM-DD');
+    ).format(props.dateFormat);
   } else modelValue.value = resetValue;
 }
 

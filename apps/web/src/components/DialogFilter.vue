@@ -264,6 +264,23 @@ const layouts = {
       },
     },
   ],
+  scale_data: [
+    {
+      comp: FormDropdownType,
+      model: 'scale_id',
+      props: {
+        table: 'scale',
+        'allow-empty': 'filterEmpty',
+      },
+    },
+    {
+      comp: FormInputDateRange,
+      model: 'date',
+      props: {
+        label: 'daterange',
+      },
+    },
+  ],
 } as any;
 
 const layout = computed(() => layouts[props.form]);

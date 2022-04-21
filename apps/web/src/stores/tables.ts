@@ -92,6 +92,16 @@ export const useTablesStore = defineStore('tables', {
       sort: useStorage('table-sort-col-charge', 'date'),
       direction: useStorage('table-sort-direction-charge', false),
     },
+    scale_data: {
+      visible: useStorage('table-visible-scale_data', [
+        'datetime',
+        'weight',
+        'scale.name',
+      ]),
+      length: useStorage('table-length-scale_data', 10),
+      sort: useStorage('table-sort-col-scale_data', 'datetime'),
+      direction: useStorage('table-sort-direction-scale_data', false),
+    },
   }),
   getters: {},
   actions: {},
