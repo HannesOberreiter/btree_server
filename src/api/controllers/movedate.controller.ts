@@ -18,8 +18,8 @@ export class MovedateController extends Controller {
       const query = Movedate.query()
         .withGraphJoined('hive')
         .withGraphJoined('apiary')
-        .withGraphJoined('creator')
-        .withGraphJoined('editor')
+        .withGraphFetched('creator(identifier)')
+        .withGraphFetched('editor(identifier)')
         .where({
           'apiary.user_id': req.user.user_id,
         })

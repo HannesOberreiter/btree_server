@@ -18,8 +18,8 @@ export class CheckupController extends Controller {
         req.query as any;
       const query = Checkup.query()
         .withGraphJoined('checkup_apiary')
-        .withGraphJoined('creator')
-        .withGraphJoined('editor')
+        .withGraphFetched('creator(identifier)')
+        .withGraphFetched('editor(identifier)')
         .withGraphJoined('type')
         .withGraphJoined('hive')
         .where({

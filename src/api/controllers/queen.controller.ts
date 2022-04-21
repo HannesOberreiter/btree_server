@@ -42,8 +42,8 @@ export class QueenController extends Controller {
           .withGraphJoined('race')
           .withGraphJoined('mating')
           .withGraphJoined('own_mother')
-          .withGraphJoined('creator')
-          .withGraphJoined('editor');
+          .withGraphFetched('creator(identifier)')
+          .withGraphFetched('editor(identifier)');
       }
 
       if (Array.isArray(order)) {

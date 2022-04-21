@@ -17,8 +17,8 @@ export class FeedController extends Controller {
         req.query as any;
       const query = Feed.query()
         .withGraphJoined('feed_apiary')
-        .withGraphJoined('creator')
-        .withGraphJoined('editor')
+        .withGraphFetched('creator(identifier)')
+        .withGraphFetched('editor(identifier)')
         .withGraphJoined('type')
         .withGraphJoined('hive')
         .where({

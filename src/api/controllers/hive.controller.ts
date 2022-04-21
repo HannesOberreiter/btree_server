@@ -100,8 +100,8 @@ export class HiveController extends Controller {
           .withGraphJoined('queen_location')
           .withGraphJoined('hive_source')
           .withGraphJoined('hive_type')
-          .withGraphJoined('creator')
-          .withGraphJoined('editor');
+          .withGraphFetched('creator(identifier)')
+          .withGraphFetched('editor(identifier)');
       }
 
       if (filters) {

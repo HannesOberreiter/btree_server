@@ -14,8 +14,8 @@ export class TodoController extends Controller {
     try {
       const { order, direction, offset, limit, q, filters } = req.query as any;
       const query = Todo.query()
-        .withGraphJoined('creator')
-        .withGraphJoined('editor')
+        .withGraphFetched('creator(identifier)')
+        .withGraphFetched('editor(identifier)')
         .where({
           user_id: req.user.user_id,
         })

@@ -17,13 +17,13 @@ export class TreatmentController extends Controller {
         req.query as any;
       const query = Treatment.query()
         .withGraphJoined('treatment_apiary')
-        .withGraphJoined('creator')
-        .withGraphJoined('editor')
+        .withGraphFetched('creator(identifier)')
+        .withGraphFetched('editor(identifier)')
         .withGraphJoined('type')
         .withGraphJoined('disease')
         .withGraphJoined('hive')
+        .where('treatment_apiary.user_id', req.user.user_id)
         .where({
-          'treatment_apiary.user_id': req.user.user_id,
           'treatments.deleted': deleted === 'true',
         })
         .page(offset, parseInt(limit) === 0 ? 10 : limit);

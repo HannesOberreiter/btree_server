@@ -17,8 +17,8 @@ export class HarvestController extends Controller {
         req.query as any;
       const query = Harvest.query()
         .withGraphJoined('harvest_apiary')
-        .withGraphJoined('creator')
-        .withGraphJoined('editor')
+        .withGraphFetched('creator(identifier)')
+        .withGraphFetched('editor(identifier)')
         .withGraphJoined('type')
         .withGraphJoined('hive')
         .where({
