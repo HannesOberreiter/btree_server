@@ -2,7 +2,7 @@ exports.up = function (knex) {
   return knex.schema.createTable('scales', (t) => {
     t.increments('id').primary().unsigned();
 
-    t.string('name', 45);
+    t.string('name', 45).index();
 
     t.integer('hive_id').unsigned().nullable();
     t.foreign('hive_id')
