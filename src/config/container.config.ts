@@ -23,75 +23,85 @@ import { ServiceController } from '@/api/controllers/service.controller';
 import { TodoController } from '@controllers/todo.controller';
 import { TreatmentController } from '@controllers/treatment.controller';
 import { UserController } from '@controllers/user.controller';
+import { ScaleController } from '@controllers/scale.controller';
+import { ScaleDataController } from '@controllers/scale_data.controller';
 
 export class Container {
   private static container: any;
 
   private static init(): any {
     this.container = awilix.createContainer({
-      injectionMode: awilix.InjectionMode.PROXY
+      injectionMode: awilix.InjectionMode.PROXY,
     });
 
     this.container
       .register({ RootController: awilix.asClass(RootController).singleton() })
       .register({
-        ExternalController: awilix.asClass(ExternalController).singleton()
+        ExternalController: awilix.asClass(ExternalController).singleton(),
       })
       .register({
-        ServiceController: awilix.asClass(ServiceController).singleton()
+        ServiceController: awilix.asClass(ServiceController).singleton(),
       })
 
       .register({
-        CompanyController: awilix.asClass(CompanyController).singleton()
+        CompanyController: awilix.asClass(CompanyController).singleton(),
       })
       .register({ HiveController: awilix.asClass(HiveController).singleton() })
       .register({
-        QueenController: awilix.asClass(QueenController).singleton()
+        QueenController: awilix.asClass(QueenController).singleton(),
       })
       .register({
-        ApiaryController: awilix.asClass(ApiaryController).singleton()
+        ApiaryController: awilix.asClass(ApiaryController).singleton(),
       })
       .register({
-        CompanyUserController: awilix.asClass(CompanyUserController).singleton()
+        CompanyUserController: awilix
+          .asClass(CompanyUserController)
+          .singleton(),
       })
       .register({
-        OptionController: awilix.asClass(OptionController).singleton()
-      })
-
-      .register({
-        RearingController: awilix.asClass(RearingController).singleton()
+        OptionController: awilix.asClass(OptionController).singleton(),
       })
 
       .register({
-        CalendarController: awilix.asClass(CalendarController).singleton()
+        RearingController: awilix.asClass(RearingController).singleton(),
       })
 
       .register({
-        ChargeController: awilix.asClass(ChargeController).singleton()
+        CalendarController: awilix.asClass(CalendarController).singleton(),
+      })
+
+      .register({
+        ChargeController: awilix.asClass(ChargeController).singleton(),
       })
       .register({
-        TodoController: awilix.asClass(TodoController).singleton()
+        TodoController: awilix.asClass(TodoController).singleton(),
       })
       .register({
-        CheckupController: awilix.asClass(CheckupController).singleton()
+        CheckupController: awilix.asClass(CheckupController).singleton(),
       })
       .register({ FeedController: awilix.asClass(FeedController).singleton() })
       .register({
-        HarvestController: awilix.asClass(HarvestController).singleton()
+        HarvestController: awilix.asClass(HarvestController).singleton(),
       })
       .register({
-        TreatmentController: awilix.asClass(TreatmentController).singleton()
+        TreatmentController: awilix.asClass(TreatmentController).singleton(),
       })
       .register({
-        MovedateController: awilix.asClass(MovedateController).singleton()
+        MovedateController: awilix.asClass(MovedateController).singleton(),
       })
       .register({
         FieldSettingController: awilix
           .asClass(FieldSettingController)
-          .singleton()
+          .singleton(),
       })
       .register({ UserController: awilix.asClass(UserController).singleton() })
       .register({ AuthController: awilix.asClass(AuthController).singleton() })
+      .register({
+        ScaleController: awilix.asClass(ScaleController).singleton(),
+      })
+      .register({
+        ScaleDataController: awilix.asClass(ScaleDataController).singleton(),
+      })
       .register({ Logger: awilix.asClass(Logger).singleton() })
       .register({ ProxyRouter: awilix.asClass(ProxyRouter).singleton() });
 

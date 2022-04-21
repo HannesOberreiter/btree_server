@@ -22,6 +22,8 @@ import { ServiceRouter } from '../routes/v1/service.route';
 import { TodoRouter } from '@routes/v1/todo.route';
 import { TreatmentRouter } from '@routes/v1/treatment.route';
 import { UserRouter } from '@routes/v1/user.route';
+import { ScaleRouter } from '@routes/v1/scale.route';
+import { ScaleDataRouter } from '@routes/v1/scale_data.route';
 
 /**
  * Load all application routes and plug it on main router
@@ -57,7 +59,9 @@ export class ProxyRouter {
     { segment: '/service/', router: ServiceRouter },
     { segment: '/todo/', router: TodoRouter },
     { segment: '/treatment/', router: TreatmentRouter },
-    { segment: '/user/', router: UserRouter }
+    { segment: '/user/', router: UserRouter },
+    { segment: '/scale/', router: ScaleRouter },
+    { segment: '/scale_data/', router: ScaleDataRouter },
   ];
 
   constructor() {

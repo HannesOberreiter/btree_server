@@ -5,7 +5,7 @@ import { ROLES } from '@enums/role.enum';
 import { Validator } from '@/api/middlewares/validator.middleware';
 import { body } from 'express-validator';
 
-export class ScaleDataRoute extends Router {
+export class ScaleDataRouter extends Router {
   constructor() {
     super();
   }
