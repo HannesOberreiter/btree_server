@@ -157,8 +157,9 @@ const columns = [
     name: 'hive.name',
     label: t('hive'),
     align: 'left',
-    field: (row: any) =>
-      row.hive.modus ? row.hive.name : `${row.hive.name} (${t('inactive')})`,
+    field: (row: any) => row.hive.name,
+    format: (val: string, row: any) =>
+      row.hive.modus ? val : `${val} (${t('inactive')})`,
     sortable: true,
   },
   {

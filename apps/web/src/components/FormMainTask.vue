@@ -49,7 +49,7 @@
         </div>
         <div class="col-12 q-pb-sm">
           <form-dropdown-option
-            v-model="state.disease"
+            v-model="state.treatment_disease"
             :values="values"
             :reset="reset"
             table="treatment_diseases"
@@ -347,7 +347,7 @@ const editOptionsCopy = ref([]) as any;
 const state = ref({
   hive: [] as any,
   type: null as any,
-  disease: null as any,
+  treatment_disease: null as any,
   treatment_vet: null as any,
   ...stateDefault,
 });

@@ -97,7 +97,6 @@ import { QTableProps } from 'quasar';
 import { useDateFormat } from '~/composables/useDate';
 import TableFilter from '~/components/TableFilter.vue';
 import { useTableFilterStore } from '~/stores/tableFilter';
-import { lowerCase } from 'lodash-es';
 
 const useDate = useDateFormat();
 const { t } = useI18n();
@@ -136,7 +135,7 @@ const columns = [
     field: (row: any) => row.date,
     format: (val: string) => useDate.displayFormat(val),
     sortable: true,
-    classes: (row: any) => `text-${lowerCase(row.mark_colour)}`,
+    //classes: (row: any) => `text-${lowerCase(row.mark_colour)}`,
   },
   {
     name: 'mark_colour',
@@ -144,7 +143,7 @@ const columns = [
     align: 'left',
     field: (row: any) => row.mark_colour,
     sortable: true,
-    classes: (row: any) => `text-${lowerCase(row.mark_colour)}`,
+    //classes: (row: any) => `text-${lowerCase(row.mark_colour)}`,
   },
   {
     name: 'hive_location.hive_name',

@@ -201,6 +201,7 @@ declare interface FormQuicktool {
   type: any;
   disease: any;
   treatment_vet: any;
+  treatment_disease: any;
 }
 
 export {

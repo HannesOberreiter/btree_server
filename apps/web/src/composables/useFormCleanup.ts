@@ -106,6 +106,10 @@ function cleanupQuicktool(state: FormQuicktool, isEdit: boolean, task: string) {
     result['amount'] = state.amount_calc;
 
     if (task === 'treatment') {
+      result['disease_id'] = state.treatment_disease
+        ? state.treatment_disease.id
+        : null;
+
       result['vet_id'] = state.treatment_vet ? state.treatment_vet.id : null;
       result['wait'] = state.treatment_wait;
     } else if (task === 'harvest') {
