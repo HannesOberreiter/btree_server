@@ -24,21 +24,25 @@
         <!-- eslint-disable-next-line vue/valid-v-slot -->
         <template #body-cell-hive_location.apiary_name="props">
           <table-col-link
+            v-if="props.row.hive_location"
             :id="props.row.hive_location.apiary_id"
             :label="props.value"
             link="apiary"
           >
           </table-col-link>
+          <td v-else></td>
         </template>
 
         <!-- eslint-disable-next-line vue/valid-v-slot -->
         <template #body-cell-hive_location.hive_name="props">
           <table-col-link
+            v-if="props.row.hive_location"
             :id="props.row.hive_location.hive_id"
             :label="props.value"
             link="hive"
           >
           </table-col-link>
+          <td v-else></td>
         </template>
 
         <template #body-cell-note="props">
