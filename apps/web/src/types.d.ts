@@ -130,6 +130,14 @@ declare interface FormTodo {
   repeat: number;
 }
 
+declare interface FormOption {
+  name: string;
+  modus: boolean;
+  favorite: boolean;
+  note: string;
+  unit: string;
+}
+
 declare interface FormCharge {
   bestbefore: string;
   date: string;
@@ -240,4 +248,5 @@ export {
   FormTodo,
   FormScale,
   FormScaleData,
+  FormOption,
 };

@@ -53,7 +53,7 @@
       icon="fas fa-passport"
       :values="values"
       :reset="reset"
-      :required="true"
+      :required="isEdit ? false : true"
     ></form-input-text>
     <form-input-note
       v-model="state.note"

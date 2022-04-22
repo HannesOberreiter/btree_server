@@ -186,6 +186,10 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  tableOption: {
+    type: String,
+    default: '',
+  },
 });
 const emit = defineEmits(['update:deleted', 'update:modus', 'change']);
 const { deleted, modus } = useVModels(props, emit);
@@ -203,9 +207,10 @@ const dialogForm = (
     componentProps: {
       title: title,
       form: form,
-      maximized: form === 'todo' ? false : true,
+      maximized: ['todo', 'option'].includes(form) ? false : true,
       selected: selected,
       ids: ids,
+      option: props.tableOption,
     },
   }).onOk(() => {
     onEmit();
@@ -270,7 +275,11 @@ function onDelete() {
     html: true,
   }).onOk(() => {
     const ids = selected.value.map((o: any) => o.id);
-    api.patch(`/v1/${props.table}/batchDelete`, { ids: ids }).then(
+    const url =
+      props.table === 'option'
+        ? `/v1/${props.table}/${props.tableOption}/batchDelete`
+        : `/v1/${props.table}/batchDelete`;
+    api.patch(url, { ids: ids }).then(
       (_response: any) => {
         emit('change');
         notification.open('positive', '');
@@ -291,7 +300,7 @@ function onExport() {
   $q.loading.show({ delay: 200 });
   const csv = stringify(unref(selected.value), { header: true });
   const status = exportFile(
-    `${props.table}-export-${useDate.getCurrent()}.csv`,
+    `${props.table}${props.tableOption}-export-${useDate.getCurrent()}.csv`,
     csv,
     'text/csv'
   );

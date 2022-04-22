@@ -31,6 +31,14 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  tableOption: {
+    type: String,
+    default: '',
+  },
+  type: {
+    type: String,
+    default: 'status',
+  },
 });
 
 async function changeStatus() {
@@ -38,7 +46,11 @@ async function changeStatus() {
     status: !props.value,
     ids: [props.id],
   });
-  await api.patch(`/v1/${props.table}/status`, data).then(
+  const url =
+    props.table === 'option'
+      ? `/v1/${props.table}/${props.tableOption}/${props.type}`
+      : `/v1/${props.table}/${props.type}`;
+  await api.patch(url, data).then(
     (_response: any) => {
       notification.open('positive', '');
       emit('change', true);

@@ -45,9 +45,7 @@ const { t } = useI18n();
 
 const props = defineProps({
   modelValue: {
-    type: null as unknown as PropType<string | null>,
-    validator: (v: any) => typeof v === 'string' || v === null,
-    default: '',
+    default: null,
   },
   reset: {
     type: Number,

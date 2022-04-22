@@ -1,5 +1,6 @@
 <template>
   <q-input
+    v-if="table !== 'option'"
     v-model="modelFilter"
     borderless
     dense
@@ -42,6 +43,10 @@ const props = defineProps({
   columns: {
     type: Object as PropType<QTableProps['columns']>,
     required: true,
+  },
+  table: {
+    type: String,
+    default: '',
   },
 });
 

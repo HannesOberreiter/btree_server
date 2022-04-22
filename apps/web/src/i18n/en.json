@@ -245,6 +245,9 @@
   "restore": "Restore",
   "save": "Save",
   "search": "Search",
+  "option": "Option | Options",
+  "favourite": "Favourite",
+  "favorite": "Favourite",
   "setting": {
     "hintChargeBestbefore": "Best before: 1 Date Field, to be used for best before date",
     "hintChargeCalibrate": "Calibrate: 1 Input Field, if you want to keep a calibrate list for you charges",

@@ -1,7 +1,10 @@
 <template>
   <q-item
     v-ripple
-    :to="{ name: link.route }"
+    :to="{
+      name: link.route,
+      params: link.route === 'settingOption' ? { option: 'checkup_types' } : {},
+    }"
     clickable
     exact
     active-class="text-yellow"

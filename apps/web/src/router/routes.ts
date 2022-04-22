@@ -262,9 +262,15 @@ const routes: RouteRecordRaw[] = [
         component: () => import('~/pages/SettingField.vue'),
       },
       {
-        path: 'dropbox/:token?',
+        path: 'option/:option',
+        name: 'settingOption',
         props: true,
+        component: () => import('~/pages/SettingOption.vue'),
+      },
+      {
+        path: 'dropbox/:token?',
         name: 'settingDropbox',
+        props: true,
         component: () => import('~/pages/SettingDropbox.vue'),
       },
     ],

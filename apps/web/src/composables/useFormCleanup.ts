@@ -5,6 +5,7 @@ import { Ref } from 'vue';
 import {
   FormCharge,
   FormHive,
+  FormOption,
   FormQueen,
   FormQuicktool,
   FormScale,
@@ -38,6 +39,8 @@ export const useFormCleanup = (
       return cleanupScaleData(state.value);
     } else if (unref(table) === 'scale') {
       return cleanupScale(state.value);
+    } else if (unref(table) === 'option') {
+      return cleanupOption(state.value);
     }
   }
 
@@ -222,6 +225,17 @@ function cleanupScale(state: FormScale) {
   const result = {
     name: state.name,
     hive_id: state.hive ? state.hive.id : null,
+  } as any;
+  return omitBy(result, isNil);
+}
+
+function cleanupOption(state: FormOption) {
+  const result = {
+    name: state.name,
+    note: state.note,
+    unit: state.unit,
+    favorite: state.favorite,
+    modus: state.modus,
   } as any;
   return omitBy(result, isNil);
 }

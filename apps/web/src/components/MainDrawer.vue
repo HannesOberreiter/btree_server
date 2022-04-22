@@ -212,6 +212,12 @@ const links = [
         menu: [] as any,
       },
       {
+        label: 'option',
+        route: 'settingOption',
+        icon: 'fas fa-cogs',
+        menu: [] as any,
+      },
+      {
         label: 'company.name',
         route: 'settingCompany',
         icon: 'fas fa-warehouse',

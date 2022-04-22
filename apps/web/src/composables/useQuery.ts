@@ -449,27 +449,25 @@ export function useHivesQuery({
 }
 
 export function useOptionsQuery(
-  table: Option,
+  table: MaybeRef<Option>,
   {
-    order = ['name', 'favorite'] as MaybeRef<Array<string>>,
+    order = ['favorite', 'name'] as MaybeRef<Array<string>>,
     direction = ['asc', 'asc'] as MaybeRef<Array<string>>,
     modus = true as MaybeRef<boolean>,
-    q = '' as MaybeRef<string>,
     enabled = true as MaybeRef<boolean>,
   }
 ) {
   const notification = useNotification();
   const api = useApiFetch();
   return useQuery(
-    ['option', table, order, direction, q],
+    ['option', table, order, direction],
     () => {
       const payload = {
         order: unref(order),
         direction: unref(direction),
         modus: unref(modus),
-        q: unref(q),
       };
-      return api.get(`/v1/option/${table}`, payload);
+      return api.get(`/v1/option/${unref(table)}`, payload);
     },
     {
       enabled: enabled,

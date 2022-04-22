@@ -36,10 +36,13 @@ import FormMainMovement from './FormMainMovement.vue';
 import FormMainQueen from './FormMainQueen.vue';
 import FormMainTask from './FormMainTask.vue';
 import FormMainScaleData from './FormMainScaleData.vue';
+import FormMainOption from './FormMainOption.vue';
 import { useDialogPluginComponent } from 'quasar';
 import dayjs from 'dayjs';
 import FormMainCharge from './FormMainCharge.vue';
 import FormMainScale from './FormMainScale.vue';
+import { PropType } from 'vue';
+import { Option } from '~/types';
 
 const { dialogRef, onDialogHide, onDialogOK } = useDialogPluginComponent();
 
@@ -72,6 +75,10 @@ const props = defineProps({
   latlng: {
     type: Object,
     default: null,
+  },
+  option: {
+    type: String as PropType<Option>,
+    default: '',
   },
 });
 
@@ -139,6 +146,12 @@ const layouts = {
   scale: {
     comp: FormMainScale,
     props: {},
+  },
+  option: {
+    comp: FormMainOption,
+    props: {
+      option: props.option,
+    },
   },
 } as any;
 

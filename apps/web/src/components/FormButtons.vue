@@ -27,9 +27,11 @@
 </template>
 
 <script setup lang="ts">
+import { PropType } from 'vue';
 import { useApiFetch } from '~/composables/useApi';
 import { useFormCleanup } from '~/composables/useFormCleanup';
 import { useNotification } from '~/composables/useResponseText';
+import { Option } from '~/types';
 
 const notification = useNotification();
 const isSubmitting = ref(false);
@@ -56,6 +58,10 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  formOption: {
+    type: String as PropType<Option>,
+    default: '',
+  },
 });
 const { state, editIds, isEdit, v, form } = toRefs(props);
 const cleanup = useFormCleanup(form, state, props.isEdit);
@@ -73,8 +79,11 @@ async function onUpdate() {
     ids: id,
     data: cleanup.cleanup(),
   };
-
-  await api.patch(`/v1/${form.value}`, JSON.stringify(data)).then(
+  const url =
+    form.value === 'option'
+      ? `/v1/${form.value}/${props.formOption}`
+      : `/v1/${form.value}`;
+  await api.patch(url, JSON.stringify(data)).then(
     async (response: any) => {
       lastInsert.value = response;
       emit('change');
@@ -91,18 +100,21 @@ async function onUpdate() {
 async function onUndo() {
   isSubmitting.value = true;
   const data = JSON.stringify({ ids: lastInsert.value });
-  await api
-    .patch(`/v1/${lastInsertTable.value}/batchDelete?hard=true`, data)
-    .then(
-      (_response: any) => {
-        lastInsert.value = null;
-        emit('change');
-        notification.open('positive', '');
-      },
-      (error) => {
-        notification.open('negative', error);
-      }
-    );
+  const url =
+    form.value === 'option'
+      ? `/v1/${form.value}/${props.formOption}/batchDelete?hard=true`
+      : `/v1/${form.value}/batchDelete?hard=true`;
+
+  await api.patch(url, data).then(
+    (_response: any) => {
+      lastInsert.value = null;
+      emit('change');
+      notification.open('positive', '');
+    },
+    (error) => {
+      notification.open('negative', error);
+    }
+  );
   isSubmitting.value = false;
   return;
 }
@@ -116,7 +128,11 @@ async function onSubmit() {
     return;
   }
   const data = cleanup.cleanup();
-  await api.post(`/v1/${form.value}`, JSON.stringify(data)).then(
+  const url =
+    form.value === 'option'
+      ? `/v1/${form.value}/${props.formOption}`
+      : `/v1/${form.value}`;
+  await api.post(url, JSON.stringify(data)).then(
     async (response: any) => {
       lastInsert.value = response;
       lastInsertTable.value = unref(form.value);
