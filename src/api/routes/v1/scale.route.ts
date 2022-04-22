@@ -18,13 +18,9 @@ export class ScaleRouter extends Router {
         Container.resolve('ScaleController').get
       );
     this.router
-      .route('/:id')
+      .route('/')
       .patch(
-        Validator.validate([
-          param('id').isNumeric(),
-          body('name').isString().isLength({ min: 1, max: 45 }).trim(),
-          body('hive_id').isNumeric().optional().trim(),
-        ]),
+        Validator.validate([body('ids').isArray()]),
         Guard.authorize([ROLES.admin, ROLES.user]),
         Container.resolve('ScaleController').patch
       );
@@ -39,7 +35,7 @@ export class ScaleRouter extends Router {
         Container.resolve('ScaleController').post
       );
     this.router
-      .route('/')
+      .route('/:id')
       .delete(
         Validator.validate([param('id').isNumeric()]),
         Guard.authorize([ROLES.admin]),

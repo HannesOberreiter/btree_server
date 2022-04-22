@@ -56,9 +56,9 @@ export class ScaleDataController extends Controller {
   }
 
   async patch(req: IUserRequest, res: Response, next: NextFunction) {
-    const ids = req.body.ids;
-    const insert = { ...req.body.data };
     try {
+      const ids = req.body.ids;
+      const insert = { ...req.body.data };
       const result = await ScaleData.transaction(async (trx) => {
         return await ScaleData.query(trx)
           .withGraphJoined('scale')

@@ -18,7 +18,7 @@ export class ScaleController extends Controller {
       if (req.params.id) {
         query.findById(req.params.id);
       }
-      res.locals.data = await query;
+      res.locals.data = req.params.id ? [await query] : await query; // array is returned to be conistent with batchGet function
       next();
     } catch (e) {
       next();
@@ -26,15 +26,18 @@ export class ScaleController extends Controller {
   }
   async patch(req: IUserRequest, res: Response, next) {
     try {
+      const ids = req.body.ids;
+      const insert = { ...req.body.data };
+
       const result = await Scale.transaction(async (trx) => {
-        if (req.body.hive_id)
+        if (insert.hive_id)
           await Hive.query(trx)
-            .where({ id: req.body.hive_id, user_id: req.user.user_id })
+            .where({ id: insert.hive_id, user_id: req.user.user_id })
             .throwIfNotFound();
 
         return await Scale.query(trx)
-          .patch({ name: req.body.name, hive_id: req.body.hive_id })
-          .findById(req.params.id)
+          .patch(insert)
+          .findByIds(ids)
           .where('user_id', req.user.user_id);
       });
       res.locals.data = result;
@@ -67,11 +70,11 @@ export class ScaleController extends Controller {
     try {
       const result = await Scale.transaction(async (trx) => {
         await ScaleData.query(trx).delete().joinRelated('scale').where({
-          scale_id: req.body.params.id,
+          scale_id: req.params.id,
           'scale.user_id': req.user.user_id,
         });
         return await Scale.query(trx)
-          .deleteById(req.body.params.id)
+          .deleteById(req.params.id)
           .where('user_id', req.user.user_id);
       });
       res.locals.data = result;
