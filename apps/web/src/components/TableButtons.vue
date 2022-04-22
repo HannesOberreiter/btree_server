@@ -40,7 +40,8 @@
       @click="openFilter"
     />
 
-    <table-button-scale v-if="table === 'scale_data'"> </table-button-scale>
+    <table-button-scale v-if="table === 'scale_data'" @change="emit('change')">
+    </table-button-scale>
 
     <q-btn-dropdown no-caps color="info" label="...">
       <q-list>
@@ -202,7 +203,7 @@ const dialogForm = (
     componentProps: {
       title: title,
       form: form,
-      maximized: true,
+      maximized: form === 'todo' ? false : true,
       selected: selected,
       ids: ids,
     },

@@ -189,7 +189,7 @@ const links = [
       {
         label: 'scale.name',
         route: 'table-scale_data',
-        icon: 'fas fa-scale',
+        icon: 'fas fa-scale-balanced',
         menu: false,
       },
     ],

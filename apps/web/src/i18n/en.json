@@ -41,10 +41,12 @@
   },
   "scale": {
     "name": "Scale",
-    "nameHint": "Name needs to be unqiue and is needed for API calls as identifier."
+    "nameHint": "Name needs to be unique and is needed for API calls as identifier.",
+    "deleteText": "Are you sure to delete {name}. You cannot undo this action and all connected scale data will be deleted!"
   },
   "confirm": "Confirm",
   "timestamp": "Timestamp",
+  "dialogSelectOptionText": "Select the option you want to edit.",
   "humidity": "Humidity",
   "rain": "Rain",
   "confirmPassword": "Confirm password",

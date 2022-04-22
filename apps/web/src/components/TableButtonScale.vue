@@ -22,9 +22,36 @@
 
 <script setup lang="ts">
 import { useQuasar } from 'quasar';
+import { useApiFetch } from '~/composables/useApi';
+import { useNotification } from '~/composables/useResponseText';
 import DialogForm from './DialogForm.vue';
+import DialogSelectOption from './DialogSelectOption.vue';
 
 const $q = useQuasar();
+const { t } = useI18n();
+const notification = useNotification();
+const api = useApiFetch();
+const emit = defineEmits(['change']);
+
+const dialogSelectScale = (type: 'edit' | 'delete') => {
+  $q.dialog({
+    component: DialogSelectOption,
+    componentProps: {
+      table: 'scale',
+      label: 'scale.name',
+    },
+  }).onOk((val) => {
+    if (type === 'edit') dialogForm('new', [val.id]);
+    if (type === 'delete')
+      $q.dialog({
+        title: t('delete') + ' ' + val.name,
+        message: t('scale.deleteText', { name: val.name }),
+        cancel: true,
+      }).onOk(() => {
+        finalDelete(val.id);
+      });
+  });
+};
 
 const dialogForm = (
   title: string,
@@ -37,22 +64,34 @@ const dialogForm = (
     componentProps: {
       title: title,
       form: form,
-      maximized: true,
       selected: selected,
       ids: ids,
+      maximized: false,
     },
-  });
+  }).onOk(() => emit('change'));
 };
+
+function finalDelete(id: number) {
+  api.deleting(`/v1/scale/${id}`).then(
+    (_response: any) => {
+      emit('change');
+      notification.open('positive', '');
+    },
+    (error) => {
+      notification.open('negative', error);
+    }
+  );
+}
 
 function onNew() {
   dialogForm('new', null);
 }
 
 function onDelete() {
-  dialogForm('edit', null);
+  dialogSelectScale('delete');
 }
 
 function onEdit() {
-  dialogForm('edit', null);
+  dialogSelectScale('edit');
 }
 </script>

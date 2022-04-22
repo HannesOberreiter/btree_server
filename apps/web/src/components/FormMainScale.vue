@@ -19,6 +19,7 @@
       v-model="state.hive"
       table="hive"
       label="hive"
+      table-id="hive_id"
       :values="values"
       :reset="reset"
     ></form-dropdown-option>
@@ -84,11 +85,12 @@ const state = ref<FormScale>({
 });
 
 async function getEdit(id: unknown[]) {
-  return await api.get(`/v1/scale/${id}`).then(
+  return await api.get(`/v1/scale/${id[0]}`).then(
     (response: any) => {
-      const editIds = map(response, (row: any) => [
-        { value: row.id, label: `ID: ${row.id} / (${row.scale.name})` },
-      ]);
+      const editIds = map(response, (row: any) => {
+        return [{ value: row.id, label: `ID: ${row.id} / (${row.name})` }];
+      });
+      console.log(editIds);
       editOptions.value = flatten(editIds);
       editOptionsCopy.value = flatten(editIds);
       values.value = response;
