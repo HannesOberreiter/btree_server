@@ -41,3 +41,7 @@ export const tableCheckSelected = (selected: any[], rows: any) => {
   const rowIds = rows.map((o: any) => o.id);
   return selected.filter((o: any) => rowIds.includes(o.id));
 };
+
+// https://stackoverflow.com/questions/10473185/regex-javascript-image-file-extension
+export const isImage = (filename: string) =>
+  /\.(gif|jpe?g|tiff?|png|webp|bmp|pdf)$/i.test(filename);

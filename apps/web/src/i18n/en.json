@@ -248,6 +248,19 @@
   "option": "Option | Options",
   "favourite": "Favourite",
   "favorite": "Favourite",
+  "folder": "Folder",
+  "newFolder": "New Folder",
+  "upload": "Upload",
+  "download": "Download",
+  "select": "Select",
+  "rename": "Rename",
+  "dropbox": {
+    "text": "Here you can add your Dropbox connection, if you want to delete this b.tree from dropbox use following link:",
+    "connectAccount": "Connect your Dropbox account",
+    "refreshToken": "Refresh token",
+    "deleteAccess": "Delete access",
+    "deleteFileOrFolder": "Are you sure you want the selected file or folder and its content?"
+  },
   "setting": {
     "hintChargeBestbefore": "Best before: 1 Date Field, to be used for best before date",
     "hintChargeCalibrate": "Calibrate: 1 Input Field, if you want to keep a calibrate list for you charges",

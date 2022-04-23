@@ -25,6 +25,7 @@
     "@vueuse/sound": "^1.1.7",
     "csv-stringify": "^6.0.5",
     "dayjs": "^1.11.0",
+    "dropbox": "^10.28.0",
     "leaflet": "^1.7.1",
     "lodash-es": "^4.17.21",
     "pinia": "^2.0.12",

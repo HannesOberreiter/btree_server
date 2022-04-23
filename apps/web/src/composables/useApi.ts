@@ -10,6 +10,9 @@ const state = reactive({
   logout: false,
 });
 
+const controller = new AbortController();
+const { signal } = controller;
+
 export const useApiFetch = () => {
   const storeToken = useAuthTokenStore();
 
@@ -32,9 +35,12 @@ export const useApiFetch = () => {
       return baseUrl + url + '?' + stringify(param, { arrayFormat: 'bracket' });
   };
 
+  const abort = () => controller.abort();
+
   const get = async (url: string, payload = '' as unknown): Promise<any> => {
     const urlParam = buildUrl(url, payload);
     const originalRequest = new Request(urlParam, {
+      signal,
       method: 'GET', // *GET, POST, PUT, DELETE, etc.
       credentials: 'omit', // include, *same-origin, omit
       headers: buildHeader(),
@@ -60,6 +66,7 @@ export const useApiFetch = () => {
   const post = async (url: string, payload: unknown): Promise<any> => {
     const urlParam = buildUrl(url, '');
     const originalRequest = new Request(urlParam, {
+      signal,
       method: 'POST', // *GET, POST, PUT, DELETE, etc.
       credentials: 'omit', // include, *same-origin, omit
       headers: buildHeader(),
@@ -72,6 +79,7 @@ export const useApiFetch = () => {
   const patch = async (url: string, payload: unknown): Promise<any> => {
     const urlParam = buildUrl(url, '');
     const originalRequest = new Request(urlParam, {
+      signal,
       method: 'PATCH', // *GET, POST, PUT, DELETE, etc.
       credentials: 'omit', // include, *same-origin, omit
       headers: buildHeader(),
@@ -155,5 +163,5 @@ export const useApiFetch = () => {
       });
   }
 
-  return { get, post, patch, deleting, state };
+  return { abort, get, post, patch, deleting, state };
 };
