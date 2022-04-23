@@ -29,6 +29,7 @@ import { TreatmentType } from '../models/option/treatment_type.model';
 import { TreatmentVet } from '../models/option/treatment_vet.model';
 import { User } from '../models/user.model';
 import { Queen } from '../models/queen.model';
+import { Dropbox } from '../models/dropbox.model';
 
 export const deleteUser = async (bee_id: number) => {
   try {
@@ -83,6 +84,7 @@ export const deleteCompany = async (company_id: number) => {
       ]);
 
       await Hive.query(trx).delete().where({ user_id: company_id });
+      await Dropbox.query(trx).delete().where({ user_id: company_id });
 
       await Movedate.query(trx)
         .delete()

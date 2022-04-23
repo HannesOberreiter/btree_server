@@ -79,6 +79,7 @@ const env = process.env.NODE_ENV;
 const version = process.env.API_VERSION;
 const port = process.env.PORT;
 const url = process.env.URL;
+const frontend = process.env.FRONTEND;
 const authorized = process.env.AUTHORIZED;
 const jwtSecret = process.env.JWT_SECRET;
 const jwtExpirationInterval: number = parseInt(
@@ -89,6 +90,8 @@ const logs = process.env.NODE_ENV === 'production' ? 'combined' : 'development';
 const httpLogs = process.env.NODE_ENV === 'production' ? 'combined' : 'dev';
 const contentType = process.env.CONTENT_TYPE;
 const meteoblueKey = process.env.METEOBLUE_KEY;
+const dropboxClientId = process.env.DROPBOX_CLIENT_ID;
+const dropboxClientSecret = process.env.DROPBOX_CLIENT_SECRET;
 
 const knexConfig = {
   client: process.env.DB_TYPE,
@@ -135,6 +138,7 @@ export {
   env,
   port,
   url,
+  frontend,
   meteoblueKey,
   authorized,
   contentType,
@@ -144,4 +148,6 @@ export {
   logs,
   httpLogs,
   mailConfig,
+  dropboxClientId,
+  dropboxClientSecret,
 };

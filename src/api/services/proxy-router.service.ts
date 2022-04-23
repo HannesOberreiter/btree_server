@@ -24,7 +24,7 @@ import { TreatmentRouter } from '@routes/v1/treatment.route';
 import { UserRouter } from '@routes/v1/user.route';
 import { ScaleRouter } from '@routes/v1/scale.route';
 import { ScaleDataRouter } from '@routes/v1/scale_data.route';
-
+import { DropboxRouter } from '../routes/v1/dropbox.route';
 /**
  * Load all application routes and plug it on main router
  */
@@ -62,6 +62,7 @@ export class ProxyRouter {
     { segment: '/user/', router: UserRouter },
     { segment: '/scale/', router: ScaleRouter },
     { segment: '/scale_data/', router: ScaleDataRouter },
+    { segment: '/dropbox/', router: DropboxRouter },
   ];
 
   constructor() {

@@ -27,11 +27,6 @@ export class Guard {
         Guard.handleJWT(req, res, next, roles)
       )(req, res, next);
 
-  static authorizeDataTables =
-    (roles = listNumber(ROLES)) =>
-    (req: IUserRequest, res: IResponse) =>
-      Guard.handleJWTDataTables(req, res, roles);
-
   private static handleJWT =
     (
       req: IUserRequest,
@@ -62,27 +57,4 @@ export class Guard {
 
       return next();
     };
-
-  private static handleJWTDataTables = (
-    req: IUserRequest,
-    res: IResponse,
-    roles: number[]
-  ) => {
-    const user = req.user;
-    if (!user) {
-      return false;
-    }
-
-    if (
-      roles === [ROLES.admin] &&
-      user.rank !== ROLES.admin &&
-      parseInt(req.params.bee_id, 10) !== user.bee_id
-    ) {
-      return false;
-    } else if (!roles.includes(user.rank)) {
-      return false;
-    }
-
-    return true;
-  };
 }

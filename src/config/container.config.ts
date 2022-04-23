@@ -25,7 +25,7 @@ import { TreatmentController } from '@controllers/treatment.controller';
 import { UserController } from '@controllers/user.controller';
 import { ScaleController } from '@controllers/scale.controller';
 import { ScaleDataController } from '@controllers/scale_data.controller';
-
+import { DropboxController } from '@/api/controllers/dropbox.controller';
 export class Container {
   private static container: any;
 
@@ -102,7 +102,12 @@ export class Container {
       .register({
         ScaleDataController: awilix.asClass(ScaleDataController).singleton(),
       })
-      .register({ Logger: awilix.asClass(Logger).singleton() })
+      .register({
+        DropboxController: awilix.asClass(DropboxController).singleton(),
+      })
+      .register({
+        Logger: awilix.asClass(Logger).singleton(),
+      })
       .register({ ProxyRouter: awilix.asClass(ProxyRouter).singleton() });
 
     return this.container;
