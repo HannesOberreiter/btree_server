@@ -126,6 +126,7 @@ declare interface FormTodo {
   name: string;
   note: string;
   done: boolean;
+  url: string;
   interval: number;
   repeat: number;
 }

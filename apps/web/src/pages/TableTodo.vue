@@ -32,7 +32,9 @@
             :columns="columns"
           ></table-filter>
         </template>
-
+        <template #body-cell-url="props">
+          <table-col-url :value="props.value"></table-col-url>
+        </template>
         <template #body-cell-note="props">
           <table-col-note
             :value="props.value"
@@ -64,6 +66,7 @@ import { useDateFormat } from '~/composables/useDate';
 import { useTableFilterStore } from '~/stores/tableFilter';
 import TableColNote from '~/components/TableColNote.vue';
 import TableColStatus from '~/components/TableColStatus.vue';
+import TableColUrl from '~/components/TableColUrl.vue';
 
 const useDate = useDateFormat();
 const { t } = useI18n();
@@ -103,6 +106,13 @@ const columns = [
     label: t('name'),
     align: 'left',
     field: (row: any) => row.name,
+    sortable: true,
+  },
+  {
+    name: 'url',
+    label: t('url'),
+    align: 'left',
+    field: (row: any) => row.url,
     sortable: true,
   },
   {

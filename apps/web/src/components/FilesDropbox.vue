@@ -87,7 +87,7 @@ import { isImage } from '~/helpers';
 import { round } from 'lodash-es';
 import { useDateFormat } from '~/composables/useDate';
 import { useServiceDropbox } from '~/composables/useDropbox';
-import DialogFile from '~/components/DialogFile.vue';
+import DialogFileShow from '~/components/DialogFileShow.vue';
 import { useQuasar } from 'quasar';
 
 const $q = useQuasar();
@@ -95,7 +95,7 @@ const useDate = useDateFormat();
 const useDropbox = useServiceDropbox();
 const { t } = useI18n();
 
-defineEmits(['select']);
+const emit = defineEmits(['selected']);
 defineProps({
   select: {
     type: Boolean,
@@ -105,7 +105,7 @@ defineProps({
 
 const showFile = (id: string) => {
   $q.dialog({
-    component: DialogFile,
+    component: DialogFileShow,
     componentProps: {
       id: id,
     },
@@ -119,6 +119,10 @@ watch(
   },
   { immediate: true }
 );
+
+function onSelect(id: string) {
+  emit('selected', id);
+}
 
 function deleteFile(row: any) {
   $q.dialog({

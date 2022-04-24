@@ -44,6 +44,13 @@
         ></form-input-numeric>
       </div>
       <div class="col-12">
+        <form-input-url
+          v-model="state.url"
+          :values="values"
+          :reset="reset"
+        ></form-input-url>
+      </div>
+      <div class="col-12">
         <form-input-note
           v-model="state.note"
           :values="values"
@@ -97,6 +104,7 @@ import useVuelidate from '@vuelidate/core';
 import { flatten, map, merge } from 'lodash-es';
 import FormButtons from './FormButtons.vue';
 import { useApiFetch } from '~/composables/useApi';
+import FormInputUrl from './FormInputUrl.vue';
 
 const api = useApiFetch();
 const notification = useNotification();

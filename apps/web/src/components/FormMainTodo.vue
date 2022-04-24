@@ -55,6 +55,11 @@
       :reset="reset"
       :required="isEdit ? false : true"
     ></form-input-text>
+    <form-input-url
+      v-model="state.url"
+      :values="values"
+      :reset="reset"
+    ></form-input-url>
     <form-input-note
       v-model="state.note"
       :values="values"
@@ -86,6 +91,7 @@ import FormInputDate from './FormInputDate.vue';
 import FormInputNumeric from './FormInputNumeric.vue';
 import FormInputText from './FormInputText.vue';
 import FormInputNote from './FormInputNote.vue';
+import FormInputUrl from './FormInputUrl.vue';
 import FormDropdownEdit from './FormDropdownEdit.vue';
 import FormInputCheckbox from './FormInputCheckbox.vue';
 import FormButtons from './FormButtons.vue';
@@ -129,6 +135,7 @@ const editOptionsCopy = ref([]) as any;
 const stateDefault = {
   date: props.date,
   name: '',
+  url: '',
   note: '',
   done: false,
   interval: 0,

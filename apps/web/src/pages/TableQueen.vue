@@ -45,6 +45,9 @@
           <td v-else></td>
         </template>
 
+        <template #body-cell-url="props">
+          <table-col-url :value="props.value"></table-col-url>
+        </template>
         <template #body-cell-note="props">
           <table-col-note
             :value="props.value"
@@ -97,6 +100,7 @@ import { QTableProps } from 'quasar';
 import { useDateFormat } from '~/composables/useDate';
 import TableFilter from '~/components/TableFilter.vue';
 import { useTableFilterStore } from '~/stores/tableFilter';
+import TableColUrl from '~/components/TableColUrl.vue';
 
 const useDate = useDateFormat();
 const { t } = useI18n();
@@ -189,6 +193,13 @@ const columns = [
     label: t('race'),
     align: 'left',
     field: (row: any) => (row.race ? row.race.name : ''),
+    sortable: true,
+  },
+  {
+    name: 'url',
+    label: t('url'),
+    align: 'left',
+    field: (row: any) => row.url,
     sortable: true,
   },
   {

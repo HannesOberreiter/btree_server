@@ -160,6 +160,15 @@ export const useServiceDropbox = () => {
       });
   }
 
+  async function uploadFile(file: File) {
+    console.log(file);
+    return await getAccessToken()
+      .then(() =>
+        dbx.filesUpload({ path: state.path, autorename: true, contents: file })
+      )
+      .catch((e) => console.error(e));
+  }
+
   async function getMeta(id: string) {
     return await dbx.filesGetMetadata({
       path: id,
@@ -222,6 +231,7 @@ export const useServiceDropbox = () => {
     listFiles,
     renameFile,
     createFolder,
+    uploadFile,
     state,
     download,
   };

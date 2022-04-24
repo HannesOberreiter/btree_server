@@ -33,6 +33,9 @@
           ></table-filter>
         </template>
 
+        <template #body-cell-url="props">
+          <table-col-url :value="props.value"></table-col-url>
+        </template>
         <template #body-cell-note="props">
           <table-col-note
             :value="props.value"
@@ -64,6 +67,7 @@ import { useDateFormat } from '~/composables/useDate';
 import { useTableFilterStore } from '~/stores/tableFilter';
 import TableColNote from '~/components/TableColNote.vue';
 import TableColStatus from '~/components/TableColStatus.vue';
+import TableColUrl from '~/components/TableColUrl.vue';
 
 const useDate = useDateFormat();
 const { t } = useI18n();
@@ -134,7 +138,7 @@ const columns = [
     name: 'feed_apiary.apiary_name',
     label: t('apiary'),
     align: 'left',
-    field: (row: any) => row.feed_apiary.apiary_name,
+    field: (row: any) => (row.feed_apiary ? row.feed_apiary.apiary_name : ''),
     sortable: true,
   },
   {
@@ -142,6 +146,13 @@ const columns = [
     label: t('status'),
     align: 'center',
     field: (row: any) => row.done,
+    sortable: true,
+  },
+  {
+    name: 'url',
+    label: t('url'),
+    align: 'left',
+    field: (row: any) => row.url,
     sortable: true,
   },
   {

@@ -183,6 +183,7 @@ function cleanupTodo(state: FormTodo, isEdit: boolean) {
     done: state.done,
     name: state.name,
     note: state.note,
+    url: state.url,
   } as any;
 
   if (!isEdit) {
