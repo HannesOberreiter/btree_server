@@ -12,9 +12,18 @@ export class RearingDetail extends Model {
 
   company?: Company;
   type?: RearingType[];
+  step?: RearingStep[];
 
   constructor() {
     super();
+  }
+
+  static get modifiers() {
+    return {
+      orderByPosition(builder) {
+        builder.orderBy('rearing_steps.position', 'asc');
+      },
+    };
   }
 
   static tableName = 'rearing_details';
@@ -28,8 +37,8 @@ export class RearingDetail extends Model {
       job: { type: 'string', minLength: 1, maxLength: 50 },
       hour: { type: 'integer' },
       note: { type: 'string', maxLength: 2000 },
-      user_id: { type: 'integer' } // Company FK
-    }
+      user_id: { type: 'integer' }, // Company FK
+    },
   };
 
   static relationMappings = () => ({
@@ -38,8 +47,16 @@ export class RearingDetail extends Model {
       modelClass: Company,
       join: {
         from: ['rearing_details.user_id'],
-        to: ['company.id']
-      }
+        to: ['company.id'],
+      },
+    },
+    step: {
+      relation: RearingDetail.HasManyRelation,
+      modelClass: RearingStep,
+      join: {
+        from: ['rearing_details.id'],
+        to: ['rearing_steps.detail_id'],
+      },
     },
     type: {
       relation: RearingDetail.ManyToManyRelation,
@@ -49,10 +66,10 @@ export class RearingDetail extends Model {
         through: {
           modelClass: RearingStep,
           from: 'rearing_steps.detail_id',
-          to: 'rearing_steps.type_id'
+          to: 'rearing_steps.type_id',
         },
-        to: 'rearing_types.id'
-      }
-    }
+        to: 'rearing_types.id',
+      },
+    },
   });
 }

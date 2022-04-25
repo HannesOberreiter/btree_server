@@ -53,12 +53,12 @@ const getRearings = async ({ query, user }) => {
       result.currentStep = { ...result.steps[j] };
       if (result.startPosition === result.currentStep.position) {
         // Current Step is actual Start Step
-        result.start = dayjs(result.date).format('YYYY-MM-DD HH:00:00');
+        result.start = dayjs(result.date).format('YYYY-MM-DD HH:mm:00');
       } else {
         if (result.currentStep.position > result.startPosition) {
           // Step comes behind Start Step, we can simply add up the hours
           addDate = addDate.add(result.currentStep.detail.hour, 'hour');
-          result.start = addDate.format('YYYY-MM-DD HH:00:00');
+          result.start = addDate.format('YYYY-MM-DD HH:mm:00');
         } else {
           // Step comes before Start Step, this is more complicated as
           // we need to account for the steps which are coming before it
@@ -69,7 +69,7 @@ const getRearings = async ({ query, user }) => {
           for (let k = 0; k < steps_before; k++) {
             subDate = subDate.subtract(result.steps[k].detail.hour, 'hour');
           }
-          result.start = subDate.format('YYYY-MM-DD HH:00:00');
+          result.start = subDate.format('YYYY-MM-DD HH:mm:00');
         }
       }
       result.steps[j].date = result.start;

@@ -18,6 +18,8 @@ import { QueenRouter } from '@routes/v1/queen.route';
 import { MovedateRouter } from '@routes/v1/movedate.route';
 import { OptionRouter } from '@routes/v1/option.route';
 import { RearingRouter } from '@routes/v1/rearing.route';
+import { RearingTypeRouter } from '@routes/v1/rearing_type.route';
+import { RearingDetailRouter } from '@routes/v1/rearing_detail.route';
 import { ServiceRouter } from '../routes/v1/service.route';
 import { TodoRouter } from '@routes/v1/todo.route';
 import { TreatmentRouter } from '@routes/v1/treatment.route';
@@ -56,6 +58,8 @@ export class ProxyRouter {
     { segment: '/movedate/', router: MovedateRouter },
     { segment: '/option/', router: OptionRouter },
     { segment: '/rearing/', router: RearingRouter },
+    { segment: '/rearing_detail/', router: RearingDetailRouter },
+    { segment: '/rearing_type/', router: RearingTypeRouter },
     { segment: '/service/', router: ServiceRouter },
     { segment: '/todo/', router: TodoRouter },
     { segment: '/treatment/', router: TreatmentRouter },

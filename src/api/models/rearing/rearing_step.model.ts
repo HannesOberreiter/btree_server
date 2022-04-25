@@ -21,9 +21,17 @@ export class RearingStep extends Model {
       id: { type: 'integer' },
       type_id: { type: 'integer' }, // RearingType FK
       detail_id: { type: 'integer' }, // RearingDetail FK
-      position: { type: 'integer' } // Order of Rearing Steps for Rearing
-    }
+      position: { type: 'integer' }, // Order of Rearing Steps for Rearing
+    },
   };
+
+  static get modifiers() {
+    return {
+      orderByPosition(builder) {
+        builder.orderBy('position', 'asc');
+      },
+    };
+  }
 
   static relationMappings = () => ({
     detail: {
@@ -31,16 +39,16 @@ export class RearingStep extends Model {
       modelClass: RearingDetail,
       join: {
         from: 'rearing_steps.detail_id',
-        to: 'rearing_details.id'
-      }
+        to: 'rearing_details.id',
+      },
     },
     type: {
       relation: RearingStep.BelongsToOneRelation,
       modelClass: RearingType,
       join: {
         from: 'rearing_steps.type_id',
-        to: 'rearing_types.id'
-      }
-    }
+        to: 'rearing_types.id',
+      },
+    },
   });
 }

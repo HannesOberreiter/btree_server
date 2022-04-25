@@ -18,6 +18,8 @@ import { QueenController } from '@controllers/queen.controller';
 import { MovedateController } from '@controllers/movedate.controller';
 import { OptionController } from '@controllers/options.controller';
 import { RearingController } from '@controllers/rearing.controller';
+import { RearingDetailController } from '@controllers/rearing_detail.controller';
+import { RearingTypeController } from '@controllers/rearing_type.controller';
 import { RootController } from '@controllers/root.controller';
 import { ServiceController } from '@/api/controllers/service.controller';
 import { TodoController } from '@controllers/todo.controller';
@@ -104,6 +106,16 @@ export class Container {
       })
       .register({
         DropboxController: awilix.asClass(DropboxController).singleton(),
+      })
+      .register({
+        RearingDetailController: awilix
+          .asClass(RearingDetailController)
+          .singleton(),
+      })
+      .register({
+        RearingTypeController: awilix
+          .asClass(RearingTypeController)
+          .singleton(),
       })
       .register({
         Logger: awilix.asClass(Logger).singleton(),

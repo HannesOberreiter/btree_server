@@ -148,6 +148,7 @@ if (env.env === 'production') {
       return {
         id: data.user_id,
         name: data.username,
+        dropbox_auth: '',
         created_at:
           data.creation_date === '0000-00-00 00:00:00'
             ? null
@@ -156,6 +157,7 @@ if (env.env === 'production') {
           'user_id',
           'username',
           'companynumber',
+          'dropbox_auth',
           'creation_date',
         ]),
       };

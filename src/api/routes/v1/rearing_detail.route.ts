@@ -5,41 +5,43 @@ import { ROLES } from '@enums/role.enum';
 import { Validator } from '@/api/middlewares/validator.middleware';
 import { body } from 'express-validator';
 
-export class RearingRouter extends Router {
+export class RearingDetailRouter extends Router {
   constructor() {
     super();
   }
+
   define() {
     this.router
       .route('/')
       .get(
         Guard.authorize([ROLES.admin, ROLES.user, ROLES.read]),
-        Container.resolve('RearingController').get
+        Container.resolve('RearingDetailController').get
       );
     this.router
       .route('/')
       .patch(
         Validator.validate([body('ids').isArray()]),
         Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('RearingController').patch
+        Container.resolve('RearingDetailController').patch
       );
     this.router
       .route('/')
       .post(
         Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('RearingController').post
-      );
-    this.router
-      .route('/date')
-      .patch(
-        Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('RearingController').updateDate
+        Container.resolve('RearingDetailController').post
       );
     this.router
       .route('/batchDelete')
       .patch(
         Guard.authorize([ROLES.admin]),
-        Container.resolve('RearingController').batchDelete
+        Container.resolve('RearingDetailController').batchDelete
+      );
+    this.router
+      .route('/batchGet')
+      .post(
+        Validator.validate([body('ids').isArray()]),
+        Guard.authorize([ROLES.admin, ROLES.user]),
+        Container.resolve('RearingDetailController').batchGet
       );
   }
 }

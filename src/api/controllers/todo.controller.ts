@@ -65,6 +65,7 @@ export class TodoController extends Controller {
       name: req.body.name,
       note: req.body.note,
       done: req.body.done,
+      url: req.body.url,
     };
     const repeat = req.body.repeat ? req.body.repeat : 0;
     const interval = req.body.interval ? req.body.interval : 0;
