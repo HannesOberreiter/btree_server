@@ -36,25 +36,25 @@ export const useFieldsettingStore = defineStore('fieldsetting', {
   state: () => ({
     settings: useStorage<Fieldsetting>('fieldsetting', {
       checkup: {
-        rating: true,
-        queen: true,
-        strength: true,
-        weight: true,
-        temperature: true,
-        varroa: true,
-        frames: true,
+        rating: false,
+        queen: false,
+        strength: false,
+        weight: false,
+        temperature: false,
+        varroa: false,
+        frames: false,
       },
       harvest: {
-        water: true,
-        frames: true,
+        water: false,
+        frames: false,
       },
       treatment: {
-        wait: true,
-        vet: true,
+        wait: false,
+        vet: false,
       },
       charge: {
-        price: true,
-        bestbefore: true,
+        price: false,
+        bestbefore: false,
       },
     }),
   }),

@@ -41,6 +41,8 @@ export const useFormCleanup = (
       return cleanupScale(state.value);
     } else if (unref(table) === 'option') {
       return cleanupOption(state.value);
+    } else if (unref(table) === 'rearing_detail') {
+      return cleanupRearingDetail(state.value);
     }
   }
 
@@ -239,4 +241,8 @@ function cleanupOption(state: FormOption) {
     modus: state.modus,
   } as any;
   return omitBy(result, isNil);
+}
+
+function cleanupRearingDetail(state: FormOption) {
+  return omitBy(state, isNil);
 }

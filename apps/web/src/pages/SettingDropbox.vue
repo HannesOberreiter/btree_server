@@ -3,7 +3,7 @@
     <global-loading></global-loading>
   </q-card>
   <q-card v-else>
-    <q-card-section v-if="resetInit || account">
+    <q-card-section v-if="resetInit && account">
       <div class="text-h5">
         <q-icon name="fab fa-dropbox"></q-icon> {{ $t('account') }}:
         {{ account.email }}
@@ -17,14 +17,20 @@
       </div>
     </q-card-section>
     <q-card-actions v-if="!account">
-      <q-btn
-        v-if="resetInit"
-        no-caps
-        unelevated
-        color="primary"
-        :label="$t('dropbox.connectAccount')"
-        @click="onAuth"
-      ></q-btn>
+      <div v-if="resetInit" class="row">
+        <div class="col-12 q-pb-sm">
+          {{ $t('dropbox.connectText') }}
+        </div>
+        <div class="col-12">
+          <q-btn
+            no-caps
+            unelevated
+            color="primary"
+            :label="$t('dropbox.connectAccount')"
+            @click="onAuth"
+          ></q-btn>
+        </div>
+      </div>
     </q-card-actions>
     <div v-else>
       <q-card-actions>
@@ -68,6 +74,7 @@ import GlobalLoading from '~/components/GlobalLoading.vue';
 import { LoadingBar, useQuasar } from 'quasar';
 import { useServiceDropbox } from '~/composables/useDropbox';
 import FilesDropbox from '~/components/FilesDropbox.vue';
+import DialogFileUpload from '~/components/DialogFileUpload.vue';
 
 const router = useRouter();
 const $q = useQuasar();
@@ -120,7 +127,11 @@ function onCreateFolder() {
 }
 
 function onUploadFile() {
-  console.log('upload');
+  $q.dialog({
+    component: DialogFileUpload,
+  }).onOk((data) => {
+    console.log(data);
+  });
 }
 
 function reset() {

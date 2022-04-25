@@ -119,7 +119,6 @@ const links = [
       },
     ],
   },
-
   {
     label: 'table',
     route: '',
@@ -190,6 +189,37 @@ const links = [
         label: 'scale.name',
         route: 'table-scale_data',
         icon: 'fas fa-scale-balanced',
+        menu: false,
+      },
+    ],
+  },
+  {
+    label: 'rearing',
+    route: '',
+    icon: 'fas fa-sitemap',
+    menu: [
+      {
+        label: 'new',
+        route: 'new-rearing',
+        icon: 'fas fa-circle-plus',
+        menu: false,
+      },
+      {
+        label: 'serie',
+        route: 'table-rearing',
+        icon: 'fas fa-table',
+        menu: false,
+      },
+      {
+        label: 'queen',
+        route: 'table-queen',
+        icon: 'fas fa-venus',
+        menu: false,
+      },
+      {
+        label: 'method',
+        route: 'table-rearing-method',
+        icon: 'fas fa-cog',
         menu: false,
       },
     ],

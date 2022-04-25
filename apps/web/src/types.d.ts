@@ -139,6 +139,21 @@ declare interface FormOption {
   unit: string;
 }
 
+declare interface FormRearingDetail {
+  job: string;
+  hour: number;
+  note: string;
+}
+
+declare interface FormRearing {
+  larvae: number;
+  hatch: number;
+  note: string;
+  date: string;
+  type: any;
+  detail: any;
+}
+
 declare interface FormCharge {
   bestbefore: string;
   date: string;
@@ -250,4 +265,6 @@ export {
   FormScale,
   FormScaleData,
   FormOption,
+  FormRearingDetail,
+  FormRearing,
 };

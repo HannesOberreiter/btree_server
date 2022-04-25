@@ -43,10 +43,15 @@
               </div>
             </q-date>
             <q-time
-              v-if="dateFormat === 'YYYY-MM-DD HH:mm:ss'"
+              v-if="
+                dateFormat === 'YYYY-MM-DD HH:mm:ss' ||
+                dateFormat === 'YYYY-MM-DD HH:mm'
+              "
               v-model="modelValue"
               :mask="dateFormat"
-              :with-seconds="true"
+              :with-seconds="
+                dateFormat === 'YYYY-MM-DD HH:mm:ss' ? true : false
+              "
               :format24h="true"
               color="purple"
             >

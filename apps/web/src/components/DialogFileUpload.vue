@@ -32,7 +32,12 @@
           >
             {{ $t('upload') }}
           </q-btn>
-          <q-btn no-caps color="secondary" @click="uploader.pickFiles()">
+          <q-btn
+            :disable="queue"
+            no-caps
+            color="secondary"
+            @click="uploader.pickFiles()"
+          >
             {{ $t('select') }}
           </q-btn>
           <q-btn no-caps color="grey" @click="uploader.reset()">

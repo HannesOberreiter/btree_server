@@ -123,13 +123,6 @@ const columns = [
     sortable: true,
   },
   {
-    name: 'url',
-    label: t('url'),
-    align: 'left',
-    field: (row: any) => row.url,
-    sortable: true,
-  },
-  {
     name: 'done',
     label: t('status'),
     align: 'center',

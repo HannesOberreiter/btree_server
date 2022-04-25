@@ -283,7 +283,7 @@ export function useQueensQuery({
             'YYYY-MM-DD'
           )})`;
           if (value.hive_location)
-            value.label += ` [${value.hive_location.name}]`;
+            value.label += ` [${value.hive_location.hive_name}]`;
           value.value = value.id;
           return value;
         });
@@ -493,4 +493,44 @@ export function clearCache(q = '') {
     const queries = queryCache.findAll(q);
     queries.forEach((query) => query.invalidate());
   }
+}
+
+export function useRearingTypesQuery({
+  offset = 0 as MaybeRef<number>,
+  limit = 10000 as MaybeRef<number>,
+  order = ['name'] as MaybeRef<Array<string>>,
+  direction = ['asc'] as MaybeRef<Array<string>>,
+  q = '' as MaybeRef<string>,
+  enabled = true as MaybeRef<boolean>,
+}) {
+  const notification = useNotification();
+  const api = useApiFetch();
+  return useQuery(
+    ['rearing_types', offset, limit, order, direction, q],
+    () => {
+      const payload = {
+        offset: unref(offset),
+        limit: unref(limit),
+        order: unref(order),
+        direction: unref(direction),
+        q: unref(q),
+      };
+      return api.get('/v1/rearing_type', payload);
+    },
+    {
+      enabled: enabled,
+      keepPreviousData: true,
+      select: (response) => {
+        const result = map(response.results, (value) => {
+          value.label = value.name;
+          value.value = value.id;
+          return value;
+        });
+        return result
+          ? { results: result, total: response.total }
+          : ([] as any);
+      },
+      onError: (error: any) => notification.open('negative', error),
+    }
+  );
 }

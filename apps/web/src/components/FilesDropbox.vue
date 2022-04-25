@@ -1,12 +1,18 @@
 <template>
   <div>
+    <q-icon
+      name="fas fa-refresh"
+      style="cursor: pointer"
+      @click="changeFolder(useDropbox.state.path)"
+    ></q-icon>
     <q-btn
       no-caps
       flat
       :label="`${$t('folder')}: ${useDropbox.state.path}`"
-      icon="fas fa-refresh"
       @click="changeFolder('')"
-    ></q-btn>
+    >
+      <q-tooltip>{{ $t('back') }}</q-tooltip>
+    </q-btn>
     <q-table
       v-if="useDropbox.state.folder"
       grid

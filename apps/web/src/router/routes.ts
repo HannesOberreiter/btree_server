@@ -131,6 +131,11 @@ const routes: RouteRecordRaw[] = [
         name: 'new-charge',
         component: () => import('~/pages/NewCharge.vue'),
       },
+      {
+        path: 'rearing',
+        name: 'new-rearing',
+        component: () => import('~/pages/NewRearing.vue'),
+      },
     ],
   },
   /***
