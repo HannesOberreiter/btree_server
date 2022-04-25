@@ -16,6 +16,7 @@
         <div class="row full-width">
           <div class="col-12">
             <files-dropbox
+              v-if="service_active"
               :select="true"
               @selected="onDialogOK"
             ></files-dropbox>
@@ -34,12 +35,14 @@
 <script setup lang="ts">
 import { useDialogPluginComponent } from 'quasar';
 import { useServiceDropbox } from '~/composables/useDropbox';
+import { useNotification } from '~/composables/useResponseText';
 import FilesDropbox from './FilesDropbox.vue';
 
 defineEmits([...useDialogPluginComponent.emits]);
+const notification = useNotification();
 const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } =
   useDialogPluginComponent();
-
+const service_active = ref(false);
 const useDropbox = useServiceDropbox();
 const props = defineProps({
   service: {
@@ -51,7 +54,14 @@ const props = defineProps({
 watch(
   () => props.service,
   (cur) => {
-    if (cur === 'dropbox') useDropbox.getAccessToken();
+    if (cur === 'dropbox')
+      useDropbox.getAccessToken().then((response) => {
+        if (!response) {
+          onDialogHide();
+          notification.open('negative', 'noFileService');
+        }
+        service_active.value = response;
+      });
   },
   { immediate: true }
 );

@@ -1,7 +1,7 @@
 <!--  https://quasar.dev/vue-components/uploader -->
 <template>
   <q-dialog ref="dialogRef" @hide="onDialogHide">
-    <q-card>
+    <q-card v-if="service_active">
       <div class="row full-width">
         <div class="col-12">
           <q-uploader
@@ -65,6 +65,8 @@ const notification = useNotification();
 const useDropbox = useServiceDropbox();
 const uploader = ref(null);
 const queue = ref(false);
+const service_active = ref(false);
+
 const props = defineProps({
   service: {
     type: String,
@@ -75,7 +77,14 @@ const props = defineProps({
 watch(
   () => props.service,
   (cur) => {
-    if (cur === 'dropbox') useDropbox.getAccessToken();
+    if (cur === 'dropbox')
+      useDropbox.getAccessToken().then((response) => {
+        if (!response) {
+          onDialogHide();
+          notification.open('negative', 'noFileService');
+        }
+        service_active.value = response;
+      });
   },
   { immediate: true }
 );

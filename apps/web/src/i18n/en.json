@@ -83,6 +83,7 @@
   "edited": "Edited",
   "egg": "Egg | Eggs",
   "email": "Email",
+  "noFileService": "No connected file service!",
   "error": {
     "access": "Access not allowed or wrong password!",
     "duplicate": "Conflict, duplicate entry!",
