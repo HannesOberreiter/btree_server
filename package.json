@@ -24,7 +24,7 @@
     "dev:build": "mkdir -p ./dist/logs && tsc -watch",
     "dev:knex": "ENVIRONMENT=development knex",
     "dev:knex-seed": "ENVIRONMENT=staging knex seed:run",
-    "dev:mail": "mjml mjml/* -o mails/ --config.beautify true --config.minify true",
+    "mail": "mjml mjml/* -o mails/ --config.beautify true --config.minify true",
     "prettier-format": "prettier --config .prettierrc 'src/**/*.ts' --write"
   },
   "_moduleAliases": {

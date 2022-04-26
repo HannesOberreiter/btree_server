@@ -28,6 +28,11 @@ docker exec -it btree_api npm run dev:tsc
 Needs already prebuild dist and mails folder to run correctly.
 
 ```bash
+npm run build
+npm run mail
+```
+
+```bash
 docker-compose -f docker-compose.prod.yml build
 docker-compose -f docker-compose.prod.yml up -d
 docker exec -it btree_api_production /bin/sh
@@ -58,9 +63,8 @@ npm i -g typescript
 - Run knex commands (migrate, seed etc.)
 
 ```bash
-npm run create:directories 
-npm run dev:tsc 
-npm run dev:node
+npm run dev:build 
+npm run dev:serve
 npm run dev:knex <options>
 ```
 
