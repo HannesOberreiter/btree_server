@@ -392,8 +392,13 @@ export function useScaleDataQuery({
 export function useHivesQuery({
   offset = 0 as MaybeRef<number>,
   limit = 10000 as MaybeRef<number>,
-  order = ['name', 'modus'] as MaybeRef<Array<string>>,
-  direction = ['asc', 'asc'] as MaybeRef<Array<string>>,
+  order = [
+    'modus',
+    'hive_location.apiary_name',
+    'position',
+    'name',
+  ] as MaybeRef<Array<string>>,
+  direction = ['asc', 'asc', 'asc', 'asc'] as MaybeRef<Array<string>>,
   modus = true as MaybeRef<boolean>,
   deleted = false as MaybeRef<boolean>,
   q = '' as MaybeRef<string>,
