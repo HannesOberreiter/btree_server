@@ -41,7 +41,7 @@
 </template>
 
 <script setup lang="ts">
-import { useNotification } from '~/composables/useResponseText';
+import { useNotification } from '~/composables/useNotification';
 import { useRouter } from 'vue-router';
 import { validationErrors } from '~/helpers';
 import AuthService from '~/services/auth.service';

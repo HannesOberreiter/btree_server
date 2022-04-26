@@ -3,7 +3,7 @@ import { MaybeRef } from '@vueuse/core';
 import { Option, Task } from '~/types';
 import { queryCache } from '~/boot/vue-query';
 import { Ref } from 'vue';
-import { useNotification } from '~/composables/useResponseText';
+import { useNotification } from '~/composables/useNotification';
 import { QueryClient, useQuery } from 'vue-query';
 import dayjs from 'dayjs';
 import { useApiFetch } from './useApi';

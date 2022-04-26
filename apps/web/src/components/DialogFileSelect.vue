@@ -35,7 +35,7 @@
 <script setup lang="ts">
 import { useDialogPluginComponent } from 'quasar';
 import { useServiceDropbox } from '~/composables/useDropbox';
-import { useNotification } from '~/composables/useResponseText';
+import { useNotification } from '~/composables/useNotification';
 import FilesDropbox from './FilesDropbox.vue';
 
 defineEmits([...useDialogPluginComponent.emits]);

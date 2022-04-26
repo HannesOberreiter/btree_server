@@ -63,7 +63,7 @@
 </template>
 
 <script setup lang="ts">
-import { useNotification } from '~/composables/useResponseText';
+import { useNotification } from '~/composables/useNotification';
 import { LoadingBar, useQuasar } from 'quasar';
 import { useServiceDropbox } from '~/composables/useDropbox';
 import DialogFileUpload from '~/components/DialogFileUpload.vue';

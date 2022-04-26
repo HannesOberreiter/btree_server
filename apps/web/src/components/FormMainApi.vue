@@ -92,7 +92,7 @@ import { map } from 'lodash-es';
 import { QInputProps } from 'quasar';
 import { useAuthUserStore } from '~/stores/auth';
 import { useClipboard } from '@vueuse/core';
-import { useNotification } from '~/composables/useResponseText';
+import { useNotification } from '~/composables/useNotification';
 import useVuelidate from '@vuelidate/core';
 import { useApiFetch } from '~/composables/useApi';
 

@@ -291,7 +291,7 @@ const stateDefault = {
 <script setup lang="ts">
 import { PropType } from 'vue';
 import useVuelidate from '@vuelidate/core';
-import { useNotification } from '~/composables/useResponseText';
+import { useNotification } from '~/composables/useNotification';
 import { useFieldsettingStore } from '~/stores/fieldsetting';
 import { useApiFetch } from '~/composables/useApi';
 

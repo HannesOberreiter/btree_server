@@ -27,7 +27,7 @@
 
 <script setup lang="ts">
 import { useAuthUserStore } from '~/stores/auth';
-import { useNotification } from '~/composables/useResponseText';
+import { useNotification } from '~/composables/useNotification';
 import { User } from '~/types';
 import useVuelidate from '@vuelidate/core';
 import { RouteLocationRaw } from 'vue-router';

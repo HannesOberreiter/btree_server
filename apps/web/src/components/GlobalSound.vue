@@ -4,7 +4,7 @@
 
 <script setup lang="ts">
 import { useAuthUserStore } from '~/stores/auth';
-import { useNotification } from '~/composables/useResponseText';
+import { useNotification } from '~/composables/useNotification';
 import { useSound } from '@vueuse/sound';
 import ErrorSound from '~/assets/audio/error.mp3';
 import SuccessSound from '~/assets/audio/success.mp3';

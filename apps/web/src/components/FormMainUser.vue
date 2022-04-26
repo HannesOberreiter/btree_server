@@ -72,7 +72,7 @@
 import { LANGUAGES } from '~/constants';
 import { required } from '~/helpers/i18n-validators';
 import { useAuthUserStore } from '~/stores/auth';
-import { useNotification } from '~/composables/useResponseText';
+import { useNotification } from '~/composables/useNotification';
 import { useQuasarLang } from '~/composables/useQuasarLang';
 import useVuelidate from '@vuelidate/core';
 import { useApiFetch } from '~/composables/useApi';

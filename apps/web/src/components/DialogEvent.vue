@@ -96,7 +96,7 @@
 
 <script setup lang="ts">
 import { truncate } from 'lodash-es';
-import { useNotification } from '~/composables/useResponseText';
+import { useNotification } from '~/composables/useNotification';
 import EventInfoRearing from './EventInfoRearing.vue';
 import EventInfoVis from './EventInfoVis.vue';
 import { useDateFormat } from '~/composables/useDate';

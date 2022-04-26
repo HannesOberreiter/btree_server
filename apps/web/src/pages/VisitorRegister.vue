@@ -108,7 +108,7 @@
 <script setup lang="ts">
 import { LANGUAGES } from '~/constants';
 import { required, maxLength } from '~/helpers/i18n-validators';
-import { useNotification } from '~/composables/useResponseText';
+import { useNotification } from '~/composables/useNotification';
 import { usePreferredLanguages } from '@vueuse/core';
 import { validationErrors } from '~/helpers';
 import AuthService from '~/services/auth.service';

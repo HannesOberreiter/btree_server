@@ -91,7 +91,7 @@
 import 'leaflet/dist/leaflet.css';
 import { useApiariesQuery } from '~/composables/useQuery';
 import { useAuthUserStore } from '~/stores/auth';
-import { useNotification } from '~/composables/useResponseText';
+import { useNotification } from '~/composables/useNotification';
 import DialogForm from '~/components/DialogForm.vue';
 import {
   LMap,

@@ -175,7 +175,7 @@ const stateDefault = {
 </script>
 
 <script setup lang="ts">
-import { useNotification } from '~/composables/useResponseText';
+import { useNotification } from '~/composables/useNotification';
 import useVuelidate from '@vuelidate/core';
 import { useHivesQuery } from '~/composables/useQuery';
 import { FormHive } from '~/types';

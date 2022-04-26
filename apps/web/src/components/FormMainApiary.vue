@@ -94,7 +94,7 @@ const stateDefault = {
 
 <script setup lang="ts">
 import { required } from '~/helpers/i18n-validators';
-import { useNotification } from '~/composables/useResponseText';
+import { useNotification } from '~/composables/useNotification';
 import useVuelidate from '@vuelidate/core';
 import { flatten, map, merge } from 'lodash-es';
 import { useApiFetch } from '~/composables/useApi';

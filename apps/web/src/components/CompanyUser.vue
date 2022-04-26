@@ -68,7 +68,7 @@
 <script setup lang="ts">
 import { findIndex } from 'lodash-es';
 import { useAuthUserStore } from '~/stores/auth';
-import { useNotification } from '~/composables/useResponseText';
+import { useNotification } from '~/composables/useNotification';
 import { useQuasar } from 'quasar';
 import { useDateFormat } from '~/composables/useDate';
 import { useApiFetch } from '~/composables/useApi';

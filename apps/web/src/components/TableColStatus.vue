@@ -13,7 +13,7 @@
 
 <script setup lang="ts">
 import { useApiFetch } from '~/composables/useApi';
-import { useNotification } from '~/composables/useResponseText';
+import { useNotification } from '~/composables/useNotification';
 
 const notification = useNotification();
 const api = useApiFetch();

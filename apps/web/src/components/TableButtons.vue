@@ -156,7 +156,7 @@ import { exportFile, useQuasar } from 'quasar';
 import { useApiFetch } from '~/composables/useApi';
 import { useDateFormat } from '~/composables/useDate';
 import { clearCache } from '~/composables/useQuery';
-import { useNotification } from '~/composables/useResponseText';
+import { useNotification } from '~/composables/useNotification';
 import { useTableFilterStore } from '~/stores/tableFilter';
 import DialogFilter from './DialogFilter.vue';
 import DialogForm from './DialogForm.vue';

@@ -92,7 +92,7 @@
 </template>
 
 <script setup lang="ts">
-import { useNotification } from '~/composables/useResponseText';
+import { useNotification } from '~/composables/useNotification';
 import useVuelidate from '@vuelidate/core';
 import { flatten, map, merge } from 'lodash-es';
 import { FormScaleData } from '~/types';

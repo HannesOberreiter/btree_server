@@ -31,7 +31,7 @@
 <script setup lang="ts">
 import { capitalize } from 'lodash-es';
 import { useFieldsettingStore } from '~/stores/fieldsetting';
-import { useNotification } from '~/composables/useResponseText';
+import { useNotification } from '~/composables/useNotification';
 import { useApiFetch } from '~/composables/useApi';
 
 const notification = useNotification();

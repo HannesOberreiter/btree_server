@@ -26,7 +26,7 @@
 </template>
 
 <script setup lang="ts">
-import { useNotification } from '~/composables/useResponseText';
+import { useNotification } from '~/composables/useNotification';
 import AuthService from '~/services/auth.service';
 import useVuelidate from '@vuelidate/core';
 

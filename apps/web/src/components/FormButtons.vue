@@ -30,7 +30,7 @@
 import { PropType } from 'vue';
 import { useApiFetch } from '~/composables/useApi';
 import { useFormCleanup } from '~/composables/useFormCleanup';
-import { useNotification } from '~/composables/useResponseText';
+import { useNotification } from '~/composables/useNotification';
 import { Option } from '~/types';
 
 const notification = useNotification();

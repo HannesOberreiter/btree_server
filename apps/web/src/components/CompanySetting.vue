@@ -54,7 +54,7 @@
 import { findIndex } from 'lodash-es';
 import { useAuthTokenStore } from '~/stores/token';
 import { useAuthUserStore } from '~/stores/auth';
-import { useNotification } from '~/composables/useResponseText';
+import { useNotification } from '~/composables/useNotification';
 import { useQuasar } from 'quasar';
 import { useRefreshStore } from '~/stores/refresh';
 import { useApiFetch } from '~/composables/useApi';

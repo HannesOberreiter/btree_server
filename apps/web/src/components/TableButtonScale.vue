@@ -23,7 +23,7 @@
 <script setup lang="ts">
 import { useQuasar } from 'quasar';
 import { useApiFetch } from '~/composables/useApi';
-import { useNotification } from '~/composables/useResponseText';
+import { useNotification } from '~/composables/useNotification';
 import DialogForm from './DialogForm.vue';
 import DialogSelectOption from './DialogSelectOption.vue';
 
