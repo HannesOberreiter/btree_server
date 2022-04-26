@@ -5,38 +5,18 @@
     "noUnusedLocals": true,
     "strictNullChecks": false,
     "forceConsistentCasingInFileNames": true,
-    "types": [
-      "@intlify/vite-plugin-vue-i18n/client"
-    ],
+    "types": ["@intlify/vite-plugin-vue-i18n/client"],
     "baseUrl": ".",
     "paths": {
-      "~/*": [
-        "src/*"
-      ],
-      "src/*": [
-        "src/*"
-      ],
-      "app/*": [
-        "*"
-      ],
-      "components/*": [
-        "src/components/*"
-      ],
-      "layouts/*": [
-        "src/layouts/*"
-      ],
-      "pages/*": [
-        "src/pages/*"
-      ],
-      "assets/*": [
-        "src/assets/*"
-      ],
-      "boot/*": [
-        "src/boot/*"
-      ],
-      "stores/*": [
-        "src/stores/*"
-      ]
+      "~/*": ["src/*"],
+      "src/*": ["src/*"],
+      "app/*": ["*"],
+      "components/*": ["src/components/*"],
+      "layouts/*": ["src/layouts/*"],
+      "pages/*": ["src/pages/*"],
+      "assets/*": ["src/assets/*"],
+      "boot/*": ["src/boot/*"],
+      "stores/*": ["src/stores/*"]
     }
   },
   "include": [
@@ -46,7 +26,5 @@
     "src/**/*.vue",
     "test/**.ts"
   ],
-  "exclude": [
-    "cypress"
-  ]
+  "exclude": ["cypress"]
 }

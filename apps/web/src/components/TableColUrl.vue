@@ -1,6 +1,10 @@
 <template>
   <q-td>
-    <div v-if="value" style="cursor: pointer" @click="showFile(value)">
+    <div
+      v-if="value"
+      style="cursor: pointer"
+      @click="showFile(value as string)"
+    >
       {{ value }}
     </div>
   </q-td>

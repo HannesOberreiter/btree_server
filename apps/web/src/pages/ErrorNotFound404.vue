@@ -1,5 +1,4 @@
 <template>
-  <!-- eslint-disable vue/multi-word-component-names -->
   <div
     class="fullscreen bg-blue-grey-8 text-white text-center q-pa-md flex flex-center"
   >
