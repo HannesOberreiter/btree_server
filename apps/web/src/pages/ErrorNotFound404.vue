@@ -7,15 +7,13 @@
 
       <div class="text-h2" style="opacity: 0.6">{{ $t('error404') }}</div>
 
-      <q-btn
+      <btn-base
         class="q-mt-xl"
         size="lg"
         color="black"
         text-color="white"
-        unelevated
         to="/"
         :label="$t('login')"
-        no-caps
       />
     </div>
   </div>

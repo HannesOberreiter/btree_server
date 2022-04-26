@@ -13,10 +13,10 @@
       :readonly="true"
     >
       <template #prepend>
-        <q-btn flat icon="fas fa-eye" @click="loadApiValue" />
+        <btn-base flat icon="fas fa-eye" @click="loadApiValue" />
       </template>
       <template #append>
-        <q-btn
+        <btn-base
           flat
           :disabled="apiField === 'password'"
           icon="fas fa-copy"
@@ -43,7 +43,7 @@
       :readonly="true"
     >
       <template #append>
-        <q-btn
+        <btn-base
           flat
           :disabled="apiField === 'password'"
           icon="fas fa-copy"

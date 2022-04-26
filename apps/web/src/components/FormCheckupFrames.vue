@@ -35,12 +35,12 @@
           </template>
           <div class="row q-pb-xs">
             <div class="col-12">
-              <q-btn class="float-right" no-caps @click="max = max + 10">
+              <btn-base class="float-right" @click="max = max + 10">
                 {{ $t('frames.extend') }} ({{ $t('max') }}: {{ max }})
-              </q-btn>
-              <q-btn class="float-right" no-caps @click="max = 20">
+              </btn-base>
+              <btn-base class="float-right" no-caps @click="max = 20">
                 {{ $t('reset') }}
-              </q-btn>
+              </btn-base>
             </div>
           </div>
         </q-card-section>

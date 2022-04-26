@@ -5,7 +5,7 @@
         <div class="row">
           <div class="text-h6">{{ $t(title) }}</div>
           <q-space />
-          <q-btn
+          <btn-base
             ref="closeBtn"
             v-close-popup
             icon="fas fa-times"

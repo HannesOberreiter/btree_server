@@ -4,7 +4,7 @@
       <q-card-section>
         <div class="row">
           <q-space />
-          <q-btn
+          <btn-base
             ref="closeBtn"
             v-close-popup
             icon="fas fa-times"
@@ -24,9 +24,9 @@
         </div>
       </q-card-section>
       <q-card-actions>
-        <q-btn outline no-caps color="grey" @click="onDialogCancel()">
+        <btn-base outline color="grey" @click="onDialogCancel()">
           {{ $t('close') }}
-        </q-btn>
+        </btn-base>
       </q-card-actions>
     </q-card>
   </q-dialog>

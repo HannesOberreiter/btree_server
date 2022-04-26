@@ -2,13 +2,13 @@
   <q-list bordered class="rounded-borders">
     <q-item v-for="value in usersData" :key="value.id">
       <q-item-section avatar>
-        <q-btn
+        <btn-base
           v-if="value.user.id === user.id"
           flat
           icon="fas fa-crown"
           :disable="true"
         />
-        <q-btn
+        <btn-base
           v-else
           flat
           icon="fas fa-user-minus"
@@ -39,7 +39,7 @@
           </span>
         </q-item-label>
         <q-item-label lines="1" class="text-weight-medium">
-          <q-btn
+          <btn-base
             flat
             :disable="value.user.id === user.id"
             icon="fas fa-user-shield"
@@ -48,13 +48,13 @@
             <span v-if="value.rank === 1" class="q-ml-sm">Admin</span>
             <span v-else-if="value.rank === 2" class="q-ml-sm">User</span>
             <span v-else class="q-ml-sm">Read-Only</span>
-          </q-btn>
+          </btn-base>
         </q-item-label>
       </q-item-section>
     </q-item>
   </q-list>
   <btn-base-group class="q-mt-lg">
-    <q-btn
+    <btn-base
       size="md"
       color="primary"
       type="submit"

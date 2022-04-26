@@ -5,7 +5,7 @@
         <div class="row">
           <div class="text-h6">{{ $t('calculateVarroa') }}</div>
           <q-space />
-          <q-btn
+          <btn-base
             ref="closeBtn"
             v-close-popup
             icon="fas fa-times"
@@ -38,9 +38,9 @@
         </div>
       </q-card-section>
       <q-card-actions>
-        <q-btn color="secondary" @click="onDialogOK(solution)">
+        <btn-base color="secondary" @click="onDialogOK(solution)">
           {{ $t('copy') }}
-        </q-btn>
+        </btn-base>
       </q-card-actions>
     </q-card>
   </q-dialog>

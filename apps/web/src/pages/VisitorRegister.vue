@@ -63,18 +63,17 @@
       >
         <slot>
           {{ t('signup.agree') }}
-          <q-btn flat color="secondary" @click="terms = true">
+          <btn-base flat color="secondary" @click="terms = true">
             {{ t('signup.terms') }}
-          </q-btn>
+          </btn-base>
         </slot>
       </q-checkbox>
 
       <form-user-newsletter v-model="state.newsletter"></form-user-newsletter>
 
       <q-card-actions>
-        <q-btn
+        <btn-base
           type="submit"
-          unelevated
           size="lg"
           color="secondary"
           class="full-width text-white"
@@ -100,7 +99,7 @@
         {{ state.lang.value == 'de' ? termsDE : termsEN }}
       </q-card-section>
       <q-card-actions align="right">
-        <q-btn v-close-popup flat label="OK" color="primary" />
+        <btn-base v-close-popup flat :label="$t('ok')" color="primary" />
       </q-card-actions>
     </q-card>
   </q-dialog>

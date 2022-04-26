@@ -2,7 +2,13 @@
   <q-layout view="hhh LpR fff">
     <q-header class="bg-primary text-white print-hide">
       <q-toolbar>
-        <q-btn dense flat round icon="fas fa-bars" @click="toggleLeftDrawer" />
+        <btn-base
+          dense
+          flat
+          round
+          icon="fas fa-bars"
+          @click="toggleLeftDrawer"
+        />
         <main-navbar></main-navbar>
       </q-toolbar>
     </q-header>

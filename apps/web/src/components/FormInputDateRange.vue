@@ -17,7 +17,12 @@
         >
           <q-date v-model="modelValue" :events="markDate" today-btn range>
             <div class="row items-center justify-end">
-              <q-btn v-close-popup :label="$t('close')" color="primary" flat />
+              <btn-base
+                v-close-popup
+                :label="$t('close')"
+                color="primary"
+                flat
+              />
             </div>
           </q-date>
         </q-popup-proxy>

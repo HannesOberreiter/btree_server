@@ -11,7 +11,7 @@
             {{ `${file.name} (${round(file.size / 1e6, 1)}MB)` }}
           </div>
           <q-space />
-          <q-btn
+          <btn-base
             ref="closeBtn"
             v-close-popup
             icon="fas fa-times"
@@ -31,14 +31,13 @@
         </div>
       </q-card-section>
       <q-card-actions align="center">
-        <q-btn
-          unelevated
+        <btn-base
           size="md"
           :label="$t('close')"
           color="primary"
           @click="onDialogOK"
         />
-        <q-btn
+        <btn-base
           unelevated
           size="md"
           :disable="useDropbox.state.isLoading || notFound"
@@ -50,7 +49,7 @@
           <q-tooltip v-if="file">
             {{ round(file.size / 1e6, 1) + ' MB' }}
           </q-tooltip>
-        </q-btn>
+        </btn-base>
       </q-card-actions>
     </q-card>
   </q-dialog>

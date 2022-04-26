@@ -14,7 +14,7 @@
         placeholder="Search you colonies and apiaries"
       >
         <template #prepend>
-          <q-btn
+          <btn-base
             v-close-popup
             flat
             dense
@@ -29,7 +29,7 @@
 
     <div class="col-6 col-sm-4 col-md-auto">
       <div class="q-gutter-md text-right">
-        <q-btn
+        <btn-base
           v-close-popup
           flat
           dense
@@ -38,7 +38,7 @@
           icon="fas fa-microphone"
           @click="onSpeak"
         />
-        <q-btn
+        <btn-base
           v-if="!$q.platform.is.mobile"
           flat
           dense
@@ -47,7 +47,7 @@
           :icon="$q.fullscreen.isActive ? 'fas fa-compress' : 'fas fa-expand'"
           @click="$q.fullscreen.toggle()"
         />
-        <q-btn
+        <btn-base
           flat
           dense
           color="white"
@@ -55,7 +55,7 @@
           :icon="$q.dark.isActive ? 'fas fa-moon' : 'fas fa-sun'"
           @click="$q.dark.toggle()"
         />
-        <q-btn
+        <btn-base
           v-close-popup
           :disable="!storeRouter.isPrevious"
           flat
@@ -66,7 +66,7 @@
           @click="router.replace({name: storeRouter.$state.previous as any,  params: storeRouter.$state.params as any})"
         >
           <q-tooltip>{{ $t('previousPage') }}</q-tooltip>
-        </q-btn>
+        </btn-base>
       </div>
     </div>
   </div>

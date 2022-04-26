@@ -20,8 +20,7 @@
       </div>
     </div>
   </q-form>
-  <q-btn
-    unelevated
+  <btn-base
     size="md"
     color="secondary"
     type="submit"

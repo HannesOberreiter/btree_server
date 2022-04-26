@@ -49,9 +49,8 @@
       </div>
     </div>
   </q-form>
-  <q-btn-group spread>
-    <q-btn
-      unelevated
+  <btn-base-group>
+    <btn-base
       size="md"
       color="secondary"
       type="submit"
@@ -59,15 +58,14 @@
       :label="t('save')"
       @click="onSubmit"
     />
-    <q-btn
-      unelevated
+    <btn-base
       size="md"
       color="negative"
       :loading="isSubmitting"
       :label="t('delete') + ' ' + t('account')"
       @click="onDelete"
     />
-  </q-btn-group>
+  </btn-base-group>
 </template>
 
 <script setup lang="ts">

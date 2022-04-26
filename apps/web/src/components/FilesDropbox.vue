@@ -5,14 +5,13 @@
       style="cursor: pointer"
       @click="changeFolder(useDropbox.state.path)"
     ></q-icon>
-    <q-btn
-      no-caps
+    <btn-base
       flat
       :label="`${$t('folder')}: ${useDropbox.state.path}`"
       @click="changeFolder('')"
     >
       <q-tooltip>{{ $t('back') }}</q-tooltip>
-    </q-btn>
+    </btn-base>
     <q-table
       v-if="useDropbox.state.folder"
       grid
@@ -23,13 +22,12 @@
         <div class="q-pa-xs col-6 col-md-4">
           <q-card v-if="props.row['.tag'] === 'folder'">
             <q-card-section class="text-center">
-              <q-btn
+              <btn-base
                 flat
-                no-caps
                 icon="fas fa-folder"
                 :label="props.row.name"
                 @click="changeFolder(props.row.path_lower)"
-              ></q-btn>
+              ></btn-base>
               <div class="text-caption">
                 {{
                   useDate.displayFormat(props.row.client_modified, 'date-time')
@@ -47,8 +45,7 @@
           </q-card>
           <q-card v-else>
             <q-card-section class="text-center">
-              <q-btn
-                no-caps
+              <btn-base
                 flat
                 :icon="isImage(props.row.name) ? 'fas fa-image' : 'fas fa-file'"
                 :label="props.row.name"
@@ -57,7 +54,7 @@
                 <q-tooltip>
                   {{ round(props.row.size / 1e6, 1) + ' MB' }}
                 </q-tooltip>
-              </q-btn>
+              </btn-base>
               <div class="text-caption">
                 {{
                   useDate.displayFormat(props.row.client_modified, 'date-time')

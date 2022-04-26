@@ -25,24 +25,22 @@
       ></btn-multiple-values>
     </template>
     <template #append>
-      <q-btn
+      <btn-base
         round
         flat
         dense
         icon="fas fa-plus"
-        style="cursor: pointer"
         :disable="modelValue >= maxValid"
         @click="modelValue++"
-      ></q-btn>
-      <q-btn
+      ></btn-base>
+      <btn-base
         round
         flat
         dense
         icon="fas fa-minus"
-        style="cursor: pointer"
         :disable="modelValue <= minValid"
         @click="modelValue--"
-      ></q-btn>
+      ></btn-base>
     </template>
     <template #after><slot name="deepAfter"></slot></template>
   </q-input>

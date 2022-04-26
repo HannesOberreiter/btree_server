@@ -1,6 +1,6 @@
 <template>
   <l-control position="bottomleft" class="d-print-none">
-    <q-btn
+    <btn-base
       size="sm"
       color="black"
       class="bg-white"
@@ -10,8 +10,8 @@
       icon="fas fa-map-marker-alt"
       @click="emit('locate')"
     >
-    </q-btn>
-    <q-btn
+    </btn-base>
+    <btn-base
       size="sm"
       color="black"
       class="bg-white"
@@ -20,8 +20,8 @@
       :icon="!showInactive ? `fas fa-eye` : `fas fa-eye-slash`"
       @click="toggleInactive"
     >
-    </q-btn>
-    <q-btn
+    </btn-base>
+    <btn-base
       size="sm"
       color="black"
       class="bg-white"
@@ -29,7 +29,7 @@
       flat
       icon="fas fa-question"
       @click="showInfo = !showInfo"
-    ></q-btn>
+    ></btn-base>
   </l-control>
   <l-control position="bottomright">
     <q-slider

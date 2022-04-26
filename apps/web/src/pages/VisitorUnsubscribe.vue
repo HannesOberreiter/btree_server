@@ -5,9 +5,8 @@
     <q-form v-else class="q-gutter-md" @submit="onSubmit">
       <form-input-email v-model="state.email"></form-input-email>
       <q-card-actions class="">
-        <q-btn
+        <btn-base
           type="submit"
-          unelevated
           size="lg"
           color="secondary"
           class="full-width text-white"

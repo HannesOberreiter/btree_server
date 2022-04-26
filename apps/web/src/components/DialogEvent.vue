@@ -18,7 +18,7 @@
           <q-icon v-if="isMovement" size="35px" round :name="eventInfo.icon">
           </q-icon>
 
-          <q-btn
+          <btn-base
             v-else
             size="35px"
             round
@@ -28,7 +28,7 @@
             "
             @click="updateStatus()"
           >
-          </q-btn>
+          </btn-base>
         </p>
         <p class="text-center pb-2">
           {{ useDate.displayFormat(eventInfo.start) }}

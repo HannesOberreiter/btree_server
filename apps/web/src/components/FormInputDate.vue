@@ -34,7 +34,7 @@
               no-unset
             >
               <div class="row items-center justify-end">
-                <q-btn
+                <btn-base
                   v-close-popup
                   :label="$t('close')"
                   color="primary"

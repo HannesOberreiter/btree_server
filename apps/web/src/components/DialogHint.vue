@@ -5,7 +5,7 @@
         {{ $t(hint) }}
       </q-card-section>
       <q-card-actions align="right">
-        <q-btn v-close-popup flat label="OK" color="primary" />
+        <btn-base v-close-popup flat :label="$t('ok')" color="primary" />
       </q-card-actions>
     </q-card>
   </q-dialog>

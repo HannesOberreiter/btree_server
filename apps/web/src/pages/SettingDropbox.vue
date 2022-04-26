@@ -22,44 +22,38 @@
           {{ $t('dropbox.connectText') }}
         </div>
         <div class="col-12">
-          <q-btn
-            no-caps
-            unelevated
+          <btn-base
             color="primary"
             :label="$t('dropbox.connectAccount')"
             @click="onAuth"
-          ></q-btn>
+          ></btn-base>
         </div>
       </div>
     </q-card-actions>
     <div v-else>
       <q-card-actions>
-        <q-btn-group unelevated>
-          <q-btn
-            no-caps
+        <btn-base-group>
+          <btn-base
             color="primary"
             :label="$t('upload')"
             @click="onUploadFile"
-          ></q-btn>
-          <q-btn
-            no-caps
+          ></btn-base>
+          <btn-base
             color="secondary"
             :label="$t('newFolder')"
             @click="onCreateFolder"
-          ></q-btn>
-          <q-btn
-            no-caps
+          ></btn-base>
+          <btn-base
             color="info"
             :label="$t('dropbox.refreshToken')"
             @click="onToken"
-          ></q-btn>
-          <q-btn
-            no-caps
+          ></btn-base>
+          <btn-base
             color="negative"
             :label="$t('dropbox.deleteAccess')"
             @click="onDelete"
-          ></q-btn>
-        </q-btn-group>
+          ></btn-base>
+        </btn-base-group>
       </q-card-actions>
       <q-card-section>
         <files-dropbox :select="false"></files-dropbox>

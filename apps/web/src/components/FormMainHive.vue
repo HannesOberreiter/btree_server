@@ -20,13 +20,13 @@
         :max-valid="24"
       ></form-input-text>
       <div v-if="!isEdit" class="col-1 text-center">
-        <q-btn
+        <btn-base
           flat
           round
           icon="fas fa-retweet"
           :color="showInterval ? 'secondary' : 'grey'"
           @click="changeInterval"
-        ></q-btn>
+        ></btn-base>
       </div>
 
       <div v-if="showInterval && !isEdit" class="col-12">

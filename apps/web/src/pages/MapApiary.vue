@@ -60,23 +60,23 @@
                     {{ value.description }}
                   </div>
                   <div v-if="value.note">{{ value.note }}</div>
-                  <q-btn-group v-if="userStore.isAdmin" spread class="q-mt-sm">
-                    <q-btn
-                      unelevated
-                      size="sm"
+                  <btn-base-group
+                    v-if="userStore.isAdmin"
+                    class="q-mt-sm"
+                    size="sm"
+                  >
+                    <btn-base
                       color="secondary"
                       @click="editApiaryForm(value.id)"
                       >{{ t('edit') }}
-                    </q-btn>
-                    <q-btn
+                    </btn-base>
+                    <btn-base
                       v-if="!value.hive_count"
-                      unelevated
-                      size="sm"
                       color="negative"
                       @click="deleteApiary(value.id)"
                       >{{ t('delete') }}
-                    </q-btn>
-                  </q-btn-group>
+                    </btn-base>
+                  </btn-base-group>
                 </l-popup>
               </l-marker>
             </template>

@@ -32,7 +32,12 @@
         >
           <q-time v-model="modelValue" mask="HH:mm" format24h>
             <div class="row items-center justify-end">
-              <q-btn v-close-popup :label="$t('close')" color="primary" flat />
+              <btn-base
+                v-close-popup
+                :label="$t('close')"
+                color="primary"
+                flat
+              />
             </div>
           </q-time>
         </q-popup-proxy>

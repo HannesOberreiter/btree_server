@@ -15,13 +15,13 @@
         ></form-input-date>
       </div>
       <div class="col-1 text-center items-center">
-        <q-btn
+        <btn-base
           flat
           round
           icon="fas fa-retweet"
           :color="showInterval ? 'secondary' : 'grey'"
           @click="repeatTask"
-        ></q-btn>
+        ></btn-base>
       </div>
     </div>
     <div v-if="showInterval" class="row q-pb-xs">
