@@ -35,14 +35,14 @@
                   useDate.displayFormat(props.row.client_modified, 'date-time')
                 }}
               </div>
-              <q-btn-group v-if="!select" outline size="sm">
-                <q-btn no-caps @click="() => renameFile(props.row)">
+              <btn-base-group v-if="!select" outline size="sm">
+                <btn-base @click="() => renameFile(props.row)">
                   {{ $t('rename') }}
-                </q-btn>
-                <q-btn no-caps @click="() => deleteFile(props.row)">
+                </btn-base>
+                <btn-base @click="() => deleteFile(props.row)">
                   {{ $t('delete') }}
-                </q-btn>
-              </q-btn-group>
+                </btn-base>
+              </btn-base-group>
             </q-card-section>
           </q-card>
           <q-card v-else>
@@ -63,23 +63,22 @@
                   useDate.displayFormat(props.row.client_modified, 'date-time')
                 }}
               </div>
-              <q-btn
+              <btn-base
                 v-if="select"
                 outline
-                no-caps
                 size="sm"
                 @click="onSelect('dropbox:' + props.row.id)"
               >
                 {{ $t('select') }}
-              </q-btn>
-              <q-btn-group v-else outline size="sm">
-                <q-btn no-caps @click="() => renameFile(props.row)">
+              </btn-base>
+              <btn-base-group v-else outline size="sm">
+                <btn-base @click="() => renameFile(props.row)">
                   {{ $t('rename') }}
-                </q-btn>
-                <q-btn no-caps @click="() => deleteFile(props.row)">
+                </btn-base>
+                <btn-base @click="() => deleteFile(props.row)">
                   {{ $t('delete') }}
-                </q-btn>
-              </q-btn-group>
+                </btn-base>
+              </btn-base-group>
             </q-card-section>
           </q-card>
         </div>

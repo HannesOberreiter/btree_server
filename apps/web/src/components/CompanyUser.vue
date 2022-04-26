@@ -53,9 +53,8 @@
       </q-item-section>
     </q-item>
   </q-list>
-  <q-btn-group class="q-mt-lg" spread>
+  <btn-base-group class="q-mt-lg">
     <q-btn
-      unelevated
       size="md"
       color="primary"
       type="submit"
@@ -63,7 +62,7 @@
       :label="t('add') + ' ' + t('user')"
       @click="addUser"
     />
-  </q-btn-group>
+  </btn-base-group>
 </template>
 
 <script setup lang="ts">

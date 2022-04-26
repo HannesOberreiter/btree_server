@@ -1,24 +1,22 @@
 <template>
-  <q-btn-group unelevated size="sm">
-    <q-btn color="primary" no-caps :label="$t('new')" @click="onNew" />
-    <q-btn
+  <btn-base-group size="sm">
+    <btn-base color="primary" :label="$t('new')" @click="onNew" />
+    <btn-base
       color="secondary"
-      no-caps
       :disable="selected.length > 0 ? false : true"
       :label="$t('edit')"
       @click="onEdit"
     />
 
-    <q-btn
+    <btn-base
       v-if="['hive', 'apiary'].includes(table)"
-      no-caps
       :color="modus ? 'warning' : 'negative'"
       :icon-right="modus ? 'fas fa-eye' : 'fas fa-eye-slash'"
       :label="$t('inactive')"
       @click="modus = !modus"
     />
 
-    <q-btn
+    <btn-base
       v-if="
         [
           'hive',
@@ -34,7 +32,6 @@
         ].includes(table)
       "
       :color="filter ? 'negative' : 'warning'"
-      no-caps
       :label="$t('filter')"
       :icon-right="filter ? 'fas fa-filter' : 'fas fa-filter-circle-xmark'"
       @click="openFilter"
@@ -149,7 +146,7 @@
         </div>
       </q-list>
     </q-btn-dropdown>
-  </q-btn-group>
+  </btn-base-group>
 </template>
 
 <script setup lang="ts">

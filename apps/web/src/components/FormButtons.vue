@@ -1,29 +1,29 @@
 <template>
-  <q-btn-group v-if="!isEdit" size="md" unelevated spread>
-    <q-btn
+  <btn-base-group v-if="!isEdit" size="md">
+    <btn-base
       color="secondary"
       :loading="isSubmitting"
       :label="$t('save')"
       @click="onSubmit"
     />
-    <q-btn color="warning" :label="$t('reset')" @click="emit('reset')" />
-    <q-btn
+    <btn-base color="warning" :label="$t('reset')" @click="emit('reset')" />
+    <btn-base
       v-if="lastInsert"
       color="info"
       :loading="isSubmitting"
       :label="$t('undo')"
       @click="onUndo"
     />
-  </q-btn-group>
-  <q-btn-group v-else unelevated spread>
-    <q-btn
+  </btn-base-group>
+  <btn-base-group v-else>
+    <btn-base
       color="secondary"
       :loading="isSubmitting"
       :label="$t('update')"
       @click="onUpdate"
-    ></q-btn>
-    <q-btn color="warning" :label="$t('reset')" @click="emit('reset')" />
-  </q-btn-group>
+    ></btn-base>
+    <btn-base color="warning" :label="$t('reset')" @click="emit('reset')" />
+  </btn-base-group>
 </template>
 
 <script setup lang="ts">

@@ -1,5 +1,5 @@
 <template>
-  <q-dialog ref="dialogRef" @hide="onDialogHide">
+  <q-dialog ref="dialogRef" style="min-width: 200px" @hide="onDialogHide">
     <q-card>
       <q-card-section>
         <div class="text-h6">
@@ -42,12 +42,17 @@
           </span>
         </p>
         <div v-if="!isTodo">
-          <b>{{ t('hive', 2) }}:</b>
-          {{
-            truncate(eventInfo.hive_names, {
-              length: 120,
-            })
-          }}
+          <span>
+            <q-tooltip v-if="eventInfo.hive_names.length > 20">
+              {{ eventInfo.hive_names }}
+            </q-tooltip>
+            <b>{{ t('hive', 2) }}:</b>
+            {{
+              truncate(eventInfo.hive_names, {
+                length: 20,
+              })
+            }}
+          </span>
           <br />
           <b>{{ t('apiary') }}:</b> {{ eventInfo.apiary_name }}
           <br />
@@ -58,29 +63,32 @@
       </q-card-section>
 
       <q-card-actions>
-        <q-btn color="grey darken-1" @click="onDialogHide">
-          {{ t('close') }}
-        </q-btn>
-
-        <q-btn v-if="!isVis" color="negative darken-1" @click="deleteEvent">
-          {{ t('delete') }}
-        </q-btn>
-
-        <q-btn
-          v-if="!isMovement && !isVis && !isRearings"
-          color="secondary darken-1"
-          @click="updateStatus()"
-        >
-          {{ t('changeStatus') }}
-        </q-btn>
-
-        <q-btn
-          v-if="!isVis && !isRearings"
-          color="green darken-1"
-          @click="editTask()"
-        >
-          {{ t('edit') }}
-        </q-btn>
+        <btn-base-group>
+          <btn-base
+            v-if="!isMovement && !isVis && !isRearings"
+            color="secondary darken-1"
+            @click="updateStatus()"
+          >
+            {{ t('changeStatus') }}
+          </btn-base>
+          <btn-base
+            v-if="!isVis && !isRearings"
+            color="green darken-1"
+            @click="editTask()"
+          >
+            {{ t('edit') }}
+          </btn-base>
+          <btn-base
+            v-if="!isVis"
+            color="negative darken-1"
+            @click="deleteEvent"
+          >
+            {{ t('delete') }}
+          </btn-base>
+          <btn-base color="grey darken-1" @click="onDialogHide">
+            {{ t('close') }}
+          </btn-base>
+        </btn-base-group>
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -93,9 +101,10 @@ import EventInfoRearing from './EventInfoRearing.vue';
 import EventInfoVis from './EventInfoVis.vue';
 import { useDateFormat } from '~/composables/useDate';
 import { useApiFetch } from '~/composables/useApi';
-import { useDialogPluginComponent } from 'quasar';
+import { useDialogPluginComponent, useQuasar } from 'quasar';
 
 const useDate = useDateFormat();
+const $q = useQuasar();
 const notification = useNotification();
 const api = useApiFetch();
 const { dialogRef, onDialogHide, onDialogOK } = useDialogPluginComponent();
@@ -140,16 +149,24 @@ async function deleteEvent() {
       : props.eventInfo.task_ids.toString().split(','),
   });
   const nameSource = props.eventInfo.table as string;
-  await api.patch(`/v1/${nameSource}/batchDelete`, data).then(
-    (response: any) => {
-      if (response === 0) notification.open('warning', 'notAllowed');
-      else notification.open('positive', 'deleted');
-      onDialogOK(props.eventInfo.table);
-    },
-    (error) => {
-      notification.open('negative', error);
-    }
-  );
+  $q.dialog({
+    title: t('delete'),
+    message: t('deleteConfirm'),
+    cancel: true,
+    persistent: true,
+    html: true,
+  }).onOk(async () => {
+    await api.patch(`/v1/${nameSource}/batchDelete`, data).then(
+      (response: any) => {
+        if (response === 0) notification.open('warning', 'notAllowed');
+        else notification.open('positive', 'deleted');
+        onDialogOK(props.eventInfo.table);
+      },
+      (error) => {
+        notification.open('negative', error);
+      }
+    );
+  });
 }
 
 function editTask() {

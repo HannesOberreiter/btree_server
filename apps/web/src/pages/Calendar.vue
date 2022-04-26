@@ -236,15 +236,12 @@ const handleEventsChange = (changeInfo: EventChangeArg) => {
   return true;
 };
 const handleDateSelect = (selectInfo: DateSelectArg) => {
-  if ($q.platform.is.mobile) {
+  if (dateClicked.value === dayjs(selectInfo.start).format('YYYY-MM-DD')) {
+    dateClicked.value = null;
+    formDialog();
+  } else {
     dateClicked.value = dayjs(selectInfo.start).format('YYYY-MM-DD');
-    formDialog();
-  } else if (
-    dateClicked.value === dayjs(selectInfo.start).format('YYYY-MM-DD')
-  ) {
-    formDialog();
   }
-  dateClicked.value = dayjs(selectInfo.start).format('YYYY-MM-DD');
 };
 const handleEventClick = (clickInfo: EventClickArg) => {
   clickInfo.jsEvent.preventDefault(); // don't let the browser navigate

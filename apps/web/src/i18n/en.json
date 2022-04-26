@@ -73,6 +73,7 @@
   "deleteApiary": "You can only delete apiaries without active colonies!",
   "deleteConfirmHive": "All connected data will also be removed, eg. feedings, checkups, harvests.",
   "deleteConfirmRow": "Are you sure you want to delete {count} row(s)?",
+  "deleteConfirm": "Are you sure to delete the data?",
   "deleted": "Deleted",
   "description": "Description",
   "disease": "Disease",

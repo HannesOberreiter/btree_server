@@ -23,30 +23,28 @@
         </div>
       </div>
       <q-card-actions>
-        <q-btn-group outline>
-          <q-btn
+        <btn-base-group>
+          <btn-base
             :disable="!queue"
-            no-caps
             color="primary"
             @click="uploader.upload()"
           >
             {{ $t('upload') }}
-          </q-btn>
-          <q-btn
+          </btn-base>
+          <btn-base
             :disable="queue"
-            no-caps
             color="secondary"
             @click="uploader.pickFiles()"
           >
             {{ $t('select') }}
-          </q-btn>
-          <q-btn no-caps color="grey" @click="uploader.reset()">
+          </btn-base>
+          <btn-base color="grey" @click="uploader.reset()">
             {{ $t('reset') }}
-          </q-btn>
-          <q-btn no-caps color="grey" @click="onDialogCancel()">
+          </btn-base>
+          <btn-base color="grey" @click="onDialogCancel()">
             {{ $t('close') }}
-          </q-btn>
-        </q-btn-group>
+          </btn-base>
+        </btn-base-group>
       </q-card-actions>
     </q-card>
   </q-dialog>

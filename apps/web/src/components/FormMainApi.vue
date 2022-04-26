@@ -57,35 +57,32 @@
     </q-input>
   </div>
   <div class="text-center q-pt-md">
-    <q-btn-group spread>
-      <q-btn
+    <btn-base-group>
+      <btn-base
         v-if="!storeUser.company.api_active"
-        unelevated
         size="md"
         color="secondary"
         @click.prevent.stop="changeApiStatus(true)"
       >
         {{ $t('activate') }}
-      </q-btn>
-      <q-btn
+      </btn-base>
+      <btn-base
         v-if="storeUser.company.api_active"
-        unelevated
         size="md"
         color="negative"
         @click.prevent.stop="changeApiStatus(false)"
       >
         {{ $t('deactivate') }}
-      </q-btn>
-      <q-btn
+      </btn-base>
+      <btn-base
         v-if="storeUser.company.api_active"
-        unelevated
         size="md"
         color="secondary"
         @click.prevent.stop="changeApiStatus(true, true)"
       >
         {{ $t('generateNewKey') }}
-      </q-btn>
-    </q-btn-group>
+      </btn-base>
+    </btn-base-group>
   </div>
 </template>
 

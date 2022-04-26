@@ -18,36 +18,36 @@
   <div class="q-mt-lg">
     <item-company></item-company>
   </div>
-  <q-btn-group size="md" unelevated class="q-mt-lg" spread>
-    <q-btn
+  <btn-base-group size="md" class="q-mt-lg">
+    <btn-base
       color="primary"
       :loading="isSubmitting"
       :label="t('new')"
       @click="newCompany"
     />
-    <q-btn
+    <btn-base
       v-if="storeUser.isAdmin"
       color="secondary"
       :loading="isSubmitting"
       :label="t('edit')"
       @click="editCompany"
     />
-  </q-btn-group>
-  <q-btn-group unelevated size="md" class="q-mt-md" spread>
-    <q-btn
+  </btn-base-group>
+  <btn-base-group size="md" class="q-mt-md">
+    <btn-base
       color="red-10"
       :loading="isSubmitting"
       :label="t('removeAccess')"
       @click="removeAccess"
     />
-    <q-btn
+    <btn-base
       v-if="storeUser.isAdmin"
       color="negative"
       :loading="isSubmitting"
       :label="t('delete')"
       @click="deleteCompany"
     />
-  </q-btn-group>
+  </btn-base-group>
 </template>
 
 <script setup lang="ts">
