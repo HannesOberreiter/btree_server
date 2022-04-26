@@ -1,6 +1,8 @@
 <template>
   <q-td>
-    <div class="cursor: pointer" @click="showFile(value)">{{ value }}</div>
+    <div v-if="value" style="cursor: pointer" @click="showFile(value)">
+      {{ value }}
+    </div>
   </q-td>
 </template>
 
@@ -12,7 +14,6 @@ const $q = useQuasar();
 
 defineProps({
   value: {
-    type: String,
     required: true,
   },
 });
