@@ -308,7 +308,7 @@
   },
   "single": "Single",
   "solution": "Solution",
-  "soundHint": "Play sound on notifications.",
+  "soundHint": "Play sound on notifications (on mobile you get vibration and sound).",
   "source": "Source",
   "start": "Start",
   "startNumberNote": "Number at which to start counting.",
