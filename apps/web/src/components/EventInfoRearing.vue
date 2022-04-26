@@ -11,8 +11,14 @@
       <ul>
         <li v-for="(item, index) in eventInfo.steps" :key="index">
           <span class="text-weight-bold q-pr-sm">{{ item.detail.job }}</span>
-          <span class="float-right">
-            {{ useDate.displayFormat(item.date, 'date-time') }}
+          <span
+            v-if="eventInfo.detail_id === item.detail_id"
+            class="float-right"
+            >{{ $t('rear.startLabel') }}:
+            <b>{{ useDate.displayFormat(item.start, 'date-time') }}</b>
+          </span>
+          <span v-else class="float-right">
+            {{ useDate.displayFormat(item.start, 'date-time') }}
           </span>
           <div class="text-grey">
             {{ item.detail.note }}

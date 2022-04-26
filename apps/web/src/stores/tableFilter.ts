@@ -12,6 +12,7 @@ interface State {
   checkup: string;
   charge: string;
   scale_data: string;
+  rearing: string;
   [key: string]: string;
 }
 
@@ -28,6 +29,7 @@ export const useTableFilterStore = defineStore('tableFilter', {
       queen: '',
       charge: '',
       scale_data: '',
+      rearing: '',
     } as State),
   getters: {
     field: (state) => {

@@ -88,6 +88,11 @@ const routes: RouteRecordRaw[] = [
         name: 'table-scale_data',
         component: () => import('~/pages/TableScaleData.vue'),
       },
+      {
+        path: 'rearing',
+        name: 'table-rearing',
+        component: () => import('~/pages/TableRearing.vue'),
+      },
     ],
   },
   /***

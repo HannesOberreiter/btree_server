@@ -190,7 +190,7 @@ const columns = [
   },
   {
     name: 'created_at',
-    label: 'created',
+    label: t('created'),
     align: 'center',
     field: (row: any) => row.created_at,
     format: (val: string, row: any) => tableMeta(val, row.creator),

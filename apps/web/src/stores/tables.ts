@@ -102,6 +102,16 @@ export const useTablesStore = defineStore('tables', {
       sort: useStorage('table-sort-col-scale_data', 'datetime'),
       direction: useStorage('table-sort-direction-scale_data', false),
     },
+    rearing: {
+      visible: useStorage('table-visible-rearing', [
+        'date',
+        'type.name',
+        'note',
+      ]),
+      length: useStorage('table-length-rearing', 10),
+      sort: useStorage('table-sort-col-rearing', 'date'),
+      direction: useStorage('table-sort-direction-rearing', false),
+    },
   }),
   getters: {},
   actions: {},

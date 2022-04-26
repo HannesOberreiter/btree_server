@@ -59,6 +59,9 @@ const FormMainCharge = defineAsyncComponent(
   () => import('./FormMainCharge.vue')
 );
 const FormMainScale = defineAsyncComponent(() => import('./FormMainScale.vue'));
+const FormMainRearing = defineAsyncComponent(
+  () => import('./FormMainRearing.vue')
+);
 
 const { dialogRef, onDialogHide, onDialogOK } = useDialogPluginComponent();
 
@@ -168,6 +171,10 @@ const layouts = {
     props: {
       option: props.option,
     },
+  },
+  rearing: {
+    comp: FormMainRearing,
+    props: {},
   },
 } as any;
 

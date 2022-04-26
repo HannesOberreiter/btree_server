@@ -3,6 +3,7 @@
     <form-dropdown-edit
       v-if="isEdit"
       v-model="editOptions"
+      off-label="date"
       class="col-12"
       :options="editOptionsCopy"
     ></form-dropdown-edit>
@@ -10,6 +11,8 @@
       v-model="state.date"
       date-format="YYYY-MM-DD HH:mm"
       label="date"
+      :values="values"
+      :reset="reset"
     ></form-input-date>
     <form-dropdown-rearing
       v-model="state.type"
@@ -56,6 +59,7 @@
     :v="v"
     form="rearing"
     @reset="onReset"
+    @change="emit('onSuccess', true)"
   ></form-buttons>
 </template>
 
@@ -83,6 +87,7 @@ const values = ref({});
 const reset = ref(0);
 const editOptions = ref([]) as any;
 const editOptionsCopy = ref([]) as any;
+const emit = defineEmits(['onSuccess']);
 const props = defineProps({
   ids: {
     type: Array,
@@ -111,7 +116,12 @@ async function getEdit(id: unknown[]) {
   return await api.post('/v1/rearing/batchGet', { ids: id }).then(
     (response: any) => {
       const editIds = map(response, (row: any) => [
-        { value: row.id, label: `ID: ${row.id} / (${row.name})` },
+        {
+          value: row.id,
+          label: `ID: ${row.id} / (${dayjs(row.date).format(
+            'YYYY-MM-DD HH:mm'
+          )})`,
+        },
       ]);
       editOptions.value = flatten(editIds);
       editOptionsCopy.value = [...unref(editOptions.value)];

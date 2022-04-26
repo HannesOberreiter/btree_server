@@ -24,23 +24,28 @@
       </template>
     </q-select>
     <q-select
+      v-if="!multipleValues"
       v-model="modelDetail"
       :label="
-        disableDetail ? $t('start') + ' - ' + $t('multipleValues') : $t('start')
+        disableDetail
+          ? $t('rear.startLabel') + ' - ' + $t('multipleValues')
+          : $t('rear.startLabel')
       "
       name="start"
       :loading="isLoading"
       :disable="isLoading || disableDetail"
       :options="optionsDetail"
       :hint="
-        $t('rear.startHint', {
-          step: modelDetail ? modelDetail.label : '',
-          date: useDate.displayFormat(modelDate, 'date-time'),
-        })
+        hintDetail
+          ? hintDetail
+          : $t('rear.startHint', {
+              step: modelDetail ? modelDetail.label : '',
+              date: useDate.displayFormat(modelDate, 'date-time'),
+            })
       "
       option-value="detail_id"
       filled
-      class="q-pb-md"
+      class="q-pb-lg"
     >
       <template #before>
         <q-icon
@@ -108,6 +113,7 @@ const disableDetail = ref(multipleValues.value);
 const options = ref<any>([]);
 const optionsDetail = ref<any>([]);
 const hint = ref('');
+const hintDetail = ref('');
 
 watch(
   [data, values, reset],
@@ -123,13 +129,10 @@ watch(modelValue, (cur) => {
   if (cur) filterStepOption();
 });
 
-watch(modelDetail, (cur) => {
-  console.log(cur);
-});
-
 function setValues() {
   disable.value = multipleValues.value;
   if (values.value && !isEmpty(values.value)) {
+    console.log(values.value[0]['type_id']);
     setOptions(values.value[0]['type_id']);
   } else if (modelValue.value && typeof modelValue.value !== 'object') {
     setOptions(modelValue.value);
@@ -161,7 +164,7 @@ function setOptions(id = 0) {
     const res = filter(data.value.results, (obj) => {
       return obj.id === id;
     });
-    if (res.length === 0) hint.value = t('dropdownNotAvailable');
+    hint.value = res.length === 0 ? t('dropdownNotAvailable') : '';
     modelValue.value = res[0];
   }
 }
@@ -182,15 +185,12 @@ function setOptionsDetail(id = 0) {
   if (!data.value) return;
   if (multipleValuesDetail.value) editValuesDetail(true);
   else if (id === 0) {
-    console.log(id);
     modelDetail.value = unref(optionsDetail.value[0]);
-    console.log(optionsDetail.value[0]);
-    console.log(modelDetail.value);
   } else {
-    const res = filter(data.value.results, (obj) => {
-      return obj.id === id;
+    const res = filter(optionsDetail.value, (obj) => {
+      return obj.detail_id === id;
     });
-    if (res.length === 0) hint.value = t('dropdownNotAvailable');
+    hintDetail.value = res.length === 0 ? t('dropdownNotAvailable') : '';
     modelDetail.value = res[0];
   }
 }

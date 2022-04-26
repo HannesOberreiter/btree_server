@@ -253,7 +253,7 @@ function cleanupRearingDetail(state: FormRearingDetail) {
 
 function cleanupRearing(state: FormRearing) {
   const result = {
-    date: state.date + ':00',
+    date: state.date ? state.date + ':00' : null,
     hatch: state.hatch,
     note: state.note,
     type_id: state.type ? state.type.id : null,

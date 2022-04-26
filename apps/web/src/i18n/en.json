@@ -209,6 +209,7 @@
   },
   "race": "Breeding line",
   "rank": "Rank",
+  "timetable": "Timetable",
   "rating": {
     "brood": "Brood",
     "calm_comb": "Calm on comb",
@@ -221,7 +222,8 @@
   },
   "rearing": "Queen rearing | Queen rearings",
   "rear": {
-    "startHint": "Starting with step {step} on {date}"
+    "startHint": "Starting with step {step} on {date}",
+    "startLabel": "Calculate from step"
   },
   "recoverUser": {
     "success": "We send you an e-mail ({msg}) to reset your password, if you dont get the mail in a few minutes it could be that no account with this address is registered. Otherwise please feel free to contact us at {'office@btree.at'}",
