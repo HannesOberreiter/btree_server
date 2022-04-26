@@ -142,7 +142,7 @@ const optionValue = computed(() => optionSelected.value.value as Option);
 watch(optionSelected, (cur) => {
   selected.value = [];
   router.replace({
-    name: 'settingOption',
+    name: 'setting-option',
     params: { option: cur.value },
   });
 });

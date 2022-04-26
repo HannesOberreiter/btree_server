@@ -3,7 +3,8 @@
     v-ripple
     :to="{
       name: link.route,
-      params: link.route === 'settingOption' ? { option: 'checkup_types' } : {},
+      params:
+        link.route === 'setting-option' ? { option: 'checkup_types' } : {},
     }"
     clickable
     exact

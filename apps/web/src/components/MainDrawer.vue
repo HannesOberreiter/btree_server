@@ -218,7 +218,7 @@ const links = [
       },
       {
         label: 'method',
-        route: 'table-rearing-method',
+        route: 'setting-rearing',
         icon: 'fas fa-cog',
         menu: false,
       },
@@ -231,31 +231,31 @@ const links = [
     menu: [
       {
         label: 'profile.name',
-        route: 'settingProfile',
+        route: 'setting-profile',
         icon: 'far fa-id-card',
         menu: [] as any,
       },
       {
         label: 'field',
-        route: 'settingField',
+        route: 'setting-field',
         icon: 'fas fa-cog',
         menu: [] as any,
       },
       {
         label: 'option',
-        route: 'settingOption',
+        route: 'setting-option',
         icon: 'fas fa-cogs',
         menu: [] as any,
       },
       {
         label: 'company.name',
-        route: 'settingCompany',
+        route: 'setting-company',
         icon: 'fas fa-warehouse',
         menu: [] as any,
       },
       {
         label: 'Dropbox',
-        route: 'settingDropbox',
+        route: 'setting-dropbox',
         icon: 'fab fa-dropbox',
         menu: [] as any,
       },

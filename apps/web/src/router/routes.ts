@@ -256,32 +256,38 @@ const routes: RouteRecordRaw[] = [
     children: [
       {
         path: 'profile/:tab?',
-        name: 'settingProfile',
+        name: 'setting-profile',
         props: true,
         component: () => import('~/pages/SettingProfile.vue'),
       },
       {
         path: 'company/:tab?',
-        name: 'settingCompany',
+        name: 'setting-company',
         props: true,
         component: () => import('~/pages/SettingCompany.vue'),
       },
       {
         path: 'field',
-        name: 'settingField',
+        name: 'setting-field',
         component: () => import('~/pages/SettingField.vue'),
       },
       {
         path: 'option/:option',
-        name: 'settingOption',
+        name: 'setting-option',
         props: true,
         component: () => import('~/pages/SettingOption.vue'),
       },
       {
         path: 'dropbox/:token?',
-        name: 'settingDropbox',
+        name: 'setting-dropbox',
         props: true,
         component: () => import('~/pages/SettingDropbox.vue'),
+      },
+      {
+        path: 'rearing',
+        name: 'setting-rearing',
+        props: true,
+        component: () => import('~/pages/SettingRearing.vue'),
       },
     ],
   },
