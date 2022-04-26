@@ -7,5 +7,6 @@ declare namespace NodeJS {
     VUE_ROUTER_BASE: string | undefined;
     DROPBOX_CLIENT_ID: string;
     OPENWEATHER_APP_ID: string;
+    BACKEND_URL: string;
   }
 }

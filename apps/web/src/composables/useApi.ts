@@ -4,7 +4,7 @@ import { stringify } from 'query-string';
 import { isString } from 'lodash-es';
 import { LoadingBar } from 'quasar';
 
-const baseUrl = '/api';
+const baseUrl = process.env.BACKEND_URL;
 const state = reactive({
   retry: false,
   logout: false,

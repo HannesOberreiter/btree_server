@@ -3,10 +3,10 @@ import { QueryCache, VueQueryPlugin, VueQueryPluginOptions } from 'vue-query';
 
 export const queryCache = new QueryCache({
   onError: (error) => {
-    console.log(error);
+    console.error(error);
   },
-  onSuccess: (data) => {
-    console.log(data);
+  onSuccess: (_data) => {
+    //console.log(data);
   },
 });
 
