@@ -5,7 +5,7 @@ exports.up = function (knex) {
 
     t.string('token').index();
     t.timestamp('expires');
-    t.string('user-agent', 50);
+    t.string('user-agent', 65);
 
     t.integer('user_id').unsigned().nullable();
     t.integer('bee_id').unsigned().nullable();

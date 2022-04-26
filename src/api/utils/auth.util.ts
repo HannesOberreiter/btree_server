@@ -26,11 +26,11 @@ const generateRefreshToken = async (
       bee_id: bee_id,
       user_id: user_id,
       'user-agent': userAgent,
-      expires: expires
+      expires: expires,
     });
 
     await User.query(trx).patch({
-      saved_company: user_id
+      saved_company: user_id,
     });
 
     await trx.commit();
@@ -52,12 +52,12 @@ const updateRefreshToken = async (oldToken: any, user_id: number) => {
       oldToken.id,
       {
         token: token,
-        expires: expires
+        expires: expires,
       }
     );
 
     await User.query(trx).patch({
-      saved_company: user_id
+      saved_company: user_id,
     });
 
     await trx.commit();
@@ -77,7 +77,7 @@ const createAccessToken = (bee_id, user_id, rank, paid: boolean) => {
     bee_id: bee_id,
     user_id: user_id,
     rank: rank,
-    paid: paid
+    paid: paid,
   };
   return { accessToken: jwt.sign(payload, jwtSecret), expiresIn: payload.exp };
 };
@@ -107,7 +107,7 @@ const checkRefreshToken = async (
     'refresh_tokens.bee_id': decoded.bee_id,
     'refresh_tokens.user_id': decoded.user_id,
     'refresh_tokens.token': token,
-    'refresh_tokens.user-agent': buildUserAgent(req)
+    'refresh_tokens.user-agent': buildUserAgent(req),
   });
 
   let refreshToken;
@@ -120,7 +120,7 @@ const checkRefreshToken = async (
   const companyBee = await CompanyBee.query()
     .findOne({
       bee_id: decoded.bee_id,
-      user_id: decoded.user_id
+      user_id: decoded.user_id,
     })
     .withGraphJoined('company');
 
@@ -141,9 +141,11 @@ const checkRefreshToken = async (
 };
 
 const buildUserAgent = (req: Request) => {
-  let userAgent = useragent.parse(req.headers['user-agent']);
-  userAgent = userAgent.os + userAgent.platform + userAgent.browser;
-  return userAgent.length > 50 ? userAgent.substring(0, 49) : userAgent;
+  const userAgent = useragent.parse(req.headers['user-agent']);
+  const userAgentInsert = userAgent.os + userAgent.platform + userAgent.source;
+  return userAgentInsert.length > 65
+    ? userAgentInsert.substring(0, 64)
+    : userAgentInsert;
 };
 
 const generateTokenResponse = async (
@@ -156,13 +158,13 @@ const generateTokenResponse = async (
   const oldToken = await RefreshToken.query().findOne({
     'refresh_tokens.bee_id': bee_id,
     'refresh_tokens.user_id': user_id,
-    'refresh_tokens.user-agent': userAgent
+    'refresh_tokens.user-agent': userAgent,
   });
 
   const companyBee = await CompanyBee.query()
     .findOne({
       bee_id: bee_id,
-      user_id: user_id
+      user_id: user_id,
     })
     .withGraphJoined('company');
 
@@ -206,7 +208,7 @@ const confirmAccount = async (id: number) => {
     const u = await User.transaction(async (trx) => {
       const u = await User.query(trx).patchAndFetchById(id, {
         state: 1,
-        reset: ''
+        reset: '',
       });
       return u.email;
     });
@@ -220,7 +222,7 @@ const unsubscribeMail = async (id: number) => {
   try {
     const u = await User.transaction(async (trx) => {
       const u = await User.query(trx).patchAndFetchById(id, {
-        newsletter: false
+        newsletter: false,
       });
       return u.email;
     });
@@ -235,7 +237,7 @@ const resetMail = async (id: number) => {
     const u = await User.transaction(async (trx) => {
       const u = await User.query(trx).patchAndFetchById(id, {
         reset: randomBytes(64).toString('hex'),
-        reset_timestamp: dayjs().toDate()
+        reset_timestamp: dayjs().toDate(),
       });
       return u;
     });
@@ -257,7 +259,7 @@ const resetPassword = async (id: number, inputPassword: string) => {
         reset: '',
         state: 1,
         password: password,
-        salt: salt
+        salt: salt,
       });
       return u;
     });
@@ -275,5 +277,5 @@ export {
   resetMail,
   resetPassword,
   unsubscribeMail,
-  buildUserAgent
+  buildUserAgent,
 };
