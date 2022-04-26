@@ -2,15 +2,15 @@ exports.up = function (knex) {
   return knex.schema.createTable('queens', (t) => {
     t.increments('id').primary().unsigned();
 
-    t.string('name', 24);
+    t.string('name', 24).index();
     t.string('mark_colour', 24);
     t.string('mother', 24);
     t.date('date');
-    t.date('move_date');
+    t.date('move_date').index();
 
     t.string('note', 2000);
     t.string('url', 512);
-    t.boolean('modus').defaultTo(1);
+    t.boolean('modus').defaultTo(1).index();
     t.date('modus_date')
       .nullable()
       .comment('Keep track of when queen was set inactive.');
@@ -41,6 +41,7 @@ exports.up = function (knex) {
 
     t.boolean('deleted')
       .defaultTo(0)
+      .index()
       .comment('if element is deleted (soft delete)');
     t.timestamp('deleted_at').nullable().defaultTo(knex.fn.now());
 

@@ -4,6 +4,30 @@ const fs = require('fs');
 var map = require('lodash/map');
 var filter = require('lodash/filter');
 var omit = require('lodash/omit');
+var find = require('lodash/find');
+var cloneDeep = require('lodash/cloneDeep');
+var compact = require('lodash/compact');
+
+class findUser {
+  constructor() {
+    this.movedates = readMigrationTable('movedate.json');
+    this.apiaries = readMigrationTable('apiary.json');
+    this.count = 0;
+  }
+  getUserID(hive_id) {
+    const movedate = find(this.movedates.data, { hive_id: hive_id });
+    if (!movedate) return null;
+    const apiary = find(this.apiaries.data, { apiary_id: movedate.apiary_id });
+    if (!apiary) {
+      console.log(movedate);
+      this.count++;
+      console.log(this.count);
+      return null;
+    }
+    //console.log(apiary);
+    return apiary.user_id;
+  }
+}
 
 if (env.env === 'production') {
   console.log('No seeding allowed in production environment!');
@@ -12,6 +36,8 @@ if (env.env === 'production') {
   };
 } else if (env.env === 'staging') {
   // This code is only used for migrating old databse to new schema
+
+  const userId = new findUser();
 
   exports.seed = async function (knex) {
     const promises = [];
@@ -92,7 +118,10 @@ if (env.env === 'production') {
     */
     rawData = readMigrationTable('checkup.json');
     newData = map(rawData.data, (data) => {
+      const user_id = userId.getUserID(data.hive_id);
+      if (!user_id) return null;
       return {
+        user_id: user_id,
         id: data.check_id,
         type_id: data.ct_id,
         varroa: isNaN(data.varroa) ? 0 : Number(data.varroa),
@@ -100,7 +129,7 @@ if (env.env === 'production') {
         ...omitFields(data, ['check_id', 'ct_id', 'varroa']),
       };
     });
-    await transactionMigration('checkups', newData, knex);
+    await transactionMigration('checkups', compact(newData), knex);
     rawData = readMigrationTable('checkup_type.json');
     newData = map(rawData.data, (data) => {
       return {
@@ -119,6 +148,7 @@ if (env.env === 'production') {
       return {
         id: data.user_id,
         name: data.username,
+        dropbox_auth: '',
         created_at:
           data.creation_date === '0000-00-00 00:00:00'
             ? null
@@ -127,6 +157,7 @@ if (env.env === 'production') {
           'user_id',
           'username',
           'companynumber',
+          'dropbox_auth',
           'creation_date',
         ]),
       };
@@ -137,21 +168,30 @@ if (env.env === 'production') {
       company_bee
     */
     rawData = readMigrationTable('members_bee.json');
-    await transactionMigration('company_bee', rawData.data, knex);
+    newData = map(rawData.data, (data) => {
+      return {
+        rank: data.rank > 2 ? 3 : data.rank,
+        ...omitFields(data, ['rank']),
+      };
+    });
+    await transactionMigration('company_bee', newData, knex);
 
     /**
       feeds
     */
     rawData = readMigrationTable('feed.json');
     newData = map(rawData.data, (data) => {
+      const user_id = userId.getUserID(data.hive_id);
+      if (!user_id) return null;
       return {
+        user_id: user_id,
         id: data.feed_id,
         type_id: data.ft_id,
         ...dateFields(data),
         ...omitFields(data, ['feed_id', 'ft_id']),
       };
     });
-    await transactionMigration('feeds', newData, knex);
+    await transactionMigration('feeds', compact(newData), knex);
     rawData = readMigrationTable('feed_type.json');
     newData = map(rawData.data, (data) => {
       return {
@@ -167,7 +207,10 @@ if (env.env === 'production') {
     */
     rawData = readMigrationTable('harvest.json');
     newData = map(rawData.data, (data) => {
+      const user_id = userId.getUserID(data.hive_id);
+      if (!user_id) return null;
       return {
+        user_id: user_id,
         id: data.harvest_id,
         type_id: data.hs_id,
         amount: data.weight,
@@ -175,7 +218,7 @@ if (env.env === 'production') {
         ...omitFields(data, ['harvest_id', 'hs_id', 'weight']),
       };
     });
-    await transactionMigration('harvests', newData, knex);
+    await transactionMigration('harvests', compact(newData), knex);
 
     rawData = readMigrationTable('harvest_source.json');
     newData = map(rawData.data, (data) => {
@@ -192,13 +235,16 @@ if (env.env === 'production') {
     */
     rawData = readMigrationTable('hive.json');
     newData = map(rawData.data, (data) => {
+      const user_id = userId.getUserID(data.hive_id);
+      if (!user_id) return null;
       return {
         id: data.hive_id,
+        user_id: user_id,
         ...dateFields(data),
         ...omitFields(data, ['hive_id']),
       };
     });
-    await transactionMigration('hives', newData, knex);
+    await transactionMigration('hives', compact(newData), knex);
 
     // hive_group is not anymore, need to get amount and save into grouphive field
     rawData = readMigrationTable('hive_group.json');
@@ -323,14 +369,17 @@ if (env.env === 'production') {
     */
     rawData = readMigrationTable('treatment.json');
     newData = map(rawData.data, (data) => {
+      const user_id = userId.getUserID(data.hive_id);
+      if (!user_id) return null;
       return {
+        user_id: user_id,
         id: data.treatment_id,
         type_id: data.tt_type,
         ...dateFields(data),
         ...omitFields(data, ['treatment_id', 'tt_type']),
       };
     });
-    await transactionMigration('treatments', newData, knex);
+    await transactionMigration('treatments', compact(newData), knex);
 
     rawData = readMigrationTable('treatment_type.json');
     newData = map(rawData.data, (data) => {
@@ -386,7 +435,7 @@ if (env.env === 'production') {
     return Promise.all(promises);
   };
 } else {
-  exports.seed = function (knex) {
+  exports.seed = async function (knex) {
     let tables = [];
     fs.readdirSync(__dirname + `/data/`).forEach((file) => {
       file = file.replace('.json', '');
@@ -398,26 +447,50 @@ if (env.env === 'production') {
     // First we clear all tables with truncate
     // then fill from data jsons
     // FOREIGN KEY CHECK removed to prevent errors
-    tables.forEach((table) => {
+    for (let t = 0; t < tables.length; t++) {
+      const table = tables[t];
       const jsonData = JSON.parse(
         fs.readFileSync(__dirname + `/data/${table}.json`, 'utf-8')
       );
-      promises.push(
-        knex.transaction(function (trx) {
-          knex
-            .raw('SET FOREIGN_KEY_CHECKS=0')
-            .transacting(trx)
-            .then(function () {
-              return knex(table).transacting(trx).truncate();
-            })
-            .then(function () {
-              return knex(table).transacting(trx).insert(jsonData);
-            })
-            .finally(trx.commit);
-        })
-      );
-    });
+      let duplicates = 1;
+      if (['checkups', 'feeds', 'treatments', 'queens'].includes(table)) {
+        duplicates = 20;
+      }
+      let newData = cloneDeep(jsonData);
 
+      if (table === 'checkups') {
+        newData = map(newData, (d) => {
+          return {
+            varroa: isNaN(d.varroa) ? 0 : Number(d.varroa),
+            ...omit(d, 'varroa'),
+          };
+        });
+      }
+
+      for (let i = 1; i <= duplicates; i++) {
+        if (i > 1) {
+          newData = map(cloneDeep(newData), (d) => omit(d, ['id']));
+        }
+        await transactionMigration(table, newData, knex);
+
+        /*promises.push(
+          knex.transaction(function (trx) {
+            knex
+              .raw('SET FOREIGN_KEY_CHECKS=0')
+              .transacting(trx)
+              .then(async function () {
+                return await knex(table).transacting(trx).truncate();
+              })
+              .then(async function () {
+                return await knex(table)
+                  .transacting(trx)
+                  .insert(cloneDeep(newData));
+              })
+              .finally(trx.commit);
+          })
+        );*/
+      }
+    }
     return Promise.all(promises);
   };
 }
@@ -475,6 +548,7 @@ async function transactionMigration(table, data, knex) {
             console.log(error);
           });
       }
+      await knex.raw('SET FOREIGN_KEY_CHECKS=1').transacting(trx);
     })
     .catch(function (error) {
       console.log(error);

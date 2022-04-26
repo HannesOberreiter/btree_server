@@ -3,7 +3,7 @@ import { Container } from '@config/container.config';
 import { Guard } from '@middlewares/guard.middleware';
 import { ROLES } from '@enums/role.enum';
 import { Validator } from '@middlewares/validator.middleware';
-import { body, param } from 'express-validator';
+import { body } from 'express-validator';
 
 export class ApiaryRouter extends Router {
   constructor() {

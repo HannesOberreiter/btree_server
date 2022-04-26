@@ -17,6 +17,7 @@ export class Harvest extends ExtModel {
   done!: boolean;
   deleted!: boolean;
 
+  user_id!: number;
   edit_id!: number;
   bee_id!: number;
   hive_id!: number;
@@ -51,11 +52,12 @@ export class Harvest extends ExtModel {
       created_at: { type: 'string', format: 'date-time' },
       updated_at: { type: 'string', format: 'date-time' },
 
+      user_id: { type: 'integer' }, // Company FK
       hive_id: { type: 'integer' }, // Hive FK
       type_id: { type: 'integer' }, // Type FK
       bee_id: { type: 'integer' }, // Creator Bee FK
-      edit_id: { type: 'integer' } // Updater Bee FK
-    }
+      edit_id: { type: 'integer' }, // Updater Bee FK
+    },
   };
 
   static relationMappings = () => ({
@@ -64,40 +66,40 @@ export class Harvest extends ExtModel {
       modelClass: HarvestType,
       join: {
         from: ['harvests.type_id'],
-        to: ['harvest_types.id']
-      }
+        to: ['harvest_types.id'],
+      },
     },
     hive: {
       relation: ExtModel.HasOneRelation,
       modelClass: Hive,
       join: {
         from: ['harvests.hive_id'],
-        to: ['hives.id']
-      }
+        to: ['hives.id'],
+      },
     },
     harvest_apiary: {
       relation: ExtModel.HasOneRelation,
       modelClass: HarvestApiary,
       join: {
         from: ['harvests_apiaries.harvest_id'],
-        to: ['harvests.id']
-      }
+        to: ['harvests.id'],
+      },
     },
     creator: {
       relation: ExtModel.HasOneRelation,
       modelClass: User,
       join: {
         from: ['harvests.bee_id'],
-        to: ['bees.id']
-      }
+        to: ['bees.id'],
+      },
     },
     editor: {
       relation: ExtModel.HasOneRelation,
       modelClass: User,
       join: {
         from: ['harvests.edit_id'],
-        to: ['bees.id']
-      }
-    }
+        to: ['bees.id'],
+      },
+    },
   });
 }

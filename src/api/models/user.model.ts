@@ -57,8 +57,8 @@ export class User extends ExtModel {
 
       last_visit: { type: 'string', format: 'date-time' },
       created_at: { type: 'string', format: 'date-time' },
-      updated_at: { type: 'string', format: 'date-time' }
-    }
+      updated_at: { type: 'string', format: 'date-time' },
+    },
   };
 
   // Omit fields for json response from model
@@ -72,6 +72,14 @@ export class User extends ExtModel {
     return user;
   }
 
+  static get modifiers() {
+    return {
+      identifier(builder) {
+        builder.select('email');
+      },
+    };
+  }
+
   static relationMappings = () => ({
     company: {
       relation: ExtModel.ManyToManyRelation,
@@ -81,19 +89,19 @@ export class User extends ExtModel {
         through: {
           modelClass: CompanyBee,
           from: 'company_bee.bee_id',
-          to: 'company_bee.user_id'
+          to: 'company_bee.user_id',
         },
-        to: 'companies.id'
-      }
+        to: 'companies.id',
+      },
     },
     company_bee: {
       relation: ExtModel.HasManyRelation,
       modelClass: CompanyBee,
       join: {
         from: 'bees.id',
-        to: 'company_bee.bee_id'
-      }
-    }
+        to: 'company_bee.bee_id',
+      },
+    },
   });
 }
 

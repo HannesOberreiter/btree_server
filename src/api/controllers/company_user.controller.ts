@@ -32,8 +32,7 @@ export class CompanyUserController extends Controller {
   async getUser(req: IUserRequest, res: Response, next: NextFunction) {
     try {
       const result = await CompanyBee.query()
-        .withGraphJoined('user')
-        .withGraphJoined('company')
+        .withGraphJoined('[user, company]')
         .where({ user_id: req.user.user_id });
 
       res.locals.data = result;

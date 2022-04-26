@@ -8,7 +8,7 @@ import {
   NotNullViolationError,
   ForeignKeyViolationError,
   CheckViolationError,
-  DataError
+  DataError,
 } from 'objection';
 
 import { IError } from '@interfaces/IError.interface';
@@ -22,35 +22,35 @@ const checkMySQLError = (err: any) => {
         error = badRequest(err.message);
         error.output.payload.message = {
           type: err.type,
-          data: err.data
+          data: err.data,
         };
         break;
       case 'RelationExpression':
         error = badRequest(err.message);
         error.output.payload.message = {
           type: 'RelationExpression',
-          data: {}
+          data: {},
         };
         break;
       case 'UnallowedRelation':
         error = badRequest(err.message);
         error.output.payload.message = {
           type: err.type,
-          data: {}
+          data: {},
         };
         break;
       case 'InvalidGraph':
         error = badRequest(err.message);
         error.output.payload.message = {
           type: err.type,
-          data: {}
+          data: {},
         };
         break;
       default:
         error = badRequest(err.message);
         error.output.payload.message = {
           type: 'UnknownValidationError',
-          data: {}
+          data: {},
         };
         break;
     }
@@ -58,7 +58,7 @@ const checkMySQLError = (err: any) => {
     error = notFound(err.message);
     error.output.payload.message = {
       type: 'NotFound',
-      data: {}
+      data: {},
     };
   } else if (err instanceof UniqueViolationError) {
     error = conflict(err.message);
@@ -67,8 +67,8 @@ const checkMySQLError = (err: any) => {
       data: {
         columns: err.columns,
         table: err.table,
-        constriant: err.constraint
-      }
+        constriant: err.constraint,
+      },
     };
   } else if (err instanceof NotNullViolationError) {
     error = badRequest(err.message);
@@ -76,8 +76,8 @@ const checkMySQLError = (err: any) => {
       type: 'NotNullViolation',
       data: {
         columns: err.column,
-        table: err.table
-      }
+        table: err.table,
+      },
     };
   } else if (err instanceof ForeignKeyViolationError) {
     error = conflict(err.message);
@@ -85,8 +85,8 @@ const checkMySQLError = (err: any) => {
       type: 'ForeignKeyViolation',
       data: {
         table: err.table,
-        constriant: err.constraint
-      }
+        constriant: err.constraint,
+      },
     };
   } else if (err instanceof CheckViolationError) {
     error = badRequest(err.message);
@@ -94,20 +94,20 @@ const checkMySQLError = (err: any) => {
       type: 'CheckViolation',
       data: {
         table: err.table,
-        constriant: err.constraint
-      }
+        constriant: err.constraint,
+      },
     };
   } else if (err instanceof DataError) {
     error = badRequest(err.message);
     error.output.payload.message = {
       type: 'InvalidData',
-      data: {}
+      data: {},
     };
   } else if (err instanceof DBError) {
     error = badImplementation(err.message);
     error.output.payload.message = {
       type: 'UnknownDatabaseError',
-      data: {}
+      data: {},
     };
   } else if (err instanceof Error) {
     return err;
@@ -115,7 +115,7 @@ const checkMySQLError = (err: any) => {
     error = badImplementation(err.message);
     error.output.payload.message = {
       type: 'UnknownError',
-      data: {}
+      data: {},
     };
   }
 
@@ -166,7 +166,7 @@ const getErrorOutput = (error): IError => {
       statusCode: getErrorStatusCode(error),
       statusText: error.output.payload.error,
       // was before inside array, removed it because I want to throw error with boom and validator [error.output.payload.message]
-      errors: error.output.payload.message
+      errors: error.output.payload.message,
     };
   }
 };

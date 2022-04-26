@@ -16,13 +16,12 @@ export class HarvestController extends Controller {
       const { order, direction, offset, limit, q, filters, deleted } =
         req.query as any;
       const query = Harvest.query()
-        .withGraphJoined('harvest_apiary')
-        .withGraphJoined('creator')
-        .withGraphJoined('editor')
-        .withGraphJoined('type')
-        .withGraphJoined('hive')
+        .withGraphJoined(
+          '[harvest_apiary, type, hive, creator(identifier), editor(identifier)]'
+        )
         .where({
-          'harvest_apiary.user_id': req.user.user_id,
+          'hive.deleted': false,
+          'harvests.user_id': req.user.user_id,
           'harvests.deleted': deleted === 'true',
         })
         .page(offset, parseInt(limit) === 0 ? 10 : limit);
@@ -73,8 +72,7 @@ export class HarvestController extends Controller {
         return await Harvest.query(trx)
           .patch({ ...insert, edit_id: req.user.bee_id })
           .findByIds(ids)
-          .leftJoinRelated('harvest_apiary')
-          .where('harvest_apiary.user_id', req.user.user_id);
+          .where('user_id', req.user.user_id);
       });
       res.locals.data = result;
       next();
@@ -121,6 +119,7 @@ export class HarvestController extends Controller {
                 ...insert,
                 hive_id: hives[hive].id,
                 bee_id: req.user.bee_id,
+                user_id: req.user.user_id,
               });
               result.push(res.id);
             }
@@ -144,7 +143,6 @@ export class HarvestController extends Controller {
             done: req.body.status,
           })
           .findByIds(req.body.ids)
-          .leftJoinRelated('harvest_apiary')
           .where('user_id', req.user.user_id);
       });
       res.locals.data = result;
@@ -164,7 +162,6 @@ export class HarvestController extends Controller {
             enddate: req.body.end,
           })
           .findByIds(req.body.ids)
-          .leftJoinRelated('harvest_apiary')
           .where('user_id', req.user.user_id);
       });
       res.locals.data = result;
@@ -179,10 +176,8 @@ export class HarvestController extends Controller {
       const result = await Harvest.transaction(async (trx) => {
         const res = await Harvest.query(trx)
           .findByIds(req.body.ids)
-          .withGraphJoined('harvest_apiary')
-          .withGraphJoined('type')
-          .withGraphJoined('hive')
-          .where('harvest_apiary.user_id', req.user.user_id);
+          .withGraphJoined('[type, hive]')
+          .where('harvests.user_id', req.user.user_id);
         return res;
       });
       res.locals.data = result;
@@ -201,7 +196,6 @@ export class HarvestController extends Controller {
         const res = await Harvest.query(trx)
           .findByIds(req.body.ids)
           .select('id', 'deleted')
-          .withGraphJoined('harvest_apiary')
           .where('user_id', req.user.user_id);
 
         const softIds = [];

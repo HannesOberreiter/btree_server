@@ -41,7 +41,6 @@ export class ApiaryController extends Controller {
       const { order, direction, offset, limit, modus, deleted, q, details } =
         req.query as any;
       const query = Apiary.query()
-        .withGraphFetched('hive_count')
         .where({
           'apiaries.user_id': req.user.user_id,
           'apiaries.deleted': deleted === 'true',
@@ -53,7 +52,11 @@ export class ApiaryController extends Controller {
       }
 
       if (details === 'true') {
-        query.withGraphJoined('creator').withGraphJoined('editor');
+        query.withGraphJoined(
+          '[hive_count, creator(identifier),editor(identifier)]'
+        );
+      } else {
+        query.withGraphJoined('[hive_count]');
       }
 
       if (Array.isArray(order)) {

@@ -16,15 +16,13 @@ export class TreatmentController extends Controller {
       const { order, direction, offset, limit, q, filters, deleted } =
         req.query as any;
       const query = Treatment.query()
-        .withGraphJoined('treatment_apiary')
-        .withGraphJoined('creator')
-        .withGraphJoined('editor')
-        .withGraphJoined('type')
-        .withGraphJoined('disease')
-        .withGraphJoined('hive')
+        .withGraphJoined(
+          '[treatment_apiary, type, disease, hive, creator(identifier), editor(identifier)]'
+        )
         .where({
-          'treatment_apiary.user_id': req.user.user_id,
+          'hive.deleted': false,
           'treatments.deleted': deleted === 'true',
+          'treatments.user_id': req.user.user_id,
         })
         .page(offset, parseInt(limit) === 0 ? 10 : limit);
 
@@ -75,8 +73,7 @@ export class TreatmentController extends Controller {
         return await Treatment.query(trx)
           .patch({ ...insert, edit_id: req.user.bee_id })
           .findByIds(ids)
-          .leftJoinRelated('treatment_apiary')
-          .where('treatment_apiary.user_id', req.user.user_id);
+          .where('user_id', req.user.user_id);
       });
       res.locals.data = result;
       next();
@@ -108,6 +105,7 @@ export class TreatmentController extends Controller {
             ...insert,
             hive_id: hives[hive].id,
             bee_id: req.user.bee_id,
+            user_id: req.user.user_id,
           });
           result.push(res.id);
           if (repeat > 0) {
@@ -145,7 +143,6 @@ export class TreatmentController extends Controller {
             done: req.body.status,
           })
           .findByIds(req.body.ids)
-          .leftJoinRelated('treatment_apiary')
           .where('user_id', req.user.user_id);
       });
       res.locals.data = result;
@@ -165,7 +162,6 @@ export class TreatmentController extends Controller {
             enddate: req.body.end,
           })
           .findByIds(req.body.ids)
-          .leftJoinRelated('treatment_apiary')
           .where('user_id', req.user.user_id);
       });
       res.locals.data = result;
@@ -180,12 +176,8 @@ export class TreatmentController extends Controller {
       const result = await Treatment.transaction(async (trx) => {
         const res = await Treatment.query(trx)
           .findByIds(req.body.ids)
-          .withGraphJoined('treatment_apiary')
-          .withGraphJoined('type')
-          .withGraphJoined('disease')
-          .withGraphJoined('vet')
-          .withGraphJoined('hive')
-          .where('treatment_apiary.user_id', req.user.user_id);
+          .withGraphJoined('[type, disease, vet, hive]')
+          .where('treatments.user_id', req.user.user_id);
         return res;
       });
       res.locals.data = result;
@@ -204,7 +196,6 @@ export class TreatmentController extends Controller {
         const res = await Treatment.query(trx)
           .findByIds(req.body.ids)
           .select('id', 'deleted')
-          .withGraphJoined('treatment_apiary')
           .where('user_id', req.user.user_id);
 
         const softIds = [];

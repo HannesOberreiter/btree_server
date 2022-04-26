@@ -25,7 +25,6 @@ export class QueenController extends Controller {
         filters,
       } = req.query as any;
       const query = Queen.query()
-        .withGraphFetched('hive_location')
         .where({
           'queens.user_id': req.user.user_id,
           'queens.deleted': deleted === 'true',
@@ -37,13 +36,11 @@ export class QueenController extends Controller {
       }
 
       if (details === 'true') {
-        query
-          .withGraphJoined('queen_location')
-          .withGraphJoined('race')
-          .withGraphJoined('mating')
-          .withGraphJoined('own_mother')
-          .withGraphJoined('creator')
-          .withGraphJoined('editor');
+        query.withGraphJoined(
+          '[hive_location,queen_location,race,mating,own_mother,creator(identifier),editor(identifier)]'
+        );
+      } else {
+        query.withGraphJoined('hive_location');
       }
 
       if (Array.isArray(order)) {

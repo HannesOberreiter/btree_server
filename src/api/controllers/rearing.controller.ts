@@ -9,13 +9,91 @@ export class RearingController extends Controller {
     super();
   }
 
+  async get(req: IUserRequest, res: Response, next: NextFunction) {
+    try {
+      const { order, direction, offset, limit, q, filters } = req.query as any;
+      const query = Rearing.query()
+        .withGraphJoined('type.detail')
+        .where({
+          'rearings.user_id': req.user.user_id,
+        })
+        .page(offset, parseInt(limit) === 0 ? 10 : limit);
+
+      if (Array.isArray(order)) {
+        order.forEach((field, index) => query.orderBy(field, direction[index]));
+      } else {
+        query.orderBy(order, direction);
+      }
+
+      if (filters) {
+        try {
+          const filtering = JSON.parse(filters);
+          if (Array.isArray(filtering)) {
+            filtering.forEach((v) => {
+              if ('date' in v && typeof v['date'] === 'object') {
+                query.whereBetween('date', [v.date.from, v.date.to]);
+              } else {
+                query.where(v);
+              }
+            });
+          }
+        } catch (e) {
+          console.log(e);
+        }
+      }
+
+      if (q.trim() !== '') {
+        query.where((builder) => {
+          builder.orWhere('types.name', 'like', `%${q}%`);
+        });
+      }
+      const result = await query.orderBy('id');
+      res.locals.data = result;
+      next();
+    } catch (e) {
+      next(checkMySQLError(e));
+    }
+  }
+
+  async patch(req: IUserRequest, res: Response, next: NextFunction) {
+    const ids = req.body.ids;
+    const insert = { ...req.body.data };
+    try {
+      const result = await Rearing.transaction(async (trx) => {
+        return await Rearing.query(trx)
+          .patch({ ...insert })
+          .findByIds(ids)
+          .where('user_id', req.user.user_id);
+      });
+      res.locals.data = result;
+      next();
+    } catch (e) {
+      next(checkMySQLError(e));
+    }
+  }
+
+  async post(req: IUserRequest, res: Response, next: NextFunction) {
+    try {
+      const result = await Rearing.transaction(async (trx) => {
+        return await Rearing.query(trx).insert({
+          ...req.body,
+          user_id: req.user.user_id,
+        });
+      });
+      res.locals.data = result;
+      next();
+    } catch (e) {
+      next(checkMySQLError(e));
+    }
+  }
+
   async updateDate(req: IUserRequest, res: Response, next: NextFunction) {
     try {
       const result = await Rearing.transaction(async (trx) => {
         return Rearing.query(trx)
           .patch({
             edit_id: req.user.bee_id,
-            date: req.body.start
+            date: req.body.start,
           })
           .findByIds(req.body.ids)
           .where('rearings.user_id', req.user.user_id);

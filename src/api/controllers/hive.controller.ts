@@ -3,7 +3,6 @@ import { Controller } from '@classes/controller.class';
 import { checkMySQLError } from '@utils/error.util';
 import { IUserRequest } from '@interfaces/IUserRequest.interface';
 import { Hive } from '../models/hive.model';
-import { HiveLocation } from '../models/hive_location.model';
 import { Movedate } from '../models/movedate.model';
 import { Apiary } from '../models/apiary.model';
 import { conflict } from '@hapi/boom';
@@ -46,9 +45,9 @@ export class HiveController extends Controller {
         const result = [];
         for (let i = 0; i < repeat; i++) {
           const name = repeat > 1 ? req.body.name + (start + i) : req.body.name;
-          const checkDuplicate = await HiveLocation.query().where({
+          const checkDuplicate = await Hive.query().where({
             user_id: req.user.user_id,
-            hive_name: name,
+            name: name,
           });
           if (checkDuplicate.length > 0) throw conflict('name');
 
@@ -56,6 +55,7 @@ export class HiveController extends Controller {
             ...insert,
             name: name,
             bee_id: req.user.bee_id,
+            user_id: req.user.user_id,
           });
           await Movedate.query(trx).insert({
             ...insertMovement,
@@ -87,21 +87,19 @@ export class HiveController extends Controller {
         filters,
       } = req.query as any;
       const query = Hive.query()
-        .withGraphJoined('hive_location.[movedate]')
         .where({
-          'hive_location.user_id': req.user.user_id,
+          'hives.user_id': req.user.user_id,
           'hives.modus': modus === 'true',
           'hives.deleted': deleted === 'true',
         })
         .page(offset, parseInt(limit) === 0 ? 10 : limit);
 
       if (details === 'true') {
-        query
-          .withGraphJoined('queen_location')
-          .withGraphJoined('hive_source')
-          .withGraphJoined('hive_type')
-          .withGraphJoined('creator')
-          .withGraphJoined('editor');
+        query.withGraphJoined(
+          '[hive_location.[movedate], queen_location, hive_source, hive_type, creator(identifier), editor(identifier)]'
+        );
+      } else {
+        query.withGraphJoined('hive_location.[movedate]');
       }
 
       if (filters) {
@@ -145,9 +143,9 @@ export class HiveController extends Controller {
       const result = await Hive.transaction(async (trx) => {
         if ('name' in req.body.data) {
           if (ids.length > 1) throw conflict('name');
-          const checkDuplicate = await HiveLocation.query().where({
+          const checkDuplicate = await Hive.query().where({
             user_id: req.user.user_id,
-            hive_name: req.body.data.name,
+            name: req.body.data.name,
           });
           if (checkDuplicate.length > 1) throw conflict('name');
         }
@@ -155,8 +153,7 @@ export class HiveController extends Controller {
         return await Hive.query(trx)
           .patch(insert)
           .findByIds(ids)
-          .leftJoinRelated('hive_location')
-          .where('hive_location.user_id', req.user.user_id);
+          .where('user_id', req.user.user_id);
       });
       res.locals.data = result;
       next();
@@ -175,8 +172,7 @@ export class HiveController extends Controller {
             modus_date: dayjs().format('YYYY-MM-DD'),
           })
           .findByIds(req.body.ids)
-          .leftJoinRelated('hive_location')
-          .where('hive_location.user_id', req.user.user_id);
+          .where('user_id', req.user.user_id);
       });
       res.locals.data = result;
       next();
@@ -191,7 +187,7 @@ export class HiveController extends Controller {
 
     try {
       const result = await Hive.transaction(async (trx) => {
-        const res = await HiveLocation.query()
+        const res = await Hive.query()
           .select('hive_id', 'hive_deleted')
           .where('user_id', req.user.user_id)
           .whereIn('hive_id', req.body.ids);
@@ -232,12 +228,9 @@ export class HiveController extends Controller {
 
   async batchGet(req: IUserRequest, res: Response, next: NextFunction) {
     try {
-      const result = await Hive.query()
-        .withGraphJoined('hive_location')
-        .findByIds(req.body.ids)
-        .where({
-          'hive_location.user_id': req.user.user_id,
-        });
+      const result = await Hive.query().findByIds(req.body.ids).where({
+        user_id: req.user.user_id,
+      });
       res.locals.data = result;
       next();
     } catch (e) {

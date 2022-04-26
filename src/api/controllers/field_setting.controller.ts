@@ -3,7 +3,7 @@ import { Controller } from '@classes/controller.class';
 import { checkMySQLError } from '@utils/error.util';
 import { IUserRequest } from '@interfaces/IUserRequest.interface';
 import { FieldSetting } from '@models/field_setting.model';
-import { OK } from 'http-status';
+
 export class FieldSettingController extends Controller {
   constructor() {
     super();
@@ -23,7 +23,6 @@ export class FieldSettingController extends Controller {
     const trx = await FieldSetting.startTransaction();
     try {
       const settings = JSON.parse(req.body.settings);
-      console.log(settings);
       const current = await FieldSetting.query().findById(req.user.bee_id);
       if (current) {
         await FieldSetting.query(trx)

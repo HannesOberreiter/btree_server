@@ -11,6 +11,7 @@ export class RearingType extends Model {
 
   company?: Company;
   detail?: RearingDetail[];
+  step?: RearingStep[];
 
   constructor() {
     super();
@@ -26,8 +27,8 @@ export class RearingType extends Model {
       id: { type: 'integer' },
       name: { type: 'string', minLength: 1, maxLength: 45 },
       note: { type: 'string', maxLength: 2000 },
-      user_id: { type: 'integer' } // Company FK
-    }
+      user_id: { type: 'integer' }, // Company FK
+    },
   };
 
   static relationMappings = () => ({
@@ -36,21 +37,31 @@ export class RearingType extends Model {
       modelClass: Company,
       join: {
         from: ['user_id'],
-        to: ['company.id']
-      }
+        to: ['company.id'],
+      },
     },
+
+    step: {
+      relation: RearingType.HasManyRelation,
+      modelClass: RearingStep,
+      join: {
+        from: ['rearing_types.id'],
+        to: ['rearing_steps.type_id'],
+      },
+    },
+
     detail: {
       relation: RearingType.ManyToManyRelation,
       modelClass: RearingDetail,
       join: {
-        from: 'rearing_type.id',
+        from: 'rearing_types.id',
         through: {
           modelClass: RearingStep,
           from: 'rearing_steps.type_id',
-          to: 'rearing_steps.detail_id'
+          to: 'rearing_steps.detail_id',
         },
-        to: 'rearing_detail.id'
-      }
-    }
+        to: 'rearing_details.id',
+      },
+    },
   });
 }

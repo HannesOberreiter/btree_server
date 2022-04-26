@@ -16,6 +16,7 @@ export class Treatment extends ExtModel {
   done!: boolean;
   deleted!: boolean;
 
+  user_id!: number;
   edit_id!: number;
   bee_id!: number;
   hive_id!: number;
@@ -51,13 +52,14 @@ export class Treatment extends ExtModel {
       created_at: { type: 'string', format: 'date-time' },
       updated_at: { type: 'string', format: 'date-time' },
 
+      user_id: { type: 'integer' }, // Company FK
       hive_id: { type: 'integer' }, // Hive FK
       type_id: { type: 'integer' }, // Type FK
       vet_id: { type: 'integer' }, // Vets FK
       disease_id: { type: 'integer' }, // Diseases FK
       bee_id: { type: 'integer' }, // Creator Bee FK
-      edit_id: { type: 'integer' } // Updater Bee FK
-    }
+      edit_id: { type: 'integer' }, // Updater Bee FK
+    },
   };
 
   static relationMappings = () => ({
@@ -66,56 +68,56 @@ export class Treatment extends ExtModel {
       modelClass: TreatmentType,
       join: {
         from: ['treatments.type_id'],
-        to: ['treatment_types.id']
-      }
+        to: ['treatment_types.id'],
+      },
     },
     disease: {
       relation: ExtModel.HasOneRelation,
       modelClass: TreatmentDisease,
       join: {
         from: ['treatments.disease_id'],
-        to: ['treatment_diseases.id']
-      }
+        to: ['treatment_diseases.id'],
+      },
     },
     vet: {
       relation: ExtModel.HasOneRelation,
       modelClass: TreatmentVet,
       join: {
         from: ['treatments.vet_id'],
-        to: ['treatment_vets.id']
-      }
+        to: ['treatment_vets.id'],
+      },
     },
     hive: {
       relation: ExtModel.HasOneRelation,
       modelClass: Hive,
       join: {
         from: ['treatments.hive_id'],
-        to: ['hives.id']
-      }
+        to: ['hives.id'],
+      },
     },
     treatment_apiary: {
       relation: ExtModel.HasOneRelation,
       modelClass: TreatmentApiary,
       join: {
-        from: ['treatments_apiaries.treatment_id'],
-        to: ['treatments.id']
-      }
+        from: ['treatments.id'],
+        to: ['treatments_apiaries.treatment_id'],
+      },
     },
     creator: {
       relation: ExtModel.HasOneRelation,
       modelClass: User,
       join: {
         from: ['treatments.bee_id'],
-        to: ['bees.id']
-      }
+        to: ['bees.id'],
+      },
     },
     editor: {
       relation: ExtModel.HasOneRelation,
       modelClass: User,
       join: {
         from: ['treatments.edit_id'],
-        to: ['bees.id']
-      }
-    }
+        to: ['bees.id'],
+      },
+    },
   });
 }

@@ -2,7 +2,7 @@ exports.up = function (knex) {
   return knex.schema.createTable('scale_data', (t) => {
     t.increments('id').primary().unsigned();
 
-    t.timestamp('datetime');
+    t.timestamp('datetime').index();
     t.decimal('weight', 4, 2);
     t.decimal('temp1', 4, 2);
     t.decimal('temp2', 4, 2);

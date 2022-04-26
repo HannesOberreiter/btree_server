@@ -1,20 +1,20 @@
 [
   {
-    "id": 27,
     "hive_id": 172,
-    "ident": "ScaleHouse",
+    "id": 27,
+    "name": "ScaleHouse",
     "user_id": 1
   },
   {
+    "hive_id": 0,
     "id": 41,
-    "hive_id": 0,
-    "ident": "test",
+    "name": "test",
     "user_id": 1
   },
   {
-    "id": 42,
     "hive_id": 0,
-    "ident": "ScaleRieger",
+    "id": 42,
+    "name": "ScaleRieger",
     "user_id": 1
   }
 ]

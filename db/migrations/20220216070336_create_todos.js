@@ -3,10 +3,10 @@ exports.up = function (knex) {
     t.increments('id').primary().unsigned();
 
     t.string('name', 48);
-    t.date('date');
+    t.date('date').index();
     t.string('note', 2000);
     t.string('url', 512);
-    t.boolean('done').defaultTo(0);
+    t.boolean('done').defaultTo(0).index();
 
     t.integer('user_id').unsigned().nullable();
     t.foreign('user_id')

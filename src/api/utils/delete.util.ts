@@ -29,6 +29,7 @@ import { TreatmentType } from '../models/option/treatment_type.model';
 import { TreatmentVet } from '../models/option/treatment_vet.model';
 import { User } from '../models/user.model';
 import { Queen } from '../models/queen.model';
+import { Dropbox } from '../models/dropbox.model';
 
 export const deleteUser = async (bee_id: number) => {
   try {
@@ -56,28 +57,16 @@ export const deleteCompany = async (company_id: number) => {
           .withGraphJoined('type')
           .where({ user_id: company_id }),
         RearingType.query(trx).delete().where({ user_id: company_id }),
-        Queen.query(trx).delete().where({ user_id: company_id })
+        Queen.query(trx).delete().where({ user_id: company_id }),
       ]);
 
       await Promise.all([
         Charge.query(trx).delete().where({ user_id: company_id }),
-        Checkup.query(trx)
-          .delete()
-          .withGraphJoined('checkup_apiary')
-          .where({ user_id: company_id }),
-        Harvest.query(trx)
-          .delete()
-          .withGraphJoined('harvest_apiary')
-          .where({ user_id: company_id }),
-        Feed.query(trx)
-          .delete()
-          .withGraphJoined('feed_apiary')
-          .where({ user_id: company_id }),
-        Treatment.query(trx)
-          .delete()
-          .withGraphJoined('treatment_apiary')
-          .where({ user_id: company_id }),
-        Todo.query(trx).delete().where({ user_id: company_id })
+        Checkup.query(trx).delete().where({ user_id: company_id }),
+        Harvest.query(trx).delete().where({ user_id: company_id }),
+        Feed.query(trx).delete().where({ user_id: company_id }),
+        Treatment.query(trx).delete().where({ user_id: company_id }),
+        Todo.query(trx).delete().where({ user_id: company_id }),
       ]);
 
       await Promise.all([
@@ -91,13 +80,11 @@ export const deleteCompany = async (company_id: number) => {
         QueenRace.query(trx).delete().where({ user_id: company_id }),
         TreatmentDisease.query(trx).delete().where({ user_id: company_id }),
         TreatmentType.query(trx).delete().where({ user_id: company_id }),
-        TreatmentVet.query(trx).delete().where({ user_id: company_id })
+        TreatmentVet.query(trx).delete().where({ user_id: company_id }),
       ]);
 
-      await Hive.query(trx)
-        .delete()
-        .withGraphJoined('apiaries')
-        .where({ 'apiaries.user_id': company_id });
+      await Hive.query(trx).delete().where({ user_id: company_id });
+      await Dropbox.query(trx).delete().where({ user_id: company_id });
 
       await Movedate.query(trx)
         .delete()
@@ -120,6 +107,6 @@ export const deleteHiveConnections = async (hive_ids: Array<number>, trx) => {
     Treatment.query(trx).delete().whereIn('hive_id', hive_ids),
     Checkup.query(trx).delete().whereIn('hive_id', hive_ids),
     Harvest.query(trx).delete().whereIn('hive_id', hive_ids),
-    Queen.query(trx).delete().whereIn('hive_id', hive_ids)
+    Queen.query(trx).delete().whereIn('hive_id', hive_ids),
   ]);
 };
