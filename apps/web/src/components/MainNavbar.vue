@@ -5,7 +5,7 @@
         {{ company.name }}
       </q-toolbar-title>
     </div>
-    <div class="col-4 col-sm-6 col-md-6 col-lg-4">
+    <div class="col-4 col-sm-5 col-md-5 col-lg-4">
       <q-select
         v-model="search"
         dense
@@ -27,7 +27,7 @@
       </q-select>
     </div>
 
-    <div class="col-6 col-sm-4 col-md-auto">
+    <div class="col-6 col-sm-5 col-md-auto">
       <div class="q-gutter-md text-right">
         <btn-base
           v-close-popup
@@ -38,6 +38,19 @@
           icon="fas fa-microphone"
           @click="onSpeak"
         />
+        <btn-base
+          v-if="wakeIsSupported"
+          flat
+          dense
+          color="white"
+          size="md"
+          :icon="wakeIsActive ? 'fas fa-eye' : 'far fa-eye'"
+          @click="wakeIsActive ? wakeRelease : wakeRequest"
+        >
+          <q-tooltip>
+            {{ $t('keepAwake') }}: {{ $t(wakeIsActive + '') }}
+          </q-tooltip>
+        </btn-base>
         <btn-base
           v-if="!$q.platform.is.mobile"
           flat
@@ -75,12 +88,19 @@
 <script setup lang="ts">
 import { useAuthUserStore } from '~/stores/auth';
 import { useRouterStore } from '~/stores/router';
+import { useWakeLock } from '@vueuse/core';
 
 const router = useRouter();
 const storeUser = useAuthUserStore();
 const storeRouter = useRouterStore();
 const { company } = storeToRefs(storeUser);
 const search = ref('');
+const {
+  isSupported: wakeIsSupported,
+  isActive: wakeIsActive,
+  request: wakeRequest,
+  release: wakeRelease,
+} = useWakeLock();
 
 function onSubmit() {
   console.log('Searching ...');
