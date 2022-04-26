@@ -1,5 +1,5 @@
 import { Response } from 'express';
-import { IModel } from '@interfaces/IModel.interface';
+import { IModel } from './IModel.interface';
 
 export interface IResponse extends Response {
   locals: {

@@ -26,7 +26,7 @@ export class HTTPServer {
    *
    */
   private options = {
-    port: port
+    port: port,
   };
 
   constructor(app: Express.Application) {

@@ -4,7 +4,7 @@ import {
   authorized,
   version,
   env,
-  contentType
+  contentType,
 } from '@config/environment.config';
 import p from 'path';
 
@@ -61,20 +61,20 @@ export class Application {
         'Content-Type',
         'Authorization',
         'Origin',
-        'From'
-      ]
+        'From',
+      ],
     },
     stream:
       env === ENVIRONMENT.production
         ? createWriteStream(p.join(__dirname, `../../logs/access.log`), {
-            flags: 'a+'
+            flags: 'a+',
           })
         : Container.resolve('Logger').get('stream'),
     rate: {
       windowMs: 60 * 60 * 1000, // 1 hour
       max: 2500,
-      message: 'Too many requests from this IP, please try again after an hour'
-    }
+      message: 'Too many requests from this IP, please try again after an hour',
+    },
   };
 
   constructor() {
@@ -108,7 +108,7 @@ export class Application {
       BodyParser.urlencoded({
         limit: '50mb',
         extended: false,
-        parameterLimit: 10000
+        parameterLimit: 10000,
       })
     );
     this.app.use(BodyParser.json({ type: contentType, limit: '50mb' }));

@@ -2,8 +2,8 @@ import * as awilix from 'awilix';
 import { Logger } from '@services/logger.service';
 import { ProxyRouter } from '@services/proxy-router.service';
 
-import { ApiaryController } from '@controllers/apiary.controller';
-import { AuthController } from '@controllers/auth.controller';
+import { ApiaryController } from '@/api/controllers/apiary.controller';
+import { AuthController } from '@/api/controllers/auth.controller';
 import { CalendarController } from '@controllers/calendar.controller';
 import { ChargeController } from '@controllers/charge.controller';
 import { CheckupController } from '@controllers/checkup.controller';
@@ -27,7 +27,7 @@ import { TreatmentController } from '@controllers/treatment.controller';
 import { UserController } from '@controllers/user.controller';
 import { ScaleController } from '@controllers/scale.controller';
 import { ScaleDataController } from '@controllers/scale_data.controller';
-import { DropboxController } from '@/api/controllers/dropbox.controller';
+import { DropboxController } from '@controllers/dropbox.controller';
 export class Container {
   private static container: any;
 

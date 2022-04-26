@@ -14,11 +14,14 @@
       "@cron/*": [
         "src/cron/*"
       ],
+      "@config/*": [
+        "src/config/*"
+      ],
+      "@servers/*": [
+        "src/servers/*"
+      ],
       "@controllers/*": [
         "src/api/controllers/*"
-      ],
-      "@datatables/*": [
-        "src/api/datatables/*"
       ],
       "@middlewares/*": [
         "src/api/middlewares/*"
@@ -26,41 +29,23 @@
       "@models/*": [
         "src/api/models/*"
       ],
-      "@repositories/*": [
-        "src/api/repositories/*"
-      ],
       "@routes/*": [
         "src/api/routes/*"
       ],
       "@services/*": [
         "src/api/services/*"
       ],
-      "@validations/*": [
-        "src/api/validations/*"
+      "@enums/*": [
+        "src/api/types/enums/*"
       ],
       "@classes/*": [
         "src/api/types/classes/*"
       ],
-      "@enums/*": [
-        "src/api/types/enums/*"
-      ],
-      "@errors/*": [
-        "src/api/types/errors/*"
-      ],
       "@interfaces/*": [
         "src/api/types/interfaces/*"
       ],
-      "@schemas/*": [
-        "src/api/types/schemas/*"
-      ],
       "@utils/*": [
         "src/api/utils/*"
-      ],
-      "@config/*": [
-        "src/config/*"
-      ],
-      "@servers/*": [
-        "src/servers/*"
       ],
     },
     "lib": [
