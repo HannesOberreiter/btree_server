@@ -148,7 +148,6 @@ if (env.env === 'production') {
       return {
         id: data.user_id,
         name: data.username,
-        dropbox_auth: '',
         created_at:
           data.creation_date === '0000-00-00 00:00:00'
             ? null
