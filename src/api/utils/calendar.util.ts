@@ -13,22 +13,27 @@ const convertDate = ({ start, end }) => {
 };
 
 const getRearings = async ({ query, user }) => {
-  // Because Rearings could goes over multiple months we add / substract here to catch them
-  const start = dayjs(query.start).subtract(2, 'month').toISOString();
-  const end = dayjs(query.end).add(2, 'month').toISOString();
-
   /*
    * Fetching Rearings and corresponding steps
    */
-  const rearings: any = await Rearing.query()
+  const rearings_query = Rearing.query()
     .where('rearings.user_id', user.user_id)
-    .where('date', '>=', start)
-    .where('date', '<=', end)
-    .withGraphFetched('start')
-    .withGraphFetched('type');
+    .withGraphFetched('[start, type]');
+
+  if (query.id) {
+    // if not used inside calendar and we only want one event
+    rearings_query.where('id', query.id);
+  } else {
+    // Because Rearings could goes over multiple months we add / substract here to catch them
+    const start = dayjs(query.start).subtract(2, 'month').toISOString();
+    const end = dayjs(query.end).add(2, 'month').toISOString();
+    rearings_query.where('date', '>=', start).where('date', '<=', end);
+  }
+
+  const rearings = await rearings_query;
   const rearingsSteps = [];
   for (const i in rearings) {
-    const res = rearings[i];
+    const res = rearings[i] as any;
     const steps: any = await RearingStep.query()
       .where('type_id', res.type_id)
       .withGraphFetched('detail')
