@@ -10,7 +10,3 @@
     </div>
   </q-card>
 </template>
-
-<script setup lang="ts">
-import FormMainRearing from '~/components/FormMainRearing.vue';
-</script>

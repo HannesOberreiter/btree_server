@@ -54,7 +54,6 @@ import { integer, maxValue, minValue } from '~/helpers/i18n-validators';
 import { isEmpty, some } from 'lodash-es';
 import useVuelidate from '@vuelidate/core';
 import { useVModels } from '@vueuse/core';
-import BtnMultipleValues from './BtnMultipleValues.vue';
 import { formCheckMultipleValues } from '~/helpers';
 
 const expanded = ref(false);

@@ -45,12 +45,6 @@
 
 <script setup lang="ts">
 import { useNotification } from '~/composables/useResponseText';
-import FormInputText from './FormInputText.vue';
-import FormInputNumeric from './FormInputNumeric.vue';
-
-import FormInputNote from './FormInputNote.vue';
-import FormDropdownEdit from './FormDropdownEdit.vue';
-import FormButtons from './FormButtons.vue';
 import useVuelidate from '@vuelidate/core';
 import { flatten, map, merge } from 'lodash-es';
 import { FormRearingDetail } from '~/types';

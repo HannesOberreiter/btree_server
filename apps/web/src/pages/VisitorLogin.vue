@@ -30,9 +30,6 @@
 import { useAuthUserStore } from '~/stores/auth';
 import { useNotification } from '~/composables/useResponseText';
 import { User } from '~/types';
-import FormErrorMax from '~/components/FormErrorMax.vue';
-import FormInputEmail from '~/components/FormInputEmail.vue';
-import FormUserPassword from '~/components/FormUserPassword.vue';
 import useVuelidate from '@vuelidate/core';
 import { RouteLocationRaw } from 'vue-router';
 

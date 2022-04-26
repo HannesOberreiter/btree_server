@@ -10,7 +10,3 @@
     </div>
   </q-card>
 </template>
-
-<script setup lang="ts">
-import FormMainHive from '~/components/FormMainHive.vue';
-</script>

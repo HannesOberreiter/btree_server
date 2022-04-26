@@ -29,8 +29,6 @@
 <script setup lang="ts">
 import { useNotification } from '~/composables/useResponseText';
 import AuthService from '~/services/auth.service';
-import FormErrorMax from '~/components/FormErrorMax.vue';
-import FormInputEmail from '~/components/FormInputEmail.vue';
 import useVuelidate from '@vuelidate/core';
 
 const notification = useNotification();
@@ -68,7 +66,7 @@ async function sendForm(from: any) {
 
       isSubmitting.value = false;
       btnLabel.value = 'success';
-      notification.open('positive', message.value);
+      notification.open('positive', message.value, false);
     },
     (error) => {
       notification.open('negative', error);

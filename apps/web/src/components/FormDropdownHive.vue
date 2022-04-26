@@ -28,8 +28,7 @@
     :options="optionsHive"
     :option-label="
       (val) => {
-        const modus = val.modus ? '' : $t('inactive');
-        return val.label + ' ' + modus;
+        return val.label + ' ' + val.modus ? '' : $t('inactive');
       }
     "
     clearable

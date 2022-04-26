@@ -47,7 +47,6 @@ import { useAuthUserStore } from '~/stores/auth';
 import { useTemperatureQuery } from '~/composables/useQuery';
 import { useVModels } from '@vueuse/core';
 import { round, isEmpty } from 'lodash-es';
-import FormInputNumeric from './FormInputNumeric.vue';
 
 const storeUser = useAuthUserStore();
 const loadTemp = ref(false);

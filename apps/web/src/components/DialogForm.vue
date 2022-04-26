@@ -15,13 +15,18 @@
           />
         </div>
         <div class="row full-width">
-          <component
-            :is="layout.comp"
-            :ids="ids"
-            v-bind="layout.props"
-            @on-success="(value: any) => onDialogOK(value)"
-          >
-          </component>
+          <suspense>
+            <template #fallback>
+              <global-loading></global-loading>
+            </template>
+            <component
+              :is="layout.comp"
+              :ids="ids"
+              v-bind="layout.props"
+              @on-success="(value: any) => onDialogOK(value)"
+            >
+            </component>
+          </suspense>
         </div>
       </q-card-section>
     </q-card>
@@ -29,20 +34,31 @@
 </template>
 
 <script setup lang="ts">
-import FormMainApiary from './FormMainApiary.vue';
-import FormMainTodo from './FormMainTodo.vue';
-import FormMainHive from '~/components/FormMainHive.vue';
-import FormMainMovement from './FormMainMovement.vue';
-import FormMainQueen from './FormMainQueen.vue';
-import FormMainTask from './FormMainTask.vue';
-import FormMainScaleData from './FormMainScaleData.vue';
-import FormMainOption from './FormMainOption.vue';
 import { useDialogPluginComponent } from 'quasar';
 import dayjs from 'dayjs';
-import FormMainCharge from './FormMainCharge.vue';
-import FormMainScale from './FormMainScale.vue';
 import { PropType } from 'vue';
 import { Option } from '~/types';
+
+const FormMainApiary = defineAsyncComponent(
+  () => import('./FormMainApiary.vue')
+);
+const FormMainTodo = defineAsyncComponent(() => import('./FormMainTodo.vue'));
+const FormMainHive = defineAsyncComponent(() => import('./FormMainHive.vue'));
+const FormMainMovement = defineAsyncComponent(
+  () => import('./FormMainMovement.vue')
+);
+const FormMainTask = defineAsyncComponent(() => import('./FormMainTask.vue'));
+const FormMainQueen = defineAsyncComponent(() => import('./FormMainQueen.vue'));
+const FormMainScaleData = defineAsyncComponent(
+  () => import('./FormMainScaleData.vue')
+);
+const FormMainOption = defineAsyncComponent(
+  () => import('./FormMainOption.vue')
+);
+const FormMainCharge = defineAsyncComponent(
+  () => import('./FormMainCharge.vue')
+);
+const FormMainScale = defineAsyncComponent(() => import('./FormMainScale.vue'));
 
 const { dialogRef, onDialogHide, onDialogOK } = useDialogPluginComponent();
 

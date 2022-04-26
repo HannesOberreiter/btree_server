@@ -60,8 +60,6 @@
 
 <script setup lang="ts">
 import news from '~/assets/news.json';
-import NewsDirective from '~/components/NewsDirective.vue';
-
 const filter = ref('');
 const rows = news.aaData;
 </script>

@@ -96,7 +96,6 @@ import { QInputProps } from 'quasar';
 import { useAuthUserStore } from '~/stores/auth';
 import { useClipboard } from '@vueuse/core';
 import { useNotification } from '~/composables/useResponseText';
-import FormUserPassword from './FormUserPassword.vue';
 import useVuelidate from '@vuelidate/core';
 import { useApiFetch } from '~/composables/useApi';
 

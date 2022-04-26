@@ -30,7 +30,6 @@ import { useAuthUserStore } from '~/stores/auth';
 import { useCalendarStore } from '~/stores/calendar';
 import useCalendarVis from '~/composables/useCalendarVis';
 import { useNotification } from '~/composables/useResponseText';
-import CalendarSetting from '~/components/CalendarSetting.vue';
 
 import DialogEvent from '~/components/DialogEvent.vue';
 import DialogForm from '~/components/DialogForm.vue';

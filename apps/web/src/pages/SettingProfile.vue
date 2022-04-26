@@ -8,9 +8,9 @@
       align="justify"
       narrow-indicator
     >
-      <q-tab name="user" :label="t('user')" />
-      <q-tab name="credentials" :label="t('credentials')" />
-      <q-tab v-if="userStore.isAdmin" name="api" :label="t('api')" />
+      <q-tab name="user" :label="$t('user')" />
+      <q-tab name="credentials" :label="$t('credentials')" />
+      <q-tab v-if="userStore.isAdmin" name="api" :label="$t('api')" />
     </q-tabs>
 
     <q-separator />
@@ -20,7 +20,7 @@
         <div class="row justify-center">
           <div class="col-12 col-sm-10 col-md-8">
             <div class="text-body2 q-pb-sm text-center">
-              {{ t('profile.userTitle') }}
+              {{ $t('profile.userTitle') }}
             </div>
 
             <form-main-user></form-main-user>
@@ -32,9 +32,8 @@
         <div class="row justify-center">
           <div class="col-12 col-sm-10 col-md-8">
             <div class="text-body2 q-pb-sm text-center">
-              {{ t('profile.credentialTitle') }}
+              {{ $t('profile.credentialTitle') }}
             </div>
-
             <form-main-credential></form-main-credential>
           </div>
         </div>
@@ -44,7 +43,7 @@
         <div class="row justify-center">
           <div class="col-12 col-sm-10 col-md-8">
             <div class="text-body2 q-pb-sm text-center">
-              {{ t('profile.apiTitle') }}
+              {{ $t('profile.apiTitle') }}
             </div>
             <form-main-api></form-main-api>
           </div>
@@ -55,21 +54,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
 import { useAuthUserStore } from '~/stores/auth';
-import { useI18n } from 'vue-i18n';
-import FormMainApi from '~/components/FormMainApi.vue';
-import FormMainCredential from '~/components/FormMainCredential.vue';
-import FormMainUser from '~/components/FormMainUser.vue';
-
 const prop = defineProps({
   tab: {
     type: String,
     default: 'user',
   },
 });
-
-const { t } = useI18n();
 const activeTab = ref(prop.tab ? prop.tab : 'user');
 const userStore = useAuthUserStore();
 </script>

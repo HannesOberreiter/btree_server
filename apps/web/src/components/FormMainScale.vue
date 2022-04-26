@@ -39,10 +39,6 @@
 
 <script setup lang="ts">
 import { useNotification } from '~/composables/useResponseText';
-import FormDropdownEdit from './FormDropdownEdit.vue';
-import FormDropdownOption from './FormDropdownOption.vue';
-import FormInputText from './FormInputText.vue';
-import FormButtons from './FormButtons.vue';
 import useVuelidate from '@vuelidate/core';
 import { flatten, map, merge } from 'lodash-es';
 import { FormScale } from '~/types';

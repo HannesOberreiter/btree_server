@@ -61,7 +61,6 @@
 import { filter, isEmpty, map } from 'lodash-es';
 import { useRearingTypesQuery } from '~/composables/useQuery';
 import { useVModels } from '@vueuse/core';
-import BtnMultipleValues from './BtnMultipleValues.vue';
 import { formCheckMultipleValues } from '~/helpers';
 import { useDateFormat } from '~/composables/useDate';
 

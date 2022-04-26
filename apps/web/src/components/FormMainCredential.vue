@@ -35,8 +35,6 @@
 <script setup lang="ts">
 import { useAuthUserStore } from '~/stores/auth';
 import { useNotification } from '~/composables/useResponseText';
-import FormInputEmail from './FormInputEmail.vue';
-import FormUserPassword from './FormUserPassword.vue';
 import useVuelidate from '@vuelidate/core';
 import { useApiFetch } from '~/composables/useApi';
 

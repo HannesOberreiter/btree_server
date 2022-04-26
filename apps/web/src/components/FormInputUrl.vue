@@ -39,7 +39,6 @@ import { useQuasar } from 'quasar';
 import DialogFileShow from './DialogFileShow.vue';
 import DialogFileUpload from './DialogFileUpload.vue';
 import DialogFileSelect from './DialogFileSelect.vue';
-import FormInputText from './FormInputText.vue';
 
 const $q = useQuasar();
 

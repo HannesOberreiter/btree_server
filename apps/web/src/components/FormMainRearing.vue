@@ -73,13 +73,7 @@ const stateDefault = {
 
 <script setup lang="ts">
 import { useNotification } from '~/composables/useResponseText';
-import FormInputDate from './FormInputDate.vue';
-import FormDropdownRearing from './FormDropdownRearing.vue';
-import FormInputNote from './FormInputNote.vue';
-import FormInputNumeric from './FormInputNumeric.vue';
-import FormDropdownEdit from './FormDropdownEdit.vue';
 import useVuelidate from '@vuelidate/core';
-import FormButtons from './FormButtons.vue';
 import { FormRearing } from '~/types';
 import { useApiFetch } from '~/composables/useApi';
 

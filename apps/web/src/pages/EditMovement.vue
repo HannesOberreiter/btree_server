@@ -12,7 +12,6 @@
 </template>
 
 <script setup lang="ts">
-import FormMainMovement from '~/components/FormMainMovement.vue';
 defineProps({
   ids: {
     type: Array,

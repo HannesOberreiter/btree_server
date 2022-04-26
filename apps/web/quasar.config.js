@@ -11,6 +11,8 @@
 const { configure } = require('quasar/wrappers');
 const path = require('path');
 
+const { QuasarResolver } = require('unplugin-vue-components/resolvers');
+
 module.exports = configure(function (ctx) {
   return {
     eslint: {
@@ -97,6 +99,13 @@ module.exports = configure(function (ctx) {
               globalsPropValue: true,
             },
             dts: 'src/auto-imports.d.ts',
+          },
+        ],
+        [
+          'unplugin-vue-components/vite',
+          {
+            resolvers: [QuasarResolver()],
+            dts: 'src/auto-components.d.ts',
           },
         ],
       ],

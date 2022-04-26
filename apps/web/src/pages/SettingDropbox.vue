@@ -70,10 +70,8 @@
 
 <script setup lang="ts">
 import { useNotification } from '~/composables/useResponseText';
-import GlobalLoading from '~/components/GlobalLoading.vue';
 import { LoadingBar, useQuasar } from 'quasar';
 import { useServiceDropbox } from '~/composables/useDropbox';
-import FilesDropbox from '~/components/FilesDropbox.vue';
 import DialogFileUpload from '~/components/DialogFileUpload.vue';
 
 const router = useRouter();

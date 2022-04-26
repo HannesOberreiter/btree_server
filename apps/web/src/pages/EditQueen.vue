@@ -12,7 +12,6 @@
 </template>
 
 <script setup lang="ts">
-import FormMainQueen from '~/components/FormMainQueen.vue';
 defineProps({
   ids: {
     type: Array,

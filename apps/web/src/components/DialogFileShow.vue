@@ -59,7 +59,6 @@
 <script setup lang="ts">
 import { useDialogPluginComponent } from 'quasar';
 import { useServiceDropbox } from '~/composables/useDropbox';
-import GlobalLoading from '~/components/GlobalLoading.vue';
 import { isImage } from '~/helpers';
 import round from 'lodash-es/round';
 

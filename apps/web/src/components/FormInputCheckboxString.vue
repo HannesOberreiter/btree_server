@@ -36,7 +36,6 @@
 import { useVModels } from '@vueuse/core';
 import { isEmpty } from 'lodash-es';
 import { formCheckMultipleValues } from '~/helpers';
-import BtnMultipleValues from './BtnMultipleValues.vue';
 
 const props = defineProps({
   modelValue: {

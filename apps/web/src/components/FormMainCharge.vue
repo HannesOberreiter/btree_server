@@ -102,20 +102,11 @@
 
 <script setup lang="ts">
 import { useNotification } from '~/composables/useResponseText';
-import FormInputDate from './FormInputDate.vue';
-import FormInputText from './FormInputText.vue';
-import FormInputNote from './FormInputNote.vue';
-import FormInputUrl from './FormInputUrl.vue';
-import FormDropdownOption from './FormDropdownOption.vue';
-import FormInputNumeric from './FormInputNumeric.vue';
-import FormDropdownEdit from './FormDropdownEdit.vue';
-import FormButtons from './FormButtons.vue';
 import useVuelidate from '@vuelidate/core';
 import { flatten, map, merge } from 'lodash-es';
 import { FormCharge } from '~/types';
 import { useApiFetch } from '~/composables/useApi';
 import { useDateFormat } from '~/composables/useDate';
-import FormInputCheckboxString from './FormInputCheckboxString.vue';
 import { useFieldsettingStore } from '~/stores/fieldsetting';
 
 const useDate = useDateFormat();

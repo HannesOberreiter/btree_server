@@ -28,7 +28,6 @@
 import { find } from 'lodash-es';
 import { PropType } from 'vue';
 import { Task } from '~/types';
-import FormMainTask from '~/components/FormMainTask.vue';
 import { useQuicktoolStore } from '~/stores/quicktool';
 
 const { t } = useI18n();

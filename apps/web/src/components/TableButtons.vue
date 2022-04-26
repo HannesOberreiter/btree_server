@@ -163,7 +163,6 @@ import { useNotification } from '~/composables/useResponseText';
 import { useTableFilterStore } from '~/stores/tableFilter';
 import DialogFilter from './DialogFilter.vue';
 import DialogForm from './DialogForm.vue';
-import TableButtonScale from './TableButtonScale.vue';
 
 const storeFilter = useTableFilterStore();
 const useDate = useDateFormat();

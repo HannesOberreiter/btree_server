@@ -267,9 +267,6 @@ const links = [
 <script setup lang="ts">
 import { useAuthUserStore } from '~/stores/auth';
 import { useQuicktoolStore } from '~/stores/quicktool';
-import BtnRefresh from './BtnRefresh.vue';
-import ItemCompany from './ItemCompany.vue';
-import DrawerItem from './DrawerItem.vue';
 
 const storeUser = useAuthUserStore();
 const storeQuicktool = useQuicktoolStore();

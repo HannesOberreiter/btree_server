@@ -95,16 +95,9 @@ const stateDefault = {
 <script setup lang="ts">
 import { required } from '~/helpers/i18n-validators';
 import { useNotification } from '~/composables/useResponseText';
-import FormInputText from './FormInputText.vue';
-import FormInputNumeric from './FormInputNumeric.vue';
-import FormInputNote from './FormInputNote.vue';
-import FormInputCheckbox from './FormInputCheckbox.vue';
-
 import useVuelidate from '@vuelidate/core';
 import { flatten, map, merge } from 'lodash-es';
-import FormButtons from './FormButtons.vue';
 import { useApiFetch } from '~/composables/useApi';
-import FormInputUrl from './FormInputUrl.vue';
 
 const api = useApiFetch();
 const notification = useNotification();

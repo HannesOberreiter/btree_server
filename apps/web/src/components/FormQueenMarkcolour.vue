@@ -42,7 +42,6 @@ function queenColor(cur: string) {
 
 <script setup lang="ts">
 import { useVModels } from '@vueuse/core';
-import FormInputText from './FormInputText.vue';
 
 const { t } = useI18n();
 const props = defineProps({

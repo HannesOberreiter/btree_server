@@ -31,7 +31,6 @@
 <script setup lang="ts">
 import { round, isEmpty } from 'lodash-es';
 import { useVModels } from '@vueuse/core';
-import FormInputNumeric from './FormInputNumeric.vue';
 
 const props = defineProps({
   modelValue: {

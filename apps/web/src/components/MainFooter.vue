@@ -12,6 +12,5 @@
 </template>
 
 <script setup lang="ts">
-import GlobalSound from '~/components/GlobalSound.vue';
 import news from '~/assets/news.json';
 </script>

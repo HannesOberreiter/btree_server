@@ -71,14 +71,7 @@
 import { tableCheckSelected, tableMeta } from '~/helpers';
 import { useApiariesQuery } from '~/composables/useQuery';
 import { useTablesStore } from '~/stores/tables';
-import TableColLink from '~/components/TableColLink.vue';
-import TableColNote from '~/components/TableColNote.vue';
-import TableColStatus from '~/components/TableColStatus.vue';
-import TableButtons from '~/components/TableButtons.vue';
 import { QTableProps } from 'quasar';
-import TableFilter from '~/components/TableFilter.vue';
-import TableColHivecount from '~/components/TableColHivecount.vue';
-import TableColUrl from '~/components/TableColUrl.vue';
 
 const storeTable = useTablesStore();
 const { t } = useI18n();

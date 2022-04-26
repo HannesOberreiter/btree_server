@@ -113,12 +113,6 @@ import { useNotification } from '~/composables/useResponseText';
 import { usePreferredLanguages } from '@vueuse/core';
 import { validationErrors } from '~/helpers';
 import AuthService from '~/services/auth.service';
-import FormErrorMax from '~/components/FormErrorMax.vue';
-import FormInputCompany from '~/components/FormInputText.vue';
-import FormInputEmail from '~/components/FormInputEmail.vue';
-import FormUserLanguage from '~/components/FormUserLanguage.vue';
-import FormUserNewsletter from '~/components/FormUserNewsletter.vue';
-import FormUserPassword from '~/components/FormUserPassword.vue';
 import termsDE from '~/i18n/de/terms.txt?raw';
 import termsEN from '~/i18n/en/terms.txt?raw';
 import useVuelidate from '@vuelidate/core';
@@ -220,7 +214,7 @@ async function sendForm(user: any) {
 
       isSubmitting.value = false;
       btnLabel.value = t('success');
-      notification.open('positive', message.value);
+      notification.open('positive', message.value, false);
     },
     (error) => {
       notification.open('negative', error);

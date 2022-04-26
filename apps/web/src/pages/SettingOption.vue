@@ -76,11 +76,7 @@
 <script setup lang="ts">
 import { tableCheckSelected, tableMeta } from '~/helpers';
 import { useOptionsQuery } from '~/composables/useQuery';
-import TableFilter from '~/components/TableFilter.vue';
-import TableButtons from '~/components/TableButtons.vue';
-import TableColNote from '~/components/TableColNote.vue';
 import { QTableProps } from 'quasar';
-import TableColStatus from '~/components/TableColStatus.vue';
 import { Option } from '~/types';
 import { PropType } from 'vue';
 import { find } from 'lodash-es';

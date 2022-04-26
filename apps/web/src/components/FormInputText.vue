@@ -36,7 +36,6 @@ import { maxLength, required, minLength } from '~/helpers/i18n-validators';
 import { useVModels } from '@vueuse/core';
 import { validationErrors, formCheckMultipleValues } from '~/helpers';
 import useVuelidate from '@vuelidate/core';
-import BtnMultipleValues from './BtnMultipleValues.vue';
 import { PropType } from 'vue';
 import { isEmpty } from 'lodash-es';
 import { TextField } from '~/types';

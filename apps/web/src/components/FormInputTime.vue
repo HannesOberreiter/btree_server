@@ -45,7 +45,6 @@
 import { useVModels } from '@vueuse/core';
 import { formCheckMultipleValues, validationErrors } from '~/helpers';
 import useVuelidate from '@vuelidate/core';
-import BtnMultipleValues from './BtnMultipleValues.vue';
 import { PropType } from 'vue';
 import { isEmpty } from 'lodash-es';
 import { useDateFormat } from '~/composables/useDate';

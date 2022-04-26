@@ -19,8 +19,6 @@
 import { find } from 'lodash-es';
 import { PropType } from 'vue';
 import { Task } from '~/types';
-import { useI18n } from 'vue-i18n';
-import FormMainTask from '~/components/FormMainTask.vue';
 
 const { t } = useI18n();
 const props = defineProps({

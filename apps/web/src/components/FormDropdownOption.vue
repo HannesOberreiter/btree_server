@@ -34,7 +34,6 @@ import {
   useScaleQuery,
 } from '~/composables/useQuery';
 import { useVModels } from '@vueuse/core';
-import BtnMultipleValues from './BtnMultipleValues.vue';
 import { formCheckMultipleValues } from '~/helpers';
 
 const { t } = useI18n();

@@ -176,16 +176,8 @@ const stateDefault = {
 
 <script setup lang="ts">
 import { useNotification } from '~/composables/useResponseText';
-import FormInputDate from './FormInputDate.vue';
-import FormInputCheckbox from './FormInputCheckbox.vue';
-import FormDropdownOption from './FormDropdownOption.vue';
-import FormInputText from './FormInputText.vue';
-import FormInputNote from './FormInputNote.vue';
-import FormInputNumeric from './FormInputNumeric.vue';
-import FormDropdownEdit from './FormDropdownEdit.vue';
 import useVuelidate from '@vuelidate/core';
 import { useHivesQuery } from '~/composables/useQuery';
-import FormButtons from './FormButtons.vue';
 import { FormHive } from '~/types';
 import { useApiFetch } from '~/composables/useApi';
 

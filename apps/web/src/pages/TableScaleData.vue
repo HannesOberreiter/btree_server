@@ -63,12 +63,8 @@ import { tableCheckSelected } from '~/helpers';
 <script setup lang="ts">
 import { useScaleDataQuery } from '~/composables/useQuery';
 import { useTablesStore } from '~/stores/tables';
-import TableColLink from '~/components/TableColLink.vue';
-import TableColNote from '~/components/TableColNote.vue';
-import TableButtons from '~/components/TableButtons.vue';
 import { QTableProps } from 'quasar';
 import { useDateFormat } from '~/composables/useDate';
-import TableFilter from '~/components/TableFilter.vue';
 import { useTableFilterStore } from '~/stores/tableFilter';
 
 const useDate = useDateFormat();

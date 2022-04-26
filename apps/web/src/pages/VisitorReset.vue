@@ -41,13 +41,9 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue';
-import { useI18n } from 'vue-i18n';
 import { useNotification } from '~/composables/useResponseText';
 import { validationErrors } from '~/helpers';
 import AuthService from '~/services/auth.service';
-import FormErrorMax from '~/components/FormErrorMax.vue';
-import FormUserPassword from '~/components/FormUserPassword.vue';
 import useVuelidate from '@vuelidate/core';
 import { alphaNum, maxLength, required } from '~/helpers/i18n-validators';
 
@@ -106,7 +102,7 @@ async function sendForm(values: any) {
 
       isSubmitting.value = false;
       btnLabel.value = 'success';
-      notification.open('positive', message.value);
+      notification.open('positive', message.value, false);
     },
     (error) => {
       notification.open('negative', error);

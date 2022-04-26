@@ -42,13 +42,10 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue';
-import { useI18n } from 'vue-i18n';
 import { useNotification } from '~/composables/useResponseText';
 import { useRouter } from 'vue-router';
 import { validationErrors } from '~/helpers';
 import AuthService from '~/services/auth.service';
-import FormErrorMax from '~/components/FormErrorMax.vue';
 import useVuelidate from '@vuelidate/core';
 import { maxLength, required, alphaNum } from '~/helpers/i18n-validators';
 

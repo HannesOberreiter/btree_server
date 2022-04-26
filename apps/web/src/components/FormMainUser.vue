@@ -76,10 +76,7 @@ import { required } from '~/helpers/i18n-validators';
 import { useAuthUserStore } from '~/stores/auth';
 import { useNotification } from '~/composables/useResponseText';
 import { useQuasarLang } from '~/composables/useQuasarLang';
-import FormUserLanguage from './FormUserLanguage.vue';
-import FormUserNewsletter from './FormUserNewsletter.vue';
 import useVuelidate from '@vuelidate/core';
-import FormInputText from './FormInputText.vue';
 import { useApiFetch } from '~/composables/useApi';
 import { useQuasar } from 'quasar';
 

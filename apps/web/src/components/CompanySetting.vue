@@ -57,7 +57,6 @@ import { useAuthUserStore } from '~/stores/auth';
 import { useNotification } from '~/composables/useResponseText';
 import { useQuasar } from 'quasar';
 import { useRefreshStore } from '~/stores/refresh';
-import ItemCompany from '~/components/ItemCompany.vue';
 import { useApiFetch } from '~/composables/useApi';
 
 const notification = useNotification();

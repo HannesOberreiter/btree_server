@@ -93,7 +93,6 @@ import { useApiariesQuery } from '~/composables/useQuery';
 import { useAuthUserStore } from '~/stores/auth';
 import { useNotification } from '~/composables/useResponseText';
 import DialogForm from '~/components/DialogForm.vue';
-import GlobalLoading from '~/components/GlobalLoading.vue';
 import {
   LMap,
   LPopup,
@@ -102,8 +101,6 @@ import {
   LFeatureGroup,
   LMarker,
 } from '@vue-leaflet/vue-leaflet';
-import MapOverlay from '~/components/MapOverlay.vue';
-import MapButtons from '~/components/MapButtons.vue';
 import { useApiFetch } from '~/composables/useApi';
 import { useQuasar } from 'quasar';
 

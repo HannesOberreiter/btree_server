@@ -70,7 +70,6 @@ import { useVModels } from '@vueuse/core';
 import { formCheckMultipleValues, validationErrors } from '~/helpers';
 import dayjs from 'dayjs';
 import useVuelidate from '@vuelidate/core';
-import BtnMultipleValues from '~/components/BtnMultipleValues.vue';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { isEmpty } from 'lodash-es';
 

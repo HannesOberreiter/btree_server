@@ -46,7 +46,6 @@
 import { useDialogPluginComponent } from 'quasar';
 import { PropType } from 'vue';
 import { Option } from '~/types';
-import FormDropdownOption from './FormDropdownOption.vue';
 
 const { dialogRef, onDialogHide, onDialogOK } = useDialogPluginComponent();
 const value = ref('');

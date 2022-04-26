@@ -59,14 +59,9 @@
 import { tableCheckSelected, tableMeta } from '~/helpers';
 import { useTasksQuery } from '~/composables/useQuery';
 import { useTablesStore } from '~/stores/tables';
-import TableButtons from '~/components/TableButtons.vue';
 import { QTableProps } from 'quasar';
-import TableFilter from '~/components/TableFilter.vue';
 import { useDateFormat } from '~/composables/useDate';
 import { useTableFilterStore } from '~/stores/tableFilter';
-import TableColNote from '~/components/TableColNote.vue';
-import TableColStatus from '~/components/TableColStatus.vue';
-import TableColUrl from '~/components/TableColUrl.vue';
 
 const useDate = useDateFormat();
 const { t } = useI18n();
