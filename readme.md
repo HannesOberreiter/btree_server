@@ -32,6 +32,14 @@ npm run build
 npm run mail
 ```
 
+Following folders are needed on production server:
+
+```bash
+- dist
+- mails
+- logs
+```
+
 ```bash
 docker-compose -f docker-compose.prod.yml build
 docker-compose -f docker-compose.prod.yml up -d

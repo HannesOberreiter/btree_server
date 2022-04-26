@@ -19,9 +19,9 @@
   "scripts": {
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "serve": "nodemon",
-    "build": "mkdir -p ./dist/logs && tsc",
+    "build": "tsc",
     "dev:serve": "ENVIRONMENT=development nodemon",
-    "dev:build": "mkdir -p ./dist/logs && tsc -watch",
+    "dev:build": "tsc -watch",
     "dev:knex": "ENVIRONMENT=development knex",
     "dev:knex-seed": "ENVIRONMENT=staging knex seed:run",
     "mail": "mjml mjml/* -o mails/ --config.beautify true --config.minify true",
