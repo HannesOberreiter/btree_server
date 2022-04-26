@@ -161,7 +161,6 @@ export const useServiceDropbox = () => {
   }
 
   async function uploadFile(file: File) {
-    console.log(file);
     return await getAccessToken()
       .then(() =>
         dbx.filesUpload({ path: state.path, autorename: true, contents: file })
@@ -170,15 +169,21 @@ export const useServiceDropbox = () => {
   }
 
   async function getMeta(id: string) {
-    return await dbx.filesGetMetadata({
-      path: id,
-    });
+    return await dbx
+      .filesGetMetadata({
+        path: id,
+      })
+      .catch(async (e) => {
+        if (e.status == 401) return await getAccessToken();
+        throw e;
+      });
   }
 
   async function getThumbnail(id: string) {
     LoadingBar.start();
     state.isLoading = true;
     if (!state.accessToken) await getAccessToken();
+    await getMeta(id);
     return await dbx
       .filesGetThumbnail({
         path: id,
