@@ -24,18 +24,18 @@
             >
               <div v-if="path.name !== 'register'">
                 <span>Don't have an account? </span>
-                <router-link class="text-secondary" to="/register">
+                <router-link class="text-secondary" :to="{ name: 'register' }">
                   Sign Up
                 </router-link>
               </div>
               <div v-if="path.name !== 'login'">
                 <span>Already registered? </span>
-                <router-link class="text-secondary" to="/login">
+                <router-link class="text-secondary" :to="{ name: 'login' }">
                   Log In
                 </router-link>
               </div>
               <div v-if="path.name !== 'recover'">
-                <router-link class="text-secondary" to="/recover">
+                <router-link class="text-secondary" :to="{ name: 'recover' }">
                   Forgot your password?
                 </router-link>
               </div>
