@@ -14,12 +14,12 @@ const routes: RouteRecordRaw[] = [
       {
         path: '',
         name: 'calendar',
-        component: () => import('~/pages/Calendar.vue'),
+        component: () => import('~/pages/MainCalendar.vue'),
       },
       {
         path: '/news',
         name: 'news',
-        component: () => import('~/pages/News.vue'),
+        component: () => import('~/pages/MainNews.vue'),
       },
     ],
   },
