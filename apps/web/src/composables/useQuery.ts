@@ -218,6 +218,7 @@ export function useApiariesQuery({
             : '';
           value.label = `${value.name} ${hive_count}`;
           value.value = value.id;
+          value.type = 'apiary';
           return value;
         });
         const center =
@@ -442,6 +443,7 @@ export function useHivesQuery({
         const result = map(response.results, (value) => {
           value.label = `${value.name} (${value.hive_location.apiary_name})`;
           value.value = value.id;
+          value.type = 'hive';
           return value;
         });
         return result
