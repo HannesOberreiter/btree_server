@@ -96,6 +96,30 @@ const routes: RouteRecordRaw[] = [
     ],
   },
   /***
+    Path: /detail/*
+   */
+  {
+    path: '/detail',
+    meta: {
+      auth: true,
+    },
+    component: () => import('~/layouts/MainLayout.vue'),
+    children: [
+      {
+        path: 'hive/:id',
+        props: true,
+        name: 'detail-hive',
+        component: () => import('~/pages/DetailHive.vue'),
+      },
+      {
+        path: 'apiary/:id',
+        props: true,
+        name: 'detail-apiary',
+        component: () => import('~/pages/DetailApiary.vue'),
+      },
+    ],
+  },
+  /***
     Path: /new/*
    */
   {

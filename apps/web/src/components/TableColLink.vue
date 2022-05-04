@@ -1,7 +1,7 @@
 <template>
   <q-td>
     <router-link
-      :to="`detail/${link}/${id}`"
+      :to="{ name: `detail-${link}`, params: { id: id } }"
       class="text-bold"
       style="text-decoration: none; color: inherit"
     >

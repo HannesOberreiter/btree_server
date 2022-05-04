@@ -50,6 +50,24 @@
             @change="refetch"
           ></table-col-status>
         </template>
+        <!-- eslint-disable-next-line vue/valid-v-slot -->
+        <template #body-cell-hive.name="props">
+          <table-col-link
+            :id="props.row.hive_id"
+            :label="props.value"
+            link="hive"
+          >
+          </table-col-link>
+        </template>
+        <!-- eslint-disable-next-line vue/valid-v-slot -->
+        <template #body-cell-treatment_apiary.apiary_name="props">
+          <table-col-link
+            :id="props.row.treatment_apiary.apiary_id"
+            :label="props.value"
+            link="apiary"
+          >
+          </table-col-link>
+        </template>
       </q-table>
     </div>
   </div>

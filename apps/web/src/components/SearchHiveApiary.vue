@@ -67,7 +67,7 @@ function filterFn(val: any, update: any, _abort: any) {
 
 function redirectFn(val: any) {
   if (val) {
-    router.push(`/detail/${val.type}/${val.id}`);
+    router.push({ name: `detail-${val.type}`, params: { id: val.id } });
   }
 }
 </script>
