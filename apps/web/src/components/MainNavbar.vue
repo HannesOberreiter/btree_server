@@ -45,10 +45,10 @@
           color="white"
           size="md"
           :icon="wakeIsActive ? 'fas fa-eye' : 'far fa-eye'"
-          @click="wakeIsActive ? wakeRelease : wakeRequest"
+          @click="wakeIsActive ? wakeRelease() : wakeRequest('screen')"
         >
           <q-tooltip>
-            {{ $t('keepAwake') }}: {{ $t(wakeIsActive + '') }}
+            {{ $t('keepAwake') }} {{ $t(wakeIsActive + '') }}
           </q-tooltip>
         </btn-base>
         <btn-base

@@ -74,7 +74,7 @@
   "deleteConfirmHive": "All connected data will also be removed, eg. feedings, checkups, harvests.",
   "deleteConfirmRow": "Are you sure you want to delete {count} row(s)?",
   "deleteConfirm": "Are you sure to delete the data?",
-  "keepAwake": "Keep my device awake.",
+  "keepAwake": "Keep my device awake?",
   "true": "Yes",
   "false": "No",
   "deleted": "Deleted",
