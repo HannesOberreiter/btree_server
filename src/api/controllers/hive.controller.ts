@@ -89,10 +89,13 @@ export class HiveController extends Controller {
       const query = Hive.query()
         .where({
           'hives.user_id': req.user.user_id,
-          'hives.modus': modus === 'true',
           'hives.deleted': deleted === 'true',
         })
         .page(offset, parseInt(limit) === 0 ? 10 : limit);
+
+      if (modus) {
+        query.where('hives.modus', modus === 'true');
+      }
 
       if (details === 'true') {
         query.withGraphJoined(
