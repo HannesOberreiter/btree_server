@@ -1,5 +1,5 @@
 <template>
-  <btn-base-group size="sm">
+  <btn-base-group size="sm" :spread="false">
     <btn-base color="primary" :label="$t('new')" @click="onNew" />
     <btn-base
       color="secondary"

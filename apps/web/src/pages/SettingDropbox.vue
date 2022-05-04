@@ -32,7 +32,7 @@
     </q-card-actions>
     <div v-else>
       <q-card-actions>
-        <btn-base-group>
+        <btn-base-group :spread="false">
           <btn-base
             color="primary"
             :label="$t('upload')"

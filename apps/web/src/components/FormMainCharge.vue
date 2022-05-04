@@ -63,6 +63,17 @@
       numeric-valid="decimal"
       :max-valid="100000"
     ></form-input-numeric>
+
+    <form-input-url
+      v-model="state.url"
+      :values="values"
+      :reset="reset"
+    ></form-input-url>
+    <form-input-note
+      v-model="state.note"
+      :values="values"
+      :reset="reset"
+    ></form-input-note>
     <form-input-checkbox-string
       v-model="state.kind"
       label="kind"
@@ -75,17 +86,6 @@
       true-value="in"
       false-value="out"
     ></form-input-checkbox-string>
-
-    <form-input-url
-      v-model="state.url"
-      :values="values"
-      :reset="reset"
-    ></form-input-url>
-    <form-input-note
-      v-model="state.note"
-      :values="values"
-      :reset="reset"
-    ></form-input-note>
   </q-form>
   <form-buttons
     class="q-pt-md"

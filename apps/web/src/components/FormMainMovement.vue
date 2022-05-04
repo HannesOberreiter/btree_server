@@ -11,14 +11,14 @@
       :selected="selected"
     ></form-dropdown-hive>
 
-    <input-date
+    <form-input-date
       v-model="state.date"
       label="movedate"
       table-id="date"
       :required="isEdit ? false : true"
       :values="values"
       :reset="reset"
-    ></input-date>
+    ></form-input-date>
     <form-dropdown-option
       v-model="state.apiary"
       label="apiary"
