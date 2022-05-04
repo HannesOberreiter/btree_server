@@ -60,7 +60,9 @@ const getRearings = async ({ query, user }) => {
         // Current Step is actual Start Step
         result.start = dayjs(result.date).format('YYYY-MM-DD HH:mm:00');
       } else {
-        if (result.currentStep.position > result.startPosition) {
+        if (
+          parseInt(result.currentStep.position) > parseInt(result.startPosition)
+        ) {
           // Step comes behind Start Step, we can simply add up the hours
           addDate = addDate.add(result.currentStep.detail.hour, 'hour');
           result.start = addDate.format('YYYY-MM-DD HH:mm:00');
