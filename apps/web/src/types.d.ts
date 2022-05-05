@@ -1,11 +1,11 @@
-declare interface Company {
+export declare interface Company {
   id: number;
   name: string;
   paid: Date;
   rank: number;
   api_active: boolean;
 }
-declare interface User {
+export declare interface User {
   email?: string;
   password?: string;
   acdate?: boolean;
@@ -25,7 +25,7 @@ declare interface User {
   company: Company[];
 }
 
-declare interface RegisterUser {
+export declare interface RegisterUser {
   company: string;
   email: string;
   password: string;
@@ -37,34 +37,34 @@ declare interface RegisterUser {
   terms?: boolean;
 }
 
-declare interface Status {
+export declare interface Status {
   loggedIn: boolean;
 }
-declare interface State {
+export declare interface State {
   status: Status;
   user: User | null;
   company: Company | null;
 }
 
-declare interface refreshToken {
+export declare interface refreshToken {
   expires: Date;
   token: string;
 }
 
-declare interface Token {
+export declare interface Token {
   accessToken: string;
   expiresIn: number;
   refreshToken: refreshToken;
   tokenType: string;
 }
 
-declare interface Todo {
+export declare interface Todo {
   date: string;
   name: string;
   note: string;
 }
 
-declare interface Apiary {
+export declare interface Apiary {
   name: string;
   description: string;
   latitude: number;
@@ -74,7 +74,7 @@ declare interface Apiary {
   modus: boolean;
 }
 
-type Option =
+export type Option =
   | 'charge_types'
   | 'hive_sources'
   | 'hive_types'
@@ -91,7 +91,7 @@ type Option =
   | 'queen'
   | 'scale';
 
-type TextField =
+export type TextField =
   | 'number'
   | 'search'
   | 'textarea'
@@ -104,9 +104,9 @@ type TextField =
   | 'url'
   | 'date';
 
-type Task = 'feed' | 'harvest' | 'treatment' | 'checkup';
+export type Task = 'feed' | 'harvest' | 'treatment' | 'checkup';
 
-declare interface FormHive {
+export declare interface FormHive {
   name: string;
   date: string;
   position: number;
@@ -121,7 +121,7 @@ declare interface FormHive {
   source: any;
 }
 
-declare interface FormTodo {
+export declare interface FormTodo {
   date: string;
   name: string;
   note: string;
@@ -131,7 +131,7 @@ declare interface FormTodo {
   repeat: number;
 }
 
-declare interface FormOption {
+export declare interface FormOption {
   name: string;
   modus: boolean;
   favorite: boolean;
@@ -139,13 +139,13 @@ declare interface FormOption {
   unit: string;
 }
 
-declare interface FormRearingDetail {
+export declare interface FormRearingDetail {
   job: string;
   hour: number;
   note: string;
 }
 
-declare interface FormRearing {
+export declare interface FormRearing {
   larvae: number;
   hatch: number;
   note: string;
@@ -154,7 +154,7 @@ declare interface FormRearing {
   detail: any;
 }
 
-declare interface FormCharge {
+export declare interface FormCharge {
   bestbefore: string;
   date: string;
   name: string;
@@ -167,7 +167,7 @@ declare interface FormCharge {
   type: any;
 }
 
-declare interface FormQueen {
+export declare interface FormQueen {
   name: string;
   date: string;
   mark_colour: string;
@@ -185,12 +185,12 @@ declare interface FormQueen {
   mother_id: any;
 }
 
-declare interface FormScale {
+export declare interface FormScale {
   name: string;
   hive: any;
 }
 
-declare interface FormScaleData {
+export declare interface FormScaleData {
   datetime: string;
   weight: number;
   temp1: number;
@@ -201,7 +201,7 @@ declare interface FormScaleData {
   scale: any;
 }
 
-declare interface FormQuicktool {
+export declare interface FormQuicktool {
   date: string;
   enddate: string;
   interval: number;
@@ -244,27 +244,3 @@ declare interface FormQuicktool {
   treatment_vet: any;
   treatment_disease: any;
 }
-
-export {
-  User,
-  Company,
-  Status,
-  State,
-  RegisterUser,
-  Token,
-  Task,
-  Todo,
-  Apiary,
-  Option,
-  TextField,
-  FormHive,
-  FormCharge,
-  FormQueen,
-  FormQuicktool,
-  FormTodo,
-  FormScale,
-  FormScaleData,
-  FormOption,
-  FormRearingDetail,
-  FormRearing,
-};
