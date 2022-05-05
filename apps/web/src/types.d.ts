@@ -145,6 +145,11 @@ export declare interface FormRearingDetail {
   note: string;
 }
 
+export declare interface FormRearingType {
+  name: string;
+  note: string;
+}
+
 export declare interface FormRearing {
   larvae: number;
   hatch: number;

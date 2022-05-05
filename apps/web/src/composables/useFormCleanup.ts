@@ -10,6 +10,7 @@ import {
   FormQuicktool,
   FormRearing,
   FormRearingDetail,
+  FormRearingType,
   FormScale,
   FormScaleData,
   FormTodo,
@@ -45,6 +46,8 @@ export const useFormCleanup = (
       return cleanupOption(state.value);
     } else if (unref(table) === 'rearing_detail') {
       return cleanupRearingDetail(state.value);
+    } else if (unref(table) === 'rearing_type') {
+      return cleanupRearingType(state.value);
     } else if (unref(table) === 'rearing') {
       return cleanupRearing(state.value);
     }
@@ -260,4 +263,8 @@ function cleanupRearing(state: FormRearing) {
     detail_id: state.detail ? state.detail.value : null,
   } as any;
   return omitBy(result, isNil);
+}
+
+function cleanupRearingType(state: FormRearingType) {
+  return omitBy(state, isNil);
 }

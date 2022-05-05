@@ -26,7 +26,7 @@ const { pause, resume } = useIntervalFn(
   async () => {
     await ping();
   },
-  1000 * 10,
+  1000 * 60 * 5,
   { immediate: true }
 );
 

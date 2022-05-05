@@ -62,6 +62,9 @@ const FormMainScale = defineAsyncComponent(() => import('./FormMainScale.vue'));
 const FormMainRearing = defineAsyncComponent(
   () => import('./FormMainRearing.vue')
 );
+const FormMainRearingMethod = defineAsyncComponent(
+  () => import('./FormMainRearingMethod.vue')
+);
 
 const { dialogRef, onDialogHide, onDialogOK } = useDialogPluginComponent();
 
@@ -174,6 +177,10 @@ const layouts = {
   },
   rearing: {
     comp: FormMainRearing,
+    props: {},
+  },
+  rearing_type: {
+    comp: FormMainRearingMethod,
     props: {},
   },
 } as any;

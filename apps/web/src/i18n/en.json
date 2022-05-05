@@ -2,6 +2,7 @@
   "account": "Account",
   "accountActivated": "You account was successfully activated!",
   "activate": "Activate",
+  "step": "Step | Steps",
   "activateUser": {
     "label": "Confirm Key",
     "message": "Thank you for your registration, please activate your account as last step.",
