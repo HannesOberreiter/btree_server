@@ -45,7 +45,7 @@
         </div>
       </q-card-section>
       <q-card-section>
-        <div class="row justify-center">
+        <div class="row justify-center print-hide">
           <div class="text-h6">NFC</div>
         </div>
       </q-card-section>
@@ -62,7 +62,6 @@
             color="negative"
             @click="nfc.write('')"
           />
-          <btn-base :label="$t('check')" color="grey" @click="nfc.check" />
           <btn-base :label="$t('cancel')" color="grey" @click="onDialogOK" />
         </btn-base-group>
       </q-card-actions>
