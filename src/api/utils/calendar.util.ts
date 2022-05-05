@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { intersection } from 'lodash';
+import { intersection, round } from 'lodash';
 import { MySQLServer } from '@servers/mysql.server';
 import { Todo } from '@models/todo.model';
 import { Rearing } from '@models/rearing/rearing.model';
@@ -235,4 +235,33 @@ const getTask = async ({ query, user }, task: string) => {
   return result;
 };
 
-export { getTask, getMovements, getTodos, getRearings };
+const getScaleData = async ({ query, user }) => {
+  const { start, end } = convertDate(query);
+
+  const results = await MySQLServer.knex(`calendar_scale_data`)
+    .where('user_id', user.user_id)
+    .where('date', '>=', start)
+    .where('date', '<=', end);
+  let result = [];
+  let weight_last = 0;
+  for (const i in results) {
+    const res = results[i];
+    res.id = res.name;
+    res.allDay = true;
+    // Event end Date is exclusive see docu https://fullcalendar.io/docs/event_data/Event_Object/
+    res.start = dayjs(res.date).format('YYYY-MM-DD');
+    res.end = dayjs(res.date).add(1, 'day').format('YYYY-MM-DD');
+    res.difference = round(res.average - weight_last, 1);
+    weight_last = res.average;
+    const weight_addon = res.difference > 0 ? '(+)' : '(-)';
+    res.title = `${weight_addon} ${res.average} ${res.name}`;
+    res.icon = res.difference > 0 ? `fas fa-plus` : 'fas fa-minus';
+    res.color = res.difference > 0 ? 'green' : 'red';
+    res.textColor = 'white';
+    res.editable = false;
+    result.push(res);
+  }
+  return result;
+};
+
+export { getTask, getMovements, getTodos, getRearings, getScaleData };
