@@ -103,7 +103,9 @@
     "notFound": "Route or server not found! (Offline?)",
     "premium": "Premium only feature!",
     "unknown": "An error occurred!",
-    "validation": "Validation error!"
+    "validation": "Validation error!",
+    "nfcNotSupported": "Web NFC is not supported by your browser.",
+    "permission": "Could not set permissions."
   },
   "error404": "Oops. Nothing here...",
   "exportCSV": "Export (.csv)",
