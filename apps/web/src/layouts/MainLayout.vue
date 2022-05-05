@@ -43,13 +43,24 @@ import { useQuasarLang } from '~/composables/useQuasarLang';
 import MainDrawer from '~/components/MainDrawer.vue';
 import MainNavbar from '~/components/MainNavbar.vue';
 import MainFooter from '~/components/MainFooter.vue';
+import { useMeta } from 'quasar';
 
 const leftDrawerOpen = ref(false);
 const storeUser = useAuthUserStore();
 const $q = useQuasar();
+const router = useRouter();
+const { t } = useI18n();
 
 storeUser.updateLang();
 useQuasarLang($q);
+
+useMeta(() => {
+  return {
+    title: router.currentRoute.value.meta.title
+      ? t(router.currentRoute.value.meta.title as string) + ' - b.tree'
+      : 'b.tree',
+  };
+});
 
 const toggleLeftDrawer = () => {
   leftDrawerOpen.value = !leftDrawerOpen.value;

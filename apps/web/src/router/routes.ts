@@ -14,16 +14,25 @@ const routes: RouteRecordRaw[] = [
       {
         path: '',
         name: 'calendar',
+        meta: {
+          title: 'calendar.name',
+        },
         component: () => import('~/pages/CalendarMain.vue'),
       },
       {
         path: 'calendar_scale',
         name: 'calendar-scale_data',
+        meta: {
+          title: 'scale.name',
+        },
         component: () => import('~/pages/CalendarScale.vue'),
       },
       {
         path: '/news',
         name: 'news',
+        meta: {
+          title: 'news',
+        },
         component: () => import('~/pages/ChangeLog.vue'),
       },
     ],
@@ -41,36 +50,57 @@ const routes: RouteRecordRaw[] = [
       {
         path: 'hive',
         name: 'table-hive',
+        meta: {
+          title: 'hive',
+        },
         component: () => import('~/pages/TableHive.vue'),
       },
       {
         path: 'queen',
         name: 'table-queen',
+        meta: {
+          title: 'queen',
+        },
         component: () => import('~/pages/TableQueen.vue'),
       },
       {
         path: 'apiary',
         name: 'table-apiary',
+        meta: {
+          title: 'apiary',
+        },
         component: () => import('~/pages/TableApiary.vue'),
       },
       {
         path: 'movement',
         name: 'table-movement',
+        meta: {
+          title: 'movement',
+        },
         component: () => import('~/pages/TableMovement.vue'),
       },
       {
         path: 'todo',
         name: 'table-todo',
+        meta: {
+          title: 'todo',
+        },
         component: () => import('~/pages/TableTodo.vue'),
       },
       {
         path: 'feed',
         name: 'table-feed',
+        meta: {
+          title: 'feed',
+        },
         component: () => import('~/pages/TableFeed.vue'),
       },
       {
         path: 'harvest',
         name: 'table-harvest',
+        meta: {
+          title: 'harvest',
+        },
         component: () => import('~/pages/TableHarvest.vue'),
       },
       {
@@ -81,21 +111,33 @@ const routes: RouteRecordRaw[] = [
       {
         path: 'checkup',
         name: 'table-checkup',
+        meta: {
+          title: 'checkup',
+        },
         component: () => import('~/pages/TableCheckup.vue'),
       },
       {
         path: 'charge',
         name: 'table-charge',
+        meta: {
+          title: 'charge',
+        },
         component: () => import('~/pages/TableCharge.vue'),
       },
       {
         path: 'scale_data',
         name: 'table-scale_data',
+        meta: {
+          title: 'scale.name',
+        },
         component: () => import('~/pages/TableScaleData.vue'),
       },
       {
         path: 'rearing',
         name: 'table-rearing',
+        meta: {
+          title: 'rearing',
+        },
         component: () => import('~/pages/TableRearing.vue'),
       },
     ],
@@ -114,12 +156,18 @@ const routes: RouteRecordRaw[] = [
         path: 'hive/:id',
         props: true,
         name: 'detail-hive',
+        meta: {
+          title: 'hive',
+        },
         component: () => import('~/pages/DetailHive.vue'),
       },
       {
         path: 'apiary/:id',
         props: true,
         name: 'detail-apiary',
+        meta: {
+          title: 'apiary',
+        },
         component: () => import('~/pages/DetailApiary.vue'),
       },
     ],
@@ -138,31 +186,49 @@ const routes: RouteRecordRaw[] = [
         path: 'quicktool/:task',
         name: 'new-quicktool',
         props: true,
+        meta: {
+          title: 'quicktool.name',
+        },
         component: () => import('~/pages/NewQuicktool.vue'),
       },
       {
         path: 'queen',
         name: 'new-queen',
+        meta: {
+          title: 'queen',
+        },
         component: () => import('~/pages/NewQueen.vue'),
       },
       {
         path: 'hive',
         name: 'new-hive',
+        meta: {
+          title: 'hive',
+        },
         component: () => import('~/pages/NewHive.vue'),
       },
       {
         path: 'todo',
         name: 'new-todo',
+        meta: {
+          title: 'todo',
+        },
         component: () => import('~/pages/NewTodo.vue'),
       },
       {
         path: 'movement',
         name: 'new-movement',
+        meta: {
+          title: 'movement',
+        },
         component: () => import('~/pages/NewMovement.vue'),
       },
       {
         path: 'charge',
         name: 'new-charge',
+        meta: {
+          title: 'charge',
+        },
         component: () => import('~/pages/NewCharge.vue'),
       },
       {
@@ -186,24 +252,36 @@ const routes: RouteRecordRaw[] = [
         path: ':task/:ids*',
         name: 'edit-quicktool',
         props: true,
+        meta: {
+          title: 'quicktool.name',
+        },
         component: () => import('~/pages/EditQuicktool.vue'),
       },
       {
         path: 'queen/:ids*',
         name: 'edit-queen',
         props: true,
+        meta: {
+          title: 'queen',
+        },
         component: () => import('~/pages/EditQueen.vue'),
       },
       {
         path: 'todo/:ids*',
         name: 'edit-todo',
         props: true,
+        meta: {
+          title: 'todo',
+        },
         component: () => import('~/pages/EditTodo.vue'),
       },
       {
         path: 'movement/:ids*',
         name: 'edit-movement',
         props: true,
+        meta: {
+          title: 'movement',
+        },
         component: () => import('~/pages/EditMovement.vue'),
       },
     ],
@@ -220,33 +298,51 @@ const routes: RouteRecordRaw[] = [
         path: 'login',
         name: 'login',
         props: true,
+        meta: {
+          title: 'login',
+        },
         component: () => import('~/pages/VisitorLogin.vue'),
       },
       {
         path: 'register',
         name: 'register',
+        meta: {
+          title: 'signup.name',
+        },
         component: () => import('~/pages/VisitorRegister.vue'),
       },
       {
         path: 'recover',
         name: 'recover',
+        meta: {
+          title: 'recoverUser.title',
+        },
         component: () => import('~/pages/VisitorRecover.vue'),
       },
       {
         path: 'reset/:reset',
         name: 'reset',
         props: true,
+        meta: {
+          title: 'resetUser.title',
+        },
         component: () => import('~/pages/VisitorReset.vue'),
       },
       {
         path: 'activate/:activate',
         name: 'activate',
         props: true,
+        meta: {
+          title: 'activateUser.title',
+        },
         component: () => import('~/pages/VisitorActivate.vue'),
       },
       {
         path: 'unsubscribe',
         name: 'unsubscribe',
+        meta: {
+          title: 'unsubscribe.name',
+        },
         component: () => import('~/pages/VisitorUnsubscribe.vue'),
       },
     ],
@@ -264,11 +360,17 @@ const routes: RouteRecordRaw[] = [
       {
         path: 'apiary',
         name: 'map-apiary',
+        meta: {
+          title: 'apiary',
+        },
         component: () => import('~/pages/MapApiary.vue'),
       },
       {
         path: 'wind',
         name: 'map-wind',
+        meta: {
+          title: 'wind',
+        },
         component: () => import('~/pages/MapWind.vue'),
       },
     ],
@@ -280,6 +382,7 @@ const routes: RouteRecordRaw[] = [
     path: '/setting',
     meta: {
       auth: true,
+      title: 'setting.name',
     },
     component: () => import('~/layouts/MainLayout.vue'),
     children: [
