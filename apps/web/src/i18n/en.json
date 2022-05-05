@@ -45,6 +45,7 @@
     "deleteText": "Are you sure to delete {name}. You cannot undo this action and all connected scale data will be deleted!"
   },
   "confirm": "Confirm",
+  "weightDifference": "Weight difference from last one: {weight}.",
   "timestamp": "Timestamp",
   "dialogSelectOptionText": "Select the option you want to edit.",
   "humidity": "Humidity",

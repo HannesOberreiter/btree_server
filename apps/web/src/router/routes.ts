@@ -14,12 +14,17 @@ const routes: RouteRecordRaw[] = [
       {
         path: '',
         name: 'calendar',
-        component: () => import('~/pages/MainCalendar.vue'),
+        component: () => import('~/pages/CalendarMain.vue'),
+      },
+      {
+        path: 'calendar_scale',
+        name: 'calendar-scale_data',
+        component: () => import('~/pages/CalendarScale.vue'),
       },
       {
         path: '/news',
         name: 'news',
-        component: () => import('~/pages/MainNews.vue'),
+        component: () => import('~/pages/ChangeLog.vue'),
       },
     ],
   },

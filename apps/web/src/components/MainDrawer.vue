@@ -249,6 +249,12 @@ const links = [
     icon: 'fas fa-scale-balanced',
     menu: [
       {
+        label: t('calendar.name'),
+        route: 'calendar-scale_data',
+        icon: 'fas fa-calendar-alt',
+        menu: false,
+      },
+      {
         label: t('table'),
         route: 'table-scale_data',
         icon: 'fas fa-table',
