@@ -494,14 +494,6 @@ export function useOptionsQuery(
   );
 }
 
-export function clearCache(q = '') {
-  if (q.trim() === '') queryCache.clear();
-  else {
-    const queries = queryCache.findAll(q);
-    queries.forEach((query) => query.invalidate());
-  }
-}
-
 export function useRearingTypesQuery({
   offset = 0 as MaybeRef<number>,
   limit = 10000 as MaybeRef<number>,
@@ -596,4 +588,12 @@ export function useRearingsQuery({
       onError: (error: any) => notification.open('negative', error),
     }
   );
+}
+
+export function clearCache(q = '') {
+  if (q.trim() === '') queryCache.clear();
+  else {
+    const queries = queryCache.findAll(q);
+    queries.forEach((query) => query.invalidate());
+  }
 }

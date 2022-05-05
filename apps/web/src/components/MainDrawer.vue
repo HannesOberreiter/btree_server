@@ -36,9 +36,9 @@
           :link="sublink"
         ></drawer-item>
       </q-expansion-item>
-
       <btn-refresh></btn-refresh>
       <item-company></item-company>
+      <item-ping></item-ping>
       <q-item v-ripple clickable @click="onLogout">
         <q-item-section avatar>
           <q-icon name="fas fa-sign-out-alt" />

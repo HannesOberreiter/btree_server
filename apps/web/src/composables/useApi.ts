@@ -35,7 +35,34 @@ export const useApiFetch = () => {
       return baseUrl + url + '?' + stringify(param, { arrayFormat: 'bracket' });
   };
 
-  const abort = () => controller.abort();
+  const abort = () => {
+    controller.abort();
+    LoadingBar.stop();
+  };
+
+  const ping = async () => {
+    const id = setTimeout(() => abort(), 15000);
+    const urlParam = buildUrl('/v1/status');
+    const request = new Request(urlParam, {
+      signal,
+      method: 'HEAD', // *GET, POST, PUT, DELETE, etc.
+      credentials: 'omit', // include, *same-origin, omit
+      headers: buildHeader(),
+    });
+    const time1 = performance.now();
+    const response = await fetch(request).catch((e) => {
+      console.log(e);
+      throw 'offline';
+    });
+    clearTimeout(id);
+
+    if (!response.ok) {
+      throw 'offline';
+    }
+
+    const time2 = performance.now();
+    return time2 - time1;
+  };
 
   const get = async (url: string, payload = '' as unknown): Promise<any> => {
     const urlParam = buildUrl(url, payload);
@@ -163,5 +190,5 @@ export const useApiFetch = () => {
       });
   }
 
-  return { abort, get, post, patch, deleting, state };
+  return { abort, ping, get, post, patch, deleting, state };
 };
