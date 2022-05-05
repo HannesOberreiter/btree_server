@@ -7,6 +7,8 @@
     </router-link>
     <q-space></q-space>
     <strong>b.tree</strong>
+    <q-space></q-space>
+    <item-share></item-share>
   </q-toolbar>
   <global-sound></global-sound>
 </template>
