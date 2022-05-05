@@ -58,7 +58,17 @@
 import { computed } from 'vue';
 import { useRouter } from 'vue-router';
 import SupporterImages from '~/components/SupporterImages.vue';
+import { useMeta } from 'quasar';
 
 const router = useRouter();
 const path = computed(() => router.currentRoute.value);
+const { t } = useI18n();
+
+useMeta(() => {
+  return {
+    title: router.currentRoute.value.meta.title
+      ? t(router.currentRoute.value.meta.title as string) + ' - b.tree'
+      : 'b.tree',
+  };
+});
 </script>
