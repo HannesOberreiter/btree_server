@@ -27,7 +27,7 @@
         :content-inset-level="0.3"
         expand-separator
         :icon="link.icon"
-        :label="$t(link.label, 2)"
+        :label="link.label"
         dark
       >
         <drawer-item
@@ -49,175 +49,137 @@
   </q-scroll-area>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
+import { useAuthUserStore } from '~/stores/auth';
+import { useQuicktoolStore } from '~/stores/quicktool';
+
+const { t } = useI18n();
+const storeUser = useAuthUserStore();
+const storeQuicktool = useQuicktoolStore();
+
+const onLogout = async () => {
+  await storeUser.logout();
+};
+
 const calendar = {
-  label: 'calendar.name',
+  label: t('calendar.name'),
   route: 'calendar',
   icon: 'far fa-calendar-alt',
 };
 
 const links = [
   {
-    label: 'new',
-    route: '',
-    icon: 'fas fa-circle-plus',
-    menu: [
-      {
-        label: 'todo',
-        route: 'new-todo',
-        icon: 'fas fa-clipboard-check',
-        menu: false,
-      },
-      {
-        label: 'hive',
-        route: 'new-hive',
-        icon: 'fas fa-house',
-        menu: false,
-      },
-      {
-        label: 'movement',
-        route: 'new-movement',
-        icon: 'fas fa-truck',
-        menu: false,
-      },
-      {
-        label: 'apiary',
-        route: 'map-apiary',
-        icon: 'fas fa-map-marker-alt',
-        menu: false,
-      },
-      {
-        label: 'queen',
-        route: 'new-queen',
-        icon: 'fas fa-venus',
-        menu: false,
-      },
-      {
-        label: 'charge',
-        route: 'new-charge',
-        icon: 'fas fa-database',
-        menu: false,
-      },
-    ],
-  },
-  {
-    label: 'map.name',
-    route: '',
-    icon: 'fas fa-globe',
-    menu: [
-      {
-        label: 'apiary',
-        route: 'map-apiary',
-        icon: 'fas fa-map-marker-alt',
-        menu: false,
-      },
-      {
-        label: 'wind',
-        route: 'map-wind',
-        icon: 'fas fa-wind',
-        menu: false,
-      },
-    ],
-  },
-  {
-    label: 'table',
+    label: t('task', 2),
     route: '',
     icon: 'fas fa-table',
     menu: [
       {
-        label: 'checkup',
+        label: t('checkup', 2),
         route: 'table-checkup',
         icon: 'fas fa-search-plus',
         menu: false,
       },
       {
-        label: 'treatment',
+        label: t('treatment', 2),
         route: 'table-treatment',
         icon: 'fas fa-kit-medical',
         menu: false,
       },
       {
-        label: 'harvest',
+        label: t('harvest', 2),
         route: 'table-harvest',
         icon: 'fas fa-droplet',
         menu: false,
       },
       {
-        label: 'feed',
+        label: t('feed', 2),
         route: 'table-feed',
         icon: 'fas fa-cube',
-        menu: false,
-      },
-      {
-        label: 'todo',
-        route: 'table-todo',
-        icon: 'fas fa-clipboard-check',
-        menu: false,
-      },
-
-      {
-        label: 'hive',
-        route: 'table-hive',
-        icon: 'fas fa-house',
-        menu: false,
-      },
-      {
-        label: 'movement',
-        route: 'table-movement',
-        icon: 'fas fa-truck',
-        menu: false,
-      },
-      {
-        label: 'apiary',
-        route: 'table-apiary',
-        icon: 'fas fa-location-dot',
-        menu: false,
-      },
-      {
-        label: 'queen',
-        route: 'table-queen',
-        icon: 'fas fa-venus',
-        menu: false,
-      },
-      {
-        label: 'charge',
-        route: 'table-charge',
-        icon: 'fas fa-database',
-        menu: false,
-      },
-      {
-        label: 'scale.name',
-        route: 'table-scale_data',
-        icon: 'fas fa-scale-balanced',
         menu: false,
       },
     ],
   },
   {
-    label: 'rearing',
+    label: t('colony', 2),
+    route: '',
+    icon: 'fas fa-house',
+    menu: [
+      {
+        label: `${t('new')} ${t('hive')}`,
+        route: 'new-hive',
+        icon: 'fas fa-house',
+        menu: false,
+      },
+      {
+        label: t('hive', 2),
+        route: 'table-hive',
+        icon: 'fas fa-table',
+        menu: false,
+      },
+      {
+        label: `${t('new')} ${t('movement')}`,
+        route: 'new-movement',
+        icon: 'fas fa-truck',
+        menu: false,
+      },
+      {
+        label: t('movement', 2),
+        route: 'table-movement',
+        icon: 'fas fa-table',
+        menu: false,
+      },
+      {
+        label: t('apiary') + ' ' + t('map.name'),
+        route: 'map-apiary',
+        icon: 'fas fa-map-marker-alt',
+        menu: false,
+      },
+      {
+        label: t('apiary', 2),
+        route: 'table-apiary',
+        icon: 'fas fa-table',
+        menu: false,
+      },
+    ],
+  },
+  {
+    label: t('queen', 2),
+    route: '',
+    icon: 'fas fa-venus',
+    menu: [
+      {
+        label: t('new'),
+        route: 'new-queen',
+        icon: 'fas fa-circle-plus',
+        menu: false,
+      },
+      {
+        label: t('table'),
+        route: 'table-queen',
+        icon: 'fas fa-table',
+        menu: false,
+      },
+    ],
+  },
+  {
+    label: t('rearing'),
     route: '',
     icon: 'fas fa-sitemap',
     menu: [
       {
-        label: 'new',
+        label: t('new'),
         route: 'new-rearing',
         icon: 'fas fa-circle-plus',
         menu: false,
       },
       {
-        label: 'serie',
+        label: t('serie'),
         route: 'table-rearing',
         icon: 'fas fa-table',
         menu: false,
       },
       {
-        label: 'queen',
-        route: 'table-queen',
-        icon: 'fas fa-venus',
-        menu: false,
-      },
-      {
-        label: 'method',
+        label: t('method'),
         route: 'setting-rearing',
         icon: 'fas fa-cog',
         menu: false,
@@ -225,30 +187,100 @@ const links = [
     ],
   },
   {
-    label: 'setting.name',
+    label: t('todo', 2),
+    route: '',
+    icon: 'fas fa-clipboard-check',
+    menu: [
+      {
+        label: t('new'),
+        route: 'new-todo',
+        icon: 'fas fa-circle-plus',
+        menu: false,
+      },
+      {
+        label: t('table'),
+        route: 'table-todo',
+        icon: 'fas fa-table',
+        menu: false,
+      },
+    ],
+  },
+  {
+    label: t('charge', 2),
+    route: '',
+    icon: 'fas fa-database',
+    menu: [
+      {
+        label: t('new'),
+        route: 'new-charge',
+        icon: 'fas fa-circle-plus',
+        menu: false,
+      },
+      {
+        label: t('table'),
+        route: 'table-charge',
+        icon: 'fas fa-table',
+        menu: false,
+      },
+    ],
+  },
+  {
+    label: t('map.name', 2),
+    route: '',
+    icon: 'fas fa-globe',
+    menu: [
+      {
+        label: t('apiary'),
+        route: 'map-apiary',
+        icon: 'fas fa-map-marker-alt',
+        menu: false,
+      },
+      {
+        label: t('wind'),
+        route: 'map-wind',
+        icon: 'fas fa-wind',
+        menu: false,
+      },
+    ],
+  },
+  {
+    label: t('scale.name', 2),
+    route: '',
+    icon: 'fas fa-scale-balanced',
+    menu: [
+      {
+        label: t('table'),
+        route: 'table-scale_data',
+        icon: 'fas fa-table',
+        menu: false,
+      },
+    ],
+  },
+  {
+    label: t('setting.name', 2),
     route: '',
     icon: 'fas fa-cogs',
     menu: [
       {
-        label: 'profile.name',
+        label: t('profile.name'),
         route: 'setting-profile',
         icon: 'far fa-id-card',
         menu: [] as any,
       },
       {
-        label: 'field',
+        label: t('field'),
         route: 'setting-field',
         icon: 'fas fa-cog',
         menu: [] as any,
       },
       {
-        label: 'option',
+        label: t('option'),
         route: 'setting-option',
         icon: 'fas fa-cogs',
         menu: [] as any,
       },
       {
-        label: 'company.name',
+        label: t('company.name'),
         route: 'setting-company',
         icon: 'fas fa-warehouse',
         menu: [] as any,
@@ -262,16 +294,4 @@ const links = [
     ],
   },
 ];
-</script>
-
-<script setup lang="ts">
-import { useAuthUserStore } from '~/stores/auth';
-import { useQuicktoolStore } from '~/stores/quicktool';
-
-const storeUser = useAuthUserStore();
-const storeQuicktool = useQuicktoolStore();
-
-const onLogout = async () => {
-  await storeUser.logout();
-};
 </script>

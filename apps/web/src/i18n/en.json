@@ -40,7 +40,7 @@
     "titleUser": "Here you can see a list of users who have access to the current company. Remove them, change access rights or add new ones."
   },
   "scale": {
-    "name": "Scale",
+    "name": "Scale | Scales",
     "nameHint": "Name needs to be unique and is needed for API calls as identifier.",
     "deleteText": "Are you sure to delete {name}. You cannot undo this action and all connected scale data will be deleted!"
   },
@@ -70,6 +70,7 @@
   "day": "Day | Days",
   "deactivate": "Deactivate",
   "delete": "Delete",
+  "task": "Task | Tasks",
   "deleteApiary": "You can only delete apiaries without active colonies!",
   "deleteConfirmHive": "All connected data will also be removed, eg. feedings, checkups, harvests.",
   "deleteConfirmRow": "Are you sure you want to delete {count} row(s)?",

@@ -14,7 +14,7 @@
       <q-icon :name="link.icon" />
     </q-item-section>
     <q-item-section>
-      {{ $t(link.label, 2) }}
+      {{ link.label }}
     </q-item-section>
   </q-item>
 </template>
