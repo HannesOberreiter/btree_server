@@ -9,7 +9,7 @@
       <search-hive-apiary></search-hive-apiary>
     </div>
 
-    <div class="col-6 col-sm-5 col-md-auto">
+    <div class="col-7 col-sm-5 col-md-auto">
       <div class="q-gutter-md text-right">
         <btn-speak></btn-speak>
         <btn-wake-lock></btn-wake-lock>
