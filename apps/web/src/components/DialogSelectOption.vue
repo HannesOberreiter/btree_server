@@ -16,7 +16,7 @@
         </div>
         <div class="row full-width text-center">
           <div class="col-12">
-            {{ $t('dialogSelectOptionText') }}
+            {{ $t(text) }}
           </div>
           <div class="col-12">
             <form-dropdown-option
@@ -52,6 +52,9 @@ const value = ref('');
 defineProps({
   label: {
     default: 'type',
+  },
+  text: {
+    default: 'dialogSelectOptionSelect',
   },
   table: {
     type: String as PropType<Option>,

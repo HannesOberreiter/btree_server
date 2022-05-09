@@ -86,6 +86,7 @@ export type Option =
   | 'treatment_diseases'
   | 'treatment_types'
   | 'treatment_vets'
+  | 'rearing_detail'
   | 'apiary'
   | 'hive'
   | 'queen'

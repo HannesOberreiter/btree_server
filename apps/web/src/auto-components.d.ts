@@ -82,6 +82,7 @@ declare module '@vue/runtime-core' {
     ItemCompany: typeof import('./components/ItemCompany.vue')['default']
     ItemPing: typeof import('./components/ItemPing.vue')['default']
     ItemShare: typeof import('./components/ItemShare.vue')['default']
+    ListRearingSteps: typeof import('./components/ListRearingSteps.vue')['default']
     MainDrawer: typeof import('./components/MainDrawer.vue')['default']
     MainFooter: typeof import('./components/MainFooter.vue')['default']
     MainNavbar: typeof import('./components/MainNavbar.vue')['default']

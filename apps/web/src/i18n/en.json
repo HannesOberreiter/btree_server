@@ -69,7 +69,8 @@
   "deleteConfirmRow": "Are you sure you want to delete {count} row(s)?",
   "deleted": "Deleted",
   "description": "Description",
-  "dialogSelectOptionText": "Select the option you want to edit.",
+  "dialogSelectOptionSelect": "Select the option you want to edit:",
+  "dialogSelectOptionAdd": "Select the option you want to add:",
   "disease": "Disease",
   "done": "Done",
   "download": "Download",
@@ -242,10 +243,13 @@
     "temper": "Temper",
     "text": "Rating low to high"
   },
+  "wait": "Wait",
   "read": "Read",
+  "job": "Task",
   "rear": {
     "startHint": "Starting with step {step} on {date}",
-    "startLabel": "Calculate from step"
+    "startLabel": "Calculate from step",
+    "detailHourText": "Number of hours to wait before this step."
   },
   "rearing": "Queen rearing | Queen rearings",
   "recoverUser": {

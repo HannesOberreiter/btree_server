@@ -31,6 +31,7 @@ import {
   useHivesQuery,
   useOptionsQuery,
   useQueensQuery,
+  useRearingDetailsQuery,
   useScaleQuery,
 } from '~/composables/useQuery';
 import { useVModels } from '@vueuse/core';
@@ -75,6 +76,8 @@ const { isLoading, data } =
     ? useQueensQuery({ modus: null })
     : props.table === 'scale'
     ? useScaleQuery({})
+    : props.table === 'rearing_detail'
+    ? useRearingDetailsQuery({})
     : useOptionsQuery(props.table, {});
 
 const emit = defineEmits(['update:modelValue']);

@@ -8,7 +8,7 @@
     ></form-dropdown-edit>
     <form-input-text
       v-model="state.job"
-      label="task"
+      label="job"
       icon="fas fa-passport"
       :values="values"
       :reset="reset"
@@ -19,7 +19,8 @@
       v-model="state.hour"
       label="wait"
       icon="fas fa-hourglass"
-      :shadow-text="$t('rear.detailHourText')"
+      shadow-text="h"
+      :hint="$t('rear.detailHourText')"
       :values="values"
       :reset="reset"
       :max-valid="5000"

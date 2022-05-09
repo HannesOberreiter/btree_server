@@ -65,6 +65,9 @@ const FormMainRearing = defineAsyncComponent(
 const FormMainRearingMethod = defineAsyncComponent(
   () => import('./FormMainRearingMethod.vue')
 );
+const FormMainRearingDetail = defineAsyncComponent(
+  () => import('./FormMainRearingDetail.vue')
+);
 
 const { dialogRef, onDialogHide, onDialogOK } = useDialogPluginComponent();
 
@@ -81,7 +84,6 @@ const props = defineProps({
     type: Array,
     default: null,
   },
-
   maximized: {
     type: Boolean,
     default: false,
@@ -181,6 +183,10 @@ const layouts = {
   },
   rearing_type: {
     comp: FormMainRearingMethod,
+    props: {},
+  },
+  rearing_detail: {
+    comp: FormMainRearingDetail,
     props: {},
   },
 } as any;
