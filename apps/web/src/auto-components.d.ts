@@ -90,7 +90,6 @@ declare module '@vue/runtime-core' {
     MapOverlay: typeof import('./components/MapOverlay.vue')['default']
     NewsDirective: typeof import('./components/NewsDirective.vue')['default']
     RearingMethod: typeof import('./components/RearingMethod.vue')['default']
-    RearingStep: typeof import('./components/RearingStep.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SearchHiveApiary: typeof import('./components/SearchHiveApiary.vue')['default']
