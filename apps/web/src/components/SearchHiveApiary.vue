@@ -1,5 +1,6 @@
 <template>
   <q-select
+    ref="searchRef"
     v-model="search"
     dense
     use-input
@@ -23,6 +24,7 @@ import { useApiariesQuery, useHivesQuery } from '~/composables/useQuery';
 
 const { t } = useI18n();
 const search = ref(null);
+const searchRef = ref(null);
 const options = ref([] as any);
 const router = useRouter();
 
@@ -69,5 +71,7 @@ function redirectFn(val: any) {
   if (val) {
     router.push({ name: `detail-${val.type}`, params: { id: val.id } });
   }
+  search.value = null;
+  searchRef.value.blur();
 }
 </script>
