@@ -22,23 +22,22 @@ import { useIntervalFn, useOnline } from '@vueuse/core';
 import round from 'lodash-es/round';
 
 const api = useApiFetch();
-const { pause, resume } = useIntervalFn(
-  async () => {
-    await ping();
-  },
-  1000 * 60 * 5,
-  { immediate: true }
-);
-
 const time = ref(null);
 const offlineServer = ref(true);
 const onlineUser = useOnline();
 const colorStatus = ref('green');
 
-async function ping() {
+useIntervalFn(
+  () => {
+    ping();
+  },
+  1000 * 60 * 5,
+  { immediateCallback: true }
+);
+
+function ping() {
   if (onlineUser.value) {
-    pause();
-    await api
+    api
       .ping()
       .then((response) => {
         offlineServer.value = false;
@@ -52,7 +51,6 @@ async function ping() {
   } else {
     colorStatus.value = 'red';
   }
-  resume();
 }
 
 function setTime(t: number) {
