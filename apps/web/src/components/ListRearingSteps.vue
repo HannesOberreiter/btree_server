@@ -10,14 +10,14 @@
           <btn-base-group>
             <btn-base
               flat
-              color="primary"
+              :color="step.active ? 'primary' : 'grey'"
               icon="fas fa-arrow-up"
               :disable="index === 0 || !step.active"
               @click="onMove(index, index - 1)"
             />
             <btn-base
               flat
-              color="secondary"
+              :color="step.active ? 'secondary' : 'grey'"
               icon="fas fa-arrow-down"
               :disable="index === modelValue.length - 1 || !step.active"
               @click="onMove(index, index + 1)"
@@ -28,7 +28,7 @@
           style="cursor: pointer"
           @click="setActiveStep(step.id, step.active ? false : true)"
         >
-          <q-item-label>
+          <q-item-label class="text-bold">
             {{ step.detail.job }} [
             <helper-day-and-hour :hour="step.detail.hour">
             </helper-day-and-hour>
@@ -40,14 +40,14 @@
           <btn-base-group>
             <btn-base
               flat
-              color="secondary"
+              :color="step.active ? 'secondary' : 'grey'"
               icon="fas fa-info"
               @click="showInfo(step.detail.note)"
             />
             <btn-base
               flat
+              :color="step.active ? 'negative' : 'grey'"
               :disable="!step.active"
-              color="negative"
               icon="fas fa-xmark"
               @click="onDelete(step.id)"
             />
