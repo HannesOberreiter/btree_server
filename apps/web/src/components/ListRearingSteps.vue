@@ -105,24 +105,6 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue', 'change']);
 const { modelValue } = useVModels(props, emit);
 
-const dialogForm = (
-  title: string,
-  ids: any[],
-  form = 'rearing_detail',
-  selected = null as any
-) => {
-  $q.dialog({
-    component: DialogForm,
-    componentProps: {
-      title: title,
-      form: form,
-      selected: selected,
-      ids: ids,
-      maximized: false,
-    },
-  }).onOk((e) => console.log(e));
-};
-
 function setActiveStep(id: number, set = true) {
   modelValue.value.step = map(modelValue.value.step, (obj) => {
     obj.active = obj.id === id ? set : false;
@@ -130,33 +112,14 @@ function setActiveStep(id: number, set = true) {
   });
 }
 
-function onMove(oldIndex: number, newIndex: number) {
-  const f = modelValue.value.step.splice(oldIndex, 1)[0];
-  // insert stored item into position `to`
-  modelValue.value.step.splice(newIndex, 0, f);
-}
-
 function showInfo(info: string) {
   $q.dialog({ message: info, html: false });
 }
 
-function onDelete(id: number) {
-  $q.dialog({
-    title: t('delete'),
-    message: t('deleteConfirm'),
-    cancel: true,
-  }).onOk(() => {
-    api.deleting(`/v1/rearing_step/${id}`).then(
-      () => {
-        notification.open('positive', 'deleted');
-        modelValue.value.step = filter(
-          modelValue.value.step,
-          (o) => o.id != id
-        );
-      },
-      () => notification.open('negative', 'error.unknown')
-    );
-  });
+function onMove(oldIndex: number, newIndex: number) {
+  const f = modelValue.value.step.splice(oldIndex, 1)[0];
+  // insert stored item into position `to`
+  modelValue.value.step.splice(newIndex, 0, f);
 }
 
 function onAdd() {
@@ -218,7 +181,26 @@ function onSave() {
   );
 }
 
-function onDeleteStep(id: number) {
+function onDelete(id: number) {
+  $q.dialog({
+    title: t('delete'),
+    message: t('deleteConfirm'),
+    cancel: true,
+  }).onOk(() => {
+    api.deleting(`/v1/rearing_step/${id}`).then(
+      () => {
+        notification.open('positive', 'deleted');
+        modelValue.value.step = filter(
+          modelValue.value.step,
+          (o) => o.id != id
+        );
+      },
+      () => notification.open('negative', 'error.unknown')
+    );
+  });
+}
+
+function onDeleteStep() {
   $q.dialog({
     component: DialogSelectOption,
     componentProps: {
