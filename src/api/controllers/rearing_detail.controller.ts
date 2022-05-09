@@ -91,7 +91,7 @@ export class RearingDetailController extends Controller {
         await RearingStep.query(trx)
           .withGraphJoined('detail')
           .delete()
-          .where('type.user_id', req.user.user_id)
+          .where('detail.user_id', req.user.user_id)
           .whereIn('detail_id', req.body.ids);
         return await RearingDetail.query(trx)
           .delete()

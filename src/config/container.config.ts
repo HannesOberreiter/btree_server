@@ -19,6 +19,7 @@ import { MovedateController } from '@controllers/movedate.controller';
 import { OptionController } from '@controllers/options.controller';
 import { RearingController } from '@controllers/rearing.controller';
 import { RearingDetailController } from '@controllers/rearing_detail.controller';
+import { RearingStepController } from '@controllers/rearing_step.controller';
 import { RearingTypeController } from '@controllers/rearing_type.controller';
 import { RootController } from '@controllers/root.controller';
 import { ServiceController } from '@/api/controllers/service.controller';
@@ -115,6 +116,11 @@ export class Container {
       .register({
         RearingTypeController: awilix
           .asClass(RearingTypeController)
+          .singleton(),
+      })
+      .register({
+        RearingStepController: awilix
+          .asClass(RearingStepController)
           .singleton(),
       })
       .register({

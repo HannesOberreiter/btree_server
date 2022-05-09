@@ -27,6 +27,7 @@ import { UserRouter } from '@routes/v1/user.route';
 import { ScaleRouter } from '@routes/v1/scale.route';
 import { ScaleDataRouter } from '@routes/v1/scale_data.route';
 import { DropboxRouter } from '../routes/v1/dropbox.route';
+import { RearingStepRouter } from '../routes/v1/rearing_step.route';
 /**
  * Load all application routes and plug it on main router
  */
@@ -60,6 +61,7 @@ export class ProxyRouter {
     { segment: '/rearing/', router: RearingRouter },
     { segment: '/rearing_detail/', router: RearingDetailRouter },
     { segment: '/rearing_type/', router: RearingTypeRouter },
+    { segment: '/rearing_step/', router: RearingStepRouter },
     { segment: '/service/', router: ServiceRouter },
     { segment: '/todo/', router: TodoRouter },
     { segment: '/treatment/', router: TreatmentRouter },
