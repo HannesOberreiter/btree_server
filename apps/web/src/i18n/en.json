@@ -88,6 +88,12 @@
   "edited": "Edited",
   "egg": "Egg | Eggs",
   "email": "Email",
+  "offline": "Offline",
+  "nfc": {
+    "reading": "NFC reader is active you can close this window and start scanning tags.",
+    "writing": "Place your tag near your NFC reader to write the current URL.",
+    "active": "NFC reader is active"
+  },
   "error": {
     "access": "Access not allowed or wrong password!",
     "duplicate": "Conflict, duplicate entry!",

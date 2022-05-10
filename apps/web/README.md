@@ -60,3 +60,11 @@ The example [example.env](example.env) show the needed environmental variables. 
 #### Version Number
 
 Changes and version number are documented in [src/assets/news.json](src/assets/news.json). This news are somewhat for the end-user and also used to update service workers to a new version. This process is not optimal but a legacy burden from my old app which may be replaced with automatic news from GitHub commits.
+
+#### Icons
+
+Icons generated with Icongenie for commands see: <https://quasar.dev/icongenie/command-list>
+
+```bash
+icongenie generate --icon public/logo.png --padding 5,5 --skip-trim --theme-color 2b957a --splashscreen-color f5f7fa --splashscreen-icon-ratio 60
+```
