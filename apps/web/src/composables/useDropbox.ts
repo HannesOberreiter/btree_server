@@ -34,11 +34,17 @@ export const useServiceDropbox = () => {
   async function getAccount() {
     LoadingBar.start();
     state.isLoading = true;
-    return await dbx.usersGetCurrentAccount().then((response) => {
-      state.isLoading = false;
-      LoadingBar.stop();
-      return response.result;
-    });
+    return await dbx
+      .usersGetCurrentAccount()
+      .then((response) => {
+        state.isLoading = false;
+        LoadingBar.stop();
+        return response.result;
+      })
+      .catch(async (e) => {
+        if (e.status == 401) return await getAccessToken();
+        throw e;
+      });
   }
 
   async function getAccessToken() {

@@ -3,6 +3,7 @@ import { useNeedAuth } from './useNeedAuth';
 import { stringify } from 'query-string';
 import { isString } from 'lodash-es';
 import { LoadingBar } from 'quasar';
+import { useOnline } from '@vueuse/core';
 
 const baseUrl = process.env.BACKEND_URL;
 const state = reactive({
@@ -10,11 +11,9 @@ const state = reactive({
   logout: false,
 });
 
-const controller = new AbortController();
-const { signal } = controller;
-
 export const useApiFetch = () => {
   const storeToken = useAuthTokenStore();
+  const onlineUser = useOnline();
 
   const buildHeader = () => {
     return {
@@ -35,13 +34,10 @@ export const useApiFetch = () => {
       return baseUrl + url + '?' + stringify(param, { arrayFormat: 'bracket' });
   };
 
-  const abort = () => {
-    controller.abort();
-    LoadingBar.stop();
-  };
-
   const ping = async () => {
-    const id = setTimeout(() => abort(), 15000);
+    const controller = new AbortController();
+    const { signal } = controller;
+    const id = setTimeout(() => controller.abort(), 15000);
     const urlParam = buildUrl('/v1/status');
     const request = new Request(urlParam, {
       signal,
@@ -67,7 +63,6 @@ export const useApiFetch = () => {
   const get = async (url: string, payload = '' as unknown): Promise<any> => {
     const urlParam = buildUrl(url, payload);
     const originalRequest = new Request(urlParam, {
-      signal,
       method: 'GET', // *GET, POST, PUT, DELETE, etc.
       credentials: 'omit', // include, *same-origin, omit
       headers: buildHeader(),
@@ -93,7 +88,6 @@ export const useApiFetch = () => {
   const post = async (url: string, payload: unknown): Promise<any> => {
     const urlParam = buildUrl(url, '');
     const originalRequest = new Request(urlParam, {
-      signal,
       method: 'POST', // *GET, POST, PUT, DELETE, etc.
       credentials: 'omit', // include, *same-origin, omit
       headers: buildHeader(),
@@ -106,7 +100,6 @@ export const useApiFetch = () => {
   const patch = async (url: string, payload: unknown): Promise<any> => {
     const urlParam = buildUrl(url, '');
     const originalRequest = new Request(urlParam, {
-      signal,
       method: 'PATCH', // *GET, POST, PUT, DELETE, etc.
       credentials: 'omit', // include, *same-origin, omit
       headers: buildHeader(),
@@ -116,6 +109,9 @@ export const useApiFetch = () => {
   };
 
   async function fetching(request: Request, recursive = false): Promise<any> {
+    if (!onlineUser.value) {
+      throw 'offline';
+    }
     LoadingBar.start();
     const token = buildToken();
     const copy = request.clone();
@@ -190,5 +186,5 @@ export const useApiFetch = () => {
       });
   }
 
-  return { abort, ping, get, post, patch, deleting, state };
+  return { ping, get, post, patch, deleting, state };
 };
