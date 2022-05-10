@@ -1,3 +1,4 @@
+import { useQuasar } from 'quasar';
 import { useNotification } from './useNotification';
 
 // Type definitions for Web NFC
@@ -73,27 +74,67 @@ declare class NDEFReader extends EventTarget {
   ) => Promise<void>;
 }
 
-export const useNFC = () => {
+const state = reactive({
+  writing: false,
+  reading: false,
+  hive_id: null,
+});
+
+const useNFC = () => {
   const notification = useNotification();
+  const router = useRouter();
+  let controller = new AbortController();
   // Functional logic adapted from
   // Project: https://github.com/maevsi/maevsi
   // Commit: https://github.com/maevsi/maevsi/commit/6e132cda75127166f48859c6da29eb0f1ba6c099#diff-9bc2c5cb71c26f59ef0c2e9a0024abb2b895c1ce889fa890116b9fd2c1ed32a5
+
+  const isSupported = () => 'NDEFReader' in window;
+
+  function abort() {
+    state.reading = false;
+    state.writing = false;
+    controller.abort();
+  }
+
   async function read() {
+    if (state.reading || state.writing) abort();
     if ('NDEFReader' in window) {
       const ndef = new NDEFReader();
       try {
-        await ndef.scan();
+        state.reading = true;
+        controller = new AbortController();
+        ndef.scan({ signal: controller.signal });
         ndef.onreading = (event: any) => {
           const decoder = new TextDecoder();
           for (const record of event.message.records) {
             console.log('Record type:  ' + record.recordType);
             console.log('MIME type:    ' + record.mediaType);
+            console.log('ID:    ' + record.id);
             console.log('=== data ===\n' + decoder.decode(record.data));
+          }
+          const record = event.message.records[0];
+          if (record.id) {
+            notification.open('positive', record.id, true);
+            /**
+                On Quicktool page and if tag is a detail hive view we add the hive to the select list
+                otherwise we do a simple redirect based on tag id value which is the relative url
+             */
+            if (
+              record.id.includes('/detail/hive') &&
+              router.currentRoute.value.name === 'new-quicktool'
+            ) {
+              const reg = /\d+/g;
+              const hive_id = reg.exec(record.id)[0];
+              state.hive_id = hive_id;
+            } else {
+              router.push(record.id);
+            }
           }
         };
       } catch (error) {
-        notification.open('negative', '');
         console.error(error);
+        state.reading = false;
+        notification.open('negative', '');
       }
     } else {
       notification.open('negative', 'error.nfcNotSupported');
@@ -114,25 +155,51 @@ export const useNFC = () => {
       if (nfcPermissionStatus.state === 'granted') {
         return Promise.resolve(true);
       } else {
-        alert(nfcPermissionStatus.state);
+        notification.open('negative', nfcPermissionStatus.state);
         return Promise.resolve(false);
       }
     }
   }
-  async function write(e: any): Promise<void> {
+  async function write(url: string | null, shortUrl = ''): Promise<void> {
+    if (state.reading || state.writing) abort();
     if (await check()) {
       try {
-        await new NDEFReader().write(e);
+        controller = new AbortController();
+        state.writing = true;
+        const records = url
+          ? {
+              records: [
+                {
+                  recordType: 'url',
+                  id: shortUrl,
+                  data: url,
+                },
+              ],
+            }
+          : 'b.tree';
+        await new NDEFReader().write(records, {
+          signal: controller.signal,
+          overwrite: true,
+        });
+        state.writing = false;
         notification.open('positive', '');
-      } catch (error) {
-        notification.open('negative', error, true);
+      } catch (error: any) {
+        console.error(error.name);
+        console.error(error);
+        state.writing = false;
+        if (error.name !== 'AbortError') notification.open('negative', '');
       }
     }
   }
 
   return {
+    state,
+    abort,
+    isSupported,
     read,
     write,
     check,
   };
 };
+
+export { useNFC };

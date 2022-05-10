@@ -1,4 +1,12 @@
 <template>
+  <q-btn
+    v-if="nfc.isSupported"
+    flat
+    class="q-pr-xs"
+    icon="fab fa-nfc-symbol"
+    @click="nfc.state.writing ? nfc.abort() : nfc.read()"
+  >
+  </q-btn>
   <div style="cursor: pointer" @click="onShare">
     <span v-if="$q.platform.is.mobile">
       {{ $t('share') }}
@@ -11,10 +19,13 @@
 
 <script setup lang="ts">
 import { useQuasar } from 'quasar';
+import { useNFC } from '~/composables/useNFC';
 import DialogShare from './DialogShare.vue';
 
 const $q = useQuasar();
 const router = useRouter();
+const nfc = useNFC();
+
 function onShare() {
   $q.dialog({
     component: DialogShare,

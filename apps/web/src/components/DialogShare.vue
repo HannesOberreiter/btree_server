@@ -1,5 +1,5 @@
 <template>
-  <q-dialog ref="dialogRef" @hide="onDialogHide">
+  <q-dialog ref="dialogRef" @hide="onHide">
     <q-card style="width: 700px">
       <q-card-section>
         <div class="row">
@@ -45,25 +45,46 @@
         </div>
       </q-card-section>
       <q-card-section>
-        <div class="row justify-center print-hide">
-          <div class="text-h6">NFC</div>
+        <div class="row print-hide">
+          <div class="col-12 text-center text-h6">NFC</div>
+          <div v-if="!nfc.isSupported()" class="col-12 text-center">
+            {{ $t('error.nfcNotSupported') }}
+          </div>
         </div>
       </q-card-section>
       <q-card-actions align="center" class="print-hide">
         <btn-base-group>
-          <btn-base :label="$t('read')" color="primary" @click="nfc.read" />
+          <btn-base
+            :label="nfc.state.reading ? $t('active') : $t('read')"
+            color="primary"
+            :disable="!nfc.isSupported() || nfc.state.reading"
+            @click="nfc.read"
+          />
           <btn-base
             :label="$t('write')"
             color="secondary"
-            @click="nfc.write(url)"
+            :disable="!nfc.isSupported() || nfc.state.writing"
+            @click="nfc.write(url, urlShort)"
           />
           <btn-base
             :label="$t('clear')"
             color="negative"
-            @click="nfc.write('')"
+            :disable="!nfc.isSupported() || nfc.state.writing"
+            @click="nfc.write(null)"
           />
-          <btn-base :label="$t('cancel')" color="grey" @click="onDialogOK" />
+          <btn-base
+            :label="$t('cancel')"
+            color="grey"
+            :disable="!nfc.state.writing && !nfc.state.reading"
+            @click="nfc.abort()"
+          />
         </btn-base-group>
+        <div v-if="nfc.state.writing" class="col-12 text-center">
+          {{ $t('nfc.writing') }}
+        </div>
+        <div v-if="nfc.state.reading" class="col-12 text-center">
+          {{ $t('nfc.reading') }}
+        </div>
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -77,7 +98,7 @@ import { useNotification } from '~/composables/useNotification';
 import { useNFC } from '~/composables/useNFC';
 
 defineEmits([...useDialogPluginComponent.emits]);
-const { dialogRef, onDialogHide, onDialogOK } = useDialogPluginComponent();
+const { dialogRef, onDialogHide } = useDialogPluginComponent();
 const { copy } = useClipboard();
 const notification = useNotification();
 const router = useRouter();
@@ -92,7 +113,13 @@ const props = defineProps({
 });
 const urlRef = ref(props.url);
 const qrcode = useQRCode(props.url);
+const urlShort = router.currentRoute.value.path;
 const title = router.currentRoute.value.meta.title
   ? t(router.currentRoute.value.meta.title as string) + ' - b.tree'
   : 'b.tree';
+
+function onHide() {
+  if (nfc.state.writing) nfc.abort();
+  onDialogHide();
+}
 </script>

@@ -52,16 +52,18 @@
 </template>
 
 <script setup lang="ts">
-import { filter, map, unionBy } from 'lodash-es';
+import { filter, map, union, unionBy } from 'lodash-es';
 import { required } from '~/helpers/i18n-validators';
 import { useApiariesQuery, useHivesQuery } from '~/composables/useQuery';
 import { useVModels } from '@vueuse/core';
 import { validationErrors } from '~/helpers';
 import useVuelidate from '@vuelidate/core';
+import { useNFC } from '~/composables/useNFC';
 
 const { t } = useI18n();
 const { isLoading: isLoadingHive, data: hives } = useHivesQuery({});
 const { isLoading: isLoadingApiary, data: apiaries } = useApiariesQuery({});
+const nfc = useNFC();
 
 const props = defineProps({
   modelValue: {
@@ -169,6 +171,17 @@ watch(
     setSelected();
   },
   { immediate: true }
+);
+
+watch(
+  () => nfc.state.hive_id,
+  (cur) => {
+    if (cur && hives.value) {
+      const found = filter(hives.value.results, (obj) => cur.includes(obj.id));
+      if (found) state.hive = union(state.hive, found);
+      nfc.state.hive_id = null;
+    }
+  }
 );
 </script>
 
