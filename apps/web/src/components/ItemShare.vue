@@ -3,8 +3,9 @@
     v-if="nfc.isSupported"
     flat
     class="q-pr-xs"
+    :color="nfc.state.reading ? 'green' : 'grey'"
     icon="fab fa-nfc-symbol"
-    @click="nfc.state.writing ? nfc.abort() : nfc.read()"
+    @click="nfc.state.reading ? nfc.abort() : nfc.read()"
   >
   </q-btn>
   <div style="cursor: pointer" @click="onShare">

@@ -90,20 +90,22 @@ const useNFC = () => {
 
   const isSupported = () => 'NDEFReader' in window;
 
-  function abort() {
+  function abort(message = true) {
     state.reading = false;
     state.writing = false;
+    if (message) notification.open('negative', 'nfc.aborted');
     controller.abort();
   }
 
   async function read() {
-    if (state.reading || state.writing) abort();
+    if (state.reading || state.writing) abort(false);
     if ('NDEFReader' in window) {
       const ndef = new NDEFReader();
       try {
         state.reading = true;
         controller = new AbortController();
         ndef.scan({ signal: controller.signal });
+        notification.open('positive', 'nfc.active');
         ndef.onreading = (event: any) => {
           const decoder = new TextDecoder();
           for (const record of event.message.records) {
@@ -161,7 +163,7 @@ const useNFC = () => {
     }
   }
   async function write(url: string | null, shortUrl = ''): Promise<void> {
-    if (state.reading || state.writing) abort();
+    if (state.reading || state.writing) abort(false);
     if (await check()) {
       try {
         controller = new AbortController();

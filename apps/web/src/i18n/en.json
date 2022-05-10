@@ -92,7 +92,8 @@
   "nfc": {
     "reading": "NFC reader is active you can close this window and start scanning tags.",
     "writing": "Place your tag near your NFC reader to write the current URL.",
-    "active": "NFC reader is active"
+    "active": "NFC reader is active",
+    "aborted": "NFC aborted"
   },
   "error": {
     "access": "Access not allowed or wrong password!",
