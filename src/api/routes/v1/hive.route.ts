@@ -18,6 +18,12 @@ export class HiveRouter extends Router {
         Container.resolve('HiveController').get
       );
     this.router
+      .route('/:id')
+      .get(
+        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+        Container.resolve('HiveController').getDetail
+      );
+    this.router
       .route('/')
       .patch(
         Validator.validate([body('ids').isArray()]),
@@ -29,7 +35,7 @@ export class HiveRouter extends Router {
       .post(
         Validator.validate([
           body('start').isInt({ max: 10000, min: 0 }),
-          body('repeat').isInt({ max: 100, min: 0 })
+          body('repeat').isInt({ max: 100, min: 0 }),
         ]),
         Guard.authorize([ROLES.admin]),
         Container.resolve('HiveController').post

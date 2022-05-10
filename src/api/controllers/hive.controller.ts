@@ -9,6 +9,7 @@ import { conflict } from '@hapi/boom';
 import { map } from 'lodash';
 import dayjs from 'dayjs';
 import { deleteHiveConnections } from '../utils/delete.util';
+import { HiveLocation } from '../models/hive_location.model';
 
 export class HiveController extends Controller {
   constructor() {
@@ -133,6 +134,38 @@ export class HiveController extends Controller {
       }
       const result = await query.orderBy('id');
       res.locals.data = result;
+      next();
+    } catch (e) {
+      next(checkMySQLError(e));
+    }
+  }
+
+  async getDetail(req: IUserRequest, res: Response, next: NextFunction) {
+    try {
+      const id = req.params.id;
+      const query = Hive.query()
+        .findById(id)
+        .where({
+          'hives.user_id': req.user.user_id,
+          'hives.deleted': false,
+        })
+        .withGraphFetched(
+          '[hive_location.[movedate], queen_location.[queen.[race, mating]], hive_source, hive_type, creator(identifier), editor(identifier)]'
+        );
+      const result = await query;
+
+      const query_apiary = await HiveLocation.query()
+        .select('hive.id', 'hive.position', 'hive.name')
+        .leftJoinRelated('hive')
+        .where({
+          apiary_id: result.hive_location ? result.hive_location.apiary_id : 0,
+          hive_deleted: false,
+          hive_modus: true,
+        })
+        .orderBy('hive.position')
+        .orderBy('hive.name');
+
+      res.locals.data = { ...result, sameLocation: query_apiary };
       next();
     } catch (e) {
       next(checkMySQLError(e));
