@@ -1,4 +1,3 @@
-import { useQuasar } from 'quasar';
 import { useNotification } from './useNotification';
 
 // Type definitions for Web NFC
@@ -84,6 +83,7 @@ const useNFC = () => {
   const notification = useNotification();
   const router = useRouter();
   let controller = new AbortController();
+  let ndef = null;
   // Functional logic adapted from
   // Project: https://github.com/maevsi/maevsi
   // Commit: https://github.com/maevsi/maevsi/commit/6e132cda75127166f48859c6da29eb0f1ba6c099#diff-9bc2c5cb71c26f59ef0c2e9a0024abb2b895c1ce889fa890116b9fd2c1ed32a5
@@ -93,6 +93,7 @@ const useNFC = () => {
   function abort(message = true) {
     state.reading = false;
     state.writing = false;
+    ndef = null;
     if (message) notification.open('negative', 'nfc.aborted');
     controller.abort();
   }
@@ -100,7 +101,7 @@ const useNFC = () => {
   async function read() {
     if (state.reading || state.writing) abort(false);
     if ('NDEFReader' in window) {
-      const ndef = new NDEFReader();
+      ndef = new NDEFReader();
       try {
         state.reading = true;
         controller = new AbortController();

@@ -2,7 +2,7 @@
   <q-btn
     v-if="nfc.isSupported"
     flat
-    class="q-pr-xs"
+    class="q-mr-xs"
     :color="nfc.state.reading ? 'green' : 'grey'"
     icon="fab fa-nfc-symbol"
     @click="nfc.state.reading ? nfc.abort() : nfc.read()"

@@ -128,7 +128,7 @@ module.exports = configure(function (ctx) {
         },
       },
       port: ctx.mode.spa ? 9000 : 9100,
-      https: true,
+      https: ctx.mode.pwa ? true : false,
       open: false, // opens browser window automatically
     },
 
