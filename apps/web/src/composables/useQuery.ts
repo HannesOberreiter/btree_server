@@ -390,6 +390,28 @@ export function useScaleDataQuery({
   );
 }
 
+export function useHiveQuery({
+  id = 0 as MaybeRef<number>,
+  enabled = true as MaybeRef<boolean>,
+}) {
+  const notification = useNotification();
+  const api = useApiFetch();
+  return useQuery(
+    ['hive', id],
+    () => {
+      return api.get(`/v1/hive/${unref(id)}`);
+    },
+    {
+      enabled: enabled,
+      keepPreviousData: true,
+      select: (response) => {
+        return response;
+      },
+      onError: (error: any) => notification.open('negative', error),
+    }
+  );
+}
+
 export function useHivesQuery({
   offset = 0 as MaybeRef<number>,
   limit = 10000 as MaybeRef<number>,

@@ -3,7 +3,6 @@ import { useNeedAuth } from './useNeedAuth';
 import { stringify } from 'query-string';
 import { isString } from 'lodash-es';
 import { LoadingBar } from 'quasar';
-import { useOnline } from '@vueuse/core';
 
 const baseUrl = process.env.BACKEND_URL;
 const state = reactive({
@@ -13,7 +12,6 @@ const state = reactive({
 
 export const useApiFetch = () => {
   const storeToken = useAuthTokenStore();
-  const onlineUser = useOnline();
 
   const buildHeader = () => {
     return {
@@ -109,9 +107,9 @@ export const useApiFetch = () => {
   };
 
   async function fetching(request: Request, recursive = false): Promise<any> {
-    if (!onlineUser.value) {
+    /*if (!window.navigator.onLine) {
       throw 'offline';
-    }
+    }*/
     LoadingBar.start();
     const token = buildToken();
     const copy = request.clone();
