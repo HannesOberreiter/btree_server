@@ -127,7 +127,6 @@ export const useApiFetch = () => {
         if (response.status === 401 && !state.retry) {
           state.retry = true;
           try {
-            console.log('refresh');
             const token = await refreshToken();
             storeToken.refreshToken(token.result);
             LoadingBar.stop();
