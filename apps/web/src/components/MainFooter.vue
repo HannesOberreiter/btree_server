@@ -8,7 +8,7 @@
     <q-space></q-space>
     <strong>b.tree</strong>
     <q-space></q-space>
-    <item-share></item-share>
+    <btn-share></btn-share>
   </q-toolbar>
   <global-sound></global-sound>
 </template>
