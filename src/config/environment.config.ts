@@ -82,7 +82,7 @@ const url = process.env.URL;
 const frontend = process.env.FRONTEND;
 const authorized = process.env.AUTHORIZED;
 const jwtSecret = process.env.JWT_SECRET;
-const jwtExpirationInterval: number = parseInt(
+const jwtExpirationInterval: number = parseFloat(
   process.env.JWT_EXPIRATION_MINUTES
 );
 const jwtExpirationIntervalRefreshToken: number = parseInt(
