@@ -159,6 +159,11 @@ export class HiveController extends Controller {
         .throwIfNotFound();
       const result = await query;
 
+      const query_first = await Movedate.query()
+        .first()
+        .where('hive_id', result.id)
+        .orderBy('date', 'desc');
+
       const query_apiary = await HiveLocation.query()
         .select('hive.id', 'hive.position', 'hive.name')
         .leftJoinRelated('hive')
@@ -170,7 +175,11 @@ export class HiveController extends Controller {
         .orderBy('hive.position')
         .orderBy('hive.name');
 
-      res.locals.data = { ...result, sameLocation: query_apiary };
+      res.locals.data = {
+        ...result,
+        sameLocation: query_apiary,
+        firstMovedate: query_first,
+      };
       next();
     } catch (e) {
       next(checkMySQLError(e));
