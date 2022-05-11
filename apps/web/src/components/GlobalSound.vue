@@ -19,11 +19,20 @@ const { user } = storeToRefs(storeUser);
 const notification = useNotification();
 const errorSound = useSound(ErrorSound);
 const successSound = useSound(SuccessSound);
+const lastSoundNotification = ref(new Date().getTime());
+
+const preventSoundNotification = (old: number, seconds = 1) =>
+  // if less than 5 seconds ago we stop any new sound notifications
+  (Math.abs(old - new Date().getTime()) / 1000) % 60 < seconds;
 
 watch(notification.state, (currentValue) => {
   if (currentValue.show === true && user.value.sound) {
-    if (isVibrationSupported) vibrate(currentValue.error ? 300 : 100);
-    currentValue.error ? errorSound.play() : successSound.play();
+    if (lastSoundNotification)
+      if (!preventSoundNotification(lastSoundNotification.value)) {
+        if (isVibrationSupported) vibrate(currentValue.error ? 300 : 100);
+        currentValue.error ? errorSound.play() : successSound.play();
+        lastSoundNotification.value = new Date().getTime();
+      }
   }
   notification.close();
 });
