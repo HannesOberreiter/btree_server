@@ -676,6 +676,29 @@ export function useRearingsQuery({
   );
 }
 
+export function useStatisticHiveQuery(
+  kind: MaybeRef<string>,
+  { filters = '' as MaybeRef<string>, enabled = true as MaybeRef<boolean> }
+) {
+  const notification = useNotification();
+  const api = useApiFetch();
+  return useQuery(
+    ['statisticHive', kind, filters],
+    () => {
+      const payload = {
+        filters: unref(filters),
+      };
+      return api.get(`/v1/statistic/hive/${unref(kind)}`, payload);
+    },
+    {
+      enabled: enabled,
+      keepPreviousData: true,
+      select: (response) => response,
+      onError: (error: any) => notification.open('negative', error),
+    }
+  );
+}
+
 export function clearCache(q = '') {
   if (q.trim() === '') queryCache.clear();
   else {
