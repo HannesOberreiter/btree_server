@@ -68,6 +68,17 @@
           >
           </table-col-link>
         </template>
+
+        <!-- eslint-disable-next-line vue/valid-v-slot -->
+        <template #body-cell-vet.name="props">
+          <q-td v-if="props.value">
+            {{ props.value }}
+            <q-tooltip v-if="props.row.vet.note">
+              {{ props.row.vet.note }}
+            </q-tooltip>
+          </q-td>
+          <q-td v-else></q-td>
+        </template>
       </q-table>
     </div>
   </div>
@@ -174,6 +185,14 @@ const columns = [
     label: t('waitTime'),
     align: 'right',
     field: (row: any) => row.wait,
+    format: (val: string) => val,
+    sortable: true,
+  },
+  {
+    name: 'vet.name',
+    label: t('vet'),
+    align: 'right',
+    field: (row: any) => (row.vet ? row.vet.name : ''),
     format: (val: string) => val,
     sortable: true,
   },
