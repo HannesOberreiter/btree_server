@@ -8,8 +8,8 @@
     <template #header>
       <q-item-section avatar>
         <q-avatar
-          :icon="icons[task.kind]"
-          :color="color[task.kind]"
+          :icon="icons[task.kind as keyof typeof icons]"
+          :color="color[task.kind as keyof typeof color]"
           text-color="white"
         />
       </q-item-section>
