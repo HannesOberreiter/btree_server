@@ -1,7 +1,11 @@
 import { checkMySQLError } from '@utils/error.util';
 import { CompanyBee } from '@models/company_bee.model';
 import { expectationFailed, unauthorized } from '@hapi/boom';
-import { jwtSecret, jwtExpirationInterval } from '@config/environment.config';
+import {
+  jwtSecret,
+  jwtExpirationInterval,
+  jwtExpirationIntervalRefreshToken,
+} from '@config/environment.config';
 import { randomBytes, createHash } from 'crypto';
 import { RefreshToken } from '@models/refresh_token.model';
 import { Request } from 'express';
@@ -19,7 +23,9 @@ const generateRefreshToken = async (
 
   try {
     const token = `${bee_id}.${randomBytes(40).toString('hex')}`;
-    const expires = dayjs().add(30, 'days').toDate();
+    const expires = dayjs()
+      .add(jwtExpirationIntervalRefreshToken, 'days')
+      .toDate();
 
     const refreshToken = await RefreshToken.query(trx).insertAndFetch({
       token: token,
@@ -46,7 +52,9 @@ const updateRefreshToken = async (oldToken: any, user_id: number) => {
 
   try {
     const token = `${oldToken.bee_id}.${randomBytes(40).toString('hex')}`;
-    const expires = dayjs().add(30, 'days').toDate();
+    const expires = dayjs()
+      .add(jwtExpirationIntervalRefreshToken, 'days')
+      .toDate();
 
     const refreshToken = await RefreshToken.query(trx).patchAndFetchById(
       oldToken.id,

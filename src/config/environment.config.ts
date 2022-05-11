@@ -85,6 +85,9 @@ const jwtSecret = process.env.JWT_SECRET;
 const jwtExpirationInterval: number = parseInt(
   process.env.JWT_EXPIRATION_MINUTES
 );
+const jwtExpirationIntervalRefreshToken: number = parseInt(
+  process.env.JWT_REFRESH_DAYS
+);
 const logs = process.env.NODE_ENV === 'production' ? 'combined' : 'development';
 // https://github.com/expressjs/morgan
 const httpLogs = process.env.NODE_ENV === 'production' ? 'combined' : 'dev';
@@ -144,6 +147,7 @@ export {
   contentType,
   jwtSecret,
   jwtExpirationInterval,
+  jwtExpirationIntervalRefreshToken,
   version,
   logs,
   httpLogs,
