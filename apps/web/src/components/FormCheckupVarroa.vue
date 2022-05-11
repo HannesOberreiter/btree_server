@@ -1,5 +1,5 @@
 <template>
-  <input-numeric
+  <form-input-numeric
     v-model="modelValue"
     :values="values"
     :reset="reset"
@@ -13,7 +13,7 @@
         @click="openCalculator"
       ></q-icon>
     </template>
-  </input-numeric>
+  </form-input-numeric>
 </template>
 
 <script setup lang="ts">
