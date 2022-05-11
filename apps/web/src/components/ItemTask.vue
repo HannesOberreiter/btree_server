@@ -41,7 +41,7 @@
     </template>
 
     <q-card>
-      <q-card-section>
+      <q-card-section class="q-pt-xs q-pb-xs">
         <div class="row">
           <div v-if="task.kind === 'harvest'" class="col-12">
             <div v-if="task.charge">
