@@ -24,6 +24,12 @@ export class HiveRouter extends Router {
         Container.resolve('HiveController').getDetail
       );
     this.router
+      .route('/task/:id')
+      .get(
+        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+        Container.resolve('HiveController').getTasks
+      );
+    this.router
       .route('/')
       .patch(
         Validator.validate([body('ids').isArray()]),

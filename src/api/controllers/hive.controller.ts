@@ -10,6 +10,10 @@ import { map } from 'lodash';
 import dayjs from 'dayjs';
 import { deleteHiveConnections } from '../utils/delete.util';
 import { HiveLocation } from '../models/hive_location.model';
+import { Harvest } from '../models/harvest.model';
+import { Feed } from '../models/feed.model';
+import { Treatment } from '../models/treatment.model';
+import { Checkup } from '../models/checkup.model';
 
 export class HiveController extends Controller {
   constructor() {
@@ -151,7 +155,8 @@ export class HiveController extends Controller {
         })
         .withGraphFetched(
           '[hive_location.[movedate], queen_location.[queen.[race, mating]], hive_source, hive_type, creator(identifier), editor(identifier)]'
-        );
+        )
+        .throwIfNotFound();
       const result = await query;
 
       const query_apiary = await HiveLocation.query()
@@ -166,6 +171,84 @@ export class HiveController extends Controller {
         .orderBy('hive.name');
 
       res.locals.data = { ...result, sameLocation: query_apiary };
+      next();
+    } catch (e) {
+      next(checkMySQLError(e));
+    }
+  }
+
+  async getTasks(req: IUserRequest, res: Response, next: NextFunction) {
+    try {
+      const id = req.params.id;
+      const year = req.query.year;
+      const result = await Hive.transaction(async (trx) => {
+        await Hive.query(trx).findById(id).throwIfNotFound().where({
+          'hives.user_id': req.user.user_id,
+          'hives.deleted': false,
+        });
+
+        const harvest = await Harvest.query()
+          .select('*', Hive.raw('? as kind', ['harvest']))
+          .withGraphFetched(
+            '[harvest_apiary, type, creator(identifier), editor(identifier)]'
+          )
+          .where({
+            hive_id: id,
+            deleted: false,
+          })
+          .whereRaw('YEAR(date) = ?', year)
+          .orderBy('date', 'desc');
+        const feed = await Feed.query()
+          .select('*', Hive.raw('? as kind', ['feed']))
+          .withGraphFetched(
+            '[feed_apiary, type, creator(identifier), editor(identifier)]'
+          )
+          .where({
+            hive_id: id,
+            deleted: false,
+          })
+          .whereRaw('YEAR(date) = ?', year)
+          .orderBy('date', 'desc');
+        const treatment = await Treatment.query()
+          .select('*', Hive.raw('? as kind', ['treatment']))
+          .withGraphFetched(
+            '[treatment_apiary, type, disease, vet, creator(identifier), editor(identifier)]'
+          )
+          .where({
+            hive_id: id,
+            deleted: false,
+          })
+          .whereRaw('YEAR(date) = ?', year)
+          .orderBy('date', 'desc');
+        const checkup = await Checkup.query()
+          .select('*', Hive.raw('? as kind', ['checkup']))
+          .withGraphFetched(
+            '[checkup_apiary, type, creator(identifier), editor(identifier)]'
+          )
+          .where({
+            hive_id: id,
+            deleted: false,
+          })
+          .whereRaw('YEAR(date) = ?', year)
+          .orderBy('date', 'desc');
+        const movedate = await Movedate.query()
+          .select('*', Hive.raw('? as kind', ['movedate']))
+          .withGraphFetched('[apiary, creator(identifier), editor(identifier)]')
+          .where({
+            hive_id: id,
+          })
+          .whereRaw('YEAR(date) = ?', year)
+          .orderBy('date', 'desc');
+
+        return {
+          harvest: harvest,
+          feed: feed,
+          treatment: treatment,
+          checkup: checkup,
+          movedate: movedate,
+        };
+      });
+      res.locals.data = result;
       next();
     } catch (e) {
       next(checkMySQLError(e));

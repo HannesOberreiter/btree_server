@@ -17,7 +17,7 @@ export class TreatmentController extends Controller {
         req.query as any;
       const query = Treatment.query()
         .withGraphJoined(
-          '[treatment_apiary, type, disease, hive, creator(identifier), editor(identifier)]'
+          '[treatment_apiary, type, disease, vet, hive, creator(identifier), editor(identifier)]'
         )
         .where({
           'hive.deleted': false,
