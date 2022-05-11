@@ -391,7 +391,7 @@ export function useScaleDataQuery({
 }
 
 export function useHiveQuery({
-  id = 0 as MaybeRef<number>,
+  id = '0' as MaybeRef<string>,
   enabled = true as MaybeRef<boolean>,
 }) {
   const notification = useNotification();
@@ -400,6 +400,30 @@ export function useHiveQuery({
     ['hive', id],
     () => {
       return api.get(`/v1/hive/${unref(id)}`);
+    },
+    {
+      enabled: enabled,
+      keepPreviousData: true,
+      select: (response) => {
+        return response;
+      },
+      onError: (error: any) => notification.open('negative', error),
+    }
+  );
+}
+
+export function useHiveTaskQuery({
+  id = '0' as MaybeRef<string>,
+  year = 2022 as MaybeRef<number>,
+  enabled = true as MaybeRef<boolean>,
+}) {
+  const notification = useNotification();
+  const api = useApiFetch();
+  return useQuery(
+    ['hive_task', id, year],
+    () => {
+      const payload = { year: unref(year) };
+      return api.get(`/v1/hive/task/${unref(id)}`, payload);
     },
     {
       enabled: enabled,

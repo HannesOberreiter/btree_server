@@ -45,3 +45,12 @@ export const tableCheckSelected = (selected: any[], rows: any) => {
 // https://stackoverflow.com/questions/10473185/regex-javascript-image-file-extension
 export const isImage = (filename: string) =>
   /\.(gif|jpe?g|tiff?|png|webp|bmp|pdf)$/i.test(filename);
+
+export const generateArrayOfYears = (min = 2000) => {
+  const max = new Date().getFullYear();
+  const years = [];
+  for (let i = max; i >= min; i--) {
+    years.push(i);
+  }
+  return years;
+};

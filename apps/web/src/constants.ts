@@ -7,6 +7,15 @@ export const FORMATS = [
   { label: '13.37 / 1989-05-01', value: 2 },
 ];
 
+export const KINDS = [
+  'filterEmpty',
+  'checkup',
+  'feed',
+  'treatment',
+  'harvest',
+  'movedate',
+];
+
 export const CALENDAR = [
   'rearing',
   'checkup',
