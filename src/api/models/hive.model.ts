@@ -7,6 +7,7 @@ import { HiveType } from './option/hive_type.mode';
 import { HiveSource } from './option/hive_source.model';
 import { QueenLocation } from './queen_location.model';
 import { Queen } from './queen.model';
+import { StatsHiveHarvest } from './stats_hive_harvest.model';
 export class Hive extends ExtModel {
   id!: number;
   name!: string;
@@ -35,6 +36,7 @@ export class Hive extends ExtModel {
   hive_type?: HiveType;
   hive_source?: HiveSource;
   queen_location?: QueenLocation;
+  stats_harvest?: StatsHiveHarvest[];
 
   static jsonSchema = {
     type: 'object',
@@ -136,6 +138,14 @@ export class Hive extends ExtModel {
           to: 'movedates.apiary_id',
         },
         to: 'apiaries.id',
+      },
+    },
+    stats_harvest: {
+      relation: Hive.HasManyRelation,
+      modelClass: StatsHiveHarvest,
+      join: {
+        from: ['hives.id'],
+        to: ['stats_hives_harvests.hive_id'],
       },
     },
   });

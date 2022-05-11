@@ -29,6 +29,8 @@ import { UserController } from '@controllers/user.controller';
 import { ScaleController } from '@controllers/scale.controller';
 import { ScaleDataController } from '@controllers/scale_data.controller';
 import { DropboxController } from '@controllers/dropbox.controller';
+import { StatisticController } from '@controllers/statistic.controller';
+
 export class Container {
   private static container: any;
 
@@ -107,6 +109,9 @@ export class Container {
       })
       .register({
         DropboxController: awilix.asClass(DropboxController).singleton(),
+      })
+      .register({
+        StatisticController: awilix.asClass(StatisticController).singleton(),
       })
       .register({
         RearingDetailController: awilix
