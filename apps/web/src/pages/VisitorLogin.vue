@@ -74,8 +74,7 @@ async function onSubmit() {
     email: state.email,
     password: state.password,
   };
-  await sendForm(form);
-  return;
+  sendForm(form);
 }
 
 function sendForm(user: User) {
@@ -93,15 +92,15 @@ function sendForm(user: User) {
 
 onMounted(() => {
   if (store.isLoggedIn) {
-    redirect;
+    redirect();
   }
 });
 
-async function redirect() {
+function redirect() {
   if (lastUrl) {
-    await router.push(lastUrl as RouteLocationRaw);
+    router.push(lastUrl as RouteLocationRaw);
   } else {
-    await router.push({ name: 'calendar' });
+    router.push({ name: 'calendar' });
   }
 }
 </script>

@@ -58,6 +58,7 @@ import { useNotification } from '~/composables/useNotification';
 import { useQuasar } from 'quasar';
 import { useRefreshStore } from '~/stores/refresh';
 import { useApiFetch } from '~/composables/useApi';
+import { clearCache } from '~/composables/useQuery';
 
 const notification = useNotification();
 const api = useApiFetch();
@@ -66,6 +67,7 @@ const $q = useQuasar();
 const storeUser = useAuthUserStore();
 const storeToken = useAuthTokenStore();
 const storeRefresh = useRefreshStore();
+const router = useRouter();
 
 const { user, company } = storeToRefs(storeUser);
 
@@ -85,9 +87,11 @@ const changeCompany = (value: any) => {
   isSubmitting.value = true;
   api.patch('/v1/user/company', { saved_company: value.id }).then(
     async (response: any) => {
+      clearCache();
       storeToken.refreshToken(response.token);
       await storeRefresh.refresh();
       notification.open('positive', '');
+      router.go(0);
     },
     (error) => {
       notification.open('negative', error);
