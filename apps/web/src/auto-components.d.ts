@@ -13,6 +13,7 @@ declare module '@vue/runtime-core' {
     BtnPreviousNext: typeof import('./components/BtnPreviousNext.vue')['default']
     BtnRefresh: typeof import('./components/BtnRefresh.vue')['default']
     BtnReturn: typeof import('./components/BtnReturn.vue')['default']
+    BtnShare: typeof import('./components/BtnShare.vue')['default']
     BtnSpeak: typeof import('./components/BtnSpeak.vue')['default']
     BtnWakeLock: typeof import('./components/BtnWakeLock.vue')['default']
     CalendarSetting: typeof import('./components/CalendarSetting.vue')['default']
