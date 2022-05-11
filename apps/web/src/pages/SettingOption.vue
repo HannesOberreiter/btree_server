@@ -2,6 +2,7 @@
   <div class="row q-pa-sm justify-center">
     <div class="col-12">
       <q-table
+        v-model:pagination="pagination"
         v-model:selected="selected"
         :rows="rows"
         :columns="columns"
@@ -89,8 +90,14 @@ const filter = ref('');
 const visibleColumns = ref(['name', 'favorite', 'modus']);
 const modus = ref(true);
 const deleted = ref(false);
-const sortBy = ref('favorite');
-const descending = ref(false);
+
+const pagination = ref({
+  sortBy: 'favorite',
+  descending: false,
+  page: 1,
+  rowsPerPage: 20,
+  rowsNumber: 0,
+});
 
 const options = [
   {
@@ -211,8 +218,8 @@ const {
   data,
   refetch,
 } = useOptionsQuery(optionValue, {
-  order: computed(() => [sortBy.value]),
-  direction: computed(() => (descending.value ? ['asc'] : ['desc'])),
+  order: computed(() => [pagination.value.sortBy]),
+  direction: computed(() => (pagination.value.descending ? ['asc'] : ['desc'])),
   modus: null,
 });
 
@@ -230,7 +237,6 @@ watch(
 );
 
 function onRequest(props: any) {
-  sortBy.value = props.pagination.sortBy;
-  descending.value = props.pagination.descending;
+  pagination.value = props.pagination;
 }
 </script>

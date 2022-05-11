@@ -505,7 +505,7 @@ export function useOptionsQuery(
   table: MaybeRef<Option>,
   {
     order = ['favorite', 'name'] as MaybeRef<Array<string>>,
-    direction = ['asc', 'asc'] as MaybeRef<Array<string>>,
+    direction = ['desc', 'asc'] as MaybeRef<Array<string>>,
     modus = true as MaybeRef<boolean>,
     enabled = true as MaybeRef<boolean>,
   }
