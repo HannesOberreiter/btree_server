@@ -365,4 +365,26 @@ export class HiveController extends Controller {
       next(checkMySQLError(e));
     }
   }
+
+  async updatePosition(req: IUserRequest, res: Response, next: NextFunction) {
+    const hives = req.body.data;
+    try {
+      const result = await Hive.transaction(async (trx) => {
+        const res = [];
+        for (const hive of hives) {
+          res.push(
+            await Hive.query(trx)
+              .patch({ position: hive.position })
+              .findById(hive.id)
+              .where('user_id', req.user.user_id)
+          );
+        }
+        return res;
+      });
+      res.locals.data = result;
+      next();
+    } catch (e) {
+      next(checkMySQLError(e));
+    }
+  }
 }
