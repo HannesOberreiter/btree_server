@@ -132,7 +132,6 @@ watch(modelValue, (cur) => {
 function setValues() {
   disable.value = multipleValues.value;
   if (values.value && !isEmpty(values.value)) {
-    console.log(values.value[0]['type_id']);
     setOptions(values.value[0]['type_id']);
   } else if (modelValue.value && typeof modelValue.value !== 'object') {
     setOptions(modelValue.value);

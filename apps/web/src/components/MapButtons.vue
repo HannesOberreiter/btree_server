@@ -30,6 +30,15 @@
       icon="fas fa-question"
       @click="showInfo = !showInfo"
     ></btn-base>
+    <btn-base
+      size="sm"
+      color="black"
+      class="bg-white"
+      fab-mini
+      flat
+      icon="fas fa-print"
+      @click="onPrint()"
+    ></btn-base>
   </l-control>
   <l-control position="bottomright">
     <q-slider
@@ -70,5 +79,8 @@ const userLocationLoading = toRef(props, 'userLocationLoading');
 function toggleInactive() {
   showInactive.value = !showInactive.value;
   emit('toggle', showInactive.value);
+}
+function onPrint() {
+  window.print();
 }
 </script>

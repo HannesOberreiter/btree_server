@@ -86,7 +86,6 @@ async function getEdit(id: unknown[]) {
       const editIds = map(response, (row: any) => {
         return [{ value: row.id, label: `ID: ${row.id} / (${row.name})` }];
       });
-      console.log(editIds);
       editOptions.value = flatten(editIds);
       editOptionsCopy.value = flatten(editIds);
       values.value = response;

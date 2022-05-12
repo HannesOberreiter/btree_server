@@ -162,8 +162,6 @@ const years = computed(() =>
   )
 );
 
-watch(data, () => console.log(data.value));
-
 useMeta(() => {
   return {
     title: data.value

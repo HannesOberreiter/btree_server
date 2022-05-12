@@ -47,7 +47,7 @@ export const useApiFetch = () => {
     });
     const time1 = performance.now();
     const response = await fetch(request).catch((e) => {
-      console.log(e);
+      console.error(e);
       throw 'offline';
     });
     clearTimeout(id);
