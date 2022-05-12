@@ -107,7 +107,7 @@
         size="sm"
         color="grey"
         icon="fas fa-cog"
-        class="absolute-bottom-right"
+        class="absolute-bottom-right print-hide"
       >
         <q-list>
           <q-item v-close-popup clickable @click="opened = !opened">

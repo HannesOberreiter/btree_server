@@ -4,7 +4,7 @@
       v-if="isEdit"
       v-model="editOptions"
       :options="editOptionsCopy"
-      off-label="task"
+      off-label="job"
     ></form-dropdown-edit>
     <form-input-text
       v-model="state.job"
@@ -92,7 +92,7 @@ async function getEdit(id: unknown[]) {
   return await api.post('/v1/rearing_detail/batchGet', { ids: id }).then(
     (response: any) => {
       const editIds = map(response, (row: any) => [
-        { value: row.id, label: `ID: ${row.id} / (${row.name})` },
+        { value: row.id, label: `ID: ${row.id} / (${row.job})` },
       ]);
       editOptions.value = flatten(editIds);
       editOptionsCopy.value = flatten(editIds);

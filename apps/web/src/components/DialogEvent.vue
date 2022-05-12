@@ -78,15 +78,15 @@
           >
             {{ t('edit') }}
           </btn-base>
+          <btn-base color="grey darken-1" @click="onDialogHide">
+            {{ t('close') }}
+          </btn-base>
           <btn-base
             v-if="!isVis"
             color="negative darken-1"
             @click="deleteEvent"
           >
             {{ t('delete') }}
-          </btn-base>
-          <btn-base color="grey darken-1" @click="onDialogHide">
-            {{ t('close') }}
           </btn-base>
         </btn-base-group>
       </q-card-actions>

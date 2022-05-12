@@ -68,7 +68,7 @@
   </div>
   <div class="col-12 q-pt-md">
     <btn-base-group>
-      <btn-base color="info" @click="onCreate">
+      <btn-base color="info" @click="onCreate(null)">
         {{ $t('new') }} {{ $t('step') }}
       </btn-base>
       <btn-base color="blue" @click="onEdit">

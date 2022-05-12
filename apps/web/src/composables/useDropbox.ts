@@ -113,21 +113,27 @@ export const useServiceDropbox = () => {
     );
   }
 
-  async function listFiles() {
+  async function listFiles(retry = false): Promise<any> {
     if (!state.accessToken) return false;
     LoadingBar.start();
     state.isLoading = true;
-    return dbx.filesListFolder({ path: state.path }).then((response) => {
-      const ordered_list = orderBy(
-        response.result.entries,
-        ['.tag', 'name'],
-        ['desc', 'asc']
-      );
-      LoadingBar.stop();
-      state.isLoading = false;
-      state.folder = ordered_list;
-      return ordered_list;
-    });
+    return dbx.filesListFolder({ path: state.path }).then(
+      (response) => {
+        const ordered_list = orderBy(
+          response.result.entries,
+          ['.tag', 'name'],
+          ['desc', 'asc']
+        );
+        LoadingBar.stop();
+        state.isLoading = false;
+        state.folder = ordered_list;
+        return ordered_list;
+      },
+      async (e) => {
+        if (retry) throw e;
+        return listFiles(true);
+      }
+    );
   }
 
   async function createFolder(name: string) {
