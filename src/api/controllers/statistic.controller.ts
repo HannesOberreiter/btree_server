@@ -3,6 +3,7 @@ import { Controller } from '@classes/controller.class';
 import { checkMySQLError } from '@utils/error.util';
 import { IUserRequest } from '@interfaces/IUserRequest.interface';
 import { Hive } from '../models/hive.model';
+import { MySQLServer } from '@/servers/mysql.server';
 
 export class StatisticController extends Controller {
   constructor() {
@@ -15,20 +16,21 @@ export class StatisticController extends Controller {
       let view = '';
       switch (kind) {
         case 'harvest': {
-          view = 'stats_harvest';
+          view = 'stats_hives_harvests';
+          break;
+        }
+        case 'feed': {
+          view = 'stats_hives_feeds';
           break;
         }
         default:
-          view = 'stats_harvest';
+          view = 'stats_hives_harvests';
       }
 
       const { filters } = req.query as any;
-      const query = Hive.query()
-        .select(`${view}.*`, 'stats_harvest:type.name as type_name')
-        .leftJoinRelated(`[${view}.[type]]`)
+      const query = MySQLServer.knex(view)
         .where({
-          'hives.deleted': false,
-          'hives.user_id': req.user.user_id,
+          user_id: req.user.user_id,
         })
         .orderBy('year', 'desc')
         .orderBy('quarter', 'desc');

@@ -105,6 +105,7 @@ export class HarvestController extends Controller {
             ...insert,
             hive_id: hives[hive].id,
             bee_id: req.user.bee_id,
+            user_id: req.user.user_id,
           });
           result.push(res.id);
           if (repeat > 0) {
