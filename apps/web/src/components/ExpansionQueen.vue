@@ -3,6 +3,7 @@
     <q-expansion-item
       switch-toggle-side
       expand-separator
+      :default-opened="opened"
       icon="fas fa-venus"
       header-class="text-h6"
       :label="queen.name"
@@ -91,6 +92,9 @@ const props = defineProps({
   data: {
     type: Object,
     required: true,
+  },
+  opened: {
+    default: false,
   },
 });
 const data = toRef(props, 'data');

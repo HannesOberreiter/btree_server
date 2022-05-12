@@ -85,7 +85,6 @@ declare module '@vue/runtime-core' {
     HelperDayAndHour: typeof import('./components/HelperDayAndHour.vue')['default']
     HiveInfoFeed: typeof import('./components/HiveInfoFeed.vue')['default']
     HiveInfoHarvest: typeof import('./components/HiveInfoHarvest.vue')['default']
-    'HiveInfoHarvest copy': typeof import('./components/HiveInfoHarvest copy.vue')['default']
     HiveInfoMovements: typeof import('./components/HiveInfoMovements.vue')['default']
     HiveInfoQueens: typeof import('./components/HiveInfoQueens.vue')['default']
     ItemCompany: typeof import('./components/ItemCompany.vue')['default']

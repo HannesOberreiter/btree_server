@@ -14,7 +14,11 @@
         bordered
         class="rounded-borders"
       >
-        <item-task :task="task" @refetch="refetch()"></item-task>
+        <item-task
+          :task="task"
+          :default-opened="opened"
+          @refetch="refetch()"
+        ></item-task>
       </q-list>
     </div>
   </div>
@@ -58,6 +62,9 @@ const props = defineProps({
   filter: {
     type: String,
     required: true,
+  },
+  opened: {
+    default: false,
   },
 });
 const { id, year, filter } = toRefs(props);

@@ -1,7 +1,7 @@
 <template>
   <q-expansion-item
     switch-toggle-side
-    expand-separator
+    :default-opened="opened"
     icon="fas fa-house"
     header-class="text-h5"
     :label="`
@@ -91,6 +91,9 @@ defineProps({
   data: {
     type: Object,
     required: true,
+  },
+  opened: {
+    default: false,
   },
 });
 
