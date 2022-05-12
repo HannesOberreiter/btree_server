@@ -22,6 +22,8 @@
   "blue": "Blue",
   "quarter": "Quarter",
   "print": "Print",
+  "weather": "Weather",
+  "unsavedChanges": "Do you really want to leave? You have unsaved changes!",
   "toggle": "Toggle",
   "calculateVarroa": "Varroa count per day",
   "calendar": {
@@ -29,6 +31,7 @@
     "name": "Calendar"
   },
   "hintHiveFirstMovedate": "Shown value is the first migration, which can be seen as date of creation.",
+  "hintApiaryFirstMovedate": "Shown value is the first migration of a hive onto this apiary, which can be seen as date of creation.",
   "cancel": "Cancel",
   "cappedBrood": "Capped brood",
   "changeStatus": "Change Status",

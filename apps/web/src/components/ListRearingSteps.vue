@@ -90,6 +90,7 @@ import { useApiFetch } from '~/composables/useApi';
 import { useNotification } from '~/composables/useNotification';
 import DialogSelectOption from './DialogSelectOption.vue';
 import DialogForm from './DialogForm.vue';
+import { onBeforeRouteLeave } from 'vue-router';
 
 const api = useApiFetch();
 const notification = useNotification();
@@ -110,6 +111,7 @@ function setActiveStep(id: number, set = true) {
     obj.active = obj.id === id ? set : false;
     return obj;
   });
+  if (set === false) onSave();
 }
 
 function showInfo(info: string) {
@@ -171,14 +173,37 @@ function onEdit() {
   });
 }
 
-function onSave() {
-  const patch = map(modelValue.value.step, (obj, index) => {
-    return { id: obj.id, position: index };
-  });
-  api.patch('/v1/rearing_step/updatePosition', { data: patch }).then(
-    () => notification.open('positive', 'updated'),
-    () => notification.open('negative', 'error')
+function positionChanged(data: any) {
+  return (
+    filter(data, (obj, index) => {
+      return obj.position !== index + 1;
+    }).length > 0
   );
+}
+
+function resetActiveStep() {
+  modelValue.value.step = map(modelValue.value.step, (obj) => {
+    obj.active = false;
+    return obj;
+  });
+}
+
+function onSave() {
+  if (!positionChanged(modelValue.value.step)) {
+    resetActiveStep();
+  } else {
+    const patch = map(modelValue.value.step, (obj, index) => {
+      return { id: obj.id, position: index + 1 };
+    });
+    api.patch('/v1/rearing_step/updatePosition', { data: patch }).then(
+      () => {
+        notification.open('positive', 'updated');
+        resetActiveStep();
+        emit('change');
+      },
+      () => notification.open('negative', 'error')
+    );
+  }
 }
 
 function onDelete(id: number) {
@@ -223,4 +248,11 @@ function onDeleteStep() {
     });
   });
 }
+
+onBeforeRouteLeave(() => {
+  if (filter(modelValue.value.step, { active: true }).length > 0) {
+    const answer = window.confirm(t('unsavedChanges'));
+    if (!answer) return false;
+  }
+});
 </script>

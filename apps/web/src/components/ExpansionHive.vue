@@ -2,12 +2,20 @@
   <q-expansion-item
     switch-toggle-side
     :default-opened="opened"
-    icon="fas fa-house"
     header-class="text-h5"
-    :label="`
-      ${data.name} (${data.hive_location ? data.hive_location.apiary_name : ''})
-    `"
   >
+    <template #header>
+      <q-item-section> {{ data.name }} </q-item-section>
+      <q-item-section v-if="data.hive_location" side>
+        <btn-base
+          flat
+          icon="fas fa-map-marker-alt"
+          @click.stop="onApiary(data.hive_location.apiary_id)"
+        >
+          {{ data.hive_location.apiary_name }}
+        </btn-base>
+      </q-item-section>
+    </template>
     <q-card>
       <q-card-section>
         <div class="col-12 q-gutter-xs">
@@ -86,6 +94,7 @@ import DialogForm from './DialogForm.vue';
 
 const $q = useQuasar();
 const useDate = useDateFormat();
+const router = useRouter();
 const emit = defineEmits(['refetch']);
 defineProps({
   data: {
@@ -109,5 +118,9 @@ function openForm(title: string, id: number) {
   }).onOk(() => {
     emit('refetch');
   });
+}
+
+function onApiary(id: number) {
+  router.push({ name: 'detail-apiary', params: { id: id } });
 }
 </script>

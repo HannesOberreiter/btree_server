@@ -42,20 +42,23 @@ export function useCalendarQuery() {
   return { fetchQuery, invalidate };
 }
 
-export function useApiaryQuery(
-  id: number,
-  { enabled = undefined as MaybeRef<boolean | undefined> }
-) {
+export function useApiaryQuery({
+  id = '0' as MaybeRef<string>,
+  enabled = true as MaybeRef<boolean>,
+}) {
   const notification = useNotification();
   const api = useApiFetch();
   return useQuery(
-    ['apiaries', id],
+    ['apiary', id],
     () => {
-      return api.get(`/v1/apiary/${id}`);
+      return api.get(`/v1/apiary/${unref(id)}`);
     },
     {
-      enabled,
-      select: (response) => response,
+      enabled: enabled,
+      keepPreviousData: true,
+      select: (response) => {
+        return response;
+      },
       onError: (error: any) => notification.open('negative', error),
     }
   );
