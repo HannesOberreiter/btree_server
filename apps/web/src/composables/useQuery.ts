@@ -9,7 +9,16 @@ import dayjs from 'dayjs';
 import { useApiFetch } from './useApi';
 
 export function useCalendarQuery() {
-  const client = new QueryClient({ queryCache: queryCache }); // need to use the queryclient here and not the useQuery as it wont work with full calendar
+  const client = new QueryClient({
+    queryCache: queryCache,
+    defaultOptions: {
+      queries: {
+        refetchOnWindowFocus: false,
+        staleTime: 1000 * 60 * 1, // stale (refetching), after 1 minute
+        cacheTime: 1000 * 60 * 60 * 24, // garbage collector, every 24 hours } },
+      },
+    },
+  }); // need to use the queryclient here and not the useQuery as it wont work with full calendar
   const api = useApiFetch();
   function fetchQuery(source: string, start: Date, end: Date) {
     return client.fetchQuery(
@@ -21,10 +30,7 @@ export function useCalendarQuery() {
         };
         return api.get(`/v1/calendar/${unref(source)}`, payload);
       },
-      {
-        staleTime: 1000 * 60 * 1, // stale (refetching), after 1 minute
-        cacheTime: 1000 * 60 * 60 * 24, // garbage collector, every 24 hours
-      }
+      {}
     );
   }
 
