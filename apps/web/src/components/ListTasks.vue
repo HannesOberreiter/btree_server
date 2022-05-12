@@ -15,8 +15,8 @@
         class="rounded-borders"
       >
         <item-task
-          :task="task"
           :default-opened="opened"
+          :task="task"
           @refetch="refetch()"
         ></item-task>
       </q-list>
@@ -67,7 +67,7 @@ const props = defineProps({
     default: false,
   },
 });
-const { id, year, filter } = toRefs(props);
+const { id, year, filter, opened } = toRefs(props);
 const { isLoading, data, refetch } = useHiveTaskQuery({ id: id, year: year });
 
 const listData = computed(() => {

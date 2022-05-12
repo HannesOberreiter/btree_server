@@ -69,7 +69,12 @@
                 ></q-select>
               </div>
             </div>
-            <list-tasks :id="id" :year="year" :filter="filter"></list-tasks>
+            <list-tasks
+              :id="id"
+              :year="year"
+              :filter="filter"
+              :opened="opened"
+            ></list-tasks>
           </q-tab-panel>
           <q-tab-panel name="info">
             <div class="row">
@@ -98,6 +103,26 @@
           </q-tab-panel>
         </q-tab-panels>
       </q-card-section>
+      <q-btn-dropdown
+        size="sm"
+        color="grey"
+        icon="fas fa-cog"
+        class="absolute-bottom-right"
+      >
+        <q-list>
+          <q-item v-close-popup clickable @click="opened = !opened">
+            <q-item-section>
+              <q-item-label>{{ $t('toggle') }}</q-item-label>
+            </q-item-section>
+          </q-item>
+
+          <q-item v-close-popup clickable @click="onPrint()">
+            <q-item-section>
+              <q-item-label>{{ $t('print') }}</q-item-label>
+            </q-item-section>
+          </q-item>
+        </q-list>
+      </q-btn-dropdown>
     </div>
   </q-card>
 </template>
@@ -116,6 +141,7 @@ const { t } = useI18n();
 const tab = ref('task');
 const year = ref(dayjs().year());
 const filter = ref('filterEmpty');
+const opened = ref(false);
 
 const props = defineProps({
   id: {
@@ -145,4 +171,8 @@ useMeta(() => {
       : t('hive') + ' - b.tree',
   };
 });
+
+function onPrint() {
+  window.print();
+}
 </script>
