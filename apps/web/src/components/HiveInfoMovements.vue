@@ -1,17 +1,16 @@
 <template>
   <global-loading v-if="isLoading"></global-loading>
   <div v-else-if="data.results">
-    <b>{{ $t('movement', 2) }}</b>
-    <span v-if="data.results.length === 5">({{ $t('max') }} 5)</span>:
-    <span v-for="(item, index) in data.results" :key="item.id">
+    <div>
+      <b>{{ $t('movement', 2) }}</b>
+      <span v-if="data.results.length === 5">({{ $t('max') }} 5)</span>
+    </div>
+    <q-chip v-for="item in data.results" :key="item.id" square>
       {{ useDate.isoFormat(item.date) }}
       <span v-if="item.apiary">
-        (
-        <b>{{ item.apiary.name }}</b>
-        )
+        &nbsp;<b>({{ item.apiary.name }})</b>
       </span>
-      <span v-if="index + 1 !== data.results.length">, </span>
-    </span>
+    </q-chip>
   </div>
 </template>
 

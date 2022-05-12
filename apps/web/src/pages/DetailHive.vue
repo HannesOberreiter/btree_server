@@ -83,9 +83,16 @@
                 <hive-info-queens :id="id"></hive-info-queens>
               </div>
             </div>
+            <q-separator class="q-mt-sm q-mb-sm"></q-separator>
             <div class="row">
               <div class="col-12">
                 <hive-info-harvest :id="id"></hive-info-harvest>
+              </div>
+            </div>
+            <q-separator class="q-mt-sm q-mb-sm"></q-separator>
+            <div class="row">
+              <div class="col-12">
+                <hive-info-feed :id="id"></hive-info-feed>
               </div>
             </div>
           </q-tab-panel>

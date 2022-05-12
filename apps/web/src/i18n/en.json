@@ -20,6 +20,7 @@
   "bestbefore": "Best before",
   "birth": "Birthday",
   "blue": "Blue",
+  "quarter": "Quarter",
   "calculateVarroa": "Varroa count per day",
   "calendar": {
     "hint": "On the calendar you can move your events and task. Task can in addition be extended if you grab the event at the end. If you double click on a date you can create new ToDo. If you click on an event you get more info and can set the status.",
