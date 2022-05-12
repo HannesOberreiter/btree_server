@@ -1,6 +1,7 @@
 <template>
   <q-expansion-item
     ref="element"
+    v-model="model"
     expand-separator
     dense
     icon="fas fa-search-plus"
@@ -216,8 +217,19 @@ const props = defineProps({
     type: Object,
     required: true,
   },
+  opened: {
+    default: false,
+  },
 });
+const model = ref(false);
 const status = ref(props.task.done);
+
+watch(
+  () => props.opened,
+  () => {
+    model.value = props.opened;
+  }
+);
 
 function updateStatus(id: number) {
   const data = JSON.stringify({

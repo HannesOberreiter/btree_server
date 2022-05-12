@@ -16,6 +16,7 @@
       >
         <item-task
           :default-opened="opened"
+          :opened="opened"
           :task="task"
           @refetch="refetch()"
         ></item-task>
