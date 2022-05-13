@@ -42,6 +42,7 @@ export default route(function ({ store }) {
   const refreshStore = useRefreshStore(store);
 
   Router.beforeEach(async (to, from, next) => {
+    Loading.hide();
     if (
       to.matched.some((record) => record.meta.auth && !storeUser.isLoggedIn)
     ) {
@@ -60,8 +61,10 @@ export default route(function ({ store }) {
         }
         Loading.hide();
       }
-      routerStore.previous = from.name as any;
-      routerStore.params = from.params as any;
+      if (!(from.name === 'new-quicktool' && to.name === 'new-quicktool')) {
+        routerStore.previous = from.name as any;
+        routerStore.params = from.params as any;
+      }
       next();
     }
   });
