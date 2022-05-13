@@ -1,4 +1,5 @@
 <template>
+  {{ usePrevent.state }}
   <div class="col-12">
     <q-list v-if="modelValue" bordered separator>
       <q-item
@@ -90,8 +91,9 @@ import { useApiFetch } from '~/composables/useApi';
 import { useNotification } from '~/composables/useNotification';
 import DialogSelectOption from './DialogSelectOption.vue';
 import DialogForm from './DialogForm.vue';
-import { onBeforeRouteLeave } from 'vue-router';
+import { usePreventNavigation } from '~/composables/usePreventNavgiation';
 
+const usePrevent = usePreventNavigation();
 const api = useApiFetch();
 const notification = useNotification();
 const $q = useQuasar();
@@ -122,6 +124,7 @@ function onMove(oldIndex: number, newIndex: number) {
   const f = modelValue.value.step.splice(oldIndex, 1)[0];
   // insert stored item into position `to`
   modelValue.value.step.splice(newIndex, 0, f);
+  usePrevent.unsavedPosition(modelValue.value.step);
 }
 
 function onAdd() {
@@ -173,23 +176,16 @@ function onEdit() {
   });
 }
 
-function positionChanged(data: any) {
-  return (
-    filter(data, (obj, index) => {
-      return obj.position !== index + 1;
-    }).length > 0
-  );
-}
-
 function resetActiveStep() {
   modelValue.value.step = map(modelValue.value.step, (obj) => {
     obj.active = false;
     return obj;
   });
+  usePrevent.state.value = false;
 }
 
 function onSave() {
-  if (!positionChanged(modelValue.value.step)) {
+  if (!usePrevent.state) {
     resetActiveStep();
   } else {
     const patch = map(modelValue.value.step, (obj, index) => {
@@ -248,11 +244,4 @@ function onDeleteStep() {
     });
   });
 }
-
-onBeforeRouteLeave(() => {
-  if (filter(modelValue.value.step, { active: true }).length > 0) {
-    const answer = window.confirm(t('unsavedChanges'));
-    if (!answer) return false;
-  }
-});
 </script>

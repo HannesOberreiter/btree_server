@@ -44,7 +44,10 @@ import MainDrawer from '~/components/MainDrawer.vue';
 import MainNavbar from '~/components/MainNavbar.vue';
 import MainFooter from '~/components/MainFooter.vue';
 import { useMeta } from 'quasar';
+import { onBeforeRouteLeave, onBeforeRouteUpdate } from 'vue-router';
+import { usePreventNavigation } from '~/composables/usePreventNavgiation';
 
+const usePrevent = usePreventNavigation();
 const leftDrawerOpen = ref(false);
 const storeUser = useAuthUserStore();
 const $q = useQuasar();
@@ -65,4 +68,11 @@ useMeta(() => {
 const toggleLeftDrawer = () => {
   leftDrawerOpen.value = !leftDrawerOpen.value;
 };
+
+onBeforeRouteLeave(() => {
+  if (usePrevent.state.value) return usePrevent.blockMessage();
+});
+onBeforeRouteUpdate(() => {
+  if (usePrevent.state.value) return usePrevent.blockMessage();
+});
 </script>

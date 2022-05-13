@@ -1,4 +1,5 @@
 <template>
+  {{ usePrevent.state }}
   <div v-if="!hives">
     {{ $t('error.noData') }}
   </div>
@@ -63,14 +64,14 @@
 </template>
 
 <script setup lang="ts">
-import { map, filter as lodashFilter } from 'lodash-es';
+import { map } from 'lodash-es';
 import { useApiFetch } from '~/composables/useApi';
 import { useNotification } from '~/composables/useNotification';
-import { onBeforeRouteLeave } from 'vue-router';
 import DialogForm from './DialogForm.vue';
 import { useQuasar } from 'quasar';
+import { usePreventNavigation } from '~/composables/usePreventNavgiation';
 
-const { t } = useI18n();
+const usePrevent = usePreventNavigation();
 const $q = useQuasar();
 const hives = ref(null);
 const api = useApiFetch();
@@ -119,14 +120,7 @@ function onMove(oldIndex: number, newIndex: number) {
   const f = hives.value.splice(oldIndex, 1)[0];
   // insert stored item into position `to`
   hives.value.splice(newIndex, 0, f);
-}
-
-function positionChanged(data: any) {
-  return (
-    lodashFilter(data, (obj, index) => {
-      return obj.position !== index + 1;
-    }).length > 0
-  );
+  usePrevent.unsavedPosition(hives.value);
 }
 
 function resetActiveStep() {
@@ -134,10 +128,11 @@ function resetActiveStep() {
     obj.active = false;
     return obj;
   });
+  usePrevent.state.value = false;
 }
 
 function onSave() {
-  if (!positionChanged(hives.value)) {
+  if (!usePrevent.state) {
     resetActiveStep();
   } else {
     const patch = map(hives.value, (obj, index) => {
@@ -153,11 +148,4 @@ function onSave() {
     );
   }
 }
-
-onBeforeRouteLeave(() => {
-  if (lodashFilter(hives.value, { active: true }).length > 0) {
-    const answer = window.confirm(t('unsavedChanges'));
-    if (!answer) return false;
-  }
-});
 </script>
