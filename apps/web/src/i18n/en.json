@@ -223,6 +223,10 @@
   "path": "Path",
   "pending": "Pending",
   "position": "Position",
+  "speech": {
+    "noCommand": "No command found with {msg}.",
+    "commandRedirect": "Found {msg}, redirecting."
+  },
   "positionNote": "Placement position of colony on apiary",
   "premiumPartner": "Our premium supporter:",
   "previousPage": "Go to previous page",
