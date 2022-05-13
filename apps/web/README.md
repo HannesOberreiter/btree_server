@@ -19,7 +19,7 @@ yarn quasar dev -m pwa
 
 We use auto-import plugins to import common libraries and components, see definitions at [src/auto-*.d.ts](src/).
 
-### API Proxy
+### API proxy development
 
 The `dev` server is running with a proxy to the backend ([quasar.config.js](quasar.config.js)), this solves the CORS problem on development. You may need to change the localhost port if you have the backend running on a different port.
 
@@ -52,6 +52,28 @@ yarn format
 
 ```bash
 yarn quasar build
+yarn quasar build -m pwa
+```
+
+#### Server
+
+Currently running with ngnix service, demo config files `etc/nginx/sites-available/btree_at_app.conf`.
+
+Settings up nginx:
+
+```bash
+# Create Config File inside /etc/nginx/sites-available
+touch your_url.conf
+# Create Symlink in /etc/nginx/sites-enabled
+ln -s ../sites-available/your_url.conf .
+# Restart ngnix
+systemctl reload nginx
+```
+
+SSL certificates are managed with certbot: <https://certbot.eff.org/instructions?ws=nginx&os=ubuntufocal>
+
+```bash
+sudo certbot --nginx
 ```
 
 #### .env
