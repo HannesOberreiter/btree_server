@@ -2,6 +2,7 @@
 .thumbs.db
 node_modules
 .VSCodeCounter
+.env
 
 # Quasar core related directories
 .quasar
