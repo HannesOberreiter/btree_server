@@ -2,7 +2,6 @@ import { NextFunction, Response } from 'express';
 import { Controller } from '@classes/controller.class';
 import { checkMySQLError } from '@utils/error.util';
 import { IUserRequest } from '@interfaces/IUserRequest.interface';
-import { Hive } from '../models/hive.model';
 import { MySQLServer } from '@/servers/mysql.server';
 
 export class StatisticController extends Controller {
