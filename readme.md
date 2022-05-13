@@ -4,65 +4,38 @@ Written in typescript build with nodejs, express, knex.js and objections.js.
 
 ## Docker
 
-For ease of development and deploying into production, you can use Docker: <https://docs.docker.com/compose/>
+For ease of deploying into production, you can use Docker: <https://docs.docker.com/compose/>
+
+### Building image
+
+Currently images are build locally and pushed to DockerHub. This process can be automated to build the newest Docker image when GitHub Master Branch updates.
 
 ```bash
-# Build Local Docker Image
-docker-compose -f docker-compose.dev.yml build
-# Run Container
-docker-compose -f docker-compose.dev.yml up
-# Stop Container 
-docker-compose -f docker-compose-dev.yml down
-# Start Container
-docker-compose -f docker-compose-dev.yml start
-docker-compose -f docker-compose-dev.yml attach
+# Build image
+docker build -t hannesoberreiter/btree_server .
+# Push image
+docker push hannesoberreiter/btree_server:latest
+```
 
+### Running container
+
+```bash
+# Run container (server)
+docker-compose -f docker-compose.server.yml up
+# Stop container  (server)
+docker-compose -f docker-compose-server.yml down
 # Access Container Bash for npm run commands
-docker exec -it btree_api /bin/sh
-# Start TypeScript Dev
-docker exec -it btree_api npm run dev:tsc
-```
-
-### Production
-
-Needs already prebuild dist and mails folder to run correctly.
-
-```bash
-npm run build
-npm run mail
-```
-
-Following folders are needed on production server:
-
-```bash
-- dist
-- mails
-- logs
-```
-
-```bash
-docker-compose -f docker-compose.prod.yml build
-docker-compose -f docker-compose.prod.yml up -d
-docker exec -it btree_api_production /bin/sh
-# Generate Local Image
-docker save btree_server_btree_api_production | gzip > btree_server_btree_api_production.tar.gz
-# Load Image on Server
-docker load < btree_server_btree_api_production.tar.gz
-```
-
-### Clear Container
-
-```bash
+docker exec -it btree-server /bin/sh
+# Clean Container
 docker-compose -f docker-compose-*.yml rm
 ```
 
-## Local w/o Docker
+## Development
 
-Typescript and Nodemon needs to be installed globally.
+Nodemon needs to be installed globally.
 
 ```bash
 npm i -g nodemon
-npm i -g typescript
 ```
 
 - Create Directories
@@ -103,6 +76,68 @@ We use knex CLI, <http://knexjs.org/#Migrations-API>.
 
 ```bash
 npm run dev:knex <options> # eg. migrate:latest
+```
+
+## Server ngnix
+
+Proxy redirecting inside `upstream.conf`. Important the redirect IP address is not localhost it is the container IP address: `docker inspect <container-id>` (get the gateway IP address + Port).
+
+```bash
+# path: /etc/nginx/conf.d/upstream.conf
+upstream btree_at_api {
+    server 172.18.0.1:1338; # Gateway + Port
+}
+```
+
+```bash
+# Create Config File inside /etc/nginx/sites-available
+touch your_url.conf
+# Create Symlink in /etc/nginx/sites-enabled
+ln -s ../sites-available/your_url.conf .
+```
+
+```bash
+# path: /etc/nginx/sites-available/your_url.conf
+# Certificates see
+# https://certbot.eff.org/instructions
+
+server {
+    # Listen HTTP
+    listen 80;
+    server_name api.btree.at;
+
+    # Redirect HTTP to HTTPS
+    return 301 https://$host$request_uri;
+}
+
+server {
+    # Listen HTTPS
+    listen 443 ssl;
+    server_name api.btree.at;
+
+    # Proxy Config
+    location / {
+        proxy_pass http://btree_at_api; #upstream name
+        proxy_http_version 1.1;
+        proxy_set_header X-Forwarded-Host $host;
+        proxy_set_header X-Forwarded-Server $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Host $http_host;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "Upgrade";
+        proxy_pass_request_headers on;
+    }
+}
+```
+
+### SSL Certificates
+
+Using certbot: <https://certbot.eff.org/instructions?ws=nginx&os=ubuntufocal>
+
+```bash
+sudo certbot --nginx
 ```
 
 ## Thanks to

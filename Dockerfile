@@ -11,13 +11,23 @@ WORKDIR /home/node/app
 RUN npm install pm2 -g
 
 # Env and User
-ENV NODE_ENV=production
 USER node
 COPY --chown=node:node . .
 
-# Install dependencies
-RUN npm install --only=prod
+# Install dependencies, in development mode as we need dev depencies
+ENV NODE_ENV=development
+RUN npm ci
+
+# Generate build and migrate to latest database schema
+ENV NODE_ENV=production
+RUN npm run build
+RUN npm run mail
+
+# Remove source code and dev depencies
+# https://joshtronic.com/2021/03/21/uninstalling-dev-dependencies-with-npm/
+RUN rm -r src mjml
+RUN npm prune --production
 
 # Exports
 EXPOSE 8101
-CMD ["pm2-runtime", "dist/api/app.bootstrap.js"]
+CMD ["/bin/sh", "entrypoint.sh"]
