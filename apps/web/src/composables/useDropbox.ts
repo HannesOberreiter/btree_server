@@ -113,8 +113,8 @@ export const useServiceDropbox = () => {
     );
   }
 
-  async function listFiles(retry = false): Promise<any> {
-    if (!state.accessToken) return false;
+  async function listFiles(): Promise<any> {
+    if (!(await getAccessToken())) return false;
     LoadingBar.start();
     state.isLoading = true;
     return dbx.filesListFolder({ path: state.path }).then(
@@ -130,8 +130,7 @@ export const useServiceDropbox = () => {
         return ordered_list;
       },
       async (e) => {
-        if (retry) throw e;
-        return listFiles(true);
+        throw e;
       }
     );
   }

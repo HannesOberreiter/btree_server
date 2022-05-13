@@ -1,5 +1,5 @@
 <template>
-  <q-card v-if="useDropbox.state.isLoading">
+  <q-card v-if="useDropbox.state.isLoading && !isModalOpen()">
     <global-loading></global-loading>
   </q-card>
   <q-card v-else>
@@ -131,4 +131,7 @@ function reset() {
   account.value = null;
   resetInit.value = true;
 }
+
+const isModalOpen = () =>
+  document.getElementsByClassName('q-dialog').length > 0;
 </script>
