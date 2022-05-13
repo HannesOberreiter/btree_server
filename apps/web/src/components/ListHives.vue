@@ -47,7 +47,7 @@
         <btn-base-group>
           <btn-base
             flat
-            color="info"
+            color="secondary"
             icon="fas fa-info"
             @click.stop="showInfo(hive.id)"
           />
