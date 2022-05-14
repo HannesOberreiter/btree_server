@@ -26,6 +26,14 @@ export class Header {
           )
         );
       }
+      // Set undefined CORS header
+      // https://github.com/expressjs/cors/issues/262
+      if (!req.headers.origin) {
+        if (req.headers.referer) {
+          const url = new URL(req.headers.referer);
+          req.headers.origin = url.origin;
+        }
+      }
       next();
     };
 }
