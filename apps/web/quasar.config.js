@@ -203,7 +203,10 @@ module.exports = configure(function (ctx) {
       swFilename: 'sw.js',
       manifestFilename: 'manifest.json',
       useCredentialsForManifestTag: false,
-      // extendGenerateSWOptions (cfg) {}
+      extendGenerateSWOptions(cfg) {
+        cfg.skipWaiting = true;
+        cfg.clientsClaim = true;
+      },
       // extendInjectManifestOptions (cfg) {},
       // extendManifestJson (json) {}
       // extendPWACustomSWConf (esbuildConf) {}
