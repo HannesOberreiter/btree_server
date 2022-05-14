@@ -21,5 +21,6 @@ const storeRefresh = useRefreshStore();
 const onRefresh = async () => {
   await storeRefresh.refresh();
   clearCache();
+  window.location.reload();
 };
 </script>
