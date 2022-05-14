@@ -44,7 +44,7 @@
         :error="v$.other.$error"
         :error-message="validationErrors(v$.other)"
         :no-error-icon="true"
-        :label="t('signupSource')"
+        :label="t('signup.source')"
         name="other"
         filled
       >
