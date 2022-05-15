@@ -26,6 +26,30 @@ register(process.env.SERVICE_WORKER_FILE, {
 
   cached(_registration) {
     console.log('Content has been cached for offline use.');
+    Notify.create({
+      color: 'negative',
+      icon: fasArrowsRotate,
+      message: i18n.global.t('serviceWorker.newContent'),
+      timeout: 0,
+      multiLine: true,
+      position: 'top',
+      actions: [
+        {
+          label: i18n.global.t('refresh'),
+          color: 'yellow',
+          handler: () => {
+            window.location.reload();
+          },
+        },
+        {
+          label: i18n.global.t('cancel'),
+          color: 'white',
+          handler: () => {
+            // Do nothing
+          },
+        },
+      ],
+    });
   },
 
   updatefound(_registration) {

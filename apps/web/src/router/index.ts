@@ -1,4 +1,5 @@
-import { Loading } from 'quasar';
+import { Loading, LoadingBar } from 'quasar';
+
 import { route } from 'quasar/wrappers';
 import { useAuthUserStore } from '~/stores/auth';
 import { useRefreshStore } from '~/stores/refresh';
@@ -42,6 +43,8 @@ export default route(function ({ store }) {
   const refreshStore = useRefreshStore(store);
 
   Router.beforeEach(async (to, from, next) => {
+    // Stop any Loading Bars or Effects
+    LoadingBar.stop();
     Loading.hide();
     if (
       to.matched.some((record) => record.meta.auth && !storeUser.isLoggedIn)
