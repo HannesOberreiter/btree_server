@@ -32,10 +32,10 @@ let messageSW = () => {
   https://developer.chrome.com/docs/workbox/handling-service-worker-updates/
 */
 if (isServiceWorkerAvailable) {
+  // workaround for SPA to check for updates on route changes
   watch(router.currentRoute, () => {
     navigator.serviceWorker.getRegistrations().then((regs) => {
       regs.forEach((reg) => {
-        console.log(reg);
         reg.update();
       });
     });
