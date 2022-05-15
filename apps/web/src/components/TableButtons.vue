@@ -1,0 +1,312 @@
+<template>
+  <btn-base-group size="sm" :spread="false">
+    <btn-base color="primary" :label="$t('new')" @click="onNew" />
+    <btn-base
+      color="secondary"
+      :disable="selected.length > 0 ? false : true"
+      :label="$t('edit')"
+      @click="onEdit"
+    />
+
+    <btn-base
+      v-if="['hive', 'apiary'].includes(table)"
+      :color="modus ? 'warning' : 'negative'"
+      :icon-right="modus ? 'fas fa-eye' : 'fas fa-eye-slash'"
+      :label="$t('inactive')"
+      @click="modus = !modus"
+    />
+
+    <btn-base
+      v-if="
+        [
+          'hive',
+          'queen',
+          'movedate',
+          'todo',
+          'feed',
+          'harvest',
+          'treatment',
+          'checkup',
+          'charge',
+          'scale_data',
+        ].includes(table)
+      "
+      :color="filter ? 'negative' : 'warning'"
+      :label="$t('filter')"
+      :icon-right="filter ? 'fas fa-filter' : 'fas fa-filter-circle-xmark'"
+      @click="openFilter"
+    />
+
+    <table-button-scale v-if="table === 'scale_data'" @change="emit('change')">
+    </table-button-scale>
+
+    <q-btn-dropdown no-caps color="info" label="...">
+      <q-list>
+        <q-item
+          v-if="table === 'hive'"
+          v-close-popup
+          clickable
+          @click="onAddQueen"
+        >
+          <q-item-section>
+            <q-item-label>{{ $t('queenAdd') }}</q-item-label>
+          </q-item-section>
+        </q-item>
+
+        <q-item
+          v-if="['hive', 'apiary'].includes(table)"
+          v-close-popup
+          clickable
+          @click="onMove"
+        >
+          <q-item-section>
+            <q-item-label>{{ $t('movement') }}</q-item-label>
+          </q-item-section>
+        </q-item>
+
+        <q-separator />
+
+        <q-item
+          v-close-popup
+          clickable
+          :disable="selected.length > 0 ? false : true"
+          @click="onExport"
+        >
+          <q-item-section avatar>
+            <q-avatar>
+              {{ selected.length }}
+            </q-avatar>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>{{ $t('exportCSV') }}</q-item-label>
+          </q-item-section>
+        </q-item>
+
+        <q-separator />
+
+        <q-item
+          v-close-popup
+          clickable
+          :disable="selected.length > 0 ? false : true"
+          @click="onDelete"
+        >
+          <q-item-section avatar>
+            <q-avatar>
+              {{ selected.length }}
+            </q-avatar>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>{{ $t('delete') }}</q-item-label>
+          </q-item-section>
+        </q-item>
+        <!-- Restoring of deleted rows is not possible for every table -->
+        <div
+          v-if="
+            [
+              'hive',
+              'queen',
+              'apiary',
+              'feed',
+              'harvest',
+              'treatment',
+              'checkup',
+              'charge',
+            ].includes(table)
+          "
+        >
+          <q-item
+            v-close-popup
+            clickable
+            :disable="selected.length > 0 && deleted ? false : true"
+            @click="onRestore"
+          >
+            <q-item-section avatar>
+              <q-avatar>
+                {{ deleted ? selected.length : 0 }}
+              </q-avatar>
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>{{ $t('restore') }}</q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-item v-close-popup clickable @click="deleted = !deleted">
+            <q-item-section avatar>
+              <q-avatar>
+                <q-icon
+                  :name="deleted ? 'fas fa-eye' : 'fas fa-eye-slash'"
+                ></q-icon>
+              </q-avatar>
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>
+                {{ $t('deleted') }}
+              </q-item-label>
+            </q-item-section>
+          </q-item>
+        </div>
+      </q-list>
+    </q-btn-dropdown>
+  </btn-base-group>
+</template>
+
+<script setup lang="ts">
+import { useVModels } from '@vueuse/core';
+import { stringify } from 'csv-stringify/browser/esm/sync';
+import { exportFile, useQuasar } from 'quasar';
+import { useApiFetch } from '~/composables/useApi';
+import { useDateFormat } from '~/composables/useDate';
+import { clearCache } from '~/composables/useQuery';
+import { useNotification } from '~/composables/useNotification';
+import { useTableFilterStore } from '~/stores/tableFilter';
+import DialogFilter from './DialogFilter.vue';
+import DialogForm from './DialogForm.vue';
+
+const storeFilter = useTableFilterStore();
+const useDate = useDateFormat();
+const api = useApiFetch();
+const { t } = useI18n();
+const $q = useQuasar();
+const notification = useNotification();
+const props = defineProps({
+  selected: {
+    type: Array,
+    required: true,
+  },
+  deleted: {
+    required: true,
+  },
+  modus: {
+    required: true,
+  },
+  table: {
+    type: String,
+    required: true,
+  },
+  tableOption: {
+    type: String,
+    default: '',
+  },
+});
+const emit = defineEmits(['update:deleted', 'update:modus', 'change']);
+const { deleted, modus } = useVModels(props, emit);
+const selected = toRef(props, 'selected');
+const filter = computed(() => storeFilter.table(props.table) !== '');
+
+const dialogForm = (
+  title: string,
+  ids: any[],
+  form = props.table,
+  selected = null as any
+) => {
+  $q.dialog({
+    component: DialogForm,
+    componentProps: {
+      title: title,
+      form: form,
+      maximized: ['todo', 'option'].includes(form) ? false : true,
+      selected: selected,
+      ids: ids,
+      option: props.tableOption,
+    },
+  }).onOk(() => {
+    onEmit();
+  });
+};
+
+function openFilter() {
+  $q.dialog({
+    component: DialogFilter,
+    componentProps: {
+      form: props.table,
+    },
+  });
+}
+
+function onNew() {
+  dialogForm('new', null);
+}
+
+function onEdit() {
+  const ids = selected.value.map((o: any) => o.id);
+  dialogForm('edit', ids);
+}
+
+function onMove() {
+  const ids =
+    props.table === 'hive' ? selected.value.map((o: any) => o.id) : null;
+  dialogForm('movement', null, 'movedate', ids);
+}
+
+function onAddQueen() {
+  const ids = selected.value.map((o: any) => o.id);
+  dialogForm('queen', null, 'queen', ids);
+}
+
+function onRestore() {
+  const ids = selected.value.map((o: any) => o.id);
+  api.patch(`/v1/${props.table}/batchDelete?restore=true`, { ids: ids }).then(
+    (_response: any) => {
+      onEmit();
+      notification.open('positive', '');
+    },
+    (error) => {
+      notification.open('negative', error);
+    }
+  );
+}
+
+function onDelete() {
+  let message = t('deleteConfirmRow', { count: selected.value.length });
+  if (props.table === 'hive') message += ' ' + t('deleteConfirmHive');
+  if (props.table === 'apiary') message += ' ' + t('deleteApiary');
+
+  if (['movedate'].includes(props.table) || deleted.value)
+    message += ' <b>' + t('warningNoUndo') + '</b>';
+
+  $q.dialog({
+    title: t('delete'),
+    message: message,
+    cancel: true,
+    persistent: true,
+    html: true,
+  }).onOk(() => {
+    const ids = selected.value.map((o: any) => o.id);
+    const url =
+      props.table === 'option'
+        ? `/v1/${props.table}/${props.tableOption}/batchDelete`
+        : `/v1/${props.table}/batchDelete`;
+    api.patch(url, { ids: ids }).then(
+      (_response: any) => {
+        emit('change');
+        notification.open('positive', '');
+      },
+      (error) => {
+        notification.open('negative', error);
+      }
+    );
+  });
+}
+
+function onEmit() {
+  clearCache(props.table);
+  emit('change');
+}
+
+function onExport() {
+  $q.loading.show({ delay: 200 });
+  const csv = stringify(unref(selected.value), { header: true });
+  const status = exportFile(
+    `${props.table}${props.tableOption}-export-${useDate.getCurrent()}.csv`,
+    csv,
+    'text/csv'
+  );
+  $q.loading.hide();
+  if (status !== true) {
+    $q.notify({
+      message: t('failedDownload'),
+      color: 'negative',
+      icon: 'warning',
+    });
+  }
+}
+</script>

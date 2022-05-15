@@ -1,0 +1,74 @@
+<template>
+  <q-dialog ref="dialogRef" @hide="onDialogHide">
+    <q-card>
+      <q-card-section class="">
+        <div class="row">
+          <div class="text-h6">{{ $t('calculateVarroa') }}</div>
+          <q-space />
+          <btn-base
+            ref="closeBtn"
+            v-close-popup
+            icon="fas fa-times"
+            flat
+            round
+            dense
+          />
+        </div>
+        <div class="row full-width">
+          <div class="col-12">
+            <q-input
+              v-model.number="sum"
+              type="number"
+              :label="$t('count')"
+            ></q-input>
+            <q-input
+              v-model.number="days"
+              type="number"
+              :rules="[(val) => val > 0]"
+              no-error-icon
+              :label="$t('day', 2)"
+            ></q-input>
+            <q-input
+              v-model.number="solution"
+              type="number"
+              :label="$t('solution')"
+              readonly
+            ></q-input>
+          </div>
+        </div>
+      </q-card-section>
+      <q-card-actions>
+        <btn-base color="secondary" @click="onDialogOK(solution)">
+          {{ $t('copy') }}
+        </btn-base>
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
+</template>
+
+<script setup lang="ts">
+import { round } from 'lodash-es';
+import { useDialogPluginComponent } from 'quasar';
+
+const { dialogRef, onDialogHide, onDialogOK } = useDialogPluginComponent();
+const props = defineProps({
+  value: {
+    type: Number,
+    default: 0,
+  },
+});
+const sum = ref(props.value);
+const days = ref(1);
+const solution = ref(sum.value / days.value);
+
+watch(sum, () => {
+  if (days.value <= 0) days.value = 1;
+  solution.value = round(sum.value / days.value, 1);
+});
+watch(days, () => {
+  if (days.value <= 0) days.value = 1;
+  solution.value = round(sum.value / days.value, 1);
+});
+
+defineEmits([...useDialogPluginComponent.emits, 'onSuccess']);
+</script>

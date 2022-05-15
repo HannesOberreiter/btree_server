@@ -1,0 +1,41 @@
+# This is a basic workflow to help you get started with Actions
+name: CI
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on:
+  push:
+    branches: [master]
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    env:
+      BACKEND_URL: https://api.btree.at/api
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+          cache: 'yarn'
+      - name: Install
+        run: yarn install
+      - name: Build PWA
+        run: yarn quasar build -m pwa
+      - name: List output files
+        run: ls
+
+      - name: Upload Files
+        id: upload
+        uses: Creepios/sftp-action@v1.0.3
+        with:
+          host: ${{ secrets.FTP_HOST }}
+          port: 22
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          localPath: './dist/pwa'
+          remotePath: './btree-vue/dist'

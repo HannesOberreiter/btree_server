@@ -1,0 +1,20 @@
+@media print {
+  .q-drawer {
+    display: none;
+  }
+  .q-page-container {
+    padding-left: 0em !important;
+    padding-top: 0em !important;
+  }
+
+  .q-card {
+    box-shadow: none !important;
+    border-radius: 0 !important;
+  }
+  .q-field {
+    display: none;
+  }
+  .q-tabs {
+    display: none;
+  }
+}
