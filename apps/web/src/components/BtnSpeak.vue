@@ -75,56 +75,58 @@ const commands = [
   },
 ] as Array<Haystack>;
 
-watch(
-  [hives, apiaries],
-  () => {
-    let hivesStack = [] as Array<Haystack>;
-    if (hives.value) {
-      hivesStack = hives.value.results.map((obj: any) => {
-        return {
-          id: obj.id,
-          command: 'hive',
-          aliases: [obj.name],
-        };
-      }) as Array<Haystack>;
-    }
-    let apiariesStack = [] as Array<Haystack>;
-    if (apiaries.value) {
-      apiariesStack = apiaries.value.results.map((obj: any) => {
-        return {
-          id: obj.id,
-          command: 'apiary',
-          aliases: [obj.name],
-        };
-      }) as Array<Haystack>;
-    }
-    // Haystack for fuzzy search
-    haystack.value = [...hivesStack, ...apiariesStack, ...commands];
-    buildGrammer(haystack.value);
-  },
-  { immediate: true }
-);
-
-function buildGrammer(haystack: Array<Haystack>) {
-  const aliases = haystack.map((obj: Haystack) => obj.aliases.join(' | '));
-  const grammar = `#JSGF V1.0; grammar at.btree.commands; public <commands> = ${aliases.join(
-    ' | '
-  )} ;`;
-  const SpeechGrammarList =
-    (window as any).SpeechGrammarList ||
-    (window as any).webkitSpeechGrammarList;
-  const speechRecognitionList = new SpeechGrammarList();
-  speechRecognitionList.addFromString(grammar, 1);
-  speech.recognition.grammars = speechRecognitionList;
-}
-
 if (speech.isSupported) {
-  watch(speech.result, (cur) => {
-    if (cur.trim()) {
-      spoken.value = cur.toLowerCase();
-      fuzzySearch(spoken.value, haystack.value);
-    }
-  });
+  watch(
+    [hives, apiaries],
+    () => {
+      let hivesStack = [] as Array<Haystack>;
+      if (hives.value) {
+        hivesStack = hives.value.results.map((obj: any) => {
+          return {
+            id: obj.id,
+            command: 'hive',
+            aliases: [obj.name],
+          };
+        }) as Array<Haystack>;
+      }
+      let apiariesStack = [] as Array<Haystack>;
+      if (apiaries.value) {
+        apiariesStack = apiaries.value.results.map((obj: any) => {
+          return {
+            id: obj.id,
+            command: 'apiary',
+            aliases: [obj.name],
+          };
+        }) as Array<Haystack>;
+      }
+      // Haystack for fuzzy search
+      haystack.value = [...hivesStack, ...apiariesStack, ...commands];
+      buildGrammer(haystack.value);
+    },
+    { immediate: true }
+  );
+
+  function buildGrammer(haystack: Array<Haystack>) {
+    const aliases = haystack.map((obj: Haystack) => obj.aliases.join(' | '));
+    const grammar = `#JSGF V1.0; grammar at.btree.commands; public <commands> = ${aliases.join(
+      ' | '
+    )} ;`;
+    const SpeechGrammarList =
+      (window as any).SpeechGrammarList ||
+      (window as any).webkitSpeechGrammarList;
+    const speechRecognitionList = new SpeechGrammarList();
+    speechRecognitionList.addFromString(grammar, 1);
+    speech.recognition.grammars = speechRecognitionList;
+  }
+
+  if (speech.isSupported) {
+    watch(speech.result, (cur) => {
+      if (cur.trim()) {
+        spoken.value = cur.toLowerCase();
+        fuzzySearch(spoken.value, haystack.value);
+      }
+    });
+  }
 }
 
 function fuzzySearch(command: string, haystack: any) {
