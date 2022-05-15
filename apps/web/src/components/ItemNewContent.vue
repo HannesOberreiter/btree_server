@@ -57,13 +57,6 @@ if (isServiceWorkerAvailable) {
 
     // When `event.wasWaitingBeforeRegister` is true, a previously
     // updated service worker is still waiting.
-    // You may want to customize the UI prompt accordingly.
-
-    // This code assumes your app has a promptForUpdate() method,
-    // which returns true if the user wants to update.
-    // Implementing this is app-specific; some examples are:
-    // https://open-ui.org/components/alert.research or
-    // https://open-ui.org/components/toast.research
     $q.notify({
       color: 'negative',
       icon: 'fas fa-arrow-rotate',
