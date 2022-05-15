@@ -14,6 +14,9 @@
               />
               <div class="text-h6">b.tree</div>
               <div class="text-subtitle2">Professional Beekeeping Database</div>
+              <item-new-content
+                class="absolute-top-right text-bold bg-red-9"
+              ></item-new-content>
             </q-card-section>
             <q-page-container class="">
               <router-view />
@@ -23,20 +26,20 @@
               class="bg-blue-grey-9 text-center text-white text-h6"
             >
               <div v-if="path.name !== 'register'">
-                <span>Don't have an account? </span>
+                <span>{{ $t('signup.text') }}&nbsp;</span>
                 <router-link class="text-secondary" :to="{ name: 'register' }">
-                  Sign Up
+                  {{ $t('signup.name') }}
                 </router-link>
               </div>
               <div v-if="path.name !== 'login'">
-                <span>Already registered? </span>
+                <span>{{ $t('signup.alreadyRegistered') }}&nbsp;</span>
                 <router-link class="text-secondary" :to="{ name: 'login' }">
-                  Log In
+                  {{ $t('login') }}
                 </router-link>
               </div>
               <div v-if="path.name !== 'recover'">
                 <router-link class="text-secondary" :to="{ name: 'recover' }">
-                  Forgot your password?
+                  {{ $t('forgot') }}
                 </router-link>
               </div>
             </q-card-section>

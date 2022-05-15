@@ -43,6 +43,7 @@
   "clearField": "Clear this field",
   "close": "Close",
   "colony": "Colony | Colonies",
+
   "company": {
     "active": "Your active company",
     "addUser": "Enter email of user. If the new user is not already registered, she/he will receive an email to reset her/his password to successfully login.",
@@ -274,7 +275,7 @@
   },
   "rearing": "Queen rearing | Queen rearings",
   "recoverUser": {
-    "success": "We send you an e-mail ({msg}) to reset your password, if you dont get the mail in a few minutes it could be that no account with this address is registered. Otherwise please feel free to contact us at {'office@btree.at'}",
+    "success": "We send you an e-mail ({msg}) to reset your password, if you don't get the mail in a few minutes it could be that no account with this address is registered. Otherwise please feel free to contact us at {'office@btree.at'}",
     "text": "Enter the e-mail address by which you registered your user account. You will receive an email with instructions on how to reset your password.",
     "title": "Recover lost password"
   },
@@ -331,6 +332,10 @@
     "title": "Here you can select or deselect fields you want to be shown in your Quicktool!"
   },
   "share": "Share",
+  "serviceWorker": {
+    "refresh": "Upgrade b.tree",
+    "newContent": "Updated content is available. Please refresh the page."
+  },
   "signup": {
     "accept": "Please accept the terms first!",
     "agree": "Do you agree with the",
@@ -339,7 +344,8 @@
     "source": "How did you find us?",
     "success": "Successfully registered, we send you an e-mail ({msg}) to activate your account.",
     "terms": "Terms and Conditions",
-    "text": "Don't have an account?"
+    "text": "Don't have an account?",
+    "alreadyRegistered": "Already registered?"
   },
   "single": "Single",
   "solution": "Solution",
