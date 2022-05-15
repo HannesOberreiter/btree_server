@@ -12,9 +12,30 @@
     <div class="col-7 col-sm-5 col-md-auto">
       <div class="q-gutter-md text-right">
         <btn-speak></btn-speak>
-        <btn-wake-lock></btn-wake-lock>
-        <btn-fullscreen></btn-fullscreen>
-        <btn-dark-mode></btn-dark-mode>
+        <q-btn-dropdown v-if="$q.platform.is.mobile" unelevated color="primary">
+          <q-list class="bg-secondary">
+            <q-item v-close-popup>
+              <q-item-section>
+                <btn-wake-lock></btn-wake-lock>
+              </q-item-section>
+            </q-item>
+            <q-item v-close-popup>
+              <q-item-section>
+                <btn-dark-mode></btn-dark-mode>
+              </q-item-section>
+            </q-item>
+            <q-item v-close-popup>
+              <q-item-section>
+                <btn-share :show-path="false"></btn-share>
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </q-btn-dropdown>
+        <template v-else>
+          <btn-wake-lock></btn-wake-lock>
+          <btn-fullscreen></btn-fullscreen>
+          <btn-dark-mode></btn-dark-mode>
+        </template>
         <btn-return></btn-return>
       </div>
     </div>
