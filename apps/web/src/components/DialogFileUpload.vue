@@ -26,7 +26,7 @@
           />
         </div>
       </div>
-      <q-card-actions>
+      <q-card-actions align="center">
         <btn-base-group>
           <btn-base
             :disable="!queue"

@@ -23,7 +23,7 @@
           </div>
         </div>
       </q-card-section>
-      <q-card-actions>
+      <q-card-actions align="right">
         <btn-base outline color="grey" @click="onDialogOK()">
           {{ $t('close') }}
         </btn-base>

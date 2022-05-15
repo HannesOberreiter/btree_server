@@ -78,7 +78,7 @@
       <q-card-section v-if="data.note">
         <pre>{{ data.note }}</pre>
       </q-card-section>
-      <q-card-actions class="float-right">
+      <q-card-actions align="right">
         <btn-base color="primary" outline @click="openForm('hive', data.id)">
           {{ $t('edit') }} {{ $t('hive') }}
         </btn-base>

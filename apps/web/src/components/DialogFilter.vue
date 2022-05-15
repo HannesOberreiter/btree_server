@@ -25,7 +25,7 @@
           </div>
         </div>
       </q-card-section>
-      <q-card-actions>
+      <q-card-actions align="center">
         <btn-base color="primary" @click="onDialogOK()">
           {{ $t('filter') }}
         </btn-base>

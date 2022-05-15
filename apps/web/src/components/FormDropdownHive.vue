@@ -9,7 +9,7 @@
     clearable
     multiple
     options-dense
-    use-input
+    :use-input="!$q.platform.is.mobile"
     @filter="filterApiary"
     @update:model-value="selectApiary"
   >
@@ -38,8 +38,8 @@
     clearable
     counter
     multiple
-    use-chips
-    use-input
+    :use-chips="!$q.platform.is.mobile"
+    :use-input="!$q.platform.is.mobile"
     filled
     class="hive-select"
     @update:model-value="selectHive"

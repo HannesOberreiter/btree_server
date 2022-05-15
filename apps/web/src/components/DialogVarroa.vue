@@ -41,7 +41,7 @@
           </div>
         </div>
       </q-card-section>
-      <q-card-actions>
+      <q-card-actions align="center">
         <btn-base color="secondary" @click="onDialogOK(solution)">
           {{ $t('copy') }}
         </btn-base>
