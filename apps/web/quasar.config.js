@@ -128,7 +128,7 @@ module.exports = configure(function (ctx) {
         },
       },
       port: ctx.mode.spa ? 9000 : 9100,
-      https: ctx.mode.pwa ? true : false,
+      https: false,
       open: false, // opens browser window automatically
     },
 
@@ -203,9 +203,10 @@ module.exports = configure(function (ctx) {
       swFilename: 'sw.js',
       manifestFilename: 'manifest.json',
       useCredentialsForManifestTag: false,
-      extendGenerateSWOptions(cfg) {
-        cfg.skipWaiting = true;
-        cfg.clientsClaim = true;
+      extendGenerateSWOptions(_cfg) {
+        //cfg.clientsClaim = false;
+        //cfg.skipWaiting = false;
+        //cfg.cleanupOutdatedCaches = false;
       },
       // extendInjectManifestOptions (cfg) {},
       // extendManifestJson (json) {}

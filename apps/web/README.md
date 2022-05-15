@@ -35,6 +35,10 @@ The `dev` server is running with a proxy to the backend ([quasar.config.js](quas
     },
 ```
 
+### PWA service worker development
+
+Chrome should be fine with `localhost` and non SSL. If testing over network with IP adress it must run over SSL. See quasar config `devServer: ... https: false`.
+
 ### Translation (vue-i18n)
 
 The translation in `.json` format can be found in [src/i18n](src/i18n/). On developer mode the console warning can be ignored:
