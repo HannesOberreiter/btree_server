@@ -38,8 +38,7 @@
     "vue": "3.2.31",
     "vue-i18n": "^9.1.10",
     "vue-query": "^1.23.0",
-    "vue-router": "^4.0.15",
-    "workbox-window": "^6.5.3"
+    "vue-router": "^4.0.15"
   },
   "devDependencies": {
     "@intlify/vite-plugin-vue-i18n": "^3.4.0",
