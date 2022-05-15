@@ -14,9 +14,6 @@
               />
               <div class="text-h6">b.tree</div>
               <div class="text-subtitle2">Professional Beekeeping Database</div>
-              <item-new-content
-                class="absolute-top-right text-bold bg-red-9"
-              ></item-new-content>
             </q-card-section>
             <q-page-container class="">
               <router-view />
