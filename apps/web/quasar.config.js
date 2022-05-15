@@ -142,6 +142,9 @@ module.exports = configure(function (ctx) {
     framework: {
       config: {
         notify: {},
+        loading: {
+          delay: 500, // Wait a number of millisecond before showing; Not worth showing for 100ms for example then hiding it, so wait until you're sure it's a process that will take some considerable amount of time
+        },
         dark: 'auto', // or Boolean true/false
       },
       iconSet: 'fontawesome-v6', // Quasar icon set
@@ -209,10 +212,10 @@ module.exports = configure(function (ctx) {
       swFilename: 'sw.js',
       manifestFilename: 'manifest.json',
       useCredentialsForManifestTag: false,
-      extendGenerateSWOptions(_cfg) {
-        //cfg.clientsClaim = false;
-        //cfg.skipWaiting = false;
-        //cfg.cleanupOutdatedCaches = false;
+      extendGenerateSWOptions(cfg) {
+        cfg.clientsClaim = true;
+        cfg.skipWaiting = true;
+        cfg.cleanupOutdatedCaches = true;
       },
       // extendInjectManifestOptions (cfg) {},
       // extendManifestJson (json) {}
