@@ -14,6 +14,8 @@ const path = require('path');
 const { QuasarResolver } = require('unplugin-vue-components/resolvers');
 
 module.exports = configure(function (ctx) {
+  require('dotenv').config(); // https://serveanswer.com/questions/process-is-not-defined-when-deploying-quasar-project-to-netlify
+
   return {
     eslint: {
       // fix: true,
@@ -66,7 +68,11 @@ module.exports = configure(function (ctx) {
       publicPath: '/',
       showProgress: true,
       // analyze: true,
-      env: require('dotenv').config().parsed,
+      env: {
+        DROPBOX_CLIENT_ID: process.env.DROPBOX_CLIENT_ID,
+        OPENWEATHER_APP_ID: process.env.OPENWEATHER_APP_ID,
+        BACKEND_URL: process.env.BACKEND_URL,
+      },
       // rawDefine: {}
       // ignorePublicFolder: true,
       // minify: false,
