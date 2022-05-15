@@ -1,5 +1,9 @@
 <template>
-  <q-dialog ref="dialogRef" @hide="onDialogHide">
+  <q-dialog
+    ref="dialogRef"
+    :maximized="$q.platform.is.mobile"
+    @hide="onDialogHide"
+  >
     <q-card style="width: 700px">
       <q-card-section>
         <div class="row">
@@ -21,7 +25,7 @@
           </div>
         </div>
       </q-card-section>
-      <q-card-actions>
+      <q-card-actions align="center">
         <btn-base color="primary" @click="onDialogOK()">
           {{ $t('filter') }}
         </btn-base>

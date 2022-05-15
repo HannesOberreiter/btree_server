@@ -1,6 +1,10 @@
 <!--  https://quasar.dev/vue-components/uploader -->
 <template>
-  <q-dialog ref="dialogRef" @hide="onDialogHide">
+  <q-dialog
+    ref="dialogRef"
+    :maximized="$q.platform.is.mobile"
+    @hide="onDialogHide"
+  >
     <q-card v-if="service_active">
       <div class="row full-width">
         <div class="col-12">
@@ -22,7 +26,7 @@
           />
         </div>
       </div>
-      <q-card-actions>
+      <q-card-actions align="center">
         <btn-base-group>
           <btn-base
             :disable="!queue"

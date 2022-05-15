@@ -8,7 +8,7 @@
     @click="nfc.state.reading ? nfc.abort() : nfc.read()"
   >
   </q-btn>
-  <div style="cursor: pointer" @click="onShare">
+  <div v-if="showPath" style="cursor: pointer" @click="onShare">
     <span v-if="$q.platform.is.mobile">
       {{ $t('share') }}
     </span>
@@ -26,6 +26,12 @@ import DialogShare from './DialogShare.vue';
 const $q = useQuasar();
 const router = useRouter();
 const nfc = useNFC();
+
+defineProps({
+  showPath: {
+    default: true,
+  },
+});
 
 function onShare() {
   $q.dialog({

@@ -1,5 +1,9 @@
 <template>
-  <q-dialog ref="dialogRef" @hide="onDialogHide">
+  <q-dialog
+    ref="dialogRef"
+    :maximized="$q.platform.is.mobile"
+    @hide="onDialogHide"
+  >
     <q-card>
       <q-card-section class="">
         <div class="row">
@@ -37,7 +41,7 @@
           </div>
         </div>
       </q-card-section>
-      <q-card-actions>
+      <q-card-actions align="center">
         <btn-base color="secondary" @click="onDialogOK(solution)">
           {{ $t('copy') }}
         </btn-base>

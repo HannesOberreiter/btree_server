@@ -69,7 +69,7 @@
       <q-card-section v-if="data.note">
         <pre>{{ data.note }}</pre>
       </q-card-section>
-      <q-card-actions class="float-right">
+      <q-card-actions align="right">
         <btn-base color="primary" outline @click="openForm('apiary', data.id)">
           {{ $t('edit') }} {{ $t('apiary') }}
         </btn-base>

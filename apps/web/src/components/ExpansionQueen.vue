@@ -57,7 +57,7 @@
         <q-card-section v-if="queen.note">
           <pre>{{ queen.note }}</pre>
         </q-card-section>
-        <q-card-actions class="float-right">
+        <q-card-actions align="right">
           <btn-base-group :spread="false">
             <btn-base
               outline

@@ -16,7 +16,7 @@
         </a>
       </div>
     </q-card-section>
-    <q-card-actions v-if="!account">
+    <q-card-actions v-if="!account" align="center">
       <div v-if="resetInit" class="row">
         <div class="col-12 q-pb-sm">
           {{ $t('dropbox.connectText') }}
@@ -31,7 +31,7 @@
       </div>
     </q-card-actions>
     <div v-else>
-      <q-card-actions>
+      <q-card-actions align="center">
         <btn-base-group :spread="false">
           <btn-base
             color="primary"

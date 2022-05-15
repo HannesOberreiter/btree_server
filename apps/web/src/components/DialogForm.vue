@@ -1,5 +1,9 @@
 <template>
-  <q-dialog ref="dialogRef" :maximized="maximized" @hide="onDialogHide">
+  <q-dialog
+    ref="dialogRef"
+    :maximized="maximized || $q.platform.is.mobile"
+    @hide="onDialogHide"
+  >
     <q-card style="width: 700px">
       <q-card-section>
         <div class="row">

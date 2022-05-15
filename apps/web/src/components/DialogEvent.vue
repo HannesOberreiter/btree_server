@@ -1,10 +1,26 @@
 <template>
-  <q-dialog ref="dialogRef" style="min-width: 200px" @hide="onDialogHide">
+  <q-dialog
+    ref="dialogRef"
+    :maximized="$q.platform.is.mobile"
+    style="min-width: 200px"
+    @hide="onDialogHide"
+  >
     <q-card>
       <q-card-section>
-        <div class="text-h6">
-          <q-icon :name="eventInfo.icon"></q-icon>
-          {{ eventInfo.title }}
+        <div class="row">
+          <div class="text-h6">
+            <q-icon :name="eventInfo.icon"></q-icon>
+            {{ eventInfo.title }}
+          </div>
+          <q-space />
+          <btn-base
+            ref="closeBtn"
+            v-close-popup
+            icon="fas fa-times"
+            flat
+            round
+            dense
+          />
         </div>
       </q-card-section>
       <q-card-section v-if="isVis" class="primary">
@@ -62,8 +78,8 @@
         <b>{{ t('edited') }}:</b> {{ eventInfo.editors }}
       </q-card-section>
 
-      <q-card-actions>
-        <btn-base-group>
+      <q-card-actions align="center">
+        <btn-base-group :spread="false">
           <btn-base
             v-if="!isMovement && !isVis && !isRearings"
             color="secondary darken-1"
