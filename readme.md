@@ -80,7 +80,7 @@ npm run dev:knex <options> # eg. migrate:latest
 
 ## Server ngnix
 
-Proxy redirecting inside `upstream.conf`. Important the redirect IP address is not localhost it is the container IP address: `docker inspect <container-id>` (get the gateway IP address + Port).
+Proxy redirecting inside `upstream.conf`. Important the redirect IP address is not localhost it is the container IP address: `docker inspect <container-id>` (get the gateway IP address + Port). Demo files for ngnix are in the root folder of this repository.
 
 ```bash
 # path: /etc/nginx/conf.d/upstream.conf
@@ -94,42 +94,6 @@ upstream btree_at_api {
 touch your_url.conf
 # Create Symlink in /etc/nginx/sites-enabled
 ln -s ../sites-available/your_url.conf .
-```
-
-```bash
-# path: /etc/nginx/sites-available/your_url.conf
-# Certificates see
-# https://certbot.eff.org/instructions
-
-server {
-    # Listen HTTP
-    listen 80;
-    server_name api.btree.at;
-
-    # Redirect HTTP to HTTPS
-    return 301 https://$host$request_uri;
-}
-
-server {
-    # Listen HTTPS
-    listen 443 ssl;
-    server_name api.btree.at;
-
-    # Proxy Config
-    location / {
-        proxy_pass http://btree_at_api; #upstream name
-        proxy_http_version 1.1;
-        proxy_set_header X-Forwarded-Host $host;
-        proxy_set_header X-Forwarded-Server $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_set_header Host $http_host;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection "Upgrade";
-        proxy_pass_request_headers on;
-    }
-}
 ```
 
 ### SSL Certificates

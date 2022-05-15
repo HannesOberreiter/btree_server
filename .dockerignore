@@ -3,9 +3,10 @@
 node_modules
 dist
 env
+db/seeds/migration
 
 # Files not needed inside Docker Container
-.DS_Store
+**/.DS_Store
 **/.gitignore
 **/.gitattributes
 **/*.log
