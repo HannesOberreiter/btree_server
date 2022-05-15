@@ -39,6 +39,7 @@
       <btn-refresh></btn-refresh>
       <item-company></item-company>
       <item-ping></item-ping>
+      <item-new-content v-if="serviceWorkerExist"></item-new-content>
       <q-item v-ripple clickable @click="onLogout">
         <q-item-section avatar>
           <q-icon name="fas fa-sign-out-alt" />
@@ -56,6 +57,8 @@ import { useQuicktoolStore } from '~/stores/quicktool';
 const { t } = useI18n();
 const storeUser = useAuthUserStore();
 const storeQuicktool = useQuicktoolStore();
+
+const serviceWorkerExist = 'serviceWorker' in navigator;
 
 const onLogout = async () => {
   await storeUser.logout();
