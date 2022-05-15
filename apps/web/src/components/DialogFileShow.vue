@@ -1,5 +1,9 @@
 <template>
-  <q-dialog ref="dialogRef" @hide="onDialogHide">
+  <q-dialog
+    ref="dialogRef"
+    :maximized="$q.platform.is.mobile"
+    @hide="onDialogHide"
+  >
     <q-card style="width: 700px">
       <global-loading v-if="!file"></global-loading>
       <div v-else-if="notFound" class="text-center text-h5">
