@@ -72,7 +72,7 @@ const dialogForm = (
 };
 
 function finalDelete(id: number) {
-  api.deleting(`/v1/scale/${id}`).then(
+  api.remove(`/v1/scale/${id}`).then(
     (_response: any) => {
       emit('change');
       notification.open('positive', '');

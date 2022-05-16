@@ -133,7 +133,7 @@ const removeAccess = (id: number, email: string) => {
     cancel: true,
     persistent: true,
   }).onOk(() => {
-    api.deleting(`/v1/company_user/remove_user/${id}`).then(
+    api.remove(`/v1/company_user/remove_user/${id}`).then(
       async (_response: any) => {
         usersData.value = await usersPromise();
         notification.open('positive', '');

@@ -71,10 +71,7 @@ export const useApiFetch = () => {
     return await fetching(originalRequest);
   };
 
-  const deleting = async (
-    url: string,
-    payload = '' as unknown
-  ): Promise<any> => {
+  const remove = async (url: string, payload = '' as unknown): Promise<any> => {
     const urlParam = buildUrl(url, payload);
     const originalRequest = new Request(urlParam, {
       method: 'DELETE', // *GET, POST, PUT, DELETE, etc.
@@ -185,5 +182,5 @@ export const useApiFetch = () => {
       });
   }
 
-  return { ping, get, post, patch, deleting, state };
+  return { ping, get, post, patch, remove, state };
 };

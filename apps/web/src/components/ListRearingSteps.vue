@@ -208,7 +208,7 @@ function onDelete(id: number) {
     message: t('deleteConfirm'),
     cancel: true,
   }).onOk(() => {
-    api.deleting(`/v1/rearing_step/${id}`).then(
+    api.remove(`/v1/rearing_step/${id}`).then(
       () => {
         notification.open('positive', 'deleted');
         modelValue.value.step = filter(
