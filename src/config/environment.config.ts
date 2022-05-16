@@ -90,7 +90,7 @@ const jwtExpirationIntervalRefreshToken: number = parseInt(
 );
 const logs = process.env.NODE_ENV === 'production' ? 'combined' : 'development';
 // https://github.com/expressjs/morgan
-const httpLogs = process.env.NODE_ENV === 'production' ? 'combined' : 'dev';
+const httpLogs = process.env.NODE_ENV === 'production' ? 'tiny' : 'dev';
 const contentType = process.env.CONTENT_TYPE;
 const meteoblueKey = process.env.METEOBLUE_KEY;
 const dropboxClientId = process.env.DROPBOX_CLIENT_ID;
