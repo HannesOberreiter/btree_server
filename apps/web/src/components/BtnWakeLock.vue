@@ -1,23 +1,18 @@
 <template>
   <btn-base
-    v-if="wakeIsSupported"
+    v-if="isSupported"
     flat
     dense
     color="white"
     size="md"
-    :icon="wakeIsActive ? 'fas fa-eye' : 'far fa-eye'"
-    @click="wakeIsActive ? wakeRelease() : wakeRequest('screen')"
+    :icon="isActive ? 'fas fa-eye' : 'far fa-eye'"
+    @click="isActive ? release() : request('screen')"
   >
-    <q-tooltip> {{ $t('keepAwake') }} {{ $t(wakeIsActive + '') }} </q-tooltip>
+    <q-tooltip> {{ $t('keepAwake') }} {{ $t(isActive + '') }} </q-tooltip>
   </btn-base>
 </template>
 
 <script setup lang="ts">
 import { useWakeLock } from '@vueuse/core';
-const {
-  isSupported: wakeIsSupported,
-  isActive: wakeIsActive,
-  request: wakeRequest,
-  release: wakeRelease,
-} = useWakeLock();
+const { isSupported, isActive, request, release } = useWakeLock();
 </script>

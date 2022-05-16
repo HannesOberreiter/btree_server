@@ -5,20 +5,20 @@
         {{ company.name }}
       </q-toolbar-title>
     </div>
-    <div class="col-4 col-sm-5 col-md-5 col-lg-4">
+    <div class="col-2 col-sm-5 col-md-5 col-lg-4">
       <search-hive-apiary></search-hive-apiary>
     </div>
 
-    <div class="col-7 col-sm-5 col-md-auto">
+    <div class="col-9 col-sm-5 col-md-auto">
       <div class="q-gutter-md text-right">
         <btn-speak></btn-speak>
-        <q-btn-dropdown v-if="$q.platform.is.mobile" unelevated color="primary">
+        <q-btn-dropdown
+          v-if="$q.platform.is.mobile"
+          unelevated
+          color="primary"
+          class="q-pa-xs"
+        >
           <q-list class="bg-secondary">
-            <q-item v-close-popup>
-              <q-item-section>
-                <btn-wake-lock></btn-wake-lock>
-              </q-item-section>
-            </q-item>
             <q-item v-close-popup>
               <q-item-section>
                 <btn-dark-mode></btn-dark-mode>
@@ -32,10 +32,10 @@
           </q-list>
         </q-btn-dropdown>
         <template v-else>
-          <btn-wake-lock></btn-wake-lock>
           <btn-fullscreen></btn-fullscreen>
           <btn-dark-mode></btn-dark-mode>
         </template>
+        <btn-wake-lock></btn-wake-lock>
         <btn-return></btn-return>
       </div>
     </div>
