@@ -336,6 +336,8 @@
     "refresh": "Upgrade b.tree",
     "newContent": "Updated content is available. Please refresh the page."
   },
+  "inputUrl": "Input an external url",
+  "noValidUrl": "Input is no valid url.",
   "signup": {
     "accept": "Please accept the terms first!",
     "agree": "Do you agree with the",

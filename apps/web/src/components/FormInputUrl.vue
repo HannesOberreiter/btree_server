@@ -11,20 +11,23 @@
   >
     <template #deepAfter>
       <q-icon
-        name="fas fa-upload"
-        style="cursor: pointer"
-        class="q-pr-sm"
-        @click="uploadFile"
-      >
-        <q-tooltip>{{ $t('uploadFile') }}</q-tooltip>
-      </q-icon>
-      <q-icon
         name="fas fa-xmark"
         style="cursor: pointer"
         class="q-pr-sm"
         @click="modelValue = ''"
       >
         <q-tooltip>{{ $t('clearField') }}</q-tooltip>
+      </q-icon>
+      <q-icon name="fas fa-file-pen" style="cursor: pointer" @click="inputUrl">
+        <q-tooltip>{{ $t('inputUrl') }}</q-tooltip>
+      </q-icon>
+      <q-icon
+        name="fas fa-upload"
+        style="cursor: pointer"
+        class="q-pr-sm"
+        @click="uploadFile"
+      >
+        <q-tooltip>{{ $t('uploadFile') }}</q-tooltip>
       </q-icon>
       <q-icon name="fab fa-dropbox" style="cursor: pointer" @click="selectFile">
         <q-tooltip>{{ $t('selectFile') }}</q-tooltip>
@@ -39,8 +42,13 @@ import { useQuasar } from 'quasar';
 import DialogFileShow from './DialogFileShow.vue';
 import DialogFileUpload from './DialogFileUpload.vue';
 import DialogFileSelect from './DialogFileSelect.vue';
+import { isValidURL } from '~/helpers';
+import { useNotification } from '~/composables/useNotification';
 
 const $q = useQuasar();
+const { t } = useI18n();
+const inputModel = ref(null);
+const notification = useNotification();
 
 const props = defineProps({
   modelValue: {
@@ -83,5 +91,20 @@ const showFile = (value: string) => {
       },
     });
   }
+};
+
+const inputUrl = () => {
+  $q.dialog({
+    prompt: {
+      model: inputModel,
+      label: t('url'),
+    },
+  }).onOk((val) => {
+    if (!isValidURL(val)) {
+      notification.open('warning', 'noValidUrl');
+    } else {
+      modelValue.value = val;
+    }
+  });
 };
 </script>
