@@ -12,7 +12,12 @@
           icon="fas fa-map-marker-alt"
           @click.stop="onApiary(data.hive_location.apiary_id)"
         >
-          {{ data.hive_location.apiary_name }}
+          <span v-if="$q.platform.is.mobile">
+            {{ truncate(data.hive_location.apiary_name, { length: 5 }) }}
+          </span>
+          <span v-else>
+            {{ truncate(data.hive_location.apiary_name, { length: 20 }) }}
+          </span>
         </btn-base>
       </q-item-section>
     </template>
@@ -91,6 +96,7 @@
 import { useQuasar } from 'quasar';
 import { useDateFormat } from '~/composables/useDate';
 import DialogForm from './DialogForm.vue';
+import { truncate } from 'lodash-es';
 
 const $q = useQuasar();
 const useDate = useDateFormat();
