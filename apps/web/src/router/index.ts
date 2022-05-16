@@ -44,8 +44,8 @@ export default route(function ({ store }) {
 
   Router.beforeEach(async (to, from, next) => {
     // Stop any Loading Bars or Effects
-    LoadingBar.stop();
-    Loading.hide();
+    if (LoadingBar.isActive) LoadingBar.stop();
+    if (Loading.isActive) Loading.hide();
     if (
       to.matched.some((record) => record.meta.auth && !storeUser.isLoggedIn)
     ) {
@@ -55,14 +55,12 @@ export default route(function ({ store }) {
         to.matched.some((record) => record.meta.auth) &&
         (refreshStore.lastHour < -1 || isNaN(refreshStore.lastHour))
       ) {
-        Loading.show();
         console.info('Updating local storage values');
         try {
           await refreshStore.refresh();
         } catch (e) {
           console.error(e);
         }
-        Loading.hide();
       }
       if (!(from.name === 'new-quicktool' && to.name === 'new-quicktool')) {
         routerStore.previous = from.name as any;
