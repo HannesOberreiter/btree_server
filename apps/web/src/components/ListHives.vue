@@ -141,7 +141,7 @@ function resetActiveStep() {
 }
 
 function onSave() {
-  if (!usePrevent.state) {
+  if (!usePrevent.state.value) {
     resetActiveStep();
   } else {
     const patch = map(hives.value, (obj, index) => {

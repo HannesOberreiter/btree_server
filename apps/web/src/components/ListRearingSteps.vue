@@ -1,5 +1,4 @@
 <template>
-  {{ usePrevent.state }}
   <div class="col-12">
     <q-list v-if="modelValue" bordered separator>
       <q-item
@@ -185,7 +184,7 @@ function resetActiveStep() {
 }
 
 function onSave() {
-  if (!usePrevent.state) {
+  if (!usePrevent.state.value) {
     resetActiveStep();
   } else {
     const patch = map(modelValue.value.step, (obj, index) => {
