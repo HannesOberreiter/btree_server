@@ -7,6 +7,7 @@ import {
   getMovements,
   getTodos,
   getRearings,
+  getScaleData,
 } from '@utils/calendar.util';
 export class CalendarController extends Controller {
   constructor() {
@@ -73,6 +74,15 @@ export class CalendarController extends Controller {
   async getFeeds(req: IUserRequest, res: Response, next: NextFunction) {
     try {
       const result = await getTask(req, 'feed');
+      res.locals.data = result;
+    } catch (e) {
+      next(checkMySQLError(e));
+    }
+    next();
+  }
+  async getScaleData(req: IUserRequest, res: Response, next: NextFunction) {
+    try {
+      const result = await getScaleData(req);
       res.locals.data = result;
     } catch (e) {
       next(checkMySQLError(e));

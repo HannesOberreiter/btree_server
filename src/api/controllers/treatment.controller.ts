@@ -17,7 +17,7 @@ export class TreatmentController extends Controller {
         req.query as any;
       const query = Treatment.query()
         .withGraphJoined(
-          '[treatment_apiary, type, disease, hive, creator(identifier), editor(identifier)]'
+          '[treatment_apiary, type, disease, vet, hive, creator(identifier), editor(identifier)]'
         )
         .where({
           'hive.deleted': false,
@@ -108,18 +108,21 @@ export class TreatmentController extends Controller {
             user_id: req.user.user_id,
           });
           result.push(res.id);
+
           if (repeat > 0) {
+            const insert_repeat = { ...insert };
             for (let i = 0; i < repeat; i++) {
-              insert.date = dayjs(insert.date)
+              insert_repeat.date = dayjs(insert_repeat.date)
                 .add(interval, 'days')
                 .format('YYYY-MM-DD');
-              insert.enddate = dayjs(insert.enddate)
+              insert_repeat.enddate = dayjs(insert_repeat.enddate)
                 .add(interval, 'days')
                 .format('YYYY-MM-DD');
               const res = await Treatment.query(trx).insert({
-                ...insert,
+                ...insert_repeat,
                 hive_id: hives[hive].id,
                 bee_id: req.user.bee_id,
+                user_id: req.user.user_id,
               });
               result.push(res.id);
             }

@@ -35,7 +35,7 @@ if (env.env === 'production') {
     return false;
   };
 } else if (env.env === 'staging') {
-  // This code is only used for migrating old databse to new schema
+  // This code is only used for migrating old database to new schema
 
   const userId = new findUser();
 
@@ -148,7 +148,6 @@ if (env.env === 'production') {
       return {
         id: data.user_id,
         name: data.username,
-        dropbox_auth: '',
         created_at:
           data.creation_date === '0000-00-00 00:00:00'
             ? null

@@ -13,7 +13,7 @@ export class RearingController extends Controller {
     try {
       const { order, direction, offset, limit, q, filters } = req.query as any;
       const query = Rearing.query()
-        .withGraphJoined('type.detail')
+        .withGraphJoined('[type, start]')
         .where({
           'rearings.user_id': req.user.user_id,
         })
@@ -44,7 +44,7 @@ export class RearingController extends Controller {
 
       if (q.trim() !== '') {
         query.where((builder) => {
-          builder.orWhere('types.name', 'like', `%${q}%`);
+          builder.orWhere('type.name', 'like', `%${q}%`);
         });
       }
       const result = await query.orderBy('id');
@@ -111,6 +111,21 @@ export class RearingController extends Controller {
         return Rearing.query(trx)
           .deleteById(req.body.ids)
           .where('user_id', req.user.user_id);
+      });
+      res.locals.data = result;
+      next();
+    } catch (e) {
+      next(checkMySQLError(e));
+    }
+  }
+
+  async batchGet(req: IUserRequest, res: Response, next: NextFunction) {
+    try {
+      const result = await Rearing.transaction(async (trx) => {
+        const res = await Rearing.query(trx)
+          .findByIds(req.body.ids)
+          .where('rearings.user_id', req.user.user_id);
+        return res;
       });
       res.locals.data = result;
       next();

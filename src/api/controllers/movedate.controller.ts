@@ -1,7 +1,7 @@
 import { NextFunction, Response } from 'express';
 import { Controller } from '@classes/controller.class';
 import { checkMySQLError } from '@utils/error.util';
-import { Movedate } from '@models/Movedate.model';
+import { Movedate } from '../models/movedate.model';
 import { IUserRequest } from '@interfaces/IUserRequest.interface';
 import { Apiary } from '../models/apiary.model';
 import { HiveLocation } from '../models/hive_location.model';

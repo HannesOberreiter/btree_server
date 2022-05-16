@@ -25,17 +25,17 @@ export class QueenLocation extends Model {
       relation: Model.BelongsToOneRelation,
       modelClass: Hive,
       join: {
-        from: 'hive.id',
-        to: 'queens_locations.hive_id'
-      }
+        from: 'hives.id',
+        to: 'queens_locations.hive_id',
+      },
     },
     queen: {
       relation: Model.BelongsToOneRelation,
       modelClass: Queen,
       join: {
-        from: 'queen.id',
-        to: 'queens_locations.queen_id'
-      }
-    }
+        from: 'queens.id',
+        to: 'queens_locations.queen_id',
+      },
+    },
   });
 }

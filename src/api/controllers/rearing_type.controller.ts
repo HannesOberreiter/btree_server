@@ -4,6 +4,7 @@ import { checkMySQLError } from '@utils/error.util';
 import { IUserRequest } from '@interfaces/IUserRequest.interface';
 import { RearingType } from '../models/rearing/rearing_type.model';
 import { RearingStep } from '../models/rearing/rearing_step.model';
+import { Rearing } from '../models/rearing/rearing.model';
 
 export class RearingTypeController extends Controller {
   constructor() {
@@ -94,6 +95,11 @@ export class RearingTypeController extends Controller {
           .withGraphJoined('type')
           .delete()
           .where('type.user_id', req.user.user_id)
+          .whereIn('type_id', req.body.ids);
+
+        await Rearing.query(trx)
+          .delete()
+          .where('rearings.user_id', req.user.user_id)
           .whereIn('type_id', req.body.ids);
 
         return await RearingType.query(trx)

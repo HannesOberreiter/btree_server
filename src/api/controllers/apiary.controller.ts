@@ -6,6 +6,8 @@ import { Apiary } from '../models/apiary.model';
 import { conflict, forbidden } from '@hapi/boom';
 import { map } from 'lodash';
 import dayjs from 'dayjs';
+import { HiveLocation } from '../models/hive_location.model';
+import { Movedate } from '../models/movedate.model';
 export class ApiaryController extends Controller {
   constructor() {
     super();
@@ -72,6 +74,60 @@ export class ApiaryController extends Controller {
       }
       const result = await query.orderBy('id');
       res.locals.data = result;
+      next();
+    } catch (e) {
+      next(checkMySQLError(e));
+    }
+  }
+
+  async getDetail(req: IUserRequest, res: Response, next: NextFunction) {
+    try {
+      const id = req.params.id;
+
+      const query = Apiary.query()
+        .findById(id)
+        .where({
+          'apiaries.user_id': req.user.user_id,
+          'apiaries.deleted': false,
+        })
+        .withGraphFetched(
+          '[hive_count, creator(identifier), editor(identifier)]'
+        )
+        .throwIfNotFound();
+      const result = await query;
+
+      const query_others = await Apiary.query()
+        .select('id', 'name')
+        .where({ user_id: req.user.user_id, deleted: false, modus: true });
+
+      const query_first = await Movedate.query()
+        .first()
+        .where('apiary_id', result.id)
+        .orderBy('date', 'desc');
+
+      const query_hives = await HiveLocation.query()
+        .select(
+          'name',
+          'hive.id as id',
+          'position',
+          'hive:queen_location.queen_name',
+          'hive:queen_location.queen_modus'
+        )
+        .leftJoinRelated('hive.[queen_location]')
+        .where({
+          apiary_id: result.id,
+          hive_deleted: false,
+          hive_modus: true,
+        })
+        .orderBy('hive.position')
+        .orderBy('hive.name');
+
+      res.locals.data = {
+        ...result,
+        firstMovedate: query_first,
+        sameLocation: query_others,
+        hives: query_hives,
+      };
       next();
     } catch (e) {
       next(checkMySQLError(e));

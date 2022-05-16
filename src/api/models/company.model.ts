@@ -5,7 +5,6 @@ import dayjs from 'dayjs';
 export class Company extends ExtModel {
   id!: number;
   name!: string;
-  dropbox_auth!: string;
   image!: string;
   paid!: string;
   api_active!: boolean;
@@ -31,18 +30,16 @@ export class Company extends ExtModel {
       image: { type: 'string', minLength: 1, maxLength: 65 },
       api_active: { type: 'boolean' },
       api_key: { type: 'string', minLength: 1, maxLength: 65 },
-      dropbox_auth: { type: 'string', minLength: 1, maxLength: 65 },
 
       created_at: { type: 'string', format: 'date-time' },
-      updated_at: { type: 'string', format: 'date-time' }
-    }
+      updated_at: { type: 'string', format: 'date-time' },
+    },
   };
 
   // Omit fields for json response from model
   $formatJson(company: Company): Company {
     super.$formatJson(company);
 
-    delete company.dropbox_auth;
     delete company.image;
 
     return company;
@@ -57,10 +54,10 @@ export class Company extends ExtModel {
         through: {
           modelClass: CompanyBee,
           from: 'company_bee.user_id',
-          to: 'company_bee.bee_id'
+          to: 'company_bee.bee_id',
         },
-        to: 'bees.id'
-      }
-    }
+        to: 'bees.id',
+      },
+    },
   });
 }

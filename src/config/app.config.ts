@@ -1,3 +1,5 @@
+import Cors from 'cors';
+
 import { ENVIRONMENT } from '@enums/environment.enum';
 import {
   httpLogs,
@@ -11,7 +13,7 @@ import p from 'path';
 import Express from 'express';
 import Hpp from 'hpp';
 import BodyParser from 'body-parser';
-import Cors from 'cors';
+import { Cors as Kors } from '@middlewares/cors.middleware';
 import Compression from 'compression';
 import RateLimit from 'express-rate-limit';
 import Morgan from 'morgan';
@@ -29,7 +31,6 @@ import { HelmetConfiguration } from '@config/helmet.config';
 
 import { PassportConfiguration } from '@config/passport.config';
 
-import { Header } from '@middlewares/header.middleware';
 import { Resolver } from '@middlewares/resolver.middleware';
 import { Catcher } from '@middlewares/catcher.middleware';
 
@@ -49,7 +50,11 @@ export class Application {
   private options = {
     cors: {
       origin: (origin, callback) => {
-        if (authorized.indexOf(origin) !== -1 || !origin) {
+        if (
+          authorized.indexOf(origin) !== -1 ||
+          !origin ||
+          env === ENVIRONMENT.development
+        ) {
           callback(null, true);
         } else {
           callback(notAcceptable(`Domain not allowed by CORS: ${origin}`));
@@ -94,10 +99,9 @@ export class Application {
    */
   private plug(): void {
     /**
-     * First, before all : check headers validity
-     *
+     * Check headers validity
      */
-    this.app.use(Header.check({ contentType }));
+    this.app.use(Kors.validate);
 
     /**
      * Expose body on req.body
