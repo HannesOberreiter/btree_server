@@ -20,8 +20,10 @@ docker push hannesoberreiter/btree_server:latest
 ### Running container
 
 ```bash
-# Run container (server)
-docker-compose -f docker-compose.server.yml up
+# Pull latest and run 
+docker-compose pull  && docker-compose up -d
+# Run container (server) (define file if not the only one in folder)
+docker-compose -f docker-compose.server.yml up -d
 # Stop container  (server)
 docker-compose -f docker-compose-server.yml down
 # Access Container Bash for npm run commands
