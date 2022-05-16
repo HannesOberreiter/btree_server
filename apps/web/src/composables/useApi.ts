@@ -106,7 +106,7 @@ export const useApiFetch = () => {
   };
 
   async function fetching(request: Request, recursive = false): Promise<any> {
-    if (network.isSupported && !network.isOnline) {
+    if (network.isSupported && !network.isOnline.value) {
       throw 'offline';
     }
     LoadingBar.start();
