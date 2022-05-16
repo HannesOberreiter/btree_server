@@ -114,7 +114,7 @@ const removeAccess = () => {
     cancel: true,
     persistent: true,
   }).onOk(() => {
-    api.deleting(`/v1/company_user/${model.value.id}`).then(
+    api.remove(`/v1/company_user/${model.value.id}`).then(
       async (response: any) => {
         storeToken.refreshToken(response.token);
         await storeRefresh.refresh();
@@ -190,7 +190,7 @@ const deleteCompany = () => {
     cancel: true,
     persistent: true,
   }).onOk(() => {
-    api.deleting(`/v1/company/${model.value.id}`).then(
+    api.remove(`/v1/company/${model.value.id}`).then(
       async (response: any) => {
         storeToken.refreshToken(response.token);
         await storeRefresh.refresh();

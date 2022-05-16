@@ -38,14 +38,13 @@ import DialogHint from '~/components/DialogHint.vue';
 import '@fullcalendar/core/vdom'; // solve problem with Vite
 import FullCalendar, {
   CalendarOptions,
-  DateSelectArg,
   EventClickArg,
   EventChangeArg,
   EventSourceInput,
 } from '@fullcalendar/vue3';
 import allLocales from '@fullcalendar/core/locales-all';
 import dayGridPlugin from '@fullcalendar/daygrid';
-import interactionPlugin from '@fullcalendar/interaction';
+import interactionPlugin, { DateClickArg } from '@fullcalendar/interaction';
 import listPlugin from '@fullcalendar/list';
 import { useApiFetch } from '~/composables/useApi';
 import { useQuasar } from 'quasar';
@@ -70,7 +69,7 @@ const cal = ref();
 const showInfo = ref(false);
 const showSetting = ref(false);
 
-const formDialog = () =>
+const formDialog = (dateClicked) =>
   $q
     .dialog({
       component: DialogForm,
@@ -177,7 +176,7 @@ function onResize(_size: any) {
   cal.value.getApi().updateSize();
 }
 
-const handleEventsChange = (changeInfo: EventChangeArg) => {
+function handleEventsChange(changeInfo: EventChangeArg) {
   // Single Day Events no Enddate possible
   if (
     changeInfo.event.extendedProps.table === 'todo' ||
@@ -234,16 +233,18 @@ const handleEventsChange = (changeInfo: EventChangeArg) => {
     }
   );
   return true;
-};
-const handleDateSelect = (selectInfo: DateSelectArg) => {
-  if (dateClicked.value === dayjs(selectInfo.start).format('YYYY-MM-DD')) {
+}
+function handleDateClick(selectInfo: DateClickArg) {
+  const dateInfo = dayjs(selectInfo.date).format('YYYY-MM-DD');
+  if (dateClicked.value === dateInfo) {
     dateClicked.value = null;
-    formDialog();
+    formDialog(dateInfo);
   } else {
-    dateClicked.value = dayjs(selectInfo.start).format('YYYY-MM-DD');
+    dateClicked.value = dateInfo;
+    setTimeout(() => (dateClicked.value = null), 550); // Timeout to simulate a double click
   }
-};
-const handleEventClick = (clickInfo: EventClickArg) => {
+}
+function handleEventClick(clickInfo: EventClickArg) {
   clickInfo.jsEvent.preventDefault(); // don't let the browser navigate
 
   const event = {
@@ -254,7 +255,7 @@ const handleEventClick = (clickInfo: EventClickArg) => {
     ),
   };
   eventDialog(event);
-};
+}
 
 const calendarOptions = reactive({
   eventSources: eventsSourceActive,
@@ -315,13 +316,11 @@ const calendarOptions = reactive({
   weekNumbers: true,
   weekNumberCalculation: 'ISO',
   displayEventTime: true,
-  selectLongPressDelay: 10,
   firstDay: 1,
-  selectable: true,
-  selectMirror: true,
+  selectable: false, // Allows a user to highlight multiple days or timeslots by clicking and dragging.
   dayMaxEvents: 8,
   weekends: true,
-  select: handleDateSelect,
+  dateClick: handleDateClick,
   eventClick: handleEventClick,
   eventChange: handleEventsChange,
 } as CalendarOptions);

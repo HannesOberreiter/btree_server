@@ -54,3 +54,14 @@ export const generateArrayOfYears = (min = 2000) => {
   }
   return years;
 };
+
+// https://stackoverflow.com/a/43467144/5316675
+export const isValidURL = (string: string) => {
+  let url;
+  try {
+    url = new URL(string);
+  } catch (_) {
+    return false;
+  }
+  return url.protocol === 'http:' || url.protocol === 'https:';
+};

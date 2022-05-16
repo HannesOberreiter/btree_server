@@ -71,10 +71,7 @@ export const useApiFetch = () => {
     return await fetching(originalRequest);
   };
 
-  const deleting = async (
-    url: string,
-    payload = '' as unknown
-  ): Promise<any> => {
+  const remove = async (url: string, payload = '' as unknown): Promise<any> => {
     const urlParam = buildUrl(url, payload);
     const originalRequest = new Request(urlParam, {
       method: 'DELETE', // *GET, POST, PUT, DELETE, etc.
@@ -117,6 +114,8 @@ export const useApiFetch = () => {
     const copy = request.clone();
     if (token) request.headers.append('Authorization', token.Authorization);
     const response = await fetch(request);
+    LoadingBar.stop();
+
     if (!response.ok) {
       if (
         ![baseUrl + '/v1/auth/login', baseUrl + '/v1/auth/refresh'].includes(
@@ -129,10 +128,8 @@ export const useApiFetch = () => {
           try {
             const token = await refreshToken();
             storeToken.refreshToken(token.result);
-            LoadingBar.stop();
             return fetching(copy, true);
           } catch (e) {
-            LoadingBar.stop();
             throw e;
           }
         } else if (response.status === 401) {
@@ -141,17 +138,13 @@ export const useApiFetch = () => {
             await new Promise((r) => setTimeout(r, 500));
           }
           if (state.logout === true) {
-            LoadingBar.stop();
             return Promise.reject();
           }
-          LoadingBar.stop();
           return fetching(copy, true);
         }
       }
-      LoadingBar.stop();
       throw await response.json();
     }
-    LoadingBar.stop();
     return response.json();
   }
 
@@ -185,5 +178,5 @@ export const useApiFetch = () => {
       });
   }
 
-  return { ping, get, post, patch, deleting, state };
+  return { ping, get, post, patch, remove, state };
 };

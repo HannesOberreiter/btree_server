@@ -1,5 +1,4 @@
 <template>
-  {{ usePrevent.state }}
   <div v-if="!hives">
     {{ $t('error.noData') }}
   </div>
@@ -7,59 +6,69 @@
     {{ $t('error.noData') }}
   </div>
   <div v-else>
-    <q-item
+    <div
       v-for="(hive, index) in hives"
       :key="hive.id"
       :class="hive.active ? 'bg-info' : ''"
     >
-      <q-item-section avatar>
-        <btn-base-group>
-          <btn-base
-            flat
-            :color="hive.active ? 'primary' : 'grey'"
-            icon="fas fa-arrow-up"
-            :disable="index === 0 || !hive.active"
-            @click="onMove(index, index - 1)"
-          />
-          <btn-base
-            flat
-            :color="hive.active ? 'secondary' : 'grey'"
-            icon="fas fa-arrow-down"
-            :disable="index === hives.length - 1 || !hive.active"
-            @click="onMove(index, index + 1)"
-          />
-        </btn-base-group>
-      </q-item-section>
-      <q-item-section
-        style="cursor: pointer"
-        @click="setActiveStep(hive.id, hive.active ? false : true)"
+      <div
+        class="row flex-center q-pa-sm"
+        style="border: 0.01em; border-style: solid"
       >
-        <q-item-label class="text-bold">
-          {{ hive.name }}
-          <span v-if="hive.queen_name" class="text-caption">
-            [{{ hive.queen_name }}]
-            <span v-if="hive.queen_modus === false">RIP</span>
-          </span>
-        </q-item-label>
-        {{ $t('position') }}: {{ hive.position }}
-      </q-item-section>
-      <q-item-section avatar>
-        <btn-base-group>
-          <btn-base
-            flat
-            color="secondary"
-            icon="fas fa-info"
-            @click.stop="showInfo(hive.id)"
-          />
-          <btn-base
-            flat
-            color="grey"
-            icon="fas fa-truck"
-            @click.stop="onMovement(hive.id)"
-          />
-        </btn-base-group>
-      </q-item-section>
-    </q-item>
+        <div
+          class="col-12 col-sm-2 col-md-2"
+          :class="$q.platform.is.mobile ? 'text-right' : ''"
+        >
+          <btn-base-group :spread="false">
+            <btn-base
+              flat
+              color="secondary"
+              icon="fas fa-info"
+              @click.stop="showInfo(hive.id)"
+            />
+            <btn-base
+              flat
+              color="grey"
+              icon="fas fa-truck"
+              @click.stop="onMovement(hive.id)"
+            />
+          </btn-base-group>
+        </div>
+        <div
+          class="col-12 col-sm-10 col-md-8"
+          style="cursor: pointer"
+          @click="setActiveStep(hive.id, hive.active ? false : true)"
+        >
+          <q-item-label class="text-bold">
+            {{ hive.name }}
+            <span v-if="hive.queen_name" class="text-caption">
+              [{{ hive.queen_name }}]
+              <span v-if="hive.queen_modus === false">RIP</span>
+            </span>
+          </q-item-label>
+          {{ $t('position') }}: {{ hive.position }}
+        </div>
+
+        <div class="col-12 col-md-2 text-right">
+          <btn-base-group :spread="false">
+            <btn-base
+              flat
+              :color="hive.active ? 'primary' : 'grey'"
+              icon="fas fa-arrow-up"
+              :disable="index === 0 || !hive.active"
+              @click="onMove(index, index - 1)"
+            />
+            <btn-base
+              flat
+              :color="hive.active ? 'secondary' : 'grey'"
+              icon="fas fa-arrow-down"
+              :disable="index === hives.length - 1 || !hive.active"
+              @click="onMove(index, index + 1)"
+            />
+          </btn-base-group>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -132,7 +141,7 @@ function resetActiveStep() {
 }
 
 function onSave() {
-  if (!usePrevent.state) {
+  if (!usePrevent.state.value) {
     resetActiveStep();
   } else {
     const patch = map(hives.value, (obj, index) => {

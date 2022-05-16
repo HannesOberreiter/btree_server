@@ -84,7 +84,7 @@ export const useServiceDropbox = () => {
   }
 
   async function deleteAccount() {
-    return await api.deleting('/v1/dropbox/0').then(
+    return await api.remove('/v1/dropbox/0').then(
       (_response: any) => {
         setAccessToken('');
         return true;
