@@ -59,6 +59,7 @@
             v-if="!data.modus"
             square
             color="negative"
+            class="text-white"
             :label="`${$t('inactive')} (${useDate.displayFormat(
               data.modus_date,
               'date'
