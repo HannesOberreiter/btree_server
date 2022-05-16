@@ -1,10 +1,12 @@
 <template>
   <q-toolbar dense style="max-height: 30px; min-height: 30px">
-    <router-link :to="{ name: 'news' }" class="text-white">
+    <router-link
+      :to="{ name: 'news' }"
+      class="text-white"
+      style="text-decoration: none"
+    >
       {{ $t('version') }}: {{ news.aaData[0].version }}
-      <span v-if="!$q.platform.is.mobile">
-        , {{ news.aaData[0].date }} &nbsp;
-      </span>
+      <span v-if="!$q.platform.is.mobile"> [{{ news.aaData[0].date }}] </span>
     </router-link>
     <q-space></q-space>
     <strong>b.tree</strong>
