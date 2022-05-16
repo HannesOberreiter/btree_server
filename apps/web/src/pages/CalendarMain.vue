@@ -69,7 +69,7 @@ const cal = ref();
 const showInfo = ref(false);
 const showSetting = ref(false);
 
-const formDialog = () =>
+const formDialog = (dateClicked) =>
   $q
     .dialog({
       component: DialogForm,
@@ -235,11 +235,12 @@ function handleEventsChange(changeInfo: EventChangeArg) {
   return true;
 }
 function handleDateClick(selectInfo: DateClickArg) {
-  if (dateClicked.value === dayjs(selectInfo.date).format('YYYY-MM-DD')) {
+  const dateInfo = dayjs(selectInfo.date).format('YYYY-MM-DD');
+  if (dateClicked.value === dateInfo) {
     dateClicked.value = null;
-    formDialog();
+    formDialog(dateInfo);
   } else {
-    dateClicked.value = dayjs(selectInfo.date).format('YYYY-MM-DD');
+    dateClicked.value = dateInfo;
     setTimeout(() => (dateClicked.value = null), 550); // Timeout to simulate a double click
   }
 }
