@@ -69,7 +69,7 @@ const cal = ref();
 const showInfo = ref(false);
 const showSetting = ref(false);
 
-const formDialog = (dateClicked) =>
+const formDialog = () =>
   $q
     .dialog({
       component: DialogForm,
@@ -238,7 +238,7 @@ function handleDateClick(selectInfo: DateClickArg) {
   const dateInfo = dayjs(selectInfo.date).format('YYYY-MM-DD');
   if (dateClicked.value === dateInfo) {
     dateClicked.value = null;
-    formDialog(dateInfo);
+    formDialog();
   } else {
     dateClicked.value = dateInfo;
     setTimeout(() => (dateClicked.value = null), 550); // Timeout to simulate a double click

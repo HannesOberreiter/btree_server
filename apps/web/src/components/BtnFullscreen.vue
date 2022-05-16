@@ -5,7 +5,12 @@
     dense
     color="white"
     size="md"
-    :icon="$q.fullscreen.isActive ? 'fas fa-compress' : 'fas fa-expand'"
-    @click="$q.fullscreen.toggle()"
+    :icon="isFullscreen ? 'fas fa-compress' : 'fas fa-expand'"
+    @click="toggle()"
   />
 </template>
+
+<script setup lang="ts">
+import { useFullscreen } from '@vueuse/core';
+const { isFullscreen, toggle } = useFullscreen();
+</script>

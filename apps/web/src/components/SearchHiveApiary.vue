@@ -2,6 +2,7 @@
   <q-select
     ref="searchRef"
     v-model="search"
+    :style="$q.platform.is.mobile ? 'display:none' : ''"
     dense
     use-input
     :loading="isLoadingHive && isLoadingApiary"
@@ -13,9 +14,26 @@
     @update:model-value="redirectFn"
   >
     <template #prepend>
-      <q-icon flat dense color="white" size="md" name="fas fa-search" />
+      <q-icon
+        flat
+        dense
+        color="white"
+        size="md"
+        name="fas fa-search"
+        @click="searchRef.showPopup()"
+      />
     </template>
   </q-select>
+  <span v-if="$q.platform.is.mobile">
+    <q-icon
+      flat
+      dense
+      color="white"
+      size="md"
+      name="fas fa-search"
+      @click="searchRef.showPopup()"
+    />
+  </span>
 </template>
 
 <script setup lang="ts">
