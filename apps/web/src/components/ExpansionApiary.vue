@@ -4,17 +4,17 @@
     :default-opened="opened"
     icon="fas fa-house"
     header-class="text-h5"
-    :label="`
-      ${data.name} [${data.hive_count ? data.hive_count.count : ''}]
-      ${
-        data.hive_count
-          ? data.hive_count.grouphivescount > 0
-            ? ' + ' + data.hive_count.grouphivescount
-            : ''
-          : ''
-      }
-    `"
   >
+    <template #header>
+      {{ data.name }}&nbsp;
+      <span v-if="data.hive_count">
+        [{{ data.hive_count.count }}]&nbsp;
+        <span v-if="data.hive_count.grouphivescount > 0">
+          + {{ data.hive_count.grouphivescount }}
+        </span>
+      </span>
+      <span v-else>[0]</span>
+    </template>
     <q-card>
       <q-card-section class="q-pb-xs">
         <div class="col-12 q-gutter-xs">
