@@ -8,7 +8,9 @@ For ease of deploying into production, you can use Docker: <https://docs.docker.
 
 ### Building image
 
-Currently images are build locally and pushed to DockerHub. This process can be automated to build the newest Docker image when GitHub Master Branch updates.
+Currently images are build automatically on 'main' branch push with GitHub actions and pushed to a private DockerHub repo.
+
+If you want to build it locally use following commands:
 
 ```bash
 # Build image
@@ -18,6 +20,8 @@ docker push hannesoberreiter/btree_server:latest
 ```
 
 ### Running container
+
+Hint: To be able to pull from a DockerHub private repo create a api key with read-only access and login once to docker on your server eg. `docker login -u hannesoberreiter` with the api token as password. The token will be saved in your config and you can call docker-compose on the private repo.
 
 ```bash
 # Pull latest and run 
