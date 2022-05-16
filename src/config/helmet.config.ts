@@ -17,10 +17,12 @@ export class HelmetConfiguration {
   private static options = {
     contentSecurityPolicy: {
       directives: {
-        ...Helmet.contentSecurityPolicy.getDefaultDirectives()
-      }
+        ...Helmet.contentSecurityPolicy.getDefaultDirectives(),
+      },
     },
-    referrerPolicy: { policy: 'no-referrer' }
+    hidePoweredBy: true,
+    noSniff: true,
+    referrerPolicy: { policy: 'no-referrer' },
   };
 
   /**

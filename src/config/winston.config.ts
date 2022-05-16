@@ -21,7 +21,7 @@ export class WinstonConfiguration {
   private stream;
 
   /**
-   * @description Output directory
+   * @description File name
    */
   private output = env === 'test' ? 'test' : 'dist';
 
@@ -54,7 +54,7 @@ export class WinstonConfiguration {
       json: true,
       maxSize: 5242880, // 5MB
       maxFiles: 5,
-      colorize: false
+      colorize: false,
     },
     error: {
       level: 'error',
@@ -68,7 +68,7 @@ export class WinstonConfiguration {
       json: true,
       maxSize: 5242880, // 5MB
       maxFiles: 5,
-      colorize: false
+      colorize: false,
     },
     info: {
       level: 'info',
@@ -82,7 +82,7 @@ export class WinstonConfiguration {
       json: true,
       maxSize: 5242880, // 5MB
       maxFiles: 5,
-      colorize: false
+      colorize: false,
     },
     console: {
       // format: Winston.format.simple(),
@@ -90,8 +90,8 @@ export class WinstonConfiguration {
       level: 'debug',
       handleExceptions: true,
       json: false,
-      colorize: true
-    }
+      colorize: true,
+    },
   };
 
   constructor() {
@@ -105,9 +105,9 @@ export class WinstonConfiguration {
         //
         new Winston.transports.File(this.options.cron),
         new Winston.transports.File(this.options.error),
-        new Winston.transports.File(this.options.info)
+        new Winston.transports.File(this.options.info),
       ],
-      exitOnError: false
+      exitOnError: false,
     });
 
     // If we're not in production||test then log to the `console`
@@ -118,9 +118,9 @@ export class WinstonConfiguration {
     logger.stream = {
       write: function (message: string, _encoding: string) {
         logger.info(message.trim(), {
-          label: 'Stream'
+          label: 'Stream',
         });
-      }
+      },
     } as any;
 
     this.logger = logger;

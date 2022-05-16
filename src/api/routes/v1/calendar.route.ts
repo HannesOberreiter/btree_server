@@ -54,9 +54,20 @@ export class CalendarRouter extends Router {
         Container.resolve('CalendarController').getTodos
       );
     this.router
-      .route('/rearing')
+      .route('/scale_data')
       .get(
         Validator.validate(CalendarParams),
+        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+        Container.resolve('CalendarController').getScaleData
+      );
+    this.router
+      .route('/rearing')
+      .get(
+        Validator.validate([
+          query('start').isString().if(query('id').exists()).optional(),
+          query('end').isString().if(query('id').exists()).optional(),
+          query('id').optional(),
+        ]),
         Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
         Container.resolve('CalendarController').getRearings
       );

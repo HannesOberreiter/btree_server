@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { intersection } from 'lodash';
+import { intersection, round } from 'lodash';
 import { MySQLServer } from '@servers/mysql.server';
 import { Todo } from '@models/todo.model';
 import { Rearing } from '@models/rearing/rearing.model';
@@ -13,22 +13,27 @@ const convertDate = ({ start, end }) => {
 };
 
 const getRearings = async ({ query, user }) => {
-  // Because Rearings could goes over multiple months we add / substract here to catch them
-  const start = dayjs(query.start).subtract(2, 'month').toISOString();
-  const end = dayjs(query.end).add(2, 'month').toISOString();
-
   /*
    * Fetching Rearings and corresponding steps
    */
-  const rearings: any = await Rearing.query()
+  const rearings_query = Rearing.query()
     .where('rearings.user_id', user.user_id)
-    .where('date', '>=', start)
-    .where('date', '<=', end)
-    .withGraphFetched('start')
-    .withGraphFetched('type');
+    .withGraphFetched('[start, type]');
+
+  if (query.id) {
+    // if not used inside calendar and we only want one event
+    rearings_query.where('id', query.id);
+  } else {
+    // Because Rearings could goes over multiple months we add / substract here to catch them
+    const start = dayjs(query.start).subtract(2, 'month').toISOString();
+    const end = dayjs(query.end).add(2, 'month').toISOString();
+    rearings_query.where('date', '>=', start).where('date', '<=', end);
+  }
+
+  const rearings = await rearings_query;
   const rearingsSteps = [];
   for (const i in rearings) {
-    const res = rearings[i];
+    const res = rearings[i] as any;
     const steps: any = await RearingStep.query()
       .where('type_id', res.type_id)
       .withGraphFetched('detail')
@@ -55,7 +60,9 @@ const getRearings = async ({ query, user }) => {
         // Current Step is actual Start Step
         result.start = dayjs(result.date).format('YYYY-MM-DD HH:mm:00');
       } else {
-        if (result.currentStep.position > result.startPosition) {
+        if (
+          parseInt(result.currentStep.position) > parseInt(result.startPosition)
+        ) {
           // Step comes behind Start Step, we can simply add up the hours
           addDate = addDate.add(result.currentStep.detail.hour, 'hour');
           result.start = addDate.format('YYYY-MM-DD HH:mm:00');
@@ -228,4 +235,33 @@ const getTask = async ({ query, user }, task: string) => {
   return result;
 };
 
-export { getTask, getMovements, getTodos, getRearings };
+const getScaleData = async ({ query, user }) => {
+  const { start, end } = convertDate(query);
+
+  const results = await MySQLServer.knex(`calendar_scale_data`)
+    .where('user_id', user.user_id)
+    .where('date', '>=', start)
+    .where('date', '<=', end);
+  let result = [];
+  let weight_last = 0;
+  for (const i in results) {
+    const res = results[i];
+    res.id = res.name;
+    res.allDay = true;
+    // Event end Date is exclusive see docu https://fullcalendar.io/docs/event_data/Event_Object/
+    res.start = dayjs(res.date).format('YYYY-MM-DD');
+    res.end = dayjs(res.date).add(1, 'day').format('YYYY-MM-DD');
+    res.difference = round(res.average - weight_last, 1);
+    weight_last = res.average;
+    const weight_addon = res.difference > 0 ? '(+)' : '(-)';
+    res.title = `${weight_addon} ${res.average} ${res.name}`;
+    res.icon = res.difference > 0 ? `fas fa-plus` : 'fas fa-minus';
+    res.color = res.difference > 0 ? 'green' : 'red';
+    res.textColor = 'white';
+    res.editable = false;
+    result.push(res);
+  }
+  return result;
+};
+
+export { getTask, getMovements, getTodos, getRearings, getScaleData };

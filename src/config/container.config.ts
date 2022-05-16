@@ -19,6 +19,7 @@ import { MovedateController } from '@controllers/movedate.controller';
 import { OptionController } from '@controllers/options.controller';
 import { RearingController } from '@controllers/rearing.controller';
 import { RearingDetailController } from '@controllers/rearing_detail.controller';
+import { RearingStepController } from '@controllers/rearing_step.controller';
 import { RearingTypeController } from '@controllers/rearing_type.controller';
 import { RootController } from '@controllers/root.controller';
 import { ServiceController } from '@/api/controllers/service.controller';
@@ -28,6 +29,8 @@ import { UserController } from '@controllers/user.controller';
 import { ScaleController } from '@controllers/scale.controller';
 import { ScaleDataController } from '@controllers/scale_data.controller';
 import { DropboxController } from '@controllers/dropbox.controller';
+import { StatisticController } from '@controllers/statistic.controller';
+
 export class Container {
   private static container: any;
 
@@ -108,6 +111,9 @@ export class Container {
         DropboxController: awilix.asClass(DropboxController).singleton(),
       })
       .register({
+        StatisticController: awilix.asClass(StatisticController).singleton(),
+      })
+      .register({
         RearingDetailController: awilix
           .asClass(RearingDetailController)
           .singleton(),
@@ -115,6 +121,11 @@ export class Container {
       .register({
         RearingTypeController: awilix
           .asClass(RearingTypeController)
+          .singleton(),
+      })
+      .register({
+        RearingStepController: awilix
+          .asClass(RearingStepController)
           .singleton(),
       })
       .register({

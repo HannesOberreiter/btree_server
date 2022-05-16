@@ -23,11 +23,11 @@ export class RefreshToken extends BaseModel {
 
       token: { type: 'string', minLength: 10 },
       expires: { type: 'string', format: 'date-time' },
-      'user-agent': { type: 'string', minLength: 1, maxLength: 50 },
+      'user-agent': { type: 'string', minLength: 1, maxLength: 65 },
 
       user_id: { type: 'integer' }, // Company FK
-      bee_id: { type: 'integer' } // User FK
-    }
+      bee_id: { type: 'integer' }, // User FK
+    },
   };
 
   static relationMappings = () => ({
@@ -36,8 +36,8 @@ export class RefreshToken extends BaseModel {
       modelClass: CompanyBee,
       join: {
         from: ['refresh_tokens.user_id', 'refresh_tokens.bee_id'],
-        to: ['company_bee.user_id', 'company_bee.bee_id']
-      }
-    }
+        to: ['company_bee.user_id', 'company_bee.bee_id'],
+      },
+    },
   });
 }

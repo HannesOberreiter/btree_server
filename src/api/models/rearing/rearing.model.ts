@@ -2,6 +2,7 @@ import { Company } from '@models/company.model';
 import { RearingDetail } from './rearing_detail.model';
 import { RearingType } from './rearing_type.model';
 import { ExtModel } from '../base.model';
+import { RearingStep } from './rearing_step.model';
 
 export class Rearing extends ExtModel {
   id!: number;
@@ -17,6 +18,7 @@ export class Rearing extends ExtModel {
   company?: Company;
   start?: RearingDetail;
   type?: RearingType;
+  step?: RearingStep;
 
   constructor() {
     super();
@@ -37,8 +39,8 @@ export class Rearing extends ExtModel {
       note: { type: 'string', maxLength: 2000 },
       type_id: { type: 'integer' },
       detail_id: { type: 'integer' },
-      user_id: { type: 'integer' }
-    }
+      user_id: { type: 'integer' },
+    },
   };
 
   static relationMappings = () => ({
@@ -47,24 +49,32 @@ export class Rearing extends ExtModel {
       modelClass: Company,
       join: {
         from: ['rearings.user_id'],
-        to: ['company.id']
-      }
+        to: ['company.id'],
+      },
     },
     start: {
       relation: Rearing.HasOneRelation,
       modelClass: RearingDetail,
       join: {
         from: ['rearings.detail_id'],
-        to: ['rearing_details.id']
-      }
+        to: ['rearing_details.id'],
+      },
     },
     type: {
       relation: Rearing.HasOneRelation,
       modelClass: RearingType,
       join: {
         from: ['rearings.type_id'],
-        to: ['rearing_types.id']
-      }
-    }
+        to: ['rearing_types.id'],
+      },
+    },
+    step: {
+      relation: Rearing.HasManyRelation,
+      modelClass: RearingStep,
+      join: {
+        from: ['rearings.type_id'],
+        to: ['rearing_steps.type_id'],
+      },
+    },
   });
 }

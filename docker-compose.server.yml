@@ -1,0 +1,25 @@
+# Example Script for Server
+# The standard entry point will run knex migrate:latest on given environment and start pm2 server listen
+version: '2.2'
+services:
+  btree-server:
+    container_name: btree-server
+    image: hannesoberreiter/btree_server:latest
+    # To run other knex commands eg:
+    # entrypoint: [ "/bin/sh", "-c", "npm run prod:knex migrate:latest" ]
+    restart: always
+    environment:
+      ENVIRONMENT: production
+    volumes:
+      - ./env:/home/node/app/env
+      # Logs folders needs to allow access  (eg. 775, 660 access.log, combined-dist.log, cron-dist.log, error-dist.log)
+      - ./logs:/home/node/app/logs
+      # Optional used for migrating old database
+      - ./migration:/home/node/app/db/seeds
+    ports:
+      - "1338:8101"
+
+networks:
+  default:
+    external: true
+    name: database_btree-db-network
