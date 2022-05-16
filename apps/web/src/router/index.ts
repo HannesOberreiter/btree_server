@@ -43,7 +43,14 @@ export default route(function ({ store }) {
   const refreshStore = useRefreshStore(store);
 
   Router.beforeEach(async (to, from, next) => {
-    // Stop any Loading Bars or Effects
+    /**
+      Stopping pending loading bars
+      The first command will hide ones which are full but wont get removed
+      does happen sometimes don't know when this "bug" happens
+     */
+    Array.from(
+      document.getElementsByClassName('q-loading-bar--bottom')
+    ).forEach((e) => e.setAttribute('style', 'opacity:0;'));
     if (LoadingBar.isActive) LoadingBar.stop();
     if (Loading.isActive) Loading.hide();
     if (
