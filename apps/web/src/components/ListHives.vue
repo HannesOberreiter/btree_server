@@ -15,7 +15,10 @@
         class="row flex-center q-pa-sm"
         style="border: 0.01em; border-style: solid"
       >
-        <div class="col-12 col-md-2 text-right">
+        <div
+          class="col-12 col-sm-2 col-md-2"
+          :class="$q.platform.is.mobile ? 'text-right' : ''"
+        >
           <btn-base-group :spread="false">
             <btn-base
               flat
@@ -32,7 +35,7 @@
           </btn-base-group>
         </div>
         <div
-          class="col-12 col-md-8"
+          class="col-12 col-sm-10 col-md-8"
           style="cursor: pointer"
           @click="setActiveStep(hive.id, hive.active ? false : true)"
         >
