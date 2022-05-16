@@ -48,7 +48,7 @@
           :loading="useDropbox.state.isLoading"
           :label="$t('download')"
           color="secondary"
-          @click="onDownload"
+          @click="onDownload(service, file)"
         >
           <q-tooltip v-if="file">
             {{ round(file.size / 1e6, 1) + ' MB' }}
@@ -70,71 +70,93 @@ const useDropbox = useServiceDropbox();
 const file = ref(null);
 const notFound = ref(false);
 const display = ref(null);
+const service = ref('url');
 
 defineEmits([...useDialogPluginComponent.emits]);
 const props = defineProps({
-  service: {
-    type: String,
-    default: 'dropbox',
-  },
-  id: {
+  value: {
     type: String,
     required: true,
   },
 });
 
+const url = toRef(props, 'value');
+
 watch(
-  () => props.id,
+  url,
   (cur) => {
-    if (cur) {
-      if (props.service === 'dropbox') {
-        useDropbox
-          .getThumbnail(cur)
-          .then((response) => {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            file.value = response.result;
-            display.value = isImage(file.value.name)
-              ? URL.createObjectURL(file.value.fileBlob)
-              : null;
-          })
-          .catch((e) => {
-            if (e.status === 409) {
-              useDropbox
-                .getMeta(cur)
-                .then((response: any) => (file.value = response.result))
-                .catch((e) => {
-                  file.value = true;
-                  notFound.value = true;
-                  console.error(e);
-                });
-            } else {
-              file.value = true;
-              notFound.value = true;
-            }
-            console.error(e);
-          });
-      } else if (props.service === 'btree') {
-        file.value = {
-          name: props.id,
-          size: 0,
-        };
-        display.value = props.id;
-      }
-    }
+    if (cur.trim()) getService(cur.trim());
   },
   { immediate: true }
 );
 
-function onDownload() {
-  if (props.service === 'dropbox') {
-    useDropbox.download(file.value.id);
-  } else if (props.service === 'btree') {
-    const link = document.createElement('a');
-    link.href = props.id;
-    link.setAttribute('download', 'download.jpg');
-    document.body.appendChild(link);
-    link.click();
+function getService(value: string) {
+  const values = value.split(/:(.*)/s);
+  switch (values[0]) {
+    case 'dropbox': {
+      serviceDropbox(values[1]);
+      service.value = 'dropbox';
+      break;
+    }
+    default: {
+      service.value = 'url';
+      serviceUrl(value);
+    }
+  }
+}
+
+function serviceDropbox(value: string) {
+  useDropbox
+    .getThumbnail(value)
+    .then((response) => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      file.value = response.result;
+      display.value = isImage(file.value.name)
+        ? URL.createObjectURL(file.value.fileBlob)
+        : null;
+    })
+    .catch((e) => {
+      if (e.status === 409) {
+        useDropbox
+          .getMeta(value)
+          .then((response: any) => (file.value = response.result))
+          .catch((e) => {
+            file.value = true;
+            notFound.value = true;
+            console.error(e);
+          });
+      } else {
+        file.value = true;
+        notFound.value = true;
+      }
+      console.error(e);
+    });
+}
+
+function serviceUrl(value: string) {
+  file.value = {
+    id: value,
+    name: value,
+    size: 0,
+  };
+  display.value = value;
+}
+
+function onDownload(service: string, file: any) {
+  switch (service) {
+    case 'dropbox': {
+      useDropbox.download(file.id);
+      break;
+    }
+    case 'url': {
+      const link = document.createElement('a');
+      link.href = file.id;
+      link.setAttribute('download', 'download.jpg');
+      document.body.appendChild(link);
+      link.click();
+      break;
+    }
   }
 }
 </script>
