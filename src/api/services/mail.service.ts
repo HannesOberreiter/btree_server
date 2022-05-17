@@ -1,5 +1,5 @@
 import * as nodemailer from 'nodemailer';
-import { env, mailConfig } from '@config/environment.config';
+import { env, frontend, mailConfig } from '@config/environment.config';
 import { readFileSync } from 'fs';
 import p from 'path';
 import { badImplementation, notFound } from '@hapi/boom';
@@ -17,7 +17,7 @@ export class MailService {
   baseUrl: string;
 
   constructor() {
-    this.baseUrl = 'https://app.btree.at/';
+    this.baseUrl = frontend;
   }
 
   private async setup() {
