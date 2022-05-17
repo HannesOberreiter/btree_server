@@ -5284,6 +5284,11 @@ vue-i18n@^9.1.10:
     "@intlify/vue-devtools" "9.1.10"
     "@vue/devtools-api" "^6.0.0-beta.7"
 
+vue-matomo@^4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/vue-matomo/-/vue-matomo-4.1.0.tgz#17b513bc8ac60e168bfa8190ad05b3257a3c441e"
+  integrity sha512-y+tdmhY835Ip3EAGfIAgA33+aBYrvRT7fNnBnA7bSM459XpoWXgqJKdbopVpEUrxCPIq8IkuF7g4KqSLc0Fa3w==
+
 vue-query@^1.23.0:
   version "1.23.0"
   resolved "https://registry.yarnpkg.com/vue-query/-/vue-query-1.23.0.tgz#c189136d265abf6b099e849fee03592d31f19951"

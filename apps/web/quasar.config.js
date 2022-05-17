@@ -32,7 +32,13 @@ module.exports = configure(function (ctx) {
     // app boot file (/src/boot)
     // --> boot files are part of "main.js"
     // https://v2.quasar.dev/quasar-cli-vite/boot-files
-    boot: ['i18n', 'quasar-lang-pack', 'quasar-loading-bar', 'vue-query'],
+    boot: [
+      'i18n',
+      'quasar-lang-pack',
+      'quasar-loading-bar',
+      'vue-query',
+      'vue-matomo',
+    ],
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#css
     css: ['app.scss'],
@@ -72,6 +78,8 @@ module.exports = configure(function (ctx) {
         DROPBOX_CLIENT_ID: process.env.DROPBOX_CLIENT_ID,
         OPENWEATHER_APP_ID: process.env.OPENWEATHER_APP_ID,
         BACKEND_URL: process.env.BACKEND_URL,
+        MATOMO_HOST: process.env.MATOMO_HOST,
+        MATOMO_SITE_ID: process.env.MATOMO_SITE_ID,
       },
       // rawDefine: {}
       // ignorePublicFolder: true,
