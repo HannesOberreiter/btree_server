@@ -14,7 +14,7 @@ describe('Routes resolving', () => {
   });
 
   describe('/report-violation', () => {
-    it('204 - OK', (done) => {
+    it('200 - OK', (done) => {
       request(server)
         .post('/api/v1/report-violation')
         .set('Content-Type', process.env.CONTENT_TYPE)

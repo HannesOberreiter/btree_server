@@ -20,6 +20,7 @@
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "serve": "nodemon",
     "build": "tsc",
+    "kickstart": "concurrently -k --restart-after 1000 'npm:dev:build' 'npm:dev:serve' 'npm:test:watch'",
     "dev:serve": "ENVIRONMENT=development nodemon",
     "dev:build": "tsc -watch",
     "dev:knex": "ENVIRONMENT=development knex",
@@ -28,7 +29,8 @@
     "mail": "mjml mjml/* -o mails/ --config.beautify true --config.minify true",
     "prettier-format": "prettier --config .prettierrc 'src/**/*.ts' --write",
     "init:test": "ENVIRONMENT=test knex migrate:latest && ENVIRONMENT=test knex seed:run",
-    "test:e2e": "npx mocha ./test/e2e/00-api.e2e.test.js  --R spec --ui bdd --env test"
+    "test:e2e": "npx mocha ./test/e2e/00-api.e2e.test.js  --R spec --ui bdd --env test",
+    "test:watch": "npx mocha ./test/e2e/00-api.e2e.test.js  --watch dist test --env test"
   },
   "_moduleAliases": {
     "@": "dist",
@@ -92,6 +94,7 @@
     "@typescript-eslint/parser": "^5.22.0",
     "chai": "^4.3.6",
     "chance": "^1.1.8",
+    "concurrently": "^7.2.0",
     "eslint": "^8.14.0",
     "eslint-config-prettier": "^8.5.0",
     "mocha": "^10.0.0",
