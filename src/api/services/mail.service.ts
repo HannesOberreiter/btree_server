@@ -52,6 +52,8 @@ export class MailService {
     name = 'false',
     email = 'false',
   }: customMail) {
+    if (env === 'test') return;
+
     await this.setup();
     // we only have german and english mails
     lang = lang !== 'de' ? 'en' : lang;
@@ -66,7 +68,16 @@ export class MailService {
     }
 
     if (name !== 'false') {
-      htmlMail = htmlMail.replace('Imker/in', name);
+      switch (lang) {
+        case 'en': {
+          htmlMail.replace('Beekeeper', name);
+          break;
+        }
+        case 'de': {
+          htmlMail.replace('Imker/in', name);
+          break;
+        }
+      }
     }
     if (email !== 'false') {
       htmlMail = htmlMail.replace(/%mail%/g, email);
@@ -88,7 +99,9 @@ export class MailService {
         console.log(`error: ${error}`);
         throw badImplementation('E-Mail could not be sent.');
       }
-      console.log(nodemailer.getTestMessageUrl(info));
+      if (env !== 'production') {
+        console.log(nodemailer.getTestMessageUrl(info));
+      }
       console.log(`Message Sent ${info.response}`);
     });
   }
