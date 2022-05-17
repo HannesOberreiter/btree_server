@@ -12,6 +12,7 @@
           v-model="state.date"
           :values="values"
           :reset="reset"
+          :required="isEdit ? false : true"
         ></form-input-date>
       </div>
       <div class="col-1 text-center items-center">
