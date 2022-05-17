@@ -21,7 +21,7 @@
     "serve": "nodemon",
     "build": "tsc",
     "kickstart": "concurrently -k --restart-after 1000 'npm:dev:build' 'npm:dev:serve' 'npm:test:watch'",
-    "dev:serve": "ENVIRONMENT=development nodemon",
+    "dev:serve": "ENVIRONMENT=development nodemon --delay 2000ms",
     "dev:build": "tsc -watch",
     "dev:knex": "ENVIRONMENT=development knex",
     "dev:knex-seed": "ENVIRONMENT=staging knex seed:run",
