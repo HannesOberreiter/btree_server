@@ -38,21 +38,23 @@ docker-compose -f docker-compose-*.yml rm
 
 ## Development
 
-Nodemon needs to be installed globally.
+First migrate and seed your database with knex commands, beforehand make sure that your development and testing database is up and running.
 
 ```bash
-npm i -g nodemon
+npm run dev:init
+npm run test:init
 ```
 
-- Create Directories
-- Compile and Watch Typescript
-- Start nodemon
-- Run knex commands (migrate, seed etc.)
+Next build the html mails with `mjml`
 
 ```bash
-npm run dev:build 
-npm run dev:serve
-npm run dev:knex <options>
+npm run mail
+```
+
+Now you can kickstart the server, it will run `tsc`, `nodemon` and `mocha` in watch mode for continuos development and testing.
+
+```bash
+npm run kickstart
 ```
 
 ## MySQL

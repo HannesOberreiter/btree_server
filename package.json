@@ -17,20 +17,21 @@
   },
   "homepage": "https://github.com/HannesOberreiter/btree_server#readme",
   "scripts": {
-    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "serve": "nodemon",
     "build": "tsc",
+    "migrate": "knex migrate:latest",
+    "mail": "mjml mjml/* -o mails/ --config.beautify true --config.minify true",
     "kickstart": "concurrently -k --restart-after 1000 'npm:dev:build' 'npm:dev:serve' 'npm:test:watch'",
+    "dev:init": "ENVIRONMENT=development knex migrate:latest && ENVIRONMENT=development knex seed:run",
     "dev:serve": "ENVIRONMENT=development nodemon --delay 2000ms",
     "dev:build": "tsc -watch",
     "dev:knex": "ENVIRONMENT=development knex",
     "dev:knex-seed": "ENVIRONMENT=staging knex seed:run",
-    "migrate": "knex migrate:latest",
-    "mail": "mjml mjml/* -o mails/ --config.beautify true --config.minify true",
-    "prettier-format": "prettier --config .prettierrc 'src/**/*.ts' --write",
-    "init:test": "ENVIRONMENT=test knex migrate:latest && ENVIRONMENT=test knex seed:run",
+    "test:init": "ENVIRONMENT=test knex migrate:latest && ENVIRONMENT=test knex seed:run",
     "test:e2e": "npx mocha ./test/e2e/00-api.e2e.test.js  --R spec --ui bdd --env test",
-    "test:watch": "npx mocha ./test/e2e/00-api.e2e.test.js  --watch dist test --env test"
+    "test:watch": "npx mocha ./test/e2e/00-api.e2e.test.js  --watch dist test --env test",
+    "prettier-format": "prettier --config .prettierrc 'src/**/*.ts' --write",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
   },
   "_moduleAliases": {
     "@": "dist",
