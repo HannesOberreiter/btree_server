@@ -1,6 +1,5 @@
 import { ENVIRONMENT } from '@enums/environment.enum';
 import p from 'path';
-import * as nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
 
 /**
@@ -51,25 +50,6 @@ class EnvironmentConfiguration {
     if (result.error) {
       throw result.error;
     }
-  }
-
-  static async mail() {
-    const mailConfig = {
-      host: process.env.MAIL_SMTP,
-      port: Number(process.env.MAIL_PORT),
-      secure: true,
-      auth: {
-        user: process.env.MAIL_FROM,
-        pass: process.env.MAIL_PASSWORD,
-      },
-    };
-    if (this.environment !== 'production') {
-      const testAccount = await nodemailer.createTestAccount();
-      mailConfig.secure = false;
-      mailConfig.auth.user = testAccount.user;
-      mailConfig.auth.pass = testAccount.pass;
-    }
-    return mailConfig;
   }
 }
 
@@ -134,7 +114,15 @@ const knexConfig = {
   },
 };
 
-const mailConfig = EnvironmentConfiguration.mail();
+const mailConfig = {
+  host: process.env.MAIL_SMTP,
+  port: Number(process.env.MAIL_PORT),
+  secure: true,
+  auth: {
+    user: process.env.MAIL_FROM,
+    pass: process.env.MAIL_PASSWORD,
+  },
+};
 
 export {
   knexConfig,

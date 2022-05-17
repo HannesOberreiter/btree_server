@@ -1,5 +1,5 @@
 import * as nodemailer from 'nodemailer';
-import { mailConfig } from '@config/environment.config';
+import { env, mailConfig } from '@config/environment.config';
 import { readFileSync } from 'fs';
 import p from 'path';
 import { badImplementation, notFound } from '@hapi/boom';
@@ -21,7 +21,14 @@ export class MailService {
   }
 
   private async setup() {
-    const conf = await mailConfig;
+    const conf = mailConfig;
+    if (env !== 'production') {
+      await nodemailer.createTestAccount((_err, account) => {
+        mailConfig.secure = false;
+        mailConfig.auth.user = account.user;
+        mailConfig.auth.pass = account.pass;
+      });
+    }
     this._transporter = nodemailer.createTransport(conf);
   }
 
@@ -43,7 +50,7 @@ export class MailService {
     subject,
     key = 'false',
     name = 'false',
-    email = 'false'
+    email = 'false',
   }: customMail) {
     await this.setup();
     // we only have german and english mails
@@ -72,10 +79,11 @@ export class MailService {
       from: 'no-reply@btree.at',
       to: to,
       subject: title,
-      html: htmlMail
+      html: htmlMail,
     };
 
     this._transporter.sendMail(options, (error, info) => {
+      this._transporter.close();
       if (error) {
         console.log(`error: ${error}`);
         throw badImplementation('E-Mail could not be sent.');

@@ -60,4 +60,12 @@ export class HTTPServer {
       );
     }
   }
+
+  /**
+   * @description stop servers
+   */
+  stop(callback = null): HttpServer | HttpsServer {
+    task.stop();
+    return this.http.close(callback);
+  }
 }

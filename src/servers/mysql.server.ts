@@ -11,8 +11,7 @@ export class MySQLServer {
   static knex = Knex(knexConfig);
   start(): void {
     try {
-      const knex = Knex(knexConfig);
-      Model.knex(knex);
+      Model.knex(MySQLServer.knex);
 
       if (env !== ENVIRONMENT.test) {
         Container.resolve('Logger').log(
@@ -27,6 +26,13 @@ export class MySQLServer {
         `MySQL connection error : ${error.message}`,
         { label: 'MySQL' }
       );
+    }
+  }
+  stop(): void {
+    try {
+      MySQLServer.knex.destroy();
+    } catch (error) {
+      console.error(error);
     }
   }
 }

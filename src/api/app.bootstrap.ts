@@ -14,10 +14,12 @@ const httpServer = new HTTPServer(application.app);
 
 httpServer.start();
 
-const wrappedHttpServerForTesting = httpServer.http;
-const wrappedApplicationForTesting = application.app;
+const wrappedServerForTesting = httpServer;
+const wrappedHttpForTesting = httpServer.http;
+const wrappedSQLServerForTesting = dbServer;
 
 export {
-  wrappedApplicationForTesting as application,
-  wrappedHttpServerForTesting as server
+  wrappedServerForTesting as boot,
+  wrappedHttpForTesting as server,
+  wrappedSQLServerForTesting as dbServer,
 };
