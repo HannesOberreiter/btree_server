@@ -8,9 +8,8 @@
           :confirm="false"
         ></form-user-password>
         <form-input-email
-          v-model:modelMail="state.email"
+          v-model="state.email"
           :disable-mail="true"
-          @update:model-mail="(value) => (state.email = value)"
         ></form-input-email>
         <form-user-password
           v-model:modelPassword="state.newPassword"
