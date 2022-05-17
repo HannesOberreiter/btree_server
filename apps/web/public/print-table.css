@@ -1,0 +1,39 @@
+table {
+  width: 100%;
+  page-break-after: auto;
+}
+/* Header and footer on each page */
+thead {
+  display: table-header-group;
+}
+tfoot {
+  display: table-footer-group;
+}
+th {
+  font-weight: bold;
+}
+
+td {
+  padding-left: 10px;
+}
+
+/* Hide first select column */
+table td:first-child,
+table th:first-child {
+  display: none;
+}
+
+/* Table Border */
+table,
+th,
+td {
+  border: 1px solid rgb(214, 213, 213);
+  border-collapse: collapse;
+}
+
+/* No page breaks inside td or tr */
+tr,
+td {
+  page-break-inside: avoid;
+  page-break-after: auto;
+}

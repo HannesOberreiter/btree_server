@@ -336,6 +336,7 @@
     "refresh": "Upgrade b.tree",
     "newContent": "Updated content is available. Please refresh the page."
   },
+  "printTable": "Print Table",
   "inputUrl": "Input an external url",
   "noValidUrl": "Input is no valid url.",
   "signup": {
