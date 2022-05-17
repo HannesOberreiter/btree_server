@@ -192,6 +192,7 @@
             v-model="state.treatment_vet"
             :values="values"
             :reset="reset"
+            table-id="vet_id"
             table="treatment_vets"
             label="vet"
           ></form-dropdown-option>
