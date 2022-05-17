@@ -1,6 +1,9 @@
 <template>
-  <q-td @click="show">
-    {{ trunc ? truncate(value ? value : '', { length: 50 }) : value }}
+  <q-td class="print-hide" @click="show">
+    <span class="print-hide">
+      {{ trunc ? truncate(value ? value : '', { length: 50 }) : value }}
+    </span>
+    <span class="print-only">{{ value }}</span>
   </q-td>
 </template>
 

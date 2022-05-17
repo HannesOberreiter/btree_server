@@ -141,9 +141,7 @@ const rules = computed(() => {
     return {
       [props.label]: {
         minValue: (value: string) => {
-          return (
-            value === null || dayjs(value, props.dateFormat, true).isValid()
-          );
+          return !value || dayjs(value, props.dateFormat, true).isValid();
         },
       },
     };

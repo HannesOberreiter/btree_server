@@ -16,11 +16,6 @@
         binary-state-sort
         @request="onRequest"
       >
-        <template #body-cell-name="props">
-          <table-col-link :id="props.row.id" :label="props.value" link="hive">
-          </table-col-link>
-        </template>
-
         <!-- eslint-disable-next-line vue/valid-v-slot -->
         <template #body-cell-hive_location.apiary_name="props">
           <table-col-link

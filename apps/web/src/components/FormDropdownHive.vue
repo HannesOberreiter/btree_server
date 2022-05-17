@@ -6,7 +6,7 @@
     :loading="isLoadingApiary || isLoadingHive"
     :disable="isLoadingApiary || isLoadingHive"
     :options="optionsApiary"
-    clearable
+    :clearable="false"
     multiple
     options-dense
     :use-input="!$q.platform.is.mobile"

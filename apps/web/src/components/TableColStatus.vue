@@ -5,9 +5,14 @@
       style="cursor: pointer"
       :color="value ? 'positive' : 'negative'"
       size="sm"
+      class="print-hide"
       @click="changeStatus"
     >
     </q-icon>
+    <span class="print-only">
+      <span v-if="value"> ✔ </span>
+      <span v-else> ✘ </span>
+    </span>
   </q-td>
 </template>
 

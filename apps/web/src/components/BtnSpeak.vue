@@ -1,6 +1,6 @@
 <template>
   <btn-base
-    v-if="speech.isSupported"
+    v-if="speech.isSupported && !$q.platform.is.safari"
     v-close-popup
     flat
     dense
@@ -25,8 +25,10 @@ import { useSpeechRecognition } from '@vueuse/core';
 import { useApiariesQuery, useHivesQuery } from '~/composables/useQuery';
 import Fuse from 'fuse.js';
 import { useNotification } from '~/composables/useNotification';
+import { useQuasar } from 'quasar';
 
 const router = useRouter();
+const $q = useQuasar();
 const { t } = useI18n();
 const notification = useNotification();
 const speech = useSpeechRecognition({
@@ -75,7 +77,7 @@ const commands = [
   },
 ] as Array<Haystack>;
 
-if (speech.isSupported) {
+if (speech.isSupported && !$q.platform.is.safari) {
   watch(
     [hives, apiaries],
     () => {
@@ -107,26 +109,28 @@ if (speech.isSupported) {
   );
 
   function buildGrammer(haystack: Array<Haystack>) {
-    const aliases = haystack.map((obj: Haystack) => obj.aliases.join(' | '));
-    const grammar = `#JSGF V1.0; grammar at.btree.commands; public <commands> = ${aliases.join(
-      ' | '
-    )} ;`;
-    const SpeechGrammarList =
-      (window as any).SpeechGrammarList ||
-      (window as any).webkitSpeechGrammarList;
-    const speechRecognitionList = new SpeechGrammarList();
-    speechRecognitionList.addFromString(grammar, 1);
-    speech.recognition.grammars = speechRecognitionList;
+    try {
+      const aliases = haystack.map((obj: Haystack) => obj.aliases.join(' | '));
+      const grammar = `#JSGF V1.0; grammar at.btree.commands; public <commands> = ${aliases.join(
+        ' | '
+      )} ;`;
+      const SpeechGrammarList =
+        (window as any).SpeechGrammarList ||
+        (window as any).webkitSpeechGrammarList;
+      const speechRecognitionList = new SpeechGrammarList();
+      speechRecognitionList.addFromString(grammar, 1);
+      speech.recognition.grammars = speechRecognitionList;
+    } catch (e) {
+      console.error(e);
+    }
   }
 
-  if (speech.isSupported) {
-    watch(speech.result, (cur) => {
-      if (cur.trim()) {
-        spoken.value = cur.toLowerCase();
-        fuzzySearch(spoken.value, haystack.value);
-      }
-    });
-  }
+  watch(speech.result, (cur) => {
+    if (cur.trim()) {
+      spoken.value = cur.toLowerCase();
+      fuzzySearch(spoken.value, haystack.value);
+    }
+  });
 }
 
 function fuzzySearch(command: string, haystack: any) {

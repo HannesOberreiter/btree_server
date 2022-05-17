@@ -47,6 +47,7 @@
             <q-chip
               v-if="!data.modus"
               color="negative"
+              class="text-white"
               :label="`
                 ${$t('inactive')}
                 (${useDate.displayFormat(data.modus_date, 'date')})

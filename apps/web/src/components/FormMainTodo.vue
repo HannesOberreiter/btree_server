@@ -12,9 +12,10 @@
           v-model="state.date"
           :values="values"
           :reset="reset"
+          :required="isEdit ? false : true"
         ></form-input-date>
       </div>
-      <div class="col-1 text-center items-center">
+      <div v-if="!isEdit" class="col-1 text-center items-center">
         <btn-base
           flat
           round

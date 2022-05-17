@@ -53,10 +53,15 @@ import useVuelidate from '@vuelidate/core';
 import { PropType } from 'vue';
 import { isEmpty } from 'lodash-es';
 import { useDateFormat } from '~/composables/useDate';
+import { required } from '~/helpers/i18n-validators';
 
 const qDateProxy = ref(false);
 const useDate = useDateFormat();
+const { t } = useI18n();
 const props = defineProps({
+  label: {
+    default: 'time',
+  },
   modelValue: {
     type: null as unknown as PropType<string | null>,
     validator: (v: any) => typeof v === 'string' || v === null,
@@ -69,6 +74,10 @@ const props = defineProps({
   values: {
     type: Object,
     default: null,
+  },
+  required: {
+    type: Boolean,
+    default: false,
   },
 });
 const emit = defineEmits(['update:modelValue']);
@@ -83,14 +92,28 @@ modelValue.value = disable.value ? null : modelValue.value;
 const state = {
   time: modelValue,
 };
-const rules = {
-  time: {
-    minValue: (value: string) => {
-      if (value === null) return true;
-      return useDate.validateFormat(value, 'HH:mm');
-    },
-  },
-};
+
+const rules = computed(() => {
+  if (props.required) {
+    return {
+      [props.label]: {
+        required: required(t(props.label)),
+        minValue: (value: string) => {
+          return useDate.validateFormat(value, 'HH:mm');
+        },
+      },
+    };
+  } else {
+    return {
+      [props.label]: {
+        minValue: (value: string) => {
+          return !value || useDate.validateFormat(value, 'HH:mm');
+        },
+      },
+    };
+  }
+});
+
 const v = useVuelidate(rules, state, { $autoDirty: true });
 
 watch(values, () => {

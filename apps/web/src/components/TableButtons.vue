@@ -40,7 +40,7 @@
     <table-button-scale v-if="table === 'scale_data'" @change="emit('change')">
     </table-button-scale>
 
-    <q-btn-dropdown no-caps color="info" label="...">
+    <q-btn-dropdown no-caps color="info" label="..." class="print-hide">
       <q-list>
         <q-item
           v-if="table === 'hive'"
@@ -79,6 +79,17 @@
           </q-item-section>
           <q-item-section>
             <q-item-label>{{ $t('exportCSV') }}</q-item-label>
+          </q-item-section>
+        </q-item>
+
+        <q-item v-close-popup clickable @click="onPrint">
+          <q-item-section avatar>
+            <q-avatar>
+              <q-icon name="fas fa-print"></q-icon>
+            </q-avatar>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>{{ $t('printTable') }}</q-item-label>
           </q-item-section>
         </q-item>
 
@@ -160,13 +171,17 @@ import { useNotification } from '~/composables/useNotification';
 import { useTableFilterStore } from '~/stores/tableFilter';
 import DialogFilter from './DialogFilter.vue';
 import DialogForm from './DialogForm.vue';
+import { useAuthUserStore } from '~/stores/auth';
 
 const storeFilter = useTableFilterStore();
 const useDate = useDateFormat();
 const api = useApiFetch();
+const router = useRouter();
 const { t } = useI18n();
 const $q = useQuasar();
 const notification = useNotification();
+const storeUser = useAuthUserStore();
+
 const props = defineProps({
   selected: {
     type: Array,
@@ -308,5 +323,43 @@ function onExport() {
       icon: 'warning',
     });
   }
+}
+
+function onPrint() {
+  const printWindow = window.open('', '', 'height=200,width=400');
+  printWindow.document.write('<html>');
+  printWindow.document.write(
+    `
+    <head>
+      <title>
+        btree_${
+          router.currentRoute.value.meta.title
+            ? t(router.currentRoute.value.meta.title as string)
+            : ''
+        }_${useDate.isoFormat(useDate.getCurrent())}
+      </title>
+      <link rel="stylesheet" type="text/css" href="/print-table.css?timestamp=${Date.now()}" />
+    </head>
+    `
+  );
+  const table = document.getElementsByClassName('q-table')[0];
+  printWindow.document.write(
+    `
+    <body>
+      ${table.outerHTML}
+      <br/>
+      <b>${storeUser.getCompany.name}</b> -
+      ${useDate.displayFormat(useDate.getCurrent())} [b.tree]
+    </body>
+    `
+  );
+  printWindow.document.write('</html>');
+  printWindow.document.close();
+  printWindow.print();
+
+  printWindow.addEventListener('afterprint', () => printWindow.close());
+  printWindow.onafterprint = () => printWindow.close();
+
+  return;
 }
 </script>
