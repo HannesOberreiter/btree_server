@@ -96,7 +96,10 @@ export class HiveController extends Controller {
           'hives.user_id': req.user.user_id,
           'hives.deleted': deleted === 'true',
         })
-        .page(offset, parseInt(limit) === 0 ? 10 : limit);
+        .page(
+          offset ? offset : 0,
+          parseInt(limit) === 0 || !limit ? 10 : limit
+        );
 
       if (modus) {
         query.where('hives.modus', modus === 'true');
@@ -122,19 +125,23 @@ export class HiveController extends Controller {
           console.log(e);
         }
       }
-
-      if (Array.isArray(order)) {
-        order.forEach((field, index) => query.orderBy(field, direction[index]));
-      } else {
-        query.orderBy(order, direction);
+      if (order) {
+        if (Array.isArray(order)) {
+          order.forEach((field, index) =>
+            query.orderBy(field, direction[index])
+          );
+        } else {
+          query.orderBy(order, direction);
+        }
       }
-
-      if (q.trim() !== '') {
-        query.where((builder) => {
-          builder
-            .orWhere('hives.name', 'like', `%${q}%`)
-            .orWhere('hive_location.apiary_name', 'like', `%${q}%`);
-        });
+      if (q) {
+        if (q.trim() !== '') {
+          query.where((builder) => {
+            builder
+              .orWhere('hives.name', 'like', `%${q}%`)
+              .orWhere('hive_location.apiary_name', 'like', `%${q}%`);
+          });
+        }
       }
       const result = await query.orderBy('id');
       res.locals.data = result;
@@ -189,7 +196,7 @@ export class HiveController extends Controller {
   async getTasks(req: IUserRequest, res: Response, next: NextFunction) {
     try {
       const id = req.params.id;
-      const year = req.query.year;
+      const year = req.query.year ? req.query.year : new Date().getFullYear();
       const result = await Hive.transaction(async (trx) => {
         await Hive.query(trx).findById(id).throwIfNotFound().where({
           'hives.user_id': req.user.user_id,
@@ -316,16 +323,16 @@ export class HiveController extends Controller {
     try {
       const result = await Hive.transaction(async (trx) => {
         const res = await Hive.query()
-          .select('hive_id', 'hive_deleted')
+          .select('id', 'deleted')
           .where('user_id', req.user.user_id)
-          .whereIn('hive_id', req.body.ids);
+          .whereIn('id', req.body.ids);
 
         const softIds = [];
         const hardIds = [];
         map(res, (obj) => {
-          if ((obj.hive_deleted || hardDelete) && !restoreDelete)
-            hardIds.push(obj.hive_id);
-          else softIds.push(obj.hive_id);
+          if ((obj.deleted || hardDelete) && !restoreDelete)
+            hardIds.push(obj.id);
+          else softIds.push(obj.id);
         });
 
         if (hardIds.length > 0) {
