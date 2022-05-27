@@ -54,6 +54,7 @@ export class ProxyRouter {
     { segment: '/external/', router: ExternalRoute },
     { segment: '/feed/', router: FeedRouter },
     { segment: '/fieldsetting/', router: FieldSettingRouter },
+    { segment: '/field_setting/', router: FieldSettingRouter },
     { segment: '/harvest/', router: HarvestRouter },
     { segment: '/hive/', router: HiveRouter },
     { segment: '/queen/', router: QueenRouter },
