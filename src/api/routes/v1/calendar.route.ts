@@ -64,8 +64,8 @@ export class CalendarRouter extends Router {
       .route('/rearing')
       .get(
         Validator.validate([
-          query('start').isString().if(query('id').exists()).optional(),
-          query('end').isString().if(query('id').exists()).optional(),
+          query('start').if(query('id').not().exists()).isString(),
+          query('end').if(query('id').not().exists()).isString(),
           query('id').optional(),
         ]),
         Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
