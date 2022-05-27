@@ -42,12 +42,16 @@ export class ApiaryController extends Controller {
     try {
       const { order, direction, offset, limit, modus, deleted, q, details } =
         req.query as any;
+
       const query = Apiary.query()
         .where({
           'apiaries.user_id': req.user.user_id,
           'apiaries.deleted': deleted === 'true',
         })
-        .page(offset, parseInt(limit) === 0 ? 10 : limit);
+        .page(
+          offset ? offset : 0,
+          parseInt(limit) === 0 || !limit ? 10 : limit
+        );
 
       if (modus) {
         query.where('apiaries.modus', modus === 'true');
@@ -60,17 +64,22 @@ export class ApiaryController extends Controller {
       } else {
         query.withGraphJoined('[hive_count]');
       }
-
-      if (Array.isArray(order)) {
-        order.forEach((field, index) => query.orderBy(field, direction[index]));
-      } else {
-        query.orderBy(order, direction);
+      if (order) {
+        if (Array.isArray(order)) {
+          order.forEach((field, index) =>
+            query.orderBy(field, direction[index])
+          );
+        } else {
+          query.orderBy(order, direction);
+        }
       }
 
-      if (q.trim() !== '') {
-        query.where((builder) => {
-          builder.orWhere('name', 'like', `%${q}%`);
-        });
+      if (q) {
+        if (q.trim() !== '') {
+          query.where((builder) => {
+            builder.orWhere('name', 'like', `%${q}%`);
+          });
+        }
       }
       const result = await query.orderBy('id');
       res.locals.data = result;
