@@ -44,7 +44,7 @@ export class User extends ExtModel {
 
       state: { type: 'integer' },
       lang: { type: 'string', minLength: 2, maxLength: 3, enum: ['de', 'en'] },
-      format: { type: 'number', maxLength: 1, enum: [1, 2] },
+      format: { type: 'number', enum: [1, 2] },
       acdate: { type: 'boolean' },
       newsletter: { type: 'boolean' },
       todo: { type: 'boolean' },
