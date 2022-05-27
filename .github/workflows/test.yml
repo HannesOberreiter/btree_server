@@ -12,9 +12,9 @@ jobs:
       DB_PASSWORD: root
     steps:
       - name: Set up MySQL
-      run: |
-        sudo systemctl start mysql
-        mysql -e 'CREATE DATABASE ${{ env.DB_DATABASE }};' -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }}
+        run: |
+          sudo systemctl start mysql
+          mysql -e 'CREATE DATABASE ${{ env.DB_DATABASE }};' -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }}
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
@@ -30,4 +30,3 @@ jobs:
         run: npm run ci:init
       - name: Run e2e tests
         run: npm run ci:e2e
-      
