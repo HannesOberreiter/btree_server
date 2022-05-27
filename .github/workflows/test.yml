@@ -12,6 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       ENVIRONMENT: ci
+      NODE_ENV: ci
       DB_DATABASE: ci_test
       DB_USER: root
       DB_PASSWORD: root
