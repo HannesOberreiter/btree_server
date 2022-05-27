@@ -10,6 +10,9 @@ const useNeedAuth = () => {
   function open() {
     state.show = true;
     Dialog.create({
+      focus: 'ok',
+      cancel: false,
+      persistent: true,
       title: 'Session time-out',
     }).onOk(async () => {
       await AuthService.logout();
