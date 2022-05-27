@@ -34,8 +34,8 @@ export class FieldSettingController extends Controller {
           settings: settings,
         });
       }
-      const result = await trx.commit();
-      res.locals.data = result;
+      await trx.commit();
+      res.locals.data = settings;
       next();
     } catch (e) {
       await trx.rollback();
