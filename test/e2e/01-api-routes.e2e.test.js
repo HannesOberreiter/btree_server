@@ -1,6 +1,4 @@
-let request = require('supertest');
-
-//let { server } = require(process.cwd() + '/dist/api/app.bootstrap');
+const request = require('supertest');
 
 describe('Routes resolving', () => {
   describe('/status', () => {
