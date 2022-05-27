@@ -149,11 +149,16 @@ const checkRefreshToken = async (
 };
 
 const buildUserAgent = (req: Request) => {
-  const userAgent = useragent.parse(req.headers['user-agent']);
-  const userAgentInsert = userAgent.os + userAgent.platform + userAgent.source;
-  return userAgentInsert.length > 65
-    ? userAgentInsert.substring(0, 64)
-    : userAgentInsert;
+  try {
+    const userAgent = useragent.parse(req.headers['user-agent']);
+    const userAgentInsert =
+      userAgent.os + userAgent.platform + userAgent.source;
+    return userAgentInsert.length > 65
+      ? userAgentInsert.substring(0, 64)
+      : userAgentInsert;
+  } catch (e) {
+    return 'noUserAgent';
+  }
 };
 
 const generateTokenResponse = async (
