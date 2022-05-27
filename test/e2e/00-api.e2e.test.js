@@ -39,4 +39,6 @@ describe('E2E API tests', () => {
   require('./04-field_setting-routes.e2e.test');
   require('./05-company-routes.e2e.test');
   require('./06-company-user-routes.e2e.test');
+  require('./07-apiary-routes.e2e.test');
+  require('./08-hive-routes.e2e.test');
 });
