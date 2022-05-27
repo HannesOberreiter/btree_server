@@ -12,7 +12,7 @@
           v-else
           flat
           icon="fas fa-user-minus"
-          @click="removeAccess(value.id, value.user.email)"
+          @click="removeAccess(value.bee_id, value.user.email)"
         />
       </q-item-section>
 
@@ -43,7 +43,7 @@
             flat
             :disable="value.user.id === user.id"
             icon="fas fa-user-shield"
-            @click="changeAccess(value.id, value.rank)"
+            @click="changeAccess(value.bee_id, value.rank)"
           >
             <span v-if="value.rank === 1" class="q-ml-sm">Admin</span>
             <span v-else-if="value.rank === 2" class="q-ml-sm">User</span>
