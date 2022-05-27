@@ -19,8 +19,9 @@ import {
   resetMail,
   resetPassword,
   unsubscribeMail,
-  buildUserAgent
+  buildUserAgent,
 } from '@utils/auth.util';
+import { env } from '@/config/environment.config';
 
 export class AuthController extends Controller {
   constructor() {
@@ -30,7 +31,7 @@ export class AuthController extends Controller {
   async confirmMail(req: Request, res: Response, next: NextFunction) {
     const key = req.body.confirm;
     const u = await User.query().findOne({
-      reset: key
+      reset: key,
     });
     if (!u) {
       return next(forbidden('Confirm Key not found'));
@@ -47,7 +48,7 @@ export class AuthController extends Controller {
   async resetRequest(req: Request, res: Response, next: NextFunction) {
     const email = req.body.email;
     const u = await User.query().findOne({
-      email: email
+      email: email,
     });
     if (!u) {
       // "Best Practice" don't tell anyone if the user exists
@@ -64,10 +65,13 @@ export class AuthController extends Controller {
         lang: result.lang,
         subject: 'pw_reset',
         name: result.firstname + ' ' + result.lastname,
-        key: result.reset
+        key: result.reset,
       });
-
-      res.locals.data = { email: result.email };
+      if (env === 'test') {
+        res.locals.data = { email: result.email, token: result.reset };
+      } else {
+        res.locals.data = { email: result.email };
+      }
       next();
     } catch (e) {
       next(e);
@@ -77,7 +81,7 @@ export class AuthController extends Controller {
   async unsubscribeRequest(req: Request, res: Response, next: NextFunction) {
     const email = req.body.email;
     const u = await User.query().findOne({
-      email: email
+      email: email,
     });
     if (!u) {
       // "Best Practice" don't tell anyone if the user exists
@@ -97,7 +101,7 @@ export class AuthController extends Controller {
   async resetPassword(req: Request, res: Response, next: NextFunction) {
     const { key, password } = req.body;
     const u = await User.query().findOne({
-      reset: key
+      reset: key,
     });
     if (!u) {
       return next(forbidden('Reset key not found!'));
@@ -111,7 +115,7 @@ export class AuthController extends Controller {
       await mailer.sendMail({
         to: result.email,
         lang: result.lang,
-        subject: 'pw_reseted'
+        subject: 'pw_reseted',
       });
       res.locals.data = { email: result.email };
       next();
@@ -131,18 +135,17 @@ export class AuthController extends Controller {
     inputUser.password = hash.password;
     inputUser.salt = hash.salt;
     // We use the password reset key for email confirmation
-    // if the user did not get it he can choose "forgot password"
+    // if the user did not get it is possible to use "forgot password" in addition
     // which will also activate the user
     inputUser.reset = randomBytes(64).toString('hex');
     // we only have german or english available for autofill
     const autofillLang = inputUser.lang == 'de' ? 'de' : 'en';
-
     try {
       await User.transaction(async (trx) => {
-        const u = await User.query(trx).insert(inputUser);
+        const u = await User.query(trx).insert({ ...inputUser, state: 0 });
         const c = await Company.query(trx).insert({
           name: inputCompany,
-          paid: dayjs().add(31, 'day').format('YYYY-MM-DD')
+          paid: dayjs().add(31, 'day').format('YYYY-MM-DD'),
         });
         await CompanyBee.query(trx).insert({ bee_id: u.id, user_id: c.id });
         await autoFill(trx, c.id, autofillLang);
@@ -155,7 +158,7 @@ export class AuthController extends Controller {
           lang: inputUser.lang,
           subject: 'register',
           email: inputUser.email,
-          key: inputUser.reset
+          key: inputUser.reset,
         });
 
         res.locals.data = { email: inputUser.email, activate: inputUser.reset };
@@ -170,9 +173,7 @@ export class AuthController extends Controller {
 
   async login(req: Request, res: IResponse, next: NextFunction) {
     const { email, password } = req.body;
-
     const userAgent = buildUserAgent(req);
-
     try {
       const { bee_id, user_id, data } = await loginCheck(email, password);
       const token = await generateTokenResponse(bee_id, user_id, userAgent);
