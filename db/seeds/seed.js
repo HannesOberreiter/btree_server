@@ -453,7 +453,7 @@ if (env.env === 'production') {
       );
       let duplicates = 1;
       if (['checkups', 'feeds', 'treatments', 'queens'].includes(table)) {
-        duplicates = env.env === 'test' ? 1 : 20;
+        duplicates = env.env === 'test' || env.env === 'ci' ? 1 : 20;
       }
       let newData = cloneDeep(jsonData);
 

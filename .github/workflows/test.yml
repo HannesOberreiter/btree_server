@@ -1,0 +1,33 @@
+name: ci-test
+
+on: [pull_request, workflow_dispatch]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      ENVIRONMENT: ci
+      DB_DATABASE: ci_test
+      DB_USER: root
+      DB_PASSWORD: root
+    steps:
+      - name: Set up MySQL
+      run: |
+        sudo systemctl start mysql
+        mysql -e 'CREATE DATABASE ${{ env.DB_DATABASE }};' -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }}
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+          cache: 'npm'
+      - name: Install packages
+        run: npm install
+      - name: Build dist
+        run: npm run build
+      - name: List output files
+        run: ls
+      - name: Migrate database and seed test data
+        run: npm run ci:init
+      - name: Run e2e tests
+        run: npm run ci:e2e
+      

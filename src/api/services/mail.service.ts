@@ -52,7 +52,7 @@ export class MailService {
     name = 'false',
     email = 'false',
   }: customMail) {
-    if (env === 'test') return;
+    if (env === 'test' || env === 'ci') return;
 
     await this.setup();
     // we only have german and english mails

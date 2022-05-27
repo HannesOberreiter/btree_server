@@ -31,6 +31,8 @@
     "test:seed": "ENVIRONMENT=test knex seed:run",
     "test:e2e": "npx mocha ./test/e2e/00-api.e2e.test.js  --R spec --ui bdd --env test",
     "test:watch": "npx mocha ./test/e2e/00-api.e2e.test.js  --watch dist test --env test",
+    "ci:init": "ENVIRONMENT=ci knex migrate:latest && ENVIRONMENT=ci knex seed:run",
+    "ci:e2e": "ENVIRONMENT=ci npx mocha ./test/e2e/00-api.e2e.test.js",
     "prettier-format": "prettier --config .prettierrc 'src/**/*.ts' --write",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
   },

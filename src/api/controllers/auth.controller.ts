@@ -67,7 +67,7 @@ export class AuthController extends Controller {
         name: result.firstname + ' ' + result.lastname,
         key: result.reset,
       });
-      if (env === 'test') {
+      if (env === 'test' || env === 'ci') {
         res.locals.data = {
           email: result.email,
           token: result.reset,
