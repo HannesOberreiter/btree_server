@@ -12,7 +12,7 @@ const insertWrongPasswordTry = async (bee_id: number) => {
     const now = dayjs.utc().toISOString().slice(0, 19).replace('T', ' ');
     await LoginAttemp.query(trx).insert({
       time: now,
-      bee_id: bee_id
+      bee_id: bee_id,
     });
 
     await trx.commit();
@@ -26,7 +26,7 @@ const updateLastLogin = async (bee_id: number) => {
   try {
     const now: Date = dayjs().toDate();
     await User.query(trx).findById(bee_id).patch({
-      last_visit: now
+      last_visit: now,
     });
     await trx.commit();
   } catch (e) {
@@ -63,12 +63,12 @@ const fetchUser = async (email: string, bee_id = 0) => {
             'companies.api_active',
             'company_bee.rank'
           );
-        }
+        },
       })
       .first();
     if (bee_id === 0) {
       user.findOne({
-        'bees.email': email
+        'bees.email': email,
       });
     } else {
       user.findOne({ 'bees.id': bee_id });
@@ -138,7 +138,7 @@ const loginCheck = async (email: string, password: string) => {
   if (!user) {
     throw unauthorized('no user');
   }
-  if (user.state != 1) {
+  if (user.state !== 1) {
     throw unauthorized('inactive account');
   }
 
