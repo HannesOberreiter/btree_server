@@ -11,7 +11,6 @@ export class Charge extends ExtModel {
   calibrate!: string;
   amount!: number;
   price!: number;
-  unit!: string;
   note!: string;
   url!: string;
   kind!: string;
@@ -41,7 +40,6 @@ export class Charge extends ExtModel {
       calibrate: { type: 'string', maxLength: 45 },
       amount: { type: 'number' },
       price: { type: 'number' },
-      unit: { type: 'string' },
       note: { type: 'string', maxLength: 2000 },
       url: { type: 'string', maxLength: 512 },
       kind: { type: 'string', maxLength: 45, enum: ['in', 'out'] },
