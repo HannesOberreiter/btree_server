@@ -21,6 +21,8 @@ jobs:
         run: |
           sudo systemctl start mysql
           mysql -e 'CREATE DATABASE ${{ env.DB_DATABASE }};' -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }}
+          mysql -e "ALTER USER '${{ env.DB_USER }}'@'localhost' IDENTIFIED WITH mysql_native_password BY 'password';" -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }}
+          mysql -e "flush privileges;" -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }}
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
