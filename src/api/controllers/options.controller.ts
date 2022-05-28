@@ -41,11 +41,14 @@ export class OptionController extends Controller {
       if (modus) {
         query.where('modus', modus === 'true');
       }
-
-      if (Array.isArray(order)) {
-        order.forEach((field, index) => query.orderBy(field, direction[index]));
-      } else {
-        query.orderBy(order, direction);
+      if (order) {
+        if (Array.isArray(order)) {
+          order.forEach((field, index) =>
+            query.orderBy(field, direction[index])
+          );
+        } else {
+          query.orderBy(order, direction);
+        }
       }
 
       res.locals.data = await query;
