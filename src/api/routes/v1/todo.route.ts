@@ -37,6 +37,7 @@ export class TodoRouter extends Router {
     this.router
       .route('/status')
       .patch(
+        Validator.validate([body('ids').isArray(), body('status').isBoolean()]),
         Guard.authorize([ROLES.admin, ROLES.user]),
         Container.resolve('TodoController').updateStatus
       );
@@ -50,12 +51,14 @@ export class TodoRouter extends Router {
     this.router
       .route('/batchDelete')
       .patch(
+        Validator.validate([body('ids').isArray()]),
         Guard.authorize([ROLES.admin]),
         Container.resolve('TodoController').batchDelete
       );
     this.router
       .route('/date')
       .patch(
+        Validator.validate([body('ids').isArray(), body('start').isString()]),
         Guard.authorize([ROLES.admin, ROLES.user]),
         Container.resolve('TodoController').updateDate
       );

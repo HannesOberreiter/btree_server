@@ -65,7 +65,7 @@ export class HiveRouter extends Router {
     this.router
       .route('/status')
       .patch(
-        Validator.validate([body('ids').isArray()]),
+        Validator.validate([body('ids').isArray(), body('status').isBoolean()]),
         Guard.authorize([ROLES.admin]),
         Container.resolve('HiveController').updateStatus
       );
