@@ -90,8 +90,9 @@ export const deleteCompany = async (company_id: number) => {
         .delete()
         .withGraphJoined('apiary')
         .where({ 'apiary.user_id': company_id });
-      await Company.query(trx).deleteById(company_id);
       await Apiary.query(trx).delete().where({ user_id: company_id });
+      await CompanyBee.query(trx).delete().where({ user_id: company_id });
+      await Company.query(trx).deleteById(company_id);
 
       return true;
     });
