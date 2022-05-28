@@ -12,7 +12,8 @@ export class FieldSettingController extends Controller {
     try {
       const result = await FieldSetting.query()
         .select('settings')
-        .findById(req.user.bee_id);
+        .first()
+        .where({ bee_id: req.user.bee_id });
       res.locals.data = result ? result : false;
       next();
     } catch (e) {
