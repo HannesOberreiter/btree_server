@@ -1,7 +1,7 @@
-// require('module-alias/register');
-// const { knexConfig } = require(process.cwd() +
-//   '/dist/config/environment.config');
-// const knexInstance = require('knex')(knexConfig);
+require('module-alias/register');
+const { knexConfig } = require(process.cwd() +
+  '/dist/config/environment.config');
+const knexInstance = require('knex')(knexConfig);
 
 process.env.ENVIROMENT = process.env.ENVIRONMENT
   ? process.env.ENVIRONMENT
@@ -16,23 +16,41 @@ require('dotenv').config({
 });
 
 global.demoUser = {
-  email: 'demo_en@btree.at',
-  password: 'demo_en',
+  email: `test@btree.at`,
+  password: 'test_btree',
+  name: 'Test Beekeeper',
+  lang: 'en',
+  newsletter: false,
+  source: '0',
 };
 
 describe('E2E API tests', () => {
-  before((done) => {
-    //await knexInstance.seed.run();
+  before(async function () {
+    this.timeout(10000);
+    console.log('  knex migrate latest ...');
+    await knexInstance.migrate.latest();
+    console.log('  knex truncate tables ...');
+    //knexInstance.migrate.rollback({ all: true })
+    await knexInstance.raw('SET FOREIGN_KEY_CHECKS = 0;');
+    const tables = await knexInstance
+      .table('information_schema.tables')
+      .select('table_name')
+      .where('table_type', 'BASE TABLE');
+    for (table of tables) {
+      if (!['KnexMigrations', 'KnexMigrations_lock'].includes(table.TABLE_NAME))
+        await knexInstance.raw(`TRUNCATE ${table.TABLE_NAME};`);
+    }
+    await knexInstance.raw('SET FOREIGN_KEY_CHECKS = 1;');
     global.app = require(process.cwd() + '/dist/api/app.bootstrap');
     global.server = global.app.server;
-    done();
   });
-  //afterEach((done) => global.app.boot.stop(done));
+
   after(() => {
     global.app.boot.stop();
     global.app.dbServer.stop();
     global.app = undefined;
     global.server = undefined;
+    knexInstance.destroy();
   });
 
   require('./01-api-routes.e2e.test');
@@ -43,4 +61,7 @@ describe('E2E API tests', () => {
   require('./06-company-user-routes.e2e.test');
   require('./07-apiary-routes.e2e.test');
   require('./08-hive-routes.e2e.test');
+  require('./09-movedate-routes.e2e.test');
+  require('./10-todo-routes.e2e.test');
+  require('./12-charge-routes.e2e.test');
 });
