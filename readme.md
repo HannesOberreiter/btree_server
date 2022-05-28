@@ -1,5 +1,8 @@
 # Backend API for b.tree Beekeeping Webapplication
 
+[![test](https://github.com/HannesOberreiter/btree_server/actions/workflows/test.yml/badge.svg)](https://github.com/HannesOberreiter/btree_server/actions/workflows/test.yml)
+[![docker-push](https://github.com/HannesOberreiter/btree_server/actions/workflows/docker-push.yml/badge.svg)](https://github.com/HannesOberreiter/btree_server/actions/workflows/docker-push.yml)
+
 Written in typescript build with nodejs, express, knex.js and objections.js.
 
 ## Docker
