@@ -19,7 +19,10 @@ export class TodoController extends Controller {
           user_id: req.user.user_id,
         })
         // Security as we may still have some unclean data in the database were linked apiary or hive does not exist anymore
-        .page(offset, parseInt(limit) === 0 ? 10 : limit);
+        .page(
+          offset ? offset : 0,
+          parseInt(limit) === 0 || !limit ? 10 : limit
+        );
 
       if (filters) {
         try {
@@ -37,19 +40,23 @@ export class TodoController extends Controller {
           console.log(e);
         }
       }
-
-      if (Array.isArray(order)) {
-        order.forEach((field, index) => query.orderBy(field, direction[index]));
-      } else {
-        query.orderBy(order, direction);
+      if (order) {
+        if (Array.isArray(order)) {
+          order.forEach((field, index) =>
+            query.orderBy(field, direction[index])
+          );
+        } else {
+          query.orderBy(order, direction);
+        }
       }
-
-      if (q.trim() !== '') {
-        query.where((builder) => {
-          builder
-            .orWhere('todos.name', 'like', `%${q}%`)
-            .orWhere('todos.note', 'like', `%${q}%`);
-        });
+      if (q) {
+        if (q.trim() !== '') {
+          query.where((builder) => {
+            builder
+              .orWhere('todos.name', 'like', `%${q}%`)
+              .orWhere('todos.note', 'like', `%${q}%`);
+          });
+        }
       }
       const result = await query.orderBy('id');
       res.locals.data = result;
@@ -60,17 +67,16 @@ export class TodoController extends Controller {
   }
 
   async post(req: IUserRequest, res: Response, next: NextFunction) {
-    const insert = {
-      date: req.body.date,
-      name: req.body.name,
-      note: req.body.note,
-      done: req.body.done,
-      url: req.body.url,
-    };
-    const repeat = req.body.repeat ? req.body.repeat : 0;
-    const interval = req.body.interval ? req.body.interval : 0;
-
     try {
+      const insert = {
+        date: req.body.date,
+        name: req.body.name,
+        note: req.body.note,
+        done: req.body.done,
+        url: req.body.url,
+      };
+      const repeat = req.body.repeat ? req.body.repeat : 0;
+      const interval = req.body.interval ? req.body.interval : 0;
       const result = await Todo.transaction(async (trx) => {
         const result = [];
 
