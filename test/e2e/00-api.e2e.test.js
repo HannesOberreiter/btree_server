@@ -63,5 +63,6 @@ describe('E2E API tests', () => {
   require('./08-hive-routes.e2e.test');
   require('./09-movedate-routes.e2e.test');
   require('./10-todo-routes.e2e.test');
+  require('./11-option-routes.e2e.test');
   require('./12-charge-routes.e2e.test');
 });
