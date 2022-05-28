@@ -22,7 +22,10 @@ export class ChargeController extends Controller {
           'charges.deleted': deleted === 'true',
         })
         // Security as we may still have some unclean data in the database were linked apiary or hive does not exist anymore
-        .page(offset, parseInt(limit) === 0 ? 10 : limit);
+        .page(
+          offset ? offset : 0,
+          parseInt(limit) === 0 || !limit ? 10 : limit
+        );
 
       if (filters) {
         try {
@@ -43,19 +46,23 @@ export class ChargeController extends Controller {
           console.log(e);
         }
       }
-
-      if (Array.isArray(order)) {
-        order.forEach((field, index) => query.orderBy(field, direction[index]));
-      } else {
-        query.orderBy(order, direction);
+      if (order) {
+        if (Array.isArray(order)) {
+          order.forEach((field, index) =>
+            query.orderBy(field, direction[index])
+          );
+        } else {
+          query.orderBy(order, direction);
+        }
       }
-
-      if (q.trim() !== '') {
-        query.where((builder) => {
-          builder
-            .orWhere('type.name', 'like', `%${q}%`)
-            .orWhere('charges.name', 'like', `%${q}%`);
-        });
+      if (q) {
+        if (q.trim() !== '') {
+          query.where((builder) => {
+            builder
+              .orWhere('type.name', 'like', `%${q}%`)
+              .orWhere('charges.name', 'like', `%${q}%`);
+          });
+        }
       }
       const result = await query.orderBy('id');
       res.locals.data = result;
@@ -66,21 +73,19 @@ export class ChargeController extends Controller {
   }
 
   async post(req: IUserRequest, res: Response, next: NextFunction) {
-    const insert = {
-      date: req.body.date,
-      bestbefore: req.body.bestbefore,
-      name: req.body.name,
-      charge: req.body.charge,
-      price: req.body.price,
-      amount: req.body.amount,
-      unit: req.body.unit,
-      url: req.body.url,
-      kind: req.body.kind,
-      type_id: req.body.type_id,
-      note: req.body.note,
-    };
-
     try {
+      const insert = {
+        date: req.body.date,
+        bestbefore: req.body.bestbefore,
+        name: req.body.name,
+        charge: req.body.charge,
+        price: req.body.price,
+        amount: req.body.amount,
+        url: req.body.url,
+        kind: req.body.kind,
+        type_id: req.body.type_id,
+        note: req.body.note,
+      };
       const result = await Charge.transaction(async (trx) => {
         const result = [];
 
