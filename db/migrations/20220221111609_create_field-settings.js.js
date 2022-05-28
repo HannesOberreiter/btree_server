@@ -25,5 +25,5 @@ exports.down = function (knex) {
   knex.schema.alterTable('field_settings', (t) => {
     t.dropForeign('bee_id');
   });
-  return knex.schema.dropTable('bees');
+  return knex.schema.dropTable('field_settings');
 };
