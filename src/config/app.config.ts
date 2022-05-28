@@ -1,5 +1,5 @@
 import Cors from 'cors';
-
+import * as rfs from 'rotating-file-stream';
 import { ENVIRONMENT } from '@enums/environment.enum';
 import {
   httpLogs,
@@ -18,9 +18,6 @@ import Compression from 'compression';
 import RateLimit from 'express-rate-limit';
 import Morgan from 'morgan';
 
-import { createWriteStream } from 'fs';
-//import { initialize as PassportInitialize, use as PassportUse } from 'passport';
-//import * as Passport from 'passport';
 import passport from 'passport';
 
 import { notAcceptable } from 'boom';
@@ -71,8 +68,10 @@ export class Application {
     },
     stream:
       env === ENVIRONMENT.production
-        ? createWriteStream(p.join(__dirname, `../../logs/access.log`), {
-            flags: 'a+',
+        ? rfs.createStream('access.log', {
+            interval: '7d',
+            maxFiles: 10,
+            path: p.join(__dirname, `../../logs`),
           })
         : Container.resolve('Logger').get('stream'),
     rate: {

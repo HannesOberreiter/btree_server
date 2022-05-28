@@ -14,17 +14,21 @@ export class Catcher {
    * @param {Function} next Callback function
    */
   static log = (err: Error, req: Request, res: Response, next) => {
-    const message =
-      req.method +
-      ' ' +
-      req.url +
-      ' ' +
-      getErrorStatusCode(err) +
-      ' : ' +
-      err.message +
-      '\n' +
-      err.stack;
-    Container.resolve('Logger').log('error', message, { label: 'Application' });
+    if (err.message !== 'TokenExpiredError') {
+      const message =
+        req.method +
+        ' ' +
+        req.url +
+        ' ' +
+        getErrorStatusCode(err) +
+        ' : ' +
+        err.message +
+        '\n' +
+        err.stack;
+      Container.resolve('Logger').log('error', message, {
+        label: 'Application',
+      });
+    }
     next(err, req, res, next);
   };
 

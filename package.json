@@ -17,16 +17,24 @@
   },
   "homepage": "https://github.com/HannesOberreiter/btree_server#readme",
   "scripts": {
-    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "serve": "nodemon",
     "build": "tsc",
-    "dev:serve": "ENVIRONMENT=development nodemon",
+    "migrate": "knex migrate:latest",
+    "mail": "mjml mjml/* -o mails/ --config.beautify true --config.minify true",
+    "kickstart": "concurrently -k --restart-after 1000 'npm:dev:build' 'npm:dev:serve' 'npm:test:watch'",
+    "dev:init": "ENVIRONMENT=development knex migrate:latest && ENVIRONMENT=development knex seed:run",
+    "dev:serve": "ENVIRONMENT=development nodemon --delay 2000ms",
     "dev:build": "tsc -watch",
     "dev:knex": "ENVIRONMENT=development knex",
     "dev:knex-seed": "ENVIRONMENT=staging knex seed:run",
-    "migrate": "knex migrate:latest",
-    "mail": "mjml mjml/* -o mails/ --config.beautify true --config.minify true",
-    "prettier-format": "prettier --config .prettierrc 'src/**/*.ts' --write"
+    "test:init": "ENVIRONMENT=test knex migrate:latest && ENVIRONMENT=test knex seed:run",
+    "test:seed": "ENVIRONMENT=test knex seed:run",
+    "test:e2e": "npx mocha ./test/e2e/00-api.e2e.test.js  --R spec --ui bdd --env test",
+    "test:watch": "npx mocha ./test/e2e/00-api.e2e.test.js  --watch dist test --env test",
+    "ci:init": "ENVIRONMENT=ci knex migrate:latest && ENVIRONMENT=ci knex seed:run",
+    "ci:e2e": "ENVIRONMENT=ci npx mocha ./test/e2e/00-api.e2e.test.js",
+    "prettier-format": "prettier --config .prettierrc 'src/**/*.ts' --write",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
   },
   "_moduleAliases": {
     "@": "dist",
@@ -78,6 +86,7 @@
     "objection": "^3.0.1",
     "passport": "^0.5.2",
     "passport-jwt": "^4.0.0",
+    "rotating-file-stream": "^3.0.3",
     "winston": "^3.7.2"
   },
   "devDependencies": {
@@ -87,10 +96,14 @@
     "@types/nodemailer": "^6.4.4",
     "@typescript-eslint/eslint-plugin": "^5.22.0",
     "@typescript-eslint/parser": "^5.22.0",
+    "chai": "^4.3.6",
+    "concurrently": "^7.2.0",
     "eslint": "^8.14.0",
     "eslint-config-prettier": "^8.5.0",
+    "mocha": "^10.0.0",
     "nodemon": "^2.0.16",
     "prettier": "2.6.2",
+    "supertest": "^6.2.3",
     "typescript": "^4.6.4"
   }
 }

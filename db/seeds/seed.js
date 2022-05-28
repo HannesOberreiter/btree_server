@@ -453,7 +453,7 @@ if (env.env === 'production') {
       );
       let duplicates = 1;
       if (['checkups', 'feeds', 'treatments', 'queens'].includes(table)) {
-        duplicates = 20;
+        duplicates = env.env === 'test' || env.env === 'ci' ? 1 : 20;
       }
       let newData = cloneDeep(jsonData);
 
@@ -528,6 +528,7 @@ async function transactionMigration(table, data, knex) {
     .transaction(async function (trx) {
       await knex.raw('SET FOREIGN_KEY_CHECKS=0').transacting(trx);
       await knex.raw('SET sql_mode=""').transacting(trx);
+      await knex(table).transacting(trx).del();
       if (table === 'hive_group') {
         map(data, async (d) => {
           await knex('hives')

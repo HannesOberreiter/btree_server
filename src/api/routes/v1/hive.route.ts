@@ -42,6 +42,8 @@ export class HiveRouter extends Router {
         Validator.validate([
           body('start').isInt({ max: 10000, min: 0 }),
           body('repeat').isInt({ max: 100, min: 0 }),
+          body('apiary_id').isInt(),
+          body('date').isString(),
         ]),
         Guard.authorize([ROLES.admin]),
         Container.resolve('HiveController').post
@@ -49,6 +51,7 @@ export class HiveRouter extends Router {
     this.router
       .route('/batchDelete')
       .patch(
+        Validator.validate([body('ids').isArray()]),
         Guard.authorize([ROLES.admin]),
         Container.resolve('HiveController').batchDelete
       );
@@ -62,6 +65,7 @@ export class HiveRouter extends Router {
     this.router
       .route('/status')
       .patch(
+        Validator.validate([body('ids').isArray()]),
         Guard.authorize([ROLES.admin]),
         Container.resolve('HiveController').updateStatus
       );

@@ -1,6 +1,5 @@
 import { ENVIRONMENT } from '@enums/environment.enum';
 import p from 'path';
-import * as nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
 
 /**
@@ -52,25 +51,6 @@ class EnvironmentConfiguration {
       throw result.error;
     }
   }
-
-  static async mail() {
-    const mailConfig = {
-      host: process.env.MAIL_SMTP,
-      port: Number(process.env.MAIL_PORT),
-      secure: true,
-      auth: {
-        user: process.env.MAIL_FROM,
-        pass: process.env.MAIL_PASSWORD,
-      },
-    };
-    if (this.environment !== 'production') {
-      const testAccount = await nodemailer.createTestAccount();
-      mailConfig.secure = false;
-      mailConfig.auth.user = testAccount.user;
-      mailConfig.auth.pass = testAccount.pass;
-    }
-    return mailConfig;
-  }
 }
 
 EnvironmentConfiguration.load();
@@ -90,7 +70,7 @@ const jwtExpirationIntervalRefreshToken: number = parseInt(
 );
 const logs = process.env.NODE_ENV === 'production' ? 'combined' : 'development';
 // https://github.com/expressjs/morgan
-const httpLogs = process.env.NODE_ENV === 'production' ? 'combined' : 'dev';
+const httpLogs = process.env.NODE_ENV === 'production' ? 'tiny' : 'dev';
 const contentType = process.env.CONTENT_TYPE;
 const meteoblueKey = process.env.METEOBLUE_KEY;
 const dropboxClientId = process.env.DROPBOX_CLIENT_ID;
@@ -134,7 +114,15 @@ const knexConfig = {
   },
 };
 
-const mailConfig = EnvironmentConfiguration.mail();
+const mailConfig = {
+  host: process.env.MAIL_SMTP,
+  port: Number(process.env.MAIL_PORT),
+  secure: true,
+  auth: {
+    user: process.env.MAIL_FROM,
+    pass: process.env.MAIL_PASSWORD,
+  },
+};
 
 export {
   knexConfig,

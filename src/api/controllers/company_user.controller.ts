@@ -21,7 +21,7 @@ export class CompanyUserController extends Controller {
     try {
       const result = await CompanyBee.query()
         .patch({ rank: req.body.rank })
-        .where({ id: req.params.id, user_id: req.user.user_id });
+        .where({ bee_id: req.params.id, user_id: req.user.user_id });
       res.locals.data = result;
       next();
     } catch (e) {
@@ -92,7 +92,7 @@ export class CompanyUserController extends Controller {
     try {
       const result = await CompanyBee.query()
         .delete()
-        .where({ id: req.params.id, user_id: req.user.user_id });
+        .where({ bee_id: req.params.id, user_id: req.user.user_id });
       res.locals.data = result;
       next();
     } catch (e) {

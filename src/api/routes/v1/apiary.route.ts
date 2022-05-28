@@ -26,6 +26,7 @@ export class ApiaryRouter extends Router {
     this.router
       .route('/')
       .post(
+        Validator.validate([body('name').isString()]),
         Guard.authorize([ROLES.admin]),
         Container.resolve('ApiaryController').post
       );
@@ -53,6 +54,7 @@ export class ApiaryRouter extends Router {
     this.router
       .route('/status')
       .patch(
+        Validator.validate([body('ids').isArray(), body('status').isBoolean()]),
         Guard.authorize([ROLES.admin]),
         Container.resolve('ApiaryController').updateStatus
       );

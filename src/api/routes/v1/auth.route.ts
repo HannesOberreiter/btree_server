@@ -13,12 +13,14 @@ export class AuthRouter extends Router {
       .route('/register')
       .post(
         Validator.validate([
-          body('email').isEmail().normalizeEmail(),
+          body('email')
+            .isEmail()
+            .normalizeEmail({ gmail_remove_subaddress: false }),
           body('password').isLength({ min: 6, max: 128 }).trim(),
           body('name').isString().isLength({ min: 3, max: 128 }).trim(),
           body('lang').isString().isLength({ min: 2, max: 2 }),
           body('newsletter').isBoolean(),
-          body('source').isString()
+          body('source').isString(),
         ]),
         Container.resolve('AuthController').register
       );
@@ -30,9 +32,9 @@ export class AuthRouter extends Router {
           .withMessage('requiredField')
           .isEmail()
           .normalizeEmail({
-            gmail_remove_subaddress: false
+            gmail_remove_subaddress: false,
           }),
-        body('password').isLength({ min: 6 }).trim()
+        body('password').isLength({ min: 6 }).trim(),
       ]),
       Container.resolve('AuthController').login
     );
@@ -56,7 +58,7 @@ export class AuthRouter extends Router {
       .patch(
         Validator.validate([
           body('key').isLength({ min: 100, max: 128 }),
-          body('password').isLength({ min: 6, max: 128 }).trim()
+          body('password').isLength({ min: 6, max: 128 }).trim(),
         ]),
         Container.resolve('AuthController').resetPassword
       );

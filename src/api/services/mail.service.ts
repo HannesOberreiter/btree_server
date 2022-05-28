@@ -1,5 +1,5 @@
 import * as nodemailer from 'nodemailer';
-import { mailConfig } from '@config/environment.config';
+import { env, frontend, mailConfig } from '@config/environment.config';
 import { readFileSync } from 'fs';
 import p from 'path';
 import { badImplementation, notFound } from '@hapi/boom';
@@ -17,11 +17,18 @@ export class MailService {
   baseUrl: string;
 
   constructor() {
-    this.baseUrl = 'https://app.btree.at/';
+    this.baseUrl = frontend;
   }
 
   private async setup() {
-    const conf = await mailConfig;
+    const conf = mailConfig;
+    if (env !== 'production') {
+      await nodemailer.createTestAccount((_err, account) => {
+        mailConfig.secure = false;
+        mailConfig.auth.user = account.user;
+        mailConfig.auth.pass = account.pass;
+      });
+    }
     this._transporter = nodemailer.createTransport(conf);
   }
 
@@ -43,8 +50,10 @@ export class MailService {
     subject,
     key = 'false',
     name = 'false',
-    email = 'false'
+    email = 'false',
   }: customMail) {
+    if (env === 'test' || env === 'ci') return;
+
     await this.setup();
     // we only have german and english mails
     lang = lang !== 'de' ? 'en' : lang;
@@ -59,7 +68,16 @@ export class MailService {
     }
 
     if (name !== 'false') {
-      htmlMail = htmlMail.replace('Imker/in', name);
+      switch (lang) {
+        case 'en': {
+          htmlMail.replace('Beekeeper', name);
+          break;
+        }
+        case 'de': {
+          htmlMail.replace('Imker/in', name);
+          break;
+        }
+      }
     }
     if (email !== 'false') {
       htmlMail = htmlMail.replace(/%mail%/g, email);
@@ -72,15 +90,18 @@ export class MailService {
       from: 'no-reply@btree.at',
       to: to,
       subject: title,
-      html: htmlMail
+      html: htmlMail,
     };
 
     this._transporter.sendMail(options, (error, info) => {
+      this._transporter.close();
       if (error) {
         console.log(`error: ${error}`);
         throw badImplementation('E-Mail could not be sent.');
       }
-      console.log(nodemailer.getTestMessageUrl(info));
+      if (env !== 'production') {
+        console.log(nodemailer.getTestMessageUrl(info));
+      }
       console.log(`Message Sent ${info.response}`);
     });
   }

@@ -1,0 +1,40 @@
+name: test
+
+on:
+  # Triggers the workflow on push or pull request events but only for the main branch
+  pull_request:
+    branches: [main]
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      ENVIRONMENT: ci
+      NODE_ENV: ci
+      DB_DATABASE: ci_test
+      DB_USER: root
+      DB_PASSWORD: root
+    steps:
+      - name: Set up MySQL
+        run: |
+          sudo systemctl start mysql
+          mysql -e 'CREATE DATABASE ${{ env.DB_DATABASE }};' -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }}
+          mysql -e "ALTER USER '${{ env.DB_USER }}'@'localhost' IDENTIFIED WITH mysql_native_password BY '${{ env.DB_PASSWORD }}';" -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }}
+          mysql -e "flush privileges;" -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }}
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+          cache: 'npm'
+      - name: Install packages
+        run: npm install
+      - name: Build dist
+        run: npm run build
+      - name: List output files
+        run: ls
+      - name: Migrate database and seed test data
+        run: npm run ci:init
+      - name: Run e2e tests
+        run: npm run ci:e2e

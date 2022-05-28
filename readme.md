@@ -1,5 +1,8 @@
 # Backend API for b.tree Beekeeping Webapplication
 
+[![test](https://github.com/HannesOberreiter/btree_server/actions/workflows/test.yml/badge.svg)](https://github.com/HannesOberreiter/btree_server/actions/workflows/test.yml)
+[![docker-push](https://github.com/HannesOberreiter/btree_server/actions/workflows/docker-push.yml/badge.svg)](https://github.com/HannesOberreiter/btree_server/actions/workflows/docker-push.yml)
+
 Written in typescript build with nodejs, express, knex.js and objections.js.
 
 ## Docker
@@ -8,7 +11,9 @@ For ease of deploying into production, you can use Docker: <https://docs.docker.
 
 ### Building image
 
-Currently images are build locally and pushed to DockerHub. This process can be automated to build the newest Docker image when GitHub Master Branch updates.
+Currently images are build automatically on 'main' branch push with GitHub actions and pushed to a private DockerHub repo.
+
+If you want to build it locally use following commands:
 
 ```bash
 # Build image
@@ -19,9 +24,13 @@ docker push hannesoberreiter/btree_server:latest
 
 ### Running container
 
+Hint: To be able to pull from a DockerHub private repo create a api key with read-only access and login once to docker on your server eg. `docker login -u hannesoberreiter` with the api token as password. The token will be saved in your config and you can call docker-compose on the private repo.
+
 ```bash
-# Run container (server)
-docker-compose -f docker-compose.server.yml up
+# Pull latest and run 
+docker-compose pull  && docker-compose up -d
+# Run container (server) (define file if not the only one in folder)
+docker-compose -f docker-compose.server.yml up -d
 # Stop container  (server)
 docker-compose -f docker-compose-server.yml down
 # Access Container Bash for npm run commands
@@ -32,21 +41,23 @@ docker-compose -f docker-compose-*.yml rm
 
 ## Development
 
-Nodemon needs to be installed globally.
+First migrate and seed your database with knex commands, beforehand make sure that your development and testing database is up and running.
 
 ```bash
-npm i -g nodemon
+npm run dev:init
+npm run test:init
 ```
 
-- Create Directories
-- Compile and Watch Typescript
-- Start nodemon
-- Run knex commands (migrate, seed etc.)
+Next build the html mails with `mjml`
 
 ```bash
-npm run dev:build 
-npm run dev:serve
-npm run dev:knex <options>
+npm run mail
+```
+
+Now you can kickstart the server, it will run `tsc`, `nodemon` and `mocha` in watch mode for continuos development and testing.
+
+```bash
+npm run kickstart
 ```
 
 ## MySQL
