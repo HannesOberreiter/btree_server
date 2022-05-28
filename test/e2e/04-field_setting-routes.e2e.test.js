@@ -49,7 +49,7 @@ describe('Fieldsetting routes', function () {
       });
     });
 
-    it(`200 - patch`, function (done) {
+    it(`200 - patch and get`, function (done) {
       doRequest(
         agent,
         'patch',
@@ -60,22 +60,20 @@ describe('Fieldsetting routes', function () {
         function (err, res) {
           expect(res.statusCode).to.eqls(200);
           expect(res.body).to.deep.equal(JSON.parse(settings));
-          done();
-        }
-      );
-    });
-
-    it(`200 - get`, function (done) {
-      doQueryRequest(
-        agent,
-        route,
-        null,
-        accessToken,
-        null,
-        function (err, res) {
-          expect(res.statusCode).to.eqls(200);
-          expect(res.body).to.deep.equal({ settings: JSON.parse(settings) });
-          done();
+          doQueryRequest(
+            agent,
+            route,
+            null,
+            accessToken,
+            null,
+            function (err, res) {
+              expect(res.statusCode).to.eqls(200);
+              expect(res.body).to.deep.equal({
+                settings: JSON.parse(settings),
+              });
+              done();
+            }
+          );
         }
       );
     });

@@ -2,15 +2,6 @@ const request = require('supertest');
 const { expect } = require('chai');
 const { doRequest, expectations } = require(process.cwd() + '/test/utils');
 
-const registerUser = {
-  email: `test${Date.now()}@btree.at`,
-  password: 'test_btree',
-  name: 'Test Beekeeper',
-  lang: 'en',
-  newsletter: false,
-  source: '0',
-};
-
 const inactiveUser = {
   email: `inactive${Date.now()}@btree.at`,
   password: 'test_btree',
@@ -31,10 +22,10 @@ describe('Authentification routes', function () {
       '/api/v1/auth/register',
       null,
       null,
-      registerUser,
+      global.demoUser,
       function (err, res) {
         expect(res.statusCode).to.eqls(200);
-        expect(res.body.email, registerUser.email);
+        expect(res.body.email, global.demoUser.email);
         expect(res.body.activate).to.be.a('string');
         confirmToken = res.body.activate;
         doRequest(
@@ -46,7 +37,7 @@ describe('Authentification routes', function () {
           inactiveUser,
           function (err, res) {
             expect(res.statusCode).to.eqls(200);
-            expect(res.body.email, registerUser.email);
+            expect(res.body.email, global.demoUser.email);
             expect(res.body.activate).to.be.a('string');
             done();
           }
@@ -90,7 +81,7 @@ describe('Authentification routes', function () {
         { confirm: confirmToken },
         function (err, res) {
           expect(res.statusCode).to.eqls(200);
-          expect(res.body.email, registerUser.email);
+          expect(res.body.email, global.demoUser.email);
           done();
         }
       );
@@ -144,7 +135,7 @@ describe('Authentification routes', function () {
         route,
         null,
         null,
-        { email: registerUser.email, password: 'testseet22' },
+        { email: global.demoUser.email, password: 'testseet22' },
         function (err, res) {
           // Too many login attempts happen in watch testing
           expect(res.statusCode).to.eqls(401);
@@ -207,10 +198,10 @@ describe('Authentification routes', function () {
         route,
         null,
         null,
-        { email: registerUser.email },
+        { email: global.demoUser.email },
         function (err, res) {
           expect(res.statusCode).to.eqls(200);
-          expect(res.body.email, registerUser.email);
+          expect(res.body.email, global.demoUser.email);
           done();
         }
       );
@@ -220,6 +211,7 @@ describe('Authentification routes', function () {
   describe('/api/v1/auth/reset', () => {
     const route = '/api/v1/auth/reset';
     const newPassword = 'newPassword';
+
     it('200 - success', function (done) {
       doRequest(
         agent,
@@ -227,10 +219,10 @@ describe('Authentification routes', function () {
         route,
         null,
         null,
-        { email: registerUser.email },
+        { email: inactiveUser.email },
         function (err, res) {
           expect(res.statusCode).to.eqls(200);
-          expect(res.body.email, registerUser.email);
+          expect(res.body.email, inactiveUser.email);
           expect(res.body.token).to.be.a('string');
           doRequest(
             agent,
@@ -241,7 +233,7 @@ describe('Authentification routes', function () {
             { key: res.body.token, password: newPassword },
             function (err, res) {
               expect(res.statusCode).to.eqls(200);
-              expect(res.body.email, registerUser.email);
+              expect(res.body.email, inactiveUser.email);
               doRequest(
                 agent,
                 'post',
