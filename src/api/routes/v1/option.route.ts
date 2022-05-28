@@ -34,6 +34,7 @@ export class OptionRouter extends Router {
       .route('/:table/status')
       .patch(
         Validator.handleOption,
+        Validator.validate([body('ids').isArray(), body('status').isBoolean()]),
         Guard.authorize([ROLES.admin]),
         Container.resolve('OptionController').updateStatus
       );
@@ -41,6 +42,7 @@ export class OptionRouter extends Router {
       .route('/:table/favorite')
       .patch(
         Validator.handleOption,
+        Validator.validate([body('ids').isArray()]),
         Guard.authorize([ROLES.admin]),
         Container.resolve('OptionController').updateFavorite
       );
@@ -48,6 +50,8 @@ export class OptionRouter extends Router {
     this.router
       .route('/:table/batchDelete')
       .patch(
+        Validator.validate([body('ids').isArray()]),
+        Validator.handleOption,
         Guard.authorize([ROLES.admin]),
         Container.resolve('OptionController').batchDelete
       );
@@ -55,6 +59,7 @@ export class OptionRouter extends Router {
       .route('/:table/batchGet')
       .post(
         Validator.validate([body('ids').isArray()]),
+        Validator.handleOption,
         Guard.authorize([ROLES.admin, ROLES.user]),
         Container.resolve('OptionController').batchGet
       );
