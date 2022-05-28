@@ -110,8 +110,8 @@ export class WinstonConfiguration {
       exitOnError: false,
     });
 
-    // If we're not in production||test then log to the `console`
-    if (!['production', 'test'].includes(process.env.NODE_ENV)) {
+    // If we're not in production||ci||test then log to the `console`
+    if (!['production', 'ci', 'test'].includes(process.env.NODE_ENV)) {
       logger.add(new Winston.transports.Console(this.options.console));
     }
 
