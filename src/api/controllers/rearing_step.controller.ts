@@ -40,8 +40,8 @@ export class RearingStepController extends Controller {
   }
 
   async updatePosition(req: IUserRequest, res: Response, next: NextFunction) {
-    const steps = req.body.data;
     try {
+      const steps = req.body.data;
       const result = await RearingStep.transaction(async (trx) => {
         const res = [];
         for (const step of steps) {
