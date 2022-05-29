@@ -34,7 +34,5 @@ jobs:
         run: npm run build
       - name: List output files
         run: ls
-      - name: Migrate database and seed test data
-        run: npm run ci:init
       - name: Run e2e tests
         run: npm run ci:e2e

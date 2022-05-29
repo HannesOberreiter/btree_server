@@ -27,12 +27,14 @@ export class RearingDetailRouter extends Router {
     this.router
       .route('/')
       .post(
+        Validator.validate([body('job').isString(), body('hour').isNumeric()]),
         Guard.authorize([ROLES.admin, ROLES.user]),
         Container.resolve('RearingDetailController').post
       );
     this.router
       .route('/batchDelete')
       .patch(
+        Validator.validate([body('ids').isArray()]),
         Guard.authorize([ROLES.admin]),
         Container.resolve('RearingDetailController').batchDelete
       );

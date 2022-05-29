@@ -18,7 +18,7 @@ export class ScaleController extends Controller {
       if (req.params.id) {
         query.findById(req.params.id);
       }
-      res.locals.data = req.params.id ? [await query] : await query; // array is returned to be conistent with batchGet function
+      res.locals.data = req.params.id ? [await query] : await query; // array is returned to be consistent with batchGet function
       next();
     } catch (e) {
       next();

@@ -19,18 +19,26 @@ export class RearingTypeController extends Controller {
         .where({
           'rearing_types.user_id': req.user.user_id,
         })
-        .page(offset, parseInt(limit) === 0 ? 10 : limit);
+        .page(
+          offset ? offset : 0,
+          parseInt(limit) === 0 || !limit ? 10 : limit
+        );
 
-      if (Array.isArray(order)) {
-        order.forEach((field, index) => query.orderBy(field, direction[index]));
-      } else {
-        query.orderBy(order, direction);
+      if (order) {
+        if (Array.isArray(order)) {
+          order.forEach((field, index) =>
+            query.orderBy(field, direction[index])
+          );
+        } else {
+          query.orderBy(order, direction);
+        }
       }
-
-      if (q.trim() !== '') {
-        query.where((builder) => {
-          builder.orWhere('rearing_types.name', 'like', `%${q}%`);
-        });
+      if (q) {
+        if (q.trim() !== '') {
+          query.where((builder) => {
+            builder.orWhere('rearing_types.name', 'like', `%${q}%`);
+          });
+        }
       }
       const result = await query.orderBy('id');
       res.locals.data = result;

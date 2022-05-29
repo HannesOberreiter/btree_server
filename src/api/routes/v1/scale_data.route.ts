@@ -20,7 +20,7 @@ export class ScaleDataRouter extends Router {
     this.router
       .route('/')
       .post(
-        Validator.validate([]),
+        Validator.validate([body('scale_id').isNumeric()]),
         Guard.authorize([ROLES.admin, ROLES.user]),
         Container.resolve('ScaleDataController').post
       );
@@ -34,6 +34,7 @@ export class ScaleDataRouter extends Router {
     this.router
       .route('/batchDelete')
       .patch(
+        Validator.validate([body('ids').isArray()]),
         Guard.authorize([ROLES.admin]),
         Container.resolve('ScaleDataController').batchDelete
       );

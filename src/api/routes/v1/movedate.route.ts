@@ -19,6 +19,11 @@ export class MovedateRouter extends Router {
     this.router
       .route('/')
       .post(
+        Validator.validate([
+          body('hive_ids').isArray(),
+          body('apiary_id').isNumeric(),
+          body('date').isString(),
+        ]),
         Guard.authorize([ROLES.admin, ROLES.user]),
         Container.resolve('MovedateController').post
       );
@@ -40,6 +45,7 @@ export class MovedateRouter extends Router {
     this.router
       .route('/batchDelete')
       .patch(
+        Validator.validate([body('ids').isArray()]),
         Guard.authorize([ROLES.admin]),
         Container.resolve('MovedateController').batchDelete
       );
@@ -47,6 +53,7 @@ export class MovedateRouter extends Router {
     this.router
       .route('/date')
       .patch(
+        Validator.validate([body('ids').isArray(), body('start').isString()]),
         Guard.authorize([ROLES.admin, ROLES.user]),
         Container.resolve('MovedateController').updateDate
       );

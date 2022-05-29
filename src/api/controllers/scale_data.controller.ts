@@ -17,7 +17,10 @@ export class ScaleDataController extends Controller {
         .where({
           'scale.user_id': req.user.user_id,
         })
-        .page(offset, parseInt(limit) === 0 ? 10 : limit);
+        .page(
+          offset ? offset : 0,
+          parseInt(limit) === 0 || !limit ? 10 : limit
+        );
 
       if (filters) {
         try {
@@ -35,17 +38,21 @@ export class ScaleDataController extends Controller {
           console.log(e);
         }
       }
-
-      if (Array.isArray(order)) {
-        order.forEach((field, index) => query.orderBy(field, direction[index]));
-      } else {
-        query.orderBy(order, direction);
+      if (order) {
+        if (Array.isArray(order)) {
+          order.forEach((field, index) =>
+            query.orderBy(field, direction[index])
+          );
+        } else {
+          query.orderBy(order, direction);
+        }
       }
-
-      if (q.trim() !== '') {
-        query.where((builder) => {
-          builder.orWhere('scale.name', 'like', `%${q}%`);
-        });
+      if (q) {
+        if (q.trim() !== '') {
+          query.where((builder) => {
+            builder.orWhere('scale.name', 'like', `%${q}%`);
+          });
+        }
       }
       const result = await query.orderBy('id');
       res.locals.data = result;
@@ -79,7 +86,7 @@ export class ScaleDataController extends Controller {
       const result = await ScaleData.transaction(async (trx) => {
         return await ScaleData.query(trx)
           .withGraphJoined('scale')
-          .insert({
+          .insertGraphAndFetch({
             ...insert,
           })
           .where('scale.user_id', req.user.user_id);

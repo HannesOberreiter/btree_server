@@ -135,7 +135,7 @@ describe('Apiary routes', function () {
         },
         function (err, res) {
           expect(res.statusCode).to.eqls(200);
-          expect(res.body, 1);
+          expect(res.body).to.equal(1);
           done();
         }
       );
@@ -305,7 +305,7 @@ describe('Apiary routes', function () {
         { ids: [insertId], status: false },
         function (err, res) {
           expect(res.statusCode).to.eqls(200);
-          expect(res.body, 1);
+          expect(res.body).to.equal(1);
           done();
         }
       );

@@ -17,12 +17,18 @@ export class RearingController extends Controller {
         .where({
           'rearings.user_id': req.user.user_id,
         })
-        .page(offset, parseInt(limit) === 0 ? 10 : limit);
-
-      if (Array.isArray(order)) {
-        order.forEach((field, index) => query.orderBy(field, direction[index]));
-      } else {
-        query.orderBy(order, direction);
+        .page(
+          offset ? offset : 0,
+          parseInt(limit) === 0 || !limit ? 10 : limit
+        );
+      if (order) {
+        if (Array.isArray(order)) {
+          order.forEach((field, index) =>
+            query.orderBy(field, direction[index])
+          );
+        } else {
+          query.orderBy(order, direction);
+        }
       }
 
       if (filters) {
@@ -41,11 +47,12 @@ export class RearingController extends Controller {
           console.log(e);
         }
       }
-
-      if (q.trim() !== '') {
-        query.where((builder) => {
-          builder.orWhere('type.name', 'like', `%${q}%`);
-        });
+      if (q) {
+        if (q.trim() !== '') {
+          query.where((builder) => {
+            builder.orWhere('type.name', 'like', `%${q}%`);
+          });
+        }
       }
       const result = await query.orderBy('id');
       res.locals.data = result;
@@ -56,9 +63,9 @@ export class RearingController extends Controller {
   }
 
   async patch(req: IUserRequest, res: Response, next: NextFunction) {
-    const ids = req.body.ids;
-    const insert = { ...req.body.data };
     try {
+      const ids = req.body.ids;
+      const insert = { ...req.body.data };
       const result = await Rearing.transaction(async (trx) => {
         return await Rearing.query(trx)
           .patch({ ...insert })
@@ -75,7 +82,7 @@ export class RearingController extends Controller {
   async post(req: IUserRequest, res: Response, next: NextFunction) {
     try {
       const result = await Rearing.transaction(async (trx) => {
-        return await Rearing.query(trx).insert({
+        return await Rearing.query(trx).insertAndFetch({
           ...req.body,
           user_id: req.user.user_id,
         });
