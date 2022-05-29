@@ -1,29 +1,27 @@
 module.exports = {
   root: true,
   env: {
-    node: true
+    node: true,
   },
   rules: {
-    "prefer-const": "off",
-    "@typescript-eslint/no-explicit-any": "off",
-    "no-unused-vars": "off",
-     // note you must disable the base rule as it can report incorrect errors
+    'prefer-const': 'off',
+    '@typescript-eslint/no-explicit-any': 'off',
+    'no-unused-vars': 'off',
+    // note you must disable the base rule as it can report incorrect errors
     '@typescript-eslint/no-unused-vars': [
-      'warn', 
+      'warn',
       {
         argsIgnorePattern: '^_',
         varsIgnorePattern: '^_',
         caughtErrorsIgnorePattern: '^_',
       },
-    ]
+    ],
   },
   parser: '@typescript-eslint/parser',
-  plugins: [
-    '@typescript-eslint',
-  ],
+  plugins: ['@typescript-eslint'],
   extends: [
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
-    'prettier'
+    'prettier',
   ],
 };
