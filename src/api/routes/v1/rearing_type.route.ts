@@ -26,12 +26,14 @@ export class RearingTypeRouter extends Router {
     this.router
       .route('/')
       .post(
+        Validator.validate([body('name').isString()]),
         Guard.authorize([ROLES.admin, ROLES.user]),
         Container.resolve('RearingTypeController').post
       );
     this.router
       .route('/batchDelete')
       .patch(
+        Validator.validate([body('ids').isArray()]),
         Guard.authorize([ROLES.admin]),
         Container.resolve('RearingTypeController').batchDelete
       );
