@@ -53,12 +53,11 @@ describe('E2E API tests', () => {
     global.server = global.app.server;
   });
 
-  after(() => {
+  after((done) => {
     global.app.boot.stop();
     global.app.dbServer.stop();
-    global.app = undefined;
-    global.server = undefined;
     knexInstance.destroy();
+    done();
   });
 
   require('./01-api-routes.e2e.test');
