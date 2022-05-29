@@ -119,7 +119,7 @@ describe('Harvest routes', function () {
       );
     });
 
-    it(`patch 401 - no header`, function (done) {
+    it(`patch 200 - success`, function (done) {
       doRequest(
         agent,
         'patch',
