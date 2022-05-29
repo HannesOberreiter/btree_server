@@ -29,24 +29,26 @@ describe('E2E API tests', () => {
     this.timeout(10000);
     console.log('  knex migrate latest ...');
     await knexInstance.migrate.latest();
-    console.log('  knex truncate tables ...');
-    //knexInstance.migrate.rollback({ all: true })
-    await knexInstance.raw('SET FOREIGN_KEY_CHECKS = 0;');
-    const tables = await knexInstance
-      .table('information_schema.tables')
-      .select('table_name', 'table_schema', 'table_type')
-      .where('table_type', 'BASE TABLE')
-      .where('table_schema', knexConfig.connection.database);
-    for (t of tables) {
-      if (
-        !(
-          ['KnexMigrations', 'KnexMigrations_lock'].includes(t.TABLE_NAME) ||
-          t.TABLE_NAME.includes('innodb')
+    if (process.env.ENVIRONMENT !== 'ci') {
+      console.log('  knex truncate tables ...');
+      //knexInstance.migrate.rollback({ all: true })
+      await knexInstance.raw('SET FOREIGN_KEY_CHECKS = 0;');
+      const tables = await knexInstance
+        .table('information_schema.tables')
+        .select('table_name', 'table_schema', 'table_type')
+        .where('table_type', 'BASE TABLE')
+        .where('table_schema', knexConfig.connection.database);
+      for (t of tables) {
+        if (
+          !(
+            ['KnexMigrations', 'KnexMigrations_lock'].includes(t.TABLE_NAME) ||
+            t.TABLE_NAME.includes('innodb')
+          )
         )
-      )
-        await knexInstance.raw(`TRUNCATE ${t.TABLE_NAME};`);
+          await knexInstance.raw(`TRUNCATE ${t.TABLE_NAME};`);
+      }
+      await knexInstance.raw('SET FOREIGN_KEY_CHECKS = 1;');
     }
-    await knexInstance.raw('SET FOREIGN_KEY_CHECKS = 1;');
     global.app = require(process.cwd() + '/dist/api/app.bootstrap');
     global.server = global.app.server;
   });
