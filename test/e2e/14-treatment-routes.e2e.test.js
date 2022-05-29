@@ -133,7 +133,7 @@ describe('Treatment routes', function () {
         },
         function (err, res) {
           expect(res.statusCode).to.eqls(200);
-          expect(res.body, 1);
+          expect(res.body).to.equal(1);
           done();
         }
       );
@@ -188,54 +188,6 @@ describe('Treatment routes', function () {
     });
   });
 
-  describe('/api/v1/treatment/batchDelete', () => {
-    it(`401 - no header`, function (done) {
-      doRequest(
-        agent,
-        'patch',
-        route + 'batchDelete',
-        null,
-        null,
-        { ids: [] },
-        function (err, res) {
-          expect(res.statusCode).to.eqls(401);
-          expect(res.errors, 'JsonWebTokenError');
-          done();
-        }
-      );
-    });
-    it(`400 - missing ids`, function (done) {
-      doRequest(
-        agent,
-        'patch',
-        route + 'batchDelete',
-        null,
-        null,
-        null,
-        function (err, res) {
-          expect(res.statusCode).to.eqls(400);
-          expectations(res, 'ids', 'Invalid value');
-          done();
-        }
-      );
-    });
-    it(`200 - success`, function (done) {
-      doRequest(
-        agent,
-        'patch',
-        route + 'batchDelete',
-        null,
-        accessToken,
-        { ids: [insertId] },
-        function (err, res) {
-          expect(res.statusCode).to.eqls(200);
-          expect(res.body, 1);
-          done();
-        }
-      );
-    });
-  });
-
   describe('/api/v1/treatment/status', () => {
     it(`401 - no header`, function (done) {
       doRequest(
@@ -277,7 +229,7 @@ describe('Treatment routes', function () {
         { ids: [insertId], status: false },
         function (err, res) {
           expect(res.statusCode).to.eqls(200);
-          expect(res.body, 1);
+          expect(res.body).to.equal(1);
           done();
         }
       );
@@ -325,7 +277,55 @@ describe('Treatment routes', function () {
         { ids: [insertId], start: testInsert.date },
         function (err, res) {
           expect(res.statusCode).to.eqls(200);
-          expect(res.body, 1);
+          expect(res.body).to.equal(1);
+          done();
+        }
+      );
+    });
+  });
+
+  describe('/api/v1/treatment/batchDelete', () => {
+    it(`401 - no header`, function (done) {
+      doRequest(
+        agent,
+        'patch',
+        route + 'batchDelete',
+        null,
+        null,
+        { ids: [] },
+        function (err, res) {
+          expect(res.statusCode).to.eqls(401);
+          expect(res.errors, 'JsonWebTokenError');
+          done();
+        }
+      );
+    });
+    it(`400 - missing ids`, function (done) {
+      doRequest(
+        agent,
+        'patch',
+        route + 'batchDelete',
+        null,
+        null,
+        null,
+        function (err, res) {
+          expect(res.statusCode).to.eqls(400);
+          expectations(res, 'ids', 'Invalid value');
+          done();
+        }
+      );
+    });
+    it(`200 - success`, function (done) {
+      doRequest(
+        agent,
+        'patch',
+        route + 'batchDelete',
+        null,
+        accessToken,
+        { ids: [insertId] },
+        function (err, res) {
+          expect(res.statusCode).to.eqls(200);
+          expect(res.body).to.be.a('Array');
           done();
         }
       );

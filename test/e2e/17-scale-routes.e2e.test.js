@@ -128,7 +128,7 @@ describe('Scale routes', function () {
       );
     });
 
-    it(`patch 401 - no header`, function (done) {
+    it(`patch 200 - success`, function (done) {
       doRequest(
         agent,
         'patch',
@@ -137,11 +137,11 @@ describe('Scale routes', function () {
         accessToken,
         {
           ids: [insertId],
-          data: {},
+          data: { name: 'updatedName' },
         },
         function (err, res) {
           expect(res.statusCode).to.eqls(200);
-          expect(res.body, 1);
+          expect(res.body).to.equal(1);
           done();
         }
       );
@@ -197,7 +197,7 @@ describe('Scale routes', function () {
         testInsert,
         function (err, res) {
           expect(res.statusCode).to.eqls(200);
-          expect(res.body, 1);
+          expect(res.body).to.equal(1);
           done();
         }
       );

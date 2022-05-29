@@ -70,4 +70,5 @@ describe('E2E API tests', () => {
   require('./15-checkup-routes.e2e.test');
   require('./16-harvest-routes.e2e.test');
   require('./17-scale-routes.e2e.test');
+  require('./18-scale_data-routes.e2e.test');
 });

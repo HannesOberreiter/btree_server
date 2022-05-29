@@ -146,7 +146,7 @@ describe('Hive routes', function () {
         },
         function (err, res) {
           expect(res.statusCode).to.eqls(200);
-          expect(res.body, 1);
+          expect(res.body).to.equal(1);
           done();
         }
       );
@@ -262,6 +262,54 @@ describe('Hive routes', function () {
     });
   });
 
+  describe('/api/v1/hive/updatePosition', () => {
+    it(`401 - no header`, function (done) {
+      doRequest(
+        agent,
+        'patch',
+        route + 'updatePosition',
+        null,
+        null,
+        { data: [{ position: 0, id: insertId }] },
+        function (err, res) {
+          expect(res.statusCode).to.eqls(401);
+          expect(res.errors, 'JsonWebTokenError');
+          done();
+        }
+      );
+    });
+    it(`400 - missing ids`, function (done) {
+      doRequest(
+        agent,
+        'patch',
+        route + 'updatePosition',
+        null,
+        null,
+        null,
+        function (err, res) {
+          expect(res.statusCode).to.eqls(400);
+          expectations(res, 'data', 'Invalid value');
+          done();
+        }
+      );
+    });
+    it(`200 - success`, function (done) {
+      doRequest(
+        agent,
+        'patch',
+        route + 'updatePosition',
+        null,
+        accessToken,
+        { data: [{ position: 0, id: insertId }] },
+        function (err, res) {
+          expect(res.statusCode).to.eqls(200);
+          expect(res.body[0]).to.equal(1);
+          done();
+        }
+      );
+    });
+  });
+
   describe('/api/v1/hive/batchDelete', () => {
     it(`401 - no header`, function (done) {
       doRequest(
@@ -351,55 +399,7 @@ describe('Hive routes', function () {
         { ids: [insertId], status: false },
         function (err, res) {
           expect(res.statusCode).to.eqls(200);
-          expect(res.body, 1);
-          done();
-        }
-      );
-    });
-  });
-
-  describe('/api/v1/hive/updatePosition', () => {
-    it(`401 - no header`, function (done) {
-      doRequest(
-        agent,
-        'patch',
-        route + 'updatePosition',
-        null,
-        null,
-        { data: [{ position: 0, id: insertId }] },
-        function (err, res) {
-          expect(res.statusCode).to.eqls(401);
-          expect(res.errors, 'JsonWebTokenError');
-          done();
-        }
-      );
-    });
-    it(`400 - missing ids`, function (done) {
-      doRequest(
-        agent,
-        'patch',
-        route + 'updatePosition',
-        null,
-        null,
-        null,
-        function (err, res) {
-          expect(res.statusCode).to.eqls(400);
-          expectations(res, 'data', 'Invalid value');
-          done();
-        }
-      );
-    });
-    it(`200 - success`, function (done) {
-      doRequest(
-        agent,
-        'patch',
-        route + 'updatePosition',
-        null,
-        accessToken,
-        { data: [{ position: 0, id: insertId }] },
-        function (err, res) {
-          expect(res.statusCode).to.eqls(200);
-          expect(res.body, 1);
+          expect(res.body).to.equal(1);
           done();
         }
       );
