@@ -193,11 +193,11 @@ describe('Scale routes', function () {
         'delete',
         route,
         insertId,
-        null,
+        accessToken,
         testInsert,
         function (err, res) {
-          expect(res.statusCode).to.eqls(401);
-          expect(res.errors, 'JsonWebTokenError');
+          expect(res.statusCode).to.eqls(200);
+          expect(res.body, 1);
           done();
         }
       );
