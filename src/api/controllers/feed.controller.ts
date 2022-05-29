@@ -24,7 +24,10 @@ export class FeedController extends Controller {
           'feeds.user_id': req.user.user_id,
           'feeds.deleted': deleted === 'true',
         })
-        .page(offset, parseInt(limit) === 0 ? 10 : limit);
+        .page(
+          offset ? offset : 0,
+          parseInt(limit) === 0 || !limit ? 10 : limit
+        );
 
       if (filters) {
         try {
@@ -42,19 +45,23 @@ export class FeedController extends Controller {
           console.log(e);
         }
       }
-
-      if (Array.isArray(order)) {
-        order.forEach((field, index) => query.orderBy(field, direction[index]));
-      } else {
-        query.orderBy(order, direction);
+      if (order) {
+        if (Array.isArray(order)) {
+          order.forEach((field, index) =>
+            query.orderBy(field, direction[index])
+          );
+        } else {
+          query.orderBy(order, direction);
+        }
       }
-
-      if (q.trim() !== '') {
-        query.where((builder) => {
-          builder
-            .orWhere('hive.name', 'like', `%${q}%`)
-            .orWhere('type.name', 'like', `%${q}%`);
-        });
+      if (q) {
+        if (q.trim() !== '') {
+          query.where((builder) => {
+            builder
+              .orWhere('hive.name', 'like', `%${q}%`)
+              .orWhere('type.name', 'like', `%${q}%`);
+          });
+        }
       }
       const result = await query.orderBy('id');
       res.locals.data = result;
@@ -65,9 +72,9 @@ export class FeedController extends Controller {
   }
 
   async patch(req: IUserRequest, res: Response, next: NextFunction) {
-    const ids = req.body.ids;
-    const insert = { ...req.body.data };
     try {
+      const ids = req.body.ids;
+      const insert = { ...req.body.data };
       const result = await Feed.transaction(async (trx) => {
         return await Feed.query(trx)
           .patch({ ...insert, edit_id: req.user.bee_id })
