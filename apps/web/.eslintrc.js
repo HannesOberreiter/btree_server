@@ -43,6 +43,17 @@ module.exports = {
     './.eslintrc-auto-import.json',
   ],
 
+  overrides: [
+    {
+      files: ['**/*.spec.{js,ts}'],
+      extends: [
+        // Add Cypress-specific lint rules, globals and Cypress plugin
+        // See https://github.com/cypress-io/eslint-plugin-cypress#rules
+        'plugin:cypress/recommended',
+      ],
+    },
+  ],
+
   plugins: [
     // required to apply rules which need type information
     '@typescript-eslint',
