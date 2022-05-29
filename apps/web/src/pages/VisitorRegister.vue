@@ -63,7 +63,12 @@
       >
         <slot>
           {{ t('signup.agree') }}
-          <btn-base flat color="secondary" @click="terms = true">
+          <btn-base
+            data-cy="terms"
+            flat
+            color="secondary"
+            @click="terms = true"
+          >
             {{ t('signup.terms') }}
           </btn-base>
         </slot>
@@ -99,7 +104,13 @@
         {{ state.lang.value == 'de' ? termsDE : termsEN }}
       </q-card-section>
       <q-card-actions align="right">
-        <btn-base v-close-popup flat :label="$t('ok')" color="primary" />
+        <btn-base
+          v-close-popup
+          flat
+          data-cy="btn-terms"
+          :label="$t('ok')"
+          color="primary"
+        />
       </q-card-actions>
     </q-card>
   </q-dialog>
