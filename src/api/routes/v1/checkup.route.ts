@@ -38,18 +38,21 @@ export class CheckupRouter extends Router {
     this.router
       .route('/status')
       .patch(
+        Validator.validate([body('ids').isArray(), body('status').isBoolean()]),
         Guard.authorize([ROLES.admin, ROLES.user]),
         Container.resolve('CheckupController').updateStatus
       );
     this.router
       .route('/date')
       .patch(
+        Validator.validate([body('ids').isArray(), body('start').isString()]),
         Guard.authorize([ROLES.admin, ROLES.user]),
         Container.resolve('CheckupController').updateDate
       );
     this.router
       .route('/batchDelete')
       .patch(
+        Validator.validate([body('ids').isArray()]),
         Guard.authorize([ROLES.admin]),
         Container.resolve('CheckupController').batchDelete
       );
