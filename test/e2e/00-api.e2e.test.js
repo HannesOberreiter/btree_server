@@ -9,6 +9,7 @@ process.env.ENVIROMENT = process.env.ENVIRONMENT
 process.env.NODE_ENV = process.env.ENVIRONMENT;
 process.env.ORIGIN = 'http://localhost:8002'; // must be in accordance with .env AUTHORIZED=http://localhost:8001
 process.env.CONTENT_TYPE = 'application/json';
+const { table } = require('console');
 const p = require('path');
 
 require('dotenv').config({
@@ -32,13 +33,18 @@ describe('E2E API tests', () => {
     console.log('  knex truncate tables ...');
     //knexInstance.migrate.rollback({ all: true })
     await knexInstance.raw('SET FOREIGN_KEY_CHECKS = 0;');
-    const tables = await knexInstance
+    let tables = await knexInstance
       .table('information_schema.tables')
       .select('table_name')
       .where('table_type', 'BASE TABLE');
-    for (table of tables) {
-      if (!['KnexMigrations', 'KnexMigrations_lock'].includes(table.TABLE_NAME))
-        await knexInstance.raw(`TRUNCATE ${table.TABLE_NAME};`);
+    for (t of tables) {
+      if (
+        !(
+          ['KnexMigrations', 'KnexMigrations_lock'].includes(t.TABLE_NAME) ||
+          t.TABLE_NAME.includes('innodb')
+        )
+      )
+        await knexInstance.raw(`TRUNCATE ${t.TABLE_NAME};`);
     }
     await knexInstance.raw('SET FOREIGN_KEY_CHECKS = 1;');
     global.app = require(process.cwd() + '/dist/api/app.bootstrap');
