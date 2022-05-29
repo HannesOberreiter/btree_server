@@ -29,7 +29,10 @@ export class QueenController extends Controller {
           'queens.user_id': req.user.user_id,
           'queens.deleted': deleted === 'true',
         })
-        .page(offset, parseInt(limit) === 0 ? 10 : limit);
+        .page(
+          offset ? offset : 0,
+          parseInt(limit) === 0 || !limit ? 10 : limit
+        );
 
       if (modus) {
         query.where('queens.modus', modus === 'true');
@@ -42,11 +45,14 @@ export class QueenController extends Controller {
       } else {
         query.withGraphJoined('hive_location');
       }
-
-      if (Array.isArray(order)) {
-        order.forEach((field, index) => query.orderBy(field, direction[index]));
-      } else {
-        query.orderBy(order, direction);
+      if (order) {
+        if (Array.isArray(order)) {
+          order.forEach((field, index) =>
+            query.orderBy(field, direction[index])
+          );
+        } else {
+          query.orderBy(order, direction);
+        }
       }
 
       if (filters) {
@@ -68,12 +74,13 @@ export class QueenController extends Controller {
           console.log(e);
         }
       }
-
-      if (q.trim() !== '') {
-        query.where((builder) => {
-          builder.orWhere('queens.name', 'like', `%${q}%`);
-          builder.orWhere('hive.name', 'like', `%${q}%`);
-        });
+      if (q) {
+        if (q.trim() !== '') {
+          query.where((builder) => {
+            builder.orWhere('queens.name', 'like', `%${q}%`);
+            builder.orWhere('hive.name', 'like', `%${q}%`);
+          });
+        }
       }
 
       const result = await query.orderBy('id');
