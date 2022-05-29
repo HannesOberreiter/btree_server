@@ -72,4 +72,5 @@ describe('E2E API tests', () => {
   require('./17-scale-routes.e2e.test');
   require('./18-scale_data-routes.e2e.test');
   require('./19-queen-routes.e2e.test');
+  require('./20-rearing-routes.e2e.test');
 });
