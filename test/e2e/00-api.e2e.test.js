@@ -1,6 +1,6 @@
 require('module-alias/register');
 const { knexConfig } = require(process.cwd() +
-  '/dist/config/environment.config');
+  '/dist/config/environment.config.js');
 const knexInstance = require('knex')(knexConfig);
 
 process.env.ENVIROMENT = process.env.ENVIRONMENT
@@ -33,10 +33,11 @@ describe('E2E API tests', () => {
     console.log('  knex truncate tables ...');
     //knexInstance.migrate.rollback({ all: true })
     await knexInstance.raw('SET FOREIGN_KEY_CHECKS = 0;');
-    let tables = await knexInstance
+    const tables = await knexInstance
       .table('information_schema.tables')
-      .select('table_name')
-      .where('table_type', 'BASE TABLE');
+      .select('table_name', 'table_schema', 'table_type')
+      .where('table_type', 'BASE TABLE')
+      .where('table_schema', knexConfig.connection.database);
     for (t of tables) {
       if (
         !(
