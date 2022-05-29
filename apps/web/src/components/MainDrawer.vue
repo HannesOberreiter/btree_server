@@ -50,16 +50,20 @@
 </template>
 
 <script setup lang="ts">
+import { useQuasar } from 'quasar';
 import { useAuthUserStore } from '~/stores/auth';
 import { useQuicktoolStore } from '~/stores/quicktool';
 
 const { t } = useI18n();
 const storeUser = useAuthUserStore();
 const storeQuicktool = useQuicktoolStore();
+const $q = useQuasar();
 
 const onLogout = async () => {
   await storeUser.logout();
 };
+
+defineExpose({ $q });
 
 const calendar = {
   label: t('calendar.name'),
