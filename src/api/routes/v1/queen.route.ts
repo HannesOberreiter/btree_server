@@ -37,12 +37,14 @@ export class QueenRouter extends Router {
     this.router
       .route('/status')
       .patch(
+        Validator.validate([body('ids').isArray(), body('status').isBoolean()]),
         Guard.authorize([ROLES.admin, ROLES.user]),
         Container.resolve('QueenController').updateStatus
       );
     this.router
       .route('/batchDelete')
       .patch(
+        Validator.validate([body('ids').isArray()]),
         Guard.authorize([ROLES.admin, ROLES.user]),
         Container.resolve('QueenController').batchDelete
       );
