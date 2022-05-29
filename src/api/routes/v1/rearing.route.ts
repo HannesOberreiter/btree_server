@@ -23,21 +23,27 @@ export class RearingRouter extends Router {
         Guard.authorize([ROLES.admin, ROLES.user]),
         Container.resolve('RearingController').patch
       );
-    this.router
-      .route('/')
-      .post(
-        Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('RearingController').post
-      );
+    this.router.route('/').post(
+      Validator.validate([
+        body('detail_id').isNumeric(),
+        body('type_id').isNumeric(),
+        body('date').isString(),
+      ]),
+
+      Guard.authorize([ROLES.admin, ROLES.user]),
+      Container.resolve('RearingController').post
+    );
     this.router
       .route('/date')
       .patch(
+        Validator.validate([body('ids').isArray(), body('start').isString()]),
         Guard.authorize([ROLES.admin, ROLES.user]),
         Container.resolve('RearingController').updateDate
       );
     this.router
       .route('/batchDelete')
       .patch(
+        Validator.validate([body('ids').isArray()]),
         Guard.authorize([ROLES.admin]),
         Container.resolve('RearingController').batchDelete
       );
