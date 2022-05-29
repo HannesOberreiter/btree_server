@@ -9,7 +9,6 @@ process.env.ENVIROMENT = process.env.ENVIRONMENT
 process.env.NODE_ENV = process.env.ENVIRONMENT;
 process.env.ORIGIN = 'http://localhost:8002'; // must be in accordance with .env AUTHORIZED=http://localhost:8001
 process.env.CONTENT_TYPE = 'application/json';
-const { table } = require('console');
 const p = require('path');
 
 require('dotenv').config({
