@@ -118,9 +118,8 @@ export const useApiFetch = () => {
 
     if (!response.ok) {
       if (
-        ![baseUrl + '/v1/auth/login', baseUrl + '/v1/auth/refresh'].includes(
-          request.url
-        ) &&
+        request.url.search('/v1/auth/login') === -1 &&
+        request.url.search('/v1/auth/refresh') === -1 &&
         !recursive
       ) {
         if (response.status === 401 && !state.retry) {
