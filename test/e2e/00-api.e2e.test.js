@@ -65,4 +65,9 @@ describe('E2E API tests', () => {
   require('./10-todo-routes.e2e.test');
   require('./11-option-routes.e2e.test');
   require('./12-charge-routes.e2e.test');
+  require('./13-feed-routes.e2e.test');
+  require('./14-treatment-routes.e2e.test');
+  require('./15-checkup-routes.e2e.test');
+  require('./16-harvest-routes.e2e.test');
+  require('./17-scale-routes.e2e.test');
 });
