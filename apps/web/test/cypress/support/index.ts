@@ -12,5 +12,11 @@
 // You can read more here:
 // https://on.cypress.io/configuration
 // ***********************************************************
-
 import './commands';
+
+// https://github.com/cypress-io/cypress/issues/518
+afterEach(function () {
+  if (this.currentTest.state === 'failed') {
+    (Cypress as any).runner.stop();
+  }
+});

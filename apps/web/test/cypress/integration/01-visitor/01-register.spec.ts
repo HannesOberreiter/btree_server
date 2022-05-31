@@ -1,5 +1,5 @@
 describe('Visitor - Register', () => {
-  let newUser, activateCode, newMail;
+  let newUser: any, activateCode: string, newMail: string;
   before(() => {
     cy.clearLocalStorage();
     cy.visit('/visitor/register');
@@ -21,11 +21,11 @@ describe('Visitor - Register', () => {
   it('Validate email', () => {
     cy.get('[name=email]').type('noEmail');
     cy.get('[role=alert]').should('be.visible');
-    cy.mail_new();
+    cy.add_demo_mail();
     cy.get('[name=email]')
       .invoke('val')
       .then((val) => {
-        newMail = val;
+        newMail = val as string;
       });
   });
 
@@ -40,9 +40,9 @@ describe('Visitor - Register', () => {
   });
 
   it('Terms Dialog', () => {
-    cy.get('[data-cy=terms]').click();
+    cy.dataCy('terms').click();
     cy.get('.q-dialog').should('exist');
-    cy.get('[data-cy=btn-terms]').click();
+    cy.dataCy('btn-terms').click();
   });
 
   it('Register', () => {

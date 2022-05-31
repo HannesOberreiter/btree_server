@@ -95,6 +95,9 @@ const useNotification = () => {
       message: m,
       type: type,
       position: 'top',
+      attrs: {
+        'data-cy': 'notification',
+      },
       actions: [
         {
           label: 'X',

@@ -24,11 +24,17 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
+
 declare global {
   namespace Cypress {
     interface Chainable {
-      mail_new(): Chainable<Element>;
-      login_new(): Chainable<Element>;
+      /**
+       * Add generated demo email address to an email form field.
+       */
+      add_demo_mail(): Chainable<Element>;
+      /**
+       * Redirect to login page and login the demo user.
+       */
       login_demo(): Chainable<Element>;
     }
   }
@@ -37,7 +43,7 @@ declare global {
 const currentTimestamp = new Date().getTime();
 const newMail = `test${currentTimestamp}@btree.at`;
 
-Cypress.Commands.add('mail_new', () => {
+Cypress.Commands.add('add_demo_mail', () => {
   cy.get('[name=email]').clear().type(newMail);
 });
 

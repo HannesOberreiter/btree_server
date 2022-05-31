@@ -23,7 +23,7 @@ describe('Visitor - Login', () => {
     cy.get('[name=email]').clear().type('test@demo.at');
     cy.get('[name=password]').clear().type('shorter');
     cy.get('form').submit();
-    cy.get('#q-notify').find('[role=alert]').should('be.visible');
+    cy.dataCy('notification').should('be.visible');
   });
 
   it('Login', () => {
