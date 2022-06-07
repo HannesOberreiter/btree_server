@@ -37,7 +37,7 @@
             link="hive"
           >
           </table-col-link>
-          <td v-else></td>
+          <td v-else>{{ $t('noHive') }}</td>
         </template>
 
         <template #body-cell-url="props">
