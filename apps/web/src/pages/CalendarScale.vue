@@ -114,10 +114,8 @@ const calendarOptions = reactive({
   weekNumbers: true,
   weekNumberCalculation: 'ISO',
   displayEventTime: true,
-  selectLongPressDelay: 10,
   firstDay: 1,
-  selectable: true,
-  selectMirror: true,
+  selectable: false, // Allows a user to highlight multiple days or timeslots by clicking and dragging.
   dayMaxEvents: 8,
   weekends: true,
   eventClick: handleEventClick,
