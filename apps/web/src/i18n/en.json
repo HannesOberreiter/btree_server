@@ -209,6 +209,7 @@
   "noQueen": "No Queen",
   "notAllowed": "Not allowed!",
   "note": "Note",
+  "sessionTimeOut": "Session time-out",
   "numberHives": "Number of hives",
   "numberQueens": "Number of queens",
   "offlineServer": "Server is offline",

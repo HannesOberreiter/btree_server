@@ -14,6 +14,7 @@ const state = reactive({
 export const useApiFetch = () => {
   const storeToken = useAuthTokenStore();
   const network = useNetwork();
+  const dialog = useNeedAuth();
 
   const buildHeader = () => {
     return {
@@ -137,6 +138,7 @@ export const useApiFetch = () => {
             await new Promise((r) => setTimeout(r, 500));
           }
           if (state.logout === true) {
+            if (!dialog.state.show) dialog.open();
             return Promise.reject();
           }
           return fetching(copy, true);
@@ -161,7 +163,6 @@ export const useApiFetch = () => {
     return fetch(request)
       .then(function (response) {
         if (!response.ok) {
-          const dialog = useNeedAuth();
           state.logout = true;
           dialog.open();
           throw response;
