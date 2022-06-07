@@ -208,7 +208,7 @@ function handleEventsChange(changeInfo: EventChangeArg) {
         if (value.position === startPosition) startStep = value;
       });
       start = dayjs(startStep.date)
-        .add(difference, 'miliseconds')
+        .add(difference, 'milliseconds')
         .format('YYYY-MM-DD HH:mm:ss');
     }
   } else {
