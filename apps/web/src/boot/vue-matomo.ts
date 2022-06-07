@@ -4,7 +4,7 @@ import { useAuthUserStore } from '~/stores/auth';
 
 export default boot(({ app, router }) => {
   const storeUser = useAuthUserStore();
-  storeUser.user.id;
+
   app.use(VueMatomo, {
     // Configure your matomo server and site by providing
     host: process.env.MATOMO_HOST,
