@@ -36,7 +36,7 @@ export class MailService {
     const mailPath = p.join(__dirname, `../../../mails/${mailName}`);
     try {
       let file = readFileSync(mailPath, 'utf-8');
-      file = file.replace(/%base_url%/g, this.baseUrl);
+      file = file.replace(/%base_url%/g, this.baseUrl + '/');
       return file;
     } catch (e) {
       console.error(e);
