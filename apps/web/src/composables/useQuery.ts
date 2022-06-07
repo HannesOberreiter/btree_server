@@ -14,7 +14,7 @@ export function useCalendarQuery() {
     defaultOptions: {
       queries: {
         refetchOnWindowFocus: false,
-        staleTime: 1000 * 60 * 1, // stale (refetching), after 1 minute
+        staleTime: 1000 * 60 * 5, // stale (refetching), after 5 minute
         cacheTime: 1000 * 60 * 60 * 24, // garbage collector, every 24 hours } },
       },
     },
@@ -35,7 +35,10 @@ export function useCalendarQuery() {
   }
 
   function invalidate(source: string) {
-    const queries = queryCache.findAll(['calendar', source]);
+    const queries = source
+      ? queryCache.findAll(['calendar', source])
+      : queryCache.findAll(['calendar']);
+
     queries.forEach((query) => query.invalidate());
   }
 

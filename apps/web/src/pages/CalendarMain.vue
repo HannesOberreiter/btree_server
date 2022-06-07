@@ -49,6 +49,7 @@ import listPlugin from '@fullcalendar/list';
 import { useApiFetch } from '~/composables/useApi';
 import { useQuasar } from 'quasar';
 import { useCalendarQuery } from '~/composables/useQuery';
+import { onBeforeRouteLeave } from 'vue-router';
 
 const useQuery = useCalendarQuery();
 const { t } = useI18n();
@@ -127,6 +128,10 @@ eventsSourceList.map(function (source: any) {
   } else {
     eventsSourceInactive.push(source);
   }
+});
+
+onBeforeRouteLeave(() => {
+  useQuery.invalidate('');
 });
 
 onMounted(() => {
