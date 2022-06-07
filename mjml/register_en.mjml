@@ -23,7 +23,7 @@
           <mj-text align="left" padding="20px 20px 20px 20px" font-weight="500">
             Please activate your account before you login!<br /><br />
             <b>Username:</b> %mail%<br />
-            <b>Activate:</b> <a href="%base_url%activate/%key%">%base_url%login/%key%</a><br />
+            <b>Activate:</b> <a href="%base_url%visitor/activate/%key%">%base_url%login/%key%</a><br />
             <b>Login:</b> <a href="%base_url%">%base_url%</a>
           </mj-text>
         </mj-column>
