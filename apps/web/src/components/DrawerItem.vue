@@ -1,6 +1,7 @@
 <template>
   <q-item
     v-ripple
+    :data-cy="`route-${link.route}`"
     :to="{
       name: link.route,
       params:

@@ -4,6 +4,7 @@
     :disable="!storeRouter.isPrevious"
     flat
     dense
+    data-cy="btn-return"
     color="white"
     size="md"
     icon="fas fa-backward-step"

@@ -2,6 +2,7 @@
   <q-select
     ref="searchRef"
     v-model="search"
+    data-cy="select-search-hive-apiary"
     :style="$q.platform.is.mobile ? 'display:none' : ''"
     dense
     use-input

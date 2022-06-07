@@ -33,28 +33,78 @@ declare global {
        */
       add_demo_mail(): Chainable<Element>;
       /**
+       * Fills in correct password based on loaded user.
+       */
+      add_demo_password(): Chainable<Element>;
+      /**
        * Redirect to login page and login the demo user.
        */
       login_demo(): Chainable<Element>;
+      /**
+       * Loads cached session or login user.
+       */
+      login_session(): Chainable<Element>;
+      /**
+       * If run fill integration test this will set the login user to use the newly registered user otherwise single tests will use the 'demo_en@btree.at' user.
+       */
+      isRegistered(): Chainable<Element>;
     }
   }
 }
 
 const currentTimestamp = new Date().getTime();
 const newMail = `test${currentTimestamp}@btree.at`;
+let noRegistration = true;
+
+Cypress.Commands.add('isRegistered', () => {
+  noRegistration = false;
+});
 
 Cypress.Commands.add('add_demo_mail', () => {
-  cy.get('[name=email]').clear().type(newMail);
+  const userFixture = noRegistration ? 'user_demo' : 'user_new';
+  cy.fixture(userFixture).then((user) => {
+    cy.get('[name=email]')
+      .clear()
+      .type(noRegistration ? user.mail : newMail);
+  });
+});
+
+Cypress.Commands.add('add_demo_password', () => {
+  const userFixture = noRegistration ? 'user_demo' : 'user_new';
+  cy.fixture(userFixture).then((user) => {
+    cy.get('[name=password]').clear().type(user.password);
+    cy.get('[name=confirmPassword]').clear().type(user.password);
+  });
 });
 
 Cypress.Commands.add('login_demo', () => {
+  const userFixture = noRegistration ? 'user_demo' : 'user_new';
   cy.visit('/visitor/login');
-  cy.fixture('user_new').then((user) => {
-    cy.get('[name=email]').type(newMail);
+  cy.fixture(userFixture).then((user) => {
+    cy.get('[name=email]').type(noRegistration ? user.mail : newMail);
     cy.get('[name=password]').type(user.password);
     cy.get('form').submit();
-    cy.get('header').should('be.visible');
+    cy.get('header', { timeout: 50000 }).should('be.visible');
   });
+});
+
+Cypress.Commands.add('login_session', () => {
+  cy.login_demo();
+  cy.saveLocalStorage();
+  /*
+  cy.session(
+    ['main'],
+    () => {
+      cy.login_demo();
+    },
+    {
+      validate() {
+        cy.visit('/');
+        cy.get('header', { timeout: 50000 }).should('be.visible');
+        cy.dataCy('dialog-session-timeout').should('not.exist');
+      },
+    }
+  );*/
 });
 
 // DO NOT REMOVE

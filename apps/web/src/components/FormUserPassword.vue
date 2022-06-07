@@ -86,7 +86,7 @@ const rules = computed(() => {
   const localRules = {
     password: {
       required,
-      minLengthValue: minLength(props.confirm ? 8 : 5),
+      minLengthValue: minLength(props.confirm ? 7 : 5),
       maxLengthValue: maxLength(100),
     },
     confirmPassword: {},
@@ -98,7 +98,7 @@ const rules = computed(() => {
     };
     localRules.password = {
       ...localRules.password,
-      minLengthValue: minLength(8),
+      minLengthValue: minLength(7),
     };
   }
   return localRules;

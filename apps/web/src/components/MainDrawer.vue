@@ -10,6 +10,7 @@
             task: storeQuicktool.getLink,
           },
         }"
+        data-cy="route-new-quicktool"
         clickable
         exact
         active-class="text-yellow"

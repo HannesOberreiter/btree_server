@@ -1,10 +1,11 @@
 describe('Visitor - Register', () => {
-  let newUser: any, activateCode: string, newMail: string;
+  let user: any, token: string, newMail: string;
   before(() => {
     cy.clearLocalStorage();
     cy.visit('/visitor/register');
-    cy.fixture('user_new').then((user) => {
-      newUser = user;
+    cy.isRegistered();
+    cy.fixture('user_new').then((user_data) => {
+      user = user_data;
     });
   });
 
@@ -15,7 +16,7 @@ describe('Visitor - Register', () => {
   it('Validate Company', () => {
     cy.get('[name="company.name"]').type('Company').clear();
     cy.get('[role=alert]').should('be.visible');
-    cy.get('[name="company.name"]').clear().type(newUser.company);
+    cy.get('[name="company.name"]').clear().type(user.company);
   });
 
   it('Validate email', () => {
@@ -35,8 +36,8 @@ describe('Visitor - Register', () => {
     cy.get('[name=password]').clear().type('firstPassword');
     cy.get('[name=confirmPassword]').clear().type('secondPassword');
     cy.get('[role=alert]').should('be.visible');
-    cy.get('[name=password]').clear().type(newUser.password);
-    cy.get('[name=confirmPassword]').clear().type(newUser.password);
+    cy.get('[name=password]').clear().type(user.password);
+    cy.get('[name=confirmPassword]').clear().type(user.password);
   });
 
   it('Terms Dialog', () => {
@@ -56,12 +57,12 @@ describe('Visitor - Register', () => {
     cy.wait('@postRequest').then((interception) => {
       assert.isNotNull(interception.response.body);
       assert.isNotNull(interception.response.body.activate);
-      activateCode = interception.response.body.activate;
+      token = interception.response.body.activate;
     });
   });
 
   it('Activate Account', () => {
-    cy.visit('/visitor/activate/' + activateCode);
+    cy.visit('/visitor/activate/' + token);
     cy.get('[name=resetKey]').should('exist');
     cy.get('form').submit();
     cy.get('[name=email]').should('have.value', newMail);

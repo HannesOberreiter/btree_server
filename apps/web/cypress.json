@@ -1,4 +1,5 @@
 {
+  "experimentalSessionAndOrigin": false,
   "baseUrl": "http://localhost:9000/",
   "fixturesFolder": "test/cypress/fixtures",
   "integrationFolder": "test/cypress/integration",
@@ -7,6 +8,7 @@
   "supportFile": "test/cypress/support/index.ts",
   "videosFolder": "test/cypress/videos",
   "video": true,
+  "userAgent": "cypress-test",
   "component": {
     "componentFolder": "src",
     "testFiles": "**/*.spec.ts",
