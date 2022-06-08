@@ -101,11 +101,13 @@
         <!-- eslint-disable-next-line vue/valid-v-slot -->
         <template #body-cell-checkup_apiary.apiary_name="props">
           <table-col-link
+            v-if="props.row.checkup_apiary"
             :id="props.row.checkup_apiary.apiary_id"
             :label="props.value"
             link="apiary"
           >
           </table-col-link>
+          <td v-else></td>
         </template>
       </q-table>
     </div>

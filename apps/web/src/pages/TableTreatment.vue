@@ -62,11 +62,13 @@
         <!-- eslint-disable-next-line vue/valid-v-slot -->
         <template #body-cell-treatment_apiary.apiary_name="props">
           <table-col-link
+            v-if="props.row.treatment_apiary"
             :id="props.row.treatment_apiary.apiary_id"
             :label="props.value"
             link="apiary"
           >
           </table-col-link>
+          <td v-else></td>
         </template>
 
         <!-- eslint-disable-next-line vue/valid-v-slot -->
