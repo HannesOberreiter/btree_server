@@ -15,14 +15,7 @@
             {{ `${file.name} (${round(file.size / 1e6, 1)}MB)` }}
           </div>
           <q-space />
-          <btn-base
-            ref="closeBtn"
-            v-close-popup
-            icon="fas fa-times"
-            flat
-            round
-            dense
-          />
+          <btn-close-dialog></btn-close-dialog>
         </div>
         <div class="row full-width text-center">
           <div v-if="isImage(file.name)" class="col-12">

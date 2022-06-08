@@ -1,5 +1,5 @@
 <template>
-  <q-form class="full-width" @submit.prevent.stop="">
+  <q-form class="full-width" data-cy="form-hive" @submit.prevent.stop="">
     <div class="row">
       <form-dropdown-edit
         v-if="isEdit"
@@ -25,6 +25,7 @@
           round
           icon="fas fa-retweet"
           :color="showInterval ? 'secondary' : 'grey'"
+          data-cy="btn-repeat"
           @click="changeInterval"
         ></btn-base>
       </div>

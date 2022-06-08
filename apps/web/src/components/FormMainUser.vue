@@ -1,5 +1,5 @@
 <template>
-  <q-form @submit.prevent.stop="onSubmit">
+  <q-form data-cy="form-user" @submit.prevent.stop="onSubmit">
     <div class="row">
       <div class="col-6 q-pr-sm">
         <form-input-text

@@ -1,10 +1,16 @@
 <template>
   <btn-base-group size="sm" :spread="false">
-    <btn-base color="primary" :label="$t('new')" @click="onNew" />
+    <btn-base
+      color="primary"
+      :label="$t('new')"
+      data-cy="btn-table-new"
+      @click="onNew"
+    />
     <btn-base
       color="secondary"
       :disable="selected.length > 0 ? false : true"
       :label="$t('edit')"
+      data-cy="btn-table-edit"
       @click="onEdit"
     />
 
@@ -40,7 +46,13 @@
     <table-button-scale v-if="table === 'scale_data'" @change="emit('change')">
     </table-button-scale>
 
-    <q-btn-dropdown no-caps color="info" label="..." class="print-hide">
+    <q-btn-dropdown
+      no-caps
+      color="info"
+      label="..."
+      class="print-hide"
+      data-cy="btn-table-dropdown"
+    >
       <q-list>
         <q-item
           v-if="table === 'hive'"
@@ -99,6 +111,7 @@
           v-close-popup
           clickable
           :disable="selected.length > 0 ? false : true"
+          data-cy="btn-table-delete"
           @click="onDelete"
         >
           <q-item-section avatar>
@@ -281,6 +294,10 @@ function onDelete() {
   $q.dialog({
     title: t('delete'),
     message: message,
+    ok: {
+      label: t('yes'),
+      class: 'btn-confirm',
+    },
     cancel: true,
     persistent: true,
     html: true,

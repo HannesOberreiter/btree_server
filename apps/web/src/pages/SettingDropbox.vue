@@ -2,7 +2,7 @@
   <q-card v-if="useDropbox.state.isLoading && !isModalOpen()">
     <global-loading></global-loading>
   </q-card>
-  <q-card v-else>
+  <q-card v-else data-cy="page-setting-dropbox">
     <q-card-section v-if="resetInit && account">
       <div class="text-h5">
         <q-icon name="fab fa-dropbox"></q-icon> {{ $t('account') }}:

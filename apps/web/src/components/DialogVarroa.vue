@@ -9,14 +9,7 @@
         <div class="row">
           <div class="text-h6">{{ $t('calculateVarroa') }}</div>
           <q-space />
-          <btn-base
-            ref="closeBtn"
-            v-close-popup
-            icon="fas fa-times"
-            flat
-            round
-            dense
-          />
+          <btn-close-dialog></btn-close-dialog>
         </div>
         <div class="row full-width">
           <div class="col-12">

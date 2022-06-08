@@ -1,19 +1,16 @@
 <template>
-  <q-dialog ref="dialogRef" :maximized="$q.platform.is.mobile" @hide="onHide">
+  <q-dialog
+    ref="dialogRef"
+    :maximized="$q.platform.is.mobile"
+    data-cy="dialog-share"
+    @hide="onHide"
+  >
     <q-card style="width: 700px">
       <q-card-section>
         <div class="row">
           <div class="text-h6">{{ title }}</div>
           <q-space />
-          <btn-base
-            ref="closeBtn"
-            v-close-popup
-            icon="fas fa-times"
-            flat
-            round
-            dense
-            class="print-hide"
-          />
+          <btn-close-dialog></btn-close-dialog>
         </div>
         <div class="row print-hide">
           {{ $t('currentPageLink') }}
@@ -25,6 +22,7 @@
           <div class="col-12">
             <q-input
               v-model="urlRef"
+              data-cy="input-url"
               :value="url"
               :label="$t('url')"
               :readonly="true"
@@ -33,6 +31,7 @@
                 <btn-base
                   flat
                   icon="fas fa-copy"
+                  data-cy="btn-copy"
                   @click="
                     copy(url).then(() =>
                       notification.open('info', 'copiedToClipboard')

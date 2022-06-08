@@ -10,7 +10,7 @@ describe('Visitor - Register', () => {
   });
 
   it('Assert form present', () => {
-    cy.get('form').should('exist');
+    cy.get('form', { timeout: 50000 }).should('exist');
   });
 
   it('Validate Company', () => {

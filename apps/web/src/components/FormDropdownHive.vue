@@ -42,6 +42,7 @@
     :use-input="!$q.platform.is.mobile"
     filled
     class="hive-select"
+    data-cy="select-hive"
     @update:model-value="selectHive"
     @filter="filterHive"
   >

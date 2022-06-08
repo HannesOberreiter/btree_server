@@ -1,6 +1,13 @@
 <template>
-  <q-dialog>
+  <q-dialog data-cy="dialog-hint">
     <q-card>
+      <q-card-section>
+        <div class="row">
+          <div class="text-h6">{{ $t('hint') }}</div>
+          <q-space />
+          <btn-close-dialog></btn-close-dialog>
+        </div>
+      </q-card-section>
       <q-card-section class="text-body1">
         {{ $t(hint) }}
       </q-card-section>

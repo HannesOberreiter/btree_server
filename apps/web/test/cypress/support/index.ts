@@ -14,9 +14,14 @@
 // ***********************************************************
 import './commands';
 
-// https://github.com/cypress-io/cypress/issues/518
 afterEach(function () {
+  // https://github.com/cypress-io/cypress/issues/518
   if (this.currentTest.state === 'failed') {
     (Cypress as any).runner.stop();
   }
+  cy.saveLocalStorage();
+});
+
+beforeEach(() => {
+  cy.restoreLocalStorage();
 });

@@ -38,16 +38,28 @@ declare global {
       add_demo_password(): Chainable<Element>;
       /**
        * Redirect to login page and login the demo user.
+       * @example cy.login_demo('/new/hive')
        */
-      login_demo(): Chainable<Element>;
+      login_demo(next: string): Chainable<Element>;
       /**
        * Loads cached session or login user.
+       * @example cy.login_session('/new/hive')
        */
-      login_session(): Chainable<Element>;
+      login_session(url: string): Chainable<Element>;
       /**
        * If run fill integration test this will set the login user to use the newly registered user otherwise single tests will use the 'demo_en@btree.at' user.
        */
       isRegistered(): Chainable<Element>;
+      /**
+       * Edit first row in table
+       * @example cy.table_edit_row('form-hive')
+       */
+      table_edit_row(form: string): Chainable<Element>;
+      /**
+       * Delete first row in table
+       * @example cy.table_delete_row()
+       */
+      table_delete_row(): Chainable<Element>;
     }
   }
 }
@@ -55,6 +67,24 @@ declare global {
 const currentTimestamp = new Date().getTime();
 const newMail = `test${currentTimestamp}@btree.at`;
 let noRegistration = true;
+
+Cypress.Commands.add('table_edit_row', (form: string) => {
+  cy.get('tbody > tr > td').first().click();
+  cy.dataCy('btn-table-edit').click();
+  cy.dataCy(form).should('exist');
+  cy.dataCy('btn-form-update').click();
+  cy.dataCy(form).should('not.exist');
+  cy.get('tbody > tr > td').first().click();
+});
+
+Cypress.Commands.add('table_delete_row', () => {
+  cy.get('tbody > tr > td').first().click();
+  cy.dataCy('btn-table-dropdown').click();
+  cy.dataCy('btn-table-delete').click();
+  cy.get('.q-dialog').should('exist');
+  cy.get('.btn-confirm').click();
+  cy.get('.q-dialog').should('not.exist');
+});
 
 Cypress.Commands.add('isRegistered', () => {
   noRegistration = false;
@@ -77,9 +107,9 @@ Cypress.Commands.add('add_demo_password', () => {
   });
 });
 
-Cypress.Commands.add('login_demo', () => {
+Cypress.Commands.add('login_demo', (next = '') => {
   const userFixture = noRegistration ? 'user_demo' : 'user_new';
-  cy.visit('/visitor/login');
+  cy.visit(next ? `/visitor/login?next=${next}` : '/visitor/login');
   cy.fixture(userFixture).then((user) => {
     cy.get('[name=email]').type(noRegistration ? user.mail : newMail);
     cy.get('[name=password]').type(user.password);
@@ -88,9 +118,35 @@ Cypress.Commands.add('login_demo', () => {
   });
 });
 
-Cypress.Commands.add('login_session', () => {
-  cy.login_demo();
+Cypress.Commands.add('login_session', (url: string) => {
+  const userFixture = noRegistration ? 'user_demo' : 'user_new';
+
+  cy.fixture(userFixture).then((user) => {
+    cy.request({
+      url: 'http://localhost:8101/api/v1/auth/login',
+      method: 'POST',
+      headers: {
+        origin: 'http://localhost:8001',
+      },
+      body: {
+        email: noRegistration ? user.mail : newMail,
+        password: user.password,
+      },
+    }).then((response) => {
+      window.localStorage.setItem('token', JSON.stringify(response.body.token));
+      window.localStorage.setItem('user', JSON.stringify(response.body.data));
+    });
+  });
+
+  //cy.login_demo(url);
+  /*cy.url().then((currentUrl) => {
+    if (!currentUrl.includes(url)) {
+      cy.visit(url);
+    }
+  });*/
+  cy.visit(url);
   cy.saveLocalStorage();
+
   /*
   cy.session(
     ['main'],

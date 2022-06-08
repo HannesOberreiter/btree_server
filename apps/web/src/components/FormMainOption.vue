@@ -1,5 +1,5 @@
 <template>
-  <q-form class="full-width" @submit.prevent.stop="">
+  <q-form class="full-width" data-cy="form-option" @submit.prevent.stop="">
     <form-dropdown-edit
       v-if="isEdit"
       v-model="editOptions"
@@ -42,6 +42,8 @@
       label="favorite"
       :values="values"
       :reset="reset"
+      status-active="yes"
+      status-inactive="no"
     ></form-input-checkbox>
   </q-form>
   <form-buttons

@@ -7,6 +7,7 @@ declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     BtnBase: typeof import('./components/BtnBase.vue')['default']
     BtnBaseGroup: typeof import('./components/BtnBaseGroup.vue')['default']
+    BtnCloseDialog: typeof import('./components/BtnCloseDialog.vue')['default']
     BtnDarkMode: typeof import('./components/BtnDarkMode.vue')['default']
     BtnFullscreen: typeof import('./components/BtnFullscreen.vue')['default']
     BtnMultipleValues: typeof import('./components/BtnMultipleValues.vue')['default']

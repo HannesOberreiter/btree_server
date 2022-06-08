@@ -4,6 +4,7 @@
       color="secondary"
       :loading="isSubmitting"
       :label="$t('save')"
+      data-cy="btn-form-save"
       @click="onSubmit"
     />
     <btn-base color="warning" :label="$t('reset')" @click="emit('reset')" />
@@ -12,6 +13,7 @@
       color="info"
       :loading="isSubmitting"
       :label="$t('undo')"
+      data-cy="btn-form-undo"
       @click="onUndo"
     />
   </btn-base-group>
@@ -20,6 +22,7 @@
       color="secondary"
       :loading="isSubmitting"
       :label="$t('update')"
+      data-cy="btn-form-update"
       @click="onUpdate"
     ></btn-base>
     <btn-base color="warning" :label="$t('reset')" @click="emit('reset')" />

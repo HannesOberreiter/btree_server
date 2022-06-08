@@ -1,16 +1,6 @@
 describe('User - Navbar', () => {
   before(() => {
-    //cy.clearLocalStorage();
-    cy.login_session();
-    cy.visit('/');
-  });
-
-  beforeEach(() => {
-    cy.restoreLocalStorage();
-  });
-
-  afterEach(() => {
-    cy.saveLocalStorage();
+    cy.login_session('/');
   });
 
   /**

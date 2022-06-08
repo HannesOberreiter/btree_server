@@ -16,6 +16,8 @@
         <q-item-section>
           <q-toggle
             v-model="modelValue"
+            :name="label"
+            :class="`checkbox-${label}`"
             color="blue"
             :false-value="falseValue"
             :true-value="trueValue"

@@ -1,5 +1,5 @@
 <template>
-  <q-form class="full-width" @submit.prevent.stop="">
+  <q-form class="full-width" data-cy="form-apiary" @submit.prevent.stop="">
     <div class="row">
       <div class="col-12">
         <form-input-text
