@@ -1,22 +1,12 @@
 <template>
   <q-form data-cy="form-user" @submit.prevent.stop="onSubmit">
-    <div class="row">
-      <div class="col-6 q-pr-sm">
-        <form-input-text
-          v-model="state.firstname"
-          label="firstname"
-          :max-valid="45"
-        >
-        </form-input-text>
-      </div>
-      <div class="col-6">
-        <form-input-text
-          v-model="state.lastname"
-          label="lastname"
-          :max-valid="45"
-        >
-        </form-input-text>
-      </div>
+    <div class="col-12">
+      <form-input-text
+        v-model="state.username"
+        label="username"
+        :max-valid="45"
+      >
+      </form-input-text>
       <div class="col-12">
         <form-user-language v-model="state.lang"></form-user-language>
       </div>
@@ -87,8 +77,7 @@ const { user } = storeToRefs(storeUser);
 const isSubmitting = ref(false);
 
 const state = reactive({
-  firstname: user.value.firstname || '',
-  lastname: user.value.lastname || '',
+  username: user.value.username || '',
   format: user.value.format || '',
   lang: user.value.lang === 'de' ? LANGUAGES[1] : LANGUAGES[0],
   sound: user.value.sound,
@@ -113,8 +102,7 @@ async function onSubmit() {
     return;
   }
   const data = {
-    firstname: state.firstname,
-    lastname: state.lastname,
+    username: state.username,
     lang: state.lang.value,
     sound: state.sound,
     acdate: state.acdate,

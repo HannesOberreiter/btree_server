@@ -18,7 +18,7 @@
 
       <q-item-section top>
         <q-item-label caption lines="1">
-          {{ value.user.firstname }} {{ value.user.lastname }}
+          {{ value.user.username }}
         </q-item-label>
         <q-item-label lines="1">
           <span class="text-weight-medium">{{ value.user.email }}</span>

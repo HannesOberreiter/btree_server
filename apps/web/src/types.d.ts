@@ -12,8 +12,7 @@ export declare interface User {
   format?: number;
   lang?: string;
   id?: number;
-  firstname?: string;
-  lastname?: string;
+  username?: string;
   saved_company?: number;
   sound?: boolean;
   newsletter?: boolean;
