@@ -82,6 +82,12 @@ export class OptionController extends Controller {
       const insert = { ...req.body };
       const table = Object(OptionController.tables)[req.params.table];
       const result = await table.transaction(async (trx) => {
+        if (insert.favorite == true) {
+          await table
+            .query(trx)
+            .patch({ favorite: false })
+            .where('user_id', req.user.user_id);
+        }
         return await table.query(trx).insert({
           ...insert,
           user_id: req.user.user_id,
