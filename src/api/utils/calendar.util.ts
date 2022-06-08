@@ -125,12 +125,12 @@ const getTodos = async ({ query, user }) => {
     }
     res.table = 'todo';
     if (res.editor) {
-      res.editors = res.editor.email;
+      res.editors = res.editor.username ? res.editor.username : res.editor.email;
     } else {
       res.editors = '';
     }
     if (res.creator) {
-      res.creators = res.creator.email;
+      res.creators = res.creator.username ? res.creator.username : res.creator.email;
     } else {
       res.creators = '';
     }

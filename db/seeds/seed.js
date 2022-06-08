@@ -83,6 +83,8 @@ if (env.env === 'production') {
           'bee_id',
           'rank',
           'task',
+          'firstname',
+          'lastname',
           'task_year',
           'creation_date',
         ]),

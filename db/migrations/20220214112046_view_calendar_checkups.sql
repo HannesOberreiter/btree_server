@@ -6,8 +6,8 @@ CREATE VIEW calendar_checkups AS
         GROUP_CONCAT(DISTINCT hives.name) as hive_names,
         task_type.id as type_id,
         task_type.name as type_name,
-        GROUP_CONCAT(DISTINCT created.email) as creators,
-        GROUP_CONCAT(DISTINCT edited.email) as editors
+        GROUP_CONCAT(DISTINCT created.name) as creators,
+        GROUP_CONCAT(DISTINCT edited.name) as editors
     FROM checkups_apiaries as ta 
     LEFT JOIN checkups as task
         ON task.id = ta.checkup_id
@@ -15,9 +15,9 @@ CREATE VIEW calendar_checkups AS
         ON task_type.id = task.type_id
     LEFT JOIN hives
         ON hives.id = task.hive_id
-    LEFT JOIN bees as created
+    LEFT JOIN (SELECT COALESCE(NULLIF(username,''), email) as name, id FROM bees) as created
         ON created.id = task.bee_id
-    LEFT JOIN bees as edited
+    LEFT JOIN (SELECT COALESCE(NULLIF(username,''), email) as name, id FROM bees) as edited
         ON edited.id = task.edit_id
     WHERE task.deleted = 0
     AND hives.deleted = 0

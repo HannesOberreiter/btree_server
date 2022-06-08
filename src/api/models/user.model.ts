@@ -6,8 +6,7 @@ import { ModelObject } from 'objection';
 export class User extends ExtModel {
   id!: number;
   email!: string;
-  lastname!: string;
-  firstname!: string;
+  username!: string;
   password!: string;
   reset!: string;
   salt!: string;
@@ -32,8 +31,7 @@ export class User extends ExtModel {
     required: ['email', 'password', 'salt'],
     properties: {
       id: { type: 'integer' },
-      firstName: { type: 'string', minLength: 1, maxLength: 45 },
-      lastName: { type: 'string', minLength: 1, maxLength: 45 },
+      username: { type: 'string', minLength: 1, maxLength: 45 },
       email: { type: 'string', format: 'email', minLength: 5, maxLength: 100 },
 
       password: { type: 'string', minLength: 6, maxLength: 128 },
@@ -75,7 +73,7 @@ export class User extends ExtModel {
   static get modifiers() {
     return {
       identifier(builder) {
-        builder.select('email');
+        builder.select('email', 'username');
       },
     };
   }

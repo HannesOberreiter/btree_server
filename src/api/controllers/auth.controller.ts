@@ -65,7 +65,7 @@ export class AuthController extends Controller {
         to: result.email,
         lang: result.lang,
         subject: 'pw_reset',
-        name: result.firstname + ' ' + result.lastname,
+        name: result.username,
         key: result.reset,
       });
       if (env !== ENVIRONMENT.production) {
