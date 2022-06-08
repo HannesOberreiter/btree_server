@@ -286,7 +286,7 @@ export class HiveController extends Controller {
         }
 
         return await Hive.query(trx)
-          .patch(insert)
+          .patch({...insert, edit_id: req.user.bee_id})
           .findByIds(ids)
           .where('user_id', req.user.user_id);
       });

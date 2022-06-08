@@ -132,7 +132,7 @@ export class QueenController extends Controller {
       const insert = { ...req.body.data };
       const result = await Queen.transaction(async (trx) => {
         return await Queen.query(trx)
-          .patch(insert)
+          .patch({ ...insert, edit_id: req.user.bee_id })
           .findByIds(ids)
           .where('user_id', req.user.user_id);
       });

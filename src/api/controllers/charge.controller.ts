@@ -110,7 +110,7 @@ export class ChargeController extends Controller {
     try {
       const result = await Charge.transaction(async (trx) => {
         return await Charge.query(trx)
-          .patch({ ...insert, bee_id: req.user.bee_id })
+          .patch({ ...insert, edit_id: req.user.bee_id })
           .findByIds(ids)
           .where('user_id', req.user.user_id);
       });
