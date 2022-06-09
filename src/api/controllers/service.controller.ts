@@ -3,8 +3,8 @@ import { Controller } from '@classes/controller.class';
 import { IUserRequest } from '@interfaces/IUserRequest.interface';
 import { Apiary } from '../models/apiary.model';
 import { getTemperature } from '../utils/temperature.util';
-import { Company } from '../models/company.model';
 import { paymentRequired } from '@hapi/boom';
+import { isPremium } from '../utils/premium.util';
 
 export class ServiceController extends Controller {
   constructor() {
@@ -13,8 +13,8 @@ export class ServiceController extends Controller {
 
   async getTemperature(req: IUserRequest, res: Response, next: NextFunction) {
     try {
-      const paid = await Company.query().findById(req.user.user_id);
-      if (!paid.isPaid()) throw paymentRequired();
+      const premium = await isPremium(req.user.user_id)
+      if (!premium) throw paymentRequired();
       const apiary = await Apiary.query()
         .findById(req.params.apiary_id)
         .where({ user_id: req.user.user_id });

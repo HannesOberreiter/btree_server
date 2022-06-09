@@ -76,6 +76,12 @@ const meteoblueKey = process.env.METEOBLUE_KEY;
 const dropboxClientId = process.env.DROPBOX_CLIENT_ID;
 const dropboxClientSecret = process.env.DROPBOX_CLIENT_SECRET;
 
+const basicLimit = {
+  hive: parseInt(process.env.limit_hive),
+  apiary: parseInt(process.env.limit_apiary),
+  scale: parseInt(process.env.limit_scale),
+}
+
 const knexConfig = {
   client: process.env.DB_TYPE,
   connection: {
@@ -142,4 +148,5 @@ export {
   mailConfig,
   dropboxClientId,
   dropboxClientSecret,
+  basicLimit
 };

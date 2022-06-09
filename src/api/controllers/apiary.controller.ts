@@ -3,11 +3,12 @@ import { Controller } from '@classes/controller.class';
 import { checkMySQLError } from '@utils/error.util';
 import { IUserRequest } from '@interfaces/IUserRequest.interface';
 import { Apiary } from '../models/apiary.model';
-import { conflict, forbidden } from '@hapi/boom';
+import { conflict, forbidden, paymentRequired } from '@hapi/boom';
 import { map } from 'lodash';
 import dayjs from 'dayjs';
 import { HiveLocation } from '../models/hive_location.model';
 import { Movedate } from '../models/movedate.model';
+import { limitApiary } from '../utils/premium.util';
 export class ApiaryController extends Controller {
   constructor() {
     super();
@@ -145,6 +146,9 @@ export class ApiaryController extends Controller {
 
   async post(req: IUserRequest, res: Response, next) {
     try {
+      const limit = await limitApiary(req.user.user_id);
+      if(limit) throw paymentRequired('no premium access')
+
       const result = await Apiary.transaction(async (trx) => {
         const checkDuplicate = await Apiary.query().where({
           user_id: req.user.user_id,

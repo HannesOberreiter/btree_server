@@ -65,7 +65,10 @@ class Cors {
     if (!req.headers.origin) {
       if (req.headers.referer) {
         const url = new URL(req.headers.referer);
+        console.log(url)
         req.headers.origin = url.origin;
+      } else if(req.headers.host) {
+        req.headers.origin = req.headers.host;
       }
     }
 

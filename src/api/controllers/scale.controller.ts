@@ -5,6 +5,8 @@ import { IUserRequest } from '@interfaces/IUserRequest.interface';
 import { Scale } from '../models/scale.model';
 import { Hive } from '../models/hive.model';
 import { ScaleData } from '../models/scale_data.model';
+import { limitScale } from '../utils/premium.util';
+import { paymentRequired } from '@hapi/boom';
 
 export class ScaleController extends Controller {
   constructor() {
@@ -48,6 +50,9 @@ export class ScaleController extends Controller {
   }
   async post(req: IUserRequest, res: Response, next) {
     try {
+      const limit = await limitScale(req.user.user_id);
+      if (limit) throw paymentRequired('no premium access');
+
       const result = await Scale.transaction(async (trx) => {
         if (req.body.hive_id)
           await Hive.query(trx)

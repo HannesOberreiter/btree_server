@@ -8,9 +8,10 @@ import { reviewPassword } from '@utils/login.util';
 import { CompanyBee } from '@models/company_bee.model';
 import { autoFill } from '@utils/autofill.util';
 import { User } from '@models/user.model';
-import { Boom, forbidden } from '@hapi/boom';
+import { Boom, forbidden, paymentRequired } from '@hapi/boom';
 import { UserController } from '@controllers/user.controller';
 import { deleteCompany } from '../utils/delete.util';
+import { isPremium } from '../utils/premium.util';
 export class CompanyController extends Controller {
   constructor() {
     super();
@@ -18,6 +19,8 @@ export class CompanyController extends Controller {
 
   async getApikey(req: IUserRequest, res: Response, next: NextFunction) {
     try {
+      const premium = await isPremium(req.user.user_id)
+      if (!premium) throw paymentRequired();
       const result = await Company.query()
         .select('api_key')
         .findById(req.user.user_id);
@@ -106,6 +109,8 @@ export class CompanyController extends Controller {
         const company = await Company.query(trx).findById(req.user.user_id);
         let api_change = false;
         if ('api_change' in req.body) {
+          const premium = await isPremium(req.user.user_id)
+          if (!premium) throw paymentRequired();
           api_change = req.body.api_change ? true : false;
           delete req.body.api_change;
         }

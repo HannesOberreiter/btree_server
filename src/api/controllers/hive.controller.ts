@@ -5,7 +5,7 @@ import { IUserRequest } from '@interfaces/IUserRequest.interface';
 import { Hive } from '../models/hive.model';
 import { Movedate } from '../models/movedate.model';
 import { Apiary } from '../models/apiary.model';
-import { conflict } from '@hapi/boom';
+import { Boom, conflict, paymentRequired } from '@hapi/boom';
 import { map } from 'lodash';
 import dayjs from 'dayjs';
 import { deleteHiveConnections } from '../utils/delete.util';
@@ -14,6 +14,7 @@ import { Harvest } from '../models/harvest.model';
 import { Feed } from '../models/feed.model';
 import { Treatment } from '../models/treatment.model';
 import { Checkup } from '../models/checkup.model';
+import { limitHive } from '../utils/premium.util';
 
 export class HiveController extends Controller {
   constructor() {
@@ -40,6 +41,9 @@ export class HiveController extends Controller {
         modus: req.body.modus,
         modus_date: req.body.modus_date,
       };
+
+      const limit = await limitHive(req.user.user_id, repeat);
+      if(limit) throw paymentRequired('no premium access')
 
       const result = await Hive.transaction(async (trx) => {
         await Apiary.query(trx)
