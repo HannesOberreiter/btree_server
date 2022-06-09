@@ -6,7 +6,7 @@
     color="pink"
     :style="disable ? '' : 'cursor: pointer'"
   />
-  <q-popup-proxy v-if="!disable">
+  <q-menu v-if="!disable">
     <q-list v-for="(option, index) in OPTIONS" :key="index">
       <q-item v-close-popup clickable @click="modelValue = option">
         <q-item-section>
@@ -14,7 +14,7 @@
         </q-item-section>
       </q-item>
     </q-list>
-  </q-popup-proxy>
+  </q-menu>
 </template>
 
 <script setup lang="ts">
