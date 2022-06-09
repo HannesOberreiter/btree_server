@@ -43,6 +43,7 @@
           :label="$t('icalUrl')"
           :type="apiField"
           :readonly="true"
+          :hint="$t('icalHint')"
         >
           <template #append>
             <btn-base
@@ -65,6 +66,7 @@
           download
           icon="fas fa-archive"
         >
+          <q-tooltip>{{ $t('icalDownload') }}</q-tooltip>
         </btn-base>
       </div>
     </div>

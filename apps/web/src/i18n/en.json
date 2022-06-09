@@ -158,6 +158,8 @@
   "humidity": "Humidity",
   "icalSource": "ICal Source",
   "icalUrl": "ICal Url",
+  "icalHint": "Subscribe to this url in your calendar software, to automatically fetch your events.",
+  "icalDownload": "The downloaded file is only static and will not update if loaded into your calendar.",
   "id": "ID",
   "in": "Goods receipt",
   "inactive": "Inactive",
