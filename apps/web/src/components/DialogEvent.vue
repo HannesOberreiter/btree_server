@@ -156,7 +156,7 @@ async function updateStatus() {
 async function deleteEvent() {
   const data = JSON.stringify({
     ids: isRearings.value
-      ? props.eventInfo.publicId
+      ? [props.eventInfo.publicId]
       : props.eventInfo.task_ids.toString().split(','),
   });
   const nameSource = props.eventInfo.table as string;

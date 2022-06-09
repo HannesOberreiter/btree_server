@@ -256,8 +256,12 @@ function cleanupRearingDetail(state: FormRearingDetail) {
 
 function cleanupRearing(state: FormRearing) {
   const result = {
+    name: state.name,
+    symbol: state.symbol,
     date: state.date ? state.date + ':00' : null,
     hatch: state.hatch,
+    larvae: state.larvae,
+    mated: state.mated,
     note: state.note,
     type_id: state.type ? state.type.id : null,
     detail_id: state.detail ? state.detail.value : null,

@@ -193,13 +193,13 @@ function handleEventsChange(changeInfo: EventChangeArg) {
     }
   }
 
-  let ids = '';
+  let ids: string | string[] = '';
   let start = '';
   if (changeInfo.event.extendedProps.table === 'rearing') {
     // For Queen Rearing Events
     // we need to find out which is the starting step
     // and how it will be changed based on the difference if the moved event is not the starting step
-    ids = changeInfo.event.groupId.replace('Q', '');
+    ids = [changeInfo.event.groupId.replace('Q', '')];
     const startPosition = changeInfo.event.extendedProps.startPosition;
     const currentPosition = changeInfo.event.extendedProps.currentStep.position;
     if (startPosition === currentPosition) {

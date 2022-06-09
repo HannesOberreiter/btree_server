@@ -3,7 +3,10 @@
     <q-card>
       <q-card-section>
         <div class="row">
-          <span v-if="!isLoading">ID: {{ data[0].id }}</span>
+          <span v-if="!isLoading">
+            <q-icon :name="`fas fa-${data[0].symbol}`"></q-icon>
+            ID: {{ data[0].name ? data[0].name : data[0].id }}
+          </span>
           <q-space />
           <btn-close-dialog></btn-close-dialog>
         </div>

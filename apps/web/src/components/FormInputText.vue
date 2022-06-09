@@ -17,7 +17,9 @@
     filled
   >
     <template v-if="icon !== ''" #before>
-      <q-icon v-if="!multipleValues" :name="icon"></q-icon>
+      <slot name="deepBefore"></slot>
+      <div v-if="icon === 'none' && !multipleValues"></div>
+      <q-icon v-else-if="!multipleValues" :name="icon"></q-icon>
       <btn-multiple-values
         v-else
         :disable="disable"

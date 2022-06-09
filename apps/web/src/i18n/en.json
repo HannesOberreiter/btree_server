@@ -129,6 +129,8 @@
   "filter": "Filter",
   "year": "Year",
   "info": "Info",
+  "identification": "Identification",
+  "mated": "Mated",
   "filterEmpty": "No filter",
   "filterNoDate": "No date range selected to filter.",
   "filterRemove": "Remove active filter",
