@@ -78,6 +78,7 @@ module.exports = configure(function (ctx) {
         DROPBOX_CLIENT_ID: process.env.DROPBOX_CLIENT_ID,
         OPENWEATHER_APP_ID: process.env.OPENWEATHER_APP_ID,
         BACKEND_URL: process.env.BACKEND_URL,
+        DEV_BACKEND_URL: process.env.DEV_BACKEND_URL,
         MATOMO_HOST: process.env.MATOMO_HOST,
         MATOMO_SITE_ID: process.env.MATOMO_SITE_ID,
       },
@@ -135,10 +136,10 @@ module.exports = configure(function (ctx) {
     devServer: {
       proxy: {
         '/api': {
-          target: 'http://localhost:8101',
+          target: process.env.DEV_BACKEND_URL,
           changeOrigin: true,
           secure: false,
-          // rewrite: (path) => path.replace(/^\/api/, ""),
+          rewrite: (path) => path.replace(/^\/api/, ''),
         },
       },
       port: ctx.mode.spa ? 9000 : 9100,

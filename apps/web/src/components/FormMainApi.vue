@@ -18,7 +18,7 @@
       <template #append>
         <btn-base
           flat
-          :disabled="apiField === 'password'"
+          :disable="apiField === 'password'"
           icon="fas fa-copy"
           @click="
             copy(apiValue).then(() =>
@@ -36,25 +36,38 @@
       :option-label="(opt) => $t(opt)"
     >
     </q-select>
-    <q-input
-      v-model="icalUrl"
-      :label="$t('icalUrl')"
-      :type="apiField"
-      :readonly="true"
-    >
-      <template #append>
+    <div class="row justify-center items-center">
+      <div class="col-11">
+        <q-input
+          v-model="icalUrl"
+          :label="$t('icalUrl')"
+          :type="apiField"
+          :readonly="true"
+        >
+          <template #append>
+            <btn-base
+              flat
+              :disable="apiField === 'password'"
+              icon="fas fa-copy"
+              @click="
+                copy(icalUrl).then(() =>
+                  notification.open('info', 'copiedToClipboard')
+                )
+              "
+            />
+          </template>
+        </q-input>
+      </div>
+      <div class="col-1">
         <btn-base
-          flat
-          :disabled="apiField === 'password'"
-          icon="fas fa-copy"
-          @click="
-            copy(icalUrl).then(() =>
-              notification.open('info', 'copiedToClipboard')
-            )
-          "
-        />
-      </template>
-    </q-input>
+          :disable="apiField === 'password'"
+          :href="icalUrl"
+          download
+          icon="fas fa-archive"
+        >
+        </btn-base>
+      </div>
+    </div>
   </div>
   <div class="text-center q-pt-md">
     <btn-base-group>
@@ -100,7 +113,10 @@ const storeUser = useAuthUserStore();
 const { copy } = useClipboard();
 const api = useApiFetch();
 const notification = useNotification();
+const baseUrl = process.env.BACKEND_URL;
+const devBackendUrl = process.env.DEV_BACKEND_URL;
 
+const dev = process.env.NODE_ENV;
 const isSubmitting = ref(false);
 const apiField = ref('password' as QInputProps['type']);
 const apiValue = ref((Math.random() + 1).toString(36));
@@ -108,10 +124,13 @@ const apiValue = ref((Math.random() + 1).toString(36));
 const icals = CALENDAR.filter((value) => value !== 'vis').map((value) => {
   return value.replace(/s$/, '');
 });
+icals.push('scale_data');
 
 const ical = ref('checkup');
 const icalUrl = computed(() => {
-  return `https://api.btree.at/v1/ext/calendar/${ical.value}/${apiValue.value}`;
+  return `${dev === 'production' ? baseUrl : devBackendUrl}/v1/external/ical/${
+    ical.value
+  }/${apiValue.value}`;
 });
 
 const state = reactive({
@@ -152,10 +171,10 @@ async function changeApiStatus(value = true, change = false) {
 
 async function loadApiValue() {
   isSubmitting.value = true;
-  apiField.value = apiField.value === 'text' ? 'password' : 'text';
-  if (apiField.value === 'text') {
+  if (apiField.value === 'password') {
     await api.get('/v1/company/apikey').then(
       (response: any) => {
+        apiField.value = apiField.value === 'text' ? 'password' : 'text';
         apiValue.value = response.api_key;
         notification.open('positive', '');
       },
@@ -163,6 +182,8 @@ async function loadApiValue() {
         notification.open('negative', error);
       }
     );
+  } else {
+    apiField.value = apiField.value === 'text' ? 'password' : 'text';
   }
   isSubmitting.value = false;
 }

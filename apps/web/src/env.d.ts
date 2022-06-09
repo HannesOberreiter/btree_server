@@ -8,6 +8,7 @@ declare namespace NodeJS {
     DROPBOX_CLIENT_ID: string;
     OPENWEATHER_APP_ID: string;
     BACKEND_URL: string;
+    DEV_BACKEND_URL: string;
     MATOMO_HOST: string;
     MATOMO_SITE_ID: number;
   }

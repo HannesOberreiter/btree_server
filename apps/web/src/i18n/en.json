@@ -113,7 +113,7 @@
     "nfcNotSupported": "Web NFC is not supported by your browser.",
     "notFound": "Route or server not found! (Offline?)",
     "permission": "Could not set permissions.",
-    "premium": "Premium only feature!",
+    "premium": "Premium only feature or basic user limit reached!",
     "unknown": "An error occurred!",
     "validation": "Validation error!"
   },
