@@ -15,6 +15,7 @@
         :class="isEdit ? 'col-12' : 'col-11'"
         :required="isEdit ? false : true"
         label="name"
+        name="queen"
         icon="fas fa-passport"
         :hint="isEdit ? '' : $t('lastAdded') + ': ' + lastNames"
         :max-valid="24"

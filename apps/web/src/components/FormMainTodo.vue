@@ -51,6 +51,7 @@
     <form-input-text
       v-model="state.name"
       label="name"
+      name="todo"
       icon="fas fa-passport"
       :values="values"
       :reset="reset"

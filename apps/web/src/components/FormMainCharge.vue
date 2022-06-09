@@ -22,6 +22,7 @@
     <form-input-text
       v-model="state.name"
       label="name"
+      name="chargeName"
       icon="fas fa-passport"
       :required="isEdit ? false : true"
       :values="values"

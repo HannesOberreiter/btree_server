@@ -9,6 +9,7 @@
     <form-input-text
       v-model="state.name"
       label="name"
+      :name="option"
       icon="fas fa-passport"
       :values="values"
       :reset="reset"

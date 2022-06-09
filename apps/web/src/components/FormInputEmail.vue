@@ -7,6 +7,7 @@
     :label="$t('email')"
     name="email"
     type="email"
+    autocapitalize="off"
     required
     filled
     :readonly="fieldStatus"

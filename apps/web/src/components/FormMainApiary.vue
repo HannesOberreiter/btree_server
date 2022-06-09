@@ -5,6 +5,7 @@
         <form-input-text
           v-model="state.name"
           label="name"
+          name="apiary"
           :required="isEdit ? false : true"
           :values="values"
           :reset="reset"

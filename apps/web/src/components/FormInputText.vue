@@ -10,7 +10,7 @@
         : $t(label, labelPlural)
     "
     :disable="disable"
-    :name="label"
+    :name="name ? name : label"
     :type="type"
     :min="minValid"
     :max="maxValid"
@@ -57,6 +57,9 @@ const props = defineProps({
   label: {
     type: String,
     required: true,
+  },
+  name: {
+    default: '',
   },
   type: {
     type: String as PropType<TextField>,
