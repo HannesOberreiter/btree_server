@@ -82,10 +82,10 @@ const getRearings = async ({ query, user }) => {
       result.steps[j].date = result.start;
       result.currentStep.date = result.start;
 
-      result.title = `${result.currentStep.detail.job} ID: ${result.id}`;
+      result.title = `${result.currentStep.detail.job} ID: ${result.name ? result.name : result.id}`;
       result.table = 'rearing';
       result.allDay = false;
-      result.icon = 'fas fa-venus';
+      result.icon = `fas fa-${result.symbol ? result.symbol : 'venus'}`;
       result.color = '#f5dfef';
       result.textColor = 'black';
       result.end = result.start;
