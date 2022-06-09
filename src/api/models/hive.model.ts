@@ -41,7 +41,7 @@ export class Hive extends ExtModel {
     required: ['name'],
     properties: {
       id: { type: 'integer' },
-      name: { type: 'string', minLength: 1, maxLength: 45 },
+      name: { type: 'string', minLength: 1, maxLength: 24 },
       grouphive: { type: 'integer' },
       position: { type: 'integer' },
       note: { type: 'string', maxLength: 2000 },
