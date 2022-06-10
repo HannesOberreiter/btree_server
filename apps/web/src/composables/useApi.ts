@@ -143,7 +143,7 @@ export const useApiFetch = () => {
           try {
             const token = await refreshToken();
             storeToken.refreshToken(token.result);
-            return fetching(copy, true);
+            return fetching(copy, true, file);
           } catch (e) {
             throw e;
           }
@@ -156,7 +156,7 @@ export const useApiFetch = () => {
             if (!dialog.state.show) dialog.open();
             return Promise.reject();
           }
-          return fetching(copy, true);
+          return fetching(copy, true, file);
         }
       }
       throw await response.json();
