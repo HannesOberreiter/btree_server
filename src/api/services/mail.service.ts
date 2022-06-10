@@ -93,7 +93,7 @@ export class MailService {
       html: htmlMail,
     };
 
-    this._transporter.sendMail(options, (error, info) => {
+    await this._transporter.sendMail(options, (error, info) => {
       this._transporter.close();
       if (error) {
         console.log(`error: ${error}`);
