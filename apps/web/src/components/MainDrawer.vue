@@ -297,6 +297,12 @@ const links = [
         menu: [] as any,
       },
       {
+        label: t('premium'),
+        route: 'premium',
+        icon: 'fas fa-face-smile',
+        menu: [] as any,
+      },
+      {
         label: 'Dropbox',
         route: 'setting-dropbox',
         icon: 'fab fa-dropbox',

@@ -35,6 +35,14 @@ const routes: RouteRecordRaw[] = [
         },
         component: () => import('~/pages/ChangeLog.vue'),
       },
+      {
+        path: '/premium',
+        name: 'premium',
+        meta: {
+          title: 'donation',
+        },
+        component: () => import('~/pages/PremiumDonation.vue'),
+      },
     ],
   },
   /***

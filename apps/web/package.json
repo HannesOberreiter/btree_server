@@ -19,6 +19,7 @@
     "@fullcalendar/interaction": "^5.11.0",
     "@fullcalendar/list": "^5.11.0",
     "@fullcalendar/vue3": "^5.11.1",
+    "@paypal/paypal-js": "^5.0.6",
     "@quasar/extras": "^1.14.0",
     "@vue-leaflet/vue-leaflet": "^0.6.1",
     "@vuelidate/core": "^2.0.0-alpha.41",

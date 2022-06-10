@@ -103,6 +103,7 @@ declare module '@vue/runtime-core' {
     MapButtons: typeof import('./components/MapButtons.vue')['default']
     MapOverlay: typeof import('./components/MapOverlay.vue')['default']
     NewsDirective: typeof import('./components/NewsDirective.vue')['default']
+    PaymentPaypal: typeof import('./components/PaymentPaypal.vue')['default']
     RearingMethod: typeof import('./components/RearingMethod.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']

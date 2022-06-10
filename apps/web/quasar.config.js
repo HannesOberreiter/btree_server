@@ -83,6 +83,7 @@ module.exports = configure(function (ctx) {
           : process.env.BACKEND_URL,
         MATOMO_HOST: process.env.MATOMO_HOST,
         MATOMO_SITE_ID: process.env.MATOMO_SITE_ID,
+        PAYPAL_CLIENT_ID: process.env.PAYPAL_CLIENT_ID,
       },
       // rawDefine: {}
       // ignorePublicFolder: true,

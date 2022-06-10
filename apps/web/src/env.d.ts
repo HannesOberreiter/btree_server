@@ -11,5 +11,6 @@ declare namespace NodeJS {
     DEV_BACKEND_URL: string;
     MATOMO_HOST: string;
     MATOMO_SITE_ID: number;
+    PAYPAL_CLIENT_ID: string;
   }
 }

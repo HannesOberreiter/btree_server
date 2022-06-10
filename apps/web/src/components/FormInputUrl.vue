@@ -100,6 +100,7 @@ const inputUrl = () => {
       label: t('url'),
     },
   }).onOk((val) => {
+    if (!val) return;
     if (!isValidURL(val)) {
       notification.open('warning', 'noValidUrl');
     } else {

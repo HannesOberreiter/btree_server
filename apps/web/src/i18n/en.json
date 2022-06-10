@@ -90,6 +90,7 @@
     "refreshToken": "Refresh token",
     "text": "Here you can add your Dropbox connection, if you want to delete this b.tree from dropbox use following link:"
   },
+  "coupon": "Coupon",
   "Dropbox": "Dropbox",
   "dropdownNotAvailable": "Original selected option is inactive and cannot be selected!",
   "edit": "Edit",
@@ -120,6 +121,20 @@
   "error404": "Oops. Nothing here...",
   "errorNoFile": "Could not find or load the image.",
   "exportCSV": "Export (.csv)",
+  "invoice": "Invoice",
+  "donation": "Donation",
+  "premium": "Premium",
+  "membership": {
+    "title": "Support b.tree with premium access",
+    "currentStatus": "Current paid time",
+    "afterPayment": "After payment your premium access is extended to",
+    "perks": "With premium membership you get following bonuses",
+    "perksHives": "Create up to 1.000 hives",
+    "perksApiaries": "Create up to 100 apiaries",
+    "perksAPI": "Get access to the API (ical, hive scales)",
+    "perksTemperature": "On checkup temperature field is automatically filled",
+    "perksSupport": "Support software development and keep the service running"
+  },
   "failedDownload": "Browser denied file download...",
   "false": "No",
   "favorite": "Favourite",
