@@ -1,12 +1,12 @@
 import cron from 'node-schedule';
 import { Container } from '@config/container.config';
 import { cleanupDatabase, visReminder } from '@/api/utils/cron.util';
-import { env } from '@/config/environment.config';
+import { cronjobTimer, env } from '@/config/environment.config';
 import { ENVIRONMENT } from '@/api/types/enums/environment.enum';
 
 const task = {
   start: () => {
-    const rule = '0 */12 * * *';
+    const rule = cronjobTimer;
     Container.resolve('Logger').log(
       'info',
       `Test Cron-Job is starting with rule: ${rule}`,

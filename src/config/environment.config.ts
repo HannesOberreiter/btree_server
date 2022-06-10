@@ -77,10 +77,12 @@ const dropboxClientId = process.env.DROPBOX_CLIENT_ID;
 const dropboxClientSecret = process.env.DROPBOX_CLIENT_SECRET;
 
 const basicLimit = {
-  hive: parseInt(process.env.limit_hive),
-  apiary: parseInt(process.env.limit_apiary),
-  scale: parseInt(process.env.limit_scale),
+  hive: parseInt(process.env.LIMIT_HIVE),
+  apiary: parseInt(process.env.LIMIT_APIARY),
+  scale: parseInt(process.env.LIMIT_SCALE),
 }
+
+const cronjobTimer = process.env.CRONJOB ? process.env.CRONJOB : '0 11 */1 * *';
 
 const knexConfig = {
   client: process.env.DB_TYPE,
@@ -148,5 +150,6 @@ export {
   mailConfig,
   dropboxClientId,
   dropboxClientSecret,
-  basicLimit
+  basicLimit,
+  cronjobTimer
 };
