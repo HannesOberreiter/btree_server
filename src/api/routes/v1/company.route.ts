@@ -17,6 +17,12 @@ export class CompanyRouter extends Router {
         Container.resolve('CompanyController').getApikey
       );
     this.router
+      .route('/download')
+      .get(
+        Guard.authorize([ROLES.admin]),
+        Container.resolve('CompanyController').download
+      );
+    this.router
       .route('/')
       .patch(
         Validator.validate([

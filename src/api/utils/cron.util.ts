@@ -173,7 +173,7 @@ export const cleanupDatabase = async () => {
 
 export const visReminder = async () => {
     try {
-        const result = { type: 'vis_reminder' }
+        const result = { type: 'vis_reminder', mails: 0 }
         const checkDate = dayjs().add(2, 'day').format('YYYY-MM-DD')
         const year = dayjs().year();
         // Stichtag Zählung
@@ -209,7 +209,7 @@ export const visReminder = async () => {
                     mailSubject = 'vis_count';
                     break;
             }
-            result['mails'] = users.length;
+            result.mails = users.length;
             const mailer = new MailService();
             for(const i in users){
                 const user = users[i];
@@ -228,3 +228,4 @@ export const visReminder = async () => {
     }
 
 }
+

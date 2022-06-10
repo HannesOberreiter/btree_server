@@ -4,7 +4,7 @@ import { cleanupDatabase, visReminder } from '@/api/utils/cron.util';
 
 const task = {
   start: () => {
-    const rule = '*/1 * * * *';
+    const rule = '0 */12 * * *';
     Container.resolve('Logger').log(
       'info',
       `Test Cron-Job is starting with rule: ${rule}`,
