@@ -39,9 +39,8 @@
       </div>
     </div>
   </q-form>
-  <btn-base-group>
+  <btn-base-group size="md">
     <btn-base
-      size="md"
       color="secondary"
       type="submit"
       :loading="isSubmitting"
@@ -49,7 +48,6 @@
       @click="onSubmit"
     />
     <btn-base
-      size="md"
       color="negative"
       :loading="isSubmitting"
       :label="t('delete') + ' ' + t('account')"

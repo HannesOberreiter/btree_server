@@ -61,6 +61,17 @@ export const useApiFetch = () => {
     return time2 - time1;
   };
 
+  const download = async (url: string) => {
+    const urlParam = buildUrl(url);
+    const originalRequest = new Request(urlParam, {
+      method: 'GET', // *GET, POST, PUT, DELETE, etc.
+      credentials: 'omit', // include, *same-origin, omit
+      headers: buildHeader(),
+    });
+
+    return await fetching(originalRequest, false, true);
+  };
+
   const get = async (url: string, payload = '' as unknown): Promise<any> => {
     const urlParam = buildUrl(url, payload);
     const originalRequest = new Request(urlParam, {
@@ -106,7 +117,11 @@ export const useApiFetch = () => {
     return await fetching(originalRequest);
   };
 
-  async function fetching(request: Request, recursive = false): Promise<any> {
+  async function fetching(
+    request: Request,
+    recursive = false,
+    file = false
+  ): Promise<any> {
     if (network.isSupported && !network.isOnline.value) {
       throw 'offline';
     }
@@ -146,7 +161,12 @@ export const useApiFetch = () => {
       }
       throw await response.json();
     }
-    return response.json();
+
+    if (file) {
+      return response.blob();
+    } else {
+      return response.json();
+    }
   }
 
   async function refreshToken() {
@@ -178,5 +198,5 @@ export const useApiFetch = () => {
       });
   }
 
-  return { ping, get, post, patch, remove, state };
+  return { ping, get, post, patch, remove, state, download };
 };
