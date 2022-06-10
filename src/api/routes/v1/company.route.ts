@@ -45,6 +45,15 @@ export class CompanyRouter extends Router {
         Container.resolve('CompanyController').post
       );
     this.router
+      .route('/coupon')
+      .post(
+        Validator.validate([
+          body('coupon').isString().isLength({ min: 3, max: 128 }).trim()
+        ]),
+        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+        Container.resolve('CompanyController').postCoupon
+      );
+    this.router
       .route('/:id')
       .delete(
         Guard.authorize([ROLES.admin]),

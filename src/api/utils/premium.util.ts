@@ -6,6 +6,7 @@ import {
 import { Hive } from '../models/hive.model';
 import { Apiary } from '../models/apiary.model';
 import { Scale } from '../models/scale.model';
+import dayjs from 'dayjs';
 
 export const isPremium = async (id: number) => {
   try {
@@ -48,4 +49,17 @@ export const limitScale = async (user_id: number) => {
   } catch (e) {
     throw checkMySQLError(e);
   }
+}
+
+
+export const addPremium = async(user_id: number, months = 12) => {
+    return await Company.transaction(async (trx) => {
+      const company = await Company.query(trx).select('paid').findById(user_id);
+      const newPaid = dayjs(company.paid) < dayjs() ? 
+      dayjs().add(months, 'month') : dayjs(company.paid).add(months, 'month');
+      const result = await Company.query(trx).patchAndFetchById(user_id, {
+        paid: newPaid.format('YYYY-MM-DD')
+      });
+      return result.paid;
+    });
 }

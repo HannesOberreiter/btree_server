@@ -5,9 +5,9 @@ exports.up = function(knex) {
         t.increments('id').primary().unsigned();
 
         t.string('code', 128);
-        t.integer('months', 11);
+        t.integer('months', 11).defaultTo(12)
         t.datetime('date');
-        t.boolean('used').defaultTo(1).comment('If code is already used');
+        t.boolean('used').defaultTo(0).comment('If code is already used');
         t.integer('user_id').comment('user_id for which companies the code was used, no FK needed');
 
     });

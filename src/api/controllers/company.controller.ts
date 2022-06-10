@@ -11,7 +11,7 @@ import { User } from '@models/user.model';
 import { Boom, forbidden, paymentRequired } from '@hapi/boom';
 import { UserController } from '@controllers/user.controller';
 import { deleteCompany } from '../utils/delete.util';
-import { isPremium } from '../utils/premium.util';
+import { addPremium, isPremium } from '../utils/premium.util';
 import archiver from 'archiver'
 import {stringify} from 'csv-stringify/sync';
 import { Apiary } from '../models/apiary.model';
@@ -25,10 +25,28 @@ import { Scale } from '../models/scale.model';
 import { ScaleData } from '../models/scale_data.model';
 import { Rearing } from '../models/rearing/rearing.model';
 import { RearingType } from '../models/rearing/rearing_type.model';
+import { Promo } from '../models/promos.model';
+import dayjs from 'dayjs';
 
 export class CompanyController extends Controller {
   constructor() {
     super();
+  }
+
+  async postCoupon(req: IUserRequest, res: Response, next: NextFunction){
+    try {
+      const promo = await Promo.query().select().where({'code': req.body.coupon, used: false}).throwIfNotFound().first();
+      const paid = await addPremium(req.user.user_id, promo.months);
+      await Promo.query().patch({
+        'used': true,
+        'date': new Date(),
+        'user_id': req.user.user_id
+      }).findById(promo.id)
+      res.locals.data = {paid: paid}
+      next();
+    } catch (e) {
+      next(checkMySQLError(e));
+    }
   }
 
   async download(req: IUserRequest, res: Response, next: NextFunction) {
