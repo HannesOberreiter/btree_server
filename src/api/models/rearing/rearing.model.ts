@@ -59,7 +59,7 @@ export class Rearing extends ExtModel {
       modelClass: Company,
       join: {
         from: ['rearings.user_id'],
-        to: ['company.id'],
+        to: ['companies.id'],
       },
     },
     start: {

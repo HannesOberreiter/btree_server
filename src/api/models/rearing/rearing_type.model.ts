@@ -36,8 +36,8 @@ export class RearingType extends Model {
       relation: RearingType.HasOneRelation,
       modelClass: Company,
       join: {
-        from: ['user_id'],
-        to: ['company.id'],
+        from: ['rearing_types.user_id'],
+        to: ['companies.id'],
       },
     },
 

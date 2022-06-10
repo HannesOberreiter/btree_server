@@ -8,14 +8,13 @@ export class BaseOptionModel extends ExtModel {
   favorite!: boolean;
   deleted!: boolean;
   user_id!: number;
-
   company?: Company;
+
+  static idColumn = 'id';
 
   constructor() {
     super();
   }
-
-  static idColumn = 'id';
 
   static jsonSchema = {
     type: 'object',
@@ -29,15 +28,4 @@ export class BaseOptionModel extends ExtModel {
       updated_at: { type: 'string', format: 'date-time' }
     }
   };
-
-  static relationMappings = () => ({
-    company: {
-      relation: ExtModel.HasOneRelation,
-      modelClass: Company,
-      join: {
-        from: ['user_id'],
-        to: ['company.id']
-      }
-    }
-  });
 }
