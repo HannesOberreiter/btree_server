@@ -77,8 +77,8 @@ const meteoblueKey = process.env.METEOBLUE_KEY;
 const dropboxClientId = process.env.DROPBOX_CLIENT_ID;
 const dropboxClientSecret = process.env.DROPBOX_CLIENT_SECRET;
 
-const paypalClientId = process.env.CLIENT_ID;
-const paypalAppSecret = process.env.APP_SECRET;
+const paypalClientId = process.env.PAYPAL_CLIENT_ID;
+const paypalAppSecret = process.env.PAYPAL_APP_SECRET;
 const paypalBase =
   process.env.NODE_ENV === 'production'
     ? 'https://api-m.paypal.com'
