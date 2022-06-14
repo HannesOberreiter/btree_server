@@ -1,3 +1,4 @@
+<!-- https://github.com/paypal-examples/docs-examples/tree/main/standard-integration -->
 <template>
   <div id="paypal_buttons"></div>
 </template>
