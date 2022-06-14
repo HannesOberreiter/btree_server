@@ -1,3 +1,7 @@
+/**
+  https://github.com/paypal-examples/docs-examples/tree/main/standard-integration
+ */
+
 import {
   paypalAppSecret,
   paypalBase,
@@ -5,6 +9,7 @@ import {
 } from '@/config/environment.config';
 import fetch from 'node-fetch';
 
+// https://developer.paypal.com/docs/api/orders/v2/#orders_create
 export async function createOrder(user_id: number, amount: number) {
   const accessToken = await generateAccessToken();
   const url = `${paypalBase}/v2/checkout/orders`;
@@ -32,6 +37,7 @@ export async function createOrder(user_id: number, amount: number) {
   return data;
 }
 
+// https://developer.paypal.com/docs/api/orders/v2/#orders_capture
 export async function capturePayment(orderId: string) {
   const accessToken = await generateAccessToken();
   const url = `${paypalBase}/v2/checkout/orders/${orderId}/capture`;
