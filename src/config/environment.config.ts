@@ -73,14 +73,22 @@ const logs = process.env.NODE_ENV === 'production' ? 'combined' : 'development';
 const httpLogs = process.env.NODE_ENV === 'production' ? 'tiny' : 'dev';
 const contentType = process.env.CONTENT_TYPE;
 const meteoblueKey = process.env.METEOBLUE_KEY;
+
 const dropboxClientId = process.env.DROPBOX_CLIENT_ID;
 const dropboxClientSecret = process.env.DROPBOX_CLIENT_SECRET;
+
+const paypalClientId = process.env.CLIENT_ID;
+const paypalAppSecret = process.env.APP_SECRET;
+const paypalBase =
+  process.env.NODE_ENV === 'production'
+    ? 'https://api-m.paypal.com'
+    : 'https://api-m.sandbox.paypal.com';
 
 const basicLimit = {
   hive: parseInt(process.env.LIMIT_HIVE),
   apiary: parseInt(process.env.LIMIT_APIARY),
   scale: parseInt(process.env.LIMIT_SCALE),
-}
+};
 
 const cronjobTimer = process.env.CRONJOB ? process.env.CRONJOB : '0 11 */1 * *';
 
@@ -150,6 +158,9 @@ export {
   mailConfig,
   dropboxClientId,
   dropboxClientSecret,
+  paypalClientId,
+  paypalAppSecret,
+  paypalBase,
   basicLimit,
-  cronjobTimer
+  cronjobTimer,
 };
