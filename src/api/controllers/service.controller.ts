@@ -5,7 +5,11 @@ import { Apiary } from '../models/apiary.model';
 import { getTemperature } from '../utils/temperature.util';
 import { badImplementation, paymentRequired } from '@hapi/boom';
 import { addPremium, isPremium } from '../utils/premium.util';
-import { capturePayment, createOrder } from '../utils/paypal.util';
+import {
+  capturePayment,
+  createOrder as paypalCreateOrder,
+} from '../utils/paypal.util';
+import { createOrder as stripeCreateOrder } from '../utils/stripe.util';
 
 export class ServiceController extends Controller {
   constructor() {
@@ -33,7 +37,7 @@ export class ServiceController extends Controller {
     next: NextFunction
   ) {
     try {
-      const order = await createOrder(req.user.user_id, req.body.amount);
+      const order = await paypalCreateOrder(req.user.user_id, req.body.amount);
       if (order.status !== 'CREATED')
         throw badImplementation('Could not create order');
       res.locals.data = order;
@@ -57,6 +61,23 @@ export class ServiceController extends Controller {
         ...capture,
         paid: paid,
       };
+      next();
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  async stripeCreateOrder(
+    req: IUserRequest,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const session = await stripeCreateOrder(
+        req.user.user_id,
+        req.body.amount
+      );
+      res.locals.data = session;
       next();
     } catch (e) {
       next(e);

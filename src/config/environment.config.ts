@@ -84,6 +84,8 @@ const paypalBase =
     ? 'https://api-m.paypal.com'
     : 'https://api-m.sandbox.paypal.com';
 
+const stripeSecret = process.env.STRIPE_SECRET_KEY;
+
 const basicLimit = {
   hive: parseInt(process.env.LIMIT_HIVE),
   apiary: parseInt(process.env.LIMIT_APIARY),
@@ -160,6 +162,7 @@ export {
   dropboxClientSecret,
   paypalClientId,
   paypalAppSecret,
+  stripeSecret,
   paypalBase,
   basicLimit,
   cronjobTimer,

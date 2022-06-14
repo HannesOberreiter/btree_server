@@ -12,10 +12,12 @@ export class ExternalRoute extends Router {
       .route('/ical/:source/:api')
       .get(
         Validator.handleSource,
-        Validator.validate([
-          param('api').isString(),
-        ]),
+        Validator.validate([param('api').isString()]),
         Container.resolve('ExternalController').ical
       );
+
+    this.router
+      .route('/stripe/webhook')
+      .post(Container.resolve('ExternalController').stripeWebhook);
   }
 }

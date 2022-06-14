@@ -32,5 +32,13 @@ export class ServiceRouter extends Router {
         Guard.authorize([ROLES.admin, ROLES.user]),
         Container.resolve('ServiceController').paypalCapturePayment
       );
+
+    this.router
+      .route('/stripe/orders')
+      .post(
+        Validator.validate([body('amount').isFloat({ min: 50 }).toInt()]),
+        Guard.authorize([ROLES.admin, ROLES.user]),
+        Container.resolve('ServiceController').stripeCreateOrder
+      );
   }
 }
