@@ -6,6 +6,12 @@
           <div class="text-h5 q-pb-sm text-center">
             {{ $t('membership.title') }}
           </div>
+          <div
+            v-if="paid"
+            class="bg-info text-weight-bold text-black q-pa-sm text-justify rounded-borders"
+          >
+            {{ $t('membership.thankYou') }}
+          </div>
           <ul>
             <li>
               {{ $t('membership.currentStatus') }}: <b>{{ getPaidStatus }}</b>
@@ -18,7 +24,7 @@
             v-model="donation"
             color="green"
             :min="50"
-            :max="100"
+            :max="150"
             :step="10"
             markers
             :marker-labels="donationMarker"
@@ -28,7 +34,7 @@
           >
           </q-slider>
           <div class="row justify-center">
-            <div class="col-12 col-md-5 col-lg-3">
+            <div class="col-12">
               <q-input
                 v-model.number="donation"
                 class="text-h3"
@@ -36,16 +42,21 @@
                 min="50"
                 step="1"
                 type="number"
+                :rules="[
+                  (val) =>
+                    parseInt(val) >= 50 || $t('membership.minimumAmount'),
+                ]"
+                :hint="$t('membership.noSubscription')"
               >
                 <template #prepend>
                   <q-icon
-                    v-if="donation < 60"
+                    v-if="donation < 80"
                     name="fas fa-face-smile"
                     size="lg"
                     color="primary"
                   ></q-icon>
                   <q-icon
-                    v-else-if="donation < 80"
+                    v-else-if="donation < 120"
                     name="fas fa-face-grin"
                     size="lg"
                     color="primary"
@@ -57,13 +68,16 @@
                     color="primary"
                   ></q-icon>
                 </template>
-                <template #append>€</template>
+                <template #append>€ {{ $t('membership.forOneYear') }}</template>
               </q-input>
             </div>
           </div>
           <div class="q-gutter-sm text-center q-pt-sm">
             <suspense>
-              <payment-paypal :donation="donation"></payment-paypal>
+              <payment-paypal
+                :donation="donation"
+                @on-paid="(data) => successPayment(data.paid)"
+              ></payment-paypal>
             </suspense>
             <btn-base label="Stripe" icon="fab fa-stripe" color="secondary">
             </btn-base>
@@ -156,15 +170,14 @@ const afterPayment = computed(() => {
 });
 
 const donation = ref(50);
+const paid = ref(false);
 
 const donationLabel = computed(() => `€ ${donation.value}`);
 const donationMarker = [
   { value: 50, label: '50 €' },
-  { value: 60, label: '60 €' },
-  { value: 70, label: '70 €' },
   { value: 80, label: '80 €' },
-  { value: 90, label: '90 €' },
-  { value: 100, label: '100€' },
+  { value: 120, label: '120 €' },
+  { value: 150, label: '150€' },
 ];
 
 function payCoupon() {
@@ -177,8 +190,7 @@ function payCoupon() {
     if (val.trim()) {
       api.post('/v1/company/coupon', { coupon: val }).then(
         (data) => {
-          notification.open('positive', dayjs(data.paid).format('YYYY-MM-DD'));
-          refreshCompany();
+          successPayment(data.paid);
         },
         (error) => {
           notification.open('negative', error);
@@ -186,6 +198,12 @@ function payCoupon() {
       );
     }
   });
+}
+
+function successPayment(newDate: string) {
+  paid.value = true;
+  notification.open('positive', dayjs(newDate).format('YYYY-MM-DD'), true);
+  refreshCompany();
 }
 
 function refreshCompany() {

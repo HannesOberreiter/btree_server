@@ -4,12 +4,17 @@
 
 <script setup lang="ts">
 import { loadScript, PayPalNamespace } from '@paypal/paypal-js';
+import { useApiFetch } from '~/composables/useApi';
+import { useNotification } from '~/composables/useNotification';
 import { useAuthUserStore } from '~/stores/auth';
 
 const storeUser = useAuthUserStore();
+const notification = useNotification();
 let paypal: PayPalNamespace;
 const PAYPAL_CLIENT_ID = process.env.PAYPAL_CLIENT_ID;
+const api = useApiFetch();
 
+const emit = defineEmits(['onPaid']);
 const props = defineProps({
   donation: {
     type: Number,
@@ -23,6 +28,7 @@ try {
   paypal = await loadScript({
     'client-id': PAYPAL_CLIENT_ID,
     currency: 'EUR',
+    'disable-funding': 'card,paylater',
     'data-user-id-token': storeUser.company.id + '',
   });
 } catch (error) {
@@ -35,37 +41,29 @@ onMounted(async () => {
       await paypal
         .Buttons({
           // Sets up the transaction when a payment button is clicked
-          createOrder: (data, actions) => {
-            return actions.order.create({
-              purchase_units: [
-                {
-                  reference_id: storeUser.company.id + '',
-                  amount: {
-                    value: donation.value + '', // Can also reference a variable or function
-                  },
-                },
-              ],
-            });
+          createOrder: (_data, _actions) => {
+            return api
+              .post('/v1/service/paypal/orders', { amount: donation.value })
+              .then(
+                (order) => order.id,
+                (error) => notification.open('negative', error)
+              );
           },
           // Finalize the transaction after payer approval
-          onApprove: (data, actions) => {
-            return actions.order.capture().then(function (orderData) {
-              // Successful capture! For dev/demo purposes:
-              console.log(
-                'Capture result',
-                orderData,
-                JSON.stringify(orderData, null, 2)
+          onApprove: (data, _actions) => {
+            return api
+              .post(`/v1/service/paypal/orders/${data.orderID}/capture`, {})
+              .then(
+                (orderData) => {
+                  console.log(
+                    'Capture result',
+                    orderData,
+                    JSON.stringify(orderData, null, 2)
+                  );
+                  emit('onPaid', orderData);
+                },
+                (error) => notification.open('negative', error)
               );
-              const transaction =
-                orderData.purchase_units[0].payments.captures[0];
-              alert(
-                `Transaction ${transaction.status}: ${transaction.id}\n\nSee console for all available details`
-              );
-              // When ready to go live, remove the alert and show a success message within this page. For example:
-              // const element = document.getElementById('paypal-button-container');
-              // element.innerHTML = '<h3>Thank you for your payment!</h3>';
-              // Or go to another URL:  actions.redirect('thank_you.html');
-            });
           },
         })
         .render('#paypal_buttons');
