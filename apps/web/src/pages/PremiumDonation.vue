@@ -72,15 +72,21 @@
               </q-input>
             </div>
           </div>
-          <div class="q-gutter-sm text-center q-pt-sm">
+          <div class="q-gutter-sm text-center q-pt-lg">
             <suspense>
               <payment-paypal
                 :donation="donation"
                 @on-paid="(data) => successPayment(data.paid)"
               ></payment-paypal>
             </suspense>
-            <btn-base label="Stripe" icon="fab fa-stripe" color="secondary">
-            </btn-base>
+            <q-separator></q-separator>
+            <div class="row">
+              <payment-stripe
+                :donation="donation"
+                @on-paid="(data) => successPayment(data.paid)"
+              ></payment-stripe>
+            </div>
+
             <btn-base
               label="office@btree.at"
               icon="fas fa-envelope"
@@ -104,28 +110,28 @@
           <div class="text-h5 q-pb-sm text-center">
             {{ $t('membership.perks') }}
           </div>
-        </div>
-        <ul class="text-subtitle1">
-          <li>
-            {{ $t('membership.perksHives') }}
-          </li>
-          <li>
-            {{ $t('membership.perksApiaries') }}
-          </li>
-          <li>
-            {{ $t('membership.perksAPI') }}
-          </li>
-          <li>
-            {{ $t('membership.perksTemperature') }}
-          </li>
-          <li>
-            {{ $t('membership.perksSupport') }}
-          </li>
-        </ul>
-        <div class="text-caption">
-          Cheers<br />
-          Hannes Oberreiter [Organic Beekeeper, Hobby Biologist and Part-Time
-          Software Developer]
+          <ul class="text-subtitle1">
+            <li>
+              {{ $t('membership.perksHives') }}
+            </li>
+            <li>
+              {{ $t('membership.perksApiaries') }}
+            </li>
+            <li>
+              {{ $t('membership.perksAPI') }}
+            </li>
+            <li>
+              {{ $t('membership.perksTemperature') }}
+            </li>
+            <li>
+              {{ $t('membership.perksSupport') }}
+            </li>
+          </ul>
+          <div class="text-caption">
+            Cheers<br />
+            Hannes Oberreiter [Organic Beekeeper, Hobby Biologist and Part-Time
+            Software Developer]
+          </div>
         </div>
       </div>
     </q-card-section>
@@ -202,7 +208,11 @@ function payCoupon() {
 
 function successPayment(newDate: string) {
   paid.value = true;
-  notification.open('positive', dayjs(newDate).format('YYYY-MM-DD'), true);
+  if (newDate) {
+    notification.open('positive', dayjs(newDate).format('YYYY-MM-DD'), true);
+  } else {
+    notification.open('positive', '');
+  }
   refreshCompany();
 }
 
