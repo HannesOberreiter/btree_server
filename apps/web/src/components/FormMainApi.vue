@@ -93,7 +93,7 @@
           <template #append>
             <btn-base
               flat
-              :disable="apiField === 'password'"
+              :disable="apiField === 'password' || scaleUrl === ''"
               icon="fas fa-copy"
               @click="
                 copy(scaleUrl).then(() =>
@@ -103,7 +103,7 @@
             />
             <btn-base
               flat
-              :disable="apiField === 'password'"
+              :disable="apiField === 'password' || scaleUrl === ''"
               icon="fas fa-cloud-arrow-up"
               @click="scaleTest()"
             />
