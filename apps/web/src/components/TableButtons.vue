@@ -372,10 +372,16 @@ function onPrint() {
   );
   printWindow.document.write('</html>');
   printWindow.document.close();
-  printWindow.print();
+  setTimeout(function () {
+    printWindow.print();
+  }, 1000);
 
-  printWindow.addEventListener('afterprint', () => printWindow.close());
-  printWindow.onafterprint = () => printWindow.close();
+  //printWindow.addEventListener('afterprint', () => printWindow.close());
+  printWindow.onafterprint = () => {
+    setTimeout(function () {
+      printWindow.close();
+    }, 100);
+  };
 
   return;
 }
