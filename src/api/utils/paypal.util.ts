@@ -21,6 +21,9 @@ export async function createOrder(user_id: number, amount: number) {
     },
     body: JSON.stringify({
       intent: 'CAPTURE',
+      application_context: {
+        shipping_preference: 'NO_SHIPPING',
+      },
       purchase_units: [
         {
           reference_id: user_id + '',
@@ -28,6 +31,7 @@ export async function createOrder(user_id: number, amount: number) {
             currency_code: 'EUR',
             value: amount,
           },
+          category: 'DIGITAL_GOODS',
         },
       ],
     }),
