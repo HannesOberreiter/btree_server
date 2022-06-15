@@ -128,6 +128,9 @@
             </li>
           </ul>
           <div class="text-caption">
+            {{ $t('membership.afterPremium') }}
+          </div>
+          <div class="text-bold q-pt-sm">
             Cheers<br />
             Hannes Oberreiter [Organic Beekeeper, Hobby Biologist and Part-Time
             Software Developer]

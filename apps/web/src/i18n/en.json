@@ -125,10 +125,11 @@
   "donation": "Donation",
   "premium": "Premium",
   "membership": {
-    "title": "Support b.tree with premium access",
+    "title": "Support b.tree with premium access for one year",
     "currentStatus": "Current paid time",
     "afterPayment": "After payment your premium access is extended to",
-    "forOneYear": "for one year membership",
+    "afterPremium": "After your premium runs out you can still work with all your created hives and colonies but limits apply again",
+    "forOneYear": "for +1 year",
     "minimumAmount": "A minimum of 50 Euro is needed.",
     "thankYou": "Thank you for your contribution. The premium time should be added automatically otherwise try to login or logout. If any problems occured, to not hesitated to contact us at {'office@btree.at'}",
     "noSubscription": "Single payment only, no automatic subscription!",
