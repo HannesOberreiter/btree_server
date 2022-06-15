@@ -61,6 +61,7 @@ const useNotification = () => {
     else if (statusCode === 409)
       displayMessage = `${t('error.duplicate')} (${t(errorField)})`;
     else if (statusCode === 423) displayMessage = t('error.locked');
+    else if (statusCode === 429) displayMessage = t('error.tooManyRequest');
 
     return displayMessage;
   }
