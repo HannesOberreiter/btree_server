@@ -3,10 +3,60 @@ import { Controller } from '@classes/controller.class';
 import { checkMySQLError } from '@utils/error.util';
 import { IUserRequest } from '@interfaces/IUserRequest.interface';
 import { ScaleData } from '../models/scale_data.model';
+import dayjs from 'dayjs';
+import { getCompany } from '../utils/api.util';
+import { isPremium } from '../utils/premium.util';
+import { paymentRequired, tooManyRequests } from '@hapi/boom';
+import { Scale } from '../models/scale.model';
 
 export class ScaleDataController extends Controller {
   constructor() {
     super();
+  }
+  async api(req: IUserRequest, res: Response, next: NextFunction) {
+    try {
+      const insertDate = req.query.datetime ? req.query.datetime : new Date();
+      const company = await getCompany(req.params.api);
+      const premium = await isPremium(company.id);
+      if (!premium) throw paymentRequired();
+
+      const result = await ScaleData.transaction(async (trx) => {
+        const scale = await Scale.query(trx)
+          .select()
+          .where({ name: req.params.ident, user_id: company.id })
+          .throwIfNotFound()
+          .first();
+        const lastInsert = await ScaleData.query(trx)
+          .select()
+          .where({ scale_id: scale.id })
+          .orderBy('datetime', 'DESC')
+          .first();
+        if (lastInsert && req.query.action === 'CREATE') {
+          if (
+            dayjs(lastInsert.datetime) >
+            dayjs(insertDate as any).subtract(1, 'hour')
+          )
+            throw tooManyRequests('you have exceeded your request limit');
+        }
+        const insert = {
+          datetime: insertDate,
+          weight: req.query.weight ? req.query.weight : 0,
+          temp1: req.query.temp1 ? req.query.temp1 : 0,
+          temp2: req.query.temp2 ? req.query.temp2 : 0,
+          rain: req.query.rain ? req.query.rain : 0,
+          humidity: req.query.hum ? req.query.hum : 0,
+          note: req.query.note ? req.query.note : '',
+          scale_id: scale.id,
+        } as any;
+        if (req.query.action === 'CREATE_DEMO') return insert;
+        const query = await ScaleData.query(trx).insert({ ...insert });
+        return query;
+      });
+      res.locals.data = result;
+      next();
+    } catch (e) {
+      next(checkMySQLError(e));
+    }
   }
 
   async get(req: IUserRequest, res: Response, next: NextFunction) {
