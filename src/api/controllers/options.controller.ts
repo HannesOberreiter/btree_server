@@ -36,8 +36,12 @@ export class OptionController extends Controller {
     try {
       const { order, direction, modus, q } = req.query as any;
       const table = Object(OptionController.tables)[req.params.table];
-      const query = table.query().where('user_id', req.user.user_id);
-
+      const query = table
+        .query()
+        .where(`${req.params.table}.user_id`, req.user.user_id);
+      if (req.params.table === 'charge_types') {
+        query.withGraphJoined('stock');
+      }
       if (modus) {
         query.where('modus', modus === 'true');
       }

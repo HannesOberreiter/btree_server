@@ -16,7 +16,9 @@ export class ChargeController extends Controller {
       const { order, direction, offset, limit, q, filters, deleted } =
         req.query as any;
       const query = Charge.query()
-        .withGraphJoined('[type, creator(identifier), editor(identifier)]')
+        .withGraphJoined(
+          '[type.stock, creator(identifier), editor(identifier)]'
+        )
         .where({
           'charges.user_id': req.user.user_id,
           'charges.deleted': deleted === 'true',

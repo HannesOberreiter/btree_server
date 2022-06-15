@@ -1,9 +1,11 @@
 import { BaseOptionModel } from '@models/option/baseoption.model';
-import { ExtModel } from '../base.model';
+import { ChargeStock } from '../charge_stock.model';
 import { Company } from '../company.model';
 
 export class ChargeType extends BaseOptionModel {
   static tableName = 'charge_types';
+
+  stock?: ChargeStock;
 
   constructor() {
     super();
@@ -14,12 +16,20 @@ export class ChargeType extends BaseOptionModel {
 
   static relationMappings = {
     company: {
-      relation: ExtModel.HasOneRelation,
+      relation: ChargeType.HasOneRelation,
       modelClass: Company,
       join: {
         from: ['charge_types.user_id'],
-        to: ['companies.id']
-      }
-    }
-  }
+        to: ['companies.id'],
+      },
+    },
+    stock: {
+      relation: ChargeType.HasOneRelation,
+      modelClass: ChargeStock,
+      join: {
+        from: ['charge_types.id'],
+        to: ['charge_stocks.type_id'],
+      },
+    },
+  };
 }
