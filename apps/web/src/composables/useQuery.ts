@@ -1,4 +1,4 @@
-import { map } from 'lodash-es';
+import { map, round } from 'lodash-es';
 import { MaybeRef } from '@vueuse/core';
 import { Option, Task } from '~/types';
 import { queryCache } from '~/boot/vue-query';
@@ -539,8 +539,19 @@ export function useOptionsQuery(
       select: (response) => {
         const result = map(response, (value) => {
           value.label = `${value.name}`;
-          if (table === 'charge_types' && value.unit)
-            value.label += ` (${value.unit})`;
+          if (table === 'charge_types') {
+            if (value.stock || value.unit) {
+              value.label += ' (';
+              if (value.stock) {
+                value.label += `${round(value.stock.sum, 2)} `;
+              }
+              if (value.unit) {
+                value.label += `${value.unit}`;
+              }
+              value.label = value.label.trim();
+              value.label += ')';
+            }
+          }
           return value;
         });
         return result ? { results: result } : ([] as any);

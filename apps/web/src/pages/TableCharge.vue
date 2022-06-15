@@ -53,6 +53,7 @@ import { useTablesStore } from '~/stores/tables';
 import { QTableProps } from 'quasar';
 import { useDateFormat } from '~/composables/useDate';
 import { useTableFilterStore } from '~/stores/tableFilter';
+import { round } from 'lodash';
 
 const useDate = useDateFormat();
 const { t } = useI18n();
@@ -102,7 +103,14 @@ const columns = [
     format: (val: string) => val,
     sortable: true,
   },
-
+  {
+    name: 'amount',
+    label: t('amount'),
+    align: 'right',
+    field: (row: any) => row.amount,
+    format: (val: string) => val,
+    sortable: true,
+  },
   {
     name: 'type.name',
     label: t('type'),
@@ -110,6 +118,16 @@ const columns = [
     field: (row: any) => (row.type ? row.type.name : ''),
     format: (val: string, row: any) =>
       !row.type ? val : row.type.unit ? val + ' (' + row.type.unit + ')' : val,
+    sortable: true,
+  },
+
+  {
+    name: 'type:stock:sum',
+    label: t('stock'),
+    align: 'right',
+    field: (row: any) =>
+      row.type ? (row.type.stock ? row.type.stock.sum : '') : '',
+    format: (val: number) => round(val, 2),
     sortable: true,
   },
   {
@@ -120,15 +138,7 @@ const columns = [
     format: (val: string) => val,
     sortable: true,
   },
-  {
-    name: 'amount',
-    label: t('amount'),
-    align: 'right',
-    field: (row: any) => row.amount,
-    format: (val: string, row: any) =>
-      !row.type ? val : row.type.unit ? val + ' ' + row.type.unit : val,
-    sortable: true,
-  },
+
   {
     name: 'price',
     label: t('price'),

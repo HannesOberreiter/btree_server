@@ -104,6 +104,7 @@
     "active": "NFC reader is active",
     "aborted": "NFC aborted"
   },
+  "stock": "Stock",
   "error": {
     "access": "Access not allowed or wrong password!",
     "duplicate": "Conflict, duplicate entry!",
