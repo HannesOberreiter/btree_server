@@ -35,7 +35,6 @@ function createSession() {
 }
 
 onMounted(() => {
-  console.log(router.query.session_id);
   if (router.query.session_id) emit('onPaid', { paid: false });
 });
 </script>
