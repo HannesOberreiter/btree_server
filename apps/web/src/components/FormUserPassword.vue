@@ -72,10 +72,14 @@ const { modelPassword } = useVModels(props, emit);
 const passwordField = ref('password' as QInputProps['type']);
 const passwordIcon = ref('fas fa-eye');
 
-const state = {
+const state = reactive({
   password: modelPassword.value,
   confirmPassword: '',
-};
+});
+
+watch(modelPassword, () => {
+  state.password = modelPassword.value;
+});
 
 const rules = {
   password: {
