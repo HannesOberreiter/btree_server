@@ -31,7 +31,7 @@ export class User extends ExtModel {
     required: ['email', 'password', 'salt'],
     properties: {
       id: { type: 'integer' },
-      username: { type: 'string', minLength: 1, maxLength: 45 },
+      username: { type: 'string', maxLength: 45 },
       email: { type: 'string', format: 'email', minLength: 5, maxLength: 100 },
 
       password: { type: 'string', minLength: 6, maxLength: 128 },

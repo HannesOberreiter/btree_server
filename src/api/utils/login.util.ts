@@ -9,7 +9,7 @@ import { createHash } from 'crypto';
 const insertWrongPasswordTry = async (bee_id: number) => {
   const trx = await LoginAttemp.startTransaction();
   try {
-    const now = dayjs.utc().toISOString().slice(0, 19).replace('T', ' ');
+    const now = new Date().toISOString().slice(0, 19).replace('T', ' ');
     await LoginAttemp.query(trx).insert({
       time: now,
       bee_id: bee_id,
@@ -24,7 +24,7 @@ const insertWrongPasswordTry = async (bee_id: number) => {
 const updateLastLogin = async (bee_id: number) => {
   const trx = await User.startTransaction();
   try {
-    const now: Date = dayjs().toDate();
+    const now = new Date();
     await User.query(trx).findById(bee_id).patch({
       last_visit: now,
     });
@@ -82,12 +82,7 @@ const fetchUser = async (email: string, bee_id = 0) => {
 const checkBruteForce = async (bee_id: number) => {
   try {
     // All login attempts are counted from the past 2 hours.
-    const validAttempts = dayjs
-      .utc()
-      .subtract(2, 'hour')
-      .toISOString()
-      .slice(0, 19)
-      .replace('T', ' ');
+    const validAttempts = dayjs().subtract(2, 'hour').utc().toISOString();
     const bruteForce = await LoginAttemp.query()
       .count('id as count')
       .where('bee_id', bee_id)
