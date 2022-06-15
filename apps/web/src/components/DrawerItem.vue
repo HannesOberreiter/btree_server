@@ -4,8 +4,7 @@
     :data-cy="`route-${link.route}`"
     :to="{
       name: link.route,
-      params:
-        link.route === 'setting-option' ? { option: 'checkup_types' } : {},
+      params: link.params ? link.params : {},
     }"
     clickable
     exact
@@ -29,5 +28,6 @@ defineProps({
     required: true,
   },
 });
+
 defineExpose({ $q });
 </script>

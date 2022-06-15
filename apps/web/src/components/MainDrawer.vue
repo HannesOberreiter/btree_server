@@ -265,6 +265,13 @@ const links = [
         icon: 'fas fa-table',
         menu: false,
       },
+      {
+        label: t('api'),
+        route: 'setting-profile',
+        params: { tab: 'api' },
+        icon: 'fas fa-cogs',
+        menu: [] as any,
+      },
     ],
   },
   {
@@ -288,6 +295,7 @@ const links = [
         label: t('option'),
         route: 'setting-option',
         icon: 'fas fa-cogs',
+        params: { option: 'checkup_types' },
         menu: [] as any,
       },
       {

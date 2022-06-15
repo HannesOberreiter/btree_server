@@ -11,7 +11,7 @@
     filled
     class="q-pb-sm"
   >
-    <template #before>
+    <template v-if="showBefore" #before>
       <q-icon v-if="!multipleValues" name="far fa-square-caret-down"></q-icon>
       <btn-multiple-values
         v-else
@@ -64,6 +64,9 @@ const props = defineProps({
   allowEmpty: {
     type: String,
     default: '',
+  },
+  showBefore: {
+    default: true,
   },
 });
 

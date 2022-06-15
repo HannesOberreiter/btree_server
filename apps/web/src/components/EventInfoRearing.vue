@@ -18,10 +18,10 @@
             v-if="eventInfo.detail_id === item.detail_id"
             class="float-right"
             >{{ $t('rear.startLabel') }}:
-            <b>{{ useDate.displayFormat(item.start, 'date-time') }}</b>
+            <b>{{ useDate.displayFormat(item.date, 'date-time') }}</b>
           </span>
           <span v-else class="float-right">
-            {{ useDate.displayFormat(item.start, 'date-time') }}
+            {{ useDate.displayFormat(item.date, 'date-time') }}
           </span>
           <div class="text-grey">
             {{ item.detail.note }}

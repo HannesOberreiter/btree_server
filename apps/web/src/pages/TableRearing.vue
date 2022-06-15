@@ -93,7 +93,7 @@ const columns = [
   },
   {
     name: 'symbol',
-    label: t('Symbol'),
+    label: t('symbol'),
     align: 'center',
     field: (row: any) => row.symbol,
     sortable: true,

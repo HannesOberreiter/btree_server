@@ -109,6 +109,7 @@
     "duplicate": "Conflict, duplicate entry!",
     "forbidden": "Access forbidden or not allowed!",
     "locked": "Account locked! (too many login attempts?)",
+    "tooManyRequest": "Too many requests!",
     "more": "One of errors",
     "noData": "No data to load",
     "nfcNotSupported": "Web NFC is not supported by your browser.",
@@ -176,6 +177,7 @@
   "hive": "Hive | Hives",
   "hivecountTooltip": "Hives [Grouphives]",
   "humidity": "Humidity",
+  "ical": "ICal",
   "icalSource": "ICal Source",
   "icalUrl": "ICal Url",
   "icalHint": "Subscribe to this url in your calendar software, to automatically fetch your events.",
@@ -328,10 +330,13 @@
   },
   "restore": "Restore",
   "save": "Save",
+  "symbol": "Symbol",
   "scale": {
     "deleteText": "Are you sure to delete {name}. You cannot undo this action and all connected scale data will be deleted!",
     "name": "Scale | Scales",
-    "nameHint": "Name needs to be unique and is needed for API calls as identifier."
+    "nameHint": "Name needs to be unique and is needed for API calls as identifier.",
+    "api": "Scale API Url",
+    "apiHint": "With this Url you can upload your hive scale data to the API endpoint, limit 1 post per hour. In production set the action query param to 'CREATE'. The datetime query param needs to be ISO8601 conform, if param is not given the current upload UTC time will be used."
   },
   "search": "Search",
   "select": "Select",

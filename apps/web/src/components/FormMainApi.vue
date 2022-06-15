@@ -28,22 +28,67 @@
         />
       </template>
     </q-input>
-
-    <q-select
-      v-model="ical"
-      :label="$t('icalSource')"
-      :options="icals"
-      :option-label="(opt) => $t(opt)"
-    >
-    </q-select>
-    <div class="row justify-center items-center">
-      <div class="col-11">
+    <q-card class="q-mt-sm" flat bordered>
+      <q-card-section>
+        <div class="text-h5">{{ $t('ical') }}:</div>
+        <q-select
+          v-model="ical"
+          :label="$t('icalSource')"
+          :options="icals"
+          :option-label="(opt) => $t(opt)"
+        >
+        </q-select>
+        <div class="row justify-center items-center">
+          <div class="col-11">
+            <q-input
+              v-model="icalUrl"
+              :label="$t('icalUrl')"
+              :type="apiField"
+              :readonly="true"
+              :hint="$t('icalHint')"
+            >
+              <template #append>
+                <btn-base
+                  flat
+                  :disable="apiField === 'password'"
+                  icon="fas fa-copy"
+                  @click="
+                    copy(icalUrl).then(() =>
+                      notification.open('info', 'copiedToClipboard')
+                    )
+                  "
+                />
+              </template>
+            </q-input>
+          </div>
+          <div class="col-1">
+            <btn-base
+              :disable="apiField === 'password'"
+              :href="icalUrl"
+              download
+              icon="fas fa-archive"
+            >
+              <q-tooltip>{{ $t('icalDownload') }}</q-tooltip>
+            </btn-base>
+          </div>
+        </div>
+      </q-card-section>
+    </q-card>
+    <q-card class="q-mt-sm" flat bordered>
+      <q-card-section>
+        <div class="text-h5">{{ $t('scale.name') }}:</div>
+        <form-dropdown-option
+          v-model="scale"
+          table="scale"
+          label="scale.name"
+          :filled="false"
+          :show-before="false"
+        ></form-dropdown-option>
         <q-input
-          v-model="icalUrl"
-          :label="$t('icalUrl')"
+          v-model="scaleUrl"
+          :label="$t('scale.api')"
           :type="apiField"
           :readonly="true"
-          :hint="$t('icalHint')"
         >
           <template #append>
             <btn-base
@@ -51,25 +96,24 @@
               :disable="apiField === 'password'"
               icon="fas fa-copy"
               @click="
-                copy(icalUrl).then(() =>
+                copy(scaleUrl).then(() =>
                   notification.open('info', 'copiedToClipboard')
                 )
               "
             />
+            <btn-base
+              flat
+              :disable="apiField === 'password'"
+              icon="fas fa-cloud-arrow-up"
+              @click="scaleTest()"
+            />
           </template>
         </q-input>
-      </div>
-      <div class="col-1">
-        <btn-base
-          :disable="apiField === 'password'"
-          :href="icalUrl"
-          download
-          icon="fas fa-archive"
-        >
-          <q-tooltip>{{ $t('icalDownload') }}</q-tooltip>
-        </btn-base>
-      </div>
-    </div>
+        <div class="q-pt-sm">
+          {{ $t('scale.apiHint') }}
+        </div>
+      </q-card-section>
+    </q-card>
   </div>
   <div class="text-center q-pt-md">
     <btn-base-group>
@@ -135,17 +179,40 @@ const icalUrl = computed(() => {
   }/${apiValue.value}`;
 });
 
+const scale = ref(null);
+const scaleQuery = `?action=CREATE_DEMO&datetime=${new Date().toISOString()}&weight=10.5&temp1=10.2&temp2=8.9&rain=15&hum=53`;
+const scaleUrl = computed(() => {
+  if (scale.value) {
+  } else {
+    return '';
+  }
+  return `${dev === 'production' ? baseUrl : devBackendUrl}/v1/external/scale/${
+    scale.value.name
+  }/${apiValue.value}${scaleQuery}`;
+});
+
+const scaleUrlShort = computed(() => {
+  if (scale.value) {
+  } else {
+    return '';
+  }
+  return `/v1/external/scale/${scale.value.name}/${apiValue.value}${scaleQuery}`;
+});
+
 const state = reactive({
   password: '',
 });
 
 const rules = {};
-const v = useVuelidate(rules, state);
+const v = useVuelidate(rules, state, { $autoDirty: true });
 
 async function changeApiStatus(value = true, change = false) {
   isSubmitting.value = true;
   const isFormCorrect = await v.value.$validate();
   if (!isFormCorrect) {
+    return;
+  }
+  if (state.password === '') {
     return;
   }
   await api
@@ -188,5 +255,22 @@ async function loadApiValue() {
     apiField.value = apiField.value === 'text' ? 'password' : 'text';
   }
   isSubmitting.value = false;
+}
+
+async function scaleTest() {
+  if (scaleUrlShort.value) {
+    await api.get(scaleUrlShort.value).then(
+      (response: any) => {
+        notification.open(
+          'positive',
+          `Demo: ${JSON.stringify(response)}`.substring(0, 100) + '...',
+          true
+        );
+      },
+      (error) => {
+        notification.open('negative', error);
+      }
+    );
+  }
 }
 </script>

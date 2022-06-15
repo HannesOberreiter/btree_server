@@ -225,7 +225,7 @@ function cleanupScaleData(state: FormScaleData) {
     humidity: state.humidity,
     rain: state.rain,
     note: state.note,
-    datetime: state.datetime,
+    datetime: new Date(state.datetime).toISOString(),
     scale_id: state.scale ? state.scale.id : null,
   } as any;
   return omitBy(result, isNil);
@@ -258,7 +258,7 @@ function cleanupRearing(state: FormRearing) {
   const result = {
     name: state.name,
     symbol: state.symbol,
-    date: state.date ? state.date + ':00' : null,
+    date: state.date ? new Date(state.date + ':00').toISOString() : null,
     hatch: state.hatch,
     larvae: state.larvae,
     mated: state.mated,
