@@ -1,7 +1,7 @@
 <template>
   <form-input-text
     v-model="modelValue"
-    label="markColor"
+    label="queenMarker"
     :values="values"
     :reset="reset"
     icon="fas fa-marker"
