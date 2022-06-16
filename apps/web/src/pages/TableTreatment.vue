@@ -34,6 +34,13 @@
             :columns="columns"
           ></table-filter>
         </template>
+        <template #header-cell-amount="props">
+          <table-th-sum
+            :label="props.col.label"
+            :name="props.col.name"
+            :selected="selected"
+          ></table-th-sum>
+        </template>
         <template #body-cell-url="props">
           <table-col-url :value="props.value"></table-col-url>
         </template>

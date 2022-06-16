@@ -123,6 +123,7 @@ declare module '@vue/runtime-core' {
     TableColUrl: typeof import('./components/TableColUrl.vue')['default']
     TableFilter: typeof import('./components/TableFilter.vue')['default']
     TableHeaderIcon: typeof import('./components/TableHeaderIcon.vue')['default']
+    TableThSum: typeof import('./components/TableThSum.vue')['default']
   }
 }
 
