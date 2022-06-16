@@ -23,6 +23,7 @@ export class QueenController extends Controller {
         q,
         details,
         filters,
+        latest,
       } = req.query as any;
       const query = Queen.query()
         .where({
@@ -42,9 +43,15 @@ export class QueenController extends Controller {
         query.withGraphJoined(
           '[hive_location,queen_location,race,mating,own_mother,creator(identifier),editor(identifier)]'
         );
+        if (latest === 'true') {
+          query.whereNotNull('queen_location.queen_id');
+        } else if (latest === 'false') {
+          query.whereNull('queen_location.queen_id');
+        }
       } else {
         query.withGraphJoined('hive_location');
       }
+
       if (order) {
         if (Array.isArray(order)) {
           order.forEach((field, index) =>
@@ -66,7 +73,11 @@ export class QueenController extends Controller {
                   v['queens.date'].to,
                 ]);
               } else {
-                query.where(v);
+                if (v['queens.hive_id'] === 'empty') {
+                  query.whereNull('hive_location.hive_id');
+                } else {
+                  query.where(v);
+                }
               }
             });
           }
@@ -130,6 +141,9 @@ export class QueenController extends Controller {
     try {
       const ids = req.body.ids;
       const insert = { ...req.body.data };
+      if (insert.hive_id) {
+        insert.hive_id = insert.hive_id !== 'empty' ? insert.hive_id : null;
+      }
       const result = await Queen.transaction(async (trx) => {
         return await Queen.query(trx)
           .patch({ ...insert, edit_id: req.user.bee_id })

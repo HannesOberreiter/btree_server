@@ -12,7 +12,8 @@ export class TodoController extends Controller {
 
   async get(req: IUserRequest, res: Response, next: NextFunction) {
     try {
-      const { order, direction, offset, limit, q, filters } = req.query as any;
+      const { order, direction, offset, limit, q, filters, done } =
+        req.query as any;
       const query = Todo.query()
         .withGraphJoined('[creator(identifier), editor(identifier)]')
         .where({
@@ -23,6 +24,10 @@ export class TodoController extends Controller {
           offset ? offset : 0,
           parseInt(limit) === 0 || !limit ? 10 : limit
         );
+
+      if (done) {
+        query.where('todos.done', done === 'true');
+      }
 
       if (filters) {
         try {
