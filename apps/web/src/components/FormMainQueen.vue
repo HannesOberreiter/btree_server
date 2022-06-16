@@ -88,7 +88,7 @@
         table-id="hive_id"
         :values="values"
         :reset="reset"
-        allow-empty="noHive"
+        filter-empty="noHive"
         :hint="$t('queenHiveInfo')"
       ></form-dropdown-option>
       <form-dropdown-hive

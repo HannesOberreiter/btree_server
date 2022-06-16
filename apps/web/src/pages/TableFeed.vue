@@ -21,6 +21,8 @@
             v-model:deleted="deleted"
             v-model:modus="modus"
             :selected="selected"
+            label-modus-true="done"
+            label-modus-false="open"
             table="feed"
             @change="refetch"
           ></table-buttons>
@@ -224,6 +226,7 @@ const {
   q: computed(() => (filter.value ? filter.value : '')),
   filters: computed(() => (filters.value ? filters.value : '')),
   deleted: deleted,
+  done: modus,
 });
 
 watch(visibleColumns, (cur) => {

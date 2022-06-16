@@ -15,11 +15,36 @@
     />
 
     <btn-base
-      v-if="['hive', 'apiary'].includes(table)"
-      :color="modus ? 'warning' : 'negative'"
-      :icon-right="modus ? 'fas fa-eye' : 'fas fa-eye-slash'"
-      :label="$t('inactive')"
-      @click="modus = !modus"
+      v-if="
+        [
+          'hive',
+          'apiary',
+          'todo',
+          'feed',
+          'treatment',
+          'harvest',
+          'checkup',
+          'queen',
+        ].includes(table)
+      "
+      :color="
+        modus === true ? 'warning' : modus === false ? 'negative' : 'info'
+      "
+      :icon-right="
+        modus === true
+          ? 'fas fa-eye'
+          : modus === false
+          ? 'fas fa-eye-slash'
+          : 'fas fa-eye-low-vision'
+      "
+      :label="
+        modus === true
+          ? $t(labelModusTrue)
+          : modus === false
+          ? $t(labelModusFalse)
+          : $t('both')
+      "
+      @click="modus = modus === true ? false : modus === false ? null : true"
     />
 
     <btn-base
@@ -213,6 +238,12 @@ const props = defineProps({
   tableOption: {
     type: String,
     default: '',
+  },
+  labelModusTrue: {
+    default: 'active',
+  },
+  labelModusFalse: {
+    default: 'inactive',
   },
 });
 const emit = defineEmits(['update:deleted', 'update:modus', 'change']);

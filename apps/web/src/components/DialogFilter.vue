@@ -121,6 +121,7 @@ const layouts = {
         table: 'hive',
         label: 'hive',
         'allow-empty': 'filterEmpty',
+        'filter-empty': 'noHive',
       },
     },
     {

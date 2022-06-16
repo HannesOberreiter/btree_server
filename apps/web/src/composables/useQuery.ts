@@ -127,11 +127,12 @@ export function useTodosQuery({
   q = '' as MaybeRef<string>,
   filters = '' as MaybeRef<string>,
   enabled = true as MaybeRef<boolean>,
+  done = true as MaybeRef<boolean>,
 }) {
   const notification = useNotification();
   const api = useApiFetch();
   return useQuery(
-    ['todo', offset, limit, order, direction, q, filters],
+    ['todo', offset, limit, order, direction, q, filters, done],
     () => {
       const payload = {
         offset: unref(offset),
@@ -140,6 +141,7 @@ export function useTodosQuery({
         direction: unref(direction),
         q: unref(q),
         filters: unref(filters),
+        done: unref(done),
       };
       return api.get('/v1/todo', payload);
     },
@@ -164,12 +166,13 @@ export function useTasksQuery(
     enabled = true as MaybeRef<boolean>,
     details = false,
     filters = '' as MaybeRef<string>,
+    done = true as MaybeRef<boolean>,
   }
 ) {
   const notification = useNotification();
   const api = useApiFetch();
   return useQuery(
-    [task, offset, limit, order, direction, deleted, q, details, filters],
+    [task, offset, limit, order, direction, deleted, q, details, filters, done],
     () => {
       const payload = {
         offset: unref(offset),
@@ -180,6 +183,7 @@ export function useTasksQuery(
         q: unref(q),
         details: unref(details),
         filters: unref(filters),
+        done: unref(done),
       };
       return api.get(`/v1/${task}`, payload);
     },
@@ -252,6 +256,7 @@ export function useQueensQuery({
   order = ['name', 'date'] as MaybeRef<Array<string>>,
   direction = ['asc', 'asc'] as MaybeRef<Array<string>>,
   modus = true as MaybeRef<boolean>,
+  latest = null as MaybeRef<boolean>,
   deleted = false as MaybeRef<boolean>,
   filters = '' as MaybeRef<string>,
   q = '' as MaybeRef<string>,
@@ -272,6 +277,7 @@ export function useQueensQuery({
       q,
       details,
       filters,
+      latest,
     ],
     () => {
       const payload = {
@@ -284,6 +290,7 @@ export function useQueensQuery({
         filters: unref(filters),
         q: unref(q),
         details: unref(details),
+        latest: unref(latest),
       };
       return api.get('/v1/queen', payload);
     },

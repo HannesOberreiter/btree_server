@@ -102,7 +102,7 @@ const visibleColumns = ref(store.value.visible);
 
 const selected = ref([]);
 const rows = ref([]);
-const modus = ref(true);
+const modus = ref(null);
 const deleted = ref(false);
 const filter = ref('');
 
@@ -159,8 +159,8 @@ const columns = [
     sortable: true,
   },
   {
-    name: 'queen_location.hive_name',
-    label: t('latest'),
+    name: 'queen_location.queen_id',
+    label: t('active'),
     align: 'left',
     field: (row: any) =>
       !row.queen_location
@@ -200,14 +200,14 @@ const columns = [
   },
   {
     name: 'modus',
-    label: t('active'),
+    label: t('alive'),
     align: 'center',
     field: (row: any) => row.modus,
     sortable: true,
   },
   {
     name: 'modus_date',
-    label: t('inactiveDate'),
+    label: t('ripDate'),
     align: 'center',
     field: (row: any) => row.modus_date,
     format: (val: string, row: any) =>
@@ -262,6 +262,7 @@ const {
   filters: computed(() => (filters.value ? filters.value : '')),
   deleted: deleted,
   modus: null,
+  latest: modus,
   details: true,
 });
 

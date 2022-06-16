@@ -20,6 +20,8 @@
           <table-buttons
             v-model:deleted="deleted"
             v-model:modus="modus"
+            label-modus-true="done"
+            label-modus-false="open"
             :selected="selected"
             table="harvest"
             @change="refetch"
@@ -250,6 +252,7 @@ const {
   q: computed(() => (filter.value ? filter.value : '')),
   filters: computed(() => (filters.value ? filters.value : '')),
   deleted: deleted,
+  done: modus,
 });
 
 watch(visibleColumns, (cur) => {

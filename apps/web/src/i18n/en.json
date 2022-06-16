@@ -105,6 +105,9 @@
     "aborted": "NFC aborted"
   },
   "stock": "Stock",
+  "both": "Both",
+  "alive": "Alive",
+  "ripDate": "RIP date",
   "error": {
     "access": "Access not allowed or wrong password!",
     "duplicate": "Conflict, duplicate entry!",
