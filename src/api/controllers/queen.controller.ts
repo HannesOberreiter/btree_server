@@ -78,7 +78,7 @@ export class QueenController extends Controller {
         if (q.trim() !== '') {
           query.where((builder) => {
             builder.orWhere('queens.name', 'like', `%${q}%`);
-            builder.orWhere('hive.name', 'like', `%${q}%`);
+            builder.orWhere('hive_location.hive_name', 'like', `%${q}%`);
           });
         }
       }
