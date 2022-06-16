@@ -43,6 +43,22 @@ const routes: RouteRecordRaw[] = [
         },
         component: () => import('~/pages/PremiumDonation.vue'),
       },
+      {
+        path: '/lifecycle',
+        name: 'lifecycle',
+        meta: {
+          title: 'lifecycle',
+        },
+        component: () => import('~/pages/HelperLifecycle.vue'),
+      },
+      {
+        path: '/sugar_water_calculator',
+        name: 'sugarwater',
+        meta: {
+          title: 'calculator',
+        },
+        component: () => import('~/pages/HelperSugarWater.vue'),
+      },
     ],
   },
   /***
