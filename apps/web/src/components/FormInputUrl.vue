@@ -1,5 +1,6 @@
 <template>
   <form-input-text
+    v-if="fields.settings.general.url"
     v-model="modelValue"
     :values="values"
     :reset="reset"
@@ -44,7 +45,9 @@ import DialogFileUpload from './DialogFileUpload.vue';
 import DialogFileSelect from './DialogFileSelect.vue';
 import { isValidURL } from '~/helpers';
 import { useNotification } from '~/composables/useNotification';
+import { useFieldsettingStore } from '~/stores/fieldsetting';
 
+const fields = useFieldsettingStore();
 const $q = useQuasar();
 const { t } = useI18n();
 const inputModel = ref(null);

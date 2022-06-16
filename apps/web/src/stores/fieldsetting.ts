@@ -25,38 +25,48 @@ interface Charge {
   bestbefore: boolean;
 }
 
+interface General {
+  url: boolean;
+}
+
 interface Fieldsetting {
   checkup: Checkup;
   harvest: Harvest;
   treatment: Treatment;
   charge: Charge;
+  general: General;
 }
+
+const resetSettings = {
+  checkup: {
+    rating: false,
+    queen: false,
+    strength: false,
+    weight: false,
+    temperature: false,
+    varroa: false,
+    frames: false,
+  },
+  harvest: {
+    water: false,
+    frames: false,
+  },
+  treatment: {
+    wait: false,
+    vet: false,
+  },
+  charge: {
+    price: false,
+    bestbefore: false,
+  },
+  general: {
+    url: false,
+  },
+};
 
 export const useFieldsettingStore = defineStore('fieldsetting', {
   state: () => ({
-    settings: useStorage<Fieldsetting>('fieldsetting', {
-      checkup: {
-        rating: false,
-        queen: false,
-        strength: false,
-        weight: false,
-        temperature: false,
-        varroa: false,
-        frames: false,
-      },
-      harvest: {
-        water: false,
-        frames: false,
-      },
-      treatment: {
-        wait: false,
-        vet: false,
-      },
-      charge: {
-        price: false,
-        bestbefore: false,
-      },
-    }),
+    settings: useStorage<Fieldsetting>('fieldsetting', resetSettings),
   }),
   getters: {
     get: (state) => state.settings,
@@ -64,6 +74,10 @@ export const useFieldsettingStore = defineStore('fieldsetting', {
   actions: {
     patch(_payload: any) {
       // console.log(payload);
+    },
+    reset() {
+      this.settings = resetSettings;
+      return resetSettings;
     },
     refresh(data: any) {
       if (data) {

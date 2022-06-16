@@ -276,6 +276,7 @@
   "drone": "Drone",
   "queencell": "Queencell | Queencells",
   "queenEdit": "Edit queen(s)",
+  "general": "General",
   "lifecycleHelper": {
     "caste": "Caste",
     "timeToLarvae": "Egg to larvae",
@@ -393,6 +394,7 @@
     "hintHarvestWater": "Water: 1 Input Field for water content %",
     "hintTreatmentVet": "Vet: 1 Dropdown, in the Options you can define the values for this dropdown",
     "hintTreatmentWait": "Wait: 1 Input Field, for waiting time after treatment",
+    "hintGeneralUrl": "Form file link and upload button for Dropbox.",
     "name": "Setting | Settings",
     "title": "Here you can select or deselect fields you want to be shown in your Quicktool!"
   },
