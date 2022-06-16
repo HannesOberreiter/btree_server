@@ -236,6 +236,11 @@ if (env.env === 'production') {
     newData = map(rawData.data, (data) => {
       const user_id = userId.getUserID(data.hive_id);
       if (!user_id) return null;
+      if (data.modus === '0') {
+        if (data.modus_date === '0000-00-00') {
+          data.modus_date = '2018-01-01';
+        }
+      }
       return {
         id: data.hive_id,
         user_id: user_id,
