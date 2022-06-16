@@ -280,6 +280,9 @@ if (env.env === 'production') {
     */
     rawData = readMigrationTable('movedate.json');
     newData = map(rawData.data, (data) => {
+      if (data.date.includes('1970-01-01')) {
+        data.date = '2000-01-01 00:00:00';
+      }
       return {
         ...dateFields(data, (deleted = false)),
         ...omitFields(data),
