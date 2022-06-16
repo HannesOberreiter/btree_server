@@ -20,6 +20,8 @@
           <table-buttons
             v-model:deleted="deleted"
             v-model:modus="modus"
+            label-modus-true="done"
+            label-modus-false="open"
             :selected="selected"
             table="todo"
             @change="refetch"
@@ -161,6 +163,7 @@ const {
   limit: computed(() => pagination.value.rowsPerPage),
   q: computed(() => (filter.value ? filter.value : '')),
   filters: computed(() => (filters.value ? filters.value : '')),
+  done: modus,
 });
 
 watch(visibleColumns, (cur) => {

@@ -1,19 +1,50 @@
 <template>
   <btn-base-group size="sm" :spread="false">
-    <btn-base color="primary" :label="$t('new')" @click="onNew" />
+    <btn-base
+      color="primary"
+      :label="$t('new')"
+      data-cy="btn-table-new"
+      @click="onNew"
+    />
     <btn-base
       color="secondary"
       :disable="selected.length > 0 ? false : true"
       :label="$t('edit')"
+      data-cy="btn-table-edit"
       @click="onEdit"
     />
 
     <btn-base
-      v-if="['hive', 'apiary'].includes(table)"
-      :color="modus ? 'warning' : 'negative'"
-      :icon-right="modus ? 'fas fa-eye' : 'fas fa-eye-slash'"
-      :label="$t('inactive')"
-      @click="modus = !modus"
+      v-if="
+        [
+          'hive',
+          'apiary',
+          'todo',
+          'feed',
+          'treatment',
+          'harvest',
+          'checkup',
+          'queen',
+        ].includes(table)
+      "
+      :color="
+        modus === true ? 'warning' : modus === false ? 'negative' : 'info'
+      "
+      :icon-right="
+        modus === true
+          ? 'fas fa-eye'
+          : modus === false
+          ? 'fas fa-eye-slash'
+          : 'fas fa-eye-low-vision'
+      "
+      :label="
+        modus === true
+          ? $t(labelModusTrue)
+          : modus === false
+          ? $t(labelModusFalse)
+          : $t('both')
+      "
+      @click="modus = modus === true ? false : modus === false ? null : true"
     />
 
     <btn-base
@@ -40,7 +71,13 @@
     <table-button-scale v-if="table === 'scale_data'" @change="emit('change')">
     </table-button-scale>
 
-    <q-btn-dropdown no-caps color="info" label="..." class="print-hide">
+    <q-btn-dropdown
+      no-caps
+      color="info"
+      label="..."
+      class="print-hide"
+      data-cy="btn-table-dropdown"
+    >
       <q-list>
         <q-item
           v-if="table === 'hive'"
@@ -99,6 +136,7 @@
           v-close-popup
           clickable
           :disable="selected.length > 0 ? false : true"
+          data-cy="btn-table-delete"
           @click="onDelete"
         >
           <q-item-section avatar>
@@ -201,6 +239,12 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  labelModusTrue: {
+    default: 'active',
+  },
+  labelModusFalse: {
+    default: 'inactive',
+  },
 });
 const emit = defineEmits(['update:deleted', 'update:modus', 'change']);
 const { deleted, modus } = useVModels(props, emit);
@@ -281,6 +325,10 @@ function onDelete() {
   $q.dialog({
     title: t('delete'),
     message: message,
+    ok: {
+      label: t('yes'),
+      class: 'btn-confirm',
+    },
     cancel: true,
     persistent: true,
     html: true,
@@ -355,10 +403,16 @@ function onPrint() {
   );
   printWindow.document.write('</html>');
   printWindow.document.close();
-  printWindow.print();
+  setTimeout(function () {
+    printWindow.print();
+  }, 1000);
 
-  printWindow.addEventListener('afterprint', () => printWindow.close());
-  printWindow.onafterprint = () => printWindow.close();
+  //printWindow.addEventListener('afterprint', () => printWindow.close());
+  printWindow.onafterprint = () => {
+    setTimeout(function () {
+      printWindow.close();
+    }, 100);
+  };
 
   return;
 }

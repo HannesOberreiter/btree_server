@@ -1,7 +1,12 @@
 <template>
-  <q-btn-dropdown no-caps color="orange" :label="$t('scale.name')">
+  <q-btn-dropdown
+    no-caps
+    color="orange"
+    :label="$t('scale.name')"
+    data-cy="btn-dropdown-scale"
+  >
     <q-list>
-      <q-item v-close-popup clickable @click="onNew">
+      <q-item v-close-popup clickable data-cy="btn-new-scale" @click="onNew">
         <q-item-section>
           <q-item-label>{{ $t('new') }}</q-item-label>
         </q-item-section>

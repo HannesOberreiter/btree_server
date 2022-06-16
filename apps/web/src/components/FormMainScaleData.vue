@@ -1,5 +1,5 @@
 <template>
-  <q-form class="full-width" @submit.prevent.stop="">
+  <q-form class="full-width" data-cy="form-scale-data" @submit.prevent.stop="">
     <form-dropdown-edit
       v-if="isEdit"
       v-model="editOptions"
@@ -17,7 +17,7 @@
     <form-dropdown-option
       v-model="state.scale"
       table="scale"
-      label="scale"
+      label="scale.name"
       :values="values"
       :reset="reset"
     ></form-dropdown-option>

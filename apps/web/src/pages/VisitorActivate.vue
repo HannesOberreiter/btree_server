@@ -94,14 +94,14 @@ async function onSubmit() {
 
 async function sendForm(value: any) {
   await AuthService.activate(value).then(
-    async (reponse) => {
+    async (response) => {
       btnLabel.value = 'success';
       message.value = t('activateUser.success');
       notification.open('positive', 'activateUser.success');
       isSubmitting.value = false;
       await router.push({
         name: 'login',
-        params: { activate: reponse.data.email },
+        params: { activate: response.email },
       });
     },
     (error) => {

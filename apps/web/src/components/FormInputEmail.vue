@@ -1,12 +1,13 @@
 <template>
   <q-input
-    v-model="modelMail"
+    v-model.trim="modelValue"
     :error="v.email.$error"
     :error-message="validationErrors(v.email)"
     :no-error-icon="true"
     :label="$t('email')"
     name="email"
     type="email"
+    autocapitalize="off"
     required
     filled
     :readonly="fieldStatus"
@@ -33,7 +34,7 @@ import useVuelidate from '@vuelidate/core';
 
 const { t } = useI18n();
 const props = defineProps({
-  modelMail: {
+  modelValue: {
     type: String,
     default: '',
   },
@@ -44,10 +45,10 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['update:modelMail']);
-const { modelMail } = useVModels(props, emit);
+const { modelValue } = useVModels(props, emit);
 const fieldStatus = ref(props.disableMail);
 const state = {
-  email: modelMail,
+  email: modelValue,
 };
 const rules = {
   email: {

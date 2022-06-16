@@ -11,7 +11,7 @@
     filled
     class="q-pb-sm"
   >
-    <template #before>
+    <template v-if="showBefore" #before>
       <q-icon v-if="!multipleValues" name="far fa-square-caret-down"></q-icon>
       <btn-multiple-values
         v-else
@@ -65,6 +65,13 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  filterEmpty: {
+    type: String,
+    default: '',
+  },
+  showBefore: {
+    default: true,
+  },
 });
 
 const { isLoading, data } =
@@ -101,7 +108,6 @@ watch(
 
 function setValues() {
   disable.value = multipleValues.value;
-
   if (values.value && !isEmpty(values.value)) {
     setOptions(values.value[0][props.tableId]);
   } else if (modelValue.value && typeof modelValue.value !== 'object') {
@@ -111,9 +117,20 @@ function setValues() {
 
 function setOptions(id = 0) {
   if (!data.value) return;
-  if (props.allowEmpty !== '') {
+  if (props.allowEmpty !== '' && props.filterEmpty !== '') {
     options.value = [
       { label: t(props.allowEmpty), value: null },
+      { label: t(props.filterEmpty), id: 'empty' },
+      ...data.value.results,
+    ];
+  } else if (props.allowEmpty !== '') {
+    options.value = [
+      { label: t(props.allowEmpty), value: null },
+      ...data.value.results,
+    ];
+  } else if (props.filterEmpty !== '') {
+    options.value = [
+      { label: t(props.filterEmpty), id: 'empty' },
       ...data.value.results,
     ];
   } else {
@@ -121,12 +138,21 @@ function setOptions(id = 0) {
   }
   if (multipleValues.value) editValues(true);
   else if (id === 0) modelValue.value = options.value[0];
+  else if (id === null) modelValue.value = options.value[0];
   else {
-    const res = filter(data.value.results, (obj) => {
+    const res = filter(options.value, (obj) => {
       return obj.id === id;
     });
-    if (res.length === 0) hint.value = t('dropdownNotAvailable');
-    modelValue.value = res[0];
+    if (res.length === 0) {
+      options.value = [
+        { label: t('dropdownNotAvailable'), value: null },
+        ...options.value,
+      ];
+      hint.value = t('dropdownNotAvailable');
+      modelValue.value = options.value[0];
+    } else {
+      modelValue.value = res[0];
+    }
   }
 }
 

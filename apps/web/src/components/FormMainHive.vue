@@ -1,5 +1,5 @@
 <template>
-  <q-form class="full-width" @submit.prevent.stop="">
+  <q-form class="full-width" data-cy="form-hive" @submit.prevent.stop="">
     <div class="row">
       <form-dropdown-edit
         v-if="isEdit"
@@ -15,6 +15,7 @@
         :class="isEdit ? 'col-12' : 'col-11'"
         :required="isEdit ? false : true"
         label="name"
+        name="hive"
         icon="fas fa-passport"
         :hint="isEdit ? '' : $t('lastAdded') + ': ' + lastNames"
         :max-valid="24"
@@ -25,6 +26,7 @@
           round
           icon="fas fa-retweet"
           :color="showInterval ? 'secondary' : 'grey'"
+          data-cy="btn-repeat"
           @click="changeInterval"
         ></btn-base>
       </div>

@@ -20,6 +20,8 @@
           <table-buttons
             v-model:deleted="deleted"
             v-model:modus="modus"
+            label-modus-true="done"
+            label-modus-false="open"
             :selected="selected"
             table="harvest"
             @change="refetch"
@@ -31,6 +33,14 @@
             v-model:modelVisible="visibleColumns"
             :columns="columns"
           ></table-filter>
+        </template>
+
+        <template #header-cell-amount="props">
+          <table-th-sum
+            :label="props.col.label"
+            :name="props.col.name"
+            :selected="selected"
+          ></table-th-sum>
         </template>
 
         <template #body-cell-url="props">
@@ -63,11 +73,13 @@
         <!-- eslint-disable-next-line vue/valid-v-slot -->
         <template #body-cell-harvest_apiary.apiary_name="props">
           <table-col-link
+            v-if="props.row.harvest_apiary"
             :id="props.row.harvest_apiary.apiary_id"
             :label="props.value"
             link="apiary"
           >
           </table-col-link>
+          <td v-else></td>
         </template>
       </q-table>
     </div>
@@ -248,6 +260,7 @@ const {
   q: computed(() => (filter.value ? filter.value : '')),
   filters: computed(() => (filters.value ? filters.value : '')),
   deleted: deleted,
+  done: modus,
 });
 
 watch(visibleColumns, (cur) => {

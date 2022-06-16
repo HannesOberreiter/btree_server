@@ -7,7 +7,7 @@
           <template #eventContent="{ timeText, event }">
             <i
               v-if="event.extendedProps.table === 'rearing'"
-              :style="`background-color: ${event.backgroundColor}`"
+              :style="`background-color: ${event.backgroundColor}; color: black;`"
               :class="event.extendedProps.icon"
             ></i>
             <i v-else :class="event.extendedProps.icon"></i>
@@ -49,6 +49,7 @@ import listPlugin from '@fullcalendar/list';
 import { useApiFetch } from '~/composables/useApi';
 import { useQuasar } from 'quasar';
 import { useCalendarQuery } from '~/composables/useQuery';
+import { onBeforeRouteLeave } from 'vue-router';
 
 const useQuery = useCalendarQuery();
 const { t } = useI18n();
@@ -129,6 +130,10 @@ eventsSourceList.map(function (source: any) {
   }
 });
 
+onBeforeRouteLeave(() => {
+  useQuery.invalidate('');
+});
+
 onMounted(() => {
   onKeyStroke('ArrowLeft', (e) => {
     e.preventDefault();
@@ -188,13 +193,13 @@ function handleEventsChange(changeInfo: EventChangeArg) {
     }
   }
 
-  let ids = '';
+  let ids: string | string[] = '';
   let start = '';
   if (changeInfo.event.extendedProps.table === 'rearing') {
     // For Queen Rearing Events
     // we need to find out which is the starting step
     // and how it will be changed based on the difference if the moved event is not the starting step
-    ids = changeInfo.event.groupId.replace('Q', '');
+    ids = [changeInfo.event.groupId.replace('Q', '')];
     const startPosition = changeInfo.event.extendedProps.startPosition;
     const currentPosition = changeInfo.event.extendedProps.currentStep.position;
     if (startPosition === currentPosition) {
@@ -208,7 +213,7 @@ function handleEventsChange(changeInfo: EventChangeArg) {
         if (value.position === startPosition) startStep = value;
       });
       start = dayjs(startStep.date)
-        .add(difference, 'miliseconds')
+        .add(difference, 'milliseconds')
         .format('YYYY-MM-DD HH:mm:ss');
     }
   } else {

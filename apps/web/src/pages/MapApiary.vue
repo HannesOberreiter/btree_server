@@ -42,6 +42,7 @@
               </l-circle>
               <l-marker
                 v-if="value.modus || showInactive"
+                :options="{ alt: value.name }"
                 :lat-lng="[value.latitude, value.longitude]"
                 :draggable="true"
                 @dragstart="moveApiaryStart(value)"
@@ -73,6 +74,7 @@
                     <btn-base
                       v-if="!value.hive_count"
                       color="negative"
+                      :data-cy="`btn-delete-${value.name}`"
                       @click="deleteApiary(value.id)"
                       >{{ t('delete') }}
                     </btn-base>

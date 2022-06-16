@@ -3,7 +3,7 @@
     <div class="text-h6 text-center">{{ t('signup.name') }}</div>
     <form-error-max v-if="submitCount >= 15"></form-error-max>
     <q-form v-else class="q-gutter-md" @submit="onSubmit">
-      <form-input-company
+      <form-input-text
         v-model="state.company"
         label="company.name"
         :max-valid="45"
@@ -13,7 +13,7 @@
         <template #deepPrepend
           ><q-icon name="fas fa-warehouse"></q-icon
         ></template>
-      </form-input-company>
+      </form-input-text>
       <form-input-email v-model="state.email"></form-input-email>
       <form-user-password
         v-model:modelPassword="state.password"
@@ -63,7 +63,12 @@
       >
         <slot>
           {{ t('signup.agree') }}
-          <btn-base flat color="secondary" @click="terms = true">
+          <btn-base
+            data-cy="terms"
+            flat
+            color="secondary"
+            @click="terms = true"
+          >
             {{ t('signup.terms') }}
           </btn-base>
         </slot>
@@ -99,7 +104,13 @@
         {{ state.lang.value == 'de' ? termsDE : termsEN }}
       </q-card-section>
       <q-card-actions align="right">
-        <btn-base v-close-popup flat :label="$t('ok')" color="primary" />
+        <btn-base
+          v-close-popup
+          flat
+          data-cy="btn-terms"
+          :label="$t('ok')"
+          color="primary"
+        />
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -198,7 +209,7 @@ async function onSubmit() {
     email: state.email,
     password: state.password,
     lang: state.lang.value,
-    source: state.source.value === 0 ? state.other : state.source + '',
+    source: state.source.value === 0 ? state.other : state.source.value + '',
     newsletter: state.newsletter,
   };
   await sendForm(form);

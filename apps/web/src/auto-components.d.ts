@@ -7,6 +7,7 @@ declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     BtnBase: typeof import('./components/BtnBase.vue')['default']
     BtnBaseGroup: typeof import('./components/BtnBaseGroup.vue')['default']
+    BtnCloseDialog: typeof import('./components/BtnCloseDialog.vue')['default']
     BtnDarkMode: typeof import('./components/BtnDarkMode.vue')['default']
     BtnFullscreen: typeof import('./components/BtnFullscreen.vue')['default']
     BtnMultipleValues: typeof import('./components/BtnMultipleValues.vue')['default']
@@ -48,6 +49,7 @@ declare module '@vue/runtime-core' {
     FormDropdownHive: typeof import('./components/FormDropdownHive.vue')['default']
     FormDropdownOption: typeof import('./components/FormDropdownOption.vue')['default']
     FormDropdownRearing: typeof import('./components/FormDropdownRearing.vue')['default']
+    FormDropdownSymbol: typeof import('./components/FormDropdownSymbol.vue')['default']
     FormErrorMax: typeof import('./components/FormErrorMax.vue')['default']
     FormInputAmount: typeof import('./components/FormInputAmount.vue')['default']
     FormInputCheckbox: typeof import('./components/FormInputCheckbox.vue')['default']
@@ -101,6 +103,8 @@ declare module '@vue/runtime-core' {
     MapButtons: typeof import('./components/MapButtons.vue')['default']
     MapOverlay: typeof import('./components/MapOverlay.vue')['default']
     NewsDirective: typeof import('./components/NewsDirective.vue')['default']
+    PaymentPaypal: typeof import('./components/PaymentPaypal.vue')['default']
+    PaymentStripe: typeof import('./components/PaymentStripe.vue')['default']
     RearingMethod: typeof import('./components/RearingMethod.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
@@ -115,9 +119,11 @@ declare module '@vue/runtime-core' {
     TableColQueen: typeof import('./components/TableColQueen.vue')['default']
     TableColRearingEvent: typeof import('./components/TableColRearingEvent.vue')['default']
     TableColStatus: typeof import('./components/TableColStatus.vue')['default']
+    TableColSymbol: typeof import('./components/TableColSymbol.vue')['default']
     TableColUrl: typeof import('./components/TableColUrl.vue')['default']
     TableFilter: typeof import('./components/TableFilter.vue')['default']
     TableHeaderIcon: typeof import('./components/TableHeaderIcon.vue')['default']
+    TableThSum: typeof import('./components/TableThSum.vue')['default']
   }
 }
 

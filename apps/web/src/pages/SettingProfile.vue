@@ -22,7 +22,6 @@
             <div class="text-body2 q-pb-sm text-center">
               {{ $t('profile.userTitle') }}
             </div>
-
             <form-main-user></form-main-user>
           </div>
         </div>
@@ -55,6 +54,7 @@
 
 <script setup lang="ts">
 import { useAuthUserStore } from '~/stores/auth';
+
 const prop = defineProps({
   tab: {
     type: String,

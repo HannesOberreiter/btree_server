@@ -6,6 +6,7 @@
           dense
           flat
           round
+          data-cy="btn-drawer"
           icon="fas fa-bars"
           @click="toggleLeftDrawer"
         />
@@ -20,6 +21,7 @@
       side="left"
       :width="200"
       class="bg-blue-grey-9 print-hide"
+      data-cy="drawer"
     >
       <main-drawer></main-drawer>
     </q-drawer>

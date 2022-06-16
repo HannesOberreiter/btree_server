@@ -3,6 +3,7 @@
     ref="dialogRef"
     :maximized="$q.platform.is.mobile"
     style="min-width: 200px"
+    data-cy="dialog-event"
     @hide="onDialogHide"
   >
     <q-card>
@@ -13,14 +14,7 @@
             {{ eventInfo.title }}
           </div>
           <q-space />
-          <btn-base
-            ref="closeBtn"
-            v-close-popup
-            icon="fas fa-times"
-            flat
-            round
-            dense
-          />
+          <btn-close-dialog></btn-close-dialog>
         </div>
       </q-card-section>
       <q-card-section v-if="isVis" class="primary">
@@ -100,6 +94,7 @@
           <btn-base
             v-if="!isVis"
             color="negative darken-1"
+            data-cy="btn-dialog-event-delete"
             @click="deleteEvent"
           >
             {{ t('delete') }}
@@ -161,13 +156,17 @@ async function updateStatus() {
 async function deleteEvent() {
   const data = JSON.stringify({
     ids: isRearings.value
-      ? props.eventInfo.publicId
+      ? [props.eventInfo.publicId]
       : props.eventInfo.task_ids.toString().split(','),
   });
   const nameSource = props.eventInfo.table as string;
   $q.dialog({
     title: t('delete'),
     message: t('deleteConfirm'),
+    ok: {
+      label: t('yes'),
+      class: 'btn-confirm',
+    },
     cancel: true,
     persistent: true,
     html: true,

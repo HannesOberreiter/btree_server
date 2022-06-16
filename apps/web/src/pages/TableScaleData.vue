@@ -20,7 +20,7 @@
         <template #body-cell-scale.hive.name="props">
           <table-col-link
             v-if="props.row.scale.hive"
-            :id="props.row.scale.hive.name"
+            :id="props.row.scale.hive.id"
             :label="props.value"
             link="hive"
           >

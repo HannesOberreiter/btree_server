@@ -16,6 +16,8 @@
         <q-item-section>
           <q-toggle
             v-model="modelValue"
+            :name="label"
+            :class="`checkbox-${label}`"
             color="blue"
             :false-value="falseValue"
             :true-value="trueValue"
@@ -34,8 +36,10 @@
 <script setup lang="ts">
 import { useVModels } from '@vueuse/core';
 import { isEmpty } from 'lodash-es';
+import { useQuasar } from 'quasar';
 import { formCheckMultipleValues } from '~/helpers';
 
+const $q = useQuasar();
 const props = defineProps({
   modelValue: {
     type: Boolean,
@@ -97,4 +101,5 @@ function editValues(val: boolean) {
   disable.value = val;
   modelValue.value = disable.value ? null : modelValue.value;
 }
+defineExpose({ $q });
 </script>

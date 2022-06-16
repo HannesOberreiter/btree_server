@@ -14,6 +14,7 @@ const state = reactive({
 export const useApiFetch = () => {
   const storeToken = useAuthTokenStore();
   const network = useNetwork();
+  const dialog = useNeedAuth();
 
   const buildHeader = () => {
     return {
@@ -58,6 +59,17 @@ export const useApiFetch = () => {
 
     const time2 = performance.now();
     return time2 - time1;
+  };
+
+  const download = async (url: string) => {
+    const urlParam = buildUrl(url);
+    const originalRequest = new Request(urlParam, {
+      method: 'GET', // *GET, POST, PUT, DELETE, etc.
+      credentials: 'omit', // include, *same-origin, omit
+      headers: buildHeader(),
+    });
+
+    return await fetching(originalRequest, false, true);
   };
 
   const get = async (url: string, payload = '' as unknown): Promise<any> => {
@@ -105,7 +117,11 @@ export const useApiFetch = () => {
     return await fetching(originalRequest);
   };
 
-  async function fetching(request: Request, recursive = false): Promise<any> {
+  async function fetching(
+    request: Request,
+    recursive = false,
+    file = false
+  ): Promise<any> {
     if (network.isSupported && !network.isOnline.value) {
       throw 'offline';
     }
@@ -118,9 +134,8 @@ export const useApiFetch = () => {
 
     if (!response.ok) {
       if (
-        ![baseUrl + '/v1/auth/login', baseUrl + '/v1/auth/refresh'].includes(
-          request.url
-        ) &&
+        request.url.search('/v1/auth/login') === -1 &&
+        request.url.search('/v1/auth/refresh') === -1 &&
         !recursive
       ) {
         if (response.status === 401 && !state.retry) {
@@ -128,7 +143,7 @@ export const useApiFetch = () => {
           try {
             const token = await refreshToken();
             storeToken.refreshToken(token.result);
-            return fetching(copy, true);
+            return fetching(copy, true, file);
           } catch (e) {
             throw e;
           }
@@ -138,14 +153,20 @@ export const useApiFetch = () => {
             await new Promise((r) => setTimeout(r, 500));
           }
           if (state.logout === true) {
+            if (!dialog.state.show) dialog.open();
             return Promise.reject();
           }
-          return fetching(copy, true);
+          return fetching(copy, true, file);
         }
       }
       throw await response.json();
     }
-    return response.json();
+
+    if (file) {
+      return response.blob();
+    } else {
+      return response.json();
+    }
   }
 
   async function refreshToken() {
@@ -162,7 +183,6 @@ export const useApiFetch = () => {
     return fetch(request)
       .then(function (response) {
         if (!response.ok) {
-          const dialog = useNeedAuth();
           state.logout = true;
           dialog.open();
           throw response;
@@ -178,5 +198,5 @@ export const useApiFetch = () => {
       });
   }
 
-  return { ping, get, post, patch, remove, state };
+  return { ping, get, post, patch, remove, state, download };
 };

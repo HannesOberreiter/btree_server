@@ -36,7 +36,13 @@
         "
         @click="getTemperature(true)"
       >
-        <q-tooltip> {{ $t('temperatureTooltip') }} </q-tooltip>
+        <q-tooltip>
+          {{
+            storeUser.getPaidStatus.status
+              ? $t('temperatureTooltip')
+              : $t('error.premium')
+          }}
+        </q-tooltip>
       </q-icon>
     </template>
   </form-input-numeric>
@@ -101,6 +107,7 @@ watch(temperature, (cur) => {
 });
 
 function getTemperature(click = false) {
+  if (!storeUser.getPaidStatus.status) return;
   if (!props.hive) return;
   if (props.hive.length === 0) return;
   select.value =

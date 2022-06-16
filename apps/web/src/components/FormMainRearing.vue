@@ -1,5 +1,5 @@
 <template>
-  <q-form class="full-width" @submit.prevent.stop="">
+  <q-form class="full-width" data-cy="form-rearing" @submit.prevent.stop="">
     <form-dropdown-edit
       v-if="isEdit"
       v-model="editOptions"
@@ -7,6 +7,24 @@
       class="col-12"
       :options="editOptionsCopy"
     ></form-dropdown-edit>
+    <form-input-text
+      v-model="state.name"
+      :values="values"
+      :reset="reset"
+      :required="false"
+      label="name"
+      name="rearingName"
+      icon="none"
+      :max-valid="24"
+    >
+      <template #deepBefore>
+        <form-dropdown-symbol
+          v-model="state.symbol"
+          :values="values"
+          :reset="reset"
+        ></form-dropdown-symbol>
+      </template>
+    </form-input-text>
     <form-input-date
       v-model="state.date"
       date-format="YYYY-MM-DD HH:mm"
@@ -21,27 +39,40 @@
       :values="values"
       :reset="reset"
     ></form-dropdown-rearing>
-    <div class="col-12 col-md-6 q-pt-sm q-pb-sm">
-      <form-input-numeric
-        v-model="state.larvae"
-        label="larvae"
-        icon="fas fa-egg"
-        numeric-valid="integer"
-        :values="values"
-        :reset="reset"
-      >
-      </form-input-numeric>
-    </div>
-    <div class="col-12 col-md-6 q-pt-sm q-pb-sm">
-      <form-input-numeric
-        v-model="state.hatch"
-        label="hatch"
-        icon="fas fa-cake-candles"
-        numeric-valid="integer"
-        :values="values"
-        :reset="reset"
-      >
-      </form-input-numeric>
+    <div class="row q-pt-md">
+      <div class="col-12 col-md-4 q-pr-xs">
+        <form-input-numeric
+          v-model="state.larvae"
+          label="larvae"
+          icon="fas fa-egg"
+          numeric-valid="integer"
+          :values="values"
+          :reset="reset"
+        >
+        </form-input-numeric>
+      </div>
+      <div class="col-12 col-md-4 q-pr-xs">
+        <form-input-numeric
+          v-model="state.hatch"
+          label="hatch"
+          icon="fas fa-cake-candles"
+          numeric-valid="integer"
+          :values="values"
+          :reset="reset"
+        >
+        </form-input-numeric>
+      </div>
+      <div class="col-12 col-md-4 q-pr-xs">
+        <form-input-numeric
+          v-model="state.mated"
+          label="mated"
+          icon="fas fa-thumbs-up"
+          numeric-valid="integer"
+          :values="values"
+          :reset="reset"
+        >
+        </form-input-numeric>
+      </div>
     </div>
 
     <form-input-note
@@ -68,9 +99,12 @@ import { flatten, map, merge } from 'lodash-es';
 import dayjs from 'dayjs';
 
 const stateDefault = {
+  name: '',
+  symbol: 'venus',
   date: dayjs().format('YYYY-MM-DD HH:mm'),
   larvae: 0,
   hatch: 0,
+  mated: 0,
   note: '',
 };
 </script>

@@ -10,6 +10,7 @@
             task: storeQuicktool.getLink,
           },
         }"
+        data-cy="route-new-quicktool"
         clickable
         exact
         active-class="text-yellow"
@@ -50,16 +51,20 @@
 </template>
 
 <script setup lang="ts">
+import { useQuasar } from 'quasar';
 import { useAuthUserStore } from '~/stores/auth';
 import { useQuicktoolStore } from '~/stores/quicktool';
 
 const { t } = useI18n();
 const storeUser = useAuthUserStore();
 const storeQuicktool = useQuicktoolStore();
+const $q = useQuasar();
 
 const onLogout = async () => {
   await storeUser.logout();
 };
+
+defineExpose({ $q });
 
 const calendar = {
   label: t('calendar.name'),
@@ -260,6 +265,13 @@ const links = [
         icon: 'fas fa-table',
         menu: false,
       },
+      {
+        label: t('api'),
+        route: 'setting-profile',
+        params: { tab: 'api' },
+        icon: 'fas fa-cogs',
+        menu: [] as any,
+      },
     ],
   },
   {
@@ -283,12 +295,19 @@ const links = [
         label: t('option'),
         route: 'setting-option',
         icon: 'fas fa-cogs',
+        params: { option: 'checkup_types' },
         menu: [] as any,
       },
       {
         label: t('company.name'),
         route: 'setting-company',
         icon: 'fas fa-warehouse',
+        menu: [] as any,
+      },
+      {
+        label: t('premium'),
+        route: 'premium',
+        icon: 'fas fa-face-smile',
         menu: [] as any,
       },
       {

@@ -1,30 +1,29 @@
 <template>
-  <q-dialog ref="dialogRef" :maximized="$q.platform.is.mobile" @hide="onHide">
+  <q-dialog
+    ref="dialogRef"
+    :maximized="$q.platform.is.mobile"
+    data-cy="dialog-share"
+    @hide="onHide"
+  >
     <q-card style="width: 700px">
       <q-card-section>
         <div class="row">
           <div class="text-h6">{{ title }}</div>
           <q-space />
-          <btn-base
-            ref="closeBtn"
-            v-close-popup
-            icon="fas fa-times"
-            flat
-            round
-            dense
-            class="print-hide"
-          />
+          <btn-close-dialog></btn-close-dialog>
         </div>
         <div class="row print-hide">
           {{ $t('currentPageLink') }}
         </div>
         <div class="row full-width justify-center">
-          <img :src="qrcode" alt="b.tree - QR Code" />
+          <img id="qr-code" :src="qrcode" alt="b.tree - QR Code" />
+          <btn-base icon="fas fa-print" @click="printQR"></btn-base>
         </div>
         <div class="row full-width justify-center">
           <div class="col-12">
             <q-input
               v-model="urlRef"
+              data-cy="input-url"
               :value="url"
               :label="$t('url')"
               :readonly="true"
@@ -33,6 +32,7 @@
                 <btn-base
                   flat
                   icon="fas fa-copy"
+                  data-cy="btn-copy"
                   @click="
                     copy(url).then(() =>
                       notification.open('info', 'copiedToClipboard')
@@ -96,12 +96,14 @@ import { useQRCode } from '@vueuse/integrations/useQRCode';
 import { useClipboard } from '@vueuse/core';
 import { useNotification } from '~/composables/useNotification';
 import { useNFC } from '~/composables/useNFC';
+import { useDateFormat } from '~/composables/useDate';
 
 defineEmits([...useDialogPluginComponent.emits]);
 const { dialogRef, onDialogHide } = useDialogPluginComponent();
 const { copy } = useClipboard();
 const notification = useNotification();
 const router = useRouter();
+const useDate = useDateFormat();
 const nfc = useNFC();
 const { t } = useI18n();
 
@@ -121,5 +123,53 @@ const title = router.currentRoute.value.meta.title
 function onHide() {
   if (nfc.state.writing) nfc.abort();
   onDialogHide();
+}
+
+function printQR() {
+  const printWindow = window.open('', '', 'height=200,width=400');
+  printWindow.document.write('<html>');
+  printWindow.document.write(
+    `
+    <head>
+      <title>
+        btree_${title}
+      </title>
+      <style>
+        img {
+          display: block;
+          margin-left: auto;
+          margin-right: auto;
+        }
+      </style>
+    </head>
+    `
+  );
+  const elem = document.getElementById('qr-code');
+  elem.style.textAlign = 'center';
+  printWindow.document.write(
+    `
+    <body>
+      <div style="text-align: center;">
+        ${elem.outerHTML}
+        <br/>
+        ${useDate.displayFormat(useDate.getCurrent())} [b.tree]
+      </div>
+    </body>
+    `
+  );
+  printWindow.document.write('</html>');
+  printWindow.document.close();
+  setTimeout(function () {
+    printWindow.print();
+  }, 1000);
+
+  //printWindow.addEventListener('afterprint', () => printWindow.close());
+  printWindow.onafterprint = () => {
+    setTimeout(function () {
+      printWindow.close();
+    }, 100);
+  };
+
+  return;
 }
 </script>

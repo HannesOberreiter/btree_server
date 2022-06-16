@@ -1,5 +1,5 @@
 <template>
-  <q-form class="full-width" @submit.prevent.stop="">
+  <q-form class="full-width" data-cy="form-charge" @submit.prevent.stop="">
     <form-dropdown-edit
       v-if="isEdit"
       v-model="editOptions"
@@ -22,6 +22,7 @@
     <form-input-text
       v-model="state.name"
       label="name"
+      name="chargeName"
       icon="fas fa-passport"
       :required="isEdit ? false : true"
       :values="values"

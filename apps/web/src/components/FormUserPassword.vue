@@ -1,6 +1,6 @@
 <template>
   <q-input
-    v-model="state.password"
+    v-model="modelPassword"
     :error="v.password.$error"
     :error-message="validationErrors(v.password)"
     :type="passwordField"
@@ -73,41 +73,35 @@ const passwordField = ref('password' as QInputProps['type']);
 const passwordIcon = ref('fas fa-eye');
 
 const state = reactive({
-  password: '',
+  password: modelPassword.value,
   confirmPassword: '',
 });
-watch(state, (curr) => {
-  if (curr.password != modelPassword.value) {
-    modelPassword.value = curr.password;
-  }
+
+watch(modelPassword, () => {
+  state.password = modelPassword.value;
 });
 
-const rules = computed(() => {
-  const localRules = {
-    password: {
-      required,
-      minLengthValue: minLength(props.confirm ? 8 : 5),
-      maxLengthValue: maxLength(100),
-    },
-    confirmPassword: {},
+const rules = {
+  password: {
+    required: required(t('password')),
+    minLengthValue: minLength(props.confirm ? 7 : 5),
+    maxLengthValue: maxLength(100),
+  },
+  confirmPassword: {},
+};
+
+if (props.confirm) {
+  rules.confirmPassword = {
+    required: required(t('confirmPassword')),
+    sameAs: sameAs(modelPassword.value, t('password')),
   };
-  if (props.confirm) {
-    localRules.confirmPassword = {
-      required,
-      sameAs: sameAs(modelPassword.value, t('password')),
-    };
-    localRules.password = {
-      ...localRules.password,
-      minLengthValue: minLength(8),
-    };
-  }
-  return localRules;
-});
+}
 
 const changePasswordField = () => {
   passwordField.value = passwordField.value === 'text' ? 'password' : 'text';
   passwordIcon.value =
     passwordField.value == 'text' ? 'fas fa-eye' : 'fas fa-eye-slash';
 };
+
 const v = useVuelidate(rules, state, { $autoDirty: true });
 </script>

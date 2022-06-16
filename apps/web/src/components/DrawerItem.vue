@@ -1,10 +1,10 @@
 <template>
   <q-item
     v-ripple
+    :data-cy="`route-${link.route}`"
     :to="{
       name: link.route,
-      params:
-        link.route === 'setting-option' ? { option: 'checkup_types' } : {},
+      params: link.params ? link.params : {},
     }"
     clickable
     exact
@@ -20,10 +20,14 @@
 </template>
 
 <script setup lang="ts">
+import { useQuasar } from 'quasar';
+const $q = useQuasar();
 defineProps({
   link: {
     type: Object,
     required: true,
   },
 });
+
+defineExpose({ $q });
 </script>

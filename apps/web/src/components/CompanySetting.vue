@@ -27,6 +27,14 @@
     />
     <btn-base
       v-if="storeUser.isAdmin"
+      color="info"
+      :loading="downloadLoading"
+      :label="t('download')"
+      @click="downloadContent"
+    >
+    </btn-base>
+    <btn-base
+      v-if="storeUser.isAdmin"
       color="secondary"
       :loading="isSubmitting"
       :label="t('edit')"
@@ -71,6 +79,7 @@ const router = useRouter();
 
 const { user, company } = storeToRefs(storeUser);
 
+const downloadLoading = ref(false);
 const isSubmitting = ref(false);
 const model = company;
 const options = computed(() => user.value.company);
@@ -201,5 +210,22 @@ const deleteCompany = () => {
       }
     );
   });
+};
+
+const downloadContent = async () => {
+  downloadLoading.value = true;
+  await api.download('v1/company/download').then(
+    (data) => {
+      const a = document.createElement('a');
+      a.href = window.URL.createObjectURL(data);
+      a.download = 'btree_export_' + new Date().toISOString() + '.zip';
+      a.click();
+      a.remove();
+    },
+    (error) => {
+      notification.open('negative', error);
+    }
+  );
+  downloadLoading.value = false;
 };
 </script>

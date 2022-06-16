@@ -1,4 +1,4 @@
-import { map } from 'lodash-es';
+import { map, round } from 'lodash-es';
 import { MaybeRef } from '@vueuse/core';
 import { Option, Task } from '~/types';
 import { queryCache } from '~/boot/vue-query';
@@ -14,7 +14,7 @@ export function useCalendarQuery() {
     defaultOptions: {
       queries: {
         refetchOnWindowFocus: false,
-        staleTime: 1000 * 60 * 1, // stale (refetching), after 1 minute
+        staleTime: 1000 * 60 * 5, // stale (refetching), after 5 minute
         cacheTime: 1000 * 60 * 60 * 24, // garbage collector, every 24 hours } },
       },
     },
@@ -35,7 +35,10 @@ export function useCalendarQuery() {
   }
 
   function invalidate(source: string) {
-    const queries = queryCache.findAll(['calendar', source]);
+    const queries = source
+      ? queryCache.findAll(['calendar', source])
+      : queryCache.findAll(['calendar']);
+
     queries.forEach((query) => query.invalidate());
   }
 
@@ -124,11 +127,12 @@ export function useTodosQuery({
   q = '' as MaybeRef<string>,
   filters = '' as MaybeRef<string>,
   enabled = true as MaybeRef<boolean>,
+  done = true as MaybeRef<boolean>,
 }) {
   const notification = useNotification();
   const api = useApiFetch();
   return useQuery(
-    ['todo', offset, limit, order, direction, q, filters],
+    ['todo', offset, limit, order, direction, q, filters, done],
     () => {
       const payload = {
         offset: unref(offset),
@@ -137,6 +141,7 @@ export function useTodosQuery({
         direction: unref(direction),
         q: unref(q),
         filters: unref(filters),
+        done: unref(done),
       };
       return api.get('/v1/todo', payload);
     },
@@ -161,12 +166,13 @@ export function useTasksQuery(
     enabled = true as MaybeRef<boolean>,
     details = false,
     filters = '' as MaybeRef<string>,
+    done = true as MaybeRef<boolean>,
   }
 ) {
   const notification = useNotification();
   const api = useApiFetch();
   return useQuery(
-    [task, offset, limit, order, direction, deleted, q, details, filters],
+    [task, offset, limit, order, direction, deleted, q, details, filters, done],
     () => {
       const payload = {
         offset: unref(offset),
@@ -177,6 +183,7 @@ export function useTasksQuery(
         q: unref(q),
         details: unref(details),
         filters: unref(filters),
+        done: unref(done),
       };
       return api.get(`/v1/${task}`, payload);
     },
@@ -249,6 +256,7 @@ export function useQueensQuery({
   order = ['name', 'date'] as MaybeRef<Array<string>>,
   direction = ['asc', 'asc'] as MaybeRef<Array<string>>,
   modus = true as MaybeRef<boolean>,
+  latest = null as MaybeRef<boolean>,
   deleted = false as MaybeRef<boolean>,
   filters = '' as MaybeRef<string>,
   q = '' as MaybeRef<string>,
@@ -269,6 +277,7 @@ export function useQueensQuery({
       q,
       details,
       filters,
+      latest,
     ],
     () => {
       const payload = {
@@ -281,6 +290,7 @@ export function useQueensQuery({
         filters: unref(filters),
         q: unref(q),
         details: unref(details),
+        latest: unref(latest),
       };
       return api.get('/v1/queen', payload);
     },
@@ -536,8 +546,19 @@ export function useOptionsQuery(
       select: (response) => {
         const result = map(response, (value) => {
           value.label = `${value.name}`;
-          if (table === 'charge_types' && value.unit)
-            value.label += ` (${value.unit})`;
+          if (table === 'charge_types') {
+            if (value.stock || value.unit) {
+              value.label += ' (';
+              if (value.stock) {
+                value.label += `${round(value.stock.sum, 2)} `;
+              }
+              if (value.unit) {
+                value.label += `${value.unit}`;
+              }
+              value.label = value.label.trim();
+              value.label += ')';
+            }
+          }
           return value;
         });
         return result ? { results: result } : ([] as any);

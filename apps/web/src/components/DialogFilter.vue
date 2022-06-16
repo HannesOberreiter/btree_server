@@ -9,14 +9,7 @@
         <div class="row">
           <div class="text-h6">{{ $t('filter') }}</div>
           <q-space />
-          <btn-base
-            ref="closeBtn"
-            v-close-popup
-            icon="fas fa-times"
-            flat
-            round
-            dense
-          />
+          <btn-close-dialog></btn-close-dialog>
         </div>
         <div class="row full-width">
           <div v-for="(o, i) in layout" :key="i" class="col-12">
@@ -128,6 +121,7 @@ const layouts = {
         table: 'hive',
         label: 'hive',
         'allow-empty': 'filterEmpty',
+        'filter-empty': 'noHive',
       },
     },
     {

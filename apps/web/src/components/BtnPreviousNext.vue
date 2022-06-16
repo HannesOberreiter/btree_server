@@ -1,9 +1,8 @@
 <template>
-  {{ sameLocationIndex.previous }}
   <div v-if="sameLocationIndex">
     <btn-base
       v-if="sameLocationIndex.previous"
-      size="sm"
+      size="md"
       class="absolute-top-left"
       icon="fas fa-arrow-left"
       @click="redirect(data.sameLocation[sameLocationIndex.previous].id)"
@@ -14,7 +13,7 @@
     </btn-base>
     <btn-base
       v-if="sameLocationIndex.next"
-      size="sm"
+      size="md"
       class="absolute-top-right"
       icon="fas fa-arrow-right"
       @click="redirect(data.sameLocation[sameLocationIndex.next].id)"

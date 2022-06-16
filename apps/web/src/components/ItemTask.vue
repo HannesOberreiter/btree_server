@@ -279,15 +279,23 @@ function createCaption(task: any) {
 }
 
 function createUserInfo(task: any) {
-  const creatorEmail = task.creator ? task.creator.email : '';
-  const editorEmail = task.editor ? task.editor.email : '';
+  const creator = task.creator
+    ? task.creator.username
+      ? task.creator.username
+      : task.creator.email
+    : '';
+  const editor = task.editor
+    ? task.editor.username
+      ? task.editor.username
+      : task.editor.email
+    : '';
 
-  if (creatorEmail === editorEmail) {
-    return `${t('user')}: ${creatorEmail}`;
+  if (creator === editor) {
+    return `${t('user')}: ${creator}`;
   } else {
-    return !editorEmail
-      ? `${t('created')}: ${creatorEmail}`
-      : `${t('created')}: ${creatorEmail}, ${t('updated')}: ${editorEmail}`;
+    return !editor
+      ? `${t('created')}: ${creator}`
+      : `${t('created')}: ${creator}, ${t('updated')}: ${editor}`;
   }
 }
 

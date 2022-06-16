@@ -2,11 +2,8 @@
   <q-card-section>
     <div class="text-h6 text-center">{{ $t('login') }}</div>
     <form-error-max v-if="submitCount >= 15"></form-error-max>
-    <q-form v-else class="q-gutter-md" @submit="onSubmit">
-      <form-input-email
-        v-model:modelMail="state.email"
-        @update:model-mail="(value) => (state.email = value)"
-      ></form-input-email>
+    <q-form v-else class="q-gutter-md" @submit.stop="onSubmit">
+      <form-input-email v-model="state.email"></form-input-email>
       <form-user-password
         v-model:modelPassword="state.password"
       ></form-user-password>

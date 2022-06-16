@@ -5,6 +5,7 @@
     dense
     color="white"
     size="md"
+    data-cy="btn-fullscreen"
     :icon="isFullscreen ? 'fas fa-compress' : 'fas fa-expand'"
     @click="toggle()"
   />

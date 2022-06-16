@@ -20,6 +20,8 @@
           <table-buttons
             v-model:deleted="deleted"
             v-model:modus="modus"
+            label-modus-true="done"
+            label-modus-false="open"
             :selected="selected"
             table="checkup"
             @change="refetch"
@@ -101,11 +103,13 @@
         <!-- eslint-disable-next-line vue/valid-v-slot -->
         <template #body-cell-checkup_apiary.apiary_name="props">
           <table-col-link
+            v-if="props.row.checkup_apiary"
             :id="props.row.checkup_apiary.apiary_id"
             :label="props.value"
             link="apiary"
           >
           </table-col-link>
+          <td v-else></td>
         </template>
       </q-table>
     </div>
@@ -418,6 +422,7 @@ const {
   q: computed(() => (filter.value ? filter.value : '')),
   filters: computed(() => (filters.value ? filters.value : '')),
   deleted: deleted,
+  done: modus,
 });
 
 watch(visibleColumns, (cur) => {

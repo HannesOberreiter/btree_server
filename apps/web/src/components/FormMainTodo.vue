@@ -1,5 +1,5 @@
 <template>
-  <q-form class="full-width" @submit.prevent.stop="">
+  <q-form class="full-width" data-cy="form-todo" @submit.prevent.stop="">
     <form-dropdown-edit
       v-if="isEdit"
       v-model="editOptions"
@@ -51,6 +51,7 @@
     <form-input-text
       v-model="state.name"
       label="name"
+      name="todo"
       icon="fas fa-passport"
       :values="values"
       :reset="reset"

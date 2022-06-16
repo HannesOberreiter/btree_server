@@ -8,7 +8,12 @@
     @click="nfc.state.reading ? nfc.abort() : nfc.read()"
   >
   </q-btn>
-  <div v-if="showPath" style="cursor: pointer" @click="onShare">
+  <div
+    v-if="showPath"
+    style="cursor: pointer"
+    data-cy="btn-share"
+    @click="onShare"
+  >
     <span v-if="$q.platform.is.mobile">
       {{ $t('share') }}
     </span>

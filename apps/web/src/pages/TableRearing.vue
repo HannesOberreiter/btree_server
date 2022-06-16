@@ -20,6 +20,10 @@
           <table-col-rearing-event :id="props.value"></table-col-rearing-event>
         </template>
 
+        <template #body-cell-symbol="props">
+          <table-col-symbol :value="props.value"></table-col-symbol>
+        </template>
+
         <template #body-cell-note="props">
           <table-col-note
             :value="props.value"
@@ -88,6 +92,20 @@ const columns = [
     sortable: true,
   },
   {
+    name: 'symbol',
+    label: t('symbol'),
+    align: 'center',
+    field: (row: any) => row.symbol,
+    sortable: true,
+  },
+  {
+    name: 'name',
+    label: t('name'),
+    align: 'left',
+    field: (row: any) => row.name,
+    sortable: true,
+  },
+  {
     name: 'date',
     label: t('date'),
     align: 'left',
@@ -117,10 +135,17 @@ const columns = [
     sortable: true,
   },
   {
-    name: 'type.hatch',
+    name: 'hatch',
     label: t('hatch'),
     align: 'left',
     field: (row: any) => row.hatch,
+    sortable: true,
+  },
+  {
+    name: 'mated',
+    label: t('mated'),
+    align: 'left',
+    field: (row: any) => row.mated,
     sortable: true,
   },
   {
