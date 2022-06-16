@@ -41,11 +41,11 @@ describe('E2E API tests', () => {
       for (t of tables) {
         if (
           !(
-            ['KnexMigrations', 'KnexMigrations_lock'].includes(t.TABLE_NAME) ||
-            t.TABLE_NAME.includes('innodb')
+            ['KnexMigrations', 'KnexMigrations_lock'].includes(t.table_name) ||
+            t.table_name.includes('innodb')
           )
         )
-          await knexInstance.raw(`TRUNCATE ${t.TABLE_NAME};`);
+          await knexInstance.raw(`TRUNCATE ${t.table_name};`);
       }
       await knexInstance.raw('SET FOREIGN_KEY_CHECKS = 1;');
     }
@@ -53,12 +53,15 @@ describe('E2E API tests', () => {
     global.server = global.app.server;
   });
 
-  after(() => {
-    global.app.boot.stop();
-    global.app.dbServer.stop();
-    global.app = undefined;
-    global.server = undefined;
-    knexInstance.destroy();
+  after((done) => {
+    try {
+      global.app.boot.stop();
+      global.app.dbServer.stop();
+      knexInstance.destroy();
+    } catch (e) {
+      console.error(e);
+    }
+    done();
   });
 
   require('./01-api-routes.e2e.test');

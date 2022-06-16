@@ -47,7 +47,7 @@ export class RearingDetail extends Model {
       modelClass: Company,
       join: {
         from: ['rearing_details.user_id'],
-        to: ['company.id'],
+        to: ['companies.id'],
       },
     },
     step: {

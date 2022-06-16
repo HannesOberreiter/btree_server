@@ -30,7 +30,7 @@
           Reisstraße 17, 8741 Weißkirchen in der Steiermark, AUSTRIA
         </mj-text>
         <mj-text align="center" color="#9B9B9B" font-size="11px">
-          <a href="%base_url%unsubscribe" style="color: #9B9B9B;">
+          <a href="%base_url%visitor/unsubscribe" style="color: #9B9B9B;">
             Unsubscribe
           </a>
           &#149;

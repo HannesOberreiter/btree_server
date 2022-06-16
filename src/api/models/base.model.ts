@@ -21,6 +21,11 @@ export class BaseModel extends Model {
             .toISOString()
             .slice(0, 19)
             .replace('T', ' ');
+        } else if (valueToValidate) {
+          json[key] = new Date(valueToValidate)
+            .toISOString()
+            .slice(0, 19)
+            .replace('T', ' ');
         }
       }
     });
@@ -37,8 +42,8 @@ export class BaseModel extends Model {
         allErrors: true,
         validateSchema: true,
         ownProperties: true,
-        v5: false
-      }
+        v5: false,
+      },
     });
   }
 }

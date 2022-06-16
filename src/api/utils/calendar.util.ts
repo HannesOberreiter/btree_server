@@ -82,10 +82,10 @@ const getRearings = async ({ query, user }) => {
       result.steps[j].date = result.start;
       result.currentStep.date = result.start;
 
-      result.title = `${result.currentStep.detail.job} ID: ${result.id}`;
+      result.title = `${result.currentStep.detail.job} ID: ${result.name ? result.name : result.id}`;
       result.table = 'rearing';
       result.allDay = false;
-      result.icon = 'fas fa-venus';
+      result.icon = `fas fa-${result.symbol ? result.symbol : 'venus'}`;
       result.color = '#f5dfef';
       result.textColor = 'black';
       result.end = result.start;
@@ -112,25 +112,26 @@ const getTodos = async ({ query, user }) => {
     const res = results[i];
     res.allDay = true;
     res.task_ids = res.id;
-
+    res.description = res.note;
     res.start = dayjs(res.date).format('YYYY-MM-DD');
     res.title = res.name;
     res.icon = 'fas fa-clipboard';
     res.durationEditable = false;
-
     if (res.done) {
+      res.unicode = '✏️ ✅';
       res.color = 'green';
     } else {
+      res.unicode = '✏️ ❎';
       res.color = 'red';
     }
     res.table = 'todo';
     if (res.editor) {
-      res.editors = res.editor.email;
+      res.editors = res.editor.username ? res.editor.username : res.editor.email;
     } else {
       res.editors = '';
     }
     if (res.creator) {
-      res.creators = res.creator.email;
+      res.creators = res.creator.username ? res.creator.username : res.creator.email;
     } else {
       res.creators = '';
     }
@@ -160,8 +161,10 @@ const getMovements = async ({ query, user }) => {
       res.title = `${count}x ${res.apiary_name}`;
     }
     res.icon = 'fas fa-truck';
+    res.unicode = '🚚'
     res.color = 'gray';
     res.table = 'movedate';
+    res.description = res.hive_names;
     res.durationEditable = false;
     if (res.editors) {
       res.editors = String(intersection(res.editors.split(',')));
@@ -188,6 +191,7 @@ const getTask = async ({ query, user }, task: string) => {
   for (const i in results) {
     const res = results[i];
     res.id = task;
+    res.description = res.hive_names;
     res.allDay = true;
     res.start = dayjs(res.date).format('YYYY-MM-DD');
     // https://stackoverflow.com/a/54035812/5316675
@@ -212,8 +216,9 @@ const getTask = async ({ query, user }, task: string) => {
       res.color = 'yellow';
       res.textColor = 'black';
     }
-
+    res.unicode = '✅';
     if (!res.done) {
+      res.unicode = '❎';
       res.color = 'red';
       res.textColor = 'white';
     }
@@ -252,6 +257,7 @@ const getScaleData = async ({ query, user }) => {
     res.start = dayjs(res.date).format('YYYY-MM-DD');
     res.end = dayjs(res.date).add(1, 'day').format('YYYY-MM-DD');
     res.difference = round(res.average - weight_last, 1);
+    res.description = res.difference;
     weight_last = res.average;
     const weight_addon = res.difference > 0 ? '(+)' : '(-)';
     res.title = `${weight_addon} ${res.average} ${res.name}`;

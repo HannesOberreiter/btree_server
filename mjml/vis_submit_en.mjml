@@ -30,7 +30,7 @@
       <mj-column>
         <mj-text align="left" padding-top="10px" font-weight="300" padding="0px">
           <b><a href="https://vis.statistik.at/vis-veterinaerinformationssystem/tierarten/bienen/registrierung/">FAQs zur Meldung an das VIS</a></b><br/>
-          Du bekommst diese Nachricht da du in deinem Profil <a href="%base_url%profile/">die VIS Stichtage makiert hast.</a>
+          Du bekommst diese Nachricht da du in deinem Profil <a href="%base_url%setting/profile">die VIS Stichtage makiert hast.</a>
         </mj-text>
       </mj-column>
     </mj-section>

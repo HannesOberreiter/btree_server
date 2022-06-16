@@ -19,9 +19,7 @@ class findUser {
     if (!movedate) return null;
     const apiary = find(this.apiaries.data, { apiary_id: movedate.apiary_id });
     if (!apiary) {
-      console.log(movedate);
       this.count++;
-      console.log(this.count);
       return null;
     }
     //console.log(apiary);
@@ -83,6 +81,8 @@ if (env.env === 'production') {
           'bee_id',
           'rank',
           'task',
+          'firstname',
+          'lastname',
           'task_year',
           'creation_date',
         ]),
@@ -528,7 +528,6 @@ async function transactionMigration(table, data, knex) {
     .transaction(async function (trx) {
       await knex.raw('SET FOREIGN_KEY_CHECKS=0').transacting(trx);
       await knex.raw('SET sql_mode=""').transacting(trx);
-      await knex(table).transacting(trx).del();
       if (table === 'hive_group') {
         map(data, async (d) => {
           await knex('hives')
@@ -540,6 +539,7 @@ async function transactionMigration(table, data, knex) {
             });
         });
       } else {
+        await knex(table).transacting(trx).del();
         await knex(table).transacting(trx).truncate();
         await knex
           .batchInsert(table, data, 10000)

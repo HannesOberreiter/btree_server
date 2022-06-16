@@ -3,10 +3,17 @@ import { notFound, badRequest } from 'boom';
 import { validationResult, ValidationChain } from 'express-validator';
 import { translateMessages } from '@utils/translations.util';
 import { OPTION } from '@enums/options.enum';
+import { SOURCE } from '../types/enums/ical.enum';
 
 export class Validator {
   static handleOption = (req: Request, res: Response, next) => {
     if (!(req.params.table in OPTION)) {
+      return next(notFound());
+    }
+    return next();
+  };
+    static handleSource = (req: Request, res: Response, next) => {
+    if (!(req.params.source in SOURCE)) {
       return next(notFound());
     }
     return next();

@@ -22,6 +22,7 @@ import {
   buildUserAgent,
 } from '@utils/auth.util';
 import { env } from '@/config/environment.config';
+import { ENVIRONMENT } from '../types/enums/environment.enum';
 
 export class AuthController extends Controller {
   constructor() {
@@ -54,7 +55,7 @@ export class AuthController extends Controller {
       // "Best Practice" don't tell anyone if the user exists
       // return next(badRequest('User not found!'));
       res.locals.data = { email: email };
-      next();
+      return next();
     }
     try {
       const result = await resetMail(u.id);
@@ -64,10 +65,10 @@ export class AuthController extends Controller {
         to: result.email,
         lang: result.lang,
         subject: 'pw_reset',
-        name: result.firstname + ' ' + result.lastname,
+        name: result.username,
         key: result.reset,
       });
-      if (env === 'test' || env === 'ci') {
+      if (env !== ENVIRONMENT.production) {
         res.locals.data = {
           email: result.email,
           token: result.reset,
@@ -91,7 +92,7 @@ export class AuthController extends Controller {
       // "Best Practice" don't tell anyone if the user exists
       // return next(badRequest('User not found!'));
       res.locals.data = { email: email };
-      next();
+      return next();
     }
     try {
       const result = await unsubscribeMail(u.id);

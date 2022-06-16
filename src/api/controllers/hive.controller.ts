@@ -5,7 +5,7 @@ import { IUserRequest } from '@interfaces/IUserRequest.interface';
 import { Hive } from '../models/hive.model';
 import { Movedate } from '../models/movedate.model';
 import { Apiary } from '../models/apiary.model';
-import { conflict } from '@hapi/boom';
+import { conflict, paymentRequired } from '@hapi/boom';
 import { map } from 'lodash';
 import dayjs from 'dayjs';
 import { deleteHiveConnections } from '../utils/delete.util';
@@ -14,68 +14,11 @@ import { Harvest } from '../models/harvest.model';
 import { Feed } from '../models/feed.model';
 import { Treatment } from '../models/treatment.model';
 import { Checkup } from '../models/checkup.model';
+import { limitHive } from '../utils/premium.util';
 
 export class HiveController extends Controller {
   constructor() {
     super();
-  }
-
-  async post(req: IUserRequest, res: Response, next: NextFunction) {
-    try {
-      const start = parseInt(req.body.start);
-      const repeat =
-        parseInt(req.body.repeat) > 1 ? parseInt(req.body.repeat) : 1;
-
-      const insertMovement = {
-        apiary_id: req.body.apiary_id,
-        date: req.body.date,
-      };
-
-      const insert = {
-        position: req.body.position,
-        type_id: req.body.type_id,
-        source_id: req.body.source_id,
-        grouphive: req.body.grouphive,
-        note: req.body.note,
-        modus: req.body.modus,
-        modus_date: req.body.modus_date,
-      };
-
-      const result = await Hive.transaction(async (trx) => {
-        await Apiary.query(trx)
-          .findByIds(insertMovement.apiary_id)
-          .throwIfNotFound()
-          .where('user_id', req.user.user_id);
-
-        const result = [];
-        for (let i = 0; i < repeat; i++) {
-          const name = repeat > 1 ? req.body.name + (start + i) : req.body.name;
-          const checkDuplicate = await Hive.query().where({
-            user_id: req.user.user_id,
-            name: name,
-          });
-          if (checkDuplicate.length > 0) throw conflict('name');
-
-          const res = await Hive.query(trx).insert({
-            ...insert,
-            name: name,
-            bee_id: req.user.bee_id,
-            user_id: req.user.user_id,
-          });
-          await Movedate.query(trx).insert({
-            ...insertMovement,
-            hive_id: res.id,
-            bee_id: req.user.bee_id,
-          });
-          result.push(res.id);
-        }
-        return result;
-      });
-      res.locals.data = result;
-      next();
-    } catch (e) {
-      next(checkMySQLError(e));
-    }
   }
 
   async get(req: IUserRequest, res: Response, next: NextFunction) {
@@ -144,6 +87,67 @@ export class HiveController extends Controller {
         }
       }
       const result = await query.orderBy('id');
+      res.locals.data = result;
+      next();
+    } catch (e) {
+      next(checkMySQLError(e));
+    }
+  }
+
+  async post(req: IUserRequest, res: Response, next: NextFunction) {
+    try {
+      const start = parseInt(req.body.start);
+      const repeat =
+        parseInt(req.body.repeat) > 1 ? parseInt(req.body.repeat) : 1;
+
+      const insertMovement = {
+        apiary_id: req.body.apiary_id,
+        date: req.body.date,
+      };
+
+      const insert = {
+        position: req.body.position,
+        type_id: req.body.type_id,
+        source_id: req.body.source_id,
+        grouphive: req.body.grouphive,
+        note: req.body.note,
+        modus: req.body.modus,
+        modus_date: req.body.modus_date,
+      };
+
+      const limit = await limitHive(req.user.user_id, repeat);
+      if (limit) throw paymentRequired('no premium access');
+
+      const result = await Hive.transaction(async (trx) => {
+        await Apiary.query(trx)
+          .findByIds(insertMovement.apiary_id)
+          .throwIfNotFound()
+          .where('user_id', req.user.user_id);
+
+        const result = [];
+        for (let i = 0; i < repeat; i++) {
+          const name = repeat > 1 ? req.body.name + (start + i) : req.body.name;
+          const checkDuplicate = await Hive.query().where({
+            user_id: req.user.user_id,
+            name: name,
+          });
+          if (checkDuplicate.length > 0) throw conflict('name');
+
+          const res = await Hive.query(trx).insert({
+            ...insert,
+            name: name,
+            bee_id: req.user.bee_id,
+            user_id: req.user.user_id,
+          });
+          await Movedate.query(trx).insert({
+            ...insertMovement,
+            hive_id: res.id,
+            bee_id: req.user.bee_id,
+          });
+          result.push(res.id);
+        }
+        return result;
+      });
       res.locals.data = result;
       next();
     } catch (e) {
@@ -286,7 +290,7 @@ export class HiveController extends Controller {
         }
 
         return await Hive.query(trx)
-          .patch(insert)
+          .patch({ ...insert, edit_id: req.user.bee_id })
           .findByIds(ids)
           .where('user_id', req.user.user_id);
       });

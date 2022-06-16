@@ -6,14 +6,19 @@ import { RearingStep } from './rearing_step.model';
 
 export class Rearing extends ExtModel {
   id!: number;
+  name!: string;
+  symbol!: string;
   larvae!: number;
   hatch!: number;
+  mated!: number;
   note!: string;
   date!: Date;
   type_id!: number;
   detail_id!: number;
   user_id!: number;
   edit_id!: number;
+  bee_id!: number;
+
 
   company?: Company;
   start?: RearingDetail;
@@ -32,8 +37,13 @@ export class Rearing extends ExtModel {
     required: [],
     properties: {
       id: { type: 'integer' },
+
+      name: { type: 'string', maxLength: 24 },
+      symbol: { type: 'string', maxLength: 24 },
+
       larvae: { type: 'integer' },
       hatch: { type: 'integer' },
+      mated: { type: 'integer' },
 
       date: { type: 'string', format: 'date-time' },
       note: { type: 'string', maxLength: 2000 },
@@ -49,7 +59,7 @@ export class Rearing extends ExtModel {
       modelClass: Company,
       join: {
         from: ['rearings.user_id'],
-        to: ['company.id'],
+        to: ['companies.id'],
       },
     },
     start: {

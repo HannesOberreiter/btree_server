@@ -13,7 +13,7 @@ export class TreatmentController extends Controller {
 
   async get(req: IUserRequest, res: Response, next: NextFunction) {
     try {
-      const { order, direction, offset, limit, q, filters, deleted } =
+      const { order, direction, offset, limit, q, filters, deleted, done } =
         req.query as any;
       const query = Treatment.query()
         .withGraphJoined(
@@ -28,6 +28,10 @@ export class TreatmentController extends Controller {
           offset ? offset : 0,
           parseInt(limit) === 0 || !limit ? 10 : limit
         );
+
+      if (done) {
+        query.where('treatments.done', done === 'true');
+      }
 
       if (filters) {
         try {

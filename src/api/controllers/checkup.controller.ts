@@ -14,7 +14,7 @@ export class CheckupController extends Controller {
 
   async get(req: IUserRequest, res: Response, next: NextFunction) {
     try {
-      const { order, direction, offset, limit, q, filters, deleted } =
+      const { order, direction, offset, limit, q, filters, deleted, done } =
         req.query as any;
       const query = Checkup.query()
         .withGraphJoined(
@@ -29,6 +29,10 @@ export class CheckupController extends Controller {
           offset ? offset : 0,
           parseInt(limit) === 0 || !limit ? 10 : limit
         );
+
+      if (done) {
+        query.where('checkups.done', done === 'true');
+      }
 
       if (filters) {
         try {

@@ -123,7 +123,7 @@ export class Queen extends ExtModel {
       modelClass: Company,
       join: {
         from: ['queens.user_id'],
-        to: ['company.id'],
+        to: ['companies.id'],
       },
     },
     own_mother: {

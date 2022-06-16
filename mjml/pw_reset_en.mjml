@@ -21,9 +21,9 @@
         <mj-column>
           <mj-text align="center" padding="20px 20px 20px 20px" font-weight="500">
             <strong>Do set a new password please use following link:</strong>
-            %base_url%reset/%key%
+            %base_url%visitor/reset/%key%
           </mj-text>
-          <mj-button href="%base_url%reset/%key%">
+          <mj-button href="%base_url%visitor/reset/%key%">
             Set new password!
           </mj-button>
         </mj-column>

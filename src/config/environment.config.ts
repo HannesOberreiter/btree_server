@@ -73,8 +73,32 @@ const logs = process.env.NODE_ENV === 'production' ? 'combined' : 'development';
 const httpLogs = process.env.NODE_ENV === 'production' ? 'tiny' : 'dev';
 const contentType = process.env.CONTENT_TYPE;
 const meteoblueKey = process.env.METEOBLUE_KEY;
+
 const dropboxClientId = process.env.DROPBOX_CLIENT_ID;
 const dropboxClientSecret = process.env.DROPBOX_CLIENT_SECRET;
+
+const paypalClientId = process.env.PAYPAL_CLIENT_ID;
+const paypalAppSecret = process.env.PAYPAL_APP_SECRET;
+const paypalBase =
+  process.env.NODE_ENV === 'production'
+    ? 'https://api-m.paypal.com'
+    : 'https://api-m.sandbox.paypal.com';
+
+const stripeSecret = process.env.STRIPE_SECRET_KEY;
+
+const basicLimit = {
+  hive: parseInt(process.env.LIMIT_HIVE),
+  apiary: parseInt(process.env.LIMIT_APIARY),
+  scale: parseInt(process.env.LIMIT_SCALE),
+};
+
+const totalLimit = {
+  hive: parseInt(process.env.TOTAL_LIMIT_HIVE),
+  apiary: parseInt(process.env.TOTAL_LIMIT_APIARY),
+  scale: parseInt(process.env.TOTAL_LIMIT_SCALE),
+};
+
+const cronjobTimer = process.env.CRONJOB ? process.env.CRONJOB : '0 11 */1 * *';
 
 const knexConfig = {
   client: process.env.DB_TYPE,
@@ -84,6 +108,7 @@ const knexConfig = {
     user: process.env.DB_USERNAME,
     password: process.env.DB_PASSWORD,
     port: parseInt(process.env.DB_PORT),
+    timezone: 'UTC',
     typeCast(field, next) {
       // https://github.com/Vincit/objection.js/issues/174#issuecomment-424873063
       // Convert 1 to true, 0 to false, and leave null alone
@@ -142,4 +167,11 @@ export {
   mailConfig,
   dropboxClientId,
   dropboxClientSecret,
+  paypalClientId,
+  paypalAppSecret,
+  stripeSecret,
+  paypalBase,
+  basicLimit,
+  totalLimit,
+  cronjobTimer,
 };

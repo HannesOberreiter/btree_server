@@ -7,6 +7,7 @@ import { HiveType } from './option/hive_type.mode';
 import { HiveSource } from './option/hive_source.model';
 import { QueenLocation } from './queen_location.model';
 import { Queen } from './queen.model';
+import { Company } from './company.model';
 export class Hive extends ExtModel {
   id!: number;
   name!: string;
@@ -28,6 +29,7 @@ export class Hive extends ExtModel {
 
   creator?: User;
   editor?: User;
+  company?: User;
   movedates?: Movedate[];
   apiares?: Apiary[];
   queens?: Queen[];
@@ -41,7 +43,7 @@ export class Hive extends ExtModel {
     required: ['name'],
     properties: {
       id: { type: 'integer' },
-      name: { type: 'string', minLength: 1, maxLength: 45 },
+      name: { type: 'string', minLength: 1, maxLength: 24 },
       grouphive: { type: 'integer' },
       position: { type: 'integer' },
       note: { type: 'string', maxLength: 2000 },
@@ -123,6 +125,14 @@ export class Hive extends ExtModel {
       join: {
         from: ['hives.id'],
         to: ['queens.hive_id'],
+      },
+    },
+    company: {
+      relation: ExtModel.HasOneRelation,
+      modelClass: Company,
+      join: {
+        from: ['hives.user_id'],
+        to: ['companies.id'],
       },
     },
     apiaries: {

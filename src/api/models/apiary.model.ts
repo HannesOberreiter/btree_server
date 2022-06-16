@@ -57,7 +57,7 @@ export class Apiary extends ExtModel {
       modelClass: Company,
       join: {
         from: ['apiaries.user_id'],
-        to: ['company.id'],
+        to: ['companies.id'],
       },
     },
     hive_count: {

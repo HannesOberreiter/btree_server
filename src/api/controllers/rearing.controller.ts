@@ -51,6 +51,7 @@ export class RearingController extends Controller {
         if (q.trim() !== '') {
           query.where((builder) => {
             builder.orWhere('type.name', 'like', `%${q}%`);
+            builder.orWhere('rearings.name', 'like', `%${q}%`);
           });
         }
       }
@@ -68,7 +69,7 @@ export class RearingController extends Controller {
       const insert = { ...req.body.data };
       const result = await Rearing.transaction(async (trx) => {
         return await Rearing.query(trx)
-          .patch({ ...insert })
+          .patch({ ...insert, edit_id: req.user.bee_id })
           .findByIds(ids)
           .where('user_id', req.user.user_id);
       });
@@ -85,6 +86,7 @@ export class RearingController extends Controller {
         return await Rearing.query(trx).insertAndFetch({
           ...req.body,
           user_id: req.user.user_id,
+          bee_id: req.user.bee_id,
         });
       });
       res.locals.data = result;
