@@ -26,7 +26,14 @@ describe('Visitor - Login', () => {
     cy.dataCy('notification').should('be.visible');
   });
 
+  it('Browser Update Popup', () => {
+    cy.visit('/visitor/login#test-bu');
+    cy.get('#buorg').should('be.visible');
+    cy.get('#buorgig').click();
+  });
+
   it('Login', () => {
-    cy.login_demo();
+    cy.visit('/visitor/login');
+    cy.login_demo('');
   });
 });
