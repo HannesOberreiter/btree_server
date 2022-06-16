@@ -7,7 +7,7 @@
           <template #eventContent="{ timeText, event }">
             <i
               v-if="event.extendedProps.table === 'rearing'"
-              :style="`background-color: ${event.backgroundColor}`"
+              :style="`background-color: ${event.backgroundColor}; color: black;`"
               :class="event.extendedProps.icon"
             ></i>
             <i v-else :class="event.extendedProps.icon"></i>
