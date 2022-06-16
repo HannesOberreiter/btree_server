@@ -15,6 +15,11 @@
               <div class="text-h6">b.tree</div>
               <div class="text-subtitle2">Professional Beekeeping Database</div>
             </q-card-section>
+            <q-card-section v-if="!localStorageAvailable">
+              <div class="text-bold text-white text-center bg-negative q-pa-sm">
+                {{ $t('error.localStorage') }}
+              </div>
+            </q-card-section>
             <q-page-container class="">
               <router-view />
             </q-page-container>
@@ -63,6 +68,34 @@ import { useMeta } from 'quasar';
 const router = useRouter();
 const path = computed(() => router.currentRoute.value);
 const { t } = useI18n();
+const localStorageAvailable = ref(false);
+
+// https://stackoverflow.com/a/16427747/5316675
+function localStorageTest() {
+  var test = 'test';
+  try {
+    localStorage.setItem(test, test);
+    localStorage.removeItem(test);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+function testBrowserSupport() {
+  const compatibleBrowser =
+    typeof Object['__defineSetter__' as keyof unknown] === 'function' &&
+    !!String.prototype.includes;
+  console.log(compatibleBrowser);
+  if (!compatibleBrowser) {
+    console.log('Incompatible browser, please upgrade!');
+  }
+}
+
+onMounted(() => {
+  localStorageAvailable.value = localStorageTest();
+  testBrowserSupport();
+});
 
 useMeta(() => {
   return {

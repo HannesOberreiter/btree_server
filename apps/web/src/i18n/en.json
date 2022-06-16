@@ -112,6 +112,7 @@
     "locked": "Account locked! (too many login attempts?)",
     "tooManyRequest": "Too many requests!",
     "more": "One of errors",
+    "localStorage": "Warning: This application needs access to your web browsers local storage to work properly.",
     "noData": "No data to load",
     "nfcNotSupported": "Web NFC is not supported by your browser.",
     "notFound": "Route or server not found! (Offline?)",
