@@ -92,6 +92,12 @@ const basicLimit = {
   scale: parseInt(process.env.LIMIT_SCALE),
 };
 
+const totalLimit = {
+  hive: parseInt(process.env.TOTAL_LIMIT_HIVE),
+  apiary: parseInt(process.env.TOTAL_LIMIT_APIARY),
+  scale: parseInt(process.env.TOTAL_LIMIT_SCALE),
+};
+
 const cronjobTimer = process.env.CRONJOB ? process.env.CRONJOB : '0 11 */1 * *';
 
 const knexConfig = {
@@ -166,5 +172,6 @@ export {
   stripeSecret,
   paypalBase,
   basicLimit,
+  totalLimit,
   cronjobTimer,
 };
