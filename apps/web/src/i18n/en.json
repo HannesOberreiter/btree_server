@@ -398,6 +398,10 @@
     "name": "Setting | Settings",
     "title": "Here you can select or deselect fields you want to be shown in your Quicktool!"
   },
+  "curatedLinks": "Curated links",
+  "lastUpdate": "Last update",
+  "statistic": "Statistic | Statistics",
+  "hiveCount": "Hive count",
   "share": "Share",
   "serviceWorker": {
     "refresh": "Upgrade b.tree",
