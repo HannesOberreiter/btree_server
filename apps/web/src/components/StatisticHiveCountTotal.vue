@@ -88,8 +88,8 @@ function renderChart() {
     ],
     dataZoom: [
       {
-        start: 0,
-        end: 50,
+        start: 50,
+        end: 100,
       },
     ],
     series: [
