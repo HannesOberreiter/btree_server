@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import { BaseModel } from '../models/base.model';
 import { checkMySQLError } from './error.util';
 
@@ -18,10 +19,14 @@ export const hiveCountApiary = async (date: Date, user_id: number) => {
       .leftJoin('hives', 'hives.id', 'movedates.hive_id')
       .where({
         'hives.deleted': 0,
-        'hives.modus': 1,
         'hives.user_id': user_id,
       })
       .where('movedates.date', '<=', date)
+      .whereRaw(
+        `(hives.modus = 1 or (hives.modus = 0 and hives.modus_date >= '${dayjs(
+          date
+        ).format('YYYY-MM-DD HH:mm:ss.SSS')}'))`
+      )
       .groupBy('hive_id')
       .as('t');
 
