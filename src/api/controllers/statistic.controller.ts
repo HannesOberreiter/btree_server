@@ -3,6 +3,7 @@ import { Controller } from '@classes/controller.class';
 import { checkMySQLError } from '@utils/error.util';
 import { IUserRequest } from '@interfaces/IUserRequest.interface';
 import { MySQLServer } from '@/servers/mysql.server';
+import { hiveCountApiary, hiveCountTotal } from '../utils/statistic.util';
 
 export class StatisticController extends Controller {
   constructor() {
@@ -47,6 +48,23 @@ export class StatisticController extends Controller {
         }
       }
       const result = await query;
+      res.locals.data = result;
+      next();
+    } catch (e) {
+      next(checkMySQLError(e));
+    }
+  }
+
+  async getHiveCount(req: IUserRequest, res: Response, next: NextFunction) {
+    try {
+      let date = req.query.date || (null as any);
+      let result;
+      if (!date) {
+        result = await hiveCountTotal(req.user.user_id);
+      } else {
+        date = new Date(date as string);
+        result = await hiveCountApiary(date, req.user.user_id);
+      }
       res.locals.data = result;
       next();
     } catch (e) {
