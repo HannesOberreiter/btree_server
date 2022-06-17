@@ -109,6 +109,8 @@ declare module '@vue/runtime-core' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SearchHiveApiary: typeof import('./components/SearchHiveApiary.vue')['default']
+    StatisticHiveCountApiary: typeof import('./components/StatisticHiveCountApiary.vue')['default']
+    StatisticHiveCountTotal: typeof import('./components/StatisticHiveCountTotal.vue')['default']
     SupporterImages: typeof import('./components/SupporterImages.vue')['default']
     TableButtons: typeof import('./components/TableButtons.vue')['default']
     TableButtonScale: typeof import('./components/TableButtonScale.vue')['default']

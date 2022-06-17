@@ -400,6 +400,7 @@
   },
   "curatedLinks": "Curated links",
   "lastUpdate": "Last update",
+  "hiveCountHint": "Group hives count are not accounted for in the total chart only in apiary chart. Count is calculated from first movement for total chart and last movement for apiary chart. Date of inactivity is date when hive was removed. Deleted hives are not visible.",
   "statistic": "Statistic | Statistics",
   "hiveCount": "Hive count",
   "share": "Share",

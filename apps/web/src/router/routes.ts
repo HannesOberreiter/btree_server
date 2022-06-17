@@ -59,6 +59,14 @@ const routes: RouteRecordRaw[] = [
         },
         component: () => import('~/pages/HelperSugarWater.vue'),
       },
+      {
+        path: '/links',
+        name: 'links',
+        meta: {
+          title: 'curatedLinks',
+        },
+        component: () => import('~/pages/HelperLinks.vue'),
+      },
     ],
   },
   /***
@@ -447,6 +455,26 @@ const routes: RouteRecordRaw[] = [
       },
     ],
   },
+  /***
+    Path: /statistic/*
+   */
+  {
+    path: '/statistic',
+    meta: {
+      auth: true,
+      premium: true,
+      title: 'statistic',
+    },
+    component: () => import('~/layouts/MainLayout.vue'),
+    children: [
+      {
+        path: 'hive_count',
+        name: 'statistic-hive_count',
+        component: () => import('~/pages/StatisticHiveCount.vue'),
+      },
+    ],
+  },
+
   /***
     Catch last 404
    */

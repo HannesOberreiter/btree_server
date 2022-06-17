@@ -335,6 +335,25 @@ const links = [
         icon: 'fas fa-calculator',
         menu: [] as any,
       },
+      {
+        label: t('curatedLinks'),
+        route: 'links',
+        icon: 'fas fa-link',
+        menu: [] as any,
+      },
+    ],
+  },
+  {
+    label: t('statistic', 2),
+    route: '',
+    icon: 'fas fa-chart-bar',
+    menu: [
+      {
+        label: t('hiveCount'),
+        route: 'statistic-hive_count',
+        icon: 'fas fa-house',
+        menu: [] as any,
+      },
     ],
   },
 ];
