@@ -23,6 +23,17 @@
             </template>
           </div>
         </template>
+        <btn-base
+          :label="$t('save')"
+          color="primary"
+          @click="onSubmit"
+        ></btn-base>
+        <btn-base
+          :label="$t('reset')"
+          color="negative"
+          class="float-right"
+          @click="onReset"
+        ></btn-base>
       </div>
     </div>
   </q-card>
@@ -40,6 +51,11 @@ const { settings } = storeToRefs(storeFields);
 const api = useApiFetch();
 
 const isSubmitting = ref(false);
+
+const onReset = () => {
+  settings.value = storeFields.reset();
+  onSubmit();
+};
 
 const onSubmit = async () => {
   isSubmitting.value = true;

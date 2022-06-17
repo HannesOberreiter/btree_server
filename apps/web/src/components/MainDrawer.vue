@@ -318,5 +318,43 @@ const links = [
       },
     ],
   },
+  {
+    label: t('tool', 2),
+    route: '',
+    icon: 'fas fa-screwdriver',
+    menu: [
+      {
+        label: t('lifecycle'),
+        route: 'lifecycle',
+        icon: 'fas fa-arrows-spin',
+        menu: [] as any,
+      },
+      {
+        label: t('sugarwater'),
+        route: 'sugarwater',
+        icon: 'fas fa-calculator',
+        menu: [] as any,
+      },
+      {
+        label: t('curatedLinks'),
+        route: 'links',
+        icon: 'fas fa-link',
+        menu: [] as any,
+      },
+    ],
+  },
+  {
+    label: t('statistic', 2),
+    route: '',
+    icon: 'fas fa-chart-bar',
+    menu: [
+      {
+        label: t('hiveCount'),
+        route: 'statistic-hive_count',
+        icon: 'fas fa-house',
+        menu: [] as any,
+      },
+    ],
+  },
 ];
 </script>

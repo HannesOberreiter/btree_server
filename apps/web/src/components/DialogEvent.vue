@@ -72,34 +72,37 @@
         <b>{{ t('edited') }}:</b> {{ eventInfo.editors }}
       </q-card-section>
 
-      <q-card-actions align="center">
-        <btn-base-group :spread="false">
-          <btn-base
-            v-if="!isMovement && !isVis && !isRearings"
-            color="secondary darken-1"
-            @click="updateStatus()"
-          >
-            {{ t('changeStatus') }}
-          </btn-base>
-          <btn-base
-            v-if="!isVis && !isRearings"
-            color="green darken-1"
-            @click="editTask()"
-          >
-            {{ t('edit') }}
-          </btn-base>
-          <btn-base color="grey darken-1" @click="onDialogHide">
-            {{ t('close') }}
-          </btn-base>
+      <q-card-actions>
+        <div class="col-12">
+          <btn-base-group :spread="false">
+            <btn-base
+              v-if="!isMovement && !isVis && !isRearings"
+              color="secondary darken-1"
+              @click="updateStatus()"
+            >
+              {{ t('changeStatus') }}
+            </btn-base>
+            <btn-base
+              v-if="!isVis && !isRearings"
+              color="green darken-1"
+              @click="editTask()"
+            >
+              {{ t('edit') }}
+            </btn-base>
+            <btn-base color="grey darken-1" @click="onDialogHide">
+              {{ t('close') }}
+            </btn-base>
+          </btn-base-group>
           <btn-base
             v-if="!isVis"
             color="negative darken-1"
+            class="float-right"
             data-cy="btn-dialog-event-delete"
             @click="deleteEvent"
           >
             {{ t('delete') }}
           </btn-base>
-        </btn-base-group>
+        </div>
       </q-card-actions>
     </q-card>
   </q-dialog>
