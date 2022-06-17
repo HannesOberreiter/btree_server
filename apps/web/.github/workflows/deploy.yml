@@ -17,6 +17,11 @@ jobs:
     runs-on: ubuntu-latest
     env:
       BACKEND_URL: https://api.btree.at/api
+      DROPBOX_CLIENT_ID: ${{ DROPBOX_CLIENT_ID }}
+      OPENWEATHER_APP_ID: ${{ OPENWEATHER_APP_ID }}
+      MATOMO_HOST: ${{ MATOMO_HOST }}
+      MATOMO_SITE_ID: ${{ MATOMO_SITE_ID }}
+      PAYPAL_CLIENT_ID: ${{ PAYPAL_CLIENT_ID }}
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - uses: actions/checkout@v2
