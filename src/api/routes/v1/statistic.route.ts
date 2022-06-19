@@ -18,12 +18,19 @@ export class StatisticRouter extends Router {
         Container.resolve('StatisticController').getHive
       );
     this.router
-      .route('/hive_count')
+      .route('/hive_count_total')
       .get(
         Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
         Validator.isPremium,
-        Validator.validate([query('date').optional().isString().toDate()]),
-        Container.resolve('StatisticController').getHiveCount
+        Container.resolve('StatisticController').getHiveCountTotal
+      );
+    this.router
+      .route('/hive_count_apiary')
+      .get(
+        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+        Validator.isPremium,
+        Validator.validate([query('date').exists().isString().toDate()]),
+        Container.resolve('StatisticController').getHiveCountApiary
       );
   }
 }

@@ -55,16 +55,32 @@ export class StatisticController extends Controller {
     }
   }
 
-  async getHiveCount(req: IUserRequest, res: Response, next: NextFunction) {
+  async getHiveCountTotal(
+    req: IUserRequest,
+    res: Response,
+    next: NextFunction
+  ) {
     try {
-      let date = req.query.date || (null as any);
-      let result;
-      if (!date) {
-        result = await hiveCountTotal(req.user.user_id);
-      } else {
-        date = new Date(date as string);
-        result = await hiveCountApiary(date, req.user.user_id);
-      }
+      const result = await hiveCountTotal(req.user.user_id);
+      res.locals.data = result;
+      next();
+    } catch (e) {
+      next(checkMySQLError(e));
+    }
+  }
+  async getHiveCountApiary(
+    req: IUserRequest,
+    res: Response,
+    next: NextFunction
+  ) {
+    let date = new Date();
+    try {
+      date = new Date(req.query.date as string);
+    } catch (e) {
+      console.error(e);
+    }
+    try {
+      const result = await hiveCountApiary(date, req.user.user_id);
       res.locals.data = result;
       next();
     } catch (e) {
