@@ -5,6 +5,7 @@
       v-if="chart"
       :loading="!data"
       :option="chart"
+      autoresize
       style="height: 60vh"
       class="bg-grey-1"
       :theme="$q.dark.isActive ? 'dark' : ''"
@@ -49,7 +50,7 @@ watch(date, () => {
 });
 
 async function loadStats() {
-  await api.get('/v1/statistic/hive_count', { date: date.value }).then(
+  await api.get('/v1/statistic/hive_count_apiary', { date: date.value }).then(
     (response) => {
       data.value = response;
       renderChart();
@@ -65,7 +66,7 @@ function renderChart() {
     alternate = !alternate;
     return {
       value: o.total,
-      itemStyle: { color: alternate ? '#ef6c00' : '#546e7a' },
+      itemStyle: { color: '#2b957a' },
     };
   });
 
@@ -101,6 +102,11 @@ function renderChart() {
         name: t('hive', 2),
         data: y,
         type: 'bar',
+        label: {
+          position: 'top',
+          formatter: '{c}',
+          show: true,
+        },
       },
     ],
   } as any;
