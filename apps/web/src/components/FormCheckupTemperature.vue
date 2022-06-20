@@ -3,7 +3,7 @@
     v-model="modelValue"
     :values="values"
     :reset="reset"
-    label="temp"
+    label="temperature"
     icon="fas fa-temperature-high"
     :min-valid="-100"
     :max-valid="100"

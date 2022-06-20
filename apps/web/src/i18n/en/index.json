@@ -326,7 +326,6 @@
     "temper": "Temper",
     "text": "Rating low to high"
   },
-  "wait": "Wait",
   "read": "Read",
   "job": "Task",
   "rear": {
@@ -414,7 +413,7 @@
     "accept": "Please accept the terms first!",
     "agree": "Do you agree with the",
     "hintPremium": "Hint: When you register, you get one month free premium access to test the entire app. Afterwards you can still use it but with limited functionality.",
-    "name": "",
+    "name": "Sign-Up",
     "source": "How did you find us?",
     "success": "Successfully registered, we send you an e-mail ({msg}) to activate your account.",
     "terms": "Terms and Conditions",
@@ -434,7 +433,6 @@
   "successReset": "Successful reset",
   "table": "Table | Tables",
   "task": "Task | Tasks",
-  "temp": "Temperature",
   "temperature": "Temperature",
   "temperatureHint": "Elevation {height}m, Lat. {lat} Lon. {lon}",
   "temperatureTooltip": "Load current temperature for apiary location.",
