@@ -25,6 +25,7 @@
       <q-expansion-item
         v-for="(link, index) in links"
         :key="index"
+        group="sidebar"
         :content-inset-level="0.3"
         expand-separator
         :icon="link.icon"
