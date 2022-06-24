@@ -32,4 +32,7 @@
   ],
   "i18n-ally.keystyle": "nested",
   "i18n-ally.sourceLanguage": "en",
+  "html-css-class-completion.remoteStyleSheets": [
+    "https://cdn.jsdelivr.net/npm/quasar@2.7.1/dist/quasar.prod.css"
+  ],
 }
