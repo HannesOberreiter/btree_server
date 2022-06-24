@@ -68,3 +68,5 @@ describe('Visitor - Register', () => {
     cy.get('[name=email]').should('have.value', newMail);
   });
 });
+
+export {};

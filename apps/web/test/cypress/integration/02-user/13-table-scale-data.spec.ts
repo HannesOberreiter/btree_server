@@ -1,4 +1,4 @@
-import Chance = require('chance');
+import Chance from 'chance';
 const chance = new Chance();
 
 describe('User - Scale Data Table', () => {
@@ -15,7 +15,7 @@ describe('User - Scale Data Table', () => {
     cy.dataCy('btn-dropdown-scale').click();
     cy.dataCy('btn-new-scale').click();
     cy.dataCy('form-scale').should('exist');
-    cy.get('[name=name]').clear().type(chance.province());
+    cy.get('[name=scale]').clear().type(chance.province());
     cy.dataCy('btn-form-save').click();
     cy.dataCy(form).should('not.exist');
   });
@@ -35,3 +35,5 @@ describe('User - Scale Data Table', () => {
     cy.table_delete_row();
   });
 });
+
+export {};

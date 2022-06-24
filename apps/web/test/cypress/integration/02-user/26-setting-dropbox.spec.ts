@@ -7,3 +7,5 @@ describe('User - Setting Dropbox', () => {
     cy.dataCy('page-setting-dropbox').should('exist');
   });
 });
+
+export {};

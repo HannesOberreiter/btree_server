@@ -1,4 +1,4 @@
-import Chance = require('chance');
+import Chance from 'chance';
 const chance = new Chance();
 
 describe('User - Calendar', () => {
@@ -25,7 +25,7 @@ describe('User - Calendar', () => {
       .find('.fc-daygrid-day-bg')
       .dblclick({ force: true });
     cy.dataCy('form-todo').should('exist');
-    cy.get('[name=name]').clear().type(chance.animal());
+    cy.get('[name=todo]').clear().type(chance.animal());
     cy.dataCy('btn-form-save').click();
     cy.dataCy('form-todo').should('not.exist');
   });
@@ -81,3 +81,5 @@ describe('User - Calendar', () => {
     cy.dataCy('dialog-calendar-setting').should('not.exist');
   });
 });
+
+export {};

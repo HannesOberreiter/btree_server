@@ -26,3 +26,5 @@ describe('User - Checkup Table', () => {
     cy.table_delete_row();
   });
 });
+
+export {};

@@ -9,3 +9,5 @@ describe('User - Queen Form', () => {
     cy.dataCy(form).should('exist');
   });
 });
+
+export {};

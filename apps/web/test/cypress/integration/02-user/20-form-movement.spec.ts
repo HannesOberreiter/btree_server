@@ -9,3 +9,5 @@ describe('User - Movement Form', () => {
     cy.dataCy(form).should('exist');
   });
 });
+
+export {};

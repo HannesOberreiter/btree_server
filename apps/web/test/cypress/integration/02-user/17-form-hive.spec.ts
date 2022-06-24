@@ -9,3 +9,5 @@ describe('User - Hive Form', () => {
     cy.dataCy(form).should('exist');
   });
 });
+
+export {};

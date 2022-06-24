@@ -72,3 +72,5 @@ describe('Visitor - Password reset', () => {
     cy.dataCy('notification').should('be.visible');
   });
 });
+
+export {};

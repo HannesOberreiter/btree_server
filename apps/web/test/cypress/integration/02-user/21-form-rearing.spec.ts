@@ -9,3 +9,5 @@ describe('User - Rearing Form', () => {
     cy.dataCy(form).should('exist');
   });
 });
+
+export {};
