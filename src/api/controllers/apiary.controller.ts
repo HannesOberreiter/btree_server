@@ -108,7 +108,8 @@ export class ApiaryController extends Controller {
 
       const query_others = await Apiary.query()
         .select('id', 'name')
-        .where({ user_id: req.user.user_id, deleted: false, modus: true });
+        .where({ user_id: req.user.user_id, deleted: false, modus: true })
+        .orderBy('name');
 
       const query_first = await Movedate.query()
         .first()
