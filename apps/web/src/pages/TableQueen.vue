@@ -132,7 +132,7 @@ const columns = [
   },
   {
     name: 'mark_colour',
-    label: t('markColor'),
+    label: t('queenMarker'),
     align: 'left',
     field: (row: any) => row.mark_colour,
     sortable: true,
