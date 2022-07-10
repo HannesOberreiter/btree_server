@@ -1,7 +1,7 @@
 <template>
   <div v-if="sameLocationIndex">
     <btn-base
-      v-if="sameLocationIndex.previous"
+      v-if="sameLocationIndex.previous !== null"
       size="md"
       class="absolute-top-left"
       icon="fas fa-arrow-left"
@@ -49,7 +49,6 @@ const sameLocationIndex = computed(() => {
       data.value.sameLocation,
       (o: any) => o.id === data.value.id
     );
-
     return {
       previous: index <= 0 ? null : index - 1,
       next: index === data.value.sameLocation.length - 1 ? null : index + 1,
