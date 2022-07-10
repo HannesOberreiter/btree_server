@@ -3,7 +3,7 @@ import { Container } from '@config/container.config';
 import { Guard } from '@middlewares/guard.middleware';
 import { ROLES } from '@enums/role.enum';
 import { Validator } from '@/api/middlewares/validator.middleware';
-import { body } from 'express-validator';
+import { body, query } from 'express-validator';
 
 export class HiveRouter extends Router {
   constructor() {
@@ -26,6 +26,10 @@ export class HiveRouter extends Router {
     this.router
       .route('/task/:id')
       .get(
+        Validator.validate([
+          query('apiary').isBoolean().toBoolean(),
+          query('year').isNumeric().toInt(),
+        ]),
         Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
         Container.resolve('HiveController').getTasks
       );
