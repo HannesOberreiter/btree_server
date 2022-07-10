@@ -433,15 +433,16 @@ export function useHiveQuery({
 
 export function useHiveTaskQuery({
   id = '0' as MaybeRef<string>,
-  year = 2022 as MaybeRef<number>,
+  year = dayjs().year() as MaybeRef<number>,
+  apiary = true as MaybeRef<boolean>,
   enabled = true as MaybeRef<boolean>,
 }) {
   const notification = useNotification();
   const api = useApiFetch();
   return useQuery(
-    ['hive_task', id, year],
+    ['hive_task', id, year, apiary],
     () => {
-      const payload = { year: unref(year) };
+      const payload = { year: unref(year), apiary: unref(apiary) };
       return api.get(`/v1/hive/task/${unref(id)}`, payload);
     },
     {

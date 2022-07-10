@@ -220,6 +220,9 @@ const props = defineProps({
   opened: {
     default: false,
   },
+  apiary: {
+    default: false,
+  },
 });
 const model = ref(false);
 const status = ref(props.task.done);
@@ -274,8 +277,11 @@ function createCaption(task: any) {
       task.kind === 'movedate'
         ? task.apiary.name
         : task[`${task.kind}_apiary`].apiary_name;
-
-  return `${date} [${apiary}]`;
+  if (props.apiary) {
+    return `${date} [${t('hive')}: ${task.hive.name}]`;
+  } else {
+    return `${date} [${t('apiary')}: ${apiary}]`;
+  }
 }
 
 function createUserInfo(task: any) {

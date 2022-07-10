@@ -9,7 +9,10 @@
     </div>
     <div v-else class="col-12">
       <q-list
-        v-for="task in listData"
+        v-for="task in listData.slice(
+          taskStart,
+          apiary ? taskEnd : listData.length
+        )"
         :key="task.kind + task.id"
         bordered
         class="rounded-borders"
@@ -18,9 +21,26 @@
           :default-opened="opened"
           :opened="opened"
           :task="task"
+          :apiary="apiary"
           @refetch="refetch()"
         ></item-task>
       </q-list>
+      <span v-if="apiary" class="text-caption">
+        {{ $t('task', 2) }}: {{ taskStart + 1 }} -
+        {{ taskEnd > listData.length ? listData.length : taskEnd }}
+      </span>
+      &nbsp;
+      <span class="text-caption">
+        {{ $t('total') }}: {{ listData.length }}
+      </span>
+      <div v-if="apiary" class="float-right">
+        <btn-base :disable="taskStart < 10" @click="taskPrevious">
+          {{ $t('previous') }}
+        </btn-base>
+        <btn-base :disable="taskEnd >= listData.length" @click="taskNext">
+          {{ $t('next') }}
+        </btn-base>
+      </div>
     </div>
   </div>
 </template>
@@ -56,6 +76,9 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  apiary: {
+    default: false,
+  },
   year: {
     type: Number,
     required: true,
@@ -68,14 +91,42 @@ const props = defineProps({
     default: false,
   },
 });
-const { id, year, filter, opened } = toRefs(props);
-const { isLoading, data, refetch } = useHiveTaskQuery({ id: id, year: year });
+const { id, year, filter, opened, apiary } = toRefs(props);
+const { isLoading, data, refetch } = useHiveTaskQuery({
+  id: id,
+  year: year,
+  apiary: apiary,
+});
+const taskStart = ref(0);
+const taskEnd = ref(10);
 
 const listData = computed(() => {
   if (data.value) {
+    taskStart.value = 0;
+    taskEnd.value = 10;
     return buildList(data.value, filter.value);
   } else {
     return null;
   }
 });
+
+const taskNext = () => {
+  if (taskEnd.value > listData.value.length) {
+    taskStart.value = listData.value.length - 10;
+    taskEnd.value = listData.value.length;
+  } else {
+    taskStart.value = taskStart.value + 10;
+    taskEnd.value = taskEnd.value + 10;
+  }
+};
+
+const taskPrevious = () => {
+  if (taskStart.value - 10 < 10) {
+    taskStart.value = 0;
+    taskEnd.value = 10;
+  } else {
+    taskStart.value = taskStart.value - 10;
+    taskEnd.value = taskEnd.value - 10;
+  }
+};
 </script>
