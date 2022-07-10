@@ -86,7 +86,6 @@ function testBrowserSupport() {
   const compatibleBrowser =
     typeof Object['__defineSetter__' as keyof unknown] === 'function' &&
     !!String.prototype.includes;
-  console.log(compatibleBrowser);
   if (!compatibleBrowser) {
     console.log('Incompatible browser, please upgrade!');
   }
