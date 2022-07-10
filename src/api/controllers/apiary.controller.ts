@@ -117,13 +117,14 @@ export class ApiaryController extends Controller {
 
       const query_hives = await HiveLocation.query()
         .select(
-          'name',
+          'hive.name as name',
           'hive.id as id',
           'position',
           'hive:queen_location.queen_name',
-          'hive:queen_location.queen_modus'
+          'hive:queen_location.queen_modus',
+          'hive:queen_location:queen.mark_colour as mark_colour'
         )
-        .leftJoinRelated('hive.[queen_location]')
+        .leftJoinRelated('hive.[queen_location.[queen]]')
         .where({
           apiary_id: result.id,
           hive_deleted: false,
@@ -147,7 +148,7 @@ export class ApiaryController extends Controller {
   async post(req: IUserRequest, res: Response, next) {
     try {
       const limit = await limitApiary(req.user.user_id);
-      if(limit) throw paymentRequired('no premium access')
+      if (limit) throw paymentRequired('no premium access');
 
       const result = await Apiary.transaction(async (trx) => {
         const checkDuplicate = await Apiary.query().where({
