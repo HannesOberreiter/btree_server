@@ -154,6 +154,7 @@
             [
               'hive',
               'queen',
+              'virgin',
               'apiary',
               'feed',
               'harvest',

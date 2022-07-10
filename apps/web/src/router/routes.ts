@@ -96,6 +96,14 @@ const routes: RouteRecordRaw[] = [
         component: () => import('~/pages/TableQueen.vue'),
       },
       {
+        path: 'virgin',
+        name: 'table-virgin',
+        meta: {
+          title: 'virgin',
+        },
+        component: () => import('~/pages/TableVirgin.vue'),
+      },
+      {
         path: 'apiary',
         name: 'table-apiary',
         meta: {

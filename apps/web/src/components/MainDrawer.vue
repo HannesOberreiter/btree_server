@@ -169,6 +169,12 @@ const links = [
         icon: 'fas fa-table',
         menu: false,
       },
+      {
+        label: t('virgin'),
+        route: 'table-virgin',
+        icon: 'fas fa-table',
+        menu: false,
+      },
     ],
   },
   {
