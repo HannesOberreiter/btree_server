@@ -30,6 +30,10 @@
         expand-separator
         :icon="link.icon"
         :label="link.label"
+        :disable="link.route === 'premium' && !storeUser.isPremium"
+        :caption="
+          link.route === 'premium' && !storeUser.isPremium ? $t('premium') : ''
+        "
         dark
       >
         <drawer-item
@@ -346,7 +350,7 @@ const links = [
   },
   {
     label: t('statistic', 2),
-    route: '',
+    route: 'premium',
     icon: 'fas fa-chart-bar',
     menu: [
       {

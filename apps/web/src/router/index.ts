@@ -46,7 +46,7 @@ export default route(function ({ store }) {
     /**
       Stopping pending loading bars
       The first command will hide ones which are full but wont get removed
-      does happen sometimes don't know when this "bug" happens
+      does happen sometimes but don't know when this "bug" happens
      */
     Array.from(
       document.getElementsByClassName('q-loading-bar--bottom')
@@ -56,6 +56,7 @@ export default route(function ({ store }) {
     if (
       to.matched.some((record) => record.meta.auth && !storeUser.isLoggedIn)
     ) {
+      console.warn('User not logged in, redirect');
       next({ name: 'login', query: { next: to.fullPath } });
     } else {
       if (
@@ -72,6 +73,13 @@ export default route(function ({ store }) {
       if (!(from.name === 'new-quicktool' && to.name === 'new-quicktool')) {
         routerStore.previous = from.name as any;
         routerStore.params = from.params as any;
+      }
+
+      if (
+        to.matched.some((record) => record.meta.premium && !storeUser.isPremium)
+      ) {
+        console.warn('No premium user redirect');
+        next({ name: 'login' });
       }
       next();
     }

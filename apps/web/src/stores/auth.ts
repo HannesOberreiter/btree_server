@@ -30,6 +30,13 @@ export const useAuthUserStore = defineStore('auth/user', {
     getCompany: (state) => state.company,
     isReadOnly: (state) => state.company.rank === 3,
     isAdmin: (state) => state.company.rank === 1,
+    isPremium: (state) => {
+      const company = state.company;
+      const date = dayjs(company.paid);
+      if (!date.isValid()) return false;
+      if (date < dayjs()) return false;
+      return true;
+    },
     /*
      * Reads Company Object and returns helpful object
      */
