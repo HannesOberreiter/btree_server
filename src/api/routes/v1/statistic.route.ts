@@ -32,5 +32,12 @@ export class StatisticRouter extends Router {
         Validator.validate([query('date').exists().isString().toDate()]),
         Container.resolve('StatisticController').getHiveCountApiary
       );
+    this.router
+      .route('/harvest/hive')
+      .get(
+        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+        Validator.isPremium,
+        Container.resolve('StatisticController').getHarvestHive
+      );
   }
 }
