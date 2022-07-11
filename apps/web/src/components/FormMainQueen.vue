@@ -141,6 +141,8 @@
     <div class="col-12 q-pb-sm">
       <form-dropdown-option
         v-model="state.mother_id"
+        :values="values"
+        :reset="reset"
         label="mother"
         table="queen"
         table-id="mother_id"
