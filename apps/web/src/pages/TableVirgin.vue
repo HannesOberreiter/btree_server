@@ -168,6 +168,20 @@ const columns = [
     sortable: true,
   },
   {
+    name: 'mother',
+    label: t('external') + ' ' + t('mother'),
+    align: 'left',
+    field: (row: any) => row.mother,
+    sortable: true,
+  },
+  {
+    name: 'own_mother.name',
+    label: t('mother'),
+    align: 'left',
+    field: (row: any) => (row.own_mother ? row.own_mother.name : ''),
+    sortable: true,
+  },
+  {
     name: 'mating.name',
     label: t('mating'),
     align: 'left',

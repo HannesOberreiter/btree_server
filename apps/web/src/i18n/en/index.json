@@ -491,5 +491,6 @@
   "wait": "Wait",
   "previous": "Previous",
   "next": "Next",
-  "virgin": "Virgin"
+  "virgin": "Virgin",
+  "external": "External"
 }
