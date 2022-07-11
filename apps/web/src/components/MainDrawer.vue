@@ -366,7 +366,7 @@ const links = [
         menu: [] as any,
       },
       {
-        label: t('harvest'),
+        label: t('harvest') + ' ' + t('hive', 1),
         route: 'statistic-table_harvest',
         icon: 'fas fa-table',
         menu: [] as any,
