@@ -31,7 +31,7 @@
             v-model:deleted="deleted"
             v-model:modus="modus"
             :selected="selected"
-            table="statistic"
+            :table="STATSSTORE"
             @change="refetch"
           ></table-buttons>
         </template>
@@ -75,8 +75,8 @@ const modus = ref(true);
 const deleted = ref(false);
 const filter = ref('');
 const storeFilter = useTableFilterStore();
-storeFilter.reset('statistic');
-const { statistic: filters } = storeToRefs(storeFilter);
+const STATSSTORE = 'statistic_harvest_table';
+const { statistic_harvest_table: filters } = storeToRefs(storeFilter);
 const visibleColumns = ref(['year', 'hive.name', 'amount_sum', 'frames_sum']);
 
 const columns = [

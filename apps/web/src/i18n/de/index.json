@@ -483,6 +483,8 @@
   "weight": "Gewicht",
   "white": "Weiß",
   "wind": "Wind",
+  "allYears": "Alle Jahre",
+  "exludeHive": "Exklusive Stock",
   "worker": "Arbeiterin",
   "write": "Schreiben",
   "year": "Jahr",
@@ -495,5 +497,6 @@
   "external": "Externe",
   "sum": "Summe",
   "average": "Durchschnitt",
-  "hintStatisticHarvestTable": "Summe und Durchschnitt der Erntemenge und Rahmen pro Jahr und Stock."
+  "hintStatisticHarvestTable": "Summe und Durchschnitt der Erntemenge und Rahmen pro Jahr und Stock.",
+  "yearly": "Jährlich"
 }

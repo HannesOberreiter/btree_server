@@ -763,6 +763,52 @@ export function useStatisticTableHarvest({
   );
 }
 
+export function useStatisticYear(
+  kind: string,
+  { filters = '' as MaybeRef<string>, enabled = true as MaybeRef<boolean> }
+) {
+  const notification = useNotification();
+  const api = useApiFetch();
+  return useQuery(
+    ['statisticYear', kind, filters],
+    () => {
+      const payload = {
+        filters: unref(filters),
+      };
+      return api.get(`/v1/statistic/${kind}/year`, payload);
+    },
+    {
+      enabled: enabled,
+      keepPreviousData: true,
+      select: (response) => response,
+      onError: (error: any) => notification.open('negative', error),
+    }
+  );
+}
+
+export function useStatisticApiary(
+  kind: string,
+  { filters = '' as MaybeRef<string>, enabled = true as MaybeRef<boolean> }
+) {
+  const notification = useNotification();
+  const api = useApiFetch();
+  return useQuery(
+    ['statisticApiary', kind, filters],
+    () => {
+      const payload = {
+        filters: unref(filters),
+      };
+      return api.get(`/v1/statistic/${kind}/apiary`, payload);
+    },
+    {
+      enabled: enabled,
+      keepPreviousData: true,
+      select: (response) => response,
+      onError: (error: any) => notification.open('negative', error),
+    }
+  );
+}
+
 export function clearCache(q = '') {
   if (q.trim() === '') queryCache.clear();
   else {

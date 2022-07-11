@@ -36,6 +36,7 @@ import { useTableFilterStore } from '~/stores/tableFilter';
 // Loaded in Setup no Auto-Import
 import FormDropdownType from './FormDropdownOption.vue';
 import FormInputDateRange from './FormInputDateRange.vue';
+import FormDropdownYear from './FormDropdownYear.vue';
 
 const storeFilter = useTableFilterStore();
 
@@ -71,7 +72,11 @@ const state = reactive({
   source_id: storeFilter.field(props.form, 'source_id'),
   apiary_id: storeFilter.field(props.form, 'apiary_id'),
   hive_id: storeFilter.field(props.form, 'hive_id'),
+  'exclude.hive_id': storeFilter.field(props.form, 'exclude.hive_id'),
   date: storeFilter.field(props.form, 'date'),
+  year: storeFilter.field(props.form, 'year')
+    ? storeFilter.field(props.form, 'year')
+    : new Date().getFullYear(),
 }) as any;
 
 const layouts = {
@@ -280,12 +285,13 @@ const layouts = {
       },
     },
   ],
-  statistic: [
+  statistic_harvest: [
     {
-      comp: FormInputDateRange,
-      model: 'date',
+      comp: FormDropdownYear,
+      model: 'year',
       props: {
-        label: 'daterange',
+        'allow-empty': new Date().getFullYear(),
+        'filter-empty': 'allYears',
       },
     },
     {
@@ -295,6 +301,34 @@ const layouts = {
         table: 'hive',
         label: 'hive',
         'allow-empty': 'filterEmpty',
+      },
+    },
+    {
+      comp: FormDropdownType,
+      model: 'exclude.hive_id',
+      props: {
+        table: 'hive',
+        label: 'excludeHive',
+        'allow-empty': 'filterEmpty',
+      },
+    },
+    {
+      comp: FormDropdownType,
+      model: 'apiary_id',
+      props: {
+        table: 'apiary',
+        label: 'apiary',
+        'allow-empty': 'filterEmpty',
+      },
+    },
+  ],
+  statistic_harvest_table: [
+    {
+      comp: FormDropdownYear,
+      model: 'year',
+      props: {
+        'filter-empty': 'allYears',
+        'all-year': true,
       },
     },
   ],

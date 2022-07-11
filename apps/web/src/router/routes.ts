@@ -485,6 +485,11 @@ const routes: RouteRecordRaw[] = [
         name: 'statistic-table_harvest',
         component: () => import('~/pages/StatisticTableHarvest.vue'),
       },
+      {
+        path: 'stats_harvest',
+        name: 'statistic-stats_harvest',
+        component: () => import('~/pages/StatisticStatsHarvest.vue'),
+      },
     ],
   },
 
