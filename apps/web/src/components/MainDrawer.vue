@@ -365,6 +365,12 @@ const links = [
         icon: 'fas fa-house',
         menu: [] as any,
       },
+      {
+        label: t('harvest'),
+        route: 'statistic-table_harvest',
+        icon: 'fas fa-table',
+        menu: [] as any,
+      },
     ],
   },
 ];

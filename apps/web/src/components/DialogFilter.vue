@@ -280,6 +280,24 @@ const layouts = {
       },
     },
   ],
+  statistic: [
+    {
+      comp: FormInputDateRange,
+      model: 'date',
+      props: {
+        label: 'daterange',
+      },
+    },
+    {
+      comp: FormDropdownType,
+      model: 'hive_id',
+      props: {
+        table: 'hive',
+        label: 'hive',
+        'allow-empty': 'filterEmpty',
+      },
+    },
+  ],
 } as any;
 
 const layout = computed(() => layouts[props.form]);

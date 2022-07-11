@@ -730,6 +730,39 @@ export function useStatisticHiveQuery(
   );
 }
 
+export function useStatisticTableHarvest({
+  offset = 0 as MaybeRef<number>,
+  limit = 10000 as MaybeRef<number>,
+  order = ['year', 'hive.name'] as MaybeRef<Array<string>>,
+  direction = ['asc', 'asc'] as MaybeRef<Array<string>>,
+  filters = '' as MaybeRef<string>,
+  q = '' as MaybeRef<string>,
+  enabled = true as MaybeRef<boolean>,
+}) {
+  const notification = useNotification();
+  const api = useApiFetch();
+  return useQuery(
+    ['statisticTableHarvest', offset, limit, order, direction, q, filters],
+    () => {
+      const payload = {
+        offset: unref(offset),
+        limit: unref(limit),
+        order: unref(order),
+        direction: unref(direction),
+        filters: unref(filters),
+        q: unref(q),
+      };
+      return api.get('/v1/statistic/harvest/hive', payload);
+    },
+    {
+      enabled: enabled,
+      keepPreviousData: true,
+      select: (response) => response,
+      onError: (error: any) => notification.open('negative', error),
+    }
+  );
+}
+
 export function clearCache(q = '') {
   if (q.trim() === '') queryCache.clear();
   else {

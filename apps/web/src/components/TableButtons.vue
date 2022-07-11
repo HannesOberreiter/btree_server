@@ -1,12 +1,14 @@
 <template>
   <btn-base-group size="sm" :spread="false">
     <btn-base
+      v-if="table !== 'statistic'"
       color="primary"
       :label="$t('new')"
       data-cy="btn-table-new"
       @click="onNew"
     />
     <btn-base
+      v-if="table !== 'statistic'"
       color="secondary"
       :disable="selected.length > 0 ? false : true"
       :label="$t('edit')"
@@ -60,6 +62,7 @@
           'checkup',
           'charge',
           'scale_data',
+          'statistic',
         ].includes(table)
       "
       :color="filter ? 'negative' : 'warning'"
@@ -133,6 +136,7 @@
         <q-separator />
 
         <q-item
+          v-if="table !== 'statistic'"
           v-close-popup
           clickable
           :disable="selected.length > 0 ? false : true"

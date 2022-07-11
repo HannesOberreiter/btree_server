@@ -480,6 +480,11 @@ const routes: RouteRecordRaw[] = [
         name: 'statistic-hive_count',
         component: () => import('~/pages/StatisticHiveCount.vue'),
       },
+      {
+        path: 'table_harvest',
+        name: 'statistic-table_harvest',
+        component: () => import('~/pages/StatisticTableHarvest.vue'),
+      },
     ],
   },
 

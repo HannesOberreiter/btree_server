@@ -492,5 +492,8 @@
   "previous": "Vorher",
   "next": "Nächste",
   "virgin": "Jungfrau",
-  "external": "Externe"
+  "external": "Externe",
+  "sum": "Summe",
+  "average": "Durchschnitt",
+  "hintStatisticHarvestTable": "Summe und Durchschnitt der Erntemenge und Rahmen pro Jahr und Stock."
 }

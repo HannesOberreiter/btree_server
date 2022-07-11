@@ -492,5 +492,8 @@
   "previous": "Previous",
   "next": "Next",
   "virgin": "Virgin",
-  "external": "External"
+  "external": "External",
+  "sum": "Sum",
+  "average": "Average",
+  "hintStatisticHarvestTable": "Sum and average of harvest amound and frames per year per hive."
 }
