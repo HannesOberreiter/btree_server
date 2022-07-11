@@ -101,6 +101,7 @@ export class StatisticController extends Controller {
         .avg('frames as frames_avg')
         .avg('water as water_avg')
         .withGraphJoined('hive')
+        .withGraphJoined('harvest_apiary as task_apiary')
         .groupBy('hive_id', 'year')
         .where({
           'hive.deleted': false,
@@ -132,8 +133,10 @@ export class StatisticController extends Controller {
           const filtering = JSON.parse(filters);
           if (Array.isArray(filtering)) {
             filtering.forEach((v) => {
-              if ('date' in v && typeof v['date'] === 'object') {
-                query.whereBetween('date', [v.date.from, v.date.to]);
+              if ('year' in v) {
+                if (v.year !== 'empty') {
+                  query.where(Harvest.raw('YEAR(date)'), v.year);
+                }
               } else {
                 query.where(v);
               }
@@ -143,7 +146,101 @@ export class StatisticController extends Controller {
           console.log(e);
         }
       }
+
       const result = await query.orderBy('hive.name');
+      res.locals.data = result;
+      next();
+    } catch (e) {
+      next(checkMySQLError(e));
+    }
+  }
+
+  async getHarvestYear(req: IUserRequest, res: Response, next: NextFunction) {
+    try {
+      const { filters } = req.query as any;
+      const query = Harvest.query()
+        .select(Harvest.raw('YEAR(date) as year'))
+        .countDistinct('hive_id as hive_count')
+        .sum('amount as amount_sum')
+        .sum('frames as frames_sum')
+        .avg('amount as amount_avg')
+        .avg('frames as frames_avg')
+        .avg('water as water_avg')
+        .withGraphJoined('harvest_apiary as task_apiary')
+        .groupBy('year')
+        .where({
+          'harvests.deleted': false,
+          'harvests.user_id': req.user.user_id,
+        })
+        .orderBy('year', 'asc');
+
+      if (filters) {
+        try {
+          const filtering = JSON.parse(filters);
+          if (Array.isArray(filtering)) {
+            filtering.forEach((v) => {
+              if ('year' in v) {
+                return;
+              } else if ('exclude.hive_id' in v) {
+                query.whereNot('hive_id', v['exclude.hive_id']);
+              } else {
+                query.where(v);
+              }
+            });
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      }
+      const result = await query;
+      res.locals.data = result;
+      next();
+    } catch (e) {
+      next(checkMySQLError(e));
+    }
+  }
+
+  async getHarvestApiary(req: IUserRequest, res: Response, next: NextFunction) {
+    try {
+      const { filters } = req.query as any;
+      const query = Harvest.query()
+        .countDistinct('hive_id as hive_count')
+        .sum('amount as amount_sum')
+        .sum('frames as frames_sum')
+        .avg('amount as amount_avg')
+        .avg('frames as frames_avg')
+        .avg('water as water_avg')
+        .withGraphJoined('harvest_apiary as task_apiary')
+        .groupBy('apiary_id')
+        .where({
+          'harvests.deleted': false,
+          'harvests.user_id': req.user.user_id,
+        })
+        .orderBy('task_apiary.apiary_name', 'asc');
+
+      if (filters) {
+        try {
+          const filtering = JSON.parse(filters);
+          if (Array.isArray(filtering)) {
+            filtering.forEach((v) => {
+              if ('year' in v) {
+                if (v.year !== 'empty') {
+                  query.where(Harvest.raw('YEAR(date)'), v.year);
+                }
+              } else if ('exclude.hive_id' in v) {
+                query.whereNot('hive_id', v['exclude.hive_id']);
+              } else {
+                query.where(v);
+              }
+            });
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      } else {
+        query.where(Harvest.raw('YEAR(date)'), new Date().getFullYear());
+      }
+      const result = await query;
       res.locals.data = result;
       next();
     } catch (e) {

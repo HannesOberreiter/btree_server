@@ -39,5 +39,19 @@ export class StatisticRouter extends Router {
         Validator.isPremium,
         Container.resolve('StatisticController').getHarvestHive
       );
+    this.router
+      .route('/harvest/year')
+      .get(
+        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+        Validator.isPremium,
+        Container.resolve('StatisticController').getHarvestYear
+      );
+    this.router
+      .route('/harvest/apiary')
+      .get(
+        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+        Validator.isPremium,
+        Container.resolve('StatisticController').getHarvestApiary
+      );
   }
 }
