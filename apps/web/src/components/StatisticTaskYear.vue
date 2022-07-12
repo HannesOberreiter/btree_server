@@ -29,54 +29,64 @@
     </q-tabs>
     <q-tab-panels v-model="tab" animated>
       <q-tab-panel name="total">
-        <v-chart
-          :option="chart_total"
-          :loading="!chart_total"
-          autoresize
-          style="height: 60vh"
-          class="bg-grey-1"
-          :theme="$q.dark.isActive ? 'dark' : ''"
-        />
+        <q-card flat bordered>
+          <v-chart
+            :option="chart_total"
+            :loading="!chart_total"
+            autoresize
+            style="height: 60vh"
+            class="bg-grey-1"
+            :theme="$q.dark.isActive ? 'dark' : ''"
+          />
+        </q-card>
       </q-tab-panel>
       <q-tab-panel name="average">
-        <v-chart
-          :option="chart_average"
-          :loading="!chart_average"
-          autoresize
-          style="height: 60vh"
-          class="bg-grey-1"
-          :theme="$q.dark.isActive ? 'dark' : ''"
-        />
+        <q-card flat bordered>
+          <v-chart
+            :option="chart_average"
+            :loading="!chart_average"
+            autoresize
+            style="height: 60vh"
+            class="bg-grey-1"
+            :theme="$q.dark.isActive ? 'dark' : ''"
+          />
+        </q-card>
       </q-tab-panel>
       <q-tab-panel name="water">
-        <v-chart
-          :option="chart_water"
-          :loading="!chart_water"
-          autoresize
-          style="height: 60vh"
-          class="bg-grey-1"
-          :theme="$q.dark.isActive ? 'dark' : ''"
-        />
+        <q-card flat bordered>
+          <v-chart
+            :option="chart_water"
+            :loading="!chart_water"
+            autoresize
+            style="height: 60vh"
+            class="bg-grey-1"
+            :theme="$q.dark.isActive ? 'dark' : ''"
+          />
+        </q-card>
       </q-tab-panel>
       <q-tab-panel name="frames_total">
-        <v-chart
-          :option="chart_frames_total"
-          :loading="!chart_frames_total"
-          autoresize
-          style="height: 60vh"
-          class="bg-grey-1"
-          :theme="$q.dark.isActive ? 'dark' : ''"
-        />
+        <q-card flat bordered>
+          <v-chart
+            :option="chart_frames_total"
+            :loading="!chart_frames_total"
+            autoresize
+            style="height: 60vh"
+            class="bg-grey-1"
+            :theme="$q.dark.isActive ? 'dark' : ''"
+          />
+        </q-card>
       </q-tab-panel>
       <q-tab-panel name="frames_average">
-        <v-chart
-          :option="chart_frames_average"
-          :loading="!chart_frames_average"
-          autoresize
-          style="height: 60vh"
-          class="bg-grey-1"
-          :theme="$q.dark.isActive ? 'dark' : ''"
-        />
+        <q-card flat bordered>
+          <v-chart
+            :option="chart_frames_average"
+            :loading="!chart_frames_average"
+            autoresize
+            style="height: 60vh"
+            class="bg-grey-1"
+            :theme="$q.dark.isActive ? 'dark' : ''"
+          />
+        </q-card>
       </q-tab-panel>
     </q-tab-panels>
   </div>
@@ -196,6 +206,9 @@ function renderChart(
         type: 'category',
         position: 'bottom',
         data: x,
+        axisLabel: {
+          interval: 0,
+        },
         splitLine: {
           show: false,
         },

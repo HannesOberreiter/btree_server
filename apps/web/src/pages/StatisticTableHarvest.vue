@@ -6,7 +6,7 @@
           {{ $t('statistic') }} {{ $t('harvest') }}
         </div>
         <div class="text-caption text-center q-pb-sm">
-          {{ $t('hintStatisticHarvestTable') }}
+          {{ $t('hintStatisticTable') }}
         </div>
       </div>
     </div>
@@ -64,7 +64,7 @@
 <script setup lang="ts">
 import { round } from 'lodash';
 import { QTableProps } from 'quasar';
-import { useStatisticTableHarvest } from '~/composables/useQuery';
+import { useStatisticTable } from '~/composables/useQuery';
 import { tableCheckSelected } from '~/helpers';
 import { useTableFilterStore } from '~/stores/tableFilter';
 
@@ -155,7 +155,7 @@ const {
   isLoading: isLoadingTable,
   data,
   refetch,
-} = useStatisticTableHarvest({
+} = useStatisticTable('harvest', {
   order: computed(() => [pagination.value.sortBy]),
   direction: computed(() => (pagination.value.descending ? ['asc'] : ['desc'])),
   offset: computed(() => pagination.value.page - 1),

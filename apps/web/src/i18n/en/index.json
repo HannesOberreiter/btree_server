@@ -363,7 +363,7 @@
     "success": "Your password was successfully changed, we sent a confirmation mail to {msg}.",
     "title": "Create new password"
   },
-  "exludeHive": "Exclude Hive",
+  "excludeHive": "Exclude Hive",
   "allYears": "All years",
   "restore": "Restore",
   "save": "Save",
@@ -497,6 +497,6 @@
   "external": "External",
   "sum": "Sum",
   "average": "Average",
-  "hintStatisticHarvestTable": "Sum and average of harvest amound and frames per year per hive.",
+  "hintStatisticTable": "Sum and average per year per hive.",
   "yearly": "Yearly"
 }

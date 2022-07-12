@@ -730,19 +730,22 @@ export function useStatisticHiveQuery(
   );
 }
 
-export function useStatisticTableHarvest({
-  offset = 0 as MaybeRef<number>,
-  limit = 10000 as MaybeRef<number>,
-  order = ['year', 'hive.name'] as MaybeRef<Array<string>>,
-  direction = ['asc', 'asc'] as MaybeRef<Array<string>>,
-  filters = '' as MaybeRef<string>,
-  q = '' as MaybeRef<string>,
-  enabled = true as MaybeRef<boolean>,
-}) {
+export function useStatisticTable(
+  kind: string,
+  {
+    offset = 0 as MaybeRef<number>,
+    limit = 10000 as MaybeRef<number>,
+    order = ['year', 'hive.name'] as MaybeRef<Array<string>>,
+    direction = ['asc', 'asc'] as MaybeRef<Array<string>>,
+    filters = '' as MaybeRef<string>,
+    q = '' as MaybeRef<string>,
+    enabled = true as MaybeRef<boolean>,
+  }
+) {
   const notification = useNotification();
   const api = useApiFetch();
   return useQuery(
-    ['statisticTableHarvest', offset, limit, order, direction, q, filters],
+    ['statisticTable', kind, offset, limit, order, direction, q, filters],
     () => {
       const payload = {
         offset: unref(offset),
@@ -752,7 +755,7 @@ export function useStatisticTableHarvest({
         filters: unref(filters),
         q: unref(q),
       };
-      return api.get('/v1/statistic/harvest/hive', payload);
+      return api.get(`/v1/statistic/${kind}/hive`, payload);
     },
     {
       enabled: enabled,
@@ -799,6 +802,29 @@ export function useStatisticApiary(
         filters: unref(filters),
       };
       return api.get(`/v1/statistic/${kind}/apiary`, payload);
+    },
+    {
+      enabled: enabled,
+      keepPreviousData: true,
+      select: (response) => response,
+      onError: (error: any) => notification.open('negative', error),
+    }
+  );
+}
+
+export function useStatisticType(
+  kind: string,
+  { filters = '' as MaybeRef<string>, enabled = true as MaybeRef<boolean> }
+) {
+  const notification = useNotification();
+  const api = useApiFetch();
+  return useQuery(
+    ['statisticType', kind, filters],
+    () => {
+      const payload = {
+        filters: unref(filters),
+      };
+      return api.get(`/v1/statistic/${kind}/type`, payload);
     },
     {
       enabled: enabled,

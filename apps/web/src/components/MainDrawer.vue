@@ -377,6 +377,30 @@ const links = [
         icon: 'fas fa-chart-simple',
         menu: [] as any,
       },
+      {
+        label: t('feed') + ' ' + t('hive', 1),
+        route: 'statistic-table_feed',
+        icon: 'fas fa-table',
+        menu: [] as any,
+      },
+      {
+        label: t('feed') + ' ' + t('statistic'),
+        route: 'statistic-stats_feed',
+        icon: 'fas fa-chart-simple',
+        menu: [] as any,
+      },
+      {
+        label: t('treatment') + ' ' + t('hive', 1),
+        route: 'statistic-table_treatment',
+        icon: 'fas fa-table',
+        menu: [] as any,
+      },
+      {
+        label: t('treatment') + ' ' + t('statistic'),
+        route: 'statistic-stats_treatment',
+        icon: 'fas fa-chart-simple',
+        menu: [] as any,
+      },
     ],
   },
 ];

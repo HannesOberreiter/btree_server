@@ -28,6 +28,7 @@
     >
       <q-tab name="year" :label="$t('yearly')" />
       <q-tab name="apiary" :label="$t('apiary', 2)" />
+      <q-tab name="type" :label="$t('type', 2)" />
     </q-tabs>
     <q-tab-panels v-model="tab" animated>
       <q-tab-panel name="year">
@@ -39,6 +40,13 @@
         <q-card-section>
           <suspense>
             <statistic-task-apiary :kind="KIND"></statistic-task-apiary>
+          </suspense>
+        </q-card-section>
+      </q-tab-panel>
+      <q-tab-panel name="type">
+        <q-card-section>
+          <suspense>
+            <statistic-task-type :kind="KIND"></statistic-task-type>
           </suspense>
         </q-card-section>
       </q-tab-panel>
