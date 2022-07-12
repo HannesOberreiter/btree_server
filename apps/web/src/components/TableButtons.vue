@@ -9,10 +9,12 @@
         ].includes(table)
       "
       color="primary"
-      :label="$t('new')"
+      icon="fas fa-plus"
       data-cy="btn-table-new"
       @click="onNew"
-    />
+    >
+      <q-tooltip>{{ $t('add') }}</q-tooltip>
+    </btn-base>
     <btn-base
       v-if="
         ![
@@ -23,10 +25,12 @@
       "
       color="secondary"
       :disable="selected.length > 0 ? false : true"
-      :label="$t('edit')"
+      icon="fas fa-pen"
       data-cy="btn-table-edit"
       @click="onEdit"
-    />
+    >
+      <q-tooltip>{{ $t('edit') }}</q-tooltip>
+    </btn-base>
 
     <btn-base
       v-if="
@@ -81,10 +85,11 @@
         ].includes(table)
       "
       :color="filter ? 'negative' : 'warning'"
-      :label="$t('filter')"
       :icon-right="filter ? 'fas fa-filter' : 'fas fa-filter-circle-xmark'"
       @click="openFilter"
-    />
+    >
+      <q-tooltip>{{ $t('filter') }}</q-tooltip>
+    </btn-base>
 
     <table-button-scale v-if="table === 'scale_data'" @change="emit('change')">
     </table-button-scale>
@@ -308,7 +313,7 @@ function openFilter() {
 }
 
 function onNew() {
-  dialogForm('new', null);
+  dialogForm('add', null);
 }
 
 function onEdit() {

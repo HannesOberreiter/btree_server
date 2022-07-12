@@ -16,7 +16,6 @@
           </template>
         </full-calendar>
       </div>
-      <dialog-hint v-model="showInfo" hint="calendar.hint"></dialog-hint>
       <calendar-setting v-model="showSetting"></calendar-setting>
     </div>
   </div>
@@ -33,7 +32,6 @@ import { useNotification } from '~/composables/useNotification';
 
 import DialogEvent from '~/components/DialogEvent.vue';
 import DialogForm from '~/components/DialogForm.vue';
-import DialogHint from '~/components/DialogHint.vue';
 
 import '@fullcalendar/core/vdom'; // solve problem with Vite
 import FullCalendar, {
@@ -272,19 +270,13 @@ const calendarOptions = reactive({
         showSetting.value = true;
       },
     },
-    info: {
-      text: 'Info',
-      click: function () {
-        showInfo.value = true;
-      },
-    },
   },
   headerToolbar: {
     left: 'prevYear,prev,next,nextYear today',
     right: 'title',
   },
   footerToolbar: {
-    left: 'sources,info',
+    left: 'sources',
     right: 'dayGridMonth,dayGridWeek,listWeek',
   },
   stickyHeaderDates: true,

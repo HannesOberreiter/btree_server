@@ -11,11 +11,22 @@
     <q-space></q-space>
     <strong>b.tree</strong>
     <q-space></q-space>
+    <btn-base
+      icon="fas fa-circle-question"
+      size="sm"
+      @click="showInfo = !showInfo"
+    ></btn-base>
     <btn-share :show-path="true"></btn-share>
   </q-toolbar>
   <global-sound></global-sound>
+  <dialog-hint v-model="showInfo" :hint="help"></dialog-hint>
 </template>
 
 <script setup lang="ts">
 import news from '~/assets/news.json';
+
+const router = useRouter();
+const help = computed(() => `help.${String(router.currentRoute.value.name)}`);
+
+const showInfo = ref(false);
 </script>

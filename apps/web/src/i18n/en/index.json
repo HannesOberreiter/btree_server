@@ -26,8 +26,11 @@
   "unsavedChanges": "Do you really want to leave? You have unsaved changes!",
   "toggle": "Toggle",
   "calculateVarroa": "Varroa count per day",
+  "help": {
+    "calendar": "On the calendar you can move your events and task. Task can in addition be extended if you grab the event at the end. If you double click on a date you can create new ToDo. If you click on an event you get more info and can set the status.",
+    "apiary-map": "You can move your apiary to a new location by drag and drop! Double click on map to create a new apiary!"
+  },
   "calendar": {
-    "hint": "On the calendar you can move your events and task. Task can in addition be extended if you grab the event at the end. If you double click on a date you can create new ToDo. If you click on an event you get more info and can set the status.",
     "name": "Calendar"
   },
   "hintHiveFirstMovedate": "Shown value is the first migration, which can be seen as date of creation.",
@@ -205,7 +208,6 @@
   "logout": "Logout",
   "longitude": "Longitude",
   "map": {
-    "hint": "You can move your apiary to a new location by drag and drop! Double click on map to create a new apiary!",
     "move": "Are you sure you want to move your apiary ({msg}) to a new location?",
     "name": "Map | Maps",
     "radius": "Radius"
@@ -493,7 +495,7 @@
   "wait": "Wait",
   "previous": "Previous",
   "next": "Next",
-  "virgin": "Virgin",
+  "virgin": "Virgin | Virgins",
   "external": "External",
   "sum": "Sum",
   "average": "Average",

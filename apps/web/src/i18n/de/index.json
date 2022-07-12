@@ -1,7 +1,10 @@
 {
   "calendar": {
-    "name": "Kalender",
-    "hint": "Im Kalender können Sie Ihre Termine und Aufgaben verschieben. Die Aufgabe kann zusätzlich verlängert werden, wenn Sie das Ereignis am Ende abrufen. Wenn Sie auf ein Datum doppelklicken, können Sie neue Aufgaben erstellen. Wenn Sie auf ein Ereignis klicken, erhalten Sie weitere Informationen und können den Status festlegen."
+    "name": "Kalender"
+  },
+  "help": {
+    "calendar": "Im Kalender können Sie Ihre Termine und Aufgaben verschieben. Die Aufgabe kann zusätzlich verlängert werden, wenn Sie das Ereignis am Ende abrufen. Wenn Sie auf ein Datum doppelklicken, können Sie neue Aufgaben erstellen. Wenn Sie auf ein Ereignis klicken, erhalten Sie weitere Informationen und können den Status festlegen.",
+    "map-apiary": "Sie können Ihren Bienenstand per Drag and Drop an einen neuen Ort verschieben! Doppelklicken Sie auf die Karte, um einen neuen Stand zu erstellen!"
   },
   "setting": {
     "name": "Einstellung | Einstellungen",
@@ -28,13 +31,13 @@
   "weightDifference": "Gewichtsunterschied zum letzten: {weight}.",
   "news": "Nachrichten",
   "latest": "Neueste",
-  "version": "Ausführung",
+  "version": "Version",
   "date": "Datum",
   "search": "Suche",
   "error404": "Hoppla. Nichts hier...",
   "hive": "Stock | Stöcke",
   "weather": "Wetter",
-  "new": "Neu",
+  "new": "Neue",
   "movement": "Wanderung | Wanderungen",
   "queen": "Königin | Königinnen",
   "quicktool": {
@@ -233,7 +236,6 @@
   "logout": "Ausloggen",
   "longitude": "Längengrad",
   "map": {
-    "hint": "Sie können Ihren Bienenstand per Drag and Drop an einen neuen Ort verschieben! Doppelklicken Sie auf die Karte, um einen neuen Stand zu erstellen!",
     "move": "Sind Sie sicher, dass Sie Ihren Bienenstand ({msg}) an einen neuen Standort verlegen möchten?",
     "name": "Karte | Karten",
     "radius": "Radius"
@@ -302,7 +304,7 @@
   "pending": "Ausstehend",
   "position": "Position",
   "positionNote": "Platzierungsposition des Stockes auf dem Bienenstand",
-  "premium": "Prämie",
+  "premium": "Premium",
   "premiumPartner": "Unser Premium-Unterstützer:",
   "price": "Preis",
   "print": "Drucken",
@@ -493,7 +495,7 @@
   "wait": "Wartezeit",
   "previous": "Vorher",
   "next": "Nächste",
-  "virgin": "Jungfrau",
+  "virgin": "Jungfrau | Jungfrauen",
   "external": "Externe",
   "sum": "Summe",
   "average": "Durchschnitt",
