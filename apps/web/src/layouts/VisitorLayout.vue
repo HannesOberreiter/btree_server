@@ -72,7 +72,7 @@ const localStorageAvailable = ref(false);
 
 // https://stackoverflow.com/a/16427747/5316675
 function localStorageTest() {
-  var test = 'test';
+  const test = 'test';
   try {
     localStorage.setItem(test, test);
     localStorage.removeItem(test);
