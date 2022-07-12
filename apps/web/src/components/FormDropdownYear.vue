@@ -62,7 +62,6 @@ function setOptions(id: string | number = 0) {
   } else {
     options.value = YEARS;
   }
-  console.log(id);
   if (props.selectEmpty && (id === 0 || !id)) {
     modelValue.value = options.value[0];
   } else if (id === 0 || !id) {
