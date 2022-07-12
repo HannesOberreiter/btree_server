@@ -292,9 +292,7 @@ const layouts = {
     {
       comp: FormDropdownYear,
       model: 'year',
-      props: {
-        'allow-empty': 'allYears',
-      },
+      props: {},
     },
     {
       comp: FormDropdownType,
@@ -351,9 +349,7 @@ const layouts = {
     {
       comp: FormDropdownYear,
       model: 'year',
-      props: {
-        'allow-empty': 'allYears',
-      },
+      props: {},
     },
     {
       comp: FormDropdownType,
@@ -410,9 +406,7 @@ const layouts = {
     {
       comp: FormDropdownYear,
       model: 'year',
-      props: {
-        'allow-empty': 'allYears',
-      },
+      props: {},
     },
     {
       comp: FormDropdownType,
