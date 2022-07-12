@@ -65,7 +65,6 @@ const eventsSourceInactive: EventSourceInput[] = [];
 let eventsSourceActiveWatcher = storeCalendar.calendar;
 const dateClicked = ref(dayjs().format('YYYY-MM-DD'));
 const cal = ref();
-const showInfo = ref(false);
 const showSetting = ref(false);
 
 const formDialog = (date: string) =>
