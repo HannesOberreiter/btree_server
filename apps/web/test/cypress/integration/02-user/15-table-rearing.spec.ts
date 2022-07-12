@@ -12,6 +12,8 @@ describe('User - Rearing Table', () => {
   it('Create', () => {
     cy.dataCy('btn-table-new').click();
     cy.dataCy(form).should('exist');
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(1000);
     cy.dataCy('btn-form-save').click();
     cy.dataCy(form).should('not.exist');
   });
