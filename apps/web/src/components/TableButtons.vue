@@ -58,6 +58,7 @@
           ? $t(labelModusFalse)
           : $t('both')
       "
+      data-cy="btn-table-modus"
       @click="modus = modus === true ? false : modus === false ? null : true"
     />
 

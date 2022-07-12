@@ -21,6 +21,10 @@ describe('User - Queen Table', () => {
     cy.dataCy(form).should('not.exist');
   });
 
+  it('Change View', () => {
+    cy.dataCy('btn-table-modus').click();
+  });
+
   it('Edit row', () => {
     cy.table_edit_row(form);
   });
