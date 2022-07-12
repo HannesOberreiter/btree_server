@@ -65,7 +65,11 @@ function setOptions(id: string | number = 0) {
   if (props.selectEmpty && (id === 0 || !id)) {
     modelValue.value = options.value[0];
   } else if (id === 0 || !id) {
-    modelValue.value = options.value[1];
+    if (props.allowEmpty) {
+      modelValue.value = options.value[1];
+    } else {
+      modelValue.value = options.value[0];
+    }
   } else {
     const res = filter(options.value, (obj) => {
       return obj.id === id;
