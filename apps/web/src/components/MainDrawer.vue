@@ -405,3 +405,9 @@ const links = [
   },
 ];
 </script>
+
+<style>
+.q-item__section--avatar {
+  min-width: 10px !important;
+}
+</style>
