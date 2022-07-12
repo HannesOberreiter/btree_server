@@ -53,5 +53,68 @@ export class StatisticRouter extends Router {
         Validator.isPremium,
         Container.resolve('StatisticController').getHarvestApiary
       );
+    this.router
+      .route('/harvest/type')
+      .get(
+        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+        Validator.isPremium,
+        Container.resolve('StatisticController').getHarvestType
+      );
+    this.router
+      .route('/feed/hive')
+      .get(
+        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+        Validator.isPremium,
+        Container.resolve('StatisticController').getFeedHive
+      );
+    this.router
+      .route('/feed/year')
+      .get(
+        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+        Validator.isPremium,
+        Container.resolve('StatisticController').getFeedYear
+      );
+    this.router
+      .route('/feed/apiary')
+      .get(
+        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+        Validator.isPremium,
+        Container.resolve('StatisticController').getFeedApiary
+      );
+    this.router
+      .route('/feed/type')
+      .get(
+        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+        Validator.isPremium,
+        Container.resolve('StatisticController').getFeedType
+      );
+    this.router
+      .route('/treatment/hive')
+      .get(
+        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+        Validator.isPremium,
+        Container.resolve('StatisticController').getTreatmentHive
+      );
+    this.router
+      .route('/treatment/year')
+      .get(
+        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+        Validator.isPremium,
+        Container.resolve('StatisticController').getTreatmentYear
+      );
+    this.router
+      .route('/treatment/apiary')
+      .get(
+        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+        Validator.isPremium,
+        Container.resolve('StatisticController').getTreatmentApiary
+      );
+    this.router
+      .route('/treatment/type')
+      .get(
+        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+        Validator.isPremium,
+        Container.resolve('StatisticController').getTreatmentType
+      );
   }
 }
