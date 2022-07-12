@@ -99,6 +99,7 @@ module.exports = configure(function (ctx) {
           {
             /* options */
             include: path.resolve(__dirname, 'src/i18n/*.json'),
+            runtimeOnly: false,
           },
         ],
         [

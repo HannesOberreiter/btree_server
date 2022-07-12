@@ -3,8 +3,9 @@ import { Composer, createI18n, Locale, VueI18n as VueI18nType } from 'vue-i18n';
 import { useAuthUserStore } from '~/stores/auth';
 
 // using single import of json and not message auto import as it broke my vite HSMR and resulted in full page reloads
-import de from '~/i18n/de/index.json';
-import en from '~/i18n/en/index.json';
+//import de from '~/i18n/de/index.json';
+//import en from '~/i18n/en/index.json';
+import { languages } from '~/i18n/index';
 
 const i18n = createI18n({
   legacy: false, // you must set `false`, to use Composition API
@@ -13,8 +14,8 @@ const i18n = createI18n({
   sync: true,
   globalInjection: true,
   messages: {
-    en: en,
-    de: de,
+    en: languages.en,
+    de: languages.de,
   },
 });
 
