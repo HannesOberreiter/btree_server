@@ -93,7 +93,7 @@ const rules = {
 if (props.confirm) {
   rules.confirmPassword = {
     required: required(t('confirmPassword')),
-    sameAs: sameAs(modelPassword.value, t('password')),
+    sameAs: sameAs(modelPassword, t('password')),
   };
 }
 
