@@ -9,6 +9,7 @@
     <form-input-text
       v-model="state.name"
       label="name"
+      name="scale"
       icon="fas fa-passport"
       :hint="$t('scale.nameHint')"
       :values="values"

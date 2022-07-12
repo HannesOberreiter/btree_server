@@ -14,11 +14,15 @@ describe('User - Queen Table', () => {
   it('Create', () => {
     cy.dataCy('btn-table-new').click();
     cy.dataCy(form).should('exist');
-    cy.get('[name=name]').clear().type(chance.name());
+    cy.get('[name=queen]').clear().type(chance.name());
     cy.dataCy('btn-repeat').click();
     cy.get('[name=numberQueens]').clear().type('2');
     cy.dataCy('btn-form-save').click();
     cy.dataCy(form).should('not.exist');
+  });
+
+  it('Change View', () => {
+    cy.dataCy('btn-table-modus').click();
   });
 
   it('Edit row', () => {
