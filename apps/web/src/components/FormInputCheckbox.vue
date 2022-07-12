@@ -57,10 +57,10 @@ const props = defineProps({
     default: true,
   },
   statusActive: {
-    default: 'open',
+    default: 'done',
   },
   statusInactive: {
-    default: 'done',
+    default: 'open',
   },
   reset: {
     type: Number,
