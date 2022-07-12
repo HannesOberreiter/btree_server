@@ -8,6 +8,7 @@
       active-color="primary"
       indicator-color="primary"
       align="justify"
+      :mobile-arrows="true"
     >
       <q-tab name="total" :label="$t('total')" />
       <q-tab name="average" :label="$t('average')" />
