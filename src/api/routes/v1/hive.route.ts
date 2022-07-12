@@ -27,8 +27,8 @@ export class HiveRouter extends Router {
       .route('/task/:id')
       .get(
         Validator.validate([
-          query('apiary').isBoolean().toBoolean(),
-          query('year').isNumeric().toInt(),
+          query('apiary').optional().isBoolean().toBoolean(),
+          query('year').optional().isNumeric().toInt(),
         ]),
         Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
         Container.resolve('HiveController').getTasks
