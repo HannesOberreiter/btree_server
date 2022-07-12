@@ -26,3 +26,5 @@ describe('User - Harvest Table', () => {
     cy.table_delete_row();
   });
 });
+
+export {};

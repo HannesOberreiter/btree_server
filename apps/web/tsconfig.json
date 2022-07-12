@@ -6,48 +6,14 @@
     "strictNullChecks": false,
     "forceConsistentCasingInFileNames": true,
     "types": [
-      "@intlify/vite-plugin-vue-i18n/client"
+      "@intlify/vite-plugin-vue-i18n/client",
+      "@quasar/quasar-app-extension-testing-e2e-cypress"
     ],
     "baseUrl": ".",
     "paths": {
       "~/*": [
         "src/*"
       ],
-      "src/*": [
-        "src/*"
-      ],
-      "app/*": [
-        "*"
-      ],
-      "components/*": [
-        "src/components/*"
-      ],
-      "layouts/*": [
-        "src/layouts/*"
-      ],
-      "pages/*": [
-        "src/pages/*"
-      ],
-      "assets/*": [
-        "src/assets/*"
-      ],
-      "boot/*": [
-        "src/boot/*"
-      ],
-      "stores/*": [
-        "src/stores/*"
-      ]
     }
   },
-  "include": [
-    "src-pwa/**/*.ts",
-    "src/**/*.ts",
-    "src/**/*.d.ts",
-    "src/**/*.tsx",
-    "src/**/*.vue",
-    "test/**.ts"
-  ],
-  "exclude": [
-    "cypress"
-  ]
 }

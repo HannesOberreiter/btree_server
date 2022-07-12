@@ -37,3 +37,5 @@ describe('Visitor - Login', () => {
     cy.login_demo('');
   });
 });
+
+export {};

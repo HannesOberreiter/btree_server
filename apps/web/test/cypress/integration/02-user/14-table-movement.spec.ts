@@ -26,3 +26,5 @@ describe('User - Movement Table', () => {
     cy.table_delete_row();
   });
 });
+
+export {};

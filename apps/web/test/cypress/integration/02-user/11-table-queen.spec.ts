@@ -1,4 +1,4 @@
-import Chance = require('chance');
+import Chance from 'chance';
 const chance = new Chance();
 
 describe('User - Queen Table', () => {
@@ -29,3 +29,5 @@ describe('User - Queen Table', () => {
     cy.table_delete_row();
   });
 });
+
+export {};

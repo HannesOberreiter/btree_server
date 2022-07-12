@@ -7,3 +7,5 @@ describe('User - Setting Company', () => {
     cy.dataCy('page-setting-company').should('exist');
   });
 });
+
+export {};

@@ -1,12 +1,26 @@
 <template>
   <btn-base-group size="sm" :spread="false">
     <btn-base
+      v-if="
+        ![
+          'statistic_harvest_table',
+          'statistic_feed_table',
+          'statistic_treatment_table',
+        ].includes(table)
+      "
       color="primary"
       :label="$t('new')"
       data-cy="btn-table-new"
       @click="onNew"
     />
     <btn-base
+      v-if="
+        ![
+          'statistic_harvest_table',
+          'statistic_feed_table',
+          'statistic_treatment_table',
+        ].includes(table)
+      "
       color="secondary"
       :disable="selected.length > 0 ? false : true"
       :label="$t('edit')"
@@ -60,6 +74,9 @@
           'checkup',
           'charge',
           'scale_data',
+          'statistic_harvest_table',
+          'statistic_feed_table',
+          'statistic_treatment_table',
         ].includes(table)
       "
       :color="filter ? 'negative' : 'warning'"
@@ -133,6 +150,13 @@
         <q-separator />
 
         <q-item
+          v-if="
+            ![
+              'statistic_harvest_table',
+              'statistic_feed_table',
+              'statistic_treatment_table',
+            ].includes(table)
+          "
           v-close-popup
           clickable
           :disable="selected.length > 0 ? false : true"
@@ -154,6 +178,7 @@
             [
               'hive',
               'queen',
+              'virgin',
               'apiary',
               'feed',
               'harvest',

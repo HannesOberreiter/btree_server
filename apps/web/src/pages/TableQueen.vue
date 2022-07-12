@@ -102,7 +102,7 @@ const visibleColumns = ref(store.value.visible);
 
 const selected = ref([]);
 const rows = ref([]);
-const modus = ref(null);
+const modus = ref(true);
 const deleted = ref(false);
 const filter = ref('');
 
@@ -132,7 +132,7 @@ const columns = [
   },
   {
     name: 'mark_colour',
-    label: t('markColor'),
+    label: t('queenMarker'),
     align: 'left',
     field: (row: any) => row.mark_colour,
     sortable: true,
@@ -168,6 +168,20 @@ const columns = [
         : row.modus === false
         ? `${t('yes')} (RIP ${useDate.displayFormat(row.modus_date)})`
         : t('yes'),
+    sortable: true,
+  },
+  {
+    name: 'mother',
+    label: t('external') + ' ' + t('mother'),
+    align: 'left',
+    field: (row: any) => row.mother,
+    sortable: true,
+  },
+  {
+    name: 'own_mother.name',
+    label: t('mother'),
+    align: 'left',
+    field: (row: any) => (row.own_mother ? row.own_mother.name : ''),
     sortable: true,
   },
   {

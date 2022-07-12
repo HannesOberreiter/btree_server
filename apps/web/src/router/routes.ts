@@ -96,6 +96,14 @@ const routes: RouteRecordRaw[] = [
         component: () => import('~/pages/TableQueen.vue'),
       },
       {
+        path: 'virgin',
+        name: 'table-virgin',
+        meta: {
+          title: 'virgin',
+        },
+        component: () => import('~/pages/TableVirgin.vue'),
+      },
+      {
         path: 'apiary',
         name: 'table-apiary',
         meta: {
@@ -471,6 +479,36 @@ const routes: RouteRecordRaw[] = [
         path: 'hive_count',
         name: 'statistic-hive_count',
         component: () => import('~/pages/StatisticHiveCount.vue'),
+      },
+      {
+        path: 'table_harvest',
+        name: 'statistic-table_harvest',
+        component: () => import('~/pages/StatisticTableHarvest.vue'),
+      },
+      {
+        path: 'stats_harvest',
+        name: 'statistic-stats_harvest',
+        component: () => import('~/pages/StatisticStatsHarvest.vue'),
+      },
+      {
+        path: 'table_feed',
+        name: 'statistic-table_feed',
+        component: () => import('~/pages/StatisticTableFeed.vue'),
+      },
+      {
+        path: 'stats_feed',
+        name: 'statistic-stats_feed',
+        component: () => import('~/pages/StatisticStatsFeed.vue'),
+      },
+      {
+        path: 'table_treatment',
+        name: 'statistic-table_treatment',
+        component: () => import('~/pages/StatisticTableTreatment.vue'),
+      },
+      {
+        path: 'stats_treatment',
+        name: 'statistic-stats_treatment',
+        component: () => import('~/pages/StatisticStatsTreatment.vue'),
       },
     ],
   },

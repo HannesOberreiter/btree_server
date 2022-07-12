@@ -36,6 +36,8 @@ import { useTableFilterStore } from '~/stores/tableFilter';
 // Loaded in Setup no Auto-Import
 import FormDropdownType from './FormDropdownOption.vue';
 import FormInputDateRange from './FormInputDateRange.vue';
+import FormDropdownYear from './FormDropdownYear.vue';
+import FormDropdownOptionMultiple from './FormDropdownOptionMultiple.vue';
 
 const storeFilter = useTableFilterStore();
 
@@ -71,7 +73,13 @@ const state = reactive({
   source_id: storeFilter.field(props.form, 'source_id'),
   apiary_id: storeFilter.field(props.form, 'apiary_id'),
   hive_id: storeFilter.field(props.form, 'hive_id'),
+
+  apiary_id_array: storeFilter.field(props.form, 'apiary_id_array'),
+  hive_id_array: storeFilter.field(props.form, 'hive_id_array'),
+  hive_id_array_exclude: storeFilter.field(props.form, 'hive_id_array_exclude'),
+
   date: storeFilter.field(props.form, 'date'),
+  year: storeFilter.field(props.form, 'year'),
 }) as any;
 
 const layouts = {
@@ -277,6 +285,201 @@ const layouts = {
       model: 'date',
       props: {
         label: 'daterange',
+      },
+    },
+  ],
+  statistic_harvest: [
+    {
+      comp: FormDropdownYear,
+      model: 'year',
+      props: {
+        'allow-empty': 'allYears',
+      },
+    },
+    {
+      comp: FormDropdownType,
+      model: 'harvests.type_id',
+      props: {
+        table: 'harvest_types',
+        'allow-empty': 'filterEmpty',
+      },
+    },
+    {
+      comp: FormDropdownOptionMultiple,
+      model: 'hive_id_array',
+      props: {
+        table: 'hive',
+        label: 'hive',
+      },
+    },
+    {
+      comp: FormDropdownOptionMultiple,
+      model: 'hive_id_array_exclude',
+      props: {
+        table: 'hive',
+        label: 'excludeHive',
+      },
+    },
+    {
+      comp: FormDropdownOptionMultiple,
+      model: 'apiary_id_array',
+      props: {
+        table: 'apiary',
+        label: 'apiary',
+      },
+    },
+  ],
+  statistic_harvest_table: [
+    {
+      comp: FormDropdownYear,
+      model: 'year',
+      props: {
+        'allow-empty': 'allYears',
+        'select-empty': true,
+      },
+    },
+    {
+      comp: FormDropdownType,
+      model: 'harvests.type_id',
+      props: {
+        table: 'harvest_types',
+        'allow-empty': 'filterEmpty',
+      },
+    },
+  ],
+  statistic_feed: [
+    {
+      comp: FormDropdownYear,
+      model: 'year',
+      props: {
+        'allow-empty': 'allYears',
+      },
+    },
+    {
+      comp: FormDropdownType,
+      model: 'feeds.type_id',
+      props: {
+        table: 'feed_types',
+        'allow-empty': 'filterEmpty',
+      },
+    },
+    {
+      comp: FormDropdownOptionMultiple,
+      model: 'hive_id_array',
+      props: {
+        table: 'hive',
+        label: 'hive',
+      },
+    },
+    {
+      comp: FormDropdownOptionMultiple,
+      model: 'hive_id_array_exclude',
+      props: {
+        table: 'hive',
+        label: 'excludeHive',
+      },
+    },
+    {
+      comp: FormDropdownOptionMultiple,
+      model: 'apiary_id_array',
+      props: {
+        table: 'apiary',
+        label: 'apiary',
+      },
+    },
+  ],
+  statistic_feed_table: [
+    {
+      comp: FormDropdownYear,
+      model: 'year',
+      props: {
+        'allow-empty': 'allYears',
+        'select-empty': true,
+      },
+    },
+    {
+      comp: FormDropdownType,
+      model: 'feeds.type_id',
+      props: {
+        table: 'feed_types',
+        'allow-empty': 'filterEmpty',
+      },
+    },
+  ],
+  statistic_treatment: [
+    {
+      comp: FormDropdownYear,
+      model: 'year',
+      props: {
+        'allow-empty': 'allYears',
+      },
+    },
+    {
+      comp: FormDropdownType,
+      model: 'treatments.type_id',
+      props: {
+        table: 'treatment_types',
+        'allow-empty': 'filterEmpty',
+      },
+    },
+    {
+      comp: FormDropdownType,
+      model: 'treatments.disease_id',
+      props: {
+        label: 'disease',
+        table: 'treatment_diseases',
+        'allow-empty': 'filterEmpty',
+      },
+    },
+    {
+      comp: FormDropdownOptionMultiple,
+      model: 'hive_id_array',
+      props: {
+        table: 'hive',
+        label: 'hive',
+      },
+    },
+    {
+      comp: FormDropdownOptionMultiple,
+      model: 'hive_id_array_exclude',
+      props: {
+        table: 'hive',
+        label: 'excludeHive',
+      },
+    },
+    {
+      comp: FormDropdownOptionMultiple,
+      model: 'apiary_id_array',
+      props: {
+        table: 'apiary',
+        label: 'apiary',
+      },
+    },
+  ],
+  statistic_treatment_table: [
+    {
+      comp: FormDropdownYear,
+      model: 'year',
+      props: {
+        'allow-empty': 'allYears',
+        'select-empty': true,
+      },
+    },
+    {
+      comp: FormDropdownType,
+      model: 'treatments.type_id',
+      props: {
+        table: 'treatment_types',
+        'allow-empty': 'filterEmpty',
+      },
+    },
+    {
+      comp: FormDropdownType,
+      model: 'treatments.disease_id',
+      props: {
+        label: 'disease',
+        table: 'treatment_diseases',
+        'allow-empty': 'filterEmpty',
       },
     },
   ],

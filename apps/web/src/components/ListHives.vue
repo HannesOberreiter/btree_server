@@ -42,7 +42,8 @@
           <q-item-label class="text-bold">
             {{ hive.name }}
             <span v-if="hive.queen_name" class="text-caption">
-              [{{ hive.queen_name }}]
+              [{{ hive.queen_name }}
+              <span v-if="hive.mark_colour">({{ hive.mark_colour }})</span>]
               <span v-if="hive.queen_modus === false">RIP</span>
             </span>
           </q-item-label>

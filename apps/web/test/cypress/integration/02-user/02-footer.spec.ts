@@ -15,3 +15,5 @@ describe('User - Footer', () => {
     cy.dataCy('dialog-share').should('not.exist');
   });
 });
+
+export {};

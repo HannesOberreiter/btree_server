@@ -1,16 +1,18 @@
 <template>
   <q-select
+    ref="apiarySelect"
     v-model="apiary"
     :label="$t('quicktool.apiary')"
     name="apiary"
     :loading="isLoadingApiary || isLoadingHive"
     :disable="isLoadingApiary || isLoadingHive"
     :options="optionsApiary"
-    :clearable="false"
+    :clearable="true"
     multiple
     options-dense
     :use-input="!$q.platform.is.mobile"
     @filter="filterApiary"
+    @clear="clearApiary"
     @update:model-value="selectApiary"
   >
     <template #before>
@@ -84,10 +86,13 @@ const emit = defineEmits(['update:modelValue']);
 const { modelValue } = useVModels(props, emit);
 
 const apiary = ref(null);
+const apiarySelect = ref(null);
 const optionsHive = ref([] as any);
 const optionsApiary = ref([] as any);
 
 function selectApiary(val: any) {
+  apiarySelect.value.hidePopup();
+  apiarySelect.value.blur();
   map(val, (v) => {
     const res = filter(
       hives.value.results,
@@ -97,6 +102,11 @@ function selectApiary(val: any) {
     if (res.length > 0) state.hive = unionBy(state.hive, res, 'id') as [];
   });
 }
+
+const clearApiary = () => {
+  apiary.value = null;
+  state.hive = null;
+};
 
 function selectHive() {
   apiary.value = null;

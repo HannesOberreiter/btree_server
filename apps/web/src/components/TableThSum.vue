@@ -5,6 +5,8 @@
 </template>
 
 <script setup lang="ts">
+import { round } from 'lodash-es';
+
 const sum = ref(0);
 
 const props = defineProps({
@@ -36,6 +38,6 @@ watch(selected, (cur) => {
 function calculateSum(values: Array<any>, col: string) {
   const arr = values.map((value) => value[col]);
   const sum = arr.reduce((total: number, num: number) => total + num);
-  return sum;
+  return round(sum, 1);
 }
 </script>

@@ -8,3 +8,5 @@ describe('User - Setting Profile', () => {
     cy.dataCy(form).should('exist');
   });
 });
+
+export {};

@@ -7,3 +7,5 @@ describe('User - Setting Fields', () => {
     cy.dataCy('page-setting-field').should('exist');
   });
 });
+
+export {};

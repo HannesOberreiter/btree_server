@@ -41,3 +41,5 @@ describe('User - Navbar', () => {
     cy.dataCy('drawer').should('be.visible');
   });
 });
+
+export {};

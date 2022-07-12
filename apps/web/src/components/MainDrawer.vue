@@ -25,10 +25,15 @@
       <q-expansion-item
         v-for="(link, index) in links"
         :key="index"
+        group="sidebar"
         :content-inset-level="0.3"
         expand-separator
         :icon="link.icon"
         :label="link.label"
+        :disable="link.route === 'premium' && !storeUser.isPremium"
+        :caption="
+          link.route === 'premium' && !storeUser.isPremium ? $t('premium') : ''
+        "
         dark
       >
         <drawer-item
@@ -161,6 +166,12 @@ const links = [
       {
         label: t('table'),
         route: 'table-queen',
+        icon: 'fas fa-table',
+        menu: false,
+      },
+      {
+        label: t('virgin'),
+        route: 'table-virgin',
         icon: 'fas fa-table',
         menu: false,
       },
@@ -345,13 +356,49 @@ const links = [
   },
   {
     label: t('statistic', 2),
-    route: '',
+    route: 'premium',
     icon: 'fas fa-chart-bar',
     menu: [
       {
         label: t('hiveCount'),
         route: 'statistic-hive_count',
         icon: 'fas fa-house',
+        menu: [] as any,
+      },
+      {
+        label: t('harvest') + ' ' + t('hive', 1),
+        route: 'statistic-table_harvest',
+        icon: 'fas fa-table',
+        menu: [] as any,
+      },
+      {
+        label: t('harvest') + ' ' + t('statistic'),
+        route: 'statistic-stats_harvest',
+        icon: 'fas fa-chart-simple',
+        menu: [] as any,
+      },
+      {
+        label: t('feed') + ' ' + t('hive', 1),
+        route: 'statistic-table_feed',
+        icon: 'fas fa-table',
+        menu: [] as any,
+      },
+      {
+        label: t('feed') + ' ' + t('statistic'),
+        route: 'statistic-stats_feed',
+        icon: 'fas fa-chart-simple',
+        menu: [] as any,
+      },
+      {
+        label: t('treatment') + ' ' + t('hive', 1),
+        route: 'statistic-table_treatment',
+        icon: 'fas fa-table',
+        menu: [] as any,
+      },
+      {
+        label: t('treatment') + ' ' + t('statistic'),
+        route: 'statistic-stats_treatment',
+        icon: 'fas fa-chart-simple',
         menu: [] as any,
       },
     ],

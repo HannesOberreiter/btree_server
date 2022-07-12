@@ -9,3 +9,5 @@ describe('User - Todo Form', () => {
     cy.dataCy(form).should('exist');
   });
 });
+
+export {};

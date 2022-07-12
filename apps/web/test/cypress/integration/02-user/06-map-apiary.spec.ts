@@ -1,4 +1,4 @@
-import Chance = require('chance');
+import Chance from 'chance';
 const chance = new Chance();
 
 describe('User - Apiary Map', () => {
@@ -16,7 +16,7 @@ describe('User - Apiary Map', () => {
   it('Create', () => {
     cy.get('.leaflet-container').dblclick(x, y);
     cy.dataCy('form-apiary').should('exist');
-    cy.get('[name=name]').clear().type(name);
+    cy.get('[name=apiary]').clear().type(name);
     cy.dataCy('btn-form-save').click();
     cy.dataCy('form-apiary').should('not.exist');
   });
@@ -27,3 +27,5 @@ describe('User - Apiary Map', () => {
     cy.get(`[alt="${name}"]`).should('not.be.visible');
   });
 });
+
+export {};

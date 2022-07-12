@@ -1,4 +1,4 @@
-import Chance = require('chance');
+import Chance from 'chance';
 const chance = new Chance();
 
 describe('User - Charge Table', () => {
@@ -14,7 +14,7 @@ describe('User - Charge Table', () => {
   it('Create', () => {
     cy.dataCy('btn-table-new').click();
     cy.dataCy(form).should('exist');
-    cy.get('[name=name]').clear().type(chance.name());
+    cy.get('[name=chargeName]').clear().type(chance.name());
     cy.dataCy('btn-form-save').click();
     cy.dataCy(form).should('not.exist');
   });
@@ -27,3 +27,5 @@ describe('User - Charge Table', () => {
     cy.table_delete_row();
   });
 });
+
+export {};

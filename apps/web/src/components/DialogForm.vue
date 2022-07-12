@@ -126,6 +126,12 @@ const layouts = {
       selected: props.selected,
     },
   },
+  virgin: {
+    comp: FormMainQueen,
+    props: {
+      selected: props.selected,
+    },
+  },
   movedate: {
     comp: FormMainMovement,
     props: {

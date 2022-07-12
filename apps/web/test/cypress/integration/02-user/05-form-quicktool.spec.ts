@@ -21,3 +21,5 @@ describe('User - Quicktool', () => {
     cy.dataCy('notification').should('exist');
   });
 });
+
+export {};

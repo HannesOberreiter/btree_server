@@ -163,10 +163,15 @@ function cleanupQueen(state: FormQueen, isEdit: boolean) {
         ? state.hive.map((o: any) => o.id)
         : state.hive.id
       : null,
-    mother_id: state.mother_id ? state.mother_id.id : null,
+    mother_id: !state.mother_id
+      ? null
+      : 'id' in state.mother_id
+      ? state.mother_id.id
+      : 'label' in state.mother_id
+      ? 'undefined' // Workaround if no mother is given
+      : null,
     race_id: state.race ? state.race.id : null,
     mating_id: state.mating ? state.mating.id : null,
-
     url: state.url,
     note: state.note,
     modus: state.modus,
@@ -176,7 +181,14 @@ function cleanupQueen(state: FormQueen, isEdit: boolean) {
     result['start'] = state.start;
     result['repeat'] = state.repeat;
   }
-  return omitBy(result, isNil);
+  const res = omitBy(result, isNil);
+  // workaround if "no mother" is given
+  if ('mother_id' in res) {
+    if (res.mother_id === 'undefined') {
+      res.mother_id = null;
+    }
+  }
+  return res;
 }
 
 function cleanupApiary(state: any) {

@@ -15,6 +15,16 @@ export const useTablesStore = defineStore('tables', {
       sort: useStorage('table-sort-col-queen', 'date'),
       direction: useStorage('table-sort-direction-queen', false),
     },
+    virgin: {
+      visible: useStorage('table-visible-virgin', [
+        'name',
+        'date',
+        'hive.name',
+      ]),
+      length: useStorage('table-length-virgin', 10),
+      sort: useStorage('table-sort-col-virgin', 'date'),
+      direction: useStorage('table-sort-direction-virgin', false),
+    },
     apiary: {
       visible: useStorage('table-visible-apiary', ['name', 'description']),
       length: useStorage('table-length-apiary', 10),

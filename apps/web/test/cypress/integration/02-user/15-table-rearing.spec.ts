@@ -24,3 +24,5 @@ describe('User - Rearing Table', () => {
     cy.table_delete_row();
   });
 });
+
+export {};

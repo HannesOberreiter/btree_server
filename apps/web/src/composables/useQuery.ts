@@ -433,15 +433,16 @@ export function useHiveQuery({
 
 export function useHiveTaskQuery({
   id = '0' as MaybeRef<string>,
-  year = 2022 as MaybeRef<number>,
+  year = dayjs().year() as MaybeRef<number>,
+  apiary = true as MaybeRef<boolean>,
   enabled = true as MaybeRef<boolean>,
 }) {
   const notification = useNotification();
   const api = useApiFetch();
   return useQuery(
-    ['hive_task', id, year],
+    ['hive_task', id, year, apiary],
     () => {
-      const payload = { year: unref(year) };
+      const payload = { year: unref(year), apiary: unref(apiary) };
       return api.get(`/v1/hive/task/${unref(id)}`, payload);
     },
     {
@@ -719,6 +720,111 @@ export function useStatisticHiveQuery(
         filters: unref(filters),
       };
       return api.get(`/v1/statistic/hive/${unref(kind)}`, payload);
+    },
+    {
+      enabled: enabled,
+      keepPreviousData: true,
+      select: (response) => response,
+      onError: (error: any) => notification.open('negative', error),
+    }
+  );
+}
+
+export function useStatisticTable(
+  kind: string,
+  {
+    offset = 0 as MaybeRef<number>,
+    limit = 10000 as MaybeRef<number>,
+    order = ['year', 'hive.name'] as MaybeRef<Array<string>>,
+    direction = ['asc', 'asc'] as MaybeRef<Array<string>>,
+    filters = '' as MaybeRef<string>,
+    q = '' as MaybeRef<string>,
+    enabled = true as MaybeRef<boolean>,
+  }
+) {
+  const notification = useNotification();
+  const api = useApiFetch();
+  return useQuery(
+    ['statisticTable', kind, offset, limit, order, direction, q, filters],
+    () => {
+      const payload = {
+        offset: unref(offset),
+        limit: unref(limit),
+        order: unref(order),
+        direction: unref(direction),
+        filters: unref(filters),
+        q: unref(q),
+      };
+      return api.get(`/v1/statistic/${kind}/hive`, payload);
+    },
+    {
+      enabled: enabled,
+      keepPreviousData: true,
+      select: (response) => response,
+      onError: (error: any) => notification.open('negative', error),
+    }
+  );
+}
+
+export function useStatisticYear(
+  kind: string,
+  { filters = '' as MaybeRef<string>, enabled = true as MaybeRef<boolean> }
+) {
+  const notification = useNotification();
+  const api = useApiFetch();
+  return useQuery(
+    ['statisticYear', kind, filters],
+    () => {
+      const payload = {
+        filters: unref(filters),
+      };
+      return api.get(`/v1/statistic/${kind}/year`, payload);
+    },
+    {
+      enabled: enabled,
+      keepPreviousData: true,
+      select: (response) => response,
+      onError: (error: any) => notification.open('negative', error),
+    }
+  );
+}
+
+export function useStatisticApiary(
+  kind: string,
+  { filters = '' as MaybeRef<string>, enabled = true as MaybeRef<boolean> }
+) {
+  const notification = useNotification();
+  const api = useApiFetch();
+  return useQuery(
+    ['statisticApiary', kind, filters],
+    () => {
+      const payload = {
+        filters: unref(filters),
+      };
+      return api.get(`/v1/statistic/${kind}/apiary`, payload);
+    },
+    {
+      enabled: enabled,
+      keepPreviousData: true,
+      select: (response) => response,
+      onError: (error: any) => notification.open('negative', error),
+    }
+  );
+}
+
+export function useStatisticType(
+  kind: string,
+  { filters = '' as MaybeRef<string>, enabled = true as MaybeRef<boolean> }
+) {
+  const notification = useNotification();
+  const api = useApiFetch();
+  return useQuery(
+    ['statisticType', kind, filters],
+    () => {
+      const payload = {
+        filters: unref(filters),
+      };
+      return api.get(`/v1/statistic/${kind}/type`, payload);
     },
     {
       enabled: enabled,

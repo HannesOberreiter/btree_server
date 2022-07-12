@@ -214,7 +214,7 @@ const deleteCompany = () => {
 
 const downloadContent = async () => {
   downloadLoading.value = true;
-  await api.download('v1/company/download').then(
+  await api.download('/v1/company/download').then(
     (data) => {
       const a = document.createElement('a');
       a.href = window.URL.createObjectURL(data);

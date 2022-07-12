@@ -37,3 +37,5 @@ describe('Visitor - Unsubscribe', () => {
     cy.dataCy('notification').should('be.visible');
   });
 });
+
+export {};

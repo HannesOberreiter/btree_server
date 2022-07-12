@@ -3,6 +3,7 @@
     <v-chart
       :option="chart"
       :loading="!data"
+      autoresize
       style="height: 60vh"
       class="bg-grey-1"
       :theme="$q.dark.isActive ? 'dark' : ''"
@@ -40,7 +41,7 @@ const { t } = useI18n();
 await loadStats();
 
 async function loadStats() {
-  await api.get('/v1/statistic/hive_count').then(
+  await api.get('/v1/statistic/hive_count_total').then(
     (response) => {
       data.value = response;
       renderChart();
@@ -97,6 +98,11 @@ function renderChart() {
         name: t('hive', 2),
         data: y,
         type: 'bar',
+        label: {
+          position: 'inside',
+          formatter: '{c}',
+          show: true,
+        },
       },
     ],
   };

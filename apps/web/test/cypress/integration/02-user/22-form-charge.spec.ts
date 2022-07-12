@@ -9,3 +9,5 @@ describe('User - Charge Form', () => {
     cy.dataCy(form).should('exist');
   });
 });
+
+export {};

@@ -13,8 +13,15 @@
         <q-list bordered separator>
           <q-item v-for="(link, index) in links" :key="index" :href="link.url">
             <q-item-section clickable>
-              <q-item-label class="text-center text-bold">
-                <a :href="link.url">{{ link.url }}</a>
+              <q-item-label class="text-left text-bold">
+                <a :href="link.url" target="_blank" rel="noopener">
+                  {{
+                    truncate(link.url.replace(/^https?:\/\/(www.)?/, ''), {
+                      length: 25,
+                    })
+                  }}
+                  <q-tooltip>{{ link.url }}</q-tooltip>
+                </a>
               </q-item-label>
               <q-item-label caption class="text-justify">
                 {{ link.description }}
@@ -28,6 +35,8 @@
 </template>
 
 <script setup lang="ts">
+import truncate from 'lodash-es/truncate';
+
 // Update lastUpdate constant if changing links, for better user experience!
 const lastUpdate = '2022-06-17';
 const links = [
