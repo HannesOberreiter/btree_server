@@ -117,7 +117,11 @@
 
 <!-- Testing browser update with url-hash #test-bu -->
 <script>
-  if (window.location.pathname.includes('visitor')) {
+  if (
+    (window.location.pathname.includes('visitor') &&
+      window.location.host !== 'localhost:9000') ||
+    window.location.hash.includes('test-bu')
+  ) {
     var $buoop = {
       required: { e: -4, f: -3, o: -3, s: -1, c: -3 },
       insecure: true,
