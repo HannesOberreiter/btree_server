@@ -201,19 +201,38 @@ export class HiveController extends Controller {
     try {
       const id = req.params.id;
       const year = req.query.year ? req.query.year : new Date().getFullYear();
+      const apiary = req.query.apiary ? req.query.apiary : false;
+
       const result = await Hive.transaction(async (trx) => {
-        await Hive.query(trx).findById(id).throwIfNotFound().where({
-          'hives.user_id': req.user.user_id,
-          'hives.deleted': false,
-        });
+        let hives = [];
+        if (apiary) {
+          await Apiary.query(trx).findById(id).throwIfNotFound().where({
+            'apiaries.user_id': req.user.user_id,
+            'apiaries.deleted': false,
+          });
+          const query_hives = await HiveLocation.query()
+            .select('hive_id')
+            .where({
+              apiary_id: id,
+              hive_deleted: false,
+              hive_modus: true,
+            });
+          hives = query_hives.map((hive) => hive.hive_id);
+        } else {
+          await Hive.query(trx).findById(id).throwIfNotFound().where({
+            'hives.user_id': req.user.user_id,
+            'hives.deleted': false,
+          });
+          hives.push(id);
+        }
 
         const harvest = await Harvest.query()
           .select('*', Hive.raw('? as kind', ['harvest']))
           .withGraphFetched(
-            '[harvest_apiary, type, creator(identifier), editor(identifier)]'
+            '[hive, harvest_apiary, type, creator(identifier), editor(identifier)]'
           )
+          .whereIn('hive_id', hives)
           .where({
-            hive_id: id,
             deleted: false,
           })
           .whereRaw('YEAR(date) = ?', year)
@@ -221,10 +240,10 @@ export class HiveController extends Controller {
         const feed = await Feed.query()
           .select('*', Hive.raw('? as kind', ['feed']))
           .withGraphFetched(
-            '[feed_apiary, type, creator(identifier), editor(identifier)]'
+            '[hive, feed_apiary, type, creator(identifier), editor(identifier)]'
           )
+          .whereIn('hive_id', hives)
           .where({
-            hive_id: id,
             deleted: false,
           })
           .whereRaw('YEAR(date) = ?', year)
@@ -232,10 +251,10 @@ export class HiveController extends Controller {
         const treatment = await Treatment.query()
           .select('*', Hive.raw('? as kind', ['treatment']))
           .withGraphFetched(
-            '[treatment_apiary, type, disease, vet, creator(identifier), editor(identifier)]'
+            '[hive, treatment_apiary, type, disease, vet, creator(identifier), editor(identifier)]'
           )
+          .whereIn('hive_id', hives)
           .where({
-            hive_id: id,
             deleted: false,
           })
           .whereRaw('YEAR(date) = ?', year)
@@ -243,20 +262,20 @@ export class HiveController extends Controller {
         const checkup = await Checkup.query()
           .select('*', Hive.raw('? as kind', ['checkup']))
           .withGraphFetched(
-            '[checkup_apiary, type, creator(identifier), editor(identifier)]'
+            '[hive, checkup_apiary, type, creator(identifier), editor(identifier)]'
           )
+          .whereIn('hive_id', hives)
           .where({
-            hive_id: id,
             deleted: false,
           })
           .whereRaw('YEAR(date) = ?', year)
           .orderBy('date', 'desc');
         const movedate = await Movedate.query()
           .select('*', Hive.raw('? as kind', ['movedate']))
-          .withGraphFetched('[apiary, creator(identifier), editor(identifier)]')
-          .where({
-            hive_id: id,
-          })
+          .withGraphFetched(
+            '[hive, apiary, creator(identifier), editor(identifier)]'
+          )
+          .whereIn('hive_id', hives)
           .whereRaw('YEAR(date) = ?', year)
           .orderBy('date', 'desc');
 
