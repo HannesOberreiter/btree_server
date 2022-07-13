@@ -32,6 +32,9 @@
           <router-view />
         </div>
       </q-pull-to-refresh>
+      <q-page-scroller position="bottom" :scroll-offset="500" :offset="[0, 10]">
+        <q-btn icon="fas fa-arrow-up" color="info" round />
+      </q-page-scroller>
     </q-page-container>
 
     <q-footer class="bg-grey-8 text-white print-hide">
