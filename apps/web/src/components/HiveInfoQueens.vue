@@ -5,10 +5,12 @@
       <b>{{ $t('queen', 2) }}</b>
       <span v-if="data.results.length === 5"> ({{ $t('max') }} 5)</span>
     </div>
-    <q-chip v-for="item in data.results" :key="item.id" square>
-      <b>{{ item.name }}</b>
-      &nbsp;({{ useDate.isoFormat(item.date) }})
-    </q-chip>
+    <ul>
+      <li v-for="item in data.results" :key="item.id">
+        <b>{{ item.name }}</b>
+        &nbsp;({{ useDate.isoFormat(item.date) }})
+      </li>
+    </ul>
   </div>
 </template>
 

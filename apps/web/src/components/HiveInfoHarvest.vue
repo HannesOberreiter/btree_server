@@ -4,22 +4,26 @@
     <div>
       <b> {{ $t('harvest', 2) }}</b>
     </div>
-    <q-chip v-for="year in sumArray" :key="year[0]" square>
-      <span>
-        <b>{{ year[0] }}:&nbsp;</b>
-        {{ year[1].total_amount }}
-        <q-tooltip>
-          {{ `${$t('quarter')}: ${year[1].quarter_amount}` }}
-        </q-tooltip>
-      </span>
-      <!-- Frames -->
-      <span v-if="year[1].total_frames > 0">
-        &nbsp;({{ $t('frame', 2) }}: {{ year[1].total_frames }})
-        <q-tooltip>
-          {{ `${$t('quarter')} ${$t('frame', 2)}: ${year[1].quarter_frames}` }}
-        </q-tooltip>
-      </span>
-    </q-chip>
+    <ul>
+      <li v-for="year in sumArray" :key="year[0]">
+        <span>
+          <b>{{ year[0] }}:&nbsp;</b>
+          {{ year[1].total_amount }}
+          <q-tooltip>
+            {{ `${$t('quarter')}: ${year[1].quarter_amount}` }}
+          </q-tooltip>
+        </span>
+        <!-- Frames -->
+        <span v-if="year[1].total_frames > 0">
+          &nbsp;({{ $t('frame', 2) }}: {{ year[1].total_frames }})
+          <q-tooltip>
+            {{
+              `${$t('quarter')} ${$t('frame', 2)}: ${year[1].quarter_frames}`
+            }}
+          </q-tooltip>
+        </span>
+      </li>
+    </ul>
   </div>
 </template>
 

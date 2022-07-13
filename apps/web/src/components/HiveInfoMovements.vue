@@ -5,12 +5,14 @@
       <b>{{ $t('movement', 2) }}</b>
       <span v-if="data.results.length === 5">({{ $t('max') }} 5)</span>
     </div>
-    <q-chip v-for="item in data.results" :key="item.id" square>
-      {{ useDate.isoFormat(item.date) }}
-      <span v-if="item.apiary">
-        &nbsp;<b>({{ item.apiary.name }})</b>
-      </span>
-    </q-chip>
+    <ul>
+      <li v-for="item in data.results" :key="item.id">
+        {{ useDate.isoFormat(item.date) }}
+        <span v-if="item.apiary">
+          &nbsp;<b>({{ item.apiary.name }})</b>
+        </span>
+      </li>
+    </ul>
   </div>
 </template>
 

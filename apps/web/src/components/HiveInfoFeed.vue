@@ -4,16 +4,18 @@
     <div>
       <b> {{ $t('feed', 2) }}</b>
     </div>
-    <q-chip v-for="year in sumArray" :key="year[0]" square>
-      <b>{{ year[0] }}:&nbsp;</b>
-      <span v-for="(type, index) in year[1]" :key="type[0]">
-        {{ type[0] }}<b>&nbsp;{{ type[1].total_amount }}</b>
-        <span v-if="index + 1 !== year[1].length">,&nbsp;</span>
-        <q-tooltip>
-          {{ `${$t('quarter')}: ${type[1].quarter_amount}` }}
-        </q-tooltip>
-      </span>
-    </q-chip>
+    <ul>
+      <li v-for="year in sumArray" :key="year[0]">
+        <b>{{ year[0] }}:&nbsp;</b>
+        <span v-for="(type, index) in year[1]" :key="type[0]">
+          {{ type[0] }}<b>&nbsp;{{ type[1].total_amount }}</b>
+          <span v-if="index + 1 !== year[1].length">,&nbsp;</span>
+          <q-tooltip>
+            {{ `${$t('quarter')}: ${type[1].quarter_amount}` }}
+          </q-tooltip>
+        </span>
+      </li>
+    </ul>
   </div>
 </template>
 

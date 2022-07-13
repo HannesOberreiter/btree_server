@@ -78,25 +78,19 @@
           </q-tab-panel>
           <q-tab-panel name="info">
             <div class="row">
-              <div class="col-12">
+              <div class="col-12 col-sm-6">
                 <hive-info-movements :id="id"></hive-info-movements>
               </div>
-            </div>
-            <q-separator class="q-mt-sm q-mb-sm"></q-separator>
-            <div class="row">
-              <div class="col-12">
+              <div class="col-12 col-sm-6">
                 <hive-info-queens :id="id"></hive-info-queens>
               </div>
             </div>
             <q-separator class="q-mt-sm q-mb-sm"></q-separator>
             <div class="row">
-              <div class="col-12">
+              <div class="col-12 col-sm-6">
                 <hive-info-harvest :id="id"></hive-info-harvest>
               </div>
-            </div>
-            <q-separator class="q-mt-sm q-mb-sm"></q-separator>
-            <div class="row">
-              <div class="col-12">
+              <div class="col-12 col-sm-6">
                 <hive-info-feed :id="id"></hive-info-feed>
               </div>
             </div>
