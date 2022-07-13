@@ -79,10 +79,11 @@ const toggleLeftDrawer = () => {
   leftDrawerOpen.value = !leftDrawerOpen.value;
 };
 
-const onRefresh = async () => {
+const onRefresh = async (done: any) => {
   await storeRefresh.refresh();
   clearCache();
   window.location.reload();
+  done();
 };
 
 onBeforeRouteLeave(() => {

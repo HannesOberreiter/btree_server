@@ -103,9 +103,11 @@ function testBrowserSupport() {
   }
 }
 
-const onRefresh = async () => {
+const onRefresh = async (done: any) => {
   clearCache();
   window.location.reload();
+  done();
+  return;
 };
 
 onMounted(() => {

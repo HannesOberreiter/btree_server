@@ -2,8 +2,9 @@ import { useAuthUserStore } from '~/stores/auth';
 import { reactive } from 'vue';
 import { Notify } from 'quasar';
 import { useI18n } from 'vue-i18n';
+import { sleep } from '~/helpers';
 
-type Type = 'positive' | 'negative' | 'warning' | 'info';
+type Type = 'positive' | 'negative' | 'warning' | 'info' | 'ongoing';
 
 const state = reactive({
   show: false,
@@ -66,12 +67,12 @@ const useNotification = () => {
     return displayMessage;
   }
 
-  function open(type: Type, message: any, translation = false) {
+  function open(type: Type, message: any, isTranslated = false) {
     state.show = true;
     state.error = type === 'negative' ? true : false;
     let m = '';
 
-    if (translation) {
+    if (isTranslated) {
       // We already received a translated message, not need to translate it.
       m = message;
     } else {
@@ -92,7 +93,7 @@ const useNotification = () => {
       }
     }
 
-    Notify.create({
+    const dismiss = Notify.create({
       message: m,
       type: type,
       position: 'top',
@@ -108,6 +109,18 @@ const useNotification = () => {
           },
         },
       ],
+    });
+    const elements = document.getElementsByClassName('q-notification');
+    sleep(100).then(() => {
+      for (let i = 0; i < elements.length; i++) {
+        elements[i].addEventListener(
+          'click',
+          () => {
+            dismiss();
+          },
+          true
+        );
+      }
     });
   }
   function close() {

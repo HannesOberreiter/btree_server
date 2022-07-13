@@ -346,4 +346,8 @@ const calendarOptions = reactive({
 .fc-col-header {
   background-color: rgb(218, 154, 37);
 }
+
+.fc-footer-toolbar {
+  font-size: 0.8em !important;
+}
 </style>

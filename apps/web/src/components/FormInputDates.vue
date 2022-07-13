@@ -38,7 +38,7 @@
     </div>
   </div>
   <div v-if="showInterval" class="row q-mb-lg">
-    <div class="col-6">
+    <div class="col-12 col-md-6">
       <form-input-numeric
         v-model.number="modelInterval"
         label="interval"
@@ -49,7 +49,7 @@
         numeric-valid="integer"
       ></form-input-numeric>
     </div>
-    <div class="col-6 q-pl-sm">
+    <div class="col-12 col-md-6">
       <form-input-numeric
         v-model.number="modelRepeat"
         label="repeat"

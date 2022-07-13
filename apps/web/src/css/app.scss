@@ -6,6 +6,10 @@
   cursor: pointer;
 }
 
+.q-field__messages {
+  font-size: 0.8em;
+}
+
 @media print {
   .q-drawer {
     display: none;

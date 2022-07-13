@@ -25,8 +25,8 @@
         ></btn-base>
       </div>
     </div>
-    <div v-if="showInterval" class="row q-pb-xs">
-      <div class="col-6">
+    <div v-if="showInterval" class="row">
+      <div class="col-12 col-md-6">
         <form-input-numeric
           v-model.number="state.interval"
           label="interval"
@@ -37,7 +37,7 @@
           numeric-valid="integer"
         ></form-input-numeric>
       </div>
-      <div class="col-6 q-pl-sm">
+      <div class="col-12 col-md-6">
         <form-input-numeric
           v-model.number="state.repeat"
           label="repeat"
