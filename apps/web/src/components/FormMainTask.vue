@@ -17,7 +17,7 @@
         :reset="reset"
       ></form-input-dates>
     </div>
-    <div class="q-mb-sm q-mt-sm">
+    <div class="q-mb-sm">
       <!-- Main Dropdowns -->
       <div v-if="task === 'checkup'">
         <form-dropdown-option

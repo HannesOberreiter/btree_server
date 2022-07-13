@@ -17,6 +17,7 @@
         label="name"
         name="queen"
         icon="fas fa-passport"
+        class="q-mb-sm"
         :hint="isEdit ? '' : $t('lastAdded') + ': ' + lastNames"
         :max-valid="24"
       ></form-input-text>
@@ -30,31 +31,31 @@
           @click="changeInterval"
         ></btn-base>
       </div>
+    </div>
 
-      <div v-if="(showInterval || forceInterval) && !isEdit" class="col-12">
-        <div class="row">
-          <div class="col-6">
-            <form-input-numeric
-              v-model.number="state.start"
-              label="start"
-              :hint="$t('startNumberNote')"
-              :max-valid="10000"
-              icon="fas fa-arrow-down-1-9"
-              numeric-valid="integer"
-            ></form-input-numeric>
-          </div>
-          <div class="col-6 q-pl-sm">
-            <form-input-numeric
-              v-model.number="state.repeat"
-              label="numberQueens"
-              :hint="sampleName"
-              :disable="forceInterval"
-              shadow-text="x"
-              icon="fas fa-infinity"
-              :max-valid="100"
-              numeric-valid="integer"
-            ></form-input-numeric>
-          </div>
+    <div v-if="(showInterval || forceInterval) && !isEdit" class="col-12">
+      <div class="row">
+        <div class="col-12 col-md-6">
+          <form-input-numeric
+            v-model.number="state.start"
+            label="start"
+            :hint="$t('startNumberNote')"
+            :max-valid="10000"
+            icon="fas fa-arrow-down-1-9"
+            numeric-valid="integer"
+          ></form-input-numeric>
+        </div>
+        <div class="col-12 col-md-6">
+          <form-input-numeric
+            v-model.number="state.repeat"
+            label="numberQueens"
+            :hint="sampleName"
+            :disable="forceInterval"
+            shadow-text="x"
+            icon="fas fa-infinity"
+            :max-valid="100"
+            numeric-valid="integer"
+          ></form-input-numeric>
         </div>
       </div>
     </div>
@@ -98,7 +99,7 @@
         :required="false"
       ></form-dropdown-hive>
     </div>
-    <div class="col-12 col-md-6 q-pt-sm">
+    <div class="col-12 col-md-6 q-pt-sm q-mb-sm">
       <form-input-date
         v-model="state.move_date"
         :values="values"
@@ -127,11 +128,12 @@
       ></form-dropdown-option>
     </div>
 
-    <div class="col-12 col-md-6 q-pt-sm q-pb-sm">
+    <div class="col-12 col-md-6 q-pt-sm">
       <form-input-text
         v-model="state.mother"
         label="mother"
         icon="fas fa-venus"
+        class="q-mb-sm"
         :values="values"
         :reset="reset"
         :hint="$t('queenMotherInfo')"

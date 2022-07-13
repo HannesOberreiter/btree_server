@@ -33,7 +33,7 @@
 
       <div v-if="showInterval && !isEdit" class="col-12">
         <div class="row">
-          <div class="col-6">
+          <div class="col-12 col-md-6">
             <form-input-numeric
               v-model.number="state.start"
               label="start"
@@ -43,7 +43,7 @@
               numeric-valid="integer"
             ></form-input-numeric>
           </div>
-          <div class="col-6 q-pl-sm">
+          <div class="col-12 col-md-6">
             <form-input-numeric
               v-model.number="state.repeat"
               label="numberHives"
@@ -58,7 +58,7 @@
       </div>
     </div>
 
-    <div v-if="!isEdit" class="row q-pt-md q-pb-md">
+    <div v-if="!isEdit" class="row q-pb-md">
       <div class="col-12 col-md-6">
         <form-dropdown-option
           v-model="state.apiary"
