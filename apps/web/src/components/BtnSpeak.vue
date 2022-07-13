@@ -50,7 +50,8 @@ const haystack = ref([]);
 useKeySpeak(btn);
 
 const onStart = () => {
-  notification.open('info', t('speech.start'));
+  if (!speech.isListening.value)
+    notification.open('info', t('speech.start'), true);
   speech.result.value = '';
   speech.toggle();
 };
