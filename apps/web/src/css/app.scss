@@ -2,6 +2,10 @@
   padding: 0px;
 }
 
+.show-pointer {
+  cursor: pointer;
+}
+
 @media print {
   .q-drawer {
     display: none;

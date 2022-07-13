@@ -201,7 +201,7 @@
   "hiveCount": "Hive count",
   "hivecountTooltip": "Hives [Grouphives]",
   "humidity": "Humidity",
-  "ical": "ICal",
+  "ical": "iCal",
   "icalDownload": "The downloaded file is only static and will not update if loaded into your calendar.",
   "icalHint": "Subscribe to this url in your calendar software, to automatically fetch your events.",
   "icalSource": "iCal Source",
@@ -405,6 +405,7 @@
     "name": "Scale | Scales",
     "nameHint": "Name needs to be unique and is needed for API calls as identifier."
   },
+  "scale_data": "Hivescale data",
   "search": "Search",
   "select": "Select",
   "selectFile": "Select a file",
@@ -450,8 +451,10 @@
   "soundHint": "Play sound on notifications (on mobile you get vibration and sound).",
   "source": "Source",
   "speech": {
-    "commandRedirect": "Found {msg}, redirecting.",
-    "noCommand": "No command found with {msg}."
+    "tooltip": "Speech recognition",
+    "commandRedirect": "Found {text}, redirecting. (original: {msg})",
+    "noCommand": "No command found with {msg}.",
+    "start": "Name your hive or apiary. Additional commands: feed, treatment, harvest, checkup, calendar."
   },
   "start": "Start",
   "startNumberNote": "Number at which to start counting.",
@@ -542,5 +545,10 @@
   "year": "Year",
   "yearly": "Yearly",
   "yellow": "Yellow",
-  "yes": "Yes"
+  "yes": "Yes",
+  "premiumSupporter": "Our premium supporter",
+  "searchHiveApiary": "Search your colonies and apiaries",
+  "fullscreen": "Fullscreen",
+  "darkMode": "Dark mode",
+  "dayMode": "Day mode"
 }

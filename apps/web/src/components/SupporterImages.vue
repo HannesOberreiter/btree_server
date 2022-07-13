@@ -1,12 +1,14 @@
 <template>
   <div class="row content-center justify-around items-center">
-    <div class="q-pa-md col-12 text-h7 text-center">Our Premium Supporter:</div>
+    <div class="q-pa-md col-12 text-h7 text-center">
+      {{ $t('premiumSupporter') }}:
+    </div>
     <div
       v-for="supporter in SUPPORTERS"
       :key="supporter.name"
       class="col-12 col-sm-6 col-md-5 col-lg-4 text-center"
     >
-      <a :href="supporter.url">
+      <a :href="supporter.url" target="_blank" rel="external noopener">
         <q-img
           :alt="supporter.name"
           :src="supporter.img"

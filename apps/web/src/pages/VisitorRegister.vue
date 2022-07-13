@@ -63,14 +63,11 @@
       >
         <slot>
           {{ t('signup.agree') }}
-          <btn-base
-            data-cy="terms"
-            flat
-            color="secondary"
-            @click="terms = true"
-          >
-            {{ t('signup.terms') }}
-          </btn-base>
+          <span data-cy="terms" flat class="show-pointer" @click="terms = true">
+            <b>
+              {{ t('signup.terms') }}
+            </b>
+          </span>
         </slot>
       </q-checkbox>
 
@@ -82,7 +79,7 @@
           size="lg"
           color="secondary"
           class="full-width text-white"
-          :label="t(btnLabel)"
+          :label="btnLabel"
           :disable="isSubmitting || message !== ''"
           :loading="isSubmitting"
         />
@@ -186,7 +183,7 @@ const state = reactive({
 const rules = reactive({
   other: { maxLengthValue: maxLength(45) },
   source: { required: required(t('source')) },
-  terms: { required: required(t('terms')) },
+  terms: { required: required(t('signup.terms')) },
 });
 const v$ = useVuelidate(rules, state);
 

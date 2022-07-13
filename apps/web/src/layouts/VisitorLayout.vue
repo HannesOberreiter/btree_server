@@ -30,7 +30,7 @@
               </q-page-container>
 
               <q-card-section
-                class="bg-blue-grey-9 text-center text-white text-h6"
+                class="bg-blue-grey-9 text-center text-white text-h7"
               >
                 <div v-if="path.name !== 'register'">
                   <span>{{ $t('signup.text') }}&nbsp;</span>
@@ -57,7 +57,9 @@
             <div class="text-center">
               <small>
                 © 2013- {{ new Date().getFullYear() }}
-                <a href="https://info.btree.at/">b.tree Beekeeping Database </a>
+                <a href="https://info.btree.at/" target="_blank" rel="noopener">
+                  b.tree Beekeeping Database
+                </a>
               </small>
             </div>
             <supporter-images></supporter-images>

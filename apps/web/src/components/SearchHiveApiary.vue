@@ -10,7 +10,7 @@
     :options="options"
     option-label="clabel"
     standout="bg-secondary text-white"
-    placeholder="Search you colonies and apiaries"
+    :placeholder="$t('searchHiveApiary')"
     @filter="filterFn"
     @update:model-value="redirectFn"
   >

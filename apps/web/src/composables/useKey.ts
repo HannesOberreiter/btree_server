@@ -31,3 +31,11 @@ export const useKeyHelp = (showInfo: Ref) => {
     showInfo.value = !showInfo.value;
   });
 };
+
+export const useKeySpeak = (btn: Ref) => {
+  onKeyStroke(['s', 'S'], (e) => {
+    if (preventKey(e)) return;
+    e.preventDefault();
+    btn.value.$el.click();
+  });
+};

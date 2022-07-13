@@ -88,7 +88,7 @@
         v-model="state.source"
         table="hive_sources"
         table-id="source_id"
-        label="source"
+        label="status"
         :values="values"
         :reset="reset"
       ></form-dropdown-option>
