@@ -5,9 +5,6 @@
         <div class="text-h5 text-center">
           {{ $t('hiveCount') }}
         </div>
-        <div class="text-caption text-center q-pb-sm">
-          {{ $t('hiveCountHint') }}
-        </div>
       </div>
     </div>
     <q-card-section>
