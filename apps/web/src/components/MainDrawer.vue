@@ -164,7 +164,7 @@ const links = [
         menu: false,
       },
       {
-        label: t('table'),
+        label: t('queen', 2),
         route: 'table-queen',
         icon: 'fas fa-table',
         menu: false,
@@ -214,7 +214,7 @@ const links = [
         menu: false,
       },
       {
-        label: t('table'),
+        label: t('todo', 2),
         route: 'table-todo',
         icon: 'fas fa-table',
         menu: false,

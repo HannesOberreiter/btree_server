@@ -14,7 +14,7 @@
           <q-item v-for="(link, index) in links" :key="index" :href="link.url">
             <q-item-section clickable>
               <q-item-label class="text-left text-bold">
-                <a :href="link.url" target="_blank" rel="noopener">
+                <a :href="link.url" target="_blank" rel="noopener external">
                   {{
                     truncate(link.url.replace(/^https?:\/\/(www.)?/, ''), {
                       length: 25,

@@ -1,6 +1,7 @@
 <template>
   <btn-base
     v-if="speech.isSupported && !$q.platform.is.safari"
+    ref="btn"
     v-close-popup
     flat
     dense
@@ -9,6 +10,7 @@
     icon="fas fa-microphone"
     @click="onStart"
   >
+    <q-tooltip>{{ $t('speech.tooltip') }} (s)</q-tooltip>
   </btn-base>
 </template>
 
@@ -26,13 +28,18 @@ import { useApiariesQuery, useHivesQuery } from '~/composables/useQuery';
 import Fuse from 'fuse.js';
 import { useNotification } from '~/composables/useNotification';
 import { useQuasar } from 'quasar';
+import { useKeySpeak } from '~/composables/useKey';
 
 const router = useRouter();
+const btn = ref(null);
 const $q = useQuasar();
 const { t } = useI18n();
 const notification = useNotification();
+
+const { locale } = useI18n();
+
 const speech = useSpeechRecognition({
-  lang: 'de',
+  lang: locale,
   interimResults: false,
   continuous: false,
 });
@@ -40,7 +47,10 @@ const speech = useSpeechRecognition({
 const spoken = ref('');
 const haystack = ref([]);
 
+useKeySpeak(btn);
+
 const onStart = () => {
+  notification.open('info', t('speech.start'));
   speech.result.value = '';
   speech.toggle();
 };
@@ -145,6 +155,7 @@ function fuzzySearch(command: string, haystack: any) {
 
 function handleResult(result: any, command: string) {
   let name = '';
+  let text = '';
   let params = {};
   if (result) {
     switch (result.item.command) {
@@ -152,6 +163,7 @@ function handleResult(result: any, command: string) {
       case 'apiary':
         name = `detail-${result.item.command}`;
         params = { id: result.item.id };
+        text = result.item.aliases[0];
         break;
 
       case 'feed':
@@ -160,17 +172,19 @@ function handleResult(result: any, command: string) {
       case 'checkup':
         name = 'new-quicktool';
         params = { task: result.item.command };
+        text = t(result.item.command);
         break;
 
       case 'dashboard':
         name = 'calendar';
+        text = t(result.item.command);
         break;
     }
   }
   if (name) {
     notification.open(
-      'info',
-      t('speech.commandRedirect', { msg: command.toUpperCase() }),
+      'positive',
+      t('speech.commandRedirect', { text: text, msg: command }),
       true
     );
     router.push({ name: name, params: params });
