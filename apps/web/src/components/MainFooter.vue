@@ -15,7 +15,8 @@
       icon="fas fa-circle-question"
       size="sm"
       @click="showInfo = !showInfo"
-    ></btn-base>
+      ><q-tooltip>{{ $t('help.name') }} (h)</q-tooltip></btn-base
+    >
     <btn-share :show-path="true"></btn-share>
   </q-toolbar>
   <global-sound></global-sound>
@@ -24,9 +25,11 @@
 
 <script setup lang="ts">
 import news from '~/assets/news.json';
+import { useKeyHelp } from '~/composables/useKey';
 
 const router = useRouter();
 const help = computed(() => `help.${String(router.currentRoute.value.name)}`);
-
 const showInfo = ref(false);
+
+useKeyHelp(showInfo);
 </script>

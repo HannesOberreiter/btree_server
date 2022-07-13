@@ -24,7 +24,6 @@
 import { remove, map, difference, merge } from 'lodash-es';
 import dayjs from 'dayjs';
 import { CALENDAR } from '~/constants';
-import { onKeyStroke } from '@vueuse/core';
 import { useAuthUserStore } from '~/stores/auth';
 import { useCalendarStore } from '~/stores/calendar';
 import useCalendarVis from '~/composables/useCalendarVis';
@@ -48,6 +47,7 @@ import { useApiFetch } from '~/composables/useApi';
 import { useQuasar } from 'quasar';
 import { useCalendarQuery } from '~/composables/useQuery';
 import { onBeforeRouteLeave } from 'vue-router';
+import { useKeyCalendar } from '~/composables/useKey';
 
 const useQuery = useCalendarQuery();
 const { t } = useI18n();
@@ -132,14 +132,7 @@ onBeforeRouteLeave(() => {
 });
 
 onMounted(() => {
-  onKeyStroke('ArrowLeft', (e) => {
-    e.preventDefault();
-    if (cal.value.getApi()) cal.value.getApi().prev();
-  });
-  onKeyStroke('ArrowRight', (e) => {
-    e.preventDefault();
-    if (cal.value.getApi()) cal.value.getApi().next();
-  });
+  useKeyCalendar(cal);
   watch(storeCalendar, (currentValue) => {
     const calendarApi = cal.value.getApi();
     const addSources = difference(
