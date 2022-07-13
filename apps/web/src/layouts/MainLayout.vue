@@ -27,9 +27,11 @@
     </q-drawer>
 
     <q-page-container>
-      <div class="q-pa-xs">
-        <router-view />
-      </div>
+      <q-pull-to-refresh @refresh="onRefresh">
+        <div class="q-pa-xs">
+          <router-view />
+        </div>
+      </q-pull-to-refresh>
     </q-page-container>
 
     <q-footer class="bg-grey-8 text-white print-hide">
@@ -48,6 +50,8 @@ import MainFooter from '~/components/MainFooter.vue';
 import { useMeta } from 'quasar';
 import { onBeforeRouteLeave, onBeforeRouteUpdate } from 'vue-router';
 import { usePreventNavigation } from '~/composables/usePreventNavgiation';
+import { clearCache } from '~/composables/useQuery';
+import { useRefreshStore } from '~/stores/refresh';
 
 const usePrevent = usePreventNavigation();
 const leftDrawerOpen = ref(false);
@@ -58,6 +62,7 @@ const { t } = useI18n();
 
 storeUser.updateLang();
 useQuasarLang($q);
+const storeRefresh = useRefreshStore();
 
 useMeta(() => {
   return {
@@ -69,6 +74,12 @@ useMeta(() => {
 
 const toggleLeftDrawer = () => {
   leftDrawerOpen.value = !leftDrawerOpen.value;
+};
+
+const onRefresh = async () => {
+  await storeRefresh.refresh();
+  clearCache();
+  window.location.reload();
 };
 
 onBeforeRouteLeave(() => {
