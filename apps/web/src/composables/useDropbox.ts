@@ -104,7 +104,7 @@ export const useServiceDropbox = () => {
   async function auth(code: string) {
     await api.get(`/v1/dropbox/auth/${code}`).then(
       (_response: any) => {
-        router.replace({ name: 'settingDropbox' });
+        router.replace({ name: 'setting-dropbox' });
         return true;
       },
       (error) => {
