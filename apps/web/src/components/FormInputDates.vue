@@ -37,7 +37,7 @@
       </form-input-date>
     </div>
   </div>
-  <div v-if="showInterval" class="row">
+  <div v-if="showInterval" class="row q-mb-lg">
     <div class="col-6">
       <form-input-numeric
         v-model.number="modelInterval"

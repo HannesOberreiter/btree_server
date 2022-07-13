@@ -109,7 +109,7 @@ const showFile = (id: string) => {
   $q.dialog({
     component: DialogFileShow,
     componentProps: {
-      id: id,
+      value: `dropbox:${id}`,
     },
   });
 };

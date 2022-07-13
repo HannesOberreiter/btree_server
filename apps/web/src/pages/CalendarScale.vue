@@ -9,7 +9,6 @@
   </div>
 </template>
 <script setup lang="ts">
-import { onKeyStroke } from '@vueuse/core';
 import { useAuthUserStore } from '~/stores/auth';
 import { useNotification } from '~/composables/useNotification';
 import '@fullcalendar/core/vdom'; // solve problem with Vite
@@ -22,6 +21,7 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import listPlugin from '@fullcalendar/list';
 import { useCalendarQuery } from '~/composables/useQuery';
+import { useKeyCalendar } from '~/composables/useKey';
 
 const useQuery = useCalendarQuery();
 const { t } = useI18n();
@@ -32,14 +32,7 @@ const { getUser } = storeToRefs(storeUser);
 const cal = ref();
 
 onMounted(() => {
-  onKeyStroke('ArrowLeft', (e) => {
-    e.preventDefault();
-    if (cal.value.getApi()) cal.value.getApi().prev();
-  });
-  onKeyStroke('ArrowRight', (e) => {
-    e.preventDefault();
-    if (cal.value.getApi()) cal.value.getApi().next();
-  });
+  useKeyCalendar(cal);
 });
 
 function onResize(_size: any) {

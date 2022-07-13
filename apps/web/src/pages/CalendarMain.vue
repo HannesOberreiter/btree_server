@@ -16,7 +16,6 @@
           </template>
         </full-calendar>
       </div>
-      <dialog-hint v-model="showInfo" hint="calendar.hint"></dialog-hint>
       <calendar-setting v-model="showSetting"></calendar-setting>
     </div>
   </div>
@@ -25,7 +24,6 @@
 import { remove, map, difference, merge } from 'lodash-es';
 import dayjs from 'dayjs';
 import { CALENDAR } from '~/constants';
-import { onKeyStroke } from '@vueuse/core';
 import { useAuthUserStore } from '~/stores/auth';
 import { useCalendarStore } from '~/stores/calendar';
 import useCalendarVis from '~/composables/useCalendarVis';
@@ -33,7 +31,6 @@ import { useNotification } from '~/composables/useNotification';
 
 import DialogEvent from '~/components/DialogEvent.vue';
 import DialogForm from '~/components/DialogForm.vue';
-import DialogHint from '~/components/DialogHint.vue';
 
 import '@fullcalendar/core/vdom'; // solve problem with Vite
 import FullCalendar, {
@@ -50,6 +47,7 @@ import { useApiFetch } from '~/composables/useApi';
 import { useQuasar } from 'quasar';
 import { useCalendarQuery } from '~/composables/useQuery';
 import { onBeforeRouteLeave } from 'vue-router';
+import { useKeyCalendar } from '~/composables/useKey';
 
 const useQuery = useCalendarQuery();
 const { t } = useI18n();
@@ -67,7 +65,6 @@ const eventsSourceInactive: EventSourceInput[] = [];
 let eventsSourceActiveWatcher = storeCalendar.calendar;
 const dateClicked = ref(dayjs().format('YYYY-MM-DD'));
 const cal = ref();
-const showInfo = ref(false);
 const showSetting = ref(false);
 
 const formDialog = (date: string) =>
@@ -135,14 +132,7 @@ onBeforeRouteLeave(() => {
 });
 
 onMounted(() => {
-  onKeyStroke('ArrowLeft', (e) => {
-    e.preventDefault();
-    if (cal.value.getApi()) cal.value.getApi().prev();
-  });
-  onKeyStroke('ArrowRight', (e) => {
-    e.preventDefault();
-    if (cal.value.getApi()) cal.value.getApi().next();
-  });
+  useKeyCalendar(cal);
   watch(storeCalendar, (currentValue) => {
     const calendarApi = cal.value.getApi();
     const addSources = difference(
@@ -272,19 +262,13 @@ const calendarOptions = reactive({
         showSetting.value = true;
       },
     },
-    info: {
-      text: 'Info',
-      click: function () {
-        showInfo.value = true;
-      },
-    },
   },
   headerToolbar: {
     left: 'prevYear,prev,next,nextYear today',
     right: 'title',
   },
   footerToolbar: {
-    left: 'sources,info',
+    left: 'sources',
     right: 'dayGridMonth,dayGridWeek,listWeek',
   },
   stickyHeaderDates: true,

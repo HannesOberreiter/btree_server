@@ -77,7 +77,7 @@ const visibleColumns = ref(store.value.visible);
 
 const selected = ref([]);
 const rows = ref([]);
-const modus = ref(true);
+const modus = ref(false);
 const deleted = ref(false);
 const filter = ref('');
 

@@ -8,7 +8,7 @@
           <btn-close-dialog></btn-close-dialog>
         </div>
       </q-card-section>
-      <q-card-section class="text-body1">
+      <q-card-section class="text-body1 break-line">
         {{ $t(hint) }}
       </q-card-section>
       <q-card-actions align="right">
@@ -26,3 +26,9 @@ defineProps({
   },
 });
 </script>
+
+<style scoped>
+.break-line {
+  white-space: pre-line;
+}
+</style>

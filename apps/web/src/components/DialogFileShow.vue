@@ -78,7 +78,7 @@ const url = toRef(props, 'value');
 watch(
   url,
   (cur) => {
-    if (cur.trim()) getService(cur.trim());
+    if (cur) getService(cur.trim());
   },
   { immediate: true }
 );

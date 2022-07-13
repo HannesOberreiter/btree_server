@@ -115,7 +115,7 @@ const links = [
     icon: 'fas fa-house',
     menu: [
       {
-        label: `${t('new')} ${t('hive')}`,
+        label: `${t('add')} ${t('hive')}`,
         route: 'new-hive',
         icon: 'fas fa-house',
         menu: false,
@@ -127,7 +127,7 @@ const links = [
         menu: false,
       },
       {
-        label: `${t('new')} ${t('movement')}`,
+        label: `${t('add')} ${t('movement')}`,
         route: 'new-movement',
         icon: 'fas fa-truck',
         menu: false,
@@ -158,7 +158,7 @@ const links = [
     icon: 'fas fa-venus',
     menu: [
       {
-        label: t('new'),
+        label: t('add'),
         route: 'new-queen',
         icon: 'fas fa-circle-plus',
         menu: false,
@@ -170,7 +170,7 @@ const links = [
         menu: false,
       },
       {
-        label: t('virgin'),
+        label: t('virgin', 2),
         route: 'table-virgin',
         icon: 'fas fa-table',
         menu: false,
@@ -183,7 +183,7 @@ const links = [
     icon: 'fas fa-sitemap',
     menu: [
       {
-        label: t('new'),
+        label: t('add'),
         route: 'new-rearing',
         icon: 'fas fa-circle-plus',
         menu: false,
@@ -208,7 +208,7 @@ const links = [
     icon: 'fas fa-clipboard-check',
     menu: [
       {
-        label: t('new'),
+        label: t('add'),
         route: 'new-todo',
         icon: 'fas fa-circle-plus',
         menu: false,
@@ -227,7 +227,7 @@ const links = [
     icon: 'fas fa-database',
     menu: [
       {
-        label: t('new'),
+        label: t('add'),
         route: 'new-charge',
         icon: 'fas fa-circle-plus',
         menu: false,
@@ -297,13 +297,13 @@ const links = [
         menu: [] as any,
       },
       {
-        label: t('field'),
+        label: t('field', 2),
         route: 'setting-field',
         icon: 'fas fa-cog',
         menu: [] as any,
       },
       {
-        label: t('option'),
+        label: t('option', 2),
         route: 'setting-option',
         icon: 'fas fa-cogs',
         params: { option: 'checkup_types' },
