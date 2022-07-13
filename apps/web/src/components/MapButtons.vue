@@ -27,15 +27,6 @@
       class="bg-white"
       fab-mini
       flat
-      icon="fas fa-question"
-      @click="showInfo = !showInfo"
-    ></btn-base>
-    <btn-base
-      size="sm"
-      color="black"
-      class="bg-white"
-      fab-mini
-      flat
       icon="fas fa-print"
       @click="onPrint()"
     ></btn-base>
@@ -53,15 +44,12 @@
     >
     </q-slider>
   </l-control>
-  <dialog-hint v-model="showInfo" hint="map.hint"></dialog-hint>
 </template>
 
 <script setup lang="ts">
 import { useVModels } from '@vueuse/core';
-import DialogHint from './DialogHint.vue';
 import { LControl } from '@vue-leaflet/vue-leaflet';
 
-const showInfo = ref(false);
 const showInactive = ref(false);
 const props = defineProps({
   userLocationLoading: {

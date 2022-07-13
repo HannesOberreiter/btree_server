@@ -19,7 +19,7 @@
     <div class="col-12">
       <btn-base-group>
         <btn-base color="primary" @click="onNew">
-          {{ $t('new') }} {{ $t('method') }}
+          {{ $t('add') }} {{ $t('method') }}
         </btn-base>
         <btn-base color="secondary" @click="onEdit">
           {{ $t('rename') }} {{ $t('method') }}
