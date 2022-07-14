@@ -14,7 +14,10 @@ export class Catcher {
    * @param {Function} next Callback function
    */
   static log = (err: Error, req: Request, res: Response, next) => {
-    if (err.message !== 'TokenExpiredError') {
+    if (
+      err.message !== 'TokenExpiredError' &&
+      err.message !== 'JsonWebTokenError'
+    ) {
       const message =
         req.method +
         ' ' +

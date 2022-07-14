@@ -1,5 +1,4 @@
 import { Validator } from '@/api/middlewares/validator.middleware';
-import { isValidTimeZone } from '@/api/utils/api.util';
 import { Router } from '@classes/router.class';
 import { Container } from '@config/container.config';
 import { param, query } from 'express-validator';
