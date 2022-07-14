@@ -94,6 +94,7 @@ declare module '@vue/runtime-core' {
     HiveInfoHarvest: typeof import('./components/HiveInfoHarvest.vue')['default']
     HiveInfoMovements: typeof import('./components/HiveInfoMovements.vue')['default']
     HiveInfoQueens: typeof import('./components/HiveInfoQueens.vue')['default']
+    HiveInfoTask: typeof import('./components/HiveInfoTask.vue')['default']
     IframeWeather: typeof import('./components/IframeWeather.vue')['default']
     ItemCompany: typeof import('./components/ItemCompany.vue')['default']
     ItemPing: typeof import('./components/ItemPing.vue')['default']

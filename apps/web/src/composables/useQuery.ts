@@ -707,29 +707,6 @@ export function useRearingsQuery({
   );
 }
 
-export function useStatisticHiveQuery(
-  kind: MaybeRef<string>,
-  { filters = '' as MaybeRef<string>, enabled = true as MaybeRef<boolean> }
-) {
-  const notification = useNotification();
-  const api = useApiFetch();
-  return useQuery(
-    ['statisticHive', kind, filters],
-    () => {
-      const payload = {
-        filters: unref(filters),
-      };
-      return api.get(`/v1/statistic/hive/${unref(kind)}`, payload);
-    },
-    {
-      enabled: enabled,
-      keepPreviousData: true,
-      select: (response) => response,
-      onError: (error: any) => notification.open('negative', error),
-    }
-  );
-}
-
 export function useStatisticTable(
   kind: string,
   {
@@ -737,6 +714,7 @@ export function useStatisticTable(
     limit = 10000 as MaybeRef<number>,
     order = ['year', 'hive.name'] as MaybeRef<Array<string>>,
     direction = ['asc', 'asc'] as MaybeRef<Array<string>>,
+    groupByType = false as MaybeRef<boolean>,
     filters = '' as MaybeRef<string>,
     q = '' as MaybeRef<string>,
     enabled = true as MaybeRef<boolean>,
@@ -745,7 +723,17 @@ export function useStatisticTable(
   const notification = useNotification();
   const api = useApiFetch();
   return useQuery(
-    ['statisticTable', kind, offset, limit, order, direction, q, filters],
+    [
+      'statisticTable',
+      kind,
+      offset,
+      limit,
+      order,
+      direction,
+      q,
+      filters,
+      groupByType,
+    ],
     () => {
       const payload = {
         offset: unref(offset),
@@ -753,6 +741,7 @@ export function useStatisticTable(
         order: unref(order),
         direction: unref(direction),
         filters: unref(filters),
+        groupByType: unref(groupByType),
         q: unref(q),
       };
       return api.get(`/v1/statistic/${kind}/hive`, payload);
