@@ -5,9 +5,6 @@
         <div class="text-h5 text-center">
           {{ $t('statistic') }} {{ $t('harvest') }}
         </div>
-        <div class="text-caption text-center q-pb-sm">
-          {{ $t('hintStatisticTable') }}
-        </div>
       </div>
     </div>
     <q-card-section>

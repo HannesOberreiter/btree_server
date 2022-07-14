@@ -67,13 +67,6 @@ describe('User - Calendar', () => {
     cy.dataCy('form-todo').should('not.exist');
   });
 
-  it('Dialog info', () => {
-    cy.get('.fc-info-button').click();
-    cy.dataCy('dialog-hint').should('exist');
-    cy.dataCy('btn-close-dialog').click();
-    cy.dataCy('dialog-hint').should('not.exist');
-  });
-
   it('Dialog source', () => {
     cy.get('.fc-sources-button').click();
     cy.dataCy('dialog-calendar-setting').should('exist');

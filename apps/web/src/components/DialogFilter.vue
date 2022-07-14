@@ -477,6 +477,16 @@ const layouts = {
       },
     },
   ],
+  statistic_rating_table: [
+    {
+      comp: FormDropdownYear,
+      model: 'year',
+      props: {
+        'allow-empty': 'allYears',
+        'select-empty': true,
+      },
+    },
+  ],
 } as any;
 
 const layout = computed(() => layouts[props.form]);

@@ -88,10 +88,10 @@
             <q-separator class="q-mt-sm q-mb-sm"></q-separator>
             <div class="row">
               <div class="col-12 col-sm-6">
-                <hive-info-harvest :id="id"></hive-info-harvest>
+                <hive-info-task :id="id" kind="harvest"></hive-info-task>
               </div>
               <div class="col-12 col-sm-6">
-                <hive-info-feed :id="id"></hive-info-feed>
+                <hive-info-task :id="id" kind="feed"></hive-info-task>
               </div>
             </div>
           </q-tab-panel>

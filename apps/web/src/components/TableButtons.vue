@@ -6,6 +6,7 @@
           'statistic_harvest_table',
           'statistic_feed_table',
           'statistic_treatment_table',
+          'statistic_rating_table',
         ].includes(table)
       "
       color="primary"
@@ -21,6 +22,7 @@
           'statistic_harvest_table',
           'statistic_feed_table',
           'statistic_treatment_table',
+          'statistic_rating_table',
         ].includes(table)
       "
       color="secondary"
@@ -82,6 +84,7 @@
           'statistic_harvest_table',
           'statistic_feed_table',
           'statistic_treatment_table',
+          'statistic_rating_table',
         ].includes(table)
       "
       :color="filter ? 'negative' : 'warning'"
@@ -161,6 +164,7 @@
               'statistic_harvest_table',
               'statistic_feed_table',
               'statistic_treatment_table',
+              'statistic_rating_table',
             ].includes(table)
           "
           v-close-popup

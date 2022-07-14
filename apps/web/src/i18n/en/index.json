@@ -178,6 +178,7 @@
     "statistic-table_feed": "Yearly total feed for every hive.",
     "statistic-table_harvest": "Yearly total harvest for every hive.",
     "statistic-table_treatment": "Yearly total treatment for every hive.",
+    "statistic-table_rating": "Yearly average for every hive. In the average calculation zero values are ignored, this is also true for varroa column.",
     "sugarwater": "Calculate your sugar water mixture or look up on the table. How much are effective stored depends on multiple parameters and is not linear, therefore you can only look up the rough estimates in the table.",
     "table-apiary": "In the apiary table you can manage or export your apiaries. Deleted apiaries can be restored up to 30 days after deletion, but you can only delete apiaries without any active hives on it. In most cases it is better to inactivate the apiary. In addition you can quickly move hives between apiaries, see movements button (blue dropdown button).",
     "table-charge": "In the charge table you can manage or export your charges. The stock columns is the current stock, which is the sum of incoming minus outgoing goods. Deleted charges can be restored up to 30 days after deletion, it will also change your stock if your delete a charge.",
