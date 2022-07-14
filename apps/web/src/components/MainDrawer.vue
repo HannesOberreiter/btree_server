@@ -401,6 +401,12 @@ const links = [
         icon: 'fas fa-chart-simple',
         menu: [] as any,
       },
+      {
+        label: t('rating.name') + ' ' + t('hive', 1),
+        route: 'statistic-table_rating',
+        icon: 'fas fa-table',
+        menu: [] as any,
+      },
     ],
   },
 ];

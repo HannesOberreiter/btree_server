@@ -20,6 +20,7 @@ interface State {
   statistic_feed_table: string;
   statistic_treatment: string;
   statistic_treatment_table: string;
+  statistic_rating_table: string;
   [key: string]: string;
 }
 
@@ -43,6 +44,7 @@ export const useTableFilterStore = defineStore('tableFilter', {
       statistic_feed_table: '',
       statistic_treatment: '',
       statistic_treatment_table: '',
+      statistic_rating_table: '',
     } as State),
   getters: {
     field: (state) => {

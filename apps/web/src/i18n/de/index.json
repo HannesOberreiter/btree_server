@@ -178,6 +178,7 @@
     "statistic-table_feed": "Jährliches Gesamtfutter für jeden Bienenstock.",
     "statistic-table_harvest": "Jährliche Gesamternte für jeden Bienenstock.",
     "statistic-table_treatment": "Jährliche Gesamtbehandlung für jeden Bienenstock.",
+    "statistic-table_rating": "Jährliche Bewertung der Bienenstöcke. Der Durchschnitt ist ohne 0 Werte berechnet, auch beim Feld Varroa!",
     "sugarwater": "Berechnen Sie Ihre Zucker-Wasser-Mischung oder schlagen Sie in der Tabelle nach. \nWie viel effektiv eingelagert wird, hängt von mehreren Parametern ab und ist nicht linear, daher können Sie der Tabelle nur grobe Schätzungen entnehmen.",
     "table-apiary": "In der Standtablle können Sie Ihre Bienenstände verwalten oder exportieren. \nGelöschte Stände können bis zu 30 Tage nach dem Löschen wiederhergestellt werden, aber Sie können nur Stände ohne aktive Bienenstöcke löschen. \nIn den meisten Fällen ist es besser, die Bienenstände zu inaktivieren. \nAußerdem können Sie Bienenstöcke schnell zwischen Stände verschieben, siehe Schaltfläche \"Wanderung\" (blaue Dropdown-Schaltfläche).",
     "table-charge": "In der Chargentabelle können Sie Ihre Chargen verwalten oder exportieren. \nDie Bestandsspalte zeigt den aktuellen Bestand, also die Summe aus Wareneingang minus Warenausgang. \nGelöschte Chargen können bis zu 30 Tage nach dem Löschen wiederhergestellt werden, es ändert auch Ihren Bestand, wenn Sie einen Eintrag löschen.",
