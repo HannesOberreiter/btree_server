@@ -13,51 +13,6 @@ export class StatisticController extends Controller {
     super();
   }
 
-  async getHive(req: IUserRequest, res: Response, next: NextFunction) {
-    try {
-      const kind = req.params.kind;
-      let view = '';
-      switch (kind) {
-        case 'harvest': {
-          view = 'stats_hives_harvests';
-          break;
-        }
-        case 'feed': {
-          view = 'stats_hives_feeds';
-          break;
-        }
-        default:
-          view = 'stats_hives_harvests';
-      }
-
-      const { filters } = req.query as any;
-      const query = MySQLServer.knex(view)
-        .where({
-          user_id: req.user.user_id,
-        })
-        .orderBy('year', 'desc')
-        .orderBy('quarter', 'desc');
-
-      if (filters) {
-        try {
-          const filtering = JSON.parse(filters);
-          if (Array.isArray(filtering)) {
-            filtering.forEach((v) => {
-              query.where(v);
-            });
-          }
-        } catch (e) {
-          console.log(e);
-        }
-      }
-      const result = await query;
-      res.locals.data = result;
-      next();
-    } catch (e) {
-      next(checkMySQLError(e));
-    }
-  }
-
   async getHiveCountTotal(
     req: IUserRequest,
     res: Response,
@@ -93,7 +48,8 @@ export class StatisticController extends Controller {
 
   async getHarvestHive(req: IUserRequest, res: Response, next: NextFunction) {
     try {
-      const { order, direction, offset, limit, q, filters } = req.query as any;
+      const { order, direction, offset, limit, q, filters, groupByType } =
+        req.query as any;
 
       const query = Harvest.query()
         .select(Harvest.raw('YEAR(date) as year'), 'hive_id')
@@ -129,6 +85,12 @@ export class StatisticController extends Controller {
             builder.orWhere('hive.name', 'like', `%${q}%`);
           });
         }
+      }
+      if (groupByType) {
+        query
+          .groupBy('harvests.type_id')
+          .withGraphJoined('type')
+          .select('type.name');
       }
       if (filters) {
         try {
@@ -307,7 +269,8 @@ export class StatisticController extends Controller {
 
   async getFeedHive(req: IUserRequest, res: Response, next: NextFunction) {
     try {
-      const { order, direction, offset, limit, q, filters } = req.query as any;
+      const { order, direction, offset, limit, q, filters, groupByType } =
+        req.query as any;
 
       const query = Feed.query()
         .select(Feed.raw('YEAR(date) as year'), 'hive_id')
@@ -340,6 +303,12 @@ export class StatisticController extends Controller {
             builder.orWhere('hive.name', 'like', `%${q}%`);
           });
         }
+      }
+      if (groupByType) {
+        query
+          .groupBy('feeds.type_id')
+          .withGraphJoined('type')
+          .select('type.name');
       }
       if (filters) {
         try {

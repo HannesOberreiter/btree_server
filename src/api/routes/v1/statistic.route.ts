@@ -12,12 +12,6 @@ export class StatisticRouter extends Router {
 
   define() {
     this.router
-      .route('/hive/:kind')
-      .get(
-        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Container.resolve('StatisticController').getHive
-      );
-    this.router
       .route('/hive_count_total')
       .get(
         Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
