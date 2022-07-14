@@ -29,7 +29,7 @@
 </template>
 
 <script setup lang="ts">
-import { round, chain } from 'lodash-es';
+import { round, sortBy, groupBy } from 'lodash-es';
 import { useStatisticTable } from '~/composables/useQuery';
 
 const props = defineProps({
@@ -59,10 +59,10 @@ watch(
   () => {
     if (data.value) {
       if (data.value.results) {
-        results.value = chain(data.value.results)
-          .sortBy('year', 'asc')
-          .groupBy('year')
-          .value();
+        results.value = groupBy(
+          sortBy(data.value.results, 'year', 'asc'),
+          'year'
+        );
         years.value = Object.keys(results.value).sort().reverse();
       }
     }
