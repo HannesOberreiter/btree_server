@@ -2,7 +2,6 @@ import { NextFunction, Response } from 'express';
 import { Controller } from '@classes/controller.class';
 import { checkMySQLError } from '@utils/error.util';
 import { IUserRequest } from '@interfaces/IUserRequest.interface';
-import { MySQLServer } from '@/servers/mysql.server';
 import { hiveCountApiary, hiveCountTotal } from '../utils/statistic.util';
 import { Harvest } from '../models/harvest.model';
 import { Feed } from '../models/feed.model';
@@ -87,10 +86,12 @@ export class StatisticController extends Controller {
         }
       }
       if (groupByType) {
-        query
-          .groupBy('harvests.type_id')
-          .withGraphJoined('type')
-          .select('type.name');
+        if (groupByType === 'true') {
+          query
+            .groupBy('harvests.type_id')
+            .withGraphJoined('type')
+            .select('type.name');
+        }
       }
       if (filters) {
         try {
@@ -305,10 +306,12 @@ export class StatisticController extends Controller {
         }
       }
       if (groupByType) {
-        query
-          .groupBy('feeds.type_id')
-          .withGraphJoined('type')
-          .select('type.name');
+        if (groupByType === 'true') {
+          query
+            .groupBy('feeds.type_id')
+            .withGraphJoined('type')
+            .select('type.name');
+        }
       }
       if (filters) {
         try {
