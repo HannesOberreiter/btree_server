@@ -6,6 +6,7 @@ import { hiveCountApiary, hiveCountTotal } from '../utils/statistic.util';
 import { Harvest } from '../models/harvest.model';
 import { Feed } from '../models/feed.model';
 import { Treatment } from '../models/treatment.model';
+import { Checkup } from '../models/checkup.model';
 
 export class StatisticController extends Controller {
   constructor() {
@@ -678,6 +679,82 @@ export class StatisticController extends Controller {
         query.whereRaw(`YEAR(date) = ${new Date().getFullYear()}`);
       }
       const result = await query;
+      res.locals.data = result;
+      next();
+    } catch (e) {
+      next(checkMySQLError(e));
+    }
+  }
+
+  async getCheckupRatingHive(
+    req: IUserRequest,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { order, direction, offset, limit, q, filters } = req.query as any;
+      const query = Checkup.query()
+        .select(
+          'hive_id',
+          Checkup.raw('AVG(NULLIF(brood, 0)) as brood'),
+          Checkup.raw('AVG(NULLIF(pollen, 0)) as pollen'),
+          Checkup.raw('AVG(NULLIF(comb, 0)) as comb'),
+          Checkup.raw('AVG(NULLIF(temper, 0)) as temper'),
+          Checkup.raw('AVG(NULLIF(calm_comb, 0)) as calm_comb'),
+          Checkup.raw('AVG(NULLIF(swarm, 0)) as swarm'),
+          Checkup.raw('AVG(NULLIF(varroa, 0)) as varroa'),
+          Checkup.raw('AVG(NULLIF(strong, 0)) as strong')
+        )
+        .select(Checkup.raw('YEAR(date) as year'))
+        .withGraphJoined('hive')
+        .where({
+          'checkups.deleted': false,
+          'checkups.user_id': req.user.user_id,
+          'hive.deleted': false,
+        })
+        .groupBy('hive_id', 'year')
+        .havingRaw(
+          '(SUM(brood) + SUM(pollen) + SUM(comb) + SUM(temper) + SUM(calm_comb) + SUM(swarm) + SUM(varroa) + SUM(strong)) > 0'
+        )
+        .page(
+          offset ? offset : 0,
+          parseInt(limit) === 0 || !limit ? 10 : limit
+        );
+
+      if (order) {
+        if (Array.isArray(order)) {
+          order.forEach((field, index) =>
+            query.orderBy(field, direction[index])
+          );
+        } else {
+          query.orderBy(order, direction);
+        }
+      }
+      if (q) {
+        if (q.trim() !== '') {
+          query.where((builder) => {
+            builder.orWhere('hive.name', 'like', `%${q}%`);
+          });
+        }
+      }
+      if (filters) {
+        try {
+          const filtering = JSON.parse(filters);
+          if (Array.isArray(filtering)) {
+            filtering.forEach((v) => {
+              if ('year' in v) {
+                query.where(Checkup.raw('YEAR(date)'), v.year);
+              } else {
+                query.where(v);
+              }
+            });
+          }
+        } catch (e) {
+          console.log(e);
+        }
+      }
+
+      const result = await query.orderBy('hive.name');
       res.locals.data = result;
       next();
     } catch (e) {

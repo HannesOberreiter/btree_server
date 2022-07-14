@@ -110,5 +110,12 @@ export class StatisticRouter extends Router {
         Validator.isPremium,
         Container.resolve('StatisticController').getTreatmentType
       );
+    this.router
+      .route('/rating/hive')
+      .get(
+        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+        Validator.isPremium,
+        Container.resolve('StatisticController').getCheckupRatingHive
+      );
   }
 }
