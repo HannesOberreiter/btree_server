@@ -68,7 +68,7 @@ export class TreatmentController extends Controller {
           });
         }
       }
-      const result = await query.orderBy('id');
+      const result = await query.orderBy(['hive_id', 'id']);
       res.locals.data = result;
       next();
     } catch (e) {
