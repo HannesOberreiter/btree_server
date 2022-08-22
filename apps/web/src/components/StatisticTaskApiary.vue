@@ -145,6 +145,7 @@ const { isLoading, data: query } = useStatisticApiary(props.kind, {
 
 const yearText = computed(() => {
   const store = storeFilter.field(STATSSTORE, 'year');
+  console.log(store);
   return store
     ? store === 'empty'
       ? t('allYears')

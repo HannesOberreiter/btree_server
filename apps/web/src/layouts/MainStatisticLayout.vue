@@ -1,20 +1,29 @@
 <template>
   <q-card>
     <div class="row q-pa-sm justify-center">
-      <div class="col-12">
-        <div class="text-h5 text-center">
+      <div class="col-6">
+        <div class="text-h5 text-left">
           {{ $t('statistic') }} {{ $t(props.kind) }}
-          <btn-base
-            :color="filter ? 'negative' : 'warning'"
-            :label="$t('filter')"
-            :icon-right="
-              filter ? 'fas fa-filter' : 'fas fa-filter-circle-xmark'
-            "
-            class="float-right"
-            @click="openFilter"
-          >
-          </btn-base>
         </div>
+      </div>
+      <div class="col-6 text-right">
+        <btn-base
+          :color="filter ? 'negative' : 'warning'"
+          :label="$t('filter')"
+          :icon-right="filter ? 'fas fa-filter' : 'fas fa-filter-circle-xmark'"
+          @click="openFilter"
+        >
+        </btn-base>
+        <span>
+          <btn-base
+            label="+"
+            color="blue-8"
+            :disable="filterYear > new Date().getFullYear()"
+            @click="changeYear(1)"
+          ></btn-base>
+          <btn-base label="-" color="blue-5" @click="changeYear(-1)"></btn-base>
+          <q-tooltip>{{ $t('change') + ' ' + $t('year') }}</q-tooltip>
+        </span>
       </div>
     </div>
     <q-separator></q-separator>
@@ -64,6 +73,11 @@ const storeFilter = useTableFilterStore();
 const STATSSTORE = 'statistic_' + unref(kind);
 storeFilter.reset(STATSSTORE);
 const filter = computed(() => storeFilter.table(STATSSTORE) !== '');
+const filterYear = computed(() => storeFilter.field(STATSSTORE, 'year'));
+
+function changeYear(change: number) {
+  console.log(storeFilter.updateYear(STATSSTORE, change));
+}
 
 function openFilter() {
   $q.dialog({
