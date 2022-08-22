@@ -1,7 +1,7 @@
 <template>
-  <th>
+  <q-th :props="parentProp">
     {{ label }} <template v-if="sum > 0">[{{ sum }}]</template>
-  </th>
+  </q-th>
 </template>
 
 <script setup lang="ts">
@@ -10,6 +10,9 @@ import { round } from 'lodash-es';
 const sum = ref(0);
 
 const props = defineProps({
+  parentProp: {
+    required: true,
+  },
   label: {
     type: String,
     required: true,
