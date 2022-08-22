@@ -113,11 +113,7 @@ const multipleValues = computed(
 );
 const disable = ref(multipleValues.value);
 
-watch(values, () => {
-  setValues();
-});
-
-watch(reset, () => {
+watch([values, reset], () => {
   setValues();
 });
 
@@ -141,7 +137,7 @@ function editValues(val: boolean) {
 }
 
 function updateStart(val: string) {
-  if (dayjs(val) > dayjs(endValue.value)) endValue.value = val;
+  endValue.value = val;
 }
 function updateEnd(val: string) {
   if (dayjs(startValue.value) > dayjs(val)) startValue.value = val;
