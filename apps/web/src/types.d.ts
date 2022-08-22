@@ -175,6 +175,11 @@ export declare interface FormCharge {
   type: any;
 }
 
+export declare interface FormQueenHive {
+  move_date: string;
+  hive: any;
+}
+
 export declare interface FormQueen {
   name: string;
   date: string;

@@ -1,4 +1,4 @@
-import { compact, isArray, isEmpty, isNil, map, omitBy } from 'lodash-es';
+import { compact, isArray, isEmpty, map } from 'lodash-es';
 import { defineStore } from 'pinia';
 import { deepUnref } from '~/helpers/deep-unref';
 
@@ -51,13 +51,9 @@ export const useTableFilterStore = defineStore('tableFilter', {
       return (table: string, key: string) => {
         try {
           const values = JSON.parse(state[table]);
-          const fil = map(values, (o) => {
-            if (key === 'date' || key === 'queens.date') return o[key];
-            if (key in o) return o[key];
-            return null;
-          });
-          const clean = omitBy(fil, isNil);
-          return clean[0];
+          const fil = values.filter((o: any) => key in o);
+          if (fil) return fil[0][key];
+          return null;
         } catch (e) {
           return null;
         }
@@ -70,6 +66,32 @@ export const useTableFilterStore = defineStore('tableFilter', {
     },
   },
   actions: {
+    updateYear(table: string, change: number) {
+      let values;
+      try {
+        let found = false;
+        values = JSON.parse(this[table]);
+        values = map(values, (o) => {
+          if ('year' in o) {
+            found = true;
+            o['year'] = o['year'] + change;
+          }
+          return o;
+        });
+        if (!found)
+          values.push({
+            year: new Date().getFullYear() + change,
+          });
+      } catch (e) {
+        values = [
+          {
+            year: new Date().getFullYear() + change,
+          },
+        ];
+      }
+      this[table] = JSON.stringify(values);
+      return values;
+    },
     update(table: string, payload: any) {
       if (payload) {
         const array = map(payload, (o, key) => {

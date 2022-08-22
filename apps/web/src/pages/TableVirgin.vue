@@ -272,7 +272,7 @@ const {
   q: computed(() => (filter.value ? filter.value : '')),
   filters: '[{"queens.hive_id":"empty"}]',
   deleted: deleted,
-  modus: null,
+  modus: true,
   latest: null,
   details: true,
 });

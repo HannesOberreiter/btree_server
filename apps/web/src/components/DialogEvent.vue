@@ -2,19 +2,18 @@
   <q-dialog
     ref="dialogRef"
     :maximized="$q.platform.is.mobile"
-    style="min-width: 200px"
     data-cy="dialog-event"
     @hide="onDialogHide"
   >
-    <q-card>
+    <q-card style="min-width: 30%">
       <q-card-section>
+        <btn-close-dialog class="float-right"></btn-close-dialog>
         <div class="row">
           <div class="text-h6">
             <q-icon :name="eventInfo.icon"></q-icon>
             {{ eventInfo.title }}
           </div>
           <q-space />
-          <btn-close-dialog></btn-close-dialog>
         </div>
       </q-card-section>
       <q-card-section v-if="isVis" class="primary">
@@ -89,18 +88,22 @@
             >
               {{ t('edit') }}
             </btn-base>
-            <btn-base color="grey darken-1" @click="onDialogHide">
-              {{ t('close') }}
+            <btn-base
+              v-if="!isVis"
+              color="negative darken-1"
+              data-cy="btn-dialog-event-delete"
+              @click="deleteEvent"
+            >
+              {{ t('delete') }}
             </btn-base>
           </btn-base-group>
+
           <btn-base
-            v-if="!isVis"
-            color="negative darken-1"
+            color="grey darken-1"
             class="float-right"
-            data-cy="btn-dialog-event-delete"
-            @click="deleteEvent"
+            @click="onDialogHide"
           >
-            {{ t('delete') }}
+            {{ t('close') }}
           </btn-base>
         </div>
       </q-card-actions>

@@ -170,7 +170,7 @@ const links = [
         menu: false,
       },
       {
-        label: t('virgin', 2),
+        label: t('without') + ' ' + t('hive'),
         route: 'table-virgin',
         icon: 'fas fa-table',
         menu: false,

@@ -41,6 +41,7 @@
         </template>
         <template #header-cell-amount_sum="props">
           <table-th-sum
+            :parent-prop="props"
             :label="props.col.label"
             :name="props.col.name"
             :selected="selected"
@@ -48,6 +49,7 @@
         </template>
         <template #header-cell-frames_sum="props">
           <table-th-sum
+            :parent-prop="props"
             :label="props.col.label"
             :name="props.col.name"
             :selected="selected"
