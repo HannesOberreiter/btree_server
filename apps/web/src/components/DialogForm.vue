@@ -46,6 +46,9 @@ const FormMainMovement = defineAsyncComponent(
 );
 const FormMainTask = defineAsyncComponent(() => import('./FormMainTask.vue'));
 const FormMainQueen = defineAsyncComponent(() => import('./FormMainQueen.vue'));
+const FormMainQueenHive = defineAsyncComponent(
+  () => import('./FormMainQueenHive.vue')
+);
 const FormMainScaleData = defineAsyncComponent(
   () => import('./FormMainScaleData.vue')
 );
@@ -122,6 +125,12 @@ const layouts = {
   },
   queen: {
     comp: FormMainQueen,
+    props: {
+      selected: props.selected,
+    },
+  },
+  queen_hive: {
+    comp: FormMainQueenHive,
     props: {
       selected: props.selected,
     },

@@ -35,6 +35,17 @@
     </btn-base>
 
     <btn-base
+      v-if="['virgin'].includes(table)"
+      color="info"
+      :disable="selected.length === 1 ? false : true"
+      icon="fas fa-house"
+      data-cy="btn-table-virginToHive"
+      @click="onVirginToHive"
+    >
+      <q-tooltip>{{ $t('virginToHive') }}</q-tooltip>
+    </btn-base>
+
+    <btn-base
       v-if="
         [
           'hive',
@@ -334,6 +345,11 @@ function onMove() {
 function onAddQueen() {
   const ids = selected.value.map((o: any) => o.id);
   dialogForm('queen', null, 'queen', ids);
+}
+
+function onVirginToHive() {
+  const ids = selected.value.map((o: any) => o.id);
+  dialogForm('virginToHive', ids, 'queen_hive');
 }
 
 function onRestore() {

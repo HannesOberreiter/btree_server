@@ -75,6 +75,7 @@ declare module '@vue/runtime-core' {
     FormMainMovement: typeof import('./components/FormMainMovement.vue')['default']
     FormMainOption: typeof import('./components/FormMainOption.vue')['default']
     FormMainQueen: typeof import('./components/FormMainQueen.vue')['default']
+    FormMainQueenHive: typeof import('./components/FormMainQueenHive.vue')['default']
     FormMainRearing: typeof import('./components/FormMainRearing.vue')['default']
     FormMainRearingDetail: typeof import('./components/FormMainRearingDetail.vue')['default']
     FormMainRearingMethod: typeof import('./components/FormMainRearingMethod.vue')['default']
