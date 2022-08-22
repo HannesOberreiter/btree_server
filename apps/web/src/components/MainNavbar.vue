@@ -12,6 +12,23 @@
     <div class="col-9 col-sm-5 col-md-auto">
       <div class="q-gutter-md text-right">
         <btn-speak></btn-speak>
+        <template v-if="!$q.platform.is.mobile">
+          <btn-fullscreen></btn-fullscreen>
+          <btn-dark-mode></btn-dark-mode>
+        </template>
+        <btn-wake-lock></btn-wake-lock>
+        <btn-return></btn-return>
+        <btn-base
+          v-if="!$q.platform.is.mobile"
+          flat
+          dense
+          color="white"
+          size="md"
+          icon="fas fa-sign-out-alt"
+          @click="onLogout"
+        >
+          <q-tooltip>{{ $t('logout') }}</q-tooltip>
+        </btn-base>
         <q-btn-dropdown
           v-if="$q.platform.is.mobile"
           unelevated
@@ -29,14 +46,20 @@
                 <btn-share :show-path="false"></btn-share>
               </q-item-section>
             </q-item>
+            <q-item v-close-popup>
+              <q-item-section>
+                <btn-base
+                  flat
+                  dense
+                  color="white"
+                  size="md"
+                  icon="fas fa-sign-out-alt"
+                  @click="onLogout"
+                ></btn-base>
+              </q-item-section>
+            </q-item>
           </q-list>
         </q-btn-dropdown>
-        <template v-else>
-          <btn-fullscreen></btn-fullscreen>
-          <btn-dark-mode></btn-dark-mode>
-        </template>
-        <btn-wake-lock></btn-wake-lock>
-        <btn-return></btn-return>
       </div>
     </div>
   </div>
@@ -46,4 +69,8 @@
 import { useAuthUserStore } from '~/stores/auth';
 const storeUser = useAuthUserStore();
 const { company } = storeToRefs(storeUser);
+
+const onLogout = async () => {
+  await storeUser.logout();
+};
 </script>
