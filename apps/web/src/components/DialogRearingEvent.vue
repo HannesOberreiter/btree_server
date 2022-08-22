@@ -2,13 +2,13 @@
   <q-dialog ref="dialogRef" :maximized="true" @hide="onDialogHide">
     <q-card>
       <q-card-section>
+        <btn-close-dialog class="float-right"></btn-close-dialog>
         <div class="row">
           <span v-if="!isLoading">
             <q-icon :name="`fas fa-${data[0].symbol}`"></q-icon>
             ID: {{ data[0].name ? data[0].name : data[0].id }}
           </span>
           <q-space />
-          <btn-close-dialog></btn-close-dialog>
         </div>
         <div class="row full-width">
           <div v-if="isLoading" class="col-12">
