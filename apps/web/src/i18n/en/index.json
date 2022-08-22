@@ -62,6 +62,7 @@
   "coupon": "Coupon",
   "created": "Created",
   "credentials": "Credentials",
+  "csvUploadRequired": "Please see the table .csv export for field names. For task the field 'hive_id' is required.",
   "curatedLinks": "Curated links",
   "currentPageLink": "Here you can copy the current page url or use the QR code.",
   "darkMode": "Dark mode",
@@ -101,6 +102,8 @@
   "email": "Email",
   "error": {
     "access": "Access not allowed or wrong password!",
+    "csvReading": "Could not read csv file!",
+    "csvTooMuch": "Upload too big!",
     "duplicate": "Conflict, duplicate entry!",
     "forbidden": "Access forbidden or not allowed!",
     "localStorage": "Warning: This application needs access to your web browsers local storage to work properly.",
@@ -117,6 +120,7 @@
   },
   "error404": "Oops. Nothing here...",
   "errorNoFile": "Could not find or load the image.",
+  "example": "Example",
   "excludeHive": "Exclude Hive",
   "exportCSV": "Export (.csv)",
   "external": "External",
@@ -213,6 +217,8 @@
   "icalUrl": "iCal Url",
   "id": "ID",
   "identification": "Identification",
+  "import": "Import",
+  "importCSV": "Import (.csv)",
   "in": "Goods receipt",
   "inactive": "Inactive",
   "inactiveDate": "Inactive Date",
@@ -245,6 +251,7 @@
     "timeToLarvae": "Egg to larvae",
     "timeToTask": "To task"
   },
+  "line": "Line | Lines",
   "locationError": "Could not access your location.",
   "login": "Login",
   "logout": "Logout",
@@ -257,6 +264,7 @@
   "mated": "Mated",
   "mating": "Mating place",
   "max": "Max.",
+  "maxUpload": "Maximum upload is {msg} lines.",
   "membership": {
     "afterPayment": "After payment your premium access is extended to",
     "afterPremium": "After your premium runs out you can still work with all your created hives and colonies but limits apply again",
@@ -390,6 +398,7 @@
     "search": "Internet Search",
     "socialMedia": "Social Media"
   },
+  "rejectedFiles": "{count} Datei(en) sind nicht erlaubt.",
   "remove": "Remove",
   "removeAccess": "Remove access",
   "rename": "Rename",

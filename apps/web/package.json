@@ -27,6 +27,7 @@
     "@vueuse/core": "^9.1.0",
     "@vueuse/integrations": "^9.1.0",
     "@vueuse/sound": "^1.1.7",
+    "csv-parse": "^5.3.0",
     "csv-stringify": "^6.2.0",
     "d3-array": "^3.1.6",
     "dayjs": "^1.11.4",

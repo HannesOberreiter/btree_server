@@ -32,6 +32,7 @@ declare module '@vue/runtime-core' {
     DialogRearingEvent: typeof import('./components/DialogRearingEvent.vue')['default']
     DialogSelectOption: typeof import('./components/DialogSelectOption.vue')['default']
     DialogShare: typeof import('./components/DialogShare.vue')['default']
+    DialogUpload: typeof import('./components/DialogUpload.vue')['default']
     DialogVarroa: typeof import('./components/DialogVarroa.vue')['default']
     DrawerItem: typeof import('./components/DrawerItem.vue')['default']
     EventInfoRearing: typeof import('./components/EventInfoRearing.vue')['default']
@@ -135,5 +136,7 @@ declare module '@vue/runtime-core' {
     TableFilter: typeof import('./components/TableFilter.vue')['default']
     TableHeaderIcon: typeof import('./components/TableHeaderIcon.vue')['default']
     TableThSum: typeof import('./components/TableThSum.vue')['default']
+    UploadCsv: typeof import('./components/UploadCsv.vue')['default']
+    UploadCSV: typeof import('./components/UploadCSV.vue')['default']
   }
 }

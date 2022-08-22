@@ -155,6 +155,24 @@
             <q-item-label>{{ $t('exportCSV') }}</q-item-label>
           </q-item-section>
         </q-item>
+        <q-item
+          v-if="
+            storeUser.isAdmin &&
+            ['feed', 'harvest', 'treatment', 'checkup'].includes(table)
+          "
+          v-close-popup
+          clickable
+          @click="onImport"
+        >
+          <q-item-section avatar>
+            <q-avatar>
+              <q-icon name="fas fa-file-csv"></q-icon>
+            </q-avatar>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>{{ $t('importCSV') }}</q-item-label>
+          </q-item-section>
+        </q-item>
 
         <q-item v-close-popup clickable @click="onPrint">
           <q-item-section avatar>
@@ -255,6 +273,7 @@ import { useNotification } from '~/composables/useNotification';
 import { useTableFilterStore } from '~/stores/tableFilter';
 import DialogFilter from './DialogFilter.vue';
 import DialogForm from './DialogForm.vue';
+import DialogUpload from './DialogUpload.vue';
 import { useAuthUserStore } from '~/stores/auth';
 
 const storeFilter = useTableFilterStore();
@@ -422,6 +441,15 @@ function onExport() {
       icon: 'warning',
     });
   }
+}
+
+function onImport() {
+  $q.dialog({
+    component: DialogUpload,
+    componentProps: {
+      table: props.table,
+    },
+  });
 }
 
 function onPrint() {

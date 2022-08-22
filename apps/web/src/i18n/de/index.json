@@ -62,6 +62,7 @@
   "coupon": "Coupon",
   "created": "Erstellt",
   "credentials": "Zugangsdaten",
+  "csvUploadRequired": "Die benötigten Feldnamen sind im Tabellen .csv Export zu sehen. Bei den Aufgaben ist die Spalte 'hive_id' verpflichtend.",
   "curatedLinks": "Kuratierte Links",
   "currentPageLink": "Hier können Sie die aktuelle Seiten-URL kopieren oder den QR-Code verwenden.",
   "darkMode": "Nachtmodus",
@@ -101,6 +102,8 @@
   "email": "Email",
   "error": {
     "access": "Zugriff nicht erlaubt oder falsches Passwort!",
+    "csvReading": "Die csv Datei konnte nicht gelesen werden!",
+    "csvTooMuch": "Upload is zu groß!",
     "duplicate": "Konflikt, doppelter Eintrag!",
     "forbidden": "Zutritt verboten oder nicht erlaubt!",
     "localStorage": "Warnung: Diese Anwendung benötigt Zugriff auf den lokalen Speicher Ihres Webbrowsers, um ordnungsgemäß zu funktionieren.",
@@ -117,6 +120,7 @@
   },
   "error404": "Hoppla. Nichts hier...",
   "errorNoFile": "Das Bild konnte nicht gefunden oder geladen werden.",
+  "example": "Beispiel",
   "excludeHive": "Exklusive Stock",
   "exportCSV": "Exportieren (.csv)",
   "external": "Externe",
@@ -213,6 +217,8 @@
   "icalUrl": "iCal-URL",
   "id": "ID",
   "identification": "Identifikation",
+  "import": "Import",
+  "importCSV": "Import (.csv)",
   "in": "Wareneingang",
   "inactive": "Inaktiv",
   "inactiveDate": "Inaktivierungs Datum",
@@ -245,6 +251,7 @@
     "timeToLarvae": "Ei zu Larven",
     "timeToTask": "Zur Aufgabe"
   },
+  "line": "Zeile | Zeilen",
   "locationError": "Auf Ihren Standort konnte nicht zugegriffen werden.",
   "login": "Anmelden",
   "logout": "Ausloggen",
@@ -257,6 +264,7 @@
   "mated": "Verpaart",
   "mating": "Paarung",
   "max": "max.",
+  "maxUpload": "Maximum Upload sind {msg} Zeilen.",
   "membership": {
     "afterPayment": "Nach der Zahlung verlängert sich Ihr Premium-Zugang um",
     "afterPremium": "Nachdem Ihre Prämie abgelaufen ist, können Sie immer noch mit all Ihren erstellten Bienenstöcken und Ständen arbeiten, aber es gelten wieder Einschränkungen",
@@ -390,6 +398,7 @@
     "search": "Internetsuche",
     "socialMedia": "Sozialen Medien"
   },
+  "rejectedFiles": "{count} file(s) did not pass validation constraints.",
   "remove": "Entfernen",
   "removeAccess": "Zugriff entfernen",
   "rename": "Umbenennen",
