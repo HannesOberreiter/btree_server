@@ -15,13 +15,13 @@
         >
         </btn-base>
         <span>
+          <btn-base label="-" color="blue-5" @click="changeYear(-1)"></btn-base>
           <btn-base
             label="+"
             color="blue-8"
             :disable="filterYear > new Date().getFullYear()"
             @click="changeYear(1)"
           ></btn-base>
-          <btn-base label="-" color="blue-5" @click="changeYear(-1)"></btn-base>
           <q-tooltip>{{ $t('change') + ' ' + $t('year') }}</q-tooltip>
         </span>
       </div>
@@ -76,7 +76,7 @@ const filter = computed(() => storeFilter.table(STATSSTORE) !== '');
 const filterYear = computed(() => storeFilter.field(STATSSTORE, 'year'));
 
 function changeYear(change: number) {
-  console.log(storeFilter.updateYear(STATSSTORE, change));
+  storeFilter.updateYear(STATSSTORE, change);
 }
 
 function openFilter() {
