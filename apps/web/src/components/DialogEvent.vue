@@ -227,11 +227,4 @@ function editTask() {
     }
   }
 }
-
-function onRedirect(type: string, id: number) {
-  router.push({
-    name: `detail-${type}`,
-    params: { id: id },
-  });
-}
 </script>
