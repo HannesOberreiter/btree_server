@@ -84,7 +84,7 @@
   "dialogSelectOptionSelect": "Wählen Sie die Option aus, die Sie bearbeiten möchten:",
   "disease": "Erkrankung",
   "donation": "Spende",
-  "done": "Fertig",
+  "done": "Erledigt",
   "download": "Download",
   "drone": "Drohne",
   "dropbox": {
@@ -100,6 +100,7 @@
   "edited": "Bearbeitet",
   "egg": "Sift | Stifte",
   "email": "Email",
+  "end": "Ende",
   "error": {
     "access": "Zugriff nicht erlaubt oder falsches Passwort!",
     "csvReading": "Die csv Datei konnte nicht gelesen werden!",

@@ -23,52 +23,73 @@
         <event-info-rearing :event-info="eventInfo"></event-info-rearing>
       </q-card-section>
       <q-card-section v-else class="primary">
-        <p class="text-center text-h1">
-          <q-icon v-if="isMovement" size="35px" round :name="eventInfo.icon">
-          </q-icon>
+        <div class="row q-mb-sm">
+          <div class="col-12">
+            <div v-if="!isMovement">
+              <b>{{ $t('status') }}: </b>
+              <span @click="updateStatus()">{{
+                eventInfo.done ? $t('done') : $t('open')
+              }}</span>
+            </div>
+            <b>{{ $t('date') }}:</b>
+            {{ useDate.displayFormat(eventInfo.start) }}
+            <span
+              v-if="
+                useDate.toDayjs(eventInfo.end).subtract(1, 'day').format('L') !=
+                useDate.toDayjs(eventInfo.start).format('L')
+              "
+            >
+              <br /><b>{{ $t('end') }}:</b>
+              {{
+                useDate.displayFormat(
+                  useDate
+                    .toDayjs(eventInfo.end)
+                    .subtract(1, 'day')
+                    .toISOString()
+                )
+              }}
+            </span>
 
-          <btn-base
-            v-else
-            size="35px"
-            round
-            :color="eventInfo.done ? 'positive' : 'negative'"
-            :icon="
-              !eventInfo.done ? 'fas fa-times-circle' : 'fas fa-check-circle'
-            "
-            @click="updateStatus()"
-          >
-          </btn-base>
-        </p>
-        <p class="text-center pb-2">
-          {{ useDate.displayFormat(eventInfo.start) }}
-          <span v-if="!isMovement && !isTodo">
-            -
-            {{
-              useDate.displayFormat(
-                useDate.toDayjs(eventInfo.end).subtract(1, 'day').toISOString()
-              )
-            }}
-          </span>
-        </p>
-        <div v-if="!isTodo">
-          <span>
-            <q-tooltip v-if="eventInfo.hive_names.length > 20">
-              {{ eventInfo.hive_names }}
-            </q-tooltip>
-            <b>{{ t('hive', 2) }}:</b>
-            {{
-              truncate(eventInfo.hive_names, {
-                length: 20,
-              })
-            }}
-          </span>
-          <br />
-          <b>{{ t('apiary') }}:</b> {{ eventInfo.apiary_name }}
-          <br />
+            <div v-if="!isTodo">
+              <span v-if="eventInfo.hive_ids.split(',').length - 1 === 0">
+                <b>{{ t('hive') }}: </b>
+                <router-link
+                  :to="{
+                    name: 'detail-hive',
+                    params: { id: eventInfo.hive_ids },
+                  }"
+                >
+                  {{ eventInfo.hive_names }}
+                </router-link>
+              </span>
+              <span v-else>
+                <q-tooltip v-if="eventInfo.hive_names.length > 20">
+                  {{ eventInfo.hive_names }}
+                </q-tooltip>
+                <b>{{ t('hive', 2) }}:</b>
+                {{
+                  truncate(eventInfo.hive_names, {
+                    length: 20,
+                  })
+                }}
+              </span>
+              <br />
+              <b>{{ t('apiary') }}: </b>
+              <router-link
+                :to="{
+                  name: 'detail-apiary',
+                  params: { id: eventInfo.apiary_id },
+                }"
+              >
+                {{ eventInfo.apiary_name }}
+              </router-link>
+              <br />
+            </div>
+            <b>{{ t('created') }}:</b> {{ eventInfo.creators }}
+            <br />
+            <b>{{ t('edited') }}:</b> {{ eventInfo.editors }}
+          </div>
         </div>
-        <b>{{ t('created') }}:</b> {{ eventInfo.creators }}
-        <br />
-        <b>{{ t('edited') }}:</b> {{ eventInfo.editors }}
       </q-card-section>
 
       <q-card-actions>
@@ -205,5 +226,12 @@ function editTask() {
       router.push({ name: 'edit-quicktool', params: { task: task, ids: ids } });
     }
   }
+}
+
+function onRedirect(type: string, id: number) {
+  router.push({
+    name: `detail-${type}`,
+    params: { id: id },
+  });
 }
 </script>
