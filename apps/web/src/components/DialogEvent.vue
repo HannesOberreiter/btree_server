@@ -31,15 +31,17 @@
                 eventInfo.done ? $t('done') : $t('open')
               }}</span>
             </div>
-            <b>{{ $t('date') }}:</b>
-            {{ useDate.displayFormat(eventInfo.start) }}
-            <span
+            <div>
+              <b>{{ $t('date') }}:</b>
+              {{ useDate.displayFormat(eventInfo.start) }}
+            </div>
+            <div
               v-if="
                 useDate.toDayjs(eventInfo.end).subtract(1, 'day').format('L') !=
                 useDate.toDayjs(eventInfo.start).format('L')
               "
             >
-              <br /><b>{{ $t('end') }}:</b>
+              <b>{{ $t('end') }}:</b>
               {{
                 useDate.displayFormat(
                   useDate
@@ -48,10 +50,10 @@
                     .toISOString()
                 )
               }}
-            </span>
+            </div>
 
             <div v-if="!isTodo">
-              <span v-if="eventInfo.hive_ids.split(',').length - 1 === 0">
+              <div v-if="eventInfo.hive_ids.split(',').length - 1 === 0">
                 <b>{{ t('hive') }}: </b>
                 <router-link
                   :to="{
@@ -61,8 +63,8 @@
                 >
                   {{ eventInfo.hive_names }}
                 </router-link>
-              </span>
-              <span v-else>
+              </div>
+              <div v-else>
                 <q-tooltip v-if="eventInfo.hive_names.length > 20">
                   {{ eventInfo.hive_names }}
                 </q-tooltip>
@@ -72,22 +74,29 @@
                     length: 20,
                   })
                 }}
-              </span>
-              <br />
-              <b>{{ t('apiary') }}: </b>
-              <router-link
-                :to="{
-                  name: 'detail-apiary',
-                  params: { id: eventInfo.apiary_id },
-                }"
-              >
-                {{ eventInfo.apiary_name }}
-              </router-link>
-              <br />
+              </div>
+              <div>
+                <b>{{ t('apiary') }}: </b>
+                <router-link
+                  :to="{
+                    name: 'detail-apiary',
+                    params: { id: eventInfo.apiary_id },
+                  }"
+                >
+                  {{ eventInfo.apiary_name }}
+                </router-link>
+              </div>
             </div>
-            <b>{{ t('created') }}:</b> {{ eventInfo.creators }}
-            <br />
-            <b>{{ t('edited') }}:</b> {{ eventInfo.editors }}
+            <div v-if="eventInfo.creators">
+              <b>{{ t('created') }}:</b> {{ eventInfo.creators }}
+            </div>
+            <div
+              v-if="
+                eventInfo.editors && eventInfo.creators != eventInfo.editors
+              "
+            >
+              <b>{{ t('edited') }}:</b> {{ eventInfo.editors }}
+            </div>
           </div>
         </div>
       </q-card-section>
