@@ -38,7 +38,6 @@
 </template>
 
 <script setup lang="ts">
-import { filter, map } from 'lodash-es';
 import { useApiariesQuery, useHivesQuery } from '~/composables/useQuery';
 
 const { t } = useI18n();
@@ -59,8 +58,16 @@ const { isLoading: isLoadingApiary, data: apiaries } = useApiariesQuery({
 });
 
 const data = computed(() => {
-  let result = [...apiaries.value.results, ...hives.value.results];
-  return map(result, (obj) => {
+  let inactive = [
+    ...apiaries.value.results.filter((o: any) => o.modus === false),
+    ...hives.value.results.filter((o: any) => o.modus === false),
+  ];
+  let active = [
+    ...apiaries.value.results.filter((o: any) => o.modus === true),
+    ...hives.value.results.filter((o: any) => o.modus === true),
+  ];
+  let result = [...active, ...inactive];
+  return result.map((obj) => {
     let label =
       obj.modus === false ? obj.label + ' [' + t('inactive') + ']' : obj.label;
     label = obj.type === 'apiary' ? label + ' [' + t('apiary') + ']' : label;
@@ -73,7 +80,7 @@ function filterFn(val: any, update: any, _abort: any) {
     update(() => {
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       const needle = new RegExp(`(${val.toLowerCase()})`);
-      options.value = filter(data.value, (obj) =>
+      options.value = data.value.filter((obj) =>
         needle.test(obj.clabel.toLowerCase())
       );
     });

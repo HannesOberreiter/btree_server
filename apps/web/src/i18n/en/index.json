@@ -100,6 +100,7 @@
   "edited": "Edited",
   "egg": "Egg | Eggs",
   "email": "Email",
+  "end": "End",
   "error": {
     "access": "Access not allowed or wrong password!",
     "csvReading": "Could not read csv file!",

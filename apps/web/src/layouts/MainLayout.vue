@@ -27,11 +27,9 @@
     </q-drawer>
 
     <q-page-container>
-      <q-pull-to-refresh @refresh="onRefresh">
-        <div class="q-pa-xs">
-          <router-view />
-        </div>
-      </q-pull-to-refresh>
+      <div class="q-pa-xs">
+        <router-view />
+      </div>
       <q-page-scroller position="bottom" :scroll-offset="500" :offset="[0, 10]">
         <q-btn icon="fas fa-arrow-up" color="info" round />
       </q-page-scroller>
@@ -53,8 +51,6 @@ import MainFooter from '~/components/MainFooter.vue';
 import { useMeta } from 'quasar';
 import { onBeforeRouteLeave, onBeforeRouteUpdate } from 'vue-router';
 import { usePreventNavigation } from '~/composables/usePreventNavgiation';
-import { clearCache } from '~/composables/useQuery';
-import { useRefreshStore } from '~/stores/refresh';
 
 const usePrevent = usePreventNavigation();
 const leftDrawerOpen = ref(false);
@@ -65,7 +61,6 @@ const { t } = useI18n();
 
 storeUser.updateLang();
 useQuasarLang($q);
-const storeRefresh = useRefreshStore();
 
 useMeta(() => {
   return {
@@ -77,13 +72,6 @@ useMeta(() => {
 
 const toggleLeftDrawer = () => {
   leftDrawerOpen.value = !leftDrawerOpen.value;
-};
-
-const onRefresh = async (done: any) => {
-  await storeRefresh.refresh();
-  clearCache();
-  window.location.reload();
-  done();
 };
 
 onBeforeRouteLeave(() => {
