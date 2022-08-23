@@ -136,6 +136,7 @@ declare module '@vue/runtime-core' {
     TableFilter: typeof import('./components/TableFilter.vue')['default']
     TableHeaderIcon: typeof import('./components/TableHeaderIcon.vue')['default']
     TableThSum: typeof import('./components/TableThSum.vue')['default']
+    TooltipBase: typeof import('./components/TooltipBase.vue')['default']
     UploadCsv: typeof import('./components/UploadCsv.vue')['default']
     UploadCSV: typeof import('./components/UploadCSV.vue')['default']
   }

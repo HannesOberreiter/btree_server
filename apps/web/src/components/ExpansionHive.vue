@@ -67,7 +67,7 @@
               ${$t('created')}:
               ${useDate.isoFormat(data.firstMovedate.date)}
             `"
-            ><q-tooltip>{{ $t('hintHiveFirstMovedate') }}</q-tooltip>
+            ><tooltip-base>{{ $t('hintHiveFirstMovedate') }}</tooltip-base>
           </q-chip>
           <q-chip
             v-if="!data.modus"

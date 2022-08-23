@@ -22,7 +22,7 @@
             :disable="filterYear > new Date().getFullYear()"
             @click="changeYear(1)"
           ></btn-base>
-          <q-tooltip>{{ $t('change') + ' ' + $t('year') }}</q-tooltip>
+          <tooltip-base>{{ $t('change') + ' ' + $t('year') }}</tooltip-base>
         </span>
       </div>
     </div>

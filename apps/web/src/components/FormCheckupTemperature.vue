@@ -36,13 +36,13 @@
         "
         @click="getTemperature(true)"
       >
-        <q-tooltip>
+        <tooltip-base>
           {{
             storeUser.getPaidStatus.status
               ? $t('temperatureTooltip')
               : $t('error.premium')
           }}
-        </q-tooltip>
+        </tooltip-base>
       </q-icon>
     </template>
   </form-input-numeric>

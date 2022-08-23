@@ -27,7 +27,9 @@
           icon="fas fa-sign-out-alt"
           @click="onLogout"
         >
-          <q-tooltip>{{ $t('logout') }}</q-tooltip>
+          <tooltip-base anchor="bottom middle" self="top middle">
+            {{ $t('logout') }}
+          </tooltip-base>
         </btn-base>
         <q-btn-dropdown
           v-if="$q.platform.is.mobile"

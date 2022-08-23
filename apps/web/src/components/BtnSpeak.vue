@@ -10,7 +10,9 @@
     icon="fas fa-microphone"
     @click="onStart"
   >
-    <q-tooltip>{{ $t('speech.tooltip') }} (s)</q-tooltip>
+    <tooltip-base anchor="bottom middle" self="top middle">
+      {{ $t('speech.tooltip') }} (s)
+    </tooltip-base>
   </btn-base>
 </template>
 

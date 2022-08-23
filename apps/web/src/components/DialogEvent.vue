@@ -65,9 +65,9 @@
                 </router-link>
               </div>
               <div v-else>
-                <q-tooltip v-if="eventInfo.hive_names.length > 20">
+                <tooltip-base v-if="eventInfo.hive_names.length > 20">
                   {{ eventInfo.hive_names }}
-                </q-tooltip>
+                </tooltip-base>
                 <b>{{ t('hive', 2) }}:</b>
                 {{
                   truncate(eventInfo.hive_names, {

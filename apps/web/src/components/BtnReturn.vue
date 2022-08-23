@@ -8,9 +8,16 @@
     color="white"
     size="md"
     icon="fas fa-backward-step"
-    @click="router.replace({name: storeRouter.$state.previous as any,  params: storeRouter.$state.params as any})"
+    @click="
+      router.replace({
+        name: storeRouter.$state.previous as any,
+        params: storeRouter.$state.params as any,
+      })
+    "
   >
-    <q-tooltip>{{ $t('previousPage') }}</q-tooltip>
+    <tooltip-base anchor="bottom middle" self="top middle">
+      {{ $t('previousPage') }}
+    </tooltip-base>
   </btn-base>
 </template>
 

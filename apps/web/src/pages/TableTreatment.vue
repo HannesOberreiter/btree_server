@@ -84,9 +84,9 @@
         <template #body-cell-vet.name="props">
           <q-td v-if="props.value">
             {{ props.value }}
-            <q-tooltip v-if="props.row.vet.note">
+            <tooltip-base v-if="props.row.vet.note">
               {{ props.row.vet.note }}
-            </q-tooltip>
+            </tooltip-base>
           </q-td>
           <q-td v-else></q-td>
         </template>

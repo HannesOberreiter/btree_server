@@ -8,7 +8,9 @@
     :icon="isActive ? 'fas fa-eye' : 'far fa-eye'"
     @click="isActive ? release() : request('screen')"
   >
-    <q-tooltip> {{ $t('keepAwake') }} {{ $t(isActive + '') }} </q-tooltip>
+    <tooltip-base anchor="bottom middle" self="top middle">
+      {{ $t('keepAwake') }} {{ $t(isActive + '') }}
+    </tooltip-base>
   </btn-base>
 </template>
 

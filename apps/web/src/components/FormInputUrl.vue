@@ -17,10 +17,10 @@
         class="q-pr-sm"
         @click="modelValue = ''"
       >
-        <q-tooltip>{{ $t('clearField') }}</q-tooltip>
+        <tooltip-base>{{ $t('clearField') }}</tooltip-base>
       </q-icon>
       <q-icon name="fas fa-file-pen" style="cursor: pointer" @click="inputUrl">
-        <q-tooltip>{{ $t('inputUrl') }}</q-tooltip>
+        <tooltip-base>{{ $t('inputUrl') }}</tooltip-base>
       </q-icon>
       <q-icon
         name="fas fa-upload"
@@ -28,10 +28,10 @@
         class="q-pr-sm"
         @click="uploadFile"
       >
-        <q-tooltip>{{ $t('uploadFile') }}</q-tooltip>
+        <tooltip-base>{{ $t('uploadFile') }}</tooltip-base>
       </q-icon>
       <q-icon name="fab fa-dropbox" style="cursor: pointer" @click="selectFile">
-        <q-tooltip>{{ $t('selectFile') }}</q-tooltip>
+        <tooltip-base>{{ $t('selectFile') }}</tooltip-base>
       </q-icon>
     </template>
   </form-input-text>

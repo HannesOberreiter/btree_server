@@ -2,14 +2,14 @@
   <q-item>
     <q-item-section avatar>
       <q-icon name="fas fa-circle" :color="colorStatus">
-        <q-tooltip> {{ $t('connectionStatus') }} </q-tooltip>
+        <tooltip-base> {{ $t('connectionStatus') }} </tooltip-base>
       </q-icon>
     </q-item-section>
     <q-item-section v-if="offlineServer">
       {{ $t('offlineServer') }}
     </q-item-section>
     <q-item-section v-else-if="onlineUser">
-      <q-tooltip> {{ time }} ms </q-tooltip>
+      <tooltip-base> {{ time }} ms </tooltip-base>
       {{ $t('online') }}
     </q-item-section>
     <q-item-section v-else> {{ $t('offlineUser') }}</q-item-section>

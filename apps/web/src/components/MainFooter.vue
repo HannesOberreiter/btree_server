@@ -15,7 +15,7 @@
       icon="fas fa-circle-question"
       size="sm"
       @click="showInfo = !showInfo"
-      ><q-tooltip>{{ $t('help.name') }} (h)</q-tooltip></btn-base
+      ><tooltip-base>{{ $t('help.name') }} (h)</tooltip-base></btn-base
     >
     <btn-share :show-path="true"></btn-share>
   </q-toolbar>
