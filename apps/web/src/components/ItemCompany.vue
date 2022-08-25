@@ -4,7 +4,7 @@
       <q-icon :name="getPaidStatus.icon"></q-icon>
     </q-item-section>
 
-    <q-item-section>
+    <q-item-section class="text-caption">
       {{ $t('paid') }}: {{ useDate.displayFormat(getPaidStatus.date) }}
       <br />
       {{ $t('status') }}: {{ getPaidStatus.name }}

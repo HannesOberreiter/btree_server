@@ -1,3 +1,12 @@
+$font-fallback: '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Helvetica',
+  Arial, 'sans-serif', 'Apple Color Emoji', 'Segoe UI Emoji';
+$font-body: 'Roboto', 'system-ui', $font-fallback;
+$font-mono: Courier, Monaco, 'Courier New', monospace, $font-fallback;
+
+body {
+  font-family: $font-body;
+}
+
 .no-padding {
   padding: 0px;
 }

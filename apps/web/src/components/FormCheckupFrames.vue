@@ -11,9 +11,8 @@
         <q-card-section>
           <template v-for="(_value, index) of modelValue" :key="index">
             <div class="row q-pb-xs">
-              <div class="col-3">{{ $t('frames.' + index) }}</div>
-              <div class="col-9">
-                {{ index }}
+              <div class="col-4">{{ $t('frames.' + index) }}</div>
+              <div class="col-8">
                 <q-slider
                   v-model="modelValue[index]"
                   :error="v[index].$error"

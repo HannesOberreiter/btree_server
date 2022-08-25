@@ -15,7 +15,8 @@ const props = defineProps({
 });
 
 let value = replace(props.news, /- /g, '');
-value = replace(value, /<br\/>,/g, '<br/>');
+value = replace(value, /<br\/>/g, '');
+value = replace(value, /(,(?=\S)|:)/g, '<br/>');
 value = replace(value, /VISUAL/g, '<b>VISUAL</b>');
 value = replace(value, /BUGFIX/g, '<b>BUGFIX</b>');
 value = replace(value, /UPDATE/g, '<b>UPDATE</b>');

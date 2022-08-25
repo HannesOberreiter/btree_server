@@ -1,5 +1,5 @@
 <template>
-  <q-item>
+  <q-item class="text-caption">
     <q-item-section avatar>
       <q-icon name="fas fa-circle" :color="colorStatus">
         <tooltip-base> {{ $t('connectionStatus') }} </tooltip-base>

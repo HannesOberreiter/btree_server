@@ -31,7 +31,7 @@
         <router-view />
       </div>
       <q-page-scroller position="bottom" :scroll-offset="500" :offset="[0, 10]">
-        <q-btn icon="fas fa-arrow-up" color="info" round />
+        <q-btn icon="fas fa-arrow-up" color="info" round style="opacity: 0.6" />
       </q-page-scroller>
     </q-page-container>
 

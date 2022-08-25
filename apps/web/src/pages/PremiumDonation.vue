@@ -124,6 +124,9 @@
               {{ $t('membership.perksTemperature') }}
             </li>
             <li>
+              {{ $t('membership.perksStats') }}
+            </li>
+            <li>
               {{ $t('membership.perksSupport') }}
             </li>
           </ul>
