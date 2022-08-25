@@ -24,10 +24,12 @@ export class FieldSettingController extends Controller {
     const trx = await FieldSetting.startTransaction();
     try {
       const settings = JSON.parse(req.body.settings);
-      const current = await FieldSetting.query().findById(req.user.bee_id);
+      const current = await FieldSetting.query()
+        .first()
+        .where('bee_id', req.user.bee_id);
       if (current) {
         await FieldSetting.query(trx)
-          .findById(req.user.bee_id)
+          .where('bee_id', req.user.bee_id)
           .patch({ settings: settings });
       } else {
         await FieldSetting.query(trx).insert({
