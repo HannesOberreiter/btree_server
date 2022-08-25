@@ -16,7 +16,7 @@
                   :label="
                     $t('setting.hint' + capitalize(index) + capitalize(j))
                   "
-                  :disable="isSubmitting"
+                  :disable="isSubmitting || isLoading"
                   @update:model-value="onSubmit"
                 />
               </div>
@@ -51,6 +51,9 @@ const { settings } = storeToRefs(storeFields);
 const api = useApiFetch();
 
 const isSubmitting = ref(false);
+const isLoading = ref(true);
+
+onMounted(() => storeFields.reload().then(() => (isLoading.value = false)));
 
 const onReset = () => {
   settings.value = storeFields.reset();

@@ -16,11 +16,13 @@ class RefreshService {
     }
   }
   user(api: any) {
+    console.log('Refreshing User from DB...');
     return api.get('/v1/user/', '').then((response: any) => {
       useAuthUserStore().refresh(response);
     });
   }
   fieldsetting(api: any) {
+    console.log('Refreshing Field Settings from DB...');
     return api.get('/v1/fieldsetting/', '').then((response: any) => {
       useFieldsettingStore().refresh(response);
     });
