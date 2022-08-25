@@ -14,7 +14,8 @@
   ],
   "typescript.tsdk": "node_modules/typescript/lib",
   "conventionalCommits.scopes": [
-    "alpha"
+    "alpha",
+    "beta"
   ],
   "json.schemas": [
     {
