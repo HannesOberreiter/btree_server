@@ -11,8 +11,8 @@
         <q-card-section>
           <template v-for="(_value, index) of modelValue" :key="index">
             <div class="row q-pb-xs">
-              <div class="col-3">{{ $t('rating.' + index) }}</div>
-              <div class="col-9">
+              <div class="col-4">{{ $t('rating.' + index) }}</div>
+              <div class="col-8">
                 <q-rating
                   v-model="modelValue[index]"
                   :error="v[index].$error"
