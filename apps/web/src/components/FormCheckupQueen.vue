@@ -3,7 +3,10 @@
     class="row q-field--labeled"
     :class="$q.dark.isActive ? 'q-field--dark' : 'q-field'"
   >
-    <div class="q-field__before q-field__marginal items-center">
+    <div
+      class="q-field__before q-field__marginal items-center"
+      :class="$q.screen.gt.sm ? '' : 'col-1'"
+    >
       <q-icon v-if="!multipleValues" name="fas fa-venus"></q-icon>
       <btn-multiple-values
         v-else
@@ -11,7 +14,7 @@
         @click="editValues(!disable)"
       ></btn-multiple-values>
     </div>
-    <div>
+    <div :class="$q.screen.gt.sm ? '' : 'col-11'">
       <q-option-group
         v-model="modelValue"
         :options="options"

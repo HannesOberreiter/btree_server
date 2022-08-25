@@ -1,5 +1,8 @@
 import { defineStore } from 'pinia';
 import { useStorage } from '@vueuse/core';
+import refreshService from '~/services/refresh.service';
+import { useApiFetch } from '~/composables/useApi';
+
 interface Checkup {
   rating: boolean;
   queen: boolean;
@@ -83,6 +86,10 @@ export const useFieldsettingStore = defineStore('fieldsetting', {
       if (data) {
         this.settings = data.settings;
       }
+    },
+    async reload() {
+      const api = useApiFetch();
+      return await refreshService.fieldsetting(api);
     },
   },
 });

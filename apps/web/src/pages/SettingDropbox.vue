@@ -3,14 +3,13 @@
     <global-loading></global-loading>
   </q-card>
   <q-card v-else data-cy="page-setting-dropbox">
-    <q-card-section v-if="resetInit && account">
-      <div class="text-h5">
+    <q-card-section v-if="!resetInit && account">
+      <div class="text-h6">
         <q-icon name="fab fa-dropbox"></q-icon> {{ $t('account') }}:
         {{ account.email }}
       </div>
 
       <div class="text-caption">
-        {{ $t('dropbox.text') }}
         <a href="https://www.dropbox.com/account/connected_apps">
           https://www.dropbox.com/account/connected_apps
         </a>

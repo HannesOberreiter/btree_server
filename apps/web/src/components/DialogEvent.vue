@@ -1,10 +1,5 @@
 <template>
-  <q-dialog
-    ref="dialogRef"
-    :maximized="$q.platform.is.mobile"
-    data-cy="dialog-event"
-    @hide="onDialogHide"
-  >
+  <q-dialog ref="dialogRef" data-cy="dialog-event" @hide="onDialogHide">
     <q-card style="min-width: 30%">
       <q-card-section>
         <btn-close-dialog class="float-right"></btn-close-dialog>
@@ -114,17 +109,19 @@
             <btn-base
               v-if="!isVis && !isRearings"
               color="green darken-1"
+              icon="fas fa-pen"
               @click="editTask()"
             >
-              {{ t('edit') }}
+              <tooltip-base>{{ t('edit') }}</tooltip-base>
             </btn-base>
             <btn-base
               v-if="!isVis"
               color="negative darken-1"
               data-cy="btn-dialog-event-delete"
+              icon="fas fa-trash"
               @click="deleteEvent"
             >
-              {{ t('delete') }}
+              <tooltip-base>{{ t('delete') }}</tooltip-base>
             </btn-base>
           </btn-base-group>
 

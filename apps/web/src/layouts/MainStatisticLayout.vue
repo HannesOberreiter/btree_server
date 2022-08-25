@@ -7,23 +7,30 @@
         </div>
       </div>
       <div class="col-6 text-right">
-        <btn-base
-          :color="filter ? 'negative' : 'warning'"
-          :label="$t('filter')"
-          :icon-right="filter ? 'fas fa-filter' : 'fas fa-filter-circle-xmark'"
-          @click="openFilter"
-        >
-        </btn-base>
-        <span>
-          <btn-base label="-" color="blue-5" @click="changeYear(-1)"></btn-base>
+        <btn-base-group>
+          <btn-base
+            :color="filter ? 'negative' : 'warning'"
+            :label="$t('filter')"
+            :icon-right="
+              filter ? 'fas fa-filter' : 'fas fa-filter-circle-xmark'
+            "
+            @click="openFilter"
+          >
+          </btn-base>
+          <btn-base
+            :disable="tab === 'year'"
+            label="-"
+            color="blue-5"
+            @click="changeYear(-1)"
+          ></btn-base>
           <btn-base
             label="+"
             color="blue-8"
-            :disable="filterYear > new Date().getFullYear()"
+            :disable="filterYear > new Date().getFullYear() || tab === 'year'"
             @click="changeYear(1)"
           ></btn-base>
           <tooltip-base>{{ $t('change') + ' ' + $t('year') }}</tooltip-base>
-        </span>
+        </btn-base-group>
       </div>
     </div>
     <q-separator></q-separator>
