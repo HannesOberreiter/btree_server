@@ -274,6 +274,7 @@
     "perksAPI": "Get access to the API (ical, hive scales)",
     "perksApiaries": "Create up to 100 apiaries",
     "perksHives": "Create up to 1.000 hives",
+    "perksStats": "Access to responsive statistics",
     "perksSupport": "Support software development and keep the service running",
     "perksTemperature": "On checkup temperature field is automatically filled",
     "thankYou": "Thank you for your contribution. The premium time should be added automatically otherwise try to login or logout. If any problems occured, to not hesitated to contact us at {'office@btree.at'}",
