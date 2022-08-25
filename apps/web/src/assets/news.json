@@ -7,7 +7,8 @@
         "- BUGFIX field settings should now be saved correctly per user",
         "- VISUAL MOBILE calendar events are not anymore fullscreen",
         "- VISUAL checkup form on small screen size queen checkups in two rows",
-        "- VISUAL checkup form more space for rating text"
+        "- VISUAL checkup form more space for rating text",
+        "- VISUAL statistic year change buttons are now disabled if all year are shown"
       ]
     },
     {
