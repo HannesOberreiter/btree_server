@@ -2,9 +2,10 @@
   "aaData": [
     {
       "version": "6.0.1",
-      "date": "2022-08-XX",
+      "date": "2022-08-25",
       "news": [
         "- BUGFIX field settings should now be saved correctly per user",
+        "- BUGFIX german translations",
         "- VISUAL MOBILE calendar events are not anymore fullscreen",
         "- VISUAL checkup form on small screen size queen checkups in two rows",
         "- VISUAL checkup form more space for rating text",
