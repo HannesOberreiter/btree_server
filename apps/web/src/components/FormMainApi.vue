@@ -68,7 +68,7 @@
               download
               icon="fas fa-archive"
             >
-              <q-tooltip>{{ $t('icalDownload') }}</q-tooltip>
+              <tooltip-base>{{ $t('icalDownload') }}</tooltip-base>
             </btn-base>
           </div>
         </div>

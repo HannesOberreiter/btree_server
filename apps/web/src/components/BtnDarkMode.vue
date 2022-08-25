@@ -8,8 +8,16 @@
     :icon="$q.dark.isActive ? 'fas fa-moon' : 'fas fa-sun'"
     @click="setDarkMode"
   >
-    <q-tooltip v-if="$q.dark.isActive">{{ $t('darkMode') }}</q-tooltip>
-    <q-tooltip else>{{ $t('dayMode') }}</q-tooltip>
+    <tooltip-base
+      v-if="$q.dark.isActive"
+      anchor="bottom middle"
+      self="top middle"
+    >
+      {{ $t('darkMode') }}
+    </tooltip-base>
+    <tooltip-base anchor="bottom middle" self="top middle" else>
+      {{ $t('dayMode') }}
+    </tooltip-base>
   </btn-base>
 </template>
 

@@ -4,7 +4,7 @@
     :color="disable ? '' : 'secondary'"
     style="cursor: pointer"
   >
-    <q-tooltip> {{ $t('multipleValuesText') }} </q-tooltip>
+    <tooltip-base> {{ $t('multipleValuesText') }} </tooltip-base>
   </q-icon>
 </template>
 

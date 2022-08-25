@@ -7,9 +7,9 @@
       icon="fas fa-arrow-left"
       @click="redirect(data.sameLocation[sameLocationIndex.previous].id)"
     >
-      <q-tooltip>
+      <tooltip-base>
         {{ data.sameLocation[sameLocationIndex.previous].name }}
-      </q-tooltip>
+      </tooltip-base>
     </btn-base>
     <btn-base
       v-if="sameLocationIndex.next"
@@ -18,9 +18,9 @@
       icon="fas fa-arrow-right"
       @click="redirect(data.sameLocation[sameLocationIndex.next].id)"
     >
-      <q-tooltip>
+      <tooltip-base>
         {{ data.sameLocation[sameLocationIndex.next].name }}
-      </q-tooltip>
+      </tooltip-base>
     </btn-base>
   </div>
 </template>

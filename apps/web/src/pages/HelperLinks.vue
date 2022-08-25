@@ -20,7 +20,7 @@
                       length: 25,
                     })
                   }}
-                  <q-tooltip>{{ link.url }}</q-tooltip>
+                  <tooltip-base>{{ link.url }}</tooltip-base>
                 </a>
               </q-item-label>
               <q-item-label caption class="text-justify">

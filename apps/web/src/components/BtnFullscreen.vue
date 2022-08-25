@@ -9,7 +9,9 @@
     :icon="isFullscreen ? 'fas fa-compress' : 'fas fa-expand'"
     @click="toggle()"
   >
-    <q-tooltip>{{ $t('fullscreen') }}</q-tooltip>
+    <tooltip-base anchor="bottom middle" self="top middle">
+      {{ $t('fullscreen') }}
+    </tooltip-base>
   </btn-base>
 </template>
 

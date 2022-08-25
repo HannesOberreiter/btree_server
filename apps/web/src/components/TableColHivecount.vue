@@ -4,9 +4,9 @@
 
     <span v-if="hivecount.grouphivescount > 0">
       [{{ hivecount.grouphivescount }}]
-      <q-tooltip>
+      <tooltip-base>
         {{ $t('hivecountTooltip') }}
-      </q-tooltip>
+      </tooltip-base>
     </span>
   </q-td>
   <q-td v-else></q-td>

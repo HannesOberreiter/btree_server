@@ -43,9 +43,9 @@
           color="secondary"
           @click="onDownload(service, file)"
         >
-          <q-tooltip v-if="file">
+          <tooltip-base v-if="file">
             {{ round(file.size / 1e6, 1) + ' MB' }}
-          </q-tooltip>
+          </tooltip-base>
         </btn-base>
       </q-card-actions>
     </q-card>

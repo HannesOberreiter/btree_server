@@ -14,7 +14,7 @@
       data-cy="btn-table-new"
       @click="onNew"
     >
-      <q-tooltip>{{ $t('add') }}</q-tooltip>
+      <tooltip-base>{{ $t('add') }}</tooltip-base>
     </btn-base>
     <btn-base
       v-if="
@@ -31,7 +31,7 @@
       data-cy="btn-table-edit"
       @click="onEdit"
     >
-      <q-tooltip>{{ $t('edit') }}</q-tooltip>
+      <tooltip-base>{{ $t('edit') }}</tooltip-base>
     </btn-base>
 
     <btn-base
@@ -42,7 +42,7 @@
       data-cy="btn-table-virginToHive"
       @click="onVirginToHive"
     >
-      <q-tooltip>{{ $t('virginToHive') }}</q-tooltip>
+      <tooltip-base>{{ $t('virginToHive') }}</tooltip-base>
     </btn-base>
 
     <btn-base
@@ -102,7 +102,7 @@
       :icon-right="filter ? 'fas fa-filter' : 'fas fa-filter-circle-xmark'"
       @click="openFilter"
     >
-      <q-tooltip>{{ $t('filter') }}</q-tooltip>
+      <tooltip-base>{{ $t('filter') }}</tooltip-base>
     </btn-base>
 
     <table-button-scale v-if="table === 'scale_data'" @change="emit('change')">

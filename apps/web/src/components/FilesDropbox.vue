@@ -10,7 +10,7 @@
       :label="`${$t('folder')}: ${useDropbox.state.path}`"
       @click="changeFolder('')"
     >
-      <q-tooltip>{{ $t('back') }}</q-tooltip>
+      <tooltip-base>{{ $t('back') }}</tooltip-base>
     </btn-base>
     <q-table
       v-if="useDropbox.state.folder"
@@ -51,9 +51,9 @@
                 :label="props.row.name"
                 @click="showFile(props.row.id)"
               >
-                <q-tooltip>
+                <tooltip-base>
                   {{ round(props.row.size / 1e6, 1) + ' MB' }}
-                </q-tooltip>
+                </tooltip-base>
               </btn-base>
               <div class="text-caption">
                 {{
