@@ -5,7 +5,9 @@
       "date": "2022-08-XX",
       "news": [
         "- BUGFIX field settings should now be saved correctly per user",
-        "- VISUAL MOBILE calendar events are not anymore fullscreen"
+        "- VISUAL MOBILE calendar events are not anymore fullscreen",
+        "- VISUAL checkup form on small screen size queen checkups in two rows",
+        "- VISUAL checkup form more space for rating text"
       ]
     },
     {
