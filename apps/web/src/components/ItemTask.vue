@@ -58,7 +58,7 @@
               <span v-if="task.vet.note">({{ task.vet.note }})</span>
             </div>
             <div v-if="fields.settings.treatment.wait">
-              <b>{{ $t('wait') }}:</b> {{ task.wait }}
+              <b>{{ $t('waitTime') }}:</b> {{ task.wait }}
             </div>
           </div>
           <div v-else-if="task.kind === 'checkup'" class="col-12">

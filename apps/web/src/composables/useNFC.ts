@@ -149,7 +149,7 @@ const useNFC = () => {
       return Promise.resolve(false);
     }
     if (!navigator.permissions) {
-      notification.open('negative', 'permission.navigator');
+      notification.open('negative', 'error.permission');
       return Promise.resolve(false);
     } else {
       const nfcPermissionStatus = await navigator.permissions.query({
