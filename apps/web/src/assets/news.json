@@ -1,6 +1,14 @@
 {
   "aaData": [
     {
+      "version": "6.0.1",
+      "date": "2022-08-XX",
+      "news": [
+        "- BUGFIX field settings should now be saved correctly per user",
+        "- VISUAL MOBILE calendar events are not anymore fullscreen"
+      ]
+    },
+    {
       "version": "6.0.0",
       "date": "2022-08-23",
       "news": [
