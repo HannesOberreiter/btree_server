@@ -6,7 +6,7 @@
     "strictNullChecks": false,
     "forceConsistentCasingInFileNames": true,
     "types": [
-      "@intlify/vite-plugin-vue-i18n/client",
+      "@intlify/vite-plugin-vue-i18n",
       "@quasar/quasar-app-extension-testing-e2e-cypress"
     ],
     "baseUrl": ".",
