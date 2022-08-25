@@ -34,11 +34,19 @@
                 }}
               </div>
               <btn-base-group v-if="!select" outline size="sm">
-                <btn-base @click="() => renameFile(props.row)">
-                  {{ $t('rename') }}
+                <btn-base
+                  size="sm"
+                  icon="fas fa-pen"
+                  @click="() => renameFile(props.row)"
+                >
+                  <tooltip-base>{{ $t('rename') }}</tooltip-base>
                 </btn-base>
-                <btn-base @click="() => deleteFile(props.row)">
-                  {{ $t('delete') }}
+                <btn-base
+                  size="sm"
+                  icon="fas fa-trash"
+                  @click="() => deleteFile(props.row)"
+                >
+                  <tooltip-base>{{ $t('delete') }}</tooltip-base>
                 </btn-base>
               </btn-base-group>
             </q-card-section>
