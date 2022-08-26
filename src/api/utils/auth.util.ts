@@ -35,7 +35,7 @@ const generateRefreshToken = async (
       expires: expires,
     });
 
-    await User.query(trx).patch({
+    await User.query(trx).findById(bee_id).patch({
       saved_company: user_id,
     });
 
@@ -47,7 +47,11 @@ const generateRefreshToken = async (
   }
 };
 
-const updateRefreshToken = async (oldToken: any, user_id: number) => {
+const updateRefreshToken = async (
+  oldToken: any,
+  user_id: number,
+  bee_id: number
+) => {
   const trx = await RefreshToken.startTransaction();
 
   try {
@@ -64,7 +68,7 @@ const updateRefreshToken = async (oldToken: any, user_id: number) => {
       }
     );
 
-    await User.query(trx).patch({
+    await User.query(trx).findById(bee_id).patch({
       saved_company: user_id,
     });
 
@@ -120,7 +124,11 @@ const checkRefreshToken = async (
 
   let refreshToken;
   if (dbCheck) {
-    refreshToken = await updateRefreshToken(dbCheck, decoded.user_id);
+    refreshToken = await updateRefreshToken(
+      dbCheck,
+      decoded.user_id,
+      decoded.bee_id
+    );
   } else {
     throw unauthorized('Refresh Token not found!');
   }
@@ -188,7 +196,7 @@ const generateTokenResponse = async (
 
   let refreshToken;
   if (oldToken) {
-    refreshToken = await updateRefreshToken(oldToken, user_id);
+    refreshToken = await updateRefreshToken(oldToken, user_id, bee_id);
   } else {
     refreshToken = await generateRefreshToken(bee_id, user_id, userAgent);
   }
