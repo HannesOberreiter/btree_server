@@ -2,11 +2,10 @@
   <q-dialog data-cy="dialog-calendar-setting">
     <q-card>
       <q-card-section>
+        <btn-close-dialog class="float-right"></btn-close-dialog>
         <div class="text-h6">
           {{ $t('setting.name', 2) }} {{ $t('calendar.name') }}
         </div>
-        <q-space />
-        <btn-close-dialog></btn-close-dialog>
       </q-card-section>
 
       <q-card-section class="q-pt-none">

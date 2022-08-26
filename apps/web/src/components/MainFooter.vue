@@ -1,5 +1,5 @@
 <template>
-  <q-toolbar dense style="max-height: 30px; min-height: 30px">
+  <q-toolbar dense style="max-height: 36px; min-height: 34px">
     <router-link
       :to="{ name: 'news' }"
       class="text-white"
