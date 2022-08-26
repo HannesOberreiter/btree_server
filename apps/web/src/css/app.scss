@@ -4,7 +4,22 @@ $font-body: 'Roboto', 'system-ui', $font-fallback;
 $font-mono: Courier, Monaco, 'Courier New', monospace, $font-fallback;
 
 body {
+  /* Prevent Overscrolling https://stackoverflow.com/a/47686467/5316675 */
+  overscroll-behavior-y: none;
   font-family: $font-body;
+  font-size: 1rem;
+}
+
+footer {
+  font-size: 0.8rem;
+}
+
+aside {
+  font-size: 0.8rem;
+}
+
+.q-field {
+  font-size: 1rem;
 }
 
 .no-padding {

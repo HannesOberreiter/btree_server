@@ -22,9 +22,10 @@
           <div class="col-12">
             <div v-if="!isMovement">
               <b>{{ $t('status') }}: </b>
-              <span @click="updateStatus()">{{
-                eventInfo.done ? $t('done') : $t('open')
-              }}</span>
+              <span class="show-pointer" @click="updateStatus()"
+                >{{ eventInfo.done ? $t('done') : $t('open') }}
+                <q-icon name="fas fa-refresh"></q-icon
+              ></span>
             </div>
             <div>
               <b>{{ $t('date') }}:</b>
@@ -102,9 +103,10 @@
             <btn-base
               v-if="!isMovement && !isVis && !isRearings"
               color="secondary darken-1"
+              icon="fas fa-refresh"
               @click="updateStatus()"
             >
-              {{ t('changeStatus') }}
+              <tooltip-base>{{ t('changeStatus') }}</tooltip-base>
             </btn-base>
             <btn-base
               v-if="!isVis && !isRearings"
