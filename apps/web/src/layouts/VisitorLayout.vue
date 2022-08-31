@@ -5,15 +5,23 @@
         <div class="col-12 col-sm-8 col-md-5 col-lg-4">
           <q-card>
             <q-card-section class="bg-primary text-white">
-              <q-img
-                src="~assets/logo.png"
-                alt="b.tree Logo"
-                spinner-color="white"
-                class="float-left q-mr-sm"
-                style="max-width: 55px"
-              />
-              <div class="text-h6">b.tree</div>
-              <div class="text-subtitle2">Professional Beekeeping Database</div>
+              <q-pull-to-refresh
+                color="yellow-9"
+                icon="fas fa-spinner"
+                @refresh="refresh"
+              >
+                <q-img
+                  src="~assets/logo.png"
+                  alt="b.tree Logo"
+                  spinner-color="white"
+                  class="float-left q-mr-sm"
+                  style="max-width: 55px"
+                />
+                <div class="text-h6">b.tree</div>
+                <div class="text-subtitle2">
+                  Professional Beekeeping Database
+                </div>
+              </q-pull-to-refresh>
             </q-card-section>
             <q-card-section v-if="!localStorageAvailable">
               <div class="text-bold text-white text-center bg-negative q-pa-sm">
@@ -105,4 +113,9 @@ useMeta(() => {
       : 'b.tree',
   };
 });
+
+const refresh = (done: () => void) => {
+  window.location.reload();
+  done();
+};
 </script>

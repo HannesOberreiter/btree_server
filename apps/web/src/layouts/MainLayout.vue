@@ -1,17 +1,23 @@
 <template>
   <q-layout view="hhh LpR fff">
     <q-header class="bg-primary text-white print-hide">
-      <q-toolbar>
-        <btn-base
-          dense
-          flat
-          round
-          data-cy="btn-drawer"
-          icon="fas fa-bars"
-          @click="toggleLeftDrawer"
-        />
-        <main-navbar></main-navbar>
-      </q-toolbar>
+      <q-pull-to-refresh
+        color="yellow-9"
+        icon="fas fa-spinner"
+        @refresh="refresh"
+      >
+        <q-toolbar>
+          <btn-base
+            dense
+            flat
+            round
+            data-cy="btn-drawer"
+            icon="fas fa-bars"
+            @click="toggleLeftDrawer"
+          />
+          <main-navbar></main-navbar>
+        </q-toolbar>
+      </q-pull-to-refresh>
     </q-header>
 
     <q-drawer
@@ -80,4 +86,9 @@ onBeforeRouteLeave(() => {
 onBeforeRouteUpdate(() => {
   if (usePrevent.state.value) return usePrevent.blockMessage();
 });
+
+const refresh = (done: () => void) => {
+  window.location.reload();
+  done();
+};
 </script>
