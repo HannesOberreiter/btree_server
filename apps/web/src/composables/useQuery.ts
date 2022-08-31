@@ -14,8 +14,8 @@ export function useCalendarQuery() {
     defaultOptions: {
       queries: {
         refetchOnWindowFocus: false,
-        staleTime: 1000 * 60 * 5, // stale (refetching), after 5 minute
-        cacheTime: 1000 * 60 * 60 * 24, // garbage collector, every 24 hours } },
+        staleTime: 1000 * 60 * 1, // stale (refetching), after 1 minute
+        cacheTime: 1000 * 60 * 60 * 48, // garbage collector, every 48 hours } },
       },
     },
   }); // need to use the queryclient here and not the useQuery as it wont work with full calendar
