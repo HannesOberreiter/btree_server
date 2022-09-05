@@ -11,7 +11,7 @@
                 @refresh="refresh"
               >
                 <q-img
-                  src="~assets/logo.png"
+                  src="~assets/logo_small.png"
                   alt="b.tree Logo"
                   spinner-color="white"
                   class="float-left q-mr-sm"
