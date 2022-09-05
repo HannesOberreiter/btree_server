@@ -149,30 +149,32 @@
           </div>
         </div>
       </q-card-section>
-      <q-card-actions>
+      <q-card-actions align="right">
         <btn-base-group>
           <btn-base
             outline
             color="secondary"
+            icon="fas fa-pen"
             @click="onEdit(task.id, task.kind)"
           >
-            {{ $t('edit') }}
+            <tooltip-base>{{ $t('edit') }}</tooltip-base>
           </btn-base>
           <btn-base
             outline
             color="negative"
+            icon="fas fa-trash"
             @click="onDelete(task.id, task.kind)"
           >
-            {{ $t('delete') }}
+            <tooltip-base>{{ $t('delete') }}</tooltip-base>
           </btn-base>
         </btn-base-group>
+        <span
+          v-if="task.creator || task.editor"
+          class="text-caption absolute-bottom-left"
+        >
+          {{ createUserInfo(task) }}
+        </span>
       </q-card-actions>
-      <div
-        v-if="task.creator || task.editor"
-        class="text-caption absolute-bottom-right"
-      >
-        {{ createUserInfo(task) }}
-      </div>
     </q-card>
   </q-expansion-item>
 </template>

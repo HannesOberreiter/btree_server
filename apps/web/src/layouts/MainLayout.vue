@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="hhh LpR fff">
+  <q-layout view="hhh LpR lff">
     <q-header class="bg-primary text-white print-hide">
       <q-pull-to-refresh
         color="yellow-9"
@@ -37,7 +37,13 @@
         <router-view />
       </div>
       <q-page-scroller position="bottom" :scroll-offset="500" :offset="[0, 10]">
-        <q-btn icon="fas fa-arrow-up" color="info" round style="opacity: 0.6" />
+        <q-btn
+          icon="fas fa-arrow-up"
+          color="info"
+          class="print-hide"
+          round
+          style="opacity: 0.6"
+        />
       </q-page-scroller>
     </q-page-container>
 

@@ -7,6 +7,7 @@
           'statistic_feed_table',
           'statistic_treatment_table',
           'statistic_rating_table',
+          'chargeStock',
         ].includes(table)
       "
       color="primary"
@@ -23,6 +24,7 @@
           'statistic_feed_table',
           'statistic_treatment_table',
           'statistic_rating_table',
+          'chargeStock',
         ].includes(table)
       "
       color="secondary"
@@ -213,6 +215,7 @@
               'statistic_feed_table',
               'statistic_treatment_table',
               'statistic_rating_table',
+              'chargeStock',
             ].includes(table)
           "
           v-close-popup

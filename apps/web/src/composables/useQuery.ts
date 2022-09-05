@@ -351,6 +351,37 @@ export function useChargeQuery({
   );
 }
 
+export function useChargeStockQuery({
+  offset = 0 as MaybeRef<number>,
+  limit = 10000 as MaybeRef<number>,
+  order = ['type_id'] as MaybeRef<Array<string>>,
+  direction = ['asc'] as MaybeRef<Array<string>>,
+  q = '' as MaybeRef<string>,
+  enabled = true as MaybeRef<boolean>,
+}) {
+  const notification = useNotification();
+  const api = useApiFetch();
+  return useQuery(
+    ['charge', offset, limit, order, direction, q],
+    () => {
+      const payload = {
+        offset: unref(offset),
+        limit: unref(limit),
+        order: unref(order),
+        direction: unref(direction),
+        q: unref(q),
+      };
+      return api.get('/v1/charge/stock', payload);
+    },
+    {
+      enabled: enabled,
+      keepPreviousData: true,
+      select: (response) => response,
+      onError: (error: any) => notification.open('negative', error),
+    }
+  );
+}
+
 export function useScaleQuery({ enabled = true as MaybeRef<boolean> }) {
   const notification = useNotification();
   const api = useApiFetch();

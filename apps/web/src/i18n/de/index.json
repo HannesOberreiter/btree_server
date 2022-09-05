@@ -41,6 +41,7 @@
   "clearField": "Lösche Feld-Inhalt.",
   "close": "Schließen",
   "colony": "Volk | Völker",
+  "colour": "Farbe",
   "company": {
     "active": "Ihre aktive Imkerei",
     "addUser": "Geben Sie die E-Mail-Adresse des Benutzers ein. Wenn der neue Benutzer noch nicht registriert ist, erhält er/sie eine E-Mail, um sein/ihr Passwort zurückzusetzen, damit er/sie sich erfolgreich anmelden kann.",
@@ -205,6 +206,7 @@
   "hintHiveFirstMovedate": "Angezeigter Wert ist die erste Wanderung, die als Erstellungsdatum angesehen werden kann.",
   "hintStatisticTable": "Summe und Durchschnitt pro Jahr und Stock.",
   "hive": "Stock | Stöcke",
+  "hiveCard": "Stockkarte",
   "hiveCount": "Anzahl Völker",
   "hivecountTooltip": "Stöcke [Gruppenstöcke]",
   "humidity": "Feuchtigkeit",
@@ -250,6 +252,7 @@
     "timeToTask": "Zur Aufgabe"
   },
   "line": "Zeile | Zeilen",
+  "loading": "Laden ...",
   "locationError": "Auf Ihren Standort konnte nicht zugegriffen werden.",
   "login": "Anmelden",
   "logout": "Ausloggen",
@@ -259,6 +262,7 @@
     "name": "Karte | Karten",
     "radius": "Radius"
   },
+  "mark_colour": "Königin-Markierung",
   "mated": "Verpaart",
   "mating": "Paarung",
   "max": "max.",
