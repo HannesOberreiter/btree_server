@@ -102,6 +102,17 @@ export const useTablesStore = defineStore('tables', {
       sort: useStorage('table-sort-col-charge', 'date'),
       direction: useStorage('table-sort-direction-charge', false),
     },
+    chargeStock: {
+      visible: useStorage('table-visible-charge-stock', [
+        'name',
+        'sum',
+        'sum_in',
+        'sum_out',
+      ]),
+      length: useStorage('table-length-charge-stock', 10),
+      sort: useStorage('table-sort-col-charge-stock', 'name'),
+      direction: useStorage('table-sort-direction-charge-stock', false),
+    },
     scale_data: {
       visible: useStorage('table-visible-scale_data', [
         'datetime',

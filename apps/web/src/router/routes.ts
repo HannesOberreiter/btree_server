@@ -165,6 +165,14 @@ const routes: RouteRecordRaw[] = [
         component: () => import('~/pages/TableCharge.vue'),
       },
       {
+        path: 'charge-stock',
+        name: 'table-charge-stock',
+        meta: {
+          title: 'stock',
+        },
+        component: () => import('~/pages/TableChargeStock.vue'),
+      },
+      {
         path: 'scale_data',
         name: 'table-scale_data',
         meta: {
@@ -514,6 +522,27 @@ const routes: RouteRecordRaw[] = [
         path: 'table_rating',
         name: 'statistic-table_rating',
         component: () => import('~/pages/StatisticTableRating.vue'),
+      },
+    ],
+  },
+  /***
+    Path: /print/*
+   */
+  {
+    path: '/print',
+    meta: {
+      auth: true,
+    },
+    component: () => import('~/layouts/PrintLayout.vue'),
+    children: [
+      {
+        path: 'hive/:id/:year?',
+        props: true,
+        name: 'print-hive',
+        meta: {
+          title: 'hive',
+        },
+        component: () => import('~/pages/PrintHive.vue'),
       },
     ],
   },
