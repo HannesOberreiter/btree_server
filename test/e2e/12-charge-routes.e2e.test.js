@@ -140,6 +140,38 @@ describe('Charge routes', function () {
     });
   });
 
+  describe('/api/v1/charge/stock', () => {
+    it(`get 401 - no header`, function (done) {
+      doQueryRequest(
+        agent,
+        route + 'stock',
+        null,
+        null,
+        null,
+        function (err, res) {
+          expect(res.statusCode).to.eqls(401);
+          expect(res.errors, 'JsonWebTokenError');
+          done();
+        }
+      );
+    });
+    it(`get 200 - success`, function (done) {
+      doQueryRequest(
+        agent,
+        route + 'stock',
+        null,
+        accessToken,
+        null,
+        function (err, res) {
+          expect(res.statusCode).to.eqls(200);
+          expect(res.body.results).to.be.a('Array');
+          expect(res.body.total).to.be.a('number');
+          done();
+        }
+      );
+    });
+  });
+
   describe('/api/v1/charge/batchGet', () => {
     it(`401 - no header`, function (done) {
       doRequest(

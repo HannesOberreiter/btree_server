@@ -5,6 +5,7 @@ import { checkMySQLError } from '@utils/error.util';
 import { IUserRequest } from '@interfaces/IUserRequest.interface';
 import dayjs from 'dayjs';
 import { map } from 'lodash';
+import { ChargeStock } from '../models/charge_stock.model';
 
 export class ChargeController extends Controller {
   constructor() {
@@ -67,6 +68,47 @@ export class ChargeController extends Controller {
         }
       }
       const result = await query.orderBy('id');
+      res.locals.data = result;
+      next();
+    } catch (e) {
+      next(checkMySQLError(e));
+    }
+  }
+
+  async getStock(req: IUserRequest, res: Response, next: NextFunction) {
+    try {
+      const { order, direction, offset, limit, q } = req.query as any;
+      const query = ChargeStock.query()
+        .select('type.id', 'sum', 'type.name', 'type.unit', 'sum_in', 'sum_out')
+        .leftJoinRelated('type')
+        .where({
+          'charge_stocks.user_id': req.user.user_id,
+          'type.modus': true,
+        })
+        // Security as we may still have some unclean data in the database were linked apiary or hive does not exist anymore
+        .page(
+          offset ? offset : 0,
+          parseInt(limit) === 0 || !limit ? 10 : limit
+        );
+
+      if (order) {
+        if (Array.isArray(order)) {
+          order.forEach((field, index) =>
+            query.orderBy(field, direction[index])
+          );
+        } else {
+          query.orderBy(order, direction);
+        }
+      }
+      if (q) {
+        if (q.trim() !== '') {
+          query.where((builder) => {
+            builder.orWhere('type.name', 'like', `%${q}%`);
+          });
+        }
+      }
+      const result = await query.orderBy('type_id');
+      console.log(result);
       res.locals.data = result;
       next();
     } catch (e) {

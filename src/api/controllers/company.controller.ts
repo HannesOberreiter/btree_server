@@ -12,8 +12,8 @@ import { Boom, forbidden, paymentRequired } from '@hapi/boom';
 import { UserController } from '@controllers/user.controller';
 import { deleteCompany } from '../utils/delete.util';
 import { addPremium, isPremium } from '../utils/premium.util';
-import archiver from 'archiver'
-import {stringify} from 'csv-stringify/sync';
+import archiver from 'archiver';
+import { stringify } from 'csv-stringify/sync';
 import { Apiary } from '../models/apiary.model';
 import { Hive } from '../models/hive.model';
 import { Movedate } from '../models/movedate.model';
@@ -26,23 +26,28 @@ import { ScaleData } from '../models/scale_data.model';
 import { Rearing } from '../models/rearing/rearing.model';
 import { RearingType } from '../models/rearing/rearing_type.model';
 import { Promo } from '../models/promos.model';
-import dayjs from 'dayjs';
 
 export class CompanyController extends Controller {
   constructor() {
     super();
   }
 
-  async postCoupon(req: IUserRequest, res: Response, next: NextFunction){
+  async postCoupon(req: IUserRequest, res: Response, next: NextFunction) {
     try {
-      const promo = await Promo.query().select().where({'code': req.body.coupon, used: false}).throwIfNotFound().first();
+      const promo = await Promo.query()
+        .select()
+        .where({ code: req.body.coupon, used: false })
+        .throwIfNotFound()
+        .first();
       const paid = await addPremium(req.user.user_id, promo.months);
-      await Promo.query().patch({
-        'used': true,
-        'date': new Date(),
-        'user_id': req.user.user_id
-      }).findById(promo.id)
-      res.locals.data = {paid: paid}
+      await Promo.query()
+        .patch({
+          used: true,
+          date: new Date(),
+          user_id: req.user.user_id,
+        })
+        .findById(promo.id);
+      res.locals.data = { paid: paid };
       next();
     } catch (e) {
       next(checkMySQLError(e));
@@ -53,38 +58,81 @@ export class CompanyController extends Controller {
     const stringifyOptions = {
       header: true,
       cast: {
-        date: function(value) {
+        date: function (value) {
           return value.toISOString();
-        }
-      }
-    }
+        },
+      },
+    };
     try {
       const arch = archiver('zip');
       await User.transaction(async (trx) => {
-        const company  = await Company.query(trx).findById(req.user.user_id);
-        arch.append(stringify([company], stringifyOptions), { name: 'company.csv'});
-        const apiaries  = await Apiary.query(trx).where('user_id', req.user.user_id);
-        arch.append(stringify(apiaries, stringifyOptions), { name: 'apiaries.csv'});
-        const hives  = await Hive.query(trx).where('user_id', req.user.user_id);
-        arch.append(stringify(hives, stringifyOptions), { name: 'hives.csv'});
-        const movedates  = await Movedate.query(trx).withGraphJoined('apiary').where('user_id', req.user.user_id);
-        arch.append(stringify(movedates, stringifyOptions), { name: 'movedates.csv'});
-        const checkups  = await Checkup.query(trx).withGraphJoined('type').where('checkups.user_id', req.user.user_id);
-        arch.append(stringify(checkups, stringifyOptions), { name: 'checkups.csv'});
-        const feeds  = await Feed.query(trx).withGraphJoined('type').where('feeds.user_id', req.user.user_id);
-        arch.append(stringify(feeds, stringifyOptions), { name: 'feeds.csv'});
-        const treatments  = await Treatment.query(trx).withGraphJoined('[type, disease, vet]').where('treatments.user_id', req.user.user_id);
-        arch.append(stringify(treatments, stringifyOptions), { name: 'treatments.csv'});
-        const harvests  = await Harvest.query(trx).withGraphJoined('type').where('harvests.user_id', req.user.user_id);
-        arch.append(stringify(harvests, stringifyOptions), { name: 'harvests.csv'});
-        const scales  = await Scale.query(trx).where('user_id', req.user.user_id);
-        arch.append(stringify(scales, stringifyOptions), { name: 'scales.csv'});
-        const scale_data  = await ScaleData.query(trx).withGraphJoined('scale').where('scale.user_id', req.user.user_id);
-        arch.append(stringify(scale_data, stringifyOptions), { name: 'scale_data.csv'});
-        const rearings  = await Rearing.query(trx).where('user_id', req.user.user_id);
-        arch.append(stringify(rearings, stringifyOptions), { name: 'rearings.csv'});
-        const rearing_types  = await RearingType.query(trx).withGraphJoined('[detail, step]').where('rearing_types.user_id', req.user.user_id);
-        arch.append(stringify(rearing_types, stringifyOptions), { name: 'rearing_types.csv'});
+        const company = await Company.query(trx).findById(req.user.user_id);
+        arch.append(stringify([company], stringifyOptions), {
+          name: 'company.csv',
+        });
+        const apiaries = await Apiary.query(trx).where(
+          'user_id',
+          req.user.user_id
+        );
+        arch.append(stringify(apiaries, stringifyOptions), {
+          name: 'apiaries.csv',
+        });
+        const hives = await Hive.query(trx).where('user_id', req.user.user_id);
+        arch.append(stringify(hives, stringifyOptions), { name: 'hives.csv' });
+        const movedates = await Movedate.query(trx)
+          .withGraphJoined('apiary')
+          .where('user_id', req.user.user_id);
+        arch.append(stringify(movedates, stringifyOptions), {
+          name: 'movedates.csv',
+        });
+        const checkups = await Checkup.query(trx)
+          .withGraphJoined('type')
+          .where('checkups.user_id', req.user.user_id);
+        arch.append(stringify(checkups, stringifyOptions), {
+          name: 'checkups.csv',
+        });
+        const feeds = await Feed.query(trx)
+          .withGraphJoined('type')
+          .where('feeds.user_id', req.user.user_id);
+        arch.append(stringify(feeds, stringifyOptions), { name: 'feeds.csv' });
+        const treatments = await Treatment.query(trx)
+          .withGraphJoined('[type, disease, vet]')
+          .where('treatments.user_id', req.user.user_id);
+        arch.append(stringify(treatments, stringifyOptions), {
+          name: 'treatments.csv',
+        });
+        const harvests = await Harvest.query(trx)
+          .withGraphJoined('type')
+          .where('harvests.user_id', req.user.user_id);
+        arch.append(stringify(harvests, stringifyOptions), {
+          name: 'harvests.csv',
+        });
+        const scales = await Scale.query(trx).where(
+          'user_id',
+          req.user.user_id
+        );
+        arch.append(stringify(scales, stringifyOptions), {
+          name: 'scales.csv',
+        });
+        const scale_data = await ScaleData.query(trx)
+          .withGraphJoined('scale')
+          .where('scale.user_id', req.user.user_id);
+        arch.append(stringify(scale_data, stringifyOptions), {
+          name: 'scale_data.csv',
+        });
+        const rearings = await Rearing.query(trx).where(
+          'user_id',
+          req.user.user_id
+        );
+        arch.append(stringify(rearings, stringifyOptions), {
+          name: 'rearings.csv',
+        });
+        const rearing_types = await RearingType.query(trx)
+          .withGraphJoined('[detail, step]')
+          .where('rearing_types.user_id', req.user.user_id);
+        arch.append(stringify(rearing_types, stringifyOptions), {
+          name: 'rearing_types.csv',
+        });
       });
       res.attachment('test.zip').type('zip');
       arch.on('end', () => res.end()); // end response when archive stream ends
@@ -97,7 +145,7 @@ export class CompanyController extends Controller {
 
   async getApikey(req: IUserRequest, res: Response, next: NextFunction) {
     try {
-      const premium = await isPremium(req.user.user_id)
+      const premium = await isPremium(req.user.user_id);
       if (!premium) throw paymentRequired();
       const result = await Company.query()
         .select('api_key')
@@ -187,7 +235,7 @@ export class CompanyController extends Controller {
         const company = await Company.query(trx).findById(req.user.user_id);
         let api_change = false;
         if ('api_change' in req.body) {
-          const premium = await isPremium(req.user.user_id)
+          const premium = await isPremium(req.user.user_id);
           if (!premium) throw paymentRequired();
           api_change = req.body.api_change ? true : false;
           delete req.body.api_change;

@@ -34,7 +34,7 @@ export class OptionController extends Controller {
 
   async get(req: IUserRequest, res: Response, next: NextFunction) {
     try {
-      const { order, direction, modus, q } = req.query as any;
+      const { order, direction, modus } = req.query as any;
       const table = Object(OptionController.tables)[req.params.table];
       const query = table
         .query()
