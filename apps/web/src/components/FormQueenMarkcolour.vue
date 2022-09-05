@@ -1,30 +1,34 @@
 <template>
   <form-input-text
     v-model="modelValue"
-    label="queenMarker"
+    label="mark_colour"
     :values="values"
     :reset="reset"
     icon="fas fa-marker"
   >
     <template #deepAfter>
-      <div class="bg-dark q-pl-xs q-pr-xs">
-        <q-icon
-          :color="color"
-          name="fas fa-circle"
-          style="cursor: pointer"
+      <div>
+        <btn-base
+          color="grey"
+          :text-color="color"
+          icon="fas fa-circle"
+          size="xs"
+          :dense="true"
+          :fab-mini="true"
           @click="setValue"
-        ></q-icon>
+        >
+          <tooltip-base>{{ $t('colour') }}: {{ $t(color) }}</tooltip-base>
+        </btn-base>
       </div>
     </template>
   </form-input-text>
 </template>
 
 <script lang="ts">
-import dayjs from 'dayjs';
-
 function queenColor(cur: string) {
-  const last = dayjs(cur).format('YYYY').slice(-1);
-
+  const last = cur
+    ? cur.slice(3, 4)
+    : new Date().getFullYear().toString().slice(-1);
   if (last == '0' || last == '5') {
     var colour = 'blue';
   } else if (last == '1' || last == '6') {
@@ -49,7 +53,7 @@ const props = defineProps({
     default: '',
   },
   date: {
-    default: dayjs().format('YYYY-MM-DD'),
+    default: new Date('YYYY-MM-DD').toString(),
   },
   reset: {
     type: Number,
