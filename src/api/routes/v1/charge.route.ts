@@ -17,6 +17,12 @@ export class ChargeRouter extends Router {
         Container.resolve('ChargeController').get
       );
     this.router
+      .route('/stock')
+      .get(
+        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+        Container.resolve('ChargeController').getStock
+      );
+    this.router
       .route('/')
       .patch(
         Validator.validate([body('ids').isArray()]),
