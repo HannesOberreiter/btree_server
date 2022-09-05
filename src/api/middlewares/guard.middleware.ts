@@ -42,8 +42,9 @@ export class Guard {
       }
 
       if (
-        roles === [ROLES.admin] &&
-        user.rank !== ROLES.admin &&
+        (roles.length === 1 &&
+          roles[0] === ROLES.admin &&
+          user.rank !== ROLES.admin) ||
         parseInt(req.params.bee_id, 10) !== user.bee_id
       ) {
         return next(forbidden('Forbidden area'));
