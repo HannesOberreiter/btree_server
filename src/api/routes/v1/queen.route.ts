@@ -18,6 +18,13 @@ export class QueenRouter extends Router {
         Container.resolve('QueenController').get
       );
     this.router
+      .route('/stats')
+      .get(
+        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+        Validator.isPremium,
+        Container.resolve('QueenController').getStats
+      );
+    this.router
       .route('/')
       .post(
         Validator.validate([
