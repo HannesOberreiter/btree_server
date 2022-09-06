@@ -165,6 +165,14 @@ const routes: RouteRecordRaw[] = [
         component: () => import('~/pages/TableCharge.vue'),
       },
       {
+        path: 'charge-stock',
+        name: 'table-charge-stock',
+        meta: {
+          title: 'stock',
+        },
+        component: () => import('~/pages/TableChargeStock.vue'),
+      },
+      {
         path: 'scale_data',
         name: 'table-scale_data',
         meta: {
@@ -337,7 +345,6 @@ const routes: RouteRecordRaw[] = [
       {
         path: 'login',
         name: 'login',
-        props: true,
         meta: {
           title: 'login',
         },
@@ -458,7 +465,6 @@ const routes: RouteRecordRaw[] = [
       {
         path: 'rearing',
         name: 'setting-rearing',
-        props: true,
         component: () => import('~/pages/SettingRearing.vue'),
       },
     ],
@@ -514,6 +520,37 @@ const routes: RouteRecordRaw[] = [
         path: 'table_rating',
         name: 'statistic-table_rating',
         component: () => import('~/pages/StatisticTableRating.vue'),
+      },
+      {
+        path: 'table_queen',
+        name: 'statistic-table_queen',
+        component: () => import('~/pages/StatisticTableQueen.vue'),
+      },
+      {
+        path: 'stats_scale',
+        name: 'statistic-scale',
+        component: () => import('~/pages/StatisticScale.vue'),
+      },
+    ],
+  },
+  /***
+    Path: /print/*
+   */
+  {
+    path: '/print',
+    meta: {
+      auth: true,
+    },
+    component: () => import('~/layouts/PrintLayout.vue'),
+    children: [
+      {
+        path: 'hive/:id/:year?',
+        props: true,
+        name: 'print-hive',
+        meta: {
+          title: 'hive',
+        },
+        component: () => import('~/pages/PrintHive.vue'),
       },
     ],
   },

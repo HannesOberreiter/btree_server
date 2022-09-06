@@ -121,21 +121,9 @@ const links = [
         menu: false,
       },
       {
-        label: t('hive', 2),
-        route: 'table-hive',
-        icon: 'fas fa-table',
-        menu: false,
-      },
-      {
-        label: `${t('add')} ${t('movement')}`,
+        label: `${t('new')} ${t('movement')}`,
         route: 'new-movement',
         icon: 'fas fa-truck',
-        menu: false,
-      },
-      {
-        label: t('movement', 2),
-        route: 'table-movement',
-        icon: 'fas fa-table',
         menu: false,
       },
       {
@@ -144,6 +132,20 @@ const links = [
         icon: 'fas fa-map-marker-alt',
         menu: false,
       },
+      {
+        label: t('hive', 2),
+        route: 'table-hive',
+        icon: 'fas fa-table',
+        menu: false,
+      },
+
+      {
+        label: t('movement', 2),
+        route: 'table-movement',
+        icon: 'fas fa-table',
+        menu: false,
+      },
+
       {
         label: t('apiary', 2),
         route: 'table-apiary',
@@ -164,7 +166,7 @@ const links = [
         menu: false,
       },
       {
-        label: t('queen', 2),
+        label: t('table'),
         route: 'table-queen',
         icon: 'fas fa-table',
         menu: false,
@@ -189,7 +191,7 @@ const links = [
         menu: false,
       },
       {
-        label: t('serie'),
+        label: t('table'),
         route: 'table-rearing',
         icon: 'fas fa-table',
         menu: false,
@@ -214,7 +216,7 @@ const links = [
         menu: false,
       },
       {
-        label: t('todo', 2),
+        label: t('table'),
         route: 'table-todo',
         icon: 'fas fa-table',
         menu: false,
@@ -236,6 +238,12 @@ const links = [
         label: t('table'),
         route: 'table-charge',
         icon: 'fas fa-table',
+        menu: false,
+      },
+      {
+        label: t('stock'),
+        route: 'table-charge-stock',
+        icon: 'fas fa-arrow-trend-up',
         menu: false,
       },
     ],
@@ -274,6 +282,12 @@ const links = [
         label: t('table'),
         route: 'table-scale_data',
         icon: 'fas fa-table',
+        menu: false,
+      },
+      {
+        label: t('statistic'),
+        route: 'statistic-scale',
+        icon: 'fas fa-chart-bar',
         menu: false,
       },
       {
@@ -404,6 +418,12 @@ const links = [
       {
         label: t('rating.name') + ' ' + t('hive', 1),
         route: 'statistic-table_rating',
+        icon: 'fas fa-table',
+        menu: [] as any,
+      },
+      {
+        label: t('rating.name') + ' ' + t('queen', 1),
+        route: 'statistic-table_queen',
         icon: 'fas fa-table',
         menu: [] as any,
       },

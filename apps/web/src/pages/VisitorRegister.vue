@@ -39,7 +39,7 @@
       </q-select>
 
       <q-input
-        v-show="state.source.value === SOURCES[7].value"
+        v-show="state.source.value === SOURCES.at(-1).value"
         v-model="v$.other.$model"
         :error="v$.other.$error"
         :error-message="validationErrors(v$.other)"
@@ -155,6 +155,10 @@ const SOURCES = [
   {
     label: t('registerSources.appStore'),
     value: 7,
+  },
+  {
+    label: t('registerSources.fair'),
+    value: 8,
   },
   {
     label: t('registerSources.other'),

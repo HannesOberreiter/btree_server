@@ -103,6 +103,7 @@ import {
   GridComponent,
   DataZoomComponent,
   TitleComponent,
+  ToolboxComponent,
 } from 'echarts/components';
 import VChart from 'vue-echarts';
 import { deepUnref } from '~/helpers/deep-unref';
@@ -116,6 +117,7 @@ use([
   GridComponent,
   DataZoomComponent,
   TitleComponent,
+  ToolboxComponent,
 ]);
 
 const props = defineProps({
@@ -198,6 +200,13 @@ function renderChart(
     tooltip: {
       trigger: 'item',
       formatter: '{a} <br/>{b} : {c}',
+    },
+    toolbox: {
+      feature: {
+        saveAsImage: {
+          name: new Date().toISOString() + '_yearly_' + titleText,
+        },
+      },
     },
     yAxis: {
       type: 'value',

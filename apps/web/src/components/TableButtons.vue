@@ -7,6 +7,8 @@
           'statistic_feed_table',
           'statistic_treatment_table',
           'statistic_rating_table',
+          'statistic_queen_table',
+          'chargeStock',
         ].includes(table)
       "
       color="primary"
@@ -23,6 +25,8 @@
           'statistic_feed_table',
           'statistic_treatment_table',
           'statistic_rating_table',
+          'statistic_queen_table',
+          'chargeStock',
         ].includes(table)
       "
       color="secondary"
@@ -96,6 +100,7 @@
           'statistic_feed_table',
           'statistic_treatment_table',
           'statistic_rating_table',
+          'statistic_queen_table',
         ].includes(table)
       "
       :color="filter ? 'negative' : 'warning'"
@@ -185,6 +190,25 @@
           </q-item-section>
         </q-item>
 
+        <q-item
+          v-if="table === 'hive'"
+          v-close-popup
+          clickable
+          :disable="selected.length > 50"
+          @click="onPrintHive"
+        >
+          <q-item-section avatar>
+            <q-avatar>
+              {{ selected.length }}
+            </q-avatar>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>{{
+              $t('print') + ' ' + $t('hiveCard')
+            }}</q-item-label>
+          </q-item-section>
+        </q-item>
+
         <q-separator />
 
         <q-item
@@ -194,6 +218,8 @@
               'statistic_feed_table',
               'statistic_treatment_table',
               'statistic_rating_table',
+              'statistic_queen_table',
+              'chargeStock',
             ].includes(table)
           "
           v-close-popup
@@ -274,6 +300,7 @@ import { useTableFilterStore } from '~/stores/tableFilter';
 import DialogFilter from './DialogFilter.vue';
 import DialogForm from './DialogForm.vue';
 import DialogUpload from './DialogUpload.vue';
+import DialogPrintHive from './DialogPrintHive.vue';
 import { useAuthUserStore } from '~/stores/auth';
 
 const storeFilter = useTableFilterStore();
@@ -449,6 +476,30 @@ function onImport() {
     componentProps: {
       table: props.table,
     },
+  });
+}
+
+function onPrintHive() {
+  $q.dialog({
+    title: t('year'),
+    prompt: {
+      model: new Date().getFullYear() + '',
+      type: 'number',
+    },
+    ok: {
+      label: t('print'),
+      class: 'btn-confirm',
+    },
+    cancel: true,
+    persistent: true,
+  }).onOk((val: number) => {
+    $q.dialog({
+      component: DialogPrintHive,
+      componentProps: {
+        selected: props.selected,
+        year: val,
+      },
+    });
   });
 }
 

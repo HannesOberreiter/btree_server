@@ -5,18 +5,11 @@
     color="white"
     size="md"
     data-cy="btn-dark-mode"
-    :icon="$q.dark.isActive ? 'fas fa-moon' : 'fas fa-sun'"
+    :icon="icon"
     @click="setDarkMode"
   >
-    <tooltip-base
-      v-if="$q.dark.isActive"
-      anchor="bottom middle"
-      self="top middle"
-    >
-      {{ $t('darkMode') }}
-    </tooltip-base>
-    <tooltip-base anchor="bottom middle" self="top middle" else>
-      {{ $t('dayMode') }}
+    <tooltip-base anchor="bottom middle" self="top middle">
+      {{ $t(text) }}
     </tooltip-base>
   </btn-base>
 </template>
@@ -26,10 +19,41 @@ import { useStorage } from '@vueuse/core';
 import { useQuasar } from 'quasar';
 
 const $q = useQuasar();
-const darkMode = useStorage('darkMode', false);
+const darkMode = useStorage<'auto' | boolean>('darkMode', 'auto');
+
+const icon = computed(() => {
+  switch ($q.dark.mode) {
+    case 'auto':
+      return 'fas fa-robot';
+    case true:
+      return 'fas fa-moon';
+    default:
+      return 'fas fa-sun';
+  }
+});
+
+const text = computed(() => {
+  switch ($q.dark.mode) {
+    case 'auto':
+      return 'autoMode';
+    case true:
+      return 'darkMode';
+    default:
+      return 'dayMode';
+  }
+});
 
 const setDarkMode = () => {
-  darkMode.value = !darkMode.value;
+  switch (darkMode.value) {
+    case 'auto':
+      darkMode.value = true;
+      break;
+    case true:
+      darkMode.value = false;
+      break;
+    default:
+      darkMode.value = 'auto';
+  }
   $q.dark.set(darkMode.value);
 };
 

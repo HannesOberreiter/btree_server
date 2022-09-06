@@ -10,6 +10,14 @@ body {
   font-size: 1rem;
 }
 
+.body--light .link {
+  color: $blue-9;
+}
+
+.body--dark .link {
+  color: $blue-6;
+}
+
 footer {
   font-size: 0.8rem;
 }

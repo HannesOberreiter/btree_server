@@ -487,6 +487,52 @@ const layouts = {
       },
     },
   ],
+  statistic_queen_table: [
+    {
+      comp: FormDropdownType,
+      model: 'queens.mating_id',
+      props: {
+        table: 'queen_matings',
+        label: 'mating',
+        'allow-empty': 'filterEmpty',
+      },
+    },
+    {
+      comp: FormDropdownType,
+      model: 'queens.race_id',
+      props: {
+        table: 'queen_races',
+        label: 'race',
+        'allow-empty': 'filterEmpty',
+      },
+    },
+    {
+      comp: FormDropdownType,
+      model: 'queens.hive_id',
+      props: {
+        table: 'hive',
+        label: 'hive',
+        'allow-empty': 'filterEmpty',
+        'filter-empty': 'noHive',
+      },
+    },
+    {
+      comp: FormDropdownType,
+      model: 'hive_location.apiary_id',
+      props: {
+        table: 'apiary',
+        label: 'apiary',
+        'allow-empty': 'filterEmpty',
+      },
+    },
+    {
+      comp: FormInputDateRange,
+      model: 'queens.move_date',
+      props: {
+        label: 'daterange',
+      },
+    },
+  ],
 } as any;
 
 const layout = computed(() => layouts[props.form]);

@@ -29,6 +29,7 @@ declare module '@vue/runtime-core' {
     DialogFilter: typeof import('./components/DialogFilter.vue')['default']
     DialogForm: typeof import('./components/DialogForm.vue')['default']
     DialogHint: typeof import('./components/DialogHint.vue')['default']
+    DialogPrintHive: typeof import('./components/DialogPrintHive.vue')['default']
     DialogRearingEvent: typeof import('./components/DialogRearingEvent.vue')['default']
     DialogSelectOption: typeof import('./components/DialogSelectOption.vue')['default']
     DialogShare: typeof import('./components/DialogShare.vue')['default']

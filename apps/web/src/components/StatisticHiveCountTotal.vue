@@ -21,6 +21,7 @@ import {
   TooltipComponent,
   GridComponent,
   DataZoomComponent,
+  ToolboxComponent,
 } from 'echarts/components';
 import VChart from 'vue-echarts';
 
@@ -30,6 +31,7 @@ use([
   TooltipComponent,
   GridComponent,
   DataZoomComponent,
+  ToolboxComponent,
 ]);
 
 const api = useApiFetch();
@@ -64,6 +66,13 @@ function renderChart() {
     tooltip: {
       trigger: 'item',
       formatter: '{a} <br/>{b} : {c}',
+    },
+    toolbox: {
+      feature: {
+        saveAsImage: {
+          name: new Date().toISOString() + '_hive_count_year',
+        },
+      },
     },
     yAxis: {
       type: 'value',

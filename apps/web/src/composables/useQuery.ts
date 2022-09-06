@@ -14,8 +14,8 @@ export function useCalendarQuery() {
     defaultOptions: {
       queries: {
         refetchOnWindowFocus: false,
-        staleTime: 1000 * 60 * 5, // stale (refetching), after 5 minute
-        cacheTime: 1000 * 60 * 60 * 24, // garbage collector, every 24 hours } },
+        staleTime: 1000 * 60 * 1, // stale (refetching), after 1 minute
+        cacheTime: 1000 * 60 * 60 * 48, // garbage collector, every 48 hours } },
       },
     },
   }); // need to use the queryclient here and not the useQuery as it wont work with full calendar
@@ -316,6 +316,39 @@ export function useQueensQuery({
   );
 }
 
+export function useQueensStats({
+  offset = 0 as MaybeRef<number>,
+  limit = 10000 as MaybeRef<number>,
+  order = ['move_date'] as MaybeRef<Array<string>>,
+  direction = ['asc'] as MaybeRef<Array<string>>,
+  filters = '' as MaybeRef<string>,
+  q = '' as MaybeRef<string>,
+  enabled = true as MaybeRef<boolean>,
+}) {
+  const notification = useNotification();
+  const api = useApiFetch();
+  return useQuery(
+    ['queen_stats', offset, limit, order, direction, q, filters],
+    () => {
+      const payload = {
+        offset: unref(offset),
+        limit: unref(limit),
+        order: unref(order),
+        direction: unref(direction),
+        filters: unref(filters),
+        q: unref(q),
+      };
+      return api.get('/v1/queen/stats', payload);
+    },
+    {
+      enabled: enabled,
+      keepPreviousData: true,
+      select: (response) => response,
+      onError: (error: any) => notification.open('negative', error),
+    }
+  );
+}
+
 export function useChargeQuery({
   offset = 0 as MaybeRef<number>,
   limit = 10000 as MaybeRef<number>,
@@ -341,6 +374,37 @@ export function useChargeQuery({
         q: unref(q),
       };
       return api.get('/v1/charge', payload);
+    },
+    {
+      enabled: enabled,
+      keepPreviousData: true,
+      select: (response) => response,
+      onError: (error: any) => notification.open('negative', error),
+    }
+  );
+}
+
+export function useChargeStockQuery({
+  offset = 0 as MaybeRef<number>,
+  limit = 10000 as MaybeRef<number>,
+  order = ['type_id'] as MaybeRef<Array<string>>,
+  direction = ['asc'] as MaybeRef<Array<string>>,
+  q = '' as MaybeRef<string>,
+  enabled = true as MaybeRef<boolean>,
+}) {
+  const notification = useNotification();
+  const api = useApiFetch();
+  return useQuery(
+    ['chargeStock', offset, limit, order, direction, q],
+    () => {
+      const payload = {
+        offset: unref(offset),
+        limit: unref(limit),
+        order: unref(order),
+        direction: unref(direction),
+        q: unref(q),
+      };
+      return api.get('/v1/charge/stock', payload);
     },
     {
       enabled: enabled,

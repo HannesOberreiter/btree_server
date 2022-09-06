@@ -5,15 +5,24 @@
         <div class="col-12 col-sm-8 col-md-5 col-lg-4">
           <q-card>
             <q-card-section class="bg-primary text-white">
-              <q-img
-                src="~assets/logo.png"
-                alt="b.tree Logo"
-                spinner-color="white"
-                class="float-left q-mr-sm"
-                style="max-width: 55px"
-              />
-              <div class="text-h6">b.tree</div>
-              <div class="text-subtitle2">Professional Beekeeping Database</div>
+              <q-pull-to-refresh
+                color="yellow-9"
+                icon="fas fa-spinner"
+                @refresh="refresh"
+              >
+                <btn-dark-mode class="float-right"></btn-dark-mode>
+                <q-img
+                  src="~assets/logo_small.png"
+                  alt="b.tree Logo"
+                  spinner-color="white"
+                  class="float-left q-mr-sm"
+                  style="max-width: 55px"
+                />
+                <div class="text-h6">b.tree</div>
+                <div class="text-subtitle2">
+                  Professional Beekeeping Database
+                </div>
+              </q-pull-to-refresh>
             </q-card-section>
             <q-card-section v-if="!localStorageAvailable">
               <div class="text-bold text-white text-center bg-negative q-pa-sm">
@@ -27,20 +36,35 @@
             <q-card-section
               class="bg-blue-grey-9 text-center text-white text-h7"
             >
-              <div v-if="path.name !== 'register'">
+              <div>
                 <span>{{ $t('signup.text') }}&nbsp;</span>
-                <router-link class="text-secondary" :to="{ name: 'register' }">
+                <router-link
+                  :class="
+                    path.name !== 'register' ? 'text-orange-4' : 'text-grey-6'
+                  "
+                  :to="{ name: 'register' }"
+                >
                   {{ $t('signup.name') }}
                 </router-link>
               </div>
-              <div v-if="path.name !== 'login'">
+              <div>
                 <span>{{ $t('signup.alreadyRegistered') }}&nbsp;</span>
-                <router-link class="text-secondary" :to="{ name: 'login' }">
+                <router-link
+                  :class="
+                    path.name !== 'login' ? 'text-orange-4' : 'text-grey-6'
+                  "
+                  :to="{ name: 'login' }"
+                >
                   {{ $t('login') }}
                 </router-link>
               </div>
-              <div v-if="path.name !== 'recover'">
-                <router-link class="text-secondary" :to="{ name: 'recover' }">
+              <div>
+                <router-link
+                  :class="
+                    path.name !== 'recover' ? 'text-orange-4' : 'text-grey-6'
+                  "
+                  :to="{ name: 'recover' }"
+                >
                   {{ $t('forgot') }}
                 </router-link>
               </div>
@@ -49,7 +73,12 @@
           <div class="text-center">
             <small>
               © 2013- {{ new Date().getFullYear() }}
-              <a href="https://info.btree.at/" target="_blank" rel="noopener">
+              <a
+                class="link"
+                href="https://info.btree.at/"
+                target="_blank"
+                rel="noopener"
+              >
                 b.tree Beekeeping Database
               </a>
             </small>
@@ -105,4 +134,9 @@ useMeta(() => {
       : 'b.tree',
   };
 });
+
+const refresh = (done: () => void) => {
+  window.location.reload();
+  done();
+};
 </script>

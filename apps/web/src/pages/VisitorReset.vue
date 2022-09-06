@@ -101,7 +101,7 @@ async function sendForm(values: any) {
 
       isSubmitting.value = false;
       btnLabel.value = 'success';
-      notification.open('positive', message.value, false);
+      notification.open('positive', message.value, true);
     },
     (error) => {
       notification.open('negative', error);

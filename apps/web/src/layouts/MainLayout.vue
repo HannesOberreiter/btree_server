@@ -1,17 +1,23 @@
 <template>
-  <q-layout view="hhh LpR fff">
+  <q-layout view="hhh LpR lff">
     <q-header class="bg-primary text-white print-hide">
-      <q-toolbar>
-        <btn-base
-          dense
-          flat
-          round
-          data-cy="btn-drawer"
-          icon="fas fa-bars"
-          @click="toggleLeftDrawer"
-        />
-        <main-navbar></main-navbar>
-      </q-toolbar>
+      <q-pull-to-refresh
+        color="yellow-9"
+        icon="fas fa-spinner"
+        @refresh="refresh"
+      >
+        <q-toolbar>
+          <btn-base
+            dense
+            flat
+            round
+            data-cy="btn-drawer"
+            icon="fas fa-bars"
+            @click="toggleLeftDrawer"
+          />
+          <main-navbar></main-navbar>
+        </q-toolbar>
+      </q-pull-to-refresh>
     </q-header>
 
     <q-drawer
@@ -31,7 +37,13 @@
         <router-view />
       </div>
       <q-page-scroller position="bottom" :scroll-offset="500" :offset="[0, 10]">
-        <q-btn icon="fas fa-arrow-up" color="info" round style="opacity: 0.6" />
+        <q-btn
+          icon="fas fa-arrow-up"
+          color="info"
+          class="print-hide"
+          round
+          style="opacity: 0.6"
+        />
       </q-page-scroller>
     </q-page-container>
 
@@ -80,4 +92,9 @@ onBeforeRouteLeave(() => {
 onBeforeRouteUpdate(() => {
   if (usePrevent.state.value) return usePrevent.blockMessage();
 });
+
+const refresh = (done: () => void) => {
+  window.location.reload();
+  done();
+};
 </script>

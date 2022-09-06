@@ -37,6 +37,7 @@
 
         <template #header-cell-amount="props">
           <table-th-sum
+            :parent-prop="props"
             :label="props.col.label"
             :name="props.col.name"
             :selected="selected"
