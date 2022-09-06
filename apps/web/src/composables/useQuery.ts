@@ -316,6 +316,39 @@ export function useQueensQuery({
   );
 }
 
+export function useQueensStats({
+  offset = 0 as MaybeRef<number>,
+  limit = 10000 as MaybeRef<number>,
+  order = ['move_date'] as MaybeRef<Array<string>>,
+  direction = ['asc'] as MaybeRef<Array<string>>,
+  filters = '' as MaybeRef<string>,
+  q = '' as MaybeRef<string>,
+  enabled = true as MaybeRef<boolean>,
+}) {
+  const notification = useNotification();
+  const api = useApiFetch();
+  return useQuery(
+    ['queen_stats', offset, limit, order, direction, q, filters],
+    () => {
+      const payload = {
+        offset: unref(offset),
+        limit: unref(limit),
+        order: unref(order),
+        direction: unref(direction),
+        filters: unref(filters),
+        q: unref(q),
+      };
+      return api.get('/v1/queen/stats', payload);
+    },
+    {
+      enabled: enabled,
+      keepPreviousData: true,
+      select: (response) => response,
+      onError: (error: any) => notification.open('negative', error),
+    }
+  );
+}
+
 export function useChargeQuery({
   offset = 0 as MaybeRef<number>,
   limit = 10000 as MaybeRef<number>,
@@ -362,7 +395,7 @@ export function useChargeStockQuery({
   const notification = useNotification();
   const api = useApiFetch();
   return useQuery(
-    ['charge', offset, limit, order, direction, q],
+    ['chargeStock', offset, limit, order, direction, q],
     () => {
       const payload = {
         offset: unref(offset),

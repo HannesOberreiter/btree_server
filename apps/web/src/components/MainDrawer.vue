@@ -285,6 +285,12 @@ const links = [
         menu: false,
       },
       {
+        label: t('statistic'),
+        route: 'statistic-scale',
+        icon: 'fas fa-chart-bar',
+        menu: false,
+      },
+      {
         label: t('api'),
         route: 'setting-profile',
         params: { tab: 'api' },
@@ -412,6 +418,12 @@ const links = [
       {
         label: t('rating.name') + ' ' + t('hive', 1),
         route: 'statistic-table_rating',
+        icon: 'fas fa-table',
+        menu: [] as any,
+      },
+      {
+        label: t('rating.name') + ' ' + t('queen', 1),
+        route: 'statistic-table_queen',
         icon: 'fas fa-table',
         menu: [] as any,
       },

@@ -522,6 +522,11 @@ const routes: RouteRecordRaw[] = [
         component: () => import('~/pages/StatisticTableRating.vue'),
       },
       {
+        path: 'table_queen',
+        name: 'statistic-table_queen',
+        component: () => import('~/pages/StatisticTableQueen.vue'),
+      },
+      {
         path: 'stats_scale',
         name: 'statistic-scale',
         component: () => import('~/pages/StatisticScale.vue'),

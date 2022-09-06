@@ -7,6 +7,7 @@
           'statistic_feed_table',
           'statistic_treatment_table',
           'statistic_rating_table',
+          'statistic_queen_table',
           'chargeStock',
         ].includes(table)
       "
@@ -24,6 +25,7 @@
           'statistic_feed_table',
           'statistic_treatment_table',
           'statistic_rating_table',
+          'statistic_queen_table',
           'chargeStock',
         ].includes(table)
       "
@@ -98,6 +100,7 @@
           'statistic_feed_table',
           'statistic_treatment_table',
           'statistic_rating_table',
+          'statistic_queen_table',
         ].includes(table)
       "
       :color="filter ? 'negative' : 'warning'"
@@ -215,6 +218,7 @@
               'statistic_feed_table',
               'statistic_treatment_table',
               'statistic_rating_table',
+              'statistic_queen_table',
               'chargeStock',
             ].includes(table)
           "

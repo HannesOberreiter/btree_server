@@ -21,6 +21,7 @@ interface State {
   statistic_treatment: string;
   statistic_treatment_table: string;
   statistic_rating_table: string;
+  statistic_queen_table: string;
   [key: string]: string;
 }
 
@@ -45,6 +46,7 @@ export const useTableFilterStore = defineStore('tableFilter', {
       statistic_treatment: '',
       statistic_treatment_table: '',
       statistic_rating_table: '',
+      statistic_queen_table: '',
     } as State),
   getters: {
     field: (state) => {
@@ -100,7 +102,12 @@ export const useTableFilterStore = defineStore('tableFilter', {
             if (o.length === 0) return null;
             return { [key]: deepUnref(o).map((v: any) => v.id) };
           }
-          if (key === 'date' || key === 'queens.date') return { [key]: o };
+          if (
+            key === 'date' ||
+            key === 'queens.date' ||
+            key === 'queens.move_date'
+          )
+            return { [key]: o };
           if ('id' in o) return { [key]: o.id };
         });
         const clean = compact(array);
