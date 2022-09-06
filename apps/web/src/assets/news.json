@@ -1,6 +1,21 @@
 {
   "aaData": [
     {
+      "version": "6.0.2",
+      "date": "2022-09-06",
+      "news": [
+        "- FEATURE added option to print hive card on hive table",
+        "- FEATURE added charge stock table",
+        "- FEATURE added hive scale weight charts",
+        "- FEATURE added pull to reload page on toolbar header",
+        "- FEATURE allow system mode for dark mode and added dark mode button to login page",
+        "- FEATURE added button to download statistics graphs as image",
+        "- BUGFIX stale cache time reduced, this means changes in data on calendar or tables are quicker shown",
+        "- BUGFIX queen mark colour was not loading on edit",
+        "- BUGFIX after account activation, redirect to login page and autofill correctly the email"
+      ]
+    },
+    {
       "version": "6.0.1",
       "date": "2022-08-25",
       "news": [

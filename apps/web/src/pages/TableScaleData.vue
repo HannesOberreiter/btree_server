@@ -123,14 +123,14 @@ const columns = [
   },
   {
     name: 'temp1',
-    label: t('temp') + ' 1',
+    label: t('temperature') + ' 1',
     align: 'right',
     field: (row: any) => row.temp1,
     sortable: true,
   },
   {
     name: 'temp2',
-    label: t('temp') + ' 2',
+    label: t('temperature') + ' 2',
     align: 'right',
     field: (row: any) => row.temp2,
     sortable: true,
