@@ -1,6 +1,11 @@
 {
   "aaData": [
     {
+      "version": "6.0.3",
+      "date": "2022-09-XX",
+      "news": ["- FEATURE PWA added maskable icons and shortcuts to manifest"]
+    },
+    {
       "version": "6.0.2",
       "date": "2022-09-06",
       "news": [
