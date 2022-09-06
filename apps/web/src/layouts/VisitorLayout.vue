@@ -10,6 +10,7 @@
                 icon="fas fa-spinner"
                 @refresh="refresh"
               >
+                <btn-dark-mode class="float-right"></btn-dark-mode>
                 <q-img
                   src="~assets/logo_small.png"
                   alt="b.tree Logo"
@@ -35,20 +36,35 @@
             <q-card-section
               class="bg-blue-grey-9 text-center text-white text-h7"
             >
-              <div v-if="path.name !== 'register'">
+              <div>
                 <span>{{ $t('signup.text') }}&nbsp;</span>
-                <router-link class="text-secondary" :to="{ name: 'register' }">
+                <router-link
+                  :class="
+                    path.name !== 'register' ? 'text-orange-4' : 'text-grey-6'
+                  "
+                  :to="{ name: 'register' }"
+                >
                   {{ $t('signup.name') }}
                 </router-link>
               </div>
-              <div v-if="path.name !== 'login'">
+              <div>
                 <span>{{ $t('signup.alreadyRegistered') }}&nbsp;</span>
-                <router-link class="text-secondary" :to="{ name: 'login' }">
+                <router-link
+                  :class="
+                    path.name !== 'login' ? 'text-orange-4' : 'text-grey-6'
+                  "
+                  :to="{ name: 'login' }"
+                >
                   {{ $t('login') }}
                 </router-link>
               </div>
-              <div v-if="path.name !== 'recover'">
-                <router-link class="text-secondary" :to="{ name: 'recover' }">
+              <div>
+                <router-link
+                  :class="
+                    path.name !== 'recover' ? 'text-orange-4' : 'text-grey-6'
+                  "
+                  :to="{ name: 'recover' }"
+                >
                   {{ $t('forgot') }}
                 </router-link>
               </div>
@@ -57,7 +73,12 @@
           <div class="text-center">
             <small>
               © 2013- {{ new Date().getFullYear() }}
-              <a href="https://info.btree.at/" target="_blank" rel="noopener">
+              <a
+                class="dark:text-yellow-5"
+                href="https://info.btree.at/"
+                target="_blank"
+                rel="noopener"
+              >
                 b.tree Beekeeping Database
               </a>
             </small>
