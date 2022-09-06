@@ -14,6 +14,7 @@ export const useAuthUserStore = defineStore('auth/user', {
   state: () => ({
     user: useStorage<User | Record<string, never>>('user', {}),
     company: useStorage<Company | Record<string, never>>('company', {}),
+    activate: '',
   }),
   getters: {
     isLoggedIn: (state) => {

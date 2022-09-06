@@ -32,32 +32,27 @@ import { RouteLocationRaw } from 'vue-router';
 const router = useRouter();
 const lastUrl = router.currentRoute.value.query.next;
 const notification = useNotification();
-const props = defineProps({
-  activate: {
-    type: String,
-    default: '',
-  },
-});
 
 const isSubmitting = ref(false);
 const submitCount = ref(0);
 
 const store = useAuthUserStore();
+const { activate } = storeToRefs(store);
 const state = reactive({
-  email: accountActivated(),
+  email: activate.value ? activate.value : '',
   password: '',
   confirmPassword: '',
 });
 
-const v = useVuelidate();
+watch(
+  activate,
+  () => {
+    if (activate.value) notification.open('positive', 'accountActivated');
+  },
+  { immediate: true }
+);
 
-function accountActivated() {
-  const param = props.activate ? props.activate : '';
-  if (param) {
-    notification.open('positive', 'accountActivated');
-  }
-  return param;
-}
+const v = useVuelidate();
 
 async function onSubmit() {
   isSubmitting.value = true;

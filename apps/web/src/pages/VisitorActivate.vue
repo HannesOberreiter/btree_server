@@ -47,10 +47,12 @@ import { validationErrors } from '~/helpers';
 import AuthService from '~/services/auth.service';
 import useVuelidate from '@vuelidate/core';
 import { maxLength, required, alphaNum } from '~/helpers/i18n-validators';
+import { useAuthUserStore } from '~/stores/auth';
 
 const notification = useNotification();
 const { t } = useI18n();
 const router = useRouter();
+const userStore = useAuthUserStore();
 
 const prop = defineProps({
   activate: {
@@ -94,14 +96,14 @@ async function onSubmit() {
 
 async function sendForm(value: any) {
   await AuthService.activate(value).then(
-    async (response) => {
+    (response) => {
       btnLabel.value = 'success';
       message.value = t('activateUser.success');
       notification.open('positive', 'activateUser.success');
       isSubmitting.value = false;
-      await router.push({
+      userStore.activate = response.email;
+      router.push({
         name: 'login',
-        params: { activate: response.email },
       });
     },
     (error) => {
