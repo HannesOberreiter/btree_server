@@ -5,57 +5,70 @@
     color="white"
     size="md"
     data-cy="btn-dark-mode"
-    :icon="icon"
+    :icon="status.icon"
     @click="setDarkMode"
   >
     <tooltip-base anchor="bottom middle" self="top middle">
-      {{ $t(text) }}
+      {{ $t(status.text) }}
     </tooltip-base>
   </btn-base>
 </template>
 
 <script lang="ts" setup>
-import { useStorage } from '@vueuse/core';
+import { useColorMode } from '@vueuse/core';
 import { useQuasar } from 'quasar';
 
 const $q = useQuasar();
-const darkMode = useStorage<'auto' | boolean>('darkMode', 'auto');
-
-const icon = computed(() => {
-  switch ($q.dark.mode) {
-    case 'auto':
-      return 'fas fa-robot';
-    case true:
-      return 'fas fa-moon';
-    default:
-      return 'fas fa-sun';
-  }
+const darkMode = useColorMode({
+  storageKey: 'colorScheme',
+  emitAuto: true,
 });
 
-const text = computed(() => {
-  switch ($q.dark.mode) {
+const status = computed<{
+  icon: string;
+  text: string;
+  status: 'auto' | boolean;
+}>(() => {
+  switch (darkMode.value) {
     case 'auto':
-      return 'autoMode';
-    case true:
-      return 'darkMode';
+      return {
+        icon: 'fas fa-robot',
+        text: 'autoMode',
+        status: 'auto',
+      };
+    case 'dark':
+      return {
+        icon: 'fas fa-moon',
+        text: 'darkMode',
+        status: true,
+      };
     default:
-      return 'dayMode';
+      return {
+        icon: 'fas fa-sun',
+        text: 'dayMode',
+        status: false,
+      };
   }
 });
 
 const setDarkMode = () => {
   switch (darkMode.value) {
-    case 'auto':
-      darkMode.value = true;
+    case 'light':
+      darkMode.value = 'dark';
       break;
-    case true:
-      darkMode.value = false;
+    case 'dark':
+      darkMode.value = 'auto';
       break;
     default:
-      darkMode.value = 'auto';
+      darkMode.value = 'light';
   }
-  $q.dark.set(darkMode.value);
 };
 
-onMounted(() => $q.dark.set(darkMode.value));
+watch(
+  darkMode,
+  () => {
+    $q.dark.set(status.value.status);
+  },
+  { immediate: true }
+);
 </script>

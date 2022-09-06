@@ -12,10 +12,8 @@
     <div class="col-9 col-sm-5 col-md-auto">
       <div class="q-gutter-md text-right">
         <btn-speak></btn-speak>
-        <template v-if="!$q.platform.is.mobile">
-          <btn-fullscreen></btn-fullscreen>
-          <btn-dark-mode></btn-dark-mode>
-        </template>
+        <btn-fullscreen v-if="!$q.platform.is.mobile"></btn-fullscreen>
+        <btn-dark-mode v-show="!$q.platform.is.mobile"></btn-dark-mode>
         <btn-wake-lock></btn-wake-lock>
         <btn-return></btn-return>
         <btn-base

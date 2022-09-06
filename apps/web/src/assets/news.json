@@ -3,7 +3,10 @@
     {
       "version": "6.0.3",
       "date": "2022-09-XX",
-      "news": ["- FEATURE PWA added maskable icons and shortcuts to manifest"]
+      "news": [
+        "- FEATURE PWA added maskable icons and shortcuts to manifest",
+        "- BUGFIX color mode should now load correctly after refresh and on mobile"
+      ]
     },
     {
       "version": "6.0.2",
