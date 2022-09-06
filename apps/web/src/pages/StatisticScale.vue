@@ -60,6 +60,7 @@ import {
   GridComponent,
   DataZoomComponent,
   TitleComponent,
+  ToolboxComponent,
 } from 'echarts/components';
 import VChart from 'vue-echarts';
 import round from 'lodash-es/round';
@@ -72,6 +73,7 @@ use([
   GridComponent,
   DataZoomComponent,
   TitleComponent,
+  ToolboxComponent,
 ]);
 
 const { t } = useI18n();
@@ -144,6 +146,13 @@ function renderChart(data: any, year: number) {
     title: {
       text: t('weight') + ' - ' + year,
       textAlign: 'auto',
+    },
+    toolbox: {
+      feature: {
+        saveAsImage: {
+          name: new Date().toISOString() + '_weight_' + year,
+        },
+      },
     },
     tooltip: {
       trigger: 'axis',
