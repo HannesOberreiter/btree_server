@@ -93,8 +93,6 @@ declare module '@vue/runtime-core' {
     GlobalLoading: typeof import('./components/GlobalLoading.vue')['default']
     GlobalSound: typeof import('./components/GlobalSound.vue')['default']
     HelperDayAndHour: typeof import('./components/HelperDayAndHour.vue')['default']
-    HiveInfoFeed: typeof import('./components/HiveInfoFeed.vue')['default']
-    HiveInfoHarvest: typeof import('./components/HiveInfoHarvest.vue')['default']
     HiveInfoMovements: typeof import('./components/HiveInfoMovements.vue')['default']
     HiveInfoQueens: typeof import('./components/HiveInfoQueens.vue')['default']
     HiveInfoTask: typeof import('./components/HiveInfoTask.vue')['default']
@@ -110,7 +108,6 @@ declare module '@vue/runtime-core' {
     MainNavbar: typeof import('./components/MainNavbar.vue')['default']
     MapButtons: typeof import('./components/MapButtons.vue')['default']
     MapOverlay: typeof import('./components/MapOverlay.vue')['default']
-    NewsDirective: typeof import('./components/NewsDirective.vue')['default']
     PaymentPaypal: typeof import('./components/PaymentPaypal.vue')['default']
     PaymentStripe: typeof import('./components/PaymentStripe.vue')['default']
     RearingMethod: typeof import('./components/RearingMethod.vue')['default']
@@ -139,6 +136,5 @@ declare module '@vue/runtime-core' {
     TableThSum: typeof import('./components/TableThSum.vue')['default']
     TooltipBase: typeof import('./components/TooltipBase.vue')['default']
     UploadCsv: typeof import('./components/UploadCsv.vue')['default']
-    UploadCSV: typeof import('./components/UploadCSV.vue')['default']
   }
 }
