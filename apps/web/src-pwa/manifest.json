@@ -7,6 +7,48 @@
   "background_color": "#f5f7fa",
   "scope": "/",
   "display": "standalone",
+  "shortcuts": [
+    {
+      "name": "QuickTool - Checkup",
+      "description": "Create a new checkup",
+      "url": "/new/quicktool/checkup",
+      "icons": [
+        { "src": "/mask_icons/maskable_icon_x96.png", "sizes": "96x96" }
+      ]
+    },
+    {
+      "name": "QuickTool - Feeding",
+      "description": "Create a new feeding",
+      "url": "/new/quicktool/feed",
+      "icons": [
+        { "src": "/mask_icons/maskable_icon_x96.png", "sizes": "96x96" }
+      ]
+    },
+    {
+      "name": "QuickTool - Harvest",
+      "description": "Create a new harvest",
+      "url": "/new/quicktool/harvest",
+      "icons": [
+        { "src": "/mask_icons/maskable_icon_x96.png", "sizes": "96x96" }
+      ]
+    },
+    {
+      "name": "QuickTool - Treatment",
+      "description": "Create a new treatment",
+      "url": "/new/quicktool/treatment",
+      "icons": [
+        { "src": "/mask_icons/maskable_icon_x96.png", "sizes": "96x96" }
+      ]
+    },
+    {
+      "name": "ToDo",
+      "description": "Create a new ToDo",
+      "url": "/new/todo",
+      "icons": [
+        { "src": "/mask_icons/maskable_icon_x96.png", "sizes": "96x96" }
+      ]
+    }
+  ],
   "icons": [
     {
       "src": "icons/icon-128x128.png",
@@ -32,6 +74,48 @@
       "src": "icons/icon-512x512.png",
       "sizes": "512x512",
       "type": "image/png"
+    },
+    {
+      "src": "mask_icons/maskable_icon_x48.png",
+      "sizes": "48x48",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "mask_icons/maskable_icon_x72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "mask_icons/maskable_icon_x96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "mask_icons/maskable_icon_x128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "mask_icons/maskable_icon_x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "mask_icons/maskable_icon_x384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "mask_icons/maskable_icon_x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }

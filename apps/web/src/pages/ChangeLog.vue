@@ -2,7 +2,7 @@
   <q-table
     grid
     :rows="rows"
-    :title="$t('news')"
+    :title="$t('changelog')"
     :filter="filter"
     :rows-per-page-options="[10]"
   >
@@ -18,20 +18,22 @@
           "
         >
           <q-card-section class="text-left">
-            <q-chip
+            <q-icon
               v-if="props.row.version === rows[0].version"
               square
               color="orange"
-              text-color="white"
-              icon-right="fas fa-star"
-              class="absolute-top-right"
+              name="fas fa-star"
+              :size="$q.screen.gt.xs ? 'lg' : 'xs'"
+              class="absolute-top-right q-pa-sm"
             >
-              {{ $t('latest') }}
-            </q-chip>
-            <news-directive
-              :key="props.row.date"
-              :news="props.row.news.toString()"
-            ></news-directive>
+              <tooltip-base>{{ $t('latest') }}</tooltip-base>
+            </q-icon>
+            <ul>
+              <li v-for="(item, index) in props.row.news" :key="index">
+                <b>{{ item.substring(0, item.indexOf(' ')) }}</b>
+                {{ item.substring(item.indexOf(' ') + 1) }}
+              </li>
+            </ul>
           </q-card-section>
 
           <q-card-section class="q-pa-xs text-right">
@@ -61,5 +63,5 @@
 <script setup lang="ts">
 import news from '~/assets/news.json';
 const filter = ref('');
-const rows = news.aaData;
+const rows = news;
 </script>

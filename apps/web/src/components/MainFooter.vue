@@ -5,8 +5,8 @@
       class="text-white"
       style="text-decoration: none"
     >
-      {{ $t('version') }}: {{ news.aaData[0].version }}
-      <span v-if="!$q.platform.is.mobile"> [{{ news.aaData[0].date }}] </span>
+      {{ $t('version') }}: {{ news[0].version }}
+      <span v-if="!$q.platform.is.mobile"> [{{ news[0].date }}] </span>
     </router-link>
     <q-space></q-space>
     <strong>b.tree</strong>
