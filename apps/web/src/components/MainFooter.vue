@@ -1,12 +1,13 @@
 <template>
   <q-toolbar dense style="max-height: 36px; min-height: 34px">
     <router-link
+      v-if="data && !isFetching && !error"
       :to="{ name: 'news' }"
       class="text-white"
       style="text-decoration: none"
     >
-      {{ $t('version') }}: {{ news[0].version }}
-      <span v-if="!$q.platform.is.mobile"> [{{ news[0].date }}] </span>
+      {{ $t('version') }}: {{ data[0].version }}
+      <span v-if="!$q.platform.is.mobile"> [{{ data[0].date }}] </span>
     </router-link>
     <q-space></q-space>
     <strong>b.tree</strong>
@@ -24,8 +25,15 @@
 </template>
 
 <script setup lang="ts">
-import news from '~/assets/news.json';
 import { useKeyHelp } from '~/composables/useKey';
+import { useFetch } from '@vueuse/core';
+
+// const build_version = process.env.NPM_PACKAGE_VERSION;
+const { isFetching, error, data }: any = useFetch(
+  '/news.json?cache=' + Date.now()
+)
+  .get()
+  .json();
 
 const router = useRouter();
 const help = computed(() => `help.${String(router.currentRoute.value.name)}`);
