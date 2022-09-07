@@ -81,6 +81,13 @@
               >
                 b.tree Beekeeping Database
               </a>
+              <br />
+              <span v-if="data && !isFetching && !error">
+                {{ $t('version') }}: {{ data[0].version }}
+                <span v-if="!$q.platform.is.mobile">
+                  [{{ data[0].date }}]
+                </span>
+              </span>
             </small>
           </div>
           <supporter-images></supporter-images>
@@ -95,6 +102,13 @@ import { computed } from 'vue';
 import { useRouter } from 'vue-router';
 import SupporterImages from '~/components/SupporterImages.vue';
 import { useMeta } from 'quasar';
+import { useFetch } from '@vueuse/core';
+
+const { isFetching, error, data }: any = useFetch(
+  '/news.json?cache=' + Date.now()
+)
+  .get()
+  .json();
 
 const router = useRouter();
 const path = computed(() => router.currentRoute.value);

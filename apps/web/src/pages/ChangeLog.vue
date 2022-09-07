@@ -1,10 +1,18 @@
 <template>
+  <div v-if="error" class="text-center">
+    <div class="text-negative text-h5">{{ $t('error.noData') }} 😱</div>
+    <div>
+      {{ error }}
+    </div>
+  </div>
   <q-table
+    v-else
     grid
-    :rows="rows"
+    :rows="data"
     :title="$t('changelog')"
     :filter="filter"
     :rows-per-page-options="[10]"
+    :loading="isFetching"
   >
     <template #item="props">
       <div class="q-pa-xs col-12">
@@ -12,14 +20,14 @@
           flat
           :bordered="true"
           :class="
-            props.row.version === rows[0].version
+            props.row.version === data[0].version
               ? 'bg-orange-3 text-black'
               : ''
           "
         >
           <q-card-section class="text-left">
             <q-icon
-              v-if="props.row.version === rows[0].version"
+              v-if="props.row.version === data[0].version"
               square
               color="orange"
               name="fas fa-star"
@@ -61,7 +69,13 @@
 </template>
 
 <script setup lang="ts">
-import news from '~/assets/news.json';
+import { useFetch } from '@vueuse/core';
+
+const { isFetching, error, data }: any = useFetch(
+  '/news.json?cache=' + Date.now()
+)
+  .get()
+  .json();
+
 const filter = ref('');
-const rows = news;
 </script>
