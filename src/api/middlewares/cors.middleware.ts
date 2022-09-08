@@ -48,6 +48,10 @@ class Cors {
       return;
     }
 
+    if (req.url.indexOf('external') !== -1) {
+      res.set('Access-Control-Allow-Origin', '*');
+    }
+
     if (
       !req.headers['content-type'] &&
       req.method !== 'GET' &&
@@ -66,7 +70,7 @@ class Cors {
       if (req.headers.referer) {
         const url = new URL(req.headers.referer);
         req.headers.origin = url.origin;
-      } else if(req.headers.host) {
+      } else if (req.headers.host) {
         req.headers.origin = req.headers.host;
       }
     }
