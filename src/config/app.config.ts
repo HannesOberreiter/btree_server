@@ -42,21 +42,12 @@ export class Application {
   public app: Express.Application;
 
   /**
-   * @description Middlewares options
+   * @description Configuring CORS asynchronously, will disable CORS for /external/ route
    */
-  private options = {
-    cors: {
-      origin: (origin, callback) => {
-        if (
-          authorized.indexOf(origin) !== -1 ||
-          !origin ||
-          env === ENVIRONMENT.development
-        ) {
-          callback(null, true);
-        } else {
-          callback(notAcceptable(`Domain not allowed by CORS: ${origin}`));
-        }
-      },
+  private corsOptionsDelegate = function (req, callback) {
+    const origin = req.header('Origin');
+    let corsOptions = {
+      origin: true,
       methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
       allowedHeaders: [
         'Accept',
@@ -65,7 +56,25 @@ export class Application {
         'Origin',
         'From',
       ],
-    },
+    } as any;
+    let error = null;
+
+    if (req.url.indexOf('external') !== -1) {
+      // Allow API calls to scale and iCal without CORS
+      corsOptions = { origin: false };
+    } else if (
+      authorized.indexOf(origin) === -1 &&
+      origin &&
+      env !== ENVIRONMENT.development
+    ) {
+      error = notAcceptable(`Domain not allowed by CORS: ${origin}`);
+    }
+    callback(error, corsOptions);
+  };
+  /**
+   * @description Middlewares options
+   */
+  private options = {
     stream:
       env === ENVIRONMENT.production
         ? rfs.createStream('access.log', {
@@ -141,7 +150,7 @@ export class Application {
      *
      * @see https://www.npmjs.com/package/cors
      */
-    this.app.use(Cors(this.options.cors));
+    this.app.use(Cors(this.corsOptionsDelegate));
 
     /**
      * Passport configuration
