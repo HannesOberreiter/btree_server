@@ -59,14 +59,6 @@ const routes: RouteRecordRaw[] = [
         },
         component: () => import('~/pages/HelperSugarWater.vue'),
       },
-      {
-        path: '/links',
-        name: 'links',
-        meta: {
-          title: 'curatedLinks',
-        },
-        component: () => import('~/pages/HelperLinks.vue'),
-      },
     ],
   },
   /***
