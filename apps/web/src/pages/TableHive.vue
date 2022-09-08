@@ -138,7 +138,7 @@ const columns = [
   },
   {
     name: 'hive_source.name',
-    label: t('source'),
+    label: t('status'),
     align: 'left',
     field: (row: any) => (row.hive_source ? row.hive_source.name : ''),
     sortable: true,

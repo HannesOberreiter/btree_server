@@ -113,7 +113,7 @@ const options = [
     value: 'hive_types',
   },
   {
-    label: t('hive') + ' ' + t('source'),
+    label: t('hive') + ' ' + t('status'),
     value: 'hive_sources',
   },
   {
