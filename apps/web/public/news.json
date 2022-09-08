@@ -1,5 +1,12 @@
 [
   {
+    "version": "6.0.4",
+    "date": "2022-09-XX",
+    "news": [
+      "REMOVED curated links helper, you can now find the links on our info page"
+    ]
+  },
+  {
     "version": "6.0.3",
     "date": "2022-09-07",
     "news": [

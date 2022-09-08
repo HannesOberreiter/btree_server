@@ -360,12 +360,6 @@ const links = [
         icon: 'fas fa-calculator',
         menu: [] as any,
       },
-      {
-        label: t('curatedLinks'),
-        route: 'links',
-        icon: 'fas fa-link',
-        menu: [] as any,
-      },
     ],
   },
   {
