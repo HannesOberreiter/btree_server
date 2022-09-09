@@ -61,12 +61,25 @@ import { useApiariesQuery, useHivesQuery } from '~/composables/useQuery';
 import { useVModels } from '@vueuse/core';
 import { validationErrors } from '~/helpers';
 import useVuelidate from '@vuelidate/core';
-import { useNFC } from '~/composables/useNFC';
+import { useScanningStore } from '~/stores/scanning';
+import { useNotification } from '~/composables/useNotification';
+
+const storeScanning = useScanningStore();
+const { hiveDropdownActive, scannedId } = storeToRefs(storeScanning);
 
 const { t } = useI18n();
 const { isLoading: isLoadingHive, data: hives } = useHivesQuery({});
 const { isLoading: isLoadingApiary, data: apiaries } = useApiariesQuery({});
-const nfc = useNFC();
+const notification = useNotification();
+
+onMounted(() => {
+  hiveDropdownActive.value = true;
+  scannedId.value = null;
+});
+onUnmounted(() => {
+  hiveDropdownActive.value = false;
+  scannedId.value = null;
+});
 
 const props = defineProps({
   modelValue: {
@@ -184,16 +197,26 @@ watch(
   { immediate: true }
 );
 
-watch(
-  () => nfc.state.hive_id,
-  (cur) => {
-    if (cur && hives.value) {
-      const found = filter(hives.value.results, (obj) => cur.includes(obj.id));
-      if (found) state.hive = union(state.hive, found);
-      nfc.state.hive_id = null;
+watch(scannedId, () => {
+  if (scannedId.value && hives.value) {
+    const found = filter(hives.value.results, (obj) =>
+      scannedId.value.includes(obj.id)
+    ) as any;
+    const double = filter(state.hive, (obj) => scannedId.value == obj.id);
+    if (found && double.length === 0) {
+      notification.open(
+        'positive',
+        t('addedHive', { name: found['name'] }),
+        true
+      );
+      scannedId.value = null;
+      state.hive = union(state.hive, found);
+    }
+    if (double.length > 0) {
+      notification.open('info', t('error.alreadyScanned'), true);
     }
   }
-);
+});
 </script>
 
 <style>

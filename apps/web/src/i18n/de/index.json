@@ -12,6 +12,7 @@
   },
   "active": "Aktiv",
   "add": "Hinzufügen",
+  "addedHive": "Stock {name} zur Auswahl hinzugefügt!",
   "alive": "Am Leben",
   "allYears": "Alle Jahre",
   "amount": "Menge",
@@ -103,6 +104,7 @@
   "end": "Ende",
   "error": {
     "access": "Zugriff nicht erlaubt oder falsches Passwort!",
+    "alreadyScanned": "Auswahl ist bereits gescannt!",
     "csvReading": "Die csv Datei konnte nicht gelesen werden!",
     "csvTooMuch": "Upload is zu groß!",
     "duplicate": "Konflikt, doppelter Eintrag!",

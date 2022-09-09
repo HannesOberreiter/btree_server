@@ -48,11 +48,15 @@
 import { useDialogPluginComponent } from 'quasar';
 import QrScanner from 'qr-scanner';
 import { useNotification } from '~/composables/useNotification';
+import { useScanningStore } from '~/stores/scanning';
+
+const notification = useNotification();
+const storeScanning = useScanningStore();
+const { hiveDropdownActive } = storeToRefs(storeScanning);
 
 defineEmits([...useDialogPluginComponent.emits]);
 const { dialogRef, onDialogHide } = useDialogPluginComponent();
-
-const notification = useNotification();
+const router = useRouter();
 const videoRef = ref(null);
 let scanner = null as any;
 const hasCamera = ref(false);
@@ -72,7 +76,7 @@ watch(
         onDecodeError: onError,
         returnDetailedScanResult: true,
         preferredCamera: 'environment',
-        maxScansPerSecond: 1,
+        maxScansPerSecond: 1 / 2,
         highlightScanRegion: true,
       });
       scanner
@@ -88,8 +92,18 @@ watch(
 );
 
 function onResult(val: any) {
-  notification.open('positive', `QR: ${val.data}`, true);
+  if (val.data === result.value) return;
+  if (hiveDropdownActive.value && storeScanning.extractUrl(val.data)) {
+    console.log('Scanned with active select box');
+  } else {
+    notification.open('positive', `QR: ${val.data}`, true);
+    if (val.data.includes(window.location.origin)) {
+      router.push(val.data.replace(window.location.origin, ''));
+    }
+  }
   result.value = val.data;
+  errorMessage.value = null;
+  return true;
 }
 function onError(error: any) {
   errorMessage.value = error;

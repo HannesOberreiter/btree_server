@@ -18,7 +18,6 @@
       @click="showInfo = !showInfo"
       ><tooltip-base>{{ $t('help.name') }} (h)</tooltip-base></btn-base
     >
-    <btn-qr-scanner></btn-qr-scanner>
     <btn-share :show-path="true"></btn-share>
   </q-toolbar>
   <global-sound></global-sound>

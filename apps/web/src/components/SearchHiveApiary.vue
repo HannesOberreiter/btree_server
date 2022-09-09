@@ -30,7 +30,7 @@
       flat
       dense
       color="white"
-      size="md"
+      size="sm"
       name="fas fa-search"
       @click="searchRef.showPopup()"
     />

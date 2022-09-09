@@ -1,5 +1,14 @@
 [
   {
+    "version": "6.0.5",
+    "date": "2022-09-09",
+    "news": [
+      "FEATURE added QR code generator on hive table",
+      "FEATURE added QR code scanner button on top navbar",
+      "IMPROVEMENT of NFC and QR scanning selection of hives"
+    ]
+  },
+  {
     "version": "6.0.4",
     "date": "2022-09-08",
     "news": [

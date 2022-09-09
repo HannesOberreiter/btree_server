@@ -10,8 +10,12 @@
     </div>
 
     <div class="col-9 col-sm-5 col-md-auto">
-      <div class="q-gutter-md text-right">
+      <div
+        class="text-right"
+        :class="$q.screen.gt.xs ? 'q-gutter-md' : 'q-gutter-sm'"
+      >
         <btn-speak></btn-speak>
+        <btn-qr-scanner></btn-qr-scanner>
         <btn-fullscreen v-if="!$q.platform.is.mobile"></btn-fullscreen>
         <btn-dark-mode v-show="!$q.platform.is.mobile"></btn-dark-mode>
         <btn-wake-lock></btn-wake-lock>

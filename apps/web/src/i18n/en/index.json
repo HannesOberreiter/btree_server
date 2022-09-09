@@ -12,6 +12,7 @@
   },
   "active": "Active",
   "add": "Add",
+  "addedHive": "Added hive {name} to selection!",
   "alive": "Alive",
   "allYears": "All years",
   "amount": "Amount",
@@ -103,6 +104,7 @@
   "end": "End",
   "error": {
     "access": "Access not allowed or wrong password!",
+    "alreadyScanned": "Selection is already scanned!",
     "csvReading": "Could not read csv file!",
     "csvTooMuch": "Upload too big!",
     "duplicate": "Conflict, duplicate entry!",
