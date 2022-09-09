@@ -1,5 +1,13 @@
 [
   {
+    "version": "6.0.6",
+    "date": "2022-09-XX",
+    "news": [
+      "BUGFIX rearing steps were not moveable",
+      "BUGFIX german temperature hint text was broken"
+    ]
+  },
+  {
     "version": "6.0.5",
     "date": "2022-09-09",
     "news": [
