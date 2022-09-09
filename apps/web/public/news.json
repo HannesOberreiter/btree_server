@@ -4,7 +4,8 @@
     "date": "2022-09-XX",
     "news": [
       "BUGFIX rearing steps were not moveable",
-      "BUGFIX german temperature hint text was broken"
+      "BUGFIX german temperature hint text was broken",
+      "BUGFIX in apiary detail view the hive order was not possible to change"
     ]
   },
   {

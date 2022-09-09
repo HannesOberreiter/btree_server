@@ -115,9 +115,8 @@ function onMovement(id: number) {
 }
 
 function setActiveStep(id: number, set = true) {
-  hives.value = map(hives.value, (obj) => {
-    obj.active = obj.id === id ? set : false;
-    return obj;
+  hives.value = map(hives.value, (obj: any) => {
+    return { ...obj, active: obj.id === id ? set : false };
   });
   if (!set) onSave();
 }
