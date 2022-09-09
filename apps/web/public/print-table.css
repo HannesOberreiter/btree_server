@@ -37,3 +37,21 @@ td {
   page-break-inside: avoid;
   page-break-after: auto;
 }
+
+.row,
+.column,
+.flex {
+  display: flex;
+  flex-wrap: wrap;
+}
+.row > .col-4,
+.row > .col-xs-4 {
+  display: block;
+  height: auto;
+  width: 33.3333%;
+  page-break-inside: avoid;
+}
+
+.text-center {
+  text-align: center;
+}

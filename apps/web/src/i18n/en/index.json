@@ -12,6 +12,7 @@
   },
   "active": "Active",
   "add": "Add",
+  "addedHive": "Added hive {name} to selection!",
   "alive": "Alive",
   "allYears": "All years",
   "amount": "Amount",
@@ -103,6 +104,7 @@
   "end": "End",
   "error": {
     "access": "Access not allowed or wrong password!",
+    "alreadyScanned": "Selection is already scanned!",
     "csvReading": "Could not read csv file!",
     "csvTooMuch": "Upload too big!",
     "duplicate": "Conflict, duplicate entry!",
@@ -111,7 +113,9 @@
     "locked": "Account locked! (too many login attempts?)",
     "more": "One of errors",
     "nfcNotSupported": "Web NFC is not supported by your browser.",
+    "noCameraDetected": "No camera device detected.",
     "noData": "No data to load",
+    "noVideoTag": "Your browser does not support the video tag.",
     "notFound": "Route or server not found! (Offline?)",
     "permission": "Could not set permissions.",
     "premium": "Premium only feature or basic user limit reached!",
@@ -351,6 +355,8 @@
     "userDeleteText": "Are you sure you want to delete your account? This action cannot be undone. Note: If there are another user in the current company the company data wont be deleted otherwise all data will be removed. For security please enter your current password.",
     "userTitle": "Here you can update your user settings."
   },
+  "qr": "QR",
+  "qrScanner": "QR Scanner",
   "quarter": "Quarter",
   "queen": "Queen | Queens",
   "queenAdd": "Add queen(s)",
@@ -417,6 +423,7 @@
     "title": "Create new password"
   },
   "restore": "Restore",
+  "result": "Result",
   "ripDate": "RIP date",
   "save": "Save",
   "scale": {
@@ -484,6 +491,7 @@
   "status": "Status",
   "step": "Step | Steps",
   "stock": "Stock",
+  "stop": "Stop",
   "strong": "Strength",
   "success": "Success!",
   "successReset": "Successful reset",

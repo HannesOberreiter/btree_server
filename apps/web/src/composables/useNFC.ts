@@ -1,3 +1,4 @@
+import { useScanningStore } from '~/stores/scanning';
 import { useNotification } from './useNotification';
 
 // Type definitions for Web NFC
@@ -76,12 +77,13 @@ declare class NDEFReader extends EventTarget {
 const state = reactive({
   writing: false,
   reading: false,
-  hive_id: null,
 });
 
 const useNFC = () => {
   const notification = useNotification();
   const router = useRouter();
+  const storeScanning = useScanningStore();
+
   let controller = new AbortController();
   let ndef = null;
   // Functional logic adapted from
@@ -117,19 +119,17 @@ const useNFC = () => {
           }
           const record = event.message.records[0];
           if (record.id) {
-            notification.open('positive', record.id, true);
             /**
-                On Quicktool page and if tag is a detail hive view we add the hive to the select list
-                otherwise we do a simple redirect based on tag id value which is the relative url
+                If a hive dropdown is active visible it will try to make a selection based on the tag,
+                otherwise a redirect will happen.
              */
             if (
-              record.id.includes('/detail/hive') &&
-              router.currentRoute.value.name === 'new-quicktool'
+              storeScanning.hiveDropdownActive &&
+              storeScanning.extractUrl(record.id)
             ) {
-              const reg = /\d+/g;
-              const hive_id = reg.exec(record.id)[0];
-              state.hive_id = hive_id;
+              return true;
             } else {
+              notification.open('positive', record.id, true);
               router.push(record.id);
             }
           }

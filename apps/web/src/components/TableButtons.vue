@@ -194,7 +194,7 @@
           v-if="table === 'hive'"
           v-close-popup
           clickable
-          :disable="selected.length > 50"
+          :disable="selected.length === 0 || selected.length > 50"
           @click="onPrintHive"
         >
           <q-item-section avatar>
@@ -206,6 +206,23 @@
             <q-item-label>{{
               $t('print') + ' ' + $t('hiveCard')
             }}</q-item-label>
+          </q-item-section>
+        </q-item>
+
+        <q-item
+          v-if="table === 'hive'"
+          v-close-popup
+          clickable
+          :disable="selected.length === 0 || selected.length > 50"
+          @click="onPrintQR"
+        >
+          <q-item-section avatar>
+            <q-avatar>
+              {{ selected.length }}
+            </q-avatar>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>{{ $t('print') + ' ' + $t('qr') }}</q-item-label>
           </q-item-section>
         </q-item>
 
@@ -301,6 +318,7 @@ import DialogFilter from './DialogFilter.vue';
 import DialogForm from './DialogForm.vue';
 import DialogUpload from './DialogUpload.vue';
 import DialogPrintHive from './DialogPrintHive.vue';
+import DialogPrintQr from './DialogPrintQr.vue';
 import { useAuthUserStore } from '~/stores/auth';
 
 const storeFilter = useTableFilterStore();
@@ -500,6 +518,15 @@ function onPrintHive() {
         year: val,
       },
     });
+  });
+}
+
+function onPrintQR() {
+  $q.dialog({
+    component: DialogPrintQr,
+    componentProps: {
+      selected: props.selected,
+    },
   });
 }
 

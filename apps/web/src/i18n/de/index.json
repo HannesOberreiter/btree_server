@@ -12,6 +12,7 @@
   },
   "active": "Aktiv",
   "add": "Hinzufügen",
+  "addedHive": "Stock {name} zur Auswahl hinzugefügt!",
   "alive": "Am Leben",
   "allYears": "Alle Jahre",
   "amount": "Menge",
@@ -103,6 +104,7 @@
   "end": "Ende",
   "error": {
     "access": "Zugriff nicht erlaubt oder falsches Passwort!",
+    "alreadyScanned": "Auswahl ist bereits gescannt!",
     "csvReading": "Die csv Datei konnte nicht gelesen werden!",
     "csvTooMuch": "Upload is zu groß!",
     "duplicate": "Konflikt, doppelter Eintrag!",
@@ -111,7 +113,9 @@
     "locked": "Konto gesperrt! (zu viele Anmeldeversuche?)",
     "more": "Einer der Fehler",
     "nfcNotSupported": "Web NFC wird von Ihrem Browser nicht unterstützt.",
+    "noCameraDetected": "Keine Kamera gefunden!",
     "noData": "Keine Daten zum Laden",
+    "noVideoTag": "Your browser does not support the video tag.",
     "notFound": "Route oder Server nicht gefunden! (Offline?)",
     "permission": "Berechtigungen konnten nicht festgelegt werden.",
     "premium": "Nur Premium-Funktion oder Basisbenutzerlimit erreicht!",
@@ -351,6 +355,8 @@
     "userDeleteText": "Möchten Sie Ihr Konto wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden. Hinweis: Wenn es in der aktuellen Imkerei einen anderen Benutzer gibt, werden die Imkereidaten nicht gelöscht, da sonst alle Daten entfernt werden. Bitte geben Sie zur Sicherheit Ihr aktuelles Passwort ein.",
     "userTitle": "Hier können Sie Ihre Benutzereinstellungen aktualisieren."
   },
+  "qr": "QR",
+  "qrScanner": "QR Scanner",
   "quarter": "Quartal",
   "queen": "Königin | Königinnen",
   "queenAdd": "Königin(en) hinzufügen",
@@ -417,6 +423,7 @@
     "title": "Neues Passwort erstellen"
   },
   "restore": "Wiederherstellen",
+  "result": "Ergebnis",
   "ripDate": "RIP-Datum",
   "save": "Speichern",
   "scale": {
@@ -484,6 +491,7 @@
   "status": "Status",
   "step": "Schritt | Schritte",
   "stock": "Bestand",
+  "stop": "Stop",
   "strong": "Stärke",
   "success": "Erfolg!",
   "successReset": "Zurücksetzen erfolgreich",
