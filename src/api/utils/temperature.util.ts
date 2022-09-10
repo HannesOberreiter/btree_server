@@ -9,6 +9,7 @@ export const getTemperature = async (latitude: number, longitude: number) => {
   try {
     return await axios.get(url);
   } catch (e) {
+    console.error(e);
     throw serverUnavailable('Meteoblue error');
   }
 };
