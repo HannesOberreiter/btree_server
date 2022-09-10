@@ -1,8 +1,8 @@
 <template>
   <div class="col-12">
-    <q-list v-if="modelValue" bordered separator>
+    <q-list v-if="steps" bordered separator>
       <q-item
-        v-for="(step, index) in modelValue.step"
+        v-for="(step, index) in steps"
         :key="step.id"
         :class="step.active ? 'bg-info' : ''"
       >
@@ -19,7 +19,7 @@
               flat
               :color="step.active ? 'secondary' : 'grey'"
               icon="fas fa-arrow-down"
-              :disable="index === modelValue.length - 1 || !step.active"
+              :disable="index === steps.length - 1 || !step.active"
               @click="onMove(index, index + 1)"
             />
           </btn-base-group>
@@ -82,7 +82,6 @@
 </template>
 
 <script setup lang="ts">
-import { useVModels } from '@vueuse/core';
 import filter from 'lodash-es/filter';
 import map from 'lodash-es/map';
 import { useQuasar } from 'quasar';
@@ -99,18 +98,27 @@ const $q = useQuasar();
 const { t } = useI18n();
 
 const props = defineProps({
-  modelValue: {
-    type: Object,
+  methodSteps: {
+    type: Array<any>,
+    required: true,
+  },
+  methodId: {
+    type: Number,
     required: true,
   },
 });
-const emit = defineEmits(['update:modelValue', 'change']);
-const { modelValue } = useVModels(props, emit);
+const emit = defineEmits(['change']);
+const { methodSteps, methodId } = toRefs(props);
+const steps = ref(null);
+watch(
+  methodSteps,
+  () => (steps.value = methodSteps.value ? methodSteps.value : null),
+  { immediate: true }
+);
 
 function setActiveStep(id: number, set = true) {
-  modelValue.value.step = map(modelValue.value.step, (obj) => {
-    obj.active = obj.id === id ? set : false;
-    return obj;
+  steps.value = steps.value.map(function (obj: any) {
+    return { ...obj, active: obj.id === id ? set : false };
   });
   if (set === false) onSave();
 }
@@ -120,10 +128,10 @@ function showInfo(info: string) {
 }
 
 function onMove(oldIndex: number, newIndex: number) {
-  const f = modelValue.value.step.splice(oldIndex, 1)[0];
+  const f = steps.value.splice(oldIndex, 1)[0];
   // insert stored item into position `to`
-  modelValue.value.step.splice(newIndex, 0, f);
-  usePrevent.unsavedPosition(modelValue.value.step);
+  steps.value.splice(newIndex, 0, f);
+  usePrevent.unsavedPosition(steps.value);
 }
 
 function onAdd() {
@@ -137,9 +145,9 @@ function onAdd() {
   }).onOk((obj) => {
     api
       .post('/v1/rearing_step', {
-        type_id: modelValue.value.id,
+        type_id: methodId.value,
         detail_id: obj.id,
-        position: modelValue.value.step.length + 1,
+        position: steps.value.length + 1,
       })
       .then(
         () => {
@@ -176,7 +184,7 @@ function onEdit() {
 }
 
 function resetActiveStep() {
-  modelValue.value.step = map(modelValue.value.step, (obj) => {
+  steps.value.map((obj: any) => {
     obj.active = false;
     return obj;
   });
@@ -187,7 +195,7 @@ function onSave() {
   if (!usePrevent.state.value) {
     resetActiveStep();
   } else {
-    const patch = map(modelValue.value.step, (obj, index) => {
+    const patch = map(steps.value, (obj, index) => {
       return { id: obj.id, position: index + 1 };
     });
     api.patch('/v1/rearing_step/updatePosition', { data: patch }).then(
@@ -210,10 +218,7 @@ function onDelete(id: number) {
     api.remove(`/v1/rearing_step/${id}`).then(
       () => {
         notification.open('positive', 'deleted');
-        modelValue.value.step = filter(
-          modelValue.value.step,
-          (o) => o.id != id
-        );
+        steps.value = filter(steps.value, (o) => o.id != id);
       },
       () => notification.open('negative', 'error.unknown')
     );

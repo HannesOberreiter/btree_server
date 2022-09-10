@@ -39,7 +39,8 @@
       <div class="text-bold">{{ $t('step', 2) }}:</div>
     </div>
     <list-rearing-steps
-      v-model="model"
+      :method-steps="model.step"
+      :method-id="model.id"
       @change="refetch()"
     ></list-rearing-steps>
   </div>
