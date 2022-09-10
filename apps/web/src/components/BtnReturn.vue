@@ -8,6 +8,7 @@
     color="white"
     size="md"
     icon="fas fa-backward-step"
+    :aria-label="$t('previousPage')"
     @click="
       router.replace({
         name: storeRouter.$state.previous as any,

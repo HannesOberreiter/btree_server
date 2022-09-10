@@ -7,6 +7,7 @@
     size="md"
     data-cy="btn-fullscreen"
     :icon="isFullscreen ? 'fas fa-compress' : 'fas fa-expand'"
+    :aria-label="$t('fullscreen')"
     @click="toggle()"
   >
     <tooltip-base anchor="bottom middle" self="top middle">

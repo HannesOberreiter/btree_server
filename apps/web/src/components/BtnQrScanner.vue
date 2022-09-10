@@ -6,8 +6,12 @@
     size="md"
     class="q-mr-xs"
     icon="fas fa-qrcode"
+    :aria-label="$t('qrScanner')"
     @click="onClick"
   >
+    <tooltip-base anchor="bottom middle" self="top middle">
+      {{ $t('qrScanner') }} (s)
+    </tooltip-base>
   </q-btn>
 </template>
 

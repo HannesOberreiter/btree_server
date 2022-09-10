@@ -15,6 +15,7 @@
     <btn-base
       icon="fas fa-circle-question"
       size="sm"
+      :aria-label="$t('help.name')"
       @click="showInfo = !showInfo"
       ><tooltip-base>{{ $t('help.name') }} (h)</tooltip-base></btn-base
     >

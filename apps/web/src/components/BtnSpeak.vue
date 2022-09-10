@@ -8,6 +8,7 @@
     :color="speech.isListening.value ? 'secondary' : 'white'"
     size="md"
     icon="fas fa-microphone"
+    :aria-label="$t('speech.tooltip')"
     @click="onStart"
   >
     <tooltip-base anchor="bottom middle" self="top middle">
