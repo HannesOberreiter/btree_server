@@ -9,11 +9,16 @@ export const useScanningStore = defineStore('scanning', {
   actions: {
     extractUrl(url: string) {
       if (url.indexOf('detail/hive') !== -1 && this.hiveDropdownActive) {
-        const reg = /(?<=hive\/)\d+/g;
-        const hive_id = reg.exec(url)[0];
-        if (hive_id) {
-          this.scannedId = hive_id;
-          return true;
+        try {
+          const reg = /(hive\/)(\d+)/g;
+          const hive_id = reg.exec(url)[2];
+          if (hive_id) {
+            this.scannedId = hive_id;
+            return true;
+          }
+        } catch (e) {
+          console.error(e);
+          return false;
         }
       }
       return false;

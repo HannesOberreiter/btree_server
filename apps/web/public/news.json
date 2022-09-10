@@ -1,11 +1,12 @@
 [
   {
     "version": "6.0.6",
-    "date": "2022-09-XX",
+    "date": "2022-09-10",
     "news": [
       "BUGFIX rearing steps were not moveable",
       "BUGFIX german temperature hint text was broken",
       "BUGFIX in apiary detail view the hive order was not possible to change",
+      "BUGFIX regrex error on safari browser",
       "VISUAL removed bullet points on change-log page, for better read ability on mobile devices"
     ]
   },
