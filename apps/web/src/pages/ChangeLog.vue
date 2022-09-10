@@ -36,12 +36,10 @@
             >
               <tooltip-base>{{ $t('latest') }}</tooltip-base>
             </q-icon>
-            <ul>
-              <li v-for="(item, index) in props.row.news" :key="index">
-                <b>{{ item.substring(0, item.indexOf(' ')) }}</b>
-                {{ item.substring(item.indexOf(' ') + 1) }}
-              </li>
-            </ul>
+            <p v-for="(item, index) in props.row.news" :key="index">
+              <b>{{ item.substring(0, item.indexOf(' ')) }}</b>
+              {{ item.substring(item.indexOf(' ') + 1) }}
+            </p>
           </q-card-section>
 
           <q-card-section class="q-pa-xs text-right">
