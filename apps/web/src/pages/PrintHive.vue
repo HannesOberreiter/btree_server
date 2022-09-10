@@ -64,11 +64,14 @@
                 <div>
                   <div v-if="item.kind === 'checkup'">
                     <span>
-                      {{ $t('queen') }}: {{ $t(item.queen + '') }},
-                      {{ $t('queencell', 2) }}: {{ $t(item.queencells + '') }},
-                      {{ $t('egg', 2) }}: {{ $t(item.eggs + '') }},
+                      {{ $t('queen') }}:
+                      {{ $t(item.queen ? 'true' : 'false') }},
+                      {{ $t('queencell', 2) }}:
+                      {{ $t(item.queencells ? 'true' : 'false') }},
+                      {{ $t('egg', 2) }}:
+                      {{ $t(item.eggs ? 'true' : 'false') }},
                       {{ $t('cappedBrood') }}:
-                      {{ $t(item.capped_brood + '') }}
+                      {{ $t(item.capped_brood ? 'true' : 'false') }}
                     </span>
                     <br />
                     <span>
@@ -97,7 +100,11 @@
                     <span v-if="item.vet"
                       >{{ $t('vet') }}: {{ item.vet.name }}&nbsp;</span
                     >
-                    <span>{{ $t('waitTime') }}: {{ item.wait }}</span>
+                    <span>
+                      {{ $t('waitTime') }}: {{ item.wait }},
+                      {{ $t('temperature') }}:
+                      {{ item.temp !== null ? item.temp : '' }}
+                    </span>
                   </div>
                   <div v-else-if="item.kind === 'harvest'">
                     <span>{{ $t('charge') }}: {{ item.charge }}&nbsp;</span>

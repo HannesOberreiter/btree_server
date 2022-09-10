@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import { useStorage } from '@vueuse/core';
 import refreshService from '~/services/refresh.service';
 import { useApiFetch } from '~/composables/useApi';
+import defaultsDeep from 'lodash-es/defaultsDeep';
 
 interface Checkup {
   rating: boolean;
@@ -21,6 +22,7 @@ interface Harvest {
 interface Treatment {
   wait: boolean;
   vet: boolean;
+  temperature: boolean;
 }
 
 interface Charge {
@@ -57,6 +59,7 @@ const resetSettings = {
   treatment: {
     wait: false,
     vet: false,
+    temperature: false,
   },
   charge: {
     price: false,
@@ -84,7 +87,7 @@ export const useFieldsettingStore = defineStore('fieldsetting', {
     },
     refresh(data: any) {
       if (data) {
-        this.settings = data.settings;
+        this.settings = defaultsDeep(data.settings, resetSettings);
       }
     },
     async reload() {

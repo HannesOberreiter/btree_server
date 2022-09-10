@@ -460,6 +460,7 @@
     "hintHarvestWater": "Wasser: Eingabefeld für Wassergehalt %",
     "hintTreatmentVet": "Tierarzt: Dropdown, in den Optionen können Sie die Werte für dieses Dropdown festlegen",
     "hintTreatmentWait": "Warten: Eingabefeld, für die Wartezeit nach der Behandlung",
+    "hintTreatmentTemperature": "@:setting.hintCheckupTemperature",
     "name": "Einstellung | Einstellungen",
     "title": "Hier können Sie Felder auswählen oder abwählen, die in Ihrem Quicktool angezeigt werden sollen!"
   },

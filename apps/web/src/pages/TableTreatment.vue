@@ -201,6 +201,14 @@ const columns = [
     sortable: true,
   },
   {
+    name: 'temp',
+    label: t('temperature'),
+    align: 'right',
+    field: (row: any) => row.temp,
+    format: (val: string) => (val !== null ? val + ' °C' : ''),
+    sortable: true,
+  },
+  {
     name: 'vet.name',
     label: t('vet'),
     align: 'right',

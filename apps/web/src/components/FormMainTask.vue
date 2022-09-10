@@ -197,10 +197,7 @@
             label="vet"
           ></form-dropdown-option>
         </div>
-        <div
-          v-if="fields.settings.treatment.wait"
-          class="col-12 col-md-6 q-pb-sm"
-        >
+        <div v-if="fields.settings.treatment.wait" class="col-12 col-md-6">
           <form-input-numeric
             v-model="state.treatment_wait"
             :values="values"
@@ -210,6 +207,17 @@
             icon="fas fa-circle-pause"
             :max-valid="365"
           ></form-input-numeric>
+        </div>
+        <div
+          v-if="fields.settings.treatment.temperature"
+          class="col-12 col-md-7"
+        >
+          <form-checkup-temperature
+            v-model="state.treatment_temp"
+            :hive="state.hive"
+            :reset="reset"
+            :values="values"
+          ></form-checkup-temperature>
         </div>
       </div>
     </div>
@@ -286,6 +294,7 @@ const stateDefault = {
   harvest_charge: '',
 
   treatment_wait: 0,
+  treatment_temp: 0,
 };
 </script>
 

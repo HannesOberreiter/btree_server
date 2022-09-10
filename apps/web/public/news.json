@@ -1,5 +1,10 @@
 [
   {
+    "version": "6.0.7",
+    "date": "2022-09-XX",
+    "news": ["FEATURE added optional temperature field to treatments"]
+  },
+  {
     "version": "6.0.6",
     "date": "2022-09-10",
     "news": [

@@ -460,6 +460,8 @@
     "hintHarvestWater": "Water: Input Field for water content %",
     "hintTreatmentVet": "Vet: Dropdown, in the Options you can define the values for this dropdown",
     "hintTreatmentWait": "Wait: Input Field, for waiting time after treatment",
+    "hintTreatmentTemperature": "@:setting.hintCheckupTemperature",
+
     "name": "Setting | Settings",
     "title": "Here you can select or deselect fields you want to be shown in your Quicktool!"
   },
