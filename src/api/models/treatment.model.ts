@@ -11,6 +11,7 @@ export class Treatment extends ExtModel {
   enddate!: Date;
   amount!: number;
   wait!: number;
+  temp!: number;
   note!: string;
   url!: string;
   done!: boolean;
@@ -41,6 +42,7 @@ export class Treatment extends ExtModel {
       enddate: { type: 'string', format: 'date' },
       amount: { type: 'number' },
       wait: { type: 'number' },
+      temp: { type: 'number' },
 
       note: { type: 'string', maxLength: 2000 },
       url: { type: 'string', maxLength: 512 },
