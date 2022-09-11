@@ -1,6 +1,6 @@
 <template>
   <btn-base
-    v-if="!$q.platform.is.mobile"
+    v-if="isSupported"
     flat
     dense
     color="white"
@@ -18,5 +18,5 @@
 
 <script setup lang="ts">
 import { useFullscreen } from '@vueuse/core';
-const { isFullscreen, toggle } = useFullscreen();
+const { isSupported, isFullscreen, toggle } = useFullscreen();
 </script>

@@ -4,7 +4,7 @@
       <q-card-section>
         <btn-close-dialog class="float-right"></btn-close-dialog>
         <div class="text-h6">
-          {{ $t('setting.name', 2) }} {{ $t('calendar.name') }}
+          {{ $t('setting.name', 2) }} {{ $t('calendar') }}
         </div>
       </q-card-section>
 

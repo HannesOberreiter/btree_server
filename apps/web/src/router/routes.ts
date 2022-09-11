@@ -15,7 +15,7 @@ const routes: RouteRecordRaw[] = [
         path: '',
         name: 'calendar',
         meta: {
-          title: 'calendar.name',
+          title: 'calendar',
         },
         component: () => import('~/pages/CalendarMain.vue'),
       },

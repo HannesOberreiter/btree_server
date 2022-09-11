@@ -29,9 +29,7 @@
   "calculate": "Calculate",
   "calculateVarroa": "Varroa count per day",
   "calculator": "Calculator",
-  "calendar": {
-    "name": "Calendar"
-  },
+  "calendar": "Calendar",
   "cancel": "Cancel",
   "cappedBrood": "Capped brood",
   "change": "change",
@@ -303,7 +301,7 @@
   "multipleValuesText": "Warning: editing multiple values, this will overwrite all task with the same value.",
   "name": "Name",
   "new": "New",
-  "newApiary": "Create Apiary",
+  "newApiary": "New @:apiary",
   "newFolder": "New Folder",
   "newPassword": "New Password",
   "newTodo": "New Todo",
@@ -458,10 +456,9 @@
     "hintGeneralUrl": "Form file link and upload button for Dropbox.",
     "hintHarvestFrames": "Frames: Input Field for how many frames you harvested.",
     "hintHarvestWater": "Water: Input Field for water content %",
+    "hintTreatmentTemperature": "@:setting.hintCheckupTemperature",
     "hintTreatmentVet": "Vet: Dropdown, in the Options you can define the values for this dropdown",
     "hintTreatmentWait": "Wait: Input Field, for waiting time after treatment",
-    "hintTreatmentTemperature": "@:setting.hintCheckupTemperature",
-
     "name": "Setting | Settings",
     "title": "Here you can select or deselect fields you want to be shown in your Quicktool!"
   },

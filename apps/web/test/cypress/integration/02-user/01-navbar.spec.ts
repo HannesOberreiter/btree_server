@@ -15,6 +15,7 @@ describe('User - Navbar', () => {
       const isDarkMode = $el.hasClass('body--dark');
       cy.dataCy('btn-dark-mode')
         .click()
+        .click()
         .then(() => {
           assert.isTrue(!isDarkMode === $el.hasClass('body--dark'));
         })
