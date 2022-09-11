@@ -108,7 +108,7 @@ const columns = [
   {
     name: 'apiary.name',
     required: false,
-    label: t('apiary'),
+    label: t('newApiary'),
     align: 'left',
     field: (row: any) =>
       row.apiary.modus

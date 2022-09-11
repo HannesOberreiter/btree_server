@@ -29,9 +29,7 @@
   "calculate": "Berechnung",
   "calculateVarroa": "Varroazahl pro Tag",
   "calculator": "Rechner",
-  "calendar": {
-    "name": "Kalender"
-  },
+  "calendar": "Kalender",
   "cancel": "Abbrechen",
   "cappedBrood": "Gedeckelte Brut",
   "change": "ändere",
@@ -303,7 +301,7 @@
   "multipleValuesText": "Warnung: Wenn Sie mehrere Werte bearbeiten, werden alle Aufgaben mit demselben Wert überschrieben.",
   "name": "Name",
   "new": "Neue",
-  "newApiary": "Stand erstellen",
+  "newApiary": "Neuer @:apiary",
   "newFolder": "Neuer Ordner",
   "newPassword": "Neues Passwort",
   "newTodo": "Neue Aufgabe",
@@ -458,6 +456,7 @@
     "hintGeneralUrl": "Link zur Formulardatei und Schaltfläche zum Hochladen für Dropbox.",
     "hintHarvestFrames": "Waben: Eingabefeld für die Anzahl der geernteten Waben.",
     "hintHarvestWater": "Wasser: Eingabefeld für Wassergehalt %",
+    "hintTreatmentTemperature": "@:setting.hintCheckupTemperature",
     "hintTreatmentVet": "Tierarzt: Dropdown, in den Optionen können Sie die Werte für dieses Dropdown festlegen",
     "hintTreatmentWait": "Warten: Eingabefeld, für die Wartezeit nach der Behandlung",
     "name": "Einstellung | Einstellungen",

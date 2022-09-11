@@ -1,13 +1,14 @@
 <template>
   <btn-base
-    v-if="speech.isSupported && !$q.platform.is.safari"
     ref="btn"
     v-close-popup
+    :disabled="!speech.isSupported || $q.platform.is.safari"
     flat
     dense
     :color="speech.isListening.value ? 'secondary' : 'white'"
     size="md"
     icon="fas fa-microphone"
+    :aria-label="$t('speech.tooltip')"
     @click="onStart"
   >
     <tooltip-base anchor="bottom middle" self="top middle">
@@ -42,7 +43,7 @@ const { locale } = useI18n();
 
 const speech = useSpeechRecognition({
   lang: locale,
-  interimResults: false,
+  interimResults: $q.platform.is.safari ? true : false,
   continuous: false,
 });
 
@@ -90,7 +91,7 @@ const commands = [
   },
 ] as Array<Haystack>;
 
-if (speech.isSupported && !$q.platform.is.safari) {
+if (speech.isSupported) {
   watch(
     [hives, apiaries],
     () => {
@@ -130,9 +131,11 @@ if (speech.isSupported && !$q.platform.is.safari) {
       const SpeechGrammarList =
         (window as any).SpeechGrammarList ||
         (window as any).webkitSpeechGrammarList;
-      const speechRecognitionList = new SpeechGrammarList();
-      speechRecognitionList.addFromString(grammar, 1);
-      speech.recognition.grammars = speechRecognitionList;
+      if (SpeechGrammarList) {
+        const speechRecognitionList = new SpeechGrammarList();
+        speechRecognitionList.addFromString(grammar, 1);
+        speech.recognition.grammars = speechRecognitionList;
+      }
     } catch (e) {
       console.error(e);
     }
@@ -198,5 +201,6 @@ function handleResult(result: any, command: string) {
       true
     );
   }
+  speech.stop();
 }
 </script>

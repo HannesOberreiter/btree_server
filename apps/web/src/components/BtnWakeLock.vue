@@ -6,6 +6,7 @@
     color="white"
     size="md"
     :icon="isActive ? 'fas fa-eye' : 'far fa-eye'"
+    :aria-label="$t('keepAwake')"
     @click="isActive ? release() : request('screen')"
   >
     <tooltip-base anchor="bottom middle" self="top middle">

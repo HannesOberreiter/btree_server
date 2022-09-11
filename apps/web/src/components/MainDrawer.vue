@@ -72,7 +72,7 @@ const onLogout = async () => {
 defineExpose({ $q });
 
 const calendar = {
-  label: t('calendar.name'),
+  label: t('calendar'),
   route: 'calendar',
   icon: 'far fa-calendar-alt',
 };
@@ -120,18 +120,7 @@ const links = [
         icon: 'fas fa-house',
         menu: false,
       },
-      {
-        label: `${t('new')} ${t('movement')}`,
-        route: 'new-movement',
-        icon: 'fas fa-truck',
-        menu: false,
-      },
-      {
-        label: t('apiary') + ' ' + t('map.name'),
-        route: 'map-apiary',
-        icon: 'fas fa-map-marker-alt',
-        menu: false,
-      },
+
       {
         label: t('hive', 2),
         route: 'table-hive',
@@ -140,9 +129,23 @@ const links = [
       },
 
       {
+        label: `${t('new')} ${t('movement')}`,
+        route: 'new-movement',
+        icon: 'fas fa-truck',
+        menu: false,
+      },
+
+      {
         label: t('movement', 2),
         route: 'table-movement',
         icon: 'fas fa-table',
+        menu: false,
+      },
+
+      {
+        label: t('apiary') + ' ' + t('map.name'),
+        route: 'map-apiary',
+        icon: 'fas fa-map-marker-alt',
         menu: false,
       },
 
@@ -273,7 +276,7 @@ const links = [
     icon: 'fas fa-scale-balanced',
     menu: [
       {
-        label: t('calendar.name'),
+        label: t('calendar'),
         route: 'calendar-scale_data',
         icon: 'fas fa-calendar-alt',
         menu: false,

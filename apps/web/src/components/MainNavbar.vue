@@ -38,6 +38,7 @@
           unelevated
           color="primary"
           class="q-pa-xs"
+          aria-label="Open Dropdown"
         >
           <q-list class="bg-secondary">
             <q-item v-close-popup>

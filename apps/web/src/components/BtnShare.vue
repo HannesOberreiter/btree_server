@@ -5,6 +5,7 @@
     class="q-mr-xs"
     :color="nfc.state.reading ? 'green' : 'grey'"
     icon="fab fa-nfc-symbol"
+    aria-label="NFC"
     @click="nfc.state.reading ? nfc.abort() : nfc.read()"
   >
   </q-btn>
@@ -12,6 +13,7 @@
     v-if="showPath"
     style="cursor: pointer"
     data-cy="btn-share"
+    :aria-label="$t('share')"
     @click="onShare"
   >
     <span v-if="$q.platform.is.mobile">

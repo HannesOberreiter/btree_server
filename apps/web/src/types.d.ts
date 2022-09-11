@@ -251,6 +251,7 @@ export declare interface FormQuicktool {
   harvest_water: number;
   harvest_charge: string;
   treatment_wait: number;
+  treatment_temp: number;
   hive: any;
   type: any;
   disease: any;

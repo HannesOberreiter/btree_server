@@ -67,3 +67,30 @@ input {
     display: none;
   }
 }
+
+html > .dark > input:-internal-autofill-selected {
+  appearance: menulist-button;
+  background-image: none !important;
+  background-color: -internal-light-dark(
+    rgb(232, 240, 254),
+    rgba(69, 70, 73, 1)
+  ) !important;
+  color: fieldtext !important;
+}
+
+/*
+  input autofill prevent standard browser style on dark mode
+  https://stackoverflow.com/questions/2781549/removing-input-background-colour-for-chrome-autocomplete
+*/
+html.dark {
+  input:-webkit-autofill {
+    -webkit-text-fill-color: white;
+  }
+
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px rgba(0, 0, 0, 0.7) inset !important;
+  }
+}

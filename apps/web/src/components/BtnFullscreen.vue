@@ -1,12 +1,13 @@
 <template>
   <btn-base
-    v-if="!$q.platform.is.mobile"
+    v-if="isSupported"
     flat
     dense
     color="white"
     size="md"
     data-cy="btn-fullscreen"
     :icon="isFullscreen ? 'fas fa-compress' : 'fas fa-expand'"
+    :aria-label="$t('fullscreen')"
     @click="toggle()"
   >
     <tooltip-base anchor="bottom middle" self="top middle">
@@ -17,5 +18,5 @@
 
 <script setup lang="ts">
 import { useFullscreen } from '@vueuse/core';
-const { isFullscreen, toggle } = useFullscreen();
+const { isSupported, isFullscreen, toggle } = useFullscreen();
 </script>

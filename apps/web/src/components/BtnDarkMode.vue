@@ -6,6 +6,7 @@
     size="md"
     data-cy="btn-dark-mode"
     :icon="status.icon"
+    :aria-label="$t(status.text)"
     @click="setDarkMode"
   >
     <tooltip-base anchor="bottom middle" self="top middle">

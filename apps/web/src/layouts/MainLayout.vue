@@ -13,6 +13,7 @@
             round
             data-cy="btn-drawer"
             icon="fas fa-bars"
+            aria-label="Toggle Sidebar"
             @click="toggleLeftDrawer"
           />
           <main-navbar></main-navbar>
