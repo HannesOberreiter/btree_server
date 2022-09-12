@@ -1,8 +1,11 @@
 <template>
   <btn-base
+    v-if="!($q.platform.is.safari || $q.platform.is.ios)"
     ref="btn"
     v-close-popup
-    :disabled="!speech.isSupported || $q.platform.is.safari"
+    :disabled="
+      !speech.isSupported || $q.platform.is.safari || $q.platform.is.ios
+    "
     flat
     dense
     :color="speech.isListening.value ? 'secondary' : 'white'"
