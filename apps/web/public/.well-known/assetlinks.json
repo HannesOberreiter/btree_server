@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.bnative",
+      "sha256_cert_fingerprints": [
+        "53:EB:89:D6:22:51:71:D9:04:BB:5B:E1:92:AA:8E:93:28:21:52:2F:B9:CE:68:62:33:38:F9:5B:61:7E:8F:51"
+      ]
+    }
+  }
+]
