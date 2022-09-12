@@ -37,7 +37,7 @@ The `dev` server is running with a proxy to the backend ([quasar.config.js](quas
 
 ### PWA service worker development
 
-Chrome should be fine with `localhost` and non SSL. If testing over network with IP adress it must run over SSL. See quasar config `devServer: ... https: false`.
+Chrome should be fine with `localhost` and non SSL. If testing over network with IP address it must run over SSL. See quasar config `devServer: ... https: false`.
 
 ### Translation (vue-i18n)
 
@@ -86,7 +86,7 @@ The example [example.env](example.env) show the needed environmental variables. 
 
 #### Version Number
 
-Changes and version number are documented in [src/assets/news.json](src/assets/news.json). This news are somewhat for the end-user and also used to update service workers to a new version. This process is not optimal but a legacy burden from my old app which may be replaced with automatic news from GitHub commits.
+Changes and version number are documented in [src/assets/news.json](src/assets/news.json). This news are somewhat only for the end-user. This is a legacy thing and may be replaced with GitHub commints in future.
 
 #### Icons
 
@@ -94,4 +94,52 @@ Icons generated with Icongenie for commands see: <https://quasar.dev/icongenie/c
 
 ```bash
 icongenie generate --icon public/logo.png --padding 5,5 --skip-trim --theme-color 2b957a --splashscreen-color f5f7fa --splashscreen-icon-ratio 60
+```
+
+## TWA (Trusted Web Activity)
+
+We do not generate a native application for iOS or Android, as alternative we use a [TWA](https://developer.chrome.com/docs/android/trusted-web-activity/).
+
+- Simple online interface creates our `.apk` file: [pwabuilder.com/publish?site=https://app.btree.at](https://www.pwabuilder.com/publish?site=https://beta.btree.at)
+- Alternative: Bubblewrap CLI: [github.com/GoogleChromeLabs/bubblewrap](https://github.com/GoogleChromeLabs/bubblewrap)
+
+PlayStore Link: [https://play.google.com/console/u/0/developers](https://play.google.com/console/u/0/developers)
+
+Settings:
+
+```json
+  "package": "com.bnative", // needs to be the same as in store otherwise a new app will be created
+  "name": "b.tree Beekeeping Database",
+  "launcherName": "btree",
+  "version": "6.0.0" // for the enduser
+  "versionsCode": 6X // check PlayStore for latest release
+  "features": {
+    "locationDelegation": {
+      "enabled": true
+    }
+  },
+  // Using our own signed key
+  "signingKey": {
+    "path": "android.keystore",
+    "alias": "bNative"
+  },
+  "enableSiteSettingsShortcut": true,
+```
+
+Important that the TWA works in Google PlayStore a the `.well-known/assetlinks.json` must be present on the apps root folder. Fingerprint is from our signed key.
+
+```json
+// .well-known/assetlinks.json
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.bnative",
+      "sha256_cert_fingerprints": [
+        "53:EB:89:D6:22:51:71:D9:04:BB:5B:E1:92:AA:8E:93:28:21:52:2F:B9:CE:68:62:33:38:F9:5B:61:7E:8F:51"
+      ]
+    }
+  }
+]
 ```
