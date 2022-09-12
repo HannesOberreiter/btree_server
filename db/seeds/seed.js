@@ -124,9 +124,10 @@ if (env.env === 'production') {
         user_id: user_id,
         id: data.check_id,
         type_id: data.ct_id,
+        temperature: data.temp,
         varroa: isNaN(data.varroa) ? 0 : Number(data.varroa),
         ...dateFields(data),
-        ...omitFields(data, ['check_id', 'ct_id', 'varroa']),
+        ...omitFields(data, ['check_id', 'ct_id', 'varroa', 'temp']),
       };
     });
     await transactionMigration('checkups', compact(newData), knex);
