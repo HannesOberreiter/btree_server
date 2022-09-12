@@ -244,14 +244,14 @@ export declare interface FormQuicktool {
   checkup_strong: number;
   checkup_weight_amount: number;
   checkup_weight_time: string;
-  checkup_temp: number;
+  checkup_temperature: number;
   harvest_frames: number;
   harvest_amount_type: string;
   harvest_amount_calc: number;
   harvest_water: number;
   harvest_charge: string;
   treatment_wait: number;
-  treatment_temp: number;
+  treatment_temperature: number;
   hive: any;
   type: any;
   disease: any;

@@ -78,6 +78,10 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  tableId: {
+    type: String,
+    default: null,
+  },
   labelPlural: {
     type: Number,
     default: 1,
@@ -150,9 +154,7 @@ function setValues() {
   if (multipleValues.value) editValues(true);
   else if (values.value && !isEmpty(values.value)) {
     modelValue.value =
-      values.value[0][
-        props.label === 'frame' ? props.label + 's' : props.label
-      ];
+      values.value[0][props.tableId ? props.tableId : props.label];
   } else modelValue.value = resetValue;
 }
 

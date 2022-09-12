@@ -91,7 +91,7 @@
                     </span>
                     <br />
                     <span>
-                      {{ $t('temperature') }}: {{ item.temp }},
+                      {{ $t('temperature') }}: {{ item.temperature }},
                       {{ $t('strong') }}: {{ item.strong }}, {{ $t('varroa') }}:
                       {{ item.varroa }},
                     </span>
@@ -103,7 +103,7 @@
                     <span>
                       {{ $t('waitTime') }}: {{ item.wait }},
                       {{ $t('temperature') }}:
-                      {{ item.temp !== null ? item.temp : '' }}
+                      {{ item.temperature !== null ? item.temperature : '' }}
                     </span>
                   </div>
                   <div v-else-if="item.kind === 'harvest'">

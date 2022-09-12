@@ -127,13 +127,17 @@ watch(reset, () => {
 function setValues() {
   disable.value = multipleValues.value;
   if (multipleValues.value) editValues(true);
-  else if (values.value && !isEmpty(values.value))
-    modelValue.value = useDate.isoFormat(
-      values.value[0].time,
-      'time',
-      'HH:mm:ss'
-    );
-  else modelValue.value = resetValue;
+  else if (values.value && !isEmpty(values.value)) {
+    if (values.value[0].time) {
+      modelValue.value = useDate.isoFormat(
+        values.value[0].time,
+        'time',
+        'HH:mm:ss'
+      );
+    } else {
+      modelValue.value = null;
+    }
+  } else modelValue.value = resetValue;
 }
 
 function editValues(val: boolean) {

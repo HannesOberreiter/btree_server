@@ -140,7 +140,7 @@
         >
           <div class="col-12 col-md-7">
             <form-checkup-temperature
-              v-model="state.checkup_temp"
+              v-model="state.checkup_temperature"
               :hive="state.hive"
               :reset="reset"
               :values="values"
@@ -159,6 +159,7 @@
               :values="values"
               :hive-count="state.hive.length"
               label="frame"
+              table-id="frames"
             ></form-input-amount>
           </div>
         </div>
@@ -213,7 +214,7 @@
           class="col-12 col-md-7"
         >
           <form-checkup-temperature
-            v-model="state.treatment_temp"
+            v-model="state.treatment_temperature"
             :hive="state.hive"
             :reset="reset"
             :values="values"
@@ -285,7 +286,7 @@ const stateDefault = {
   checkup_strong: 0,
   checkup_weight_amount: 0,
   checkup_weight_time: dayjs().format('HH:mm'),
-  checkup_temp: 0,
+  checkup_temperature: 0,
 
   harvest_frames: 0,
   harvest_amount_type: 'single',
@@ -294,7 +295,7 @@ const stateDefault = {
   harvest_charge: '',
 
   treatment_wait: 0,
-  treatment_temp: 0,
+  treatment_temperature: 0,
 };
 </script>
 

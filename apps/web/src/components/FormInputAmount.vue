@@ -8,6 +8,7 @@
         :values="values"
         :reset="reset"
         :max-valid="10000"
+        :table-id="tableId"
         icon="fas fa-bucket"
         :hint="
           hiveCount > 0 && modelType === 'total'
@@ -59,6 +60,10 @@ const props = defineProps({
     type: Object,
     default: null,
   },
+  tableId: {
+    type: String,
+    default: null,
+  },
 });
 const emit = defineEmits([
   'update:modelValue',
@@ -70,6 +75,7 @@ const { modelValue, modelType, modelCalc } = useVModels(props, emit);
 const OPTIONS = ['single', 'total'];
 
 watch(props, () => {
+  props.tableId;
   if (props.hiveCount > 0 && modelType.value === 'total')
     modelCalc.value = round(modelValue.value / props.hiveCount, 2);
   else modelCalc.value = modelValue.value;

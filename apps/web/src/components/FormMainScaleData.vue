@@ -11,6 +11,7 @@
       :readonly="false"
       :values="values"
       :reset="reset"
+      label="datetime"
       date-format="YYYY-MM-DD HH:mm:ss"
     ></form-input-date>
 
@@ -33,6 +34,7 @@
     <form-input-numeric
       v-model="state.temp1"
       label="temperature"
+      table-id="temp1"
       icon="fas fa-temperature-high"
       numeric-valid="decimal"
       :min-valid="-100"
@@ -42,17 +44,10 @@
     <form-input-numeric
       v-model="state.temp2"
       label="temperature"
+      table-id="temp2"
       icon="fas fa-temperature-low"
       numeric-valid="decimal"
       :min-valid="-100"
-      :values="values"
-      :reset="reset"
-    ></form-input-numeric>
-    <form-input-numeric
-      v-model="state.rain"
-      label="temperature"
-      icon="fas fa-city"
-      numeric-valid="decimal"
       :values="values"
       :reset="reset"
     ></form-input-numeric>

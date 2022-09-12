@@ -332,10 +332,10 @@ const columns = [
     sortable: true,
   },
   {
-    name: 'temp',
+    name: 'temperature',
     label: t('temperature'),
     align: 'right',
-    field: (row: any) => row.temp,
+    field: (row: any) => row.temperature,
     format: (val: string) => val + ' °C',
     sortable: true,
   },
