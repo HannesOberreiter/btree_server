@@ -104,7 +104,7 @@ const columns = [
   {
     name: 'hive_count.count',
     required: false,
-    label: t('count'),
+    label: t('hive', 2),
     align: 'left',
     field: (row: any) => row.hive_count,
     sortable: true,

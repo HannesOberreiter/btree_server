@@ -22,7 +22,10 @@
           <div class="col-12">
             <div v-if="!isMovement">
               <b>{{ $t('status') }}: </b>
-              <span class="show-pointer" @click="updateStatus()"
+              <span
+                class="show-pointer"
+                :class="eventInfo.done ? 'text-green-8' : 'text-red-8'"
+                @click="updateStatus()"
                 >{{ eventInfo.done ? $t('done') : $t('open') }}
                 <q-icon name="fas fa-refresh"></q-icon
               ></span>
@@ -52,6 +55,7 @@
               <div v-if="eventInfo.hive_ids.split(',').length - 1 === 0">
                 <b>{{ t('hive') }}: </b>
                 <router-link
+                  class="text-orange-8"
                   :to="{
                     name: 'detail-hive',
                     params: { id: eventInfo.hive_ids },
@@ -74,6 +78,7 @@
               <div>
                 <b>{{ t('apiary') }}: </b>
                 <router-link
+                  class="text-orange-8"
                   :to="{
                     name: 'detail-apiary',
                     params: { id: eventInfo.apiary_id },
