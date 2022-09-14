@@ -1,4 +1,4 @@
-name: Live
+name: live
 
 on:
   push:

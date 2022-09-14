@@ -1,6 +1,17 @@
 # Frontend for b.tree Beekeeping Webapplication
 
-Written in typescript build with Vue.js and Quasar. The b.tree application is for managing your honeybee colonies in a modern way. More infos at <https://info.btree.at>.
+[![beta](https://github.com/HannesOberreiter/btree_vue/actions/workflows/beta.yml/badge.svg)](https://github.com/HannesOberreiter/btree_vue/actions/workflows/beta.yml)
+[![live](https://github.com/HannesOberreiter/btree_vue/actions/workflows/live.yml/badge.svg)](https://github.com/HannesOberreiter/btree_vue/actions/workflows/live.yml)
+
+Written in typescript build with Vue.js and Quasar. The b.tree application is for managing your honey bee colonies in a modern way. More infos at <https://info.btree.at>.
+
+- [Repo - b.tree Server API](https://github.com/HannesOberreiter/btree_server)
+  - Live: <https://api.btree.at>
+  - Beta: <https://api-beta.btree.at>
+- [Private Repo - b.tree Frontend](https://github.com/HannesOberreiter/btree_vue)
+  - Live: <https://app.btree.at>
+  - Beta: <https://beta.btree.at>
+- [Repo - b.tree Database](https://github.com/HannesOberreiter/btree_database)
 
 ## Install the dependencies
 
@@ -61,9 +72,12 @@ yarn quasar build -m pwa
 
 #### Server
 
-Currently running with ngnix service, demo config files `etc/nginx/sites-available/btree_at_app.conf`.
+Currently running with Ngnix service, demo config files for `etc/nginx/sites-available/btree_at_app.conf`.
 
-Settings up nginx:
+- Live Server: [btree_at_app.conf](btree_at_app.conf)
+- Beta Server: [btree_at_beta.conf](btree_at_beta.conf)
+
+Settings up Nginx:
 
 ```bash
 # Create Config File inside /etc/nginx/sites-available
@@ -79,6 +93,10 @@ SSL certificates are managed with certbot: <https://certbot.eff.org/instructions
 ```bash
 sudo certbot --nginx
 ```
+
+#### Deployment & Staging
+
+The beta url and api are our staging and testing url. GitHub action is automatically uploading the latest PWA build version to the servers `var/www` folder with sftp. The [master] branch uploads to <https://beta.btree.at> and is connected to `api-beta.btree.at`. The [live] branch uploads the live version for <https://app.btree.at> and is connected to the live backend `api.btree.at`.
 
 #### .env
 
