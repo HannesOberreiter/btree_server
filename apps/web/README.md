@@ -28,7 +28,7 @@ yarn quasar dev
 yarn quasar dev -m pwa
 ```
 
-We use auto-import plugins to import common libraries and components, see definitions at [src/auto-*.d.ts](src/).
+We use auto-import plugins to import common libraries and components, see definitions at [src/auto-\*.d.ts](src/).
 
 ### API proxy development
 

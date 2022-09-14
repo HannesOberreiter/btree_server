@@ -3,36 +3,21 @@
   "editor.guides.bracketPairs": true,
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "editor.codeActionsOnSave": [
-    "source.fixAll.eslint"
-  ],
-  "eslint.validate": [
-    "javascript",
-    "javascriptreact",
-    "typescript",
-    "vue"
-  ],
+  "editor.codeActionsOnSave": ["source.fixAll.eslint"],
+  "eslint.validate": ["javascript", "javascriptreact", "typescript", "vue"],
   "typescript.tsdk": "node_modules/typescript/lib",
-  "conventionalCommits.scopes": [
-    "beta"
-  ],
+  "conventionalCommits.scopes": ["beta"],
   "json.schemas": [
     {
-      "fileMatch": [
-        "cypress.json"
-      ],
+      "fileMatch": ["cypress.json"],
       "url": "https://on.cypress.io/cypress.schema.json"
     }
   ],
-  "i18n-ally.localesPaths": [
-    "src/i18n"
-  ],
-  "i18n-ally.enabledParsers": [
-    "json"
-  ],
+  "i18n-ally.localesPaths": ["src/i18n"],
+  "i18n-ally.enabledParsers": ["json"],
   "i18n-ally.keystyle": "nested",
   "i18n-ally.sourceLanguage": "en",
   "html-css-class-completion.remoteStyleSheets": [
     "https://cdn.jsdelivr.net/npm/quasar@2.7.1/dist/quasar.prod.css"
-  ],
+  ]
 }
