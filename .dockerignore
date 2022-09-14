@@ -16,6 +16,7 @@ db/seeds/migration
 **/docker-compose.*
 Dockerfile*
 Insomnia.json
+*.conf
 
 
 # Logs

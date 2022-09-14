@@ -1,0 +1,26 @@
+# https://community.hetzner.com/tutorials/install-and-configure-docker
+# etc/nginx/conf.d/upstream.conf
+# docker inspect to get ip adress
+# pull latest and run
+# docker compose pull  && docker compose up -d
+version: '3.8'
+services:
+  btree-server:
+    container_name: btree-server-beta
+    image: hannesoberreiter/btree_server:latest
+    # To run knex commands
+    #entrypoint: [ "/bin/sh", "-c", "npm run prod:knex migrate:latest" ]
+    restart: always
+    environment:
+      ENVIRONMENT: production
+    volumes:
+      - ./env:/home/node/app/env
+      - ./logs:/home/node/app/logs
+      - ./migration:/home/node/app/db/seeds/migration
+    ports:
+      - "1339:8101"
+
+networks:
+  default:
+    external: true
+    name: database-beta_btree-db-network-beta
