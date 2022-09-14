@@ -20,7 +20,7 @@ export class Checkup extends ExtModel {
   swarm!: number;
   varroa!: number;
   strong!: number;
-  temp!: number;
+  temperature!: number;
   weight!: number;
   time!: string;
   broodframes!: number;
@@ -65,7 +65,7 @@ export class Checkup extends ExtModel {
       swarm: { type: 'number' },
       varroa: { type: 'number' },
       strong: { type: 'integer' },
-      temp: { type: 'number' },
+      temperature: { type: 'number' },
       weight: { type: 'number' },
       time: { type: 'string', format: 'time' },
       broodframes: { type: 'integer' },

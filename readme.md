@@ -5,15 +5,19 @@
 
 Written in typescript build with nodejs, express, knex.js and objections.js.
 
-## Docker
+- [Repo - b.tree Server API](https://github.com/HannesOberreiter/btree_server)
+  - Live: <https://api.btree.at>
+  - Beta: <https://api-beta.btree.at>
+- [Private Repo - b.tree Frontend](https://github.com/HannesOberreiter/btree_vue)
+  - Live: <https://app.btree.at>
+  - Beta: <https://beta.btree.at>
+- [Repo - b.tree Database](https://github.com/HannesOberreiter/btree_database)
 
-For ease of deploying into production, you can use Docker: <https://docs.docker.com/compose/>
+## Docker Container
 
 ### Building image
 
-Currently images are build automatically on 'main' branch push with GitHub actions and pushed to a private DockerHub repo.
-
-If you want to build it locally use following commands:
+Currently images are build automatically on 'main' branch merge with GitHub actions and pushed to a private DockerHub repo. If you want to build the image locally use following commands:
 
 ```bash
 # Build image
@@ -24,20 +28,35 @@ docker push hannesoberreiter/btree_server:latest
 
 ### Running container
 
-Hint: To be able to pull from a DockerHub private repo create a api key with read-only access and login once to docker on your server eg. `docker login -u hannesoberreiter` with the api token as password. The token will be saved in your config and you can call docker-compose on the private repo.
+Hint: To be able to pull from a DockerHub private repo create a api key with read-only access and login once to docker on your server eg. `docker login -u hannesoberreiter` with the api token as password. The token will be saved in your config and you can call `docker compose` on the private repo.
 
 ```bash
 # Pull latest and run 
-docker-compose pull  && docker-compose up -d
+docker compose pull  && docker compose up -d
 # Run container (server) (define file if not the only one in folder)
-docker-compose -f docker-compose.server.yml up -d
+docker compose -f docker-compose.server.yml up -d
 # Stop container  (server)
-docker-compose -f docker-compose-server.yml down
+docker compose -f docker-compose-server.yml down
 # Access Container Bash for npm run commands
 docker exec -it btree-server /bin/sh
 # Clean Container
-docker-compose -f docker-compose-*.yml rm
+docker compose -f docker-compose-*.yml rm
 ```
+
+### Docker Compose Files
+
+In the root directory you can find example composer files which are used on our server for live and beta (testing and staging) backend servers.
+
+- [docker-compose.api.yml](docker-compose.api.yml)
+  - Live: <https://api.btree.at>
+- [docker-compose.api-beta.yml](docker-compose.api-beta.yml)
+  - Live: <https://api-beta.btree.at>
+
+### Deployment
+
+The beta api automatically pulls with a Cron-Job the latest version von DockerHub each day, read the readme on [Repo - b.tree Database](https://github.com/HannesOberreiter/btree_database) for more information.
+
+The live api server needs to be upgraded manually which can be archived by `docker compose pull  && docker compose up -d`.
 
 ## Development
 
@@ -60,11 +79,13 @@ Now you can kickstart the server, it will run `tsc`, `nodemon` and `mocha` in wa
 npm run kickstart
 ```
 
-## MySQL
+## MariaDB
 
-I use Docker with MySQL and network to connect multiple docker instances, see GitHub Repo: <https://github.com/HannesOberreiter/btree-docker-mysql>
+We use Docker with MariaDB and network to connect multiple docker instances, see GitHub Repo: <https://github.com/HannesOberreiter/btree-docker-mysql>
 
-You can also install MySQL on your computer and run it locally. On Mac best to install it with Homebrew, you can use the latest or specify the version with `@5.7`.
+### Local Installation
+
+Alternative you can also install MySQL on your computer and run it locally. On Mac best to install it with Homebrew, you can use the latest or specify the version with `@5.7`.
 
 ```bash
 brew install mysql
@@ -89,9 +110,9 @@ We use knex CLI, <http://knexjs.org/#Migrations-API>.
 npm run dev:knex <options> # eg. migrate:latest
 ```
 
-## Server ngnix
+## Server Ngnix
 
-Proxy redirecting inside `upstream.conf`. Important the redirect IP address is not localhost it is the container IP address: `docker inspect <container-id>` (get the gateway IP address + Port). Demo files for ngnix are in the root folder of this repository.
+Proxy redirecting inside `upstream.conf`. Important the redirect IP address is not localhost it is the container IP address: `docker inspect <container-id>` (get the gateway IP address + Port). Demo files for Ngnix are in the root folder of this repository, which are also used on our live server.
 
 ```bash
 # path: /etc/nginx/conf.d/upstream.conf
