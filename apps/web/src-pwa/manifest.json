@@ -7,9 +7,11 @@
   "background_color": "#f5f7fa",
   "scope": "/",
   "display": "standalone",
+  "categories": ["software", "beekeeping", "utilities"],
+
   "shortcuts": [
     {
-      "name": "QuickTool - Checkup",
+      "name": "Checkup - QuickTool",
       "description": "Create a new checkup",
       "url": "/new/quicktool/checkup",
       "icons": [
@@ -17,7 +19,7 @@
       ]
     },
     {
-      "name": "QuickTool - Feeding",
+      "name": "Feeding - QuickTool",
       "description": "Create a new feeding",
       "url": "/new/quicktool/feed",
       "icons": [
@@ -33,7 +35,7 @@
       ]
     },
     {
-      "name": "QuickTool - Treatment",
+      "name": "Treatment - QuickTool",
       "description": "Create a new treatment",
       "url": "/new/quicktool/treatment",
       "icons": [

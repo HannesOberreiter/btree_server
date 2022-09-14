@@ -1,0 +1,40 @@
+name: Live
+
+on:
+  push:
+    branches: [live]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      BACKEND_URL: https://api.btree.at/api
+      DROPBOX_CLIENT_ID: ${{ secrets.DROPBOX_CLIENT_ID }}
+      OPENWEATHER_APP_ID: ${{ secrets.OPENWEATHER_APP_ID }}
+      MATOMO_HOST: ${{ secrets.MATOMO_HOST }}
+      MATOMO_SITE_ID: ${{ secrets.MATOMO_SITE_ID }}
+      PAYPAL_CLIENT_ID: ${{ secrets.PAYPAL_CLIENT_ID }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: 'yarn'
+      - name: Install
+        run: yarn install
+      - name: Build PWA
+        run: yarn quasar build -m pwa
+      - name: List output files
+        run: ls
+
+      - name: Upload Files
+        id: upload
+        uses: Creepios/sftp-action@v1.0.3
+        with:
+          host: ${{ secrets.FTP_HOST }}
+          port: 22
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          localPath: './dist/pwa'
+          remotePath: './btree-vue/dist'

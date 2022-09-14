@@ -21,13 +21,14 @@
 
 <script setup lang="ts">
 import { useVModels } from '@vueuse/core';
+import { PropType } from 'vue';
 
 const props = defineProps({
   modelValue: {
     default: 0,
   },
   modelTime: {
-    type: String,
+    type: null as unknown as PropType<string | null>,
     required: true,
   },
   reset: {

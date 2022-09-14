@@ -101,7 +101,7 @@ function cleanupQuicktool(state: FormQuicktool, isEdit: boolean, task: string) {
     result['time'] = state.checkup_weight_time
       ? dayjs(state.checkup_weight_time, 'HH:mm').format('HH:MM:ss')
       : null;
-    result['temp'] = state.checkup_temp;
+    result['temperature'] = state.checkup_temperature;
 
     result['broodframes'] = state.checkup_frames.broodframes;
     result['emptyframes'] = state.checkup_frames.emptyframes;
@@ -130,7 +130,7 @@ function cleanupQuicktool(state: FormQuicktool, isEdit: boolean, task: string) {
 
       result['vet_id'] = state.treatment_vet ? state.treatment_vet.id : null;
       result['wait'] = state.treatment_wait;
-      result['temp'] = state.treatment_temp;
+      result['temperature'] = state.treatment_temperature;
     } else if (task === 'harvest') {
       result['frames'] = state.harvest_amount_calc;
       result['water'] = state.harvest_water;

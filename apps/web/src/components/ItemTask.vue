@@ -61,7 +61,7 @@
               <b>{{ $t('waitTime') }}:</b> {{ task.wait }}
             </div>
             <div v-if="fields.settings.treatment.temperature">
-              <b>{{ $t('temperature') }}:</b> {{ task.temp }} °C
+              <b>{{ $t('temperature') }}:</b> {{ task.temperature }} °C
             </div>
           </div>
           <div v-else-if="task.kind === 'checkup'" class="col-12">
@@ -139,7 +139,7 @@
               <b>{{ $t('varroa') }}:</b> {{ task.varroa }}
             </div>
             <div v-if="fields.settings.checkup.temperature">
-              <b>{{ $t('temperature') }}:</b> {{ task.temp }} °C
+              <b>{{ $t('temperature') }}:</b> {{ task.temperature }} °C
             </div>
           </div>
 

@@ -1,5 +1,13 @@
 [
   {
+    "version": "6.0.8",
+    "date": "2022-09-XX",
+    "news": [
+      "BUGFIX temperature field value for checkup, scale data and treatment could not be edited",
+      "BUGFIX time on checkup weight was not able to be left alone"
+    ]
+  },
+  {
     "version": "6.0.7",
     "date": "2022-09-11",
     "news": [
