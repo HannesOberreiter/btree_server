@@ -50,6 +50,10 @@
           ></table-col-note>
         </template>
 
+        <template #body-cell-name="props">
+          <table-col-pedigree :parent-props="props"></table-col-pedigree>
+        </template>
+
         <template #body-cell-modus="props">
           <table-col-status
             :id="props.row.id"

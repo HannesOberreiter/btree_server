@@ -349,6 +349,26 @@ export function useQueensStats({
   );
 }
 
+export function useQueenPedigree({
+  id = 0 as MaybeRef<number>,
+  enabled = true as MaybeRef<boolean>,
+}) {
+  const notification = useNotification();
+  const api = useApiFetch();
+  return useQuery(
+    ['queen_pedigree', id],
+    () => {
+      return api.get(`/v1/queen/pedigree/${unref(id)}`);
+    },
+    {
+      enabled: enabled,
+      keepPreviousData: false,
+      select: (response) => response,
+      onError: (error: any) => notification.open('negative', error),
+    }
+  );
+}
+
 export function useChargeQuery({
   offset = 0 as MaybeRef<number>,
   limit = 10000 as MaybeRef<number>,

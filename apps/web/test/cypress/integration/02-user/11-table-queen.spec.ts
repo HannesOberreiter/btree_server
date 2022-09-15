@@ -32,6 +32,12 @@ describe('User - Queen Table', () => {
   it('Delete row', () => {
     cy.table_delete_row();
   });
+
+  it('Open Dialog Pedigree', () => {
+    cy.dataCy('col-pedigree').first().click();
+    cy.dataCy('dialog-pedigree').should('exist');
+    cy.dataCy('btn-close-dialog').click();
+  });
 });
 
 export {};
