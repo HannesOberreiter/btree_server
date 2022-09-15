@@ -161,7 +161,7 @@ module.exports = configure(function (ctx) {
           timeout: 2000, // default: 5000 ms
         },
         loading: {
-          delay: 500, // Wait a number of millisecond before showing; Not worth showing for 100ms for example then hiding it, so wait until you're sure it's a process that will take some considerable amount of time
+          delay: 100, // Wait a number of millisecond before showing; Not worth showing for 100ms for example then hiding it, so wait until you're sure it's a process that will take some considerable amount of time
         },
         dark: 'auto', // or Boolean true/false
       },

@@ -5,5 +5,6 @@ export default () => {
     color: 'primary',
     size: '10px',
     position: 'bottom',
+    skipHijack: true,
   });
 };
