@@ -171,6 +171,38 @@ describe('Queen routes', function () {
     });
   });
 
+  describe('/api/v1/queen/pedigree/:id', () => {
+    it(`get 401 - no header`, function (done) {
+      doQueryRequest(
+        agent,
+        route + 'pedigree/7850',
+        null,
+        null,
+        null,
+        function (err, res) {
+          expect(res.statusCode).to.eqls(401);
+          expect(res.errors, 'JsonWebTokenError');
+          done();
+        }
+      );
+    });
+
+    it(`get 200 - success`, function (done) {
+      doQueryRequest(
+        agent,
+        route + 'pedigree/7850',
+        null,
+        accessToken,
+        null,
+        function (err, res) {
+          expect(res.statusCode).to.eqls(200);
+          expect(res.body).to.be.a('Array');
+          done();
+        }
+      );
+    });
+  });
+
   describe('/api/v1/queen/batchGet', () => {
     it(`401 - no header`, function (done) {
       doRequest(
