@@ -25,6 +25,12 @@ export class QueenRouter extends Router {
         Container.resolve('QueenController').getStats
       );
     this.router
+      .route('/pedigree/:id')
+      .get(
+        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+        Container.resolve('QueenController').getPedigree
+      );
+    this.router
       .route('/')
       .post(
         Validator.validate([

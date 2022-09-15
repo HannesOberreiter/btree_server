@@ -105,6 +105,59 @@ export class QueenController extends Controller {
     }
   }
 
+  async getPedigree(req: IUserRequest, res: Response, next: NextFunction) {
+    try {
+      const queen = await Queen.query()
+        .withRecursive('mothers', (qb) => {
+          qb.from('queens')
+            .select(
+              'queens.name',
+              'queens.id',
+              'mother_id',
+              'date',
+              'mark_colour',
+              'mother',
+              'queen_matings.name as mating',
+              'queen_races.name as race'
+            )
+            .where({
+              'queens.user_id': req.user.user_id,
+              'queens.id': req.params.id,
+            })
+            .leftJoin('queen_matings', 'mating_id', 'queen_matings.id')
+            .leftJoin('queen_races', 'race_id', 'queen_races.id')
+
+            .unionAll((qb) => {
+              qb.select(
+                'queens.name',
+                'queens.id',
+                'queens.mother_id',
+                'queens.date',
+                'queens.mark_colour',
+                'queens.mother',
+                'queen_matings.name as mating',
+                'queen_races.name as race'
+              )
+                .from('queens')
+                .leftJoin(
+                  'queen_matings',
+                  'queens.mating_id',
+                  'queen_matings.id'
+                )
+                .leftJoin('queen_races', 'race_id', 'queen_races.id')
+                .innerJoin('mothers', 'queens.id', 'mothers.mother_id');
+            });
+        })
+        .select('*')
+        .from('mothers');
+
+      res.locals.data = queen;
+      next();
+    } catch (e) {
+      next(checkMySQLError(e));
+    }
+  }
+
   async getStats(req: IUserRequest, res: Response, next: NextFunction) {
     try {
       const { order, direction, offset, limit, q, filters } = req.query as any;
