@@ -316,10 +316,6 @@ const calendarOptions = reactive({
 </script>
 
 <style>
-.calendar-container {
-  //height: 80vh;
-}
-
 // Hide Overflown long titles in daygrid view
 .fc .fc-daygrid-event {
   overflow: hidden;
@@ -329,18 +325,10 @@ const calendarOptions = reactive({
   overflow: hidden;
 }
 
-// Toolbar Buttons and text
-.fc-toolbar {
-  text-align: center;
-  // smaller text and inline buttons on small devices
-  @include media-breakpoint-down(sm) {
-    display: inline;
-    .fc-toolbar-title {
-      font-size: 20px;
-      line-height: normal;
-      display: inline !important;
-    }
-  }
+body.screen--xs .fc-toolbar-title {
+  font-size: 1.3rem !important;
+  line-height: normal;
+  display: inline !important;
 }
 
 .fc-col-header {
