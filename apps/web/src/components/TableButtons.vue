@@ -418,15 +418,22 @@ function onVirginToHive() {
 
 function onRestore() {
   const ids = selected.value.map((o: any) => o.id);
-  api.patch(`/v1/${props.table}/batchDelete?restore=true`, { ids: ids }).then(
-    (_response: any) => {
-      onEmit();
-      notification.open('positive', '');
-    },
-    (error) => {
-      notification.open('negative', error);
-    }
-  );
+  api
+    .patch(
+      `/v1/${
+        props.table === 'virgin' ? 'queen' : props.table
+      }/batchDelete?restore=true`,
+      { ids: ids }
+    )
+    .then(
+      (_response: any) => {
+        onEmit();
+        notification.open('positive', '');
+      },
+      (error) => {
+        notification.open('negative', error);
+      }
+    );
 }
 
 function onDelete() {
@@ -449,10 +456,20 @@ function onDelete() {
     html: true,
   }).onOk(() => {
     const ids = selected.value.map((o: any) => o.id);
-    const url =
-      props.table === 'option'
-        ? `/v1/${props.table}/${props.tableOption}/batchDelete`
-        : `/v1/${props.table}/batchDelete`;
+
+    let url = '';
+
+    switch (props.table) {
+      case 'virgin':
+        url = '/v1/queen/batchDelete';
+        break;
+      case 'option':
+        url = `/v1/${props.table}/${props.tableOption}/batchDelete`;
+        break;
+      default:
+        url = `/v1/${props.table}/batchDelete`;
+    }
+
     api.patch(url, { ids: ids }).then(
       (_response: any) => {
         emit('change');

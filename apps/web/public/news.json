@@ -1,10 +1,14 @@
 [
   {
     "version": "6.0.8",
-    "date": "2022-09-XX",
+    "date": "2022-09-15",
     "news": [
+      "FEATURE pedigree window if you click on the queen name in queen or virgin table",
+      "FEATURE added queen rearing methods separate tab with table for steps for easier management of multiple steps",
       "BUGFIX temperature field value for checkup, scale data and treatment could not be edited",
-      "BUGFIX time on checkup weight was not able to be left alone"
+      "BUGFIX time on checkup weight was not able to be left alone",
+      "BUGFIX it was not possible to delete virgin queens",
+      "VISUAL small style improvements for small screen sizes"
     ]
   },
   {

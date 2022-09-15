@@ -17,7 +17,7 @@
             :max-file-size="2e7"
             :url="uploadUrl"
             :send-raw="true"
-            :headers="(files) => buildHeader(files)"
+            :headers="(files: File[]) => buildHeader(files)"
             @failed="onFailed"
             @rejected="onRejected"
             @uploaded="onUpload"

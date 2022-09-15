@@ -27,7 +27,7 @@
           </div>
         </div>
       </q-card-section>
-      <q-card-section>
+      <q-card-section class="q-pa-xs">
         <q-tabs
           v-model="tab"
           dense
@@ -44,7 +44,7 @@
         <q-separator />
 
         <q-tab-panels v-model="tab" animated>
-          <q-tab-panel name="task">
+          <q-tab-panel name="task" class="q-pa-xs">
             <div class="row">
               <div class="col-12 col-md-6">
                 <q-select v-model="year" :options="years" :label="$t('year')">
@@ -76,7 +76,7 @@
               :opened="opened"
             ></list-tasks>
           </q-tab-panel>
-          <q-tab-panel name="info">
+          <q-tab-panel name="info" class="q-pa-xs">
             <div class="row">
               <div class="col-12 col-sm-6">
                 <hive-info-movements :id="id"></hive-info-movements>
@@ -104,13 +104,18 @@
         class="absolute-bottom-right print-hide"
       >
         <q-list>
-          <q-item v-close-popup clickable @click="opened = !opened">
+          <q-item
+            v-close-popup
+            clickable
+            class="print-hide"
+            @click="opened = !opened"
+          >
             <q-item-section>
               <q-item-label>{{ $t('toggle') }}</q-item-label>
             </q-item-section>
           </q-item>
 
-          <q-item v-close-popup clickable @click="onPrint()">
+          <q-item v-close-popup clickable class="print-hide" @click="onPrint()">
             <q-item-section>
               <q-item-label>{{ $t('print') }}</q-item-label>
             </q-item-section>

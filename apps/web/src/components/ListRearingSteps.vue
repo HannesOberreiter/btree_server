@@ -5,8 +5,9 @@
         v-for="(step, index) in steps"
         :key="step.id"
         :class="step.active ? 'bg-info' : ''"
+        class="q-pa-xs"
       >
-        <q-item-section avatar>
+        <q-item-section v-if="$q.screen.gt.xs" avatar>
           <btn-base-group>
             <btn-base
               flat
@@ -37,6 +38,22 @@
           {{ step.note }}
         </q-item-section>
         <q-item-section avatar>
+          <btn-base-group v-if="!$q.screen.gt.xs">
+            <btn-base
+              flat
+              :color="step.active ? 'primary' : 'grey'"
+              icon="fas fa-arrow-up"
+              :disable="index === 0 || !step.active"
+              @click="onMove(index, index - 1)"
+            />
+            <btn-base
+              flat
+              :color="step.active ? 'secondary' : 'grey'"
+              icon="fas fa-arrow-down"
+              :disable="index === steps.length - 1 || !step.active"
+              @click="onMove(index, index + 1)"
+            />
+          </btn-base-group>
           <btn-base-group>
             <btn-base
               flat
@@ -59,23 +76,10 @@
   <div class="col-12 q-pt-md">
     <btn-base-group>
       <btn-base color="primary" @click="onSave">
-        {{ $t('save') }} {{ $t('step', 2) }}
+        {{ $t('save') }}
       </btn-base>
       <btn-base color="secondary" @click="onAdd">
         {{ $t('add') }} {{ $t('step') }}
-      </btn-base>
-    </btn-base-group>
-  </div>
-  <div class="col-12 q-pt-md">
-    <btn-base-group>
-      <btn-base color="info" @click="onCreate(null)">
-        {{ $t('new') }} {{ $t('step') }}
-      </btn-base>
-      <btn-base color="blue" @click="onEdit">
-        {{ $t('edit') }} {{ $t('step') }}
-      </btn-base>
-      <btn-base color="negative" @click="onDeleteStep">
-        {{ $t('delete') }} {{ $t('step') }}
       </btn-base>
     </btn-base-group>
   </div>
@@ -88,7 +92,6 @@ import { useQuasar } from 'quasar';
 import { useApiFetch } from '~/composables/useApi';
 import { useNotification } from '~/composables/useNotification';
 import DialogSelectOption from './DialogSelectOption.vue';
-import DialogForm from './DialogForm.vue';
 import { usePreventNavigation } from '~/composables/usePreventNavgiation';
 
 const usePrevent = usePreventNavigation();
@@ -159,30 +162,6 @@ function onAdd() {
   });
 }
 
-function onCreate(editIds: Array<number> = []) {
-  $q.dialog({
-    component: DialogForm,
-    componentProps: {
-      title: 'new',
-      form: 'rearing_detail',
-      maximized: false,
-      ids: editIds,
-    },
-  }).onOk(() => (editIds.length === 0 ? onAdd() : emit('change')));
-}
-
-function onEdit() {
-  $q.dialog({
-    component: DialogSelectOption,
-    componentProps: {
-      label: 'step',
-      table: 'rearing_detail',
-    },
-  }).onOk((obj) => {
-    onCreate([obj.id]);
-  });
-}
-
 function resetActiveStep() {
   steps.value.map((obj: any) => {
     obj.active = false;
@@ -222,30 +201,6 @@ function onDelete(id: number) {
       },
       () => notification.open('negative', 'error.unknown')
     );
-  });
-}
-
-function onDeleteStep() {
-  $q.dialog({
-    component: DialogSelectOption,
-    componentProps: {
-      label: 'step',
-      table: 'rearing_detail',
-    },
-  }).onOk((selected) => {
-    $q.dialog({
-      title: t('delete'),
-      message: t('deleteConfirm'),
-      cancel: true,
-    }).onOk(() => {
-      api.patch('/v1/rearing_detail/batchDelete', { ids: [selected.id] }).then(
-        () => {
-          notification.open('positive', 'deleted');
-          emit('change');
-        },
-        () => notification.open('negative', 'error.unknown')
-      );
-    });
   });
 }
 </script>

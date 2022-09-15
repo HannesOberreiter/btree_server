@@ -21,7 +21,7 @@
           </div>
         </div>
       </q-card-section>
-      <q-card-section>
+      <q-card-section class="q-pa-xs">
         <q-tabs
           v-model="tab"
           dense
@@ -39,14 +39,14 @@
         <q-separator />
 
         <q-tab-panels v-model="tab" animated>
-          <q-tab-panel name="hive">
+          <q-tab-panel name="hive" class="q-pa-xs">
             <list-hives
               v-if="data"
               :data="data"
               @change="refetch()"
             ></list-hives>
           </q-tab-panel>
-          <q-tab-panel name="task">
+          <q-tab-panel name="task" class="q-pa-xs">
             <div class="row">
               <div class="col-12 col-md-6">
                 <q-select v-model="year" :options="years" :label="$t('year')">
@@ -79,7 +79,7 @@
               :opened="opened"
             ></list-tasks>
           </q-tab-panel>
-          <q-tab-panel name="weather">
+          <q-tab-panel name="weather" class="q-pa-xs">
             <div class="row">
               <div class="col-12">
                 <iframe-weather

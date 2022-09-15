@@ -40,6 +40,10 @@
           <td v-else>{{ $t('noHive') }}</td>
         </template>
 
+        <template #body-cell-name="props">
+          <table-col-pedigree :parent-props="props"></table-col-pedigree>
+        </template>
+
         <template #body-cell-url="props">
           <table-col-url :value="props.value"></table-col-url>
         </template>

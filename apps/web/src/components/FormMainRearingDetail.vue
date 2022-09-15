@@ -17,6 +17,7 @@
     ></form-input-text>
     <form-input-numeric
       v-model="state.hour"
+      table-id="hour"
       label="waitTime"
       icon="fas fa-hourglass"
       shadow-text="h"

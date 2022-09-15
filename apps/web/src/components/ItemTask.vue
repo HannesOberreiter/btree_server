@@ -4,7 +4,7 @@
     v-model="model"
     expand-separator
     dense
-    icon="fas fa-search-plus"
+    :expand-icon-class="$q.screen.gt.xs ? '' : 'hidden'"
   >
     <template #header>
       <q-item-section avatar>
@@ -12,6 +12,7 @@
           :icon="icons[task.kind as keyof typeof icons]"
           :color="color[task.kind as keyof typeof color]"
           text-color="white"
+          :size="$q.screen.gt.xs ? 'md' : 'sm'"
         />
       </q-item-section>
       <q-item-section>
@@ -28,6 +29,7 @@
             flat
             icon="fas fa-check-circle"
             color="positive"
+            :class="$q.screen.gt.xs ? '' : 'q-pa-xs'"
             @click.stop="updateStatus(task.id)"
           ></btn-base>
           <btn-base
@@ -35,6 +37,7 @@
             flat
             icon="fas fa-times-circle"
             color="negative"
+            :class="$q.screen.gt.xs ? '' : 'q-pa-xs'"
             @click.stop="updateStatus(task.id)"
           ></btn-base>
         </div>
@@ -42,7 +45,7 @@
     </template>
 
     <q-card>
-      <q-card-section class="q-pt-xs q-pb-xs">
+      <q-card-section class="q-pt-xs q-pb-xs q-pl-sm q-pr-sm">
         <div class="row">
           <div v-if="task.kind === 'harvest'" class="col-12">
             <div v-if="task.charge">
