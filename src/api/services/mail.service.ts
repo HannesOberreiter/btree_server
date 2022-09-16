@@ -36,11 +36,22 @@ export class MailService {
   }
 
   private loadHtmlMail(mailName: string) {
-    const mailPath = p.join(__dirname, `../../../mails/${mailName}`);
+    const mailPath = p.join(__dirname, `../../../mails/${mailName}.txt`);
     try {
-      let file = readFileSync(mailPath, 'utf-8');
-      file = file.replace(/%base_url%/g, this.baseUrl + '/');
-      return file;
+      return readFileSync(mailPath, 'utf-8');
+    } catch (e) {
+      console.error(e);
+      return;
+    }
+  }
+
+  private loadFooter(lang: string) {
+    const mailPath = p.join(
+      __dirname,
+      `../../../mails/partials/footer_${lang}.txt`
+    );
+    try {
+      return readFileSync(mailPath, 'utf-8');
     } catch (e) {
       console.error(e);
       return;
@@ -59,14 +70,22 @@ export class MailService {
     // we only have german and english mails
     lang = lang !== 'de' ? 'en' : lang;
 
-    let htmlMail = this.loadHtmlMail(subject + '_' + lang + '.html');
-
-    const titleReg = /(?<=<title>)(.*?)(?=<\/title>)/gi;
-    const title = titleReg.exec(htmlMail)[0];
-
+    let htmlMail = this.loadHtmlMail(subject + '_' + lang);
     if (!htmlMail) {
       throw notFound('Could not find E-Mail Template.');
     }
+    let htmlFooter = this.loadFooter(lang);
+    if (!htmlFooter) {
+      throw notFound('Could not find E-Mail Template.');
+    }
+    htmlMail = htmlMail + htmlFooter;
+
+    /*
+      Fake <title></title> attribute to set email header
+    */
+    const titleReg = /(?<=<title>)(.*?)(?=<\/title>)/gi;
+    const title = titleReg.exec(htmlMail)[0];
+    htmlMail = htmlMail.replace(/(<title>)(.*?)(<\/title>)/g, '');
 
     if (name !== 'false' && name) {
       switch (lang) {
@@ -84,14 +103,16 @@ export class MailService {
     if (key !== 'false') {
       htmlMail = htmlMail.replace(/%key%/g, key);
     }
+
     htmlMail = htmlMail.replace(/%lang%/g, lang);
     htmlMail = htmlMail.replace(/%mail%/g, to);
+    htmlMail = htmlMail.replace(/%base_url%/g, this.baseUrl + '/');
 
     const options = {
       from: 'no-reply@btree.at',
       to: to,
       subject: title,
-      html: htmlMail,
+      text: htmlMail,
     };
     try {
       await this._transporter.sendMail(options, (error, info) => {

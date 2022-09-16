@@ -1,0 +1,6 @@
+<title>Weight difference on you hive scale</title>
+Dear Beekeeper,
+
+for your information, there is a big weight difference to your last transmitted value.
+
+>> %key%

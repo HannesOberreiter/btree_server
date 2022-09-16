@@ -1,0 +1,6 @@
+<title>New password successfully saved</title>
+Dear Beekeeper,
+
+you password was successfully changed!
+
+If you did not change it, please contact us as soon as possible: office@btree.at

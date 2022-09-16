@@ -1,0 +1,9 @@
+<title>VIS Meldung</title>
+Liebe/r Imker/in,
+
+eine kurze Erinnerung, dass die Meldung an die Statistik Austria (VIS) in Kürze abgeschlossen sein muss.
+
+- Letzter Tag der Meldung: %key%
+- Link VIS: https://portal.statistik.at/
+
+Du bekommst diese Nachricht da du in deinem Profil die VIS Stichtage markiert hast.

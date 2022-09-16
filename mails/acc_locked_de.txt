@@ -1,0 +1,8 @@
+<title>Dein Account wurde gesperrt!</title>
+Liebe/r Imker/in,
+
+mit deinem b.tree Account gab es zuviele fehlgeschlagene Login versuche. Aus Sicherheitsgründen ist dein Account für zwei Stunden gesperrt.
+
+Wenn du dein Passwort vergessen hast, benütze bitte folgenden Link: %base_url%recover/
+
+Solltest du noch immer Login Probleme haben oder eine andere Frage, bitte kontaktiere uns per Mail office@btree.at

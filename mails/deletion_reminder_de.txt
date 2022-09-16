@@ -1,0 +1,8 @@
+<title>Dein b.tree Account wird in kürze gelöscht!</title>
+Liebe/r Imker/in,
+
+da uns Privatsphäre am Herzen liegt und du dich die letzten 5 Jahre nicht in unsere App eingeloggt hast löschen wir deinen Account in kürze inklusive Kontaktdaten. Möchtest du eine Löschung verhindern, kannst du dich die nächsten paar Tage noch hier einloggen:
+
+%base_url%
+
+Wir wünschen dir jedenfalls eine erfolgreiche Imkerei und alles Gute.
