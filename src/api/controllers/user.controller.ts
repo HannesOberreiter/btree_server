@@ -13,9 +13,9 @@ import {
   createHashedPassword,
   generateTokenResponse
 } from '@utils/auth.util';
-import { MailService } from '@services/mail.service';
 import { map } from 'lodash';
 import { deleteCompany, deleteUser } from '../utils/delete.util';
+import { MailServer } from '../app.bootstrap';
 export class UserController extends Controller {
   constructor() {
     super();
@@ -89,8 +89,7 @@ export class UserController extends Controller {
       const user = await fetchUser('', req.user.bee_id);
       if ('salt' in req.body) {
         try {
-          const mailer = new MailService();
-          await mailer.sendMail({
+          await MailServer.sendMail({
             to: user['email'],
             lang: user['lang'],
             subject: 'pw_reseted'

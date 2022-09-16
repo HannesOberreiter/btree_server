@@ -52,6 +52,7 @@ export class HTTPServer {
        * @description Start Cron Jobs
        */
       task.start();
+      task.nextRun();
     } catch (error) {
       Container.resolve('Logger').log(
         'error',

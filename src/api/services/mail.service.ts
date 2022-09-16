@@ -3,13 +3,13 @@ import { env, frontend, mailConfig } from '@config/environment.config';
 import { readFileSync } from 'fs';
 import p from 'path';
 import { badImplementation, notFound } from '@hapi/boom';
+import { ENVIRONMENT } from '../types/enums/environment.enum';
 interface customMail {
   to: string;
   lang: string;
   subject: string;
   key?: string;
   name?: string;
-  email?: string;
 }
 
 export class MailService {
@@ -20,15 +20,18 @@ export class MailService {
     this.baseUrl = frontend;
   }
 
-  private async setup() {
-    const conf = mailConfig;
-    if (env !== 'production') {
-      await nodemailer.createTestAccount((_err, account) => {
+  async setup() {
+    if (env === ENVIRONMENT.development || env === ENVIRONMENT.test) {
+      try {
+        const account = await nodemailer.createTestAccount();
         mailConfig.secure = false;
         mailConfig.auth.user = account.user;
         mailConfig.auth.pass = account.pass;
-      });
+      } catch (e) {
+        console.error(e);
+      }
     }
+    const conf = mailConfig;
     this._transporter = nodemailer.createTransport(conf);
   }
 
@@ -50,11 +53,9 @@ export class MailService {
     subject,
     key = 'false',
     name = 'false',
-    email = 'false',
   }: customMail) {
-    if (env === 'test' || env === 'ci') return;
+    if (env === ENVIRONMENT.test || env === ENVIRONMENT.ci) return;
 
-    await this.setup();
     // we only have german and english mails
     lang = lang !== 'de' ? 'en' : lang;
 
@@ -79,12 +80,12 @@ export class MailService {
         }
       }
     }
-    if (email !== 'false') {
-      htmlMail = htmlMail.replace(/%mail%/g, email);
-    }
+
     if (key !== 'false') {
       htmlMail = htmlMail.replace(/%key%/g, key);
     }
+    htmlMail = htmlMail.replace(/%lang%/g, lang);
+    htmlMail = htmlMail.replace(/%mail%/g, to);
 
     const options = {
       from: 'no-reply@btree.at',
@@ -92,17 +93,20 @@ export class MailService {
       subject: title,
       html: htmlMail,
     };
-
-    await this._transporter.sendMail(options, (error, info) => {
-      this._transporter.close();
-      if (error) {
-        console.log(`error: ${error}`);
-        throw badImplementation('E-Mail could not be sent.');
-      }
-      if (env !== 'production') {
-        console.log(nodemailer.getTestMessageUrl(info));
-      }
-      console.log(`Message Sent ${info.response}`);
-    });
+    try {
+      await this._transporter.sendMail(options, (error, info) => {
+        this._transporter.close();
+        if (error) {
+          console.log(`error: ${error}`);
+          throw badImplementation('E-Mail could not be sent.');
+        }
+        if (env === ENVIRONMENT.development || env === ENVIRONMENT.test) {
+          console.log(nodemailer.getTestMessageUrl(info));
+        }
+        console.log(`Message Sent ${info.response}`);
+      });
+    } catch (e) {
+      console.error(e);
+    }
   }
 }

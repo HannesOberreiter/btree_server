@@ -6,7 +6,6 @@ import { CompanyBee } from '@models/company_bee.model';
 import { Controller } from '@classes/controller.class';
 import { IResponse } from '@interfaces/IResponse.interface';
 import { loginCheck } from '@utils/login.util';
-import { MailService } from '@services/mail.service';
 import { NextFunction, Request, Response } from 'express';
 import { randomBytes } from 'crypto';
 import { User } from '@models/user.model';
@@ -23,6 +22,7 @@ import {
 } from '@utils/auth.util';
 import { env } from '@/config/environment.config';
 import { ENVIRONMENT } from '../types/enums/environment.enum';
+import { MailServer } from '../app.bootstrap';
 
 export class AuthController extends Controller {
   constructor() {
@@ -60,8 +60,7 @@ export class AuthController extends Controller {
     try {
       const result = await resetMail(u.id);
 
-      const mailer = new MailService();
-      await mailer.sendMail({
+      await MailServer.sendMail({
         to: result.email,
         lang: result.lang,
         subject: 'pw_reset',
@@ -116,8 +115,7 @@ export class AuthController extends Controller {
     }
     try {
       const result = await resetPassword(u.id, password);
-      const mailer = new MailService();
-      await mailer.sendMail({
+      await MailServer.sendMail({
         to: result.email,
         lang: result.lang,
         subject: 'pw_reseted',
@@ -157,12 +155,10 @@ export class AuthController extends Controller {
       });
 
       try {
-        const mailer = new MailService();
-        await mailer.sendMail({
+        await MailServer.sendMail({
           to: inputUser.email,
           lang: inputUser.lang,
           subject: 'register',
-          email: inputUser.email,
           key: inputUser.reset,
         });
 
