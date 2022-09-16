@@ -2,15 +2,13 @@ import { Request, Response } from 'express';
 import { OK } from 'http-status';
 import { Container } from '@config/container.config';
 import { Controller } from '@classes/controller.class';
-import { visReminder } from '../utils/cron.util';
 
 export class RootController extends Controller {
   constructor() {
     super();
   }
 
-  status = (req: Request, res: Response, _next) => {
-    visReminder();
+  status = (_req: Request, res: Response, _next) => {
     res.status(OK);
     res.end();
   };
