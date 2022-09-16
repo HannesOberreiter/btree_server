@@ -7,8 +7,8 @@ exports.up = function (knex) {
     t.string('charge', 255);
     t.date('bestbefore');
     t.string('calibrate', 45);
-    t.float('amount', 45);
-    t.float('price', 45);
+    t.decimal('amount', 7, 2);
+    t.decimal('price', 7, 2);
     t.string('note', 2000);
     t.string('url', 512);
     t.string('kind', 45).comment('out or in, for outgoing or incoming');

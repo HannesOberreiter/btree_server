@@ -4,7 +4,7 @@
  */
 exports.up = function (knex) {
   return knex.schema.alterTable('checkups', (t) => {
-    t.float('varroa').alter();
+    t.decimal('varroa', 5, 2).alter();
   });
 };
 
