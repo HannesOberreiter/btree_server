@@ -8,6 +8,8 @@ import { getCompany } from '../utils/api.util';
 import { isPremium } from '../utils/premium.util';
 import { paymentRequired, tooManyRequests } from '@hapi/boom';
 import { Scale } from '../models/scale.model';
+import { User } from '../models/user.model';
+import { MailServer } from '../app.bootstrap';
 
 export class ScaleDataController extends Controller {
   constructor() {
@@ -37,6 +39,29 @@ export class ScaleDataController extends Controller {
             dayjs(insertDate as any).subtract(1, 'hour')
           )
             throw tooManyRequests('you have exceeded your request limit');
+        }
+
+        if(req.query.weight && lastInsert.weight && req.query.action === 'CREATE'){
+          try {
+              const currentWeight = parseFloat(req.query.weight as any)
+              const checkWeight = Math.abs(lastInsert.weight - currentWeight);
+              if(checkWeight > 5){
+                const user = await User.query().leftJoinRelated('company_bee').where({
+                  'company_bee.rank': 1,
+                  'company_bee.user_id': company.id
+                })
+                user.forEach((u) => {
+                  MailServer.sendMail({
+                    to: u.email,
+                    lang: u.lang,
+                    subject: 'weight_warning',
+                    key: `${scale.name}: ${checkWeight} (${lastInsert.weight} - ${currentWeight})`,
+                    name: u.username
+                  }
+                  )
+                })
+              }
+          } catch(e) { console.error(e) }
         }
         const insert = {
           datetime: insertDate,
