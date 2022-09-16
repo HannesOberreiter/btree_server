@@ -258,7 +258,7 @@ export const visReminder = async () => {
             to: user.email,
             lang: 'de',
             subject: mailSubject,
-            name: user.username ? user.username : 'false',
+            name: user.username,
             key: mailDate,
           });
         }
@@ -294,7 +294,7 @@ export const premiumReminder = async () => {
             to: u.email,
             lang: u.lang,
             subject: 'premium_reminder',
-            name: u.username ? u.username : 'false',
+            name: u.username,
           });
           await User.query().findById(u.id).patch({
             last_reminder: now,
@@ -338,7 +338,7 @@ export const deletionReminder = async () => {
           to: u['email'],
           lang: u['lang'],
           subject: 'deletion_reminder',
-          name: u['username'] ? u['username'] : 'false',
+          name: u['username'],
         });
         await User.query().findById(u.id).patch({
           last_reminder: now,

@@ -119,6 +119,7 @@ export class AuthController extends Controller {
         to: result.email,
         lang: result.lang,
         subject: 'pw_reseted',
+        name: result.username
       });
       res.locals.data = { email: result.email };
       next();
@@ -159,7 +160,7 @@ export class AuthController extends Controller {
           to: inputUser.email,
           lang: inputUser.lang,
           subject: 'register',
-          key: inputUser.reset,
+          key: inputUser.reset
         });
 
         res.locals.data = { email: inputUser.email, activate: inputUser.reset };

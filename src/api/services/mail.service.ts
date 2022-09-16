@@ -68,14 +68,14 @@ export class MailService {
       throw notFound('Could not find E-Mail Template.');
     }
 
-    if (name !== 'false') {
+    if (name !== 'false' && name) {
       switch (lang) {
         case 'en': {
-          htmlMail.replace('Beekeeper', name);
+          htmlMail = htmlMail.replace('Beekeeper', name);
           break;
         }
         case 'de': {
-          htmlMail.replace('Imker/in', name);
+          htmlMail = htmlMail.replace('Imker/in', name);
           break;
         }
       }

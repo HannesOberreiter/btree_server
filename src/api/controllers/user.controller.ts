@@ -92,7 +92,8 @@ export class UserController extends Controller {
           await MailServer.sendMail({
             to: user['email'],
             lang: user['lang'],
-            subject: 'pw_reseted'
+            subject: 'pw_reseted',
+            name: user['username']
           });
         } catch (e) {
           next(e);
