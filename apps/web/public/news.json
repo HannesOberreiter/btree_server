@@ -8,6 +8,7 @@
       "BUGFIX temperature field value for checkup, scale data and treatment could not be edited",
       "BUGFIX time on checkup weight was not able to be left alone",
       "BUGFIX it was not possible to delete virgin queens",
+      "BUGFIX allow higher values in scale data weight input",
       "VISUAL small style improvements for small screen sizes"
     ]
   },
