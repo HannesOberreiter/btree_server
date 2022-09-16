@@ -141,7 +141,7 @@ const knexConfig = {
 const mailConfig = {
   host: process.env.MAIL_SMTP,
   port: Number(process.env.MAIL_PORT),
-  secure: true,
+  secure: process.env.MAIL_SECURE === 'true' ? true : false,
   auth: {
     user: process.env.MAIL_FROM,
     pass: process.env.MAIL_PASSWORD,
