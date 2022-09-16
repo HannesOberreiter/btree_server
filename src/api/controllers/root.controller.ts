@@ -8,7 +8,7 @@ export class RootController extends Controller {
     super();
   }
 
-  status = (req: Request, res: Response, _next) => {
+  status = (_req: Request, res: Response, _next) => {
     res.status(OK);
     res.end();
   };

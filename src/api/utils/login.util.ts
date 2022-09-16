@@ -5,11 +5,12 @@ import { checkMySQLError } from '@utils/error.util';
 import { forbidden, locked, unauthorized } from '@hapi/boom';
 import dayjs from 'dayjs';
 import { createHash } from 'crypto';
+import { MailServer } from '../app.bootstrap';
 
 const insertWrongPasswordTry = async (bee_id: number) => {
   const trx = await LoginAttemp.startTransaction();
   try {
-    const now = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    const now = dayjs().utc().toISOString();
     await LoginAttemp.query(trx).insert({
       time: now,
       bee_id: bee_id,
@@ -89,10 +90,24 @@ const checkBruteForce = async (bee_id: number) => {
       .where('time', '>', validAttempts)
       .orderBy('time');
     // ToDo send user E-Mail that the account is bruteForced
-
     if (bruteForce[0]['count'] < 10) {
       return false;
     } else {
+      const lastReminder = dayjs().subtract(1, 'day').format('YYYY-MM-DD');
+      const user = await User.query()
+        .findById(bee_id)
+        .where('last_reminder', '<', lastReminder);
+      if (user) {
+        MailServer.sendMail({
+          to: user.email,
+          lang: user.lang,
+          subject: 'acc_locked',
+          name: user.username,
+        });
+        await User.query()
+          .patch({ last_reminder: new Date() })
+          .findById(user.id);
+      }
       return true;
     }
   } catch (e) {

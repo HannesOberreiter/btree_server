@@ -10,21 +10,20 @@ exports.up = function (knex) {
     t.boolean('eggs');
     t.boolean('capped_brood');
 
-    t.float('brood');
-    t.float('pollen');
-    t.float('comb');
-    t.float('temper');
-    t.float('calm_comb');
-    t.float('swarm');
+    t.decimal('brood', 3, 1);
+    t.decimal('pollen', 3, 1);
+    t.decimal('comb', 3, 1);
+    t.decimal('temper', 3, 1);
+    t.decimal('calm_comb', 3, 1);
+    t.decimal('swarm', 3, 1);
 
     t.string('varroa', 12).comment(
       'Varchar old system had strings in it needs to be cleaned out.'
     );
     t.integer('strong', 12);
 
-    t.float('temp');
-
-    t.float('weight');
+    t.decimal('temp', 5, 1);
+    t.decimal('weight', 5, 1);
     t.time('time');
 
     t.integer('broodframes', 12);

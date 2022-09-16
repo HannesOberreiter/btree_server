@@ -14,7 +14,7 @@ class EnvironmentConfiguration {
   /**
    * @description Current environment (default dev)
    */
-  static environment: string = ENVIRONMENT.development;
+  static environment: ENVIRONMENT = ENVIRONMENT.development;
 
   /**
    * @description Set environment according to current process args
@@ -28,8 +28,7 @@ class EnvironmentConfiguration {
       ENVIRONMENT.hasOwnProperty(process.argv[3])
     ) {
       this.environment = ENVIRONMENT[process.argv[3]];
-    }
-    if (
+    } else if (
       process.env.ENVIRONMENT &&
       // eslint-disable-next-line no-prototype-builtins
       ENVIRONMENT.hasOwnProperty(process.env.ENVIRONMENT)
@@ -55,7 +54,7 @@ class EnvironmentConfiguration {
 
 EnvironmentConfiguration.load();
 
-const env = process.env.NODE_ENV;
+const env = EnvironmentConfiguration.environment;
 const version = process.env.API_VERSION;
 const port = process.env.PORT;
 const url = process.env.URL;
@@ -68,9 +67,9 @@ const jwtExpirationInterval: number = parseFloat(
 const jwtExpirationIntervalRefreshToken: number = parseInt(
   process.env.JWT_REFRESH_DAYS
 );
-const logs = process.env.NODE_ENV === 'production' ? 'combined' : 'development';
+const logs = env === ENVIRONMENT.production ? 'combined' : 'development';
 // https://github.com/expressjs/morgan
-const httpLogs = process.env.NODE_ENV === 'production' ? 'tiny' : 'dev';
+const httpLogs = env === ENVIRONMENT.production ? 'tiny' : 'dev';
 const contentType = process.env.CONTENT_TYPE;
 const meteoblueKey = process.env.METEOBLUE_KEY;
 
@@ -80,7 +79,7 @@ const dropboxClientSecret = process.env.DROPBOX_CLIENT_SECRET;
 const paypalClientId = process.env.PAYPAL_CLIENT_ID;
 const paypalAppSecret = process.env.PAYPAL_APP_SECRET;
 const paypalBase =
-  process.env.NODE_ENV === 'production'
+  env === ENVIRONMENT.production
     ? 'https://api-m.paypal.com'
     : 'https://api-m.sandbox.paypal.com';
 
@@ -119,7 +118,7 @@ const knexConfig = {
       return next();
     },
   },
-  debug: process.env.NODE_ENV === ENVIRONMENT.development ? true : false,
+  debug: env === ENVIRONMENT.development ? true : false,
   pool: {
     min: parseInt(process.env.DB_POOL_MIN),
     max: parseInt(process.env.DB_POOL_MAX),

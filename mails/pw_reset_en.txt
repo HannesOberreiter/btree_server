@@ -1,0 +1,8 @@
+<title>New Password for b.tree Database</title>
+Dear Beekeeper,
+
+someone has requested a new password for your b.tree Login. If you did not ask for a new password or it was simple a mistake, please ignore this email.
+
+Do set a new password please use following link:
+
+%base_url%visitor/reset/%key%

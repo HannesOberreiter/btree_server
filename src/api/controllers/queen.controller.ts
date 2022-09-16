@@ -85,7 +85,7 @@ export class QueenController extends Controller {
             });
           }
         } catch (e) {
-          console.log(e);
+          console.error(e);
         }
       }
       if (q) {
@@ -205,7 +205,7 @@ export class QueenController extends Controller {
             });
           }
         } catch (e) {
-          console.log(e);
+          console.error(e);
         }
       }
       if (q) {

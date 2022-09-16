@@ -1,0 +1,9 @@
+<title>VIS Stichtag für Zählung</title>
+Liebe/r Imker/in,
+
+eine kurze Erinnerung, dass der Stichtag für die Zählung der Meldung an die Statistik Austria (VIS) in Kürze bevorsteht.
+
+- Datum der Zählung: %key%
+- Link VIS: https://portal.statistik.at/
+
+Du bekommst diese Nachricht da du in deinem Profil die VIS Stichtage markiert hast.

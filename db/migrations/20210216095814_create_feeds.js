@@ -4,7 +4,7 @@ exports.up = function (knex) {
 
     t.date('date').index();
     t.date('enddate').index();
-    t.float('amount');
+    t.decimal('amount', 7, 1);
     t.string('note', 2000);
     t.string('url', 512);
     t.boolean('done').defaultTo(1);

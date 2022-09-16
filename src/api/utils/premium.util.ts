@@ -4,6 +4,8 @@ import { basicLimit, totalLimit } from '@config/environment.config';
 import { Hive } from '../models/hive.model';
 import { Apiary } from '../models/apiary.model';
 import { Scale } from '../models/scale.model';
+import { Payment } from '../models/payment.model';
+
 import dayjs from 'dayjs';
 
 export const isPremium = async (id: number) => {
@@ -77,7 +79,7 @@ export const limitScale = async (user_id: number) => {
   }
 };
 
-export const addPremium = async (user_id: number, months = 12) => {
+export const addPremium = async (user_id: number, months = 12, amount = 0, type = '') => {
   return await Company.transaction(async (trx) => {
     const company = await Company.query(trx).select('paid').findById(user_id);
     const newPaid =
@@ -87,6 +89,12 @@ export const addPremium = async (user_id: number, months = 12) => {
     const result = await Company.query(trx).patchAndFetchById(user_id, {
       paid: newPaid.format('YYYY-MM-DD'),
     });
+    await Payment.query(trx).insert({
+      date: new Date(),
+      user_id: user_id,
+      amount: amount ? amount : 0,
+      type: type
+    })
     return result.paid;
   });
 };

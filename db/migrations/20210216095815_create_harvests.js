@@ -4,9 +4,9 @@ exports.up = function (knex) {
 
     t.date('date').index();
     t.date('enddate').index();
-    t.float('amount');
+    t.decimal('amount', 7, 1);
     t.integer('frames', 12);
-    t.float('water');
+    t.decimal('water', 5, 1);
     t.string('charge', 24);
     t.string('note', 2000);
     t.string('url', 512);

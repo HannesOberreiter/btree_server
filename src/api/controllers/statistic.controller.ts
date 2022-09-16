@@ -107,7 +107,7 @@ export class StatisticController extends Controller {
             });
           }
         } catch (e) {
-          console.log(e);
+          console.error(e);
         }
       }
 
@@ -346,7 +346,7 @@ export class StatisticController extends Controller {
             });
           }
         } catch (e) {
-          console.log(e);
+          console.error(e);
         }
       }
 
@@ -554,7 +554,7 @@ export class StatisticController extends Controller {
             });
           }
         } catch (e) {
-          console.log(e);
+          console.error(e);
         }
       }
 
@@ -783,7 +783,7 @@ export class StatisticController extends Controller {
             });
           }
         } catch (e) {
-          console.log(e);
+          console.error(e);
         }
       }
 

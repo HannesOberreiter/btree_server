@@ -544,7 +544,7 @@ async function transactionMigration(table, data, knex) {
             .update('grouphive', d.amount)
             .where('id', d.hive_id)
             .catch(function (error) {
-              console.log(error);
+              console.error(error);
             });
         });
       } else {
@@ -554,12 +554,12 @@ async function transactionMigration(table, data, knex) {
           .batchInsert(table, data, 10000)
           .transacting(trx)
           .catch(function (error) {
-            console.log(error);
+            console.error(error);
           });
       }
       await knex.raw('SET FOREIGN_KEY_CHECKS=1').transacting(trx);
     })
     .catch(function (error) {
-      console.log(error);
+      console.error(error);
     });
 }

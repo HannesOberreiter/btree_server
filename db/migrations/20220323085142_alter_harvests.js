@@ -4,7 +4,7 @@
  */
 exports.up = function (knex) {
   return knex.schema.alterTable('harvests', (t) => {
-    t.float('frames').alter();
+    t.decimal('frames', 7, 1).alter();
   });
 };
 

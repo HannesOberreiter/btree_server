@@ -4,7 +4,7 @@
  */
 exports.up = function (knex) {
   return knex.schema.alterTable('treatments', (t) => {
-    t.float('temperature').comment('Temperature input field');
+    t.decimal('temperature', 5, 1).comment('Temperature input field');
   });
 };
 /**

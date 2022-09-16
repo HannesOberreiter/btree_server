@@ -44,7 +44,7 @@ export class RearingController extends Controller {
             });
           }
         } catch (e) {
-          console.log(e);
+          console.error(e);
         }
       }
       if (q) {

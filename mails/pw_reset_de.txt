@@ -1,0 +1,8 @@
+<title>Neues Passwort für b.tree Database</title>
+Liebe/r Imker/in,
+
+jemand hat ein neue Passwort für deinen b.tree Login angefordert. Wenn du es nicht angefordert hast oder es ein Fehler war, ignoriere und lösche einfach diese E-Mail.
+
+Um ein neues Passwort zu erstellen, benutze folgenden Link:
+
+%base_url%visitor/reset/%key%

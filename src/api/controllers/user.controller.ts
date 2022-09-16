@@ -11,11 +11,11 @@ import { reviewPassword, fetchUser } from '@utils/login.util';
 import {
   buildUserAgent,
   createHashedPassword,
-  generateTokenResponse
+  generateTokenResponse,
 } from '@utils/auth.util';
-import { MailService } from '@services/mail.service';
 import { map } from 'lodash';
 import { deleteCompany, deleteUser } from '../utils/delete.util';
+import { MailServer } from '../app.bootstrap';
 export class UserController extends Controller {
   constructor() {
     super();
@@ -34,12 +34,12 @@ export class UserController extends Controller {
     try {
       await reviewPassword(req.user.bee_id, req.body.password);
       const companies = await CompanyBee.query().where({
-        bee_id: req.user.bee_id
+        bee_id: req.user.bee_id,
       });
       await Promise.all(
         map(companies, async (company) => {
           const count = await CompanyBee.query().select('id').where({
-            user_id: company.user_id
+            user_id: company.user_id,
           });
           if (count.length === 1 && company.user_id) {
             await deleteCompany(company.user_id);
@@ -49,7 +49,6 @@ export class UserController extends Controller {
       );
 
       const result = await deleteUser(req.user.bee_id);
-      console.log(result);
       res.locals.data = result;
       next();
     } catch (e) {
@@ -89,11 +88,11 @@ export class UserController extends Controller {
       const user = await fetchUser('', req.user.bee_id);
       if ('salt' in req.body) {
         try {
-          const mailer = new MailService();
-          await mailer.sendMail({
+          await MailServer.sendMail({
             to: user['email'],
             lang: user['lang'],
-            subject: 'pw_reseted'
+            subject: 'pw_reseted',
+            name: user['username'],
           });
         } catch (e) {
           next(e);
@@ -116,7 +115,7 @@ export class UserController extends Controller {
         .throwIfNotFound();
 
       const result = await User.query(trx).findById(req.user.bee_id).patch({
-        saved_company: req.body.saved_company
+        saved_company: req.body.saved_company,
       });
       await trx.commit();
 

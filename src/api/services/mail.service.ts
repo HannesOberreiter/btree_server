@@ -3,13 +3,13 @@ import { env, frontend, mailConfig } from '@config/environment.config';
 import { readFileSync } from 'fs';
 import p from 'path';
 import { badImplementation, notFound } from '@hapi/boom';
+import { ENVIRONMENT } from '../types/enums/environment.enum';
 interface customMail {
   to: string;
   lang: string;
   subject: string;
   key?: string;
   name?: string;
-  email?: string;
 }
 
 export class MailService {
@@ -20,24 +20,38 @@ export class MailService {
     this.baseUrl = frontend;
   }
 
-  private async setup() {
-    const conf = mailConfig;
-    if (env !== 'production') {
-      await nodemailer.createTestAccount((_err, account) => {
+  async setup() {
+    if (env === ENVIRONMENT.development || env === ENVIRONMENT.test) {
+      try {
+        const account = await nodemailer.createTestAccount();
         mailConfig.secure = false;
         mailConfig.auth.user = account.user;
         mailConfig.auth.pass = account.pass;
-      });
+      } catch (e) {
+        console.error(e);
+      }
     }
+    const conf = mailConfig;
     this._transporter = nodemailer.createTransport(conf);
   }
 
   private loadHtmlMail(mailName: string) {
-    const mailPath = p.join(__dirname, `../../../mails/${mailName}`);
+    const mailPath = p.join(__dirname, `../../../mails/${mailName}.txt`);
     try {
-      let file = readFileSync(mailPath, 'utf-8');
-      file = file.replace(/%base_url%/g, this.baseUrl + '/');
-      return file;
+      return readFileSync(mailPath, 'utf-8');
+    } catch (e) {
+      console.error(e);
+      return;
+    }
+  }
+
+  private loadFooter(lang: string) {
+    const mailPath = p.join(
+      __dirname,
+      `../../../mails/partials/footer_${lang}.txt`
+    );
+    try {
+      return readFileSync(mailPath, 'utf-8');
     } catch (e) {
       console.error(e);
       return;
@@ -50,59 +64,70 @@ export class MailService {
     subject,
     key = 'false',
     name = 'false',
-    email = 'false',
   }: customMail) {
-    if (env === 'test' || env === 'ci') return;
+    if (env === ENVIRONMENT.test || env === ENVIRONMENT.ci) return;
 
-    await this.setup();
     // we only have german and english mails
     lang = lang !== 'de' ? 'en' : lang;
 
-    let htmlMail = this.loadHtmlMail(subject + '_' + lang + '.html');
-
-    const titleReg = /(?<=<title>)(.*?)(?=<\/title>)/gi;
-    const title = titleReg.exec(htmlMail)[0];
-
+    let htmlMail = this.loadHtmlMail(subject + '_' + lang);
     if (!htmlMail) {
       throw notFound('Could not find E-Mail Template.');
     }
+    let htmlFooter = this.loadFooter(lang);
+    if (!htmlFooter) {
+      throw notFound('Could not find E-Mail Template.');
+    }
+    htmlMail = htmlMail + htmlFooter;
 
-    if (name !== 'false') {
+    /*
+      Fake <title></title> attribute to set email header
+    */
+    const titleReg = /(?<=<title>)(.*?)(?=<\/title>)/gi;
+    const title = titleReg.exec(htmlMail)[0];
+    htmlMail = htmlMail.replace(/(<title>)(.*?)(<\/title>)/g, '');
+
+    if (name !== 'false' && name) {
       switch (lang) {
         case 'en': {
-          htmlMail.replace('Beekeeper', name);
+          htmlMail = htmlMail.replace('Beekeeper', name);
           break;
         }
         case 'de': {
-          htmlMail.replace('Imker/in', name);
+          htmlMail = htmlMail.replace('Imker/in', name);
           break;
         }
       }
     }
-    if (email !== 'false') {
-      htmlMail = htmlMail.replace(/%mail%/g, email);
-    }
+
     if (key !== 'false') {
       htmlMail = htmlMail.replace(/%key%/g, key);
     }
+
+    htmlMail = htmlMail.replace(/%lang%/g, lang);
+    htmlMail = htmlMail.replace(/%mail%/g, to);
+    htmlMail = htmlMail.replace(/%base_url%/g, this.baseUrl + '/');
 
     const options = {
       from: 'no-reply@btree.at',
       to: to,
       subject: title,
-      html: htmlMail,
+      text: htmlMail,
     };
-
-    await this._transporter.sendMail(options, (error, info) => {
-      this._transporter.close();
-      if (error) {
-        console.log(`error: ${error}`);
-        throw badImplementation('E-Mail could not be sent.');
-      }
-      if (env !== 'production') {
-        console.log(nodemailer.getTestMessageUrl(info));
-      }
-      console.log(`Message Sent ${info.response}`);
-    });
+    try {
+      await this._transporter.sendMail(options, (error, info) => {
+        this._transporter.close();
+        if (error) {
+          console.error(`error: ${error}`);
+          throw badImplementation('E-Mail could not be sent.');
+        }
+        if (env === ENVIRONMENT.development || env === ENVIRONMENT.test) {
+          console.log(nodemailer.getTestMessageUrl(info));
+        }
+        console.log(`Message Sent ${info.response}`);
+      });
+    } catch (e) {
+      console.error(e);
+    }
   }
 }
