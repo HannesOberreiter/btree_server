@@ -13,7 +13,7 @@
     <mj-section padding="10px 0 20px 0">
       <mj-column>
         <mj-text align="center" color="#9B9B9B" font-size="10px">
-          This E-Mail was send to <b>%mail%</b>, from
+          This E-Mail was send to %mail%, from
           <b><a href="%base_url%" style="color: #9B9B9B;">
               %base_url%
             </a></b>
@@ -34,11 +34,11 @@
             Unsubscribe
           </a>
           &#149;
-          <a href="https://info.btree.at/data-privacy" style="color: #9B9B9B;">
+          <a href="https://info.btree.at/%lang%/data-privacy" style="color: #9B9B9B;">
             Privacy Policy
           </a>
           &#149;
-          <a href="https://info.btree.at/impressum" style="color: #9B9B9B;">
+          <a href="https://info.btree.at/%lang%/impressum" style="color: #9B9B9B;">
             Legal Information
           </a>
         </mj-text>
