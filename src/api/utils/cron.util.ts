@@ -35,6 +35,8 @@ import { raw } from 'objection';
 import { env } from '@/config/environment.config';
 import { ENVIRONMENT } from '../types/enums/environment.enum';
 import { MailServer } from '../app.bootstrap';
+import isBetween from 'dayjs/plugin/isBetween';
+dayjs.extend(isBetween);
 
 export const cleanupDatabase = async () => {
   try {
@@ -216,40 +218,45 @@ export const cleanupDatabase = async () => {
 export const visReminder = async () => {
   try {
     const result = { type: 'vis_reminder', mails: 0 };
-    const checkDate = dayjs().add(2, 'day').format('YYYY-MM-DD');
+    const startDate = dayjs().format('YYYY-MM-DD');
+    const endDate = dayjs().add(5, 'day');
+    const lastReminder = dayjs().subtract(7, 'day').format('YYYY-MM-DD');
+    const now = new Date();
+
     const year = dayjs().year();
     // Stichtag Zählung
     const countDay1 = year + '-10-31';
     const countDay2 = year + '-04-30';
     // VIS Eingabe
-    const reportDay1 = year + '-12-31';
+    const reportDay1 = year + '-12-18';
     const reportDay2 = year + '-06-30';
-    if ([countDay1, countDay2, reportDay1, reportDay2].includes(checkDate)) {
-      const users = await User.query().select('username', 'email').where({
-        lang: 'de',
-        acdate: true,
-      });
 
-      let mailDate, mailSubject;
-      switch (checkDate) {
-        case countDay1:
-          mailDate = countDay1;
-          mailSubject = 'vis_count';
-          break;
-        case countDay2:
-          mailDate = countDay2;
-          mailSubject = 'vis_count';
-          break;
-        case reportDay1:
-          mailDate = reportDay1;
-          mailSubject = 'vis_count';
-          break;
-        case reportDay2:
-          mailDate = reportDay2;
-          mailSubject = 'vis_count';
-          break;
-      }
+    let mailDate, mailSubject;
+
+    if (dayjs(countDay1).isBetween(startDate, endDate)) {
+      mailDate = countDay1;
+      mailSubject = 'vis_count';
+    } else if (dayjs(countDay2).isBetween(startDate, endDate)) {
+      mailDate = countDay2;
+      mailSubject = 'vis_count';
+    } else if (dayjs(reportDay1).isBetween(startDate, endDate)) {
+      mailDate = reportDay1;
+      mailSubject = 'vis_submit';
+    } else if (dayjs(reportDay2).isBetween(startDate, endDate)) {
+      mailDate = reportDay2;
+      mailSubject = 'vis_submit';
+    }
+
+    if (mailDate && mailSubject) {
+      const users = await User.query()
+        .select('username', 'email', 'id')
+        .where({
+          lang: 'de',
+          acdate: true,
+        })
+        .where('last_reminder', '<', lastReminder);
       result.mails = users.length;
+
       // Staging server does have correct mail settings don't send reminders, otherwise user would get double notified
       if (env !== ENVIRONMENT.staging) {
         for (const i in users) {
@@ -261,9 +268,13 @@ export const visReminder = async () => {
             name: user.username,
             key: mailDate,
           });
+          await User.query().findById(user.id).patch({
+            last_reminder: now,
+          });
         }
       }
     }
+
     return result;
   } catch (e) {
     throw checkMySQLError(e);
