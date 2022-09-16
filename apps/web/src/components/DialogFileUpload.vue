@@ -127,11 +127,15 @@ function onUpload(info: any) {
 
 function onFailed(error: any) {
   console.log(error);
-  notification.open('negative', 'Upload failed!');
+  notification.open('negative', 'Upload failed!', true);
 }
 
 function onRejected(rejectedEntries: any) {
   console.log(rejectedEntries);
-  notification.open('negative', 'file(s) did not pass validation constraints');
+  notification.open(
+    'negative',
+    'file(s) did not pass validation constraints',
+    true
+  );
 }
 </script>
