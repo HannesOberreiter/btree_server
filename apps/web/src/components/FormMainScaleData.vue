@@ -28,6 +28,7 @@
       label="weight"
       icon="fas fa-weight"
       numeric-valid="decimal"
+      :max-valid="1000"
       :values="values"
       :reset="reset"
     ></form-input-numeric>
