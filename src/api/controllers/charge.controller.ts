@@ -46,7 +46,7 @@ export class ChargeController extends Controller {
             });
           }
         } catch (e) {
-          console.log(e);
+          console.error(e);
         }
       }
       if (order) {
@@ -108,7 +108,6 @@ export class ChargeController extends Controller {
         }
       }
       const result = await query.orderBy('type_id');
-      console.log(result);
       res.locals.data = result;
       next();
     } catch (e) {

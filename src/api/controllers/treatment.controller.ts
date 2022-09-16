@@ -46,7 +46,7 @@ export class TreatmentController extends Controller {
             });
           }
         } catch (e) {
-          console.log(e);
+          console.error(e);
         }
       }
       if (order) {

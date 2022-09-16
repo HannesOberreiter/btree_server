@@ -41,27 +41,34 @@ export class ScaleDataController extends Controller {
             throw tooManyRequests('you have exceeded your request limit');
         }
 
-        if(req.query.weight && lastInsert.weight && req.query.action === 'CREATE'){
+        if (
+          req.query.weight &&
+          lastInsert.weight &&
+          req.query.action === 'CREATE'
+        ) {
           try {
-              const currentWeight = parseFloat(req.query.weight as any)
-              const checkWeight = Math.abs(lastInsert.weight - currentWeight);
-              if(checkWeight > 5){
-                const user = await User.query().leftJoinRelated('company_bee').where({
+            const currentWeight = parseFloat(req.query.weight as any);
+            const checkWeight = Math.abs(lastInsert.weight - currentWeight);
+            if (checkWeight > 5) {
+              const user = await User.query()
+                .leftJoinRelated('company_bee')
+                .where({
                   'company_bee.rank': 1,
-                  'company_bee.user_id': company.id
-                })
-                user.forEach((u) => {
-                  MailServer.sendMail({
-                    to: u.email,
-                    lang: u.lang,
-                    subject: 'weight_warning',
-                    key: `${scale.name}: ${checkWeight} (${lastInsert.weight} - ${currentWeight})`,
-                    name: u.username
-                  }
-                  )
-                })
-              }
-          } catch(e) { console.error(e) }
+                  'company_bee.user_id': company.id,
+                });
+              user.forEach((u) => {
+                MailServer.sendMail({
+                  to: u.email,
+                  lang: u.lang,
+                  subject: 'weight_warning',
+                  key: `${scale.name}: ${checkWeight} (${lastInsert.weight} - ${currentWeight})`,
+                  name: u.username,
+                });
+              });
+            }
+          } catch (e) {
+            console.error(e);
+          }
         }
         const insert = {
           datetime: insertDate,
@@ -110,7 +117,7 @@ export class ScaleDataController extends Controller {
             });
           }
         } catch (e) {
-          console.log(e);
+          console.error(e);
         }
       }
       if (order) {

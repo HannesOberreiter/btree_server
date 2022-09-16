@@ -65,7 +65,7 @@ export class HiveController extends Controller {
             });
           }
         } catch (e) {
-          console.log(e);
+          console.error(e);
         }
       }
       if (order) {

@@ -118,7 +118,7 @@ export class MailService {
       await this._transporter.sendMail(options, (error, info) => {
         this._transporter.close();
         if (error) {
-          console.log(`error: ${error}`);
+          console.error(`error: ${error}`);
           throw badImplementation('E-Mail could not be sent.');
         }
         if (env === ENVIRONMENT.development || env === ENVIRONMENT.test) {

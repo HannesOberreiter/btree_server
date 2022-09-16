@@ -37,7 +37,6 @@ export async function createOrder(user_id: number, amount: number) {
     }),
   });
   const data = await response.json();
-  console.log(data);
   return data;
 }
 

@@ -90,21 +90,23 @@ const checkBruteForce = async (bee_id: number) => {
       .where('time', '>', validAttempts)
       .orderBy('time');
     // ToDo send user E-Mail that the account is bruteForced
-    console.log(bruteForce);
     if (bruteForce[0]['count'] < 10) {
       return false;
     } else {
       const lastReminder = dayjs().subtract(1, 'day').format('YYYY-MM-DD');
-      const user = await User.query().findById(bee_id).where('last_reminder', '<', lastReminder);
-      console.log(user);
-      if(user){
+      const user = await User.query()
+        .findById(bee_id)
+        .where('last_reminder', '<', lastReminder);
+      if (user) {
         MailServer.sendMail({
           to: user.email,
           lang: user.lang,
           subject: 'acc_locked',
-          name: user.username
-        })
-        await User.query().patch({last_reminder: new Date()}).findById(user.id)
+          name: user.username,
+        });
+        await User.query()
+          .patch({ last_reminder: new Date() })
+          .findById(user.id);
       }
       return true;
     }
