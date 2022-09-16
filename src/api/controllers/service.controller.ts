@@ -56,7 +56,13 @@ export class ServiceController extends Controller {
       const capture = await capturePayment(req.params.orderID);
       if (capture.status !== 'COMPLETED' && capture.status !== 'APPROVED')
         throw badImplementation('Could not capure order');
-      const paid = await addPremium(req.user.user_id);
+      let value = 0;
+      try {
+        value = parseFloat(capture.purchase_units[0].payments.captures[0].amount.value)
+      } catch(e) {
+        console.error(e)
+      }
+      const paid = await addPremium(req.user.user_id, 12, value, 'paypal');
       res.locals.data = {
         ...capture,
         paid: paid,

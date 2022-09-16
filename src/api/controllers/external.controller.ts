@@ -94,8 +94,14 @@ export class ExternalController extends Controller {
     try {
       const event = req.body;
       if (event.type === 'checkout.session.completed') {
-        const user_id = event.data.object.client_reference_id;
-        await addPremium(user_id, 12);
+        const user_id = parseInt(event.data.object.client_reference_id);
+        let amount = 0;
+        try {
+          amount = parseFloat(event.data.object.amount_total)/100
+        } catch(e){
+          console.error(e)
+        }
+        await addPremium(user_id, 12, amount, 'stripe');
       }
       res.send();
     } catch (e) {

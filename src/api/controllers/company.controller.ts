@@ -39,7 +39,7 @@ export class CompanyController extends Controller {
         .where({ code: req.body.coupon, used: false })
         .throwIfNotFound()
         .first();
-      const paid = await addPremium(req.user.user_id, promo.months);
+      const paid = await addPremium(req.user.user_id, promo.months, 0, 'promo');
       await Promo.query()
         .patch({
           used: true,
