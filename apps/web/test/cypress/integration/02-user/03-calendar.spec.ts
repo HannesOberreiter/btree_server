@@ -59,7 +59,7 @@ describe('User - Calendar', () => {
       .find('.fc-daygrid-day-events')
       .find('.fa-clipboard')
       .first()
-      .click();
+      .click({ force: true });
 
     cy.dataCy('dialog-event').should('exist');
     cy.dataCy('btn-dialog-event-delete').click();
