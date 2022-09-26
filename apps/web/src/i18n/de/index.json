@@ -342,7 +342,7 @@
   "position": "Position",
   "positionNote": "Platzierungsposition des Stockes auf dem Bienenstand",
   "premium": "Premium",
-  "premiumSupporter": "Unsere Premium Sponsoren",
+  "premiumSupporter": "Unsere Sponsoren",
   "previous": "Vorher",
   "previousPage": "Zurück zur letzten Seite",
   "price": "Preis",
@@ -439,6 +439,7 @@
   "select": "Auswählen",
   "selectFile": "Wählen Sie eine Datei aus",
   "serie": "Serie | Serien",
+  "serviceProvider": "Unsere Partner Dienstleister",
   "serviceWorker": {
     "newContent": "Aktualisierte Inhalte sind verfügbar. Bitte aktualisieren Sie die Seite.",
     "refresh": "Aktualisieren Sie b.tree"

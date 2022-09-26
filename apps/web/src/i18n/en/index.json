@@ -342,7 +342,7 @@
   "position": "Position",
   "positionNote": "Placement position of colony on apiary",
   "premium": "Premium",
-  "premiumSupporter": "Our premium supporter",
+  "premiumSupporter": "Our supporter",
   "previous": "Previous",
   "previousPage": "Go to previous page",
   "price": "Price",
@@ -439,6 +439,7 @@
   "select": "Select",
   "selectFile": "Select a file",
   "serie": "Serie | Series",
+  "serviceProvider": "Our service provider",
   "serviceWorker": {
     "newContent": "Updated content is available. Please refresh the page.",
     "refresh": "Upgrade b.tree"

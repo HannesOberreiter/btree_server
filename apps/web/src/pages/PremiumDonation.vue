@@ -141,6 +141,9 @@
         </div>
       </div>
     </q-card-section>
+    <q-card-section>
+      <supporter-images></supporter-images>
+    </q-card-section>
   </q-card>
 </template>
 
