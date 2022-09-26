@@ -1,4 +1,4 @@
-<title>Neues Passwort für b.tree Database</title>
+<title>Anforderung eines neuen Passworts</title>
 Liebe/r Imker/in,
 
 jemand hat ein neue Passwort für deinen b.tree Login angefordert. Wenn du es nicht angefordert hast oder es ein Fehler war, ignoriere und lösche einfach diese E-Mail.
