@@ -109,7 +109,10 @@ export class MailService {
     htmlMail = htmlMail.replace(/%base_url%/g, this.baseUrl + '/');
 
     const options = {
-      from: 'no-reply@btree.at',
+      from: {
+        name: 'b.tree - Beekeeping Database',
+        address: 'no-reply@btree.at',
+      },
       to: to,
       subject: title,
       text: htmlMail,
