@@ -20,7 +20,7 @@ import Morgan from 'morgan';
 
 import passport from 'passport';
 
-import { notAcceptable } from 'boom';
+import { notAcceptable } from '@hapi/boom';
 
 import { Container } from '@config/container.config';
 

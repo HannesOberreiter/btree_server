@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { NO_CONTENT } from 'http-status';
-import { expectationFailed } from 'boom';
+import { expectationFailed } from '@hapi/boom';
 
 /**
  * Resolver middleware that close all requests by response sending (404 except)

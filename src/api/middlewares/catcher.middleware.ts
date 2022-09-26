@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { notFound } from 'boom';
+import { notFound } from '@hapi/boom';
 
 import { Container } from '@config/container.config';
 import { getErrorStatusCode, getErrorOutput } from '@utils/error.util';
