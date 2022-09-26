@@ -146,6 +146,10 @@ const mailConfig = {
     user: process.env.MAIL_FROM,
     pass: process.env.MAIL_PASSWORD,
   },
+  private_key:
+    process.env.MAIL_DKIM_PRIVATE === 'false'
+      ? ''
+      : Buffer.from(process.env.MAIL_DKIM_PRIVATE, 'base64').toString('ascii'),
 };
 
 export {
