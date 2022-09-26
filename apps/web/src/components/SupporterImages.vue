@@ -6,7 +6,7 @@
     <div
       v-for="service in SERVICES"
       :key="service.name"
-      class="col-12 col-sm-6 col-md-5 col-lg-4 text-center"
+      class="col-12 col-sm-6 col-md-5 col-lg-4 text-center q-pb-lg"
     >
       <a :href="service.url" target="_blank" rel="external noopener">
         <q-img
@@ -23,7 +23,7 @@
     <div
       v-for="supporter in SUPPORTERS"
       :key="supporter.name"
-      class="col-12 col-sm-6 col-md-5 col-lg-4 text-center"
+      class="col-12 col-sm-6 col-md-5 col-lg-4 text-center q-pb-lg"
     >
       <a :href="supporter.url" target="_blank" rel="external noopener">
         <q-img
@@ -40,6 +40,7 @@
 <script setup lang="ts">
 import ImageHetzner from '~/assets/supporter/hetzner.svg';
 import ImageMeteoblue from '~/assets/supporter/meteoblue.png';
+import ImageTouchad from '~/assets/supporter/touchad.png';
 import ImageWB from '~/assets/supporter/wiener-bezirksimkerei.png';
 
 const SERVICES = [
@@ -54,6 +55,12 @@ const SERVICES = [
     alt: 'Meteoblue is a meteorological service created at the University of Basel, Switzerland. In 2006, Meteoblue was then founded as a spin-off company in order to serve customers especially in the area of agriculture as well as solar and wind power.',
     img: ImageMeteoblue,
     url: 'https://www.meteoblue.com/',
+  },
+  {
+    name: 'TouchAd',
+    alt: 'TouchAd digitale Werbung Dienstleister',
+    img: ImageTouchad,
+    url: 'https://touchad.at/',
   },
 ];
 
