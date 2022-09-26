@@ -13,6 +13,7 @@
           :alt="service.alt"
           :src="service.img"
           spinner-color="white"
+          loading="lazy"
           style="max-width: 120px"
         />
       </a>
@@ -30,6 +31,7 @@
           :alt="supporter.alt"
           :src="supporter.img"
           spinner-color="white"
+          loading="lazy"
           style="max-width: 120px"
         />
       </a>
@@ -38,7 +40,7 @@
 </template>
 
 <script setup lang="ts">
-import ImageHetzner from '~/assets/supporter/hetzner.svg';
+import ImageHetzner from '~/assets/supporter/hetzner.png';
 import ImageMeteoblue from '~/assets/supporter/meteoblue.png';
 import ImageTouchad from '~/assets/supporter/touchad.png';
 import ImageWB from '~/assets/supporter/wiener-bezirksimkerei.png';
