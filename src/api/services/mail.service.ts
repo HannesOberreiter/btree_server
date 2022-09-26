@@ -118,13 +118,6 @@ export class MailService {
       text: htmlMail,
     };
 
-    if (mailConfig.private_key) {
-      options['dkim'] = {
-        domainName: 'btree.at',
-        keySelector: mailConfig.selector_key,
-        privateKey: mailConfig.private_key,
-      };
-    }
     try {
       await this._transporter.sendMail(options, (error, info) => {
         this._transporter.close();

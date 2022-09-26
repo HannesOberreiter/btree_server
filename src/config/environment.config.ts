@@ -146,11 +146,16 @@ const mailConfig = {
     user: process.env.MAIL_FROM,
     pass: process.env.MAIL_PASSWORD,
   },
-  selector_key: process.env.MAIL_DKIM_SELECTOR,
-  private_key:
-    process.env.MAIL_DKIM_PRIVATE === 'false'
-      ? ''
-      : Buffer.from(process.env.MAIL_DKIM_PRIVATE, 'base64').toString('ascii'),
+  dkim: {
+    domainName: process.env.MAIL_DKIM_SELECTOR ? 'btree.at' : '',
+    keySelector: process.env.MAIL_DKIM_SELECTOR,
+    privateKey:
+      process.env.MAIL_DKIM_PRIVATE === 'false'
+        ? ''
+        : Buffer.from(process.env.MAIL_DKIM_PRIVATE, 'base64').toString(
+            'ascii'
+          ),
+  },
 };
 
 export {
