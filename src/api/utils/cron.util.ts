@@ -35,8 +35,6 @@ import { raw } from 'objection';
 import { env } from '@/config/environment.config';
 import { ENVIRONMENT } from '../types/enums/environment.enum';
 import { MailServer } from '../app.bootstrap';
-import isBetween from 'dayjs/plugin/isBetween';
-dayjs.extend(isBetween);
 
 export const cleanupDatabase = async () => {
   try {
@@ -215,13 +213,16 @@ export const cleanupDatabase = async () => {
   }
 };
 
-export const visReminder = async () => {
+/**
+ * Send reminder 5 days before VIS action is required
+ * @returns Object or void
+ */
+export const reminderVIS = async () => {
   try {
     const result = { type: 'vis_reminder', mails: 0 };
-    const startDate = dayjs().format('YYYY-MM-DD');
-    const endDate = dayjs().add(5, 'day');
-    const lastReminder = dayjs().subtract(7, 'day').format('YYYY-MM-DD');
-    const now = new Date();
+    const checkDate = dayjs().add(5, 'day');
+    const lastDate = dayjs().subtract(1, 'day').toDate();
+    const nowDate = new Date();
 
     const year = dayjs().year();
     // Stichtag Zählung
@@ -233,16 +234,16 @@ export const visReminder = async () => {
 
     let mailDate, mailSubject;
 
-    if (dayjs(countDay1).isBetween(startDate, endDate)) {
+    if (dayjs(countDay1).isSame(checkDate, 'day')) {
       mailDate = countDay1;
       mailSubject = 'vis_count';
-    } else if (dayjs(countDay2).isBetween(startDate, endDate)) {
+    } else if (dayjs(countDay2).isSame(checkDate, 'day')) {
       mailDate = countDay2;
       mailSubject = 'vis_count';
-    } else if (dayjs(reportDay1).isBetween(startDate, endDate)) {
+    } else if (dayjs(reportDay1).isSame(checkDate, 'day')) {
       mailDate = reportDay1;
       mailSubject = 'vis_submit';
-    } else if (dayjs(reportDay2).isBetween(startDate, endDate)) {
+    } else if (dayjs(reportDay2).isSame(checkDate, 'day')) {
       mailDate = reportDay2;
       mailSubject = 'vis_submit';
     }
@@ -254,7 +255,12 @@ export const visReminder = async () => {
           lang: 'de',
           acdate: true,
         })
-        .where('last_reminder', '<', lastReminder);
+        .where((builder) =>
+          builder
+            .where('reminder_vis', '<', lastDate)
+            .orWhereNull('reminder_vis')
+        );
+
       result.mails = users.length;
 
       // Staging server does have correct mail settings don't send reminders, otherwise user would get double notified
@@ -269,7 +275,7 @@ export const visReminder = async () => {
             key: mailDate,
           });
           await User.query().findById(user.id).patch({
-            last_reminder: now,
+            reminder_vis: nowDate,
           });
         }
       }
@@ -281,19 +287,28 @@ export const visReminder = async () => {
   }
 };
 
-export const premiumReminder = async () => {
+/**
+ * Send reminder 5 days before premium membership runs out
+ * @returns Object or void
+ */
+export const reminderPremium = async () => {
   try {
     const result = { type: 'premium_reminder', mails: 0 };
     const startDate = dayjs().format('YYYY-MM-DD');
-    const endDate = dayjs().add(5, 'day').format('YYYY-MM-DD');
-    const lastReminder = dayjs().subtract(7, 'day').format('YYYY-MM-DD');
-    const now = new Date();
+    const endDate = dayjs().add(1, 'day').format('YYYY-MM-DD');
+    const lastDate = dayjs().subtract(7, 'day').format('YYYY-MM-DD');
+    const nowDate = new Date();
 
     const companies = await Company.query()
       .select('user_id', 'companies.name', 'paid')
-      .whereBetween('paid', [startDate, endDate])
       .withGraphJoined('user')
-      .where('last_reminder', '<', lastReminder)
+      .where('paid', '>=', startDate)
+      .where('paid', '<', endDate)
+      .where((builder) =>
+        builder
+          .where('reminder_premium', '<', lastDate)
+          .orWhereNull('reminder_premium')
+      )
       .where('user_join.rank', 1)
       .where('newsletter', true);
 
@@ -308,7 +323,7 @@ export const premiumReminder = async () => {
             name: u.username,
           });
           await User.query().findById(u.id).patch({
-            last_reminder: now,
+            reminder_premium: nowDate,
           });
         });
       });
@@ -321,7 +336,12 @@ export const premiumReminder = async () => {
   }
 };
 
-export const deletionReminder = async () => {
+/**
+ * Send reminder 6 days before user account gets deleted (right to be forgotten)
+ * if user logs into the app in between the account will not be deleted
+ * @returns Object or void
+ */
+export const reminderDeletion = async () => {
   try {
     const result = { type: 'deletion_reminder', mails: 0 };
     const timeToBeForgotten = dayjs()
@@ -329,15 +349,19 @@ export const deletionReminder = async () => {
       .subtract(6, 'day')
       .toISOString();
 
-    const lastReminder = dayjs().subtract(7, 'day').format('YYYY-MM-DD');
-    const now = new Date();
+    const lastDate = dayjs().subtract(7, 'day').format('YYYY-MM-DD');
+    const nowDate = new Date();
 
     const forgottenIds = await CompanyBee.query()
       .select('username', 'email', 'lang', 'user.id', 'last_visit')
       .distinct('bee_id')
       .leftJoinRelated('user')
       .where('user.last_visit', '<=', timeToBeForgotten)
-      .where('last_reminder', '<', lastReminder)
+      .where((builder) =>
+        builder
+          .where('reminder_deletion', '<', lastDate)
+          .orWhereNull('reminder_deletion')
+      )
       .where('newsletter', true)
       .groupBy('company_bee.user_id')
       .having(raw('COUNT(bee_id)'), '=', 1);
@@ -352,7 +376,7 @@ export const deletionReminder = async () => {
           name: u['username'],
         });
         await User.query().findById(u.id).patch({
-          last_reminder: now,
+          reminder_deletion: nowDate,
         });
       });
     }
