@@ -121,7 +121,7 @@ export class MailService {
     if (mailConfig.private_key) {
       options['dkim'] = {
         domainName: 'btree.at',
-        keySelector: 'default2209',
+        keySelector: mailConfig.selector_key,
         privateKey: mailConfig.private_key,
       };
     }

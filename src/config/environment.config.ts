@@ -146,6 +146,7 @@ const mailConfig = {
     user: process.env.MAIL_FROM,
     pass: process.env.MAIL_PASSWORD,
   },
+  selector_key: process.env.MAIL_DKIM_SELECTOR,
   private_key:
     process.env.MAIL_DKIM_PRIVATE === 'false'
       ? ''
