@@ -1,4 +1,4 @@
-import { badImplementation, conflict, notFound, badRequest } from 'boom';
+import { badImplementation, conflict, notFound, badRequest } from '@hapi/boom';
 
 import {
   ValidationError,

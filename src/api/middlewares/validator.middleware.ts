@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { notFound, badRequest } from 'boom';
+import { notFound, badRequest } from '@hapi/boom';
 import { validationResult, ValidationChain } from 'express-validator';
 import { translateMessages } from '@utils/translations.util';
 import { OPTION } from '@enums/options.enum';
