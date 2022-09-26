@@ -93,10 +93,14 @@ const checkBruteForce = async (bee_id: number) => {
     if (bruteForce[0]['count'] < 10) {
       return false;
     } else {
-      const lastReminder = dayjs().subtract(1, 'day').format('YYYY-MM-DD');
+      const lastNotice = dayjs().subtract(1, 'day').format('YYYY-MM-DD');
       const user = await User.query()
         .findById(bee_id)
-        .where('last_reminder', '<', lastReminder);
+        .where((builder) =>
+          builder
+            .where('notice_bruteforce', '<', lastNotice)
+            .orWhereNull('notice_bruteforce')
+        );
       if (user) {
         MailServer.sendMail({
           to: user.email,
@@ -105,7 +109,7 @@ const checkBruteForce = async (bee_id: number) => {
           name: user.username,
         });
         await User.query()
-          .patch({ last_reminder: new Date() })
+          .patch({ notice_bruteforce: new Date() })
           .findById(user.id);
       }
       return true;

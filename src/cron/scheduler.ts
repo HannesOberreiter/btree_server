@@ -2,9 +2,9 @@ import cron from 'node-schedule';
 import { Container } from '@config/container.config';
 import {
   cleanupDatabase,
-  deletionReminder,
-  premiumReminder,
-  visReminder,
+  reminderPremium,
+  reminderDeletion,
+  reminderVIS,
 } from '@/api/utils/cron.util';
 import { cronjobTimer } from '@/config/environment.config';
 
@@ -35,10 +35,10 @@ const task = {
           Container.resolve('Logger').log('info', 'Test Cron-Job', {
             label: 'CronJob',
           });
-          Logger(await deletionReminder());
+          Logger(await reminderDeletion());
           Logger(await cleanupDatabase());
-          Logger(await visReminder());
-          Logger(await premiumReminder());
+          Logger(await reminderVIS());
+          Logger(await reminderPremium());
         } catch (e) {
           Container.resolve('Logger').log('error', e, { label: 'CronJob' });
         }

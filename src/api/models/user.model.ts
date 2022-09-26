@@ -19,7 +19,10 @@ export class User extends ExtModel {
   saved_company!: number;
   reset_timestamp!: Date;
   last_visit!: Date;
-  last_reminder!: Date;
+  reminder_premium!: Date;
+  reminder_deletion!: Date;
+  reminder_vis!: Date;
+  notice_bruteforce!: Date;
 
   company?: Company[];
   company_bee?: CompanyBee[];
@@ -55,7 +58,11 @@ export class User extends ExtModel {
       saved_company: { type: 'integer' },
 
       last_visit: { type: 'string', format: 'date-time' },
-      last_reminder: { type: 'string', format: 'date-time' },
+      reminder_premium: { type: 'string', format: 'date-time' },
+      reminder_deletion: { type: 'string', format: 'date-time' },
+      reminder_vis: { type: 'string', format: 'date-time' },
+      notice_bruteforce: { type: 'string', format: 'date-time' },
+
       created_at: { type: 'string', format: 'date-time' },
       updated_at: { type: 'string', format: 'date-time' },
     },
