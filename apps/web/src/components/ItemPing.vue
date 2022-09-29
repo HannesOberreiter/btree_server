@@ -9,7 +9,7 @@
       {{ $t('offlineServer') }}
     </q-item-section>
     <q-item-section v-else-if="onlineUser">
-      <tooltip-base> {{ time }} ms </tooltip-base>
+      <tooltip-base> {{ time }} ms ({{ baseUrl }}) </tooltip-base>
       {{ $t('online') }}
     </q-item-section>
     <q-item-section v-else> {{ $t('offlineUser') }}</q-item-section>
@@ -26,6 +26,7 @@ const time = ref(null);
 const offlineServer = ref(true);
 const onlineUser = useOnline();
 const colorStatus = ref('green');
+const baseUrl = process.env.BACKEND_URL;
 
 useIntervalFn(
   () => {
