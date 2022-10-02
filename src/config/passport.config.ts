@@ -1,3 +1,4 @@
+import { User } from '@/api/types/interfaces/IUserRequest.interface';
 import { jwtSecret } from '@config/environment.config';
 import { Strategy as JwtStrategy } from 'passport-jwt';
 import { ExtractJwt } from 'passport-jwt';
@@ -5,8 +6,8 @@ export class PassportConfiguration {
   private static options = {
     jwt: {
       secretOrKey: jwtSecret,
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken()
-    }
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+    },
   };
 
   static factory(_strategy: string): JwtStrategy {
@@ -17,7 +18,7 @@ export class PassportConfiguration {
   }
 
   private static jwt = async (
-    user,
+    user: User,
     next: (e?: Error, v?: any | boolean) => void
   ) => {
     try {
