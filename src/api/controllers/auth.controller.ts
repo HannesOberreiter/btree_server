@@ -4,7 +4,6 @@ import { checkMySQLError } from '@utils/error.util';
 import { Company } from '@models/company.model';
 import { CompanyBee } from '@models/company_bee.model';
 import { Controller } from '@classes/controller.class';
-import { IResponse } from '@interfaces/IResponse.interface';
 import { loginCheck } from '@utils/login.util';
 import { NextFunction, Request, Response } from 'express';
 import { randomBytes } from 'crypto';
@@ -119,7 +118,7 @@ export class AuthController extends Controller {
         to: result.email,
         lang: result.lang,
         subject: 'pw_reseted',
-        name: result.username
+        name: result.username,
       });
       res.locals.data = { email: result.email };
       next();
@@ -160,7 +159,7 @@ export class AuthController extends Controller {
           to: inputUser.email,
           lang: inputUser.lang,
           subject: 'register',
-          key: inputUser.reset
+          key: inputUser.reset,
         });
 
         res.locals.data = { email: inputUser.email, activate: inputUser.reset };
@@ -173,7 +172,7 @@ export class AuthController extends Controller {
     }
   }
 
-  async login(req: Request, res: IResponse, next: NextFunction) {
+  async login(req: Request, res: Response, next: NextFunction) {
     const { email, password } = req.body;
     const userAgent = buildUserAgent(req);
     try {

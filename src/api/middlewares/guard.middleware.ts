@@ -4,7 +4,6 @@ import { forbidden, badRequest, unauthorized } from '@hapi/boom';
 import { ROLES } from '@enums/role.enum';
 import { listNumber } from '@utils/enum.util';
 import { IUserRequest } from '@interfaces/IUserRequest.interface';
-import { IResponse } from '@interfaces/IResponse.interface';
 
 /**
  * Authentication middleware
@@ -20,7 +19,7 @@ export class Guard {
    */
   static authorize =
     (roles = listNumber(ROLES)) =>
-    (req: IUserRequest, res: IResponse, next: (e?: Error) => void): void =>
+    (req: IUserRequest, res: Response, next: (e?: Error) => void): void =>
       passport.authenticate(
         'jwt',
         { session: false },
@@ -30,7 +29,7 @@ export class Guard {
   private static handleJWT =
     (
       req: IUserRequest,
-      res: IResponse,
+      _res: Response,
       next: (error?: Error) => void,
       roles: number[]
     ) =>

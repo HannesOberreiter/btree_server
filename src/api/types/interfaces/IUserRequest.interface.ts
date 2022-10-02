@@ -6,7 +6,7 @@ export interface User {
   sub: number;
   bee_id: number;
   user_id: number;
-  rank: 1 | 2 | 3;
+  rank: 1 | 2 | 3 | 4;
   paid: boolean;
 }
 
