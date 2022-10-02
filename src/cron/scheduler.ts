@@ -35,8 +35,8 @@ const task = {
           Container.resolve('Logger').log('info', 'Test Cron-Job', {
             label: 'CronJob',
           });
-          Logger(await reminderDeletion());
           Logger(await cleanupDatabase());
+          Logger(await reminderDeletion());
           Logger(await reminderVIS());
           Logger(await reminderPremium());
         } catch (e) {

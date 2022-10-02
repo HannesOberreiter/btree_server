@@ -214,8 +214,8 @@ export const cleanupDatabase = async () => {
 };
 
 /**
- * Send reminder 5 days before VIS action is required
- * @returns Object or void
+ * Send reminder five days before VIS action is required
+ * @returns Count of mails send as object {type: 'vis_reminder', mails: count}
  */
 export const reminderVIS = async () => {
   try {
@@ -288,8 +288,8 @@ export const reminderVIS = async () => {
 };
 
 /**
- * Send reminder 5 days before premium membership runs out
- * @returns Object or void
+ * Send reminder five days before premium membership runs out
+ * @returns Count of mails send as object {type: 'premium_reminder', mails: count}
  */
 export const reminderPremium = async () => {
   try {
@@ -315,7 +315,7 @@ export const reminderPremium = async () => {
     // Staging server does have correct mail settings don't send reminders, otherwise user would get double notified
     if (env !== ENVIRONMENT.staging) {
       companies.forEach(async (company) => {
-        await company.user.forEach(async (u) => {
+        company.user.forEach(async (u) => {
           await MailServer.sendMail({
             to: u.email,
             lang: u.lang,
@@ -337,9 +337,9 @@ export const reminderPremium = async () => {
 };
 
 /**
- * Send reminder 6 days before user account gets deleted (right to be forgotten)
- * if user logs into the app in between the account will not be deleted
- * @returns Object or void
+ * Send reminder six days before user account gets deleted (right to be forgotten)
+ * if user logs into the app in the next six days the account will not be deleted
+ * @returns Count of mails send as object {type: 'deletion_reminder', mails: count}
  */
 export const reminderDeletion = async () => {
   try {
