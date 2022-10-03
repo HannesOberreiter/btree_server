@@ -6,6 +6,8 @@ import { LoadingBar } from 'quasar';
 import { useNetwork } from '@vueuse/core';
 
 const baseUrl = process.env.BACKEND_URL;
+const dev = process.env.NODE_ENV;
+
 const state = reactive({
   retry: false,
   logout: false,
@@ -122,7 +124,11 @@ export const useApiFetch = () => {
     recursive = false,
     file = false
   ): Promise<any> {
-    if (network.isSupported && !network.isOnline.value) {
+    if (
+      network.isSupported &&
+      !network.isOnline.value &&
+      dev !== 'development'
+    ) {
       throw 'offline';
     }
     LoadingBar.start();

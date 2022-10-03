@@ -145,7 +145,7 @@
   "frames": {
     "broodframes": "Broodframes",
     "emptyframes": "Empty",
-    "extend": "Add more frames",
+    "extend": "Increase limit",
     "foundation": "Foundation",
     "honeyframes": "Honeyframes",
     "text": "Number of frames"
