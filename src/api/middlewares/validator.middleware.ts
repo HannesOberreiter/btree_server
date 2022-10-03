@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { notFound, badRequest } from '@hapi/boom';
 import { validationResult, ValidationChain } from 'express-validator';
 import { translateMessages } from '@utils/translations.util';
@@ -9,19 +9,31 @@ import { IUserRequest } from '../types/interfaces/IUserRequest.interface';
 import { paymentRequired } from '@hapi/boom';
 
 export class Validator {
-  static handleOption = (req: Request, res: Response, next) => {
+  static handleOption = (
+    req: Request,
+    _res: Response,
+    next: NextFunction | ((e?: Error) => void)
+  ) => {
     if (!(req.params.table in OPTION)) {
       return next(notFound());
     }
     return next();
   };
-  static handleSource = (req: Request, res: Response, next) => {
+  static handleSource = (
+    req: Request,
+    _res: Response,
+    next: NextFunction | ((e?: Error) => void)
+  ) => {
     if (!(req.params.source in SOURCE)) {
       return next(notFound());
     }
     return next();
   };
-  static isPremium = async (req: IUserRequest, res: Response, next) => {
+  static isPremium = async (
+    req: IUserRequest,
+    _res: Response,
+    next: NextFunction | ((e?: Error) => void)
+  ) => {
     if (!(await isPremium(req.user.user_id))) {
       return next(paymentRequired());
     }
@@ -29,7 +41,11 @@ export class Validator {
   };
 
   static validate = (validations: ValidationChain[]) => {
-    return async (req: Request, res: Response, next) => {
+    return async (
+      req: Request,
+      _res: Response,
+      next: NextFunction | ((e?: Error) => void)
+    ) => {
       await Promise.all(validations.map((validation) => validation.run(req)));
 
       const errors = validationResult(req);
