@@ -34,10 +34,21 @@
           </template>
           <div class="row q-pb-xs">
             <div class="col-12">
-              <btn-base class="float-right" @click="max = max + 10">
+              <btn-base
+                outline
+                size="sm"
+                class="float-right"
+                @click="max = max + 10"
+              >
                 {{ $t('frames.extend') }} ({{ $t('max') }}: {{ max }})
               </btn-base>
-              <btn-base class="float-right" no-caps @click="max = 20">
+              <btn-base
+                outline
+                size="sm"
+                class="float-right"
+                no-caps
+                @click="max = 20"
+              >
                 {{ $t('reset') }}
               </btn-base>
             </div>

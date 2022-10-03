@@ -12,7 +12,7 @@
           <template v-for="(_value, index) of modelValue" :key="index">
             <div class="row q-pb-xs">
               <div class="col-4">{{ $t('rating.' + index) }}</div>
-              <div class="col-8">
+              <div class="col-5 col-sm-4 col-lg-3">
                 <q-rating
                   v-model="modelValue[index]"
                   :error="v[index].$error"
@@ -22,7 +22,27 @@
                   size="sm"
                 >
                 </q-rating>
-                {{ modelValue[index] }}
+              </div>
+              <div class="col-3 col-sm-2">
+                <btn-base
+                  round
+                  flat
+                  dense
+                  icon="fas fa-plus"
+                  :disable="modelValue[index] >= 5 || disable[index]"
+                  @click="modelValue[index] = round(modelValue[index] + 0.1, 1)"
+                ></btn-base>
+                <btn-base
+                  round
+                  flat
+                  dense
+                  icon="fas fa-minus"
+                  :disable="modelValue[index] <= 0 || disable[index]"
+                  @click="modelValue[index] = round(modelValue[index] - 0.1, 1)"
+                ></btn-base>
+              </div>
+              <div class="col-2 col-sm-1">
+                {{ round(modelValue[index], 1) }}
                 <btn-multiple-values
                   v-if="multipleValues[index]"
                   :disable="disable[index]"
@@ -38,9 +58,9 @@
 </template>
 
 <script setup lang="ts">
-import { integer, maxValue, minValue } from '~/helpers/i18n-validators';
+import { numeric, maxValue, minValue } from '~/helpers/i18n-validators';
 import { PropType } from 'vue';
-import { isEmpty, some } from 'lodash-es';
+import { isEmpty, some, round } from 'lodash-es';
 import useVuelidate from '@vuelidate/core';
 import { useVModels } from '@vueuse/core';
 import { formCheckMultipleValues } from '~/helpers';
@@ -92,32 +112,32 @@ const rules = {
   brood: {
     minValue: minValue(0),
     maxValue: maxValue(100),
-    integer: integer,
+    numeric: numeric,
   },
   pollen: {
     minValue: minValue(0),
     maxValue: maxValue(100),
-    integer: integer,
+    numeric: numeric,
   },
   comb: {
     minValue: minValue(0),
     maxValue: maxValue(100),
-    integer: integer,
+    numeric: numeric,
   },
   temper: {
     minValue: minValue(0),
     maxValue: maxValue(100),
-    integer: integer,
+    numeric: numeric,
   },
   calm_comb: {
     minValue: minValue(0),
     maxValue: maxValue(100),
-    integer: integer,
+    numeric: numeric,
   },
   swarm: {
     minValue: minValue(0),
     maxValue: maxValue(100),
-    integer: integer,
+    numeric: numeric,
   },
 };
 
