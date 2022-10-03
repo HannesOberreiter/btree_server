@@ -20,7 +20,7 @@ const standardValues = {
     apiary: {
       name: 'Muster Bienenstand',
       latitude: 47.074853,
-      longitude: 12.69527
+      longitude: 12.69527,
     },
     source: ['Kunstschwarm', 'Ableger', 'Schwarm'],
     type: ['Aktiv', 'Zucht', 'Verkauf', 'Lost'],
@@ -33,7 +33,7 @@ const standardValues = {
       'Schimmel-Pilze',
       'Ruhr',
       'Kalkbrut',
-      'Varroa'
+      'Varroa',
     ],
     treatment: ['Wabenentnahme', 'Ableger', 'Abschwefeln', 'Ameisensäure'],
     vet: ['-'],
@@ -41,7 +41,7 @@ const standardValues = {
     mating: ['Belegstelle', 'Standbegattung', 'Künstliche Besamung'],
     reartype: {
       name: 'Starter Finisher',
-      note: 'Weiselloses Volk, ohne offene Brut zum aufziehen der Weiselzellen.'
+      note: 'Weiselloses Volk, ohne offene Brut zum aufziehen der Weiselzellen.',
     },
     reardetail: {
       job: [
@@ -50,7 +50,7 @@ const standardValues = {
         'Umlarven',
         'Finisher',
         'Käfigen',
-        'Schlupf'
+        'Schlupf',
       ],
       note: [
         'Erstellen des Sammelablegers mit verdeckelte Brutwaben, aufsitzenden Bienen von offener Brut und Pollen und Futterwaben.',
@@ -58,16 +58,16 @@ const standardValues = {
         'Maximal einen Tag alte verwenden! (Anm. 3 Tage Ei Stadium).',
         'Angeblasene Zellen einem weiselrichtigen Wirtschaftsvolk über einem Absperrgitter einhängen.',
         'Schlupfkäfig über Weiselzellen anbringen.',
-        'Königinnen schlüpfen (12 Tage nach dem Umlarven).'
+        'Königinnen schlüpfen (12 Tage nach dem Umlarven).',
       ],
-      time: [0, 219, 3, 48, 120, 120]
-    }
+      time: [0, 219, 3, 48, 120, 120],
+    },
   },
   en: {
     apiary: {
       name: 'Sample Apiary',
       latitude: 47.074853,
-      longitude: 12.69527
+      longitude: 12.69527,
     },
     source: ['Artifical Swarm', 'Split', 'Swarm'],
     type: ['Aktive', 'Rearing', 'Sold', 'Lost'],
@@ -82,7 +82,7 @@ const standardValues = {
     mating: ['Mating Place', 'Apiary', 'Artificial Insemination'],
     reartype: {
       name: 'Starter Finisher',
-      note: 'Starter to get the queencells ready and finish in normal hive with queen.'
+      note: 'Starter to get the queencells ready and finish in normal hive with queen.',
     },
     reardetail: {
       job: [
@@ -91,7 +91,7 @@ const standardValues = {
         'Grafting',
         'Finisher',
         'Cage Queencells',
-        'Queens emerge'
+        'Queens emerge',
       ],
       note: [
         'Create a queenless hive with capped brood, bees, food and pollen frames.',
@@ -99,11 +99,11 @@ const standardValues = {
         'Fill the grafting frame, use max. 1 day old larvae (Egg needs 3 days to larvae).',
         'Move the grafting frame to a strong hive with a queen.',
         'Cage the queens cells.',
-        'Queen emerges (12 days after grafting (if you use 1 day old larvae)).'
+        'Queen emerges (12 days after grafting (if you use 1 day old larvae)).',
       ],
-      time: [0, 219, 3, 48, 120, 120]
-    }
-  }
+      time: [0, 219, 3, 48, 120, 120],
+    },
+  },
 };
 
 const autoFill = async (trx: Transaction, id: number, lang: string) => {
@@ -148,19 +148,19 @@ const autoFill = async (trx: Transaction, id: number, lang: string) => {
   const rearType = await RearingType.query(trx).insert({
     name: val.reartype.name,
     note: val.reartype.note,
-    user_id: id
+    user_id: id,
   });
   for (let i = 0; i < val.reardetail.job.length; i++) {
     const rearingDetail = await RearingDetail.query(trx).insert({
       job: val.reardetail.job[i],
       hour: val.reardetail.time[i],
       note: val.reardetail.note[i],
-      user_id: id
+      user_id: id,
     });
     await RearingStep.query(trx).insert({
       position: i,
       type_id: rearType.id,
-      detail_id: rearingDetail.id
+      detail_id: rearingDetail.id,
     });
   }
 
@@ -168,7 +168,7 @@ const autoFill = async (trx: Transaction, id: number, lang: string) => {
     name: val.apiary.name,
     longitude: val.apiary.longitude,
     latitude: val.apiary.latitude,
-    user_id: id
+    user_id: id,
   });
 
   return;

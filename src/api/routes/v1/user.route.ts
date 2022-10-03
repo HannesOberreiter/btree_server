@@ -29,7 +29,7 @@ export class UserRouter extends Router {
       .route('/delete')
       .patch(
         Validator.validate([
-          body('password').exists().withMessage('requiredField').trim()
+          body('password').exists().withMessage('requiredField').trim(),
         ]),
         Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
         Container.resolve('UserController').delete

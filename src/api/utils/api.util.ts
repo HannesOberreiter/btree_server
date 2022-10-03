@@ -22,7 +22,8 @@ export function isValidTimeZone(tz: string) {
   try {
     Intl.DateTimeFormat(undefined, { timeZone: tz });
     return true;
-  } catch (ex) {
+  } catch (e) {
+    console.error(e);
     return false;
   }
 }
