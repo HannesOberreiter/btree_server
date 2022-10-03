@@ -13,8 +13,8 @@ jobs:
       DROPBOX_CLIENT_ID: ${{ secrets.DROPBOX_CLIENT_ID }}
       OPENWEATHER_APP_ID: ${{ secrets.OPENWEATHER_APP_ID }}
       MATOMO_HOST: ${{ secrets.MATOMO_HOST }}
-      MATOMO_SITE_ID: ${{ secrets.MATOMO_SITE_ID }}
-      PAYPAL_CLIENT_ID: ${{ secrets.PAYPAL_CLIENT_ID }}
+      MATOMO_SITE_ID: ${{ secrets.MATOMO_SITE_ID_LIVE }}
+      PAYPAL_CLIENT_ID: ${{ secrets.PAYPAL_CLIENT_ID_LIVE }}
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
