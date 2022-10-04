@@ -3,7 +3,7 @@
 [![beta](https://github.com/HannesOberreiter/btree_vue/actions/workflows/beta.yml/badge.svg)](https://github.com/HannesOberreiter/btree_vue/actions/workflows/beta.yml)
 [![live](https://github.com/HannesOberreiter/btree_vue/actions/workflows/live.yml/badge.svg)](https://github.com/HannesOberreiter/btree_vue/actions/workflows/live.yml)
 
-Written in typescript build with Vue.js and Quasar. The b.tree application is for managing your honey bee colonies in a modern way. More infos at <https://info.btree.at>.
+Written in typescript build with Vue.js and Quasar. The b.tree application is for managing your honey bee colonies in a modern way. More infos at <https://www.btree.at>.
 
 - [Repo - b.tree Server API](https://github.com/HannesOberreiter/btree_server)
   - Live: <https://api.btree.at>

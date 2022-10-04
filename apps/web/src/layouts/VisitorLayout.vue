@@ -75,7 +75,7 @@
               © 2013- {{ new Date().getFullYear() }}
               <a
                 class="link"
-                href="https://info.btree.at/"
+                href="https://wwww.btree.at/"
                 target="_blank"
                 rel="noopener"
               >
