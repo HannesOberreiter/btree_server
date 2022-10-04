@@ -126,10 +126,11 @@ function onHide() {
 }
 
 function printQR() {
-  const printWindow = window.open('', '', 'height=200,width=400');
-  printWindow.document.write('<html>');
-  printWindow.document.write(
-    `
+  setTimeout(() => {
+    const printWindow = window.open('', '_blank', 'height=200,width=400');
+    printWindow.document.write('<html>');
+    printWindow.document.write(
+      `
     <head>
       <title>
         btree_${title}
@@ -143,11 +144,11 @@ function printQR() {
       </style>
     </head>
     `
-  );
-  const elem = document.getElementById('qr-code');
-  elem.style.textAlign = 'center';
-  printWindow.document.write(
-    `
+    );
+    const elem = document.getElementById('qr-code');
+    elem.style.textAlign = 'center';
+    printWindow.document.write(
+      `
     <body>
       <div style="text-align: center;">
         ${elem.outerHTML}
@@ -156,20 +157,21 @@ function printQR() {
       </div>
     </body>
     `
-  );
-  printWindow.document.write('</html>');
-  printWindow.document.close();
-  setTimeout(function () {
-    printWindow.print();
-  }, 1000);
-
-  //printWindow.addEventListener('afterprint', () => printWindow.close());
-  printWindow.onafterprint = () => {
+    );
+    printWindow.document.write('</html>');
+    printWindow.document.close();
     setTimeout(function () {
-      printWindow.close();
-    }, 100);
-  };
+      printWindow.print();
+    }, 1000);
 
-  return;
+    //printWindow.addEventListener('afterprint', () => printWindow.close());
+    printWindow.onafterprint = () => {
+      setTimeout(function () {
+        printWindow.close();
+      }, 2000);
+    };
+
+    return;
+  });
 }
 </script>

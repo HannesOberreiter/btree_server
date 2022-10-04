@@ -77,38 +77,40 @@ function nextItem() {
 }
 
 function onPrint() {
-  const printWindow = window.open('', '', 'height=200,width=400');
-  printWindow.document.write('<html>');
-  printWindow.document.write(
-    `
+  setTimeout(() => {
+    const printWindow = window.open('', '_blank', 'height=200,width=400');
+    printWindow.document.write('<html>');
+    printWindow.document.write(
+      `
     <head>
       <title>
         btree
       </title>
     </head>
     `
-  );
-  const element = document.getElementById('printContainer');
-  printWindow.document.write(
-    `
+    );
+    const element = document.getElementById('printContainer');
+    printWindow.document.write(
+      `
     <body>
       ${element.outerHTML}
     </body>
     `
-  );
-  printWindow.document.write('</html>');
-  printWindow.document.close();
-  setTimeout(function () {
-    printWindow.print();
-  }, 1000);
-
-  //printWindow.addEventListener('afterprint', () => printWindow.close());
-  printWindow.onafterprint = () => {
+    );
+    printWindow.document.write('</html>');
+    printWindow.document.close();
     setTimeout(function () {
-      printWindow.close();
-    }, 100);
-  };
+      printWindow.print();
+    }, 1000);
 
-  return;
+    //printWindow.addEventListener('afterprint', () => printWindow.close());
+    printWindow.onafterprint = () => {
+      setTimeout(function () {
+        printWindow.close();
+      }, 2000);
+    };
+
+    return;
+  });
 }
 </script>
