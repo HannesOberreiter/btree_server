@@ -13,9 +13,7 @@ export class AuthRouter extends Router {
       .route('/register')
       .post(
         Validator.validate([
-          body('email')
-            .isEmail()
-            .normalizeEmail({ gmail_remove_subaddress: false }),
+          body('email').isEmail(),
           body('password').isLength({ min: 6, max: 128 }).trim(),
           body('name').isString().isLength({ min: 3, max: 128 }).trim(),
           body('lang').isString().isLength({ min: 2, max: 2 }),
@@ -25,19 +23,15 @@ export class AuthRouter extends Router {
         Container.resolve('AuthController').register
       );
 
-    this.router.route('/login').post(
-      Validator.validate([
-        body('email')
-          .exists()
-          .withMessage('requiredField')
-          .isEmail()
-          .normalizeEmail({
-            gmail_remove_subaddress: false,
-          }),
-        body('password').isLength({ min: 6 }).trim(),
-      ]),
-      Container.resolve('AuthController').login
-    );
+    this.router
+      .route('/login')
+      .post(
+        Validator.validate([
+          body('email').exists().withMessage('requiredField').isEmail(),
+          body('password').isLength({ min: 6 }).trim(),
+        ]),
+        Container.resolve('AuthController').login
+      );
 
     this.router
       .route('/confirm')
@@ -49,7 +43,7 @@ export class AuthRouter extends Router {
     this.router
       .route('/reset')
       .post(
-        Validator.validate([body('email').isEmail().normalizeEmail()]),
+        Validator.validate([body('email').isEmail()]),
         Container.resolve('AuthController').resetRequest
       );
 
@@ -66,7 +60,7 @@ export class AuthRouter extends Router {
     this.router
       .route('/unsubscribe')
       .patch(
-        Validator.validate([body('email').isEmail().normalizeEmail()]),
+        Validator.validate([body('email').isEmail()]),
         Container.resolve('AuthController').unsubscribeRequest
       );
 
