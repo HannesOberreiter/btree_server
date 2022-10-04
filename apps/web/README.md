@@ -118,7 +118,7 @@ icongenie generate --icon public/logo.png --padding 5,5 --skip-trim --theme-colo
 
 We do not generate a native application for iOS or Android, as alternative we use a [TWA](https://developer.chrome.com/docs/android/trusted-web-activity/).
 
-- Simple online interface creates our `.apk` file: [pwabuilder.com/publish?site=https://app.btree.at](https://www.pwabuilder.com/publish?site=https://beta.btree.at)
+- Simple online interface creates our `.apk` file: [pwabuilder.com/publish?site=https://app.btree.at](https://www.pwabuilder.com/publish?site=https://app.btree.at)
 - Alternative: Bubblewrap CLI: [github.com/GoogleChromeLabs/bubblewrap](https://github.com/GoogleChromeLabs/bubblewrap)
 
 PlayStore Link: [https://play.google.com/console/u/0/developers](https://play.google.com/console/u/0/developers)

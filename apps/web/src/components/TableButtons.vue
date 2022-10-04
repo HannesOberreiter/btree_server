@@ -548,10 +548,11 @@ function onPrintQR() {
 }
 
 function onPrint() {
-  const printWindow = window.open('', '', 'height=200,width=400');
-  printWindow.document.write('<html>');
-  printWindow.document.write(
-    `
+  setTimeout(() => {
+    const printWindow = window.open('', '_blank', 'height=200,width=400');
+    printWindow.document.write('<html>');
+    printWindow.document.write(
+      `
     <head>
       <title>
         btree_${
@@ -563,10 +564,10 @@ function onPrint() {
       <link rel="stylesheet" type="text/css" href="/print-table.css?timestamp=${Date.now()}" />
     </head>
     `
-  );
-  const table = document.getElementsByClassName('q-table')[0];
-  printWindow.document.write(
-    `
+    );
+    const table = document.getElementsByClassName('q-table')[0];
+    printWindow.document.write(
+      `
     <body>
       ${table.outerHTML}
       <br/>
@@ -574,20 +575,21 @@ function onPrint() {
       ${useDate.displayFormat(useDate.getCurrent())} [b.tree]
     </body>
     `
-  );
-  printWindow.document.write('</html>');
-  printWindow.document.close();
-  setTimeout(function () {
-    printWindow.print();
-  }, 1000);
-
-  //printWindow.addEventListener('afterprint', () => printWindow.close());
-  printWindow.onafterprint = () => {
+    );
+    printWindow.document.write('</html>');
+    printWindow.document.close();
     setTimeout(function () {
-      printWindow.close();
-    }, 100);
-  };
+      printWindow.print();
+    }, 1000);
 
-  return;
+    //printWindow.addEventListener('afterprint', () => printWindow.close());
+    printWindow.onafterprint = () => {
+      setTimeout(function () {
+        printWindow.close();
+      }, 2000);
+    };
+
+    return;
+  });
 }
 </script>
