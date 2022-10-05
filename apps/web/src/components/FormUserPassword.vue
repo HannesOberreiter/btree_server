@@ -7,6 +7,7 @@
     :no-error-icon="true"
     :label="t(props.passwordLabel)"
     name="password"
+    :autofill="confirm ? 'new-password' : 'current-password'"
     required
     filled
   >
