@@ -12,7 +12,7 @@ Written in typescript build with nodejs, express, knex.js and objections.js.
   - Live: <https://app.btree.at>
   - Beta: <https://beta.btree.at>
 - [Repo - b.tree Database](https://github.com/HannesOberreiter/btree_database)
-- [Private Repo - b.tree iOS](https://github.com/HannesOberreiter/btree_ios)
+- [Repo - b.tree iOS](https://github.com/HannesOberreiter/btree_ios)
 
 ## Docker Container
 
