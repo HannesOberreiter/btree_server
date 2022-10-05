@@ -8,6 +8,7 @@
     name="email"
     type="email"
     autocapitalize="off"
+    autofill="username"
     required
     filled
     :readonly="fieldStatus"
