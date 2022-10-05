@@ -90,7 +90,7 @@
   "drone": "Drohne",
   "dropbox": {
     "connectAccount": "Verbinden Sie Ihr Dropbox-Konto",
-    "connectText": "Auf dieser Seite können Sie Ihr Dropbox-Konto https://wwww.dropbox.com verbinden. Pro Imkerei kann ein Konto verbunden werden. Nach der Verbindung wird ein neuer Ordner „/Apps/btree - Beekeeping“ in Dropbox erstellt, auf den alle Benutzer in Ihrem Unternehmen zugreifen können.",
+    "connectText": "Auf dieser Seite können Sie Ihr Dropbox-Konto https://www.dropbox.com verbinden. Pro Imkerei kann ein Konto verbunden werden. Nach der Verbindung wird ein neuer Ordner „/Apps/btree - Beekeeping“ in Dropbox erstellt, auf den alle Benutzer in Ihrem Unternehmen zugreifen können.",
     "deleteAccess": "Zugriff löschen",
     "deleteFileOrFolder": "Sind Sie sicher, dass Sie die ausgewählte Datei oder den ausgewählten Ordner und seinen Inhalt löschen möchten?",
     "refreshToken": "Token aktualisieren"
