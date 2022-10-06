@@ -63,7 +63,8 @@ export class HarvestController extends Controller {
           query.where((builder) => {
             builder
               .orWhere('hive.name', 'like', `%${q}%`)
-              .orWhere('type.name', 'like', `%${q}%`);
+              .orWhere('type.name', 'like', `%${q}%`)
+              .orWhere('harvests.charge', 'like', `%${q}%`);
           });
         }
       }
