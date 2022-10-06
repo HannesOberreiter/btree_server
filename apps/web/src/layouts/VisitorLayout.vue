@@ -72,7 +72,7 @@
           </q-card>
           <div class="text-center">
             <small>
-              © 2013- {{ new Date().getFullYear() }}
+              © 2014-{{ new Date().getFullYear() }}
               <a
                 class="link"
                 href="https://www.btree.at/"

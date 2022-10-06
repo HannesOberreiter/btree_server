@@ -1,5 +1,20 @@
 [
   {
+    "version": "6.0.10",
+    "date": "2022-10-06",
+    "news": [
+      "BUGFIX small typo on login screen",
+      "BUGFIX remove stripe payment for iOS app, as it will break the app",
+      "BUGFIX remove payment console logs in production",
+      "FEATURE PayPal allow credit card direct payment",
+      "FEATURE harvest table search now also includes the charge column (Server)",
+      "FEATURE charges table search now also includes the charge column (Server)",
+      "FEATURE hive table has now a specific filter for apiary",
+      "FEATURE apiary table now has an option to export hive cards, thx paul",
+      "FEATURE on touch devices you can now swipe on the calendar to move forward or back in history"
+    ]
+  },
+  {
     "version": "6.0.9",
     "date": "2022-10-05",
     "news": [

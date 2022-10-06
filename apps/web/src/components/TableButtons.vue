@@ -191,10 +191,14 @@
         </q-item>
 
         <q-item
-          v-if="table === 'hive'"
+          v-if="table === 'hive' || table === 'apiary'"
           v-close-popup
           clickable
-          :disable="selected.length === 0 || selected.length > 50"
+          :disable="
+            selected.length === 0 ||
+            selected.length > 50 ||
+            (table === 'apiary' && selected.length > 1)
+          "
           @click="onPrintHive"
         >
           <q-item-section avatar>
@@ -533,6 +537,7 @@ function onPrintHive() {
       componentProps: {
         selected: props.selected,
         year: val,
+        apiary: props.table === 'apiary' ? true : false,
       },
     });
   });
