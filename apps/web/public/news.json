@@ -8,7 +8,8 @@
       "BUGFIX remove payment console logs in production",
       "FEATURE PayPal allow credit card direct payment",
       "FEATURE harvest table search now also includes the charge column (Server)",
-      "FEATURE charges table search now also includes the charge column (Server)"
+      "FEATURE charges table search now also includes the charge column (Server)",
+      "FEATURE hive table has now a specific filter for apiary"
     ]
   },
   {
