@@ -15,8 +15,17 @@
           transition-show="scale"
           transition-hide="scale"
         >
-          <q-date v-model="modelValue" :events="markDate" today-btn range>
+          <q-date
+            v-model="modelValue"
+            :events="markDate"
+            today-btn
+            range
+            @update:model-value="() => (qDateProxy = !qDateProxy)"
+          >
             <div class="row items-center justify-end">
+              <btn-date-auto-close
+                @change="(v: boolean) => autoClose = v"
+              ></btn-date-auto-close>
               <btn-base
                 v-close-popup
                 :label="$t('close')"
@@ -38,6 +47,8 @@ import { useDateFormat } from '~/composables/useDate';
 
 const { t } = useI18n();
 const qDateProxy = ref(false);
+const autoClose = ref(false);
+
 const useDate = useDateFormat();
 const displayValue = ref('');
 const props = defineProps({

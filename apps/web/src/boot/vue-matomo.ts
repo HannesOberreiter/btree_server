@@ -4,11 +4,17 @@ import { useAuthUserStore } from '~/stores/auth';
 
 export default boot(({ app, router }) => {
   const storeUser = useAuthUserStore();
+  const uniqueIdentifier = computed(() => {
+    let identifier = '';
+    if (storeUser.user) identifier += `bee_id:${storeUser.user.id}`;
+    if (storeUser.company) identifier += `.user_id:${storeUser.company.id}`;
+    return identifier;
+  });
   app.use(VueMatomo, {
     // Configure your matomo server and site by providing
     host: process.env.MATOMO_HOST,
     siteId: process.env.MATOMO_SITE_ID,
-    userId: storeUser.user ? storeUser.user.id : 'undefined',
+    userId: uniqueIdentifier.value,
     router: router,
     // Require consent before sending tracking information to matomo
     // Default: false

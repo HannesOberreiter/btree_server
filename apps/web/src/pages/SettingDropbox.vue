@@ -10,7 +10,10 @@
       </div>
 
       <div class="text-caption">
-        <a href="https://www.dropbox.com/account/connected_apps">
+        <a
+          class="text-orange-8"
+          href="https://www.dropbox.com/account/connected_apps"
+        >
           https://www.dropbox.com/account/connected_apps
         </a>
       </div>

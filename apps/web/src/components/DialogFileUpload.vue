@@ -1,10 +1,6 @@
 <!--  https://quasar.dev/vue-components/uploader -->
 <template>
-  <q-dialog
-    ref="dialogRef"
-    :maximized="$q.platform.is.mobile"
-    @hide="onDialogHide"
-  >
+  <q-dialog ref="dialogRef" :maximized="false" @hide="onDialogHide">
     <q-card v-if="service_active">
       <div class="row full-width">
         <div class="col-12">
@@ -13,7 +9,7 @@
             flat
             :label="$t('upload')"
             capture="user"
-            accept="image/*, audio/*"
+            accept="image/*, audio/*, application/pdf"
             :max-file-size="2e7"
             :url="uploadUrl"
             :send-raw="true"
@@ -31,22 +27,36 @@
           <btn-base
             :disable="!queue"
             color="primary"
+            icon="fas fa-arrow-up"
             @click="uploader.upload()"
           >
-            {{ $t('upload') }}
+            <tooltip-base>
+              {{ $t('upload') }}
+            </tooltip-base>
           </btn-base>
           <btn-base
             :disable="queue"
             color="secondary"
+            icon="fas fa-folder-open"
             @click="uploader.pickFiles()"
           >
-            {{ $t('select') }}
+            <tooltip-base>
+              {{ $t('select') }}
+            </tooltip-base>
           </btn-base>
-          <btn-base color="grey" @click="uploader.reset()">
-            {{ $t('reset') }}
+          <btn-base
+            color="grey"
+            icon="fas fa-rotate-left"
+            @click="uploader.reset()"
+          >
+            <tooltip-base>
+              {{ $t('reset') }}
+            </tooltip-base>
           </btn-base>
-          <btn-base color="grey" @click="onDialogCancel()">
-            {{ $t('close') }}
+          <btn-base color="grey" icon="fas fa-times" @click="onDialogCancel()">
+            <tooltip-base>
+              {{ $t('close') }}
+            </tooltip-base>
           </btn-base>
         </btn-base-group>
       </q-card-actions>

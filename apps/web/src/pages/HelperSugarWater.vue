@@ -53,7 +53,7 @@
       </div>
       <div class="col-12">
         <q-card flat bordered>
-          <q-card-section>
+          <q-card-section class="q-pa-xs">
             <q-tabs
               v-model="activeTab"
               dense
@@ -74,7 +74,7 @@
               />
             </q-tabs>
             <q-tab-panels v-model="activeTab" animated>
-              <q-tab-panel name="oneToOne">
+              <q-tab-panel name="oneToOne" class="q-pa-xs">
                 <q-markup-table dense separator="none">
                   <thead class="text-right bg-info">
                     <tr>
@@ -114,7 +114,7 @@
                   </tfoot>
                 </q-markup-table>
               </q-tab-panel>
-              <q-tab-panel name="threeToTwo">
+              <q-tab-panel name="threeToTwo" class="q-pa-xs">
                 <q-markup-table dense separator="none">
                   <thead class="text-right bg-warning">
                     <tr>
