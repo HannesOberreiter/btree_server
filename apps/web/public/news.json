@@ -5,7 +5,8 @@
     "news": [
       "BUGFIX added missing PayPal user information on payment (Server)",
       "VISUAL Dropbox upload modal is not fullscreen any more on mobile devices and uses icons now",
-      "FEATURE you can now select .pdf files for upload to Dropbox"
+      "FEATURE you can now select .pdf files for upload to Dropbox",
+      "FEATURE added option to date modal to auto close after selection of date"
     ]
   },
   {
