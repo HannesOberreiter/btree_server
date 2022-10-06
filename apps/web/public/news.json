@@ -1,5 +1,14 @@
 [
   {
+    "version": "6.0.10",
+    "date": "2022-10-06",
+    "news": [
+      "BUGFIX small typo on login screen",
+      "FEATURE harvest table search now also includes the charge column (Server)",
+      "FEATURE charges table search now also includes the charge column (Server)"
+    ]
+  },
+  {
     "version": "6.0.9",
     "date": "2022-10-05",
     "news": [
