@@ -10,7 +10,8 @@
       "FEATURE harvest table search now also includes the charge column (Server)",
       "FEATURE charges table search now also includes the charge column (Server)",
       "FEATURE hive table has now a specific filter for apiary",
-      "FEATURE apiary table now has an option to export hive cards, thx paul"
+      "FEATURE apiary table now has an option to export hive cards, thx paul",
+      "FEATURE on touch devices you can now swipe on the calendar to move forward or back in history"
     ]
   },
   {

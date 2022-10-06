@@ -2,7 +2,7 @@
   <div width="100%">
     <q-resize-observer @resize="onResize" />
     <div class="col-12">
-      <div class="calendar-container text-body1">
+      <div ref="container" class="calendar-container text-body1">
         <full-calendar ref="cal" :options="calendarOptions">
           <template #eventContent="{ timeText, event }">
             <i
@@ -48,6 +48,7 @@ import { useQuasar } from 'quasar';
 import { useCalendarQuery } from '~/composables/useQuery';
 import { onBeforeRouteLeave } from 'vue-router';
 import { useKeyCalendar } from '~/composables/useKey';
+import { useSwipeCalendar } from '~/composables/useSwipe';
 
 const useQuery = useCalendarQuery();
 const { t } = useI18n();
@@ -64,8 +65,11 @@ const eventsSourceActive: EventSourceInput[] = [];
 const eventsSourceInactive: EventSourceInput[] = [];
 let eventsSourceActiveWatcher = storeCalendar.calendar;
 const dateClicked = ref(dayjs().format('YYYY-MM-DD'));
-const cal = ref();
+const cal = ref<any | null>(null);
+const container = ref<HTMLElement | null>(null);
 const showSetting = ref(false);
+
+useSwipeCalendar(cal, container);
 
 const formDialog = (date: string) =>
   $q
