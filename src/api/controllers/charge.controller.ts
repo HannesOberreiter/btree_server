@@ -63,7 +63,8 @@ export class ChargeController extends Controller {
           query.where((builder) => {
             builder
               .orWhere('type.name', 'like', `%${q}%`)
-              .orWhere('charges.name', 'like', `%${q}%`);
+              .orWhere('charges.name', 'like', `%${q}%`)
+              .orWhere('charges.charge', 'like', `%${q}%`);
           });
         }
       }
