@@ -5,6 +5,8 @@
     "news": [
       "BUGFIX small typo on login screen",
       "BUGFIX remove stripe payment for iOS app, as it will break the app",
+      "BUGFIX remove payment console logs in production",
+      "FEATURE PayPal allow credit card direct payment",
       "FEATURE harvest table search now also includes the charge column (Server)",
       "FEATURE charges table search now also includes the charge column (Server)"
     ]
