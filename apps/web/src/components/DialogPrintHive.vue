@@ -36,6 +36,7 @@
 </template>
 
 <script setup lang="ts">
+import { useHivesQuery } from '~/composables/useQuery';
 import { deepUnref } from '~/helpers/deep-unref';
 import PrintHive from '~/pages/PrintHive.vue';
 const props = defineProps({
@@ -47,9 +48,18 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  apiary: {
+    default: false,
+  },
 });
 
 const selected = toRef(props, 'selected');
+const apiary_selected_filter = ref(null);
+const { data: hives } = useHivesQuery({
+  details: true,
+  filters: apiary_selected_filter,
+  enabled: apiary_selected_filter.value ? true : false,
+});
 
 const items = [] as any;
 let loadItem = {};
@@ -60,8 +70,29 @@ watch(
   selected,
   () => {
     if (selected.value) {
-      toLoadItems = deepUnref(selected.value);
-      nextItem();
+      if (props.apiary) {
+        apiary_selected_filter.value = JSON.stringify([
+          {
+            'hive_location.apiary_id': selected.value[0].id,
+          },
+        ]);
+      } else {
+        toLoadItems = deepUnref(selected.value);
+        nextItem();
+      }
+    }
+  },
+  { immediate: true }
+);
+
+watch(
+  hives,
+  () => {
+    if (hives.value) {
+      if (hives.value.results) {
+        toLoadItems = deepUnref(hives.value.results);
+        nextItem();
+      }
     }
   },
   { immediate: true }
