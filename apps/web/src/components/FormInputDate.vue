@@ -32,8 +32,12 @@
               :disable="disable"
               today-btn
               no-unset
+              @update:model-value="() => (qDateProxy = !autoClose)"
             >
               <div class="row items-center justify-end">
+                <btn-date-auto-close
+                  @change="(v: boolean) => autoClose = v"
+                ></btn-date-auto-close>
                 <btn-base
                   v-close-popup
                   :label="$t('close')"
@@ -76,6 +80,8 @@ import { isEmpty } from 'lodash-es';
 dayjs.extend(customParseFormat); // Needed to validate if date is even possible
 const { t } = useI18n();
 const qDateProxy = ref(false);
+const autoClose = ref(false);
+
 const props = defineProps({
   dateFormat: {
     type: String,
