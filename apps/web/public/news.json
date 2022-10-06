@@ -4,7 +4,8 @@
     "date": "2022-XX-XX",
     "news": [
       "BUGFIX added missing PayPal user information on payment (Server)",
-      "VISUAL Dropbox upload modal is not fullscreen any more on mobile devices and uses icons now"
+      "VISUAL Dropbox upload modal is not fullscreen any more on mobile devices and uses icons now",
+      "FEATURE you can now select .pdf files for upload to Dropbox"
     ]
   },
   {

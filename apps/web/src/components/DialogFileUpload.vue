@@ -9,7 +9,7 @@
             flat
             :label="$t('upload')"
             capture="user"
-            accept="image/*, audio/*"
+            accept="image/*, audio/*, application/pdf"
             :max-file-size="2e7"
             :url="uploadUrl"
             :send-raw="true"
