@@ -26,7 +26,8 @@ export async function createOrder(user_id: number, amount: number) {
       },
       purchase_units: [
         {
-          reference_id: user_id + '',
+          custom_id: user_id + '',
+          invoice_id: `ID: ${user_id}, Date: ${new Date().toISOString()}`,
           amount: {
             currency_code: 'EUR',
             value: amount,
