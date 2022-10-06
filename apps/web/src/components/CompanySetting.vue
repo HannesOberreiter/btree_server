@@ -5,7 +5,11 @@
     :option-value="(item) => item.id"
     :option-label="
       (item) =>
-        item.name == company.name ? `${item.name} (${t('active')})` : item.name
+        item.name == company.name
+          ? `${item.name} (${t('active')})`
+          : `${item.name} (${t('paid')}: ${useDate.displayFormat(
+              item.paid.toString()
+            )})`
     "
     :label="t('company.active')"
     standout="bg-blue text-white"
@@ -59,7 +63,7 @@
 </template>
 
 <script setup lang="ts">
-import { findIndex } from 'lodash-es';
+import { findIndex, sortBy } from 'lodash-es';
 import { useAuthTokenStore } from '~/stores/token';
 import { useAuthUserStore } from '~/stores/auth';
 import { useNotification } from '~/composables/useNotification';
@@ -67,8 +71,10 @@ import { useQuasar } from 'quasar';
 import { useRefreshStore } from '~/stores/refresh';
 import { useApiFetch } from '~/composables/useApi';
 import { clearCache } from '~/composables/useQuery';
+import { useDateFormat } from '~/composables/useDate';
 
 const notification = useNotification();
+const useDate = useDateFormat();
 const api = useApiFetch();
 const { t } = useI18n();
 const $q = useQuasar();
@@ -82,7 +88,11 @@ const { user, company } = storeToRefs(storeUser);
 const downloadLoading = ref(false);
 const isSubmitting = ref(false);
 const model = company;
-const options = computed(() => user.value.company);
+
+const sortCompanyName = (company: any) => company.name.toString().toLowerCase();
+const options = computed(() => {
+  return sortBy(user.value.company, [sortCompanyName]);
+});
 
 const checkCompanyName = (val: string) => {
   return (
