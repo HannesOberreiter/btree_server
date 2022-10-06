@@ -2,7 +2,7 @@
   <div width="100%">
     <q-resize-observer @resize="onResize" />
     <div class="col-12">
-      <div class="calendar-container text-body1">
+      <div ref="container" class="calendar-container text-body1">
         <full-calendar ref="cal" :options="calendarOptions"> </full-calendar>
       </div>
     </div>
@@ -22,14 +22,17 @@ import interactionPlugin from '@fullcalendar/interaction';
 import listPlugin from '@fullcalendar/list';
 import { useCalendarQuery } from '~/composables/useQuery';
 import { useKeyCalendar } from '~/composables/useKey';
+import { useSwipeCalendar } from '~/composables/useSwipe';
 
 const useQuery = useCalendarQuery();
 const { t } = useI18n();
 const notification = useNotification();
 const storeUser = useAuthUserStore();
 const { getUser } = storeToRefs(storeUser);
+const cal = ref<any | null>(null);
+const container = ref<HTMLElement | null>(null);
 
-const cal = ref();
+useSwipeCalendar(cal, container);
 
 onMounted(() => {
   useKeyCalendar(cal);

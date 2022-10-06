@@ -13,6 +13,8 @@ const storeUser = useAuthUserStore();
 const notification = useNotification();
 let paypal: PayPalNamespace;
 const PAYPAL_CLIENT_ID = process.env.PAYPAL_CLIENT_ID;
+const ENV = process.env.NODE_ENV;
+
 const api = useApiFetch();
 
 const emit = defineEmits(['onPaid']);
@@ -29,7 +31,7 @@ try {
   paypal = await loadScript({
     'client-id': PAYPAL_CLIENT_ID,
     currency: 'EUR',
-    'disable-funding': 'card,paylater',
+    'disable-funding': 'paylater',
     'data-user-id-token': storeUser.company.id + '',
   });
 } catch (error) {
@@ -56,11 +58,13 @@ onMounted(async () => {
               .post(`/v1/service/paypal/orders/${data.orderID}/capture`, {})
               .then(
                 (orderData) => {
-                  console.log(
-                    'Capture result',
-                    orderData,
-                    JSON.stringify(orderData, null, 2)
-                  );
+                  if (ENV === 'development') {
+                    console.log(
+                      'Capture result',
+                      orderData,
+                      JSON.stringify(orderData, null, 2)
+                    );
+                  }
                   emit('onPaid', orderData);
                 },
                 (error) => notification.open('negative', error)

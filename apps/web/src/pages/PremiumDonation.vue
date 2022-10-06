@@ -80,7 +80,10 @@
               ></payment-paypal>
             </suspense>
             <q-separator></q-separator>
-            <div class="row">
+            <div
+              v-if="!($q.platform.is.ios && $q.platform.is.nativeMobileWrapper)"
+              class="row"
+            >
               <payment-stripe
                 :donation="donation"
                 @on-paid="(data) => successPayment(data.paid)"

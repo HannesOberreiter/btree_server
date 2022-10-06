@@ -102,6 +102,15 @@ const layouts = {
         'allow-empty': 'filterEmpty',
       },
     },
+    {
+      comp: FormDropdownType,
+      model: 'hive_location.apiary_id',
+      props: {
+        table: 'apiary',
+        label: 'apiary',
+        'allow-empty': 'filterEmpty',
+      },
+    },
   ],
   queen: [
     {
