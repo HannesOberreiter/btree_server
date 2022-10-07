@@ -150,7 +150,7 @@ module.exports = configure(function (ctx) {
         },
       },
       port: ctx.mode.spa ? 9000 : 9100,
-      https: false,
+      https: true,
       open: false, // opens browser window automatically
     },
 

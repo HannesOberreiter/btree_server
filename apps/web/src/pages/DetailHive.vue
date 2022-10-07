@@ -39,6 +39,9 @@
         >
           <q-tab name="task" :label="$t('task', 2)" />
           <q-tab name="info" :label="$t('info')" />
+          <btn-dropdown-task
+            @refetch="() => refetchCounter++"
+          ></btn-dropdown-task>
         </q-tabs>
 
         <q-separator />
@@ -74,6 +77,7 @@
               :year="year"
               :filter="filter"
               :opened="opened"
+              :refetch="refetchCounter"
             ></list-tasks>
           </q-tab-panel>
           <q-tab-panel name="info" class="q-pa-xs">
@@ -141,6 +145,7 @@ const tab = ref('task');
 const year = ref(dayjs().year());
 const filter = ref('filterEmpty');
 const opened = ref(false);
+const refetchCounter = ref(0);
 
 const props = defineProps({
   id: {
