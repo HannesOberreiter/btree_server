@@ -130,7 +130,7 @@ const columns = [
   },
   {
     name: 'queen_location.queen_name',
-    label: t('queen'),
+    label: `${t('queenCol')}`,
     align: 'left',
     field: (row: any) => row.queen_location,
     format: (val: string) => queenTableCol(val),
@@ -266,10 +266,11 @@ function onRequest(props: any) {
 
 function queenTableCol(queen: any) {
   if (!queen) return '';
-  if (queen.queen_modus)
+  if (queen.queen_modus) {
     return `${queen.queen_name} (${useDate.displayFormat(
-      queen.queen_modus_date
+      queen.queen_move_date
     )})`;
+  }
   return `R.I.P  (${useDate.displayFormat(queen.queen_modus_date)})`;
 }
 </script>

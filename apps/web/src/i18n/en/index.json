@@ -364,6 +364,7 @@
   "quarter": "Quarter",
   "queen": "Queen | Queens",
   "queenAdd": "Add queen(s)",
+  "queenCol": "Queen (inserted/died)",
   "queenEdit": "Edit queen(s)",
   "queenHiveInfo": "Set hive (colony) selection to 'no hive' to create queens without connection.",
   "queenMarker": "Queen Marking",
