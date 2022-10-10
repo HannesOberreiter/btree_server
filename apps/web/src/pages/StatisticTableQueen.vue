@@ -190,6 +190,12 @@ const columns = [
     label: t('hive'),
     align: 'left',
     field: (row: any) => (row.hive_location ? row.hive_location.hive_name : ''),
+    format: (val, row) =>
+      row.hive_location
+        ? row.hive_location.hive_modus
+          ? val
+          : `${val} (${t('inactive')})`
+        : val,
     sortable: true,
   },
   {
@@ -205,8 +211,13 @@ const columns = [
     label: t('dateEnd'),
     align: 'center',
     field: (row: any) => row.last_date,
-    format: (v) => useDate.displayFormat(v),
-    sortable: true,
+    format: (v, row) =>
+      row.hive_location
+        ? row.hive_location.hive_modus
+          ? useDate.displayFormat(v)
+          : '-'
+        : '',
+    sortable: false,
   },
   {
     type: 'checkup',
