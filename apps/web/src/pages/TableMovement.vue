@@ -62,6 +62,7 @@ import { useTablesStore } from '~/stores/tables';
 import { QTableProps } from 'quasar';
 import { useDateFormat } from '~/composables/useDate';
 import { useTableFilterStore } from '~/stores/tableFilter';
+import { useKeyTable } from '~/composables/useKey';
 
 const useDate = useDateFormat();
 const { t } = useI18n();
@@ -141,6 +142,7 @@ const pagination = ref({
   rowsPerPage: store.value.length,
   rowsNumber: 0,
 });
+useKeyTable(pagination);
 
 const {
   isLoading: isLoadingTable,

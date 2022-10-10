@@ -79,6 +79,7 @@
 
 <script lang="ts">
 import { tableCheckSelected, tableMeta } from '~/helpers';
+import { useKeyTable } from '~/composables/useKey';
 </script>
 
 <script setup lang="ts">
@@ -222,6 +223,7 @@ const pagination = ref({
   rowsPerPage: store.value.length,
   rowsNumber: 0,
 });
+useKeyTable(pagination);
 
 const {
   isLoading: isLoadingTable,

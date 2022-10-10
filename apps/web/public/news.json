@@ -9,7 +9,8 @@
       "BUGFIX hive table queen date was wrong, thanks yannik",
       "FEATURE added NFC button to read content, thanks hermann",
       "FEATURE hive and apiary detail page now have custom button to quickly add tasks, thanks hermann",
-      "FEATURE queen table added missing move date column"
+      "FEATURE queen table added missing move date column",
+      "FEATURES tables support now arrow navigation for pagination (left, right, up and down)"
     ]
   },
   {

@@ -72,6 +72,7 @@ import { tableCheckSelected, tableMeta } from '~/helpers';
 import { useApiariesQuery } from '~/composables/useQuery';
 import { useTablesStore } from '~/stores/tables';
 import { QTableProps } from 'quasar';
+import { useKeyTable } from '~/composables/useKey';
 
 const storeTable = useTablesStore();
 const { t } = useI18n();
@@ -189,6 +190,7 @@ const pagination = ref({
   rowsPerPage: store.value.length,
   rowsNumber: 0,
 });
+useKeyTable(pagination);
 
 const {
   isLoading: isLoadingTable,

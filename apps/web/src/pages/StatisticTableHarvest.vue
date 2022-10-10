@@ -63,6 +63,7 @@
 <script setup lang="ts">
 import { round } from 'lodash';
 import { QTableProps } from 'quasar';
+import { useKeyTable } from '~/composables/useKey';
 import { useStatisticTable } from '~/composables/useQuery';
 import { tableCheckSelected } from '~/helpers';
 import { useTableFilterStore } from '~/stores/tableFilter';
@@ -149,6 +150,7 @@ const pagination = ref({
   rowsPerPage: 10,
   rowsNumber: 0,
 });
+useKeyTable(pagination);
 
 const {
   isLoading: isLoadingTable,
