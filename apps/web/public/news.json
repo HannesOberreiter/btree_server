@@ -8,7 +8,8 @@
       "BUGFIX queen stats table, allow ordering of calculated fields, but only on the visible ones!",
       "BUGFIX hive table queen date was wrong, thanks yannik",
       "FEATURE added NFC button to read content, thanks hermann",
-      "FEATURE hive and apiary detail page now have custom button to quickly add tasks, thanks hermann"
+      "FEATURE hive and apiary detail page now have custom button to quickly add tasks, thanks hermann",
+      "FEATURE queen table added missing move date column"
     ]
   },
   {

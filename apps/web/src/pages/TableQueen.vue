@@ -155,6 +155,14 @@ const columns = [
     sortable: true,
   },
   {
+    name: 'move_date',
+    label: t('queenMovedate'),
+    align: 'left',
+    field: (row: any) => row.move_date,
+    format: (val: string) => useDate.displayFormat(val),
+    sortable: true,
+  },
+  {
     name: 'hive_location.apiary_name',
     label: t('apiary'),
     align: 'left',
