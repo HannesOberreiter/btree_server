@@ -3,6 +3,7 @@
     "version": "6.0.12",
     "date": "2022-10-XX",
     "news": [
+      "BUGFIX charge table filtering was not working properly",
       "BUGFIX queen stats table was not showing the current active queens [SERVER]",
       "BUGFIX queen stats table, allow ordering of calculated fields, but only on the visible ones!",
       "BUGFIX hive table queen date was wrong, thanks yannik",
