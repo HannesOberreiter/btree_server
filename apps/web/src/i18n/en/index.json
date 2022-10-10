@@ -58,6 +58,7 @@
   "confirm": "Confirm",
   "confirmPassword": "Confirm password",
   "connectionStatus": "Connection status and latency to server.",
+  "content": "Content",
   "copiedToClipboard": "Copied to the clipboard.",
   "copy": "Copy",
   "count": "Count",
@@ -313,7 +314,9 @@
   "nfc": {
     "aborted": "NFC aborted",
     "active": "NFC reader is active",
+    "content": "Place your tag near your NFC reader to get the content of the tag.",
     "reading": "NFC reader is active you can close this window and start scanning tags.",
+    "timeout": "NFC timeout, try again.",
     "writing": "Place your tag near your NFC reader to write the current URL."
   },
   "no": "No",
@@ -387,6 +390,7 @@
     "text": "Rating low to high"
   },
   "read": "Read",
+  "ready": "Ready",
   "rear": {
     "detailHourText": "Number of hours to wait before this step.",
     "startHint": "Starting with step {step} on {date}",

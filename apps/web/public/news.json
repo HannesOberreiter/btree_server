@@ -3,6 +3,7 @@
     "version": "6.0.12",
     "date": "2022-10-XX",
     "news": [
+      "FEATURE added NFC button to read content, thanks hermann",
       "FEATURE hive and apiary detail page now have custom button to quickly add tasks, thanks hermann"
     ]
   },
