@@ -58,6 +58,7 @@
   "confirm": "Confirm",
   "confirmPassword": "Confirm password",
   "connectionStatus": "Connection status and latency to server.",
+  "content": "Content",
   "copiedToClipboard": "Copied to the clipboard.",
   "copy": "Copy",
   "count": "Count",
@@ -212,6 +213,7 @@
   "hintApiaryFirstMovedate": "Shown value is the first migration of a hive onto this apiary, which can be seen as date of creation.",
   "hintHiveFirstMovedate": "Shown value is the first migration, which can be seen as date of creation.",
   "hintStatisticTable": "Sum and average per year per hive.",
+  "hintStatisticTableQueen": "Important information, ordering of calculated values eg. brood, harvest is only applied to the visible local data!",
   "hive": "Hive | Hives",
   "hiveCard": "Hivecard",
   "hiveCount": "Hive count",
@@ -313,7 +315,9 @@
   "nfc": {
     "aborted": "NFC aborted",
     "active": "NFC reader is active",
+    "content": "Place your tag near your NFC reader to get the content of the tag.",
     "reading": "NFC reader is active you can close this window and start scanning tags.",
+    "timeout": "NFC timeout, try again.",
     "writing": "Place your tag near your NFC reader to write the current URL."
   },
   "no": "No",
@@ -361,6 +365,7 @@
   "quarter": "Quarter",
   "queen": "Queen | Queens",
   "queenAdd": "Add queen(s)",
+  "queenCol": "Queen (inserted/died)",
   "queenEdit": "Edit queen(s)",
   "queenHiveInfo": "Set hive (colony) selection to 'no hive' to create queens without connection.",
   "queenMarker": "Queen Marking",
@@ -387,6 +392,7 @@
     "text": "Rating low to high"
   },
   "read": "Read",
+  "ready": "Ready",
   "rear": {
     "detailHourText": "Number of hours to wait before this step.",
     "startHint": "Starting with step {step} on {date}",

@@ -150,7 +150,7 @@ module.exports = configure(function (ctx) {
         },
       },
       port: ctx.mode.spa ? 9000 : 9100,
-      https: false,
+      https: false, // set to true if testing NFC but cypress testing will not work with SSL
       open: false, // opens browser window automatically
     },
 

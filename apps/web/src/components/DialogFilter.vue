@@ -273,7 +273,7 @@ const layouts = {
   charge: [
     {
       comp: FormDropdownType,
-      model: 'type_id',
+      model: 'charges.type_id',
       props: {
         table: 'charge_types',
         'allow-empty': 'filterEmpty',

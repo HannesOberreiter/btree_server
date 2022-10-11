@@ -24,7 +24,7 @@ export const useAuthUserStore = defineStore('auth/user', {
     getLanguage: (state) => {
       const languages = usePreferredLanguages();
       let lang = !isEmpty(state.user) ? state.user.lang : languages.value[0];
-      if (lang !== 'de') lang = 'en';
+      if (!['de', 'fr', 'it'].includes(lang)) lang = 'en';
       return lang;
     },
     getUser: (state) => state.user,

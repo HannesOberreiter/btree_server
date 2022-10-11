@@ -79,6 +79,7 @@
 
 <script lang="ts">
 import { tableCheckSelected, tableMeta } from '~/helpers';
+import { useKeyTable } from '~/composables/useKey';
 </script>
 
 <script setup lang="ts">
@@ -130,7 +131,7 @@ const columns = [
   },
   {
     name: 'queen_location.queen_name',
-    label: t('queen'),
+    label: `${t('queenCol')}`,
     align: 'left',
     field: (row: any) => row.queen_location,
     format: (val: string) => queenTableCol(val),
@@ -222,6 +223,7 @@ const pagination = ref({
   rowsPerPage: store.value.length,
   rowsNumber: 0,
 });
+useKeyTable(pagination);
 
 const {
   isLoading: isLoadingTable,
@@ -266,10 +268,11 @@ function onRequest(props: any) {
 
 function queenTableCol(queen: any) {
   if (!queen) return '';
-  if (queen.queen_modus)
+  if (queen.queen_modus) {
     return `${queen.queen_name} (${useDate.displayFormat(
-      queen.queen_modus_date
+      queen.queen_move_date
     )})`;
+  }
   return `R.I.P  (${useDate.displayFormat(queen.queen_modus_date)})`;
 }
 </script>

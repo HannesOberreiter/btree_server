@@ -57,25 +57,45 @@
           <btn-base
             :label="nfc.state.reading ? $t('active') : $t('read')"
             color="primary"
-            :disable="!nfc.isSupported() || nfc.state.reading"
+            :disable="
+              !nfc.isSupported() || nfc.state.reading || nfc.state.getContent
+            "
             @click="nfc.read"
           />
           <btn-base
             :label="$t('write')"
             color="secondary"
-            :disable="!nfc.isSupported() || nfc.state.writing"
+            :disable="
+              !nfc.isSupported() || nfc.state.writing || nfc.state.getContent
+            "
             @click="nfc.write(url, urlShort)"
+          />
+        </btn-base-group>
+      </q-card-actions>
+      <q-card-actions align="center" class="print-hide">
+        <btn-base-group>
+          <btn-base
+            :label="nfc.state.getContent ? $t('ready') : $t('content')"
+            color="secondary"
+            :disable="
+              !nfc.isSupported() || nfc.state.reading || nfc.state.writing
+            "
+            @click="nfc.getContent()"
           />
           <btn-base
             :label="$t('clear')"
             color="negative"
-            :disable="!nfc.isSupported() || nfc.state.writing"
+            :disable="
+              !nfc.isSupported() || nfc.state.writing || nfc.state.getContent
+            "
             @click="nfc.write(null)"
           />
           <btn-base
             :label="$t('cancel')"
             color="grey"
-            :disable="!nfc.state.writing && !nfc.state.reading"
+            :disable="
+              !nfc.state.writing && !nfc.state.reading && !nfc.state.getContent
+            "
             @click="nfc.abort()"
           />
         </btn-base-group>
@@ -84,6 +104,14 @@
         </div>
         <div v-if="nfc.state.reading" class="col-12 text-center">
           {{ $t('nfc.reading') }}
+        </div>
+        <div v-if="nfc.state.getContent" class="col-12 text-center">
+          {{ $t('nfc.content') }}
+        </div>
+        <div v-if="nfc.state.content[0]" class="col-12 text-center">
+          <div v-for="(item, index) in nfc.state.content[0]" :key="index">
+            {{ item }}
+          </div>
         </div>
       </q-card-actions>
     </q-card>
@@ -121,7 +149,7 @@ const title = router.currentRoute.value.meta.title
   : 'b.tree';
 
 function onHide() {
-  if (nfc.state.writing) nfc.abort();
+  if (nfc.state.writing || nfc.state.getContent) nfc.abort();
   onDialogHide();
 }
 

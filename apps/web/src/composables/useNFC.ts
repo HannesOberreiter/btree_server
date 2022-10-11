@@ -1,3 +1,4 @@
+import { T } from 'dist/pwa/assets/TouchPan.59883801';
 import { useScanningStore } from '~/stores/scanning';
 import { useNotification } from './useNotification';
 
@@ -9,22 +10,15 @@ import { useNotification } from './useNotification';
 // This type definitions referenced to WebIDL.
 // https://w3c.github.io/web-nfc/#actual-idl-index
 
-// eslint-disable-next-line no-use-before-define
-declare type NDEFRecordDataSource = string | BufferSource | NDEFMessageInit;
-
-declare interface NDEFRecordInit {
-  recordType: string;
-  mediaType?: string;
-  id?: string;
-  encoding?: string;
-  lang?: string;
-  data?: NDEFRecordDataSource;
+declare class NDEFMessage {
+  constructor(messageInit: NDEFMessageInit);
+  records: ReadonlyArray<NDEFRecord>;
 }
-
 declare interface NDEFMessageInit {
   records: NDEFRecordInit[];
 }
 
+declare type NDEFRecordDataSource = string | BufferSource | NDEFMessageInit;
 declare class NDEFRecord {
   constructor(recordInit: NDEFRecordInit);
   readonly recordType: string;
@@ -35,33 +29,16 @@ declare class NDEFRecord {
   readonly lang?: string;
   toRecords?: () => NDEFRecord[];
 }
-
-declare class NDEFMessage {
-  constructor(messageInit: NDEFMessageInit);
-  records: ReadonlyArray<NDEFRecord>;
+declare interface NDEFRecordInit {
+  recordType: string;
+  mediaType?: string;
+  id?: string;
+  encoding?: string;
+  lang?: string;
+  data?: NDEFRecordDataSource;
 }
 
 declare type NDEFMessageSource = string | BufferSource | NDEFMessageInit;
-
-interface NDEFReadingEventInit extends EventInit {
-  serialNumber?: string;
-  message: NDEFMessageInit;
-}
-
-declare class NDEFReadingEvent extends Event {
-  constructor(type: string, readingEventInitDict: NDEFReadingEventInit);
-  serialNumber: string;
-  message: NDEFMessage;
-}
-
-interface NDEFWriteOptions {
-  overwrite?: boolean;
-  signal?: AbortSignal;
-}
-
-interface NDEFScanOptions {
-  signal: AbortSignal;
-}
 
 declare class NDEFReader extends EventTarget {
   constructor();
@@ -72,11 +49,35 @@ declare class NDEFReader extends EventTarget {
     message: NDEFMessageSource,
     options?: NDEFWriteOptions
   ) => Promise<void>;
+  makeReadOnly: (options?: NDEFMakeReadOnlyOptions) => Promise<void>;
+}
+
+declare class NDEFReadingEvent extends Event {
+  constructor(type: string, readingEventInitDict: NDEFReadingEventInit);
+  serialNumber: string;
+  message: NDEFMessage;
+}
+interface NDEFReadingEventInit extends EventInit {
+  serialNumber?: string;
+  message: NDEFMessageInit;
+}
+
+interface NDEFWriteOptions {
+  overwrite?: boolean;
+  signal?: AbortSignal;
+}
+interface NDEFMakeReadOnlyOptions {
+  signal?: AbortSignal;
+}
+interface NDEFScanOptions {
+  signal: AbortSignal;
 }
 
 const state = reactive({
   writing: false,
   reading: false,
+  getContent: false,
+  content: [] as any,
 });
 
 const useNFC = () => {
@@ -85,30 +86,88 @@ const useNFC = () => {
   const storeScanning = useScanningStore();
 
   let controller = new AbortController();
-  let ndef = null;
+  let ndef = null as null | NDEFReader;
   // Functional logic adapted from
   // Project: https://github.com/maevsi/maevsi
   // Commit: https://github.com/maevsi/maevsi/commit/6e132cda75127166f48859c6da29eb0f1ba6c099#diff-9bc2c5cb71c26f59ef0c2e9a0024abb2b895c1ce889fa890116b9fd2c1ed32a5
 
   const isSupported = () => 'NDEFReader' in window;
 
-  function abort(message = true) {
+  function abort(message: string | boolean = 'nfc.aborted') {
     state.reading = false;
     state.writing = false;
+    state.getContent = false;
+    if (controller) {
+      try {
+        controller.abort('AbortError');
+      } catch (e) {
+        console.error(e);
+      }
+    }
     ndef = null;
-    if (message) notification.open('negative', 'nfc.aborted');
-    controller.abort();
+    controller = null;
+    if (message) notification.open('negative', message);
+  }
+
+  async function getContent() {
+    if (state.getContent) {
+      state.content = [];
+      abort(false);
+      return false;
+    }
+    if (state.reading || state.writing || state.getContent) abort(false);
+    if (await check()) {
+      try {
+        state.getContent = true;
+        ndef = new NDEFReader();
+        controller = new AbortController();
+        ndef.scan({ signal: controller.signal });
+        const result = [] as any;
+        ndef.onreadingerror = (e) => {
+          console.error(
+            'Argh! Cannot read data from the NFC tag. Try another one?'
+          );
+          console.error(e);
+        };
+        ndef.onreading = (event: any) => {
+          const decoder = new TextDecoder();
+          for (const record of event.message.records) {
+            const item = {
+              name: 'Record type:  ' + record.recordType,
+              type: 'MIME type:    ' + record.mediaType,
+              id: 'ID:    ' + record.id,
+              data: '=== data ===\n' + decoder.decode(record.data),
+            };
+            result.push(item);
+          }
+          state.content = result;
+        };
+      } catch (error) {
+        console.error(error);
+        state.getContent = false;
+        notification.open('negative', '');
+        return false;
+      }
+    }
+    return true;
   }
 
   async function read() {
-    if (state.reading || state.writing) abort(false);
-    if ('NDEFReader' in window) {
-      ndef = new NDEFReader();
+    state.content = [];
+    if (state.reading || state.writing || state.getContent) abort(false);
+    if (await check()) {
       try {
+        ndef = new NDEFReader();
         state.reading = true;
         controller = new AbortController();
         ndef.scan({ signal: controller.signal });
         notification.open('positive', 'nfc.active');
+        ndef.onreadingerror = (e) => {
+          console.error(
+            'Argh! Cannot read data from the NFC tag. Try another one?'
+          );
+          console.error(e);
+        };
         ndef.onreading = (event: any) => {
           const decoder = new TextDecoder();
           for (const record of event.message.records) {
@@ -138,37 +197,47 @@ const useNFC = () => {
         console.error(error);
         state.reading = false;
         notification.open('negative', '');
+        return false;
       }
     } else {
       notification.open('negative', 'error.nfcNotSupported');
+      return false;
     }
+    return true;
   }
   async function check(): Promise<boolean> {
-    if (!('NDEFReader' in window)) {
-      notification.open('negative', 'error.nfcNotSupported');
-      return Promise.resolve(false);
-    }
-    if (!navigator.permissions) {
-      notification.open('negative', 'error.permission');
-      return Promise.resolve(false);
-    } else {
-      const nfcPermissionStatus = await navigator.permissions.query({
-        name: 'nfc' as PermissionName,
-      });
-      if (nfcPermissionStatus.state === 'granted') {
-        return Promise.resolve(true);
-      } else {
-        notification.open('negative', nfcPermissionStatus.state);
+    try {
+      if (!('NDEFReader' in window)) {
+        notification.open('negative', 'error.nfcNotSupported');
         return Promise.resolve(false);
       }
+      if (!navigator.permissions) {
+        notification.open('negative', 'error.permission');
+        return Promise.resolve(false);
+      } else {
+        const nfcPermissionStatus = await navigator.permissions.query({
+          name: 'nfc' as PermissionName,
+        });
+        if (nfcPermissionStatus.state === 'granted') {
+          return Promise.resolve(true);
+        } else {
+          notification.open('negative', nfcPermissionStatus.state);
+          return Promise.resolve(false);
+        }
+      }
+    } catch (e) {
+      console.error(e);
+      return Promise.resolve(false);
     }
   }
-  async function write(url: string | null, shortUrl = ''): Promise<void> {
-    if (state.reading || state.writing) abort(false);
+
+  async function write(url: string | null, shortUrl = ''): Promise<boolean> {
+    state.content = [];
+    if (state.reading || state.writing || state.getContent) abort(false);
     if (await check()) {
       try {
-        controller = new AbortController();
         state.writing = true;
+        controller = new AbortController();
         const records = url
           ? {
               records: [
@@ -179,20 +248,32 @@ const useNFC = () => {
                 },
               ],
             }
-          : 'b.tree';
-        await new NDEFReader().write(records, {
-          signal: controller.signal,
-          overwrite: true,
-        });
-        state.writing = false;
+          : {
+              records: [
+                {
+                  recordType: 'empty',
+                },
+              ],
+            };
+
+        ndef = new NDEFReader();
+        controller = new AbortController();
+        setTimeout(() => controller.abort('timeout'), 10_000);
+        await ndef.write(records, { signal: controller.signal });
         notification.open('positive', '');
+        abort(false);
       } catch (error: any) {
-        console.error(error.name);
+        if (error === 'timeout') {
+          abort('nfc.timeout');
+        } else {
+          abort();
+        }
         console.error(error);
+      } finally {
         state.writing = false;
-        if (error.name !== 'AbortError') notification.open('negative', '');
       }
     }
+    return true;
   }
 
   return {
@@ -201,6 +282,7 @@ const useNFC = () => {
     isSupported,
     read,
     write,
+    getContent,
     check,
   };
 };
