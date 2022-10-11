@@ -1,5 +1,10 @@
 [
   {
+    "version": "6.0.13",
+    "date": "2022-10-XX",
+    "news": ["BUGFIX wrong CSS in scale calendar"]
+  },
+  {
     "version": "6.0.12",
     "date": "2022-10-11",
     "news": [

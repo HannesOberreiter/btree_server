@@ -320,7 +320,7 @@ const calendarOptions = reactive({
 </script>
 
 <style>
-// Hide Overflown long titles in daygrid view
+/* Hide Overflown long titles in daygrid view */
 .fc .fc-daygrid-event {
   overflow: hidden;
 }
