@@ -33,7 +33,12 @@
         >
           <q-tab name="hive" :label="$t('hive', 2)" />
           <q-tab name="task" :label="$t('task', 2)" />
-          <q-tab name="weather" :label="$t('weather')" />
+          <q-tab name="weather" icon="fas fa-cloud-sun-rain">
+            <tooltip-base>{{ $t('weather') }}</tooltip-base>
+          </q-tab>
+          <btn-dropdown-task
+            @refetch="() => refetchCounter++"
+          ></btn-dropdown-task>
         </q-tabs>
 
         <q-separator />
@@ -77,6 +82,7 @@
               :year="year"
               :filter="filter"
               :opened="opened"
+              :refetch="refetchCounter"
             ></list-tasks>
           </q-tab-panel>
           <q-tab-panel name="weather" class="q-pa-xs">
@@ -112,6 +118,7 @@ const tab = ref('hive');
 const year = ref(dayjs().year());
 const filter = ref('filterEmpty');
 const opened = ref(false);
+const refetchCounter = ref(0);
 
 const props = defineProps({
   id: {

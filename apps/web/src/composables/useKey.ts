@@ -1,5 +1,14 @@
 import { onKeyStroke } from '@vueuse/core';
+import { off } from 'process';
 import { Ref } from 'vue';
+
+declare interface Pagination {
+  sortBy: string;
+  descending: boolean;
+  page: number;
+  rowsPerPage: number;
+  rowsNumber: number;
+}
 
 const preventKey = (e: KeyboardEvent) => {
   if (
@@ -37,5 +46,37 @@ export const useKeySpeak = (btn: Ref) => {
     if (preventKey(e)) return;
     e.preventDefault();
     btn.value.$el.click();
+  });
+};
+
+export const useKeyTable = (page: Ref<Pagination>) => {
+  const pages = computed(() =>
+    Math.ceil(page.value.rowsNumber / page.value.rowsPerPage)
+  );
+  onKeyStroke(['ArrowUp'], (e) => {
+    if (page.value.page <= 1) return;
+    if (preventKey(e)) return;
+    e.preventDefault();
+    page.value.page = 1;
+  });
+  onKeyStroke(['ArrowLeft'], (e) => {
+    if (page.value.page <= 1) return;
+    if (page.value.page - 1 < 1) return;
+    if (preventKey(e)) return;
+    e.preventDefault();
+    page.value.page = page.value.page - 1;
+  });
+  onKeyStroke(['ArrowRight'], (e) => {
+    if (page.value.page === pages.value) return;
+    if (page.value.page + 1 > pages.value) return;
+    if (preventKey(e)) return;
+    e.preventDefault();
+    page.value.page = page.value.page + 1;
+  });
+  onKeyStroke(['ArrowDown'], (e) => {
+    if (page.value.page === pages.value) return;
+    if (preventKey(e)) return;
+    e.preventDefault();
+    page.value.page = pages.value;
   });
 };

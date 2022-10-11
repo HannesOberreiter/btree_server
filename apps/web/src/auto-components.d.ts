@@ -12,6 +12,7 @@ declare module '@vue/runtime-core' {
     BtnCloseDialog: typeof import('./components/BtnCloseDialog.vue')['default']
     BtnDarkMode: typeof import('./components/BtnDarkMode.vue')['default']
     BtnDateAutoClose: typeof import('./components/BtnDateAutoClose.vue')['default']
+    BtnDropdownTask: typeof import('./components/BtnDropdownTask.vue')['default']
     BtnFullscreen: typeof import('./components/BtnFullscreen.vue')['default']
     BtnMultipleValues: typeof import('./components/BtnMultipleValues.vue')['default']
     BtnPreviousNext: typeof import('./components/BtnPreviousNext.vue')['default']

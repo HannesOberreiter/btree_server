@@ -98,4 +98,27 @@ const refresh = (done: () => void) => {
   window.location.reload();
   done();
 };
+
+// Matomo User Tracking
+const _paq = ((window as any)._paq = (window as any)._paq || []);
+const uniqueIdentifier = computed(() => {
+  let identifier = '';
+  if (storeUser?.user?.id) identifier += `bee_id:${storeUser.user.id}`;
+  if (storeUser?.company?.id) identifier += `.user_id:${storeUser.company.id}`;
+  return identifier;
+});
+
+watch(
+  uniqueIdentifier,
+  () => {
+    if (uniqueIdentifier.value) {
+      _paq.push(['setUserId', uniqueIdentifier.value]);
+      _paq.push(['trackPageView']);
+    } else {
+      _paq.push(['resetUserId']);
+      _paq.push(['trackPageView']);
+    }
+  },
+  { immediate: true }
+);
 </script>

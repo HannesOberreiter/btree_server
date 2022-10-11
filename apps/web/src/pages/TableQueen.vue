@@ -86,6 +86,7 @@
 
 <script lang="ts">
 import { tableCheckSelected, tableMeta } from '~/helpers';
+import { useKeyTable } from '~/composables/useKey';
 </script>
 
 <script setup lang="ts">
@@ -152,6 +153,14 @@ const columns = [
             row.move_date
           )})`
         : '',
+    sortable: true,
+  },
+  {
+    name: 'move_date',
+    label: t('queenMovedate'),
+    align: 'left',
+    field: (row: any) => row.move_date,
+    format: (val: string) => useDate.displayFormat(val),
     sortable: true,
   },
   {
@@ -266,6 +275,7 @@ const pagination = ref({
   rowsPerPage: store.value.length,
   rowsNumber: 0,
 });
+useKeyTable(pagination);
 
 const {
   isLoading: isLoadingTable,

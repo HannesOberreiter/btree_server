@@ -81,7 +81,7 @@
             </suspense>
             <q-separator></q-separator>
             <div
-              v-if="!($q.platform.is.ios && $q.platform.is.nativeMobileWrapper)"
+              v-if="!($q.platform.is.ios && $q.platform.is.safari)"
               class="row"
             >
               <payment-stripe

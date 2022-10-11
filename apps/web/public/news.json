@@ -1,5 +1,22 @@
 [
   {
+    "version": "6.0.12",
+    "date": "2022-10-11",
+    "news": [
+      "BUGFIX charge table filtering was not working properly",
+      "BUGFIX queen stats table was not showing the current active queens [SERVER]",
+      "BUGFIX queen stats table, allow ordering of calculated fields, but only on the visible ones!",
+      "BUGFIX hive table queen date was wrong, thanks yannik",
+      "BUGFIX wrong activation link on registration email",
+      "BUGFIX some german and english typos",
+      "FEATURE added NFC button to read content, thanks hermann",
+      "FEATURE hive and apiary detail page now have custom button to quickly add tasks, thanks hermann",
+      "FEATURE queen table added missing move date column",
+      "FEATURES tables support now arrow navigation for pagination (left, right, up and down)",
+      "FEATURE added again machine translated italian and french translation"
+    ]
+  },
+  {
     "version": "6.0.11",
     "date": "2022-10-06",
     "news": [

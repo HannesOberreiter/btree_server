@@ -50,6 +50,7 @@ import { tableCheckSelected } from '~/helpers';
 import { useRearingDetailsQuery } from '~/composables/useQuery';
 import { useTablesStore } from '~/stores/tables';
 import { QTableProps } from 'quasar';
+import { useKeyTable } from '~/composables/useKey';
 
 const { t } = useI18n();
 
@@ -102,6 +103,7 @@ const pagination = ref({
   rowsPerPage: store.value.length,
   rowsNumber: 0,
 });
+useKeyTable(pagination);
 
 const {
   isLoading: isLoadingTable,

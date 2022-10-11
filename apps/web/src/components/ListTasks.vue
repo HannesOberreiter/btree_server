@@ -90,8 +90,11 @@ const props = defineProps({
   opened: {
     default: false,
   },
+  refetch: {
+    default: 0,
+  },
 });
-const { id, year, filter, opened, apiary } = toRefs(props);
+const { id, year, filter, opened, apiary, refetch: doRefetch } = toRefs(props);
 const { isLoading, data, refetch } = useHiveTaskQuery({
   id: id,
   year: year,
@@ -99,6 +102,8 @@ const { isLoading, data, refetch } = useHiveTaskQuery({
 });
 const taskStart = ref(0);
 const taskEnd = ref(10);
+
+watch(doRefetch, () => refetch.value());
 
 const listData = computed(() => {
   if (data.value) {

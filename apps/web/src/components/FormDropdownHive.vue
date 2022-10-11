@@ -63,10 +63,13 @@ import { validationErrors } from '~/helpers';
 import useVuelidate from '@vuelidate/core';
 import { useScanningStore } from '~/stores/scanning';
 import { useNotification } from '~/composables/useNotification';
+import { useNFC } from '~/composables/useNFC';
 
 const storeScanning = useScanningStore();
 const { hiveDropdownActive, scannedId } = storeToRefs(storeScanning);
+const nfc = useNFC();
 
+const router = useRouter();
 const { t } = useI18n();
 const { isLoading: isLoadingHive, data: hives } = useHivesQuery({});
 const { isLoading: isLoadingApiary, data: apiaries } = useApiariesQuery({});
@@ -184,6 +187,47 @@ const rules = computed(() => {
 });
 const v = useVuelidate(rules, state);
 
+onMounted(() => {
+  if (router.currentRoute.value.name === 'detail-apiary') {
+    watch(
+      [apiaries, router.currentRoute],
+      () => {
+        if (router.currentRoute.value.params?.id) {
+          const { double, found } = findApiaries(
+            apiaries.value.results,
+            router.currentRoute.value.params?.id,
+            apiary.value
+          );
+          if (found && double.length === 0) {
+            apiary.value = union(apiary.value, found);
+            selectApiary(apiary.value);
+          }
+        }
+      },
+      { immediate: true }
+    );
+  }
+
+  if (router.currentRoute.value.name === 'detail-hive') {
+    watch(
+      [hives, router.currentRoute],
+      () => {
+        if (router.currentRoute.value.params?.id) {
+          const { double, found } = findHives(
+            hives.value.results,
+            router.currentRoute.value.params?.id,
+            state.hive
+          );
+          if (found && double.length === 0) {
+            state.hive = union(state.hive, found);
+          }
+        }
+      },
+      { immediate: true }
+    );
+  }
+});
+
 watch(state, (cur) => {
   if (cur.hive === null) cur.hive = [];
   emit('update:modelValue', cur.hive);
@@ -197,26 +241,45 @@ watch(
   { immediate: true }
 );
 
-watch(scannedId, () => {
-  if (scannedId.value && hives.value) {
-    const found = filter(hives.value.results, (obj) =>
-      scannedId.value.includes(obj.id)
-    ) as any;
-    const double = filter(state.hive, (obj) => scannedId.value == obj.id);
-    if (found && double.length === 0) {
-      notification.open(
-        'positive',
-        t('addedHive', { name: found['name'] }),
-        true
+if (nfc.isSupported) {
+  watch(scannedId, () => {
+    if (scannedId.value && hives.value) {
+      const { double, found } = findHives(
+        hives.value.results,
+        scannedId.value,
+        state.hive
       );
-      scannedId.value = null;
-      state.hive = union(state.hive, found);
+      if (found && double.length === 0) {
+        notification.open(
+          'positive',
+          t('addedHive', { name: found['name'] }),
+          true
+        );
+        scannedId.value = null;
+        state.hive = union(state.hive, found);
+      }
+      if (double.length > 0) {
+        notification.open('info', t('error.alreadyScanned'), true);
+      }
     }
-    if (double.length > 0) {
-      notification.open('info', t('error.alreadyScanned'), true);
-    }
-  }
-});
+  });
+}
+
+function findHives(hives: any, id: string | string[], selected_hives: any) {
+  const found = filter(hives, (obj) => id.includes(obj.id)) as any;
+  const double = filter(selected_hives, (obj) => id == obj.id);
+  return { found: found, double: double };
+}
+
+function findApiaries(
+  apiaries: any,
+  id: string | string[],
+  selected_apiaries: any
+) {
+  const found = filter(apiaries, (obj) => id.includes(obj.id)) as any;
+  const double = filter(selected_apiaries, (obj) => id == obj.id);
+  return { found: found, double: double };
+}
 </script>
 
 <style>
