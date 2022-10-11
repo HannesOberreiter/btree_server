@@ -45,7 +45,12 @@ export class User extends ExtModel {
       reset_timestamp: { type: 'string', format: 'date-time' },
 
       state: { type: 'integer' },
-      lang: { type: 'string', minLength: 2, maxLength: 3, enum: ['de', 'en'] },
+      lang: {
+        type: 'string',
+        minLength: 2,
+        maxLength: 3,
+        enum: ['de', 'en', 'it', 'fr'],
+      },
       format: { type: 'number', enum: [1, 2] },
       acdate: { type: 'boolean' },
       newsletter: { type: 'boolean' },

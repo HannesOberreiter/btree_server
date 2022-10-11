@@ -5,7 +5,10 @@ SELECT
     t.hive_id,
     t.user_id,
     t.duration,
-    DATE_ADD(t.move_date, INTERVAL t.duration DAY) as last_date
+    IFNULL(
+        DATE_ADD(t.move_date, INTERVAL t.duration DAY),
+        CURDATE()
+    ) AS last_date
 FROM
     (
         SELECT
@@ -33,9 +36,9 @@ FROM
             LEFT JOIN queens q1 ON q.hive_id = q1.hive_id
             AND q.id <> q1.id
             AND q.move_date < q1.move_date
+            AND q1.deleted = 0
         WHERE
             q1.id IS NULL
-            AND q1.deleted = 0
             AND q.deleted = 0
         ORDER BY
             id
