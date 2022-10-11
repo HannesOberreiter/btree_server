@@ -9,4 +9,4 @@ This E-Mail was send to %mail%, from %base_url% because it is an important e-mai
 
 - Unsubscribe: %base_url%visitor/unsubscribe
 - Privacy Policy: https://www.btree.at/%lang%/data-privacy
-- Legal Information: https://wwww.btree.at/%lang%/impressum
+- Legal Information: https://www.btree.at/%lang%/impressum
