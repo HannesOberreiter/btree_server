@@ -1,0 +1,8 @@
+<title>Demande d'un nouveau mot de passe</title>
+Cher apiculteur,
+
+quelqu'un a demandé un nouveau mot de passe pour votre login b.tree. Si vous n'avez pas demandé un nouveau mot de passe ou si c'est une simple erreur, veuillez ignorer cet email.
+
+Pour définir un nouveau mot de passe, veuillez utiliser le lien suivant :
+
+%base_url%visitor/reset/%key%.

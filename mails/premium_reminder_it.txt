@@ -1,0 +1,8 @@
+<title>La tua iscrizione Premium scade presto</title>
+Caro apicoltore!
+
+La tua iscrizione Premium scadrà presto! Saremo lieti di mantenerla come Membro Premium.
+
+Rinnovare ora: %base_url%premium
+      
+Se la tua iscrizione Premium scade, non perderai alcun dato! Potrai inoltre continuare a lavorare gratuitamente con tutti i tuoi alveari e apiari, ma le limitazioni dell'iscrizione di base sono di nuovo in vigore!

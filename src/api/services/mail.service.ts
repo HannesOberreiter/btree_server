@@ -67,8 +67,8 @@ export class MailService {
   }: customMail) {
     if (env === ENVIRONMENT.test || env === ENVIRONMENT.ci) return;
 
-    // we only have german and english mails
-    lang = lang !== 'de' ? 'en' : lang;
+    // Only use languages which are available (translated), fallback english
+    lang = ['de', 'fr', 'it'].includes(lang) ? lang : 'en';
 
     let htmlMail = this.loadHtmlMail(subject + '_' + lang);
     if (!htmlMail) {
@@ -97,14 +97,26 @@ export class MailService {
           htmlMail = htmlMail.replace('Imker/in', name);
           break;
         }
+        case 'it': {
+          htmlMail = htmlMail.replace('apicoltore', name);
+          break;
+        }
+        case 'fr': {
+          htmlMail = htmlMail.replace('apiculteur', name);
+          break;
+        }
       }
     }
 
     if (key !== 'false') {
       htmlMail = htmlMail.replace(/%key%/g, key);
     }
-
-    htmlMail = htmlMail.replace(/%lang%/g, lang);
+    // Main page and docuemntation is only available in german and english
+    if (['fr', 'it'].includes(lang)) {
+      htmlMail = htmlMail.replace(/%lang%/g, 'en');
+    } else {
+      htmlMail = htmlMail.replace(/%lang%/g, lang);
+    }
     htmlMail = htmlMail.replace(/%mail%/g, to);
     htmlMail = htmlMail.replace(/%base_url%/g, this.baseUrl + '/');
 
