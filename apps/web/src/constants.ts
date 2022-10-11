@@ -1,6 +1,8 @@
 export const LANGUAGES = [
   { label: 'English', value: 'en' },
   { label: 'Deutsch', value: 'de' },
+  { label: 'Français (Traduction automatique)', value: 'fr' },
+  { label: 'Italiano (Traduzione automatica)', value: 'it' },
 ];
 export const FORMATS = [
   { label: '13,37 / 05.01.1989', value: 1 },

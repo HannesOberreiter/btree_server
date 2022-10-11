@@ -77,7 +77,7 @@ const isSubmitting = ref(false);
 const state = reactive({
   username: user.value.username || '',
   format: user.value.format || '',
-  lang: user.value.lang === 'de' ? LANGUAGES[1] : LANGUAGES[0],
+  lang: LANGUAGES.filter((e) => e.value === user.value.lang)[0],
   sound: user.value.sound,
   newsletter: user.value.newsletter,
   acdate: user.value.acdate,
