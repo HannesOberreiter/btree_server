@@ -1,5 +1,16 @@
 <template>
+  <btn-base-group v-if="$q.screen.gt.md">
+    <btn-base
+      v-for="(task, index) in TASKS"
+      :key="index"
+      :icon="task.icon"
+      @click="() => openModal(task)"
+    >
+      <tooltip-base>{{ task.label }}</tooltip-base>
+    </btn-base>
+  </btn-base-group>
   <q-btn-dropdown
+    v-else
     split
     :icon="currentTask.icon"
     auto-close
