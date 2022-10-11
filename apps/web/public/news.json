@@ -4,7 +4,8 @@
     "date": "2022-10-XX",
     "news": [
       "BUGFIX wrong CSS in scale calendar",
-      "BUGFIX disable speech recognition if not available (firefox)"
+      "BUGFIX disable speech recognition if not available (firefox)",
+      "VISUAL added share button (print QR and set NFC) to top navbar button dropdown list on mobile devices"
     ]
   },
   {
