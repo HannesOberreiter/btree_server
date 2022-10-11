@@ -80,6 +80,9 @@ useMeta(() => {
     title: router.currentRoute.value.meta.title
       ? t(router.currentRoute.value.meta.title as string) + ' - b.tree'
       : 'b.tree',
+    meta: {
+      robots: { name: 'robots', content: 'noindex,follow' },
+    },
   };
 });
 
