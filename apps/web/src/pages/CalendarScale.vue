@@ -2,7 +2,11 @@
   <div width="100%">
     <q-resize-observer @resize="onResize" />
     <div class="col-12">
-      <div ref="container" class="calendar-container text-body1">
+      <div
+        ref="container"
+        class="calendar-container text-body1"
+        :style="{ opacity }"
+      >
         <full-calendar ref="cal" :options="calendarOptions"> </full-calendar>
       </div>
     </div>
@@ -31,8 +35,10 @@ const storeUser = useAuthUserStore();
 const { getUser } = storeToRefs(storeUser);
 const cal = ref<any | null>(null);
 const container = ref<HTMLElement | null>(null);
+const opacity = ref(1);
+const eventDrag = ref(false);
 
-useSwipeCalendar(cal, container);
+useSwipeCalendar(cal, container, opacity, eventDrag);
 
 onMounted(() => {
   useKeyCalendar(cal);
@@ -115,6 +121,10 @@ const calendarOptions = reactive({
   dayMaxEvents: 8,
   weekends: true,
   eventClick: handleEventClick,
+  eventDragStart: () => (eventDrag.value = true),
+  eventDragStop: () => (eventDrag.value = false),
+  eventResizeStart: () => (eventDrag.value = true),
+  eventResizeStop: () => (eventDrag.value = false),
 } as CalendarOptions);
 </script>
 
