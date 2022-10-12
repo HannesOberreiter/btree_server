@@ -378,10 +378,10 @@
   "queenMotherInfo": "Puoi scrivere qui il nome della mamma o selezionarne uno tuo.",
   "queenMovedate": "Data di introduzione",
   "queenMovedateInfo": "Data in cui la regina fu introdotta nella colonia.",
-  "queencell": "Queencell | Queencells",
+  "queencell": "Celle di regine | Cella della regina",
   "quicktool": {
     "apiary": "Seleziona gli alveari in base alla posizione corrente dell'apiario.",
-    "name": "Strumento rapido",
+    "name": "Quicktool",
     "taskDropdown": "Seleziona il tipo di attività che desideri aggiungere."
   },
   "race": "Linea di allevamento",
@@ -423,7 +423,7 @@
     "search": "Ricerca Internet",
     "socialMedia": "Social media"
   },
-  "rejectedFiles": "{count} file(s) are not allowed.",
+  "rejectedFiles": "{count} I file non sono ammessi.",
   "remove": "Rimuovere",
   "removeAccess": "Rimuovere l'accesso",
   "rename": "Rinominare",
