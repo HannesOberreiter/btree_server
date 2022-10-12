@@ -56,7 +56,10 @@
 </template>
 
 <script setup lang="ts">
+import { useIntervalFn } from '@vueuse/core';
 import { useQuasar } from 'quasar';
+import { useCountsQuery } from '~/composables/useQuery';
+import { sleep } from '~/helpers';
 import { useAuthUserStore } from '~/stores/auth';
 import { useQuicktoolStore } from '~/stores/quicktool';
 
@@ -64,6 +67,50 @@ const { t } = useI18n();
 const storeUser = useAuthUserStore();
 const storeQuicktool = useQuicktoolStore();
 const $q = useQuasar();
+const fetchCount = ref(false);
+
+const { data, refetch } = useCountsQuery({ enabled: fetchCount });
+
+const countReset = {
+  feed: 0,
+  checkup: 0,
+  harvest: 0,
+  treatment: 0,
+  todo: 0,
+  apiary: 0,
+  queen: 0,
+  virgin: 0,
+  hive: 0,
+};
+
+const count = ref({ ...countReset }) as any;
+
+watch(
+  data,
+  () => {
+    if (data.value) {
+      count.value = { ...countReset };
+      data.value.forEach((o: any) => {
+        if (o.kind in count.value) {
+          count.value[o.kind] = o.count;
+        } else if (o.kind === 'hivegroup_sum') {
+          count.value['hive'] = count.value['hive'] + o.count;
+        } else if (o.kind === 'hivegroup_count') {
+          count.value['hive'] = count.value['hive'] - o.count;
+        }
+      });
+    }
+  },
+  { immediate: true }
+);
+
+onMounted(() => {
+  sleep(3000).then(() => (fetchCount.value = true));
+});
+
+useIntervalFn(() => {
+  refetch.value();
+}, 1000 * 60 * 5);
 
 const onLogout = async () => {
   await storeUser.logout();
@@ -77,7 +124,7 @@ const calendar = {
   icon: 'far fa-calendar-alt',
 };
 
-const links = [
+const links = computed(() => [
   {
     label: t('task', 2),
     route: '',
@@ -87,24 +134,28 @@ const links = [
         label: t('checkup', 2),
         route: 'table-checkup',
         icon: 'fas fa-search-plus',
+        count: count.value.checkup,
         menu: false,
       },
       {
         label: t('treatment', 2),
         route: 'table-treatment',
         icon: 'fas fa-kit-medical',
+        count: count.value.treatment,
         menu: false,
       },
       {
         label: t('harvest', 2),
         route: 'table-harvest',
         icon: 'fas fa-droplet',
+        count: count.value.harvest,
         menu: false,
       },
       {
         label: t('feed', 2),
         route: 'table-feed',
         icon: 'fas fa-cube',
+        count: count.value.feed,
         menu: false,
       },
     ],
@@ -125,6 +176,7 @@ const links = [
         label: t('hive', 2),
         route: 'table-hive',
         icon: 'fas fa-table',
+        count: count.value.hive,
         menu: false,
       },
 
@@ -153,6 +205,7 @@ const links = [
         label: t('apiary', 2),
         route: 'table-apiary',
         icon: 'fas fa-table',
+        count: count.value.apiary,
         menu: false,
       },
     ],
@@ -172,12 +225,14 @@ const links = [
         label: t('table'),
         route: 'table-queen',
         icon: 'fas fa-table',
+        count: count.value.queen,
         menu: false,
       },
       {
         label: t('without') + ' ' + t('hive'),
         route: 'table-virgin',
         icon: 'fas fa-table',
+        count: count.value.virgin,
         menu: false,
       },
     ],
@@ -222,6 +277,7 @@ const links = [
         label: t('table'),
         route: 'table-todo',
         icon: 'fas fa-table',
+        count: count.value.todo,
         menu: false,
       },
     ],
@@ -426,7 +482,7 @@ const links = [
       },
     ],
   },
-];
+]);
 </script>
 
 <style>

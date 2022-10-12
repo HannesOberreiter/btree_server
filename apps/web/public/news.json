@@ -1,7 +1,7 @@
 [
   {
     "version": "6.0.13",
-    "date": "2022-10-XX",
+    "date": "2022-10-12",
     "news": [
       "BUGFIX wrong CSS in scale calendar",
       "BUGFIX disable speech recognition if not available (firefox)",
@@ -10,7 +10,8 @@
       "BUGFIX scanning hive detail QR codes should now also select hives if hive dropdown is active on page",
       "VISUAL added share button (print QR and set NFC) to top navbar button dropdown list on mobile devices",
       "FEATURE on detail pages you can now filter for open tasks",
-      "FEATURE added inactivate queen and hive button to hive detail page, thanks hermann"
+      "FEATURE added inactivate queen and hive button to hive detail page, thanks hermann",
+      "FEATURE navigation menu now shows again open tasks and counts. Info: Count will only update every five minutes"
     ]
   },
   {

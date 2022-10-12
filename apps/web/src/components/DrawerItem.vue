@@ -15,6 +15,7 @@
     </q-item-section>
     <q-item-section>
       {{ link.label }}
+      {{ link.count ? `[${link.count}]` : '' }}
     </q-item-section>
   </q-item>
 </template>
