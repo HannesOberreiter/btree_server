@@ -241,7 +241,7 @@ watch(
   { immediate: true }
 );
 
-if (nfc.isSupported) {
+if (nfc.isSupported()) {
   watch(scannedId, () => {
     if (scannedId.value && hives.value) {
       const { double, found } = findHives(
@@ -266,7 +266,7 @@ if (nfc.isSupported) {
 }
 
 function findHives(hives: any, id: string | string[], selected_hives: any) {
-  const found = filter(hives, (obj) => id.includes(obj.id)) as any;
+  const found = filter(hives, (obj) => id === String(obj.id)) as any;
   const double = filter(selected_hives, (obj) => id == obj.id);
   return { found: found, double: double };
 }
