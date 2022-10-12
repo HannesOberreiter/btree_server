@@ -16,7 +16,9 @@ export const KINDS = [
   'treatment',
   'harvest',
   'movedate',
-];
+] as const;
+
+export const STATUS = ['both', 'open', 'done'] as const;
 
 export const CALENDAR = [
   'rearing',

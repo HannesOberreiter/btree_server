@@ -6,7 +6,8 @@
       "BUGFIX wrong CSS in scale calendar",
       "BUGFIX disable speech recognition if not available (firefox)",
       "BUGFIX disable swiping on calendar if user is dragging events",
-      "VISUAL added share button (print QR and set NFC) to top navbar button dropdown list on mobile devices"
+      "VISUAL added share button (print QR and set NFC) to top navbar button dropdown list on mobile devices",
+      "FEATURE on detail pages you can now filter for open tasks"
     ]
   },
   {
