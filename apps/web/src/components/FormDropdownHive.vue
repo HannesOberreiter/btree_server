@@ -241,29 +241,27 @@ watch(
   { immediate: true }
 );
 
-if (nfc.isSupported()) {
-  watch(scannedId, () => {
-    if (scannedId.value && hives.value) {
-      const { double, found } = findHives(
-        hives.value.results,
-        scannedId.value,
-        state.hive
+watch(scannedId, () => {
+  if (scannedId.value && hives.value) {
+    const { double, found } = findHives(
+      hives.value.results,
+      scannedId.value,
+      state.hive
+    );
+    if (found && double.length === 0) {
+      notification.open(
+        'positive',
+        t('addedHive', { name: found['name'] }),
+        true
       );
-      if (found && double.length === 0) {
-        notification.open(
-          'positive',
-          t('addedHive', { name: found['name'] }),
-          true
-        );
-        scannedId.value = null;
-        state.hive = union(state.hive, found);
-      }
-      if (double.length > 0) {
-        notification.open('info', t('error.alreadyScanned'), true);
-      }
+      scannedId.value = null;
+      state.hive = union(state.hive, found);
     }
-  });
-}
+    if (double.length > 0) {
+      notification.open('info', t('error.alreadyScanned'), true);
+    }
+  }
+});
 
 function findHives(hives: any, id: string | string[], selected_hives: any) {
   const found = filter(hives, (obj) => id === String(obj.id)) as any;
