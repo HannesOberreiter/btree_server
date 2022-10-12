@@ -26,6 +26,7 @@ import { ScaleData } from '../models/scale_data.model';
 import { Rearing } from '../models/rearing/rearing.model';
 import { RearingType } from '../models/rearing/rearing_type.model';
 import { Promo } from '../models/promos.model';
+import { Counts } from '../models/counts.model';
 
 export class CompanyController extends Controller {
   constructor() {
@@ -157,6 +158,15 @@ export class CompanyController extends Controller {
     }
   }
 
+  async getCounts(req: IUserRequest, res: Response, next: NextFunction) {
+    try {
+      const result = await Counts.query().where('user_id', req.user.user_id);
+      res.locals.data = result;
+      next();
+    } catch (e) {
+      next(checkMySQLError(e));
+    }
+  }
   async delete(req: IUserRequest, res: Response, next: NextFunction) {
     try {
       const otherUser = await Company.query()

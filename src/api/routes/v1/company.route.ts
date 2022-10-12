@@ -17,6 +17,12 @@ export class CompanyRouter extends Router {
         Container.resolve('CompanyController').getApikey
       );
     this.router
+      .route('/count')
+      .get(
+        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+        Container.resolve('CompanyController').getCounts
+      );
+    this.router
       .route('/download')
       .get(
         Guard.authorize([ROLES.admin]),
@@ -30,7 +36,7 @@ export class CompanyRouter extends Router {
             .optional()
             .isString()
             .isLength({ min: 3, max: 128 })
-            .trim()
+            .trim(),
         ]),
         Guard.authorize([ROLES.admin]),
         Container.resolve('CompanyController').patch
@@ -39,7 +45,7 @@ export class CompanyRouter extends Router {
       .route('/')
       .post(
         Validator.validate([
-          body('name').isString().isLength({ min: 3, max: 128 }).trim()
+          body('name').isString().isLength({ min: 3, max: 128 }).trim(),
         ]),
         Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
         Container.resolve('CompanyController').post
@@ -48,7 +54,7 @@ export class CompanyRouter extends Router {
       .route('/coupon')
       .post(
         Validator.validate([
-          body('coupon').isString().isLength({ min: 3, max: 128 }).trim()
+          body('coupon').isString().isLength({ min: 3, max: 128 }).trim(),
         ]),
         Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
         Container.resolve('CompanyController').postCoupon
