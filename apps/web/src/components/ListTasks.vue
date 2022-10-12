@@ -47,29 +47,38 @@
 
 <script lang="ts">
 import { orderBy } from 'lodash';
+import { Filter, FilterState } from '~/types';
 
-function buildList(data: any, filter: string) {
-  if (filter !== 'filterEmpty') {
-    return data[filter];
-  } else {
-    const array: any[] = [];
-    for (const prop in data) {
-      array.push(...data[prop]);
-    }
-    const sortedArray = orderBy(
-      array,
-      function (o) {
-        return new Date(o.date);
-      },
-      'desc'
-    );
-    return sortedArray;
+function buildList(data: any, filter: Filter, filterState: FilterState) {
+  let array: any[] =
+    filter !== 'filterEmpty'
+      ? data[filter]
+      : (Object.values(data).flat() as any[]);
+
+  if (filterState !== 'both') {
+    array = array.filter((o) => {
+      if (o.kind === 'movedate') {
+        if (filterState === 'done') {
+          return new Date() >= new Date(o.date);
+        } else {
+          return new Date() < new Date(o.date);
+        }
+      }
+      if (filterState === 'done') {
+        return o.done === true;
+      } else {
+        return o.done === false;
+      }
+    });
   }
+  const sortedArray = orderBy(array, ['date'], 'desc');
+  return sortedArray;
 }
 </script>
 
 <script setup lang="ts">
 import { useHiveTaskQuery } from '~/composables/useQuery';
+import { PropType } from 'vue';
 
 const props = defineProps({
   id: {
@@ -84,7 +93,11 @@ const props = defineProps({
     required: true,
   },
   filter: {
-    type: String,
+    type: String as PropType<Filter>,
+    required: true,
+  },
+  filterState: {
+    type: String as PropType<FilterState>,
     required: true,
   },
   opened: {
@@ -94,7 +107,15 @@ const props = defineProps({
     default: 0,
   },
 });
-const { id, year, filter, opened, apiary, refetch: doRefetch } = toRefs(props);
+const {
+  id,
+  year,
+  filter,
+  filterState,
+  opened,
+  apiary,
+  refetch: doRefetch,
+} = toRefs(props);
 const { isLoading, data, refetch } = useHiveTaskQuery({
   id: id,
   year: year,
@@ -109,7 +130,7 @@ const listData = computed(() => {
   if (data.value) {
     taskStart.value = 0;
     taskEnd.value = 10;
-    return buildList(data.value, filter.value);
+    return buildList(data.value, filter.value, filterState.value);
   } else {
     return null;
   }

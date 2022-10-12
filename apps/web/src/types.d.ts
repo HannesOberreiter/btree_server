@@ -1,3 +1,7 @@
+import { KINDS, STATUS } from '~/constants';
+
+export type FilterState = typeof STATUS[number];
+export type Filter = typeof KINDS[number];
 export declare interface Company {
   id: number;
   name: string;

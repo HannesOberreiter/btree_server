@@ -2,7 +2,11 @@
   <div width="100%">
     <q-resize-observer @resize="onResize" />
     <div class="col-12">
-      <div ref="container" class="calendar-container text-body1">
+      <div
+        ref="container"
+        class="calendar-container text-body1"
+        :style="{ opacity }"
+      >
         <full-calendar ref="cal" :options="calendarOptions">
           <template #eventContent="{ timeText, event }">
             <i
@@ -67,9 +71,11 @@ let eventsSourceActiveWatcher = storeCalendar.calendar;
 const dateClicked = ref(dayjs().format('YYYY-MM-DD'));
 const cal = ref<any | null>(null);
 const container = ref<HTMLElement | null>(null);
+const opacity = ref(1);
+const eventDrag = ref(false);
 const showSetting = ref(false);
 
-useSwipeCalendar(cal, container);
+useSwipeCalendar(cal, container, opacity, eventDrag);
 
 const formDialog = (date: string) =>
   $q
@@ -316,11 +322,15 @@ const calendarOptions = reactive({
   dateClick: handleDateClick,
   eventClick: handleEventClick,
   eventChange: handleEventsChange,
+  eventDragStart: () => (eventDrag.value = true),
+  eventDragStop: () => (eventDrag.value = false),
+  eventResizeStart: () => (eventDrag.value = true),
+  eventResizeStop: () => (eventDrag.value = false),
 } as CalendarOptions);
 </script>
 
 <style>
-// Hide Overflown long titles in daygrid view
+/* Hide Overflown long titles in daygrid view */
 .fc .fc-daygrid-event {
   overflow: hidden;
 }

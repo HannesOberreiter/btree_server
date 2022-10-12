@@ -5,8 +5,8 @@
       expand-separator
       :default-opened="opened"
       icon="fas fa-venus"
-      header-class="text-h6"
-      :label="queen.name"
+      :header-class="queen.modus ? 'text-h6' : 'text-h6 text-negative'"
+      :label="queen.modus ? queen.name : `${queen.name} (RIP)`"
     >
       <q-card>
         <q-card-section>
@@ -45,12 +45,12 @@
               `"
             />
             <q-chip
-              v-if="!data.modus"
+              v-if="!queen.modus"
               color="negative"
               class="text-white"
               :label="`
                 ${$t('inactive')}
-                (${useDate.displayFormat(data.modus_date, 'date')})
+                (${useDate.displayFormat(queen.modus_date, 'date')})
               `"
             />
           </div>
@@ -61,11 +61,19 @@
         <q-card-actions align="right">
           <btn-base-group :spread="false">
             <btn-base
+              color="negative"
+              :loading="isSubmitting"
+              outline
+              @click="setModus(queen.id, queen.modus)"
+            >
+              {{ queen.modus ? $t('inactivateQueen') : $t('activateQueen') }}
+            </btn-base>
+            <btn-base
               outline
               color="secondary"
               @click="openForm('queen', queen.id, null)"
             >
-              {{ $t('edit') }} {{ $t('queen') }}
+              {{ $t('editQueen') }}
             </btn-base>
             <btn-base
               outline
@@ -84,8 +92,12 @@
 <script setup lang="ts">
 import { useQuasar } from 'quasar';
 import { useDateFormat } from '~/composables/useDate';
+import { useNotification } from '~/composables/useNotification';
+import { useApiFetch } from '~/composables/useApi';
 import DialogForm from './DialogForm.vue';
 
+const notification = useNotification();
+const api = useApiFetch();
 const useDate = useDateFormat();
 const $q = useQuasar();
 const emit = defineEmits(['refetch']);
@@ -99,6 +111,7 @@ const props = defineProps({
   },
 });
 const data = toRef(props, 'data');
+const isSubmitting = ref(false);
 
 const queen = computed(() => {
   return data.value
@@ -121,5 +134,31 @@ function openForm(title: string, id: number, selected: number) {
   }).onOk(() => {
     emit('refetch');
   });
+}
+
+async function setModus(id: number, modus: boolean) {
+  isSubmitting.value = true;
+  const url = '/v1/queen';
+  await api
+    .patch(
+      url,
+      JSON.stringify({
+        ids: [id],
+        data: {
+          modus: !modus,
+          modus_date: useDate.isoFormat(useDate.getCurrent()),
+        },
+      })
+    )
+    .then(
+      async (_response: any) => {
+        emit('refetch');
+        notification.open('positive', '');
+      },
+      (error) => {
+        notification.open('negative', error);
+      }
+    );
+  isSubmitting.value = false;
 }
 </script>

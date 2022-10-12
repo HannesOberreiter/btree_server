@@ -58,6 +58,20 @@
                   dense
                   color="white"
                   size="md"
+                  icon="fas fa-share-nodes"
+                  @click="onShare"
+                >
+                  <tooltip-base>QR & NFC</tooltip-base>
+                </btn-base>
+              </q-item-section>
+            </q-item>
+            <q-item v-close-popup>
+              <q-item-section>
+                <btn-base
+                  flat
+                  dense
+                  color="white"
+                  size="md"
                   icon="fas fa-sign-out-alt"
                   @click="onLogout"
                 ></btn-base>
@@ -71,11 +85,24 @@
 </template>
 
 <script setup lang="ts">
+import { useQuasar } from 'quasar';
+import DialogShare from './DialogShare.vue';
 import { useAuthUserStore } from '~/stores/auth';
+
 const storeUser = useAuthUserStore();
 const { company } = storeToRefs(storeUser);
+const $q = useQuasar();
 
 const onLogout = async () => {
   await storeUser.logout();
 };
+
+function onShare() {
+  $q.dialog({
+    component: DialogShare,
+    componentProps: {
+      url: window.location.href,
+    },
+  });
+}
 </script>

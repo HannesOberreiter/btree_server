@@ -2,10 +2,12 @@
   <q-expansion-item
     switch-toggle-side
     :default-opened="opened"
-    header-class="text-h5"
+    :header-class="data.modus ? 'text-h5' : 'text-h5 text-negative'"
   >
     <template #header>
-      <q-item-section> {{ data.name }} </q-item-section>
+      <q-item-section>
+        {{ data.modus ? data.name : `${data.name} (${$t('inactive')})` }}
+      </q-item-section>
       <q-item-section v-if="data.hive_location" side>
         <btn-base
           flat
@@ -85,9 +87,23 @@
         <pre>{{ data.note }}</pre>
       </q-card-section>
       <q-card-actions align="right">
-        <btn-base color="primary" outline @click="openForm('hive', data.id)">
-          {{ $t('edit') }} {{ $t('hive') }}
-        </btn-base>
+        <btn-base-group :spread="false">
+          <btn-base
+            color="negative"
+            :loading="isSubmitting"
+            outline
+            @click="setModus(data.id, data.modus)"
+          >
+            {{ data.modus ? $t('inactivateHive') : $t('activateHive') }}
+          </btn-base>
+          <btn-base
+            color="secondary"
+            outline
+            @click="openForm('hive', data.id)"
+          >
+            {{ $t('editHive') }}
+          </btn-base>
+        </btn-base-group>
       </q-card-actions>
     </q-card>
   </q-expansion-item>
@@ -98,11 +114,17 @@ import { useQuasar } from 'quasar';
 import { useDateFormat } from '~/composables/useDate';
 import DialogForm from './DialogForm.vue';
 import { truncate } from 'lodash-es';
+import { useApiFetch } from '~/composables/useApi';
+import { useNotification } from '~/composables/useNotification';
 
+const notification = useNotification();
 const $q = useQuasar();
 const useDate = useDateFormat();
 const router = useRouter();
 const emit = defineEmits(['refetch']);
+const isSubmitting = ref(false);
+const api = useApiFetch();
+
 defineProps({
   data: {
     type: Object,
@@ -129,5 +151,31 @@ function openForm(title: string, id: number) {
 
 function onApiary(id: number) {
   router.push({ name: 'detail-apiary', params: { id: id } });
+}
+
+async function setModus(id: number, modus: boolean) {
+  isSubmitting.value = true;
+  const url = '/v1/hive';
+  await api
+    .patch(
+      url,
+      JSON.stringify({
+        ids: [id],
+        data: {
+          modus: !modus,
+          modus_date: useDate.isoFormat(useDate.getCurrent()),
+        },
+      })
+    )
+    .then(
+      async (_response: any) => {
+        emit('refetch');
+        notification.open('positive', '');
+      },
+      (error) => {
+        notification.open('negative', error);
+      }
+    );
+  isSubmitting.value = false;
 }
 </script>

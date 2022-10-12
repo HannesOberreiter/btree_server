@@ -3,9 +3,7 @@
     v-if="!($q.platform.is.safari || $q.platform.is.ios)"
     ref="btn"
     v-close-popup
-    :disabled="
-      !speech.isSupported || $q.platform.is.safari || $q.platform.is.ios
-    "
+    :disable="!speech.isSupported.value"
     flat
     dense
     :color="speech.isListening.value ? 'secondary' : 'white'"
@@ -74,23 +72,23 @@ const { data: apiaries } = useApiariesQuery({
 const commands = [
   {
     command: 'dashboard',
-    aliases: ['dashboard', 'calendar', 'kalender'],
+    aliases: ['dashboard', 'calendar', 'kalender', 'calendrier', 'calendario'],
   },
   {
     command: 'feed',
-    aliases: ['feeding', 'fütterung'],
+    aliases: ['feeding', 'fütterung', 'alimentazione', 'alimentation'],
   },
   {
     command: 'treatment',
-    aliases: ['treatment', 'behandlung'],
+    aliases: ['treatment', 'behandlung', 'traitement', 'trattamento'],
   },
   {
     command: 'harvest',
-    aliases: ['harvest', 'ernte'],
+    aliases: ['harvest', 'ernte', 'raccolto', 'récolter'],
   },
   {
     command: 'checkup',
-    aliases: ['checkup', 'kontrolle'],
+    aliases: ['checkup', 'kontrolle', 'vérification', 'verifica'],
   },
 ] as Array<Haystack>;
 
@@ -145,6 +143,7 @@ if (speech.isSupported) {
   }
 
   watch(speech.result, (cur) => {
+    console.log(cur);
     if (cur.trim()) {
       spoken.value = cur.toLowerCase();
       fuzzySearch(spoken.value, haystack.value);
