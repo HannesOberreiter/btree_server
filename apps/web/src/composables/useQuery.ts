@@ -914,7 +914,7 @@ export function useCountsQuery({ enabled = true as MaybeRef<boolean> }) {
   return useQuery(
     ['countsQuery'],
     () => {
-      return api.get('/v1/company/count', '');
+      return api.get('/v1/company/count', '', false);
     },
     {
       enabled: enabled,
