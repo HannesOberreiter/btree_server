@@ -63,11 +63,9 @@ import { validationErrors } from '~/helpers';
 import useVuelidate from '@vuelidate/core';
 import { useScanningStore } from '~/stores/scanning';
 import { useNotification } from '~/composables/useNotification';
-import { useNFC } from '~/composables/useNFC';
 
 const storeScanning = useScanningStore();
 const { hiveDropdownActive, scannedId } = storeToRefs(storeScanning);
-const nfc = useNFC();
 
 const router = useRouter();
 const { t } = useI18n();
