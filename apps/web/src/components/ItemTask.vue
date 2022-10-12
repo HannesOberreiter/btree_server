@@ -253,6 +253,7 @@ function updateStatus(id: number) {
     (_response: any) => {
       notification.open('positive', '');
       status.value = !status.value;
+      emit('refetch');
     },
     (error) => {
       notification.open('negative', error);

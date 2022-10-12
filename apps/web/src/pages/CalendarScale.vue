@@ -2,7 +2,11 @@
   <div width="100%">
     <q-resize-observer @resize="onResize" />
     <div class="col-12">
-      <div ref="container" class="calendar-container text-body1">
+      <div
+        ref="container"
+        class="calendar-container text-body1"
+        :style="{ opacity }"
+      >
         <full-calendar ref="cal" :options="calendarOptions"> </full-calendar>
       </div>
     </div>
@@ -31,8 +35,10 @@ const storeUser = useAuthUserStore();
 const { getUser } = storeToRefs(storeUser);
 const cal = ref<any | null>(null);
 const container = ref<HTMLElement | null>(null);
+const opacity = ref(1);
+const eventDrag = ref(false);
 
-useSwipeCalendar(cal, container);
+useSwipeCalendar(cal, container, opacity, eventDrag);
 
 onMounted(() => {
   useKeyCalendar(cal);
@@ -115,15 +121,15 @@ const calendarOptions = reactive({
   dayMaxEvents: 8,
   weekends: true,
   eventClick: handleEventClick,
+  eventDragStart: () => (eventDrag.value = true),
+  eventDragStop: () => (eventDrag.value = false),
+  eventResizeStart: () => (eventDrag.value = true),
+  eventResizeStop: () => (eventDrag.value = false),
 } as CalendarOptions);
 </script>
 
 <style>
-.calendar-container {
-  //height: 80vh;
-}
-
-// Hide Overflown long titles in daygrid view
+/* Hide Overflown long titles in daygrid view */
 .fc .fc-daygrid-event {
   overflow: hidden;
 }
@@ -132,21 +138,17 @@ const calendarOptions = reactive({
   overflow: hidden;
 }
 
-// Toolbar Buttons and text
-.fc-toolbar {
-  text-align: center;
-  // smaller text and inline buttons on small devices
-  @include media-breakpoint-down(sm) {
-    display: inline;
-    .fc-toolbar-title {
-      font-size: 20px;
-      line-height: normal;
-      display: inline !important;
-    }
-  }
+body.screen--xs .fc-toolbar-title {
+  font-size: 1.3rem !important;
+  line-height: normal;
+  display: inline !important;
 }
 
 .fc-col-header {
   background-color: rgb(218, 154, 37);
+}
+
+.fc-footer-toolbar {
+  font-size: 0.8em !important;
 }
 </style>

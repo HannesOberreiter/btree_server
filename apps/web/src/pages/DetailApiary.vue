@@ -68,12 +68,24 @@
                 </q-select>
               </div>
               <div class="col-12 col-md-6">
-                <q-select
-                  v-model="filter"
-                  :options="KINDS"
-                  :label="$t('filter')"
-                  :option-label="(label) => $t(label)"
-                ></q-select>
+                <div class="row">
+                  <div class="col-6">
+                    <q-select
+                      v-model="filter"
+                      :options="KINDS"
+                      :label="$t('filter') + ' ' + $t('task')"
+                      :option-label="(label) => $t(label)"
+                    ></q-select>
+                  </div>
+                  <div class="col-6">
+                    <q-select
+                      v-model="filterState"
+                      :options="STATUS"
+                      :label="$t('filter') + ' ' + $t('status')"
+                      :option-label="(label) => $t(label)"
+                    ></q-select>
+                  </div>
+                </div>
               </div>
             </div>
             <list-tasks
@@ -81,6 +93,7 @@
               :apiary="true"
               :year="year"
               :filter="filter"
+              :filter-state="filterState"
               :opened="opened"
               :refetch="refetchCounter"
             ></list-tasks>
@@ -104,8 +117,9 @@
 </template>
 
 <script lang="ts">
-import { KINDS } from '~/constants';
+import { KINDS, STATUS } from '~/constants';
 import { generateArrayOfYears } from '~/helpers';
+import { Filter, FilterState } from '~/types';
 </script>
 
 <script setup lang="ts">
@@ -116,7 +130,8 @@ import dayjs from 'dayjs';
 const { t } = useI18n();
 const tab = ref('hive');
 const year = ref(dayjs().year());
-const filter = ref('filterEmpty');
+const filter = ref<Filter>('filterEmpty');
+const filterState = ref<FilterState>(STATUS[0]);
 const opened = ref(false);
 const refetchCounter = ref(0);
 

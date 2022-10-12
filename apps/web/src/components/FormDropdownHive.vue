@@ -63,11 +63,9 @@ import { validationErrors } from '~/helpers';
 import useVuelidate from '@vuelidate/core';
 import { useScanningStore } from '~/stores/scanning';
 import { useNotification } from '~/composables/useNotification';
-import { useNFC } from '~/composables/useNFC';
 
 const storeScanning = useScanningStore();
 const { hiveDropdownActive, scannedId } = storeToRefs(storeScanning);
-const nfc = useNFC();
 
 const router = useRouter();
 const { t } = useI18n();
@@ -241,32 +239,30 @@ watch(
   { immediate: true }
 );
 
-if (nfc.isSupported) {
-  watch(scannedId, () => {
-    if (scannedId.value && hives.value) {
-      const { double, found } = findHives(
-        hives.value.results,
-        scannedId.value,
-        state.hive
+watch(scannedId, () => {
+  if (scannedId.value && hives.value) {
+    const { double, found } = findHives(
+      hives.value.results,
+      scannedId.value,
+      state.hive
+    );
+    if (found && double.length === 0) {
+      notification.open(
+        'positive',
+        t('addedHive', { name: found['name'] }),
+        true
       );
-      if (found && double.length === 0) {
-        notification.open(
-          'positive',
-          t('addedHive', { name: found['name'] }),
-          true
-        );
-        scannedId.value = null;
-        state.hive = union(state.hive, found);
-      }
-      if (double.length > 0) {
-        notification.open('info', t('error.alreadyScanned'), true);
-      }
+      scannedId.value = null;
+      state.hive = union(state.hive, found);
     }
-  });
-}
+    if (double.length > 0) {
+      notification.open('info', t('error.alreadyScanned'), true);
+    }
+  }
+});
 
 function findHives(hives: any, id: string | string[], selected_hives: any) {
-  const found = filter(hives, (obj) => id.includes(obj.id)) as any;
+  const found = filter(hives, (obj) => id === String(obj.id)) as any;
   const double = filter(selected_hives, (obj) => id == obj.id);
   return { found: found, double: double };
 }

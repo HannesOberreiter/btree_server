@@ -1,4 +1,3 @@
-import { T } from 'dist/pwa/assets/TouchPan.59883801';
 import { useScanningStore } from '~/stores/scanning';
 import { useNotification } from './useNotification';
 
@@ -177,19 +176,39 @@ const useNFC = () => {
             console.log('=== data ===\n' + decoder.decode(record.data));
           }
           const record = event.message.records[0];
-          if (record.id) {
+
+          if (!record) return false;
+          let id = record.id ? record.id : '';
+          const decodedData = record.data ? decoder.decode(record.data) : '';
+
+          if (id === '' && decodedData) {
+            const deleteBase = new RegExp(/^(.*?)btree.at(?:\/app)?/i);
+            const generatedId = decodedData.replace(deleteBase, '');
+            if (
+              decodedData.indexOf('/detail/hive') > 0 ||
+              decodedData.indexOf('/detail/apiary') > 0 ||
+              decodedData.indexOf('app.btree.at') > 0
+            ) {
+              /*
+                   Generate a custom ID if it is an old NFC tag with detail link or
+                    if user did only write URL, eg. custom NFC tool
+                   */
+              id = generatedId;
+            }
+          }
+          if (id && id !== '') {
             /**
                 If a hive dropdown is active visible it will try to make a selection based on the tag,
                 otherwise a redirect will happen.
              */
             if (
               storeScanning.hiveDropdownActive &&
-              storeScanning.extractUrl(record.id)
+              storeScanning.extractUrl(id)
             ) {
               return true;
             } else {
-              notification.open('positive', record.id, true);
-              router.push(record.id);
+              notification.open('positive', id, true);
+              router.push(id);
             }
           }
         };
@@ -215,15 +234,13 @@ const useNFC = () => {
         notification.open('negative', 'error.permission');
         return Promise.resolve(false);
       } else {
-        const nfcPermissionStatus = await navigator.permissions.query({
+        const permission = await navigator.permissions.query({
           name: 'nfc' as PermissionName,
         });
-        if (nfcPermissionStatus.state === 'granted') {
+        if (permission.state === 'granted' || permission.state === 'prompt')
           return Promise.resolve(true);
-        } else {
-          notification.open('negative', nfcPermissionStatus.state);
-          return Promise.resolve(false);
-        }
+        notification.open('negative', permission.state, true);
+        return Promise.resolve(false);
       }
     } catch (e) {
       console.error(e);

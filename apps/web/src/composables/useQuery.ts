@@ -908,6 +908,25 @@ export function useStatisticType(
   );
 }
 
+export function useCountsQuery({ enabled = true as MaybeRef<boolean> }) {
+  const notification = useNotification();
+  const api = useApiFetch();
+  return useQuery(
+    ['countsQuery'],
+    () => {
+      return api.get('/v1/company/count', '');
+    },
+    {
+      enabled: enabled,
+      keepPreviousData: true,
+      refetchOnWindowFocus: true,
+      staleTime: 1000, // stale (refetching), after 1 second
+      select: (response) => response,
+      onError: (error: any) => notification.open('negative', error),
+    }
+  );
+}
+
 export function clearCache(q = '') {
   if (q.trim() === '') queryCache.clear();
   else {

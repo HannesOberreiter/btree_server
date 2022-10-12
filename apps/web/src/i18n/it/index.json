@@ -3,6 +3,8 @@
   "account": "Account",
   "accountActivated": "Il tuo account è stato attivato con successo!",
   "activate": "Attivare",
+  "activateHive": "Attiva l'alveare",
+  "activateQueen": "Attiva la regina",
   "activateUser": {
     "label": "Conferma chiave",
     "message": "Grazie per la tua registrazione, attiva il tuo account come ultimo passaggio.",
@@ -99,6 +101,8 @@
   },
   "dropdownNotAvailable": "L'opzione originale selezionata è inattiva e non può essere selezionata!",
   "edit": "Modificare",
+  "editHive": "Modifica alveare",
+  "editQueen": "Modifica regina",
   "edited": "Modificato",
   "egg": "Uovo | Uova",
   "email": "E-mail",
@@ -229,6 +233,8 @@
   "import": "Importare",
   "importCSV": "Importa (.csv)",
   "in": "Ricevuta merce",
+  "inactivateHive": "Disattiva l'alveare",
+  "inactivateQueen": "RIP regina",
   "inactive": "Non attivo",
   "inactiveDate": "Data inattiva",
   "info": "Informazioni",
@@ -372,10 +378,10 @@
   "queenMotherInfo": "Puoi scrivere qui il nome della mamma o selezionarne uno tuo.",
   "queenMovedate": "Data di introduzione",
   "queenMovedateInfo": "Data in cui la regina fu introdotta nella colonia.",
-  "queencell": "Queencell | Queencells",
+  "queencell": "Celle di regine | Cella della regina",
   "quicktool": {
     "apiary": "Seleziona gli alveari in base alla posizione corrente dell'apiario.",
-    "name": "Strumento rapido",
+    "name": "Quicktool",
     "taskDropdown": "Seleziona il tipo di attività che desideri aggiungere."
   },
   "race": "Linea di allevamento",
@@ -417,7 +423,7 @@
     "search": "Ricerca Internet",
     "socialMedia": "Social media"
   },
-  "rejectedFiles": "{count} file(s) are not allowed.",
+  "rejectedFiles": "{count} I file non sono ammessi.",
   "remove": "Rimuovere",
   "removeAccess": "Rimuovere l'accesso",
   "rename": "Rinominare",
