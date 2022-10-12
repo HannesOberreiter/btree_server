@@ -33,41 +33,44 @@ export class ScaleDataController extends Controller {
           .where({ scale_id: scale.id })
           .orderBy('datetime', 'DESC')
           .first();
-        if (lastInsert && req.query.action === 'CREATE') {
-          if (
-            dayjs(lastInsert.datetime) >
-            dayjs(insertDate as any).subtract(1, 'hour')
-          )
-            throw tooManyRequests('you have exceeded your request limit');
-        }
 
-        if (
-          req.query.weight &&
-          lastInsert.weight &&
-          req.query.action === 'CREATE'
-        ) {
-          try {
-            const currentWeight = parseFloat(req.query.weight as any);
-            const checkWeight = Math.abs(lastInsert.weight - currentWeight);
-            if (checkWeight > 5) {
-              const user = await User.query()
-                .leftJoinRelated('company_bee')
-                .where({
-                  'company_bee.rank': 1,
-                  'company_bee.user_id': company.id,
+        if (lastInsert) {
+          if (req.query.action === 'CREATE') {
+            if (
+              dayjs(lastInsert.datetime) >
+              dayjs(insertDate as any).subtract(1, 'hour')
+            )
+              throw tooManyRequests('you have exceeded your request limit');
+          }
+
+          if (
+            req.query.weight &&
+            lastInsert.weight &&
+            req.query.action === 'CREATE'
+          ) {
+            try {
+              const currentWeight = parseFloat(req.query.weight as any);
+              const checkWeight = Math.abs(lastInsert.weight - currentWeight);
+              if (checkWeight > 5) {
+                const user = await User.query()
+                  .leftJoinRelated('company_bee')
+                  .where({
+                    'company_bee.rank': 1,
+                    'company_bee.user_id': company.id,
+                  });
+                user.forEach((u) => {
+                  MailServer.sendMail({
+                    to: u.email,
+                    lang: u.lang,
+                    subject: 'weight_warning',
+                    key: `${scale.name}: ${checkWeight} (${lastInsert.weight} - ${currentWeight})`,
+                    name: u.username,
+                  });
                 });
-              user.forEach((u) => {
-                MailServer.sendMail({
-                  to: u.email,
-                  lang: u.lang,
-                  subject: 'weight_warning',
-                  key: `${scale.name}: ${checkWeight} (${lastInsert.weight} - ${currentWeight})`,
-                  name: u.username,
-                });
-              });
+              }
+            } catch (e) {
+              console.error(e);
             }
-          } catch (e) {
-            console.error(e);
           }
         }
         const insert = {

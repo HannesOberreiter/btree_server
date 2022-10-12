@@ -32,7 +32,7 @@ export class ChargeRouter extends Router {
     this.router
       .route('/')
       .post(
-        Guard.authorize([ROLES.admin]),
+        Guard.authorize([ROLES.admin, ROLES.user]),
         Container.resolve('ChargeController').post
       );
     this.router
