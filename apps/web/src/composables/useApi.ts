@@ -74,7 +74,11 @@ export const useApiFetch = () => {
     return await fetching(originalRequest, false, true);
   };
 
-  const get = async (url: string, payload = '' as unknown): Promise<any> => {
+  const get = async (
+    url: string,
+    payload = '' as unknown,
+    loadingIndicator = true
+  ): Promise<any> => {
     const urlParam = buildUrl(url, payload);
     const originalRequest = new Request(urlParam, {
       method: 'GET', // *GET, POST, PUT, DELETE, etc.
@@ -82,7 +86,7 @@ export const useApiFetch = () => {
       headers: buildHeader(),
     });
 
-    return await fetching(originalRequest);
+    return await fetching(originalRequest, false, false, loadingIndicator);
   };
 
   const remove = async (url: string, payload = '' as unknown): Promise<any> => {
@@ -122,7 +126,8 @@ export const useApiFetch = () => {
   async function fetching(
     request: Request,
     recursive = false,
-    file = false
+    file = false,
+    loadingIndicator = true
   ): Promise<any> {
     if (
       network.isSupported &&
@@ -131,12 +136,12 @@ export const useApiFetch = () => {
     ) {
       throw 'offline';
     }
-    LoadingBar.start();
+    if (loadingIndicator) LoadingBar.start();
     const token = buildToken();
     const copy = request.clone();
     if (token) request.headers.append('Authorization', token.Authorization);
     const response = await fetch(request);
-    LoadingBar.stop();
+    if (loadingIndicator) LoadingBar.stop();
 
     if (!response.ok) {
       if (
