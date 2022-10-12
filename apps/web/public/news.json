@@ -8,6 +8,8 @@
       "BUGFIX disable swiping on calendar if user is dragging events",
       "BUGFIX it is now possible to scan NFC tags from the old version to select hives",
       "BUGFIX scanning hive detail QR codes should now also select hives if hive dropdown is active on page",
+      "BUGFIX hive scale upload was not working for new scales [SERVER]",
+      "BUGFIX rank user is now able to create charges [SERVER]",
       "VISUAL added share button (print QR and set NFC) to top navbar button dropdown list on mobile devices",
       "FEATURE on detail pages you can now filter for open tasks",
       "FEATURE added inactivate queen and hive button to hive detail page, thanks hermann",
