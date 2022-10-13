@@ -34,15 +34,19 @@ const getRearings = async ({ query, user }) => {
   const rearingsSteps = [];
   for (const i in rearings) {
     const res = rearings[i] as any;
-    const steps: any = await RearingStep.query()
+    const steps = await RearingStep.query()
       .where('type_id', res.type_id)
       .withGraphFetched('detail')
       .orderBy('position', 'asc');
-    res.steps = { ...steps };
+
     for (const j in steps) {
-      if (steps[j].detail_id === res.start.id)
+      steps[j]['key'] = j;
+      if (steps[j].detail_id === res.start.id) {
         res.startPosition = steps[j].position;
+        res.startKey = j;
+      }
     }
+    res.steps = { ...steps };
     rearingsSteps.push(res);
   }
   /*
@@ -69,12 +73,14 @@ const getRearings = async ({ query, user }) => {
         } else {
           // Step comes before Start Step, this is more complicated as
           // we need to account for the steps which are coming before it
-          const steps_before =
-            result.startPosition - result.currentStep.position;
+          const steps_before = result.startKey - result.currentStep.key;
           // subDate is helper to calculate the date
           let subDate = dayjs(result.date);
           for (let k = 0; k < steps_before; k++) {
-            subDate = subDate.subtract(result.steps[k].detail.hour, 'hour');
+            subDate = subDate.subtract(
+              result.steps[result.startKey - k].detail.hour,
+              'hour'
+            );
           }
           result.start = subDate.format('YYYY-MM-DD HH:mm:00');
         }
@@ -82,7 +88,9 @@ const getRearings = async ({ query, user }) => {
       result.steps[j].date = result.start;
       result.currentStep.date = result.start;
 
-      result.title = `${result.currentStep.detail.job} ID: ${result.name ? result.name : result.id}`;
+      result.title = `${result.currentStep.detail.job} ID: ${
+        result.name ? result.name : result.id
+      }`;
       result.table = 'rearing';
       result.allDay = false;
       result.icon = `fas fa-${result.symbol ? result.symbol : 'venus'}`;
@@ -126,12 +134,16 @@ const getTodos = async ({ query, user }) => {
     }
     res.table = 'todo';
     if (res.editor) {
-      res.editors = res.editor.username ? res.editor.username : res.editor.email;
+      res.editors = res.editor.username
+        ? res.editor.username
+        : res.editor.email;
     } else {
       res.editors = '';
     }
     if (res.creator) {
-      res.creators = res.creator.username ? res.creator.username : res.creator.email;
+      res.creators = res.creator.username
+        ? res.creator.username
+        : res.creator.email;
     } else {
       res.creators = '';
     }
@@ -161,7 +173,7 @@ const getMovements = async ({ query, user }) => {
       res.title = `${count}x ${res.apiary_name}`;
     }
     res.icon = 'fas fa-truck';
-    res.unicode = '🚚'
+    res.unicode = '🚚';
     res.color = 'gray';
     res.table = 'movedate';
     res.description = res.hive_names;
