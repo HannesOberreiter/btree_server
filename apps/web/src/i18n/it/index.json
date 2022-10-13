@@ -87,7 +87,7 @@
   "description": "Descrizione",
   "dialogSelectOptionAdd": "Seleziona l'opzione che vuoi aggiungere:",
   "dialogSelectOptionSelect": "Seleziona l'opzione che desideri modificare:",
-  "disease": "Patologia",
+  "disease": "malattia | \nMalattie",
   "donation": "Donazione",
   "done": "Fatto",
   "download": "Scarica",

@@ -101,15 +101,19 @@ const pagination = ref({
 
 const options = [
   {
-    label: t('charge') + ' ' + t('type'),
+    label: t('charge') + ' ' + t('type', 2),
     value: 'charge_types',
   },
   {
-    label: t('checkup') + ' ' + t('type'),
+    label: t('checkup') + ' ' + t('type', 2),
     value: 'checkup_types',
   },
   {
-    label: t('hive') + ' ' + t('type'),
+    label: t('harvest') + ' ' + t('type', 2),
+    value: 'harvest_types',
+  },
+  {
+    label: t('hive') + ' ' + t('type', 2),
     value: 'hive_types',
   },
   {
@@ -125,7 +129,7 @@ const options = [
     value: 'queen_races',
   },
   {
-    label: t('treatment') + ' ' + t('type'),
+    label: t('treatment') + ' ' + t('type', 2),
     value: 'treatment_types',
   },
   {
