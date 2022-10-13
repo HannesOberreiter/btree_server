@@ -76,7 +76,7 @@ watch(
         onDecodeError: onError,
         returnDetailedScanResult: true,
         preferredCamera: 'environment',
-        maxScansPerSecond: 1 / 2,
+        maxScansPerSecond: 20,
         highlightScanRegion: true,
       });
       scanner
