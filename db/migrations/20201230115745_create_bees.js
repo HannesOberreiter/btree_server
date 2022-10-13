@@ -21,16 +21,16 @@ exports.up = function (knex) {
     t.string('lang', 3);
     t.boolean('format').defaultTo(1).comment('User Time and Date Format');
     t.boolean('acdate')
-      .defaultTo(1)
+      .defaultTo(0)
       .comment(
         'If VIS Date (AUSTRIA) is shown in calendar or not, also for newsletter reminder'
       );
-    t.boolean('newsletter').defaultTo(1);
+    t.boolean('newsletter').defaultTo(0);
     t.boolean('todo')
       .defaultTo(1)
       .comment('1 shows done todos in calendar 0 not');
     t.boolean('sound')
-      .defaultTo(1)
+      .defaultTo(0)
       .comment(
         'If user wants to sounds when action is saved succefully or on error etc'
       );
