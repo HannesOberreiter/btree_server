@@ -7,9 +7,8 @@
 </template>
 
 <script lang="ts">
-import round from 'lodash-es/round';
 function calculateDaysAndHours(value: number) {
-  const days = round(value / 24);
+  const days = Math.floor(value / 24);
   const hours = value - days * 24;
   return {
     days: days,
