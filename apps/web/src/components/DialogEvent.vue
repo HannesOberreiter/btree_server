@@ -1,6 +1,6 @@
 <template>
   <q-dialog ref="dialogRef" data-cy="dialog-event" @hide="onDialogHide">
-    <q-card style="min-width: 30%">
+    <q-card :style="isRearings ? 'min-width: 50%' : 'min-width: 30%'">
       <q-card-section>
         <btn-close-dialog class="float-right"></btn-close-dialog>
         <div class="row">
