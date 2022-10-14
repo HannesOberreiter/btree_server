@@ -1,7 +1,7 @@
 [
   {
     "version": "6.0.15",
-    "date": "2022-10-XX",
+    "date": "2022-10-14",
     "news": [
       "VISUAL table rearing dialog is now only in fullscreen on mobile devices",
       "BUGFIX wrong day/hour calculation for rearing steps",
