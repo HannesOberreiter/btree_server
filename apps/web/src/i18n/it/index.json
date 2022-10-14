@@ -54,6 +54,7 @@
     "name": "Azienda | Aziende",
     "new": "Inserisci il nome per la tua nuova azienda (min: 5, max: 45). Nota: dovrai pagare separatamente per ogni nuovo accesso premium aziendale.",
     "removeAccess": "Sei sicuro di voler rimuovere il tuo accesso a questa azienda? Questo è possibile solo se non sei l'unico utente in questa azienda e se non è la tua unica azienda. Per sicurezza si prega di ripetere il nome dell'azienda:",
+    "removeUser": "Sei sicuro di voler rimuovere questo utente? \nSe l'utente non ha accesso a un'altra azienda, non sarà in grado di accedere nuovamente.",
     "title": "Qui puoi cambiare tra le tue aziende o crearne di nuove. Come amministratore puoi anche modificare il nome della tua azienda o eliminarne una.",
     "titleUser": "Qui puoi vedere un elenco di utenti che hanno accesso alla società attuale. Rimuovili, modifica i diritti di accesso o aggiungine di nuovi."
   },

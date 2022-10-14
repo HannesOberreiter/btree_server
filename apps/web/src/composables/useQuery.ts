@@ -920,7 +920,7 @@ export function useCountsQuery({ enabled = true as MaybeRef<boolean> }) {
       enabled: enabled,
       keepPreviousData: true,
       refetchOnWindowFocus: true,
-      staleTime: 1000, // stale (refetching), after 1 second
+      staleTime: 1000 * 60, // stale (refetching), after 60 second
       select: (response) => response,
       onError: (error: any) => notification.open('negative', error),
     }

@@ -54,6 +54,7 @@
     "name": "Company | Companies",
     "new": "Enter name for your new company (min: 5, max: 45). Note: You will need to pay for each new company premium access separately.",
     "removeAccess": "Are you sure you want to remove your access to this company? This is only possible if you are not the sole user in this company and if it is not your only company. For security please repeat the name of the company:",
+    "removeUser": "Are you sure you want to remove this user? If the user does not have access to another company, he or she will not be able to login again.",
     "title": "Here you can change your between your companies or create new ones. As admin you can also edit the name of your company or delete one.",
     "titleUser": "Here you can see a list of users who have access to the current company. Remove them, change access rights or add new ones."
   },
