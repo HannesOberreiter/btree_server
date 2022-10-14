@@ -54,6 +54,7 @@
     "name": "Imkerei | Imkereien",
     "new": "Geben Sie den Namen für Ihre neue Imkerei ein (min: 5, max: 45). Hinweis: Sie müssen für jede neue Imkerei den Premium-Zugang separat bezahlen.",
     "removeAccess": "Möchten Sie Ihren Zugriff auf diese Imkerei wirklich entfernen? Dies ist nur möglich, wenn Sie nicht der einzige Benutzer in dieser Imkerei sind und es nicht Ihre einzige Imkerei ist. Zur Sicherheit wiederholen Sie bitte den Imkereinamen:",
+    "removeUser": "Möchten Sie diesen Benutzer wirklich entfernen? \nWenn der Benutzer keinen Zugang zu einem anderen Unternehmen hat, kann er sich nicht erneut anmelden.",
     "title": "Hier können Sie zwischen Ihren Imkereien wechseln oder neue erstellen. Als Administrator können Sie auch den Namen Ihrer Imkerei bearbeiten oder die Imkerei löschen.",
     "titleUser": "Hier sehen Sie eine Liste der Benutzer, die Zugriff auf die aktuelle Imkerei haben. Entfernen Sie sie, ändern Sie die Zugriffsrechte oder fügen Sie neue hinzu."
   },

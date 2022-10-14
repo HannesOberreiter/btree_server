@@ -3,8 +3,13 @@
     "version": "6.0.15",
     "date": "2022-10-XX",
     "news": [
+      "VISUAL table rearing dialog is now only in fullscreen on mobile devices",
       "BUGFIX wrong day/hour calculation for rearing steps",
-      "BUGFIX wrong calculation of rearing series if last step as starting step was selected [SERVER]"
+      "BUGFIX wrong calculation of rearing series if last step as starting step was selected [SERVER]",
+      "BUGFIX batch deletion of queen rearing was not working [SERVER]",
+      "BUGFIX rearing events did not use UTC time [SERVER]",
+      "BUGFIX creating new companies was broken [SERVER]",
+      "BUGFIX missing translation for removing user"
     ]
   },
 
