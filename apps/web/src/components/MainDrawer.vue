@@ -105,7 +105,7 @@ watch(
 );
 
 onMounted(() => {
-  sleep(3000).then(() => (fetchCount.value = true));
+  sleep(1000 * 10).then(() => (fetchCount.value = true));
 });
 
 useIntervalFn(() => {
