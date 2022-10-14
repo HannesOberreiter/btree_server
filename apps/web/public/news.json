@@ -1,5 +1,14 @@
 [
   {
+    "version": "6.0.15",
+    "date": "2022-10-XX",
+    "news": [
+      "BUGFIX wrong day/hour calculation for rearing steps",
+      "BUGFIX wrong calculation of rearing series if last step as starting step was selected [SERVER]"
+    ]
+  },
+
+  {
     "version": "6.0.14",
     "date": "2022-10-12",
     "news": ["BUGFIX missing option for harvest types in settings"]
