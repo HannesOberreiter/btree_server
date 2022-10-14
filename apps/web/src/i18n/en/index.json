@@ -61,6 +61,7 @@
   "confirm": "Confirm",
   "confirmPassword": "Confirm password",
   "connectionStatus": "Connection status and latency to server.",
+  "contact": "Contact us",
   "content": "Content",
   "copiedToClipboard": "Copied to the clipboard.",
   "copy": "Copy",
@@ -137,6 +138,7 @@
   "external": "External",
   "failedDownload": "Browser denied file download...",
   "false": "No",
+  "faqs": "FAQs",
   "favorite": "Favourite",
   "favourite": "Favourite",
   "feed": "Feeding | Feedings",
@@ -480,6 +482,7 @@
     "title": "Here you can select or deselect fields you want to be shown in your Quicktool!"
   },
   "share": "Share",
+  "shareButton": "QR and NFC settings",
   "signup": {
     "accept": "Please accept the terms first!",
     "agree": "Do you agree with the",

@@ -61,6 +61,7 @@
   "confirm": "Bestätigen",
   "confirmPassword": "Passwort bestätigen",
   "connectionStatus": "Verbindungsstatus und Latenz zum Server.",
+  "contact": "Kontaktiere uns",
   "content": "Inhalt",
   "copiedToClipboard": "In die Zwischenablage kopiert.",
   "copy": "Kopieren",
@@ -137,6 +138,7 @@
   "external": "Externe",
   "failedDownload": "Browser verweigert Dateidownload...",
   "false": "Nein",
+  "faqs": "Häufig gestellte Fragen",
   "favorite": "Favorit",
   "favourite": "Favorit",
   "feed": "Fütterung | Fütterungen",
@@ -480,6 +482,7 @@
     "title": "Hier können Sie Felder auswählen oder abwählen, die in Ihrem Quicktool angezeigt werden sollen!"
   },
   "share": "Teilen",
+  "shareButton": "QR- und NFC-Einstellungen",
   "signup": {
     "accept": "Bitte akzeptieren Sie zuerst die Bedingungen!",
     "agree": "Stimmen Sie dem zu",

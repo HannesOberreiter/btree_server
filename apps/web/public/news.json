@@ -1,5 +1,10 @@
 [
   {
+    "version": "6.0.16",
+    "date": "2022-10-XX",
+    "news": ["FEATURE added mail contact button and FAQs link to footer"]
+  },
+  {
     "version": "6.0.15",
     "date": "2022-10-14",
     "news": [
