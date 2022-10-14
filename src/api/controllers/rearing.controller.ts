@@ -118,7 +118,8 @@ export class RearingController extends Controller {
     try {
       const result = await Rearing.transaction(async (trx) => {
         return Rearing.query(trx)
-          .deleteById(req.body.ids)
+          .delete()
+          .findByIds(req.body.ids)
           .where('user_id', req.user.user_id);
       });
       res.locals.data = result;
