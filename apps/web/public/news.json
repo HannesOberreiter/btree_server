@@ -1,8 +1,11 @@
 [
   {
-    "version": "6.0.16",
+    "version": "6.1.0",
     "date": "2022-10-XX",
-    "news": ["FEATURE added mail contact button and FAQs link to footer"]
+    "news": [
+      "FEATURE added mail contact button and FAQs link to footer",
+      "BETA added notice if you are currently on the beta server"
+    ]
   },
   {
     "version": "6.0.15",

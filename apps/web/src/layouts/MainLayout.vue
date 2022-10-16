@@ -96,6 +96,15 @@ onBeforeRouteLeave(() => {
 onBeforeRouteUpdate(() => {
   if (usePrevent.state.value) return usePrevent.blockMessage();
 });
+onMounted(() => {
+  if (process.env.BACKEND_URL.indexOf('beta') >= 0) {
+    $q.dialog({
+      title: 'BETA Page',
+      message:
+        'You are on the beta server, this page is only meant for testing and your data is not saved here! You will not edit your live data if you edit any data on this server.',
+    });
+  }
+});
 
 const refresh = (done: () => void) => {
   window.location.reload();
