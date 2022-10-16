@@ -91,7 +91,7 @@
 
 <script setup lang="ts">
 import 'leaflet/dist/leaflet.css';
-import { useApiariesQuery } from '~/composables/useQuery';
+import { useApiariesQuery, useInvalidateQueries } from '~/composables/useQuery';
 import { useAuthUserStore } from '~/stores/auth';
 import { useNotification } from '~/composables/useNotification';
 import DialogForm from '~/components/DialogForm.vue';
@@ -118,6 +118,7 @@ const { t } = useI18n();
 const $q = useQuasar();
 const userStore = useAuthUserStore();
 const notification = useNotification();
+const useInvalidate = useInvalidateQueries();
 
 const zoom = computed(() => (isLoading.value ? 2 : 9));
 const circleRadius = ref(1000);
@@ -189,7 +190,8 @@ function editApiaryForm(e: any) {
 function deleteApiary(value: string) {
   api.patch('/v1/apiary/batchDelete', { ids: [value] }).then(
     async (_response: any) => {
-      await refetch.value();
+      useInvalidate.invalidate('apiary');
+      //await refetch.value();
       notification.open('positive', '');
     },
     (error) => {
