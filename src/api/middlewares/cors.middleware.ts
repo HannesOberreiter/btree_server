@@ -53,6 +53,7 @@ class Cors {
 
     if (req.method === 'OPTIONS') {
       res.writeHead(200, {
+        'Access-Control-Allow-Credentials': 'true',
         'Access-Control-Allow-Headers': [
           'Content-Type',
           'Authorization',
