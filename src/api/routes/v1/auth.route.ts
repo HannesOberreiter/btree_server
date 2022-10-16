@@ -34,6 +34,10 @@ export class AuthRouter extends Router {
       );
 
     this.router
+      .route('/logout')
+      .get(Container.resolve('AuthController').logout);
+
+    this.router
       .route('/confirm')
       .patch(
         Validator.validate([body('confirm').isLength({ min: 100, max: 128 })]),

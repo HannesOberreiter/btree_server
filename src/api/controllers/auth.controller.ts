@@ -172,14 +172,51 @@ export class AuthController extends Controller {
     }
   }
 
+  async logout(req: Request, res: Response, next: NextFunction) {
+    req.session.user = null;
+    req.session.save(function (err) {
+      if (err) next(err);
+      // regenerate the session, which is good practice to help
+      // guard against forms of session fixation
+      req.session.regenerate(function (err) {
+        if (err) next(err);
+        res.locals.data = true;
+        next();
+      });
+    });
+  }
+
   async login(req: Request, res: Response, next: NextFunction) {
     const { email, password } = req.body;
     const userAgent = buildUserAgent(req);
     try {
-      const { bee_id, user_id, data } = await loginCheck(email, password);
-      const token = await generateTokenResponse(bee_id, user_id, userAgent);
-      res.locals.data = { token, data };
-      next();
+      const { bee_id, user_id, data, paid, rank } = await loginCheck(
+        email,
+        password
+      );
+
+      //const token = await generateTokenResponse(bee_id, user_id, userAgent);
+
+      req.session.regenerate(function (err) {
+        if (err) next(err);
+
+        // store user information in session, typically a user id
+        req.session.user = {
+          bee_id: bee_id,
+          user_id: user_id,
+          paid: paid,
+          rank: rank as any,
+          user_agent: userAgent,
+        };
+
+        // save the session before redirection to ensure page
+        // load does not happen before session is saved
+        req.session.save(function (err) {
+          if (err) return next(err);
+          res.locals.data = { data };
+          next();
+        });
+      });
     } catch (e) {
       next(e);
     }

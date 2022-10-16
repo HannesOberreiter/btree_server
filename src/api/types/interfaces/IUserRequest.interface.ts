@@ -1,13 +1,11 @@
 import { Request } from 'express';
 
 export interface User {
-  exp: number;
-  iat: number;
-  sub: number;
   bee_id: number;
   user_id: number;
   rank: 1 | 2 | 3 | 4;
   paid: boolean;
+  user_agent: string;
 }
 
 export interface IUserRequest extends Request {
@@ -15,4 +13,16 @@ export interface IUserRequest extends Request {
   body: any;
   user: User;
   params: Record<string, string>;
+}
+
+declare module 'express-session' {
+  interface SessionData {
+    user: {
+      bee_id: number;
+      user_id: number;
+      rank: 1 | 2 | 3 | 4;
+      paid: boolean;
+      user_agent: string;
+    };
+  }
 }

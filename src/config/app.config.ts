@@ -11,6 +11,8 @@ import {
 import p from 'path';
 
 import Express from 'express';
+import session from 'express-session';
+
 import Hpp from 'hpp';
 import BodyParser from 'body-parser';
 import { Cors as Kors } from '@middlewares/cors.middleware';
@@ -18,7 +20,7 @@ import Compression from 'compression';
 import RateLimit from 'express-rate-limit';
 import Morgan from 'morgan';
 
-import passport from 'passport';
+//import passport from 'passport';
 
 import { notAcceptable } from '@hapi/boom';
 
@@ -26,10 +28,15 @@ import { Container } from '@config/container.config';
 
 import { HelmetConfiguration } from '@config/helmet.config';
 
-import { PassportConfiguration } from '@config/passport.config';
+// import { PassportConfiguration } from '@config/passport.config';
 
 import { Resolver } from '@middlewares/resolver.middleware';
 import { Catcher } from '@middlewares/catcher.middleware';
+
+import { MySQLServer } from '@/servers/mysql.server';
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const KnexSessionStore = require('connect-session-knex')(session);
 
 /**
  * Instanciate and set Express application.
@@ -40,6 +47,10 @@ export class Application {
    * @description Wrapped Express.js application
    */
   public app: Express.Application;
+  /**
+   * @description Store for sessions
+   */
+  private store: any;
 
   /**
    * @description Configuring CORS asynchronously, will disable CORS for /external/ route
@@ -92,6 +103,7 @@ export class Application {
 
   constructor() {
     this.init();
+    this.createStore();
     this.plug();
   }
 
@@ -100,6 +112,18 @@ export class Application {
    */
   private init(): void {
     this.app = Express();
+  }
+
+  /***
+   * @description Instantiate session store with knex
+   */
+  private createStore(): void {
+    const knex = MySQLServer.knex;
+    this.store = new KnexSessionStore({
+      knex,
+      createtable: false,
+      clearInterval: 1000 * 60 * 60,
+    });
   }
 
   /**
@@ -152,15 +176,33 @@ export class Application {
      */
     this.app.use(Cors(this.corsOptionsDelegate));
 
+    this.app.use(
+      session({
+        name: 'btree-session',
+        secret: 'keyboard cat',
+        resave: false,
+        saveUninitialized: false,
+        rolling: false,
+        store: this.store,
+        cookie: {
+          sameSite: 'lax',
+          maxAge: 1000 * 60 * 60 * 24 * 60, // 60 days
+          secure: env !== ENVIRONMENT.development,
+          domain: env === ENVIRONMENT.production ? 'btree.at' : '',
+        },
+      })
+    );
+
     /**
      * Passport configuration
      *
      * @see http://www.passportjs.org/
      */
-    //this.app.use(PassportInitialize());
-    //PassportUse('jwt', PassportConfiguration.factory('jwt'));
-    this.app.use(passport.initialize());
-    passport.use('jwt', PassportConfiguration.factory('jwt'));
+    // this.app.use(passport.initialize());
+    // this.app.use(
+    //  passport.use('session', PassportConfiguration.factory('session'))
+    // );
+    //passport.use('jwt', PassportConfiguration.factory('jwt'));
 
     /**
      * Request logging with Morgan
@@ -193,6 +235,11 @@ export class Application {
       Container.resolve('ProxyRouter').router,
       Resolver.resolve
     );
+
+    /**
+     * Disable cache header
+     */
+    this.app.disable('etag');
 
     this.app.use(Catcher.log, Catcher.exit, Catcher.notFound); // Log, exit with error || exit with 404
   }

@@ -6,6 +6,7 @@ import { forbidden, locked, unauthorized } from '@hapi/boom';
 import dayjs from 'dayjs';
 import { createHash } from 'crypto';
 import { MailServer } from '../app.bootstrap';
+import { CompanyBee } from '../models/company_bee.model';
 
 const insertWrongPasswordTry = async (bee_id: number) => {
   const trx = await LoginAttemp.startTransaction();
@@ -177,6 +178,7 @@ const loginCheck = async (email: string, password: string) => {
   } else {
     company = user.company[0].id;
   }
+  const { rank, paid } = await getPaidRank(user.id, company);
 
   if (!checkPassword(password, user.password, user.salt)) {
     await insertWrongPasswordTry(user.id);
@@ -185,7 +187,29 @@ const loginCheck = async (email: string, password: string) => {
 
   await updateLastLogin(user.id);
 
-  return { bee_id: user.id, user_id: company, data: user };
+  return {
+    bee_id: user.id,
+    user_id: company,
+    data: user,
+    paid: paid,
+    rank: rank,
+  };
 };
 
-export { loginCheck, reviewPassword, fetchUser };
+const getPaidRank = async (bee_id: number, user_id: number) => {
+  const companyBee = await CompanyBee.query()
+    .findOne({
+      bee_id: bee_id,
+      user_id: user_id,
+    })
+    .withGraphJoined('company');
+
+  if (!companyBee) {
+    // User could be removed from company
+    throw unauthorized('Invalid Company / Bee Connection');
+  }
+
+  return { rank: companyBee.rank, paid: companyBee.company.isPaid() };
+};
+
+export { loginCheck, reviewPassword, fetchUser, getPaidRank };
