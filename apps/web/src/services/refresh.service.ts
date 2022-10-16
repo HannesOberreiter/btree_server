@@ -1,18 +1,13 @@
 import { useAuthUserStore } from '~/stores/auth';
 import { useFieldsettingStore } from '~/stores/fieldsetting';
-import { useInvalidateQueries } from '~/composables/useQuery';
 import { useApiFetch } from '~/composables/useApi';
 
 class RefreshService {
-  async refresh(user = true, clear = true) {
+  async refresh(user = true) {
     const api = useApiFetch();
     try {
       if (user) await this.user(api);
       await this.fieldsetting(api);
-      if (clear) {
-        const useInvalidate = useInvalidateQueries();
-        useInvalidate.invalidate('');
-      }
       return true;
     } catch (e) {
       console.error(e);

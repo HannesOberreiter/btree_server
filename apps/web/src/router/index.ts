@@ -65,7 +65,7 @@ export default route(function ({ store }) {
       ) {
         console.info('Updating local storage values');
         try {
-          await refreshStore.refresh(true, false);
+          await refreshStore.refresh();
         } catch (e) {
           console.error(e);
         }
