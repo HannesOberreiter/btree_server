@@ -11,6 +11,7 @@ describe('Company User routes', function () {
 
   before(function (done) {
     agent = request.agent(global.server);
+
     doRequest(
       agent,
       'post',
@@ -19,9 +20,9 @@ describe('Company User routes', function () {
       null,
       global.demoUser,
       function (err, res) {
+        if (err) throw err;
         expect(res.statusCode).to.eqls(200);
-        expect(res.body.token).to.be.a('Object');
-        accessToken = res.body.token.accessToken;
+        expect(res.header, 'set-cookie', /connect.sid=.*; Path=\/; HttpOnly/);
         done();
       }
     );
@@ -30,7 +31,7 @@ describe('Company User routes', function () {
   describe('/api/v1/company_user/user', () => {
     it(`401 - no header`, function (done) {
       doQueryRequest(
-        agent,
+        request.agent(global.server),
         route + 'user',
         null,
         null,
@@ -45,7 +46,7 @@ describe('Company User routes', function () {
 
     it(`add_user 401 - no header`, function (done) {
       doRequest(
-        agent,
+        request.agent(global.server),
         'post',
         route + 'add_user',
         null,
@@ -108,7 +109,7 @@ describe('Company User routes', function () {
   describe('/api/v1/company_user/', () => {
     it(`delete 401 - no header`, function (done) {
       doRequest(
-        agent,
+        request.agent(global.server),
         'delete',
         route + '1',
         null,
@@ -124,7 +125,7 @@ describe('Company User routes', function () {
 
     it(`patch 401 - no header`, function (done) {
       doRequest(
-        agent,
+        request.agent(global.server),
         'patch',
         route + '1',
         null,

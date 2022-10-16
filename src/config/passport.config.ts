@@ -2,6 +2,7 @@ import { User } from '@/api/types/interfaces/IUserRequest.interface';
 import { jwtSecret } from '@config/environment.config';
 import { Strategy as JwtStrategy } from 'passport-jwt';
 import { ExtractJwt } from 'passport-jwt';
+
 export class PassportConfiguration {
   private static options = {
     jwt: {
@@ -10,11 +11,13 @@ export class PassportConfiguration {
     },
   };
 
-  static factory(_strategy: string): JwtStrategy {
-    return new JwtStrategy(
-      PassportConfiguration.options.jwt,
-      PassportConfiguration.jwt
-    );
+  static factory(strategy: string): JwtStrategy {
+    if (strategy === 'jwt') {
+      return new JwtStrategy(
+        PassportConfiguration.options.jwt,
+        PassportConfiguration.jwt
+      );
+    }
   }
 
   private static jwt = async (

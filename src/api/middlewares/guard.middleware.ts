@@ -1,4 +1,4 @@
-import passport from 'passport';
+//import passport from 'passport';
 import { forbidden, badRequest, unauthorized } from '@hapi/boom';
 
 import { ROLES } from '@enums/role.enum';
@@ -21,15 +21,39 @@ export class Guard {
   static authorize =
     (roles = listNumber(ROLES)) =>
     (req: IUserRequest, res: any, next: NextFunction) =>
-      passport.authenticate(
+      Guard.handleSession(req, res, next, roles);
+  /*passport.authenticate(
         'jwt',
         { session: false },
         Guard.handleJWT(req, res, next, roles)
-      )(req, res, next);
+      )(req, res, next);*/
+
+  private static handleSession = (
+    req: IUserRequest,
+    _res: any,
+    next: NextFunction,
+    roles: number[]
+  ) => {
+    if (!req.session.user) return next(unauthorized());
+
+    if (
+      roles.length === 1 &&
+      roles[0] === ROLES.admin &&
+      req.session.user.rank !== ROLES.admin
+    ) {
+      return next(forbidden('Forbidden area'));
+    } else if (!roles.includes(req.session.user.rank)) {
+      return next(forbidden('Forbidden area'));
+    }
+    req.user = req.session.user;
+    return next();
+  };
 
   private static handleJWT =
     (req: IUserRequest, _res: any, next: NextFunction, roles: number[]) =>
     async (err: Error, user: any, info: any) => {
+      console.log(req);
+      console.log(user);
       const error = err || info;
 
       if (error || !user) {

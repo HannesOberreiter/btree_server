@@ -7,7 +7,7 @@ import { User } from '@models/user.model';
 import { CompanyBee } from '@models/company_bee.model';
 
 import { IUserRequest } from '@interfaces/IUserRequest.interface';
-import { reviewPassword, fetchUser } from '@utils/login.util';
+import { reviewPassword, fetchUser, getPaidRank } from '@utils/login.util';
 import {
   buildUserAgent,
   createHashedPassword,
@@ -23,7 +23,25 @@ export class UserController extends Controller {
 
   async get(req: IUserRequest, res: Response, next) {
     try {
-      res.locals.data = await fetchUser('', req.user.bee_id);
+      const data = await fetchUser('', req.user.bee_id);
+
+      // Check if connected company exists (last visited company)
+      // otherwise take the simply the first one
+      let company: number;
+      if (data.company.some((el) => el.id === data.saved_company)) {
+        company = data.saved_company;
+      } else {
+        company = data.company[0].id;
+      }
+      const { rank, paid } = await getPaidRank(data.id, company);
+      req.session.user = {
+        bee_id: data.id,
+        user_id: company,
+        paid: paid,
+        rank: rank as any,
+        user_agent: buildUserAgent(req),
+      };
+      res.locals.data = data;
       next();
     } catch (e) {
       next();

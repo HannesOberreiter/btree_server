@@ -27,9 +27,9 @@ describe('Queen routes', function () {
       null,
       global.demoUser,
       function (err, res) {
+        if (err) throw err;
         expect(res.statusCode).to.eqls(200);
-        expect(res.body.token).to.be.a('Object');
-        accessToken = res.body.token.accessToken;
+        expect(res.header, 'set-cookie', /connect.sid=.*; Path=\/; HttpOnly/);
         doRequest(
           agent,
           'post',
@@ -50,15 +50,22 @@ describe('Queen routes', function () {
 
   describe('/api/v1/queen/', () => {
     it(`get 401 - no header`, function (done) {
-      doQueryRequest(agent, route, null, null, null, function (err, res) {
-        expect(res.statusCode).to.eqls(401);
-        expect(res.errors, 'JsonWebTokenError');
-        done();
-      });
+      doQueryRequest(
+        request.agent(global.server),
+        route,
+        null,
+        null,
+        null,
+        function (err, res) {
+          expect(res.statusCode).to.eqls(401);
+          expect(res.errors, 'JsonWebTokenError');
+          done();
+        }
+      );
     });
     it(`post 401 - no header`, function (done) {
       doRequest(
-        agent,
+        request.agent(global.server),
         'post',
         route,
         null,
@@ -73,7 +80,7 @@ describe('Queen routes', function () {
     });
     it(`patch 401 - no header`, function (done) {
       doRequest(
-        agent,
+        request.agent(global.server),
         'patch',
         route,
         null,
@@ -118,7 +125,7 @@ describe('Queen routes', function () {
       );
     });
 
-    it(`patch 401 - no header`, function (done) {
+    it(`patch 200 - success`, function (done) {
       doRequest(
         agent,
         'patch',
@@ -141,7 +148,7 @@ describe('Queen routes', function () {
   describe('/api/v1/queen/stats', () => {
     it(`get 401 - no header`, function (done) {
       doQueryRequest(
-        agent,
+        request.agent(global.server),
         route + 'stats',
         null,
         null,
@@ -174,7 +181,7 @@ describe('Queen routes', function () {
   describe('/api/v1/queen/pedigree/:id', () => {
     it(`get 401 - no header`, function (done) {
       doQueryRequest(
-        agent,
+        request.agent(global.server),
         route + 'pedigree/7850',
         null,
         null,
@@ -206,7 +213,7 @@ describe('Queen routes', function () {
   describe('/api/v1/queen/batchGet', () => {
     it(`401 - no header`, function (done) {
       doRequest(
-        agent,
+        request.agent(global.server),
         'post',
         route + 'batchGet',
         null,
@@ -254,7 +261,7 @@ describe('Queen routes', function () {
   describe('/api/v1/queen/status', () => {
     it(`401 - no header`, function (done) {
       doRequest(
-        agent,
+        request.agent(global.server),
         'patch',
         route + 'status',
         null,
@@ -302,7 +309,7 @@ describe('Queen routes', function () {
   describe('/api/v1/queen/batchDelete', () => {
     it(`401 - no header`, function (done) {
       doRequest(
-        agent,
+        request.agent(global.server),
         'patch',
         route + 'batchDelete',
         null,
@@ -350,7 +357,7 @@ describe('Queen routes', function () {
   describe('/api/v1/queen/status', () => {
     it(`401 - no header`, function (done) {
       doRequest(
-        agent,
+        request.agent(global.server),
         'patch',
         route + 'status',
         null,

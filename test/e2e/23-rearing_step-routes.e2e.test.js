@@ -23,9 +23,9 @@ describe('Rearing Step routes', function () {
       null,
       global.demoUser,
       function (err, res) {
+        if (err) throw err;
         expect(res.statusCode).to.eqls(200);
-        expect(res.body.token).to.be.a('Object');
-        accessToken = res.body.token.accessToken;
+        expect(res.header, 'set-cookie', /connect.sid=.*; Path=\/; HttpOnly/);
         doRequest(
           agent,
           'post',
@@ -47,7 +47,7 @@ describe('Rearing Step routes', function () {
   describe('/api/v1/rearing_step/', () => {
     it(`post 401 - no header`, function (done) {
       doRequest(
-        agent,
+        request.agent(global.server),
         'post',
         route,
         null,
@@ -79,7 +79,7 @@ describe('Rearing Step routes', function () {
   describe('/api/v1/rearing_step/updatePosition', () => {
     it(`401 - no header`, function (done) {
       doRequest(
-        agent,
+        request.agent(global.server),
         'patch',
         route + 'updatePosition',
         null,
@@ -127,7 +127,7 @@ describe('Rearing Step routes', function () {
   describe('/api/v1/rearing_step/:id', () => {
     it(`401 - no header`, function (done) {
       doRequest(
-        agent,
+        request.agent(global.server),
         'delete',
         route,
         insertId,
