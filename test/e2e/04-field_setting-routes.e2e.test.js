@@ -24,6 +24,7 @@ describe('Fieldsetting routes', function () {
 
   before(function (done) {
     agent = request.agent(global.server);
+
     doRequest(
       agent,
       'post',
@@ -32,9 +33,9 @@ describe('Fieldsetting routes', function () {
       null,
       global.demoUser,
       function (err, res) {
+        if (err) throw err;
         expect(res.statusCode).to.eqls(200);
-        expect(res.body.token).to.be.a('Object');
-        accessToken = res.body.token.accessToken;
+        expect(res.header, 'set-cookie', /connect.sid=.*; Path=\/; HttpOnly/);
         done();
       }
     );
@@ -42,11 +43,18 @@ describe('Fieldsetting routes', function () {
 
   describe('/api/v1/field_setting/', () => {
     it(`401 - no header`, function (done) {
-      doQueryRequest(agent, route, null, null, null, function (err, res) {
-        expect(res.statusCode).to.eqls(401);
-        expect(res.errors, 'JsonWebTokenError');
-        done();
-      });
+      doQueryRequest(
+        request.agent(global.server),
+        route,
+        null,
+        null,
+        null,
+        function (err, res) {
+          expect(res.statusCode).to.eqls(401);
+          expect(res.errors, 'JsonWebTokenError');
+          done();
+        }
+      );
     });
 
     it(`200 - patch and get`, function (done) {

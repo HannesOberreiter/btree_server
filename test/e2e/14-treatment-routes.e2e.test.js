@@ -29,9 +29,9 @@ describe('Treatment routes', function () {
       null,
       global.demoUser,
       function (err, res) {
+        if (err) throw err;
         expect(res.statusCode).to.eqls(200);
-        expect(res.body.token).to.be.a('Object');
-        accessToken = res.body.token.accessToken;
+        expect(res.header, 'set-cookie', /connect.sid=.*; Path=\/; HttpOnly/);
         doRequest(
           agent,
           'post',
@@ -52,15 +52,22 @@ describe('Treatment routes', function () {
 
   describe('/api/v1/treatment/', () => {
     it(`get 401 - no header`, function (done) {
-      doQueryRequest(agent, route, null, null, null, function (err, res) {
-        expect(res.statusCode).to.eqls(401);
-        expect(res.errors, 'JsonWebTokenError');
-        done();
-      });
+      doQueryRequest(
+        request.agent(global.server),
+        route,
+        null,
+        null,
+        null,
+        function (err, res) {
+          expect(res.statusCode).to.eqls(401);
+          expect(res.errors, 'JsonWebTokenError');
+          done();
+        }
+      );
     });
     it(`post 401 - no header`, function (done) {
       doRequest(
-        agent,
+        request.agent(global.server),
         'post',
         route,
         null,
@@ -75,7 +82,7 @@ describe('Treatment routes', function () {
     });
     it(`patch 401 - no header`, function (done) {
       doRequest(
-        agent,
+        request.agent(global.server),
         'patch',
         route,
         null,
@@ -143,7 +150,7 @@ describe('Treatment routes', function () {
   describe('/api/v1/treatment/batchGet', () => {
     it(`401 - no header`, function (done) {
       doRequest(
-        agent,
+        request.agent(global.server),
         'post',
         route + 'batchGet',
         null,
@@ -191,7 +198,7 @@ describe('Treatment routes', function () {
   describe('/api/v1/treatment/status', () => {
     it(`401 - no header`, function (done) {
       doRequest(
-        agent,
+        request.agent(global.server),
         'patch',
         route + 'status',
         null,
@@ -239,7 +246,7 @@ describe('Treatment routes', function () {
   describe('/api/v1/treatment/date', () => {
     it(`401 - no header`, function (done) {
       doRequest(
-        agent,
+        request.agent(global.server),
         'patch',
         route + 'date',
         null,
@@ -287,7 +294,7 @@ describe('Treatment routes', function () {
   describe('/api/v1/treatment/batchDelete', () => {
     it(`401 - no header`, function (done) {
       doRequest(
-        agent,
+        request.agent(global.server),
         'patch',
         route + 'batchDelete',
         null,

@@ -169,21 +169,23 @@ describe('Authentification routes', function () {
         global.demoUser,
         function (err, res) {
           expect(res.statusCode).to.eqls(200);
-          expect(res.body.token).to.be.a('Object');
+          //expect(res.body.token).to.be.a('Object');
           expect(res.body.data).to.be.a('Object');
-          doRequest(
+          expect(res.header, 'set-cookie', /connect.sid=.*; Path=\/; HttpOnly/);
+          done();
+          /*doRequest(
             agent,
             'post',
             '/api/v1/auth/refresh',
             null,
-            res.body.token.accessToken,
-            res.body.token.refreshToken,
+            //res.body.token.accessToken,
+            //res.body.token.refreshToken,
             function (err, res) {
               expect(res.statusCode).to.eqls(200);
               expect(res.body.result).to.be.a('Object');
               done();
             }
-          );
+          );*/
         }
       );
     });
@@ -243,7 +245,7 @@ describe('Authentification routes', function () {
                 { email: res.body.email, password: newPassword },
                 function (err, res) {
                   expect(res.statusCode).to.eqls(200);
-                  expect(res.body.token).to.be.a('Object');
+                  //expect(res.body.token).to.be.a('Object');
                   expect(res.body.data).to.be.a('Object');
                   done();
                 }

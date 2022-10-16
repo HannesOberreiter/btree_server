@@ -187,7 +187,7 @@ export class Application {
         cookie: {
           sameSite: 'lax',
           maxAge: 1000 * 60 * 60 * 24 * 60, // 60 days
-          secure: env !== ENVIRONMENT.development,
+          secure: env === ENVIRONMENT.production,
           domain: env === ENVIRONMENT.production ? 'btree.at' : '',
         },
       })

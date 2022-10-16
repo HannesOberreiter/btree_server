@@ -1,7 +1,11 @@
 const request = require('supertest');
 const { expect } = require('chai');
-const { doRequest, expectations, doQueryRequest } = require(process.cwd() +
-  '/test/utils');
+const {
+  doRequest,
+  expectations,
+  doQueryRequest,
+  login,
+} = require(process.cwd() + '/test/utils');
 
 describe('Calendar routes', function () {
   const route = '/api/v1/calendar';
@@ -9,6 +13,7 @@ describe('Calendar routes', function () {
 
   before(function (done) {
     agent = request.agent(global.server);
+
     doRequest(
       agent,
       'post',
@@ -17,9 +22,9 @@ describe('Calendar routes', function () {
       null,
       global.demoUser,
       function (err, res) {
+        if (err) throw err;
         expect(res.statusCode).to.eqls(200);
-        expect(res.body.token).to.be.a('Object');
-        accessToken = res.body.token.accessToken;
+        expect(res.header, 'set-cookie', /connect.sid=.*; Path=\/; HttpOnly/);
         done();
       }
     );
@@ -54,7 +59,7 @@ describe('Calendar routes', function () {
 
       it(`${kind} 401 - no header`, function (done) {
         doQueryRequest(
-          agent,
+          request.agent(global.server),
           route + kind,
           null,
           null,
