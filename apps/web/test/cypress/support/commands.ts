@@ -120,32 +120,51 @@ Cypress.Commands.add('login_demo', (next = '') => {
 
 Cypress.Commands.add('login_session', (url: string) => {
   const userFixture = noRegistration ? 'user_demo' : 'user_new';
+  cy.session([userFixture, url], () => {
+    cy.fixture(userFixture).then((user) => {
+      cy.request({
+        url: 'http://localhost:8101/api/v1/auth/login',
+        method: 'POST',
 
-  cy.fixture(userFixture).then((user) => {
-    cy.request({
-      url: 'http://localhost:8101/api/v1/auth/login',
-      method: 'POST',
-      headers: {
-        origin: 'http://localhost:8001',
-      },
-      body: {
-        email: noRegistration ? user.mail : newMail,
-        password: user.password,
-      },
-    }).then((response) => {
-      window.localStorage.setItem('token', JSON.stringify(response.body.token));
-      window.localStorage.setItem('user', JSON.stringify(response.body.data));
+        headers: {
+          origin: 'http://localhost:8001',
+        },
+        body: {
+          email: noRegistration ? user.mail : newMail,
+          password: user.password,
+        },
+      }).then((response) => {
+        //window.localStorage.setItem('token', JSON.stringify(response.body.token));
+        window.localStorage.setItem('user', JSON.stringify(response.body.data));
+        const curId = response.body.data.saved_company || 0;
+        const companies = response.body.data.company;
+        let currentCompany: any = companies[0];
+        if (curId !== 0) {
+          currentCompany = find(companies, { id: curId });
+        }
+        // In case the user got removed from the saved company
+        if (!currentCompany) {
+          currentCompany = companies[0];
+        }
+        localStorage.setItem('company', JSON.stringify(currentCompany));
+        const cookie = response.headers['set-cookie'][0];
+        const firstPart = cookie.split(';')[0];
+        const separator = firstPart.indexOf('=');
+        const name = firstPart.substring(0, separator);
+        const value = firstPart.substring(separator + 1);
+        cy.setCookie(name, value);
+      });
     });
-  });
 
-  //cy.login_demo(url);
-  /*cy.url().then((currentUrl) => {
+    //cy.login_demo(url);
+    /*cy.url().then((currentUrl) => {
     if (!currentUrl.includes(url)) {
       cy.visit(url);
     }
   });*/
+    cy.saveLocalStorage();
+  });
   cy.visit(url);
-  cy.saveLocalStorage();
 
   /*
   cy.session(
@@ -166,4 +185,5 @@ Cypress.Commands.add('login_session', (url: string) => {
 // DO NOT REMOVE
 // Imports Quasar Cypress AE predefined commands
 import { registerCommands } from '@quasar/quasar-app-extension-testing-e2e-cypress';
+import find from 'lodash-es/find';
 registerCommands();

@@ -5,11 +5,9 @@ describe('Visitor - Unsubscribe', () => {
     cy.visit('/visitor/unsubscribe');
   });
 
-  it('Assert form present', () => {
+  it('Assert form', () => {
     cy.get('form').should('exist');
-  });
 
-  it('Validate email', () => {
     cy.get('[name=email]').type('noEmail');
     cy.get('[role=alert]').should('be.visible');
     cy.add_demo_mail();
@@ -18,9 +16,7 @@ describe('Visitor - Unsubscribe', () => {
       .then((val) => {
         mail = val as string;
       });
-  });
 
-  it('Unsubscribe', () => {
     cy.intercept({
       method: 'PATCH',
       url: '/api/v1/auth/unsubscribe',

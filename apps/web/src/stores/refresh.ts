@@ -18,10 +18,10 @@ export const useRefreshStore = defineStore('refresh', {
     },
   },
   actions: {
-    async refresh() {
+    async refresh(user = true, clear = true) {
       try {
         this.last = dayjs();
-        return await refreshService.refreshAll();
+        return await refreshService.refresh(user, clear);
       } catch (e) {
         throw e;
       }

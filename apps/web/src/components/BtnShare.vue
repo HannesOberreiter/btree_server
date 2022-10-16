@@ -8,6 +8,7 @@
     aria-label="NFC"
     @click="nfc.state.reading ? nfc.abort() : nfc.read()"
   >
+    <tooltip-base>NFC</tooltip-base>
   </q-btn>
   <div
     v-if="showPath"

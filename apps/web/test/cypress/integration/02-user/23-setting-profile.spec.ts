@@ -1,6 +1,6 @@
 describe('User - Setting Profile', () => {
   const form = 'form-user';
-  before(() => {
+  beforeEach(() => {
     cy.login_session('setting/profile');
   });
 

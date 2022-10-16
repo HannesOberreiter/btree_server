@@ -1,7 +1,7 @@
 describe('User - Charge Form', () => {
   const form = 'form-charge';
 
-  before(() => {
+  beforeEach(() => {
     cy.login_session('new/charge');
   });
 

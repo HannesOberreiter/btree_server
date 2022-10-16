@@ -1,7 +1,7 @@
 describe('User - Queen Form', () => {
   const form = 'form-queen';
 
-  before(() => {
+  beforeEach(() => {
     cy.login_session('new/queen');
   });
 

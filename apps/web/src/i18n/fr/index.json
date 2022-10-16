@@ -61,6 +61,7 @@
   "confirm": "Confirmer",
   "confirmPassword": "Confirmez le mot de passe",
   "connectionStatus": "État de la connexion et latence au serveur.",
+  "contact": "Contactez-nous",
   "content": "Contenu",
   "copiedToClipboard": "Copié dans le presse-papiers.",
   "copy": "Copie",
@@ -137,6 +138,7 @@
   "external": "Externe",
   "failedDownload": "Le navigateur a refusé le téléchargement du fichier...",
   "false": "Non",
+  "faqs": "FAQ",
   "favorite": "Favori",
   "favourite": "Favori",
   "feed": "Alimentation | Tétées",
@@ -480,6 +482,7 @@
     "title": "Ici, vous pouvez sélectionner ou désélectionner les champs que vous souhaitez afficher dans votre Quicktool!"
   },
   "share": "Partager",
+  "shareButton": "Paramètres QR et NFC",
   "signup": {
     "accept": "Veuillez d'abord accepter les conditions!",
     "agree": "Êtes-vous d'accord avec le",

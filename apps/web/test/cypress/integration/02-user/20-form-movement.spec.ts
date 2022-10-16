@@ -1,7 +1,7 @@
 describe('User - Movement Form', () => {
   const form = 'form-movement';
 
-  before(() => {
+  beforeEach(() => {
     cy.login_session('new/movement');
   });
 

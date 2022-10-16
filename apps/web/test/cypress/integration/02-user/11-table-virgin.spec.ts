@@ -3,15 +3,13 @@ const chance = new Chance();
 
 describe('User - Virgin Table', () => {
   const form = 'form-queen';
-  before(() => {
+  beforeEach(() => {
     cy.login_session('/table/virgin');
   });
 
-  it('Loaded', () => {
+  it('Create & Edit and Delete', () => {
     cy.get('.q-table').should('exist');
-  });
 
-  it('Create', () => {
     cy.dataCy('btn-table-new').click();
     cy.dataCy(form).should('exist');
     cy.get('[name=queen]').clear().type(chance.name());
@@ -19,13 +17,7 @@ describe('User - Virgin Table', () => {
     cy.get('[name=numberQueens]').clear().type('2');
     cy.dataCy('btn-form-save').click();
     cy.dataCy(form).should('not.exist');
-  });
-
-  it('Edit row', () => {
     cy.table_edit_row(form);
-  });
-
-  it('Delete row', () => {
     cy.table_delete_row();
   });
 });

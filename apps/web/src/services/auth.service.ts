@@ -1,10 +1,28 @@
 import { find } from 'lodash-es';
 import { RegisterUser, User } from '~/types';
-import { useAuthTokenStore } from '~/stores/token';
-import { useAuthUserStore } from '~/stores/auth';
+// import { useAuthTokenStore } from '~/stores/token';
+// import { useAuthUserStore } from '~/stores/auth';
 import { useApiFetch } from '~/composables/useApi';
 
 class AuthService {
+  async checkLogin() {
+    const api = useApiFetch();
+
+    return api
+      .get('/v1/user/', '', true, false)
+      .then((data) => data)
+      .catch(() => false);
+    /*
+    .then((response: any) => {
+      console.log(response);
+      /*if (response.token.accessToken) {
+        const storeToken = useAuthTokenStore();
+        storeToken.refreshToken(response.token);
+      }*/
+    //return response;
+    //});
+  }
+
   login(user: User) {
     const api = useApiFetch();
     const data = JSON.stringify({
@@ -12,19 +30,20 @@ class AuthService {
       password: user.password,
     });
     return api.post('/v1/auth/login', data).then((response: any) => {
-      if (response.token.accessToken) {
+      /*if (response.token.accessToken) {
         const storeToken = useAuthTokenStore();
         storeToken.refreshToken(response.token);
-      }
+      }*/
       return response;
     });
   }
 
   async logout() {
-    const storeToken = useAuthTokenStore();
-    const storeUser = useAuthUserStore();
-    storeToken.removeToken();
-    await storeUser.logout();
+    const api = useApiFetch();
+    return api
+      .get('/v1/auth/logout', '', true, false)
+      .then((data) => data)
+      .catch(() => false);
   }
 
   register(user: RegisterUser) {

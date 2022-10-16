@@ -1,7 +1,7 @@
 describe('User - Todo Form', () => {
   const form = 'form-todo';
 
-  before(() => {
+  beforeEach(() => {
     cy.login_session('new/todo');
   });
 

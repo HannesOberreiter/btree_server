@@ -1,20 +1,16 @@
 describe('Visitor - Login', () => {
-  before(() => {
+  beforeEach(() => {
     cy.clearLocalStorage();
     cy.visit('/');
   });
 
-  it('Assert form present', () => {
+  it('Assert form', () => {
     cy.get('[name=email]').should('exist');
     cy.get('[name=password]').should('exist');
-  });
 
-  it('Validate email', () => {
     cy.get('[name=email]').type('noEmail');
     cy.get('[role=alert]').should('be.visible');
-  });
 
-  it('Validate password', () => {
     cy.get('[name=password]').type('shor');
     cy.get('[role=alert]').should('be.visible');
   });
