@@ -6,14 +6,17 @@ import { useApiFetch } from '~/composables/useApi';
 class RefreshService {
   async refresh(user = true, clear = true) {
     const api = useApiFetch();
-    const useInvalidate = useInvalidateQueries();
     try {
       if (user) await this.user(api);
       await this.fieldsetting(api);
-      if (clear) useInvalidate.invalidate('');
+      if (clear) {
+        const useInvalidate = useInvalidateQueries();
+        useInvalidate.invalidate('');
+      }
       return true;
     } catch (e) {
-      throw e;
+      console.error(e);
+      await useAuthUserStore().logout();
     }
   }
   user(api: any) {

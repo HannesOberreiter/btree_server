@@ -56,8 +56,8 @@ export default route(function ({ store }) {
     if (
       to.matched.some((record) => record.meta.auth && !storeUser.isLoggedIn)
     ) {
-      console.warn('User not logged in, redirect');
-      next({ name: 'login', query: { next: to.fullPath } });
+      console.warn('User not logged in, redirect from', to.path);
+      next({ name: 'login', query: { next: to.path } });
     } else {
       if (
         to.matched.some((record) => record.meta.auth) &&
@@ -65,7 +65,7 @@ export default route(function ({ store }) {
       ) {
         console.info('Updating local storage values');
         try {
-          await refreshStore.refresh();
+          await refreshStore.refresh(true, false);
         } catch (e) {
           console.error(e);
         }
