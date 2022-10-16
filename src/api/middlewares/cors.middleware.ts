@@ -59,7 +59,15 @@ class Cors {
           'Authorization',
           'Origin',
         ],
-        'Access-Control-Allow-Methods': '*',
+        'Access-Control-Allow-Methods': [
+          'GET',
+          'POST',
+          'PUT',
+          'DELETE',
+          'OPTIONS',
+          'HEAD',
+          'PATCH',
+        ],
       });
       res.end();
       return;
