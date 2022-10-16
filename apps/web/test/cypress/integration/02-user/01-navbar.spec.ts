@@ -1,16 +1,12 @@
 describe('User - Navbar', () => {
-  before(() => {
+  beforeEach(() => {
     cy.login_session('/');
   });
 
-  /**
-    We cannot assert fullscreen as it needs user interaction
-   */
-  it('Fullscreen icon exist', () => {
+  it('Assert icons', () => {
+    // We cannot assert fullscreen as it needs user interaction
     cy.dataCy('btn-fullscreen').should('exist');
-  });
-
-  it('Dark mode', () => {
+    // Dark Mode
     cy.get('body').then(($el) => {
       const isDarkMode = $el.hasClass('body--dark');
       cy.dataCy('btn-dark-mode')
@@ -21,9 +17,7 @@ describe('User - Navbar', () => {
         })
         .click();
     });
-  });
-
-  it('Search and return button', () => {
+    // Search and return button
     cy.url().then((oldUrl) => {
       cy.dataCy('select-search-hive-apiary').click();
       cy.get('.q-menu').find('.q-item__section').first().click();
@@ -35,9 +29,8 @@ describe('User - Navbar', () => {
           cy.url().should('equal', oldUrl);
         });
     });
-  });
 
-  it('Open drawer', () => {
+    // Open Drawer
     cy.dataCy('btn-drawer').click();
     cy.dataCy('drawer').should('be.visible');
   });

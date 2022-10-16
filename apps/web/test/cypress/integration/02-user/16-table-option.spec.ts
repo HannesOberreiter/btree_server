@@ -4,28 +4,20 @@ const chance = new Chance();
 describe('User - Option Table', () => {
   const form = 'form-option';
 
-  before(() => {
+  beforeEach(() => {
     cy.login_session('setting/option/checkup_types');
   });
 
-  it('Loaded', () => {
-    cy.get('.q-table').should('exist');
-  });
-
   it('Create', () => {
+    cy.get('.q-table').should('exist');
+
     cy.dataCy('btn-table-new').click();
     cy.dataCy(form).should('exist');
     cy.get('[name=checkup_types]').clear().type(chance.word());
     cy.get('.checkbox-favorite').click();
     cy.dataCy('btn-form-save').click();
     cy.dataCy(form).should('not.exist');
-  });
-
-  it('Edit row', () => {
     cy.table_edit_row(form);
-  });
-
-  it('Delete row', () => {
     cy.table_delete_row();
   });
 });

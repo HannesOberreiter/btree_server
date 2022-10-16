@@ -1,5 +1,5 @@
 describe('User - Setting Company', () => {
-  before(() => {
+  beforeEach(() => {
     cy.login_session('setting/company');
   });
 

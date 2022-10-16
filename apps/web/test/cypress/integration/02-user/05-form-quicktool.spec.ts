@@ -1,18 +1,14 @@
 describe('User - Quicktool', () => {
-  before(() => {
+  beforeEach(() => {
     cy.login_session('/new/quicktool/feed');
   });
 
   it('Loaded', () => {
     cy.dataCy('form-quicktool').should('exist');
-  });
-
-  it('No hive', () => {
+    // No hive selected
     cy.dataCy('btn-form-save').click();
     cy.dataCy('notification').should('exist');
-  });
-
-  it('Save checkup and undo', () => {
+    // Save Checkup
     cy.dataCy('select-hive').click();
     cy.get('.q-menu').find('.q-item__section').first().click();
     cy.dataCy('btn-form-save').click();

@@ -2,15 +2,13 @@ import Chance from 'chance';
 const chance = new Chance();
 
 describe('User - Calendar', () => {
-  before(() => {
+  beforeEach(() => {
     cy.login_session('/');
   });
 
-  it('Fullcalendar loaded', () => {
+  it('Fullcalendar', () => {
     cy.get('.calendar-container').find('.fc').should('exist');
-  });
-
-  it('Change date', () => {
+    // Change Date
     cy.get('.fc-today-button').as('btn-today');
     cy.get('.fc-next-button').as('btn-next');
 
@@ -18,9 +16,8 @@ describe('User - Calendar', () => {
     cy.get('@btn-next').click();
     cy.get('@btn-today').should('not.have.attr', 'disabled');
     cy.get('@btn-today').click();
-  });
 
-  it('Add todo', () => {
+    // Add Todo
     cy.get('.fc-day-today')
       .find('.fc-daygrid-day-bg')
       .dblclick({ force: true });
@@ -28,9 +25,8 @@ describe('User - Calendar', () => {
     cy.get('[name=todo]').clear().type(chance.animal());
     cy.dataCy('btn-form-save').click();
     cy.dataCy('form-todo').should('not.exist');
-  });
 
-  it('Change view format', () => {
+    // Change View
     cy.get('.fc-dayGridMonth-button').as('btn-grid-month');
     cy.get('.fc-dayGridWeek-button').as('btn-grid-week');
     cy.get('.fc-listWeek-button').as('btn-list-week');
@@ -52,9 +48,8 @@ describe('User - Calendar', () => {
       .then(() => {
         cy.get('.fc-dayGridMonth-view').should('exist');
       });
-  });
 
-  it('Remove todo', () => {
+    // Remove Todo
     cy.get('.fc-day-today')
       .find('.fc-daygrid-day-events')
       .find('.fa-clipboard')
@@ -65,9 +60,8 @@ describe('User - Calendar', () => {
     cy.dataCy('btn-dialog-event-delete').click();
     cy.get('.btn-confirm').click();
     cy.dataCy('form-todo').should('not.exist');
-  });
 
-  it('Dialog source', () => {
+    // Dialog Settings
     cy.get('.fc-sources-button').click();
     cy.dataCy('dialog-calendar-setting').should('exist');
     cy.dataCy('btn-close-dialog').click();
