@@ -184,7 +184,7 @@ export class Application {
         secret: sessionSecret,
         resave: false,
         saveUninitialized: false,
-        rolling: false,
+        rolling: true,
         store: this.store,
         cookie: {
           sameSite: 'lax',
