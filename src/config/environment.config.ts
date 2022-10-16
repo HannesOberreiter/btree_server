@@ -67,6 +67,8 @@ const jwtExpirationInterval: number = parseFloat(
 const jwtExpirationIntervalRefreshToken: number = parseInt(
   process.env.JWT_REFRESH_DAYS
 );
+const sessionSecret = process.env.SESSION_SECRET;
+
 const logs = env === ENVIRONMENT.production ? 'combined' : 'development';
 // https://github.com/expressjs/morgan
 const httpLogs = env === ENVIRONMENT.production ? 'tiny' : 'dev';
@@ -183,4 +185,5 @@ export {
   basicLimit,
   totalLimit,
   cronjobTimer,
+  sessionSecret,
 };

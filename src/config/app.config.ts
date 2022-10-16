@@ -7,6 +7,7 @@ import {
   version,
   env,
   contentType,
+  sessionSecret,
 } from '@config/environment.config';
 import p from 'path';
 
@@ -59,6 +60,7 @@ export class Application {
     const origin = req.header('Origin');
     let corsOptions = {
       origin: true,
+      credentials: true,
       methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
       allowedHeaders: [
         'Accept',
@@ -72,7 +74,7 @@ export class Application {
 
     if (req.url.indexOf('external') !== -1) {
       // Allow API calls to scale and iCal without CORS
-      corsOptions = { origin: false };
+      corsOptions = { origin: false, credentials: false };
     } else if (
       authorized.indexOf(origin) === -1 &&
       origin &&
@@ -179,7 +181,7 @@ export class Application {
     this.app.use(
       session({
         name: 'btree-session',
-        secret: 'keyboard cat',
+        secret: sessionSecret,
         resave: false,
         saveUninitialized: false,
         rolling: false,

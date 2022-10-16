@@ -34,9 +34,25 @@ class Cors {
    * @param next Callback function
    */
   validate(req: Request, res: Response, next: (e?: Error) => void): void {
+    if (req.url.indexOf('external') !== -1) {
+      res.set('Access-Control-Allow-Origin', '*');
+    } else {
+      res.set('Access-Control-Allow-Origin', req.headers.origin);
+    }
+
+    // Set undefined CORS header
+    // https://github.com/expressjs/cors/issues/262
+    if (!req.headers.origin) {
+      if (req.headers.referer) {
+        const url = new URL(req.headers.referer);
+        req.headers.origin = url.origin;
+      } else if (req.headers.host) {
+        req.headers.origin = req.headers.host;
+      }
+    }
+
     if (req.method === 'OPTIONS') {
       res.writeHead(200, {
-        'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Headers': [
           'Content-Type',
           'Authorization',
@@ -46,10 +62,6 @@ class Cors {
       });
       res.end();
       return;
-    }
-
-    if (req.url.indexOf('external') !== -1) {
-      res.set('Access-Control-Allow-Origin', '*');
     }
 
     if (
@@ -62,17 +74,6 @@ class Cors {
           `Content-Type headers must be ${contentType} or 'multipart/form-data', ${req.headers['content-type']} given`
         )
       );
-    }
-
-    // Set undefined CORS header
-    // https://github.com/expressjs/cors/issues/262
-    if (!req.headers.origin) {
-      if (req.headers.referer) {
-        const url = new URL(req.headers.referer);
-        req.headers.origin = url.origin;
-      } else if (req.headers.host) {
-        req.headers.origin = req.headers.host;
-      }
     }
 
     if (!req.headers.origin) {
