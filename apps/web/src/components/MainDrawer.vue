@@ -84,7 +84,7 @@ const countReset = {
 const count = ref({ ...countReset }) as any;
 
 onMounted(() => {
-  refreshService.refresh(false, false);
+  refreshService.refresh(false);
 });
 
 watch(

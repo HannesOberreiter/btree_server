@@ -21,8 +21,8 @@ const storeRefresh = useRefreshStore();
 const $q = useQuasar();
 
 const onRefresh = async () => {
-  await storeRefresh.refresh();
   clearCache();
+  await storeRefresh.refresh();
   window.location.reload();
 };
 
