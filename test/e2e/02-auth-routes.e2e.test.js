@@ -256,4 +256,36 @@ describe('Authentification routes', function () {
       );
     });
   });
+
+  describe('/api/v1/user/', () => {
+    const route = '/api/v1/user/';
+    it('200 - checkpassword', function (done) {
+      doRequest(
+        agent,
+        'post',
+        '/api/v1/auth/login',
+        null,
+        null,
+        global.demoUser,
+        function (err, res) {
+          expect(res.statusCode).to.eqls(200);
+          expect(res.body.data).to.be.a('Object');
+          expect(res.header, 'set-cookie', /connect.sid=.*; Path=\/; HttpOnly/);
+          doRequest(
+            agent,
+            'post',
+            route + 'checkpassword',
+            null,
+            null,
+            global.demoUser,
+            function (err, res) {
+              expect(res.statusCode).to.eqls(200);
+              expect(res.body).to.be.equal(true);
+              done();
+            }
+          );
+        }
+      );
+    });
+  });
 });
