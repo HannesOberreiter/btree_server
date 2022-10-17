@@ -179,14 +179,14 @@ export class Application {
 
     this.app.use(
       session({
-        name: 'btree-session',
+        name: '_auth-btree-session',
         secret: sessionSecret,
         resave: false,
         saveUninitialized: false,
         rolling: true,
         store: this.store,
         cookie: {
-          sameSite: 'lax',
+          sameSite: 'strict',
           maxAge: 1000 * 60 * 60 * 24 * 60, // 60 days
           secure: env === ENVIRONMENT.production,
           domain: env === ENVIRONMENT.production ? 'btree.at' : '',
