@@ -1,5 +1,5 @@
 import { autoFill } from '@utils/autofill.util';
-import { badRequest, forbidden } from '@hapi/boom';
+import { forbidden, unauthorized } from '@hapi/boom';
 import { checkMySQLError } from '@utils/error.util';
 import { Company } from '@models/company.model';
 import { CompanyBee } from '@models/company_bee.model';
@@ -10,8 +10,6 @@ import { randomBytes } from 'crypto';
 import { User } from '@models/user.model';
 import dayjs from 'dayjs';
 import {
-  generateTokenResponse,
-  checkRefreshToken,
   createHashedPassword,
   confirmAccount,
   resetMail,
@@ -223,7 +221,10 @@ export class AuthController extends Controller {
   }
 
   async refresh(req: Request, res: Response, next: NextFunction) {
-    let accessToken: string;
+    // Change to Session Cookie from JWT
+    next(unauthorized('Session Only'));
+
+    /*let accessToken: string;
     const authHeader = String(req.headers['authorization'] || '');
     if (authHeader.startsWith('Bearer ')) {
       accessToken = authHeader.substring(7, authHeader.length);
@@ -237,6 +238,6 @@ export class AuthController extends Controller {
       next();
     } catch (e) {
       next(e);
-    }
+    }*/
   }
 }

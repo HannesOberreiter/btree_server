@@ -1,5 +1,5 @@
 //import passport from 'passport';
-import { forbidden, badRequest, unauthorized } from '@hapi/boom';
+import { forbidden, unauthorized } from '@hapi/boom';
 
 import { ROLES } from '@enums/role.enum';
 import { listNumber } from '@utils/enum.util';
@@ -9,8 +9,7 @@ import { NextFunction } from 'express';
 /**
  * Authentication middleware
  *
- * @dependency passport
- * @see http://www.passportjs.org/
+ * @dependency express-session
  */
 export class Guard {
   /**
@@ -48,7 +47,7 @@ export class Guard {
     req.user = req.session.user;
     return next();
   };
-
+  /*
   private static handleJWT =
     (req: IUserRequest, _res: any, next: NextFunction, roles: number[]) =>
     async (err: Error, user: any, info: any) => {
@@ -76,4 +75,5 @@ export class Guard {
 
       return next();
     };
+    */
 }

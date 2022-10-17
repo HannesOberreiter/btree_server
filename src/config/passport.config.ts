@@ -1,3 +1,4 @@
+/*
 import { User } from '@/api/types/interfaces/IUserRequest.interface';
 import { jwtSecret } from '@config/environment.config';
 import { Strategy as JwtStrategy } from 'passport-jwt';
@@ -34,3 +35,4 @@ export class PassportConfiguration {
     }
   };
 }
+*/

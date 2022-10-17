@@ -1,20 +1,24 @@
 import { checkMySQLError } from '@utils/error.util';
-import { CompanyBee } from '@models/company_bee.model';
-import { expectationFailed, unauthorized } from '@hapi/boom';
+
+/*
 import {
   jwtSecret,
   jwtExpirationInterval,
   jwtExpirationIntervalRefreshToken,
 } from '@config/environment.config';
-import { randomBytes, createHash } from 'crypto';
+import { CompanyBee } from '@models/company_bee.model';
+import { expectationFailed, unauthorized } from '@hapi/boom';
 import { RefreshToken } from '@models/refresh_token.model';
+import jwt from 'jsonwebtoken';
+*/
+
+import { randomBytes, createHash } from 'crypto';
 import { Request } from 'express';
 import { User } from '@models/user.model';
 import dayjs from 'dayjs';
-import jwt from 'jsonwebtoken';
 import useragent from 'express-useragent';
 
-const generateRefreshToken = async (
+/*const generateRefreshToken = async (
   bee_id: number,
   user_id: number,
   userAgent: string
@@ -154,7 +158,7 @@ const checkRefreshToken = async (
 
   const tokenType = 'Bearer';
   return { tokenType, accessToken, refreshToken, expiresIn };
-};
+};*/
 
 const buildUserAgent = (req: Request) => {
   try {
@@ -169,7 +173,7 @@ const buildUserAgent = (req: Request) => {
   }
 };
 
-const generateTokenResponse = async (
+/*const generateTokenResponse = async (
   bee_id: number,
   user_id: number,
   userAgent: string
@@ -209,7 +213,7 @@ const generateTokenResponse = async (
   );
 
   return { tokenType, accessToken, refreshToken, expiresIn };
-};
+};*/
 
 const createHashedPassword = (password: string, hash = 'sha512') => {
   // We first need to hash the inputPassword, this is due to an old code
@@ -291,8 +295,8 @@ const resetPassword = async (id: number, inputPassword: string) => {
 };
 
 export {
-  generateTokenResponse,
-  checkRefreshToken,
+  //generateTokenResponse,
+  //checkRefreshToken,
   createHashedPassword,
   confirmAccount,
   resetMail,

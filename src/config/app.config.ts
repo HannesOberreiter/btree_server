@@ -21,14 +21,13 @@ import Compression from 'compression';
 import RateLimit from 'express-rate-limit';
 import Morgan from 'morgan';
 
-//import passport from 'passport';
-
 import { notAcceptable } from '@hapi/boom';
 
 import { Container } from '@config/container.config';
 
 import { HelmetConfiguration } from '@config/helmet.config';
 
+// import passport from 'passport';
 // import { PassportConfiguration } from '@config/passport.config';
 
 import { Resolver } from '@middlewares/resolver.middleware';

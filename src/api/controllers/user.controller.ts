@@ -11,7 +11,7 @@ import { reviewPassword, fetchUser, getPaidRank } from '@utils/login.util';
 import {
   buildUserAgent,
   createHashedPassword,
-  generateTokenResponse,
+  //generateTokenResponse,
 } from '@utils/auth.util';
 import { map } from 'lodash';
 import { deleteCompany, deleteUser } from '../utils/delete.util';
