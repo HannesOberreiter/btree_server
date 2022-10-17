@@ -11,7 +11,7 @@ import { reviewPassword, fetchUser, getPaidRank } from '@utils/login.util';
 import {
   buildUserAgent,
   createHashedPassword,
-  generateTokenResponse,
+  //generateTokenResponse,
 } from '@utils/auth.util';
 import { map } from 'lodash';
 import { deleteCompany, deleteUser } from '../utils/delete.util';
@@ -137,13 +137,24 @@ export class UserController extends Controller {
       });
       await trx.commit();
 
-      const userAgent = buildUserAgent(req);
-      const token = await generateTokenResponse(
+      const data = await fetchUser('', req.user.bee_id);
+
+      const { rank, paid } = await getPaidRank(data.id, req.body.saved_company);
+      req.session.user = {
+        bee_id: data.id,
+        user_id: req.body.saved_company,
+        paid: paid,
+        rank: rank as any,
+        user_agent: buildUserAgent(req),
+      };
+      res.locals.data = { data: data, result: result };
+
+      //const userAgent = buildUserAgent(req);
+      /*const token = await generateTokenResponse(
         req.user.bee_id,
         req.body.saved_company,
         userAgent
-      );
-      res.locals.data = { token, result };
+      );*/
       next();
     } catch (e) {
       await trx.rollback();

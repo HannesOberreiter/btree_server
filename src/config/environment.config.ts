@@ -60,13 +60,15 @@ const port = process.env.PORT;
 const url = process.env.URL;
 const frontend = process.env.FRONTEND;
 const authorized = process.env.AUTHORIZED;
-const jwtSecret = process.env.JWT_SECRET;
+
+/*const jwtSecret = process.env.JWT_SECRET;
 const jwtExpirationInterval: number = parseFloat(
   process.env.JWT_EXPIRATION_MINUTES
 );
 const jwtExpirationIntervalRefreshToken: number = parseInt(
   process.env.JWT_REFRESH_DAYS
-);
+);*/
+
 const sessionSecret = process.env.SESSION_SECRET;
 
 const logs = env === ENVIRONMENT.production ? 'combined' : 'development';
@@ -169,9 +171,9 @@ export {
   meteoblueKey,
   authorized,
   contentType,
-  jwtSecret,
-  jwtExpirationInterval,
-  jwtExpirationIntervalRefreshToken,
+  //jwtSecret,
+  //jwtExpirationInterval,
+  //jwtExpirationIntervalRefreshToken,
   version,
   logs,
   httpLogs,

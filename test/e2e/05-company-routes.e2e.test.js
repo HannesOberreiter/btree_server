@@ -141,9 +141,10 @@ describe('Company routes', function () {
                 accessToken,
                 {},
                 function (err, res) {
+                  console.log(res.body);
                   expect(res.statusCode).to.eqls(200);
                   expect(res.body.result, 1);
-                  expect(res.body.token).to.be.a('Object');
+                  expect(res.body.data).to.be.a('Object');
                   done();
                 }
               );
