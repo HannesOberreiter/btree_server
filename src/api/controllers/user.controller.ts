@@ -74,6 +74,18 @@ export class UserController extends Controller {
     }
   }
 
+  async checkPassword(req: IUserRequest, res: Response, next) {
+    if ('password' in req.body) {
+      try {
+        const result = await reviewPassword(req.user.bee_id, req.body.password);
+        res.locals.data = result;
+        next();
+      } catch (e) {
+        next(e);
+      }
+    }
+  }
+
   async patch(req: IUserRequest, res: Response, next) {
     const trx = await User.startTransaction();
     try {

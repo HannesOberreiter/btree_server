@@ -36,6 +36,16 @@ export class UserRouter extends Router {
       );
 
     this.router
+      .route('/checkpassword')
+      .post(
+        Validator.validate([
+          body('password').exists().withMessage('requiredField').trim(),
+        ]),
+        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+        Container.resolve('UserController').checkPassword
+      );
+
+    this.router
       .route('/company')
       .patch(
         Validator.validate([body('saved_company').exists()]),
