@@ -78,12 +78,13 @@ export const useApiFetch = () => {
     url: string,
     payload = '' as unknown,
     loadingIndicator = true,
-    showPopup = true
+    showPopup = true,
+    credentials = true
   ): Promise<any> => {
     const urlParam = buildUrl(url, payload);
     const originalRequest = new Request(urlParam, {
       method: 'GET', // *GET, POST, PUT, DELETE, etc.
-      credentials: 'include', // include, *same-origin, omit
+      credentials: credentials ? 'include' : 'omit', // include, *same-origin, omit
       headers: buildHeader(),
     });
 
