@@ -1,7 +1,7 @@
 [
   {
     "version": "6.1.0",
-    "date": "2022-10-16",
+    "date": "2022-10-17",
     "news": [
       "BETA added notice if you are currently on the beta server",
       "BUGFIX relax data caching and invalidate old cache if new data is generated",
