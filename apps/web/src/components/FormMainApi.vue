@@ -156,6 +156,7 @@ import useVuelidate from '@vuelidate/core';
 import { useApiFetch } from '~/composables/useApi';
 
 const storeUser = useAuthUserStore();
+const { t } = useI18n();
 const { copy } = useClipboard();
 const api = useApiFetch();
 const notification = useNotification();
@@ -241,6 +242,41 @@ async function changeApiStatus(value = true, change = false) {
 async function loadApiValue() {
   isSubmitting.value = true;
   if (apiField.value === 'password') {
+    const isFormCorrect = await v.value.$validate();
+    if (!isFormCorrect) {
+      notification.open(
+        'negative',
+        t('validations.required', { field: t('password') }),
+        true
+      );
+      return;
+    }
+    if (state.password === '') {
+      notification.open(
+        'negative',
+        t('validations.required', { field: t('password') }),
+        true
+      );
+      return;
+    }
+
+    const checkPassword = await api
+      .post('/v1/user/checkpassword', {
+        password: state.password,
+      })
+      .then(
+        async (response: any) => {
+          return response;
+        },
+        (error) => {
+          notification.open('negative', error);
+        }
+      );
+
+    if (!checkPassword) {
+      return;
+    }
+
     await api.get('/v1/company/apikey').then(
       (response: any) => {
         apiField.value = apiField.value === 'text' ? 'password' : 'text';
@@ -259,7 +295,7 @@ async function loadApiValue() {
 
 async function scaleTest() {
   if (scaleUrlShort.value) {
-    await api.get(scaleUrlShort.value).then(
+    await api.get(scaleUrlShort.value, '', true, true, false).then(
       (response: any) => {
         notification.open(
           'positive',

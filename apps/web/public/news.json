@@ -11,6 +11,7 @@
       "CHANGE navbar hive and apiary search does not include inactive anymore",
       "FEATURE improved QR code scanner and added option to upload image",
       "FEATURE added mail contact button and FAQs link to footer",
+      "FEATURE for more security the password is now required to show API key",
       "BREAKING changed session logic from JWT to cookies [SERVER, FRONTEND], this means you will be logged out and your apps must be updated to work again! Sorry for the inconvenience.",
       "BREAKING (German) die Session Logik wurde von JWT auf Cookies umgestellt [SERVER, FRONTEND], das bedeutet, dass Sie abgemeldet werden und Sie Ihre Anwendungen aktualisieren müssen, dass diese wieder zu funktioniert! Wir entschuldigen uns für die Unannehmlichkeiten."
     ]
