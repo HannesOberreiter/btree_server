@@ -8,7 +8,7 @@
   >
     <div id="qr-code-full-region" class="col-12"></div>
   </div>
-  <div v-if="!deviceId" class="row">
+  <div v-if="deviceId === '' && !scanning" class="row">
     <div class="col-12">
       {{ $t('error.noCameraDetected') }}
     </div>
@@ -26,6 +26,13 @@
   <div class="row q-pt-lg">
     <div class="col-12 text-center">
       <BtnBaseGroup>
+        <BtnBase
+          color="secondary"
+          :disable="scanning || deviceId !== ''"
+          @click="getPermission"
+        >
+          {{ $t('permission') }}
+        </BtnBase>
         <BtnBase color="primary" :disable="scanning" @click="startScanning">
           {{ $t('start') }}
         </BtnBase>
@@ -104,7 +111,6 @@ onMounted(async () => {
   });
 });
 
-/*
 function getPermission() {
   // This method will trigger user permissions
   try {
@@ -114,6 +120,7 @@ function getPermission() {
           console.log(devices);
           deviceId.value = devices[0].id;
         }
+        notification.open('positive', '');
       })
       .catch((err) => {
         console.error(err);
@@ -123,7 +130,6 @@ function getPermission() {
     console.error(err);
   }
 }
-*/
 
 function startScanning() {
   if (html5QrCode.value) {

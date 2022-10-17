@@ -76,22 +76,24 @@ function sendForm(user: User) {
       redirect();
     },
     (error) => {
+      isSubmitting.value = false;
       console.error(error);
       notification.open('negative', error);
     }
   );
-  isSubmitting.value = false;
 }
 
 onMounted(() => {
   store
     .checkLoginStatus()
     .then((status) => {
-      isSubmitting.value = false;
       if (status) redirect();
+      else isSubmitting.value = false;
     })
     .catch(() => (isSubmitting.value = false));
 });
+
+onUnmounted(() => (isSubmitting.value = false));
 
 function redirect() {
   if (lastUrl) {
