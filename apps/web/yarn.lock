@@ -1766,11 +1766,6 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-18.11.0.tgz#f38c7139247a1d619f6cc6f27b072606af7c289d"
   integrity sha512-IOXCvVRToe7e0ny7HpT/X9Rb2RYtElG1a+VshjwT00HxrM2dWBApHQoqsI6WiY7Q03vdf2bCrIGzVrkF/5t10w==
 
-"@types/offscreencanvas@^2019.6.4":
-  version "2019.7.0"
-  resolved "https://registry.yarnpkg.com/@types/offscreencanvas/-/offscreencanvas-2019.7.0.tgz#e4a932069db47bb3eabeb0b305502d01586fa90d"
-  integrity sha512-PGcyveRIpL1XIqK8eBsmRBt76eFgtzuPiSTyKHZxnGemp2yzGzWpjYKAfK3wIMiU7eH+851yEpiuP8JZerTmWg==
-
 "@types/qrcode@^1.5.0":
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/@types/qrcode/-/qrcode-1.5.0.tgz#6a98fe9a9a7b2a9a3167b6dde17eff999eabe40b"
@@ -4262,6 +4257,11 @@ html-minifier@^4.0.0:
     relateurl "^0.2.7"
     uglify-js "^3.5.1"
 
+html5-qrcode@^2.2.3:
+  version "2.2.3"
+  resolved "https://registry.yarnpkg.com/html5-qrcode/-/html5-qrcode-2.2.3.tgz#5acb826860365e7c7ab91e1e14528ea16a502e8a"
+  integrity sha512-9CtEz5FVT56T76entiQxyrASzBWl8Rm30NHiQH8T163Eml5LS14BoZlYel9igxbikOt7O8KhvrT3awN1Y2HMqw==
+
 http-errors@2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/http-errors/-/http-errors-2.0.0.tgz#b7774a1486ef73cf7667ac9ae0858c012c57b9d3"
@@ -5645,13 +5645,6 @@ punycode@^2.1.0, punycode@^2.1.1:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/punycode/-/punycode-2.1.1.tgz#b58b010ac40c22c5657616c8d2c2c02c7bf479ec"
   integrity sha512-XRsRjdf+j5ml+y/6GKHPZbrF/8p2Yga0JPtdqTIY2Xe5ohJPD9saDJJLPvp9+NSBprVvevdXZybnj2cv8OEd0A==
-
-qr-scanner@^1.4.1:
-  version "1.4.1"
-  resolved "https://registry.yarnpkg.com/qr-scanner/-/qr-scanner-1.4.1.tgz#31a1bf7f9927f0eb1e3c0909fe66fec97a3b3701"
-  integrity sha512-xiR90NONHTfTwaFgW/ihlqjGMIZg6ExHDOvGQRba1TvV+WVw7GoDArIOt21e+RO+9WiO4AJJq+mwc5f4BnGH3w==
-  dependencies:
-    "@types/offscreencanvas" "^2019.6.4"
 
 qrcode@^1.5.1:
   version "1.5.1"

@@ -120,6 +120,7 @@ declare module '@vue/runtime-core' {
     MapOverlay: typeof import('./components/MapOverlay.vue')['default']
     PaymentPaypal: typeof import('./components/PaymentPaypal.vue')['default']
     PaymentStripe: typeof import('./components/PaymentStripe.vue')['default']
+    QrcodeScanner: typeof import('./components/QrcodeScanner.vue')['default']
     RearingMethod: typeof import('./components/RearingMethod.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']

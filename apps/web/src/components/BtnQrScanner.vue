@@ -1,6 +1,6 @@
 <template>
   <q-btn
-    v-if="hasCamera"
+    v-if="cameras.length > 0"
     flat
     dense
     size="md"
@@ -18,14 +18,10 @@
 <script setup lang="ts">
 import { useQuasar } from 'quasar';
 import DialogQrScanner from './DialogQrScanner.vue';
-import QrScanner from 'qr-scanner';
+import { useDevicesList } from '@vueuse/core';
 
 const $q = useQuasar();
-const hasCamera = ref(false);
-
-onMounted(() =>
-  QrScanner.hasCamera().then((value) => (hasCamera.value = value))
-);
+const { videoInputs: cameras } = useDevicesList();
 
 function onClick() {
   $q.dialog({
