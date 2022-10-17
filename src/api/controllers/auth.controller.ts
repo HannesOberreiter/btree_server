@@ -220,7 +220,7 @@ export class AuthController extends Controller {
     }
   }
 
-  async refresh(req: Request, res: Response, next: NextFunction) {
+  async refresh(_req: Request, _res: Response, next: NextFunction) {
     // Change to Session Cookie from JWT
     next(unauthorized('Session Only'));
 
