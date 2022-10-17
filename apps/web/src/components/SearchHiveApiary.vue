@@ -47,18 +47,18 @@ const options = ref([] as any);
 const router = useRouter();
 
 const { isLoading: isLoadingHive, data: hives } = useHivesQuery({
-  modus: null,
+  modus: true,
   order: ['modus', 'hive_location.apiary_name', 'position'],
   direction: ['desc', 'asc', 'asc'],
 });
 const { isLoading: isLoadingApiary, data: apiaries } = useApiariesQuery({
-  modus: null,
+  modus: true,
   order: ['modus', 'name'],
   direction: ['desc', 'asc'],
 });
 
 const data = computed(() => {
-  let inactive = [
+  /*let inactive = [
     ...apiaries.value.results.filter((o: any) => o.modus === false),
     ...hives.value.results.filter((o: any) => o.modus === false),
   ];
@@ -67,6 +67,8 @@ const data = computed(() => {
     ...hives.value.results.filter((o: any) => o.modus === true),
   ];
   let result = [...active, ...inactive];
+  */
+  let result = [...apiaries.value.results, ...hives.value.results];
   return result.map((obj) => {
     let label =
       obj.modus === false ? obj.label + ' [' + t('inactive') + ']' : obj.label;
