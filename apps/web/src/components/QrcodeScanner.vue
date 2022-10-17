@@ -20,7 +20,6 @@
   </div>
   <div class="row">
     <div class="col-12 text-center q-pt-sm">
-      {{ $t('file') }}:
       <input id="qr-input-file" type="file" accept="image/*" capture />
     </div>
   </div>
