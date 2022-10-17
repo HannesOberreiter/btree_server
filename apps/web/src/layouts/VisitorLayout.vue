@@ -20,7 +20,11 @@
                 />
                 <div class="text-h6">b.tree</div>
                 <div class="text-subtitle2">
-                  Professional Beekeeping Database
+                  {{
+                    isBeta
+                      ? 'You are on the BETA Server, your data on this page will not be saved!'
+                      : 'Professional Beekeeping Database'
+                  }}
                 </div>
               </q-pull-to-refresh>
             </q-card-section>
@@ -103,6 +107,12 @@ import { useRouter } from 'vue-router';
 import SupporterImages from '~/components/SupporterImages.vue';
 import { useMeta } from 'quasar';
 import { useFetch } from '@vueuse/core';
+import { useApiFetch } from '~/composables/useApi';
+
+const useApi = useApiFetch();
+useApi.state.logout = false;
+
+const isBeta = process.env.BACKEND_URL.indexOf('beta') >= 0;
 
 const { isFetching, error, data }: any = useFetch(
   '/news.json?cache=' + Date.now()

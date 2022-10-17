@@ -138,8 +138,8 @@
           </div>
           <div class="text-bold q-pt-sm">
             Cheers<br />
-            Hannes Oberreiter [Organic Beekeeper, Hobby Biologist and Part-Time
-            Software Developer]
+            _Hannes Oberreiter_, [certified organic Beekeeper, hobby biologist
+            and spare time programmer]
           </div>
         </div>
       </div>

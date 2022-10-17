@@ -1,5 +1,5 @@
 describe('User - Setting Dropbox', () => {
-  before(() => {
+  beforeEach(() => {
     cy.login_session('setting/dropbox');
   });
 

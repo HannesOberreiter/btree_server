@@ -2,10 +2,10 @@ import { acceptHMRUpdate, defineStore } from 'pinia';
 import { i18n, setLocale } from '~/boot/i18n';
 import { isEmpty } from 'lodash-es';
 import { Router } from '~/router';
-import { useAuthTokenStore } from './token';
+//import { useAuthTokenStore } from './token';
 import { usePreferredLanguages } from '@vueuse/core';
 import { User, Company } from '~/types';
-import { useRefreshStore } from './refresh';
+//import { useRefreshStore } from './refresh';
 import { useStorage } from '@vueuse/core';
 import AuthService from '~/services/auth.service';
 import dayjs from 'dayjs';
@@ -18,8 +18,7 @@ export const useAuthUserStore = defineStore('auth/user', {
   }),
   getters: {
     isLoggedIn: (state) => {
-      const tokenStore = useAuthTokenStore();
-      return !isEmpty(state.user) && !isEmpty(tokenStore.getToken);
+      return !isEmpty(state.user) && !isEmpty(state.company);
     },
     getLanguage: (state) => {
       const languages = usePreferredLanguages();
@@ -73,6 +72,16 @@ export const useAuthUserStore = defineStore('auth/user', {
     },
   },
   actions: {
+    async checkLoginStatus() {
+      const data = await AuthService.checkLogin();
+      if (data) {
+        this.refresh(data);
+        return true;
+      }
+      return false;
+      //const tokenStore = useAuthTokenStore();
+      //return !isEmpty(state.user) && !isEmpty(tokenStore.getToken);
+    },
     updateLang() {
       setLocale(i18n, this.getLanguage);
     },
@@ -80,7 +89,7 @@ export const useAuthUserStore = defineStore('auth/user', {
       return AuthService.login(user).then(
         async (res: any) => {
           this.refresh(res.data);
-          await useRefreshStore().refresh();
+          //await useRefreshStore().refresh();
           return Promise.resolve(user);
         },
         (error: any) => {
@@ -92,14 +101,15 @@ export const useAuthUserStore = defineStore('auth/user', {
       );
     },
     async logout() {
+      AuthService.logout();
       this.user = {};
       this.company = {};
-      localStorage.removeItem('token');
-      localStorage.removeItem('refresh');
-      await Router.push({
+      localStorage.removeItem('user');
+      localStorage.removeItem('company');
+      return await Router.push({
         name: 'login',
-        query: { next: Router.currentRoute.value.fullPath },
-      });
+        query: { next: Router.currentRoute.value.path },
+      }).then((v) => v);
     },
     refresh(data: any) {
       const curCompany = AuthService.getCurrentCompany(data);

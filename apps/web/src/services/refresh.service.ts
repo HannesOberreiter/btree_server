@@ -1,18 +1,17 @@
 import { useAuthUserStore } from '~/stores/auth';
 import { useFieldsettingStore } from '~/stores/fieldsetting';
-import { clearCache } from '~/composables/useQuery';
 import { useApiFetch } from '~/composables/useApi';
 
 class RefreshService {
-  async refreshAll() {
+  async refresh(user = true) {
     const api = useApiFetch();
     try {
-      await this.user(api);
+      if (user) await this.user(api);
       await this.fieldsetting(api);
-      clearCache();
       return true;
     } catch (e) {
-      throw e;
+      console.error(e);
+      await useAuthUserStore().logout();
     }
   }
   user(api: any) {

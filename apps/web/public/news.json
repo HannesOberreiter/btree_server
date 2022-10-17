@@ -1,5 +1,22 @@
 [
   {
+    "version": "6.1.0",
+    "date": "2022-10-17",
+    "news": [
+      "BETA added notice if you are currently on the beta server",
+      "BUGFIX relax data caching and invalidate old cache if new data is generated",
+      "BUGFIX feeding types were missing in options, thanks jannis",
+      "BUGFIX rezise observer on calendar did try to change calendar size even if not ready",
+      "BUGFIX keep login button disabled till redirected to starting page",
+      "CHANGE navbar hive and apiary search does not include inactive anymore",
+      "FEATURE improved QR code scanner and added option to upload image",
+      "FEATURE added mail contact button and FAQs link to footer",
+      "FEATURE for more security the password is now required to show API key",
+      "BREAKING changed session logic from JWT to cookies [SERVER, FRONTEND], this means you will be logged out and your apps must be updated to work again! Sorry for the inconvenience.",
+      "BREAKING (German) die Session Logik wurde von JWT auf Cookies umgestellt [SERVER, FRONTEND], das bedeutet, dass Sie abgemeldet werden und Sie Ihre Anwendungen aktualisieren müssen, dass diese wieder zu funktioniert! Wir entschuldigen uns für die Unannehmlichkeiten."
+    ]
+  },
+  {
     "version": "6.0.15",
     "date": "2022-10-14",
     "news": [

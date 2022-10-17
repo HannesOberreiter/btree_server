@@ -1,15 +1,13 @@
 describe('Visitor - Password reset', () => {
   let token: string, mail: string;
-  before(() => {
+  beforeEach(() => {
     cy.clearLocalStorage();
     cy.visit('/visitor/recover');
   });
 
-  it('Recover - Assert form present', () => {
+  it('Recover - Assert form', () => {
     cy.get('form').should('exist');
-  });
 
-  it('Recover - Validate email', () => {
     cy.get('[name=email]').type('noEmail');
     cy.get('[role=alert]').should('be.visible');
     cy.add_demo_mail();
@@ -18,9 +16,7 @@ describe('Visitor - Password reset', () => {
       .then((val) => {
         mail = val as string;
       });
-  });
 
-  it('Recover', () => {
     cy.intercept({
       method: 'POST',
       url: '/api/v1/auth/reset',
@@ -35,28 +31,19 @@ describe('Visitor - Password reset', () => {
     });
   });
 
-  it('Reset - Move to reset form', () => {
+  it('Reset - Assert Form', () => {
     cy.visit(`/visitor/reset/${token}`);
-  });
-
-  it('Reset - Assert form present', () => {
     cy.get('form').should('exist');
-  });
 
-  it('Reset - Assert param token is correctly taken into form field', () => {
     cy.get('[name=resetKey]').should('have.value', token);
-  });
 
-  it('Reset - Validate password', () => {
     cy.get('[name=password]').type('shor');
     cy.get('[role=alert]').should('be.visible');
     cy.get('[name=password]').clear().type('firstPassword');
     cy.get('[name=confirmPassword]').clear().type('secondPassword');
     cy.get('[role=alert]').should('be.visible');
     cy.add_demo_password();
-  });
 
-  it('Reset', () => {
     cy.intercept({
       method: 'PATCH',
       url: '/api/v1/auth/reset',

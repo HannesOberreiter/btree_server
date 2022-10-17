@@ -64,13 +64,13 @@
 
 <script setup lang="ts">
 import { findIndex, sortBy } from 'lodash-es';
-import { useAuthTokenStore } from '~/stores/token';
+// import { useAuthTokenStore } from '~/stores/token';
 import { useAuthUserStore } from '~/stores/auth';
 import { useNotification } from '~/composables/useNotification';
 import { useQuasar } from 'quasar';
 import { useRefreshStore } from '~/stores/refresh';
 import { useApiFetch } from '~/composables/useApi';
-import { clearCache } from '~/composables/useQuery';
+import { clearCache, useInvalidateQueries } from '~/composables/useQuery';
 import { useDateFormat } from '~/composables/useDate';
 
 const notification = useNotification();
@@ -79,8 +79,9 @@ const api = useApiFetch();
 const { t } = useI18n();
 const $q = useQuasar();
 const storeUser = useAuthUserStore();
-const storeToken = useAuthTokenStore();
+// const storeToken = useAuthTokenStore();
 const storeRefresh = useRefreshStore();
+const invalidateQueries = useInvalidateQueries();
 const router = useRouter();
 
 const { user, company } = storeToRefs(storeUser);
@@ -107,8 +108,10 @@ const changeCompany = (value: any) => {
   api.patch('/v1/user/company', { saved_company: value.id }).then(
     async (response: any) => {
       clearCache();
-      storeToken.refreshToken(response.token);
-      await storeRefresh.refresh();
+      invalidateQueries.invalidate();
+      storeUser.refresh(response.data);
+      // storeToken.refreshToken(response.token);
+      //await storeRefresh.refresh();
       notification.open('positive', '');
       router.go(0);
     },
@@ -134,8 +137,9 @@ const removeAccess = () => {
     persistent: true,
   }).onOk(() => {
     api.remove(`/v1/company_user/${model.value.id}`).then(
-      async (response: any) => {
-        storeToken.refreshToken(response.token);
+      async (_response: any) => {
+        invalidateQueries.invalidate();
+        // storeToken.refreshToken(response.token);
         await storeRefresh.refresh();
         notification.open('positive', '');
       },
@@ -161,6 +165,7 @@ const editCompany = () => {
   }).onOk((data) => {
     api.patch('/v1/company', { name: data }).then(
       async (_response: any) => {
+        invalidateQueries.invalidate();
         await storeRefresh.refresh();
         notification.open('positive', '');
       },
@@ -185,6 +190,7 @@ const newCompany = () => {
   }).onOk((data) => {
     api.post('/v1/company', { name: data }).then(
       async (_response: any) => {
+        invalidateQueries.invalidate();
         await storeRefresh.refresh();
         notification.open('positive', '');
       },
@@ -210,8 +216,9 @@ const deleteCompany = () => {
     persistent: true,
   }).onOk(() => {
     api.remove(`/v1/company/${model.value.id}`).then(
-      async (response: any) => {
-        storeToken.refreshToken(response.token);
+      async (_response: any) => {
+        invalidateQueries.invalidate();
+        //storeToken.refreshToken(response.token);
         await storeRefresh.refresh();
         notification.open('positive', '');
       },

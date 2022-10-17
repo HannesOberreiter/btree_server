@@ -4,7 +4,7 @@ import { Option, Task } from '~/types';
 import { queryCache } from '~/boot/vue-query';
 import { Ref } from 'vue';
 import { useNotification } from '~/composables/useNotification';
-import { QueryClient, useQuery } from 'vue-query';
+import { QueryClient, useQuery, useQueryClient } from 'vue-query';
 import dayjs from 'dayjs';
 import { useApiFetch } from './useApi';
 
@@ -14,6 +14,7 @@ export function useCalendarQuery() {
     defaultOptions: {
       queries: {
         refetchOnWindowFocus: false,
+        refetchOnMount: true,
         staleTime: 1000 * 60 * 1, // stale (refetching), after 1 minute
         cacheTime: 1000 * 60 * 60 * 48, // garbage collector, every 48 hours } },
       },
@@ -58,7 +59,7 @@ export function useApiaryQuery({
     },
     {
       enabled: enabled,
-      keepPreviousData: true,
+      keepPreviousData: false,
       select: (response) => {
         return response;
       },
@@ -112,7 +113,7 @@ export function useMovementsQuery({
     },
     {
       enabled: enabled,
-      keepPreviousData: true,
+      keepPreviousData: false,
       select: (response) => response,
       onError: (error: any) => notification.open('negative', error),
     }
@@ -147,7 +148,7 @@ export function useTodosQuery({
     },
     {
       enabled: enabled,
-      keepPreviousData: true,
+      keepPreviousData: false,
       select: (response) => response,
       onError: (error: any) => notification.open('negative', error),
     }
@@ -171,6 +172,7 @@ export function useTasksQuery(
 ) {
   const notification = useNotification();
   const api = useApiFetch();
+
   return useQuery(
     [task, offset, limit, order, direction, deleted, q, details, filters, done],
     () => {
@@ -189,7 +191,7 @@ export function useTasksQuery(
     },
     {
       enabled: enabled,
-      keepPreviousData: true,
+      keepPreviousData: false,
       select: (response) => response,
       onError: (error: any) => notification.open('negative', error),
     }
@@ -226,7 +228,8 @@ export function useApiariesQuery({
     },
     {
       enabled: enabled,
-      keepPreviousData: true,
+      keepPreviousData: false,
+      refetchOnMount: true,
       select: (response) => {
         const result = map(response.results, (value) => {
           const hive_count = value.hive_count
@@ -296,7 +299,7 @@ export function useQueensQuery({
     },
     {
       enabled: enabled,
-      keepPreviousData: true,
+      keepPreviousData: false,
       select: (response) => {
         const result = map(response.results, (value) => {
           value.label = `${value.name} (${dayjs(value.date).format(
@@ -342,7 +345,7 @@ export function useQueensStats({
     },
     {
       enabled: enabled,
-      keepPreviousData: true,
+      keepPreviousData: false,
       select: (response) => response,
       onError: (error: any) => notification.open('negative', error),
     }
@@ -397,7 +400,7 @@ export function useChargeQuery({
     },
     {
       enabled: enabled,
-      keepPreviousData: true,
+      keepPreviousData: false,
       select: (response) => response,
       onError: (error: any) => notification.open('negative', error),
     }
@@ -428,7 +431,7 @@ export function useChargeStockQuery({
     },
     {
       enabled: enabled,
-      keepPreviousData: true,
+      keepPreviousData: false,
       select: (response) => response,
       onError: (error: any) => notification.open('negative', error),
     }
@@ -445,7 +448,7 @@ export function useScaleQuery({ enabled = true as MaybeRef<boolean> }) {
     },
     {
       enabled: enabled,
-      keepPreviousData: true,
+      keepPreviousData: false,
       select: (response) => {
         const result = map(response, (value) => {
           const hive = value.hive ? ` (${value.hive.name})` : '';
@@ -486,7 +489,7 @@ export function useScaleDataQuery({
     },
     {
       enabled: enabled,
-      keepPreviousData: true,
+      keepPreviousData: false,
       select: (response) => response,
       onError: (error: any) => notification.open('negative', error),
     }
@@ -506,7 +509,7 @@ export function useHiveQuery({
     },
     {
       enabled: enabled,
-      keepPreviousData: true,
+      keepPreviousData: false,
       select: (response) => {
         return response;
       },
@@ -531,7 +534,7 @@ export function useHiveTaskQuery({
     },
     {
       enabled: enabled,
-      keepPreviousData: true,
+      keepPreviousData: false,
       select: (response) => {
         return response;
       },
@@ -588,7 +591,7 @@ export function useHivesQuery({
     },
     {
       enabled: enabled,
-      keepPreviousData: true,
+      keepPreviousData: false,
       select: (response) => {
         const result = map(response.results, (value) => {
           value.label = `${value.name} (${value.hive_location.apiary_name})`;
@@ -679,7 +682,7 @@ export function useRearingDetailsQuery({
     },
     {
       enabled: enabled,
-      keepPreviousData: true,
+      keepPreviousData: false,
       select: (response) => {
         const result = map(response.results, (value) => {
           value.label = `${value.job} [${value.hour}h]`;
@@ -719,7 +722,7 @@ export function useRearingTypesQuery({
     },
     {
       enabled: enabled,
-      keepPreviousData: true,
+      keepPreviousData: false,
       select: (response) => {
         const result = map(response.results, (value) => {
           value.label = value.name;
@@ -751,7 +754,7 @@ export function useRearingEventQuery({
     },
     {
       enabled: enabled,
-      keepPreviousData: true,
+      keepPreviousData: false,
       select: (response) => response,
       onError: (error: any) => notification.open('negative', error),
     }
@@ -784,7 +787,7 @@ export function useRearingsQuery({
     },
     {
       enabled: enabled,
-      keepPreviousData: true,
+      keepPreviousData: false,
       select: (response) => response,
       onError: (error: any) => notification.open('negative', error),
     }
@@ -832,7 +835,7 @@ export function useStatisticTable(
     },
     {
       enabled: enabled,
-      keepPreviousData: true,
+      keepPreviousData: false,
       select: (response) => response,
       onError: (error: any) => notification.open('negative', error),
     }
@@ -855,7 +858,7 @@ export function useStatisticYear(
     },
     {
       enabled: enabled,
-      keepPreviousData: true,
+      keepPreviousData: false,
       select: (response) => response,
       onError: (error: any) => notification.open('negative', error),
     }
@@ -878,7 +881,7 @@ export function useStatisticApiary(
     },
     {
       enabled: enabled,
-      keepPreviousData: true,
+      keepPreviousData: false,
       select: (response) => response,
       onError: (error: any) => notification.open('negative', error),
     }
@@ -901,7 +904,7 @@ export function useStatisticType(
     },
     {
       enabled: enabled,
-      keepPreviousData: true,
+      keepPreviousData: false,
       select: (response) => response,
       onError: (error: any) => notification.open('negative', error),
     }
@@ -918,9 +921,11 @@ export function useCountsQuery({ enabled = true as MaybeRef<boolean> }) {
     },
     {
       enabled: enabled,
-      keepPreviousData: true,
-      refetchOnWindowFocus: true,
-      staleTime: 1000 * 60, // stale (refetching), after 60 second
+      keepPreviousData: false,
+      refetchOnWindowFocus: false,
+      refetchOnMount: true,
+      staleTime: 1000 * 60, // after 60 second
+      refetchInterval: 1000 * 60 * 30, // every 30 minutes
       select: (response) => response,
       onError: (error: any) => notification.open('negative', error),
     }
@@ -934,3 +939,15 @@ export function clearCache(q = '') {
     queries.forEach((query) => query.invalidate());
   }
 }
+
+export const useInvalidateQueries = () => {
+  const queryClient = useQueryClient();
+
+  function invalidate(q = '') {
+    if (q.trim() === '') queryClient.invalidateQueries();
+    else {
+      queryClient.invalidateQueries(q);
+    }
+  }
+  return { invalidate };
+};

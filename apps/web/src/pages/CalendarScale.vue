@@ -45,7 +45,9 @@ onMounted(() => {
 });
 
 function onResize(_size: any) {
-  cal.value.getApi().updateSize();
+  if (cal.value?.getApi()) {
+    cal.value.getApi().updateSize();
+  }
 }
 
 const handleEventClick = (clickInfo: EventClickArg) => {

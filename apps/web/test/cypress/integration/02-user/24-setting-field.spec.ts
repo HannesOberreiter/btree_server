@@ -1,5 +1,5 @@
 describe('User - Setting Fields', () => {
-  before(() => {
+  beforeEach(() => {
     cy.login_session('setting/field');
   });
 

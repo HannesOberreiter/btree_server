@@ -113,6 +113,10 @@ const options = [
     value: 'harvest_types',
   },
   {
+    label: t('feed') + ' ' + t('type', 2),
+    value: 'feed_types',
+  },
+  {
     label: t('hive') + ' ' + t('type', 2),
     value: 'hive_types',
   },

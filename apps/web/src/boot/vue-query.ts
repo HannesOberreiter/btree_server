@@ -17,6 +17,7 @@ const vueQueryPluginOptions: VueQueryPluginOptions = {
     defaultOptions: {
       queries: {
         refetchOnWindowFocus: false,
+        refetchOnMount: true,
         staleTime: 1000 * 30, // stale (refetching), after 30 seconds
         cacheTime: 1000 * 60 * 60 * 48, // garbage collector, every 24 hours
       },

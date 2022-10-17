@@ -34,8 +34,10 @@ import { PropType } from 'vue';
 import { useApiFetch } from '~/composables/useApi';
 import { useFormCleanup } from '~/composables/useFormCleanup';
 import { useNotification } from '~/composables/useNotification';
+import { useInvalidateQueries } from '~/composables/useQuery';
 import { Option } from '~/types';
 
+const useInvalidate = useInvalidateQueries();
 const notification = useNotification();
 const isSubmitting = ref(false);
 const api = useApiFetch();
@@ -89,8 +91,7 @@ async function onUpdate() {
   await api.patch(url, JSON.stringify(data)).then(
     async (response: any) => {
       lastInsert.value = response;
-      emit('change');
-      notification.open('positive', '');
+      dataChanged();
     },
     (error) => {
       notification.open('negative', error);
@@ -111,8 +112,7 @@ async function onUndo() {
   await api.patch(url, data).then(
     (_response: any) => {
       lastInsert.value = null;
-      emit('change');
-      notification.open('positive', '');
+      dataChanged();
     },
     (error) => {
       notification.open('negative', error);
@@ -139,13 +139,19 @@ async function onSubmit() {
     async (response: any) => {
       lastInsert.value = response;
       lastInsertTable.value = unref(form.value);
-      emit('change');
-      notification.open('positive', '');
+
+      dataChanged();
     },
     (error) => {
       notification.open('negative', error);
     }
   );
   isSubmitting.value = false;
+}
+
+function dataChanged() {
+  useInvalidate.invalidate(form.value);
+  notification.open('positive', '');
+  emit('change');
 }
 </script>

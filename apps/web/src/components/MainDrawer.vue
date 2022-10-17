@@ -56,10 +56,9 @@
 </template>
 
 <script setup lang="ts">
-import { useIntervalFn } from '@vueuse/core';
 import { useQuasar } from 'quasar';
 import { useCountsQuery } from '~/composables/useQuery';
-import { sleep } from '~/helpers';
+import refreshService from '~/services/refresh.service';
 import { useAuthUserStore } from '~/stores/auth';
 import { useQuicktoolStore } from '~/stores/quicktool';
 
@@ -67,9 +66,8 @@ const { t } = useI18n();
 const storeUser = useAuthUserStore();
 const storeQuicktool = useQuicktoolStore();
 const $q = useQuasar();
-const fetchCount = ref(false);
 
-const { data, refetch } = useCountsQuery({ enabled: fetchCount });
+const { data } = useCountsQuery({ enabled: true });
 
 const countReset = {
   feed: 0,
@@ -84,6 +82,10 @@ const countReset = {
 };
 
 const count = ref({ ...countReset }) as any;
+
+onMounted(() => {
+  refreshService.refresh(false);
+});
 
 watch(
   data,
@@ -103,14 +105,6 @@ watch(
   },
   { immediate: true }
 );
-
-onMounted(() => {
-  sleep(1000 * 10).then(() => (fetchCount.value = true));
-});
-
-useIntervalFn(() => {
-  refetch.value();
-}, 1000 * 60 * 5);
 
 const onLogout = async () => {
   await storeUser.logout();

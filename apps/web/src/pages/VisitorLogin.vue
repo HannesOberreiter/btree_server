@@ -33,7 +33,7 @@ const router = useRouter();
 const lastUrl = router.currentRoute.value.query.next;
 const notification = useNotification();
 
-const isSubmitting = ref(false);
+const isSubmitting = ref(true);
 const submitCount = ref(0);
 
 const store = useAuthUserStore();
@@ -76,17 +76,24 @@ function sendForm(user: User) {
       redirect();
     },
     (error) => {
+      isSubmitting.value = false;
+      console.error(error);
       notification.open('negative', error);
     }
   );
-  isSubmitting.value = false;
 }
 
 onMounted(() => {
-  if (store.isLoggedIn) {
-    redirect();
-  }
+  store
+    .checkLoginStatus()
+    .then((status) => {
+      if (status) redirect();
+      else isSubmitting.value = false;
+    })
+    .catch(() => (isSubmitting.value = false));
 });
+
+onUnmounted(() => (isSubmitting.value = false));
 
 function redirect() {
   if (lastUrl) {

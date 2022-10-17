@@ -3,15 +3,13 @@ const chance = new Chance();
 
 describe('User - Queen Table', () => {
   const form = 'form-queen';
-  before(() => {
+  beforeEach(() => {
     cy.login_session('/table/queen');
   });
 
-  it('Loaded', () => {
+  it('Create & Edit and Delete', () => {
     cy.get('.q-table').should('exist');
-  });
 
-  it('Create', () => {
     cy.dataCy('btn-table-new').click();
     cy.dataCy(form).should('exist');
     cy.get('[name=queen]').clear().type(chance.name());
@@ -19,21 +17,14 @@ describe('User - Queen Table', () => {
     cy.get('[name=numberQueens]').clear().type('2');
     cy.dataCy('btn-form-save').click();
     cy.dataCy(form).should('not.exist');
-  });
 
-  it('Change View', () => {
     cy.dataCy('btn-table-modus').click();
-  });
-
-  it('Edit row', () => {
     cy.table_edit_row(form);
-  });
-
-  it('Delete row', () => {
     cy.table_delete_row();
   });
 
   it('Open Dialog Pedigree', () => {
+    cy.dataCy('btn-table-modus').click();
     cy.dataCy('col-pedigree').first().click();
     cy.dataCy('dialog-pedigree').should('exist');
     cy.dataCy('btn-close-dialog').click();

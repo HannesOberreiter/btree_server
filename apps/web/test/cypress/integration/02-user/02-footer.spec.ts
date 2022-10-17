@@ -1,9 +1,9 @@
 describe('User - Footer', () => {
-  before(() => {
+  beforeEach(() => {
     cy.login_session('/');
   });
 
-  it('Share dialog', () => {
+  it('Footer Icons', () => {
     cy.dataCy('btn-share').click();
     cy.dataCy('dialog-share').should('be.visible');
     cy.dataCy('input-url')
