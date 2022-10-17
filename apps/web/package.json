@@ -34,7 +34,7 @@
     "dropbox": "^10.33.0",
     "echarts": "^5.4.0",
     "fuse.js": "^6.6.2",
-    "leaflet": "^1.9.2",
+    "leaflet": "^1.9.1",
     "lodash-es": "^4.17.21",
     "pinia": "^2.0.23",
     "qr-scanner": "^1.4.1",
