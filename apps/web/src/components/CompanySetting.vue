@@ -106,11 +106,12 @@ const checkCompanyName = (val: string) => {
 const changeCompany = (value: any) => {
   isSubmitting.value = true;
   api.patch('/v1/user/company', { saved_company: value.id }).then(
-    async (_response: any) => {
+    async (response: any) => {
       clearCache();
       invalidateQueries.invalidate();
+      storeUser.refresh(response.data);
       // storeToken.refreshToken(response.token);
-      await storeRefresh.refresh();
+      //await storeRefresh.refresh();
       notification.open('positive', '');
       router.go(0);
     },
