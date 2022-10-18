@@ -98,8 +98,16 @@ export const useScanner = () => {
   }
 
   async function destroy() {
-    await stopScanning();
-    if (!isStarting.value) html5QrCode.value = null;
+    if (html5QrCode.value) {
+      try {
+        if (html5QrCode.value.localMediaStream?.getVideoTracks)
+          html5QrCode.value.localMediaStream.getVideoTracks()[0].stop();
+      } catch (err) {
+        console.error(err);
+      }
+      await stopScanning();
+      if (!isStarting.value) html5QrCode.value = null;
+    }
   }
 
   async function startScanning() {
