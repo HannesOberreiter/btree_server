@@ -16,7 +16,7 @@ const html5QrCode = ref<Html5QrCustom | null>(null);
 const isScanning = ref(false);
 const isStarting = ref(false);
 const textError = ref('');
-const textResult = ref('-----');
+const textResult = ref('');
 
 export const useScanner = () => {
   const { videoInputs: cameras } = useDevicesList();
@@ -53,7 +53,7 @@ export const useScanner = () => {
     }) as unknown as Html5QrCustom;
 
     textError.value = '';
-    textResult.value = '-----';
+    textResult.value = '';
     const fileinput = document.getElementById('qr-input-file');
     fileinput.addEventListener('change', (e) => {
       const target = e.target as HTMLInputElement;
@@ -98,8 +98,16 @@ export const useScanner = () => {
   }
 
   async function destroy() {
-    await stopScanning();
-    if (!isStarting.value) html5QrCode.value = null;
+    if (html5QrCode.value) {
+      try {
+        if (html5QrCode.value.localMediaStream?.getVideoTracks)
+          html5QrCode.value.localMediaStream.getVideoTracks()[0].stop();
+      } catch (err) {
+        console.error(err);
+      }
+      await stopScanning();
+      if (!isStarting.value) html5QrCode.value = null;
+    }
   }
 
   async function startScanning() {

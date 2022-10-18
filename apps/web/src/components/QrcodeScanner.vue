@@ -84,7 +84,7 @@ onMounted(async () => {
 });
 
 watch(textResult, (cur) => {
-  if (cur) {
+  if (cur && cur !== '') {
     handleResult(cur);
   }
 });
