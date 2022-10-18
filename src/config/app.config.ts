@@ -179,7 +179,10 @@ export class Application {
 
     this.app.use(
       session({
-        name: '_auth-btree-session',
+        name:
+          env === ENVIRONMENT.staging
+            ? '_auth-btree-session-staging'
+            : '_auth-btree-session',
         secret: sessionSecret,
         resave: false,
         saveUninitialized: false,
