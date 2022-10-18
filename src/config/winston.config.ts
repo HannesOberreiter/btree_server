@@ -23,7 +23,7 @@ export class WinstonConfiguration {
   /**
    * @description File name
    */
-  private output = env === 'test' ? 'test' : 'dist';
+  private output = env;
 
   /**
    * @description Output format
@@ -111,7 +111,9 @@ export class WinstonConfiguration {
     });
 
     // If we're not in production||ci||test then log to the `console`
-    if (!['production', 'ci', 'test'].includes(process.env.NODE_ENV)) {
+    if (
+      !['production', 'ci', 'test', 'staging'].includes(process.env.NODE_ENV)
+    ) {
       logger.add(new Winston.transports.Console(this.options.console));
     }
 
