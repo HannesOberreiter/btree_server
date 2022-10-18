@@ -1,6 +1,6 @@
 <template>
   <div class="row">
-    <div class="col-12 text-center">{{ $t('result') }}: {{ resultText }}</div>
+    <div class="col-12 text-center">{{ $t('result') }}: {{ textResult }}</div>
   </div>
   <div
     class="row"
@@ -8,14 +8,14 @@
   >
     <div id="qr-code-full-region" class="col-12"></div>
   </div>
-  <div v-if="deviceId === '' && !scanning" class="row">
+  <div v-if="!isAvailable" class="row">
     <div class="col-12">
       {{ $t('error.noCameraDetected') }}
     </div>
   </div>
-  <div v-if="errorText" class="row">
+  <div v-if="textError" class="row">
     <div class="col-12">
-      <small class="text-negative">{{ errorText }}</small>
+      <small class="text-negative">{{ textError }}</small>
     </div>
   </div>
   <div class="row">
@@ -26,17 +26,27 @@
   <div class="row q-pt-lg">
     <div class="col-12 text-center">
       <BtnBaseGroup>
-        <BtnBase
+        <!--<BtnBase
           color="secondary"
           :disable="scanning || deviceId !== ''"
           @click="getPermission"
         >
           {{ $t('permission') }}
-        </BtnBase>
-        <BtnBase color="primary" :disable="scanning" @click="startScanning">
+        </BtnBase>-->
+        <BtnBase
+          color="primary"
+          :disable="isScanning && isAvailable"
+          :loading="isStarting"
+          @click="startScanning"
+        >
           {{ $t('start') }}
         </BtnBase>
-        <BtnBase color="negative" :disable="!scanning" @click="stopScanning">
+        <BtnBase
+          color="negative"
+          :loading="isStarting"
+          :disable="!isScanning"
+          @click="stopScanning"
+        >
           {{ $t('stop') }}
         </BtnBase>
       </BtnBaseGroup>
@@ -45,137 +55,41 @@
 </template>
 
 <script setup lang="ts">
-import {
-  Html5Qrcode,
-  Html5QrcodeScanType,
-  Html5QrcodeSupportedFormats,
-} from 'html5-qrcode';
 import { useNotification } from '~/composables/useNotification';
 import { useScanningStore } from '~/stores/scanning';
+import { useScanner } from '~/composables/useScanner';
 
 const router = useRouter();
 const notification = useNotification();
 const storeScanning = useScanningStore();
 const { hiveDropdownActive } = storeToRefs(storeScanning);
 
-const scanning = ref(false);
-const deviceId = ref('');
-const errorText = ref('');
-const resultText = ref('-----');
-const html5QrCode = ref<Html5Qrcode | null>(null);
-
-const config = {
-  fps: 10,
-  qrbox: { width: 400, height: 400 },
-  rememberLastUsedCamera: false,
-  supportedScanTypes: [
-    Html5QrcodeScanType.SCAN_TYPE_CAMERA,
-    Html5QrcodeScanType.SCAN_TYPE_FILE,
-  ],
-  formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE],
-};
+const {
+  init,
+  startScanning,
+  destroy,
+  stopScanning,
+  textError,
+  textResult,
+  isScanning,
+  isAvailable,
+  isStarting,
+} = useScanner();
 
 onUnmounted(() => {
-  stopScanning();
-  html5QrCode.value = null;
+  destroy();
 });
 onMounted(async () => {
-  stopScanning();
-  //getPermission();
-  html5QrCode.value = new Html5Qrcode('qr-code-full-region');
-
-  const fileinput = document.getElementById('qr-input-file');
-  fileinput.addEventListener('change', (e) => {
-    const target = e.target as HTMLInputElement;
-
-    if (target.files.length == 0) {
-      // No file selected, ignore
-      return;
-    }
-    stopScanning();
-    html5QrCode.value.clear();
-    const imageFile = target.files[0];
-    // Scan QR Code
-    html5QrCode.value
-      .scanFile(imageFile, true)
-      .then((decodedText) => {
-        // success, use decodedText
-        console.log(decodedText);
-        handleResult(decodedText);
-      })
-      .catch((err) => {
-        // failure, handle it.
-        console.error(`Error scanning file. Reason: ${err}`);
-        errorText.value = err;
-      });
-  });
+  init();
 });
 
-function getPermission() {
-  // This method will trigger user permissions
-  try {
-    Html5Qrcode.getCameras()
-      .then((devices) => {
-        if (devices && devices.length) {
-          console.log(devices);
-          deviceId.value = devices[0].id;
-        }
-        notification.open('positive', '');
-      })
-      .catch((err) => {
-        console.error(err);
-        errorText.value = err;
-      });
-  } catch (err) {
-    console.error(err);
+watch(textResult, (cur) => {
+  if (cur && cur !== '') {
+    handleResult(cur);
   }
-}
-
-function startScanning() {
-  if (html5QrCode.value) {
-    scanning.value = true;
-    try {
-      html5QrCode.value
-        .start(
-          { facingMode: 'environment' },
-          config,
-          qrCodeSuccessCallback,
-          qrCodeErrorCallback
-        )
-        .catch((err) => {
-          scanning.value = false;
-          console.error(err);
-          errorText.value = err;
-        });
-    } catch (err) {
-      console.error(err);
-      stopScanning();
-    }
-  }
-}
-
-function stopScanning() {
-  if (html5QrCode.value) {
-    try {
-      html5QrCode.value
-        .stop()
-        .then((ignore) => {
-          scanning.value = false;
-          console.log(ignore);
-        })
-        .catch((err) => {
-          scanning.value = false;
-          console.error(err);
-          errorText.value = err;
-        });
-    } catch (err) {
-      console.error(err);
-    }
-  }
-}
+});
 
 function handleResult(decodedText: string) {
-  resultText.value = decodedText;
   if (hiveDropdownActive.value && storeScanning.extractUrl(decodedText)) {
     console.log('Scanned with active select box');
   } else {
@@ -184,21 +98,6 @@ function handleResult(decodedText: string) {
       router.push(decodedText.replace(window.location.origin, ''));
     }
   }
-  errorText.value = '';
-}
-
-function qrCodeSuccessCallback(decodedText: string, decodedResult: any) {
-  // handle the scanned code as you like, for example:
-  console.log(`Code matched = ${decodedText}`, decodedResult);
-  if (decodedText === resultText.value) return;
-  if (decodedText) {
-    handleResult(decodedText);
-  }
-}
-
-function qrCodeErrorCallback(error: string) {
-  // handle scan failure, usually better to ignore and keep scanning.
-  // for example:
-  console.warn(`Code scan error = ${error}`);
+  textError.value = '';
 }
 </script>

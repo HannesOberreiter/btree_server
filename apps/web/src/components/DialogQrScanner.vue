@@ -1,5 +1,10 @@
 <template>
-  <q-dialog ref="dialogRef" data-cy="dialog-share" @hide="onDialogHide">
+  <q-dialog
+    ref="dialogRef"
+    data-cy="dialog-share"
+    :persistent="isStarting"
+    @hide="onDialogHide"
+  >
     <q-card>
       <q-card-section>
         <div class="row">
@@ -17,6 +22,9 @@
 
 <script setup lang="ts">
 import { useDialogPluginComponent } from 'quasar';
+import { useScanner } from '~/composables/useScanner';
+
+const { isStarting } = useScanner();
 
 defineEmits([...useDialogPluginComponent.emits]);
 const { dialogRef, onDialogHide } = useDialogPluginComponent();
