@@ -53,6 +53,8 @@ In the root directory you can find example composer files which are used on our 
 - [docker-compose.api-beta.yml](docker-compose.api-beta.yml)
   - Live: <https://api-beta.btree.at>
 
+Best practices for node container see: <https://github.com/nodejs/docker-node/blob/main/docs/BestPractices.md>
+
 ### Deployment
 
 The beta api automatically pulls with a Cron-Job the latest version von DockerHub each day, read the readme on [Repo - b.tree Database](https://github.com/HannesOberreiter/btree_database) for more information.

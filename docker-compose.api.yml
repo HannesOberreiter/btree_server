@@ -1,4 +1,5 @@
 # https://community.hetzner.com/tutorials/install-and-configure-docker
+# https://github.com/nodejs/docker-node/blob/main/docs/BestPractices.md
 # etc/nginx/conf.d/upstream.conf
 # docker inspect to get ip adress
 # pull latest and run
@@ -11,6 +12,7 @@ services:
     # To run knex commands
     #entrypoint: [ "/bin/sh", "-c", "npm run prod:knex migrate:latest" ]
     restart: always
+    user: "node" # connected volume logs must have write access as node user chown -R 1000:1000 logs
     environment:
       ENVIRONMENT: production
     volumes:
