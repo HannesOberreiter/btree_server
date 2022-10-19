@@ -88,8 +88,8 @@ export class Application {
    */
   private options = {
     stream:
-      env === ENVIRONMENT.production
-        ? rfs.createStream('access.log', {
+      env === ENVIRONMENT.production || env === ENVIRONMENT.staging
+        ? rfs.createStream(`access-${env}.log`, {
             interval: '7d',
             maxFiles: 10,
             path: p.join(__dirname, `../../logs`),

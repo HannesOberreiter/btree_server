@@ -2,6 +2,7 @@ import { env } from '@config/environment.config';
 import * as Winston from 'winston';
 import { format } from 'winston';
 import p from 'path';
+import { ENVIRONMENT } from '@/api/types/enums/environment.enum';
 
 /**
  * This logger implements Winston module for writing custom logs
@@ -110,10 +111,7 @@ export class WinstonConfiguration {
       exitOnError: false,
     });
 
-    // If we're not in production||ci||test then log to the `console`
-    if (
-      !['production', 'ci', 'test', 'staging'].includes(process.env.NODE_ENV)
-    ) {
+    if (env === ENVIRONMENT.development || env === ENVIRONMENT.test) {
       logger.add(new Winston.transports.Console(this.options.console));
     }
 
