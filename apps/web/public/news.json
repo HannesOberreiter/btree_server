@@ -5,7 +5,8 @@
     "news": [
       "BUGFIX don't count deleted tasks or hives and apiaries in sidebar count",
       "BUGFIX username does not need to be unique any more",
-      "BUGFIX on new hive creation, the shown last three names do now include inactive ones"
+      "BUGFIX on new hive creation, the shown last three names do now include inactive ones",
+      "BUGFIX similar ID for apiaries did result in multiple automatic selection in apiary detail window"
     ]
   },
   {
