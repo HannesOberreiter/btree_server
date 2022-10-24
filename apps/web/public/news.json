@@ -1,5 +1,14 @@
 [
   {
+    "version": "6.1.2",
+    "date": "2022-XX-XX",
+    "news": [
+      "BUGFIX don't count deleted tasks or hives and apiaries in sidebar count",
+      "BUGFIX username does not need to be unique any more",
+      "BUGFIX on new hive creation, the shown last three names do now include inactive ones"
+    ]
+  },
+  {
     "version": "6.1.1",
     "date": "2022-10-18",
     "news": ["BUGFIX qr scanner did sometimes break"]
