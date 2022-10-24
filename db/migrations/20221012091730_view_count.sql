@@ -7,6 +7,7 @@ FROM
     checkups
 WHERE
     done = 0
+    AND deleted = 0
 GROUP BY
     user_id
 UNION
@@ -18,6 +19,7 @@ FROM
     harvests
 WHERE
     done = 0
+    AND deleted = 0
 GROUP BY
     user_id
 UNION
@@ -29,6 +31,7 @@ FROM
     treatments
 WHERE
     done = 0
+    AND deleted = 0
 GROUP BY
     user_id
 UNION
@@ -40,6 +43,7 @@ FROM
     feeds
 WHERE
     done = 0
+    AND deleted = 0
 GROUP BY
     user_id
 UNION
@@ -62,6 +66,7 @@ FROM
     hives
 WHERE
     modus = 1
+    AND deleted = 0
 GROUP BY
     user_id
 UNION
@@ -74,6 +79,7 @@ FROM
 WHERE
     modus = 1
     AND grouphive > 0
+    AND deleted = 0
 GROUP BY
     user_id
 UNION
@@ -86,6 +92,7 @@ FROM
 WHERE
     modus = 1
     AND grouphive > 0
+    AND deleted = 0
 GROUP BY
     user_id
 UNION
@@ -97,6 +104,7 @@ FROM
     apiaries
 WHERE
     modus = 1
+    AND deleted = 0
 GROUP BY
     user_id
 UNION
@@ -109,6 +117,7 @@ FROM
 WHERE
     modus = 1
     AND hive_id is null
+    AND deleted = 0
 GROUP BY
     user_id
 UNION
@@ -121,5 +130,6 @@ FROM
     LEFT JOIN hives ON hives.id = queens_locations.hive_id
 WHERE
     modus = 1
+    AND deleted = 0
 GROUP BY
     user_id
