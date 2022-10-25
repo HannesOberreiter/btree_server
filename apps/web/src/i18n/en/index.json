@@ -40,6 +40,7 @@
   "changelog": "Changelog",
   "charge": "Charge Control | Charge Controls",
   "chargeNumber": "Charge identification number",
+  "checkbox": "Checkbox",
   "checkup": "Checkup | Checkups",
   "clear": "Clear",
   "clearField": "Clear this field",
@@ -89,7 +90,7 @@
   "description": "Description",
   "dialogSelectOptionAdd": "Select the option you want to add:",
   "dialogSelectOptionSelect": "Select the option you want to edit:",
-  "disease": "Disease | Diseases",
+  "disease": "Disease | Diseases",
   "donation": "Donation",
   "done": "Done",
   "download": "Download",
@@ -215,7 +216,7 @@
     "table-scale_data": "In the hive scale data table you can manage or export your entries coming from your hive scale. Deleted data cannot be restored! You can add new hive scales identifier with the scale button. Be careful if you delete a scale identifier all your connected data will be deleted as well without the possibility of restoration. To checkout how to connect your hive scale check the API options page. Basic membership limit is 2 identifier / scales and premium 10 scales.",
     "table-todo": "In the ToDo table you can manage or export your ToDo's. As standard only open tasks are shown. You can change this by clicking on the eye symbol. You cannot restore ToDo's after deletion!",
     "table-treatment": "In the treatment table you can manage or export your treatment. Deleted task can be restored up to 30 days after deletion. Search field is searching the columns hive, type and disease names.",
-    "table-virgin": "Same as the queen table but on this table you can only find queens without any hive. This is meant to be used as parking spot for queens in your mating units, which can then be quickly added to your colonies or marked as sold (you can misuse a  dropdown value, e.g. breeding line or use the note field) and set inactive."
+    "table-virgin": "Same as the queen table but on this table you can only find queens without any hive. This is meant to be used as parking spot for queens in your mating units, which can then be quickly added to your colonies or marked as sold (you can misuse a dropdown value, e.g. breeding line or use the note field) and set inactive."
   },
   "hint": "Hint",
   "hintApiaryFirstMovedate": "Shown value is the first migration of a hive onto this apiary, which can be seen as date of creation.",
@@ -271,7 +272,7 @@
     "timeToLarvae": "Egg to larvae",
     "timeToTask": "To task"
   },
-  "line": "Line | Lines",
+  "line": "Line | Lines",
   "loading": "Loading ...",
   "locationError": "Could not access your location.",
   "login": "Login",
@@ -385,6 +386,9 @@
   "queenMovedate": "Date of introduction",
   "queenMovedateInfo": "Date when queen was introduced to the colony.",
   "queencell": "Queencell | Queencells",
+  "queencells": "Queencells",
+  "capped_brood": "@:cappedBrood",
+  "eggs": "Eggs",
   "quicktool": {
     "apiary": "Select hives based on current apiary location.",
     "name": "Quicktool",
@@ -397,6 +401,7 @@
     "brood": "Brood",
     "calm_comb": "Calm on comb",
     "comb": "Comb",
+    "max": "Maximum value",
     "name": "Rating",
     "pollen": "Pollen",
     "swarm": "Swarm",

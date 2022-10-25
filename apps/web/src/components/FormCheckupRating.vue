@@ -10,9 +10,15 @@
       <q-card>
         <q-card-section>
           <template v-for="(_value, index) of modelValue" :key="index">
-            <div class="row q-pb-xs">
+            <div
+              v-if="
+                fields.settings.checkup.ratings[index] ||
+                fields.settings.checkup?.rating
+              "
+              class="row q-pb-xs"
+            >
               <div class="col-4">{{ $t('rating.' + index) }}</div>
-              <div class="col-5 col-sm-4 col-lg-3">
+              <div class="col-5 col-sm-5 col-lg-3">
                 <q-rating
                   v-model="modelValue[index]"
                   :error="v[index].$error"
@@ -20,26 +26,30 @@
                   color="grey"
                   :disable="disable[index]"
                   size="sm"
+                  :max="fields.settings.checkup.ratings.max"
                 >
                 </q-rating>
               </div>
-              <div class="col-3 col-sm-2">
-                <btn-base
-                  round
-                  flat
-                  dense
-                  icon="fas fa-plus"
-                  :disable="modelValue[index] >= 5 || disable[index]"
-                  @click="modelValue[index] = round(modelValue[index] + 0.1, 1)"
-                ></btn-base>
-                <btn-base
-                  round
-                  flat
-                  dense
-                  icon="fas fa-minus"
-                  :disable="modelValue[index] <= 0 || disable[index]"
-                  @click="modelValue[index] = round(modelValue[index] - 0.1, 1)"
-                ></btn-base>
+              <div class="col-2 col-sm-2">
+                <btn-base-group round flat dense>
+                  <btn-base
+                    icon="fas fa-plus"
+                    :disable="
+                      modelValue[index] >=
+                        fields.settings.checkup.ratings.max || disable[index]
+                    "
+                    @click="
+                      modelValue[index] = round(modelValue[index] + 0.1, 1)
+                    "
+                  ></btn-base>
+                  <btn-base
+                    icon="fas fa-minus"
+                    :disable="modelValue[index] <= 0 || disable[index]"
+                    @click="
+                      modelValue[index] = round(modelValue[index] - 0.1, 1)
+                    "
+                  ></btn-base>
+                </btn-base-group>
               </div>
               <div class="col-2 col-sm-1">
                 {{ round(modelValue[index], 1) }}
@@ -64,7 +74,9 @@ import { isEmpty, some, round } from 'lodash-es';
 import useVuelidate from '@vuelidate/core';
 import { useVModels } from '@vueuse/core';
 import { formCheckMultipleValues } from '~/helpers';
+import { useFieldsettingStore } from '~/stores/fieldsetting';
 
+const fields = useFieldsettingStore();
 const expanded = ref(false);
 const props = defineProps({
   modelValue: {

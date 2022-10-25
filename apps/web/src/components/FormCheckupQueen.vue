@@ -34,7 +34,9 @@ import { useVModels } from '@vueuse/core';
 import { formCheckMultipleValues } from '~/helpers';
 import { isEmpty } from 'lodash-es';
 import { useQuasar } from 'quasar';
+import { useFieldsettingStore } from '~/stores/fieldsetting';
 
+const fields = useFieldsettingStore();
 const $q = useQuasar();
 const { t } = useI18n();
 const props = defineProps({
@@ -63,12 +65,21 @@ const multipleValues = computed(
 );
 const disable = ref(multipleValues.value);
 
-const options = [
+const checkboxes = [
   { label: t('queen'), value: 'queen', trueValue: true },
   { label: t('queencell', 2), value: 'queencells', trueValue: true },
   { label: t('egg', 2), value: 'eggs', trueValue: true },
   { label: t('cappedBrood'), value: 'capped_brood', trueValue: true },
 ];
+
+const options = computed(() => {
+  return checkboxes.filter(
+    (checkbox) =>
+      fields.settings.checkup.checkboxes[
+        checkbox.value as keyof typeof fields.settings.checkup.checkboxes
+      ]
+  );
+});
 
 watch(values, () => {
   setValues();
@@ -83,7 +94,7 @@ function setValues() {
   if (multipleValues.value) editValues(true);
   else if (values.value && !isEmpty(values.value)) {
     const original = [];
-    for (const option of options) {
+    for (const option of options.value) {
       if (values.value[0][option.value] === true) original.push(option.value);
     }
     modelValue.value = original;

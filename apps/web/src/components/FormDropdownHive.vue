@@ -104,6 +104,11 @@ const apiarySelect = ref(null);
 const optionsHive = ref([] as any);
 const optionsApiary = ref([] as any);
 
+const clearApiary = () => {
+  apiary.value = null;
+  state.hive = null;
+};
+
 function selectApiary(val: any) {
   apiarySelect.value.hidePopup();
   apiarySelect.value.blur();
@@ -116,11 +121,6 @@ function selectApiary(val: any) {
     if (res.length > 0) state.hive = unionBy(state.hive, res, 'id') as [];
   });
 }
-
-const clearApiary = () => {
-  apiary.value = null;
-  state.hive = null;
-};
 
 function selectHive() {
   apiary.value = null;
@@ -193,7 +193,7 @@ onMounted(() => {
         if (router.currentRoute.value.params?.id) {
           const { double, found } = findApiaries(
             apiaries.value.results,
-            router.currentRoute.value.params?.id,
+            String(router.currentRoute.value.params.id),
             apiary.value
           );
           if (found && double.length === 0) {
@@ -213,7 +213,7 @@ onMounted(() => {
         if (router.currentRoute.value.params?.id) {
           const { double, found } = findHives(
             hives.value.results,
-            router.currentRoute.value.params?.id,
+            String(router.currentRoute.value.params.id),
             state.hive
           );
           if (found && double.length === 0) {
@@ -261,18 +261,14 @@ watch(scannedId, () => {
   }
 });
 
-function findHives(hives: any, id: string | string[], selected_hives: any) {
+function findHives(hives: any, id: string, selected_hives: any) {
   const found = filter(hives, (obj) => id === String(obj.id)) as any;
   const double = filter(selected_hives, (obj) => id == obj.id);
   return { found: found, double: double };
 }
 
-function findApiaries(
-  apiaries: any,
-  id: string | string[],
-  selected_apiaries: any
-) {
-  const found = filter(apiaries, (obj) => id.includes(obj.id)) as any;
+function findApiaries(apiaries: any, id: string, selected_apiaries: any) {
+  const found = filter(apiaries, (obj) => id === String(obj.id)) as any;
   const double = filter(selected_apiaries, (obj) => id == obj.id);
   return { found: found, double: double };
 }

@@ -211,6 +211,7 @@ const { data: hives, refetch } = useHivesQuery({
   order: ['id'],
   direction: ['desc'],
   enabled: !isEdit.value,
+  modus: null,
 });
 const lastNames = computed(() =>
   hives.value ? getNames(hives.value.results) : ''

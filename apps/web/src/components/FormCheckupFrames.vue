@@ -10,7 +10,10 @@
       <q-card>
         <q-card-section>
           <template v-for="(_value, index) of modelValue" :key="index">
-            <div class="row q-pb-xs">
+            <div
+              v-if="fields.settings.checkup.frame[index]"
+              class="row q-pb-xs"
+            >
               <div class="col-4">{{ $t('frames.' + index) }}</div>
               <div class="col-8">
                 <q-slider
@@ -65,7 +68,9 @@ import { isEmpty, some } from 'lodash-es';
 import useVuelidate from '@vuelidate/core';
 import { useVModels } from '@vueuse/core';
 import { formCheckMultipleValues } from '~/helpers';
+import { useFieldsettingStore } from '~/stores/fieldsetting';
 
+const fields = useFieldsettingStore();
 const expanded = ref(false);
 const max = ref(20);
 const props = defineProps({
