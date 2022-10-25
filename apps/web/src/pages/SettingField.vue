@@ -9,12 +9,77 @@
           <span class="text-h6">{{ $t(index) }}</span>
           <q-separator color="secondary" inset />
           <div class="q-pa-md">
-            <template v-for="(_value, j) in setting" :key="j">
-              <div class="col-12">
+            <template v-for="(subsetting, i) in setting" :key="i">
+              <template v-if="i == 'ratings'">
+                <span class="text-bold">{{ $t('rating.name') }}: </span>
+                <div
+                  v-for="(_value, j) in subsetting"
+                  :key="j"
+                  class="col-12 q-pl-lg"
+                >
+                  <div v-if="j == 'max'">
+                    <div class="row">
+                      <div class="col-7 q-pr-md">
+                        <q-slider
+                          v-model="settings.checkup.ratings.max"
+                          :min="0"
+                          :max="10"
+                          :step="1"
+                        ></q-slider>
+                      </div>
+                      <div class="col-5">
+                        {{ $t('rating.max') }}:
+                        {{ settings.checkup.ratings.max }}
+                      </div>
+                    </div>
+                  </div>
+                  <q-toggle
+                    v-else
+                    v-model="settings[index as keyof typeof settings][i as keyof typeof setting][j as keyof typeof subsetting]"
+                    :label="$t('rating.' + j)"
+                    :disable="isSubmitting || isLoading"
+                    @update:model-value="onSubmit"
+                  />
+                </div>
+                <q-separator color="gray" inset />
+              </template>
+              <template v-else-if="i == 'checkboxes'">
+                <span class="text-bold">{{ $t('checkbox') }}: </span>
+                <div
+                  v-for="(_value, j) in subsetting"
+                  :key="j"
+                  class="col-12 q-pl-md"
+                >
+                  <q-toggle
+                    v-model="settings[index as keyof typeof settings][i as keyof typeof setting][j as keyof typeof subsetting]"
+                    :label="$t(j)"
+                    :disable="isSubmitting || isLoading"
+                    @update:model-value="onSubmit"
+                  />
+                </div>
+                <q-separator color="gray" inset />
+              </template>
+              <template v-else-if="i == 'frame'">
+                <span class="text-bold">{{ $t('frame', 2) }}: </span>
+                <div
+                  v-for="(_value, j) in subsetting"
+                  :key="j"
+                  class="col-12 q-pl-md"
+                >
+                  <q-toggle
+                    v-model="settings[index as keyof typeof settings][i as keyof typeof setting][j as keyof typeof subsetting]"
+                    :label="$t('frames.' + j)"
+                    :disable="isSubmitting || isLoading"
+                    @update:model-value="onSubmit"
+                  />
+                </div>
+                <q-separator color="gray" inset />
+              </template>
+              <div v-else class="col-12">
                 <q-toggle
-                  v-model="settings[index as keyof typeof settings][j as keyof typeof setting]"
+                  v-model="settings[index as keyof typeof settings][i as keyof typeof setting]"
                   :label="
-                    $t('setting.hint' + capitalize(index) + capitalize(j))
+                    $t('setting.hint' + capitalize(index) + capitalize(i))
                   "
                   :disable="isSubmitting || isLoading"
                   @update:model-value="onSubmit"

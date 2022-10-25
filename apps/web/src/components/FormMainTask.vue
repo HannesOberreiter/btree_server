@@ -84,19 +84,19 @@
       <!-- Additional optional fields -->
       <div v-if="task === 'checkup'">
         <form-checkup-queen
-          v-if="fields.settings.checkup.queen"
+          v-if="fields.settings.checkup.queen || fields.someCheckboxTrue"
           v-model="state.checkup_queen"
           :values="values"
           :reset="reset"
         ></form-checkup-queen>
         <form-checkup-rating
-          v-if="fields.settings.checkup.rating"
+          v-if="fields.settings.checkup.rating || fields.someRatingTrue"
           v-model="state.checkup_rating"
           :reset="reset"
           :values="values"
         ></form-checkup-rating>
         <form-checkup-frames
-          v-if="fields.settings.checkup.frames"
+          v-if="fields.settings.checkup.frames || fields.someFrameTrue"
           v-model="state.checkup_frames"
           :values="values"
           :reset="reset"
