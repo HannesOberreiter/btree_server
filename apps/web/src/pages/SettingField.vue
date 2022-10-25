@@ -19,17 +19,17 @@
                 >
                   <div v-if="j == 'max'">
                     <div class="row">
-                      <div class="col-7 q-pr-md">
+                      <div class="col-5 col-lg-3">
+                        {{ $t('rating.max') }}:
+                        {{ settings.checkup.ratings.max }}
+                      </div>
+                      <div class="col-7 q-pl-md">
                         <q-slider
                           v-model="settings.checkup.ratings.max"
                           :min="0"
                           :max="10"
                           :step="1"
                         ></q-slider>
-                      </div>
-                      <div class="col-5">
-                        {{ $t('rating.max') }}:
-                        {{ settings.checkup.ratings.max }}
                       </div>
                     </div>
                   </div>

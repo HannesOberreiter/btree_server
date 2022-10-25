@@ -162,7 +162,7 @@ export const useFieldsettingStore = defineStore('fieldsetting', {
           };
           delete data.settings.checkup.queen;
         }
-        // Migrate old field settings to new separate queens checkboxes
+        // Migrate old field settings to new separate frames
         if (data.settings.checkup?.frames) {
           data.settings.checkup.frame = {
             broodframes: true,
@@ -172,17 +172,16 @@ export const useFieldsettingStore = defineStore('fieldsetting', {
           };
           delete data.settings.checkup.frames;
         }
+        if ('rating' in data.settings.checkup)
+          delete data.settings.checkup.rating;
+        if ('queen' in data.settings.checkup)
+          delete data.settings.checkup.queen;
+        if ('frames' in data.settings.checkup)
+          delete data.settings.checkup.frames;
         this.settings = defaultsDeep(data.settings, resetSettings);
       } else {
         this.settings = defaultsDeep(this.settings, resetSettings);
       }
-      if ('rating' in data.settings.checkup)
-        delete data.settings.checkup.rating;
-      if ('queen' in data.settings.checkup) delete data.settings.checkup.queen;
-      if ('frames' in data.settings.checkup)
-        delete data.settings.checkup.frames;
-
-      console.log(this.settings);
     },
     async reload() {
       const api = useApiFetch();
