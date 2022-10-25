@@ -111,7 +111,7 @@ export class WinstonConfiguration {
       exitOnError: false,
     });
 
-    if (env === ENVIRONMENT.development || env === ENVIRONMENT.test) {
+    if (env === ENVIRONMENT.development) {
       logger.add(new Winston.transports.Console(this.options.console));
     }
 
