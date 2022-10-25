@@ -1,7 +1,7 @@
 [
   {
     "version": "6.1.2",
-    "date": "2022-XX-XX",
+    "date": "2022-10-27",
     "news": [
       "BUGFIX don't count deleted tasks or hives and apiaries in sidebar count",
       "BUGFIX username does not need to be unique any more",
