@@ -95,11 +95,11 @@ onMounted(() => {
 
 onUnmounted(() => (isSubmitting.value = false));
 
-function redirect() {
+async function redirect() {
   if (lastUrl) {
-    router.push(lastUrl as RouteLocationRaw);
-  } else {
-    router.push({ name: 'calendar' });
+    if (!lastUrl.includes('visitor'))
+      await router.push(lastUrl as RouteLocationRaw);
   }
+  await router.push({ name: 'calendar' });
 }
 </script>
