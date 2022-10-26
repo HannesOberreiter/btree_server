@@ -1,7 +1,12 @@
 [
   {
+    "version": "6.1.3",
+    "date": "2022-10-26",
+    "news": ["BUGFIX possible fix for iOS password autofill not working"]
+  },
+  {
     "version": "6.1.2",
-    "date": "2022-10-27",
+    "date": "2022-10-25",
     "news": [
       "BUGFIX don't count deleted tasks or hives and apiaries in sidebar count",
       "BUGFIX username does not need to be unique any more",
