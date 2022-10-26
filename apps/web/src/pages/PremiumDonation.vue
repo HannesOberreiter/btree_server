@@ -76,7 +76,7 @@
             <suspense>
               <payment-paypal
                 :donation="donation"
-                @on-paid="(data) => successPayment(data.paid)"
+                @on-paid="(data: any) => successPayment(data.paid)"
               ></payment-paypal>
             </suspense>
             <q-separator></q-separator>
@@ -86,7 +86,7 @@
             >
               <payment-stripe
                 :donation="donation"
-                @on-paid="(data) => successPayment(data.paid)"
+                @on-paid="(data: any) => successPayment(data.paid)"
               ></payment-stripe>
             </div>
 

@@ -1,5 +1,6 @@
 <template>
   <q-input
+    ref="passwordInput"
     v-model="modelPassword"
     :error="v.password.$error"
     :error-message="validationErrors(v.password)"
@@ -41,7 +42,7 @@
 </template>
 
 <script setup lang="ts">
-import { QInputProps } from 'quasar';
+import { QInput, QInputProps, useQuasar } from 'quasar';
 import { useVModels } from '@vueuse/core';
 import { validationErrors } from '~/helpers';
 import useVuelidate from '@vuelidate/core';
@@ -52,6 +53,8 @@ import {
   maxLength,
 } from '../helpers/i18n-validators';
 
+const passwordInput = ref<QInput | null>(null);
+const $q = useQuasar();
 const { t } = useI18n();
 const props = defineProps({
   confirm: {
@@ -80,6 +83,18 @@ const state = reactive({
 
 watch(modelPassword, () => {
   state.password = modelPassword.value;
+});
+
+onMounted(() => {
+  if ($q.platform.is.ios) {
+    const nativeInput =
+      passwordInput.value.getNativeElement() as HTMLInputElement;
+    nativeInput.addEventListener('change', (event) => {
+      requestAnimationFrame(() => {
+        state.password = (event.target as HTMLInputElement).value;
+      });
+    });
+  }
 });
 
 const rules = {
