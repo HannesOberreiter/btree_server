@@ -1,5 +1,6 @@
 {
   "experimentalSessionAndOrigin": true,
+  "chromeWebSecurity": false,
   "baseUrl": "http://localhost:9000/",
   "fixturesFolder": "test/cypress/fixtures",
   "integrationFolder": "test/cypress/integration",

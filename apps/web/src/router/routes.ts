@@ -384,6 +384,14 @@ const routes: RouteRecordRaw[] = [
         },
         component: () => import('~/pages/VisitorUnsubscribe.vue'),
       },
+      {
+        path: 'forum',
+        name: 'forum',
+        meta: {
+          title: 'forum',
+        },
+        component: () => import('~/pages/VisitorForum.vue'),
+      },
     ],
   },
   /***
