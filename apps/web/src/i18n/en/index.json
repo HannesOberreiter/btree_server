@@ -35,6 +35,7 @@
   "calendar": "Calendar",
   "cancel": "Cancel",
   "cappedBrood": "Capped brood",
+  "capped_brood": "@:cappedBrood",
   "change": "change",
   "changeStatus": "Change Status",
   "changelog": "Changelog",
@@ -108,6 +109,7 @@
   "editQueen": "Edit queen",
   "edited": "Edited",
   "egg": "Egg | Eggs",
+  "eggs": "Eggs",
   "email": "Email",
   "end": "End",
   "error": {
@@ -152,6 +154,7 @@
   "folder": "Folder",
   "forgot": "Forgot your password?",
   "formMaxCount": "Sorry but you have attempted to submit too many times.",
+  "forum": "Forum",
   "frame": "Frame | Frames",
   "frames": {
     "broodframes": "Broodframes",
@@ -387,8 +390,6 @@
   "queenMovedateInfo": "Date when queen was introduced to the colony.",
   "queencell": "Queencell | Queencells",
   "queencells": "Queencells",
-  "capped_brood": "@:cappedBrood",
-  "eggs": "Eggs",
   "quicktool": {
     "apiary": "Select hives based on current apiary location.",
     "name": "Quicktool",

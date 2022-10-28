@@ -1,5 +1,12 @@
 [
   {
+    "version": "6.1.4",
+    "date": "2022-10-28",
+    "news": [
+      "FEATURE added a new forum, sadly the old one and the data was lost in the migration process"
+    ]
+  },
+  {
     "version": "6.1.3",
     "date": "2022-10-26",
     "news": ["BUGFIX possible fix for iOS password autofill not working"]
