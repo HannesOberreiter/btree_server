@@ -1,7 +1,9 @@
+import { Guard } from '@/api/middlewares/guard.middleware';
+import { ROLES } from '@/api/types/enums/role.enum';
 import { Router } from '@classes/router.class';
 import { Container } from '@config/container.config';
 import { Validator } from '@middlewares/validator.middleware';
-import { body } from 'express-validator';
+import { body, param } from 'express-validator';
 
 export class AuthRouter extends Router {
   constructor() {
@@ -73,6 +75,14 @@ export class AuthRouter extends Router {
       .post(
         Validator.validate([body('token'), body('expires').isISO8601()]),
         Container.resolve('AuthController').refresh
+      );
+
+    this.router
+      .route('/discourse')
+      .get(
+        Validator.validate([param('payload'), param('sig')]),
+        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+        Container.resolve('AuthController').discourse
       );
   }
 }

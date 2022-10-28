@@ -89,6 +89,8 @@ const paypalBase =
 
 const stripeSecret = process.env.STRIPE_SECRET_KEY;
 
+const discourseSecret = process.env.DISCOURSE_SSO;
+
 const basicLimit = {
   hive: parseInt(process.env.LIMIT_HIVE),
   apiary: parseInt(process.env.LIMIT_APIARY),
@@ -188,4 +190,5 @@ export {
   totalLimit,
   cronjobTimer,
   sessionSecret,
+  discourseSecret,
 };

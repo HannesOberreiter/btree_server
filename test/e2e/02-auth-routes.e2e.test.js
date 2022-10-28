@@ -1,6 +1,7 @@
 const request = require('supertest');
 const { expect } = require('chai');
-const { doRequest, expectations } = require(process.cwd() + '/test/utils');
+const { doRequest, expectations, doQueryRequest } = require(process.cwd() +
+  '/test/utils');
 
 const inactiveUser = {
   email: `inactive${Date.now()}@btree.at`,
@@ -250,6 +251,61 @@ describe('Authentification routes', function () {
                   done();
                 }
               );
+            }
+          );
+        }
+      );
+    });
+  });
+
+  describe('/api/v1/auth/discourse', () => {
+    const route = '/api/v1/auth/discourse';
+    const sso =
+      'payload=bm9uY2U9OTJkYWQ0NTMxZTBhZDIwMmY4MWMxYWM0NzVmYjQ5MDMmcmV0dXJuX3Nzb191cmw9aHR0cHMlM0ElMkYlMkZmb3J1bS5idHJlZS5hdCUyRnNlc3Npb24lMkZzc29fbG9naW4%3D&sig=e18fcf73285bdf65610b43ca2e80712175e660571d1d934c08d9499679a52ad0';
+
+    it('403 - forbidden', function (done) {
+      doQueryRequest(agent, route, null, null, null, function (err, res) {
+        expect(res.statusCode).to.eqls(403);
+        done();
+      });
+    });
+
+    it('401 - unauthorized', function (done) {
+      doQueryRequest(
+        request.agent(global.server),
+        route + '?' + sso,
+        null,
+        null,
+        null,
+        function (err, res) {
+          expect(res.statusCode).to.eqls(401);
+          done();
+        }
+      );
+    });
+
+    it('200 - discourse payload', function (done) {
+      doRequest(
+        agent,
+        'post',
+        '/api/v1/auth/login',
+        null,
+        null,
+        global.demoUser,
+        function (err, res) {
+          expect(res.statusCode).to.eqls(200);
+          expect(res.body.data).to.be.a('Object');
+          expect(res.header, 'set-cookie', /connect.sid=.*; Path=\/; HttpOnly/);
+          doQueryRequest(
+            agent,
+            route + '?' + sso,
+            null,
+            null,
+            null,
+            function (err, res) {
+              expect(res.statusCode).to.eqls(200);
+              expect(res.body).to.include('sso');
+              done();
             }
           );
         }
