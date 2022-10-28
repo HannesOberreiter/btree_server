@@ -17,9 +17,12 @@ import {
   unsubscribeMail,
   buildUserAgent,
 } from '@utils/auth.util';
-import { env } from '@/config/environment.config';
+import { discourseSecret, env } from '@/config/environment.config';
 import { ENVIRONMENT } from '../types/enums/environment.enum';
 import { MailServer } from '../app.bootstrap';
+
+import { IUserRequest } from '../types/interfaces/IUserRequest.interface';
+import { DiscourseSSO } from '../services/discourse.service';
 
 export class AuthController extends Controller {
   constructor() {
@@ -239,5 +242,40 @@ export class AuthController extends Controller {
     } catch (e) {
       next(e);
     }*/
+  }
+
+  async discourse(req: IUserRequest, res: Response, next: NextFunction) {
+    const sso = new DiscourseSSO(discourseSecret);
+    const { payload, sig } = req.query as any;
+    if (payload && sig) {
+      try {
+        if (sso.validate(payload, sig)) {
+          const user = await User.query()
+            .select('id', 'username', 'email')
+            .findById(req.user.bee_id)
+            .throwIfNotFound();
+
+          const nonce = sso.getNonce(payload);
+          const userparams = {
+            nonce: nonce,
+            external_id: user.id,
+            email: user.email,
+            username: user.username ? user.username : 'anonymous_' + user.id,
+            name: user.username ? user.username : 'anonymous_' + user.id,
+            suppress_welcome_message: true,
+            require_activation: false,
+          };
+          const q = sso.buildLoginString(userparams);
+          res.locals.data = q;
+          next();
+        } else {
+          next(forbidden());
+        }
+      } catch (e) {
+        next(checkMySQLError(e));
+      }
+    } else {
+      next(forbidden());
+    }
   }
 }
