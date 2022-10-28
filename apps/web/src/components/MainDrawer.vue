@@ -42,6 +42,20 @@
           :link="sublink"
         ></drawer-item>
       </q-expansion-item>
+      <q-item
+        v-ripple
+        clickable
+        data-cy="route - external - forum"
+        href="https://forum.btree.at"
+        @click.prevent="openLink('https://forum.btree.at')"
+      >
+        <q-item-section avatar>
+          <q-icon name="fab fa-discourse" />
+        </q-item-section>
+        <q-item-section>
+          {{ $t('forum') }}
+        </q-item-section>
+      </q-item>
       <btn-refresh></btn-refresh>
       <item-company></item-company>
       <item-ping></item-ping>
@@ -477,6 +491,10 @@ const links = computed(() => [
     ],
   },
 ]);
+
+function openLink(link: string) {
+  window.location.href = link;
+}
 </script>
 
 <style>

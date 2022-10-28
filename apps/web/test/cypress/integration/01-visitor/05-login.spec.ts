@@ -30,7 +30,7 @@ describe('Visitor - Login', () => {
 
   it('Login', () => {
     cy.visit('/visitor/login');
-    cy.login_demo('');
+    cy.login_demo('', false);
   });
 });
 

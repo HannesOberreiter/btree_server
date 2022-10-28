@@ -38,9 +38,9 @@ declare global {
       add_demo_password(): Chainable<Element>;
       /**
        * Redirect to login page and login the demo user.
-       * @example cy.login_demo('/new/hive')
+       * @example cy.login_demo('/new/hive', false)
        */
-      login_demo(next: string): Chainable<Element>;
+      login_demo(next: string, sso: boolean): Chainable<Element>;
       /**
        * Loads cached session or login user.
        * @example cy.login_session('/new/hive')
@@ -107,14 +107,14 @@ Cypress.Commands.add('add_demo_password', () => {
   });
 });
 
-Cypress.Commands.add('login_demo', (next = '') => {
+Cypress.Commands.add('login_demo', (next = '', sso = false) => {
   const userFixture = noRegistration ? 'user_demo' : 'user_new';
-  cy.visit(next ? `/visitor/login?next=${next}` : '/visitor/login');
+  if (!sso) cy.visit(next ? `/visitor/login?next=${next}` : '/visitor/login');
   cy.fixture(userFixture).then((user) => {
     cy.get('[name=email]').type(noRegistration ? user.mail : newMail);
     cy.get('[name=password]').type(user.password);
     cy.get('form').submit();
-    cy.get('header', { timeout: 50000 }).should('be.visible');
+    if (!sso) cy.get('header', { timeout: 50000 }).should('be.visible');
   });
 });
 

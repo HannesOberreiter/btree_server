@@ -86,6 +86,9 @@ watch(modelPassword, () => {
 });
 
 onMounted(() => {
+  /**
+    Workaround for autofill bug in iOS app, but still does not work
+   */
   if ($q.platform.is.ios) {
     const nativeInput =
       passwordInput.value.getNativeElement() as HTMLInputElement;
