@@ -1,5 +1,10 @@
 [
   {
+    "version": "6.1.5",
+    "date": "2022-10-31",
+    "news": ["BUGFIX for charges the charge number was not saved correctly"]
+  },
+  {
     "version": "6.1.4",
     "date": "2022-10-28",
     "news": [

@@ -37,7 +37,8 @@
     ></form-dropdown-option>
     <form-input-text
       v-model="state.charge"
-      label="chargeNumber"
+      label="charge"
+      name="chargeNumber"
       icon="fas fa-receipt"
       :values="values"
       :reset="reset"
