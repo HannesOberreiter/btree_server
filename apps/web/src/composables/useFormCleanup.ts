@@ -220,6 +220,7 @@ function cleanupCharge(state: FormCharge) {
     name: state.name,
     price: state.price,
     amount: state.amount,
+    charge: state.charge,
     url: state.url,
     note: state.note,
     date: state.date,
