@@ -3,7 +3,7 @@ import Stripe from 'stripe';
 
 export async function createOrder(user_id: number, amount: number) {
   const stripe = new Stripe(stripeSecret, {
-    apiVersion: '2022-08-01',
+    apiVersion: '2022-11-15',
     typescript: true,
   });
   const session = await stripe.checkout.sessions.create({
