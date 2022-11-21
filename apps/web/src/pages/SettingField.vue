@@ -104,6 +104,12 @@
             :disable="isSubmitting || isLoading"
             @update:model-value="onSubmit"
           />
+          <q-toggle
+            v-model="localPerf['calendar-show-weeknumber']"
+            :label="$t('setting.hintCalendarWeeknumber')"
+            :disable="isSubmitting || isLoading"
+            @update:model-value="onSubmit"
+          />
         </div>
         <btn-base
           :label="$t('save')"
@@ -135,7 +141,11 @@ const api = useApiFetch();
 
 const localPerf = useLocalStorage(
   'pref-local',
-  { 'date-auto-close': false, 'hive-use-input': false },
+  {
+    'date-auto-close': false,
+    'hive-use-input': false,
+    'calendar-show-weeknumber': true,
+  },
   { mergeDefaults: true }
 );
 

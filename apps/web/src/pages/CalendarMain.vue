@@ -53,6 +53,7 @@ import { useCalendarQuery } from '~/composables/useQuery';
 import { onBeforeRouteLeave } from 'vue-router';
 import { useKeyCalendar } from '~/composables/useKey';
 import { useSwipeCalendar } from '~/composables/useSwipe';
+import { useLocalStorage } from '@vueuse/core';
 
 const useQuery = useCalendarQuery();
 const { t } = useI18n();
@@ -76,6 +77,12 @@ const eventDrag = ref(false);
 const showSetting = ref(false);
 
 useSwipeCalendar(cal, container, opacity, eventDrag);
+
+const localPerf = useLocalStorage(
+  'pref-local',
+  { 'calendar-show-weeknumber': true },
+  { mergeDefaults: true }
+);
 
 const formDialog = (date: string) =>
   $q
@@ -314,7 +321,7 @@ const calendarOptions = reactive({
   locales: allLocales,
   locale: getUser.value.lang || 'en',
   editable: getPaidStatus.value.rank.id === 3 ? false : true,
-  weekNumbers: true,
+  weekNumbers: localPerf.value['calendar-show-weeknumber'],
   weekNumberCalculation: 'ISO',
   displayEventTime: true,
   firstDay: 1,
