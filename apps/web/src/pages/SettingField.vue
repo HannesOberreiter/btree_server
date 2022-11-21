@@ -94,21 +94,15 @@
           <q-toggle
             v-model="localPerf['date-auto-close']"
             :label="$t('autoCloseDate')"
-            :disable="isSubmitting || isLoading"
-            @update:model-value="onSubmit"
           />
           <q-toggle
             v-if="$q.platform.is.mobile"
             v-model="localPerf['hive-use-input']"
             :label="$t('setting.hintHiveUseInput')"
-            :disable="isSubmitting || isLoading"
-            @update:model-value="onSubmit"
           />
           <q-toggle
             v-model="localPerf['calendar-show-weeknumber']"
             :label="$t('setting.hintCalendarWeeknumber')"
-            :disable="isSubmitting || isLoading"
-            @update:model-value="onSubmit"
           />
         </div>
         <btn-base
