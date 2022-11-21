@@ -327,8 +327,8 @@ const links = computed(() => [
         menu: false,
       },
       {
-        label: t('wind'),
-        route: 'map-wind',
+        label: 'Meteoblue',
+        route: 'map-meteoblue',
         icon: 'fas fa-wind',
         menu: false,
       },
@@ -378,7 +378,7 @@ const links = computed(() => [
         menu: [] as any,
       },
       {
-        label: t('field', 2),
+        label: t('field', 2) + ' & ' + t('local'),
         route: 'setting-field',
         icon: 'fas fa-cog',
         menu: [] as any,

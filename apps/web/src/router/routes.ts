@@ -413,12 +413,12 @@ const routes: RouteRecordRaw[] = [
         component: () => import('~/pages/MapApiary.vue'),
       },
       {
-        path: 'wind',
-        name: 'map-wind',
+        path: 'meteoblue',
+        name: 'map-meteoblue',
         meta: {
-          title: 'wind',
+          title: 'meteoblue',
         },
-        component: () => import('~/pages/MapWind.vue'),
+        component: () => import('~/pages/MapMeteoblue.vue'),
       },
     ],
   },

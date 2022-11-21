@@ -27,6 +27,7 @@ import listPlugin from '@fullcalendar/list';
 import { useCalendarQuery } from '~/composables/useQuery';
 import { useKeyCalendar } from '~/composables/useKey';
 import { useSwipeCalendar } from '~/composables/useSwipe';
+import { useLocalStorage } from '@vueuse/core';
 
 const useQuery = useCalendarQuery();
 const { t } = useI18n();
@@ -39,6 +40,12 @@ const opacity = ref(1);
 const eventDrag = ref(false);
 
 useSwipeCalendar(cal, container, opacity, eventDrag);
+
+const localPerf = useLocalStorage(
+  'pref-local',
+  { 'calendar-show-weeknumber': true },
+  { mergeDefaults: true }
+);
 
 onMounted(() => {
   useKeyCalendar(cal);
@@ -115,7 +122,7 @@ const calendarOptions = reactive({
   height: '90vh',
   locales: allLocales,
   locale: getUser.value.lang || 'en',
-  weekNumbers: true,
+  weekNumbers: localPerf.value['calendar-show-weeknumber'],
   weekNumberCalculation: 'ISO',
   displayEventTime: true,
   firstDay: 1,

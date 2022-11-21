@@ -70,6 +70,12 @@
         </div>
       </div>
     </div>
+    <btn-base
+      size="sm"
+      class="float-right bg-orange-7"
+      @click.stop="onSave(true)"
+      >{{ $t('updatePosition') }}</btn-base
+    >
   </div>
 </template>
 
@@ -80,6 +86,7 @@ import { useNotification } from '~/composables/useNotification';
 import DialogForm from './DialogForm.vue';
 import { useQuasar } from 'quasar';
 import { usePreventNavigation } from '~/composables/usePreventNavgiation';
+import { clearCache } from '~/composables/useQuery';
 
 const usePrevent = usePreventNavigation();
 const $q = useQuasar();
@@ -140,8 +147,8 @@ function resetActiveStep() {
   usePrevent.state.value = false;
 }
 
-function onSave() {
-  if (!usePrevent.state.value) {
+function onSave(force = false) {
+  if (!usePrevent.state.value && !force) {
     resetActiveStep();
   } else {
     const patch = map(hives.value, (obj, index) => {
@@ -151,6 +158,7 @@ function onSave() {
       () => {
         notification.open('positive', 'updated');
         resetActiveStep();
+        clearCache('hive');
         emit('change');
       },
       () => notification.open('negative', '')

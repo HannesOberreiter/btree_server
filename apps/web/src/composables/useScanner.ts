@@ -36,7 +36,6 @@ export const useScanner = () => {
   const isAvailable = computed(() => cameras.value.length > 0);
 
   async function init(elementId = 'qr-code-full-region') {
-    console.log(html5QrCode.value);
     if (html5QrCode.value) {
       isScanning.value = false;
       isStarting.value = false;
