@@ -1,5 +1,6 @@
 {
   "Dropbox": "Dropbox",
+  "abo": "Abo | \nAbos",
   "account": "Konto",
   "accountActivated": "Ihr Konto wurde erfolgreich aktiviert!",
   "activate": "Aktivieren",
@@ -277,6 +278,8 @@
   },
   "line": "Zeile | Zeilen",
   "loading": "Laden ...",
+  "local": "Lokal",
+  "localSetting": "Lokale Geräteeinstellungen",
   "locationError": "Auf Ihren Standort konnte nicht zugegriffen werden.",
   "login": "Anmelden",
   "logout": "Ausloggen",
@@ -436,6 +439,7 @@
     "socialMedia": "Soziale Medien"
   },
   "rejectedFiles": "{count} Datei(en) konnten nicht validiert werden.",
+  "reloadRequired": "Ein Neuladen ist erforderlich.",
   "remove": "Entfernen",
   "removeAccess": "Zugriff entfernen",
   "rename": "Umbenennen",
@@ -471,6 +475,7 @@
   },
   "sessionTimeOut": "Session-Abgelaufen",
   "setting": {
+    "hintCalendarWeeknumber": "Wochennummer im Kalender anzeigen.",
     "hintChargeBestbefore": "Mindesthaltbarkeitsdatum: Datumsfeld",
     "hintChargeCalibrate": "Kalibrieren: Eingabefeld, wenn Sie eine Kalibrierliste für Ihre Chargen führen möchten",
     "hintChargePrice": "Preis: Eingabefeld, für einen Preis",
@@ -484,6 +489,7 @@
     "hintGeneralUrl": "Link zur Formulardatei und Schaltfläche zum Hochladen für Dropbox.",
     "hintHarvestFrames": "Waben: Eingabefeld für die Anzahl der geernteten Waben.",
     "hintHarvestWater": "Wasser: Eingabefeld für Wassergehalt %",
+    "hintHiveUseInput": "Verwenden Sie die Tastatureingabe bei der Stock und Stand-Auswahl.",
     "hintTreatmentTemperature": "@:setting.hintCheckupTemperature",
     "hintTreatmentVet": "Tierarzt: Dropdown, in den Optionen können Sie die Werte für dieses Dropdown festlegen",
     "hintTreatmentWait": "Warten: Eingabefeld, für die Wartezeit nach der Behandlung",
@@ -563,6 +569,7 @@
     "success": "Wir haben {msg} aus unserer Mailingliste entfernt, falls sie registriert ist. Ansonsten kontaktieren Sie uns bitte unter {'office@btree.at'}"
   },
   "update": "Aktualisieren",
+  "updatePosition": "Stock-Positionen aktualisieren",
   "updated": "Aktualisiert",
   "upload": "Hochladen",
   "uploadFile": "Eine Datei hochladen",

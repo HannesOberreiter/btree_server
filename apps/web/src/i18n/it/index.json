@@ -1,5 +1,6 @@
 {
   "Dropbox": "Dropbox",
+  "abo": "Abò | \nAbs",
   "account": "Account",
   "accountActivated": "Il tuo account è stato attivato con successo!",
   "activate": "Attivare",
@@ -277,6 +278,8 @@
   },
   "line": "Riga | Linee",
   "loading": "Caricamento ...",
+  "local": "Locale",
+  "localSetting": "Impostazioni dispositivo locale",
   "locationError": "Impossibile accedere alla tua posizione.",
   "login": "Login",
   "logout": "Disconnettersi",
@@ -436,6 +439,7 @@
     "socialMedia": "Social media"
   },
   "rejectedFiles": "{count} I file non sono ammessi.",
+  "reloadRequired": "È necessaria una ricarica.",
   "remove": "Rimuovere",
   "removeAccess": "Rimuovere l'accesso",
   "rename": "Rinominare",
@@ -471,6 +475,7 @@
   },
   "sessionTimeOut": "Timeout della sessione",
   "setting": {
+    "hintCalendarWeeknumber": "Mostra il numero della settimana sul calendario.",
     "hintChargeBestbefore": "Da consumarsi preferibilmente entro: campo data",
     "hintChargeCalibrate": "Calibra: campo di immissione, se desideri mantenere un elenco di calibrazione per i tuoi addebiti",
     "hintChargePrice": "Prezzo: campo di immissione, per un prezzo",
@@ -484,6 +489,7 @@
     "hintGeneralUrl": "Collegamento al file del modulo e pulsante di caricamento per Dropbox.",
     "hintHarvestFrames": "Frame: campo di immissione per quanti frame hai raccolto.",
     "hintHarvestWater": "Acqua: campo di immissione per il contenuto d'acqua %",
+    "hintHiveUseInput": "Usa l'input da tastiera per la selezione dell'hive.",
     "hintTreatmentTemperature": "@:setting.hintCheckupTemperatura",
     "hintTreatmentVet": "Vet: Dropdown, nelle Opzioni puoi definire i valori per questo menu a tendina",
     "hintTreatmentWait": "Attendere: campo di immissione, per il tempo di attesa dopo il trattamento",
@@ -563,6 +569,7 @@
     "success": "Abbiamo rimosso {msg} dalla nostra mailing list, se è registrato. Altrimenti non esitare a contattarci all'indirizzo {'office@btree.at'}"
   },
   "update": "Aggiornare",
+  "updatePosition": "Aggiorna le posizioni dell'alveare",
   "updated": "Aggiornato",
   "upload": "Caricamento",
   "uploadFile": "Caricare un file",

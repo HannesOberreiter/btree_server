@@ -1,5 +1,6 @@
 {
   "Dropbox": "Dropbox",
+  "abo": "Abo | Abos",
   "account": "Account",
   "accountActivated": "You account was successfully activated!",
   "activate": "Activate",
@@ -277,6 +278,8 @@
   },
   "line": "Line | Lines",
   "loading": "Loading ...",
+  "local": "Local",
+  "localSetting": "Local Device Settings",
   "locationError": "Could not access your location.",
   "login": "Login",
   "logout": "Logout",
@@ -436,6 +439,7 @@
     "socialMedia": "Social Media"
   },
   "rejectedFiles": "{count} Datei(en) sind nicht erlaubt.",
+  "reloadRequired": "A reload is required.",
   "remove": "Remove",
   "removeAccess": "Remove access",
   "rename": "Rename",
@@ -471,6 +475,7 @@
   },
   "sessionTimeOut": "Session time-out",
   "setting": {
+    "hintCalendarWeeknumber": "Show week number on calendar.",
     "hintChargeBestbefore": "Best before: Date Field",
     "hintChargeCalibrate": "Calibrate: Input Field, if you want to keep a calibrate list for you charges",
     "hintChargePrice": "Price: Input Field, for a price",
@@ -484,6 +489,7 @@
     "hintGeneralUrl": "Form file link and upload button for Dropbox.",
     "hintHarvestFrames": "Frames: Input Field for how many frames you harvested.",
     "hintHarvestWater": "Water: Input Field for water content %",
+    "hintHiveUseInput": "Use keyboard input on hive and apiary selection.",
     "hintTreatmentTemperature": "@:setting.hintCheckupTemperature",
     "hintTreatmentVet": "Vet: Dropdown, in the Options you can define the values for this dropdown",
     "hintTreatmentWait": "Wait: Input Field, for waiting time after treatment",
@@ -563,6 +569,7 @@
     "success": "We removed {msg} from our mailing list, if it is registered. Otherwise please feel free to contact us at {'office@btree.at'}"
   },
   "update": "Update",
+  "updatePosition": "Update hive positions",
   "updated": "Updated",
   "upload": "Upload",
   "uploadFile": "Upload a file",

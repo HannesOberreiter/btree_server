@@ -1,5 +1,6 @@
 {
   "Dropbox": "Boîte de dépôt",
+  "abo": "Abo | \nAbos",
   "account": "Compte",
   "accountActivated": "Votre compte a été activé avec succès!",
   "activate": "Activer",
@@ -277,6 +278,8 @@
   },
   "line": "Ligne | Lignes",
   "loading": "Chargement ...",
+  "local": "Local",
+  "localSetting": "Paramètres de l'appareil local",
   "locationError": "Impossible d'accéder à votre position.",
   "login": "Connexion",
   "logout": "Se déconnecter",
@@ -436,6 +439,7 @@
     "socialMedia": "Des médias sociaux"
   },
   "rejectedFiles": "{count} Le(s) fichier(s) ne sont pas autorisés.",
+  "reloadRequired": "Un rechargement est nécessaire.",
   "remove": "Retirer",
   "removeAccess": "Supprimer l'accès",
   "rename": "Renommer",
@@ -471,6 +475,7 @@
   },
   "sessionTimeOut": "Expiration de la session",
   "setting": {
+    "hintCalendarWeeknumber": "Afficher le numéro de semaine sur le calendrier.",
     "hintChargeBestbefore": "À consommer de préférence avant: champ de date",
     "hintChargeCalibrate": "Calibrer: champ de saisie, si vous souhaitez conserver une liste de calibrage pour vos charges",
     "hintChargePrice": "Prix: Champ de saisie, pour un prix",
@@ -484,6 +489,7 @@
     "hintGeneralUrl": "Lien de fichier de formulaire et bouton de téléchargement pour Dropbox.",
     "hintHarvestFrames": "Images: champ de saisie du nombre d'images que vous avez récoltées.",
     "hintHarvestWater": "Eau: champ de saisie pour la teneur en eau %",
+    "hintHiveUseInput": "Utilisez la saisie au clavier lors de la sélection de la ruche.",
     "hintTreatmentTemperature": "@:setting.hintCheckupTemperature",
     "hintTreatmentVet": "Vétérinaire: liste déroulante, dans les options, vous pouvez définir les valeurs de cette liste déroulante",
     "hintTreatmentWait": "Attendre : champ de saisie, pour le temps d'attente après le traitement",
@@ -563,6 +569,7 @@
     "success": "Nous avons supprimé {msg} de notre liste de diffusion, s'il est enregistré. Sinon, n'hésitez pas à nous contacter à {'office@btree.at'}"
   },
   "update": "Mise à jour",
+  "updatePosition": "Mettre à jour les positions de la ruche",
   "updated": "Actualisé",
   "upload": "Télécharger",
   "uploadFile": "Télécharger un fichier",
