@@ -88,6 +88,23 @@
             </template>
           </div>
         </template>
+        <span class="text-h6">{{ $t('localSetting') }}</span>
+        <q-separator color="secondary" inset />
+        <div class="q-pa-md">
+          <q-toggle
+            v-model="localPerf['date-auto-close']"
+            :label="$t('autoCloseDate')"
+            :disable="isSubmitting || isLoading"
+            @update:model-value="onSubmit"
+          />
+          <q-toggle
+            v-if="$q.platform.is.mobile"
+            v-model="localPerf['hive-use-input']"
+            :label="$t('setting.hintHiveUseInput')"
+            :disable="isSubmitting || isLoading"
+            @update:model-value="onSubmit"
+          />
+        </div>
         <btn-base
           :label="$t('save')"
           color="primary"
@@ -109,11 +126,18 @@ import { capitalize } from 'lodash-es';
 import { useFieldsettingStore } from '~/stores/fieldsetting';
 import { useNotification } from '~/composables/useNotification';
 import { useApiFetch } from '~/composables/useApi';
+import { useLocalStorage } from '@vueuse/core';
 
 const notification = useNotification();
 const storeFields = useFieldsettingStore();
 const { settings } = storeToRefs(storeFields);
 const api = useApiFetch();
+
+const localPerf = useLocalStorage(
+  'pref-local',
+  { 'date-auto-close': false, 'hive-use-input': false },
+  { mergeDefaults: true }
+);
 
 const isSubmitting = ref(false);
 const isLoading = ref(true);
