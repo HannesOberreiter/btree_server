@@ -192,7 +192,7 @@ const rules = computed(() => {
 const v = useVuelidate(rules, state);
 
 onMounted(() => {
-  if (router.currentRoute.value.name === 'detail-apiary') {
+  if (router.currentRoute.value.name === 'detail-apiary' && !props.selected) {
     watch(
       [apiaries, router.currentRoute],
       () => {
