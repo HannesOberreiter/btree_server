@@ -269,7 +269,7 @@ const calendarOptions = reactive({
   plugins: [dayGridPlugin, listPlugin, interactionPlugin],
   customButtons: {
     sources: {
-      text: t('setting.name', 2),
+      text: t('abo', 2),
       click: function () {
         showSetting.value = true;
       },

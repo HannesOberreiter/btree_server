@@ -3,22 +3,22 @@
     <q-card>
       <q-card-section>
         <btn-close-dialog class="float-right"></btn-close-dialog>
-        <div class="text-h6">
-          {{ $t('setting.name', 2) }} {{ $t('calendar') }}
-        </div>
+        <div class="text-h6">{{ $t('abo', 2) }} {{ $t('calendar') }}</div>
       </q-card-section>
 
       <q-card-section class="q-pt-none">
-        <q-toggle
-          v-for="value in CALENDAR"
-          :key="value"
-          v-model="storeCalendar.calendar"
-          size="lg"
-          :val="value"
-          :label="value.length > 3 ? $t(value.replace(/s$/, ''), 2) : $t(value)"
-          type="toggle"
-        >
-        </q-toggle>
+        <div v-for="value in CALENDAR" :key="value">
+          <q-toggle
+            v-model="storeCalendar.calendar"
+            size="md"
+            :val="value"
+            :label="
+              value.length > 3 ? $t(value.replace(/s$/, ''), 2) : $t(value)
+            "
+            type="toggle"
+          >
+          </q-toggle>
+        </div>
       </q-card-section>
 
       <q-card-actions align="right">
