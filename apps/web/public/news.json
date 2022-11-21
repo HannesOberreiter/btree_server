@@ -1,7 +1,7 @@
 [
   {
     "version": "6.1.6",
-    "date": "2022-10-21",
+    "date": "2022-11-21",
     "news": [
       "FEATURE renamed wind map to Meteoblue and added more maps and closer starting zoom to the widget",
       "FEATURE new local settings on fields page, to allow keyboard input on hive and apiary selection on mobile devices, thx matthias",
