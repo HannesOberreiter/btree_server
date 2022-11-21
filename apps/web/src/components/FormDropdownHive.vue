@@ -10,7 +10,7 @@
     :clearable="true"
     multiple
     options-dense
-    :use-input="!$q.platform.is.mobile"
+    :use-input="!$q.platform.is.mobile || localPerf['hive-use-input']"
     @filter="filterApiary"
     @clear="clearApiary"
     @update:model-value="selectApiary"
@@ -41,7 +41,7 @@
     counter
     multiple
     :use-chips="!$q.platform.is.mobile"
-    :use-input="!$q.platform.is.mobile"
+    :use-input="!$q.platform.is.mobile || localPerf['hive-use-input']"
     filled
     class="hive-select"
     data-cy="select-hive"
@@ -58,7 +58,7 @@
 import { filter, map, union, unionBy } from 'lodash-es';
 import { required } from '~/helpers/i18n-validators';
 import { useApiariesQuery, useHivesQuery } from '~/composables/useQuery';
-import { useVModels } from '@vueuse/core';
+import { useLocalStorage, useVModels } from '@vueuse/core';
 import { validationErrors } from '~/helpers';
 import useVuelidate from '@vuelidate/core';
 import { useScanningStore } from '~/stores/scanning';
@@ -72,6 +72,12 @@ const { t } = useI18n();
 const { isLoading: isLoadingHive, data: hives } = useHivesQuery({});
 const { isLoading: isLoadingApiary, data: apiaries } = useApiariesQuery({});
 const notification = useNotification();
+
+const localPerf = useLocalStorage(
+  'pref-local',
+  { 'hive-use-input': false },
+  { mergeDefaults: true }
+);
 
 onMounted(() => {
   hiveDropdownActive.value = true;
@@ -186,7 +192,7 @@ const rules = computed(() => {
 const v = useVuelidate(rules, state);
 
 onMounted(() => {
-  if (router.currentRoute.value.name === 'detail-apiary') {
+  if (router.currentRoute.value.name === 'detail-apiary' && !props.selected) {
     watch(
       [apiaries, router.currentRoute],
       () => {

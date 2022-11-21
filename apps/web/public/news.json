@@ -1,5 +1,20 @@
 [
   {
+    "version": "6.1.6",
+    "date": "2022-11-21",
+    "news": [
+      "FEATURE renamed wind map to Meteoblue and added more maps and closer starting zoom to the widget",
+      "FEATURE new local settings on fields page, to allow keyboard input on hive and apiary selection on mobile devices, thx matthias",
+      "FEATURE added new button to force update hive position on apiary detail hive list, thx josef",
+      "FEATURE added option to disable week numbers in calendar, thx josef",
+      "BUGFIX apiary detail window, don't select on movement all hives if using the movement button in the hive list, thx josef",
+      "VISUAL improvement text on premium page",
+      "VISUAL calendar settings renamed to abos and now presented in a cleaner list style",
+      "CHORE updated libs",
+      "CHORE upgraded Stripe API [SERVER]"
+    ]
+  },
+  {
     "version": "6.1.5",
     "date": "2022-10-31",
     "news": ["BUGFIX for charges the charge number was not saved correctly"]
@@ -38,10 +53,10 @@
     "news": [
       "BETA added notice if you are currently on the beta server",
       "BUGFIX relax data caching and invalidate old cache if new data is generated",
-      "BUGFIX feeding types were missing in options, thanks jannis",
+      "BUGFIX feeding types were missing in options, thx jannis",
       "BUGFIX rezise observer on calendar did try to change calendar size even if not ready",
       "BUGFIX keep login button disabled till redirected to starting page",
-      "CHANGE navbar hive and apiary search does not include inactive anymore",
+      "CHANGE navbar hive and apiary search does not include inactive any more",
       "FEATURE improved QR code scanner and added option to upload image",
       "FEATURE added mail contact button and FAQs link to footer",
       "FEATURE for more security the password is now required to show API key",
@@ -81,7 +96,7 @@
       "BUGFIX rank user is now able to create charges [SERVER]",
       "VISUAL added share button (print QR and set NFC) to top navbar button dropdown list on mobile devices",
       "FEATURE on detail pages you can now filter for open tasks",
-      "FEATURE added inactivate queen and hive button to hive detail page, thanks hermann",
+      "FEATURE added inactivate queen and hive button to hive detail page, thx hermann",
       "FEATURE navigation menu now shows again open tasks and counts. Info: Count will only update every five minutes"
     ]
   },
@@ -92,13 +107,13 @@
       "BUGFIX charge table filtering was not working properly",
       "BUGFIX queen stats table was not showing the current active queens [SERVER]",
       "BUGFIX queen stats table, allow ordering of calculated fields, but only on the visible ones!",
-      "BUGFIX hive table queen date was wrong, thanks yannik",
+      "BUGFIX hive table queen date was wrong, thx yannik",
       "BUGFIX wrong activation link on registration email",
       "BUGFIX some german and english typos",
-      "FEATURE added NFC button to read content, thanks hermann",
-      "FEATURE hive and apiary detail page now have custom button to quickly add tasks, thanks hermann",
+      "FEATURE added NFC button to read content, thx hermann",
+      "FEATURE hive and apiary detail page now have custom button to quickly add tasks, thx hermann",
       "FEATURE queen table added missing move date column",
-      "FEATURES tables support now arrow navigation for pagination (left, right, up and down)",
+      "FEATURE tables support now arrow navigation for pagination (left, right, up and down)",
       "FEATURE added again machine translated italian and french translation"
     ]
   },
@@ -133,7 +148,7 @@
     "date": "2022-10-05",
     "news": [
       "Version 6 is live 🚀",
-      "BUGFIX emails with dots did not work, thanks hermann",
+      "BUGFIX emails with dots did not work, thx hermann",
       "BUGFIX typos in dropbox and main url"
     ]
   },
@@ -363,7 +378,7 @@
       "UPDATED translation libraries ",
       "BUGFIX top search bar did try to load on login page ",
       "BUGFIX translation table did not save and update correctly ",
-      "CHANGE task charts now load as standard the last year with data and not all years summarized, thanks manfred for the suggestion ",
+      "CHANGE task charts now load as standard the last year with data and not all years summarized, thx manfred for the suggestion ",
       "CHANGE removed pie charts from tasks, now showing a more comprehensive bar chart "
     ]
   },
@@ -371,10 +386,10 @@
     "version": "5.0.9",
     "date": "2020-09-08",
     "news": [
-      "TRANSLATIONS improvements on french translations, thanks to Carnot ",
+      "TRANSLATIONS improvements on french translations, thx to Carnot ",
       "UPDATED third party libraries ",
       "UPDATED CDN for bootstrap and jquery ",
-      "BUGFIX varroa count was not shown in checkup table, thanks Andreas and Matthias ",
+      "BUGFIX varroa count was not shown in checkup table, thx Andreas and Matthias ",
       "BUGFIX loading chart library ",
       "BUGFIX quickqueen did not save creation time and user ",
       "VISUAL removed white background from quicktool ",
@@ -387,9 +402,9 @@
     "version": "5.0.8",
     "date": "2020-06-23",
     "news": [
-      "VISUAL added ID to rearing table and info modal, thanks Matthias",
+      "VISUAL added ID to rearing table and info modal, thx Matthias",
       "VISUAL added missing line break between note and larvae number in rearing modal",
-      "BUGFIX hive position was not loading in hive detail edit modal, thanks Olli",
+      "BUGFIX hive position was not loading in hive detail edit modal, thx Olli",
       "FEATURE it is now possible to order by inactive date on the hive table",
       "BUGFIX speak command to load hive or apiary details was not working correctly"
     ]
@@ -466,7 +481,7 @@
       "BUGFIX added missing trailing backslash to some table URLs ",
       "BUGFIX english documentation one link was broken ",
       "BUGFIX service worker did serve wrong links for calendar ",
-      "BUGFIX hive table - adding tasks from table did not work correctly (thanks Stefan) ",
+      "BUGFIX hive table - adding tasks from table did not work correctly (thx Stefan) ",
       "BUGFIX login page cookie should work again ",
       "BUGFIX calendar did show errors if changing too quick between months ",
       "FEATURE speak recognition now also works with new Microsoft Edge Browser"

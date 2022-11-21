@@ -34,6 +34,6 @@ const referUrl = computed(() => {
 });
 
 const widgetUrl = computed(() => {
-  return `https://www.meteoblue.com/${urlPart.value}/maps/widget?windAnimation=0&windAnimation=1&gust=0&gust=1&satellite=0&satellite=1&geoloc=detect&tempunit=C&windunit=km%252Fh&lengthunit=metric&zoom=5&autowidth=auto`;
+  return `https://www.meteoblue.com/${urlPart.value}/maps/widget?windAnimation=0&windAnimation=1&gust=0&gust=1&satellite=0&satellite=1&cloudsAndPrecipitation=0&cloudsAndPrecipitation=1&temperature=0&temperature=1&sunshine=0&sunshine=1&extremeForecastIndex=0&extremeForecastIndex=1&geoloc=detect&tempunit=C&windunit=km%252Fh&lengthunit=metric&zoom=8&autowidth=auto`;
 });
 </script>
