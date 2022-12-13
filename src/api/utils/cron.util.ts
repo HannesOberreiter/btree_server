@@ -229,7 +229,7 @@ export const reminderVIS = async () => {
     const countDay1 = year + '-10-31';
     const countDay2 = year + '-04-30';
     // VIS Eingabe
-    const reportDay1 = year + '-12-18';
+    const reportDay1 = year + '-12-31';
     const reportDay2 = year + '-06-30';
 
     let mailDate, mailSubject;
