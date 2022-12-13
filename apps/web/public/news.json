@@ -1,5 +1,10 @@
 [
   {
+    "version": "6.1.X",
+    "date": "2022-XX-XX",
+    "news": ["BUGFIX wrong VIS date in december [SERVER]"]
+  },
+  {
     "version": "6.1.6",
     "date": "2022-11-21",
     "news": [
