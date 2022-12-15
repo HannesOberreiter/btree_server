@@ -18,7 +18,7 @@ import {
   buildUserAgent,
 } from '@utils/auth.util';
 import { discourseSecret, env } from '@/config/environment.config';
-import { ENVIRONMENT } from '../types/enums/environment.enum';
+import { ENVIRONMENT } from '../types/constants/environment.const';
 import { MailServer } from '../app.bootstrap';
 
 import { IUserRequest } from '../types/interfaces/IUserRequest.interface';

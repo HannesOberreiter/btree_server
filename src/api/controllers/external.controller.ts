@@ -7,7 +7,7 @@ import { getCompany } from '../utils/api.util';
 import { addPremium, isPremium } from '../utils/premium.util';
 import { paymentRequired } from '@hapi/boom';
 import { checkMySQLError } from '../utils/error.util';
-import { SOURCE } from '../types/enums/ical.enum';
+import { SOURCE } from '../types/constants/ical.const';
 import {
   getMovements,
   getRearings,
@@ -97,9 +97,9 @@ export class ExternalController extends Controller {
         const user_id = parseInt(event.data.object.client_reference_id);
         let amount = 0;
         try {
-          amount = parseFloat(event.data.object.amount_total)/100
-        } catch(e){
-          console.error(e)
+          amount = parseFloat(event.data.object.amount_total) / 100;
+        } catch (e) {
+          console.error(e);
         }
         await addPremium(user_id, 12, amount, 'stripe');
       }

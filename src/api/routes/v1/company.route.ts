@@ -1,7 +1,7 @@
 import { Router } from '@classes/router.class';
 import { Container } from '@config/container.config';
 import { Guard } from '@middlewares/guard.middleware';
-import { ROLES } from '@enums/role.enum';
+import { ROLES } from '@/api/types/constants/role.const';
 import { body } from 'express-validator';
 import { Validator } from '@/api/middlewares/validator.middleware';
 export class CompanyRouter extends Router {

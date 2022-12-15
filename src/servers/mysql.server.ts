@@ -1,4 +1,4 @@
-import { ENVIRONMENT } from '@enums/environment.enum';
+import { ENVIRONMENT } from '@/api/types/constants/environment.const';
 import { env, knexConfig } from '@config/environment.config';
 import { Container } from '@config/container.config';
 import Knex from 'knex';

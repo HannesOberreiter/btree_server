@@ -1,6 +1,6 @@
 import { Guard } from '@/api/middlewares/guard.middleware';
 import { Validator } from '@/api/middlewares/validator.middleware';
-import { ROLES } from '@/api/types/enums/role.enum';
+import { ROLES } from '@/api/types/constants/role.const';
 import { Router } from '@classes/router.class';
 import { Container } from '@config/container.config';
 import { body, param } from 'express-validator';

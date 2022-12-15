@@ -1,4 +1,4 @@
-import { ENVIRONMENT } from '@enums/environment.enum';
+import { ENVIRONMENT } from '@/api/types/constants/environment.const';
 import p from 'path';
 import dotenv from 'dotenv';
 
@@ -14,7 +14,7 @@ class EnvironmentConfiguration {
   /**
    * @description Current environment (default dev)
    */
-  static environment: ENVIRONMENT = ENVIRONMENT.development;
+  static environment: keyof typeof ENVIRONMENT = ENVIRONMENT.development;
 
   /**
    * @description Set environment according to current process args
@@ -33,7 +33,7 @@ class EnvironmentConfiguration {
       // eslint-disable-next-line no-prototype-builtins
       ENVIRONMENT.hasOwnProperty(process.env.ENVIRONMENT)
     ) {
-      this.environment = process.env.ENVIRONMENT as ENVIRONMENT;
+      this.environment = process.env.ENVIRONMENT as keyof typeof ENVIRONMENT;
     }
   }
 

@@ -2,7 +2,7 @@ import { env } from '@config/environment.config';
 import * as Winston from 'winston';
 import { format } from 'winston';
 import p from 'path';
-import { ENVIRONMENT } from '@/api/types/enums/environment.enum';
+import { ENVIRONMENT } from '@/api/types/constants/environment.const';
 
 /**
  * This logger implements Winston module for writing custom logs

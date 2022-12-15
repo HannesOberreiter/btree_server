@@ -1,7 +1,7 @@
 //import passport from 'passport';
 import { forbidden, unauthorized } from '@hapi/boom';
 
-import { ROLES } from '@enums/role.enum';
+import { ROLES } from '@/api/types/constants/role.const';
 import { listNumber } from '@utils/enum.util';
 import { IUserRequest } from '@interfaces/IUserRequest.interface';
 import { NextFunction } from 'express';

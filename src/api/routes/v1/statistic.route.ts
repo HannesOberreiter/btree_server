@@ -1,7 +1,7 @@
 import { Router } from '@classes/router.class';
 import { Container } from '@config/container.config';
 import { Guard } from '@middlewares/guard.middleware';
-import { ROLES } from '@enums/role.enum';
+import { ROLES } from '@/api/types/constants/role.const';
 import { Validator } from '@/api/middlewares/validator.middleware';
 import { query } from 'express-validator';
 
