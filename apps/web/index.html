@@ -149,7 +149,7 @@
 <script>
   if (
     (window.location.pathname.includes('visitor') &&
-      window.location.host !== 'localhost:9001') ||
+      !window.location.host.includes('localhost')) ||
     window.location.hash.includes('test-bu')
   ) {
     var $buoop = {
