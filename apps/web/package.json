@@ -14,11 +14,11 @@
     "test:e2e:ci": "cross-env NODE_ENV=test start-test \"quasar dev\" http-get://localhost:9000 \"cypress run\""
   },
   "dependencies": {
-    "@fullcalendar/core": "^5.11.2",
-    "@fullcalendar/daygrid": "^5.11.2",
-    "@fullcalendar/interaction": "^5.11.2",
-    "@fullcalendar/list": "^5.11.2",
-    "@fullcalendar/vue3": "^5.11.2",
+    "@fullcalendar/core": "^6.0.2",
+    "@fullcalendar/daygrid": "^6.0.2",
+    "@fullcalendar/interaction": "^6.0.2",
+    "@fullcalendar/list": "^6.0.2",
+    "@fullcalendar/vue3": "^6.0.2",
     "@paypal/paypal-js": "^5.1.4",
     "@quasar/extras": "^1.15.8",
     "@vue-leaflet/vue-leaflet": "^0.7.0",
