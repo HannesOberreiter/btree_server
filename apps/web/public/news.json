@@ -2,7 +2,14 @@
   {
     "version": "6.1.X",
     "date": "2022-XX-XX",
-    "news": ["BUGFIX wrong VIS date in december [SERVER]"]
+    "news": [
+      "IMPROVEMENT automatic e2e tests upgraded to cypress 11",
+      "IMPROVEMENT reduced warning of outdated browser",
+      "IMPROVEMENT sound notification files are now only loaded if option is active",
+      "CHORES updated calendar, should now render faster if many events are visible",
+      "CHORES updated libraries [SERVER]",
+      "BUGFIX wrong VIS date in december [SERVER]"
+    ]
   },
   {
     "version": "6.1.6",

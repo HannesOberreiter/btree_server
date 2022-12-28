@@ -11,7 +11,6 @@ export default defineConfig({
   video: true,
   defaultCommandTimeout: 10000,
   e2e: {
-    experimentalSessionAndOrigin: true,
     experimentalRunAllSpecs: true,
     setupNodeEvents(on, config) {
       registerCodeCoverageTasks(on, config);

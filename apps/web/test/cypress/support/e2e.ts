@@ -21,9 +21,9 @@ afterEach(function () {
   if (this.currentTest.state === 'failed') {
     (Cypress as any).runner.stop();
   }
-  cy.saveLocalStorage();
+  //cy.saveLocalStorage();
 });
 
 beforeEach(() => {
-  cy.restoreLocalStorage();
+  //cy.restoreLocalStorage();
 });
