@@ -48,7 +48,7 @@ register(process.env.SERVICE_WORKER_FILE, {
           label: i18n.global.t('refresh'),
           color: 'yellow',
           handler: () => {
-            Router.go(0);
+            window.location.reload();
           },
         },
         {
