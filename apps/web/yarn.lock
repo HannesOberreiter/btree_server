@@ -1117,7 +1117,7 @@
   resolved "https://registry.yarnpkg.com/@humanwhocodes/object-schema/-/object-schema-1.2.1.tgz#b520529ec21d8e5945a1851dfd1c32e94e39ff45"
   integrity sha512-ZnQMnLV4e7hDlUvw8H+U8ASL02SS2Gn6+9Ac3wGGLIe7+je2AeAOxPY+izIPJDfFDb7eDjev0Us8MO1iFRN8hA==
 
-"@intlify/bundle-utils@^3.2.1":
+"@intlify/bundle-utils@^3.4.0":
   version "3.4.0"
   resolved "https://registry.yarnpkg.com/@intlify/bundle-utils/-/bundle-utils-3.4.0.tgz#72558611f4b223a6791f591363dc48a4bcacdf70"
   integrity sha512-2UQkqiSAOSPEHMGWlybqWm4G2K0X+FyYho5AwXz6QklSX1EY5EDmOSxZmwscn2qmKBnp6OYsme5kUrnN9xrWzQ==
@@ -1171,17 +1171,23 @@
   resolved "https://registry.yarnpkg.com/@intlify/shared/-/shared-9.3.0-beta.11.tgz#a98668c7685ba3b62ccd18767bc52d8087e9e414"
   integrity sha512-CtbotesxTRiC3bRyXyv1NG39fkqJ790f8z8xFaeIXSZpOdiyxoh5BIyypCzSFQZDGLwz0Q9gyWbW1XpxQJm68Q==
 
-"@intlify/vite-plugin-vue-i18n@^6.0.1":
-  version "6.0.3"
-  resolved "https://registry.yarnpkg.com/@intlify/vite-plugin-vue-i18n/-/vite-plugin-vue-i18n-6.0.3.tgz#57a6900de02a9829e52b16bf072768534c7664ef"
-  integrity sha512-6SgNzPAOCR90wvt368lKzi7f/5ZEWJn22UCGvhFsP3XvKqlF3cVzojahgQ6o+LTdCkExeM6wPgd+haFf28E9VQ==
+"@intlify/unplugin-vue-i18n@^0.8.1":
+  version "0.8.1"
+  resolved "https://registry.yarnpkg.com/@intlify/unplugin-vue-i18n/-/unplugin-vue-i18n-0.8.1.tgz#e472981da044d85b910521ee0f9e15382cba9a09"
+  integrity sha512-BhigujPmP6JL1FSxmpogCaL+REozncHCVkJuUnefz4GWBu3X+pRe5O7PeJn8/g+Iml2ieQJz4ISPMmEbuGQjqQ==
   dependencies:
-    "@intlify/bundle-utils" "^3.2.1"
+    "@intlify/bundle-utils" "^3.4.0"
     "@intlify/shared" next
     "@rollup/pluginutils" "^4.2.0"
+    "@vue/compiler-sfc" "^3.2.45"
     debug "^4.3.1"
     fast-glob "^3.2.5"
+    js-yaml "^4.1.0"
+    json5 "^2.2.0"
+    pathe "^1.0.0"
+    picocolors "^1.0.0"
     source-map "0.6.1"
+    unplugin "^1.0.0"
 
 "@intlify/vue-devtools@9.2.2":
   version "9.2.2"
@@ -1964,7 +1970,7 @@
     "@vue/compiler-core" "3.2.45"
     "@vue/shared" "3.2.45"
 
-"@vue/compiler-sfc@3.2.45":
+"@vue/compiler-sfc@3.2.45", "@vue/compiler-sfc@^3.2.45":
   version "3.2.45"
   resolved "https://registry.yarnpkg.com/@vue/compiler-sfc/-/compiler-sfc-3.2.45.tgz#7f7989cc04ec9e7c55acd406827a2c4e96872c70"
   integrity sha512-1jXDuWah1ggsnSAOGsec8cFjT/K6TMZ0sPL3o3d84Ft2AYZi2jWJgRMjw4iaK0rBfA89L5gw427H4n1RZQBu6Q==
@@ -6709,7 +6715,7 @@ unplugin-vue-components@^0.22.12:
     resolve "^1.22.1"
     unplugin "^1.0.1"
 
-unplugin@^1.0.1:
+unplugin@^1.0.0, unplugin@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/unplugin/-/unplugin-1.0.1.tgz#83b528b981cdcea1cad422a12cd02e695195ef3f"
   integrity sha512-aqrHaVBWW1JVKBHmGo33T5TxeL0qWzfvjWokObHA9bYmN7eNDkwOxmLjhioHl9878qDFMAaT51XNroRyuz7WxA==
