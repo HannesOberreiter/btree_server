@@ -26,7 +26,6 @@
     "@vuelidate/validators": "^2.0.0",
     "@vueuse/core": "^9.9.0",
     "@vueuse/integrations": "^9.9.0",
-    "@vueuse/sound": "^2.0.0",
     "csv-parse": "^5.3.1",
     "csv-stringify": "^6.2.0",
     "d3-array": "^3.1.6",
