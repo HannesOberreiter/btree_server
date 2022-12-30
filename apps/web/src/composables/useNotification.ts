@@ -122,6 +122,7 @@ const useNotification = () => {
         );
       }
     });
+    return dismiss;
   }
   function close() {
     state.show = false;
