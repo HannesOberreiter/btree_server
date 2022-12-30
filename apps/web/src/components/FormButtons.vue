@@ -72,8 +72,6 @@ const { state, editIds, isEdit, v, form } = toRefs(props);
 const cleanup = useFormCleanup(form, state, props.isEdit);
 const numberOfTasks = computed(() => {
   let count = 0;
-  console.log(state.value);
-  console.log(form.value);
   if (
     ['feed', 'harvest', 'treatment', 'checkup', 'movedate'].includes(form.value)
   ) {
