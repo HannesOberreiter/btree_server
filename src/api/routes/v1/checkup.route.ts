@@ -23,7 +23,7 @@ export class CheckupRouter extends Router {
         Validator.validate([
           body('hive_ids').isArray(),
           body('interval').isInt({ max: 365, min: 0 }),
-          body('repeat').isInt({ max: 30, min: 0 }),
+          body('repeat').isInt({ max: 15, min: 0 }),
         ]),
         Guard.authorize([ROLES.admin, ROLES.user]),
         Container.resolve('CheckupController').post
