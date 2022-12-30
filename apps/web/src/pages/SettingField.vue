@@ -91,19 +91,31 @@
         <span class="text-h6">{{ $t('localSetting') }}</span>
         <q-separator color="secondary" inset />
         <div class="q-pa-md">
-          <q-toggle
-            v-model="localPerf['date-auto-close']"
-            :label="$t('autoCloseDate')"
-          />
-          <q-toggle
-            v-if="$q.platform.is.mobile"
-            v-model="localPerf['hive-use-input']"
-            :label="$t('setting.hintHiveUseInput')"
-          />
-          <q-toggle
-            v-model="localPerf['calendar-show-weeknumber']"
-            :label="$t('setting.hintCalendarWeeknumber')"
-          />
+          <div>
+            <q-toggle
+              v-model="localPerf['date-auto-close']"
+              :label="$t('autoCloseDate')"
+            />
+          </div>
+          <div>
+            <q-toggle
+              v-if="$q.platform.is.mobile"
+              v-model="localPerf['hive-use-input']"
+              :label="$t('setting.hintHiveUseInput')"
+            />
+          </div>
+          <div>
+            <q-toggle
+              v-model="localPerf['charge-use-input']"
+              :label="$t('setting.hintChargeUseInput')"
+            />
+          </div>
+          <div>
+            <q-toggle
+              v-model="localPerf['calendar-show-weeknumber']"
+              :label="$t('setting.hintCalendarWeeknumber')"
+            />
+          </div>
         </div>
         <btn-base
           :label="$t('save')"
@@ -138,6 +150,7 @@ const localPerf = useLocalStorage(
   {
     'date-auto-close': false,
     'hive-use-input': false,
+    'charge-use-input': false,
     'calendar-show-weeknumber': true,
   },
   { mergeDefaults: true }

@@ -96,44 +96,61 @@
             </div>
             <div
               v-if="
-                fields.settings.checkup.rating &&
-                task.brood +
-                  task.pollen +
-                  task.comb +
-                  task.temper +
-                  task.calm_comb +
-                  task.swarm >
-                  0
+                task.brood ||
+                task.calm_comb ||
+                task.comb ||
+                task.pollen ||
+                task.swarm ||
+                task.temper
               "
             >
-              <b>{{ $t('rating.name') }}:</b>
-              {{ $t('rating.brood') }} ({{ task.brood }}),
-              {{ $t('rating.pollen') }} ({{ task.pollen }}),
-              {{ $t('rating.comb') }} ({{ task.comb }}),
-              {{ $t('rating.temper') }} ({{ task.temper }}),
-              {{ $t('rating.calm_comb') }} ({{ task.calm_comb }}),
-              {{ $t('rating.swarm') }} ({{ task.swarm }})
+              <b>{{ $t('rating.name') }}: </b>
+              <span v-if="task.brood">
+                {{ $t('rating.brood') }} ({{ task.brood }})
+              </span>
+              <span v-if="task.calm_comb">
+                {{ $t('rating.calm_comb') }} ({{ task.calm_comb }})
+              </span>
+              <span v-if="task.comb">
+                {{ $t('rating.comb') }} ({{ task.comb }})
+              </span>
+              <span v-if="task.pollen">
+                {{ $t('rating.pollen') }} ({{ task.pollen }})
+              </span>
+              <span v-if="task.swarm">
+                {{ $t('rating.swarm') }} ({{ task.swarm }})
+              </span>
+              <span v-if="task.temper">
+                {{ $t('rating.temper') }} ({{ task.temper }})
+              </span>
             </div>
             <div
               v-if="
-                fields.settings.checkup.frames &&
-                task.broodframes +
-                  task.honeyframes +
-                  task.foundation +
-                  task.emptyframes >
-                  0
+                task.broodframes ||
+                task.honeyframes ||
+                task.foundation ||
+                task.emptyframes
               "
             >
-              <b>{{ $t('frame', 2) }}:</b>
-              {{ $t('frames.broodframes') }} ({{ task.broodframes }}),
-              {{ $t('frames.honeyframes') }} ({{ task.honeyframes }}),
-              {{ $t('frames.foundation') }} ({{ task.foundation }}),
+              <b>{{ $t('frame', 2) }}: </b>
+              <span v-if="task.broodframes">
+                {{ $t('frames.broodframes') }} ({{ task.broodframes }})
+              </span>
+              <span v-if="task.honeyframes">
+                {{ $t('frames.honeyframes') }} ({{ task.honeyframes }})
+              </span>
+              <span v-if="task.emptyframes">
+                {{ $t('frames.emptyframes') }} ({{ task.emptyframes }})
+              </span>
+              <span v-if="task.foundation">
+                {{ $t('frames.foundation') }} ({{ task.foundation }})
+              </span>
             </div>
-            <div v-if="fields.settings.checkup.strength && task.strong > 0">
+            <div v-if="task.strength && task.strong > 0">
               <b>{{ $t('strong') }}:</b> {{ task.strong }}
             </div>
 
-            <div v-if="fields.settings.checkup.weight && task.weight > 0">
+            <div v-if="task.weight">
               <b>{{ $t('weight') }}:</b>
               {{ task.weight }}
               ({{ useDate.displayFormat(task.time, 'time', 'HH:mm:ss') }})

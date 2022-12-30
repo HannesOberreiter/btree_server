@@ -34,9 +34,11 @@
     ></form-input-note>
     <form-input-checkbox
       v-model="state.modus"
-      label="modus"
+      label="active"
       :values="values"
       :reset="reset"
+      status-active="yes"
+      status-inactive="no"
     ></form-input-checkbox>
     <form-input-checkbox
       v-model="state.favorite"

@@ -36,13 +36,13 @@ import { useNotification } from '~/composables/useNotification';
 import DialogEvent from '~/components/DialogEvent.vue';
 import DialogForm from '~/components/DialogForm.vue';
 
-import '@fullcalendar/core/vdom'; // solve problem with Vite
-import FullCalendar, {
+import {
   CalendarOptions,
   EventClickArg,
   EventChangeArg,
   EventSourceInput,
-} from '@fullcalendar/vue3';
+} from '@fullcalendar/core';
+import FullCalendar from '@fullcalendar/vue3';
 import allLocales from '@fullcalendar/core/locales-all';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin, { DateClickArg } from '@fullcalendar/interaction';

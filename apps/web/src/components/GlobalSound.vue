@@ -1,11 +1,13 @@
 <template>
-  <div></div>
+  <div v-if="user.sound">
+    <audio ref="successSound" :src="SuccessSound" preload="auto"></audio>
+    <audio ref="errorSound" :src="ErrorSound" preload="auto"></audio>
+  </div>
 </template>
 
 <script setup lang="ts">
 import { useAuthUserStore } from '~/stores/auth';
 import { useNotification } from '~/composables/useNotification';
-import { useSound } from '@vueuse/sound';
 import { useVibrate } from '@vueuse/core';
 
 import ErrorSound from '~/assets/audio/error.mp3';
@@ -17,8 +19,8 @@ const { vibrate, isSupported: isVibrationSupported } = useVibrate({
 const storeUser = useAuthUserStore();
 const { user } = storeToRefs(storeUser);
 const notification = useNotification();
-const errorSound = useSound(ErrorSound);
-const successSound = useSound(SuccessSound);
+const errorSound = ref<null | HTMLAudioElement>(null);
+const successSound = ref<null | HTMLAudioElement>(null);
 const lastSoundNotification = ref(new Date().getTime());
 
 const preventSoundNotification = (old: number, seconds = 1) =>
@@ -30,7 +32,9 @@ watch(notification.state, (currentValue) => {
     if (lastSoundNotification)
       if (!preventSoundNotification(lastSoundNotification.value)) {
         if (isVibrationSupported) vibrate(currentValue.error ? 300 : 100);
-        currentValue.error ? errorSound.play() : successSound.play();
+        currentValue.error
+          ? errorSound.value.play()
+          : successSound.value.play();
         lastSoundNotification.value = new Date().getTime();
       }
   }

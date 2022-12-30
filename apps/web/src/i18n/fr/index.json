@@ -479,6 +479,7 @@
     "hintChargeBestbefore": "À consommer de préférence avant: champ de date",
     "hintChargeCalibrate": "Calibrer: champ de saisie, si vous souhaitez conserver une liste de calibrage pour vos charges",
     "hintChargePrice": "Prix: Champ de saisie, pour un prix",
+    "hintChargeUseInput": "Utilisez la saisie au clavier pour la sélection du type de charge.",
     "hintCheckupFrames": "Cadres : 4 champs de saisie - Broodframes, Honeyframes, Foundationframes, Emptyframes",
     "hintCheckupQueen": "Reine : 4 cases à cocher - Reine, Cellules de reine, Oeufs, Couvain plafonné",
     "hintCheckupRating": "Évaluation: 6 champs d'entrée: couvain, pollen, construction de peignes, tempérament, peigne calme, essaim",

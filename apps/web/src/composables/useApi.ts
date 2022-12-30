@@ -1,6 +1,6 @@
 //import { useAuthTokenStore } from '~/stores/token';
 import { useNeedAuth } from './useNeedAuth';
-import { stringify } from 'query-string';
+import querystring from 'query-string';
 import { isString } from 'lodash-es';
 import { LoadingBar } from 'quasar';
 import { useNetwork } from '@vueuse/core';
@@ -34,7 +34,12 @@ export const useApiFetch = () => {
   const buildUrl = (url: string, param = '' as unknown) => {
     if (param === '') return baseUrl + url;
     else
-      return baseUrl + url + '?' + stringify(param, { arrayFormat: 'bracket' });
+      return (
+        baseUrl +
+        url +
+        '?' +
+        querystring.stringify(param, { arrayFormat: 'bracket' })
+      );
   };
 
   const ping = async () => {

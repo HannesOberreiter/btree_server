@@ -15,11 +15,9 @@
 <script setup lang="ts">
 import { useAuthUserStore } from '~/stores/auth';
 import { useNotification } from '~/composables/useNotification';
-import '@fullcalendar/core/vdom'; // solve problem with Vite
-import FullCalendar, {
-  CalendarOptions,
-  EventClickArg,
-} from '@fullcalendar/vue3';
+
+import { CalendarOptions, EventClickArg } from '@fullcalendar/core';
+import FullCalendar from '@fullcalendar/vue3';
 import allLocales from '@fullcalendar/core/locales-all';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';

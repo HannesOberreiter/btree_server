@@ -20,7 +20,7 @@
                   v-model="modelValue[index]"
                   :error="v[index].$error"
                   :step="1"
-                  :min="0"
+                  :min="max * -1"
                   :max="max"
                   :disable="disable[index]"
                   size="sm"
@@ -50,7 +50,7 @@
                 size="sm"
                 class="float-right"
                 no-caps
-                @click="max = 20"
+                @click="max = 10"
               >
                 {{ $t('reset') }}
               </btn-base>
@@ -72,7 +72,7 @@ import { useFieldsettingStore } from '~/stores/fieldsetting';
 
 const fields = useFieldsettingStore();
 const expanded = ref(false);
-const max = ref(20);
+const max = ref(10);
 const props = defineProps({
   modelValue: {
     default: {
@@ -107,22 +107,22 @@ const disable = ref({ ...unref(multipleValues.value) });
 
 const rules = {
   broodframes: {
-    minValue: minValue(0),
+    minValue: minValue(-100),
     maxValue: maxValue(100),
     integer: integer,
   },
   honeyframes: {
-    minValue: minValue(0),
+    minValue: minValue(-100),
     maxValue: maxValue(100),
     integer: integer,
   },
   foundation: {
-    minValue: minValue(0),
+    minValue: minValue(-100),
     maxValue: maxValue(100),
     integer: integer,
   },
   emptyframes: {
-    minValue: minValue(0),
+    minValue: minValue(-100),
     maxValue: maxValue(100),
     integer: integer,
   },

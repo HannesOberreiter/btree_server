@@ -8,8 +8,10 @@
     :options="options"
     :hint="hint"
     option-value="id"
+    :use-input="table === 'charge_types' && localPerf['charge-use-input']"
     filled
     class="q-pb-sm"
+    @filter="filterSelection"
   >
     <template v-if="showBefore" #before>
       <q-icon v-if="!multipleValues" name="far fa-square-caret-down"></q-icon>
@@ -34,8 +36,14 @@ import {
   useRearingDetailsQuery,
   useScaleQuery,
 } from '~/composables/useQuery';
-import { useVModels } from '@vueuse/core';
+import { useLocalStorage, useVModels } from '@vueuse/core';
 import { formCheckMultipleValues } from '~/helpers';
+
+const localPerf = useLocalStorage(
+  'pref-local',
+  { 'charge-use-input': false },
+  { mergeDefaults: true }
+);
 
 const { t } = useI18n();
 const hint = ref('');
@@ -95,6 +103,7 @@ const multipleValues = computed(() =>
 );
 const disable = ref(multipleValues.value);
 const options = ref([] as any);
+const keepOptions = ref([] as any);
 
 watch(
   [data, values, reset],
@@ -106,6 +115,24 @@ watch(
   }
 );
 
+function filterSelection(val: any, update: any, _abort: any) {
+  if (values.value !== null) {
+    update(() => {
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      const needle = new RegExp(`(${val.toLowerCase()})`);
+      options.value = filter(options.value, (obj) =>
+        needle.test(obj.name.toLowerCase())
+      );
+    });
+  }
+  if (val === '') {
+    update(() => {
+      options.value = keepOptions.value;
+    });
+    return;
+  }
+}
+
 function setValues() {
   disable.value = multipleValues.value;
   if (values.value && !isEmpty(values.value)) {
@@ -113,6 +140,7 @@ function setValues() {
   } else if (modelValue.value && typeof modelValue.value !== 'object') {
     setOptions(modelValue.value);
   } else setOptions();
+  keepOptions.value = options.value;
 }
 
 function setOptions(id = 0) {
