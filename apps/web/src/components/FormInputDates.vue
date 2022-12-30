@@ -55,6 +55,7 @@
         label="repeat"
         :hint="$t('repeatText')"
         shadow-text="x"
+        :max-valid="15"
         icon="fas fa-infinity"
         numeric-valid="integer"
       ></form-input-numeric>
