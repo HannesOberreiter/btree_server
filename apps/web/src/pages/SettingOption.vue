@@ -193,7 +193,7 @@ const columns = [
   },
   {
     name: 'modus',
-    label: t('modus'),
+    label: t('active'),
     align: 'center',
     field: (row: any) => row.modus,
     sortable: true,
