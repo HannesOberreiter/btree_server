@@ -479,6 +479,7 @@
     "hintChargeBestbefore": "Da consumarsi preferibilmente entro: campo data",
     "hintChargeCalibrate": "Calibra: campo di immissione, se desideri mantenere un elenco di calibrazione per i tuoi addebiti",
     "hintChargePrice": "Prezzo: campo di immissione, per un prezzo",
+    "hintChargeUseInput": "Utilizzare l'input da tastiera per la selezione del tipo di addebito.",
     "hintCheckupFrames": "Frame: 4 campi di input - Broodframes, Honeyframes, Foundationframes, Emptyframes",
     "hintCheckupQueen": "Regina: 4 caselle di controllo: regina, celle della regina, uova, covata con cappuccio",
     "hintCheckupRating": "Valutazione: 6 campi di input: covata, polline, pettine, temperamento, pettine calmo, sciame",
