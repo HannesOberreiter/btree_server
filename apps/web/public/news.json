@@ -1,6 +1,6 @@
 [
   {
-    "version": "6.1.6",
+    "version": "6.1.7",
     "date": "2023-01-01",
     "news": [
       "BUGFIX set a missing limit when creating repeating tasks (15x)",
