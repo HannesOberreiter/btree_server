@@ -90,6 +90,7 @@
 </template>
 
 <script setup lang="ts">
+import 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useApiariesQuery, useInvalidateQueries } from '~/composables/useQuery';
 import { useAuthUserStore } from '~/stores/auth';

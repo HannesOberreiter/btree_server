@@ -3,7 +3,7 @@
     <btn-base
       color="secondary"
       :loading="isSubmitting"
-      :label="$t('save')"
+      :label="$t('save') + ` (${numberOfTasks})`"
       data-cy="btn-form-save"
       @click="onSubmit"
     />
@@ -21,7 +21,7 @@
     <btn-base
       color="secondary"
       :loading="isSubmitting"
-      :label="$t('update')"
+      :label="$t('update') + ` (${numberOfEdits})`"
       data-cy="btn-form-update"
       @click="onUpdate"
     ></btn-base>
@@ -70,6 +70,45 @@ const props = defineProps({
 });
 const { state, editIds, isEdit, v, form } = toRefs(props);
 const cleanup = useFormCleanup(form, state, props.isEdit);
+const numberOfTasks = computed(() => {
+  let count = 0;
+  if (
+    ['feed', 'harvest', 'treatment', 'checkup', 'movedate'].includes(form.value)
+  ) {
+    if (state.value.hive) {
+      count = state.value.hive.length;
+      if (state.value.repeat) {
+        count = count * state.value.repeat;
+      }
+    }
+  } else if (['charge', 'scale_data'].includes(form.value)) {
+    count = 1;
+  } else if (
+    ['hive', 'queen', 'apiary', 'todo', 'scale', 'option', 'rearing'].includes(
+      form.value
+    )
+  ) {
+    if (state.value.name) {
+      count = 1;
+      if (state.value.repeat) {
+        count = count * state.value.repeat;
+      }
+    }
+  } else if (['rearing_detail'].includes(form.value)) {
+    if (state.value.job) {
+      count = 1;
+    }
+  }
+  return count;
+});
+
+const numberOfEdits = computed(() => {
+  let count = 0;
+  if (editIds.value) {
+    count = editIds.value.length;
+  }
+  return count;
+});
 
 async function onUpdate() {
   isSubmitting.value = true;

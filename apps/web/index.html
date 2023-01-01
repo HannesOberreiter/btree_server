@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html translate="no">
   <head>
     <title><%= productName %></title>
 
@@ -149,11 +149,11 @@
 <script>
   if (
     (window.location.pathname.includes('visitor') &&
-      window.location.host !== 'localhost:9000') ||
+      !window.location.host.includes('localhost')) ||
     window.location.hash.includes('test-bu')
   ) {
     var $buoop = {
-      required: { e: -4, f: -3, o: -3, s: -1, c: -3 },
+      required: { e: -6, f: -6, o: -6, s: -6, c: -6 },
       insecure: true,
       unsupported: true,
       style: 'bottom',

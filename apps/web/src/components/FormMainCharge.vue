@@ -21,7 +21,7 @@
     ></form-input-date>
     <form-input-text
       v-model="state.name"
-      label="name"
+      label="description"
       name="chargeName"
       icon="fas fa-passport"
       :required="isEdit ? false : true"

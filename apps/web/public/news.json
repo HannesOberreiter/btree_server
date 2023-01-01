@@ -1,6 +1,28 @@
 [
   {
     "version": "6.1.6",
+    "date": "2023-01-01",
+    "news": [
+      "BUGFIX set a missing limit when creating repeating tasks (15x)",
+      "BUGFIX allow negative frames, thx steffen",
+      "BUGFIX rating and frames did not show up in hive detail task list",
+      "TRANSLATION renamed name field in charges to description as it makes more sense",
+      "TRANSLATION options table changed modus to active, which makes more sense",
+      "FEATURE new local setting to allow text search for charge types",
+      "FEATURE added count of tasks to be created or updated to the corresponding buttons",
+      "FEATURE added apiary filter option to task tables",
+      "IMPROVEMENT added info box when swiping on calendar",
+      "IMPROVEMENT tell browser to not auto translate page, this will hopefully prevent a lot of strange translation errors",
+      "IMPROVEMENT automatic e2e tests upgraded to cypress 11",
+      "IMPROVEMENT reduced warning of outdated browser",
+      "IMPROVEMENT sound notification files are now only loaded if option is active",
+      "CHORES updated calendar, should now render faster if many events are visible",
+      "CHORES updated libraries [SERVER]",
+      "BUGFIX wrong VIS date in december [SERVER]"
+    ]
+  },
+  {
+    "version": "6.1.6",
     "date": "2022-11-21",
     "news": [
       "FEATURE renamed wind map to Meteoblue and added more maps and closer starting zoom to the widget",
@@ -54,7 +76,7 @@
       "BETA added notice if you are currently on the beta server",
       "BUGFIX relax data caching and invalidate old cache if new data is generated",
       "BUGFIX feeding types were missing in options, thx jannis",
-      "BUGFIX rezise observer on calendar did try to change calendar size even if not ready",
+      "BUGFIX resize observer on calendar did try to change calendar size even if not ready",
       "BUGFIX keep login button disabled till redirected to starting page",
       "CHANGE navbar hive and apiary search does not include inactive any more",
       "FEATURE improved QR code scanner and added option to upload image",
