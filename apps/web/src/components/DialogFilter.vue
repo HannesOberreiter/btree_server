@@ -204,6 +204,15 @@ const layouts = {
       },
     },
     {
+      comp: FormDropdownType,
+      model: 'feed_apiary.apiary_id',
+      props: {
+        table: 'apiary',
+        label: 'apiary',
+        'allow-empty': 'filterEmpty',
+      },
+    },
+    {
       comp: FormInputDateRange,
       model: 'date',
       props: {
@@ -221,6 +230,15 @@ const layouts = {
       },
     },
     {
+      comp: FormDropdownType,
+      model: 'harvest_apiary.apiary_id',
+      props: {
+        table: 'apiary',
+        label: 'apiary',
+        'allow-empty': 'filterEmpty',
+      },
+    },
+    {
       comp: FormInputDateRange,
       model: 'date',
       props: {
@@ -234,6 +252,15 @@ const layouts = {
       model: 'treatments.type_id',
       props: {
         table: 'treatment_types',
+        'allow-empty': 'filterEmpty',
+      },
+    },
+    {
+      comp: FormDropdownType,
+      model: 'treatment_apiary.apiary_id',
+      props: {
+        table: 'apiary',
+        label: 'apiary',
         'allow-empty': 'filterEmpty',
       },
     },
@@ -259,6 +286,15 @@ const layouts = {
       model: 'checkups.type_id',
       props: {
         table: 'checkup_types',
+        'allow-empty': 'filterEmpty',
+      },
+    },
+    {
+      comp: FormDropdownType,
+      model: 'checkup_apiary.apiary_id',
+      props: {
+        table: 'apiary',
+        label: 'apiary',
         'allow-empty': 'filterEmpty',
       },
     },

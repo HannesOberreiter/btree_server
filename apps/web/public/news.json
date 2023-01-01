@@ -1,7 +1,7 @@
 [
   {
     "version": "6.1.6",
-    "date": "2022-12-30",
+    "date": "2023-01-01",
     "news": [
       "BUGFIX set a missing limit when creating repeating tasks (15x)",
       "BUGFIX allow negative frames, thx steffen",
@@ -10,6 +10,7 @@
       "TRANSLATION options table changed modus to active, which makes more sense",
       "FEATURE new local setting to allow text search for charge types",
       "FEATURE added count of tasks to be created or updated to the corresponding buttons",
+      "FEATURE added apiary filter option to task tables",
       "IMPROVEMENT added info box when swiping on calendar",
       "IMPROVEMENT tell browser to not auto translate page, this will hopefully prevent a lot of strange translation errors",
       "IMPROVEMENT automatic e2e tests upgraded to cypress 11",
