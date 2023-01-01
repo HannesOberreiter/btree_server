@@ -36,7 +36,7 @@
         "src/api/services/*"
       ],
       "@enums/*": [
-        "src/api/types/enums/*"
+        "src/api/types/constants/*"
       ],
       "@classes/*": [
         "src/api/types/classes/*"

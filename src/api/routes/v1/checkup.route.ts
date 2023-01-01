@@ -1,7 +1,7 @@
 import { Router } from '@classes/router.class';
 import { Container } from '@config/container.config';
 import { Guard } from '@middlewares/guard.middleware';
-import { ROLES } from '@enums/role.enum';
+import { ROLES } from '@/api/types/constants/role.const';
 import { Validator } from '@/api/middlewares/validator.middleware';
 import { body } from 'express-validator';
 
@@ -23,7 +23,7 @@ export class CheckupRouter extends Router {
         Validator.validate([
           body('hive_ids').isArray(),
           body('interval').isInt({ max: 365, min: 0 }),
-          body('repeat').isInt({ max: 30, min: 0 }),
+          body('repeat').isInt({ max: 15, min: 0 }),
         ]),
         Guard.authorize([ROLES.admin, ROLES.user]),
         Container.resolve('CheckupController').post

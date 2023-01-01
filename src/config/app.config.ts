@@ -1,6 +1,6 @@
 import Cors from 'cors';
 import * as rfs from 'rotating-file-stream';
-import { ENVIRONMENT } from '@enums/environment.enum';
+import { ENVIRONMENT } from '@/api/types/constants/environment.const';
 import {
   httpLogs,
   authorized,

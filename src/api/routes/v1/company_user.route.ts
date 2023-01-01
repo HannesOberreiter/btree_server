@@ -1,7 +1,7 @@
 import { Router } from '@classes/router.class';
 import { Container } from '@config/container.config';
 import { Guard } from '@middlewares/guard.middleware';
-import { ROLES } from '@enums/role.enum';
+import { ROLES } from '@/api/types/constants/role.const';
 import { Validator } from '@/api/middlewares/validator.middleware';
 import { body } from 'express-validator';
 
@@ -23,8 +23,8 @@ export class CompanyUserRouter extends Router {
           .withMessage('requiredField')
           .isEmail()
           .normalizeEmail({
-            gmail_remove_subaddress: false
-          })
+            gmail_remove_subaddress: false,
+          }),
       ]),
       Guard.authorize([ROLES.admin]),
       Container.resolve('CompanyUserController').addUser
@@ -45,7 +45,7 @@ export class CompanyUserRouter extends Router {
       .route('/:id')
       .patch(
         Validator.validate([
-          body('rank').exists().withMessage('requiredField')
+          body('rank').exists().withMessage('requiredField'),
         ]),
         Guard.authorize([ROLES.admin]),
         Container.resolve('CompanyUserController').patch

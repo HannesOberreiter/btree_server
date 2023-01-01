@@ -3,7 +3,7 @@ import { env, frontend, mailConfig } from '@config/environment.config';
 import { readFileSync } from 'fs';
 import p from 'path';
 import { badImplementation, notFound } from '@hapi/boom';
-import { ENVIRONMENT } from '../types/enums/environment.enum';
+import { ENVIRONMENT } from '../types/constants/environment.const';
 interface customMail {
   to: string;
   lang: string;

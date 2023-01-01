@@ -33,7 +33,7 @@ import { Harvest } from '../models/harvest.model';
 import { Queen } from '../models/queen.model';
 import { raw } from 'objection';
 import { env } from '@/config/environment.config';
-import { ENVIRONMENT } from '../types/enums/environment.enum';
+import { ENVIRONMENT } from '../types/constants/environment.const';
 import { MailServer } from '../app.bootstrap';
 
 export const cleanupDatabase = async () => {
@@ -229,7 +229,7 @@ export const reminderVIS = async () => {
     const countDay1 = year + '-10-31';
     const countDay2 = year + '-04-30';
     // VIS Eingabe
-    const reportDay1 = year + '-12-18';
+    const reportDay1 = year + '-12-31';
     const reportDay2 = year + '-06-30';
 
     let mailDate, mailSubject;
