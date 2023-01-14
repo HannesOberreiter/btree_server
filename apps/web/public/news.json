@@ -1,5 +1,13 @@
 [
   {
+    "version": "6.1.8",
+    "date": "2023-01-14",
+    "news": [
+      "BUGFIX fixed problem for safari that dialog wont close",
+      "CHORES updated libraries [SERVER, CLIENT]"
+    ]
+  },
+  {
     "version": "6.1.7",
     "date": "2023-01-01",
     "news": [
