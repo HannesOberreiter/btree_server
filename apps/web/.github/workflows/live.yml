@@ -20,11 +20,11 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 16
-          cache: 'yarn'
+          cache: 'npm'
       - name: Install
-        run: yarn install
+        run: npm install
       - name: Build PWA
-        run: yarn quasar build -m pwa
+        run: npm run quasar build -m pwa
       - name: List output files
         run: ls
 
