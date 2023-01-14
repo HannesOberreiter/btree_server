@@ -20,7 +20,7 @@ describe('User - Apiary Map', () => {
 
     cy.get(`[alt="${name}"]`).click();
     cy.dataCy(`"btn-delete-${name}"`).click();
-    cy.get(`[alt="${name}"]`).should('not.be.visible');
+    cy.get(`[alt="${name}"]`).should('not.exist');
   });
 });
 
