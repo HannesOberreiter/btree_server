@@ -17,16 +17,16 @@ Written in typescript build with Vue.js and Quasar. The b.tree application is fo
 ## Install the dependencies
 
 ```bash
-yarn
+npm install
 ```
 
-`yarn postinstall` is implement because of a TypeScript bug with FullCalendar. It is run automatically, you may need to restart your IDE after running `yarn` or updating FullCalendar.
+`npm postinstall` is implement because of a TypeScript bug with FullCalendar. It is run automatically, you may need to restart your IDE after running `npm` or updating FullCalendar.
 
 ### Start the app in development mode (hot-code reloading, error reporting, etc.)
 
 ```bash
-yarn quasar dev
-yarn quasar dev -m pwa
+npm run quasar dev
+npm run quasar dev -m pwa
 ```
 
 We use auto-import plugins to import common libraries and components, see definitions at [src/auto-\*.d.ts](src/).
@@ -60,15 +60,15 @@ The translation in `.json` format can be found in [src/i18n](src/i18n/). On deve
 ### Lint & Format (eslint & prettier)
 
 ```bash
-yarn lint
-yarn format
+npm run lint
+npm run format
 ```
 
 ### Build the app for production
 
 ```bash
-yarn quasar build
-yarn quasar build -m pwa
+npm run quasar build
+npm run quasar build -m pwa
 ```
 
 #### Server
