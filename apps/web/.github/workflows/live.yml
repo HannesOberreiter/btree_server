@@ -24,7 +24,7 @@ jobs:
       - name: Install
         run: npm install
       - name: Build PWA
-        run: npm run quasar build -m pwa
+        run: npm run build:pwa
       - name: List output files
         run: ls
 

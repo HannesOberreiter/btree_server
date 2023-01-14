@@ -25,8 +25,8 @@ npm install
 ### Start the app in development mode (hot-code reloading, error reporting, etc.)
 
 ```bash
-npm run quasar dev
-npm run quasar dev -m pwa
+npm run dev
+npm run dev:pwa
 ```
 
 We use auto-import plugins to import common libraries and components, see definitions at [src/auto-\*.d.ts](src/).
@@ -67,8 +67,8 @@ npm run format
 ### Build the app for production
 
 ```bash
-npm run quasar build
-npm run quasar build -m pwa
+npm run build
+npm run build:pwa
 ```
 
 #### Server
