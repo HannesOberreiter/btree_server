@@ -50,10 +50,11 @@ const props = defineProps({
   },
 });
 
+const columns = toRef(props, 'columns');
 const emit = defineEmits(['update:modelFilter', 'update:modelVisible']);
 const { modelFilter, modelVisible } = useVModels(props, emit);
 
-const optionColumns = props.columns.filter((obj) =>
-  !obj.required ? obj : null
-);
+const optionColumns = computed(() => {
+  return columns.value.filter((obj) => (!obj.required ? obj : null));
+});
 </script>
