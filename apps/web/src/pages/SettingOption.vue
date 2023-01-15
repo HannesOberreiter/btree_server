@@ -5,7 +5,7 @@
         v-model:pagination="pagination"
         v-model:selected="selected"
         :rows="rows"
-        :columns="columns"
+        :columns="columnsIn"
         :visible-columns="visibleColumns"
         :loading="isLoadingTable"
         :dense="true"
@@ -13,7 +13,7 @@
         row-key="id"
         selection="multiple"
         binary-state-sort
-        :rows-per-page-options="[20, 50, 100, 500, 10000]"
+        :rows-per-page-options="[20, 50, 100, 500]"
         @request="onRequest"
       >
         <template #top-left>
@@ -39,7 +39,7 @@
           <table-filter
             v-model:modelFilter="filter"
             v-model:modelVisible="visibleColumns"
-            :columns="columns"
+            :columns="columnsIn"
             table="option"
           ></table-filter>
         </template>
@@ -79,7 +79,7 @@ import { tableCheckSelected, tableMeta } from '~/helpers';
 import { useOptionsQuery } from '~/composables/useQuery';
 import { QTableProps } from 'quasar';
 import { Option } from '~/types';
-import { PropType } from 'vue';
+import { ComputedRef, PropType } from 'vue';
 import { find } from 'lodash-es';
 
 const { t } = useI18n();
@@ -162,64 +162,79 @@ watch(optionSelected, (cur) => {
   });
 });
 
-const columns = [
-  {
-    name: 'id',
-    label: t('id'),
-    align: 'right',
-    field: (row: any) => row.id,
-    sortable: true,
-  },
-  {
-    name: 'name',
-    label: t('name'),
-    align: 'left',
-    field: (row: any) => row.name,
-    sortable: true,
-  },
-  {
-    name: 'unit',
-    label: t('unit'),
-    align: 'left',
-    field: (row: any) => row.unit,
-    sortable: true,
-  },
-  {
-    name: 'favorite',
-    label: t('favourite'),
-    align: 'center',
-    field: (row: any) => row.favorite,
-    sortable: true,
-  },
-  {
-    name: 'modus',
-    label: t('active'),
-    align: 'center',
-    field: (row: any) => row.modus,
-    sortable: true,
-  },
-  {
-    name: 'note',
-    label: t('note'),
-    align: 'left',
-    field: (row: any) => row.note,
-    sortable: true,
-  },
-  {
-    name: 'created_at',
-    label: t('created'),
-    align: 'center',
-    field: (row: any) => row.created_at,
-    format: (val: string) => tableMeta(val, null),
-  },
-  {
-    name: 'updated_at',
-    label: t('updated'),
-    align: 'center',
-    field: (row: any) => row.updated_at,
-    format: (val: string) => tableMeta(val, null),
-  },
-] as QTableProps['columns'];
+const columnsIn = computed(() => {
+  const addOn = [];
+  switch (optionValue.value) {
+    case 'charge_types':
+      addOn.push({
+        name: 'unit',
+        label: t('unit'),
+        align: 'left',
+        field: (row: any) => row.unit,
+        sortable: false,
+      });
+      break;
+    case 'treatment_vets':
+      addOn.push({
+        name: 'note',
+        label: t('note'),
+        align: 'left',
+        field: (row: any) => row.note,
+        sortable: false,
+      });
+      break;
+    default:
+      break;
+  }
+
+  const columns = [
+    {
+      name: 'id',
+      label: t('id'),
+      align: 'right',
+      field: (row: any) => row.id,
+      sortable: true,
+    },
+    {
+      name: 'name',
+      label: t('name'),
+      align: 'left',
+      field: (row: any) => row.name,
+      sortable: true,
+    },
+    ...addOn,
+    {
+      name: 'favorite',
+      label: t('favourite'),
+      align: 'center',
+      field: (row: any) => row.favorite,
+      sortable: true,
+    },
+    {
+      name: 'modus',
+      label: t('active'),
+      align: 'center',
+      field: (row: any) => row.modus,
+      sortable: true,
+    },
+    {
+      name: 'created_at',
+      label: t('created'),
+      align: 'center',
+      field: (row: any) => row.created_at,
+      format: (val: string) => tableMeta(val, null),
+    },
+    {
+      name: 'updated_at',
+      label: t('updated'),
+      align: 'center',
+      field: (row: any) => row.updated_at,
+      format: (val: string) => tableMeta(val, null),
+    },
+  ] as QTableProps['columns'];
+
+  return columns;
+}) as ComputedRef<QTableProps['columns']>;
 
 const {
   isLoading: isLoadingTable,
