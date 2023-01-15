@@ -4,6 +4,8 @@
     "date": "2023-01-14",
     "news": [
       "BUGFIX fixed problem for safari that dialog wont close",
+      "BUGFIX options table breaks if sorted by not available column",
+      "BUGFIX on registration allow empty source",
       "CHORES updated libraries [SERVER, CLIENT]"
     ]
   },
