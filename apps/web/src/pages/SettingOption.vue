@@ -12,6 +12,7 @@
         separator="vertical"
         row-key="id"
         selection="multiple"
+        :hide-pagination="true"
         binary-state-sort
         :rows-per-page-options="[20, 50, 100, 500]"
         @request="onRequest"
