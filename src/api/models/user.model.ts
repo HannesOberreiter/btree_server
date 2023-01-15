@@ -58,7 +58,7 @@ export class User extends ExtModel {
       sound: { type: 'boolean' },
       tablexscroll: { type: 'boolean' },
 
-      source: { type: 'string', minLength: 1, maxLength: 20 },
+      source: { type: 'string', minLength: 0, maxLength: 20 },
 
       saved_company: { type: 'integer' },
 
