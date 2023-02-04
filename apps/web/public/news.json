@@ -1,5 +1,10 @@
 [
   {
+    "version": "6.1.9",
+    "date": "2023-02-04",
+    "news": ["BUGFIX longitude had wrong limits now 180/-180, thx Ron"]
+  },
+  {
     "version": "6.1.8",
     "date": "2023-01-14",
     "news": [

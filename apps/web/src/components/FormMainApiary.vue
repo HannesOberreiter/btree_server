@@ -39,8 +39,8 @@
           :values="values"
           :reset="reset"
           icon=""
-          :min-valid="-90"
-          :max-valid="90"
+          :min-valid="-180"
+          :max-valid="180"
           numeric-valid="decimal"
         ></form-input-numeric>
       </div>
