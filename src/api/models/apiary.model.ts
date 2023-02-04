@@ -34,7 +34,7 @@ export class Apiary extends ExtModel {
       name: { type: 'string', minLength: 1, maxLength: 45 },
       description: { type: 'string', maxLength: 512 },
       latitude: { type: 'number', minimum: -90, maximum: 90 },
-      longitude: { type: 'number', minimum: -90, maximum: 90 },
+      longitude: { type: 'number', minimum: -180, maximum: 180 },
       note: { type: 'string', maxLength: 2000 },
       url: { type: 'string', maxLength: 512 },
 
