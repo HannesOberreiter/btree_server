@@ -43,6 +43,11 @@ import { useChargeStockQuery } from '~/composables/useQuery';
 import { useTablesStore } from '~/stores/tables';
 import { QTableProps } from 'quasar';
 import { useKeyTable } from '~/composables/useKey';
+import TableFilter from '~/components/TableFilter.vue';
+import TableButtons from '~/components/TableButtons.vue';
+import { useI18n } from 'vue-i18n';
+import { ref, computed, watch } from 'vue';
+import { storeToRefs } from 'pinia';
 
 const { t } = useI18n();
 

@@ -29,6 +29,11 @@
 import { useNotification } from '~/composables/useNotification';
 import AuthService from '~/services/auth.service';
 import useVuelidate from '@vuelidate/core';
+import FormErrorMax from '~/components/FormErrorMax.vue';
+import FormInputEmail from '~/components/FormInputEmail.vue';
+
+import { reactive, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 const notification = useNotification();
 const { t } = useI18n();

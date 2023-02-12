@@ -43,6 +43,10 @@ import { useDialogPluginComponent } from 'quasar';
 import { PropType } from 'vue';
 import { Option } from '~/types';
 
+import BtnCloseDialog from './BtnCloseDialog.vue';
+import FormDropdownOption from './FormDropdownOption.vue';
+import { ref, unref } from 'vue';
+
 const { dialogRef, onDialogHide, onDialogOK } = useDialogPluginComponent();
 const value = ref('');
 

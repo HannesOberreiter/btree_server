@@ -8,6 +8,7 @@ import { loadScript, PayPalNamespace } from '@paypal/paypal-js';
 import { useApiFetch } from '~/composables/useApi';
 import { useNotification } from '~/composables/useNotification';
 import { useAuthUserStore } from '~/stores/auth';
+import { toRef, onMounted } from 'vue';
 
 const storeUser = useAuthUserStore();
 const notification = useNotification();
@@ -67,7 +68,9 @@ onMounted(async () => {
                   }
                   emit('onPaid', orderData);
                 },
-                (error) => notification.open('negative', error)
+                (error) => {
+                  notification.open('negative', error);
+                }
               );
           },
         })

@@ -5,6 +5,7 @@ import {
   Html5QrcodeSupportedFormats,
 } from 'html5-qrcode';
 import { useNotification } from '~/composables/useNotification';
+import { ref, computed } from 'vue';
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore

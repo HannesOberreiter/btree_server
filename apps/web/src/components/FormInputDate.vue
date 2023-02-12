@@ -76,6 +76,10 @@ import dayjs from 'dayjs';
 import useVuelidate from '@vuelidate/core';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { isEmpty } from 'lodash-es';
+import { useI18n } from 'vue-i18n';
+
+import BtnDateAutoClose from './BtnDateAutoClose.vue';
+import { ref, computed, toRefs, unref, watch } from 'vue';
 
 dayjs.extend(customParseFormat); // Needed to validate if date is even possible
 const { t } = useI18n();

@@ -1,6 +1,6 @@
 import { SwipeDirection, useSwipe } from '@vueuse/core';
 import { QNotifyUpdateOptions } from 'quasar';
-import { Ref } from 'vue';
+import { Ref, computed } from 'vue';
 import { useNotification } from './useNotification';
 
 export const useSwipeCalendar = (

@@ -107,6 +107,12 @@ import {
 import { useApiFetch } from '~/composables/useApi';
 import { useQuasar } from 'quasar';
 
+import MapButtons from '~/components/MapButtons.vue';
+import MapOverlay from '~/components/MapOverlay.vue';
+
+import { useI18n } from 'vue-i18n';
+import { computed, ref } from 'vue';
+
 const api = useApiFetch();
 const {
   isLoading,

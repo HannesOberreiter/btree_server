@@ -91,8 +91,12 @@ import map from 'lodash-es/map';
 import { useQuasar } from 'quasar';
 import { useApiFetch } from '~/composables/useApi';
 import { useNotification } from '~/composables/useNotification';
-import DialogSelectOption from './DialogSelectOption.vue';
 import { usePreventNavigation } from '~/composables/usePreventNavgiation';
+import { useI18n } from 'vue-i18n';
+import { watch, ref, toRefs } from 'vue';
+
+import DialogSelectOption from './DialogSelectOption.vue';
+import helperDayAndHour from './HelperDayAndHour.vue';
 
 const usePrevent = usePreventNavigation();
 const api = useApiFetch();

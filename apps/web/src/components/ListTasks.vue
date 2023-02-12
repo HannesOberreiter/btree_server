@@ -9,13 +9,14 @@
     </div>
     <div v-else class="col-12">
       <q-list
-        v-for="task in listData.slice(
+        v-for="(task, index) in listData.slice(
           taskStart,
           apiary ? taskEnd : listData.length
         )"
         :key="task.kind + task.id"
         bordered
-        class="rounded-borders"
+        class="borders"
+        :class="index > 0 ? 'border-top-none' : ''"
       >
         <item-task
           :default-opened="opened"
@@ -48,6 +49,10 @@
 <script lang="ts">
 import { orderBy } from 'lodash';
 import { Filter, FilterState } from '~/types';
+
+import ItemTask from './ItemTask.vue';
+
+import { watch, ref, toRefs, computed } from 'vue';
 
 function buildList(data: any, filter: Filter, filterState: FilterState) {
   let array: any[] =
@@ -128,7 +133,9 @@ watch(doRefetch, () => refetch.value());
 
 const listData = computed(() => {
   if (data.value) {
+    // eslint-disable-next-line vue/no-side-effects-in-computed-properties
     taskStart.value = 0;
+    // eslint-disable-next-line vue/no-side-effects-in-computed-properties
     taskEnd.value = 10;
     return buildList(data.value, filter.value, filterState.value);
   } else {

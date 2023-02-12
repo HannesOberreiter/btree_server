@@ -12,5 +12,7 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue';
+
 const newsletter = ref(false);
 </script>

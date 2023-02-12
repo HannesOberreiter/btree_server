@@ -64,6 +64,9 @@ import MainFooter from '~/components/MainFooter.vue';
 import { useMeta } from 'quasar';
 import { onBeforeRouteLeave, onBeforeRouteUpdate } from 'vue-router';
 import { usePreventNavigation } from '~/composables/usePreventNavgiation';
+import { useI18n } from 'vue-i18n';
+import { useRouter } from 'vue-router';
+import { onMounted, ref, computed, watch } from 'vue';
 
 const usePrevent = usePreventNavigation();
 const leftDrawerOpen = ref(false);

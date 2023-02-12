@@ -1,5 +1,16 @@
 [
   {
+    "version": "6.1.10",
+    "date": "2023-02-12",
+    "news": [
+      "FEATURE added multi month view to calendar",
+      "BUGFIX checkup weight time minutes had a wrong time format",
+      "BUGFIX charge description is not mandatory any more",
+      "BUGFIX task detail view, checkup checkboxes and strong field did not show up, thx Dominik",
+      "CHORES updated libraries [SERVER, CLIENT]"
+    ]
+  },
+  {
     "version": "6.1.9",
     "date": "2023-02-04",
     "news": ["BUGFIX longitude had wrong limits now 180/-180, thx Ron"]

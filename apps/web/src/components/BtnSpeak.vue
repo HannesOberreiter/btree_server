@@ -33,6 +33,10 @@ import Fuse from 'fuse.js';
 import { useNotification } from '~/composables/useNotification';
 import { useQuasar } from 'quasar';
 import { useKeySpeak } from '~/composables/useKey';
+import { useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
+
+import { ref, watch } from 'vue';
 
 const router = useRouter();
 const btn = ref(null);

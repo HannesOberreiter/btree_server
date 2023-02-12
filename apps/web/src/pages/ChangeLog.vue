@@ -68,6 +68,7 @@
 
 <script setup lang="ts">
 import { useFetch } from '@vueuse/core';
+import { ref } from 'vue';
 
 const { isFetching, error, data }: any = useFetch(
   '/news.json?cache=' + Date.now()

@@ -114,6 +114,15 @@ import { useNotification } from '~/composables/useNotification';
 import useVuelidate from '@vuelidate/core';
 import { FormRearing } from '~/types';
 import { useApiFetch } from '~/composables/useApi';
+import FormDropdownEdit from '~/components/FormDropdownEdit.vue';
+import FormDropdownSymbol from '~/components/FormDropdownSymbol.vue';
+import FormDropdownRearing from '~/components/FormDropdownRearing.vue';
+import FormInputText from '~/components/FormInputText.vue';
+import FormInputDate from '~/components/FormInputDate.vue';
+import FormInputNumeric from '~/components/FormInputNumeric.vue';
+import FormInputNote from '~/components/FormInputNote.vue';
+import FormButtons from '~/components/FormButtons.vue';
+import { ref, computed, unref } from 'vue';
 
 const notification = useNotification();
 const api = useApiFetch();

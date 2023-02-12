@@ -17,5 +17,6 @@
 
 <script setup lang="ts">
 import { useWakeLock } from '@vueuse/core';
+
 const { isSupported, isActive, request, release } = useWakeLock();
 </script>

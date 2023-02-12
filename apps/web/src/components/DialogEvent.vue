@@ -154,6 +154,12 @@ import { useDateFormat } from '~/composables/useDate';
 import { useApiFetch } from '~/composables/useApi';
 import { useDialogPluginComponent, useQuasar } from 'quasar';
 
+import BtnCloseDialog from './BtnCloseDialog.vue';
+
+import { useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
+import { computed } from 'vue';
+
 const useDate = useDateFormat();
 const $q = useQuasar();
 const notification = useNotification();

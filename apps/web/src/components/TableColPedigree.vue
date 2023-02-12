@@ -12,6 +12,7 @@
 <script setup lang="ts">
 import { useQuasar } from 'quasar';
 import DialogPedigree from './DialogPedigree.vue';
+import { toRef } from 'vue';
 
 const $q = useQuasar();
 const props = defineProps({

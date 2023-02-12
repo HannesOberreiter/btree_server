@@ -19,6 +19,8 @@
 
 <script setup lang="ts">
 import { useDialogPluginComponent } from 'quasar';
+import BtnCloseDialog from './BtnCloseDialog.vue';
+import UploadCsv from './UploadCsv.vue';
 
 defineEmits([...useDialogPluginComponent.emits]);
 const { dialogRef } = useDialogPluginComponent();

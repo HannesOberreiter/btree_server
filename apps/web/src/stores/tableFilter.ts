@@ -1,5 +1,5 @@
 import { compact, isArray, isEmpty, map } from 'lodash-es';
-import { defineStore } from 'pinia';
+import { defineStore, acceptHMRUpdate } from 'pinia';
 import { deepUnref } from '~/helpers/deep-unref';
 
 interface State {

@@ -31,6 +31,7 @@ import { useApiFetch } from '~/composables/useApi';
 import { useNotification } from '~/composables/useNotification';
 import DialogForm from './DialogForm.vue';
 import DialogSelectOption from './DialogSelectOption.vue';
+import { useI18n } from 'vue-i18n';
 
 const $q = useQuasar();
 const { t } = useI18n();

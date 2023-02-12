@@ -65,6 +65,13 @@ import { useQuasarLang } from '~/composables/useQuasarLang';
 import useVuelidate from '@vuelidate/core';
 import { useApiFetch } from '~/composables/useApi';
 import { useQuasar } from 'quasar';
+import { useI18n } from 'vue-i18n';
+import { reactive, ref } from 'vue';
+import { storeToRefs } from 'pinia';
+
+import FormUserNewsletter from '~/components/FormUserNewsletter.vue';
+import FormUserLanguage from '~/components/FormUserLanguage.vue';
+import FormInputText from '~/components/FormInputText.vue';
 
 const { t } = useI18n();
 const $q = useQuasar();

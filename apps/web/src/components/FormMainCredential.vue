@@ -35,6 +35,10 @@ import { useAuthUserStore } from '~/stores/auth';
 import { useNotification } from '~/composables/useNotification';
 import useVuelidate from '@vuelidate/core';
 import { useApiFetch } from '~/composables/useApi';
+import { ref, reactive } from 'vue';
+
+import FormUserPassword from './FormUserPassword.vue';
+import FormInputEmail from './FormInputEmail.vue';
 
 const notification = useNotification();
 const storeUser = useAuthUserStore();

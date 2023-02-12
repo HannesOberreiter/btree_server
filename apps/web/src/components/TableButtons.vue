@@ -318,12 +318,17 @@ import { useDateFormat } from '~/composables/useDate';
 import { clearCache } from '~/composables/useQuery';
 import { useNotification } from '~/composables/useNotification';
 import { useTableFilterStore } from '~/stores/tableFilter';
+import { useAuthUserStore } from '~/stores/auth';
+import { useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
+import { unref, toRef, computed } from 'vue';
+
 import DialogFilter from './DialogFilter.vue';
 import DialogForm from './DialogForm.vue';
 import DialogUpload from './DialogUpload.vue';
 import DialogPrintHive from './DialogPrintHive.vue';
 import DialogPrintQr from './DialogPrintQr.vue';
-import { useAuthUserStore } from '~/stores/auth';
+import TableButtonScale from './TableButtonScale.vue';
 
 const storeFilter = useTableFilterStore();
 const useDate = useDateFormat();

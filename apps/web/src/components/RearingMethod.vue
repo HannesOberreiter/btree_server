@@ -52,7 +52,11 @@ import { useQuasar } from 'quasar';
 import { useApiFetch } from '~/composables/useApi';
 import { useNotification } from '~/composables/useNotification';
 import { useRearingTypesQuery } from '~/composables/useQuery';
+import { ref, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
+
 import DialogForm from './DialogForm.vue';
+import ListRearingSteps from './ListRearingSteps.vue';
 
 const notification = useNotification();
 const api = useApiFetch();

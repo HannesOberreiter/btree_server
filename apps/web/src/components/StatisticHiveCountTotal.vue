@@ -24,6 +24,8 @@ import {
   ToolboxComponent,
 } from 'echarts/components';
 import VChart from 'vue-echarts';
+import { ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 use([
   CanvasRenderer,

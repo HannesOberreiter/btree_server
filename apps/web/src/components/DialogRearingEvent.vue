@@ -36,6 +36,9 @@
 import { useDialogPluginComponent } from 'quasar';
 import { useRearingEventQuery } from '~/composables/useQuery';
 
+import BtnCloseDialog from './BtnCloseDialog.vue';
+import EventInfoRearing from './EventInfoRearing.vue';
+
 defineEmits([...useDialogPluginComponent.emits]);
 const { dialogRef, onDialogHide, onDialogOK } = useDialogPluginComponent();
 

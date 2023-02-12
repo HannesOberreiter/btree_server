@@ -23,6 +23,8 @@
 <script setup lang="ts">
 import { useQuasar } from 'quasar';
 import { useAuthUserStore } from '~/stores/auth';
+import { computed, toRef } from 'vue';
+
 const storeUser = useAuthUserStore();
 
 const $q = useQuasar();

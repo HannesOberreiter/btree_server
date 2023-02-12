@@ -63,6 +63,11 @@ import { validationErrors } from '~/helpers';
 import useVuelidate from '@vuelidate/core';
 import { useScanningStore } from '~/stores/scanning';
 import { useNotification } from '~/composables/useNotification';
+import { useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
+import { onMounted, onUnmounted } from 'vue';
+import { storeToRefs } from 'pinia';
+import { ref, computed, reactive, watch } from 'vue';
 
 const storeScanning = useScanningStore();
 const { hiveDropdownActive, scannedId } = storeToRefs(storeScanning);

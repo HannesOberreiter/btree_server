@@ -1,4 +1,4 @@
-import { defineStore } from 'pinia';
+import { defineStore, acceptHMRUpdate } from 'pinia';
 import { Token } from '~/types';
 import { useStorage } from '@vueuse/core';
 

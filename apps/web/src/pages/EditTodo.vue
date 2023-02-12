@@ -12,6 +12,8 @@
 </template>
 
 <script setup lang="ts">
+import FormMainTodo from '~/components/FormMainTodo.vue';
+
 defineProps({
   ids: {
     type: Array,
