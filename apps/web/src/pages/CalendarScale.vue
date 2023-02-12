@@ -26,6 +26,9 @@ import { useCalendarQuery } from '~/composables/useQuery';
 import { useKeyCalendar } from '~/composables/useKey';
 import { useSwipeCalendar } from '~/composables/useSwipe';
 import { useLocalStorage } from '@vueuse/core';
+import { onMounted, ref, reactive } from 'vue';
+import { useI18n } from 'vue-i18n';
+import { storeToRefs } from 'pinia';
 
 const useQuery = useCalendarQuery();
 const { t } = useI18n();

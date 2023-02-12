@@ -1,4 +1,4 @@
-import { defineStore } from 'pinia';
+import { acceptHMRUpdate, defineStore } from 'pinia';
 
 export const useScanningStore = defineStore('scanning', {
   state: () => ({

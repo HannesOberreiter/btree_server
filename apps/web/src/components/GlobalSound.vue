@@ -9,6 +9,8 @@
 import { useAuthUserStore } from '~/stores/auth';
 import { useNotification } from '~/composables/useNotification';
 import { useVibrate } from '@vueuse/core';
+import { storeToRefs } from 'pinia';
+import { ref, watch } from 'vue';
 
 import ErrorSound from '~/assets/audio/error.mp3';
 import SuccessSound from '~/assets/audio/success.mp3';
@@ -29,7 +31,7 @@ const preventSoundNotification = (old: number, seconds = 1) =>
 
 watch(notification.state, (currentValue) => {
   if (currentValue.show === true && user.value.sound) {
-    if (lastSoundNotification)
+    if (lastSoundNotification.value)
       if (!preventSoundNotification(lastSoundNotification.value)) {
         if (isVibrationSupported) vibrate(currentValue.error ? 300 : 100);
         currentValue.error

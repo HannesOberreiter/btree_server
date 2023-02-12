@@ -15,6 +15,7 @@
 
 <script lang="ts" setup>
 import { useLocalStorage } from '@vueuse/core';
+import { watch } from 'vue';
 
 const emit = defineEmits(['change']);
 const state = useLocalStorage(

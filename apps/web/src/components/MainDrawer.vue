@@ -75,6 +75,12 @@ import { useCountsQuery } from '~/composables/useQuery';
 import refreshService from '~/services/refresh.service';
 import { useAuthUserStore } from '~/stores/auth';
 import { useQuicktoolStore } from '~/stores/quicktool';
+import DrawerItem from '~/components/DrawerItem.vue';
+import BtnRefresh from '~/components/BtnRefresh.vue';
+import ItemCompany from '~/components/ItemCompany.vue';
+import ItemPing from '~/components/ItemPing.vue';
+import { useI18n } from 'vue-i18n';
+import { ref, onMounted, watch, computed } from 'vue';
 
 const { t } = useI18n();
 const storeUser = useAuthUserStore();

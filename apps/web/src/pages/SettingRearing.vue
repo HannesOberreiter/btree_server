@@ -1,7 +1,7 @@
 <template>
   <q-card>
     <div class="row justify-center q-pb-sm">
-      <div class="col-12 col-sm-10 col-md-8">
+      <div class="col-12 col-md-11 col-lg-10">
         <div class="text-body2 q-pb-sm text-center">
           {{ $t('rearing') }}
         </div>
@@ -36,6 +36,10 @@
 </template>
 
 <script setup lang="ts">
-import TableRearingStep from './TableRearingStep.vue';
+import { ref } from 'vue';
+
+import TableRearingStep from '~/pages/TableRearingStep.vue';
+import RearingMethod from '~/components/RearingMethod.vue';
+
 const tab = ref('method');
 </script>

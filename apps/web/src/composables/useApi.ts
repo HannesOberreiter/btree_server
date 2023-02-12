@@ -4,6 +4,7 @@ import querystring from 'query-string';
 import { isString } from 'lodash-es';
 import { LoadingBar } from 'quasar';
 import { useNetwork } from '@vueuse/core';
+import { reactive } from 'vue';
 
 const baseUrl = process.env.BACKEND_URL;
 const dev = process.env.NODE_ENV;

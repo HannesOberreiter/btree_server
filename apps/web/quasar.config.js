@@ -11,8 +11,6 @@
 const { configure } = require('quasar/wrappers');
 const path = require('path');
 
-const { QuasarResolver } = require('unplugin-vue-components/resolvers');
-
 module.exports = configure(function (ctx) {
   require('dotenv').config(); // https://serveanswer.com/questions/process-is-not-defined-when-deploying-quasar-project-to-netlify
 
@@ -33,6 +31,7 @@ module.exports = configure(function (ctx) {
     // --> boot files are part of "main.js"
     // https://v2.quasar.dev/quasar-cli-vite/boot-files
     boot: [
+      'global-components',
       'i18n',
       'quasar-lang-pack',
       'quasar-loading-bar',
@@ -101,31 +100,6 @@ module.exports = configure(function (ctx) {
             /* options */
             include: path.resolve(__dirname, 'src/i18n/*.json'),
             runtimeOnly: false,
-          },
-        ],
-        [
-          'unplugin-auto-import/vite',
-          {
-            include: [
-              /\.[tj]sx?$/, // .ts, .tsx, .js, .jsx
-              /\.vue$/,
-              /\.vue\?vue/, // .vue
-              /\.md$/, // .md
-            ],
-            imports: ['vue', 'vue-router', 'pinia', 'vue-i18n'],
-            eslintrc: {
-              enabled: true,
-              filepath: './.eslintrc-auto-import.json',
-              globalsPropValue: true,
-            },
-            dts: 'src/auto-imports.d.ts',
-          },
-        ],
-        [
-          'unplugin-vue-components/vite',
-          {
-            resolvers: [QuasarResolver()],
-            dts: 'src/auto-components.d.ts',
           },
         ],
       ],

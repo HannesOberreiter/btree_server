@@ -34,6 +34,7 @@
 
 <script setup lang="ts">
 import { useDateFormat } from '~/composables/useDate';
+
 const useDate = useDateFormat();
 defineProps({
   eventInfo: {

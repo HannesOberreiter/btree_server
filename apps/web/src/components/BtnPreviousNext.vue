@@ -28,6 +28,9 @@
 <script setup lang="ts">
 import { findIndex } from 'lodash-es';
 
+import { useRouter } from 'vue-router';
+import { toRef, computed } from 'vue';
+
 const router = useRouter();
 const props = defineProps({
   data: {

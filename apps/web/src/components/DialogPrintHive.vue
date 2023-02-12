@@ -39,6 +39,10 @@
 import { useHivesQuery } from '~/composables/useQuery';
 import { deepUnref } from '~/helpers/deep-unref';
 import PrintHive from '~/pages/PrintHive.vue';
+
+import BtnCloseDialog from './BtnCloseDialog.vue';
+import { ref, toRef, watch } from 'vue';
+
 const props = defineProps({
   selected: {
     type: Object,

@@ -12,8 +12,6 @@
   <q-td v-else></q-td>
 </template>
 
-<script lang="ts"></script>
-
 <script setup lang="ts">
 defineProps({
   hivecount: {

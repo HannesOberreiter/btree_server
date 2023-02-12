@@ -89,6 +89,17 @@ import { useQuasar } from 'quasar';
 import DialogShare from './DialogShare.vue';
 import { useAuthUserStore } from '~/stores/auth';
 
+import BtnDarkMode from './BtnDarkMode.vue';
+import BtnFullscreen from './BtnFullscreen.vue';
+import BtnQrScanner from './BtnQrScanner.vue';
+import BtnReturn from './BtnReturn.vue';
+import BtnShare from './BtnShare.vue';
+import BtnSpeak from './BtnSpeak.vue';
+import BtnWakeLock from './BtnWakeLock.vue';
+import SearchHiveApiary from './SearchHiveApiary.vue';
+
+import { storeToRefs } from 'pinia';
+
 const storeUser = useAuthUserStore();
 const { company } = storeToRefs(storeUser);
 const $q = useQuasar();

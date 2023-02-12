@@ -48,6 +48,10 @@
 import QRCode from 'qrcode';
 import { deepUnref } from '~/helpers/deep-unref';
 
+import BtnCloseDialog from './BtnCloseDialog.vue';
+
+import { ref, toRef, watch } from 'vue';
+
 const props = defineProps({
   selected: {
     type: Object,

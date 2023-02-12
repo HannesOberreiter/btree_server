@@ -89,6 +89,9 @@ import { useQuasar } from 'quasar';
 import { usePreventNavigation } from '~/composables/usePreventNavgiation';
 import { clearCache } from '~/composables/useQuery';
 
+import { useRouter } from 'vue-router';
+import { ref, watch } from 'vue';
+
 const usePrevent = usePreventNavigation();
 const $q = useQuasar();
 const hives = ref(null);
@@ -141,7 +144,7 @@ function onMove(oldIndex: number, newIndex: number) {
 }
 
 function resetActiveStep() {
-  hives.values = map(hives.values, (obj) => {
+  hives.value.values = map(hives.value.values, (obj) => {
     obj.active = false;
     return obj;
   });

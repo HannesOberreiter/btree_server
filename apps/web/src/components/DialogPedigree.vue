@@ -15,6 +15,8 @@
 
 <script setup lang="ts">
 import { useDialogPluginComponent } from 'quasar';
+import BtnCloseDialog from './BtnCloseDialog.vue';
+import ListPedigree from './ListPedigree.vue';
 
 const { dialogRef } = useDialogPluginComponent();
 

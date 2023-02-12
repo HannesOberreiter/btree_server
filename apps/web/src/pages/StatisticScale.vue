@@ -66,6 +66,11 @@ import VChart from 'vue-echarts';
 import round from 'lodash-es/round';
 import { deepUnref } from '~/helpers/deep-unref';
 
+import FormDropdownOption from '~/components/FormDropdownOption.vue';
+
+import { useI18n } from 'vue-i18n';
+import { ref, computed, watch, unref } from 'vue';
+
 use([
   CanvasRenderer,
   LineChart,

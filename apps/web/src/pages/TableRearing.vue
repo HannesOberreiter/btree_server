@@ -60,6 +60,15 @@ import { useTableFilterStore } from '~/stores/tableFilter';
 import { QTableProps } from 'quasar';
 import { useDateFormat } from '~/composables/useDate';
 import { useKeyTable } from '~/composables/useKey';
+import { useI18n } from 'vue-i18n';
+import { ref, computed, watch } from 'vue';
+import { storeToRefs } from 'pinia';
+
+import TableColNote from '~/components/TableColNote.vue';
+import TableButtons from '~/components/TableButtons.vue';
+import TableFilter from '~/components/TableFilter.vue';
+import TableColRearingEvent from '~/components/TableColRearingEvent.vue';
+import TableColSymbol from '~/components/TableColSymbol.vue';
 
 const useDate = useDateFormat();
 const { t } = useI18n();

@@ -117,6 +117,9 @@ import { truncate } from 'lodash-es';
 import { useApiFetch } from '~/composables/useApi';
 import { useNotification } from '~/composables/useNotification';
 
+import { useRouter } from 'vue-router';
+import { ref } from 'vue';
+
 const notification = useNotification();
 const $q = useQuasar();
 const useDate = useDateFormat();

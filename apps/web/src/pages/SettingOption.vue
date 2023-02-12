@@ -82,6 +82,13 @@ import { QTableProps } from 'quasar';
 import { Option } from '~/types';
 import { ComputedRef, PropType } from 'vue';
 import { find } from 'lodash-es';
+import TableColNote from '~/components/TableColNote.vue';
+import TableColStatus from '~/components/TableColStatus.vue';
+import TableButtons from '~/components/TableButtons.vue';
+import TableFilter from '~/components/TableFilter.vue';
+import { useI18n } from 'vue-i18n';
+import { ref, watch, computed } from 'vue';
+import { useRouter } from 'vue-router';
 
 const { t } = useI18n();
 const router = useRouter();

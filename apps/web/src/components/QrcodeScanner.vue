@@ -59,6 +59,10 @@ import { useNotification } from '~/composables/useNotification';
 import { useScanningStore } from '~/stores/scanning';
 import { useScanner } from '~/composables/useScanner';
 
+import { onMounted, onUnmounted, watch } from 'vue';
+import { useRouter } from 'vue-router';
+import { storeToRefs } from 'pinia';
+
 const router = useRouter();
 const notification = useNotification();
 const storeScanning = useScanningStore();

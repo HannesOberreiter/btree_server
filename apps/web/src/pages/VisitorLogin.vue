@@ -28,6 +28,13 @@ import { useNotification } from '~/composables/useNotification';
 import { User } from '~/types';
 import useVuelidate from '@vuelidate/core';
 import { RouteLocationRaw } from 'vue-router';
+import FormUserPassword from '~/components/FormUserPassword.vue';
+import FormInputEmail from '~/components/FormInputEmail.vue';
+
+import FormErrorMax from '~/components/FormErrorMax.vue';
+import { useRouter } from 'vue-router';
+import { reactive, ref, onMounted, onUnmounted, watch } from 'vue';
+import { storeToRefs } from 'pinia';
 
 const router = useRouter();
 const lastUrl = router.currentRoute.value.query.next;

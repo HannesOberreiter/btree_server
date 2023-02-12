@@ -20,6 +20,7 @@
 import { useVModels } from '@vueuse/core';
 import { useQuasar } from 'quasar';
 import DialogVarroa from './DialogVarroa.vue';
+import FormInputNumeric from '~/components/FormInputNumeric.vue';
 
 const $q = useQuasar();
 const props = defineProps({

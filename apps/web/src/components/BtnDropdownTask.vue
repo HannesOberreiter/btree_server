@@ -40,7 +40,10 @@
 
 <script setup lang="ts">
 import { useQuasar } from 'quasar';
+import { useI18n } from 'vue-i18n';
 import DialogForm from './DialogForm.vue';
+
+import { ref } from 'vue';
 
 const emit = defineEmits(['refetch']);
 const { t } = useI18n();

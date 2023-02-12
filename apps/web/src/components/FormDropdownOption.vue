@@ -38,6 +38,8 @@ import {
 } from '~/composables/useQuery';
 import { useLocalStorage, useVModels } from '@vueuse/core';
 import { formCheckMultipleValues } from '~/helpers';
+import { useI18n } from 'vue-i18n';
+import { ref, watch, toRefs, computed } from 'vue';
 
 const localPerf = useLocalStorage(
   'pref-local',

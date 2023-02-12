@@ -154,6 +154,18 @@ import { useMeta } from 'quasar';
 import { useHiveQuery } from '~/composables/useQuery';
 import dayjs from 'dayjs';
 
+import HiveInfoMovements from '~/components/HiveInfoMovements.vue';
+import HiveInfoQueens from '~/components/HiveInfoQueens.vue';
+import HiveInfoTask from '~/components/HiveInfoTask.vue';
+import ExpansionQueen from '~/components/ExpansionQueen.vue';
+import ExpansionHive from '~/components/ExpansionHive.vue';
+import BtnPreviousNext from '~/components/BtnPreviousNext.vue';
+import BtnDropdownTask from '~/components/BtnDropdownTask.vue';
+
+import ListTasks from '~/components/ListTasks.vue';
+import { useI18n } from 'vue-i18n';
+import { ref, computed, toRef } from 'vue';
+
 const { t } = useI18n();
 const tab = ref('task');
 const year = ref(dayjs().year());

@@ -30,6 +30,7 @@
 import { QTableProps } from 'quasar';
 import { PropType } from 'vue';
 import { useVModels } from '@vueuse/core';
+import { toRef, computed } from 'vue';
 
 const props = defineProps({
   modelFilter: {

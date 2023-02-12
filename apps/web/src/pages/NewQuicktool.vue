@@ -29,6 +29,10 @@ import { find } from 'lodash-es';
 import { PropType } from 'vue';
 import { Task } from '~/types';
 import { useQuicktoolStore } from '~/stores/quicktool';
+import FormMainTask from '~/components/FormMainTask.vue';
+import { useI18n } from 'vue-i18n';
+import { ref, watch } from 'vue';
+import { useRouter } from 'vue-router';
 
 const { t } = useI18n();
 const storeQuicktool = useQuicktoolStore();

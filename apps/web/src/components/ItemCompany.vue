@@ -17,6 +17,8 @@
 <script setup lang="ts">
 import { useDateFormat } from '~/composables/useDate';
 import { useAuthUserStore } from '~/stores/auth';
+import { computed } from 'vue';
+
 const useDate = useDateFormat();
 const storeUser = useAuthUserStore();
 const getPaidStatus = computed(() => {

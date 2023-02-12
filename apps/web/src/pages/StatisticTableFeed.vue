@@ -59,6 +59,12 @@ import { useKeyTable } from '~/composables/useKey';
 import { useStatisticTable } from '~/composables/useQuery';
 import { tableCheckSelected } from '~/helpers';
 import { useTableFilterStore } from '~/stores/tableFilter';
+import TableThSum from '~/components/TableThSum.vue';
+import TableButtons from '~/components/TableButtons.vue';
+import TableFilter from '~/components/TableFilter.vue';
+import { storeToRefs } from 'pinia';
+import { useI18n } from 'vue-i18n';
+import { ref, computed, watch } from 'vue';
 
 const { t } = useI18n();
 const selected = ref([]);

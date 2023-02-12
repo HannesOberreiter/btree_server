@@ -1,5 +1,5 @@
 import { CALENDAR } from '~/constants';
-import { defineStore } from 'pinia';
+import { acceptHMRUpdate, defineStore } from 'pinia';
 import { useStorage } from '@vueuse/core';
 
 export const useCalendarStore = defineStore('calendar', {

@@ -21,6 +21,8 @@ import { useApiFetch } from '~/composables/useApi';
 import { useIntervalFn, useOnline } from '@vueuse/core';
 import round from 'lodash-es/round';
 
+import { ref } from 'vue';
+
 const api = useApiFetch();
 const time = ref(null);
 const offlineServer = ref(true);

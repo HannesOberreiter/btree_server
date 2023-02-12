@@ -51,6 +51,12 @@ import { useRearingDetailsQuery } from '~/composables/useQuery';
 import { useTablesStore } from '~/stores/tables';
 import { QTableProps } from 'quasar';
 import { useKeyTable } from '~/composables/useKey';
+import TableColNote from '~/components/TableColNote.vue';
+import { useI18n } from 'vue-i18n';
+import { ref, computed, watch } from 'vue';
+import { storeToRefs } from 'pinia';
+import TableButtons from '~/components/TableButtons.vue';
+import TableFilter from '~/components/TableFilter.vue';
 
 const { t } = useI18n();
 

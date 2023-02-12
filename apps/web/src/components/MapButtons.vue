@@ -50,6 +50,8 @@
 import { useVModels } from '@vueuse/core';
 import { LControl } from '@vue-leaflet/vue-leaflet';
 
+import { ref, toRef } from 'vue';
+
 const showInactive = ref(false);
 const props = defineProps({
   userLocationLoading: {

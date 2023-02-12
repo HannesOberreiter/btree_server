@@ -69,6 +69,9 @@ import { useNotification } from '~/composables/useNotification';
 import { LoadingBar, useQuasar } from 'quasar';
 import { useServiceDropbox } from '~/composables/useDropbox';
 import DialogFileUpload from '~/components/DialogFileUpload.vue';
+import FilesDropbox from '~/components/FilesDropbox.vue';
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 const router = useRouter();
 const $q = useQuasar();

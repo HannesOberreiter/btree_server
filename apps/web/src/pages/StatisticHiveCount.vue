@@ -27,4 +27,7 @@
   </q-card>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import StatisticHiveCountApiary from '~/components/StatisticHiveCountApiary.vue';
+import StatisticHiveCountTotal from '~/components/StatisticHiveCountTotal.vue';
+</script>

@@ -39,6 +39,9 @@
 
 <script setup lang="ts">
 import { useApiariesQuery, useHivesQuery } from '~/composables/useQuery';
+import { useRouter } from 'vue-router';
+import { ref, computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 const search = ref(null);
@@ -78,7 +81,7 @@ const data = computed(() => {
 });
 
 function filterFn(val: any, update: any, _abort: any) {
-  if (data !== null) {
+  if (data.value !== null) {
     update(() => {
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       const needle = new RegExp(`(${val.toLowerCase()})`);

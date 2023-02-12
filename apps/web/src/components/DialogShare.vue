@@ -126,6 +126,11 @@ import { useNotification } from '~/composables/useNotification';
 import { useNFC } from '~/composables/useNFC';
 import { useDateFormat } from '~/composables/useDate';
 
+import BtnCloseDialog from './BtnCloseDialog.vue';
+import { useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
+import { ref } from 'vue';
+
 defineEmits([...useDialogPluginComponent.emits]);
 const { dialogRef, onDialogHide } = useDialogPluginComponent();
 const { copy } = useClipboard();

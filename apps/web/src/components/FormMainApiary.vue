@@ -70,7 +70,7 @@
       </div>
     </div>
   </q-form>
-  <form-buttons
+  <from-buttons
     :state="state"
     :is-edit="isEdit"
     :edit-ids="editOptions"
@@ -78,7 +78,7 @@
     form="apiary"
     @reset="onReset"
     @change="onChange"
-  ></form-buttons>
+  ></from-buttons>
 </template>
 
 <script lang="ts">
@@ -99,6 +99,14 @@ import { useNotification } from '~/composables/useNotification';
 import useVuelidate from '@vuelidate/core';
 import { flatten, map, merge } from 'lodash-es';
 import { useApiFetch } from '~/composables/useApi';
+import FromButtons from './FormButtons.vue';
+import FormInputText from './FormInputText.vue';
+import FormInputNumeric from './FormInputNumeric.vue';
+import FormInputUrl from './FormInputUrl.vue';
+import FormInputNote from './FormInputNote.vue';
+import FormInputCheckbox from './FormInputCheckbox.vue';
+import { ref, unref, computed, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 const api = useApiFetch();
 const notification = useNotification();

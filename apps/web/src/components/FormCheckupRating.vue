@@ -76,6 +76,16 @@ import { useVModels } from '@vueuse/core';
 import { formCheckMultipleValues } from '~/helpers';
 import { useFieldsettingStore } from '~/stores/fieldsetting';
 
+import {
+  ref,
+  computed,
+  defineProps,
+  defineEmits,
+  toRefs,
+  unref,
+  watch,
+} from 'vue';
+
 const fields = useFieldsettingStore();
 const expanded = ref(false);
 const props = defineProps({

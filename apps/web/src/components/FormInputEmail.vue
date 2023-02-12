@@ -32,6 +32,8 @@ import { email, required, maxLength } from '~/helpers/i18n-validators';
 import { useVModels } from '@vueuse/core';
 import { validationErrors } from '~/helpers';
 import useVuelidate from '@vuelidate/core';
+import { useI18n } from 'vue-i18n';
+import { ref } from 'vue';
 
 const { t } = useI18n();
 const props = defineProps({

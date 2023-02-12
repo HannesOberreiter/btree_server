@@ -31,6 +31,7 @@
 <script setup lang="ts">
 import { round, sortBy, groupBy } from 'lodash-es';
 import { useStatisticTable } from '~/composables/useQuery';
+import { toRef, ref, watch, computed } from 'vue';
 
 const props = defineProps({
   id: {

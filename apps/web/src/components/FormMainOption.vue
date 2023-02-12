@@ -69,7 +69,12 @@ import useVuelidate from '@vuelidate/core';
 import { flatten, map, merge } from 'lodash-es';
 import { FormOption, Option } from '~/types';
 import { useApiFetch } from '~/composables/useApi';
-import { PropType } from 'vue';
+import FormButtons from '~/components/FormButtons.vue';
+import { PropType, ref, computed, unref } from 'vue';
+import FormInputCheckbox from '~/components/FormInputCheckbox.vue';
+import FormInputNote from '~/components/FormInputNote.vue';
+import FormInputText from '~/components/FormInputText.vue';
+import FormDropdownEdit from '~/components/FormDropdownEdit.vue';
 
 const notification = useNotification();
 const values = ref({});

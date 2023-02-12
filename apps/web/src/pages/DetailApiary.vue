@@ -127,6 +127,17 @@ import { useApiaryQuery } from '~/composables/useQuery';
 import { useMeta } from 'quasar';
 import dayjs from 'dayjs';
 
+import BtnPreviousNext from '~/components/BtnPreviousNext.vue';
+import ExpansionApiary from '~/components/ExpansionApiary.vue';
+import ListHives from '~/components/ListHives.vue';
+import ListTasks from '~/components/ListTasks.vue';
+import BtnDropdownTask from '~/components/BtnDropdownTask.vue';
+
+import IframeWeather from '~/components/IframeWeather.vue';
+
+import { useI18n } from 'vue-i18n';
+import { ref, computed, toRef } from 'vue';
+
 const { t } = useI18n();
 const tab = ref('hive');
 const year = ref(dayjs().year());

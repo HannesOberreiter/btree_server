@@ -27,6 +27,9 @@ import {
 } from 'echarts/components';
 import VChart from 'vue-echarts';
 import { useDateFormat } from '~/composables/useDate';
+import FormInputDate from '~/components/FormInputDate.vue';
+import { useI18n } from 'vue-i18n';
+import { ref, watch } from 'vue';
 
 use([
   CanvasRenderer,

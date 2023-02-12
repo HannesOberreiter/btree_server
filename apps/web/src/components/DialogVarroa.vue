@@ -46,6 +46,9 @@
 <script setup lang="ts">
 import { round } from 'lodash-es';
 import { useDialogPluginComponent } from 'quasar';
+import BtnCloseDialog from './BtnCloseDialog.vue';
+
+import { ref, watch } from 'vue';
 
 const { dialogRef, onDialogHide, onDialogOK } = useDialogPluginComponent();
 const props = defineProps({

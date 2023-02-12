@@ -139,6 +139,8 @@ import { useFieldsettingStore } from '~/stores/fieldsetting';
 import { useNotification } from '~/composables/useNotification';
 import { useApiFetch } from '~/composables/useApi';
 import { useLocalStorage } from '@vueuse/core';
+import { storeToRefs } from 'pinia';
+import { onMounted, ref } from 'vue';
 
 const notification = useNotification();
 const storeFields = useFieldsettingStore();

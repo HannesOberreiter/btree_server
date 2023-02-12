@@ -19,6 +19,8 @@
 </template>
 
 <script setup lang="ts">
+import BtnCloseDialog from './BtnCloseDialog.vue';
+
 defineProps({
   hint: {
     type: String,

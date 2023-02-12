@@ -73,6 +73,16 @@ import { useApiariesQuery } from '~/composables/useQuery';
 import { useTablesStore } from '~/stores/tables';
 import { QTableProps } from 'quasar';
 import { useKeyTable } from '~/composables/useKey';
+import { useI18n } from 'vue-i18n';
+import { ref, computed, watch } from 'vue';
+import { storeToRefs } from 'pinia';
+import TableFilter from '~/components/TableFilter.vue';
+import TableButtons from '~/components/TableButtons.vue';
+import TableColLink from '~/components/TableColLink.vue';
+import TableColNote from '~/components/TableColNote.vue';
+import TableColUrl from '~/components/TableColUrl.vue';
+import TableColStatus from '~/components/TableColStatus.vue';
+import TableColHivecount from '~/components/TableColHivecount.vue';
 
 const storeTable = useTablesStore();
 const { t } = useI18n();

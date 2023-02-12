@@ -56,6 +56,10 @@ import { onBeforeRouteLeave } from 'vue-router';
 import { useKeyCalendar } from '~/composables/useKey';
 import { useSwipeCalendar } from '~/composables/useSwipe';
 import { useLocalStorage } from '@vueuse/core';
+import { useI18n } from 'vue-i18n';
+import CalendarSetting from '~/components/CalendarSetting.vue';
+import { storeToRefs } from 'pinia';
+import { ref, onMounted, reactive, watch } from 'vue';
 
 const useQuery = useCalendarQuery();
 const { t } = useI18n();
@@ -295,8 +299,10 @@ const calendarOptions = reactive({
   stickyHeaderDates: true,
   initialView: 'dayGridMonth',
   buttonText: {
+    dayGridMonth: t('month'),
     months: t('month', 2),
     listWeek: t('event', 2),
+    dayGridWeek: t('week'),
   },
   views: {
     dayGrid: {

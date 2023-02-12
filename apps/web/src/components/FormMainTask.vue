@@ -300,11 +300,29 @@ const stateDefault = {
 </script>
 
 <script setup lang="ts">
-import { PropType } from 'vue';
+import { PropType, ref, computed, unref } from 'vue';
 import useVuelidate from '@vuelidate/core';
 import { useNotification } from '~/composables/useNotification';
 import { useFieldsettingStore } from '~/stores/fieldsetting';
 import { useApiFetch } from '~/composables/useApi';
+import FormButtons from '~/components/FormButtons.vue';
+import FormInputText from '~/components/FormInputText.vue';
+import FormInputNumeric from '~/components/FormInputNumeric.vue';
+import FormInputAmount from '~/components/FormInputAmount.vue';
+import FormInputUrl from '~/components/FormInputUrl.vue';
+import FormInputNote from '~/components/FormInputNote.vue';
+import FormInputCheckbox from '~/components/FormInputCheckbox.vue';
+import FormDropdownOption from '~/components/FormDropdownOption.vue';
+import FormCheckupTemperature from '~/components/FormCheckupTemperature.vue';
+import FormCheckupFrames from '~/components/FormCheckupFrames.vue';
+import FormCheckupRating from '~/components/FormCheckupRating.vue';
+import FormCheckupQueen from '~/components/FormCheckupQueen.vue';
+import FormDropdownHive from '~/components/FormDropdownHive.vue';
+import FormDropdownEdit from '~/components/FormDropdownEdit.vue';
+import FormCheckupWeight from '~/components/FormCheckupWeight.vue';
+import FormCheckupVarroa from './FormCheckupVarroa.vue';
+import FormInputDates from './FormInputDates.vue';
+import { useRouter } from 'vue-router';
 
 const fields = useFieldsettingStore();
 const notification = useNotification();
