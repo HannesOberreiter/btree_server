@@ -16,7 +16,8 @@ export class Catcher {
   static log = (err: Error, req: Request, res: Response, next) => {
     if (
       err.message !== 'TokenExpiredError' &&
-      err.message !== 'JsonWebTokenError'
+      err.message !== 'JsonWebTokenError' &&
+      err.message !== 'Unauthorized'
     ) {
       const message =
         req.method +
