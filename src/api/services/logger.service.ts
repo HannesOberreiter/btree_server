@@ -30,7 +30,7 @@ export class Logger {
    * @description Generic property getter
    * @param {string} property
    */
-  get(property: string) {
+  get(property: 'logger' | 'stream') {
     return this[property];
   }
 
