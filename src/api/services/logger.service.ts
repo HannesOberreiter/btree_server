@@ -1,4 +1,5 @@
 import { WinstonConfiguration } from '@config/winston.config';
+import { User } from '../models/user.model';
 
 /**
  * Log service
@@ -30,7 +31,7 @@ export class Logger {
    * @description Generic property getter
    * @param {string} property
    */
-  get(property: string) {
+  get(property: 'logger' | 'stream') {
     return this[property];
   }
 
@@ -40,7 +41,11 @@ export class Logger {
    * @param {string} message
    * @param {object} scope
    */
-  log(level: string, message: string, scope: { label: string }) {
-    this.logger[level](message, { label: scope.label });
+  log(
+    level: string,
+    message: string,
+    scope: { label: string; user: User | undefined }
+  ) {
+    this.logger[level](message, { label: scope.label, user: scope.user });
   }
 }
