@@ -29,9 +29,13 @@ export class WinstonConfiguration {
   /**
    * @description Output format
    */
-  private formater = format.printf(({ level, message, label, timestamp }) => {
-    return `${timestamp} [${level}] ${label} : ${message}`;
-  });
+  private formater = format.printf(
+    ({ level, message, label, user, timestamp }) => {
+      if (user)
+        return `${timestamp} [${level}] ${label} (user_id: ${user.user_id}, bee_id: ${user.bee_id}) : ${message}`;
+      return `${timestamp} [${level}] ${label} : ${message}`;
+    }
+  );
 
   private isCron = format((info, opts) => {
     if (info.label === 'CronJob' && opts) return info;
@@ -132,7 +136,7 @@ export class WinstonConfiguration {
    *
    * @param {string} property Property name to returns
    */
-  get(property: string) {
+  get(property: 'logger' | 'stream') {
     return this[property];
   }
 }

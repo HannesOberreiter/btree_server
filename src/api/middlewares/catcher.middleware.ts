@@ -3,6 +3,7 @@ import { notFound } from '@hapi/boom';
 
 import { Container } from '@config/container.config';
 import { getErrorStatusCode, getErrorOutput } from '@utils/error.util';
+import { IUserRequest } from '../types/interfaces/IUserRequest.interface';
 
 export class Catcher {
   /**
@@ -13,7 +14,12 @@ export class Catcher {
    * @param {Response} res Express response object
    * @param {Function} next Callback function
    */
-  static log = (err: Error, req: Request, res: Response, next) => {
+  static log = (
+    err: Error,
+    req: Request | IUserRequest,
+    res: Response,
+    next
+  ) => {
     if (
       err.message !== 'TokenExpiredError' &&
       err.message !== 'JsonWebTokenError' &&
@@ -31,6 +37,7 @@ export class Catcher {
         err.stack;
       Container.resolve('Logger').log('error', message, {
         label: 'Application',
+        user: 'user' in req ? req?.user : undefined,
       });
     }
     next(err, req, res, next);
