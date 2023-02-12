@@ -9,13 +9,14 @@
     </div>
     <div v-else class="col-12">
       <q-list
-        v-for="task in listData.slice(
+        v-for="(task, index) in listData.slice(
           taskStart,
           apiary ? taskEnd : listData.length
         )"
         :key="task.kind + task.id"
         bordered
-        class="rounded-borders"
+        class="borders"
+        :class="index > 0 ? 'border-top-none' : ''"
       >
         <item-task
           :default-opened="opened"

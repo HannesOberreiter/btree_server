@@ -14,6 +14,7 @@
       <div
         class="row flex-center q-pa-sm"
         style="border: 0.01em; border-style: solid"
+        :class="index > 0 ? 'border-top-none' : ''"
       >
         <div
           class="col-12 col-sm-2 col-md-2"
