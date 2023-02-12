@@ -24,7 +24,7 @@
       label="description"
       name="chargeName"
       icon="fas fa-passport"
-      :required="isEdit ? false : true"
+      :required="false"
       :values="values"
       :reset="reset"
     ></form-input-text>
