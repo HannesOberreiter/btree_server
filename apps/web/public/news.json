@@ -2,7 +2,10 @@
   {
     "version": "6.1.10",
     "date": "2023-02-12",
-    "news": ["BUGFIX checkup weight time minutes had a wrong time format"]
+    "news": [
+      "BUGFIX checkup weight time minutes had a wrong time format",
+      "BUGFIX task detail view, checkup checkboxes and strong field did not show up, thx Dominik"
+    ]
   },
   {
     "version": "6.1.9",

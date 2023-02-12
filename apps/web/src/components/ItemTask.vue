@@ -68,26 +68,30 @@
             </div>
           </div>
           <div v-else-if="task.kind === 'checkup'" class="col-12">
-            <div v-if="fields.settings.checkup.queen">
+            <div v-if="fields.someCheckboxTrue">
               <q-chip
+                v-if="fields.settings.checkup.checkboxes.queen"
                 :color="task.queen ? 'positive' : 'negative'"
                 text-color="white"
               >
                 {{ t('queen') }}
               </q-chip>
               <q-chip
+                v-if="fields.settings.checkup.checkboxes.queencells"
                 :color="task.queencells ? 'positive' : 'negative'"
                 text-color="white"
               >
                 {{ t('queencell', 2) }}
               </q-chip>
               <q-chip
+                v-if="fields.settings.checkup.checkboxes.capped_brood"
                 :color="task.capped_brood ? 'positive' : 'negative'"
                 text-color="white"
               >
                 {{ t('cappedBrood') }}
               </q-chip>
               <q-chip
+                v-if="fields.settings.checkup.checkboxes.eggs"
                 :color="task.eggs ? 'positive' : 'negative'"
                 text-color="white"
               >
@@ -146,7 +150,7 @@
                 {{ $t('frames.foundation') }} ({{ task.foundation }})
               </span>
             </div>
-            <div v-if="task.strength && task.strong > 0">
+            <div v-if="task.strong && task.strong > 0">
               <b>{{ $t('strong') }}:</b> {{ task.strong }}
             </div>
 
