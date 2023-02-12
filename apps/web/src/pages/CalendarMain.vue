@@ -46,6 +46,8 @@ import FullCalendar from '@fullcalendar/vue3';
 import allLocales from '@fullcalendar/core/locales-all';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin, { DateClickArg } from '@fullcalendar/interaction';
+import multiMonthPlugin from '@fullcalendar/multimonth';
+
 import listPlugin from '@fullcalendar/list';
 import { useApiFetch } from '~/composables/useApi';
 import { useQuasar } from 'quasar';
@@ -273,7 +275,7 @@ function handleEventClick(clickInfo: EventClickArg) {
 
 const calendarOptions = reactive({
   eventSources: eventsSourceActive,
-  plugins: [dayGridPlugin, listPlugin, interactionPlugin],
+  plugins: [dayGridPlugin, listPlugin, interactionPlugin, multiMonthPlugin],
   customButtons: {
     sources: {
       text: t('abo', 2),
@@ -288,10 +290,14 @@ const calendarOptions = reactive({
   },
   footerToolbar: {
     left: 'sources',
-    right: 'dayGridMonth,dayGridWeek,listWeek',
+    right: 'dayGridMonth,months,dayGridWeek,listWeek',
   },
   stickyHeaderDates: true,
   initialView: 'dayGridMonth',
+  buttonText: {
+    months: t('month', 2),
+    listWeek: t('event', 2),
+  },
   views: {
     dayGrid: {
       titleFormat: {
@@ -303,6 +309,14 @@ const calendarOptions = reactive({
       titleFormat: {
         year: '2-digit',
         month: 'short',
+      },
+    },
+    months: {
+      type: 'multiMonth',
+      duration: { months: 4 },
+      showNonCurrentDates: false,
+      titleFormat: {
+        year: '2-digit',
       },
     },
     day: {
