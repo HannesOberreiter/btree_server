@@ -52,6 +52,8 @@ import {
   minLength,
   maxLength,
 } from '../helpers/i18n-validators';
+import { ref, reactive, watch, onMounted } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 const passwordInput = ref<QInput | null>(null);
 const $q = useQuasar();

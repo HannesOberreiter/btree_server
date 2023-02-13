@@ -1,4 +1,4 @@
-import { defineStore } from 'pinia';
+import { acceptHMRUpdate, defineStore } from 'pinia';
 import { useStorage } from '@vueuse/core';
 import refreshService from '~/services/refresh.service';
 import { useApiFetch } from '~/composables/useApi';

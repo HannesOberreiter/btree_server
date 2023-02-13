@@ -73,6 +73,12 @@ import { useApiFetch } from '~/composables/useApi';
 import { clearCache, useInvalidateQueries } from '~/composables/useQuery';
 import { useDateFormat } from '~/composables/useDate';
 
+import ItemCompany from './ItemCompany.vue';
+import { useI18n } from 'vue-i18n';
+import { useRouter } from 'vue-router';
+import { ref, computed } from 'vue';
+import { storeToRefs } from 'pinia';
+
 const notification = useNotification();
 const useDate = useDateFormat();
 const api = useApiFetch();

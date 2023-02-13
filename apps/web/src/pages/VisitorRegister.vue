@@ -123,6 +123,15 @@ import AuthService from '~/services/auth.service';
 import termsDE from '~/i18n/de/terms.txt?raw';
 import termsEN from '~/i18n/en/terms.txt?raw';
 import useVuelidate from '@vuelidate/core';
+import { ref, reactive } from 'vue';
+import { useI18n } from 'vue-i18n';
+
+import FormUserPassword from '~/components/FormUserPassword.vue';
+import FormUserLanguage from '~/components/FormUserLanguage.vue';
+import FormUserNewsletter from '~/components/FormUserNewsletter.vue';
+import FormInputEmail from '~/components/FormInputEmail.vue';
+import FormInputText from '~/components/FormInputText.vue';
+import FormErrorMax from '~/components/FormErrorMax.vue';
 
 const notification = useNotification();
 const { t } = useI18n();

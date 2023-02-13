@@ -9,3 +9,5 @@
     class="print-hide"
   />
 </template>
+
+<script setup></script>

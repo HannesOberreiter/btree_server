@@ -154,6 +154,11 @@ import { useClipboard } from '@vueuse/core';
 import { useNotification } from '~/composables/useNotification';
 import useVuelidate from '@vuelidate/core';
 import { useApiFetch } from '~/composables/useApi';
+import { useI18n } from 'vue-i18n';
+import { ref, computed, reactive } from 'vue';
+
+import FormDropdownOption from '~/components/FormDropdownOption.vue';
+import FormUserPassword from '~/components/FormUserPassword.vue';
 
 const storeUser = useAuthUserStore();
 const { t } = useI18n();

@@ -1,5 +1,7 @@
 import { useScanningStore } from '~/stores/scanning';
 import { useNotification } from './useNotification';
+import { reactive } from 'vue';
+import { useRouter } from 'vue-router';
 
 // Type definitions for Web NFC
 // Project: https://github.com/w3c/web-nfc

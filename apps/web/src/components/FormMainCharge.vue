@@ -24,7 +24,7 @@
       label="description"
       name="chargeName"
       icon="fas fa-passport"
-      :required="isEdit ? false : true"
+      :required="false"
       :values="values"
       :reset="reset"
     ></form-input-text>
@@ -110,6 +110,16 @@ import { FormCharge } from '~/types';
 import { useApiFetch } from '~/composables/useApi';
 import { useDateFormat } from '~/composables/useDate';
 import { useFieldsettingStore } from '~/stores/fieldsetting';
+import FormButtons from '~/components/FormButtons.vue';
+import FormDropdownEdit from '~/components/FormDropdownEdit.vue';
+import FormDropdownOption from '~/components/FormDropdownOption.vue';
+import FormInputCheckboxString from '~/components/FormInputCheckboxString.vue';
+import FormInputDate from '~/components/FormInputDate.vue';
+import FormInputNumeric from '~/components/FormInputNumeric.vue';
+import FormInputNote from '~/components/FormInputNote.vue';
+import FormInputText from '~/components/FormInputText.vue';
+import FormInputUrl from '~/components/FormInputUrl.vue';
+import { ref, computed, unref } from 'vue';
 
 const useDate = useDateFormat();
 const fields = useFieldsettingStore();

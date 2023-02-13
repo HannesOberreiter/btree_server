@@ -104,10 +104,14 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useRouter } from 'vue-router';
-import SupporterImages from '~/components/SupporterImages.vue';
 import { useMeta } from 'quasar';
 import { useFetch } from '@vueuse/core';
 import { useApiFetch } from '~/composables/useApi';
+import { useI18n } from 'vue-i18n';
+import { onMounted, ref } from 'vue';
+
+import SupporterImages from '~/components/SupporterImages.vue';
+import BtnDarkMode from '~/components/BtnDarkMode.vue';
 
 const useApi = useApiFetch();
 useApi.state.logout = false;

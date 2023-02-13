@@ -63,6 +63,14 @@ import { useDateFormat } from '~/composables/useDate';
 import { useTableFilterStore } from '~/stores/tableFilter';
 import { round } from 'lodash';
 import { useKeyTable } from '~/composables/useKey';
+import TableButtons from '~/components/TableButtons.vue';
+import TableFilter from '~/components/TableFilter.vue';
+import TableColUrl from '~/components/TableColUrl.vue';
+import TableColNote from '~/components/TableColNote.vue';
+import TableThSum from '~/components/TableThSum.vue';
+import { useI18n } from 'vue-i18n';
+import { ref, computed, watch } from 'vue';
+import { storeToRefs } from 'pinia';
 
 const useDate = useDateFormat();
 const { t } = useI18n();

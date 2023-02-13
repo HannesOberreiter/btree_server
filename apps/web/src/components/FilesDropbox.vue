@@ -108,6 +108,9 @@ import { useServiceDropbox } from '~/composables/useDropbox';
 import DialogFileShow from '~/components/DialogFileShow.vue';
 import { useQuasar } from 'quasar';
 
+import { useI18n } from 'vue-i18n';
+import { watch } from 'vue';
+
 const $q = useQuasar();
 const useDate = useDateFormat();
 const useDropbox = useServiceDropbox();

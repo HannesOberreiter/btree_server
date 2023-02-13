@@ -47,6 +47,11 @@
 
 <script setup lang="ts">
 import { useAuthUserStore } from '~/stores/auth';
+
+import CompanySetting from '~/components/CompanySetting.vue';
+import CompanyUser from '~/components/CompanyUser.vue';
+import { ref } from 'vue';
+
 const prop = defineProps({
   tab: {
     type: String,

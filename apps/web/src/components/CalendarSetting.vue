@@ -42,6 +42,8 @@
 import { useLocalStorage } from '@vueuse/core';
 import { CALENDAR } from '~/constants';
 import { useCalendarStore } from '~/stores/calendar';
+import BtnCloseDialog from './BtnCloseDialog.vue';
+
 const storeCalendar = useCalendarStore();
 
 const localPerf = useLocalStorage(

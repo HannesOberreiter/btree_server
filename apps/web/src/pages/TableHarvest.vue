@@ -95,6 +95,16 @@ import { QTableProps } from 'quasar';
 import { useDateFormat } from '~/composables/useDate';
 import { useTableFilterStore } from '~/stores/tableFilter';
 import { useKeyTable } from '~/composables/useKey';
+import TableColLink from '~/components/TableColLink.vue';
+import TableColNote from '~/components/TableColNote.vue';
+import TableColStatus from '~/components/TableColStatus.vue';
+import TableColUrl from '~/components/TableColUrl.vue';
+import { useI18n } from 'vue-i18n';
+import { ref, computed, watch } from 'vue';
+import { storeToRefs } from 'pinia';
+import TableButtons from '~/components/TableButtons.vue';
+import TableFilter from '~/components/TableFilter.vue';
+import TableThSum from '~/components/TableThSum.vue';
 
 const useDate = useDateFormat();
 const { t } = useI18n();

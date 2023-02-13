@@ -34,8 +34,9 @@
       size="sm"
       :aria-label="$t('help.name')"
       @click="showInfo = !showInfo"
-      ><tooltip-base>{{ $t('help.name') }} (h)</tooltip-base></btn-base
     >
+      <tooltip-base>{{ $t('help.name') }} (h)</tooltip-base>
+    </btn-base>
     <btn-share :show-path="true"></btn-share>
   </q-toolbar>
   <global-sound></global-sound>
@@ -46,6 +47,12 @@
 import { useKeyHelp } from '~/composables/useKey';
 import { useFetch } from '@vueuse/core';
 import { useAuthUserStore } from '~/stores/auth';
+import BtnShare from './BtnShare.vue';
+
+import DialogHint from './DialogHint.vue';
+import GlobalSound from './GlobalSound.vue';
+import { useRouter } from 'vue-router';
+import { computed, ref } from 'vue';
 
 // const build_version = process.env.NPM_PACKAGE_VERSION;
 const storeUser = useAuthUserStore();

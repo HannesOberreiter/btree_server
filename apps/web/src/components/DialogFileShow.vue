@@ -58,6 +58,10 @@ import { useServiceDropbox } from '~/composables/useDropbox';
 import { isImage } from '~/helpers';
 import round from 'lodash-es/round';
 
+import BtnCloseDialog from './BtnCloseDialog.vue';
+
+import { ref, watch, toRef } from 'vue';
+
 const { dialogRef, onDialogHide, onDialogOK } = useDialogPluginComponent();
 const useDropbox = useServiceDropbox();
 const file = ref(null);

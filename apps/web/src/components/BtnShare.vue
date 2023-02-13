@@ -31,6 +31,8 @@ import { useQuasar } from 'quasar';
 import { useNFC } from '~/composables/useNFC';
 import DialogShare from './DialogShare.vue';
 
+import { useRouter } from 'vue-router';
+
 const $q = useQuasar();
 const router = useRouter();
 const nfc = useNFC();

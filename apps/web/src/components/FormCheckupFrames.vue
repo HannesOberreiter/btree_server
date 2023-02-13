@@ -70,6 +70,8 @@ import { useVModels } from '@vueuse/core';
 import { formCheckMultipleValues } from '~/helpers';
 import { useFieldsettingStore } from '~/stores/fieldsetting';
 
+import { ref, computed, unref, toRefs, watch } from 'vue';
+
 const fields = useFieldsettingStore();
 const expanded = ref(false);
 const max = ref(10);

@@ -126,6 +126,15 @@ import TableFilter from '~/components/TableFilter.vue';
 import { useDateFormat } from '~/composables/useDate';
 import { useTableFilterStore } from '~/stores/tableFilter';
 import { useKeyTable } from '~/composables/useKey';
+import TableColBoolean from '~/components/TableColBoolean.vue';
+import TableColLink from '~/components/TableColLink.vue';
+import TableColNote from '~/components/TableColNote.vue';
+import TableColStatus from '~/components/TableColStatus.vue';
+import TableColUrl from '~/components/TableColUrl.vue';
+import TableHeaderIcon from '~/components/TableHeaderIcon.vue';
+import { useI18n } from 'vue-i18n';
+import { ref, computed, watch } from 'vue';
+import { storeToRefs } from 'pinia';
 
 const useDate = useDateFormat();
 const { t } = useI18n();

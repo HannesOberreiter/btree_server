@@ -44,6 +44,10 @@
 import { useVModels } from '@vueuse/core';
 import dayjs from 'dayjs';
 import { useDateFormat } from '~/composables/useDate';
+import BtnDateAutoClose from '~/components/BtnDateAutoClose.vue';
+
+import { useI18n } from 'vue-i18n';
+import { ref, watch } from 'vue';
 
 const { t } = useI18n();
 const qDateProxy = ref(false);

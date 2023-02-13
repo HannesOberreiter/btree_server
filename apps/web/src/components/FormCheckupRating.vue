@@ -69,12 +69,12 @@
 
 <script setup lang="ts">
 import { numeric, maxValue, minValue } from '~/helpers/i18n-validators';
-import { PropType } from 'vue';
 import { isEmpty, some, round } from 'lodash-es';
 import useVuelidate from '@vuelidate/core';
 import { useVModels } from '@vueuse/core';
 import { formCheckMultipleValues } from '~/helpers';
 import { useFieldsettingStore } from '~/stores/fieldsetting';
+import { ref, computed, toRefs, unref, watch, PropType } from 'vue';
 
 const fields = useFieldsettingStore();
 const expanded = ref(false);

@@ -18,6 +18,7 @@
 <script lang="ts" setup>
 import { useColorMode } from '@vueuse/core';
 import { useQuasar } from 'quasar';
+import { computed, watch } from 'vue';
 
 const $q = useQuasar();
 const darkMode = useColorMode({

@@ -1,5 +1,5 @@
 import { onKeyStroke } from '@vueuse/core';
-import { Ref } from 'vue';
+import { Ref, computed } from 'vue';
 
 declare interface Pagination {
   sortBy: string;

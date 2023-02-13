@@ -4,6 +4,8 @@ import { LoadingBar } from 'quasar';
 import { isImage } from '~/helpers';
 import { useApiFetch } from './useApi';
 import { useNotification } from './useNotification';
+import { useRouter } from 'vue-router';
+import { reactive } from 'vue';
 
 const DROPBOX_CLIENT_ID = process.env.DROPBOX_CLIENT_ID;
 const dbx = new Dropbox({ clientId: DROPBOX_CLIENT_ID });

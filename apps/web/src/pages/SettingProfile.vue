@@ -54,6 +54,11 @@
 
 <script setup lang="ts">
 import { useAuthUserStore } from '~/stores/auth';
+import { ref } from 'vue';
+
+import FormMainApi from '~/components/FormMainApi.vue';
+import FormMainCredential from '~/components/FormMainCredential.vue';
+import FormMainUser from '~/components/FormMainUser.vue';
 
 const prop = defineProps({
   tab: {

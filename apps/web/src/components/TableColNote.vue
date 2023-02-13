@@ -10,6 +10,7 @@
 <script setup lang="ts">
 import { truncate, escape } from 'lodash-es';
 import { useQuasar } from 'quasar';
+import { useI18n } from 'vue-i18n';
 
 const $q = useQuasar();
 const { t } = useI18n();

@@ -109,6 +109,10 @@ import { deepUnref } from '~/helpers/deep-unref';
 import { round } from 'lodash-es';
 import { useTableFilterStore } from '~/stores/tableFilter';
 
+import { useI18n } from 'vue-i18n';
+import { computed, ref, watch } from 'vue';
+import { storeToRefs } from 'pinia';
+
 use([
   CanvasRenderer,
   BarChart,

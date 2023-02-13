@@ -1,4 +1,4 @@
-import { defineStore } from 'pinia';
+import { defineStore, acceptHMRUpdate } from 'pinia';
 import { useStorage } from '@vueuse/core';
 
 export const useTablesStore = defineStore('tables', {

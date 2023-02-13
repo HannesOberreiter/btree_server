@@ -163,6 +163,12 @@ import { useNotification } from '~/composables/useNotification';
 import { useAuthUserStore } from '~/stores/auth';
 import { useRefreshStore } from '~/stores/refresh';
 
+import PaymentPaypal from '~/components/PaymentPaypal.vue';
+import PaymentStripe from '~/components/PaymentStripe.vue';
+import SupporterImages from '~/components/SupporterImages.vue';
+import { useI18n } from 'vue-i18n';
+import { computed, ref } from 'vue';
+
 const storeRefresh = useRefreshStore();
 const useDate = useDateFormat();
 const storeUser = useAuthUserStore();

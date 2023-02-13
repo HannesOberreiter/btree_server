@@ -48,6 +48,8 @@ import AuthService from '~/services/auth.service';
 import useVuelidate from '@vuelidate/core';
 import { maxLength, required, alphaNum } from '~/helpers/i18n-validators';
 import { useAuthUserStore } from '~/stores/auth';
+import { reactive, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 const notification = useNotification();
 const { t } = useI18n();

@@ -1,7 +1,7 @@
 import { MaybeRef } from '@vueuse/core';
 import dayjs from 'dayjs';
 import { includes, isNil, omitBy } from 'lodash-es';
-import { Ref } from 'vue';
+import { Ref, unref } from 'vue';
 import {
   FormCharge,
   FormHive,
@@ -99,10 +99,9 @@ function cleanupQuicktool(state: FormQuicktool, isEdit: boolean, task: string) {
     result['varroa'] = state.checkup_varroa;
     result['weight'] = state.checkup_weight_amount;
     result['time'] = state.checkup_weight_time
-      ? dayjs(state.checkup_weight_time, 'HH:mm').format('HH:MM:ss')
+      ? dayjs(state.checkup_weight_time, 'HH:mm').format('HH:mm:ss')
       : null;
     result['temperature'] = state.checkup_temperature;
-
     result['broodframes'] = state.checkup_frames.broodframes;
     result['emptyframes'] = state.checkup_frames.emptyframes;
     result['foundation'] = state.checkup_frames.foundation;

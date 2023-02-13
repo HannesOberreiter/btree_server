@@ -10,3 +10,7 @@
     </div>
   </q-card>
 </template>
+
+<script setup lang="ts">
+import FormMainTodo from '~/components/FormMainTodo.vue';
+</script>

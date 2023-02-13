@@ -43,6 +43,8 @@ const OPENWEATHER_API = process.env.OPENWEATHER_APP_ID;
 <script setup lang="ts">
 import { useAuthUserStore } from '~/stores/auth';
 import { LTileLayer, LControlLayers } from '@vue-leaflet/vue-leaflet';
+import { computed } from 'vue';
+
 const userStore = useAuthUserStore();
 const paidStatus = computed(() => userStore.getPaidStatus);
 </script>

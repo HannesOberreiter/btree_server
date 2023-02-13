@@ -46,6 +46,10 @@ import DialogFileSelect from './DialogFileSelect.vue';
 import { isValidURL } from '~/helpers';
 import { useNotification } from '~/composables/useNotification';
 import { useFieldsettingStore } from '~/stores/fieldsetting';
+import FormInputText from './FormInputText.vue';
+
+import { ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 const fields = useFieldsettingStore();
 const $q = useQuasar();

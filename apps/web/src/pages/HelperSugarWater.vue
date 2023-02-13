@@ -183,6 +183,9 @@ const threeToTwo = {
 <script setup lang="ts">
 import round from 'lodash-es/round';
 
+import { ref, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
+
 const { t } = useI18n();
 const options = [
   {

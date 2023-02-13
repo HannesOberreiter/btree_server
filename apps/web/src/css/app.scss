@@ -94,3 +94,8 @@ html.dark {
     -webkit-box-shadow: 0 0 0 30px rgba(0, 0, 0, 0.7) inset !important;
   }
 }
+
+/* Remove top border */
+.border-top-none {
+  border-top: none !important;
+}
