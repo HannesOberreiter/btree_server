@@ -19,16 +19,12 @@ jobs:
       REDIS_HOSTNAME: localhost
       REDIS_USERNAME: default
       REDIS_PORT: 6379
-      REDIS_PASSWORD: root
 
     services:
       redis:
         image: redis
-        env:
-          REDIS_PASSWORD: root
         # Set health checks to wait until redis has started
         options: >-
-          --requirepass ${{ env.REDIS_PASSWORD }}
           --health-cmd "redis-cli ping"
           --health-interval 10s
           --health-timeout 5s

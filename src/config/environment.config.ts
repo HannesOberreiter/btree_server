@@ -109,7 +109,7 @@ const redisConfig = {
   host: process.env.REDIS_HOSTNAME,
   port: parseInt(process.env.REDIS_PORT),
   user: process.env.REDIS_USERNAME,
-  password: process.env.REDIS_PASSWORD,
+  password: process.env.REDIS_PASSWORD ?? '',
 };
 
 const knexConfig = {
