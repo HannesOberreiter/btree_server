@@ -7,6 +7,7 @@
       "BUGFIX checkup weight time minutes had a wrong time format",
       "BUGFIX charge description is not mandatory any more",
       "BUGFIX task detail view, checkup checkboxes and strong field did not show up, thx Dominik",
+      "SERVER changed redis session architecture, this change will lead to a forced logout of users",
       "CHORES updated libraries [SERVER, CLIENT]"
     ]
   },
