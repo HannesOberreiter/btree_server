@@ -15,6 +15,38 @@ dbServer.start();
 redisServer.start();
 mailServer.setup();
 
+// Helper function to copy session from MySQL to redis
+async function transferSession() {
+  const oldSession = await MySQLServer.knex('sessions').select('*');
+  for (const session of oldSession) {
+    const sessionData = JSON.parse(session.sess);
+    const newSession = {
+      cookie: {
+        ...sessionData.cookie,
+      },
+      user: {
+        ...sessionData.user,
+        last_visit: new Date(),
+      },
+    };
+    await RedisServer.client.set(
+      `btree_sess:${session.sid}`,
+      JSON.stringify(newSession),
+      'EX',
+      sessionData.cookie.originalMaxAge
+    );
+    await RedisServer.client.set(
+      session.sid,
+      JSON.stringify(newSession),
+      'EX',
+      sessionData.cookie.originalMaxAge
+    );
+  }
+  console.log(`Copied old session: ${oldSession.length}`);
+}
+
+transferSession();
+
 const application = new Application();
 const httpServer = new HTTPServer(application.app);
 httpServer.start();
