@@ -32,7 +32,7 @@ import { useNotification } from '~/composables/useNotification';
 import FilesDropbox from './FilesDropbox.vue';
 
 import BtnCloseDialog from './BtnCloseDialog.vue';
-import { defineProps, ref, watch } from 'vue';
+import { ref, watch } from 'vue';
 
 defineEmits([...useDialogPluginComponent.emits]);
 const notification = useNotification();
