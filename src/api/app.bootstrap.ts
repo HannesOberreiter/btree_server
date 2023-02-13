@@ -16,7 +16,7 @@ redisServer.start();
 mailServer.setup();
 
 // Helper function to copy session from MySQL to redis
-async function transferSession() {
+async function _transferSession() {
   const oldSession = await MySQLServer.knex('sessions').select('*');
   for (const session of oldSession) {
     const sessionData = JSON.parse(session.sess);
@@ -45,7 +45,7 @@ async function transferSession() {
   console.log(`Copied old session: ${oldSession.length}`);
 }
 
-transferSession();
+// transferSession();
 
 const application = new Application();
 const httpServer = new HTTPServer(application.app);
