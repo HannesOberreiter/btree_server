@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 import Cors from 'cors';
 import * as rfs from 'rotating-file-stream';
 import { ENVIRONMENT } from '@/api/types/constants/environment.const';
@@ -32,11 +33,12 @@ import { HelmetConfiguration } from '@config/helmet.config';
 
 import { Resolver } from '@middlewares/resolver.middleware';
 import { Catcher } from '@middlewares/catcher.middleware';
+// import { MySQLServer } from '@/servers/mysql.server';
+import { RedisServer } from '@/servers/redis.server';
+import { randomUUID } from 'node:crypto';
 
-import { MySQLServer } from '@/servers/mysql.server';
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const KnexSessionStore = require('connect-session-knex')(session);
+// const KnexSessionStore = require('connect-session-knex')(session);
+const RedisSessionStore = require('connect-redis')(session);
 
 /**
  * Instanciate and set Express application.
@@ -50,7 +52,8 @@ export class Application {
   /**
    * @description Store for sessions
    */
-  private store: any;
+  //private store: any;
+  private redisStore: any;
 
   /**
    * @description Configuring CORS asynchronously, will disable CORS for /external/ route
@@ -104,7 +107,8 @@ export class Application {
 
   constructor() {
     this.init();
-    this.createStore();
+    this.createSessionStore();
+    // this.createStore();
     this.plug();
   }
 
@@ -116,8 +120,20 @@ export class Application {
   }
 
   /***
+   * @description Instantiate session store with redis
+   */
+  private createSessionStore(): void {
+    const redis = RedisServer.client;
+    this.redisStore = new RedisSessionStore({
+      client: redis,
+      prefix: 'btree_sess:',
+    });
+  }
+
+  /***
    * @description Instantiate session store with knex
    */
+  /*
   private createStore(): void {
     const knex = MySQLServer.knex;
     this.store = new KnexSessionStore({
@@ -126,6 +142,7 @@ export class Application {
       clearInterval: 1000 * 60 * 60,
     });
   }
+  */
 
   /**
    * @description Plug and set middlewares on Express app
@@ -177,6 +194,7 @@ export class Application {
      */
     this.app.use(Cors(this.corsOptionsDelegate));
 
+    /*
     this.app.use(
       session({
         name:
@@ -191,6 +209,37 @@ export class Application {
         cookie: {
           sameSite: 'strict',
           maxAge: 1000 * 60 * 60 * 24 * 60, // 60 days
+          secure: env === ENVIRONMENT.production,
+          domain: env === ENVIRONMENT.production ? 'btree.at' : '',
+        },
+      })
+    );
+    */
+
+    this.app.use(
+      session({
+        genid: function (req) {
+          // Match method in express-session
+          // See https://github.com/expressjs/session/blob/v1.15.6/index.js#L502
+          let id = randomUUID();
+          if ('bee_id' in req) {
+            id = `${req.bee_id}:${id}`;
+          }
+          return id;
+        },
+        name:
+          env === ENVIRONMENT.staging
+            ? '_auth-btree-session-staging'
+            : '_auth-btree-session',
+        secret: sessionSecret,
+        resave: false,
+        saveUninitialized: false,
+        rolling: false,
+        store: this.redisStore,
+        unset: 'destroy',
+        cookie: {
+          sameSite: 'strict',
+          maxAge: 1000 * 60 * 60 * 24 * 30, // 30 days
           secure: env === ENVIRONMENT.production,
           domain: env === ENVIRONMENT.production ? 'btree.at' : '',
         },

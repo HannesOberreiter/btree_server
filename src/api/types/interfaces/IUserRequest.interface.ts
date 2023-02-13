@@ -6,6 +6,7 @@ export interface User {
   rank: 1 | 2 | 3 | 4;
   paid: boolean;
   user_agent: string;
+  last_visit: Date;
 }
 
 export interface IUserRequest extends Request {
@@ -23,6 +24,7 @@ declare module 'express-session' {
       rank: 1 | 2 | 3 | 4;
       paid: boolean;
       user_agent: string;
+      last_visit: Date;
     };
   }
 }

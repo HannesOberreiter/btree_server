@@ -105,6 +105,13 @@ const totalLimit = {
 
 const cronjobTimer = process.env.CRONJOB ? process.env.CRONJOB : '0 11 */1 * *';
 
+const redisConfig = {
+  host: process.env.REDIS_HOSTNAME,
+  port: parseInt(process.env.REDIS_PORT),
+  user: process.env.REDIS_USERNAME,
+  password: process.env.REDIS_PASSWORD,
+};
+
 const knexConfig = {
   client: process.env.DB_TYPE,
   connection: {
@@ -165,6 +172,7 @@ const mailConfig = {
 };
 
 export {
+  redisConfig,
   knexConfig,
   env,
   port,
