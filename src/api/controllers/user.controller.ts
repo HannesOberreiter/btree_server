@@ -40,6 +40,7 @@ export class UserController extends Controller {
         paid: paid,
         rank: rank as any,
         user_agent: buildUserAgent(req),
+        last_visit: new Date(),
       };
       res.locals.data = data;
       next();
@@ -158,6 +159,7 @@ export class UserController extends Controller {
         paid: paid,
         rank: rank as any,
         user_agent: buildUserAgent(req),
+        last_visit: new Date(),
       };
       res.locals.data = { data: data, result: result };
 

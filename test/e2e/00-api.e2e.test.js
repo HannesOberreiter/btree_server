@@ -57,6 +57,7 @@ describe('E2E API tests', () => {
     try {
       global.app.boot.stop();
       global.app.dbServer.stop();
+      global.app.redisServer.stop();
       knexInstance.destroy();
     } catch (e) {
       console.error(e);

@@ -174,16 +174,10 @@ export class AuthController extends Controller {
   }
 
   async logout(req: Request, res: Response, next: NextFunction) {
-    req.session.user = null;
-    req.session.save(function (err) {
+    req.session.destroy(function (err) {
       if (err) next(err);
-      // regenerate the session, which is good practice to help
-      // guard against forms of session fixation
-      req.session.regenerate(function (err) {
-        if (err) next(err);
-        res.locals.data = true;
-        next();
-      });
+      res.locals.data = true;
+      next();
     });
   }
 
@@ -197,7 +191,10 @@ export class AuthController extends Controller {
       );
 
       //const token = await generateTokenResponse(bee_id, user_id, userAgent);
+      // Add bee_id to req as regenerate will call genid which uses bee_id as prefix to store key
+      // see app.config.ts session(genId: function);
 
+      req['bee_id'] = bee_id;
       req.session.regenerate(function (err) {
         if (err) next(err);
 
@@ -208,6 +205,7 @@ export class AuthController extends Controller {
           paid: paid,
           rank: rank as any,
           user_agent: userAgent,
+          last_visit: new Date(),
         };
 
         // save the session before redirection to ensure page
