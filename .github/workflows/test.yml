@@ -16,7 +16,7 @@ jobs:
       DB_DATABASE: ci_test
       DB_USER: root
       DB_PASSWORD: root
-      REDIS_HOSTNAME: localhost
+      REDIS_HOSTNAME: redis
       REDIS_USERNAME: default
       REDIS_PORT: 6379
 
