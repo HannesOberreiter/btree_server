@@ -24,6 +24,8 @@ jobs:
     services:
       redis:
         image: redis
+        env:
+          REDIS_PASSWORD: root
         # Set health checks to wait until redis has started
         options: >-
           --requirepass ${{ env.REDIS_PASSWORD }}
