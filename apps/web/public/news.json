@@ -1,5 +1,12 @@
 [
   {
+    "version": "6.1.11",
+    "date": "2023-02-18",
+    "news": [
+      "BUGFIX it was not possible to select hives for queens without an active hive"
+    ]
+  },
+  {
     "version": "6.1.10",
     "date": "2023-02-12",
     "news": [

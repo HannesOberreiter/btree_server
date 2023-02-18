@@ -122,9 +122,10 @@ function filterSelection(val: any, update: any, _abort: any) {
     update(() => {
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       const needle = new RegExp(`(${val.toLowerCase()})`);
-      options.value = filter(options.value, (obj) =>
-        needle.test(obj.name.toLowerCase())
-      );
+      options.value = filter(options.value, (obj) => {
+        if (!obj.value) return;
+        return needle.test(obj.name.toLowerCase());
+      });
     });
   }
   if (val === '') {
