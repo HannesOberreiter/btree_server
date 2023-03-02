@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from 'express';
-import { NO_CONTENT } from 'http-status';
 import { expectationFailed } from '@hapi/boom';
 
 /**
@@ -21,7 +20,7 @@ export class Resolver {
 
     // Success DELETE request which have 204 statusCode : we get out
     if (req.method === 'DELETE') {
-      if (res.statusCode === NO_CONTENT) {
+      if (res.statusCode === 204) {
         res.end();
       } else if (isNaN(parseInt(req.url.split('/').pop(), 10))) {
         return next(expectationFailed('ID parameter must be a number'));
