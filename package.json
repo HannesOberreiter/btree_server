@@ -25,7 +25,6 @@
     "dev:serve": "ENVIRONMENT=development nodemon --delay 2000ms",
     "dev:build": "tsc -watch",
     "dev:knex": "ENVIRONMENT=development knex",
-    "dev:knex-seed": "ENVIRONMENT=staging knex seed:run",
     "test:coverage": "ENVIRONMENT=test nyc --reporter=text mocha ./test/e2e/00-api.e2e.test.js",
     "test:e2e": "ENVIRONMENT=test npx mocha ./test/e2e/00-api.e2e.test.js  --R spec --ui bdd --env test",
     "test:watch": "ENVIRONMENT=test npx mocha ./test/e2e/00-api.e2e.test.js  --watch dist test --env test",
