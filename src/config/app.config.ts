@@ -14,6 +14,7 @@ import p from 'path';
 
 import Express from 'express';
 import session from 'express-session';
+import RedisStore from 'connect-redis';
 
 import Hpp from 'hpp';
 import BodyParser from 'body-parser';
@@ -36,9 +37,6 @@ import { Catcher } from '@middlewares/catcher.middleware';
 // import { MySQLServer } from '@/servers/mysql.server';
 import { RedisServer } from '@/servers/redis.server';
 import { randomUUID } from 'node:crypto';
-
-// const KnexSessionStore = require('connect-session-knex')(session);
-const RedisSessionStore = require('connect-redis')(session);
 
 /**
  * Instanciate and set Express application.
@@ -124,7 +122,7 @@ export class Application {
    */
   private createSessionStore(): void {
     const redis = RedisServer.client;
-    this.redisStore = new RedisSessionStore({
+    this.redisStore = new RedisStore({
       client: redis,
       prefix: 'btree_sess:',
     });
