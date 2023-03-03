@@ -7,7 +7,7 @@ import { map } from 'lodash';
 import { Hive } from '../models/hive.model';
 import dayjs from 'dayjs';
 
-export class CheckupController extends Controller {
+export default class CheckupController extends Controller {
   constructor() {
     super();
   }

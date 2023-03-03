@@ -5,7 +5,7 @@ import { IUserRequest } from '@interfaces/IUserRequest.interface';
 import { RearingDetail } from '../models/rearing/rearing_detail.model';
 import { RearingStep } from '../models/rearing/rearing_step.model';
 
-export class RearingDetailController extends Controller {
+export default class RearingDetailController extends Controller {
   constructor() {
     super();
   }

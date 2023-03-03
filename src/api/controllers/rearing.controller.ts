@@ -4,7 +4,7 @@ import { checkMySQLError } from '@utils/error.util';
 import { Rearing } from '@models/rearing/rearing.model';
 import { IUserRequest } from '@interfaces/IUserRequest.interface';
 
-export class RearingController extends Controller {
+export default class RearingController extends Controller {
   constructor() {
     super();
   }

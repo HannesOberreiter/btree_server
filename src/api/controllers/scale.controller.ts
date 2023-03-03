@@ -8,7 +8,7 @@ import { ScaleData } from '../models/scale_data.model';
 import { limitScale } from '../utils/premium.util';
 import { paymentRequired } from '@hapi/boom';
 
-export class ScaleController extends Controller {
+export default class ScaleController extends Controller {
   constructor() {
     super();
   }

@@ -6,7 +6,7 @@ import { Treatment } from '@models/treatment.model';
 import { map } from 'lodash';
 import { Hive } from '../models/hive.model';
 import dayjs from 'dayjs';
-export class TreatmentController extends Controller {
+export default class TreatmentController extends Controller {
   constructor() {
     super();
   }

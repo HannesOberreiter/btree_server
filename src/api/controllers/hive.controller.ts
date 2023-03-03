@@ -16,7 +16,7 @@ import { Treatment } from '../models/treatment.model';
 import { Checkup } from '../models/checkup.model';
 import { limitHive } from '../utils/premium.util';
 
-export class HiveController extends Controller {
+export default class HiveController extends Controller {
   constructor() {
     super();
   }

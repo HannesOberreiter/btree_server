@@ -7,7 +7,7 @@ import dayjs from 'dayjs';
 import { map } from 'lodash';
 import { ChargeStock } from '../models/charge_stock.model';
 
-export class ChargeController extends Controller {
+export default class ChargeController extends Controller {
   constructor() {
     super();
   }

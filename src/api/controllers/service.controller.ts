@@ -11,7 +11,7 @@ import {
 } from '../utils/paypal.util';
 import { createOrder as stripeCreateOrder } from '../utils/stripe.util';
 
-export class ServiceController extends Controller {
+export default class ServiceController extends Controller {
   constructor() {
     super();
   }
@@ -58,9 +58,11 @@ export class ServiceController extends Controller {
         throw badImplementation('Could not capure order');
       let value = 0;
       try {
-        value = parseFloat(capture.purchase_units[0].payments.captures[0].amount.value)
-      } catch(e) {
-        console.error(e)
+        value = parseFloat(
+          capture.purchase_units[0].payments.captures[0].amount.value
+        );
+      } catch (e) {
+        console.error(e);
       }
       const paid = await addPremium(req.user.user_id, 12, value, 'paypal');
       res.locals.data = {

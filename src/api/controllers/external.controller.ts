@@ -16,7 +16,7 @@ import {
   getTodos,
 } from '../utils/calendar.util';
 
-export class ExternalController extends Controller {
+export default class ExternalController extends Controller {
   constructor() {
     super();
   }

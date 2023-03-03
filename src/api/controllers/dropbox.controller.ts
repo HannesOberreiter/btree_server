@@ -13,7 +13,7 @@ import { Dropbox, DropboxAuth } from 'dropbox';
 /**
  * Dropbox Apps: https://www.dropbox.com/developers/apps?_tk=pilot_lp&_ad=topbar4&_camp=myapps
  */
-export class DropboxController extends Controller {
+export default class DropboxController extends Controller {
   private static config: { clientId: string; clientSecret: string };
   private static redirect: string;
 

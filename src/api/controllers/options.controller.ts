@@ -13,7 +13,7 @@ import { HiveSource } from '../models/option/hive_source.model';
 import { HiveType } from '../models/option/hive_type.mode';
 import { QueenMating } from '../models/option/queen_mating.model';
 import { QueenRace } from '../models/option/queen_race.model';
-export class OptionController extends Controller {
+export default class OptionController extends Controller {
   constructor() {
     super();
   }

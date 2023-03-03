@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { Container } from '@config/container.config';
 import { Controller } from '@classes/controller.class';
 
-export class RootController extends Controller {
+export default class RootController extends Controller {
   constructor() {
     super();
   }
