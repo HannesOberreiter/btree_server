@@ -1,5 +1,10 @@
-import * as awilix from 'awilix';
-import { createContainer, Lifetime, AwilixContainer } from 'awilix';
+import {
+  createContainer,
+  Lifetime,
+  AwilixContainer,
+  asClass,
+  InjectionMode,
+} from 'awilix';
 
 import { Logger } from '@services/logger.service';
 import { ProxyRouter } from '@services/proxy-router.service';
@@ -20,7 +25,7 @@ export class Container {
 
   private static init(): any {
     this.container = createContainer({
-      injectionMode: awilix.InjectionMode.PROXY,
+      injectionMode: InjectionMode.PROXY,
     });
 
     // Auto load and inject classes from controller folder
@@ -30,16 +35,16 @@ export class Container {
         formatName: this.nameController,
         resolverOptions: {
           lifetime: Lifetime.SINGLETON,
-          register: awilix.asClass,
+          register: asClass,
         },
       }
     );
 
     this.container
       .register({
-        Logger: awilix.asClass(Logger).singleton(),
+        Logger: asClass(Logger).singleton(),
       })
-      .register({ ProxyRouter: awilix.asClass(ProxyRouter).singleton() });
+      .register({ ProxyRouter: asClass(ProxyRouter).singleton() });
 
     return this.container;
   }
