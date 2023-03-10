@@ -55,7 +55,7 @@
     "vue-router": "4.1.6"
   },
   "devDependencies": {
-    "@intlify/unplugin-vue-i18n": "^0.8.1",
+    "@intlify/unplugin-vue-i18n": "^0.9.1",
     "@quasar/app-vite": "^1.2.1",
     "@quasar/quasar-app-extension-testing-e2e-cypress": "^5.1.0",
     "@types/chance": "^1.1.3",

@@ -72,9 +72,9 @@
 import { required } from '~/helpers/i18n-validators';
 import { useVModels } from '@vueuse/core';
 import { formCheckMultipleValues, validationErrors } from '~/helpers';
-import dayjs from 'dayjs';
+import * as dayjs from 'dayjs';
 import useVuelidate from '@vuelidate/core';
-import customParseFormat from 'dayjs/plugin/customParseFormat';
+import * as customParseFormat from 'dayjs/plugin/customParseFormat';
 import { isEmpty } from 'lodash-es';
 import { useI18n } from 'vue-i18n';
 

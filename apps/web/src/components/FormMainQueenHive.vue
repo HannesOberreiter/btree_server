@@ -52,7 +52,7 @@
 
 <script lang="ts">
 import { flatten, map, merge } from 'lodash-es';
-import dayjs from 'dayjs';
+import * as dayjs from 'dayjs';
 
 const stateDefault = {
   move_date: dayjs().format('YYYY-MM-DD'),

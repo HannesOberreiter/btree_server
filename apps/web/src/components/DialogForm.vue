@@ -32,7 +32,7 @@
 
 <script setup lang="ts">
 import { useDialogPluginComponent } from 'quasar';
-import dayjs from 'dayjs';
+import * as dayjs from 'dayjs';
 import { PropType } from 'vue';
 import { Option } from '~/types';
 import BtnCloseDialog from './BtnCloseDialog.vue';
