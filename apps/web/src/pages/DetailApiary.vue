@@ -125,7 +125,7 @@ import { Filter, FilterState } from '~/types';
 <script setup lang="ts">
 import { useApiaryQuery } from '~/composables/useQuery';
 import { useMeta } from 'quasar';
-import * as dayjs from 'dayjs';
+import dayjs from 'dayjs';
 
 import BtnPreviousNext from '~/components/BtnPreviousNext.vue';
 import ExpansionApiary from '~/components/ExpansionApiary.vue';

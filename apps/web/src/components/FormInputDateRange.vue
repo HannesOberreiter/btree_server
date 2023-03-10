@@ -42,7 +42,7 @@
 
 <script setup lang="ts">
 import { useVModels } from '@vueuse/core';
-import * as dayjs from 'dayjs';
+import dayjs from 'dayjs';
 import { useDateFormat } from '~/composables/useDate';
 import BtnDateAutoClose from '~/components/BtnDateAutoClose.vue';
 

@@ -200,7 +200,7 @@
 
 <script lang="ts">
 import { flatten, map, merge } from 'lodash-es';
-import * as dayjs from 'dayjs';
+import dayjs from 'dayjs';
 
 function getNames(v: any) {
   return v.map((o: any) => o.name).join(', ');

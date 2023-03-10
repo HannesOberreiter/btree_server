@@ -96,7 +96,7 @@
 
 <script lang="ts">
 import { flatten, map, merge } from 'lodash-es';
-import * as dayjs from 'dayjs';
+import dayjs from 'dayjs';
 
 const stateDefault = {
   name: '',

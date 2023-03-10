@@ -88,7 +88,7 @@
 
 <script setup lang="ts">
 import { useNotification } from '~/composables/useNotification';
-import * as dayjs from 'dayjs';
+import dayjs from 'dayjs';
 import FormButtons from './FormButtons.vue';
 import useVuelidate from '@vuelidate/core';
 import { flatten, map, merge } from 'lodash-es';

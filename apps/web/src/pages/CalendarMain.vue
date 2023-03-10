@@ -26,7 +26,7 @@
 </template>
 <script setup lang="ts">
 import { remove, map, difference, merge } from 'lodash-es';
-import * as dayjs from 'dayjs';
+import dayjs from 'dayjs';
 import { CALENDAR } from '~/constants';
 import { useAuthUserStore } from '~/stores/auth';
 import { useCalendarStore } from '~/stores/calendar';
