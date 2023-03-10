@@ -108,6 +108,7 @@
               v-model="state.checkup_varroa"
               :reset="reset"
               :values="values"
+              :hive="state.hive"
             ></form-checkup-varroa>
           </div>
         </div>
