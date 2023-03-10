@@ -9,6 +9,7 @@
       v-else
       v-model="state.hive"
       :selected="selected"
+      :form-event="formEvent"
     ></form-dropdown-hive>
 
     <form-input-date
@@ -38,7 +39,7 @@
     :v="v"
     form="movedate"
     @reset="onReset"
-    @change="emit('onSuccess', true)"
+    @change="(val: 'update' | 'insert') => onChange(val)"
   >
   </form-buttons>
 </template>
@@ -62,6 +63,8 @@ const notification = useNotification();
 const api = useApiFetch();
 const values = ref({});
 const reset = ref(0);
+const formEvent = ref<string>('');
+
 const router = useRouter();
 const emit = defineEmits(['onSuccess']);
 const props = defineProps({
@@ -122,5 +125,10 @@ async function getEdit(id: unknown[]) {
       notification.open('negative', error);
     }
   );
+}
+
+function onChange(type: 'update' | 'insert' = 'update') {
+  formEvent.value = type;
+  emit('onSuccess', true);
 }
 </script>

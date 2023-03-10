@@ -493,6 +493,7 @@
     "hintGeneralUrl": "Link zur Formulardatei und Schaltfläche zum Hochladen für Dropbox.",
     "hintHarvestFrames": "Waben: Eingabefeld für die Anzahl der geernteten Waben.",
     "hintHarvestWater": "Wasser: Eingabefeld für Wassergehalt %",
+    "hintHiveClearAfterSaving": "Stock Auswahl leeren, nachdem eine neue Aufgabe gespeichert wurde.",
     "hintHiveUseInput": "Verwenden Sie die Tastatureingabe bei der Stock und Stand-Auswahl.",
     "hintTreatmentTemperature": "@:setting.hintCheckupTemperature",
     "hintTreatmentVet": "Tierarzt: Dropdown, in den Optionen können Sie die Werte für dieses Dropdown festlegen",

@@ -493,6 +493,7 @@
     "hintGeneralUrl": "Collegamento al file del modulo e pulsante di caricamento per Dropbox.",
     "hintHarvestFrames": "Frame: campo di immissione per quanti frame hai raccolto.",
     "hintHarvestWater": "Acqua: campo di immissione per il contenuto d'acqua %",
+    "hintHiveClearAfterSaving": "Cancella il campo a discesa hive dopo aver salvato una nuova attività.",
     "hintHiveUseInput": "Usa l'input da tastiera per la selezione dell'hive.",
     "hintTreatmentTemperature": "@:setting.hintCheckupTemperatura",
     "hintTreatmentVet": "Vet: Dropdown, nelle Opzioni puoi definire i valori per questo menu a tendina",
