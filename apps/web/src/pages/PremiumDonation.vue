@@ -155,7 +155,7 @@
 </template>
 
 <script setup lang="ts">
-import dayjs from 'dayjs';
+import * as dayjs from 'dayjs';
 import { useQuasar } from 'quasar';
 import { useApiFetch } from '~/composables/useApi';
 import { useDateFormat } from '~/composables/useDate';

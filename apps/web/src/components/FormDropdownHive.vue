@@ -65,7 +65,7 @@ import { useScanningStore } from '~/stores/scanning';
 import { useNotification } from '~/composables/useNotification';
 import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
-import { onMounted, onUnmounted } from 'vue';
+import { onMounted, onUnmounted, toRef } from 'vue';
 import { storeToRefs } from 'pinia';
 import { ref, computed, reactive, watch } from 'vue';
 
@@ -80,7 +80,7 @@ const notification = useNotification();
 
 const localPerf = useLocalStorage(
   'pref-local',
-  { 'hive-use-input': false },
+  { 'hive-use-input': false, 'hive-clear-after-saving': false },
   { mergeDefaults: true }
 );
 
@@ -105,11 +105,16 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
+  formEvent: {
+    type: String,
+    default: '',
+  },
 });
 
 const emit = defineEmits(['update:modelValue']);
 const { modelValue } = useVModels(props, emit);
 
+const formEvent = toRef(props, 'formEvent');
 const apiary = ref(null);
 const apiarySelect = ref(null);
 const optionsHive = ref([] as any);
@@ -269,6 +274,12 @@ watch(scannedId, () => {
     if (double.length > 0) {
       notification.open('info', t('error.alreadyScanned'), true);
     }
+  }
+});
+
+watch(formEvent, (val) => {
+  if (localPerf.value['hive-clear-after-saving'] && val === 'insert') {
+    clearApiary();
   }
 });
 

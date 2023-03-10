@@ -152,7 +152,7 @@ import { Filter, FilterState } from '~/types';
 <script setup lang="ts">
 import { useMeta } from 'quasar';
 import { useHiveQuery } from '~/composables/useQuery';
-import dayjs from 'dayjs';
+import * as dayjs from 'dayjs';
 
 import HiveInfoMovements from '~/components/HiveInfoMovements.vue';
 import HiveInfoQueens from '~/components/HiveInfoQueens.vue';

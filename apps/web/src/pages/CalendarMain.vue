@@ -26,7 +26,7 @@
 </template>
 <script setup lang="ts">
 import { remove, map, difference, merge } from 'lodash-es';
-import dayjs from 'dayjs';
+import * as dayjs from 'dayjs';
 import { CALENDAR } from '~/constants';
 import { useAuthUserStore } from '~/stores/auth';
 import { useCalendarStore } from '~/stores/calendar';
@@ -47,8 +47,8 @@ import allLocales from '@fullcalendar/core/locales-all';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin, { DateClickArg } from '@fullcalendar/interaction';
 import multiMonthPlugin from '@fullcalendar/multimonth';
-
 import listPlugin from '@fullcalendar/list';
+
 import { useApiFetch } from '~/composables/useApi';
 import { useQuasar } from 'quasar';
 import { useCalendarQuery } from '~/composables/useQuery';

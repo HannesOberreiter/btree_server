@@ -35,6 +35,10 @@ const props = defineProps({
     type: Object,
     default: null,
   },
+  hive: {
+    type: Array,
+    default: [] as any,
+  },
 });
 const emit = defineEmits(['update:modelValue']);
 const { modelValue } = useVModels(props, emit);
@@ -44,6 +48,7 @@ function openCalculator() {
     component: DialogVarroa,
     componentProps: {
       value: modelValue.value,
+      hive: props.hive,
     },
   }).onOk((e) => {
     modelValue.value = e;

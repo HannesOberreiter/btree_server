@@ -106,6 +106,12 @@
           </div>
           <div>
             <q-toggle
+              v-model="localPerf['hive-clear-after-saving']"
+              :label="$t('setting.hintHiveClearAfterSaving')"
+            />
+          </div>
+          <div>
+            <q-toggle
               v-model="localPerf['charge-use-input']"
               :label="$t('setting.hintChargeUseInput')"
             />
@@ -152,6 +158,7 @@ const localPerf = useLocalStorage(
   {
     'date-auto-close': false,
     'hive-use-input': false,
+    'hive-clear-after-saving': false,
     'charge-use-input': false,
     'calendar-show-weeknumber': true,
   },
