@@ -64,7 +64,7 @@
 </template>
 
 <script setup lang="ts">
-import * as dayjs from 'dayjs';
+import dayjs from 'dayjs';
 import { useVModels } from '@vueuse/core';
 import { formCheckMultipleValues } from '~/helpers';
 import { isEmpty } from 'lodash-es';
