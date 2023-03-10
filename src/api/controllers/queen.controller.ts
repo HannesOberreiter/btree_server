@@ -9,7 +9,7 @@ import { QueenDuration } from '../models/queen_duration.model';
 import { Checkup } from '../models/checkup.model';
 import { Harvest } from '../models/harvest.model';
 
-export class QueenController extends Controller {
+export default class QueenController extends Controller {
   constructor() {
     super();
   }

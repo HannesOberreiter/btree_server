@@ -6,13 +6,13 @@ import { Company } from '@models/company.model';
 
 import { IUserRequest } from '@interfaces/IUserRequest.interface';
 import { forbidden } from '@hapi/boom';
-import { UserController } from './user.controller';
-import { AuthController } from './auth.controller';
+import UserController from './user.controller';
+import AuthController from './auth.controller';
 
 import { User } from '../models/user.model';
 import { randomBytes } from 'crypto';
 
-export class CompanyUserController extends Controller {
+export default class CompanyUserController extends Controller {
   constructor() {
     super();
   }

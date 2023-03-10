@@ -4,7 +4,7 @@ import { checkMySQLError } from '@utils/error.util';
 import { IUserRequest } from '@interfaces/IUserRequest.interface';
 import { RearingStep } from '../models/rearing/rearing_step.model';
 
-export class RearingStepController extends Controller {
+export default class RearingStepController extends Controller {
   constructor() {
     super();
   }

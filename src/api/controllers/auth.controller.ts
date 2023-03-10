@@ -24,7 +24,7 @@ import { MailServer } from '../app.bootstrap';
 import { IUserRequest } from '../types/interfaces/IUserRequest.interface';
 import { DiscourseSSO } from '../services/discourse.service';
 
-export class AuthController extends Controller {
+export default class AuthController extends Controller {
   constructor() {
     super();
   }

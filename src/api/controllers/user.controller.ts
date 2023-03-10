@@ -16,7 +16,7 @@ import {
 import { map } from 'lodash';
 import { deleteCompany, deleteUser } from '../utils/delete.util';
 import { MailServer } from '../app.bootstrap';
-export class UserController extends Controller {
+export default class UserController extends Controller {
   constructor() {
     super();
   }

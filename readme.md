@@ -76,12 +76,6 @@ Next build the html mails with `mjml`
 npm run mail
 ```
 
-Now you can kickstart the server, it will run `tsc`, `nodemon` and `mocha` in watch mode for continuos development and testing.
-
-```bash
-npm run kickstart
-```
-
 ## MariaDB
 
 We use Docker with MariaDB and network to connect multiple docker instances, see GitHub Repo: <https://github.com/HannesOberreiter/btree-docker-mysql>

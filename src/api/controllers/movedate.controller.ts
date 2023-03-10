@@ -7,7 +7,7 @@ import { Apiary } from '../models/apiary.model';
 import { HiveLocation } from '../models/hive_location.model';
 import { forbidden } from '@hapi/boom';
 
-export class MovedateController extends Controller {
+export default class MovedateController extends Controller {
   constructor() {
     super();
   }

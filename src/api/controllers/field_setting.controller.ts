@@ -4,7 +4,7 @@ import { checkMySQLError } from '@utils/error.util';
 import { IUserRequest } from '@interfaces/IUserRequest.interface';
 import { FieldSetting } from '@models/field_setting.model';
 
-export class FieldSettingController extends Controller {
+export default class FieldSettingController extends Controller {
   constructor() {
     super();
   }

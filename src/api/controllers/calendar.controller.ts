@@ -9,7 +9,7 @@ import {
   getRearings,
   getScaleData,
 } from '@utils/calendar.util';
-export class CalendarController extends Controller {
+export default class CalendarController extends Controller {
   constructor() {
     super();
   }

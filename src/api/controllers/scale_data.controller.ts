@@ -11,7 +11,7 @@ import { Scale } from '../models/scale.model';
 import { User } from '../models/user.model';
 import { MailServer } from '../app.bootstrap';
 
-export class ScaleDataController extends Controller {
+export default class ScaleDataController extends Controller {
   constructor() {
     super();
   }

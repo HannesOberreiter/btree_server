@@ -9,7 +9,8 @@ import dayjs from 'dayjs';
 import { HiveLocation } from '../models/hive_location.model';
 import { Movedate } from '../models/movedate.model';
 import { limitApiary } from '../utils/premium.util';
-export class ApiaryController extends Controller {
+
+export default class ApiaryController extends Controller {
   constructor() {
     super();
   }

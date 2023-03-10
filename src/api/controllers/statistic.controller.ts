@@ -8,7 +8,7 @@ import { Feed } from '../models/feed.model';
 import { Treatment } from '../models/treatment.model';
 import { Checkup } from '../models/checkup.model';
 
-export class StatisticController extends Controller {
+export default class StatisticController extends Controller {
   constructor() {
     super();
   }

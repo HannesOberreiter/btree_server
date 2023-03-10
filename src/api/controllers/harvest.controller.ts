@@ -6,7 +6,7 @@ import { Harvest } from '@models/harvest.model';
 import { map } from 'lodash';
 import { Hive } from '../models/hive.model';
 import dayjs from 'dayjs';
-export class HarvestController extends Controller {
+export default class HarvestController extends Controller {
   constructor() {
     super();
   }

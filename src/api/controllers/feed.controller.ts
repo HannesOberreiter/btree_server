@@ -6,7 +6,7 @@ import { Feed } from '@models/feed.model';
 import { map } from 'lodash';
 import { Hive } from '../models/hive.model';
 import dayjs from 'dayjs';
-export class FeedController extends Controller {
+export default class FeedController extends Controller {
   constructor() {
     super();
   }

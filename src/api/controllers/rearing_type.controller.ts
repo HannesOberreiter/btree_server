@@ -6,7 +6,7 @@ import { RearingType } from '../models/rearing/rearing_type.model';
 import { RearingStep } from '../models/rearing/rearing_step.model';
 import { Rearing } from '../models/rearing/rearing.model';
 
-export class RearingTypeController extends Controller {
+export default class RearingTypeController extends Controller {
   constructor() {
     super();
   }

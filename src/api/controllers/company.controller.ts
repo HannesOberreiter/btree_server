@@ -9,7 +9,7 @@ import { CompanyBee } from '@models/company_bee.model';
 import { autoFill } from '@utils/autofill.util';
 import { User } from '@models/user.model';
 import { Boom, forbidden, paymentRequired } from '@hapi/boom';
-import { UserController } from '@controllers/user.controller';
+import UserController from '@controllers/user.controller';
 import { deleteCompany } from '../utils/delete.util';
 import { addPremium, isPremium } from '../utils/premium.util';
 import archiver from 'archiver';
@@ -28,7 +28,7 @@ import { RearingType } from '../models/rearing/rearing_type.model';
 import { Promo } from '../models/promos.model';
 import { Counts } from '../models/counts.model';
 
-export class CompanyController extends Controller {
+export default class CompanyController extends Controller {
   constructor() {
     super();
   }

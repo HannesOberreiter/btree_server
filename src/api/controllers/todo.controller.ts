@@ -5,7 +5,7 @@ import { IUserRequest } from '@interfaces/IUserRequest.interface';
 import { Todo } from '@models/todo.model';
 import dayjs from 'dayjs';
 
-export class TodoController extends Controller {
+export default class TodoController extends Controller {
   constructor() {
     super();
   }
