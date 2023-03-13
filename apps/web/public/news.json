@@ -1,5 +1,17 @@
 [
   {
+    "version": "6.1.12",
+    "date": "2023-03-10",
+    "news": [
+      "FEATURE new local option to clear hive selection after a new task was created, thx Manfred",
+      "FEATURE checkup varroa calculator now saves the last entered days in local storage, thx Matthias",
+      "FEATURE checkup varroa calculator now shows the last checkup date difference in days, thx Matthias",
+      "BUGFIX camera was not recognising QR codes",
+      "SERVER removed legacy code pieces",
+      "CHORES updated libraries [SERVER, CLIENT]"
+    ]
+  },
+  {
     "version": "6.1.11",
     "date": "2023-02-18",
     "news": [

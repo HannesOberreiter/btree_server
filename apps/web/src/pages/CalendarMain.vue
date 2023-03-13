@@ -47,8 +47,8 @@ import allLocales from '@fullcalendar/core/locales-all';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin, { DateClickArg } from '@fullcalendar/interaction';
 import multiMonthPlugin from '@fullcalendar/multimonth';
-
 import listPlugin from '@fullcalendar/list';
+
 import { useApiFetch } from '~/composables/useApi';
 import { useQuasar } from 'quasar';
 import { useCalendarQuery } from '~/composables/useQuery';

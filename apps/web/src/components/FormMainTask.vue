@@ -5,7 +5,11 @@
       v-model="editOptions"
       :options="editOptionsCopy"
     ></form-dropdown-edit>
-    <form-dropdown-hive v-else v-model="state.hive"></form-dropdown-hive>
+    <form-dropdown-hive
+      v-else
+      v-model="state.hive"
+      :form-event="formEvent"
+    ></form-dropdown-hive>
 
     <div class="q-pt-xs">
       <form-input-dates
@@ -108,6 +112,7 @@
               v-model="state.checkup_varroa"
               :reset="reset"
               :values="values"
+              :hive="state.hive"
             ></form-checkup-varroa>
           </div>
         </div>
@@ -246,7 +251,7 @@
     :v="v"
     :form="props.task"
     @reset="onReset"
-    @change="onChange"
+    @change="(val: 'update' | 'insert') => onChange(val)"
   ></form-buttons>
 </template>
 
@@ -326,11 +331,14 @@ import { useRouter } from 'vue-router';
 
 const fields = useFieldsettingStore();
 const notification = useNotification();
+
 const v = useVuelidate();
 const api = useApiFetch();
 const router = useRouter();
 const values = ref({});
 const reset = ref(0);
+const formEvent = ref<string>('');
+
 const emit = defineEmits(['onSuccess']);
 const props = defineProps({
   task: {
@@ -389,7 +397,8 @@ function onReset() {
   notification.open('positive', 'successReset');
 }
 
-async function onChange() {
+function onChange(type: 'update' | 'insert' = 'update') {
+  formEvent.value = type;
   emit('onSuccess', true);
 }
 </script>

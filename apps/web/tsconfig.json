@@ -1,6 +1,7 @@
 {
   "extends": "@quasar/app-vite/tsconfig-preset",
   "compilerOptions": {
+    "esModuleInterop": true,
     "skipLibCheck": true,
     "noUnusedLocals": true,
     "strictNullChecks": false,

@@ -180,7 +180,7 @@ async function onSubmit() {
       lastInsert.value = response;
       lastInsertTable.value = unref(form.value);
 
-      dataChanged();
+      dataChanged('insert');
     },
     (error) => {
       notification.open('negative', error);
@@ -189,9 +189,9 @@ async function onSubmit() {
   isSubmitting.value = false;
 }
 
-function dataChanged() {
+function dataChanged(type: 'update' | 'insert' = 'update') {
   useInvalidate.invalidate(form.value);
   notification.open('positive', '');
-  emit('change');
+  emit('change', type);
 }
 </script>
