@@ -15,6 +15,8 @@ import {
   getTask,
   getTodos,
 } from '../utils/calendar.util';
+import { Stripe } from 'stripe';
+import { createInvoice } from '../utils/foxyoffice.util';
 
 export default class ExternalController extends Controller {
   constructor() {
@@ -93,15 +95,17 @@ export default class ExternalController extends Controller {
   async stripeWebhook(req: IUserRequest, res: Response, next: NextFunction) {
     try {
       const event = req.body;
+      const object = event.data.object as Stripe.Checkout.Session;
       if (event.type === 'checkout.session.completed') {
-        const user_id = parseInt(event.data.object.client_reference_id);
+        const user_id = parseInt(object.client_reference_id);
         let amount = 0;
         try {
-          amount = parseFloat(event.data.object.amount_total) / 100;
+          amount = parseFloat(object.amount_total as any) / 100;
         } catch (e) {
           console.error(e);
         }
         await addPremium(user_id, 12, amount, 'stripe');
+        createInvoice(object.customer_details.email, amount, 'Stripe');
       }
       res.send();
     } catch (e) {

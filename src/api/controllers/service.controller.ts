@@ -10,6 +10,7 @@ import {
   createOrder as paypalCreateOrder,
 } from '../utils/paypal.util';
 import { createOrder as stripeCreateOrder } from '../utils/stripe.util';
+import { createInvoice } from '../utils/foxyoffice.util';
 
 export default class ServiceController extends Controller {
   constructor() {
@@ -57,6 +58,7 @@ export default class ServiceController extends Controller {
       if (capture.status !== 'COMPLETED' && capture.status !== 'APPROVED')
         throw badImplementation('Could not capure order');
       let value = 0;
+      const mail = capture.payment_source.paypal.email_address;
       try {
         value = parseFloat(
           capture.purchase_units[0].payments.captures[0].amount.value
@@ -69,6 +71,8 @@ export default class ServiceController extends Controller {
         ...capture,
         paid: paid,
       };
+      createInvoice(mail, value, 'PayPal');
+
       next();
     } catch (e) {
       next(e);
