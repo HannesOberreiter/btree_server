@@ -139,7 +139,9 @@
   "event": "Evento | \nEventi",
   "example": "Esempio",
   "excludeHive": "Escludi alveare",
+  "export": "Esportare",
   "exportCSV": "Esporta (.csv)",
+  "exportCsvSeparator": "Scegli il separatore di elenco (delimitatore).",
   "external": "Esterno",
   "failedDownload": "Download del file negato dal browser...",
   "false": "No",
@@ -470,6 +472,8 @@
   "searchHiveApiary": "Cerca le tue colonie e apiari",
   "select": "Selezionare",
   "selectFile": "Seleziona un file",
+  "separatorComma": "Virgola ( , )",
+  "separatorSemicolon": "Punto e virgola ( ; )",
   "serie": "Serie | Serie",
   "serviceProvider": "Il nostro fornitore di servizi",
   "serviceWorker": {
