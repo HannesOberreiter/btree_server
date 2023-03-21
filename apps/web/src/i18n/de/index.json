@@ -139,7 +139,9 @@
   "event": "Termin | Termine",
   "example": "Beispiel",
   "excludeHive": "Exklusive Stock",
+  "export": "Export",
   "exportCSV": "Exportieren (.csv)",
+  "exportCsvSeparator": "Wählen Sie Listentrennzeichen (Trennzeichen).",
   "external": "Externe",
   "failedDownload": "Browser verweigert Dateidownload...",
   "false": "Nein",
@@ -470,6 +472,8 @@
   "searchHiveApiary": "Stock und Stand Suche",
   "select": "Auswählen",
   "selectFile": "Wählen Sie eine Datei aus",
+  "separatorComma": "Komma ( , )",
+  "separatorSemicolon": "Strichpunkt ( ; )",
   "serie": "Serie | Serien",
   "serviceProvider": "Unsere Partner Dienstleister",
   "serviceWorker": {

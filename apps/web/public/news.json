@@ -1,5 +1,13 @@
 [
   {
+    "version": "6.1.13",
+    "date": "2023-03-21",
+    "news": [
+      "FEATURE export of tables is now flatten and you can choose the delimiter on export, thx Adriana",
+      "BUGFIX added fallback languages for visitors"
+    ]
+  },
+  {
     "version": "6.1.12",
     "date": "2023-03-10",
     "news": [

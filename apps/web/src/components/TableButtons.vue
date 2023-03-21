@@ -321,7 +321,7 @@ import { useTableFilterStore } from '~/stores/tableFilter';
 import { useAuthUserStore } from '~/stores/auth';
 import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
-import { unref, toRef, computed } from 'vue';
+import { toRef, computed } from 'vue';
 
 import DialogFilter from './DialogFilter.vue';
 import DialogForm from './DialogForm.vue';
@@ -496,22 +496,67 @@ function onEmit() {
   emit('change');
 }
 
-function onExport() {
-  $q.loading.show({ delay: 200 });
-  const csv = stringify(unref(selected.value), { header: true });
-  const status = exportFile(
-    `${props.table}${props.tableOption}-export-${useDate.getCurrent()}.csv`,
-    csv,
-    'text/csv'
-  );
-  $q.loading.hide();
-  if (status !== true) {
-    $q.notify({
-      message: t('failedDownload'),
-      color: 'negative',
-      icon: 'warning',
-    });
+// https://stackoverflow.com/a/53739792/5316675 CC BY-SA 4.0 Muthukrishnan
+function flattenObject(ob: any) {
+  var toReturn = {} as any;
+
+  for (var i in ob) {
+    if (!ob.hasOwnProperty(i)) continue;
+
+    if (typeof ob[i] == 'object' && ob[i] !== null) {
+      var flatObject = flattenObject(ob[i]);
+      for (var x in flatObject) {
+        if (!flatObject.hasOwnProperty(x)) continue;
+
+        toReturn[i + '.' + x] = flatObject[x];
+      }
+    } else {
+      toReturn[i] = ob[i];
+    }
   }
+  return toReturn;
+}
+
+function onExport() {
+  $q.dialog({
+    title: t('export'),
+    message: t('exportCsvSeparator'),
+    options: {
+      type: 'radio',
+      model: ';',
+      inline: true,
+      items: [
+        { label: t('separatorSemicolon'), value: ';', default: true },
+        { label: t('separatorComma'), value: ',' },
+      ],
+    },
+    ok: {
+      label: t('yes'),
+      class: 'btn-confirm',
+    },
+    cancel: true,
+    persistent: true,
+  }).onOk((val: string) => {
+    $q.loading.show({ delay: 200 });
+    const values: any = [];
+    selected.value.forEach((o: any) => {
+      values.push(flattenObject(o));
+    });
+    const csv = stringify(values, { header: true, delimiter: val });
+    const status = exportFile(
+      `${props.table}${props.tableOption}-export-${useDate.getCurrent()}.csv`,
+      csv,
+      'text/csv'
+    );
+    $q.loading.hide();
+    if (status !== true) {
+      $q.notify({
+        message: t('failedDownload'),
+        color: 'negative',
+        icon: 'warning',
+      });
+    }
+  });
 }
 
 function onImport() {
