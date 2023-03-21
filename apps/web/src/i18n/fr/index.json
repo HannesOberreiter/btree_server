@@ -139,7 +139,9 @@
   "event": "Réunion | Réunion",
   "example": "Exemple",
   "excludeHive": "Exclure la ruche",
+  "export": "Exporter",
   "exportCSV": "Exporter (.csv)",
+  "exportCsvSeparator": "Choisissez le séparateur de liste (délimiteur).",
   "external": "Externe",
   "failedDownload": "Le navigateur a refusé le téléchargement du fichier...",
   "false": "Non",
@@ -470,6 +472,8 @@
   "searchHiveApiary": "Fouillez vos colonies et ruchers",
   "select": "Sélectionner",
   "selectFile": "Sélectionner un fichier",
+  "separatorComma": "Virgule ( , )",
+  "separatorSemicolon": "Point virgule ( ; )",
   "serie": "Série | Série",
   "serviceProvider": "Notre prestataire",
   "serviceWorker": {

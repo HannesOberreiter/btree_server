@@ -139,7 +139,9 @@
   "event": "event | events",
   "example": "Example",
   "excludeHive": "Exclude Hive",
+  "export": "Export",
   "exportCSV": "Export (.csv)",
+  "exportCsvSeparator": "Choose list separator (delimiter).",
   "external": "External",
   "failedDownload": "Browser denied file download...",
   "false": "No",
@@ -470,6 +472,8 @@
   "searchHiveApiary": "Search your colonies and apiaries",
   "select": "Select",
   "selectFile": "Select a file",
+  "separatorComma": "Comma ( , )",
+  "separatorSemicolon": "Semicolon ( ; )",
   "serie": "Serie | Series",
   "serviceProvider": "Our service provider",
   "serviceWorker": {

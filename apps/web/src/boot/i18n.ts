@@ -13,9 +13,15 @@ const i18n = createI18n({
   globalInjection: true,
   messages: {
     en: languages.en,
+    'en-US': languages.en,
+    'en-GB': languages.en,
     de: languages.de,
+    'de-DE': languages.de,
+    'de-AT': languages.de,
     fr: languages.fr,
+    'fr-FR': languages.fr,
     it: languages.it,
+    'it-IT': languages.it,
   },
 });
 
