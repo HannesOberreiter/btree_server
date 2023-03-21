@@ -146,4 +146,32 @@ export class MailService {
       console.error(e);
     }
   }
+
+  async sendRawMail(to: string, subject: string, text: string) {
+    const options = {
+      from: {
+        name: 'b.tree - Beekeeping Database',
+        address: 'no-reply@btree.at',
+      },
+      to: to,
+      subject: subject,
+      text: text,
+    };
+
+    try {
+      await this._transporter.sendMail(options, (error, info) => {
+        this._transporter.close();
+        if (error) {
+          console.error(`error: ${error}`);
+          throw badImplementation('E-Mail could not be sent.');
+        }
+        if (env === ENVIRONMENT.development || env === ENVIRONMENT.test) {
+          console.log(nodemailer.getTestMessageUrl(info));
+        }
+        console.log(`Message Sent ${info.response}`);
+      });
+    } catch (e) {
+      console.error(e);
+    }
+  }
 }

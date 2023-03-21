@@ -91,6 +91,9 @@ const stripeSecret = process.env.STRIPE_SECRET_KEY;
 
 const discourseSecret = process.env.DISCOURSE_SSO;
 
+const foxyOfficeKey = process.env.FOXY_OFFICE_KEY;
+const foxyOfficeUrl = process.env.FOXY_OFFICE_URL;
+
 const basicLimit = {
   hive: parseInt(process.env.LIMIT_HIVE),
   apiary: parseInt(process.env.LIMIT_APIARY),
@@ -199,4 +202,6 @@ export {
   cronjobTimer,
   sessionSecret,
   discourseSecret,
+  foxyOfficeKey,
+  foxyOfficeUrl,
 };

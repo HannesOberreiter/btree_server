@@ -79,7 +79,12 @@ export const limitScale = async (user_id: number) => {
   }
 };
 
-export const addPremium = async (user_id: number, months = 12, amount = 0, type = '') => {
+export const addPremium = async (
+  user_id: number,
+  months = 12,
+  amount = 0,
+  type: undefined | 'paypal' | 'promo' | 'stripe'
+) => {
   return await Company.transaction(async (trx) => {
     const company = await Company.query(trx).select('paid').findById(user_id);
     const newPaid =
@@ -93,8 +98,8 @@ export const addPremium = async (user_id: number, months = 12, amount = 0, type 
       date: new Date(),
       user_id: user_id,
       amount: amount ? amount : 0,
-      type: type
-    })
+      type: type,
+    });
     return result.paid;
   });
 };
