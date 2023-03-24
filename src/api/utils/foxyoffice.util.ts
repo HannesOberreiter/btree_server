@@ -54,7 +54,7 @@ export async function createInvoice(
             : latestInvoice.number_group_id,
         address: mail,
         date: DateToFormat(new Date()),
-        paid: 1,
+        paid: 0,
         canceled: 0,
         paymentTarget: DateToFormat(new Date()),
         leading_text:
