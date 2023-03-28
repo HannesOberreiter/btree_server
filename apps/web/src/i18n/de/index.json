@@ -288,6 +288,7 @@
   "login": "Anmelden",
   "logout": "Ausloggen",
   "longitude": "Längengrad",
+  "lostInternetConnection": "Hoppla! \nAnscheinend wurde Ihre Internetverbindung unterbrochen. \nBitte verbinden Sie sich erneut, um b.tree zu verwenden.",
   "map": {
     "move": "Sind Sie sicher, dass Sie Ihren Bienenstand ({msg}) an einen neuen Standort verlegen möchten?",
     "name": "Karte | Karten",
@@ -445,6 +446,7 @@
     "socialMedia": "Soziale Medien"
   },
   "rejectedFiles": "{count} Datei(en) konnten nicht validiert werden.",
+  "reload": "Neu laden",
   "reloadRequired": "Ein Neuladen ist erforderlich.",
   "remove": "Entfernen",
   "removeAccess": "Zugriff entfernen",

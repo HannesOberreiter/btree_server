@@ -288,6 +288,7 @@
   "login": "Login",
   "logout": "Logout",
   "longitude": "Longitude",
+  "lostInternetConnection": "Oops! It looks like your internet connection was lost. Please reconnect to use b.tree.",
   "map": {
     "move": "Are you sure you want to move your apiary ({msg}) to a new location?",
     "name": "Map | Maps",
@@ -445,6 +446,7 @@
     "socialMedia": "Social Media"
   },
   "rejectedFiles": "{count} Datei(en) sind nicht erlaubt.",
+  "reload": "Reload",
   "reloadRequired": "A reload is required.",
   "remove": "Remove",
   "removeAccess": "Remove access",
