@@ -20,7 +20,7 @@
           flat
           :bordered="true"
           :class="
-            props.row.version === data[0].version
+            props.row.version === currentVersion?.version
               ? 'bg-orange-3 text-black'
               : ''
           "
@@ -67,14 +67,10 @@
 </template>
 
 <script setup lang="ts">
-import { useFetch } from '@vueuse/core';
 import { ref } from 'vue';
+import { useNews } from '~/composables/useNews';
 
-const { isFetching, error, data }: any = useFetch(
-  '/news.json?cache=' + Date.now()
-)
-  .get()
-  .json();
+const { isFetching, error, data, currentVersion } = useNews();
 
 const filter = ref('');
 </script>

@@ -1,5 +1,16 @@
 [
   {
+    "version": "6.1.14",
+    "date": "2023-03-31",
+    "news": [
+      "BUGFIX disabled new content available popup for iOS devices as it seems to be broken, thx Olli",
+      "FEATURE improvements on geolocation for meteoblue map",
+      "REMOVED no more browser outdated warnings on login screen, as it lead to a lot of confusion",
+      "VISUAL show more prominent in footer if an update is available",
+      "VISUAL show offline notification and add reload button if offline to top navbar"
+    ]
+  },
+  {
     "version": "6.1.13",
     "date": "2023-03-21",
     "news": [

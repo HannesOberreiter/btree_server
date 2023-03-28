@@ -50,6 +50,7 @@ if (Platform.is.ios) {
 
     updated(_registration) {
       console.log('New content is available; please refresh.');
+      if (Platform.is.ios) return;
 
       Notify.create({
         color: 'negative',
