@@ -70,7 +70,7 @@
     "form-data": "^4.0.0",
     "helmet": "^6.0.1",
     "hpp": "^0.2.3",
-    "ical-generator": "^3.6.1",
+    "ical-generator": "^4.0.0",
     "ioredis": "^5.3.1",
     "knex": "^2.3.0",
     "lodash": "^4.17.21",
