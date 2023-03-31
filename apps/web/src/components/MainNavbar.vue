@@ -2,7 +2,21 @@
   <div class="row full-width items-center justify-between">
     <div class="col-1 col-sm-2 col-md-auto">
       <q-toolbar-title v-if="$q.screen.gt.xs" shrink>
-        {{ company.name }}
+        <span v-if="isOnline">
+          {{ company.name }}
+        </span>
+        <span v-else>
+          <q-btn
+            icon="fas fa-wifi"
+            color="negative"
+            square
+            flat
+            @click="() => onReload()"
+          >
+            {{ $t('offline') }}
+            <q-tooltip>{{ $t('reload') }}</q-tooltip>
+          </q-btn>
+        </span>
       </q-toolbar-title>
     </div>
     <div class="col-2 col-sm-5 col-md-5 col-lg-4">
@@ -85,9 +99,13 @@
 </template>
 
 <script setup lang="ts">
-import { useQuasar } from 'quasar';
+import { DialogChainObject, useQuasar } from 'quasar';
 import DialogShare from './DialogShare.vue';
 import { useAuthUserStore } from '~/stores/auth';
+import { storeToRefs } from 'pinia';
+import { useNetwork } from '@vueuse/core';
+import { ref, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 import BtnDarkMode from './BtnDarkMode.vue';
 import BtnFullscreen from './BtnFullscreen.vue';
@@ -98,11 +116,29 @@ import BtnSpeak from './BtnSpeak.vue';
 import BtnWakeLock from './BtnWakeLock.vue';
 import SearchHiveApiary from './SearchHiveApiary.vue';
 
-import { storeToRefs } from 'pinia';
-
 const storeUser = useAuthUserStore();
 const { company } = storeToRefs(storeUser);
 const $q = useQuasar();
+const { isOnline } = useNetwork();
+const { t } = useI18n();
+const offlineDialog = ref<DialogChainObject>(null);
+
+watch(isOnline, (online) => {
+  if (!online && !offlineDialog.value) {
+    offlineDialog.value = $q
+      .dialog({
+        title: t('offline'),
+        message: t('lostInternetConnection'),
+      })
+      .onDismiss(() => {
+        offlineDialog.value = null;
+      });
+  }
+  if (online && offlineDialog.value) {
+    offlineDialog.value.hide();
+    offlineDialog.value = null;
+  }
+});
 
 const onLogout = async () => {
   await storeUser.logout();
@@ -115,5 +151,9 @@ function onShare() {
       url: window.location.href,
     },
   });
+}
+
+function onReload() {
+  window.location.reload();
 }
 </script>

@@ -288,6 +288,7 @@
   "login": "Login",
   "logout": "Disconnettersi",
   "longitude": "Longitudine",
+  "lostInternetConnection": "Ops! \nSembra che la tua connessione Internet sia stata persa. \nRiconnettiti per usare b.tree.",
   "map": {
     "move": "Sei sicuro di voler spostare il tuo apiario ({msg}) in una nuova posizione?",
     "name": "Mappa | Mappe",
@@ -362,6 +363,7 @@
   "open": "Aprire",
   "option": "Opzione | Opzioni",
   "out": "Merci in uscita",
+  "outdatedVersion": "Aggiornamento disponibile!",
   "paid": "Pagato",
   "password": "Parola d'ordine",
   "path": "Sentiero",
@@ -444,6 +446,7 @@
     "socialMedia": "Social media"
   },
   "rejectedFiles": "{count} I file non sono ammessi.",
+  "reload": "Ricaricare",
   "reloadRequired": "È necessaria una ricarica.",
   "remove": "Rimuovere",
   "removeAccess": "Rimuovere l'accesso",
@@ -498,7 +501,7 @@
     "hintHarvestFrames": "Frame: campo di immissione per quanti frame hai raccolto.",
     "hintHarvestWater": "Acqua: campo di immissione per il contenuto d'acqua %",
     "hintHiveClearAfterSaving": "Cancella il campo a discesa hive dopo aver salvato una nuova attività.",
-    "hintHiveUseInput": "Usa l'input da tastiera per la selezione dell'hive.",
+    "hintHiveUseInput": "Utilizza l'input da tastiera per la selezione di alveari e apiari (solo dispositivi mobili).",
     "hintTreatmentTemperature": "@:setting.hintCheckupTemperatura",
     "hintTreatmentVet": "Vet: Dropdown, nelle Opzioni puoi definire i valori per questo menu a tendina",
     "hintTreatmentWait": "Attendere: campo di immissione, per il tempo di attesa dopo il trattamento",

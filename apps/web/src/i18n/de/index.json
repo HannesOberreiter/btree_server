@@ -288,6 +288,7 @@
   "login": "Anmelden",
   "logout": "Ausloggen",
   "longitude": "Längengrad",
+  "lostInternetConnection": "Hoppla! \nAnscheinend wurde Ihre Internetverbindung unterbrochen. \nBitte verbinden Sie sich erneut, um b.tree zu verwenden.",
   "map": {
     "move": "Sind Sie sicher, dass Sie Ihren Bienenstand ({msg}) an einen neuen Standort verlegen möchten?",
     "name": "Karte | Karten",
@@ -362,6 +363,7 @@
   "open": "Offen",
   "option": "Option | Optionen",
   "out": "Warenausgang",
+  "outdatedVersion": "Update verfügbar!",
   "paid": "Bezahlt",
   "password": "Passwort",
   "path": "Pfad",
@@ -444,6 +446,7 @@
     "socialMedia": "Soziale Medien"
   },
   "rejectedFiles": "{count} Datei(en) konnten nicht validiert werden.",
+  "reload": "Neu laden",
   "reloadRequired": "Ein Neuladen ist erforderlich.",
   "remove": "Entfernen",
   "removeAccess": "Zugriff entfernen",
@@ -498,7 +501,7 @@
     "hintHarvestFrames": "Waben: Eingabefeld für die Anzahl der geernteten Waben.",
     "hintHarvestWater": "Wasser: Eingabefeld für Wassergehalt %",
     "hintHiveClearAfterSaving": "Stock Auswahl leeren, nachdem eine neue Aufgabe gespeichert wurde.",
-    "hintHiveUseInput": "Verwenden Sie die Tastatureingabe bei der Stock und Stand-Auswahl.",
+    "hintHiveUseInput": "Verwenden Sie die Tastatureingabe bei der Bienenstock- und Imkereiauswahl (nur mobil).",
     "hintTreatmentTemperature": "@:setting.hintCheckupTemperature",
     "hintTreatmentVet": "Tierarzt: Dropdown, in den Optionen können Sie die Werte für dieses Dropdown festlegen",
     "hintTreatmentWait": "Warten: Eingabefeld, für die Wartezeit nach der Behandlung",

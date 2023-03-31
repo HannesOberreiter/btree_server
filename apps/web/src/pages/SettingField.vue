@@ -99,8 +99,8 @@
           </div>
           <div>
             <q-toggle
-              v-if="$q.platform.is.mobile"
               v-model="localPerf['hive-use-input']"
+              :disable="!$q.platform.is.mobile"
               :label="$t('setting.hintHiveUseInput')"
             />
           </div>

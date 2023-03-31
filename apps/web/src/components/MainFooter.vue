@@ -1,13 +1,16 @@
 <template>
   <q-toolbar dense style="max-height: 36px; min-height: 34px">
     <router-link
-      v-if="data && !isFetching && !error"
+      v-if="data && !isFetching"
       :to="{ name: 'news' }"
-      class="text-white"
+      :class="isOutdated ? 'text-red-2 text-bold' : 'text-white'"
       style="text-decoration: none"
     >
-      {{ $t('version') }}: {{ data[0].version }}
-      <span v-if="!$q.platform.is.mobile"> [{{ data[0].date }}] </span>
+      {{ $t('version') }}: {{ currentVersion?.version }}
+      <span v-if="!$q.platform.is.mobile">
+        <span v-if="isOutdated"> [{{ $t('outdatedVersion') }}] </span>
+        <span v-else> [{{ currentVersion?.date }}] </span>
+      </span>
       <tooltip-base>{{ $t('news') }}</tooltip-base>
     </router-link>
     <q-space></q-space>
@@ -45,22 +48,23 @@
 
 <script setup lang="ts">
 import { useKeyHelp } from '~/composables/useKey';
-import { useFetch } from '@vueuse/core';
 import { useAuthUserStore } from '~/stores/auth';
 import BtnShare from './BtnShare.vue';
 
 import DialogHint from './DialogHint.vue';
 import GlobalSound from './GlobalSound.vue';
 import { useRouter } from 'vue-router';
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
+import { useNews } from '~/composables/useNews';
 
-// const build_version = process.env.NPM_PACKAGE_VERSION;
 const storeUser = useAuthUserStore();
-const { isFetching, error, data }: any = useFetch(
-  '/news.json?cache=' + Date.now()
-)
-  .get()
-  .json();
+
+const { data, isFetching, currentVersion, loadCurrentNews, isOutdated } =
+  useNews();
+
+onMounted(async () => {
+  loadCurrentNews();
+});
 
 const router = useRouter();
 const help = computed(() => `help.${String(router.currentRoute.value.name)}`);

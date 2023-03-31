@@ -288,6 +288,7 @@
   "login": "Login",
   "logout": "Logout",
   "longitude": "Longitude",
+  "lostInternetConnection": "Oops! It looks like your internet connection was lost. Please reconnect to use b.tree.",
   "map": {
     "move": "Are you sure you want to move your apiary ({msg}) to a new location?",
     "name": "Map | Maps",
@@ -362,6 +363,7 @@
   "open": "Open",
   "option": "Option | Options",
   "out": "Outgoing goods ",
+  "outdatedVersion": "Update available!",
   "paid": "Paid",
   "password": "Password",
   "path": "Path",
@@ -444,6 +446,7 @@
     "socialMedia": "Social Media"
   },
   "rejectedFiles": "{count} Datei(en) sind nicht erlaubt.",
+  "reload": "Reload",
   "reloadRequired": "A reload is required.",
   "remove": "Remove",
   "removeAccess": "Remove access",
@@ -498,7 +501,7 @@
     "hintHarvestFrames": "Frames: Input Field for how many frames you harvested.",
     "hintHarvestWater": "Water: Input Field for water content %",
     "hintHiveClearAfterSaving": "Clear hive dropdown field after saving a new task.",
-    "hintHiveUseInput": "Use keyboard input on hive and apiary selection.",
+    "hintHiveUseInput": "Use keyboard input on hive and apiary selection (mobile only).",
     "hintTreatmentTemperature": "@:setting.hintCheckupTemperature",
     "hintTreatmentVet": "Vet: Dropdown, in the Options you can define the values for this dropdown",
     "hintTreatmentWait": "Wait: Input Field, for waiting time after treatment",
