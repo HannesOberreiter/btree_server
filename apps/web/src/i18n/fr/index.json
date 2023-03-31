@@ -501,7 +501,7 @@
     "hintHarvestFrames": "Images: champ de saisie du nombre d'images que vous avez récoltées.",
     "hintHarvestWater": "Eau: champ de saisie pour la teneur en eau %",
     "hintHiveClearAfterSaving": "Effacer le champ déroulant de la ruche après avoir enregistré une nouvelle tâche.",
-    "hintHiveUseInput": "Utilisez la saisie au clavier lors de la sélection de la ruche.",
+    "hintHiveUseInput": "Utilisez la saisie au clavier sur la sélection de la ruche et du rucher (mobile uniquement).",
     "hintTreatmentTemperature": "@:setting.hintCheckupTemperature",
     "hintTreatmentVet": "Vétérinaire: liste déroulante, dans les options, vous pouvez définir les valeurs de cette liste déroulante",
     "hintTreatmentWait": "Attendre : champ de saisie, pour le temps d'attente après le traitement",

@@ -501,7 +501,7 @@
     "hintHarvestFrames": "Waben: Eingabefeld für die Anzahl der geernteten Waben.",
     "hintHarvestWater": "Wasser: Eingabefeld für Wassergehalt %",
     "hintHiveClearAfterSaving": "Stock Auswahl leeren, nachdem eine neue Aufgabe gespeichert wurde.",
-    "hintHiveUseInput": "Verwenden Sie die Tastatureingabe bei der Stock und Stand-Auswahl.",
+    "hintHiveUseInput": "Verwenden Sie die Tastatureingabe bei der Bienenstock- und Imkereiauswahl (nur mobil).",
     "hintTreatmentTemperature": "@:setting.hintCheckupTemperature",
     "hintTreatmentVet": "Tierarzt: Dropdown, in den Optionen können Sie die Werte für dieses Dropdown festlegen",
     "hintTreatmentWait": "Warten: Eingabefeld, für die Wartezeit nach der Behandlung",

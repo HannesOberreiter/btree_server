@@ -501,7 +501,7 @@
     "hintHarvestFrames": "Frames: Input Field for how many frames you harvested.",
     "hintHarvestWater": "Water: Input Field for water content %",
     "hintHiveClearAfterSaving": "Clear hive dropdown field after saving a new task.",
-    "hintHiveUseInput": "Use keyboard input on hive and apiary selection.",
+    "hintHiveUseInput": "Use keyboard input on hive and apiary selection (mobile only).",
     "hintTreatmentTemperature": "@:setting.hintCheckupTemperature",
     "hintTreatmentVet": "Vet: Dropdown, in the Options you can define the values for this dropdown",
     "hintTreatmentWait": "Wait: Input Field, for waiting time after treatment",
