@@ -99,12 +99,12 @@
 </template>
 
 <script setup lang="ts">
-import { useQuasar } from 'quasar';
+import { DialogChainObject, useQuasar } from 'quasar';
 import DialogShare from './DialogShare.vue';
 import { useAuthUserStore } from '~/stores/auth';
 import { storeToRefs } from 'pinia';
 import { useNetwork } from '@vueuse/core';
-import { watch } from 'vue';
+import { ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 import BtnDarkMode from './BtnDarkMode.vue';
@@ -121,13 +121,22 @@ const { company } = storeToRefs(storeUser);
 const $q = useQuasar();
 const { isOnline } = useNetwork();
 const { t } = useI18n();
+const offlineDialog = ref<DialogChainObject>(null);
 
 watch(isOnline, (online) => {
-  if (!online) {
-    $q.dialog({
-      title: t('offline'),
-      message: t('lostInternetConnection'),
-    });
+  if (!online && !offlineDialog.value) {
+    offlineDialog.value = $q
+      .dialog({
+        title: t('offline'),
+        message: t('lostInternetConnection'),
+      })
+      .onDismiss(() => {
+        offlineDialog.value = null;
+      });
+  }
+  if (online && offlineDialog.value) {
+    offlineDialog.value.hide();
+    offlineDialog.value = null;
   }
 });
 
