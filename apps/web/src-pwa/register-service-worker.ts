@@ -50,7 +50,10 @@ if (Platform.is.ios) {
 
     updated(_registration) {
       console.log('New content is available; please refresh.');
-      if (Platform.is.ios) return;
+
+      // swift cookie is set by the iOS app
+      // let platformCookie = Cookie(name: "app-platform", value: "iOS App Store")
+      if (document.cookie.includes('iOS')) return;
 
       Notify.create({
         color: 'negative',
