@@ -19,7 +19,6 @@ export default class TodoController extends Controller {
         .where({
           user_id: req.user.user_id,
         })
-        // Security as we may still have some unclean data in the database were linked apiary or hive does not exist anymore
         .page(
           offset ? offset : 0,
           parseInt(limit) === 0 || !limit ? 10 : limit
