@@ -137,6 +137,7 @@
         class="q-mb-sm"
         :values="values"
         :reset="reset"
+        :max-valid="24"
         :hint="$t('queenMotherInfo')"
       ></form-input-text>
     </div>
