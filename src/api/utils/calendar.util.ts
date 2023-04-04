@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import { intersection, round } from 'lodash';
-import { MySQLServer } from '@servers/mysql.server';
+import { DatabaseServer } from '@/servers/db.server';
 import { Todo } from '@models/todo.model';
 import { Rearing } from '@models/rearing/rearing.model';
 import { RearingStep } from '@models/rearing/rearing_step.model';
@@ -155,7 +155,7 @@ const getTodos = async ({ query, user }) => {
 
 const getMovements = async ({ query, user }) => {
   const { start, end } = convertDate(query);
-  const results = await MySQLServer.knex(`calendar_movements`)
+  const results = await DatabaseServer.knex(`calendar_movements`)
     .where('user_id', user.user_id)
     .where('date', '>=', start)
     .where('date', '<=', end);
@@ -195,7 +195,7 @@ const getMovements = async ({ query, user }) => {
 
 const getTask = async ({ query, user }, task: string) => {
   const { start, end } = convertDate(query);
-  const results = await MySQLServer.knex(`calendar_${task}s`)
+  const results = await DatabaseServer.knex(`calendar_${task}s`)
     .where('user_id', user.user_id)
     .where('date', '>=', start)
     .where('enddate', '<=', end);
@@ -255,7 +255,7 @@ const getTask = async ({ query, user }, task: string) => {
 const getScaleData = async ({ query, user }) => {
   const { start, end } = convertDate(query);
 
-  const results = await MySQLServer.knex(`calendar_scale_data`)
+  const results = await DatabaseServer.knex(`calendar_scale_data`)
     .where('user_id', user.user_id)
     .where('date', '>=', start)
     .where('date', '<=', end);

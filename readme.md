@@ -76,7 +76,7 @@ Next build the html mails with `mjml`
 npm run mail
 ```
 
-## MariaDB
+## Database: MariaDB
 
 We use Docker with MariaDB and network to connect multiple docker instances, see GitHub Repo: <https://github.com/HannesOberreiter/btree-docker-mysql>
 

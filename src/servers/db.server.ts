@@ -5,32 +5,32 @@ import Knex from 'knex';
 import { Model } from 'objection';
 
 /**
- * Database connection manager for MySQL server
+ * Database connection manager for MariaDb server
  */
-export class MySQLServer {
+export class DatabaseServer {
   static knex = Knex(knexConfig);
   start(): void {
     try {
-      Model.knex(MySQLServer.knex);
+      Model.knex(DatabaseServer.knex);
 
       if (env !== ENVIRONMENT.test) {
         Container.resolve('Logger').log(
           'info',
-          `Connection to MySQL server established on port ${knexConfig.connection.port} (${env})`,
-          { label: 'MySQL' }
+          `Connection to database established on port ${knexConfig.connection.port} (${env})`,
+          { label: 'Database' }
         );
       }
     } catch (error) {
       Container.resolve('Logger').log(
         'error',
-        `MySQL connection error : ${error.message}`,
-        { label: 'MySQL' }
+        `Database connection error : ${error.message}`,
+        { label: 'Database' }
       );
     }
   }
   stop(): void {
     try {
-      MySQLServer.knex.destroy();
+      DatabaseServer.knex.destroy();
     } catch (error) {
       console.error(error);
     }
