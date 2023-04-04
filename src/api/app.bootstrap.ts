@@ -1,13 +1,13 @@
 require('module-alias/register');
 
-import { MySQLServer } from '@servers/mysql.server';
+import { DatabaseServer } from '@/servers/db.server';
 import { RedisServer } from '@servers/redis.server';
 
 import { Application } from '@config/app.config';
 import { HTTPServer } from '@servers/http.server';
 import { MailService } from './services/mail.service';
 
-const dbServer = new MySQLServer();
+const dbServer = new DatabaseServer();
 const redisServer = new RedisServer();
 const mailServer = new MailService();
 

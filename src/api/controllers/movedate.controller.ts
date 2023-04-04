@@ -186,7 +186,7 @@ export default class MovedateController extends Controller {
           .where('user_id', req.user.user_id)
           .where('count', '>', 1); // User is not allowed to delete the last movedate
       });
-      if (result === 0) throw forbidden();
+      if (result === 0) throw forbidden('lastMovement'); // this specific key is used in frontend to show a specific error message
       res.locals.data = result;
       next();
     } catch (e) {

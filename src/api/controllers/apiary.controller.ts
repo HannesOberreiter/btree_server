@@ -10,6 +10,16 @@ import { HiveLocation } from '../models/hive_location.model';
 import { Movedate } from '../models/movedate.model';
 import { limitApiary } from '../utils/premium.util';
 
+async function isDuplicateApiaryName(user_id: number, name: string) {
+  const checkDuplicate = await Apiary.query().select('id').findOne({
+    user_id,
+    name,
+    deleted: false,
+  });
+  if (checkDuplicate?.id) return true;
+  return false;
+}
+
 export default class ApiaryController extends Controller {
   constructor() {
     super();
@@ -22,10 +32,8 @@ export default class ApiaryController extends Controller {
       const result = await Apiary.transaction(async (trx) => {
         if (req.body.name) {
           if (ids.length > 1) throw conflict('name');
-          const checkDuplicate = await Apiary.query()
-            .where('user_id', req.user.user_id)
-            .where('name', req.body.name);
-          if (checkDuplicate.length > 1) throw conflict('name');
+          if (await isDuplicateApiaryName(req.user.user_id, req.body.name))
+            throw conflict('name');
         }
         return await Apiary.query(trx)
           .patch({ ...insert, edit_id: req.user.bee_id })
@@ -153,12 +161,8 @@ export default class ApiaryController extends Controller {
       if (limit) throw paymentRequired('no premium access');
 
       const result = await Apiary.transaction(async (trx) => {
-        const checkDuplicate = await Apiary.query().where({
-          user_id: req.user.user_id,
-          name: req.body.name,
-        });
-
-        if (checkDuplicate.length > 0) throw conflict('name');
+        if (await isDuplicateApiaryName(req.user.user_id, req.body.name))
+          throw conflict('name');
         return Apiary.query(trx).insertAndFetch({
           bee_id: req.user.bee_id,
           user_id: req.user.user_id,
