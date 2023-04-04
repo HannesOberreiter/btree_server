@@ -120,6 +120,7 @@
     "csvTooMuch": "Upload ist zu groß!",
     "duplicate": "Konflikt, doppelter Eintrag!",
     "forbidden": "Zutritt verboten oder nicht erlaubt!",
+    "lastMovement": "Jeder Bienenstock braucht mindestens eine Wanderung! Die letzte Wanderung kannst du nicht löschen.",
     "localStorage": "Warnung: Diese Anwendung benötigt Zugriff auf den lokalen Speicher Ihres Webbrowsers, um ordnungsgemäß zu funktionieren.",
     "locked": "Konto gesperrt! (zu viele Anmeldeversuche?)",
     "more": "Einer der Fehler",

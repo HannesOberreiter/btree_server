@@ -1,5 +1,5 @@
 import { compact, isArray, isEmpty, map } from 'lodash-es';
-import { defineStore, acceptHMRUpdate } from 'pinia';
+import { defineStore } from 'pinia';
 import { deepUnref } from '~/helpers/deep-unref';
 
 interface State {
@@ -130,7 +130,3 @@ export const useTableFilterStore = defineStore('tableFilter', {
     },
   },
 });
-
-if (import.meta.hot) {
-  import.meta.hot.accept(acceptHMRUpdate(useTableFilterStore, import.meta.hot));
-}

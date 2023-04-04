@@ -1,4 +1,4 @@
-import { acceptHMRUpdate, defineStore } from 'pinia';
+import { defineStore } from 'pinia';
 import { useStorage } from '@vueuse/core';
 import refreshService from '~/services/refresh.service';
 import { useApiFetch } from '~/composables/useApi';
@@ -192,9 +192,3 @@ export const useFieldsettingStore = defineStore('fieldsetting', {
 
 export type useFieldsettingStore = ReturnType<typeof useFieldsettingStore>;
 export type { Fieldsetting };
-
-if (import.meta.hot) {
-  import.meta.hot.accept(
-    acceptHMRUpdate(useFieldsettingStore, import.meta.hot)
-  );
-}

@@ -1,4 +1,4 @@
-import { defineStore, acceptHMRUpdate } from 'pinia';
+import { defineStore } from 'pinia';
 import { Token } from '~/types';
 import { useStorage } from '@vueuse/core';
 
@@ -22,7 +22,3 @@ export const useAuthTokenStore = defineStore('auth/token', {
 });
 
 export type useAuthTokenStore = ReturnType<typeof useAuthTokenStore>;
-
-if (import.meta.hot) {
-  import.meta.hot.accept(acceptHMRUpdate(useAuthTokenStore, import.meta.hot));
-}

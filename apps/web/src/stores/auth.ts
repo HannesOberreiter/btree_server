@@ -1,4 +1,4 @@
-import { acceptHMRUpdate, defineStore } from 'pinia';
+import { defineStore } from 'pinia';
 import { i18n, setLocale } from '~/boot/i18n';
 import { isEmpty } from 'lodash-es';
 import { Router } from '~/router';
@@ -119,7 +119,3 @@ export const useAuthUserStore = defineStore('auth/user', {
     },
   },
 });
-
-if (import.meta.hot) {
-  import.meta.hot.accept(acceptHMRUpdate(useAuthUserStore, import.meta.hot));
-}

@@ -1,4 +1,4 @@
-import { acceptHMRUpdate, defineStore } from 'pinia';
+import { defineStore } from 'pinia';
 import { useStorage } from '@vueuse/core';
 import dayjs from 'dayjs';
 import refreshService from '~/services/refresh.service';
@@ -28,7 +28,3 @@ export const useRefreshStore = defineStore('refresh', {
     },
   },
 });
-
-if (import.meta.hot) {
-  import.meta.hot.accept(acceptHMRUpdate(useRefreshStore, import.meta.hot));
-}
