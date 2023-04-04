@@ -120,6 +120,7 @@
     "csvTooMuch": "Upload too big!",
     "duplicate": "Conflict, duplicate entry!",
     "forbidden": "Access forbidden or not allowed!",
+    "lastMovement": "Each hive needs at least one movement! You cannot delete the last one.",
     "localStorage": "Warning: This application needs access to your web browsers local storage to work properly.",
     "locked": "Account locked! (too many login attempts?)",
     "more": "One of errors",
