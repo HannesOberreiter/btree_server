@@ -1,5 +1,5 @@
 import { CALENDAR } from '~/constants';
-import { acceptHMRUpdate, defineStore } from 'pinia';
+import { defineStore } from 'pinia';
 import { useStorage } from '@vueuse/core';
 
 export const useCalendarStore = defineStore('calendar', {
@@ -15,7 +15,3 @@ export const useCalendarStore = defineStore('calendar', {
     },
   },
 });
-
-if (import.meta.hot) {
-  import.meta.hot.accept(acceptHMRUpdate(useCalendarStore, import.meta.hot));
-}

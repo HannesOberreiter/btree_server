@@ -120,6 +120,7 @@
     "csvTooMuch": "Télécharger trop gros!",
     "duplicate": "Conflit, entrée en double!",
     "forbidden": "Accès interdit ou non autorisé !",
+    "lastMovement": "Chaque ruche a besoin d'au moins un mouvement ! \nVous ne pouvez pas supprimer le dernier.",
     "localStorage": "Avertissement : Cette application a besoin d'accéder au stockage local de votre navigateur Web pour fonctionner correctement.",
     "locked": "Compte bloqué! (trop de tentatives de connexion?)",
     "more": "Une des erreurs",

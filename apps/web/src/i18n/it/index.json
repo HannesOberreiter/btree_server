@@ -120,6 +120,7 @@
     "csvTooMuch": "Carica troppo grande!",
     "duplicate": "Conflitto, voce duplicata!",
     "forbidden": "Accesso vietato o non consentito!",
+    "lastMovement": "Ogni alveare ha bisogno di almeno un movimento! \nNon puoi eliminare l'ultimo.",
     "localStorage": "Avvertenza: questa applicazione necessita dell'accesso alla memoria locale del browser Web per funzionare correttamente.",
     "locked": "Account bloccato! (troppi tentativi di accesso?)",
     "more": "Uno degli errori",

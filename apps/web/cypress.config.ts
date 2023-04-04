@@ -16,7 +16,7 @@ export default defineConfig({
       registerCodeCoverageTasks(on, config);
       return config;
     },
-    baseUrl: 'http://localhost:9000/',
+    baseUrl: 'http://localhost:9001/',
     supportFile: 'test/cypress/support/e2e.ts',
     specPattern: 'test/cypress/e2e/**/*.spec.{js,jsx,ts,tsx}',
   },

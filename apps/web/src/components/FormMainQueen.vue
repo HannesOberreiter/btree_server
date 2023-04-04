@@ -105,6 +105,7 @@
         :values="values"
         :reset="reset"
         label="queenMovedate"
+        table-id="move_date"
         :hint="$t('queenMovedateInfo')"
       ></form-input-date>
     </div>
@@ -136,6 +137,7 @@
         class="q-mb-sm"
         :values="values"
         :reset="reset"
+        :max-valid="24"
         :hint="$t('queenMotherInfo')"
       ></form-input-text>
     </div>
@@ -177,11 +179,12 @@
       </div>
       <div class="col-12 col-md-6">
         <form-input-date
-          v-if="!state.modus"
+          v-show="!state.modus"
           v-model="state.modusDate"
           :values="values"
           :reset="reset"
           label="modusDate"
+          table-id="modus_date"
         ></form-input-date>
       </div>
     </div>
@@ -322,6 +325,10 @@ async function getEdit(id: unknown[]) {
       ]);
       editOptions.value = flatten(editIds);
       editOptionsCopy.value = [...unref(editOptions.value)];
+      // Little helper to set current date if user edits one entry and wants to set inactive state, otherwise it would be the creation date
+      if (response.length === 1 && response[0]?.modus) {
+        response[0].modus_date = dayjs().format('YYYY-MM-DD');
+      }
       values.value = response;
     },
     (error) => {

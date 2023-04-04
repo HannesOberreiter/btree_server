@@ -108,8 +108,14 @@ const columns = [
     required: false,
     label: t('hive'),
     align: 'left',
-    field: (row: any) =>
-      row.hive.modus ? row.hive.name : `${row.hive.name} (${t('inactive')})`,
+    field: (row: any) => {
+      if (row.hive.deleted) {
+        return `${row.hive.name} (${t('deleted')})`;
+      } else if (!row.hive.modus) {
+        return `${row.hive.name} (${t('inactive')})`;
+      }
+      return row.hive.name;
+    },
     sortable: true,
   },
   {
@@ -117,10 +123,14 @@ const columns = [
     required: false,
     label: t('newApiary'),
     align: 'left',
-    field: (row: any) =>
-      row.apiary.modus
-        ? row.apiary.name
-        : `${row.apiary.name} (${t('inactive')})`,
+    field: (row: any) => {
+      if (!row.apiary.modus) {
+        return `${row.apiary.name} (${t('inactive')})`;
+      } else if (row.apiary.deleted) {
+        return `${row.apiary.name} (${t('deleted')})`;
+      }
+      return row.apiary.name;
+    },
     sortable: true,
   },
   {
