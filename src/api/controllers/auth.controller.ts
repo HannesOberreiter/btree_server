@@ -1,5 +1,5 @@
 import { autoFill } from '@utils/autofill.util';
-import { forbidden, unauthorized } from '@hapi/boom';
+import { conflict, forbidden, unauthorized } from '@hapi/boom';
 import { checkMySQLError } from '@utils/error.util';
 import { Company } from '@models/company.model';
 import { CompanyBee } from '@models/company_bee.model';
@@ -146,6 +146,11 @@ export default class AuthController extends Controller {
     const autofillLang = inputUser.lang == 'de' ? 'de' : 'en';
     try {
       await User.transaction(async (trx) => {
+        const uniqueMail = await User.query(trx).findOne({
+          email: inputUser.email,
+        });
+        if (uniqueMail) throw conflict('email');
+
         const u = await User.query(trx).insert({ ...inputUser, state: 0 });
         const c = await Company.query(trx).insert({
           name: inputCompany,
