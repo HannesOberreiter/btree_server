@@ -16,6 +16,16 @@ import { Treatment } from '../models/treatment.model';
 import { Checkup } from '../models/checkup.model';
 import { limitHive } from '../utils/premium.util';
 
+async function isDuplicateHiveName(user_id: number, name: string) {
+  const checkDuplicate = await Hive.query().select('id').findOne({
+    user_id,
+    name,
+    deleted: false,
+  });
+  if (checkDuplicate?.id) return true;
+  return false;
+}
+
 export default class HiveController extends Controller {
   constructor() {
     super();
@@ -127,11 +137,9 @@ export default class HiveController extends Controller {
         const result = [];
         for (let i = 0; i < repeat; i++) {
           const name = repeat > 1 ? req.body.name + (start + i) : req.body.name;
-          const checkDuplicate = await Hive.query().where({
-            user_id: req.user.user_id,
-            name: name,
-          });
-          if (checkDuplicate.length > 0) throw conflict('name');
+
+          if (await isDuplicateHiveName(req.user.user_id, name))
+            throw conflict('name');
 
           const res = await Hive.query(trx).insert({
             ...insert,
@@ -301,11 +309,10 @@ export default class HiveController extends Controller {
       const result = await Hive.transaction(async (trx) => {
         if ('name' in req.body.data) {
           if (ids.length > 1) throw conflict('name');
-          const checkDuplicate = await Hive.query().where({
-            user_id: req.user.user_id,
-            name: req.body.data.name,
-          });
-          if (checkDuplicate.length > 1) throw conflict('name');
+
+          if (await isDuplicateHiveName(req.user.user_id, req.body.data.name)) {
+            throw conflict('name');
+          }
         }
 
         return await Hive.query(trx)
