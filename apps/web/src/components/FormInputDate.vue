@@ -166,6 +166,7 @@ watch([reset, values], () => {
 
 function setValues() {
   disable.value = multipleValues.value;
+
   if (multipleValues.value) editValues(true);
   else if (values.value && !isEmpty(values.value)) {
     modelValue.value = dayjs(
