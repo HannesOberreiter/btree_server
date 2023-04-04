@@ -126,7 +126,14 @@ const columns = [
     required: true,
     label: t('hive'),
     align: 'left',
-    field: (row: any) => row.name,
+    field: (row: any) => {
+      if (!row.modus) {
+        return `${row.name} (${t('inactive')})`;
+      } else if (row.deleted) {
+        return `${row.name} (${t('deleted')})`;
+      }
+      return row.name;
+    },
     sortable: true,
   },
   {
