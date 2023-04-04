@@ -24,7 +24,7 @@ const useNotification = () => {
     const lang = storeUser.getLanguage;
     let displayMessage = '';
     if (typeof error === 'string') return t(error);
-    console.log(error);
+
     if ('errors' in error) {
       if (typeof error.errors === 'string') {
         displayMessage = checkStatus(error.statusCode, error.errors);
