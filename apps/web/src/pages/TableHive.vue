@@ -127,10 +127,10 @@ const columns = [
     label: t('hive'),
     align: 'left',
     field: (row: any) => {
-      if (!row.modus) {
-        return `${row.name} (${t('inactive')})`;
-      } else if (row.deleted) {
+      if (row.deleted) {
         return `${row.name} (${t('deleted')})`;
+      } else if (!row.modus) {
+        return `${row.name} (${t('inactive')})`;
       }
       return row.name;
     },

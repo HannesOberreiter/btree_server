@@ -109,10 +109,10 @@ const columns = [
     label: t('hive'),
     align: 'left',
     field: (row: any) => {
-      if (!row.hive.modus) {
-        return `${row.hive.name} (${t('inactive')})`;
-      } else if (row.hive.deleted) {
+      if (row.hive.deleted) {
         return `${row.hive.name} (${t('deleted')})`;
+      } else if (!row.hive.modus) {
+        return `${row.hive.name} (${t('inactive')})`;
       }
       return row.hive.name;
     },
