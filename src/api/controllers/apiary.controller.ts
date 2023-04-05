@@ -32,8 +32,6 @@ export default class ApiaryController extends Controller {
       const result = await Apiary.transaction(async (trx) => {
         if (req.body.name) {
           if (ids.length > 1) throw conflict('name');
-          if (await isDuplicateApiaryName(req.user.user_id, req.body.name))
-            throw conflict('name');
         }
         return await Apiary.query(trx)
           .patch({ ...insert, edit_id: req.user.bee_id })
