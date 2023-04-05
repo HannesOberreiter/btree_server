@@ -309,10 +309,6 @@ export default class HiveController extends Controller {
       const result = await Hive.transaction(async (trx) => {
         if ('name' in req.body.data) {
           if (ids.length > 1) throw conflict('name');
-
-          if (await isDuplicateHiveName(req.user.user_id, req.body.data.name)) {
-            throw conflict('name');
-          }
         }
 
         return await Hive.query(trx)
