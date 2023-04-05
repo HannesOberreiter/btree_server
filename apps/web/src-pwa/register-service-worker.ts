@@ -8,7 +8,7 @@ import { Router } from '~/router';
 // events passes a ServiceWorkerRegistration instance in their arguments.
 // ServiceWorkerRegistration: https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerRegistration
 
-if (Platform.is.ios) {
+if (Platform.is.ios || document.cookie.includes('iOS') || Platform.is.safari) {
   // Delete old pending service workers for iOS users
   try {
     if ('serviceWorker' in navigator) {
@@ -54,6 +54,7 @@ if (Platform.is.ios) {
       // swift cookie is set by the iOS app
       // let platformCookie = Cookie(name: "app-platform", value: "iOS App Store")
       if (document.cookie.includes('iOS')) return;
+      if (Platform.is.safari) return;
 
       Notify.create({
         color: 'negative',
