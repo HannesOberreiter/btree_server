@@ -17,6 +17,15 @@
           :disable="isSubmitting"
           :loading="isSubmitting"
         />
+        <q-btn
+          color="primary"
+          label="Google"
+          icon="fab fa-google"
+          class="full-width q-mt-lg"
+          no-caps
+          outline
+          @click="onLoginGoogle()"
+        />
       </q-card-actions>
     </q-form>
   </q-card-section>
@@ -88,6 +97,12 @@ function sendForm(user: User) {
       notification.open('negative', error);
     }
   );
+}
+
+function onLoginGoogle() {
+  const baseUrl = process.env.BACKEND_URL;
+  const url = `${baseUrl}/v1/auth/google/login`;
+  window.location.href = url;
 }
 
 onMounted(() => {
