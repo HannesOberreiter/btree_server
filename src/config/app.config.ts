@@ -37,6 +37,8 @@ import { Catcher } from '@middlewares/catcher.middleware';
 // import { MySQLServer } from '@/servers/mysql.server';
 import { RedisServer } from '@/servers/redis.server';
 import { randomUUID } from 'node:crypto';
+import passport from 'passport';
+import { PassportConfiguration } from './passport.config';
 
 /**
  * Instanciate and set Express application.
@@ -249,10 +251,8 @@ export class Application {
      *
      * @see http://www.passportjs.org/
      */
-    // this.app.use(passport.initialize());
-    // this.app.use(
-    //  passport.use('session', PassportConfiguration.factory('session'))
-    // );
+    this.app.use(passport.initialize());
+    passport.use('google', PassportConfiguration.factory('google'));
     //passport.use('jwt', PassportConfiguration.factory('jwt'));
 
     /**

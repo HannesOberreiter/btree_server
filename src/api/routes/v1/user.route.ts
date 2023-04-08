@@ -3,7 +3,7 @@ import { Container } from '@config/container.config';
 import { Guard } from '@middlewares/guard.middleware';
 import { ROLES } from '@/api/types/constants/role.const';
 import { Validator } from '@/api/middlewares/validator.middleware';
-import { body } from 'express-validator';
+import { body, param, query } from 'express-validator';
 
 export class UserRouter extends Router {
   constructor() {
@@ -51,6 +51,29 @@ export class UserRouter extends Router {
         Validator.validate([body('saved_company').exists()]),
         Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
         Container.resolve('UserController').changeCompany
+      );
+
+    this.router
+      .route('/federatedCredentials')
+      .get(
+        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+        Container.resolve('UserController').getFederatedCredentials
+      );
+
+    this.router
+      .route('/federatedCredentials/:id')
+      .delete(
+        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+        Validator.validate([param('id').exists().isNumeric()]),
+        Container.resolve('UserController').deleteFederatedCredentials
+      );
+
+    this.router
+      .route('/federatedCredentials')
+      .post(
+        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+        Validator.validate([body('email').exists().isEmail()]),
+        Container.resolve('UserController').addFederatedCredentials
       );
   }
 }

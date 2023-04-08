@@ -148,8 +148,18 @@ const reviewPassword = async (bee_id, password: string) => {
   return true;
 };
 
-const loginCheck = async (email: string, password: string) => {
-  const user = await fetchUser(email);
+const loginCheck = async (
+  email: string,
+  password: string,
+  bee_id: number = undefined
+) => {
+  let user;
+  if (!bee_id) {
+    user = await fetchUser(email);
+  } else {
+    user = await fetchUser('', bee_id);
+  }
+
   if (!user) {
     throw unauthorized('no user');
   }
@@ -180,9 +190,11 @@ const loginCheck = async (email: string, password: string) => {
   }
   const { rank, paid } = await getPaidRank(user.id, company);
 
-  if (!checkPassword(password, user.password, user.salt)) {
-    await insertWrongPasswordTry(user.id);
-    throw unauthorized('Invalid password');
+  if (!bee_id) {
+    if (!checkPassword(password, user.password, user.salt)) {
+      await insertWrongPasswordTry(user.id);
+      throw unauthorized('Invalid password');
+    }
   }
 
   await updateLastLogin(user.id);

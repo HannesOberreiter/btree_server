@@ -94,6 +94,11 @@ const discourseSecret = process.env.DISCOURSE_SSO;
 const foxyOfficeKey = process.env.FOXY_OFFICE_KEY;
 const foxyOfficeUrl = process.env.FOXY_OFFICE_URL;
 
+const googleOAuth = {
+  clientID: process.env.GOOGLE_CLIENT_ID,
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+};
+
 const basicLimit = {
   hive: parseInt(process.env.LIMIT_HIVE),
   apiary: parseInt(process.env.LIMIT_APIARY),
@@ -204,4 +209,5 @@ export {
   discourseSecret,
   foxyOfficeKey,
   foxyOfficeUrl,
+  googleOAuth,
 };

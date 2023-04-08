@@ -16,9 +16,52 @@ import {
 import { map } from 'lodash';
 import { deleteCompany, deleteUser } from '../utils/delete.util';
 import { MailServer } from '../app.bootstrap';
+import { FederatedCredential } from '../models/federated_credential';
+import { badRequest } from '@hapi/boom';
 export default class UserController extends Controller {
   constructor() {
     super();
+  }
+
+  async getFederatedCredentials(req: IUserRequest, res: Response, next) {
+    try {
+      const data = await FederatedCredential.query().where({
+        bee_id: req.user.bee_id,
+      });
+      res.locals.data = data;
+      next();
+    } catch (e) {
+      next(checkMySQLError(e));
+    }
+  }
+
+  async deleteFederatedCredentials(req: IUserRequest, res: Response, next) {
+    try {
+      if (!req.params.id) next(badRequest('Missing id'));
+      const data = await FederatedCredential.query().delete().where({
+        bee_id: req.user.bee_id,
+        id: req.params.id,
+      });
+      res.locals.data = data;
+      next();
+    } catch (e) {
+      next(checkMySQLError(e));
+    }
+  }
+
+  async addFederatedCredentials(req: IUserRequest, res: Response, next) {
+    try {
+      if (!req.body.email) next(badRequest('Missing mail'));
+      const data = await FederatedCredential.query().insert({
+        bee_id: req.user.bee_id,
+        provider: 'google',
+        mail: req.body.email,
+      });
+      res.locals.data = data.id;
+      next();
+    } catch (e) {
+      next(checkMySQLError(e));
+    }
   }
 
   async get(req: IUserRequest, res: Response, next) {
