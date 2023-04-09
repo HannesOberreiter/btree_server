@@ -6,7 +6,7 @@ import { CompanyBee } from '@models/company_bee.model';
 import { Controller } from '@classes/controller.class';
 import { loginCheck } from '@utils/login.util';
 import { NextFunction, Request, Response } from 'express';
-import { randomBytes } from 'crypto';
+import { randomBytes, randomUUID } from 'crypto';
 import { User } from '@models/user.model';
 import dayjs from 'dayjs';
 import {
@@ -211,6 +211,8 @@ export default class AuthController extends Controller {
           rank: rank as any,
           user_agent: userAgent,
           last_visit: new Date(),
+          uuid: randomUUID(),
+          ip: req.ip,
         };
 
         // save the session before redirection to ensure page
@@ -320,6 +322,8 @@ export default class AuthController extends Controller {
           rank: rank as any,
           user_agent: userAgent,
           last_visit: new Date(),
+          uuid: randomUUID(),
+          ip: req.ip,
         };
 
         req.session.save(function (err) {

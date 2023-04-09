@@ -1,4 +1,4 @@
-import { Response } from 'express';
+import { NextFunction, Response } from 'express';
 
 import { Controller } from '@classes/controller.class';
 import { checkMySQLError } from '@utils/error.util';
@@ -18,6 +18,8 @@ import { deleteCompany, deleteUser } from '../utils/delete.util';
 import { MailServer } from '../app.bootstrap';
 import { FederatedCredential } from '../models/federated_credential';
 import { badRequest } from '@hapi/boom';
+import { RedisServer } from '@/servers/redis.server';
+import { randomUUID } from 'node:crypto';
 export default class UserController extends Controller {
   constructor() {
     super();
@@ -84,6 +86,8 @@ export default class UserController extends Controller {
         rank: rank as any,
         user_agent: buildUserAgent(req),
         last_visit: new Date(),
+        uuid: randomUUID(),
+        ip: req.ip,
       };
       res.locals.data = data;
       next();
@@ -203,6 +207,8 @@ export default class UserController extends Controller {
         rank: rank as any,
         user_agent: buildUserAgent(req),
         last_visit: new Date(),
+        uuid: randomUUID(),
+        ip: req.ip,
       };
       res.locals.data = { data: data, result: result };
 
@@ -216,6 +222,65 @@ export default class UserController extends Controller {
     } catch (e) {
       await trx.rollback();
       next(checkMySQLError(e));
+    }
+  }
+
+  async getRedisSession(req: IUserRequest, res: Response, next: NextFunction) {
+    const { bee_id } = req.user;
+    try {
+      let keys = [];
+      let cursor = 0;
+      let safety = 1000;
+
+      while (safety-- > 0) {
+        const result = await RedisServer.client.scan(
+          cursor,
+          'MATCH',
+          `btree_sess:${bee_id}:*`,
+          'COUNT',
+          500
+        );
+        const nextCursor = parseInt(result[0]);
+        if (nextCursor === 0) break;
+        cursor = nextCursor;
+        keys = keys.concat(result[1]);
+      }
+      if (keys.length === 0) {
+        res.locals.data = [];
+        next();
+        return;
+      }
+      const content = await RedisServer.client.mget(keys);
+      const result = content.map((el, index) => {
+        const o = JSON.parse(el);
+        o.id = keys[index];
+        o.user.currentSession =
+          o.user?.uuid && o.user?.uuid === req.session.user?.uuid;
+        return o;
+      });
+      res.locals.data = result;
+      next();
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  async deleteRedisSession(
+    req: IUserRequest,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { bee_id } = req.user;
+      const { id } = req.params;
+      const lastPart = id.split(':').at(-1);
+      const result = await RedisServer.client.del(
+        `btree_sess:${bee_id}:${lastPart}`
+      );
+      res.locals.data = result;
+      next();
+    } catch (e) {
+      next(e);
     }
   }
 }

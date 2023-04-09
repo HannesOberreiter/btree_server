@@ -3,7 +3,7 @@ import { Container } from '@config/container.config';
 import { Guard } from '@middlewares/guard.middleware';
 import { ROLES } from '@/api/types/constants/role.const';
 import { Validator } from '@/api/middlewares/validator.middleware';
-import { body, param, query } from 'express-validator';
+import { body, param } from 'express-validator';
 
 export class UserRouter extends Router {
   constructor() {
@@ -74,6 +74,20 @@ export class UserRouter extends Router {
         Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
         Validator.validate([body('email').exists().isEmail()]),
         Container.resolve('UserController').addFederatedCredentials
+      );
+
+    this.router
+      .route('/session')
+      .get(
+        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+        Container.resolve('UserController').getRedisSession
+      );
+    this.router
+      .route('/session/:id')
+      .delete(
+        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+        Validator.validate([param('id').exists().isString()]),
+        Container.resolve('UserController').deleteRedisSession
       );
   }
 }

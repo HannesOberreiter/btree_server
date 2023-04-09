@@ -25,6 +25,8 @@ declare module 'express-session' {
       paid: boolean;
       user_agent: string;
       last_visit: Date;
+      uuid: string;
+      ip: string;
     };
   }
 }
