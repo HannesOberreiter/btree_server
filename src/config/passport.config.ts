@@ -32,7 +32,6 @@ export class PassportConfiguration {
     profile: GoogleStrategy.Profile,
     done: GoogleStrategy.VerifyCallback
   ): void => {
-    console.log(profile);
     try {
       verifyUser(
         profile.id,
