@@ -1,5 +1,5 @@
 <template>
-  <q-card>
+  <q-card flat>
     <q-card-section v-if="isLoading">
       <global-loading v-if="isLoading"></global-loading>
     </q-card-section>

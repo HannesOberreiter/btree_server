@@ -14,6 +14,8 @@
         selection="multiple"
         :hide-pagination="true"
         binary-state-sort
+        flat
+        bordered
         :rows-per-page-options="[20, 50, 100, 500]"
         @request="onRequest"
       >

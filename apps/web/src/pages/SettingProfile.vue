@@ -18,7 +18,7 @@ const userStore = useAuthUserStore();
 </script>
 
 <template>
-  <q-card>
+  <q-card flat>
     <q-tabs
       v-model="activeTab"
       dense

@@ -1,5 +1,5 @@
 <template>
-  <q-card>
+  <q-card flat>
     <div class="row q-pa-sm justify-center">
       <div class="col-12">
         <div class="text-h5 text-center">
@@ -21,6 +21,8 @@
         :row-key="(row) => row.hive_id + '-' + row.year"
         selection="multiple"
         binary-state-sort
+        flat
+        bordered
         @request="onRequest"
       >
         <template #top-left>

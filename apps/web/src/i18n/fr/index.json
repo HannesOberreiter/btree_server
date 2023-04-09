@@ -316,6 +316,7 @@
     "forOneYear": "pendant 1 an",
     "minimumAmount": "Un minimum de 50 euros est nécessaire.",
     "noSubscription": "Paiement unique, pas d'abonnement automatique !",
+    "payWithStripe": "Carte de crédit et autres",
     "perks": "Avec l'adhésion premium, vous obtenez les bonus suivants",
     "perksAPI": "Accéder à l'API (ical, échelles de ruche)",
     "perksApiaries": "Créez jusqu'à 100 ruchers",

@@ -1,5 +1,5 @@
 <template>
-  <q-card>
+  <q-card flat>
     <div class="row q-pa-sm justify-center">
       <div class="col-12">
         <div class="text-h5 q-pb-sm text-center">
@@ -75,7 +75,7 @@
             </q-tabs>
             <q-tab-panels v-model="activeTab" animated>
               <q-tab-panel name="oneToOne" class="q-pa-xs">
-                <q-markup-table dense separator="none">
+                <q-markup-table dense separator="none" flat>
                   <thead class="text-right bg-info">
                     <tr>
                       <th>{{ $t('sugarHelper.sugar') }}</th>

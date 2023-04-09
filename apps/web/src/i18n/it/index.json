@@ -316,6 +316,7 @@
     "forOneYear": "per 1 anno",
     "minimumAmount": "È necessario un minimo di 50 euro.",
     "noSubscription": "Solo pagamento unico, nessun abbonamento automatico!",
+    "payWithStripe": "Carta di credito e altri",
     "perks": "Con l'abbonamento premium ottieni i seguenti bonus",
     "perksAPI": "Ottieni l'accesso all'API (ical, hive scales)",
     "perksApiaries": "Crea fino a 100 apiari",

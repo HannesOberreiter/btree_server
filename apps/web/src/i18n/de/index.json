@@ -316,6 +316,7 @@
     "forOneYear": "1 Jahr lang",
     "minimumAmount": "Minimum Betrag sind 50 Euro.",
     "noSubscription": "Nur einmalige Zahlung, kein automatisches Abo!",
+    "payWithStripe": "Kreditkarte und andere",
     "perks": "Mit der Premium-Mitgliedschaft erhalten Sie folgende Boni",
     "perksAPI": "Erhalten Sie Zugriff auf die API (iCal, Stockwaagen)",
     "perksApiaries": "Erstellen Sie bis zu 100 Bienenstände",

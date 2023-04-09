@@ -316,6 +316,7 @@
     "forOneYear": "for +1 year",
     "minimumAmount": "A minimum of 50 Euro is needed.",
     "noSubscription": "Single payment only, no automatic subscription!",
+    "payWithStripe": "Creditcard and others",
     "perks": "With premium membership you get following bonuses",
     "perksAPI": "Get access to the API (ical, hive scales)",
     "perksApiaries": "Create up to 100 apiaries",

@@ -1,8 +1,8 @@
 <template>
-  <q-card v-if="useDropbox.state.isLoading && !isModalOpen()">
+  <div v-if="useDropbox.state.isLoading && !isModalOpen()">
     <global-loading></global-loading>
-  </q-card>
-  <q-card v-else data-cy="page-setting-dropbox">
+  </div>
+  <q-card v-else data-cy="page-setting-dropbox" flat>
     <q-card-section v-if="!resetInit && account">
       <div class="text-h6">
         <q-icon name="fab fa-dropbox"></q-icon> {{ $t('account') }}:
