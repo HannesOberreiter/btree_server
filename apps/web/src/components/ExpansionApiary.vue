@@ -19,7 +19,7 @@
       <q-card-section class="q-pb-xs">
         <div class="col-12 q-gutter-xs">
           <btn-base
-            v-if="data.url.trim()"
+            v-if="data?.url?.trim()"
             size="md"
             round
             color="orange"
@@ -28,7 +28,7 @@
             @click="showFile(data.url)"
           />
           <q-chip
-            v-if="data.description.trim()"
+            v-if="data?.description?.trim()"
             square
             color="info"
             text-color="black"
