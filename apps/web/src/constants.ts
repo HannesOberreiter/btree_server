@@ -30,3 +30,18 @@ export const CALENDAR = [
   'movedate',
   'vis',
 ];
+
+export const OPTIONS = [
+  'charge_types',
+  'hive_sources',
+  'hive_types',
+  'feed_types',
+  'harvest_types',
+  'checkup_types',
+  'queen_matings',
+  'queen_races',
+  'treatment_diseases',
+  'treatment_types',
+  'treatment_vets',
+  'rearing_detail',
+] as const;
