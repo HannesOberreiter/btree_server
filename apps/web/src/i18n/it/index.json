@@ -77,6 +77,7 @@
   "credentials": "Credenziali",
   "csvUploadRequired": "Consulta la tabella Esportazione .csv per i nomi dei campi. Per l'attività è richiesto il campo 'hive_id'.",
   "currentPageLink": "Qui puoi copiare l'URL della pagina corrente o utilizzare il codice QR.",
+  "currentSession": "Sessione corrente",
   "darkMode": "Modalità scura",
   "dataLoaded": "I dati sono stati caricati correttamente",
   "date": "Data",
@@ -146,6 +147,7 @@
   "event": "Evento | \nEventi",
   "example": "Esempio",
   "excludeHive": "Escludi alveare",
+  "expireDate": "Data di scadenza",
   "export": "Esportare",
   "exportCSV": "Esporta (.csv)",
   "exportCsvSeparator": "Scegli il separatore di elenco (delimitatore).",
@@ -155,7 +157,7 @@
   "faqs": "Domande frequenti",
   "favorite": "Preferito",
   "favourite": "Preferito",
-  "federatedCredentialAdded": "",
+  "federatedCredentialAdded": "Fornitore aggiunto",
   "federatedCredentialRemoved": "Fornitore rimosso",
   "federatedCredentials": "Provider di autenticazione esterno",
   "feed": "Alimentazione | Alimentazione",
@@ -396,6 +398,7 @@
     "credentialTitle": "Aggiorna le tue credenziali di accesso, per motivi di sicurezza inserisci anche la tua vecchia password.",
     "federatedCredentials": "Elenco dei provider oAuth di terze parti connessi. \nPuoi rimuovere e aggiungere provider qui. \nAttualmente è supportato solo Google.",
     "name": "Profilo | Profili",
+    "session": "Elenco delle sessioni attualmente attive. \nVerranno automaticamente cancellati dopo essere rimasti inattivi per un certo periodo di tempo, ma qui puoi anche eliminare manualmente le sessioni.",
     "userDeleteText": "Sei sicuro di voler eliminare il tuo account? Questa azione non può essere annullata. Nota: se nell'attuale azienda è presente un altro utente, i dati dell'azienda non verranno eliminati, altrimenti tutti i dati verranno rimossi. Per sicurezza, inserisci la tua password attuale.",
     "userTitle": "Qui puoi aggiornare le tue impostazioni utente."
   },
@@ -496,6 +499,8 @@
     "newContent": "Il contenuto aggiornato è disponibile. Aggiorna la pagina.",
     "refresh": "Aggiorna b.tree"
   },
+  "session": "Sessione | \nSessioni",
+  "sessionRemoved": "Sessione rimossa",
   "sessionTimeOut": "Timeout della sessione",
   "setting": {
     "hintCalendarWeeknumber": "Mostra il numero della settimana sul calendario.",
@@ -600,6 +605,7 @@
   "uploadFile": "Caricare un file",
   "url": "URL",
   "user": "Utente | Utenti",
+  "userAgent": "Agente utente",
   "username": "Nome utente",
   "validations": {
     "alphaNum": "Il valore deve essere alfanumerico.",

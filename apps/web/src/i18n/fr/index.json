@@ -77,6 +77,7 @@
   "credentials": "Identifiants",
   "csvUploadRequired": "Veuillez consulter le tableau d'exportation .csv pour les noms de champs. Pour la tâche, le champ 'hive_id' est obligatoire.",
   "currentPageLink": "Ici, vous pouvez copier l'URL de la page actuelle ou utiliser le code QR.",
+  "currentSession": "Session actuelle",
   "darkMode": "Mode sombre",
   "dataLoaded": "Les données sont chargées avec succès",
   "date": "Date",
@@ -146,6 +147,7 @@
   "event": "Réunion | Réunion",
   "example": "Exemple",
   "excludeHive": "Exclure la ruche",
+  "expireDate": "Date d'expiration",
   "export": "Exporter",
   "exportCSV": "Exporter (.csv)",
   "exportCsvSeparator": "Choisissez le séparateur de liste (délimiteur).",
@@ -155,7 +157,7 @@
   "faqs": "FAQ",
   "favorite": "Favori",
   "favourite": "Favori",
-  "federatedCredentialAdded": "",
+  "federatedCredentialAdded": "Fournisseur ajouté",
   "federatedCredentialRemoved": "Fournisseur supprimé",
   "federatedCredentials": "Fournisseur d'authentification externe",
   "feed": "Alimentation | Tétées",
@@ -396,6 +398,7 @@
     "credentialTitle": "Mettez à jour vos identifiants de connexion, pour des raisons de sécurité, veuillez également insérer votre ancien mot de passe.",
     "federatedCredentials": "Liste des fournisseurs oAuth tiers connectés. \nVous pouvez supprimer et ajouter un fournisseur ici. \nActuellement, seul Google est pris en charge.",
     "name": "Profil | Profils",
+    "session": "Liste des sessions actuellement actives. \nIls seront automatiquement supprimés après une certaine période d'inactivité, mais vous pouvez également supprimer manuellement les sessions ici.",
     "userDeleteText": "Êtes-vous sûr de vouloir supprimer votre compte? Cette action ne peut pas être annulée. Remarque : S'il y a un autre utilisateur dans l'entreprise actuelle, les données de l'entreprise ne seront pas supprimées, sinon toutes les données seront supprimées. Pour plus de sécurité, veuillez entrer votre mot de passe actuel.",
     "userTitle": "Ici, vous pouvez mettre à jour vos paramètres d'utilisateur."
   },
@@ -496,6 +499,8 @@
     "newContent": "Le contenu mis à jour est disponible. Veuillez actualiser la page.",
     "refresh": "Mettre à jour b.tree"
   },
+  "session": "Séance | \nSéances",
+  "sessionRemoved": "Session supprimée",
   "sessionTimeOut": "Expiration de la session",
   "setting": {
     "hintCalendarWeeknumber": "Afficher le numéro de semaine sur le calendrier.",
@@ -600,6 +605,7 @@
   "uploadFile": "Télécharger un fichier",
   "url": "URL",
   "user": "Utilisateur | Utilisateurs",
+  "userAgent": "Agent utilisateur",
   "username": "Nom d'utilisateur",
   "validations": {
     "alphaNum": "La valeur doit être alphanumérique.",

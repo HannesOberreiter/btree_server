@@ -77,6 +77,7 @@
   "credentials": "Credentials",
   "csvUploadRequired": "Please see the table .csv export for field names. For task the field 'hive_id' is required.",
   "currentPageLink": "Here you can copy the current page url or use the QR code.",
+  "currentSession": "Current session",
   "darkMode": "Dark mode",
   "dataLoaded": "Data is successfully loaded",
   "date": "Date",
@@ -146,6 +147,7 @@
   "event": "event | events",
   "example": "Example",
   "excludeHive": "Exclude Hive",
+  "expireDate": "Expire date",
   "export": "Export",
   "exportCSV": "Export (.csv)",
   "exportCsvSeparator": "Choose list separator (delimiter).",
@@ -396,6 +398,7 @@
     "credentialTitle": "Update your login credentials, for security reasons please also insert your old password.",
     "federatedCredentials": "List of connected third party oAuth provider. You can remove and add provider here. Currently only Google is supported.",
     "name": "Profile | Profiles",
+    "session": "List of currently active session. They will be auto deleted after inactive for a certain period of time, but you can also manually delete sessions here. ",
     "userDeleteText": "Are you sure you want to delete your account? This action cannot be undone. Note: If there are another user in the current company the company data wont be deleted otherwise all data will be removed. For security please enter your current password.",
     "userTitle": "Here you can update your user settings."
   },
@@ -496,6 +499,8 @@
     "newContent": "Updated content is available. Please refresh the page.",
     "refresh": "Upgrade b.tree"
   },
+  "session": "Session | Sessions",
+  "sessionRemoved": "Session removed",
   "sessionTimeOut": "Session time-out",
   "setting": {
     "hintCalendarWeeknumber": "Show week number on calendar.",
@@ -600,6 +605,7 @@
   "uploadFile": "Upload a file",
   "url": "Url",
   "user": "User | Users",
+  "userAgent": "User-agent",
   "username": "Username",
   "validations": {
     "alphaNum": "The value must be alpha-numeric.",
