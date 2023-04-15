@@ -40,5 +40,16 @@ export class ServiceRouter extends Router {
         Guard.authorize([ROLES.admin, ROLES.user]),
         Container.resolve('ServiceController').stripeCreateOrder
       );
+
+    this.router
+      .route('/wizbee/ask')
+      .post(
+        Validator.validate([
+          body('question').isString().isLength({ min: 1, max: 1000 }),
+          body('lang').isString().isLength({ min: 2, max: 2 }),
+        ]),
+        Guard.authorize([ROLES.admin, ROLES.user]),
+        Container.resolve('ServiceController').askWizBee
+      );
   }
 }
