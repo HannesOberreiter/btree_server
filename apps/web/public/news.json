@@ -1,5 +1,18 @@
 [
   {
+    "version": "6.2.0",
+    "date": "2023-04-15",
+    "news": [
+      "BUGFIX second login button to go to last visited page or dashboard, this may prevent some login issues",
+      "FEATURE WizBee integration, you can find the new feature under tools",
+      "FEATURE add google sign-in option",
+      "FEATURE dropdown fields now have quick option to add new entry",
+      "FEATURE on profile page you can now show and delete sessions for your account",
+      "VISUAL add no warp to buttons to force one line",
+      "VISUAL removed shadow drop from most pages and made style more flatter"
+    ]
+  },
+  {
     "version": "6.1.15",
     "date": "2023-04-04",
     "news": [

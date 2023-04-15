@@ -1,44 +1,46 @@
 <template>
-  <q-input
-    ref="passwordInput"
-    v-model="modelPassword"
-    :error="v.password.$error"
-    :error-message="validationErrors(v.password)"
-    :type="passwordField"
-    :no-error-icon="true"
-    :label="t(props.passwordLabel)"
-    name="password"
-    :autofill="confirm ? 'new-password' : 'current-password'"
-    required
-    filled
-  >
-    <template #prepend>
-      <q-icon name="fas fa-lock" />
-    </template>
-    <template #append>
-      <q-icon
-        :name="passwordIcon"
-        style="cursor: pointer"
-        @click="changePasswordField"
-      />
-    </template>
-  </q-input>
-  <q-input
-    v-if="confirm"
-    v-model="state.confirmPassword"
-    :error="v.confirmPassword.$error"
-    :error-message="validationErrors(v.confirmPassword)"
-    :type="passwordField"
-    :no-error-icon="true"
-    :label="t('confirmPassword')"
-    name="confirmPassword"
-    required
-    filled
-  >
-    <template #prepend>
-      <q-icon name="fas fa-lock" />
-    </template>
-  </q-input>
+  <div>
+    <q-input
+      ref="passwordInput"
+      v-model="modelPassword"
+      :error="v.password.$error"
+      :error-message="validationErrors(v.password)"
+      :type="passwordField"
+      :no-error-icon="true"
+      :label="t(props.passwordLabel)"
+      name="password"
+      :autofill="confirm ? 'new-password' : 'current-password'"
+      required
+      filled
+    >
+      <template #prepend>
+        <q-icon name="fas fa-lock" />
+      </template>
+      <template #append>
+        <q-icon
+          :name="passwordIcon"
+          style="cursor: pointer"
+          @click="changePasswordField"
+        />
+      </template>
+    </q-input>
+    <q-input
+      v-if="confirm"
+      v-model="state.confirmPassword"
+      :error="v.confirmPassword.$error"
+      :error-message="validationErrors(v.confirmPassword)"
+      :type="passwordField"
+      :no-error-icon="true"
+      :label="t('confirmPassword')"
+      name="confirmPassword"
+      required
+      filled
+    >
+      <template #prepend>
+        <q-icon name="fas fa-lock" />
+      </template>
+    </q-input>
+  </div>
 </template>
 
 <script setup lang="ts">

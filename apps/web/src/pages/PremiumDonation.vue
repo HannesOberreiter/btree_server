@@ -1,5 +1,5 @@
 <template>
-  <q-card>
+  <q-card flat>
     <q-card-section>
       <div class="row q-pa-sm justify-center">
         <div class="col-12 col-sm-10 col-md-8">
@@ -33,7 +33,7 @@
             switch-marker-labels-side
           >
           </q-slider>
-          <div class="row justify-center">
+          <div class="row justify-center payment">
             <div class="col-12">
               <q-input
                 v-model.number="donation"
@@ -72,37 +72,38 @@
               </q-input>
             </div>
           </div>
-          <div class="q-gutter-sm text-center q-pt-lg">
-            <suspense>
-              <payment-paypal
-                :donation="donation"
-                @on-paid="(data: any) => successPayment(data.paid)"
-              ></payment-paypal>
-            </suspense>
-            <q-separator></q-separator>
-            <div
-              v-if="!($q.platform.is.ios && $q.platform.is.safari)"
-              class="row"
-            >
+          <div class="text-center payment q-col-gutter-y-sm">
+            <div v-if="!($q.platform.is.ios && $q.platform.is.safari)">
               <payment-stripe
                 :donation="donation"
                 @on-paid="(data: any) => successPayment(data.paid)"
               ></payment-stripe>
+              <q-separator></q-separator>
             </div>
-
-            <btn-base
-              label="office@btree.at"
-              icon="fas fa-envelope"
-              color="info"
-              :href="mailTo"
-            >
-            </btn-base>
-            <btn-base
-              icon="fas fa-ticket"
-              color="info"
-              :label="$t('coupon')"
-              @click="payCoupon"
-            ></btn-base>
+            <div>
+              <suspense>
+                <payment-paypal
+                  :donation="donation"
+                  @on-paid="(data: any) => successPayment(data.paid)"
+                ></payment-paypal>
+              </suspense>
+              <q-separator></q-separator>
+            </div>
+            <div>
+              <btn-base
+                label="office@btree.at"
+                icon="fas fa-envelope"
+                color="info"
+                :href="mailTo"
+              >
+              </btn-base>
+              <btn-base
+                icon="fas fa-ticket"
+                color="info"
+                :label="$t('coupon')"
+                @click="payCoupon"
+              ></btn-base>
+            </div>
           </div>
         </div>
       </div>
@@ -242,3 +243,10 @@ function refreshCompany() {
   storeRefresh.refresh();
 }
 </script>
+
+<style scoped>
+.payment {
+  max-width: 500px;
+  margin: 0 auto;
+}
+</style>

@@ -1,5 +1,5 @@
 <template>
-  <q-card data-cy="page-setting-company">
+  <q-card data-cy="page-setting-company" flat>
     <q-tabs
       v-model="activeTab"
       dense

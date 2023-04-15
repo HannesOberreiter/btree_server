@@ -1,5 +1,5 @@
 <template>
-  <q-card>
+  <q-card flat>
     <div class="row q-pa-sm justify-center">
       <div class="col-12">
         <div class="text-h5 text-center">

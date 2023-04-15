@@ -1,14 +1,12 @@
 <template>
-  <q-card>
-    <div class="row q-pa-sm justify-center">
-      <div class="col-12 col-sm-10 col-md-8">
-        <div class="text-h5 q-pb-sm text-center">
-          {{ $t('new') }} {{ $t('queen') }}
-        </div>
-        <form-main-queen></form-main-queen>
+  <div class="row q-pa-sm justify-center">
+    <div class="col-12 col-sm-10 col-md-8">
+      <div class="text-h5 q-pb-sm text-center">
+        {{ $t('new') }} {{ $t('queen') }}
       </div>
+      <form-main-queen></form-main-queen>
     </div>
-  </q-card>
+  </div>
 </template>
 
 <script setup lang="ts">
