@@ -22,9 +22,12 @@
   "alive": "Am Leben",
   "allYears": "Alle Jahre",
   "amount": "Menge",
+  "answer": "Antworten",
   "api": "API",
   "apiary": "Stand | Stände",
   "apiaryEdit": "Stand bearbeiten | Stände bearbeiten",
+  "ask": "Frage",
+  "askQuestion": "Geben Sie Ihre Frage zur Imkerei oder b.tree App ein!",
   "autoCloseDate": "Datum bei Auswahl automatisch schließen.",
   "autoMode": "System",
   "average": "Durchschnitt",
@@ -72,6 +75,7 @@
   "copiedToClipboard": "In die Zwischenablage kopiert.",
   "copy": "Kopieren",
   "count": "Zählung",
+  "countTokensLeft": "Tägliche Token übrig",
   "coupon": "Coupon",
   "created": "Erstellt",
   "credentials": "Zugangsdaten",
@@ -132,12 +136,14 @@
     "mailInvalid": "Email muss gültig sein",
     "more": "Einer der Fehler",
     "nfcNotSupported": "Web NFC wird von Ihrem Browser nicht unterstützt.",
+    "noAnswer": "Zu Ihrer Frage konnten keine Referenzen gefunden werden.",
     "noCameraDetected": "Keine Kamera gefunden!",
     "noData": "Keine Daten zum Laden",
     "noVideoTag": "Ihr Browser unterstütz den video tag nicht.",
     "notFound": "Route oder Server nicht gefunden! (Offline?)",
     "permission": "Berechtigungen konnten nicht festgelegt werden.",
     "premium": "Nur Premium-Funktion oder Basisbenutzerlimit erreicht!",
+    "tokenLimit": "Tägliches Token-Limit erreicht, versuchen Sie es morgen erneut.",
     "tooManyRequest": "Zu viele Anfragen!",
     "unknown": "Ein Fehler ist aufgetreten!",
     "validation": "Validierungsfehler!"
@@ -146,6 +152,14 @@
   "errorNoFile": "Das Bild konnte nicht gefunden oder geladen werden.",
   "event": "Termin | Termine",
   "example": "Beispiel",
+  "exampleQuestion": {
+    "Offline": "",
+    "diffDiseases": "Unterschied zwischen amerikanischer und europäischer Faulbrut?",
+    "eggs": "Wie viele Eier legt eine Bienenkönigin?",
+    "offline": "Funktioniert b.tree offline?",
+    "option": "Wie kann ich einen eigenen Fütterungstypen definieren?",
+    "premium": "Wie viel kostet Premium?"
+  },
   "excludeHive": "Exklusive Stock",
   "expireDate": "Ablaufdatum",
   "export": "Export",
@@ -235,7 +249,8 @@
     "table-scale_data": "In der Datentabelle der Bienenstockwaage können Sie Ihre Einträge der übertragenen Daten verwalten oder exportieren. \nGelöschte Daten können nicht wiederhergestellt werden! \nMit der Schaltfläche “Waagen“ können Sie eine neue Bienenstockwaagen Ident hinzufügen. \nSeien Sie vorsichtig, wenn Sie eine Waagenkennung löschen, werden alle Ihre verbundenen Daten ebenfalls gelöscht, ohne dass eine Wiederherstellungsmöglichkeit besteht. \nUm herauszufinden, wie Sie Ihre Stock-Waage verbinden können, besuchen Sie die Seite mit den API-Optionen. \nDas Basismitgliedschaftslimit beträgt 2 Identifikatoren / Waagen und die Premium-Mitgliedschaft 10 Waagen.",
     "table-todo": "In der ToDo-Tabelle können Sie Ihre ToDo's verwalten oder exportieren. \nStandardmäßig werden nur offene Aufgaben angezeigt. \nSie können dies ändern, indem Sie auf das Augensymbol klicken. \nAchtung: Sie können ToDo's nach dem Löschen nicht wiederherstellen!",
     "table-treatment": "In der Behandlungstabelle können Sie Ihre Behandlung verwalten oder exportieren. \nGelöschte Aufgaben können bis zu 30 Tage nach dem Löschen wiederhergestellt werden. \nDas Suchfeld durchsucht die Spalten Bienenstock, Art und Krankheitsnamen.",
-    "table-virgin": "Dasselbe wie die Königinnentabelle, aber in dieser Tabelle finden Sie nur Königinnen ohne Stock. \nDiese dient als Stellplatz für Königinnen in Ihren Begattungseinheiten, die dann schnell zu Ihren Kolonien hinzugefügt oder als verkauft markiert werden können (Sie können einen Dropdown-Wert missbrauchen, z. B. Zuchtlinie oder das Notizfeld verwenden) und inaktiv setzen."
+    "table-virgin": "Dasselbe wie die Königinnentabelle, aber in dieser Tabelle finden Sie nur Königinnen ohne Stock. \nDiese dient als Stellplatz für Königinnen in Ihren Begattungseinheiten, die dann schnell zu Ihren Kolonien hinzugefügt oder als verkauft markiert werden können (Sie können einen Dropdown-Wert missbrauchen, z. B. Zuchtlinie oder das Notizfeld verwenden) und inaktiv setzen.",
+    "wizbee": "Dieses Tool verwendet die chatGPT-API, um Fragen zur Imkerei aus verschiedenen Quellen zu beantworten, auf die verwiesen wird und die öffentlich zugänglich sind. \nIhre Frage wird an OpenAI gesendet, sie haben ihren Sitz in den USA, bitte beachten Sie deren Datenschutzrichtlinie. \nDie generierte Antwort sollte mit den Referenzen abgeglichen werden, da sie nicht immer korrekt sind. \nBitte vertraue ihnen nicht zu 100%."
   },
   "hint": "Hinweis",
   "hintApiaryFirstMovedate": "Angezeigter Wert ist die erste Wanderung eines Bienenstocks auf diesen Bienenstand, die als Erstellungsdatum angesehen werden kann.",
@@ -449,6 +464,7 @@
     "title": "Verlorenes Passwort wiederherstellen"
   },
   "red": "Rot",
+  "reference": "Referenz | \nVerweise",
   "refresh": "Aktualisierung",
   "refreshData": "Daten aktualisieren",
   "registerSources": {

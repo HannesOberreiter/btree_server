@@ -22,9 +22,12 @@
   "alive": "Vivant",
   "allYears": "Toutes les années",
   "amount": "Montant",
+  "answer": "Répondre",
   "api": "API",
   "apiary": "Rucher | Ruchers",
   "apiaryEdit": "Modifier le rucher | modifier les ruchers",
+  "ask": "Demander",
+  "askQuestion": "Saisissez votre question relative à l'apiculture ou à l'application b.tree !",
   "autoCloseDate": "Fermer automatiquement la date lors de la sélection.",
   "autoMode": "Système",
   "average": "Moyen",
@@ -72,6 +75,7 @@
   "copiedToClipboard": "Copié dans le presse-papiers.",
   "copy": "Copie",
   "count": "Compter",
+  "countTokensLeft": "Jetons quotidiens restants",
   "coupon": "Coupon",
   "created": "Établi",
   "credentials": "Identifiants",
@@ -132,12 +136,14 @@
     "mailInvalid": "L'email doit être valide",
     "more": "Une des erreurs",
     "nfcNotSupported": "Web NFC n'est pas pris en charge par votre navigateur.",
+    "noAnswer": "Impossible de trouver des références pour votre question.",
     "noCameraDetected": "Aucun appareil photo détecté.",
     "noData": "Aucune donnée à charger",
     "noVideoTag": "Votre navigateur ne prend pas en charge la balise vidéo.",
     "notFound": "Route ou serveur introuvable! (Hors ligne?)",
     "permission": "Impossible de définir les autorisations.",
     "premium": "Fonction Premium uniquement ou limite d'utilisateurs de base atteinte!",
+    "tokenLimit": "Limite quotidienne de jetons atteinte, réessayez demain.",
     "tooManyRequest": "Trop de demandes !",
     "unknown": "Une erreur s'est produite!",
     "validation": "Erreur de validation!"
@@ -146,6 +152,14 @@
   "errorNoFile": "Impossible de trouver ou de charger l'image.",
   "event": "Réunion | Réunion",
   "example": "Exemple",
+  "exampleQuestion": {
+    "Offline": "",
+    "diffDiseases": "Comment faire la différence entre AFB et EFB ?",
+    "eggs": "Combien d'oeufs une reine des abeilles pond-elle ?",
+    "offline": "b.tree fonctionne-t-il hors ligne ?",
+    "option": "Comment puis-je ajouter un type d'alimentation personnalisé ?",
+    "premium": "Combien coûte la prime ?"
+  },
   "excludeHive": "Exclure la ruche",
   "expireDate": "Date d'expiration",
   "export": "Exporter",
@@ -235,7 +249,8 @@
     "table-scale_data": "Dans le tableau de données de l'échelle de la ruche, vous pouvez gérer ou exporter vos entrées provenant de votre échelle de la ruche. \nLes données supprimées ne peuvent pas être restaurées! \nVous pouvez ajouter un nouvel identifiant d'échelles de ruche avec le bouton d'échelle. \nAttention si vous supprimez un identifiant de balance toutes vos données connectées seront également supprimées sans possibilité de restauration. \nPour savoir comment connecter votre balance de ruche, consultez la page des options de l'API. \nLa limite d'adhésion de base est de 2 identifiants / échelles et de 10 échelles premium.",
     "table-todo": "Dans le tableau ToDo, vous pouvez gérer ou exporter vos ToDo. \nEn standard, seules les tâches ouvertes sont affichées. \nVous pouvez modifier cela en cliquant sur le symbole de l'œil. \nVous ne pouvez pas restaurer les tâches après suppression!",
     "table-treatment": "Dans le tableau de traitement, vous pouvez gérer ou exporter votre traitement. \nLa tâche supprimée peut être restaurée jusqu'à 30 jours après la suppression. \nLe champ de recherche recherche dans les colonnes les noms de ruche, de type et de maladie.",
-    "table-virgin": "Identique à la table des reines mais sur cette table vous ne pouvez trouver que des reines sans aucune ruche. \nCeci est destiné à être utilisé comme place de stationnement pour les reines dans vos unités d'accouplement, qui peuvent ensuite être rapidement ajoutées à vos colonies ou marquées comme vendues (vous pouvez utiliser à mauvais escient une valeur déroulante, par exemple une lignée de reproduction ou utiliser le champ de note) et la rendre inactive."
+    "table-virgin": "Identique à la table des reines mais sur cette table vous ne pouvez trouver que des reines sans aucune ruche. \nCeci est destiné à être utilisé comme place de stationnement pour les reines dans vos unités d'accouplement, qui peuvent ensuite être rapidement ajoutées à vos colonies ou marquées comme vendues (vous pouvez utiliser à mauvais escient une valeur déroulante, par exemple une lignée de reproduction ou utiliser le champ de note) et la rendre inactive.",
+    "wizbee": "Cet outil utilise l'API chatGPT pour répondre aux questions liées à l'apiculture à partir de diverses sources référencées et accessibles au public. \nVotre question sera envoyée à OpenAI, ils sont basés aux États-Unis, veuillez vous référer à leur politique de confidentialité. \nLa réponse générée doit être recoupée avec les références, car elles ne sont pas toujours correctes. \nS'il vous plaît ne leur faites pas confiance à 100%."
   },
   "hint": "Indice",
   "hintApiaryFirstMovedate": "La valeur indiquée est la première migration d'une ruche sur ce rucher, qui peut être considérée comme la date de création.",
@@ -449,6 +464,7 @@
     "title": "Récupérer le mot de passe perdu"
   },
   "red": "Rouge",
+  "reference": "Référence | \nLes références",
   "refresh": "Rafraîchir",
   "refreshData": "Actualiser les données",
   "registerSources": {

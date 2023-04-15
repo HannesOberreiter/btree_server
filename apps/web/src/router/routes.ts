@@ -59,6 +59,14 @@ const routes: RouteRecordRaw[] = [
         },
         component: () => import('~/pages/HelperSugarWater.vue'),
       },
+      {
+        path: '/wizbee',
+        name: 'wizbee',
+        meta: {
+          title: 'WizBee',
+        },
+        component: () => import('~/pages/WizBee.vue'),
+      },
     ],
   },
   /***
