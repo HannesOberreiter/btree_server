@@ -120,6 +120,13 @@ const redisConfig = {
   password: process.env.REDIS_PASSWORD ?? '',
 };
 
+const vectorConfig = {
+  host: process.env.VECTOR_HOSTNAME,
+  port: parseInt(process.env.VECTOR_PORT),
+  user: process.env.VECTOR_USERNAME,
+  password: process.env.VECTOR_PASSWORD ?? '',
+};
+
 const knexConfig = {
   client: process.env.DB_TYPE,
   connection: {
@@ -179,9 +186,17 @@ const mailConfig = {
   },
 };
 
+const openAI = {
+  key: process.env.OPEN_AI_KEY ?? '',
+  dailyUserTokenLimit: parseInt(
+    process.env.OPEN_AI_DAILY_USER_TOKEN_LIMIT ?? '0'
+  ),
+};
+
 export {
   redisConfig,
   knexConfig,
+  vectorConfig,
   env,
   port,
   url,
@@ -210,4 +225,5 @@ export {
   foxyOfficeKey,
   foxyOfficeUrl,
   googleOAuth,
+  openAI,
 };
