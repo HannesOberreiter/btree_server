@@ -231,7 +231,6 @@ export default class UserController extends Controller {
       let keys = [];
       let cursor = 0;
       let safety = 1000;
-      console.log('bee_id', bee_id, 'btree_sess:' + bee_id + ':*');
 
       while (safety-- > 0) {
         const result = await RedisServer.client.scan(
@@ -241,13 +240,14 @@ export default class UserController extends Controller {
           'COUNT',
           500
         );
-        console.log('result', result);
+        if (result[1].length > 0) {
+          keys = keys.concat(result[1]);
+        }
         const nextCursor = parseInt(result[0]);
         if (nextCursor === 0) break;
         cursor = nextCursor;
-        keys = keys.concat(result[1]);
       }
-      console.log('keys', keys);
+
       if (keys.length === 0) {
         res.locals.data = [];
         next();
