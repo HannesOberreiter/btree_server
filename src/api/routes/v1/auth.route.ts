@@ -1,9 +1,11 @@
 import { Guard } from '@/api/middlewares/guard.middleware';
 import { ROLES } from '@/api/types/constants/role.const';
+import { frontend } from '@/config/environment.config';
 import { Router } from '@classes/router.class';
 import { Container } from '@config/container.config';
 import { Validator } from '@middlewares/validator.middleware';
 import { body, param } from 'express-validator';
+import passport from 'passport';
 
 export class AuthRouter extends Router {
   constructor() {
@@ -84,5 +86,16 @@ export class AuthRouter extends Router {
         Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
         Container.resolve('AuthController').discourse
       );
+
+    this.router.route('/google/login').get(passport.authenticate('google'));
+    this.router.route('/google/callback').get(
+      passport.authenticate('google', {
+        session: false,
+        failureRedirect: frontend + '/visitor/login?error=oauth',
+        failureMessage: true,
+        assignProperty: 'user',
+      }),
+      Container.resolve('AuthController').google
+    );
   }
 }

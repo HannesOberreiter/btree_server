@@ -94,6 +94,11 @@ const discourseSecret = process.env.DISCOURSE_SSO;
 const foxyOfficeKey = process.env.FOXY_OFFICE_KEY;
 const foxyOfficeUrl = process.env.FOXY_OFFICE_URL;
 
+const googleOAuth = {
+  clientID: process.env.GOOGLE_CLIENT_ID,
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+};
+
 const basicLimit = {
   hive: parseInt(process.env.LIMIT_HIVE),
   apiary: parseInt(process.env.LIMIT_APIARY),
@@ -113,6 +118,13 @@ const redisConfig = {
   port: parseInt(process.env.REDIS_PORT),
   user: process.env.REDIS_USERNAME,
   password: process.env.REDIS_PASSWORD ?? '',
+};
+
+const vectorConfig = {
+  host: process.env.VECTOR_HOSTNAME,
+  port: parseInt(process.env.VECTOR_PORT),
+  user: process.env.VECTOR_USERNAME,
+  password: process.env.VECTOR_PASSWORD ?? '',
 };
 
 const knexConfig = {
@@ -174,9 +186,17 @@ const mailConfig = {
   },
 };
 
+const openAI = {
+  key: process.env.OPEN_AI_KEY ?? '',
+  dailyUserTokenLimit: parseInt(
+    process.env.OPEN_AI_DAILY_USER_TOKEN_LIMIT ?? '0'
+  ),
+};
+
 export {
   redisConfig,
   knexConfig,
+  vectorConfig,
   env,
   port,
   url,
@@ -204,4 +224,6 @@ export {
   discourseSecret,
   foxyOfficeKey,
   foxyOfficeUrl,
+  googleOAuth,
+  openAI,
 };

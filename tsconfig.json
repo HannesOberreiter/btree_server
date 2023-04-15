@@ -49,10 +49,10 @@
       ],
     },
     "lib": [
-      "es2021",
+      "ES2022",
       "dom"
     ],
-    "target": "es2021",
+    "target": "ES2022",
     "module": "commonjs",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,

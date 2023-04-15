@@ -22,8 +22,6 @@ export class Resolver {
     if (req.method === 'DELETE') {
       if (res.statusCode === 204) {
         res.end();
-      } else if (isNaN(parseInt(req.url.split('/').pop(), 10))) {
-        return next(expectationFailed('ID parameter must be a number'));
       }
     }
 

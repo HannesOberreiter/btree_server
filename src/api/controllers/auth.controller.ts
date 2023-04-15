@@ -6,7 +6,7 @@ import { CompanyBee } from '@models/company_bee.model';
 import { Controller } from '@classes/controller.class';
 import { loginCheck } from '@utils/login.util';
 import { NextFunction, Request, Response } from 'express';
-import { randomBytes } from 'crypto';
+import { randomBytes, randomUUID } from 'crypto';
 import { User } from '@models/user.model';
 import dayjs from 'dayjs';
 import {
@@ -17,7 +17,7 @@ import {
   unsubscribeMail,
   buildUserAgent,
 } from '@utils/auth.util';
-import { discourseSecret, env } from '@/config/environment.config';
+import { discourseSecret, env, frontend } from '@/config/environment.config';
 import { ENVIRONMENT } from '../types/constants/environment.const';
 import { MailServer } from '../app.bootstrap';
 
@@ -211,6 +211,8 @@ export default class AuthController extends Controller {
           rank: rank as any,
           user_agent: userAgent,
           last_visit: new Date(),
+          uuid: randomUUID(),
+          ip: req.ip,
         };
 
         // save the session before redirection to ensure page
@@ -279,6 +281,59 @@ export default class AuthController extends Controller {
       }
     } else {
       next(forbidden());
+    }
+  }
+
+  /**
+   * @description handle google oauth callback, redirect to register page if user does not exist or login otherwise with session cookie
+   */
+  async google(req: IUserRequest, res: Response, next: NextFunction) {
+    if (!req.user.bee_id) {
+      if (!req.user['name'] && !req.user['email']) {
+        return res.redirect(frontend + '/visitor/login?error=oauth');
+      }
+      return res.redirect(
+        frontend +
+          '/visitor/register?name=' +
+          req.user['name'] +
+          '&email=' +
+          req.user['email'] +
+          '&oauth=google'
+      );
+    }
+
+    const userAgent = buildUserAgent(req);
+
+    try {
+      const { bee_id, user_id, data, paid, rank } = await loginCheck(
+        '',
+        '',
+        req.user.bee_id
+      );
+
+      req['bee_id'] = bee_id;
+      req.session.regenerate(function (err) {
+        if (err) next(err);
+
+        req.session.user = {
+          bee_id: bee_id,
+          user_id: user_id,
+          paid: paid,
+          rank: rank as any,
+          user_agent: userAgent,
+          last_visit: new Date(),
+          uuid: randomUUID(),
+          ip: req.ip,
+        };
+
+        req.session.save(function (err) {
+          if (err) return next(err);
+          res.locals.data = { data };
+          res.redirect(frontend + '/visitor/login');
+        });
+      });
+    } catch (e) {
+      next(e);
     }
   }
 }
