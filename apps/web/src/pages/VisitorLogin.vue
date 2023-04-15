@@ -1,56 +1,23 @@
-<template>
-  <q-card-section>
-    <div class="text-h6 text-center">{{ $t('login') }}</div>
-    <form-error-max v-if="submitCount >= 15"></form-error-max>
-    <q-form v-else class="q-gutter-md" @submit.stop="onSubmit">
-      <form-input-email v-model="state.email"></form-input-email>
-      <form-user-password
-        v-model:modelPassword="state.password"
-      ></form-user-password>
-      <q-card-actions class="">
-        <btn-base
-          type="submit"
-          size="lg"
-          color="secondary"
-          class="full-width text-white"
-          :label="$t('login')"
-          :disable="isSubmitting"
-          :loading="isSubmitting"
-        />
-        <q-btn
-          color="primary"
-          label="Google"
-          icon="fab fa-google"
-          class="full-width q-mt-lg"
-          no-caps
-          outline
-          @click="onLoginGoogle()"
-        />
-      </q-card-actions>
-    </q-form>
-  </q-card-section>
-</template>
-
 <script setup lang="ts">
 import { useAuthUserStore } from '~/stores/auth';
 import { useNotification } from '~/composables/useNotification';
 import { User } from '~/types';
 import useVuelidate from '@vuelidate/core';
-import { RouteLocationRaw } from 'vue-router';
-import FormUserPassword from '~/components/FormUserPassword.vue';
-import FormInputEmail from '~/components/FormInputEmail.vue';
-
-import FormErrorMax from '~/components/FormErrorMax.vue';
+import { truncate } from 'lodash-es';
 import { useRouter } from 'vue-router';
 import { reactive, ref, onMounted, onUnmounted, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 
+import FormUserPassword from '~/components/FormUserPassword.vue';
+import FormInputEmail from '~/components/FormInputEmail.vue';
+import FormErrorMax from '~/components/FormErrorMax.vue';
+
 const router = useRouter();
-const lastUrl = router.currentRoute.value.query.next;
 const notification = useNotification();
 
 const isSubmitting = ref(true);
 const submitCount = ref(0);
+const forceDashboardRedirect = ref(false);
 
 const store = useAuthUserStore();
 const { activate } = storeToRefs(store);
@@ -59,6 +26,19 @@ const state = reactive({
   password: '',
   confirmPassword: '',
 });
+
+const validLastUrl = (): string | undefined => {
+  const lastUrl = router.currentRoute.value.query.next;
+  console.log(lastUrl);
+  if (!lastUrl) return undefined;
+  if (typeof lastUrl !== 'string') return undefined;
+  if (lastUrl === '/') return undefined;
+  if (lastUrl.includes('visitor')) return undefined;
+
+  return lastUrl;
+};
+
+const truncatedLastUrl = truncate(validLastUrl(), { length: 20 });
 
 watch(
   activate,
@@ -118,10 +98,55 @@ onMounted(() => {
 onUnmounted(() => (isSubmitting.value = false));
 
 async function redirect() {
-  if (lastUrl) {
-    if (!lastUrl.includes('visitor'))
-      await router.push(lastUrl as RouteLocationRaw);
+  if (validLastUrl() && !forceDashboardRedirect.value) {
+    await router.push(validLastUrl());
+    return;
   }
   await router.push({ name: 'calendar' });
 }
 </script>
+
+<template>
+  <q-card-section>
+    <div class="text-h6 text-center">{{ $t('login') }}</div>
+    <form-error-max v-if="submitCount >= 15"></form-error-max>
+    <q-form v-else class="q-gutter-md" @submit.stop="onSubmit">
+      <form-input-email v-model="state.email"></form-input-email>
+      <form-user-password
+        v-model:modelPassword="state.password"
+      ></form-user-password>
+      <q-card-actions class="">
+        <btn-base
+          v-if="validLastUrl()"
+          type="submit"
+          size="md"
+          color="orange-6"
+          class="full-width text-white q-mb-xs"
+          :label="$t('lastVisit') + ': ' + truncatedLastUrl"
+          :disable="isSubmitting"
+          :loading="isSubmitting"
+        />
+        <btn-base
+          type="submit"
+          size="lg"
+          color="secondary"
+          class="full-width text-white"
+          :label="$t('login')"
+          :disable="isSubmitting"
+          :loading="isSubmitting"
+          @click="forceDashboardRedirect = true"
+        />
+
+        <q-btn
+          color="primary"
+          label="Google"
+          icon="fab fa-google"
+          class="full-width q-mt-lg"
+          no-caps
+          outline
+          @click="onLoginGoogle()"
+        />
+      </q-card-actions>
+    </q-form>
+  </q-card-section>
+</template>
