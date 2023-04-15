@@ -1,7 +1,7 @@
 import { env, openAI } from '@/config/environment.config';
 import { VectorServer } from '@/servers/vector.server';
 import { encode } from 'gpt-3-encoder';
-import { Configuration, OpenAIApi } from 'openai';
+import { Configuration, CreateChatCompletionRequest, OpenAIApi } from 'openai';
 
 type Metadata = {
   created: string;
@@ -97,6 +97,9 @@ export class WizBee {
     return input.filter((item) => item.score <= minScore);
   }
 
+  /**
+   * @description combine documents into a single string and filter out possible metadata duplicates
+   */
   private concatDocuments(documents: Document[]): {
     contextText: string;
     refs: Metadata[];
@@ -117,7 +120,7 @@ export class WizBee {
         break;
       }
 
-      contextText += `${content.trim()}\n---\n`;
+      contextText += `${content.trim()}\n###\n`;
     }
     return { contextText, refs: this.filterDuplicates(refs) };
   }
@@ -163,23 +166,32 @@ export class WizBee {
     return this.filterScore(result, minScore);
   }
 
-  private createPrompt(input: string, contextText: string) {
+  /**
+   * @description helper function to create completion prompt
+   */
+  private _createPrompt(input: string, contextText: string) {
     return this.template
       .replace('$query', input)
       .replace('$context', contextText)
       .replace(/\n/g, ' ');
   }
 
-  private async createAnswer(input: string, contextText: string) {
+  /**
+   * @description completion prompt gives better answers but is 10x more expensive
+   */
+  private async _createAnswer(input: string, contextText: string) {
     const completionResponse = await this.openAI.createCompletion({
       model: WizBee.completionModel,
-      prompt: this.createPrompt(input, contextText),
+      prompt: this._createPrompt(input, contextText),
       max_tokens: 500, // Choose the max allowed tokens in completion
       temperature: 0.2, // Set to 0 for deterministic results
     });
     return completionResponse.data;
   }
 
+  /**
+   * @description use the turbo model to translate the question to english
+   */
   private async translate(text: string) {
     try {
       const response = await this.openAI.createChatCompletion({
@@ -201,41 +213,58 @@ export class WizBee {
       });
       return response.data;
     } catch (e) {
-      console.log(e);
       return undefined;
     }
   }
 
-  private async createAnswerTurbo(input: string, contextText: string) {
+  /**
+   * @description use the turbo model and chat completion to answer the user question
+   */
+  private async createAnswerTurbo(
+    input: string,
+    contextText: string,
+    lang: string
+  ) {
     try {
+      const messages: CreateChatCompletionRequest['messages'] = [
+        {
+          role: 'system',
+          content:
+            'You are a friendly bot assistant, answering beekeeping related question by using given context. The context could be from multiple references and each is separated by ###.',
+        },
+        {
+          role: 'system',
+          content: `Context: ${contextText}`,
+        },
+        {
+          role: 'user',
+          content: `${input}`,
+        },
+      ];
+
+      if (lang !== 'en') {
+        messages.push({
+          role: 'system',
+          content: `User question is in language ${lang}, respond in the same language.`,
+        });
+      }
+
       const response = await this.openAI.createChatCompletion({
         model: WizBee.turboModel,
-        messages: [
-          {
-            role: 'system',
-            content:
-              'You are a friendly bot assistant, answering beekeeping related question by using given context. The context could be from multiple references each is separated by ;;;. Answer the user question using only that information and in the same language as the user question.',
-          },
-          {
-            role: 'system',
-            content: `Context: ${contextText}`,
-          },
-          {
-            role: 'user',
-            content: `${input}`,
-          },
-        ],
+        messages,
         max_tokens: 500,
         temperature: 0.1,
         user: 'WizBee_' + env,
       });
       return response.data;
     } catch (e) {
-      console.log(e);
       return undefined;
     }
   }
 
+  /**
+   * @description exposed entry point called by controller
+   */
   async search(question: string, lang: 'en') {
     let tokens = 0;
     let input = question.replace(/\n/g, ' ');
@@ -246,7 +275,6 @@ export class WizBee {
         input = translation.choices[0].message.content ?? input;
       }
     }
-    console.log(input);
 
     const { embedding, tokens: embeddingTokens } = await this.createEmbedding(
       input
@@ -261,7 +289,7 @@ export class WizBee {
     const { contextText, refs } = this.concatDocuments(results);
     // const answer = await this.createAnswer(question, contextText);
 
-    const answer = await this.createAnswerTurbo(question, contextText);
+    const answer = await this.createAnswerTurbo(question, contextText, lang);
 
     tokens += answer?.usage?.total_tokens ?? 0;
 
