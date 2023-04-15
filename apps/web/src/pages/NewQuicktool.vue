@@ -1,27 +1,25 @@
 <template>
-  <q-card>
-    <div class="row q-pa-sm justify-center">
-      <div class="col-12 col-sm-10 col-md-8">
-        <div class="text-body2 q-pb-sm text-center">
-          {{ $t('quicktool.name') }}
-        </div>
-        <q-select
-          v-model="taskSelect"
-          :label="$t('quicktool.taskDropdown')"
-          name="taskSelect"
-          standout
-          :options="options"
-          rounded
-          class="q-mb-sm text-center"
-        >
-        </q-select>
-        <form-main-task
-          v-if="taskSelect"
-          :task="(taskForm as any)"
-        ></form-main-task>
+  <div class="row q-pa-sm justify-center">
+    <div class="col-12 col-sm-10 col-md-8">
+      <div class="text-body2 q-pb-sm text-center">
+        {{ $t('quicktool.name') }}
       </div>
+      <q-select
+        v-model="taskSelect"
+        :label="$t('quicktool.taskDropdown')"
+        name="taskSelect"
+        standout
+        :options="options"
+        rounded
+        class="q-mb-sm text-center"
+      >
+      </q-select>
+      <form-main-task
+        v-if="taskSelect"
+        :task="(taskForm as any)"
+      ></form-main-task>
     </div>
-  </q-card>
+  </div>
 </template>
 
 <script setup lang="ts">

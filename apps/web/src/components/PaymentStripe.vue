@@ -4,6 +4,7 @@
     color="secondary"
     class="full-width q-pl-lg"
     size="lg"
+    :label="$t('membership.payWithStripe')"
     @click="createSession"
   >
   </btn-base>

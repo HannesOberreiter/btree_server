@@ -1,35 +1,3 @@
-<template>
-  <q-form @submit.prevent.stop="onSubmit">
-    <div class="row">
-      <div class="col-12">
-        <form-user-password
-          v-model:modelPassword="state.oldPassword"
-          password-label="oldPassword"
-          :confirm="false"
-        ></form-user-password>
-        <form-input-email
-          v-model="state.email"
-          :disable-mail="true"
-        ></form-input-email>
-        <form-user-password
-          v-model:modelPassword="state.newPassword"
-          password-label="newPassword"
-          :confirm="true"
-        ></form-user-password>
-      </div>
-    </div>
-  </q-form>
-  <btn-base
-    size="md"
-    color="secondary"
-    type="submit"
-    :loading="isSubmitting"
-    :label="$t('save')"
-    class="full-width text-white"
-    @click.prevent.stop="onSubmit"
-  />
-</template>
-
 <script setup lang="ts">
 import { useAuthUserStore } from '~/stores/auth';
 import { useNotification } from '~/composables/useNotification';
@@ -78,3 +46,43 @@ async function onSubmit() {
   isSubmitting.value = false;
 }
 </script>
+
+<template>
+  <q-form @submit.prevent.stop="onSubmit">
+    <div class="row">
+      <div class="col-12">
+        <form-user-password
+          v-model:modelPassword="state.oldPassword"
+          password-label="oldPassword"
+          :confirm="false"
+        ></form-user-password>
+        <form-input-email
+          v-model="state.email"
+          :disable-mail="true"
+        ></form-input-email>
+        <form-user-password
+          v-model:modelPassword="state.newPassword"
+          password-label="newPassword"
+          :confirm="true"
+        ></form-user-password>
+      </div>
+    </div>
+  </q-form>
+  <btn-base
+    size="md"
+    color="secondary"
+    type="submit"
+    :loading="isSubmitting"
+    :label="$t('save')"
+    class="full-width text-white"
+    @click.prevent.stop="onSubmit"
+  />
+  <btn-base
+    size="md"
+    color="grey-8"
+    type="a"
+    href="/visitor/recover"
+    :label="$t('forgot')"
+    class="full-width text-white q-mt-lg"
+  />
+</template>

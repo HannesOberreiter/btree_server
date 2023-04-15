@@ -14,7 +14,6 @@ if (Platform.is.ios || document.cookie.includes('iOS') || Platform.is.safari) {
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.getRegistrations().then(function (registrations) {
         for (const registration of registrations) {
-          console.log(registration);
           registration.unregister();
         }
       });

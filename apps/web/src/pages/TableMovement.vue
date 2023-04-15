@@ -14,6 +14,8 @@
         row-key="id"
         selection="multiple"
         binary-state-sort
+        flat
+        bordered
         @request="onRequest"
       >
         <!-- eslint-disable-next-line vue/valid-v-slot -->

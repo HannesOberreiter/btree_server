@@ -54,6 +54,15 @@
       @click="onDelete"
     />
   </btn-base-group>
+
+  <btn-base
+    color="secondary"
+    type="submit"
+    :loading="isSubmitting"
+    :label="t('logout')"
+    @click="onSubmit"
+    ><tooltip-base>Logout all devices </tooltip-base>
+  </btn-base>
 </template>
 
 <script setup lang="ts">

@@ -16,6 +16,7 @@
       </form-input-text>
       <form-input-email v-model="state.email"></form-input-email>
       <form-user-password
+        v-if="!isOAuthRedirect"
         v-model:modelPassword="state.password"
         :confirm="true"
       ></form-user-password>
@@ -125,6 +126,7 @@ import termsEN from '~/i18n/en/terms.txt?raw';
 import useVuelidate from '@vuelidate/core';
 import { ref, reactive } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useRouter } from 'vue-router';
 
 import FormUserPassword from '~/components/FormUserPassword.vue';
 import FormUserLanguage from '~/components/FormUserLanguage.vue';
@@ -135,6 +137,31 @@ import FormErrorMax from '~/components/FormErrorMax.vue';
 
 const notification = useNotification();
 const { t } = useI18n();
+const { currentRoute } = useRouter();
+
+// https://stackoverflow.com/a/43020177/5316675
+const pwdChars =
+  '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+const randPassword = new Array(35)
+  .fill(0)
+  .map(() =>
+    (function (chars) {
+      let umax = Math.pow(2, 32),
+        r = new Uint32Array(1),
+        max = umax - (umax % chars.length);
+      do {
+        crypto.getRandomValues(r);
+      } while (r[0] > max);
+      return chars[r[0] % chars.length];
+    })(pwdChars)
+  )
+  .join('');
+
+const company = (currentRoute.value.query?.name as string) ?? '';
+const email = (currentRoute.value.query?.email as string) ?? '';
+const isOAuthRedirect = !!currentRoute.value.query?.oauth;
+console.log(isOAuthRedirect);
+const password = isOAuthRedirect ? randPassword : '';
 
 const SOURCES = [
   {
@@ -183,10 +210,10 @@ const submitCount = ref(0);
 const languages = usePreferredLanguages();
 
 const state = reactive({
-  company: '',
-  email: '',
-  password: '',
-  confirmPassword: '',
+  company: company,
+  email: email,
+  password: password,
+  confirmPassword: password,
   lang: languages.value[0] === 'de' ? LANGUAGES[1] : LANGUAGES[0],
   source: SOURCES[0],
   other: '',

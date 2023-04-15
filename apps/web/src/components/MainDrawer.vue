@@ -422,6 +422,12 @@ const links = computed(() => [
     icon: 'fas fa-screwdriver',
     menu: [
       {
+        label: 'WizBee',
+        route: 'wizbee',
+        icon: 'fas fa-person-circle-question',
+        menu: [] as any,
+      },
+      {
         label: t('lifecycle'),
         route: 'lifecycle',
         icon: 'fas fa-arrows-spin',

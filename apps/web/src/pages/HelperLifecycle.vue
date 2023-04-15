@@ -1,5 +1,5 @@
 <template>
-  <q-card>
+  <q-card flat>
     <div class="row q-pa-sm justify-center">
       <div class="col-12">
         <div class="text-h5 q-pb-sm text-center">
@@ -10,7 +10,13 @@
     <q-card-section>
       <div class="row q-pa-sm justify-center">
         <div class="col-12 col-md-11 col-lg-6">
-          <q-markup-table dense separator="none" class="text-body1">
+          <q-markup-table
+            dense
+            separator="none"
+            class="text-body1"
+            flat
+            bordered
+          >
             <thead class="bg-info text-right">
               <tr>
                 <th>{{ $t('lifecycleHelper.caste') }}</th>
@@ -28,7 +34,7 @@
                 </th>
               </tr>
             </thead>
-            <tbody class="text-right">
+            <tbody class="text-right" flat bordered>
               <tr>
                 <td>{{ $t('queen') }}</td>
                 <td>3</td>

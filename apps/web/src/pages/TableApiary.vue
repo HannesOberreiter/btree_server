@@ -14,6 +14,8 @@
         row-key="id"
         selection="multiple"
         binary-state-sort
+        flat
+        bordered
         @request="onRequest"
       >
         <template #body-cell-name="props">

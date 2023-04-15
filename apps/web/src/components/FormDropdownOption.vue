@@ -40,12 +40,18 @@ import { useLocalStorage, useVModels } from '@vueuse/core';
 import { formCheckMultipleValues } from '~/helpers';
 import { useI18n } from 'vue-i18n';
 import { ref, watch, toRefs, computed } from 'vue';
+import { useQuasar } from 'quasar';
+
+import DialogForm from './DialogForm.vue';
+import { OPTIONS } from '~/constants';
 
 const localPerf = useLocalStorage(
   'pref-local',
   { 'charge-use-input': false },
   { mergeDefaults: true }
 );
+
+const $q = useQuasar();
 
 const { t } = useI18n();
 const hint = ref('');
@@ -117,6 +123,27 @@ watch(
   }
 );
 
+watch(modelValue, () => {
+  if (modelValue.value && typeof modelValue.value === 'object') {
+    if (modelValue.value.value === 'addOption') {
+      onNewOptionDialog();
+    }
+  }
+});
+
+function onNewOptionDialog() {
+  $q.dialog({
+    component: DialogForm,
+    componentProps: {
+      title: 'add',
+      form: 'option',
+      option: props.table,
+    },
+  }).onDismiss(() => {
+    setValues();
+  });
+}
+
 function filterSelection(val: any, update: any, _abort: any) {
   if (values.value !== null) {
     update(() => {
@@ -124,7 +151,8 @@ function filterSelection(val: any, update: any, _abort: any) {
       const needle = new RegExp(`(${val.toLowerCase()})`);
       options.value = filter(options.value, (obj) => {
         if (!obj.value) return;
-        return needle.test(obj.name.toLowerCase());
+        if (obj.name) return needle.test(obj.name.toLowerCase());
+        return;
       });
     });
   }
@@ -144,6 +172,14 @@ function setValues() {
     setOptions(modelValue.value);
   } else setOptions();
   keepOptions.value = options.value;
+}
+
+function setNewOptionPlaceholder() {
+  if (!OPTIONS.includes(props.table as any)) return;
+  options.value = [
+    ...options.value,
+    { label: `[${t('addOption')}]`, value: 'addOption' },
+  ];
 }
 
 function setOptions(id = 0) {
@@ -185,6 +221,7 @@ function setOptions(id = 0) {
       modelValue.value = res[0];
     }
   }
+  setNewOptionPlaceholder();
 }
 
 function editValues(val: boolean) {
