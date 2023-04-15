@@ -136,7 +136,7 @@ export default class ServiceController extends Controller {
       const result = await bot.search(req.body.question, req.body.lang);
       if (!result) throw notFound('Could not get answer from WizBee');
 
-      if (usedTokens) {
+      if (result.tokens) {
         savedTokens -= result.tokens;
         savedTokens = savedTokens < 0 ? 0 : savedTokens;
         savedQuestions += 1;
