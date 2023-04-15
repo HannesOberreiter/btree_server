@@ -29,7 +29,6 @@ const state = reactive({
 
 const validLastUrl = (): string | undefined => {
   const lastUrl = router.currentRoute.value.query.next;
-  console.log(lastUrl);
   if (!lastUrl) return undefined;
   if (typeof lastUrl !== 'string') return undefined;
   if (lastUrl === '/') return undefined;
