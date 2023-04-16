@@ -75,48 +75,47 @@ async function onQuestion() {
 <template>
   <div class="row justify-center q-mx-md">
     <div class="q-mb-md container-size">
-      <h3 class="q-mb-xs">{{ $t('ask') }} WizBee</h3>
-      <small class="text-grey-7">
-        {{ $t('help.wizbee') }}
-        <br />
-        API Service:
-        <a href="https://openai.com/" target="_blank">https://openai.com/</a>
-      </small>
-
-      <q-form class="q-mt-sm" @submit="(e) => e.preventDefault()">
-        <q-input
-          v-model="question"
-          :placeholder="$t('askQuestion')"
-          :minlength="3"
-          :maxlength="1000"
-          :clearable="true"
-        >
-          <template #prepend>
-            <img
-              src="
+      <div class="row justify-center vertical-middle q-mb-xs items-center">
+        <img
+          src="
       /wizbee/favicon-96x96.png"
-              alt="WizBee Logo"
-              style="width: 1.5em"
-            />
-          </template>
-          <template #after>
-            <BtnBase
-              fab
-              icon="fas fa-question"
-              type="submit"
-              color="positive"
-              @click="onQuestion()"
-            />
-            <q-select
-              v-model="lang"
-              class="q-pl-sm"
-              filled
-              :options="LANGUAGES"
-              option-value="value"
-              option-label="label"
-            />
-          </template>
-        </q-input>
+          alt="WizBee Logo"
+          height="50"
+          class="q-mr-sm"
+        />
+        <div class="text-h5">{{ $t('ask') }} WizBee</div>
+      </div>
+      <q-form class="q-mt-sm" @submit="(e) => e.preventDefault()">
+        <div class="row">
+          <q-input
+            v-model="question"
+            :placeholder="$t('askQuestion')"
+            :minlength="3"
+            :maxlength="1000"
+            :clearable="true"
+            class="full-width"
+          >
+            <template #after>
+              <BtnBase
+                icon="fas fa-question"
+                type="submit"
+                color="positive"
+                square
+                size="md"
+                @click="onQuestion()"
+              />
+              <q-select
+                v-model="lang"
+                filled
+                dense
+                square
+                :options="LANGUAGES"
+                option-value="value"
+                option-label="label"
+              />
+            </template>
+          </q-input>
+        </div>
       </q-form>
     </div>
   </div>
@@ -165,12 +164,20 @@ async function onQuestion() {
           :key="example"
           no-caps
           outline
+          size="sm"
           @click="onExampleQuestion(example)"
         >
           {{ example }}
         </q-btn>
       </div>
     </div>
+
+    <small class="text-grey-7 container-size">
+      {{ $t('help.wizbee') }}
+      <br />
+      API Service:
+      <a href="https://openai.com/" target="_blank">https://openai.com/</a>
+    </small>
   </div>
 </template>
 
