@@ -109,8 +109,11 @@ export default class ServiceController extends Controller {
       const premium = await isPremium(req.user.user_id);
       if (!premium) throw paymentRequired();
       const date = new Date().toISOString().split('T')[0];
+
       let savedTokens = 0;
       let savedQuestions = 0;
+      let id = null;
+
       const usedTokens = await WizBeeToken.query().findOne({
         bee_id: req.user.bee_id,
         date: date,
@@ -119,8 +122,10 @@ export default class ServiceController extends Controller {
         if (usedTokens.usedTokens <= 0) {
           throw tooManyRequests('Daily tokens limit reached');
         }
+
         savedTokens = usedTokens.usedTokens;
         savedQuestions = usedTokens.countQuestions;
+        id = usedTokens.id;
       } else {
         const insert = await WizBeeToken.query().insertAndFetch({
           bee_id: req.user.bee_id,
@@ -128,19 +133,21 @@ export default class ServiceController extends Controller {
           usedTokens: openAI.dailyUserTokenLimit,
           countQuestions: 0,
         });
+
         savedTokens = insert.usedTokens;
         savedQuestions = insert.countQuestions;
+        id = insert.id;
       }
 
       const bot = new WizBee();
       const result = await bot.search(req.body.question, req.body.lang);
       if (!result) throw notFound('Could not get answer from WizBee');
 
-      if (result.tokens) {
+      if (result.tokens && id) {
         savedTokens -= result.tokens;
         savedTokens = savedTokens < 0 ? 0 : savedTokens;
         savedQuestions += 1;
-        await WizBeeToken.query().patchAndFetchById(usedTokens.id, {
+        await WizBeeToken.query().patchAndFetchById(id, {
           usedTokens: savedTokens,
           countQuestions: savedQuestions,
         });
