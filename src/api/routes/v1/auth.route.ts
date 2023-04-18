@@ -87,7 +87,11 @@ export class AuthRouter extends Router {
         Container.resolve('AuthController').discourse
       );
 
-    this.router.route('/google/login').get(passport.authenticate('google'));
+    this.router.route('/google/login').get(
+      passport.authenticate('google', {
+        prompt: 'select_account',
+      })
+    );
     this.router.route('/google/callback').get(
       passport.authenticate('google', {
         session: false,
