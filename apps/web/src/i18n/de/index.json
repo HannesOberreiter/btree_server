@@ -412,6 +412,7 @@
     "apiTitle": "Premium-Mitglieder können auf die API zugreifen. Weitere Informationen finden Sie in der Dokumentation.",
     "credentialTitle": "Aktualisieren Sie Ihre Zugangsdaten, geben Sie aus Sicherheitsgründen bitte auch Ihr altes Passwort ein.",
     "federatedCredentials": "Liste der verbundenen oAuth-Drittanbieter. Hier können Sie Anbieter entfernen und hinzufügen. Derzeit wird nur Google unterstützt.",
+    "federatedCredentialsRemoveNote": "Wenn Sie Ihre Verbindung zu b.tree vollständig trennen möchten, müssen Sie Ihre Provider-Einstellungen aufrufen:",
     "name": "Profil | Profile",
     "session": "Liste der derzeit aktiven Sitzung. Sie werden nach Inaktivität für einen bestimmten Zeitraum automatisch gelöscht, aber Sie können Sitzungen hier auch manuell löschen.",
     "userDeleteText": "Möchten Sie Ihr Konto wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden. Hinweis: Wenn es in der aktuellen Imkerei einen anderen Benutzer gibt, werden die Imkereidaten nicht gelöscht, da sonst alle Daten entfernt werden. Bitte geben Sie zur Sicherheit Ihr aktuelles Passwort ein.",

@@ -412,6 +412,7 @@
     "apiTitle": "I membri Premium possono accedere all'API, consultare la documentazione per ulteriori informazioni.",
     "credentialTitle": "Aggiorna le tue credenziali di accesso, per motivi di sicurezza inserisci anche la tua vecchia password.",
     "federatedCredentials": "Elenco dei provider oAuth di terze parti connessi. \nPuoi rimuovere e aggiungere provider qui. \nAttualmente è supportato solo Google.",
+    "federatedCredentialsRemoveNote": "Se desideri rimuovere completamente la tua connessione a b.tree, devi visitare le impostazioni del tuo provider:",
     "name": "Profilo | Profili",
     "session": "Elenco delle sessioni attualmente attive. \nVerranno automaticamente cancellati dopo essere rimasti inattivi per un certo periodo di tempo, ma qui puoi anche eliminare manualmente le sessioni.",
     "userDeleteText": "Sei sicuro di voler eliminare il tuo account? Questa azione non può essere annullata. Nota: se nell'attuale azienda è presente un altro utente, i dati dell'azienda non verranno eliminati, altrimenti tutti i dati verranno rimossi. Per sicurezza, inserisci la tua password attuale.",

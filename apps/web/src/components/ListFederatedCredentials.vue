@@ -11,6 +11,7 @@ const $q = useQuasar();
 const t = useI18n().t;
 const notification = useNotification();
 const items = ref(null);
+const isAppleStoreWrapper = document.cookie.includes('iOS');
 
 await fetchFederatedCredentials();
 
@@ -101,6 +102,7 @@ function addFederatedCredentialDialog() {
     </q-item>
   </q-list>
   <BtnBase
+    v-if="!isAppleStoreWrapper"
     color="primary"
     :label="$t('addFederatedCredential')"
     size="md"

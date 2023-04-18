@@ -12,6 +12,7 @@
       icon="fas fa-passport"
       :values="values"
       :reset="reset"
+      :max-valid="24"
       :required="true"
     ></form-input-text>
     <form-input-note
@@ -19,6 +20,7 @@
       label="note"
       :values="values"
       :reset="reset"
+      :max-valid="2000"
     >
     </form-input-note>
   </q-form>
