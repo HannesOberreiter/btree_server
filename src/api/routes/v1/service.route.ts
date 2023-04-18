@@ -48,7 +48,7 @@ export class ServiceRouter extends Router {
           body('question').isString().isLength({ min: 1, max: 1000 }),
           body('lang').isString().isLength({ min: 2, max: 2 }),
         ]),
-        Guard.authorize([ROLES.admin, ROLES.user]),
+        Guard.authorize([ROLES.admin, ROLES.user, ROLES.read]),
         Container.resolve('ServiceController').askWizBee
       );
   }
