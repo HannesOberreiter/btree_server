@@ -2,7 +2,10 @@
   {
     "version": "6.2.1",
     "date": "2023-04-18",
-    "news": ["BUGFIX disabled google sign-in for iOS app"]
+    "news": [
+      "BUGFIX disabled google sign-in for iOS app",
+      "BUGFIX validate max length for rearing methods name"
+    ]
   },
   {
     "version": "6.2.0",
