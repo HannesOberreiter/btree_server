@@ -412,6 +412,7 @@
     "apiTitle": "Premium members can access the API, please see documentation for more information.",
     "credentialTitle": "Update your login credentials, for security reasons please also insert your old password.",
     "federatedCredentials": "List of connected third party oAuth provider. You can remove and add provider here. Currently only Google is supported.",
+    "federatedCredentialsRemoveNote": "If you want to entirely remove your connection to b.tree you need to visit your provider settings: ",
     "name": "Profile | Profiles",
     "session": "List of currently active session. They will be auto deleted after inactive for a certain period of time, but you can also manually delete sessions here. ",
     "userDeleteText": "Are you sure you want to delete your account? This action cannot be undone. Note: If there are another user in the current company the company data wont be deleted otherwise all data will be removed. For security please enter your current password.",
