@@ -18,6 +18,7 @@ const notification = useNotification();
 const isSubmitting = ref(true);
 const submitCount = ref(0);
 const forceDashboardRedirect = ref(false);
+const isAppleStoreWrapper = document.cookie.includes('iOS');
 
 const store = useAuthUserStore();
 const { activate } = storeToRefs(store);
@@ -137,6 +138,7 @@ async function redirect() {
         />
 
         <q-btn
+          v-if="!isAppleStoreWrapper"
           color="primary"
           label="Google"
           icon="fab fa-google"

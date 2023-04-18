@@ -68,6 +68,13 @@ const userStore = useAuthUserStore();
           <div class="col-12 col-sm-10 col-md-8">
             <div class="text-body2 q-pb-sm text-center">
               {{ $t('profile.federatedCredentials') }}
+              {{ $t('profile.federatedCredentialsRemoveNote') }}
+              <a
+                href="https://myaccount.google.com/permissions"
+                target="_blank"
+              >
+                Google Permissions
+              </a>
             </div>
             <suspense>
               <list-federated-credentials></list-federated-credentials>
