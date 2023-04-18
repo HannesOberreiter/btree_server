@@ -1,5 +1,10 @@
 [
   {
+    "version": "6.2.1",
+    "date": "2023-04-18",
+    "news": ["BUGFIX disabled google sign-in for iOS app"]
+  },
+  {
     "version": "6.2.0",
     "date": "2023-04-15",
     "news": [
