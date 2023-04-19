@@ -171,7 +171,6 @@ const useNFC = () => {
             try {
               const result = [] as any;
               for (const record of event.message.records) {
-                console.log(record);
                 const item = {
                   name: 'Record type:  ' + record.recordType,
                   type: 'MIME type:    ' + record.mediaType,
@@ -180,7 +179,6 @@ const useNFC = () => {
                     ? '=== data ===\n' + decoder.decode(record.data)
                     : '',
                 };
-                console.log(item);
                 result.push(item);
               }
               state.content = result;
@@ -216,7 +214,8 @@ const useNFC = () => {
               console.log('Record type:  ' + record.recordType);
               console.log('MIME type:    ' + record.mediaType);
               console.log('ID:    ' + record.id);
-              console.log('=== data ===\n' + decoder.decode(record.data));
+              if (record.data)
+                console.log('=== data ===\n' + decoder.decode(record.data));
             }
             const record = event.message.records[0];
 
