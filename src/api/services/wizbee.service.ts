@@ -10,6 +10,7 @@ type Metadata = {
   folder: boolean;
   link: string;
   reference: string;
+  score?: number;
 };
 
 type Document = {
@@ -113,7 +114,7 @@ export class WizBee {
       const document = documents[i];
       const content = document.content;
       const encoded = encode(content);
-      refs.push({ ...document.metadata });
+      refs.push({ ...document.metadata, score: document.score });
       tokenCount += encoded.length;
 
       if (tokenCount > 2500) {
@@ -137,7 +138,7 @@ export class WizBee {
    * @description search for the most similar documents, based on KNN flat index
    * @param text the text to search for
    * @param k number of results to return
-   * @param minScore the minimum matching score required for a document to be considered a match. Defaults to 0.2. Because the similarity calculation algorithm is based on cosine similarity, the smaller the angle, the higher the similarity.
+   * @param minScore the minimum matching score required for a document to be considered a match. Defaults to 0.2. Because the similarity calculation algorithm is based on cosine similarity, the smaller the angle, the higher the similarity. (Cosine Distance = 1 — Cosine Similarity)
    */
   private async searchKNN(
     embedding: number[],
@@ -230,7 +231,7 @@ export class WizBee {
         {
           role: 'system',
           content:
-            'You are a friendly bot assistant, answering beekeeping related question by using given context. The context could be from multiple references and each is separated by ###.',
+            'You are a friendly bot assistant, answering beekeeping related question by using only given context. The context could be from multiple references and each is separated by ###. If you cannot give a good answer with given context, please type "Sorry, we cannot give a good answer to that question."',
         },
         {
           role: 'system',
@@ -281,7 +282,7 @@ export class WizBee {
     );
     tokens += embeddingTokens;
 
-    const results = await this.searchKNN(embedding);
+    const results = await this.searchKNN(embedding, 4, 0.21);
 
     if (!results) return undefined;
     if (results.length === 0) return undefined;
