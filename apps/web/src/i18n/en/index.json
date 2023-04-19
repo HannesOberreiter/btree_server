@@ -368,10 +368,12 @@
   "nfc": {
     "aborted": "NFC aborted",
     "active": "NFC reader is active",
+    "clearing": "Place your tag near your NFC reader to clear it.",
     "content": "Place your tag near your NFC reader to get the content of the tag.",
     "reading": "NFC reader is active you can close this window and start scanning tags.",
     "timeout": "NFC timeout, try again.",
-    "writing": "Place your tag near your NFC reader to write the current URL."
+    "writing": "Place your tag near your NFC reader to write the current URL.",
+    "writingDone": "Tag is succesfully overwritten!"
   },
   "no": "No",
   "noFederatedCredentials": "Currently there are no connected providers.",

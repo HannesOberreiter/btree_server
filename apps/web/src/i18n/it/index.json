@@ -368,10 +368,12 @@
   "nfc": {
     "aborted": "NFC interrotto",
     "active": "Il lettore NFC è attivo",
+    "clearing": "Posiziona il tag vicino al lettore NFC per cancellarlo.",
     "content": "Posiziona il tuo tag vicino al tuo lettore NFC per ottenere il contenuto del tag.",
     "reading": "Il lettore NFC è attivo puoi chiudere questa finestra e avviare la scansione dei tag.",
     "timeout": "Timeout NFC, riprova.",
-    "writing": "Posiziona il tag vicino al tuo lettore NFC per scrivere l'URL corrente."
+    "writing": "Posiziona il tag vicino al tuo lettore NFC per scrivere l'URL corrente.",
+    "writingDone": "Il tag è stato sovrascritto correttamente!"
   },
   "no": "No",
   "noFederatedCredentials": "Al momento non ci sono provider collegati.",

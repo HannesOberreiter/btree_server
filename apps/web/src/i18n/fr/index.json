@@ -368,10 +368,12 @@
   "nfc": {
     "aborted": "NFC abandonné",
     "active": "Le lecteur NFC est actif",
+    "clearing": "Placez votre tag près de votre lecteur NFC pour l'effacer.",
     "content": "Placez votre tag près de votre lecteur NFC pour obtenir le contenu du tag.",
     "reading": "Le lecteur NFC est actif, vous pouvez fermer cette fenêtre et commencer à numériser les balises.",
     "timeout": "Délai d'attente NFC, réessayez.",
-    "writing": "Placez votre tag près de votre lecteur NFC pour écrire l'URL courante."
+    "writing": "Placez votre tag près de votre lecteur NFC pour écrire l'URL courante.",
+    "writingDone": "La balise a été écrasée avec succès !"
   },
   "no": "Non",
   "noFederatedCredentials": "Il n'y a actuellement aucun fournisseur connecté.",

@@ -76,73 +76,120 @@ interface NDEFScanOptions {
 
 const state = reactive({
   writing: false,
+  writingDone: false,
+  writingContent: '',
+  clearing: false,
   reading: false,
   getContent: false,
   content: [] as any,
 });
+
+const abortSignals = [] as AbortController[];
+const writeTimeouts: ReturnType<typeof setTimeout>[] = [];
+let ndef: undefined | NDEFReader = undefined;
+const decoder = new TextDecoder();
 
 const useNFC = () => {
   const notification = useNotification();
   const router = useRouter();
   const storeScanning = useScanningStore();
 
-  let controller = new AbortController();
-  let ndef = null as null | NDEFReader;
   // Functional logic adapted from
   // Project: https://github.com/maevsi/maevsi
   // Commit: https://github.com/maevsi/maevsi/commit/6e132cda75127166f48859c6da29eb0f1ba6c099#diff-9bc2c5cb71c26f59ef0c2e9a0024abb2b895c1ce889fa890116b9fd2c1ed32a5
 
   const isSupported = () => 'NDEFReader' in window;
 
+  async function initScan() {
+    const isAllowed = await check();
+    if (!isAllowed) return false;
+    if (ndef) return true;
+
+    try {
+      ndef = new NDEFReader();
+      ndef.onreadingerror = (e) => {
+        console.error(
+          'Argh! Cannot read data from the NFC tag. Try another one?'
+        );
+        console.error(e);
+      };
+      const ctrl = new AbortController();
+      ctrl.signal.onabort = () => {
+        console.log('NFC scan aborted');
+      };
+      await ndef.scan({ signal: ctrl.signal });
+      abortSignals.push(ctrl);
+
+      return true;
+    } catch (e) {
+      console.error(e);
+      return false;
+    }
+  }
+
   function abort(message: string | boolean = 'nfc.aborted') {
     state.reading = false;
     state.writing = false;
+    state.writingDone = false;
     state.getContent = false;
-    if (controller) {
-      try {
-        controller.abort('AbortError');
-      } catch (e) {
-        console.error(e);
-      }
+    state.clearing = false;
+    state.writingContent = '';
+    state.content = [];
+
+    try {
+      abortSignals.forEach((signal) => signal.abort());
+    } catch (e) {
+      console.error(e);
     }
-    ndef = null;
-    controller = null;
+
+    ndef = undefined;
+
     if (message) notification.open('negative', message);
   }
 
+  function anyStateTrue() {
+    return (
+      state.reading ||
+      state.writing ||
+      state.writingDone ||
+      state.getContent ||
+      state.clearing
+    );
+  }
+
   async function getContent() {
-    if (state.getContent) {
-      state.content = [];
-      abort(false);
-      return false;
-    }
-    if (state.reading || state.writing || state.getContent) abort(false);
-    if (await check()) {
+    if (state.getContent) return;
+    if (anyStateTrue()) abort(false);
+    const result = await initScan();
+    if (result) {
       try {
         state.getContent = true;
-        ndef = new NDEFReader();
-        controller = new AbortController();
-        ndef.scan({ signal: controller.signal });
-        const result = [] as any;
-        ndef.onreadingerror = (e) => {
-          console.error(
-            'Argh! Cannot read data from the NFC tag. Try another one?'
-          );
-          console.error(e);
-        };
-        ndef.onreading = (event: any) => {
-          const decoder = new TextDecoder();
-          for (const record of event.message.records) {
-            const item = {
-              name: 'Record type:  ' + record.recordType,
-              type: 'MIME type:    ' + record.mediaType,
-              id: 'ID:    ' + record.id,
-              data: '=== data ===\n' + decoder.decode(record.data),
-            };
-            result.push(item);
-          }
-          state.content = result;
-        };
+        abortSignals.push(new AbortController());
+        ndef.addEventListener(
+          'reading',
+          (event: any) => {
+            try {
+              const result = [] as any;
+              for (const record of event.message.records) {
+                console.log(record);
+                const item = {
+                  name: 'Record type:  ' + record.recordType,
+                  type: 'MIME type:    ' + record.mediaType,
+                  id: 'ID:    ' + record.id,
+                  data: record.data
+                    ? '=== data ===\n' + decoder.decode(record.data)
+                    : '',
+                };
+                console.log(item);
+                result.push(item);
+              }
+              state.content = result;
+            } catch (e) {
+              console.error(e);
+            }
+          },
+          { signal: abortSignals[abortSignals.length - 1].signal }
+        );
       } catch (error) {
         console.error(error);
         state.getContent = false;
@@ -154,66 +201,62 @@ const useNFC = () => {
   }
 
   async function read() {
-    state.content = [];
-    if (state.reading || state.writing || state.getContent) abort(false);
-    if (await check()) {
+    if (state.reading) return;
+    if (anyStateTrue()) abort(false);
+    const result = await initScan();
+    if (result) {
       try {
-        ndef = new NDEFReader();
         state.reading = true;
-        controller = new AbortController();
-        ndef.scan({ signal: controller.signal });
         notification.open('positive', 'nfc.active');
-        ndef.onreadingerror = (e) => {
-          console.error(
-            'Argh! Cannot read data from the NFC tag. Try another one?'
-          );
-          console.error(e);
-        };
-        ndef.onreading = (event: any) => {
-          const decoder = new TextDecoder();
-          for (const record of event.message.records) {
-            console.log('Record type:  ' + record.recordType);
-            console.log('MIME type:    ' + record.mediaType);
-            console.log('ID:    ' + record.id);
-            console.log('=== data ===\n' + decoder.decode(record.data));
-          }
-          const record = event.message.records[0];
+        abortSignals.push(new AbortController());
+        ndef.addEventListener(
+          'reading',
+          (event: any) => {
+            for (const record of event.message.records) {
+              console.log('Record type:  ' + record.recordType);
+              console.log('MIME type:    ' + record.mediaType);
+              console.log('ID:    ' + record.id);
+              console.log('=== data ===\n' + decoder.decode(record.data));
+            }
+            const record = event.message.records[0];
 
-          if (!record) return false;
-          let id = record.id ? record.id : '';
-          const decodedData = record.data ? decoder.decode(record.data) : '';
+            if (!record) return false;
+            let id = record.id ? record.id : '';
+            const decodedData = record.data ? decoder.decode(record.data) : '';
 
-          if (id === '' && decodedData) {
-            const deleteBase = new RegExp(/^(.*?)btree.at(?:\/app)?/i);
-            const generatedId = decodedData.replace(deleteBase, '');
-            if (
-              decodedData.indexOf('/detail/hive') > 0 ||
-              decodedData.indexOf('/detail/apiary') > 0 ||
-              decodedData.indexOf('app.btree.at') > 0
-            ) {
-              /*
+            if (id === '' && decodedData) {
+              const deleteBase = new RegExp(/^(.*?)btree.at(?:\/app)?/i);
+              const generatedId = decodedData.replace(deleteBase, '');
+              if (
+                decodedData.indexOf('/detail/hive') > 0 ||
+                decodedData.indexOf('/detail/apiary') > 0 ||
+                decodedData.indexOf('app.btree.at') > 0
+              ) {
+                /*
                    Generate a custom ID if it is an old NFC tag with detail link or
                     if user did only write URL, eg. custom NFC tool
                    */
-              id = generatedId;
+                id = generatedId;
+              }
             }
-          }
-          if (id && id !== '') {
-            /**
+            if (id && id !== '') {
+              /**
                 If a hive dropdown is active visible it will try to make a selection based on the tag,
                 otherwise a redirect will happen.
              */
-            if (
-              storeScanning.hiveDropdownActive &&
-              storeScanning.extractUrl(id)
-            ) {
-              return true;
-            } else {
-              notification.open('positive', id, true);
-              router.push(id);
+              if (
+                storeScanning.hiveDropdownActive &&
+                storeScanning.extractUrl(id)
+              ) {
+                return true;
+              } else {
+                notification.open('positive', id, true);
+                router.push(id);
+              }
             }
-          }
-        };
+          },
+          { signal: abortSignals[abortSignals.length - 1].signal }
+        );
       } catch (error) {
         console.error(error);
         state.reading = false;
@@ -226,6 +269,78 @@ const useNFC = () => {
     }
     return true;
   }
+
+  async function write(url: string | null, shortUrl = ''): Promise<void> {
+    if (anyStateTrue()) abort(false);
+    const result = await initScan();
+    if (result) {
+      try {
+        const records = {
+          records: [
+            {
+              recordType: 'empty',
+            },
+          ],
+        } as any;
+        if (url) {
+          state.writing = true;
+          state.writingContent = url;
+          records.records = [
+            {
+              recordType: 'url',
+              id: shortUrl,
+              data: url,
+            },
+          ];
+        } else {
+          state.clearing = true;
+        }
+
+        const ctrlWrite = new AbortController();
+        ctrlWrite.signal.onabort = () => 'timeout';
+        writeTimeouts.push(
+          setTimeout(() => {
+            if (ctrlWrite) ctrlWrite.abort();
+          }, 10_000)
+        );
+
+        ndef.addEventListener(
+          'reading',
+          (_event) => {
+            console.log('Currently waiting for write to finish...');
+          },
+          { signal: ctrlWrite.signal }
+        );
+
+        await ndef
+          .write(records, { signal: ctrlWrite.signal })
+          .then(() => {
+            notification.open('positive', '');
+          })
+          .catch((e) => {
+            if (e === 'timeout') {
+              if (!state.writingDone)
+                notification.open('negative', 'nfc.timeout', false);
+            } else {
+              console.error(e);
+              notification.open('negative', '');
+            }
+          })
+          .finally(() => {
+            state.writing = false;
+            state.writingDone = true;
+            state.writingContent = '';
+            state.clearing = false;
+          });
+      } catch (error: any) {
+        state.writing = false;
+        state.writingContent = '';
+        state.clearing = false;
+        console.error(error);
+      }
+    }
+  }
+
   async function check(): Promise<boolean> {
     try {
       if (!('NDEFReader' in window)) {
@@ -250,52 +365,8 @@ const useNFC = () => {
     }
   }
 
-  async function write(url: string | null, shortUrl = ''): Promise<boolean> {
-    state.content = [];
-    if (state.reading || state.writing || state.getContent) abort(false);
-    if (await check()) {
-      try {
-        state.writing = true;
-        controller = new AbortController();
-        const records = url
-          ? {
-              records: [
-                {
-                  recordType: 'url',
-                  id: shortUrl,
-                  data: url,
-                },
-              ],
-            }
-          : {
-              records: [
-                {
-                  recordType: 'empty',
-                },
-              ],
-            };
-
-        ndef = new NDEFReader();
-        controller = new AbortController();
-        setTimeout(() => controller.abort('timeout'), 10_000);
-        await ndef.write(records, { signal: controller.signal });
-        notification.open('positive', '');
-        abort(false);
-      } catch (error: any) {
-        if (error === 'timeout') {
-          abort('nfc.timeout');
-        } else {
-          abort();
-        }
-        console.error(error);
-      } finally {
-        state.writing = false;
-      }
-    }
-    return true;
-  }
-
   return {
+    ndef,
     state,
     abort,
     isSupported,

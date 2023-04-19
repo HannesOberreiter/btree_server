@@ -368,10 +368,12 @@
   "nfc": {
     "aborted": "NFC abgebrochen",
     "active": "NFC-Reader ist aktiv",
+    "clearing": "Platzieren Sie Ihr Tag in der Nähe Ihres NFC-Lesegeräts, um es zu löschen.",
     "content": "Platziere den Tag in der Nähe des NFC-Lesegeräts, um den Inhalt des Tags abzurufen.",
     "reading": "Wenn der NFC-Leser aktiv ist, können Sie dieses Fenster schließen und mit dem Scannen von Tags beginnen.",
     "timeout": "NFC war zu lange inaktiv, versuch es erneut.",
-    "writing": "Platzieren Sie Ihr Tag in der Nähe Ihres NFC-Lesegeräts, um die aktuelle URL zu schreiben."
+    "writing": "Platzieren Sie Ihr Tag in der Nähe Ihres NFC-Lesegeräts, um die aktuelle URL zu schreiben.",
+    "writingDone": "Tag wurde erfolgreich überschrieben!"
   },
   "no": "Nein",
   "noFederatedCredentials": "Derzeit sind keine angeschlossenen Anbieter vorhanden.",
