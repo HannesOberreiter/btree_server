@@ -341,6 +341,7 @@
     "perksStats": "Accesso a statistiche reattive",
     "perksSupport": "Supportare lo sviluppo del software e mantenere attivo il servizio",
     "perksTemperature": "Al momento del controllo il campo della temperatura viene compilato automaticamente",
+    "perksWizBee": "Accedi a WizBee la tua conoscenza personale dell'apicoltura AI, alimentata da ChatGPT",
     "thankYou": "Grazie per il tuo contributo. Il tempo premium dovrebbe essere aggiunto automaticamente, altrimenti prova ad accedere o disconnettersi. In caso di problemi, non esitare a contattarci all'indirizzo {'office@btree.at'}",
     "title": "Supporta b.tree con accesso premium per un anno"
   },
@@ -367,10 +368,12 @@
   "nfc": {
     "aborted": "NFC interrotto",
     "active": "Il lettore NFC è attivo",
+    "clearing": "Posiziona il tag vicino al lettore NFC per cancellarlo.",
     "content": "Posiziona il tuo tag vicino al tuo lettore NFC per ottenere il contenuto del tag.",
     "reading": "Il lettore NFC è attivo puoi chiudere questa finestra e avviare la scansione dei tag.",
     "timeout": "Timeout NFC, riprova.",
-    "writing": "Posiziona il tag vicino al tuo lettore NFC per scrivere l'URL corrente."
+    "writing": "Posiziona il tag vicino al tuo lettore NFC per scrivere l'URL corrente.",
+    "writingDone": "Il tag è stato sovrascritto correttamente!"
   },
   "no": "No",
   "noFederatedCredentials": "Al momento non ci sono provider collegati.",
