@@ -140,7 +140,7 @@ async function onQuestion() {
         <ul>
           <li v-for="meta in data?.refs" :key="meta.reference">
             <a :href="meta.link" class="text-white" target="_blank">
-              {{ meta.reference }}
+              {{ meta.reference }} ({{ Math.round((1 - meta.score) * 100) }}%)
             </a>
           </li>
         </ul>
