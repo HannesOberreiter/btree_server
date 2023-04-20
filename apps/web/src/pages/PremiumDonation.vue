@@ -131,6 +131,9 @@
               {{ $t('membership.perksStats') }}
             </li>
             <li>
+              {{ $t('membership.perksWizBee') }}
+            </li>
+            <li>
               {{ $t('membership.perksSupport') }}
             </li>
           </ul>

@@ -1,123 +1,3 @@
-<template>
-  <q-dialog
-    ref="dialogRef"
-    :maximized="$q.platform.is.mobile"
-    data-cy="dialog-share"
-    @hide="onHide"
-  >
-    <q-card style="width: 700px">
-      <q-card-section>
-        <div class="row">
-          <div class="text-h6">{{ title }}</div>
-          <q-space />
-          <btn-close-dialog></btn-close-dialog>
-        </div>
-        <div class="row print-hide">
-          {{ $t('currentPageLink') }}
-        </div>
-        <div class="row full-width justify-center">
-          <img id="qr-code" :src="qrcode" alt="b.tree - QR Code" />
-          <btn-base icon="fas fa-print" @click="printQR"></btn-base>
-        </div>
-        <div class="row full-width justify-center">
-          <div class="col-12">
-            <q-input
-              v-model="urlRef"
-              data-cy="input-url"
-              :value="url"
-              :label="$t('url')"
-              :readonly="true"
-            >
-              <template #append>
-                <btn-base
-                  flat
-                  icon="fas fa-copy"
-                  data-cy="btn-copy"
-                  @click="
-                    copy(url).then(() =>
-                      notification.open('info', 'copiedToClipboard')
-                    )
-                  "
-                />
-              </template>
-            </q-input>
-          </div>
-        </div>
-      </q-card-section>
-      <q-card-section>
-        <div class="row print-hide">
-          <div class="col-12 text-center text-h6">NFC</div>
-          <div v-if="!nfc.isSupported()" class="col-12 text-center">
-            {{ $t('error.nfcNotSupported') }}
-          </div>
-        </div>
-      </q-card-section>
-      <q-card-actions align="center" class="print-hide">
-        <btn-base-group>
-          <btn-base
-            :label="nfc.state.reading ? $t('active') : $t('read')"
-            color="primary"
-            :disable="
-              !nfc.isSupported() || nfc.state.reading || nfc.state.getContent
-            "
-            @click="nfc.read"
-          />
-          <btn-base
-            :label="$t('write')"
-            color="secondary"
-            :disable="
-              !nfc.isSupported() || nfc.state.writing || nfc.state.getContent
-            "
-            @click="nfc.write(url, urlShort)"
-          />
-        </btn-base-group>
-      </q-card-actions>
-      <q-card-actions align="center" class="print-hide">
-        <btn-base-group>
-          <btn-base
-            :label="nfc.state.getContent ? $t('ready') : $t('content')"
-            color="secondary"
-            :disable="
-              !nfc.isSupported() || nfc.state.reading || nfc.state.writing
-            "
-            @click="nfc.getContent()"
-          />
-          <btn-base
-            :label="$t('clear')"
-            color="negative"
-            :disable="
-              !nfc.isSupported() || nfc.state.writing || nfc.state.getContent
-            "
-            @click="nfc.write(null)"
-          />
-          <btn-base
-            :label="$t('cancel')"
-            color="grey"
-            :disable="
-              !nfc.state.writing && !nfc.state.reading && !nfc.state.getContent
-            "
-            @click="nfc.abort()"
-          />
-        </btn-base-group>
-        <div v-if="nfc.state.writing" class="col-12 text-center">
-          {{ $t('nfc.writing') }}
-        </div>
-        <div v-if="nfc.state.reading" class="col-12 text-center">
-          {{ $t('nfc.reading') }}
-        </div>
-        <div v-if="nfc.state.getContent" class="col-12 text-center">
-          {{ $t('nfc.content') }}
-        </div>
-        <div v-if="nfc.state.content[0]" class="col-12 text-center">
-          <div v-for="(item, index) in nfc.state.content[0]" :key="index">
-            {{ item }}
-          </div>
-        </div>
-      </q-card-actions>
-    </q-card>
-  </q-dialog>
-</template>
-
 <script setup lang="ts">
 import { useDialogPluginComponent } from 'quasar';
 import { useQRCode } from '@vueuse/integrations/useQRCode';
@@ -208,3 +88,142 @@ function printQR() {
   });
 }
 </script>
+
+<template>
+  <q-dialog
+    ref="dialogRef"
+    :maximized="$q.platform.is.mobile"
+    data-cy="dialog-share"
+    @hide="onHide"
+  >
+    <q-card style="width: 700px">
+      <q-card-section>
+        <div class="row">
+          <div class="text-h6">{{ title }}</div>
+          <q-space />
+          <btn-close-dialog></btn-close-dialog>
+        </div>
+        <div class="row print-hide">
+          {{ $t('currentPageLink') }}
+        </div>
+        <div class="row full-width justify-center">
+          <img id="qr-code" :src="qrcode" alt="b.tree - QR Code" />
+          <btn-base icon="fas fa-print" @click="printQR"></btn-base>
+        </div>
+        <div class="row full-width justify-center">
+          <div class="col-12">
+            <q-input
+              v-model="urlRef"
+              data-cy="input-url"
+              :value="url"
+              :label="$t('url')"
+              :readonly="true"
+            >
+              <template #append>
+                <btn-base
+                  flat
+                  icon="fas fa-copy"
+                  data-cy="btn-copy"
+                  @click="
+                    copy(url).then(() =>
+                      notification.open('info', 'copiedToClipboard')
+                    )
+                  "
+                />
+              </template>
+            </q-input>
+          </div>
+        </div>
+      </q-card-section>
+      <q-card-section>
+        <div class="row print-hide">
+          <div class="col-12 text-center text-h6">NFC</div>
+          <div v-if="!nfc.isSupported()" class="col-12 text-center">
+            {{ $t('error.nfcNotSupported') }}
+          </div>
+        </div>
+      </q-card-section>
+      <q-card-actions align="center" class="print-hide">
+        <btn-base-group>
+          <btn-base
+            :label="nfc.state.reading ? $t('active') : $t('read')"
+            color="primary"
+            :disable="
+              !nfc.isSupported() ||
+              nfc.state.writing ||
+              nfc.state.getContent ||
+              nfc.state.clearing
+            "
+            @click="nfc.read"
+          />
+          <btn-base
+            :label="$t('write')"
+            color="secondary"
+            :disable="
+              !nfc.isSupported() ||
+              nfc.state.reading ||
+              nfc.state.getContent ||
+              nfc.state.clearing
+            "
+            @click="nfc.write(url, urlShort)"
+          />
+        </btn-base-group>
+      </q-card-actions>
+      <q-card-actions align="center" class="print-hide">
+        <btn-base-group>
+          <btn-base
+            :label="nfc.state.getContent ? $t('ready') : $t('content')"
+            color="secondary"
+            :disable="
+              !nfc.isSupported() ||
+              nfc.state.writing ||
+              nfc.state.clearing ||
+              nfc.state.reading
+            "
+            @click="nfc.getContent()"
+          />
+          <btn-base
+            :label="$t('clear')"
+            color="negative"
+            :disable="
+              !nfc.isSupported() ||
+              nfc.state.reading ||
+              nfc.state.getContent ||
+              nfc.state.writing
+            "
+            @click="nfc.write(null)"
+          />
+          <btn-base :label="$t('cancel')" color="grey" @click="nfc.abort()" />
+        </btn-base-group>
+        <div
+          v-if="nfc.state.writingDone"
+          class="col-12 text-center text-positive"
+        >
+          {{ $t('nfc.writingDone') }}
+        </div>
+        <div v-else-if="nfc.state.writing" class="col-12 text-center">
+          {{ $t('nfc.writing') }}
+          [{{ nfc.state.writingContent }}]
+        </div>
+        <div v-else-if="nfc.state.clearing" class="col-12 text-center">
+          {{ $t('nfc.clearing') }}
+        </div>
+        <div v-else-if="nfc.state.reading" class="col-12 text-center">
+          {{ $t('nfc.reading') }}
+        </div>
+        <div v-else-if="nfc.state.getContent" class="col-12 text-center">
+          {{ $t('nfc.content') }}
+        </div>
+        <div v-if="nfc.state.content[0]" class="col-12 text-center">
+          <div
+            v-for="(item, index) in nfc.state.content[0]"
+            :key="index"
+            class="text-positive"
+          >
+            {{ item }}
+          </div>
+        </div>
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
+</template>

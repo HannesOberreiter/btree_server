@@ -1,5 +1,13 @@
 [
   {
+    "version": "6.2.2",
+    "date": "2023-04-20",
+    "news": [
+      "BUGFIX added possible fix for NFC occurring for android 13 with chrome 110",
+      "IMPROVEMENT add more references for WizBee"
+    ]
+  },
+  {
     "version": "6.2.1",
     "date": "2023-04-18",
     "news": [
