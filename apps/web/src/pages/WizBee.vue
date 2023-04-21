@@ -51,6 +51,12 @@ async function onQuestion() {
       lang: lang.value.value,
     })
     .then((res) => {
+      // if no choice is returned by chatGPT
+      if (res?.text === undefined) {
+        data.value = undefined;
+        error.value = t('error.unknown');
+        return;
+      }
       data.value = res;
       error.value = undefined;
     })
