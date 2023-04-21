@@ -294,7 +294,9 @@ export class WizBee {
 
     tokens += answer?.usage?.total_tokens ?? 0;
 
+    const answerText = answer?.choices[0].message?.content ?? undefined;
+
     //return { text: answer.choices[0].text, refs, tokens };
-    return { text: answer.choices[0].message?.content, refs, tokens };
+    return { text: answerText, refs, tokens };
   }
 }
