@@ -14,7 +14,6 @@
 // ***********************************************************
 
 import './commands';
-import '@cypress/code-coverage/support';
 
 afterEach(function () {
   // https://github.com/cypress-io/cypress/issues/518

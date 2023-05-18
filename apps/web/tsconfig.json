@@ -5,6 +5,8 @@
     "skipLibCheck": true,
     "noUnusedLocals": true,
     "strictNullChecks": false,
+    "sourceMap": false,
+    "inlineSourceMap": false,
     "forceConsistentCasingInFileNames": true,
     "types": [
       "@quasar/quasar-app-extension-testing-e2e-cypress"
