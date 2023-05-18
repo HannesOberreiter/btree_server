@@ -12,7 +12,7 @@ describe('User - Hive Table', () => {
     cy.dataCy('btn-table-new').click();
     cy.dataCy('form-hive').should('exist');
     cy.get('[name=hive]').clear();
-    cy.get('[name=hive]').type(chance.animal());
+    cy.get('[name=hive]').type(chance.animal().substring(0, 24));
     cy.dataCy('btn-repeat').click();
     cy.get('[name=numberHives]').clear();
     cy.get('[name=numberHives]').type('2');
