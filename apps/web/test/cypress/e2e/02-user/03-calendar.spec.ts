@@ -22,7 +22,8 @@ describe('User - Calendar', () => {
       .find('.fc-daygrid-day-bg')
       .dblclick({ force: true });
     cy.dataCy('form-todo').should('exist');
-    cy.get('[name=todo]').clear().type(chance.animal());
+    cy.get('[name=todo]').clear();
+    cy.get('[name=todo]').type(chance.animal());
     cy.dataCy('btn-form-save').click();
     cy.dataCy('form-todo').should('not.exist');
 
@@ -31,23 +32,14 @@ describe('User - Calendar', () => {
     cy.get('.fc-dayGridWeek-button').as('btn-grid-week');
     cy.get('.fc-listWeek-button').as('btn-list-week');
 
-    cy.get('.fc-dayGridWeek-button')
-      .click()
-      .then(() => {
-        cy.get('.fc-dayGridWeek-view').should('exist');
-      });
+    cy.get('.fc-dayGridWeek-button').click();
+    cy.get('.fc-dayGridWeek-view').should('exist');
 
-    cy.get('.fc-listWeek-button')
-      .click()
-      .then(() => {
-        cy.get('.fc-listWeek-view').should('exist');
-      });
+    cy.get('.fc-listWeek-button').click();
+    cy.get('.fc-listWeek-view').should('exist');
 
-    cy.get('.fc-dayGridMonth-button')
-      .click()
-      .then(() => {
-        cy.get('.fc-dayGridMonth-view').should('exist');
-      });
+    cy.get('.fc-dayGridMonth-button').click();
+    cy.get('.fc-dayGridMonth-view').should('exist');
 
     // Remove Todo
     cy.get('.fc-day-today')
