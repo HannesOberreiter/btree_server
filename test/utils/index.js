@@ -59,7 +59,7 @@ const _expectations = (res, field, err) => {
   expect(res.body.statusCode).to.eqls(400);
   expect(res.body.errors).to.be.an('array').length.gt(0);
   expect(res.body.errors).satisfy(function (value) {
-    return value.filter((error) => error.param === field).length >= 1;
+    return value.filter((error) => error.path === field).length >= 1;
   });
 };
 

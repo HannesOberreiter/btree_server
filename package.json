@@ -66,7 +66,7 @@
     "express-rate-limit": "^6.6.0",
     "express-session": "^1.17.3",
     "express-useragent": "^1.0.15",
-    "express-validator": "^6.14.2",
+    "express-validator": "^7.0.1",
     "form-data": "^4.0.0",
     "gpt-3-encoder": "^1.1.4",
     "helmet": "^6.0.1",
@@ -108,6 +108,6 @@
     "nyc": "^15.1.0",
     "prettier": "^2.8.1",
     "supertest": "^6.3.3",
-    "typescript": "^4.9.4"
+    "typescript": "^5.0.4"
   }
 }
