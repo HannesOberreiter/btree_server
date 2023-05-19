@@ -7,7 +7,7 @@ export default defineConfig({
   fixturesFolder: 'test/cypress/fixtures',
   screenshotsFolder: 'test/cypress/screenshots',
   videosFolder: 'test/cypress/videos',
-  video: true,
+  video: false,
   defaultCommandTimeout: 10000,
   watchForFileChanges: false,
   e2e: {
