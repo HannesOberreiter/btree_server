@@ -3,6 +3,7 @@
     "version": "6.2.3",
     "date": "2023-05-19",
     "news": [
+      "BUGFIX navbar search now selects on enter the first dropdown entry",
       "FEATURE for each dropdown selection you can now choose to use the keyboard",
       "FEATURE on mobile there is now a button near the hive dropdown to use it with the keyboard",
       "CHANGE settings for keyboard selection on charge types and hive selection was removed in favor of new icon near the input field",
