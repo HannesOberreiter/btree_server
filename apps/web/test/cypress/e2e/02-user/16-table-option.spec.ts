@@ -13,7 +13,8 @@ describe('User - Option Table', () => {
 
     cy.dataCy('btn-table-new').click();
     cy.dataCy(form).should('exist');
-    cy.get('[name=checkup_types]').clear().type(chance.word());
+    cy.get('[name=checkup_types]').clear();
+    cy.get('[name=checkup_types]').type(chance.word());
     cy.get('.checkbox-favorite').click();
     cy.dataCy('btn-form-save').click();
     cy.dataCy(form).should('not.exist');

@@ -16,8 +16,10 @@ describe('Visitor - Login', () => {
   });
 
   it('Wrong Login', () => {
-    cy.get('[name=email]').clear().type('test@demo.at');
-    cy.get('[name=password]').clear().type('shorter');
+    cy.get('[name=email]').clear();
+    cy.get('[name=email]').type('test@demo.at');
+    cy.get('[name=password]').clear();
+    cy.get('[name=password]').type('shorter');
     cy.get('form').submit();
     cy.dataCy('notification').should('be.visible');
   });

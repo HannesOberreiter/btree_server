@@ -8,7 +8,8 @@
     :options="options"
     :hint="hint"
     option-value="id"
-    :use-input="table === 'charge_types' && localPerf['charge-use-input']"
+    :use-input="localPerf[`dropdown-${table}-use-input`]"
+    :clearable="localPerf[`dropdown-${table}-use-input`]"
     filled
     class="q-pb-sm"
     @filter="filterSelection"
@@ -20,6 +21,19 @@
         :disable="disable"
         @click="editValues(!disable)"
       ></btn-multiple-values>
+    </template>
+    <template #after>
+      <q-btn
+        icon="fas fa-keyboard"
+        flat
+        round
+        dense
+        :class="localPerf[`dropdown-${table}-use-input`] ? 'text-green-8' : ''"
+        @click="
+          localPerf[`dropdown-${table}-use-input`] =
+            !localPerf[`dropdown-${table}-use-input`]
+        "
+      ></q-btn>
     </template>
   </q-select>
 </template>
@@ -44,12 +58,6 @@ import { useQuasar } from 'quasar';
 
 import DialogForm from './DialogForm.vue';
 import { OPTIONS } from '~/constants';
-
-const localPerf = useLocalStorage(
-  'pref-local',
-  { 'charge-use-input': false },
-  { mergeDefaults: true }
-);
 
 const $q = useQuasar();
 
@@ -89,6 +97,12 @@ const props = defineProps({
     default: true,
   },
 });
+
+const localPerf = useLocalStorage(
+  'pref-local',
+  { 'charge-use-input': false, [`dropdown-${props.table}-use-input`]: false },
+  { mergeDefaults: true }
+);
 
 const { isLoading, data } =
   props.table === 'apiary'
@@ -144,23 +158,56 @@ function onNewOptionDialog() {
   });
 }
 
-function filterSelection(val: any, update: any, _abort: any) {
-  if (values.value !== null) {
-    update(() => {
-      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      const needle = new RegExp(`(${val.toLowerCase()})`);
-      options.value = filter(options.value, (obj) => {
-        if (!obj.value) return;
-        if (obj.name) return needle.test(obj.name.toLowerCase());
-        return;
-      });
-    });
-  }
+function filterSelection(val: string, update: any, abort: any) {
+  if (!localPerf.value[`dropdown-${props.table}-use-input`]) abort();
   if (val === '') {
-    update(() => {
-      options.value = keepOptions.value;
-    });
+    update(
+      () => {
+        options.value = keepOptions.value;
+      },
+      (modelValue: any) => {
+        if (
+          modelValue.options.length > 0 &&
+          modelValue.getOptionIndex() === -1
+        ) {
+          modelValue.moveOptionSelection(1, true);
+          modelValue.toggleOption(
+            modelValue.options[modelValue.optionIndex],
+            true
+          );
+        }
+      }
+    );
     return;
+  }
+
+  if (values.value !== null) {
+    update(
+      () => {
+        const needle = new RegExp(`(${val.toLowerCase()})`);
+        options.value = filter(options.value, (obj) => {
+          if (!obj.name) return;
+          if (obj.name) return needle.test(obj.name.toLowerCase());
+          return;
+        });
+      },
+      (modelValue: any) => {
+        if (
+          modelValue.options.length > 0 &&
+          modelValue.getOptionIndex() === -1
+        ) {
+          modelValue.moveOptionSelection(1, true);
+          modelValue.toggleOption(
+            modelValue.options[modelValue.optionIndex],
+            true
+          );
+        }
+      }
+    );
+
+    abort(() => {
+      console.log('abort');
+    });
   }
 }
 

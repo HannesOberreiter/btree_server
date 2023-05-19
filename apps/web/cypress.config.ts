@@ -1,4 +1,3 @@
-import registerCodeCoverageTasks from '@cypress/code-coverage/task';
 import { injectQuasarDevServerConfig } from '@quasar/quasar-app-extension-testing-e2e-cypress/cct-dev-server';
 import { defineConfig } from 'cypress';
 
@@ -8,21 +7,20 @@ export default defineConfig({
   fixturesFolder: 'test/cypress/fixtures',
   screenshotsFolder: 'test/cypress/screenshots',
   videosFolder: 'test/cypress/videos',
-  video: true,
+  video: false,
   defaultCommandTimeout: 10000,
+  watchForFileChanges: false,
   e2e: {
     experimentalRunAllSpecs: true,
     setupNodeEvents(on, config) {
-      registerCodeCoverageTasks(on, config);
       return config;
     },
-    baseUrl: 'http://localhost:9001/',
+    baseUrl: 'http://localhost:9000/',
     supportFile: 'test/cypress/support/e2e.ts',
     specPattern: 'test/cypress/e2e/**/*.spec.{js,jsx,ts,tsx}',
   },
   component: {
     setupNodeEvents(on, config) {
-      registerCodeCoverageTasks(on, config);
       return config;
     },
     supportFile: 'test/cypress/support/component.ts',

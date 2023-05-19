@@ -81,20 +81,34 @@ const data = computed(() => {
 });
 
 function filterFn(val: any, update: any, _abort: any) {
-  if (data.value !== null) {
-    update(() => {
-      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      const needle = new RegExp(`(${val.toLowerCase()})`);
-      options.value = data.value.filter((obj) =>
-        needle.test(obj.clabel.toLowerCase())
-      );
-    });
-  }
   if (val === '') {
     update(() => {
       options.value = data.value;
     });
     return;
+  }
+  if (data.value !== null) {
+    update(
+      () => {
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+        const needle = new RegExp(`(${val.toLowerCase()})`);
+        options.value = data.value.filter((obj) =>
+          needle.test(obj.clabel.toLowerCase())
+        );
+      },
+      (modelValue: any) => {
+        if (
+          modelValue.options.length > 0 &&
+          modelValue.getOptionIndex() === -1
+        ) {
+          modelValue.moveOptionSelection(1, true);
+          modelValue.toggleOption(
+            modelValue.options[modelValue.optionIndex],
+            true
+          );
+        }
+      }
+    );
   }
 }
 

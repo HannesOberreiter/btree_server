@@ -10,8 +10,11 @@
     :multiple="true"
     :clearable="true"
     option-value="id"
+    use-input
+    :use-chips="!$q.platform.is.mobile"
     filled
     class="q-pb-sm"
+    @filter="filterSelection"
   >
     <template v-if="showBefore" #before>
       <q-icon name="far fa-square-caret-down"></q-icon>
@@ -73,6 +76,7 @@ const { isLoading, data } =
 const emit = defineEmits(['update:modelValue']);
 const { modelValue } = useVModels(props, emit);
 const options = ref([] as any);
+const keepOptions = ref([] as any);
 
 watch(
   [data],
@@ -88,6 +92,7 @@ function setValues() {
   if (modelValue.value) {
     setOptions(deepUnref(modelValue.value));
   } else setOptions();
+  keepOptions.value = options.value;
 }
 
 function setOptions(id = <Array<number>>[]) {
@@ -109,6 +114,58 @@ function setOptions(id = <Array<number>>[]) {
     } else {
       modelValue.value = res;
     }
+  }
+}
+
+function filterSelection(val: string, update: any, abort: any) {
+  if (val === '') {
+    update(
+      () => {
+        options.value = keepOptions.value;
+      },
+      (modelValue: any) => {
+        if (
+          modelValue.options.length > 0 &&
+          modelValue.getOptionIndex() === -1
+        ) {
+          modelValue.moveOptionSelection(1, true);
+          modelValue.toggleOption(
+            modelValue.options[modelValue.optionIndex],
+            true
+          );
+        }
+      }
+    );
+    return;
+  }
+
+  if (options.value !== null) {
+    update(
+      () => {
+        const needle = new RegExp(`(${val.toLowerCase()})`);
+        options.value = filter(options.value, (obj) => {
+          if (!obj.name) return;
+          if (obj.name) return needle.test(obj.name.toLowerCase());
+          return;
+        });
+      },
+      (modelValue: any) => {
+        if (
+          modelValue.options.length > 0 &&
+          modelValue.getOptionIndex() === -1
+        ) {
+          modelValue.moveOptionSelection(1, true);
+          modelValue.toggleOption(
+            modelValue.options[modelValue.optionIndex],
+            true
+          );
+        }
+      }
+    );
+
+    abort(() => {
+      console.log('abort');
+    });
   }
 }
 </script>

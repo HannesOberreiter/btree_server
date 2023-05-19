@@ -10,14 +10,14 @@
           <q-separator color="secondary" inset />
           <div class="q-pa-md">
             <template v-for="(subsetting, i) in setting" :key="i">
-              <template v-if="i == 'ratings'">
+              <template v-if="i === 'ratings'">
                 <span class="text-bold">{{ $t('rating.name') }}: </span>
                 <div
                   v-for="(_value, j) in subsetting"
                   :key="j"
                   class="col-12 q-pl-lg"
                 >
-                  <div v-if="j == 'max'">
+                  <div v-if="(j as any) === 'max'">
                     <div class="row">
                       <div class="col-5 col-lg-3">
                         {{ $t('rating.max') }}:
@@ -52,7 +52,7 @@
                 >
                   <q-toggle
                     v-model="settings[index as keyof typeof settings][i as keyof typeof setting][j as keyof typeof subsetting]"
-                    :label="$t(j)"
+                    :label="$t(j as any)"
                     :disable="isSubmitting || isLoading"
                     @update:model-value="onSubmit"
                   />
@@ -99,21 +99,8 @@
           </div>
           <div>
             <q-toggle
-              v-model="localPerf['hive-use-input']"
-              :disable="!$q.platform.is.mobile"
-              :label="$t('setting.hintHiveUseInput')"
-            />
-          </div>
-          <div>
-            <q-toggle
               v-model="localPerf['hive-clear-after-saving']"
               :label="$t('setting.hintHiveClearAfterSaving')"
-            />
-          </div>
-          <div>
-            <q-toggle
-              v-model="localPerf['charge-use-input']"
-              :label="$t('setting.hintChargeUseInput')"
             />
           </div>
           <div>
@@ -157,9 +144,7 @@ const localPerf = useLocalStorage(
   'pref-local',
   {
     'date-auto-close': false,
-    'hive-use-input': false,
     'hive-clear-after-saving': false,
-    'charge-use-input': false,
     'calendar-show-weeknumber': true,
   },
   { mergeDefaults: true }

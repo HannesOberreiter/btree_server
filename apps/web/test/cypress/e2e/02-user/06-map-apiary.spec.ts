@@ -14,7 +14,8 @@ describe('User - Apiary Map', () => {
 
     cy.get('.leaflet-container').dblclick(x, y);
     cy.dataCy('form-apiary').should('exist');
-    cy.get('[name=apiary]').clear().type(name);
+    cy.get('[name=apiary]').clear();
+    cy.get('[name=apiary]').type(name);
     cy.dataCy('btn-form-save').click();
     cy.dataCy('form-apiary').should('not.exist');
 

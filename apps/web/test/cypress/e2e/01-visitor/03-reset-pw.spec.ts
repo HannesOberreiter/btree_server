@@ -39,8 +39,10 @@ describe('Visitor - Password reset', () => {
 
     cy.get('[name=password]').type('shor');
     cy.get('[role=alert]').should('be.visible');
-    cy.get('[name=password]').clear().type('firstPassword');
-    cy.get('[name=confirmPassword]').clear().type('secondPassword');
+    cy.get('[name=password]').clear();
+    cy.get('[name=password]').type('firstPassword');
+    cy.get('[name=confirmPassword]').clear();
+    cy.get('[name=confirmPassword]').type('secondPassword');
     cy.get('[role=alert]').should('be.visible');
     cy.add_demo_password();
 

@@ -12,7 +12,8 @@ describe('User - Charge Table', () => {
 
     cy.dataCy('btn-table-new').click();
     cy.dataCy(form).should('exist');
-    cy.get('[name=chargeName]').clear().type(chance.name());
+    cy.get('[name=chargeName]').clear();
+    cy.get('[name=chargeName]').type(chance.name());
     cy.dataCy('btn-form-save').click();
     cy.dataCy(form).should('not.exist');
     cy.table_edit_row(form);
