@@ -1,4 +1,6 @@
 import { RouteRecordRaw } from 'vue-router';
+import MainLaylout from '~/layouts/MainLayout.vue';
+import VisitorLayout from '~/layouts/VisitorLayout.vue';
 
 const routes: RouteRecordRaw[] = [
   /***
@@ -9,7 +11,7 @@ const routes: RouteRecordRaw[] = [
     meta: {
       auth: true,
     },
-    component: () => import('~/layouts/MainLayout.vue'),
+    component: MainLaylout,
     children: [
       {
         path: '',
@@ -77,7 +79,7 @@ const routes: RouteRecordRaw[] = [
     meta: {
       auth: true,
     },
-    component: () => import('~/layouts/MainLayout.vue'),
+    component: MainLaylout,
     children: [
       {
         path: 'hive',
@@ -198,7 +200,7 @@ const routes: RouteRecordRaw[] = [
     meta: {
       auth: true,
     },
-    component: () => import('~/layouts/MainLayout.vue'),
+    component: MainLaylout,
     children: [
       {
         path: 'hive/:id',
@@ -228,7 +230,7 @@ const routes: RouteRecordRaw[] = [
     meta: {
       auth: true,
     },
-    component: () => import('~/layouts/MainLayout.vue'),
+    component: MainLaylout,
     children: [
       {
         path: 'quicktool/:task',
@@ -294,7 +296,7 @@ const routes: RouteRecordRaw[] = [
     meta: {
       auth: true,
     },
-    component: () => import('~/layouts/MainLayout.vue'),
+    component: MainLaylout,
     children: [
       {
         path: ':task/:ids*',
@@ -340,7 +342,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/visitor',
     name: 'visitorTemplate',
-    component: () => import('~/layouts/VisitorLayout.vue'),
+    component: VisitorLayout,
     children: [
       {
         path: 'login',
@@ -410,7 +412,7 @@ const routes: RouteRecordRaw[] = [
     meta: {
       auth: true,
     },
-    component: () => import('~/layouts/MainLayout.vue'),
+    component: MainLaylout,
     children: [
       {
         path: 'apiary',
@@ -439,7 +441,7 @@ const routes: RouteRecordRaw[] = [
       auth: true,
       title: 'setting.name',
     },
-    component: () => import('~/layouts/MainLayout.vue'),
+    component: MainLaylout,
     children: [
       {
         path: 'profile/:tab?',
@@ -487,7 +489,7 @@ const routes: RouteRecordRaw[] = [
       premium: true,
       title: 'statistic',
     },
-    component: () => import('~/layouts/MainLayout.vue'),
+    component: MainLaylout,
     children: [
       {
         path: 'hive_count',

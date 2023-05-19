@@ -11,9 +11,13 @@ describe('Visitor - Register', () => {
 
   it('Assert Register Form', () => {
     cy.get('form', { timeout: 50000 }).should('exist');
-    cy.get('[name="company.name"]').type('Company').clear();
+    cy.get('[name="company.name"]').clear();
+    cy.get('[name="company.name"]').type('Company');
+
     cy.get('[role=alert]').should('be.visible');
-    cy.get('[name="company.name"]').clear().type(user.company);
+
+    cy.get('[name="company.name"]').clear();
+    cy.get('[name="company.name"]').type(user.company);
     cy.get('[name=email]').type('noEmail');
     cy.get('[role=alert]').should('be.visible');
     cy.add_demo_mail();
@@ -25,11 +29,15 @@ describe('Visitor - Register', () => {
 
     cy.get('[name=password]').type('shor');
     cy.get('[role=alert]').should('be.visible');
-    cy.get('[name=password]').clear().type('firstPassword');
-    cy.get('[name=confirmPassword]').clear().type('secondPassword');
+    cy.get('[name=password]').clear();
+    cy.get('[name=password]').type('firstPassword');
+    cy.get('[name=confirmPassword]').clear();
+    cy.get('[name=confirmPassword]').type('secondPassword');
     cy.get('[role=alert]').should('be.visible');
-    cy.get('[name=password]').clear().type(user.password);
-    cy.get('[name=confirmPassword]').clear().type(user.password);
+    cy.get('[name=password]').clear();
+    cy.get('[name=password]').type(user.password);
+    cy.get('[name=confirmPassword]').clear();
+    cy.get('[name=confirmPassword]').type(user.password);
 
     cy.dataCy('terms').click();
     cy.get('.q-dialog').should('exist');

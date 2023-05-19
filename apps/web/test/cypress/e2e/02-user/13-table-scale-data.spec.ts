@@ -13,7 +13,8 @@ describe('User - Scale Data Table', () => {
     cy.dataCy('btn-dropdown-scale').click();
     cy.dataCy('btn-new-scale').click();
     cy.dataCy('form-scale').should('exist');
-    cy.get('[name=scale]').clear().type(chance.province());
+    cy.get('[name=scale]').clear();
+    cy.get('[name=scale]').type(chance.province());
     cy.dataCy('btn-form-save').click();
     cy.dataCy(form).should('not.exist');
   });
