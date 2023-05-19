@@ -18,6 +18,19 @@
     <template #before>
       <q-icon name="fas fa-location-dot"></q-icon>
     </template>
+    <template #after>
+      <q-btn
+        v-if="$q.platform.is.mobile"
+        icon="fas fa-keyboard"
+        flat
+        round
+        dense
+        :class="localPerf['hive-use-input'] ? 'text-green-8' : ''"
+        @click="localPerf['hive-use-input'] = !localPerf['hive-use-input']"
+      >
+        <tooltip-base>{{ t('allowKeyboardOnSelection') }}</tooltip-base>
+      </q-btn>
+    </template>
   </q-select>
   <q-select
     v-model="state.hive"
@@ -80,7 +93,10 @@ const notification = useNotification();
 
 const localPerf = useLocalStorage(
   'pref-local',
-  { 'hive-use-input': false, 'hive-clear-after-saving': false },
+  {
+    'hive-use-input': false,
+    'hive-clear-after-saving': false,
+  },
   { mergeDefaults: true }
 );
 
@@ -142,21 +158,48 @@ function selectHive() {
   apiary.value = null;
 }
 
-function filterHive(val: any, update: any, _abort: any) {
-  if (hives.value !== null) {
-    update(() => {
-      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      const needle = new RegExp(`(${val.toLowerCase()})`);
-      optionsHive.value = filter(hives.value.results, (obj) =>
-        needle.test(obj.label.toLowerCase())
-      );
-    });
-  }
+function filterHive(val: string, update: any, _abort: any) {
   if (val === '') {
-    update(() => {
-      optionsHive.value = hives.value.results;
-    });
+    update(
+      () => {
+        optionsHive.value = hives.value.results;
+      },
+      (modelValue: any) => {
+        if (
+          modelValue.options.length > 0 &&
+          modelValue.getOptionIndex() === -1
+        ) {
+          modelValue.moveOptionSelection(1, true);
+          modelValue.toggleOption(
+            modelValue.options[modelValue.optionIndex],
+            true
+          );
+        }
+      }
+    );
     return;
+  }
+  if (hives.value !== null) {
+    update(
+      () => {
+        const needle = new RegExp(`(${val.toLowerCase()})`);
+        optionsHive.value = filter(hives.value.results, (obj) =>
+          needle.test(obj.label.toLowerCase())
+        );
+      },
+      (modelValue: any) => {
+        if (
+          modelValue.options.length > 0 &&
+          modelValue.getOptionIndex() === -1
+        ) {
+          modelValue.moveOptionSelection(1, true);
+          modelValue.toggleOption(
+            modelValue.options[modelValue.optionIndex],
+            true
+          );
+        }
+      }
+    );
   }
 }
 
