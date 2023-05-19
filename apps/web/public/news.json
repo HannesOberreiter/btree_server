@@ -3,6 +3,7 @@
     "version": "6.2.3",
     "date": "2023-05-19",
     "news": [
+      "VISUAL moved settings and scales further down in the navigation menu",
       "BUGFIX navbar search now selects on enter the first dropdown entry",
       "FEATURE for each dropdown selection you can now choose to use the keyboard",
       "FEATURE on mobile there is now a button near the hive dropdown to use it with the keyboard",
