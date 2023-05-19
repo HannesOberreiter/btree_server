@@ -33,7 +33,9 @@
           localPerf[`dropdown-${table}-use-input`] =
             !localPerf[`dropdown-${table}-use-input`]
         "
-      ></q-btn>
+      >
+        <tooltip-base>{{ t('allowKeyboardOnSelection') }}</tooltip-base>
+      </q-btn>
     </template>
   </q-select>
 </template>
