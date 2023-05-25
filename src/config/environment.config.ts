@@ -135,6 +135,7 @@ const knexConfig = {
     user: process.env.DB_USERNAME,
     password: process.env.DB_PASSWORD,
     port: parseInt(process.env.DB_PORT),
+    charset: 'utf8mb4',
     timezone: 'UTC',
     typeCast(field, next) {
       // https://github.com/Vincit/objection.js/issues/174#issuecomment-424873063
