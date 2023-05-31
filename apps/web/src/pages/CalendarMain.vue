@@ -218,7 +218,7 @@ function handleEventsChange(changeInfo: EventChangeArg) {
     const startPosition = changeInfo.event.extendedProps.startPosition;
     const currentPosition = changeInfo.event.extendedProps.currentStep.position;
     if (startPosition === currentPosition) {
-      start = dayjs(changeInfo.event.start).format('YYYY-MM-DD HH:mm:ss');
+      start = dayjs(changeInfo.event.start).toISOString();
     } else {
       const difference = dayjs(changeInfo.event.start).diff(
         dayjs(changeInfo.event.extendedProps.currentStep.date)
@@ -229,7 +229,7 @@ function handleEventsChange(changeInfo: EventChangeArg) {
       });
       start = dayjs(startStep.date)
         .add(difference, 'milliseconds')
-        .format('YYYY-MM-DD HH:mm:ss');
+        .toISOString();
     }
   } else {
     ids = changeInfo.event.extendedProps.task_ids.toString().split(',');
