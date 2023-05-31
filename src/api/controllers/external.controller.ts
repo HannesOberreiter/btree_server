@@ -40,7 +40,7 @@ export default class ExternalController extends Controller {
       };
       const calendar = ical({
         name: `b.tree - ${req.params.source}`,
-        timezone: 'UTC',
+        // timezone: 'UTC', // standard is UTC no need to define it
         prodId: {
           company: 'btree',
           product: 'events',
@@ -75,8 +75,8 @@ export default class ExternalController extends Controller {
             result.title
           }`,
           description: result.description,
-          floating: true,
-          timezone: 'UTC',
+          //floating: true, // floating would mean always an event on 12:00 would be always on 12:00 no matter the timezone
+          //timezone: 'UTC', // standard is UTC no need to define it
           url: 'https://app.btree.at/',
         });
       }
