@@ -96,7 +96,7 @@ const getRearings = async ({ query, user }) => {
       result.icon = `fas fa-${result.symbol ? result.symbol : 'venus'}`;
       result.color = '#f5dfef';
       result.textColor = 'black';
-      result.end = result.start;
+      result.end = dayjs(result.start).add(1, 'second').toISOString();
       result.groupId = `Q${result.id}`;
       result.displayEventTime = true;
       result.durationEditable = false;
