@@ -1,5 +1,10 @@
 [
   {
+    "version": "6.2.5",
+    "date": "2023-05-31",
+    "news": ["BUGFIX fix UTC timezone for rearings, thx Olli"]
+  },
+  {
     "version": "6.2.4",
     "date": "2023-05-25",
     "news": ["FEATURE emojis are now allowed in all text fields"]
