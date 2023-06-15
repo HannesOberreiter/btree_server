@@ -34,7 +34,7 @@
 </template>
 
 <script setup lang="ts">
-import { maxLength, required, minLength } from '~/helpers/i18n-validators';
+import { maxLength, requiredField, minLength } from '~/helpers/i18n-validators';
 import { useVModels } from '@vueuse/core';
 import { validationErrors, formCheckMultipleValues } from '~/helpers';
 import useVuelidate from '@vuelidate/core';
@@ -103,7 +103,7 @@ const rules = computed(() => {
   if (props.required) {
     return {
       [props.label]: {
-        required: required(t(props.label)),
+        required: requiredField(t(props.label)),
         maxLengthValue: maxLength(props.maxValid),
         minLengthValue: minLength(props.minValid),
       },

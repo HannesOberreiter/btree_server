@@ -69,7 +69,7 @@
 </template>
 
 <script setup lang="ts">
-import { required } from '~/helpers/i18n-validators';
+import { requiredField } from '~/helpers/i18n-validators';
 import { useVModels } from '@vueuse/core';
 import { formCheckMultipleValues, validationErrors } from '~/helpers';
 import dayjs from 'dayjs';
@@ -141,7 +141,7 @@ const rules = computed(() => {
   if (props.required) {
     return {
       [props.label]: {
-        required: required(t(props.label)),
+        required: requiredField(t(props.label)),
         minValue: (value: string) => {
           return dayjs(value, props.dateFormat, true).isValid();
         },

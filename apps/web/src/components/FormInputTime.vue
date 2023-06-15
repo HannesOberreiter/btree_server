@@ -52,7 +52,7 @@ import { formCheckMultipleValues, validationErrors } from '~/helpers';
 import useVuelidate from '@vuelidate/core';
 import { isEmpty } from 'lodash-es';
 import { useDateFormat } from '~/composables/useDate';
-import { required } from '~/helpers/i18n-validators';
+import { requiredField } from '~/helpers/i18n-validators';
 
 import { useI18n } from 'vue-i18n';
 import { PropType, ref, computed, toRefs, unref, watch } from 'vue';
@@ -99,7 +99,7 @@ const rules = computed(() => {
   if (props.required) {
     return {
       [props.label]: {
-        required: required(t(props.label)),
+        required: requiredField(t(props.label)),
         minValue: (value: string) => {
           return useDate.validateFormat(value, 'HH:mm');
         },

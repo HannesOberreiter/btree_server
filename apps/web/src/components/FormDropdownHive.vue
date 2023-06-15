@@ -69,7 +69,7 @@
 
 <script setup lang="ts">
 import { filter, map, union, unionBy } from 'lodash-es';
-import { required } from '~/helpers/i18n-validators';
+import { requiredField } from '~/helpers/i18n-validators';
 import { useApiariesQuery, useHivesQuery } from '~/composables/useQuery';
 import { useLocalStorage, useVModels } from '@vueuse/core';
 import { validationErrors } from '~/helpers';
@@ -236,7 +236,7 @@ const state = reactive({
 const rules = computed(() => {
   if (props.required) {
     return {
-      hive: { required: required(t('hive')) },
+      hive: { required: requiredField(t('hive')) },
     };
   } else {
     return { hive: {} };
