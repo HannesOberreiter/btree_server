@@ -23,7 +23,7 @@ import { helpers } from '@vuelidate/validators';
 const requiredCustom = (field: string) =>
   helpers.withParams({ field: field }, (value) => helpers.req(value));
 
-export const required = withI18nMessage(requiredCustom, {
+export const requiredField = withI18nMessage(requiredCustom, {
   withArguments: true,
 });
 

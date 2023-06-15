@@ -46,7 +46,7 @@ import { useRouter } from 'vue-router';
 import { validationErrors } from '~/helpers';
 import AuthService from '~/services/auth.service';
 import useVuelidate from '@vuelidate/core';
-import { maxLength, required, alphaNum } from '~/helpers/i18n-validators';
+import { maxLength, requiredField, alphaNum } from '~/helpers/i18n-validators';
 import { useAuthUserStore } from '~/stores/auth';
 import { reactive, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -73,7 +73,7 @@ const state = reactive({
 });
 const rules = {
   resetKey: {
-    required: required(t('key')),
+    required: requiredField(t('key')),
     alphaNum,
     maxLengthValue: maxLength(200),
   },

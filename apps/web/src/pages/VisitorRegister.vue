@@ -116,7 +116,7 @@
 
 <script setup lang="ts">
 import { LANGUAGES } from '~/constants';
-import { required, maxLength } from '~/helpers/i18n-validators';
+import { requiredField, maxLength } from '~/helpers/i18n-validators';
 import { useNotification } from '~/composables/useNotification';
 import { usePreferredLanguages } from '@vueuse/core';
 import { validationErrors } from '~/helpers';
@@ -222,8 +222,8 @@ const state = reactive({
 });
 const rules = reactive({
   other: { maxLengthValue: maxLength(45) },
-  source: { required: required(t('source')) },
-  terms: { required: required(t('signup.terms')) },
+  source: { required: requiredField(t('source')) },
+  terms: { required: requiredField(t('signup.terms')) },
 });
 const v$ = useVuelidate(rules, state);
 

@@ -44,7 +44,7 @@ import { useNotification } from '~/composables/useNotification';
 import { validationErrors } from '~/helpers';
 import AuthService from '~/services/auth.service';
 import useVuelidate from '@vuelidate/core';
-import { alphaNum, maxLength, required } from '~/helpers/i18n-validators';
+import { alphaNum, maxLength, requiredField } from '~/helpers/i18n-validators';
 import FormUserPassword from '~/components/FormUserPassword.vue';
 import FormErrorMax from '~/components/FormErrorMax.vue';
 import { reactive, ref } from 'vue';
@@ -72,7 +72,7 @@ const state = reactive({
 });
 const rules = reactive({
   resetKey: {
-    required: required(t('key')),
+    required: requiredField(t('key')),
     alphaNum,
     maxLengthValue: maxLength(200),
   },
