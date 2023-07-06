@@ -15,7 +15,7 @@ export class CheckupRouter extends Router {
       .route('/')
       .get(
         Guard.authorize([ROLES.admin, ROLES.user, ROLES.read]),
-        Container.resolve('CheckupController').get
+        Container.resolve('CheckupController').get,
       );
     this.router
       .route('/')
@@ -26,42 +26,42 @@ export class CheckupRouter extends Router {
           body('repeat').isInt({ max: 15, min: 0 }),
         ]),
         Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('CheckupController').post
+        Container.resolve('CheckupController').post,
       );
     this.router
       .route('/')
       .patch(
         Validator.validate([body('ids').isArray()]),
         Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('CheckupController').patch
+        Container.resolve('CheckupController').patch,
       );
     this.router
       .route('/status')
       .patch(
         Validator.validate([body('ids').isArray(), body('status').isBoolean()]),
         Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('CheckupController').updateStatus
+        Container.resolve('CheckupController').updateStatus,
       );
     this.router
       .route('/date')
       .patch(
         Validator.validate([body('ids').isArray(), body('start').isString()]),
         Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('CheckupController').updateDate
+        Container.resolve('CheckupController').updateDate,
       );
     this.router
       .route('/batchDelete')
       .patch(
         Validator.validate([body('ids').isArray()]),
         Guard.authorize([ROLES.admin]),
-        Container.resolve('CheckupController').batchDelete
+        Container.resolve('CheckupController').batchDelete,
       );
     this.router
       .route('/batchGet')
       .post(
         Validator.validate([body('ids').isArray()]),
         Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('CheckupController').batchGet
+        Container.resolve('CheckupController').batchGet,
       );
   }
 }

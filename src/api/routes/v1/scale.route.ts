@@ -15,14 +15,14 @@ export class ScaleRouter extends Router {
       .get(
         Validator.validate([param('id').optional().isNumeric()]),
         Guard.authorize([ROLES.admin, ROLES.user, ROLES.read]),
-        Container.resolve('ScaleController').get
+        Container.resolve('ScaleController').get,
       );
     this.router
       .route('/')
       .patch(
         Validator.validate([body('ids').isArray()]),
         Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('ScaleController').patch
+        Container.resolve('ScaleController').patch,
       );
     this.router
       .route('/')
@@ -32,14 +32,14 @@ export class ScaleRouter extends Router {
           body('hive_id').isNumeric(),
         ]),
         Guard.authorize([ROLES.admin]),
-        Container.resolve('ScaleController').post
+        Container.resolve('ScaleController').post,
       );
     this.router
       .route('/:id')
       .delete(
         Validator.validate([param('id').isNumeric()]),
         Guard.authorize([ROLES.admin]),
-        Container.resolve('ScaleController').delete
+        Container.resolve('ScaleController').delete,
       );
   }
 }

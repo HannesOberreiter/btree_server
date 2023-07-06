@@ -18,7 +18,7 @@ export default class ChargeController extends Controller {
         req.query as any;
       const query = Charge.query()
         .withGraphJoined(
-          '[type.stock, creator(identifier), editor(identifier)]'
+          '[type.stock, creator(identifier), editor(identifier)]',
         )
         .where({
           'charges.user_id': req.user.user_id,
@@ -26,7 +26,7 @@ export default class ChargeController extends Controller {
         })
         .page(
           offset ? offset : 0,
-          parseInt(limit) === 0 || !limit ? 10 : limit
+          parseInt(limit) === 0 || !limit ? 10 : limit,
         );
 
       if (filters) {
@@ -51,7 +51,7 @@ export default class ChargeController extends Controller {
       if (order) {
         if (Array.isArray(order)) {
           order.forEach((field, index) =>
-            query.orderBy(field, direction[index])
+            query.orderBy(field, direction[index]),
           );
         } else {
           query.orderBy(order, direction);
@@ -87,13 +87,13 @@ export default class ChargeController extends Controller {
         })
         .page(
           offset ? offset : 0,
-          parseInt(limit) === 0 || !limit ? 10 : limit
+          parseInt(limit) === 0 || !limit ? 10 : limit,
         );
 
       if (order) {
         if (Array.isArray(order)) {
           order.forEach((field, index) =>
-            query.orderBy(field, direction[index])
+            query.orderBy(field, direction[index]),
           );
         } else {
           query.orderBy(order, direction);

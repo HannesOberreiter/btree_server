@@ -12,9 +12,9 @@ export const hiveCountApiary = async (date: Date, user_id: number) => {
         knex.raw('IF(hives.grouphive > 0, hives.grouphive, 1) as amount'),
         // https://stackoverflow.com/a/58697900/5316675
         knex.raw(
-          "SUBSTRING(MAX(CONCAT(TO_CHAR(date, 'YYYY-MM-DD HH:mm:ss'), apiary_id)), 20, 31) as apiary_id"
+          "SUBSTRING(MAX(CONCAT(TO_CHAR(date, 'YYYY-MM-DD HH:mm:ss'), apiary_id)), 20, 31) as apiary_id",
         ),
-        'user_id'
+        'user_id',
       )
       .leftJoin('hives', 'hives.id', 'movedates.hive_id')
       .where({
@@ -24,8 +24,8 @@ export const hiveCountApiary = async (date: Date, user_id: number) => {
       .where('movedates.date', '<=', date)
       .whereRaw(
         `(hives.modus = 1 or (hives.modus = 0 and hives.modus_date >= '${dayjs(
-          date
-        ).format('YYYY-MM-DD HH:mm:ss.SSS')}'))`
+          date,
+        ).format('YYYY-MM-DD HH:mm:ss.SSS')}'))`,
       )
       .groupBy('hive_id')
       .as('t');
@@ -35,7 +35,7 @@ export const hiveCountApiary = async (date: Date, user_id: number) => {
         knex.raw('apiary_id'),
         knex.raw('sum(t.amount) as total'),
         'apiaries.user_id',
-        'apiaries.name'
+        'apiaries.name',
       )
       .leftJoin('apiaries', 'apiaries.id', 't.apiary_id')
       .groupBy('apiary_id');
@@ -64,32 +64,32 @@ export const hiveCountTotal = async (user_id: number) => {
       knex.raw('QUARTER(t.date) as quarter'),
       knex.raw('CONCAT(YEAR(t.date), QUARTER(t.date)) as ident'),
       knex.raw('sum(t.amount) as increase'),
-      'user_id'
+      'user_id',
     )
     .groupBy('year', 'quarter');
 
   const decrease = await knex(
     subquery
       .select(knex.raw('min(hives.modus_date) as modus_date'))
-      .where('hives.modus', 0)
+      .where('hives.modus', 0),
   )
     .select(
       knex.raw('YEAR(t.modus_date) as year'),
       knex.raw('QUARTER(t.modus_date) as quarter'),
       knex.raw('CONCAT(YEAR(t.modus_date), QUARTER(t.modus_date)) as ident'),
       knex.raw('sum(t.amount) as decrease'),
-      'user_id'
+      'user_id',
     )
     .groupBy('year', 'quarter');
   const minYear = Math.min(
     ...(increase
       .map((v) => parseInt(v.year))
-      .concat(decrease.map((v) => parseInt(v.year))) as any)
+      .concat(decrease.map((v) => parseInt(v.year))) as any),
   );
   const maxYear = Math.max(
     ...(increase
       .map((v) => parseInt(v.year))
-      .concat(decrease.map((v) => parseInt(v.year))) as any)
+      .concat(decrease.map((v) => parseInt(v.year))) as any),
   );
   let result = [];
   for (let i = 0; i <= maxYear - minYear; i++) {
@@ -105,11 +105,11 @@ export const hiveCountTotal = async (user_id: number) => {
   result = result.map((i) => {
     let res = Object.assign(
       i,
-      decrease.find((b) => i.ident === b.ident)
+      decrease.find((b) => i.ident === b.ident),
     );
     res = Object.assign(
       res,
-      increase.find((b) => res.ident === b.ident)
+      increase.find((b) => res.ident === b.ident),
     );
     res.change = (res.increase || 0) - (res.decrease || 0);
     res.total = total + res.change;

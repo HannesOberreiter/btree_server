@@ -17,8 +17,8 @@ export class LoginAttemp extends BaseModel {
     properties: {
       id: { type: 'integer' },
       time: { type: 'string', format: 'date-time' },
-      bee_id: { type: 'integer' } // User FK
-    }
+      bee_id: { type: 'integer' }, // User FK
+    },
   };
 
   static relationMappings = () => ({
@@ -27,8 +27,8 @@ export class LoginAttemp extends BaseModel {
       modelClass: User,
       join: {
         from: ['login_attempts.bee_id'],
-        to: ['bees.id']
-      }
-    }
+        to: ['bees.id'],
+      },
+    },
   });
 }

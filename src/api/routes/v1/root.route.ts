@@ -38,7 +38,7 @@ export class RootRouter extends Router {
      */
     this.router.post(
       '/report-violation',
-      Container.resolve('RootController').report
+      Container.resolve('RootController').report,
     );
   }
 }

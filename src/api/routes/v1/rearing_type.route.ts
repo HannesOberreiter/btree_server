@@ -14,35 +14,35 @@ export class RearingTypeRouter extends Router {
       .route('/')
       .get(
         Guard.authorize([ROLES.admin, ROLES.user, ROLES.read]),
-        Container.resolve('RearingTypeController').get
+        Container.resolve('RearingTypeController').get,
       );
     this.router
       .route('/')
       .patch(
         Validator.validate([body('ids').isArray()]),
         Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('RearingTypeController').patch
+        Container.resolve('RearingTypeController').patch,
       );
     this.router
       .route('/')
       .post(
         Validator.validate([body('name').isString()]),
         Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('RearingTypeController').post
+        Container.resolve('RearingTypeController').post,
       );
     this.router
       .route('/batchDelete')
       .patch(
         Validator.validate([body('ids').isArray()]),
         Guard.authorize([ROLES.admin]),
-        Container.resolve('RearingTypeController').batchDelete
+        Container.resolve('RearingTypeController').batchDelete,
       );
     this.router
       .route('/batchGet')
       .post(
         Validator.validate([body('ids').isArray()]),
         Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('RearingTypeController').batchGet
+        Container.resolve('RearingTypeController').batchGet,
       );
   }
 }

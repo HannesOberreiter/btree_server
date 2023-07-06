@@ -130,7 +130,7 @@ export class WizBee {
   private filterDuplicates(obj: Array<any>) {
     return (obj = obj.filter(
       (value, index, self) =>
-        index === self.findIndex((t) => t.file === value.file)
+        index === self.findIndex((t) => t.file === value.file),
     ));
   }
 
@@ -143,7 +143,7 @@ export class WizBee {
   private async searchKNN(
     embedding: number[],
     k = 2,
-    minScore = 0.3
+    minScore = 0.3,
   ): Promise<Document[] | undefined> {
     const unit32Buffer = this.createQueryParam(embedding);
     const queryResult = await WizBee.vectorServer.call(
@@ -159,7 +159,7 @@ export class WizBee {
       'SORTBY',
       'score',
       'DIALECT',
-      2
+      2,
     );
     if (!queryResult) return undefined;
     const result = this.transformResult(queryResult);
@@ -224,7 +224,7 @@ export class WizBee {
   private async createAnswerTurbo(
     input: string,
     contextText: string,
-    lang: string
+    lang: string,
   ) {
     try {
       const messages: CreateChatCompletionRequest['messages'] = [
@@ -278,7 +278,7 @@ export class WizBee {
     }
 
     const { embedding, tokens: embeddingTokens } = await this.createEmbedding(
-      input
+      input,
     );
     tokens += embeddingTokens;
 

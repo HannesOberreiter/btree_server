@@ -25,7 +25,7 @@ export class BaseOptionModel extends ExtModel {
       favorite: { type: 'boolean' },
       modus: { type: 'boolean' },
       created_at: { type: 'string', format: 'date-time' },
-      updated_at: { type: 'string', format: 'date-time' }
-    }
+      updated_at: { type: 'string', format: 'date-time' },
+    },
   };
 }

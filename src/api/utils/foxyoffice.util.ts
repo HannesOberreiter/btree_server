@@ -16,7 +16,7 @@ async function getLatestInvoice() {
   const from = `${new Date().getFullYear()}-01-01`;
   const to = `${new Date().getFullYear()}-12-31`;
   const result = await axios.get(
-    buildBaseUrl(`billing/api/searchInvoicesByDate/${from}/${to}`)
+    buildBaseUrl(`billing/api/searchInvoicesByDate/${from}/${to}`),
   );
   if (result.data.length > 0) {
     let newNumber = 0;
@@ -40,7 +40,7 @@ async function getLatestInvoice() {
 export async function createInvoice(
   mail: string,
   amount: number,
-  type: 'PayPal' | 'Stripe'
+  type: 'PayPal' | 'Stripe',
 ) {
   try {
     const latestInvoice = await getLatestInvoice();
@@ -83,7 +83,7 @@ export async function createInvoice(
       for (let key in data.InvoicePosition[i]) {
         form.append(
           `InvoicePosition[${i}][${key}]`,
-          data.InvoicePosition[i][key]
+          data.InvoicePosition[i][key],
         );
       }
     }
@@ -100,7 +100,7 @@ export async function createInvoice(
             '\n\n' +
             JSON.stringify(latestInvoice) +
             '\n\n' +
-            JSON.stringify(mail)
+            JSON.stringify(mail),
         );
       })
       .catch((err) => {

@@ -15,8 +15,8 @@ export class CheckupType extends BaseOptionModel {
       modelClass: Company,
       join: {
         from: ['checkup_types.user_id'],
-        to: ['companies.id']
-      }
-    }
-  }
+        to: ['companies.id'],
+      },
+    },
+  };
 }

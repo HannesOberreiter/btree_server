@@ -16,49 +16,49 @@ export class CalendarRouter extends Router {
       .get(
         Validator.validate(CalendarParams),
         Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Container.resolve('CalendarController').getCheckups
+        Container.resolve('CalendarController').getCheckups,
       );
     this.router
       .route('/treatment')
       .get(
         Validator.validate(CalendarParams),
         Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Container.resolve('CalendarController').getTreatments
+        Container.resolve('CalendarController').getTreatments,
       );
     this.router
       .route('/harvest')
       .get(
         Validator.validate(CalendarParams),
         Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Container.resolve('CalendarController').getHarvests
+        Container.resolve('CalendarController').getHarvests,
       );
     this.router
       .route('/feed')
       .get(
         Validator.validate(CalendarParams),
         Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Container.resolve('CalendarController').getFeeds
+        Container.resolve('CalendarController').getFeeds,
       );
     this.router
       .route('/movedate')
       .get(
         Validator.validate(CalendarParams),
         Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Container.resolve('CalendarController').getMovements
+        Container.resolve('CalendarController').getMovements,
       );
     this.router
       .route('/todo')
       .get(
         Validator.validate(CalendarParams),
         Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Container.resolve('CalendarController').getTodos
+        Container.resolve('CalendarController').getTodos,
       );
     this.router
       .route('/scale_data')
       .get(
         Validator.validate(CalendarParams),
         Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Container.resolve('CalendarController').getScaleData
+        Container.resolve('CalendarController').getScaleData,
       );
     this.router
       .route('/rearing')
@@ -69,7 +69,7 @@ export class CalendarRouter extends Router {
           query('id').optional(),
         ]),
         Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Container.resolve('CalendarController').getRearings
+        Container.resolve('CalendarController').getRearings,
       );
   }
 }

@@ -17,14 +17,14 @@ export class DatabaseServer {
         Container.resolve('Logger').log(
           'info',
           `Connection to database established on port ${knexConfig.connection.port} (${env})`,
-          { label: 'Database' }
+          { label: 'Database' },
         );
       }
     } catch (error) {
       Container.resolve('Logger').log(
         'error',
         `Database connection error : ${error.message}`,
-        { label: 'Database' }
+        { label: 'Database' },
       );
     }
   }

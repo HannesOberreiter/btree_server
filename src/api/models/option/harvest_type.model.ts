@@ -14,8 +14,8 @@ export class HarvestType extends BaseOptionModel {
       modelClass: Company,
       join: {
         from: ['harvest_types.user_id'],
-        to: ['companies.id']
-      }
-    }
-  }
+        to: ['companies.id'],
+      },
+    },
+  };
 }

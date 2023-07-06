@@ -15,35 +15,35 @@ export class RearingDetailRouter extends Router {
       .route('/')
       .get(
         Guard.authorize([ROLES.admin, ROLES.user, ROLES.read]),
-        Container.resolve('RearingDetailController').get
+        Container.resolve('RearingDetailController').get,
       );
     this.router
       .route('/')
       .patch(
         Validator.validate([body('ids').isArray()]),
         Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('RearingDetailController').patch
+        Container.resolve('RearingDetailController').patch,
       );
     this.router
       .route('/')
       .post(
         Validator.validate([body('job').isString(), body('hour').isNumeric()]),
         Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('RearingDetailController').post
+        Container.resolve('RearingDetailController').post,
       );
     this.router
       .route('/batchDelete')
       .patch(
         Validator.validate([body('ids').isArray()]),
         Guard.authorize([ROLES.admin]),
-        Container.resolve('RearingDetailController').batchDelete
+        Container.resolve('RearingDetailController').batchDelete,
       );
     this.router
       .route('/batchGet')
       .post(
         Validator.validate([body('ids').isArray()]),
         Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('RearingDetailController').batchGet
+        Container.resolve('RearingDetailController').batchGet,
       );
   }
 }

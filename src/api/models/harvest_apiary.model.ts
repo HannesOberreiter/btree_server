@@ -23,16 +23,16 @@ export class HarvestApiary extends Model {
       modelClass: Company,
       join: {
         from: 'harvests_apiaries.user_id',
-        to: 'companies.id'
-      }
+        to: 'companies.id',
+      },
     },
     harvest: {
       relation: Model.BelongsToOneRelation,
       modelClass: Harvest,
       join: {
         from: 'harvests_apiaries.harvest_id',
-        to: 'harvests.id'
-      }
-    }
+        to: 'harvests.id',
+      },
+    },
   });
 }

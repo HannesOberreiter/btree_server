@@ -15,14 +15,14 @@ export class TodoRouter extends Router {
       .route('/')
       .get(
         Guard.authorize([ROLES.admin, ROLES.user, ROLES.read]),
-        Container.resolve('TodoController').get
+        Container.resolve('TodoController').get,
       );
     this.router
       .route('/')
       .patch(
         Validator.validate([body('ids').isArray()]),
         Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('TodoController').patch
+        Container.resolve('TodoController').patch,
       );
     this.router
       .route('/')
@@ -32,35 +32,35 @@ export class TodoRouter extends Router {
           body('repeat').optional().isInt({ max: 30, min: 0 }),
         ]),
         Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('TodoController').post
+        Container.resolve('TodoController').post,
       );
     this.router
       .route('/status')
       .patch(
         Validator.validate([body('ids').isArray(), body('status').isBoolean()]),
         Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('TodoController').updateStatus
+        Container.resolve('TodoController').updateStatus,
       );
     this.router
       .route('/batchGet')
       .post(
         Validator.validate([body('ids').isArray()]),
         Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('TodoController').batchGet
+        Container.resolve('TodoController').batchGet,
       );
     this.router
       .route('/batchDelete')
       .patch(
         Validator.validate([body('ids').isArray()]),
         Guard.authorize([ROLES.admin]),
-        Container.resolve('TodoController').batchDelete
+        Container.resolve('TodoController').batchDelete,
       );
     this.router
       .route('/date')
       .patch(
         Validator.validate([body('ids').isArray(), body('start').isString()]),
         Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('TodoController').updateDate
+        Container.resolve('TodoController').updateDate,
       );
   }
 }

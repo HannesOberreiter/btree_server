@@ -17,8 +17,8 @@ export class FieldSetting extends BaseModel {
     properties: {
       id: { type: 'integer' },
       settings: { type: 'object' },
-      bee_id: { type: 'integer' }
-    }
+      bee_id: { type: 'integer' },
+    },
   };
 
   static relationMappings = () => ({
@@ -27,8 +27,8 @@ export class FieldSetting extends BaseModel {
       modelClass: User,
       join: {
         from: ['field_settings.bee_id'],
-        to: ['bee.id']
-      }
-    }
+        to: ['bee.id'],
+      },
+    },
   });
 }

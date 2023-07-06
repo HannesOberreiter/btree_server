@@ -80,8 +80,8 @@ class Cors {
     ) {
       return next(
         notAcceptable(
-          `Content-Type headers must be ${contentType} or 'multipart/form-data', ${req.headers['content-type']} given`
-        )
+          `Content-Type headers must be ${contentType} or 'multipart/form-data', ${req.headers['content-type']} given`,
+        ),
       );
     }
 

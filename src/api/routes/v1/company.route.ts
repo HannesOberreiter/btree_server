@@ -14,19 +14,19 @@ export class CompanyRouter extends Router {
       .route('/apikey')
       .get(
         Guard.authorize([ROLES.admin]),
-        Container.resolve('CompanyController').getApikey
+        Container.resolve('CompanyController').getApikey,
       );
     this.router
       .route('/count')
       .get(
         Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Container.resolve('CompanyController').getCounts
+        Container.resolve('CompanyController').getCounts,
       );
     this.router
       .route('/download')
       .get(
         Guard.authorize([ROLES.admin]),
-        Container.resolve('CompanyController').download
+        Container.resolve('CompanyController').download,
       );
     this.router
       .route('/')
@@ -39,7 +39,7 @@ export class CompanyRouter extends Router {
             .trim(),
         ]),
         Guard.authorize([ROLES.admin]),
-        Container.resolve('CompanyController').patch
+        Container.resolve('CompanyController').patch,
       );
     this.router
       .route('/')
@@ -48,7 +48,7 @@ export class CompanyRouter extends Router {
           body('name').isString().isLength({ min: 3, max: 128 }).trim(),
         ]),
         Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Container.resolve('CompanyController').post
+        Container.resolve('CompanyController').post,
       );
     this.router
       .route('/coupon')
@@ -57,13 +57,13 @@ export class CompanyRouter extends Router {
           body('coupon').isString().isLength({ min: 3, max: 128 }).trim(),
         ]),
         Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Container.resolve('CompanyController').postCoupon
+        Container.resolve('CompanyController').postCoupon,
       );
     this.router
       .route('/:id')
       .delete(
         Guard.authorize([ROLES.admin]),
-        Container.resolve('CompanyController').delete
+        Container.resolve('CompanyController').delete,
       );
   }
 }

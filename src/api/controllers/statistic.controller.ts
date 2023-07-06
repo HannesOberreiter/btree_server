@@ -16,7 +16,7 @@ export default class StatisticController extends Controller {
   async getHiveCountTotal(
     req: IUserRequest,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ) {
     try {
       const result = await hiveCountTotal(req.user.user_id);
@@ -29,7 +29,7 @@ export default class StatisticController extends Controller {
   async getHiveCountApiary(
     req: IUserRequest,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ) {
     let date = new Date();
     try {
@@ -68,12 +68,12 @@ export default class StatisticController extends Controller {
         })
         .page(
           offset ? offset : 0,
-          parseInt(limit) === 0 || !limit ? 10 : limit
+          parseInt(limit) === 0 || !limit ? 10 : limit,
         );
       if (order) {
         if (Array.isArray(order)) {
           order.forEach((field, index) =>
-            query.orderBy(field, direction[index])
+            query.orderBy(field, direction[index]),
           );
         } else {
           query.orderBy(order, direction);
@@ -125,10 +125,10 @@ export default class StatisticController extends Controller {
       const query = Harvest.query()
         .select(Harvest.raw('YEAR(date) as year'))
         .select(
-          Harvest.raw('SUM(amount) / COUNT(DISTINCT hive_id) as amount_avg')
+          Harvest.raw('SUM(amount) / COUNT(DISTINCT hive_id) as amount_avg'),
         )
         .select(
-          Harvest.raw('SUM(frames) / COUNT(DISTINCT hive_id) as frames_avg')
+          Harvest.raw('SUM(frames) / COUNT(DISTINCT hive_id) as frames_avg'),
         )
         .countDistinct('hive_id as hive_count')
         .sum('amount as amount_sum')
@@ -182,10 +182,10 @@ export default class StatisticController extends Controller {
         .sum('amount as amount_sum')
         .sum('frames as frames_sum')
         .select(
-          Harvest.raw('SUM(amount) / COUNT(DISTINCT hive_id) as amount_avg')
+          Harvest.raw('SUM(amount) / COUNT(DISTINCT hive_id) as amount_avg'),
         )
         .select(
-          Harvest.raw('SUM(frames) / COUNT(DISTINCT hive_id) as frames_avg')
+          Harvest.raw('SUM(frames) / COUNT(DISTINCT hive_id) as frames_avg'),
         )
         //.avg('amount as amount_avg')
         //.avg('frames as frames_avg')
@@ -238,10 +238,10 @@ export default class StatisticController extends Controller {
         .sum('amount as amount_sum')
         .sum('frames as frames_sum')
         .select(
-          Harvest.raw('SUM(amount) / COUNT(DISTINCT hive_id) as amount_avg')
+          Harvest.raw('SUM(amount) / COUNT(DISTINCT hive_id) as amount_avg'),
         )
         .select(
-          Harvest.raw('SUM(frames) / COUNT(DISTINCT hive_id) as frames_avg')
+          Harvest.raw('SUM(frames) / COUNT(DISTINCT hive_id) as frames_avg'),
         )
         //.avg('amount as amount_avg')
         //.avg('frames as frames_avg')
@@ -307,12 +307,12 @@ export default class StatisticController extends Controller {
         })
         .page(
           offset ? offset : 0,
-          parseInt(limit) === 0 || !limit ? 10 : limit
+          parseInt(limit) === 0 || !limit ? 10 : limit,
         );
       if (order) {
         if (Array.isArray(order)) {
           order.forEach((field, index) =>
-            query.orderBy(field, direction[index])
+            query.orderBy(field, direction[index]),
           );
         } else {
           query.orderBy(order, direction);
@@ -510,7 +510,7 @@ export default class StatisticController extends Controller {
         .select(Treatment.raw('YEAR(date) as year'), 'hive_id')
         .sum('amount as amount_sum')
         .select(
-          Treatment.raw('SUM(amount) / COUNT(DISTINCT hive_id) as amount_avg')
+          Treatment.raw('SUM(amount) / COUNT(DISTINCT hive_id) as amount_avg'),
         )
         //.avg('amount as amount_avg')
         .withGraphJoined('hive')
@@ -523,12 +523,12 @@ export default class StatisticController extends Controller {
         })
         .page(
           offset ? offset : 0,
-          parseInt(limit) === 0 || !limit ? 10 : limit
+          parseInt(limit) === 0 || !limit ? 10 : limit,
         );
       if (order) {
         if (Array.isArray(order)) {
           order.forEach((field, index) =>
-            query.orderBy(field, direction[index])
+            query.orderBy(field, direction[index]),
           );
         } else {
           query.orderBy(order, direction);
@@ -574,7 +574,7 @@ export default class StatisticController extends Controller {
         .countDistinct('hive_id as hive_count')
         .sum('amount as amount_sum')
         .select(
-          Treatment.raw('SUM(amount) / COUNT(DISTINCT hive_id) as amount_avg')
+          Treatment.raw('SUM(amount) / COUNT(DISTINCT hive_id) as amount_avg'),
         )
         .withGraphJoined('treatment_apiary as task_apiary')
         .groupBy('year')
@@ -617,7 +617,7 @@ export default class StatisticController extends Controller {
   async getTreatmentApiary(
     req: IUserRequest,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ) {
     try {
       const { filters } = req.query as any;
@@ -625,7 +625,7 @@ export default class StatisticController extends Controller {
         .countDistinct('hive_id as hive_count')
         .sum('amount as amount_sum')
         .select(
-          Treatment.raw('SUM(amount) / COUNT(DISTINCT hive_id) as amount_avg')
+          Treatment.raw('SUM(amount) / COUNT(DISTINCT hive_id) as amount_avg'),
         )
         //.avg('amount as amount_avg')
         .withGraphJoined('treatment_apiary as task_apiary')
@@ -675,7 +675,7 @@ export default class StatisticController extends Controller {
         .countDistinct('hive_id as hive_count')
         .sum('amount as amount_sum')
         .select(
-          Treatment.raw('SUM(amount) / COUNT(DISTINCT hive_id) as amount_avg')
+          Treatment.raw('SUM(amount) / COUNT(DISTINCT hive_id) as amount_avg'),
         )
         //.avg('amount as amount_avg')
         .withGraphJoined('treatment_apiary as task_apiary')
@@ -722,7 +722,7 @@ export default class StatisticController extends Controller {
   async getCheckupRatingHive(
     req: IUserRequest,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ) {
     try {
       const { order, direction, offset, limit, q, filters } = req.query as any;
@@ -736,7 +736,7 @@ export default class StatisticController extends Controller {
           Checkup.raw('AVG(NULLIF(calm_comb, 0)) as calm_comb'),
           Checkup.raw('AVG(NULLIF(swarm, 0)) as swarm'),
           Checkup.raw('AVG(NULLIF(varroa, 0)) as varroa'),
-          Checkup.raw('AVG(NULLIF(strong, 0)) as strong')
+          Checkup.raw('AVG(NULLIF(strong, 0)) as strong'),
         )
         .select(Checkup.raw('YEAR(date) as year'))
         .withGraphJoined('hive')
@@ -747,17 +747,17 @@ export default class StatisticController extends Controller {
         })
         .groupBy('hive_id', 'year')
         .havingRaw(
-          '(SUM(brood) + SUM(pollen) + SUM(comb) + SUM(temper) + SUM(calm_comb) + SUM(swarm) + SUM(varroa) + SUM(strong)) > 0'
+          '(SUM(brood) + SUM(pollen) + SUM(comb) + SUM(temper) + SUM(calm_comb) + SUM(swarm) + SUM(varroa) + SUM(strong)) > 0',
         )
         .page(
           offset ? offset : 0,
-          parseInt(limit) === 0 || !limit ? 10 : limit
+          parseInt(limit) === 0 || !limit ? 10 : limit,
         );
 
       if (order) {
         if (Array.isArray(order)) {
           order.forEach((field, index) =>
-            query.orderBy(field, direction[index])
+            query.orderBy(field, direction[index]),
           );
         } else {
           query.orderBy(order, direction);

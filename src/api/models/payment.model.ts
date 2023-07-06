@@ -6,7 +6,7 @@ export class Payment extends BaseModel {
   type!: string;
   amount!: number;
   date!: Date;
-  user_id!: number
+  user_id!: number;
 
   static tableName = 'payments';
   static idColumn = 'id';
@@ -18,7 +18,7 @@ export class Payment extends BaseModel {
     properties: {
       id: { type: 'integer' },
       type: { type: 'string', minLength: 0, maxLength: 45 },
-      amount: { type: 'number'},
+      amount: { type: 'number' },
       date: { type: 'string', format: 'date-time' },
       user_id: { type: 'integer' }, // Company FK
     },

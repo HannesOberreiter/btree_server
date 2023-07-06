@@ -23,16 +23,16 @@ export class FeedApiary extends Model {
       modelClass: Company,
       join: {
         from: 'feeds_apiaries.user_id',
-        to: 'companies.id'
-      }
+        to: 'companies.id',
+      },
     },
     feed: {
       relation: Model.BelongsToOneRelation,
       modelClass: Feed,
       join: {
         from: 'feeds_apiaries.feed_id',
-        to: 'feeds.id'
-      }
-    }
+        to: 'feeds.id',
+      },
+    },
   });
 }

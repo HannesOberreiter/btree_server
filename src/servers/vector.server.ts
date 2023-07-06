@@ -21,14 +21,14 @@ export class VectorServer {
       VectorServer.client = new Redis(
         vectorConfig.port,
         vectorConfig.host,
-        config
+        config,
       );
       VectorServer.client.on('connect', () => {
         if (env !== ENVIRONMENT.test) {
           Container.resolve('Logger').log(
             'info',
             `Connection to redis (vector) server established on port ${vectorConfig.port} (${env})`,
-            { label: 'Vector' }
+            { label: 'Vector' },
           );
         }
       });
@@ -36,7 +36,7 @@ export class VectorServer {
       Container.resolve('Logger').log(
         'error',
         `Redis connection error : ${error.message}`,
-        { label: 'Vector' }
+        { label: 'Vector' },
       );
     }
   }

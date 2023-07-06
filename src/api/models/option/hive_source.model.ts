@@ -14,8 +14,8 @@ export class HiveSource extends BaseOptionModel {
       modelClass: Company,
       join: {
         from: ['hive_sources.user_id'],
-        to: ['companies.id']
-      }
-    }
-  }
+        to: ['companies.id'],
+      },
+    },
+  };
 }

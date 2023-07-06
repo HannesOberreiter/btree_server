@@ -51,7 +51,7 @@ export default class HiveController extends Controller {
         })
         .page(
           offset ? offset : 0,
-          parseInt(limit) === 0 || !limit ? 10 : limit
+          parseInt(limit) === 0 || !limit ? 10 : limit,
         );
 
       if (modus) {
@@ -60,7 +60,7 @@ export default class HiveController extends Controller {
 
       if (details === 'true') {
         query.withGraphJoined(
-          '[hive_location.[movedate], queen_location, hive_source, hive_type, creator(identifier), editor(identifier)]'
+          '[hive_location.[movedate], queen_location, hive_source, hive_type, creator(identifier), editor(identifier)]',
         );
       } else {
         query.withGraphJoined('hive_location.[movedate]');
@@ -81,7 +81,7 @@ export default class HiveController extends Controller {
       if (order) {
         if (Array.isArray(order)) {
           order.forEach((field, index) =>
-            query.orderBy(field, direction[index])
+            query.orderBy(field, direction[index]),
           );
         } else {
           query.orderBy(order, direction);
@@ -173,7 +173,7 @@ export default class HiveController extends Controller {
           'hives.deleted': false,
         })
         .withGraphFetched(
-          '[hive_location.[movedate], queen_location.[queen.[race, mating]], hive_source, hive_type, creator(identifier), editor(identifier)]'
+          '[hive_location.[movedate], queen_location.[queen.[race, mating]], hive_source, hive_type, creator(identifier), editor(identifier)]',
         )
         .throwIfNotFound();
       const result = await query;
@@ -237,7 +237,7 @@ export default class HiveController extends Controller {
         const harvest = await Harvest.query()
           .select('*', Hive.raw('? as kind', ['harvest']))
           .withGraphFetched(
-            '[hive, harvest_apiary, type, creator(identifier), editor(identifier)]'
+            '[hive, harvest_apiary, type, creator(identifier), editor(identifier)]',
           )
           .whereIn('hive_id', hives)
           .where({
@@ -248,7 +248,7 @@ export default class HiveController extends Controller {
         const feed = await Feed.query()
           .select('*', Hive.raw('? as kind', ['feed']))
           .withGraphFetched(
-            '[hive, feed_apiary, type, creator(identifier), editor(identifier)]'
+            '[hive, feed_apiary, type, creator(identifier), editor(identifier)]',
           )
           .whereIn('hive_id', hives)
           .where({
@@ -259,7 +259,7 @@ export default class HiveController extends Controller {
         const treatment = await Treatment.query()
           .select('*', Hive.raw('? as kind', ['treatment']))
           .withGraphFetched(
-            '[hive, treatment_apiary, type, disease, vet, creator(identifier), editor(identifier)]'
+            '[hive, treatment_apiary, type, disease, vet, creator(identifier), editor(identifier)]',
           )
           .whereIn('hive_id', hives)
           .where({
@@ -270,7 +270,7 @@ export default class HiveController extends Controller {
         const checkup = await Checkup.query()
           .select('*', Hive.raw('? as kind', ['checkup']))
           .withGraphFetched(
-            '[hive, checkup_apiary, type, creator(identifier), editor(identifier)]'
+            '[hive, checkup_apiary, type, creator(identifier), editor(identifier)]',
           )
           .whereIn('hive_id', hives)
           .where({
@@ -281,7 +281,7 @@ export default class HiveController extends Controller {
         const movedate = await Movedate.query()
           .select('*', Hive.raw('? as kind', ['movedate']))
           .withGraphFetched(
-            '[hive, apiary, creator(identifier), editor(identifier)]'
+            '[hive, apiary, creator(identifier), editor(identifier)]',
           )
           .whereIn('hive_id', hives)
           .whereRaw('YEAR(date) = ?', year)
@@ -409,7 +409,7 @@ export default class HiveController extends Controller {
             await Hive.query(trx)
               .patch({ position: hive.position })
               .findById(hive.id)
-              .where('user_id', req.user.user_id)
+              .where('user_id', req.user.user_id),
           );
         }
         return res;

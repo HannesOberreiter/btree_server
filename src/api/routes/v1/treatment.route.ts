@@ -15,7 +15,7 @@ export class TreatmentRouter extends Router {
       .route('/')
       .get(
         Guard.authorize([ROLES.admin, ROLES.user, ROLES.read]),
-        Container.resolve('TreatmentController').get
+        Container.resolve('TreatmentController').get,
       );
     this.router
       .route('/')
@@ -26,7 +26,7 @@ export class TreatmentRouter extends Router {
           body('repeat').isInt({ max: 15, min: 0 }),
         ]),
         Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('TreatmentController').post
+        Container.resolve('TreatmentController').post,
       );
 
     this.router
@@ -34,35 +34,35 @@ export class TreatmentRouter extends Router {
       .patch(
         Validator.validate([body('ids').isArray()]),
         Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('TreatmentController').patch
+        Container.resolve('TreatmentController').patch,
       );
     this.router
       .route('/status')
       .patch(
         Validator.validate([body('ids').isArray(), body('status').isBoolean()]),
         Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('TreatmentController').updateStatus
+        Container.resolve('TreatmentController').updateStatus,
       );
     this.router
       .route('/date')
       .patch(
         Validator.validate([body('ids').isArray(), body('start').isString()]),
         Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('TreatmentController').updateDate
+        Container.resolve('TreatmentController').updateDate,
       );
     this.router
       .route('/batchDelete')
       .patch(
         Validator.validate([body('ids').isArray()]),
         Guard.authorize([ROLES.admin]),
-        Container.resolve('TreatmentController').batchDelete
+        Container.resolve('TreatmentController').batchDelete,
       );
     this.router
       .route('/batchGet')
       .post(
         Validator.validate([body('ids').isArray()]),
         Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('TreatmentController').batchGet
+        Container.resolve('TreatmentController').batchGet,
       );
   }
 }

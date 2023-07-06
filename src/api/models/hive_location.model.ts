@@ -28,24 +28,24 @@ export class HiveLocation extends Model {
       modelClass: Apiary,
       join: {
         from: 'apiaries.id',
-        to: 'hives_locations.apiary_id'
-      }
+        to: 'hives_locations.apiary_id',
+      },
     },
     hive: {
       relation: Model.BelongsToOneRelation,
       modelClass: Hive,
       join: {
         from: 'hives.id',
-        to: 'hives_locations.hive_id'
-      }
+        to: 'hives_locations.hive_id',
+      },
     },
     movedate: {
       relation: Model.BelongsToOneRelation,
       modelClass: Movedate,
       join: {
         from: 'movedates.id',
-        to: 'hives_locations.move_id'
-      }
-    }
+        to: 'hives_locations.move_id',
+      },
+    },
   });
 }

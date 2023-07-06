@@ -14,8 +14,8 @@ export class TreatmentVet extends BaseOptionModel {
       modelClass: Company,
       join: {
         from: ['treatment_vets.user_id'],
-        to: ['companies.id']
-      }
-    }
-  }
+        to: ['companies.id'],
+      },
+    },
+  };
 }

@@ -35,7 +35,7 @@ export default class QueenController extends Controller {
         })
         .page(
           offset ? offset : 0,
-          parseInt(limit) === 0 || !limit ? 10 : limit
+          parseInt(limit) === 0 || !limit ? 10 : limit,
         );
 
       if (modus) {
@@ -44,7 +44,7 @@ export default class QueenController extends Controller {
 
       if (details === 'true') {
         query.withGraphJoined(
-          '[hive_location,queen_location,race,mating,own_mother,creator(identifier),editor(identifier)]'
+          '[hive_location,queen_location,race,mating,own_mother,creator(identifier),editor(identifier)]',
         );
         if (latest === 'true') {
           query.whereNotNull('queen_location.queen_id');
@@ -58,7 +58,7 @@ export default class QueenController extends Controller {
       if (order) {
         if (Array.isArray(order)) {
           order.forEach((field, index) =>
-            query.orderBy(field, direction[index])
+            query.orderBy(field, direction[index]),
           );
         } else {
           query.orderBy(order, direction);
@@ -118,7 +118,7 @@ export default class QueenController extends Controller {
               'mark_colour',
               'mother',
               'queen_matings.name as mating',
-              'queen_races.name as race'
+              'queen_races.name as race',
             )
             .where({
               'queens.user_id': req.user.user_id,
@@ -136,13 +136,13 @@ export default class QueenController extends Controller {
                 'queens.mark_colour',
                 'queens.mother',
                 'queen_matings.name as mating',
-                'queen_races.name as race'
+                'queen_races.name as race',
               )
                 .from('queens')
                 .leftJoin(
                   'queen_matings',
                   'queens.mating_id',
-                  'queen_matings.id'
+                  'queen_matings.id',
                 )
                 .leftJoin('queen_races', 'race_id', 'queen_races.id')
                 .innerJoin('mothers', 'queens.id', 'mothers.mother_id');
@@ -169,13 +169,13 @@ export default class QueenController extends Controller {
         })
         .page(
           offset ? offset : 0,
-          parseInt(limit) === 0 || !limit ? 10 : limit
+          parseInt(limit) === 0 || !limit ? 10 : limit,
         );
 
       if (order) {
         if (Array.isArray(order)) {
           order.forEach((field, index) =>
-            query.orderBy(field, direction[index])
+            query.orderBy(field, direction[index]),
           );
         } else {
           query.orderBy(order, direction);
@@ -231,7 +231,7 @@ export default class QueenController extends Controller {
             Checkup.raw('AVG(NULLIF(calm_comb, 0)) as calm_comb'),
             Checkup.raw('AVG(NULLIF(swarm, 0)) as swarm'),
             Checkup.raw('AVG(NULLIF(varroa, 0)) as varroa'),
-            Checkup.raw('AVG(NULLIF(strong, 0)) as strong')
+            Checkup.raw('AVG(NULLIF(strong, 0)) as strong'),
           )
           .where('hive_id', queen.hive_id)
           .whereBetween('date', [queen.move_date, queen.last_date]);

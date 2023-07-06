@@ -126,7 +126,7 @@ export default class CompanyUserController extends Controller {
 
       if (otherCompanies.length === 0)
         throw forbidden(
-          'This is your last company, you cannot remove access to it.'
+          'This is your last company, you cannot remove access to it.',
         );
       req.body.saved_company = otherCompanies[0].id;
 

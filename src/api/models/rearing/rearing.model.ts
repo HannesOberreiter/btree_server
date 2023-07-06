@@ -19,7 +19,6 @@ export class Rearing extends ExtModel {
   edit_id!: number;
   bee_id!: number;
 
-
   company?: Company;
   start?: RearingDetail;
   type?: RearingType;

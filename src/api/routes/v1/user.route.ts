@@ -15,14 +15,14 @@ export class UserRouter extends Router {
       .route('/')
       .get(
         Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Container.resolve('UserController').get
+        Container.resolve('UserController').get,
       );
 
     this.router
       .route('/')
       .patch(
         Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Container.resolve('UserController').patch
+        Container.resolve('UserController').patch,
       );
 
     this.router
@@ -32,7 +32,7 @@ export class UserRouter extends Router {
           body('password').exists().withMessage('requiredField').trim(),
         ]),
         Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Container.resolve('UserController').delete
+        Container.resolve('UserController').delete,
       );
 
     this.router
@@ -42,7 +42,7 @@ export class UserRouter extends Router {
           body('password').exists().withMessage('requiredField').trim(),
         ]),
         Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Container.resolve('UserController').checkPassword
+        Container.resolve('UserController').checkPassword,
       );
 
     this.router
@@ -50,14 +50,14 @@ export class UserRouter extends Router {
       .patch(
         Validator.validate([body('saved_company').exists()]),
         Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Container.resolve('UserController').changeCompany
+        Container.resolve('UserController').changeCompany,
       );
 
     this.router
       .route('/federatedCredentials')
       .get(
         Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Container.resolve('UserController').getFederatedCredentials
+        Container.resolve('UserController').getFederatedCredentials,
       );
 
     this.router
@@ -65,7 +65,7 @@ export class UserRouter extends Router {
       .delete(
         Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
         Validator.validate([param('id').exists().isNumeric()]),
-        Container.resolve('UserController').deleteFederatedCredentials
+        Container.resolve('UserController').deleteFederatedCredentials,
       );
 
     this.router
@@ -73,21 +73,21 @@ export class UserRouter extends Router {
       .post(
         Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
         Validator.validate([body('email').exists().isEmail()]),
-        Container.resolve('UserController').addFederatedCredentials
+        Container.resolve('UserController').addFederatedCredentials,
       );
 
     this.router
       .route('/session')
       .get(
         Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Container.resolve('UserController').getRedisSession
+        Container.resolve('UserController').getRedisSession,
       );
     this.router
       .route('/session/:id')
       .delete(
         Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
         Validator.validate([param('id').exists().isString()]),
-        Container.resolve('UserController').deleteRedisSession
+        Container.resolve('UserController').deleteRedisSession,
       );
   }
 }

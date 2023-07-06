@@ -15,7 +15,7 @@ export class ServiceRouter extends Router {
       .route('/temperature/:apiary_id')
       .get(
         Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('ServiceController').getTemperature
+        Container.resolve('ServiceController').getTemperature,
       );
 
     this.router
@@ -23,14 +23,14 @@ export class ServiceRouter extends Router {
       .post(
         Validator.validate([body('amount').isFloat({ min: 50 }).toInt()]),
         Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('ServiceController').paypalCreateOrder
+        Container.resolve('ServiceController').paypalCreateOrder,
       );
 
     this.router
       .route('/paypal/orders/:orderID/capture')
       .post(
         Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('ServiceController').paypalCapturePayment
+        Container.resolve('ServiceController').paypalCapturePayment,
       );
 
     this.router
@@ -38,7 +38,7 @@ export class ServiceRouter extends Router {
       .post(
         Validator.validate([body('amount').isFloat({ min: 50 }).toInt()]),
         Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('ServiceController').stripeCreateOrder
+        Container.resolve('ServiceController').stripeCreateOrder,
       );
 
     this.router
@@ -49,7 +49,7 @@ export class ServiceRouter extends Router {
           body('lang').isString().isLength({ min: 2, max: 2 }),
         ]),
         Guard.authorize([ROLES.admin, ROLES.user, ROLES.read]),
-        Container.resolve('ServiceController').askWizBee
+        Container.resolve('ServiceController').askWizBee,
       );
   }
 }

@@ -12,7 +12,7 @@ export class Validator {
   static handleOption = (
     req: Request,
     _res: Response,
-    next: NextFunction | ((e?: Error) => void)
+    next: NextFunction | ((e?: Error) => void),
   ) => {
     if (!(req.params.table in OPTION)) {
       return next(notFound());
@@ -22,7 +22,7 @@ export class Validator {
   static handleSource = (
     req: Request,
     _res: Response,
-    next: NextFunction | ((e?: Error) => void)
+    next: NextFunction | ((e?: Error) => void),
   ) => {
     if (!(req.params.source in SOURCE)) {
       return next(notFound());
@@ -32,7 +32,7 @@ export class Validator {
   static isPremium = async (
     req: IUserRequest,
     _res: Response,
-    next: NextFunction | ((e?: Error) => void)
+    next: NextFunction | ((e?: Error) => void),
   ) => {
     if (!(await isPremium(req.user.user_id))) {
       return next(paymentRequired());
@@ -44,7 +44,7 @@ export class Validator {
     return async (
       req: Request,
       _res: Response,
-      next: NextFunction | ((e?: Error) => void)
+      next: NextFunction | ((e?: Error) => void),
     ) => {
       await Promise.all(validations.map((validation) => validation.run(req)));
 

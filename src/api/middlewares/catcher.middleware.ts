@@ -18,7 +18,7 @@ export class Catcher {
     err: Error,
     req: Request | IUserRequest,
     res: Response,
-    next
+    next,
   ) => {
     if (
       err.message !== 'TokenExpiredError' &&

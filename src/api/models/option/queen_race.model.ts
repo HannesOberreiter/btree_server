@@ -14,8 +14,8 @@ export class QueenRace extends BaseOptionModel {
       modelClass: Company,
       join: {
         from: ['queen_races.user_id'],
-        to: ['companies.id']
-      }
-    }
-  }
+        to: ['companies.id'],
+      },
+    },
+  };
 }

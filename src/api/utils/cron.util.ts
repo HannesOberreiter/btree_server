@@ -258,7 +258,7 @@ export const reminderVIS = async () => {
         .where((builder) =>
           builder
             .where('reminder_vis', '<', lastDate)
-            .orWhereNull('reminder_vis')
+            .orWhereNull('reminder_vis'),
         );
 
       result.mails = users.length;
@@ -307,7 +307,7 @@ export const reminderPremium = async () => {
       .where((builder) =>
         builder
           .where('reminder_premium', '<', lastDate)
-          .orWhereNull('reminder_premium')
+          .orWhereNull('reminder_premium'),
       )
       .where('user_join.rank', 1)
       .where('newsletter', true);
@@ -360,7 +360,7 @@ export const reminderDeletion = async () => {
       .where((builder) =>
         builder
           .where('reminder_deletion', '<', lastDate)
-          .orWhereNull('reminder_deletion')
+          .orWhereNull('reminder_deletion'),
       )
       .where('newsletter', true)
       .groupBy('company_bee.user_id')

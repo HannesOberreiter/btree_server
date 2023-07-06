@@ -82,7 +82,7 @@ export default class ExternalController extends Controller {
       }
       calendar.serve(
         res,
-        `btree-${req.params.source}-${new Date().toISOString()}.ics`
+        `btree-${req.params.source}-${new Date().toISOString()}.ics`,
       );
     } catch (e) {
       next(checkMySQLError(e));

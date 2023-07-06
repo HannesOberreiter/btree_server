@@ -18,7 +18,7 @@ export class Container {
 
   static nameController(
     _name: string,
-    descriptor: LoadedModuleDescriptor
+    descriptor: LoadedModuleDescriptor,
   ): string {
     return (descriptor.value as any).name; // get class name
   }
@@ -37,7 +37,7 @@ export class Container {
           lifetime: Lifetime.SINGLETON,
           register: asClass,
         },
-      }
+      },
     );
 
     this.container

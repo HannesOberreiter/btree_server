@@ -23,16 +23,16 @@ export class TreatmentApiary extends Model {
       modelClass: Company,
       join: {
         from: 'treatments_apiaries.user_id',
-        to: 'companies.id'
-      }
+        to: 'companies.id',
+      },
     },
     treatment: {
       relation: Model.BelongsToOneRelation,
       modelClass: Treatment,
       join: {
         from: 'treatments_apiaries.treatment_id',
-        to: 'treatments_id.id'
-      }
-    }
+        to: 'treatments_id.id',
+      },
+    },
   });
 }

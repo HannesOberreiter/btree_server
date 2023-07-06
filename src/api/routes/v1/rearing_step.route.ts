@@ -15,20 +15,20 @@ export class RearingStepRouter extends Router {
       .route('/')
       .post(
         Guard.authorize([ROLES.admin]),
-        Container.resolve('RearingStepController').post
+        Container.resolve('RearingStepController').post,
       );
     this.router
       .route('/:id')
       .delete(
         Guard.authorize([ROLES.admin]),
-        Container.resolve('RearingStepController').delete
+        Container.resolve('RearingStepController').delete,
       );
     this.router
       .route('/updatePosition')
       .patch(
         Validator.validate([body('data').isArray()]),
         Guard.authorize([ROLES.admin]),
-        Container.resolve('RearingStepController').updatePosition
+        Container.resolve('RearingStepController').updatePosition,
       );
   }
 }

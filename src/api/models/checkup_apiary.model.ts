@@ -23,16 +23,16 @@ export class CheckupApiary extends Model {
       modelClass: Company,
       join: {
         from: 'checkups_apiaries.user_id',
-        to: 'companies.id'
-      }
+        to: 'companies.id',
+      },
     },
     checkup: {
       relation: Model.BelongsToOneRelation,
       modelClass: Checkup,
       join: {
         from: 'checkups_apiaries.checkup_id',
-        to: 'checkups.id'
-      }
-    }
+        to: 'checkups.id',
+      },
+    },
   });
 }

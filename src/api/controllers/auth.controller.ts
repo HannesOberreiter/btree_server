@@ -192,7 +192,7 @@ export default class AuthController extends Controller {
     try {
       const { bee_id, user_id, data, paid, rank } = await loginCheck(
         email,
-        password
+        password,
       );
 
       //const token = await generateTokenResponse(bee_id, user_id, userAgent);
@@ -298,7 +298,7 @@ export default class AuthController extends Controller {
           req.user['name'] +
           '&email=' +
           req.user['email'] +
-          '&oauth=google'
+          '&oauth=google',
       );
     }
 
@@ -308,7 +308,7 @@ export default class AuthController extends Controller {
       const { bee_id, user_id, data, paid, rank } = await loginCheck(
         '',
         '',
-        req.user.bee_id
+        req.user.bee_id,
       );
 
       req['bee_id'] = bee_id;

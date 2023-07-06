@@ -50,7 +50,7 @@ export default class RearingStepController extends Controller {
               .withGraphJoined('detail')
               .patch({ position: step.position })
               .findById(step.id)
-              .where('detail.user_id', req.user.user_id)
+              .where('detail.user_id', req.user.user_id),
           );
         }
         return res;

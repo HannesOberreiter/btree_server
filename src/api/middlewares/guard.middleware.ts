@@ -31,7 +31,7 @@ export class Guard {
     req: IUserRequest,
     _res: any,
     next: NextFunction,
-    roles: number[]
+    roles: number[],
   ) => {
     if (!req.session.user) return next(unauthorized());
 
