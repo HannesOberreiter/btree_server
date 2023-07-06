@@ -374,7 +374,7 @@ const dialogForm = (
   title: string,
   ids: any[],
   form = props.table,
-  selected = null as any
+  selected = null as any,
 ) => {
   $q.dialog({
     component: DialogForm,
@@ -432,7 +432,7 @@ function onRestore() {
       `/v1/${
         props.table === 'virgin' ? 'queen' : props.table
       }/batchDelete?restore=true`,
-      { ids: ids }
+      { ids: ids },
     )
     .then(
       (_response: any) => {
@@ -441,7 +441,7 @@ function onRestore() {
       },
       (error) => {
         notification.open('negative', error);
-      }
+      },
     );
 }
 
@@ -486,7 +486,7 @@ function onDelete() {
       },
       (error) => {
         notification.open('negative', error);
-      }
+      },
     );
   });
 }
@@ -546,7 +546,7 @@ function onExport() {
     const status = exportFile(
       `${props.table}${props.tableOption}-export-${useDate.getCurrent()}.csv`,
       csv,
-      'text/csv'
+      'text/csv',
     );
     $q.loading.hide();
     if (status !== true) {
@@ -618,7 +618,7 @@ function onPrint() {
       </title>
       <link rel="stylesheet" type="text/css" href="/print-table.css?timestamp=${Date.now()}" />
     </head>
-    `
+    `,
     );
     const table = document.getElementsByClassName('q-table')[0];
     printWindow.document.write(
@@ -629,7 +629,7 @@ function onPrint() {
       <b>${storeUser.getCompany.name}</b> -
       ${useDate.displayFormat(useDate.getCurrent())} [b.tree]
     </body>
-    `
+    `,
     );
     printWindow.document.write('</html>');
     printWindow.document.close();

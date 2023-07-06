@@ -346,7 +346,7 @@ watch(
   },
   {
     immediate: true,
-  }
+  },
 );
 
 function onRequest(props: any) {
@@ -360,7 +360,7 @@ function orderLocalData(o: any) {
       if (v[o.type][o.name]) return v[o.type][o.name];
       return '';
     },
-    orderLocalDirection.value
+    orderLocalDirection.value,
   );
   orderLocalDirection.value =
     orderLocalDirection.value === 'asc' ? 'desc' : 'asc';

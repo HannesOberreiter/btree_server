@@ -71,6 +71,6 @@ watch(
   () => {
     $q.dark.set(status.value.status);
   },
-  { immediate: true }
+  { immediate: true },
 );
 </script>

@@ -125,7 +125,7 @@ const useNotification = () => {
           () => {
             dismiss();
           },
-          true
+          true,
         );
       }
     });

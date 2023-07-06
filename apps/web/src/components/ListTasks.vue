@@ -11,7 +11,7 @@
       <q-list
         v-for="(task, index) in listData.slice(
           taskStart,
-          apiary ? taskEnd : listData.length
+          apiary ? taskEnd : listData.length,
         )"
         :key="task.kind + task.id"
         bordered

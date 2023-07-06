@@ -85,7 +85,7 @@ export const useApiFetch = () => {
     payload = '' as unknown,
     loadingIndicator = true,
     showPopup = true,
-    credentials = true
+    credentials = true,
   ): Promise<any> => {
     const urlParam = buildUrl(url, payload);
     const originalRequest = new Request(urlParam, {
@@ -99,7 +99,7 @@ export const useApiFetch = () => {
       false,
       false,
       loadingIndicator,
-      showPopup
+      showPopup,
     );
   };
 
@@ -142,7 +142,7 @@ export const useApiFetch = () => {
     recursive = false,
     file = false,
     loadingIndicator = true,
-    showPopup = true
+    showPopup = true,
   ): Promise<any> {
     if (
       network.isSupported &&

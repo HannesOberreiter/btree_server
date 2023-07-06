@@ -86,7 +86,7 @@ const numberOfTasks = computed(() => {
     count = 1;
   } else if (
     ['hive', 'queen', 'apiary', 'todo', 'scale', 'option', 'rearing'].includes(
-      form.value
+      form.value,
     )
   ) {
     if (state.value.name) {
@@ -135,7 +135,7 @@ async function onUpdate() {
     },
     (error) => {
       notification.open('negative', error);
-    }
+    },
   );
   isSubmitting.value = false;
   return;
@@ -156,7 +156,7 @@ async function onUndo() {
     },
     (error) => {
       notification.open('negative', error);
-    }
+    },
   );
   isSubmitting.value = false;
   return;
@@ -184,7 +184,7 @@ async function onSubmit() {
     },
     (error) => {
       notification.open('negative', error);
-    }
+    },
   );
   isSubmitting.value = false;
 }

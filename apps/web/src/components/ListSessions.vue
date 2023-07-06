@@ -21,7 +21,7 @@ function fetchSession() {
     },
     (error) => {
       console.error(error);
-    }
+    },
   );
 }
 
@@ -34,7 +34,7 @@ function deleteSession(id: string) {
     (error) => {
       notification.open('negative', error);
       console.error(error);
-    }
+    },
   );
 }
 </script>

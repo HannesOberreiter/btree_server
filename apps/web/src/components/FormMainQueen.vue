@@ -276,7 +276,7 @@ const { data: queens, refetch } = useQueensQuery({
   enabled: !isEdit.value,
 });
 const lastNames = computed(() =>
-  queens.value ? getNames(queens.value.results) : ''
+  queens.value ? getNames(queens.value.results) : '',
 );
 const sampleName = computed(() => {
   let hintText = '';
@@ -314,7 +314,7 @@ watch(
     } else {
       forceInterval.value = false;
     }
-  }
+  },
 );
 
 async function getEdit(id: unknown[]) {
@@ -333,7 +333,7 @@ async function getEdit(id: unknown[]) {
     },
     (error) => {
       notification.open('negative', error);
-    }
+    },
   );
 }
 

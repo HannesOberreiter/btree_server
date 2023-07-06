@@ -86,7 +86,7 @@ if (params.error) {
   notification.open(
     'negative',
     params.error_description ? params.error_description : params.error,
-    false
+    false,
   );
 } else if (params.code) {
   useDropbox.auth(params.code as string).then(() => onToken());

@@ -162,7 +162,7 @@ async function getEdit(id: unknown[]) {
         {
           value: row.id,
           label: `ID: ${row.id} / (${dayjs(row.date).format(
-            'YYYY-MM-DD HH:mm'
+            'YYYY-MM-DD HH:mm',
           )})`,
         },
       ]);
@@ -172,7 +172,7 @@ async function getEdit(id: unknown[]) {
     },
     (error) => {
       notification.open('negative', error);
-    }
+    },
   );
 }
 

@@ -24,7 +24,7 @@
           >
             <div class="row items-center justify-end">
               <btn-date-auto-close
-                @change="(v: boolean) => autoClose = v"
+                @change="(v: boolean) => (autoClose = v)"
               ></btn-date-auto-close>
               <btn-base
                 v-close-popup
@@ -79,13 +79,13 @@ watch(
   (cur) => {
     if (cur) {
       displayValue.value = `${t('from')} ${useDate.displayFormat(
-        cur.from
+        cur.from,
       )} to ${useDate.displayFormat(cur.to)}`;
     } else {
       displayValue.value = t('filterNoDate');
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 function markDate(date: string) {

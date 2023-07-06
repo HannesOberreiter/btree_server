@@ -87,7 +87,7 @@ const { modelValue } = useVModels(props, emit);
 const resetValue = unref(modelValue.value);
 const { values, reset } = toRefs(props);
 const multipleValues = computed(() =>
-  formCheckMultipleValues(values.value, 'time')
+  formCheckMultipleValues(values.value, 'time'),
 );
 const disable = ref(multipleValues.value);
 modelValue.value = disable.value ? null : modelValue.value;
@@ -134,7 +134,7 @@ function setValues() {
       modelValue.value = useDate.isoFormat(
         values.value[0].time,
         'time',
-        'HH:mm:ss'
+        'HH:mm:ss',
       );
     } else {
       modelValue.value = null;

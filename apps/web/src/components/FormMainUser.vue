@@ -120,7 +120,7 @@ async function onSubmit() {
     },
     (error) => {
       notification.open('negative', error);
-    }
+    },
   );
   isSubmitting.value = false;
 }
@@ -149,7 +149,7 @@ const onDelete = () => {
         },
         (error) => {
           notification.open('negative', error);
-        }
+        },
       );
     })
     .onDismiss(() => (isSubmitting.value = false));

@@ -31,7 +31,7 @@ export function useCalendarQuery() {
         };
         return api.get(`/v1/calendar/${unref(source)}`, payload);
       },
-      {}
+      {},
     );
   }
 
@@ -64,13 +64,13 @@ export function useApiaryQuery({
         return response;
       },
       onError: (error: any) => notification.open('negative', error),
-    }
+    },
   );
 }
 
 export function useTemperatureQuery(
   apiary_id: Ref<number>,
-  { enabled = undefined as MaybeRef<boolean | undefined> }
+  { enabled = undefined as MaybeRef<boolean | undefined> },
 ) {
   const notification = useNotification();
   const api = useApiFetch();
@@ -83,7 +83,7 @@ export function useTemperatureQuery(
       enabled,
       select: (response) => response,
       onError: (error: any) => notification.open('negative', error),
-    }
+    },
   );
 }
 
@@ -116,7 +116,7 @@ export function useMovementsQuery({
       keepPreviousData: false,
       select: (response) => response,
       onError: (error: any) => notification.open('negative', error),
-    }
+    },
   );
 }
 
@@ -151,7 +151,7 @@ export function useTodosQuery({
       keepPreviousData: false,
       select: (response) => response,
       onError: (error: any) => notification.open('negative', error),
-    }
+    },
   );
 }
 
@@ -168,7 +168,7 @@ export function useTasksQuery(
     details = false,
     filters = '' as MaybeRef<string>,
     done = true as MaybeRef<boolean>,
-  }
+  },
 ) {
   const notification = useNotification();
   const api = useApiFetch();
@@ -194,7 +194,7 @@ export function useTasksQuery(
       keepPreviousData: false,
       select: (response) => response,
       onError: (error: any) => notification.open('negative', error),
-    }
+    },
   );
 }
 
@@ -249,7 +249,7 @@ export function useApiariesQuery({
           : ([] as any);
       },
       onError: (error: any) => notification.open('negative', error),
-    }
+    },
   );
 }
 
@@ -303,7 +303,7 @@ export function useQueensQuery({
       select: (response) => {
         const result = map(response.results, (value) => {
           value.label = `${value.name} (${dayjs(value.date).format(
-            'YYYY-MM-DD'
+            'YYYY-MM-DD',
           )})`;
           if (value.hive_location)
             value.label += ` [${value.hive_location.hive_name}]`;
@@ -315,7 +315,7 @@ export function useQueensQuery({
           : ([] as any);
       },
       onError: (error: any) => notification.open('negative', error),
-    }
+    },
   );
 }
 
@@ -348,7 +348,7 @@ export function useQueensStats({
       keepPreviousData: false,
       select: (response) => response,
       onError: (error: any) => notification.open('negative', error),
-    }
+    },
   );
 }
 
@@ -368,7 +368,7 @@ export function useQueenPedigree({
       keepPreviousData: false,
       select: (response) => response,
       onError: (error: any) => notification.open('negative', error),
-    }
+    },
   );
 }
 
@@ -403,7 +403,7 @@ export function useChargeQuery({
       keepPreviousData: false,
       select: (response) => response,
       onError: (error: any) => notification.open('negative', error),
-    }
+    },
   );
 }
 
@@ -434,7 +434,7 @@ export function useChargeStockQuery({
       keepPreviousData: false,
       select: (response) => response,
       onError: (error: any) => notification.open('negative', error),
-    }
+    },
   );
 }
 
@@ -459,7 +459,7 @@ export function useScaleQuery({ enabled = true as MaybeRef<boolean> }) {
         return result ? { results: result } : ([] as any);
       },
       onError: (error: any) => notification.open('negative', error),
-    }
+    },
   );
 }
 
@@ -492,7 +492,7 @@ export function useScaleDataQuery({
       keepPreviousData: false,
       select: (response) => response,
       onError: (error: any) => notification.open('negative', error),
-    }
+    },
   );
 }
 
@@ -514,7 +514,7 @@ export function useHiveQuery({
         return response;
       },
       onError: (error: any) => notification.open('negative', error),
-    }
+    },
   );
 }
 
@@ -539,7 +539,7 @@ export function useHiveTaskQuery({
         return response;
       },
       onError: (error: any) => notification.open('negative', error),
-    }
+    },
   );
 }
 
@@ -604,7 +604,7 @@ export function useHivesQuery({
           : ([] as any);
       },
       onError: (error: any) => notification.open('negative', error),
-    }
+    },
   );
 }
 
@@ -615,7 +615,7 @@ export function useOptionsQuery(
     direction = ['desc', 'asc'] as MaybeRef<Array<string>>,
     modus = true as MaybeRef<boolean>,
     enabled = true as MaybeRef<boolean>,
-  }
+  },
 ) {
   const notification = useNotification();
   const api = useApiFetch();
@@ -654,7 +654,7 @@ export function useOptionsQuery(
       onError: (error: any) => {
         notification.open('negative', error);
       },
-    }
+    },
   );
 }
 
@@ -694,7 +694,7 @@ export function useRearingDetailsQuery({
           : ([] as any);
       },
       onError: (error: any) => notification.open('negative', error),
-    }
+    },
   );
 }
 
@@ -734,7 +734,7 @@ export function useRearingTypesQuery({
           : ([] as any);
       },
       onError: (error: any) => notification.open('negative', error),
-    }
+    },
   );
 }
 
@@ -757,7 +757,7 @@ export function useRearingEventQuery({
       keepPreviousData: false,
       select: (response) => response,
       onError: (error: any) => notification.open('negative', error),
-    }
+    },
   );
 }
 
@@ -790,7 +790,7 @@ export function useRearingsQuery({
       keepPreviousData: false,
       select: (response) => response,
       onError: (error: any) => notification.open('negative', error),
-    }
+    },
   );
 }
 
@@ -805,7 +805,7 @@ export function useStatisticTable(
     filters = '' as MaybeRef<string>,
     q = '' as MaybeRef<string>,
     enabled = true as MaybeRef<boolean>,
-  }
+  },
 ) {
   const notification = useNotification();
   const api = useApiFetch();
@@ -838,13 +838,13 @@ export function useStatisticTable(
       keepPreviousData: false,
       select: (response) => response,
       onError: (error: any) => notification.open('negative', error),
-    }
+    },
   );
 }
 
 export function useStatisticYear(
   kind: string,
-  { filters = '' as MaybeRef<string>, enabled = true as MaybeRef<boolean> }
+  { filters = '' as MaybeRef<string>, enabled = true as MaybeRef<boolean> },
 ) {
   const notification = useNotification();
   const api = useApiFetch();
@@ -861,13 +861,13 @@ export function useStatisticYear(
       keepPreviousData: false,
       select: (response) => response,
       onError: (error: any) => notification.open('negative', error),
-    }
+    },
   );
 }
 
 export function useStatisticApiary(
   kind: string,
-  { filters = '' as MaybeRef<string>, enabled = true as MaybeRef<boolean> }
+  { filters = '' as MaybeRef<string>, enabled = true as MaybeRef<boolean> },
 ) {
   const notification = useNotification();
   const api = useApiFetch();
@@ -884,13 +884,13 @@ export function useStatisticApiary(
       keepPreviousData: false,
       select: (response) => response,
       onError: (error: any) => notification.open('negative', error),
-    }
+    },
   );
 }
 
 export function useStatisticType(
   kind: string,
-  { filters = '' as MaybeRef<string>, enabled = true as MaybeRef<boolean> }
+  { filters = '' as MaybeRef<string>, enabled = true as MaybeRef<boolean> },
 ) {
   const notification = useNotification();
   const api = useApiFetch();
@@ -907,7 +907,7 @@ export function useStatisticType(
       keepPreviousData: false,
       select: (response) => response,
       onError: (error: any) => notification.open('negative', error),
-    }
+    },
   );
 }
 
@@ -928,7 +928,7 @@ export function useCountsQuery({ enabled = true as MaybeRef<boolean> }) {
       refetchInterval: 1000 * 60 * 30, // every 30 minutes
       select: (response) => response,
       onError: (error: any) => notification.open('negative', error),
-    }
+    },
   );
 }
 

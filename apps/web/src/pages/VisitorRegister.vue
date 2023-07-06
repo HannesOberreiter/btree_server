@@ -153,7 +153,7 @@ const randPassword = new Array(35)
         crypto.getRandomValues(r);
       } while (r[0] > max);
       return chars[r[0] % chars.length];
-    })(pwdChars)
+    })(pwdChars),
   )
   .join('');
 
@@ -266,7 +266,7 @@ async function sendForm(user: any) {
     (error) => {
       notification.open('negative', error);
       isSubmitting.value = false;
-    }
+    },
   );
 }
 </script>

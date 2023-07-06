@@ -78,7 +78,7 @@
             class="text-white"
             :label="`${$t('inactive')} (${useDate.displayFormat(
               data.modus_date,
-              'date'
+              'date',
             )})`"
           />
         </div>
@@ -168,7 +168,7 @@ async function setModus(id: number, modus: boolean) {
           modus: !modus,
           modus_date: useDate.isoFormat(useDate.getCurrent()),
         },
-      })
+      }),
     )
     .then(
       async (_response: any) => {
@@ -177,7 +177,7 @@ async function setModus(id: number, modus: boolean) {
       },
       (error) => {
         notification.open('negative', error);
-      }
+      },
     );
   isSubmitting.value = false;
 }

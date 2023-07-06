@@ -172,7 +172,7 @@ function createApiaryForm(e: any) {
     }).onOk((e) => {
       refetch.value().then(
         () => console.log(e),
-        (error) => console.error(error)
+        (error) => console.error(error),
       );
     });
   }
@@ -189,7 +189,7 @@ function editApiaryForm(e: any) {
     }).onOk((e) => {
       refetch.value().then(
         () => console.log(e),
-        (error) => console.error(error)
+        (error) => console.error(error),
       );
     });
   }
@@ -203,7 +203,7 @@ function deleteApiary(value: string) {
     },
     (error) => {
       notification.open('negative', error);
-    }
+    },
   );
 }
 function moveApiaryStart(value: any) {
@@ -233,7 +233,7 @@ function moveApiaryEnd(e: any) {
         (error) => {
           updateTimestamp.value = Date();
           notification.open('negative', error);
-        }
+        },
       );
     })
     .onCancel(async () => {

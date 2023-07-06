@@ -125,7 +125,7 @@ export const useFieldsettingStore = defineStore('fieldsetting', {
       Object.values(state.settings.checkup.ratings).some((val) => val === true),
     someCheckboxTrue: (state) =>
       Object.values(state.settings.checkup.checkboxes).some(
-        (val) => val === true
+        (val) => val === true,
       ),
     someFrameTrue: (state) =>
       Object.values(state.settings.checkup.frame).some((val) => val === true),

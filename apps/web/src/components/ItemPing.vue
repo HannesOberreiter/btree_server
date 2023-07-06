@@ -35,7 +35,7 @@ useIntervalFn(
     ping();
   },
   1000 * 60 * 5,
-  { immediateCallback: true }
+  { immediateCallback: true },
 );
 
 function ping() {

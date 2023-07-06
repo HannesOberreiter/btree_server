@@ -100,7 +100,7 @@ watch(
         service_active.value = response;
       });
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 const uploadUrl = () => {
@@ -147,7 +147,7 @@ function onRejected(rejectedEntries: any) {
   notification.open(
     'negative',
     'file(s) did not pass validation constraints',
-    true
+    true,
   );
 }
 </script>

@@ -45,7 +45,7 @@ watch(
   () => {
     if (activate.value) notification.open('positive', 'accountActivated');
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 const v = useVuelidate();
@@ -75,7 +75,7 @@ function sendForm(user: User) {
       isSubmitting.value = false;
       console.error(error);
       notification.open('negative', error);
-    }
+    },
   );
 }
 

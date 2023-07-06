@@ -36,7 +36,7 @@ watch(
   () => {
     filter.value = JSON.stringify([{ 'movedates.hive_id': id.value }]);
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 const { isLoading, data } = useMovementsQuery({

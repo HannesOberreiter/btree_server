@@ -46,7 +46,7 @@
                   useDate
                     .toDayjs(eventInfo.end)
                     .subtract(1, 'day')
-                    .toISOString()
+                    .toISOString(),
                 )
               }}
             </div>
@@ -177,7 +177,7 @@ const props = defineProps({
 defineEmits([...useDialogPluginComponent.emits]);
 
 const isMovement = computed(
-  () => props.eventInfo.table === 'movedate' || false
+  () => props.eventInfo.table === 'movedate' || false,
 );
 const isTodo = computed(() => props.eventInfo.table === 'todo' || false);
 const isVis = computed(() => props.eventInfo.table === 'vis' || false);
@@ -196,7 +196,7 @@ async function updateStatus() {
     },
     (error) => {
       notification.open('negative', error);
-    }
+    },
   );
 }
 async function deleteEvent() {
@@ -225,7 +225,7 @@ async function deleteEvent() {
       },
       (error) => {
         notification.open('negative', error);
-      }
+      },
     );
   });
 }

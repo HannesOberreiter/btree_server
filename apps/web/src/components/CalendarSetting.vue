@@ -51,6 +51,6 @@ const localPerf = useLocalStorage(
   {
     'calendar-show-weeknumber': true,
   },
-  { mergeDefaults: true }
+  { mergeDefaults: true },
 );
 </script>

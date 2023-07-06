@@ -105,7 +105,7 @@ const emit = defineEmits([
 ]);
 const { startValue, endValue, modelInterval, modelRepeat } = useVModels(
   props,
-  emit
+  emit,
 );
 const showInterval = ref(false);
 const resetStart = unref(startValue.value);
@@ -114,7 +114,7 @@ const { values, reset } = toRefs(props);
 const multipleValues = computed(
   () =>
     formCheckMultipleValues(values.value, 'date') ||
-    formCheckMultipleValues(values.value, 'enddate')
+    formCheckMultipleValues(values.value, 'enddate'),
 );
 const disable = ref(multipleValues.value);
 

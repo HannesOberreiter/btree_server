@@ -8,14 +8,10 @@
     "sourceMap": false,
     "inlineSourceMap": false,
     "forceConsistentCasingInFileNames": true,
-    "types": [
-      "@quasar/quasar-app-extension-testing-e2e-cypress"
-    ],
+    "types": ["@quasar/quasar-app-extension-testing-e2e-cypress"],
     "baseUrl": ".",
     "paths": {
-      "~/*": [
-        "src/*"
-      ]
+      "~/*": ["src/*"]
     }
   }
 }

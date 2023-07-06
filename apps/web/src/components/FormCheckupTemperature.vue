@@ -83,7 +83,7 @@ const {
   refetch,
 } = useTemperatureQuery(select, {
   enabled: computed(
-    () => select.value != 0 && loadTemp.value && props.values !== null
+    () => select.value != 0 && loadTemp.value && props.values !== null,
   ),
 });
 const emit = defineEmits(['update:modelValue']);
@@ -96,7 +96,7 @@ watch(
   () => props.hive,
   () => {
     getTemperature();
-  }
+  },
 );
 
 watch(temperature, (cur) => {
@@ -122,7 +122,7 @@ function getTemperature(click = false) {
   if (click)
     refetch.value().then(
       () => console.log('Loading new temperature from service'),
-      (e) => console.error(e)
+      (e) => console.error(e),
     );
 }
 </script>

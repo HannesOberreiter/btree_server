@@ -30,7 +30,7 @@ import { useAuthUserStore } from '~/stores/auth';
 const storeUser = useAuthUserStore();
 
 const urlPart = computed(() =>
-  storeUser.user.lang === 'de' ? 'de/wetter' : 'en/weather'
+  storeUser.user.lang === 'de' ? 'de/wetter' : 'en/weather',
 );
 
 const { coords, error, pause } = useGeolocation({

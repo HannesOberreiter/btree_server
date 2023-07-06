@@ -97,7 +97,7 @@ const localPerf = useLocalStorage(
     'hive-use-input': false,
     'hive-clear-after-saving': false,
   },
-  { mergeDefaults: true }
+  { mergeDefaults: true },
 );
 
 onMounted(() => {
@@ -147,7 +147,7 @@ function selectApiary(val: any) {
   map(val, (v) => {
     const res = filter(
       hives.value.results,
-      (obj) => obj.hive_location.apiary_name === v.name
+      (obj) => obj.hive_location.apiary_name === v.name,
     );
     if (!state.hive) state.hive = [];
     if (res.length > 0) state.hive = unionBy(state.hive, res, 'id') as [];
@@ -172,10 +172,10 @@ function filterHive(val: string, update: any, _abort: any) {
           modelValue.moveOptionSelection(1, true);
           modelValue.toggleOption(
             modelValue.options[modelValue.optionIndex],
-            true
+            true,
           );
         }
-      }
+      },
     );
     return;
   }
@@ -184,7 +184,7 @@ function filterHive(val: string, update: any, _abort: any) {
       () => {
         const needle = new RegExp(`(${val.toLowerCase()})`);
         optionsHive.value = filter(hives.value.results, (obj) =>
-          needle.test(obj.label.toLowerCase())
+          needle.test(obj.label.toLowerCase()),
         );
       },
       (modelValue: any) => {
@@ -195,10 +195,10 @@ function filterHive(val: string, update: any, _abort: any) {
           modelValue.moveOptionSelection(1, true);
           modelValue.toggleOption(
             modelValue.options[modelValue.optionIndex],
-            true
+            true,
           );
         }
-      }
+      },
     );
   }
 }
@@ -206,7 +206,7 @@ function filterHive(val: string, update: any, _abort: any) {
 function setSelected() {
   if (props.selected && hives.value)
     state.hive = filter(hives.value.results, (obj) =>
-      props.selected.includes(obj.id)
+      props.selected.includes(obj.id),
     );
 }
 
@@ -218,7 +218,7 @@ function filterApiary(val: any, update: any, _abort: any) {
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       const needle = new RegExp(`(${val.toLowerCase()})`);
       optionsApiary.value = filter(data, (obj) =>
-        needle.test(obj.label.toLowerCase())
+        needle.test(obj.label.toLowerCase()),
       );
     });
   }
@@ -253,7 +253,7 @@ onMounted(() => {
           const { double, found } = findApiaries(
             apiaries.value.results,
             String(router.currentRoute.value.params.id),
-            apiary.value
+            apiary.value,
           );
           if (found && double.length === 0) {
             apiary.value = union(apiary.value, found);
@@ -261,7 +261,7 @@ onMounted(() => {
           }
         }
       },
-      { immediate: true }
+      { immediate: true },
     );
   }
 
@@ -273,14 +273,14 @@ onMounted(() => {
           const { double, found } = findHives(
             hives.value.results,
             String(router.currentRoute.value.params.id),
-            state.hive
+            state.hive,
           );
           if (found && double.length === 0) {
             state.hive = union(state.hive, found);
           }
         }
       },
-      { immediate: true }
+      { immediate: true },
     );
   }
 });
@@ -295,7 +295,7 @@ watch(
   () => {
     setSelected();
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 watch(scannedId, () => {
@@ -303,13 +303,13 @@ watch(scannedId, () => {
     const { double, found } = findHives(
       hives.value.results,
       scannedId.value,
-      state.hive
+      state.hive,
     );
     if (found && double.length === 0) {
       notification.open(
         'positive',
         t('addedHive', { name: found['name'] }),
-        true
+        true,
       );
       scannedId.value = null;
       state.hive = union(state.hive, found);

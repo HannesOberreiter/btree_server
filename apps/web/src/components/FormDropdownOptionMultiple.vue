@@ -85,7 +85,7 @@ watch(
   },
   {
     immediate: true,
-  }
+  },
 );
 
 function setValues() {
@@ -131,10 +131,10 @@ function filterSelection(val: string, update: any, abort: any) {
           modelValue.moveOptionSelection(1, true);
           modelValue.toggleOption(
             modelValue.options[modelValue.optionIndex],
-            true
+            true,
           );
         }
-      }
+      },
     );
     return;
   }
@@ -157,10 +157,10 @@ function filterSelection(val: string, update: any, abort: any) {
           modelValue.moveOptionSelection(1, true);
           modelValue.toggleOption(
             modelValue.options[modelValue.optionIndex],
-            true
+            true,
           );
         }
-      }
+      },
     );
 
     abort(() => {

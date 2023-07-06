@@ -63,7 +63,7 @@ const dialogForm = (
   title: string,
   ids: any[],
   form = 'scale',
-  selected = null as any
+  selected = null as any,
 ) => {
   $q.dialog({
     component: DialogForm,
@@ -85,7 +85,7 @@ function finalDelete(id: number) {
     },
     (error) => {
       notification.open('negative', error);
-    }
+    },
   );
 }
 

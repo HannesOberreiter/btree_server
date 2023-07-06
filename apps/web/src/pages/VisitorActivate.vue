@@ -116,7 +116,7 @@ async function sendForm(value: any) {
         notification.open('negative', error);
       }
       isSubmitting.value = false;
-    }
+    },
   );
 }
 </script>

@@ -84,7 +84,7 @@ watch(
   (cur) => {
     if (cur) getService(cur.trim());
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 function getService(value: string) {
