@@ -56,7 +56,7 @@ const emit = defineEmits(['update:modelValue']);
 const { modelValue } = useVModels(props, emit);
 const { values, reset } = toRefs(props);
 const multipleValues = computed(() =>
-  formCheckMultipleValues(values.value, 'symbol')
+  formCheckMultipleValues(values.value, 'symbol'),
 );
 const disable = ref(multipleValues.value);
 
@@ -67,7 +67,7 @@ watch(
   },
   {
     immediate: true,
-  }
+  },
 );
 
 function setValues() {

@@ -111,7 +111,7 @@ watch(
   (cur) => (hives.value = cur ? cur.hives : null),
   {
     immediate: true,
-  }
+  },
 );
 
 function onMovement(id: number) {
@@ -165,7 +165,7 @@ function onSave(force = false) {
         clearCache('hive');
         emit('change');
       },
-      () => notification.open('negative', '')
+      () => notification.open('negative', ''),
     );
   }
 }

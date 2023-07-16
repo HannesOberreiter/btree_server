@@ -97,7 +97,7 @@ export const useAuthUserStore = defineStore('auth/user', {
           this.user = {};
           this.company = {};
           return Promise.reject(error);
-        }
+        },
       );
     },
     async logout() {

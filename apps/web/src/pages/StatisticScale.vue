@@ -120,12 +120,12 @@ watch(
     if (data.value)
       chartTimeseries.value = renderChart(
         deepUnref(data.value.results),
-        unref(year.value)
+        unref(year.value),
       );
   },
   {
     immediate: true,
-  }
+  },
 );
 
 function renderChart(data: any, year: number) {

@@ -64,7 +64,7 @@ const multipleValues = computed(
     formCheckMultipleValues(values.value, 'queen') ||
     formCheckMultipleValues(values.value, 'queencells') ||
     formCheckMultipleValues(values.value, 'capped_brood') ||
-    formCheckMultipleValues(values.value, 'eggs')
+    formCheckMultipleValues(values.value, 'eggs'),
 );
 const disable = ref(multipleValues.value);
 
@@ -80,7 +80,7 @@ const options = computed(() => {
     (checkbox) =>
       fields.settings.checkup.checkboxes[
         checkbox.value as keyof typeof fields.settings.checkup.checkboxes
-      ]
+      ],
   );
 });
 

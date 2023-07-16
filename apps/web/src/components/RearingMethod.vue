@@ -79,14 +79,14 @@ watch(
   },
   {
     immediate: true,
-  }
+  },
 );
 
 const dialogForm = (
   title: string,
   ids: any[],
   form = 'rearing_type',
-  selected = null as any
+  selected = null as any,
 ) => {
   $q.dialog({
     component: DialogForm,
@@ -97,7 +97,7 @@ const dialogForm = (
       ids: ids,
       maximized: false,
     },
-  }).onOk(() => refetch.value());
+  }).onOk(() => refetch());
 };
 
 function onNew() {
@@ -117,9 +117,9 @@ function onDelete() {
       () => {
         notification.open('positive', 'deleted');
         model.value = null;
-        refetch.value();
+        refetch();
       },
-      () => notification.open('negative', 'error.unknown')
+      () => notification.open('negative', 'error.unknown'),
     );
   });
 }

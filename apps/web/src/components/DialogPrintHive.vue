@@ -86,7 +86,7 @@ watch(
       }
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 watch(
@@ -99,7 +99,7 @@ watch(
       }
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 function nextItem() {
@@ -122,7 +122,7 @@ function onPrint() {
         btree
       </title>
     </head>
-    `
+    `,
     );
     const element = document.getElementById('printContainer');
     printWindow.document.write(
@@ -130,7 +130,7 @@ function onPrint() {
     <body>
       ${element.outerHTML}
     </body>
-    `
+    `,
     );
     printWindow.document.write('</html>');
     printWindow.document.close();

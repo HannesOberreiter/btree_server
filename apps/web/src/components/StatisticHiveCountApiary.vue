@@ -60,7 +60,7 @@ async function loadStats() {
       data.value = response;
       renderChart();
     },
-    (error) => notification.open('negative', error)
+    (error) => notification.open('negative', error),
   );
 }
 

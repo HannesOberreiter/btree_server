@@ -93,7 +93,7 @@ function filterFn(val: any, update: any, _abort: any) {
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
         const needle = new RegExp(`(${val.toLowerCase()})`);
         options.value = data.value.filter((obj) =>
-          needle.test(obj.clabel.toLowerCase())
+          needle.test(obj.clabel.toLowerCase()),
         );
       },
       (modelValue: any) => {
@@ -104,10 +104,10 @@ function filterFn(val: any, update: any, _abort: any) {
           modelValue.moveOptionSelection(1, true);
           modelValue.toggleOption(
             modelValue.options[modelValue.optionIndex],
-            true
+            true,
           );
         }
-      }
+      },
     );
   }
 }

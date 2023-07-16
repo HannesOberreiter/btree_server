@@ -22,7 +22,7 @@ function fetchFederatedCredentials() {
     },
     (error) => {
       console.error(error);
-    }
+    },
   );
 }
 
@@ -35,7 +35,7 @@ function deleteFederatedCredential(id: string) {
     (error) => {
       notification.open('negative', error);
       console.error(error);
-    }
+    },
   );
 }
 
@@ -48,7 +48,7 @@ function addFederatedCredential(email: string) {
     (error) => {
       notification.open('negative', error);
       console.error(error);
-    }
+    },
   );
 }
 

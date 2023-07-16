@@ -47,7 +47,7 @@ export const useTableFilterStore = defineStore('tableFilter', {
       statistic_treatment_table: '',
       statistic_rating_table: '',
       statistic_queen_table: '',
-    } as State),
+    }) as State,
   getters: {
     field: (state) => {
       return (table: string, key: string) => {

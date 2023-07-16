@@ -265,7 +265,7 @@ watch(
   () => props.opened,
   () => {
     model.value = props.opened;
-  }
+  },
 );
 
 function updateStatus(id: number) {
@@ -281,7 +281,7 @@ function updateStatus(id: number) {
     },
     (error) => {
       notification.open('negative', error);
-    }
+    },
   );
 }
 
@@ -366,7 +366,7 @@ function onDelete(id: number, kind: string) {
       },
       (error) => {
         notification.open('negative', error);
-      }
+      },
     );
   });
 }

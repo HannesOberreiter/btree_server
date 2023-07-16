@@ -34,7 +34,7 @@ watch(
   () => {
     filter.value = JSON.stringify([{ 'queens.hive_id': id.value }]);
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 const { isLoading, data } = useQueensQuery({

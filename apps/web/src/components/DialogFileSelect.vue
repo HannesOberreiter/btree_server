@@ -59,6 +59,6 @@ watch(
         service_active.value = response;
       });
   },
-  { immediate: true }
+  { immediate: true },
 );
 </script>

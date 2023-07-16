@@ -11,7 +11,7 @@
       <q-list
         v-for="(task, index) in listData.slice(
           taskStart,
-          apiary ? taskEnd : listData.length
+          apiary ? taskEnd : listData.length,
         )"
         :key="task.kind + task.id"
         bordered
@@ -23,7 +23,7 @@
           :opened="opened"
           :task="task"
           :apiary="apiary"
-          @refetch="refetch()"
+          @refetch="refetchQuery()"
         ></item-task>
       </q-list>
       <span v-if="apiary" class="text-caption">
@@ -121,7 +121,11 @@ const {
   apiary,
   refetch: doRefetch,
 } = toRefs(props);
-const { isLoading, data, refetch } = useHiveTaskQuery({
+const {
+  isLoading,
+  data,
+  refetch: refetchQuery,
+} = useHiveTaskQuery({
   id: id,
   year: year,
   apiary: apiary,
@@ -129,7 +133,7 @@ const { isLoading, data, refetch } = useHiveTaskQuery({
 const taskStart = ref(0);
 const taskEnd = ref(10);
 
-watch(doRefetch, () => refetch.value());
+watch(doRefetch, () => refetchQuery());
 
 const listData = computed(() => {
   if (data.value) {

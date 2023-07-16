@@ -169,7 +169,7 @@ const columns = [
     field: (row: any) =>
       row.hive_location
         ? `${row.hive_location.hive_name} (${useDate.displayFormat(
-            row.move_date
+            row.move_date,
           )})`
         : '',
     sortable: true,
@@ -328,7 +328,7 @@ watch(
   },
   {
     immediate: true,
-  }
+  },
 );
 
 function onRequest(props: any) {

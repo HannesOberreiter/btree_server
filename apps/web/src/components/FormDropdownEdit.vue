@@ -16,7 +16,7 @@
 </template>
 
 <script setup lang="ts">
-import { required } from '~/helpers/i18n-validators';
+import { requiredField } from '~/helpers/i18n-validators';
 import { useVModels } from '@vueuse/core';
 import { validationErrors } from '~/helpers';
 import useVuelidate from '@vuelidate/core';
@@ -44,7 +44,7 @@ const state = {
 };
 
 const rules = {
-  edit: { required: required('ID') },
+  edit: { required: requiredField('ID') },
 };
 const v = useVuelidate(rules, state);
 </script>

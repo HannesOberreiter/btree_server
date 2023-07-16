@@ -225,7 +225,7 @@ const { data: hives, refetch } = useHivesQuery({
   modus: null,
 });
 const lastNames = computed(() =>
-  hives.value ? getNames(hives.value.results) : ''
+  hives.value ? getNames(hives.value.results) : '',
 );
 const sampleName = computed(() => {
   let hintText = '';
@@ -268,7 +268,7 @@ async function getEdit(id: unknown[]) {
     },
     (error) => {
       notification.open('negative', error);
-    }
+    },
   );
 }
 
@@ -287,6 +287,6 @@ function onReset() {
 
 async function onChange() {
   emit('onSuccess', true);
-  refetch.value();
+  refetch();
 }
 </script>

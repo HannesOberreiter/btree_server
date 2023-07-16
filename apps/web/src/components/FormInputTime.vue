@@ -52,7 +52,7 @@ import { formCheckMultipleValues, validationErrors } from '~/helpers';
 import useVuelidate from '@vuelidate/core';
 import { isEmpty } from 'lodash-es';
 import { useDateFormat } from '~/composables/useDate';
-import { required } from '~/helpers/i18n-validators';
+import { requiredField } from '~/helpers/i18n-validators';
 
 import { useI18n } from 'vue-i18n';
 import { PropType, ref, computed, toRefs, unref, watch } from 'vue';
@@ -87,7 +87,7 @@ const { modelValue } = useVModels(props, emit);
 const resetValue = unref(modelValue.value);
 const { values, reset } = toRefs(props);
 const multipleValues = computed(() =>
-  formCheckMultipleValues(values.value, 'time')
+  formCheckMultipleValues(values.value, 'time'),
 );
 const disable = ref(multipleValues.value);
 modelValue.value = disable.value ? null : modelValue.value;
@@ -99,7 +99,7 @@ const rules = computed(() => {
   if (props.required) {
     return {
       [props.label]: {
-        required: required(t(props.label)),
+        required: requiredField(t(props.label)),
         minValue: (value: string) => {
           return useDate.validateFormat(value, 'HH:mm');
         },
@@ -134,7 +134,7 @@ function setValues() {
       modelValue.value = useDate.isoFormat(
         values.value[0].time,
         'time',
-        'HH:mm:ss'
+        'HH:mm:ss',
       );
     } else {
       modelValue.value = null;

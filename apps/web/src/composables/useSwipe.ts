@@ -7,7 +7,7 @@ export const useSwipeCalendar = (
   cal: Ref<any | null>,
   container: Ref<HTMLElement | null>,
   opacity: Ref<number>,
-  eventDrag: Ref<boolean>
+  eventDrag: Ref<boolean>,
 ) => {
   const notification = useNotification();
   let notificationDismiss: null | ((props?: QNotifyUpdateOptions) => void) =
@@ -48,7 +48,7 @@ export const useSwipeCalendar = (
   function onEventEnd(
     distance: number,
     container: number,
-    direction: SwipeDirection
+    direction: SwipeDirection,
   ) {
     const ratio = Math.abs(distance) / container;
     if (container && !eventDrag.value && ratio >= 0.4) {
@@ -59,14 +59,14 @@ export const useSwipeCalendar = (
           notificationDismiss = notification.open(
             'info',
             cal.value.calendar.currentData.viewTitle,
-            true
+            true,
           );
         } else {
           cal.value.getApi().next();
           notificationDismiss = notification.open(
             'info',
             cal.value.calendar.currentData.viewTitle,
-            true
+            true,
           );
         }
       }

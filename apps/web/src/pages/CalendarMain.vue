@@ -87,7 +87,7 @@ useSwipeCalendar(cal, container, opacity, eventDrag);
 const localPerf = useLocalStorage(
   'pref-local',
   { 'calendar-show-weeknumber': true },
-  { mergeDefaults: true }
+  { mergeDefaults: true },
 );
 
 const formDialog = (date: string) =>
@@ -134,7 +134,7 @@ CALENDAR.map(function (source, _index) {
           (error) => {
             notification.open('negative', error);
             failureCallback(error);
-          }
+          },
         );
       },
       id: source,
@@ -160,11 +160,11 @@ onMounted(() => {
     const calendarApi = cal.value.getApi();
     const addSources = difference(
       currentValue.calendar,
-      eventsSourceActiveWatcher
+      eventsSourceActiveWatcher,
     );
     const removeSources = difference(
       eventsSourceActiveWatcher,
-      currentValue.calendar
+      currentValue.calendar,
     );
     eventsSourceActiveWatcher = currentValue.calendar;
     eventsSourceList.map(function (source: any) {
@@ -221,7 +221,7 @@ function handleEventsChange(changeInfo: EventChangeArg) {
       start = dayjs(changeInfo.event.start).toISOString();
     } else {
       const difference = dayjs(changeInfo.event.start).diff(
-        dayjs(changeInfo.event.extendedProps.currentStep.date)
+        dayjs(changeInfo.event.extendedProps.currentStep.date),
       );
       let startStep: any = '';
       map(changeInfo.event.extendedProps.steps, function (value) {
@@ -250,7 +250,7 @@ function handleEventsChange(changeInfo: EventChangeArg) {
     (error) => {
       notification.open('negative', error);
       changeInfo.revert();
-    }
+    },
   );
   return true;
 }
@@ -271,7 +271,7 @@ function handleEventClick(clickInfo: EventClickArg) {
     ...merge(
       clickInfo.event._instance?.range,
       clickInfo.event._def,
-      clickInfo.event.extendedProps
+      clickInfo.event.extendedProps,
     ),
   };
   eventDialog(event);

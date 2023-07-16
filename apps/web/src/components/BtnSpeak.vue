@@ -124,14 +124,14 @@ if (speech.isSupported) {
       haystack.value = [...hivesStack, ...apiariesStack, ...commands];
       buildGrammer(haystack.value);
     },
-    { immediate: true }
+    { immediate: true },
   );
 
   function buildGrammer(haystack: Array<Haystack>) {
     try {
       const aliases = haystack.map((obj: Haystack) => obj.aliases.join(' | '));
       const grammar = `#JSGF V1.0; grammar at.btree.commands; public <commands> = ${aliases.join(
-        ' | '
+        ' | ',
       )} ;`;
       const SpeechGrammarList =
         (window as any).SpeechGrammarList ||
@@ -197,14 +197,14 @@ function handleResult(result: any, command: string) {
     notification.open(
       'positive',
       t('speech.commandRedirect', { text: text, msg: command }),
-      true
+      true,
     );
     router.push({ name: name, params: params });
   } else {
     notification.open(
       'warning',
       t('speech.noCommand', { msg: command.toUpperCase() }),
-      true
+      true,
     );
   }
   speech.stop();

@@ -119,7 +119,7 @@ useApi.state.logout = false;
 const isBeta = process.env.BACKEND_URL.indexOf('beta') >= 0;
 
 const { isFetching, error, data }: any = useFetch(
-  '/news.json?cache=' + Date.now()
+  '/news.json?cache=' + Date.now(),
 )
   .get()
   .json();

@@ -31,7 +31,7 @@ export const tableMeta = (date: string, name: any) => {
   if (dayjs(date).isValid() === false) return '';
   if (name) {
     return `${name.username ? name.username : name.email} (${dayjs(date).format(
-      'YYYY-MM-DD HH:mm'
+      'YYYY-MM-DD HH:mm',
     )})`;
   } else {
     return dayjs(date).format('YYYY-MM-DD HH:mm');

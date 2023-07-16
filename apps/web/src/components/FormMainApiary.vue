@@ -94,7 +94,7 @@ const stateDefault = {
 </script>
 
 <script setup lang="ts">
-import { required } from '~/helpers/i18n-validators';
+import { requiredField } from '~/helpers/i18n-validators';
 import { useNotification } from '~/composables/useNotification';
 import useVuelidate from '@vuelidate/core';
 import { flatten, map, merge } from 'lodash-es';
@@ -142,10 +142,10 @@ const state = ref({
 
 const rules = {
   latitude: {
-    required: required(t('latitude')),
+    required: requiredField(t('latitude')),
   },
   longitude: {
-    required: required(t('longitude')),
+    required: requiredField(t('longitude')),
   },
 };
 const v = useVuelidate(rules, state, { $autoDirty: true });
@@ -160,7 +160,7 @@ watch(
   },
   {
     immediate: true,
-  }
+  },
 );
 
 async function getEdit(id: unknown[]) {
@@ -175,7 +175,7 @@ async function getEdit(id: unknown[]) {
     },
     (error) => {
       notification.open('negative', error);
-    }
+    },
   );
 }
 

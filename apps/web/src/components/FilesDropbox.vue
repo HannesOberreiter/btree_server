@@ -138,7 +138,7 @@ watch(
   (cur) => {
     if (!useDropbox.state.folder && cur) useDropbox.listFiles();
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 function onSelect(id: string) {

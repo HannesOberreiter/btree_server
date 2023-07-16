@@ -28,7 +28,7 @@
 </template>
 
 <script setup lang="ts">
-import { email, required, maxLength } from '~/helpers/i18n-validators';
+import { email, requiredField, maxLength } from '~/helpers/i18n-validators';
 import { useVModels } from '@vueuse/core';
 import { validationErrors } from '~/helpers';
 import useVuelidate from '@vuelidate/core';
@@ -55,7 +55,7 @@ const state = {
 };
 const rules = {
   email: {
-    required: required(t('email')),
+    required: requiredField(t('email')),
     email,
     maxLengthValue: maxLength(50),
   },

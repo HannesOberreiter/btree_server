@@ -49,7 +49,7 @@ export default route(function ({ store }) {
       does happen sometimes but don't know when this "bug" happens
      */
     Array.from(
-      document.getElementsByClassName('q-loading-bar--bottom')
+      document.getElementsByClassName('q-loading-bar--bottom'),
     ).forEach((e) => e.setAttribute('style', 'opacity:0;'));
     if (LoadingBar.isActive) LoadingBar.stop();
     if (Loading.isActive) Loading.hide();

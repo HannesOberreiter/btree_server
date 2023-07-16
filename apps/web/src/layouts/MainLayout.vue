@@ -134,6 +134,6 @@ watch(
       _paq.push(['trackPageView']);
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 </script>

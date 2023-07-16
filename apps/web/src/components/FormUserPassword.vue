@@ -50,7 +50,7 @@ import { validationErrors } from '~/helpers';
 import useVuelidate from '@vuelidate/core';
 import {
   sameAs,
-  required,
+  requiredField,
   minLength,
   maxLength,
 } from '../helpers/i18n-validators';
@@ -106,7 +106,7 @@ onMounted(() => {
 
 const rules = {
   password: {
-    required: required(t('password')),
+    required: requiredField(t('password')),
     minLengthValue: minLength(props.confirm ? 7 : 5),
     maxLengthValue: maxLength(100),
   },
@@ -115,7 +115,7 @@ const rules = {
 
 if (props.confirm) {
   rules.confirmPassword = {
-    required: required(t('confirmPassword')),
+    required: requiredField(t('confirmPassword')),
     sameAs: sameAs(modelPassword, t('password')),
   };
 }

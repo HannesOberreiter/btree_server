@@ -11,6 +11,12 @@
   <q-separator />
 
   Wanderungen und Änderungen innerhalb von 7 Tagen.
+  <p class="q-mt-sm">
+    <b>Login: </b>
+    <a href="https://portal.statistik.at/" target="_blank">
+      https://portal.statistik.at/
+    </a>
+  </p>
 </template>
 
 <script setup lang="ts">

@@ -116,7 +116,7 @@
 
 <script setup lang="ts">
 import { LANGUAGES } from '~/constants';
-import { required, maxLength } from '~/helpers/i18n-validators';
+import { requiredField, maxLength } from '~/helpers/i18n-validators';
 import { useNotification } from '~/composables/useNotification';
 import { usePreferredLanguages } from '@vueuse/core';
 import { validationErrors } from '~/helpers';
@@ -153,7 +153,7 @@ const randPassword = new Array(35)
         crypto.getRandomValues(r);
       } while (r[0] > max);
       return chars[r[0] % chars.length];
-    })(pwdChars)
+    })(pwdChars),
   )
   .join('');
 
@@ -222,8 +222,8 @@ const state = reactive({
 });
 const rules = reactive({
   other: { maxLengthValue: maxLength(45) },
-  source: { required: required(t('source')) },
-  terms: { required: required(t('signup.terms')) },
+  source: { required: requiredField(t('source')) },
+  terms: { required: requiredField(t('signup.terms')) },
 });
 const v$ = useVuelidate(rules, state);
 
@@ -266,7 +266,7 @@ async function sendForm(user: any) {
     (error) => {
       notification.open('negative', error);
       isSubmitting.value = false;
-    }
+    },
   );
 }
 </script>

@@ -170,9 +170,9 @@ function createApiaryForm(e: any) {
         latlng: e.latlng,
       },
     }).onOk((e) => {
-      refetch.value().then(
+      refetch().then(
         () => console.log(e),
-        (error) => console.error(error)
+        (error) => console.error(error),
       );
     });
   }
@@ -187,9 +187,9 @@ function editApiaryForm(e: any) {
         ids: [e],
       },
     }).onOk((e) => {
-      refetch.value().then(
+      refetch().then(
         () => console.log(e),
-        (error) => console.error(error)
+        (error) => console.error(error),
       );
     });
   }
@@ -198,12 +198,12 @@ function deleteApiary(value: string) {
   api.patch('/v1/apiary/batchDelete', { ids: [value] }).then(
     async (_response: any) => {
       useInvalidate.invalidate('apiary');
-      //await refetch.value();
+      //await refetch();
       notification.open('positive', '');
     },
     (error) => {
       notification.open('negative', error);
-    }
+    },
   );
 }
 function moveApiaryStart(value: any) {
@@ -227,13 +227,13 @@ function moveApiaryEnd(e: any) {
     .onOk(() => {
       api.patch('/v1/apiary', data).then(
         async (_response: any) => {
-          await refetch.value();
+          await refetch();
           notification.open('positive', '');
         },
         (error) => {
           updateTimestamp.value = Date();
           notification.open('negative', error);
-        }
+        },
       );
     })
     .onCancel(async () => {

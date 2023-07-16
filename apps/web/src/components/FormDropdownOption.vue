@@ -103,7 +103,7 @@ const props = defineProps({
 const localPerf = useLocalStorage(
   'pref-local',
   { 'charge-use-input': false, [`dropdown-${props.table}-use-input`]: false },
-  { mergeDefaults: true }
+  { mergeDefaults: true },
 );
 
 const { isLoading, data } =
@@ -123,7 +123,7 @@ const emit = defineEmits(['update:modelValue']);
 const { modelValue } = useVModels(props, emit);
 const { values, reset } = toRefs(props);
 const multipleValues = computed(() =>
-  formCheckMultipleValues(values.value, props.tableId)
+  formCheckMultipleValues(values.value, props.tableId),
 );
 const disable = ref(multipleValues.value);
 const options = ref([] as any);
@@ -136,7 +136,7 @@ watch(
   },
   {
     immediate: true,
-  }
+  },
 );
 
 watch(modelValue, () => {
@@ -175,10 +175,10 @@ function filterSelection(val: string, update: any, abort: any) {
           modelValue.moveOptionSelection(1, true);
           modelValue.toggleOption(
             modelValue.options[modelValue.optionIndex],
-            true
+            true,
           );
         }
-      }
+      },
     );
     return;
   }
@@ -201,10 +201,10 @@ function filterSelection(val: string, update: any, abort: any) {
           modelValue.moveOptionSelection(1, true);
           modelValue.toggleOption(
             modelValue.options[modelValue.optionIndex],
-            true
+            true,
           );
         }
-      }
+      },
     );
 
     abort(() => {

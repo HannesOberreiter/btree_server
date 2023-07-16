@@ -141,7 +141,7 @@ Cypress.Commands.add('login_session', (url: string) => {
           //window.localStorage.setItem('token', JSON.stringify(response.body.token));
           window.localStorage.setItem(
             'user',
-            JSON.stringify(response.body.data)
+            JSON.stringify(response.body.data),
           );
           const curId = response.body.data.saved_company || 0;
           const companies = response.body.data.company;
@@ -162,7 +162,7 @@ Cypress.Commands.add('login_session', (url: string) => {
           cy.setCookie(name, value);
         });
         //cy.saveLocalStorage();
-      }
+      },
     );
 
     //cy.login_demo(url);

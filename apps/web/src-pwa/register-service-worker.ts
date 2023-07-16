@@ -83,7 +83,7 @@ if (Platform.is.ios || document.cookie.includes('iOS') || Platform.is.safari) {
 
     offline() {
       console.log(
-        'No internet connection found. App is running in offline mode.'
+        'No internet connection found. App is running in offline mode.',
       );
     },
 

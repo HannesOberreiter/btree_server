@@ -6,7 +6,7 @@
       </div>
       <form-main-task
         v-if="taskSelect"
-        :task="(taskForm as any)"
+        :task="taskForm as any"
         :ids="ids"
       ></form-main-task>
     </div>

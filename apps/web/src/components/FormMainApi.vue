@@ -22,7 +22,7 @@
           icon="fas fa-copy"
           @click="
             copy(apiValue).then(() =>
-              notification.open('info', 'copiedToClipboard')
+              notification.open('info', 'copiedToClipboard'),
             )
           "
         />
@@ -54,7 +54,7 @@
                   icon="fas fa-copy"
                   @click="
                     copy(icalUrl).then(() =>
-                      notification.open('info', 'copiedToClipboard')
+                      notification.open('info', 'copiedToClipboard'),
                     )
                   "
                 />
@@ -97,7 +97,7 @@
               icon="fas fa-copy"
               @click="
                 copy(scaleUrl).then(() =>
-                  notification.open('info', 'copiedToClipboard')
+                  notification.open('info', 'copiedToClipboard'),
                 )
               "
             />
@@ -239,7 +239,7 @@ async function changeApiStatus(value = true, change = false) {
       },
       (error) => {
         notification.open('negative', error);
-      }
+      },
     );
   isSubmitting.value = false;
 }
@@ -252,7 +252,7 @@ async function loadApiValue() {
       notification.open(
         'negative',
         t('validations.required', { field: t('password') }),
-        true
+        true,
       );
       return;
     }
@@ -260,7 +260,7 @@ async function loadApiValue() {
       notification.open(
         'negative',
         t('validations.required', { field: t('password') }),
-        true
+        true,
       );
       return;
     }
@@ -275,7 +275,7 @@ async function loadApiValue() {
         },
         (error) => {
           notification.open('negative', error);
-        }
+        },
       );
 
     if (!checkPassword) {
@@ -290,7 +290,7 @@ async function loadApiValue() {
       },
       (error) => {
         notification.open('negative', error);
-      }
+      },
     );
   } else {
     apiField.value = apiField.value === 'text' ? 'password' : 'text';
@@ -305,12 +305,12 @@ async function scaleTest() {
         notification.open(
           'positive',
           `Demo: ${JSON.stringify(response)}`.substring(0, 100) + '...',
-          true
+          true,
         );
       },
       (error) => {
         notification.open('negative', error);
-      }
+      },
     );
   }
 }

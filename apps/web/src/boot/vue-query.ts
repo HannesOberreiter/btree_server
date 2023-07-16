@@ -1,5 +1,9 @@
 import { boot } from 'quasar/wrappers';
-import { QueryCache, VueQueryPlugin, VueQueryPluginOptions } from 'vue-query';
+import {
+  QueryCache,
+  VueQueryPlugin,
+  VueQueryPluginOptions,
+} from '@tanstack/vue-query';
 
 export const queryCache = new QueryCache({
   onError: (error) => {

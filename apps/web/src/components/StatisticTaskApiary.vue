@@ -145,7 +145,7 @@ const chart_frames_average = ref(null);
 
 const { isLoading, data: query } = useStatisticApiary(props.kind, {
   filters: computed(() =>
-    store[STATSSTORE].value ? store[STATSSTORE].value : ''
+    store[STATSSTORE].value ? store[STATSSTORE].value : '',
   ),
 });
 
@@ -172,37 +172,37 @@ watch(
         chart_frames_total.value = renderChart(
           'frames_sum',
           t('frame', 2) + ' ' + t('total'),
-          [...deepUnref(query.value)]
+          [...deepUnref(query.value)],
         );
         chart_frames_average.value = renderChart(
           'frames_avg',
           t('frame', 2) + ' ' + t('average'),
-          [...deepUnref(query.value)]
+          [...deepUnref(query.value)],
         );
         chart_water.value = renderChart(
           'water_avg',
           t('water') + ' ' + t('average'),
-          [...deepUnref(query.value)]
+          [...deepUnref(query.value)],
         );
       }
     }
   },
   {
     immediate: true,
-  }
+  },
 );
 
 function renderChart(
   col: 'amount_sum' | 'amount_avg' | 'water_avg' | 'frames_sum' | 'frames_avg',
   titleText: string,
-  data: any
+  data: any,
 ) {
   const title = `${t('apiary', 2)} ${titleText} (${yearText.value})`;
   const x = data.map(
     (o: any) =>
       `${o.task_apiary ? o.task_apiary.apiary_name : t('deleted')} (${
         o.hive_count
-      })`
+      })`,
   );
   const y = data.map((o: any) => {
     return {

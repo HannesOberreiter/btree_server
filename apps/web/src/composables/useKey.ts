@@ -50,7 +50,7 @@ export const useKeySpeak = (btn: Ref) => {
 
 export const useKeyTable = (page: Ref<Pagination>) => {
   const pages = computed(() =>
-    Math.ceil(page.value.rowsNumber / page.value.rowsPerPage)
+    Math.ceil(page.value.rowsNumber / page.value.rowsPerPage),
   );
   onKeyStroke(['ArrowUp'], (e) => {
     if (page.value.page <= 1) return;

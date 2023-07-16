@@ -75,7 +75,7 @@ watch(
       loading.value = false;
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 function createUrl(id: string) {
@@ -103,7 +103,7 @@ function onPrint() {
       </title>
       <link rel="stylesheet" type="text/css" href="/print-table.css?timestamp=${Date.now()}" />
     </head>
-    `
+    `,
     );
     const element = document.getElementById('printContainer');
     printWindow.document.write(
@@ -111,7 +111,7 @@ function onPrint() {
     <body>
       ${element.outerHTML}
     </body>
-    `
+    `,
     );
     printWindow.document.write('</html>');
     printWindow.document.close();

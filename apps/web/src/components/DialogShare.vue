@@ -56,7 +56,7 @@ function printQR() {
         }
       </style>
     </head>
-    `
+    `,
     );
     const elem = document.getElementById('qr-code');
     elem.style.textAlign = 'center';
@@ -69,7 +69,7 @@ function printQR() {
         ${useDate.displayFormat(useDate.getCurrent())} [b.tree]
       </div>
     </body>
-    `
+    `,
     );
     printWindow.document.write('</html>');
     printWindow.document.close();
@@ -126,7 +126,7 @@ function printQR() {
                   data-cy="btn-copy"
                   @click="
                     copy(url).then(() =>
-                      notification.open('info', 'copiedToClipboard')
+                      notification.open('info', 'copiedToClipboard'),
                     )
                   "
                 />
@@ -159,6 +159,7 @@ function printQR() {
           <btn-base
             :label="$t('write')"
             color="secondary"
+            :loading="nfc.state.writing"
             :disable="
               !nfc.isSupported() ||
               nfc.state.reading ||
@@ -185,6 +186,7 @@ function printQR() {
           <btn-base
             :label="$t('clear')"
             color="negative"
+            :loading="nfc.state.clearing"
             :disable="
               !nfc.isSupported() ||
               nfc.state.reading ||

@@ -16,7 +16,7 @@
       </q-select>
       <form-main-task
         v-if="taskSelect"
-        :task="(taskForm as any)"
+        :task="taskForm as any"
       ></form-main-task>
     </div>
   </div>

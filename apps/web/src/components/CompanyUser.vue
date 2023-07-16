@@ -96,7 +96,7 @@ const usersPromise = async () =>
     },
     (error) => {
       notification.open('negative', error);
-    }
+    },
   );
 
 const usersData = ref(await usersPromise());
@@ -126,7 +126,7 @@ const changeAccess = (id: number, rank: number) => {
       },
       (error) => {
         notification.open('negative', error);
-      }
+      },
     );
 };
 
@@ -144,7 +144,7 @@ const removeAccess = (id: number, email: string) => {
       },
       (error) => {
         notification.open('negative', error);
-      }
+      },
     );
   });
 };
@@ -173,7 +173,7 @@ const addUser = () => {
         },
         (error) => {
           notification.open('negative', error);
-        }
+        },
       );
   });
 };

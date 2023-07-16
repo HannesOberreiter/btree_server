@@ -58,7 +58,7 @@
 
 <script setup lang="ts">
 import { LANGUAGES } from '~/constants';
-import { required } from '~/helpers/i18n-validators';
+import { requiredField } from '~/helpers/i18n-validators';
 import { useAuthUserStore } from '~/stores/auth';
 import { useNotification } from '~/composables/useNotification';
 import { useQuasarLang } from '~/composables/useQuasarLang';
@@ -92,7 +92,7 @@ const state = reactive({
 
 const rules = {
   lang: {
-    required,
+    requiredField,
   },
   sound: {},
   acdate: {},
@@ -120,7 +120,7 @@ async function onSubmit() {
     },
     (error) => {
       notification.open('negative', error);
-    }
+    },
   );
   isSubmitting.value = false;
 }
@@ -149,7 +149,7 @@ const onDelete = () => {
         },
         (error) => {
           notification.open('negative', error);
-        }
+        },
       );
     })
     .onDismiss(() => (isSubmitting.value = false));

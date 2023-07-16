@@ -45,7 +45,7 @@ useSwipeCalendar(cal, container, opacity, eventDrag);
 const localPerf = useLocalStorage(
   'pref-local',
   { 'calendar-show-weeknumber': true },
-  { mergeDefaults: true }
+  { mergeDefaults: true },
 );
 
 onMounted(() => {
@@ -64,7 +64,7 @@ const handleEventClick = (clickInfo: EventClickArg) => {
   notification.open(
     'info',
     t('weightDifference', { weight: weight_difference }),
-    true
+    true,
   );
 };
 
@@ -79,7 +79,7 @@ const calendarOptions = reactive({
           (error) => {
             notification.open('negative', error);
             failureCallback(error);
-          }
+          },
         );
       },
       id: 'scale',
