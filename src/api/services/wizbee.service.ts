@@ -26,7 +26,7 @@ export class WizBee {
   private static indexName = 'link';
   private static vectorField = 'content_vector';
   private static vectorServer = VectorServer.client;
-  private static completionModel = 'text-davinci-003' as const;
+  private static completionModel = 'gpt-4' as const;
   private static turboModel = 'gpt-3.5-turbo' as const;
   private static embeddingModel = 'text-embedding-ada-002' as const;
 
@@ -117,7 +117,7 @@ export class WizBee {
       refs.push({ ...document.metadata, score: document.score });
       tokenCount += encoded.length;
 
-      if (tokenCount > 2500) {
+      if (tokenCount > 4000) {
         break;
       }
 
@@ -221,17 +221,13 @@ export class WizBee {
   /**
    * @description use the turbo model and chat completion to answer the user question
    */
-  private async createAnswerTurbo(
-    input: string,
-    contextText: string,
-    lang: string,
-  ) {
+  private async createAnswer(input: string, contextText: string, lang: string) {
     try {
       const messages: CreateChatCompletionRequest['messages'] = [
         {
           role: 'system',
           content:
-            'You are a friendly bot assistant, answering beekeeping related question by using only given context. The context could be from multiple references and each is separated by ###. If you cannot give a good answer with given context, please type "Sorry, we cannot give a good answer to that question."',
+            'You are a friendly bot assistant, answering beekeeping related question or questions about the usage of the b.tree beekeeping software by using only given context. The context could be from multiple references or from the official b.tree documentation and each is separated by ###. If you cannot give a good answer with given context, please type "Sorry, we cannot give a good answer to that question."',
         },
         {
           role: 'system',
@@ -251,7 +247,7 @@ export class WizBee {
       }
 
       const response = await this.openAI.createChatCompletion({
-        model: WizBee.turboModel,
+        model: WizBee.completionModel,
         messages,
         max_tokens: 500,
         temperature: 0.1,
@@ -290,7 +286,7 @@ export class WizBee {
     const { contextText, refs } = this.concatDocuments(results);
     // const answer = await this.createAnswer(question, contextText);
 
-    const answer = await this.createAnswerTurbo(question, contextText, lang);
+    const answer = await this.createAnswer(question, contextText, lang);
 
     tokens += answer?.usage?.total_tokens ?? 0;
 
