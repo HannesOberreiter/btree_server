@@ -1,5 +1,6 @@
 {
     "conventionalCommits.scopes": [
         "dev"
-    ]
+    ],
+    "editor.formatOnSave": true
 }

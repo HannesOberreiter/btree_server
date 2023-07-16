@@ -14,7 +14,7 @@ export class CompanyUserRouter extends Router {
       .route('/user')
       .get(
         Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Container.resolve('CompanyUserController').getUser
+        Container.resolve('CompanyUserController').getUser,
       );
     this.router.route('/add_user').post(
       Validator.validate([
@@ -27,19 +27,19 @@ export class CompanyUserRouter extends Router {
           }),
       ]),
       Guard.authorize([ROLES.admin]),
-      Container.resolve('CompanyUserController').addUser
+      Container.resolve('CompanyUserController').addUser,
     );
     this.router
       .route('/remove_user/:id')
       .delete(
         Guard.authorize([ROLES.admin]),
-        Container.resolve('CompanyUserController').removeUser
+        Container.resolve('CompanyUserController').removeUser,
       );
     this.router
       .route('/:company_id')
       .delete(
         Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Container.resolve('CompanyUserController').delete
+        Container.resolve('CompanyUserController').delete,
       );
     this.router
       .route('/:id')
@@ -48,7 +48,7 @@ export class CompanyUserRouter extends Router {
           body('rank').exists().withMessage('requiredField'),
         ]),
         Guard.authorize([ROLES.admin]),
-        Container.resolve('CompanyUserController').patch
+        Container.resolve('CompanyUserController').patch,
       );
   }
 }

@@ -14,21 +14,21 @@ export class OptionRouter extends Router {
       .get(
         Validator.handleOption,
         Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Container.resolve('OptionController').get
+        Container.resolve('OptionController').get,
       );
     this.router
       .route('/:table')
       .patch(
         Validator.validate([body('ids').isArray()]),
         Guard.authorize([ROLES.admin]),
-        Container.resolve('OptionController').patch
+        Container.resolve('OptionController').patch,
       );
     this.router
       .route('/:table')
       .post(
         Validator.validate([]),
         Guard.authorize([ROLES.admin]),
-        Container.resolve('OptionController').post
+        Container.resolve('OptionController').post,
       );
     this.router
       .route('/:table/status')
@@ -36,7 +36,7 @@ export class OptionRouter extends Router {
         Validator.handleOption,
         Validator.validate([body('ids').isArray(), body('status').isBoolean()]),
         Guard.authorize([ROLES.admin]),
-        Container.resolve('OptionController').updateStatus
+        Container.resolve('OptionController').updateStatus,
       );
     this.router
       .route('/:table/favorite')
@@ -44,7 +44,7 @@ export class OptionRouter extends Router {
         Validator.handleOption,
         Validator.validate([body('ids').isArray()]),
         Guard.authorize([ROLES.admin]),
-        Container.resolve('OptionController').updateFavorite
+        Container.resolve('OptionController').updateFavorite,
       );
 
     this.router
@@ -53,7 +53,7 @@ export class OptionRouter extends Router {
         Validator.validate([body('ids').isArray()]),
         Validator.handleOption,
         Guard.authorize([ROLES.admin]),
-        Container.resolve('OptionController').batchDelete
+        Container.resolve('OptionController').batchDelete,
       );
     this.router
       .route('/:table/batchGet')
@@ -61,7 +61,7 @@ export class OptionRouter extends Router {
         Validator.validate([body('ids').isArray()]),
         Validator.handleOption,
         Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('OptionController').batchGet
+        Container.resolve('OptionController').batchGet,
       );
   }
 }

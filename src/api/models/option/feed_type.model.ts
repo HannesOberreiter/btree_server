@@ -14,8 +14,8 @@ export class FeedType extends BaseOptionModel {
       modelClass: Company,
       join: {
         from: ['feed_types.user_id'],
-        to: ['companies.id']
-      }
-    }
-  }
+        to: ['companies.id'],
+      },
+    },
+  };
 }

@@ -14,14 +14,14 @@ export class RearingRouter extends Router {
       .route('/')
       .get(
         Guard.authorize([ROLES.admin, ROLES.user, ROLES.read]),
-        Container.resolve('RearingController').get
+        Container.resolve('RearingController').get,
       );
     this.router
       .route('/')
       .patch(
         Validator.validate([body('ids').isArray()]),
         Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('RearingController').patch
+        Container.resolve('RearingController').patch,
       );
     this.router.route('/').post(
       Validator.validate([
@@ -31,28 +31,28 @@ export class RearingRouter extends Router {
       ]),
 
       Guard.authorize([ROLES.admin, ROLES.user]),
-      Container.resolve('RearingController').post
+      Container.resolve('RearingController').post,
     );
     this.router
       .route('/date')
       .patch(
         Validator.validate([body('ids').isArray(), body('start').isString()]),
         Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('RearingController').updateDate
+        Container.resolve('RearingController').updateDate,
       );
     this.router
       .route('/batchDelete')
       .patch(
         Validator.validate([body('ids').isArray()]),
         Guard.authorize([ROLES.admin]),
-        Container.resolve('RearingController').batchDelete
+        Container.resolve('RearingController').batchDelete,
       );
     this.router
       .route('/batchGet')
       .post(
         Validator.validate([body('ids').isArray()]),
         Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('RearingController').batchGet
+        Container.resolve('RearingController').batchGet,
       );
   }
 }

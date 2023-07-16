@@ -24,7 +24,7 @@ export class AuthRouter extends Router {
           body('newsletter').isBoolean(),
           body('source').isString(),
         ]),
-        Container.resolve('AuthController').register
+        Container.resolve('AuthController').register,
       );
 
     this.router
@@ -34,7 +34,7 @@ export class AuthRouter extends Router {
           body('email').exists().withMessage('requiredField').isEmail(),
           body('password').isLength({ min: 6 }).trim(),
         ]),
-        Container.resolve('AuthController').login
+        Container.resolve('AuthController').login,
       );
 
     this.router
@@ -45,14 +45,14 @@ export class AuthRouter extends Router {
       .route('/confirm')
       .patch(
         Validator.validate([body('confirm').isLength({ min: 100, max: 128 })]),
-        Container.resolve('AuthController').confirmMail
+        Container.resolve('AuthController').confirmMail,
       );
 
     this.router
       .route('/reset')
       .post(
         Validator.validate([body('email').isEmail()]),
-        Container.resolve('AuthController').resetRequest
+        Container.resolve('AuthController').resetRequest,
       );
 
     this.router
@@ -62,21 +62,21 @@ export class AuthRouter extends Router {
           body('key').isLength({ min: 100, max: 128 }),
           body('password').isLength({ min: 6, max: 128 }).trim(),
         ]),
-        Container.resolve('AuthController').resetPassword
+        Container.resolve('AuthController').resetPassword,
       );
 
     this.router
       .route('/unsubscribe')
       .patch(
         Validator.validate([body('email').isEmail()]),
-        Container.resolve('AuthController').unsubscribeRequest
+        Container.resolve('AuthController').unsubscribeRequest,
       );
 
     this.router
       .route('/refresh')
       .post(
         Validator.validate([body('token'), body('expires').isISO8601()]),
-        Container.resolve('AuthController').refresh
+        Container.resolve('AuthController').refresh,
       );
 
     this.router
@@ -84,13 +84,13 @@ export class AuthRouter extends Router {
       .get(
         Validator.validate([param('payload'), param('sig')]),
         Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Container.resolve('AuthController').discourse
+        Container.resolve('AuthController').discourse,
       );
 
     this.router.route('/google/login').get(
       passport.authenticate('google', {
         prompt: 'select_account',
-      })
+      }),
     );
     this.router.route('/google/callback').get(
       passport.authenticate('google', {
@@ -99,7 +99,7 @@ export class AuthRouter extends Router {
         failureMessage: true,
         assignProperty: 'user',
       }),
-      Container.resolve('AuthController').google
+      Container.resolve('AuthController').google,
     );
   }
 }

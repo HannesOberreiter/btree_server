@@ -53,7 +53,7 @@ const fetchUser = async (email: string, bee_id = 0) => {
         'sound',
         'todo',
         'acdate',
-        'newsletter'
+        'newsletter',
       )
       .withGraphFetched('company(cm)')
       .modifiers({
@@ -63,7 +63,7 @@ const fetchUser = async (email: string, bee_id = 0) => {
             'companies.name',
             'companies.paid',
             'companies.api_active',
-            'company_bee.rank'
+            'company_bee.rank',
           );
         },
       })
@@ -100,7 +100,7 @@ const checkBruteForce = async (bee_id: number) => {
         .where((builder) =>
           builder
             .where('notice_bruteforce', '<', lastNotice)
-            .orWhereNull('notice_bruteforce')
+            .orWhereNull('notice_bruteforce'),
         );
       if (user) {
         MailServer.sendMail({
@@ -124,7 +124,7 @@ const checkPassword = (
   inputPassword: string,
   dbPassword: string,
   salt: string,
-  hash = 'sha512'
+  hash = 'sha512',
 ) => {
   // We first need to hash the inputPassword, this is due to an old code
   // in my first app I did hash the password on login page before sending to server
@@ -151,7 +151,7 @@ const reviewPassword = async (bee_id, password: string) => {
 const loginCheck = async (
   email: string,
   password: string,
-  bee_id: number = undefined
+  bee_id: number = undefined,
 ) => {
   let user;
   if (!bee_id) {

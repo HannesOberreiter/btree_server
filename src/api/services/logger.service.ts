@@ -44,7 +44,7 @@ export class Logger {
   log(
     level: string,
     message: string,
-    scope: { label: string; user: User | undefined }
+    scope: { label: string; user: User | undefined },
   ) {
     this.logger[level](message, { label: scope.label, user: scope.user });
   }

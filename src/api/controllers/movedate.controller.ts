@@ -17,7 +17,7 @@ export default class MovedateController extends Controller {
       const { order, direction, offset, limit, q, filters } = req.query as any;
       const query = Movedate.query()
         .withGraphJoined(
-          '[hive, apiary, creator(identifier), editor(identifier)]'
+          '[hive, apiary, creator(identifier), editor(identifier)]',
         )
         .where({
           'apiary.user_id': req.user.user_id,
@@ -27,7 +27,7 @@ export default class MovedateController extends Controller {
         .whereNotNull('hive.id')
         .page(
           offset ? offset : 0,
-          parseInt(limit) === 0 || !limit ? 10 : limit
+          parseInt(limit) === 0 || !limit ? 10 : limit,
         );
 
       if (filters) {
@@ -49,7 +49,7 @@ export default class MovedateController extends Controller {
       if (order) {
         if (Array.isArray(order)) {
           order.forEach((field, index) =>
-            query.orderBy(field, direction[index])
+            query.orderBy(field, direction[index]),
           );
         } else {
           query.orderBy(order, direction);

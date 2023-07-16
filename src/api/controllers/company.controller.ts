@@ -73,7 +73,7 @@ export default class CompanyController extends Controller {
         });
         const apiaries = await Apiary.query(trx).where(
           'user_id',
-          req.user.user_id
+          req.user.user_id,
         );
         arch.append(stringify(apiaries, stringifyOptions), {
           name: 'apiaries.csv',
@@ -110,7 +110,7 @@ export default class CompanyController extends Controller {
         });
         const scales = await Scale.query(trx).where(
           'user_id',
-          req.user.user_id
+          req.user.user_id,
         );
         arch.append(stringify(scales, stringifyOptions), {
           name: 'scales.csv',
@@ -123,7 +123,7 @@ export default class CompanyController extends Controller {
         });
         const rearings = await Rearing.query(trx).where(
           'user_id',
-          req.user.user_id
+          req.user.user_id,
         );
         arch.append(stringify(rearings, stringifyOptions), {
           name: 'rearings.csv',

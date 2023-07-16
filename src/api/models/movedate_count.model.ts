@@ -17,8 +17,8 @@ export class MovedateCount extends Model {
     required: ['date', 'apiary_id', 'hive_id'],
     properties: {
       hive_id: { type: 'integer' },
-      count: { type: 'integer' }
-    }
+      count: { type: 'integer' },
+    },
   };
 
   static relationMappings = () => ({
@@ -27,16 +27,16 @@ export class MovedateCount extends Model {
       modelClass: Hive,
       join: {
         from: 'movedates_counts.hive_id',
-        to: 'hives.id'
-      }
+        to: 'hives.id',
+      },
     },
     movedate: {
       relation: Model.HasManyRelation,
       modelClass: Movedate,
       join: {
         from: 'movedates_counts.hive_id',
-        to: 'movedates.hive_id'
-      }
-    }
+        to: 'movedates.hive_id',
+      },
+    },
   });
 }

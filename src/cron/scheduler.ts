@@ -22,7 +22,7 @@ const task = {
     Container.resolve('Logger').log(
       'info',
       `Test Cron-Job is starting with rule: ${rule}`,
-      { label: 'Server' }
+      { label: 'Server' },
     );
     job = cron.scheduleJob(
       {
@@ -42,7 +42,7 @@ const task = {
         } catch (e) {
           Container.resolve('Logger').log('error', e, { label: 'CronJob' });
         }
-      }
+      },
     );
   },
   nextRun: () =>
@@ -51,7 +51,7 @@ const task = {
       `Next CronJob at: ${job.nextInvocation()}`,
       {
         label: 'CronJob',
-      }
+      },
     ),
   stop: () => cron.gracefulShutdown(),
 };

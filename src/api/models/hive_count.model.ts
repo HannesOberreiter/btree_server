@@ -20,8 +20,8 @@ export class HiveCount extends Model {
       modelClass: Apiary,
       join: {
         from: 'apiaries.id',
-        to: 'hives_counts.id'
-      }
-    }
+        to: 'hives_counts.id',
+      },
+    },
   });
 }

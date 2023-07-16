@@ -14,14 +14,14 @@ export class FieldSettingRouter extends Router {
       .route('/')
       .get(
         Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Container.resolve('FieldSettingController').get
+        Container.resolve('FieldSettingController').get,
       );
     this.router
       .route('/')
       .patch(
         Validator.validate([body('settings').isJSON()]),
         Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Container.resolve('FieldSettingController').patch
+        Container.resolve('FieldSettingController').patch,
       );
   }
 }

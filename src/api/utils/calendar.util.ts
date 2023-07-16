@@ -79,7 +79,7 @@ const getRearings = async ({ query, user }) => {
           for (let k = 0; k < steps_before; k++) {
             subDate = subDate.subtract(
               result.steps[result.startKey - k].detail.hour,
-              'hour'
+              'hour',
             );
           }
           result.start = subDate.toISOString();

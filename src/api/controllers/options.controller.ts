@@ -48,7 +48,7 @@ export default class OptionController extends Controller {
       if (order) {
         if (Array.isArray(order)) {
           order.forEach((field, index) =>
-            query.orderBy(field, direction[index])
+            query.orderBy(field, direction[index]),
           );
         } else {
           query.orderBy(order, direction);

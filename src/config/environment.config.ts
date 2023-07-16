@@ -182,7 +182,7 @@ const mailConfig = {
       process.env.MAIL_DKIM_PRIVATE === 'false'
         ? ''
         : Buffer.from(process.env.MAIL_DKIM_PRIVATE, 'base64').toString(
-            'ascii'
+            'ascii',
           ),
   },
 };
@@ -190,7 +190,7 @@ const mailConfig = {
 const openAI = {
   key: process.env.OPEN_AI_KEY ?? '',
   dailyUserTokenLimit: parseInt(
-    process.env.OPEN_AI_DAILY_USER_TOKEN_LIMIT ?? '0'
+    process.env.OPEN_AI_DAILY_USER_TOKEN_LIMIT ?? '0',
   ),
 };
 

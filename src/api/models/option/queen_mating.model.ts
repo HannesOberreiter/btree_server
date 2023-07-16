@@ -14,8 +14,8 @@ export class QueenMating extends BaseOptionModel {
       modelClass: Company,
       join: {
         from: ['queen_matings.user_id'],
-        to: ['companies.id']
-      }
-    }
-  }
+        to: ['companies.id'],
+      },
+    },
+  };
 }

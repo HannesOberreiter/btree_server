@@ -21,14 +21,14 @@ export class RedisServer {
       RedisServer.client = new Redis(
         redisConfig.port,
         redisConfig.host,
-        config
+        config,
       );
       RedisServer.client.on('connect', () => {
         if (env !== ENVIRONMENT.test) {
           Container.resolve('Logger').log(
             'info',
             `Connection to redis (session) server established on port ${redisConfig.port} (${env})`,
-            { label: 'Redis' }
+            { label: 'Redis' },
           );
         }
       });
@@ -36,7 +36,7 @@ export class RedisServer {
       Container.resolve('Logger').log(
         'error',
         `Redis connection error : ${error.message}`,
-        { label: 'Redis' }
+        { label: 'Redis' },
       );
     }
   }

@@ -34,7 +34,7 @@ export class WinstonConfiguration {
       if (user)
         return `${timestamp} [${level}] ${label} (user_id: ${user.user_id}, bee_id: ${user.bee_id}) : ${message}`;
       return `${timestamp} [${level}] ${label} : ${message}`;
-    }
+    },
   );
 
   private isCron = format((info, opts) => {
@@ -52,7 +52,7 @@ export class WinstonConfiguration {
       format: format.combine(
         this.isCron(true),
         format.timestamp(),
-        this.formater
+        this.formater,
       ),
       filename: p.join(__dirname, `../../logs/cron-${this.output}.log`),
       handleException: true,
@@ -66,7 +66,7 @@ export class WinstonConfiguration {
       format: format.combine(
         this.isCron(false),
         format.timestamp(),
-        this.formater
+        this.formater,
       ),
       filename: p.join(__dirname, `../../logs/error-${this.output}.log`),
       handleException: true,
@@ -80,7 +80,7 @@ export class WinstonConfiguration {
       format: format.combine(
         this.isCron(false),
         format.timestamp(),
-        this.formater
+        this.formater,
       ),
       filename: p.join(__dirname, `../../logs/combined-${this.output}.log`),
       handleException: false,

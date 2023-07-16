@@ -15,13 +15,13 @@ export class HiveRouter extends Router {
       .route('/')
       .get(
         Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Container.resolve('HiveController').get
+        Container.resolve('HiveController').get,
       );
     this.router
       .route('/:id')
       .get(
         Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Container.resolve('HiveController').getDetail
+        Container.resolve('HiveController').getDetail,
       );
     this.router
       .route('/task/:id')
@@ -31,14 +31,14 @@ export class HiveRouter extends Router {
           query('year').optional().isNumeric().toInt(),
         ]),
         Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Container.resolve('HiveController').getTasks
+        Container.resolve('HiveController').getTasks,
       );
     this.router
       .route('/')
       .patch(
         Validator.validate([body('ids').isArray()]),
         Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('HiveController').patch
+        Container.resolve('HiveController').patch,
       );
     this.router
       .route('/')
@@ -50,35 +50,35 @@ export class HiveRouter extends Router {
           body('date').isString(),
         ]),
         Guard.authorize([ROLES.admin]),
-        Container.resolve('HiveController').post
+        Container.resolve('HiveController').post,
       );
     this.router
       .route('/batchDelete')
       .patch(
         Validator.validate([body('ids').isArray()]),
         Guard.authorize([ROLES.admin]),
-        Container.resolve('HiveController').batchDelete
+        Container.resolve('HiveController').batchDelete,
       );
     this.router
       .route('/batchGet')
       .post(
         Validator.validate([body('ids').isArray()]),
         Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('HiveController').batchGet
+        Container.resolve('HiveController').batchGet,
       );
     this.router
       .route('/status')
       .patch(
         Validator.validate([body('ids').isArray(), body('status').isBoolean()]),
         Guard.authorize([ROLES.admin]),
-        Container.resolve('HiveController').updateStatus
+        Container.resolve('HiveController').updateStatus,
       );
     this.router
       .route('/updatePosition')
       .patch(
         Validator.validate([body('data').isArray()]),
         Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('HiveController').updatePosition
+        Container.resolve('HiveController').updatePosition,
       );
   }
 }

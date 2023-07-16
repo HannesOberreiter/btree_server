@@ -20,7 +20,7 @@ export class PassportConfiguration {
     if (strategy === 'google') {
       return new GoogleStrategy.Strategy(
         { ...this.options.google, passReqToCallback: true },
-        this.verifyGoogle
+        this.verifyGoogle,
       );
     }
   }
@@ -30,14 +30,14 @@ export class PassportConfiguration {
     _accessToken: string,
     _refreshToken: string,
     profile: GoogleStrategy.Profile,
-    done: GoogleStrategy.VerifyCallback
+    done: GoogleStrategy.VerifyCallback,
   ): void => {
     try {
       verifyUser(
         profile.id,
         profile.displayName,
         profile.provider,
-        profile.emails
+        profile.emails,
       ).then(
         (user) => {
           return done(null, user);
@@ -45,7 +45,7 @@ export class PassportConfiguration {
         (err) => {
           console.error(err);
           return done(err, false);
-        }
+        },
       );
     } catch (err) {
       console.error(err);
@@ -67,7 +67,7 @@ async function verifyUser(
   emails: {
     value: string;
     verified: 'true' | 'false';
-  }[]
+  }[],
 ): Promise<federatedUser> {
   // best case federated is already in database
   const federate = await FederatedCredential.query().findOne({

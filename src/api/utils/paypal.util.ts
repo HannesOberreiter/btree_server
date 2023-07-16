@@ -58,7 +58,7 @@ export async function capturePayment(orderId: string) {
 
 async function generateAccessToken() {
   const auth = Buffer.from(paypalClientId + ':' + paypalAppSecret).toString(
-    'base64'
+    'base64',
   );
   const response = await fetch(`${paypalBase}/v1/oauth2/token`, {
     method: 'post',

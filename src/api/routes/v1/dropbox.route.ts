@@ -13,25 +13,25 @@ export class DropboxRouter extends Router {
       .route('/')
       .get(
         Guard.authorize([ROLES.admin]),
-        Container.resolve('DropboxController').get
+        Container.resolve('DropboxController').get,
       );
     this.router
       .route('/:id?')
       .delete(
         Guard.authorize([ROLES.admin]),
-        Container.resolve('DropboxController').delete
+        Container.resolve('DropboxController').delete,
       );
     this.router
       .route('/auth/:code')
       .get(
         Guard.authorize([ROLES.admin]),
-        Container.resolve('DropboxController').auth
+        Container.resolve('DropboxController').auth,
       );
     this.router
       .route('/token')
       .get(
         Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('DropboxController').token
+        Container.resolve('DropboxController').token,
       );
   }
 }

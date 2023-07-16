@@ -83,7 +83,7 @@ export const addPremium = async (
   user_id: number,
   months = 12,
   amount = 0,
-  type: undefined | 'paypal' | 'promo' | 'stripe'
+  type: undefined | 'paypal' | 'promo' | 'stripe',
 ) => {
   return await Company.transaction(async (trx) => {
     const company = await Company.query(trx).select('paid').findById(user_id);

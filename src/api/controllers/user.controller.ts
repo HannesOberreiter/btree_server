@@ -111,7 +111,7 @@ export default class UserController extends Controller {
             await deleteCompany(company.user_id);
           }
           return true;
-        })
+        }),
       );
 
       const result = await deleteUser(req.user.bee_id);
@@ -238,7 +238,7 @@ export default class UserController extends Controller {
           'MATCH',
           `btree_sess:${bee_id}:*`,
           'COUNT',
-          500
+          500,
         );
         if (result[1].length > 0) {
           keys = keys.concat(result[1]);
@@ -271,14 +271,14 @@ export default class UserController extends Controller {
   async deleteRedisSession(
     req: IUserRequest,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ) {
     try {
       const { bee_id } = req.user;
       const { id } = req.params;
       const lastPart = id.split(':').at(-1);
       const result = await RedisServer.client.del(
-        `btree_sess:${bee_id}:${lastPart}`
+        `btree_sess:${bee_id}:${lastPart}`,
       );
       res.locals.data = result;
       next();

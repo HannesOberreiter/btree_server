@@ -17,7 +17,7 @@ export default class HarvestController extends Controller {
         req.query as any;
       const query = Harvest.query()
         .withGraphJoined(
-          '[harvest_apiary, type, hive, creator(identifier), editor(identifier)]'
+          '[harvest_apiary, type, hive, creator(identifier), editor(identifier)]',
         )
         .where({
           'hive.deleted': false,
@@ -26,7 +26,7 @@ export default class HarvestController extends Controller {
         })
         .page(
           offset ? offset : 0,
-          parseInt(limit) === 0 || !limit ? 10 : limit
+          parseInt(limit) === 0 || !limit ? 10 : limit,
         );
 
       if (done) {
@@ -52,7 +52,7 @@ export default class HarvestController extends Controller {
       if (order) {
         if (Array.isArray(order)) {
           order.forEach((field, index) =>
-            query.orderBy(field, direction[index])
+            query.orderBy(field, direction[index]),
           );
         } else {
           query.orderBy(order, direction);

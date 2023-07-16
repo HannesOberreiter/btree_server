@@ -14,7 +14,7 @@ export class MovedateRouter extends Router {
       .route('/')
       .get(
         Guard.authorize([ROLES.admin, ROLES.user, ROLES.read]),
-        Container.resolve('MovedateController').get
+        Container.resolve('MovedateController').get,
       );
     this.router
       .route('/')
@@ -25,21 +25,21 @@ export class MovedateRouter extends Router {
           body('date').isString(),
         ]),
         Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('MovedateController').post
+        Container.resolve('MovedateController').post,
       );
     this.router
       .route('/')
       .patch(
         Validator.validate([body('ids').isArray()]),
         Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('MovedateController').patch
+        Container.resolve('MovedateController').patch,
       );
     this.router
       .route('/batchGet')
       .post(
         Validator.validate([body('ids').isArray()]),
         Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('MovedateController').batchGet
+        Container.resolve('MovedateController').batchGet,
       );
 
     this.router
@@ -47,7 +47,7 @@ export class MovedateRouter extends Router {
       .patch(
         Validator.validate([body('ids').isArray()]),
         Guard.authorize([ROLES.admin]),
-        Container.resolve('MovedateController').batchDelete
+        Container.resolve('MovedateController').batchDelete,
       );
 
     this.router
@@ -55,7 +55,7 @@ export class MovedateRouter extends Router {
       .patch(
         Validator.validate([body('ids').isArray(), body('start').isString()]),
         Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('MovedateController').updateDate
+        Container.resolve('MovedateController').updateDate,
       );
   }
 }

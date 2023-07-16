@@ -163,7 +163,7 @@ export class Application {
         limit: '50mb',
         extended: false,
         parameterLimit: 10000,
-      })
+      }),
     );
     this.app.use(BodyParser.json({ type: contentType, limit: '50mb' }));
     /**
@@ -243,7 +243,7 @@ export class Application {
           secure: env === ENVIRONMENT.production,
           domain: env === ENVIRONMENT.production ? 'btree.at' : '',
         },
-      })
+      }),
     );
 
     /**
@@ -284,7 +284,7 @@ export class Application {
       `/api/${version}`,
       RateLimit(this.options.rate),
       Container.resolve('ProxyRouter').router,
-      Resolver.resolve
+      Resolver.resolve,
     );
 
     /**

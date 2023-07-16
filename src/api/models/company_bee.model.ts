@@ -20,8 +20,8 @@ export class CompanyBee extends Model {
       id: { type: 'integer' },
       user_id: { type: 'integer' }, // Company FK
       bee_id: { type: 'integer' }, // User FK
-      rank: { type: 'integer' }
-    }
+      rank: { type: 'integer' },
+    },
   };
 
   static relationMappings = () => ({
@@ -30,16 +30,16 @@ export class CompanyBee extends Model {
       modelClass: Company,
       join: {
         from: 'company_bee.user_id',
-        to: 'companies.id'
-      }
+        to: 'companies.id',
+      },
     },
     user: {
       relation: Model.BelongsToOneRelation,
       modelClass: User,
       join: {
         from: 'company_bee.bee_id',
-        to: 'bees.id'
-      }
-    }
+        to: 'bees.id',
+      },
+    },
   });
 }

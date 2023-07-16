@@ -21,13 +21,13 @@ export default class RearingTypeController extends Controller {
         })
         .page(
           offset ? offset : 0,
-          parseInt(limit) === 0 || !limit ? 10 : limit
+          parseInt(limit) === 0 || !limit ? 10 : limit,
         );
 
       if (order) {
         if (Array.isArray(order)) {
           order.forEach((field, index) =>
-            query.orderBy(field, direction[index])
+            query.orderBy(field, direction[index]),
           );
         } else {
           query.orderBy(order, direction);

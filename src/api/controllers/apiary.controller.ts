@@ -58,7 +58,7 @@ export default class ApiaryController extends Controller {
         })
         .page(
           offset ? offset : 0,
-          parseInt(limit) === 0 || !limit ? 10 : limit
+          parseInt(limit) === 0 || !limit ? 10 : limit,
         );
 
       if (modus) {
@@ -67,7 +67,7 @@ export default class ApiaryController extends Controller {
 
       if (details === 'true') {
         query.withGraphJoined(
-          '[hive_count, creator(identifier),editor(identifier)]'
+          '[hive_count, creator(identifier),editor(identifier)]',
         );
       } else {
         query.withGraphJoined('[hive_count]');
@@ -75,7 +75,7 @@ export default class ApiaryController extends Controller {
       if (order) {
         if (Array.isArray(order)) {
           order.forEach((field, index) =>
-            query.orderBy(field, direction[index])
+            query.orderBy(field, direction[index]),
           );
         } else {
           query.orderBy(order, direction);
@@ -108,7 +108,7 @@ export default class ApiaryController extends Controller {
           'apiaries.deleted': false,
         })
         .withGraphFetched(
-          '[hive_count, creator(identifier), editor(identifier)]'
+          '[hive_count, creator(identifier), editor(identifier)]',
         )
         .throwIfNotFound();
       const result = await query;
@@ -130,7 +130,7 @@ export default class ApiaryController extends Controller {
           'position',
           'hive:queen_location.queen_name',
           'hive:queen_location.queen_modus',
-          'hive:queen_location:queen.mark_colour as mark_colour'
+          'hive:queen_location:queen.mark_colour as mark_colour',
         )
         .leftJoinRelated('hive.[queen_location.[queen]]')
         .where({

@@ -104,7 +104,7 @@ export default class ScaleDataController extends Controller {
         })
         .page(
           offset ? offset : 0,
-          parseInt(limit) === 0 || !limit ? 10 : limit
+          parseInt(limit) === 0 || !limit ? 10 : limit,
         );
 
       if (filters) {
@@ -126,7 +126,7 @@ export default class ScaleDataController extends Controller {
       if (order) {
         if (Array.isArray(order)) {
           order.forEach((field, index) =>
-            query.orderBy(field, direction[index])
+            query.orderBy(field, direction[index]),
           );
         } else {
           query.orderBy(order, direction);

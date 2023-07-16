@@ -7,7 +7,7 @@ export class Promo extends BaseModel {
   months!: number;
   date!: Date;
   used!: boolean;
-  user_id!: number
+  user_id!: number;
 
   static tableName = 'promos';
   static idColumn = 'id';
@@ -20,7 +20,7 @@ export class Promo extends BaseModel {
     properties: {
       id: { type: 'integer' },
       code: { type: 'string', minLength: 3, maxLength: 128 },
-      months: { type: 'integer', maxLength: 11},
+      months: { type: 'integer', maxLength: 11 },
       date: { type: 'string', format: 'date-time' },
       used: { type: 'boolean' },
       user_id: { type: 'integer' }, // Company FK

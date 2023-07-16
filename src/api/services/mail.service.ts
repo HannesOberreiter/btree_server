@@ -48,7 +48,7 @@ export class MailService {
   private loadFooter(lang: string) {
     const mailPath = p.join(
       __dirname,
-      `../../../mails/partials/footer_${lang}.txt`
+      `../../../mails/partials/footer_${lang}.txt`,
     );
     try {
       return readFileSync(mailPath, 'utf-8');

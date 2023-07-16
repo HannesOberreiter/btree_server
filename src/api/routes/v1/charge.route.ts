@@ -14,40 +14,40 @@ export class ChargeRouter extends Router {
       .route('/')
       .get(
         Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Container.resolve('ChargeController').get
+        Container.resolve('ChargeController').get,
       );
     this.router
       .route('/stock')
       .get(
         Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Container.resolve('ChargeController').getStock
+        Container.resolve('ChargeController').getStock,
       );
     this.router
       .route('/')
       .patch(
         Validator.validate([body('ids').isArray()]),
         Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('ChargeController').patch
+        Container.resolve('ChargeController').patch,
       );
     this.router
       .route('/')
       .post(
         Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('ChargeController').post
+        Container.resolve('ChargeController').post,
       );
     this.router
       .route('/batchDelete')
       .patch(
         Validator.validate([body('ids').isArray()]),
         Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('ChargeController').batchDelete
+        Container.resolve('ChargeController').batchDelete,
       );
     this.router
       .route('/batchGet')
       .post(
         Validator.validate([body('ids').isArray()]),
         Guard.authorize([ROLES.admin, ROLES.user, ROLES.read]),
-        Container.resolve('ChargeController').batchGet
+        Container.resolve('ChargeController').batchGet,
       );
   }
 }

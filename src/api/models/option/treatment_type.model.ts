@@ -14,8 +14,8 @@ export class TreatmentType extends BaseOptionModel {
       modelClass: Company,
       join: {
         from: ['treatment_types.user_id'],
-        to: ['companies.id']
-      }
-    }
-  }
+        to: ['companies.id'],
+      },
+    },
+  };
 }

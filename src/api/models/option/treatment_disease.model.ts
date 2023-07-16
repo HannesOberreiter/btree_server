@@ -14,8 +14,8 @@ export class TreatmentDisease extends BaseOptionModel {
       modelClass: Company,
       join: {
         from: ['treatment_diseases.user_id'],
-        to: ['companies.id']
-      }
-    }
-  }
+        to: ['companies.id'],
+      },
+    },
+  };
 }

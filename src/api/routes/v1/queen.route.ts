@@ -15,20 +15,20 @@ export class QueenRouter extends Router {
       .route('/')
       .get(
         Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Container.resolve('QueenController').get
+        Container.resolve('QueenController').get,
       );
     this.router
       .route('/stats')
       .get(
         Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
         Validator.isPremium,
-        Container.resolve('QueenController').getStats
+        Container.resolve('QueenController').getStats,
       );
     this.router
       .route('/pedigree/:id')
       .get(
         Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Container.resolve('QueenController').getPedigree
+        Container.resolve('QueenController').getPedigree,
       );
     this.router
       .route('/')
@@ -38,35 +38,35 @@ export class QueenRouter extends Router {
           body('repeat').isInt({ max: 100, min: 0 }),
         ]),
         Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('QueenController').post
+        Container.resolve('QueenController').post,
       );
     this.router
       .route('/')
       .patch(
         Validator.validate([body('ids').isArray()]),
         Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('QueenController').patch
+        Container.resolve('QueenController').patch,
       );
     this.router
       .route('/status')
       .patch(
         Validator.validate([body('ids').isArray(), body('status').isBoolean()]),
         Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('QueenController').updateStatus
+        Container.resolve('QueenController').updateStatus,
       );
     this.router
       .route('/batchDelete')
       .patch(
         Validator.validate([body('ids').isArray()]),
         Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('QueenController').batchDelete
+        Container.resolve('QueenController').batchDelete,
       );
     this.router
       .route('/batchGet')
       .post(
         Validator.validate([body('ids').isArray()]),
         Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('QueenController').batchGet
+        Container.resolve('QueenController').batchGet,
       );
   }
 }

@@ -43,7 +43,7 @@ export default class ServiceController extends Controller {
   async paypalCreateOrder(
     req: IUserRequest,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ) {
     try {
       const order = await paypalCreateOrder(req.user.user_id, req.body.amount);
@@ -59,7 +59,7 @@ export default class ServiceController extends Controller {
   async paypalCapturePayment(
     req: IUserRequest,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ) {
     try {
       const capture = await capturePayment(req.params.orderID);
@@ -69,7 +69,7 @@ export default class ServiceController extends Controller {
       const mail = capture.payment_source.paypal.email_address;
       try {
         value = parseFloat(
-          capture.purchase_units[0].payments.captures[0].amount.value
+          capture.purchase_units[0].payments.captures[0].amount.value,
         );
       } catch (e) {
         console.error(e);
@@ -90,12 +90,12 @@ export default class ServiceController extends Controller {
   async stripeCreateOrder(
     req: IUserRequest,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ) {
     try {
       const session = await stripeCreateOrder(
         req.user.user_id,
-        req.body.amount
+        req.body.amount,
       );
       res.locals.data = session;
       next();

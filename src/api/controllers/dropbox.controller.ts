@@ -37,7 +37,7 @@ export default class DropboxController extends Controller {
           'offline',
           null,
           'none',
-          false
+          false,
         )
         .then((authUrl) => {
           res.locals.data = authUrl;
@@ -54,7 +54,7 @@ export default class DropboxController extends Controller {
       const dbx = new DropboxAuth(DropboxController.config);
       const token = await dbx.getAccessTokenFromCode(
         DropboxController.redirect,
-        code
+        code,
       );
 
       const refresh_token = token.result['refresh_token'];
@@ -88,7 +88,7 @@ export default class DropboxController extends Controller {
     try {
       const token = await DropboxModel.query().findOne(
         'user_id',
-        req.user.user_id
+        req.user.user_id,
       );
       if (!token) {
         res.locals.data = '';

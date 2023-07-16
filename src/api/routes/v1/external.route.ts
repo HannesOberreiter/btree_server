@@ -13,7 +13,7 @@ export class ExternalRoute extends Router {
       .get(
         Validator.handleSource,
         Validator.validate([param('api').isString()]),
-        Container.resolve('ExternalController').ical
+        Container.resolve('ExternalController').ical,
       );
 
     this.router
@@ -31,7 +31,7 @@ export class ExternalRoute extends Router {
           query('rain').optional().isNumeric().toFloat(),
           query('note').optional().isString().isLength({ max: 300 }),
         ]),
-        Container.resolve('ScaleDataController').api
+        Container.resolve('ScaleDataController').api,
       );
 
     this.router

@@ -28,7 +28,7 @@ export class DiscourseSSO {
 
   getNonce(payload: string) {
     const q = querystring.parse(
-      Buffer.from(querystring.unescape(payload), 'base64').toString()
+      Buffer.from(querystring.unescape(payload), 'base64').toString(),
     );
     if ('nonce' in q) {
       return q['nonce'];
@@ -49,7 +49,7 @@ export class DiscourseSSO {
     }
 
     const payload = Buffer.from(querystring.stringify(params), 'utf8').toString(
-      'base64'
+      'base64',
     );
     const hmac = this.getHmac();
     hmac.update(payload);

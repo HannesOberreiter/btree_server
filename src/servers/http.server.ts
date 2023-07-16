@@ -44,7 +44,7 @@ export class HTTPServer {
           Container.resolve('Logger').log(
             'info',
             `HTTP(S) server is now running on port ${port} (${env})`,
-            { label: 'Server' }
+            { label: 'Server' },
           );
         }
       });
@@ -57,7 +57,7 @@ export class HTTPServer {
       Container.resolve('Logger').log(
         'error',
         `Server creation error : ${error.message}`,
-        { label: 'Server' }
+        { label: 'Server' },
       );
     }
   }
