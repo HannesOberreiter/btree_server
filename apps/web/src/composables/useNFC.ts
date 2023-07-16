@@ -201,6 +201,8 @@ const useNFC = () => {
   async function read() {
     if (state.reading) return;
     if (anyStateTrue()) abort(false);
+    if (!(await check())) return false;
+
     const result = await initScan();
     if (result) {
       try {
