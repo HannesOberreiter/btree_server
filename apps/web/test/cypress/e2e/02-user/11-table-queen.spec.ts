@@ -21,6 +21,8 @@ describe('User - Queen Table', () => {
     cy.dataCy(form).should('not.exist');
 
     cy.dataCy('btn-table-modus').click();
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(1000);
     cy.table_edit_row(form);
     cy.table_delete_row();
   });

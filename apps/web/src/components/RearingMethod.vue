@@ -97,7 +97,7 @@ const dialogForm = (
       ids: ids,
       maximized: false,
     },
-  }).onOk(() => refetch.value());
+  }).onOk(() => refetch());
 };
 
 function onNew() {
@@ -117,7 +117,7 @@ function onDelete() {
       () => {
         notification.open('positive', 'deleted');
         model.value = null;
-        refetch.value();
+        refetch();
       },
       () => notification.open('negative', 'error.unknown'),
     );
