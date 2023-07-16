@@ -4,7 +4,7 @@ import { Option, Task } from '~/types';
 import { queryCache } from '~/boot/vue-query';
 import { Ref, unref } from 'vue';
 import { useNotification } from '~/composables/useNotification';
-import { QueryClient, useQuery, useQueryClient } from 'vue-query';
+import { QueryClient, useQuery, useQueryClient } from '@tanstack/vue-query';
 import dayjs from 'dayjs';
 import { useApiFetch } from './useApi';
 
@@ -935,7 +935,7 @@ export function useCountsQuery({ enabled = true as MaybeRef<boolean> }) {
 export function clearCache(q = '') {
   if (q.trim() === '') queryCache.clear();
   else {
-    const queries = queryCache.findAll(q);
+    const queries = queryCache.findAll({ queryKey: [q] });
     queries.forEach((query) => query.invalidate());
   }
 }
@@ -946,7 +946,7 @@ export const useInvalidateQueries = () => {
   function invalidate(q = '') {
     if (q.trim() === '') queryClient.invalidateQueries();
     else {
-      queryClient.invalidateQueries(q);
+      queryClient.invalidateQueries({ queryKey: [q] });
     }
   }
   return { invalidate };
