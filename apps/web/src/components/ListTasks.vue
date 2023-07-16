@@ -133,7 +133,7 @@ const {
 const taskStart = ref(0);
 const taskEnd = ref(10);
 
-watch(doRefetch, () => refetchQuery.value());
+watch(doRefetch, () => refetchQuery());
 
 const listData = computed(() => {
   if (data.value) {

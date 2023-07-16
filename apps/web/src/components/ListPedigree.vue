@@ -54,7 +54,7 @@ function openDialog(id: number) {
       ids: [id],
     },
   }).onOk(async () => {
-    await refetch.value();
+    await refetch();
   });
 }
 </script>
