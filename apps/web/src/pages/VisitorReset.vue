@@ -110,7 +110,7 @@ async function sendForm(values: any) {
     (error) => {
       notification.open('negative', error);
       isSubmitting.value = false;
-    }
+    },
   );
 }
 </script>

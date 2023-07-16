@@ -190,7 +190,7 @@ watch(
   },
   {
     immediate: true,
-  }
+  },
 );
 
 function onRequest(props: any) {

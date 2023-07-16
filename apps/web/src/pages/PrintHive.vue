@@ -136,7 +136,7 @@ function buildList(data: any) {
     function (o) {
       return new Date(o.date);
     },
-    'desc'
+    'desc',
   );
   return sortedArray;
 }
@@ -176,7 +176,7 @@ watch(
   () => {
     if (!isLoading.value && !isLoadingTask.value) emits('loaded');
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 const listData = computed(() => {

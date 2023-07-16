@@ -56,7 +56,7 @@ const state = reactive({
   'treatments.type_id': storeFilter.field(props.form, 'treatments.type_id'),
   'treatments.disease_id': storeFilter.field(
     props.form,
-    'treatments.disease_id'
+    'treatments.disease_id',
   ),
   'feeds.type_id': storeFilter.field(props.form, 'feeds.type_id'),
   'harvests.type_id': storeFilter.field(props.form, 'harvests.type_id'),
@@ -67,7 +67,7 @@ const state = reactive({
   'queens.hive_id': storeFilter.field(props.form, 'queens.hive_id'),
   'hive_location.apiary_id': storeFilter.field(
     props.form,
-    'hive_location.apiary_id'
+    'hive_location.apiary_id',
   ),
 
   type_id: storeFilter.field(props.form, 'type_id'),

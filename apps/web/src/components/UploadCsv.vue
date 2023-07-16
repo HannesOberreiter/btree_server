@@ -128,7 +128,7 @@ async function onUpload() {
       (error) => {
         notification.open('negative', error);
         return false;
-      }
+      },
     );
     if (!success) break;
   }
@@ -143,7 +143,7 @@ function onRejected(rejectedEntries: QRejectedEntry[]) {
   notification.open(
     'negative',
     t('rejectedFiles', { count: rejectedEntries.length }),
-    true
+    true,
   );
 }
 </script>

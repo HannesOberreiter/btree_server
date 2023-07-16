@@ -19,7 +19,7 @@ import {
 export const useFormCleanup = (
   table: MaybeRef<string>,
   state: Ref,
-  isEdit: boolean
+  isEdit: boolean,
 ) => {
   function cleanup() {
     if (unref(table) === 'hive') {

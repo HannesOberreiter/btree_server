@@ -21,7 +21,7 @@ const emit = defineEmits(['change']);
 const state = useLocalStorage(
   'pref-local',
   { 'date-auto-close': false },
-  { mergeDefaults: true }
+  { mergeDefaults: true },
 );
 
 watch(state.value, () => emit('change', state.value['date-auto-close']), {

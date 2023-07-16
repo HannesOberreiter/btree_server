@@ -50,7 +50,7 @@ const sameLocationIndex = computed(() => {
     if (!data.value.sameLocation) return null;
     const index = findIndex(
       data.value.sameLocation,
-      (o: any) => o.id === data.value.id
+      (o: any) => o.id === data.value.id,
     );
     return {
       previous: index <= 0 ? null : index - 1,

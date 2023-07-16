@@ -120,7 +120,7 @@ export const useScanner = () => {
             { facingMode: 'environment' },
             config,
             qrCodeSuccessCallback,
-            qrCodeErrorCallback
+            qrCodeErrorCallback,
           )
           .catch((err) => {
             console.error(err);

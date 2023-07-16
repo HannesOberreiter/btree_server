@@ -39,36 +39,36 @@ import BtnCloseDialog from './BtnCloseDialog.vue';
 import { defineAsyncComponent, computed } from 'vue';
 
 const FormMainApiary = defineAsyncComponent(
-  () => import('./FormMainApiary.vue')
+  () => import('./FormMainApiary.vue'),
 );
 const FormMainTodo = defineAsyncComponent(() => import('./FormMainTodo.vue'));
 const FormMainHive = defineAsyncComponent(() => import('./FormMainHive.vue'));
 const FormMainMovement = defineAsyncComponent(
-  () => import('./FormMainMovement.vue')
+  () => import('./FormMainMovement.vue'),
 );
 const FormMainTask = defineAsyncComponent(() => import('./FormMainTask.vue'));
 const FormMainQueen = defineAsyncComponent(() => import('./FormMainQueen.vue'));
 const FormMainQueenHive = defineAsyncComponent(
-  () => import('./FormMainQueenHive.vue')
+  () => import('./FormMainQueenHive.vue'),
 );
 const FormMainScaleData = defineAsyncComponent(
-  () => import('./FormMainScaleData.vue')
+  () => import('./FormMainScaleData.vue'),
 );
 const FormMainOption = defineAsyncComponent(
-  () => import('./FormMainOption.vue')
+  () => import('./FormMainOption.vue'),
 );
 const FormMainCharge = defineAsyncComponent(
-  () => import('./FormMainCharge.vue')
+  () => import('./FormMainCharge.vue'),
 );
 const FormMainScale = defineAsyncComponent(() => import('./FormMainScale.vue'));
 const FormMainRearing = defineAsyncComponent(
-  () => import('./FormMainRearing.vue')
+  () => import('./FormMainRearing.vue'),
 );
 const FormMainRearingMethod = defineAsyncComponent(
-  () => import('./FormMainRearingMethod.vue')
+  () => import('./FormMainRearingMethod.vue'),
 );
 const FormMainRearingDetail = defineAsyncComponent(
-  () => import('./FormMainRearingDetail.vue')
+  () => import('./FormMainRearingDetail.vue'),
 );
 
 const { dialogRef, onDialogHide, onDialogOK } = useDialogPluginComponent();

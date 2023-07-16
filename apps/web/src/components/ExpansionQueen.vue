@@ -150,7 +150,7 @@ async function setModus(id: number, modus: boolean) {
           modus: !modus,
           modus_date: useDate.isoFormat(useDate.getCurrent()),
         },
-      })
+      }),
     )
     .then(
       async (_response: any) => {
@@ -159,7 +159,7 @@ async function setModus(id: number, modus: boolean) {
       },
       (error) => {
         notification.open('negative', error);
-      }
+      },
     );
   isSubmitting.value = false;
 }

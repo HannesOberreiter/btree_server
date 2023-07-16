@@ -82,7 +82,7 @@ function sendForm(user: User) {
       isSubmitting.value = false;
       console.error(error);
       notification.open('negative', error);
-    }
+    },
   );
 }
 

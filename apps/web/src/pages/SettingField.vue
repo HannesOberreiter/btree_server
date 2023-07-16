@@ -35,7 +35,11 @@
                   </div>
                   <q-toggle
                     v-else
-                    v-model="settings[index as keyof typeof settings][i as keyof typeof setting][j as keyof typeof subsetting]"
+                    v-model="
+                      settings[index as keyof typeof settings][
+                        i as keyof typeof setting
+                      ][j as keyof typeof subsetting]
+                    "
                     :label="$t('rating.' + j)"
                     :disable="isSubmitting || isLoading"
                     @update:model-value="onSubmit"
@@ -51,7 +55,11 @@
                   class="col-12 q-pl-md"
                 >
                   <q-toggle
-                    v-model="settings[index as keyof typeof settings][i as keyof typeof setting][j as keyof typeof subsetting]"
+                    v-model="
+                      settings[index as keyof typeof settings][
+                        i as keyof typeof setting
+                      ][j as keyof typeof subsetting]
+                    "
                     :label="$t(j as any)"
                     :disable="isSubmitting || isLoading"
                     @update:model-value="onSubmit"
@@ -67,7 +75,11 @@
                   class="col-12 q-pl-md"
                 >
                   <q-toggle
-                    v-model="settings[index as keyof typeof settings][i as keyof typeof setting][j as keyof typeof subsetting]"
+                    v-model="
+                      settings[index as keyof typeof settings][
+                        i as keyof typeof setting
+                      ][j as keyof typeof subsetting]
+                    "
                     :label="$t('frames.' + j)"
                     :disable="isSubmitting || isLoading"
                     @update:model-value="onSubmit"
@@ -77,7 +89,11 @@
               </template>
               <div v-else class="col-12">
                 <q-toggle
-                  v-model="settings[index as keyof typeof settings][i as keyof typeof setting]"
+                  v-model="
+                    settings[index as keyof typeof settings][
+                      i as keyof typeof setting
+                    ]
+                  "
                   :label="
                     $t('setting.hint' + capitalize(index) + capitalize(i))
                   "
@@ -147,7 +163,7 @@ const localPerf = useLocalStorage(
     'hive-clear-after-saving': false,
     'calendar-show-weeknumber': true,
   },
-  { mergeDefaults: true }
+  { mergeDefaults: true },
 );
 
 const isSubmitting = ref(false);
@@ -170,7 +186,7 @@ const onSubmit = async () => {
       },
       (error) => {
         notification.open('negative', error);
-      }
+      },
     );
   isSubmitting.value = false;
 };

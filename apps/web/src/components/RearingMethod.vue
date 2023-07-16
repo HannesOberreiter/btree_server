@@ -79,14 +79,14 @@ watch(
   },
   {
     immediate: true,
-  }
+  },
 );
 
 const dialogForm = (
   title: string,
   ids: any[],
   form = 'rearing_type',
-  selected = null as any
+  selected = null as any,
 ) => {
   $q.dialog({
     component: DialogForm,
@@ -119,7 +119,7 @@ function onDelete() {
         model.value = null;
         refetch.value();
       },
-      () => notification.open('negative', 'error.unknown')
+      () => notification.open('negative', 'error.unknown'),
     );
   });
 }

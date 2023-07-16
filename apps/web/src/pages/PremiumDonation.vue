@@ -196,7 +196,7 @@ const afterPayment = computed(() => {
     return useDate.displayFormat(dayjs().add(1, 'year').toISOString());
   } else {
     return useDate.displayFormat(
-      dayjs(storeUser.getPaidStatus.date).add(1, 'year').toISOString()
+      dayjs(storeUser.getPaidStatus.date).add(1, 'year').toISOString(),
     );
   }
 });
@@ -226,7 +226,7 @@ function payCoupon() {
         },
         (error) => {
           notification.open('negative', error);
-        }
+        },
       );
     }
   });

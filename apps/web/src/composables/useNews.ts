@@ -14,7 +14,7 @@ const {
   error,
   data,
 }: { isFetching: Ref<boolean>; error: Ref<any>; data: Ref<News[]> } = useFetch(
-  '/news.json?cache=' + Date.now()
+  '/news.json?cache=' + Date.now(),
 )
   .get()
   .json();

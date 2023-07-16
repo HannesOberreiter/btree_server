@@ -62,7 +62,7 @@ async function changeStatus() {
     },
     (error) => {
       notification.open('negative', error);
-    }
+    },
   );
 }
 </script>

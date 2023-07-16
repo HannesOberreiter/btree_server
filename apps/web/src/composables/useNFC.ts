@@ -48,7 +48,7 @@ declare class NDEFReader extends EventTarget {
   scan: (options?: NDEFScanOptions) => Promise<void>;
   write: (
     message: NDEFMessageSource,
-    options?: NDEFWriteOptions
+    options?: NDEFWriteOptions,
   ) => Promise<void>;
   makeReadOnly: (options?: NDEFMakeReadOnlyOptions) => Promise<void>;
 }
@@ -109,7 +109,7 @@ const useNFC = () => {
       ndef = new NDEFReader();
       ndef.onreadingerror = (e) => {
         console.error(
-          'Argh! Cannot read data from the NFC tag. Try another one?'
+          'Argh! Cannot read data from the NFC tag. Try another one?',
         );
         console.error(e);
       };
@@ -186,7 +186,7 @@ const useNFC = () => {
               console.error(e);
             }
           },
-          { signal: abortSignals[abortSignals.length - 1].signal }
+          { signal: abortSignals[abortSignals.length - 1].signal },
         );
       } catch (error) {
         console.error(error);
@@ -254,7 +254,7 @@ const useNFC = () => {
               }
             }
           },
-          { signal: abortSignals[abortSignals.length - 1].signal }
+          { signal: abortSignals[abortSignals.length - 1].signal },
         );
       } catch (error) {
         console.error(error);
@@ -300,7 +300,7 @@ const useNFC = () => {
         writeTimeouts.push(
           setTimeout(() => {
             if (ctrlWrite) ctrlWrite.abort();
-          }, 10_000)
+          }, 10_000),
         );
 
         ndef.addEventListener(
@@ -308,7 +308,7 @@ const useNFC = () => {
           (_event) => {
             console.log('Currently waiting for write to finish...');
           },
-          { signal: ctrlWrite.signal }
+          { signal: ctrlWrite.signal },
         );
 
         await ndef

@@ -36,7 +36,7 @@
             >
               <div class="row items-center justify-end">
                 <btn-date-auto-close
-                  @change="(v: boolean) => autoClose = v"
+                  @change="(v: boolean) => (autoClose = v)"
                 ></btn-date-auto-close>
                 <btn-base
                   v-close-popup
@@ -128,8 +128,8 @@ const { values, reset } = toRefs(props);
 const multipleValues = computed(() =>
   formCheckMultipleValues(
     values.value,
-    props.tableId ? props.tableId : props.label
-  )
+    props.tableId ? props.tableId : props.label,
+  ),
 );
 const disable = ref(multipleValues.value);
 
@@ -170,7 +170,7 @@ function setValues() {
   if (multipleValues.value) editValues(true);
   else if (values.value && !isEmpty(values.value)) {
     modelValue.value = dayjs(
-      values.value[0][props.tableId ? props.tableId : props.label]
+      values.value[0][props.tableId ? props.tableId : props.label],
     ).format(props.dateFormat);
   } else modelValue.value = resetValue;
 }

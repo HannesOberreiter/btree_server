@@ -77,7 +77,7 @@ const { modelValue } = useVModels(props, emit);
 const resetValue = unref(modelValue.value);
 const { values, reset } = toRefs(props);
 const multipleValues = computed(() =>
-  formCheckMultipleValues(values.value, props.label)
+  formCheckMultipleValues(values.value, props.label),
 );
 const disable = ref(multipleValues.value);
 

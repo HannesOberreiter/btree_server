@@ -41,7 +41,7 @@ async function onSubmit() {
     },
     (error) => {
       notification.open('negative', error);
-    }
+    },
   );
   isSubmitting.value = false;
 }

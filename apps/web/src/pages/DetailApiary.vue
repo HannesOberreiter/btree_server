@@ -161,8 +161,8 @@ const years = computed(() =>
       ? data.value.firstMovedate
         ? dayjs(data.value.firstMovedate.date).year()
         : 2000
-      : 2000
-  )
+      : 2000,
+  ),
 );
 
 useMeta(() => {

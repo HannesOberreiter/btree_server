@@ -105,10 +105,10 @@ const emit = defineEmits(['update:modelValue', 'update:modelDetail']);
 const { modelValue, modelDetail, modelDate } = useVModels(props, emit);
 const { values, reset } = toRefs(props);
 const multipleValues = computed(() =>
-  formCheckMultipleValues(values.value, 'type_id')
+  formCheckMultipleValues(values.value, 'type_id'),
 );
 const multipleValuesDetail = computed(() =>
-  formCheckMultipleValues(values.value, 'detail_id')
+  formCheckMultipleValues(values.value, 'detail_id'),
 );
 const disable = ref(multipleValues.value);
 const disableDetail = ref(multipleValues.value);
@@ -125,7 +125,7 @@ watch(
   },
   {
     immediate: true,
-  }
+  },
 );
 
 watch(modelValue, (cur) => {

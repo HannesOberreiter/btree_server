@@ -160,7 +160,7 @@ watch(
   },
   {
     immediate: true,
-  }
+  },
 );
 
 async function getEdit(id: unknown[]) {
@@ -175,7 +175,7 @@ async function getEdit(id: unknown[]) {
     },
     (error) => {
       notification.open('negative', error);
-    }
+    },
   );
 }
 

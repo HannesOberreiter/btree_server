@@ -112,9 +112,8 @@ const lastCheckup = computed(() => {
   if (diffDays > 365) return undefined;
   return {
     days: diffDays,
-    text: `${t('lastCheckup')}: ${diffDays} ${t('day', diffDays)} (${
-      result.hive?.name
-    }, ${result.type?.name})`,
+    text: `${t('lastCheckup')}: ${diffDays} ${t('day', diffDays)} (${result.hive
+      ?.name}, ${result.type?.name})`,
   };
 });
 

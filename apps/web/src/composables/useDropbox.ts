@@ -70,7 +70,7 @@ export const useServiceDropbox = () => {
         setAccessToken('');
         console.error(error);
         return false;
-      }
+      },
     );
   }
 
@@ -81,7 +81,7 @@ export const useServiceDropbox = () => {
       },
       (error) => {
         console.error(error);
-      }
+      },
     );
   }
 
@@ -93,7 +93,7 @@ export const useServiceDropbox = () => {
       },
       (error) => {
         console.error(error);
-      }
+      },
     );
   }
 
@@ -111,7 +111,7 @@ export const useServiceDropbox = () => {
       },
       (error) => {
         notification.open('negative', error);
-      }
+      },
     );
   }
 
@@ -124,7 +124,7 @@ export const useServiceDropbox = () => {
         const ordered_list = orderBy(
           response.result.entries,
           ['.tag', 'name'],
-          ['desc', 'asc']
+          ['desc', 'asc'],
         );
         LoadingBar.stop();
         state.isLoading = false;
@@ -133,7 +133,7 @@ export const useServiceDropbox = () => {
       },
       async (e) => {
         throw e;
-      }
+      },
     );
   }
 
@@ -176,7 +176,7 @@ export const useServiceDropbox = () => {
   async function uploadFile(file: File) {
     return await getAccessToken()
       .then(() =>
-        dbx.filesUpload({ path: state.path, autorename: true, contents: file })
+        dbx.filesUpload({ path: state.path, autorename: true, contents: file }),
       )
       .catch((e) => console.error(e));
   }

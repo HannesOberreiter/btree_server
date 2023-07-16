@@ -37,12 +37,12 @@ const props = defineProps({
 const latlng = toRef(props, 'latlng');
 
 const urlPart = computed(() =>
-  storeUser.user.lang === 'de' ? 'de/wetter' : 'en/weather'
+  storeUser.user.lang === 'de' ? 'de/wetter' : 'en/weather',
 );
 const darkMode = computed(() => ($q.dark.isActive ? 'dark' : 'bright'));
 
 const location = computed(
-  () => `${latlng.value.latitude}N${latlng.value.longitude}E`
+  () => `${latlng.value.latitude}N${latlng.value.longitude}E`,
 );
 
 const referUrl = computed(() => {

@@ -274,7 +274,7 @@ watch(
   },
   {
     immediate: true,
-  }
+  },
 );
 
 function onRequest(props: any) {
@@ -288,7 +288,7 @@ function queenTableCol(queen: any) {
   if (!queen) return '';
   if (queen.queen_modus) {
     return `${queen.queen_name} (${useDate.displayFormat(
-      queen.queen_move_date
+      queen.queen_move_date,
     )})`;
   }
   return `R.I.P  (${useDate.displayFormat(queen.queen_modus_date)})`;

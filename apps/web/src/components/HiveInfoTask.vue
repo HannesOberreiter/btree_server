@@ -62,12 +62,12 @@ watch(
       if (data.value.results) {
         results.value = groupBy(
           sortBy(data.value.results, 'year', 'asc'),
-          'year'
+          'year',
         );
         years.value = Object.keys(results.value).sort().reverse();
       }
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
 </script>

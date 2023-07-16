@@ -18,7 +18,7 @@ export const useDateFormat = () => {
   const isoFormat = (
     date: string,
     type = 'date' as DateFormat,
-    inputFormat = ''
+    inputFormat = '',
   ) => {
     const formats = {
       date: 'YYYY-MM-DD',
@@ -34,7 +34,7 @@ export const useDateFormat = () => {
   const displayFormat = (
     date: string,
     type = 'date' as DateFormat,
-    inputFormat = ''
+    inputFormat = '',
   ) => {
     const formats = {
       date: 'YYYY-MM-DD',

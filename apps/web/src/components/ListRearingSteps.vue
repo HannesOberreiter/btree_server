@@ -120,7 +120,7 @@ const steps = ref(null);
 watch(
   methodSteps,
   () => (steps.value = methodSteps.value ? methodSteps.value : null),
-  { immediate: true }
+  { immediate: true },
 );
 
 function setActiveStep(id: number, set = true) {
@@ -161,7 +161,7 @@ function onAdd() {
           notification.open('positive', '');
           emit('change');
         },
-        () => notification.open('negative', 'error')
+        () => notification.open('negative', 'error'),
       );
   });
 }
@@ -187,7 +187,7 @@ function onSave() {
         resetActiveStep();
         emit('change');
       },
-      () => notification.open('negative', 'error')
+      () => notification.open('negative', 'error'),
     );
   }
 }
@@ -203,7 +203,7 @@ function onDelete(id: number) {
         notification.open('positive', 'deleted');
         steps.value = filter(steps.value, (o) => o.id != id);
       },
-      () => notification.open('negative', 'error.unknown')
+      () => notification.open('negative', 'error.unknown'),
     );
   });
 }

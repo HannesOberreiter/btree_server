@@ -8,7 +8,7 @@
         item.name == company.name
           ? `${item.name} (${t('active')})`
           : `${item.name} (${t('paid')}: ${useDate.displayFormat(
-              item.paid.toString()
+              item.paid.toString(),
             )})`
     "
     :label="t('company.active')"
@@ -123,7 +123,7 @@ const changeCompany = (value: any) => {
     },
     (error) => {
       notification.open('negative', error);
-    }
+    },
   );
   isSubmitting.value = false;
 };
@@ -151,7 +151,7 @@ const removeAccess = () => {
       },
       (error) => {
         notification.open('negative', error);
-      }
+      },
     );
   });
 };
@@ -177,7 +177,7 @@ const editCompany = () => {
       },
       (error) => {
         notification.open('negative', error);
-      }
+      },
     );
   });
 };
@@ -202,7 +202,7 @@ const newCompany = () => {
       },
       (error) => {
         notification.open('negative', error);
-      }
+      },
     );
   });
 };
@@ -230,7 +230,7 @@ const deleteCompany = () => {
       },
       (error) => {
         notification.open('negative', error);
-      }
+      },
     );
   });
 };
@@ -247,7 +247,7 @@ const downloadContent = async () => {
     },
     (error) => {
       notification.open('negative', error);
-    }
+    },
   );
   downloadLoading.value = false;
 };

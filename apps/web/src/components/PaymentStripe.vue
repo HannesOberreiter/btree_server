@@ -34,7 +34,7 @@ function createSession() {
     (session) => {
       window.location.href = session.url;
     },
-    (error) => notification.open('negative', error)
+    (error) => notification.open('negative', error),
   );
 }
 

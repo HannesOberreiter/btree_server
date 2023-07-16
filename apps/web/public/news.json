@@ -1,5 +1,17 @@
 [
   {
+    "version": "6.2.6",
+    "date": "2023-07-16",
+    "news": [
+      "BUGFIX disable caching on service worker",
+      "FEATURE added link to VIS portal on calendar event",
+      "FEATURE added new CDN service bunny.net",
+      "FEATURE updated WizBee to work with ChatGPT version 4",
+      "CHORE updated vue-query to @tanstack",
+      "CHORES upgrade libraries [SERVER, CLIENT]"
+    ]
+  },
+  {
     "version": "6.2.5",
     "date": "2023-05-31",
     "news": ["BUGFIX fix UTC timezone for rearings, thx Olli"]

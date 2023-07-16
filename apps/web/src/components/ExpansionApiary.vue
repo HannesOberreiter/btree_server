@@ -62,7 +62,7 @@
             class="text-white"
             :label="`${$t('inactive')} (${useDate.displayFormat(
               data.modus_date,
-              'date'
+              'date',
             )})`"
           />
         </div>
