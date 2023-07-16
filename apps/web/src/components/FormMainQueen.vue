@@ -352,6 +352,6 @@ function onReset() {
 
 async function onChange() {
   emit('onSuccess', true);
-  refetch.value();
+  refetch();
 }
 </script>
