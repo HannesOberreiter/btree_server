@@ -3,6 +3,9 @@
     "version": "6.2.6",
     "date": "2023-07-16",
     "news": [
+      "BUGFIX disable form temperature waiting spinner (checkup and treatment) on init load",
+      "BUGFIX nfc writing / clearing was not showing loading icon and disable if reading is active",
+      "BUGFIX prevent NFC error double notification",
       "BUGFIX disable caching on service worker",
       "FEATURE added link to VIS portal on calendar event",
       "FEATURE added new CDN service bunny.net",

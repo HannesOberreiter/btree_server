@@ -19,7 +19,11 @@
     "
   >
     <template v-if="!values || isEmpty(values)" #deepAfter>
-      <q-spinner-hourglass v-if="isLoading" flat round></q-spinner-hourglass>
+      <q-spinner-hourglass
+        v-if="isLoading && enabled"
+        flat
+        round
+      ></q-spinner-hourglass>
       <q-icon
         v-else
         name="fas fa-broadcast-tower"
@@ -76,15 +80,17 @@ const props = defineProps({
     default: null,
   },
 });
+
+const enabled = computed(
+  () => select.value != 0 && loadTemp.value && props.values !== null,
+);
 const {
   isLoading,
   isSuccess,
   data: temperature,
   refetch,
 } = useTemperatureQuery(select, {
-  enabled: computed(
-    () => select.value != 0 && loadTemp.value && props.values !== null,
-  ),
+  enabled,
 });
 const emit = defineEmits(['update:modelValue']);
 const { modelValue } = useVModels(props, emit);
