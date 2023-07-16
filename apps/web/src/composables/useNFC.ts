@@ -137,11 +137,12 @@ const useNFC = () => {
     state.content = [];
 
     try {
-      abortSignals.forEach((signal) => signal.abort());
+      abortSignals.forEach((signal) => signal.abort(message ?? 'nfc.aborted'));
     } catch (e) {
       console.error(e);
     }
 
+    abortSignals.splice(0, abortSignals.length);
     ndef = undefined;
 
     if (message) notification.open('negative', message);
@@ -272,7 +273,7 @@ const useNFC = () => {
   }
 
   async function write(url: string | null, shortUrl = ''): Promise<void> {
-    if (anyStateTrue()) abort(false);
+    abort(false);
     const result = await initScan();
     if (result) {
       try {
@@ -304,32 +305,39 @@ const useNFC = () => {
             if (ctrlWrite) ctrlWrite.abort();
           }, 10_000),
         );
+        abortSignals.push(ctrlWrite);
 
         ndef.addEventListener(
           'reading',
           (_event) => {
             console.log('Currently waiting for write to finish...');
           },
-          { signal: ctrlWrite.signal },
+          { signal: abortSignals[abortSignals.length - 1].signal },
         );
 
         await ndef
-          .write(records, { signal: ctrlWrite.signal })
+          .write(records, {
+            signal: abortSignals[abortSignals.length - 1].signal,
+          })
           .then(() => {
             notification.open('positive', '');
+            state.writingDone = true;
           })
           .catch((e) => {
+            console.log(e);
             if (e === 'timeout') {
               if (!state.writingDone)
                 notification.open('negative', 'nfc.timeout', false);
+            } else if (e === 'nfc.aborted') {
+              // do nothing
             } else {
               console.error(e);
               notification.open('negative', '');
             }
+            state.writingDone = false;
           })
           .finally(() => {
             state.writing = false;
-            state.writingDone = true;
             state.writingContent = '';
             state.clearing = false;
           });

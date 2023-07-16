@@ -159,6 +159,7 @@ function printQR() {
           <btn-base
             :label="$t('write')"
             color="secondary"
+            :loading="nfc.state.writing"
             :disable="
               !nfc.isSupported() ||
               nfc.state.reading ||
@@ -185,6 +186,7 @@ function printQR() {
           <btn-base
             :label="$t('clear')"
             color="negative"
+            :loading="nfc.state.clearing"
             :disable="
               !nfc.isSupported() ||
               nfc.state.reading ||
