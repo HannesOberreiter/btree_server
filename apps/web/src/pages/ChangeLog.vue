@@ -8,7 +8,7 @@
   <q-table
     v-else
     grid
-    :rows="data"
+    :rows="dataFetched"
     :title="$t('changelog')"
     :filter="filter"
     :rows-per-page-options="[10]"
@@ -67,10 +67,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useNews } from '~/composables/useNews';
 
 const { isFetching, error, data, currentVersion } = useNews();
+
+const dataFetched = computed(() => data.value ?? []);
 
 const filter = ref('');
 </script>
