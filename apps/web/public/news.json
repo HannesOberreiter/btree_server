@@ -3,6 +3,7 @@
     "version": "6.2.6",
     "date": "2023-07-16",
     "news": [
+      "BUGFIX disable form temperature waiting spinner (checkup and treatment) on init load",
       "BUGFIX disable caching on service worker",
       "FEATURE added link to VIS portal on calendar event",
       "FEATURE added new CDN service bunny.net",
