@@ -4,6 +4,7 @@
     "date": "2023-07-16",
     "news": [
       "BUGFIX disable form temperature waiting spinner (checkup and treatment) on init load",
+      "BUGFIX changelog was not visible on page refresh",
       "BUGFIX nfc writing / clearing was not showing loading icon and disable if reading is active",
       "BUGFIX prevent NFC error double notification",
       "BUGFIX disable caching on service worker",
