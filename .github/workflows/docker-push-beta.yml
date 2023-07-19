@@ -3,7 +3,7 @@ name: docker-push-beta
 on:
   push:
     branches:
-      - 'dev'
+      - 'beta'
   workflow_dispatch:
 
 jobs:
