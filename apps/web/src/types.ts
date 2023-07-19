@@ -145,7 +145,6 @@ export declare interface FormOption {
 
 export declare interface FormRearingDetail {
   job: string;
-  hour: number;
   note: string;
 }
 
