@@ -6,6 +6,9 @@ import { RearingStep } from './rearing_step.model';
 export class RearingDetail extends Model {
   id!: number;
   job!: string;
+  /**
+   * @deprecated use sleep_before in rearing_steps table
+   */
   hour!: string;
   note!: string;
   user_id!: number;
@@ -35,7 +38,7 @@ export class RearingDetail extends Model {
     properties: {
       id: { type: 'integer' },
       job: { type: 'string', minLength: 1, maxLength: 50 },
-      hour: { type: 'integer' },
+      hour: { type: 'integer' }, // deprecated, use sleep_before in rearing_steps table
       note: { type: 'string', maxLength: 2000 },
       user_id: { type: 'integer' }, // Company FK
     },

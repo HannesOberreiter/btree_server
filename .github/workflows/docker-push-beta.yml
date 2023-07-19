@@ -1,9 +1,9 @@
-name: docker-push
+name: docker-push-beta
 
 on:
   push:
     branches:
-      - 'main'
+      - 'beta'
   workflow_dispatch:
 
 jobs:
@@ -26,4 +26,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: hannesoberreiter/btree_server:latest
+          tags: hannesoberreiter/btree_server:beta
