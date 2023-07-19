@@ -195,7 +195,6 @@ const autoFill = async (trx: Transaction, id: number, lang: string) => {
   for (let i = 0; i < val.reardetail.job.length; i++) {
     const rearingDetail = await RearingDetail.query(trx).insert({
       job: val.reardetail.job[i],
-      hour: val.reardetail.time[i],
       note: val.reardetail.note[i],
       user_id: id,
     });
@@ -203,6 +202,7 @@ const autoFill = async (trx: Transaction, id: number, lang: string) => {
       position: i,
       type_id: rearType.id,
       detail_id: rearingDetail.id,
+      sleep_before: val.reardetail.time[i],
     });
   }
 

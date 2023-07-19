@@ -68,7 +68,7 @@ const getRearings = async ({ query, user }) => {
           parseInt(result.currentStep.position) > parseInt(result.startPosition)
         ) {
           // Step comes behind Start Step, we can simply add up the hours
-          addDate = addDate.add(result.currentStep.detail.hour, 'hour');
+          addDate = addDate.add(result.currentStep.sleep_before, 'hour');
           result.start = addDate.toISOString();
         } else {
           // Step comes before Start Step, this is more complicated as
@@ -78,7 +78,7 @@ const getRearings = async ({ query, user }) => {
           let subDate = dayjs(result.date);
           for (let k = 0; k < steps_before; k++) {
             subDate = subDate.subtract(
-              result.steps[result.startKey - k].detail.hour,
+              result.steps[result.startKey - k].sleep_before,
               'hour',
             );
           }

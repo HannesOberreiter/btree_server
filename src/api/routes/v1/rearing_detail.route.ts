@@ -27,7 +27,7 @@ export class RearingDetailRouter extends Router {
     this.router
       .route('/')
       .post(
-        Validator.validate([body('job').isString(), body('hour').isNumeric()]),
+        Validator.validate([body('job').isString()]),
         Guard.authorize([ROLES.admin, ROLES.user]),
         Container.resolve('RearingDetailController').post,
       );

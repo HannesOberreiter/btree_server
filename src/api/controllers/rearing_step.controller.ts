@@ -48,7 +48,10 @@ export default class RearingStepController extends Controller {
           res.push(
             await RearingStep.query(trx)
               .withGraphJoined('detail')
-              .patch({ position: step.position })
+              .patch({
+                position: step.position,
+                sleep_before: step.sleep_before,
+              })
               .findById(step.id)
               .where('detail.user_id', req.user.user_id),
           );
