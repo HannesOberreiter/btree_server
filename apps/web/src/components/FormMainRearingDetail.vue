@@ -15,17 +15,6 @@
       :required="isEdit ? false : true"
       :max-valid="50"
     ></form-input-text>
-    <form-input-numeric
-      v-model="state.hour"
-      table-id="hour"
-      label="waitTime"
-      icon="fas fa-hourglass"
-      shadow-text="h"
-      :hint="$t('rear.detailHourText')"
-      :values="values"
-      :reset="reset"
-      :max-valid="5000"
-    ></form-input-numeric>
     <form-input-note
       v-model="state.note"
       :values="values"
@@ -53,7 +42,6 @@ import { FormRearingDetail } from '~/types';
 import { useApiFetch } from '~/composables/useApi';
 import FormDropdownEdit from './FormDropdownEdit.vue';
 import FormInputText from './FormInputText.vue';
-import FormInputNumeric from './FormInputNumeric.vue';
 import FormInputNote from './FormInputNote.vue';
 import FormButtons from './FormButtons.vue';
 import { ref, computed, unref } from 'vue';
@@ -87,7 +75,6 @@ const editOptionsCopy = ref([]) as any;
 
 const stateDefault = {
   job: '',
-  hour: 0,
   note: '',
 };
 

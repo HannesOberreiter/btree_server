@@ -90,7 +90,7 @@ const columns = [
   },
   {
     name: 'hour',
-    label: t('waitTime') + ' [h]',
+    label: t('deprecatedField') + ' (' + t('waitTime') + ' [h]' + ')',
     align: 'right',
     field: (row: any) => row.hour,
     sortable: true,
