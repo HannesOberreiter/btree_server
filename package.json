@@ -22,7 +22,7 @@
     "migrate": "knex migrate:latest",
     "dev:init": "ENVIRONMENT=development knex migrate:latest && ENVIRONMENT=development knex seed:run",
     "dev:serve": "ENVIRONMENT=development nodemon --delay 2000ms",
-    "dev:build": "tsc -watch",
+    "dev:build": "tsc --watch",
     "dev:knex": "ENVIRONMENT=development knex",
     "test:coverage": "ENVIRONMENT=test nyc --reporter=text mocha ./test/e2e/00-api.e2e.test.js",
     "test:e2e": "ENVIRONMENT=test npx mocha ./test/e2e/00-api.e2e.test.js  --R spec --ui bdd --env test",
