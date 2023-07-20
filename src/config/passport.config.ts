@@ -74,6 +74,9 @@ async function verifyUser(
     provider_id: id,
   });
   if (federate) {
+    await FederatedCredential.query().patch({
+      last_visit: new Date(),
+    });
     return { bee_id: federate.bee_id, name: undefined, email: undefined };
   }
 
@@ -88,6 +91,7 @@ async function verifyUser(
         .patch({
           provider: provider,
           provider_id: id,
+          last_visit: new Date(),
         })
         .where({ mail: mail.value });
       return {
@@ -124,6 +128,7 @@ async function verifyUser(
     provider_id: id,
     mail: new_mail,
     bee_id: bee_id,
+    last_visit: new Date(),
   });
   return { bee_id, name: undefined, email: undefined };
 }
