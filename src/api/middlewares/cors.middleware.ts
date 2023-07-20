@@ -34,15 +34,18 @@ class Cors {
    * @param next Callback function
    */
   validate(req: Request, res: Response, next: (e?: Error) => void): void {
-    if (req.url.indexOf('external') !== -1) {
+    if (
+      req.url.indexOf('external') >= 0 ||
+      req.url.indexOf('auth/google/callback') >= 0
+    ) {
       res.set('Access-Control-Allow-Origin', '*');
     } else {
       res.set('Access-Control-Allow-Origin', req.headers.origin);
     }
 
-    // Set undefined CORS header
-    // https://github.com/expressjs/cors/issues/262
     if (!req.headers.origin) {
+      // Set undefined CORS header
+      // https://github.com/expressjs/cors/issues/262
       if (req.headers.referer) {
         const url = new URL(req.headers.referer);
         req.headers.origin = url.origin;

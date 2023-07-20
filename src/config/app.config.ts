@@ -56,7 +56,7 @@ export class Application {
   private redisStore: any;
 
   /**
-   * @description Configuring CORS asynchronously, will disable CORS for /external/ route
+   * @description Configuring CORS asynchronously, will disable CORS for /external/ and auth/google/callback route
    */
   private corsOptionsDelegate = function (req, callback) {
     const origin = req.header('Origin');
@@ -74,8 +74,11 @@ export class Application {
     } as any;
     let error = null;
 
-    if (req.url.indexOf('external') !== -1) {
-      // Allow API calls to scale and iCal without CORS
+    if (
+      req.url.indexOf('external') >= 0 ||
+      req.url.indexOf('auth/google/callback') >= 0
+    ) {
+      // Allow API calls to scale and iCal and google auth without CORS
       corsOptions = { origin: false, credentials: false };
     } else if (
       authorized.indexOf(origin) === -1 &&
