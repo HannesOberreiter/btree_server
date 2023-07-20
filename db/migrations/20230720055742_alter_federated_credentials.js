@@ -4,7 +4,7 @@
  */
 exports.up = function (knex) {
   return knex.schema.alterTable('federated_credentials', (t) => {
-    t.timestamp('last_visit').nullable().defaultTo(knex.fn.now());
+    t.timestamp('last_visit').nullable().defaultTo(null);
   });
 };
 
