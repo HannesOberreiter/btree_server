@@ -13,10 +13,10 @@ import jwt from 'jsonwebtoken';
 */
 
 import { randomBytes, createHash } from 'crypto';
-import { Request } from 'express';
 import { User } from '@models/user.model';
 import dayjs from 'dayjs';
 import useragent from 'express-useragent';
+import { FastifyRequest } from 'fastify';
 
 /*const generateRefreshToken = async (
   bee_id: number,
@@ -160,7 +160,7 @@ const checkRefreshToken = async (
   return { tokenType, accessToken, refreshToken, expiresIn };
 };*/
 
-const buildUserAgent = (req: Request) => {
+const buildUserAgent = (req: FastifyRequest) => {
   try {
     const userAgent = useragent.parse(req.headers['user-agent']);
     const userAgentInsert =

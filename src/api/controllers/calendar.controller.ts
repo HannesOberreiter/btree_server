@@ -1,7 +1,4 @@
-import { NextFunction, Response } from 'express';
-import { Controller } from '@classes/controller.class';
 import { checkMySQLError } from '@utils/error.util';
-import { IUserRequest } from '@interfaces/IUserRequest.interface';
 import {
   getTask,
   getMovements,
@@ -9,84 +6,77 @@ import {
   getRearings,
   getScaleData,
 } from '@utils/calendar.util';
-export default class CalendarController extends Controller {
-  constructor() {
-    super();
+import { FastifyReply, FastifyRequest } from 'fastify';
+export default class CalendarController {
+  static async getRearings(req: FastifyRequest, reply: FastifyReply) {
+    try {
+      const result = await getRearings(req as any);
+      reply.send(result);
+    } catch (e) {
+      reply.send(checkMySQLError(e));
+    }
   }
 
-  async getRearings(req: IUserRequest, res: Response, next: NextFunction) {
+  static async getTodos(req: FastifyRequest, reply: FastifyReply) {
     try {
-      const result = await getRearings(req);
-      res.locals.data = result;
+      const result = await getTodos(req as any);
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
-    next();
   }
 
-  async getTodos(req: IUserRequest, res: Response, next: NextFunction) {
+  static async getMovements(req: FastifyRequest, reply: FastifyReply) {
     try {
-      const result = await getTodos(req);
-      res.locals.data = result;
+      const result = await getMovements(req as any);
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
-    next();
   }
 
-  async getMovements(req: IUserRequest, res: Response, next: NextFunction) {
+  static async getCheckups(req: FastifyRequest, reply: FastifyReply) {
     try {
-      const result = await getMovements(req);
-      res.locals.data = result;
+      const result = await getTask(req as any, 'checkup');
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
-    next();
   }
 
-  async getCheckups(req: IUserRequest, res: Response, next: NextFunction) {
+  static async getTreatments(req: FastifyRequest, reply: FastifyReply) {
     try {
-      const result = await getTask(req, 'checkup');
-      res.locals.data = result;
+      const result = await getTask(req as any, 'treatment');
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
-    next();
   }
-  async getTreatments(req: IUserRequest, res: Response, next: NextFunction) {
+
+  static async getHarvests(req: FastifyRequest, reply: FastifyReply) {
     try {
-      const result = await getTask(req, 'treatment');
-      res.locals.data = result;
+      const result = await getTask(req as any, 'harvest');
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
-    next();
   }
-  async getHarvests(req: IUserRequest, res: Response, next: NextFunction) {
+
+  static async getFeeds(req: FastifyRequest, reply: FastifyReply) {
     try {
-      const result = await getTask(req, 'harvest');
-      res.locals.data = result;
+      const result = await getTask(req as any, 'feed');
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
-    next();
   }
-  async getFeeds(req: IUserRequest, res: Response, next: NextFunction) {
+
+  static async getScaleData(req: FastifyRequest, reply: FastifyReply) {
     try {
-      const result = await getTask(req, 'feed');
-      res.locals.data = result;
+      const result = await getScaleData(req as any);
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
-    next();
-  }
-  async getScaleData(req: IUserRequest, res: Response, next: NextFunction) {
-    try {
-      const result = await getScaleData(req);
-      res.locals.data = result;
-    } catch (e) {
-      next(checkMySQLError(e));
-    }
-    next();
   }
 }

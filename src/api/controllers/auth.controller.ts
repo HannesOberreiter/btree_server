@@ -1,11 +1,8 @@
 import { autoFill } from '@utils/autofill.util';
-import { conflict, forbidden, unauthorized } from '@hapi/boom';
 import { checkMySQLError } from '@utils/error.util';
 import { Company } from '@models/company.model';
 import { CompanyBee } from '@models/company_bee.model';
-import { Controller } from '@classes/controller.class';
 import { loginCheck } from '@utils/login.util';
-import { NextFunction, Request, Response } from 'express';
 import { randomBytes, randomUUID } from 'crypto';
 import { User } from '@models/user.model';
 import dayjs from 'dayjs';
@@ -21,117 +18,94 @@ import { discourseSecret, env, frontend } from '@/config/environment.config';
 import { ENVIRONMENT } from '../types/constants/environment.const';
 import { MailServer } from '../app.bootstrap';
 
-import { IUserRequest } from '../types/interfaces/IUserRequest.interface';
 import { DiscourseSSO } from '../services/discourse.service';
+import { FastifyReply, FastifyRequest } from 'fastify';
+import fastifyPassport from '@fastify/passport';
+import httpErrors from 'http-errors';
 
-export default class AuthController extends Controller {
-  constructor() {
-    super();
-  }
-
-  async confirmMail(req: Request, res: Response, next: NextFunction) {
-    const key = req.body.confirm;
+export default class AuthController {
+  static async confirmMail(req: FastifyRequest, reply: FastifyReply) {
+    const body = req.body as any;
+    const key = body.confirm;
     const u = await User.query().findOne({
       reset: key,
     });
     if (!u) {
-      return next(forbidden('Confirm Key not found'));
+      reply.send(httpErrors.Forbidden('Confirm Key not found'));
     }
-    try {
-      const result = await confirmAccount(u.id);
-      res.locals.data = { email: result };
-      next();
-    } catch (e) {
-      next(e);
-    }
+    const result = await confirmAccount(u.id);
+    reply.send({ email: result });
   }
 
-  async resetRequest(req: Request, res: Response, next: NextFunction) {
-    const email = req.body.email;
+  static async resetRequest(req: FastifyRequest, reply: FastifyReply) {
+    const body = req.body as any;
+    const email = body.email;
     const u = await User.query().findOne({
       email: email,
     });
     if (!u) {
       // "Best Practice" don't tell anyone if the user exists
       // return next(badRequest('User not found!'));
-      res.locals.data = { email: email };
-      return next();
+      reply.send({ email: email });
     }
-    try {
-      const result = await resetMail(u.id);
+    const result = await resetMail(u.id);
 
-      await MailServer.sendMail({
-        to: result.email,
-        lang: result.lang,
-        subject: 'pw_reset',
-        name: result.username,
-        key: result.reset,
+    await MailServer.sendMail({
+      to: result.email,
+      lang: result.lang,
+      subject: 'pw_reset',
+      name: result.username,
+      key: result.reset,
+    });
+    if (env !== ENVIRONMENT.production) {
+      reply.send({
+        email: result.email,
+        token: result.reset,
+        id: result.id,
       });
-      if (env !== ENVIRONMENT.production) {
-        res.locals.data = {
-          email: result.email,
-          token: result.reset,
-          id: result.id,
-        };
-      } else {
-        res.locals.data = { email: result.email };
-      }
-      next();
-    } catch (e) {
-      next(e);
     }
+    reply.send({ email: result.email });
   }
 
-  async unsubscribeRequest(req: Request, res: Response, next: NextFunction) {
-    const email = req.body.email;
+  static async unsubscribeRequest(req: FastifyRequest, reply: FastifyReply) {
+    const body = req.body as any;
+    const email = body.email;
     const u = await User.query().findOne({
       email: email,
     });
     if (!u) {
       // "Best Practice" don't tell anyone if the user exists
       // return next(badRequest('User not found!'));
-      res.locals.data = { email: email };
-      return next();
+      reply.send({ email: email });
     }
-    try {
-      const result = await unsubscribeMail(u.id);
-      res.locals.data = { email: result };
-      next();
-    } catch (e) {
-      next(e);
-    }
+    const result = await unsubscribeMail(u.id);
+    reply.send({ email: result });
   }
 
-  async resetPassword(req: Request, res: Response, next: NextFunction) {
-    const { key, password } = req.body;
+  static async resetPassword(req: FastifyRequest, reply: FastifyReply) {
+    const { key, password } = req.body as any;
     const u = await User.query().findOne({
       reset: key,
     });
     if (!u) {
-      return next(forbidden('Reset key not found!'));
+      reply.send(httpErrors.NotFound('Reset key not found!'));
     }
     if (dayjs().diff(u.reset_timestamp, 'hours') > 24) {
-      return next(forbidden('Reset key too old!'));
+      reply.send(httpErrors.Forbidden('Reset key too old!'));
     }
-    try {
-      const result = await resetPassword(u.id, password);
-      await MailServer.sendMail({
-        to: result.email,
-        lang: result.lang,
-        subject: 'pw_reseted',
-        name: result.username,
-      });
-      res.locals.data = { email: result.email };
-      next();
-    } catch (e) {
-      next(e);
-    }
+    const result = await resetPassword(u.id, password);
+    await MailServer.sendMail({
+      to: result.email,
+      lang: result.lang,
+      subject: 'pw_reseted',
+      name: result.username,
+    });
+    reply.send({ email: result.email });
   }
 
-  async register(req: Request, res: Response, next: NextFunction) {
-    let inputCompany = req.body.name;
-
-    let inputUser = req.body;
+  static async register(req: FastifyRequest, reply: FastifyReply) {
+    const inputCompany = (req.body as any).name;
+    let inputUser = req.body as any;
     delete inputUser['name'];
 
     // create hashed password and salt
@@ -149,7 +123,9 @@ export default class AuthController extends Controller {
         const uniqueMail = await User.query(trx).findOne({
           email: inputUser.email,
         });
-        if (uniqueMail) throw conflict('email');
+        if (uniqueMail) {
+          reply.send(httpErrors.Conflict('email'));
+        }
 
         const u = await User.query(trx).insert({ ...inputUser, state: 0 });
         const c = await Company.query(trx).insert({
@@ -160,51 +136,49 @@ export default class AuthController extends Controller {
         await autoFill(trx, c.id, autofillLang);
       });
 
-      try {
-        await MailServer.sendMail({
-          to: inputUser.email,
-          lang: inputUser.lang,
-          subject: 'register',
-          key: inputUser.reset,
-        });
+      await MailServer.sendMail({
+        to: inputUser.email,
+        lang: inputUser.lang,
+        subject: 'register',
+        key: inputUser.reset,
+      });
 
-        res.locals.data = { email: inputUser.email, activate: inputUser.reset };
-        next();
-      } catch (e) {
-        next(e);
-      }
+      reply.send({ email: inputUser.email, activate: inputUser.reset });
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async logout(req: Request, res: Response, next: NextFunction) {
+  static async logout(req: FastifyRequest, reply: FastifyReply) {
     req.session.destroy(function (err) {
-      if (err) next(err);
-      res.locals.data = true;
-      next();
+      if (err) {
+        if (err instanceof Error) {
+          throw err;
+        }
+        throw Error(err);
+      }
     });
+    req.logOut();
+    reply.send(true);
   }
 
-  async login(req: Request, res: Response, next: NextFunction) {
-    const { email, password } = req.body;
+  static async login(req: FastifyRequest, reply: FastifyReply) {
+    const { email, password } = req.body as any;
     const userAgent = buildUserAgent(req);
+    const { bee_id, user_id, data, paid, rank } = await loginCheck(
+      email,
+      password,
+    );
+
+    //const token = await generateTokenResponse(bee_id, user_id, userAgent);
+    // Add bee_id to req as regenerate will call genid which uses bee_id as prefix to store key
+    // see app.config.ts session(genId: function);
+
+    req['bee_id'] = bee_id;
     try {
-      const { bee_id, user_id, data, paid, rank } = await loginCheck(
-        email,
-        password,
-      );
-
-      //const token = await generateTokenResponse(bee_id, user_id, userAgent);
-      // Add bee_id to req as regenerate will call genid which uses bee_id as prefix to store key
-      // see app.config.ts session(genId: function);
-
-      req['bee_id'] = bee_id;
-      req.session.regenerate(function (err) {
-        if (err) next(err);
-
-        // store user information in session, typically a user id
-        req.session.user = {
+      await req.session.regenerate();
+      fastifyPassport.registerUserSerializer(async (user, request) => {
+        return (user = {
           bee_id: bee_id,
           user_id: user_id,
           paid: paid,
@@ -212,44 +186,18 @@ export default class AuthController extends Controller {
           user_agent: userAgent,
           last_visit: new Date(),
           uuid: randomUUID(),
-          ip: req.ip,
-        };
-
-        // save the session before redirection to ensure page
-        // load does not happen before session is saved
-        req.session.save(function (err) {
-          if (err) return next(err);
-          res.locals.data = { data };
-          next();
+          ip: request.ip,
         });
       });
+      await req.session.save();
     } catch (e) {
-      next(e);
+      req.log.error(e);
+      reply.send(httpErrors[500]('Failed to create session'));
     }
+    reply.send({ data });
   }
 
-  async refresh(_req: Request, _res: Response, next: NextFunction) {
-    // Change to Session Cookie from JWT
-    next(unauthorized('Session Only'));
-
-    /*let accessToken: string;
-    const authHeader = String(req.headers['authorization'] || '');
-    if (authHeader.startsWith('Bearer ')) {
-      accessToken = authHeader.substring(7, authHeader.length);
-    } else {
-      return next(badRequest('Old Access Token not found'));
-    }
-    try {
-      const { token, expires } = req.body;
-      const result = await checkRefreshToken(accessToken, token, expires, req);
-      res.locals.data = { result };
-      next();
-    } catch (e) {
-      next(e);
-    }*/
-  }
-
-  async discourse(req: IUserRequest, res: Response, next: NextFunction) {
+  static async discourse(req: FastifyRequest, reply: FastifyReply) {
     const sso = new DiscourseSSO(discourseSecret);
     const { payload, sig } = req.query as any;
     if (payload && sig) {
@@ -271,28 +219,27 @@ export default class AuthController extends Controller {
             require_activation: false,
           };
           const q = sso.buildLoginString(userparams);
-          res.locals.data = q;
-          next();
+          reply.send(q);
         } else {
-          next(forbidden());
+          reply.send(httpErrors.Forbidden('Invalid Signature'));
         }
       } catch (e) {
-        next(checkMySQLError(e));
+        reply.send(checkMySQLError(e));
       }
     } else {
-      next(forbidden());
+      reply.send(httpErrors.Forbidden('Missing Signature'));
     }
   }
 
   /**
    * @description handle google oauth callback, redirect to register page if user does not exist or login otherwise with session cookie
    */
-  async google(req: IUserRequest, res: Response, next: NextFunction) {
+  static async google(req: FastifyRequest, reply: FastifyReply) {
     if (!req.user.bee_id) {
       if (!req.user['name'] && !req.user['email']) {
-        return res.redirect(frontend + '/visitor/login?error=oauth');
+        return reply.redirect(frontend + '/visitor/login?error=oauth');
       }
-      return res.redirect(
+      return reply.redirect(
         frontend +
           '/visitor/register?name=' +
           req.user['name'] +
@@ -304,18 +251,16 @@ export default class AuthController extends Controller {
 
     const userAgent = buildUserAgent(req);
 
+    const { bee_id, user_id, paid, rank } = await loginCheck(
+      '',
+      '',
+      req.user.bee_id,
+    );
+
     try {
-      const { bee_id, user_id, data, paid, rank } = await loginCheck(
-        '',
-        '',
-        req.user.bee_id,
-      );
-
-      req['bee_id'] = bee_id;
-      req.session.regenerate(function (err) {
-        if (err) next(err);
-
-        req.session.user = {
+      await req.session.regenerate();
+      fastifyPassport.registerUserSerializer(async (user, request) => {
+        return (user = {
           bee_id: bee_id,
           user_id: user_id,
           paid: paid,
@@ -323,17 +268,14 @@ export default class AuthController extends Controller {
           user_agent: userAgent,
           last_visit: new Date(),
           uuid: randomUUID(),
-          ip: req.ip,
-        };
-
-        req.session.save(function (err) {
-          if (err) return next(err);
-          res.locals.data = { data };
-          res.redirect(frontend + '/visitor/login');
+          ip: request.ip,
         });
       });
+      await req.session.save();
     } catch (e) {
-      next(e);
+      req.log.error(e);
+      reply.send(httpErrors[500]('Failed to create session'));
     }
+    reply.redirect(frontend + '/visitor/login');
   }
 }

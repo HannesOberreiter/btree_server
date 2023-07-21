@@ -6,7 +6,6 @@ import {
   InjectionMode,
 } from 'awilix';
 
-import { Logger } from '@services/logger.service';
 import { ProxyRouter } from '@services/proxy-router.service';
 import { dirname } from 'path';
 import { LoadedModuleDescriptor } from 'awilix/lib/load-modules';
@@ -40,11 +39,7 @@ export class Container {
       },
     );
 
-    this.container
-      .register({
-        Logger: asClass(Logger).singleton(),
-      })
-      .register({ ProxyRouter: asClass(ProxyRouter).singleton() });
+    this.container.register({ ProxyRouter: asClass(ProxyRouter).singleton() });
 
     return this.container;
   }

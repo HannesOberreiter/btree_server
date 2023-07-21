@@ -1,12 +1,13 @@
 import { ENVIRONMENT } from '@/api/types/constants/environment.const';
 import { env, vectorConfig } from '@config/environment.config';
-import { Container } from '@config/container.config';
 import Redis, { RedisOptions } from 'ioredis';
+import { Logger } from '@/api/services/logger.service';
 
 /**
  * Connection to redis docker instance
  */
 export class VectorServer {
+  private logger = Logger.getInstance();
   static client: Redis;
   start(): void {
     try {
@@ -25,7 +26,7 @@ export class VectorServer {
       );
       VectorServer.client.on('connect', () => {
         if (env !== ENVIRONMENT.test) {
-          Container.resolve('Logger').log(
+          this.logger.log(
             'info',
             `Connection to redis (vector) server established on port ${vectorConfig.port} (${env})`,
             { label: 'Vector' },
@@ -33,11 +34,9 @@ export class VectorServer {
         }
       });
     } catch (error) {
-      Container.resolve('Logger').log(
-        'error',
-        `Redis connection error : ${error.message}`,
-        { label: 'Vector' },
-      );
+      this.logger.log('error', `Redis connection error : ${error.message}`, {
+        label: 'Vector',
+      });
     }
   }
   stop(): void {
@@ -45,7 +44,7 @@ export class VectorServer {
       VectorServer.client.save();
       VectorServer.client.quit();
     } catch (error) {
-      console.error(error);
+      this.logger.log('error', 'Redis connection error', { error });
     }
   }
 }

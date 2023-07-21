@@ -55,8 +55,7 @@ class EnvironmentConfiguration {
 EnvironmentConfiguration.load();
 
 const env = EnvironmentConfiguration.environment;
-const version = process.env.API_VERSION;
-const port = process.env.PORT;
+const port = parseInt(process.env.PORT);
 const url = process.env.URL;
 const frontend = process.env.FRONTEND;
 const authorized = process.env.AUTHORIZED;
@@ -71,9 +70,6 @@ const jwtExpirationIntervalRefreshToken: number = parseInt(
 
 const sessionSecret = process.env.SESSION_SECRET;
 
-const logs = env === ENVIRONMENT.production ? 'combined' : 'development';
-// https://github.com/expressjs/morgan
-const httpLogs = env === ENVIRONMENT.production ? 'tiny' : 'dev';
 const contentType = process.env.CONTENT_TYPE;
 const meteoblueKey = process.env.METEOBLUE_KEY;
 
@@ -208,9 +204,6 @@ export {
   //jwtSecret,
   //jwtExpirationInterval,
   //jwtExpirationIntervalRefreshToken,
-  version,
-  logs,
-  httpLogs,
   mailConfig,
   dropboxClientId,
   dropboxClientSecret,

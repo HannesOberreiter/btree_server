@@ -1,14 +1,12 @@
-import { NextFunction, Response } from 'express';
-import { Controller } from '@classes/controller.class';
 import { checkMySQLError } from '@utils/error.util';
-import { IUserRequest } from '@interfaces/IUserRequest.interface';
 import { Apiary } from '../models/apiary.model';
-import { conflict, forbidden, paymentRequired } from '@hapi/boom';
 import { map } from 'lodash';
 import dayjs from 'dayjs';
 import { HiveLocation } from '../models/hive_location.model';
 import { Movedate } from '../models/movedate.model';
 import { limitApiary } from '../utils/premium.util';
+import { FastifyReply, FastifyRequest } from 'fastify';
+import httpErrors from 'http-errors';
 
 async function isDuplicateApiaryName(user_id: number, name: string) {
   const checkDuplicate = await Apiary.query().select('id').findOne({
@@ -20,18 +18,15 @@ async function isDuplicateApiaryName(user_id: number, name: string) {
   return false;
 }
 
-export default class ApiaryController extends Controller {
-  constructor() {
-    super();
-  }
-
-  async patch(req: IUserRequest, res: Response, next) {
+export default class ApiaryController {
+  static async patch(req: FastifyRequest, reply: FastifyReply) {
     try {
-      const ids = req.body.ids;
-      const insert = { ...req.body.data };
+      const body = req.body as any;
+      const ids = body.ids;
+      const insert = { ...body.data };
       const result = await Apiary.transaction(async (trx) => {
-        if (req.body.name) {
-          if (ids.length > 1) throw conflict('name');
+        if (body.name) {
+          if (ids.length > 1) reply.send(httpErrors.Conflict('name'));
         }
         return await Apiary.query(trx)
           .patch({ ...insert, edit_id: req.user.bee_id })
@@ -39,14 +34,13 @@ export default class ApiaryController extends Controller {
           .withGraphFetched('hive_count')
           .where('user_id', req.user.user_id);
       });
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async get(req: IUserRequest, res: Response, next: NextFunction) {
+  static async get(req: FastifyRequest, reply: FastifyReply) {
     try {
       const { order, direction, offset, limit, modus, deleted, q, details } =
         req.query as any;
@@ -90,16 +84,15 @@ export default class ApiaryController extends Controller {
         }
       }
       const result = await query.orderBy('id');
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async getDetail(req: IUserRequest, res: Response, next: NextFunction) {
+  static async getDetail(req: FastifyRequest, reply: FastifyReply) {
     try {
-      const id = req.params.id;
+      const id = (req.params as any).id;
 
       const query = Apiary.query()
         .findById(id)
@@ -141,72 +134,75 @@ export default class ApiaryController extends Controller {
         .orderBy('hive.position')
         .orderBy('hive.name');
 
-      res.locals.data = {
+      reply.send({
         ...result,
         firstMovedate: query_first,
         sameLocation: query_others,
         hives: query_hives,
-      };
-      next();
+      });
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async post(req: IUserRequest, res: Response, next) {
+  static async post(req: FastifyRequest, reply: FastifyReply) {
     try {
       const limit = await limitApiary(req.user.user_id);
-      if (limit) throw paymentRequired('no premium access');
+      if (limit) reply.send(httpErrors.PaymentRequired('no premium access'));
 
       const result = await Apiary.transaction(async (trx) => {
-        if (await isDuplicateApiaryName(req.user.user_id, req.body.name))
-          throw conflict('name');
+        if (
+          await isDuplicateApiaryName(req.user.user_id, (req.body as any).name)
+        )
+          reply.send(httpErrors.Conflict('name'));
         return Apiary.query(trx).insertAndFetch({
           bee_id: req.user.bee_id,
           user_id: req.user.user_id,
-          ...req.body,
+          ...(req.body as any),
         });
       });
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async updateStatus(req: IUserRequest, res: Response, next: NextFunction) {
+  static async updateStatus(req: FastifyRequest, reply: FastifyReply) {
     try {
+      const body = req.body as any;
       const result = await Apiary.transaction(async (trx) => {
         return Apiary.query(trx)
           .patch({
             edit_id: req.user.bee_id,
-            modus: req.body.status,
+            modus: body.status,
           })
-          .findByIds(req.body.ids)
+          .findByIds(body.ids)
           .where('user_id', req.user.user_id);
       });
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async batchDelete(req: IUserRequest, res: Response, next: NextFunction) {
+  static async batchDelete(req: FastifyRequest, reply: FastifyReply) {
     try {
-      const hardDelete = req.query.hard ? true : false;
-      const restoreDelete = req.query.restore ? true : false;
+      const query = req.query as any;
+      const body = req.body as any;
 
-      const result = await Apiary.transaction(async (trx) => {
+      const hardDelete = query.hard ? true : false;
+      const restoreDelete = query.restore ? true : false;
+
+      await Apiary.transaction(async (trx) => {
         const res = await Apiary.query()
           .withGraphFetched('hive_count')
           .where('user_id', req.user.user_id)
-          .whereIn('id', req.body.ids);
+          .whereIn('id', body.ids);
 
         const softIds = [];
         const hardIds = [];
         map(res, (obj) => {
-          if (obj.hive_count) throw forbidden();
+          if (obj.hive_count) reply.send(httpErrors.Forbidden());
 
           if ((obj.deleted || hardDelete) && !restoreDelete)
             hardIds.push(obj.id);
@@ -232,22 +228,20 @@ export default class ApiaryController extends Controller {
 
         return res;
       });
-      res.locals.data = result;
-      next();
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async batchGet(req: IUserRequest, res: Response, next: NextFunction) {
+  static async batchGet(req: FastifyRequest, reply: FastifyReply) {
     try {
-      const result = await Apiary.query().findByIds(req.body.ids).where({
+      const body = req.body as any;
+      const result = await Apiary.query().findByIds(body.ids).where({
         user_id: req.user.user_id,
       });
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 }

@@ -155,7 +155,9 @@ const getTodos = async ({ query, user }) => {
 
 const getMovements = async ({ query, user }) => {
   const { start, end } = convertDate(query);
-  const results = await DatabaseServer.knex(`calendar_movements`)
+  const instance = DatabaseServer.getInstance();
+  const results = await instance
+    .knex(`calendar_movements`)
     .where('user_id', user.user_id)
     .where('date', '>=', start)
     .where('date', '<=', end);
@@ -195,7 +197,9 @@ const getMovements = async ({ query, user }) => {
 
 const getTask = async ({ query, user }, task: string) => {
   const { start, end } = convertDate(query);
-  const results = await DatabaseServer.knex(`calendar_${task}s`)
+  const instance = DatabaseServer.getInstance();
+  const results = await instance
+    .knex(`calendar_${task}s`)
     .where('user_id', user.user_id)
     .where('date', '>=', start)
     .where('enddate', '<=', end);
@@ -255,7 +259,9 @@ const getTask = async ({ query, user }, task: string) => {
 const getScaleData = async ({ query, user }) => {
   const { start, end } = convertDate(query);
 
-  const results = await DatabaseServer.knex(`calendar_scale_data`)
+  const instance = DatabaseServer.getInstance();
+  const results = await instance
+    .knex(`calendar_scale_data`)
     .where('user_id', user.user_id)
     .where('date', '>=', start)
     .where('date', '<=', end);

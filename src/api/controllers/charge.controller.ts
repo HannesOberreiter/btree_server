@@ -1,18 +1,12 @@
-import { Controller } from '@classes/controller.class';
 import { Charge } from '../models/charge.model';
-import { NextFunction, Response } from 'express';
 import { checkMySQLError } from '@utils/error.util';
-import { IUserRequest } from '@interfaces/IUserRequest.interface';
 import dayjs from 'dayjs';
 import { map } from 'lodash';
 import { ChargeStock } from '../models/charge_stock.model';
+import { FastifyReply, FastifyRequest } from 'fastify';
 
-export default class ChargeController extends Controller {
-  constructor() {
-    super();
-  }
-
-  async get(req: IUserRequest, res: Response, next: NextFunction) {
+export default class ChargeController {
+  static async get(req: FastifyRequest, reply: FastifyReply) {
     try {
       const { order, direction, offset, limit, q, filters, deleted } =
         req.query as any;
@@ -45,7 +39,7 @@ export default class ChargeController extends Controller {
             });
           }
         } catch (e) {
-          console.error(e);
+          req.log.error(e);
         }
       }
       if (order) {
@@ -68,14 +62,13 @@ export default class ChargeController extends Controller {
         }
       }
       const result = await query.orderBy('id');
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async getStock(req: IUserRequest, res: Response, next: NextFunction) {
+  static async getStock(req: FastifyRequest, reply: FastifyReply) {
     try {
       const { order, direction, offset, limit, q } = req.query as any;
       const query = ChargeStock.query()
@@ -107,26 +100,26 @@ export default class ChargeController extends Controller {
         }
       }
       const result = await query.orderBy('type_id');
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async post(req: IUserRequest, res: Response, next: NextFunction) {
+  static async post(req: FastifyRequest, reply: FastifyReply) {
     try {
+      const body = req.body as any;
       const insert = {
-        date: req.body.date,
-        bestbefore: req.body.bestbefore,
-        name: req.body.name,
-        charge: req.body.charge,
-        price: req.body.price,
-        amount: req.body.amount,
-        url: req.body.url,
-        kind: req.body.kind,
-        type_id: req.body.type_id,
-        note: req.body.note,
+        date: body.date,
+        bestbefore: body.bestbefore,
+        name: body.name,
+        charge: body.charge,
+        price: body.price,
+        amount: body.amount,
+        url: body.url,
+        kind: body.kind,
+        type_id: body.type_id,
+        note: body.note,
       };
       const result = await Charge.transaction(async (trx) => {
         const result = [];
@@ -139,16 +132,16 @@ export default class ChargeController extends Controller {
         result.push(res.id);
         return result;
       });
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async patch(req: IUserRequest, res: Response, next: NextFunction) {
-    const ids = req.body.ids;
-    const insert = { ...req.body.data };
+  static async patch(req: FastifyRequest, reply: FastifyReply) {
+    const body = req.body as any;
+    const ids = body.ids;
+    const insert = { ...body.data };
     try {
       const result = await Charge.transaction(async (trx) => {
         return await Charge.query(trx)
@@ -156,37 +149,38 @@ export default class ChargeController extends Controller {
           .findByIds(ids)
           .where('user_id', req.user.user_id);
       });
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async batchGet(req: IUserRequest, res: Response, next: NextFunction) {
+  static async batchGet(req: FastifyRequest, reply: FastifyReply) {
+    const body = req.body as any;
     try {
       const result = await Charge.transaction(async (trx) => {
         const res = await Charge.query(trx)
-          .findByIds(req.body.ids)
+          .findByIds(body.ids)
           .where('user_id', req.user.user_id);
         return res;
       });
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async batchDelete(req: IUserRequest, res: Response, next: NextFunction) {
+  static async batchDelete(req: FastifyRequest, reply: FastifyReply) {
     try {
-      const hardDelete = req.query.hard ? true : false;
-      const restoreDelete = req.query.restore ? true : false;
+      const query = req.query as any;
+      const body = req.body as any;
+      const hardDelete = query.hard ? true : false;
+      const restoreDelete = query.restore ? true : false;
 
       const result = await Charge.transaction(async (trx) => {
         const res = await Charge.query()
           .where('user_id', req.user.user_id)
-          .whereIn('id', req.body.ids);
+          .whereIn('id', body.ids);
 
         const softIds = [];
         const hardIds = [];
@@ -215,10 +209,9 @@ export default class ChargeController extends Controller {
 
         return res;
       });
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 }

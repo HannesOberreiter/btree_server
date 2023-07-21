@@ -2,10 +2,6 @@ import { Router } from 'express';
 import { IRoute } from '@interfaces/IRoute.interface';
 import { RootRouter } from '@routes/v1/root.route';
 
-import { ApiaryRouter } from '@routes/v1/apiary.route';
-import { AuthRouter } from '@routes/v1/auth.route';
-import { CalendarRouter } from '@routes/v1/calendar.route';
-import { ChargeRouter } from '@routes/v1/charge.route';
 import { CheckupRouter } from '@routes/v1/checkup.route';
 import { CompanyRouter } from '@routes/v1/company.route';
 import { CompanyUserRouter } from '@routes/v1/company_user.route';
@@ -44,10 +40,6 @@ export class ProxyRouter {
   private routes = [
     { segment: '', router: RootRouter },
 
-    { segment: '/apiary/', router: ApiaryRouter },
-    { segment: '/auth/', router: AuthRouter },
-    { segment: '/calendar/', router: CalendarRouter },
-    { segment: '/charge/', router: ChargeRouter },
     { segment: '/checkup/', router: CheckupRouter },
     { segment: '/company_user/', router: CompanyUserRouter },
     { segment: '/company/', router: CompanyRouter },

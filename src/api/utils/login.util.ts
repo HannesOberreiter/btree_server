@@ -2,11 +2,11 @@ import { User } from '@models/user.model';
 import { LoginAttemp } from '@models/login_attempt.model';
 
 import { checkMySQLError } from '@utils/error.util';
-import { forbidden, locked, unauthorized } from '@hapi/boom';
 import dayjs from 'dayjs';
 import { createHash } from 'crypto';
 import { MailServer } from '../app.bootstrap';
 import { CompanyBee } from '../models/company_bee.model';
+import httpErrors from 'http-errors';
 
 const insertWrongPasswordTry = async (bee_id: number) => {
   const trx = await LoginAttemp.startTransaction();
@@ -143,7 +143,7 @@ const checkPassword = (
 const reviewPassword = async (bee_id, password: string) => {
   const user = await User.query().select('salt', 'password').findById(bee_id);
   if (!checkPassword(password, user.password, user.salt)) {
-    throw forbidden('Wrong password');
+    throw httpErrors.Forbidden('Wrong password');
   }
   return true;
 };
@@ -161,23 +161,23 @@ const loginCheck = async (
   }
 
   if (!user) {
-    throw unauthorized('no user');
+    throw httpErrors.Forbidden('No User');
   }
   if (user.state !== 1) {
-    throw unauthorized('inactive account');
+    throw httpErrors.Unauthorized('Inactive account');
   }
 
   const bruteForce = await checkBruteForce(user.id);
   if (bruteForce) {
-    throw locked('too many login attempts');
+    throw httpErrors.Locked('too many login attempts');
   }
 
   // Safety check if there is any connected company to the given user
   if (!user.company) {
-    throw unauthorized('no company');
+    throw httpErrors.Unauthorized('no company');
   }
   if (user.company.length < 1) {
-    throw unauthorized('no company');
+    throw httpErrors.Unauthorized('no company');
   }
 
   // Check if connected company exists (last visited company)
@@ -193,7 +193,7 @@ const loginCheck = async (
   if (!bee_id) {
     if (!checkPassword(password, user.password, user.salt)) {
       await insertWrongPasswordTry(user.id);
-      throw unauthorized('Invalid password');
+      throw httpErrors.Unauthorized('Invalid password');
     }
   }
 
@@ -218,9 +218,8 @@ const getPaidRank = async (bee_id: number, user_id: number) => {
 
   if (!companyBee) {
     // User could be removed from company
-    throw unauthorized('Invalid Company / Bee Connection');
+    throw httpErrors.Unauthorized('Invalid Company / Bee Connection');
   }
-
   return { rank: companyBee.rank, paid: companyBee.company.isPaid() };
 };
 

@@ -8,8 +8,12 @@ import { HTTPServer } from '@servers/http.server';
 import { MailService } from './services/mail.service';
 import { VectorServer } from '@/servers/vector.server';
 import { env } from '@/config/environment.config';
+import { Logger } from './services/logger.service';
 
-const dbServer = new DatabaseServer();
+const logger = Logger.getInstance();
+logger.log('info', 'Starting server...', { label: 'Server' });
+
+const dbServer = DatabaseServer.getInstance();
 const redisServer = new RedisServer();
 const mailServer = new MailService();
 
