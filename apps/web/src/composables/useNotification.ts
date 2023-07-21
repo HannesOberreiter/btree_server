@@ -25,10 +25,19 @@ const useNotification = () => {
     let displayMessage = '';
     if (typeof error === 'string') return t(error);
 
+    let errorMessage;
+
+    if ('message' in error) {
+      errorMessage = error.message;
+    }
     if ('errors' in error) {
-      if (typeof error.errors === 'string') {
-        displayMessage = checkStatus(error.statusCode, error.errors);
-      } else if ('type' in error.errors) {
+      errorMessage = error.errors;
+    }
+
+    if (errorMessage) {
+      if (typeof errorMessage === 'string') {
+        displayMessage = checkStatus(error.statusCode, errorMessage);
+      } else if ('type' in errorMessage) {
         // This error comes from Ajv Schema error
         // we actually want to prevent this in our backend
         // as the types should be already checked on the route
@@ -36,12 +45,12 @@ const useNotification = () => {
         displayMessage = checkStatus(error.statusCode);
         if (displayMessage === '') displayMessage = t('error.validation');
       } else {
-        if ('msgTranslation' in error.errors[0]) {
-          displayMessage = error.errors[0].msgTranslation[lang];
-          if ('paramTranslation' in error.errors[0])
+        if ('msgTranslation' in errorMessage[0]) {
+          displayMessage = errorMessage[0].msgTranslation[lang];
+          if ('paramTranslation' in errorMessage[0])
             // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-            displayMessage = `${displayMessage} (${error.errors[0].paramTranslation[lang]})`;
-          if (error.errors.length > 1)
+            displayMessage = `${displayMessage} (${errorMessage[0].paramTranslation[lang]})`;
+          if (errorMessage.length > 1)
             displayMessage = t('error.more') + ': ' + displayMessage;
         }
       }
