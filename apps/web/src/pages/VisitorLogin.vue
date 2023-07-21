@@ -81,7 +81,7 @@ function sendForm(user: User) {
 
 function onLoginGoogle() {
   const baseUrl = process.env.BACKEND_URL;
-  const url = `${baseUrl}/v1/auth/google/login`;
+  const url = `${baseUrl}/v1/auth/google/callback`;
   window.location.href = url;
 }
 
