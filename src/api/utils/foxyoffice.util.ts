@@ -1,8 +1,8 @@
-import { Container } from '@/config/container.config';
 import { foxyOfficeKey, foxyOfficeUrl } from '@/config/environment.config';
-import axios from 'axios';
 import { MailServer } from '../app.bootstrap';
-import FormData from 'form-data';
+import { Logger } from '../services/logger.service';
+
+const logger = Logger.getInstance();
 
 function buildBaseUrl(endpoint: string) {
   return `https://${foxyOfficeUrl}/${endpoint}/${foxyOfficeKey}`;
@@ -15,9 +15,9 @@ function DateToFormat(date: Date) {
 async function getLatestInvoice() {
   const from = `${new Date().getFullYear()}-01-01`;
   const to = `${new Date().getFullYear()}-12-31`;
-  const result = await axios.get(
-    buildBaseUrl(`billing/api/searchInvoicesByDate/${from}/${to}`),
-  );
+  const url = buildBaseUrl(`billing/api/searchInvoicesByDate/${from}/${to}`);
+  const response = await fetch(url);
+  const result = (await response.json()) as any;
   if (result.data.length > 0) {
     let newNumber = 0;
     let newNumberGroupId = 0;
@@ -29,7 +29,10 @@ async function getLatestInvoice() {
         newNumberGroupId = parseInt(invoice['Invoice'].number_group_id);
       }
     }
-    return { number: newNumber + 1, number_group_id: newNumberGroupId };
+    return {
+      number: newNumber + 1,
+      number_group_id: newNumberGroupId,
+    };
   }
   return {
     number: Math.random().toString(36).slice(2, 9),
@@ -88,29 +91,28 @@ export async function createInvoice(
       }
     }
 
-    axios
-      .post(buildBaseUrl('billing/api/addInvoice'), form, {
-        headers: form.getHeaders(),
-      })
-      .then((res) => {
-        MailServer.sendRawMail(
-          'office@btree.at',
-          'New invoice created',
-          JSON.stringify(res.data) +
-            '\n\n' +
-            JSON.stringify(latestInvoice) +
-            '\n\n' +
-            JSON.stringify(mail),
-        );
-      })
-      .catch((err) => {
-        Container.resolve('Logger').log('error', JSON.stringify(err), {
-          label: 'Server',
-        });
-      });
+    const response = fetch(buildBaseUrl('billing/api/addInvoice'), {
+      method: 'POST',
+      body: form,
+    });
+
+    const result = await response;
+
+    if (result.status === 200) {
+      MailServer.sendRawMail(
+        'office@btree.at',
+        'New invoice created',
+        result.body +
+          '\n\n' +
+          JSON.stringify(latestInvoice) +
+          '\n\n' +
+          JSON.stringify(mail),
+      );
+    }
   } catch (err) {
-    Container.resolve('Logger').log('error', JSON.stringify(err), {
-      label: 'Server',
+    logger.log('error', 'Error creating invoice', {
+      label: 'FoxyOffice',
+      err: err,
     });
   }
 }

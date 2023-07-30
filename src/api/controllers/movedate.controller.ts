@@ -1,18 +1,12 @@
-import { NextFunction, Response } from 'express';
-import { Controller } from '@classes/controller.class';
 import { checkMySQLError } from '@utils/error.util';
 import { Movedate } from '../models/movedate.model';
-import { IUserRequest } from '@interfaces/IUserRequest.interface';
 import { Apiary } from '../models/apiary.model';
 import { HiveLocation } from '../models/hive_location.model';
-import { forbidden } from '@hapi/boom';
+import { FastifyReply, FastifyRequest } from 'fastify';
+import httpErrors from 'http-errors';
 
-export default class MovedateController extends Controller {
-  constructor() {
-    super();
-  }
-
-  async get(req: IUserRequest, res: Response, next: NextFunction) {
+export default class MovedateController {
+  static async get(req: FastifyRequest, reply: FastifyReply) {
     try {
       const { order, direction, offset, limit, q, filters } = req.query as any;
       const query = Movedate.query()
@@ -43,7 +37,7 @@ export default class MovedateController extends Controller {
             });
           }
         } catch (e) {
-          console.error(e);
+          req.log.error(e);
         }
       }
       if (order) {
@@ -65,17 +59,17 @@ export default class MovedateController extends Controller {
         }
       }
       const result = await query.orderBy('id');
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async patch(req: IUserRequest, res: Response, next: NextFunction) {
+  static async patch(req: FastifyRequest, reply: FastifyReply) {
     try {
-      const ids = req.body.ids;
-      const insert = { ...req.body.data };
+      const body = req.body as any;
+      const ids = body.ids;
+      const insert = { ...body.data };
       const result = await Movedate.transaction(async (trx) => {
         return await Movedate.query(trx)
           .patch({
@@ -86,19 +80,19 @@ export default class MovedateController extends Controller {
           .leftJoinRelated('apiary')
           .where('apiary.user_id', req.user.user_id);
       });
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async post(req: IUserRequest, res: Response, next: NextFunction) {
+  static async post(req: FastifyRequest, reply: FastifyReply) {
     try {
-      const hive_ids = req.body.hive_ids;
+      const body = req.body as any;
+      const hive_ids = body.hive_ids;
       const insert = {
-        apiary_id: req.body.apiary_id,
-        date: req.body.date,
+        apiary_id: body.apiary_id,
+        date: body.date,
       };
       const result = await Movedate.transaction(async (trx) => {
         await Apiary.query(trx)
@@ -126,71 +120,72 @@ export default class MovedateController extends Controller {
         }
         return result;
       });
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async updateDate(req: IUserRequest, res: Response, next: NextFunction) {
+  static async updateDate(req: FastifyRequest, reply: FastifyReply) {
     try {
+      const body = req.body as any;
       const result = await Movedate.transaction(async (trx) => {
         // First checking if the movedate ids all belong to the user
         // we dont use a left join because of some hassle with ambigious fields
         const ids = await Movedate.query(trx)
           .select('movedates.id')
-          .findByIds(req.body.ids)
+          .findByIds(body.ids)
           .leftJoinRelated('apiary')
           .where('user_id', req.user.user_id);
         const ids_array = ids.map((elem) => elem.id);
         return Movedate.query(trx)
           .patch({
             edit_id: req.user.bee_id,
-            date: req.body.start,
+            date: body.start,
           })
           .findByIds(ids_array);
       });
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async batchGet(req: IUserRequest, res: Response, next: NextFunction) {
+  static async batchGet(req: FastifyRequest, reply: FastifyReply) {
     try {
+      const body = req.body as any;
       const result = await Movedate.transaction(async (trx) => {
         const res = await Movedate.query(trx)
-          .findByIds(req.body.ids)
+          .findByIds(body.ids)
           .withGraphJoined('hive')
           .withGraphJoined('apiary')
           .where('apiary.user_id', req.user.user_id);
         return res;
       });
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async batchDelete(req: IUserRequest, res: Response, next: NextFunction) {
+  static async batchDelete(req: FastifyRequest, reply: FastifyReply) {
     try {
+      const body = req.body as any;
       const result = await Movedate.transaction(async (trx) => {
         return await Movedate.query(trx)
           .delete()
           .withGraphJoined('apiary')
           .withGraphJoined('movedate_count')
-          .whereIn('movedates.id', req.body.ids)
+          .whereIn('movedates.id', body.ids)
           .where('user_id', req.user.user_id)
           .where('count', '>', 1); // User is not allowed to delete the last movedate
       });
-      if (result === 0) throw forbidden('lastMovement'); // this specific key is used in frontend to show a specific error message
-      res.locals.data = result;
-      next();
+      if (result === 0) {
+        reply.send(httpErrors.Forbidden('lastMovement')); // this specific key is used in frontend to show a specific error message
+      }
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 }

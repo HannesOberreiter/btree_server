@@ -1,13 +1,8 @@
-import { NextFunction, Response } from 'express';
-import { Controller } from '@classes/controller.class';
-import { IUserRequest } from '@interfaces/IUserRequest.interface';
 import ical, { ICalCalendarMethod } from 'ical-generator';
 import dayjs from 'dayjs';
 import { getCompany } from '../utils/api.util';
 import { addPremium, isPremium } from '../utils/premium.util';
-import { paymentRequired } from '@hapi/boom';
 import { checkMySQLError } from '../utils/error.util';
-import { SOURCE } from '../types/constants/ical.const';
 import {
   getMovements,
   getRearings,
@@ -17,17 +12,19 @@ import {
 } from '../utils/calendar.util';
 import { Stripe } from 'stripe';
 import { createInvoice } from '../utils/foxyoffice.util';
+import { FastifyReply, FastifyRequest } from 'fastify';
+import httpErrors from 'http-errors';
+import { SOURCE } from '@/config/constants.config';
 
-export default class ExternalController extends Controller {
-  constructor() {
-    super();
-  }
-
-  async ical(req: IUserRequest, res: Response, next: NextFunction) {
+export default class ExternalController {
+  static async ical(req: FastifyRequest, reply: FastifyReply) {
     try {
-      const company = await getCompany(req.params.api);
+      const params = req.params as any;
+      const company = await getCompany(params.api);
       const premium = await isPremium(company.id);
-      if (!premium) throw paymentRequired();
+      if (!premium) {
+        reply.send(httpErrors.PaymentRequired());
+      }
       let results = [];
       const payload = {
         user: {
@@ -39,7 +36,7 @@ export default class ExternalController extends Controller {
         },
       };
       const calendar = ical({
-        name: `b.tree - ${req.params.source}`,
+        name: `b.tree - ${params.source}`,
         // timezone: 'UTC', // standard is UTC no need to define it
         prodId: {
           company: 'btree',
@@ -47,7 +44,7 @@ export default class ExternalController extends Controller {
         },
       });
       calendar.method(ICalCalendarMethod.PUBLISH);
-      switch (req.params.source) {
+      switch (params.source) {
         case SOURCE.todo:
           results = await getTodos(payload);
           break;
@@ -61,7 +58,7 @@ export default class ExternalController extends Controller {
           results = await getScaleData(payload);
           break;
         default:
-          results = await getTask(payload, req.params.source);
+          results = await getTask(payload, params.source);
           break;
       }
       for (const i in results) {
@@ -81,20 +78,20 @@ export default class ExternalController extends Controller {
         });
       }
       calendar.serve(
-        res,
-        `btree-${req.params.source}-${new Date().toISOString()}.ics`,
+        reply.raw,
+        `btree-${params.source}-${new Date().toISOString()}.ics`,
       );
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
   /**
-    Local development use Stripe CLI and redirect webhooks: stripe listen --forward-to localhost:8101/api/v1/external/stripe/webhook
-  */
-  async stripeWebhook(req: IUserRequest, res: Response, next: NextFunction) {
+   * @description  Local development use Stripe CLI and redirect webhooks: stripe listen --forward-to localhost:8101/api/v1/external/stripe/webhook
+   */
+  static async stripeWebhook(req: FastifyRequest, reply: FastifyReply) {
     try {
-      const event = req.body;
+      const event = req.body as any;
       const object = event.data.object as Stripe.Checkout.Session;
       if (event.type === 'checkout.session.completed') {
         const user_id = parseInt(object.client_reference_id);
@@ -102,14 +99,15 @@ export default class ExternalController extends Controller {
         try {
           amount = parseFloat(object.amount_total as any) / 100;
         } catch (e) {
-          console.error(e);
+          req.log.error(e);
         }
         await addPremium(user_id, 12, amount, 'stripe');
         createInvoice(object.customer_details.email, amount, 'Stripe');
       }
-      res.send();
+      reply.send();
     } catch (e) {
-      next(e);
+      req.log.error(e);
+      throw e;
     }
   }
 }

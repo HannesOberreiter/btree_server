@@ -1,31 +1,32 @@
-import { NextFunction, Response } from 'express';
-import { Controller } from '@classes/controller.class';
 import { checkMySQLError } from '@utils/error.util';
-import { IUserRequest } from '@interfaces/IUserRequest.interface';
 import { ScaleData } from '../models/scale_data.model';
 import dayjs from 'dayjs';
 import { getCompany } from '../utils/api.util';
 import { isPremium } from '../utils/premium.util';
-import { paymentRequired, tooManyRequests } from '@hapi/boom';
 import { Scale } from '../models/scale.model';
 import { User } from '../models/user.model';
 import { MailServer } from '../app.bootstrap';
+import { FastifyReply, FastifyRequest } from 'fastify';
+import httpErrors from 'http-errors';
 
-export default class ScaleDataController extends Controller {
-  constructor() {
-    super();
-  }
-  async api(req: IUserRequest, res: Response, next: NextFunction) {
+export default class ScaleDataController {
+  static async api(req: FastifyRequest, reply: FastifyReply) {
     try {
-      const insertDate = req.query.datetime ? req.query.datetime : new Date();
-      const company = await getCompany(req.params.api);
+      const q = req.query as any;
+      const params = req.params as any;
+
+      const insertDate = q.datetime ? q.datetime : new Date();
+
+      const company = await getCompany(params.api);
       const premium = await isPremium(company.id);
-      if (!premium) throw paymentRequired();
+      if (!premium) {
+        reply.send(httpErrors.PaymentRequired());
+      }
 
       const result = await ScaleData.transaction(async (trx) => {
         const scale = await Scale.query(trx)
           .select()
-          .where({ name: req.params.ident, user_id: company.id })
+          .where({ name: params.ident, user_id: company.id })
           .throwIfNotFound()
           .first();
         const lastInsert = await ScaleData.query(trx)
@@ -35,21 +36,18 @@ export default class ScaleDataController extends Controller {
           .first();
 
         if (lastInsert) {
-          if (req.query.action === 'CREATE') {
+          if (q.action === 'CREATE') {
             if (
               dayjs(lastInsert.datetime) >
               dayjs(insertDate as any).subtract(1, 'hour')
-            )
-              throw tooManyRequests('you have exceeded your request limit');
+            ) {
+              reply.send(httpErrors.TooManyRequests());
+            }
           }
 
-          if (
-            req.query.weight &&
-            lastInsert.weight &&
-            req.query.action === 'CREATE'
-          ) {
+          if (q.weight && lastInsert.weight && q.action === 'CREATE') {
             try {
-              const currentWeight = parseFloat(req.query.weight as any);
+              const currentWeight = parseFloat(q.weight as any);
               const checkWeight = Math.abs(lastInsert.weight - currentWeight);
               if (checkWeight > 5) {
                 const user = await User.query()
@@ -69,32 +67,31 @@ export default class ScaleDataController extends Controller {
                 });
               }
             } catch (e) {
-              console.error(e);
+              req.log.error(e);
             }
           }
         }
         const insert = {
           datetime: insertDate,
-          weight: req.query.weight ? req.query.weight : 0,
-          temp1: req.query.temp1 ? req.query.temp1 : 0,
-          temp2: req.query.temp2 ? req.query.temp2 : 0,
-          rain: req.query.rain ? req.query.rain : 0,
-          humidity: req.query.hum ? req.query.hum : 0,
-          note: req.query.note ? req.query.note : '',
+          weight: q.weight ? q.weight : 0,
+          temp1: q.temp1 ? q.temp1 : 0,
+          temp2: q.temp2 ? q.temp2 : 0,
+          rain: q.rain ? q.rain : 0,
+          humidity: q.hum ? q.hum : 0,
+          note: q.note ? q.note : '',
           scale_id: scale.id,
         } as any;
-        if (req.query.action === 'CREATE_DEMO') return insert;
+        if (q.action === 'CREATE_DEMO') return insert;
         const query = await ScaleData.query(trx).insert({ ...insert });
         return query;
       });
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async get(req: IUserRequest, res: Response, next: NextFunction) {
+  static async get(req: FastifyRequest, reply: FastifyReply) {
     try {
       const { order, direction, offset, limit, q, filters } = req.query as any;
       const query = ScaleData.query()
@@ -120,7 +117,7 @@ export default class ScaleDataController extends Controller {
             });
           }
         } catch (e) {
-          console.error(e);
+          req.log.error(e);
         }
       }
       if (order) {
@@ -140,17 +137,17 @@ export default class ScaleDataController extends Controller {
         }
       }
       const result = await query.orderBy('id');
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async patch(req: IUserRequest, res: Response, next: NextFunction) {
+  static async patch(req: FastifyRequest, reply: FastifyReply) {
     try {
-      const ids = req.body.ids;
-      const insert = { ...req.body.data };
+      const body = req.body as any;
+      const ids = body.ids;
+      const insert = { ...body.data };
       const result = await ScaleData.transaction(async (trx) => {
         return await ScaleData.query(trx)
           .withGraphJoined('scale')
@@ -158,16 +155,15 @@ export default class ScaleDataController extends Controller {
           .findByIds(ids)
           .where('scale.user_id', req.user.user_id);
       });
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async post(req: IUserRequest, res: Response, next: NextFunction) {
+  static async post(req: FastifyRequest, reply: FastifyReply) {
     try {
-      const insert = req.body;
+      const insert = req.body as any;
       const result = await ScaleData.transaction(async (trx) => {
         return await ScaleData.query(trx)
           .withGraphJoined('scale')
@@ -176,42 +172,41 @@ export default class ScaleDataController extends Controller {
           })
           .where('scale.user_id', req.user.user_id);
       });
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async batchGet(req: IUserRequest, res: Response, next: NextFunction) {
+  static async batchGet(req: FastifyRequest, reply: FastifyReply) {
     try {
+      const body = req.body as any;
       const result = await ScaleData.transaction(async (trx) => {
         const res = await ScaleData.query(trx)
-          .findByIds(req.body.ids)
+          .findByIds(body.ids)
           .withGraphJoined('scale')
           .where('scale.user_id', req.user.user_id);
         return res;
       });
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async batchDelete(req: IUserRequest, res: Response, next: NextFunction) {
+  static async batchDelete(req: FastifyRequest, reply: FastifyReply) {
     try {
+      const body = req.body as any;
       const result = await ScaleData.transaction(async (trx) => {
         return await ScaleData.query(trx)
           .delete()
           .withGraphJoined('scale')
           .where('scale.user_id', req.user.user_id)
-          .findByIds(req.body.ids);
+          .findByIds(body.ids);
       });
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 }

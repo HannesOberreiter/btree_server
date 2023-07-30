@@ -1,4 +1,4 @@
-import { ROLES } from '@/api/types/constants/role.const';
+import { ROLES } from '@/config/constants.config';
 import { listNumber } from '@utils/enum.util';
 import { FastifyReply, FastifyRequest, HookHandlerDoneFunction } from 'fastify';
 import httpErrors from 'http-errors';

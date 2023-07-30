@@ -1,49 +1,70 @@
-import { Router } from '@classes/router.class';
-import { Container } from '@config/container.config';
 import { Guard } from '@middlewares/guard.middleware';
-import { ROLES } from '@/api/types/constants/role.const';
-import { Validator } from '@/api/middlewares/validator.middleware';
-import { body } from 'express-validator';
+import { ROLES } from '@/config/constants.config';
+import { FastifyInstance } from 'fastify';
+import { ZodTypeProvider } from 'fastify-type-provider-zod';
+import { z } from 'zod';
+import ScaleDataController from '@/api/controllers/scale_data.controller';
 
-export class ScaleDataRouter extends Router {
-  constructor() {
-    super();
-  }
+export default function routes(
+  instance: FastifyInstance,
+  _options: any,
+  done: any,
+) {
+  const server = instance.withTypeProvider<ZodTypeProvider>();
+  server.get(
+    '/',
+    { preHandler: Guard.authorize([ROLES.admin, ROLES.user, ROLES.read]) },
+    ScaleDataController.get,
+  );
+  server.post(
+    '/',
+    {
+      preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
+      schema: {
+        body: z.object({
+          scale_id: z.number(),
+        }),
+      },
+    },
+    ScaleDataController.post,
+  );
+  server.patch(
+    '/',
+    {
+      preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
+      schema: {
+        body: z.object({
+          ids: z.array(z.number()),
+        }),
+      },
+    },
+    ScaleDataController.patch,
+  );
 
-  define() {
-    this.router
-      .route('/')
-      .get(
-        Guard.authorize([ROLES.admin, ROLES.user, ROLES.read]),
-        Container.resolve('ScaleDataController').get,
-      );
-    this.router
-      .route('/')
-      .post(
-        Validator.validate([body('scale_id').isNumeric()]),
-        Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('ScaleDataController').post,
-      );
-    this.router
-      .route('/')
-      .patch(
-        Validator.validate([body('ids').isArray()]),
-        Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('ScaleDataController').patch,
-      );
-    this.router
-      .route('/batchDelete')
-      .patch(
-        Validator.validate([body('ids').isArray()]),
-        Guard.authorize([ROLES.admin]),
-        Container.resolve('ScaleDataController').batchDelete,
-      );
-    this.router
-      .route('/batchGet')
-      .post(
-        Validator.validate([body('ids').isArray()]),
-        Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('ScaleDataController').batchGet,
-      );
-  }
+  server.patch(
+    '/batchDelete',
+    {
+      preHandler: Guard.authorize([ROLES.admin]),
+      schema: {
+        body: z.object({
+          ids: z.array(z.number()),
+        }),
+      },
+    },
+    ScaleDataController.batchDelete,
+  );
+  server.post(
+    '/batchGet',
+    {
+      preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
+      schema: {
+        body: z.object({
+          ids: z.array(z.number()),
+        }),
+      },
+    },
+    ScaleDataController.batchGet,
+  );
+
+  done();
 }

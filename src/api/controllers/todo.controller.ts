@@ -1,16 +1,10 @@
-import { NextFunction, Response } from 'express';
-import { Controller } from '@classes/controller.class';
 import { checkMySQLError } from '@utils/error.util';
-import { IUserRequest } from '@interfaces/IUserRequest.interface';
 import { Todo } from '@models/todo.model';
 import dayjs from 'dayjs';
+import { FastifyRequest, FastifyReply } from 'fastify';
 
-export default class TodoController extends Controller {
-  constructor() {
-    super();
-  }
-
-  async get(req: IUserRequest, res: Response, next: NextFunction) {
+export default class TodoController {
+  static async get(req: FastifyRequest, reply: FastifyReply) {
     try {
       const { order, direction, offset, limit, q, filters, done } =
         req.query as any;
@@ -41,7 +35,7 @@ export default class TodoController extends Controller {
             });
           }
         } catch (e) {
-          console.error(e);
+          req.log.error(e);
         }
       }
       if (order) {
@@ -63,24 +57,24 @@ export default class TodoController extends Controller {
         }
       }
       const result = await query.orderBy('id');
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async post(req: IUserRequest, res: Response, next: NextFunction) {
+  static async post(req: FastifyRequest, reply: FastifyReply) {
     try {
+      const body = req.body as any;
       const insert = {
-        date: req.body.date,
-        name: req.body.name,
-        note: req.body.note,
-        done: req.body.done,
-        url: req.body.url,
+        date: body.date,
+        name: body.name,
+        note: body.note,
+        done: body.done,
+        url: body.url,
       };
-      const repeat = req.body.repeat ? req.body.repeat : 0;
-      const interval = req.body.interval ? req.body.interval : 0;
+      const repeat = body.repeat ? body.repeat : 0;
+      const interval = body.interval ? body.interval : 0;
       const result = await Todo.transaction(async (trx) => {
         const result = [];
 
@@ -105,16 +99,16 @@ export default class TodoController extends Controller {
         }
         return result;
       });
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async patch(req: IUserRequest, res: Response, next: NextFunction) {
-    const ids = req.body.ids;
-    const insert = { ...req.body.data };
+  static async patch(req: FastifyRequest, reply: FastifyReply) {
+    const body = req.body as any;
+    const ids = body.ids;
+    const insert = { ...body.data };
     try {
       const result = await Todo.transaction(async (trx) => {
         return await Todo.query(trx)
@@ -122,76 +116,75 @@ export default class TodoController extends Controller {
           .findByIds(ids)
           .where('user_id', req.user.user_id);
       });
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async batchGet(req: IUserRequest, res: Response, next: NextFunction) {
+  static async batchGet(req: FastifyRequest, reply: FastifyReply) {
     try {
+      const body = req.body as any;
       const result = await Todo.transaction(async (trx) => {
         const res = await Todo.query(trx)
-          .findByIds(req.body.ids)
+          .findByIds(body.ids)
           .where('user_id', req.user.user_id);
         return res;
       });
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async batchDelete(req: IUserRequest, res: Response, next: NextFunction) {
+  static async batchDelete(req: FastifyRequest, reply: FastifyReply) {
     try {
+      const body = req.body as any;
       const result = await Todo.transaction(async (trx) => {
         return Todo.query(trx)
           .delete()
-          .whereIn('id', req.body.ids)
+          .whereIn('id', body.ids)
           .where('user_id', req.user.user_id);
       });
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async updateStatus(req: IUserRequest, res: Response, next: NextFunction) {
+  static async updateStatus(req: FastifyRequest, reply: FastifyReply) {
     try {
+      const body = req.body as any;
       const result = await Todo.transaction(async (trx) => {
         return Todo.query(trx)
           .patch({
             edit_id: req.user.bee_id,
-            done: req.body.status,
+            done: body.status,
           })
-          .findByIds(req.body.ids)
+          .findByIds(body.ids)
           .where('user_id', req.user.user_id);
       });
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async updateDate(req: IUserRequest, res: Response, next: NextFunction) {
+  static async updateDate(req: FastifyRequest, reply: FastifyReply) {
     try {
+      const body = req.body as any;
       const result = await Todo.transaction(async (trx) => {
         return Todo.query(trx)
           .patch({
             edit_id: req.user.bee_id,
-            date: req.body.start,
+            date: body.start,
           })
-          .findByIds(req.body.ids)
+          .findByIds(body.ids)
           .where('user_id', req.user.user_id);
       });
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 }

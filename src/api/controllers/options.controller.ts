@@ -1,7 +1,4 @@
-import { NextFunction, Response } from 'express';
-import { Controller } from '@classes/controller.class';
 import { checkMySQLError } from '@utils/error.util';
-import { IUserRequest } from '@interfaces/IUserRequest.interface';
 import { ChargeType } from '@models/option/charge_type.model';
 import { CheckupType } from '@models/option/checkup_type.model';
 import { FeedType } from '@models/option/feed_type.model';
@@ -13,11 +10,8 @@ import { HiveSource } from '../models/option/hive_source.model';
 import { HiveType } from '../models/option/hive_type.mode';
 import { QueenMating } from '../models/option/queen_mating.model';
 import { QueenRace } from '../models/option/queen_race.model';
-export default class OptionController extends Controller {
-  constructor() {
-    super();
-  }
-
+import { FastifyReply, FastifyRequest } from 'fastify';
+export default class OptionController {
   private static tables = {
     charge_types: ChargeType,
     hive_sources: HiveSource,
@@ -32,14 +26,15 @@ export default class OptionController extends Controller {
     treatment_vets: TreatmentVet,
   };
 
-  async get(req: IUserRequest, res: Response, next: NextFunction) {
+  static async get(req: FastifyRequest, reply: FastifyReply) {
     try {
+      const params = req.params as any;
       const { order, direction, modus } = req.query as any;
-      const table = Object(OptionController.tables)[req.params.table];
+      const table = Object(OptionController.tables)[params.table];
       const query = table
         .query()
-        .where(`${req.params.table}.user_id`, req.user.user_id);
-      if (req.params.table === 'charge_types') {
+        .where(`${params.table}.user_id`, req.user.user_id);
+      if (params.table === 'charge_types') {
         query.withGraphJoined('stock');
       }
       if (modus) {
@@ -55,18 +50,20 @@ export default class OptionController extends Controller {
         }
       }
 
-      res.locals.data = await query;
-      next();
+      const result = await query;
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async patch(req: IUserRequest, res: Response, next: NextFunction) {
+  static async patch(req: FastifyRequest, reply: FastifyReply) {
     try {
-      const ids = req.body.ids;
-      const insert = { ...req.body.data };
-      const table = Object(OptionController.tables)[req.params.table];
+      const body = req.body as any;
+      const params = req.params as any;
+      const ids = body.ids;
+      const insert = { ...body.data };
+      const table = Object(OptionController.tables)[params.table];
       const result = await table.transaction(async (trx) => {
         return await table
           .query(trx)
@@ -74,17 +71,18 @@ export default class OptionController extends Controller {
           .findByIds(ids)
           .where('user_id', req.user.user_id);
       });
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async post(req: IUserRequest, res: Response, next: NextFunction) {
+  static async post(req: FastifyRequest, reply: FastifyReply) {
     try {
-      const insert = { ...req.body };
-      const table = Object(OptionController.tables)[req.params.table];
+      const params = req.params as any;
+      const body = req.body as any;
+      const insert = { ...body };
+      const table = Object(OptionController.tables)[params.table];
       const result = await table.transaction(async (trx) => {
         if (insert.favorite == true) {
           await table
@@ -97,35 +95,37 @@ export default class OptionController extends Controller {
           user_id: req.user.user_id,
         });
       });
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async updateStatus(req: IUserRequest, res: Response, next: NextFunction) {
+  static async updateStatus(req: FastifyRequest, reply: FastifyReply) {
     try {
-      const table = Object(OptionController.tables)[req.params.table];
+      const params = req.params as any;
+      const body = req.body as any;
+      const table = Object(OptionController.tables)[params.table];
       const result = await table.transaction(async (trx) => {
         return table
           .query(trx)
           .patch({
-            modus: req.body.status,
+            modus: body.status,
           })
-          .findByIds(req.body.ids)
+          .findByIds(body.ids)
           .where('user_id', req.user.user_id);
       });
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async updateFavorite(req: IUserRequest, res: Response, next: NextFunction) {
+  static async updateFavorite(req: FastifyRequest, reply: FastifyReply) {
     try {
-      const table = Object(OptionController.tables)[req.params.table];
+      const params = req.params as any;
+      const body = req.body as any;
+      const table = Object(OptionController.tables)[params.table];
       const result = await table.transaction(async (trx) => {
         await table
           .query(trx)
@@ -135,47 +135,48 @@ export default class OptionController extends Controller {
         return table
           .query(trx)
           .patch({ favorite: true })
-          .findByIds(req.body.ids)
+          .findByIds(body.ids)
           .where('user_id', req.user.user_id);
       });
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async batchGet(req: IUserRequest, res: Response, next: NextFunction) {
+  static async batchGet(req: FastifyRequest, reply: FastifyReply) {
     try {
-      const table = Object(OptionController.tables)[req.params.table];
+      const params = req.params as any;
+      const body = req.body as any;
+      const table = Object(OptionController.tables)[params.table];
       const result = await table.transaction(async (trx) => {
         const res = await table
           .query(trx)
-          .findByIds(req.body.ids)
+          .findByIds(body.ids)
           .where('user_id', req.user.user_id);
         return res;
       });
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async batchDelete(req: IUserRequest, res: Response, next: NextFunction) {
+  static async batchDelete(req: FastifyRequest, reply: FastifyReply) {
     try {
-      const table = Object(OptionController.tables)[req.params.table];
+      const params = req.params as any;
+      const body = req.body as any;
+      const table = Object(OptionController.tables)[params.table];
       const result = await table.transaction(async (trx) => {
         return await table
           .query(trx)
           .delete()
-          .findByIds(req.body.ids)
+          .findByIds(body.ids)
           .where('user_id', req.user.user_id);
       });
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 }

@@ -1,7 +1,7 @@
-import { ENVIRONMENT } from '@/api/types/constants/environment.const';
 import { env, redisConfig } from '@config/environment.config';
 import Redis, { RedisOptions } from 'ioredis';
 import { Logger } from '@/api/services/logger.service';
+import { ENVIRONMENT } from '@/config/constants.config';
 
 /**
  * Connection to redis docker instance

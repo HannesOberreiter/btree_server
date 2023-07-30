@@ -1,47 +1,42 @@
-import { NextFunction, Response } from 'express';
-import { Controller } from '@classes/controller.class';
 import { checkMySQLError } from '@utils/error.util';
-import { IUserRequest } from '@interfaces/IUserRequest.interface';
 import { RearingStep } from '../models/rearing/rearing_step.model';
+import { FastifyRequest, FastifyReply } from 'fastify';
 
-export default class RearingStepController extends Controller {
-  constructor() {
-    super();
-  }
-
-  async post(req: IUserRequest, res: Response, next: NextFunction) {
+export default class RearingStepController {
+  static async post(req: FastifyRequest, reply: FastifyReply) {
     try {
+      const body = req.body as any;
       const result = await RearingStep.transaction(async (trx) => {
         return await RearingStep.query(trx).insert({
-          ...req.body,
+          ...body,
         });
       });
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async delete(req: IUserRequest, res: Response, next: NextFunction) {
+  static async delete(req: FastifyRequest, reply: FastifyReply) {
     try {
+      const params = req.params as any;
       const result = await RearingStep.transaction(async (trx) => {
         return await RearingStep.query(trx)
           .withGraphJoined('detail')
           .delete()
           .where('detail.user_id', req.user.user_id)
-          .findById(req.params.id);
+          .findById(params.id);
       });
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async updatePosition(req: IUserRequest, res: Response, next: NextFunction) {
+  static async updatePosition(req: FastifyRequest, reply: FastifyReply) {
     try {
-      const steps = req.body.data;
+      const body = req.body as any;
+      const steps = body.data;
       const result = await RearingStep.transaction(async (trx) => {
         const res = [];
         for (const step of steps) {
@@ -58,10 +53,9 @@ export default class RearingStepController extends Controller {
         }
         return res;
       });
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 }

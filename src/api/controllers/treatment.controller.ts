@@ -1,17 +1,11 @@
-import { NextFunction, Response } from 'express';
-import { Controller } from '@classes/controller.class';
 import { checkMySQLError } from '@utils/error.util';
-import { IUserRequest } from '@interfaces/IUserRequest.interface';
 import { Treatment } from '@models/treatment.model';
 import { map } from 'lodash';
 import { Hive } from '../models/hive.model';
 import dayjs from 'dayjs';
-export default class TreatmentController extends Controller {
-  constructor() {
-    super();
-  }
-
-  async get(req: IUserRequest, res: Response, next: NextFunction) {
+import { FastifyReply, FastifyRequest } from 'fastify';
+export default class TreatmentController {
+  static async get(req: FastifyRequest, reply: FastifyReply) {
     try {
       const { order, direction, offset, limit, q, filters, deleted, done } =
         req.query as any;
@@ -46,7 +40,7 @@ export default class TreatmentController extends Controller {
             });
           }
         } catch (e) {
-          console.error(e);
+          req.log.error(e);
         }
       }
       if (order) {
@@ -69,36 +63,36 @@ export default class TreatmentController extends Controller {
         }
       }
       const result = await query.orderBy(['hive_id', 'id']);
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async patch(req: IUserRequest, res: Response, next: NextFunction) {
+  static async patch(req: FastifyRequest, reply: FastifyReply) {
     try {
-      const ids = req.body.ids;
-      const insert = { ...req.body.data };
+      const body = req.body as any;
+      const ids = body.ids;
+      const insert = { ...body.data };
       const result = await Treatment.transaction(async (trx) => {
         return await Treatment.query(trx)
           .patch({ ...insert, edit_id: req.user.bee_id })
           .findByIds(ids)
           .where('user_id', req.user.user_id);
       });
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async post(req: IUserRequest, res: Response, next: NextFunction) {
+  static async post(req: FastifyRequest, reply: FastifyReply) {
     try {
-      const hive_ids = req.body.hive_ids;
-      const interval = req.body.interval;
-      const repeat = req.body.repeat;
-      const insert = req.body;
+      const body = req.body as any;
+      const hive_ids = body.hive_ids;
+      const interval = body.interval;
+      const repeat = body.repeat;
+      const insert = body;
       delete insert.hive_ids;
       delete insert.interval;
       delete insert.repeat;
@@ -141,74 +135,75 @@ export default class TreatmentController extends Controller {
         }
         return result;
       });
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async updateStatus(req: IUserRequest, res: Response, next: NextFunction) {
+  static async updateStatus(req: FastifyRequest, reply: FastifyReply) {
     try {
+      const body = req.body as any;
       const result = await Treatment.transaction(async (trx) => {
         return Treatment.query(trx)
           .patch({
             edit_id: req.user.bee_id,
-            done: req.body.status,
+            done: body.status,
           })
-          .findByIds(req.body.ids)
+          .findByIds(body.ids)
           .where('user_id', req.user.user_id);
       });
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async updateDate(req: IUserRequest, res: Response, next: NextFunction) {
+  static async updateDate(req: FastifyRequest, reply: FastifyReply) {
     try {
+      const body = req.body as any;
       const result = await Treatment.transaction(async (trx) => {
         return Treatment.query(trx)
           .patch({
             edit_id: req.user.bee_id,
-            date: req.body.start,
-            enddate: req.body.end,
+            date: body.start,
+            enddate: body.end,
           })
-          .findByIds(req.body.ids)
+          .findByIds(body.ids)
           .where('user_id', req.user.user_id);
       });
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async batchGet(req: IUserRequest, res: Response, next: NextFunction) {
+  static async batchGet(req: FastifyRequest, reply: FastifyReply) {
     try {
+      const body = req.body as any;
       const result = await Treatment.transaction(async (trx) => {
         const res = await Treatment.query(trx)
-          .findByIds(req.body.ids)
+          .findByIds(body.ids)
           .withGraphJoined('[type, disease, vet, hive]')
           .where('treatments.user_id', req.user.user_id);
         return res;
       });
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async batchDelete(req: IUserRequest, res: Response, next: NextFunction) {
-    const hardDelete = req.query.hard ? true : false;
-    const restoreDelete = req.query.restore ? true : false;
+  static async batchDelete(req: FastifyRequest, reply: FastifyReply) {
+    const q = req.query as any;
+    const body = req.body as any;
+    const hardDelete = q.hard ? true : false;
+    const restoreDelete = q.restore ? true : false;
 
     try {
       const result = await Treatment.transaction(async (trx) => {
         const res = await Treatment.query(trx)
-          .findByIds(req.body.ids)
+          .findByIds(body.ids)
           .select('id', 'deleted')
           .where('user_id', req.user.user_id);
 
@@ -232,10 +227,9 @@ export default class TreatmentController extends Controller {
 
         return res;
       });
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 }

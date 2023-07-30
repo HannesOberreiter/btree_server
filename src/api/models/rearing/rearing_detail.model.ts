@@ -34,7 +34,7 @@ export class RearingDetail extends Model {
 
   static jsonSchema = {
     type: 'object',
-    required: ['job', 'hour'],
+    required: ['job'],
     properties: {
       id: { type: 'integer' },
       job: { type: 'string', minLength: 1, maxLength: 50 },

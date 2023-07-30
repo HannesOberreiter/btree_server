@@ -2,8 +2,10 @@ import * as nodemailer from 'nodemailer';
 import { env, frontend, mailConfig } from '@config/environment.config';
 import { readFileSync } from 'fs';
 import p from 'path';
-import { badImplementation, notFound } from '@hapi/boom';
-import { ENVIRONMENT } from '../types/constants/environment.const';
+import { ENVIRONMENT } from '@/config/constants.config';
+import httpErrors from 'http-errors';
+import { Logger } from './logger.service';
+
 interface customMail {
   to: string;
   lang: string;
@@ -15,6 +17,7 @@ interface customMail {
 export class MailService {
   private _transporter: nodemailer.Transporter;
   baseUrl: string;
+  private logger = Logger.getInstance();
 
   constructor() {
     this.baseUrl = frontend;
@@ -40,7 +43,10 @@ export class MailService {
     try {
       return readFileSync(mailPath, 'utf-8');
     } catch (e) {
-      console.error(e);
+      this.logger.log('error', `Could not find E-Mail Template.`, {
+        name: mailName,
+        error: e,
+      });
       return;
     }
   }
@@ -53,7 +59,10 @@ export class MailService {
     try {
       return readFileSync(mailPath, 'utf-8');
     } catch (e) {
-      console.error(e);
+      this.logger.log('error', `Could not find E-Mail Template.`, {
+        lang,
+        error: e,
+      });
       return;
     }
   }
@@ -72,11 +81,11 @@ export class MailService {
 
     let htmlMail = this.loadHtmlMail(subject + '_' + lang);
     if (!htmlMail) {
-      throw notFound('Could not find E-Mail Template.');
+      throw httpErrors.NotFound('Could not find E-Mail Template.');
     }
     let htmlFooter = this.loadFooter(lang);
     if (!htmlFooter) {
-      throw notFound('Could not find E-Mail Template.');
+      throw httpErrors.NotFound('Could not find E-Mail Template.');
     }
     htmlMail = htmlMail + htmlFooter;
 
@@ -135,15 +144,14 @@ export class MailService {
         this._transporter.close();
         if (error) {
           console.error(`error: ${error}`);
-          throw badImplementation('E-Mail could not be sent.');
+          throw httpErrors.InternalServerError('E-Mail could not be sent.');
         }
-        if (env === ENVIRONMENT.development || env === ENVIRONMENT.test) {
-          console.log(nodemailer.getTestMessageUrl(info));
-        }
-        console.log(`Message Sent ${info.response}`);
+        this.logger.log('info', `Message Sent ${info.response}`, {
+          subject: title,
+        });
       });
     } catch (e) {
-      console.error(e);
+      this.logger.log('error', `Could not send E-Mail.`, { error: e });
     }
   }
 
@@ -163,15 +171,16 @@ export class MailService {
         this._transporter.close();
         if (error) {
           console.error(`error: ${error}`);
-          throw badImplementation('E-Mail could not be sent.');
+          throw httpErrors.InternalServerError('E-Mail could not be sent.');
         }
         if (env === ENVIRONMENT.development || env === ENVIRONMENT.test) {
-          console.log(nodemailer.getTestMessageUrl(info));
+          const testUrl = nodemailer.getTestMessageUrl(info) as string;
+          this.logger.log('info', `Preview Url: ${testUrl}`, {});
         }
-        console.log(`Message Sent ${info.response}`);
+        this.logger.log('info', `Message Sent ${info.response}`, {});
       });
     } catch (e) {
-      console.error(e);
+      this.logger.log('error', `Could not send E-Mail.`, { error: e });
     }
   }
 }

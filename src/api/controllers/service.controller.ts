@@ -1,14 +1,5 @@
-import { NextFunction, Response } from 'express';
-import { Controller } from '@classes/controller.class';
-import { IUserRequest } from '@interfaces/IUserRequest.interface';
 import { Apiary } from '../models/apiary.model';
 import { getTemperature } from '../utils/temperature.util';
-import {
-  badImplementation,
-  notFound,
-  paymentRequired,
-  tooManyRequests,
-} from '@hapi/boom';
 import { addPremium, isPremium } from '../utils/premium.util';
 import {
   capturePayment,
@@ -19,52 +10,48 @@ import { createInvoice } from '../utils/foxyoffice.util';
 import { WizBee } from '../services/wizbee.service';
 import { WizBeeToken } from '../models/wizbee_token.model';
 import { openAI } from '@/config/environment.config';
+import { FastifyRequest, FastifyReply } from 'fastify';
+import httpErrors from 'http-errors';
+import { checkMySQLError } from '../utils/error.util';
 
-export default class ServiceController extends Controller {
-  constructor() {
-    super();
-  }
-
-  async getTemperature(req: IUserRequest, res: Response, next: NextFunction) {
+export default class ServiceController {
+  static async getTemperature(req: FastifyRequest, reply: FastifyReply) {
     try {
+      const params = req.params as any;
       const premium = await isPremium(req.user.user_id);
-      if (!premium) throw paymentRequired();
+      if (!premium) {
+        reply.send(httpErrors.PaymentRequired());
+      }
       const apiary = await Apiary.query()
-        .findById(req.params.apiary_id)
+        .findById(params.apiary_id)
         .where({ user_id: req.user.user_id });
       const temp = await getTemperature(apiary.latitude, apiary.longitude);
-      res.locals.data = temp.data;
-      next();
+      reply.send(temp.data);
     } catch (e) {
-      next(e);
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async paypalCreateOrder(
-    req: IUserRequest,
-    res: Response,
-    next: NextFunction,
-  ) {
+  static async paypalCreateOrder(req: FastifyRequest, reply: FastifyReply) {
     try {
-      const order = await paypalCreateOrder(req.user.user_id, req.body.amount);
-      if (order.status !== 'CREATED')
-        throw badImplementation('Could not create order');
-      res.locals.data = order;
-      next();
+      const body = req.body as any;
+      const order = await paypalCreateOrder(req.user.user_id, body.amount);
+      if (order.status !== 'CREATED') {
+        reply.send(httpErrors.InternalServerError('Could not create order'));
+      }
+      reply.send(order);
     } catch (e) {
-      next(e);
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async paypalCapturePayment(
-    req: IUserRequest,
-    res: Response,
-    next: NextFunction,
-  ) {
+  static async paypalCapturePayment(req: FastifyRequest, reply: FastifyReply) {
     try {
-      const capture = await capturePayment(req.params.orderID);
-      if (capture.status !== 'COMPLETED' && capture.status !== 'APPROVED')
-        throw badImplementation('Could not capure order');
+      const params = req.params as any;
+      const capture = await capturePayment(params.orderID);
+      if (capture.status !== 'COMPLETED' && capture.status !== 'APPROVED') {
+        reply.send(httpErrors.InternalServerError('Could not capure order'));
+      }
       let value = 0;
       const mail = capture.payment_source.paypal.email_address;
       try {
@@ -72,42 +59,34 @@ export default class ServiceController extends Controller {
           capture.purchase_units[0].payments.captures[0].amount.value,
         );
       } catch (e) {
-        console.error(e);
+        req.log.error(e);
       }
       const paid = await addPremium(req.user.user_id, 12, value, 'paypal');
-      res.locals.data = {
-        ...capture,
-        paid: paid,
-      };
+
       createInvoice(mail, value, 'PayPal');
-
-      next();
+      reply.send({ ...capture, paid });
     } catch (e) {
-      next(e);
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async stripeCreateOrder(
-    req: IUserRequest,
-    res: Response,
-    next: NextFunction,
-  ) {
+  static async stripeCreateOrder(req: FastifyRequest, reply: FastifyReply) {
     try {
-      const session = await stripeCreateOrder(
-        req.user.user_id,
-        req.body.amount,
-      );
-      res.locals.data = session;
-      next();
+      const body = req.body as any;
+      const session = await stripeCreateOrder(req.user.user_id, body.amount);
+      reply.send(session);
     } catch (e) {
-      next(e);
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async askWizBee(req: IUserRequest, res: Response, next: NextFunction) {
+  static async askWizBee(req: FastifyRequest, reply: FastifyReply) {
     try {
+      const body = req.body as any;
       const premium = await isPremium(req.user.user_id);
-      if (!premium) throw paymentRequired();
+      if (!premium) {
+        reply.send(httpErrors.PaymentRequired());
+      }
       const date = new Date().toISOString().split('T')[0];
 
       let savedTokens = 0;
@@ -120,7 +99,7 @@ export default class ServiceController extends Controller {
       });
       if (usedTokens) {
         if (usedTokens.usedTokens <= 0) {
-          throw tooManyRequests('Daily tokens limit reached');
+          reply.send(httpErrors.TooManyRequests('Daily tokens limit reached'));
         }
 
         savedTokens = usedTokens.usedTokens;
@@ -140,8 +119,10 @@ export default class ServiceController extends Controller {
       }
 
       const bot = new WizBee();
-      const result = await bot.search(req.body.question, req.body.lang);
-      if (!result) throw notFound('Could not get answer from WizBee');
+      const result = await bot.search(body.question, body.lang);
+      if (!result) {
+        reply.send(httpErrors.NotFound('Could not get answer from WizBee'));
+      }
 
       if (result.tokens && id) {
         savedTokens -= result.tokens;
@@ -153,10 +134,9 @@ export default class ServiceController extends Controller {
         });
       }
 
-      res.locals.data = { ...result, savedTokens, savedQuestions };
-      next();
+      reply.send({ ...result, savedTokens, savedQuestions });
     } catch (e) {
-      next(e);
+      reply.send(checkMySQLError(e));
     }
   }
 }

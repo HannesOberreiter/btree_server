@@ -1,20 +1,14 @@
-import { NextFunction, Response } from 'express';
-import { Controller } from '@classes/controller.class';
 import { checkMySQLError } from '@utils/error.util';
-import { IUserRequest } from '@interfaces/IUserRequest.interface';
 import { Queen } from '../models/queen.model';
 import { map } from 'lodash';
 import dayjs from 'dayjs';
 import { QueenDuration } from '../models/queen_duration.model';
 import { Checkup } from '../models/checkup.model';
 import { Harvest } from '../models/harvest.model';
+import { FastifyReply, FastifyRequest } from 'fastify';
 
-export default class QueenController extends Controller {
-  constructor() {
-    super();
-  }
-
-  async get(req: IUserRequest, res: Response, next: NextFunction) {
+export default class QueenController {
+  static async get(req: FastifyRequest, reply: FastifyReply) {
     try {
       const {
         order,
@@ -85,7 +79,7 @@ export default class QueenController extends Controller {
             });
           }
         } catch (e) {
-          console.error(e);
+          req.log.error(e);
         }
       }
       if (q) {
@@ -98,15 +92,15 @@ export default class QueenController extends Controller {
       }
 
       const result = await query.orderBy('id');
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async getPedigree(req: IUserRequest, res: Response, next: NextFunction) {
+  static async getPedigree(req: FastifyRequest, reply: FastifyReply) {
     try {
+      const params = req.params as any;
       const queen = await Queen.query()
         .withRecursive('mothers', (qb) => {
           qb.from('queens')
@@ -122,7 +116,7 @@ export default class QueenController extends Controller {
             )
             .where({
               'queens.user_id': req.user.user_id,
-              'queens.id': req.params.id,
+              'queens.id': params.id,
             })
             .leftJoin('queen_matings', 'mating_id', 'queen_matings.id')
             .leftJoin('queen_races', 'race_id', 'queen_races.id')
@@ -151,14 +145,13 @@ export default class QueenController extends Controller {
         .select('*')
         .from('mothers');
 
-      res.locals.data = queen;
-      next();
+      reply.send(queen);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async getStats(req: IUserRequest, res: Response, next: NextFunction) {
+  static async getStats(req: FastifyRequest, reply: FastifyReply) {
     try {
       const { order, direction, offset, limit, q, filters } = req.query as any;
       const query = QueenDuration.query();
@@ -205,7 +198,7 @@ export default class QueenController extends Controller {
             });
           }
         } catch (e) {
-          console.error(e);
+          req.log.error(e);
         }
       }
       if (q) {
@@ -246,20 +239,19 @@ export default class QueenController extends Controller {
         queen.checkup = query_checkup;
         queen.harvest = query_harvest;
       }
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async post(req: IUserRequest, res: Response, next: NextFunction) {
+  static async post(req: FastifyRequest, reply: FastifyReply) {
     try {
-      const start = parseInt(req.body.start);
-      const repeat =
-        parseInt(req.body.repeat) > 1 ? parseInt(req.body.repeat) : 1;
+      const body = req.body as any;
+      const start = parseInt(body.start);
+      const repeat = parseInt(body.repeat) > 1 ? parseInt(body.repeat) : 1;
 
-      const insert = { ...req.body };
+      const insert = { ...body };
       delete insert.start;
       delete insert.repeat;
       delete insert.name;
@@ -268,8 +260,8 @@ export default class QueenController extends Controller {
       const result = await Queen.transaction(async (trx) => {
         const result = [];
         for (let i = 0; i < repeat; i++) {
-          const name = repeat > 1 ? req.body.name + (start + i) : req.body.name;
-          const hive_id = req.body.hive_id ? req.body.hive_id[i] : null;
+          const name = repeat > 1 ? body.name + (start + i) : body.name;
+          const hive_id = body.hive_id ? body.hive_id[i] : null;
           const res = await Queen.query(trx).insert({
             ...insert,
             name: name,
@@ -281,17 +273,17 @@ export default class QueenController extends Controller {
         }
         return result;
       });
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async patch(req: IUserRequest, res: Response, next: NextFunction) {
+  static async patch(req: FastifyRequest, reply: FastifyReply) {
     try {
-      const ids = req.body.ids;
-      const insert = { ...req.body.data };
+      const body = req.body as any;
+      const ids = body.ids;
+      const insert = { ...body.data };
       if (insert.hive_id) {
         insert.hive_id = insert.hive_id !== 'empty' ? insert.hive_id : null;
       }
@@ -301,42 +293,43 @@ export default class QueenController extends Controller {
           .findByIds(ids)
           .where('user_id', req.user.user_id);
       });
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async updateStatus(req: IUserRequest, res: Response, next: NextFunction) {
+  static async updateStatus(req: FastifyRequest, reply: FastifyReply) {
     try {
+      const body = req.body as any;
       const result = await Queen.transaction(async (trx) => {
         return Queen.query(trx)
           .patch({
             edit_id: req.user.bee_id,
-            modus: req.body.status,
+            modus: body.status,
             modus_date: dayjs().format('YYYY-MM-DD'),
           })
-          .findByIds(req.body.ids)
+          .findByIds(body.ids)
           .where('user_id', req.user.user_id);
       });
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async batchDelete(req: IUserRequest, res: Response, next: NextFunction) {
-    const hardDelete = req.query.hard ? true : false;
-    const restoreDelete = req.query.restore ? true : false;
+  static async batchDelete(req: FastifyRequest, reply: FastifyReply) {
+    const q = req.query as any;
+    const body = req.body as any;
+    const hardDelete = q.hard ? true : false;
+    const restoreDelete = q.restore ? true : false;
 
     try {
       const result = await Queen.transaction(async (trx) => {
         const res = await Queen.query()
           .select('id', 'deleted')
           .where('user_id', req.user.user_id)
-          .whereIn('id', req.body.ids);
+          .whereIn('id', body.ids);
 
         const softIds = [];
         const hardIds = [];
@@ -364,22 +357,21 @@ export default class QueenController extends Controller {
 
         return res;
       });
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async batchGet(req: IUserRequest, res: Response, next: NextFunction) {
+  static async batchGet(req: FastifyRequest, reply: FastifyReply) {
     try {
-      const result = await Queen.query().findByIds(req.body.ids).where({
+      const body = req.body as any;
+      const result = await Queen.query().findByIds(body.ids).where({
         user_id: req.user.user_id,
       });
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 }

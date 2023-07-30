@@ -1,11 +1,7 @@
-import { NextFunction, Response } from 'express';
-import { Controller } from '@classes/controller.class';
 import { checkMySQLError } from '@utils/error.util';
-import { IUserRequest } from '@interfaces/IUserRequest.interface';
 import { Hive } from '../models/hive.model';
 import { Movedate } from '../models/movedate.model';
 import { Apiary } from '../models/apiary.model';
-import { conflict, paymentRequired } from '@hapi/boom';
 import { map } from 'lodash';
 import dayjs from 'dayjs';
 import { deleteHiveConnections } from '../utils/delete.util';
@@ -15,6 +11,8 @@ import { Feed } from '../models/feed.model';
 import { Treatment } from '../models/treatment.model';
 import { Checkup } from '../models/checkup.model';
 import { limitHive } from '../utils/premium.util';
+import { FastifyRequest, FastifyReply } from 'fastify';
+import httpErrors from 'http-errors';
 
 async function isDuplicateHiveName(user_id: number, name: string) {
   const checkDuplicate = await Hive.query().select('id').findOne({
@@ -26,12 +24,8 @@ async function isDuplicateHiveName(user_id: number, name: string) {
   return false;
 }
 
-export default class HiveController extends Controller {
-  constructor() {
-    super();
-  }
-
-  async get(req: IUserRequest, res: Response, next: NextFunction) {
+export default class HiveController {
+  static async get(req: FastifyRequest, reply: FastifyReply) {
     try {
       const {
         order,
@@ -75,7 +69,7 @@ export default class HiveController extends Controller {
             });
           }
         } catch (e) {
-          console.error(e);
+          req.log.error(e);
         }
       }
       if (order) {
@@ -97,36 +91,37 @@ export default class HiveController extends Controller {
         }
       }
       const result = await query.orderBy('id');
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async post(req: IUserRequest, res: Response, next: NextFunction) {
+  static async post(req: FastifyRequest, reply: FastifyReply) {
     try {
-      const start = parseInt(req.body.start);
-      const repeat =
-        parseInt(req.body.repeat) > 1 ? parseInt(req.body.repeat) : 1;
+      const body = req.body as any;
+      const start = parseInt(body.start);
+      const repeat = parseInt(body.repeat) > 1 ? parseInt(body.repeat) : 1;
 
       const insertMovement = {
-        apiary_id: req.body.apiary_id,
-        date: req.body.date,
+        apiary_id: body.apiary_id,
+        date: body.date,
       };
 
       const insert = {
-        position: req.body.position,
-        type_id: req.body.type_id,
-        source_id: req.body.source_id,
-        grouphive: req.body.grouphive,
-        note: req.body.note,
-        modus: req.body.modus,
-        modus_date: req.body.modus_date,
+        position: body.position,
+        type_id: body.type_id,
+        source_id: body.source_id,
+        grouphive: body.grouphive,
+        note: body.note,
+        modus: body.modus,
+        modus_date: body.modus_date,
       };
 
       const limit = await limitHive(req.user.user_id, repeat);
-      if (limit) throw paymentRequired('no premium access');
+      if (limit) {
+        reply.send(httpErrors.PaymentRequired('no premium access'));
+      }
 
       const result = await Hive.transaction(async (trx) => {
         await Apiary.query(trx)
@@ -136,10 +131,11 @@ export default class HiveController extends Controller {
 
         const result = [];
         for (let i = 0; i < repeat; i++) {
-          const name = repeat > 1 ? req.body.name + (start + i) : req.body.name;
+          const name = repeat > 1 ? body.name + (start + i) : body.name;
 
-          if (await isDuplicateHiveName(req.user.user_id, name))
-            throw conflict('name');
+          if (await isDuplicateHiveName(req.user.user_id, name)) {
+            reply.send(httpErrors.Conflict('name'));
+          }
 
           const res = await Hive.query(trx).insert({
             ...insert,
@@ -156,16 +152,16 @@ export default class HiveController extends Controller {
         }
         return result;
       });
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async getDetail(req: IUserRequest, res: Response, next: NextFunction) {
+  static async getDetail(req: FastifyRequest, reply: FastifyReply) {
     try {
-      const id = req.params.id;
+      const params = req.params as any;
+      const id = params.id;
       const query = Hive.query()
         .findById(id)
         .where({
@@ -194,22 +190,23 @@ export default class HiveController extends Controller {
         .orderBy('hive.position')
         .orderBy('hive.name');
 
-      res.locals.data = {
+      reply.send({
         ...result,
         sameLocation: query_apiary,
         firstMovedate: query_first,
-      };
-      next();
+      });
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async getTasks(req: IUserRequest, res: Response, next: NextFunction) {
+  static async getTasks(req: FastifyRequest, reply: FastifyReply) {
     try {
-      const id = req.params.id;
-      const year = req.query.year ? req.query.year : new Date().getFullYear();
-      const apiary = req.query.apiary ? req.query.apiary : false;
+      const params = req.params as any;
+      const q = req.query as any;
+      const id = params.id;
+      const year = q.year ? q.year : new Date().getFullYear();
+      const apiary = q.apiary ? q.apiary : false;
 
       const result = await Hive.transaction(async (trx) => {
         let hives = [];
@@ -295,20 +292,22 @@ export default class HiveController extends Controller {
           movedate: movedate,
         };
       });
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async patch(req: IUserRequest, res: Response, next: NextFunction) {
+  static async patch(req: FastifyRequest, reply: FastifyReply) {
     try {
-      const ids = req.body.ids;
-      const insert = { ...req.body.data };
+      const body = req.body as any;
+      const ids = body.ids;
+      const insert = { ...body.data };
       const result = await Hive.transaction(async (trx) => {
-        if ('name' in req.body.data) {
-          if (ids.length > 1) throw conflict('name');
+        if ('name' in body.data) {
+          if (ids.length > 1) {
+            reply.send(httpErrors.Conflict('name'));
+          }
         }
 
         return await Hive.query(trx)
@@ -316,42 +315,43 @@ export default class HiveController extends Controller {
           .findByIds(ids)
           .where('user_id', req.user.user_id);
       });
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async updateStatus(req: IUserRequest, res: Response, next: NextFunction) {
+  static async updateStatus(req: FastifyRequest, reply: FastifyReply) {
     try {
+      const body = req.body as any;
       const result = await Hive.transaction(async (trx) => {
         return Hive.query(trx)
           .patch({
             edit_id: req.user.bee_id,
-            modus: req.body.status,
+            modus: body.status,
             modus_date: dayjs().format('YYYY-MM-DD'),
           })
-          .findByIds(req.body.ids)
+          .findByIds(body.ids)
           .where('user_id', req.user.user_id);
       });
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async batchDelete(req: IUserRequest, res: Response, next: NextFunction) {
-    const hardDelete = req.query.hard ? true : false;
-    const restoreDelete = req.query.restore ? true : false;
+  static async batchDelete(req: FastifyRequest, reply: FastifyReply) {
+    const body = req.body as any;
+    const q = req.query as any;
+    const hardDelete = q.hard ? true : false;
+    const restoreDelete = q.restore ? true : false;
 
     try {
       const result = await Hive.transaction(async (trx) => {
         const res = await Hive.query()
           .select('id', 'deleted')
           .where('user_id', req.user.user_id)
-          .whereIn('id', req.body.ids);
+          .whereIn('id', body.ids);
 
         const softIds = [];
         const hardIds = [];
@@ -380,27 +380,27 @@ export default class HiveController extends Controller {
 
         return res;
       });
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async batchGet(req: IUserRequest, res: Response, next: NextFunction) {
+  static async batchGet(req: FastifyRequest, reply: FastifyReply) {
     try {
-      const result = await Hive.query().findByIds(req.body.ids).where({
+      const body = req.body as any;
+      const result = await Hive.query().findByIds(body.ids).where({
         user_id: req.user.user_id,
       });
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async updatePosition(req: IUserRequest, res: Response, next: NextFunction) {
-    const hives = req.body.data;
+  static async updatePosition(req: FastifyRequest, reply: FastifyReply) {
+    const body = req.body as any;
+    const hives = body.data;
     try {
       const result = await Hive.transaction(async (trx) => {
         const res = [];
@@ -414,10 +414,9 @@ export default class HiveController extends Controller {
         }
         return res;
       });
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 }

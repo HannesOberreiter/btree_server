@@ -1,34 +1,20 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-import { ENVIRONMENT } from '@/api/types/constants/environment.const';
-import {
-  authorized,
-  env,
-  contentType,
-  sessionSecret,
-} from '@config/environment.config';
-
 import RedisStore from 'connect-redis';
-
-// import Hpp from 'hpp';
-// import BodyParser from 'body-parser';
-
-import { notAcceptable } from '@hapi/boom';
-
-import { Container } from '@config/container.config';
-
-// import { HelmetConfiguration } from '@config/helmet.config';
-
-// import passport from 'passport';
-// import { PassportConfiguration } from '@config/passport.config';
-
-import { Resolver } from '@middlewares/resolver.middleware';
-// import { MySQLServer } from '@/servers/mysql.server';
-import { RedisServer } from '@/servers/redis.server';
 import { randomUUID } from 'node:crypto';
-// import passport from 'passport';
-import fastifyPassport from '@fastify/passport';
+import {
+  serializerCompiler,
+  validatorCompiler,
+} from 'fastify-type-provider-zod';
+import { ZodError } from 'zod';
+import httpErrors from 'http-errors';
 
-import { PassportConfiguration } from './passport.config';
+import { RedisServer } from '@/servers/redis.server.js';
+import { authorized, env, sessionSecret } from '@config/environment.config.js';
+import { PassportConfiguration } from './passport.config.js';
+import { Logger } from '@/api/services/logger.service.js';
+import { ENVIRONMENT } from './constants.config.js';
+import routes from '@/api/routes/index.js';
+
+import fastifyPassport from '@fastify/passport';
 import fastify, { FastifyInstance, FastifyRequest } from 'fastify';
 import fastifyCookie from '@fastify/cookie';
 import fastifySession from '@fastify/session';
@@ -37,48 +23,30 @@ import fastifyHelmet from '@fastify/helmet';
 import fastifyCors from '@fastify/cors';
 import fastifyRateLimit from '@fastify/rate-limit';
 
-import { Logger } from '@/api/services/logger.service';
-import {
-  ZodTypeProvider,
-  serializerCompiler,
-  validatorCompiler,
-} from 'fastify-type-provider-zod';
-import { ZodError } from 'zod';
-
 /**
- * Instanciate and set Express application.
- * Configure and plug middlewares from local options or dedicated files in ./config.
+ * @description Instantiate server application.
  */
 export class Application {
-  /**
-   * @description Wrapped Express.js application
-   */
   public app: FastifyInstance;
-  /**
-   * @description Store for sessions
-   */
   private redisStore: RedisStore;
+  private logger: Logger;
 
   constructor() {
     this.init();
     this.createSessionStore();
-    // this.createStore();
     this.plug();
   }
 
-  /**
-   * @description Instantiate Express application
-   */
   private init(): void {
+    this.logger = Logger.getInstance();
     this.app = fastify({
-      logger: Logger.getInstance().pino,
+      logger: this.logger.pino,
       trustProxy: true,
+      bodyLimit: 1048576 * 50, // 50 MB
+      maxParamLength: 10000,
     });
   }
 
-  /***
-   * @description Instantiate session store with redis
-   */
   private createSessionStore(): void {
     const redis = RedisServer.client;
     this.redisStore = new RedisStore({
@@ -87,49 +55,7 @@ export class Application {
     });
   }
 
-  /***
-   * @description Instantiate session store with knex
-   */
-  /*
-  private createStore(): void {
-    const knex = MySQLServer.knex;
-    this.store = new KnexSessionStore({
-      knex,
-      createtable: false,
-      clearInterval: 1000 * 60 * 60,
-    });
-  }
-  */
-
-  /**
-   * @description Plug and set middlewares on Express app
-   */
   private plug(): void {
-    /**
-     * Check headers validity
-     */
-    // this.app.use(Kors.validate);
-
-    /**
-     * Expose body on req.body
-     *
-     * @see https://www.npmjs.com/package/body-parser
-     */
-    /*this.app.use(
-      BodyParser.urlencoded({
-        limit: '50mb',
-        extended: false,
-        parameterLimit: 10000,
-      }),
-    );
-    this.app.use(BodyParser.json({ type: contentType, limit: '50mb' }));*/
-    /**
-     * Prevent request parameter pollution
-     *
-     * @see https://www.npmjs.com/package/hpp
-     */
-    // this.app.use(Hpp({ checkBody: false, whitelist: ['order', 'direction'] }));
-
     /**
      * @description GZIP compression
      * @see https://www.npmjs.com/package/@fastify/compress
@@ -147,8 +73,7 @@ export class Application {
     });
 
     /**
-     * Enable CORS - Cross Origin Resource Sharing
-     *
+     * @description Enable CORS - Cross Origin Resource Sharing
      * @see https://www.npmjs.com/package/cors
      */
     this.app.register(fastifyCors, (_instance) => {
@@ -177,7 +102,6 @@ export class Application {
             'From',
           ],
         } as any;
-        let error = null;
 
         if (
           req.url.indexOf('external') >= 0 ||
@@ -190,33 +114,16 @@ export class Application {
           origin &&
           env !== ENVIRONMENT.development
         ) {
-          error = notAcceptable(`Domain not allowed by CORS: ${origin}`);
+          callback(
+            httpErrors.NotAcceptable(`Domain not allowed by CORS: ${origin}`),
+            corsOptions,
+          );
         }
-        callback(error, corsOptions);
+
+        callback(null, corsOptions);
       };
     });
 
-    /*
-    this.app.use(
-      session({
-        name:
-          env === ENVIRONMENT.staging
-            ? '_auth-btree-session-staging'
-            : '_auth-btree-session',
-        secret: sessionSecret,
-        resave: false,
-        saveUninitialized: false,
-        rolling: true,
-        store: this.store,
-        cookie: {
-          sameSite: 'strict',
-          maxAge: 1000 * 60 * 60 * 24 * 60, // 60 days
-          secure: env === ENVIRONMENT.production,
-          domain: env === ENVIRONMENT.production ? 'btree.at' : '',
-        },
-      })
-    );
-    */
     this.app.register(fastifyCookie);
 
     this.app.register(fastifySession, {
@@ -246,8 +153,7 @@ export class Application {
     });
 
     /**
-     * Passport configuration
-     *
+     * @description Passport configuration
      * @see http://www.passportjs.org/
      */
     this.app.register(fastifyPassport.initialize());
@@ -260,32 +166,9 @@ export class Application {
       return user;
     });
 
-    //passport.use('jwt', PassportConfiguration.factory('jwt'));
-
     /**
-     * Request logging with Morgan
-     * dev : console | production : file
-     *
-     * @see https://github.com/expressjs/morgan
-     */
-    // this.app.use(Morgan(httpLogs, { stream: this.options.stream }));
-
-    /**
-     * Configure API Rate limit
-     * Note that you can also set limit on specific route path
-     *
-     * @see https://www.npmjs.com/package/express-rate-limit
-     */
-    // this.app.enable('trust proxy'); // only if you're behind a reverse proxy (Heroku, Bluemix, AWS ELB, Nginx, etc)
-
-    /**
-     * Set global middlewares on Express Application
-     *
-     * Note also that middlewares are implemented in each route file (Guard, Validation, Upload, ...)
-     *
-     * - RateLimit
-     * - Router(s)
-     * - Resolver
+     * @description Configure API Rate limit
+     * @see https://github.com/fastify/fastify-rate-limit
      */
     this.app.register(fastifyRateLimit, {
       timeWindow: 1000 * 60, // 1 minute
@@ -322,20 +205,7 @@ export class Application {
       reply.send(error);
     });
 
-    /*this.app.register(
-      `/api/${version}`,
-      Container.resolve('ProxyRouter').router,
-      // Resolver.resolve,
-    );*/
-
-    /**
-     * Disable cache header
-     */
-    // this.app.disable('etag');
-
-    // this.app.use(Catcher.log, Catcher.exit, Catcher.notFound); // Log, exit with error || exit with 404
-
-    this.app.register(require('../api/routes'), {
+    this.app.register(routes, {
       prefix: '/api/',
     });
 

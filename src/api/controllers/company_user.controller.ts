@@ -1,74 +1,65 @@
-import { NextFunction, Response } from 'express';
-import { Controller } from '@classes/controller.class';
 import { checkMySQLError } from '@utils/error.util';
 import { CompanyBee } from '@models/company_bee.model';
 import { Company } from '@models/company.model';
 
-import { IUserRequest } from '@interfaces/IUserRequest.interface';
-import { forbidden } from '@hapi/boom';
 import UserController from './user.controller';
 import AuthController from './auth.controller';
 
 import { User } from '../models/user.model';
 import { randomBytes } from 'crypto';
+import { FastifyReply, FastifyRequest } from 'fastify';
+import httpErrors from 'http-errors';
 
-export default class CompanyUserController extends Controller {
-  constructor() {
-    super();
-  }
-
-  async patch(req: IUserRequest, res: Response, next: NextFunction) {
+export default class CompanyUserController {
+  static async patch(req: FastifyRequest, reply: FastifyReply) {
     try {
+      const body = req.body as any;
       const result = await CompanyBee.query()
-        .patch({ rank: req.body.rank })
-        .where({ bee_id: req.params.id, user_id: req.user.user_id });
-      res.locals.data = result;
-      next();
+        .patch({ rank: body.rank })
+        .where({ bee_id: (req.params as any).id, user_id: req.user.user_id });
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async getUser(req: IUserRequest, res: Response, next: NextFunction) {
+  static async getUser(req: FastifyRequest, reply: FastifyReply) {
     try {
       const result = await CompanyBee.query()
         .withGraphJoined('[user, company]')
         .where({ user_id: req.user.user_id });
-
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async addUser(req: IUserRequest, res: Response, next: NextFunction) {
+  static async addUser(req: FastifyRequest, reply: FastifyReply) {
     try {
+      const body = req.body as any;
       const userExists = await User.query()
         .select('id')
-        .findOne({ email: req.body.email });
+        .findOne({ email: body.email });
       if (userExists) {
         const duplicate = await CompanyBee.query()
           .select('id')
           .findOne({ bee_id: userExists.id, user_id: req.user.user_id });
         if (duplicate) {
-          res.locals.data = userExists;
-          next();
+          reply.send(userExists);
         } else {
           await CompanyBee.query().insert({
             bee_id: userExists.id,
             user_id: req.user.user_id,
             rank: 3,
           });
-          res.locals.data = userExists;
-          next();
+          reply.send(userExists);
         }
       } else {
         const inviter = await User.query()
           .select('lang')
           .findById(req.user.bee_id);
         const newUser = await User.query().insertAndFetch({
-          email: req.body.email,
+          email: body.email,
           lang: inviter.lang,
           password: randomBytes(40).toString('hex'),
           salt: randomBytes(40).toString('hex'),
@@ -80,28 +71,28 @@ export default class CompanyUserController extends Controller {
           rank: 3,
         });
 
-        const auth = new AuthController();
-        auth.resetRequest(req, res, next);
+        AuthController.resetRequest(req, reply);
       }
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async removeUser(req: IUserRequest, res: Response, next: NextFunction) {
+  static async removeUser(req: FastifyRequest, reply: FastifyReply) {
     try {
+      const params = req.params as any;
       const result = await CompanyBee.query()
         .delete()
-        .where({ bee_id: req.params.id, user_id: req.user.user_id });
-      res.locals.data = result;
-      next();
+        .where({ bee_id: params.id, user_id: req.user.user_id });
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async delete(req: IUserRequest, res: Response, next: NextFunction) {
+  static async delete(req: FastifyRequest, reply: FastifyReply) {
     try {
+      const params = req.params as any;
       const otherUser = await Company.query()
         .select('user.id')
         .withGraphJoined('user')
@@ -109,10 +100,15 @@ export default class CompanyUserController extends Controller {
           'user.id': req.user.bee_id,
         })
         .where({
-          'companies.id': req.params.company_id,
+          'companies.id': params.company_id,
         });
-      if (otherUser.length === 0)
-        throw forbidden('No other users found, cannot remove your access.');
+      if (otherUser.length === 0) {
+        reply.send(
+          httpErrors.Forbidden(
+            'No other users found, cannot remove your access.',
+          ),
+        );
+      }
 
       const otherCompanies = await Company.query()
         .select('companies.id as id')
@@ -121,23 +117,26 @@ export default class CompanyUserController extends Controller {
           'user.id': req.user.bee_id,
         })
         .whereNot({
-          'companies.id': req.params.company_id,
+          'companies.id': params.company_id,
         });
 
-      if (otherCompanies.length === 0)
-        throw forbidden(
-          'This is your last company, you cannot remove access to it.',
+      if (otherCompanies.length === 0) {
+        reply.send(
+          httpErrors.Forbidden(
+            'This is your last company, you cannot remove access to it.',
+          ),
         );
-      req.body.saved_company = otherCompanies[0].id;
+      }
+
+      req.body['saved_company'] = otherCompanies[0].id;
 
       await CompanyBee.query()
         .delete()
-        .where({ user_id: req.params.company_id, bee_id: req.user.bee_id });
+        .where({ user_id: params.company_id, bee_id: req.user.bee_id });
 
-      const user = new UserController();
-      user.changeCompany(req, res, next);
+      UserController.changeCompany(req, reply);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 }

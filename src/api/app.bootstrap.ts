@@ -1,14 +1,14 @@
 require('module-alias/register');
 
-import { DatabaseServer } from '@/servers/db.server';
-import { RedisServer } from '@servers/redis.server';
+import { DatabaseServer } from '@/servers/db.server.js';
+import { RedisServer } from '@servers/redis.server.js';
 
-import { Application } from '@config/app.config';
-import { HTTPServer } from '@servers/http.server';
-import { MailService } from './services/mail.service';
-import { VectorServer } from '@/servers/vector.server';
-import { env } from '@/config/environment.config';
-import { Logger } from './services/logger.service';
+import { Application } from '@config/app.config.js';
+import { HTTPServer } from '@servers/http.server.js';
+import { MailService } from './services/mail.service.js';
+import { VectorServer } from '@/servers/vector.server.js';
+import { env } from '@/config/environment.config.js';
+import { Logger } from './services/logger.service.js';
 
 const logger = Logger.getInstance();
 logger.log('info', 'Starting server...', { label: 'Server' });

@@ -15,13 +15,13 @@ import {
   buildUserAgent,
 } from '@utils/auth.util';
 import { discourseSecret, env, frontend } from '@/config/environment.config';
-import { ENVIRONMENT } from '../types/constants/environment.const';
 import { MailServer } from '../app.bootstrap';
 
 import { DiscourseSSO } from '../services/discourse.service';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import fastifyPassport from '@fastify/passport';
 import httpErrors from 'http-errors';
+import { ENVIRONMENT } from '@/config/constants.config';
 
 export default class AuthController {
   static async confirmMail(req: FastifyRequest, reply: FastifyReply) {

@@ -1,58 +1,92 @@
-import { Router } from '@classes/router.class';
-import { Container } from '@config/container.config';
 import { Guard } from '@middlewares/guard.middleware';
-import { ROLES } from '@/api/types/constants/role.const';
-import { Validator } from '@/api/middlewares/validator.middleware';
-import { body } from 'express-validator';
+import { ROLES } from '@/config/constants.config';
+import { FastifyInstance } from 'fastify';
+import { ZodTypeProvider } from 'fastify-type-provider-zod';
+import { z } from 'zod';
+import RearingController from '@/api/controllers/rearing.controller';
 
-export class RearingRouter extends Router {
-  constructor() {
-    super();
-  }
-  define() {
-    this.router
-      .route('/')
-      .get(
-        Guard.authorize([ROLES.admin, ROLES.user, ROLES.read]),
-        Container.resolve('RearingController').get,
-      );
-    this.router
-      .route('/')
-      .patch(
-        Validator.validate([body('ids').isArray()]),
-        Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('RearingController').patch,
-      );
-    this.router.route('/').post(
-      Validator.validate([
-        body('detail_id').isNumeric(),
-        body('type_id').isNumeric(),
-        body('date').isString(),
-      ]),
+export default function routes(
+  instance: FastifyInstance,
+  _options: any,
+  done: any,
+) {
+  const server = instance.withTypeProvider<ZodTypeProvider>();
 
-      Guard.authorize([ROLES.admin, ROLES.user]),
-      Container.resolve('RearingController').post,
-    );
-    this.router
-      .route('/date')
-      .patch(
-        Validator.validate([body('ids').isArray(), body('start').isString()]),
-        Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('RearingController').updateDate,
-      );
-    this.router
-      .route('/batchDelete')
-      .patch(
-        Validator.validate([body('ids').isArray()]),
-        Guard.authorize([ROLES.admin]),
-        Container.resolve('RearingController').batchDelete,
-      );
-    this.router
-      .route('/batchGet')
-      .post(
-        Validator.validate([body('ids').isArray()]),
-        Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('RearingController').batchGet,
-      );
-  }
+  server.get(
+    '/',
+    {
+      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+    },
+    RearingController.get,
+  );
+
+  server.patch(
+    '/',
+    {
+      preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
+      schema: {
+        body: z.object({
+          ids: z.array(z.number()),
+        }),
+      },
+    },
+    RearingController.patch,
+  );
+
+  server.post(
+    '/',
+    {
+      preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
+      schema: {
+        body: z.object({
+          detail_id: z.number(),
+          type_id: z.number(),
+          date: z.string(),
+        }),
+      },
+    },
+    RearingController.post,
+  );
+
+  server.patch(
+    '/date',
+    {
+      preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
+      schema: {
+        body: z.object({
+          ids: z.array(z.number()),
+          start: z.string(),
+        }),
+      },
+    },
+    RearingController.updateDate,
+  );
+
+  server.patch(
+    '/batchDelete',
+    {
+      preHandler: Guard.authorize([ROLES.admin]),
+      schema: {
+        body: z.object({
+          ids: z.array(z.number()),
+        }),
+      },
+    },
+    RearingController.batchDelete,
+  );
+
+  server.post(
+    '/batchGet',
+    {
+      preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
+      schema: {
+        body: z.object({
+          ids: z.array(z.number()),
+        }),
+      },
+    },
+    RearingController.batchGet,
+  );
+
+  done();
 }

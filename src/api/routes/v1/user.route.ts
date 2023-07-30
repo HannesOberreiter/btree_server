@@ -1,93 +1,114 @@
-import { Router } from '@classes/router.class';
-import { Container } from '@config/container.config';
 import { Guard } from '@middlewares/guard.middleware';
-import { ROLES } from '@/api/types/constants/role.const';
-import { Validator } from '@/api/middlewares/validator.middleware';
-import { body, param } from 'express-validator';
+import { ROLES } from '@/config/constants.config';
+import { FastifyInstance } from 'fastify';
+import { ZodTypeProvider } from 'fastify-type-provider-zod';
+import { z } from 'zod';
+import UserController from '@/api/controllers/user.controller';
 
-export class UserRouter extends Router {
-  constructor() {
-    super();
-  }
+export default function routes(
+  instance: FastifyInstance,
+  _options: any,
+  done: any,
+) {
+  const server = instance.withTypeProvider<ZodTypeProvider>();
 
-  define(): void {
-    this.router
-      .route('/')
-      .get(
-        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Container.resolve('UserController').get,
-      );
+  server.get(
+    '/',
+    { preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]) },
+    UserController.get,
+  );
+  server.patch(
+    '/',
+    { preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]) },
+    UserController.patch,
+  );
+  server.patch(
+    '/delete',
+    {
+      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+      schema: {
+        body: z.object({
+          password: z.string().trim(),
+        }),
+      },
+    },
+    UserController.delete,
+  );
 
-    this.router
-      .route('/')
-      .patch(
-        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Container.resolve('UserController').patch,
-      );
+  server.post(
+    '/checkpassword',
+    {
+      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+      schema: {
+        body: z.object({
+          password: z.string().trim(),
+        }),
+      },
+    },
+    UserController.checkPassword,
+  );
 
-    this.router
-      .route('/delete')
-      .patch(
-        Validator.validate([
-          body('password').exists().withMessage('requiredField').trim(),
-        ]),
-        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Container.resolve('UserController').delete,
-      );
+  server.patch(
+    '/company',
+    {
+      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+      schema: {
+        body: z.object({
+          saved_company: z.string().trim(),
+        }),
+      },
+    },
+    UserController.changeCompany,
+  );
 
-    this.router
-      .route('/checkpassword')
-      .post(
-        Validator.validate([
-          body('password').exists().withMessage('requiredField').trim(),
-        ]),
-        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Container.resolve('UserController').checkPassword,
-      );
+  server.get(
+    '/federatedCredentials',
+    { preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]) },
+    UserController.getFederatedCredentials,
+  );
+  server.delete(
+    '/federatedCredentials/:id',
+    {
+      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+      schema: {
+        params: z.object({
+          id: z.number(),
+        }),
+      },
+    },
+    UserController.deleteFederatedCredentials,
+  );
 
-    this.router
-      .route('/company')
-      .patch(
-        Validator.validate([body('saved_company').exists()]),
-        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Container.resolve('UserController').changeCompany,
-      );
+  server.post(
+    '/federatedCredentials',
+    {
+      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+      schema: {
+        body: z.object({
+          email: z.string().email(),
+        }),
+      },
+    },
+    UserController.addFederatedCredentials,
+  );
 
-    this.router
-      .route('/federatedCredentials')
-      .get(
-        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Container.resolve('UserController').getFederatedCredentials,
-      );
+  server.get(
+    '/session',
+    { preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]) },
+    UserController.getRedisSession,
+  );
+  server.delete(
+    '/session/:id',
+    {
+      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+      schema: {
+        params: z.object({
+          id: z.string(),
+        }),
+      },
+    },
+    UserController.deleteRedisSession,
+  );
 
-    this.router
-      .route('/federatedCredentials/:id')
-      .delete(
-        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Validator.validate([param('id').exists().isNumeric()]),
-        Container.resolve('UserController').deleteFederatedCredentials,
-      );
-
-    this.router
-      .route('/federatedCredentials')
-      .post(
-        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Validator.validate([body('email').exists().isEmail()]),
-        Container.resolve('UserController').addFederatedCredentials,
-      );
-
-    this.router
-      .route('/session')
-      .get(
-        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Container.resolve('UserController').getRedisSession,
-      );
-    this.router
-      .route('/session/:id')
-      .delete(
-        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Validator.validate([param('id').exists().isString()]),
-        Container.resolve('UserController').deleteRedisSession,
-      );
-  }
+  done();
 }

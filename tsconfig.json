@@ -35,30 +35,20 @@
       "@services/*": [
         "src/api/services/*"
       ],
-      "@enums/*": [
-        "src/api/types/constants/*"
-      ],
-      "@classes/*": [
-        "src/api/types/classes/*"
-      ],
-      "@interfaces/*": [
-        "src/api/types/interfaces/*"
-      ],
       "@utils/*": [
         "src/api/utils/*"
       ],
     },
     "lib": [
       "ES2022",
-      "dom"
+      "DOM"
     ],
     "target": "ES2022",
-    "module": "commonjs",
+    "module": "nodenext",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "resolveJsonModule": true,
     "skipLibCheck": true,
   },
   "include": [

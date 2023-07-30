@@ -1,4 +1,3 @@
-import { ENVIRONMENT } from '@/api/types/constants/environment.const';
 import { env, port } from '@config/environment.config';
 
 import { FastifyInstance } from 'fastify';
@@ -7,6 +6,7 @@ import { Server as HttpServer } from 'http';
 import { Server as HttpsServer } from 'https';
 import { task } from '@cron/scheduler';
 import { Logger } from '@/api/services/logger.service';
+import { ENVIRONMENT } from '@/config/constants.config';
 // import { Container } from '@config/container.config';
 
 /**
@@ -27,6 +27,7 @@ export class HTTPServer {
 
   constructor(app: FastifyInstance) {
     this.app = app;
+    this.http = this.app.server;
   }
 
   /**

@@ -1,52 +1,37 @@
-import { NextFunction, Response } from 'express';
-import { Controller } from '@classes/controller.class';
 import { checkMySQLError } from '@utils/error.util';
-import { IUserRequest } from '@interfaces/IUserRequest.interface';
 import { hiveCountApiary, hiveCountTotal } from '../utils/statistic.util';
 import { Harvest } from '../models/harvest.model';
 import { Feed } from '../models/feed.model';
 import { Treatment } from '../models/treatment.model';
 import { Checkup } from '../models/checkup.model';
+import { FastifyReply, FastifyRequest } from 'fastify';
 
-export default class StatisticController extends Controller {
-  constructor() {
-    super();
-  }
-
-  async getHiveCountTotal(
-    req: IUserRequest,
-    res: Response,
-    next: NextFunction,
-  ) {
+export default class StatisticController {
+  static async getHiveCountTotal(req: FastifyRequest, reply: FastifyReply) {
     try {
       const result = await hiveCountTotal(req.user.user_id);
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
-  async getHiveCountApiary(
-    req: IUserRequest,
-    res: Response,
-    next: NextFunction,
-  ) {
+  static async getHiveCountApiary(req: FastifyRequest, reply: FastifyReply) {
     let date = new Date();
+    const query = req.query as any;
     try {
-      date = new Date(req.query.date as string);
+      date = new Date(query.date as string);
     } catch (e) {
-      console.error(e);
+      req.log.error(e);
     }
     try {
       const result = await hiveCountApiary(date, req.user.user_id);
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async getHarvestHive(req: IUserRequest, res: Response, next: NextFunction) {
+  static async getHarvestHive(req: FastifyRequest, reply: FastifyReply) {
     try {
       const { order, direction, offset, limit, q, filters, groupByType } =
         req.query as any;
@@ -107,19 +92,18 @@ export default class StatisticController extends Controller {
             });
           }
         } catch (e) {
-          console.error(e);
+          req.log.error(e);
         }
       }
 
       const result = await query.orderBy('hive.name');
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async getHarvestYear(req: IUserRequest, res: Response, next: NextFunction) {
+  static async getHarvestYear(req: FastifyRequest, reply: FastifyReply) {
     try {
       const { filters } = req.query as any;
       const query = Harvest.query()
@@ -163,18 +147,17 @@ export default class StatisticController extends Controller {
             });
           }
         } catch (e) {
-          console.error(e);
+          req.log.error(e);
         }
       }
       const result = await query;
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async getHarvestApiary(req: IUserRequest, res: Response, next: NextFunction) {
+  static async getHarvestApiary(req: FastifyRequest, reply: FastifyReply) {
     try {
       const { filters } = req.query as any;
       const query = Harvest.query()
@@ -217,20 +200,19 @@ export default class StatisticController extends Controller {
             });
           }
         } catch (e) {
-          console.error(e);
+          req.log.error(e);
         }
       } else {
         query.whereRaw(`YEAR(date) = ${new Date().getFullYear()}`);
       }
       const result = await query;
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async getHarvestType(req: IUserRequest, res: Response, next: NextFunction) {
+  static async getHarvestType(req: FastifyRequest, reply: FastifyReply) {
     try {
       const { filters } = req.query as any;
       const query = Harvest.query()
@@ -274,20 +256,19 @@ export default class StatisticController extends Controller {
             });
           }
         } catch (e) {
-          console.error(e);
+          req.log.error(e);
         }
       } else {
         query.whereRaw(`YEAR(date) = ${new Date().getFullYear()}`);
       }
       const result = await query;
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async getFeedHive(req: IUserRequest, res: Response, next: NextFunction) {
+  static async getFeedHive(req: FastifyRequest, reply: FastifyReply) {
     try {
       const { order, direction, offset, limit, q, filters, groupByType } =
         req.query as any;
@@ -346,19 +327,18 @@ export default class StatisticController extends Controller {
             });
           }
         } catch (e) {
-          console.error(e);
+          req.log.error(e);
         }
       }
 
       const result = await query.orderBy('hive.name');
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async getFeedYear(req: IUserRequest, res: Response, next: NextFunction) {
+  static async getFeedYear(req: FastifyRequest, reply: FastifyReply) {
     try {
       const { filters } = req.query as any;
       const query = Feed.query()
@@ -394,18 +374,17 @@ export default class StatisticController extends Controller {
             });
           }
         } catch (e) {
-          console.error(e);
+          req.log.error(e);
         }
       }
       const result = await query;
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async getFeedApiary(req: IUserRequest, res: Response, next: NextFunction) {
+  static async getFeedApiary(req: FastifyRequest, reply: FastifyReply) {
     try {
       const { filters } = req.query as any;
       const query = Feed.query()
@@ -440,20 +419,19 @@ export default class StatisticController extends Controller {
             });
           }
         } catch (e) {
-          console.error(e);
+          req.log.error(e);
         }
       } else {
         query.whereRaw(`YEAR(date) = ${new Date().getFullYear()}`);
       }
       const result = await query;
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async getFeedType(req: IUserRequest, res: Response, next: NextFunction) {
+  static async getFeedType(req: FastifyRequest, reply: FastifyReply) {
     try {
       const { filters } = req.query as any;
       const query = Feed.query()
@@ -489,20 +467,19 @@ export default class StatisticController extends Controller {
             });
           }
         } catch (e) {
-          console.error(e);
+          req.log.error(e);
         }
       } else {
         query.whereRaw(`YEAR(date) = ${new Date().getFullYear()}`);
       }
       const result = await query;
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async getTreatmentHive(req: IUserRequest, res: Response, next: NextFunction) {
+  static async getTreatmentHive(req: FastifyRequest, reply: FastifyReply) {
     try {
       const { order, direction, offset, limit, q, filters } = req.query as any;
 
@@ -554,19 +531,18 @@ export default class StatisticController extends Controller {
             });
           }
         } catch (e) {
-          console.error(e);
+          req.log.error(e);
         }
       }
 
       const result = await query.orderBy('hive.name');
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async getTreatmentYear(req: IUserRequest, res: Response, next: NextFunction) {
+  static async getTreatmentYear(req: FastifyRequest, reply: FastifyReply) {
     try {
       const { filters } = req.query as any;
       const query = Treatment.query()
@@ -603,22 +579,17 @@ export default class StatisticController extends Controller {
             });
           }
         } catch (e) {
-          console.error(e);
+          req.log.error(e);
         }
       }
       const result = await query;
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async getTreatmentApiary(
-    req: IUserRequest,
-    res: Response,
-    next: NextFunction,
-  ) {
+  static async getTreatmentApiary(req: FastifyRequest, reply: FastifyReply) {
     try {
       const { filters } = req.query as any;
       const query = Treatment.query()
@@ -655,20 +626,19 @@ export default class StatisticController extends Controller {
             });
           }
         } catch (e) {
-          console.error(e);
+          req.log.error(e);
         }
       } else {
         query.whereRaw(`YEAR(date) = ${new Date().getFullYear()}`);
       }
       const result = await query;
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async getTreatmentType(req: IUserRequest, res: Response, next: NextFunction) {
+  static async getTreatmentType(req: FastifyRequest, reply: FastifyReply) {
     try {
       const { filters } = req.query as any;
       const query = Treatment.query()
@@ -706,24 +676,19 @@ export default class StatisticController extends Controller {
             });
           }
         } catch (e) {
-          console.error(e);
+          req.log.error(e);
         }
       } else {
         query.whereRaw(`YEAR(date) = ${new Date().getFullYear()}`);
       }
       const result = await query;
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async getCheckupRatingHive(
-    req: IUserRequest,
-    res: Response,
-    next: NextFunction,
-  ) {
+  static async getCheckupRatingHive(req: FastifyRequest, reply: FastifyReply) {
     try {
       const { order, direction, offset, limit, q, filters } = req.query as any;
       const query = Checkup.query()
@@ -783,15 +748,14 @@ export default class StatisticController extends Controller {
             });
           }
         } catch (e) {
-          console.error(e);
+          req.log.error(e);
         }
       }
 
       const result = await query.orderBy('hive.name');
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 }

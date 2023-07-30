@@ -27,7 +27,7 @@ export class Apiary extends ExtModel {
   hive_count?: HiveCount;
 
   static jsonSchema = {
-    id: 'apiaries_schema',
+    $id: 'apiaries_schema',
     type: 'object',
     required: ['name'],
     properties: {

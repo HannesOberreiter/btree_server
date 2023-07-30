@@ -1,8 +1,8 @@
-import { ENVIRONMENT } from '@/api/types/constants/environment.const';
 import { env, knexConfig } from '@config/environment.config';
 import Knex from 'knex';
 import { Model } from 'objection';
 import { Logger } from '@/api/services/logger.service';
+import { ENVIRONMENT } from '@/config/constants.config';
 
 /**
  * Database connection manager for MariaDb server

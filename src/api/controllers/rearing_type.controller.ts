@@ -1,17 +1,11 @@
-import { NextFunction, Response } from 'express';
-import { Controller } from '@classes/controller.class';
 import { checkMySQLError } from '@utils/error.util';
-import { IUserRequest } from '@interfaces/IUserRequest.interface';
 import { RearingType } from '../models/rearing/rearing_type.model';
 import { RearingStep } from '../models/rearing/rearing_step.model';
 import { Rearing } from '../models/rearing/rearing.model';
+import { FastifyRequest, FastifyReply } from 'fastify';
 
-export default class RearingTypeController extends Controller {
-  constructor() {
-    super();
-  }
-
-  async get(req: IUserRequest, res: Response, next: NextFunction) {
+export default class RearingTypeController {
+  static async get(req: FastifyRequest, reply: FastifyReply) {
     try {
       const { order, direction, offset, limit, q } = req.query as any;
       const query = RearingType.query()
@@ -41,16 +35,16 @@ export default class RearingTypeController extends Controller {
         }
       }
       const result = await query.orderBy('id');
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async patch(req: IUserRequest, res: Response, next: NextFunction) {
-    const ids = req.body.ids;
-    const insert = { ...req.body.data };
+  static async patch(req: FastifyRequest, reply: FastifyReply) {
+    const body = req.body as any;
+    const ids = body.ids;
+    const insert = { ...body.data };
     try {
       const result = await RearingType.transaction(async (trx) => {
         return await RearingType.query(trx)
@@ -58,67 +52,66 @@ export default class RearingTypeController extends Controller {
           .findByIds(ids)
           .where('user_id', req.user.user_id);
       });
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async post(req: IUserRequest, res: Response, next: NextFunction) {
+  static async post(req: FastifyRequest, reply: FastifyReply) {
     try {
+      const body = req.body as any;
       const result = await RearingType.transaction(async (trx) => {
         return await RearingType.query(trx).insert({
-          ...req.body,
+          ...body,
           user_id: req.user.user_id,
         });
       });
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async batchGet(req: IUserRequest, res: Response, next: NextFunction) {
+  static async batchGet(req: FastifyRequest, reply: FastifyReply) {
     try {
+      const body = req.body as any;
       const result = await RearingType.transaction(async (trx) => {
         const res = await RearingType.query(trx)
           .withGraphFetched('detail')
-          .findByIds(req.body.ids)
+          .findByIds(body.ids)
           .where('rearing_types.user_id', req.user.user_id);
         return res;
       });
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async batchDelete(req: IUserRequest, res: Response, next: NextFunction) {
+  static async batchDelete(req: FastifyRequest, reply: FastifyReply) {
     try {
+      const body = req.body as any;
       const result = await RearingType.transaction(async (trx) => {
         await RearingStep.query(trx)
           .withGraphJoined('type')
           .delete()
           .where('type.user_id', req.user.user_id)
-          .whereIn('type_id', req.body.ids);
+          .whereIn('type_id', body.ids);
 
         await Rearing.query(trx)
           .delete()
           .where('rearings.user_id', req.user.user_id)
-          .whereIn('type_id', req.body.ids);
+          .whereIn('type_id', body.ids);
 
         return await RearingType.query(trx)
           .delete()
-          .whereIn('id', req.body.ids)
+          .whereIn('id', body.ids)
           .where('user_id', req.user.user_id);
       });
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 }

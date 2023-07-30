@@ -1,68 +1,106 @@
-import { Router } from '@classes/router.class';
-import { Container } from '@config/container.config';
 import { Guard } from '@middlewares/guard.middleware';
-import { ROLES } from '@/api/types/constants/role.const';
-import { Validator } from '@/api/middlewares/validator.middleware';
-import { body } from 'express-validator';
+import { ROLES } from '@/config/constants.config';
+import { FastifyInstance } from 'fastify';
+import { ZodTypeProvider } from 'fastify-type-provider-zod';
+import { z } from 'zod';
+import TreatmentController from '@/api/controllers/treatment.controller';
 
-export class TreatmentRouter extends Router {
-  constructor() {
-    super();
-  }
+export default function routes(
+  instance: FastifyInstance,
+  _options: any,
+  done: any,
+) {
+  const server = instance.withTypeProvider<ZodTypeProvider>();
 
-  define() {
-    this.router
-      .route('/')
-      .get(
-        Guard.authorize([ROLES.admin, ROLES.user, ROLES.read]),
-        Container.resolve('TreatmentController').get,
-      );
-    this.router
-      .route('/')
-      .post(
-        Validator.validate([
-          body('hive_ids').isArray(),
-          body('interval').isInt({ max: 365, min: 0 }),
-          body('repeat').isInt({ max: 15, min: 0 }),
-        ]),
-        Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('TreatmentController').post,
-      );
+  server.get(
+    '/',
+    {
+      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+    },
+    TreatmentController.get,
+  );
 
-    this.router
-      .route('/')
-      .patch(
-        Validator.validate([body('ids').isArray()]),
-        Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('TreatmentController').patch,
-      );
-    this.router
-      .route('/status')
-      .patch(
-        Validator.validate([body('ids').isArray(), body('status').isBoolean()]),
-        Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('TreatmentController').updateStatus,
-      );
-    this.router
-      .route('/date')
-      .patch(
-        Validator.validate([body('ids').isArray(), body('start').isString()]),
-        Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('TreatmentController').updateDate,
-      );
-    this.router
-      .route('/batchDelete')
-      .patch(
-        Validator.validate([body('ids').isArray()]),
-        Guard.authorize([ROLES.admin]),
-        Container.resolve('TreatmentController').batchDelete,
-      );
-    this.router
-      .route('/batchGet')
-      .post(
-        Validator.validate([body('ids').isArray()]),
-        Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('TreatmentController').batchGet,
-      );
-  }
+  server.post(
+    '/',
+    {
+      preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
+      schema: {
+        body: z.object({
+          hive_ids: z.array(z.number()),
+          interval: z.number().min(0).max(365),
+          repeat: z.number().min(0).max(15),
+        }),
+      },
+    },
+    TreatmentController.post,
+  );
+
+  server.patch(
+    '/',
+    {
+      preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
+      schema: {
+        body: z.object({
+          ids: z.array(z.number()),
+        }),
+      },
+    },
+    TreatmentController.patch,
+  );
+
+  server.patch(
+    '/status',
+    {
+      preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
+      schema: {
+        body: z.object({
+          ids: z.array(z.number()),
+          status: z.boolean(),
+        }),
+      },
+    },
+    TreatmentController.updateStatus,
+  );
+
+  server.patch(
+    '/date',
+    {
+      preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
+      schema: {
+        body: z.object({
+          ids: z.array(z.number()),
+          status: z.string(),
+        }),
+      },
+    },
+    TreatmentController.updateDate,
+  );
+
+  server.patch(
+    '/batchDelete',
+    {
+      preHandler: Guard.authorize([ROLES.admin]),
+      schema: {
+        body: z.object({
+          ids: z.array(z.number()),
+        }),
+      },
+    },
+    TreatmentController.batchDelete,
+  );
+
+  server.post(
+    '/batchGet',
+    {
+      preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
+      schema: {
+        body: z.object({
+          ids: z.array(z.number()),
+        }),
+      },
+    },
+    TreatmentController.batchGet,
+  );
+
+  done();
 }

@@ -1,16 +1,10 @@
-import { NextFunction, Response } from 'express';
-import { Controller } from '@classes/controller.class';
 import { checkMySQLError } from '@utils/error.util';
-import { IUserRequest } from '@interfaces/IUserRequest.interface';
 import { RearingDetail } from '../models/rearing/rearing_detail.model';
 import { RearingStep } from '../models/rearing/rearing_step.model';
+import { FastifyReply, FastifyRequest } from 'fastify';
 
-export default class RearingDetailController extends Controller {
-  constructor() {
-    super();
-  }
-
-  async get(req: IUserRequest, res: Response, next: NextFunction) {
+export default class RearingDetailController {
+  static async get(req: FastifyRequest, reply: FastifyReply) {
     try {
       const { order, direction, offset, limit, q } = req.query as any;
       const query = RearingDetail.query()
@@ -39,16 +33,16 @@ export default class RearingDetailController extends Controller {
         }
       }
       const result = await query.orderBy('id');
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async patch(req: IUserRequest, res: Response, next: NextFunction) {
-    const ids = req.body.ids;
-    const insert = { ...req.body.data };
+  static async patch(req: FastifyRequest, reply: FastifyReply) {
+    const body = req.body as any;
+    const ids = body.ids;
+    const insert = { ...body.data };
     try {
       const result = await RearingDetail.transaction(async (trx) => {
         return await RearingDetail.query(trx)
@@ -56,60 +50,59 @@ export default class RearingDetailController extends Controller {
           .findByIds(ids)
           .where('user_id', req.user.user_id);
       });
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async post(req: IUserRequest, res: Response, next: NextFunction) {
+  static async post(req: FastifyRequest, reply: FastifyReply) {
     try {
+      const body = req.body as any;
       const result = await RearingDetail.transaction(async (trx) => {
         return await RearingDetail.query(trx).insert({
-          ...req.body,
+          ...body,
           user_id: req.user.user_id,
         });
       });
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async batchGet(req: IUserRequest, res: Response, next: NextFunction) {
+  static async batchGet(req: FastifyRequest, reply: FastifyReply) {
     try {
+      const body = req.body as any;
       const result = await RearingDetail.transaction(async (trx) => {
         const res = await RearingDetail.query(trx)
-          .findByIds(req.body.ids)
+          .findByIds(body.ids)
           .where('user_id', req.user.user_id);
         return res;
       });
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async batchDelete(req: IUserRequest, res: Response, next: NextFunction) {
+  static async batchDelete(req: FastifyRequest, reply: FastifyReply) {
     try {
+      const body = req.body as any;
       const result = await RearingDetail.transaction(async (trx) => {
         await RearingStep.query(trx)
           .withGraphJoined('detail')
           .delete()
           .where('detail.user_id', req.user.user_id)
-          .whereIn('detail_id', req.body.ids);
+          .whereIn('detail_id', body.ids);
         return await RearingDetail.query(trx)
           .delete()
-          .whereIn('id', req.body.ids)
+          .whereIn('id', body.ids)
           .where('user_id', req.user.user_id);
       });
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 }

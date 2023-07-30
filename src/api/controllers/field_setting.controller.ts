@@ -1,29 +1,25 @@
-import { Response } from 'express';
-import { Controller } from '@classes/controller.class';
 import { checkMySQLError } from '@utils/error.util';
-import { IUserRequest } from '@interfaces/IUserRequest.interface';
 import { FieldSetting } from '@models/field_setting.model';
+import { FastifyReply, FastifyRequest } from 'fastify';
 
-export default class FieldSettingController extends Controller {
-  constructor() {
-    super();
-  }
-  async get(req: IUserRequest, res: Response, next) {
+export default class FieldSettingController {
+  static async get(req: FastifyRequest, reply: FastifyReply) {
     try {
       const result = await FieldSetting.query()
         .select('settings')
         .first()
         .where({ bee_id: req.user.bee_id });
-      res.locals.data = result ? result : false;
-      next();
+      reply.send(result ? result : false);
     } catch (e) {
-      next();
+      reply.send(checkMySQLError(e));
     }
   }
-  async patch(req: IUserRequest, res: Response, next) {
+
+  static async patch(req: FastifyRequest, reply: FastifyReply) {
+    const body = req.body as any;
     const trx = await FieldSetting.startTransaction();
     try {
-      const settings = JSON.parse(req.body.settings);
+      const settings = JSON.parse(body.settings);
       const current = await FieldSetting.query()
         .first()
         .where('bee_id', req.user.bee_id);
@@ -38,11 +34,10 @@ export default class FieldSettingController extends Controller {
         });
       }
       await trx.commit();
-      res.locals.data = settings;
-      next();
+      reply.send(settings);
     } catch (e) {
       await trx.rollback();
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 }

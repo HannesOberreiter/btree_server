@@ -18,35 +18,35 @@ export const checkMySQLError = (err: any) => {
     switch (err.type) {
       case 'ModelValidation':
         error = httpErrors.BadRequest(err.message);
-        error.output.payload.message = {
+        error.cause = {
           type: err.type,
           data: err.data,
         };
         break;
       case 'RelationExpression':
         error = httpErrors.BadRequest(err.message);
-        error.output.payload.message = {
+        error.cause = {
           type: 'RelationExpression',
           data: {},
         };
         break;
       case 'UnallowedRelation':
         error = httpErrors.BadRequest(err.message);
-        error.output.payload.message = {
+        error.cause = {
           type: err.type,
           data: {},
         };
         break;
       case 'InvalidGraph':
         error = httpErrors.BadRequest(err.message);
-        error.output.payload.message = {
+        error.cause = {
           type: err.type,
           data: {},
         };
         break;
       default:
         error = httpErrors.BadRequest(err.message);
-        error.output.payload.message = {
+        error.cause = {
           type: 'UnknownValidationError',
           data: {},
         };
@@ -54,13 +54,13 @@ export const checkMySQLError = (err: any) => {
     }
   } else if (err instanceof NotFoundError) {
     error = httpErrors.NotFound(err.message);
-    error.output.payload.message = {
+    error.cause = {
       type: 'NotFound',
       data: {},
     };
   } else if (err instanceof UniqueViolationError) {
     error = httpErrors.Conflict(err.message);
-    error.output.payload.message = {
+    error.cause = {
       type: 'UniqueViolation',
       data: {
         columns: err.columns,
@@ -70,7 +70,7 @@ export const checkMySQLError = (err: any) => {
     };
   } else if (err instanceof NotNullViolationError) {
     error = httpErrors.BadRequest(err.message);
-    error.output.payload.message = {
+    error.cause = {
       type: 'NotNullViolation',
       data: {
         columns: err.column,
@@ -79,7 +79,7 @@ export const checkMySQLError = (err: any) => {
     };
   } else if (err instanceof ForeignKeyViolationError) {
     error = httpErrors.Conflict(err.message);
-    error.output.payload.message = {
+    error.cause = {
       type: 'ForeignKeyViolation',
       data: {
         table: err.table,
@@ -88,7 +88,7 @@ export const checkMySQLError = (err: any) => {
     };
   } else if (err instanceof CheckViolationError) {
     error = httpErrors.BadRequest(err.message);
-    error.output.payload.message = {
+    error.cause = {
       type: 'CheckViolation',
       data: {
         table: err.table,
@@ -97,13 +97,13 @@ export const checkMySQLError = (err: any) => {
     };
   } else if (err instanceof DataError) {
     error = httpErrors.BadRequest(err.message);
-    error.output.payload.message = {
+    error.cause = {
       type: 'InvalidData',
       data: {},
     };
   } else if (err instanceof DBError) {
     error = httpErrors[500](err.message);
-    error.output.payload.message = {
+    error.cause = {
       type: 'UnknownDatabaseError',
       data: {},
     };
@@ -111,7 +111,7 @@ export const checkMySQLError = (err: any) => {
     return err;
   } else {
     error = httpErrors[500](err.message);
-    error.output.payload.message = {
+    error.cause = {
       type: 'UnknownError',
       data: {},
     };

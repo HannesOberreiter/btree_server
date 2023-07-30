@@ -5,7 +5,7 @@ import {
   StreamEntry,
 } from 'pino';
 import * as rfs from 'rotating-file-stream';
-import { ENVIRONMENT } from '@/api/types/constants/environment.const';
+import { ENVIRONMENT } from '@config/constants.config';
 import { env } from '@config/environment.config';
 import p from 'path';
 import pretty from 'pino-pretty';

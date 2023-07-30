@@ -33,8 +33,8 @@ import { Harvest } from '../models/harvest.model';
 import { Queen } from '../models/queen.model';
 import { raw } from 'objection';
 import { env } from '@/config/environment.config';
-import { ENVIRONMENT } from '../types/constants/environment.const';
 import { MailServer } from '../app.bootstrap';
+import { ENVIRONMENT } from '@/config/constants.config';
 
 export const cleanupDatabase = async () => {
   try {

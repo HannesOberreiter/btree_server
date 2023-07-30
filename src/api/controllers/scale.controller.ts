@@ -1,35 +1,31 @@
-import { Response } from 'express';
-import { Controller } from '@classes/controller.class';
 import { checkMySQLError } from '@utils/error.util';
-import { IUserRequest } from '@interfaces/IUserRequest.interface';
 import { Scale } from '../models/scale.model';
 import { Hive } from '../models/hive.model';
 import { ScaleData } from '../models/scale_data.model';
 import { limitScale } from '../utils/premium.util';
-import { paymentRequired } from '@hapi/boom';
+import { FastifyReply, FastifyRequest } from 'fastify';
+import httpErrors from 'http-errors';
 
-export default class ScaleController extends Controller {
-  constructor() {
-    super();
-  }
-  async get(req: IUserRequest, res: Response, next) {
+export default class ScaleController {
+  static async get(req: FastifyRequest, reply: FastifyReply) {
     try {
+      const params = req.params as any;
       const query = Scale.query()
         .withGraphFetched('hive')
         .where('user_id', req.user.user_id);
-      if (req.params.id) {
-        query.findById(req.params.id);
+      if (params.id) {
+        query.findById(params.id);
       }
-      res.locals.data = req.params.id ? [await query] : await query; // array is returned to be consistent with batchGet function
-      next();
+      reply.send(params.id ? [await query] : await query); // array is returned to be consistent with batchGet function
     } catch (e) {
-      next();
+      reply.send(checkMySQLError(e));
     }
   }
-  async patch(req: IUserRequest, res: Response, next) {
+  static async patch(req: FastifyRequest, reply: FastifyReply) {
     try {
-      const ids = req.body.ids;
-      const insert = { ...req.body.data };
+      const body = req.body as any;
+      const ids = body.ids;
+      const insert = { ...body.data };
 
       const result = await Scale.transaction(async (trx) => {
         if (insert.hive_id)
@@ -42,50 +38,52 @@ export default class ScaleController extends Controller {
           .findByIds(ids)
           .where('user_id', req.user.user_id);
       });
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
-  async post(req: IUserRequest, res: Response, next) {
+  static async post(req: FastifyRequest, reply: FastifyReply) {
     try {
+      const body = req.body as any;
+
       const limit = await limitScale(req.user.user_id);
-      if (limit) throw paymentRequired('no premium access');
+      if (limit) {
+        reply.send(httpErrors.PaymentRequired('no premium access'));
+      }
 
       const result = await Scale.transaction(async (trx) => {
-        if (req.body.hive_id)
+        if (body.hive_id)
           await Hive.query(trx)
-            .where({ id: req.body.hive_id, user_id: req.user.user_id })
+            .where({ id: body.hive_id, user_id: req.user.user_id })
             .throwIfNotFound();
 
         return await Scale.query(trx).insert({
-          name: req.body.name,
-          hive_id: req.body.hive_id,
+          name: body.name,
+          hive_id: body.hive_id,
           user_id: req.user.user_id,
         });
       });
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
-  async delete(req: IUserRequest, res: Response, next) {
+  static async delete(req: FastifyRequest, reply: FastifyReply) {
     try {
+      const params = req.params as any;
       const result = await Scale.transaction(async (trx) => {
         await ScaleData.query(trx).delete().joinRelated('scale').where({
-          scale_id: req.params.id,
+          scale_id: params.id,
           'scale.user_id': req.user.user_id,
         });
         return await Scale.query(trx)
-          .deleteById(req.params.id)
+          .deleteById(params.id)
           .where('user_id', req.user.user_id);
       });
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 }

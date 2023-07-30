@@ -1,14 +1,10 @@
-import { Response, NextFunction } from 'express';
-import { Controller } from '@classes/controller.class';
 import { checkMySQLError } from '@utils/error.util';
 import { Company } from '@models/company.model';
-import { IUserRequest } from '@interfaces/IUserRequest.interface';
 import { randomBytes } from 'crypto';
 import { reviewPassword } from '@utils/login.util';
 import { CompanyBee } from '@models/company_bee.model';
 import { autoFill } from '@utils/autofill.util';
 import { User } from '@models/user.model';
-import { Boom, forbidden, paymentRequired } from '@hapi/boom';
 import UserController from '@controllers/user.controller';
 import { deleteCompany } from '../utils/delete.util';
 import { addPremium, isPremium } from '../utils/premium.util';
@@ -27,17 +23,16 @@ import { Rearing } from '../models/rearing/rearing.model';
 import { RearingType } from '../models/rearing/rearing_type.model';
 import { Promo } from '../models/promos.model';
 import { Counts } from '../models/counts.model';
+import { FastifyReply, FastifyRequest } from 'fastify';
+import httpErrors from 'http-errors';
 
-export default class CompanyController extends Controller {
-  constructor() {
-    super();
-  }
-
-  async postCoupon(req: IUserRequest, res: Response, next: NextFunction) {
+export default class CompanyController {
+  static async postCoupon(req: FastifyRequest, reply: FastifyReply) {
+    const body = req.body as any;
     try {
       const promo = await Promo.query()
         .select()
-        .where({ code: req.body.coupon, used: false })
+        .where({ code: body.coupon, used: false })
         .throwIfNotFound()
         .first();
       const paid = await addPremium(req.user.user_id, promo.months, 0, 'promo');
@@ -48,14 +43,13 @@ export default class CompanyController extends Controller {
           user_id: req.user.user_id,
         })
         .findById(promo.id);
-      res.locals.data = { paid: paid };
-      next();
+      reply.send({ paid: paid });
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async download(req: IUserRequest, res: Response, next: NextFunction) {
+  static async download(req: FastifyRequest, reply: FastifyReply) {
     const stringifyOptions = {
       header: true,
       cast: {
@@ -135,40 +129,50 @@ export default class CompanyController extends Controller {
           name: 'rearing_types.csv',
         });
       });
-      res.attachment('test.zip').type('zip');
-      arch.on('end', () => res.end()); // end response when archive stream ends
-      arch.pipe(res);
+
+      // reply.header('Content-Type', 'application/zip');
+      reply.header('Content-Type', 'application/octet-stream');
+      reply.header(
+        'Content-Disposition',
+        'attachment; filename="btree_data.zip"',
+      );
+      arch.on('error', (err) => {
+        throw err;
+      });
+      arch.pipe(reply.raw);
+      arch.on('end', () => reply.raw.end()); // end response when archive stream ends
       arch.finalize();
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async getApikey(req: IUserRequest, res: Response, next: NextFunction) {
+  static async getApikey(req: FastifyRequest, reply: FastifyReply) {
     try {
       const premium = await isPremium(req.user.user_id);
-      if (!premium) throw paymentRequired();
+      if (!premium) {
+        reply.send(httpErrors.PaymentRequired());
+      }
       const result = await Company.query()
         .select('api_key')
         .findById(req.user.user_id);
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async getCounts(req: IUserRequest, res: Response, next: NextFunction) {
+  static async getCounts(req: FastifyRequest, reply: FastifyReply) {
     try {
       const result = await Counts.query().where('user_id', req.user.user_id);
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
-  async delete(req: IUserRequest, res: Response, next: NextFunction) {
+  static async delete(req: FastifyRequest, reply: FastifyReply) {
     try {
+      const params = req.params as { id: string };
       const otherUser = await Company.query()
         .select('user.id')
         .withGraphJoined('user')
@@ -176,10 +180,15 @@ export default class CompanyController extends Controller {
           'user.id': req.user.bee_id,
         })
         .where({
-          'companies.id': req.params.id,
+          'companies.id': params.id,
         });
-      if (otherUser.length > 0)
-        throw forbidden('Other user(s) found, please remove them first.');
+      if (otherUser.length > 0) {
+        reply.send(
+          httpErrors.Forbidden(
+            'Other user(s) found, please remove them first.',
+          ),
+        );
+      }
 
       const otherCompanies = await Company.query()
         .select('companies.id as id')
@@ -188,36 +197,41 @@ export default class CompanyController extends Controller {
           'user.id': req.user.bee_id,
         })
         .whereNot({
-          'companies.id': req.params.id,
+          'companies.id': params.id,
         });
-      if (otherCompanies.length === 0)
-        throw forbidden('This is your last company, you cannot delete it.');
-      req.body.saved_company = otherCompanies[0].id;
+      if (otherCompanies.length === 0) {
+        reply.send(
+          httpErrors.Forbidden(
+            'This is your last company, you cannot delete it.',
+          ),
+        );
+      }
 
-      await deleteCompany(parseInt(req.params.id));
+      req.body['saved_company'] = otherCompanies[0].id;
 
-      const user = new UserController();
-      user.changeCompany(req, res, next);
+      await deleteCompany(parseInt(params.id));
+
+      UserController.changeCompany(req, reply);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async post(req: IUserRequest, res: Response, next: NextFunction) {
+  static async post(req: FastifyRequest, reply: FastifyReply) {
     try {
+      const body = req.body as { name: string };
       const result = await Company.transaction(async (trx) => {
         const check = await Company.query(trx)
           .select('companies.id')
           .withGraphJoined('user')
           .where({
-            name: req.body.name,
+            name: body.name,
             'user.id': req.user.bee_id,
           });
-        if (check.length > 0)
-          throw new Boom('Company name already exists', {
-            statusCode: 409,
-          });
-        const c = await Company.query(trx).insert({ name: req.body.name });
+        if (check.length > 0) {
+          reply.send(httpErrors.Conflict('Company name already exists'));
+        }
+        const c = await Company.query(trx).insert({ name: body.name });
         const u = await User.query(trx)
           .select('lang')
           .findById(req.user.bee_id);
@@ -228,30 +242,36 @@ export default class CompanyController extends Controller {
         await autoFill(trx, c.id, u.lang);
         return c;
       });
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async patch(req: IUserRequest, res: Response, next: NextFunction) {
+  static async patch(req: FastifyRequest, reply: FastifyReply) {
     try {
-      if ('password' in req.body) {
-        await reviewPassword(req.user.bee_id, req.body.password);
-        delete req.body.password;
+      const body = req.body as {
+        name: string;
+        password?: string;
+        api_change?: boolean;
+      };
+      if ('password' in body) {
+        await reviewPassword(req.user.bee_id, body.password);
+        delete body.password;
       }
       const result = await Company.transaction(async (trx) => {
         const company = await Company.query(trx).findById(req.user.user_id);
         let api_change = false;
-        if ('api_change' in req.body) {
+        if ('api_change' in body) {
           const premium = await isPremium(req.user.user_id);
-          if (!premium) throw paymentRequired();
-          api_change = req.body.api_change ? true : false;
-          delete req.body.api_change;
+          if (!premium) {
+            reply.send(httpErrors.PaymentRequired());
+          }
+          api_change = body.api_change ? true : false;
+          delete body.api_change;
         }
 
-        const res = await company.$query().patchAndFetch({ ...req.body });
+        const res = await company.$query().patchAndFetch({ ...body });
 
         if (
           api_change ||
@@ -265,10 +285,9 @@ export default class CompanyController extends Controller {
         delete res.api_key;
         return res;
       });
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 }

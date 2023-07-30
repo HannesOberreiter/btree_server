@@ -1,7 +1,4 @@
-import { NextFunction, Response } from 'express';
-import { Controller } from '@classes/controller.class';
 import { checkMySQLError } from '@utils/error.util';
-import { IUserRequest } from '@interfaces/IUserRequest.interface';
 import {
   dropboxClientId,
   dropboxClientSecret,
@@ -9,24 +6,19 @@ import {
 } from '@/config/environment.config';
 import { Dropbox as DropboxModel } from '../models/dropbox.model';
 import { Dropbox, DropboxAuth } from 'dropbox';
+import { FastifyReply, FastifyRequest } from 'fastify';
 
 /**
  * Dropbox Apps: https://www.dropbox.com/developers/apps?_tk=pilot_lp&_ad=topbar4&_camp=myapps
  */
-export default class DropboxController extends Controller {
-  private static config: { clientId: string; clientSecret: string };
-  private static redirect: string;
+export default class DropboxController {
+  private static config = {
+    clientId: dropboxClientId,
+    clientSecret: dropboxClientSecret,
+  };
+  private static redirect = `${frontend}/setting/dropbox`; // must be exactly the same as in the Dropbox App defined
 
-  constructor() {
-    super();
-    DropboxController.config = {
-      clientId: dropboxClientId,
-      clientSecret: dropboxClientSecret,
-    };
-    DropboxController.redirect = `${frontend}/setting/dropbox`; // must be exactly the same as in the Dropbox App defined
-  }
-
-  async get(_req: IUserRequest, res: Response, next: NextFunction) {
+  static async get(_req: FastifyRequest, reply: FastifyReply) {
     try {
       const dbx = new DropboxAuth(DropboxController.config);
       dbx
@@ -40,17 +32,16 @@ export default class DropboxController extends Controller {
           false,
         )
         .then((authUrl) => {
-          res.locals.data = authUrl;
-          next();
+          reply.send({ url: authUrl });
         });
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async auth(req: IUserRequest, res: Response, next: NextFunction) {
+  static async auth(req: FastifyRequest, reply: FastifyReply) {
     try {
-      const { code } = req.params;
+      const { code } = req.params as any;
       const dbx = new DropboxAuth(DropboxController.config);
       const token = await dbx.getAccessTokenFromCode(
         DropboxController.redirect,
@@ -77,48 +68,45 @@ export default class DropboxController extends Controller {
           });
         }
       });
-      res.locals.data = access_token;
-      next();
+      reply.redirect(access_token);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async token(req: IUserRequest, res: Response, next: NextFunction) {
+  static async token(req: FastifyRequest, reply: FastifyReply) {
     try {
       const token = await DropboxModel.query().findOne(
         'user_id',
         req.user.user_id,
       );
       if (!token) {
-        res.locals.data = '';
-      } else {
-        // check if access_token is still valid, to prevent one round trip
-        const dbx = new DropboxAuth({
-          ...DropboxController.config,
-          accessToken: token.access_token,
-          refreshToken: token.refresh_token,
-        });
-        await dbx.checkAndRefreshAccessToken();
-        if (token.access_token !== dbx.getAccessToken()) {
-          await DropboxModel.transaction(async (trx) => {
-            return DropboxModel.query(trx)
-              .patch({
-                access_token: dbx.getAccessToken(),
-                refresh_token: dbx.getRefreshToken(),
-              })
-              .findOne('user_id', req.user.user_id);
-          });
-        }
-        res.locals.data = token.access_token;
+        reply.send('');
       }
-      next();
+      // check if access_token is still valid, to prevent one round trip
+      const dbx = new DropboxAuth({
+        ...DropboxController.config,
+        accessToken: token.access_token,
+        refreshToken: token.refresh_token,
+      });
+      await dbx.checkAndRefreshAccessToken();
+      if (token.access_token !== dbx.getAccessToken()) {
+        await DropboxModel.transaction(async (trx) => {
+          return DropboxModel.query(trx)
+            .patch({
+              access_token: dbx.getAccessToken(),
+              refresh_token: dbx.getRefreshToken(),
+            })
+            .findOne('user_id', req.user.user_id);
+        });
+      }
+      reply.send(token.access_token);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 
-  async delete(req: IUserRequest, res: Response, next: NextFunction) {
+  static async delete(req: FastifyRequest, reply: FastifyReply) {
     try {
       const result = await DropboxModel.transaction(async (trx) => {
         const token = await DropboxModel.query(trx)
@@ -133,10 +121,9 @@ export default class DropboxController extends Controller {
           .delete()
           .where('user_id', req.user.user_id);
       });
-      res.locals.data = result;
-      next();
+      reply.send(result);
     } catch (e) {
-      next(checkMySQLError(e));
+      reply.send(checkMySQLError(e));
     }
   }
 }
