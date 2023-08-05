@@ -9,12 +9,12 @@ import httpErrors from 'http-errors';
 
 import { RedisServer } from '@/servers/redis.server.js';
 import { authorized, env, sessionSecret } from '@config/environment.config.js';
-import { PassportConfiguration } from './passport.config.js';
+// import { PassportConfiguration } from './passport.config.js';
 import { Logger } from '@/api/services/logger.service.js';
 import { ENVIRONMENT } from './constants.config.js';
 import routes from '@/api/routes/index.js';
 
-import fastifyPassport from '@fastify/passport';
+// import fastifyPassport from '@fastify/passport';
 import fastify, { FastifyInstance, FastifyRequest } from 'fastify';
 import fastifyCookie from '@fastify/cookie';
 import fastifySession from '@fastify/session';
@@ -22,6 +22,7 @@ import fastifyCompress from '@fastify/compress';
 import fastifyHelmet from '@fastify/helmet';
 import fastifyCors from '@fastify/cors';
 import fastifyRateLimit from '@fastify/rate-limit';
+import { checkMySQLError } from '@/api/utils/error.util.js';
 
 /**
  * @description Instantiate server application.
@@ -156,16 +157,22 @@ export class Application {
      * @description Passport configuration
      * @see http://www.passportjs.org/
      */
-    this.app.register(fastifyPassport.initialize());
-    fastifyPassport.use('google', PassportConfiguration.factory('google'));
 
-    fastifyPassport.registerUserSerializer(async (user, _done) => {
-      return user;
-    });
-    fastifyPassport.registerUserDeserializer(async (user, _done) => {
-      return user;
-    });
+    //this.app.register(fastifyPassport.initialize());
+    //this.app.register(fastifyPassport.secureSession());
 
+    //fastifyPassport.use('google', PassportConfiguration.factory('google'));
+
+    /*
+    fastifyPassport.registerUserSerializer(async (user, req) => {
+      this.logger.log('info', 'Serializing user', { user });
+      req.session.user = user as any;
+    });
+    fastifyPassport.registerUserDeserializer(async (user, req) => {
+      this.logger.log('info', 'Deserzialize user', { user });
+      req.session.user = user as any;
+    });
+*/
     /**
      * @description Configure API Rate limit
      * @see https://github.com/fastify/fastify-rate-limit
@@ -192,17 +199,19 @@ export class Application {
           error: 'Bad Request',
           issues: error.issues,
         });
+        return;
       }
+      let e = checkMySQLError(error);
       this.log.error(
         {
-          user: request.user,
+          user: request?.session?.user,
           label: 'Application',
-          error: error,
+          error: e,
           path: request.url,
         },
         'Error in request handler',
       );
-      reply.send(error);
+      throw e;
     });
 
     this.app.register(routes, {

@@ -15,7 +15,7 @@ import { RedisServer } from '@/servers/redis.server';
 import { randomUUID } from 'node:crypto';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import httpErrors from 'http-errors';
-import fastifyPassport from '@fastify/passport';
+// import fastifyPassport from '@fastify/passport';
 
 export default class UserController {
   static async getFederatedCredentials(
@@ -24,11 +24,11 @@ export default class UserController {
   ) {
     try {
       const data = await FederatedCredential.query().where({
-        bee_id: req.user.bee_id,
+        bee_id: req.session.user.bee_id,
       });
-      reply.send(data);
+      return { data };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -39,15 +39,15 @@ export default class UserController {
     try {
       const params = req.params as any;
       if (!params.id) {
-        reply.send(httpErrors.BadRequest('Missing id'));
+        throw httpErrors.BadRequest('Missing id');
       }
       const data = await FederatedCredential.query().delete().where({
-        bee_id: req.user.bee_id,
+        bee_id: req.session.user.bee_id,
         id: params.id,
       });
-      reply.send(data);
+      return { data };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -58,22 +58,22 @@ export default class UserController {
     try {
       const body = req.body as any;
       if (!body.email) {
-        reply.send(httpErrors.BadRequest('Missing mail'));
+        throw httpErrors.BadRequest('Missing mail');
       }
       const data = await FederatedCredential.query().insert({
-        bee_id: req.user.bee_id,
+        bee_id: req.session.user.bee_id,
         provider: 'google',
         mail: body.email,
       });
-      reply.send(data);
+      return { data };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
   static async get(req: FastifyRequest, reply: FastifyReply) {
     try {
-      const data = await fetchUser('', req.user.bee_id);
+      const data = await fetchUser('', req.session.user.bee_id);
 
       // Check if connected company exists (last visited company)
       // otherwise take the simply the first one
@@ -85,33 +85,34 @@ export default class UserController {
       }
       const { rank, paid } = await getPaidRank(data.id, company);
 
+      req['bee_id'] = req.session.user.bee_id;
+
       await req.session.regenerate();
-      fastifyPassport.registerUserSerializer(async (user, request) => {
-        return (user = {
-          bee_id: data.id,
-          user_id: company,
-          paid: paid,
-          rank: rank as any,
-          user_agent: buildUserAgent(req),
-          last_visit: new Date(),
-          uuid: randomUUID(),
-          ip: request.ip,
-        });
-      });
+      req.session.user = {
+        bee_id: data.id,
+        user_id: company,
+        paid: paid,
+        rank: rank as any,
+        user_agent: buildUserAgent(req),
+        last_visit: new Date(),
+        uuid: randomUUID(),
+        ip: req.ip,
+      };
+
       await req.session.save();
 
-      reply.send(data);
+      return { data };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
   static async delete(req: FastifyRequest, reply: FastifyReply) {
     try {
       const body = req.body as any;
-      await reviewPassword(req.user.bee_id, body.password);
+      await reviewPassword(req.session.user.bee_id, body.password);
       const companies = await CompanyBee.query().where({
-        bee_id: req.user.bee_id,
+        bee_id: req.session.user.bee_id,
       });
       await Promise.all(
         map(companies, async (company) => {
@@ -125,10 +126,10 @@ export default class UserController {
         }),
       );
 
-      const result = await deleteUser(req.user.bee_id);
-      reply.send(result);
+      const result = await deleteUser(req.session.user.bee_id);
+      return result;
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -136,10 +137,13 @@ export default class UserController {
     const body = req.body as any;
     if ('password' in body) {
       try {
-        const result = await reviewPassword(req.user.bee_id, body.password);
-        reply.send(result);
+        const result = await reviewPassword(
+          req.session.user.bee_id,
+          body.password,
+        );
+        return result;
       } catch (e) {
-        reply.send(checkMySQLError(e));
+        throw checkMySQLError(e);
       }
     }
   }
@@ -150,9 +154,9 @@ export default class UserController {
     try {
       if ('password' in body) {
         try {
-          await reviewPassword(req.user.bee_id, body.password);
+          await reviewPassword(req.session.user.bee_id, body.password);
         } catch (e) {
-          reply.send(checkMySQLError(e));
+          throw checkMySQLError(e);
         }
 
         delete body.password;
@@ -171,10 +175,10 @@ export default class UserController {
         }
       }
 
-      await User.query(trx).findById(req.user.bee_id).patch(req.body);
+      await User.query(trx).findById(req.session.user.bee_id).patch(req.body);
 
       await trx.commit();
-      const user = await fetchUser('', req.user.bee_id);
+      const user = await fetchUser('', req.session.user.bee_id);
       if ('salt' in body) {
         try {
           await MailServer.sendMail({
@@ -184,13 +188,13 @@ export default class UserController {
             name: user['username'],
           });
         } catch (e) {
-          reply.send(checkMySQLError(e));
+          throw checkMySQLError(e);
         }
       }
-      reply.send(user);
+      return { user };
     } catch (e) {
       await trx.rollback();
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -199,50 +203,51 @@ export default class UserController {
     const trx = await User.startTransaction();
     try {
       await CompanyBee.query()
-        .where('bee_id', req.user.bee_id)
+        .where('bee_id', req.session.user.bee_id)
         .where('user_id', body.saved_company)
         .throwIfNotFound();
 
-      const result = await User.query(trx).findById(req.user.bee_id).patch({
-        saved_company: body.saved_company,
-      });
+      const result = await User.query(trx)
+        .findById(req.session.user.bee_id)
+        .patch({
+          saved_company: body.saved_company,
+        });
       await trx.commit();
 
-      const data = await fetchUser('', req.user.bee_id);
+      const data = await fetchUser('', req.session.user.bee_id);
 
       const { rank, paid } = await getPaidRank(data.id, body.saved_company);
 
+      req['bee_id'] = req.session.user.bee_id;
       await req.session.regenerate();
-      fastifyPassport.registerUserSerializer(async (user, request) => {
-        return (user = {
-          bee_id: data.id,
-          user_id: body.saved_company,
-          paid: paid,
-          rank: rank as any,
-          user_agent: buildUserAgent(req),
-          last_visit: new Date(),
-          uuid: randomUUID(),
-          ip: request.ip,
-        });
-      });
+      req.session.user = {
+        bee_id: data.id,
+        user_id: body.saved_company,
+        paid: paid,
+        rank: rank as any,
+        user_agent: buildUserAgent(req),
+        last_visit: new Date(),
+        uuid: randomUUID(),
+        ip: req.ip,
+      };
       await req.session.save();
 
-      reply.send({ data: data, result: result });
+      return { data: data, result: result };
 
       //const userAgent = buildUserAgent(req);
       /*const token = await generateTokenResponse(
-        req.user.bee_id,
+        req.session.user.bee_id,
         req.body.saved_company,
         userAgent
       );*/
     } catch (e) {
       await trx.rollback();
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
   static async getRedisSession(req: FastifyRequest, reply: FastifyReply) {
-    const { bee_id } = req.user;
+    const { bee_id } = req.session.user;
     try {
       let keys = [];
       let cursor = 0;
@@ -265,32 +270,33 @@ export default class UserController {
       }
 
       if (keys.length === 0) {
-        reply.send([]);
+        return [];
       }
       const content = await RedisServer.client.mget(keys);
       const result = content.map((el, index) => {
         const o = JSON.parse(el);
         o.id = keys[index];
-        o.user.currentSession = o.user?.uuid && o.user?.uuid === req.user.uuid;
+        o.user.currentSession =
+          o.user?.uuid && o.user?.uuid === req.session.user.uuid;
         return o;
       });
-      reply.send(result);
+      return { ...result };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
   static async deleteRedisSession(req: FastifyRequest, reply: FastifyReply) {
     try {
-      const { bee_id } = req.user;
+      const { bee_id } = req.session.user;
       const { id } = req.params as any;
       const lastPart = id.split(':').at(-1);
       const result = await RedisServer.client.del(
         `btree_sess:${bee_id}:${lastPart}`,
       );
-      reply.send(result);
+      return result;
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 }

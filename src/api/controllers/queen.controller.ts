@@ -24,7 +24,7 @@ export default class QueenController {
       } = req.query as any;
       const query = Queen.query()
         .where({
-          'queens.user_id': req.user.user_id,
+          'queens.user_id': req.session.user.user_id,
           'queens.deleted': deleted === 'true',
         })
         .page(
@@ -92,9 +92,9 @@ export default class QueenController {
       }
 
       const result = await query.orderBy('id');
-      reply.send(result);
+      return { ...result };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -115,7 +115,7 @@ export default class QueenController {
               'queen_races.name as race',
             )
             .where({
-              'queens.user_id': req.user.user_id,
+              'queens.user_id': req.session.user.user_id,
               'queens.id': params.id,
             })
             .leftJoin('queen_matings', 'mating_id', 'queen_matings.id')
@@ -145,9 +145,9 @@ export default class QueenController {
         .select('*')
         .from('mothers');
 
-      reply.send(queen);
+      return { queen };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -158,7 +158,7 @@ export default class QueenController {
       query
         .withGraphJoined('[queen as queens, hive_location]')
         .where({
-          'queen_durations.user_id': req.user.user_id,
+          'queen_durations.user_id': req.session.user.user_id,
         })
         .page(
           offset ? offset : 0,
@@ -239,9 +239,9 @@ export default class QueenController {
         queen.checkup = query_checkup;
         queen.harvest = query_harvest;
       }
-      reply.send(result);
+      return { ...result };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -266,16 +266,16 @@ export default class QueenController {
             ...insert,
             name: name,
             hive_id: hive_id,
-            user_id: req.user.user_id,
-            bee_id: req.user.bee_id,
+            user_id: req.session.user.user_id,
+            bee_id: req.session.user.bee_id,
           });
           result.push(res.id);
         }
         return result;
       });
-      reply.send(result);
+      return { ...result };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -289,13 +289,13 @@ export default class QueenController {
       }
       const result = await Queen.transaction(async (trx) => {
         return await Queen.query(trx)
-          .patch({ ...insert, edit_id: req.user.bee_id })
+          .patch({ ...insert, edit_id: req.session.user.bee_id })
           .findByIds(ids)
-          .where('user_id', req.user.user_id);
+          .where('user_id', req.session.user.user_id);
       });
-      reply.send(result);
+      return result;
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -305,16 +305,16 @@ export default class QueenController {
       const result = await Queen.transaction(async (trx) => {
         return Queen.query(trx)
           .patch({
-            edit_id: req.user.bee_id,
+            edit_id: req.session.user.bee_id,
             modus: body.status,
             modus_date: dayjs().format('YYYY-MM-DD'),
           })
           .findByIds(body.ids)
-          .where('user_id', req.user.user_id);
+          .where('user_id', req.session.user.user_id);
       });
-      reply.send(result);
+      return result;
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -328,7 +328,7 @@ export default class QueenController {
       const result = await Queen.transaction(async (trx) => {
         const res = await Queen.query()
           .select('id', 'deleted')
-          .where('user_id', req.user.user_id)
+          .where('user_id', req.session.user.user_id)
           .whereIn('id', body.ids);
 
         const softIds = [];
@@ -351,15 +351,15 @@ export default class QueenController {
                 .toISOString()
                 .slice(0, 19)
                 .replace('T', ' '),
-              edit_id: req.user.bee_id,
+              edit_id: req.session.user.bee_id,
             })
             .findByIds(softIds);
 
         return res;
       });
-      reply.send(result);
+      return { ...result };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -367,11 +367,11 @@ export default class QueenController {
     try {
       const body = req.body as any;
       const result = await Queen.query().findByIds(body.ids).where({
-        user_id: req.user.user_id,
+        user_id: req.session.user.user_id,
       });
-      reply.send(result);
+      return { ...result };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 }

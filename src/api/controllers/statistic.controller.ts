@@ -9,10 +9,10 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 export default class StatisticController {
   static async getHiveCountTotal(req: FastifyRequest, reply: FastifyReply) {
     try {
-      const result = await hiveCountTotal(req.user.user_id);
-      reply.send(result);
+      const result = await hiveCountTotal(req.session.user.user_id);
+      return { ...result };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
   static async getHiveCountApiary(req: FastifyRequest, reply: FastifyReply) {
@@ -24,10 +24,10 @@ export default class StatisticController {
       req.log.error(e);
     }
     try {
-      const result = await hiveCountApiary(date, req.user.user_id);
-      reply.send(result);
+      const result = await hiveCountApiary(date, req.session.user.user_id);
+      return { ...result };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -49,7 +49,7 @@ export default class StatisticController {
         .where({
           'hive.deleted': false,
           'harvests.deleted': false,
-          'harvests.user_id': req.user.user_id,
+          'harvests.user_id': req.session.user.user_id,
         })
         .page(
           offset ? offset : 0,
@@ -97,9 +97,9 @@ export default class StatisticController {
       }
 
       const result = await query.orderBy('hive.name');
-      reply.send(result);
+      return { ...result };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -124,7 +124,7 @@ export default class StatisticController {
         .groupBy('year')
         .where({
           'harvests.deleted': false,
-          'harvests.user_id': req.user.user_id,
+          'harvests.user_id': req.session.user.user_id,
         })
         .orderBy('year', 'asc');
 
@@ -151,9 +151,9 @@ export default class StatisticController {
         }
       }
       const result = await query;
-      reply.send(result);
+      return { ...result };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -177,7 +177,7 @@ export default class StatisticController {
         .groupBy('apiary_id')
         .where({
           'harvests.deleted': false,
-          'harvests.user_id': req.user.user_id,
+          'harvests.user_id': req.session.user.user_id,
         })
         .orderBy('task_apiary.apiary_name', 'asc');
 
@@ -206,9 +206,9 @@ export default class StatisticController {
         query.whereRaw(`YEAR(date) = ${new Date().getFullYear()}`);
       }
       const result = await query;
-      reply.send(result);
+      return { ...result };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -233,7 +233,7 @@ export default class StatisticController {
         .groupBy('type_id')
         .where({
           'harvests.deleted': false,
-          'harvests.user_id': req.user.user_id,
+          'harvests.user_id': req.session.user.user_id,
         })
         .orderBy('type.name', 'asc');
 
@@ -262,9 +262,9 @@ export default class StatisticController {
         query.whereRaw(`YEAR(date) = ${new Date().getFullYear()}`);
       }
       const result = await query;
-      reply.send(result);
+      return { ...result };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -284,7 +284,7 @@ export default class StatisticController {
         .where({
           'hive.deleted': false,
           'feeds.deleted': false,
-          'feeds.user_id': req.user.user_id,
+          'feeds.user_id': req.session.user.user_id,
         })
         .page(
           offset ? offset : 0,
@@ -332,9 +332,9 @@ export default class StatisticController {
       }
 
       const result = await query.orderBy('hive.name');
-      reply.send(result);
+      return { ...result };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -351,7 +351,7 @@ export default class StatisticController {
         .groupBy('year')
         .where({
           'feeds.deleted': false,
-          'feeds.user_id': req.user.user_id,
+          'feeds.user_id': req.session.user.user_id,
         })
         .orderBy('year', 'asc');
 
@@ -378,9 +378,9 @@ export default class StatisticController {
         }
       }
       const result = await query;
-      reply.send(result);
+      return { ...result };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -396,7 +396,7 @@ export default class StatisticController {
         .groupBy('apiary_id')
         .where({
           'feeds.deleted': false,
-          'feeds.user_id': req.user.user_id,
+          'feeds.user_id': req.session.user.user_id,
         })
         .orderBy('task_apiary.apiary_name', 'asc');
 
@@ -425,9 +425,9 @@ export default class StatisticController {
         query.whereRaw(`YEAR(date) = ${new Date().getFullYear()}`);
       }
       const result = await query;
-      reply.send(result);
+      return { ...result };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -444,7 +444,7 @@ export default class StatisticController {
         .groupBy('type_id')
         .where({
           'feeds.deleted': false,
-          'feeds.user_id': req.user.user_id,
+          'feeds.user_id': req.session.user.user_id,
         })
         .orderBy('type.name', 'asc');
 
@@ -473,9 +473,9 @@ export default class StatisticController {
         query.whereRaw(`YEAR(date) = ${new Date().getFullYear()}`);
       }
       const result = await query;
-      reply.send(result);
+      return { ...result };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -496,7 +496,7 @@ export default class StatisticController {
         .where({
           'hive.deleted': false,
           'treatments.deleted': false,
-          'treatments.user_id': req.user.user_id,
+          'treatments.user_id': req.session.user.user_id,
         })
         .page(
           offset ? offset : 0,
@@ -536,9 +536,9 @@ export default class StatisticController {
       }
 
       const result = await query.orderBy('hive.name');
-      reply.send(result);
+      return { ...result };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -556,7 +556,7 @@ export default class StatisticController {
         .groupBy('year')
         .where({
           'treatments.deleted': false,
-          'treatments.user_id': req.user.user_id,
+          'treatments.user_id': req.session.user.user_id,
         })
         .orderBy('year', 'asc');
 
@@ -583,9 +583,9 @@ export default class StatisticController {
         }
       }
       const result = await query;
-      reply.send(result);
+      return { ...result };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -603,7 +603,7 @@ export default class StatisticController {
         .groupBy('apiary_id')
         .where({
           'treatments.deleted': false,
-          'treatments.user_id': req.user.user_id,
+          'treatments.user_id': req.session.user.user_id,
         })
         .orderBy('task_apiary.apiary_name', 'asc');
 
@@ -632,9 +632,9 @@ export default class StatisticController {
         query.whereRaw(`YEAR(date) = ${new Date().getFullYear()}`);
       }
       const result = await query;
-      reply.send(result);
+      return { ...result };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -653,7 +653,7 @@ export default class StatisticController {
         .groupBy('type_id')
         .where({
           'treatments.deleted': false,
-          'treatments.user_id': req.user.user_id,
+          'treatments.user_id': req.session.user.user_id,
         })
         .orderBy('type.name', 'asc');
 
@@ -682,9 +682,9 @@ export default class StatisticController {
         query.whereRaw(`YEAR(date) = ${new Date().getFullYear()}`);
       }
       const result = await query;
-      reply.send(result);
+      return { ...result };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -707,7 +707,7 @@ export default class StatisticController {
         .withGraphJoined('hive')
         .where({
           'checkups.deleted': false,
-          'checkups.user_id': req.user.user_id,
+          'checkups.user_id': req.session.user.user_id,
           'hive.deleted': false,
         })
         .groupBy('hive_id', 'year')
@@ -753,9 +753,9 @@ export default class StatisticController {
       }
 
       const result = await query.orderBy('hive.name');
-      reply.send(result);
+      return { ...result };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 }

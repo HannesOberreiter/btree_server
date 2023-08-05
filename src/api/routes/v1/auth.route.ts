@@ -1,9 +1,10 @@
 import { frontend } from '@/config/environment.config';
-import fastifyPassport from '@fastify/passport';
 import { FastifyInstance } from 'fastify';
 import { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { z } from 'zod';
 import AuthController from '@/api/controllers/auth.controller';
+import { Guard } from '@/api/middlewares/guard.middleware';
+import { ROLES } from '@/config/constants.config';
 
 export default function routes(
   instance: FastifyInstance,
@@ -96,6 +97,7 @@ export default function routes(
   server.get(
     '/discourse',
     {
+      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
       schema: {
         querystring: z.object({
           payload: z.string(),
@@ -106,7 +108,7 @@ export default function routes(
     AuthController.discourse,
   );
 
-  server.get(
+  /*server.get(
     '/google/callback',
     {
       preValidation: fastifyPassport.authenticate('google', {
@@ -118,7 +120,7 @@ export default function routes(
       }),
     },
     AuthController.google,
-  );
+  );*/
 
   done();
 }

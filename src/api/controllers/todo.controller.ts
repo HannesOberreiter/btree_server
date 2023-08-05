@@ -11,7 +11,7 @@ export default class TodoController {
       const query = Todo.query()
         .withGraphJoined('[creator(identifier), editor(identifier)]')
         .where({
-          user_id: req.user.user_id,
+          user_id: req.session.user.user_id,
         })
         .page(
           offset ? offset : 0,
@@ -57,9 +57,9 @@ export default class TodoController {
         }
       }
       const result = await query.orderBy('id');
-      reply.send(result);
+      return { ...result };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -80,8 +80,8 @@ export default class TodoController {
 
         const res = await Todo.query(trx).insert({
           ...insert,
-          user_id: req.user.user_id,
-          bee_id: req.user.bee_id,
+          user_id: req.session.user.user_id,
+          bee_id: req.session.user.bee_id,
         });
         result.push(res.id);
         if (repeat > 0) {
@@ -91,17 +91,17 @@ export default class TodoController {
               .format('YYYY-MM-DD');
             const res = await Todo.query(trx).insert({
               ...insert,
-              user_id: req.user.user_id,
-              bee_id: req.user.bee_id,
+              user_id: req.session.user.user_id,
+              bee_id: req.session.user.bee_id,
             });
             result.push(res.id);
           }
         }
         return result;
       });
-      reply.send(result);
+      return { ...result };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -112,13 +112,13 @@ export default class TodoController {
     try {
       const result = await Todo.transaction(async (trx) => {
         return await Todo.query(trx)
-          .patch({ ...insert, bee_id: req.user.bee_id })
+          .patch({ ...insert, bee_id: req.session.user.bee_id })
           .findByIds(ids)
-          .where('user_id', req.user.user_id);
+          .where('user_id', req.session.user.user_id);
       });
-      reply.send(result);
+      return result;
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -128,12 +128,12 @@ export default class TodoController {
       const result = await Todo.transaction(async (trx) => {
         const res = await Todo.query(trx)
           .findByIds(body.ids)
-          .where('user_id', req.user.user_id);
+          .where('user_id', req.session.user.user_id);
         return res;
       });
-      reply.send(result);
+      return { ...result };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -144,11 +144,11 @@ export default class TodoController {
         return Todo.query(trx)
           .delete()
           .whereIn('id', body.ids)
-          .where('user_id', req.user.user_id);
+          .where('user_id', req.session.user.user_id);
       });
-      reply.send(result);
+      return result;
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -158,15 +158,15 @@ export default class TodoController {
       const result = await Todo.transaction(async (trx) => {
         return Todo.query(trx)
           .patch({
-            edit_id: req.user.bee_id,
+            edit_id: req.session.user.bee_id,
             done: body.status,
           })
           .findByIds(body.ids)
-          .where('user_id', req.user.user_id);
+          .where('user_id', req.session.user.user_id);
       });
-      reply.send(result);
+      return result;
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -176,15 +176,15 @@ export default class TodoController {
       const result = await Todo.transaction(async (trx) => {
         return Todo.query(trx)
           .patch({
-            edit_id: req.user.bee_id,
+            edit_id: req.session.user.bee_id,
             date: body.start,
           })
           .findByIds(body.ids)
-          .where('user_id', req.user.user_id);
+          .where('user_id', req.session.user.user_id);
       });
-      reply.send(result);
+      return result;
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 }

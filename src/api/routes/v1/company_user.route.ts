@@ -27,7 +27,7 @@ export default function routes(
         }),
       },
     },
-    CompanyUserController.getUser,
+    CompanyUserController.addUser,
   );
 
   server.delete(
@@ -46,7 +46,7 @@ export default function routes(
       preHandler: Guard.authorize([ROLES.admin]),
       schema: {
         body: z.object({
-          rank: z.string(),
+          rank: z.number(),
         }),
       },
     },

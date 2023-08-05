@@ -41,9 +41,9 @@ describe('Authentification routes', function () {
             expect(res.body.email, global.demoUser.email);
             expect(res.body.activate).to.be.a('string');
             done();
-          }
+          },
         );
-      }
+      },
     );
   });
 
@@ -68,7 +68,7 @@ describe('Authentification routes', function () {
         function (err, res) {
           expectations(res, 'confirm', 'Invalid value');
           done();
-        }
+        },
       );
     });
 
@@ -84,7 +84,7 @@ describe('Authentification routes', function () {
           expect(res.statusCode).to.eqls(200);
           expect(res.body.email, global.demoUser.email);
           done();
-        }
+        },
       );
     });
   });
@@ -110,7 +110,7 @@ describe('Authentification routes', function () {
         function (err, res) {
           expect(res.statusCode).to.eqls(401);
           done();
-        }
+        },
       );
     });
 
@@ -125,11 +125,11 @@ describe('Authentification routes', function () {
         function (err, res) {
           expectations(res, 'password', 'Invalid value');
           done();
-        }
+        },
       );
     });
 
-    it('401 - wrong password', function (done) {
+    it('403 - wrong password', function (done) {
       doRequest(
         agent,
         'post',
@@ -139,13 +139,13 @@ describe('Authentification routes', function () {
         { email: global.demoUser.email, password: 'testseet22' },
         function (err, res) {
           // Too many login attempts happen in watch testing
-          expect(res.statusCode).to.eqls(401);
+          expect(res.statusCode).to.eqls(403);
           done();
-        }
+        },
       );
     });
 
-    it('401 - wrong email', function (done) {
+    it('403 - wrong email', function (done) {
       doRequest(
         agent,
         'post',
@@ -154,13 +154,13 @@ describe('Authentification routes', function () {
         null,
         { email: 'demo_@btree.at', password: 'testseet22' },
         function (err, res) {
-          expect(res.statusCode).to.eqls(401);
+          expect(res.statusCode).to.eqls(403);
           done();
-        }
+        },
       );
     });
 
-    it('200 - login and refresh token', function (done) {
+    it('200 - login', function (done) {
       doRequest(
         agent,
         'post',
@@ -170,24 +170,10 @@ describe('Authentification routes', function () {
         global.demoUser,
         function (err, res) {
           expect(res.statusCode).to.eqls(200);
-          //expect(res.body.token).to.be.a('Object');
           expect(res.body.data).to.be.a('Object');
           expect(res.header, 'set-cookie', /connect.sid=.*; Path=\/; HttpOnly/);
           done();
-          /*doRequest(
-            agent,
-            'post',
-            '/api/v1/auth/refresh',
-            null,
-            //res.body.token.accessToken,
-            //res.body.token.refreshToken,
-            function (err, res) {
-              expect(res.statusCode).to.eqls(200);
-              expect(res.body.result).to.be.a('Object');
-              done();
-            }
-          );*/
-        }
+        },
       );
     });
   });
@@ -206,7 +192,7 @@ describe('Authentification routes', function () {
           expect(res.statusCode).to.eqls(200);
           expect(res.body.email, global.demoUser.email);
           done();
-        }
+        },
       );
     });
   });
@@ -246,14 +232,13 @@ describe('Authentification routes', function () {
                 { email: res.body.email, password: newPassword },
                 function (err, res) {
                   expect(res.statusCode).to.eqls(200);
-                  //expect(res.body.token).to.be.a('Object');
                   expect(res.body.data).to.be.a('Object');
                   done();
-                }
+                },
               );
-            }
+            },
           );
-        }
+        },
       );
     });
   });
@@ -263,9 +248,9 @@ describe('Authentification routes', function () {
     const sso =
       'payload=bm9uY2U9OTJkYWQ0NTMxZTBhZDIwMmY4MWMxYWM0NzVmYjQ5MDMmcmV0dXJuX3Nzb191cmw9aHR0cHMlM0ElMkYlMkZmb3J1bS5idHJlZS5hdCUyRnNlc3Npb24lMkZzc29fbG9naW4%3D&sig=e18fcf73285bdf65610b43ca2e80712175e660571d1d934c08d9499679a52ad0';
 
-    it('403 - forbidden', function (done) {
+    it('400 - bad request', function (done) {
       doQueryRequest(agent, route, null, null, null, function (err, res) {
-        expect(res.statusCode).to.eqls(403);
+        expect(res.statusCode).to.eqls(400);
         done();
       });
     });
@@ -280,7 +265,7 @@ describe('Authentification routes', function () {
         function (err, res) {
           expect(res.statusCode).to.eqls(401);
           done();
-        }
+        },
       );
     });
 
@@ -304,11 +289,12 @@ describe('Authentification routes', function () {
             null,
             function (err, res) {
               expect(res.statusCode).to.eqls(200);
-              expect(res.body).to.include('sso');
+              expect(res.body).to.be.a('Object');
+              expect(res.body.q).to.include('sso');
               done();
-            }
+            },
           );
-        }
+        },
       );
     });
   });
@@ -338,9 +324,9 @@ describe('Authentification routes', function () {
               expect(res.statusCode).to.eqls(200);
               expect(res.body).to.be.equal(true);
               done();
-            }
+            },
           );
-        }
+        },
       );
     });
   });

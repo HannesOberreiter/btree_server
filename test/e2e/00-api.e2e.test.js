@@ -67,12 +67,12 @@ describe('E2E API tests', () => {
     done();
   });
 
-  require('./01-api-routes.e2e.test');
+  //require('./01-api-routes.e2e.test');
   require('./02-auth-routes.e2e.test');
-  // require('./03-calendar-routes.e2e.test');
-  // require('./04-field_setting-routes.e2e.test');
-  // require('./05-company-routes.e2e.test');
-  // require('./06-company-user-routes.e2e.test');
+  //require('./03-calendar-routes.e2e.test');
+  //require('./04-field_setting-routes.e2e.test');
+  require('./05-company-routes.e2e.test');
+  require('./06-company-user-routes.e2e.test');
   // require('./07-apiary-routes.e2e.test');
   // require('./08-hive-routes.e2e.test');
   // require('./09-movedate-routes.e2e.test');

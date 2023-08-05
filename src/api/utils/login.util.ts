@@ -193,7 +193,7 @@ const loginCheck = async (
   if (!bee_id) {
     if (!checkPassword(password, user.password, user.salt)) {
       await insertWrongPasswordTry(user.id);
-      throw httpErrors.Unauthorized('Invalid password');
+      throw httpErrors.Forbidden('Invalid password');
     }
   }
 

@@ -14,7 +14,7 @@ export default class MovedateController {
           '[hive, apiary, creator(identifier), editor(identifier)]',
         )
         .where({
-          'apiary.user_id': req.user.user_id,
+          'apiary.user_id': req.session.user.user_id,
         })
         // Security as we may still have some unclean data in the database were linked apiary or hive does not exist anymore
         .whereNotNull('apiary.id')
@@ -59,9 +59,9 @@ export default class MovedateController {
         }
       }
       const result = await query.orderBy('id');
-      reply.send(result);
+      return { ...result };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -74,15 +74,15 @@ export default class MovedateController {
         return await Movedate.query(trx)
           .patch({
             ...insert,
-            'movedates.edit_id': req.user.bee_id,
+            'movedates.edit_id': req.session.user.bee_id,
           })
           .findByIds(ids)
           .leftJoinRelated('apiary')
-          .where('apiary.user_id', req.user.user_id);
+          .where('apiary.user_id', req.session.user.user_id);
       });
-      reply.send(result);
+      return result;
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -98,7 +98,7 @@ export default class MovedateController {
         await Apiary.query(trx)
           .findByIds(insert.apiary_id)
           .throwIfNotFound()
-          .where('user_id', req.user.user_id);
+          .where('user_id', req.session.user.user_id);
 
         const result = [];
         for (let i = 0; i < hive_ids.length; i++) {
@@ -106,7 +106,7 @@ export default class MovedateController {
 
           await HiveLocation.query()
             .where({
-              user_id: req.user.user_id,
+              user_id: req.session.user.user_id,
               hive_id: id,
             })
             .throwIfNotFound();
@@ -114,15 +114,15 @@ export default class MovedateController {
           const res = await Movedate.query(trx).insert({
             ...insert,
             hive_id: id,
-            bee_id: req.user.bee_id,
+            bee_id: req.session.user.bee_id,
           });
           result.push(res.id);
         }
         return result;
       });
-      reply.send(result);
+      return { ...result };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -136,18 +136,18 @@ export default class MovedateController {
           .select('movedates.id')
           .findByIds(body.ids)
           .leftJoinRelated('apiary')
-          .where('user_id', req.user.user_id);
+          .where('user_id', req.session.user.user_id);
         const ids_array = ids.map((elem) => elem.id);
         return Movedate.query(trx)
           .patch({
-            edit_id: req.user.bee_id,
+            edit_id: req.session.user.bee_id,
             date: body.start,
           })
           .findByIds(ids_array);
       });
-      reply.send(result);
+      return result;
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -159,12 +159,12 @@ export default class MovedateController {
           .findByIds(body.ids)
           .withGraphJoined('hive')
           .withGraphJoined('apiary')
-          .where('apiary.user_id', req.user.user_id);
+          .where('apiary.user_id', req.session.user.user_id);
         return res;
       });
-      reply.send(result);
+      return { ...result };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -177,15 +177,15 @@ export default class MovedateController {
           .withGraphJoined('apiary')
           .withGraphJoined('movedate_count')
           .whereIn('movedates.id', body.ids)
-          .where('user_id', req.user.user_id)
+          .where('user_id', req.session.user.user_id)
           .where('count', '>', 1); // User is not allowed to delete the last movedate
       });
       if (result === 0) {
-        reply.send(httpErrors.Forbidden('lastMovement')); // this specific key is used in frontend to show a specific error message
+        throw httpErrors.Forbidden('lastMovement'); // this specific key is used in frontend to show a specific error message
       }
-      reply.send(result);
+      return result;
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 }

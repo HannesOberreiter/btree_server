@@ -40,7 +40,7 @@ export default class HiveController {
       } = req.query as any;
       const query = Hive.query()
         .where({
-          'hives.user_id': req.user.user_id,
+          'hives.user_id': req.session.user.user_id,
           'hives.deleted': deleted === 'true',
         })
         .page(
@@ -91,9 +91,9 @@ export default class HiveController {
         }
       }
       const result = await query.orderBy('id');
-      reply.send(result);
+      return { ...result };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -118,43 +118,43 @@ export default class HiveController {
         modus_date: body.modus_date,
       };
 
-      const limit = await limitHive(req.user.user_id, repeat);
+      const limit = await limitHive(req.session.user.user_id, repeat);
       if (limit) {
-        reply.send(httpErrors.PaymentRequired('no premium access'));
+        throw httpErrors.PaymentRequired('no premium access');
       }
 
       const result = await Hive.transaction(async (trx) => {
         await Apiary.query(trx)
           .findByIds(insertMovement.apiary_id)
           .throwIfNotFound()
-          .where('user_id', req.user.user_id);
+          .where('user_id', req.session.user.user_id);
 
         const result = [];
         for (let i = 0; i < repeat; i++) {
           const name = repeat > 1 ? body.name + (start + i) : body.name;
 
-          if (await isDuplicateHiveName(req.user.user_id, name)) {
-            reply.send(httpErrors.Conflict('name'));
+          if (await isDuplicateHiveName(req.session.user.user_id, name)) {
+            throw httpErrors.Conflict('name');
           }
 
           const res = await Hive.query(trx).insert({
             ...insert,
             name: name,
-            bee_id: req.user.bee_id,
-            user_id: req.user.user_id,
+            bee_id: req.session.user.bee_id,
+            user_id: req.session.user.user_id,
           });
           await Movedate.query(trx).insert({
             ...insertMovement,
             hive_id: res.id,
-            bee_id: req.user.bee_id,
+            bee_id: req.session.user.bee_id,
           });
           result.push(res.id);
         }
         return result;
       });
-      reply.send(result);
+      return { ...result };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -165,7 +165,7 @@ export default class HiveController {
       const query = Hive.query()
         .findById(id)
         .where({
-          'hives.user_id': req.user.user_id,
+          'hives.user_id': req.session.user.user_id,
           'hives.deleted': false,
         })
         .withGraphFetched(
@@ -196,7 +196,7 @@ export default class HiveController {
         firstMovedate: query_first,
       });
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -212,7 +212,7 @@ export default class HiveController {
         let hives = [];
         if (apiary) {
           await Apiary.query(trx).findById(id).throwIfNotFound().where({
-            'apiaries.user_id': req.user.user_id,
+            'apiaries.user_id': req.session.user.user_id,
             'apiaries.deleted': false,
           });
           const query_hives = await HiveLocation.query()
@@ -225,7 +225,7 @@ export default class HiveController {
           hives = query_hives.map((hive) => hive.hive_id);
         } else {
           await Hive.query(trx).findById(id).throwIfNotFound().where({
-            'hives.user_id': req.user.user_id,
+            'hives.user_id': req.session.user.user_id,
             'hives.deleted': false,
           });
           hives.push(id);
@@ -292,9 +292,9 @@ export default class HiveController {
           movedate: movedate,
         };
       });
-      reply.send(result);
+      return { ...result };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -306,18 +306,18 @@ export default class HiveController {
       const result = await Hive.transaction(async (trx) => {
         if ('name' in body.data) {
           if (ids.length > 1) {
-            reply.send(httpErrors.Conflict('name'));
+            throw httpErrors.Conflict('name');
           }
         }
 
         return await Hive.query(trx)
-          .patch({ ...insert, edit_id: req.user.bee_id })
+          .patch({ ...insert, edit_id: req.session.user.bee_id })
           .findByIds(ids)
-          .where('user_id', req.user.user_id);
+          .where('user_id', req.session.user.user_id);
       });
-      reply.send(result);
+      return result;
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -327,16 +327,16 @@ export default class HiveController {
       const result = await Hive.transaction(async (trx) => {
         return Hive.query(trx)
           .patch({
-            edit_id: req.user.bee_id,
+            edit_id: req.session.user.bee_id,
             modus: body.status,
             modus_date: dayjs().format('YYYY-MM-DD'),
           })
           .findByIds(body.ids)
-          .where('user_id', req.user.user_id);
+          .where('user_id', req.session.user.user_id);
       });
-      reply.send(result);
+      return result;
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -350,7 +350,7 @@ export default class HiveController {
       const result = await Hive.transaction(async (trx) => {
         const res = await Hive.query()
           .select('id', 'deleted')
-          .where('user_id', req.user.user_id)
+          .where('user_id', req.session.user.user_id)
           .whereIn('id', body.ids);
 
         const softIds = [];
@@ -374,15 +374,15 @@ export default class HiveController {
                 .toISOString()
                 .slice(0, 19)
                 .replace('T', ' '),
-              edit_id: req.user.bee_id,
+              edit_id: req.session.user.bee_id,
             })
             .findByIds(softIds);
 
         return res;
       });
-      reply.send(result);
+      return { ...result };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -390,11 +390,11 @@ export default class HiveController {
     try {
       const body = req.body as any;
       const result = await Hive.query().findByIds(body.ids).where({
-        user_id: req.user.user_id,
+        user_id: req.session.user.user_id,
       });
-      reply.send(result);
+      return { ...result };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -409,14 +409,14 @@ export default class HiveController {
             await Hive.query(trx)
               .patch({ position: hive.position })
               .findById(hive.id)
-              .where('user_id', req.user.user_id),
+              .where('user_id', req.session.user.user_id),
           );
         }
         return res;
       });
-      reply.send(result);
+      return { ...result };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 }

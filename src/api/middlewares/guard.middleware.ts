@@ -7,11 +7,6 @@ import httpErrors from 'http-errors';
  * Authentication middleware
  */
 export class Guard {
-  /**
-   * @description Authorize user access according to role(s) in arguments
-   *
-   * @param roles
-   */
   static authorize =
     (roles = listNumber(ROLES)) =>
     (req: FastifyRequest, res: FastifyReply, done: HookHandlerDoneFunction) =>
@@ -23,18 +18,21 @@ export class Guard {
     done: HookHandlerDoneFunction,
     roles: number[],
   ) => {
-    if (!req.isAuthenticated())
-      reply.send(new httpErrors.Unauthorized('Unauthorized'));
-    if (!req.user) reply.send(new httpErrors.Unauthorized('Unauthorized'));
+    if (!req.session.user) {
+      reply.send(httpErrors.Unauthorized('Unauthorized'));
+      return reply;
+    }
 
     if (
       roles.length === 1 &&
       roles[0] === ROLES.admin &&
-      req.user.rank !== ROLES.admin
+      req.session.user.rank !== ROLES.admin
     ) {
-      reply.send(new httpErrors.Forbidden('Forbidden area'));
-    } else if (!roles.includes(req.user.rank)) {
-      reply.send(new httpErrors.Forbidden('Forbidden area'));
+      reply.send(httpErrors.Forbidden('Forbidden area'));
+      return reply;
+    } else if (!roles.includes(req.session.user.rank)) {
+      reply.send(httpErrors.Forbidden('Forbidden area'));
+      return reply;
     }
     done();
   };

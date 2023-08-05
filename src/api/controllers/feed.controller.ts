@@ -16,7 +16,7 @@ export default class FeedController {
         )
         .where({
           'hive.deleted': false,
-          'feeds.user_id': req.user.user_id,
+          'feeds.user_id': req.session.user.user_id,
           'feeds.deleted': deleted === 'true',
         })
         .page(
@@ -63,9 +63,9 @@ export default class FeedController {
         }
       }
       const result = await query.orderBy(['hive_id', 'id']);
-      reply.send(result);
+      return { ...result };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -76,13 +76,13 @@ export default class FeedController {
       const insert = { ...body.data };
       const result = await Feed.transaction(async (trx) => {
         return await Feed.query(trx)
-          .patch({ ...insert, edit_id: req.user.bee_id })
+          .patch({ ...insert, edit_id: req.session.user.bee_id })
           .findByIds(ids)
-          .where('user_id', req.user.user_id);
+          .where('user_id', req.session.user.user_id);
       });
-      reply.send(result);
+      return result;
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -103,15 +103,15 @@ export default class FeedController {
           .distinct('hives.id')
           .findByIds(hive_ids)
           .leftJoinRelated('apiaries')
-          .where('apiaries.user_id', req.user.user_id);
+          .where('apiaries.user_id', req.session.user.user_id);
 
         const result = [];
         for (const hive in hives) {
           const res = await Feed.query(trx).insert({
             ...insert,
             hive_id: hives[hive].id,
-            bee_id: req.user.bee_id,
-            user_id: req.user.user_id,
+            bee_id: req.session.user.bee_id,
+            user_id: req.session.user.user_id,
           });
           result.push(res.id);
 
@@ -127,8 +127,8 @@ export default class FeedController {
               const res = await Feed.query(trx).insert({
                 ...insert_repeat,
                 hive_id: hives[hive].id,
-                bee_id: req.user.bee_id,
-                user_id: req.user.user_id,
+                bee_id: req.session.user.bee_id,
+                user_id: req.session.user.user_id,
               });
               result.push(res.id);
             }
@@ -136,9 +136,9 @@ export default class FeedController {
         }
         return result;
       });
-      reply.send(result);
+      return { ...result };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -148,15 +148,15 @@ export default class FeedController {
       const result = await Feed.transaction(async (trx) => {
         return Feed.query(trx)
           .patch({
-            edit_id: req.user.bee_id,
+            edit_id: req.session.user.bee_id,
             done: body.status,
           })
           .findByIds(body.ids)
-          .where('user_id', req.user.user_id);
+          .where('user_id', req.session.user.user_id);
       });
-      reply.send(result);
+      return result;
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -166,16 +166,16 @@ export default class FeedController {
       const result = await Feed.transaction(async (trx) => {
         return Feed.query(trx)
           .patch({
-            edit_id: req.user.bee_id,
+            edit_id: req.session.user.bee_id,
             date: body.start,
             enddate: body.end,
           })
           .findByIds(body.ids)
-          .where('user_id', req.user.user_id);
+          .where('user_id', req.session.user.user_id);
       });
-      reply.send(result);
+      return result;
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -186,12 +186,12 @@ export default class FeedController {
         const res = await Feed.query(trx)
           .findByIds(body.ids)
           .withGraphJoined('[type, hive]')
-          .where('feeds.user_id', req.user.user_id);
+          .where('feeds.user_id', req.session.user.user_id);
         return res;
       });
-      reply.send(result);
+      return { ...result };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -206,7 +206,7 @@ export default class FeedController {
         const res = await Feed.query(trx)
           .findByIds(body.ids)
           .select('id', 'deleted')
-          .where('user_id', req.user.user_id);
+          .where('user_id', req.session.user.user_id);
 
         const softIds = [];
         const hardIds = [];
@@ -222,15 +222,15 @@ export default class FeedController {
           await Feed.query(trx)
             .patch({
               deleted: restoreDelete ? false : true,
-              edit_id: req.user.bee_id,
+              edit_id: req.session.user.bee_id,
             })
             .findByIds(softIds);
 
         return res;
       });
-      reply.send(result);
+      return { ...result };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 }

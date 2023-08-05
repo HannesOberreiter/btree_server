@@ -15,7 +15,7 @@ export default function routes(
   server.get(
     '/',
     {
-      preHandler: Guard.authorize[(ROLES.read, ROLES.admin, ROLES.user)],
+      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
     },
     ApiaryController.get,
   );

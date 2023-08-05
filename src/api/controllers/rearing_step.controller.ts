@@ -11,9 +11,9 @@ export default class RearingStepController {
           ...body,
         });
       });
-      reply.send(result);
+      return { ...result };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -24,12 +24,12 @@ export default class RearingStepController {
         return await RearingStep.query(trx)
           .withGraphJoined('detail')
           .delete()
-          .where('detail.user_id', req.user.user_id)
+          .where('detail.user_id', req.session.user.user_id)
           .findById(params.id);
       });
-      reply.send(result);
+      return { ...result };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -48,14 +48,14 @@ export default class RearingStepController {
                 sleep_before: step.sleep_before,
               })
               .findById(step.id)
-              .where('detail.user_id', req.user.user_id),
+              .where('detail.user_id', req.session.user.user_id),
           );
         }
         return res;
       });
-      reply.send(result);
+      return { ...result };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 }

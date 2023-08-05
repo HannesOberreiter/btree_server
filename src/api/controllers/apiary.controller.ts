@@ -26,17 +26,19 @@ export default class ApiaryController {
       const insert = { ...body.data };
       const result = await Apiary.transaction(async (trx) => {
         if (body.name) {
-          if (ids.length > 1) reply.send(httpErrors.Conflict('name'));
+          if (ids.length > 1) {
+            throw httpErrors.Conflict('name');
+          }
         }
         return await Apiary.query(trx)
-          .patch({ ...insert, edit_id: req.user.bee_id })
+          .patch({ ...insert, edit_id: req.session.user.bee_id })
           .findByIds(ids)
           .withGraphFetched('hive_count')
-          .where('user_id', req.user.user_id);
+          .where('user_id', req.session.user.user_id);
       });
-      reply.send(result);
+      return result;
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -47,7 +49,7 @@ export default class ApiaryController {
 
       const query = Apiary.query()
         .where({
-          'apiaries.user_id': req.user.user_id,
+          'apiaries.user_id': req.session.user.user_id,
           'apiaries.deleted': deleted === 'true',
         })
         .page(
@@ -84,9 +86,9 @@ export default class ApiaryController {
         }
       }
       const result = await query.orderBy('id');
-      reply.send(result);
+      return { ...result };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -97,7 +99,7 @@ export default class ApiaryController {
       const query = Apiary.query()
         .findById(id)
         .where({
-          'apiaries.user_id': req.user.user_id,
+          'apiaries.user_id': req.session.user.user_id,
           'apiaries.deleted': false,
         })
         .withGraphFetched(
@@ -108,7 +110,11 @@ export default class ApiaryController {
 
       const query_others = await Apiary.query()
         .select('id', 'name')
-        .where({ user_id: req.user.user_id, deleted: false, modus: true })
+        .where({
+          user_id: req.session.user.user_id,
+          deleted: false,
+          modus: true,
+        })
         .orderBy('name');
 
       const query_first = await Movedate.query()
@@ -141,29 +147,35 @@ export default class ApiaryController {
         hives: query_hives,
       });
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
   static async post(req: FastifyRequest, reply: FastifyReply) {
     try {
-      const limit = await limitApiary(req.user.user_id);
-      if (limit) reply.send(httpErrors.PaymentRequired('no premium access'));
+      const limit = await limitApiary(req.session.user.user_id);
+      if (limit) {
+        throw httpErrors.PaymentRequired('no premium access');
+      }
 
       const result = await Apiary.transaction(async (trx) => {
         if (
-          await isDuplicateApiaryName(req.user.user_id, (req.body as any).name)
-        )
-          reply.send(httpErrors.Conflict('name'));
+          await isDuplicateApiaryName(
+            req.session.user.user_id,
+            (req.body as any).name,
+          )
+        ) {
+          throw httpErrors.Conflict('name');
+        }
         return Apiary.query(trx).insertAndFetch({
-          bee_id: req.user.bee_id,
-          user_id: req.user.user_id,
+          bee_id: req.session.user.bee_id,
+          user_id: req.session.user.user_id,
           ...(req.body as any),
         });
       });
-      reply.send(result);
+      return { ...result };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -173,15 +185,15 @@ export default class ApiaryController {
       const result = await Apiary.transaction(async (trx) => {
         return Apiary.query(trx)
           .patch({
-            edit_id: req.user.bee_id,
+            edit_id: req.session.user.bee_id,
             modus: body.status,
           })
           .findByIds(body.ids)
-          .where('user_id', req.user.user_id);
+          .where('user_id', req.session.user.user_id);
       });
-      reply.send(result);
+      return result;
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -196,13 +208,15 @@ export default class ApiaryController {
       await Apiary.transaction(async (trx) => {
         const res = await Apiary.query()
           .withGraphFetched('hive_count')
-          .where('user_id', req.user.user_id)
+          .where('user_id', req.session.user.user_id)
           .whereIn('id', body.ids);
 
         const softIds = [];
         const hardIds = [];
         map(res, (obj) => {
-          if (obj.hive_count) reply.send(httpErrors.Forbidden());
+          if (obj.hive_count) {
+            throw httpErrors.Forbidden();
+          }
 
           if ((obj.deleted || hardDelete) && !restoreDelete)
             hardIds.push(obj.id);
@@ -222,14 +236,14 @@ export default class ApiaryController {
                 .toISOString()
                 .slice(0, 19)
                 .replace('T', ' '),
-              edit_id: req.user.bee_id,
+              edit_id: req.session.user.bee_id,
             })
             .findByIds(softIds);
 
         return res;
       });
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -237,11 +251,11 @@ export default class ApiaryController {
     try {
       const body = req.body as any;
       const result = await Apiary.query().findByIds(body.ids).where({
-        user_id: req.user.user_id,
+        user_id: req.session.user.user_id,
       });
-      reply.send(result);
+      return { ...result };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 }

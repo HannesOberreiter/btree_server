@@ -16,7 +16,7 @@ export default class TreatmentController {
         .where({
           'hive.deleted': false,
           'treatments.deleted': deleted === 'true',
-          'treatments.user_id': req.user.user_id,
+          'treatments.user_id': req.session.user.user_id,
         })
         .page(
           offset ? offset : 0,
@@ -63,9 +63,9 @@ export default class TreatmentController {
         }
       }
       const result = await query.orderBy(['hive_id', 'id']);
-      reply.send(result);
+      return { ...result };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -76,13 +76,13 @@ export default class TreatmentController {
       const insert = { ...body.data };
       const result = await Treatment.transaction(async (trx) => {
         return await Treatment.query(trx)
-          .patch({ ...insert, edit_id: req.user.bee_id })
+          .patch({ ...insert, edit_id: req.session.user.bee_id })
           .findByIds(ids)
-          .where('user_id', req.user.user_id);
+          .where('user_id', req.session.user.user_id);
       });
-      reply.send(result);
+      return result;
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -102,15 +102,15 @@ export default class TreatmentController {
           .distinct('hives.id')
           .findByIds(hive_ids)
           .leftJoinRelated('apiaries')
-          .where('apiaries.user_id', req.user.user_id);
+          .where('apiaries.user_id', req.session.user.user_id);
 
         const result = [];
         for (const hive in hives) {
           const res = await Treatment.query(trx).insert({
             ...insert,
             hive_id: hives[hive].id,
-            bee_id: req.user.bee_id,
-            user_id: req.user.user_id,
+            bee_id: req.session.user.bee_id,
+            user_id: req.session.user.user_id,
           });
           result.push(res.id);
 
@@ -126,8 +126,8 @@ export default class TreatmentController {
               const res = await Treatment.query(trx).insert({
                 ...insert_repeat,
                 hive_id: hives[hive].id,
-                bee_id: req.user.bee_id,
-                user_id: req.user.user_id,
+                bee_id: req.session.user.bee_id,
+                user_id: req.session.user.user_id,
               });
               result.push(res.id);
             }
@@ -135,9 +135,9 @@ export default class TreatmentController {
         }
         return result;
       });
-      reply.send(result);
+      return { ...result };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -147,15 +147,15 @@ export default class TreatmentController {
       const result = await Treatment.transaction(async (trx) => {
         return Treatment.query(trx)
           .patch({
-            edit_id: req.user.bee_id,
+            edit_id: req.session.user.bee_id,
             done: body.status,
           })
           .findByIds(body.ids)
-          .where('user_id', req.user.user_id);
+          .where('user_id', req.session.user.user_id);
       });
-      reply.send(result);
+      return result;
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -165,16 +165,16 @@ export default class TreatmentController {
       const result = await Treatment.transaction(async (trx) => {
         return Treatment.query(trx)
           .patch({
-            edit_id: req.user.bee_id,
+            edit_id: req.session.user.bee_id,
             date: body.start,
             enddate: body.end,
           })
           .findByIds(body.ids)
-          .where('user_id', req.user.user_id);
+          .where('user_id', req.session.user.user_id);
       });
-      reply.send(result);
+      return result;
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -185,12 +185,12 @@ export default class TreatmentController {
         const res = await Treatment.query(trx)
           .findByIds(body.ids)
           .withGraphJoined('[type, disease, vet, hive]')
-          .where('treatments.user_id', req.user.user_id);
+          .where('treatments.user_id', req.session.user.user_id);
         return res;
       });
-      reply.send(result);
+      return { ...result };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -205,7 +205,7 @@ export default class TreatmentController {
         const res = await Treatment.query(trx)
           .findByIds(body.ids)
           .select('id', 'deleted')
-          .where('user_id', req.user.user_id);
+          .where('user_id', req.session.user.user_id);
 
         const softIds = [];
         const hardIds = [];
@@ -221,15 +221,15 @@ export default class TreatmentController {
           await Treatment.query(trx)
             .patch({
               deleted: restoreDelete ? false : true,
-              edit_id: req.user.bee_id,
+              edit_id: req.session.user.bee_id,
             })
             .findByIds(softIds);
 
         return res;
       });
-      reply.send(result);
+      return { ...result };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 }

@@ -19,7 +19,7 @@ import { MailServer } from '../app.bootstrap';
 
 import { DiscourseSSO } from '../services/discourse.service';
 import { FastifyReply, FastifyRequest } from 'fastify';
-import fastifyPassport from '@fastify/passport';
+// import fastifyPassport from '@fastify/passport';
 import httpErrors from 'http-errors';
 import { ENVIRONMENT } from '@/config/constants.config';
 
@@ -31,10 +31,10 @@ export default class AuthController {
       reset: key,
     });
     if (!u) {
-      reply.send(httpErrors.Forbidden('Confirm Key not found'));
+      return httpErrors.Forbidden('Confirm Key not found');
     }
     const result = await confirmAccount(u.id);
-    reply.send({ email: result });
+    return { email: result };
   }
 
   static async resetRequest(req: FastifyRequest, reply: FastifyReply) {
@@ -46,7 +46,7 @@ export default class AuthController {
     if (!u) {
       // "Best Practice" don't tell anyone if the user exists
       // return next(badRequest('User not found!'));
-      reply.send({ email: email });
+      return { email: email };
     }
     const result = await resetMail(u.id);
 
@@ -58,13 +58,13 @@ export default class AuthController {
       key: result.reset,
     });
     if (env !== ENVIRONMENT.production) {
-      reply.send({
+      return {
         email: result.email,
         token: result.reset,
         id: result.id,
-      });
+      };
     }
-    reply.send({ email: result.email });
+    return { email: result.email };
   }
 
   static async unsubscribeRequest(req: FastifyRequest, reply: FastifyReply) {
@@ -76,10 +76,10 @@ export default class AuthController {
     if (!u) {
       // "Best Practice" don't tell anyone if the user exists
       // return next(badRequest('User not found!'));
-      reply.send({ email: email });
+      return { email: email };
     }
     const result = await unsubscribeMail(u.id);
-    reply.send({ email: result });
+    return { email: result };
   }
 
   static async resetPassword(req: FastifyRequest, reply: FastifyReply) {
@@ -88,10 +88,10 @@ export default class AuthController {
       reset: key,
     });
     if (!u) {
-      reply.send(httpErrors.NotFound('Reset key not found!'));
+      return httpErrors.NotFound('Reset key not found!');
     }
     if (dayjs().diff(u.reset_timestamp, 'hours') > 24) {
-      reply.send(httpErrors.Forbidden('Reset key too old!'));
+      return httpErrors.Forbidden('Reset key too old!');
     }
     const result = await resetPassword(u.id, password);
     await MailServer.sendMail({
@@ -100,7 +100,7 @@ export default class AuthController {
       subject: 'pw_reseted',
       name: result.username,
     });
-    reply.send({ email: result.email });
+    return { email: result.email };
   }
 
   static async register(req: FastifyRequest, reply: FastifyReply) {
@@ -118,35 +118,31 @@ export default class AuthController {
     inputUser.reset = randomBytes(64).toString('hex');
     // we only have german or english available for autofill
     const autofillLang = inputUser.lang == 'de' ? 'de' : 'en';
-    try {
-      await User.transaction(async (trx) => {
-        const uniqueMail = await User.query(trx).findOne({
-          email: inputUser.email,
-        });
-        if (uniqueMail) {
-          reply.send(httpErrors.Conflict('email'));
-        }
-
-        const u = await User.query(trx).insert({ ...inputUser, state: 0 });
-        const c = await Company.query(trx).insert({
-          name: inputCompany,
-          paid: dayjs().add(31, 'day').format('YYYY-MM-DD'),
-        });
-        await CompanyBee.query(trx).insert({ bee_id: u.id, user_id: c.id });
-        await autoFill(trx, c.id, autofillLang);
+    await User.transaction(async (trx) => {
+      const uniqueMail = await User.query(trx).findOne({
+        email: inputUser.email,
       });
+      if (uniqueMail) {
+        return httpErrors.Conflict('email');
+      }
 
-      await MailServer.sendMail({
-        to: inputUser.email,
-        lang: inputUser.lang,
-        subject: 'register',
-        key: inputUser.reset,
+      const u = await User.query(trx).insert({ ...inputUser, state: 0 });
+      const c = await Company.query(trx).insert({
+        name: inputCompany,
+        paid: dayjs().add(31, 'day').format('YYYY-MM-DD'),
       });
+      await CompanyBee.query(trx).insert({ bee_id: u.id, user_id: c.id });
+      await autoFill(trx, c.id, autofillLang);
+    });
 
-      reply.send({ email: inputUser.email, activate: inputUser.reset });
-    } catch (e) {
-      reply.send(checkMySQLError(e));
-    }
+    await MailServer.sendMail({
+      to: inputUser.email,
+      lang: inputUser.lang,
+      subject: 'register',
+      key: inputUser.reset,
+    });
+
+    return { email: inputUser.email, activate: inputUser.reset };
   }
 
   static async logout(req: FastifyRequest, reply: FastifyReply) {
@@ -158,8 +154,8 @@ export default class AuthController {
         throw Error(err);
       }
     });
-    req.logOut();
-    reply.send(true);
+    // req.logOut();
+    return true;
   }
 
   static async login(req: FastifyRequest, reply: FastifyReply) {
@@ -177,57 +173,51 @@ export default class AuthController {
     req['bee_id'] = bee_id;
     try {
       await req.session.regenerate();
-      fastifyPassport.registerUserSerializer(async (user, request) => {
-        return (user = {
-          bee_id: bee_id,
-          user_id: user_id,
-          paid: paid,
-          rank: rank as any,
-          user_agent: userAgent,
-          last_visit: new Date(),
-          uuid: randomUUID(),
-          ip: request.ip,
-        });
-      });
+      req.session.user = {
+        bee_id: bee_id,
+        user_id: user_id,
+        paid: paid,
+        rank: rank as any,
+        user_agent: userAgent,
+        last_visit: new Date(),
+        uuid: randomUUID(),
+        ip: req.ip,
+      };
       await req.session.save();
     } catch (e) {
       req.log.error(e);
-      reply.send(httpErrors[500]('Failed to create session'));
+      return httpErrors[500]('Failed to create session');
     }
-    reply.send({ data });
+    return { data };
   }
 
   static async discourse(req: FastifyRequest, reply: FastifyReply) {
     const sso = new DiscourseSSO(discourseSecret);
     const { payload, sig } = req.query as any;
     if (payload && sig) {
-      try {
-        if (sso.validate(payload, sig)) {
-          const user = await User.query()
-            .select('id', 'username', 'email')
-            .findById(req.user.bee_id)
-            .throwIfNotFound();
+      if (sso.validate(payload, sig)) {
+        const user = await User.query()
+          .select('id', 'username', 'email')
+          .findById(req.session.user.bee_id)
+          .throwIfNotFound();
 
-          const nonce = sso.getNonce(payload);
-          const userparams = {
-            nonce: nonce,
-            external_id: user.id,
-            email: user.email,
-            username: user.username ? user.username : 'anonymous_' + user.id,
-            name: user.username ? user.username : 'anonymous_' + user.id,
-            suppress_welcome_message: true,
-            require_activation: false,
-          };
-          const q = sso.buildLoginString(userparams);
-          reply.send(q);
-        } else {
-          reply.send(httpErrors.Forbidden('Invalid Signature'));
-        }
-      } catch (e) {
-        reply.send(checkMySQLError(e));
+        const nonce = sso.getNonce(payload);
+        const userparams = {
+          nonce: nonce,
+          external_id: user.id,
+          email: user.email,
+          username: user.username ? user.username : 'anonymous_' + user.id,
+          name: user.username ? user.username : 'anonymous_' + user.id,
+          suppress_welcome_message: true,
+          require_activation: false,
+        };
+        const q = sso.buildLoginString(userparams);
+        return { q };
+      } else {
+        return httpErrors.Forbidden('Invalid Signature');
       }
     } else {
-      reply.send(httpErrors.Forbidden('Missing Signature'));
+      return httpErrors.Forbidden('Missing Signature');
     }
   }
 
@@ -235,16 +225,16 @@ export default class AuthController {
    * @description handle google oauth callback, redirect to register page if user does not exist or login otherwise with session cookie
    */
   static async google(req: FastifyRequest, reply: FastifyReply) {
-    if (!req.user.bee_id) {
-      if (!req.user['name'] && !req.user['email']) {
+    if (!req.session.user.bee_id) {
+      if (!req.session.user['name'] && !req.session.user['email']) {
         return reply.redirect(frontend + '/visitor/login?error=oauth');
       }
       return reply.redirect(
         frontend +
           '/visitor/register?name=' +
-          req.user['name'] +
+          req.session.user['name'] +
           '&email=' +
-          req.user['email'] +
+          req.session.user['email'] +
           '&oauth=google',
       );
     }
@@ -254,27 +244,26 @@ export default class AuthController {
     const { bee_id, user_id, paid, rank } = await loginCheck(
       '',
       '',
-      req.user.bee_id,
+      req.session.user.bee_id,
     );
 
     try {
+      req['bee_id'] = bee_id;
       await req.session.regenerate();
-      fastifyPassport.registerUserSerializer(async (user, request) => {
-        return (user = {
-          bee_id: bee_id,
-          user_id: user_id,
-          paid: paid,
-          rank: rank as any,
-          user_agent: userAgent,
-          last_visit: new Date(),
-          uuid: randomUUID(),
-          ip: request.ip,
-        });
-      });
+      req.session.user = {
+        bee_id: bee_id,
+        user_id: user_id,
+        paid: paid,
+        rank: rank as any,
+        user_agent: userAgent,
+        last_visit: new Date(),
+        uuid: randomUUID(),
+        ip: req.ip,
+      };
       await req.session.save();
     } catch (e) {
       req.log.error(e);
-      reply.send(httpErrors[500]('Failed to create session'));
+      return httpErrors[500]('Failed to create session');
     }
     reply.redirect(frontend + '/visitor/login');
   }

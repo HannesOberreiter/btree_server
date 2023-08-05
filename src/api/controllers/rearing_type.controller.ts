@@ -11,7 +11,7 @@ export default class RearingTypeController {
       const query = RearingType.query()
         .withGraphFetched('step(orderByPosition).detail')
         .where({
-          'rearing_types.user_id': req.user.user_id,
+          'rearing_types.user_id': req.session.user.user_id,
         })
         .page(
           offset ? offset : 0,
@@ -35,9 +35,9 @@ export default class RearingTypeController {
         }
       }
       const result = await query.orderBy('id');
-      reply.send(result);
+      return { ...result };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -50,11 +50,11 @@ export default class RearingTypeController {
         return await RearingType.query(trx)
           .patch({ ...insert })
           .findByIds(ids)
-          .where('user_id', req.user.user_id);
+          .where('user_id', req.session.user.user_id);
       });
-      reply.send(result);
+      return result;
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -64,12 +64,12 @@ export default class RearingTypeController {
       const result = await RearingType.transaction(async (trx) => {
         return await RearingType.query(trx).insert({
           ...body,
-          user_id: req.user.user_id,
+          user_id: req.session.user.user_id,
         });
       });
-      reply.send(result);
+      return { ...result };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -80,12 +80,12 @@ export default class RearingTypeController {
         const res = await RearingType.query(trx)
           .withGraphFetched('detail')
           .findByIds(body.ids)
-          .where('rearing_types.user_id', req.user.user_id);
+          .where('rearing_types.user_id', req.session.user.user_id);
         return res;
       });
-      reply.send(result);
+      return { ...result };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -96,22 +96,22 @@ export default class RearingTypeController {
         await RearingStep.query(trx)
           .withGraphJoined('type')
           .delete()
-          .where('type.user_id', req.user.user_id)
+          .where('type.user_id', req.session.user.user_id)
           .whereIn('type_id', body.ids);
 
         await Rearing.query(trx)
           .delete()
-          .where('rearings.user_id', req.user.user_id)
+          .where('rearings.user_id', req.session.user.user_id)
           .whereIn('type_id', body.ids);
 
         return await RearingType.query(trx)
           .delete()
           .whereIn('id', body.ids)
-          .where('user_id', req.user.user_id);
+          .where('user_id', req.session.user.user_id);
       });
-      reply.send(result);
+      return result;
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 }

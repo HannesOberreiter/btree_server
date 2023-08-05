@@ -18,30 +18,33 @@ export default class ServiceController {
   static async getTemperature(req: FastifyRequest, reply: FastifyReply) {
     try {
       const params = req.params as any;
-      const premium = await isPremium(req.user.user_id);
+      const premium = await isPremium(req.session.user.user_id);
       if (!premium) {
-        reply.send(httpErrors.PaymentRequired());
+        throw httpErrors.PaymentRequired();
       }
       const apiary = await Apiary.query()
         .findById(params.apiary_id)
-        .where({ user_id: req.user.user_id });
+        .where({ user_id: req.session.user.user_id });
       const temp = await getTemperature(apiary.latitude, apiary.longitude);
-      reply.send(temp.data);
+      return { ...temp.data };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
   static async paypalCreateOrder(req: FastifyRequest, reply: FastifyReply) {
     try {
       const body = req.body as any;
-      const order = await paypalCreateOrder(req.user.user_id, body.amount);
+      const order = await paypalCreateOrder(
+        req.session.user.user_id,
+        body.amount,
+      );
       if (order.status !== 'CREATED') {
-        reply.send(httpErrors.InternalServerError('Could not create order'));
+        throw httpErrors.InternalServerError('Could not create order');
       }
-      reply.send(order);
+      return { order };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -50,7 +53,7 @@ export default class ServiceController {
       const params = req.params as any;
       const capture = await capturePayment(params.orderID);
       if (capture.status !== 'COMPLETED' && capture.status !== 'APPROVED') {
-        reply.send(httpErrors.InternalServerError('Could not capure order'));
+        throw httpErrors.InternalServerError('Could not capure order');
       }
       let value = 0;
       const mail = capture.payment_source.paypal.email_address;
@@ -61,31 +64,39 @@ export default class ServiceController {
       } catch (e) {
         req.log.error(e);
       }
-      const paid = await addPremium(req.user.user_id, 12, value, 'paypal');
+      const paid = await addPremium(
+        req.session.user.user_id,
+        12,
+        value,
+        'paypal',
+      );
 
       createInvoice(mail, value, 'PayPal');
-      reply.send({ ...capture, paid });
+      return { ...capture, paid };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
   static async stripeCreateOrder(req: FastifyRequest, reply: FastifyReply) {
     try {
       const body = req.body as any;
-      const session = await stripeCreateOrder(req.user.user_id, body.amount);
-      reply.send(session);
+      const session = await stripeCreateOrder(
+        req.session.user.user_id,
+        body.amount,
+      );
+      return session;
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
   static async askWizBee(req: FastifyRequest, reply: FastifyReply) {
     try {
       const body = req.body as any;
-      const premium = await isPremium(req.user.user_id);
+      const premium = await isPremium(req.session.user.user_id);
       if (!premium) {
-        reply.send(httpErrors.PaymentRequired());
+        throw httpErrors.PaymentRequired();
       }
       const date = new Date().toISOString().split('T')[0];
 
@@ -94,12 +105,12 @@ export default class ServiceController {
       let id = null;
 
       const usedTokens = await WizBeeToken.query().findOne({
-        bee_id: req.user.bee_id,
+        bee_id: req.session.user.bee_id,
         date: date,
       });
       if (usedTokens) {
         if (usedTokens.usedTokens <= 0) {
-          reply.send(httpErrors.TooManyRequests('Daily tokens limit reached'));
+          throw httpErrors.TooManyRequests('Daily tokens limit reached');
         }
 
         savedTokens = usedTokens.usedTokens;
@@ -107,7 +118,7 @@ export default class ServiceController {
         id = usedTokens.id;
       } else {
         const insert = await WizBeeToken.query().insertAndFetch({
-          bee_id: req.user.bee_id,
+          bee_id: req.session.user.bee_id,
           date: date,
           usedTokens: openAI.dailyUserTokenLimit,
           countQuestions: 0,
@@ -121,7 +132,7 @@ export default class ServiceController {
       const bot = new WizBee();
       const result = await bot.search(body.question, body.lang);
       if (!result) {
-        reply.send(httpErrors.NotFound('Could not get answer from WizBee'));
+        throw httpErrors.NotFound('Could not get answer from WizBee');
       }
 
       if (result.tokens && id) {
@@ -134,9 +145,9 @@ export default class ServiceController {
         });
       }
 
-      reply.send({ ...result, savedTokens, savedQuestions });
+      return { ...result, savedTokens, savedQuestions };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 }

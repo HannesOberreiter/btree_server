@@ -9,7 +9,7 @@ export default class RearingController {
       const query = Rearing.query()
         .withGraphJoined('[type, start]')
         .where({
-          'rearings.user_id': req.user.user_id,
+          'rearings.user_id': req.session.user.user_id,
         })
         .page(
           offset ? offset : 0,
@@ -50,9 +50,9 @@ export default class RearingController {
         }
       }
       const result = await query.orderBy('id');
-      reply.send(result);
+      return { ...result };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -63,13 +63,13 @@ export default class RearingController {
       const insert = { ...body.data };
       const result = await Rearing.transaction(async (trx) => {
         return await Rearing.query(trx)
-          .patch({ ...insert, edit_id: req.user.bee_id })
+          .patch({ ...insert, edit_id: req.session.user.bee_id })
           .findByIds(ids)
-          .where('user_id', req.user.user_id);
+          .where('user_id', req.session.user.user_id);
       });
-      reply.send(result);
+      return result;
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -79,13 +79,13 @@ export default class RearingController {
       const result = await Rearing.transaction(async (trx) => {
         return await Rearing.query(trx).insertAndFetch({
           ...body,
-          user_id: req.user.user_id,
-          bee_id: req.user.bee_id,
+          user_id: req.session.user.user_id,
+          bee_id: req.session.user.bee_id,
         });
       });
-      reply.send(result);
+      return { ...result };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -95,15 +95,15 @@ export default class RearingController {
       const result = await Rearing.transaction(async (trx) => {
         return Rearing.query(trx)
           .patch({
-            edit_id: req.user.bee_id,
+            edit_id: req.session.user.bee_id,
             date: body.start,
           })
           .findByIds(body.ids)
-          .where('rearings.user_id', req.user.user_id);
+          .where('rearings.user_id', req.session.user.user_id);
       });
-      reply.send(result);
+      return result;
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -114,11 +114,11 @@ export default class RearingController {
         return Rearing.query(trx)
           .delete()
           .findByIds(body.ids)
-          .where('user_id', req.user.user_id);
+          .where('user_id', req.session.user.user_id);
       });
-      reply.send(result);
+      return result;
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -128,12 +128,12 @@ export default class RearingController {
       const result = await Rearing.transaction(async (trx) => {
         const res = await Rearing.query(trx)
           .findByIds(body.ids)
-          .where('rearings.user_id', req.user.user_id);
+          .where('rearings.user_id', req.session.user.user_id);
         return res;
       });
-      reply.send(result);
+      return { ...result };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 }

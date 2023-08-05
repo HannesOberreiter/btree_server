@@ -15,7 +15,7 @@ export default class ChargeController {
           '[type.stock, creator(identifier), editor(identifier)]',
         )
         .where({
-          'charges.user_id': req.user.user_id,
+          'charges.user_id': req.session.user.user_id,
           'charges.deleted': deleted === 'true',
         })
         .page(
@@ -62,9 +62,9 @@ export default class ChargeController {
         }
       }
       const result = await query.orderBy('id');
-      reply.send(result);
+      return { ...result };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -75,7 +75,7 @@ export default class ChargeController {
         .select('type.id', 'sum', 'type.name', 'type.unit', 'sum_in', 'sum_out')
         .leftJoinRelated('type')
         .where({
-          'charge_stocks.user_id': req.user.user_id,
+          'charge_stocks.user_id': req.session.user.user_id,
           'type.modus': true,
         })
         .page(
@@ -100,9 +100,9 @@ export default class ChargeController {
         }
       }
       const result = await query.orderBy('type_id');
-      reply.send(result);
+      return { ...result };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -126,15 +126,15 @@ export default class ChargeController {
 
         const res = await Charge.query(trx).insert({
           ...insert,
-          user_id: req.user.user_id,
-          bee_id: req.user.bee_id,
+          user_id: req.session.user.user_id,
+          bee_id: req.session.user.bee_id,
         });
         result.push(res.id);
         return result;
       });
-      reply.send(result);
+      return { ...result };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -145,13 +145,13 @@ export default class ChargeController {
     try {
       const result = await Charge.transaction(async (trx) => {
         return await Charge.query(trx)
-          .patch({ ...insert, edit_id: req.user.bee_id })
+          .patch({ ...insert, edit_id: req.session.user.bee_id })
           .findByIds(ids)
-          .where('user_id', req.user.user_id);
+          .where('user_id', req.session.user.user_id);
       });
-      reply.send(result);
+      return result;
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -161,12 +161,12 @@ export default class ChargeController {
       const result = await Charge.transaction(async (trx) => {
         const res = await Charge.query(trx)
           .findByIds(body.ids)
-          .where('user_id', req.user.user_id);
+          .where('user_id', req.session.user.user_id);
         return res;
       });
-      reply.send(result);
+      return { ...result };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -179,7 +179,7 @@ export default class ChargeController {
 
       const result = await Charge.transaction(async (trx) => {
         const res = await Charge.query()
-          .where('user_id', req.user.user_id)
+          .where('user_id', req.session.user.user_id)
           .whereIn('id', body.ids);
 
         const softIds = [];
@@ -203,15 +203,15 @@ export default class ChargeController {
                 .toISOString()
                 .slice(0, 19)
                 .replace('T', ' '),
-              edit_id: req.user.bee_id,
+              edit_id: req.session.user.bee_id,
             })
             .findByIds(softIds);
 
         return res;
       });
-      reply.send(result);
+      return { ...result };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 }

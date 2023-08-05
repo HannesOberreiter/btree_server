@@ -9,7 +9,6 @@ const {
 
 describe('Calendar routes', function () {
   const route = '/api/v1/calendar';
-  let accessToken;
 
   before(function (done) {
     agent = request.agent(global.server);
@@ -26,7 +25,7 @@ describe('Calendar routes', function () {
         expect(res.statusCode).to.eqls(200);
         expect(res.header, 'set-cookie', /connect.sid=.*; Path=\/; HttpOnly/);
         done();
-      }
+      },
     );
   });
 
@@ -50,10 +49,12 @@ describe('Calendar routes', function () {
           {},
           function (err, res) {
             expect(res.statusCode).to.eqls(400);
-            expectations(res, 'start', 'Invalid value');
-            expectations(res, 'end', 'Invalid value');
+            if (kind !== '/rearing') {
+              expectations(res, 'start', 'Invalid value');
+              expectations(res, 'end', 'Invalid value');
+            }
             done();
-          }
+          },
         );
       });
 
@@ -68,7 +69,7 @@ describe('Calendar routes', function () {
             expect(res.statusCode).to.eqls(401);
             expect(res.errors, 'JsonWebTokenError');
             done();
-          }
+          },
         );
       });
 
@@ -77,7 +78,7 @@ describe('Calendar routes', function () {
           agent,
           route + kind,
           null,
-          accessToken,
+          null,
           {
             start: new Date('2020-01-01').toISOString(),
             end: new Date('2020-12-30').toISOString(),
@@ -86,7 +87,7 @@ describe('Calendar routes', function () {
             expect(res.statusCode).to.eqls(200);
             expect(res.body).to.be.a('Array');
             done();
-          }
+          },
         );
       });
     });

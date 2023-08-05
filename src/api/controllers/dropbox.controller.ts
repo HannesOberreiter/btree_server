@@ -32,10 +32,10 @@ export default class DropboxController {
           false,
         )
         .then((authUrl) => {
-          reply.send({ url: authUrl });
+          return { url: authUrl };
         });
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -54,7 +54,7 @@ export default class DropboxController {
       await DropboxModel.transaction(async (trx) => {
         const exist = await DropboxModel.query(trx)
           .select('id')
-          .findOne('user_id', req.user.user_id);
+          .findOne('user_id', req.session.user.user_id);
         if (exist) {
           return await DropboxModel.query(trx).findById(exist.id).patch({
             refresh_token: refresh_token,
@@ -64,13 +64,13 @@ export default class DropboxController {
           return await DropboxModel.query(trx).insert({
             refresh_token: refresh_token,
             access_token: access_token,
-            user_id: req.user.user_id,
+            user_id: req.session.user.user_id,
           });
         }
       });
       reply.redirect(access_token);
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -78,10 +78,10 @@ export default class DropboxController {
     try {
       const token = await DropboxModel.query().findOne(
         'user_id',
-        req.user.user_id,
+        req.session.user.user_id,
       );
       if (!token) {
-        reply.send('');
+        return '';
       }
       // check if access_token is still valid, to prevent one round trip
       const dbx = new DropboxAuth({
@@ -97,12 +97,12 @@ export default class DropboxController {
               access_token: dbx.getAccessToken(),
               refresh_token: dbx.getRefreshToken(),
             })
-            .findOne('user_id', req.user.user_id);
+            .findOne('user_id', req.session.user.user_id);
         });
       }
-      reply.send(token.access_token);
+      return token.access_token;
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -111,7 +111,7 @@ export default class DropboxController {
       const result = await DropboxModel.transaction(async (trx) => {
         const token = await DropboxModel.query(trx)
           .select('refresh_token')
-          .findOne('user_id', req.user.user_id);
+          .findOne('user_id', req.session.user.user_id);
         const dbx = new Dropbox({
           ...DropboxController.config,
           refreshToken: token.refresh_token,
@@ -119,11 +119,11 @@ export default class DropboxController {
         await dbx.authTokenRevoke();
         return DropboxModel.query(trx)
           .delete()
-          .where('user_id', req.user.user_id);
+          .where('user_id', req.session.user.user_id);
       });
-      reply.send(result);
+      return result;
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 }

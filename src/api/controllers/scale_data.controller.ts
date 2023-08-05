@@ -20,7 +20,7 @@ export default class ScaleDataController {
       const company = await getCompany(params.api);
       const premium = await isPremium(company.id);
       if (!premium) {
-        reply.send(httpErrors.PaymentRequired());
+        throw httpErrors.PaymentRequired();
       }
 
       const result = await ScaleData.transaction(async (trx) => {
@@ -41,7 +41,7 @@ export default class ScaleDataController {
               dayjs(lastInsert.datetime) >
               dayjs(insertDate as any).subtract(1, 'hour')
             ) {
-              reply.send(httpErrors.TooManyRequests());
+              throw httpErrors.TooManyRequests();
             }
           }
 
@@ -85,9 +85,9 @@ export default class ScaleDataController {
         const query = await ScaleData.query(trx).insert({ ...insert });
         return query;
       });
-      reply.send(result);
+      return { ...result };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -97,7 +97,7 @@ export default class ScaleDataController {
       const query = ScaleData.query()
         .withGraphJoined('[scale.hive]')
         .where({
-          'scale.user_id': req.user.user_id,
+          'scale.user_id': req.session.user.user_id,
         })
         .page(
           offset ? offset : 0,
@@ -137,9 +137,9 @@ export default class ScaleDataController {
         }
       }
       const result = await query.orderBy('id');
-      reply.send(result);
+      return { ...result };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -153,11 +153,11 @@ export default class ScaleDataController {
           .withGraphJoined('scale')
           .patch({ ...insert })
           .findByIds(ids)
-          .where('scale.user_id', req.user.user_id);
+          .where('scale.user_id', req.session.user.user_id);
       });
-      reply.send(result);
+      return result;
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -170,11 +170,11 @@ export default class ScaleDataController {
           .insertGraphAndFetch({
             ...insert,
           })
-          .where('scale.user_id', req.user.user_id);
+          .where('scale.user_id', req.session.user.user_id);
       });
-      reply.send(result);
+      return { ...result };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -185,12 +185,12 @@ export default class ScaleDataController {
         const res = await ScaleData.query(trx)
           .findByIds(body.ids)
           .withGraphJoined('scale')
-          .where('scale.user_id', req.user.user_id);
+          .where('scale.user_id', req.session.user.user_id);
         return res;
       });
-      reply.send(result);
+      return { ...result };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -201,12 +201,12 @@ export default class ScaleDataController {
         return await ScaleData.query(trx)
           .delete()
           .withGraphJoined('scale')
-          .where('scale.user_id', req.user.user_id)
+          .where('scale.user_id', req.session.user.user_id)
           .findByIds(body.ids);
       });
-      reply.send(result);
+      return result;
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 }

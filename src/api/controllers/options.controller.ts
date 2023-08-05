@@ -33,7 +33,7 @@ export default class OptionController {
       const table = Object(OptionController.tables)[params.table];
       const query = table
         .query()
-        .where(`${params.table}.user_id`, req.user.user_id);
+        .where(`${params.table}.user_id`, req.session.user.user_id);
       if (params.table === 'charge_types') {
         query.withGraphJoined('stock');
       }
@@ -51,9 +51,9 @@ export default class OptionController {
       }
 
       const result = await query;
-      reply.send(result);
+      return { ...result };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -69,11 +69,11 @@ export default class OptionController {
           .query(trx)
           .patch({ ...insert })
           .findByIds(ids)
-          .where('user_id', req.user.user_id);
+          .where('user_id', req.session.user.user_id);
       });
-      reply.send(result);
+      return { ...result };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -88,16 +88,16 @@ export default class OptionController {
           await table
             .query(trx)
             .patch({ favorite: false })
-            .where('user_id', req.user.user_id);
+            .where('user_id', req.session.user.user_id);
         }
         return await table.query(trx).insert({
           ...insert,
-          user_id: req.user.user_id,
+          user_id: req.session.user.user_id,
         });
       });
-      reply.send(result);
+      return { ...result };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -113,11 +113,11 @@ export default class OptionController {
             modus: body.status,
           })
           .findByIds(body.ids)
-          .where('user_id', req.user.user_id);
+          .where('user_id', req.session.user.user_id);
       });
-      reply.send(result);
+      return { ...result };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -130,17 +130,17 @@ export default class OptionController {
         await table
           .query(trx)
           .patch({ favorite: false })
-          .where('user_id', req.user.user_id);
+          .where('user_id', req.session.user.user_id);
 
         return table
           .query(trx)
           .patch({ favorite: true })
           .findByIds(body.ids)
-          .where('user_id', req.user.user_id);
+          .where('user_id', req.session.user.user_id);
       });
-      reply.send(result);
+      return { ...result };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -153,12 +153,12 @@ export default class OptionController {
         const res = await table
           .query(trx)
           .findByIds(body.ids)
-          .where('user_id', req.user.user_id);
+          .where('user_id', req.session.user.user_id);
         return res;
       });
-      reply.send(result);
+      return { ...result };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -172,11 +172,11 @@ export default class OptionController {
           .query(trx)
           .delete()
           .findByIds(body.ids)
-          .where('user_id', req.user.user_id);
+          .where('user_id', req.session.user.user_id);
       });
-      reply.send(result);
+      return { ...result };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 }

@@ -23,14 +23,14 @@ export default class ExternalController {
       const company = await getCompany(params.api);
       const premium = await isPremium(company.id);
       if (!premium) {
-        reply.send(httpErrors.PaymentRequired());
+        throw httpErrors.PaymentRequired();
       }
       let results = [];
       const payload = {
         user: {
           user_id: company.id,
         },
-        query: {
+        params: {
           start: dayjs().subtract(6, 'month'),
           end: dayjs().add(6, 'month'),
         },
@@ -46,19 +46,19 @@ export default class ExternalController {
       calendar.method(ICalCalendarMethod.PUBLISH);
       switch (params.source) {
         case SOURCE.todo:
-          results = await getTodos(payload);
+          results = await getTodos(payload.params, payload.user);
           break;
         case SOURCE.rearing:
-          results = await getRearings(payload);
+          results = await getRearings(payload.params, payload.user);
           break;
         case SOURCE.movedate:
-          results = await getMovements(payload);
+          results = await getMovements(payload.params, payload.user);
           break;
         case SOURCE.scale_data:
-          results = await getScaleData(payload);
+          results = await getScaleData(payload.params, payload.user);
           break;
         default:
-          results = await getTask(payload, params.source);
+          results = await getTask(payload.params, payload.user, params.source);
           break;
       }
       for (const i in results) {
@@ -82,7 +82,7 @@ export default class ExternalController {
         `btree-${params.source}-${new Date().toISOString()}.ics`,
       );
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -104,7 +104,7 @@ export default class ExternalController {
         await addPremium(user_id, 12, amount, 'stripe');
         createInvoice(object.customer_details.email, amount, 'Stripe');
       }
-      reply.send();
+      return {};
     } catch (e) {
       req.log.error(e);
       throw e;

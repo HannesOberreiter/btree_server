@@ -12,13 +12,14 @@ export default class ScaleController {
       const params = req.params as any;
       const query = Scale.query()
         .withGraphFetched('hive')
-        .where('user_id', req.user.user_id);
+        .where('user_id', req.session.user.user_id);
       if (params.id) {
         query.findById(params.id);
       }
-      reply.send(params.id ? [await query] : await query); // array is returned to be consistent with batchGet function
+      const result = params.id ? [await query] : await query; // array is returned to be consistent with batchGet function
+      return result;
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
   static async patch(req: FastifyRequest, reply: FastifyReply) {
@@ -30,43 +31,43 @@ export default class ScaleController {
       const result = await Scale.transaction(async (trx) => {
         if (insert.hive_id)
           await Hive.query(trx)
-            .where({ id: insert.hive_id, user_id: req.user.user_id })
+            .where({ id: insert.hive_id, user_id: req.session.user.user_id })
             .throwIfNotFound();
 
         return await Scale.query(trx)
           .patch(insert)
           .findByIds(ids)
-          .where('user_id', req.user.user_id);
+          .where('user_id', req.session.user.user_id);
       });
-      reply.send(result);
+      return result;
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
   static async post(req: FastifyRequest, reply: FastifyReply) {
     try {
       const body = req.body as any;
 
-      const limit = await limitScale(req.user.user_id);
+      const limit = await limitScale(req.session.user.user_id);
       if (limit) {
-        reply.send(httpErrors.PaymentRequired('no premium access'));
+        throw httpErrors.PaymentRequired('no premium access');
       }
 
       const result = await Scale.transaction(async (trx) => {
         if (body.hive_id)
           await Hive.query(trx)
-            .where({ id: body.hive_id, user_id: req.user.user_id })
+            .where({ id: body.hive_id, user_id: req.session.user.user_id })
             .throwIfNotFound();
 
         return await Scale.query(trx).insert({
           name: body.name,
           hive_id: body.hive_id,
-          user_id: req.user.user_id,
+          user_id: req.session.user.user_id,
         });
       });
-      reply.send(result);
+      return { ...result };
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
   static async delete(req: FastifyRequest, reply: FastifyReply) {
@@ -75,15 +76,15 @@ export default class ScaleController {
       const result = await Scale.transaction(async (trx) => {
         await ScaleData.query(trx).delete().joinRelated('scale').where({
           scale_id: params.id,
-          'scale.user_id': req.user.user_id,
+          'scale.user_id': req.session.user.user_id,
         });
         return await Scale.query(trx)
           .deleteById(params.id)
-          .where('user_id', req.user.user_id);
+          .where('user_id', req.session.user.user_id);
       });
-      reply.send(result);
+      return result;
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 }

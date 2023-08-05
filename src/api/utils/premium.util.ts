@@ -9,15 +9,11 @@ import { Payment } from '../models/payment.model';
 import dayjs from 'dayjs';
 
 export const isPremium = async (id: number) => {
-  try {
-    const paid = await Company.query()
-      .select('paid')
-      .findById(id)
-      .throwIfNotFound();
-    return paid.isPaid();
-  } catch (e) {
-    throw checkMySQLError(e);
-  }
+  const paid = await Company.query()
+    .select('paid')
+    .findById(id)
+    .throwIfNotFound();
+  return paid.isPaid();
 };
 
 export const limitHive = async (user_id: number, amount: number) => {

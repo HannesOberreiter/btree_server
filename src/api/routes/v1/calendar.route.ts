@@ -19,7 +19,7 @@ export default function routes(
   server.get(
     '/checkup',
     {
-      preHandler: Guard.authorize[(ROLES.read, ROLES.admin, ROLES.user)],
+      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
       schema: {
         querystring: CalendarParams,
       },
@@ -30,7 +30,7 @@ export default function routes(
   server.get(
     '/treatment',
     {
-      preHandler: Guard.authorize[(ROLES.read, ROLES.admin, ROLES.user)],
+      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
       schema: {
         querystring: CalendarParams,
       },
@@ -41,7 +41,7 @@ export default function routes(
   server.get(
     '/harvest',
     {
-      preHandler: Guard.authorize[(ROLES.read, ROLES.admin, ROLES.user)],
+      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
       schema: {
         querystring: CalendarParams,
       },
@@ -52,7 +52,7 @@ export default function routes(
   server.get(
     '/feed',
     {
-      preHandler: Guard.authorize[(ROLES.read, ROLES.admin, ROLES.user)],
+      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
       schema: {
         querystring: CalendarParams,
       },
@@ -63,7 +63,7 @@ export default function routes(
   server.get(
     '/movedate',
     {
-      preHandler: Guard.authorize[(ROLES.read, ROLES.admin, ROLES.user)],
+      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
       schema: {
         querystring: CalendarParams,
       },
@@ -74,7 +74,7 @@ export default function routes(
   server.get(
     '/todo',
     {
-      preHandler: Guard.authorize[(ROLES.read, ROLES.admin, ROLES.user)],
+      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
       schema: {
         querystring: CalendarParams,
       },
@@ -85,7 +85,7 @@ export default function routes(
   server.get(
     '/scale_data',
     {
-      preHandler: Guard.authorize[(ROLES.read, ROLES.admin, ROLES.user)],
+      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
       schema: {
         querystring: CalendarParams,
       },
@@ -96,16 +96,18 @@ export default function routes(
   server.get(
     '/rearing',
     {
-      preHandler: Guard.authorize[(ROLES.read, ROLES.admin, ROLES.user)],
+      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
       schema: {
         querystring: z
           .object({
-            start: z.string(),
-            end: z.string(),
+            start: z.string().optional(),
+            end: z.string().optional(),
             id: z.string().optional(),
           })
           .refine((val) => {
+            if (val.start && val.end) return true;
             if (val.id) return true;
+            return false;
           }),
       },
     },

@@ -22,7 +22,14 @@ export default function routes(
       preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
       schema: {
         body: z.object({
-          settings: z.object({}),
+          settings: z.custom<string>((data: any) => {
+            try {
+              JSON.parse(data);
+            } catch (error) {
+              return false;
+            }
+            return true;
+          }, 'invalid json'),
         }),
       },
     },

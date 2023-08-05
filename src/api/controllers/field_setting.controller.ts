@@ -8,10 +8,10 @@ export default class FieldSettingController {
       const result = await FieldSetting.query()
         .select('settings')
         .first()
-        .where({ bee_id: req.user.bee_id });
-      reply.send(result ? result : false);
+        .where({ bee_id: req.session.user.bee_id });
+      return result ? result : false;
     } catch (e) {
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 
@@ -22,22 +22,22 @@ export default class FieldSettingController {
       const settings = JSON.parse(body.settings);
       const current = await FieldSetting.query()
         .first()
-        .where('bee_id', req.user.bee_id);
+        .where('bee_id', req.session.user.bee_id);
       if (current) {
         await FieldSetting.query(trx)
-          .where('bee_id', req.user.bee_id)
+          .where('bee_id', req.session.user.bee_id)
           .patch({ settings: settings });
       } else {
         await FieldSetting.query(trx).insert({
-          bee_id: req.user.bee_id,
+          bee_id: req.session.user.bee_id,
           settings: settings,
         });
       }
       await trx.commit();
-      reply.send(settings);
+      return settings;
     } catch (e) {
       await trx.rollback();
-      reply.send(checkMySQLError(e));
+      throw checkMySQLError(e);
     }
   }
 }

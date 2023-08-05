@@ -1,10 +1,10 @@
 // https://github.com/jaredhanson/passport-google-oauth2
-import GoogleStrategy from 'passport-google-oauth20';
+/*import GoogleStrategy from 'passport-google-oauth20';
 import { googleOAuth, url } from './environment.config';
 import { FederatedCredential } from '@/api/models/federated_credential';
-import { User } from '@/api/models/user.model';
+import { User } from '@/api/models/user.model';*/
 
-export class PassportConfiguration {
+/*export class PassportConfiguration {
   private static options: {
     google: GoogleStrategy.StrategyOptions;
   } = {
@@ -16,12 +16,14 @@ export class PassportConfiguration {
     },
   };
 
-  static factory(strategy: 'google'): GoogleStrategy.Strategy {
+  static factory(strategy: 'google' | 'cookie'): GoogleStrategy.Strategy {
     if (strategy === 'google') {
       return new GoogleStrategy.Strategy(
         { ...this.options.google, passReqToCallback: true },
         this.verifyGoogle,
       );
+    } else {
+      throw new Error('Invalid strategy');
     }
   }
 
@@ -135,3 +137,4 @@ async function verifyUser(
   });
   return { bee_id, name: undefined, email: undefined };
 }
+*/
