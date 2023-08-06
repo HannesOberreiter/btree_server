@@ -131,7 +131,7 @@
     "alreadyScanned": "Auswahl ist bereits gescannt!",
     "csvReading": "Die .csv Datei konnte nicht gelesen werden!",
     "csvTooMuch": "Upload ist zu groß!",
-    "duplicate": "Konflikt, doppelter Eintrag!",
+    "duplicate": "Konflikt, Eintrag mit angegebenem Wert existiert bereits.",
     "emailRequired": "Post ist erforderlich.",
     "forbidden": "Zutritt verboten oder nicht erlaubt!",
     "lastMovement": "Jeder Bienenstock braucht mindestens eine Wanderung! Die letzte Wanderung kannst du nicht löschen.",

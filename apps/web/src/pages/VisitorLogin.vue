@@ -73,7 +73,6 @@ function sendForm(user: User) {
     },
     (error) => {
       isSubmitting.value = false;
-      console.error(error);
       notification.open('negative', error);
     },
   );

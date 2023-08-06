@@ -131,7 +131,7 @@
     "alreadyScanned": "La sélection est déjà scannée!",
     "csvReading": "Impossible de lire le fichier csv!",
     "csvTooMuch": "Télécharger trop gros!",
-    "duplicate": "Conflit, entrée en double!",
+    "duplicate": "Conflit, l'entrée avec la valeur donnée existe déjà.",
     "emailRequired": "Le courrier est requis.",
     "forbidden": "Accès interdit ou non autorisé !",
     "lastMovement": "Chaque ruche a besoin d'au moins un mouvement ! \nVous ne pouvez pas supprimer le dernier.",

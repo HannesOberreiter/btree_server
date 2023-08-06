@@ -20,8 +20,6 @@ const useNotification = () => {
   }
 
   function useHandleError(error: any) {
-    const storeUser = useAuthUserStore();
-    const lang = storeUser.getLanguage;
     let displayMessage = '';
     if (typeof error === 'string') return t(error);
 
@@ -33,29 +31,10 @@ const useNotification = () => {
     if ('errors' in error) {
       errorMessage = error.errors;
     }
-
-    if (errorMessage) {
-      if (typeof errorMessage === 'string') {
-        displayMessage = checkStatus(error.statusCode, errorMessage);
-      } else if ('type' in errorMessage) {
-        // This error comes from Ajv Schema error
-        // we actually want to prevent this in our backend
-        // as the types should be already checked on the route
-        // with express.validate
-        displayMessage = checkStatus(error.statusCode);
-        if (displayMessage === '') displayMessage = t('error.validation');
-      } else {
-        if ('msgTranslation' in errorMessage[0]) {
-          displayMessage = errorMessage[0].msgTranslation[lang];
-          if ('paramTranslation' in errorMessage[0])
-            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-            displayMessage = `${displayMessage} (${errorMessage[0].paramTranslation[lang]})`;
-          if (errorMessage.length > 1)
-            displayMessage = t('error.more') + ': ' + displayMessage;
-        }
-      }
+    if ('error' in error) {
+      errorMessage = error.error;
     }
-
+    displayMessage = checkStatus(error.statusCode, errorMessage);
     if (displayMessage === '') displayMessage = t('error.unknown');
 
     return displayMessage;
@@ -68,7 +47,6 @@ const useNotification = () => {
       displayMessage = t('error.access');
     } else if (statusCode === 402) displayMessage = t('error.premium');
     else if (statusCode === 403) {
-      console.log(errorField);
       if (errorField === 'lastMovement') {
         displayMessage = t('error.lastMovement');
       } else {
