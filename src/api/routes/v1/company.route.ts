@@ -27,7 +27,7 @@ export default function routes(
     CompanyController.download,
   );
   server.patch(
-    '/',
+    '',
     {
       preHandler: Guard.authorize([ROLES.admin]),
       schema: {
@@ -40,7 +40,7 @@ export default function routes(
   );
 
   server.post(
-    '/',
+    '',
     {
       preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
       schema: {

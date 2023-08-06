@@ -1,4 +1,3 @@
-import { checkMySQLError } from '@utils/error.util';
 import { CompanyBee } from '@models/company_bee.model';
 import { Company } from '@models/company.model';
 

@@ -1,18 +1,13 @@
-import { checkMySQLError } from '@utils/error.util';
 import { FieldSetting } from '@models/field_setting.model';
 import { FastifyReply, FastifyRequest } from 'fastify';
 
 export default class FieldSettingController {
   static async get(req: FastifyRequest, reply: FastifyReply) {
-    try {
-      const result = await FieldSetting.query()
-        .select('settings')
-        .first()
-        .where({ bee_id: req.session.user.bee_id });
-      return result ? result : false;
-    } catch (e) {
-      throw checkMySQLError(e);
-    }
+    const result = await FieldSetting.query()
+      .select('settings')
+      .first()
+      .where({ bee_id: req.session.user.bee_id });
+    return result ? result : false;
   }
 
   static async patch(req: FastifyRequest, reply: FastifyReply) {
@@ -37,7 +32,7 @@ export default class FieldSettingController {
       return settings;
     } catch (e) {
       await trx.rollback();
-      throw checkMySQLError(e);
+      throw e;
     }
   }
 }

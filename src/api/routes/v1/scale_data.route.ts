@@ -21,9 +21,11 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
-        body: z.object({
-          scale_id: z.number(),
-        }),
+        body: z
+          .object({
+            scale_id: z.number(),
+          })
+          .passthrough(),
       },
     },
     ScaleDataController.post,
@@ -35,6 +37,7 @@ export default function routes(
       schema: {
         body: z.object({
           ids: z.array(z.number()),
+          data: z.object({}).passthrough(),
         }),
       },
     },

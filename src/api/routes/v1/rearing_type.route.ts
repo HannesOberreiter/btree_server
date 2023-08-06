@@ -27,6 +27,7 @@ export default function routes(
       schema: {
         body: z.object({
           ids: z.array(z.number()),
+          data: z.object({}).passthrough(),
         }),
       },
     },
@@ -38,9 +39,11 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
-        body: z.object({
-          name: z.string(),
-        }),
+        body: z
+          .object({
+            name: z.string(),
+          })
+          .passthrough(),
       },
     },
     RearingTypeController.post,

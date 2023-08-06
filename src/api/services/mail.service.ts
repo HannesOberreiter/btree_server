@@ -146,6 +146,10 @@ export class MailService {
           console.error(`error: ${error}`);
           throw httpErrors.InternalServerError('E-Mail could not be sent.');
         }
+        if (env === ENVIRONMENT.development || env === ENVIRONMENT.test) {
+          const testUrl = nodemailer.getTestMessageUrl(info) as string;
+          this.logger.log('info', `Preview Url: ${testUrl}`, {});
+        }
         this.logger.log('info', `Message Sent ${info.response}`, {
           subject: title,
         });

@@ -24,6 +24,11 @@ export default function routes(
     '/:id',
     {
       preHandler: Guard.authorize([ROLES.admin]),
+      schema: {
+        params: z.object({
+          id: z.string(),
+        }),
+      },
     },
     RearingStepController.delete,
   );

@@ -45,6 +45,9 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.admin]),
       schema: {
+        params: z.object({
+          id: z.string(),
+        }),
         body: z.object({
           rank: z.number(),
         }),

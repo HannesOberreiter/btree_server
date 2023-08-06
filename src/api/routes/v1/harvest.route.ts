@@ -25,11 +25,13 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
-        body: z.object({
-          hive_ids: z.array(z.number()),
-          interval: z.number().min(0).max(365),
-          repeat: z.number().min(0).max(15),
-        }),
+        body: z
+          .object({
+            hive_ids: z.array(z.number()),
+            interval: z.number().min(0).max(365).optional(),
+            repeat: z.number().min(0).max(15).optional(),
+          })
+          .passthrough(),
       },
     },
     HarvestController.post,
@@ -42,6 +44,7 @@ export default function routes(
       schema: {
         body: z.object({
           ids: z.array(z.number()),
+          data: z.object({}).passthrough(),
         }),
       },
     },
@@ -69,7 +72,7 @@ export default function routes(
       schema: {
         body: z.object({
           ids: z.array(z.number()),
-          status: z.string(),
+          start: z.string(),
         }),
       },
     },

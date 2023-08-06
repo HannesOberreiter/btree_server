@@ -5,12 +5,10 @@ const { doRequest, expectations, doQueryRequest } = require(process.cwd() +
 
 const testInsert = {
   name: 'TestApiary' + new Date().toISOString(),
-  latitude: 0,
-  longitude: 0,
 };
 
 describe('Apiary routes', function () {
-  const route = '/api/v1/apiary/';
+  const route = '/api/v1/apiary';
   let accessToken, insertId;
 
   before(function (done) {
@@ -38,9 +36,9 @@ describe('Apiary routes', function () {
             expect(res.body).to.has.property('id');
             insertId = res.body.id;
             done();
-          }
+          },
         );
-      }
+      },
     );
   });
 
@@ -56,7 +54,7 @@ describe('Apiary routes', function () {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
-        }
+        },
       );
     });
     it(`post 401 - no header`, function (done) {
@@ -71,7 +69,7 @@ describe('Apiary routes', function () {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
-        }
+        },
       );
     });
     it(`patch 401 - no header`, function (done) {
@@ -86,7 +84,7 @@ describe('Apiary routes', function () {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
-        }
+        },
       );
     });
 
@@ -102,7 +100,7 @@ describe('Apiary routes', function () {
           expect(res.body.results).to.be.a('Array');
           expect(res.body.total).to.be.a('number');
           done();
-        }
+        },
       );
     });
 
@@ -118,7 +116,7 @@ describe('Apiary routes', function () {
           expect(res.statusCode).to.eqls(400);
           expectations(res, 'name', 'Invalid value');
           done();
-        }
+        },
       );
     });
 
@@ -133,7 +131,7 @@ describe('Apiary routes', function () {
         function (err, res) {
           expect(res.statusCode).to.eqls(409);
           done();
-        }
+        },
       );
     });
 
@@ -152,7 +150,7 @@ describe('Apiary routes', function () {
           expect(res.statusCode).to.eqls(200);
           expect(res.body).to.equal(1);
           done();
-        }
+        },
       );
     });
   });
@@ -169,7 +167,7 @@ describe('Apiary routes', function () {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
-        }
+        },
       );
     });
     it(`200 - success`, function (done) {
@@ -185,7 +183,7 @@ describe('Apiary routes', function () {
           expect(res.body).to.has.property('name');
           expect(res.body).to.has.property('sameLocation');
           done();
-        }
+        },
       );
     });
   });
@@ -195,7 +193,7 @@ describe('Apiary routes', function () {
       doRequest(
         request.agent(global.server),
         'post',
-        route + 'batchGet',
+        route + '/batchGet',
         null,
         null,
         { ids: [insertId] },
@@ -203,14 +201,14 @@ describe('Apiary routes', function () {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
-        }
+        },
       );
     });
     it(`400 - missing ids`, function (done) {
       doRequest(
         agent,
         'post',
-        route + 'batchGet',
+        route + '/batchGet',
         null,
         null,
         null,
@@ -218,14 +216,14 @@ describe('Apiary routes', function () {
           expect(res.statusCode).to.eqls(400);
           expectations(res, 'ids', 'Invalid value');
           done();
-        }
+        },
       );
     });
     it(`200 - success`, function (done) {
       doRequest(
         agent,
         'post',
-        route + 'batchGet',
+        route + '/batchGet',
         null,
         accessToken,
         { ids: [insertId] },
@@ -233,7 +231,7 @@ describe('Apiary routes', function () {
           expect(res.statusCode).to.eqls(200);
           expect(res.body).to.be.a('Array');
           done();
-        }
+        },
       );
     });
   });
@@ -243,7 +241,7 @@ describe('Apiary routes', function () {
       doRequest(
         request.agent(global.server),
         'patch',
-        route + 'batchDelete',
+        route + '/batchDelete',
         null,
         null,
         { ids: [] },
@@ -251,14 +249,14 @@ describe('Apiary routes', function () {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
-        }
+        },
       );
     });
     it(`400 - missing ids`, function (done) {
       doRequest(
         agent,
         'patch',
-        route + 'batchDelete',
+        route + '/batchDelete',
         null,
         null,
         null,
@@ -266,14 +264,14 @@ describe('Apiary routes', function () {
           expect(res.statusCode).to.eqls(400);
           expectations(res, 'ids', 'Invalid value');
           done();
-        }
+        },
       );
     });
     it(`200 - success`, function (done) {
       doRequest(
         agent,
         'patch',
-        route + 'batchDelete',
+        route + '/batchDelete',
         null,
         accessToken,
         { ids: [insertId] },
@@ -281,7 +279,7 @@ describe('Apiary routes', function () {
           expect(res.statusCode).to.eqls(200);
           expect(res.body).to.be.a('Array');
           done();
-        }
+        },
       );
     });
   });
@@ -291,7 +289,7 @@ describe('Apiary routes', function () {
       doRequest(
         request.agent(global.server),
         'patch',
-        route + 'status',
+        route + '/status',
         null,
         null,
         { ids: [], status: true },
@@ -299,14 +297,14 @@ describe('Apiary routes', function () {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
-        }
+        },
       );
     });
     it(`400 - missing ids`, function (done) {
       doRequest(
         agent,
         'patch',
-        route + 'status',
+        route + '/status',
         null,
         null,
         null,
@@ -314,14 +312,14 @@ describe('Apiary routes', function () {
           expect(res.statusCode).to.eqls(400);
           expectations(res, 'ids', 'Invalid value');
           done();
-        }
+        },
       );
     });
     it(`200 - success`, function (done) {
       doRequest(
         agent,
         'patch',
-        route + 'status',
+        route + '/status',
         null,
         accessToken,
         { ids: [insertId], status: false },
@@ -329,7 +327,7 @@ describe('Apiary routes', function () {
           expect(res.statusCode).to.eqls(200);
           expect(res.body).to.equal(1);
           done();
-        }
+        },
       );
     });
   });

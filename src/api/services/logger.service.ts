@@ -55,6 +55,7 @@ export class Logger {
     this.pino = pino(
       {
         level: env === ENVIRONMENT.production ? 'info' : 'debug',
+        base: undefined,
         timestamp: () => {
           return `,"time":"${new Date().toISOString()}"`;
         },

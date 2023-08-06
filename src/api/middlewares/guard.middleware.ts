@@ -3,9 +3,6 @@ import { listNumber } from '@utils/enum.util';
 import { FastifyReply, FastifyRequest, HookHandlerDoneFunction } from 'fastify';
 import httpErrors from 'http-errors';
 
-/**
- * Authentication middleware
- */
 export class Guard {
   static authorize =
     (roles = listNumber(ROLES)) =>
@@ -18,22 +15,18 @@ export class Guard {
     done: HookHandlerDoneFunction,
     roles: number[],
   ) => {
+    let error: any;
     if (!req.session.user) {
-      reply.send(httpErrors.Unauthorized('Unauthorized'));
-      return reply;
-    }
-
-    if (
+      throw httpErrors.Unauthorized('Unauthorized');
+    } else if (
       roles.length === 1 &&
       roles[0] === ROLES.admin &&
       req.session.user.rank !== ROLES.admin
     ) {
-      reply.send(httpErrors.Forbidden('Forbidden area'));
-      return reply;
+      throw httpErrors.Forbidden('Forbidden area');
     } else if (!roles.includes(req.session.user.rank)) {
-      reply.send(httpErrors.Forbidden('Forbidden area'));
-      return reply;
+      throw httpErrors.Forbidden('Forbidden area');
     }
-    done();
+    done(error);
   };
 }

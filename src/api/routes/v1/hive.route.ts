@@ -4,6 +4,17 @@ import { FastifyInstance } from 'fastify';
 import { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { z } from 'zod';
 import HiveController from '@/api/controllers/hive.controller';
+import { booleanParamSchema } from '@/api/utils/zod.util';
+
+const hiveSchema = z.object({
+  name: z.string().min(1).max(24).trim(),
+  grouphive: z.number().int().optional().default(0),
+  position: z.number().int().optional().default(0),
+  note: z.string().max(2000).optional(),
+  modus: z.boolean().optional(),
+  modus_date: z.string().optional(),
+  deleted: z.boolean().optional(),
+});
 
 export default function routes(
   instance: FastifyInstance,
@@ -26,9 +37,12 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
       schema: {
+        params: z.object({
+          id: z.coerce.number(),
+        }),
         querystring: z.object({
-          apiary: z.boolean().optional(),
-          year: z.number().optional(),
+          apiary: booleanParamSchema.optional(),
+          year: z.coerce.number().optional(),
         }),
       },
     },
@@ -41,6 +55,7 @@ export default function routes(
       schema: {
         body: z.object({
           ids: z.array(z.number()),
+          data: hiveSchema.partial(),
         }),
       },
     },
@@ -52,12 +67,14 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.admin]),
       schema: {
-        body: z.object({
-          apiary_id: z.number(),
-          start: z.number().min(0).max(10000),
-          repeat: z.number().min(0).max(100),
-          date: z.string(),
-        }),
+        body: z
+          .object({
+            apiary_id: z.number(),
+            start: z.number().min(0).max(10000),
+            repeat: z.number().min(0).max(100),
+            date: z.string(),
+          })
+          .merge(hiveSchema),
       },
     },
     HiveController.post,

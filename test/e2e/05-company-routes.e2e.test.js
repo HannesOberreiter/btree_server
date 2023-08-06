@@ -7,7 +7,7 @@ const patchCompanyName = 'newName';
 const newCompanyName = 'testCompany';
 
 describe('Company routes', function () {
-  const route = '/api/v1/company/';
+  const route = '/api/v1/company';
   let accessToken;
 
   before(function (done) {
@@ -33,7 +33,7 @@ describe('Company routes', function () {
     it(`401 - no header`, function (done) {
       doQueryRequest(
         request.agent(global.server),
-        route + 'apikey',
+        route + '/apikey',
         null,
         null,
         null,
@@ -48,7 +48,7 @@ describe('Company routes', function () {
     it(`200 - get`, function (done) {
       doQueryRequest(
         agent,
-        route + 'apikey',
+        route + '/apikey',
         null,
         accessToken,
         null,

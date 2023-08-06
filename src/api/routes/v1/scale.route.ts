@@ -24,6 +24,7 @@ export default function routes(
       schema: {
         body: z.object({
           ids: z.array(z.number()),
+          data: z.object({}).passthrough(),
         }),
       },
     },
@@ -35,10 +36,12 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.admin]),
       schema: {
-        body: z.object({
-          name: z.string().min(1).max(45).trim(),
-          hive_id: z.number(),
-        }),
+        body: z
+          .object({
+            name: z.string().min(1).max(45).trim(),
+            hive_id: z.number(),
+          })
+          .passthrough(),
       },
     },
     ScaleController.post,
@@ -50,7 +53,7 @@ export default function routes(
       preHandler: Guard.authorize([ROLES.admin]),
       schema: {
         params: z.object({
-          id: z.number(),
+          id: z.string(),
         }),
       },
     },

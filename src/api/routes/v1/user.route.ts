@@ -53,9 +53,11 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
       schema: {
-        body: z.object({
-          saved_company: z.string().trim(),
-        }),
+        body: z
+          .object({
+            saved_company: z.string().trim(),
+          })
+          .passthrough(),
       },
     },
     UserController.changeCompany,

@@ -43,10 +43,12 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
-        body: z.object({
-          start: z.number().int().min(0).max(10000),
-          repeat: z.number().int().min(0).max(100),
-        }),
+        body: z
+          .object({
+            start: z.number().int().min(0).max(10000).optional(),
+            repeat: z.number().int().min(0).max(100).optional(),
+          })
+          .passthrough(),
       },
     },
     QueenController.post,
@@ -59,6 +61,7 @@ export default function routes(
       schema: {
         body: z.object({
           ids: z.array(z.number()),
+          data: z.object({}).passthrough(),
         }),
       },
     },

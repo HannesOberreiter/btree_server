@@ -42,9 +42,15 @@ export class Application {
     this.logger = Logger.getInstance();
     this.app = fastify({
       logger: this.logger.pino,
+      disableRequestLogging: false,
       trustProxy: true,
       bodyLimit: 1048576 * 50, // 50 MB
       maxParamLength: 10000,
+      ajv: {
+        customOptions: {
+          removeAdditional: false, // Refer to [ajv options](https://ajv.js.org/options.html#removeadditional)
+        },
+      },
     });
   }
 
@@ -189,11 +195,19 @@ export class Application {
     this.app.setSerializerCompiler(serializerCompiler);
 
     /**
-     * @description Global error logger
+     * @description Global logger
      */
     this.app.setErrorHandler(function (error, request, reply) {
       if (error instanceof ZodError) {
-        request.log.warn(error);
+        request.log.error(
+          {
+            user: request?.session?.user,
+            req: request,
+            error: error.issues,
+            path: request.url,
+          },
+          'Zod validation error',
+        );
         reply.status(400).send({
           statusCode: 400,
           error: 'Bad Request',
@@ -205,12 +219,19 @@ export class Application {
       this.log.error(
         {
           user: request?.session?.user,
-          label: 'Application',
-          error: e,
+          req: request,
+          error: e.cause ? e.cause : e,
           path: request.url,
         },
-        'Error in request handler',
+        e.message ? e.message : 'Unhandled error',
       );
+      if (e.statusCode) {
+        reply.status(e.statusCode).send({
+          statusCode: e.statusCode,
+          error: e.message,
+        });
+        return;
+      }
       throw e;
     });
 

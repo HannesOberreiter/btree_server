@@ -5,6 +5,14 @@ import { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { z } from 'zod';
 import TodoController from '@/api/controllers/todo.controller';
 
+const schemaTodo = z.object({
+  name: z.string().min(1).max(48).trim(),
+  date: z.string(),
+  note: z.string().max(2000).optional(),
+  url: z.string().max(512).optional(),
+  done: z.boolean().optional(),
+});
+
 export default function routes(
   instance: FastifyInstance,
   _options: any,
@@ -25,10 +33,12 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
-        body: z.object({
-          interval: z.number().min(0).max(365),
-          repeat: z.number().min(0).max(30),
-        }),
+        body: z
+          .object({
+            interval: z.number().min(0).max(365).optional(),
+            repeat: z.number().min(0).max(30).optional(),
+          })
+          .merge(schemaTodo),
       },
     },
     TodoController.post,
@@ -41,6 +51,7 @@ export default function routes(
       schema: {
         body: z.object({
           ids: z.array(z.number()),
+          data: schemaTodo.partial(),
         }),
       },
     },
@@ -68,7 +79,7 @@ export default function routes(
       schema: {
         body: z.object({
           ids: z.array(z.number()),
-          status: z.string(),
+          start: z.string(),
         }),
       },
     },

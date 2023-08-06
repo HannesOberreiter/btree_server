@@ -11,8 +11,7 @@ export class Validator {
   ) => {
     const params = req.params as any;
     if (!(params.table in OPTION)) {
-      done(new httpErrors.NotFound());
-      return;
+      throw new httpErrors.NotFound();
     }
     done();
   };
@@ -23,16 +22,19 @@ export class Validator {
   ) => {
     const params = req.params as any;
     if (!(params.source in SOURCE)) {
-      done(httpErrors.NotFound());
-      return;
+      throw httpErrors.NotFound();
     }
     done();
   };
   static isPremium = async (req: FastifyRequest, reply: FastifyReply) => {
-    const premium = await isPremium(req.session.user.user_id);
+    if (!req.session.user) {
+      throw httpErrors.Unauthorized();
+    }
+    const premium = await isPremium(req.session.user.user_id).catch((_err) => {
+      throw httpErrors.PaymentRequired();
+    });
     if (!premium) {
-      reply.send(httpErrors.PaymentRequired());
-      return reply;
+      throw httpErrors.PaymentRequired();
     }
     return;
   };

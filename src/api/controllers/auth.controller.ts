@@ -1,5 +1,4 @@
 import { autoFill } from '@utils/autofill.util';
-import { checkMySQLError } from '@utils/error.util';
 import { Company } from '@models/company.model';
 import { CompanyBee } from '@models/company_bee.model';
 import { loginCheck } from '@utils/login.util';
@@ -123,7 +122,7 @@ export default class AuthController {
         email: inputUser.email,
       });
       if (uniqueMail) {
-        return httpErrors.Conflict('email');
+        throw httpErrors.Conflict('email');
       }
 
       const u = await User.query(trx).insert({ ...inputUser, state: 0 });
@@ -145,17 +144,14 @@ export default class AuthController {
     return { email: inputUser.email, activate: inputUser.reset };
   }
 
-  static async logout(req: FastifyRequest, reply: FastifyReply) {
-    req.session.destroy(function (err) {
+  static logout(req: FastifyRequest, reply: FastifyReply) {
+    req.session.destroy((err) => {
       if (err) {
-        if (err instanceof Error) {
-          throw err;
-        }
-        throw Error(err);
+        throw err;
       }
+      reply.status(200).send(true);
+      return reply;
     });
-    // req.logOut();
-    return true;
   }
 
   static async login(req: FastifyRequest, reply: FastifyReply) {
@@ -186,7 +182,7 @@ export default class AuthController {
       await req.session.save();
     } catch (e) {
       req.log.error(e);
-      return httpErrors[500]('Failed to create session');
+      throw httpErrors[500]('Failed to create session');
     }
     return { data };
   }
@@ -214,10 +210,10 @@ export default class AuthController {
         const q = sso.buildLoginString(userparams);
         return { q };
       } else {
-        return httpErrors.Forbidden('Invalid Signature');
+        throw httpErrors.Forbidden('Invalid Signature');
       }
     } else {
-      return httpErrors.Forbidden('Missing Signature');
+      throw httpErrors.Forbidden('Missing Signature');
     }
   }
 
@@ -263,7 +259,7 @@ export default class AuthController {
       await req.session.save();
     } catch (e) {
       req.log.error(e);
-      return httpErrors[500]('Failed to create session');
+      throw httpErrors[500]('Failed to create session');
     }
     reply.redirect(frontend + '/visitor/login');
   }
