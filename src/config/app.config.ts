@@ -13,14 +13,12 @@ import { ENVIRONMENT } from './constants.config.js';
 import routes from '@/api/routes/index.js';
 import fastifyRateLimit from '@fastify/rate-limit';
 import { checkMySQLError } from '@/api/utils/error.util.js';
-import httpErrors from 'http-errors';
 
 import fastify, { FastifyInstance } from 'fastify';
 import fastifyCookie from '@fastify/cookie';
 import fastifySession from '@fastify/session';
 import fastifyCompress from '@fastify/compress';
 import fastifyHelmet from '@fastify/helmet';
-import fastifyCors from '@fastify/cors';
 
 /**
  * @description Instantiate server application.
