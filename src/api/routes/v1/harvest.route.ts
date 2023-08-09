@@ -74,6 +74,7 @@ export default function routes(
         body: z.object({
           ids: z.array(numberSchema),
           start: z.string(),
+          end: z.string(),
         }),
       },
     },
