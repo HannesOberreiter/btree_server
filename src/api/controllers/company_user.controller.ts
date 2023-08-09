@@ -1,13 +1,12 @@
-import { CompanyBee } from '@models/company_bee.model';
-import { Company } from '@models/company.model';
-
-import UserController from './user.controller';
-import AuthController from './auth.controller';
-
-import { User } from '../models/user.model';
 import { randomBytes } from 'crypto';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import httpErrors from 'http-errors';
+
+import { CompanyBee } from '../models/company_bee.model.js';
+import { Company } from '../models/company.model.js';
+import UserController from './user.controller.js';
+import AuthController from './auth.controller.js';
+import { User } from '../models/user.model.js';
 
 export default class CompanyUserController {
   static async patch(req: FastifyRequest, reply: FastifyReply) {

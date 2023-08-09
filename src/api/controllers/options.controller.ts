@@ -1,14 +1,14 @@
-import { ChargeType } from '@models/option/charge_type.model';
-import { CheckupType } from '@models/option/checkup_type.model';
-import { FeedType } from '@models/option/feed_type.model';
-import { HarvestType } from '@models/option/harvest_type.model';
-import { TreatmentType } from '@models/option/treatment_type.model';
-import { TreatmentDisease } from '@models/option/treatment_disease.model';
-import { TreatmentVet } from '@models/option/treatment_vet.model';
-import { HiveSource } from '../models/option/hive_source.model';
-import { HiveType } from '../models/option/hive_type.mode';
-import { QueenMating } from '../models/option/queen_mating.model';
-import { QueenRace } from '../models/option/queen_race.model';
+import { ChargeType } from '../models/option/charge_type.model.js';
+import { CheckupType } from '../models/option/checkup_type.model.js';
+import { FeedType } from '../models/option/feed_type.model.js';
+import { HarvestType } from '../models/option/harvest_type.model.js';
+import { TreatmentType } from '../models/option/treatment_type.model.js';
+import { TreatmentDisease } from '../models/option/treatment_disease.model.js';
+import { TreatmentVet } from '../models/option/treatment_vet.model.js';
+import { HiveSource } from '../models/option/hive_source.model.js';
+import { HiveType } from '../models/option/hive_type.mode.js';
+import { QueenMating } from '../models/option/queen_mating.model.js';
+import { QueenRace } from '../models/option/queen_race.model.js';
 import { FastifyReply, FastifyRequest } from 'fastify';
 export default class OptionController {
   private static tables = {

@@ -1,29 +1,30 @@
-import { Company } from '@models/company.model';
-import { randomBytes } from 'crypto';
-import { reviewPassword } from '@utils/login.util';
-import { CompanyBee } from '@models/company_bee.model';
-import { autoFill } from '@utils/autofill.util';
-import { User } from '@models/user.model';
-import UserController from '@controllers/user.controller';
-import { deleteCompany } from '../utils/delete.util';
-import { addPremium, isPremium } from '../utils/premium.util';
-import archiver from 'archiver';
-import { stringify } from 'csv-stringify/sync';
-import { Apiary } from '../models/apiary.model';
-import { Hive } from '../models/hive.model';
-import { Movedate } from '../models/movedate.model';
-import { Checkup } from '../models/checkup.model';
-import { Feed } from '../models/feed.model';
-import { Treatment } from '../models/treatment.model';
-import { Harvest } from '../models/harvest.model';
-import { Scale } from '../models/scale.model';
-import { ScaleData } from '../models/scale_data.model';
-import { Rearing } from '../models/rearing/rearing.model';
-import { RearingType } from '../models/rearing/rearing_type.model';
-import { Promo } from '../models/promos.model';
-import { Counts } from '../models/counts.model';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import httpErrors from 'http-errors';
+import { randomBytes } from 'crypto';
+import archiver from 'archiver';
+import { stringify } from 'csv-stringify/sync';
+
+import { Company } from '../models/company.model.js';
+import { reviewPassword } from '../utils/login.util.js';
+import { CompanyBee } from '../models/company_bee.model.js';
+import { autoFill } from '../utils/autofill.util.js';
+import { User } from '../models/user.model.js';
+import UserController from '../controllers/user.controller.js';
+import { deleteCompany } from '../utils/delete.util.js';
+import { addPremium, isPremium } from '../utils/premium.util.js';
+import { Apiary } from '../models/apiary.model.js';
+import { Hive } from '../models/hive.model.js';
+import { Movedate } from '../models/movedate.model.js';
+import { Checkup } from '../models/checkup.model.js';
+import { Feed } from '../models/feed.model.js';
+import { Treatment } from '../models/treatment.model.js';
+import { Harvest } from '../models/harvest.model.js';
+import { Scale } from '../models/scale.model.js';
+import { ScaleData } from '../models/scale_data.model.js';
+import { Rearing } from '../models/rearing/rearing.model.js';
+import { RearingType } from '../models/rearing/rearing_type.model.js';
+import { Promo } from '../models/promos.model.js';
+import { Counts } from '../models/counts.model.js';
 
 export default class CompanyController {
   static async postCoupon(req: FastifyRequest, reply: FastifyReply) {

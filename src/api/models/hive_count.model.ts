@@ -1,4 +1,4 @@
-import { Apiary } from '@models/apiary.model';
+import { Apiary } from './apiary.model.js';
 import { Model } from 'objection';
 
 export class HiveCount extends Model {

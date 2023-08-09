@@ -1,10 +1,10 @@
-import { Guard } from '@middlewares/guard.middleware';
-import { ROLES } from '@/config/constants.config';
+import { Guard } from '../../middlewares/guard.middleware.js';
+import { ROLES } from '../../../config/constants.config.js';
 import { FastifyInstance } from 'fastify';
 import { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { z } from 'zod';
-import TodoController from '@/api/controllers/todo.controller';
-import { numberSchema } from '@/api/utils/zod.util';
+import TodoController from '../../controllers/todo.controller.js';
+import { numberSchema } from '../../utils/zod.util.js';
 
 const schemaTodo = z.object({
   name: z.string().min(1).max(48).trim(),

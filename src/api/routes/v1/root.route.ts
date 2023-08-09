@@ -1,6 +1,6 @@
 import { FastifyInstance } from 'fastify';
 import { ZodTypeProvider } from 'fastify-type-provider-zod';
-import RootController from '@/api/controllers/root.controller';
+import RootController from '../../controllers/root.controller.js';
 
 export default function routes(
   instance: FastifyInstance,

@@ -1,7 +1,7 @@
 import { Model } from 'objection';
-import { Hive } from './hive.model';
-import { HiveLocation } from './hive_location.model';
-import { Queen } from './queen.model';
+import { Hive } from './hive.model.js';
+import { HiveLocation } from './hive_location.model.js';
+import { Queen } from './queen.model.js';
 
 export class QueenDuration extends Model {
   hive_id!: number;

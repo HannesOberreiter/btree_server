@@ -1,6 +1,6 @@
 import { Model } from 'objection';
-import { Hive } from '@models/hive.model';
-import { Movedate } from './movedate.model';
+import { Hive } from './hive.model.js';
+import { Movedate } from './movedate.model.js';
 
 export class MovedateCount extends Model {
   hive_id!: number;

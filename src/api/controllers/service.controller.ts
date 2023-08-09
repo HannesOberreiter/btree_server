@@ -1,15 +1,15 @@
-import { Apiary } from '../models/apiary.model';
-import { getTemperature } from '../utils/temperature.util';
-import { addPremium, isPremium } from '../utils/premium.util';
+import { Apiary } from '../models/apiary.model.js';
+import { getTemperature } from '../utils/temperature.util.js';
+import { addPremium, isPremium } from '../utils/premium.util.js';
 import {
   capturePayment,
   createOrder as paypalCreateOrder,
-} from '../utils/paypal.util';
-import { createOrder as stripeCreateOrder } from '../utils/stripe.util';
-import { createInvoice } from '../utils/foxyoffice.util';
-import { WizBee } from '../services/wizbee.service';
-import { WizBeeToken } from '../models/wizbee_token.model';
-import { openAI } from '@/config/environment.config';
+} from '../utils/paypal.util.js';
+import { createOrder as stripeCreateOrder } from '../utils/stripe.util.js';
+import { createInvoice } from '../utils/foxyoffice.util.js';
+import { WizBee } from '../../services/wizbee.service.js';
+import { WizBeeToken } from '../models/wizbee_token.model.js';
+import { openAI } from '../../config/environment.config.js';
 import { FastifyRequest, FastifyReply } from 'fastify';
 import httpErrors from 'http-errors';
 

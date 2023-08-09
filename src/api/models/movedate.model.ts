@@ -1,9 +1,9 @@
-import { ExtModel } from '@models/base.model';
-import { User } from '@models/user.model';
+import { ExtModel } from './base.model.js';
+import { User } from './user.model.js';
 import { Model } from 'objection';
-import { Apiary } from '@models/apiary.model';
-import { Hive } from '@models/hive.model';
-import { MovedateCount } from './movedate_count.model';
+import { Apiary } from './apiary.model.js';
+import { Hive } from './hive.model.js';
+import { MovedateCount } from './movedate_count.model.js';
 
 export class Movedate extends ExtModel {
   id!: number;

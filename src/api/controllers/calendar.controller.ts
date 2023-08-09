@@ -1,11 +1,13 @@
+import { FastifyReply, FastifyRequest } from 'fastify';
+
 import {
   getTask,
   getMovements,
   getTodos,
   getRearings,
   getScaleData,
-} from '@utils/calendar.util';
-import { FastifyReply, FastifyRequest } from 'fastify';
+} from '../utils/calendar.util.js';
+
 export default class CalendarController {
   static async getRearings(req: FastifyRequest, reply: FastifyReply) {
     const result = await getRearings(req.query, req.session.user);

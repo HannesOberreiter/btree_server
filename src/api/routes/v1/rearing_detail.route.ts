@@ -1,10 +1,10 @@
-import { Guard } from '@middlewares/guard.middleware';
-import { ROLES } from '@/config/constants.config';
+import { Guard } from '../../middlewares/guard.middleware.js';
+import { ROLES } from '../../../config/constants.config.js';
 import { FastifyInstance } from 'fastify';
 import { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { z } from 'zod';
-import RearingDetailController from '@/api/controllers/rearing_detail.controller';
-import { numberSchema } from '@/api/utils/zod.util';
+import RearingDetailController from '../../controllers/rearing_detail.controller.js';
+import { numberSchema } from '../../utils/zod.util.js';
 
 export default function routes(
   instance: FastifyInstance,

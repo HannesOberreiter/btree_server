@@ -6,15 +6,19 @@ import {
 } from 'fastify-type-provider-zod';
 import { ZodError } from 'zod';
 
-import { RedisServer } from '@/servers/redis.server.js';
-import { authorized, env, sessionSecret } from '@config/environment.config.js';
-import { Logger } from '@/api/services/logger.service.js';
+import { RedisServer } from '../servers/redis.server.js';
+import {
+  authorized,
+  env,
+  sessionSecret,
+} from '../config/environment.config.js';
+import { Logger } from '../services/logger.service.js';
 import { ENVIRONMENT } from './constants.config.js';
-import routes from '@/api/routes/index.js';
-import fastifyRateLimit from '@fastify/rate-limit';
-import { checkMySQLError } from '@/api/utils/error.util.js';
+import routes from '../api/routes/index.js';
+import { checkMySQLError } from '../api/utils/error.util.js';
 
 import fastify, { FastifyInstance } from 'fastify';
+import fastifyRateLimit from '@fastify/rate-limit';
 import fastifyCookie from '@fastify/cookie';
 import fastifySession from '@fastify/session';
 import fastifyCompress from '@fastify/compress';
@@ -78,7 +82,7 @@ export class Application {
     /**
      * @description Enable CORS - Cross Origin Resource Sharing
      */
-    this.app.addHook('preHandler', (req, reply, done) => {
+    this.app.addHook('onRequest', (req, reply, done) => {
       // Set undefined CORS header
       // https://github.com/expressjs/cors/issues/262
       if (!req.headers.origin) {
@@ -112,7 +116,7 @@ export class Application {
         'Access-Control-Allow-Headers',
         'Origin, Content-Type, Accept, Authorization',
       );
-      reply.header('Access-Control-Allow-Methods', '*');
+      reply.header('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE');
 
       if (req.method.toLowerCase() === 'options') {
         reply.send();
@@ -149,26 +153,6 @@ export class Application {
       },
     });
 
-    /**
-     * @description Passport configuration
-     * @see http://www.passportjs.org/
-     */
-
-    //this.app.register(fastifyPassport.initialize());
-    //this.app.register(fastifyPassport.secureSession());
-
-    //fastifyPassport.use('google', PassportConfiguration.factory('google'));
-
-    /*
-    fastifyPassport.registerUserSerializer(async (user, req) => {
-      this.logger.log('info', 'Serializing user', { user });
-      req.session.user = user as any;
-    });
-    fastifyPassport.registerUserDeserializer(async (user, req) => {
-      this.logger.log('info', 'Deserzialize user', { user });
-      req.session.user = user as any;
-    });
-*/
     /**
      * @description Configure API Rate limit
      * @see https://github.com/fastify/fastify-rate-limit

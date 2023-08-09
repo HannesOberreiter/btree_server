@@ -1,9 +1,10 @@
 import dayjs from 'dayjs';
 import { intersection, round } from 'lodash';
-import { DatabaseServer } from '@/servers/db.server';
-import { Todo } from '@models/todo.model';
-import { Rearing } from '@models/rearing/rearing.model';
-import { RearingStep } from '@models/rearing/rearing_step.model';
+
+import { DatabaseServer } from '../../servers/db.server.js';
+import { Todo } from '../models/todo.model.js';
+import { Rearing } from '../models/rearing/rearing.model.js';
+import { RearingStep } from '../models/rearing/rearing_step.model.js';
 
 const convertDate = ({ start, end }) => {
   return {

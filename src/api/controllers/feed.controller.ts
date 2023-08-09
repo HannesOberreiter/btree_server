@@ -1,8 +1,9 @@
-import { Feed } from '@models/feed.model';
 import { map } from 'lodash';
-import { Hive } from '../models/hive.model';
 import dayjs from 'dayjs';
 import { FastifyReply, FastifyRequest } from 'fastify';
+
+import { Feed } from '../models/feed.model.js';
+import { Hive } from '../models/hive.model.js';
 
 export default class FeedController {
   static async get(req: FastifyRequest, reply: FastifyReply) {

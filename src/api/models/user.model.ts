@@ -1,6 +1,6 @@
-import { ExtModel } from '@models/base.model';
-import { Company } from '@models/company.model';
-import { CompanyBee } from '@models/company_bee.model';
+import { ExtModel } from './base.model.js';
+import { Company } from './company.model.js';
+import { CompanyBee } from './company_bee.model.js';
 import { ModelObject } from 'objection';
 
 export class User extends ExtModel {

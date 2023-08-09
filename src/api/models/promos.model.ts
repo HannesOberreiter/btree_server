@@ -1,5 +1,5 @@
-import { BaseModel } from '@models/base.model';
-import { Company } from '@models/company.model';
+import { BaseModel } from './base.model.js';
+import { Company } from './company.model.js';
 
 export class Promo extends BaseModel {
   id!: number;

@@ -1,6 +1,7 @@
 import { Model } from 'objection';
-import { RearingDetail } from '@models/rearing/rearing_detail.model';
-import { RearingType } from './rearing_type.model';
+
+import { RearingDetail } from './rearing_detail.model.js';
+import { RearingType } from './rearing_type.model.js';
 
 export class RearingStep extends Model {
   id!: number;

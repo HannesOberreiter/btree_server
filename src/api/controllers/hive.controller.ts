@@ -1,17 +1,18 @@
-import { Hive } from '../models/hive.model';
-import { Movedate } from '../models/movedate.model';
-import { Apiary } from '../models/apiary.model';
-import { map } from 'lodash';
-import dayjs from 'dayjs';
-import { deleteHiveConnections } from '../utils/delete.util';
-import { HiveLocation } from '../models/hive_location.model';
-import { Harvest } from '../models/harvest.model';
-import { Feed } from '../models/feed.model';
-import { Treatment } from '../models/treatment.model';
-import { Checkup } from '../models/checkup.model';
-import { limitHive } from '../utils/premium.util';
 import { FastifyRequest, FastifyReply } from 'fastify';
 import httpErrors from 'http-errors';
+import { map } from 'lodash';
+import dayjs from 'dayjs';
+
+import { Hive } from '../models/hive.model.js';
+import { Movedate } from '../models/movedate.model.js';
+import { Apiary } from '../models/apiary.model.js';
+import { deleteHiveConnections } from '../utils/delete.util.js';
+import { HiveLocation } from '../models/hive_location.model.js';
+import { Harvest } from '../models/harvest.model.js';
+import { Feed } from '../models/feed.model.js';
+import { Treatment } from '../models/treatment.model.js';
+import { Checkup } from '../models/checkup.model.js';
+import { limitHive } from '../utils/premium.util.js';
 
 async function isDuplicateHiveName(user_id: number, name: string) {
   const checkDuplicate = await Hive.query().select('id').findOne({

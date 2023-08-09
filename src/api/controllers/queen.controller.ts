@@ -1,9 +1,9 @@
-import { Queen } from '../models/queen.model';
+import { Queen } from '../models/queen.model.js';
 import { map } from 'lodash';
 import dayjs from 'dayjs';
-import { QueenDuration } from '../models/queen_duration.model';
-import { Checkup } from '../models/checkup.model';
-import { Harvest } from '../models/harvest.model';
+import { QueenDuration } from '../models/queen_duration.model.js';
+import { Checkup } from '../models/checkup.model.js';
+import { Harvest } from '../models/harvest.model.js';
 import { FastifyReply, FastifyRequest } from 'fastify';
 
 export default class QueenController {

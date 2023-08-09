@@ -1,4 +1,4 @@
-import { Rearing } from '@models/rearing/rearing.model';
+import { Rearing } from '../models/rearing/rearing.model.js';
 import { FastifyReply, FastifyRequest } from 'fastify';
 
 export default class RearingController {

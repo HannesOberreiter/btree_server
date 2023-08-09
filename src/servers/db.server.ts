@@ -1,11 +1,12 @@
-import { env, knexConfig } from '@config/environment.config';
 import Knex from 'knex';
 import { Model } from 'objection';
-import { Logger } from '@/api/services/logger.service';
-import { ENVIRONMENT } from '@/config/constants.config';
+
+import { env, knexConfig } from '../config/environment.config.js';
+import { Logger } from '../services/logger.service.js';
+import { ENVIRONMENT } from '../config/constants.config.js';
 
 /**
- * Database connection manager for MariaDb server
+ * @description Database connection manager for MariaDb server
  */
 export class DatabaseServer {
   private static instance: DatabaseServer;

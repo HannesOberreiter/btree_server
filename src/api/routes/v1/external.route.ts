@@ -1,9 +1,9 @@
-import { Validator } from '@/api/middlewares/validator.middleware';
+import { Validator } from '../../middlewares/validator.middleware.js';
 import { FastifyInstance } from 'fastify';
 import { ZodTypeProvider } from 'fastify-type-provider-zod';
-import ExternalController from '@/api/controllers/external.controller';
+import ExternalController from '../../controllers/external.controller.js';
 import { z } from 'zod';
-import ScaleDataController from '@/api/controllers/scale_data.controller';
+import ScaleDataController from '../../controllers/scale_data.controller.js';
 
 export default function routes(
   instance: FastifyInstance,

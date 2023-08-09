@@ -1,21 +1,17 @@
-import { checkMySQLError } from '@utils/error.util';
-import { User } from '@models/user.model';
-import { CompanyBee } from '@models/company_bee.model';
-import { reviewPassword, fetchUser, getPaidRank } from '@utils/login.util';
-import {
-  buildUserAgent,
-  createHashedPassword,
-  //generateTokenResponse,
-} from '@utils/auth.util';
-import { map } from 'lodash';
-import { deleteCompany, deleteUser } from '../utils/delete.util';
-import { MailServer } from '../app.bootstrap';
-import { FederatedCredential } from '../models/federated_credential';
-import { RedisServer } from '@/servers/redis.server';
 import { randomUUID } from 'node:crypto';
 import { FastifyReply, FastifyRequest } from 'fastify';
+import { map } from 'lodash';
 import httpErrors from 'http-errors';
-// import fastifyPassport from '@fastify/passport';
+
+import { checkMySQLError } from '../utils/error.util.js';
+import { User } from '../models/user.model.js';
+import { CompanyBee } from '../models/company_bee.model.js';
+import { reviewPassword, fetchUser, getPaidRank } from '../utils/login.util.js';
+import { buildUserAgent, createHashedPassword } from '../utils/auth.util.js';
+import { deleteCompany, deleteUser } from '../utils/delete.util.js';
+import { MailServer } from '../../app.bootstrap.js';
+import { FederatedCredential } from '../models/federated_credential.js';
+import { RedisServer } from '../../servers/redis.server.js';
 
 export default class UserController {
   static async getFederatedCredentials(

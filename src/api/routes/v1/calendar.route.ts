@@ -1,9 +1,9 @@
-import { Guard } from '@middlewares/guard.middleware';
-import { ROLES } from '@/config/constants.config';
+import { Guard } from '../../middlewares/guard.middleware.js';
+import { ROLES } from '../../../config/constants.config.js';
 import { FastifyInstance } from 'fastify';
 import { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { z } from 'zod';
-import CalendarController from '@/api/controllers/calendar.controller';
+import CalendarController from '../../controllers/calendar.controller.js';
 
 const CalendarParams = z.object({
   start: z.string(),

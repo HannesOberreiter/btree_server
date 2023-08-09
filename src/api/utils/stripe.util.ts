@@ -1,5 +1,6 @@
-import { frontend, stripeSecret } from '@/config/environment.config';
 import Stripe from 'stripe';
+
+import { frontend, stripeSecret } from '../../config/environment.config.js';
 
 export async function createOrder(user_id: number, amount: number) {
   const stripe = new Stripe(stripeSecret, {

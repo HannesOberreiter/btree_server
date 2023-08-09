@@ -1,6 +1,6 @@
-import { BaseModel } from '@models/base.model';
-import { Company } from '@models/company.model';
-import { ChargeType } from '@/api/models/option/charge_type.model';
+import { BaseModel } from './base.model.js';
+import { Company } from './company.model.js';
+import { ChargeType } from './option/charge_type.model.js';
 
 export class ChargeStock extends BaseModel {
   sum_in!: number;

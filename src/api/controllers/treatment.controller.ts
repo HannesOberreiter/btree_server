@@ -1,6 +1,6 @@
-import { Treatment } from '@models/treatment.model';
+import { Treatment } from '../models/treatment.model.js';
 import { map } from 'lodash';
-import { Hive } from '../models/hive.model';
+import { Hive } from '../models/hive.model.js';
 import dayjs from 'dayjs';
 import { FastifyReply, FastifyRequest } from 'fastify';
 export default class TreatmentController {

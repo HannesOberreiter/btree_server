@@ -5,7 +5,7 @@
   "license": "AGPL-3.0",
   "private": true,
   "keywords": [],
-  "main": "./dist/api/app.bootstrap.js",
+  "main": "./dist/app.bootstrap.js",
   "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
   "description": "b.tree backend based on nodejs, express and knex.js, objections.js.",
   "repository": {
@@ -24,25 +24,11 @@
     "dev:serve": "ENVIRONMENT=development nodemon --delay 2000ms",
     "dev:build": "tsc --watch",
     "dev:knex": "ENVIRONMENT=development knex",
-    "test:coverage": "ENVIRONMENT=test nyc --reporter=text mocha ./test/e2e/00-api.e2e.test.js",
     "test:e2e": "ENVIRONMENT=test npx mocha ./test/e2e/00-api.e2e.test.js  --R spec --ui bdd --env test",
     "test:watch": "ENVIRONMENT=test npx mocha ./test/e2e/00-api.e2e.test.js  --watch dist test --env test",
     "ci:e2e": "ENVIRONMENT=ci npx mocha ./test/e2e/00-api.e2e.test.js",
     "prettier-format": "prettier --config .prettierrc 'src/**/*.ts' --write",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
-  },
-  "_moduleAliases": {
-    "@": "dist",
-    "@api": "dist/api",
-    "@cron": "dist/cron",
-    "@config": "dist/config",
-    "@servers": "dist/servers",
-    "@controllers": "dist/api/controllers",
-    "@middlewares": "dist/api/middlewares",
-    "@models": "dist/api/models",
-    "@routes": "dist/api/routes",
-    "@services": "dist/api/services",
-    "@utils": "dist/api/utils"
   },
   "dependencies": {
     "@fastify/compress": "^6.4.0",
@@ -66,7 +52,6 @@
     "ioredis": "^5.3.1",
     "knex": "^2.3.0",
     "lodash": "^4.17.21",
-    "module-alias": "^2.2.2",
     "mysql": "^2.18.1",
     "node-schedule": "^2.1.0",
     "nodemailer": "^6.7.8",
@@ -81,7 +66,6 @@
   },
   "devDependencies": {
     "@types/archiver": "^5.3.1",
-    "@types/body-parser": "^1.19.2",
     "@types/lodash": "^4.14.191",
     "@types/node": "^20.3.1",
     "@types/nodemailer": "^6.4.7",
@@ -92,7 +76,6 @@
     "eslint-config-prettier": "^8.5.0",
     "mocha": "^10.2.0",
     "nodemon": "^2.0.20",
-    "nyc": "^15.1.0",
     "prettier": "^3.0.0",
     "supertest": "^6.3.3",
     "typescript": "^5.0.4"

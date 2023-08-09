@@ -1,5 +1,5 @@
-import { RearingDetail } from '../models/rearing/rearing_detail.model';
-import { RearingStep } from '../models/rearing/rearing_step.model';
+import { RearingDetail } from '../models/rearing/rearing_detail.model.js';
+import { RearingStep } from '../models/rearing/rearing_step.model.js';
 import { FastifyReply, FastifyRequest } from 'fastify';
 
 export default class RearingDetailController {

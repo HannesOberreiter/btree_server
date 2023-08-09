@@ -1,10 +1,8 @@
-import { autoFill } from '@utils/autofill.util';
-import { Company } from '@models/company.model';
-import { CompanyBee } from '@models/company_bee.model';
-import { loginCheck } from '@utils/login.util';
-import { randomBytes, randomUUID } from 'crypto';
-import { User } from '@models/user.model';
 import dayjs from 'dayjs';
+import httpErrors from 'http-errors';
+import { randomBytes, randomUUID } from 'crypto';
+import { FastifyReply, FastifyRequest } from 'fastify';
+
 import {
   createHashedPassword,
   confirmAccount,
@@ -12,15 +10,20 @@ import {
   resetPassword,
   unsubscribeMail,
   buildUserAgent,
-} from '@utils/auth.util';
-import { discourseSecret, env, frontend } from '@/config/environment.config';
-import { MailServer } from '../app.bootstrap';
-
-import { DiscourseSSO } from '../services/discourse.service';
-import { FastifyReply, FastifyRequest } from 'fastify';
-// import fastifyPassport from '@fastify/passport';
-import httpErrors from 'http-errors';
-import { ENVIRONMENT } from '@/config/constants.config';
+} from '../utils/auth.util.js';
+import {
+  discourseSecret,
+  env,
+  frontend,
+} from '../../config/environment.config.js';
+import { MailServer } from '../../app.bootstrap.js';
+import { autoFill } from '../utils/autofill.util.js';
+import { Company } from '../models/company.model.js';
+import { CompanyBee } from '../models/company_bee.model.js';
+import { loginCheck } from '../utils/login.util.js';
+import { User } from '../models/user.model.js';
+import { DiscourseSSO } from '../../services/discourse.service.js';
+import { ENVIRONMENT } from '../../config/constants.config.js';
 
 export default class AuthController {
   static async confirmMail(req: FastifyRequest, reply: FastifyReply) {

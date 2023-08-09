@@ -1,9 +1,9 @@
-import { Guard } from '@/api/middlewares/guard.middleware';
-import { ROLES } from '@/config/constants.config';
+import { Guard } from '../../middlewares/guard.middleware.js';
+import { ROLES } from '../../../config/constants.config.js';
 import { FastifyInstance } from 'fastify';
 import { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { z } from 'zod';
-import ServiceController from '@/api/controllers/service.controller';
+import ServiceController from '../../controllers/service.controller.js';
 
 export default function routes(
   instance: FastifyInstance,

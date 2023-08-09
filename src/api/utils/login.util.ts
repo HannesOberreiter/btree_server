@@ -1,12 +1,12 @@
-import { User } from '@models/user.model';
-import { LoginAttemp } from '@models/login_attempt.model';
-
-import { checkMySQLError } from '@utils/error.util';
 import dayjs from 'dayjs';
 import { createHash } from 'crypto';
-import { MailServer } from '../app.bootstrap';
-import { CompanyBee } from '../models/company_bee.model';
 import httpErrors from 'http-errors';
+
+import { User } from '../models/user.model.js';
+import { LoginAttemp } from '../models/login_attempt.model.js';
+import { checkMySQLError } from './error.util.js';
+import { MailServer } from '../../app.bootstrap.js';
+import { CompanyBee } from '../models/company_bee.model.js';
 
 const insertWrongPasswordTry = async (bee_id: number) => {
   const trx = await LoginAttemp.startTransaction();

@@ -3,11 +3,8 @@ import dotenv from 'dotenv';
 import { ENVIRONMENT } from './constants.config.js';
 
 /**
- * Configure dotenv with variables.env file before app, to allow process.env accessibility in
- * app.js
- *
+ * @description Configure dotenv with variables.env file before app
  * @dependency dotenv
- *
  * @see https://www.npmjs.com/package/dotenv
  */
 class EnvironmentConfiguration {
@@ -73,7 +70,7 @@ const paypalAppSecret = process.env.PAYPAL_APP_SECRET;
 const paypalBase =
   env === ENVIRONMENT.production
     ? 'https://api-m.paypal.com'
-    : 'https://api-m.sandbox.paypal.com';
+    : 'https.//api-m.sandbox.paypal.com.js';
 
 const stripeSecret = process.env.STRIPE_SECRET_KEY;
 
@@ -99,7 +96,9 @@ const totalLimit = {
   scale: parseInt(process.env.TOTAL_LIMIT_SCALE),
 };
 
-const cronjobTimer = process.env.CRONJOB ? process.env.CRONJOB : '0 11 */1 * *';
+const cronjobTimer = process.env.CRONJOB
+  ? process.env.CRONJOB
+  : '0 11 ./1 * *.js';
 
 const redisConfig = {
   host: process.env.REDIS_HOSTNAME,

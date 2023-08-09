@@ -4,9 +4,9 @@ import {
   reminderPremium,
   reminderDeletion,
   reminderVIS,
-} from '@/api/utils/cron.util';
-import { cronjobTimer } from '@/config/environment.config';
-import { Logger } from '@/api/services/logger.service';
+} from '../api/utils/cron.util.js';
+import { cronjobTimer } from '../config/environment.config.js';
+import { Logger } from '../services/logger.service.js';
 
 let job: any;
 

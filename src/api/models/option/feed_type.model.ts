@@ -1,6 +1,6 @@
-import { BaseOptionModel } from '@models/option/baseoption.model';
-import { ExtModel } from '../base.model';
-import { Company } from '../company.model';
+import { BaseOptionModel } from './baseoption.model.js';
+import { ExtModel } from '../base.model.js';
+import { Company } from '../company.model.js';
 
 export class FeedType extends BaseOptionModel {
   static tableName = 'feed_types';

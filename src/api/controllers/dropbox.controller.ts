@@ -1,14 +1,15 @@
+import { Dropbox, DropboxAuth } from 'dropbox';
+import { FastifyReply, FastifyRequest } from 'fastify';
+
 import {
   dropboxClientId,
   dropboxClientSecret,
   frontend,
-} from '@/config/environment.config';
-import { Dropbox as DropboxModel } from '../models/dropbox.model';
-import { Dropbox, DropboxAuth } from 'dropbox';
-import { FastifyReply, FastifyRequest } from 'fastify';
+} from '../../config/environment.config.js';
+import { Dropbox as DropboxModel } from '../models/dropbox.model.js';
 
 /**
- * Dropbox Apps: https://www.dropbox.com/developers/apps?_tk=pilot_lp&_ad=topbar4&_camp=myapps
+ * @see https://www.dropbox.com/developers/apps?_tk=pilot_lp&_ad=topbar4&_camp=myapps
  */
 export default class DropboxController {
   private static config = {

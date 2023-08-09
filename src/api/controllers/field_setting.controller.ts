@@ -1,5 +1,6 @@
-import { FieldSetting } from '@models/field_setting.model';
 import { FastifyReply, FastifyRequest } from 'fastify';
+
+import { FieldSetting } from '../models/field_setting.model.js';
 
 export default class FieldSettingController {
   static async get(req: FastifyRequest, reply: FastifyReply) {

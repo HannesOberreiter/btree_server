@@ -1,13 +1,16 @@
-import { frontend } from '@/config/environment.config';
+import { frontend } from '../../../config/environment.config.js';
 import { FastifyInstance } from 'fastify';
 import { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { z } from 'zod';
-import AuthController from '@/api/controllers/auth.controller';
-import { Guard } from '@/api/middlewares/guard.middleware';
-import { ROLES } from '@/config/constants.config';
-import { GoogleAuth, federatedUser } from '@/api/services/federated.service';
-import { buildUserAgent } from '@/api/utils/auth.util';
-import { loginCheck } from '@/api/utils/login.util';
+import AuthController from '../../controllers/auth.controller.js';
+import { Guard } from '../../middlewares/guard.middleware.js';
+import { ROLES } from '../../../config/constants.config.js';
+import {
+  GoogleAuth,
+  federatedUser,
+} from '../../../services/federated.service.js';
+import { buildUserAgent } from '../../utils/auth.util.js';
+import { loginCheck } from '../../utils/login.util.js';
 import { randomUUID } from 'crypto';
 import httpErrors from 'http-errors';
 

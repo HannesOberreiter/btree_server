@@ -1,4 +1,4 @@
-import { Todo } from '@models/todo.model';
+import { Todo } from '../models/todo.model.js';
 import dayjs from 'dayjs';
 import { FastifyRequest, FastifyReply } from 'fastify';
 

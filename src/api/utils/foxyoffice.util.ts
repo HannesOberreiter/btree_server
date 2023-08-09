@@ -1,6 +1,9 @@
-import { foxyOfficeKey, foxyOfficeUrl } from '@/config/environment.config';
-import { MailServer } from '../app.bootstrap';
-import { Logger } from '../services/logger.service';
+import {
+  foxyOfficeKey,
+  foxyOfficeUrl,
+} from '../../config/environment.config.js';
+import { MailServer } from '../../app.bootstrap.js';
+import { Logger } from '../../services/logger.service.js';
 
 function buildBaseUrl(endpoint: string) {
   return `https://${foxyOfficeUrl}/${endpoint}/${foxyOfficeKey}`;

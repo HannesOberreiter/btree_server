@@ -1,8 +1,9 @@
-import { Charge } from '../models/charge.model';
 import dayjs from 'dayjs';
 import { map } from 'lodash';
-import { ChargeStock } from '../models/charge_stock.model';
 import { FastifyReply, FastifyRequest } from 'fastify';
+
+import { Charge } from '../models/charge.model.js';
+import { ChargeStock } from '../models/charge_stock.model.js';
 
 export default class ChargeController {
   static async get(req: FastifyRequest, reply: FastifyReply) {

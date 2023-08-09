@@ -1,0 +1,214 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.autoFill = void 0;
+const checkup_type_model_js_1 = require("../models/option/checkup_type.model.js");
+const apiary_model_js_1 = require("../models/apiary.model.js");
+const hive_source_model_js_1 = require("../models/option/hive_source.model.js");
+const hive_type_mode_js_1 = require("../models/option/hive_type.mode.js");
+const charge_type_model_js_1 = require("../models/option/charge_type.model.js");
+const feed_type_model_js_1 = require("../models/option/feed_type.model.js");
+const harvest_type_model_js_1 = require("../models/option/harvest_type.model.js");
+const treatment_disease_model_js_1 = require("../models/option/treatment_disease.model.js");
+const treatment_type_model_js_1 = require("../models/option/treatment_type.model.js");
+const treatment_vet_model_js_1 = require("../models/option/treatment_vet.model.js");
+const queen_race_model_js_1 = require("../models/option/queen_race.model.js");
+const queen_mating_model_js_1 = require("../models/option/queen_mating.model.js");
+const rearing_detail_model_js_1 = require("../models/rearing/rearing_detail.model.js");
+const rearing_type_model_js_1 = require("../models/rearing/rearing_type.model.js");
+const rearing_step_model_js_1 = require("../models/rearing/rearing_step.model.js");
+const standardValues = {
+    de: {
+        apiary: {
+            name: 'Muster Bienenstand',
+            latitude: 47.074853,
+            longitude: 12.69527,
+        },
+        source: ['Ableger', 'Gekauft', 'Kunstschwarm', 'Schwarm'],
+        type: [
+            'Aktiv',
+            'Zucht',
+            'Verkauft',
+            'Vereinigt - Schwach',
+            'Aufgelöst - Verhungert',
+            'Aufgelöst - Unbekannt',
+        ],
+        checkup: [
+            'Kontrolle',
+            'Zargenwechsel',
+            'Schied +',
+            'Schied -',
+            'Varroakontrolle',
+            'Drohnenrahmen +',
+            'Drohnenrahmen -',
+        ],
+        charge: ['Futter - Zucker', 'kg', 'Material - Zargen', 'Stk.'],
+        feed: ['3:2 Zuckerwasser', '1:1 Zuckerwasser', 'Futterteig'],
+        harvest: ['Mischhonig', 'Raps', 'Akazien', 'Waldhonig'],
+        disease: [
+            'amerikanische Faulbrut',
+            'Schimmel-Pilze',
+            'Ruhr',
+            'Kalkbrut',
+            'Varroa',
+        ],
+        treatment: [
+            'Wabenentnahme',
+            'Ableger',
+            'Abschwefeln',
+            'Ameisensäure',
+            'Oxalsäure (Sublimieren)',
+        ],
+        vet: ['-'],
+        race: ['Linie A', 'Unbekannt', 'A.m.Mellifera'],
+        mating: ['Belegstelle', 'Standbegattung', 'Künstliche Besamung'],
+        reartype: {
+            name: 'Starter Finisher',
+            note: 'Weiselloses Volk, ohne offene Brut zum aufziehen der Weiselzellen.',
+        },
+        reardetail: {
+            job: [
+                'Sammelableger',
+                'Weiselzellen brechen',
+                'Umlarven',
+                'Finisher',
+                'Käfigen',
+                'Schlupf',
+            ],
+            note: [
+                'Erstellen des Sammelablegers mit verdeckelte Brutwaben, aufsitzenden Bienen von offener Brut und Pollen und Futterwaben.',
+                'Weiselzellen suchen und wenn vorhanden brechen.',
+                'Maximal einen Tag alte verwenden! (Anm. 3 Tage Ei Stadium).',
+                'Angeblasene Zellen einem weiselrichtigen Wirtschaftsvolk über einem Absperrgitter einhängen.',
+                'Schlupfkäfig über Weiselzellen anbringen.',
+                'Königinnen schlüpfen (12 Tage nach dem Umlarven).',
+            ],
+            time: [0, 219, 3, 48, 120, 120],
+        },
+    },
+    en: {
+        apiary: {
+            name: 'Sample Apiary',
+            latitude: 47.074853,
+            longitude: 12.69527,
+        },
+        source: ['Artifical Swarm', 'Split', 'Swarm'],
+        type: [
+            'Active',
+            'Rearing',
+            'Sold',
+            'Combined - Weak',
+            'Lost - Queen Problem',
+            'Lost - Varroa',
+            'Lost - Unknown',
+        ],
+        checkup: [
+            'Checkup',
+            'Varroa Control',
+            'Pressing +',
+            'Pressing -',
+            'Droneframe +',
+            'Droneframe -',
+        ],
+        charge: ['Feed-Sugar', 'kg', 'Production-Glasses', 'Pcs.'],
+        feed: ['3:2 Sugarwater', '1:1 Sugarwater', 'Sugarfond'],
+        harvest: ['Mix Honey', 'Rapeseed', 'Acacia', 'Honeydew'],
+        disease: ['AFB', 'Mold Fungi', 'Dysentery', 'Chalk Brood', 'Varroa'],
+        treatment: [
+            'Comb Removal',
+            'Split',
+            'Sulphurizing',
+            'Formic Acid',
+            'Oxalic Strips',
+        ],
+        vet: ['-'],
+        race: ['LineA', 'Unknown', 'A.m.Mellifera'],
+        mating: ['Mating Place', 'Home Apiary', 'Artificial Insemination'],
+        reartype: {
+            name: 'Starter Finisher',
+            note: 'Starter to get the queencells ready and finish in normal hive with queen.',
+        },
+        reardetail: {
+            job: [
+                'Starter',
+                'Break Queenscells',
+                'Grafting',
+                'Finisher',
+                'Cage Queencells',
+                'Queens emerge',
+            ],
+            note: [
+                'Create a queenless hive with capped brood, bees, food and pollen frames.',
+                'Search and break queen cells if there are any.',
+                'Fill the grafting frame, use max. 1 day old larvae (Egg needs 3 days to larvae).',
+                'Move the grafting frame to a strong hive with a queen.',
+                'Cage the queens cells.',
+                'Queen emerges (12 days after grafting (if you use 1 day old larvae)).',
+            ],
+            time: [0, 219, 3, 48, 120, 120],
+        },
+    },
+};
+const autoFill = async (trx, id, lang) => {
+    const val = standardValues[lang];
+    // We use MySQL we cannot use patch insert
+    for (const source of val.source) {
+        await hive_source_model_js_1.HiveSource.query(trx).insert({ name: source, user_id: id });
+    }
+    for (const type of val.type) {
+        await hive_type_mode_js_1.HiveType.query(trx).insert({ name: type, user_id: id });
+    }
+    for (const charge of val.charge) {
+        await charge_type_model_js_1.ChargeType.query(trx).insert({ name: charge, user_id: id });
+    }
+    for (const checkup of val.checkup) {
+        await checkup_type_model_js_1.CheckupType.query(trx).insert({ name: checkup, user_id: id });
+    }
+    for (const feed of val.feed) {
+        await feed_type_model_js_1.FeedType.query(trx).insert({ name: feed, user_id: id });
+    }
+    for (const harvest of val.harvest) {
+        await harvest_type_model_js_1.HarvestType.query(trx).insert({ name: harvest, user_id: id });
+    }
+    for (const disease of val.disease) {
+        await treatment_disease_model_js_1.TreatmentDisease.query(trx).insert({ name: disease, user_id: id });
+    }
+    for (const treatment of val.treatment) {
+        await treatment_type_model_js_1.TreatmentType.query(trx).insert({ name: treatment, user_id: id });
+    }
+    for (const vet of val.vet) {
+        await treatment_vet_model_js_1.TreatmentVet.query(trx).insert({ name: vet, user_id: id });
+    }
+    for (const race of val.race) {
+        await queen_race_model_js_1.QueenRace.query(trx).insert({ name: race, user_id: id });
+    }
+    for (const mating of val.mating) {
+        await queen_mating_model_js_1.QueenMating.query(trx).insert({ name: mating, user_id: id });
+    }
+    // Rearing we need to get always the last inserted id
+    const rearType = await rearing_type_model_js_1.RearingType.query(trx).insert({
+        name: val.reartype.name,
+        note: val.reartype.note,
+        user_id: id,
+    });
+    for (let i = 0; i < val.reardetail.job.length; i++) {
+        const rearingDetail = await rearing_detail_model_js_1.RearingDetail.query(trx).insert({
+            job: val.reardetail.job[i],
+            note: val.reardetail.note[i],
+            user_id: id,
+        });
+        await rearing_step_model_js_1.RearingStep.query(trx).insert({
+            position: i,
+            type_id: rearType.id,
+            detail_id: rearingDetail.id,
+            sleep_before: val.reardetail.time[i],
+        });
+    }
+    await apiary_model_js_1.Apiary.query(trx).insert({
+        name: val.apiary.name,
+        longitude: val.apiary.longitude,
+        latitude: val.apiary.latitude,
+        user_id: id,
+    });
+    return;
+};
+exports.autoFill = autoFill;

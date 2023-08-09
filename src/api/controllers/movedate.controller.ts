@@ -1,8 +1,9 @@
-import { Movedate } from '../models/movedate.model';
-import { Apiary } from '../models/apiary.model';
-import { HiveLocation } from '../models/hive_location.model';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import httpErrors from 'http-errors';
+
+import { Movedate } from '../models/movedate.model.js';
+import { Apiary } from '../models/apiary.model.js';
+import { HiveLocation } from '../models/hive_location.model.js';
 
 export default class MovedateController {
   static async get(req: FastifyRequest, reply: FastifyReply) {

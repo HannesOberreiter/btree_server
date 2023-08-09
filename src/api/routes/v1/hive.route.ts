@@ -1,10 +1,10 @@
-import { Guard } from '@middlewares/guard.middleware';
-import { ROLES } from '@/config/constants.config';
+import { Guard } from '../../middlewares/guard.middleware.js';
+import { ROLES } from '../../../config/constants.config.js';
 import { FastifyInstance } from 'fastify';
 import { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { z } from 'zod';
-import HiveController from '@/api/controllers/hive.controller';
-import { booleanParamSchema, numberSchema } from '@/api/utils/zod.util';
+import HiveController from '../../controllers/hive.controller.js';
+import { booleanParamSchema, numberSchema } from '../../utils/zod.util.js';
 
 const hiveSchema = z.object({
   name: z.string().min(1).max(24).trim(),

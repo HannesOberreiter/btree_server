@@ -1,8 +1,8 @@
-import { ExtModel } from '@models/base.model';
-import { Hive } from '@models/hive.model';
-import { User } from '@models/user.model';
-import { CheckupType } from '@models/option/checkup_type.model';
-import { CheckupApiary } from '@models/checkup_apiary.model';
+import { ExtModel } from './base.model.js';
+import { Hive } from './hive.model.js';
+import { User } from './user.model.js';
+import { CheckupType } from './option/checkup_type.model.js';
+import { CheckupApiary } from './checkup_apiary.model.js';
 export class Checkup extends ExtModel {
   id!: number;
   date!: Date;

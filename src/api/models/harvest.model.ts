@@ -1,8 +1,8 @@
-import { ExtModel } from '@models/base.model';
-import { Hive } from '@models/hive.model';
-import { User } from '@models/user.model';
-import { HarvestType } from '@models/option/harvest_type.model';
-import { HarvestApiary } from '@models/harvest_apiary.model';
+import { ExtModel } from './base.model.js';
+import { Hive } from './hive.model.js';
+import { User } from './user.model.js';
+import { HarvestType } from './option/harvest_type.model.js';
+import { HarvestApiary } from './harvest_apiary.model.js';
 
 export class Harvest extends ExtModel {
   id!: number;

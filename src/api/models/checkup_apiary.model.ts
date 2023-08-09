@@ -1,5 +1,5 @@
-import { Company } from '@models/company.model';
-import { Checkup } from '@models/checkup.model';
+import { Company } from './company.model.js';
+import { Checkup } from './checkup.model.js';
 import { Model } from 'objection';
 
 export class CheckupApiary extends Model {
