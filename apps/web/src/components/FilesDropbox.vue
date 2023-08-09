@@ -25,7 +25,7 @@
               <btn-base
                 flat
                 icon="fas fa-folder"
-                :label="props.row.name"
+                :label="truncate(props.row.name, { length: 30 })"
                 @click="changeFolder(props.row.path_lower)"
               ></btn-base>
               <div class="text-caption">
@@ -56,7 +56,7 @@
               <btn-base
                 flat
                 :icon="isImage(props.row.name) ? 'fas fa-image' : 'fas fa-file'"
-                :label="props.row.name"
+                :label="truncate(props.row.name, { length: 30 })"
                 @click="showFile(props.row.id)"
               >
                 <tooltip-base>
@@ -102,7 +102,7 @@
 
 <script setup lang="ts">
 import { isImage } from '~/helpers';
-import { round } from 'lodash-es';
+import { round, truncate } from 'lodash-es';
 import { useDateFormat } from '~/composables/useDate';
 import { useServiceDropbox } from '~/composables/useDropbox';
 import DialogFileShow from '~/components/DialogFileShow.vue';
@@ -136,7 +136,8 @@ const showFile = (id: string) => {
 watch(
   () => useDropbox.state.accessToken,
   (cur) => {
-    if (!useDropbox.state.folder && cur) useDropbox.listFiles();
+    if (!useDropbox.state.folder && cur && !useDropbox.state.isLoading)
+      useDropbox.listFiles();
   },
   { immediate: true },
 );

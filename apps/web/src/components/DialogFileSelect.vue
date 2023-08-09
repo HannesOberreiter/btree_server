@@ -51,7 +51,7 @@ watch(
   () => props.service,
   (cur) => {
     if (cur === 'dropbox')
-      useDropbox.getAccessToken().then((response) => {
+      useDropbox.getAccount().then((response) => {
         if (!response) {
           onDialogHide();
           notification.open('negative', 'noFileService');
