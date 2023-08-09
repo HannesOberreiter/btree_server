@@ -1,49 +1,79 @@
-import { Router } from '@classes/router.class';
-import { Container } from '@config/container.config';
 import { Guard } from '@middlewares/guard.middleware';
-import { ROLES } from '@/api/types/constants/role.const';
-import { Validator } from '@/api/middlewares/validator.middleware';
-import { body } from 'express-validator';
+import { ROLES } from '@/config/constants.config';
+import { FastifyInstance } from 'fastify';
+import { ZodTypeProvider } from 'fastify-type-provider-zod';
+import { z } from 'zod';
+import RearingDetailController from '@/api/controllers/rearing_detail.controller';
+import { numberSchema } from '@/api/utils/zod.util';
 
-export class RearingDetailRouter extends Router {
-  constructor() {
-    super();
-  }
+export default function routes(
+  instance: FastifyInstance,
+  _options: any,
+  done: any,
+) {
+  const server = instance.withTypeProvider<ZodTypeProvider>();
 
-  define() {
-    this.router
-      .route('/')
-      .get(
-        Guard.authorize([ROLES.admin, ROLES.user, ROLES.read]),
-        Container.resolve('RearingDetailController').get,
-      );
-    this.router
-      .route('/')
-      .patch(
-        Validator.validate([body('ids').isArray()]),
-        Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('RearingDetailController').patch,
-      );
-    this.router
-      .route('/')
-      .post(
-        Validator.validate([body('job').isString()]),
-        Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('RearingDetailController').post,
-      );
-    this.router
-      .route('/batchDelete')
-      .patch(
-        Validator.validate([body('ids').isArray()]),
-        Guard.authorize([ROLES.admin]),
-        Container.resolve('RearingDetailController').batchDelete,
-      );
-    this.router
-      .route('/batchGet')
-      .post(
-        Validator.validate([body('ids').isArray()]),
-        Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('RearingDetailController').batchGet,
-      );
-  }
+  server.get(
+    '/',
+    {
+      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+    },
+    RearingDetailController.get,
+  );
+
+  server.patch(
+    '/',
+    {
+      preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
+      schema: {
+        body: z.object({
+          ids: z.array(numberSchema),
+          data: z.object({}).passthrough(),
+        }),
+      },
+    },
+    RearingDetailController.patch,
+  );
+
+  server.post(
+    '/',
+    {
+      preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
+      schema: {
+        body: z
+          .object({
+            job: z.string(),
+          })
+          .passthrough(),
+      },
+    },
+    RearingDetailController.post,
+  );
+
+  server.patch(
+    '/batchDelete',
+    {
+      preHandler: Guard.authorize([ROLES.admin]),
+      schema: {
+        body: z.object({
+          ids: z.array(numberSchema),
+        }),
+      },
+    },
+    RearingDetailController.batchDelete,
+  );
+
+  server.post(
+    '/batchGet',
+    {
+      preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
+      schema: {
+        body: z.object({
+          ids: z.array(numberSchema),
+        }),
+      },
+    },
+    RearingDetailController.batchGet,
+  );
+  done();
 }

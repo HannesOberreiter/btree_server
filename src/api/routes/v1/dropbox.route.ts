@@ -1,37 +1,35 @@
 import { Guard } from '@/api/middlewares/guard.middleware';
-import { ROLES } from '@/api/types/constants/role.const';
-import { Router } from '@classes/router.class';
-import { Container } from '@config/container.config';
+import { ROLES } from '@/config/constants.config';
+import { FastifyInstance } from 'fastify';
+import { ZodTypeProvider } from 'fastify-type-provider-zod';
+import DropboxController from '@/api/controllers/dropbox.controller';
 
-export class DropboxRouter extends Router {
-  constructor() {
-    super();
-  }
+export default function routes(
+  instance: FastifyInstance,
+  _options: any,
+  done: any,
+) {
+  const server = instance.withTypeProvider<ZodTypeProvider>();
 
-  define() {
-    this.router
-      .route('/')
-      .get(
-        Guard.authorize([ROLES.admin]),
-        Container.resolve('DropboxController').get,
-      );
-    this.router
-      .route('/:id?')
-      .delete(
-        Guard.authorize([ROLES.admin]),
-        Container.resolve('DropboxController').delete,
-      );
-    this.router
-      .route('/auth/:code')
-      .get(
-        Guard.authorize([ROLES.admin]),
-        Container.resolve('DropboxController').auth,
-      );
-    this.router
-      .route('/token')
-      .get(
-        Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('DropboxController').token,
-      );
-  }
+  server.get(
+    '/',
+    { preHandler: Guard.authorize([ROLES.admin]) },
+    DropboxController.get,
+  );
+  server.delete(
+    '/:id?',
+    { preHandler: Guard.authorize([ROLES.admin]) },
+    DropboxController.delete,
+  );
+  server.get(
+    '/auth/:code',
+    { preHandler: Guard.authorize([ROLES.admin]) },
+    DropboxController.auth,
+  );
+  server.get(
+    '/token',
+    { preHandler: Guard.authorize([ROLES.admin, ROLES.user]) },
+    DropboxController.token,
+  );
+  done();
 }

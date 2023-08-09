@@ -1,124 +1,91 @@
-import { NextFunction, Response } from 'express';
-import { Controller } from '@classes/controller.class';
-import { checkMySQLError } from '@utils/error.util';
-import { IUserRequest } from '@interfaces/IUserRequest.interface';
 import { RearingType } from '../models/rearing/rearing_type.model';
 import { RearingStep } from '../models/rearing/rearing_step.model';
 import { Rearing } from '../models/rearing/rearing.model';
+import { FastifyRequest, FastifyReply } from 'fastify';
 
-export default class RearingTypeController extends Controller {
-  constructor() {
-    super();
-  }
+export default class RearingTypeController {
+  static async get(req: FastifyRequest, reply: FastifyReply) {
+    const { order, direction, offset, limit, q } = req.query as any;
+    const query = RearingType.query()
+      .withGraphFetched('step(orderByPosition).detail')
+      .where({
+        'rearing_types.user_id': req.session.user.user_id,
+      })
+      .page(offset ? offset : 0, parseInt(limit) === 0 || !limit ? 10 : limit);
 
-  async get(req: IUserRequest, res: Response, next: NextFunction) {
-    try {
-      const { order, direction, offset, limit, q } = req.query as any;
-      const query = RearingType.query()
-        .withGraphFetched('step(orderByPosition).detail')
-        .where({
-          'rearing_types.user_id': req.user.user_id,
-        })
-        .page(
-          offset ? offset : 0,
-          parseInt(limit) === 0 || !limit ? 10 : limit,
-        );
-
-      if (order) {
-        if (Array.isArray(order)) {
-          order.forEach((field, index) =>
-            query.orderBy(field, direction[index]),
-          );
-        } else {
-          query.orderBy(order, direction);
-        }
+    if (order) {
+      if (Array.isArray(order)) {
+        order.forEach((field, index) => query.orderBy(field, direction[index]));
+      } else {
+        query.orderBy(order, direction);
       }
-      if (q) {
-        if (q.trim() !== '') {
-          query.where((builder) => {
-            builder.orWhere('rearing_types.name', 'like', `%${q}%`);
-          });
-        }
-      }
-      const result = await query.orderBy('id');
-      res.locals.data = result;
-      next();
-    } catch (e) {
-      next(checkMySQLError(e));
     }
-  }
-
-  async patch(req: IUserRequest, res: Response, next: NextFunction) {
-    const ids = req.body.ids;
-    const insert = { ...req.body.data };
-    try {
-      const result = await RearingType.transaction(async (trx) => {
-        return await RearingType.query(trx)
-          .patch({ ...insert })
-          .findByIds(ids)
-          .where('user_id', req.user.user_id);
-      });
-      res.locals.data = result;
-      next();
-    } catch (e) {
-      next(checkMySQLError(e));
-    }
-  }
-
-  async post(req: IUserRequest, res: Response, next: NextFunction) {
-    try {
-      const result = await RearingType.transaction(async (trx) => {
-        return await RearingType.query(trx).insert({
-          ...req.body,
-          user_id: req.user.user_id,
+    if (q) {
+      if (q.trim() !== '') {
+        query.where((builder) => {
+          builder.orWhere('rearing_types.name', 'like', `%${q}%`);
         });
-      });
-      res.locals.data = result;
-      next();
-    } catch (e) {
-      next(checkMySQLError(e));
+      }
     }
+    const result = await query.orderBy('id');
+    return { ...result };
   }
 
-  async batchGet(req: IUserRequest, res: Response, next: NextFunction) {
-    try {
-      const result = await RearingType.transaction(async (trx) => {
-        const res = await RearingType.query(trx)
-          .withGraphFetched('detail')
-          .findByIds(req.body.ids)
-          .where('rearing_types.user_id', req.user.user_id);
-        return res;
-      });
-      res.locals.data = result;
-      next();
-    } catch (e) {
-      next(checkMySQLError(e));
-    }
+  static async patch(req: FastifyRequest, reply: FastifyReply) {
+    const body = req.body as any;
+    const ids = body.ids;
+    const insert = { ...body.data };
+    const result = await RearingType.transaction(async (trx) => {
+      return await RearingType.query(trx)
+        .patch({ ...insert })
+        .findByIds(ids)
+        .where('user_id', req.session.user.user_id);
+    });
+    return result;
   }
 
-  async batchDelete(req: IUserRequest, res: Response, next: NextFunction) {
-    try {
-      const result = await RearingType.transaction(async (trx) => {
-        await RearingStep.query(trx)
-          .withGraphJoined('type')
-          .delete()
-          .where('type.user_id', req.user.user_id)
-          .whereIn('type_id', req.body.ids);
-
-        await Rearing.query(trx)
-          .delete()
-          .where('rearings.user_id', req.user.user_id)
-          .whereIn('type_id', req.body.ids);
-
-        return await RearingType.query(trx)
-          .delete()
-          .whereIn('id', req.body.ids)
-          .where('user_id', req.user.user_id);
+  static async post(req: FastifyRequest, reply: FastifyReply) {
+    const body = req.body as any;
+    const result = await RearingType.transaction(async (trx) => {
+      return await RearingType.query(trx).insert({
+        ...body,
+        user_id: req.session.user.user_id,
       });
-      res.locals.data = result;
-      next();
-    } catch (e) {
-      next(checkMySQLError(e));
-    }
+    });
+    return { ...result };
+  }
+
+  static async batchGet(req: FastifyRequest, reply: FastifyReply) {
+    const body = req.body as any;
+    const result = await RearingType.transaction(async (trx) => {
+      const res = await RearingType.query(trx)
+        .withGraphFetched('detail')
+        .findByIds(body.ids)
+        .where('rearing_types.user_id', req.session.user.user_id);
+      return res;
+    });
+    return result;
+  }
+
+  static async batchDelete(req: FastifyRequest, reply: FastifyReply) {
+    const body = req.body as any;
+    const result = await RearingType.transaction(async (trx) => {
+      await RearingStep.query(trx)
+        .withGraphJoined('type')
+        .delete()
+        .where('type.user_id', req.session.user.user_id)
+        .whereIn('type_id', body.ids);
+
+      await Rearing.query(trx)
+        .delete()
+        .where('rearings.user_id', req.session.user.user_id)
+        .whereIn('type_id', body.ids);
+
+      return await RearingType.query(trx)
+        .delete()
+        .whereIn('id', body.ids)
+        .where('user_id', req.session.user.user_id);
+    });
+    return result;
   }
 }

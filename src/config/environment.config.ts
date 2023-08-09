@@ -1,6 +1,6 @@
-import { ENVIRONMENT } from '@/api/types/constants/environment.const';
 import p from 'path';
 import dotenv from 'dotenv';
+import { ENVIRONMENT } from './constants.config.js';
 
 /**
  * Configure dotenv with variables.env file before app, to allow process.env accessibility in
@@ -55,26 +55,13 @@ class EnvironmentConfiguration {
 EnvironmentConfiguration.load();
 
 const env = EnvironmentConfiguration.environment;
-const version = process.env.API_VERSION;
-const port = process.env.PORT;
+const port = parseInt(process.env.PORT);
 const url = process.env.URL;
 const frontend = process.env.FRONTEND;
 const authorized = process.env.AUTHORIZED;
 
-/*const jwtSecret = process.env.JWT_SECRET;
-const jwtExpirationInterval: number = parseFloat(
-  process.env.JWT_EXPIRATION_MINUTES
-);
-const jwtExpirationIntervalRefreshToken: number = parseInt(
-  process.env.JWT_REFRESH_DAYS
-);*/
-
 const sessionSecret = process.env.SESSION_SECRET;
 
-const logs = env === ENVIRONMENT.production ? 'combined' : 'development';
-// https://github.com/expressjs/morgan
-const httpLogs = env === ENVIRONMENT.production ? 'tiny' : 'dev';
-const contentType = process.env.CONTENT_TYPE;
 const meteoblueKey = process.env.METEOBLUE_KEY;
 
 const dropboxClientId = process.env.DROPBOX_CLIENT_ID;
@@ -204,13 +191,6 @@ export {
   frontend,
   meteoblueKey,
   authorized,
-  contentType,
-  //jwtSecret,
-  //jwtExpirationInterval,
-  //jwtExpirationIntervalRefreshToken,
-  version,
-  logs,
-  httpLogs,
   mailConfig,
   dropboxClientId,
   dropboxClientSecret,

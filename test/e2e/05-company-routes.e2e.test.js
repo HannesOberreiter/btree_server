@@ -7,7 +7,7 @@ const patchCompanyName = 'newName';
 const newCompanyName = 'testCompany';
 
 describe('Company routes', function () {
-  const route = '/api/v1/company/';
+  const route = '/api/v1/company';
   let accessToken;
 
   before(function (done) {
@@ -25,7 +25,7 @@ describe('Company routes', function () {
         expect(res.statusCode).to.eqls(200);
         expect(res.header, 'set-cookie', /connect.sid=.*; Path=\/; HttpOnly/);
         done();
-      }
+      },
     );
   });
 
@@ -33,7 +33,7 @@ describe('Company routes', function () {
     it(`401 - no header`, function (done) {
       doQueryRequest(
         request.agent(global.server),
-        route + 'apikey',
+        route + '/apikey',
         null,
         null,
         null,
@@ -41,14 +41,14 @@ describe('Company routes', function () {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
-        }
+        },
       );
     });
 
     it(`200 - get`, function (done) {
       doQueryRequest(
         agent,
-        route + 'apikey',
+        route + '/apikey',
         null,
         accessToken,
         null,
@@ -56,7 +56,7 @@ describe('Company routes', function () {
           expect(res.statusCode).to.eqls(200);
           expect(res.body).to.has.property('api_key');
           done();
-        }
+        },
       );
     });
   });
@@ -74,7 +74,7 @@ describe('Company routes', function () {
           expect(res.statusCode).to.eqls(400);
           expectations(res, 'name', 'Invalid value');
           done();
-        }
+        },
       );
     });
 
@@ -90,7 +90,7 @@ describe('Company routes', function () {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
-        }
+        },
       );
     });
 
@@ -106,7 +106,7 @@ describe('Company routes', function () {
           expect(res.statusCode).to.eqls(200);
           expect(res.body.name, patchCompanyName);
           done();
-        }
+        },
       );
     });
 
@@ -145,11 +145,11 @@ describe('Company routes', function () {
                   expect(res.body.result, 1);
                   expect(res.body.data).to.be.a('Object');
                   done();
-                }
+                },
               );
-            }
+            },
           );
-        }
+        },
       );
     });
   });

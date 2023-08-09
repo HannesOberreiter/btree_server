@@ -1,127 +1,59 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-import Cors from 'cors';
-import * as rfs from 'rotating-file-stream';
-import { ENVIRONMENT } from '@/api/types/constants/environment.const';
-import {
-  httpLogs,
-  authorized,
-  version,
-  env,
-  contentType,
-  sessionSecret,
-} from '@config/environment.config';
-import p from 'path';
-
-import Express from 'express';
-import session from 'express-session';
 import RedisStore from 'connect-redis';
-
-import Hpp from 'hpp';
-import BodyParser from 'body-parser';
-import { Cors as Kors } from '@middlewares/cors.middleware';
-import Compression from 'compression';
-import RateLimit from 'express-rate-limit';
-import Morgan from 'morgan';
-
-import { notAcceptable } from '@hapi/boom';
-
-import { Container } from '@config/container.config';
-
-import { HelmetConfiguration } from '@config/helmet.config';
-
-// import passport from 'passport';
-// import { PassportConfiguration } from '@config/passport.config';
-
-import { Resolver } from '@middlewares/resolver.middleware';
-import { Catcher } from '@middlewares/catcher.middleware';
-// import { MySQLServer } from '@/servers/mysql.server';
-import { RedisServer } from '@/servers/redis.server';
 import { randomUUID } from 'node:crypto';
-import passport from 'passport';
-import { PassportConfiguration } from './passport.config';
+import {
+  serializerCompiler,
+  validatorCompiler,
+} from 'fastify-type-provider-zod';
+import { ZodError } from 'zod';
+import httpErrors from 'http-errors';
+
+import { RedisServer } from '@/servers/redis.server.js';
+import { authorized, env, sessionSecret } from '@config/environment.config.js';
+// import { PassportConfiguration } from './passport.config.js';
+import { Logger } from '@/api/services/logger.service.js';
+import { ENVIRONMENT } from './constants.config.js';
+import routes from '@/api/routes/index.js';
+
+// import fastifyPassport from '@fastify/passport';
+import fastify, { FastifyInstance, FastifyRequest } from 'fastify';
+import fastifyCookie from '@fastify/cookie';
+import fastifySession from '@fastify/session';
+import fastifyCompress from '@fastify/compress';
+import fastifyHelmet from '@fastify/helmet';
+import fastifyCors from '@fastify/cors';
+import fastifyRateLimit from '@fastify/rate-limit';
+import { checkMySQLError } from '@/api/utils/error.util.js';
 
 /**
- * Instanciate and set Express application.
- * Configure and plug middlewares from local options or dedicated files in ./config.
+ * @description Instantiate server application.
  */
 export class Application {
-  /**
-   * @description Wrapped Express.js application
-   */
-  public app: Express.Application;
-  /**
-   * @description Store for sessions
-   */
-  //private store: any;
-  private redisStore: any;
-
-  /**
-   * @description Configuring CORS asynchronously, will disable CORS for /external/ route
-   */
-  private corsOptionsDelegate = function (req, callback) {
-    const origin = req.header('Origin');
-    let corsOptions = {
-      origin: true,
-      credentials: true,
-      methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
-      allowedHeaders: [
-        'Accept',
-        'Content-Type',
-        'Authorization',
-        'Origin',
-        'From',
-      ],
-    } as any;
-    let error = null;
-
-    if (req.url.indexOf('external') !== -1) {
-      // Allow API calls to scale and iCal without CORS
-      corsOptions = { origin: false, credentials: false };
-    } else if (
-      authorized.indexOf(origin) === -1 &&
-      origin &&
-      env !== ENVIRONMENT.development
-    ) {
-      error = notAcceptable(`Domain not allowed by CORS: ${origin}`);
-    }
-    callback(error, corsOptions);
-  };
-  /**
-   * @description Middlewares options
-   */
-  private options = {
-    stream:
-      env === ENVIRONMENT.production || env === ENVIRONMENT.staging
-        ? rfs.createStream(`access-${env}.log`, {
-            interval: '7d',
-            maxFiles: 10,
-            path: p.join(__dirname, `../../logs`),
-          })
-        : Container.resolve('Logger').get('stream'),
-    rate: {
-      windowMs: 60 * 60 * 1000, // 1 hour
-      max: 2500,
-      message: 'Too many requests from this IP, please try again after an hour',
-    },
-  };
+  public app: FastifyInstance;
+  private redisStore: RedisStore;
+  private logger: Logger;
 
   constructor() {
     this.init();
     this.createSessionStore();
-    // this.createStore();
     this.plug();
   }
 
-  /**
-   * @description Instantiate Express application
-   */
   private init(): void {
-    this.app = Express();
+    this.logger = Logger.getInstance();
+    this.app = fastify({
+      logger: this.logger.pino,
+      disableRequestLogging: false,
+      trustProxy: true,
+      bodyLimit: 1048576 * 50, // 50 MB
+      maxParamLength: 10000,
+      ajv: {
+        customOptions: {
+          removeAdditional: false, // Refer to [ajv options](https://ajv.js.org/options.html#removeadditional)
+        },
+      },
+    });
   }
 
-  /***
-   * @description Instantiate session store with redis
-   */
   private createSessionStore(): void {
     const redis = RedisServer.client;
     this.redisStore = new RedisStore({
@@ -130,168 +62,183 @@ export class Application {
     });
   }
 
-  /***
-   * @description Instantiate session store with knex
-   */
-  /*
-  private createStore(): void {
-    const knex = MySQLServer.knex;
-    this.store = new KnexSessionStore({
-      knex,
-      createtable: false,
-      clearInterval: 1000 * 60 * 60,
-    });
-  }
-  */
-
-  /**
-   * @description Plug and set middlewares on Express app
-   */
   private plug(): void {
     /**
-     * Check headers validity
+     * @description GZIP compression
+     * @see https://www.npmjs.com/package/@fastify/compress
      */
-    this.app.use(Kors.validate);
+    this.app.register(fastifyCompress);
 
     /**
-     * Expose body on req.body
-     *
-     * @see https://www.npmjs.com/package/body-parser
+     * @description Important security headers for Fastify. It is a tiny wrapper around helmet.
+     * @see https://github.com/fastify/fastify-helmet
      */
-    this.app.use(
-      BodyParser.urlencoded({
-        limit: '50mb',
-        extended: false,
-        parameterLimit: 10000,
-      }),
-    );
-    this.app.use(BodyParser.json({ type: contentType, limit: '50mb' }));
-    /**
-     * Prevent request parameter pollution
-     *
-     * @see https://www.npmjs.com/package/hpp
-     */
-    this.app.use(Hpp({ checkBody: false, whitelist: ['order', 'direction'] }));
+    this.app.register(fastifyHelmet, {
+      hidePoweredBy: true,
+      noSniff: true,
+      referrerPolicy: { policy: 'no-referrer' },
+    });
 
     /**
-     * GZIP compression
-     *
-     * @see https://github.com/expressjs/compression
-     */
-    this.app.use(Compression());
-
-    /**
-     * Enable and set Helmet security middleware
-     *
-     * @see https://github.com/helmetjs/helmet
-     */
-    this.app.use(HelmetConfiguration.get()());
-
-    /**
-     * Enable CORS - Cross Origin Resource Sharing
-     *
+     * @description Enable CORS - Cross Origin Resource Sharing
      * @see https://www.npmjs.com/package/cors
      */
-    this.app.use(Cors(this.corsOptionsDelegate));
-
-    /*
-    this.app.use(
-      session({
-        name:
-          env === ENVIRONMENT.staging
-            ? '_auth-btree-session-staging'
-            : '_auth-btree-session',
-        secret: sessionSecret,
-        resave: false,
-        saveUninitialized: false,
-        rolling: true,
-        store: this.store,
-        cookie: {
-          sameSite: 'strict',
-          maxAge: 1000 * 60 * 60 * 24 * 60, // 60 days
-          secure: env === ENVIRONMENT.production,
-          domain: env === ENVIRONMENT.production ? 'btree.at' : '',
-        },
-      })
-    );
-    */
-
-    this.app.use(
-      session({
-        genid: function (req) {
-          // Match method in express-session
-          // See https://github.com/expressjs/session/blob/v1.15.6/index.js#L502
-          let id = randomUUID();
-          if ('bee_id' in req) {
-            id = `${req.bee_id}:${id}`;
+    this.app.register(fastifyCors, (_instance) => {
+      return (req: FastifyRequest, callback) => {
+        if (!req.headers.origin) {
+          // Set undefined CORS header
+          // https://github.com/expressjs/cors/issues/262
+          if (req.headers.referer) {
+            const url = new URL(req.headers.referer);
+            req.headers.origin = url.origin;
+          } else if (req.headers.host) {
+            req.headers.origin = req.headers.host;
           }
-          return id;
-        },
-        name:
-          env === ENVIRONMENT.staging
-            ? '_auth-btree-session-staging'
-            : '_auth-btree-session',
-        secret: sessionSecret,
-        resave: false,
-        saveUninitialized: false,
-        rolling: false,
-        store: this.redisStore,
-        unset: 'destroy',
-        cookie: {
-          sameSite: 'strict',
-          maxAge: 1000 * 60 * 60 * 24 * 30, // 30 days
-          secure: env === ENVIRONMENT.production,
-          domain: env === ENVIRONMENT.production ? 'btree.at' : '',
-        },
-      }),
-    );
+        }
+
+        const origin = req.headers.origin;
+        let corsOptions = {
+          origin: true,
+          credentials: true,
+          methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+          allowedHeaders: [
+            'Accept',
+            'Content-Type',
+            'Authorization',
+            'Origin',
+            'From',
+          ],
+        } as any;
+
+        if (
+          req.url.indexOf('external') >= 0 ||
+          req.url.indexOf('auth/google/callback') >= 0
+        ) {
+          // Allow API calls to scale and iCal and google auth without CORS
+          corsOptions = { origin: false, credentials: false };
+        } else if (
+          authorized.indexOf(origin) === -1 &&
+          origin &&
+          env !== ENVIRONMENT.development
+        ) {
+          callback(
+            httpErrors.NotAcceptable(`Domain not allowed by CORS: ${origin}`),
+            corsOptions,
+          );
+        }
+
+        callback(null, corsOptions);
+      };
+    });
+
+    this.app.register(fastifyCookie);
+
+    this.app.register(fastifySession, {
+      idGenerator: function (req) {
+        let id = randomUUID();
+        if ('bee_id' in req) {
+          id = `${req.bee_id}:${id}`;
+        }
+        return id;
+      },
+      cookieName:
+        env === ENVIRONMENT.staging
+          ? '_auth-btree-session-staging'
+          : '_auth-btree-session',
+      cookiePrefix: 's:',
+      secret: sessionSecret,
+      saveUninitialized: false,
+      rolling: false,
+      store: this.redisStore,
+      cookie: {
+        sameSite: 'strict',
+        maxAge: 1000 * 60 * 60 * 24 * 30, // 30 days
+        secure: env === ENVIRONMENT.production,
+        domain: env === ENVIRONMENT.production ? 'btree.at' : '',
+        path: '/',
+      },
+    });
 
     /**
-     * Passport configuration
-     *
+     * @description Passport configuration
      * @see http://www.passportjs.org/
      */
-    this.app.use(passport.initialize());
-    passport.use('google', PassportConfiguration.factory('google'));
-    //passport.use('jwt', PassportConfiguration.factory('jwt'));
+
+    //this.app.register(fastifyPassport.initialize());
+    //this.app.register(fastifyPassport.secureSession());
+
+    //fastifyPassport.use('google', PassportConfiguration.factory('google'));
+
+    /*
+    fastifyPassport.registerUserSerializer(async (user, req) => {
+      this.logger.log('info', 'Serializing user', { user });
+      req.session.user = user as any;
+    });
+    fastifyPassport.registerUserDeserializer(async (user, req) => {
+      this.logger.log('info', 'Deserzialize user', { user });
+      req.session.user = user as any;
+    });
+*/
+    /**
+     * @description Configure API Rate limit
+     * @see https://github.com/fastify/fastify-rate-limit
+     */
+    this.app.register(fastifyRateLimit, {
+      timeWindow: 1000 * 60, // 1 minute
+      max: 1000,
+    });
 
     /**
-     * Request logging with Morgan
-     * dev : console | production : file
-     *
-     * @see https://github.com/expressjs/morgan
+     * @description Global validator and serializer compiler using Zod
      */
-    this.app.use(Morgan(httpLogs, { stream: this.options.stream }));
+    this.app.setValidatorCompiler(validatorCompiler);
+    this.app.setSerializerCompiler(serializerCompiler);
 
     /**
-     * Configure API Rate limit
-     * Note that you can also set limit on specific route path
-     *
-     * @see https://www.npmjs.com/package/express-rate-limit
+     * @description Global logger
      */
-    this.app.enable('trust proxy'); // only if you're behind a reverse proxy (Heroku, Bluemix, AWS ELB, Nginx, etc)
+    this.app.setErrorHandler(function (error, request, reply) {
+      if (error instanceof ZodError) {
+        request.log.error(
+          {
+            user: request?.session?.user,
+            req: request,
+            error: error.issues,
+            path: request.url,
+          },
+          'Zod validation error',
+        );
+        reply.status(400).send({
+          statusCode: 400,
+          error: 'Bad Request',
+          issues: error.issues,
+        });
+        return;
+      }
+      let e = checkMySQLError(error);
+      this.log.error(
+        {
+          user: request?.session?.user,
+          req: request,
+          error: e.cause ? e.cause : e,
+          path: request.url,
+        },
+        e.message ? e.message : 'Unhandled error',
+      );
+      if (e.statusCode) {
+        reply.status(e.statusCode).send({
+          statusCode: e.statusCode,
+          error: e.message,
+        });
+        return;
+      }
+      throw e;
+    });
 
-    /**
-     * Set global middlewares on Express Application
-     *
-     * Note also that middlewares are implemented in each route file (Guard, Validation, Upload, ...)
-     *
-     * - RateLimit
-     * - Router(s)
-     * - Resolver
-     */
-    this.app.use(
-      `/api/${version}`,
-      RateLimit(this.options.rate),
-      Container.resolve('ProxyRouter').router,
-      Resolver.resolve,
-    );
+    this.app.register(routes, {
+      prefix: '/api/',
+    });
 
-    /**
-     * Disable cache header
-     */
-    this.app.disable('etag');
-
-    this.app.use(Catcher.log, Catcher.exit, Catcher.notFound); // Log, exit with error || exit with 404
+    this.app.ready();
   }
 }

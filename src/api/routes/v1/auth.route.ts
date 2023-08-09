@@ -1,105 +1,186 @@
-import { Guard } from '@/api/middlewares/guard.middleware';
-import { ROLES } from '@/api/types/constants/role.const';
 import { frontend } from '@/config/environment.config';
-import { Router } from '@classes/router.class';
-import { Container } from '@config/container.config';
-import { Validator } from '@middlewares/validator.middleware';
-import { body, param } from 'express-validator';
-import passport from 'passport';
+import { FastifyInstance } from 'fastify';
+import { ZodTypeProvider } from 'fastify-type-provider-zod';
+import { z } from 'zod';
+import AuthController from '@/api/controllers/auth.controller';
+import { Guard } from '@/api/middlewares/guard.middleware';
+import { ROLES } from '@/config/constants.config';
+import { GoogleAuth, federatedUser } from '@/config/passport.config';
+import { buildUserAgent } from '@/api/utils/auth.util';
+import { loginCheck } from '@/api/utils/login.util';
+import { randomUUID } from 'crypto';
+import httpErrors from 'http-errors';
+import { numberSchema } from '@/api/utils/zod.util';
 
-export class AuthRouter extends Router {
-  constructor() {
-    super();
-  }
+export default function routes(
+  instance: FastifyInstance,
+  _options: any,
+  done: any,
+) {
+  const server = instance.withTypeProvider<ZodTypeProvider>();
+  const google = GoogleAuth.getInstance();
 
-  define() {
-    this.router
-      .route('/register')
-      .post(
-        Validator.validate([
-          body('email').isEmail(),
-          body('password').isLength({ min: 6, max: 128 }).trim(),
-          body('name').isString().isLength({ min: 3, max: 128 }).trim(),
-          body('lang').isString().isLength({ min: 2, max: 2 }),
-          body('newsletter').isBoolean(),
-          body('source').isString(),
-        ]),
-        Container.resolve('AuthController').register,
+  server.post(
+    '/register',
+    {
+      schema: {
+        body: z.object({
+          email: z.string().email(),
+          password: z.string().min(6).max(128).trim(),
+          name: z.string().min(3).max(128).trim(),
+          lang: z.string().min(2).max(2),
+          newsletter: z.boolean(),
+          source: z.string(),
+        }),
+      },
+    },
+    AuthController.register,
+  );
+
+  server.post(
+    '/login',
+    {
+      schema: {
+        body: z.object({
+          email: z.string().email(),
+          password: z.string().min(6).max(128).trim(),
+        }),
+      },
+    },
+    AuthController.login,
+  );
+
+  server.get('/logout', {}, AuthController.logout);
+
+  server.patch(
+    '/confirm',
+    {
+      schema: {
+        body: z.object({
+          confirm: z.string().min(100).max(128),
+        }),
+      },
+    },
+    AuthController.confirmMail,
+  );
+
+  server.post(
+    '/reset',
+    {
+      schema: {
+        body: z.object({
+          email: z.string().email(),
+        }),
+      },
+    },
+    AuthController.resetRequest,
+  );
+
+  server.patch(
+    '/reset',
+    {
+      schema: {
+        body: z.object({
+          key: z.string().min(100).max(128),
+          password: z.string().min(6).max(128).trim(),
+        }),
+      },
+    },
+    AuthController.resetPassword,
+  );
+
+  server.patch(
+    '/unsubscribe',
+    {
+      schema: {
+        body: z.object({
+          email: z.string().email(),
+        }),
+      },
+    },
+    AuthController.unsubscribeRequest,
+  );
+
+  server.get(
+    '/discourse',
+    {
+      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+      schema: {
+        querystring: z.object({
+          payload: z.string(),
+          sig: z.string(),
+        }),
+      },
+    },
+    AuthController.discourse,
+  );
+
+  server.get('/google', {}, async (req, reply) => {
+    return { url: google.generateAuthUrl() };
+  });
+
+  server.get(
+    '/google/callback',
+    {
+      schema: {
+        querystring: z.object({
+          code: z.string(),
+        }),
+      },
+    },
+    async (req, reply) => {
+      let result: federatedUser;
+      try {
+        const token = req.query.code;
+        result = await google.verify(token);
+        if (!result.bee_id) {
+          if (!result.name && !result.email) {
+            throw new Error('No name or email');
+          }
+          return reply.redirect(
+            frontend +
+              '/visitor/register?name=' +
+              result.name +
+              '&email=' +
+              result.email +
+              '&oauth=google',
+          );
+        }
+      } catch (e) {
+        req.log.error({ message: 'Error in google callback', error: e });
+        return reply.redirect(frontend + '/visitor/login?error=oauth');
+      }
+
+      const userAgent = buildUserAgent(req);
+
+      const { bee_id, user_id, paid, rank } = await loginCheck(
+        '',
+        '',
+        result.bee_id,
       );
 
-    this.router
-      .route('/login')
-      .post(
-        Validator.validate([
-          body('email').exists().withMessage('requiredField').isEmail(),
-          body('password').isLength({ min: 6 }).trim(),
-        ]),
-        Container.resolve('AuthController').login,
-      );
+      try {
+        req['bee_id'] = bee_id;
+        await req.session.regenerate();
+        req.session.user = {
+          bee_id: bee_id,
+          user_id: user_id,
+          paid: paid,
+          rank: rank as any,
+          user_agent: userAgent,
+          last_visit: new Date(),
+          uuid: randomUUID(),
+          ip: req.ip,
+        };
+        await req.session.save();
+      } catch (e) {
+        req.log.error(e);
+        throw httpErrors[500]('Failed to create session');
+      }
+      reply.redirect(frontend + '/visitor/login');
+      return reply;
+    },
+  );
 
-    this.router
-      .route('/logout')
-      .get(Container.resolve('AuthController').logout);
-
-    this.router
-      .route('/confirm')
-      .patch(
-        Validator.validate([body('confirm').isLength({ min: 100, max: 128 })]),
-        Container.resolve('AuthController').confirmMail,
-      );
-
-    this.router
-      .route('/reset')
-      .post(
-        Validator.validate([body('email').isEmail()]),
-        Container.resolve('AuthController').resetRequest,
-      );
-
-    this.router
-      .route('/reset')
-      .patch(
-        Validator.validate([
-          body('key').isLength({ min: 100, max: 128 }),
-          body('password').isLength({ min: 6, max: 128 }).trim(),
-        ]),
-        Container.resolve('AuthController').resetPassword,
-      );
-
-    this.router
-      .route('/unsubscribe')
-      .patch(
-        Validator.validate([body('email').isEmail()]),
-        Container.resolve('AuthController').unsubscribeRequest,
-      );
-
-    this.router
-      .route('/refresh')
-      .post(
-        Validator.validate([body('token'), body('expires').isISO8601()]),
-        Container.resolve('AuthController').refresh,
-      );
-
-    this.router
-      .route('/discourse')
-      .get(
-        Validator.validate([param('payload'), param('sig')]),
-        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Container.resolve('AuthController').discourse,
-      );
-
-    this.router.route('/google/login').get(
-      passport.authenticate('google', {
-        prompt: 'select_account',
-      }),
-    );
-    this.router.route('/google/callback').get(
-      passport.authenticate('google', {
-        session: false,
-        failureRedirect: frontend + '/visitor/login?error=oauth',
-        failureMessage: true,
-        assignProperty: 'user',
-      }),
-      Container.resolve('AuthController').google,
-    );
-  }
+  done();
 }

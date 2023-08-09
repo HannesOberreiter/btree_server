@@ -16,7 +16,7 @@ const testInsert = {
 };
 
 describe('Charge routes', function () {
-  const route = '/api/v1/charge/';
+  const route = '/api/v1/charge';
   let accessToken, insertId;
 
   before(function (done) {
@@ -44,9 +44,9 @@ describe('Charge routes', function () {
             expect(res.body).to.be.a('Array');
             insertId = res.body[0];
             done();
-          }
+          },
         );
-      }
+      },
     );
   });
 
@@ -62,7 +62,7 @@ describe('Charge routes', function () {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
-        }
+        },
       );
     });
     it(`post 401 - no header`, function (done) {
@@ -77,7 +77,7 @@ describe('Charge routes', function () {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
-        }
+        },
       );
     });
     it(`patch 401 - no header`, function (done) {
@@ -87,12 +87,12 @@ describe('Charge routes', function () {
         route,
         null,
         null,
-        { ids: [insertId] },
+        { ids: [insertId], data: {} },
         function (err, res) {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
-        }
+        },
       );
     });
 
@@ -108,7 +108,7 @@ describe('Charge routes', function () {
           expect(res.body.results).to.be.a('Array');
           expect(res.body.total).to.be.a('number');
           done();
-        }
+        },
       );
     });
 
@@ -123,7 +123,7 @@ describe('Charge routes', function () {
         function (err, res) {
           expect(res.statusCode).to.eqls(400);
           done();
-        }
+        },
       );
     });
 
@@ -142,7 +142,7 @@ describe('Charge routes', function () {
           expect(res.statusCode).to.eqls(200);
           expect(res.body).to.equal(1);
           done();
-        }
+        },
       );
     });
   });
@@ -151,7 +151,7 @@ describe('Charge routes', function () {
     it(`get 401 - no header`, function (done) {
       doQueryRequest(
         request.agent(global.server),
-        route + 'stock',
+        route + '/stock',
         null,
         null,
         null,
@@ -159,13 +159,13 @@ describe('Charge routes', function () {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
-        }
+        },
       );
     });
     it(`get 200 - success`, function (done) {
       doQueryRequest(
         agent,
-        route + 'stock',
+        route + '/stock',
         null,
         accessToken,
         null,
@@ -174,7 +174,7 @@ describe('Charge routes', function () {
           expect(res.body.results).to.be.a('Array');
           expect(res.body.total).to.be.a('number');
           done();
-        }
+        },
       );
     });
   });
@@ -184,7 +184,7 @@ describe('Charge routes', function () {
       doRequest(
         request.agent(global.server),
         'post',
-        route + 'batchGet',
+        route + '/batchGet',
         null,
         null,
         { ids: [insertId] },
@@ -192,14 +192,14 @@ describe('Charge routes', function () {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
-        }
+        },
       );
     });
     it(`400 - missing ids`, function (done) {
       doRequest(
         agent,
         'post',
-        route + 'batchGet',
+        route + '/batchGet',
         null,
         null,
         null,
@@ -207,14 +207,14 @@ describe('Charge routes', function () {
           expect(res.statusCode).to.eqls(400);
           expectations(res, 'ids', 'Invalid value');
           done();
-        }
+        },
       );
     });
     it(`200 - success`, function (done) {
       doRequest(
         agent,
         'post',
-        route + 'batchGet',
+        route + '/batchGet',
         null,
         accessToken,
         { ids: [insertId] },
@@ -222,7 +222,7 @@ describe('Charge routes', function () {
           expect(res.statusCode).to.eqls(200);
           expect(res.body).to.be.a('Array');
           done();
-        }
+        },
       );
     });
   });
@@ -232,7 +232,7 @@ describe('Charge routes', function () {
       doRequest(
         request.agent(global.server),
         'patch',
-        route + 'batchDelete',
+        route + '/batchDelete',
         null,
         null,
         { ids: [] },
@@ -240,14 +240,14 @@ describe('Charge routes', function () {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
-        }
+        },
       );
     });
     it(`400 - missing ids`, function (done) {
       doRequest(
         agent,
         'patch',
-        route + 'batchDelete',
+        route + '/batchDelete',
         null,
         null,
         null,
@@ -255,14 +255,14 @@ describe('Charge routes', function () {
           expect(res.statusCode).to.eqls(400);
           expectations(res, 'ids', 'Invalid value');
           done();
-        }
+        },
       );
     });
     it(`200 - success`, function (done) {
       doRequest(
         agent,
         'patch',
-        route + 'batchDelete',
+        route + '/batchDelete',
         null,
         accessToken,
         { ids: [insertId] },
@@ -270,7 +270,7 @@ describe('Charge routes', function () {
           expect(res.statusCode).to.eqls(200);
           expect(res.body).to.be.a('Array');
           done();
-        }
+        },
       );
     });
   });

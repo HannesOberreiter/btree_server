@@ -1,7 +1,3 @@
-import { NextFunction, Response } from 'express';
-import { Controller } from '@classes/controller.class';
-import { checkMySQLError } from '@utils/error.util';
-import { IUserRequest } from '@interfaces/IUserRequest.interface';
 import { ChargeType } from '@models/option/charge_type.model';
 import { CheckupType } from '@models/option/checkup_type.model';
 import { FeedType } from '@models/option/feed_type.model';
@@ -13,11 +9,8 @@ import { HiveSource } from '../models/option/hive_source.model';
 import { HiveType } from '../models/option/hive_type.mode';
 import { QueenMating } from '../models/option/queen_mating.model';
 import { QueenRace } from '../models/option/queen_race.model';
-export default class OptionController extends Controller {
-  constructor() {
-    super();
-  }
-
+import { FastifyReply, FastifyRequest } from 'fastify';
+export default class OptionController {
   private static tables = {
     charge_types: ChargeType,
     hive_sources: HiveSource,
@@ -30,152 +23,128 @@ export default class OptionController extends Controller {
     treatment_diseases: TreatmentDisease,
     treatment_types: TreatmentType,
     treatment_vets: TreatmentVet,
-  };
+  } as const;
 
-  async get(req: IUserRequest, res: Response, next: NextFunction) {
-    try {
-      const { order, direction, modus } = req.query as any;
-      const table = Object(OptionController.tables)[req.params.table];
-      const query = table
-        .query()
-        .where(`${req.params.table}.user_id`, req.user.user_id);
-      if (req.params.table === 'charge_types') {
-        query.withGraphJoined('stock');
+  static async get(req: FastifyRequest, reply: FastifyReply) {
+    const params = req.params['table'] as keyof typeof OptionController.tables;
+    const { order, direction, modus } = req.query as any;
+    const table = OptionController.tables[params];
+    const query = table
+      .query()
+      .where(`${params}.user_id`, req.session.user.user_id);
+    if (params === 'charge_types') {
+      query.withGraphJoined('stock');
+    }
+    if (modus) {
+      query.where('modus', modus === 'true');
+    }
+    if (order) {
+      if (Array.isArray(order)) {
+        order.forEach((field, index) => query.orderBy(field, direction[index]));
+      } else {
+        query.orderBy(order, direction);
       }
-      if (modus) {
-        query.where('modus', modus === 'true');
-      }
-      if (order) {
-        if (Array.isArray(order)) {
-          order.forEach((field, index) =>
-            query.orderBy(field, direction[index]),
-          );
-        } else {
-          query.orderBy(order, direction);
-        }
-      }
-
-      res.locals.data = await query;
-      next();
-    } catch (e) {
-      next(checkMySQLError(e));
     }
+    const result = await query;
+    return result;
   }
 
-  async patch(req: IUserRequest, res: Response, next: NextFunction) {
-    try {
-      const ids = req.body.ids;
-      const insert = { ...req.body.data };
-      const table = Object(OptionController.tables)[req.params.table];
-      const result = await table.transaction(async (trx) => {
-        return await table
-          .query(trx)
-          .patch({ ...insert })
-          .findByIds(ids)
-          .where('user_id', req.user.user_id);
-      });
-      res.locals.data = result;
-      next();
-    } catch (e) {
-      next(checkMySQLError(e));
-    }
+  static async patch(req: FastifyRequest, reply: FastifyReply) {
+    const body = req.body as any;
+    const params = req.params['table'] as keyof typeof OptionController.tables;
+    const ids = body.ids;
+    const insert = { ...body.data };
+    const table = OptionController.tables[params];
+    const result = await table.transaction(async (trx) => {
+      return await table
+        .query(trx)
+        .patch({ ...insert })
+        .findByIds(ids)
+        .where('user_id', req.session.user.user_id);
+    });
+    return result;
   }
 
-  async post(req: IUserRequest, res: Response, next: NextFunction) {
-    try {
-      const insert = { ...req.body };
-      const table = Object(OptionController.tables)[req.params.table];
-      const result = await table.transaction(async (trx) => {
-        if (insert.favorite == true) {
-          await table
-            .query(trx)
-            .patch({ favorite: false })
-            .where('user_id', req.user.user_id);
-        }
-        return await table.query(trx).insert({
-          ...insert,
-          user_id: req.user.user_id,
-        });
-      });
-      res.locals.data = result;
-      next();
-    } catch (e) {
-      next(checkMySQLError(e));
-    }
-  }
-
-  async updateStatus(req: IUserRequest, res: Response, next: NextFunction) {
-    try {
-      const table = Object(OptionController.tables)[req.params.table];
-      const result = await table.transaction(async (trx) => {
-        return table
-          .query(trx)
-          .patch({
-            modus: req.body.status,
-          })
-          .findByIds(req.body.ids)
-          .where('user_id', req.user.user_id);
-      });
-      res.locals.data = result;
-      next();
-    } catch (e) {
-      next(checkMySQLError(e));
-    }
-  }
-
-  async updateFavorite(req: IUserRequest, res: Response, next: NextFunction) {
-    try {
-      const table = Object(OptionController.tables)[req.params.table];
-      const result = await table.transaction(async (trx) => {
+  static async post(req: FastifyRequest, reply: FastifyReply) {
+    const params = req.params['table'] as keyof typeof OptionController.tables;
+    const body = req.body as any;
+    const insert = { ...body };
+    const table = OptionController.tables[params];
+    const result = await table.transaction(async (trx) => {
+      if (insert.favorite == true) {
         await table
           .query(trx)
           .patch({ favorite: false })
-          .where('user_id', req.user.user_id);
-
-        return table
-          .query(trx)
-          .patch({ favorite: true })
-          .findByIds(req.body.ids)
-          .where('user_id', req.user.user_id);
+          .where('user_id', req.session.user.user_id);
+      }
+      return await table.query(trx).insert({
+        ...insert,
+        user_id: req.session.user.user_id,
       });
-      res.locals.data = result;
-      next();
-    } catch (e) {
-      next(checkMySQLError(e));
-    }
+    });
+    return result;
   }
 
-  async batchGet(req: IUserRequest, res: Response, next: NextFunction) {
-    try {
-      const table = Object(OptionController.tables)[req.params.table];
-      const result = await table.transaction(async (trx) => {
-        const res = await table
-          .query(trx)
-          .findByIds(req.body.ids)
-          .where('user_id', req.user.user_id);
-        return res;
-      });
-      res.locals.data = result;
-      next();
-    } catch (e) {
-      next(checkMySQLError(e));
-    }
+  static async updateStatus(req: FastifyRequest, reply: FastifyReply) {
+    const params = req.params['table'] as keyof typeof OptionController.tables;
+    const body = req.body as any;
+    const table = OptionController.tables[params];
+    const result = await table.transaction(async (trx) => {
+      return await table
+        .query(trx)
+        .patch({
+          modus: body.status,
+        })
+        .findByIds(body.ids)
+        .where('user_id', req.session.user.user_id);
+    });
+    return result;
   }
 
-  async batchDelete(req: IUserRequest, res: Response, next: NextFunction) {
-    try {
-      const table = Object(OptionController.tables)[req.params.table];
-      const result = await table.transaction(async (trx) => {
-        return await table
-          .query(trx)
-          .delete()
-          .findByIds(req.body.ids)
-          .where('user_id', req.user.user_id);
-      });
-      res.locals.data = result;
-      next();
-    } catch (e) {
-      next(checkMySQLError(e));
-    }
+  static async updateFavorite(req: FastifyRequest, reply: FastifyReply) {
+    const params = req.params['table'] as keyof typeof OptionController.tables;
+    const body = req.body as any;
+    const table = OptionController.tables[params];
+    const result = await table.transaction(async (trx) => {
+      await table
+        .query(trx)
+        .patch({ favorite: false })
+        .where('user_id', req.session.user.user_id);
+
+      return await table
+        .query(trx)
+        .patch({ favorite: true })
+        .findByIds(body.ids)
+        .where('user_id', req.session.user.user_id);
+    });
+    return result;
+  }
+
+  static async batchGet(req: FastifyRequest, reply: FastifyReply) {
+    const params = req.params['table'] as keyof typeof OptionController.tables;
+    const body = req.body as any;
+    const table = OptionController.tables[params];
+    const result = await table.transaction(async (trx) => {
+      const res = await table
+        .query(trx)
+        .findByIds(body.ids)
+        .where('user_id', req.session.user.user_id);
+      return res;
+    });
+    return result;
+  }
+
+  static async batchDelete(req: FastifyRequest, reply: FastifyReply) {
+    const params = req.params['table'] as keyof typeof OptionController.tables;
+    const body = req.body as any;
+    const table = OptionController.tables[params];
+    const result = await table.transaction(async (trx) => {
+      return await table
+        .query(trx)
+        .delete()
+        .findByIds(body.ids)
+        .where('user_id', req.session.user.user_id);
+    });
+    return result;
   }
 }

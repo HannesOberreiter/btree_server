@@ -1,41 +1,41 @@
 import { Validator } from '@/api/middlewares/validator.middleware';
-import { Router } from '@classes/router.class';
-import { Container } from '@config/container.config';
-import { param, query } from 'express-validator';
+import { FastifyInstance } from 'fastify';
+import { ZodTypeProvider } from 'fastify-type-provider-zod';
+import ExternalController from '@/api/controllers/external.controller';
+import { z } from 'zod';
+import ScaleDataController from '@/api/controllers/scale_data.controller';
 
-export class ExternalRoute extends Router {
-  constructor() {
-    super();
-  }
-  define() {
-    this.router
-      .route('/ical/:source/:api')
-      .get(
-        Validator.handleSource,
-        Validator.validate([param('api').isString()]),
-        Container.resolve('ExternalController').ical,
-      );
+export default function routes(
+  instance: FastifyInstance,
+  _options: any,
+  done: any,
+) {
+  const server = instance.withTypeProvider<ZodTypeProvider>();
 
-    this.router
-      .route('/scale/:ident/:api')
-      .get(
-        Validator.validate([
-          param('ident').isString(),
-          param('api').isString(),
-          query('action').exists().isString().isIn(['CREATE', 'CREATE_DEMO']),
-          query('datetime').optional().isISO8601().toDate(),
-          query('weight').optional().isNumeric().toFloat(),
-          query('temp1').optional().isNumeric().toFloat(),
-          query('temp2').optional().isNumeric().toFloat(),
-          query('hum').optional().isNumeric().toFloat(),
-          query('rain').optional().isNumeric().toFloat(),
-          query('note').optional().isString().isLength({ max: 300 }),
-        ]),
-        Container.resolve('ScaleDataController').api,
-      );
+  server.get(
+    '/ical/:source/:api',
+    { preHandler: Validator.handleSource },
+    ExternalController.ical,
+  );
+  server.post('/stripe/webhook', {}, ExternalController.stripeWebhook);
+  server.get(
+    '/scale/:ident/:api',
+    {
+      schema: {
+        querystring: z.object({
+          action: z.string().regex(/^(CREATE|CREATE_DEMO)$/),
+          datetime: z.string().datetime().optional(),
+          weight: z.coerce.number().optional(),
+          temp1: z.coerce.number().optional(),
+          temp2: z.coerce.number().optional(),
+          hum: z.coerce.number().optional(),
+          rain: z.coerce.number().optional(),
+          note: z.string().max(300).optional(),
+        }),
+      },
+    },
+    ScaleDataController.api,
+  );
 
-    this.router
-      .route('/stripe/webhook')
-      .post(Container.resolve('ExternalController').stripeWebhook);
-  }
+  done();
 }

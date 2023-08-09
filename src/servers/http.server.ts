@@ -1,17 +1,20 @@
-import { ENVIRONMENT } from '@/api/types/constants/environment.const';
 import { env, port } from '@config/environment.config';
 
-import * as Express from 'express';
+import { FastifyInstance } from 'fastify';
 
 import { Server as HttpServer } from 'http';
 import { Server as HttpsServer } from 'https';
 import { task } from '@cron/scheduler';
-import { Container } from '@config/container.config';
+import { Logger } from '@/api/services/logger.service';
+import { ENVIRONMENT } from '@/config/constants.config';
+// import { Container } from '@config/container.config';
 
 /**
  * Application server wrapper instance
  */
 export class HTTPServer {
+  private logger = Logger.getInstance();
+
   /**
    *
    */
@@ -20,17 +23,11 @@ export class HTTPServer {
   /**
    *
    */
-  app: Express.Application;
+  app: FastifyInstance;
 
-  /**
-   *
-   */
-  private options = {
-    port: port,
-  };
-
-  constructor(app: Express.Application) {
+  constructor(app: FastifyInstance) {
     this.app = app;
+    this.http = this.app.server;
   }
 
   /**
@@ -38,8 +35,24 @@ export class HTTPServer {
    */
   start(): void {
     try {
-      const server = this.app;
-      this.http = server.listen(port, function () {
+      const app = this.app;
+      const logger = this.logger;
+      app.listen({ port }, function (err, address) {
+        if (err) {
+          logger.log('error', 'Server creation error', { err });
+          process.exit(1);
+        }
+        if (env !== ENVIRONMENT.test) {
+          app.log.debug(`HTTP(S) server is now running on ${address} (${env})`);
+          /*Container.resolve('Logger').log(
+            'info',
+            `HTTP(S) server is now running on ${address} (${env})`,
+            { label: 'Server' },
+          );*/
+        }
+      });
+
+      /*this.http = server.listen(port, function () {
         if (env !== ENVIRONMENT.test) {
           Container.resolve('Logger').log(
             'info',
@@ -47,18 +60,19 @@ export class HTTPServer {
             { label: 'Server' },
           );
         }
-      });
+      });*/
       /**
        * @description Start Cron Jobs
        */
       task.start();
       task.nextRun();
     } catch (error) {
-      Container.resolve('Logger').log(
+      this.logger.log('error', 'Failed to create server', error);
+      /*Container.resolve('Logger').log(
         'error',
         `Server creation error : ${error.message}`,
         { label: 'Server' },
-      );
+      );*/
     }
   }
 
@@ -67,6 +81,8 @@ export class HTTPServer {
    */
   stop(callback = null): HttpServer | HttpsServer {
     task.stop();
-    return this.http.close(callback);
+    // return this.http.close(callback);
+    this.app.log.info('Stopping server');
+    return this.app.close(callback);
   }
 }

@@ -1,54 +1,60 @@
-import { Router } from '@classes/router.class';
-import { Container } from '@config/container.config';
 import { Guard } from '@middlewares/guard.middleware';
-import { ROLES } from '@/api/types/constants/role.const';
-import { Validator } from '@/api/middlewares/validator.middleware';
-import { body } from 'express-validator';
+import { ROLES } from '@/config/constants.config';
+import { FastifyInstance } from 'fastify';
+import { ZodTypeProvider } from 'fastify-type-provider-zod';
+import CompanyUserController from '@/api/controllers/company_user.controller';
+import { z } from 'zod';
 
-export class CompanyUserRouter extends Router {
-  constructor() {
-    super();
-  }
-  define() {
-    this.router
-      .route('/user')
-      .get(
-        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Container.resolve('CompanyUserController').getUser,
-      );
-    this.router.route('/add_user').post(
-      Validator.validate([
-        body('email')
-          .exists()
-          .withMessage('requiredField')
-          .isEmail()
-          .normalizeEmail({
-            gmail_remove_subaddress: false,
-          }),
-      ]),
-      Guard.authorize([ROLES.admin]),
-      Container.resolve('CompanyUserController').addUser,
-    );
-    this.router
-      .route('/remove_user/:id')
-      .delete(
-        Guard.authorize([ROLES.admin]),
-        Container.resolve('CompanyUserController').removeUser,
-      );
-    this.router
-      .route('/:company_id')
-      .delete(
-        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Container.resolve('CompanyUserController').delete,
-      );
-    this.router
-      .route('/:id')
-      .patch(
-        Validator.validate([
-          body('rank').exists().withMessage('requiredField'),
-        ]),
-        Guard.authorize([ROLES.admin]),
-        Container.resolve('CompanyUserController').patch,
-      );
-  }
+export default function routes(
+  instance: FastifyInstance,
+  _options: any,
+  done: any,
+) {
+  const server = instance.withTypeProvider<ZodTypeProvider>();
+
+  server.get(
+    '/user',
+    { preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]) },
+    CompanyUserController.getUser,
+  );
+  server.post(
+    '/add_user',
+    {
+      preHandler: Guard.authorize([ROLES.admin]),
+      schema: {
+        body: z.object({
+          email: z.string().email(),
+        }),
+      },
+    },
+    CompanyUserController.addUser,
+  );
+
+  server.delete(
+    '/remove_user/:id',
+    { preHandler: Guard.authorize([ROLES.admin]) },
+    CompanyUserController.removeUser,
+  );
+  server.delete(
+    '/:company_id',
+    { preHandler: Guard.authorize([ROLES.admin, ROLES.user, ROLES.read]) },
+    CompanyUserController.delete,
+  );
+  server.patch(
+    '/:id',
+    {
+      preHandler: Guard.authorize([ROLES.admin]),
+      schema: {
+        params: z.object({
+          id: z.string(),
+        }),
+        body: z.object({
+          rank: z.number(),
+        }),
+      },
+    },
+    CompanyUserController.patch,
+  );
+
+  done();
 }
