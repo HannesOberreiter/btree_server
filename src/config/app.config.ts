@@ -91,6 +91,11 @@ export class Application {
       }
 
       const origin = req.headers.origin;
+      req.log.error({
+        origin: origin,
+        authorized: authorized,
+        headers: req.headers,
+      });
       if (
         req.url.indexOf('external') >= 0 ||
         req.url.indexOf('auth/google/callback') >= 0 ||
