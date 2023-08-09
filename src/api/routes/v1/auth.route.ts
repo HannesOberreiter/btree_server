@@ -5,12 +5,11 @@ import { z } from 'zod';
 import AuthController from '@/api/controllers/auth.controller';
 import { Guard } from '@/api/middlewares/guard.middleware';
 import { ROLES } from '@/config/constants.config';
-import { GoogleAuth, federatedUser } from '@/config/passport.config';
+import { GoogleAuth, federatedUser } from '@/api/services/federated.service';
 import { buildUserAgent } from '@/api/utils/auth.util';
 import { loginCheck } from '@/api/utils/login.util';
 import { randomUUID } from 'crypto';
 import httpErrors from 'http-errors';
-import { numberSchema } from '@/api/utils/zod.util';
 
 export default function routes(
   instance: FastifyInstance,
@@ -115,7 +114,7 @@ export default function routes(
     AuthController.discourse,
   );
 
-  server.get('/google', {}, async (req, reply) => {
+  server.get('/google', {}, async () => {
     return { url: google.generateAuthUrl() };
   });
 

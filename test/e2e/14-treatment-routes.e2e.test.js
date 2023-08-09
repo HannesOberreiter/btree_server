@@ -251,7 +251,7 @@ describe('Treatment routes', function () {
         route + '/date',
         null,
         null,
-        { ids: [], start: testInsert.date },
+        { ids: [], start: testInsert.date, end: testInsert.date },
         function (err, res) {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
@@ -281,7 +281,7 @@ describe('Treatment routes', function () {
         route + '/date',
         null,
         accessToken,
-        { ids: [insertId], start: testInsert.date },
+        { ids: [insertId], start: testInsert.date, end: testInsert.date },
         function (err, res) {
           expect(res.statusCode).to.eqls(200);
           expect(res.body).to.equal(1);

@@ -30,7 +30,7 @@ export class DatabaseServer {
 
       if (env !== ENVIRONMENT.test) {
         this.logger.log(
-          'info',
+          'debug',
           `Connection to database established on port ${knexConfig.connection.port} (${env})`,
           { label: 'Database' },
         );

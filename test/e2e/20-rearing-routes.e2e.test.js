@@ -35,8 +35,8 @@ describe('Rearing routes', function () {
           testInsert,
           function (err, res) {
             expect(res.statusCode).to.eqls(200);
-            expect(res.body).to.be.a('Object');
-            insertId = res.body.id;
+            expect(res.body).to.be.a('Array');
+            insertId = res.body[0];
             done();
           },
         );
@@ -197,7 +197,7 @@ describe('Rearing routes', function () {
         route + '/date',
         null,
         null,
-        { ids: [], start: testInsert.date },
+        { ids: [], start: testInsert.date, end: testInsert.date },
         function (err, res) {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
@@ -227,7 +227,7 @@ describe('Rearing routes', function () {
         route + '/date',
         null,
         accessToken,
-        { ids: [insertId], start: testInsert.date },
+        { ids: [insertId], start: testInsert.date, end: testInsert.date },
         function (err, res) {
           expect(res.statusCode).to.eqls(200);
           expect(res.body).to.equal(1);
