@@ -1,4 +1,5 @@
 const request = require('supertest');
+const { expect } = require('chai');
 
 describe('Routes resolving', () => {
   describe('/status', () => {
@@ -39,6 +40,18 @@ describe('Routes resolving', () => {
         .set('Content-Type', process.env.CONTENT_TYPE)
         .set('Origin', 'http://www.test.com')
         .expect(406, done);
+    });
+
+    it('200 - options request', function (done) {
+      request(global.server)
+        .options('/api/v1/status')
+        .set('Origin', process.env.ORIGIN)
+        .end(function (err, res) {
+          expect(res.headers['access-control-allow-origin']).to.equal(
+            process.env.ORIGIN,
+          );
+          done();
+        });
     });
   });
 });

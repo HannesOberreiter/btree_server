@@ -91,6 +91,11 @@ export class Application {
       }
 
       const origin = req.headers.origin;
+      req.log.error({
+        origin: origin,
+        authorized: authorized,
+        headers: req.headers,
+      });
       if (
         req.url.indexOf('external') >= 0 ||
         req.url.indexOf('auth/google/callback') >= 0 ||
@@ -100,6 +105,7 @@ export class Application {
         reply.header('Access-Control-Allow-Origin', '*');
       } else {
         reply.header('Access-Control-Allow-Origin', origin);
+        reply.header('Access-Control-Allow-Credentials', 'true');
       }
 
       if (authorized.indexOf(origin) === -1) {
@@ -109,7 +115,7 @@ export class Application {
       reply.header('Access-Control-Allow-Headers', '*');
       reply.header('Access-Control-Allow-Methods', '*');
 
-      if (/options/i.test(req.method)) {
+      if (req.method.toLowerCase() === 'options') {
         reply.send();
       }
 
