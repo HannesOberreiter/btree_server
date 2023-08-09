@@ -20,33 +20,21 @@ const useNotification = () => {
   }
 
   function useHandleError(error: any) {
-    const storeUser = useAuthUserStore();
-    const lang = storeUser.getLanguage;
     let displayMessage = '';
     if (typeof error === 'string') return t(error);
 
-    if ('errors' in error) {
-      if (typeof error.errors === 'string') {
-        displayMessage = checkStatus(error.statusCode, error.errors);
-      } else if ('type' in error.errors) {
-        // This error comes from Ajv Schema error
-        // we actually want to prevent this in our backend
-        // as the types should be already checked on the route
-        // with express.validate
-        displayMessage = checkStatus(error.statusCode);
-        if (displayMessage === '') displayMessage = t('error.validation');
-      } else {
-        if ('msgTranslation' in error.errors[0]) {
-          displayMessage = error.errors[0].msgTranslation[lang];
-          if ('paramTranslation' in error.errors[0])
-            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-            displayMessage = `${displayMessage} (${error.errors[0].paramTranslation[lang]})`;
-          if (error.errors.length > 1)
-            displayMessage = t('error.more') + ': ' + displayMessage;
-        }
-      }
-    }
+    let errorMessage;
 
+    if ('message' in error) {
+      errorMessage = error.message;
+    }
+    if ('errors' in error) {
+      errorMessage = error.errors;
+    }
+    if ('error' in error) {
+      errorMessage = error.error;
+    }
+    displayMessage = checkStatus(error.statusCode, errorMessage);
     if (displayMessage === '') displayMessage = t('error.unknown');
 
     return displayMessage;
@@ -59,7 +47,6 @@ const useNotification = () => {
       displayMessage = t('error.access');
     } else if (statusCode === 402) displayMessage = t('error.premium');
     else if (statusCode === 403) {
-      console.log(errorField);
       if (errorField === 'lastMovement') {
         displayMessage = t('error.lastMovement');
       } else {

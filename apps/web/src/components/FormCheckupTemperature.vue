@@ -109,7 +109,9 @@ watch(temperature, (cur) => {
   if (!props.hive) return;
   if (props.hive.length === 0) return;
   if (cur) {
-    modelValue.value = round(cur.data_current.temperature, 1);
+    if (cur.data_current) {
+      modelValue.value = round(cur.data_current.temperature, 1);
+    }
     loadTemp.value = false;
   }
 });

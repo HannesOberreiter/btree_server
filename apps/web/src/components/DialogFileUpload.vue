@@ -69,7 +69,7 @@ import { useDialogPluginComponent } from 'quasar';
 import { useNotification } from '~/composables/useNotification';
 import { useServiceDropbox } from '~/composables/useDropbox';
 
-import { ref, watch } from 'vue';
+import { ref, toRefs, watch } from 'vue';
 
 defineEmits([...useDialogPluginComponent.emits]);
 const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } =
@@ -88,11 +88,13 @@ const props = defineProps({
   },
 });
 
+const { service } = toRefs(props);
+
 watch(
-  () => props.service,
-  (cur) => {
-    if (cur === 'dropbox')
-      useDropbox.getAccessToken().then((response) => {
+  [service, useDropbox.state.accessToken],
+  () => {
+    if (service.value === 'dropbox' && !useDropbox.state.isLoading)
+      useDropbox.getAccount().then((response) => {
         if (!response) {
           onDialogHide();
           notification.open('negative', 'noFileService');

@@ -127,11 +127,12 @@
   "end": "Fine",
   "enterEmail": "",
   "error": {
+    "CouponNotFound": "Impossibile trovare il coupon {token}.",
     "access": "Accesso non consentito o password errata!",
     "alreadyScanned": "La selezione è già stata scansionata!",
     "csvReading": "Impossibile leggere il file CSV!",
     "csvTooMuch": "Carica troppo grande!",
-    "duplicate": "Conflitto, voce duplicata!",
+    "duplicate": "Conflitto, la voce con un determinato valore esiste già.",
     "emailRequired": "La posta è obbligatoria.",
     "forbidden": "Accesso vietato o non consentito!",
     "lastMovement": "Ogni alveare ha bisogno di almeno un movimento! \nNon puoi eliminare l'ultimo.",
@@ -614,6 +615,7 @@
   "type": "Digitare | Tipi",
   "undo": "Annullare",
   "unit": "Unità",
+  "unlockAPI": "Sblocca i dettagli dell'API",
   "unsavedChanges": "Vuoi davvero partire? Hai modifiche non salvate!",
   "unsubscribe": {
     "btn": "Rimuovi la mia email.",

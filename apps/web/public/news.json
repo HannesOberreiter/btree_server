@@ -1,9 +1,15 @@
 [
   {
-    "version": "6.2.X",
+    "version": "6.3.X",
     "date": "2023-XX-XX",
     "news": [
-      "REFACTOR queen rearing logic was changed, waiting time is now set on the method and not for each step. This should make it a lot clearer and easier to use. Additionally improved display in calendar to include the weekday in the detail dialog. The update should handle and update the old system but please check your queen rearing methods and adjust them if necessary."
+      "REFACTOR server changed from express to fastify, for better performance",
+      "REFACTOR queen rearing logic was changed, waiting time is now set on the method and not for each step. This should make it a lot clearer and easier to use. Additionally improved display in calendar to include the weekday in the detail dialog. The update should handle and update the old system but please check your queen rearing methods and adjust them if necessary.",
+      "REFACTOR dropbox integration should now work more stable and reduced number of api calls",
+      "BUGFIX sound notification was only working after reload",
+      "BUGFIX disabled CORS for google auth, which should fix the login problem with google",
+      "BUGFIX rearing form now always shows one on save button, as no name is required",
+      "BUGFIX better error message for coupons"
     ]
   },
   {
