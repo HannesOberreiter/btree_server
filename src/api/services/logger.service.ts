@@ -27,8 +27,16 @@ export class Logger {
       | StreamEntry
       | (DestinationStream | StreamEntry)[] = [
       {
-        level: 'debug',
+        level: 'info',
         stream: rfs.createStream(`pino-info-${env}.log`, {
+          interval: '7d',
+          maxFiles: 10,
+          path: p.join(__dirname, `../../../logs`),
+        }),
+      },
+      {
+        level: 'debug',
+        stream: rfs.createStream(`pino-debug-${env}.log`, {
           interval: '7d',
           maxFiles: 10,
           path: p.join(__dirname, `../../../logs`),
@@ -75,7 +83,7 @@ export class Logger {
         },
       },
       pino.multistream(streams, {
-        dedupe: false,
+        dedupe: true,
       }),
     );
   }

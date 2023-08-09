@@ -11,7 +11,7 @@ import { env } from '@/config/environment.config.js';
 import { Logger } from './services/logger.service.js';
 
 const logger = Logger.getInstance();
-logger.log('info', 'Starting server...', { label: 'Server' });
+logger.log('debug', 'Starting server...', { label: 'Server' });
 
 const dbServer = DatabaseServer.getInstance();
 const redisServer = new RedisServer();

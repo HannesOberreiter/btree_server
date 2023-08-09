@@ -1,72 +1,14 @@
-// https://github.com/jaredhanson/passport-google-oauth2
-/*import GoogleStrategy from 'passport-google-oauth20';
-import { googleOAuth, url } from './environment.config';
+import { OAuth2Client, TokenPayload } from 'google-auth-library';
+import { googleOAuth, url } from '../../config/environment.config';
 import { FederatedCredential } from '@/api/models/federated_credential';
-import { User } from '@/api/models/user.model';*/
+import { User } from '@/api/models/user.model';
+import { Logger } from '@/api/services/logger.service';
 
-/*export class PassportConfiguration {
-  private static options: {
-    google: GoogleStrategy.StrategyOptions;
-  } = {
-    google: {
-      clientID: googleOAuth.clientID,
-      clientSecret: googleOAuth.clientSecret,
-      callbackURL: url + '/api/v1/auth/google/callback',
-      scope: ['profile', 'email'],
-    },
-  };
-
-  static factory(strategy: 'google' | 'cookie'): GoogleStrategy.Strategy {
-    if (strategy === 'google') {
-      return new GoogleStrategy.Strategy(
-        { ...this.options.google, passReqToCallback: true },
-        this.verifyGoogle,
-      );
-    } else {
-      throw new Error('Invalid strategy');
-    }
-  }
-
-  private static verifyGoogle = (
-    _req: any,
-    _accessToken: string,
-    _refreshToken: string,
-    profile: GoogleStrategy.Profile,
-    done: GoogleStrategy.VerifyCallback,
-  ): void => {
-    try {
-      verifyUser(
-        profile.id,
-        profile.displayName,
-        profile.provider,
-        profile.emails,
-      ).then(
-        (user) => {
-          return done(null, user);
-        },
-        (err) => {
-          console.error(err);
-          return done(err, false);
-        },
-      );
-    } catch (err) {
-      console.error(err);
-      return done(err, false);
-    }
-  };
-}
-*/
 export type federatedUser = {
   bee_id: number | undefined;
   name: string | undefined;
   email: string | undefined;
 };
-
-import { OAuth2Client, TokenPayload } from 'google-auth-library';
-import { googleOAuth, url } from './environment.config';
-import { FederatedCredential } from '@/api/models/federated_credential';
-import { User } from '@/api/models/user.model';
-import { Logger } from '@/api/services/logger.service';
 
 export class GoogleAuth {
   private static instance: GoogleAuth;

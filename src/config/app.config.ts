@@ -8,20 +8,19 @@ import { ZodError } from 'zod';
 
 import { RedisServer } from '@/servers/redis.server.js';
 import { authorized, env, sessionSecret } from '@config/environment.config.js';
-// import { PassportConfiguration } from './passport.config.js';
 import { Logger } from '@/api/services/logger.service.js';
 import { ENVIRONMENT } from './constants.config.js';
 import routes from '@/api/routes/index.js';
+import fastifyRateLimit from '@fastify/rate-limit';
+import { checkMySQLError } from '@/api/utils/error.util.js';
+import httpErrors from 'http-errors';
 
-// import fastifyPassport from '@fastify/passport';
 import fastify, { FastifyInstance } from 'fastify';
 import fastifyCookie from '@fastify/cookie';
 import fastifySession from '@fastify/session';
 import fastifyCompress from '@fastify/compress';
 import fastifyHelmet from '@fastify/helmet';
 import fastifyCors from '@fastify/cors';
-import fastifyRateLimit from '@fastify/rate-limit';
-import { checkMySQLError } from '@/api/utils/error.util.js';
 
 /**
  * @description Instantiate server application.
@@ -84,13 +83,13 @@ export class Application {
      */
     this.app.register(fastifyCors, {
       origin: (origin, cb) => {
+        if (env === ENVIRONMENT.development || env === ENVIRONMENT.ci) {
+          cb(null, true);
+          return;
+        }
         try {
-          if (env === ENVIRONMENT.development) {
-            cb(null, true);
-            return;
-          }
           const url = new URL(origin);
-          if (authorized.indexOf(url.hostname) === -1) {
+          if (authorized.indexOf(url.hostname) >= 0) {
             cb(null, true);
             return;
           }
@@ -103,10 +102,12 @@ export class Application {
             return;
           }
 
-          cb(new Error('Not allowed'), false);
+          cb(httpErrors.NotAcceptable(), false);
+          return;
         } catch (e) {
-          this.app.log.error('No origin header');
-          cb(null, false);
+          this.app.log.error('Missing origin header');
+          cb(httpErrors.NotAcceptable('Missing origin header'), false);
+          return;
         }
       },
       methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],

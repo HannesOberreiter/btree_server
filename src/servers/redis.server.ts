@@ -27,7 +27,7 @@ export class RedisServer {
       RedisServer.client.on('connect', () => {
         if (env !== ENVIRONMENT.test) {
           this.logger.log(
-            'info',
+            'debug',
             `Connection to redis (session) server established on port ${redisConfig.port} (${env})`,
             { label: 'Redis' },
           );

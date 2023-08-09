@@ -13,7 +13,7 @@ let job: any;
 const logger = Logger.getInstance();
 
 function Logging(input: any) {
-  logger.log('info', JSON.stringify(input), {
+  logger.log('debug', JSON.stringify(input), {
     label: 'CronJob',
   });
 }
@@ -21,7 +21,7 @@ function Logging(input: any) {
 const task = {
   start: async () => {
     const rule = cronjobTimer;
-    logger.log('info', `Test Cron-Job is starting with rule: ${rule}`, {
+    logger.log('debug', `Test Cron-Job is starting with rule: ${rule}`, {
       label: 'Server',
     });
     job = cron.scheduleJob(
@@ -32,7 +32,7 @@ const task = {
       },
       async function () {
         try {
-          logger.log('info', 'Test Cron-Job', {
+          logger.log('debug', 'Test Cron-Job', {
             label: 'CronJob',
           });
           Logging(await cleanupDatabase());
@@ -46,7 +46,7 @@ const task = {
     );
   },
   nextRun: () =>
-    logger.log('info', `Next CronJob at: ${job.nextInvocation()}`, {
+    logger.log('debug', `Next CronJob at: ${job.nextInvocation()}`, {
       label: 'CronJob',
     }),
   stop: () => cron.gracefulShutdown(),

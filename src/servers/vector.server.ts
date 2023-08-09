@@ -28,7 +28,7 @@ export class VectorServer {
       VectorServer.client.on('connect', () => {
         if (env !== ENVIRONMENT.test) {
           this.logger.log(
-            'info',
+            'debug',
             `Connection to redis (vector) server established on port ${vectorConfig.port} (${env})`,
             { label: 'Vector' },
           );
