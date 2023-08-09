@@ -11,6 +11,7 @@ import { storeToRefs } from 'pinia';
 import FormUserPassword from '~/components/FormUserPassword.vue';
 import FormInputEmail from '~/components/FormInputEmail.vue';
 import FormErrorMax from '~/components/FormErrorMax.vue';
+import { useApiFetch } from '~/composables/useApi';
 
 const router = useRouter();
 const notification = useNotification();
@@ -21,6 +22,8 @@ const forceDashboardRedirect = ref(false);
 const isAppleStoreWrapper = document.cookie.includes('iOS');
 
 const store = useAuthUserStore();
+const api = useApiFetch();
+
 const { activate } = storeToRefs(store);
 const state = reactive({
   email: activate.value ? activate.value : '',
@@ -78,10 +81,10 @@ function sendForm(user: User) {
   );
 }
 
-function onLoginGoogle() {
-  const baseUrl = process.env.BACKEND_URL;
-  const url = `${baseUrl}/v1/auth/google/callback`;
-  window.location.href = url;
+async function onLoginGoogle() {
+  api.get('/v1/auth/google').then((res) => {
+    window.location.href = res.url;
+  });
 }
 
 onMounted(() => {
@@ -91,7 +94,10 @@ onMounted(() => {
       if (status) redirect();
       else isSubmitting.value = false;
     })
-    .catch(() => (isSubmitting.value = false));
+    .catch((err) => {
+      console.error(err);
+      isSubmitting.value = false;
+    });
 });
 
 onUnmounted(() => (isSubmitting.value = false));
