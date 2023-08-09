@@ -79,46 +79,45 @@ export class Application {
 
     /**
      * @description Enable CORS - Cross Origin Resource Sharing
-     * @see https://github.com/fastify/fastify-cors
      */
-    this.app.register(fastifyCors, {
-      origin: (origin, cb) => {
-        if (env === ENVIRONMENT.development || env === ENVIRONMENT.ci) {
-          cb(null, true);
-          return;
+    this.app.addHook('onRequest', (req, reply, done) => {
+      if (!req.headers.origin) {
+        // Set undefined CORS header
+        // https://github.com/expressjs/cors/issues/262
+        if (req.headers.referer) {
+          const url = new URL(req.headers.referer);
+          req.headers.origin = url.origin;
+        } else if (req.headers.host) {
+          req.headers.origin = req.headers.host;
         }
-        try {
-          const url = new URL(origin);
-          if (authorized.indexOf(url.hostname) >= 0) {
-            cb(null, true);
-            return;
-          }
-          // Allow API calls to scale and iCal and google auth without CORS
-          if (
-            url.pathname.indexOf('external') >= 0 ||
-            url.pathname.indexOf('auth/google/callback') >= 0
-          ) {
-            cb(null, true);
-            return;
-          }
+      }
 
-          cb(httpErrors.NotAcceptable(), false);
-          return;
-        } catch (e) {
-          this.app.log.error('Missing origin header');
-          cb(httpErrors.NotAcceptable('Missing origin header'), false);
-          return;
-        }
-      },
-      methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
-      credentials: true,
-      allowedHeaders: [
-        'Accept',
-        'Content-Type',
-        'Authorization',
-        'Origin',
-        'From',
-      ],
+      const origin = req.headers.origin;
+      if (
+        req.url.indexOf('external') >= 0 ||
+        req.url.indexOf('auth/google/callback') >= 0 ||
+        env === ENVIRONMENT.development ||
+        env === ENVIRONMENT.ci
+      ) {
+        reply.header('Access-Control-Allow-Origin', '*');
+      } else {
+        reply.header('Access-Control-Allow-Origin', origin);
+      }
+      if (authorized.indexOf(origin) === -1) {
+        reply.status(406).send();
+        return;
+      }
+
+      reply.header('Access-Control-Allow-Headers', '*');
+      reply.header('Access-Control-Allow-Methods', '*');
+
+      if (/options/i.test(req.method)) {
+        reply.status(200).send();
+        return;
+      } else {
+        done();
+        return;
+      }
     });
 
     this.app.register(fastifyCookie);
