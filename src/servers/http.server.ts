@@ -1,4 +1,4 @@
-import { env, port } from '@config/environment.config';
+import { env, isContainer, port } from '@config/environment.config';
 
 import { FastifyInstance } from 'fastify';
 
@@ -37,20 +37,29 @@ export class HTTPServer {
     try {
       const app = this.app;
       const logger = this.logger;
-      app.listen({ port }, function (err, address) {
-        if (err) {
-          logger.log('error', 'Server creation error', { err });
-          process.exit(1);
-        }
-        if (env !== ENVIRONMENT.test) {
-          app.log.debug(`HTTP(S) server is now running on ${address} (${env})`);
-          /*Container.resolve('Logger').log(
+      const containerHost = isContainer ? '0.0.0.0' : 'localhost';
+      app.listen(
+        {
+          port,
+          host: containerHost,
+        },
+        function (err, address) {
+          if (err) {
+            logger.log('error', 'Server creation error', { err });
+            process.exit(1);
+          }
+          if (env !== ENVIRONMENT.test) {
+            app.log.debug(
+              `HTTP(S) server is now running on ${address} (${env})`,
+            );
+            /*Container.resolve('Logger').log(
             'info',
             `HTTP(S) server is now running on ${address} (${env})`,
             { label: 'Server' },
           );*/
-        }
-      });
+          }
+        },
+      );
 
       /*this.http = server.listen(port, function () {
         if (env !== ENVIRONMENT.test) {
