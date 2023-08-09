@@ -25,7 +25,6 @@ export class WizBee {
   private template: string;
   private static indexName = 'link';
   private static vectorField = 'content_vector';
-  private static vectorServer = VectorServer.client;
   private static completionModel = 'gpt-4' as const;
   private static turboModel = 'gpt-3.5-turbo' as const;
   private static embeddingModel = 'text-embedding-ada-002' as const;
@@ -146,7 +145,7 @@ export class WizBee {
     minScore = 0.3,
   ): Promise<Document[] | undefined> {
     const unit32Buffer = this.createQueryParam(embedding);
-    const queryResult = await WizBee.vectorServer.call(
+    const queryResult = await VectorServer.client.call(
       'FT.SEARCH',
       WizBee.indexName,
       `*=>[KNN $K @${WizBee.vectorField} $BLOB as score]`,

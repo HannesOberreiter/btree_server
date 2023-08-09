@@ -4,6 +4,7 @@ import { FastifyInstance } from 'fastify';
 import { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { z } from 'zod';
 import MovedateController from '@/api/controllers/movedate.controller';
+import { numberSchema } from '@/api/utils/zod.util';
 
 export default function routes(
   instance: FastifyInstance,
@@ -26,7 +27,7 @@ export default function routes(
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
         body: z.object({
-          hive_ids: z.array(z.number()),
+          hive_ids: z.array(numberSchema),
           apiary_id: z.number(),
           date: z.string(),
         }),
@@ -41,7 +42,7 @@ export default function routes(
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
         body: z.object({
-          ids: z.array(z.number()),
+          ids: z.array(numberSchema),
         }),
       },
     },
@@ -54,7 +55,7 @@ export default function routes(
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
         body: z.object({
-          ids: z.array(z.number()),
+          ids: z.array(numberSchema),
           start: z.string(),
         }),
       },
@@ -68,7 +69,7 @@ export default function routes(
       preHandler: Guard.authorize([ROLES.admin]),
       schema: {
         body: z.object({
-          ids: z.array(z.number()),
+          ids: z.array(numberSchema),
         }),
       },
     },
@@ -81,7 +82,7 @@ export default function routes(
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
         body: z.object({
-          ids: z.array(z.number()),
+          ids: z.array(numberSchema),
         }),
       },
     },

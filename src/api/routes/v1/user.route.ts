@@ -55,7 +55,7 @@ export default function routes(
       schema: {
         body: z
           .object({
-            saved_company: z.string().trim(),
+            saved_company: z.number(),
           })
           .passthrough(),
       },

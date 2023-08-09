@@ -2,8 +2,6 @@ import { foxyOfficeKey, foxyOfficeUrl } from '@/config/environment.config';
 import { MailServer } from '../app.bootstrap';
 import { Logger } from '../services/logger.service';
 
-const logger = Logger.getInstance();
-
 function buildBaseUrl(endpoint: string) {
   return `https://${foxyOfficeUrl}/${endpoint}/${foxyOfficeKey}`;
 }
@@ -18,11 +16,11 @@ async function getLatestInvoice() {
   const url = buildBaseUrl(`billing/api/searchInvoicesByDate/${from}/${to}`);
   const response = await fetch(url);
   const result = (await response.json()) as any;
-  if (result.data.length > 0) {
+  if (result.length > 0) {
     let newNumber = 0;
     let newNumberGroupId = 0;
-    for (let i = 0; i < result.data.length; i++) {
-      const invoice = result.data[i];
+    for (let i = 0; i < result.length; i++) {
+      const invoice = result[i];
       if (invoice['Invoice'].deleted == '1') continue;
       if (parseInt(invoice['Invoice'].number) > newNumber) {
         newNumber = parseInt(invoice['Invoice'].number);
@@ -91,18 +89,18 @@ export async function createInvoice(
       }
     }
 
-    const response = fetch(buildBaseUrl('billing/api/addInvoice'), {
+    const response = await fetch(buildBaseUrl('billing/api/addInvoice'), {
       method: 'POST',
       body: form,
     });
 
-    const result = await response;
+    const result = await response.text();
 
-    if (result.status === 200) {
+    if (response.status === 200) {
       MailServer.sendRawMail(
         'office@btree.at',
         'New invoice created',
-        result.body +
+        result +
           '\n\n' +
           JSON.stringify(latestInvoice) +
           '\n\n' +
@@ -110,7 +108,7 @@ export async function createInvoice(
       );
     }
   } catch (err) {
-    logger.log('error', 'Error creating invoice', {
+    Logger.getInstance().log('error', 'Error creating invoice', {
       label: 'FoxyOffice',
       err: err,
     });

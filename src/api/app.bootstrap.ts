@@ -18,6 +18,7 @@ const redisServer = new RedisServer();
 const mailServer = new MailService();
 
 let wrappedVectorServerForTesting;
+
 if (env !== 'ci') {
   const vectorServer = new VectorServer();
   vectorServer.start();

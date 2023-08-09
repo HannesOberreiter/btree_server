@@ -5,6 +5,7 @@ import { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { z } from 'zod';
 import { Validator } from '@/api/middlewares/validator.middleware';
 import QueenController from '@/api/controllers/queen.controller';
+import { numberSchema } from '@/api/utils/zod.util';
 
 export default function routes(
   instance: FastifyInstance,
@@ -60,7 +61,7 @@ export default function routes(
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
         body: z.object({
-          ids: z.array(z.number()),
+          ids: z.array(numberSchema),
           data: z.object({}).passthrough(),
         }),
       },
@@ -74,7 +75,7 @@ export default function routes(
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
         body: z.object({
-          ids: z.array(z.number()),
+          ids: z.array(numberSchema),
           status: z.boolean(),
         }),
       },
@@ -88,7 +89,7 @@ export default function routes(
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
         body: z.object({
-          ids: z.array(z.number()),
+          ids: z.array(numberSchema),
         }),
       },
     },
@@ -101,7 +102,7 @@ export default function routes(
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
         body: z.object({
-          ids: z.array(z.number()),
+          ids: z.array(numberSchema),
         }),
       },
     },

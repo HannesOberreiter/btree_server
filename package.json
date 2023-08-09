@@ -60,6 +60,7 @@
     "dropbox": "^10.33.0",
     "fastify": "^4.20.0",
     "fastify-type-provider-zod": "^1.1.9",
+    "google-auth-library": "^9.0.0",
     "gpt-3-encoder": "^1.1.4",
     "http-errors": "^2.0.0",
     "ical-generator": "^5.0.0",
@@ -76,7 +77,8 @@
     "pino-abstract-transport": "^1.0.0",
     "pino-pretty": "^10.0.1",
     "rotating-file-stream": "^3.0.4",
-    "stripe": "^12.0.0"
+    "stripe": "^12.0.0",
+    "ua-parser-js": "^1.0.35"
   },
   "devDependencies": {
     "@types/archiver": "^5.3.1",

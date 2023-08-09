@@ -4,6 +4,7 @@ import { FastifyInstance } from 'fastify';
 import { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { z } from 'zod';
 import TodoController from '@/api/controllers/todo.controller';
+import { numberSchema } from '@/api/utils/zod.util';
 
 const schemaTodo = z.object({
   name: z.string().min(1).max(48).trim(),
@@ -50,7 +51,7 @@ export default function routes(
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
         body: z.object({
-          ids: z.array(z.number()),
+          ids: z.array(numberSchema),
           data: schemaTodo.partial(),
         }),
       },
@@ -64,7 +65,7 @@ export default function routes(
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
         body: z.object({
-          ids: z.array(z.number()),
+          ids: z.array(numberSchema),
           status: z.boolean(),
         }),
       },
@@ -78,7 +79,7 @@ export default function routes(
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
         body: z.object({
-          ids: z.array(z.number()),
+          ids: z.array(numberSchema),
           start: z.string(),
         }),
       },
@@ -92,7 +93,7 @@ export default function routes(
       preHandler: Guard.authorize([ROLES.admin]),
       schema: {
         body: z.object({
-          ids: z.array(z.number()),
+          ids: z.array(numberSchema),
         }),
       },
     },
@@ -105,7 +106,7 @@ export default function routes(
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
         body: z.object({
-          ids: z.array(z.number()),
+          ids: z.array(numberSchema),
         }),
       },
     },

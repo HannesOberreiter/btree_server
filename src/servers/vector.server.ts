@@ -9,6 +9,7 @@ import { ENVIRONMENT } from '@/config/constants.config';
 export class VectorServer {
   private logger = Logger.getInstance();
   static client: Redis;
+
   start(): void {
     try {
       const config: RedisOptions = {

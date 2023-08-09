@@ -145,7 +145,7 @@ export default class CompanyController {
     });
     arch.pipe(reply.raw);
     arch.on('end', () => reply.raw.end()); // end response when archive stream ends
-    arch.finalize();
+    return arch.finalize();
   }
 
   static async getApikey(req: FastifyRequest, reply: FastifyReply) {
@@ -164,7 +164,7 @@ export default class CompanyController {
       'user_id',
       req.session.user.user_id,
     );
-    return { ...result };
+    return result;
   }
   static async delete(req: FastifyRequest, reply: FastifyReply) {
     const params = req.params as { id: string };

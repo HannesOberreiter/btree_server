@@ -24,7 +24,7 @@ export default class ServiceController {
       .findById(params.apiary_id)
       .where({ user_id: req.session.user.user_id });
     const temp = await getTemperature(apiary.latitude, apiary.longitude);
-    return { ...temp.data };
+    return temp;
   }
 
   static async paypalCreateOrder(req: FastifyRequest, reply: FastifyReply) {
@@ -36,7 +36,7 @@ export default class ServiceController {
     if (order.status !== 'CREATED') {
       throw httpErrors.InternalServerError('Could not create order');
     }
-    return { order };
+    return order;
   }
 
   static async paypalCapturePayment(req: FastifyRequest, reply: FastifyReply) {

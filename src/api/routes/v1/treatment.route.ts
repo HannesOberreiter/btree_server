@@ -4,6 +4,7 @@ import { FastifyInstance } from 'fastify';
 import { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { z } from 'zod';
 import TreatmentController from '@/api/controllers/treatment.controller';
+import { numberSchema } from '@/api/utils/zod.util';
 
 export default function routes(
   instance: FastifyInstance,
@@ -27,7 +28,7 @@ export default function routes(
       schema: {
         body: z
           .object({
-            hive_ids: z.array(z.number()),
+            hive_ids: z.array(numberSchema),
             interval: z.number().min(0).max(365),
             repeat: z.number().min(0).max(15),
           })
@@ -43,7 +44,7 @@ export default function routes(
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
         body: z.object({
-          ids: z.array(z.number()),
+          ids: z.array(numberSchema),
           data: z.object({}).passthrough(),
         }),
       },
@@ -57,7 +58,7 @@ export default function routes(
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
         body: z.object({
-          ids: z.array(z.number()),
+          ids: z.array(numberSchema),
           status: z.boolean(),
         }),
       },
@@ -71,7 +72,7 @@ export default function routes(
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
         body: z.object({
-          ids: z.array(z.number()),
+          ids: z.array(numberSchema),
           start: z.string(),
         }),
       },
@@ -85,7 +86,7 @@ export default function routes(
       preHandler: Guard.authorize([ROLES.admin]),
       schema: {
         body: z.object({
-          ids: z.array(z.number()),
+          ids: z.array(numberSchema),
         }),
       },
     },
@@ -98,7 +99,7 @@ export default function routes(
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
         body: z.object({
-          ids: z.array(z.number()),
+          ids: z.array(numberSchema),
         }),
       },
     },

@@ -2,8 +2,6 @@ import { meteoblueKey } from '@/config/environment.config.js';
 import httpErrors from 'http-errors';
 import { Logger } from '../services/logger.service.js';
 
-const logger = Logger.getInstance();
-
 export const getTemperature = async (latitude: number, longitude: number) => {
   // Api Key is given by meteoblue, we pay for it yearly, with limited amount of usage. (60,00 €/ 30 Mio Fetches)
   // https://www.meteoblue.com/en/weather-api
@@ -13,7 +11,7 @@ export const getTemperature = async (latitude: number, longitude: number) => {
     const response = await fetch(url);
     return response.json();
   } catch (error) {
-    logger.log('error', 'Meteoblue error', {
+    Logger.getInstance().log('error', 'Meteoblue error', {
       label: 'Meteoblue',
       error: error,
     });

@@ -31,9 +31,11 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.admin]),
       schema: {
-        body: z.object({
-          name: z.string().min(3).max(128).trim().optional(),
-        }),
+        body: z
+          .object({
+            name: z.string().min(3).max(128).trim().optional(),
+          })
+          .passthrough(),
       },
     },
     CompanyController.patch,

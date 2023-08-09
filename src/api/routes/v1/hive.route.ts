@@ -4,7 +4,7 @@ import { FastifyInstance } from 'fastify';
 import { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { z } from 'zod';
 import HiveController from '@/api/controllers/hive.controller';
-import { booleanParamSchema } from '@/api/utils/zod.util';
+import { booleanParamSchema, numberSchema } from '@/api/utils/zod.util';
 
 const hiveSchema = z.object({
   name: z.string().min(1).max(24).trim(),
@@ -54,7 +54,7 @@ export default function routes(
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
         body: z.object({
-          ids: z.array(z.number()),
+          ids: z.array(numberSchema),
           data: hiveSchema.partial(),
         }),
       },
@@ -86,7 +86,7 @@ export default function routes(
       preHandler: Guard.authorize([ROLES.admin]),
       schema: {
         body: z.object({
-          ids: z.array(z.number()),
+          ids: z.array(numberSchema),
         }),
       },
     },
@@ -99,7 +99,7 @@ export default function routes(
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
         body: z.object({
-          ids: z.array(z.number()),
+          ids: z.array(numberSchema),
         }),
       },
     },
@@ -112,7 +112,7 @@ export default function routes(
       preHandler: Guard.authorize([ROLES.admin]),
       schema: {
         body: z.object({
-          ids: z.array(z.number()),
+          ids: z.array(numberSchema),
           status: z.boolean(),
         }),
       },

@@ -3,27 +3,16 @@ import { randomBytes, createHash } from 'crypto';
 import { User } from '@models/user.model.js';
 import dayjs from 'dayjs';
 import { FastifyRequest } from 'fastify';
+import { UAParser } from 'ua-parser-js';
 
 const buildUserAgent = (req: FastifyRequest) => {
   try {
-    req.headers['user-agent'] = req.headers['user-agent'] || '';
-
-    const userAgent = {
-      os: req.headers['user-agent'].match(
-        /Android|BlackBerry|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i,
-      )
-        ? 'mobile'
-        : 'desktop',
-      platform: req.headers['user-agent'].match(/Windows|Mac/i)
-        ? 'desktop'
-        : 'mobile',
-      source: req.headers['user-agent'].match(/Chrome|Firefox/i)
-        ? 'browser'
-        : 'app',
-    };
-
+    const agent = UAParser(req.headers['user-agent']);
     const userAgentInsert =
-      userAgent.os + userAgent.platform + userAgent.source;
+      agent.os.name +
+      agent.browser.name +
+      agent.device.vendor +
+      agent.device.model;
     return userAgentInsert.length > 65
       ? userAgentInsert.substring(0, 64)
       : userAgentInsert;

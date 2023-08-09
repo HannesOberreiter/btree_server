@@ -25,7 +25,7 @@ export default class UserController {
     const data = await FederatedCredential.query().where({
       bee_id: req.session.user.bee_id,
     });
-    return { data };
+    return data;
   }
 
   static async deleteFederatedCredentials(
@@ -40,7 +40,7 @@ export default class UserController {
       bee_id: req.session.user.bee_id,
       id: params.id,
     });
-    return { data };
+    return data;
   }
 
   static async addFederatedCredentials(
@@ -88,7 +88,7 @@ export default class UserController {
 
     await req.session.save();
 
-    return { data };
+    return { ...data };
   }
 
   static async delete(req: FastifyRequest, reply: FastifyReply) {
@@ -168,7 +168,7 @@ export default class UserController {
           throw checkMySQLError(e);
         }
       }
-      return { user };
+      return user;
     } catch (e) {
       await trx.rollback();
       throw e;
@@ -249,14 +249,17 @@ export default class UserController {
       return [];
     }
     const content = await RedisServer.client.mget(keys);
-    const result = content.map((el, index) => {
-      const o = JSON.parse(el);
-      o.id = keys[index];
-      o.user.currentSession =
-        o.user?.uuid && o.user?.uuid === req.session.user.uuid;
-      return o;
-    });
-    return { ...result };
+    const result = content
+      .map((el, index) => {
+        const o = JSON.parse(el);
+        if (!o.user) return null;
+        o.id = keys[index];
+        o.user['currentSession'] =
+          o.user?.uuid && o.user?.uuid === req.session.user.uuid;
+        return o;
+      })
+      .filter((el) => el !== null);
+    return result;
   }
 
   static async deleteRedisSession(req: FastifyRequest, reply: FastifyReply) {

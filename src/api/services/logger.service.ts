@@ -75,7 +75,7 @@ export class Logger {
         },
       },
       pino.multistream(streams, {
-        dedupe: true,
+        dedupe: false,
       }),
     );
   }
@@ -87,6 +87,10 @@ export class Logger {
    * @param {object} scope
    */
   log(level: string, message: string, scope: undefined | unknown) {
-    this.pino[level](scope, message);
+    try {
+      this.pino[level](scope, message);
+    } catch (e) {
+      throw new Error('Error in logger service');
+    }
   }
 }

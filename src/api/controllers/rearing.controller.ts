@@ -61,14 +61,12 @@ export default class RearingController {
 
   static async post(req: FastifyRequest, reply: FastifyReply) {
     const body = req.body as any;
-    const result = await Rearing.transaction(async (trx) => {
-      return await Rearing.query(trx).insertAndFetch({
-        ...body,
-        user_id: req.session.user.user_id,
-        bee_id: req.session.user.bee_id,
-      });
+    const result = await Rearing.query().insert({
+      ...body,
+      user_id: req.session.user.user_id,
+      bee_id: req.session.user.bee_id,
     });
-    return { ...result };
+    return [result.id];
   }
 
   static async updateDate(req: FastifyRequest, reply: FastifyReply) {

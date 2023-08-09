@@ -4,3 +4,5 @@ import { z } from 'zod';
 export const booleanParamSchema = z
   .enum(['true', 'false'])
   .transform((value) => value === 'true');
+
+export const numberSchema = z.preprocess(Number, z.number());
