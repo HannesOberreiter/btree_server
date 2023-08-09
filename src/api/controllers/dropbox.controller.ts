@@ -19,19 +19,16 @@ export default class DropboxController {
 
   static async get(_req: FastifyRequest, reply: FastifyReply) {
     const dbx = new DropboxAuth(DropboxController.config);
-    dbx
-      .getAuthenticationUrl(
-        DropboxController.redirect,
-        null,
-        'code',
-        'offline',
-        null,
-        'none',
-        false,
-      )
-      .then((authUrl) => {
-        return { url: authUrl };
-      });
+    const authUrl = await dbx.getAuthenticationUrl(
+      DropboxController.redirect,
+      null,
+      'code',
+      'offline',
+      null,
+      'none',
+      false,
+    );
+    return { url: authUrl };
   }
 
   static async auth(req: FastifyRequest, reply: FastifyReply) {
@@ -62,7 +59,7 @@ export default class DropboxController {
         });
       }
     });
-    reply.redirect(access_token);
+    return { token: access_token };
   }
 
   static async token(req: FastifyRequest, reply: FastifyReply) {
@@ -71,7 +68,7 @@ export default class DropboxController {
       req.session.user.user_id,
     );
     if (!token) {
-      return '';
+      return { token: undefined };
     }
     // check if access_token is still valid, to prevent one round trip
     const dbx = new DropboxAuth({
@@ -90,7 +87,7 @@ export default class DropboxController {
           .findOne('user_id', req.session.user.user_id);
       });
     }
-    return token.access_token;
+    return { token: token.access_token };
   }
 
   static async delete(req: FastifyRequest, reply: FastifyReply) {
