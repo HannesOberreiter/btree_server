@@ -134,11 +134,7 @@ export const useTablesStore = defineStore('tables', {
       direction: useStorage('table-sort-direction-rearing', false),
     },
     rearing_detail: {
-      visible: useStorage('table-visible-rearing_detail', [
-        'job',
-        'hour',
-        'note',
-      ]),
+      visible: useStorage('table-visible-rearing_detail', ['job', 'note']),
       length: useStorage('table-length-rearing_detail', 10),
       sort: useStorage('table-sort-col-rearing_detail', 'job'),
       direction: useStorage('table-sort-direction-rearing_detail', false),
