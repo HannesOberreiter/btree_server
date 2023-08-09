@@ -127,6 +127,7 @@
   "end": "Ende",
   "enterEmail": "",
   "error": {
+    "CouponNotFound": "Coupon {token} konnte nicht gefunden werden.",
     "access": "Zugriff nicht erlaubt oder falsches Passwort!",
     "alreadyScanned": "Auswahl ist bereits gescannt!",
     "csvReading": "Die .csv Datei konnte nicht gelesen werden!",
