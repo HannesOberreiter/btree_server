@@ -11,6 +11,7 @@ const DROPBOX_CLIENT_ID = process.env.DROPBOX_CLIENT_ID;
 const dbx = new Dropbox({ clientId: DROPBOX_CLIENT_ID });
 
 const state = reactive({
+  refresh: false,
   isLoading: false,
   path: '',
   accessToken: null as string,
@@ -33,31 +34,45 @@ export const useServiceDropbox = () => {
     dbx.auth.setAccessToken(token);
   };
 
-  async function getAccount() {
+  async function getAccount(): Promise<any> {
+    if (state.isLoading) return false;
+
     LoadingBar.start();
     state.isLoading = true;
+
+    if (!state.accessToken) {
+      await getAccessToken();
+    }
+
     return await dbx
       .usersGetCurrentAccount()
       .then((response) => {
-        state.isLoading = false;
-        LoadingBar.stop();
         return response.result;
       })
       .catch(async (e) => {
-        if (e.status == 401) return await getAccessToken();
-        throw e;
+        console.error(e);
+        if (state.refresh) {
+          return false;
+        }
+        state.refresh = true;
+        if (e.status === 401 || e.statusCode === 401) {
+          await getAccessToken();
+          return await getAccount();
+        }
+        return false;
+      })
+      .finally(() => {
+        state.refresh = false;
+        state.isLoading = false;
+        LoadingBar.stop();
       });
   }
 
   async function getAccessToken() {
-    LoadingBar.start();
-    state.isLoading = true;
     return await api.get('/v1/dropbox/token').then(
       (response: any) => {
-        LoadingBar.stop();
-        state.isLoading = false;
-        if (response !== '') {
-          setAccessToken(response);
+        if (response.token) {
+          setAccessToken(response.token);
           return true;
         } else {
           setAccessToken('');
@@ -65,8 +80,6 @@ export const useServiceDropbox = () => {
         }
       },
       (error) => {
-        LoadingBar.stop();
-        state.isLoading = false;
         setAccessToken('');
         console.error(error);
         return false;
@@ -77,7 +90,7 @@ export const useServiceDropbox = () => {
   async function addAccount() {
     await api.get('/v1/dropbox').then(
       (response: any) => {
-        window.location.href = response;
+        window.location.href = response.url;
       },
       (error) => {
         console.error(error);
@@ -105,9 +118,9 @@ export const useServiceDropbox = () => {
 
   async function auth(code: string) {
     await api.get(`/v1/dropbox/auth/${code}`).then(
-      (_response: any) => {
-        router.replace({ name: 'setting-dropbox' });
-        return true;
+      (response: any) => {
+        router.replace({ query: null });
+        setAccessToken(response.token);
       },
       (error) => {
         notification.open('negative', error);
@@ -116,11 +129,14 @@ export const useServiceDropbox = () => {
   }
 
   async function listFiles(): Promise<any> {
-    if (!(await getAccessToken())) return false;
     LoadingBar.start();
     state.isLoading = true;
-    return dbx.filesListFolder({ path: state.path }).then(
-      (response) => {
+    if (!state.accessToken) {
+      await getAccessToken();
+    }
+    return dbx
+      .filesListFolder({ path: state.path })
+      .then((response) => {
         const ordered_list = orderBy(
           response.result.entries,
           ['.tag', 'name'],
@@ -130,11 +146,23 @@ export const useServiceDropbox = () => {
         state.isLoading = false;
         state.folder = ordered_list;
         return ordered_list;
-      },
-      async (e) => {
-        throw e;
-      },
-    );
+      })
+      .catch(async (e) => {
+        console.error(e);
+        if (state.refresh) {
+          return false;
+        }
+        state.refresh = true;
+        if (e.status === 401 || e.statusCode === 401) {
+          await getAccessToken();
+          return await listFiles();
+        }
+      })
+      .finally(() => {
+        state.refresh = false;
+        state.isLoading = false;
+        LoadingBar.stop();
+      });
   }
 
   async function createFolder(name: string) {
@@ -186,17 +214,34 @@ export const useServiceDropbox = () => {
       .filesGetMetadata({
         path: id,
       })
-      .catch(async (e) => {
-        if (e.status == 401) return await getAccessToken();
-        throw e;
+      .catch(async (e): Promise<any> => {
+        console.error(e);
+        if (state.refresh) {
+          return false;
+        }
+        state.refresh = true;
+        if (e.status === 401 || e.statusCode === 401) {
+          await getAccessToken();
+          return await getMeta(id);
+        }
+      })
+      .finally(() => {
+        state.refresh = false;
+        state.isLoading = false;
+        LoadingBar.stop();
       });
   }
 
   async function getThumbnail(id: string) {
     LoadingBar.start();
     state.isLoading = true;
-    if (!state.accessToken) await getAccessToken();
+
+    if (!state.accessToken) {
+      await getAccessToken();
+    }
+
     await getMeta(id);
+
     return await dbx
       .filesGetThumbnail({
         path: id,

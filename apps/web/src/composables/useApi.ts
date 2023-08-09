@@ -1,4 +1,3 @@
-//import { useAuthTokenStore } from '~/stores/token';
 import { useNeedAuth } from './useNeedAuth';
 import querystring from 'query-string';
 import { isString } from 'lodash-es';
@@ -15,7 +14,6 @@ const state = reactive({
 });
 
 export const useApiFetch = () => {
-  //const storeToken = useAuthTokenStore();
   const network = useNetwork();
   const dialog = useNeedAuth();
 
@@ -25,12 +23,6 @@ export const useApiFetch = () => {
       'Content-Type': 'application/json;charset=UTF-8',
     };
   };
-
-  /*const buildToken = () => {
-    const token = storeToken.getAccessToken;
-    if (token) return { Authorization: `Bearer ${token}` };
-    return false;
-  };*/
 
   const buildUrl = (url: string, param = '' as unknown) => {
     if (param === '') return baseUrl + url;
@@ -109,6 +101,7 @@ export const useApiFetch = () => {
       method: 'DELETE', // *GET, POST, PUT, DELETE, etc.
       credentials: 'include', // include, *same-origin, omit
       headers: buildHeader(),
+      body: '{}',
     });
 
     return await fetching(originalRequest);
@@ -169,8 +162,6 @@ export const useApiFetch = () => {
         // 401 Response and it is currently no retry ongoing
         if (response.status === 401 && !state.retry && !recursive) {
           try {
-            //const token = await refreshToken();
-            //storeToken.refreshToken(token.result);
             state.retry = true;
             return fetching(copy, true, file);
           } catch (e) {
@@ -206,35 +197,5 @@ export const useApiFetch = () => {
       return response.json();
     }
   }
-
-  /*async function refreshToken() {
-    const token = buildToken();
-    const urlParam = baseUrl + '/v1/auth/refresh';
-    const request = new Request(urlParam, {
-      method: 'POST',
-      credentials: 'include',
-      headers: buildHeader(),
-      body: JSON.stringify(storeToken.getRefreshToken),
-    });
-    if (token) request.headers.append('Authorization', token.Authorization);
-
-    return fetch(request)
-      .then(function (response) {
-        if (!response.ok) {
-          state.logout = true;
-          dialog.open();
-          throw response;
-        }
-        return response;
-      })
-      .then(function (response) {
-        state.retry = false;
-        return response.json();
-      })
-      .catch(async function (error) {
-        throw await error.json();
-      });
-  }*/
-
   return { ping, get, post, patch, remove, state, download };
 };

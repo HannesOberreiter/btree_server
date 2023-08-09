@@ -110,7 +110,7 @@ async function sso() {
     await api
       .get('/v1/auth/discourse', { sig: sig.value, payload: payload.value })
       .then((data) => {
-        window.location.href = `https://forum.btree.at/session/sso_login?${data}`;
+        window.location.href = `https://forum.btree.at/session/sso_login?${data.q}`;
       })
       .catch(() => (ssoError.value = true));
   } else {

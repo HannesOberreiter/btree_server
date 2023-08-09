@@ -127,11 +127,12 @@
   "end": "Ende",
   "enterEmail": "",
   "error": {
+    "CouponNotFound": "Coupon {token} konnte nicht gefunden werden.",
     "access": "Zugriff nicht erlaubt oder falsches Passwort!",
     "alreadyScanned": "Auswahl ist bereits gescannt!",
     "csvReading": "Die .csv Datei konnte nicht gelesen werden!",
     "csvTooMuch": "Upload ist zu groß!",
-    "duplicate": "Konflikt, doppelter Eintrag!",
+    "duplicate": "Konflikt, Eintrag mit angegebenem Wert existiert bereits.",
     "emailRequired": "Post ist erforderlich.",
     "forbidden": "Zutritt verboten oder nicht erlaubt!",
     "lastMovement": "Jeder Bienenstock braucht mindestens eine Wanderung! Die letzte Wanderung kannst du nicht löschen.",
@@ -614,6 +615,7 @@
   "type": "Typ | Typen",
   "undo": "Rückgängig machen",
   "unit": "Einheit",
+  "unlockAPI": "API-Details freischalten",
   "unsavedChanges": "Willst du diese Seite wirklich verlassen? Du hast nicht gespeicherte Änderungen!",
   "unsubscribe": {
     "btn": "Entfernen Sie meine E-Mail.",

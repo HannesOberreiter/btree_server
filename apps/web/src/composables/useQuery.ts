@@ -685,7 +685,7 @@ export function useRearingDetailsQuery({
       keepPreviousData: false,
       select: (response) => {
         const result = map(response.results, (value) => {
-          value.label = `${value.job} [${value.hour}h]`;
+          value.label = `${value.job}`;
           value.value = value.id;
           return value;
         });

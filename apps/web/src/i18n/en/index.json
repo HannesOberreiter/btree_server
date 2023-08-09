@@ -127,11 +127,12 @@
   "end": "End",
   "enterEmail": "Please enter your email address",
   "error": {
+    "CouponNotFound": "Could not find coupon {token}.",
     "access": "Access not allowed or wrong password!",
     "alreadyScanned": "Selection is already scanned!",
     "csvReading": "Could not read csv file!",
     "csvTooMuch": "Upload too big!",
-    "duplicate": "Conflict, duplicate entry!",
+    "duplicate": "Conflict, entry with given value already exists.",
     "emailRequired": "Mail is required.",
     "forbidden": "Access forbidden or not allowed!",
     "lastMovement": "Each hive needs at least one movement! You cannot delete the last one.",
@@ -614,6 +615,7 @@
   "type": "Type | Types",
   "undo": "Undo",
   "unit": "Unit",
+  "unlockAPI": "Unlock API Details",
   "unsavedChanges": "Do you really want to leave? You have unsaved changes!",
   "unsubscribe": {
     "btn": "Remove my email.",

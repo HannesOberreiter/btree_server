@@ -85,9 +85,7 @@ const numberOfTasks = computed(() => {
   } else if (['charge', 'scale_data'].includes(form.value)) {
     count = 1;
   } else if (
-    ['hive', 'queen', 'apiary', 'todo', 'scale', 'option', 'rearing'].includes(
-      form.value,
-    )
+    ['hive', 'queen', 'apiary', 'todo', 'scale', 'option'].includes(form.value)
   ) {
     if (state.value.name) {
       count = 1;
@@ -99,6 +97,8 @@ const numberOfTasks = computed(() => {
     if (state.value.job) {
       count = 1;
     }
+  } else if (['rearing'].includes(form.value)) {
+    count = 1;
   }
   return count;
 });

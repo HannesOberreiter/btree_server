@@ -1,7 +1,5 @@
 import { find } from 'lodash-es';
 import { RegisterUser, User } from '~/types';
-// import { useAuthTokenStore } from '~/stores/token';
-// import { useAuthUserStore } from '~/stores/auth';
 import { useApiFetch } from '~/composables/useApi';
 
 class AuthService {
@@ -12,15 +10,6 @@ class AuthService {
       .get('/v1/user/', '', true, false)
       .then((data) => data)
       .catch(() => false);
-    /*
-    .then((response: any) => {
-      console.log(response);
-      /*if (response.token.accessToken) {
-        const storeToken = useAuthTokenStore();
-        storeToken.refreshToken(response.token);
-      }*/
-    //return response;
-    //});
   }
 
   login(user: User) {
@@ -30,10 +19,6 @@ class AuthService {
       password: user.password,
     });
     return api.post('/v1/auth/login', data).then((response: any) => {
-      /*if (response.token.accessToken) {
-        const storeToken = useAuthTokenStore();
-        storeToken.refreshToken(response.token);
-      }*/
       return response;
     });
   }
