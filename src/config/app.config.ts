@@ -78,10 +78,10 @@ export class Application {
     /**
      * @description Enable CORS - Cross Origin Resource Sharing
      */
-    this.app.addHook('onRequest', (req, reply, done) => {
+    this.app.addHook('preHandler', (req, reply, done) => {
+      // Set undefined CORS header
+      // https://github.com/expressjs/cors/issues/262
       if (!req.headers.origin) {
-        // Set undefined CORS header
-        // https://github.com/expressjs/cors/issues/262
         if (req.headers.referer) {
           const url = new URL(req.headers.referer);
           req.headers.origin = url.origin;
@@ -101,21 +101,19 @@ export class Application {
       } else {
         reply.header('Access-Control-Allow-Origin', origin);
       }
+
       if (authorized.indexOf(origin) === -1) {
         reply.status(406).send();
-        return;
       }
 
       reply.header('Access-Control-Allow-Headers', '*');
       reply.header('Access-Control-Allow-Methods', '*');
 
       if (/options/i.test(req.method)) {
-        reply.status(200).send();
-        return;
-      } else {
-        done();
-        return;
+        reply.send();
       }
+
+      done();
     });
 
     this.app.register(fastifyCookie);
