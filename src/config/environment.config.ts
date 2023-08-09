@@ -59,6 +59,7 @@ const port = parseInt(process.env.PORT);
 const url = process.env.URL;
 const frontend = process.env.FRONTEND;
 const authorized = process.env.AUTHORIZED;
+const isContainer = !!process.env.CONTAINER;
 
 const sessionSecret = process.env.SESSION_SECRET;
 
@@ -207,4 +208,5 @@ export {
   foxyOfficeUrl,
   googleOAuth,
   openAI,
+  isContainer,
 };

@@ -20,6 +20,7 @@ RUN npm ci
 
 # Generate build and migrate to latest database schema
 ENV NODE_ENV=production
+ENV CONTAINER=docker
 RUN npm run build
 
 # Remove source code and dev depencies
