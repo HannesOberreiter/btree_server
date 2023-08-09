@@ -108,7 +108,10 @@ export class Application {
         reply.status(406).send();
       }
 
-      reply.header('Access-Control-Allow-Headers', '*');
+      reply.header(
+        'Access-Control-Allow-Headers',
+        'Origin, Content-Type, Accept, Authorization',
+      );
       reply.header('Access-Control-Allow-Methods', '*');
 
       if (req.method.toLowerCase() === 'options') {
