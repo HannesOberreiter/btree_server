@@ -5,7 +5,6 @@ import {
   validatorCompiler,
 } from 'fastify-type-provider-zod';
 import { ZodError } from 'zod';
-import httpErrors from 'http-errors';
 
 import { RedisServer } from '@/servers/redis.server.js';
 import { authorized, env, sessionSecret } from '@config/environment.config.js';
@@ -15,7 +14,7 @@ import { ENVIRONMENT } from './constants.config.js';
 import routes from '@/api/routes/index.js';
 
 // import fastifyPassport from '@fastify/passport';
-import fastify, { FastifyInstance, FastifyRequest } from 'fastify';
+import fastify, { FastifyInstance } from 'fastify';
 import fastifyCookie from '@fastify/cookie';
 import fastifySession from '@fastify/session';
 import fastifyCompress from '@fastify/compress';
@@ -81,54 +80,44 @@ export class Application {
 
     /**
      * @description Enable CORS - Cross Origin Resource Sharing
-     * @see https://www.npmjs.com/package/cors
+     * @see https://github.com/fastify/fastify-cors
      */
-    this.app.register(fastifyCors, (_instance) => {
-      return (req: FastifyRequest, callback) => {
-        if (!req.headers.origin) {
-          // Set undefined CORS header
-          // https://github.com/expressjs/cors/issues/262
-          if (req.headers.referer) {
-            const url = new URL(req.headers.referer);
-            req.headers.origin = url.origin;
-          } else if (req.headers.host) {
-            req.headers.origin = req.headers.host;
+    this.app.register(fastifyCors, {
+      origin: (origin, cb) => {
+        try {
+          if (env === ENVIRONMENT.development) {
+            cb(null, true);
+            return;
           }
-        }
-
-        const origin = req.headers.origin;
-        let corsOptions = {
-          origin: true,
-          credentials: true,
-          methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-          allowedHeaders: [
-            'Accept',
-            'Content-Type',
-            'Authorization',
-            'Origin',
-            'From',
-          ],
-        } as any;
-
-        if (
-          req.url.indexOf('external') >= 0 ||
-          req.url.indexOf('auth/google/callback') >= 0
-        ) {
+          const url = new URL(origin);
+          if (authorized.indexOf(url.hostname) === -1) {
+            cb(null, true);
+            return;
+          }
           // Allow API calls to scale and iCal and google auth without CORS
-          corsOptions = { origin: false, credentials: false };
-        } else if (
-          authorized.indexOf(origin) === -1 &&
-          origin &&
-          env !== ENVIRONMENT.development
-        ) {
-          callback(
-            httpErrors.NotAcceptable(`Domain not allowed by CORS: ${origin}`),
-            corsOptions,
-          );
-        }
+          if (
+            url.pathname.indexOf('external') >= 0 ||
+            url.pathname.indexOf('auth/google/callback') >= 0
+          ) {
+            cb(null, true);
+            return;
+          }
 
-        callback(null, corsOptions);
-      };
+          cb(new Error('Not allowed'), false);
+        } catch (e) {
+          this.app.log.error('No origin header');
+          cb(null, false);
+        }
+      },
+      methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+      credentials: true,
+      allowedHeaders: [
+        'Accept',
+        'Content-Type',
+        'Authorization',
+        'Origin',
+        'From',
+      ],
     });
 
     this.app.register(fastifyCookie);
