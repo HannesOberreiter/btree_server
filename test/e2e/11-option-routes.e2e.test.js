@@ -23,7 +23,7 @@ const options = [
 
 options.map((option) => {
   describe(`${option} routes`, function () {
-    const route = '/api/v1/option/' + option + '/';
+    const route = '/api/v1/option/' + option;
     let accessToken, insertId;
 
     before(function (done) {
@@ -51,9 +51,9 @@ options.map((option) => {
               expect(res.body).to.be.a('Object');
               insertId = res.body.id;
               done();
-            }
+            },
           );
-        }
+        },
       );
     });
 
@@ -69,7 +69,7 @@ options.map((option) => {
             expect(res.statusCode).to.eqls(401);
             expect(res.errors, 'JsonWebTokenError');
             done();
-          }
+          },
         );
       });
       it(`post 401 - no header`, function (done) {
@@ -84,7 +84,7 @@ options.map((option) => {
             expect(res.statusCode).to.eqls(401);
             expect(res.errors, 'JsonWebTokenError');
             done();
-          }
+          },
         );
       });
       it(`patch 401 - no header`, function (done) {
@@ -94,12 +94,12 @@ options.map((option) => {
           route,
           null,
           null,
-          { ids: [insertId] },
+          { ids: [insertId], data: {} },
           function (err, res) {
             expect(res.statusCode).to.eqls(401);
             expect(res.errors, 'JsonWebTokenError');
             done();
-          }
+          },
         );
       });
 
@@ -114,7 +114,7 @@ options.map((option) => {
             expect(res.statusCode).to.eqls(200);
             expect(res.body).to.be.a('Array');
             done();
-          }
+          },
         );
       });
 
@@ -129,7 +129,7 @@ options.map((option) => {
           function (err, res) {
             expect(res.statusCode).to.eqls(400);
             done();
-          }
+          },
         );
       });
 
@@ -148,7 +148,7 @@ options.map((option) => {
             expect(res.statusCode).to.eqls(200);
             expect(res.body).to.equal(1);
             done();
-          }
+          },
         );
       });
     });
@@ -158,7 +158,7 @@ options.map((option) => {
         doRequest(
           request.agent(global.server),
           'post',
-          route + 'batchGet',
+          route + '/batchGet',
           null,
           null,
           { ids: [insertId] },
@@ -166,14 +166,14 @@ options.map((option) => {
             expect(res.statusCode).to.eqls(401);
             expect(res.errors, 'JsonWebTokenError');
             done();
-          }
+          },
         );
       });
       it(`400 - missing ids`, function (done) {
         doRequest(
           agent,
           'post',
-          route + 'batchGet',
+          route + '/batchGet',
           null,
           null,
           null,
@@ -181,14 +181,14 @@ options.map((option) => {
             expect(res.statusCode).to.eqls(400);
             expectations(res, 'ids', 'Invalid value');
             done();
-          }
+          },
         );
       });
       it(`200 - success`, function (done) {
         doRequest(
           agent,
           'post',
-          route + 'batchGet',
+          route + '/batchGet',
           null,
           accessToken,
           { ids: [insertId] },
@@ -196,7 +196,7 @@ options.map((option) => {
             expect(res.statusCode).to.eqls(200);
             expect(res.body).to.be.a('Array');
             done();
-          }
+          },
         );
       });
     });
@@ -206,7 +206,7 @@ options.map((option) => {
         doRequest(
           request.agent(global.server),
           'patch',
-          route + 'status',
+          route + '/status',
           null,
           null,
           { ids: [], status: true },
@@ -214,14 +214,14 @@ options.map((option) => {
             expect(res.statusCode).to.eqls(401);
             expect(res.errors, 'JsonWebTokenError');
             done();
-          }
+          },
         );
       });
       it(`400 - missing ids`, function (done) {
         doRequest(
           agent,
           'patch',
-          route + 'status',
+          route + '/status',
           null,
           null,
           null,
@@ -229,14 +229,14 @@ options.map((option) => {
             expect(res.statusCode).to.eqls(400);
             expectations(res, 'ids', 'Invalid value');
             done();
-          }
+          },
         );
       });
       it(`200 - success`, function (done) {
         doRequest(
           agent,
           'patch',
-          route + 'status',
+          route + '/status',
           null,
           accessToken,
           { ids: [insertId], status: false },
@@ -244,7 +244,7 @@ options.map((option) => {
             expect(res.statusCode).to.eqls(200);
             expect(res.body).to.equal(1);
             done();
-          }
+          },
         );
       });
     });
@@ -254,7 +254,7 @@ options.map((option) => {
         doRequest(
           request.agent(global.server),
           'patch',
-          route + 'favorite',
+          route + '/favorite',
           null,
           null,
           { ids: [] },
@@ -262,14 +262,14 @@ options.map((option) => {
             expect(res.statusCode).to.eqls(401);
             expect(res.errors, 'JsonWebTokenError');
             done();
-          }
+          },
         );
       });
       it(`400 - missing ids`, function (done) {
         doRequest(
           agent,
           'patch',
-          route + 'favorite',
+          route + '/favorite',
           null,
           null,
           null,
@@ -277,14 +277,14 @@ options.map((option) => {
             expect(res.statusCode).to.eqls(400);
             expectations(res, 'ids', 'Invalid value');
             done();
-          }
+          },
         );
       });
       it(`200 - success`, function (done) {
         doRequest(
           agent,
           'patch',
-          route + 'favorite',
+          route + '/favorite',
           null,
           accessToken,
           { ids: [insertId] },
@@ -292,7 +292,7 @@ options.map((option) => {
             expect(res.statusCode).to.eqls(200);
             expect(res.body).to.equal(1);
             done();
-          }
+          },
         );
       });
     });
@@ -302,7 +302,7 @@ options.map((option) => {
         doRequest(
           request.agent(global.server),
           'patch',
-          route + 'batchDelete',
+          route + '/batchDelete',
           null,
           null,
           { ids: [] },
@@ -310,14 +310,14 @@ options.map((option) => {
             expect(res.statusCode).to.eqls(401);
             expect(res.errors, 'JsonWebTokenError');
             done();
-          }
+          },
         );
       });
       it(`400 - missing ids`, function (done) {
         doRequest(
           agent,
           'patch',
-          route + 'batchDelete',
+          route + '/batchDelete',
           null,
           null,
           null,
@@ -325,14 +325,14 @@ options.map((option) => {
             expect(res.statusCode).to.eqls(400);
             expectations(res, 'ids', 'Invalid value');
             done();
-          }
+          },
         );
       });
       it(`200 - success`, function (done) {
         doRequest(
           agent,
           'patch',
-          route + 'batchDelete',
+          route + '/batchDelete',
           null,
           accessToken,
           { ids: [insertId] },
@@ -340,7 +340,7 @@ options.map((option) => {
             expect(res.statusCode).to.eqls(200);
             expect(res.body).to.equal(1);
             done();
-          }
+          },
         );
       });
     });

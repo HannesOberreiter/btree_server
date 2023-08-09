@@ -1,38 +1,51 @@
-import { ENVIRONMENT } from '@/api/types/constants/environment.const';
 import { env, knexConfig } from '@config/environment.config';
-import { Container } from '@config/container.config';
 import Knex from 'knex';
 import { Model } from 'objection';
+import { Logger } from '@/api/services/logger.service';
+import { ENVIRONMENT } from '@/config/constants.config';
 
 /**
  * Database connection manager for MariaDb server
  */
 export class DatabaseServer {
-  static knex = Knex(knexConfig);
+  private static instance: DatabaseServer;
+  knex: ReturnType<typeof Knex>;
+
+  static getInstance(): DatabaseServer {
+    if (!this.instance) {
+      this.instance = new this();
+    }
+    return this.instance;
+  }
+
+  private constructor() {
+    this.knex = Knex(knexConfig);
+  }
+
+  private logger = Logger.getInstance();
+
   start(): void {
     try {
-      Model.knex(DatabaseServer.knex);
+      Model.knex(this.knex);
 
       if (env !== ENVIRONMENT.test) {
-        Container.resolve('Logger').log(
+        this.logger.log(
           'info',
           `Connection to database established on port ${knexConfig.connection.port} (${env})`,
           { label: 'Database' },
         );
       }
     } catch (error) {
-      Container.resolve('Logger').log(
-        'error',
-        `Database connection error : ${error.message}`,
-        { label: 'Database' },
-      );
+      this.logger.log('error', `Database connection error : ${error.message}`, {
+        label: 'Database',
+      });
     }
   }
   stop(): void {
     try {
-      DatabaseServer.knex.destroy();
+      this.knex.destroy();
     } catch (error) {
-      console.error(error);
+      this.logger.log('error', 'Database connection error', { error });
     }
   }
 }

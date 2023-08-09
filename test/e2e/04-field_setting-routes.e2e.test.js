@@ -19,7 +19,7 @@ const settings = JSON.stringify({
 });
 
 describe('Fieldsetting routes', function () {
-  const route = '/api/v1/field_setting/';
+  const route = '/api/v1/field_setting';
   let accessToken;
 
   before(function (done) {
@@ -37,11 +37,11 @@ describe('Fieldsetting routes', function () {
         expect(res.statusCode).to.eqls(200);
         expect(res.header, 'set-cookie', /connect.sid=.*; Path=\/; HttpOnly/);
         done();
-      }
+      },
     );
   });
 
-  describe('/api/v1/field_setting/', () => {
+  describe('/api/v1/field_setting', () => {
     it(`401 - no header`, function (done) {
       doQueryRequest(
         request.agent(global.server),
@@ -53,7 +53,7 @@ describe('Fieldsetting routes', function () {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
-        }
+        },
       );
     });
 
@@ -80,9 +80,9 @@ describe('Fieldsetting routes', function () {
                 settings: JSON.parse(settings),
               });
               done();
-            }
+            },
           );
-        }
+        },
       );
     });
   });

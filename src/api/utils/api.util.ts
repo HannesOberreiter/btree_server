@@ -23,7 +23,6 @@ export function isValidTimeZone(tz: string) {
     Intl.DateTimeFormat(undefined, { timeZone: tz });
     return true;
   } catch (e) {
-    console.error(e);
     return false;
   }
 }

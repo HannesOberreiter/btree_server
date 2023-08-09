@@ -13,7 +13,7 @@ const testInsert2 = {
 };
 
 describe('Scale routes', function () {
-  const route = '/api/v1/scale/';
+  const route = '/api/v1/scale';
   let accessToken, insertId;
 
   before(function (done) {
@@ -51,11 +51,11 @@ describe('Scale routes', function () {
                 expect(res.body).to.be.a('Object');
                 insertId = res.body.id;
                 done();
-              }
+              },
             );
-          }
+          },
         );
-      }
+      },
     );
   });
 
@@ -71,7 +71,7 @@ describe('Scale routes', function () {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
-        }
+        },
       );
     });
     it(`post 401 - no header`, function (done) {
@@ -86,7 +86,7 @@ describe('Scale routes', function () {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
-        }
+        },
       );
     });
     it(`patch 401 - no header`, function (done) {
@@ -96,12 +96,12 @@ describe('Scale routes', function () {
         route,
         null,
         null,
-        { ids: [insertId] },
+        { ids: [insertId], data: {} },
         function (err, res) {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
-        }
+        },
       );
     });
 
@@ -116,7 +116,7 @@ describe('Scale routes', function () {
           expect(res.statusCode).to.eqls(200);
           expect(res.body).to.be.a('Array');
           done();
-        }
+        },
       );
     });
 
@@ -131,7 +131,7 @@ describe('Scale routes', function () {
         function (err, res) {
           expect(res.statusCode).to.eqls(400);
           done();
-        }
+        },
       );
     });
 
@@ -150,7 +150,7 @@ describe('Scale routes', function () {
           expect(res.statusCode).to.eqls(200);
           expect(res.body).to.equal(1);
           done();
-        }
+        },
       );
     });
   });
@@ -167,7 +167,7 @@ describe('Scale routes', function () {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
-        }
+        },
       );
     });
     it(`delete 401 - no header`, function (done) {
@@ -182,7 +182,7 @@ describe('Scale routes', function () {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
-        }
+        },
       );
     });
 
@@ -197,7 +197,7 @@ describe('Scale routes', function () {
           expect(res.statusCode).to.eqls(200);
           expect(res.body).to.be.a('Array');
           done();
-        }
+        },
       );
     });
 
@@ -213,7 +213,7 @@ describe('Scale routes', function () {
           expect(res.statusCode).to.eqls(200);
           expect(res.body).to.equal(1);
           done();
-        }
+        },
       );
     });
   });

@@ -1,5 +1,4 @@
 import cron from 'node-schedule';
-import { Container } from '@config/container.config';
 import {
   cleanupDatabase,
   reminderPremium,
@@ -7,11 +6,14 @@ import {
   reminderVIS,
 } from '@/api/utils/cron.util';
 import { cronjobTimer } from '@/config/environment.config';
+import { Logger } from '@/api/services/logger.service';
 
 let job: any;
 
-function Logger(input: any) {
-  Container.resolve('Logger').log('info', JSON.stringify(input), {
+const logger = Logger.getInstance();
+
+function Logging(input: any) {
+  logger.log('info', JSON.stringify(input), {
     label: 'CronJob',
   });
 }
@@ -19,11 +21,9 @@ function Logger(input: any) {
 const task = {
   start: async () => {
     const rule = cronjobTimer;
-    Container.resolve('Logger').log(
-      'info',
-      `Test Cron-Job is starting with rule: ${rule}`,
-      { label: 'Server' },
-    );
+    logger.log('info', `Test Cron-Job is starting with rule: ${rule}`, {
+      label: 'Server',
+    });
     job = cron.scheduleJob(
       {
         // https://crontab.guru/
@@ -32,27 +32,23 @@ const task = {
       },
       async function () {
         try {
-          Container.resolve('Logger').log('info', 'Test Cron-Job', {
+          logger.log('info', 'Test Cron-Job', {
             label: 'CronJob',
           });
-          Logger(await cleanupDatabase());
-          Logger(await reminderDeletion());
-          Logger(await reminderVIS());
-          Logger(await reminderPremium());
+          Logging(await cleanupDatabase());
+          Logging(await reminderDeletion());
+          Logging(await reminderVIS());
+          Logging(await reminderPremium());
         } catch (e) {
-          Container.resolve('Logger').log('error', e, { label: 'CronJob' });
+          logger.log('error', e, { label: 'CronJob' });
         }
       },
     );
   },
   nextRun: () =>
-    Container.resolve('Logger').log(
-      'info',
-      `Next CronJob at: ${job.nextInvocation()}`,
-      {
-        label: 'CronJob',
-      },
-    ),
+    logger.log('info', `Next CronJob at: ${job.nextInvocation()}`, {
+      label: 'CronJob',
+    }),
   stop: () => cron.gracefulShutdown(),
 };
 

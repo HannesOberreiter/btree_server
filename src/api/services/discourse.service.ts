@@ -1,10 +1,10 @@
 import crypto from 'crypto';
 import querystring from 'querystring';
 
-/*
-    Helper class for disourse SSO service
-    based on https://github.com/ArmedGuy/discourse_sso_node
-*/
+/***
+ * @description  Helper class for disourse SSO service
+ * @see https://github.com/ArmedGuy/discourse_sso_node
+ */
 export class DiscourseSSO {
   private secret: string;
 

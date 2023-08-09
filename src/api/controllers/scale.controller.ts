@@ -1,91 +1,73 @@
-import { Response } from 'express';
-import { Controller } from '@classes/controller.class';
-import { checkMySQLError } from '@utils/error.util';
-import { IUserRequest } from '@interfaces/IUserRequest.interface';
 import { Scale } from '../models/scale.model';
 import { Hive } from '../models/hive.model';
 import { ScaleData } from '../models/scale_data.model';
 import { limitScale } from '../utils/premium.util';
-import { paymentRequired } from '@hapi/boom';
+import { FastifyReply, FastifyRequest } from 'fastify';
+import httpErrors from 'http-errors';
 
-export default class ScaleController extends Controller {
-  constructor() {
-    super();
-  }
-  async get(req: IUserRequest, res: Response, next) {
-    try {
-      const query = Scale.query()
-        .withGraphFetched('hive')
-        .where('user_id', req.user.user_id);
-      if (req.params.id) {
-        query.findById(req.params.id);
-      }
-      res.locals.data = req.params.id ? [await query] : await query; // array is returned to be consistent with batchGet function
-      next();
-    } catch (e) {
-      next();
+export default class ScaleController {
+  static async get(req: FastifyRequest, reply: FastifyReply) {
+    const params = req.params as any;
+    const query = Scale.query()
+      .withGraphFetched('hive')
+      .where('user_id', req.session.user.user_id);
+    if (params.id) {
+      query.findById(params.id);
     }
+    const result = params.id ? [await query] : await query; // array is returned to be consistent with batchGet function
+    return result;
   }
-  async patch(req: IUserRequest, res: Response, next) {
-    try {
-      const ids = req.body.ids;
-      const insert = { ...req.body.data };
+  static async patch(req: FastifyRequest, reply: FastifyReply) {
+    const body = req.body as any;
+    const ids = body.ids;
+    const insert = { ...body.data };
 
-      const result = await Scale.transaction(async (trx) => {
-        if (insert.hive_id)
-          await Hive.query(trx)
-            .where({ id: insert.hive_id, user_id: req.user.user_id })
-            .throwIfNotFound();
+    const result = await Scale.transaction(async (trx) => {
+      if (insert.hive_id)
+        await Hive.query(trx)
+          .where({ id: insert.hive_id, user_id: req.session.user.user_id })
+          .throwIfNotFound();
 
-        return await Scale.query(trx)
-          .patch(insert)
-          .findByIds(ids)
-          .where('user_id', req.user.user_id);
+      return await Scale.query(trx)
+        .patch(insert)
+        .findByIds(ids)
+        .where('user_id', req.session.user.user_id);
+    });
+    return result;
+  }
+  static async post(req: FastifyRequest, reply: FastifyReply) {
+    const body = req.body as any;
+
+    const limit = await limitScale(req.session.user.user_id);
+    if (limit) {
+      throw httpErrors.PaymentRequired('no premium access');
+    }
+
+    const result = await Scale.transaction(async (trx) => {
+      if (body.hive_id)
+        await Hive.query(trx)
+          .where({ id: body.hive_id, user_id: req.session.user.user_id })
+          .throwIfNotFound();
+
+      return await Scale.query(trx).insert({
+        name: body.name,
+        hive_id: body.hive_id,
+        user_id: req.session.user.user_id,
       });
-      res.locals.data = result;
-      next();
-    } catch (e) {
-      next(checkMySQLError(e));
-    }
+    });
+    return { ...result };
   }
-  async post(req: IUserRequest, res: Response, next) {
-    try {
-      const limit = await limitScale(req.user.user_id);
-      if (limit) throw paymentRequired('no premium access');
-
-      const result = await Scale.transaction(async (trx) => {
-        if (req.body.hive_id)
-          await Hive.query(trx)
-            .where({ id: req.body.hive_id, user_id: req.user.user_id })
-            .throwIfNotFound();
-
-        return await Scale.query(trx).insert({
-          name: req.body.name,
-          hive_id: req.body.hive_id,
-          user_id: req.user.user_id,
-        });
+  static async delete(req: FastifyRequest, reply: FastifyReply) {
+    const params = req.params as any;
+    const result = await Scale.transaction(async (trx) => {
+      await ScaleData.query(trx).delete().joinRelated('scale').where({
+        scale_id: params.id,
+        'scale.user_id': req.session.user.user_id,
       });
-      res.locals.data = result;
-      next();
-    } catch (e) {
-      next(checkMySQLError(e));
-    }
-  }
-  async delete(req: IUserRequest, res: Response, next) {
-    try {
-      const result = await Scale.transaction(async (trx) => {
-        await ScaleData.query(trx).delete().joinRelated('scale').where({
-          scale_id: req.params.id,
-          'scale.user_id': req.user.user_id,
-        });
-        return await Scale.query(trx)
-          .deleteById(req.params.id)
-          .where('user_id', req.user.user_id);
-      });
-      res.locals.data = result;
-      next();
-    } catch (e) {
-      next(checkMySQLError(e));
-    }
+      return await Scale.query(trx)
+        .deleteById(params.id)
+        .where('user_id', req.session.user.user_id);
+    });
+    return result;
   }
 }

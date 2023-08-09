@@ -6,7 +6,7 @@ const { doRequest, expectations, doQueryRequest } = require(process.cwd() +
 const newUser = 'newUser@demo.at';
 
 describe('Company User routes', function () {
-  const route = '/api/v1/company_user/';
+  const route = '/api/v1/company_user';
   let accessToken;
 
   before(function (done) {
@@ -24,7 +24,7 @@ describe('Company User routes', function () {
         expect(res.statusCode).to.eqls(200);
         expect(res.header, 'set-cookie', /connect.sid=.*; Path=\/; HttpOnly/);
         done();
-      }
+      },
     );
   });
 
@@ -32,7 +32,7 @@ describe('Company User routes', function () {
     it(`401 - no header`, function (done) {
       doQueryRequest(
         request.agent(global.server),
-        route + 'user',
+        route + '/user',
         null,
         null,
         null,
@@ -40,7 +40,7 @@ describe('Company User routes', function () {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
-        }
+        },
       );
     });
 
@@ -48,7 +48,7 @@ describe('Company User routes', function () {
       doRequest(
         request.agent(global.server),
         'post',
-        route + 'add_user',
+        route + '/add_user',
         null,
         null,
         { email: newUser },
@@ -56,14 +56,14 @@ describe('Company User routes', function () {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
-        }
+        },
       );
     });
 
     it(`200 - get`, function (done) {
       doQueryRequest(
         agent,
-        route + 'user',
+        route + '/user',
         null,
         accessToken,
         null,
@@ -71,7 +71,7 @@ describe('Company User routes', function () {
           expect(res.statusCode).to.eqls(200);
           expect(res.body).to.be.a('Array');
           done();
-        }
+        },
       );
     });
 
@@ -79,7 +79,7 @@ describe('Company User routes', function () {
       doRequest(
         agent,
         'post',
-        route + 'add_user',
+        route + '/add_user',
         null,
         accessToken,
         { email: newUser },
@@ -91,7 +91,7 @@ describe('Company User routes', function () {
           doRequest(
             agent,
             'delete',
-            route + 'remove_user/',
+            route + '/remove_user',
             newId,
             accessToken,
             {},
@@ -99,9 +99,9 @@ describe('Company User routes', function () {
               expect(res.statusCode).to.eqls(200);
               expect(res.body).to.equal(1);
               done();
-            }
+            },
           );
-        }
+        },
       );
     });
   });
@@ -111,7 +111,7 @@ describe('Company User routes', function () {
       doRequest(
         request.agent(global.server),
         'delete',
-        route + '1',
+        route + '/1',
         null,
         null,
         {},
@@ -119,7 +119,7 @@ describe('Company User routes', function () {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
-        }
+        },
       );
     });
 
@@ -127,7 +127,7 @@ describe('Company User routes', function () {
       doRequest(
         request.agent(global.server),
         'patch',
-        route + '1',
+        route + '/1',
         null,
         null,
         { rank: 1 },
@@ -135,7 +135,7 @@ describe('Company User routes', function () {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
-        }
+        },
       );
     });
 
@@ -143,7 +143,7 @@ describe('Company User routes', function () {
       doRequest(
         agent,
         'patch',
-        route + '1',
+        route + '/1',
         null,
         null,
         {},
@@ -151,7 +151,7 @@ describe('Company User routes', function () {
           expect(res.statusCode).to.eqls(400);
           expectations(res, 'rank', 'requiredField');
           done();
-        }
+        },
       );
     });
 
@@ -167,7 +167,7 @@ describe('Company User routes', function () {
           expect(res.statusCode).to.eqls(200);
           expect(res.body).to.equal(1);
           done();
-        }
+        },
       );
     });
   });

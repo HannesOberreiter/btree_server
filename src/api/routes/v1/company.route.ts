@@ -1,69 +1,77 @@
-import { Router } from '@classes/router.class';
-import { Container } from '@config/container.config';
 import { Guard } from '@middlewares/guard.middleware';
-import { ROLES } from '@/api/types/constants/role.const';
-import { body } from 'express-validator';
-import { Validator } from '@/api/middlewares/validator.middleware';
-export class CompanyRouter extends Router {
-  constructor() {
-    super();
-  }
+import { ROLES } from '@/config/constants.config';
+import { FastifyInstance } from 'fastify';
+import { ZodTypeProvider } from 'fastify-type-provider-zod';
+import { z } from 'zod';
+import CompanyController from '@/api/controllers/company.controller';
 
-  define() {
-    this.router
-      .route('/apikey')
-      .get(
-        Guard.authorize([ROLES.admin]),
-        Container.resolve('CompanyController').getApikey,
-      );
-    this.router
-      .route('/count')
-      .get(
-        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Container.resolve('CompanyController').getCounts,
-      );
-    this.router
-      .route('/download')
-      .get(
-        Guard.authorize([ROLES.admin]),
-        Container.resolve('CompanyController').download,
-      );
-    this.router
-      .route('/')
-      .patch(
-        Validator.validate([
-          body('name')
-            .optional()
-            .isString()
-            .isLength({ min: 3, max: 128 })
-            .trim(),
-        ]),
-        Guard.authorize([ROLES.admin]),
-        Container.resolve('CompanyController').patch,
-      );
-    this.router
-      .route('/')
-      .post(
-        Validator.validate([
-          body('name').isString().isLength({ min: 3, max: 128 }).trim(),
-        ]),
-        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Container.resolve('CompanyController').post,
-      );
-    this.router
-      .route('/coupon')
-      .post(
-        Validator.validate([
-          body('coupon').isString().isLength({ min: 3, max: 128 }).trim(),
-        ]),
-        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Container.resolve('CompanyController').postCoupon,
-      );
-    this.router
-      .route('/:id')
-      .delete(
-        Guard.authorize([ROLES.admin]),
-        Container.resolve('CompanyController').delete,
-      );
-  }
+export default function routes(
+  instance: FastifyInstance,
+  _options: any,
+  done: any,
+) {
+  const server = instance.withTypeProvider<ZodTypeProvider>();
+  server.get(
+    '/apikey',
+    { preHandler: Guard.authorize([ROLES.admin]) },
+    CompanyController.getApikey,
+  );
+  server.get(
+    '/count',
+    { preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]) },
+    CompanyController.getCounts,
+  );
+  server.get(
+    '/download',
+    { preHandler: Guard.authorize([ROLES.admin]) },
+    CompanyController.download,
+  );
+  server.patch(
+    '',
+    {
+      preHandler: Guard.authorize([ROLES.admin]),
+      schema: {
+        body: z
+          .object({
+            name: z.string().min(3).max(128).trim().optional(),
+          })
+          .passthrough(),
+      },
+    },
+    CompanyController.patch,
+  );
+
+  server.post(
+    '',
+    {
+      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+      schema: {
+        body: z.object({
+          name: z.string().min(3).max(128).trim(),
+        }),
+      },
+    },
+    CompanyController.post,
+  );
+
+  server.post(
+    '/coupon',
+    {
+      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+      schema: {
+        body: z.object({
+          coupon: z.string().min(3).max(128).trim(),
+        }),
+      },
+    },
+    CompanyController.postCoupon,
+  );
+
+  server.delete(
+    '/:id',
+    { preHandler: Guard.authorize([ROLES.admin]) },
+    CompanyController.delete,
+  );
+
+  done();
 }

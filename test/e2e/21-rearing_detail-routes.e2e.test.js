@@ -10,7 +10,7 @@ const testInsert = {
 };
 
 describe('Rearing Detail routes', function () {
-  const route = '/api/v1/rearing_detail/';
+  const route = '/api/v1/rearing_detail';
   let accessToken, insertId;
 
   before(function (done) {
@@ -38,9 +38,9 @@ describe('Rearing Detail routes', function () {
             expect(res.body).to.be.a('Object');
             insertId = res.body.id;
             done();
-          }
+          },
         );
-      }
+      },
     );
   });
 
@@ -56,7 +56,7 @@ describe('Rearing Detail routes', function () {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
-        }
+        },
       );
     });
     it(`post 401 - no header`, function (done) {
@@ -71,7 +71,7 @@ describe('Rearing Detail routes', function () {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
-        }
+        },
       );
     });
     it(`patch 401 - no header`, function (done) {
@@ -81,12 +81,12 @@ describe('Rearing Detail routes', function () {
         route,
         null,
         null,
-        { ids: [insertId] },
+        { ids: [insertId], data: {} },
         function (err, res) {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
-        }
+        },
       );
     });
 
@@ -102,7 +102,7 @@ describe('Rearing Detail routes', function () {
           expect(res.body.results).to.be.a('Array');
           expect(res.body.total).to.be.a('number');
           done();
-        }
+        },
       );
     });
 
@@ -117,7 +117,7 @@ describe('Rearing Detail routes', function () {
         function (err, res) {
           expect(res.statusCode).to.eqls(400);
           done();
-        }
+        },
       );
     });
 
@@ -136,7 +136,7 @@ describe('Rearing Detail routes', function () {
           expect(res.statusCode).to.eqls(200);
           expect(res.body).to.equal(1);
           done();
-        }
+        },
       );
     });
   });
@@ -146,7 +146,7 @@ describe('Rearing Detail routes', function () {
       doRequest(
         request.agent(global.server),
         'post',
-        route + 'batchGet',
+        route + '/batchGet',
         null,
         null,
         { ids: [insertId] },
@@ -154,14 +154,14 @@ describe('Rearing Detail routes', function () {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
-        }
+        },
       );
     });
     it(`400 - missing ids`, function (done) {
       doRequest(
         agent,
         'post',
-        route + 'batchGet',
+        route + '/batchGet',
         null,
         null,
         null,
@@ -169,14 +169,14 @@ describe('Rearing Detail routes', function () {
           expect(res.statusCode).to.eqls(400);
           expectations(res, 'ids', 'Invalid value');
           done();
-        }
+        },
       );
     });
     it(`200 - success`, function (done) {
       doRequest(
         agent,
         'post',
-        route + 'batchGet',
+        route + '/batchGet',
         null,
         accessToken,
         { ids: [insertId] },
@@ -184,7 +184,7 @@ describe('Rearing Detail routes', function () {
           expect(res.statusCode).to.eqls(200);
           expect(res.body).to.be.a('Array');
           done();
-        }
+        },
       );
     });
   });
@@ -194,7 +194,7 @@ describe('Rearing Detail routes', function () {
       doRequest(
         request.agent(global.server),
         'patch',
-        route + 'batchDelete',
+        route + '/batchDelete',
         null,
         null,
         { ids: [] },
@@ -202,14 +202,14 @@ describe('Rearing Detail routes', function () {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
-        }
+        },
       );
     });
     it(`400 - missing ids`, function (done) {
       doRequest(
         agent,
         'patch',
-        route + 'batchDelete',
+        route + '/batchDelete',
         null,
         null,
         null,
@@ -217,14 +217,14 @@ describe('Rearing Detail routes', function () {
           expect(res.statusCode).to.eqls(400);
           expectations(res, 'ids', 'Invalid value');
           done();
-        }
+        },
       );
     });
     it(`200 - success`, function (done) {
       doRequest(
         agent,
         'patch',
-        route + 'batchDelete',
+        route + '/batchDelete',
         null,
         accessToken,
         { ids: [insertId] },
@@ -232,7 +232,7 @@ describe('Rearing Detail routes', function () {
           expect(res.statusCode).to.eqls(200);
           expect(res.body).to.equal(1);
           done();
-        }
+        },
       );
     });
   });

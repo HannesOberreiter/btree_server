@@ -1,12 +1,13 @@
-import { ENVIRONMENT } from '@/api/types/constants/environment.const';
 import { env, redisConfig } from '@config/environment.config';
-import { Container } from '@config/container.config';
 import Redis, { RedisOptions } from 'ioredis';
+import { Logger } from '@/api/services/logger.service';
+import { ENVIRONMENT } from '@/config/constants.config';
 
 /**
  * Connection to redis docker instance
  */
 export class RedisServer {
+  private logger = Logger.getInstance();
   static client: Redis;
   start(): void {
     try {
@@ -25,7 +26,7 @@ export class RedisServer {
       );
       RedisServer.client.on('connect', () => {
         if (env !== ENVIRONMENT.test) {
-          Container.resolve('Logger').log(
+          this.logger.log(
             'info',
             `Connection to redis (session) server established on port ${redisConfig.port} (${env})`,
             { label: 'Redis' },
@@ -33,11 +34,9 @@ export class RedisServer {
         }
       });
     } catch (error) {
-      Container.resolve('Logger').log(
-        'error',
-        `Redis connection error : ${error.message}`,
-        { label: 'Redis' },
-      );
+      this.logger.log('error', `Redis connection error : ${error.message}`, {
+        label: 'Redis',
+      });
     }
   }
   stop(): void {
@@ -45,7 +44,7 @@ export class RedisServer {
       RedisServer.client.save();
       RedisServer.client.quit();
     } catch (error) {
-      console.error(error);
+      this.logger.log('error', 'Redis connection error', { error });
     }
   }
 }

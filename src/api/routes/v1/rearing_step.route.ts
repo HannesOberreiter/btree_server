@@ -1,34 +1,56 @@
-import { Router } from '@classes/router.class';
-import { Container } from '@config/container.config';
 import { Guard } from '@middlewares/guard.middleware';
-import { ROLES } from '@/api/types/constants/role.const';
-import { Validator } from '@/api/middlewares/validator.middleware';
-import { body } from 'express-validator';
+import { ROLES } from '@/config/constants.config';
+import { FastifyInstance } from 'fastify';
+import { ZodTypeProvider } from 'fastify-type-provider-zod';
+import { z } from 'zod';
+import RearingStepController from '@/api/controllers/rearing_step.controller';
 
-export class RearingStepRouter extends Router {
-  constructor() {
-    super();
-  }
+export default function routes(
+  instance: FastifyInstance,
+  _options: any,
+  done: any,
+) {
+  const server = instance.withTypeProvider<ZodTypeProvider>();
 
-  define() {
-    this.router
-      .route('/')
-      .post(
-        Guard.authorize([ROLES.admin]),
-        Container.resolve('RearingStepController').post,
-      );
-    this.router
-      .route('/:id')
-      .delete(
-        Guard.authorize([ROLES.admin]),
-        Container.resolve('RearingStepController').delete,
-      );
-    this.router
-      .route('/updatePosition')
-      .patch(
-        Validator.validate([body('data').isArray()]),
-        Guard.authorize([ROLES.admin]),
-        Container.resolve('RearingStepController').updatePosition,
-      );
-  }
+  server.post(
+    '/',
+    {
+      preHandler: Guard.authorize([ROLES.admin]),
+    },
+    RearingStepController.post,
+  );
+
+  server.delete(
+    '/:id',
+    {
+      preHandler: Guard.authorize([ROLES.admin]),
+      schema: {
+        params: z.object({
+          id: z.string(),
+        }),
+      },
+    },
+    RearingStepController.delete,
+  );
+
+  server.patch(
+    '/updatePosition',
+    {
+      preHandler: Guard.authorize([ROLES.admin]),
+      schema: {
+        body: z.object({
+          data: z.array(
+            z.object({
+              id: z.number(),
+              position: z.number(),
+              sleep_before: z.number(),
+            }),
+          ),
+        }),
+      },
+    },
+    RearingStepController.updatePosition,
+  );
+
+  done();
 }

@@ -10,7 +10,7 @@ const testInsert = {
 };
 
 describe('Rearing Step routes', function () {
-  const route = '/api/v1/rearing_step/';
+  const route = '/api/v1/rearing_step';
   let accessToken, insertId;
 
   before(function (done) {
@@ -38,9 +38,9 @@ describe('Rearing Step routes', function () {
             expect(res.body).to.be.a('Object');
             insertId = res.body.id;
             done();
-          }
+          },
         );
-      }
+      },
     );
   });
 
@@ -57,7 +57,7 @@ describe('Rearing Step routes', function () {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
-        }
+        },
       );
     });
     it(`post 400 - no data`, function (done) {
@@ -71,7 +71,7 @@ describe('Rearing Step routes', function () {
         function (err, res) {
           expect(res.statusCode).to.eqls(400);
           done();
-        }
+        },
       );
     });
   });
@@ -81,7 +81,7 @@ describe('Rearing Step routes', function () {
       doRequest(
         request.agent(global.server),
         'patch',
-        route + 'updatePosition',
+        route + '/updatePosition',
         null,
         null,
         { data: [] },
@@ -89,14 +89,14 @@ describe('Rearing Step routes', function () {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
-        }
+        },
       );
     });
     it(`400 - missing value`, function (done) {
       doRequest(
         agent,
         'patch',
-        route + 'updatePosition',
+        route + '/updatePosition',
         null,
         null,
         null,
@@ -104,22 +104,22 @@ describe('Rearing Step routes', function () {
           expect(res.statusCode).to.eqls(400);
           expectations(res, 'data', 'Invalid value');
           done();
-        }
+        },
       );
     });
     it(`200 - success`, function (done) {
       doRequest(
         agent,
         'patch',
-        route + 'updatePosition',
+        route + '/updatePosition',
         null,
         accessToken,
-        { data: [{ id: insertId, position: 10 }] },
+        { data: [{ id: insertId, position: 10, sleep_before: 0 }] },
         function (err, res) {
           expect(res.statusCode).to.eqls(200);
           expect(res.body).to.be.a('Array');
           done();
-        }
+        },
       );
     });
   });
@@ -137,7 +137,7 @@ describe('Rearing Step routes', function () {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
-        }
+        },
       );
     });
 
@@ -153,7 +153,7 @@ describe('Rearing Step routes', function () {
           expect(res.statusCode).to.eqls(200);
           expect(res.body).to.equal(1);
           done();
-        }
+        },
       );
     });
   });

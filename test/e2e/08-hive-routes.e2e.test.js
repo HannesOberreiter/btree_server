@@ -14,7 +14,7 @@ const testInsert = {
 };
 
 describe('Hive routes', function () {
-  const route = '/api/v1/hive/';
+  const route = '/api/v1/hive';
   let accessToken, insertId;
 
   before(function (done) {
@@ -42,9 +42,9 @@ describe('Hive routes', function () {
             expect(res.body).to.be.a('Array');
             insertId = res.body[0];
             done();
-          }
+          },
         );
-      }
+      },
     );
   });
 
@@ -60,7 +60,7 @@ describe('Hive routes', function () {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
-        }
+        },
       );
     });
     it(`post 401 - no header`, function (done) {
@@ -75,7 +75,7 @@ describe('Hive routes', function () {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
-        }
+        },
       );
     });
     it(`patch 401 - no header`, function (done) {
@@ -85,12 +85,12 @@ describe('Hive routes', function () {
         route,
         null,
         null,
-        { ids: [insertId] },
+        { ids: [insertId], data: {} },
         function (err, res) {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
-        }
+        },
       );
     });
 
@@ -106,7 +106,7 @@ describe('Hive routes', function () {
           expect(res.body.results).to.be.a('Array');
           expect(res.body.total).to.be.a('number');
           done();
-        }
+        },
       );
     });
 
@@ -121,7 +121,7 @@ describe('Hive routes', function () {
         function (err, res) {
           expect(res.statusCode).to.eqls(400);
           done();
-        }
+        },
       );
     });
 
@@ -136,7 +136,7 @@ describe('Hive routes', function () {
         function (err, res) {
           expect(res.statusCode).to.eqls(409);
           done();
-        }
+        },
       );
     });
 
@@ -149,13 +149,15 @@ describe('Hive routes', function () {
         accessToken,
         {
           ids: [insertId],
-          data: {},
+          data: {
+            name: 'Hive2',
+          },
         },
         function (err, res) {
           expect(res.statusCode).to.eqls(200);
           expect(res.body).to.equal(1);
           done();
-        }
+        },
       );
     });
   });
@@ -172,7 +174,7 @@ describe('Hive routes', function () {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
-        }
+        },
       );
     });
     it(`200 - success`, function (done) {
@@ -188,7 +190,7 @@ describe('Hive routes', function () {
           expect(res.body).to.has.property('name');
           expect(res.body).to.has.property('sameLocation');
           done();
-        }
+        },
       );
     });
   });
@@ -197,7 +199,7 @@ describe('Hive routes', function () {
     it(`401 - no header`, function (done) {
       doQueryRequest(
         request.agent(global.server),
-        route + 'task/',
+        route + '/task',
         insertId,
         null,
         null,
@@ -205,13 +207,13 @@ describe('Hive routes', function () {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
-        }
+        },
       );
     });
     it(`200 - success`, function (done) {
       doQueryRequest(
         agent,
-        route + 'task/',
+        route + '/task',
         insertId,
         accessToken,
         null,
@@ -223,7 +225,7 @@ describe('Hive routes', function () {
           expect(res.body).to.has.property('checkup');
           expect(res.body).to.has.property('movedate');
           done();
-        }
+        },
       );
     });
   });
@@ -233,7 +235,7 @@ describe('Hive routes', function () {
       doRequest(
         request.agent(global.server),
         'post',
-        route + 'batchGet',
+        route + '/batchGet',
         null,
         null,
         { ids: [insertId] },
@@ -241,14 +243,14 @@ describe('Hive routes', function () {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
-        }
+        },
       );
     });
     it(`400 - missing ids`, function (done) {
       doRequest(
         agent,
         'post',
-        route + 'batchGet',
+        route + '/batchGet',
         null,
         null,
         null,
@@ -256,14 +258,14 @@ describe('Hive routes', function () {
           expect(res.statusCode).to.eqls(400);
           expectations(res, 'ids', 'Invalid value');
           done();
-        }
+        },
       );
     });
     it(`200 - success`, function (done) {
       doRequest(
         agent,
         'post',
-        route + 'batchGet',
+        route + '/batchGet',
         null,
         accessToken,
         { ids: [insertId] },
@@ -271,7 +273,7 @@ describe('Hive routes', function () {
           expect(res.statusCode).to.eqls(200);
           expect(res.body).to.be.a('Array');
           done();
-        }
+        },
       );
     });
   });
@@ -281,7 +283,7 @@ describe('Hive routes', function () {
       doRequest(
         request.agent(global.server),
         'patch',
-        route + 'updatePosition',
+        route + '/updatePosition',
         null,
         null,
         { data: [{ position: 0, id: insertId }] },
@@ -289,14 +291,14 @@ describe('Hive routes', function () {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
-        }
+        },
       );
     });
     it(`400 - missing ids`, function (done) {
       doRequest(
         agent,
         'patch',
-        route + 'updatePosition',
+        route + '/updatePosition',
         null,
         null,
         null,
@@ -304,14 +306,14 @@ describe('Hive routes', function () {
           expect(res.statusCode).to.eqls(400);
           expectations(res, 'data', 'Invalid value');
           done();
-        }
+        },
       );
     });
     it(`200 - success`, function (done) {
       doRequest(
         agent,
         'patch',
-        route + 'updatePosition',
+        route + '/updatePosition',
         null,
         accessToken,
         { data: [{ position: 0, id: insertId }] },
@@ -319,7 +321,7 @@ describe('Hive routes', function () {
           expect(res.statusCode).to.eqls(200);
           expect(res.body[0]).to.equal(1);
           done();
-        }
+        },
       );
     });
   });
@@ -329,7 +331,7 @@ describe('Hive routes', function () {
       doRequest(
         request.agent(global.server),
         'patch',
-        route + 'batchDelete',
+        route + '/batchDelete',
         null,
         null,
         { ids: [] },
@@ -337,14 +339,14 @@ describe('Hive routes', function () {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
-        }
+        },
       );
     });
     it(`400 - missing ids`, function (done) {
       doRequest(
         agent,
         'patch',
-        route + 'batchDelete',
+        route + '/batchDelete',
         null,
         null,
         null,
@@ -352,14 +354,14 @@ describe('Hive routes', function () {
           expect(res.statusCode).to.eqls(400);
           expectations(res, 'ids', 'Invalid value');
           done();
-        }
+        },
       );
     });
     it(`200 - success`, function (done) {
       doRequest(
         agent,
         'patch',
-        route + 'batchDelete',
+        route + '/batchDelete',
         null,
         accessToken,
         { ids: [insertId] },
@@ -367,7 +369,7 @@ describe('Hive routes', function () {
           expect(res.statusCode).to.eqls(200);
           expect(res.body).to.be.a('Array');
           done();
-        }
+        },
       );
     });
   });
@@ -377,7 +379,7 @@ describe('Hive routes', function () {
       doRequest(
         request.agent(global.server),
         'patch',
-        route + 'status',
+        route + '/status',
         null,
         null,
         { ids: [], status: true },
@@ -385,14 +387,14 @@ describe('Hive routes', function () {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
-        }
+        },
       );
     });
     it(`400 - missing ids`, function (done) {
       doRequest(
         agent,
         'patch',
-        route + 'status',
+        route + '/status',
         null,
         null,
         null,
@@ -400,14 +402,14 @@ describe('Hive routes', function () {
           expect(res.statusCode).to.eqls(400);
           expectations(res, 'ids', 'Invalid value');
           done();
-        }
+        },
       );
     });
     it(`200 - success`, function (done) {
       doRequest(
         agent,
         'patch',
-        route + 'status',
+        route + '/status',
         null,
         accessToken,
         { ids: [insertId], status: false },
@@ -415,7 +417,7 @@ describe('Hive routes', function () {
           expect(res.statusCode).to.eqls(200);
           expect(res.body).to.equal(1);
           done();
-        }
+        },
       );
     });
   });

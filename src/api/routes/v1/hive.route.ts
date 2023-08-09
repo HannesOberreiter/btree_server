@@ -1,84 +1,142 @@
-import { Router } from '@classes/router.class';
-import { Container } from '@config/container.config';
 import { Guard } from '@middlewares/guard.middleware';
-import { ROLES } from '@/api/types/constants/role.const';
-import { Validator } from '@/api/middlewares/validator.middleware';
-import { body, query } from 'express-validator';
+import { ROLES } from '@/config/constants.config';
+import { FastifyInstance } from 'fastify';
+import { ZodTypeProvider } from 'fastify-type-provider-zod';
+import { z } from 'zod';
+import HiveController from '@/api/controllers/hive.controller';
+import { booleanParamSchema, numberSchema } from '@/api/utils/zod.util';
 
-export class HiveRouter extends Router {
-  constructor() {
-    super();
-  }
+const hiveSchema = z.object({
+  name: z.string().min(1).max(24).trim(),
+  grouphive: z.number().int().optional().default(0),
+  position: z.number().int().optional().default(0),
+  note: z.string().max(2000).optional(),
+  modus: z.boolean().optional(),
+  modus_date: z.string().optional(),
+  deleted: z.boolean().optional(),
+});
 
-  define() {
-    this.router
-      .route('/')
-      .get(
-        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Container.resolve('HiveController').get,
-      );
-    this.router
-      .route('/:id')
-      .get(
-        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Container.resolve('HiveController').getDetail,
-      );
-    this.router
-      .route('/task/:id')
-      .get(
-        Validator.validate([
-          query('apiary').optional().isBoolean().toBoolean(),
-          query('year').optional().isNumeric().toInt(),
-        ]),
-        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Container.resolve('HiveController').getTasks,
-      );
-    this.router
-      .route('/')
-      .patch(
-        Validator.validate([body('ids').isArray()]),
-        Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('HiveController').patch,
-      );
-    this.router
-      .route('/')
-      .post(
-        Validator.validate([
-          body('start').isInt({ max: 10000, min: 0 }),
-          body('repeat').isInt({ max: 100, min: 0 }),
-          body('apiary_id').isInt(),
-          body('date').isString(),
-        ]),
-        Guard.authorize([ROLES.admin]),
-        Container.resolve('HiveController').post,
-      );
-    this.router
-      .route('/batchDelete')
-      .patch(
-        Validator.validate([body('ids').isArray()]),
-        Guard.authorize([ROLES.admin]),
-        Container.resolve('HiveController').batchDelete,
-      );
-    this.router
-      .route('/batchGet')
-      .post(
-        Validator.validate([body('ids').isArray()]),
-        Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('HiveController').batchGet,
-      );
-    this.router
-      .route('/status')
-      .patch(
-        Validator.validate([body('ids').isArray(), body('status').isBoolean()]),
-        Guard.authorize([ROLES.admin]),
-        Container.resolve('HiveController').updateStatus,
-      );
-    this.router
-      .route('/updatePosition')
-      .patch(
-        Validator.validate([body('data').isArray()]),
-        Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('HiveController').updatePosition,
-      );
-  }
+export default function routes(
+  instance: FastifyInstance,
+  _options: any,
+  done: any,
+) {
+  const server = instance.withTypeProvider<ZodTypeProvider>();
+  server.get(
+    '/',
+    { preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]) },
+    HiveController.get,
+  );
+  server.get(
+    '/:id',
+    { preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]) },
+    HiveController.getDetail,
+  );
+  server.get(
+    '/task/:id',
+    {
+      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+      schema: {
+        params: z.object({
+          id: z.coerce.number(),
+        }),
+        querystring: z.object({
+          apiary: booleanParamSchema.optional(),
+          year: z.coerce.number().optional(),
+        }),
+      },
+    },
+    HiveController.getTasks,
+  );
+  server.patch(
+    '/',
+    {
+      preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
+      schema: {
+        body: z.object({
+          ids: z.array(numberSchema),
+          data: hiveSchema.partial(),
+        }),
+      },
+    },
+    HiveController.patch,
+  );
+
+  server.post(
+    '/',
+    {
+      preHandler: Guard.authorize([ROLES.admin]),
+      schema: {
+        body: z
+          .object({
+            apiary_id: z.number(),
+            start: z.number().min(0).max(10000),
+            repeat: z.number().min(0).max(100),
+            date: z.string(),
+          })
+          .merge(hiveSchema),
+      },
+    },
+    HiveController.post,
+  );
+
+  server.patch(
+    '/batchDelete',
+    {
+      preHandler: Guard.authorize([ROLES.admin]),
+      schema: {
+        body: z.object({
+          ids: z.array(numberSchema),
+        }),
+      },
+    },
+    HiveController.batchDelete,
+  );
+
+  server.post(
+    '/batchGet',
+    {
+      preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
+      schema: {
+        body: z.object({
+          ids: z.array(numberSchema),
+        }),
+      },
+    },
+    HiveController.batchGet,
+  );
+
+  server.patch(
+    '/status',
+    {
+      preHandler: Guard.authorize([ROLES.admin]),
+      schema: {
+        body: z.object({
+          ids: z.array(numberSchema),
+          status: z.boolean(),
+        }),
+      },
+    },
+    HiveController.updateStatus,
+  );
+
+  server.patch(
+    '/updatePosition',
+    {
+      preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
+      schema: {
+        body: z.object({
+          data: z
+            .object({
+              id: z.number(),
+              position: z.number(),
+            })
+            .array(),
+        }),
+      },
+    },
+    HiveController.updatePosition,
+  );
+
+  done();
 }
