@@ -615,6 +615,7 @@
   "type": "Taper | Les types",
   "undo": "Annuler",
   "unit": "Unité",
+  "unlockAPI": "Déverrouiller les détails de l'API",
   "unsavedChanges": "Voulez-vous vraiment partir ? Vous avez des changements non enregistrés!",
   "unsubscribe": {
     "btn": "Supprimer mon e-mail.",

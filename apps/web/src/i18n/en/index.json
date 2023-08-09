@@ -615,6 +615,7 @@
   "type": "Type | Types",
   "undo": "Undo",
   "unit": "Unit",
+  "unlockAPI": "Unlock API Details",
   "unsavedChanges": "Do you really want to leave? You have unsaved changes!",
   "unsubscribe": {
     "btn": "Remove my email.",

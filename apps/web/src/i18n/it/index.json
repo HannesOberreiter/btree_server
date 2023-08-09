@@ -615,6 +615,7 @@
   "type": "Digitare | Tipi",
   "undo": "Annullare",
   "unit": "Unità",
+  "unlockAPI": "Sblocca i dettagli dell'API",
   "unsavedChanges": "Vuoi davvero partire? Hai modifiche non salvate!",
   "unsubscribe": {
     "btn": "Rimuovi la mia email.",
