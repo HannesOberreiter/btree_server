@@ -24,6 +24,7 @@ import { loginCheck } from '../utils/login.util.js';
 import { User } from '../models/user.model.js';
 import { DiscourseSSO } from '../../services/discourse.service.js';
 import { ENVIRONMENT } from '../../config/constants.config.js';
+import { GoogleAuth, federatedUser } from 'src/services/federated.service.js';
 
 export default class AuthController {
   static async confirmMail(req: FastifyRequest, reply: FastifyReply) {
@@ -165,10 +166,8 @@ export default class AuthController {
       password,
     );
 
-    //const token = await generateTokenResponse(bee_id, user_id, userAgent);
     // Add bee_id to req as regenerate will call genid which uses bee_id as prefix to store key
     // see app.config.ts session(genId: function);
-
     req['bee_id'] = bee_id;
     try {
       await req.session.regenerate();
@@ -224,18 +223,28 @@ export default class AuthController {
    * @description handle google oauth callback, redirect to register page if user does not exist or login otherwise with session cookie
    */
   static async google(req: FastifyRequest, reply: FastifyReply) {
-    if (!req.session.user.bee_id) {
-      if (!req.session.user['name'] && !req.session.user['email']) {
-        return reply.redirect(frontend + '/visitor/login?error=oauth');
+    const google = GoogleAuth.getInstance();
+    let result: federatedUser;
+    const token = (req.query as any).code as string;
+
+    try {
+      result = await google.verify(token);
+      if (!result.bee_id) {
+        if (!result.name && !result.email) {
+          throw new Error('No name or email');
+        }
+        return reply.redirect(
+          frontend +
+            '/visitor/register?name=' +
+            result.name +
+            '&email=' +
+            result.email +
+            '&oauth=google',
+        );
       }
-      return reply.redirect(
-        frontend +
-          '/visitor/register?name=' +
-          req.session.user['name'] +
-          '&email=' +
-          req.session.user['email'] +
-          '&oauth=google',
-      );
+    } catch (e) {
+      req.log.error({ message: 'Error in google callback', error: e });
+      return reply.redirect(frontend + '/visitor/login?error=oauth');
     }
 
     const userAgent = buildUserAgent(req);
@@ -243,7 +252,7 @@ export default class AuthController {
     const { bee_id, user_id, paid, rank } = await loginCheck(
       '',
       '',
-      req.session.user.bee_id,
+      result.bee_id,
     );
 
     try {
@@ -265,5 +274,6 @@ export default class AuthController {
       throw httpErrors[500]('Failed to create session');
     }
     reply.redirect(frontend + '/visitor/login');
+    return reply;
   }
 }

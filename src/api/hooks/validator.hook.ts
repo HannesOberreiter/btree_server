@@ -3,6 +3,7 @@ import httpErrors from 'http-errors';
 
 import { OPTION, SOURCE } from '../../config/constants.config.js';
 import { isPremium } from '../utils/premium.util.js';
+
 export class Validator {
   static handleOption = (
     req: FastifyRequest,

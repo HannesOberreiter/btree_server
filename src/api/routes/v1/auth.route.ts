@@ -1,18 +1,11 @@
-import { frontend } from '../../../config/environment.config.js';
 import { FastifyInstance } from 'fastify';
 import { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { z } from 'zod';
+
 import AuthController from '../../controllers/auth.controller.js';
-import { Guard } from '../../middlewares/guard.middleware.js';
+import { Guard } from '../../hooks/guard.hook.js';
 import { ROLES } from '../../../config/constants.config.js';
-import {
-  GoogleAuth,
-  federatedUser,
-} from '../../../services/federated.service.js';
-import { buildUserAgent } from '../../utils/auth.util.js';
-import { loginCheck } from '../../utils/login.util.js';
-import { randomUUID } from 'crypto';
-import httpErrors from 'http-errors';
+import { GoogleAuth } from '../../../services/federated.service.js';
 
 export default function routes(
   instance: FastifyInstance,
@@ -20,7 +13,6 @@ export default function routes(
   done: any,
 ) {
   const server = instance.withTypeProvider<ZodTypeProvider>();
-  const google = GoogleAuth.getInstance();
 
   server.post(
     '/register',
@@ -118,6 +110,7 @@ export default function routes(
   );
 
   server.get('/google', {}, async () => {
+    const google = GoogleAuth.getInstance();
     return { url: google.generateAuthUrl() };
   });
 
@@ -130,58 +123,7 @@ export default function routes(
         }),
       },
     },
-    async (req, reply) => {
-      let result: federatedUser;
-      try {
-        const token = req.query.code;
-        result = await google.verify(token);
-        if (!result.bee_id) {
-          if (!result.name && !result.email) {
-            throw new Error('No name or email');
-          }
-          return reply.redirect(
-            frontend +
-              '/visitor/register?name=' +
-              result.name +
-              '&email=' +
-              result.email +
-              '&oauth=google',
-          );
-        }
-      } catch (e) {
-        req.log.error({ message: 'Error in google callback', error: e });
-        return reply.redirect(frontend + '/visitor/login?error=oauth');
-      }
-
-      const userAgent = buildUserAgent(req);
-
-      const { bee_id, user_id, paid, rank } = await loginCheck(
-        '',
-        '',
-        result.bee_id,
-      );
-
-      try {
-        req['bee_id'] = bee_id;
-        await req.session.regenerate();
-        req.session.user = {
-          bee_id: bee_id,
-          user_id: user_id,
-          paid: paid,
-          rank: rank as any,
-          user_agent: userAgent,
-          last_visit: new Date(),
-          uuid: randomUUID(),
-          ip: req.ip,
-        };
-        await req.session.save();
-      } catch (e) {
-        req.log.error(e);
-        throw httpErrors[500]('Failed to create session');
-      }
-      reply.redirect(frontend + '/visitor/login');
-      return reply;
-    },
+    AuthController.google,
   );
 
   done();

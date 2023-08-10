@@ -1,4 +1,4 @@
-import { Validator } from '../../middlewares/validator.middleware.js';
+import { Validator } from '../../hooks/validator.hook.js';
 import { FastifyInstance } from 'fastify';
 import { ZodTypeProvider } from 'fastify-type-provider-zod';
 import ExternalController from '../../controllers/external.controller.js';

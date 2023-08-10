@@ -7,15 +7,12 @@ import {
 import { ZodError } from 'zod';
 
 import { RedisServer } from '../servers/redis.server.js';
-import {
-  authorized,
-  env,
-  sessionSecret,
-} from '../config/environment.config.js';
+import { env, sessionSecret } from '../config/environment.config.js';
 import { Logger } from '../services/logger.service.js';
 import { ENVIRONMENT } from './constants.config.js';
 import routes from '../api/routes/index.js';
 import { checkMySQLError } from '../api/utils/error.util.js';
+import cors from '../api/hooks/cors.hook.js';
 
 import fastify, { FastifyInstance } from 'fastify';
 import fastifyRateLimit from '@fastify/rate-limit';
@@ -29,7 +26,7 @@ import fastifyHelmet from '@fastify/helmet';
  */
 export class Application {
   public app: FastifyInstance;
-  private redisStore: RedisStore;
+  private sessionStore: RedisStore;
   private logger: Logger;
 
   constructor() {
@@ -56,7 +53,7 @@ export class Application {
 
   private createSessionStore(): void {
     const redis = RedisServer.client;
-    this.redisStore = new RedisStore({
+    this.sessionStore = new RedisStore({
       client: redis,
       prefix: 'btree_sess:',
     });
@@ -82,52 +79,7 @@ export class Application {
     /**
      * @description Enable CORS - Cross Origin Resource Sharing
      */
-    this.app.addHook('onRequest', (req, reply, done) => {
-      // Set undefined CORS header
-      // https://github.com/expressjs/cors/issues/262
-      if (!req.headers.origin) {
-        if (req.headers.referer) {
-          const url = new URL(req.headers.referer);
-          req.headers.origin = url.origin;
-        } else if (req.headers.host) {
-          req.headers.origin = req.headers.host;
-        }
-      }
-
-      const origin = req.headers.origin;
-
-      if (
-        req.url.indexOf('external') >= 0 ||
-        req.url.indexOf('auth/google/callback') >= 0 ||
-        env === ENVIRONMENT.development ||
-        env === ENVIRONMENT.ci
-      ) {
-        reply.header('Access-Control-Allow-Origin', '*');
-      } else {
-        reply.header('Access-Control-Allow-Origin', origin);
-        reply.header('Access-Control-Allow-Credentials', 'true');
-      }
-
-      if (authorized.indexOf(origin) === -1) {
-        reply.status(406).send();
-      }
-
-      reply.header(
-        'Access-Control-Allow-Headers',
-        'Origin, Content-Type, Accept, Authorization',
-      );
-      reply.header('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE');
-      reply.header(
-        'Access-Control-Expose-Headers',
-        'Access-Control-Allow-Origin, Access-Control-Allow-Methods, Access-Control-Allow-Headers',
-      );
-
-      if (req.method.toLowerCase() === 'options') {
-        reply.send();
-      }
-
-      done();
-    });
+    this.app.register(cors);
 
     this.app.register(fastifyCookie);
 
@@ -147,7 +99,7 @@ export class Application {
       secret: sessionSecret,
       saveUninitialized: false,
       rolling: false,
-      store: this.redisStore,
+      store: this.sessionStore,
       cookie: {
         sameSite: 'strict',
         maxAge: 1000 * 60 * 60 * 24 * 30, // 30 days

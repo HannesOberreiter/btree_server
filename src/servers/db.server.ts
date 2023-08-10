@@ -10,6 +10,8 @@ import { ENVIRONMENT } from '../config/constants.config.js';
  */
 export class DatabaseServer {
   private static instance: DatabaseServer;
+  private logger = Logger.getInstance();
+
   knex: ReturnType<typeof Knex>;
 
   static getInstance(): DatabaseServer {
@@ -22,8 +24,6 @@ export class DatabaseServer {
   private constructor() {
     this.knex = Knex(knexConfig);
   }
-
-  private logger = Logger.getInstance();
 
   start(): void {
     try {

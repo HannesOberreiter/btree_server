@@ -68,6 +68,7 @@
     "@types/archiver": "^5.3.1",
     "@types/lodash": "^4.14.191",
     "@types/node": "^20.3.1",
+    "@types/node-schedule": "^2.1.0",
     "@types/nodemailer": "^6.4.7",
     "@typescript-eslint/eslint-plugin": "^5.47.1",
     "@typescript-eslint/parser": "^5.47.1",

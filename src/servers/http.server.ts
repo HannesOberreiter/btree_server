@@ -3,7 +3,7 @@ import { Server as HttpServer } from 'http';
 import { Server as HttpsServer } from 'https';
 
 import { env, isContainer, port } from '../config/environment.config.js';
-import { task } from '../cron/scheduler.js';
+import { Cron } from '../services/cron.service.js';
 import { Logger } from '../services/logger.service.js';
 import { ENVIRONMENT } from '../config/constants.config.js';
 
@@ -12,6 +12,8 @@ import { ENVIRONMENT } from '../config/constants.config.js';
  */
 export class HTTPServer {
   private logger = Logger.getInstance();
+  private cron = Cron.getInstance();
+
   http: HttpServer | HttpsServer;
   app: FastifyInstance;
 
@@ -20,9 +22,6 @@ export class HTTPServer {
     this.http = this.app.server;
   }
 
-  /**
-   * @description Start servers
-   */
   start(): void {
     try {
       const app = this.app;
@@ -45,22 +44,19 @@ export class HTTPServer {
           }
         },
       );
-
-      /**
-       * @description Start Cron Jobs
-       */
-      task.start();
-      task.nextRun();
     } catch (error) {
       this.logger.log('error', 'Failed to create server', error);
     }
+
+    try {
+      this.cron.start();
+    } catch (error) {
+      this.logger.log('error', 'Failed to start cron jobs', error);
+    }
   }
 
-  /**
-   * @description stop servers
-   */
   stop(callback = null): HttpServer | HttpsServer {
-    task.stop();
+    this.cron.gracefulShutdown();
     this.app.log.info('Stopping server');
     return this.app.close(callback);
   }
