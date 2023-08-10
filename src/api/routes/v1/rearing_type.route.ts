@@ -1,8 +1,9 @@
-import { Guard } from '../../hooks/guard.hook.js';
-import { ROLES } from '../../../config/constants.config.js';
 import { FastifyInstance } from 'fastify';
 import { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { z } from 'zod';
+
+import { Guard } from '../../hooks/guard.hook.js';
+import { ROLES } from '../../../config/constants.config.js';
 import RearingTypeController from '../../controllers/rearing_type.controller.js';
 import { numberSchema } from '../../utils/zod.util.js';
 
