@@ -7,7 +7,7 @@
   "keywords": [],
   "main": "./dist/app.bootstrap.js",
   "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
-  "description": "b.tree backend based on nodejs, express and knex.js, objections.js.",
+  "description": "b.tree backend based on nodejs, fastify and knex.js, objections.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/HannesOberreiter/btree_server.git"
@@ -32,7 +32,7 @@
   },
   "dependencies": {
     "@fastify/compress": "^6.4.0",
-    "@fastify/cookie": "^8.3.0",
+    "@fastify/cookie": "^9.0.0",
     "@fastify/helmet": "^11.0.0",
     "@fastify/rate-limit": "^8.0.3",
     "@fastify/session": "^10.4.0",
@@ -70,13 +70,13 @@
     "@types/node": "^20.3.1",
     "@types/node-schedule": "^2.1.0",
     "@types/nodemailer": "^6.4.7",
-    "@typescript-eslint/eslint-plugin": "^5.47.1",
-    "@typescript-eslint/parser": "^5.47.1",
+    "@typescript-eslint/eslint-plugin": "^6.3.0",
+    "@typescript-eslint/parser": "^6.3.0",
     "chai": "^4.3.6",
     "eslint": "^8.30.0",
-    "eslint-config-prettier": "^8.5.0",
+    "eslint-config-prettier": "^9.0.0",
     "mocha": "^10.2.0",
-    "nodemon": "^2.0.20",
+    "nodemon": "^3.0.0",
     "prettier": "^3.0.0",
     "supertest": "^6.3.3",
     "typescript": "^5.0.4"
