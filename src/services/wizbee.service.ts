@@ -1,7 +1,8 @@
-import { env, openAI } from '@/config/environment.config';
-import { VectorServer } from '@/servers/vector.server';
 import { encode } from 'gpt-3-encoder';
 import { Configuration, CreateChatCompletionRequest, OpenAIApi } from 'openai';
+
+import { env, openAI } from '../config/environment.config.js';
+import { VectorServer } from '../servers/vector.server.js';
 
 type Metadata = {
   created: string;

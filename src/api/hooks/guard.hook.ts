@@ -1,13 +1,21 @@
-import { ROLES } from '@/config/constants.config';
-import { listNumber } from '@utils/enum.util';
 import { FastifyReply, FastifyRequest, HookHandlerDoneFunction } from 'fastify';
 import httpErrors from 'http-errors';
 
+import { ROLES } from '../../config/constants.config.js';
+
 export class Guard {
   static authorize =
-    (roles = listNumber(ROLES)) =>
+    (roles = this.listNumber(ROLES)) =>
     (req: FastifyRequest, res: FastifyReply, done: HookHandlerDoneFunction) =>
       Guard.handleSession(req, res, done, roles);
+
+  private static listNumber(en: any): number[] {
+    const list = [];
+    for (const item in en) {
+      list.push(en[item]);
+    }
+    return list;
+  }
 
   private static handleSession = (
     req: FastifyRequest,

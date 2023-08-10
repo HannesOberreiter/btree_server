@@ -1,4 +1,4 @@
-import { RearingStep } from '../models/rearing/rearing_step.model';
+import { RearingStep } from '../models/rearing/rearing_step.model.js';
 import { FastifyRequest, FastifyReply } from 'fastify';
 
 export default class RearingStepController {

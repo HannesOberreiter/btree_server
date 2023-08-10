@@ -1,5 +1,5 @@
-import { Company } from '@models/company.model';
-import { Feed } from '@models/feed.model';
+import { Company } from './company.model.js';
+import { Feed } from './feed.model.js';
 import { Model } from 'objection';
 
 export class FeedApiary extends Model {

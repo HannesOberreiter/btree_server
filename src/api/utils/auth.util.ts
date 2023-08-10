@@ -1,9 +1,10 @@
-import { checkMySQLError } from '@utils/error.util.js';
 import { randomBytes, createHash } from 'crypto';
-import { User } from '@models/user.model.js';
 import dayjs from 'dayjs';
 import { FastifyRequest } from 'fastify';
 import { UAParser } from 'ua-parser-js';
+
+import { checkMySQLError } from '../utils/error.util.js';
+import { User } from '../models/user.model.js';
 
 const buildUserAgent = (req: FastifyRequest) => {
   try {

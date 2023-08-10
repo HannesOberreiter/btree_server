@@ -1,7 +1,8 @@
 import { Model } from 'objection';
-import { Company } from '@models/company.model';
-import { RearingDetail } from './rearing_detail.model';
-import { RearingStep } from './rearing_step.model';
+
+import { Company } from '../company.model.js';
+import { RearingDetail } from './rearing_detail.model.js';
+import { RearingStep } from './rearing_step.model.js';
 
 export class RearingType extends Model {
   id!: number;

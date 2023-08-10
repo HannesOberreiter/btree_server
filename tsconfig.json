@@ -4,41 +4,6 @@
     "outDir": "dist",
     "baseUrl": "./",
     "sourceMap": false,
-    "paths": {
-      "@/*": [
-        "src/*"
-      ],
-      "@api/*": [
-        "src/api/*"
-      ],
-      "@cron/*": [
-        "src/cron/*"
-      ],
-      "@config/*": [
-        "src/config/*"
-      ],
-      "@servers/*": [
-        "src/servers/*"
-      ],
-      "@controllers/*": [
-        "src/api/controllers/*"
-      ],
-      "@middlewares/*": [
-        "src/api/middlewares/*"
-      ],
-      "@models/*": [
-        "src/api/models/*"
-      ],
-      "@routes/*": [
-        "src/api/routes/*"
-      ],
-      "@services/*": [
-        "src/api/services/*"
-      ],
-      "@utils/*": [
-        "src/api/utils/*"
-      ],
-    },
     "lib": [
       "ES2022",
       "DOM"

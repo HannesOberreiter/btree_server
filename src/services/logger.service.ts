@@ -5,10 +5,11 @@ import {
   StreamEntry,
 } from 'pino';
 import * as rfs from 'rotating-file-stream';
-import { ENVIRONMENT } from '@config/constants.config';
-import { env } from '@config/environment.config';
 import p from 'path';
 import pretty from 'pino-pretty';
+
+import { ENVIRONMENT } from '../config/constants.config.js';
+import { env } from '../config/environment.config.js';
 
 export class Logger {
   private static instance: Logger;

@@ -1,6 +1,6 @@
-import { CompanyBee } from '@models/company_bee.model';
+import { CompanyBee } from './company_bee.model.js';
 import { Model } from 'objection';
-import { BaseModel } from '@models/base.model';
+import { BaseModel } from './base.model.js';
 
 export class RefreshToken extends BaseModel {
   token!: string;

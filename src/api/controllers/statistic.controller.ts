@@ -1,8 +1,8 @@
-import { hiveCountApiary, hiveCountTotal } from '../utils/statistic.util';
-import { Harvest } from '../models/harvest.model';
-import { Feed } from '../models/feed.model';
-import { Treatment } from '../models/treatment.model';
-import { Checkup } from '../models/checkup.model';
+import { hiveCountApiary, hiveCountTotal } from '../utils/statistic.util.js';
+import { Harvest } from '../models/harvest.model.js';
+import { Feed } from '../models/feed.model.js';
+import { Treatment } from '../models/treatment.model.js';
+import { Checkup } from '../models/checkup.model.js';
 import { FastifyReply, FastifyRequest } from 'fastify';
 
 export default class StatisticController {

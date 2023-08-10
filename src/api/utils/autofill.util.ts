@@ -1,19 +1,19 @@
 import { Transaction } from 'objection';
-import { CheckupType } from '@models/option/checkup_type.model';
-import { Apiary } from '@models/apiary.model';
-import { HiveSource } from '@models/option/hive_source.model';
-import { HiveType } from '@models/option/hive_type.mode';
-import { ChargeType } from '@models/option/charge_type.model';
-import { FeedType } from '@models/option/feed_type.model';
-import { HarvestType } from '@models/option/harvest_type.model';
-import { TreatmentDisease } from '@models/option/treatment_disease.model';
-import { TreatmentType } from '@models/option/treatment_type.model';
-import { TreatmentVet } from '@models/option/treatment_vet.model';
-import { QueenRace } from '@models/option/queen_race.model';
-import { QueenMating } from '@models/option/queen_mating.model';
-import { RearingDetail } from '@models/rearing/rearing_detail.model';
-import { RearingType } from '@models/rearing/rearing_type.model';
-import { RearingStep } from '@models/rearing/rearing_step.model';
+import { CheckupType } from '../models/option/checkup_type.model.js';
+import { Apiary } from '../models/apiary.model.js';
+import { HiveSource } from '../models/option/hive_source.model.js';
+import { HiveType } from '../models/option/hive_type.mode.js';
+import { ChargeType } from '../models/option/charge_type.model.js';
+import { FeedType } from '../models/option/feed_type.model.js';
+import { HarvestType } from '../models/option/harvest_type.model.js';
+import { TreatmentDisease } from '../models/option/treatment_disease.model.js';
+import { TreatmentType } from '../models/option/treatment_type.model.js';
+import { TreatmentVet } from '../models/option/treatment_vet.model.js';
+import { QueenRace } from '../models/option/queen_race.model.js';
+import { QueenMating } from '../models/option/queen_mating.model.js';
+import { RearingDetail } from '../models/rearing/rearing_detail.model.js';
+import { RearingType } from '../models/rearing/rearing_type.model.js';
+import { RearingStep } from '../models/rearing/rearing_step.model.js';
 
 const standardValues = {
   de: {

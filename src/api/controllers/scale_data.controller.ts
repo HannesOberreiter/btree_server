@@ -1,10 +1,10 @@
-import { ScaleData } from '../models/scale_data.model';
+import { ScaleData } from '../models/scale_data.model.js';
 import dayjs from 'dayjs';
-import { getCompany } from '../utils/api.util';
-import { isPremium } from '../utils/premium.util';
-import { Scale } from '../models/scale.model';
-import { User } from '../models/user.model';
-import { MailServer } from '../app.bootstrap';
+import { getCompany } from '../utils/api.util.js';
+import { isPremium } from '../utils/premium.util.js';
+import { Scale } from '../models/scale.model.js';
+import { User } from '../models/user.model.js';
+import { MailServer } from '../../app.bootstrap.js';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import httpErrors from 'http-errors';
 

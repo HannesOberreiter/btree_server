@@ -1,8 +1,10 @@
-import { Harvest } from '@models/harvest.model';
 import { map } from 'lodash';
-import { Hive } from '../models/hive.model';
 import dayjs from 'dayjs';
 import { FastifyRequest, FastifyReply } from 'fastify';
+
+import { Harvest } from '../models/harvest.model.js';
+import { Hive } from '../models/hive.model.js';
+
 export default class HarvestController {
   static async get(req: FastifyRequest, reply: FastifyReply) {
     const { order, direction, offset, limit, q, filters, deleted, done } =

@@ -1,10 +1,10 @@
-import { ExtModel } from '@models/base.model';
-import { Hive } from '@models/hive.model';
-import { User } from '@models/user.model';
-import { TreatmentType } from '@models/option/treatment_type.model';
-import { TreatmentDisease } from '@models/option/treatment_disease.model';
-import { TreatmentVet } from '@models/option/treatment_vet.model';
-import { TreatmentApiary } from '@models/treatment_apiary.model';
+import { ExtModel } from './base.model.js';
+import { Hive } from './hive.model.js';
+import { User } from './user.model.js';
+import { TreatmentType } from './option/treatment_type.model.js';
+import { TreatmentDisease } from './option/treatment_disease.model.js';
+import { TreatmentVet } from './option/treatment_vet.model.js';
+import { TreatmentApiary } from './treatment_apiary.model.js';
 export class Treatment extends ExtModel {
   id!: number;
   date!: Date;

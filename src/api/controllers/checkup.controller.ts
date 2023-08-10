@@ -1,8 +1,10 @@
-import { Checkup } from '@models/checkup.model';
-import { map } from 'lodash';
-import { Hive } from '../models/hive.model';
 import dayjs from 'dayjs';
 import { FastifyReply, FastifyRequest } from 'fastify';
+import { map } from 'lodash';
+
+import { Checkup } from '../models/checkup.model.js';
+import { Hive } from '../models/hive.model.js';
+
 export default class CheckupController {
   static async get(req: FastifyRequest, reply: FastifyReply) {
     const { order, direction, offset, limit, q, filters, deleted, done } =

@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
-import { BaseModel } from '../models/base.model';
-import { checkMySQLError } from './error.util';
+
+import { BaseModel } from '../models/base.model.js';
+import { checkMySQLError } from './error.util.js';
 
 export const hiveCountApiary = async (date: Date, user_id: number) => {
   try {

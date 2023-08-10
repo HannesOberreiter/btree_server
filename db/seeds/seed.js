@@ -1,4 +1,3 @@
-require('module-alias/register');
 const env = require('../../dist/config/environment.config');
 const fs = require('fs');
 var map = require('lodash/map');
@@ -26,7 +25,7 @@ if (env.env === 'production') {
     for (let t = 0; t < tables.length; t++) {
       const table = tables[t];
       const jsonData = JSON.parse(
-        fs.readFileSync(__dirname + `/data/${table}.json`, 'utf-8')
+        fs.readFileSync(__dirname + `/data/${table}.json`, 'utf-8'),
       );
       let duplicates = 1;
       if (['checkups', 'feeds', 'treatments', 'queens'].includes(table)) {

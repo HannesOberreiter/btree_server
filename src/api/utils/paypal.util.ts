@@ -6,7 +6,7 @@ import {
   paypalAppSecret,
   paypalBase,
   paypalClientId,
-} from '@/config/environment.config';
+} from '../../config/environment.config.js';
 
 // https://developer.paypal.com/docs/api/orders/v2/#orders_create
 export async function createOrder(user_id: number, amount: number) {

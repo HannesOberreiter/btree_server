@@ -1,10 +1,11 @@
 import * as nodemailer from 'nodemailer';
-import { env, frontend, mailConfig } from '@config/environment.config';
 import { readFileSync } from 'fs';
 import p from 'path';
-import { ENVIRONMENT } from '@/config/constants.config';
 import httpErrors from 'http-errors';
-import { Logger } from './logger.service';
+
+import { env, frontend, mailConfig } from '../config/environment.config.js';
+import { ENVIRONMENT } from '../config/constants.config.js';
+import { Logger } from './logger.service.js';
 
 interface customMail {
   to: string;

@@ -1,7 +1,7 @@
-import { ExtModel } from '@models/base.model';
-import { User } from '@models/user.model';
-import { Company } from '@models/company.model';
-import { HiveCount } from '@models/hive_count.model';
+import { ExtModel } from './base.model.js';
+import { User } from './user.model.js';
+import { Company } from './company.model.js';
+import { HiveCount } from './hive_count.model.js';
 export class Apiary extends ExtModel {
   id!: number;
   name!: string;

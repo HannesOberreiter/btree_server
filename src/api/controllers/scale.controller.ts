@@ -1,7 +1,7 @@
-import { Scale } from '../models/scale.model';
-import { Hive } from '../models/hive.model';
-import { ScaleData } from '../models/scale_data.model';
-import { limitScale } from '../utils/premium.util';
+import { Scale } from '../models/scale.model.js';
+import { Hive } from '../models/hive.model.js';
+import { ScaleData } from '../models/scale_data.model.js';
+import { limitScale } from '../utils/premium.util.js';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import httpErrors from 'http-errors';
 

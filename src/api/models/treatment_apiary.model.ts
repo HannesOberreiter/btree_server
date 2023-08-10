@@ -1,5 +1,5 @@
-import { Company } from '@models/company.model';
-import { Treatment } from '@models/treatment.model';
+import { Company } from './company.model.js';
+import { Treatment } from './treatment.model.js';
 import { Model } from 'objection';
 
 export class TreatmentApiary extends Model {

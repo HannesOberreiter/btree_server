@@ -1,6 +1,7 @@
-import { meteoblueKey } from '@/config/environment.config.js';
 import httpErrors from 'http-errors';
-import { Logger } from '../services/logger.service.js';
+
+import { meteoblueKey } from '../../config/environment.config.js';
+import { Logger } from '../../services/logger.service.js';
 
 export const getTemperature = async (latitude: number, longitude: number) => {
   // Api Key is given by meteoblue, we pay for it yearly, with limited amount of usage. (60,00 €/ 30 Mio Fetches)

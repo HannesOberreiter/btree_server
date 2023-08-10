@@ -1,4 +1,3 @@
-require('module-alias/register');
 const { knexConfig } = require(process.cwd() +
   '/dist/config/environment.config.js');
 const knexInstance = require('knex')(knexConfig);

@@ -1,7 +1,7 @@
-import { Apiary } from '@models/apiary.model';
+import { Apiary } from './apiary.model.js';
 import { Model } from 'objection';
-import { Hive } from './hive.model';
-import { Movedate } from './movedate.model';
+import { Hive } from './hive.model.js';
+import { Movedate } from './movedate.model.js';
 
 export class HiveLocation extends Model {
   apiary_id!: number;

@@ -1,10 +1,10 @@
-import { Guard } from '@/api/middlewares/guard.middleware';
-import { ROLES } from '@/config/constants.config';
+import { Guard } from '../../hooks/guard.hook.js';
+import { ROLES } from '../../../config/constants.config.js';
 import { FastifyInstance } from 'fastify';
 import { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { z } from 'zod';
-import StatisticController from '@/api/controllers/statistic.controller';
-import { Validator } from '@/api/middlewares/validator.middleware';
+import StatisticController from '../../controllers/statistic.controller.js';
+import { Validator } from '../../hooks/validator.hook.js';
 
 export default function routes(
   instance: FastifyInstance,

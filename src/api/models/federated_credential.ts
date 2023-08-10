@@ -1,5 +1,5 @@
-import { User } from '@models/user.model';
-import { BaseModel } from '@models/base.model';
+import { User } from './user.model.js';
+import { BaseModel } from './base.model.js';
 
 export class FederatedCredential extends BaseModel {
   id!: number;

@@ -1,11 +1,12 @@
-import { Apiary } from '../models/apiary.model';
-import { map } from 'lodash';
-import dayjs from 'dayjs';
-import { HiveLocation } from '../models/hive_location.model';
-import { Movedate } from '../models/movedate.model';
-import { limitApiary } from '../utils/premium.util';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import httpErrors from 'http-errors';
+import { map } from 'lodash';
+import dayjs from 'dayjs';
+
+import { Apiary } from '../models/apiary.model.js';
+import { HiveLocation } from '../models/hive_location.model.js';
+import { Movedate } from '../models/movedate.model.js';
+import { limitApiary } from '../utils/premium.util.js';
 
 async function isDuplicateApiaryName(user_id: number, name: string) {
   const checkDuplicate = await Apiary.query().select('id').findOne({

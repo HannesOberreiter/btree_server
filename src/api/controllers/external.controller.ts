@@ -1,19 +1,20 @@
+import { Stripe } from 'stripe';
+import { FastifyReply, FastifyRequest } from 'fastify';
+import httpErrors from 'http-errors';
 import ical, { ICalCalendarMethod } from 'ical-generator';
 import dayjs from 'dayjs';
-import { getCompany } from '../utils/api.util';
-import { addPremium, isPremium } from '../utils/premium.util';
+
+import { getCompany } from '../utils/api.util.js';
+import { addPremium, isPremium } from '../utils/premium.util.js';
 import {
   getMovements,
   getRearings,
   getScaleData,
   getTask,
   getTodos,
-} from '../utils/calendar.util';
-import { Stripe } from 'stripe';
-import { createInvoice } from '../utils/foxyoffice.util';
-import { FastifyReply, FastifyRequest } from 'fastify';
-import httpErrors from 'http-errors';
-import { SOURCE } from '@/config/constants.config';
+} from '../utils/calendar.util.js';
+import { createInvoice } from '../utils/foxyoffice.util.js';
+import { SOURCE } from '../../config/constants.config.js';
 
 export default class ExternalController {
   static async ical(req: FastifyRequest, reply: FastifyReply) {

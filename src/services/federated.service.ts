@@ -1,8 +1,9 @@
 import { OAuth2Client, TokenPayload } from 'google-auth-library';
-import { googleOAuth, url } from '../../config/environment.config';
-import { FederatedCredential } from '@/api/models/federated_credential';
-import { User } from '@/api/models/user.model';
-import { Logger } from '@/api/services/logger.service';
+
+import { googleOAuth, url } from '../config/environment.config.js';
+import { FederatedCredential } from '../api/models/federated_credential.js';
+import { User } from '../api/models/user.model.js';
+import { Logger } from './logger.service.js';
 
 export type federatedUser = {
   bee_id: number | undefined;

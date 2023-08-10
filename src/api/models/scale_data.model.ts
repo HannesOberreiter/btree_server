@@ -1,5 +1,5 @@
-import { BaseModel } from './base.model';
-import { Scale } from './scale.model';
+import { BaseModel } from './base.model.js';
+import { Scale } from './scale.model.js';
 
 export class ScaleData extends BaseModel {
   id!: number;

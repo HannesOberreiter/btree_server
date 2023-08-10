@@ -1,10 +1,11 @@
-import { env, vectorConfig } from '@config/environment.config';
 import Redis, { RedisOptions } from 'ioredis';
-import { Logger } from '@/api/services/logger.service';
-import { ENVIRONMENT } from '@/config/constants.config';
+
+import { env, vectorConfig } from '../config/environment.config.js';
+import { Logger } from '../services/logger.service.js';
+import { ENVIRONMENT } from '../config/constants.config.js';
 
 /**
- * Connection to redis docker instance
+ * @description Connection to redis docker instance
  */
 export class VectorServer {
   private logger = Logger.getInstance();

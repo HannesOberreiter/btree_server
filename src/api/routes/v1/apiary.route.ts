@@ -1,10 +1,10 @@
-import { Guard } from '@middlewares/guard.middleware';
-import { ROLES } from '@/config/constants.config';
+import { Guard } from '../../hooks/guard.hook.js';
+import { ROLES } from '../../../config/constants.config.js';
 import { FastifyInstance } from 'fastify';
-import ApiaryController from '@/api/controllers/apiary.controller';
+import ApiaryController from '../../controllers/apiary.controller.js';
 import { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { z } from 'zod';
-import { numberSchema } from '@/api/utils/zod.util';
+import { numberSchema } from '../../utils/zod.util.js';
 
 export default function routes(
   instance: FastifyInstance,

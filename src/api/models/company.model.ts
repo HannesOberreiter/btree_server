@@ -1,6 +1,6 @@
-import { ExtModel } from '@models/base.model';
-import { User } from '@models/user.model';
-import { CompanyBee } from '@models/company_bee.model';
+import { ExtModel } from './base.model.js';
+import { User } from './user.model.js';
+import { CompanyBee } from './company_bee.model.js';
 import dayjs from 'dayjs';
 export class Company extends ExtModel {
   id!: number;

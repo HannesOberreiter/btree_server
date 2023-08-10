@@ -1,7 +1,8 @@
-import { OPTION, SOURCE } from '@/config/constants.config';
-import { isPremium } from '../utils/premium.util';
 import { FastifyReply, FastifyRequest, HookHandlerDoneFunction } from 'fastify';
 import httpErrors from 'http-errors';
+
+import { OPTION, SOURCE } from '../../config/constants.config.js';
+import { isPremium } from '../utils/premium.util.js';
 
 export class Validator {
   static handleOption = (
