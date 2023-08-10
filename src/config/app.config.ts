@@ -117,6 +117,10 @@ export class Application {
         'Origin, Content-Type, Accept, Authorization',
       );
       reply.header('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE');
+      reply.header(
+        'Access-Control-Expose-Headers',
+        'Access-Control-Allow-Origin, Access-Control-Allow-Methods, Access-Control-Allow-Headers',
+      );
 
       if (req.method.toLowerCase() === 'options') {
         reply.send();
