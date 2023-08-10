@@ -48,7 +48,7 @@ describe('E2E API tests', () => {
       }
       await knexInstance.raw('SET FOREIGN_KEY_CHECKS = 1;');
     }
-    global.app = require(process.cwd() + '/dist/api/app.bootstrap');
+    global.app = require(process.cwd() + '/dist/app.bootstrap');
     global.server = global.app.server;
   });
 
