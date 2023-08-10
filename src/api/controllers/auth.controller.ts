@@ -24,7 +24,7 @@ import { loginCheck } from '../utils/login.util.js';
 import { User } from '../models/user.model.js';
 import { DiscourseSSO } from '../../services/discourse.service.js';
 import { ENVIRONMENT } from '../../config/constants.config.js';
-import { GoogleAuth, federatedUser } from 'src/services/federated.service.js';
+import { GoogleAuth, federatedUser } from '../../services/federated.service.js';
 
 export default class AuthController {
   static async confirmMail(req: FastifyRequest, reply: FastifyReply) {
