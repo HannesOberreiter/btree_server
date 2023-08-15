@@ -3,15 +3,9 @@ import querystring from 'query-string';
 import { isString } from 'lodash-es';
 import { LoadingBar } from 'quasar';
 import { useNetwork } from '@vueuse/core';
-import { reactive } from 'vue';
 
 const baseUrl = process.env.BACKEND_URL;
 const dev = process.env.NODE_ENV;
-
-const state = reactive({
-  retry: false,
-  logout: false,
-});
 
 export const useApiFetch = () => {
   const network = useNetwork();
@@ -132,10 +126,10 @@ export const useApiFetch = () => {
 
   async function fetching(
     request: Request,
-    recursive = false,
+    _recursive = false,
     file = false,
     loadingIndicator = true,
-    showPopup = true,
+    _showPopup = true,
   ): Promise<any> {
     if (
       network.isSupported &&
@@ -144,52 +138,21 @@ export const useApiFetch = () => {
     ) {
       throw 'offline';
     }
-    if (state.logout) throw 'error.forbidden';
 
     if (loadingIndicator) LoadingBar.start();
-    //const token = buildToken();
-    const copy = request.clone();
-    //if (token) request.headers.append('Authorization', token.Authorization);
     const response = await fetch(request);
     if (loadingIndicator) LoadingBar.stop();
 
     if (!response.ok) {
       if (
-        request.url.search('/v1/auth/login') === -1 &&
-        request.url.search('/v1/auth/refresh') === -1 &&
-        showPopup
+        request.url.search('/v1/auth/') === -1 &&
+        window.location.href.search('/visitor/') === -1 &&
+        response.status === 401
       ) {
-        // 401 Response and it is currently no retry ongoing
-        if (response.status === 401 && !state.retry && !recursive) {
-          try {
-            state.retry = true;
-            return fetching(copy, true, file);
-          } catch (e) {
-            state.retry = false;
-            throw e;
-          }
-          // This was a recursive copy to try again and it again failed with authentication
-        } else if (response.status === 401 && recursive) {
-          state.logout = true;
-          state.retry = false;
-        } else if (response.status === 401) {
-          while (state.retry === true) {
-            // Wait till first request finish refresh token, request
-            await new Promise((r) => setTimeout(r, 500));
-          }
-          if (state.logout === true) {
-            if (!dialog.state.show && showPopup) dialog.open();
-            return Promise.reject();
-          }
-          return fetching(copy, true, file);
-        }
+        if (!dialog.state.show) dialog.open();
+        throw 'error.forbidden';
       }
       throw await response.json();
-    }
-
-    if (state.retry) {
-      state.retry = false; // fetch did work after a retry, waiting promises can now try
-      state.logout = false;
     }
     if (file) {
       return response.blob();
@@ -197,5 +160,5 @@ export const useApiFetch = () => {
       return response.json();
     }
   }
-  return { ping, get, post, patch, remove, state, download };
+  return { ping, get, post, patch, remove, download };
 };

@@ -9,7 +9,10 @@
       "BUGFIX sound notification was only working after reload",
       "BUGFIX disabled CORS for google auth, which should fix the login problem with google",
       "BUGFIX rearing form now always shows one on save button, as no name is required",
-      "BUGFIX better error message for coupons"
+      "BUGFIX better error message for coupons",
+      "BUGFIX disable hive scale stats link on navigationbar if only basic user",
+      "BUGFIX wizbee show correct error message for basic user",
+      "BUGFIX notify user if registration email failed to deliver"
     ]
   },
   {

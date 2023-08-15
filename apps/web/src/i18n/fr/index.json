@@ -138,6 +138,7 @@
     "lastMovement": "Chaque ruche a besoin d'au moins un mouvement ! \nVous ne pouvez pas supprimer le dernier.",
     "localStorage": "Avertissement : Cette application a besoin d'accéder au stockage local de votre navigateur Web pour fonctionner correctement.",
     "locked": "Compte bloqué! (trop de tentatives de connexion?)",
+    "mailError": "L'e-mail n'a pas pu être livré !",
     "mailInvalid": "L'email doit être valide",
     "more": "Une des erreurs",
     "nfcNotSupported": "Web NFC n'est pas pris en charge par votre navigateur.",

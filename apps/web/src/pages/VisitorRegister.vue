@@ -160,7 +160,6 @@ const randPassword = new Array(35)
 const company = (currentRoute.value.query?.name as string) ?? '';
 const email = (currentRoute.value.query?.email as string) ?? '';
 const isOAuthRedirect = !!currentRoute.value.query?.oauth;
-console.log(isOAuthRedirect);
 const password = isOAuthRedirect ? randPassword : '';
 
 const SOURCES = [
@@ -264,7 +263,12 @@ async function sendForm(user: any) {
       notification.open('positive', message.value, false);
     },
     (error) => {
-      notification.open('negative', error);
+      console.error(error);
+      if (error.statusCode === 401) {
+        notification.open('negative', t('error.mailError'));
+      } else {
+        notification.open('negative', error);
+      }
       isSubmitting.value = false;
     },
   );

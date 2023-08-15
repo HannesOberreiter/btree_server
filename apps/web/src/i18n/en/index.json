@@ -138,6 +138,7 @@
     "lastMovement": "Each hive needs at least one movement! You cannot delete the last one.",
     "localStorage": "Warning: This application needs access to your web browsers local storage to work properly.",
     "locked": "Account locked! (too many login attempts?)",
+    "mailError": "Email could not be delivered!",
     "mailInvalid": "E-Mail must be valid",
     "more": "One of errors",
     "nfcNotSupported": "Web NFC is not supported by your browser.",

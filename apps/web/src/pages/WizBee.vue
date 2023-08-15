@@ -69,6 +69,9 @@ async function onQuestion() {
       } else if (err?.statusCode === 429) {
         error.value = t('error.tokenLimit');
         return;
+      } else if (err?.statusCode === 402) {
+        error.value = t('error.premium');
+        return;
       }
       error.value = t('error.unknown');
     })
