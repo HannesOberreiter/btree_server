@@ -65,7 +65,7 @@ export const checkMySQLError = (err: any) => {
       data: {
         columns: err.columns,
         table: err.table,
-        constriant: err.constraint,
+        constraint: err.constraint,
       },
     };
   } else if (err instanceof NotNullViolationError) {
@@ -83,7 +83,7 @@ export const checkMySQLError = (err: any) => {
       type: 'ForeignKeyViolation',
       data: {
         table: err.table,
-        constriant: err.constraint,
+        constraint: err.constraint,
       },
     };
   } else if (err instanceof CheckViolationError) {
@@ -92,7 +92,7 @@ export const checkMySQLError = (err: any) => {
       type: 'CheckViolation',
       data: {
         table: err.table,
-        constriant: err.constraint,
+        constraint: err.constraint,
       },
     };
   } else if (err instanceof DataError) {

@@ -206,7 +206,8 @@ export class Application {
       if (e.statusCode) {
         reply.status(e.statusCode).send({
           statusCode: e.statusCode,
-          error: e.message,
+          error: e.cause ? e.cause.type : 'Unhandled error',
+          cause: e.cause ?? undefined,
         });
         return;
       }
