@@ -11,6 +11,13 @@ import pretty from 'pino-pretty';
 import { ENVIRONMENT } from '../config/constants.config.js';
 import { env } from '../config/environment.config.js';
 
+function logFileNameGenerator(time: number | Date, name: string) {
+  if (!time) return `${name}.log`;
+  if (typeof time === 'number') time = new Date(time);
+  const iso = time.toISOString().split('T')[0];
+  return `${name}-${iso}.log`;
+}
+
 export class Logger {
   private static instance: Logger;
   pino: PinoLogger;
@@ -28,28 +35,30 @@ export class Logger {
       | StreamEntry
       | (DestinationStream | StreamEntry)[] = [
       {
-        level: 'info',
-        stream: rfs.createStream(`pino-info-${env}.log`, {
-          interval: '7d',
-          maxFiles: 10,
-          path: p.join(__dirname, `../../../logs`),
-        }),
-      },
-      {
         level: 'debug',
-        stream: rfs.createStream(`pino-debug-${env}.log`, {
-          interval: '7d',
-          maxFiles: 10,
-          path: p.join(__dirname, `../../../logs`),
-        }),
+        stream: rfs.createStream(
+          (time) => logFileNameGenerator(time, `info-${env}`),
+          {
+            interval: '1d',
+            maxFiles: 90,
+            immutable: true,
+            history: `history-info-${env}.txt`,
+            path: p.join(__dirname, `../../logs`),
+          },
+        ),
       },
       {
         level: 'error',
-        stream: rfs.createStream(`pino-error-${env}.log`, {
-          interval: '7d',
-          maxFiles: 10,
-          path: p.join(__dirname, `../../../logs`),
-        }),
+        stream: rfs.createStream(
+          (time) => logFileNameGenerator(time, `error-${env}`),
+          {
+            interval: '1d',
+            maxFiles: 90,
+            immutable: true,
+            history: `history-error-${env}.txt`,
+            path: p.join(__dirname, `../../logs`),
+          },
+        ),
       },
     ];
 
@@ -63,11 +72,9 @@ export class Logger {
 
     this.pino = pino(
       {
-        level: env === ENVIRONMENT.production ? 'info' : 'debug',
+        level: 'debug',
         base: undefined,
-        timestamp: () => {
-          return `,"time":"${new Date().toISOString()}"`;
-        },
+        timestamp: pino.stdTimeFunctions.isoTime,
         formatters: {
           level: (label: string) => {
             return { level: label.toUpperCase() };
@@ -84,7 +91,7 @@ export class Logger {
         },
       },
       pino.multistream(streams, {
-        dedupe: true,
+        dedupe: false,
       }),
     );
   }
