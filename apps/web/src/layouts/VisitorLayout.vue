@@ -106,15 +106,11 @@ import { computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { useMeta } from 'quasar';
 import { useFetch } from '@vueuse/core';
-import { useApiFetch } from '~/composables/useApi';
 import { useI18n } from 'vue-i18n';
 import { onMounted, ref } from 'vue';
 
 import SupporterImages from '~/components/SupporterImages.vue';
 import BtnDarkMode from '~/components/BtnDarkMode.vue';
-
-const useApi = useApiFetch();
-useApi.state.logout = false;
 
 const isBeta = process.env.BACKEND_URL.indexOf('beta') >= 0;
 
