@@ -138,6 +138,7 @@
     "lastMovement": "Ogni alveare ha bisogno di almeno un movimento! \nNon puoi eliminare l'ultimo.",
     "localStorage": "Avvertenza: questa applicazione necessita dell'accesso alla memoria locale del browser Web per funzionare correttamente.",
     "locked": "Account bloccato! (troppi tentativi di accesso?)",
+    "mailError": "L'e-mail non può essere consegnata!",
     "mailInvalid": "L'email deve essere valida",
     "more": "Uno degli errori",
     "nfcNotSupported": "Web NFC non è supportato dal tuo browser.",

@@ -138,6 +138,7 @@
     "lastMovement": "Jeder Bienenstock braucht mindestens eine Wanderung! Die letzte Wanderung kannst du nicht löschen.",
     "localStorage": "Warnung: Diese Anwendung benötigt Zugriff auf den lokalen Speicher Ihres Webbrowsers, um ordnungsgemäß zu funktionieren.",
     "locked": "Konto gesperrt! (zu viele Anmeldeversuche?)",
+    "mailError": "E-Mail konnte nicht zugestellt werden!",
     "mailInvalid": "Email muss gültig sein",
     "more": "Einer der Fehler",
     "nfcNotSupported": "Web NFC wird von Ihrem Browser nicht unterstützt.",

@@ -26,11 +26,9 @@ const useNotification = () => {
 
     if ('message' in error) {
       errorMessage = error.message;
-    }
-    if ('errors' in error) {
+    } else if ('errors' in error) {
       errorMessage = error.errors;
-    }
-    if ('error' in error) {
+    } else if ('error' in error) {
       errorMessage = error.error;
     }
     displayMessage = checkStatus(error.statusCode, errorMessage);
@@ -43,7 +41,11 @@ const useNotification = () => {
     let displayMessage = '';
 
     if (statusCode === 401) {
-      displayMessage = t('error.access');
+      if (errorField === 'mail') {
+        displayMessage = t('error.mailError');
+      } else {
+        displayMessage = t('error.access');
+      }
     } else if (statusCode === 402) displayMessage = t('error.premium');
     else if (statusCode === 403) {
       if (errorField === 'lastMovement') {
