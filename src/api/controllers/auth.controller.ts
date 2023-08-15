@@ -53,13 +53,16 @@ export default class AuthController {
     }
     const result = await resetMail(u.id);
 
-    await MailServer.sendMail({
+    const mail = await MailServer.sendMail({
       to: result.email,
       lang: result.lang,
       subject: 'pw_reset',
       name: result.username,
       key: result.reset,
     });
+    if (!mail) {
+      throw httpErrors.Unauthorized('mail');
+    }
     if (env !== ENVIRONMENT.production) {
       return {
         email: result.email,
@@ -138,12 +141,16 @@ export default class AuthController {
       await autoFill(trx, c.id, autofillLang);
     });
 
-    await MailServer.sendMail({
+    const mail = await MailServer.sendMail({
       to: inputUser.email,
       lang: inputUser.lang,
       subject: 'register',
       key: inputUser.reset,
     });
+
+    if (!mail) {
+      throw httpErrors.Unauthorized('mail');
+    }
 
     return { email: inputUser.email, activate: inputUser.reset };
   }

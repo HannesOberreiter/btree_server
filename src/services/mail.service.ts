@@ -17,12 +17,10 @@ interface customMail {
 
 export class MailService {
   private _transporter: nodemailer.Transporter;
-  baseUrl: string;
+  baseUrl = frontend;
   private logger = Logger.getInstance();
 
-  constructor() {
-    this.baseUrl = frontend;
-  }
+  constructor() {}
 
   async setup() {
     if (env === ENVIRONMENT.development || env === ENVIRONMENT.test) {
@@ -35,12 +33,12 @@ export class MailService {
         console.error(e);
       }
     }
-    const conf = mailConfig;
-    this._transporter = nodemailer.createTransport(conf);
+    this.logger.log('debug', `Setup mail with host: ${mailConfig.host}`, {});
+    this._transporter = nodemailer.createTransport(mailConfig);
   }
 
   private loadHtmlMail(mailName: string) {
-    const mailPath = p.join(__dirname, `../../../mails/${mailName}.txt`);
+    const mailPath = p.join(__dirname, `../../mails/${mailName}.txt`);
     try {
       return readFileSync(mailPath, 'utf-8');
     } catch (e) {
@@ -55,7 +53,7 @@ export class MailService {
   private loadFooter(lang: string) {
     const mailPath = p.join(
       __dirname,
-      `../../../mails/partials/footer_${lang}.txt`,
+      `../../mails/partials/footer_${lang}.txt`,
     );
     try {
       return readFileSync(mailPath, 'utf-8');
@@ -75,7 +73,7 @@ export class MailService {
     key = 'false',
     name = 'false',
   }: customMail) {
-    if (env === ENVIRONMENT.test || env === ENVIRONMENT.ci) return;
+    if (env === ENVIRONMENT.test || env === ENVIRONMENT.ci) return true;
 
     // Only use languages which are available (translated), fallback english
     lang = ['de', 'fr', 'it'].includes(lang) ? lang : 'en';
@@ -141,22 +139,24 @@ export class MailService {
     };
 
     try {
-      await this._transporter.sendMail(options, (error, info) => {
-        this._transporter.close();
-        if (error) {
-          console.error(`error: ${error}`);
-          throw httpErrors.InternalServerError('E-Mail could not be sent.');
-        }
-        if (env === ENVIRONMENT.development || env === ENVIRONMENT.test) {
-          const testUrl = nodemailer.getTestMessageUrl(info) as string;
-          this.logger.log('info', `Preview Url: ${testUrl}`, {});
-        }
-        this.logger.log('info', `Message Sent ${info.response}`, {
-          subject: title,
-        });
+      const result = await this._transporter.sendMail(options);
+      this._transporter.close();
+      if (result.rejected.length > 0) {
+        this.logger.log('error', `Could not send E-Mail.`, result);
+        throw httpErrors.InternalServerError('E-Mail could not be sent.');
+      }
+      if (env === ENVIRONMENT.development) {
+        const testUrl = nodemailer.getTestMessageUrl(result) as string;
+        this.logger.log('info', `Preview Url: ${testUrl}`, {});
+      }
+      this.logger.log('info', `Message Sent ${result.response}`, {
+        subject: title,
+        result: result,
       });
+      return true;
     } catch (e) {
       this.logger.log('error', `Could not send E-Mail.`, { error: e });
+      return false;
     }
   }
 

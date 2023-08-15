@@ -38,8 +38,10 @@ export class HTTPServer {
             process.exit(1);
           }
           if (env !== ENVIRONMENT.test) {
-            app.log.debug(
+            logger.log(
+              'debug',
               `HTTP(S) server is now running on ${address} (${env})`,
+              {},
             );
           }
         },
