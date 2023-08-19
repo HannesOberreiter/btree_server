@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { map } from 'lodash';
+import { map } from 'lodash-es';
 import { FastifyReply, FastifyRequest } from 'fastify';
 
 import { Charge } from '../models/charge.model.js';

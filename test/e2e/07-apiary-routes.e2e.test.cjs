@@ -1,19 +1,14 @@
 const request = require('supertest');
 const { expect } = require('chai');
 const { doRequest, expectations, doQueryRequest } = require(process.cwd() +
-  '/test/utils');
+  '/test/utils/index.cjs');
 
 const testInsert = {
-  date: new Date().toISOString().slice(0, 10),
-  name: 'testTodo',
-  note: '----',
-  done: false,
-  url: '',
-  repeat: 10,
+  name: 'TestApiary' + new Date().toISOString(),
 };
 
-describe('Todo routes', function () {
-  const route = '/api/v1/todo';
+describe('Apiary routes', function () {
+  const route = '/api/v1/apiary';
   let accessToken, insertId;
 
   before(function (done) {
@@ -38,8 +33,8 @@ describe('Todo routes', function () {
           testInsert,
           function (err, res) {
             expect(res.statusCode).to.eqls(200);
-            expect(res.body).to.be.a('Array');
-            insertId = res.body[0];
+            expect(res.body).to.has.property('id');
+            insertId = res.body.id;
             done();
           },
         );
@@ -47,7 +42,7 @@ describe('Todo routes', function () {
     );
   });
 
-  describe('/api/v1/todo/', () => {
+  describe('/api/v1/apiary/', () => {
     it(`get 401 - no header`, function (done) {
       doQueryRequest(
         request.agent(global.server),
@@ -84,7 +79,7 @@ describe('Todo routes', function () {
         route,
         null,
         null,
-        { ids: [insertId], data: {} },
+        null,
         function (err, res) {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
@@ -109,7 +104,7 @@ describe('Todo routes', function () {
       );
     });
 
-    it(`post 400 - no data`, function (done) {
+    it(`post 400 - no name`, function (done) {
       doRequest(
         agent,
         'post',
@@ -119,6 +114,22 @@ describe('Todo routes', function () {
         null,
         function (err, res) {
           expect(res.statusCode).to.eqls(400);
+          expectations(res, 'name', 'Invalid value');
+          done();
+        },
+      );
+    });
+
+    it(`post 409 - duplicate name`, function (done) {
+      doRequest(
+        agent,
+        'post',
+        route,
+        null,
+        accessToken,
+        testInsert,
+        function (err, res) {
+          expect(res.statusCode).to.eqls(409);
           done();
         },
       );
@@ -133,7 +144,7 @@ describe('Todo routes', function () {
         accessToken,
         {
           ids: [insertId],
-          data: {},
+          data: { name: 'test2' },
         },
         function (err, res) {
           expect(res.statusCode).to.eqls(200);
@@ -144,7 +155,40 @@ describe('Todo routes', function () {
     });
   });
 
-  describe('/api/v1/todo/batchGet', () => {
+  describe('/api/v1/apiary/:id', () => {
+    it(`401 - no header`, function (done) {
+      doQueryRequest(
+        request.agent(global.server),
+        route,
+        insertId,
+        null,
+        null,
+        function (err, res) {
+          expect(res.statusCode).to.eqls(401);
+          expect(res.errors, 'JsonWebTokenError');
+          done();
+        },
+      );
+    });
+    it(`200 - success`, function (done) {
+      doQueryRequest(
+        agent,
+        route,
+        insertId,
+        accessToken,
+        null,
+        function (err, res) {
+          expect(res.statusCode).to.eqls(200);
+          expect(res.body).to.has.property('id');
+          expect(res.body).to.has.property('name');
+          expect(res.body).to.has.property('sameLocation');
+          done();
+        },
+      );
+    });
+  });
+
+  describe('/api/v1/apiary/batchGet', () => {
     it(`401 - no header`, function (done) {
       doRequest(
         request.agent(global.server),
@@ -192,103 +236,7 @@ describe('Todo routes', function () {
     });
   });
 
-  describe('/api/v1/todo/status', () => {
-    it(`401 - no header`, function (done) {
-      doRequest(
-        request.agent(global.server),
-        'patch',
-        route + '/status',
-        null,
-        null,
-        { ids: [], status: true },
-        function (err, res) {
-          expect(res.statusCode).to.eqls(401);
-          expect(res.errors, 'JsonWebTokenError');
-          done();
-        },
-      );
-    });
-    it(`400 - missing ids`, function (done) {
-      doRequest(
-        agent,
-        'patch',
-        route + '/status',
-        null,
-        null,
-        null,
-        function (err, res) {
-          expect(res.statusCode).to.eqls(400);
-          expectations(res, 'ids', 'Invalid value');
-          done();
-        },
-      );
-    });
-    it(`200 - success`, function (done) {
-      doRequest(
-        agent,
-        'patch',
-        route + '/status',
-        null,
-        accessToken,
-        { ids: [insertId], status: false },
-        function (err, res) {
-          expect(res.statusCode).to.eqls(200);
-          expect(res.body).to.equal(1);
-          done();
-        },
-      );
-    });
-  });
-
-  describe('/api/v1/todo/date', () => {
-    it(`401 - no header`, function (done) {
-      doRequest(
-        request.agent(global.server),
-        'patch',
-        route + '/date',
-        null,
-        null,
-        { ids: [], start: testInsert.date },
-        function (err, res) {
-          expect(res.statusCode).to.eqls(401);
-          expect(res.errors, 'JsonWebTokenError');
-          done();
-        },
-      );
-    });
-    it(`400 - missing ids`, function (done) {
-      doRequest(
-        agent,
-        'patch',
-        route + '/date',
-        null,
-        null,
-        null,
-        function (err, res) {
-          expect(res.statusCode).to.eqls(400);
-          expectations(res, 'ids', 'Invalid value');
-          done();
-        },
-      );
-    });
-    it(`200 - success`, function (done) {
-      doRequest(
-        agent,
-        'patch',
-        route + '/date',
-        null,
-        accessToken,
-        { ids: [insertId], start: testInsert.date },
-        function (err, res) {
-          expect(res.statusCode).to.eqls(200);
-          expect(res.body).to.equal(1);
-          done();
-        },
-      );
-    });
-  });
-
-  describe('/api/v1/todo/batchDelete', () => {
+  describe('/api/v1/apiary/batchDelete', () => {
     it(`401 - no header`, function (done) {
       doRequest(
         request.agent(global.server),
@@ -327,6 +275,54 @@ describe('Todo routes', function () {
         null,
         accessToken,
         { ids: [insertId] },
+        function (err, res) {
+          expect(res.statusCode).to.eqls(200);
+          expect(res.body).to.be.a('Array');
+          done();
+        },
+      );
+    });
+  });
+
+  describe('/api/v1/apiary/status', () => {
+    it(`401 - no header`, function (done) {
+      doRequest(
+        request.agent(global.server),
+        'patch',
+        route + '/status',
+        null,
+        null,
+        { ids: [], status: true },
+        function (err, res) {
+          expect(res.statusCode).to.eqls(401);
+          expect(res.errors, 'JsonWebTokenError');
+          done();
+        },
+      );
+    });
+    it(`400 - missing ids`, function (done) {
+      doRequest(
+        agent,
+        'patch',
+        route + '/status',
+        null,
+        null,
+        null,
+        function (err, res) {
+          expect(res.statusCode).to.eqls(400);
+          expectations(res, 'ids', 'Invalid value');
+          done();
+        },
+      );
+    });
+    it(`200 - success`, function (done) {
+      doRequest(
+        agent,
+        'patch',
+        route + '/status',
+        null,
+        accessToken,
+        { ids: [insertId], status: false },
         function (err, res) {
           expect(res.statusCode).to.eqls(200);
           expect(res.body).to.equal(1);

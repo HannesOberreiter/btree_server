@@ -2,7 +2,7 @@
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
-exports.up = function (knex) {
+export const up = function (knex) {
   return knex.schema.createTable('wizbee_tokens', (t) => {
     t.increments('id').primary().unsigned();
     t.date('date').index();
@@ -22,7 +22,7 @@ exports.up = function (knex) {
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
-exports.down = function (knex) {
+export const down = function (knex) {
   knex.schema.alterTable('wizbee_tokens', (t) => {
     t.dropForeign('bee_id');
   });

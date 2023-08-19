@@ -1,6 +1,7 @@
-import p from 'path';
 import dotenv from 'dotenv';
 import { ENVIRONMENT } from './constants.config.js';
+
+const rootDirectory = new URL('../../', import.meta.url).pathname;
 
 /**
  * @description Configure dotenv with variables.env file before app
@@ -41,7 +42,7 @@ class EnvironmentConfiguration {
     this.set();
     // https://www.npmjs.com/package/dotenv
     const result = dotenv.config({
-      path: p.join(__dirname, `../../env/${this.environment}.env`),
+      path: rootDirectory + `/env/${this.environment}.env`,
     });
     if (result.error) {
       throw result.error;
@@ -182,6 +183,7 @@ const openAI = {
 };
 
 export {
+  rootDirectory,
   redisConfig,
   knexConfig,
   vectorConfig,

@@ -1,5 +1,5 @@
 import { Queen } from '../models/queen.model.js';
-import { map } from 'lodash';
+import { map } from 'lodash-es';
 import dayjs from 'dayjs';
 import { QueenDuration } from '../models/queen_duration.model.js';
 import { Checkup } from '../models/checkup.model.js';

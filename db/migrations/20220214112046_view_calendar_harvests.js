@@ -1,12 +1,14 @@
+import { fileURLToPath } from 'url';
+import { readFileSync } from 'fs';
+
 /**
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
-exports.up = function (knex) {
-  const fs = require('fs');
-  const path = require('path');
+export const up = function (knex) {
+  const path = new URL('./', import.meta.url).pathname;
   const scriptName = '20220214112046_view_calendar_checkups.sql';
-  let sql = fs.readFileSync(path.resolve(__dirname, scriptName), 'utf8');
+  let sql = readFileSync(path + scriptName, 'utf8');
   return knex.raw(sql.replace(/checkup/g, 'harvest'));
 };
 
@@ -14,6 +16,6 @@ exports.up = function (knex) {
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
-exports.down = function (knex) {
+export const down = function (knex) {
   return knex.raw('drop view calendar_harvests');
 };

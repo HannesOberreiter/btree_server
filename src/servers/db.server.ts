@@ -12,7 +12,7 @@ export class DatabaseServer {
   private static instance: DatabaseServer;
   private logger = Logger.getInstance();
 
-  knex: ReturnType<typeof Knex>;
+  knex: Knex.Knex;
 
   static getInstance(): DatabaseServer {
     if (!this.instance) {
@@ -22,7 +22,7 @@ export class DatabaseServer {
   }
 
   private constructor() {
-    this.knex = Knex(knexConfig);
+    this.knex = Knex.knex(knexConfig);
   }
 
   start(): void {
@@ -42,11 +42,13 @@ export class DatabaseServer {
       });
     }
   }
-  stop(): void {
+  async stop(): Promise<void> {
     try {
-      this.knex.destroy();
+      this.logger.log('debug', 'Closing database connection', {});
+      await this.knex.destroy();
+      this.logger.log('debug', 'Closed database connection', {});
     } catch (error) {
-      this.logger.log('error', 'Database connection error', { error });
+      this.logger.log('error', 'Database closing error', { error });
     }
   }
 }

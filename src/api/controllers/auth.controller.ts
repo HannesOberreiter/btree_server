@@ -16,7 +16,6 @@ import {
   env,
   frontend,
 } from '../../config/environment.config.js';
-import { MailServer } from '../../app.bootstrap.js';
 import { autoFill } from '../utils/autofill.util.js';
 import { Company } from '../models/company.model.js';
 import { CompanyBee } from '../models/company_bee.model.js';
@@ -25,6 +24,7 @@ import { User } from '../models/user.model.js';
 import { DiscourseSSO } from '../../services/discourse.service.js';
 import { ENVIRONMENT } from '../../config/constants.config.js';
 import { GoogleAuth, federatedUser } from '../../services/federated.service.js';
+import { MailService } from '../../services/mail.service.js';
 
 export default class AuthController {
   static async confirmMail(req: FastifyRequest, reply: FastifyReply) {
@@ -53,7 +53,7 @@ export default class AuthController {
     }
     const result = await resetMail(u.id);
 
-    const mail = await MailServer.sendMail({
+    const mail = await MailService.getInstance().sendMail({
       to: result.email,
       lang: result.lang,
       subject: 'pw_reset',
@@ -100,7 +100,7 @@ export default class AuthController {
       return httpErrors.Forbidden('Reset key too old!');
     }
     const result = await resetPassword(u.id, password);
-    await MailServer.sendMail({
+    await MailService.getInstance().sendMail({
       to: result.email,
       lang: result.lang,
       subject: 'pw_reseted',
@@ -141,7 +141,7 @@ export default class AuthController {
       await autoFill(trx, c.id, autofillLang);
     });
 
-    const mail = await MailServer.sendMail({
+    const mail = await MailService.getInstance().sendMail({
       to: inputUser.email,
       lang: inputUser.lang,
       subject: 'register',

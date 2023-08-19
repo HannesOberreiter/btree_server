@@ -1,4 +1,4 @@
-exports.up = function (knex) {
+export const up = function (knex) {
   return knex.schema.createTable('bees', (t) => {
     t.increments('id').primary().unsigned();
     t.string('firstname', 45);
@@ -14,7 +14,7 @@ exports.up = function (knex) {
     t.boolean('state')
       .defaultTo(0)
       .comment(
-        'Variable to close Accounts without deleting user for history (multiple user in one company)'
+        'Variable to close Accounts without deleting user for history (multiple user in one company)',
       );
 
     // user settings
@@ -23,7 +23,7 @@ exports.up = function (knex) {
     t.boolean('acdate')
       .defaultTo(0)
       .comment(
-        'If VIS Date (AUSTRIA) is shown in calendar or not, also for newsletter reminder'
+        'If VIS Date (AUSTRIA) is shown in calendar or not, also for newsletter reminder',
       );
     t.boolean('newsletter').defaultTo(0);
     t.boolean('todo')
@@ -32,14 +32,14 @@ exports.up = function (knex) {
     t.boolean('sound')
       .defaultTo(0)
       .comment(
-        'If user wants to sounds when action is saved succefully or on error etc'
+        'If user wants to sounds when action is saved succefully or on error etc',
       );
     t.boolean('tablexscroll')
       .defaultTo(1)
       .comment('If user want to allow horizontal scrolling in tables');
 
     t.string('source', 45).comment(
-      'User Registration Source, 1=-; 2=Recommended by colleague; 3=Search Engine; 4=Social Media; 5=Ads; 6=Magazine; 7=App Store; Empty or other Text given'
+      'User Registration Source, 1=-; 2=Recommended by colleague; 3=Search Engine; 4=Social Media; 5=Ads; 6=Magazine; 7=App Store; Empty or other Text given',
     );
 
     t.timestamp('last_visit').nullable().defaultTo(knex.fn.now());
@@ -55,7 +55,7 @@ exports.up = function (knex) {
   });
 };
 
-exports.down = function (knex) {
+export const down = function (knex) {
   knex.schema.alterTable('bees', (t) => {
     t.dropForeign('saved_company');
   });

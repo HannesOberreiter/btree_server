@@ -5,7 +5,7 @@ const {
   expectations,
   doQueryRequest,
   login,
-} = require(process.cwd() + '/test/utils');
+} = require(process.cwd() + '/test/utils/index.cjs');
 
 describe('Calendar routes', function () {
   const route = '/api/v1/calendar';

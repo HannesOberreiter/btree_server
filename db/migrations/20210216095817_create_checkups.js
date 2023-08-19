@@ -1,4 +1,4 @@
-exports.up = function (knex) {
+export const up = function (knex) {
   return knex.schema.createTable('checkups', (t) => {
     t.increments('id').primary().unsigned();
 
@@ -18,7 +18,7 @@ exports.up = function (knex) {
     t.decimal('swarm', 3, 1);
 
     t.string('varroa', 12).comment(
-      'Varchar old system had strings in it needs to be cleaned out.'
+      'Varchar old system had strings in it needs to be cleaned out.',
     );
     t.integer('strong', 12);
 
@@ -75,7 +75,7 @@ exports.up = function (knex) {
   });
 };
 
-exports.down = function (knex) {
+export const down = function (knex) {
   knex.schema.alterTable('checkups', (t) => {
     t.dropForeign('user_id');
     t.dropForeign('bee_id');

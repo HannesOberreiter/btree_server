@@ -99,8 +99,7 @@ export class Application {
       if (
         req.url.indexOf('external') >= 0 ||
         req.url.indexOf('auth/google/callback') >= 0 ||
-        env === ENVIRONMENT.development ||
-        env === ENVIRONMENT.ci
+        env === ENVIRONMENT.development
       ) {
         reply.header('Access-Control-Allow-Origin', '*');
       } else {

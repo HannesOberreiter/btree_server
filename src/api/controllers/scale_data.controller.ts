@@ -4,7 +4,7 @@ import { getCompany } from '../utils/api.util.js';
 import { isPremium } from '../utils/premium.util.js';
 import { Scale } from '../models/scale.model.js';
 import { User } from '../models/user.model.js';
-import { MailServer } from '../../app.bootstrap.js';
+import { MailService } from '../../services/mail.service.js';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import httpErrors from 'http-errors';
 
@@ -55,7 +55,7 @@ export default class ScaleDataController {
                   'company_bee.user_id': company.id,
                 });
               user.forEach((u) => {
-                MailServer.sendMail({
+                MailService.getInstance().sendMail({
                   to: u.email,
                   lang: u.lang,
                   subject: 'weight_warning',

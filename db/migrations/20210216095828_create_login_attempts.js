@@ -1,4 +1,4 @@
-exports.up = function (knex) {
+export const up = function (knex) {
   return knex.schema.createTable('login_attempts', (t) => {
     t.increments('id').primary().unsigned();
 
@@ -12,7 +12,7 @@ exports.up = function (knex) {
   });
 };
 
-exports.down = function (knex) {
+export const down = function (knex) {
   knex.schema.alterTable('login_attempts', (t) => {
     t.dropForeign('bee_id');
   });

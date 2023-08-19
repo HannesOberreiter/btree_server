@@ -1,14 +1,20 @@
 const request = require('supertest');
 const { expect } = require('chai');
 const { doRequest, expectations, doQueryRequest } = require(process.cwd() +
-  '/test/utils');
+  '/test/utils/index.cjs');
 
 const testInsert = {
-  name: 'TestApiary' + new Date().toISOString(),
+  name: 'Hive',
+  apiary_id: 1,
+  date: new Date().toISOString().slice(0, 10),
+  source_id: 1,
+  type_id: 1,
+  start: 0,
+  repeat: 10,
 };
 
-describe('Apiary routes', function () {
-  const route = '/api/v1/apiary';
+describe('Hive routes', function () {
+  const route = '/api/v1/hive';
   let accessToken, insertId;
 
   before(function (done) {
@@ -33,8 +39,8 @@ describe('Apiary routes', function () {
           testInsert,
           function (err, res) {
             expect(res.statusCode).to.eqls(200);
-            expect(res.body).to.has.property('id');
-            insertId = res.body.id;
+            expect(res.body).to.be.a('Array');
+            insertId = res.body[0];
             done();
           },
         );
@@ -42,7 +48,7 @@ describe('Apiary routes', function () {
     );
   });
 
-  describe('/api/v1/apiary/', () => {
+  describe('/api/v1/hive/', () => {
     it(`get 401 - no header`, function (done) {
       doQueryRequest(
         request.agent(global.server),
@@ -79,7 +85,7 @@ describe('Apiary routes', function () {
         route,
         null,
         null,
-        null,
+        { ids: [insertId], data: {} },
         function (err, res) {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
@@ -104,7 +110,7 @@ describe('Apiary routes', function () {
       );
     });
 
-    it(`post 400 - no name`, function (done) {
+    it(`post 400 - no data`, function (done) {
       doRequest(
         agent,
         'post',
@@ -114,7 +120,6 @@ describe('Apiary routes', function () {
         null,
         function (err, res) {
           expect(res.statusCode).to.eqls(400);
-          expectations(res, 'name', 'Invalid value');
           done();
         },
       );
@@ -144,7 +149,9 @@ describe('Apiary routes', function () {
         accessToken,
         {
           ids: [insertId],
-          data: { name: 'test2' },
+          data: {
+            name: 'Hive2',
+          },
         },
         function (err, res) {
           expect(res.statusCode).to.eqls(200);
@@ -155,7 +162,7 @@ describe('Apiary routes', function () {
     });
   });
 
-  describe('/api/v1/apiary/:id', () => {
+  describe('/api/v1/hive/:id', () => {
     it(`401 - no header`, function (done) {
       doQueryRequest(
         request.agent(global.server),
@@ -188,7 +195,42 @@ describe('Apiary routes', function () {
     });
   });
 
-  describe('/api/v1/apiary/batchGet', () => {
+  describe('/api/v1/hive/task/:id', () => {
+    it(`401 - no header`, function (done) {
+      doQueryRequest(
+        request.agent(global.server),
+        route + '/task',
+        insertId,
+        null,
+        null,
+        function (err, res) {
+          expect(res.statusCode).to.eqls(401);
+          expect(res.errors, 'JsonWebTokenError');
+          done();
+        },
+      );
+    });
+    it(`200 - success`, function (done) {
+      doQueryRequest(
+        agent,
+        route + '/task',
+        insertId,
+        accessToken,
+        null,
+        function (err, res) {
+          expect(res.statusCode).to.eqls(200);
+          expect(res.body).to.has.property('harvest');
+          expect(res.body).to.has.property('feed');
+          expect(res.body).to.has.property('treatment');
+          expect(res.body).to.has.property('checkup');
+          expect(res.body).to.has.property('movedate');
+          done();
+        },
+      );
+    });
+  });
+
+  describe('/api/v1/hive/batchGet', () => {
     it(`401 - no header`, function (done) {
       doRequest(
         request.agent(global.server),
@@ -236,7 +278,55 @@ describe('Apiary routes', function () {
     });
   });
 
-  describe('/api/v1/apiary/batchDelete', () => {
+  describe('/api/v1/hive/updatePosition', () => {
+    it(`401 - no header`, function (done) {
+      doRequest(
+        request.agent(global.server),
+        'patch',
+        route + '/updatePosition',
+        null,
+        null,
+        { data: [{ position: 0, id: insertId }] },
+        function (err, res) {
+          expect(res.statusCode).to.eqls(401);
+          expect(res.errors, 'JsonWebTokenError');
+          done();
+        },
+      );
+    });
+    it(`400 - missing ids`, function (done) {
+      doRequest(
+        agent,
+        'patch',
+        route + '/updatePosition',
+        null,
+        null,
+        null,
+        function (err, res) {
+          expect(res.statusCode).to.eqls(400);
+          expectations(res, 'data', 'Invalid value');
+          done();
+        },
+      );
+    });
+    it(`200 - success`, function (done) {
+      doRequest(
+        agent,
+        'patch',
+        route + '/updatePosition',
+        null,
+        accessToken,
+        { data: [{ position: 0, id: insertId }] },
+        function (err, res) {
+          expect(res.statusCode).to.eqls(200);
+          expect(res.body[0]).to.equal(1);
+          done();
+        },
+      );
+    });
+  });
+
+  describe('/api/v1/hive/batchDelete', () => {
     it(`401 - no header`, function (done) {
       doRequest(
         request.agent(global.server),
@@ -284,7 +374,7 @@ describe('Apiary routes', function () {
     });
   });
 
-  describe('/api/v1/apiary/status', () => {
+  describe('/api/v1/hive/status', () => {
     it(`401 - no header`, function (done) {
       doRequest(
         request.agent(global.server),

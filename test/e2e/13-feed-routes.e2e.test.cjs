@@ -1,20 +1,21 @@
 const request = require('supertest');
 const { expect } = require('chai');
 const { doRequest, expectations, doQueryRequest } = require(process.cwd() +
-  '/test/utils');
+  '/test/utils/index.cjs');
 
 const testInsert = {
-  name: 'testQueen',
-  hive_id: 1,
+  hive_ids: [1],
   date: new Date().toISOString().slice(0, 10),
-  race_id: 1,
-  mating_id: 1,
-  start: 0,
-  repeat: 10,
+  amount: 12,
+  type_id: 1,
+  note: '----',
+  url: '',
+  repeat: 1,
+  interval: 2,
 };
 
-describe('Queen routes', function () {
-  const route = '/api/v1/queen';
+describe('Feed routes', function () {
+  const route = '/api/v1/feed';
   let accessToken, insertId;
 
   before(function (done) {
@@ -48,7 +49,7 @@ describe('Queen routes', function () {
     );
   });
 
-  describe('/api/v1/queen/', () => {
+  describe('/api/v1/feed/', () => {
     it(`get 401 - no header`, function (done) {
       doQueryRequest(
         request.agent(global.server),
@@ -145,72 +146,7 @@ describe('Queen routes', function () {
     });
   });
 
-  describe('/api/v1/queen/stats', () => {
-    it(`get 401 - no header`, function (done) {
-      doQueryRequest(
-        request.agent(global.server),
-        route + '/stats',
-        null,
-        null,
-        null,
-        function (err, res) {
-          expect(res.statusCode).to.eqls(401);
-          expect(res.errors, 'JsonWebTokenError');
-          done();
-        },
-      );
-    });
-
-    it(`get 200 - success`, function (done) {
-      doQueryRequest(
-        agent,
-        route + '/stats',
-        null,
-        accessToken,
-        null,
-        function (err, res) {
-          expect(res.statusCode).to.eqls(200);
-          expect(res.body.results).to.be.a('Array');
-          expect(res.body.total).to.be.a('number');
-          done();
-        },
-      );
-    });
-  });
-
-  describe('/api/v1/queen/pedigree/:id', () => {
-    it(`get 401 - no header`, function (done) {
-      doQueryRequest(
-        request.agent(global.server),
-        route + '/pedigree/7850',
-        null,
-        null,
-        null,
-        function (err, res) {
-          expect(res.statusCode).to.eqls(401);
-          expect(res.errors, 'JsonWebTokenError');
-          done();
-        },
-      );
-    });
-
-    it(`get 200 - success`, function (done) {
-      doQueryRequest(
-        agent,
-        route + '/pedigree/7850',
-        null,
-        accessToken,
-        null,
-        function (err, res) {
-          expect(res.statusCode).to.eqls(200);
-          expect(res.body).to.be.a('Array');
-          done();
-        },
-      );
-    });
-  });
-
-  describe('/api/v1/queen/batchGet', () => {
+  describe('/api/v1/feed/batchGet', () => {
     it(`401 - no header`, function (done) {
       doRequest(
         request.agent(global.server),
@@ -258,7 +194,7 @@ describe('Queen routes', function () {
     });
   });
 
-  describe('/api/v1/queen/status', () => {
+  describe('/api/v1/feed/status', () => {
     it(`401 - no header`, function (done) {
       doRequest(
         request.agent(global.server),
@@ -306,7 +242,55 @@ describe('Queen routes', function () {
     });
   });
 
-  describe('/api/v1/queen/batchDelete', () => {
+  describe('/api/v1/feed/date', () => {
+    it(`401 - no header`, function (done) {
+      doRequest(
+        request.agent(global.server),
+        'patch',
+        route + '/date',
+        null,
+        null,
+        { ids: [], start: testInsert.date, end: testInsert.date },
+        function (err, res) {
+          expect(res.statusCode).to.eqls(401);
+          expect(res.errors, 'JsonWebTokenError');
+          done();
+        },
+      );
+    });
+    it(`400 - missing ids`, function (done) {
+      doRequest(
+        agent,
+        'patch',
+        route + '/date',
+        null,
+        null,
+        null,
+        function (err, res) {
+          expect(res.statusCode).to.eqls(400);
+          expectations(res, 'ids', 'Invalid value');
+          done();
+        },
+      );
+    });
+    it(`200 - success`, function (done) {
+      doRequest(
+        agent,
+        'patch',
+        route + '/date',
+        null,
+        accessToken,
+        { ids: [insertId], start: testInsert.date, end: testInsert.date },
+        function (err, res) {
+          expect(res.statusCode).to.eqls(200);
+          expect(res.body).to.equal(1);
+          done();
+        },
+      );
+    });
+  });
+
+  describe('/api/v1/feed/batchDelete', () => {
     it(`401 - no header`, function (done) {
       doRequest(
         request.agent(global.server),
@@ -348,54 +332,6 @@ describe('Queen routes', function () {
         function (err, res) {
           expect(res.statusCode).to.eqls(200);
           expect(res.body).to.be.a('Array');
-          done();
-        },
-      );
-    });
-  });
-
-  describe('/api/v1/queen/status', () => {
-    it(`401 - no header`, function (done) {
-      doRequest(
-        request.agent(global.server),
-        'patch',
-        route + '/status',
-        null,
-        null,
-        { ids: [], status: true },
-        function (err, res) {
-          expect(res.statusCode).to.eqls(401);
-          expect(res.errors, 'JsonWebTokenError');
-          done();
-        },
-      );
-    });
-    it(`400 - missing ids`, function (done) {
-      doRequest(
-        agent,
-        'patch',
-        route + '/status',
-        null,
-        null,
-        null,
-        function (err, res) {
-          expect(res.statusCode).to.eqls(400);
-          expectations(res, 'ids', 'Invalid value');
-          done();
-        },
-      );
-    });
-    it(`200 - success`, function (done) {
-      doRequest(
-        agent,
-        'patch',
-        route + '/status',
-        null,
-        accessToken,
-        { ids: [insertId], status: false },
-        function (err, res) {
-          expect(res.statusCode).to.eqls(200);
-          expect(res.body).to.equal(1);
           done();
         },
       );

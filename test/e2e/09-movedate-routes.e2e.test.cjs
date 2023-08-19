@@ -1,16 +1,16 @@
 const request = require('supertest');
 const { expect } = require('chai');
 const { doRequest, expectations, doQueryRequest } = require(process.cwd() +
-  '/test/utils');
+  '/test/utils/index.cjs');
 
 const testInsert = {
-  date: new Date().toISOString().replace('Z', '').replace('T', ' '),
-  detail_id: 1,
-  type_id: 1,
+  hive_ids: [2, 3],
+  apiary_id: 1,
+  date: new Date().toISOString().slice(0, 10),
 };
 
-describe('Rearing routes', function () {
-  const route = '/api/v1/rearing';
+describe('Movedate routes', function () {
+  const route = '/api/v1/movedate';
   let accessToken, insertId;
 
   before(function (done) {
@@ -44,7 +44,7 @@ describe('Rearing routes', function () {
     );
   });
 
-  describe('/api/v1/rearing/', () => {
+  describe('/api/v1/movedate/', () => {
     it(`get 401 - no header`, function (done) {
       doQueryRequest(
         request.agent(global.server),
@@ -81,7 +81,7 @@ describe('Rearing routes', function () {
         route,
         null,
         null,
-        { ids: [insertId], data: {} },
+        { ids: [insertId] },
         function (err, res) {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
@@ -141,7 +141,7 @@ describe('Rearing routes', function () {
     });
   });
 
-  describe('/api/v1/rearing/batchGet', () => {
+  describe('/api/v1/movedate/batchGet', () => {
     it(`401 - no header`, function (done) {
       doRequest(
         request.agent(global.server),
@@ -189,7 +189,7 @@ describe('Rearing routes', function () {
     });
   });
 
-  describe('/api/v1/rearing/date', () => {
+  describe('/api/v1/movedate/date', () => {
     it(`401 - no header`, function (done) {
       doRequest(
         request.agent(global.server),
@@ -197,7 +197,7 @@ describe('Rearing routes', function () {
         route + '/date',
         null,
         null,
-        { ids: [], start: testInsert.date, end: testInsert.date },
+        { ids: [], start: testInsert.date },
         function (err, res) {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
@@ -227,7 +227,7 @@ describe('Rearing routes', function () {
         route + '/date',
         null,
         accessToken,
-        { ids: [insertId], start: testInsert.date, end: testInsert.date },
+        { ids: [insertId], start: testInsert.date },
         function (err, res) {
           expect(res.statusCode).to.eqls(200);
           expect(res.body).to.equal(1);
@@ -237,7 +237,7 @@ describe('Rearing routes', function () {
     });
   });
 
-  describe('/api/v1/rearing/batchDelete', () => {
+  describe('/api/v1/movedate/batchDelete', () => {
     it(`401 - no header`, function (done) {
       doRequest(
         request.agent(global.server),

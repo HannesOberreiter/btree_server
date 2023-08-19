@@ -1,9 +1,8 @@
 import { Model } from 'objection';
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const AjvValidator = require('objection').AjvValidator;
+import { AjvValidator } from 'objection';
 import addFormats from 'ajv-formats';
 import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc';
+import utc from 'dayjs/plugin/utc.js';
 dayjs.extend(utc);
 
 export class BaseModel extends Model {
@@ -36,13 +35,12 @@ export class BaseModel extends Model {
   static createValidator() {
     return new AjvValidator({
       onCreateAjv: (ajv) => {
-        addFormats(ajv);
+        addFormats.default(ajv);
       },
       options: {
         allErrors: true,
         validateSchema: true,
         ownProperties: true,
-        v5: false,
       },
     });
   }

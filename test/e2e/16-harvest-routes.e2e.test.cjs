@@ -1,16 +1,21 @@
 const request = require('supertest');
 const { expect } = require('chai');
 const { doRequest, expectations, doQueryRequest } = require(process.cwd() +
-  '/test/utils');
+  '/test/utils/index.cjs');
 
 const testInsert = {
-  hive_ids: [2, 3],
-  apiary_id: 1,
+  hive_ids: [1],
   date: new Date().toISOString().slice(0, 10),
+  amount: 12,
+  type_id: 1,
+  note: '----',
+  url: '',
+  repeat: 1,
+  interval: 2,
 };
 
-describe('Movedate routes', function () {
-  const route = '/api/v1/movedate';
+describe('Harvest routes', function () {
+  const route = '/api/v1/harvest';
   let accessToken, insertId;
 
   before(function (done) {
@@ -44,7 +49,7 @@ describe('Movedate routes', function () {
     );
   });
 
-  describe('/api/v1/movedate/', () => {
+  describe('/api/v1/harvest/', () => {
     it(`get 401 - no header`, function (done) {
       doQueryRequest(
         request.agent(global.server),
@@ -81,7 +86,7 @@ describe('Movedate routes', function () {
         route,
         null,
         null,
-        { ids: [insertId] },
+        { ids: [insertId], data: {} },
         function (err, res) {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
@@ -141,7 +146,7 @@ describe('Movedate routes', function () {
     });
   });
 
-  describe('/api/v1/movedate/batchGet', () => {
+  describe('/api/v1/harvest/batchGet', () => {
     it(`401 - no header`, function (done) {
       doRequest(
         request.agent(global.server),
@@ -189,7 +194,55 @@ describe('Movedate routes', function () {
     });
   });
 
-  describe('/api/v1/movedate/date', () => {
+  describe('/api/v1/harvest/status', () => {
+    it(`401 - no header`, function (done) {
+      doRequest(
+        request.agent(global.server),
+        'patch',
+        route + '/status',
+        null,
+        null,
+        { ids: [], status: true },
+        function (err, res) {
+          expect(res.statusCode).to.eqls(401);
+          expect(res.errors, 'JsonWebTokenError');
+          done();
+        },
+      );
+    });
+    it(`400 - missing ids`, function (done) {
+      doRequest(
+        agent,
+        'patch',
+        route + '/status',
+        null,
+        null,
+        null,
+        function (err, res) {
+          expect(res.statusCode).to.eqls(400);
+          expectations(res, 'ids', 'Invalid value');
+          done();
+        },
+      );
+    });
+    it(`200 - success`, function (done) {
+      doRequest(
+        agent,
+        'patch',
+        route + '/status',
+        null,
+        accessToken,
+        { ids: [insertId], status: false },
+        function (err, res) {
+          expect(res.statusCode).to.eqls(200);
+          expect(res.body).to.equal(1);
+          done();
+        },
+      );
+    });
+  });
+
+  describe('/api/v1/harvest/date', () => {
     it(`401 - no header`, function (done) {
       doRequest(
         request.agent(global.server),
@@ -197,7 +250,7 @@ describe('Movedate routes', function () {
         route + '/date',
         null,
         null,
-        { ids: [], start: testInsert.date },
+        { ids: [], start: testInsert.date, end: testInsert.date },
         function (err, res) {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
@@ -227,7 +280,7 @@ describe('Movedate routes', function () {
         route + '/date',
         null,
         accessToken,
-        { ids: [insertId], start: testInsert.date },
+        { ids: [insertId], start: testInsert.date, end: testInsert.date },
         function (err, res) {
           expect(res.statusCode).to.eqls(200);
           expect(res.body).to.equal(1);
@@ -237,7 +290,7 @@ describe('Movedate routes', function () {
     });
   });
 
-  describe('/api/v1/movedate/batchDelete', () => {
+  describe('/api/v1/harvest/batchDelete', () => {
     it(`401 - no header`, function (done) {
       doRequest(
         request.agent(global.server),
@@ -278,7 +331,7 @@ describe('Movedate routes', function () {
         { ids: [insertId] },
         function (err, res) {
           expect(res.statusCode).to.eqls(200);
-          expect(res.body).to.equal(1);
+          expect(res.body).to.be.a('Array');
           done();
         },
       );

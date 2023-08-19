@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { map } from 'lodash';
+import { map } from 'lodash-es';
 import httpErrors from 'http-errors';
 
 import { checkMySQLError } from '../utils/error.util.js';
@@ -9,9 +9,9 @@ import { CompanyBee } from '../models/company_bee.model.js';
 import { reviewPassword, fetchUser, getPaidRank } from '../utils/login.util.js';
 import { buildUserAgent, createHashedPassword } from '../utils/auth.util.js';
 import { deleteCompany, deleteUser } from '../utils/delete.util.js';
-import { MailServer } from '../../app.bootstrap.js';
 import { FederatedCredential } from '../models/federated_credential.js';
 import { RedisServer } from '../../servers/redis.server.js';
+import { MailService } from '../../services/mail.service.js';
 
 export default class UserController {
   static async getFederatedCredentials(
@@ -154,7 +154,7 @@ export default class UserController {
       const user = await fetchUser('', req.session.user.bee_id);
       if ('salt' in body) {
         try {
-          await MailServer.sendMail({
+          await MailService.getInstance().sendMail({
             to: user['email'],
             lang: user['lang'],
             subject: 'pw_reseted',

@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { map } from 'lodash';
+import { map } from 'lodash-es';
 
 import { Checkup } from '../models/checkup.model.js';
 import { Hive } from '../models/hive.model.js';
