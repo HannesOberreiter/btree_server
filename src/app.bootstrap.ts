@@ -41,12 +41,20 @@ async function gracefulShutdown() {
   //process.on('SIGTERM', afterFirstSignal);
   //process.on('SIGINT', afterFirstSignal);
   try {
-    await Promise.allSettled([
-      vectorServer.stop(),
-      dbServer.stop(),
-      redisServer.stop(),
-      httpServer.stop(),
-    ]);
+    if (env === 'ci') {
+      await Promise.allSettled([
+        dbServer.stop(),
+        redisServer.stop(),
+        httpServer.stop(),
+      ]);
+    } else {
+      await Promise.allSettled([
+        vectorServer.stop(),
+        dbServer.stop(),
+        redisServer.stop(),
+        httpServer.stop(),
+      ]);
+    }
   } catch (error) {
     console.error('Failed to stop server', error);
   }
