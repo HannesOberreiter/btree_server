@@ -1,21 +1,15 @@
 const request = require('supertest');
 const { expect } = require('chai');
 const { doRequest, expectations, doQueryRequest } = require(process.cwd() +
-  '/test/utils');
+  '/test/utils/index.cjs');
 
 const testInsert = {
-  hive_ids: [1],
-  date: new Date().toISOString().slice(0, 10),
-  amount: 12,
-  type_id: 1,
-  note: '----',
-  url: '',
-  repeat: 1,
-  interval: 2,
+  name: 'TestType',
+  note: '',
 };
 
-describe('Harvest routes', function () {
-  const route = '/api/v1/harvest';
+describe('Rearing Type routes', function () {
+  const route = '/api/v1/rearing_type';
   let accessToken, insertId;
 
   before(function (done) {
@@ -40,8 +34,8 @@ describe('Harvest routes', function () {
           testInsert,
           function (err, res) {
             expect(res.statusCode).to.eqls(200);
-            expect(res.body).to.be.a('Array');
-            insertId = res.body[0];
+            expect(res.body).to.be.a('Object');
+            insertId = res.body.id;
             done();
           },
         );
@@ -49,7 +43,7 @@ describe('Harvest routes', function () {
     );
   });
 
-  describe('/api/v1/harvest/', () => {
+  describe('/api/v1/rearing_type/', () => {
     it(`get 401 - no header`, function (done) {
       doQueryRequest(
         request.agent(global.server),
@@ -135,7 +129,7 @@ describe('Harvest routes', function () {
         accessToken,
         {
           ids: [insertId],
-          data: {},
+          data: { name: 'newTypeName' },
         },
         function (err, res) {
           expect(res.statusCode).to.eqls(200);
@@ -146,7 +140,7 @@ describe('Harvest routes', function () {
     });
   });
 
-  describe('/api/v1/harvest/batchGet', () => {
+  describe('/api/v1/rearing_type/batchGet', () => {
     it(`401 - no header`, function (done) {
       doRequest(
         request.agent(global.server),
@@ -194,103 +188,7 @@ describe('Harvest routes', function () {
     });
   });
 
-  describe('/api/v1/harvest/status', () => {
-    it(`401 - no header`, function (done) {
-      doRequest(
-        request.agent(global.server),
-        'patch',
-        route + '/status',
-        null,
-        null,
-        { ids: [], status: true },
-        function (err, res) {
-          expect(res.statusCode).to.eqls(401);
-          expect(res.errors, 'JsonWebTokenError');
-          done();
-        },
-      );
-    });
-    it(`400 - missing ids`, function (done) {
-      doRequest(
-        agent,
-        'patch',
-        route + '/status',
-        null,
-        null,
-        null,
-        function (err, res) {
-          expect(res.statusCode).to.eqls(400);
-          expectations(res, 'ids', 'Invalid value');
-          done();
-        },
-      );
-    });
-    it(`200 - success`, function (done) {
-      doRequest(
-        agent,
-        'patch',
-        route + '/status',
-        null,
-        accessToken,
-        { ids: [insertId], status: false },
-        function (err, res) {
-          expect(res.statusCode).to.eqls(200);
-          expect(res.body).to.equal(1);
-          done();
-        },
-      );
-    });
-  });
-
-  describe('/api/v1/harvest/date', () => {
-    it(`401 - no header`, function (done) {
-      doRequest(
-        request.agent(global.server),
-        'patch',
-        route + '/date',
-        null,
-        null,
-        { ids: [], start: testInsert.date, end: testInsert.date },
-        function (err, res) {
-          expect(res.statusCode).to.eqls(401);
-          expect(res.errors, 'JsonWebTokenError');
-          done();
-        },
-      );
-    });
-    it(`400 - missing ids`, function (done) {
-      doRequest(
-        agent,
-        'patch',
-        route + '/date',
-        null,
-        null,
-        null,
-        function (err, res) {
-          expect(res.statusCode).to.eqls(400);
-          expectations(res, 'ids', 'Invalid value');
-          done();
-        },
-      );
-    });
-    it(`200 - success`, function (done) {
-      doRequest(
-        agent,
-        'patch',
-        route + '/date',
-        null,
-        accessToken,
-        { ids: [insertId], start: testInsert.date, end: testInsert.date },
-        function (err, res) {
-          expect(res.statusCode).to.eqls(200);
-          expect(res.body).to.equal(1);
-          done();
-        },
-      );
-    });
-  });
-
-  describe('/api/v1/harvest/batchDelete', () => {
+  describe('/api/v1/rearing_type/batchDelete', () => {
     it(`401 - no header`, function (done) {
       doRequest(
         request.agent(global.server),
@@ -331,7 +229,7 @@ describe('Harvest routes', function () {
         { ids: [insertId] },
         function (err, res) {
           expect(res.statusCode).to.eqls(200);
-          expect(res.body).to.be.a('Array');
+          expect(res.body).to.equal(1);
           done();
         },
       );

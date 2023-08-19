@@ -1,4 +1,4 @@
-exports.up = function (knex) {
+export const up = function (knex) {
   return knex.schema.createTable('apiaries', (t) => {
     t.increments('id').primary().unsigned();
     t.string('name', 45).index();
@@ -37,7 +37,7 @@ exports.up = function (knex) {
   });
 };
 
-exports.down = function (knex) {
+export const down = function (knex) {
   knex.schema.alterTable('apiaries', (t) => {
     t.dropForeign('bee_id');
     t.dropForeign('edit_id');

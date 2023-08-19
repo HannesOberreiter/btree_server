@@ -1,4 +1,4 @@
-import Redis, { RedisOptions } from 'ioredis';
+import { RedisOptions, Redis } from 'ioredis';
 
 import { env, redisConfig } from '../config/environment.config.js';
 import { Logger } from '../services/logger.service.js';
@@ -40,12 +40,14 @@ export class RedisServer {
       });
     }
   }
-  stop(): void {
+  async stop(): Promise<void> {
     try {
-      RedisServer.client.save();
-      RedisServer.client.quit();
+      this.logger.log('debug', 'Closing redis connection', {});
+      await RedisServer.client.save();
+      await RedisServer.client.quit();
+      this.logger.log('debug', 'Closed redis connection', {});
     } catch (error) {
-      this.logger.log('error', 'Redis connection error', { error });
+      this.logger.log('error', 'Redis closing error', { error });
     }
   }
 }

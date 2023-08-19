@@ -57,9 +57,11 @@ export class HTTPServer {
     }
   }
 
-  stop(callback = null): HttpServer | HttpsServer {
-    this.cron.gracefulShutdown();
-    this.app.log.info('Stopping server');
-    return this.app.close(callback);
+  async stop(): Promise<void> {
+    this.app.log.debug('Stopping HTTP server');
+    await this.cron.gracefulShutdown();
+    await this.app.close();
+    this.app.log.debug('HTTP server stopped');
+    return;
   }
 }

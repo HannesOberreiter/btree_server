@@ -2,11 +2,11 @@
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
-exports.up = function (knex) {
+export const up = function (knex) {
   return knex.schema.createTable('field_settings', (t) => {
     t.increments('id').primary().unsigned();
     t.json('settings').comment(
-      'Object contains tablename, field, boolean to indicate if field should be visible in frontend or not.'
+      'Object contains tablename, field, boolean to indicate if field should be visible in frontend or not.',
     );
     // Foreign Keys
     t.integer('bee_id').unsigned().nullable();
@@ -21,7 +21,7 @@ exports.up = function (knex) {
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
-exports.down = function (knex) {
+export const down = function (knex) {
   knex.schema.alterTable('field_settings', (t) => {
     t.dropForeign('bee_id');
   });

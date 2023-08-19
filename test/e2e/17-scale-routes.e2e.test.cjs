@@ -1,16 +1,19 @@
 const request = require('supertest');
 const { expect } = require('chai');
 const { doRequest, expectations, doQueryRequest } = require(process.cwd() +
-  '/test/utils');
+  '/test/utils/index.cjs');
 
 const testInsert = {
-  type_id: 1,
-  detail_id: 1,
-  position: 1,
+  hive_id: 1,
+  name: 'testScale',
+};
+const testInsert2 = {
+  hive_id: 1,
+  name: 'testScale2',
 };
 
-describe('Rearing Step routes', function () {
-  const route = '/api/v1/rearing_step';
+describe('Scale routes', function () {
+  const route = '/api/v1/scale';
   let accessToken, insertId;
 
   before(function (done) {
@@ -36,15 +39,41 @@ describe('Rearing Step routes', function () {
           function (err, res) {
             expect(res.statusCode).to.eqls(200);
             expect(res.body).to.be.a('Object');
-            insertId = res.body.id;
-            done();
+            doRequest(
+              agent,
+              'post',
+              route,
+              null,
+              accessToken,
+              testInsert2,
+              function (err, res) {
+                expect(res.statusCode).to.eqls(200);
+                expect(res.body).to.be.a('Object');
+                insertId = res.body.id;
+                done();
+              },
+            );
           },
         );
       },
     );
   });
 
-  describe('/api/v1/rearing_step/', () => {
+  describe('/api/v1/scale/', () => {
+    it(`get 401 - no header`, function (done) {
+      doQueryRequest(
+        request.agent(global.server),
+        route,
+        null,
+        null,
+        null,
+        function (err, res) {
+          expect(res.statusCode).to.eqls(401);
+          expect(res.errors, 'JsonWebTokenError');
+          done();
+        },
+      );
+    });
     it(`post 401 - no header`, function (done) {
       doRequest(
         request.agent(global.server),
@@ -60,6 +89,37 @@ describe('Rearing Step routes', function () {
         },
       );
     });
+    it(`patch 401 - no header`, function (done) {
+      doRequest(
+        request.agent(global.server),
+        'patch',
+        route,
+        null,
+        null,
+        { ids: [insertId], data: {} },
+        function (err, res) {
+          expect(res.statusCode).to.eqls(401);
+          expect(res.errors, 'JsonWebTokenError');
+          done();
+        },
+      );
+    });
+
+    it(`get 200 - success`, function (done) {
+      doQueryRequest(
+        agent,
+        route,
+        null,
+        accessToken,
+        null,
+        function (err, res) {
+          expect(res.statusCode).to.eqls(200);
+          expect(res.body).to.be.a('Array');
+          done();
+        },
+      );
+    });
+
     it(`post 400 - no data`, function (done) {
       doRequest(
         agent,
@@ -74,17 +134,35 @@ describe('Rearing Step routes', function () {
         },
       );
     });
+
+    it(`patch 200 - success`, function (done) {
+      doRequest(
+        agent,
+        'patch',
+        route,
+        null,
+        accessToken,
+        {
+          ids: [insertId],
+          data: { name: 'updatedName' },
+        },
+        function (err, res) {
+          expect(res.statusCode).to.eqls(200);
+          expect(res.body).to.equal(1);
+          done();
+        },
+      );
+    });
   });
 
-  describe('/api/v1/rearing_step/updatePosition', () => {
-    it(`401 - no header`, function (done) {
-      doRequest(
+  describe('/api/v1/scale/:id', () => {
+    it(`get 401 - no header`, function (done) {
+      doQueryRequest(
         request.agent(global.server),
-        'patch',
-        route + '/updatePosition',
+        route,
+        insertId,
         null,
         null,
-        { data: [] },
         function (err, res) {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
@@ -92,29 +170,29 @@ describe('Rearing Step routes', function () {
         },
       );
     });
-    it(`400 - missing value`, function (done) {
+    it(`delete 401 - no header`, function (done) {
       doRequest(
-        agent,
-        'patch',
-        route + '/updatePosition',
+        request.agent(global.server),
+        'delete',
+        route,
+        insertId,
         null,
-        null,
-        null,
+        testInsert,
         function (err, res) {
-          expect(res.statusCode).to.eqls(400);
-          expectations(res, 'data', 'Invalid value');
+          expect(res.statusCode).to.eqls(401);
+          expect(res.errors, 'JsonWebTokenError');
           done();
         },
       );
     });
-    it(`200 - success`, function (done) {
-      doRequest(
+
+    it(`get 200 - success`, function (done) {
+      doQueryRequest(
         agent,
-        'patch',
-        route + '/updatePosition',
-        null,
+        route,
+        insertId,
         accessToken,
-        { data: [{ id: insertId, position: 10, sleep_before: 0 }] },
+        null,
         function (err, res) {
           expect(res.statusCode).to.eqls(200);
           expect(res.body).to.be.a('Array');
@@ -122,33 +200,15 @@ describe('Rearing Step routes', function () {
         },
       );
     });
-  });
 
-  describe('/api/v1/rearing_step/:id', () => {
-    it(`401 - no header`, function (done) {
-      doRequest(
-        request.agent(global.server),
-        'delete',
-        route,
-        insertId,
-        null,
-        { ids: [] },
-        function (err, res) {
-          expect(res.statusCode).to.eqls(401);
-          expect(res.errors, 'JsonWebTokenError');
-          done();
-        },
-      );
-    });
-
-    it(`200 - success`, function (done) {
+    it(`delete 200 - success`, function (done) {
       doRequest(
         agent,
         'delete',
         route,
         insertId,
         accessToken,
-        {},
+        testInsert,
         function (err, res) {
           expect(res.statusCode).to.eqls(200);
           expect(res.body).to.equal(1);

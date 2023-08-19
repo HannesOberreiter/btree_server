@@ -5,11 +5,10 @@ import {
   StreamEntry,
 } from 'pino';
 import * as rfs from 'rotating-file-stream';
-import p from 'path';
-import pretty from 'pino-pretty';
 
 import { ENVIRONMENT } from '../config/constants.config.js';
-import { env } from '../config/environment.config.js';
+import { env, rootDirectory } from '../config/environment.config.js';
+import { stdout } from 'process';
 
 function logFileNameGenerator(time: number | Date, name: string) {
   if (!time) return `${name}.log`;
@@ -43,7 +42,7 @@ export class Logger {
             maxFiles: 90,
             immutable: true,
             history: `history-info-${env}.txt`,
-            path: p.join(__dirname, `../../logs`),
+            path: rootDirectory + '/logs',
           },
         ),
       },
@@ -56,7 +55,7 @@ export class Logger {
             maxFiles: 90,
             immutable: true,
             history: `history-error-${env}.txt`,
-            path: p.join(__dirname, `../../logs`),
+            path: rootDirectory + '/logs',
           },
         ),
       },
@@ -64,9 +63,8 @@ export class Logger {
 
     if (env === ENVIRONMENT.development) {
       streams.push({
-        stream: pretty({
-          colorize: true,
-        }),
+        level: 'debug',
+        stream: stdout,
       });
     }
 
@@ -102,7 +100,11 @@ export class Logger {
    * @param {string} message
    * @param {object} scope
    */
-  log(level: string, message: string, scope: undefined | unknown) {
+  log(
+    level: 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'fatal',
+    message: string,
+    scope: undefined | unknown,
+  ) {
     try {
       this.pino[level](scope, message);
     } catch (e) {

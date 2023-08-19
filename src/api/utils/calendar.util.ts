@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { intersection, round } from 'lodash';
+import { intersection, round } from 'lodash-es';
 
 import { DatabaseServer } from '../../servers/db.server.js';
 import { Todo } from '../models/todo.model.js';

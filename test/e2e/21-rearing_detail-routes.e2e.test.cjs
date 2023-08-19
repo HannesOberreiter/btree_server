@@ -1,19 +1,16 @@
 const request = require('supertest');
 const { expect } = require('chai');
 const { doRequest, expectations, doQueryRequest } = require(process.cwd() +
-  '/test/utils');
+  '/test/utils/index.cjs');
 
 const testInsert = {
-  hive_id: 1,
-  name: 'testScale',
-};
-const testInsert2 = {
-  hive_id: 1,
-  name: 'testScale2',
+  job: 'TestJob',
+  hour: 1,
+  note: '',
 };
 
-describe('Scale routes', function () {
-  const route = '/api/v1/scale';
+describe('Rearing Detail routes', function () {
+  const route = '/api/v1/rearing_detail';
   let accessToken, insertId;
 
   before(function (done) {
@@ -39,27 +36,15 @@ describe('Scale routes', function () {
           function (err, res) {
             expect(res.statusCode).to.eqls(200);
             expect(res.body).to.be.a('Object');
-            doRequest(
-              agent,
-              'post',
-              route,
-              null,
-              accessToken,
-              testInsert2,
-              function (err, res) {
-                expect(res.statusCode).to.eqls(200);
-                expect(res.body).to.be.a('Object');
-                insertId = res.body.id;
-                done();
-              },
-            );
+            insertId = res.body.id;
+            done();
           },
         );
       },
     );
   });
 
-  describe('/api/v1/scale/', () => {
+  describe('/api/v1/rearing_detail/', () => {
     it(`get 401 - no header`, function (done) {
       doQueryRequest(
         request.agent(global.server),
@@ -114,7 +99,8 @@ describe('Scale routes', function () {
         null,
         function (err, res) {
           expect(res.statusCode).to.eqls(200);
-          expect(res.body).to.be.a('Array');
+          expect(res.body.results).to.be.a('Array');
+          expect(res.body.total).to.be.a('number');
           done();
         },
       );
@@ -144,7 +130,7 @@ describe('Scale routes', function () {
         accessToken,
         {
           ids: [insertId],
-          data: { name: 'updatedName' },
+          data: { job: 'newJobName' },
         },
         function (err, res) {
           expect(res.statusCode).to.eqls(200);
@@ -155,29 +141,15 @@ describe('Scale routes', function () {
     });
   });
 
-  describe('/api/v1/scale/:id', () => {
-    it(`get 401 - no header`, function (done) {
-      doQueryRequest(
-        request.agent(global.server),
-        route,
-        insertId,
-        null,
-        null,
-        function (err, res) {
-          expect(res.statusCode).to.eqls(401);
-          expect(res.errors, 'JsonWebTokenError');
-          done();
-        },
-      );
-    });
-    it(`delete 401 - no header`, function (done) {
+  describe('/api/v1/rearing_detail/batchGet', () => {
+    it(`401 - no header`, function (done) {
       doRequest(
         request.agent(global.server),
-        'delete',
-        route,
-        insertId,
+        'post',
+        route + '/batchGet',
         null,
-        testInsert,
+        null,
+        { ids: [insertId] },
         function (err, res) {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
@@ -185,14 +157,29 @@ describe('Scale routes', function () {
         },
       );
     });
-
-    it(`get 200 - success`, function (done) {
-      doQueryRequest(
+    it(`400 - missing ids`, function (done) {
+      doRequest(
         agent,
-        route,
-        insertId,
-        accessToken,
+        'post',
+        route + '/batchGet',
         null,
+        null,
+        null,
+        function (err, res) {
+          expect(res.statusCode).to.eqls(400);
+          expectations(res, 'ids', 'Invalid value');
+          done();
+        },
+      );
+    });
+    it(`200 - success`, function (done) {
+      doRequest(
+        agent,
+        'post',
+        route + '/batchGet',
+        null,
+        accessToken,
+        { ids: [insertId] },
         function (err, res) {
           expect(res.statusCode).to.eqls(200);
           expect(res.body).to.be.a('Array');
@@ -200,15 +187,47 @@ describe('Scale routes', function () {
         },
       );
     });
+  });
 
-    it(`delete 200 - success`, function (done) {
+  describe('/api/v1/rearing_detail/batchDelete', () => {
+    it(`401 - no header`, function (done) {
+      doRequest(
+        request.agent(global.server),
+        'patch',
+        route + '/batchDelete',
+        null,
+        null,
+        { ids: [] },
+        function (err, res) {
+          expect(res.statusCode).to.eqls(401);
+          expect(res.errors, 'JsonWebTokenError');
+          done();
+        },
+      );
+    });
+    it(`400 - missing ids`, function (done) {
       doRequest(
         agent,
-        'delete',
-        route,
-        insertId,
+        'patch',
+        route + '/batchDelete',
+        null,
+        null,
+        null,
+        function (err, res) {
+          expect(res.statusCode).to.eqls(400);
+          expectations(res, 'ids', 'Invalid value');
+          done();
+        },
+      );
+    });
+    it(`200 - success`, function (done) {
+      doRequest(
+        agent,
+        'patch',
+        route + '/batchDelete',
+        null,
         accessToken,
-        testInsert,
+        { ids: [insertId] },
         function (err, res) {
           expect(res.statusCode).to.eqls(200);
           expect(res.body).to.equal(1);

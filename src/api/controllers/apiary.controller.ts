@@ -1,6 +1,6 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import httpErrors from 'http-errors';
-import { map } from 'lodash';
+import { map } from 'lodash-es';
 import dayjs from 'dayjs';
 
 import { Apiary } from '../models/apiary.model.js';

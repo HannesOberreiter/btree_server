@@ -1,9 +1,13 @@
 import * as nodemailer from 'nodemailer';
 import { readFileSync } from 'fs';
-import p from 'path';
 import httpErrors from 'http-errors';
 
-import { env, frontend, mailConfig } from '../config/environment.config.js';
+import {
+  env,
+  frontend,
+  mailConfig,
+  rootDirectory,
+} from '../config/environment.config.js';
 import { ENVIRONMENT } from '../config/constants.config.js';
 import { Logger } from './logger.service.js';
 
@@ -17,10 +21,19 @@ interface customMail {
 
 export class MailService {
   private _transporter: nodemailer.Transporter;
+  private static instance: MailService;
+
   baseUrl = frontend;
   private logger = Logger.getInstance();
 
-  constructor() {}
+  static getInstance(): MailService {
+    if (!this.instance) {
+      this.instance = new this();
+    }
+    return this.instance;
+  }
+
+  private constructor() {}
 
   async setup() {
     if (env === ENVIRONMENT.development || env === ENVIRONMENT.test) {
@@ -38,7 +51,7 @@ export class MailService {
   }
 
   private loadHtmlMail(mailName: string) {
-    const mailPath = p.join(__dirname, `../../mails/${mailName}.txt`);
+    const mailPath = rootDirectory + `/mails/${mailName}.txt`;
     try {
       return readFileSync(mailPath, 'utf-8');
     } catch (e) {
@@ -51,10 +64,7 @@ export class MailService {
   }
 
   private loadFooter(lang: string) {
-    const mailPath = p.join(
-      __dirname,
-      `../../mails/partials/footer_${lang}.txt`,
-    );
+    const mailPath = rootDirectory + `/mails/partials/footer_${lang}.txt`;
     try {
       return readFileSync(mailPath, 'utf-8');
     } catch (e) {

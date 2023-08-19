@@ -2,7 +2,7 @@ import {
   foxyOfficeKey,
   foxyOfficeUrl,
 } from '../../config/environment.config.js';
-import { MailServer } from '../../app.bootstrap.js';
+import { MailService } from '../../services/mail.service.js';
 import { Logger } from '../../services/logger.service.js';
 
 function buildBaseUrl(endpoint: string) {
@@ -100,7 +100,7 @@ export async function createInvoice(
     const result = await response.text();
 
     if (response.status === 200) {
-      MailServer.sendRawMail(
+      MailService.getInstance().sendRawMail(
         'office@btree.at',
         'New invoice created',
         result +

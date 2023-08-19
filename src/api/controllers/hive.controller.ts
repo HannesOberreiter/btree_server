@@ -1,6 +1,6 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 import httpErrors from 'http-errors';
-import { map } from 'lodash';
+import { map } from 'lodash-es';
 import dayjs from 'dayjs';
 
 import { Hive } from '../models/hive.model.js';

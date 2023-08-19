@@ -1,4 +1,4 @@
-exports.up = function (knex) {
+export const up = function (knex) {
   return knex.schema.createTable('scale_data', (t) => {
     t.increments('id').primary().unsigned();
 
@@ -18,7 +18,7 @@ exports.up = function (knex) {
   });
 };
 
-exports.down = function (knex) {
+export const down = function (knex) {
   knex.schema.alterTable('scale_data', (t) => {
     t.dropForeign('scale_id');
   });

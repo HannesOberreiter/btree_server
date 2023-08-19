@@ -1,5 +1,5 @@
 import { Treatment } from '../models/treatment.model.js';
-import { map } from 'lodash';
+import { map } from 'lodash-es';
 import { Hive } from '../models/hive.model.js';
 import dayjs from 'dayjs';
 import { FastifyReply, FastifyRequest } from 'fastify';

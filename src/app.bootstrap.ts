@@ -1,6 +1,7 @@
 import { env } from './config/environment.config.js';
 import { Application } from './config/app.config.js';
 import { Logger } from './services/logger.service.js';
+import closeWithGrace from 'close-with-grace';
 
 import { DatabaseServer } from './servers/db.server.js';
 import { RedisServer } from './servers/redis.server.js';
@@ -13,14 +14,12 @@ logger.log('debug', 'Starting server...', { label: 'Server' });
 
 const dbServer = DatabaseServer.getInstance();
 const redisServer = new RedisServer();
-const mailServer = new MailService();
+const mailServer = MailService.getInstance();
 
-let wrappedVectorServerForTesting;
-
+let vectorServer;
 if (env !== 'ci') {
-  const vectorServer = new VectorServer();
+  vectorServer = new VectorServer();
   vectorServer.start();
-  wrappedVectorServerForTesting = vectorServer;
 }
 
 dbServer.start();
@@ -31,17 +30,32 @@ const application = new Application();
 const httpServer = new HTTPServer(application.app);
 httpServer.start();
 
-const wrappedServerForTesting = httpServer;
-const wrappedHttpForTesting = httpServer.http;
-const wrappedSQLServerForTesting = dbServer;
-const wrappedRedisServerForTesting = redisServer;
-const wrappedMailServerForTesting = mailServer;
+closeWithGrace({ delay: 5000 }, async function ({ signal, err, manual }) {
+  if (err) {
+    console.error(err);
+  }
+  await gracefulShutdown();
+});
+
+async function gracefulShutdown() {
+  //process.on('SIGTERM', afterFirstSignal);
+  //process.on('SIGINT', afterFirstSignal);
+  try {
+    await Promise.allSettled([
+      vectorServer.stop(),
+      dbServer.stop(),
+      redisServer.stop(),
+      httpServer.stop(),
+    ]);
+  } catch (error) {
+    console.error('Failed to stop server', error);
+  }
+}
+
+const wrappedHttpForTesting = httpServer.app.server;
 
 export {
-  wrappedServerForTesting as boot,
+  gracefulShutdown,
+  httpServer as boot,
   wrappedHttpForTesting as server,
-  wrappedSQLServerForTesting as dbServer,
-  wrappedRedisServerForTesting as redisServer,
-  wrappedMailServerForTesting as MailServer,
-  wrappedVectorServerForTesting as vectorServer,
 };

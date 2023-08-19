@@ -1,12 +1,15 @@
 import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc.js';
 import { createHash } from 'crypto';
 import httpErrors from 'http-errors';
 
 import { User } from '../models/user.model.js';
 import { LoginAttemp } from '../models/login_attempt.model.js';
 import { checkMySQLError } from './error.util.js';
-import { MailServer } from '../../app.bootstrap.js';
+import { MailService } from '../../services/mail.service.js';
 import { CompanyBee } from '../models/company_bee.model.js';
+
+dayjs.extend(utc);
 
 const insertWrongPasswordTry = async (bee_id: number) => {
   const trx = await LoginAttemp.startTransaction();
@@ -103,7 +106,7 @@ const checkBruteForce = async (bee_id: number) => {
             .orWhereNull('notice_bruteforce'),
         );
       if (user) {
-        MailServer.sendMail({
+        MailService.getInstance().sendMail({
           to: user.email,
           lang: user.lang,
           subject: 'acc_locked',

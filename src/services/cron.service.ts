@@ -68,6 +68,10 @@ export class Cron {
     this.logger.log('debug', 'CronJob is shutting down', {
       label: 'CronJob',
     });
-    return await cron.gracefulShutdown();
+    await cron.gracefulShutdown();
+    this.logger.log('debug', 'CronJob is shut down', {
+      label: 'CronJob',
+    });
+    return;
   }
 }

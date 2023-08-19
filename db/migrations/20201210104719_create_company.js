@@ -1,4 +1,4 @@
-exports.up = function (knex) {
+export const up = function (knex) {
   return knex.schema.createTable('companies', (t) => {
     t.increments('id').primary().unsigned();
     t.string('name', 45);
@@ -14,6 +14,6 @@ exports.up = function (knex) {
   });
 };
 
-exports.down = function (knex) {
+export const down = function (knex) {
   return knex.schema.dropTable('companies');
 };

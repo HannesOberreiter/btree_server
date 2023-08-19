@@ -1,4 +1,4 @@
-import Redis, { RedisOptions } from 'ioredis';
+import { RedisOptions, Redis } from 'ioredis';
 
 import { env, vectorConfig } from '../config/environment.config.js';
 import { Logger } from '../services/logger.service.js';
@@ -41,12 +41,14 @@ export class VectorServer {
       });
     }
   }
-  stop(): void {
+  async stop(): Promise<void> {
     try {
-      VectorServer.client.save();
-      VectorServer.client.quit();
+      this.logger.log('debug', 'Closing redis (vector) connection', {});
+      await VectorServer.client.save();
+      await VectorServer.client.quit();
+      this.logger.log('debug', 'Closed redis (vector) connection', {});
     } catch (error) {
-      this.logger.log('error', 'Redis connection error', { error });
+      this.logger.log('error', 'Redis (vector) closing error', { error });
     }
   }
 }

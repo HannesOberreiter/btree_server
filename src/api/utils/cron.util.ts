@@ -33,7 +33,7 @@ import { Harvest } from '../models/harvest.model.js';
 import { Queen } from '../models/queen.model.js';
 import { raw } from 'objection';
 import { env } from '../../config/environment.config.js';
-import { MailServer } from '../../app.bootstrap.js';
+import { MailService } from '../../services/mail.service.js';
 import { ENVIRONMENT } from '../../config/constants.config.js';
 
 export const cleanupDatabase = async () => {
@@ -267,7 +267,7 @@ export const reminderVIS = async () => {
       if (env !== ENVIRONMENT.staging) {
         for (const i in users) {
           const user = users[i];
-          await MailServer.sendMail({
+          await MailService.getInstance().sendMail({
             to: user.email,
             lang: 'de',
             subject: mailSubject,
@@ -316,7 +316,7 @@ export const reminderPremium = async () => {
     if (env !== ENVIRONMENT.staging) {
       companies.forEach(async (company) => {
         company.user.forEach(async (u) => {
-          await MailServer.sendMail({
+          await MailService.getInstance().sendMail({
             to: u.email,
             lang: u.lang,
             subject: 'premium_reminder',
@@ -369,7 +369,7 @@ export const reminderDeletion = async () => {
     // Staging server does have correct mail settings don't send reminders, otherwise user would get double notified
     if (env !== ENVIRONMENT.staging) {
       forgottenIds.forEach(async (u) => {
-        await MailServer.sendMail({
+        await MailService.getInstance().sendMail({
           to: u['email'],
           lang: u['lang'],
           subject: 'deletion_reminder',

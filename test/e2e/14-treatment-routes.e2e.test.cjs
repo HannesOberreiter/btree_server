@@ -1,19 +1,22 @@
 const request = require('supertest');
 const { expect } = require('chai');
 const { doRequest, expectations, doQueryRequest } = require(process.cwd() +
-  '/test/utils');
+  '/test/utils/index.cjs');
 
 const testInsert = {
-  scale_id: 1,
-  datetime: new Date().toISOString().replace('Z', '').replace('T', ' '),
-  weight: 1,
-  temp1: 2,
-  temp2: 2.5,
+  hive_ids: [1],
+  date: new Date().toISOString().slice(0, 10),
+  amount: 12,
+  disease_id: 1,
+  type_id: 1,
   note: '----',
+  url: '',
+  repeat: 1,
+  interval: 2,
 };
 
-describe('Scale Data routes', function () {
-  const route = '/api/v1/scale_data';
+describe('Treatment routes', function () {
+  const route = '/api/v1/treatment';
   let accessToken, insertId;
 
   before(function (done) {
@@ -38,8 +41,8 @@ describe('Scale Data routes', function () {
           testInsert,
           function (err, res) {
             expect(res.statusCode).to.eqls(200);
-            expect(res.body).to.be.a('Object');
-            insertId = res.body.id;
+            expect(res.body).to.be.a('Array');
+            insertId = res.body[0];
             done();
           },
         );
@@ -47,7 +50,7 @@ describe('Scale Data routes', function () {
     );
   });
 
-  describe('/api/v1/scale_data/', () => {
+  describe('/api/v1/treatment/', () => {
     it(`get 401 - no header`, function (done) {
       doQueryRequest(
         request.agent(global.server),
@@ -133,7 +136,7 @@ describe('Scale Data routes', function () {
         accessToken,
         {
           ids: [insertId],
-          data: { weight: 2 },
+          data: {},
         },
         function (err, res) {
           expect(res.statusCode).to.eqls(200);
@@ -144,7 +147,7 @@ describe('Scale Data routes', function () {
     });
   });
 
-  describe('/api/v1/scale_data/batchGet', () => {
+  describe('/api/v1/treatment/batchGet', () => {
     it(`401 - no header`, function (done) {
       doRequest(
         request.agent(global.server),
@@ -192,7 +195,103 @@ describe('Scale Data routes', function () {
     });
   });
 
-  describe('/api/v1/scale_data/batchDelete', () => {
+  describe('/api/v1/treatment/status', () => {
+    it(`401 - no header`, function (done) {
+      doRequest(
+        request.agent(global.server),
+        'patch',
+        route + '/status',
+        null,
+        null,
+        { ids: [], status: true },
+        function (err, res) {
+          expect(res.statusCode).to.eqls(401);
+          expect(res.errors, 'JsonWebTokenError');
+          done();
+        },
+      );
+    });
+    it(`400 - missing ids`, function (done) {
+      doRequest(
+        agent,
+        'patch',
+        route + '/status',
+        null,
+        null,
+        null,
+        function (err, res) {
+          expect(res.statusCode).to.eqls(400);
+          expectations(res, 'ids', 'Invalid value');
+          done();
+        },
+      );
+    });
+    it(`200 - success`, function (done) {
+      doRequest(
+        agent,
+        'patch',
+        route + '/status',
+        null,
+        accessToken,
+        { ids: [insertId], status: false },
+        function (err, res) {
+          expect(res.statusCode).to.eqls(200);
+          expect(res.body).to.equal(1);
+          done();
+        },
+      );
+    });
+  });
+
+  describe('/api/v1/treatment/date', () => {
+    it(`401 - no header`, function (done) {
+      doRequest(
+        request.agent(global.server),
+        'patch',
+        route + '/date',
+        null,
+        null,
+        { ids: [], start: testInsert.date, end: testInsert.date },
+        function (err, res) {
+          expect(res.statusCode).to.eqls(401);
+          expect(res.errors, 'JsonWebTokenError');
+          done();
+        },
+      );
+    });
+    it(`400 - missing ids`, function (done) {
+      doRequest(
+        agent,
+        'patch',
+        route + '/date',
+        null,
+        null,
+        null,
+        function (err, res) {
+          expect(res.statusCode).to.eqls(400);
+          expectations(res, 'ids', 'Invalid value');
+          done();
+        },
+      );
+    });
+    it(`200 - success`, function (done) {
+      doRequest(
+        agent,
+        'patch',
+        route + '/date',
+        null,
+        accessToken,
+        { ids: [insertId], start: testInsert.date, end: testInsert.date },
+        function (err, res) {
+          expect(res.statusCode).to.eqls(200);
+          expect(res.body).to.equal(1);
+          done();
+        },
+      );
+    });
+  });
+
+  describe('/api/v1/treatment/batchDelete', () => {
     it(`401 - no header`, function (done) {
       doRequest(
         request.agent(global.server),
@@ -233,7 +332,7 @@ describe('Scale Data routes', function () {
         { ids: [insertId] },
         function (err, res) {
           expect(res.statusCode).to.eqls(200);
-          expect(res.body).to.equal(1);
+          expect(res.body).to.be.a('Array');
           done();
         },
       );
