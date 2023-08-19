@@ -22,6 +22,7 @@ describe('E2E API tests', () => {
   let knexInstance;
 
   before(async function () {
+    this.timeout(10000);
     const { knexConfig } = await import(
       process.cwd() + '/dist/config/environment.config.js'
     );
