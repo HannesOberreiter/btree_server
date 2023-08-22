@@ -161,7 +161,6 @@ export class MailService {
       }
       this.logger.log('info', `Message Sent ${result.response}`, {
         subject: title,
-        result: result,
       });
       return true;
     } catch (e) {
