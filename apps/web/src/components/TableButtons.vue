@@ -39,6 +39,17 @@
     </btn-base>
 
     <btn-base
+      v-if="['hive', 'queen', 'virgin', 'charge'].includes(table)"
+      color="info"
+      :disable="selected.length === 1 ? false : true"
+      icon="fas fa-copy"
+      data-cy="btn-table-copy"
+      @click="onCopy"
+    >
+      <tooltip-base>{{ $t('copy') }}</tooltip-base>
+    </btn-base>
+
+    <btn-base
       v-if="['virgin'].includes(table)"
       color="info"
       :disable="selected.length === 1 ? false : true"
@@ -384,6 +395,7 @@ const dialogForm = (
       maximized: ['todo', 'option'].includes(form) ? false : true,
       selected: selected,
       ids: ids,
+      copy: title === 'copy' ? true : false,
       option: props.tableOption,
     },
   }).onOk(() => {
@@ -407,6 +419,11 @@ function onNew() {
 function onEdit() {
   const ids = selected.value.map((o: any) => o.id);
   dialogForm('edit', ids);
+}
+
+function onCopy() {
+  const ids = [selected.value.map((o: any) => o.id)[0]];
+  dialogForm('copy', ids);
 }
 
 function onMove() {
