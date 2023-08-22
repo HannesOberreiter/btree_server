@@ -14,13 +14,18 @@ import { Treatment } from '../models/treatment.model.js';
 import { Checkup } from '../models/checkup.model.js';
 import { limitHive } from '../utils/premium.util.js';
 
-async function isDuplicateHiveName(user_id: number, name: string) {
-  const checkDuplicate = await Hive.query().select('id').findOne({
+async function isDuplicateHiveName(user_id: number, name: string, id?: number) {
+  const checkDuplicate = Hive.query().select('id').findOne({
     user_id,
     name,
     deleted: false,
+    modus: true,
   });
-  if (checkDuplicate?.id) return true;
+  if (id) {
+    checkDuplicate.whereNot('id', id);
+  }
+  const result = await checkDuplicate;
+  if (result?.id) return true;
   return false;
 }
 
@@ -282,6 +287,15 @@ export default class HiveController {
     const result = await Hive.transaction(async (trx) => {
       if ('name' in body.data) {
         if (ids.length > 1) {
+          throw httpErrors.Conflict('name');
+        }
+        if (
+          await isDuplicateHiveName(
+            req.session.user.user_id,
+            insert.name,
+            ids[0],
+          )
+        ) {
           throw httpErrors.Conflict('name');
         }
       }
