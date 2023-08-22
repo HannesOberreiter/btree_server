@@ -266,6 +266,7 @@
   "hive": "Ruche | Urticaire",
   "hiveCard": "Carte de la ruche",
   "hiveCount": "Nombre de ruches",
+  "hiveModeTooltip": "Réglez le mode sur inactif si vous avez perdu, vendu ou dissous votre ruche.",
   "hivecountTooltip": "Ruches [Grouphives]",
   "humidity": "Humidité",
   "ical": "iCal",

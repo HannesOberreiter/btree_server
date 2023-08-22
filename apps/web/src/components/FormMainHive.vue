@@ -126,6 +126,7 @@
     ></form-input-note>
     <div class="row q-pt-sm q-pb-md">
       <div class="col-12 col-md-6">
+        <tooltip-base>{{ $t('hiveModeTooltip') }}</tooltip-base>
         <form-input-checkbox
           v-model="state.modus"
           label="modus"
@@ -172,6 +173,7 @@ import FormInputNote from './FormInputNote.vue';
 import FormInputNumeric from './FormInputNumeric.vue';
 import FormInputText from './FormInputText.vue';
 import FormDropdownEdit from './FormDropdownEdit.vue';
+import { toRefs } from '@vueuse/core';
 
 function getNames(v: any) {
   return v.map((o: any) => o.name).join(', ');
@@ -207,15 +209,29 @@ const props = defineProps({
     type: Array,
     default: null,
   },
+  copy: {
+    type: Boolean,
+    default: false,
+  },
 });
 
-const ids = ref(props.ids);
+const { ids, copy } = toRefs(props);
 const isEdit = computed(() => {
+  if (copy.value) return false;
   if (ids.value === null) return false;
   if (ids.value.length === 0) return false;
   return true;
 });
-if (isEdit.value) getEdit(unref(ids.value));
+
+const isCopy = computed(() => {
+  if (copy.value) return true;
+  if (ids.value) {
+    if (ids.value.length === 1) return true;
+  }
+  return false;
+});
+
+if (isEdit.value || isCopy.value) getEdit(unref(ids.value));
 
 const { data: hives, refetch } = useHivesQuery({
   limit: 3,
@@ -255,12 +271,14 @@ const v = useVuelidate(rules, state, { $autoDirty: true });
 async function getEdit(id: unknown[]) {
   return await api.post('/v1/hive/batchGet', { ids: id }).then(
     (response: any) => {
-      const editIds = map(response, (row: any) => [
-        { value: row.id, label: `ID: ${row.id} / (${row.name})` },
-      ]);
-      editOptions.value = flatten(editIds);
-      editOptionsCopy.value = [...unref(editOptions.value)];
-      // Little helper to set current date if user edits one entry and wants to set inactive state, otherwise it would be the creation date
+      if (isEdit.value) {
+        const editIds = map(response, (row: any) => [
+          { value: row.id, label: `ID: ${row.id} / (${row.name})` },
+        ]);
+        editOptions.value = flatten(editIds);
+        editOptionsCopy.value = [...unref(editOptions.value)];
+        // Little helper to set current date if user edits one entry and wants to set inactive state, otherwise it would be the creation date
+      }
       if (response.length === 1 && response[0]?.modus) {
         response[0].modus_date = dayjs().format('YYYY-MM-DD');
       }
