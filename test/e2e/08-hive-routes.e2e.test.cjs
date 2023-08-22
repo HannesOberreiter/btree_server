@@ -13,6 +13,8 @@ const testInsert = {
   repeat: 10,
 };
 
+const patchName = 'Hive' + Date.now();
+
 describe('Hive routes', function () {
   const route = '/api/v1/hive';
   let accessToken, insertId;
@@ -150,7 +152,28 @@ describe('Hive routes', function () {
         {
           ids: [insertId],
           data: {
-            name: 'Hive2',
+            name: patchName,
+          },
+        },
+        function (err, res) {
+          expect(res.statusCode).to.eqls(200);
+          expect(res.body).to.equal(1);
+          done();
+        },
+      );
+    });
+
+    it(`patch 200 - success second patch with same name`, function (done) {
+      doRequest(
+        agent,
+        'patch',
+        route,
+        null,
+        accessToken,
+        {
+          ids: [insertId],
+          data: {
+            name: patchName,
           },
         },
         function (err, res) {

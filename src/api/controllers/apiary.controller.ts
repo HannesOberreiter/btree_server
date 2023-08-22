@@ -8,13 +8,22 @@ import { HiveLocation } from '../models/hive_location.model.js';
 import { Movedate } from '../models/movedate.model.js';
 import { limitApiary } from '../utils/premium.util.js';
 
-async function isDuplicateApiaryName(user_id: number, name: string) {
-  const checkDuplicate = await Apiary.query().select('id').findOne({
+async function isDuplicateApiaryName(
+  user_id: number,
+  name: string,
+  id?: number,
+) {
+  const checkDuplicate = Apiary.query().select('id').findOne({
     user_id,
     name,
     deleted: false,
+    modus: true,
   });
-  if (checkDuplicate?.id) return true;
+  if (id) {
+    checkDuplicate.whereNot('id', id);
+  }
+  const result = await checkDuplicate;
+  if (result?.id) return true;
   return false;
 }
 
@@ -26,6 +35,15 @@ export default class ApiaryController {
     const result = await Apiary.transaction(async (trx) => {
       if (body.name) {
         if (ids.length > 1) {
+          throw httpErrors.Conflict('name');
+        }
+        if (
+          await isDuplicateApiaryName(
+            req.session.user.user_id,
+            body.name,
+            ids[0],
+          )
+        ) {
           throw httpErrors.Conflict('name');
         }
       }
