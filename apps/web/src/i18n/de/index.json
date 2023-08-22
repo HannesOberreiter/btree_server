@@ -266,6 +266,7 @@
   "hive": "Stock | Stöcke",
   "hiveCard": "Stockkarte",
   "hiveCount": "Anzahl Völker",
+  "hiveModeTooltip": "Setzen Sie den Modus auf inaktiv, wenn Sie Ihren Bienenstock verloren, verkauft oder aufgelöst haben.",
   "hivecountTooltip": "Stöcke [Gruppenstöcke]",
   "humidity": "Feuchtigkeit",
   "ical": "iCal",

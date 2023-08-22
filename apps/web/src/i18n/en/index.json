@@ -266,6 +266,7 @@
   "hive": "Hive | Hives",
   "hiveCard": "Hivecard",
   "hiveCount": "Hive count",
+  "hiveModeTooltip": "Set mode to inactive if you lost, sold or disbanded your hive.",
   "hivecountTooltip": "Hives [Grouphives]",
   "humidity": "Humidity",
   "ical": "iCal",

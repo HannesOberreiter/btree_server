@@ -126,6 +126,7 @@
     ></form-input-note>
     <div class="row q-pt-sm q-pb-md">
       <div class="col-12 col-md-6">
+        <tooltip-base>{{ $t('hiveModeTooltip') }}</tooltip-base>
         <form-input-checkbox
           v-model="state.modus"
           label="modus"
