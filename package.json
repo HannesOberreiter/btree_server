@@ -38,7 +38,7 @@
     "@fastify/rate-limit": "^8.0.3",
     "@fastify/session": "^10.4.0",
     "ajv-formats": "^2.1.1",
-    "archiver": "^5.3.1",
+    "archiver": "^6.0.0",
     "close-with-grace": "^1.2.0",
     "connect-redis": "^7.0.0",
     "csv-stringify": "^6.2.3",
@@ -62,7 +62,7 @@
     "pino": "^8.14.1",
     "pino-abstract-transport": "^1.0.0",
     "rotating-file-stream": "^3.0.4",
-    "stripe": "^12.0.0",
+    "stripe": "^13.2.0",
     "ua-parser-js": "^1.0.35"
   },
   "devDependencies": {
