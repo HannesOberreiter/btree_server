@@ -13,9 +13,9 @@ export default class ChargeController {
       .withGraphJoined('[type.stock, creator(identifier), editor(identifier)]')
       .where({
         'charges.user_id': req.session.user.user_id,
-        'charges.deleted': deleted === 'true',
+        'charges.deleted': deleted === true,
       })
-      .page(offset ? offset : 0, parseInt(limit) === 0 || !limit ? 10 : limit);
+      .page(offset ? offset : 0, limit === 0 || !limit ? 10 : limit);
 
     if (filters) {
       try {
@@ -66,7 +66,7 @@ export default class ChargeController {
         'charge_stocks.user_id': req.session.user.user_id,
         'type.modus': true,
       })
-      .page(offset ? offset : 0, parseInt(limit) === 0 || !limit ? 10 : limit);
+      .page(offset ? offset : 0, limit === 0 || !limit ? 10 : limit);
 
     if (order) {
       if (Array.isArray(order)) {

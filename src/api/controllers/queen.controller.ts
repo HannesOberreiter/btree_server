@@ -23,21 +23,21 @@ export default class QueenController {
     const query = Queen.query()
       .where({
         'queens.user_id': req.session.user.user_id,
-        'queens.deleted': deleted === 'true',
+        'queens.deleted': deleted === true,
       })
-      .page(offset ? offset : 0, parseInt(limit) === 0 || !limit ? 10 : limit);
+      .page(offset ? offset : 0, limit === 0 || !limit ? 10 : limit);
 
-    if (modus) {
-      query.where('queens.modus', modus === 'true');
+    if (modus !== undefined && modus !== null) {
+      query.where('queens.modus', modus === true);
     }
 
-    if (details === 'true') {
+    if (details === true) {
       query.withGraphJoined(
         '[hive_location,queen_location,race,mating,own_mother,creator(identifier),editor(identifier)]',
       );
-      if (latest === 'true') {
+      if (latest === true) {
         query.whereNotNull('queen_location.queen_id');
-      } else if (latest === 'false') {
+      } else if (latest === false) {
         query.whereNull('queen_location.queen_id');
       }
     } else {
@@ -141,7 +141,7 @@ export default class QueenController {
       .where({
         'queen_durations.user_id': req.session.user.user_id,
       })
-      .page(offset ? offset : 0, parseInt(limit) === 0 || !limit ? 10 : limit);
+      .page(offset ? offset : 0, limit === 0 || !limit ? 10 : limit);
 
     if (order) {
       if (Array.isArray(order)) {

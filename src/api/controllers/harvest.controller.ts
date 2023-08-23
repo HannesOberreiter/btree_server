@@ -16,9 +16,9 @@ export default class HarvestController {
       .where({
         'hive.deleted': false,
         'harvests.user_id': req.session.user.user_id,
-        'harvests.deleted': deleted === 'true',
+        'harvests.deleted': deleted === true,
       })
-      .page(offset ? offset : 0, parseInt(limit) === 0 || !limit ? 10 : limit);
+      .page(offset ? offset : 0, limit === 0 || !limit ? 10 : limit);
 
     if (done) {
       query.where('harvests.done', done === 'true');

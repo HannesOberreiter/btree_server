@@ -63,15 +63,15 @@ export default class ApiaryController {
     const query = Apiary.query()
       .where({
         'apiaries.user_id': req.session.user.user_id,
-        'apiaries.deleted': deleted === 'true',
+        'apiaries.deleted': deleted === true,
       })
-      .page(offset ? offset : 0, parseInt(limit) === 0 || !limit ? 10 : limit);
+      .page(offset ? offset : 0, limit === 0 || !limit ? 10 : limit);
 
-    if (modus) {
-      query.where('apiaries.modus', modus === 'true');
+    if (modus !== undefined && modus !== null) {
+      query.where('apiaries.modus', modus === true);
     }
 
-    if (details === 'true') {
+    if (details === true) {
       query.withGraphJoined(
         '[hive_count, creator(identifier),editor(identifier)]',
       );
