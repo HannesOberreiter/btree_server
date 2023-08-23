@@ -1,8 +1,9 @@
 import { encode } from 'gpt-3-encoder';
-import { Configuration, CreateChatCompletionRequest, OpenAIApi } from 'openai';
+import OpenAI from 'openai';
 
 import { env, openAI } from '../config/environment.config.js';
 import { VectorServer } from '../servers/vector.server.js';
+// import { Stream } from 'node_modules/openai/streaming.js';
 
 type Metadata = {
   created: string;
@@ -22,7 +23,7 @@ type Document = {
 };
 
 export class WizBee {
-  private openAI: OpenAIApi;
+  private openAI: OpenAI;
   private template: string;
   private static indexName = 'link';
   private static vectorField = 'content_vector';
@@ -31,10 +32,9 @@ export class WizBee {
   private static embeddingModel = 'text-embedding-ada-002' as const;
 
   constructor() {
-    const configuration = new Configuration({
+    this.openAI = new OpenAI({
       apiKey: openAI.key,
     });
-    this.openAI = new OpenAIApi(configuration);
 
     this.template = `
     You are a friendly bot assistant, answering beekeeping related question by using given context. The context could be from multiple references, if it is each is separated by ;;;. Answer the question using only that information. If you can't create an answer with the references, say "Sorry, could not generated a good answer. You may find your answer in the references bellow.".
@@ -49,12 +49,12 @@ export class WizBee {
    * @description use openAI embedding as we also use it for the uploaded documents
    */
   private async createEmbedding(text: string) {
-    const response = await this.openAI.createEmbedding({
+    const response = await this.openAI.embeddings.create({
       model: WizBee.embeddingModel,
       input: text,
     });
-    const [{ embedding }] = response.data.data;
-    return { embedding, tokens: response.data.usage.total_tokens };
+    const [{ embedding }] = response.data;
+    return { embedding, tokens: response.usage.total_tokens };
   }
 
   /**
@@ -181,13 +181,13 @@ export class WizBee {
    * @description completion prompt gives better answers but is 10x more expensive
    */
   private async _createAnswer(input: string, contextText: string) {
-    const completionResponse = await this.openAI.createCompletion({
+    const completionResponse = await this.openAI.completions.create({
       model: WizBee.completionModel,
       prompt: this._createPrompt(input, contextText),
       max_tokens: 500, // Choose the max allowed tokens in completion
       temperature: 0.2, // Set to 0 for deterministic results
     });
-    return completionResponse.data;
+    return completionResponse.choices[0].text;
   }
 
   /**
@@ -195,7 +195,7 @@ export class WizBee {
    */
   private async translate(text: string) {
     try {
-      const response = await this.openAI.createChatCompletion({
+      const response = await this.openAI.chat.completions.create({
         model: WizBee.turboModel,
         messages: [
           {
@@ -212,7 +212,7 @@ export class WizBee {
         temperature: 0.1,
         user: 'WizBee_' + env,
       });
-      return response.data;
+      return response;
     } catch (e) {
       return undefined;
     }
@@ -223,21 +223,22 @@ export class WizBee {
    */
   private async createAnswer(input: string, contextText: string, lang: string) {
     try {
-      const messages: CreateChatCompletionRequest['messages'] = [
-        {
-          role: 'system',
-          content:
-            'You are a friendly bot assistant, answering beekeeping related question or questions about the usage of the b.tree beekeeping software by using only given context. The context could be from multiple references or from the official b.tree documentation and each is separated by ###. If you cannot give a good answer with given context, please type "Sorry, we cannot give a good answer to that question."',
-        },
-        {
-          role: 'system',
-          content: `Context: ${contextText}`,
-        },
-        {
-          role: 'user',
-          content: `${input}`,
-        },
-      ];
+      const messages: OpenAI.Chat.Completions.CreateChatCompletionRequestMessage[] =
+        [
+          {
+            role: 'system',
+            content:
+              'You are a friendly bot assistant, answering beekeeping related question or questions about the usage of the b.tree beekeeping software by using only given context. The context could be from multiple references or from the official b.tree documentation and each is separated by ###. If you cannot give a good answer with given context, please type "Sorry, we cannot give a good answer to that question."',
+          },
+          {
+            role: 'system',
+            content: `Context: ${contextText}`,
+          },
+          {
+            role: 'user',
+            content: `${input}`,
+          },
+        ];
 
       if (lang !== 'en') {
         messages.push({
@@ -246,14 +247,15 @@ export class WizBee {
         });
       }
 
-      const response = await this.openAI.createChatCompletion({
+      const response = await this.openAI.chat.completions.create({
         model: WizBee.completionModel,
         messages,
         max_tokens: 500,
         temperature: 0.1,
         user: 'WizBee_' + env,
+        stream: false,
       });
-      return response.data;
+      return response;
     } catch (e) {
       return undefined;
     }
@@ -267,8 +269,8 @@ export class WizBee {
     let input = question.replace(/\n/g, ' ');
     if (lang !== 'en') {
       const translation = await this.translate(input);
-      if ('usage' in translation && 'choices' in translation) {
-        tokens += translation?.usage?.total_tokens ?? 0;
+      if (translation) {
+        tokens += translation.usage?.total_tokens ?? 0;
         input = translation.choices[0].message.content ?? input;
       }
     }
@@ -287,12 +289,16 @@ export class WizBee {
     // const answer = await this.createAnswer(question, contextText);
 
     const answer = await this.createAnswer(question, contextText, lang);
+    //const iterator = this.readResponse(answer);
 
     tokens += answer?.usage?.total_tokens ?? 0;
-
     const answerText = answer?.choices[0].message?.content ?? undefined;
-
-    //return { text: answer.choices[0].text, refs, tokens };
     return { text: answerText, refs, tokens };
+  }
+
+  async *readResponse(answer: any) {
+    for await (const chunk of answer) {
+      yield JSON.stringify(chunk);
+    }
   }
 }
