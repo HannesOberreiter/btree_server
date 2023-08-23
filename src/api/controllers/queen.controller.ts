@@ -76,10 +76,12 @@ export default class QueenController {
       }
     }
     if (q) {
-      if (q.trim() !== '') {
+      const search = '' + q; // Querystring could be converted be a number
+
+      if (search.trim() !== '') {
         query.where((builder) => {
-          builder.orWhere('queens.name', 'like', `%${q}%`);
-          builder.orWhere('hive_location.hive_name', 'like', `%${q}%`);
+          builder.orWhere('queens.name', 'like', `%${search}%`);
+          builder.orWhere('hive_location.hive_name', 'like', `%${search}%`);
         });
       }
     }
@@ -178,10 +180,12 @@ export default class QueenController {
       }
     }
     if (q) {
-      if (q.trim() !== '') {
+      const search = '' + q; // Querystring could be converted be a number
+
+      if (search.trim() !== '') {
         query.where((builder) => {
-          builder.orWhere('queens.name', 'like', `%${q}%`);
-          builder.orWhere('hive_location.hive_name', 'like', `%${q}%`);
+          builder.orWhere('queens.name', 'like', `%${search}%`);
+          builder.orWhere('hive_location.hive_name', 'like', `%${search}%`);
         });
       }
     }

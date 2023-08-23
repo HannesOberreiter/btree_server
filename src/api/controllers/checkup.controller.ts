@@ -48,9 +48,11 @@ export default class CheckupController {
       }
     }
     if (q) {
-      if (q.trim() !== '') {
+      const search = '' + q; // Querystring could be converted be a number
+
+      if (search.trim() !== '') {
         query.where((builder) => {
-          builder.orWhere('hive.name', 'like', `%${q}%`);
+          builder.orWhere('hive.name', 'like', `%${search}%`);
         });
       }
     }

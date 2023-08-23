@@ -19,9 +19,11 @@ export default class RearingDetailController {
       }
     }
     if (q) {
-      if (q.trim() !== '') {
+      const search = '' + q; // Querystring could be converted be a number
+
+      if (search.trim() !== '') {
         query.where((builder) => {
-          builder.orWhere('job', 'like', `%${q}%`);
+          builder.orWhere('job', 'like', `%${search}%`);
         });
       }
     }

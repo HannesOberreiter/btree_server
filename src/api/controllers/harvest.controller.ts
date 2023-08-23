@@ -48,12 +48,14 @@ export default class HarvestController {
       }
     }
     if (q) {
-      if (q.trim() !== '') {
+      const search = '' + q; // Querystring could be converted be a number
+
+      if (search.trim() !== '') {
         query.where((builder) => {
           builder
-            .orWhere('hive.name', 'like', `%${q}%`)
-            .orWhere('type.name', 'like', `%${q}%`)
-            .orWhere('harvests.charge', 'like', `%${q}%`);
+            .orWhere('hive.name', 'like', `%${search}%`)
+            .orWhere('type.name', 'like', `%${search}%`)
+            .orWhere('harvests.charge', 'like', `%${search}%`);
         });
       }
     }

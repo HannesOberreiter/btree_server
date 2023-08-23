@@ -48,11 +48,13 @@ export default class FeedController {
       }
     }
     if (q) {
-      if (q.trim() !== '') {
+      const search = '' + q; // Querystring could be converted be a number
+
+      if (search.trim() !== '') {
         query.where((builder) => {
           builder
-            .orWhere('hive.name', 'like', `%${q}%`)
-            .orWhere('type.name', 'like', `%${q}%`);
+            .orWhere('hive.name', 'like', `%${search}%`)
+            .orWhere('type.name', 'like', `%${search}%`);
         });
       }
     }
