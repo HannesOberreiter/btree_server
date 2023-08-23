@@ -103,6 +103,7 @@
         numeric-valid="integer"
         :values="values"
         :reset="reset"
+        :max-valid="9999"
       >
       </form-input-numeric>
     </div>
@@ -115,6 +116,7 @@
         numeric-valid="integer"
         :values="values"
         :reset="reset"
+        :max-valid="9999"
       ></form-input-numeric>
     </div>
 

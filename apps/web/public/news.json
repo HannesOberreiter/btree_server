@@ -10,6 +10,7 @@
       "FEATURE you can now copy rows in tables (hive, queen, virgin, charge), thx Olli",
       "IMPROVEMENT added helpful tooltip to hive mode toggle button",
       "BUGFIX changing the modus of multiple hives did result in invalid inactive date",
+      "BUGFIX increase position and group hive max validation to 9999",
       "BUGFIX sound notification was only working after reload",
       "BUGFIX disabled CORS for google auth, which should fix the login problem with google",
       "BUGFIX rearing form now always shows one on save button, as no name is required",
