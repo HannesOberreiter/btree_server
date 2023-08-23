@@ -41,8 +41,8 @@ export default function routes(
           id: z.coerce.number(),
         }),
         querystring: z.object({
-          apiary: booleanParamSchema.optional(),
-          year: z.coerce.number().optional(),
+          apiary: z.boolean().optional(),
+          year: z.number().optional(),
         }),
       },
     },

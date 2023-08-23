@@ -18,7 +18,7 @@ export default class MovedateController {
       // Security as we may still have some unclean data in the database were linked apiary or hive does not exist anymore
       .whereNotNull('apiary.id')
       .whereNotNull('hive.id')
-      .page(offset ? offset : 0, parseInt(limit) === 0 || !limit ? 10 : limit);
+      .page(offset ? offset : 0, limit === 0 || !limit ? 10 : limit);
 
     if (filters) {
       try {

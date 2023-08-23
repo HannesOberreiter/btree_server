@@ -16,9 +16,9 @@ export default class FeedController {
       .where({
         'hive.deleted': false,
         'feeds.user_id': req.session.user.user_id,
-        'feeds.deleted': deleted === 'true',
+        'feeds.deleted': deleted === true,
       })
-      .page(offset ? offset : 0, parseInt(limit) === 0 || !limit ? 10 : limit);
+      .page(offset ? offset : 0, limit === 0 || !limit ? 10 : limit);
 
     if (done) {
       query.where('feeds.done', done === 'true');

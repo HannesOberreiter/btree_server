@@ -42,18 +42,19 @@ export default class HiveController {
       details,
       filters,
     } = req.query as any;
+
     const query = Hive.query()
       .where({
         'hives.user_id': req.session.user.user_id,
-        'hives.deleted': deleted === 'true',
+        'hives.deleted': deleted === true,
       })
-      .page(offset ? offset : 0, parseInt(limit) === 0 || !limit ? 10 : limit);
+      .page(offset ? offset : 0, limit === 0 || !limit ? 10 : limit);
 
-    if (modus) {
-      query.where('hives.modus', modus === 'true');
+    if (modus !== undefined && modus !== null) {
+      query.where('hives.modus', modus === true);
     }
 
-    if (details === 'true') {
+    if (details === true) {
       query.withGraphJoined(
         '[hive_location.[movedate], queen_location, hive_source, hive_type, creator(identifier), editor(identifier)]',
       );

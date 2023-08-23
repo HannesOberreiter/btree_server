@@ -41,7 +41,7 @@ export default class StatisticController {
         'harvests.deleted': false,
         'harvests.user_id': req.session.user.user_id,
       })
-      .page(offset ? offset : 0, parseInt(limit) === 0 || !limit ? 10 : limit);
+      .page(offset ? offset : 0, limit === 0 || !limit ? 10 : limit);
     if (order) {
       if (Array.isArray(order)) {
         order.forEach((field, index) => query.orderBy(field, direction[index]));
@@ -255,7 +255,7 @@ export default class StatisticController {
         'feeds.deleted': false,
         'feeds.user_id': req.session.user.user_id,
       })
-      .page(offset ? offset : 0, parseInt(limit) === 0 || !limit ? 10 : limit);
+      .page(offset ? offset : 0, limit === 0 || !limit ? 10 : limit);
     if (order) {
       if (Array.isArray(order)) {
         order.forEach((field, index) => query.orderBy(field, direction[index]));
@@ -446,7 +446,7 @@ export default class StatisticController {
         'treatments.deleted': false,
         'treatments.user_id': req.session.user.user_id,
       })
-      .page(offset ? offset : 0, parseInt(limit) === 0 || !limit ? 10 : limit);
+      .page(offset ? offset : 0, limit === 0 || !limit ? 10 : limit);
     if (order) {
       if (Array.isArray(order)) {
         order.forEach((field, index) => query.orderBy(field, direction[index]));
@@ -641,7 +641,7 @@ export default class StatisticController {
       .havingRaw(
         '(SUM(brood) + SUM(pollen) + SUM(comb) + SUM(temper) + SUM(calm_comb) + SUM(swarm) + SUM(varroa) + SUM(strong)) > 0',
       )
-      .page(offset ? offset : 0, parseInt(limit) === 0 || !limit ? 10 : limit);
+      .page(offset ? offset : 0, limit === 0 || !limit ? 10 : limit);
 
     if (order) {
       if (Array.isArray(order)) {

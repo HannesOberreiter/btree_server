@@ -102,7 +102,7 @@ export default function routes(
           .object({
             start: z.string().optional(),
             end: z.string().optional(),
-            id: z.string().optional(),
+            id: z.number().optional(),
           })
           .refine((val) => {
             if (val.start && val.end) return true;

@@ -61,6 +61,7 @@
     "openai": "^4.1.0",
     "pino": "^8.14.1",
     "pino-abstract-transport": "^1.0.0",
+    "query-string": "^8.1.0",
     "rotating-file-stream": "^3.0.4",
     "stripe": "^13.2.0",
     "ua-parser-js": "^1.0.35"
