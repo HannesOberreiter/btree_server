@@ -277,8 +277,8 @@ async function getEdit(id: unknown[]) {
         ]);
         editOptions.value = flatten(editIds);
         editOptionsCopy.value = [...unref(editOptions.value)];
-        // Little helper to set current date if user edits one entry and wants to set inactive state, otherwise it would be the creation date
       }
+      // Little helper to set current date if user edits one entry and wants to set inactive state, otherwise it would be the creation date
       if (response.length === 1 && response[0]?.modus) {
         response[0].modus_date = dayjs().format('YYYY-MM-DD');
       }
