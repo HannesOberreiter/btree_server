@@ -39,43 +39,47 @@
           "
         >
           <q-item-label>
-            <btn-base
-              flat
-              class="ignore-click"
-              :color="step.active ? 'primary' : 'grey'"
-              icon="fas fa-plus"
-              @pointerdown="
-                step.active
-                  ? onSleepChange(index, step.sleep_before, 'plus')
-                  : () => {}
-              "
-              @pointerup="holdingButton = false"
-            />
-            <btn-base
-              flat
-              class="ignore-click"
-              :color="step.active ? 'secondary' : 'grey'"
-              icon="fas fa-minus"
-              @pointerdown="
-                step.active
-                  ? onSleepChange(index, step.sleep_before, 'minus')
-                  : () => {}
-              "
-              @pointerup="holdingButton = false"
-            />
-            <span class="ignore-click" @click="editSleep(index)">
-              <q-tooltip>
-                {{ $t('total') }}:
-                <helper-day-and-hour :hour="getCurrentSum(index)">
-                </helper-day-and-hour>
-              </q-tooltip>
-              {{ $t('after') }}
-              <helper-day-and-hour :hour="step.sleep_before">
-              </helper-day-and-hour
-              >:
-            </span>
-            <span class="text-bold">
+            <span class="text-bold show-pointer">
               {{ step.detail.job }}
+            </span>
+            <span v-if="$q.screen.xs">
+              <br />
+            </span>
+            <span v-show="index > 0">
+              <span class="ignore-click show-pointer" @click="editSleep(index)">
+                <q-tooltip>
+                  {{ $t('total') }}:
+                  <helper-day-and-hour :hour="getCurrentSum(index)">
+                  </helper-day-and-hour>
+                </q-tooltip>
+                {{ $t('after') }}
+                <helper-day-and-hour :hour="step.sleep_before">
+                </helper-day-and-hour>
+              </span>
+              <btn-base
+                flat
+                class="ignore-click"
+                :color="step.active ? 'primary' : 'grey'"
+                icon="fas fa-plus"
+                @pointerdown="
+                  step.active
+                    ? onSleepChange(index, step.sleep_before, 'plus')
+                    : () => {}
+                "
+                @pointerup="holdingButton = false"
+              />
+              <btn-base
+                flat
+                class="ignore-click"
+                :color="step.active ? 'secondary' : 'grey'"
+                icon="fas fa-minus"
+                @pointerdown="
+                  step.active
+                    ? onSleepChange(index, step.sleep_before, 'minus')
+                    : () => {}
+                "
+                @pointerup="holdingButton = false"
+              />
             </span>
           </q-item-label>
           {{ step.note }}
