@@ -41,11 +41,12 @@ export default class TodoController {
       }
     }
     if (q) {
-      if (q.trim() !== '') {
+      const search = '' + q; // Querystring could be converted be a number
+      if (search.trim() !== '') {
         query.where((builder) => {
           builder
-            .orWhere('todos.name', 'like', `%${q}%`)
-            .orWhere('todos.note', 'like', `%${q}%`);
+            .orWhere('todos.name', 'like', `%${search}%`)
+            .orWhere('todos.note', 'like', `%${search}%`);
         });
       }
     }

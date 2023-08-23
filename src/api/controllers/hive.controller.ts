@@ -82,11 +82,13 @@ export default class HiveController {
       }
     }
     if (q) {
-      if (q.trim() !== '') {
+      const search = '' + q; // Querystring could be converted be a number
+
+      if (search.trim() !== '') {
         query.where((builder) => {
           builder
-            .orWhere('hives.name', 'like', `%${q}%`)
-            .orWhere('hive_location.apiary_name', 'like', `%${q}%`);
+            .orWhere('hives.name', 'like', `%${search}%`)
+            .orWhere('hive_location.apiary_name', 'like', `%${search}%`);
         });
       }
     }

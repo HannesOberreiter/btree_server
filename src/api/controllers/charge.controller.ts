@@ -44,12 +44,13 @@ export default class ChargeController {
       }
     }
     if (q) {
-      if (q.trim() !== '') {
+      const search = '' + q; // Querystring could be converted be a number
+      if (search.trim() !== '') {
         query.where((builder) => {
           builder
-            .orWhere('type.name', 'like', `%${q}%`)
-            .orWhere('charges.name', 'like', `%${q}%`)
-            .orWhere('charges.charge', 'like', `%${q}%`);
+            .orWhere('type.name', 'like', `%${search}%`)
+            .orWhere('charges.name', 'like', `%${search}%`)
+            .orWhere('charges.charge', 'like', `%${search}%`);
         });
       }
     }
@@ -76,9 +77,10 @@ export default class ChargeController {
       }
     }
     if (q) {
-      if (q.trim() !== '') {
+      const search = '' + q; // Querystring could be converted be a number
+      if (search.trim() !== '') {
         query.where((builder) => {
-          builder.orWhere('type.name', 'like', `%${q}%`);
+          builder.orWhere('type.name', 'like', `%${search}%`);
         });
       }
     }
