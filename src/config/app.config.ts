@@ -5,6 +5,7 @@ import {
   validatorCompiler,
 } from 'fastify-type-provider-zod';
 import { ZodError } from 'zod';
+import queryString from 'query-string';
 
 import { RedisServer } from '../servers/redis.server.js';
 import {
@@ -46,9 +47,16 @@ export class Application {
       trustProxy: true,
       bodyLimit: 1048576 * 50, // 50 MB
       maxParamLength: 10000,
+      querystringParser: (str) =>
+        queryString.parse(str, {
+          arrayFormat: 'bracket',
+          parseBooleans: true,
+          parseNumbers: true,
+        }),
       ajv: {
         customOptions: {
           removeAdditional: false, // Refer to [ajv options](https://ajv.js.org/options.html#removeadditional)
+          // coerceTypes: 'array',
         },
       },
     });

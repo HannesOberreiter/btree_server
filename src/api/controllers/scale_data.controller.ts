@@ -93,7 +93,7 @@ export default class ScaleDataController {
       .where({
         'scale.user_id': req.session.user.user_id,
       })
-      .page(offset ? offset : 0, parseInt(limit) === 0 || !limit ? 10 : limit);
+      .page(offset ? offset : 0, limit === 0 || !limit ? 10 : limit);
 
     if (filters) {
       try {

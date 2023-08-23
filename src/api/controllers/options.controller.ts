@@ -35,8 +35,8 @@ export default class OptionController {
     if (params === 'charge_types') {
       query.withGraphJoined('stock');
     }
-    if (modus) {
-      query.where('modus', modus === 'true');
+    if (modus !== undefined && modus !== null) {
+      query.where('modus', modus === true);
     }
     if (order) {
       if (Array.isArray(order)) {
