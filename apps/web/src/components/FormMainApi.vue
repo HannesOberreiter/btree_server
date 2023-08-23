@@ -6,6 +6,16 @@
     ></form-user-password>
   </q-form>
   <div v-if="storeUser.company.api_active">
+    <div>
+      <q-btn
+        class="full-width"
+        :color="apiField === 'password' ? 'negative' : 'primary'"
+        :no-caps="true"
+        :label="$t('unlockAPI')"
+        icon="fas fa-key"
+        @click="loadApiValue"
+      ></q-btn>
+    </div>
     <q-input
       v-model.trim="apiValue"
       label="API Key"

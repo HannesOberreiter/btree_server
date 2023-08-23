@@ -106,6 +106,10 @@ const props = defineProps({
     type: String as PropType<Option>,
     default: '',
   },
+  copy: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const layouts = {
@@ -123,12 +127,15 @@ const layouts = {
   },
   hive: {
     comp: FormMainHive,
-    props: {},
+    props: {
+      copy: props.copy,
+    },
   },
   queen: {
     comp: FormMainQueen,
     props: {
       selected: props.selected,
+      copy: props.copy,
     },
   },
   queen_hive: {
@@ -141,6 +148,7 @@ const layouts = {
     comp: FormMainQueen,
     props: {
       selected: props.selected,
+      copy: props.copy,
     },
   },
   movedate: {
@@ -175,7 +183,9 @@ const layouts = {
   },
   charge: {
     comp: FormMainCharge,
-    props: {},
+    props: {
+      copy: props.copy,
+    },
   },
   scale_data: {
     comp: FormMainScaleData,

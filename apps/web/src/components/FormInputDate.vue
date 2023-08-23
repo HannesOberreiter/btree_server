@@ -177,7 +177,9 @@ function setValues() {
 
 function editValues(val: boolean) {
   disable.value = val;
-  modelValue.value = disable.value ? null : modelValue.value;
+  modelValue.value = disable.value
+    ? null
+    : modelValue.value ?? dayjs().format('YYYY-MM-DD');
 }
 function markDate(date: string) {
   return dayjs(date).isSame(props.mark);

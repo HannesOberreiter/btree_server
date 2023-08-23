@@ -225,7 +225,15 @@ function payCoupon() {
           successPayment(data.paid);
         },
         (error) => {
-          notification.open('negative', error);
+          if (error.statusCode === 404) {
+            notification.open(
+              'negative',
+              t('error.CouponNotFound', { token: val }),
+              true,
+            );
+          } else {
+            notification.open('negative', error);
+          }
         },
       );
     }

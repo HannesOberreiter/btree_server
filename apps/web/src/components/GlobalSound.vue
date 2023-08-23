@@ -1,5 +1,5 @@
 <template>
-  <div v-if="user.sound">
+  <div>
     <audio ref="successSound" :src="SuccessSound" preload="auto"></audio>
     <audio ref="errorSound" :src="ErrorSound" preload="auto"></audio>
   </div>

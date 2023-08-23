@@ -594,7 +594,8 @@ export function useHivesQuery({
       keepPreviousData: false,
       select: (response) => {
         const result = map(response.results, (value) => {
-          value.label = `${value.name} (${value.hive_location.apiary_name})`;
+          const apiary = `(${value.hive_location?.apiary_name ?? '--'})`;
+          value.label = `${value.name} (${apiary})`;
           value.value = value.id;
           value.type = 'hive';
           return value;
@@ -685,7 +686,7 @@ export function useRearingDetailsQuery({
       keepPreviousData: false,
       select: (response) => {
         const result = map(response.results, (value) => {
-          value.label = `${value.job} [${value.hour}h]`;
+          value.label = `${value.job}`;
           value.value = value.id;
           return value;
         });

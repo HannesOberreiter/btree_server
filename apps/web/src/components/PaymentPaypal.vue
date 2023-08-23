@@ -30,10 +30,10 @@ const donation = toRef(props, 'donation');
 
 try {
   paypal = await loadScript({
-    'client-id': PAYPAL_CLIENT_ID,
+    clientId: PAYPAL_CLIENT_ID,
     currency: 'EUR',
-    'disable-funding': 'paylater',
-    'data-user-id-token': storeUser.company.id + '',
+    disableFunding: 'paylater',
+    dataUserIdToken: storeUser.company.id + '',
   });
 } catch (error) {
   console.error('failed to load the PayPal JS SDK script', error);

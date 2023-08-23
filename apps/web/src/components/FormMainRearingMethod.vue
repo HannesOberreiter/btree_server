@@ -64,7 +64,6 @@ const emit = defineEmits<{
 
 const ids = ref(props.ids);
 const isEdit = computed(() => {
-  console.log(ids.value);
   if (ids.value === null) return false;
   if (ids.value.length === 0) return false;
   return true;

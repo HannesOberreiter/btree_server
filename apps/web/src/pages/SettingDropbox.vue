@@ -70,7 +70,7 @@ import { LoadingBar, useQuasar } from 'quasar';
 import { useServiceDropbox } from '~/composables/useDropbox';
 import DialogFileUpload from '~/components/DialogFileUpload.vue';
 import FilesDropbox from '~/components/FilesDropbox.vue';
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
@@ -82,17 +82,19 @@ const resetInit = ref(false);
 
 const params = router.currentRoute.value.query;
 
-if (params.error) {
-  notification.open(
-    'negative',
-    params.error_description ? params.error_description : params.error,
-    false,
-  );
-} else if (params.code) {
-  useDropbox.auth(params.code as string).then(() => onToken());
-} else {
-  onToken();
-}
+onMounted(() => {
+  if (params.error) {
+    notification.open(
+      'negative',
+      params.error_description ? params.error_description : params.error,
+      false,
+    );
+  } else if (params.code) {
+    useDropbox.auth(params.code as string).then(() => onToken());
+  } else {
+    onToken();
+  }
+});
 
 function onAuth() {
   useDropbox.addAccount();
@@ -102,10 +104,10 @@ function onDelete() {
   useDropbox.deleteAccount().then(() => reset());
 }
 
-function onToken() {
-  useDropbox.getAccessToken().then((response) => {
+async function onToken() {
+  await useDropbox.getAccount().then((response) => {
     if (response) {
-      useDropbox.getAccount().then((response) => (account.value = response));
+      account.value = response;
     } else {
       reset();
     }

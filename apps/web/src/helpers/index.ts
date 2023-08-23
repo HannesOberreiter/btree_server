@@ -23,6 +23,12 @@ export const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 export const formCheckMultipleValues = (data: any, name: string) => {
   const r = map(data, (row: any) => row[name]);
   const u = uniq(r);
+  if (u.length === 1) {
+    // Hack if date by any chance is broken, which results in 0000-00-00
+    if (u[0] === '0000-00-00') {
+      return true;
+    }
+  }
   return u.length > 1;
 };
 

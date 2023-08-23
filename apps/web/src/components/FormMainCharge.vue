@@ -120,6 +120,7 @@ import FormInputNote from '~/components/FormInputNote.vue';
 import FormInputText from '~/components/FormInputText.vue';
 import FormInputUrl from '~/components/FormInputUrl.vue';
 import { ref, computed, unref } from 'vue';
+import { toRefs } from '@vueuse/core';
 
 const useDate = useDateFormat();
 const fields = useFieldsettingStore();
@@ -132,18 +133,32 @@ const props = defineProps({
     type: Array,
     default: null,
   },
+  copy: {
+    type: Boolean,
+    default: false,
+  },
 });
 const emit = defineEmits<{
   (e: 'onSuccess', value: boolean): void;
 }>();
 
-const ids = ref(props.ids);
+const { ids, copy } = toRefs(props);
 const isEdit = computed(() => {
+  if (copy.value) return false;
   if (ids.value === null) return false;
   if (ids.value.length === 0) return false;
   return true;
 });
-if (isEdit.value) getEdit(unref(ids.value));
+
+const isCopy = computed(() => {
+  if (copy.value) return true;
+  if (ids.value) {
+    if (ids.value.length === 1) return true;
+  }
+  return false;
+});
+
+if (isEdit.value || isCopy.value) getEdit(unref(ids.value));
 
 const v = useVuelidate();
 
@@ -170,11 +185,13 @@ const state = ref<FormCharge>({
 async function getEdit(id: unknown[]) {
   return await api.post('/v1/charge/batchGet', { ids: id }).then(
     (response: any) => {
-      const editIds = map(response, (row: any) => [
-        { value: row.id, label: `ID: ${row.id} / (${row.name})` },
-      ]);
-      editOptions.value = flatten(editIds);
-      editOptionsCopy.value = flatten(editIds);
+      if (isEdit.value) {
+        const editIds = map(response, (row: any) => [
+          { value: row.id, label: `ID: ${row.id} / (${row.name})` },
+        ]);
+        editOptions.value = flatten(editIds);
+        editOptionsCopy.value = flatten(editIds);
+      }
       values.value = response;
     },
     (error) => {

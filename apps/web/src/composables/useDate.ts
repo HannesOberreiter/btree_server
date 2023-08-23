@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
+
 import { useI18n } from 'vue-i18n';
 import { unref } from 'vue';
 
@@ -10,7 +11,12 @@ import 'dayjs/locale/en';
 dayjs.extend(localizedFormat);
 dayjs.extend(customParseFormat);
 
-type DateFormat = 'date' | 'date-time' | 'time' | 'date-time-seconds';
+type DateFormat =
+  | 'date'
+  | 'date-time'
+  | 'time'
+  | 'date-time-seconds'
+  | 'rearing';
 
 export const useDateFormat = () => {
   const { locale } = useI18n();
@@ -25,6 +31,7 @@ export const useDateFormat = () => {
       'date-time': 'YYYY-MM-DD HH:mm',
       time: 'HH:mm',
       'date-time-seconds': 'YYYY-MM-DD HH:mm:ss',
+      rearing: 'lll dddd',
     };
     if (inputFormat !== '')
       return dayjs(date, inputFormat).format(formats[type]);
@@ -41,10 +48,17 @@ export const useDateFormat = () => {
       'date-time': 'lll',
       time: 'LT',
       'date-time-seconds': 'L LTS',
+      rearing: 'lll, dddd',
     };
     if (inputFormat !== '')
       return dayjs(date, inputFormat).format(formats[type]);
     return dayjs(date).locale(unref(locale)).format(formats[type]);
+  };
+
+  const rearingFormat = (date: string) => {
+    const prefix = displayFormat(date, 'date-time');
+    const suffix = dayjs(date).locale(unref(locale)).format('dddd');
+    return `${prefix} ${suffix}`;
   };
 
   const getYear = (date: string) => dayjs(date).year();
@@ -57,6 +71,7 @@ export const useDateFormat = () => {
   return {
     isoFormat,
     displayFormat,
+    rearingFormat,
     getYear,
     getCurrent,
     toDayjs,

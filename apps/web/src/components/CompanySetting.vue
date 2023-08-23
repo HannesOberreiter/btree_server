@@ -64,7 +64,6 @@
 
 <script setup lang="ts">
 import { findIndex, sortBy } from 'lodash-es';
-// import { useAuthTokenStore } from '~/stores/token';
 import { useAuthUserStore } from '~/stores/auth';
 import { useNotification } from '~/composables/useNotification';
 import { useQuasar } from 'quasar';
@@ -85,7 +84,6 @@ const api = useApiFetch();
 const { t } = useI18n();
 const $q = useQuasar();
 const storeUser = useAuthUserStore();
-// const storeToken = useAuthTokenStore();
 const storeRefresh = useRefreshStore();
 const invalidateQueries = useInvalidateQueries();
 const router = useRouter();
@@ -116,8 +114,6 @@ const changeCompany = (value: any) => {
       clearCache();
       invalidateQueries.invalidate();
       storeUser.refresh(response.data);
-      // storeToken.refreshToken(response.token);
-      //await storeRefresh.refresh();
       notification.open('positive', '');
       router.go(0);
     },
@@ -145,7 +141,6 @@ const removeAccess = () => {
     api.remove(`/v1/company_user/${model.value.id}`).then(
       async (_response: any) => {
         invalidateQueries.invalidate();
-        // storeToken.refreshToken(response.token);
         await storeRefresh.refresh();
         notification.open('positive', '');
       },
@@ -224,7 +219,6 @@ const deleteCompany = () => {
     api.remove(`/v1/company/${model.value.id}`).then(
       async (_response: any) => {
         invalidateQueries.invalidate();
-        //storeToken.refreshToken(response.token);
         await storeRefresh.refresh();
         notification.open('positive', '');
       },
