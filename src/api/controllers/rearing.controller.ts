@@ -35,10 +35,12 @@ export default class RearingController {
       }
     }
     if (q) {
-      if (q.trim() !== '') {
+      const search = '' + q; // Querystring could be converted be a number
+
+      if (search.trim() !== '') {
         query.where((builder) => {
-          builder.orWhere('type.name', 'like', `%${q}%`);
-          builder.orWhere('rearings.name', 'like', `%${q}%`);
+          builder.orWhere('type.name', 'like', `%${search}%`);
+          builder.orWhere('rearings.name', 'like', `%${search}%`);
         });
       }
     }
