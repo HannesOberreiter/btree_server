@@ -1,7 +1,7 @@
-import { ExtModel } from '@models/base.model';
-import { User } from '@models/user.model';
-import { Company } from '@models/company.model';
-import { HiveCount } from '@models/hive_count.model';
+import { ExtModel } from './base.model.js';
+import { User } from './user.model.js';
+import { Company } from './company.model.js';
+import { HiveCount } from './hive_count.model.js';
 export class Apiary extends ExtModel {
   id!: number;
   name!: string;
@@ -27,14 +27,15 @@ export class Apiary extends ExtModel {
   hive_count?: HiveCount;
 
   static jsonSchema = {
+    $id: 'apiaries_schema',
     type: 'object',
     required: ['name'],
     properties: {
       id: { type: 'integer' },
       name: { type: 'string', minLength: 1, maxLength: 45 },
       description: { type: 'string', maxLength: 512 },
-      latitude: { type: 'number', minimum: -90, maximum: 90 },
-      longitude: { type: 'number', minimum: -180, maximum: 180 },
+      latitude: { type: 'number', minimum: -90, maximum: 90, default: 0 },
+      longitude: { type: 'number', minimum: -180, maximum: 180, default: 0 },
       note: { type: 'string', maxLength: 2000 },
       url: { type: 'string', maxLength: 512 },
 

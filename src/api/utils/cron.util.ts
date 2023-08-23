@@ -1,40 +1,40 @@
 import dayjs from 'dayjs';
-import { Apiary } from '../models/apiary.model';
-import { Company } from '../models/company.model';
-import { CompanyBee } from '../models/company_bee.model';
-import { Hive } from '../models/hive.model';
-import { Movedate } from '../models/movedate.model';
-import { User } from '../models/user.model';
-import { checkMySQLError } from './error.util';
-import { Dropbox } from '../models/dropbox.model';
-import { ChargeType } from '../models/option/charge_type.model';
-import { CheckupType } from '../models/option/checkup_type.model';
-import { FeedType } from '../models/option/feed_type.model';
-import { HarvestType } from '../models/option/harvest_type.model';
-import { HiveSource } from '../models/option/hive_source.model';
-import { HiveType } from '../models/option/hive_type.mode';
-import { LoginAttemp } from '../models/login_attempt.model';
-import { QueenMating } from '../models/option/queen_mating.model';
-import { QueenRace } from '../models/option/queen_race.model';
-import { RearingDetail } from '../models/rearing/rearing_detail.model';
-import { RearingType } from '../models/rearing/rearing_type.model';
-import { Rearing } from '../models/rearing/rearing.model';
-import { RearingStep } from '../models/rearing/rearing_step.model';
-import { RefreshToken } from '../models/refresh_token.model';
-import { Scale } from '../models/scale.model';
-import { ScaleData } from '../models/scale_data.model';
-import { TreatmentDisease } from '../models/option/treatment_disease.model';
-import { TreatmentType } from '../models/option/treatment_type.model';
-import { TreatmentVet } from '../models/option/treatment_vet.model';
-import { Feed } from '../models/feed.model';
-import { Treatment } from '../models/treatment.model';
-import { Checkup } from '../models/checkup.model';
-import { Harvest } from '../models/harvest.model';
-import { Queen } from '../models/queen.model';
+import { Apiary } from '../models/apiary.model.js';
+import { Company } from '../models/company.model.js';
+import { CompanyBee } from '../models/company_bee.model.js';
+import { Hive } from '../models/hive.model.js';
+import { Movedate } from '../models/movedate.model.js';
+import { User } from '../models/user.model.js';
+import { checkMySQLError } from './error.util.js';
+import { Dropbox } from '../models/dropbox.model.js';
+import { ChargeType } from '../models/option/charge_type.model.js';
+import { CheckupType } from '../models/option/checkup_type.model.js';
+import { FeedType } from '../models/option/feed_type.model.js';
+import { HarvestType } from '../models/option/harvest_type.model.js';
+import { HiveSource } from '../models/option/hive_source.model.js';
+import { HiveType } from '../models/option/hive_type.mode.js';
+import { LoginAttemp } from '../models/login_attempt.model.js';
+import { QueenMating } from '../models/option/queen_mating.model.js';
+import { QueenRace } from '../models/option/queen_race.model.js';
+import { RearingDetail } from '../models/rearing/rearing_detail.model.js';
+import { RearingType } from '../models/rearing/rearing_type.model.js';
+import { Rearing } from '../models/rearing/rearing.model.js';
+import { RearingStep } from '../models/rearing/rearing_step.model.js';
+import { RefreshToken } from '../models/refresh_token.model.js';
+import { Scale } from '../models/scale.model.js';
+import { ScaleData } from '../models/scale_data.model.js';
+import { TreatmentDisease } from '../models/option/treatment_disease.model.js';
+import { TreatmentType } from '../models/option/treatment_type.model.js';
+import { TreatmentVet } from '../models/option/treatment_vet.model.js';
+import { Feed } from '../models/feed.model.js';
+import { Treatment } from '../models/treatment.model.js';
+import { Checkup } from '../models/checkup.model.js';
+import { Harvest } from '../models/harvest.model.js';
+import { Queen } from '../models/queen.model.js';
 import { raw } from 'objection';
-import { env } from '@/config/environment.config';
-import { ENVIRONMENT } from '../types/constants/environment.const';
-import { MailServer } from '../app.bootstrap';
+import { env } from '../../config/environment.config.js';
+import { MailService } from '../../services/mail.service.js';
+import { ENVIRONMENT } from '../../config/constants.config.js';
 
 export const cleanupDatabase = async () => {
   try {
@@ -267,7 +267,7 @@ export const reminderVIS = async () => {
       if (env !== ENVIRONMENT.staging) {
         for (const i in users) {
           const user = users[i];
-          await MailServer.sendMail({
+          await MailService.getInstance().sendMail({
             to: user.email,
             lang: 'de',
             subject: mailSubject,
@@ -316,7 +316,7 @@ export const reminderPremium = async () => {
     if (env !== ENVIRONMENT.staging) {
       companies.forEach(async (company) => {
         company.user.forEach(async (u) => {
-          await MailServer.sendMail({
+          await MailService.getInstance().sendMail({
             to: u.email,
             lang: u.lang,
             subject: 'premium_reminder',
@@ -369,7 +369,7 @@ export const reminderDeletion = async () => {
     // Staging server does have correct mail settings don't send reminders, otherwise user would get double notified
     if (env !== ENVIRONMENT.staging) {
       forgottenIds.forEach(async (u) => {
-        await MailServer.sendMail({
+        await MailService.getInstance().sendMail({
           to: u['email'],
           lang: u['lang'],
           subject: 'deletion_reminder',

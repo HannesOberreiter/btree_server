@@ -1,75 +1,118 @@
-import { Router } from '@classes/router.class';
-import { Container } from '@config/container.config';
-import { Guard } from '@middlewares/guard.middleware';
-import { ROLES } from '@/api/types/constants/role.const';
-import { Validator } from '@middlewares/validator.middleware';
-import { query } from 'express-validator';
+import { Guard } from '../../hooks/guard.hook.js';
+import { ROLES } from '../../../config/constants.config.js';
+import { FastifyInstance } from 'fastify';
+import { ZodTypeProvider } from 'fastify-type-provider-zod';
+import { z } from 'zod';
+import CalendarController from '../../controllers/calendar.controller.js';
 
-const CalendarParams = [query('start').isString(), query('end').isString()];
-export class CalendarRouter extends Router {
-  constructor() {
-    super();
-  }
-  define() {
-    this.router
-      .route('/checkup')
-      .get(
-        Validator.validate(CalendarParams),
-        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Container.resolve('CalendarController').getCheckups,
-      );
-    this.router
-      .route('/treatment')
-      .get(
-        Validator.validate(CalendarParams),
-        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Container.resolve('CalendarController').getTreatments,
-      );
-    this.router
-      .route('/harvest')
-      .get(
-        Validator.validate(CalendarParams),
-        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Container.resolve('CalendarController').getHarvests,
-      );
-    this.router
-      .route('/feed')
-      .get(
-        Validator.validate(CalendarParams),
-        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Container.resolve('CalendarController').getFeeds,
-      );
-    this.router
-      .route('/movedate')
-      .get(
-        Validator.validate(CalendarParams),
-        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Container.resolve('CalendarController').getMovements,
-      );
-    this.router
-      .route('/todo')
-      .get(
-        Validator.validate(CalendarParams),
-        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Container.resolve('CalendarController').getTodos,
-      );
-    this.router
-      .route('/scale_data')
-      .get(
-        Validator.validate(CalendarParams),
-        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Container.resolve('CalendarController').getScaleData,
-      );
-    this.router
-      .route('/rearing')
-      .get(
-        Validator.validate([
-          query('start').if(query('id').not().exists()).isString(),
-          query('end').if(query('id').not().exists()).isString(),
-          query('id').optional(),
-        ]),
-        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Container.resolve('CalendarController').getRearings,
-      );
-  }
+const CalendarParams = z.object({
+  start: z.string(),
+  end: z.string(),
+});
+export default function routes(
+  instance: FastifyInstance,
+  _options: any,
+  done: any,
+) {
+  const server = instance.withTypeProvider<ZodTypeProvider>();
+
+  server.get(
+    '/checkup',
+    {
+      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+      schema: {
+        querystring: CalendarParams,
+      },
+    },
+    CalendarController.getCheckups,
+  );
+
+  server.get(
+    '/treatment',
+    {
+      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+      schema: {
+        querystring: CalendarParams,
+      },
+    },
+    CalendarController.getTreatments,
+  );
+
+  server.get(
+    '/harvest',
+    {
+      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+      schema: {
+        querystring: CalendarParams,
+      },
+    },
+    CalendarController.getHarvests,
+  );
+
+  server.get(
+    '/feed',
+    {
+      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+      schema: {
+        querystring: CalendarParams,
+      },
+    },
+    CalendarController.getFeeds,
+  );
+
+  server.get(
+    '/movedate',
+    {
+      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+      schema: {
+        querystring: CalendarParams,
+      },
+    },
+    CalendarController.getMovements,
+  );
+
+  server.get(
+    '/todo',
+    {
+      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+      schema: {
+        querystring: CalendarParams,
+      },
+    },
+    CalendarController.getTodos,
+  );
+
+  server.get(
+    '/scale_data',
+    {
+      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+      schema: {
+        querystring: CalendarParams,
+      },
+    },
+    CalendarController.getScaleData,
+  );
+
+  server.get(
+    '/rearing',
+    {
+      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+      schema: {
+        querystring: z
+          .object({
+            start: z.string().optional(),
+            end: z.string().optional(),
+            id: z.string().optional(),
+          })
+          .refine((val) => {
+            if (val.start && val.end) return true;
+            if (val.id) return true;
+            return false;
+          }),
+      },
+    },
+    CalendarController.getRearings,
+  );
+
+  done();
 }

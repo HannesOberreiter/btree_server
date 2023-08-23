@@ -1,67 +1,106 @@
-import { Router } from '@classes/router.class';
-import { Container } from '@config/container.config';
-import { Guard } from '@middlewares/guard.middleware';
-import { ROLES } from '@/api/types/constants/role.const';
-import { Validator } from '@/api/middlewares/validator.middleware';
-import { body } from 'express-validator';
-export class OptionRouter extends Router {
-  constructor() {
-    super();
-  }
-  define() {
-    this.router
-      .route('/:table')
-      .get(
-        Validator.handleOption,
-        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Container.resolve('OptionController').get,
-      );
-    this.router
-      .route('/:table')
-      .patch(
-        Validator.validate([body('ids').isArray()]),
-        Guard.authorize([ROLES.admin]),
-        Container.resolve('OptionController').patch,
-      );
-    this.router
-      .route('/:table')
-      .post(
-        Validator.validate([]),
-        Guard.authorize([ROLES.admin]),
-        Container.resolve('OptionController').post,
-      );
-    this.router
-      .route('/:table/status')
-      .patch(
-        Validator.handleOption,
-        Validator.validate([body('ids').isArray(), body('status').isBoolean()]),
-        Guard.authorize([ROLES.admin]),
-        Container.resolve('OptionController').updateStatus,
-      );
-    this.router
-      .route('/:table/favorite')
-      .patch(
-        Validator.handleOption,
-        Validator.validate([body('ids').isArray()]),
-        Guard.authorize([ROLES.admin]),
-        Container.resolve('OptionController').updateFavorite,
-      );
+import { Guard } from '../../hooks/guard.hook.js';
+import { ROLES } from '../../../config/constants.config.js';
+import { FastifyInstance } from 'fastify';
+import { ZodTypeProvider } from 'fastify-type-provider-zod';
+import { z } from 'zod';
+import OptionsController from '../../controllers/options.controller.js';
+import { Validator } from '../../hooks/validator.hook.js';
+import { numberSchema } from '../../utils/zod.util.js';
 
-    this.router
-      .route('/:table/batchDelete')
-      .patch(
-        Validator.validate([body('ids').isArray()]),
-        Validator.handleOption,
-        Guard.authorize([ROLES.admin]),
-        Container.resolve('OptionController').batchDelete,
-      );
-    this.router
-      .route('/:table/batchGet')
-      .post(
-        Validator.validate([body('ids').isArray()]),
-        Validator.handleOption,
-        Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('OptionController').batchGet,
-      );
-  }
+export default function routes(
+  instance: FastifyInstance,
+  _options: any,
+  done: any,
+) {
+  const server = instance.withTypeProvider<ZodTypeProvider>();
+  server.get(
+    '/:table',
+    {
+      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+      preValidation: Validator.handleOption,
+    },
+    OptionsController.get,
+  );
+  server.patch(
+    '/:table',
+    {
+      preHandler: Guard.authorize([ROLES.admin]),
+      preValidation: Validator.handleOption,
+      schema: {
+        body: z.object({
+          ids: z.array(numberSchema),
+          data: z.object({}).passthrough(),
+        }),
+      },
+    },
+    OptionsController.patch,
+  );
+
+  server.post(
+    '/:table',
+    {
+      preHandler: Guard.authorize([ROLES.admin]),
+      preValidation: Validator.handleOption,
+    },
+    OptionsController.post,
+  );
+
+  server.patch(
+    '/:table/status',
+    {
+      preHandler: Guard.authorize([ROLES.admin]),
+      preValidation: Validator.handleOption,
+      schema: {
+        body: z.object({
+          ids: z.array(numberSchema),
+          status: z.boolean(),
+        }),
+      },
+    },
+    OptionsController.updateStatus,
+  );
+
+  server.patch(
+    '/:table/favorite',
+    {
+      preHandler: Guard.authorize([ROLES.admin]),
+      preValidation: Validator.handleOption,
+      schema: {
+        body: z.object({
+          ids: z.array(numberSchema),
+        }),
+      },
+    },
+    OptionsController.updateFavorite,
+  );
+
+  server.patch(
+    '/:table/batchDelete',
+    {
+      preHandler: Guard.authorize([ROLES.admin]),
+      preValidation: Validator.handleOption,
+      schema: {
+        body: z.object({
+          ids: z.array(numberSchema),
+        }),
+      },
+    },
+    OptionsController.batchDelete,
+  );
+
+  server.post(
+    '/:table/batchGet',
+    {
+      preHandler: Guard.authorize([ROLES.admin, ROLES.user, ROLES.read]),
+      preValidation: Validator.handleOption,
+      schema: {
+        body: z.object({
+          ids: z.array(numberSchema),
+        }),
+      },
+    },
+    OptionsController.batchGet,
+  );
+
+  done();
 }

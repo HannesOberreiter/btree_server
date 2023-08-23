@@ -1,13 +1,11 @@
-import { ENVIRONMENT } from '@/api/types/constants/environment.const';
-import p from 'path';
 import dotenv from 'dotenv';
+import { ENVIRONMENT } from './constants.config.js';
+
+const rootDirectory = new URL('../../', import.meta.url).pathname;
 
 /**
- * Configure dotenv with variables.env file before app, to allow process.env accessibility in
- * app.js
- *
+ * @description Configure dotenv with variables.env file before app
  * @dependency dotenv
- *
  * @see https://www.npmjs.com/package/dotenv
  */
 class EnvironmentConfiguration {
@@ -44,7 +42,7 @@ class EnvironmentConfiguration {
     this.set();
     // https://www.npmjs.com/package/dotenv
     const result = dotenv.config({
-      path: p.join(__dirname, `../../env/${this.environment}.env`),
+      path: rootDirectory + `/env/${this.environment}.env`,
     });
     if (result.error) {
       throw result.error;
@@ -55,26 +53,14 @@ class EnvironmentConfiguration {
 EnvironmentConfiguration.load();
 
 const env = EnvironmentConfiguration.environment;
-const version = process.env.API_VERSION;
-const port = process.env.PORT;
+const port = parseInt(process.env.PORT);
 const url = process.env.URL;
 const frontend = process.env.FRONTEND;
 const authorized = process.env.AUTHORIZED;
-
-/*const jwtSecret = process.env.JWT_SECRET;
-const jwtExpirationInterval: number = parseFloat(
-  process.env.JWT_EXPIRATION_MINUTES
-);
-const jwtExpirationIntervalRefreshToken: number = parseInt(
-  process.env.JWT_REFRESH_DAYS
-);*/
+const isContainer = !!process.env.CONTAINER;
 
 const sessionSecret = process.env.SESSION_SECRET;
 
-const logs = env === ENVIRONMENT.production ? 'combined' : 'development';
-// https://github.com/expressjs/morgan
-const httpLogs = env === ENVIRONMENT.production ? 'tiny' : 'dev';
-const contentType = process.env.CONTENT_TYPE;
 const meteoblueKey = process.env.METEOBLUE_KEY;
 
 const dropboxClientId = process.env.DROPBOX_CLIENT_ID;
@@ -85,7 +71,7 @@ const paypalAppSecret = process.env.PAYPAL_APP_SECRET;
 const paypalBase =
   env === ENVIRONMENT.production
     ? 'https://api-m.paypal.com'
-    : 'https://api-m.sandbox.paypal.com';
+    : 'https.//api-m.sandbox.paypal.com.js';
 
 const stripeSecret = process.env.STRIPE_SECRET_KEY;
 
@@ -111,7 +97,9 @@ const totalLimit = {
   scale: parseInt(process.env.TOTAL_LIMIT_SCALE),
 };
 
-const cronjobTimer = process.env.CRONJOB ? process.env.CRONJOB : '0 11 */1 * *';
+const cronjobTimer = process.env.CRONJOB
+  ? process.env.CRONJOB
+  : '0 11 ./1 * *.js';
 
 const redisConfig = {
   host: process.env.REDIS_HOSTNAME,
@@ -195,6 +183,7 @@ const openAI = {
 };
 
 export {
+  rootDirectory,
   redisConfig,
   knexConfig,
   vectorConfig,
@@ -204,13 +193,6 @@ export {
   frontend,
   meteoblueKey,
   authorized,
-  contentType,
-  //jwtSecret,
-  //jwtExpirationInterval,
-  //jwtExpirationIntervalRefreshToken,
-  version,
-  logs,
-  httpLogs,
   mailConfig,
   dropboxClientId,
   dropboxClientSecret,
@@ -227,4 +209,5 @@ export {
   foxyOfficeUrl,
   googleOAuth,
   openAI,
+  isContainer,
 };

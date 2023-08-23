@@ -4,61 +4,16 @@
     "outDir": "dist",
     "baseUrl": "./",
     "sourceMap": false,
-    "paths": {
-      "@/*": [
-        "src/*"
-      ],
-      "@api/*": [
-        "src/api/*"
-      ],
-      "@cron/*": [
-        "src/cron/*"
-      ],
-      "@config/*": [
-        "src/config/*"
-      ],
-      "@servers/*": [
-        "src/servers/*"
-      ],
-      "@controllers/*": [
-        "src/api/controllers/*"
-      ],
-      "@middlewares/*": [
-        "src/api/middlewares/*"
-      ],
-      "@models/*": [
-        "src/api/models/*"
-      ],
-      "@routes/*": [
-        "src/api/routes/*"
-      ],
-      "@services/*": [
-        "src/api/services/*"
-      ],
-      "@enums/*": [
-        "src/api/types/constants/*"
-      ],
-      "@classes/*": [
-        "src/api/types/classes/*"
-      ],
-      "@interfaces/*": [
-        "src/api/types/interfaces/*"
-      ],
-      "@utils/*": [
-        "src/api/utils/*"
-      ],
-    },
     "lib": [
       "ES2022",
-      "dom"
+      "DOM"
     ],
     "target": "ES2022",
-    "module": "commonjs",
+    "module": "nodenext",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "resolveJsonModule": true,
     "skipLibCheck": true,
   },
   "include": [

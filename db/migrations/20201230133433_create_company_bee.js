@@ -1,5 +1,5 @@
 // m:n table with rank for users in companies
-exports.up = function (knex) {
+export const up = function (knex) {
   return knex.schema.createTable('company_bee', (t) => {
     t.increments('id').primary().unsigned();
     t.integer('user_id').unsigned().nullable();
@@ -19,7 +19,7 @@ exports.up = function (knex) {
   });
 };
 
-exports.down = function (knex) {
+export const down = function (knex) {
   knex.schema.alterTable('company_bee', (t) => {
     t.dropForeign('user_id');
     t.dropForeign('bee_id');

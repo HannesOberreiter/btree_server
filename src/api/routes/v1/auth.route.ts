@@ -1,105 +1,130 @@
-import { Guard } from '@/api/middlewares/guard.middleware';
-import { ROLES } from '@/api/types/constants/role.const';
-import { frontend } from '@/config/environment.config';
-import { Router } from '@classes/router.class';
-import { Container } from '@config/container.config';
-import { Validator } from '@middlewares/validator.middleware';
-import { body, param } from 'express-validator';
-import passport from 'passport';
+import { FastifyInstance } from 'fastify';
+import { ZodTypeProvider } from 'fastify-type-provider-zod';
+import { z } from 'zod';
 
-export class AuthRouter extends Router {
-  constructor() {
-    super();
-  }
+import AuthController from '../../controllers/auth.controller.js';
+import { Guard } from '../../hooks/guard.hook.js';
+import { ROLES } from '../../../config/constants.config.js';
+import { GoogleAuth } from '../../../services/federated.service.js';
 
-  define() {
-    this.router
-      .route('/register')
-      .post(
-        Validator.validate([
-          body('email').isEmail(),
-          body('password').isLength({ min: 6, max: 128 }).trim(),
-          body('name').isString().isLength({ min: 3, max: 128 }).trim(),
-          body('lang').isString().isLength({ min: 2, max: 2 }),
-          body('newsletter').isBoolean(),
-          body('source').isString(),
-        ]),
-        Container.resolve('AuthController').register,
-      );
+export default function routes(
+  instance: FastifyInstance,
+  _options: any,
+  done: any,
+) {
+  const server = instance.withTypeProvider<ZodTypeProvider>();
 
-    this.router
-      .route('/login')
-      .post(
-        Validator.validate([
-          body('email').exists().withMessage('requiredField').isEmail(),
-          body('password').isLength({ min: 6 }).trim(),
-        ]),
-        Container.resolve('AuthController').login,
-      );
+  server.post(
+    '/register',
+    {
+      schema: {
+        body: z.object({
+          email: z.string().email(),
+          password: z.string().min(6).max(128).trim(),
+          name: z.string().min(3).max(128).trim(),
+          lang: z.string().min(2).max(2),
+          newsletter: z.boolean(),
+          source: z.string(),
+        }),
+      },
+    },
+    AuthController.register,
+  );
 
-    this.router
-      .route('/logout')
-      .get(Container.resolve('AuthController').logout);
+  server.post(
+    '/login',
+    {
+      schema: {
+        body: z.object({
+          email: z.string().email(),
+          password: z.string().min(6).max(128).trim(),
+        }),
+      },
+    },
+    AuthController.login,
+  );
 
-    this.router
-      .route('/confirm')
-      .patch(
-        Validator.validate([body('confirm').isLength({ min: 100, max: 128 })]),
-        Container.resolve('AuthController').confirmMail,
-      );
+  server.get('/logout', {}, AuthController.logout);
 
-    this.router
-      .route('/reset')
-      .post(
-        Validator.validate([body('email').isEmail()]),
-        Container.resolve('AuthController').resetRequest,
-      );
+  server.patch(
+    '/confirm',
+    {
+      schema: {
+        body: z.object({
+          confirm: z.string().min(100).max(128),
+        }),
+      },
+    },
+    AuthController.confirmMail,
+  );
 
-    this.router
-      .route('/reset')
-      .patch(
-        Validator.validate([
-          body('key').isLength({ min: 100, max: 128 }),
-          body('password').isLength({ min: 6, max: 128 }).trim(),
-        ]),
-        Container.resolve('AuthController').resetPassword,
-      );
+  server.post(
+    '/reset',
+    {
+      schema: {
+        body: z.object({
+          email: z.string().email(),
+        }),
+      },
+    },
+    AuthController.resetRequest,
+  );
 
-    this.router
-      .route('/unsubscribe')
-      .patch(
-        Validator.validate([body('email').isEmail()]),
-        Container.resolve('AuthController').unsubscribeRequest,
-      );
+  server.patch(
+    '/reset',
+    {
+      schema: {
+        body: z.object({
+          key: z.string().min(100).max(128),
+          password: z.string().min(6).max(128).trim(),
+        }),
+      },
+    },
+    AuthController.resetPassword,
+  );
 
-    this.router
-      .route('/refresh')
-      .post(
-        Validator.validate([body('token'), body('expires').isISO8601()]),
-        Container.resolve('AuthController').refresh,
-      );
+  server.patch(
+    '/unsubscribe',
+    {
+      schema: {
+        body: z.object({
+          email: z.string().email(),
+        }),
+      },
+    },
+    AuthController.unsubscribeRequest,
+  );
 
-    this.router
-      .route('/discourse')
-      .get(
-        Validator.validate([param('payload'), param('sig')]),
-        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Container.resolve('AuthController').discourse,
-      );
+  server.get(
+    '/discourse',
+    {
+      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+      schema: {
+        querystring: z.object({
+          payload: z.string(),
+          sig: z.string(),
+        }),
+      },
+    },
+    AuthController.discourse,
+  );
 
-    this.router.route('/google/login').get(
-      passport.authenticate('google', {
-        prompt: 'select_account',
-      }),
-    );
-    this.router.route('/google/callback').get(
-      passport.authenticate('google', {
-        session: false,
-        failureRedirect: frontend + '/visitor/login?error=oauth',
-        failureMessage: true,
-        assignProperty: 'user',
-      }),
-      Container.resolve('AuthController').google,
-    );
-  }
+  server.get('/google', {}, async () => {
+    const google = GoogleAuth.getInstance();
+    return { url: google.generateAuthUrl() };
+  });
+
+  server.get(
+    '/google/callback',
+    {
+      schema: {
+        querystring: z.object({
+          code: z.string(),
+        }),
+      },
+    },
+    AuthController.google,
+  );
+
+  done();
 }

@@ -6,8 +6,7 @@ import {
   paypalAppSecret,
   paypalBase,
   paypalClientId,
-} from '@/config/environment.config';
-import fetch from 'node-fetch';
+} from '../../config/environment.config.js';
 
 // https://developer.paypal.com/docs/api/orders/v2/#orders_create
 export async function createOrder(user_id: number, amount: number) {
@@ -38,7 +37,7 @@ export async function createOrder(user_id: number, amount: number) {
     }),
   });
   const data = await response.json();
-  return data;
+  return data as any;
 }
 
 // https://developer.paypal.com/docs/api/orders/v2/#orders_capture
@@ -53,7 +52,7 @@ export async function capturePayment(orderId: string) {
     },
   });
   const data = await response.json();
-  return data;
+  return data as any;
 }
 
 async function generateAccessToken() {
@@ -67,6 +66,6 @@ async function generateAccessToken() {
       Authorization: `Basic ${auth}`,
     },
   });
-  const data = await response.json();
+  const data = (await response.json()) as any;
   return data.access_token;
 }

@@ -1,61 +1,93 @@
-import { Router } from '@classes/router.class';
-import { Container } from '@config/container.config';
-import { Guard } from '@middlewares/guard.middleware';
-import { ROLES } from '@/api/types/constants/role.const';
-import { Validator } from '@/api/middlewares/validator.middleware';
-import { body } from 'express-validator';
+import { Guard } from '../../hooks/guard.hook.js';
+import { ROLES } from '../../../config/constants.config.js';
+import { FastifyInstance } from 'fastify';
+import { ZodTypeProvider } from 'fastify-type-provider-zod';
+import { z } from 'zod';
+import MovedateController from '../../controllers/movedate.controller.js';
+import { numberSchema } from '../../utils/zod.util.js';
 
-export class MovedateRouter extends Router {
-  constructor() {
-    super();
-  }
-  define() {
-    this.router
-      .route('/')
-      .get(
-        Guard.authorize([ROLES.admin, ROLES.user, ROLES.read]),
-        Container.resolve('MovedateController').get,
-      );
-    this.router
-      .route('/')
-      .post(
-        Validator.validate([
-          body('hive_ids').isArray(),
-          body('apiary_id').isNumeric(),
-          body('date').isString(),
-        ]),
-        Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('MovedateController').post,
-      );
-    this.router
-      .route('/')
-      .patch(
-        Validator.validate([body('ids').isArray()]),
-        Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('MovedateController').patch,
-      );
-    this.router
-      .route('/batchGet')
-      .post(
-        Validator.validate([body('ids').isArray()]),
-        Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('MovedateController').batchGet,
-      );
+export default function routes(
+  instance: FastifyInstance,
+  _options: any,
+  done: any,
+) {
+  const server = instance.withTypeProvider<ZodTypeProvider>();
 
-    this.router
-      .route('/batchDelete')
-      .patch(
-        Validator.validate([body('ids').isArray()]),
-        Guard.authorize([ROLES.admin]),
-        Container.resolve('MovedateController').batchDelete,
-      );
+  server.get(
+    '/',
+    {
+      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+    },
+    MovedateController.get,
+  );
 
-    this.router
-      .route('/date')
-      .patch(
-        Validator.validate([body('ids').isArray(), body('start').isString()]),
-        Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('MovedateController').updateDate,
-      );
-  }
+  server.post(
+    '/',
+    {
+      preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
+      schema: {
+        body: z.object({
+          hive_ids: z.array(numberSchema),
+          apiary_id: z.number(),
+          date: z.string(),
+        }),
+      },
+    },
+    MovedateController.post,
+  );
+
+  server.patch(
+    '/',
+    {
+      preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
+      schema: {
+        body: z.object({
+          ids: z.array(numberSchema),
+        }),
+      },
+    },
+    MovedateController.patch,
+  );
+
+  server.patch(
+    '/date',
+    {
+      preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
+      schema: {
+        body: z.object({
+          ids: z.array(numberSchema),
+          start: z.string(),
+        }),
+      },
+    },
+    MovedateController.updateDate,
+  );
+
+  server.patch(
+    '/batchDelete',
+    {
+      preHandler: Guard.authorize([ROLES.admin]),
+      schema: {
+        body: z.object({
+          ids: z.array(numberSchema),
+        }),
+      },
+    },
+    MovedateController.batchDelete,
+  );
+
+  server.post(
+    '/batchGet',
+    {
+      preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
+      schema: {
+        body: z.object({
+          ids: z.array(numberSchema),
+        }),
+      },
+    },
+    MovedateController.batchGet,
+  );
+
+  done();
 }

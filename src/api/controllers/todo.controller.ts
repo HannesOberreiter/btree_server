@@ -1,197 +1,156 @@
-import { NextFunction, Response } from 'express';
-import { Controller } from '@classes/controller.class';
-import { checkMySQLError } from '@utils/error.util';
-import { IUserRequest } from '@interfaces/IUserRequest.interface';
-import { Todo } from '@models/todo.model';
+import { Todo } from '../models/todo.model.js';
 import dayjs from 'dayjs';
+import { FastifyRequest, FastifyReply } from 'fastify';
 
-export default class TodoController extends Controller {
-  constructor() {
-    super();
-  }
+export default class TodoController {
+  static async get(req: FastifyRequest, reply: FastifyReply) {
+    const { order, direction, offset, limit, q, filters, done } =
+      req.query as any;
+    const query = Todo.query()
+      .withGraphJoined('[creator(identifier), editor(identifier)]')
+      .where({
+        user_id: req.session.user.user_id,
+      })
+      .page(offset ? offset : 0, parseInt(limit) === 0 || !limit ? 10 : limit);
 
-  async get(req: IUserRequest, res: Response, next: NextFunction) {
-    try {
-      const { order, direction, offset, limit, q, filters, done } =
-        req.query as any;
-      const query = Todo.query()
-        .withGraphJoined('[creator(identifier), editor(identifier)]')
-        .where({
-          user_id: req.user.user_id,
-        })
-        .page(
-          offset ? offset : 0,
-          parseInt(limit) === 0 || !limit ? 10 : limit,
-        );
+    if (done) {
+      query.where('todos.done', done === 'true');
+    }
 
-      if (done) {
-        query.where('todos.done', done === 'true');
-      }
-
-      if (filters) {
-        try {
-          const filtering = JSON.parse(filters);
-          if (Array.isArray(filtering)) {
-            filtering.forEach((v) => {
-              if ('date' in v && typeof v['date'] === 'object') {
-                query.whereBetween('date', [v.date.from, v.date.to]);
-              } else {
-                query.where(v);
-              }
-            });
-          }
-        } catch (e) {
-          console.error(e);
-        }
-      }
-      if (order) {
-        if (Array.isArray(order)) {
-          order.forEach((field, index) =>
-            query.orderBy(field, direction[index]),
-          );
-        } else {
-          query.orderBy(order, direction);
-        }
-      }
-      if (q) {
-        if (q.trim() !== '') {
-          query.where((builder) => {
-            builder
-              .orWhere('todos.name', 'like', `%${q}%`)
-              .orWhere('todos.note', 'like', `%${q}%`);
+    if (filters) {
+      try {
+        const filtering = JSON.parse(filters);
+        if (Array.isArray(filtering)) {
+          filtering.forEach((v) => {
+            if ('date' in v && typeof v['date'] === 'object') {
+              query.whereBetween('date', [v.date.from, v.date.to]);
+            } else {
+              query.where(v);
+            }
           });
         }
+      } catch (e) {
+        req.log.error(e);
       }
-      const result = await query.orderBy('id');
-      res.locals.data = result;
-      next();
-    } catch (e) {
-      next(checkMySQLError(e));
     }
-  }
-
-  async post(req: IUserRequest, res: Response, next: NextFunction) {
-    try {
-      const insert = {
-        date: req.body.date,
-        name: req.body.name,
-        note: req.body.note,
-        done: req.body.done,
-        url: req.body.url,
-      };
-      const repeat = req.body.repeat ? req.body.repeat : 0;
-      const interval = req.body.interval ? req.body.interval : 0;
-      const result = await Todo.transaction(async (trx) => {
-        const result = [];
-
-        const res = await Todo.query(trx).insert({
-          ...insert,
-          user_id: req.user.user_id,
-          bee_id: req.user.bee_id,
+    if (order) {
+      if (Array.isArray(order)) {
+        order.forEach((field, index) => query.orderBy(field, direction[index]));
+      } else {
+        query.orderBy(order, direction);
+      }
+    }
+    if (q) {
+      if (q.trim() !== '') {
+        query.where((builder) => {
+          builder
+            .orWhere('todos.name', 'like', `%${q}%`)
+            .orWhere('todos.note', 'like', `%${q}%`);
         });
-        result.push(res.id);
-        if (repeat > 0) {
-          for (let i = 0; i < repeat; i++) {
-            insert.date = dayjs(insert.date)
-              .add(interval, 'days')
-              .format('YYYY-MM-DD');
-            const res = await Todo.query(trx).insert({
-              ...insert,
-              user_id: req.user.user_id,
-              bee_id: req.user.bee_id,
-            });
-            result.push(res.id);
-          }
+      }
+    }
+    const result = await query.orderBy('id');
+    return { ...result };
+  }
+
+  static async post(req: FastifyRequest, reply: FastifyReply) {
+    const body = req.body as any;
+    const insert = {
+      date: body.date,
+      name: body.name,
+      note: body.note,
+      done: body.done,
+      url: body.url,
+    };
+    const repeat = body.repeat ? body.repeat : 0;
+    const interval = body.interval ? body.interval : 0;
+    const result = await Todo.transaction(async (trx) => {
+      const result = [];
+
+      const res = await Todo.query(trx).insert({
+        ...insert,
+        user_id: req.session.user.user_id,
+        bee_id: req.session.user.bee_id,
+      });
+      result.push(res.id);
+      if (repeat > 0) {
+        for (let i = 0; i < repeat; i++) {
+          insert.date = dayjs(insert.date)
+            .add(interval, 'days')
+            .format('YYYY-MM-DD');
+          const res = await Todo.query(trx).insert({
+            ...insert,
+            user_id: req.session.user.user_id,
+            bee_id: req.session.user.bee_id,
+          });
+          result.push(res.id);
         }
-        return result;
-      });
-      res.locals.data = result;
-      next();
-    } catch (e) {
-      next(checkMySQLError(e));
-    }
+      }
+      return result;
+    });
+    return result;
   }
 
-  async patch(req: IUserRequest, res: Response, next: NextFunction) {
-    const ids = req.body.ids;
-    const insert = { ...req.body.data };
-    try {
-      const result = await Todo.transaction(async (trx) => {
-        return await Todo.query(trx)
-          .patch({ ...insert, bee_id: req.user.bee_id })
-          .findByIds(ids)
-          .where('user_id', req.user.user_id);
-      });
-      res.locals.data = result;
-      next();
-    } catch (e) {
-      next(checkMySQLError(e));
-    }
+  static async patch(req: FastifyRequest, reply: FastifyReply) {
+    const body = req.body as any;
+    const ids = body.ids;
+    const insert = { ...body.data };
+    const result = await Todo.transaction(async (trx) => {
+      return await Todo.query(trx)
+        .patch({ ...insert, bee_id: req.session.user.bee_id })
+        .findByIds(ids)
+        .where('user_id', req.session.user.user_id);
+    });
+    return result;
   }
 
-  async batchGet(req: IUserRequest, res: Response, next: NextFunction) {
-    try {
-      const result = await Todo.transaction(async (trx) => {
-        const res = await Todo.query(trx)
-          .findByIds(req.body.ids)
-          .where('user_id', req.user.user_id);
-        return res;
-      });
-      res.locals.data = result;
-      next();
-    } catch (e) {
-      next(checkMySQLError(e));
-    }
+  static async batchGet(req: FastifyRequest, reply: FastifyReply) {
+    const body = req.body as any;
+    const result = await Todo.transaction(async (trx) => {
+      const res = await Todo.query(trx)
+        .findByIds(body.ids)
+        .where('user_id', req.session.user.user_id);
+      return res;
+    });
+    return result;
   }
 
-  async batchDelete(req: IUserRequest, res: Response, next: NextFunction) {
-    try {
-      const result = await Todo.transaction(async (trx) => {
-        return Todo.query(trx)
-          .delete()
-          .whereIn('id', req.body.ids)
-          .where('user_id', req.user.user_id);
-      });
-      res.locals.data = result;
-      next();
-    } catch (e) {
-      next(checkMySQLError(e));
-    }
+  static async batchDelete(req: FastifyRequest, reply: FastifyReply) {
+    const body = req.body as any;
+    const result = await Todo.transaction(async (trx) => {
+      return Todo.query(trx)
+        .delete()
+        .whereIn('id', body.ids)
+        .where('user_id', req.session.user.user_id);
+    });
+    return result;
   }
 
-  async updateStatus(req: IUserRequest, res: Response, next: NextFunction) {
-    try {
-      const result = await Todo.transaction(async (trx) => {
-        return Todo.query(trx)
-          .patch({
-            edit_id: req.user.bee_id,
-            done: req.body.status,
-          })
-          .findByIds(req.body.ids)
-          .where('user_id', req.user.user_id);
-      });
-      res.locals.data = result;
-      next();
-    } catch (e) {
-      next(checkMySQLError(e));
-    }
+  static async updateStatus(req: FastifyRequest, reply: FastifyReply) {
+    const body = req.body as any;
+    const result = await Todo.transaction(async (trx) => {
+      return Todo.query(trx)
+        .patch({
+          edit_id: req.session.user.bee_id,
+          done: body.status,
+        })
+        .findByIds(body.ids)
+        .where('user_id', req.session.user.user_id);
+    });
+    return result;
   }
 
-  async updateDate(req: IUserRequest, res: Response, next: NextFunction) {
-    try {
-      const result = await Todo.transaction(async (trx) => {
-        return Todo.query(trx)
-          .patch({
-            edit_id: req.user.bee_id,
-            date: req.body.start,
-          })
-          .findByIds(req.body.ids)
-          .where('user_id', req.user.user_id);
-      });
-      res.locals.data = result;
-      next();
-    } catch (e) {
-      next(checkMySQLError(e));
-    }
+  static async updateDate(req: FastifyRequest, reply: FastifyReply) {
+    const body = req.body as any;
+    const result = await Todo.transaction(async (trx) => {
+      return Todo.query(trx)
+        .patch({
+          edit_id: req.session.user.bee_id,
+          date: body.start,
+        })
+        .findByIds(body.ids)
+        .where('user_id', req.session.user.user_id);
+    });
+    return result;
   }
 }

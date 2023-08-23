@@ -1,45 +1,65 @@
-import { Guard } from '@/api/middlewares/guard.middleware';
-import { Validator } from '@/api/middlewares/validator.middleware';
-import { ROLES } from '@/api/types/constants/role.const';
-import { Router } from '@classes/router.class';
-import { Container } from '@config/container.config';
-import { body, param } from 'express-validator';
+import { Guard } from '../../hooks/guard.hook.js';
+import { ROLES } from '../../../config/constants.config.js';
+import { FastifyInstance } from 'fastify';
+import { ZodTypeProvider } from 'fastify-type-provider-zod';
+import { z } from 'zod';
+import ScaleController from '../../controllers/scale.controller.js';
+import { numberSchema } from '../../utils/zod.util.js';
 
-export class ScaleRouter extends Router {
-  constructor() {
-    super();
-  }
-  define(): void {
-    this.router
-      .route('/:id?')
-      .get(
-        Validator.validate([param('id').optional().isNumeric()]),
-        Guard.authorize([ROLES.admin, ROLES.user, ROLES.read]),
-        Container.resolve('ScaleController').get,
-      );
-    this.router
-      .route('/')
-      .patch(
-        Validator.validate([body('ids').isArray()]),
-        Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('ScaleController').patch,
-      );
-    this.router
-      .route('/')
-      .post(
-        Validator.validate([
-          body('name').isString().isLength({ min: 1, max: 45 }).trim(),
-          body('hive_id').isNumeric(),
-        ]),
-        Guard.authorize([ROLES.admin]),
-        Container.resolve('ScaleController').post,
-      );
-    this.router
-      .route('/:id')
-      .delete(
-        Validator.validate([param('id').isNumeric()]),
-        Guard.authorize([ROLES.admin]),
-        Container.resolve('ScaleController').delete,
-      );
-  }
+export default function routes(
+  instance: FastifyInstance,
+  _options: any,
+  done: any,
+) {
+  const server = instance.withTypeProvider<ZodTypeProvider>();
+
+  server.get(
+    '/:id?',
+    { preHandler: Guard.authorize([ROLES.admin, ROLES.user, ROLES.read]) },
+    ScaleController.get,
+  );
+  server.patch(
+    '/',
+    {
+      preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
+      schema: {
+        body: z.object({
+          ids: z.array(numberSchema),
+          data: z.object({}).passthrough(),
+        }),
+      },
+    },
+    ScaleController.patch,
+  );
+
+  server.post(
+    '/',
+    {
+      preHandler: Guard.authorize([ROLES.admin]),
+      schema: {
+        body: z
+          .object({
+            name: z.string().min(1).max(45).trim(),
+            hive_id: z.number(),
+          })
+          .passthrough(),
+      },
+    },
+    ScaleController.post,
+  );
+
+  server.delete(
+    '/:id',
+    {
+      preHandler: Guard.authorize([ROLES.admin]),
+      schema: {
+        params: z.object({
+          id: z.string(),
+        }),
+      },
+    },
+    ScaleController.delete,
+  );
+
+  done();
 }

@@ -1,12 +1,14 @@
-import { ENVIRONMENT } from '@/api/types/constants/environment.const';
-import { env, redisConfig } from '@config/environment.config';
-import { Container } from '@config/container.config';
-import Redis, { RedisOptions } from 'ioredis';
+import { RedisOptions, Redis } from 'ioredis';
+
+import { env, redisConfig } from '../config/environment.config.js';
+import { Logger } from '../services/logger.service.js';
+import { ENVIRONMENT } from '../config/constants.config.js';
 
 /**
- * Connection to redis docker instance
+ * @description Connection to redis docker instance
  */
 export class RedisServer {
+  private logger = Logger.getInstance();
   static client: Redis;
   start(): void {
     try {
@@ -25,27 +27,27 @@ export class RedisServer {
       );
       RedisServer.client.on('connect', () => {
         if (env !== ENVIRONMENT.test) {
-          Container.resolve('Logger').log(
-            'info',
+          this.logger.log(
+            'debug',
             `Connection to redis (session) server established on port ${redisConfig.port} (${env})`,
             { label: 'Redis' },
           );
         }
       });
     } catch (error) {
-      Container.resolve('Logger').log(
-        'error',
-        `Redis connection error : ${error.message}`,
-        { label: 'Redis' },
-      );
+      this.logger.log('error', `Redis connection error : ${error.message}`, {
+        label: 'Redis',
+      });
     }
   }
-  stop(): void {
+  async stop(): Promise<void> {
     try {
-      RedisServer.client.save();
-      RedisServer.client.quit();
+      this.logger.log('debug', 'Closing redis connection', {});
+      await RedisServer.client.save();
+      await RedisServer.client.quit();
+      this.logger.log('debug', 'Closed redis connection', {});
     } catch (error) {
-      console.error(error);
+      this.logger.log('error', 'Redis closing error', { error });
     }
   }
 }

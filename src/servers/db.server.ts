@@ -1,38 +1,54 @@
-import { ENVIRONMENT } from '@/api/types/constants/environment.const';
-import { env, knexConfig } from '@config/environment.config';
-import { Container } from '@config/container.config';
 import Knex from 'knex';
 import { Model } from 'objection';
 
+import { env, knexConfig } from '../config/environment.config.js';
+import { Logger } from '../services/logger.service.js';
+import { ENVIRONMENT } from '../config/constants.config.js';
+
 /**
- * Database connection manager for MariaDb server
+ * @description Database connection manager for MariaDb server
  */
 export class DatabaseServer {
-  static knex = Knex(knexConfig);
+  private static instance: DatabaseServer;
+  private logger = Logger.getInstance();
+
+  knex: Knex.Knex;
+
+  static getInstance(): DatabaseServer {
+    if (!this.instance) {
+      this.instance = new this();
+    }
+    return this.instance;
+  }
+
+  private constructor() {
+    this.knex = Knex.knex(knexConfig);
+  }
+
   start(): void {
     try {
-      Model.knex(DatabaseServer.knex);
+      Model.knex(this.knex);
 
       if (env !== ENVIRONMENT.test) {
-        Container.resolve('Logger').log(
-          'info',
+        this.logger.log(
+          'debug',
           `Connection to database established on port ${knexConfig.connection.port} (${env})`,
           { label: 'Database' },
         );
       }
     } catch (error) {
-      Container.resolve('Logger').log(
-        'error',
-        `Database connection error : ${error.message}`,
-        { label: 'Database' },
-      );
+      this.logger.log('error', `Database connection error : ${error.message}`, {
+        label: 'Database',
+      });
     }
   }
-  stop(): void {
+  async stop(): Promise<void> {
     try {
-      DatabaseServer.knex.destroy();
+      this.logger.log('debug', 'Closing database connection', {});
+      await this.knex.destroy();
+      this.logger.log('debug', 'Closed database connection', {});
     } catch (error) {
-      console.error(error);
+      this.logger.log('error', 'Database closing error', { error });
     }
   }
 }

@@ -1,7 +1,7 @@
 import { Model } from 'objection';
-import { Company } from './company.model';
-import { Hive } from './hive.model';
-import { ScaleData } from './scale_data.model';
+import { Company } from './company.model.js';
+import { Hive } from './hive.model.js';
+import { ScaleData } from './scale_data.model.js';
 
 export class Scale extends Model {
   id!: number;

@@ -1,12 +1,14 @@
+import { fileURLToPath } from 'url';
+import { readFileSync } from 'fs';
+
 /**
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
-exports.up = function (knex) {
-  const fs = require('fs');
-  const path = require('path');
-  const scriptName = path.basename(__filename).replace('.js', '.sql');
-  const sql = fs.readFileSync(path.resolve(__dirname, scriptName), 'utf8');
+export const up = function (knex) {
+  let filename = fileURLToPath(import.meta.url);
+  filename = filename.replace('.js', '.sql');
+  const sql = readFileSync(filename, 'utf8');
   return knex.raw(sql);
 };
 
@@ -14,6 +16,6 @@ exports.up = function (knex) {
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
-exports.down = function (knex) {
+export const down = function (knex) {
   return knex.raw('drop view stats_hives_harvests');
 };

@@ -1,9 +1,10 @@
 import dayjs from 'dayjs';
-import { intersection, round } from 'lodash';
-import { DatabaseServer } from '@/servers/db.server';
-import { Todo } from '@models/todo.model';
-import { Rearing } from '@models/rearing/rearing.model';
-import { RearingStep } from '@models/rearing/rearing_step.model';
+import { intersection, round } from 'lodash-es';
+
+import { DatabaseServer } from '../../servers/db.server.js';
+import { Todo } from '../models/todo.model.js';
+import { Rearing } from '../models/rearing/rearing.model.js';
+import { RearingStep } from '../models/rearing/rearing_step.model.js';
 
 const convertDate = ({ start, end }) => {
   return {
@@ -12,7 +13,7 @@ const convertDate = ({ start, end }) => {
   };
 };
 
-const getRearings = async ({ query, user }) => {
+const getRearings = async (params, user) => {
   /*
    * Fetching Rearings and corresponding steps
    */
@@ -20,13 +21,13 @@ const getRearings = async ({ query, user }) => {
     .where('rearings.user_id', user.user_id)
     .withGraphFetched('[start, type]');
 
-  if (query.id) {
+  if (params.id) {
     // if not used inside calendar and we only want one event
-    rearings_query.where('id', query.id);
+    rearings_query.where('id', params.id);
   } else {
     // Because Rearings could goes over multiple months we add / substract here to catch them
-    const start = dayjs(query.start).subtract(2, 'month').toISOString();
-    const end = dayjs(query.end).add(2, 'month').toISOString();
+    const start = dayjs(params.start).subtract(2, 'month').toISOString();
+    const end = dayjs(params.end).add(2, 'month').toISOString();
     rearings_query.where('date', '>=', start).where('date', '<=', end);
   }
 
@@ -68,7 +69,7 @@ const getRearings = async ({ query, user }) => {
           parseInt(result.currentStep.position) > parseInt(result.startPosition)
         ) {
           // Step comes behind Start Step, we can simply add up the hours
-          addDate = addDate.add(result.currentStep.detail.hour, 'hour');
+          addDate = addDate.add(result.currentStep.sleep_before, 'hour');
           result.start = addDate.toISOString();
         } else {
           // Step comes before Start Step, this is more complicated as
@@ -78,7 +79,7 @@ const getRearings = async ({ query, user }) => {
           let subDate = dayjs(result.date);
           for (let k = 0; k < steps_before; k++) {
             subDate = subDate.subtract(
-              result.steps[result.startKey - k].detail.hour,
+              result.steps[result.startKey - k].sleep_before,
               'hour',
             );
           }
@@ -107,8 +108,8 @@ const getRearings = async ({ query, user }) => {
   return results;
 };
 
-const getTodos = async ({ query, user }) => {
-  const { start, end } = convertDate(query);
+const getTodos = async (params, user) => {
+  const { start, end } = convertDate(params);
 
   const results: any = await Todo.query()
     .where('user_id', user.user_id)
@@ -153,9 +154,11 @@ const getTodos = async ({ query, user }) => {
   return result;
 };
 
-const getMovements = async ({ query, user }) => {
-  const { start, end } = convertDate(query);
-  const results = await DatabaseServer.knex(`calendar_movements`)
+const getMovements = async (params, user) => {
+  const { start, end } = convertDate(params);
+  const instance = DatabaseServer.getInstance();
+  const results = await instance
+    .knex(`calendar_movements`)
     .where('user_id', user.user_id)
     .where('date', '>=', start)
     .where('date', '<=', end);
@@ -193,9 +196,11 @@ const getMovements = async ({ query, user }) => {
   return result;
 };
 
-const getTask = async ({ query, user }, task: string) => {
-  const { start, end } = convertDate(query);
-  const results = await DatabaseServer.knex(`calendar_${task}s`)
+const getTask = async (params, user, task: string) => {
+  const { start, end } = convertDate(params);
+  const instance = DatabaseServer.getInstance();
+  const results = await instance
+    .knex(`calendar_${task}s`)
     .where('user_id', user.user_id)
     .where('date', '>=', start)
     .where('enddate', '<=', end);
@@ -252,10 +257,12 @@ const getTask = async ({ query, user }, task: string) => {
   return result;
 };
 
-const getScaleData = async ({ query, user }) => {
-  const { start, end } = convertDate(query);
+const getScaleData = async (params, user) => {
+  const { start, end } = convertDate(params);
 
-  const results = await DatabaseServer.knex(`calendar_scale_data`)
+  const instance = DatabaseServer.getInstance();
+  const results = await instance
+    .knex(`calendar_scale_data`)
     .where('user_id', user.user_id)
     .where('date', '>=', start)
     .where('date', '<=', end);

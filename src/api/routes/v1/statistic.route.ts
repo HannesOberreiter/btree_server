@@ -1,121 +1,147 @@
-import { Router } from '@classes/router.class';
-import { Container } from '@config/container.config';
-import { Guard } from '@middlewares/guard.middleware';
-import { ROLES } from '@/api/types/constants/role.const';
-import { Validator } from '@/api/middlewares/validator.middleware';
-import { query } from 'express-validator';
+import { Guard } from '../../hooks/guard.hook.js';
+import { ROLES } from '../../../config/constants.config.js';
+import { FastifyInstance } from 'fastify';
+import { ZodTypeProvider } from 'fastify-type-provider-zod';
+import { z } from 'zod';
+import StatisticController from '../../controllers/statistic.controller.js';
+import { Validator } from '../../hooks/validator.hook.js';
 
-export class StatisticRouter extends Router {
-  constructor() {
-    super();
-  }
+export default function routes(
+  instance: FastifyInstance,
+  _options: any,
+  done: any,
+) {
+  const server = instance.withTypeProvider<ZodTypeProvider>();
+  server.get(
+    '/hive_count_total',
+    {
+      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+      preValidation: Validator.isPremium,
+    },
+    StatisticController.getHiveCountTotal,
+  );
 
-  define() {
-    this.router
-      .route('/hive_count_total')
-      .get(
-        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Validator.isPremium,
-        Container.resolve('StatisticController').getHiveCountTotal,
-      );
-    this.router
-      .route('/hive_count_apiary')
-      .get(
-        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Validator.isPremium,
-        Validator.validate([query('date').exists().isString().toDate()]),
-        Container.resolve('StatisticController').getHiveCountApiary,
-      );
-    this.router
-      .route('/harvest/hive')
-      .get(
-        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Validator.isPremium,
-        Container.resolve('StatisticController').getHarvestHive,
-      );
-    this.router
-      .route('/harvest/year')
-      .get(
-        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Validator.isPremium,
-        Container.resolve('StatisticController').getHarvestYear,
-      );
-    this.router
-      .route('/harvest/apiary')
-      .get(
-        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Validator.isPremium,
-        Container.resolve('StatisticController').getHarvestApiary,
-      );
-    this.router
-      .route('/harvest/type')
-      .get(
-        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Validator.isPremium,
-        Container.resolve('StatisticController').getHarvestType,
-      );
-    this.router
-      .route('/feed/hive')
-      .get(
-        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Validator.isPremium,
-        Container.resolve('StatisticController').getFeedHive,
-      );
-    this.router
-      .route('/feed/year')
-      .get(
-        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Validator.isPremium,
-        Container.resolve('StatisticController').getFeedYear,
-      );
-    this.router
-      .route('/feed/apiary')
-      .get(
-        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Validator.isPremium,
-        Container.resolve('StatisticController').getFeedApiary,
-      );
-    this.router
-      .route('/feed/type')
-      .get(
-        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Validator.isPremium,
-        Container.resolve('StatisticController').getFeedType,
-      );
-    this.router
-      .route('/treatment/hive')
-      .get(
-        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Validator.isPremium,
-        Container.resolve('StatisticController').getTreatmentHive,
-      );
-    this.router
-      .route('/treatment/year')
-      .get(
-        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Validator.isPremium,
-        Container.resolve('StatisticController').getTreatmentYear,
-      );
-    this.router
-      .route('/treatment/apiary')
-      .get(
-        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Validator.isPremium,
-        Container.resolve('StatisticController').getTreatmentApiary,
-      );
-    this.router
-      .route('/treatment/type')
-      .get(
-        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Validator.isPremium,
-        Container.resolve('StatisticController').getTreatmentType,
-      );
-    this.router
-      .route('/rating/hive')
-      .get(
-        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Validator.isPremium,
-        Container.resolve('StatisticController').getCheckupRatingHive,
-      );
-  }
+  server.get(
+    '/hive_count_apiary',
+    {
+      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+      preValidation: Validator.isPremium,
+      schema: {
+        querystring: z.object({
+          date: z.string(),
+        }),
+      },
+    },
+    StatisticController.getHiveCountApiary,
+  );
+
+  server.get(
+    '/harvest/hive',
+    {
+      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+      preValidation: Validator.isPremium,
+    },
+    StatisticController.getHarvestHive,
+  );
+  server.get(
+    '/harvest/year',
+    {
+      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+      preValidation: Validator.isPremium,
+    },
+    StatisticController.getHarvestYear,
+  );
+  server.get(
+    '/harvest/apiary',
+    {
+      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+      preValidation: Validator.isPremium,
+    },
+    StatisticController.getHarvestApiary,
+  );
+  server.get(
+    '/harvest/type',
+    {
+      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+      preValidation: Validator.isPremium,
+    },
+    StatisticController.getHarvestType,
+  );
+
+  server.get(
+    '/feed/hive',
+    {
+      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+      preValidation: Validator.isPremium,
+    },
+    StatisticController.getFeedHive,
+  );
+  server.get(
+    '/feed/year',
+    {
+      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+      preValidation: Validator.isPremium,
+    },
+    StatisticController.getFeedYear,
+  );
+  server.get(
+    '/feed/apiary',
+    {
+      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+      preValidation: Validator.isPremium,
+    },
+    StatisticController.getFeedApiary,
+  );
+  server.get(
+    '/feed/type',
+    {
+      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+      preValidation: Validator.isPremium,
+    },
+    StatisticController.getFeedType,
+  );
+
+  server.get(
+    '/treatment/hive',
+    {
+      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+      preValidation: Validator.isPremium,
+    },
+    StatisticController.getTreatmentHive,
+  );
+  server.get(
+    '/treatment/year',
+    {
+      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+      preValidation: Validator.isPremium,
+    },
+    StatisticController.getTreatmentYear,
+  );
+  server.get(
+    '/treatment/apiary',
+    {
+      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+      preValidation: Validator.isPremium,
+    },
+    StatisticController.getTreatmentApiary,
+  );
+  server.get(
+    '/treatment/type',
+    {
+      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+      preValidation: Validator.isPremium,
+    },
+    StatisticController.getTreatmentType,
+  );
+
+  server.get(
+    '/rating/hive',
+    {
+      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+      preValidation: Validator.isPremium,
+    },
+    StatisticController.getCheckupRatingHive,
+  );
+
+  done();
 }

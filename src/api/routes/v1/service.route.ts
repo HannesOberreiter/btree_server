@@ -1,55 +1,72 @@
-import { Router } from '@classes/router.class';
-import { Container } from '@config/container.config';
-import { Guard } from '@middlewares/guard.middleware';
-import { ROLES } from '@/api/types/constants/role.const';
-import { Validator } from '@/api/middlewares/validator.middleware';
-import { body } from 'express-validator';
+import { Guard } from '../../hooks/guard.hook.js';
+import { ROLES } from '../../../config/constants.config.js';
+import { FastifyInstance } from 'fastify';
+import { ZodTypeProvider } from 'fastify-type-provider-zod';
+import { z } from 'zod';
+import ServiceController from '../../controllers/service.controller.js';
 
-export class ServiceRouter extends Router {
-  constructor() {
-    super();
-  }
+export default function routes(
+  instance: FastifyInstance,
+  _options: any,
+  done: any,
+) {
+  const server = instance.withTypeProvider<ZodTypeProvider>();
 
-  define() {
-    this.router
-      .route('/temperature/:apiary_id')
-      .get(
-        Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('ServiceController').getTemperature,
-      );
+  server.get(
+    '/temperature/:apiary_id',
+    {
+      preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
+    },
+    ServiceController.getTemperature,
+  );
 
-    this.router
-      .route('/paypal/orders')
-      .post(
-        Validator.validate([body('amount').isFloat({ min: 50 }).toInt()]),
-        Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('ServiceController').paypalCreateOrder,
-      );
+  server.post(
+    '/paypal/orders',
+    {
+      preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
+      schema: {
+        body: z.object({
+          amount: z.number().min(50),
+        }),
+      },
+    },
+    ServiceController.paypalCreateOrder,
+  );
 
-    this.router
-      .route('/paypal/orders/:orderID/capture')
-      .post(
-        Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('ServiceController').paypalCapturePayment,
-      );
+  server.post(
+    '/paypal/orders/:orderID/capture',
+    {
+      preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
+    },
+    ServiceController.paypalCapturePayment,
+  );
 
-    this.router
-      .route('/stripe/orders')
-      .post(
-        Validator.validate([body('amount').isFloat({ min: 50 }).toInt()]),
-        Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('ServiceController').stripeCreateOrder,
-      );
+  server.post(
+    '/stripe/orders',
+    {
+      preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
+      schema: {
+        body: z.object({
+          amount: z.number().min(50),
+        }),
+      },
+    },
+    ServiceController.stripeCreateOrder,
+  );
 
-    this.router
-      .route('/wizbee/ask')
-      .post(
-        Validator.validate([
-          body('question').isString().isLength({ min: 1, max: 1000 }),
-          body('lang').isString().isLength({ min: 2, max: 2 }),
-        ]),
-        Guard.authorize([ROLES.admin, ROLES.user, ROLES.read]),
-        Container.resolve('ServiceController').askWizBee,
-      );
-  }
+  server.post(
+    '/wizbee/ask',
+    {
+      preHandler: Guard.authorize([ROLES.admin, ROLES.user, ROLES.read]),
+      schema: {
+        body: z.object({
+          question: z.string().min(1).max(1000),
+          lang: z.string().min(2).max(2),
+        }),
+      },
+    },
+    ServiceController.askWizBee,
+  );
+
+  done();
 }

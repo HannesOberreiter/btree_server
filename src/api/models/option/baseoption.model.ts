@@ -1,5 +1,5 @@
-import { ExtModel } from '@models/base.model';
-import { Company } from '@models/company.model';
+import { ExtModel } from '../base.model.js';
+import { Company } from '../company.model.js';
 
 export class BaseOptionModel extends ExtModel {
   id!: number;

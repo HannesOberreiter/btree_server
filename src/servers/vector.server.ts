@@ -1,13 +1,16 @@
-import { ENVIRONMENT } from '@/api/types/constants/environment.const';
-import { env, vectorConfig } from '@config/environment.config';
-import { Container } from '@config/container.config';
-import Redis, { RedisOptions } from 'ioredis';
+import { RedisOptions, Redis } from 'ioredis';
+
+import { env, vectorConfig } from '../config/environment.config.js';
+import { Logger } from '../services/logger.service.js';
+import { ENVIRONMENT } from '../config/constants.config.js';
 
 /**
- * Connection to redis docker instance
+ * @description Connection to redis docker instance
  */
 export class VectorServer {
+  private logger = Logger.getInstance();
   static client: Redis;
+
   start(): void {
     try {
       const config: RedisOptions = {
@@ -25,27 +28,27 @@ export class VectorServer {
       );
       VectorServer.client.on('connect', () => {
         if (env !== ENVIRONMENT.test) {
-          Container.resolve('Logger').log(
-            'info',
+          this.logger.log(
+            'debug',
             `Connection to redis (vector) server established on port ${vectorConfig.port} (${env})`,
             { label: 'Vector' },
           );
         }
       });
     } catch (error) {
-      Container.resolve('Logger').log(
-        'error',
-        `Redis connection error : ${error.message}`,
-        { label: 'Vector' },
-      );
+      this.logger.log('error', `Redis connection error : ${error.message}`, {
+        label: 'Vector',
+      });
     }
   }
-  stop(): void {
+  async stop(): Promise<void> {
     try {
-      VectorServer.client.save();
-      VectorServer.client.quit();
+      this.logger.log('debug', 'Closing redis (vector) connection', {});
+      await VectorServer.client.save();
+      await VectorServer.client.quit();
+      this.logger.log('debug', 'Closed redis (vector) connection', {});
     } catch (error) {
-      console.error(error);
+      this.logger.log('error', 'Redis (vector) closing error', { error });
     }
   }
 }

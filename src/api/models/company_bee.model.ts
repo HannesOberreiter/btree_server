@@ -1,5 +1,5 @@
-import { User } from '@models/user.model';
-import { Company } from '@models/company.model';
+import { User } from './user.model.js';
+import { Company } from './company.model.js';
 import { Model } from 'objection';
 
 export class CompanyBee extends Model {

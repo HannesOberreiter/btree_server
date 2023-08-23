@@ -1,72 +1,67 @@
-import { ENVIRONMENT } from '@/api/types/constants/environment.const';
-import { env, port } from '@config/environment.config';
-
-import * as Express from 'express';
-
+import { FastifyInstance } from 'fastify';
 import { Server as HttpServer } from 'http';
 import { Server as HttpsServer } from 'https';
-import { task } from '@cron/scheduler';
-import { Container } from '@config/container.config';
+
+import { env, isContainer, port } from '../config/environment.config.js';
+import { Cron } from '../services/cron.service.js';
+import { Logger } from '../services/logger.service.js';
+import { ENVIRONMENT } from '../config/constants.config.js';
 
 /**
- * Application server wrapper instance
+ * @description Application server wrapper instance
  */
 export class HTTPServer {
-  /**
-   *
-   */
+  private logger = Logger.getInstance();
+  private cron = Cron.getInstance();
+
   http: HttpServer | HttpsServer;
+  app: FastifyInstance;
 
-  /**
-   *
-   */
-  app: Express.Application;
-
-  /**
-   *
-   */
-  private options = {
-    port: port,
-  };
-
-  constructor(app: Express.Application) {
+  constructor(app: FastifyInstance) {
     this.app = app;
+    this.http = this.app.server;
   }
 
-  /**
-   * @description Start servers
-   */
   start(): void {
     try {
-      const server = this.app;
-      this.http = server.listen(port, function () {
-        if (env !== ENVIRONMENT.test) {
-          Container.resolve('Logger').log(
-            'info',
-            `HTTP(S) server is now running on port ${port} (${env})`,
-            { label: 'Server' },
-          );
-        }
-      });
-      /**
-       * @description Start Cron Jobs
-       */
-      task.start();
-      task.nextRun();
-    } catch (error) {
-      Container.resolve('Logger').log(
-        'error',
-        `Server creation error : ${error.message}`,
-        { label: 'Server' },
+      const app = this.app;
+      const logger = this.logger;
+      const containerHost = isContainer ? '0.0.0.0' : 'localhost';
+      app.listen(
+        {
+          port,
+          host: containerHost,
+        },
+        function (err, address) {
+          if (err) {
+            logger.log('error', 'Server creation error', { err });
+            process.exit(1);
+          }
+          if (env !== ENVIRONMENT.test) {
+            logger.log(
+              'debug',
+              `HTTP(S) server is now running on ${address} (${env})`,
+              {},
+            );
+          }
+        },
       );
+    } catch (error) {
+      this.logger.log('error', 'Failed to create server', error);
+    }
+
+    try {
+      this.cron.start();
+    } catch (error) {
+      this.logger.log('error', 'Failed to start cron jobs', error);
     }
   }
 
-  /**
-   * @description stop servers
-   */
-  stop(callback = null): HttpServer | HttpsServer {
-    task.stop();
-    return this.http.close(callback);
+  async stop(): Promise<void> {
+    this.app.log.debug('Stopping HTTP server');
+    await this.cron.gracefulShutdown();
+    await this.app.close();
+    this.app.log.debug('HTTP server stopped');
+    return;
   }
 }

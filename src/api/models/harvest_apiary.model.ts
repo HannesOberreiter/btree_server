@@ -1,5 +1,5 @@
-import { Company } from '@models/company.model';
-import { Harvest } from '@models/harvest.model';
+import { Company } from './company.model.js';
+import { Harvest } from './harvest.model.js';
 import { Model } from 'objection';
 
 export class HarvestApiary extends Model {

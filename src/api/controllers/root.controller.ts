@@ -1,25 +1,21 @@
-import { Request, Response } from 'express';
-import { Container } from '@config/container.config';
-import { Controller } from '@classes/controller.class';
+import { FastifyReply, FastifyRequest } from 'fastify';
 
-export default class RootController extends Controller {
-  constructor() {
-    super();
+export default class RootController {
+  static status(_req: FastifyRequest, reply: FastifyReply) {
+    reply.send({ status: 'ok' });
   }
 
-  status = (_req: Request, res: Response, _next) => {
-    res.status(200);
-    res.end();
-  };
-
-  report = (req: Request, res: Response, _next) => {
-    const message = req.body.violation
-      ? 'CSP Violation: ' + req.body.violation
+  static report(req: FastifyRequest, reply: FastifyReply) {
+    const body = req.body as any;
+    const message = body.violation
+      ? 'CSP Violation: ' + body.violation
       : 'CSP Violation';
-    Container.resolve('Logger').log('error', message, {
+
+    req.log.warn(message, {
+      'csp-report': body,
       label: 'CSP violation',
     });
-    res.status(200);
-    res.end();
-  };
+
+    reply.send({ status: 'ok' });
+  }
 }

@@ -1,115 +1,82 @@
-import { NextFunction, Response } from 'express';
-import { Controller } from '@classes/controller.class';
-import { checkMySQLError } from '@utils/error.util';
-import { IUserRequest } from '@interfaces/IUserRequest.interface';
-import { RearingDetail } from '../models/rearing/rearing_detail.model';
-import { RearingStep } from '../models/rearing/rearing_step.model';
+import { RearingDetail } from '../models/rearing/rearing_detail.model.js';
+import { RearingStep } from '../models/rearing/rearing_step.model.js';
+import { FastifyReply, FastifyRequest } from 'fastify';
 
-export default class RearingDetailController extends Controller {
-  constructor() {
-    super();
-  }
+export default class RearingDetailController {
+  static async get(req: FastifyRequest, reply: FastifyReply) {
+    const { order, direction, offset, limit, q } = req.query as any;
+    const query = RearingDetail.query()
+      .where({
+        user_id: req.session.user.user_id,
+      })
+      .page(offset ? offset : 0, parseInt(limit) === 0 || !limit ? 10 : limit);
 
-  async get(req: IUserRequest, res: Response, next: NextFunction) {
-    try {
-      const { order, direction, offset, limit, q } = req.query as any;
-      const query = RearingDetail.query()
-        .where({
-          user_id: req.user.user_id,
-        })
-        .page(
-          offset ? offset : 0,
-          parseInt(limit) === 0 || !limit ? 10 : limit,
-        );
-
-      if (order) {
-        if (Array.isArray(order)) {
-          order.forEach((field, index) =>
-            query.orderBy(field, direction[index]),
-          );
-        } else {
-          query.orderBy(order, direction);
-        }
+    if (order) {
+      if (Array.isArray(order)) {
+        order.forEach((field, index) => query.orderBy(field, direction[index]));
+      } else {
+        query.orderBy(order, direction);
       }
-      if (q) {
-        if (q.trim() !== '') {
-          query.where((builder) => {
-            builder.orWhere('job', 'like', `%${q}%`);
-          });
-        }
-      }
-      const result = await query.orderBy('id');
-      res.locals.data = result;
-      next();
-    } catch (e) {
-      next(checkMySQLError(e));
     }
-  }
-
-  async patch(req: IUserRequest, res: Response, next: NextFunction) {
-    const ids = req.body.ids;
-    const insert = { ...req.body.data };
-    try {
-      const result = await RearingDetail.transaction(async (trx) => {
-        return await RearingDetail.query(trx)
-          .patch({ ...insert })
-          .findByIds(ids)
-          .where('user_id', req.user.user_id);
-      });
-      res.locals.data = result;
-      next();
-    } catch (e) {
-      next(checkMySQLError(e));
-    }
-  }
-
-  async post(req: IUserRequest, res: Response, next: NextFunction) {
-    try {
-      const result = await RearingDetail.transaction(async (trx) => {
-        return await RearingDetail.query(trx).insert({
-          ...req.body,
-          user_id: req.user.user_id,
+    if (q) {
+      if (q.trim() !== '') {
+        query.where((builder) => {
+          builder.orWhere('job', 'like', `%${q}%`);
         });
-      });
-      res.locals.data = result;
-      next();
-    } catch (e) {
-      next(checkMySQLError(e));
+      }
     }
+    const result = await query.orderBy('id');
+    return { ...result };
   }
 
-  async batchGet(req: IUserRequest, res: Response, next: NextFunction) {
-    try {
-      const result = await RearingDetail.transaction(async (trx) => {
-        const res = await RearingDetail.query(trx)
-          .findByIds(req.body.ids)
-          .where('user_id', req.user.user_id);
-        return res;
-      });
-      res.locals.data = result;
-      next();
-    } catch (e) {
-      next(checkMySQLError(e));
-    }
+  static async patch(req: FastifyRequest, reply: FastifyReply) {
+    const body = req.body as any;
+    const ids = body.ids;
+    const insert = { ...body.data };
+    const result = await RearingDetail.transaction(async (trx) => {
+      return await RearingDetail.query(trx)
+        .patch({ ...insert })
+        .findByIds(ids)
+        .where('user_id', req.session.user.user_id);
+    });
+    return result;
   }
 
-  async batchDelete(req: IUserRequest, res: Response, next: NextFunction) {
-    try {
-      const result = await RearingDetail.transaction(async (trx) => {
-        await RearingStep.query(trx)
-          .withGraphJoined('detail')
-          .delete()
-          .where('detail.user_id', req.user.user_id)
-          .whereIn('detail_id', req.body.ids);
-        return await RearingDetail.query(trx)
-          .delete()
-          .whereIn('id', req.body.ids)
-          .where('user_id', req.user.user_id);
+  static async post(req: FastifyRequest, reply: FastifyReply) {
+    const body = req.body as any;
+    const result = await RearingDetail.transaction(async (trx) => {
+      return await RearingDetail.query(trx).insert({
+        ...body,
+        user_id: req.session.user.user_id,
       });
-      res.locals.data = result;
-      next();
-    } catch (e) {
-      next(checkMySQLError(e));
-    }
+    });
+    return { ...result };
+  }
+
+  static async batchGet(req: FastifyRequest, reply: FastifyReply) {
+    const body = req.body as any;
+    const result = await RearingDetail.transaction(async (trx) => {
+      const res = await RearingDetail.query(trx)
+        .findByIds(body.ids)
+        .where('user_id', req.session.user.user_id);
+      return res;
+    });
+    return result;
+  }
+
+  static async batchDelete(req: FastifyRequest, reply: FastifyReply) {
+    const body = req.body as any;
+    const result = await RearingDetail.transaction(async (trx) => {
+      await RearingStep.query(trx)
+        .withGraphJoined('detail')
+        .delete()
+        .where('detail.user_id', req.session.user.user_id)
+        .whereIn('detail_id', body.ids);
+      return await RearingDetail.query(trx)
+        .delete()
+        .whereIn('id', body.ids)
+        .where('user_id', req.session.user.user_id);
+    });
+    return result;
   }
 }

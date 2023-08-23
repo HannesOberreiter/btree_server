@@ -1,6 +1,6 @@
-import { ExtModel } from '@models/base.model';
-import { Company } from '@models/company.model';
-import { User } from '@models/user.model';
+import { ExtModel } from './base.model.js';
+import { Company } from './company.model.js';
+import { User } from './user.model.js';
 
 export class Todo extends ExtModel {
   id!: number;

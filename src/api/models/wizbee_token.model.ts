@@ -1,5 +1,5 @@
-import { BaseModel, ExtModel } from '@models/base.model';
-import { User } from './user.model';
+import { BaseModel, ExtModel } from './base.model.js';
+import { User } from './user.model.js';
 
 export class WizBeeToken extends ExtModel {
   id!: number;

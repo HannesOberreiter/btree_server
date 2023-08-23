@@ -1,8 +1,8 @@
-import { ExtModel } from '@models/base.model';
-import { Hive } from '@models/hive.model';
-import { User } from '@models/user.model';
-import { FeedType } from '@models/option/feed_type.model';
-import { FeedApiary } from '@models/feed_apiary.model';
+import { ExtModel } from './base.model.js';
+import { Hive } from './hive.model.js';
+import { User } from './user.model.js';
+import { FeedType } from './option/feed_type.model.js';
+import { FeedApiary } from './feed_apiary.model.js';
 
 export class Feed extends ExtModel {
   id!: number;

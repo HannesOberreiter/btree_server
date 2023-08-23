@@ -1,92 +1,51 @@
-import { NextFunction, Response } from 'express';
-import { Controller } from '@classes/controller.class';
-import { checkMySQLError } from '@utils/error.util';
-import { IUserRequest } from '@interfaces/IUserRequest.interface';
+import { FastifyReply, FastifyRequest } from 'fastify';
+
 import {
   getTask,
   getMovements,
   getTodos,
   getRearings,
   getScaleData,
-} from '@utils/calendar.util';
-export default class CalendarController extends Controller {
-  constructor() {
-    super();
+} from '../utils/calendar.util.js';
+
+export default class CalendarController {
+  static async getRearings(req: FastifyRequest, reply: FastifyReply) {
+    const result = await getRearings(req.query, req.session.user);
+    return result;
   }
 
-  async getRearings(req: IUserRequest, res: Response, next: NextFunction) {
-    try {
-      const result = await getRearings(req);
-      res.locals.data = result;
-    } catch (e) {
-      next(checkMySQLError(e));
-    }
-    next();
+  static async getTodos(req: FastifyRequest, reply: FastifyReply) {
+    const result = await getTodos(req.query, req.session.user);
+    return result;
   }
 
-  async getTodos(req: IUserRequest, res: Response, next: NextFunction) {
-    try {
-      const result = await getTodos(req);
-      res.locals.data = result;
-    } catch (e) {
-      next(checkMySQLError(e));
-    }
-    next();
+  static async getMovements(req: FastifyRequest, reply: FastifyReply) {
+    const result = await getMovements(req.query, req.session.user);
+    return result;
   }
 
-  async getMovements(req: IUserRequest, res: Response, next: NextFunction) {
-    try {
-      const result = await getMovements(req);
-      res.locals.data = result;
-    } catch (e) {
-      next(checkMySQLError(e));
-    }
-    next();
+  static async getCheckups(req: FastifyRequest, reply: FastifyReply) {
+    const result = await getTask(req.query, req.session.user, 'checkup');
+    return result;
   }
 
-  async getCheckups(req: IUserRequest, res: Response, next: NextFunction) {
-    try {
-      const result = await getTask(req, 'checkup');
-      res.locals.data = result;
-    } catch (e) {
-      next(checkMySQLError(e));
-    }
-    next();
+  static async getTreatments(req: FastifyRequest, reply: FastifyReply) {
+    const result = await getTask(req.query, req.session.user, 'treatment');
+    return result;
   }
-  async getTreatments(req: IUserRequest, res: Response, next: NextFunction) {
-    try {
-      const result = await getTask(req, 'treatment');
-      res.locals.data = result;
-    } catch (e) {
-      next(checkMySQLError(e));
-    }
-    next();
+
+  static async getHarvests(req: FastifyRequest, reply: FastifyReply) {
+    const result = await getTask(req.query, req.session.user, 'harvest');
+    return result;
   }
-  async getHarvests(req: IUserRequest, res: Response, next: NextFunction) {
-    try {
-      const result = await getTask(req, 'harvest');
-      res.locals.data = result;
-    } catch (e) {
-      next(checkMySQLError(e));
-    }
-    next();
+
+  static async getFeeds(req: FastifyRequest, reply: FastifyReply) {
+    const result = await getTask(req.query, req.session.user, 'feed');
+    return result;
   }
-  async getFeeds(req: IUserRequest, res: Response, next: NextFunction) {
-    try {
-      const result = await getTask(req, 'feed');
-      res.locals.data = result;
-    } catch (e) {
-      next(checkMySQLError(e));
-    }
-    next();
-  }
-  async getScaleData(req: IUserRequest, res: Response, next: NextFunction) {
-    try {
-      const result = await getScaleData(req);
-      res.locals.data = result;
-    } catch (e) {
-      next(checkMySQLError(e));
-    }
-    next();
+
+  static async getScaleData(req: FastifyRequest, reply: FastifyReply) {
+    const result = await getScaleData(req.query, req.session.user);
+    return result;
   }
 }

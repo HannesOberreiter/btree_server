@@ -1,66 +1,117 @@
-import { Router } from '@classes/router.class';
-import { Container } from '@config/container.config';
-import { Guard } from '@middlewares/guard.middleware';
-import { ROLES } from '@/api/types/constants/role.const';
-import { Validator } from '@/api/middlewares/validator.middleware';
-import { body } from 'express-validator';
+import { Guard } from '../../hooks/guard.hook.js';
+import { ROLES } from '../../../config/constants.config.js';
+import { FastifyInstance } from 'fastify';
+import { ZodTypeProvider } from 'fastify-type-provider-zod';
+import { z } from 'zod';
+import TodoController from '../../controllers/todo.controller.js';
+import { numberSchema } from '../../utils/zod.util.js';
 
-export class TodoRouter extends Router {
-  constructor() {
-    super();
-  }
+const schemaTodo = z.object({
+  name: z.string().min(1).max(48).trim(),
+  date: z.string(),
+  note: z.string().max(2000).optional(),
+  url: z.string().max(512).optional(),
+  done: z.boolean().optional(),
+});
 
-  define() {
-    this.router
-      .route('/')
-      .get(
-        Guard.authorize([ROLES.admin, ROLES.user, ROLES.read]),
-        Container.resolve('TodoController').get,
-      );
-    this.router
-      .route('/')
-      .patch(
-        Validator.validate([body('ids').isArray()]),
-        Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('TodoController').patch,
-      );
-    this.router
-      .route('/')
-      .post(
-        Validator.validate([
-          body('interval').optional().isInt({ max: 365, min: 0 }),
-          body('repeat').optional().isInt({ max: 30, min: 0 }),
-        ]),
-        Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('TodoController').post,
-      );
-    this.router
-      .route('/status')
-      .patch(
-        Validator.validate([body('ids').isArray(), body('status').isBoolean()]),
-        Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('TodoController').updateStatus,
-      );
-    this.router
-      .route('/batchGet')
-      .post(
-        Validator.validate([body('ids').isArray()]),
-        Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('TodoController').batchGet,
-      );
-    this.router
-      .route('/batchDelete')
-      .patch(
-        Validator.validate([body('ids').isArray()]),
-        Guard.authorize([ROLES.admin]),
-        Container.resolve('TodoController').batchDelete,
-      );
-    this.router
-      .route('/date')
-      .patch(
-        Validator.validate([body('ids').isArray(), body('start').isString()]),
-        Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('TodoController').updateDate,
-      );
-  }
+export default function routes(
+  instance: FastifyInstance,
+  _options: any,
+  done: any,
+) {
+  const server = instance.withTypeProvider<ZodTypeProvider>();
+
+  server.get(
+    '/',
+    {
+      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+    },
+    TodoController.get,
+  );
+
+  server.post(
+    '/',
+    {
+      preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
+      schema: {
+        body: z
+          .object({
+            interval: z.number().min(0).max(365).optional(),
+            repeat: z.number().min(0).max(30).optional(),
+          })
+          .merge(schemaTodo),
+      },
+    },
+    TodoController.post,
+  );
+
+  server.patch(
+    '/',
+    {
+      preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
+      schema: {
+        body: z.object({
+          ids: z.array(numberSchema),
+          data: schemaTodo.partial(),
+        }),
+      },
+    },
+    TodoController.patch,
+  );
+
+  server.patch(
+    '/status',
+    {
+      preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
+      schema: {
+        body: z.object({
+          ids: z.array(numberSchema),
+          status: z.boolean(),
+        }),
+      },
+    },
+    TodoController.updateStatus,
+  );
+
+  server.patch(
+    '/date',
+    {
+      preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
+      schema: {
+        body: z.object({
+          ids: z.array(numberSchema),
+          start: z.string(),
+        }),
+      },
+    },
+    TodoController.updateDate,
+  );
+
+  server.patch(
+    '/batchDelete',
+    {
+      preHandler: Guard.authorize([ROLES.admin]),
+      schema: {
+        body: z.object({
+          ids: z.array(numberSchema),
+        }),
+      },
+    },
+    TodoController.batchDelete,
+  );
+
+  server.post(
+    '/batchGet',
+    {
+      preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
+      schema: {
+        body: z.object({
+          ids: z.array(numberSchema),
+        }),
+      },
+    },
+    TodoController.batchGet,
+  );
+
+  done();
 }

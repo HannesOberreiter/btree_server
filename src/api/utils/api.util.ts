@@ -1,5 +1,5 @@
-import { checkMySQLError } from '@utils/error.util';
-import { Company } from '../models/company.model';
+import { checkMySQLError } from './error.util.js';
+import { Company } from '../models/company.model.js';
 
 export const getCompany = async (api: string) => {
   try {
@@ -23,7 +23,6 @@ export function isValidTimeZone(tz: string) {
     Intl.DateTimeFormat(undefined, { timeZone: tz });
     return true;
   } catch (e) {
-    console.error(e);
     return false;
   }
 }

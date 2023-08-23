@@ -1,23 +1,19 @@
-import { checkMySQLError } from '@utils/error.util';
-import { Company } from '../models/company.model';
-import { basicLimit, totalLimit } from '@config/environment.config';
-import { Hive } from '../models/hive.model';
-import { Apiary } from '../models/apiary.model';
-import { Scale } from '../models/scale.model';
-import { Payment } from '../models/payment.model';
-
 import dayjs from 'dayjs';
 
+import { checkMySQLError } from '../utils/error.util.js';
+import { Company } from '../models/company.model.js';
+import { basicLimit, totalLimit } from '../../config/environment.config.js';
+import { Hive } from '../models/hive.model.js';
+import { Apiary } from '../models/apiary.model.js';
+import { Scale } from '../models/scale.model.js';
+import { Payment } from '../models/payment.model.js';
+
 export const isPremium = async (id: number) => {
-  try {
-    const paid = await Company.query()
-      .select('paid')
-      .findById(id)
-      .throwIfNotFound();
-    return paid.isPaid();
-  } catch (e) {
-    throw checkMySQLError(e);
-  }
+  const paid = await Company.query()
+    .select('paid')
+    .findById(id)
+    .throwIfNotFound();
+  return paid.isPaid();
 };
 
 export const limitHive = async (user_id: number, amount: number) => {

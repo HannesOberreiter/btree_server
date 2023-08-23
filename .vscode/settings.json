@@ -2,5 +2,8 @@
     "conventionalCommits.scopes": [
         "dev"
     ],
-    "editor.formatOnSave": true
+    "editor.formatOnSave": true,
+    "cSpell.words": [
+        "trx"
+    ]
 }

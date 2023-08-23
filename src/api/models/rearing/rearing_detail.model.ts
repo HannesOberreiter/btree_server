@@ -1,11 +1,15 @@
 import { Model } from 'objection';
-import { Company } from '@models/company.model';
-import { RearingType } from './rearing_type.model';
-import { RearingStep } from './rearing_step.model';
+
+import { Company } from '../company.model.js';
+import { RearingType } from './rearing_type.model.js';
+import { RearingStep } from './rearing_step.model.js';
 
 export class RearingDetail extends Model {
   id!: number;
   job!: string;
+  /**
+   * @deprecated use sleep_before in rearing_steps table
+   */
   hour!: string;
   note!: string;
   user_id!: number;
@@ -31,11 +35,11 @@ export class RearingDetail extends Model {
 
   static jsonSchema = {
     type: 'object',
-    required: ['job', 'hour'],
+    required: ['job'],
     properties: {
       id: { type: 'integer' },
       job: { type: 'string', minLength: 1, maxLength: 50 },
-      hour: { type: 'integer' },
+      hour: { type: 'integer' }, // deprecated, use sleep_before in rearing_steps table
       note: { type: 'string', maxLength: 2000 },
       user_id: { type: 'integer' }, // Company FK
     },

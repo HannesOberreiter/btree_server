@@ -1,72 +1,113 @@
-import { Router } from '@classes/router.class';
-import { Container } from '@config/container.config';
-import { Guard } from '@middlewares/guard.middleware';
-import { ROLES } from '@/api/types/constants/role.const';
-import { Validator } from '@/api/middlewares/validator.middleware';
-import { body } from 'express-validator';
+import { Guard } from '../../hooks/guard.hook.js';
+import { ROLES } from '../../../config/constants.config.js';
+import { FastifyInstance } from 'fastify';
+import { ZodTypeProvider } from 'fastify-type-provider-zod';
+import { z } from 'zod';
+import { Validator } from '../../hooks/validator.hook.js';
+import QueenController from '../../controllers/queen.controller.js';
+import { numberSchema } from '../../utils/zod.util.js';
 
-export class QueenRouter extends Router {
-  constructor() {
-    super();
-  }
+export default function routes(
+  instance: FastifyInstance,
+  _options: any,
+  done: any,
+) {
+  const server = instance.withTypeProvider<ZodTypeProvider>();
 
-  define() {
-    this.router
-      .route('/')
-      .get(
-        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Container.resolve('QueenController').get,
-      );
-    this.router
-      .route('/stats')
-      .get(
-        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Validator.isPremium,
-        Container.resolve('QueenController').getStats,
-      );
-    this.router
-      .route('/pedigree/:id')
-      .get(
-        Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-        Container.resolve('QueenController').getPedigree,
-      );
-    this.router
-      .route('/')
-      .post(
-        Validator.validate([
-          body('start').isInt({ max: 10000, min: 0 }),
-          body('repeat').isInt({ max: 100, min: 0 }),
-        ]),
-        Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('QueenController').post,
-      );
-    this.router
-      .route('/')
-      .patch(
-        Validator.validate([body('ids').isArray()]),
-        Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('QueenController').patch,
-      );
-    this.router
-      .route('/status')
-      .patch(
-        Validator.validate([body('ids').isArray(), body('status').isBoolean()]),
-        Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('QueenController').updateStatus,
-      );
-    this.router
-      .route('/batchDelete')
-      .patch(
-        Validator.validate([body('ids').isArray()]),
-        Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('QueenController').batchDelete,
-      );
-    this.router
-      .route('/batchGet')
-      .post(
-        Validator.validate([body('ids').isArray()]),
-        Guard.authorize([ROLES.admin, ROLES.user]),
-        Container.resolve('QueenController').batchGet,
-      );
-  }
+  server.get(
+    '/',
+    {
+      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+    },
+    QueenController.get,
+  );
+
+  server.get(
+    '/stats',
+    {
+      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+      preValidation: Validator.isPremium,
+    },
+    QueenController.getStats,
+  );
+
+  server.get(
+    '/pedigree/:id',
+    {
+      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+    },
+    QueenController.getPedigree,
+  );
+
+  server.post(
+    '/',
+    {
+      preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
+      schema: {
+        body: z
+          .object({
+            start: z.number().int().min(0).max(10000).optional(),
+            repeat: z.number().int().min(0).max(100).optional(),
+          })
+          .passthrough(),
+      },
+    },
+    QueenController.post,
+  );
+
+  server.patch(
+    '/',
+    {
+      preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
+      schema: {
+        body: z.object({
+          ids: z.array(numberSchema),
+          data: z.object({}).passthrough(),
+        }),
+      },
+    },
+    QueenController.patch,
+  );
+
+  server.patch(
+    '/status',
+    {
+      preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
+      schema: {
+        body: z.object({
+          ids: z.array(numberSchema),
+          status: z.boolean(),
+        }),
+      },
+    },
+    QueenController.updateStatus,
+  );
+
+  server.patch(
+    '/batchDelete',
+    {
+      preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
+      schema: {
+        body: z.object({
+          ids: z.array(numberSchema),
+        }),
+      },
+    },
+    QueenController.batchDelete,
+  );
+
+  server.post(
+    '/batchGet',
+    {
+      preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
+      schema: {
+        body: z.object({
+          ids: z.array(numberSchema),
+        }),
+      },
+    },
+    QueenController.batchGet,
+  );
+
+  done();
 }
