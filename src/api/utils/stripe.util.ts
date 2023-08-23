@@ -4,7 +4,7 @@ import { frontend, stripeSecret } from '../../config/environment.config.js';
 
 export async function createOrder(user_id: number, amount: number) {
   const stripe = new Stripe(stripeSecret, {
-    apiVersion: '2022-11-15',
+    apiVersion: '2023-08-16',
     typescript: true,
   });
   const session = await stripe.checkout.sessions.create({

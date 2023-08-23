@@ -86,7 +86,7 @@ export default class ExternalController {
    * @description  Local development use Stripe CLI and redirect webhooks: stripe listen --forward-to localhost:8101/api/v1/external/stripe/webhook
    */
   static async stripeWebhook(req: FastifyRequest, reply: FastifyReply) {
-    const event = req.body as any;
+    const event = req.body as Stripe.Event;
     const object = event.data.object as Stripe.Checkout.Session;
     if (event.type === 'checkout.session.completed') {
       const user_id = parseInt(object.client_reference_id);
