@@ -69,7 +69,9 @@ const getRearings = async (params, user) => {
           parseInt(result.currentStep.position) > parseInt(result.startPosition)
         ) {
           // Step comes behind Start Step, we can simply add up the hours
-          addDate = addDate.add(result.currentStep.sleep_before, 'hour');
+          const hours = result.currentStep.sleep_before ?? 0;
+          addDate = addDate.add(hours, 'hour');
+          console.log(addDate);
           result.start = addDate.toISOString();
         } else {
           // Step comes before Start Step, this is more complicated as
