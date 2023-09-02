@@ -6,7 +6,7 @@ export const up = function (knex) {
   return knex.schema.createTable('observations', (t) => {
     t.increments('id').primary().unsigned();
     t.string('taxa', 45).index();
-    t.integer('external_service').unsigned().index();
+    t.string('external_service', 45);
     t.integer('external_id').unsigned().index();
     t.point('location');
     t.json('data');
