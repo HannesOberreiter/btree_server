@@ -114,7 +114,7 @@ const { locale } = useI18n();
 
 const identifyDocument = computed(() => {
   if (locale.value === 'de') {
-    return 'http://frelonasiatique.mnhn.fr/wp-content/uploads/sites/10/2015/07/Identifizierungshilfe_Vespa_velutina_MNHN.pdf';
+    return 'https://frelonasiatique.mnhn.fr/wp-content/uploads/sites/10/2015/07/Identifizierungshilfe_Vespa_velutina_MNHN.pdf';
   } else if (locale.value === 'fr') {
     return 'https://frelonasiatique.mnhn.fr/wp-content/uploads/sites/10/2021/10/Fiches_Identification_Vespa_velutina_MNHN.pdf'
   } else if (locale.value === 'it') {
