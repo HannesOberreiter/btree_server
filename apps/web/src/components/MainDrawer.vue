@@ -2,19 +2,12 @@
   <q-scroll-area class="fit">
     <q-list>
       <drawer-item :link="calendar"></drawer-item>
-      <q-item
-        v-ripple
-        :to="{
-          name: 'new-quicktool',
-          params: {
-            task: storeQuicktool.getLink,
-          },
-        }"
-        data-cy="route-new-quicktool"
-        clickable
-        exact
-        active-class="text-yellow"
-      >
+      <q-item v-ripple :to="{
+        name: 'new-quicktool',
+        params: {
+          task: storeQuicktool.getLink,
+        },
+      }" data-cy="route-new-quicktool" clickable exact active-class="text-yellow">
         <q-item-section avatar>
           <q-icon name="fas fa-magic" />
         </q-item-section>
@@ -22,34 +15,16 @@
           {{ $t('quicktool.name') }}
         </q-item-section>
       </q-item>
-      <q-expansion-item
-        v-for="(link, index) in links"
-        :key="index"
-        group="sidebar"
-        :content-inset-level="0.3"
-        expand-separator
-        :icon="link.icon"
-        :label="link.label"
-        :disable="link.premium && !storeUser.isPremium"
-        :caption="link.premium && !storeUser.isPremium ? $t('premium') : ''"
-        dark
-      >
+      <q-expansion-item v-for="(link, index) in links" :key="index" group="sidebar" :content-inset-level="0.3"
+        expand-separator :icon="link.icon" :label="link.label" :disable="link.premium && !storeUser.isPremium"
+        :caption="link.premium && !storeUser.isPremium ? $t('premium') : ''" dark>
         <div v-if="Array.isArray(link.menu)">
-          <drawer-item
-            v-for="(sublink, subindex) in link.menu"
-            :key="subindex"
-            :link="sublink"
-            :disable="sublink.premium && !storeUser.isPremium"
-          ></drawer-item>
+          <drawer-item v-for="(sublink, subindex) in link.menu" :key="subindex" :link="sublink"
+            :disable="sublink.premium && !storeUser.isPremium"></drawer-item>
         </div>
       </q-expansion-item>
-      <q-item
-        v-ripple
-        clickable
-        data-cy="route - external - forum"
-        href="https://forum.btree.at"
-        @click.prevent="openLink('https://forum.btree.at')"
-      >
+      <q-item v-ripple clickable data-cy="route - external - forum" href="https://forum.btree.at"
+        @click.prevent="openLink('https://forum.btree.at')">
         <q-item-section avatar>
           <q-icon name="fab fa-discourse" />
         </q-item-section>
@@ -354,6 +329,12 @@ const links = computed(
             icon: 'fas fa-wind',
             menu: false,
           },
+          {
+            label: 'Vespa velutina',
+            route: 'map-velutina',
+            icon: 'fas fa-bug-slash',
+            menu: false,
+          },
         ],
       },
 
@@ -523,7 +504,7 @@ const links = computed(
     ] as MenuSection[],
 );
 
-function openLink(link: string) {
+function openLink (link: string) {
   window.location.href = link;
 }
 </script>

@@ -43,6 +43,7 @@
     "fuse.js": "^6.6.2",
     "html5-qrcode": "^2.3.4",
     "leaflet": "^1.9.3",
+    "leaflet.markercluster": "^1.5.3",
     "lodash-es": "^4.17.21",
     "pinia": "^2.0.23",
     "qrcode": "^1.5.1",

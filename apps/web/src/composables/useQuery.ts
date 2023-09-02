@@ -594,7 +594,7 @@ export function useHivesQuery({
       keepPreviousData: false,
       select: (response) => {
         const result = map(response.results, (value) => {
-          const apiary = `(${value.hive_location?.apiary_name ?? '--'})`;
+          const apiary = `${value.hive_location?.apiary_name ?? '--'}`;
           value.label = `${value.name} (${apiary})`;
           value.value = value.id;
           value.type = 'hive';

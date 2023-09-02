@@ -1,5 +1,14 @@
 [
   {
+    "version": "6.3.1",
+    "date": "2023-09-02",
+    "news": [
+      "FEATURE added Vespa velutina map and identification material",
+      "BUGFIX double brackets in hive dropdown",
+      "BUGFIX wrong header in treatment statistic, thx Benedikt"
+    ]
+  },
+  {
     "version": "6.3.0",
     "date": "2023-08-23",
     "news": [
