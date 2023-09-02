@@ -3,51 +3,26 @@
     <div class="row q-pa-sm justify-center">
       <div class="col-12">
         <div class="text-h5 text-center">
-          {{ $t('statistic') }} {{ $t('harvest') }}
+          {{ $t('statistic') }} {{ $t('treatment') }}
         </div>
       </div>
     </div>
     <q-card-section>
-      <q-table
-        v-model:pagination="pagination"
-        v-model:selected="selected"
-        :visible-columns="visibleColumns"
-        :rows="rows"
-        :columns="columns"
-        :loading="isLoadingTable"
-        :dense="true"
-        :rows-per-page-options="[10, 50, 100, 500, 10000]"
-        separator="vertical"
-        :row-key="(row) => row.hive_id + '-' + row.year"
-        selection="multiple"
-        binary-state-sort
-        flat
-        bordered
-        @request="onRequest"
-      >
+      <q-table v-model:pagination="pagination" v-model:selected="selected" :visible-columns="visibleColumns" :rows="rows"
+        :columns="columns" :loading="isLoadingTable" :dense="true" :rows-per-page-options="[10, 50, 100, 500, 10000]"
+        separator="vertical" :row-key="(row) => row.hive_id + '-' + row.year" selection="multiple" binary-state-sort flat
+        bordered @request="onRequest">
         <template #top-left>
-          <table-buttons
-            v-model:deleted="deleted"
-            v-model:modus="modus"
-            :selected="selected"
-            :table="STATSSTORE"
-            @change="refetch"
-          ></table-buttons>
+          <table-buttons v-model:deleted="deleted" v-model:modus="modus" :selected="selected" :table="STATSSTORE"
+            @change="refetch"></table-buttons>
         </template>
         <template #top-right>
-          <table-filter
-            v-model:modelFilter="filter"
-            v-model:modelVisible="visibleColumns"
-            :columns="columns"
-          ></table-filter>
+          <table-filter v-model:modelFilter="filter" v-model:modelVisible="visibleColumns"
+            :columns="columns"></table-filter>
         </template>
         <template #header-cell-amount_sum="props">
-          <table-th-sum
-            :parent-prop="props"
-            :label="props.col.label"
-            :name="props.col.name"
-            :selected="selected"
-          ></table-th-sum>
+          <table-th-sum :parent-prop="props" :label="props.col.label" :name="props.col.name"
+            :selected="selected"></table-th-sum>
         </template>
       </q-table>
     </q-card-section>
@@ -156,7 +131,7 @@ watch(
   },
 );
 
-function onRequest(props: any) {
+function onRequest (props: any) {
   pagination.value = props.pagination;
 }
 </script>

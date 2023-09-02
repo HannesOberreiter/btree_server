@@ -430,6 +430,14 @@ const routes: RouteRecordRaw[] = [
         },
         component: () => import('~/pages/MapMeteoblue.vue'),
       },
+      {
+        path: 'vespa_velutina',
+        name: 'map-velutina',
+        meta: {
+          title: 'Vespa velutina',
+        },
+        component: () => import('~/pages/MapVelutina.vue'),
+      },
     ],
   },
   /***
