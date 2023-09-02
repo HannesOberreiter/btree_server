@@ -8,6 +8,7 @@ import {
 } from '../api/utils/cron.util.js';
 import { cronjobTimer } from '../config/environment.config.js';
 import { Logger } from './logger.service.js';
+import { fetchObservations } from '../api/utils/velutina.util.js';
 
 export class Cron {
   private static instance: Cron;
@@ -50,6 +51,7 @@ export class Cron {
           this.Logging(await reminderDeletion());
           this.Logging(await reminderVIS());
           this.Logging(await reminderPremium());
+          fetchObservations().then((res) => this.Logging(res));
         } catch (e) {
           this.logger.log('error', e, { label: 'CronJob' });
         }
