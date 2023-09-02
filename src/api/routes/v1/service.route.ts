@@ -68,5 +68,13 @@ export default function routes(
     ServiceController.askWizBee,
   );
 
+  server.get(
+    '/observation',
+    {
+      preHandler: Guard.authorize([ROLES.admin, ROLES.user, ROLES.read]),
+    },
+    ServiceController.getObservations,
+  );
+
   done();
 }
