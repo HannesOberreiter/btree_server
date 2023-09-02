@@ -42,7 +42,7 @@ export class Observation extends ExtModel {
   $formatDatabaseJson(json) {
     const location = json.location;
     const formattedJson = super.$formatDatabaseJson(json);
-    const rawLocation = raw('ST_PointFromText("POINT(? ?)")', [
+    const rawLocation = raw('PointFromText("POINT(? ?)")', [
       location.lat,
       location.lng,
     ]);
