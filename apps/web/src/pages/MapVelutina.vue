@@ -71,20 +71,14 @@
 
 <script lang="ts">
 type Observation = {
-  created_at: string
-  data: any
-  external_id: string
-  external_service: string
-  id: string
   location: {
-    type: 'Point',
-    coordinates: number[]
+    x: number,
+    y: number
   }
+  uri: string
   observed_at: string
   localDate: string
   isRecentObservation: boolean
-  taxa: string
-  updated_at: string
 };
 </script>
 
@@ -107,7 +101,7 @@ import {
 } from '@vue-leaflet/vue-leaflet';
 import { useApiFetch } from '~/composables/useApi';
 import MapButtons from '~/components/MapButtons.vue';
-import { computed, ref } from 'vue';
+import { computed, onBeforeUnmount, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { locale } = useI18n();
@@ -133,7 +127,9 @@ const updateTimestamp = ref(Date()); // helper to update layer
 
 const notification = useNotification();
 
-const cluster = (L as any).markerClusterGroup();
+const cluster = (L as any).markerClusterGroup({
+  chunkedLoading: true
+});
 const activeTab = ref('map');
 const zoom = computed(() => (isLoading.value ? 2 : 6));
 const circleRadius = ref(1000);
@@ -146,27 +142,36 @@ let map = {} as any;
 
 
 const onMapReady = () => {
+
   map = mapRef.value.leafletObject;
   map.doubleClickZoom.disable();
   map.scrollWheelZoom.enable();
-  api.get('/v1/service/observation').then((response) => {
+  api.get('/v1/public/velutina/observations/recent').then((response) => {
     const data = response.map((item: any) => {
       return {
         ...item,
         localDate: new Date(item.observed_at).toLocaleDateString(),
         isRecentObservation: new Date(item.observed_at) > new Date(Date.now() - 1000 * 60 * 60 * 24 * 365),
       } as Observation;
+
     });
     data.map((item: Observation) => {
-      const circleMarker = L.circleMarker(item.location.coordinates as LatLngTuple);
-      circleMarker.bindPopup(`${item.localDate}<br/><a href="${item.data.uri}">${item.data.uri}</a>`);
+      const circleMarker = L.circleMarker([item.location.x, item.location.y] as LatLngTuple, {
+        radius: 5,
+        color: item.isRecentObservation ? 'red' : 'blue',
+        fillOpacity: 0.5,
+      });
+      const uri = JSON.parse(item.uri)
+      circleMarker.bindPopup(`${item.localDate}<br/><a href="${uri}">${uri}</a>`);
       cluster.addLayer(circleMarker);
     });
     map.addLayer(cluster);
   });
 };
 
-
+onBeforeUnmount(() => {
+  map.removeLayer(cluster);
+});
 
 
 function loadLocation () {
