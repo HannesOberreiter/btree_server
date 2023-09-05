@@ -574,7 +574,7 @@ const routes: RouteRecordRaw[] = [
   },
 
   {
-    path: '/public/map/vespa_velutina',
+    path: '/external/map/vespa_velutina',
     meta: {
       auth: false,
     },
