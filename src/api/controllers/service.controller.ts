@@ -131,13 +131,4 @@ export default class ServiceController {
 
     return { ...result, savedTokens, savedQuestions };
   }
-
-  static async getObservations(req: FastifyRequest, reply: FastifyReply) {
-    const start = new Date(Date.now() - 1000 * 60 * 60 * 24 * 182);
-    const end = new Date(Date.now());
-    const result = await Observation.query()
-      .select('*', raw('ST_AsGeoJSON(location) as location'))
-      .whereBetween('observed_at', [start, end]);
-    return result;
-  }
 }
