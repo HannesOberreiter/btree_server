@@ -27,6 +27,7 @@ import v1RearingStep from './v1/rearing_step.route.js';
 import v1FieldSetting from './v1/field_setting.route.js';
 import v1Service from './v1/service.route.js';
 import v1Todo from './v1/todo.route.js';
+import v1Public from './v1/public.route.js';
 
 export default function routes(app: FastifyInstance, _options: any, done: any) {
   app.register(v1Root, {
@@ -132,6 +133,10 @@ export default function routes(app: FastifyInstance, _options: any, done: any) {
 
   app.register(v1Statistic, {
     prefix: '/v1/statistic',
+  });
+
+  app.register(v1Public, {
+    prefix: '/v1/public',
   });
 
   done();

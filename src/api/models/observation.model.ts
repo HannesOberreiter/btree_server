@@ -4,12 +4,14 @@ import { ExtModel } from './base.model.js';
 export class Observation extends ExtModel {
   id!: number;
   taxa!: 'Vespa velutina';
-  external_service!: 'iNaturalist';
-  external_id!: string;
+  external_service!: 'iNaturalist' | 'PatriNat';
+  external_id!: number;
+  external_uuid!: string;
   location!: {
     lat: number;
     lng: number;
   };
+  data!: any;
 
   observed_at!: string;
 
@@ -18,18 +20,13 @@ export class Observation extends ExtModel {
 
   static jsonSchema = {
     type: 'object',
-    required: [
-      'taxa',
-      'external_service',
-      'external_id',
-      'location',
-      'observed_at',
-    ],
+    required: ['taxa', 'external_service', 'location', 'observed_at'],
     properties: {
       id: { type: 'integer' },
       taxa: { type: 'string', minLength: 1, maxLength: 45 },
       external_service: { type: 'string', minLength: 1, maxLength: 45 },
       external_id: { type: 'integer' },
+      external_uuid: { type: 'string' },
       location: { type: 'object' },
       data: { type: 'object' },
 
@@ -46,7 +43,6 @@ export class Observation extends ExtModel {
       location.lat,
       location.lng,
     ]);
-    console.log(rawLocation);
     formattedJson.location = rawLocation;
     return formattedJson;
   }
