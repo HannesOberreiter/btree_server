@@ -58,6 +58,15 @@
                   </l-marker>
                 </template>
               </l-feature-group>
+              <l-control position="bottomleft">
+                <div class="leaflet-control-attribution">
+                  <div>DataSources: <a href="https://www.inaturalist.org/home">iNaturalist</a>, <a
+                      href="https://frelonasiatique.mnhn.fr/visualisateur">PatriNat</a></div>
+                  <div>Recent observations: {{ recentCount }} (last 6 months)</div>
+                  <div>Total observations in our database: {{ totalCount }}</div>
+                  <div><b>Only the recent observations are shown on the map.</b></div>
+                </div>
+              </l-control>
             </l-map>
           </div>
         </q-tab-panel>
@@ -71,20 +80,14 @@
 
 <script lang="ts">
 type Observation = {
-  created_at: string
-  data: any
-  external_id: string
-  external_service: string
-  id: string
   location: {
-    type: 'Point',
-    coordinates: number[]
+    x: number,
+    y: number
   }
+  uri: string
   observed_at: string
   localDate: string
   isRecentObservation: boolean
-  taxa: string
-  updated_at: string
 };
 </script>
 
@@ -104,10 +107,11 @@ import {
   LFeatureGroup,
   LMarker,
   LTileLayer,
+  LControl,
 } from '@vue-leaflet/vue-leaflet';
 import { useApiFetch } from '~/composables/useApi';
 import MapButtons from '~/components/MapButtons.vue';
-import { computed, ref } from 'vue';
+import { computed, onBeforeUnmount, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { locale } = useI18n();
@@ -133,7 +137,9 @@ const updateTimestamp = ref(Date()); // helper to update layer
 
 const notification = useNotification();
 
-const cluster = (L as any).markerClusterGroup();
+const cluster = (L as any).markerClusterGroup({
+  chunkedLoading: true
+});
 const activeTab = ref('map');
 const zoom = computed(() => (isLoading.value ? 2 : 6));
 const circleRadius = ref(1000);
@@ -144,29 +150,47 @@ const userLocationLoading = ref(false);
 const showInactive = ref(false);
 let map = {} as any;
 
+const recentCount = ref(0);
+const totalCount = ref(0);
+
+api.get('/v1/public/velutina/observations/stats').then((response) => {
+  totalCount.value = response.count;
+});
+
 
 const onMapReady = () => {
+
   map = mapRef.value.leafletObject;
   map.doubleClickZoom.disable();
   map.scrollWheelZoom.enable();
-  api.get('/v1/service/observation').then((response) => {
+  api.get('/v1/public/velutina/observations/recent').then((response) => {
     const data = response.map((item: any) => {
       return {
         ...item,
         localDate: new Date(item.observed_at).toLocaleDateString(),
         isRecentObservation: new Date(item.observed_at) > new Date(Date.now() - 1000 * 60 * 60 * 24 * 365),
       } as Observation;
+
     });
+    recentCount.value = data.length;
+
     data.map((item: Observation) => {
-      const circleMarker = L.circleMarker(item.location.coordinates as LatLngTuple);
-      circleMarker.bindPopup(`${item.localDate}<br/><a href="${item.data.uri}">${item.data.uri}</a>`);
+      const circleMarker = L.circleMarker([item.location.x, item.location.y] as LatLngTuple, {
+        radius: 5,
+        color: item.isRecentObservation ? 'red' : 'blue',
+        fillOpacity: 0.5,
+      });
+      const uri = JSON.parse(item.uri)
+      circleMarker.bindPopup(`${item.localDate}<br/><a href="${uri}">${uri}</a>`);
       cluster.addLayer(circleMarker);
     });
     map.addLayer(cluster);
   });
 };
 
-
+onBeforeUnmount(() => {
+  map.removeLayer(cluster);
+});
 
 
 function loadLocation () {

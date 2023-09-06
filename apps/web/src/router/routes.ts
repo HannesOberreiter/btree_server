@@ -573,6 +573,14 @@ const routes: RouteRecordRaw[] = [
     ],
   },
 
+  {
+    path: '/pub/vespa-velutina/map/',
+    meta: {
+      auth: false,
+    },
+    component: () => import('~/pages/PublicMapVelutina.vue'),
+  },
+
   /***
     Catch last 404
    */
