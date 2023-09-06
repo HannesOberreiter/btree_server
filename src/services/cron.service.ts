@@ -51,7 +51,9 @@ export class Cron {
           this.Logging(await reminderDeletion());
           this.Logging(await reminderVIS());
           this.Logging(await reminderPremium());
-          fetchObservations().then((res) => this.Logging(res));
+          fetchObservations()
+            .then((res) => this.Logging(res))
+            .catch((e) => this.logger.log('error', e, { label: 'CronJob' }));
         } catch (e) {
           this.logger.log('error', e, { label: 'CronJob' });
         }

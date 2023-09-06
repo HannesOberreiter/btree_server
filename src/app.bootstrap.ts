@@ -30,9 +30,9 @@ const application = new Application();
 const httpServer = new HTTPServer(application.app);
 httpServer.start();
 
-closeWithGrace({ delay: 5000 }, async function ({ signal, err, manual }) {
-  if (err) {
-    console.error(err);
+closeWithGrace({ delay: 5000 }, async function (res) {
+  if (res.err) {
+    console.error(res.err);
   }
   await gracefulShutdown();
 });

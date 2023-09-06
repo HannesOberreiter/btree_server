@@ -7,7 +7,7 @@ export const up = function (knex) {
     t.increments('id').primary().unsigned();
     t.string('taxa', 45).index();
     t.string('external_service', 45);
-    t.integer('external_id').unsigned().index();
+    t.integer('external_id').unsigned().nullable().index();
     t.point('location');
     t.json('data');
 
