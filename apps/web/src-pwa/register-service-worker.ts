@@ -8,7 +8,13 @@ import { Router } from '~/router';
 // events passes a ServiceWorkerRegistration instance in their arguments.
 // ServiceWorkerRegistration: https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerRegistration
 
-if (Platform.is.ios || document.cookie.includes('iOS') || Platform.is.safari) {
+if (window.location.pathname.startsWith('/pub/')) {
+  console.log('Service worker disabled for /pub/ routes');
+} else if (
+  Platform.is.ios ||
+  document.cookie.includes('iOS') ||
+  Platform.is.safari
+) {
   // Delete old pending service workers for iOS users
   try {
     if ('serviceWorker' in navigator) {
