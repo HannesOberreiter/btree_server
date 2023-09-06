@@ -1,5 +1,13 @@
 [
   {
+    "version": "6.3.2",
+    "date": "2023-09-06",
+    "news": [
+      "FEATURE added public available vespa velutina map",
+      "IMPROVEMENT added caching to vespa velutina data for faster loading"
+    ]
+  },
+  {
     "version": "6.3.1",
     "date": "2023-09-02",
     "news": [

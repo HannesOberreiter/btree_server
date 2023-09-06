@@ -58,6 +58,15 @@
                   </l-marker>
                 </template>
               </l-feature-group>
+              <l-control position="bottomleft">
+                <div class="leaflet-control-attribution">
+                  <div>DataSources: <a href="https://www.inaturalist.org/home">iNaturalist</a>, <a
+                      href="https://frelonasiatique.mnhn.fr/visualisateur">PatriNat</a></div>
+                  <div>Recent observations: {{ recentCount }} (last 6 months)</div>
+                  <div>Total observations in our database: {{ totalCount }}</div>
+                  <div><b>Only the recent observations are shown on the map.</b></div>
+                </div>
+              </l-control>
             </l-map>
           </div>
         </q-tab-panel>
@@ -98,6 +107,7 @@ import {
   LFeatureGroup,
   LMarker,
   LTileLayer,
+  LControl,
 } from '@vue-leaflet/vue-leaflet';
 import { useApiFetch } from '~/composables/useApi';
 import MapButtons from '~/components/MapButtons.vue';
@@ -140,6 +150,13 @@ const userLocationLoading = ref(false);
 const showInactive = ref(false);
 let map = {} as any;
 
+const recentCount = ref(0);
+const totalCount = ref(0);
+
+api.get('/v1/public/velutina/observations/stats').then((response) => {
+  totalCount.value = response.count;
+});
+
 
 const onMapReady = () => {
 
@@ -155,6 +172,8 @@ const onMapReady = () => {
       } as Observation;
 
     });
+    recentCount.value = data.length;
+
     data.map((item: Observation) => {
       const circleMarker = L.circleMarker([item.location.x, item.location.y] as LatLngTuple, {
         radius: 5,
