@@ -97,9 +97,7 @@ const totalLimit = {
   scale: parseInt(process.env.TOTAL_LIMIT_SCALE),
 };
 
-const cronjobTimer = process.env.CRONJOB
-  ? process.env.CRONJOB
-  : '0 11 ./1 * *.js';
+const cronjobTimer = process.env.CRONJOB ? process.env.CRONJOB : '0 11 */1 * *';
 
 const redisConfig = {
   host: process.env.REDIS_HOSTNAME,
