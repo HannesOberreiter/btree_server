@@ -59,9 +59,10 @@
                 </template>
               </l-feature-group>
               <l-control position="bottomleft">
-                <div class="leaflet-control-attribution">
-                  <div>DataSources: <a href="https://www.inaturalist.org/home">iNaturalist</a>, <a
-                      href="https://frelonasiatique.mnhn.fr/visualisateur">PatriNat</a></div>
+                <div class="leaflet-control-attribution" style="margin-bottom: 24px!important">
+                  <div>DataSources: <a href="https://www.inaturalist.org/home" target="_blank">iNaturalist</a>, <a
+                      href="https://frelonasiatique.mnhn.fr/visualisateur" target="_blank">PatriNat</a>, <a
+                      href="https://www.artenfinder.net" target="_blank">artenfinder.net</a></div>
                   <div>Recent observations: {{ recentCount }} (last 6 months)</div>
                   <div>Total observations in our database: {{ totalCount }}</div>
                   <div><b>Only the recent observations are shown on the map.</b></div>
@@ -181,7 +182,7 @@ const onMapReady = () => {
         fillOpacity: 0.5,
       });
       const uri = JSON.parse(item.uri)
-      circleMarker.bindPopup(`${item.localDate}<br/><a href="${uri}">${uri}</a>`);
+      circleMarker.bindPopup(`${item.localDate}<br/><a href="${uri}" target="_blank">${uri}</a>`);
       cluster.addLayer(circleMarker);
     });
     map.addLayer(cluster);
