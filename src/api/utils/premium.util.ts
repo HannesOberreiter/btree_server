@@ -93,6 +93,7 @@ export const addPremium = async (
     await Payment.query(trx).insert({
       date: new Date(),
       user_id: user_id,
+      months: months,
       amount: amount ? amount : 0,
       type: type,
     });

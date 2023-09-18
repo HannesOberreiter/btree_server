@@ -12,8 +12,6 @@ import { WizBeeToken } from '../models/wizbee_token.model.js';
 import { openAI } from '../../config/environment.config.js';
 import { FastifyRequest, FastifyReply } from 'fastify';
 import httpErrors from 'http-errors';
-import { Observation } from '../models/observation.model.js';
-import { raw } from 'objection';
 
 export default class ServiceController {
   static async getTemperature(req: FastifyRequest, reply: FastifyReply) {
@@ -34,6 +32,7 @@ export default class ServiceController {
     const order = await paypalCreateOrder(
       req.session.user.user_id,
       body.amount,
+      body.quantity,
     );
     if (order.status !== 'CREATED') {
       throw httpErrors.InternalServerError('Could not create order');
@@ -48,7 +47,10 @@ export default class ServiceController {
       throw httpErrors.InternalServerError('Could not capure order');
     }
     let value = 0;
+    let years = 1;
+
     const mail = capture.payment_source.paypal.email_address;
+
     try {
       value = parseFloat(
         capture.purchase_units[0].payments.captures[0].amount.value,
@@ -56,14 +58,24 @@ export default class ServiceController {
     } catch (e) {
       req.log.error(e);
     }
+
+    try {
+      const custom_id = JSON.parse(
+        capture.purchase_units[0].payments.captures[0].custom_id,
+      );
+      years = parseFloat(custom_id.quantity) ?? 1;
+    } catch (e) {
+      req.log.error(e);
+    }
+
     const paid = await addPremium(
       req.session.user.user_id,
-      12,
+      12 * years,
       value,
       'paypal',
     );
 
-    createInvoice(mail, value, 'PayPal');
+    createInvoice(mail, value, years, 'PayPal');
     return { ...capture, paid };
   }
 
@@ -72,6 +84,7 @@ export default class ServiceController {
     const session = await stripeCreateOrder(
       req.session.user.user_id,
       body.amount,
+      body.quantity,
     );
     return session;
   }

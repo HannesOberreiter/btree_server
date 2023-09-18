@@ -43,6 +43,7 @@ async function getLatestInvoice() {
 
 export async function createInvoice(
   mail: string,
+  price: number,
   amount: number,
   type: 'PayPal' | 'Stripe',
 ) {
@@ -68,9 +69,9 @@ export async function createInvoice(
       InvoicePosition: [
         {
           text: 'b.tree PREMIUM Mitglied, Abo Time: + 1 Jahr Abo',
-          amount: 1,
+          amount: amount,
           unit: 'x',
-          price: amount / 1.2,
+          price: price / amount / 1.2,
           tax_percent: 20,
           discount: 0,
         },

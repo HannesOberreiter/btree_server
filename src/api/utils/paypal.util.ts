@@ -9,7 +9,11 @@ import {
 } from '../../config/environment.config.js';
 
 // https://developer.paypal.com/docs/api/orders/v2/#orders_create
-export async function createOrder(user_id: number, amount: number) {
+export async function createOrder(
+  user_id: number,
+  amount: number,
+  quantity: number,
+) {
   const accessToken = await generateAccessToken();
   const url = `${paypalBase}/v2/checkout/orders`;
   const response = await fetch(url, {
@@ -25,11 +29,28 @@ export async function createOrder(user_id: number, amount: number) {
       },
       purchase_units: [
         {
-          custom_id: user_id + '',
+          items: [
+            {
+              name: 'Premium',
+              description: 'Premium Subscription',
+              quantity: quantity,
+              unit_amount: {
+                currency_code: 'EUR',
+                value: amount,
+              },
+            },
+          ],
+          custom_id: JSON.stringify({ user_id: user_id, quantity: quantity }),
           invoice_id: `ID: ${user_id}, Date: ${new Date().toISOString()}`,
           amount: {
             currency_code: 'EUR',
-            value: amount,
+            value: amount * quantity,
+            breakdown: {
+              item_total: {
+                currency_code: 'EUR',
+                value: amount * quantity,
+              },
+            },
           },
           category: 'DIGITAL_GOODS',
         },
