@@ -338,8 +338,10 @@
     "afterPayment": "Dopo il pagamento il tuo accesso premium viene esteso a",
     "afterPremium": "Dopo che il tuo premio si esaurisce, puoi ancora lavorare con tutti gli alveari e le colonie che hai creato, ma i limiti si applicano di nuovo",
     "currentStatus": "Tempo corrente pagato",
+    "decreaseDays": "Rimuovere un anno di pagamento (minimo un anno).",
     "forOneYear": "per 1 anno",
-    "minimumAmount": "È necessario un minimo di 50 euro.",
+    "increaseDays": "Aggiungere un anno di pagamento (massimo 10 anni in anticipo possibili).",
+    "minimumAmount": "",
     "noSubscription": "Solo pagamento unico, nessun abbonamento automatico!",
     "payWithStripe": "Carta di credito e altri",
     "perks": "Con l'abbonamento premium ottieni i seguenti bonus",
@@ -351,8 +353,10 @@
     "perksTemperature": "Al momento del controllo il campo della temperatura viene compilato automaticamente",
     "perksWizBee": "Accedi a WizBee la tua conoscenza personale dell'apicoltura AI, alimentata da ChatGPT",
     "priceHistory": "La nostra cronologia dei prezzi e le modifiche imminenti",
+    "sum": "Paga per {years} anno/i di abbonamento premium una somma totale di {sum}€.",
     "thankYou": "Grazie per il tuo contributo. Il tempo premium dovrebbe essere aggiunto automaticamente, altrimenti prova ad accedere o disconnettersi. In caso di problemi, non esitare a contattarci all'indirizzo {'office@btree.at'}",
-    "title": "Supporta b.tree con accesso premium per un anno"
+    "title": "Supporta b.tree con accesso premium per un anno",
+    "yesSubscription": ""
   },
   "method": "Metodo | Metodi",
   "modus": "Modo",

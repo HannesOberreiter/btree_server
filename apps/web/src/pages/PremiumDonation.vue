@@ -14,7 +14,8 @@
           </div>
           <ul>
             <li>
-              {{ $t('membership.currentStatus') }}: <b>{{ getPaidStatus }}</b>
+              {{ $t('membership.currentStatus') }}:
+              <b>{{ getPaidStatus }}</b>
             </li>
             <li>
               {{ $t('membership.afterPayment') }}: <b>{{ afterPayment }}</b>
@@ -45,7 +46,7 @@
                 :rules="[
                   (val) =>
                     parseInt(val) >= currentPrice ||
-                    $t('membership.minimumAmount'),
+                    $t('membership.minimumAmount', { value: currentPrice }),
                 ]"
                 :hint="$t('membership.noSubscription')"
               >
@@ -69,14 +70,42 @@
                     color="primary"
                   ></q-icon>
                 </template>
-                <template #append>€ {{ $t('membership.forOneYear') }}</template>
+                <template #append>€</template>
+                <template #after>
+                  <q-btn
+                    icon="fas fa-calendar-plus"
+                    flat
+                    round
+                    :disable="days >= 3650"
+                    @click="changeDays(365)"
+                  >
+                    <tooltip-base>
+                      {{ $t('membership.increaseDays') }}
+                    </tooltip-base>
+                  </q-btn>
+                  <q-btn
+                    icon="fas fa-calendar-minus"
+                    flat
+                    round
+                    :disable="days <= 365"
+                    @click="changeDays(-365)"
+                  >
+                    <tooltip-base>
+                      {{ $t('membership.decreaseDays') }}
+                    </tooltip-base>
+                  </q-btn>
+                </template>
               </q-input>
+              <div class="text-center text-h4">
+                {{ $t('membership.sum', { years: years, sum: sum }) }}
+              </div>
             </div>
           </div>
           <div class="text-center payment q-col-gutter-y-sm">
             <div v-if="!($q.platform.is.ios && $q.platform.is.safari)">
               <payment-stripe
                 :donation="donation"
+                :years="years"
                 @on-paid="(data: any) => successPayment(data.paid)"
               ></payment-stripe>
               <q-separator></q-separator>
@@ -85,6 +114,7 @@
               <suspense>
                 <payment-paypal
                   :donation="donation"
+                  :years="years"
                   @on-paid="(data: any) => successPayment(data.paid)"
                 ></payment-paypal>
               </suspense>
@@ -214,10 +244,14 @@ const getPaidStatus = computed(() => {
 });
 const afterPayment = computed(() => {
   if (dayjs(storeUser.getPaidStatus.date) < dayjs()) {
-    return useDate.displayFormat(dayjs().add(1, 'year').toISOString());
+    return useDate.displayFormat(
+      dayjs().add(years.value, 'year').toISOString(),
+    );
   } else {
     return useDate.displayFormat(
-      dayjs(storeUser.getPaidStatus.date).add(1, 'year').toISOString(),
+      dayjs(storeUser.getPaidStatus.date)
+        .add(years.value, 'year')
+        .toISOString(),
     );
   }
 });
@@ -247,6 +281,9 @@ const maxPrice = currentPrice + 100;
 
 const donation = ref(currentPrice);
 const paid = ref(false);
+const days = ref(365);
+const years = computed(() => Math.floor(days.value / 365));
+const sum = computed(() => donation.value * years.value);
 
 const donationLabel = computed(() => `€ ${donation.value}`);
 const donationMarker = [
@@ -300,6 +337,12 @@ function calculatePriceChange(cur: number, prev: number) {
 
 function refreshCompany() {
   storeRefresh.refresh();
+}
+
+function changeDays(val: number) {
+  if (days.value === 365 && val < 0) return;
+  if (days.value === 3650 && val > 0) return;
+  days.value += val;
 }
 </script>
 

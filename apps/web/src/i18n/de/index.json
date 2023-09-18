@@ -338,8 +338,10 @@
     "afterPayment": "Nach der Zahlung verlängert sich Ihr Premium-Zugang um",
     "afterPremium": "Nachdem Ihre Prämie abgelaufen ist, können Sie immer noch mit all Ihren erstellten Bienenstöcken und Ständen arbeiten, aber es gelten wieder Einschränkungen",
     "currentStatus": "Aktuelle bezahlte Zeit",
+    "decreaseDays": "Entfernen Sie ein Zahlungsjahr (mindestens ein Jahr).",
     "forOneYear": "1 Jahr lang",
-    "minimumAmount": "Minimum Betrag sind 50 Euro.",
+    "increaseDays": "Fügen Sie ein Zahlungsjahr hinzu (maximal 10 Jahre im Voraus möglich).",
+    "minimumAmount": "",
     "noSubscription": "Nur einmalige Zahlung, kein automatisches Abo!",
     "payWithStripe": "Kreditkarte und andere",
     "perks": "Mit der Premium-Mitgliedschaft erhalten Sie folgende Boni",
@@ -351,8 +353,10 @@
     "perksTemperature": "Bei Kontrollen wird das Temperaturfeld automatisch ausgefüllt",
     "perksWizBee": "Greifen Sie auf WizBee zu, Ihre persönliche Imkerei-Wissens-KI, unterstützt von ChatGPT",
     "priceHistory": "Unser Preisverlauf und bevorstehende Änderungen",
+    "sum": "Zahlen Sie für {years} Jahr(e) Premium-Mitgliedschaft einen Gesamtbetrag von {sum}€.",
     "thankYou": "Danke für Ihren Beitrag. Die Premium-Zeit sollte automatisch hinzugefügt werden, andernfalls versuchen Sie sich anzumelden oder abzumelden. Sollten Probleme auftreten, zögern Sie nicht, uns unter {'office@btree.at'} zu kontaktieren.",
-    "title": "Unterstützen Sie b.tree mit einem Premium-Zugang für ein Jahr"
+    "title": "Unterstützen Sie b.tree mit einem Premium-Zugang für ein Jahr",
+    "yesSubscription": ""
   },
   "method": "Methode | Methoden",
   "modus": "Modus",
