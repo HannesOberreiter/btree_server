@@ -23,8 +23,8 @@
           <q-slider
             v-model="donation"
             color="green"
-            :min="50"
-            :max="150"
+            :min="currentPrice"
+            :max="maxPrice"
             :step="10"
             markers
             :marker-labels="donationMarker"
@@ -44,19 +44,20 @@
                 type="number"
                 :rules="[
                   (val) =>
-                    parseInt(val) >= 50 || $t('membership.minimumAmount'),
+                    parseInt(val) >= currentPrice ||
+                    $t('membership.minimumAmount'),
                 ]"
                 :hint="$t('membership.noSubscription')"
               >
                 <template #prepend>
                   <q-icon
-                    v-if="donation < 80"
+                    v-if="donation < donationMarker[1].value"
                     name="fas fa-face-smile"
                     size="lg"
                     color="primary"
                   ></q-icon>
                   <q-icon
-                    v-else-if="donation < 120"
+                    v-else-if="donation < donationMarker[2].value"
                     name="fas fa-face-grin"
                     size="lg"
                     color="primary"
@@ -111,9 +112,29 @@
     <q-card-section>
       <div class="row q-pa-sm justify-center">
         <div class="col-12 col-sm-10 col-md-8">
-          <div class="text-h5 q-pb-sm text-center">
-            {{ $t('membership.perks') }}
+          <div class="text-h5 q-pb-sm">
+            {{ $t('membership.priceHistory') }}:
           </div>
+          <ul>
+            <li v-for="(item, index) in priceHistory" :key="index">
+              {{ item.year }}: {{ item.price }} € / {{ $t('year') }}
+              {{
+                index > 0
+                  ? calculatePriceChange(
+                      item.price,
+                      priceHistory[index - 1].price,
+                    )
+                  : ''
+              }}
+            </li>
+          </ul>
+        </div>
+      </div>
+    </q-card-section>
+    <q-card-section>
+      <div class="row q-pa-sm justify-center">
+        <div class="col-12 col-sm-10 col-md-8">
+          <div class="text-h5 q-pb-sm">{{ $t('membership.perks') }}:</div>
           <ul class="text-subtitle1">
             <li>
               {{ $t('membership.perksHives') }}
@@ -201,15 +222,38 @@ const afterPayment = computed(() => {
   }
 });
 
-const donation = ref(50);
+const priceHistory = [
+  {
+    year: 2014,
+    price: 24,
+  },
+  {
+    year: 2016,
+    price: 50,
+  },
+  {
+    year: 2024,
+    price: 55,
+  },
+];
+
+const year = dayjs().year();
+const currentPrice =
+  priceHistory[priceHistory.length - 1].year > year
+    ? priceHistory[priceHistory.length - 2].price
+    : priceHistory[priceHistory.length - 1].price;
+
+const maxPrice = currentPrice + 100;
+
+const donation = ref(currentPrice);
 const paid = ref(false);
 
 const donationLabel = computed(() => `€ ${donation.value}`);
 const donationMarker = [
-  { value: 50, label: '50 €' },
-  { value: 80, label: '80 €' },
-  { value: 120, label: '120 €' },
-  { value: 150, label: '150€' },
+  { value: currentPrice, label: currentPrice + '€' },
+  { value: currentPrice + 30, label: currentPrice + 30 + '€' },
+  { value: currentPrice + 60, label: currentPrice + 60 + '€' },
+  { value: maxPrice, label: maxPrice + '€' },
 ];
 
 function payCoupon() {
@@ -248,6 +292,10 @@ function successPayment(newDate: string) {
     notification.open('positive', '');
   }
   refreshCompany();
+}
+
+function calculatePriceChange(cur: number, prev: number) {
+  return '+ ' + Math.floor((cur * 100) / prev - 100) + '%';
 }
 
 function refreshCompany() {
