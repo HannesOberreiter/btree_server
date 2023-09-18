@@ -101,7 +101,6 @@ const rules = {};
 const v = useVuelidate(rules, state, { $autoDirty: true });
 
 async function getEdit(id: unknown[]) {
-  console.log(id);
   return await api.post('/v1/queen/batchGet', { ids: id }).then(
     (response: any) => {
       const editIds = map(response, (row: any) => [
