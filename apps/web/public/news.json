@@ -1,5 +1,13 @@
 [
   {
+    "version": "6.3.3",
+    "date": "2023-09-18",
+    "news": [
+      "BUGFIX allow access to external api endpoints for stripe",
+      "FEATURE option to pay multiple years in advance"
+    ]
+  },
+  {
     "version": "6.3.2",
     "date": "2023-09-06",
     "news": [
