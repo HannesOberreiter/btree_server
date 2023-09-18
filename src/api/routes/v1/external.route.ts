@@ -17,7 +17,9 @@ export default function routes(
     { preHandler: Validator.handleSource },
     ExternalController.ical,
   );
+
   server.post('/stripe/webhook', {}, ExternalController.stripeWebhook);
+
   server.get(
     '/scale/:ident/:api',
     {
