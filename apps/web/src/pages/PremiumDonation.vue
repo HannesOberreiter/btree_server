@@ -1,14 +1,15 @@
+<!-- eslint-disable vue/no-v-html -->
 <template>
   <q-card flat>
     <q-card-section>
       <div class="row q-pa-sm justify-center">
         <div class="col-12 col-sm-10 col-md-8">
-          <div class="text-h5 q-pb-sm text-center">
+          <div class="text-h5 q-pb-sm">
             {{ $t('membership.title') }}
           </div>
           <div
             v-if="paid"
-            class="bg-info text-weight-bold text-black q-pa-sm text-justify rounded-borders"
+            class="bg-info text-weight-bold text-black q-pa-sm rounded-borders"
           >
             {{ $t('membership.thankYou') }}
           </div>
@@ -34,7 +35,7 @@
             switch-marker-labels-side
           >
           </q-slider>
-          <div class="row justify-center payment">
+          <div class="row payment">
             <div class="col-12">
               <q-input
                 v-model.number="donation"
@@ -70,7 +71,9 @@
                     color="primary"
                   ></q-icon>
                 </template>
-                <template #append>€</template>
+                <template #append>
+                  {{ years > 1 ? `(${sum})` : '' }} €
+                </template>
                 <template #after>
                   <q-btn
                     icon="fas fa-calendar-plus"
@@ -96,9 +99,10 @@
                   </q-btn>
                 </template>
               </q-input>
-              <div class="text-center text-h4">
-                {{ $t('membership.sum', { years: years, sum: sum }) }}
-              </div>
+              <div
+                class="text-h5 q-pt-sm q-pb-sm"
+                v-html="$t('membership.sum', { years: years, sum: sum })"
+              ></div>
             </div>
           </div>
           <div class="text-center payment q-col-gutter-y-sm">

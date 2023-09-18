@@ -353,7 +353,7 @@
     "perksTemperature": "Lors du contrôle, le champ de température est automatiquement rempli",
     "perksWizBee": "Accédez à WizBee, votre IA personnelle de connaissances apicoles, optimisée par ChatGPT",
     "priceHistory": "Notre historique de prix et les changements à venir",
-    "sum": "Payez pour {years} année(s) d'abonnement premium une somme totale de {sum} €.",
+    "sum": "Payez pour <b>{years}</b> année(s) d'abonnement premium une somme totale de <b>{sum} €</b>.",
     "thankYou": "Nous vous remercions de votre contribution. Le temps premium doit être ajouté automatiquement, sinon essayez de vous connecter ou de vous déconnecter. En cas de problème, n'hésitez pas à nous contacter à {'office@btree.at'}",
     "title": "Soutenez b.tree avec un accès premium pendant un an",
     "yesSubscription": ""

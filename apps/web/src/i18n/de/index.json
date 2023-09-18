@@ -353,7 +353,7 @@
     "perksTemperature": "Bei Kontrollen wird das Temperaturfeld automatisch ausgefüllt",
     "perksWizBee": "Greifen Sie auf WizBee zu, Ihre persönliche Imkerei-Wissens-KI, unterstützt von ChatGPT",
     "priceHistory": "Unser Preisverlauf und bevorstehende Änderungen",
-    "sum": "Zahlen Sie für {years} Jahr(e) Premium-Mitgliedschaft einen Gesamtbetrag von {sum}€.",
+    "sum": "Zahlen Sie für <b>{years}</b> Jahr(e) der Premium-Mitgliedschaft einen Gesamtbetrag von <b>{sum}€</b>.",
     "thankYou": "Danke für Ihren Beitrag. Die Premium-Zeit sollte automatisch hinzugefügt werden, andernfalls versuchen Sie sich anzumelden oder abzumelden. Sollten Probleme auftreten, zögern Sie nicht, uns unter {'office@btree.at'} zu kontaktieren.",
     "title": "Unterstützen Sie b.tree mit einem Premium-Zugang für ein Jahr",
     "yesSubscription": ""
