@@ -15,6 +15,7 @@ import {
 } from '../utils/calendar.util.js';
 import { createInvoice } from '../utils/foxyoffice.util.js';
 import { SOURCE } from '../../config/constants.config.js';
+import { MailService } from '../../services/mail.service.js';
 
 export default class ExternalController {
   static async ical(req: FastifyRequest, reply: FastifyReply) {
@@ -89,15 +90,32 @@ export default class ExternalController {
     const event = req.body as Stripe.Event;
     const object = event.data.object as Stripe.Checkout.Session;
     if (event.type === 'checkout.session.completed') {
-      const user_id = parseInt(object.client_reference_id);
+      let user_id: number;
+      let years = 1;
+
+      try {
+        const reference = JSON.parse(object.client_reference_id);
+        user_id = reference.user_id;
+        years = reference.quantity ?? 1;
+      } catch (e) {
+        const mailer = MailService.getInstance();
+        mailer.sendRawMail(
+          'office@btree.at',
+          'Failed capture of Stripe Payment',
+          JSON.stringify(event, null, 2),
+        );
+        req.log.error(e);
+        throw httpErrors.InternalServerError();
+      }
+
       let amount = 0;
       try {
         amount = parseFloat(object.amount_total as any) / 100;
       } catch (e) {
         req.log.error(e);
       }
-      await addPremium(user_id, 12, amount, 'stripe');
-      createInvoice(object.customer_details.email, amount, 'Stripe');
+      await addPremium(user_id, 12 * years, amount, 'stripe');
+      createInvoice(object.customer_details.email, amount, years, 'Stripe');
     }
     return {};
   }
