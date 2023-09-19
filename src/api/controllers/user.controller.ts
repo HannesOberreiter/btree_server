@@ -127,7 +127,7 @@ export default class UserController {
     try {
       if ('password' in body) {
         try {
-          await reviewPassword(req.session.user.bee_id, body.password);
+          await reviewPassword(req.session.user.bee_id, body.password, trx);
         } catch (e) {
           throw checkMySQLError(e);
         }
@@ -175,7 +175,7 @@ export default class UserController {
     const body = req.body as any;
     const trx = await User.startTransaction();
     try {
-      await CompanyBee.query()
+      await CompanyBee.query(trx)
         .where('bee_id', req.session.user.bee_id)
         .where('user_id', body.saved_company)
         .throwIfNotFound();

@@ -16,7 +16,7 @@ export default class FieldSettingController {
     const trx = await FieldSetting.startTransaction();
     try {
       const settings = JSON.parse(body.settings);
-      const current = await FieldSetting.query()
+      const current = await FieldSetting.query(trx)
         .first()
         .where('bee_id', req.session.user.bee_id);
       if (current) {
