@@ -1,8 +1,9 @@
 [
   {
     "version": "6.3.3",
-    "date": "2023-09-18",
+    "date": "2023-09-19",
     "news": [
+      "BUGFIX convert empty string in numeric field to zero number",
       "BUGFIX allow access to external api endpoints for stripe",
       "FEATURE option to pay multiple years in advance"
     ]
