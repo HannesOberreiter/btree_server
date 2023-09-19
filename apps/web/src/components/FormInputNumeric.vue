@@ -15,6 +15,9 @@
     :min="minValid"
     :max="maxValid"
     filled
+    @update:model-value="
+      (val) => $emit('update:modelValue', val === '' ? 0 : val)
+    "
   >
     <template v-if="icon !== ''" #before>
       <q-icon v-if="!multipleValues" :name="icon"></q-icon>
