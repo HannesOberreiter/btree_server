@@ -92,7 +92,7 @@ export default class MovedateController {
       for (let i = 0; i < hive_ids.length; i++) {
         const id = hive_ids[i];
 
-        await HiveLocation.query()
+        await HiveLocation.query(trx)
           .where({
             user_id: req.session.user.user_id,
             hive_id: id,

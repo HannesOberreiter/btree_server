@@ -261,14 +261,14 @@ export default class CompanyController {
         delete body.api_change;
       }
 
-      const res = await company.$query().patchAndFetch({ ...body });
+      const res = await company.$query(trx).patchAndFetch({ ...body });
 
       if (
         api_change ||
         (res.api_active && (res.api_key === '' || res.api_key === null))
       ) {
         const apiKey = await randomBytes(25).toString('hex');
-        await company.$query().patch({
+        await company.$query(trx).patch({
           api_key: apiKey,
         });
       }

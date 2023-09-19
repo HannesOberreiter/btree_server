@@ -8,6 +8,7 @@ import { LoginAttemp } from '../models/login_attempt.model.js';
 import { checkMySQLError } from './error.util.js';
 import { MailService } from '../../services/mail.service.js';
 import { CompanyBee } from '../models/company_bee.model.js';
+import Objection from 'objection';
 
 dayjs.extend(utc);
 
@@ -22,6 +23,7 @@ const insertWrongPasswordTry = async (bee_id: number) => {
 
     await trx.commit();
   } catch (e) {
+    await trx.rollback();
     throw checkMySQLError(e);
   }
 };
@@ -35,6 +37,7 @@ const updateLastLogin = async (bee_id: number) => {
     });
     await trx.commit();
   } catch (e) {
+    await trx.rollback();
     throw checkMySQLError(e);
   }
 };
@@ -143,8 +146,14 @@ const checkPassword = (
   }
 };
 
-const reviewPassword = async (bee_id, password: string) => {
-  const user = await User.query().select('salt', 'password').findById(bee_id);
+const reviewPassword = async (
+  bee_id,
+  password: string,
+  trx: Objection.Transaction = null,
+) => {
+  const user = await User.query(trx)
+    .select('salt', 'password')
+    .findById(bee_id);
   if (!checkPassword(password, user.password, user.salt)) {
     throw httpErrors.Forbidden('Wrong password');
   }

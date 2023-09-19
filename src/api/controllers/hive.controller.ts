@@ -13,9 +13,15 @@ import { Feed } from '../models/feed.model.js';
 import { Treatment } from '../models/treatment.model.js';
 import { Checkup } from '../models/checkup.model.js';
 import { limitHive } from '../utils/premium.util.js';
+import Objection from 'objection';
 
-async function isDuplicateHiveName(user_id: number, name: string, id?: number) {
-  const checkDuplicate = Hive.query().select('id').findOne({
+async function isDuplicateHiveName(
+  user_id: number,
+  name: string,
+  id?: number,
+  trx: Objection.Transaction = null,
+) {
+  const checkDuplicate = Hive.query(trx).select('id').findOne({
     user_id,
     name,
     deleted: false,
@@ -131,7 +137,9 @@ export default class HiveController {
       for (let i = 0; i < repeat; i++) {
         const name = repeat > 1 ? body.name + (start + i) : body.name;
 
-        if (await isDuplicateHiveName(req.session.user.user_id, name)) {
+        if (
+          await isDuplicateHiveName(req.session.user.user_id, name, null, trx)
+        ) {
           throw httpErrors.Conflict('name');
         }
 
@@ -205,11 +213,13 @@ export default class HiveController {
           'apiaries.user_id': req.session.user.user_id,
           'apiaries.deleted': false,
         });
-        const query_hives = await HiveLocation.query().select('hive_id').where({
-          apiary_id: id,
-          hive_deleted: false,
-          hive_modus: true,
-        });
+        const query_hives = await HiveLocation.query(trx)
+          .select('hive_id')
+          .where({
+            apiary_id: id,
+            hive_deleted: false,
+            hive_modus: true,
+          });
         hives = query_hives.map((hive) => hive.hive_id);
       } else {
         await Hive.query(trx).findById(id).throwIfNotFound().where({
@@ -219,7 +229,7 @@ export default class HiveController {
         hives.push(id);
       }
 
-      const harvest = await Harvest.query()
+      const harvest = await Harvest.query(trx)
         .select('*', Hive.raw('? as kind', ['harvest']))
         .withGraphFetched(
           '[hive, harvest_apiary, type, creator(identifier), editor(identifier)]',
@@ -230,7 +240,7 @@ export default class HiveController {
         })
         .whereRaw('YEAR(date) = ?', year)
         .orderBy('date', 'desc');
-      const feed = await Feed.query()
+      const feed = await Feed.query(trx)
         .select('*', Hive.raw('? as kind', ['feed']))
         .withGraphFetched(
           '[hive, feed_apiary, type, creator(identifier), editor(identifier)]',
@@ -241,7 +251,7 @@ export default class HiveController {
         })
         .whereRaw('YEAR(date) = ?', year)
         .orderBy('date', 'desc');
-      const treatment = await Treatment.query()
+      const treatment = await Treatment.query(trx)
         .select('*', Hive.raw('? as kind', ['treatment']))
         .withGraphFetched(
           '[hive, treatment_apiary, type, disease, vet, creator(identifier), editor(identifier)]',
@@ -252,7 +262,7 @@ export default class HiveController {
         })
         .whereRaw('YEAR(date) = ?', year)
         .orderBy('date', 'desc');
-      const checkup = await Checkup.query()
+      const checkup = await Checkup.query(trx)
         .select('*', Hive.raw('? as kind', ['checkup']))
         .withGraphFetched(
           '[hive, checkup_apiary, type, creator(identifier), editor(identifier)]',
@@ -263,7 +273,7 @@ export default class HiveController {
         })
         .whereRaw('YEAR(date) = ?', year)
         .orderBy('date', 'desc');
-      const movedate = await Movedate.query()
+      const movedate = await Movedate.query(trx)
         .select('*', Hive.raw('? as kind', ['movedate']))
         .withGraphFetched(
           '[hive, apiary, creator(identifier), editor(identifier)]',
@@ -297,6 +307,7 @@ export default class HiveController {
             req.session.user.user_id,
             insert.name,
             ids[0],
+            trx,
           )
         ) {
           throw httpErrors.Conflict('name');

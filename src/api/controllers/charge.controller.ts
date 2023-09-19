@@ -147,7 +147,7 @@ export default class ChargeController {
     const restoreDelete = query.restore ? true : false;
 
     const result = await Charge.transaction(async (trx) => {
-      const res = await Charge.query()
+      const res = await Charge.query(trx)
         .where('user_id', req.session.user.user_id)
         .whereIn('id', body.ids);
 
