@@ -90,7 +90,6 @@ const sum = ref(props.value);
 const days = useLocalStorage('varroa-days', 1);
 
 const filters = computed(() => {
-  console.log(hive.value);
   if (hive.value.length === 0) return undefined;
   return JSON.stringify([{ hive_id: (hive.value[0] as any).id }]);
 });

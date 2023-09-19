@@ -1,29 +1,61 @@
 <template>
   <head>
     <title>b.tree - Professional Beekeeping Database - Map Velutina</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   </head>
   <div ref="iframeRef" class="iframe-container">
-    <l-map ref="mapRef" :zoom="5" :center="[49.4582838, 15.2718234]" loading-control="true" @ready="onMapReady">
-      <l-tile-layer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" layer-type="base" name="OpenStreetMap"
+    <l-map
+      ref="mapRef"
+      :zoom="5"
+      :center="[49.4582838, 15.2718234]"
+      loading-control="true"
+      @ready="onMapReady"
+    >
+      <l-tile-layer
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        layer-type="base"
+        name="OpenStreetMap"
         attribution="Map data &copy; <a href='http://openstreetmap.org'>OpenStreetMap</a> contributors, <a href='http://creativecommons.org/licenses/by-sa/2.0/''>CC-BY-SA</a>"
-        :max-zoom="18"></l-tile-layer>
-      <l-tile-layer url="https://api.inaturalist.org/v2/heatmap/{z}/{x}/{y}.png?taxon_id=119019" layer-type="overlay"
-        name="iNaturalist" :max-zoom="18"
-        attribution="Heatmap data &copy; <a href='https://www.inaturalist.org/'>iNaturalist</a>"></l-tile-layer>
+        :max-zoom="18"
+      ></l-tile-layer>
+      <l-tile-layer
+        url="https://api.inaturalist.org/v2/heatmap/{z}/{x}/{y}.png?taxon_id=119019"
+        layer-type="overlay"
+        name="iNaturalist"
+        :max-zoom="18"
+        attribution="Heatmap data &copy; <a href='https://www.inaturalist.org/'>iNaturalist</a>"
+      ></l-tile-layer>
       <l-control position="bottomleft">
-        <div class="leaflet-control-attribution" style="margin-bottom: 24px!important">
-          <div><b>Service by <a href="https://www.btree.at" target="_blank">b.tree</a></b></div>
-          <div>DataSources: <a href="https://www.inaturalist.org/home" target="_blank">iNaturalist</a>, <a
-              href="https://frelonasiatique.mnhn.fr/visualisateur" target="_blank">PatriNat</a>, <a
-              href="https://www.artenfinder.net" target="_blank">artenfinder.net</a></div>
+        <div
+          class="leaflet-control-attribution"
+          style="margin-bottom: 24px !important"
+        >
+          <div>
+            <b
+              >Service by
+              <a href="https://www.btree.at" target="_blank">b.tree</a></b
+            >
+          </div>
+          <div>
+            DataSources:
+            <a href="https://www.inaturalist.org/home" target="_blank"
+              >iNaturalist</a
+            >,
+            <a
+              href="https://frelonasiatique.mnhn.fr/visualisateur"
+              target="_blank"
+              >PatriNat</a
+            >,
+            <a href="https://www.artenfinder.net" target="_blank"
+              >artenfinder.net</a
+            >
+          </div>
           <div>Recent observations: {{ recentCount }} (last 6 months)</div>
           <div>Total observations in our database: {{ totalCount }}</div>
           <div><b>Only the recent observations are shown on the map.</b></div>
         </div>
       </l-control>
-
     </l-map>
   </div>
 </template>
@@ -31,13 +63,13 @@
 <script lang="ts">
 type Observation = {
   location: {
-    x: number,
-    y: number
-  }
-  uri: string
-  observed_at: string
-  localDate: string
-  isRecentObservation: boolean
+    x: number;
+    y: number;
+  };
+  uri: string;
+  observed_at: string;
+  localDate: string;
+  isRecentObservation: boolean;
 };
 </script>
 
@@ -47,19 +79,13 @@ import 'leaflet/dist/leaflet.css';
 import 'leaflet.markercluster/dist/MarkerCluster.css';
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 import 'leaflet.markercluster/dist/leaflet.markercluster.js';
-import {
-  LMap,
-  LTileLayer,
-  LControl,
-} from '@vue-leaflet/vue-leaflet';
+import { LMap, LTileLayer, LControl } from '@vue-leaflet/vue-leaflet';
 import { useApiFetch } from '~/composables/useApi';
 import { onBeforeUnmount, ref, onMounted } from 'vue';
 
-
-
 const api = useApiFetch();
 const cluster = (L as any).markerClusterGroup({
-  chunkedLoading: true
+  chunkedLoading: true,
 });
 
 const mapRef = ref(null as any);
@@ -81,18 +107,25 @@ const onMapReady = () => {
       return {
         ...item,
         localDate: new Date(item.observed_at).toLocaleDateString(),
-        isRecentObservation: new Date(item.observed_at) > new Date(Date.now() - 1000 * 60 * 60 * 24 * 365),
+        isRecentObservation:
+          new Date(item.observed_at) >
+          new Date(Date.now() - 1000 * 60 * 60 * 24 * 365),
       } as Observation;
     });
     recentCount.value = data.length;
     data.map((item: Observation) => {
-      const circleMarker = L.circleMarker([item.location.x, item.location.y] as LatLngTuple, {
-        radius: 5,
-        color: item.isRecentObservation ? 'red' : 'blue',
-        fillOpacity: 0.5,
-      });
-      const uri = JSON.parse(item.uri)
-      circleMarker.bindPopup(`${item.localDate}<br/><a href="${uri}" target="_blank">${uri}</a>`);
+      const circleMarker = L.circleMarker(
+        [item.location.x, item.location.y] as LatLngTuple,
+        {
+          radius: 5,
+          color: item.isRecentObservation ? 'red' : 'blue',
+          fillOpacity: 0.5,
+        },
+      );
+      const uri = JSON.parse(item.uri);
+      circleMarker.bindPopup(
+        `${item.localDate}<br/><a href="${uri}" target="_blank">${uri}</a>`,
+      );
       cluster.addLayer(circleMarker);
     });
     map.addLayer(cluster);
@@ -108,11 +141,11 @@ onBeforeUnmount(() => {
   window.removeEventListener('resize', resizeIframe);
 });
 
-function resizeIframe () {
+function resizeIframe() {
   if (iframeRef.value) {
     iframeRef.value.style.height = `${iframeRef.value.scrollHeight}px`;
   }
-};
+}
 </script>
 
 <style>

@@ -8,7 +8,7 @@ import { loadScript, PayPalNamespace } from '@paypal/paypal-js';
 import { useApiFetch } from '~/composables/useApi';
 import { useNotification } from '~/composables/useNotification';
 import { useAuthUserStore } from '~/stores/auth';
-import { toRef, onMounted } from 'vue';
+import { onMounted, toRefs } from 'vue';
 
 const storeUser = useAuthUserStore();
 const notification = useNotification();
@@ -24,9 +24,14 @@ const props = defineProps({
     type: Number,
     required: true,
   },
+  years: {
+    type: Number,
+    required: true,
+    default: 1,
+  },
 });
 
-const donation = toRef(props, 'donation');
+const { donation, years } = toRefs(props);
 
 try {
   paypal = await loadScript({
@@ -47,7 +52,10 @@ onMounted(async () => {
           // Sets up the transaction when a payment button is clicked
           createOrder: (_data, _actions) => {
             return api
-              .post('/v1/service/paypal/orders', { amount: donation.value })
+              .post('/v1/service/paypal/orders', {
+                amount: donation.value,
+                quantity: years.value,
+              })
               .then(
                 (order) => order.id,
                 (error) => notification.open('negative', error),

@@ -15,7 +15,7 @@ import { useApiFetch } from '~/composables/useApi';
 import { useNotification } from '~/composables/useNotification';
 
 import { useRoute } from 'vue-router';
-import { toRef, onMounted } from 'vue';
+import { onMounted, toRefs } from 'vue';
 
 const notification = useNotification();
 const api = useApiFetch();
@@ -26,16 +26,26 @@ const props = defineProps({
     type: Number,
     required: true,
   },
+  years: {
+    type: Number,
+    required: true,
+    default: 1,
+  },
 });
-const donation = toRef(props, 'donation');
+const { donation, years } = toRefs(props);
 
 function createSession() {
-  api.post('/v1/service/stripe/orders', { amount: donation.value }).then(
-    (session) => {
-      window.location.href = session.url;
-    },
-    (error) => notification.open('negative', error),
-  );
+  api
+    .post('/v1/service/stripe/orders', {
+      amount: donation.value,
+      quantity: years.value,
+    })
+    .then(
+      (session) => {
+        window.location.href = session.url;
+      },
+      (error) => notification.open('negative', error),
+    );
 }
 
 onMounted(() => {

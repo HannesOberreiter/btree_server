@@ -1,20 +1,22 @@
+<!-- eslint-disable vue/no-v-html -->
 <template>
   <q-card flat>
     <q-card-section>
       <div class="row q-pa-sm justify-center">
         <div class="col-12 col-sm-10 col-md-8">
-          <div class="text-h5 q-pb-sm text-center">
+          <div class="text-h5 q-pb-sm">
             {{ $t('membership.title') }}
           </div>
           <div
             v-if="paid"
-            class="bg-info text-weight-bold text-black q-pa-sm text-justify rounded-borders"
+            class="bg-info text-weight-bold text-black q-pa-sm rounded-borders"
           >
             {{ $t('membership.thankYou') }}
           </div>
           <ul>
             <li>
-              {{ $t('membership.currentStatus') }}: <b>{{ getPaidStatus }}</b>
+              {{ $t('membership.currentStatus') }}:
+              <b>{{ getPaidStatus }}</b>
             </li>
             <li>
               {{ $t('membership.afterPayment') }}: <b>{{ afterPayment }}</b>
@@ -23,8 +25,8 @@
           <q-slider
             v-model="donation"
             color="green"
-            :min="50"
-            :max="150"
+            :min="currentPrice"
+            :max="maxPrice"
             :step="10"
             markers
             :marker-labels="donationMarker"
@@ -33,7 +35,7 @@
             switch-marker-labels-side
           >
           </q-slider>
-          <div class="row justify-center payment">
+          <div class="row payment">
             <div class="col-12">
               <q-input
                 v-model.number="donation"
@@ -44,19 +46,20 @@
                 type="number"
                 :rules="[
                   (val) =>
-                    parseInt(val) >= 50 || $t('membership.minimumAmount'),
+                    parseInt(val) >= currentPrice ||
+                    $t('membership.minimumAmount', { value: currentPrice }),
                 ]"
                 :hint="$t('membership.noSubscription')"
               >
                 <template #prepend>
                   <q-icon
-                    v-if="donation < 80"
+                    v-if="donation < donationMarker[1].value"
                     name="fas fa-face-smile"
                     size="lg"
                     color="primary"
                   ></q-icon>
                   <q-icon
-                    v-else-if="donation < 120"
+                    v-else-if="donation < donationMarker[2].value"
                     name="fas fa-face-grin"
                     size="lg"
                     color="primary"
@@ -68,14 +71,45 @@
                     color="primary"
                   ></q-icon>
                 </template>
-                <template #append>€ {{ $t('membership.forOneYear') }}</template>
+                <template #append>
+                  {{ years > 1 ? `(${sum})` : '' }} €
+                </template>
+                <template #after>
+                  <q-btn
+                    icon="fas fa-calendar-plus"
+                    flat
+                    round
+                    :disable="days >= 3650"
+                    @click="changeDays(365)"
+                  >
+                    <tooltip-base>
+                      {{ $t('membership.increaseDays') }}
+                    </tooltip-base>
+                  </q-btn>
+                  <q-btn
+                    icon="fas fa-calendar-minus"
+                    flat
+                    round
+                    :disable="days <= 365"
+                    @click="changeDays(-365)"
+                  >
+                    <tooltip-base>
+                      {{ $t('membership.decreaseDays') }}
+                    </tooltip-base>
+                  </q-btn>
+                </template>
               </q-input>
+              <div
+                class="text-h5 q-pt-sm q-pb-sm"
+                v-html="$t('membership.sum', { years: years, sum: sum })"
+              ></div>
             </div>
           </div>
           <div class="text-center payment q-col-gutter-y-sm">
             <div v-if="!($q.platform.is.ios && $q.platform.is.safari)">
               <payment-stripe
                 :donation="donation"
+                :years="years"
                 @on-paid="(data: any) => successPayment(data.paid)"
               ></payment-stripe>
               <q-separator></q-separator>
@@ -84,6 +118,7 @@
               <suspense>
                 <payment-paypal
                   :donation="donation"
+                  :years="years"
                   @on-paid="(data: any) => successPayment(data.paid)"
                 ></payment-paypal>
               </suspense>
@@ -111,9 +146,29 @@
     <q-card-section>
       <div class="row q-pa-sm justify-center">
         <div class="col-12 col-sm-10 col-md-8">
-          <div class="text-h5 q-pb-sm text-center">
-            {{ $t('membership.perks') }}
+          <div class="text-h5 q-pb-sm">
+            {{ $t('membership.priceHistory') }}:
           </div>
+          <ul>
+            <li v-for="(item, index) in priceHistory" :key="index">
+              {{ item.year }}: {{ item.price }} € / {{ $t('year') }}
+              {{
+                index > 0
+                  ? calculatePriceChange(
+                      item.price,
+                      priceHistory[index - 1].price,
+                    )
+                  : ''
+              }}
+            </li>
+          </ul>
+        </div>
+      </div>
+    </q-card-section>
+    <q-card-section>
+      <div class="row q-pa-sm justify-center">
+        <div class="col-12 col-sm-10 col-md-8">
+          <div class="text-h5 q-pb-sm">{{ $t('membership.perks') }}:</div>
           <ul class="text-subtitle1">
             <li>
               {{ $t('membership.perksHives') }}
@@ -193,23 +248,53 @@ const getPaidStatus = computed(() => {
 });
 const afterPayment = computed(() => {
   if (dayjs(storeUser.getPaidStatus.date) < dayjs()) {
-    return useDate.displayFormat(dayjs().add(1, 'year').toISOString());
+    return useDate.displayFormat(
+      dayjs().add(years.value, 'year').toISOString(),
+    );
   } else {
     return useDate.displayFormat(
-      dayjs(storeUser.getPaidStatus.date).add(1, 'year').toISOString(),
+      dayjs(storeUser.getPaidStatus.date)
+        .add(years.value, 'year')
+        .toISOString(),
     );
   }
 });
 
-const donation = ref(50);
+const priceHistory = [
+  {
+    year: 2014,
+    price: 24,
+  },
+  {
+    year: 2016,
+    price: 50,
+  },
+  {
+    year: 2024,
+    price: 55,
+  },
+];
+
+const year = dayjs().year();
+const currentPrice =
+  priceHistory[priceHistory.length - 1].year > year
+    ? priceHistory[priceHistory.length - 2].price
+    : priceHistory[priceHistory.length - 1].price;
+
+const maxPrice = currentPrice + 100;
+
+const donation = ref(currentPrice);
 const paid = ref(false);
+const days = ref(365);
+const years = computed(() => Math.floor(days.value / 365));
+const sum = computed(() => donation.value * years.value);
 
 const donationLabel = computed(() => `€ ${donation.value}`);
 const donationMarker = [
-  { value: 50, label: '50 €' },
-  { value: 80, label: '80 €' },
-  { value: 120, label: '120 €' },
-  { value: 150, label: '150€' },
+  { value: currentPrice, label: currentPrice + '€' },
+  { value: currentPrice + 30, label: currentPrice + 30 + '€' },
+  { value: currentPrice + 60, label: currentPrice + 60 + '€' },
+  { value: maxPrice, label: maxPrice + '€' },
 ];
 
 function payCoupon() {
@@ -250,8 +335,18 @@ function successPayment(newDate: string) {
   refreshCompany();
 }
 
+function calculatePriceChange(cur: number, prev: number) {
+  return '+ ' + Math.floor((cur * 100) / prev - 100) + '%';
+}
+
 function refreshCompany() {
   storeRefresh.refresh();
+}
+
+function changeDays(val: number) {
+  if (days.value === 365 && val < 0) return;
+  if (days.value === 3650 && val > 0) return;
+  days.value += val;
 }
 </script>
 
