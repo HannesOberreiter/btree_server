@@ -13,8 +13,9 @@ async function isDuplicateApiaryName(
   user_id: number,
   name: string,
   id?: number,
+  trx: Objection.Transaction = null,
 ) {
-  const checkDuplicate = Apiary.query().select('id').findOne({
+  const checkDuplicate = Apiary.query(trx).select('id').findOne({
     user_id,
     name,
     deleted: false,
@@ -43,6 +44,7 @@ export default class ApiaryController {
             req.session.user.user_id,
             body.name,
             ids[0],
+            trx,
           )
         ) {
           throw httpErrors.Conflict('name');
@@ -165,6 +167,8 @@ export default class ApiaryController {
           await isDuplicateApiaryName(
             req.session.user.user_id,
             (req.body as any).name,
+            null,
+            trx,
           )
         ) {
           throw httpErrors.Conflict('name');
