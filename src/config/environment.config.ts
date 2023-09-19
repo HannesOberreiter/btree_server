@@ -71,7 +71,7 @@ const paypalAppSecret = process.env.PAYPAL_APP_SECRET;
 const paypalBase =
   env === ENVIRONMENT.production
     ? 'https://api-m.paypal.com'
-    : 'https.//api-m.sandbox.paypal.com.js';
+    : 'https://api-m.sandbox.paypal.com';
 
 const stripeSecret = process.env.STRIPE_SECRET_KEY;
 

@@ -104,19 +104,21 @@ export class Application {
 
       const origin = req.headers.origin;
 
-      if (
+      const isExternal =
         req.url.indexOf('external') >= 0 ||
-        req.url.indexOf('auth/google/callback') >= 0 ||
-        env === ENVIRONMENT.development
-      ) {
+        req.url.indexOf('auth/google/callback') >= 0;
+
+      if (isExternal || env === ENVIRONMENT.development) {
         reply.header('Access-Control-Allow-Origin', '*');
       } else {
         reply.header('Access-Control-Allow-Origin', origin);
         reply.header('Access-Control-Allow-Credentials', 'true');
       }
 
-      if (authorized.indexOf(origin) === -1) {
-        reply.status(406).send();
+      if (!isExternal) {
+        if (authorized.indexOf(origin) === -1) {
+          reply.status(406).send();
+        }
       }
 
       reply.header(

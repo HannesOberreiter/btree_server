@@ -27,6 +27,7 @@ export default function routes(
       schema: {
         body: z.object({
           amount: z.number().min(50),
+          quantity: z.number().min(1).max(10),
         }),
       },
     },
@@ -48,6 +49,7 @@ export default function routes(
       schema: {
         body: z.object({
           amount: z.number().min(50),
+          quantity: z.number().min(1).max(10),
         }),
       },
     },
