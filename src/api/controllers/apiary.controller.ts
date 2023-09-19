@@ -7,6 +7,7 @@ import { Apiary } from '../models/apiary.model.js';
 import { HiveLocation } from '../models/hive_location.model.js';
 import { Movedate } from '../models/movedate.model.js';
 import { limitApiary } from '../utils/premium.util.js';
+import Objection from 'objection';
 
 async function isDuplicateApiaryName(
   user_id: number,
@@ -200,7 +201,7 @@ export default class ApiaryController {
     const restoreDelete = query.restore ? true : false;
 
     const result = await Apiary.transaction(async (trx) => {
-      const res = await Apiary.query()
+      const res = await Apiary.query(trx)
         .withGraphFetched('hive_count')
         .where('user_id', req.session.user.user_id)
         .whereIn('id', body.ids);

@@ -48,7 +48,7 @@ export default class ScaleDataController {
             const currentWeight = parseFloat(q.weight as any);
             const checkWeight = Math.abs(lastInsert.weight - currentWeight);
             if (checkWeight > 5) {
-              const user = await User.query()
+              const user = await User.query(trx)
                 .leftJoinRelated('company_bee')
                 .where({
                   'company_bee.rank': 1,
