@@ -27,9 +27,9 @@
 
 <script setup lang="ts">
 import { findIndex } from 'lodash-es';
-
 import { useRouter } from 'vue-router';
 import { toRef, computed } from 'vue';
+import { useKeyNavDetail } from '~/composables/useKey';
 
 const router = useRouter();
 const props = defineProps({
@@ -60,6 +60,19 @@ const sameLocationIndex = computed(() => {
     return null;
   }
 });
+
+useKeyNavDetail(onNav);
+
+function onNav(direction: 'prev' | 'next') {
+  if (!sameLocationIndex.value) return;
+
+  if (direction === 'prev' && sameLocationIndex.value.previous != null) {
+    redirect(data.value.sameLocation[sameLocationIndex.value.previous].id);
+  }
+  if (direction === 'next' && sameLocationIndex.value.next != null) {
+    redirect(data.value.sameLocation[sameLocationIndex.value.next].id);
+  }
+}
 
 function redirect(id: number) {
   router.push({ name: `detail-${props.link}`, params: { id: id } });
