@@ -1,5 +1,12 @@
 [
   {
+    "version": "6.3.5",
+    "date": "2023-XX-XX",
+    "news": [
+      "BUGFIX WizBee was showing no error if no answer could be generated"
+    ]
+  },
+  {
     "version": "6.3.4",
     "date": "2023-09-29",
     "news": [
