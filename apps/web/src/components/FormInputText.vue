@@ -62,6 +62,10 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  tableId: {
+    type: String,
+    default: null,
+  },
   name: {
     default: '',
   },
@@ -92,7 +96,7 @@ const { modelValue } = useVModels(props, emit);
 const resetValue = unref(modelValue.value);
 const { values, reset } = toRefs(props);
 const multipleValues = computed(() =>
-  formCheckMultipleValues(values.value, props.label),
+  formCheckMultipleValues(values.value, props.tableId ?? props.label),
 );
 const disable = ref(multipleValues.value);
 modelValue.value = disable.value ? null : modelValue.value;
@@ -131,15 +135,10 @@ function setValues() {
   disable.value = multipleValues.value;
   if (multipleValues.value) editValues(true);
   else if (values.value && !isEmpty(values.value)) {
-    modelValue.value =
-      values.value[0][
-        props.label === 'frame'
-          ? props.label + 's'
-          : props.label === 'markColor'
-          ? 'mark_colour'
-          : props.label
-      ];
-  } else modelValue.value = resetValue;
+    modelValue.value = values.value[0][props.tableId ?? props.label];
+  } else {
+    modelValue.value = resetValue;
+  }
 }
 
 function editValues(val: boolean) {
