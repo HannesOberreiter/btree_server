@@ -5,7 +5,8 @@
     "news": [
       "BUGFIX the left and right arrow navigation on the detail pages for hives and apiaries did not work",
       "BUGFIX improve handling of invalid dropbox token",
-      "BUGFIX fix charge description on edit not showing up"
+      "BUGFIX fix charge description on edit not showing up",
+      "BUGFIX editing multiple harvest with different amount of frames did not work correctly"
     ]
   },
   {
