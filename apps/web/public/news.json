@@ -1,7 +1,7 @@
 [
   {
     "version": "6.3.4",
-    "date": "2023-09-XX",
+    "date": "2023-09-29",
     "news": [
       "BUGFIX the left and right arrow navigation on the detail pages for hives and apiaries did not work",
       "BUGFIX improve handling of invalid dropbox token",
