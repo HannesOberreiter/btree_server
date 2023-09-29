@@ -79,3 +79,13 @@ export const useKeyTable = (page: Ref<Pagination>) => {
     page.value.page = pages.value;
   });
 };
+
+export const useKeyNavDetail = (fn: (direction: 'prev' | 'next') => void) => {
+  onKeyStroke('ArrowLeft', () => {
+    fn('prev');
+  });
+
+  onKeyStroke('ArrowRight', () => {
+    fn('next');
+  });
+};

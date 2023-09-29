@@ -1,4 +1,4 @@
-import { Dropbox, files } from 'dropbox';
+import { Dropbox, DropboxResponse, files } from 'dropbox';
 import { orderBy } from 'lodash-es';
 import { LoadingBar } from 'quasar';
 import { isImage } from '~/helpers';
@@ -34,9 +34,7 @@ export const useServiceDropbox = () => {
     dbx.auth.setAccessToken(token);
   };
 
-  async function getAccount(): Promise<any> {
-    if (state.isLoading) return false;
-
+  async function getAccount(isRetry = false): Promise<any> {
     LoadingBar.start();
     state.isLoading = true;
 
@@ -44,28 +42,22 @@ export const useServiceDropbox = () => {
       await getAccessToken();
     }
 
-    return await dbx
-      .usersGetCurrentAccount()
-      .then((response) => {
-        return response.result;
-      })
-      .catch(async (e) => {
-        console.error(e);
-        if (state.refresh) {
-          return false;
-        }
-        state.refresh = true;
-        if (e.status === 401 || e.statusCode === 401) {
-          await getAccessToken();
-          return await getAccount();
-        }
+    try {
+      const res = await dbx.usersGetCurrentAccount();
+      state.isLoading = false;
+      LoadingBar.stop();
+      return res;
+    } catch (e: any) {
+      if (isRetry) {
         return false;
-      })
-      .finally(() => {
-        state.refresh = false;
-        state.isLoading = false;
-        LoadingBar.stop();
-      });
+      }
+      if (e.status === 401) {
+        state.accessToken = null;
+        const res = await getAccount(true);
+        return res;
+      }
+      return false;
+    }
   }
 
   async function getAccessToken() {
@@ -128,41 +120,35 @@ export const useServiceDropbox = () => {
     );
   }
 
-  async function listFiles(): Promise<any> {
+  async function listFiles(isRetry = false): Promise<any> {
     LoadingBar.start();
     state.isLoading = true;
     if (!state.accessToken) {
       await getAccessToken();
     }
-    return dbx
-      .filesListFolder({ path: state.path })
-      .then((response) => {
-        const ordered_list = orderBy(
-          response.result.entries,
-          ['.tag', 'name'],
-          ['desc', 'asc'],
-        );
-        LoadingBar.stop();
-        state.isLoading = false;
-        state.folder = ordered_list;
-        return ordered_list;
-      })
-      .catch(async (e) => {
-        console.error(e);
-        if (state.refresh) {
-          return false;
-        }
-        state.refresh = true;
-        if (e.status === 401 || e.statusCode === 401) {
-          await getAccessToken();
-          return await listFiles();
-        }
-      })
-      .finally(() => {
-        state.refresh = false;
-        state.isLoading = false;
-        LoadingBar.stop();
-      });
+    try {
+      const res = await dbx.filesListFolder({ path: state.path });
+      const ordered_list = orderBy(
+        res.result.entries,
+        ['.tag', 'name'],
+        ['desc', 'asc'],
+      );
+      LoadingBar.stop();
+      state.folder = ordered_list;
+      state.isLoading = false;
+      LoadingBar.stop();
+      return ordered_list;
+    } catch (e: any) {
+      if (isRetry) {
+        return false;
+      }
+      if (e.status === 401) {
+        state.accessToken = null;
+        const res = await listFiles(true);
+        return res;
+      }
+      return false;
+    }
   }
 
   async function createFolder(name: string) {
@@ -209,27 +195,42 @@ export const useServiceDropbox = () => {
       .catch((e) => console.error(e));
   }
 
-  async function getMeta(id: string) {
-    return await dbx
-      .filesGetMetadata({
+  async function getMeta(
+    id: string,
+    isRetry = false,
+  ): Promise<
+    DropboxResponse<
+      | files.FileMetadataReference
+      | files.FolderMetadataReference
+      | files.DeletedMetadataReference
+    >
+  > {
+    LoadingBar.start();
+    state.isLoading = true;
+    if (!state.accessToken) {
+      await getAccessToken();
+    }
+
+    try {
+      const res = await dbx.filesGetMetadata({
         path: id,
-      })
-      .catch(async (e): Promise<any> => {
-        console.error(e);
-        if (state.refresh) {
-          return false;
-        }
-        state.refresh = true;
-        if (e.status === 401 || e.statusCode === 401) {
-          await getAccessToken();
-          return await getMeta(id);
-        }
-      })
-      .finally(() => {
-        state.refresh = false;
-        state.isLoading = false;
-        LoadingBar.stop();
       });
+      state.isLoading = false;
+      LoadingBar.stop();
+      return res;
+    } catch (e: any) {
+      state.isLoading = false;
+      LoadingBar.stop();
+      if (isRetry) {
+        throw false;
+      }
+      if (e.status === 401) {
+        state.accessToken = null;
+        const res = await getMeta(id, true);
+        return res;
+      }
+      throw false;
+    }
   }
 
   async function getThumbnail(id: string) {

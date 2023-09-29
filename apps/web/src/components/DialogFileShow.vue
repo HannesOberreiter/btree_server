@@ -117,7 +117,7 @@ function serviceDropbox(value: string) {
       if (e.status === 409) {
         useDropbox
           .getMeta(value)
-          .then((response: any) => (file.value = response.result))
+          .then((response) => (file.value = response.result))
           .catch((e) => {
             file.value = true;
             notFound.value = true;

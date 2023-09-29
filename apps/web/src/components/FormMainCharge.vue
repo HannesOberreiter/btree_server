@@ -23,6 +23,7 @@
       v-model="state.name"
       label="description"
       name="chargeName"
+      table-id="name"
       icon="fas fa-passport"
       :required="false"
       :values="values"
