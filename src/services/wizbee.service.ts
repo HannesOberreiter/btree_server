@@ -27,9 +27,10 @@ export class WizBee {
   private template: string;
   private static indexName = 'link';
   private static vectorField = 'content_vector';
-  private static completionModel = 'gpt-4' as const;
+  private static completionModel = 'gpt-3.5-turbo' as const;
   private static turboModel = 'gpt-3.5-turbo' as const;
   private static embeddingModel = 'text-embedding-ada-002' as const;
+  private static maxToken = 3000;
 
   constructor() {
     this.openAI = new OpenAI({
@@ -37,7 +38,7 @@ export class WizBee {
     });
 
     this.template = `
-    You are a friendly bot assistant, answering beekeeping related question by using given context. The context could be from multiple references, if it is each is separated by ;;;. Answer the question using only that information. If you can't create an answer with the references, say "Sorry, could not generated a good answer. You may find your answer in the references bellow.".
+    You are a friendly bot assistant, answering beekeeping related question by using given context. The context could be from multiple references, if it is each is separated by ;;;. Answer the question using mainly given information. If you can't create an answer with the references, say "Sorry, could not generated a good answer. You may find your answer in the references bellow.".
 
     Question: $query
 
@@ -117,7 +118,7 @@ export class WizBee {
       refs.push({ ...document.metadata, score: document.score });
       tokenCount += encoded.length;
 
-      if (tokenCount > 4000) {
+      if (tokenCount > WizBee.maxToken) {
         break;
       }
 
@@ -275,9 +276,8 @@ export class WizBee {
       }
     }
 
-    const { embedding, tokens: embeddingTokens } = await this.createEmbedding(
-      input,
-    );
+    const { embedding, tokens: embeddingTokens } =
+      await this.createEmbedding(input);
     tokens += embeddingTokens;
 
     const results = await this.searchKNN(embedding, 4, 0.21);

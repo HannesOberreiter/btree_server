@@ -2,18 +2,16 @@ import { Observation } from '../models/observation.model.js';
 import proj4 from 'proj4';
 
 export async function fetchObservations() {
-  const inat = fetchInat();
-  const patriNat = fetchPatriNat();
-  const artenfinderNet = fetchArtenfinderNet();
-  const [inatResult, patriNatResult, artenfinderNetResult] = await Promise.all([
-    inat,
-    patriNat,
-    artenfinderNet,
-  ]);
+  const inat = await fetchInat();
+  const observationOrg = await fetchObservationOrg();
+  const patriNat = await fetchPatriNat();
+  const artenfinderNet = await fetchArtenfinderNet();
+
   return {
-    iNaturalist: inatResult,
-    patriNat: patriNatResult,
-    artenfinderNet: artenfinderNetResult,
+    iNaturalist: inat,
+    patriNat: patriNat,
+    artenfinderNet: artenfinderNet,
+    observationOrg: observationOrg,
   };
 }
 
@@ -216,5 +214,62 @@ export async function fetchArtenfinderNet() {
 
   if (newObservations === 0) return { newObservations: 0 };
 
+  return { newObservations: newObservations };
+}
+
+export async function fetchObservationOrg() {
+  const url =
+    'https://api.gbif.org/v1/occurrence/search?dataset_key=8a863029-f435-446a-821e-275f4f641165&taxon_key=1311477';
+
+  let endOfRecords = false;
+  let offset = 0;
+  let newObservations = 0;
+  const limit = 300;
+  let yearFilter = `&year=${
+    new Date().getFullYear() - 1
+  },${new Date().getFullYear()}`;
+  const oldRecords = await Observation.query()
+    .select('external_id')
+    .where('external_service', 'Observation.org');
+  const searchArray = oldRecords.map((o) => o.external_id);
+
+  if (searchArray.length === 0) yearFilter = '';
+
+  while (endOfRecords === false) {
+    const result = await fetch(
+      `${url}&limit=${limit}&offset=${offset}${yearFilter}`,
+    );
+    const data = await result.json();
+    if (data.results.length === 0) break;
+    endOfRecords = data.endOfRecords;
+    offset += limit;
+
+    const observations = [];
+    const results = data.results;
+    for (let i = 0; i < results.length; i++) {
+      if (searchArray.includes(Number(results[i]['gbifID']))) {
+        continue;
+      }
+      newObservations++;
+      const observation = results[i];
+      observations.push({
+        external_id: Number(observation['gbifID']),
+        external_uuid: observation['catalogNumber'],
+        external_service: 'Observation.org',
+        observed_at: observation['eventDate'],
+        location: {
+          lat: Number(observation['decimalLatitude']),
+          lng: Number(observation['decimalLongitude']),
+        },
+        taxa: 'Vespa velutina',
+        data: {
+          individualCount: observation['individualCount'],
+          lifeStage: observation['lifeStage'],
+          uri: observation['occurrenceID'],
+        },
+      });
+    }
+    await Observation.query().insertGraph(observations);
+  }
   return { newObservations: newObservations };
 }
