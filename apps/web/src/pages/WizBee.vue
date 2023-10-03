@@ -61,10 +61,10 @@ async function onQuestion() {
       error.value = undefined;
     })
     .catch((err) => {
+      console.error(err);
       data.value = undefined;
       if (err?.statusCode === 404) {
         error.value = t('error.noAnswer');
-        error.value = err?.errors;
         return;
       } else if (err?.statusCode === 429) {
         error.value = t('error.tokenLimit');

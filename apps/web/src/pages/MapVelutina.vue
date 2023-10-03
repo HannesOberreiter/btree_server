@@ -112,6 +112,9 @@
                     >,
                     <a href="https://www.artenfinder.net" target="_blank"
                       >artenfinder.net</a
+                    >,
+                    <a href="https://wwww.observation.org" target="_blank"
+                      >observation.org</a
                     >
                   </div>
                   <div>
