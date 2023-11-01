@@ -34,6 +34,8 @@
   "autoMode": "Sistema",
   "average": "Media",
   "back": "Di ritorno",
+  "beekeepingNews": "Notizie sull'apicoltura",
+  "beekeepingNewsSubtitle": "Una selezione curata di feed da tutto il mondo relativi al tema dell'apicoltura e delle api mellifere.",
   "bestbefore": "Da consumarsi preferibilmente entro",
   "birth": "Compleanno",
   "blue": "Blu",
@@ -469,6 +471,7 @@
     "text": "Voto da basso ad alto"
   },
   "read": "Leggi",
+  "readMore": "Per saperne di più",
   "ready": "Pronto",
   "rear": {
     "detailHourText": "Numero di ore di attesa prima di questo passaggio.",

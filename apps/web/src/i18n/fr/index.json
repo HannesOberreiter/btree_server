@@ -34,6 +34,8 @@
   "autoMode": "Système",
   "average": "Moyen",
   "back": "Retour",
+  "beekeepingNews": "Actualités apicoles",
+  "beekeepingNewsSubtitle": "Une sélection organisée de flux mondiaux liés au thème de l'apiculture et des abeilles domestiques.",
   "bestbefore": "À consommer de préférence avant",
   "birth": "Date d'anniversaire",
   "blue": "Bleu",
@@ -469,6 +471,7 @@
     "text": "Note faible à élevée"
   },
   "read": "Lis",
+  "readMore": "En savoir plus",
   "ready": "Prêt",
   "rear": {
     "detailHourText": "Nombre d'heures à attendre avant cette étape.",

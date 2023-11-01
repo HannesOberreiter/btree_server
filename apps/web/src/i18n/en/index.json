@@ -34,6 +34,8 @@
   "autoMode": "System",
   "average": "Average",
   "back": "Back",
+  "beekeepingNews": "Beekeeping News",
+  "beekeepingNewsSubtitle": "A curated selection of worldwide feeds related around the topic of beekeeping and honeybees.",
   "bestbefore": "Best before",
   "birth": "Birthday",
   "blue": "Blue",
@@ -469,6 +471,7 @@
     "text": "Rating low to high"
   },
   "read": "Read",
+  "readMore": "Read more",
   "ready": "Ready",
   "rear": {
     "detailHourText": "Number of hours to wait before this step.",

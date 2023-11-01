@@ -386,6 +386,12 @@ const links = computed(
             icon: 'fas fa-calculator',
             menu: [] as any,
           },
+          {
+            label: t('beekeepingNews'),
+            route: 'beekeeping_news',
+            icon: 'fas fa-newspaper',
+            menu: [] as any,
+          },
         ],
       },
       {
