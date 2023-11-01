@@ -18,6 +18,7 @@ jobs:
       MATOMO_HOST: ${{ secrets.MATOMO_HOST }}
       MATOMO_SITE_ID: ${{ secrets.MATOMO_SITE_ID_LIVE }}
       PAYPAL_CLIENT_ID: ${{ secrets.PAYPAL_CLIENT_ID_LIVE }}
+      BEEKEEPING_NEWS_BEARER: ${{ secrets.BEEKEEPING_NEWS_BEARER }}
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
