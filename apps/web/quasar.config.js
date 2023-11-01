@@ -84,6 +84,7 @@ module.exports = configure(function (ctx) {
         MATOMO_SITE_ID: process.env.MATOMO_SITE_ID,
         PAYPAL_CLIENT_ID: process.env.PAYPAL_CLIENT_ID,
         NPM_PACKAGE_VERSION: process.env.npm_package_version,
+        BEEKEEPING_NEWS_BEARER: process.env.BEEKEEPING_NEWS_BEARER,
       },
       // rawDefine: {}
       // ignorePublicFolder: true,

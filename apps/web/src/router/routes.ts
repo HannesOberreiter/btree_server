@@ -62,6 +62,14 @@ const routes: RouteRecordRaw[] = [
         component: () => import('~/pages/HelperSugarWater.vue'),
       },
       {
+        path: '/beekeeping_news',
+        name: 'beekeeping_news',
+        meta: {
+          title: 'beekeepingNews',
+        },
+        component: () => import('~/pages/BeekeepingNews.vue'),
+      },
+      {
         path: '/wizbee',
         name: 'wizbee',
         meta: {

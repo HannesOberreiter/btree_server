@@ -34,6 +34,8 @@
   "autoMode": "System",
   "average": "Durchschnitt",
   "back": "Zurück",
+  "beekeepingNews": "Imkerei Nachrichten",
+  "beekeepingNewsSubtitle": "Eine kuratierte Auswahl weltweiter Feeds rund um das Thema Bienenzucht und Honigbienen.",
   "bestbefore": "MDH",
   "birth": "Geburtstag",
   "blue": "Blau",
@@ -469,6 +471,7 @@
     "text": "Bewertung niedrig bis hoch"
   },
   "read": "Lesen",
+  "readMore": "Mehr lesen",
   "ready": "Bereit",
   "rear": {
     "detailHourText": "Anzahl der Stunden, die vor diesem Schritt gewartet werden soll.",
