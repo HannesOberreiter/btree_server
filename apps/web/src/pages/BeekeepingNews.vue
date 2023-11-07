@@ -6,6 +6,7 @@ import { truncate } from 'lodash-es';
 import { useDateFormat } from '~/composables/useDate';
 import GlobalLoading from '~/components/GlobalLoading.vue';
 import ChipBeeNews, { Feedsource } from '~/components/ChipBeeNews.vue';
+import { useKeyNews } from '~/composables/useKey';
 
 type FeedItem = {
   id: number;
@@ -42,6 +43,7 @@ const endpoint = 'https://api.beekeeping-news.com';
 const bearer = process.env.BEEKEEPING_NEWS_BEARER;
 const searchQuery = ref('');
 const page = ref(1);
+useKeyNews(page);
 const dateFormat = useDateFormat();
 const newsStorage = useStorage('bee-news', {
   sourceIds: [],
@@ -251,7 +253,6 @@ function createParams(name: string) {
             :label="$t('language')"
           />
         </div>
-
         <div v-if="isFetching" class="text-center">
           <global-loading></global-loading>
         </div>
