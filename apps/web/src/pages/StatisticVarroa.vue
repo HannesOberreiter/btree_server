@@ -182,7 +182,7 @@ function renderChart() {
         return 'circle';
       },
       tooltip: {
-        trigger: 'item',
+        trigger: 'axis',
         formatter: (params: any) => {
           return `${params.value[2].split('T')[0]} <br/> ${params.name}: ${
             params.value[3]
@@ -192,7 +192,7 @@ function renderChart() {
       encode: {
         x: 'Date',
         y: 'Varroa',
-        tooltip: ['Type', 'Varroa', 'Date'],
+        tooltip: ['Varroa', 'Type'],
         itemName: 'Hive',
       },
     };
@@ -217,7 +217,7 @@ function renderChart() {
         symbol: 'triangle',
         symbolSize: 20,
         tooltip: {
-          trigger: 'item',
+          trigger: 'axis',
           formatter: (params: any) => {
             return `${params.value[2].split('T')[0]} <br/> ${params.name}: ${
               params.value[3]
@@ -227,7 +227,7 @@ function renderChart() {
         encode: {
           x: 'Date',
           y: 'Dummy',
-          tooltip: ['Type', 'Amount', 'Date'],
+          tooltip: ['Type', 'Amount'],
           itemName: 'Hive',
           seriesIndex: countTreatment,
         },
@@ -260,22 +260,32 @@ function renderChart() {
       {
         type: 'slider',
         xAxisIndex: 0,
-        filterMode: 'empty',
-        bottom: 0,
+        filterMode: 'none',
+        bottom: 6,
       },
     ],
-    tooltip: {},
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: {
+        show: false,
+      },
+    },
     xAxis: {
+      position: 'bottom',
       type: 'time',
       name: t('date'),
       axisLabel: {
-        rotate: 30,
-        formatter: '{yy}-{MM}-{dd}',
+        formatter: '{MMM} {dd}',
+        hideOverlap: true,
       },
+      offset: 10,
+      boundaryGap: ['5%', '5%'],
     },
     yAxis: {
       type: 'value',
       name: t('varroa'),
+      min: -1,
+      boundaryGap: [0, '5%'],
     },
     legend: {},
     series: series,
@@ -317,7 +327,7 @@ function renderChart() {
           :loading="!chartTimeseries"
           :update-options="{ notMerge: true, silent: false }"
           autoresize
-          style="height: 50vh; width: 100%"
+          style="height: 500px"
           class="bg-grey-1"
           :theme="$q.dark.isActive ? 'dark' : ''"
         />
