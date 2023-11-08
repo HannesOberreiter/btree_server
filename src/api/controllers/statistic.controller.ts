@@ -745,7 +745,7 @@ export default class StatisticController {
         resultCheckup.push([
           hive_id,
           v.varroa,
-          v.date,
+          v.date.toISOString().split('T')[0],
           v.type_name,
           v.hive_name,
         ]);
@@ -801,7 +801,7 @@ export default class StatisticController {
         resultTreatment.push([
           hive_id,
           v.amount,
-          v.date,
+          v.date.toISOString().split('T')[0],
           v.type_name,
           v.hive_name,
           -1,
