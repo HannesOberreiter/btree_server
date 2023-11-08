@@ -33,6 +33,7 @@
   "autoCloseDate": "Fermer automatiquement la date lors de la sélection.",
   "autoMode": "Système",
   "average": "Moyen",
+  "avg": "Moyenne",
   "back": "Retour",
   "beekeepingNews": "Actualités apicoles",
   "beekeepingNewsSubtitle": "Une sélection organisée de flux mondiaux liés au thème de l'apiculture et des abeilles domestiques.",
@@ -246,6 +247,7 @@
     "statistic-table_queen": "Note moyenne pour les reines (les zéros sont ignorés) et quantité totale de récolte en poids et cadres pour la durée de la reine sur une colonie donnée.",
     "statistic-table_rating": "Moyenne annuelle pour chaque ruche. \nDans le calcul de la moyenne, les valeurs nulles sont ignorées, cela est également vrai pour la colonne varroa.",
     "statistic-table_treatment": "Traitement total annuel pour chaque ruche.",
+    "statistic-varroa": "Champ de saisie des statistiques de base pour le varroa qui peut être activé pour les contrôles. \nLes valeurs nulles sont ignorées pour le tableau et le graphique montre un maximum de 20 colonies.",
     "sugarwater": "Calculez votre mélange d'eau sucrée ou regardez sur la table. \nLa quantité effective stockée dépend de plusieurs paramètres et n'est pas linéaire, vous ne pouvez donc consulter que les estimations approximatives dans le tableau.",
     "table-apiary": "Dans la table des ruchers, vous pouvez gérer ou exporter vos ruchers. \nLes ruchers supprimés peuvent être restaurés jusqu'à 30 jours après la suppression, mais vous ne pouvez supprimer que les ruchers sans aucune ruche active dessus. \nDans la plupart des cas, il est préférable d'inactiver le rucher. \nDe plus vous pouvez déplacer rapidement les ruches entre les ruchers, voir bouton déplacements (bouton déroulant bleu).",
     "table-charge": "Dans le tableau des frais, vous pouvez gérer ou exporter vos frais. \nLes colonnes de stock correspondent au stock actuel, qui est la somme des marchandises entrantes moins les marchandises sortantes. \nLes charges supprimées peuvent être restaurées jusqu'à 30 jours après la suppression, cela changera également votre stock si vous supprimez une charge.",
@@ -362,6 +364,7 @@
     "yesSubscription": ""
   },
   "method": "Méthode | Méthodes",
+  "min": "Min.",
   "modus": "Modus",
   "modusDate": "Date d'inactivité",
   "month": "Mois | \nMois",
@@ -659,6 +662,7 @@
     "sameAs": "La valeur doit être égale à la valeur du mot de passe."
   },
   "varroa": "Varroa",
+  "varroaStatsTableHeader": "Statistique de comptage de Varroa, les valeurs nulles sont ignorées dans le calcul.",
   "version": "Version",
   "vet": "Vétérinaire",
   "virgin": "Vierge | Vierges",

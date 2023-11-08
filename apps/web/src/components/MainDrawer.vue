@@ -453,6 +453,12 @@ const links = computed(
             icon: 'fas fa-table',
             menu: [] as any,
           },
+          {
+            label: t('varroa'),
+            route: 'statistic-varroa',
+            icon: 'fas fa-bug',
+            menu: [] as any,
+          },
         ],
       },
       {

@@ -33,6 +33,7 @@
   "autoCloseDate": "Chiudi automaticamente la data sulla selezione.",
   "autoMode": "Sistema",
   "average": "Media",
+  "avg": "Media",
   "back": "Di ritorno",
   "beekeepingNews": "Notizie sull'apicoltura",
   "beekeepingNewsSubtitle": "Una selezione curata di feed da tutto il mondo relativi al tema dell'apicoltura e delle api mellifere.",
@@ -246,6 +247,7 @@
     "statistic-table_queen": "Valutazione media per le regine (gli zeri vengono ignorati) e quantità totale di raccolto in peso e frame per la durata della regina in una determinata colonia.",
     "statistic-table_rating": "Media annuale per ogni alveare. \nNel calcolo della media i valori zero vengono ignorati, questo vale anche per la colonna varroa.",
     "statistic-table_treatment": "Trattamento totale annuale per ogni alveare.",
+    "statistic-varroa": "Campo di input delle statistiche di base per la varroa che può essere abilitato per i controlli. \nI valori zero vengono ignorati nella tabella e il grafico mostra un massimo di 20 colonie.",
     "sugarwater": "Calcola la tua miscela di zucchero e acqua o guarda in alto sul tavolo. \nLa quantità di effettivi memorizzati dipende da più parametri e non è lineare, quindi puoi solo cercare le stime approssimative nella tabella.",
     "table-apiary": "Nella tabella apiario puoi gestire o esportare i tuoi apiari. \nGli apiari eliminati possono essere ripristinati fino a 30 giorni dopo l'eliminazione, ma puoi eliminare solo gli apiari senza alveari attivi su di essi. \nNella maggior parte dei casi è meglio inattivare l'apiario. \nInoltre puoi spostare rapidamente le arnie tra gli apiari, vedere il pulsante dei movimenti (pulsante a discesa blu).",
     "table-charge": "Nella tabella degli addebiti puoi gestire o esportare i tuoi addebiti. \nLa colonna stock è lo stock corrente, che è la somma delle merci in entrata meno in uscita. \nGli addebiti eliminati possono essere ripristinati fino a 30 giorni dopo l'eliminazione, inoltre cambierà il tuo stock se elimini un addebito.",
@@ -362,6 +364,7 @@
     "yesSubscription": ""
   },
   "method": "Metodo | Metodi",
+  "min": "minimo",
   "modus": "Modo",
   "modusDate": "Data di inattività",
   "month": "Mese | \nMesi",
@@ -659,6 +662,7 @@
     "sameAs": "Il valore deve essere uguale al valore della password."
   },
   "varroa": "Varroa",
+  "varroaStatsTableHeader": "Statistica del conteggio della varroa, i valori zero vengono ignorati nel calcolo.",
   "version": "Versione",
   "vet": "Veterinario",
   "virgin": "Vergine | Vergini",

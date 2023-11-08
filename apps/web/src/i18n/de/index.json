@@ -33,6 +33,7 @@
   "autoCloseDate": "Datum bei Auswahl automatisch schließen.",
   "autoMode": "System",
   "average": "Durchschnitt",
+  "avg": "Durchschnitt",
   "back": "Zurück",
   "beekeepingNews": "Imkerei Nachrichten",
   "beekeepingNewsSubtitle": "Eine kuratierte Auswahl weltweiter Feeds rund um das Thema Bienenzucht und Honigbienen.",
@@ -246,6 +247,7 @@
     "statistic-table_queen": "Durchschnittliche Bewertung der Königinnen (null Werte werden ignoriert) und gesamt Menge der Ernte in Gewicht und Wabenzahl. Berechnung erfolgt für die Dauer am Stock (Anfangsdatum bis Enddatum).",
     "statistic-table_rating": "Jährliche Bewertung der Bienenstöcke. Der Durchschnitt ist ohne 0 Werte berechnet, auch beim Feld Varroa!",
     "statistic-table_treatment": "Jährliche Gesamtbehandlung für jeden Bienenstock.",
+    "statistic-varroa": "Statistiken zu Varroa, der Wert kann bei Kontrollen eingegeben werden. Nullwerte werden für die Tabelle ignoriert und das Diagramm zeigt maximal 20 Kolonien.",
     "sugarwater": "Berechnen Sie Ihre Zucker-Wasser-Mischung oder schlagen Sie in der Tabelle nach. \nWie viel effektiv eingelagert wird, hängt von mehreren Parametern ab und ist nicht linear, daher können Sie der Tabelle nur grobe Schätzungen entnehmen.",
     "table-apiary": "In der Standtablle können Sie Ihre Bienenstände verwalten oder exportieren. \nGelöschte Stände können bis zu 30 Tage nach dem Löschen wiederhergestellt werden, aber Sie können nur Stände ohne aktive Bienenstöcke löschen. \nIn den meisten Fällen ist es besser, die Bienenstände zu inaktivieren. \nAußerdem können Sie Bienenstöcke schnell zwischen Stände verschieben, siehe Schaltfläche \"Wanderung\" (blaue Dropdown-Schaltfläche).",
     "table-charge": "In der Chargentabelle können Sie Ihre Chargen verwalten oder exportieren. \nDie Bestandsspalte zeigt den aktuellen Bestand, also die Summe aus Wareneingang minus Warenausgang. \nGelöschte Chargen können bis zu 30 Tage nach dem Löschen wiederhergestellt werden, es ändert auch Ihren Bestand, wenn Sie einen Eintrag löschen.",
@@ -335,7 +337,7 @@
   "mark_colour": "Königin-Markierung",
   "mated": "Verpaart",
   "mating": "Paarung",
-  "max": "max.",
+  "max": "Max.",
   "maxUpload": "Maximum Upload sind {msg} Zeilen.",
   "membership": {
     "afterPayment": "Nach der Zahlung verlängert sich Ihr Premium-Zugang um",
@@ -362,6 +364,7 @@
     "yesSubscription": ""
   },
   "method": "Methode | Methoden",
+  "min": "Min.",
   "modus": "Modus",
   "modusDate": "Datum der Inaktivität",
   "month": "Monat | \nMonate",
@@ -659,6 +662,7 @@
     "sameAs": "Der Wert muss gleich dem Passwort sein."
   },
   "varroa": "Varroa",
+  "varroaStatsTableHeader": "Varroa-Zählstatistik, Nullwerte werden bei der Berechnung ignoriert.",
   "version": "Version",
   "vet": "Tierarzt",
   "virgin": "Jungfrau | Jungfrauen",
