@@ -33,6 +33,7 @@
   "autoCloseDate": "Automatically close date on selection.",
   "autoMode": "System",
   "average": "Average",
+  "avg": "Average",
   "back": "Back",
   "beekeepingNews": "Beekeeping News",
   "beekeepingNewsSubtitle": "A curated selection of worldwide feeds related around the topic of beekeeping and honeybees.",
@@ -211,6 +212,7 @@
   "harvest": "Harvest | Harvests",
   "hatch": "Hatch",
   "help": {
+    "beekeeping_news": "A curated selection of worldwide feeds related around the topic of beekeeping and honeybees. You can use the left and right cursors for pagination.",
     "calendar": "On the calendar you can move your events and task. Task can in addition be extended if you grab the event at the end. If you double click on a date you can create new ToDo. If you click on an event you get more info and can set the status. With the arrow keys (left, right) you can move between months.",
     "calendar-scale_data": "The scale calendar does show you the mean weight of your connected hive scales. If you click on the event it shows you the difference to the day before. If events are colour coded, green if the average is higher than the day before and red if it is lower. With the arrow keys (left, right) you can move between months.",
     "detail-apiary": "Overview of your apiaries. The arrow keys on the top allow you to quickly switch through your apiaries, it is ordered alphabetically. On the first hive tab you can change the order of your hives by clicking on them and using the arrow keys. The number in the brackets after the apiary name is the current hive count. This order will also be reflected in the hive dropdowns. If you click on the info symbol you will get redirected to the selected hive. The car symbol is to move the hive to another apiary. On the tasks tab you can find all the tasks for the hives on this apiary and the weather tab shows you a small widget of the current and future weather predictions for the apiary location.",
@@ -245,6 +247,7 @@
     "statistic-table_queen": "Average rating for queens (zeroes are ignored) and total harvest amount in weight and frames for the duration of the queen on given colony.",
     "statistic-table_rating": "Yearly average for every hive. In the average calculation zero values are ignored, this is also true for varroa column.",
     "statistic-table_treatment": "Yearly total treatment for every hive.",
+    "statistic-varroa": "Basic statistics for the varroa value, a field which can be enabled for checkups. Zero values are ignored for the table and the graph shows a maximum of 20 colonies.",
     "sugarwater": "Calculate your sugar water mixture or look up on the table. How much are effective stored depends on multiple parameters and is not linear, therefore you can only look up the rough estimates in the table.",
     "table-apiary": "In the apiary table you can manage or export your apiaries. Deleted apiaries can be restored up to 30 days after deletion, but you can only delete apiaries without any active hives on it. In most cases it is better to inactivate the apiary. In addition you can quickly move hives between apiaries, see movements button (blue dropdown button).",
     "table-charge": "In the charge table you can manage or export your charges. The stock columns is the current stock, which is the sum of incoming minus outgoing goods. Deleted charges can be restored up to 30 days after deletion, it will also change your stock if your delete a charge.",
@@ -361,6 +364,7 @@
     "yesSubscription": "Automatic yearly payment as subscription."
   },
   "method": "Method | Methods",
+  "min": "Min.",
   "modus": "Modus",
   "modusDate": "Date of inactivity",
   "month": "month | months",
@@ -658,6 +662,7 @@
     "sameAs": "The value must be equal to the password value."
   },
   "varroa": "Varroa",
+  "varroaStatsTableHeader": "Varroa count statistic, zero values are ignored in the calculation.",
   "version": "Version",
   "vet": "Veterinarian",
   "virgin": "Virgin | Virgins",

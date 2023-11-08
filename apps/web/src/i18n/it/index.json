@@ -33,6 +33,7 @@
   "autoCloseDate": "Chiudi automaticamente la data sulla selezione.",
   "autoMode": "Sistema",
   "average": "Media",
+  "avg": "Media",
   "back": "Di ritorno",
   "beekeepingNews": "Notizie sull'apicoltura",
   "beekeepingNewsSubtitle": "Una selezione curata di feed da tutto il mondo relativi al tema dell'apicoltura e delle api mellifere.",
@@ -211,6 +212,7 @@
   "harvest": "Vendemmia | Raccolto",
   "hatch": "Schiudere",
   "help": {
+    "beekeeping_news": "Una selezione curata di feed da tutto il mondo relativi al tema dell'apicoltura e delle api mellifere. \nÈ possibile utilizzare i cursori sinistro e destro per l'impaginazione.",
     "calendar": "Sul calendario puoi spostare i tuoi eventi e attività. \nL'attività può inoltre essere estesa se si prende l'evento alla fine. \nSe fai doppio clic su una data puoi creare un nuovo ToDo. \nSe fai clic su un evento, ottieni maggiori informazioni e puoi impostarne lo stato. \nCon i tasti freccia (sinistra, destra) puoi spostarti tra i mesi.",
     "calendar-scale_data": "Il calendario della bilancia ti mostra il peso medio delle tue bilance per alveare collegate. \nSe clicchi sull'evento ti viene mostrata la differenza rispetto al giorno prima. \nSe gli eventi sono codificati a colori, verde se la media è superiore al giorno prima e rosso se è inferiore. \nCon i tasti freccia (sinistra, destra) puoi spostarti tra i mesi.",
     "detail-apiary": "Panoramica dei tuoi apiari. \nI tasti freccia in alto ti consentono di passare rapidamente da un apiario all'altro, è ordinato in ordine alfabetico. \nNella prima scheda dell'alveare puoi modificare l'ordine dei tuoi alveari facendo clic su di essi e utilizzando i tasti freccia. \nIl numero tra parentesi dopo il nome dell'apiario è il conteggio dell'alveare corrente. \nQuesto ordine si rifletterà anche nei menu a discesa dell'alveare. \nSe fai clic sul simbolo delle informazioni verrai reindirizzato all'alveare selezionato. \nIl simbolo dell'auto è quello di spostare l'alveare in un altro apiario. \nNella scheda attività puoi trovare tutte le attività per gli alveari su questo apiario e la scheda meteo mostra un piccolo widget delle previsioni meteo attuali e future per la posizione dell'apiario.",
@@ -245,6 +247,7 @@
     "statistic-table_queen": "Valutazione media per le regine (gli zeri vengono ignorati) e quantità totale di raccolto in peso e frame per la durata della regina in una determinata colonia.",
     "statistic-table_rating": "Media annuale per ogni alveare. \nNel calcolo della media i valori zero vengono ignorati, questo vale anche per la colonna varroa.",
     "statistic-table_treatment": "Trattamento totale annuale per ogni alveare.",
+    "statistic-varroa": "Campo di input delle statistiche di base per la varroa che può essere abilitato per i controlli. \nI valori zero vengono ignorati nella tabella e il grafico mostra un massimo di 20 colonie.",
     "sugarwater": "Calcola la tua miscela di zucchero e acqua o guarda in alto sul tavolo. \nLa quantità di effettivi memorizzati dipende da più parametri e non è lineare, quindi puoi solo cercare le stime approssimative nella tabella.",
     "table-apiary": "Nella tabella apiario puoi gestire o esportare i tuoi apiari. \nGli apiari eliminati possono essere ripristinati fino a 30 giorni dopo l'eliminazione, ma puoi eliminare solo gli apiari senza alveari attivi su di essi. \nNella maggior parte dei casi è meglio inattivare l'apiario. \nInoltre puoi spostare rapidamente le arnie tra gli apiari, vedere il pulsante dei movimenti (pulsante a discesa blu).",
     "table-charge": "Nella tabella degli addebiti puoi gestire o esportare i tuoi addebiti. \nLa colonna stock è lo stock corrente, che è la somma delle merci in entrata meno in uscita. \nGli addebiti eliminati possono essere ripristinati fino a 30 giorni dopo l'eliminazione, inoltre cambierà il tuo stock se elimini un addebito.",
@@ -361,6 +364,7 @@
     "yesSubscription": ""
   },
   "method": "Metodo | Metodi",
+  "min": "minimo",
   "modus": "Modo",
   "modusDate": "Data di inattività",
   "month": "Mese | \nMesi",
@@ -658,6 +662,7 @@
     "sameAs": "Il valore deve essere uguale al valore della password."
   },
   "varroa": "Varroa",
+  "varroaStatsTableHeader": "Statistica del conteggio della varroa, i valori zero vengono ignorati nel calcolo.",
   "version": "Versione",
   "vet": "Veterinario",
   "virgin": "Vergine | Vergini",

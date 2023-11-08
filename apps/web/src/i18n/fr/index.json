@@ -33,6 +33,7 @@
   "autoCloseDate": "Fermer automatiquement la date lors de la sélection.",
   "autoMode": "Système",
   "average": "Moyen",
+  "avg": "Moyenne",
   "back": "Retour",
   "beekeepingNews": "Actualités apicoles",
   "beekeepingNewsSubtitle": "Une sélection organisée de flux mondiaux liés au thème de l'apiculture et des abeilles domestiques.",
@@ -211,6 +212,7 @@
   "harvest": "Récolte | Récoltes",
   "hatch": "Éclore",
   "help": {
+    "beekeeping_news": "Une sélection organisée de flux mondiaux liés au thème de l'apiculture et des abeilles domestiques. \nVous pouvez utiliser les curseurs gauche et droit pour la pagination.",
     "calendar": "Sur le calendrier, vous pouvez déplacer vos événements et vos tâches. \nLa tâche peut en outre être prolongée si vous saisissez l'événement à la fin. \nSi vous double-cliquez sur une date, vous pouvez créer une nouvelle ToDo. \nSi vous cliquez sur un événement, vous obtenez plus d'informations et pouvez définir le statut. \nAvec les touches fléchées (gauche, droite), vous pouvez passer d'un mois à l'autre.",
     "calendar-scale_data": "Le calendrier de la balance vous indique le poids moyen de vos balances de ruche connectées. \nSi vous cliquez sur l'événement, il vous montre la différence par rapport à la veille. \nSi les événements sont codés par couleur, vert si la moyenne est supérieure à la veille et rouge si elle est inférieure. \nAvec les touches fléchées (gauche, droite), vous pouvez passer d'un mois à l'autre.",
     "detail-apiary": "Vue d'ensemble de vos ruchers. \nLes touches fléchées du haut vous permettent de passer rapidement d'un rucher à l'autre, c'est classé par ordre alphabétique. \nSur le premier onglet de ruche, vous pouvez modifier l'ordre de vos ruches en cliquant dessus et en utilisant les touches fléchées. \nLe nombre entre parenthèses après le nom du rucher est le nombre actuel de ruches. \nCet ordre sera également reflété dans les listes déroulantes de la ruche. \nSi vous cliquez sur le symbole d'information, vous serez redirigé vers la ruche sélectionnée. \nLe symbole de la voiture sert à déplacer la ruche vers un autre rucher. \nSur l'onglet tâches, vous pouvez trouver toutes les tâches pour les ruches sur ce rucher et l'onglet météo vous montre un petit widget des prévisions météorologiques actuelles et futures pour l'emplacement du rucher.",
@@ -245,6 +247,7 @@
     "statistic-table_queen": "Note moyenne pour les reines (les zéros sont ignorés) et quantité totale de récolte en poids et cadres pour la durée de la reine sur une colonie donnée.",
     "statistic-table_rating": "Moyenne annuelle pour chaque ruche. \nDans le calcul de la moyenne, les valeurs nulles sont ignorées, cela est également vrai pour la colonne varroa.",
     "statistic-table_treatment": "Traitement total annuel pour chaque ruche.",
+    "statistic-varroa": "Champ de saisie des statistiques de base pour le varroa qui peut être activé pour les contrôles. \nLes valeurs nulles sont ignorées pour le tableau et le graphique montre un maximum de 20 colonies.",
     "sugarwater": "Calculez votre mélange d'eau sucrée ou regardez sur la table. \nLa quantité effective stockée dépend de plusieurs paramètres et n'est pas linéaire, vous ne pouvez donc consulter que les estimations approximatives dans le tableau.",
     "table-apiary": "Dans la table des ruchers, vous pouvez gérer ou exporter vos ruchers. \nLes ruchers supprimés peuvent être restaurés jusqu'à 30 jours après la suppression, mais vous ne pouvez supprimer que les ruchers sans aucune ruche active dessus. \nDans la plupart des cas, il est préférable d'inactiver le rucher. \nDe plus vous pouvez déplacer rapidement les ruches entre les ruchers, voir bouton déplacements (bouton déroulant bleu).",
     "table-charge": "Dans le tableau des frais, vous pouvez gérer ou exporter vos frais. \nLes colonnes de stock correspondent au stock actuel, qui est la somme des marchandises entrantes moins les marchandises sortantes. \nLes charges supprimées peuvent être restaurées jusqu'à 30 jours après la suppression, cela changera également votre stock si vous supprimez une charge.",
@@ -361,6 +364,7 @@
     "yesSubscription": ""
   },
   "method": "Méthode | Méthodes",
+  "min": "Min.",
   "modus": "Modus",
   "modusDate": "Date d'inactivité",
   "month": "Mois | \nMois",
@@ -658,6 +662,7 @@
     "sameAs": "La valeur doit être égale à la valeur du mot de passe."
   },
   "varroa": "Varroa",
+  "varroaStatsTableHeader": "Statistique de comptage de Varroa, les valeurs nulles sont ignorées dans le calcul.",
   "version": "Version",
   "vet": "Vétérinaire",
   "virgin": "Vierge | Vierges",

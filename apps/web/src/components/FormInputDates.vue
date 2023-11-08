@@ -82,6 +82,9 @@ const props = defineProps({
     type: String,
     default: dayjs().format('YYYY-MM-DD'),
   },
+  updateOnChange: {
+    default: true,
+  },
   modelInterval: {
     default: 0,
   },
@@ -142,9 +145,11 @@ function editValues(val: boolean) {
 }
 
 function updateStart(val: string) {
+  if (!props.updateOnChange) return;
   endValue.value = val;
 }
 function updateEnd(val: string) {
+  if (!props.updateOnChange) return;
   if (dayjs(startValue.value) > dayjs(val)) startValue.value = val;
 }
 

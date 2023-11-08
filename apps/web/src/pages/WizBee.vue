@@ -134,9 +134,14 @@ async function onQuestion() {
     </q-card>
 
     <q-card v-if="data" class="q-ma-sm container-size">
-      <q-card-section class="text-bold"> {{ $t('answer') }}: </q-card-section>
-      <q-card-section>
-        {{ result }}
+      <q-card-section class="text-bold">
+        <q-input
+          v-model="result"
+          :label="$t('answer')"
+          type="textarea"
+          :autogrow="true"
+          :readonly="true"
+        />
       </q-card-section>
       <q-card-section class="bg-grey-8 text-white">
         <div>

@@ -89,3 +89,16 @@ export const useKeyNavDetail = (fn: (direction: 'prev' | 'next') => void) => {
     fn('next');
   });
 };
+
+export const useKeyNews = (page: Ref<number>) => {
+  onKeyStroke('ArrowLeft', (e) => {
+    if (preventKey(e)) return;
+    if (page.value <= 1) return;
+    page.value = page.value - 1;
+  });
+
+  onKeyStroke('ArrowRight', (e) => {
+    if (preventKey(e)) return;
+    page.value = page.value + 1;
+  });
+};

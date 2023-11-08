@@ -41,7 +41,6 @@
 
 <script setup lang="ts">
 import ImageHetzner from '~/assets/supporter/hetzner.png';
-import ImageMeteoblue from '~/assets/supporter/meteoblue.png';
 import ImageTouchad from '~/assets/supporter/touchad.png';
 import ImageWB from '~/assets/supporter/wiener-bezirksimkerei.png';
 
@@ -51,12 +50,6 @@ const SERVICES = [
     alt: 'Hetzner Online GmbH is a company and data center operator based in Gunzenhausen, Germany',
     img: ImageHetzner,
     url: 'https://hetzner.cloud/?ref=gphXYt4v7MQw',
-  },
-  {
-    name: 'Meteoblue',
-    alt: 'Meteoblue is a meteorological service created at the University of Basel, Switzerland. In 2006, Meteoblue was then founded as a spin-off company in order to serve customers especially in the area of agriculture as well as solar and wind power.',
-    img: ImageMeteoblue,
-    url: 'https://www.meteoblue.com/',
   },
   {
     name: 'TouchAd',
