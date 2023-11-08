@@ -5,6 +5,7 @@ import { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { z } from 'zod';
 import StatisticController from '../../controllers/statistic.controller.js';
 import { Validator } from '../../hooks/validator.hook.js';
+import { numberSchema } from '../../utils/zod.util.js';
 
 export default function routes(
   instance: FastifyInstance,
@@ -141,6 +142,22 @@ export default function routes(
       preValidation: Validator.isPremium,
     },
     StatisticController.getCheckupRatingHive,
+  );
+
+  server.get(
+    '/varroa',
+    {
+      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+      preValidation: Validator.isPremium,
+      schema: {
+        querystring: z.object({
+          start_date: z.string(),
+          end_date: z.string(),
+          hive_ids: z.array(numberSchema),
+        }),
+      },
+    },
+    StatisticController.getVarroa,
   );
 
   done();
