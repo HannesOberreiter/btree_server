@@ -804,7 +804,7 @@ export default class StatisticController {
           v.date.toISOString().split('T')[0],
           v.type_name,
           v.hive_name,
-          -1,
+          0,
         ]);
       });
       resultDatasetTreatment[hive_id] = resultTreatment;
