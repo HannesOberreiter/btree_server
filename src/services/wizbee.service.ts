@@ -1,6 +1,5 @@
 import { encode } from 'gpt-3-encoder';
 import OpenAI from 'openai';
-
 import { env, openAI } from '../config/environment.config.js';
 import { VectorServer } from '../servers/vector.server.js';
 // import { Stream } from 'node_modules/openai/streaming.js';
@@ -27,10 +26,10 @@ export class WizBee {
   private template: string;
   private static indexName = 'link';
   private static vectorField = 'content_vector';
-  private static completionModel = 'gpt-3.5-turbo' as const;
-  private static turboModel = 'gpt-3.5-turbo' as const;
+  private static completionModel = 'gpt-4-1106-preview' as const;
+  private static turboModel = 'gpt-4-1106-preview' as const;
   private static embeddingModel = 'text-embedding-ada-002' as const;
-  private static maxToken = 3000;
+  private static maxToken = 5000;
 
   constructor() {
     this.openAI = new OpenAI({
@@ -224,22 +223,21 @@ export class WizBee {
    */
   private async createAnswer(input: string, contextText: string, lang: string) {
     try {
-      const messages: OpenAI.Chat.Completions.CreateChatCompletionRequestMessage[] =
-        [
-          {
-            role: 'system',
-            content:
-              'You are a friendly bot assistant, answering beekeeping related question or questions about the usage of the b.tree beekeeping software by using only given context. The context could be from multiple references or from the official b.tree documentation and each is separated by ###. If you cannot give a good answer with given context, please type "Sorry, we cannot give a good answer to that question."',
-          },
-          {
-            role: 'system',
-            content: `Context: ${contextText}`,
-          },
-          {
-            role: 'user',
-            content: `${input}`,
-          },
-        ];
+      const messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [
+        {
+          role: 'system',
+          content:
+            'You are a friendly bot assistant, answering beekeeping related question or questions about the usage of the b.tree beekeeping software by using only given context. The context could be from multiple references or from the official b.tree documentation and each is separated by ###. If you cannot give a good answer with given context, please type "Sorry, we cannot give a good answer to that question."',
+        },
+        {
+          role: 'system',
+          content: `Context: ${contextText}`,
+        },
+        {
+          role: 'user',
+          content: `${input}`,
+        },
+      ];
 
       if (lang !== 'en') {
         messages.push({

@@ -4,6 +4,7 @@ import { Feed } from '../models/feed.model.js';
 import { Treatment } from '../models/treatment.model.js';
 import { Checkup } from '../models/checkup.model.js';
 import { FastifyReply, FastifyRequest } from 'fastify';
+import httpErrors from 'http-errors';
 
 export default class StatisticController {
   static async getHiveCountTotal(req: FastifyRequest, reply: FastifyReply) {
@@ -684,5 +685,135 @@ export default class StatisticController {
 
     const result = await query.orderBy('hive.name');
     return { ...result };
+  }
+
+  static async getVarroa(req: FastifyRequest, reply: FastifyReply) {
+    const query = req.query as {
+      start_date: string;
+      end_date: string;
+      hive_ids: string[];
+    };
+
+    type ResultStats = {
+      hive_name: string;
+      varroa: {
+        min: number;
+        max: number;
+        avg: number;
+      };
+    };
+
+    const resultDatasetCheckup: any = {};
+    const resultDatasetTreatment: any = {};
+    const resultStats = [] as ResultStats[];
+
+    for (let i = 0; i < query.hive_ids.length; i++) {
+      if (i > 20) break;
+      const resultCheckup: any[] = [];
+      const hive_id = query.hive_ids[i];
+      const res = await Checkup.query()
+        .select(
+          'hive_id',
+          'varroa',
+          'date',
+          'type.name as type_name',
+          'hive.name as hive_name',
+        )
+        .leftJoinRelated('type')
+        .leftJoinRelated('hive')
+        .where({
+          'checkups.deleted': false,
+          'checkups.user_id': req.session.user.user_id,
+          'hive.deleted': false,
+          'checkups.hive_id': hive_id,
+        })
+        .whereBetween('checkups.date', [query.start_date, query.end_date]);
+
+      if (res.length === 0) continue;
+
+      resultStats[i] = {
+        hive_name: (res[0] as any)?.hive_name ?? '',
+        varroa: {
+          min: 0,
+          max: 0,
+          avg: 0,
+        },
+      };
+
+      let averageLength = 0;
+      res.map((v: any) => {
+        resultCheckup.push([
+          hive_id,
+          v.varroa,
+          v.date.toISOString().split('T')[0],
+          v.type_name,
+          v.hive_name,
+        ]);
+
+        resultStats[i].varroa.max = Math.max(
+          resultStats[i].varroa.max,
+          v.varroa,
+        );
+        if (v.varroa > 0) {
+          averageLength++;
+          resultStats[i].varroa.min = Math.min(
+            resultStats[i].varroa.min === 0
+              ? v.varroa
+              : resultStats[i].varroa.min,
+            v.varroa,
+          );
+          resultStats[i].varroa.avg += v.varroa;
+        }
+      });
+      if (averageLength > 0) {
+        resultStats[i].varroa.avg =
+          Math.round(
+            (resultStats[i].varroa.avg / averageLength + Number.EPSILON) * 100,
+          ) / 100;
+      }
+      resultDatasetCheckup[hive_id] = resultCheckup;
+    }
+
+    for (let i = 0; i < query.hive_ids.length; i++) {
+      if (i > 20) break;
+      const resultTreatment: any[] = [];
+      const hive_id = query.hive_ids[i];
+      const res = await Treatment.query()
+        .select(
+          'hive_id',
+          'date',
+          'amount',
+          'type.name as type_name',
+          'hive.name as hive_name',
+        )
+        .leftJoinRelated('type')
+        .leftJoinRelated('hive')
+        .where({
+          'treatments.deleted': false,
+          'treatments.user_id': req.session.user.user_id,
+          'hive.deleted': false,
+          'treatments.hive_id': hive_id,
+        })
+        .whereBetween('treatments.date', [query.start_date, query.end_date]);
+
+      if (res.length === 0) continue;
+      res.map((v: any) => {
+        resultTreatment.push([
+          hive_id,
+          v.amount,
+          v.date.toISOString().split('T')[0],
+          v.type_name,
+          v.hive_name,
+          0,
+        ]);
+      });
+      resultDatasetTreatment[hive_id] = resultTreatment;
+    }
+
+    return {
+      datasetCheckup: resultDatasetCheckup,
+      datasetTreatment: resultDatasetTreatment,
+      stats: resultStats,
+    };
   }
 }
