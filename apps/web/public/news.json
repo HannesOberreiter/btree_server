@@ -1,12 +1,13 @@
 [
   {
-    "version": "6.3.6",
-    "date": "2023-11-08",
+    "version": "6.3.7",
+    "date": "2023-11-10",
     "news": [
       "IMPROVEMENT added more references for WizBee (vespa velutina, aethina tumida, oxymel)",
       "IMPROVEMENT WizBee now uses ChatGPT4 Turbo Model",
       "IMPROVEMENT allow left and right cursor for pagination on beekeeping news page",
-      "REMOVED meteoblue as supporter, as we do not receive any discount any more"
+      "REMOVED meteoblue as supporter, as we do not receive any discount any more",
+      "FEATURE new varroa count over time statistics [PREMIUM]"
     ]
   },
   {

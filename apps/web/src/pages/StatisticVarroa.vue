@@ -13,9 +13,7 @@ import { CanvasRenderer } from 'echarts/renderers';
 import { ScatterChart } from 'echarts/charts';
 import {
   TooltipComponent,
-  GridComponent,
   DataZoomComponent,
-  TitleComponent,
   ToolboxComponent,
   LegendComponent,
   DatasetComponent,
@@ -29,9 +27,7 @@ use([
   CanvasRenderer,
   ScatterChart,
   TooltipComponent,
-  GridComponent,
   DataZoomComponent,
-  TitleComponent,
   ToolboxComponent,
   LegendComponent,
   DatasetComponent,
@@ -80,15 +76,15 @@ renderChart();
 watchDebounced(
   queryParams,
   async () => {
-    if (!queryParams.value.hive_ids.length) {
+    if (queryParams.value.hive_ids.length === 0) {
       response.value = {
         datasetCheckup: {},
         datasetTreatment: {},
         stats: [],
       };
-      return;
+    } else {
+      response.value = await getResponse();
     }
-    response.value = await getResponse();
     renderChart();
   },
   {
@@ -99,6 +95,9 @@ watchDebounced(
 
 async function getResponse() {
   try {
+    if (hive_id.value.length > 20) {
+      notify.open('warning', t('maxHivesStatsVarroa', { max: 20 }), true);
+    }
     const response = await api.get('/v1/statistic/varroa', queryParams.value);
     if (!response) {
       return {
@@ -182,7 +181,7 @@ function renderChart() {
         return 'circle';
       },
       tooltip: {
-        trigger: 'item',
+        trigger: 'axis',
         formatter: (params: any) => {
           return `${params.value[2].split('T')[0]} <br/> ${params.name}: ${
             params.value[3]
@@ -192,7 +191,7 @@ function renderChart() {
       encode: {
         x: 'Date',
         y: 'Varroa',
-        tooltip: ['Type', 'Varroa', 'Date'],
+        tooltip: ['Varroa', 'Type'],
         itemName: 'Hive',
       },
     };
@@ -212,12 +211,13 @@ function renderChart() {
       };
       series[count] = {
         datasetIndex: count,
-        name: value[0][4] + ' - ' + t('treatment'),
+        name: value[0][4],
         type: 'scatter',
         symbol: 'triangle',
         symbolSize: 20,
+        symbolOffset: [0, 10],
         tooltip: {
-          trigger: 'item',
+          trigger: 'axis',
           formatter: (params: any) => {
             return `${params.value[2].split('T')[0]} <br/> ${params.name}: ${
               params.value[3]
@@ -227,7 +227,8 @@ function renderChart() {
         encode: {
           x: 'Date',
           y: 'Dummy',
-          tooltip: ['Type', 'Amount', 'Date'],
+          tooltip: ['Type', 'Amount'],
+          tooltipName: 'Type',
           itemName: 'Hive',
           seriesIndex: countTreatment,
         },
@@ -249,6 +250,7 @@ function renderChart() {
       '#a6761d',
       '#666666',
     ],
+    legend: {},
     toolbox: {
       feature: {
         saveAsImage: {
@@ -260,24 +262,63 @@ function renderChart() {
       {
         type: 'slider',
         xAxisIndex: 0,
-        filterMode: 'empty',
-        bottom: 0,
+        filterMode: 'none',
+        bottom: 8,
       },
     ],
-    tooltip: {},
+    tooltip: {
+      trigger: 'axis',
+      order: 'valueDesc',
+      textStyle: {
+        fontSize: 12,
+      },
+      axisPointer: {
+        show: 'auto',
+      },
+      formatter: (params: any) => {
+        let label = '';
+        const orderedParams: any[] = [];
+        params.forEach((param: any) => {
+          if (param.value[param.encode.y[0]] > 0) {
+            orderedParams.unshift(param);
+          } else {
+            orderedParams.push(param);
+          }
+        });
+
+        for (let i = 0; i < params.length; i++) {
+          const param = orderedParams[i];
+          if (i === 0) {
+            label += param.axisValueLabel.split(' ')[0];
+          }
+          const hive = param.seriesName;
+          const type = param.value[3];
+          const amount = param.value[1];
+          label += `<br/> <b>${hive}</b>: ${type} (${amount})`;
+        }
+        return label;
+      },
+    },
     xAxis: {
+      position: 'bottom',
       type: 'time',
       name: t('date'),
       axisLabel: {
-        rotate: 30,
-        formatter: '{yy}-{MM}-{dd}',
+        formatter: '{MMM} {dd}',
+        hideOverlap: true,
       },
+      offset: 7,
+      boundaryGap: ['5%', '5%'],
     },
     yAxis: {
       type: 'value',
       name: t('varroa'),
+      axisLabel: {
+        showMinLabel: false,
+      },
+      min: -0.1,
+      boundaryGap: [0, '5%'],
     },
-    legend: {},
     series: series,
   };
 
@@ -317,7 +358,7 @@ function renderChart() {
           :loading="!chartTimeseries"
           :update-options="{ notMerge: true, silent: false }"
           autoresize
-          style="height: 50vh; width: 100%"
+          style="height: 500px"
           class="bg-grey-1"
           :theme="$q.dark.isActive ? 'dark' : ''"
         />

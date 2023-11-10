@@ -338,6 +338,7 @@
   "mated": "Verpaart",
   "mating": "Paarung",
   "max": "Max.",
+  "maxHivesStatsVarroa": "Warnung: Es werden nur die ersten {max} Kolonien angezeigt. \nDenn es ist die Grenze für die Berechnung!",
   "maxUpload": "Maximum Upload sind {msg} Zeilen.",
   "membership": {
     "afterPayment": "Nach der Zahlung verlängert sich Ihr Premium-Zugang um",

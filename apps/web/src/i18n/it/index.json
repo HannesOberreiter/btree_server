@@ -338,6 +338,7 @@
   "mated": "accoppiato",
   "mating": "Luogo di accoppiamento",
   "max": "Massimo",
+  "maxHivesStatsVarroa": "Avvertenza: vengono mostrate solo le prime {max} colonie. \nPoiché è il limite per il calcolo!",
   "maxUpload": "Il caricamento massimo è di {msg} righe.",
   "membership": {
     "afterPayment": "Dopo il pagamento il tuo accesso premium viene esteso a",
