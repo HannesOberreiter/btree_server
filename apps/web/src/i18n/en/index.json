@@ -338,6 +338,7 @@
   "mated": "Mated",
   "mating": "Mating place",
   "max": "Max.",
+  "maxHivesStatsVarroa": "Warning: Only the first {max} colonies are shown. As it is the limit for the calculation!",
   "maxUpload": "Maximum upload is {msg} lines.",
   "membership": {
     "afterPayment": "After payment your premium access is extended to",

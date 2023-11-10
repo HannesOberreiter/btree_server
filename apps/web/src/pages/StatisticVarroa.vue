@@ -13,9 +13,7 @@ import { CanvasRenderer } from 'echarts/renderers';
 import { ScatterChart } from 'echarts/charts';
 import {
   TooltipComponent,
-  GridComponent,
   DataZoomComponent,
-  TitleComponent,
   ToolboxComponent,
   LegendComponent,
   DatasetComponent,
@@ -29,9 +27,7 @@ use([
   CanvasRenderer,
   ScatterChart,
   TooltipComponent,
-  GridComponent,
   DataZoomComponent,
-  TitleComponent,
   ToolboxComponent,
   LegendComponent,
   DatasetComponent,
@@ -80,15 +76,15 @@ renderChart();
 watchDebounced(
   queryParams,
   async () => {
-    if (!queryParams.value.hive_ids.length) {
+    if (queryParams.value.hive_ids.length === 0) {
       response.value = {
         datasetCheckup: {},
         datasetTreatment: {},
         stats: [],
       };
-      return;
+    } else {
+      response.value = await getResponse();
     }
-    response.value = await getResponse();
     renderChart();
   },
   {
@@ -99,6 +95,9 @@ watchDebounced(
 
 async function getResponse() {
   try {
+    if (hive_id.value.length > 20) {
+      notify.open('warning', t('maxHivesStatsVarroa', { max: 20 }), true);
+    }
     const response = await api.get('/v1/statistic/varroa', queryParams.value);
     if (!response) {
       return {
@@ -212,10 +211,11 @@ function renderChart() {
       };
       series[count] = {
         datasetIndex: count,
-        name: value[0][4] + ' - ' + t('treatment'),
+        name: value[0][4],
         type: 'scatter',
         symbol: 'triangle',
         symbolSize: 20,
+        symbolOffset: [0, 10],
         tooltip: {
           trigger: 'axis',
           formatter: (params: any) => {
@@ -228,6 +228,7 @@ function renderChart() {
           x: 'Date',
           y: 'Dummy',
           tooltip: ['Type', 'Amount'],
+          tooltipName: 'Type',
           itemName: 'Hive',
           seriesIndex: countTreatment,
         },
@@ -249,6 +250,7 @@ function renderChart() {
       '#a6761d',
       '#666666',
     ],
+    legend: {},
     toolbox: {
       feature: {
         saveAsImage: {
@@ -261,13 +263,40 @@ function renderChart() {
         type: 'slider',
         xAxisIndex: 0,
         filterMode: 'none',
-        bottom: 6,
+        bottom: 8,
       },
     ],
     tooltip: {
       trigger: 'axis',
+      order: 'valueDesc',
+      textStyle: {
+        fontSize: 12,
+      },
       axisPointer: {
-        show: false,
+        show: 'auto',
+      },
+      formatter: (params: any) => {
+        let label = '';
+        const orderedParams: any[] = [];
+        params.forEach((param: any) => {
+          if (param.value[param.encode.y[0]] > 0) {
+            orderedParams.unshift(param);
+          } else {
+            orderedParams.push(param);
+          }
+        });
+
+        for (let i = 0; i < params.length; i++) {
+          const param = orderedParams[i];
+          if (i === 0) {
+            label += param.axisValueLabel.split(' ')[0];
+          }
+          const hive = param.seriesName;
+          const type = param.value[3];
+          const amount = param.value[1];
+          label += `<br/> <b>${hive}</b>: ${type} (${amount})`;
+        }
+        return label;
       },
     },
     xAxis: {
@@ -278,16 +307,18 @@ function renderChart() {
         formatter: '{MMM} {dd}',
         hideOverlap: true,
       },
-      offset: 10,
+      offset: 7,
       boundaryGap: ['5%', '5%'],
     },
     yAxis: {
       type: 'value',
       name: t('varroa'),
-      min: -1,
+      axisLabel: {
+        showMinLabel: false,
+      },
+      min: -0.1,
       boundaryGap: [0, '5%'],
     },
-    legend: {},
     series: series,
   };
 
