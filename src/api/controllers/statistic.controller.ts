@@ -4,7 +4,6 @@ import { Feed } from '../models/feed.model.js';
 import { Treatment } from '../models/treatment.model.js';
 import { Checkup } from '../models/checkup.model.js';
 import { FastifyReply, FastifyRequest } from 'fastify';
-import httpErrors from 'http-errors';
 
 export default class StatisticController {
   static async getHiveCountTotal(req: FastifyRequest, reply: FastifyReply) {
