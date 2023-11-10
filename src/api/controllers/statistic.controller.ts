@@ -706,6 +706,7 @@ export default class StatisticController {
     const resultDatasetTreatment: any = {};
     const resultStats = [] as ResultStats[];
 
+    let arrayCount = 0;
     for (let i = 0; i < query.hive_ids.length; i++) {
       if (i > 20) break;
       const resultCheckup: any[] = [];
@@ -730,7 +731,7 @@ export default class StatisticController {
 
       if (res.length === 0) continue;
 
-      resultStats[i] = {
+      resultStats[arrayCount] = {
         hive_name: (res[0] as any)?.hive_name ?? '',
         varroa: {
           min: 0,
@@ -749,28 +750,31 @@ export default class StatisticController {
           v.hive_name,
         ]);
 
-        resultStats[i].varroa.max = Math.max(
-          resultStats[i].varroa.max,
-          v.varroa,
-        );
         if (v.varroa > 0) {
           averageLength++;
-          resultStats[i].varroa.min = Math.min(
-            resultStats[i].varroa.min === 0
+          resultStats[arrayCount].varroa.min = Math.min(
+            resultStats[arrayCount].varroa.min === 0
               ? v.varroa
-              : resultStats[i].varroa.min,
+              : resultStats[arrayCount].varroa.min,
             v.varroa,
           );
-          resultStats[i].varroa.avg += v.varroa;
+          resultStats[arrayCount].varroa.max = Math.max(
+            resultStats[arrayCount].varroa.max,
+            v.varroa,
+          );
+          resultStats[arrayCount].varroa.avg += v.varroa;
         }
       });
       if (averageLength > 0) {
-        resultStats[i].varroa.avg =
+        resultStats[arrayCount].varroa.avg =
           Math.round(
-            (resultStats[i].varroa.avg / averageLength + Number.EPSILON) * 100,
+            (resultStats[arrayCount].varroa.avg / averageLength +
+              Number.EPSILON) *
+              100,
           ) / 100;
       }
       resultDatasetCheckup[hive_id] = resultCheckup;
+      arrayCount++;
     }
 
     for (let i = 0; i < query.hive_ids.length; i++) {
