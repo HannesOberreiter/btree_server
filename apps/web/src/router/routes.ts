@@ -557,6 +557,11 @@ const routes: RouteRecordRaw[] = [
         name: 'statistic-scale',
         component: () => import('~/pages/StatisticScale.vue'),
       },
+      {
+        path: 'stats_varroa',
+        name: 'statistic-varroa',
+        component: () => import('~/pages/StatisticVarroa.vue'),
+      },
     ],
   },
   /***

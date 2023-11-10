@@ -24,7 +24,7 @@
   "allYears": "Alle Jahre",
   "allowKeyboardOnSelection": "Verwenden Sie die Tastatur, um die Auswahl zu filtern.",
   "amount": "Menge",
-  "answer": "Antworten",
+  "answer": "Antwort",
   "api": "API",
   "apiary": "Stand | Stände",
   "apiaryEdit": "Stand bearbeiten | Stände bearbeiten",
@@ -33,6 +33,7 @@
   "autoCloseDate": "Datum bei Auswahl automatisch schließen.",
   "autoMode": "System",
   "average": "Durchschnitt",
+  "avg": "Durchschnitt",
   "back": "Zurück",
   "beekeepingNews": "Imkerei Nachrichten",
   "beekeepingNewsSubtitle": "Eine kuratierte Auswahl weltweiter Feeds rund um das Thema Bienenzucht und Honigbienen.",
@@ -211,6 +212,7 @@
   "harvest": "Ernte | Ernten",
   "hatch": "Schlupf",
   "help": {
+    "beekeeping_news": "Eine kuratierte Auswahl weltweiter Feeds rund um das Thema Bienenhaltung und Honigbienen. \nFür die Paginierung können Sie den linken und rechten Cursor verwenden.",
     "calendar": "Im Kalender können Sie Ihre Termine und Aufgaben verschieben. Die Aufgaben können auch in die Länge gezogen werden, wenn Sie das Ereignis am Ende anklicken und ziehen. Wenn Sie auf ein Datum doppelklicken, können Sie ein neues ToDo erstellen. Wenn Sie auf ein Ereignis klicken, erhalten Sie weitere Informationen und können den Status festlegen. Mit den Pfeiltasten (rechts, links) können Sie zwischen den Monaten wechseln.",
     "calendar-scale_data": "Der Stockwaagen Kalendar zeigt das mittlere Gewicht Ihrer verbundenen Bienenstockwaage. \nWenn Sie auf das Ereignis klicken, wird Ihnen die Differenz zum Vortag angezeigt. Ereignisse sind Farbcodiert, grün, wenn der Durchschnitt höher als am Vortag ist, und rot, wenn er niedriger ist. \nMit den Pfeiltasten (links, rechts) können Sie zwischen den Monaten wechseln.",
     "detail-apiary": "Überblick über den Bienenstand. \nMit den Pfeilsymbolen oben kannst du schnell durch deine Stände wechseln, sie sind alphabetisch geordnet. Die Zahl in Klammern hinter dem Bienenstandsnamen ist die aktuelle Stockzahl. \nAuf der ersten Registerkarte können Sie die Reihenfolge Ihrer Bienenstöcke ändern, indem Sie darauf klicken und die Auf-und-Ab-Pfeilsymbole verwenden. Diese Reihenfolge wird auch in den Stock-Dropdowns widergespiegelt. Wenn Sie auf das Info-Symbol klicken, werden Sie zum ausgewählten Bienenstock weitergeleitet. Mit dem Auto-Symbol kann man mit einem Bienenstock zu einem anderen Bienenstand wandern. \nAuf der Registerkarte Aufgaben finden Sie alle Aufgaben für die Bienenstöcke auf diesem Bienenstand und die Registerkarte Wetter zeigt Ihnen ein kleines Widget mit den aktuellen und zukünftigen Wettervorhersagen für den Bienenstandstandort.",
@@ -245,6 +247,7 @@
     "statistic-table_queen": "Durchschnittliche Bewertung der Königinnen (null Werte werden ignoriert) und gesamt Menge der Ernte in Gewicht und Wabenzahl. Berechnung erfolgt für die Dauer am Stock (Anfangsdatum bis Enddatum).",
     "statistic-table_rating": "Jährliche Bewertung der Bienenstöcke. Der Durchschnitt ist ohne 0 Werte berechnet, auch beim Feld Varroa!",
     "statistic-table_treatment": "Jährliche Gesamtbehandlung für jeden Bienenstock.",
+    "statistic-varroa": "Statistiken zu Varroa, der Wert kann bei Kontrollen eingegeben werden. Nullwerte werden für die Tabelle ignoriert und das Diagramm zeigt maximal 20 Kolonien.",
     "sugarwater": "Berechnen Sie Ihre Zucker-Wasser-Mischung oder schlagen Sie in der Tabelle nach. \nWie viel effektiv eingelagert wird, hängt von mehreren Parametern ab und ist nicht linear, daher können Sie der Tabelle nur grobe Schätzungen entnehmen.",
     "table-apiary": "In der Standtablle können Sie Ihre Bienenstände verwalten oder exportieren. \nGelöschte Stände können bis zu 30 Tage nach dem Löschen wiederhergestellt werden, aber Sie können nur Stände ohne aktive Bienenstöcke löschen. \nIn den meisten Fällen ist es besser, die Bienenstände zu inaktivieren. \nAußerdem können Sie Bienenstöcke schnell zwischen Stände verschieben, siehe Schaltfläche \"Wanderung\" (blaue Dropdown-Schaltfläche).",
     "table-charge": "In der Chargentabelle können Sie Ihre Chargen verwalten oder exportieren. \nDie Bestandsspalte zeigt den aktuellen Bestand, also die Summe aus Wareneingang minus Warenausgang. \nGelöschte Chargen können bis zu 30 Tage nach dem Löschen wiederhergestellt werden, es ändert auch Ihren Bestand, wenn Sie einen Eintrag löschen.",
@@ -334,7 +337,8 @@
   "mark_colour": "Königin-Markierung",
   "mated": "Verpaart",
   "mating": "Paarung",
-  "max": "max.",
+  "max": "Max.",
+  "maxHivesStatsVarroa": "Warnung: Es werden nur die ersten {max} Kolonien angezeigt. \nDenn es ist die Grenze für die Berechnung!",
   "maxUpload": "Maximum Upload sind {msg} Zeilen.",
   "membership": {
     "afterPayment": "Nach der Zahlung verlängert sich Ihr Premium-Zugang um",
@@ -361,6 +365,7 @@
     "yesSubscription": ""
   },
   "method": "Methode | Methoden",
+  "min": "Min.",
   "modus": "Modus",
   "modusDate": "Datum der Inaktivität",
   "month": "Monat | \nMonate",
@@ -658,6 +663,7 @@
     "sameAs": "Der Wert muss gleich dem Passwort sein."
   },
   "varroa": "Varroa",
+  "varroaStatsTableHeader": "Varroa-Zählstatistik, Nullwerte werden bei der Berechnung ignoriert.",
   "version": "Version",
   "vet": "Tierarzt",
   "virgin": "Jungfrau | Jungfrauen",
