@@ -11,7 +11,7 @@ class RefreshService {
       return true;
     } catch (e) {
       console.error(e);
-      await useAuthUserStore().logout();
+      // await useAuthUserStore().logout();
     }
   }
   user(api: any) {

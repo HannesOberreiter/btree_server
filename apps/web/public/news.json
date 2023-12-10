@@ -3,6 +3,15 @@
     "version": "6.3.7",
     "date": "2023-11-10",
     "news": [
+      "IMPROVEMENT remove session logout if no internet connection",
+      "IMPROVEMENT ICal export now has fewer dependencies",
+      "CHORES upgrade libraries [SERVER, CLIENT]"
+    ]
+  },
+  {
+    "version": "6.3.7",
+    "date": "2023-11-10",
+    "news": [
       "IMPROVEMENT added more references for WizBee (vespa velutina, aethina tumida, oxymel)",
       "IMPROVEMENT WizBee now uses ChatGPT4 Turbo Model",
       "IMPROVEMENT allow left and right cursor for pagination on beekeeping news page",
