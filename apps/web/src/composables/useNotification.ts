@@ -1,6 +1,6 @@
 import { reactive } from 'vue';
 import { Notify } from 'quasar';
-import { useI18n } from 'vue-i18n';
+import { ComposerTranslation, useI18n } from 'vue-i18n';
 import { sleep } from '~/helpers';
 
 type Type = 'positive' | 'negative' | 'warning' | 'info' | 'ongoing';
@@ -10,8 +10,8 @@ const state = reactive({
   error: false,
 });
 
-const useNotification = () => {
-  const { t } = useI18n();
+const useNotification = (t: undefined | ComposerTranslation = undefined) => {
+  if (!t) t = useI18n().t;
 
   function useHandleSuccess(value: any) {
     const displayMessage = value ? t(value) : '';

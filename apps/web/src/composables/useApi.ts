@@ -33,11 +33,11 @@ export const useApiFetch = () => {
     const controller = new AbortController();
     const { signal } = controller;
     const id = setTimeout(() => controller.abort(), 15000);
-    const urlParam = buildUrl('/v1/status');
+    const urlParam = buildUrl('/v1/auth/ping');
     const request = new Request(urlParam, {
       signal,
       method: 'HEAD', // *GET, POST, PUT, DELETE, etc.
-      credentials: 'omit', // include, *same-origin, omit
+      credentials: 'include', // include, *same-origin, omit
       headers: buildHeader(),
     });
     const time1 = performance.now();
@@ -47,9 +47,18 @@ export const useApiFetch = () => {
     });
     clearTimeout(id);
 
+    // 401 response means that session is expired
+    if (response.status === 401) {
+      if (!dialog.state.show) dialog.open();
+      throw 'error.forbidden';
+    }
+
     if (!response.ok) {
       throw 'offline';
     }
+
+    // Reset logout dialog if as the session is recovered at this point
+    if (dialog.state.show) dialog.close();
 
     const time2 = performance.now();
     return time2 - time1;
