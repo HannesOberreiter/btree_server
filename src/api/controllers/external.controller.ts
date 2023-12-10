@@ -77,10 +77,10 @@ export default class ExternalController {
         url: 'https://app.btree.at/',
       });
     }
-    calendar.serve(
-      reply.raw,
-      `btree-${params.source}-${new Date().toISOString()}.ics`,
-    );
+    const filename = `btree-${params.source}-${new Date().toISOString()}.ics`;
+    reply.header('Content-Disposition', `attachment; filename=${filename}`);
+    reply.header('Content-Type', 'text/calendar; charset=utf-8');
+    return calendar.toString();
   }
 
   /**
