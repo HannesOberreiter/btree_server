@@ -3,6 +3,7 @@
     "version": "6.3.7",
     "date": "2023-11-10",
     "news": [
+      "IMPROVEMENT ping timer is now lower if status is offline, this should lead to quicker recover if the internet connection is back",
       "IMPROVEMENT remove session logout if no internet connection",
       "IMPROVEMENT ICal export now has fewer dependencies",
       "CHORES upgrade libraries [SERVER, CLIENT]"
