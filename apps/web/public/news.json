@@ -1,8 +1,11 @@
 [
   {
-    "version": "6.3.7",
-    "date": "2023-11-10",
+    "version": "6.3.8",
+    "date": "2023-XX-XX",
     "news": [
+      "CHANGE updated urls to btree.at main page for english language",
+      "IMPROVEMENT added infoFauna.ch as Vespa velutina source (it lags behind a bit as the data is from GBIF)",
+      "IMPROVEMENT on the velutina map you can now change years, to view older data",
       "IMPROVEMENT ping timer is now lower if status is offline, this should lead to quicker recover if the internet connection is back",
       "IMPROVEMENT remove session logout if no internet connection",
       "IMPROVEMENT ICal export now has fewer dependencies",

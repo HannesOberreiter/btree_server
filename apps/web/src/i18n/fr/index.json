@@ -664,6 +664,7 @@
   },
   "varroa": "Varroa",
   "varroaStatsTableHeader": "Statistique de comptage de Varroa, les valeurs nulles sont ignorées dans le calcul.",
+  "velutinaRecent": "Seulement récent (6 mois).",
   "version": "Version",
   "vet": "Vétérinaire",
   "virgin": "Vierge | Vierges",
