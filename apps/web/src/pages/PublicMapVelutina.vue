@@ -22,10 +22,12 @@
       <l-tile-layer
         url="https://api.inaturalist.org/v2/heatmap/{z}/{x}/{y}.png?taxon_id=119019"
         layer-type="overlay"
-        name="iNaturalist"
+        name="Heatmap - iNaturalist"
         :max-zoom="18"
         attribution="Heatmap data &copy; <a href='https://www.inaturalist.org/'>iNaturalist</a>"
+        :visible="false"
       ></l-tile-layer>
+      <l-control-layers />
       <l-control position="bottomleft">
         <div
           class="leaflet-control-attribution"
@@ -37,8 +39,12 @@
               <a href="https://www.btree.at" target="_blank">b.tree</a></b
             >
           </div>
+
+          <div>Recent observations: {{ recentCount }} (last 6 months)</div>
+          <div>Total observations in our database: {{ totalCount }}</div>
+          <div><b>Only the recent observations are shown on the map.</b></div>
           <div>
-            DataSources:
+            DataSources:<br />
             <a href="https://www.inaturalist.org/home" target="_blank"
               >iNaturalist</a
             >,
@@ -53,10 +59,10 @@
             <a href="https://wwww.observation.org" target="_blank"
               >observation.org</a
             >
+            <a href="https://lepus.infofauna.ch/carto/" target="_blank">
+              infofauna.ch
+            </a>
           </div>
-          <div>Recent observations: {{ recentCount }} (last 6 months)</div>
-          <div>Total observations in our database: {{ totalCount }}</div>
-          <div><b>Only the recent observations are shown on the map.</b></div>
         </div>
       </l-control>
     </l-map>
@@ -82,7 +88,12 @@ import 'leaflet/dist/leaflet.css';
 import 'leaflet.markercluster/dist/MarkerCluster.css';
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 import 'leaflet.markercluster/dist/leaflet.markercluster.js';
-import { LMap, LTileLayer, LControl } from '@vue-leaflet/vue-leaflet';
+import {
+  LMap,
+  LTileLayer,
+  LControl,
+  LControlLayers,
+} from '@vue-leaflet/vue-leaflet';
 import { useApiFetch } from '~/composables/useApi';
 import { onBeforeUnmount, ref, onMounted } from 'vue';
 
