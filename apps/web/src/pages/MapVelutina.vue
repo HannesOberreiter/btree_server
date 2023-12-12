@@ -225,7 +225,6 @@ const yearOptions = [
 const notification = useNotification();
 
 watch(year, () => {
-  console.log(year);
   onMapReady();
 });
 
