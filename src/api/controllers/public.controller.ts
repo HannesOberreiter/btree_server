@@ -16,15 +16,17 @@ export default class PublicController {
       return cached;
     }
 
+    const query = Observation.query().select(
+      'location',
+      raw('JSON_EXTRACT(data, "$.uri") as uri'),
+      'observed_at',
+    );
+
     const start = new Date(Date.now() - 1000 * 60 * 60 * 24 * 182);
     const end = new Date(Date.now());
-    const result = await Observation.query()
-      .select(
-        'location',
-        raw('JSON_EXTRACT(data, "$.uri") as uri'),
-        'observed_at',
-      )
-      .whereBetween('observed_at', [start, end]);
+    query.whereBetween('observed_at', [start, end]);
+
+    const result = await query;
 
     redis.set(
       'cache:velutinaObservationsRecent',
@@ -32,6 +34,30 @@ export default class PublicController {
       'EX',
       21600,
     );
+
+    return result;
+  }
+
+  static async getVelutinaObservationsYear(
+    req: FastifyRequest,
+    reply: FastifyReply,
+  ) {
+    reply.header('Cache-Control', 'public, max-age=21600');
+    const querystring = req.params as any;
+    if (!querystring.year) {
+      return [];
+    }
+    const year = querystring.year;
+
+    const query = Observation.query()
+      .select(
+        'location',
+        raw('JSON_EXTRACT(data, "$.uri") as uri'),
+        'observed_at',
+      )
+      .where(raw('YEAR(observed_at)'), year);
+
+    const result = await query;
 
     return result;
   }
