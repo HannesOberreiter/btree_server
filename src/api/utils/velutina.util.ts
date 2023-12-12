@@ -6,12 +6,14 @@ export async function fetchObservations() {
   const observationOrg = await fetchObservationOrg();
   const patriNat = await fetchPatriNat();
   const artenfinderNet = await fetchArtenfinderNet();
+  const infoFaunaCh = await fetchInfoFaunaCh();
 
   return {
     iNaturalist: inat,
     patriNat: patriNat,
     artenfinderNet: artenfinderNet,
     observationOrg: observationOrg,
+    infoFaunaCh: infoFaunaCh,
   };
 }
 
@@ -266,6 +268,63 @@ export async function fetchObservationOrg() {
           individualCount: observation['individualCount'],
           lifeStage: observation['lifeStage'],
           uri: observation['occurrenceID'],
+        },
+      });
+    }
+    await Observation.query().insertGraph(observations);
+  }
+  return { newObservations: newObservations };
+}
+
+export async function fetchInfoFaunaCh() {
+  const url =
+    'https://api.gbif.org/v1/occurrence/search?dataset_key=81981d98-e27f-4155-9a94-9eae9bbad2be&taxon_key=1311477';
+
+  let endOfRecords = false;
+  let offset = 0;
+  let newObservations = 0;
+  const limit = 300;
+  let yearFilter = `&year=${
+    new Date().getFullYear() - 1
+  },${new Date().getFullYear()}`;
+  const oldRecords = await Observation.query()
+    .select('external_id')
+    .where('external_service', 'Info Fauna (GBIF)');
+  const searchArray = oldRecords.map((o) => o.external_id);
+
+  if (searchArray.length === 0) yearFilter = '';
+
+  while (endOfRecords === false) {
+    const result = await fetch(
+      `${url}&limit=${limit}&offset=${offset}${yearFilter}`,
+    );
+    const data = await result.json();
+    if (data.results.length === 0) break;
+    endOfRecords = data.endOfRecords;
+    offset += limit;
+
+    const observations = [];
+    const results = data.results;
+    for (let i = 0; i < results.length; i++) {
+      if (searchArray.includes(Number(results[i]['gbifID']))) {
+        continue;
+      }
+      newObservations++;
+      const observation = results[i];
+      observations.push({
+        external_id: Number(observation['gbifID']),
+        external_uuid: observation['catalogNumber'],
+        external_service: 'Info Fauna (GBIF)',
+        observed_at: observation['eventDate'],
+        location: {
+          lat: Number(observation['decimalLatitude']),
+          lng: Number(observation['decimalLongitude']),
+        },
+        taxa: 'Vespa velutina',
+        data: {
+          bibliographicCitation: observation['bibliographicCitation'],
+          identificationRemarks: observation['identificationRemarks'],
+          uri: 'https://lepus.infofauna.ch/carto/58510',
         },
       });
     }
