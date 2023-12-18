@@ -21,7 +21,7 @@ import { useApiFetch } from '~/composables/useApi';
 import { useIntervalFn, useOnline } from '@vueuse/core';
 import round from 'lodash-es/round';
 
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 
 const api = useApiFetch();
 const time = ref(null);
@@ -29,12 +29,18 @@ const offlineServer = ref(true);
 const onlineUser = useOnline();
 const colorStatus = ref('green');
 const baseUrl = process.env.BACKEND_URL;
+const pingTimer = computed(() => {
+  if (offlineServer.value) {
+    return 1000 * 15;
+  }
+  return 1000 * 60 * 5;
+});
 
 useIntervalFn(
   () => {
     ping();
   },
-  1000 * 60 * 5,
+  pingTimer,
   { immediateCallback: true },
 );
 

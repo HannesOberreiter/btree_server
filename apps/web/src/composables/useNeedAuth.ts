@@ -1,17 +1,18 @@
-import { reactive } from 'vue';
-import { Dialog } from 'quasar';
+import { reactive, ref } from 'vue';
+import { Dialog, DialogChainObject } from 'quasar';
 import { i18n } from '~/boot/i18n';
 import { useAuthUserStore } from '~/stores/auth';
 
 const state = reactive({
   show: false,
 });
+const dialog = ref<DialogChainObject | null>(null);
 
 const useNeedAuth = () => {
   const storeUser = useAuthUserStore();
   function open() {
     state.show = true;
-    Dialog.create({
+    dialog.value = Dialog.create({
       focus: 'ok',
       cancel: false,
       persistent: true,
@@ -22,10 +23,13 @@ const useNeedAuth = () => {
       .onOk(() => {
         storeUser.logout().then(() => close());
       })
-      .onDismiss(() => close());
+      .onDismiss(() => {
+        state.show = false;
+      });
   }
   function close() {
     state.show = false;
+    dialog.value?.hide();
     return true;
   }
   return {

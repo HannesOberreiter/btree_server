@@ -3,8 +3,12 @@ import { MaybeRef } from '@vueuse/core';
 import { Option, Task } from '~/types';
 import { queryCache } from '~/boot/vue-query';
 import { Ref, unref } from 'vue';
-import { useNotification } from '~/composables/useNotification';
-import { QueryClient, useQuery, useQueryClient } from '@tanstack/vue-query';
+import {
+  QueryClient,
+  keepPreviousData,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/vue-query';
 import dayjs from 'dayjs';
 import { useApiFetch } from './useApi';
 
@@ -16,29 +20,28 @@ export function useCalendarQuery() {
         refetchOnWindowFocus: false,
         refetchOnMount: true,
         staleTime: 1000 * 60 * 1, // stale (refetching), after 1 minute
-        cacheTime: 1000 * 60 * 60 * 48, // garbage collector, every 48 hours } },
+        gcTime: 1000 * 60 * 60 * 48, // garbage collector, every 48 hours } },
       },
     },
   }); // need to use the queryclient here and not the useQuery as it wont work with full calendar
   const api = useApiFetch();
   function fetchQuery(source: string, start: Date, end: Date) {
-    return client.fetchQuery(
-      ['calendar', source, start, end],
-      () => {
+    return client.fetchQuery({
+      queryKey: ['calendar', source, start, end],
+      queryFn: () => {
         const payload = {
           start: unref(start),
           end: unref(end),
         };
         return api.get(`/v1/calendar/${unref(source)}`, payload);
       },
-      {},
-    );
+    });
   }
 
   function invalidate(source: string) {
     const queries = source
-      ? queryCache.findAll(['calendar', source])
-      : queryCache.findAll(['calendar']);
+      ? queryCache.findAll({ queryKey: ['calendar', source] })
+      : queryCache.findAll({ queryKey: ['calendar'] });
 
     queries.forEach((query) => query.invalidate());
   }
@@ -50,41 +53,33 @@ export function useApiaryQuery({
   id = '0' as MaybeRef<string>,
   enabled = true as MaybeRef<boolean>,
 }) {
-  const notification = useNotification();
   const api = useApiFetch();
-  return useQuery(
-    ['apiary', id],
-    () => {
+  return useQuery({
+    queryKey: ['apiary', id],
+    queryFn: () => {
       return api.get(`/v1/apiary/${unref(id)}`);
     },
-    {
-      enabled: enabled,
-      keepPreviousData: false,
-      select: (response) => {
-        return response;
-      },
-      onError: (error: any) => notification.open('negative', error),
+    enabled: enabled,
+    placeholderData: keepPreviousData,
+    select: (response) => {
+      return response;
     },
-  );
+  });
 }
 
 export function useTemperatureQuery(
   apiary_id: Ref<number>,
   { enabled = undefined as MaybeRef<boolean | undefined> },
 ) {
-  const notification = useNotification();
   const api = useApiFetch();
-  return useQuery(
-    ['temperature', apiary_id],
-    () => {
+  return useQuery({
+    queryKey: ['temperature', apiary_id],
+    queryFn: () => {
       return api.get(`/v1/service/temperature/${apiary_id.value}`);
     },
-    {
-      enabled,
-      select: (response) => response,
-      onError: (error: any) => notification.open('negative', error),
-    },
-  );
+    enabled,
+    select: (response) => response,
+  });
 }
 
 export function useMovementsQuery({
@@ -96,11 +91,10 @@ export function useMovementsQuery({
   filters = '' as MaybeRef<string>,
   enabled = true as MaybeRef<boolean>,
 }) {
-  const notification = useNotification();
   const api = useApiFetch();
-  return useQuery(
-    ['movedate', offset, limit, order, direction, q, filters],
-    () => {
+  return useQuery({
+    queryKey: ['movedate', offset, limit, order, direction, q, filters],
+    queryFn: () => {
       const payload = {
         offset: unref(offset),
         limit: unref(limit),
@@ -111,13 +105,10 @@ export function useMovementsQuery({
       };
       return api.get('/v1/movedate', payload);
     },
-    {
-      enabled: enabled,
-      keepPreviousData: false,
-      select: (response) => response,
-      onError: (error: any) => notification.open('negative', error),
-    },
-  );
+    enabled: enabled,
+    placeholderData: keepPreviousData,
+    select: (response) => response,
+  });
 }
 
 export function useTodosQuery({
@@ -130,11 +121,10 @@ export function useTodosQuery({
   enabled = true as MaybeRef<boolean>,
   done = true as MaybeRef<boolean>,
 }) {
-  const notification = useNotification();
   const api = useApiFetch();
-  return useQuery(
-    ['todo', offset, limit, order, direction, q, filters, done],
-    () => {
+  return useQuery({
+    queryKey: ['todo', offset, limit, order, direction, q, filters, done],
+    queryFn: () => {
       const payload = {
         offset: unref(offset),
         limit: unref(limit),
@@ -146,13 +136,10 @@ export function useTodosQuery({
       };
       return api.get('/v1/todo', payload);
     },
-    {
-      enabled: enabled,
-      keepPreviousData: false,
-      select: (response) => response,
-      onError: (error: any) => notification.open('negative', error),
-    },
-  );
+    enabled: enabled,
+    placeholderData: keepPreviousData,
+    select: (response) => response,
+  });
 }
 
 export function useTasksQuery(
@@ -170,12 +157,22 @@ export function useTasksQuery(
     done = true as MaybeRef<boolean>,
   },
 ) {
-  const notification = useNotification();
   const api = useApiFetch();
 
-  return useQuery(
-    [task, offset, limit, order, direction, deleted, q, details, filters, done],
-    () => {
+  return useQuery({
+    queryKey: [
+      task,
+      offset,
+      limit,
+      order,
+      direction,
+      deleted,
+      q,
+      details,
+      filters,
+      done,
+    ],
+    queryFn: () => {
       const payload = {
         offset: unref(offset),
         limit: unref(limit),
@@ -189,13 +186,10 @@ export function useTasksQuery(
       };
       return api.get(`/v1/${task}`, payload);
     },
-    {
-      enabled: enabled,
-      keepPreviousData: false,
-      select: (response) => response,
-      onError: (error: any) => notification.open('negative', error),
-    },
-  );
+    enabled: enabled,
+    placeholderData: keepPreviousData,
+    select: (response) => response,
+  });
 }
 
 export function useApiariesQuery({
@@ -209,11 +203,20 @@ export function useApiariesQuery({
   enabled = true as MaybeRef<boolean>,
   details = false,
 }) {
-  const notification = useNotification();
   const api = useApiFetch();
-  return useQuery(
-    ['apiary', offset, limit, order, direction, modus, deleted, q, details],
-    () => {
+  return useQuery({
+    queryKey: [
+      'apiary',
+      offset,
+      limit,
+      order,
+      direction,
+      modus,
+      deleted,
+      q,
+      details,
+    ],
+    queryFn: () => {
       const payload = {
         offset: unref(offset),
         limit: unref(limit),
@@ -226,31 +229,28 @@ export function useApiariesQuery({
       };
       return api.get('/v1/apiary', payload);
     },
-    {
-      enabled: enabled,
-      keepPreviousData: false,
-      refetchOnMount: true,
-      select: (response) => {
-        const result = map(response.results, (value) => {
-          const hive_count = value.hive_count
-            ? `(${value.hive_count.count + value.hive_count.grouphivescount})`
-            : '';
-          value.label = `${value.name} ${hive_count}`;
-          value.value = value.id;
-          value.type = 'apiary';
-          return value;
-        });
-        const center =
-          result.length > 0
-            ? [result[0].latitude, result[0].longitude, 9]
-            : [47.4751336, 13.5968839, 2];
-        return result
-          ? { results: result, total: response.total, center: center }
-          : ([] as any);
-      },
-      onError: (error: any) => notification.open('negative', error),
+    enabled: enabled,
+    placeholderData: keepPreviousData,
+    refetchOnMount: true,
+    select: (response) => {
+      const result = map(response.results, (value) => {
+        const hive_count = value.hive_count
+          ? `(${value.hive_count.count + value.hive_count.grouphivescount})`
+          : '';
+        value.label = `${value.name} ${hive_count}`;
+        value.value = value.id;
+        value.type = 'apiary';
+        return value;
+      });
+      const center =
+        result.length > 0
+          ? [result[0].latitude, result[0].longitude, 9]
+          : [47.4751336, 13.5968839, 2];
+      return result
+        ? { results: result, total: response.total, center: center }
+        : ([] as any);
     },
-  );
+  });
 }
 
 export function useQueensQuery({
@@ -266,10 +266,9 @@ export function useQueensQuery({
   enabled = true as MaybeRef<boolean>,
   details = false,
 }) {
-  const notification = useNotification();
   const api = useApiFetch();
-  return useQuery(
-    [
+  return useQuery({
+    queryKey: [
       'queen',
       offset,
       limit,
@@ -282,7 +281,7 @@ export function useQueensQuery({
       filters,
       latest,
     ],
-    () => {
+    queryFn: () => {
       const payload = {
         offset: unref(offset),
         limit: unref(limit),
@@ -297,26 +296,21 @@ export function useQueensQuery({
       };
       return api.get('/v1/queen', payload);
     },
-    {
-      enabled: enabled,
-      keepPreviousData: false,
-      select: (response) => {
-        const result = map(response.results, (value) => {
-          value.label = `${value.name} (${dayjs(value.date).format(
-            'YYYY-MM-DD',
-          )})`;
-          if (value.hive_location)
-            value.label += ` [${value.hive_location.hive_name}]`;
-          value.value = value.id;
-          return value;
-        });
-        return result
-          ? { results: result, total: response.total }
-          : ([] as any);
-      },
-      onError: (error: any) => notification.open('negative', error),
+    enabled: enabled,
+    placeholderData: keepPreviousData,
+    select: (response) => {
+      const result = map(response.results, (value) => {
+        value.label = `${value.name} (${dayjs(value.date).format(
+          'YYYY-MM-DD',
+        )})`;
+        if (value.hive_location)
+          value.label += ` [${value.hive_location.hive_name}]`;
+        value.value = value.id;
+        return value;
+      });
+      return result ? { results: result, total: response.total } : ([] as any);
     },
-  );
+  });
 }
 
 export function useQueensStats({
@@ -328,11 +322,10 @@ export function useQueensStats({
   q = '' as MaybeRef<string>,
   enabled = true as MaybeRef<boolean>,
 }) {
-  const notification = useNotification();
   const api = useApiFetch();
-  return useQuery(
-    ['queen_stats', offset, limit, order, direction, q, filters],
-    () => {
+  return useQuery({
+    queryKey: ['queen_stats', offset, limit, order, direction, q, filters],
+    queryFn: () => {
       const payload = {
         offset: unref(offset),
         limit: unref(limit),
@@ -343,33 +336,26 @@ export function useQueensStats({
       };
       return api.get('/v1/queen/stats', payload);
     },
-    {
-      enabled: enabled,
-      keepPreviousData: false,
-      select: (response) => response,
-      onError: (error: any) => notification.open('negative', error),
-    },
-  );
+    enabled: enabled,
+    placeholderData: keepPreviousData,
+    select: (response) => response,
+  });
 }
 
 export function useQueenPedigree({
   id = 0 as MaybeRef<number>,
   enabled = true as MaybeRef<boolean>,
 }) {
-  const notification = useNotification();
   const api = useApiFetch();
-  return useQuery(
-    ['queen_pedigree', id],
-    () => {
+  return useQuery({
+    queryKey: ['queen_pedigree', id],
+    queryFn: () => {
       return api.get(`/v1/queen/pedigree/${unref(id)}`);
     },
-    {
-      enabled: enabled,
-      keepPreviousData: false,
-      select: (response) => response,
-      onError: (error: any) => notification.open('negative', error),
-    },
-  );
+    enabled: enabled,
+    placeholderData: keepPreviousData,
+    select: (response) => response,
+  });
 }
 
 export function useChargeQuery({
@@ -382,11 +368,10 @@ export function useChargeQuery({
   q = '' as MaybeRef<string>,
   enabled = true as MaybeRef<boolean>,
 }) {
-  const notification = useNotification();
   const api = useApiFetch();
-  return useQuery(
-    ['charge', offset, limit, order, direction, deleted, q, filters],
-    () => {
+  return useQuery({
+    queryKey: ['charge', offset, limit, order, direction, deleted, q, filters],
+    queryFn: () => {
       const payload = {
         offset: unref(offset),
         limit: unref(limit),
@@ -398,13 +383,10 @@ export function useChargeQuery({
       };
       return api.get('/v1/charge', payload);
     },
-    {
-      enabled: enabled,
-      keepPreviousData: false,
-      select: (response) => response,
-      onError: (error: any) => notification.open('negative', error),
-    },
-  );
+    enabled: enabled,
+    placeholderData: keepPreviousData,
+    select: (response) => response,
+  });
 }
 
 export function useChargeStockQuery({
@@ -415,11 +397,10 @@ export function useChargeStockQuery({
   q = '' as MaybeRef<string>,
   enabled = true as MaybeRef<boolean>,
 }) {
-  const notification = useNotification();
   const api = useApiFetch();
-  return useQuery(
-    ['chargeStock', offset, limit, order, direction, q],
-    () => {
+  return useQuery({
+    queryKey: ['chargeStock', offset, limit, order, direction, q],
+    queryFn: () => {
       const payload = {
         offset: unref(offset),
         limit: unref(limit),
@@ -429,38 +410,31 @@ export function useChargeStockQuery({
       };
       return api.get('/v1/charge/stock', payload);
     },
-    {
-      enabled: enabled,
-      keepPreviousData: false,
-      select: (response) => response,
-      onError: (error: any) => notification.open('negative', error),
-    },
-  );
+    enabled: enabled,
+    placeholderData: keepPreviousData,
+    select: (response) => response,
+  });
 }
 
 export function useScaleQuery({ enabled = true as MaybeRef<boolean> }) {
-  const notification = useNotification();
   const api = useApiFetch();
-  return useQuery(
-    ['scale'],
-    () => {
+  return useQuery({
+    queryKey: ['scale'],
+    queryFn: () => {
       return api.get('/v1/scale');
     },
-    {
-      enabled: enabled,
-      keepPreviousData: false,
-      select: (response) => {
-        const result = map(response, (value) => {
-          const hive = value.hive ? ` (${value.hive.name})` : '';
-          value.label = value.name + hive;
-          value.value = value.id;
-          return value;
-        });
-        return result ? { results: result } : ([] as any);
-      },
-      onError: (error: any) => notification.open('negative', error),
+    enabled: enabled,
+    placeholderData: keepPreviousData,
+    select: (response) => {
+      const result = map(response, (value) => {
+        const hive = value.hive ? ` (${value.hive.name})` : '';
+        value.label = value.name + hive;
+        value.value = value.id;
+        return value;
+      });
+      return result ? { results: result } : ([] as any);
     },
-  );
+  });
 }
 
 export function useScaleDataQuery({
@@ -472,11 +446,10 @@ export function useScaleDataQuery({
   q = '' as MaybeRef<string>,
   enabled = true as MaybeRef<boolean>,
 }) {
-  const notification = useNotification();
   const api = useApiFetch();
-  return useQuery(
-    ['scale_data', offset, limit, order, direction, q, filters],
-    () => {
+  return useQuery({
+    queryKey: ['scale_data', offset, limit, order, direction, q, filters],
+    queryFn: () => {
       const payload = {
         offset: unref(offset),
         limit: unref(limit),
@@ -487,35 +460,28 @@ export function useScaleDataQuery({
       };
       return api.get('/v1/scale_data', payload);
     },
-    {
-      enabled: enabled,
-      keepPreviousData: false,
-      select: (response) => response,
-      onError: (error: any) => notification.open('negative', error),
-    },
-  );
+    enabled: enabled,
+    placeholderData: keepPreviousData,
+    select: (response) => response,
+  });
 }
 
 export function useHiveQuery({
   id = '0' as MaybeRef<string>,
   enabled = true as MaybeRef<boolean>,
 }) {
-  const notification = useNotification();
   const api = useApiFetch();
-  return useQuery(
-    ['hive', id],
-    () => {
+  return useQuery({
+    queryKey: ['hive', id],
+    queryFn: () => {
       return api.get(`/v1/hive/${unref(id)}`);
     },
-    {
-      enabled: enabled,
-      keepPreviousData: false,
-      select: (response) => {
-        return response;
-      },
-      onError: (error: any) => notification.open('negative', error),
+    enabled: enabled,
+    placeholderData: keepPreviousData,
+    select: (response) => {
+      return response;
     },
-  );
+  });
 }
 
 export function useHiveTaskQuery({
@@ -524,23 +490,19 @@ export function useHiveTaskQuery({
   apiary = true as MaybeRef<boolean>,
   enabled = true as MaybeRef<boolean>,
 }) {
-  const notification = useNotification();
   const api = useApiFetch();
-  return useQuery(
-    ['hive_task', id, year, apiary],
-    () => {
+  return useQuery({
+    queryKey: ['hive_task', id, year, apiary],
+    queryFn: () => {
       const payload = { year: unref(year), apiary: unref(apiary) };
       return api.get(`/v1/hive/task/${unref(id)}`, payload);
     },
-    {
-      enabled: enabled,
-      keepPreviousData: false,
-      select: (response) => {
-        return response;
-      },
-      onError: (error: any) => notification.open('negative', error),
+    enabled: enabled,
+    placeholderData: keepPreviousData,
+    select: (response) => {
+      return response;
     },
-  );
+  });
 }
 
 export function useHivesQuery({
@@ -560,10 +522,9 @@ export function useHivesQuery({
   enabled = true as MaybeRef<boolean>,
   details = false,
 }) {
-  const notification = useNotification();
   const api = useApiFetch();
-  return useQuery(
-    [
+  return useQuery({
+    queryKey: [
       'hive',
       offset,
       limit,
@@ -575,7 +536,7 @@ export function useHivesQuery({
       details,
       filters,
     ],
-    () => {
+    queryFn: () => {
       const payload = {
         offset: unref(offset),
         limit: unref(limit),
@@ -589,24 +550,19 @@ export function useHivesQuery({
       };
       return api.get('/v1/hive', payload);
     },
-    {
-      enabled: enabled,
-      keepPreviousData: false,
-      select: (response) => {
-        const result = map(response.results, (value) => {
-          const apiary = `${value.hive_location?.apiary_name ?? '--'}`;
-          value.label = `${value.name} (${apiary})`;
-          value.value = value.id;
-          value.type = 'hive';
-          return value;
-        });
-        return result
-          ? { results: result, total: response.total }
-          : ([] as any);
-      },
-      onError: (error: any) => notification.open('negative', error),
+    enabled: enabled,
+    placeholderData: keepPreviousData,
+    select: (response) => {
+      const result = map(response.results, (value) => {
+        const apiary = `${value.hive_location?.apiary_name ?? '--'}`;
+        value.label = `${value.name} (${apiary})`;
+        value.value = value.id;
+        value.type = 'hive';
+        return value;
+      });
+      return result ? { results: result, total: response.total } : ([] as any);
     },
-  );
+  });
 }
 
 export function useOptionsQuery(
@@ -618,11 +574,10 @@ export function useOptionsQuery(
     enabled = true as MaybeRef<boolean>,
   },
 ) {
-  const notification = useNotification();
   const api = useApiFetch();
-  return useQuery(
-    ['option', table, order, direction],
-    () => {
+  return useQuery({
+    queryKey: ['option', table, order, direction],
+    queryFn: () => {
       const payload = {
         order: unref(order),
         direction: unref(direction),
@@ -630,33 +585,28 @@ export function useOptionsQuery(
       };
       return api.get(`/v1/option/${unref(table)}`, payload);
     },
-    {
-      enabled: enabled,
-      select: (response) => {
-        const result = map(response, (value) => {
-          value.label = `${value.name}`;
-          if (table === 'charge_types') {
-            if (value.stock || value.unit) {
-              value.label += ' (';
-              if (value.stock) {
-                value.label += `${round(value.stock.sum, 2)} `;
-              }
-              if (value.unit) {
-                value.label += `${value.unit}`;
-              }
-              value.label = value.label.trim();
-              value.label += ')';
+    enabled: enabled,
+    select: (response) => {
+      const result = map(response, (value) => {
+        value.label = `${value.name}`;
+        if (table === 'charge_types') {
+          if (value.stock || value.unit) {
+            value.label += ' (';
+            if (value.stock) {
+              value.label += `${round(value.stock.sum, 2)} `;
             }
+            if (value.unit) {
+              value.label += `${value.unit}`;
+            }
+            value.label = value.label.trim();
+            value.label += ')';
           }
-          return value;
-        });
-        return result ? { results: result } : ([] as any);
-      },
-      onError: (error: any) => {
-        notification.open('negative', error);
-      },
+        }
+        return value;
+      });
+      return result ? { results: result } : ([] as any);
     },
-  );
+  });
 }
 
 export function useRearingDetailsQuery({
@@ -667,11 +617,10 @@ export function useRearingDetailsQuery({
   q = '' as MaybeRef<string>,
   enabled = true as MaybeRef<boolean>,
 }) {
-  const notification = useNotification();
   const api = useApiFetch();
-  return useQuery(
-    ['rearing_details', offset, limit, order, direction, q],
-    () => {
+  return useQuery({
+    queryKey: ['rearing_details', offset, limit, order, direction, q],
+    queryFn: () => {
       const payload = {
         offset: unref(offset),
         limit: unref(limit),
@@ -681,22 +630,17 @@ export function useRearingDetailsQuery({
       };
       return api.get('/v1/rearing_detail', payload);
     },
-    {
-      enabled: enabled,
-      keepPreviousData: false,
-      select: (response) => {
-        const result = map(response.results, (value) => {
-          value.label = `${value.job}`;
-          value.value = value.id;
-          return value;
-        });
-        return result
-          ? { results: result, total: response.total }
-          : ([] as any);
-      },
-      onError: (error: any) => notification.open('negative', error),
+    enabled: enabled,
+    placeholderData: keepPreviousData,
+    select: (response) => {
+      const result = map(response.results, (value) => {
+        value.label = `${value.job}`;
+        value.value = value.id;
+        return value;
+      });
+      return result ? { results: result, total: response.total } : ([] as any);
     },
-  );
+  });
 }
 
 export function useRearingTypesQuery({
@@ -707,11 +651,10 @@ export function useRearingTypesQuery({
   q = '' as MaybeRef<string>,
   enabled = true as MaybeRef<boolean>,
 }) {
-  const notification = useNotification();
   const api = useApiFetch();
-  return useQuery(
-    ['rearing_types', offset, limit, order, direction, q],
-    () => {
+  return useQuery({
+    queryKey: ['rearing_types', offset, limit, order, direction, q],
+    queryFn: () => {
       const payload = {
         offset: unref(offset),
         limit: unref(limit),
@@ -721,45 +664,36 @@ export function useRearingTypesQuery({
       };
       return api.get('/v1/rearing_type', payload);
     },
-    {
-      enabled: enabled,
-      keepPreviousData: false,
-      select: (response) => {
-        const result = map(response.results, (value) => {
-          value.label = value.name;
-          value.value = value.id;
-          return value;
-        });
-        return result
-          ? { results: result, total: response.total }
-          : ([] as any);
-      },
-      onError: (error: any) => notification.open('negative', error),
+    enabled: enabled,
+    placeholderData: keepPreviousData,
+    select: (response) => {
+      const result = map(response.results, (value) => {
+        value.label = value.name;
+        value.value = value.id;
+        return value;
+      });
+      return result ? { results: result, total: response.total } : ([] as any);
     },
-  );
+  });
 }
 
 export function useRearingEventQuery({
   id = 0 as MaybeRef<number>,
   enabled = true as MaybeRef<boolean>,
 }) {
-  const notification = useNotification();
   const api = useApiFetch();
-  return useQuery(
-    ['rearingEvent', id],
-    () => {
+  return useQuery({
+    queryKey: ['rearingEvent', id],
+    queryFn: () => {
       const payload = {
         id: unref(id),
       };
       return api.get('/v1/calendar/rearing', payload);
     },
-    {
-      enabled: enabled,
-      keepPreviousData: false,
-      select: (response) => response,
-      onError: (error: any) => notification.open('negative', error),
-    },
-  );
+    enabled: enabled,
+    placeholderData: keepPreviousData,
+    select: (response) => response,
+  });
 }
 
 export function useRearingsQuery({
@@ -771,11 +705,10 @@ export function useRearingsQuery({
   q = '' as MaybeRef<string>,
   enabled = true as MaybeRef<boolean>,
 }) {
-  const notification = useNotification();
   const api = useApiFetch();
-  return useQuery(
-    ['rearing', offset, limit, order, direction, q, filters],
-    () => {
+  return useQuery({
+    queryKey: ['rearing', offset, limit, order, direction, q, filters],
+    queryFn: () => {
       const payload = {
         offset: unref(offset),
         limit: unref(limit),
@@ -786,13 +719,10 @@ export function useRearingsQuery({
       };
       return api.get('/v1/rearing', payload);
     },
-    {
-      enabled: enabled,
-      keepPreviousData: false,
-      select: (response) => response,
-      onError: (error: any) => notification.open('negative', error),
-    },
-  );
+    enabled: enabled,
+    placeholderData: keepPreviousData,
+    select: (response) => response,
+  });
 }
 
 export function useStatisticTable(
@@ -808,10 +738,9 @@ export function useStatisticTable(
     enabled = true as MaybeRef<boolean>,
   },
 ) {
-  const notification = useNotification();
   const api = useApiFetch();
-  return useQuery(
-    [
+  return useQuery({
+    queryKey: [
       'statisticTable',
       kind,
       offset,
@@ -822,7 +751,7 @@ export function useStatisticTable(
       filters,
       groupByType,
     ],
-    () => {
+    queryFn: () => {
       const payload = {
         offset: unref(offset),
         limit: unref(limit),
@@ -834,103 +763,84 @@ export function useStatisticTable(
       };
       return api.get(`/v1/statistic/${kind}/hive`, payload);
     },
-    {
-      enabled: enabled,
-      keepPreviousData: false,
-      select: (response) => response,
-      onError: (error: any) => notification.open('negative', error),
-    },
-  );
+    enabled: enabled,
+    placeholderData: keepPreviousData,
+    select: (response) => response,
+  });
 }
 
 export function useStatisticYear(
   kind: string,
   { filters = '' as MaybeRef<string>, enabled = true as MaybeRef<boolean> },
 ) {
-  const notification = useNotification();
   const api = useApiFetch();
-  return useQuery(
-    ['statisticYear', kind, filters],
-    () => {
+  return useQuery({
+    queryKey: ['statisticYear', kind, filters],
+    queryFn: () => {
       const payload = {
         filters: unref(filters),
       };
       return api.get(`/v1/statistic/${kind}/year`, payload);
     },
-    {
-      enabled: enabled,
-      keepPreviousData: false,
-      select: (response) => response,
-      onError: (error: any) => notification.open('negative', error),
-    },
-  );
+    enabled: enabled,
+    placeholderData: keepPreviousData,
+    select: (response) => response,
+  });
 }
 
 export function useStatisticApiary(
   kind: string,
   { filters = '' as MaybeRef<string>, enabled = true as MaybeRef<boolean> },
 ) {
-  const notification = useNotification();
   const api = useApiFetch();
-  return useQuery(
-    ['statisticApiary', kind, filters],
-    () => {
+  return useQuery({
+    queryKey: ['statisticApiary', kind, filters],
+    queryFn: () => {
       const payload = {
         filters: unref(filters),
       };
       return api.get(`/v1/statistic/${kind}/apiary`, payload);
     },
-    {
-      enabled: enabled,
-      keepPreviousData: false,
-      select: (response) => response,
-      onError: (error: any) => notification.open('negative', error),
-    },
-  );
+    enabled: enabled,
+    placeholderData: keepPreviousData,
+    select: (response) => response,
+  });
 }
 
 export function useStatisticType(
   kind: string,
   { filters = '' as MaybeRef<string>, enabled = true as MaybeRef<boolean> },
 ) {
-  const notification = useNotification();
   const api = useApiFetch();
-  return useQuery(
-    ['statisticType', kind, filters],
-    () => {
+  return useQuery({
+    queryKey: ['statisticType', kind, filters],
+    queryFn: () => {
       const payload = {
         filters: unref(filters),
       };
       return api.get(`/v1/statistic/${kind}/type`, payload);
     },
-    {
-      enabled: enabled,
-      keepPreviousData: false,
-      select: (response) => response,
-      onError: (error: any) => notification.open('negative', error),
-    },
-  );
+    enabled: enabled,
+    placeholderData: keepPreviousData,
+    select: (response) => response,
+  });
 }
 
 export function useCountsQuery({ enabled = true as MaybeRef<boolean> }) {
-  const notification = useNotification();
   const api = useApiFetch();
-  return useQuery(
-    ['countsQuery'],
-    () => {
+  return useQuery({
+    queryKey: ['countsQuery'],
+    queryFn: () => {
       return api.get('/v1/company/count', '', false);
     },
-    {
-      enabled: enabled,
-      keepPreviousData: false,
-      refetchOnWindowFocus: false,
-      refetchOnMount: true,
-      staleTime: 1000 * 60, // after 60 second
-      refetchInterval: 1000 * 60 * 30, // every 30 minutes
-      select: (response) => response,
-      onError: (error: any) => notification.open('negative', error),
-    },
-  );
+    enabled: enabled,
+    placeholderData: keepPreviousData,
+    refetchOnWindowFocus: false,
+    refetchOnMount: true,
+    staleTime: 1000 * 60, // after 60 second
+    refetchInterval: 1000 * 60 * 30, // every 30 minutes
+    select: (response) => response,
+  });
 }
 
 export function clearCache(q = '') {

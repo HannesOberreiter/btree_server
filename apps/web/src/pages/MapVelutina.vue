@@ -49,10 +49,12 @@
               <l-tile-layer
                 url="https://api.inaturalist.org/v2/heatmap/{z}/{x}/{y}.png?taxon_id=119019"
                 layer-type="overlay"
-                name="iNaturalist"
+                name="Heatmap - iNaturalist"
                 :max-zoom="18"
                 attribution="Heatmap data &copy; <a href='https://www.inaturalist.org/'>iNaturalist</a>"
+                :visible="false"
               ></l-tile-layer>
+              <l-control-layers />
 
               <l-circle-marker
                 v-if="location"
@@ -100,31 +102,37 @@
                   class="leaflet-control-attribution"
                   style="margin-bottom: 24px !important"
                 >
-                  <div>
-                    DataSources:
-                    <a href="https://www.inaturalist.org/home" target="_blank"
-                      >iNaturalist</a
-                    >,
-                    <a
-                      href="https://frelonasiatique.mnhn.fr/visualisateur"
-                      target="_blank"
-                      >PatriNat</a
-                    >,
-                    <a href="https://www.artenfinder.net" target="_blank"
-                      >artenfinder.net</a
-                    >,
-                    <a href="https://wwww.observation.org" target="_blank"
-                      >observation.org</a
-                    >
-                  </div>
-                  <div>
-                    Recent observations: {{ recentCount }} (last 6 months)
-                  </div>
+                  <q-select
+                    v-model="year"
+                    :options="yearOptions"
+                    :dense="true"
+                    :filled-input="true"
+                    :label="$t('year')"
+                  ></q-select>
+                  <div>Observations: {{ recentCount }}</div>
                   <div>
                     Total observations in our database: {{ totalCount }}
                   </div>
                   <div>
-                    <b>Only the recent observations are shown on the map.</b>
+                    DataSources: <br />
+                    <a href="https://www.inaturalist.org/home" target="_blank">
+                      iNaturalist </a
+                    >,
+                    <a
+                      href="https://frelonasiatique.mnhn.fr/visualisateur"
+                      target="_blank"
+                    >
+                      PatriNat </a
+                    >,
+                    <a href="https://www.artenfinder.net" target="_blank">
+                      artenfinder.net </a
+                    >,
+                    <a href="https://wwww.observation.org" target="_blank">
+                      observation.org
+                    </a>
+                    <a href="https://lepus.infofauna.ch/carto/" target="_blank">
+                      infofauna.ch
+                    </a>
                   </div>
                 </div>
               </l-control>
@@ -172,13 +180,14 @@ import {
   LMarker,
   LTileLayer,
   LControl,
+  LControlLayers,
 } from '@vue-leaflet/vue-leaflet';
 import { useApiFetch } from '~/composables/useApi';
 import MapButtons from '~/components/MapButtons.vue';
-import { computed, onBeforeUnmount, ref } from 'vue';
+import { computed, onBeforeUnmount, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
-const { locale } = useI18n();
+const { locale, t } = useI18n();
 
 const identifyDocument = computed(() => {
   if (locale.value === 'de') {
@@ -196,7 +205,28 @@ const api = useApiFetch();
 const { isLoading, data: apiaries } = useApiariesQuery({ modus: null });
 const updateTimestamp = ref(Date()); // helper to update layer
 
+const year = ref({
+  value: '',
+  label: t('velutinaRecent'),
+});
+const curYear = new Date().getFullYear();
+const yearOptions = [
+  {
+    value: '',
+    label: t('velutinaRecent'),
+  },
+  { value: curYear, label: curYear },
+  { value: curYear - 1, label: curYear - 1 },
+  { value: curYear - 2, label: curYear - 2 },
+  { value: curYear - 3, label: curYear - 3 },
+  { value: curYear - 4, label: curYear - 4 },
+];
+
 const notification = useNotification();
+
+watch(year, () => {
+  onMapReady();
+});
 
 const cluster = (L as any).markerClusterGroup({
   chunkedLoading: true,
@@ -219,10 +249,16 @@ api.get('/v1/public/velutina/observations/stats').then((response) => {
 });
 
 const onMapReady = () => {
+  cluster.clearLayers();
   map = mapRef.value.leafletObject;
   map.doubleClickZoom.disable();
   map.scrollWheelZoom.enable();
-  api.get('/v1/public/velutina/observations/recent').then((response) => {
+  let url = '/v1/public/velutina/observations/recent';
+  if (year.value.value) {
+    url = '/v1/public/velutina/observations/year/' + year.value.value;
+  }
+  api.get(url).then((response) => {
+    map.removeLayer(cluster);
     const data = response.map((item: any) => {
       return {
         ...item,

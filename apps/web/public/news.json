@@ -1,5 +1,21 @@
 [
   {
+    "version": "6.3.8",
+    "date": "2023-12-18",
+    "news": [
+      "BUGFIX changes on type and source for hives were not saved correctly, thx sepp",
+      "BUGFIX dropbox loading state was not stopped in some cases",
+      "BUGFIX on queen edit the connection to the hive was lost",
+      "CHANGE updated urls to btree.at main page for english language",
+      "IMPROVEMENT added infoFauna.ch as vespa velutina source (it lags behind a bit as the data is from GBIF)",
+      "IMPROVEMENT on the velutina map you can now change years to view older data",
+      "IMPROVEMENT ping timer is now lower if status is offline, this should lead to quicker recovery if the internet connection is back",
+      "IMPROVEMENT remove session logout if no internet connection is present",
+      "IMPROVEMENT ICal export now has fewer dependencies",
+      "CHORES upgrade libraries [SERVER, CLIENT]"
+    ]
+  },
+  {
     "version": "6.3.7",
     "date": "2023-11-10",
     "news": [

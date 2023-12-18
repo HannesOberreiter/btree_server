@@ -75,8 +75,8 @@ const mailTo = computed(() => {
 });
 
 const linkTo = computed(() => {
-  return `https://www.btree.at/${
-    storeUser.getLanguage === 'de' ? 'de' : 'en'
+  return `https://www.btree.at${
+    storeUser.getLanguage === 'de' ? '/de' : ''
   }/doc-faqs/`;
 });
 
