@@ -227,9 +227,6 @@ const isEdit = computed(() => {
 
 const isCopy = computed(() => {
   if (copy.value) return true;
-  if (ids.value) {
-    if (ids.value.length === 1) return true;
-  }
   return false;
 });
 
