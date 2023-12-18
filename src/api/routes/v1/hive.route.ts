@@ -14,6 +14,8 @@ const hiveSchema = z.object({
   modus: z.boolean().optional(),
   modus_date: z.string().optional(),
   deleted: z.boolean().optional(),
+  source_id: z.number().int().optional(),
+  type_id: z.number().int().optional(),
 });
 
 export default function routes(
