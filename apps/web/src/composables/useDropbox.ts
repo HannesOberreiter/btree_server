@@ -48,6 +48,7 @@ export const useServiceDropbox = () => {
       LoadingBar.stop();
       return res;
     } catch (e: any) {
+      state.isLoading = false;
       if (isRetry) {
         return false;
       }
