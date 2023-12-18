@@ -6,6 +6,7 @@ import AuthController from '../../controllers/auth.controller.js';
 import { Guard } from '../../hooks/guard.hook.js';
 import { ROLES } from '../../../config/constants.config.js';
 import { GoogleAuth } from '../../../services/federated.service.js';
+import RootController from '../../controllers/root.controller.js';
 
 export default function routes(
   instance: FastifyInstance,
@@ -124,6 +125,12 @@ export default function routes(
       },
     },
     AuthController.google,
+  );
+
+  server.get(
+    '/ping',
+    { preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]) },
+    RootController.status,
   );
 
   done();
