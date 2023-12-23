@@ -6,7 +6,7 @@ import {
   reminderDeletion,
   reminderVIS,
 } from '../api/utils/cron.util.js';
-import { cronjobTimer } from '../config/environment.config.js';
+import { cronjobTimer, isChild } from '../config/environment.config.js';
 import { Logger } from './logger.service.js';
 import { fetchObservations } from '../api/utils/velutina.util.js';
 
@@ -29,6 +29,13 @@ export class Cron {
   }
 
   async start() {
+    if (isChild) {
+      this.logger.log('debug', 'CronJob is not running in child mode', {
+        label: 'CronJob',
+      });
+      return;
+    }
+
     this.logger.log(
       'debug',
       `Test Cron-Job is starting with rule: ${cronjobTimer}`,
@@ -69,6 +76,13 @@ export class Cron {
   }
 
   async gracefulShutdown(): Promise<void> {
+    if (isChild) {
+      this.logger.log('debug', 'CronJob is not running in child mode', {
+        label: 'CronJob',
+      });
+      return;
+    }
+
     this.logger.log('debug', 'CronJob is shutting down', {
       label: 'CronJob',
     });
