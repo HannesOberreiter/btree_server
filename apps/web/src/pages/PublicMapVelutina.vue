@@ -12,59 +12,14 @@
       loading-control="true"
       @ready="onMapReady"
     >
-      <l-tile-layer
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        layer-type="base"
-        name="OpenStreetMap"
-        attribution="Map data &copy; <a href='http://openstreetmap.org'>OpenStreetMap</a> contributors, <a href='http://creativecommons.org/licenses/by-sa/2.0/''>CC-BY-SA</a>"
-        :max-zoom="18"
-      ></l-tile-layer>
-      <l-tile-layer
-        url="https://api.inaturalist.org/v2/heatmap/{z}/{x}/{y}.png?taxon_id=119019"
-        layer-type="overlay"
-        name="Heatmap - iNaturalist"
-        :max-zoom="18"
-        attribution="Heatmap data &copy; <a href='https://www.inaturalist.org/'>iNaturalist</a>"
-        :visible="false"
-      ></l-tile-layer>
-      <l-control-layers />
-      <l-control position="bottomleft">
-        <div
-          class="leaflet-control-attribution"
-          style="margin-bottom: 24px !important"
-        >
-          <div>
-            <b
-              >Service by
-              <a href="https://www.btree.at" target="_blank">b.tree</a></b
-            >
-          </div>
-
-          <div>Recent observations: {{ recentCount }} (last 6 months)</div>
-          <div>Total observations in our database: {{ totalCount }}</div>
-          <div><b>Only the recent observations are shown on the map.</b></div>
-          <div>
-            DataSources:<br />
-            <a href="https://www.inaturalist.org/home" target="_blank"
-              >iNaturalist</a
-            >,
-            <a
-              href="https://frelonasiatique.mnhn.fr/visualisateur"
-              target="_blank"
-              >PatriNat</a
-            >,
-            <a href="https://www.artenfinder.net" target="_blank"
-              >artenfinder.net</a
-            >,
-            <a href="https://wwww.observation.org" target="_blank"
-              >observation.org</a
-            >
-            <a href="https://lepus.infofauna.ch/carto/" target="_blank">
-              infofauna.ch
-            </a>
-          </div>
+      <velutina-map-layers :recent-count="recentCount">
+        <div>
+          <b>
+            Service by
+            <a href="https://www.btree.at" target="_blank">b.tree</a>
+          </b>
         </div>
-      </l-control>
+      </velutina-map-layers>
     </l-map>
   </div>
 </template>
@@ -88,14 +43,10 @@ import 'leaflet/dist/leaflet.css';
 import 'leaflet.markercluster/dist/MarkerCluster.css';
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 import 'leaflet.markercluster/dist/leaflet.markercluster.js';
-import {
-  LMap,
-  LTileLayer,
-  LControl,
-  LControlLayers,
-} from '@vue-leaflet/vue-leaflet';
+import { LMap } from '@vue-leaflet/vue-leaflet';
 import { useApiFetch } from '~/composables/useApi';
 import { onBeforeUnmount, ref, onMounted } from 'vue';
+import VelutinaMapLayers from '~/components/VelutinaMapLayers.vue';
 
 const api = useApiFetch();
 const cluster = (L as any).markerClusterGroup({
@@ -106,11 +57,6 @@ const mapRef = ref(null as any);
 const iframeRef = ref<HTMLIFrameElement | null>(null);
 let map = {} as any;
 const recentCount = ref(0);
-const totalCount = ref(0);
-
-api.get('/v1/public/velutina/observations/stats').then((response) => {
-  totalCount.value = response.count;
-});
 
 const onMapReady = () => {
   map = mapRef.value.leafletObject;

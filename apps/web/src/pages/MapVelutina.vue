@@ -38,23 +38,18 @@
               >
               </map-buttons>
 
-              <l-tile-layer
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                layer-type="base"
-                name="OpenStreetMap"
-                attribution="Map data &copy; <a href='http://openstreetmap.org'>OpenStreetMap</a> contributors, <a href='http://creativecommons.org/licenses/by-sa/2.0/''>CC-BY-SA</a>"
-                :max-zoom="18"
-              ></l-tile-layer>
-
-              <l-tile-layer
-                url="https://api.inaturalist.org/v2/heatmap/{z}/{x}/{y}.png?taxon_id=119019"
-                layer-type="overlay"
-                name="Heatmap - iNaturalist"
-                :max-zoom="18"
-                attribution="Heatmap data &copy; <a href='https://www.inaturalist.org/'>iNaturalist</a>"
-                :visible="false"
-              ></l-tile-layer>
-              <l-control-layers />
+              <velutina-map-layers :recent-count="recentCount">
+                <q-select
+                  v-model="year"
+                  :options="yearOptions"
+                  :dense="true"
+                  :filled-input="true"
+                  :label="$t('year')"
+                  color="dark"
+                  :dark="false"
+                  popup-content-class="text-dark"
+                ></q-select>
+              </velutina-map-layers>
 
               <l-circle-marker
                 v-if="location"
@@ -97,45 +92,6 @@
                   </l-marker>
                 </template>
               </l-feature-group>
-              <l-control position="bottomleft">
-                <div
-                  class="leaflet-control-attribution"
-                  style="margin-bottom: 24px !important"
-                >
-                  <q-select
-                    v-model="year"
-                    :options="yearOptions"
-                    :dense="true"
-                    :filled-input="true"
-                    :label="$t('year')"
-                  ></q-select>
-                  <div>Observations: {{ recentCount }}</div>
-                  <div>
-                    Total observations in our database: {{ totalCount }}
-                  </div>
-                  <div>
-                    DataSources: <br />
-                    <a href="https://www.inaturalist.org/home" target="_blank">
-                      iNaturalist </a
-                    >,
-                    <a
-                      href="https://frelonasiatique.mnhn.fr/visualisateur"
-                      target="_blank"
-                    >
-                      PatriNat </a
-                    >,
-                    <a href="https://www.artenfinder.net" target="_blank">
-                      artenfinder.net </a
-                    >,
-                    <a href="https://wwww.observation.org" target="_blank">
-                      observation.org
-                    </a>
-                    <a href="https://lepus.infofauna.ch/carto/" target="_blank">
-                      infofauna.ch
-                    </a>
-                  </div>
-                </div>
-              </l-control>
             </l-map>
           </div>
         </q-tab-panel>
@@ -178,14 +134,12 @@ import {
   LCircleMarker,
   LFeatureGroup,
   LMarker,
-  LTileLayer,
-  LControl,
-  LControlLayers,
 } from '@vue-leaflet/vue-leaflet';
 import { useApiFetch } from '~/composables/useApi';
 import MapButtons from '~/components/MapButtons.vue';
 import { computed, onBeforeUnmount, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
+import VelutinaMapLayers from '~/components/VelutinaMapLayers.vue';
 
 const { locale, t } = useI18n();
 
@@ -242,11 +196,6 @@ const showInactive = ref(false);
 let map = {} as any;
 
 const recentCount = ref(0);
-const totalCount = ref(0);
-
-api.get('/v1/public/velutina/observations/stats').then((response) => {
-  totalCount.value = response.count;
-});
 
 const onMapReady = () => {
   cluster.clearLayers();
