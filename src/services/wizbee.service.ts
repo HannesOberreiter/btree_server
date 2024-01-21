@@ -262,6 +262,7 @@ export class WizBee {
 
   /**
    * @description exposed entry point called by controller
+   * @deprecated we use the stream version now
    */
   async search(question: string, lang: 'en') {
     let tokens = 0;
@@ -284,19 +285,79 @@ export class WizBee {
     if (results.length === 0) return undefined;
 
     const { contextText, refs } = this.concatDocuments(results);
-    // const answer = await this.createAnswer(question, contextText);
 
     const answer = await this.createAnswer(question, contextText, lang);
-    //const iterator = this.readResponse(answer);
 
     tokens += answer?.usage?.total_tokens ?? 0;
     const answerText = answer?.choices[0].message?.content ?? undefined;
     return { text: answerText, refs, tokens };
   }
 
-  async *readResponse(answer: any) {
-    for await (const chunk of answer) {
-      yield JSON.stringify(chunk);
+  /**
+   * @description exposed entry point called by controller
+   */
+  async searchStream(question: string, lang: 'en') {
+    let tokens = 0;
+    const userQuestion = question.replace(/\n/g, ' ');
+    let input = userQuestion;
+    if (lang !== 'en') {
+      const translation = await this.translate(input);
+      if (translation) {
+        tokens += translation.usage?.total_tokens ?? 0;
+        input = translation.choices[0].message.content ?? input;
+      }
     }
+
+    const { embedding, tokens: embeddingTokens } =
+      await this.createEmbedding(input);
+    tokens += embeddingTokens;
+
+    const results = await this.searchKNN(embedding, 4, 0.21);
+
+    if (!results) return undefined;
+    if (results.length === 0) return undefined;
+
+    const { contextText, refs } = this.concatDocuments(results);
+    // const answer = await this.createAnswer(question, contextText);
+
+    const messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [
+      {
+        role: 'system',
+        content:
+          'You are a friendly bot assistant, answering beekeeping related question or questions about the usage of the b.tree beekeeping software by using only given context. The context could be from multiple references or from the official b.tree documentation and each is separated by ###. If you cannot give a good answer with given context, please type "Sorry, we cannot give a good answer to that question."',
+      },
+      {
+        role: 'system',
+        content: `Context: ${contextText}`,
+      },
+      {
+        role: 'user',
+        content: `${userQuestion}`,
+      },
+    ];
+
+    if (lang !== 'en') {
+      messages.push({
+        role: 'system',
+        content: `User question is in language ${lang}, respond in the same language.`,
+      });
+    }
+
+    tokens += tokens + encode(JSON.stringify(messages)).length;
+
+    const stream = this.openAI.chat.completions.create({
+      model: WizBee.completionModel,
+      messages,
+      max_tokens: 500,
+      temperature: 0.1,
+      user: 'WizBee_' + env,
+      stream: true,
+    });
+
+    return {
+      stream: await stream,
+      refs,
+      tokens,
+    };
   }
 }
