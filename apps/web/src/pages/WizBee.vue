@@ -31,6 +31,7 @@ const lang = ref(currentLanguage);
 const data = ref(null);
 const error = ref(null);
 const isFetching = ref(false);
+let breakStream = false;
 const result = computed(() => {
   if (!data.value) return '';
   return data.value.text;
@@ -44,6 +45,12 @@ function onExampleQuestion(example: string) {
 async function onQuestion() {
   data.value = undefined;
   error.value = undefined;
+  if (isFetching.value) {
+    breakStream = true;
+    isFetching.value = false;
+    return;
+  }
+
   isFetching.value = true;
   const stream = api.stream('/v1/service/wizbee/ask/stream', {
     question: question.value,
@@ -56,8 +63,13 @@ async function onQuestion() {
     let chunks = '';
 
     reader.read().then(function processStream({ done, value }): any {
-      isFetching.value = false;
+      if (breakStream) {
+        breakStream = false;
+        reader.cancel();
+        return;
+      }
       if (done) {
+        isFetching.value = false;
         return;
       }
       const decoded = new TextDecoder('utf-8').decode(value);
@@ -104,6 +116,7 @@ async function onQuestion() {
     });
   } catch (e) {
     isFetching.value = false;
+    breakStream = false;
     error.value = t('error.unknown');
   }
 }
