@@ -1,0 +1,85 @@
+<template>
+  <l-tile-layer
+    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+    layer-type="base"
+    name="OpenStreetMap"
+    attribution="Map data &copy; <a href='http://openstreetmap.org'>OpenStreetMap</a> contributors, <a href='http://creativecommons.org/licenses/by-sa/2.0/''>CC-BY-SA</a>"
+    :max-zoom="18"
+  ></l-tile-layer>
+  <l-tile-layer
+    url="https://api.inaturalist.org/v2/heatmap/{z}/{x}/{y}.png?taxon_id=119019"
+    layer-type="overlay"
+    name="Heatmap - iNaturalist"
+    :max-zoom="18"
+    attribution="Heatmap data &copy; <a href='https://www.inaturalist.org/'>iNaturalist</a>"
+    :visible="false"
+  ></l-tile-layer>
+  <l-control-layers />
+
+  <l-control position="bottomleft">
+    <div
+      class="leaflet-control-attribution"
+      style="margin-bottom: 24px !important"
+    >
+      <slot></slot>
+
+      <div>Recent observations: {{ recentCount }} (last 6 months)</div>
+      <div>Total observations in our database: {{ totalCount }}</div>
+      <div><b>Only the recent observations are shown on the map.</b></div>
+      <div>DataSources: <a href="#" @click="onShowSources">Show</a></div>
+    </div>
+  </l-control>
+</template>
+
+<script setup lang="ts">
+import { ref, toRefs } from 'vue';
+import { LTileLayer, LControlLayers, LControl } from '@vue-leaflet/vue-leaflet';
+import { useApiFetch } from '~/composables/useApi';
+import { useQuasar } from 'quasar';
+
+const api = useApiFetch();
+const $q = useQuasar();
+
+const props = defineProps({
+  recentCount: {
+    type: Number,
+    required: true,
+  },
+});
+
+const { recentCount } = toRefs(props);
+const totalCount = ref(0);
+
+api.get('/v1/public/velutina/observations/stats').then((response) => {
+  totalCount.value = response.count;
+});
+
+function onShowSources() {
+  const sources = `
+  <ul>
+    <li>
+      <a href="https://www.inaturalist.org/home" target="_blank">iNaturalist</a>
+    </li>
+    <li>
+      <a href="https://frelonasiatique.mnhn.fr/visualisateur" target="_blank">PatriNat</a>
+      </li>
+      <li>
+        <a href="https://www.artenfinder.net" target="_blank">artenfinder.net</a>
+      </li>
+      <li>
+        <a href="https://wwww.observation.org" target="_blank">observation.org</a>
+      </li>
+      <li>
+        <a href="https://lepus.infofauna.ch/carto/" target="_blank">infofauna.ch</a>
+      </li>
+  </ol>
+  `;
+
+  $q.dialog({
+    title: 'Data Sources',
+    message: sources,
+    html: true,
+    ok: 'Close',
+  });
+}
+</script>

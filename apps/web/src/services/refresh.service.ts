@@ -3,6 +3,8 @@ import { useFieldsettingStore } from '~/stores/fieldsetting';
 import { useApiFetch } from '~/composables/useApi';
 
 class RefreshService {
+  private isFetching = false;
+
   async refresh(user = true) {
     const api = useApiFetch();
     try {
@@ -21,8 +23,14 @@ class RefreshService {
     });
   }
   fieldsetting(api: any) {
+    if (this.isFetching) {
+      console.debug('Already fetching field settings, skipping...');
+      return;
+    }
+    this.isFetching = true;
     console.log('Refreshing Field Settings from DB...');
     return api.get('/v1/fieldsetting/', '').then((response: any) => {
+      this.isFetching = false;
       useFieldsettingStore().refresh(response);
     });
   }

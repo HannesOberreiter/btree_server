@@ -45,39 +45,67 @@ async function onQuestion() {
   data.value = undefined;
   error.value = undefined;
   isFetching.value = true;
-  api
-    .post('/v1/service/wizbee/ask', {
-      question: question.value,
-      lang: lang.value.value,
-    })
-    .then((res) => {
-      // if no choice is returned by chatGPT
-      if (res?.text === undefined) {
-        data.value = undefined;
-        error.value = t('error.unknown');
-        return;
-      }
-      data.value = res;
-      error.value = undefined;
-    })
-    .catch((err) => {
-      console.error(err);
-      data.value = undefined;
-      if (err?.statusCode === 404) {
-        error.value = t('error.noAnswer');
-        return;
-      } else if (err?.statusCode === 429) {
-        error.value = t('error.tokenLimit');
-        return;
-      } else if (err?.statusCode === 402) {
-        error.value = t('error.premium');
-        return;
-      }
-      error.value = t('error.unknown');
-    })
-    .finally(() => {
+  const stream = api.stream('/v1/service/wizbee/ask/stream', {
+    question: question.value,
+    lang: lang.value.value,
+  });
+
+  try {
+    const responseStream = (await stream).body;
+    const reader = responseStream.getReader();
+    let chunks = '';
+
+    reader.read().then(function processStream({ done, value }): any {
       isFetching.value = false;
+      if (done) {
+        return;
+      }
+      const decoded = new TextDecoder('utf-8').decode(value);
+      const responses = decoded.split(/\}\s*\{/);
+      let lastResponse = {} as any;
+      for (let i = 0; i < responses.length; i++) {
+        let response = responses[i];
+        if (i !== 0) {
+          response = '{' + response;
+        }
+        if (i !== responses.length - 1) {
+          response = response + '}';
+        }
+        const json = JSON.parse(response);
+
+        if (json?.statusCode === 404) {
+          error.value = t('error.noAnswer');
+          return;
+        } else if (json?.statusCode === 429) {
+          error.value = t('error.tokenLimit');
+          return;
+        } else if (json?.statusCode === 402) {
+          error.value = t('error.premium');
+          return;
+        }
+
+        if (json?.text === undefined) {
+          data.value = undefined;
+          error.value = t('error.unknown');
+          return;
+        }
+
+        chunks += json.text;
+        lastResponse = json;
+      }
+
+      data.value = {
+        text: chunks,
+        savedTokens: lastResponse.savedTokens,
+        tokens: lastResponse.tokens,
+        refs: lastResponse.refs,
+      };
+      return reader.read().then(processStream);
     });
+  } catch (e) {
+    isFetching.value = false;
+    error.value = t('error.unknown');
+  }
 }
 </script>
 
@@ -85,12 +113,14 @@ async function onQuestion() {
   <div class="row justify-center q-mx-md">
     <div class="q-mb-md container-size">
       <div class="row justify-center vertical-middle q-mb-xs items-center">
+        <!-- on dark mode inverse the logo color -->
         <img
           src="
       /wizbee/favicon-96x96.png"
           alt="WizBee Logo"
           height="50"
           class="q-mr-sm"
+          :class="{ 'invert-colors': $q.dark.isActive }"
         />
         <div class="text-h5">{{ $t('ask') }} WizBee</div>
       </div>
@@ -199,5 +229,9 @@ async function onQuestion() {
 .container-size {
   min-width: 80%;
   max-width: 600px;
+}
+
+.invert-colors {
+  filter: grayscale(1) invert(1);
 }
 </style>
