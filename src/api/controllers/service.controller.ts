@@ -254,6 +254,10 @@ export default class ServiceController {
           reply.raw.setHeader('Access-Control-Allow-Origin', origin);
         }
 
+        if (!reply.raw.getHeader('Access-Control-Allow-Credentials')) {
+          reply.raw.setHeader('Access-Control-Allow-Credentials', 'true');
+        }
+
         reply.raw.write(
           JSON.stringify({
             text: replyChunk?.choices[0]?.delta?.content || '',
