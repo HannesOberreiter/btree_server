@@ -69,6 +69,7 @@
   },
   "devDependencies": {
     "@types/archiver": "^6.0.2",
+    "@types/http-errors": "^2.0.4",
     "@types/lodash": "^4.14.191",
     "@types/node": "^20.3.1",
     "@types/node-schedule": "^2.1.0",
