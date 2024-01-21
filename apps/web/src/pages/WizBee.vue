@@ -113,12 +113,14 @@ async function onQuestion() {
   <div class="row justify-center q-mx-md">
     <div class="q-mb-md container-size">
       <div class="row justify-center vertical-middle q-mb-xs items-center">
+        <!-- on dark mode inverse the logo color -->
         <img
           src="
       /wizbee/favicon-96x96.png"
           alt="WizBee Logo"
           height="50"
           class="q-mr-sm"
+          :class="{ 'invert-colors': $q.dark.isActive }"
         />
         <div class="text-h5">{{ $t('ask') }} WizBee</div>
       </div>
@@ -227,5 +229,9 @@ async function onQuestion() {
 .container-size {
   min-width: 80%;
   max-width: 600px;
+}
+
+.invert-colors {
+  filter: grayscale(1) invert(1);
 }
 </style>
