@@ -231,12 +231,8 @@ export default class ServiceController {
       throw httpErrors.RequestTimeout('WizBee timeout');
     }
 
-    if (env === ENVIRONMENT.development) {
-      reply.header('Access-Control-Allow-Origin', '*');
-    } else {
-      reply.header('Access-Control-Allow-Origin', origin);
-      reply.header('Access-Control-Allow-Credentials', 'true');
-    }
+    reply.header('Access-Control-Allow-Origin', '*');
+    reply.header('Access-Control-Allow-Credentials', 'true');
 
     try {
       for await (const chunk of stream.toReadableStream()) {
