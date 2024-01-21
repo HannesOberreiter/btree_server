@@ -241,7 +241,17 @@ export default class ServiceController {
         const replyChunk = JSON.parse(str) as Chunk;
 
         if (!reply.raw.getHeader('Access-Control-Allow-Origin')) {
-          reply.raw.setHeader('Access-Control-Allow-Origin', '*');
+          if (!req.headers.origin) {
+            if (req.headers.referer) {
+              const url = new URL(req.headers.referer);
+              req.headers.origin = url.origin;
+            } else if (req.headers.host) {
+              req.headers.origin = req.headers.host;
+            }
+          }
+
+          const origin = req.headers.origin;
+          reply.raw.setHeader('Access-Control-Allow-Origin', origin);
         }
 
         reply.raw.write(
