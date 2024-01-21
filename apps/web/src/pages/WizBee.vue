@@ -28,9 +28,16 @@ const currentLanguage = ref(LANGUAGES.find((l) => l.value === locale.value));
 
 const question = ref('');
 const lang = ref(currentLanguage);
-const data = ref(null);
-const error = ref(null);
+const data = ref({
+  text: '',
+  savedTokens: 0,
+  tokens: 0,
+  refs: [] as any[],
+});
+const error = ref<string | undefined>(undefined);
 const isFetching = ref(false);
+const isStreaming = ref(false);
+let breakStream = false;
 const result = computed(() => {
   if (!data.value) return '';
   return data.value.text;
@@ -42,9 +49,16 @@ function onExampleQuestion(example: string) {
 }
 
 async function onQuestion() {
-  data.value = undefined;
   error.value = undefined;
+  if (isStreaming.value) {
+    breakStream = true;
+    isFetching.value = false;
+    isStreaming.value = false;
+    return;
+  }
+
   isFetching.value = true;
+  data.value.text = '....';
   const stream = api.stream('/v1/service/wizbee/ask/stream', {
     question: question.value,
     lang: lang.value.value,
@@ -52,12 +66,20 @@ async function onQuestion() {
 
   try {
     const responseStream = (await stream).body;
+    isStreaming.value = true;
+    isFetching.value = false;
     const reader = responseStream.getReader();
     let chunks = '';
 
     reader.read().then(function processStream({ done, value }): any {
-      isFetching.value = false;
+      if (breakStream) {
+        breakStream = false;
+        isStreaming.value = false;
+        reader.cancel();
+        return;
+      }
       if (done) {
+        isStreaming.value = false;
         return;
       }
       const decoded = new TextDecoder('utf-8').decode(value);
@@ -104,6 +126,8 @@ async function onQuestion() {
     });
   } catch (e) {
     isFetching.value = false;
+    isStreaming.value = false;
+    breakStream = false;
     error.value = t('error.unknown');
   }
 }
@@ -141,6 +165,7 @@ async function onQuestion() {
                 color="positive"
                 square
                 size="md"
+                :loading="isFetching"
                 @click="onQuestion()"
               />
               <q-select
@@ -159,12 +184,15 @@ async function onQuestion() {
     </div>
   </div>
   <div class="row justify-center">
-    <q-card v-if="isFetching" flat class="q-ma-sm container-size">
-      <q-spinner-dots size="4em" />
-    </q-card>
-
-    <q-card v-if="data" class="q-ma-sm container-size">
-      <q-card-section class="text-bold">
+    <q-card class="q-ma-sm container-size">
+      <q-card-section v-if="error" class="text-bold bg-red-8 text-white">
+        <q-icon name="fas fa-bug" size="xl" class="q-mr-md"></q-icon>
+        {{ $t('error.unknown') }}
+        <div class="text-weight-regular q-mt-sm">
+          {{ error }}
+        </div>
+      </q-card-section>
+      <q-card-section v-else class="text-bold">
         <q-input
           v-model="result"
           :label="$t('answer')"
@@ -191,17 +219,7 @@ async function onQuestion() {
       </q-card-section>
     </q-card>
 
-    <q-card v-if="error" class="bg-red-8 text-white q-ma-sm container-size">
-      <q-card-section class="text-bold">
-        <q-icon name="fas fa-bug" size="xl" class="q-mr-md"></q-icon>
-        {{ $t('error.unknown') }}
-      </q-card-section>
-      <q-card-section class="">
-        {{ error }}
-      </q-card-section>
-    </q-card>
-
-    <div v-if="!isFetching" class="q-mb-md container-size">
+    <div class="q-mb-md container-size">
       <div class="q-gutter-sm">
         <q-btn
           v-for="example in exampleQuestions"
@@ -209,6 +227,7 @@ async function onQuestion() {
           no-caps
           outline
           size="sm"
+          :loading="isFetching"
           @click="onExampleQuestion(example)"
         >
           {{ example }}
