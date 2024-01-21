@@ -13,6 +13,7 @@ import { env, openAI } from '../../config/environment.config.js';
 import { FastifyRequest, FastifyReply } from 'fastify';
 import httpErrors from 'http-errors';
 import { ENVIRONMENT } from '../../config/constants.config.js';
+import { Stream } from 'stream';
 
 type Chunk = {
   id: string;
@@ -231,9 +232,6 @@ export default class ServiceController {
       throw httpErrors.RequestTimeout('WizBee timeout');
     }
 
-    reply.header('Access-Control-Allow-Origin', '*');
-    reply.header('Access-Control-Allow-Credentials', 'true');
-
     try {
       for await (const chunk of stream.toReadableStream()) {
         if (controller.signal.aborted) {
@@ -241,6 +239,11 @@ export default class ServiceController {
         }
         const str = new TextDecoder().decode(chunk);
         const replyChunk = JSON.parse(str) as Chunk;
+
+        if (!reply.raw.getHeader('Access-Control-Allow-Origin')) {
+          reply.raw.setHeader('Access-Control-Allow-Origin', '*');
+        }
+
         reply.raw.write(
           JSON.stringify({
             text: replyChunk?.choices[0]?.delta?.content || '',
