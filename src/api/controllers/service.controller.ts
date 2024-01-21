@@ -9,9 +9,10 @@ import { createOrder as stripeCreateOrder } from '../utils/stripe.util.js';
 import { createInvoice } from '../utils/foxyoffice.util.js';
 import { WizBee } from '../../services/wizbee.service.js';
 import { WizBeeToken } from '../models/wizbee_token.model.js';
-import { openAI } from '../../config/environment.config.js';
+import { env, openAI } from '../../config/environment.config.js';
 import { FastifyRequest, FastifyReply } from 'fastify';
 import httpErrors from 'http-errors';
+import { ENVIRONMENT } from '../../config/constants.config.js';
 
 type Chunk = {
   id: string;
@@ -228,6 +229,13 @@ export default class ServiceController {
 
     if (controller.signal.aborted) {
       throw httpErrors.RequestTimeout('WizBee timeout');
+    }
+
+    if (env === ENVIRONMENT.development) {
+      reply.header('Access-Control-Allow-Origin', '*');
+    } else {
+      reply.header('Access-Control-Allow-Origin', origin);
+      reply.header('Access-Control-Allow-Credentials', 'true');
     }
 
     try {
