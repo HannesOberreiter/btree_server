@@ -1,9 +1,10 @@
 [
   {
     "version": "6.3.9",
-    "date": "2023-XX-XX",
+    "date": "2024-01-22",
     "news": [
       "FEATURE WizBee is now streaming answers, which should lead to quicker responses",
+      "BUGFIX statistic graphs did not load correctly",
       "BUGFIX disable double fetching of user settings",
       "BUGFIX added a dark mode grayscale image for WizBee",
       "IMPROVEMENT velutina map code and style",
