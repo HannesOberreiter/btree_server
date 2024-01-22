@@ -28,9 +28,16 @@ const currentLanguage = ref(LANGUAGES.find((l) => l.value === locale.value));
 
 const question = ref('');
 const lang = ref(currentLanguage);
-const data = ref(null);
-const error = ref(null);
+const data = ref({
+  text: '',
+  savedTokens: 0,
+  tokens: 0,
+  refs: [] as any[],
+});
+const error = ref<string | undefined>(undefined);
 const isFetching = ref(false);
+const isStreaming = ref(false);
+let breakStream = false;
 const result = computed(() => {
   if (!data.value) return '';
   return data.value.text;
@@ -42,42 +49,87 @@ function onExampleQuestion(example: string) {
 }
 
 async function onQuestion() {
-  data.value = undefined;
   error.value = undefined;
+  if (isStreaming.value) {
+    breakStream = true;
+    isFetching.value = false;
+    isStreaming.value = false;
+    return;
+  }
+
   isFetching.value = true;
-  api
-    .post('/v1/service/wizbee/ask', {
-      question: question.value,
-      lang: lang.value.value,
-    })
-    .then((res) => {
-      // if no choice is returned by chatGPT
-      if (res?.text === undefined) {
-        data.value = undefined;
-        error.value = t('error.unknown');
+  data.value.text = '....';
+  const stream = api.stream('/v1/service/wizbee/ask/stream', {
+    question: question.value,
+    lang: lang.value.value,
+  });
+
+  try {
+    const responseStream = (await stream).body;
+    isStreaming.value = true;
+    isFetching.value = false;
+    const reader = responseStream.getReader();
+    let chunks = '';
+
+    reader.read().then(function processStream({ done, value }): any {
+      if (breakStream) {
+        breakStream = false;
+        isStreaming.value = false;
+        reader.cancel();
         return;
       }
-      data.value = res;
-      error.value = undefined;
-    })
-    .catch((err) => {
-      console.error(err);
-      data.value = undefined;
-      if (err?.statusCode === 404) {
-        error.value = t('error.noAnswer');
-        return;
-      } else if (err?.statusCode === 429) {
-        error.value = t('error.tokenLimit');
-        return;
-      } else if (err?.statusCode === 402) {
-        error.value = t('error.premium');
+      if (done) {
+        isStreaming.value = false;
         return;
       }
-      error.value = t('error.unknown');
-    })
-    .finally(() => {
-      isFetching.value = false;
+      const decoded = new TextDecoder('utf-8').decode(value);
+      const responses = decoded.split(/\}\s*\{/);
+      let lastResponse = {} as any;
+      for (let i = 0; i < responses.length; i++) {
+        let response = responses[i];
+        if (i !== 0) {
+          response = '{' + response;
+        }
+        if (i !== responses.length - 1) {
+          response = response + '}';
+        }
+        const json = JSON.parse(response);
+
+        if (json?.statusCode === 404) {
+          error.value = t('error.noAnswer');
+          return;
+        } else if (json?.statusCode === 429) {
+          error.value = t('error.tokenLimit');
+          return;
+        } else if (json?.statusCode === 402) {
+          error.value = t('error.premium');
+          return;
+        }
+
+        if (json?.text === undefined) {
+          data.value = undefined;
+          error.value = t('error.unknown');
+          return;
+        }
+
+        chunks += json.text;
+        lastResponse = json;
+      }
+
+      data.value = {
+        text: chunks,
+        savedTokens: lastResponse.savedTokens,
+        tokens: lastResponse.tokens,
+        refs: lastResponse.refs,
+      };
+      return reader.read().then(processStream);
     });
+  } catch (e) {
+    isFetching.value = false;
+    isStreaming.value = false;
+    breakStream = false;
+    error.value = t('error.unknown');
+  }
 }
 </script>
 
@@ -85,12 +137,14 @@ async function onQuestion() {
   <div class="row justify-center q-mx-md">
     <div class="q-mb-md container-size">
       <div class="row justify-center vertical-middle q-mb-xs items-center">
+        <!-- on dark mode inverse the logo color -->
         <img
           src="
       /wizbee/favicon-96x96.png"
           alt="WizBee Logo"
           height="50"
           class="q-mr-sm"
+          :class="{ 'invert-colors': $q.dark.isActive }"
         />
         <div class="text-h5">{{ $t('ask') }} WizBee</div>
       </div>
@@ -111,6 +165,7 @@ async function onQuestion() {
                 color="positive"
                 square
                 size="md"
+                :loading="isFetching"
                 @click="onQuestion()"
               />
               <q-select
@@ -129,12 +184,15 @@ async function onQuestion() {
     </div>
   </div>
   <div class="row justify-center">
-    <q-card v-if="isFetching" flat class="q-ma-sm container-size">
-      <q-spinner-dots size="4em" />
-    </q-card>
-
-    <q-card v-if="data" class="q-ma-sm container-size">
-      <q-card-section class="text-bold">
+    <q-card class="q-ma-sm container-size">
+      <q-card-section v-if="error" class="text-bold bg-red-8 text-white">
+        <q-icon name="fas fa-bug" size="xl" class="q-mr-md"></q-icon>
+        {{ $t('error.unknown') }}
+        <div class="text-weight-regular q-mt-sm">
+          {{ error }}
+        </div>
+      </q-card-section>
+      <q-card-section v-else class="text-bold">
         <q-input
           v-model="result"
           :label="$t('answer')"
@@ -161,17 +219,7 @@ async function onQuestion() {
       </q-card-section>
     </q-card>
 
-    <q-card v-if="error" class="bg-red-8 text-white q-ma-sm container-size">
-      <q-card-section class="text-bold">
-        <q-icon name="fas fa-bug" size="xl" class="q-mr-md"></q-icon>
-        {{ $t('error.unknown') }}
-      </q-card-section>
-      <q-card-section class="">
-        {{ error }}
-      </q-card-section>
-    </q-card>
-
-    <div v-if="!isFetching" class="q-mb-md container-size">
+    <div class="q-mb-md container-size">
       <div class="q-gutter-sm">
         <q-btn
           v-for="example in exampleQuestions"
@@ -179,6 +227,7 @@ async function onQuestion() {
           no-caps
           outline
           size="sm"
+          :loading="isFetching"
           @click="onExampleQuestion(example)"
         >
           {{ example }}
@@ -199,5 +248,9 @@ async function onQuestion() {
 .container-size {
   min-width: 80%;
   max-width: 600px;
+}
+
+.invert-colors {
+  filter: grayscale(1) invert(1);
 }
 </style>

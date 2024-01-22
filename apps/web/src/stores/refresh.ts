@@ -20,8 +20,10 @@ export const useRefreshStore = defineStore('refresh', {
   actions: {
     async refresh(user = true) {
       try {
-        this.last = dayjs();
-        return await refreshService.refresh(user);
+        if (this.lastHour < -1 || isNaN(this.lastHour) || user) {
+          this.last = dayjs();
+          return await refreshService.refresh(user);
+        }
       } catch (e) {
         throw e;
       }

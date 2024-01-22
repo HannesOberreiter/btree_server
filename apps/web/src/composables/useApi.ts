@@ -169,5 +169,23 @@ export const useApiFetch = () => {
       return response.json();
     }
   }
-  return { ping, get, post, patch, remove, download };
+
+  /**
+   * @description get stream data from server
+   */
+  const stream = (url: string, payload = '' as unknown) => {
+    const urlParam = buildUrl(url, '');
+    const originalRequest = new Request(urlParam, {
+      method: 'POST', // *GET, POST, PUT, DELETE, etc.
+      credentials: 'include', // include, *same-origin, omit
+      headers: {
+        Accept: 'application/octet-stream',
+        'Content-Type': 'application/json;charset=UTF-8',
+      },
+      body: isString(payload) ? (payload as string) : JSON.stringify(payload),
+    });
+
+    return fetch(originalRequest);
+  };
+  return { ping, get, post, patch, remove, download, stream };
 };
