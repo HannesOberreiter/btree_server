@@ -1,7 +1,7 @@
 # https://www.digitalocean.com/community/tutorials/how-to-secure-a-containerized-node-js-application-with-nginx-let-s-encrypt-and-docker-compose
 # https://www.digitalocean.com/community/tutorials/how-to-build-a-node-js-application-with-docker#step-3-%E2%80%94-writing-the-dockerfile
 
-FROM node:18-alpine
+FROM node:20-alpine
 
 # Create app directory
 RUN mkdir -p /home/node/app/node_modules && chown -R node:node /home/node/app
