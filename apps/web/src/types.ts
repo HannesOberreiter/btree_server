@@ -34,6 +34,7 @@ export declare interface RegisterUser {
   password: string;
   confirmPasswort: string;
   lang: string;
+  format: 'DD.MM.YYYY' | 'YYYY-MM-DD';
   source: string;
   otherSource: string;
   newsletter?: boolean;

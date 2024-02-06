@@ -40,6 +40,7 @@ class AuthService {
       password: user.password,
       source: user.source,
       lang: user.lang,
+      format: user.format,
       newsletter: user.newsletter ? true : false,
     });
     return api.post('/v1/auth/register', data);
