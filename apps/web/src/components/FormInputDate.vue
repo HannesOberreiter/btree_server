@@ -1,6 +1,6 @@
 <template>
   <q-input
-    v-model="modelValue"
+    v-model="maskFormat"
     :error="v[props.label]['$error']"
     :error-messages="validationErrors(v[props.label])"
     :label="disable ? $t('multipleValues') : $t(label)"
@@ -77,6 +77,7 @@ import useVuelidate from '@vuelidate/core';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { isEmpty } from 'lodash-es';
 import { useI18n } from 'vue-i18n';
+import { useDateFormat } from '~/composables/useDate';
 
 import BtnDateAutoClose from './BtnDateAutoClose.vue';
 import { ref, computed, toRefs, unref, watch } from 'vue';
@@ -85,6 +86,7 @@ dayjs.extend(customParseFormat); // Needed to validate if date is even possible
 const { t } = useI18n();
 const qDateProxy = ref(false);
 const autoClose = ref(false);
+const date = useDateFormat();
 
 const props = defineProps({
   dateFormat: {
@@ -124,7 +126,7 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue']);
 const { modelValue } = useVModels(props, emit);
 const resetValue = unref(modelValue.value);
-const { values, reset } = toRefs(props);
+const { values, reset, dateFormat } = toRefs(props);
 const multipleValues = computed(() =>
   formCheckMultipleValues(
     values.value,
@@ -159,6 +161,19 @@ const rules = computed(() => {
 });
 
 const v = useVuelidate(rules, state, { $autoDirty: true });
+
+const maskFormat = computed(() => {
+  switch (dateFormat.value) {
+    case 'YYYY-MM-DD':
+      return date.displayFormat(modelValue.value, 'date');
+    case 'YYYY-MM-DD HH:mm':
+      return date.displayFormat(modelValue.value, 'date-time');
+    case 'YYYY-MM-DD HH:mm:ss':
+      return date.displayFormat(modelValue.value, 'date-time-seconds');
+    default:
+      return date.formats.value.date;
+  }
+});
 
 watch([reset, values], () => {
   setValues();

@@ -90,6 +90,7 @@
   "darkMode": "Dark mode",
   "dataLoaded": "Data is successfully loaded",
   "date": "Date",
+  "dateDisplayFormat": "Date display",
   "dateEnd": "End date",
   "dateStart": "Start date",
   "datetime": "Date & Time",

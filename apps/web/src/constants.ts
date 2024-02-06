@@ -5,8 +5,8 @@ export const LANGUAGES = [
   { label: 'Italiano (Traduzione automatica)', value: 'it' },
 ];
 export const FORMATS = [
-  { label: '13,37 / 05.01.1989', value: 1 },
-  { label: '13.37 / 1989-05-01', value: 2 },
+  { label: '05.01.1989', value: 'DD.MM.YYYY' },
+  { label: '1989-05-01', value: 'YYYY-MM-DD' },
 ];
 
 export const KINDS = [

@@ -33,14 +33,14 @@ export const formCheckMultipleValues = (data: any, name: string) => {
 };
 
 // Create combined field eg. test@test.com (1982-04-01 05:11) || 1982-04-01 05:11
-export const tableMeta = (date: string, name: any) => {
+export const tableMeta = (date: string, name: any, dateFormat: string) => {
   if (dayjs(date).isValid() === false) return '';
   if (name) {
     return `${name.username ? name.username : name.email} (${dayjs(date).format(
-      'YYYY-MM-DD HH:mm',
+      dateFormat,
     )})`;
   } else {
-    return dayjs(date).format('YYYY-MM-DD HH:mm');
+    return dayjs(date).format(dateFormat);
   }
 };
 

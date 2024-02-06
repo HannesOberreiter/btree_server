@@ -13,7 +13,7 @@ export declare interface User {
   email?: string;
   password?: string;
   acdate?: boolean;
-  format?: number;
+  format?: 'DD.MM.YYYY' | 'YYYY-MM-DD';
   lang?: string;
   id?: number;
   username?: string;

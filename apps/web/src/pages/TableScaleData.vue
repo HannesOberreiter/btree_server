@@ -121,7 +121,7 @@ const columns = [
     align: 'left',
     field: (row: any) => row.datetime,
     format: (val: string, row: any) =>
-      useDate.isoFormat(val, 'date-time-seconds'),
+      useDate.displayFormat(val, 'date-time-seconds'),
     sortable: true,
   },
   {
