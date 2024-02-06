@@ -70,7 +70,10 @@ export default class StatisticController {
         if (Array.isArray(filtering)) {
           filtering.forEach((v) => {
             if ('year' in v) {
-              query.where(Harvest.raw('YEAR(date)'), v.year);
+              query.whereBetween('date', [
+                `${v.year}-01-01`,
+                `${v.year}-12-31`,
+              ]);
             } else {
               query.where(v);
             }
@@ -164,7 +167,10 @@ export default class StatisticController {
         if (Array.isArray(filtering)) {
           filtering.forEach((v) => {
             if ('year' in v) {
-              query.where(Harvest.raw('YEAR(date)'), v.year);
+              query.whereBetween('date', [
+                `${v.year}-01-01`,
+                `${v.year}-12-31`,
+              ]);
             } else if ('hive_id_array' in v) {
               query.whereIn('hive_id', v['hive_id_array']);
             } else if ('apiary_id_array' in v) {
@@ -180,7 +186,10 @@ export default class StatisticController {
         req.log.error(e);
       }
     } else {
-      query.whereRaw(`YEAR(date) = ${new Date().getFullYear()}`);
+      query.whereBetween('date', [
+        `${new Date().getFullYear()}-01-01`,
+        `${new Date().getFullYear()}-12-31`,
+      ]);
     }
     const result = await query;
     return result;
@@ -216,7 +225,10 @@ export default class StatisticController {
         if (Array.isArray(filtering)) {
           filtering.forEach((v) => {
             if ('year' in v) {
-              query.where(Harvest.raw('YEAR(date)'), v.year);
+              query.whereBetween('date', [
+                `${v.year}-01-01`,
+                `${v.year}-12-31`,
+              ]);
             } else if ('hive_id_array' in v) {
               query.whereIn('hive_id', v['hive_id_array']);
             } else if ('apiary_id_array' in v) {
@@ -232,7 +244,10 @@ export default class StatisticController {
         req.log.error(e);
       }
     } else {
-      query.whereRaw(`YEAR(date) = ${new Date().getFullYear()}`);
+      query.whereBetween('date', [
+        `${new Date().getFullYear()}-01-01`,
+        `${new Date().getFullYear()}-12-31`,
+      ]);
     }
     const result = await query;
     return result;
@@ -284,7 +299,10 @@ export default class StatisticController {
         if (Array.isArray(filtering)) {
           filtering.forEach((v) => {
             if ('year' in v) {
-              query.where(Harvest.raw('YEAR(date)'), v.year);
+              query.whereBetween('date', [
+                `${v.year}-01-01`,
+                `${v.year}-12-31`,
+              ]);
             } else {
               query.where(v);
             }
@@ -362,7 +380,10 @@ export default class StatisticController {
         if (Array.isArray(filtering)) {
           filtering.forEach((v) => {
             if ('year' in v) {
-              query.where(Harvest.raw('YEAR(date)'), v.year);
+              query.whereBetween('date', [
+                `${v.year}-01-01`,
+                `${v.year}-12-31`,
+              ]);
             } else if ('hive_id_array' in v) {
               query.whereIn('hive_id', v['hive_id_array']);
             } else if ('apiary_id_array' in v) {
@@ -378,7 +399,10 @@ export default class StatisticController {
         req.log.error(e);
       }
     } else {
-      query.whereRaw(`YEAR(date) = ${new Date().getFullYear()}`);
+      query.whereBetween('date', [
+        `${new Date().getFullYear()}-01-01`,
+        `${new Date().getFullYear()}-12-31`,
+      ]);
     }
     const result = await query;
     return result;
@@ -406,7 +430,10 @@ export default class StatisticController {
         if (Array.isArray(filtering)) {
           filtering.forEach((v) => {
             if ('year' in v) {
-              query.where(Harvest.raw('YEAR(date)'), v.year);
+              query.whereBetween('date', [
+                `${v.year}-01-01`,
+                `${v.year}-12-31`,
+              ]);
             } else if ('hive_id_array' in v) {
               query.whereIn('hive_id', v['hive_id_array']);
             } else if ('apiary_id_array' in v) {
@@ -422,7 +449,10 @@ export default class StatisticController {
         req.log.error(e);
       }
     } else {
-      query.whereRaw(`YEAR(date) = ${new Date().getFullYear()}`);
+      query.whereBetween('date', [
+        `${new Date().getFullYear()}-01-01`,
+        `${new Date().getFullYear()}-12-31`,
+      ]);
     }
     const result = await query;
     return result;
@@ -469,7 +499,10 @@ export default class StatisticController {
         if (Array.isArray(filtering)) {
           filtering.forEach((v) => {
             if ('year' in v) {
-              query.where(Harvest.raw('YEAR(date)'), v.year);
+              query.whereBetween('date', [
+                `${v.year}-01-01`,
+                `${v.year}-12-31`,
+              ]);
             } else {
               query.where(v);
             }
@@ -550,7 +583,10 @@ export default class StatisticController {
         if (Array.isArray(filtering)) {
           filtering.forEach((v) => {
             if ('year' in v) {
-              query.where(Harvest.raw('YEAR(date)'), v.year);
+              query.whereBetween('date', [
+                `${v.year}-01-01`,
+                `${v.year}-12-31`,
+              ]);
             } else if ('hive_id_array' in v) {
               query.whereIn('hive_id', v['hive_id_array']);
             } else if ('apiary_id_array' in v) {
@@ -566,7 +602,10 @@ export default class StatisticController {
         req.log.error(e);
       }
     } else {
-      query.whereRaw(`YEAR(date) = ${new Date().getFullYear()}`);
+      query.whereBetween('date', [
+        `${new Date().getFullYear()}-01-01`,
+        `${new Date().getFullYear()}-12-31`,
+      ]);
     }
     const result = await query;
     return result;
@@ -596,7 +635,10 @@ export default class StatisticController {
         if (Array.isArray(filtering)) {
           filtering.forEach((v) => {
             if ('year' in v) {
-              query.where(Harvest.raw('YEAR(date)'), v.year);
+              query.whereBetween('date', [
+                `${v.year}-01-01`,
+                `${v.year}-12-31`,
+              ]);
             } else if ('hive_id_array' in v) {
               query.whereIn('hive_id', v['hive_id_array']);
             } else if ('apiary_id_array' in v) {
@@ -612,7 +654,10 @@ export default class StatisticController {
         req.log.error(e);
       }
     } else {
-      query.whereRaw(`YEAR(date) = ${new Date().getFullYear()}`);
+      query.whereBetween('date', [
+        `${new Date().getFullYear()}-01-01`,
+        `${new Date().getFullYear()}-12-31`,
+      ]);
     }
     const result = await query;
     return result;
@@ -667,7 +712,10 @@ export default class StatisticController {
         if (Array.isArray(filtering)) {
           filtering.forEach((v) => {
             if ('year' in v) {
-              query.where(Checkup.raw('YEAR(date)'), v.year);
+              query.whereBetween('date', [
+                `${v.year}-01-01`,
+                `${v.year}-12-31`,
+              ]);
             } else {
               query.where(v);
             }
