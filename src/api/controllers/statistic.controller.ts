@@ -59,12 +59,10 @@ export default class StatisticController {
       }
     }
     if (groupByType) {
-      if (groupByType === 'true') {
-        query
-          .groupBy('harvests.type_id')
-          .withGraphJoined('type')
-          .select('type.name');
-      }
+      query
+        .groupBy('harvests.type_id')
+        .withGraphJoined('type')
+        .select('type.name');
     }
     if (filters) {
       try {
@@ -275,12 +273,10 @@ export default class StatisticController {
       }
     }
     if (groupByType) {
-      if (groupByType === 'true') {
-        query
-          .groupBy('feeds.type_id')
-          .withGraphJoined('type')
-          .select('type.name');
-      }
+      query
+        .groupBy('feeds.type_id')
+        .withGraphJoined('type')
+        .select('type.name');
     }
     if (filters) {
       try {
