@@ -37,9 +37,9 @@ export const useDateFormat = () => {
 
     return {
       date: 'YYYY-MM-DD',
-      'date-time': 'lll',
-      time: 'LT',
-      'date-time-seconds': 'L LTS',
+      'date-time': 'YYYY-MM-DD HH:mm',
+      time: 'HH:mm',
+      'date-time-seconds': 'YYYY-MM-DD HH:mm:ss',
       rearing: 'lll, dddd',
     };
   });
