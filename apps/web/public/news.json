@@ -3,7 +3,11 @@
     "version": "6.4.0",
     "date": "2024-0X-XX",
     "news": [
-      "FEATURE you can chose between two date formats in the profile settings (ISO and AT/DE-DIN)"
+      "FEATURE you can chose between two date formats in the profile settings (ISO and AT/DE-DIN)",
+      "BUGFIX hive details statistics type names were not displayed",
+      "BUGFIX database, changed scale data to datetime from timestamp to prevent date constraints",
+      "BUGFIX date picker not showing for Firefox, thx Manu",
+      "PERFORMANCE added new database indexes and composition indexes to hives, apiaries and observations"
     ]
   },
   {
