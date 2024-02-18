@@ -9,11 +9,9 @@ import { createOrder as stripeCreateOrder } from '../utils/stripe.util.js';
 import { createInvoice } from '../utils/foxyoffice.util.js';
 import { WizBee } from '../../services/wizbee.service.js';
 import { WizBeeToken } from '../models/wizbee_token.model.js';
-import { env, openAI } from '../../config/environment.config.js';
+import { openAI } from '../../config/environment.config.js';
 import { FastifyRequest, FastifyReply } from 'fastify';
 import httpErrors from 'http-errors';
-import { ENVIRONMENT } from '../../config/constants.config.js';
-import { Stream } from 'stream';
 
 type Chunk = {
   id: string;

@@ -13,7 +13,22 @@ export default function routes(
 
   server.get(
     '/velutina/observations/recent',
-    {},
+    {
+      schema: {
+        response: {
+          200: z.array(
+            z.object({
+              location: z.object({
+                x: z.number(),
+                y: z.number(),
+              }),
+              uri: z.string(),
+              observed_at: z.date(),
+            }),
+          ),
+        },
+      },
+    },
     PublicController.getVelutinaObservationsRecent,
   );
 
@@ -24,6 +39,18 @@ export default function routes(
         params: z.object({
           year: numberSchema,
         }),
+        response: {
+          200: z.array(
+            z.object({
+              location: z.object({
+                x: z.number(),
+                y: z.number(),
+              }),
+              uri: z.string(),
+              observed_at: z.date(),
+            }),
+          ),
+        },
       },
     },
     PublicController.getVelutinaObservationsYear,

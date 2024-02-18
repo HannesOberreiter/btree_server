@@ -238,7 +238,7 @@ export default class HiveController {
         .where({
           deleted: false,
         })
-        .whereRaw('YEAR(date) = ?', year)
+        .whereBetween('date', [`${year}-01-01`, `${year}-12-31`])
         .orderBy('date', 'desc');
       const feed = await Feed.query(trx)
         .select('*', Hive.raw('? as kind', ['feed']))
@@ -249,7 +249,7 @@ export default class HiveController {
         .where({
           deleted: false,
         })
-        .whereRaw('YEAR(date) = ?', year)
+        .whereBetween('date', [`${year}-01-01`, `${year}-12-31`])
         .orderBy('date', 'desc');
       const treatment = await Treatment.query(trx)
         .select('*', Hive.raw('? as kind', ['treatment']))
@@ -260,7 +260,7 @@ export default class HiveController {
         .where({
           deleted: false,
         })
-        .whereRaw('YEAR(date) = ?', year)
+        .whereBetween('date', [`${year}-01-01`, `${year}-12-31`])
         .orderBy('date', 'desc');
       const checkup = await Checkup.query(trx)
         .select('*', Hive.raw('? as kind', ['checkup']))
@@ -271,7 +271,7 @@ export default class HiveController {
         .where({
           deleted: false,
         })
-        .whereRaw('YEAR(date) = ?', year)
+        .whereBetween('date', [`${year}-01-01`, `${year}-12-31`])
         .orderBy('date', 'desc');
       const movedate = await Movedate.query(trx)
         .select('*', Hive.raw('? as kind', ['movedate']))
@@ -279,7 +279,7 @@ export default class HiveController {
           '[hive, apiary, creator(identifier), editor(identifier)]',
         )
         .whereIn('hive_id', hives)
-        .whereRaw('YEAR(date) = ?', year)
+        .whereBetween('date', [`${year}-01-01`, `${year}-12-31`])
         .orderBy('date', 'desc');
 
       return {

@@ -55,7 +55,7 @@ export default class PublicController {
         raw('JSON_EXTRACT(data, "$.uri") as uri'),
         'observed_at',
       )
-      .where(raw('YEAR(observed_at)'), year);
+      .whereBetween('observed_at', [`${year}-01-01`, `${year}-12-31`]);
 
     const result = await query;
 
