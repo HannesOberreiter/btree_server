@@ -1,7 +1,7 @@
 [
   {
     "version": "6.4.0",
-    "date": "2024-0X-XX",
+    "date": "2024-02-18",
     "news": [
       "FEATURE you can chose between two date formats in the profile settings (ISO and AT/DE-DIN)",
       "BUGFIX hive details statistics type names were not displayed",
