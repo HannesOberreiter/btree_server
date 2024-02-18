@@ -13,7 +13,7 @@ export class User extends ExtModel {
   lang!: string;
   state!: number;
   acdate!: boolean;
-  format!: number;
+  format!: 'DD.MM.YYYY' | 'YYYY-MM-DD';
   newsletter!: boolean;
   sound!: boolean;
   saved_company!: number;
@@ -51,7 +51,7 @@ export class User extends ExtModel {
         maxLength: 3,
         enum: ['de', 'en', 'it', 'fr'],
       },
-      format: { type: 'number', enum: [1, 2] },
+      format: { type: 'string', enum: ['DD.MM.YYYY', 'YYYY-MM-DD'] },
       acdate: { type: 'boolean' },
       newsletter: { type: 'boolean' },
       todo: { type: 'boolean' },
