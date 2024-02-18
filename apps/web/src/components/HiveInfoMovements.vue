@@ -7,7 +7,7 @@
     </div>
     <ul>
       <li v-for="item in data.results" :key="item.id">
-        {{ useDate.isoFormat(item.date) }}
+        {{ useDate.displayFormat(item.date) }}
         <span v-if="item.apiary">
           &nbsp;<b>({{ item.apiary.name }})</b>
         </span>

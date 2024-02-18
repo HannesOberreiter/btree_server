@@ -122,7 +122,7 @@ const columns = [
     label: t('date'),
     align: 'left',
     field: (row: any) => row.date,
-    format: (val: string) => useDate.isoFormat(val, 'date-time'),
+    format: (val: string) => useDate.displayFormat(val, 'date-time'),
     sortable: true,
   },
   {
@@ -172,7 +172,8 @@ const columns = [
     label: t('created'),
     align: 'center',
     field: (row: any) => row.created_at,
-    format: (val: string, row: any) => tableMeta(val, row.creator),
+    format: (val: string, row: any) =>
+      tableMeta(val, row.creator, useDate.formats.value['date-time']),
     sortable: true,
   },
   {
@@ -180,7 +181,8 @@ const columns = [
     label: t('updated'),
     align: 'center',
     field: (row: any) => row.updated_at,
-    format: (val: string, row: any) => tableMeta(val, row.editor),
+    format: (val: string, row: any) =>
+      tableMeta(val, row.editor, useDate.formats.value['date-time']),
     sortable: true,
   },
 ] as QTableProps['columns'];

@@ -51,7 +51,7 @@
             text-color="black"
             :label="`
               ${$t('created')}:
-              ${useDate.isoFormat(data.firstMovedate.date)}
+              ${useDate.displayFormat(data.firstMovedate.date)}
             `"
             ><tooltip-base>{{ $t('hintApiaryFirstMovedate') }}</tooltip-base>
           </q-chip>
