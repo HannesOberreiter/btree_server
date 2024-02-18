@@ -26,6 +26,7 @@ export const useAuthUserStore = defineStore('auth/user', {
     },
     getUser: (state) => state.user,
     getCompany: (state) => state.company,
+    getDateFormat: (state) => state.user.format,
     isReadOnly: (state) => state.company.rank === 3,
     isAdmin: (state) => state.company.rank === 1,
     isPremium: (state) => {

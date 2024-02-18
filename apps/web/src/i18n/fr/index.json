@@ -90,6 +90,7 @@
   "darkMode": "Mode sombre",
   "dataLoaded": "Les données sont chargées avec succès",
   "date": "Date",
+  "dateDisplayFormat": "Affichage des dates",
   "dateEnd": "Date de fin",
   "dateStart": "Date de début",
   "datetime": "Date",

@@ -192,7 +192,8 @@ const columns = [
     label: t('created'),
     align: 'center',
     field: (row: any) => row.created_at,
-    format: (val: string, row: any) => tableMeta(val, row.creator),
+    format: (val: string, row: any) =>
+      tableMeta(val, row.creator, useDate.formats.value['date-time']),
     sortable: true,
   },
   {
@@ -200,7 +201,8 @@ const columns = [
     label: t('updated'),
     align: 'center',
     field: (row: any) => row.updated_at,
-    format: (val: string, row: any) => tableMeta(val, row.editor),
+    format: (val: string, row: any) =>
+      tableMeta(val, row.editor, useDate.formats.value['date-time']),
     sortable: true,
   },
   {
@@ -209,7 +211,9 @@ const columns = [
     align: 'center',
     field: (row: any) => row.deleted_at,
     format: (val: string, row: any) =>
-      row.deleted ? tableMeta(val, row.editor) : '',
+      row.deleted
+        ? tableMeta(val, row.editor, useDate.formats.value['date-time'])
+        : '',
     sortable: true,
   },
 ] as QTableProps['columns'];

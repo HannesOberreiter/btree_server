@@ -3,10 +3,11 @@ import localizedFormat from 'dayjs/plugin/localizedFormat';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 
 import { useI18n } from 'vue-i18n';
-import { unref } from 'vue';
+import { computed, unref } from 'vue';
 
 import 'dayjs/locale/de';
 import 'dayjs/locale/en';
+import { useAuthUserStore } from '~/stores/auth';
 
 dayjs.extend(localizedFormat);
 dayjs.extend(customParseFormat);
@@ -20,6 +21,28 @@ type DateFormat =
 
 export const useDateFormat = () => {
   const { locale } = useI18n();
+  const storeUser = useAuthUserStore();
+
+  const formats = computed(() => {
+    const format = storeUser.getDateFormat;
+    if (format === 'DD.MM.YYYY') {
+      return {
+        date: 'DD.MM.YYYY',
+        'date-time': 'DD.MM.YYYY HH:mm',
+        time: 'HH:mm',
+        'date-time-seconds': 'DD.MM.YYYY HH:mm:ss',
+        rearing: 'lll dddd',
+      };
+    }
+
+    return {
+      date: 'YYYY-MM-DD',
+      'date-time': 'YYYY-MM-DD HH:mm',
+      time: 'HH:mm',
+      'date-time-seconds': 'YYYY-MM-DD HH:mm:ss',
+      rearing: 'lll, dddd',
+    };
+  });
 
   const isoFormat = (
     date: string,
@@ -43,16 +66,9 @@ export const useDateFormat = () => {
     type = 'date' as DateFormat,
     inputFormat = '',
   ) => {
-    const formats = {
-      date: 'YYYY-MM-DD',
-      'date-time': 'lll',
-      time: 'LT',
-      'date-time-seconds': 'L LTS',
-      rearing: 'lll, dddd',
-    };
     if (inputFormat !== '')
-      return dayjs(date, inputFormat).format(formats[type]);
-    return dayjs(date).locale(unref(locale)).format(formats[type]);
+      return dayjs(date, inputFormat).format(formats.value[type]);
+    return dayjs(date).locale(unref(locale)).format(formats.value[type]);
   };
 
   const rearingFormat = (date: string) => {
@@ -76,5 +92,6 @@ export const useDateFormat = () => {
     getCurrent,
     toDayjs,
     validateFormat,
+    formats,
   };
 };

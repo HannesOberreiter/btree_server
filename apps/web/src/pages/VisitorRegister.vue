@@ -21,6 +21,7 @@
         :confirm="true"
       ></form-user-password>
       <form-user-language v-model="state.lang"></form-user-language>
+      <form-user-date-format v-model="state.format"></form-user-date-format>
 
       <q-select
         v-model="v$.source.$model"
@@ -134,6 +135,7 @@ import FormUserNewsletter from '~/components/FormUserNewsletter.vue';
 import FormInputEmail from '~/components/FormInputEmail.vue';
 import FormInputText from '~/components/FormInputText.vue';
 import FormErrorMax from '~/components/FormErrorMax.vue';
+import FormUserDateFormat from '~/components/FormUserDateFormat.vue';
 
 const notification = useNotification();
 const { t } = useI18n();
@@ -214,6 +216,7 @@ const state = reactive({
   password: password,
   confirmPassword: password,
   lang: languages.value[0] === 'de' ? LANGUAGES[1] : LANGUAGES[0],
+  format: 'YYYY-MM-DD',
   source: SOURCES[0],
   other: '',
   terms: false,
@@ -245,6 +248,7 @@ async function onSubmit() {
     email: state.email,
     password: state.password,
     lang: state.lang.value,
+    format: state.format,
     source: state.source.value === 0 ? state.other : state.source.value + '',
     newsletter: state.newsletter,
   };

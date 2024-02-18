@@ -10,6 +10,9 @@
       <div class="col-12">
         <form-user-language v-model="state.lang"></form-user-language>
       </div>
+      <div class="col-12 q-mt-md q-mb-md">
+        <form-user-date-format v-model="state.format"></form-user-date-format>
+      </div>
       <div class="col-12">
         <form-user-newsletter v-model="state.newsletter"></form-user-newsletter>
       </div>
@@ -39,7 +42,7 @@
       </div>
     </div>
   </q-form>
-  <btn-base-group size="md">
+  <btn-base-group size="md" class="q-mt-md">
     <btn-base
       color="secondary"
       type="submit"
@@ -72,6 +75,7 @@ import { storeToRefs } from 'pinia';
 import FormUserNewsletter from '~/components/FormUserNewsletter.vue';
 import FormUserLanguage from '~/components/FormUserLanguage.vue';
 import FormInputText from '~/components/FormInputText.vue';
+import FormUserDateFormat from '~/components/FormUserDateFormat.vue';
 
 const { t } = useI18n();
 const $q = useQuasar();
@@ -83,7 +87,7 @@ const isSubmitting = ref(false);
 
 const state = reactive({
   username: user.value.username || '',
-  format: user.value.format || '',
+  format: user.value.format || 'iso',
   lang: LANGUAGES.filter((e) => e.value === user.value.lang)[0],
   sound: user.value.sound,
   newsletter: user.value.newsletter,
@@ -108,6 +112,7 @@ async function onSubmit() {
   }
   const data = {
     username: state.username,
+    format: state.format,
     lang: state.lang.value,
     sound: state.sound,
     acdate: state.acdate,

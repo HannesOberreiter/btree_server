@@ -304,8 +304,10 @@ function createLabel(task: any) {
 function createCaption(task: any) {
   const date =
     task.date === task.enddate || task.kind === 'movedate'
-      ? useDate.isoFormat(task.date)
-      : useDate.isoFormat(task.date) + ' - ' + useDate.isoFormat(task.enddate);
+      ? useDate.displayFormat(task.date)
+      : useDate.displayFormat(task.date) +
+        ' - ' +
+        useDate.displayFormat(task.enddate);
   let apiary = '';
   if (task.apiary || task[`${task.kind}_apiary`])
     apiary =

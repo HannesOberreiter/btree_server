@@ -8,7 +8,7 @@
     <ul>
       <li v-for="item in data.results" :key="item.id">
         <b>{{ item.name }}</b>
-        &nbsp;({{ useDate.isoFormat(item.date) }})
+        &nbsp;({{ useDate.displayFormat(item.date) }})
       </li>
     </ul>
   </div>

@@ -276,7 +276,7 @@ function createParams(name: string) {
                 <div class="text-caption">
                   {{ item.attributes.feedsource.data.attributes.source }}
                   <span class="text-weight-medium">|</span>
-                  {{ dateFormat.isoFormat(item.attributes.createdAt) }}
+                  {{ dateFormat.displayFormat(item.attributes.createdAt) }}
                 </div>
               </q-card-section>
               <q-card-section v-if="item.attributes.preview">
