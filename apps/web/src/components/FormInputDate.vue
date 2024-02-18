@@ -21,45 +21,53 @@
       <q-icon :name="icon" class="cursor-pointer">
         <q-popup-proxy
           v-model="qDateProxy"
+          :cover="true"
           transition-show="scale"
           transition-hide="scale"
         >
-          <div class="row">
-            <q-date
-              v-model="modelValue"
-              :events="markDate"
-              :mask="dateFormat"
-              :disable="disable"
-              today-btn
-              no-unset
-              @update:model-value="() => (qDateProxy = !autoClose)"
-            >
-              <div class="row items-center justify-end">
-                <btn-date-auto-close
-                  @change="(v: boolean) => (autoClose = v)"
-                ></btn-date-auto-close>
-                <btn-base
-                  v-close-popup
-                  :label="$t('close')"
-                  color="primary"
-                  flat
-                />
-              </div>
-            </q-date>
-            <q-time
-              v-if="
-                dateFormat === 'YYYY-MM-DD HH:mm:ss' ||
-                dateFormat === 'YYYY-MM-DD HH:mm'
-              "
-              v-model="modelValue"
-              :mask="dateFormat"
-              :with-seconds="
-                dateFormat === 'YYYY-MM-DD HH:mm:ss' ? true : false
-              "
-              :format24h="true"
-              color="purple"
-            >
-            </q-time>
+          <div class="row wrap justify-start items-center content-center">
+            <div class="col">
+              <q-date
+                v-model="modelValue"
+                :events="markDate"
+                :mask="dateFormat"
+                :disable="disable"
+                :cover="true"
+                today-btn
+                no-unset
+                :flat="true"
+                @update:model-value="() => (qDateProxy = !autoClose)"
+              >
+                <div class="row items-center justify-end">
+                  <btn-date-auto-close
+                    @change="(v: boolean) => (autoClose = v)"
+                  ></btn-date-auto-close>
+                  <btn-base
+                    v-close-popup
+                    :label="$t('close')"
+                    color="primary"
+                    flat
+                  />
+                </div>
+              </q-date>
+            </div>
+            <div class="col">
+              <q-time
+                v-if="
+                  dateFormat === 'YYYY-MM-DD HH:mm:ss' ||
+                  dateFormat === 'YYYY-MM-DD HH:mm'
+                "
+                v-model="modelValue"
+                :mask="dateFormat"
+                :with-seconds="
+                  dateFormat === 'YYYY-MM-DD HH:mm:ss' ? true : false
+                "
+                :format24h="true"
+                color="purple"
+                :flat="true"
+              >
+              </q-time>
+            </div>
           </div>
         </q-popup-proxy>
       </q-icon>
