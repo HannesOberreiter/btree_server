@@ -7,9 +7,6 @@ FROM node:20-alpine
 RUN mkdir -p /home/node/app/node_modules && chown -R node:node /home/node/app
 WORKDIR /home/node/app
 
-# Install pm2 globally
-RUN npm install pm2 -g
-
 # Env and User
 USER node
 COPY --chown=node:node . .
