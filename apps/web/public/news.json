@@ -1,5 +1,13 @@
 [
   {
+    "version": "6.4.1",
+    "date": "2024-03-22",
+    "news": [
+      "TRANSLATION changed german translation for temper, thx Clemens",
+      "REMOVED you can no longer pay via SOFORT as the service is discontinued by Klarna"
+    ]
+  },
+  {
     "version": "6.4.0",
     "date": "2024-02-18",
     "news": [
