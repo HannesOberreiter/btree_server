@@ -37,7 +37,7 @@ try {
   paypal = await loadScript({
     clientId: PAYPAL_CLIENT_ID,
     currency: 'EUR',
-    disableFunding: 'paylater',
+    disableFunding: ['paylater', 'sofort'],
     dataUserIdToken: storeUser.company.id + '',
   });
 } catch (error) {
