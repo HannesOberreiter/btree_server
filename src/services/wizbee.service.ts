@@ -345,17 +345,22 @@ export class WizBee {
 
     tokens += tokens + encode(JSON.stringify(messages)).length;
 
-    const stream = this.openAI.chat.completions.create({
-      model: WizBee.completionModel,
-      messages,
-      max_tokens: 500,
-      temperature: 0.1,
-      user: 'WizBee_' + env,
-      stream: true,
-    });
+    const stream = this.openAI.chat.completions.create(
+      {
+        model: WizBee.completionModel,
+        messages,
+        max_tokens: 500,
+        temperature: 0.1,
+        user: 'WizBee_' + env,
+        stream: true,
+      },
+      {
+        idempotencyKey: 'beekeeping_' + Date.now(),
+      },
+    );
 
     return {
-      stream: await stream,
+      stream: (await stream) ?? undefined,
       refs,
       tokens,
     };
