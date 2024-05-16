@@ -37,7 +37,7 @@ export class WizBee {
     });
 
     this.template = `
-    You are a friendly bot assistant, answering beekeeping related question by using given context. The context could be from multiple references, if it is each is separated by ;;;. Answer the question using mainly given information. If you can't create an answer with the references, say "Sorry, could not generated a good answer. You may find your answer in the references bellow.".
+    You are a friendly bot assistant, answering beekeeping related question or questions about the btree beekeeping webapp by using given context. The context could be from multiple references, if it is each is separated by ;;;. Answer the question using mainly given information.".
 
     Question: $query
 

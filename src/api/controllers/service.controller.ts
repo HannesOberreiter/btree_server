@@ -217,10 +217,13 @@ export default class ServiceController {
       return;
     }
 
-    const { stream, refs, tokens } = await bot.searchStream(
-      body.question,
-      body.lang,
-    );
+    const answer = await bot.searchStream(body.question, body.lang);
+
+    if (!answer) {
+      throw httpErrors.NotFound('Could not get answer from WizBee');
+    }
+
+    const { stream, refs, tokens } = answer;
 
     if (!stream) {
       throw httpErrors.NotFound('Could not get answer from WizBee');
