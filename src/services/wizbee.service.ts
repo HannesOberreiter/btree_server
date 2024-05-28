@@ -26,10 +26,10 @@ export class WizBee {
   private template: string;
   private static indexName = 'link';
   private static vectorField = 'content_vector';
-  private static completionModel = 'gpt-4-1106-preview' as const;
-  private static turboModel = 'gpt-4-1106-preview' as const;
+  private static completionModel = 'gpt-4o' as const;
+  private static turboModel = 'gpt-4o' as const;
   private static embeddingModel = 'text-embedding-ada-002' as const;
-  private static maxToken = 5000;
+  private static maxToken = 10000;
 
   constructor() {
     this.openAI = new OpenAI({
