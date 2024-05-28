@@ -93,7 +93,14 @@ async function onQuestion() {
         if (i !== responses.length - 1) {
           response = response + '}';
         }
-        const json = JSON.parse(response);
+
+        let json: any;
+        try {
+          json = JSON.parse(response);
+        } catch (e) {
+          console.error(e);
+          continue;
+        }
 
         if (json?.statusCode === 404) {
           error.value = t('error.noAnswer');
