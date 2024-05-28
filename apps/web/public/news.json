@@ -1,5 +1,14 @@
 [
   {
+    "version": "6.4.2",
+    "date": "2024-05-28",
+    "news": [
+      "BUGFIX WizBee should now also work with broken JSON answers",
+      "UPDATE WizBee now uses ChatGPT-4o",
+      "UPDATE upgrades the forum to the latest version"
+    ]
+  },
+  {
     "version": "6.4.1",
     "date": "2024-03-22",
     "news": [
