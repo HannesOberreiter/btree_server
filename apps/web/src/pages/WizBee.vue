@@ -54,7 +54,6 @@ async function onQuestion() {
     breakStream = true;
     isFetching.value = false;
     isStreaming.value = false;
-    return;
   }
 
   isFetching.value = true;
@@ -70,6 +69,7 @@ async function onQuestion() {
     isFetching.value = false;
     const reader = responseStream.getReader();
     let chunks = '';
+    let accumulated = '';
 
     reader.read().then(function processStream({ done, value }): any {
       if (breakStream) {
@@ -83,8 +83,10 @@ async function onQuestion() {
         return;
       }
       const decoded = new TextDecoder('utf-8').decode(value);
-      const responses = decoded.split(/\}\s*\{/);
+      accumulated += decoded;
+      let responses = accumulated.split(/\}\s*\{/);
       let lastResponse = {} as any;
+
       for (let i = 0; i < responses.length; i++) {
         let response = responses[i];
         if (i !== 0) {
@@ -99,7 +101,8 @@ async function onQuestion() {
           json = JSON.parse(response);
         } catch (e) {
           console.error(e);
-          continue;
+          accumulated = response;
+          return reader.read().then(processStream);
         }
 
         if (json?.statusCode === 404) {
@@ -123,6 +126,7 @@ async function onQuestion() {
         lastResponse = json;
       }
 
+      accumulated = '';
       data.value = {
         text: chunks,
         savedTokens: lastResponse.savedTokens,
