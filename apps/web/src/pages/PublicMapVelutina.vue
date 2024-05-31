@@ -12,7 +12,7 @@
       loading-control="true"
       @ready="onMapReady"
     >
-      <velutina-map-layers :recent-count="recentCount">
+      <velutina-map-layers :recent-count="recentCount" :is-public="true">
         <div>
           <b>
             Service by

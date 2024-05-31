@@ -1,5 +1,12 @@
 [
   {
+    "version": "6.4.3",
+    "date": "2024-XX-XX",
+    "news": [
+      "BUGFIX add missing translations to velutina map and simplify the text"
+    ]
+  },
+  {
     "version": "6.4.2",
     "date": "2024-05-28",
     "news": [

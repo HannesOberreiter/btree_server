@@ -569,6 +569,7 @@
   },
   "share": "Share",
   "shareButton": "QR and NFC settings",
+  "show": "Show",
   "signup": {
     "accept": "Please accept the terms first!",
     "agree": "Do you agree with the",
@@ -583,7 +584,7 @@
   "single": "Single",
   "solution": "Solution",
   "soundHint": "Play sound on notifications (on mobile you get vibration and sound).",
-  "source": "Source",
+  "source": "Source | Sources",
   "speech": {
     "commandRedirect": "Found {text}, redirecting. (original: {msg})",
     "noCommand": "No command found with {msg}.",
@@ -665,6 +666,7 @@
   },
   "varroa": "Varroa",
   "varroaStatsTableHeader": "Varroa count statistic, zero values are ignored in the calculation.",
+  "velutinaMapPublicText": "Only the observations of the last 6 months are shown on the map.",
   "velutinaRecent": "Only recent (6 Months).",
   "version": "Version",
   "vet": "Veterinarian",

@@ -569,6 +569,7 @@
   },
   "share": "Teilen",
   "shareButton": "QR- und NFC-Einstellungen",
+  "show": "Zeigen",
   "signup": {
     "accept": "Bitte akzeptieren Sie zuerst die Bedingungen!",
     "agree": "Stimmen Sie dem zu",
@@ -583,7 +584,7 @@
   "single": "Einzel",
   "solution": "Lösung",
   "soundHint": "Erhalten Sie Feedback aus der App als Ton (Handy mit Vibration verbunden).",
-  "source": "Quelle",
+  "source": "Quelle | Quellen",
   "speech": {
     "commandRedirect": "{text} gefunden, Weiterleitung. (Original: {msg})",
     "noCommand": "Kein Befehl mit {msg} gefunden.",
@@ -665,6 +666,7 @@
   },
   "varroa": "Varroa",
   "varroaStatsTableHeader": "Varroa-Zählstatistik, Nullwerte werden bei der Berechnung ignoriert.",
+  "velutinaMapPublicText": "Auf der Karte werden nur die Beobachtungen der letzten 6 Monate angezeigt.",
   "velutinaRecent": "Erst kürzlich (6 Monate).",
   "version": "Version",
   "vet": "Tierarzt",
