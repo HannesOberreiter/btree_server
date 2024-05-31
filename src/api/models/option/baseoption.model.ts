@@ -24,8 +24,8 @@ export class BaseOptionModel extends ExtModel {
       name: { type: 'string', minLength: 1, maxLength: 45 },
       favorite: { type: 'boolean' },
       modus: { type: 'boolean' },
-      created_at: { type: 'string', format: 'date-time' },
-      updated_at: { type: 'string', format: 'date-time' },
+      created_at: { type: 'string', format: 'iso-date-time' },
+      updated_at: { type: 'string', format: 'iso-date-time' },
     },
   };
 }

@@ -44,7 +44,7 @@ export class Rearing extends ExtModel {
       hatch: { type: 'integer' },
       mated: { type: 'integer' },
 
-      date: { type: 'string', format: 'date-time' },
+      date: { type: 'string', format: 'iso-date-time' },
       note: { type: 'string', maxLength: 2000 },
       type_id: { type: 'integer' },
       detail_id: { type: 'integer' },

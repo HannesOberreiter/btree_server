@@ -45,9 +45,9 @@ export class Charge extends ExtModel {
       kind: { type: 'string', maxLength: 45, enum: ['in', 'out'] },
 
       deleted: { type: 'boolean' },
-      deleted_at: { type: 'string', format: 'date-time' },
-      created_at: { type: 'string', format: 'date-time' },
-      updated_at: { type: 'string', format: 'date-time' },
+      deleted_at: { type: 'string', format: 'iso-date-time' },
+      created_at: { type: 'string', format: 'iso-date-time' },
+      updated_at: { type: 'string', format: 'iso-date-time' },
 
       type_id: { type: 'integer' }, // Type FK
       user_id: { type: 'integer' }, // Company FK

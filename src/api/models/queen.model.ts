@@ -54,10 +54,10 @@ export class Queen extends ExtModel {
       modus: { type: 'boolean' },
       modus_date: { type: 'string', format: 'date' },
       deleted: { type: 'boolean' },
-      deleted_at: { type: 'string', format: 'date-time' },
+      deleted_at: { type: 'string', format: 'iso-date-time' },
 
-      created_at: { type: 'string', format: 'date-time' },
-      updated_at: { type: 'string', format: 'date-time' },
+      created_at: { type: 'string', format: 'iso-date-time' },
+      updated_at: { type: 'string', format: 'iso-date-time' },
 
       hive_id: { type: ['integer', 'null'] },
       race_id: { type: 'integer' },

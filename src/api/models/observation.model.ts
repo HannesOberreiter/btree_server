@@ -30,9 +30,9 @@ export class Observation extends ExtModel {
       location: { type: 'object' },
       data: { type: 'object' },
 
-      observed_at: { type: 'string', format: 'date-time' },
-      created_at: { type: 'string', format: 'date-time' },
-      updated_at: { type: 'string', format: 'date-time' },
+      observed_at: { type: 'string', format: 'iso-date-time' },
+      created_at: { type: 'string', format: 'iso-date-time' },
+      updated_at: { type: 'string', format: 'iso-date-time' },
     },
   };
 

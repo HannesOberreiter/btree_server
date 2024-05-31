@@ -42,7 +42,7 @@ export class User extends ExtModel {
       salt: { type: 'string', minLength: 10, maxLength: 128 },
 
       reset: { type: 'string', maxLength: 128 },
-      reset_timestamp: { type: 'string', format: 'date-time' },
+      reset_timestamp: { type: 'string', format: 'iso-date-time' },
 
       state: { type: 'integer' },
       lang: {
@@ -62,14 +62,14 @@ export class User extends ExtModel {
 
       saved_company: { type: 'integer' },
 
-      last_visit: { type: 'string', format: 'date-time' },
-      reminder_premium: { type: 'string', format: 'date-time' },
-      reminder_deletion: { type: 'string', format: 'date-time' },
-      reminder_vis: { type: 'string', format: 'date-time' },
-      notice_bruteforce: { type: 'string', format: 'date-time' },
+      last_visit: { type: 'string', format: 'iso-date-time' },
+      reminder_premium: { type: 'string', format: 'iso-date-time' },
+      reminder_deletion: { type: 'string', format: 'iso-date-time' },
+      reminder_vis: { type: 'string', format: 'iso-date-time' },
+      notice_bruteforce: { type: 'string', format: 'iso-date-time' },
 
-      created_at: { type: 'string', format: 'date-time' },
-      updated_at: { type: 'string', format: 'date-time' },
+      created_at: { type: 'string', format: 'iso-date-time' },
+      updated_at: { type: 'string', format: 'iso-date-time' },
     },
   };
 
