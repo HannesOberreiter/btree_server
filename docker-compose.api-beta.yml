@@ -22,6 +22,8 @@ services:
       - ./migration:/home/node/app/db/seeds/migration
     ports:
       - '1339:8101'
+    logging:
+      driver: 'local'
 
 networks:
   default:
