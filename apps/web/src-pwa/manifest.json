@@ -6,8 +6,13 @@
   "theme_color": "#2b957a",
   "background_color": "#f5f7fa",
   "scope": "/",
+  "iarc_rating_id": "02a8f185-5a3d-4186-a787-f6a27bb6739a",
+  "dir": "ltr",
   "display": "standalone",
   "categories": ["software", "beekeeping", "utilities"],
+  "launch_handler": {
+    "client_mode": ["navigate-existing", "auto"]
+  },
 
   "shortcuts": [
     {
@@ -75,7 +80,8 @@
     {
       "src": "icons/icon-512x512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
       "src": "mask_icons/maskable_icon_x48.png",
