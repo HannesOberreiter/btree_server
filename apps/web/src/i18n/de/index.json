@@ -552,7 +552,7 @@
     "hintChargePrice": "Preis: Eingabefeld, für einen Preis",
     "hintCheckupFrames": "Rahmen: 4 Eingabefelder - Brut, Honig, Mittelwände und Leerrahmen",
     "hintCheckupQueen": "Königin: 4 Kontrollkästchen - Königin, Königinnenzellen, Eier, gedeckelte Brut",
-    "hintCheckupRating": "Wertung: 6 Eingabefelder - Brut, Pollen, Wabenbau, Temperament, Wabensitz, Schwarm",
+    "hintCheckupRating": "Wertung: 6 Eingabefelder - Brut, Pollen, Wabenbau, Sanftmut, Wabensitz, Schwarm",
     "hintCheckupStrength": "Stärke: Eingabefeld - Stärke",
     "hintCheckupTemperature": "Temperatur: Eingabefeld, für Premium-Benutzer wird automatisch die aktuelle Temperatur auf dem ausgewählten Bienenstock oder Bienenstand geladen",
     "hintCheckupVarroa": "Varroa: Eingabefeld für die Varroa-Anzahl",
@@ -569,6 +569,7 @@
   },
   "share": "Teilen",
   "shareButton": "QR- und NFC-Einstellungen",
+  "show": "Zeigen",
   "signup": {
     "accept": "Bitte akzeptieren Sie zuerst die Bedingungen!",
     "agree": "Stimmen Sie dem zu",
@@ -583,7 +584,7 @@
   "single": "Einzel",
   "solution": "Lösung",
   "soundHint": "Erhalten Sie Feedback aus der App als Ton (Handy mit Vibration verbunden).",
-  "source": "Quelle",
+  "source": "Quelle | Quellen",
   "speech": {
     "commandRedirect": "{text} gefunden, Weiterleitung. (Original: {msg})",
     "noCommand": "Kein Befehl mit {msg} gefunden.",
@@ -665,6 +666,7 @@
   },
   "varroa": "Varroa",
   "varroaStatsTableHeader": "Varroa-Zählstatistik, Nullwerte werden bei der Berechnung ignoriert.",
+  "velutinaMapPublicText": "Auf der Karte werden nur die Beobachtungen der letzten 6 Monate angezeigt.",
   "velutinaRecent": "Erst kürzlich (6 Monate).",
   "version": "Version",
   "vet": "Tierarzt",
