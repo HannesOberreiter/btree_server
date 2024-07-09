@@ -1,7 +1,7 @@
 {
   "name": "b.tree Beekeeping Database",
   "short_name": "btree",
-  "description": "Web Applikation for commercial and hobby beekeepers",
+  "description": "Designed to cater to both hobbyists and professionals, our app offers a quick and easy overview of your apiaries and colonies. With b.tree, you can keep track of your feedings, harvests, treatments, checkups, and more. Our beekeeping web app is perfect for organic beekeepers who need to keep accurate records, as well as anyone who wants to manage their beekeeping tasks in the cloud. With our app, you can work simultaneously with multiple users and easily access your data in the field or at home without any syncing needs.",
   "orientation": "portrait",
   "theme_color": "#2b957a",
   "background_color": "#f5f7fa",
@@ -13,7 +13,29 @@
   "launch_handler": {
     "client_mode": ["navigate-existing", "auto"]
   },
-
+  "screenshots": [
+    {
+      "src": "screenshots/calendar.png",
+      "sizes": "640x516",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Calendar Dashboard"
+    },
+    {
+      "src": "screenshots/table.png",
+      "sizes": "640x516",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Tables"
+    },
+    {
+      "src": "screenshots/mobile.png",
+      "sizes": "320x655",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Tables"
+    }
+  ],
   "shortcuts": [
     {
       "name": "Checkup - QuickTool",
