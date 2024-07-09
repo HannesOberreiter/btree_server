@@ -23,10 +23,15 @@
     >
       <slot></slot>
 
-      <div>Recent observations: {{ recentCount }} (last 6 months)</div>
-      <div>Total observations in our database: {{ totalCount }}</div>
-      <div><b>Only the recent observations are shown on the map.</b></div>
-      <div>DataSources: <a href="#" @click="onShowSources">Show</a></div>
+      <div>{{ $t('observation', 2) }}: {{ recentCount }}</div>
+      <div>{{ $t('total') }}: {{ totalCount }}</div>
+      <div v-if="props.isPublic">
+        <b>{{ $t('velutinaMapPublicText') }}</b>
+      </div>
+      <div>
+        {{ $t('source', 2) }}:
+        <a href="#" @click="onShowSources">{{ $t('show') }}</a>
+      </div>
     </div>
   </l-control>
 </template>
@@ -36,14 +41,20 @@ import { ref, toRefs } from 'vue';
 import { LTileLayer, LControlLayers, LControl } from '@vue-leaflet/vue-leaflet';
 import { useApiFetch } from '~/composables/useApi';
 import { useQuasar } from 'quasar';
+import { useI18n } from 'vue-i18n';
 
 const api = useApiFetch();
 const $q = useQuasar();
+const { t } = useI18n();
 
 const props = defineProps({
   recentCount: {
     type: Number,
     required: true,
+  },
+  isPublic: {
+    type: Boolean,
+    default: false,
   },
 });
 
@@ -76,7 +87,7 @@ function onShowSources() {
   `;
 
   $q.dialog({
-    title: 'Data Sources',
+    title: t('source', 2),
     message: sources,
     html: true,
     ok: 'Close',
