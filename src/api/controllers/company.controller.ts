@@ -267,7 +267,7 @@ export default class CompanyController {
         api_change ||
         (res.api_active && (res.api_key === '' || res.api_key === null))
       ) {
-        const apiKey = await randomBytes(25).toString('hex');
+        const apiKey = randomBytes(25).toString('hex');
         await company.$query(trx).patch({
           api_key: apiKey,
         });
