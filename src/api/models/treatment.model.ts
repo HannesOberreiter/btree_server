@@ -22,6 +22,10 @@ export class Treatment extends ExtModel {
   bee_id!: number;
   hive_id!: number;
 
+  type_id!: number;
+  vet_id!: number;
+  disease_id!: number;
+
   static tableName = 'treatments';
   static idColumn = 'id';
 

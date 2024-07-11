@@ -18,6 +18,7 @@ export class Feed extends ExtModel {
   edit_id!: number;
   bee_id!: number;
   hive_id!: number;
+  type_id!: number;
 
   static tableName = 'feeds';
   static idColumn = 'id';

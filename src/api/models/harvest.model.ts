@@ -21,6 +21,7 @@ export class Harvest extends ExtModel {
   edit_id!: number;
   bee_id!: number;
   hive_id!: number;
+  type_id!: number;
 
   static tableName = 'harvests';
   static idColumn = 'id';

@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
 import { ENVIRONMENT } from './constants.config.js';
+import { connect } from 'http2';
 
 const rootDirectory = new URL('../../', import.meta.url).pathname;
 
@@ -114,6 +115,9 @@ const vectorConfig = {
   password: process.env.VECTOR_PASSWORD ?? '',
 };
 
+/**
+ * @type {Knex}
+ */
 const knexConfig = {
   client: process.env.DB_TYPE,
   connection: {
@@ -154,6 +158,21 @@ const knexConfig = {
   },
 };
 
+/**
+ * @type {Knex}
+ */
+const externalKnexConfig = {
+  ...knexConfig,
+  connection: {
+    ...knexConfig.connection,
+    host: process.env.EXTERNAL_DB_HOSTNAME,
+    database: process.env.EXTERNAL_DB_NAME,
+    user: process.env.EXTERNAL_DB_USERNAME,
+    password: process.env.EXTERNAL_DB_PASSWORD,
+    port: parseInt(process.env.EXTERNAL_DB_PORT),
+  },
+};
+
 const mailConfig = {
   host: process.env.MAIL_SMTP,
   port: Number(process.env.MAIL_PORT),
@@ -185,6 +204,7 @@ export {
   rootDirectory,
   redisConfig,
   knexConfig,
+  externalKnexConfig,
   vectorConfig,
   env,
   port,

@@ -25,6 +25,9 @@ export class Queen extends ExtModel {
   edit_id!: number;
   mother_id!: number;
   user_id!: number;
+  hive_id!: number;
+  race_id!: number;
+  mating_id!: number;
 
   static tableName = 'queens';
   static idColumn = 'id';
