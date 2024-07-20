@@ -15,7 +15,6 @@
   },
   "active": "Actif",
   "add": "Ajouter",
-  "addFederatedCedential": "",
   "addFederatedCredential": "Ajouter un fournisseur",
   "addOption": "Ajouter une nouvelle option",
   "addedHive": "La ruche {name} a été ajoutée à la sélection!",
@@ -129,7 +128,7 @@
   "eggs": "Des œufs",
   "email": "E-mail",
   "end": "Fin",
-  "enterEmail": "",
+  "enterEmail": "Veuillez entrer votre adresse e-mail",
   "error": {
     "CouponNotFound": "Impossible de trouver le coupon {token}.",
     "access": "Accès non autorisé ou mot de passe erroné!",
@@ -163,7 +162,6 @@
   "event": "Réunion | Réunion",
   "example": "Exemple",
   "exampleQuestion": {
-    "Offline": "",
     "diffDiseases": "Comment faire la différence entre AFB et EFB ?",
     "eggs": "Combien d'oeufs une reine des abeilles pond-elle ?",
     "offline": "b.tree fonctionne-t-il hors ligne ?",
@@ -348,7 +346,7 @@
     "decreaseDays": "Supprimez une année de paiement (minimum un an).",
     "forOneYear": "pendant 1 an",
     "increaseDays": "Ajoutez une année de paiement (maximum 10 ans d'avance possible).",
-    "minimumAmount": "",
+    "minimumAmount": "Un minimum de {value} euros est nécessaire.",
     "noSubscription": "Paiement unique, pas d'abonnement automatique !",
     "payWithStripe": "Carte de crédit et autres",
     "perks": "Avec l'adhésion premium, vous obtenez les bonus suivants",
@@ -362,8 +360,7 @@
     "priceHistory": "Notre historique de prix et les changements à venir",
     "sum": "Payez pour <b>{years}</b> année(s) d'abonnement premium une somme totale de <b>{sum} €</b>.",
     "thankYou": "Nous vous remercions de votre contribution. Le temps premium doit être ajouté automatiquement, sinon essayez de vous connecter ou de vous déconnecter. En cas de problème, n'hésitez pas à nous contacter à {'office@btree.at'}",
-    "title": "Soutenez b.tree avec un accès premium pendant un an",
-    "yesSubscription": ""
+    "title": "Soutenez b.tree avec un accès premium pendant un an"
   },
   "method": "Méthode | Méthodes",
   "min": "Min.",
@@ -537,6 +534,17 @@
   "separatorComma": "Virgule ( , )",
   "separatorSemicolon": "Point virgule ( ; )",
   "serie": "Série | Série",
+  "server": {
+    "hint": {
+      "register": "Choisissez le serveur le plus proche de votre emplacement pour de meilleures performances, vous ne pouvez pas le modifier après l'inscription !",
+      "visitor": "Choisissez le serveur sur lequel vous avez enregistré votre entreprise !"
+    },
+    "text": {
+      "button": "Nouvelle entreprise d'importation",
+      "info": "Avec cette fonction, vous pouvez importer une exportation précédente. \nL'importation créera une nouvelle société. \nLes utilisateurs de l'entreprise et les données utilisateur associées, l'élevage des reines, le pedigree de la reine et les données de balance sont perdus lors de l'importation.",
+      "title": "Importer les données de l'entreprise"
+    }
+  },
   "serviceProvider": "Notre prestataire",
   "serviceWorker": {
     "newContent": "Le contenu mis à jour est disponible. Veuillez actualiser la page.",

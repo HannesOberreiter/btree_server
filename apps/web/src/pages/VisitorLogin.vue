@@ -11,6 +11,7 @@ import { storeToRefs } from 'pinia';
 import FormUserPassword from '~/components/FormUserPassword.vue';
 import FormInputEmail from '~/components/FormInputEmail.vue';
 import FormErrorMax from '~/components/FormErrorMax.vue';
+import FormDropdownServer from '~/components/FormDropdownServer.vue';
 import { useApiFetch } from '~/composables/useApi';
 
 const router = useRouter();
@@ -120,6 +121,7 @@ async function redirect() {
       <form-user-password
         v-model:modelPassword="state.password"
       ></form-user-password>
+      <form-dropdown-server></form-dropdown-server>
       <q-card-actions class="">
         <btn-base
           v-if="validLastUrl()"

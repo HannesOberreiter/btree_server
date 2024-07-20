@@ -1,6 +1,6 @@
 {
   "Dropbox": "Dropbox",
-  "abo": "Abo | Abos",
+  "abo": "Abo | Abos",
   "account": "Account",
   "accountActivated": "You account was successfully activated!",
   "activate": "Activate",
@@ -15,7 +15,6 @@
   },
   "active": "Active",
   "add": "Add",
-  "addFederatedCedential": "Add Federated Credential",
   "addFederatedCredential": "Add Provider",
   "addOption": "Add a new option",
   "addedHive": "Added hive {name} to selection!",
@@ -163,7 +162,6 @@
   "event": "event | events",
   "example": "Example",
   "exampleQuestion": {
-    "Offline": "Does b.tree work offline?",
     "diffDiseases": "How can I differentiate between AFB and EFB?",
     "eggs": "How many eggs does a queen bee lay?",
     "offline": "Does b.tree work offline?",
@@ -362,8 +360,7 @@
     "priceHistory": "Our price history and upcoming changes",
     "sum": "Pay for <b>{years}</b> year(s) of premium membership a total sum of <b>{sum}€</b>.",
     "thankYou": "Thank you for your contribution. The premium time should be added automatically otherwise try to login or logout. If any problems occured, to not hesitated to contact us at {'office@btree.at'}",
-    "title": "Support b.tree with premium access for one year",
-    "yesSubscription": "Automatic yearly payment as subscription."
+    "title": "Support b.tree with premium access for one year"
   },
   "method": "Method | Methods",
   "min": "Min.",
@@ -537,6 +534,17 @@
   "separatorComma": "Comma ( , )",
   "separatorSemicolon": "Semicolon ( ; )",
   "serie": "Serie | Series",
+  "server": {
+    "hint": {
+      "register": "Choose the server which is closest to your location for best performance, you cannot change this after registration!",
+      "visitor": "Choose the server which you registered you company!"
+    },
+    "text": {
+      "button": "New company from import",
+      "info": "With this function you can import a previous export. The import will create a new company. Lost on import are company users and related user data, queen rearing, queen pedigree, scales data. ",
+      "title": "Import company data"
+    }
+  },
   "serviceProvider": "Our service provider",
   "serviceWorker": {
     "newContent": "Updated content is available. Please refresh the page.",

@@ -39,25 +39,31 @@ const useNotification = (t: undefined | ComposerTranslation = undefined) => {
 
   function checkStatus(statusCode: number, errorField = '') {
     let displayMessage = '';
-
-    if (statusCode === 401) {
+    if (statusCode === 400) {
+      displayMessage = t('error.unknown') + ' ' + errorField;
+    } else if (statusCode === 401) {
       if (errorField === 'mail') {
         displayMessage = t('error.mailError');
       } else {
         displayMessage = t('error.access');
       }
-    } else if (statusCode === 402) displayMessage = t('error.premium');
-    else if (statusCode === 403) {
+    } else if (statusCode === 402) {
+      displayMessage = t('error.premium');
+    } else if (statusCode === 403) {
       if (errorField === 'lastMovement') {
         displayMessage = t('error.lastMovement');
       } else {
         displayMessage = t('error.forbidden');
       }
-    } else if (statusCode === 404) displayMessage = t('error.notFound');
-    else if (statusCode === 409)
+    } else if (statusCode === 404) {
+      displayMessage = t('error.notFound');
+    } else if (statusCode === 409) {
       displayMessage = `${t('error.duplicate')} (${t(errorField)})`;
-    else if (statusCode === 423) displayMessage = t('error.locked');
-    else if (statusCode === 429) displayMessage = t('error.tooManyRequest');
+    } else if (statusCode === 423) {
+      displayMessage = t('error.locked');
+    } else if (statusCode === 429) {
+      displayMessage = t('error.tooManyRequest');
+    }
 
     return displayMessage;
   }

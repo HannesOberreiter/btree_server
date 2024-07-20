@@ -59,6 +59,13 @@
       :label="t('delete')"
       @click="deleteCompany"
     />
+    <btn-base
+      v-if="storeUser.isAdmin"
+      color="negative"
+      :loading="isSubmitting"
+      :label="t('server.text.button')"
+      @click="importData"
+    />
   </btn-base-group>
 </template>
 
@@ -77,6 +84,7 @@ import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 import { ref, computed } from 'vue';
 import { storeToRefs } from 'pinia';
+import { useBackend } from '~/composables/useBackend';
 
 const notification = useNotification();
 const useDate = useDateFormat();
@@ -244,5 +252,31 @@ const downloadContent = async () => {
     },
   );
   downloadLoading.value = false;
+};
+
+const backend = useBackend();
+const importData = async () => {
+  $q.dialog({
+    title: t('server.text.title') + ': ' + backend.getOtherOption()[0].label,
+    message: t('server.text.info'),
+    prompt: {
+      model: '',
+      type: 'file',
+      label: 'API Key',
+    },
+    cancel: true,
+    persistent: false,
+  }).onOk((data: FileList) => {
+    api.postMultiPart('/v1/company/import', { upload: data[0] }).then(
+      async (data) => {
+        invalidateQueries.invalidate();
+        await storeRefresh.refresh();
+        notification.open('positive', data.name, true);
+      },
+      (error) => {
+        notification.open('negative', error);
+      },
+    );
+  });
 };
 </script>

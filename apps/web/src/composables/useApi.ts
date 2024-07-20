@@ -3,13 +3,15 @@ import querystring from 'query-string';
 import { isString } from 'lodash-es';
 import { LoadingBar } from 'quasar';
 import { useNetwork } from '@vueuse/core';
+import { useBackend } from './useBackend';
 
-const baseUrl = process.env.BACKEND_URL;
 const dev = process.env.NODE_ENV;
 
 export const useApiFetch = () => {
+  const backend = useBackend();
   const network = useNetwork();
   const dialog = useNeedAuth();
+  const baseUrl = backend.url;
 
   const buildHeader = () => {
     return {
@@ -19,10 +21,10 @@ export const useApiFetch = () => {
   };
 
   const buildUrl = (url: string, param = '' as unknown) => {
-    if (param === '') return baseUrl + url;
+    if (param === '') return baseUrl.value + url;
     else
       return (
-        baseUrl +
+        baseUrl.value +
         url +
         '?' +
         querystring.stringify(param, { arrayFormat: 'bracket' })
@@ -122,6 +124,27 @@ export const useApiFetch = () => {
     return await fetching(originalRequest);
   };
 
+  const postMultiPart = async (
+    url: string,
+    payload: Record<string, any>,
+  ): Promise<any> => {
+    const urlParam = buildUrl(url, '');
+    const mulitpartPayload = new FormData();
+    for (const key in payload) {
+      mulitpartPayload.append(key, payload[key]);
+    }
+    const originalRequest = new Request(urlParam, {
+      method: 'POST', // *GET, POST, PUT, DELETE, etc.
+      credentials: 'include', // include, *same-origin, omit
+      headers: {
+        Accept: 'application/json',
+      },
+      body: mulitpartPayload,
+    });
+
+    return await fetching(originalRequest);
+  };
+
   const patch = async (url: string, payload: unknown): Promise<any> => {
     const urlParam = buildUrl(url, '');
     const originalRequest = new Request(urlParam, {
@@ -187,5 +210,5 @@ export const useApiFetch = () => {
 
     return fetch(originalRequest);
   };
-  return { ping, get, post, patch, remove, download, stream };
+  return { ping, get, post, patch, remove, download, stream, postMultiPart };
 };

@@ -15,7 +15,6 @@
   },
   "active": "Aktiv",
   "add": "Hinzufügen",
-  "addFederatedCedential": "",
   "addFederatedCredential": "Anbieter hinzufügen",
   "addOption": "Neue Option hinzufügen",
   "addedHive": "Stock {name} zur Auswahl hinzugefügt!",
@@ -129,7 +128,7 @@
   "eggs": "Eier",
   "email": "Email",
   "end": "Ende",
-  "enterEmail": "",
+  "enterEmail": "Geben Sie bitte Ihre Email-Adresse ein",
   "error": {
     "CouponNotFound": "Coupon {token} konnte nicht gefunden werden.",
     "access": "Zugriff nicht erlaubt oder falsches Passwort!",
@@ -137,7 +136,7 @@
     "csvReading": "Die .csv Datei konnte nicht gelesen werden!",
     "csvTooMuch": "Upload ist zu groß!",
     "duplicate": "Konflikt, Eintrag mit angegebenem Wert existiert bereits.",
-    "emailRequired": "Post ist erforderlich.",
+    "emailRequired": "Email ist erforderlich.",
     "forbidden": "Zutritt verboten oder nicht erlaubt!",
     "lastMovement": "Jeder Bienenstock braucht mindestens eine Wanderung! Die letzte Wanderung kannst du nicht löschen.",
     "localStorage": "Warnung: Diese Anwendung benötigt Zugriff auf den lokalen Speicher Ihres Webbrowsers, um ordnungsgemäß zu funktionieren.",
@@ -163,7 +162,6 @@
   "event": "Termin | Termine",
   "example": "Beispiel",
   "exampleQuestion": {
-    "Offline": "",
     "diffDiseases": "Unterschied zwischen amerikanischer und europäischer Faulbrut?",
     "eggs": "Wie viele Eier legt eine Bienenkönigin?",
     "offline": "Funktioniert b.tree offline?",
@@ -348,7 +346,7 @@
     "decreaseDays": "Entfernen Sie ein Zahlungsjahr (mindestens ein Jahr).",
     "forOneYear": "1 Jahr lang",
     "increaseDays": "Fügen Sie ein Zahlungsjahr hinzu (maximal 10 Jahre im Voraus möglich).",
-    "minimumAmount": "",
+    "minimumAmount": "Es ist ein Mindestbetrag von {value} Euro erforderlich.",
     "noSubscription": "Nur einmalige Zahlung, kein automatisches Abo!",
     "payWithStripe": "Kreditkarte und andere",
     "perks": "Mit der Premium-Mitgliedschaft erhalten Sie folgende Boni",
@@ -362,8 +360,7 @@
     "priceHistory": "Unser Preisverlauf und bevorstehende Änderungen",
     "sum": "Zahlen Sie für <b>{years}</b> Jahr(e) der Premium-Mitgliedschaft einen Gesamtbetrag von <b>{sum}€</b>.",
     "thankYou": "Danke für Ihren Beitrag. Die Premium-Zeit sollte automatisch hinzugefügt werden, andernfalls versuchen Sie sich anzumelden oder abzumelden. Sollten Probleme auftreten, zögern Sie nicht, uns unter {'office@btree.at'} zu kontaktieren.",
-    "title": "Unterstützen Sie b.tree mit einem Premium-Zugang für ein Jahr",
-    "yesSubscription": ""
+    "title": "Unterstützen Sie b.tree mit einem Premium-Zugang für ein Jahr"
   },
   "method": "Methode | Methoden",
   "min": "Min.",
@@ -537,6 +534,17 @@
   "separatorComma": "Komma ( , )",
   "separatorSemicolon": "Strichpunkt ( ; )",
   "serie": "Serie | Serien",
+  "server": {
+    "hint": {
+      "register": "Wählen Sie den Server aus, der Ihrem Standort am nächsten liegt, um die beste Leistung zu erzielen. Nach der Registrierung können Sie diesen nicht mehr ändern!",
+      "visitor": "Wählen Sie den Server aus, auf dem Sie Ihre Imkerei registriert haben!"
+    },
+    "text": {
+      "button": "Neue Imkerei aus Import",
+      "info": "Mit dieser Funktion können Sie einen vorherigen Export importieren. \nDurch den Import wird ein neues Unternehmen erstellt. \nBeim Import gehen Unternehmensbenutzer und zugehörige Benutzerdaten, Königinnenaufzucht, Königinnenstammbaum und Waagedaten verloren.",
+      "title": "Imkereidaten importieren"
+    }
+  },
   "serviceProvider": "Unsere Partner Dienstleister",
   "serviceWorker": {
     "newContent": "Aktualisierte Inhalte sind verfügbar. Bitte aktualisieren Sie die Seite.",
