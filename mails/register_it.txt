@@ -5,9 +5,9 @@ Benvenuto su b.tree, come piccolo regalo di benvenuto, il tuo account ha ricevut
 
 Per favore, apri il seguente link per attivare il tuo account prima di effettuare il primo login:
 
-%base_url%visitor/activate/%key%
+%base_url%visitor/activate/%key%%params%
 
 ## Le tue credenziali di accesso
 
 - Nome utente: %mail%
-- Accesso: %base_url%
+- Accesso: %base_url%%params%

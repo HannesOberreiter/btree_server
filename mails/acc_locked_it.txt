@@ -3,6 +3,6 @@ Caro apicoltore,
 
 il suo account b.tree ha avuto troppi accessi non riusciti. Come misura di sicurezza abbiamo bloccato il suo account per due ore.
 
-Se hai dimenticato la password, utilizza il seguente link: %base_url%recover/
+Se hai dimenticato la password, utilizza il seguente link: %base_url%recover/%params%
 
 Se ha ancora problemi con il login o altre domande, non esiti a contattarci office@btree.at.

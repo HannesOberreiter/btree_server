@@ -3,6 +3,6 @@ Dear Beekeeper,
 
 your b.tree account had too many failed logins. As security measure we locked your account for two hours.
 
-If you forgot your password, please use following link: %base_url%recover/
+If you forgot your password, please use following link: %base_url%recover/%params%
 
 If you still have problems with your login or other questions, please feel free to contact us office@btree.at

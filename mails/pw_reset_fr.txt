@@ -5,4 +5,4 @@ quelqu'un a demandé un nouveau mot de passe pour votre login b.tree. Si vous n'
 
 Pour définir un nouveau mot de passe, veuillez utiliser le lien suivant :
 
-%base_url%visitor/reset/%key%.
+%base_url%visitor/reset/%key%%params%

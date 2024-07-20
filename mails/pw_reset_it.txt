@@ -5,4 +5,4 @@ qualcuno ha richiesto una nuova password per il suo b.tree Login. Se non hai ric
 
 Per impostare una nuova password, utilizzare il seguente link:
 
-%base_url%visitor/reset/%key%
+%base_url%visitor/reset/%key%%params%

@@ -209,6 +209,11 @@ const openAI = {
   ),
 };
 
+const serverLocations = ['eu', 'us'];
+const serverLocation = serverLocations.includes(process.env.SERVER_LOCATION)
+  ? process.env.SERVER_LOCATION
+  : 'eu';
+
 export {
   rootDirectory,
   redisConfig,
@@ -239,4 +244,5 @@ export {
   openAI,
   isContainer,
   isChild,
+  serverLocation,
 };
