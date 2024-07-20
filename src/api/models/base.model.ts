@@ -66,15 +66,26 @@ export class ExtModel extends BaseModel {
 
   // https://github.com/Vincit/objection.js/issues/647
   $beforeInsert() {
+    if (this.updated_at) {
+      delete this.updated_at;
+    }
+    if (this.created_at) {
+      return;
+    }
     this[`${this.getTablename()}.created_at`] = dayjs
       .utc()
       .toISOString()
       .slice(0, 19)
       .replace('T', ' ');
-    delete this.updated_at;
   }
 
   $beforeUpdate() {
+    if (this.created_at) {
+      delete this.created_at;
+    }
+    if (this.updated_at) {
+      return;
+    }
     this[`${this.getTablename()}.updated_at`] = dayjs
       .utc()
       .toISOString()

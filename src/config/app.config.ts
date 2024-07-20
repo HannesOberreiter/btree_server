@@ -24,6 +24,7 @@ import fastifyCookie from '@fastify/cookie';
 import fastifySession from '@fastify/session';
 import fastifyCompress from '@fastify/compress';
 import fastifyHelmet from '@fastify/helmet';
+import fastifyMultipart from '@fastify/multipart';
 
 /**
  * @description Instantiate server application.
@@ -222,6 +223,17 @@ export class Application {
         return;
       }
       throw e;
+    });
+
+    /**
+     * @description Register multipart plugin
+     */
+    this.app.register(fastifyMultipart, {
+      limits: {
+        fileSize: 1048576 * 10, // 10 MB
+        files: 1, // Max number of file fields
+      },
+      attachFieldsToBody: 'keyValues',
     });
 
     this.app.register(routes, {

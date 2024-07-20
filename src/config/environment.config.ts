@@ -1,6 +1,5 @@
 import dotenv from 'dotenv';
 import { ENVIRONMENT } from './constants.config.js';
-import { connect } from 'http2';
 
 const rootDirectory = new URL('../../', import.meta.url).pathname;
 
@@ -14,6 +13,8 @@ class EnvironmentConfiguration {
    * @description Current environment (default dev)
    */
   static environment: keyof typeof ENVIRONMENT = ENVIRONMENT.development;
+
+  static server: 'eu' | 'us' = 'eu';
 
   /**
    * @description Set environment according to current process args
@@ -34,6 +35,12 @@ class EnvironmentConfiguration {
     ) {
       this.environment = process.env.ENVIRONMENT as keyof typeof ENVIRONMENT;
     }
+    if (
+      process.env.SERVER &&
+      (process.env.SERVER === 'eu' || process.env.SERVER === 'us')
+    ) {
+      this.server = process.env.SERVER;
+    }
   }
 
   /**
@@ -43,7 +50,9 @@ class EnvironmentConfiguration {
     this.set();
     // https://www.npmjs.com/package/dotenv
     const result = dotenv.config({
-      path: rootDirectory + `/env/${this.environment}.env`,
+      path:
+        rootDirectory +
+        `/env/${this.environment + (this.server === 'eu' ? '' : '-' + this.server)}.env`,
     });
     if (result.error) {
       throw result.error;
