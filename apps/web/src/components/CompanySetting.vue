@@ -47,6 +47,13 @@
   </btn-base-group>
   <btn-base-group size="md" class="q-mt-md">
     <btn-base
+      v-if="storeUser.isAdmin"
+      color="primary"
+      :loading="isSubmitting"
+      :label="t('server.text.button')"
+      @click="importData"
+    />
+    <btn-base
       color="red-10"
       :loading="isSubmitting"
       :label="t('removeAccess')"
@@ -58,13 +65,6 @@
       :loading="isSubmitting"
       :label="t('delete')"
       @click="deleteCompany"
-    />
-    <btn-base
-      v-if="storeUser.isAdmin"
-      color="negative"
-      :loading="isSubmitting"
-      :label="t('server.text.button')"
-      @click="importData"
     />
   </btn-base-group>
 </template>
@@ -262,7 +262,6 @@ const importData = async () => {
     prompt: {
       model: '',
       type: 'file',
-      label: 'API Key',
     },
     cancel: true,
     persistent: false,
