@@ -449,8 +449,15 @@ export default class CompanyController {
       await zip.close();
     }
     const name = Date.now() + '';
+    /** 4 days after import probably seems fair and does prevent misuse */
+    const paid = new Date();
+    paid.setDate(paid.getDate() + 4);
+
     await Company.transaction(async (trx) => {
-      const company = await Company.query(trx).insert({ name });
+      const company = await Company.query(trx).insert({
+        name,
+        paid: paid.toISOString().slice(0, 10),
+      });
       await CompanyBee.query(trx).insert({
         bee_id: req.session.user.bee_id,
         user_id: company.id,
