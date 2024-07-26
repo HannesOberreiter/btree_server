@@ -9,8 +9,6 @@ declare namespace NodeJS {
     OPENWEATHER_APP_ID: string;
     BACKEND_URL: string;
     BACKEND_URL_US: string;
-    DEV_BACKEND_URL: string;
-    DEV_BACKEND_URL_US: string;
     MATOMO_HOST: string;
     MATOMO_SITE_ID: number;
     PAYPAL_CLIENT_ID: string;

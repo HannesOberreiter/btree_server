@@ -76,11 +76,10 @@ module.exports = configure(function (ctx) {
       env: {
         DROPBOX_CLIENT_ID: process.env.DROPBOX_CLIENT_ID,
         OPENWEATHER_APP_ID: process.env.OPENWEATHER_APP_ID,
+
         BACKEND_URL: process.env.BACKEND_URL,
         BACKEND_URL_US: process.env.BACKEND_URL_US,
-        DEV_BACKEND_URL: process.env.DEV_BACKEND_URL || process.env.BACKEND_URL,
-        DEV_BACKEND_URL_US:
-          process.env.DEV_BACKEND_URL_US || process.env.BACKEND_URL_US,
+
         MATOMO_HOST: process.env.MATOMO_HOST,
         MATOMO_SITE_ID: process.env.MATOMO_SITE_ID,
         PAYPAL_CLIENT_ID: process.env.PAYPAL_CLIENT_ID,
@@ -117,16 +116,16 @@ module.exports = configure(function (ctx) {
     devServer: {
       proxy: {
         '/api': {
-          target: process.env.DEV_BACKEND_URL || process.env.BACKEND_URL,
+          target: process.env.BACKEND_URL,
           changeOrigin: true,
           secure: false,
           rewrite: (path) => path.replace(/^\/api/, ''),
         },
-        '/usapi': {
-          target: process.env.DEV_BACKEND_URL_US || process.env.BACKEND_URL_US,
+        '/us/api': {
+          target: process.env.BACKEND_URL_US,
           changeOrigin: true,
           secure: false,
-          rewrite: (path) => path.replace(/^\/usapi/, ''),
+          rewrite: (path) => path.replace(/^\/us\/api/, ''),
         },
       },
       port: ctx.mode.spa ? 9000 : 9100,

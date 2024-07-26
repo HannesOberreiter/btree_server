@@ -36,7 +36,5 @@ const overwriteOption =
     : null;
 const modelValue = ref(overwriteOption || backend.getOption());
 
-watch(modelValue, () => {
-  backend.state.value = modelValue.value.id;
-});
+watch(modelValue, () => backend.setBackend(modelValue.value.id));
 </script>

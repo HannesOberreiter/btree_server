@@ -177,10 +177,8 @@ const { copy } = useClipboard();
 const api = useApiFetch();
 const notification = useNotification();
 const backend = useBackend();
-const baseUrl = backend.url;
-const devBackendUrl = process.env.DEV_BACKEND_URL;
+const baseUrl = backend.urlIgnoreProxy;
 
-const dev = process.env.NODE_ENV;
 const isSubmitting = ref(false);
 const apiField = ref('password' as QInputProps['type']);
 const apiValue = ref((Math.random() + 1).toString(36));
@@ -192,9 +190,7 @@ icals.push('scale_data');
 
 const ical = ref('checkup');
 const icalUrl = computed(() => {
-  return `${dev === 'production' ? baseUrl.value : devBackendUrl}/v1/external/ical/${
-    ical.value
-  }/${apiValue.value}`;
+  return `${baseUrl.value}/v1/external/ical/${ical.value}/${apiValue.value}`;
 });
 
 const scale = ref(null);
@@ -204,9 +200,7 @@ const scaleUrl = computed(() => {
   } else {
     return '';
   }
-  return `${dev === 'production' ? baseUrl.value : devBackendUrl}/v1/external/scale/${
-    scale.value.name
-  }/${apiValue.value}${scaleQuery}`;
+  return `${baseUrl.value}/v1/external/scale/${scale.value.name}/${apiValue.value}${scaleQuery}`;
 });
 
 const scaleUrlShort = computed(() => {

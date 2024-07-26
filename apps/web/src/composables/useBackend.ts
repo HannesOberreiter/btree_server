@@ -2,15 +2,19 @@ import { useLocalStorage } from '@vueuse/core';
 import { computed } from 'vue';
 import { API_SERVER } from '~/constants';
 
+const isDev = process.env.NODE_ENV !== 'production';
 const baseUrl = process.env.BACKEND_URL;
 const baseUrlUS = process.env.BACKEND_URL_US;
 
-const backends: { [key: string]: string } = {
+const backends: {
+  [key: string]: string;
+} = {
   eu: baseUrl,
 };
 if (baseUrlUS) {
   backends['us'] = baseUrlUS;
 }
+
 const validServers = Object.keys(backends);
 
 const options: Array<{ label: string; id: string }> = [
@@ -35,7 +39,16 @@ export const useBackend = () => {
     state.value = server;
   }
 
-  const url = computed(() => backends[state.value] || baseUrl);
+  const url = computed(() => {
+    const server = state.value;
+    const url = backends[server] || baseUrl;
+    if (isDev)
+      return server !== 'eu'
+        ? '/' + server + new URL(url).pathname // reverse proxy is set to trigger on /[server]/api ...
+        : new URL(url).pathname; // reverse proxy is set to trigger on /api
+    return url;
+  });
+  const urlIgnoreProxy = computed(() => backends[state.value] || baseUrl);
 
   return {
     state,
@@ -49,6 +62,7 @@ export const useBackend = () => {
     findOption: (id: string) => options.find((o) => o.id === id),
     getOtherOption: () => options.filter((o) => o.id != state.value),
     isServerParam: !!server,
+    urlIgnoreProxy,
     url,
     options,
   };
