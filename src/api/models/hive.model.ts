@@ -14,7 +14,6 @@ export class Hive extends ExtModel {
   grouphive!: number;
   position!: number;
   note!: string;
-  url!: string;
   modus!: boolean;
   modus_date!: string;
   deleted_at!: string;

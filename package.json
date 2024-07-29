@@ -44,6 +44,7 @@
     "archiver": "^7.0.1",
     "close-with-grace": "^1.2.0",
     "connect-redis": "^7.0.0",
+    "csv-parse": "^5.5.6",
     "csv-stringify": "^6.2.3",
     "dayjs": "^1.11.7",
     "dotenv": "^16.0.2",

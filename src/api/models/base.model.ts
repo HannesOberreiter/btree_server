@@ -43,8 +43,10 @@ export class BaseModel extends Model {
       },
       options: {
         allErrors: true,
-        validateSchema: true,
+        validateSchema: false,
         ownProperties: true,
+        coerceTypes: true,
+        removeAdditional: true,
       },
     });
   }

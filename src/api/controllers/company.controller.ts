@@ -3,7 +3,8 @@ import httpErrors from 'http-errors';
 import { randomBytes } from 'crypto';
 import archiver from 'archiver';
 import yauzl from 'yauzl-promise';
-import { stringify } from 'csv-stringify/sync';
+import { Options, stringify } from 'csv-stringify/sync';
+import { parse } from 'csv-parse/sync';
 
 import { Company } from '../models/company.model.js';
 import { reviewPassword } from '../utils/login.util.js';
@@ -67,13 +68,21 @@ export default class CompanyController {
   }
 
   static async download(req: FastifyRequest, reply: FastifyReply) {
-    const stringifyOptions = {
+    const stringifyOptions: Options = {
       header: true,
       cast: {
         date: function (value) {
           return value.toISOString();
         },
+        string: function (value) {
+          return value.replace(/(\r\n|\n|\r|")/gm, ' ');
+        },
+        boolean: function (value) {
+          if (value === null) return '';
+          return value ? '1' : '0';
+        },
       },
+      record_delimiter: 'windows',
     };
     const arch = archiver('zip');
     await User.transaction(async (trx) => {
@@ -442,7 +451,7 @@ export default class CompanyController {
             chunks.push(chunk);
           }
           const content = Buffer.concat(chunks);
-          data[name] = convertCSVtoJSON(content.toString());
+          data[name] = parseCSV(content.toString());
         }
       }
     } finally {
@@ -494,39 +503,62 @@ export default class CompanyController {
   }
 }
 
-function convertCSVtoJSON(csv: string) {
-  const lines = csv.split('\n');
-  const result = [];
-  const headers = lines[0].split(',');
-  for (let i = 1; i < lines.length - 1; i++) {
-    const obj = {};
-    let line = lines[i];
-    line = line.replace(/"{.*?}"/g, '');
-    const currentline = line.split(',');
-    for (let j = 0; j < headers.length; j++) {
-      if (!currentline[j]) {
-        continue;
+function parseCSV(csv: string) {
+  const results = parse(csv, {
+    columns: true,
+    autoParse: false,
+    cast: false,
+    to: 1_000_000,
+    skipEmptyLines: true,
+    onRecord: (record, context) => {
+      if (context.header) {
+        return;
       }
-      if (
-        ['modus', 'deleted', 'favorite', 'active', 'done'].includes(headers[j])
-      ) {
-        obj[headers[j]] = currentline[j] === '1';
-      } else if (
-        ['created_at', 'updated_at', 'deleted_at'].includes(headers[j])
-      ) {
-        obj[headers[j]] = currentline[j].slice(0, 19).replace('T', ' ');
-      } else if (['date', 'enddate', 'modus_date'].includes(headers[j])) {
-        obj[headers[j]] = currentline[j].slice(0, 10);
-      } else {
-        obj[headers[j]] = currentline[j];
+      for (let key of Object.keys(record)) {
+        if (
+          record[key] === '' ||
+          record[key] === null ||
+          record[key] === undefined
+        ) {
+          delete record[key];
+        } else if (
+          [
+            'modus',
+            'deleted',
+            'favorite',
+            'active',
+            'done',
+            'queen',
+            'queencells',
+            'eggs',
+            'capped_brood',
+          ].includes(key)
+        ) {
+          /** convert to boolean, ajv coercing does not work for strings to boolean */
+          record[key] = record[key] === '1';
+        } else if (['created_at', 'updated_at', 'deleted_at'].includes(key)) {
+          /** prepare for direct insert into db */
+          if (record[key]) {
+            record[key] = record[key].slice(0, 19).replace('T', ' ');
+          } else {
+            delete record[key];
+          }
+        } else if (
+          ['date', 'enddate', 'modus_date', 'bestbefore', 'move_date'].includes(
+            key,
+          )
+        ) {
+          /** convert to short date */
+          record[key] = record[key].slice(0, 10);
+          if (record[key] === '0000-00-00') {
+            delete record[key];
+          }
+        }
       }
-    }
-    result.push(obj);
-    if (i > 10_000) {
-      break;
-    }
-  }
-  return result;
+      return record;
+    },
+  });
+  return results;
 }
 
 const removeKeys = (
@@ -731,22 +763,6 @@ async function moveCheckups(
   if (data.checkups.length === 0) return;
   removeKeys(data.checkups);
   data.checkups.map((checkup) => {
-    checkup.brood = parseFloat(checkup.brood);
-    checkup.pollen = parseFloat(checkup.pollen);
-    checkup.swarm = parseFloat(checkup.swarm);
-    checkup.calm_comb = parseFloat(checkup.calm_comb);
-    checkup.comb = parseFloat(checkup.comb);
-    checkup.temper = parseFloat(checkup.temper);
-    checkup.weight = parseFloat(checkup.weight);
-    checkup.varroa = parseFloat(checkup.varroa);
-    checkup.temperature = parseFloat(checkup.temperature);
-
-    checkup.strong = parseInt(checkup.strong);
-    checkup.broodframes = parseInt(checkup.broodframes);
-    checkup.emptyframes = parseInt(checkup.emptyframes);
-    checkup.foundation = parseInt(checkup.foundation);
-    checkup.honeyframes = parseInt(checkup.honeyframes);
-
     checkup.user_id = user_id;
     checkup.hive_id = hives[checkup.hive_id];
     checkup.type_id = oldMapTypes[checkup.type_id];
@@ -831,8 +847,6 @@ async function moveHives(
   const copyHives = JSON.parse(JSON.stringify(data.hives));
   removeKeys(data.hives);
   data.hives.map((hive) => {
-    hive.position = parseInt(hive.position);
-    hive.grouphive = parseInt(hive.grouphive);
     hive.user_id = user_id;
     hive.type_id = oldMapTypes[hive.type_id];
     hive.source_id = oldMapSource[hive.source_id];

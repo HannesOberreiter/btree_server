@@ -56,6 +56,7 @@ export class Queen extends ExtModel {
 
       modus: { type: 'boolean' },
       modus_date: { type: 'string', format: 'date' },
+
       deleted: { type: 'boolean' },
       deleted_at: { type: 'string', format: 'iso-date-time' },
 
