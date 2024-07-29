@@ -26,6 +26,7 @@
     "dev:serve:us": "ENVIRONMENT=development SERVER=us nodemon --delay 2000ms",
     "dev:build": "tsc --watch",
     "dev:knex": "ENVIRONMENT=development knex",
+    "dev:knex:us": "ENVIRONMENT=development SERVER=us knex",
     "test:e2e": "ENVIRONMENT=test npx mocha ./test/e2e/00-api.e2e.test.cjs  --R spec --ui bdd --env test --timeout 5000",
     "test:watch": "ENVIRONMENT=test npx mocha ./test/e2e/00-api.e2e.test.cjs  --watch dist test --env test",
     "ci:e2e": "ENVIRONMENT=ci npx mocha ./test/e2e/00-api.e2e.test.cjs --timeout 5000",
