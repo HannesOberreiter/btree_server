@@ -3,6 +3,6 @@ Liebe/r Imker/in,
 
 deine Premium Mitgliedschaft läuft bald aus. Wir würden uns freuen, wenn du uns als Premium Mitglied behalten bleibst! 
 
-Jetzt verlängern: %base_url%premium
+Jetzt verlängern: %base_url%premium%params%
 
 Wenn deine Premium Mitgliedschaft ausgelaufen ist, verlierst du natürlich keine Daten. Du kannst mit deinen existierenden Stöcken und Ständen ohne weiteres weiterarbeiten, aber die Basic User Limitierungen sind wieder aktiv.

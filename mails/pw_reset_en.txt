@@ -5,4 +5,4 @@ someone has requested a new password for your b.tree Login. If you did not ask f
 
 Do set a new password please use following link:
 
-%base_url%visitor/reset/%key%
+%base_url%visitor/reset/%key%%params%

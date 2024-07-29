@@ -5,8 +5,8 @@ b.tree - Professional Beekeeping Database
 Hannes Oberreiter, office@btree.at
 Reisstraße 17, 8741 Weißkirchen in der Steiermark, Österreich
 
-Diese E-Mail wurde an %mail%, von %base_url% gesendet, da es sich um eine wichtige E-Mail zur Nutzung der Anwendung handelt oder Sie sich für den Erhalt automatischer Informationsmails entschieden haben. Die Informations-E-Mails können Sie auf Ihrer Profilseite oder über den unten stehenden Abmeldelink abstellen. Wir versenden keine Newsletter. Dies ist eine automatisierte System-E-Mail. Bitte antworten Sie nicht auf diese E-Mail.
+Diese E-Mail wurde an %mail%, von %base_url%%params% gesendet, da es sich um eine wichtige E-Mail zur Nutzung der Anwendung handelt oder Sie sich für den Erhalt automatischer Informationsmails entschieden haben. Die Informations-E-Mails können Sie auf Ihrer Profilseite oder über den unten stehenden Abmeldelink abstellen. Wir versenden keine Newsletter. Dies ist eine automatisierte System-E-Mail. Bitte antworten Sie nicht auf diese E-Mail.
 
-- Abmelden: %base_url%visitor/unsubscribe
-- Datenschutz: https://www.btree.at/%lang%/data-privacy
-- Impressum: https://www.btree.at/%lang%/impressum
+- Abmelden: %base_url%visitor/unsubscribe%params%
+- Datenschutz: https://www.btree.at/%lang%/data-privacy%params%
+- Impressum: https://www.btree.at/%lang%/impressum%params%

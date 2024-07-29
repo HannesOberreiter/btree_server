@@ -3,6 +3,6 @@ Dear Beekeeper!
 
 Your Premium Membership will expire soon! We would be happy to keep you as Premium Member around.
 
-Renew now: %base_url%premium
+Renew now: %base_url%premium%params%
       
 If your Premium Membership runs out, you wont loose any data! You also can still work with all your hives and apiaries for free but basic membership limitations are again in place!

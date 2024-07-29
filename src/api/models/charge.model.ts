@@ -20,6 +20,7 @@ export class Charge extends ExtModel {
 
   edit_id!: number;
   bee_id!: number;
+  type_id!: number;
 
   static tableName = 'charges';
   static idColumn = 'id';

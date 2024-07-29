@@ -14,7 +14,6 @@ export class Hive extends ExtModel {
   grouphive!: number;
   position!: number;
   note!: string;
-  url!: string;
   modus!: boolean;
   modus_date!: string;
   deleted_at!: string;
@@ -23,6 +22,8 @@ export class Hive extends ExtModel {
   user_id!: number;
   bee_id!: number;
   edit_id!: number;
+  type_id!: number;
+  source_id!: number;
 
   static tableName = 'hives';
   static idColumn = 'id';
@@ -59,6 +60,9 @@ export class Hive extends ExtModel {
       user_id: { type: 'integer' }, // Company FK
       bee_id: { type: 'integer' }, // Creator Bee FK
       edit_id: { type: 'integer' }, // Updater Bee FK
+
+      type_id: { type: 'integer' }, // HiveType FK
+      source_id: { type: 'integer' }, // HiveSource FK
     },
   };
 

@@ -1,7 +1,8 @@
 const request = require('supertest');
 const { expect } = require('chai');
-const { doRequest, expectations, doQueryRequest } = require(process.cwd() +
-  '/test/utils/index.cjs');
+const { doRequest, expectations, doQueryRequest } = require(
+  process.cwd() + '/test/utils/index.cjs',
+);
 
 const patchCompanyName = 'newName';
 const newCompanyName = 'testCompany';
@@ -101,7 +102,7 @@ describe('Company routes', function () {
         route,
         null,
         accessToken,
-        { name: patchCompanyName },
+        { name: patchCompanyName, api_change: true },
         function (err, res) {
           expect(res.statusCode).to.eqls(200);
           expect(res.body.name, patchCompanyName);

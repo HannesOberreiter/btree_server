@@ -3,6 +3,6 @@ Caro apicoltore!
 
 Poiché la privacy è importante per noi e non hai effettuato l'accesso alla nostra applicazione negli ultimi 5 anni, cancelleremo a breve il tuo account, compresi i dati di contatto. Se vuole evitare la cancellazione, può ancora accedere qui per i prossimi giorni:
 
-%base_url%
+%base_url%%params%
 
 In ogni caso, vi auguriamo un'apicoltura di successo e tutto il meglio.

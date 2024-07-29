@@ -3,6 +3,6 @@ Cher apiculteur !
 
 Comme la confidentialité est importante pour nous et que vous ne vous êtes pas connecté à notre application au cours des 5 dernières années, nous allons supprimer votre compte, y compris vos coordonnées, sous peu. Si vous voulez empêcher une suppression, vous pouvez encore vous connecter ici pendant les prochains jours:
 
-%base_url%
+%base_url%%params%
 
 Dans tous les cas, nous vous souhaitons une apiculture réussie et vous adressons nos meilleurs vœux.

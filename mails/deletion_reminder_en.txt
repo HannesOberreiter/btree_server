@@ -3,6 +3,6 @@ Dear Beekeeper!
 
 Since privacy is important to us and you have not logged into our app in the last 5 years, we will delete your account including contact details shortly. If you want to prevent a deletion, you can still log in here for the next few days:
 
-%base_url%
+%base_url%%params%
 
 In any case, we wish you successful beekeeping and all the best.

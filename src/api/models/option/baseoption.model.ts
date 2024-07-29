@@ -6,7 +6,6 @@ export class BaseOptionModel extends ExtModel {
   name!: string;
   modus!: boolean;
   favorite!: boolean;
-  deleted!: boolean;
   user_id!: number;
   company?: Company;
 
