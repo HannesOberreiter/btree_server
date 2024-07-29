@@ -35,11 +35,8 @@ class EnvironmentConfiguration {
     ) {
       this.environment = process.env.ENVIRONMENT as keyof typeof ENVIRONMENT;
     }
-    if (
-      process.env.SERVER &&
-      (process.env.SERVER === 'eu' || process.env.SERVER === 'us')
-    ) {
-      this.server = process.env.SERVER;
+    if (process.env.SERVER && ['eu', 'us'].includes(process.env.SERVER)) {
+      this.server = process.env.SERVER as 'eu' | 'us';
     }
   }
 
@@ -167,21 +164,6 @@ const knexConfig = {
   },
 };
 
-/**
- * @type {Knex}
- */
-const externalKnexConfig = {
-  ...knexConfig,
-  connection: {
-    ...knexConfig.connection,
-    host: process.env.EXTERNAL_DB_HOSTNAME,
-    database: process.env.EXTERNAL_DB_NAME,
-    user: process.env.EXTERNAL_DB_USERNAME,
-    password: process.env.EXTERNAL_DB_PASSWORD,
-    port: parseInt(process.env.EXTERNAL_DB_PORT),
-  },
-};
-
 const mailConfig = {
   host: process.env.MAIL_SMTP,
   port: Number(process.env.MAIL_PORT),
@@ -218,7 +200,6 @@ export {
   rootDirectory,
   redisConfig,
   knexConfig,
-  externalKnexConfig,
   vectorConfig,
   env,
   port,
