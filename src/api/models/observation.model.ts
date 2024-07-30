@@ -1,9 +1,11 @@
 import { raw } from 'objection';
 import { ExtModel } from './base.model.js';
 
+export type Taxa = 'Vespa velutina' | 'Aethina tumida';
+
 export class Observation extends ExtModel {
   id!: number;
-  taxa!: 'Vespa velutina';
+  taxa!: Taxa;
   external_service!: 'iNaturalist' | 'PatriNat';
   external_id!: number;
   external_uuid!: string;

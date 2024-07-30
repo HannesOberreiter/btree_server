@@ -12,32 +12,11 @@ export default function routes(
   const server = instance.withTypeProvider<ZodTypeProvider>();
 
   server.get(
-    '/velutina/observations/recent',
-    {
-      schema: {
-        response: {
-          200: z.array(
-            z.object({
-              location: z.object({
-                x: z.number(),
-                y: z.number(),
-              }),
-              uri: z.string(),
-              observed_at: z.date(),
-            }),
-          ),
-        },
-      },
-    },
-    PublicController.getVelutinaObservationsRecent,
-  );
-
-  server.get(
-    '/velutina/observations/year/:year',
+    '/:taxa/observations/recent',
     {
       schema: {
         params: z.object({
-          year: numberSchema,
+          taxa: z.union([z.literal('velutina'), z.literal('aethina_tumida')]),
         }),
         response: {
           200: z.array(
@@ -53,18 +32,42 @@ export default function routes(
         },
       },
     },
-    PublicController.getVelutinaObservationsYear,
-  );
-
-  server.get(
-    '/velutina/observations/stats',
-    {},
-    PublicController.getVelutinaObservationsStats,
+    PublicController.getPestObservationsRecent,
   );
   server.get(
-    '/velutina/observations/array',
-    {},
-    PublicController.getVelutinaObservationsArray,
+    '/:taxa/observations/year/:year',
+    {
+      schema: {
+        params: z.object({
+          year: numberSchema,
+          taxa: z.union([z.literal('velutina'), z.literal('aethina_tumida')]),
+        }),
+        response: {
+          200: z.array(
+            z.object({
+              location: z.object({
+                x: z.number(),
+                y: z.number(),
+              }),
+              uri: z.string(),
+              observed_at: z.date(),
+            }),
+          ),
+        },
+      },
+    },
+    PublicController.getPestObservationsYear,
+  );
+  server.get(
+    '/:taxa/observations/stats',
+    {
+      schema: {
+        params: z.object({
+          taxa: z.union([z.literal('velutina'), z.literal('aethina_tumida')]),
+        }),
+      },
+    },
+    PublicController.getPestObservationsStats,
   );
 
   done();

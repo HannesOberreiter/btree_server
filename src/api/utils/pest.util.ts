@@ -1,12 +1,20 @@
-import { Observation } from '../models/observation.model.js';
+import { Observation, Taxa } from '../models/observation.model.js';
 import proj4 from 'proj4';
 
-export async function fetchObservations() {
-  const inat = await fetchInat();
-  const observationOrg = await fetchObservationOrg();
-  const patriNat = await fetchPatriNat();
-  const artenfinderNet = await fetchArtenfinderNet();
-  const infoFaunaCh = await fetchInfoFaunaCh();
+export async function fetchObservations(taxa: Taxa = 'Vespa velutina') {
+  const inat = await fetchInat(taxa);
+  const observationOrg = await fetchObservationOrg(taxa);
+
+  const patriNat =
+    taxa === 'Vespa velutina' ? await fetchPatriNat() : { newObservations: 0 };
+  const artenfinderNet =
+    taxa === 'Vespa velutina'
+      ? await fetchArtenfinderNet()
+      : { newObservations: 0 };
+  const infoFaunaCh =
+    taxa === 'Vespa velutina'
+      ? await fetchInfoFaunaCh()
+      : { newObservations: 0 };
 
   return {
     iNaturalist: inat,
@@ -99,7 +107,12 @@ export async function fetchPatriNat() {
   return { newObservations: observations.length };
 }
 
-export async function fetchInat(monthsBefore = 6) {
+export async function fetchInat(taxa: Taxa, monthsBefore = 6) {
+  const taxonIds: Record<Taxa, number> = {
+    'Vespa velutina': 119019,
+    'Aethina tumida': 457066,
+  };
+
   const fields =
     '(id:!t,uri:!t,quality_grade:!t,time_observed_at:!t,location:!t,taxon:(id:!t))';
 
@@ -116,7 +129,7 @@ export async function fetchInat(monthsBefore = 6) {
   const searchArray = oldRecords.map((o) => o.external_id);
 
   while (idAbove > 0) {
-    const url = `https://api.inaturalist.org/v2/observations?taxon_id=119019&verifiable=true&quality_grade=research&order=asc&order_by=id&per_page=200&fields=${fields}&created_d1=${createdAtD1}&created_d2=${createdAtD2}&id_above=${idAbove}`;
+    const url = `https://api.inaturalist.org/v2/observations?taxon_id=${taxonIds[taxa]}&verifiable=true&quality_grade=research&order=asc&order_by=id&per_page=200&fields=${fields}&created_d1=${createdAtD1}&created_d2=${createdAtD2}&id_above=${idAbove}`;
     const response = await fetch(url);
     const res = await response.json();
     let observations = [];
@@ -141,7 +154,7 @@ export async function fetchInat(monthsBefore = 6) {
           lat: Number(observation.location.split(',')[0]),
           lng: Number(observation.location.split(',')[1]),
         },
-        taxa: 'Vespa velutina',
+        taxa: taxa,
         data: data,
       });
     }
@@ -219,9 +232,13 @@ export async function fetchArtenfinderNet() {
   return { newObservations: newObservations };
 }
 
-export async function fetchObservationOrg() {
-  const url =
-    'https://api.gbif.org/v1/occurrence/search?dataset_key=8a863029-f435-446a-821e-275f4f641165&taxon_key=1311477';
+export async function fetchObservationOrg(taxa: Taxa) {
+  const taxonKey: Record<Taxa, number> = {
+    'Vespa velutina': 1311477,
+    'Aethina tumida': 8254044,
+  };
+
+  const url = `https://api.gbif.org/v1/occurrence/search?dataset_key=8a863029-f435-446a-821e-275f4f641165&taxon_key=${taxonKey[taxa]}`;
 
   let endOfRecords = false;
   let offset = 0;
@@ -263,7 +280,7 @@ export async function fetchObservationOrg() {
           lat: Number(observation['decimalLatitude']),
           lng: Number(observation['decimalLongitude']),
         },
-        taxa: 'Vespa velutina',
+        taxa: taxa,
         data: {
           individualCount: observation['individualCount'],
           lifeStage: observation['lifeStage'],
