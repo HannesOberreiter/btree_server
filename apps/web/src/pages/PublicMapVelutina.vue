@@ -59,11 +59,16 @@ const mapRef = ref(null as any);
 const iframeRef = ref<HTMLIFrameElement | null>(null);
 let map = {} as any;
 const recentCount = ref(0);
+const daysRecent = 7;
 
 const onMapReady = () => {
+  cluster.clearLayers();
+  layerRecent.clearLayers();
+
   map = mapRef.value.leafletObject;
   map.doubleClickZoom.disable();
   map.scrollWheelZoom.enable();
+
   api.get('/v1/public/velutina/observations/recent').then((response) => {
     map.removeLayer(cluster);
     map.removeLayer(layerRecent);
@@ -75,7 +80,7 @@ const onMapReady = () => {
         localDate: new Date(item.observed_at).toLocaleDateString(),
         isRecentObservation:
           new Date(item.observed_at) >
-          new Date(Date.now() - 1000 * 60 * 60 * 24 * 7),
+          new Date(Date.now() - 1000 * 60 * 60 * 24 * daysRecent),
       } as Observation;
 
       if (obs.isRecentObservation) countRecent++;

@@ -196,15 +196,20 @@ const mapRef = ref(null as any);
 const location = ref(null as any);
 const userLocationLoading = ref(false);
 const showInactive = ref(false);
+const daysRecent = 7;
+
 let map = {} as any;
 
 const recentCount = ref(0);
 
 const onMapReady = () => {
   cluster.clearLayers();
+  layerRecent.clearLayers();
+
   map = mapRef.value.leafletObject;
   map.doubleClickZoom.disable();
   map.scrollWheelZoom.enable();
+
   let url = '/v1/public/velutina/observations/recent';
   if (year.value.value) {
     url = '/v1/public/velutina/observations/year/' + year.value.value;
@@ -220,7 +225,7 @@ const onMapReady = () => {
         localDate: new Date(item.observed_at).toLocaleDateString(),
         isRecentObservation:
           new Date(item.observed_at) >
-          new Date(Date.now() - 1000 * 60 * 60 * 24 * 7),
+          new Date(Date.now() - 1000 * 60 * 60 * 24 * daysRecent),
       } as Observation;
 
       if (obs.isRecentObservation) countRecent++;
