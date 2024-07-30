@@ -1,5 +1,15 @@
 [
   {
+    "version": "6.4.4",
+    "date": "2024-XX-XX",
+    "news": [
+      "BUGFIX dropbox authentication was not working correctly, due to too long access token",
+      "IMPROVEMENT full data export should now correctly include boolean values",
+      "IMPROVEMENT velutina map has now smaller clusters and recent observation are separated from cluster",
+      "FEATURE add option to import an export to create a new beekeeping company"
+    ]
+  },
+  {
     "version": "6.4.3",
     "date": "2024-07-09",
     "news": [

@@ -23,7 +23,7 @@
     >
       <slot></slot>
 
-      <div>{{ $t('observation', 2) }}: {{ recentCount }}</div>
+      <div>{{ $t('recentObservations') }}: {{ recentCount }}</div>
       <div>{{ $t('total') }}: {{ totalCount }}</div>
       <div v-if="props.isPublic">
         <b>{{ $t('velutinaMapPublicText') }}</b>

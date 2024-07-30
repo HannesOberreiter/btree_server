@@ -482,6 +482,7 @@
     "startLabel": "Calculer à partir de l'étape"
   },
   "rearing": "Elevage de reine | Élevage de reine",
+  "recentObservations": "Observations récentes",
   "recoverUser": {
     "success": "Nous vous envoyons un e-mail ({msg}) pour réinitialiser votre mot de passe, si vous ne recevez pas l'e-mail dans quelques minutes, il se peut qu'aucun compte avec cette adresse ne soit enregistré. Sinon, n'hésitez pas à nous contacter à {'office@btree.at'}",
     "text": "Entrez l'adresse e-mail avec laquelle vous avez enregistré votre compte utilisateur. Vous recevrez un e-mail avec des instructions sur la façon de réinitialiser votre mot de passe.",

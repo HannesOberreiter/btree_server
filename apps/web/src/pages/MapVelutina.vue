@@ -184,7 +184,10 @@ watch(year, () => {
 
 const cluster = (L as any).markerClusterGroup({
   chunkedLoading: true,
+  maxClusterRadius: 50,
 });
+const layerRecent = (L as any).layerGroup();
+
 const activeTab = ref('map');
 const zoom = computed(() => (isLoading.value ? 2 : 6));
 const circleRadius = ref(1000);
@@ -208,38 +211,46 @@ const onMapReady = () => {
   }
   api.get(url).then((response) => {
     map.removeLayer(cluster);
-    const data = response.map((item: any) => {
-      return {
+    map.removeLayer(layerRecent);
+
+    let countRecent = 0;
+    response.map((item: any) => {
+      const obs = {
         ...item,
         localDate: new Date(item.observed_at).toLocaleDateString(),
         isRecentObservation:
           new Date(item.observed_at) >
-          new Date(Date.now() - 1000 * 60 * 60 * 24 * 365),
+          new Date(Date.now() - 1000 * 60 * 60 * 24 * 7),
       } as Observation;
-    });
-    recentCount.value = data.length;
 
-    data.map((item: Observation) => {
+      if (obs.isRecentObservation) countRecent++;
+
       const circleMarker = L.circleMarker(
-        [item.location.x, item.location.y] as LatLngTuple,
+        [obs.location.x, obs.location.y] as LatLngTuple,
         {
-          radius: 5,
-          color: item.isRecentObservation ? 'red' : 'blue',
+          radius: obs.isRecentObservation ? 10 : 5,
+          color: obs.isRecentObservation ? 'red' : 'blue',
           fillOpacity: 0.5,
         },
       );
-      const uri = JSON.parse(item.uri);
+
+      const uri = JSON.parse(obs.uri);
       circleMarker.bindPopup(
-        `${item.localDate}<br/><a href="${uri}" target="_blank">${uri}</a>`,
+        `${obs.localDate}<br/><a href="${uri}" target="_blank">${uri}</a>`,
       );
-      cluster.addLayer(circleMarker);
+      if (obs.isRecentObservation) layerRecent.addLayer(circleMarker);
+      else cluster.addLayer(circleMarker);
     });
+    recentCount.value = countRecent;
+
+    map.addLayer(layerRecent);
     map.addLayer(cluster);
   });
 };
 
 onBeforeUnmount(() => {
   map.removeLayer(cluster);
+  map.removeLayer(layerRecent);
 });
 
 function loadLocation() {

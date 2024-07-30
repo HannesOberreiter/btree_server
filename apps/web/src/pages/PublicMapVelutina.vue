@@ -51,7 +51,9 @@ import VelutinaMapLayers from '~/components/VelutinaMapLayers.vue';
 const api = useApiFetch();
 const cluster = (L as any).markerClusterGroup({
   chunkedLoading: true,
+  maxClusterRadius: 50,
 });
+const layerRecent = (L as any).layerGroup();
 
 const mapRef = ref(null as any);
 const iframeRef = ref<HTMLIFrameElement | null>(null);
@@ -63,31 +65,40 @@ const onMapReady = () => {
   map.doubleClickZoom.disable();
   map.scrollWheelZoom.enable();
   api.get('/v1/public/velutina/observations/recent').then((response) => {
-    const data = response.map((item: any) => {
-      return {
+    map.removeLayer(cluster);
+    map.removeLayer(layerRecent);
+
+    let countRecent = 0;
+    response.map((item: any) => {
+      const obs = {
         ...item,
         localDate: new Date(item.observed_at).toLocaleDateString(),
         isRecentObservation:
           new Date(item.observed_at) >
-          new Date(Date.now() - 1000 * 60 * 60 * 24 * 365),
+          new Date(Date.now() - 1000 * 60 * 60 * 24 * 7),
       } as Observation;
-    });
-    recentCount.value = data.length;
-    data.map((item: Observation) => {
+
+      if (obs.isRecentObservation) countRecent++;
+
       const circleMarker = L.circleMarker(
-        [item.location.x, item.location.y] as LatLngTuple,
+        [obs.location.x, obs.location.y] as LatLngTuple,
         {
-          radius: 5,
-          color: item.isRecentObservation ? 'red' : 'blue',
+          radius: obs.isRecentObservation ? 10 : 5,
+          color: obs.isRecentObservation ? 'red' : 'blue',
           fillOpacity: 0.5,
         },
       );
-      const uri = JSON.parse(item.uri);
+
+      const uri = JSON.parse(obs.uri);
       circleMarker.bindPopup(
-        `${item.localDate}<br/><a href="${uri}" target="_blank">${uri}</a>`,
+        `${obs.localDate}<br/><a href="${uri}" target="_blank">${uri}</a>`,
       );
-      cluster.addLayer(circleMarker);
+      if (obs.isRecentObservation) layerRecent.addLayer(circleMarker);
+      else cluster.addLayer(circleMarker);
     });
+    recentCount.value = countRecent;
+
+    map.addLayer(layerRecent);
     map.addLayer(cluster);
   });
 };

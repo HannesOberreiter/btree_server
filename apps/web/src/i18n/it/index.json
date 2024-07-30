@@ -482,6 +482,7 @@
     "startLabel": "Calcola dal passaggio"
   },
   "rearing": "Allevamento della regina | Allevamenti di regine",
+  "recentObservations": "Osservazioni recenti",
   "recoverUser": {
     "success": "Ti inviamo una e-mail ({msg}) per reimpostare la tua password, se non ricevi la mail entro pochi minuti potrebbe essere che nessun account con questo indirizzo sia registrato. Altrimenti non esitare a contattarci all'indirizzo {'office@btree.at'}",
     "text": "Inserisci l'indirizzo e-mail con cui hai registrato il tuo account utente. Riceverai un'e-mail con le istruzioni su come reimpostare la password.",

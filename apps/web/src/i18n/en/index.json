@@ -482,6 +482,7 @@
     "startLabel": "Calculate from step"
   },
   "rearing": "Queen rearing | Queen rearings",
+  "recentObservations": "Recent observations",
   "recoverUser": {
     "success": "We send you an e-mail ({msg}) to reset your password, if you don't get the mail in a few minutes it could be that no account with this address is registered. Otherwise please feel free to contact us at {'office@btree.at'}",
     "text": "Enter the e-mail address by which you registered your user account. You will receive an email with instructions on how to reset your password.",
