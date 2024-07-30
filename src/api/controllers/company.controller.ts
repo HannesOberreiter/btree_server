@@ -451,7 +451,7 @@ export default class CompanyController {
             chunks.push(chunk);
           }
           const content = Buffer.concat(chunks);
-          data[name] = parseCSV(content.toString());
+          data[name] = await parseCSV(content.toString());
         }
       }
     } finally {
@@ -503,7 +503,46 @@ export default class CompanyController {
   }
 }
 
-function parseCSV(csv: string) {
+/**
+ * @description some fields need special attention on import, therefore we check a few jsonSchemas to get the names
+ */
+async function specialTypes() {
+  const booleanFields = [];
+  const dateFields = [];
+  const isoDateFields = [];
+
+  const properties = [
+    Hive.jsonSchema.properties,
+    Checkup.jsonSchema.properties,
+    CheckupType.jsonSchema.properties,
+    Charge.jsonSchema.properties,
+    Queen.jsonSchema.properties,
+    Movedate.jsonSchema.properties,
+  ];
+
+  properties.map((property) => {
+    console.log(property);
+    for (const key of Object.keys(property)) {
+      const item = property[key];
+      if (item.type === 'boolean') {
+        booleanFields.push(key);
+      } else if (item.format === 'date') {
+        dateFields.push(key);
+      } else if (item.format === 'iso-date-time') {
+        isoDateFields.push(key);
+      }
+    }
+  });
+  return {
+    booleanFields,
+    dateFields,
+    isoDateFields,
+  };
+}
+
+async function parseCSV(csv: string) {
+  const exceptions = await specialTypes();
+
   const results = parse(csv, {
     columns: true,
     autoParse: false,
@@ -521,33 +560,17 @@ function parseCSV(csv: string) {
           record[key] === undefined
         ) {
           delete record[key];
-        } else if (
-          [
-            'modus',
-            'deleted',
-            'favorite',
-            'active',
-            'done',
-            'queen',
-            'queencells',
-            'eggs',
-            'capped_brood',
-          ].includes(key)
-        ) {
+        } else if (exceptions.booleanFields.includes(key)) {
           /** convert to boolean, ajv coercing does not work for strings to boolean */
           record[key] = record[key] === '1';
-        } else if (['created_at', 'updated_at', 'deleted_at'].includes(key)) {
+        } else if (exceptions.isoDateFields.includes(key)) {
           /** prepare for direct insert into db */
           if (record[key]) {
             record[key] = record[key].slice(0, 19).replace('T', ' ');
           } else {
             delete record[key];
           }
-        } else if (
-          ['date', 'enddate', 'modus_date', 'bestbefore', 'move_date'].includes(
-            key,
-          )
-        ) {
+        } else if (exceptions.dateFields.includes(key)) {
           /** convert to short date */
           record[key] = record[key].slice(0, 10);
           if (record[key] === '0000-00-00') {
