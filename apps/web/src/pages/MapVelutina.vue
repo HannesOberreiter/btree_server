@@ -277,4 +277,8 @@ function onLocationError() {
 .leaflet-bottom {
   z-index: 900;
 }
+
+.leaflet-marker-pane {
+  z-index: 200;
+}
 </style>
