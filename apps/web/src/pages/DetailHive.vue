@@ -14,7 +14,16 @@
         <div class="row justify-center">
           <!-- Hive Header -->
           <div class="col-12 col-md-8 q-pt-sm">
-            <expansion-hive :data="data" @refetch="refetch()"></expansion-hive>
+            <expansion-hive :data="data" @refetch="refetch()">
+              <btn-base
+                v-if="!data.queen_location"
+                outline
+                color="primary"
+                @click="openForm('queen', null, data.id)"
+              >
+                {{ $t('new') }} {{ $t('queen') }}
+              </btn-base>
+            </expansion-hive>
           </div>
         </div>
         <!-- Queen Header -->
@@ -150,7 +159,7 @@ import { Filter, FilterState } from '~/types';
 </script>
 
 <script setup lang="ts">
-import { useMeta } from 'quasar';
+import { useMeta, useQuasar } from 'quasar';
 import { useHiveQuery } from '~/composables/useQuery';
 import dayjs from 'dayjs';
 
@@ -161,12 +170,15 @@ import ExpansionQueen from '~/components/ExpansionQueen.vue';
 import ExpansionHive from '~/components/ExpansionHive.vue';
 import BtnPreviousNext from '~/components/BtnPreviousNext.vue';
 import BtnDropdownTask from '~/components/BtnDropdownTask.vue';
+import DialogForm from '~/components/DialogForm.vue';
 
 import ListTasks from '~/components/ListTasks.vue';
 import { useI18n } from 'vue-i18n';
 import { ref, computed, toRef } from 'vue';
 
 const { t } = useI18n();
+const $q = useQuasar();
+
 const tab = ref('task');
 const year = ref(dayjs().year());
 const filter = ref<Filter>('filterEmpty');
@@ -203,5 +215,20 @@ useMeta(() => {
 
 function onPrint() {
   window.print();
+}
+
+function openForm(title: string, id: number, selected: number) {
+  $q.dialog({
+    component: DialogForm,
+    componentProps: {
+      title: title,
+      form: title,
+      maximized: true,
+      ids: id ? [id] : null,
+      selected: selected ? [selected] : null,
+    },
+  }).onOk(() => {
+    refetch();
+  });
 }
 </script>

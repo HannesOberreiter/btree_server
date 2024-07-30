@@ -103,6 +103,7 @@
           >
             {{ $t('editHive') }}
           </btn-base>
+          <slot> </slot>
         </btn-base-group>
       </q-card-actions>
     </q-card>
