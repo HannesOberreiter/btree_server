@@ -15,7 +15,11 @@
         outside-arrows
       >
         <q-tab name="map" :label="$t('observation', 2)" />
-        <q-tab name="identification" :label="$t('identification')" />
+        <q-tab
+          v-if="taxa === 'velutina'"
+          name="identification"
+          :label="$t('identification')"
+        />
       </q-tabs>
       <q-separator />
       <q-tab-panels v-model="activeTab" animated>
@@ -38,7 +42,7 @@
               >
               </map-buttons>
 
-              <velutina-map-layers :recent-count="recentCount">
+              <pest-map-layers :recent-count="recentCount" :taxa="taxa">
                 <q-select
                   v-model="year"
                   :options="yearOptions"
@@ -49,7 +53,7 @@
                   :dark="false"
                   popup-content-class="text-dark"
                 ></q-select>
-              </velutina-map-layers>
+              </pest-map-layers>
 
               <l-circle-marker
                 v-if="location"
@@ -95,7 +99,7 @@
             </l-map>
           </div>
         </q-tab-panel>
-        <q-tab-panel name="identification">
+        <q-tab-panel v-if="taxa === 'velutina'" name="identification">
           <iframe
             :src="identifyDocument"
             style="width: 100%; height: 800px"
@@ -139,9 +143,25 @@ import { useApiFetch } from '~/composables/useApi';
 import MapButtons from '~/components/MapButtons.vue';
 import { computed, onBeforeUnmount, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
-import VelutinaMapLayers from '~/components/VelutinaMapLayers.vue';
+import PestMapLayers from '~/components/PestMapLayers.vue';
+import { useRouter } from 'vue-router';
 
 const { locale, t } = useI18n();
+const router = useRouter();
+
+const taxa = computed(() => {
+  const name = router.currentRoute.value.name;
+  if (name === 'map-velutina') {
+    return 'velutina';
+  } else if (name === 'map-aethina-tumida') {
+    return 'aethina_tumida';
+  }
+  return 'velutina';
+});
+
+watch(taxa, () => {
+  if (map) onMapReady();
+});
 
 const identifyDocument = computed(() => {
   if (locale.value === 'de') {
@@ -198,7 +218,7 @@ const userLocationLoading = ref(false);
 const showInactive = ref(false);
 const daysRecent = 7;
 
-let map = {} as any;
+let map = undefined as any;
 
 const recentCount = ref(0);
 
@@ -210,9 +230,9 @@ const onMapReady = () => {
   map.doubleClickZoom.disable();
   map.scrollWheelZoom.enable();
 
-  let url = '/v1/public/velutina/observations/recent';
+  let url = `/v1/public/${taxa.value}/observations/recent`;
   if (year.value.value) {
-    url = '/v1/public/velutina/observations/year/' + year.value.value;
+    url = `/v1/public/${taxa.value}/observations/year/${year.value.value}`;
   }
   api.get(url).then((response) => {
     map.removeLayer(cluster);

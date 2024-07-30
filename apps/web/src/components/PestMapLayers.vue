@@ -37,7 +37,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, toRefs } from 'vue';
+import { ref, toRefs, watch } from 'vue';
 import { LTileLayer, LControlLayers, LControl } from '@vue-leaflet/vue-leaflet';
 import { useApiFetch } from '~/composables/useApi';
 import { useQuasar } from 'quasar';
@@ -56,14 +56,24 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  taxa: {
+    type: String,
+    required: true,
+  },
 });
 
-const { recentCount } = toRefs(props);
+const { recentCount, taxa } = toRefs(props);
 const totalCount = ref(0);
 
-api.get('/v1/public/velutina/observations/stats').then((response) => {
-  totalCount.value = response.count;
-});
+watch(
+  taxa,
+  (taxa) => {
+    api.get(`/v1/public/${taxa}/observations/stats`).then((response) => {
+      totalCount.value = response.count;
+    });
+  },
+  { immediate: true },
+);
 
 function onShowSources() {
   const sources = `

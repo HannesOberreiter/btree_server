@@ -12,14 +12,18 @@
       loading-control="true"
       @ready="onMapReady"
     >
-      <velutina-map-layers :recent-count="recentCount" :is-public="true">
+      <pest-map-layers
+        :recent-count="recentCount"
+        :is-public="true"
+        taxa="velutina"
+      >
         <div>
           <b>
             Service by
             <a href="https://www.btree.at" target="_blank">b.tree</a>
           </b>
         </div>
-      </velutina-map-layers>
+      </pest-map-layers>
     </l-map>
   </div>
 </template>
@@ -46,7 +50,7 @@ import 'leaflet.markercluster/dist/leaflet.markercluster.js';
 import { LMap } from '@vue-leaflet/vue-leaflet';
 import { useApiFetch } from '~/composables/useApi';
 import { onBeforeUnmount, ref, onMounted } from 'vue';
-import VelutinaMapLayers from '~/components/VelutinaMapLayers.vue';
+import PestMapLayers from '~/components/PestMapLayers.vue';
 
 const api = useApiFetch();
 const cluster = (L as any).markerClusterGroup({

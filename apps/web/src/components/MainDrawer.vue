@@ -360,6 +360,12 @@ const links = computed(
             icon: 'fas fa-bug-slash',
             menu: false,
           },
+          {
+            label: 'Aethina tumida',
+            route: 'map-aethina-tumida',
+            icon: 'fas fa-bug-slash',
+            menu: false,
+          },
         ],
       },
 
