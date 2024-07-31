@@ -166,6 +166,7 @@ import useVuelidate from '@vuelidate/core';
 import { useApiFetch } from '~/composables/useApi';
 import { useI18n } from 'vue-i18n';
 import { ref, computed, reactive } from 'vue';
+import { useBackend } from '~/composables/useBackend';
 
 import FormDropdownOption from '~/components/FormDropdownOption.vue';
 import FormUserPassword from '~/components/FormUserPassword.vue';
@@ -175,10 +176,9 @@ const { t } = useI18n();
 const { copy } = useClipboard();
 const api = useApiFetch();
 const notification = useNotification();
-const baseUrl = process.env.BACKEND_URL;
-const devBackendUrl = process.env.DEV_BACKEND_URL;
+const backend = useBackend();
+const baseUrl = backend.urlIgnoreProxy;
 
-const dev = process.env.NODE_ENV;
 const isSubmitting = ref(false);
 const apiField = ref('password' as QInputProps['type']);
 const apiValue = ref((Math.random() + 1).toString(36));
@@ -190,9 +190,7 @@ icals.push('scale_data');
 
 const ical = ref('checkup');
 const icalUrl = computed(() => {
-  return `${dev === 'production' ? baseUrl : devBackendUrl}/v1/external/ical/${
-    ical.value
-  }/${apiValue.value}`;
+  return `${baseUrl.value}/v1/external/ical/${ical.value}/${apiValue.value}`;
 });
 
 const scale = ref(null);
@@ -202,9 +200,7 @@ const scaleUrl = computed(() => {
   } else {
     return '';
   }
-  return `${dev === 'production' ? baseUrl : devBackendUrl}/v1/external/scale/${
-    scale.value.name
-  }/${apiValue.value}${scaleQuery}`;
+  return `${baseUrl.value}/v1/external/scale/${scale.value.name}/${apiValue.value}${scaleQuery}`;
 });
 
 const scaleUrlShort = computed(() => {

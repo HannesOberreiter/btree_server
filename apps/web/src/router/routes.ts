@@ -444,7 +444,15 @@ const routes: RouteRecordRaw[] = [
         meta: {
           title: 'Vespa velutina',
         },
-        component: () => import('~/pages/MapVelutina.vue'),
+        component: () => import('~/pages/MapPest.vue'),
+      },
+      {
+        path: 'aethina_tumida',
+        name: 'map-aethina-tumida',
+        meta: {
+          title: 'Aethina tunida',
+        },
+        component: () => import('~/pages/MapPest.vue'),
       },
     ],
   },
@@ -588,6 +596,7 @@ const routes: RouteRecordRaw[] = [
 
   {
     path: '/pub/vespa-velutina/map/',
+    name: 'public-map-velutina',
     meta: {
       auth: false,
     },

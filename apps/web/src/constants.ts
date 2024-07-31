@@ -45,3 +45,8 @@ export const OPTIONS = [
   'treatment_vets',
   'rearing_detail',
 ] as const;
+
+export const API_SERVER = {
+  eu: 'Europe (Frankfurt, Germany) [DEFAULT]',
+  us: 'America (US-West) (Hillsboro, Oregon)',
+} as const;

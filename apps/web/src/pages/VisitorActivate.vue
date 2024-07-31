@@ -21,6 +21,7 @@
         append-inner-icon="fas fa-lock"
       >
       </q-input>
+      <form-dropdown-server></form-dropdown-server>
 
       <q-card-actions class="">
         <btn-base
@@ -50,6 +51,7 @@ import { maxLength, requiredField, alphaNum } from '~/helpers/i18n-validators';
 import { useAuthUserStore } from '~/stores/auth';
 import { reactive, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
+import FormDropdownServer from '~/components/FormDropdownServer.vue';
 
 const notification = useNotification();
 const { t } = useI18n();

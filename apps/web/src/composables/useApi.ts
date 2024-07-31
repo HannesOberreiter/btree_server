@@ -3,13 +3,15 @@ import querystring from 'query-string';
 import { isString } from 'lodash-es';
 import { LoadingBar } from 'quasar';
 import { useNetwork } from '@vueuse/core';
+import { useBackend } from './useBackend';
 
-const baseUrl = process.env.BACKEND_URL;
 const dev = process.env.NODE_ENV;
 
 export const useApiFetch = () => {
+  const backend = useBackend();
   const network = useNetwork();
   const dialog = useNeedAuth();
+  const baseUrl = backend.url;
 
   const buildHeader = () => {
     return {
@@ -19,10 +21,10 @@ export const useApiFetch = () => {
   };
 
   const buildUrl = (url: string, param = '' as unknown) => {
-    if (param === '') return baseUrl + url;
+    if (param === '') return baseUrl.value + url;
     else
       return (
-        baseUrl +
+        baseUrl.value +
         url +
         '?' +
         querystring.stringify(param, { arrayFormat: 'bracket' })
@@ -36,8 +38,8 @@ export const useApiFetch = () => {
     const urlParam = buildUrl('/v1/auth/ping');
     const request = new Request(urlParam, {
       signal,
-      method: 'HEAD', // *GET, POST, PUT, DELETE, etc.
-      credentials: 'include', // include, *same-origin, omit
+      method: 'HEAD',
+      credentials: 'include',
       headers: buildHeader(),
     });
     const time1 = performance.now();
@@ -47,7 +49,7 @@ export const useApiFetch = () => {
     });
     clearTimeout(id);
 
-    // 401 response means that session is expired
+    /** 401 response means that session is expired */
     if (response.status === 401) {
       if (!dialog.state.show) dialog.open();
       throw 'error.forbidden';
@@ -57,7 +59,7 @@ export const useApiFetch = () => {
       throw 'offline';
     }
 
-    // Reset logout dialog if as the session is recovered at this point
+    /** reset logout dialog if as the session is recovered at this point */
     if (dialog.state.show) dialog.close();
 
     const time2 = performance.now();
@@ -67,8 +69,8 @@ export const useApiFetch = () => {
   const download = async (url: string) => {
     const urlParam = buildUrl(url);
     const originalRequest = new Request(urlParam, {
-      method: 'GET', // *GET, POST, PUT, DELETE, etc.
-      credentials: 'include', // include, *same-origin, omit
+      method: 'GET',
+      credentials: 'include',
       headers: buildHeader(),
     });
 
@@ -84,8 +86,8 @@ export const useApiFetch = () => {
   ): Promise<any> => {
     const urlParam = buildUrl(url, payload);
     const originalRequest = new Request(urlParam, {
-      method: 'GET', // *GET, POST, PUT, DELETE, etc.
-      credentials: credentials ? 'include' : 'omit', // include, *same-origin, omit
+      method: 'GET',
+      credentials: credentials ? 'include' : 'omit',
       headers: buildHeader(),
     });
 
@@ -101,8 +103,8 @@ export const useApiFetch = () => {
   const remove = async (url: string, payload = '' as unknown): Promise<any> => {
     const urlParam = buildUrl(url, payload);
     const originalRequest = new Request(urlParam, {
-      method: 'DELETE', // *GET, POST, PUT, DELETE, etc.
-      credentials: 'include', // include, *same-origin, omit
+      method: 'DELETE',
+      credentials: 'include',
       headers: buildHeader(),
       body: '{}',
     });
@@ -113,10 +115,31 @@ export const useApiFetch = () => {
   const post = async (url: string, payload: unknown): Promise<any> => {
     const urlParam = buildUrl(url, '');
     const originalRequest = new Request(urlParam, {
-      method: 'POST', // *GET, POST, PUT, DELETE, etc.
-      credentials: 'include', // include, *same-origin, omit
+      method: 'POST',
+      credentials: 'include',
       headers: buildHeader(),
       body: isString(payload) ? (payload as string) : JSON.stringify(payload),
+    });
+
+    return await fetching(originalRequest);
+  };
+
+  const postMultiPart = async (
+    url: string,
+    payload: Record<string, any>,
+  ): Promise<any> => {
+    const urlParam = buildUrl(url, '');
+    const mulitpartPayload = new FormData();
+    for (const key in payload) {
+      mulitpartPayload.append(key, payload[key]);
+    }
+    const originalRequest = new Request(urlParam, {
+      method: 'POST', // *GET, POST, PUT, DELETE, etc.
+      credentials: 'include', // include, *same-origin, omit
+      headers: {
+        Accept: 'application/json',
+      },
+      body: mulitpartPayload,
     });
 
     return await fetching(originalRequest);
@@ -176,8 +199,8 @@ export const useApiFetch = () => {
   const stream = (url: string, payload = '' as unknown) => {
     const urlParam = buildUrl(url, '');
     const originalRequest = new Request(urlParam, {
-      method: 'POST', // *GET, POST, PUT, DELETE, etc.
-      credentials: 'include', // include, *same-origin, omit
+      method: 'POST',
+      credentials: 'include',
       headers: {
         Accept: 'application/octet-stream',
         'Content-Type': 'application/json;charset=UTF-8',
@@ -187,5 +210,5 @@ export const useApiFetch = () => {
 
     return fetch(originalRequest);
   };
-  return { ping, get, post, patch, remove, download, stream };
+  return { ping, get, post, patch, remove, download, stream, postMultiPart };
 };

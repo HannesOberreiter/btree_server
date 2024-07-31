@@ -40,6 +40,12 @@
         </template>
       </q-select>
 
+      <form-dropdown-server
+        class="q-mb-xl"
+        form="register"
+        :overwrite-country="countryCode"
+      ></form-dropdown-server>
+
       <q-input
         v-show="state.source.value === SOURCES.at(-1).value"
         v-model="v$.other.$model"
@@ -136,6 +142,7 @@ import FormInputEmail from '~/components/FormInputEmail.vue';
 import FormInputText from '~/components/FormInputText.vue';
 import FormErrorMax from '~/components/FormErrorMax.vue';
 import FormUserDateFormat from '~/components/FormUserDateFormat.vue';
+import FormDropdownServer from '~/components/FormDropdownServer.vue';
 
 const notification = useNotification();
 const { t } = useI18n();
@@ -163,6 +170,10 @@ const company = (currentRoute.value.query?.name as string) ?? '';
 const email = (currentRoute.value.query?.email as string) ?? '';
 const isOAuthRedirect = !!currentRoute.value.query?.oauth;
 const password = isOAuthRedirect ? randPassword : '';
+
+/** For server selection we check if the user timezone is in America */
+const currentTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+const countryCode = currentTimezone.includes('America') ? 'us' : '';
 
 const SOURCES = [
   {

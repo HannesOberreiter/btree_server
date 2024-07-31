@@ -1,12 +1,12 @@
 import { useDateFormat } from './useDate';
 
-interface fetchInfo {
+type fetchInfo = {
   start: Date;
   end: Date;
   startStr: string;
   endStr: string;
   timeZone: string;
-}
+};
 
 const useCalendarVis = () => {
   const useDate = useDateFormat();

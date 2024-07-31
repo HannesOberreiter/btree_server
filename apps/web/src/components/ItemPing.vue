@@ -9,7 +9,7 @@
       {{ $t('offlineServer') }}
     </q-item-section>
     <q-item-section v-else-if="onlineUser">
-      <tooltip-base> {{ time }} ms ({{ baseUrl }}) </tooltip-base>
+      <tooltip-base> {{ time }} ms ({{ baseUrl.url }}) </tooltip-base>
       {{ $t('online') }}
     </q-item-section>
     <q-item-section v-else> {{ $t('offlineUser') }}</q-item-section>
@@ -20,6 +20,7 @@
 import { useApiFetch } from '~/composables/useApi';
 import { useIntervalFn, useOnline } from '@vueuse/core';
 import round from 'lodash-es/round';
+import { useBackend } from '~/composables/useBackend';
 
 import { computed, ref } from 'vue';
 
@@ -28,7 +29,7 @@ const time = ref(null);
 const offlineServer = ref(true);
 const onlineUser = useOnline();
 const colorStatus = ref('green');
-const baseUrl = process.env.BACKEND_URL;
+const baseUrl = useBackend();
 const pingTimer = computed(() => {
   if (offlineServer.value) {
     return 1000 * 15;

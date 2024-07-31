@@ -4,6 +4,7 @@
     <form-error-max v-if="submitCount >= 15"></form-error-max>
     <q-form v-else class="q-gutter-md" @submit="onSubmit">
       <form-input-email v-model="state.email"></form-input-email>
+      <form-dropdown-server></form-dropdown-server>
       <q-card-actions class="">
         <btn-base
           type="submit"
@@ -28,6 +29,7 @@ import AuthService from '~/services/auth.service';
 import useVuelidate from '@vuelidate/core';
 import FormErrorMax from '~/components/FormErrorMax.vue';
 import FormInputEmail from '~/components/FormInputEmail.vue';
+import FormDropdownServer from '~/components/FormDropdownServer.vue';
 
 import { reactive, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
