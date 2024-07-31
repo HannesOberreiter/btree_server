@@ -1,6 +1,6 @@
 <title>Nouveau mot de passe enregistré avec succès</title>
 Cher apiculteur,
 
-votre mot de passe a été changé avec succès !
+votre mot de passe a été changé avec succès!
 
 Si vous ne l'avez pas changé, veuillez nous contacter dès que possible: office@btree.at.

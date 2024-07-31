@@ -41,10 +41,10 @@ export class Apiary extends ExtModel {
 
       modus: { type: 'boolean' },
       deleted: { type: 'boolean' },
-      deleted_at: { type: 'string', format: 'date-time' },
+      deleted_at: { type: 'string', format: 'iso-date-time' },
 
-      created_at: { type: 'string', format: 'date-time' },
-      updated_at: { type: 'string', format: 'date-time' },
+      created_at: { type: 'string', format: 'iso-date-time' },
+      updated_at: { type: 'string', format: 'iso-date-time' },
 
       user_id: { type: 'integer' }, // Company FK
       bee_id: { type: 'integer' }, // Creator Bee FK

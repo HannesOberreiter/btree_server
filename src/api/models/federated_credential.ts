@@ -22,8 +22,8 @@ export class FederatedCredential extends BaseModel {
       provider_id: { type: 'string', maxLength: 45 },
       mail: { type: 'string', maxLength: 100 },
       bee_id: { type: 'integer' }, // User FK
-      created_at: { type: 'string', format: 'date-time' },
-      last_login: { type: 'string', format: 'date-time' },
+      created_at: { type: 'string', format: 'iso-date-time' },
+      last_login: { type: 'string', format: 'iso-date-time' },
     },
   };
 

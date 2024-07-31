@@ -3,6 +3,6 @@ Cher apiculteur,
 
 votre compte b.tree a connu trop d'échecs de connexion. Par mesure de sécurité, nous avons verrouillé votre compte pendant deux heures.
 
-Si vous avez oublié votre mot de passe, veuillez utiliser le lien suivant : %base_url%recover/
+Si vous avez oublié votre mot de passe, veuillez utiliser le lien suivant : %base_url%recover/%params%
 
 Si vous avez toujours des problèmes avec votre connexion ou d'autres questions, n'hésitez pas à nous contacter office@btree.at.

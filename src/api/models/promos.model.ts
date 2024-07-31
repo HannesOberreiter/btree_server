@@ -21,7 +21,7 @@ export class Promo extends BaseModel {
       id: { type: 'integer' },
       code: { type: 'string', minLength: 3, maxLength: 128 },
       months: { type: 'integer', maxLength: 11 },
-      date: { type: 'string', format: 'date-time' },
+      date: { type: 'string', format: 'iso-date-time' },
       used: { type: 'boolean' },
       user_id: { type: 'integer' }, // Company FK
     },

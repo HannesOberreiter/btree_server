@@ -31,8 +31,8 @@ export class Company extends ExtModel {
       api_active: { type: 'boolean' },
       api_key: { type: 'string', minLength: 1, maxLength: 65 },
 
-      created_at: { type: 'string', format: 'date-time' },
-      updated_at: { type: 'string', format: 'date-time' },
+      created_at: { type: 'string', format: 'iso-date-time' },
+      updated_at: { type: 'string', format: 'iso-date-time' },
     },
   };
 

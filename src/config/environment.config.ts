@@ -14,6 +14,8 @@ class EnvironmentConfiguration {
    */
   static environment: keyof typeof ENVIRONMENT = ENVIRONMENT.development;
 
+  static server: 'eu' | 'us' = 'eu';
+
   /**
    * @description Set environment according to current process args
    */
@@ -33,6 +35,9 @@ class EnvironmentConfiguration {
     ) {
       this.environment = process.env.ENVIRONMENT as keyof typeof ENVIRONMENT;
     }
+    if (process.env.SERVER && ['eu', 'us'].includes(process.env.SERVER)) {
+      this.server = process.env.SERVER as 'eu' | 'us';
+    }
   }
 
   /**
@@ -42,7 +47,9 @@ class EnvironmentConfiguration {
     this.set();
     // https://www.npmjs.com/package/dotenv
     const result = dotenv.config({
-      path: rootDirectory + `/env/${this.environment}.env`,
+      path:
+        rootDirectory +
+        `/env/${this.environment + (this.server === 'eu' ? '' : '-' + this.server)}.env`,
     });
     if (result.error) {
       throw result.error;
@@ -114,6 +121,9 @@ const vectorConfig = {
   password: process.env.VECTOR_PASSWORD ?? '',
 };
 
+/**
+ * @type {Knex}
+ */
 const knexConfig = {
   client: process.env.DB_TYPE,
   connection: {
@@ -129,7 +139,8 @@ const knexConfig = {
       // Convert 1 to true, 0 to false, and leave null alone
       if (field.type === 'TINY' && field.length === 1) {
         const value = field.string();
-        return value ? value === '1' : null;
+        if (value === null) return null;
+        return value == '1';
       }
       return next();
     },
@@ -181,6 +192,11 @@ const openAI = {
   ),
 };
 
+const serverLocations = ['eu', 'us'];
+const serverLocation = serverLocations.includes(process.env.SERVER_LOCATION)
+  ? process.env.SERVER_LOCATION
+  : 'eu';
+
 export {
   rootDirectory,
   redisConfig,
@@ -210,4 +226,5 @@ export {
   openAI,
   isContainer,
   isChild,
+  serverLocation,
 };
