@@ -84,7 +84,6 @@ import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 import { ref, computed } from 'vue';
 import { storeToRefs } from 'pinia';
-import { useBackend } from '~/composables/useBackend';
 
 const notification = useNotification();
 const useDate = useDateFormat();
@@ -254,7 +253,6 @@ const downloadContent = async () => {
   downloadLoading.value = false;
 };
 
-const backend = useBackend();
 const importData = async () => {
   $q.dialog({
     title: t('server.text.title'),
