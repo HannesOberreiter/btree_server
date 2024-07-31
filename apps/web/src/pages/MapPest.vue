@@ -23,7 +23,7 @@
         </q-tab-panel>
         <q-tab-panel name="identification">
           <iframe
-            :src="identifyDocument"
+            id="identifyDocument"
             style="width: 100%; height: 800px"
           ></iframe>
         </q-tab-panel>
@@ -33,7 +33,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { watchOnce } from '@vueuse/core';
+import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 import MapPest from '~/components/MapPest.vue';
@@ -70,6 +71,20 @@ const identifyDocument = computed(() => {
 });
 
 const activeTab = ref('map');
+
+watch([taxa, activeTab], async () => {
+  if (activeTab.value === 'identification') {
+    const result = await fetch(identifyDocument.value);
+    if (result.ok) {
+      const blob = await result.blob();
+      const url = URL.createObjectURL(blob);
+      const iframe = document.getElementById(
+        'identifyDocument',
+      ) as HTMLIFrameElement;
+      iframe.src = url;
+    }
+  }
+});
 </script>
 
 <style>
