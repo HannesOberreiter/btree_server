@@ -55,19 +55,19 @@ const taxa = computed(() => {
 const identifyDocument = computed(() => {
   if (taxa.value === 'aethina_tumida') {
     if (locale.value === 'de') {
-      return '/documents/Informationsbroschüre_Kleiner_Bienenstockkaefer.pdf';
+      return '/documents/aethina_tumida_de.pdf';
     }
-    return '/documents/BPG_9_small_hive_beetle_v4_Layout_1.pdf';
+    return '/documents/aethina_tumida_en.pdf';
   }
   /** Vespa velutina is default identify documents */
   if (locale.value === 'de') {
-    return '/documents/Identifizierungshilfe_Vespa_velutina_MNHN.pdf';
+    return '/documents/vespa_velutina_de.pdf';
   } else if (locale.value === 'fr') {
-    return '/documents/Fiches_Identification_Vespa_velutina_MNHN.pdf';
+    return '/documents/vespa_velutina_fr.pdf';
   } else if (locale.value === 'it') {
-    return '/documents/Scheda_identi_cativa_Vespa_velutina_MNHN.pdf';
+    return '/documents/vespa_velutina_it.pdf';
   }
-  return '/documents/Vespa_velutina_Identification_Sheet_MNHN.pdf';
+  return '/documents/vespa_velutina_en.pdf';
 });
 
 const activeTab = ref('map');
