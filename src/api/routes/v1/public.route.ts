@@ -3,6 +3,7 @@ import { ZodTypeProvider } from 'fastify-type-provider-zod';
 import PublicController from '../../controllers/public.controller.js';
 import { z } from 'zod';
 import { numberSchema } from '../../utils/zod.util.js';
+import { Taxa } from 'src/api/models/observation.model.js';
 
 export default function routes(
   instance: FastifyInstance,
@@ -16,7 +17,7 @@ export default function routes(
     {
       schema: {
         params: z.object({
-          taxa: z.union([z.literal('velutina'), z.literal('aethina_tumida')]),
+          taxa: Taxa,
         }),
         response: {
           200: z.array(
@@ -40,7 +41,7 @@ export default function routes(
       schema: {
         params: z.object({
           year: numberSchema,
-          taxa: z.union([z.literal('velutina'), z.literal('aethina_tumida')]),
+          taxa: Taxa,
         }),
         response: {
           200: z.array(
@@ -63,7 +64,7 @@ export default function routes(
     {
       schema: {
         params: z.object({
-          taxa: z.union([z.literal('velutina'), z.literal('aethina_tumida')]),
+          taxa: Taxa,
         }),
       },
     },

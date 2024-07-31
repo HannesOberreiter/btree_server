@@ -1,7 +1,12 @@
 import { raw } from 'objection';
 import { ExtModel } from './base.model.js';
+import { z } from 'zod';
 
-export type Taxa = 'Vespa velutina' | 'Aethina tumida';
+export const Taxa = z.union([
+  z.literal('Vespa velutina'),
+  z.literal('Aethina tumida'),
+]);
+export type Taxa = z.infer<typeof Taxa>;
 
 export class Observation extends ExtModel {
   id!: number;
