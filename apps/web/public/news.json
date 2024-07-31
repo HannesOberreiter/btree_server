@@ -1,7 +1,7 @@
 [
   {
     "version": "6.4.4",
-    "date": "2024-08-XX",
+    "date": "2024-08-01",
     "news": [
       "BUGFIX dropbox authentication was not working correctly, due to too long access token",
       "IMPROVEMENT hive detail view now has now always a new queen button",
