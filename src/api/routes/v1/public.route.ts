@@ -3,7 +3,7 @@ import { ZodTypeProvider } from 'fastify-type-provider-zod';
 import PublicController from '../../controllers/public.controller.js';
 import { z } from 'zod';
 import { numberSchema } from '../../utils/zod.util.js';
-import { Taxa } from 'src/api/models/observation.model.js';
+import { Taxa } from '../../models/observation.model.js';
 
 export default function routes(
   instance: FastifyInstance,
