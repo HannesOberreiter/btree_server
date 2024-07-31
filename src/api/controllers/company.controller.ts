@@ -42,6 +42,7 @@ import { QueenMating } from '../models/option/queen_mating.model.js';
 import { QueenRace } from '../models/option/queen_race.model.js';
 import { Todo } from '../models/todo.model.js';
 import Objection from 'objection';
+import { Stream } from 'stream';
 
 export default class CompanyController {
   static async postCoupon(req: FastifyRequest, reply: FastifyReply) {
@@ -68,217 +69,23 @@ export default class CompanyController {
   }
 
   static async download(req: FastifyRequest, reply: FastifyReply) {
-    const stringifyOptions: Options = {
-      header: true,
-      cast: {
-        date: function (value) {
-          return value.toISOString();
-        },
-        string: function (value) {
-          return value.replace(/(\r\n|\n|\r|")/gm, ' ');
-        },
-        boolean: function (value) {
-          if (value === null) return '';
-          return value ? '1' : '0';
-        },
-      },
-      record_delimiter: 'windows',
-    };
-    const arch = archiver('zip');
-    await User.transaction(async (trx) => {
-      const company = await Company.query(trx).findById(
-        req.session.user.user_id,
-      );
-      arch.append(stringify([company], stringifyOptions), {
-        name: 'company.csv',
-      });
-      const apiaries = await Apiary.query(trx).where(
-        'user_id',
-        req.session.user.user_id,
-      );
-      arch.append(stringify(apiaries, stringifyOptions), {
-        name: 'apiaries.csv',
-      });
-      const hives = await Hive.query(trx).where(
-        'user_id',
-        req.session.user.user_id,
-      );
-      arch.append(stringify(hives, stringifyOptions), { name: 'hives.csv' });
+    const pass = new Stream.PassThrough();
 
-      const hiveTypes = await HiveType.query(trx).where(
-        'user_id',
-        req.session.user.user_id,
-      );
-      arch.append(stringify(hiveTypes, stringifyOptions), {
-        name: 'hive_types.csv',
-      });
-      const hiveSources = await HiveSource.query(trx).where(
-        'user_id',
-        req.session.user.user_id,
-      );
-      arch.append(stringify(hiveSources, stringifyOptions), {
-        name: 'hive_sources.csv',
-      });
-
-      const movedates = await Movedate.query(trx)
-        .withGraphJoined('apiary')
-        .where('user_id', req.session.user.user_id);
-      arch.append(stringify(movedates, stringifyOptions), {
-        name: 'movedates.csv',
-      });
-      const checkups = await Checkup.query(trx)
-        .withGraphJoined('type')
-        .where('checkups.user_id', req.session.user.user_id);
-      arch.append(stringify(checkups, stringifyOptions), {
-        name: 'checkups.csv',
-      });
-      const checkupTypes = await CheckupType.query(trx).where(
-        'user_id',
-        req.session.user.user_id,
-      );
-      arch.append(stringify(checkupTypes, stringifyOptions), {
-        name: 'checkup_types.csv',
-      });
-
-      const feeds = await Feed.query(trx)
-        .withGraphJoined('type')
-        .where('feeds.user_id', req.session.user.user_id);
-      arch.append(stringify(feeds, stringifyOptions), { name: 'feeds.csv' });
-      const feedTypes = await FeedType.query(trx).where(
-        'user_id',
-        req.session.user.user_id,
-      );
-      arch.append(stringify(feedTypes, stringifyOptions), {
-        name: 'feed_types.csv',
-      });
-
-      const treatments = await Treatment.query(trx)
-        .withGraphJoined('[type, disease, vet]')
-        .where('treatments.user_id', req.session.user.user_id);
-      arch.append(stringify(treatments, stringifyOptions), {
-        name: 'treatments.csv',
-      });
-      const treatmentTypes = await TreatmentType.query(trx).where(
-        'user_id',
-        req.session.user.user_id,
-      );
-      arch.append(stringify(treatmentTypes, stringifyOptions), {
-        name: 'treatment_types.csv',
-      });
-      const treatmentDiseases = await TreatmentDisease.query(trx).where(
-        'user_id',
-        req.session.user.user_id,
-      );
-      arch.append(stringify(treatmentDiseases, stringifyOptions), {
-        name: 'treatment_diseases.csv',
-      });
-      const treatmentVets = await TreatmentVet.query(trx).where(
-        'user_id',
-        req.session.user.user_id,
-      );
-      arch.append(stringify(treatmentVets, stringifyOptions), {
-        name: 'treatment_vets.csv',
-      });
-
-      const harvests = await Harvest.query(trx)
-        .withGraphJoined('type')
-        .where('harvests.user_id', req.session.user.user_id);
-      arch.append(stringify(harvests, stringifyOptions), {
-        name: 'harvests.csv',
-      });
-      const harvestTypes = await HarvestType.query(trx).where(
-        'user_id',
-        req.session.user.user_id,
-      );
-      arch.append(stringify(harvestTypes, stringifyOptions), {
-        name: 'harvest_types.csv',
-      });
-
-      const charges = await Charge.query(trx).where(
-        'user_id',
-        req.session.user.user_id,
-      );
-      arch.append(stringify(charges, stringifyOptions), {
-        name: 'charges.csv',
-      });
-      const chargeTypes = await ChargeType.query(trx).where(
-        'user_id',
-        req.session.user.user_id,
-      );
-      arch.append(stringify(chargeTypes, stringifyOptions), {
-        name: 'charge_types.csv',
-      });
-
-      const queens = await Queen.query(trx).where(
-        'user_id',
-        req.session.user.user_id,
-      );
-      arch.append(stringify(queens, stringifyOptions), {
-        name: 'queens.csv',
-      });
-      const queenMatings = await QueenMating.query(trx).where(
-        'user_id',
-        req.session.user.user_id,
-      );
-      arch.append(stringify(queenMatings, stringifyOptions), {
-        name: 'queen_matings.csv',
-      });
-      const queenRaces = await QueenRace.query(trx).where(
-        'user_id',
-        req.session.user.user_id,
-      );
-      arch.append(stringify(queenRaces, stringifyOptions), {
-        name: 'queen_races.csv',
-      });
-
-      const scales = await Scale.query(trx).where(
-        'user_id',
-        req.session.user.user_id,
-      );
-      arch.append(stringify(scales, stringifyOptions), {
-        name: 'scales.csv',
-      });
-      const scale_data = await ScaleData.query(trx)
-        .withGraphJoined('scale')
-        .where('scale.user_id', req.session.user.user_id);
-      arch.append(stringify(scale_data, stringifyOptions), {
-        name: 'scale_data.csv',
-      });
-      const rearings = await Rearing.query(trx).where(
-        'user_id',
-        req.session.user.user_id,
-      );
-      arch.append(stringify(rearings, stringifyOptions), {
-        name: 'rearings.csv',
-      });
-      const rearing_types = await RearingType.query(trx)
-        .withGraphJoined('[detail, step]')
-        .where('rearing_types.user_id', req.session.user.user_id);
-      arch.append(stringify(rearing_types, stringifyOptions), {
-        name: 'rearing_types.csv',
-      });
-
-      const todos = await Todo.query(trx).where(
-        'user_id',
-        req.session.user.user_id,
-      );
-      arch.append(stringify(todos, stringifyOptions), {
-        name: 'todos.csv',
-      });
-    });
-
-    // reply.header('Content-Type', 'application/zip');
     reply.header('Content-Type', 'application/octet-stream');
     reply.header(
       'Content-Disposition',
-      'attachment; filename="btree_data.zip"',
+      `attachment; filename="btree_data_${Date.now()}.zip"`,
     );
+
+    const arch = archiver('zip');
     arch.on('error', (err) => {
       throw err;
     });
-    arch.pipe(reply.raw);
-    arch.on('end', () => reply.raw.end()); // end response when archive stream ends
-    arch.finalize();
+    arch.pipe(pass);
+
+    await downloadData(arch, req.session.user.user_id);
+    await arch.finalize();
+    return pass;
   }
 
   static async getApikey(req: FastifyRequest, reply: FastifyReply) {
@@ -896,4 +703,150 @@ async function moveApiaries(
   });
   const a = await insert(Apiary.query(trx), data);
   return oldMap(a, copy);
+}
+
+async function downloadData(arch: archiver.Archiver, user_id: number) {
+  const stringifyOptions: Options = {
+    header: true,
+    cast: {
+      date: function (value) {
+        return value.toISOString();
+      },
+      string: function (value) {
+        return value.replace(/(\r\n|\n|\r|")/gm, ' ');
+      },
+      boolean: function (value) {
+        if (value === null) return '';
+        return value ? '1' : '0';
+      },
+    },
+    record_delimiter: 'windows',
+  };
+
+  const company = await Company.query().findById(user_id);
+  arch.append(stringify([company], stringifyOptions), {
+    name: 'company.csv',
+  });
+  const apiaries = await Apiary.query().where('user_id', user_id);
+  arch.append(stringify(apiaries, stringifyOptions), {
+    name: 'apiaries.csv',
+  });
+  const hives = await Hive.query().where('user_id', user_id);
+  arch.append(stringify(hives, stringifyOptions), { name: 'hives.csv' });
+
+  const hiveTypes = await HiveType.query().where('user_id', user_id);
+  arch.append(stringify(hiveTypes, stringifyOptions), {
+    name: 'hive_types.csv',
+  });
+  const hiveSources = await HiveSource.query().where('user_id', user_id);
+  arch.append(stringify(hiveSources, stringifyOptions), {
+    name: 'hive_sources.csv',
+  });
+
+  const movedates = await Movedate.query()
+    .withGraphJoined('apiary')
+    .where('user_id', user_id);
+  arch.append(stringify(movedates, stringifyOptions), {
+    name: 'movedates.csv',
+  });
+  const checkups = await Checkup.query()
+    .withGraphJoined('type')
+    .where('checkups.user_id', user_id);
+  arch.append(stringify(checkups, stringifyOptions), {
+    name: 'checkups.csv',
+  });
+  const checkupTypes = await CheckupType.query().where('user_id', user_id);
+  arch.append(stringify(checkupTypes, stringifyOptions), {
+    name: 'checkup_types.csv',
+  });
+
+  const feeds = await Feed.query()
+    .withGraphJoined('type')
+    .where('feeds.user_id', user_id);
+  arch.append(stringify(feeds, stringifyOptions), { name: 'feeds.csv' });
+  const feedTypes = await FeedType.query().where('user_id', user_id);
+  arch.append(stringify(feedTypes, stringifyOptions), {
+    name: 'feed_types.csv',
+  });
+
+  const treatments = await Treatment.query()
+    .withGraphJoined('[type, disease, vet]')
+    .where('treatments.user_id', user_id);
+  arch.append(stringify(treatments, stringifyOptions), {
+    name: 'treatments.csv',
+  });
+  const treatmentTypes = await TreatmentType.query().where('user_id', user_id);
+  arch.append(stringify(treatmentTypes, stringifyOptions), {
+    name: 'treatment_types.csv',
+  });
+  const treatmentDiseases = await TreatmentDisease.query().where(
+    'user_id',
+    user_id,
+  );
+  arch.append(stringify(treatmentDiseases, stringifyOptions), {
+    name: 'treatment_diseases.csv',
+  });
+  const treatmentVets = await TreatmentVet.query().where('user_id', user_id);
+  arch.append(stringify(treatmentVets, stringifyOptions), {
+    name: 'treatment_vets.csv',
+  });
+
+  const harvests = await Harvest.query()
+    .withGraphJoined('type')
+    .where('harvests.user_id', user_id);
+  arch.append(stringify(harvests, stringifyOptions), {
+    name: 'harvests.csv',
+  });
+  const harvestTypes = await HarvestType.query().where('user_id', user_id);
+  arch.append(stringify(harvestTypes, stringifyOptions), {
+    name: 'harvest_types.csv',
+  });
+
+  const charges = await Charge.query().where('user_id', user_id);
+  arch.append(stringify(charges, stringifyOptions), {
+    name: 'charges.csv',
+  });
+  const chargeTypes = await ChargeType.query().where('user_id', user_id);
+  arch.append(stringify(chargeTypes, stringifyOptions), {
+    name: 'charge_types.csv',
+  });
+
+  const queens = await Queen.query().where('user_id', user_id);
+  arch.append(stringify(queens, stringifyOptions), {
+    name: 'queens.csv',
+  });
+  const queenMatings = await QueenMating.query().where('user_id', user_id);
+  arch.append(stringify(queenMatings, stringifyOptions), {
+    name: 'queen_matings.csv',
+  });
+  const queenRaces = await QueenRace.query().where('user_id', user_id);
+  arch.append(stringify(queenRaces, stringifyOptions), {
+    name: 'queen_races.csv',
+  });
+
+  const scales = await Scale.query().where('user_id', user_id);
+  arch.append(stringify(scales, stringifyOptions), {
+    name: 'scales.csv',
+  });
+  const scale_data = await ScaleData.query()
+    .withGraphJoined('scale')
+    .where('scale.user_id', user_id);
+  arch.append(stringify(scale_data, stringifyOptions), {
+    name: 'scale_data.csv',
+  });
+  const rearings = await Rearing.query().where('user_id', user_id);
+  arch.append(stringify(rearings, stringifyOptions), {
+    name: 'rearings.csv',
+  });
+  const rearing_types = await RearingType.query()
+    .withGraphJoined('[detail, step]')
+    .where('rearing_types.user_id', user_id);
+  arch.append(stringify(rearing_types, stringifyOptions), {
+    name: 'rearing_types.csv',
+  });
+
+  const todos = await Todo.query().where('user_id', user_id);
+  arch.append(stringify(todos, stringifyOptions), {
+    name: 'todos.csv',
+  });
 }
