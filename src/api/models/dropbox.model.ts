@@ -15,8 +15,8 @@ export class Dropbox extends Model {
     type: 'object',
     required: ['refresh_token', 'access_token', 'user_id'],
     properties: {
-      refresh_token: { type: 'string', minLength: 1, maxLength: 255 },
-      access_token: { type: 'string', minLength: 1, maxLength: 255 },
+      refresh_token: { type: 'string', minLength: 1, maxLength: 2_500 },
+      access_token: { type: 'string', minLength: 1, maxLength: 2_500 },
       user_id: { type: 'integer' },
     },
   };
