@@ -76,29 +76,42 @@ watch(
 );
 
 function onShowSources() {
-  const sources = `
-  <ul>
-    <li>
-      <a href="https://www.inaturalist.org/home" target="_blank">iNaturalist</a>
-    </li>
-    <li>
-      <a href="https://frelonasiatique.mnhn.fr/visualisateur" target="_blank">PatriNat</a>
-      </li>
-      <li>
-        <a href="https://www.artenfinder.net" target="_blank">artenfinder.net</a>
-      </li>
-      <li>
-        <a href="https://wwww.observation.org" target="_blank">observation.org</a>
-      </li>
-      <li>
-        <a href="https://lepus.infofauna.ch/carto/" target="_blank">infofauna.ch</a>
-      </li>
-  </ol>
-  `;
+  const sources = [
+    {
+      name: 'iNaturalist',
+      url: 'https://www.inaturalist.org/home',
+    },
+    {
+      name: 'artenfinder.net',
+      url: 'https://www.artenfinder.net',
+    },
+    {
+      name: 'observation.org',
+      url: 'https://wwww.observation.org',
+    },
+    {
+      name: 'infofauna.ch',
+      url: 'https://lepus.infofauna.ch/carto/',
+    },
+  ];
+
+  if (taxa.value === 'velutina') {
+    sources.push({
+      name: 'PatriNat',
+      url: 'https://frelonasiatique.mnhn.fr/visualisateur',
+    });
+  }
+
+  const sourcesHtml = sources
+    .map(
+      (source) =>
+        `<li><a href="${source.url}" target="_blank">${source.name}</a></li>`,
+    )
+    .join('');
 
   $q.dialog({
     title: t('source', 2),
-    message: sources,
+    message: `<ul>${sourcesHtml}</ul>`,
     html: true,
     ok: 'Close',
   });

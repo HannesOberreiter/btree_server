@@ -12,6 +12,7 @@
     >
     </btn-base>
     <btn-base
+      v-if="!isPublic"
       size="sm"
       color="black"
       class="bg-white"
@@ -33,6 +34,7 @@
   </l-control>
   <l-control position="bottomright">
     <q-slider
+      v-if="!isPublic"
       v-model="modelRadius"
       color="secondary"
       :min="0"
@@ -61,6 +63,10 @@ const props = defineProps({
   modelRadius: {
     type: Number,
     required: true,
+  },
+  isPublic: {
+    type: Boolean,
+    default: false,
   },
 });
 const emit = defineEmits(['update:modelRadius', 'locate', 'toggle']);
