@@ -5,9 +5,9 @@ Bienvenue à b.tree, comme petit cadeau de bienvenue, votre compte a reçu un mo
 
 Veuillez ouvrir le lien suivant pour activer votre compte avant de vous connecter la première fois:
 
-%base_url%visitor/activate/%key%
+%base_url%visitor/activate/%key%%params%
 
 ## Vos identifiants de connexion
 
 - Nom d'utilisateur: %mail
-- Connexion: %base_url%.
+- Connexion: %base_url%%params%

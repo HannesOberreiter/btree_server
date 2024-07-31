@@ -5,9 +5,9 @@ Welcome to b.tree, as small welcome present, your account received one month of 
 
 Please open following link to activate your account before you login the first time:
 
-%base_url%visitor/activate/%key%
+%base_url%visitor/activate/%key%%params%
 
 ## Your Login Credentials
 
 - Username: %mail%
-- Login: %base_url%
+- Login: %base_url%%params%

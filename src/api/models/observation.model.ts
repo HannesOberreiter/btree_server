@@ -1,9 +1,16 @@
 import { raw } from 'objection';
 import { ExtModel } from './base.model.js';
+import { z } from 'zod';
+
+export const Taxa = z.union([
+  z.literal('Vespa velutina'),
+  z.literal('Aethina tumida'),
+]);
+export type Taxa = z.infer<typeof Taxa>;
 
 export class Observation extends ExtModel {
   id!: number;
-  taxa!: 'Vespa velutina';
+  taxa!: Taxa;
   external_service!: 'iNaturalist' | 'PatriNat';
   external_id!: number;
   external_uuid!: string;
@@ -30,9 +37,9 @@ export class Observation extends ExtModel {
       location: { type: 'object' },
       data: { type: 'object' },
 
-      observed_at: { type: 'string', format: 'date-time' },
-      created_at: { type: 'string', format: 'date-time' },
-      updated_at: { type: 'string', format: 'date-time' },
+      observed_at: { type: 'string', format: 'iso-date-time' },
+      created_at: { type: 'string', format: 'iso-date-time' },
+      updated_at: { type: 'string', format: 'iso-date-time' },
     },
   };
 

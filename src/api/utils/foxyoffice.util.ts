@@ -1,6 +1,7 @@
 import {
   foxyOfficeKey,
   foxyOfficeUrl,
+  serverLocation,
 } from '../../config/environment.config.js';
 import { MailService } from '../../services/mail.service.js';
 import { Logger } from '../../services/logger.service.js';
@@ -104,11 +105,17 @@ export async function createInvoice(
       MailService.getInstance().sendRawMail(
         'office@btree.at',
         'New invoice created',
-        result +
+        'FoxyOfficeResponse: ' +
+          result +
           '\n\n' +
+          'InvoiceNumber: ' +
           JSON.stringify(latestInvoice) +
           '\n\n' +
-          JSON.stringify(mail),
+          'CustomerMail: ' +
+          JSON.stringify(mail) +
+          '\n\n' +
+          'Server: ' +
+          serverLocation,
       );
     }
   } catch (err) {

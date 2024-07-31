@@ -22,7 +22,7 @@ export class RefreshToken extends BaseModel {
       id: { type: 'integer' },
 
       token: { type: 'string', minLength: 10 },
-      expires: { type: 'string', format: 'date-time' },
+      expires: { type: 'string', format: 'iso-date-time' },
       'user-agent': { type: 'string', minLength: 1, maxLength: 65 },
 
       user_id: { type: 'integer' }, // Company FK

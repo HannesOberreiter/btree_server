@@ -40,7 +40,6 @@ export default function routes(
     },
     CompanyController.patch,
   );
-
   server.post(
     '',
     {
@@ -53,7 +52,6 @@ export default function routes(
     },
     CompanyController.post,
   );
-
   server.post(
     '/coupon',
     {
@@ -66,11 +64,18 @@ export default function routes(
     },
     CompanyController.postCoupon,
   );
-
   server.delete(
     '/:id',
     { preHandler: Guard.authorize([ROLES.admin]) },
     CompanyController.delete,
+  );
+
+  server.post(
+    '/import',
+    {
+      preHandler: Guard.authorize([ROLES.admin]),
+    },
+    CompanyController.import,
   );
 
   done();

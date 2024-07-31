@@ -7,6 +7,7 @@ import {
   frontend,
   mailConfig,
   rootDirectory,
+  serverLocation,
 } from '../config/environment.config.js';
 import { ENVIRONMENT } from '../config/constants.config.js';
 import { Logger } from './logger.service.js';
@@ -22,6 +23,7 @@ interface customMail {
 export class MailService {
   private _transporter: nodemailer.Transporter;
   private static instance: MailService;
+  params = serverLocation === 'eu' ? '?server=eu' : '?server=us';
 
   baseUrl = frontend;
   private logger = Logger.getInstance();
@@ -98,9 +100,7 @@ export class MailService {
     }
     htmlMail = htmlMail + htmlFooter;
 
-    /*
-      Fake <title></title> attribute to set email header
-    */
+    /** @description Fake <title></title> attribute to set email header */
     const titleReg = /(?<=<title>)(.*?)(?=<\/title>)/gi;
     const title = titleReg.exec(htmlMail)[0];
     htmlMail = htmlMail.replace(/(<title>)(.*?)(<\/title>)/g, '');
@@ -129,7 +129,7 @@ export class MailService {
     if (key !== 'false') {
       htmlMail = htmlMail.replace(/%key%/g, key);
     }
-    // Main page and docuemntation is only available in german and english
+    // Main page and documentation is only available in german and english
     if (['fr', 'it'].includes(lang)) {
       htmlMail = htmlMail.replace(/%lang%/g, 'en');
     } else {
@@ -137,6 +137,7 @@ export class MailService {
     }
     htmlMail = htmlMail.replace(/%mail%/g, to);
     htmlMail = htmlMail.replace(/%base_url%/g, this.baseUrl + '/');
+    htmlMail = htmlMail.replace(/%params%/g, this.params);
 
     const options = {
       from: {

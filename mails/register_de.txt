@@ -5,9 +5,9 @@ willkommen bei b.tree, als kleines Dankeschön, für dein Interesse an unserer A
 
 Öffne bitte folgenden Link um deine Registrierung zu vervollständigen:
 
-%base_url%visitor/activate/%key%
+%base_url%visitor/activate/%key%%params%
 
 ## Deine Login Daten
 
 - Username: %mail%
-- Login: %base_url%
+- Login: %base_url%%params%

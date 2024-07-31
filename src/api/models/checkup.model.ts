@@ -36,6 +36,7 @@ export class Checkup extends ExtModel {
   edit_id!: number;
   bee_id!: number;
   hive_id!: number;
+  type_id!: number;
 
   static tableName = 'checkups';
   static idColumn = 'id';
@@ -67,7 +68,7 @@ export class Checkup extends ExtModel {
       strong: { type: 'integer' },
       temperature: { type: 'number' },
       weight: { type: 'number' },
-      time: { type: 'string', format: 'time' },
+      time: { type: 'string', format: 'iso-time' },
       broodframes: { type: 'integer' },
       honeyframes: { type: 'integer' },
       foundation: { type: 'integer' },
@@ -79,9 +80,9 @@ export class Checkup extends ExtModel {
       done: { type: 'boolean' },
 
       deleted: { type: 'boolean' },
-      deleted_at: { type: 'string', format: 'date-time' },
-      created_at: { type: 'string', format: 'date-time' },
-      updated_at: { type: 'string', format: 'date-time' },
+      deleted_at: { type: 'string', format: 'iso-date-time' },
+      created_at: { type: 'string', format: 'iso-date-time' },
+      updated_at: { type: 'string', format: 'iso-date-time' },
 
       user_id: { type: 'integer' }, // Company FK
       hive_id: { type: 'integer' }, // Hive FK

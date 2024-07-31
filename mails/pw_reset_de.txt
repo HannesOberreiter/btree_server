@@ -5,4 +5,4 @@ jemand hat ein neue Passwort für deinen b.tree Login angefordert. Wenn du es ni
 
 Um ein neues Passwort zu erstellen, benutze folgenden Link:
 
-%base_url%visitor/reset/%key%
+%base_url%visitor/reset/%key%%params%

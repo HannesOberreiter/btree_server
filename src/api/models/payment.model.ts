@@ -21,7 +21,7 @@ export class Payment extends BaseModel {
       type: { type: 'string', minLength: 0, maxLength: 45 },
       amount: { type: 'number' },
       months: { type: 'integer' },
-      date: { type: 'string', format: 'date-time' },
+      date: { type: 'string', format: 'iso-date-time' },
       user_id: { type: 'integer' }, // Company FK
     },
   };

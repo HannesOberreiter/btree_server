@@ -16,7 +16,7 @@ export class LoginAttemp extends BaseModel {
     type: 'object',
     properties: {
       id: { type: 'integer' },
-      time: { type: 'string', format: 'date-time' },
+      time: { type: 'string', format: 'iso-date-time' },
       bee_id: { type: 'integer' }, // User FK
     },
   };

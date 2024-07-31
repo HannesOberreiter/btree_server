@@ -22,7 +22,7 @@ export class ScaleData extends BaseModel {
     type: 'object',
     required: ['scale_id', 'datetime'],
     properties: {
-      datetime: { type: 'string', format: 'date-time' },
+      datetime: { type: 'string', format: 'iso-date-time' },
       weight: { type: 'number' },
       temp1: { type: 'number' },
       temp2: { type: 'number' },
