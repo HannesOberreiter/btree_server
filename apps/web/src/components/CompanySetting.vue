@@ -257,7 +257,7 @@ const downloadContent = async () => {
 const backend = useBackend();
 const importData = async () => {
   $q.dialog({
-    title: t('server.text.title') + ': ' + backend.getOtherOption()[0].label,
+    title: t('server.text.title'),
     message: t('server.text.info'),
     prompt: {
       model: '',
