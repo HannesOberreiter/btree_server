@@ -278,7 +278,7 @@ export default class CompanyController {
     });
     arch.pipe(reply.raw);
     arch.on('end', () => reply.raw.end()); // end response when archive stream ends
-    return arch.finalize();
+    arch.finalize();
   }
 
   static async getApikey(req: FastifyRequest, reply: FastifyReply) {
