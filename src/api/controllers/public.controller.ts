@@ -9,9 +9,6 @@ function mapTaxa(req: FastifyRequest) {
   if (!paramTaxa) {
     throw createHttpError(400, 'Taxa is required');
   }
-  if (paramTaxa !== 'velutina' && paramTaxa !== 'aethina_tumida') {
-    throw createHttpError(400, 'Invalid taxa');
-  }
   const taxa: Taxa =
     paramTaxa === 'velutina' ? 'Vespa velutina' : 'Aethina tumida';
   return taxa;
