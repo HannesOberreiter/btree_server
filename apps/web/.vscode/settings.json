@@ -16,9 +16,6 @@
     "vue"
   ],
   "typescript.tsdk": "node_modules/typescript/lib",
-  "conventionalCommits.scopes": [
-    "dev"
-  ],
   "json.schemas": [
     {
       "fileMatch": [
@@ -39,7 +36,10 @@
     "https://cdn.jsdelivr.net/npm/quasar@2.7.1/dist/quasar.prod.css"
   ],
   "cSpell.words": [
+    "checkup",
     "composables",
-    "pinia"
+    "dayjs",
+    "pinia",
+    "vueuse"
   ]
 }

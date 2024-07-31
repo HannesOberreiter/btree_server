@@ -15,7 +15,6 @@
   },
   "active": "Attivo",
   "add": "Aggiungere",
-  "addFederatedCedential": "",
   "addFederatedCredential": "Aggiungi fornitore",
   "addOption": "Aggiungi una nuova opzione",
   "addedHive": "Aggiunto hive {name} alla selezione!",
@@ -129,7 +128,7 @@
   "eggs": "Uova",
   "email": "E-mail",
   "end": "Fine",
-  "enterEmail": "",
+  "enterEmail": "Inserisci il tuo indirizzo email",
   "error": {
     "CouponNotFound": "Impossibile trovare il coupon {token}.",
     "access": "Accesso non consentito o password errata!",
@@ -163,7 +162,6 @@
   "event": "Evento | \nEventi",
   "example": "Esempio",
   "exampleQuestion": {
-    "Offline": "",
     "diffDiseases": "Come posso distinguere tra AFB e EFB?",
     "eggs": "Quante uova depone un'ape regina?",
     "offline": "b.tree funziona offline?",
@@ -348,7 +346,7 @@
     "decreaseDays": "Rimuovere un anno di pagamento (minimo un anno).",
     "forOneYear": "per 1 anno",
     "increaseDays": "Aggiungere un anno di pagamento (massimo 10 anni in anticipo possibili).",
-    "minimumAmount": "",
+    "minimumAmount": "È necessario un minimo di {value} Euro.",
     "noSubscription": "Solo pagamento unico, nessun abbonamento automatico!",
     "payWithStripe": "Carta di credito e altri",
     "perks": "Con l'abbonamento premium ottieni i seguenti bonus",
@@ -362,14 +360,13 @@
     "priceHistory": "La nostra cronologia dei prezzi e le modifiche imminenti",
     "sum": "Paga per <b>{years}</b> anno/i di abbonamento premium una somma totale di <b>{sum}€</b>.",
     "thankYou": "Grazie per il tuo contributo. Il tempo premium dovrebbe essere aggiunto automaticamente, altrimenti prova ad accedere o disconnettersi. In caso di problemi, non esitare a contattarci all'indirizzo {'office@btree.at'}",
-    "title": "Supporta b.tree con accesso premium per un anno",
-    "yesSubscription": ""
+    "title": "Supporta b.tree con accesso premium per un anno"
   },
   "method": "Metodo | Metodi",
   "min": "minimo",
   "modus": "Modo",
   "modusDate": "Data di inattività",
-  "month": "Mese | \nMesi",
+  "month": "Mese | Mesi",
   "more": "Di più",
   "mother": "Madre",
   "movedate": "Data di migrazione",
@@ -485,6 +482,7 @@
     "startLabel": "Calcola dal passaggio"
   },
   "rearing": "Allevamento della regina | Allevamenti di regine",
+  "recentObservations": "Osservazioni recenti",
   "recoverUser": {
     "success": "Ti inviamo una e-mail ({msg}) per reimpostare la tua password, se non ricevi la mail entro pochi minuti potrebbe essere che nessun account con questo indirizzo sia registrato. Altrimenti non esitare a contattarci all'indirizzo {'office@btree.at'}",
     "text": "Inserisci l'indirizzo e-mail con cui hai registrato il tuo account utente. Riceverai un'e-mail con le istruzioni su come reimpostare la password.",
@@ -537,6 +535,17 @@
   "separatorComma": "Virgola ( , )",
   "separatorSemicolon": "Punto e virgola ( ; )",
   "serie": "Serie | Serie",
+  "server": {
+    "hint": {
+      "register": "Scegli il server più vicino alla tua posizione per ottenere le migliori prestazioni, non puoi modificarlo dopo la registrazione!",
+      "visitor": "Scegli il server su cui hai registrato la tua azienda!"
+    },
+    "text": {
+      "button": "Nuova azienda dall'importazione",
+      "info": "Con questa funzione è possibile importare un'esportazione precedente. \nL'importazione creerà una nuova società. \nDurante l'importazione vengono persi gli utenti aziendali e i relativi dati utente, l'allevamento delle regine, il pedigree delle regine e i dati sulle bilance.",
+      "title": "Importa dati aziendali"
+    }
+  },
   "serviceProvider": "Il nostro fornitore di servizi",
   "serviceWorker": {
     "newContent": "Il contenuto aggiornato è disponibile. Aggiorna la pagina.",

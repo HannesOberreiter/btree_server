@@ -24,8 +24,8 @@ import {
 const createHistory = process.env.SERVER
   ? createMemoryHistory
   : process.env.VUE_ROUTER_MODE === 'history'
-  ? createWebHistory
-  : createWebHashHistory;
+    ? createWebHistory
+    : createWebHashHistory;
 
 const Router = createRouter({
   scrollBehavior: () => ({ left: 0, top: 0 }),
@@ -57,7 +57,8 @@ export default route(function ({ store }) {
       to.matched.some((record) => record.meta.auth && !storeUser.isLoggedIn)
     ) {
       console.warn('User not logged in, redirect from', to.path);
-      next({ name: 'login', query: { next: to.path } });
+      const query = to.query;
+      next({ name: 'login', query: { next: to.path, ...query } });
     } else {
       if (
         to.matched.some((record) => record.meta.auth) &&

@@ -1,5 +1,17 @@
 [
   {
+    "version": "6.4.4",
+    "date": "2024-08-01",
+    "news": [
+      "BUGFIX dropbox authentication was not working correctly, due to too long access token",
+      "IMPROVEMENT hive detail view now has now always a new queen button",
+      "IMPROVEMENT full data export should now correctly include boolean values",
+      "IMPROVEMENT velutina map has now smaller clusters and recent observation are separated from cluster",
+      "FEATURE add option to import an export to create a new beekeeping company",
+      "FEATURED added hive beetle map to maps"
+    ]
+  },
+  {
     "version": "6.4.3",
     "date": "2024-07-09",
     "news": [

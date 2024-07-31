@@ -23,7 +23,7 @@
     >
       <slot></slot>
 
-      <div>{{ $t('observation', 2) }}: {{ recentCount }}</div>
+      <div>{{ $t('recentObservations') }}: {{ recentCount }}</div>
       <div>{{ $t('total') }}: {{ totalCount }}</div>
       <div v-if="props.isPublic">
         <b>{{ $t('velutinaMapPublicText') }}</b>
@@ -37,7 +37,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, toRefs } from 'vue';
+import { ref, toRefs, watch } from 'vue';
 import { LTileLayer, LControlLayers, LControl } from '@vue-leaflet/vue-leaflet';
 import { useApiFetch } from '~/composables/useApi';
 import { useQuasar } from 'quasar';
@@ -56,39 +56,62 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  taxa: {
+    type: String,
+    required: true,
+  },
 });
 
-const { recentCount } = toRefs(props);
+const { recentCount, taxa } = toRefs(props);
 const totalCount = ref(0);
 
-api.get('/v1/public/velutina/observations/stats').then((response) => {
-  totalCount.value = response.count;
-});
+watch(
+  taxa,
+  (taxa) => {
+    api.get(`/v1/public/${taxa}/observations/stats`).then((response) => {
+      totalCount.value = response.count;
+    });
+  },
+  { immediate: true },
+);
 
 function onShowSources() {
-  const sources = `
-  <ul>
-    <li>
-      <a href="https://www.inaturalist.org/home" target="_blank">iNaturalist</a>
-    </li>
-    <li>
-      <a href="https://frelonasiatique.mnhn.fr/visualisateur" target="_blank">PatriNat</a>
-      </li>
-      <li>
-        <a href="https://www.artenfinder.net" target="_blank">artenfinder.net</a>
-      </li>
-      <li>
-        <a href="https://wwww.observation.org" target="_blank">observation.org</a>
-      </li>
-      <li>
-        <a href="https://lepus.infofauna.ch/carto/" target="_blank">infofauna.ch</a>
-      </li>
-  </ol>
-  `;
+  const sources = [
+    {
+      name: 'iNaturalist',
+      url: 'https://www.inaturalist.org/home',
+    },
+    {
+      name: 'artenfinder.net',
+      url: 'https://www.artenfinder.net',
+    },
+    {
+      name: 'observation.org',
+      url: 'https://wwww.observation.org',
+    },
+    {
+      name: 'infofauna.ch',
+      url: 'https://lepus.infofauna.ch/carto/',
+    },
+  ];
+
+  if (taxa.value === 'velutina') {
+    sources.push({
+      name: 'PatriNat',
+      url: 'https://frelonasiatique.mnhn.fr/visualisateur',
+    });
+  }
+
+  const sourcesHtml = sources
+    .map(
+      (source) =>
+        `<li><a href="${source.url}" target="_blank">${source.name}</a></li>`,
+    )
+    .join('');
 
   $q.dialog({
     title: t('source', 2),
-    message: sources,
+    message: `<ul>${sourcesHtml}</ul>`,
     html: true,
     ok: 'Close',
   });

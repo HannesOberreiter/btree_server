@@ -5,99 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   </head>
   <div ref="iframeRef" class="iframe-container">
-    <l-map
-      ref="mapRef"
-      :zoom="5"
-      :center="[49.4582838, 15.2718234]"
-      loading-control="true"
-      @ready="onMapReady"
-    >
-      <velutina-map-layers :recent-count="recentCount" :is-public="true">
-        <div>
-          <b>
-            Service by
-            <a href="https://www.btree.at" target="_blank">b.tree</a>
-          </b>
-        </div>
-      </velutina-map-layers>
-    </l-map>
+    <map-pest :is-public="true"></map-pest>
   </div>
 </template>
 
-<script lang="ts">
-type Observation = {
-  location: {
-    x: number;
-    y: number;
-  };
-  uri: string;
-  observed_at: string;
-  localDate: string;
-  isRecentObservation: boolean;
-};
-</script>
-
 <script setup lang="ts">
-import L, { LatLngTuple } from 'leaflet';
-import 'leaflet/dist/leaflet.css';
-import 'leaflet.markercluster/dist/MarkerCluster.css';
-import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
-import 'leaflet.markercluster/dist/leaflet.markercluster.js';
-import { LMap } from '@vue-leaflet/vue-leaflet';
-import { useApiFetch } from '~/composables/useApi';
 import { onBeforeUnmount, ref, onMounted } from 'vue';
-import VelutinaMapLayers from '~/components/VelutinaMapLayers.vue';
+import MapPest from '~/components/MapPest.vue';
 
-const api = useApiFetch();
-const cluster = (L as any).markerClusterGroup({
-  chunkedLoading: true,
-});
-
-const mapRef = ref(null as any);
 const iframeRef = ref<HTMLIFrameElement | null>(null);
-let map = {} as any;
-const recentCount = ref(0);
-
-const onMapReady = () => {
-  map = mapRef.value.leafletObject;
-  map.doubleClickZoom.disable();
-  map.scrollWheelZoom.enable();
-  api.get('/v1/public/velutina/observations/recent').then((response) => {
-    const data = response.map((item: any) => {
-      return {
-        ...item,
-        localDate: new Date(item.observed_at).toLocaleDateString(),
-        isRecentObservation:
-          new Date(item.observed_at) >
-          new Date(Date.now() - 1000 * 60 * 60 * 24 * 365),
-      } as Observation;
-    });
-    recentCount.value = data.length;
-    data.map((item: Observation) => {
-      const circleMarker = L.circleMarker(
-        [item.location.x, item.location.y] as LatLngTuple,
-        {
-          radius: 5,
-          color: item.isRecentObservation ? 'red' : 'blue',
-          fillOpacity: 0.5,
-        },
-      );
-      const uri = JSON.parse(item.uri);
-      circleMarker.bindPopup(
-        `${item.localDate}<br/><a href="${uri}" target="_blank">${uri}</a>`,
-      );
-      cluster.addLayer(circleMarker);
-    });
-    map.addLayer(cluster);
-  });
-};
 
 onMounted(() => {
   resizeIframe();
   window.addEventListener('resize', resizeIframe);
 });
 onBeforeUnmount(() => {
-  map.removeLayer(cluster);
   window.removeEventListener('resize', resizeIframe);
 });
 
@@ -115,10 +37,5 @@ function resizeIframe() {
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.leaflet-top,
-.leaflet-bottom {
-  z-index: 900;
 }
 </style>

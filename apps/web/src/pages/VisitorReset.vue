@@ -20,6 +20,7 @@
         password-label="newPassword"
         :confirm="true"
       ></form-user-password>
+      <form-dropdown-server></form-dropdown-server>
 
       <q-card-actions class="">
         <btn-base
@@ -47,6 +48,7 @@ import useVuelidate from '@vuelidate/core';
 import { alphaNum, maxLength, requiredField } from '~/helpers/i18n-validators';
 import FormUserPassword from '~/components/FormUserPassword.vue';
 import FormErrorMax from '~/components/FormErrorMax.vue';
+import FormDropdownServer from '~/components/FormDropdownServer.vue';
 import { reactive, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
