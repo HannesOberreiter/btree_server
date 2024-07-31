@@ -33,3 +33,9 @@ if (process.env.MODE !== 'ssr' || process.env.PROD) {
     ),
   );
 }
+
+self.addEventListener('fetch', (event) => {
+  if (event.request.url.endsWith('.pdf')) {
+    event.respondWith(fetch(event.request));
+  }
+});
