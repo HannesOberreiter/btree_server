@@ -11,6 +11,7 @@ export async function fetchObservations(taxa: Taxa = 'Vespa velutina') {
     taxa === 'Vespa velutina' ? await fetchPatriNat() : { newObservations: 0 };
 
   return {
+    taxa: taxa,
     iNaturalist: inat,
     patriNat: patriNat,
     artenfinderNet: artenfinderNet,
