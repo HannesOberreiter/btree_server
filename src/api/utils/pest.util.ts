@@ -1,3 +1,5 @@
+import { RedisServer } from 'src/servers/redis.server.js';
+import { buildRedisCacheKeyObservationsRecent } from '../controllers/public.controller.js';
 import { Observation, Taxa } from '../models/observation.model.js';
 import proj4 from 'proj4';
 
@@ -9,6 +11,10 @@ export async function fetchObservations(taxa: Taxa = 'Vespa velutina') {
 
   const patriNat =
     taxa === 'Vespa velutina' ? await fetchPatriNat() : { newObservations: 0 };
+
+  /** after fetching new taxa we want to cleanup any possible cached map results */
+  const cacheKey = buildRedisCacheKeyObservationsRecent(taxa);
+  RedisServer.client.del(cacheKey);
 
   return {
     taxa: taxa,
