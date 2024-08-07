@@ -241,12 +241,14 @@ export default class AuthController {
           throw new Error('No name or email');
         }
         return reply.redirect(
-          frontend +
-            '/visitor/register?name=' +
-            result.name +
-            '&email=' +
-            result.email +
-            '&oauth=google',
+          encodeURI(
+            frontend +
+              '/visitor/register?name=' +
+              result.name +
+              '&email=' +
+              result.email +
+              '&oauth=google',
+          ),
         );
       }
     } catch (e) {
