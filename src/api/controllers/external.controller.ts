@@ -16,6 +16,11 @@ import {
 import { createInvoice } from '../utils/foxyoffice.util.js';
 import { SOURCE } from '../../config/constants.config.js';
 import { MailService } from '../../services/mail.service.js';
+import {
+  isServerLocationValid,
+  serverLocation,
+} from '../../config/environment.config.js';
+import { Logger } from '../../services/logger.service.js';
 
 export default class ExternalController {
   static async ical(req: FastifyRequest, reply: FastifyReply) {
@@ -92,11 +97,15 @@ export default class ExternalController {
     if (event.type === 'checkout.session.completed') {
       let user_id: number;
       let years = 1;
+      let server: string = 'eu';
 
       try {
         const reference = JSON.parse(object.client_reference_id);
         user_id = reference.user_id;
         years = reference.quantity ?? 1;
+        server = isServerLocationValid(reference.server)
+          ? reference.server
+          : 'eu';
       } catch (e) {
         const mailer = MailService.getInstance();
         mailer.sendRawMail(
@@ -106,6 +115,18 @@ export default class ExternalController {
         );
         req.log.error(e);
         throw httpErrors.InternalServerError();
+      }
+
+      if (serverLocation !== server) {
+        Logger.getInstance().log(
+          'info',
+          'Stripe Webhook - ignored wrong server',
+          {
+            server: server,
+            current: serverLocation,
+          },
+        );
+        return {};
       }
 
       let amount = 0;

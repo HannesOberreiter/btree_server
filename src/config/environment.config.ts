@@ -193,7 +193,9 @@ const openAI = {
 };
 
 const serverLocations = ['eu', 'us'];
-const serverLocation = serverLocations.includes(process.env.SERVER_LOCATION)
+const isServerLocationValid = (server: string) =>
+  serverLocations.includes(server);
+const serverLocation = isServerLocationValid(process.env.SERVER_LOCATION)
   ? process.env.SERVER_LOCATION
   : 'eu';
 
@@ -226,5 +228,6 @@ export {
   openAI,
   isContainer,
   isChild,
+  isServerLocationValid,
   serverLocation,
 };

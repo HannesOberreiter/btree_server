@@ -25,11 +25,12 @@ export async function createOrder(
       },
     ],
     mode: 'payment',
-    success_url: `${frontend}/premium?session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${frontend}/premium`,
+    success_url: `${frontend}/premium?session_id={CHECKOUT_SESSION_ID}&server=${process.env.SERVER}`,
+    cancel_url: `${frontend}/premium?server=${process.env.SERVER}`,
     client_reference_id: JSON.stringify({
       user_id: user_id,
       quantity: quantity,
+      server: process.env.SERVER,
     }),
   });
   return session;
