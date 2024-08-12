@@ -15,6 +15,7 @@ import {
   discourseSecret,
   env,
   frontend,
+  serverLocation,
 } from '../../config/environment.config.js';
 import { autoFill } from '../utils/autofill.util.js';
 import { Company } from '../models/company.model.js';
@@ -247,13 +248,17 @@ export default class AuthController {
               result.name +
               '&email=' +
               result.email +
-              '&oauth=google',
+              '&oauth=google' +
+              '&server=' +
+              serverLocation,
           ),
         );
       }
     } catch (e) {
       req.log.error({ message: 'Error in google callback', error: e });
-      return reply.redirect(frontend + '/visitor/login?error=oauth');
+      return reply.redirect(
+        frontend + '/visitor/login?error=oauth&server=' + serverLocation,
+      );
     }
 
     const userAgent = buildUserAgent(req);
@@ -282,7 +287,7 @@ export default class AuthController {
       req.log.error(e);
       throw httpErrors[500]('Failed to create session');
     }
-    reply.redirect(frontend + '/visitor/login');
+    reply.redirect(frontend + '/visitor/login&server=' + serverLocation);
     return reply;
   }
 }
