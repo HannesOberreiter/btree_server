@@ -8,12 +8,14 @@ on:
 
 env:
   ZONE_ID: 1496328
+  STORAGE_NAME: btree-beta
 
 jobs:
   build:
     runs-on: ubuntu-latest
     env:
       BACKEND_URL: https://api-beta.btree.at/api
+      BACKEND_URL_US: https://us.api.btree.at/api
       DROPBOX_CLIENT_ID: ${{ secrets.DROPBOX_CLIENT_ID }}
       OPENWEATHER_APP_ID: ${{ secrets.OPENWEATHER_APP_ID }}
       MATOMO_HOST: ${{ secrets.MATOMO_HOST }}
@@ -34,20 +36,15 @@ jobs:
       - name: List output files
         run: ls
 
-      - name: Upload Files
-        id: upload
-        uses: Creepios/sftp-action@v1.0.3
+      - name: Deploy to BunnyCDN
+        uses: ayeressian/bunnycdn-storage-deploy@v2.2.2
         with:
-          host: ${{ secrets.FTP_HOST }}
-          port: 22
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          localPath: './dist/pwa'
-          remotePath: './btree-vue/beta'
-
-      - name: Purge BunnyCDN
-        uses: fjogeleit/http-request-action@v1
-        with:
-          url: 'https://api.bunny.net/pullzone/${{env.ZONE_ID}}/purgeCache'
-          method: 'POST'
-          customHeaders: '{ "AccessKey": "${{ secrets.BUNNY_KEY }}"}'
+          source: './dist/pwa'
+          destination: '/'
+          storageZoneName: '${{ env.STORAGE_NAME }}'
+          storagePassword: '${{ secrets.STORAGE_PASSWORD_BETA }}'
+          accessKey: '${{ secrets.BUNNY_KEY }}'
+          pullZoneId: '${{ env.ZONE_ID }}'
+          remove: 'true'
+          purgePullZone: 'true'
+          upload: 'true'
