@@ -1,4 +1,4 @@
-import { RedisServer } from 'src/servers/redis.server.js';
+import { RedisServer } from '../../servers/redis.server.js';
 import { buildRedisCacheKeyObservationsRecent } from '../controllers/public.controller.js';
 import { Observation, Taxa } from '../models/observation.model.js';
 import proj4 from 'proj4';
