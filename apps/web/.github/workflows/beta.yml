@@ -8,7 +8,7 @@ on:
 
 env:
   ZONE_ID: 1496328
-  STORAGE_NAME: btree-beta
+  STORAGE_NAME: btree-app-beta
 
 jobs:
   build:
