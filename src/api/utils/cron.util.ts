@@ -321,6 +321,7 @@ export const reminderPremium = async () => {
             lang: u.lang,
             subject: 'premium_reminder',
             name: u.username,
+            key: company.name,
           });
           await User.query().findById(u.id).patch({
             reminder_premium: nowDate,

@@ -14,6 +14,10 @@ function mapTaxa(req: FastifyRequest) {
   return taxa;
 }
 
+export function buildRedisCacheKeyObservationsRecent(taxa: Taxa) {
+  return `cache:${taxa}ObservationsRecent`;
+}
+
 export default class PublicController {
   static async getPestObservationsRecent(
     req: FastifyRequest,
@@ -22,7 +26,7 @@ export default class PublicController {
     const taxa = mapTaxa(req);
 
     reply.header('Cache-Control', 'public, max-age=21600');
-    const cacheKey = `cache:${taxa}ObservationsRecent`;
+    const cacheKey = buildRedisCacheKeyObservationsRecent(taxa);
 
     const redis = RedisServer.client;
     const cached = await redis.get(cacheKey);
@@ -86,33 +90,5 @@ export default class PublicController {
       .count('id as count')
       .where('taxa', taxa);
     return res[0];
-  }
-
-  static async getPestObservationsArray(
-    req: FastifyRequest,
-    reply: FastifyReply,
-  ) {
-    const taxa = mapTaxa(req);
-
-    reply.header('Cache-Control', 'public, max-age=21600');
-    const cacheKey = `cache:${taxa}ObservationsArray`;
-
-    const redis = RedisServer.client;
-    const cached = await redis.get(cacheKey);
-    if (cached) {
-      return cached;
-    }
-
-    const result = await Observation.query()
-      .select('location')
-      .where('taxa', taxa);
-    const res = [];
-    for (const r of result) {
-      res.push([(r as any).location.x, (r as any).location.y]);
-    }
-
-    redis.set(cacheKey, JSON.stringify(res), 'EX', 21600);
-
-    return res;
   }
 }
