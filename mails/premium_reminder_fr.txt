@@ -3,6 +3,8 @@ Cher apiculteur !
 
 Votre adhésion Premium va bientôt expirer! Nous serions heureux de vous garder comme membre Premium.
 
+Organization: %key%
+
 Prolonger maintenant: %base_url%premium%params%
       
 Si votre abonnement Premium expire, vous ne perdrez aucune donnée ! Vous pouvez également continuer à travailler avec toutes vos ruches et ruchers gratuitement, mais les limitations de l'adhésion de base sont de nouveau en place !
