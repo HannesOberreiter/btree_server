@@ -1,5 +1,14 @@
 [
   {
+    "version": "6.4.5",
+    "date": "2024-08-12",
+    "news": [
+      "BUGFIX clear velutina and hive beetle daily cache on new version",
+      "BUGFIX google oauth was not working correctly with special characters in email",
+      "IMPROVEMENT added company name to premium reminder mail"
+    ]
+  },
+  {
     "version": "6.4.4",
     "date": "2024-08-01",
     "news": [
