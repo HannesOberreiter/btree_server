@@ -1,0 +1,33 @@
+version: '3.8'
+services:
+  btree-server:
+    container_name: btree-server
+    image: hannesoberreiter/btree_server:latest
+    restart: always
+    user: 'node' # connected volume logs must have write access as node user chown -R 1000:1000 logs
+    #entrypoint: [ "/bin/sh", "-c", "tail -f /dev/null" ]
+    environment:
+      ENVIRONMENT: production
+      IS_CHILD: false
+    volumes:
+      - ./env:/home/node/app/env
+      - ./logs:/home/node/app/logs
+    ports:
+      - '1339:8101'
+    logging:
+      driver: 'local'
+    networks:
+      - default
+      - web
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.app.rule=Host(`us.api.btree.at`)'
+      - 'traefik.http.routers.app.middlewares=wwwredirect'
+
+networks:
+  default:
+    external: true
+    name: database_btree-db-network
+  web:
+    external: true
+    name: container_web
