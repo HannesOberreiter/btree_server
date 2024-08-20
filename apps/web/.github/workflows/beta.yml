@@ -8,7 +8,6 @@ on:
 
 env:
   ZONE_ID: 1496328
-  STORAGE_NAME: btree-app-beta
 
 jobs:
   build:
@@ -36,15 +35,20 @@ jobs:
       - name: List output files
         run: ls
 
-      - name: Deploy to BunnyCDN
-        uses: ayeressian/bunnycdn-storage-deploy@v2.2.2
+      - name: Upload Files
+        id: upload
+        uses: Creepios/sftp-action@v1.0.3
         with:
-          source: './dist/pwa'
-          destination: '/'
-          storageZoneName: '${{ env.STORAGE_NAME }}'
-          storagePassword: '${{ secrets.STORAGE_PASSWORD_BETA }}'
-          accessKey: '${{ secrets.BUNNY_KEY }}'
-          pullZoneId: '${{ env.ZONE_ID }}'
-          remove: 'true'
-          purgePullZone: 'true'
-          upload: 'true'
+          host: ${{ secrets.FTP_HOST }}
+          port: 22
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          localPath: './dist/pwa'
+          remotePath: './btree-vue/beta'
+
+      - name: Purge BunnyCDN
+        uses: fjogeleit/http-request-action@v1
+        with:
+          url: 'https://api.bunny.net/pullzone/${{env.ZONE_ID}}/purgeCache'
+          method: 'POST'
+          customHeaders: '{ "AccessKey": "${{ secrets.BUNNY_KEY }}"}'
