@@ -5,6 +5,7 @@ import { QueenDuration } from '../models/queen_duration.model.js';
 import { Checkup } from '../models/checkup.model.js';
 import { Harvest } from '../models/harvest.model.js';
 import { FastifyReply, FastifyRequest } from 'fastify';
+import Objection from 'objection';
 
 export default class QueenController {
   static async get(req: FastifyRequest, reply: FastifyReply) {
@@ -245,6 +246,9 @@ export default class QueenController {
           user_id: req.session.user.user_id,
           bee_id: req.session.user.bee_id,
         });
+        if (hive_id && body.move_date) {
+          await inactivateOtherQueens(trx, hive_id, body.move_date);
+        }
         result.push(res.id);
       }
       return result;
@@ -260,10 +264,14 @@ export default class QueenController {
       insert.hive_id = insert.hive_id !== 'empty' ? insert.hive_id : null;
     }
     const result = await Queen.transaction(async (trx) => {
-      return await Queen.query(trx)
+      const res = await Queen.query(trx)
         .patch({ ...insert, edit_id: req.session.user.bee_id })
         .findByIds(ids)
         .where('user_id', req.session.user.user_id);
+      if (insert.hive_id) {
+        await inactivateOtherQueens(trx, insert.hive_id, insert.move_date);
+      }
+      return res;
     });
     return result;
   }
@@ -329,5 +337,32 @@ export default class QueenController {
       user_id: req.session.user.user_id,
     });
     return result;
+  }
+}
+
+/**
+ * @description If a new queen is added to a hive all other queens in the hive should be inactivated (RIP)
+ */
+async function inactivateOtherQueens(
+  trx: Objection.Transaction,
+  hive_id: number,
+  move_date: string,
+) {
+  let lastMoveDate = move_date;
+  const queens = await Queen.query(trx)
+    .where('hive_id', hive_id)
+    .orderBy('move_date', 'desc');
+
+  for (const queen of queens) {
+    if (!queen.move_date) continue;
+    const curMoveDate = new Date(queen.move_date).toISOString().split('T')[0];
+    if (queen.modus && curMoveDate < lastMoveDate) {
+      await Queen.query(trx)
+        .patch({ modus: false, modus_date: lastMoveDate })
+        .where('id', queen.id);
+    }
+    if (curMoveDate < lastMoveDate) {
+      lastMoveDate = curMoveDate;
+    }
   }
 }
