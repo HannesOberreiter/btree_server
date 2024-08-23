@@ -328,7 +328,6 @@ async function specialTypes() {
   ];
 
   properties.map((property) => {
-    console.log(property);
     for (const key of Object.keys(property)) {
       const item = property[key];
       if (item.type === 'boolean') {
