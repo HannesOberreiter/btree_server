@@ -3,9 +3,10 @@
     "version": "6.4.x",
     "date": "2024-08-xx",
     "news": [
-      "BUGFIX: Stripe webhook now correctly distinguishes between server locations.",
-      "BUGFIX: Inactive queens are now displayed in the hive details list.",
-      "FEATURE: When adding a new queen to a hive, older queens will automatically be set to inactive based on the insertion date of the new queen. The update will change automatically the status your current queens, but please check your queen data and adjust it if necessary."
+      "BUGFIX Stripe webhook now correctly distinguishes between server locations.",
+      "BUGFIX Inactive queens are now displayed in the hive details list.",
+      "BUGFIX Add current time to queen and hive movement, to prevent problems when date is the same, resulting in no obvious order.",
+      "FEATURE When adding a new queen to a hive, older queens will automatically be set to inactive based on the insertion date of the new queen. The update will change automatically the status your current queens, but please check your queen data and adjust it if necessary."
     ]
   },
   {
