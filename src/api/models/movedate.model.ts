@@ -7,7 +7,7 @@ import { MovedateCount } from './movedate_count.model.js';
 
 export class Movedate extends ExtModel {
   id!: number;
-  date!: Date;
+  date!: string;
   apiary_id!: number;
   hive_id!: number;
   edit_id!: number;
@@ -27,7 +27,7 @@ export class Movedate extends ExtModel {
     required: ['date', 'apiary_id', 'hive_id'],
     properties: {
       id: { type: 'integer' },
-      date: { type: 'string', format: 'date' },
+      date: { type: 'string', format: 'iso-date-time' },
       edit_id: { type: 'integer' },
       apiary_id: { type: 'integer' }, // Apiary FK
       hive_id: { type: 'integer' }, // Hive FK

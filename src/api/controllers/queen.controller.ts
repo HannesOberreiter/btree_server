@@ -260,6 +260,7 @@ export default class QueenController {
     const body = req.body as any;
     const ids = body.ids;
     const insert = { ...body.data };
+    console.log(insert);
     if (insert.hive_id) {
       insert.hive_id = insert.hive_id !== 'empty' ? insert.hive_id : null;
     }
@@ -348,17 +349,20 @@ async function inactivateOtherQueens(
   hive_id: number,
   move_date: string,
 ) {
-  let lastMoveDate = move_date;
+  let lastMoveDate = new Date(move_date);
   const queens = await Queen.query(trx)
     .where('hive_id', hive_id)
     .orderBy('move_date', 'desc');
 
   for (const queen of queens) {
     if (!queen.move_date) continue;
-    const curMoveDate = new Date(queen.move_date).toISOString().split('T')[0];
+    const curMoveDate = new Date(queen.move_date);
     if (queen.modus && curMoveDate < lastMoveDate) {
       await Queen.query(trx)
-        .patch({ modus: false, modus_date: lastMoveDate })
+        .patch({
+          modus: false,
+          modus_date: lastMoveDate.toISOString().split('T')[0],
+        })
         .where('id', queen.id);
     }
     if (curMoveDate < lastMoveDate) {

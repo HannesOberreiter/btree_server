@@ -50,7 +50,7 @@ export class Queen extends ExtModel {
       mark_colour: { type: 'string', maxLength: 24 },
       mother: { type: 'string', maxLength: 24 },
       date: { type: 'string', format: 'date' },
-      move_date: { type: 'string', format: 'date' },
+      move_date: { type: 'string', format: 'iso-date-time' },
       url: { type: 'string', maxLength: 512 },
       note: { type: 'string', maxLength: 2000 },
 
