@@ -45,6 +45,7 @@
                 :options="{ alt: value.name }"
                 :lat-lng="[value.latitude, value.longitude]"
                 :draggable="true"
+                :icon="icon"
                 @dragstart="moveApiaryStart(value)"
                 @dragend="moveApiaryEnd"
               >
@@ -90,7 +91,7 @@
 </template>
 
 <script setup lang="ts">
-import 'leaflet';
+import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useApiariesQuery, useInvalidateQueries } from '~/composables/useQuery';
 import { useAuthUserStore } from '~/stores/auth';
@@ -112,6 +113,9 @@ import MapOverlay from '~/components/MapOverlay.vue';
 
 import { useI18n } from 'vue-i18n';
 import { computed, ref } from 'vue';
+
+const icon = new L.Icon.Default();
+icon.options.shadowSize = [0, 0];
 
 const api = useApiFetch();
 const {
