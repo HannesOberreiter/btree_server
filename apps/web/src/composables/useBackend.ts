@@ -2,6 +2,8 @@ import { useLocalStorage } from '@vueuse/core';
 import { computed } from 'vue';
 import { API_SERVER } from '~/constants';
 
+type Server = 'eu' | 'us';
+
 const isDev = process.env.NODE_ENV !== 'production';
 const baseUrl = process.env.BACKEND_URL;
 const baseUrlUS = process.env.BACKEND_URL_US;
@@ -28,9 +30,11 @@ export const useBackend = () => {
   const params = new URLSearchParams(window.location.search);
   const paramServer = params.get('server');
 
-  const server = validServers.includes(paramServer) ? paramServer : null;
+  const server = validServers.includes(paramServer)
+    ? (paramServer as Server)
+    : null;
 
-  const state = useLocalStorage(
+  const state = useLocalStorage<Server>(
     'backend-location',
     server === 'us' ? 'us' : 'eu',
   );
@@ -56,7 +60,7 @@ export const useBackend = () => {
       if (!backends[value]) {
         throw new Error('Invalid backend');
       }
-      state.value = value;
+      state.value = value as Server;
     },
     getOption: () => options.find((o) => o.id === state.value),
     findOption: (id: string) => options.find((o) => o.id === id),

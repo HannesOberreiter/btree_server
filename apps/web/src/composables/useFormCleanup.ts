@@ -139,7 +139,17 @@ function cleanupQuicktool(state: FormQuicktool, isEdit: boolean, task: string) {
   return omitBy(result, isNil);
 }
 
-function cleanupMovement(state: any, isEdit: boolean) {
+function cleanupMovement(originalState: any, isEdit: boolean) {
+  /* We need a copy as we modify the state */
+  const state = { ...originalState };
+  if (state.date) {
+    const date = new Date(state.date);
+    const now = new Date();
+    date.setHours(now.getHours());
+    date.setMinutes(now.getMinutes());
+    date.setSeconds(now.getSeconds());
+    state.date = date.toISOString();
+  }
   const result = {
     date: state.date,
     apiary_id: state.apiary ? state.apiary.id : null,
@@ -150,7 +160,19 @@ function cleanupMovement(state: any, isEdit: boolean) {
   return omitBy(result, isNil);
 }
 
-function cleanupQueen(state: FormQueen, isEdit: boolean) {
+function cleanupQueen(originalState: FormQueen, isEdit: boolean) {
+  /* We need a copy as we modify the state */
+  const state = { ...originalState };
+
+  if (state.move_date) {
+    const date = new Date(state.move_date);
+    const now = new Date();
+    date.setHours(now.getHours());
+    date.setMinutes(now.getMinutes());
+    date.setSeconds(now.getSeconds());
+    state.move_date = date.toISOString();
+  }
+
   const result = {
     name: state.name,
     mark_colour: state.mark_colour,
@@ -166,10 +188,10 @@ function cleanupQueen(state: FormQueen, isEdit: boolean) {
     mother_id: !state.mother_id
       ? null
       : 'id' in state.mother_id
-      ? state.mother_id.id
-      : 'label' in state.mother_id
-      ? 'undefined' // Workaround if no mother is given
-      : null,
+        ? state.mother_id.id
+        : 'label' in state.mother_id
+          ? 'undefined' // Workaround if no mother is given
+          : null,
     race_id: state.race ? state.race.id : null,
     mating_id: state.mating ? state.mating.id : null,
     url: state.url,

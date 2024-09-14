@@ -136,6 +136,15 @@ const columns = [
     sortable: true,
   },
   {
+    name: 'movedate_previous_apiary.previous_apiary_name',
+    required: false,
+    label: t('previousApiary'),
+    align: 'left',
+    field: (row: any) =>
+      row.movedate_previous_apiary?.previous_apiary_name ?? '',
+    sortable: false,
+  },
+  {
     name: 'created_at',
     label: t('created'),
     align: 'center',

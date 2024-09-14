@@ -7,8 +7,14 @@
     </div>
     <ul>
       <li v-for="item in data.results" :key="item.id">
-        <b>{{ item.name }}</b>
-        &nbsp;({{ useDate.displayFormat(item.date) }})
+        <b>{{ item.name }}</b
+        >&nbsp;
+        <template v-if="item.modus">
+          ({{ useDate.displayFormat(item.date) }})
+        </template>
+        <template v-else>
+          (RIP {{ useDate.displayFormat(item.modus_date) }})
+        </template>
       </li>
     </ul>
   </div>
@@ -39,8 +45,9 @@ watch(
 
 const { isLoading, data } = useQueensQuery({
   limit: 5,
-  order: ['queens.date'],
+  order: ['queens.move_date'],
   direction: ['desc'],
   filters: filter,
+  modus: null,
 });
 </script>

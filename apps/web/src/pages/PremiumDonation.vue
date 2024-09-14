@@ -227,6 +227,7 @@ import PaymentStripe from '~/components/PaymentStripe.vue';
 import SupporterImages from '~/components/SupporterImages.vue';
 import { useI18n } from 'vue-i18n';
 import { computed, ref } from 'vue';
+import { useBackend } from '~/composables/useBackend';
 
 const storeRefresh = useRefreshStore();
 const useDate = useDateFormat();
@@ -235,9 +236,10 @@ const $q = useQuasar();
 const { t } = useI18n();
 const api = useApiFetch();
 const notification = useNotification();
+const backend = useBackend();
 
 const mailTo = computed(() => {
-  return `mailto:office@btree.at?subject=Invoice Request ${storeUser.company.name} (${storeUser.company.id})&body=Please send me an invoice for the company "${storeUser.company.name}" (id: ${storeUser.company.id}) with a donation of ${donation.value} Euros. Response E-Mail: ${storeUser.user.email}`;
+  return `mailto:office@btree.at?subject=Invoice Request ${storeUser.company.name} (${storeUser.company.id}) [Server: ${backend.state.value}]&body=Please send me an invoice for the company "${storeUser.company.name}" (id: ${storeUser.company.id}) with a donation of ${donation.value} Euros. Response E-Mail: ${storeUser.user.email}`;
 });
 const getPaidStatus = computed(() => {
   if (dayjs(storeUser.getPaidStatus.date) < dayjs()) {
