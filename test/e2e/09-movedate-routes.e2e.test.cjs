@@ -1,7 +1,8 @@
 const request = require('supertest');
 const { expect } = require('chai');
-const { doRequest, expectations, doQueryRequest } = require(process.cwd() +
-  '/test/utils/index.cjs');
+const { doRequest, expectations, doQueryRequest } = require(
+  process.cwd() + '/test/utils/index.cjs',
+);
 
 const testInsert = {
   hive_ids: [2, 3],
@@ -81,7 +82,7 @@ describe('Movedate routes', function () {
         route,
         null,
         null,
-        { ids: [insertId] },
+        { ids: [insertId], data: {} },
         function (err, res) {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
