@@ -63,6 +63,7 @@
           :options="{ alt: value.name }"
           :lat-lng="[value.latitude, value.longitude]"
           :draggable="false"
+          :icon="icon"
         >
           <l-popup>
             <div class="text-h6">
@@ -122,6 +123,7 @@ import { useRouter } from 'vue-router';
 
 const { t } = useI18n();
 const router = useRouter();
+let map = undefined as any;
 
 const props = defineProps({
   isPublic: {
@@ -130,6 +132,9 @@ const props = defineProps({
   },
 });
 const { isPublic } = toRefs(props);
+
+const icon = new L.Icon.Default();
+icon.options.shadowSize = [0, 0];
 
 const taxa = computed(() => {
   const name = router.currentRoute.value.name;
@@ -190,8 +195,6 @@ const userLocationLoading = ref(false);
 const showInactive = ref(false);
 const daysRecent = 7;
 
-let map = undefined as any;
-
 const recentCount = ref(0);
 
 const onMapReady = () => {
@@ -240,8 +243,8 @@ const onMapReady = () => {
     });
     recentCount.value = countRecent;
 
-    map.addLayer(layerRecent);
     map.addLayer(cluster);
+    map.addLayer(layerRecent);
   });
 };
 
@@ -273,9 +276,5 @@ function onLocationError() {
 .leaflet-top,
 .leaflet-bottom {
   z-index: 900;
-}
-
-.leaflet-marker-pane {
-  z-index: 200 !important;
 }
 </style>
