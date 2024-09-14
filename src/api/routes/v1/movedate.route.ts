@@ -43,6 +43,7 @@ export default function routes(
       schema: {
         body: z.object({
           ids: z.array(numberSchema),
+          data: z.object({}).passthrough(),
         }),
       },
     },
