@@ -4,10 +4,11 @@ import { Model } from 'objection';
 import { Apiary } from './apiary.model.js';
 import { Hive } from './hive.model.js';
 import { MovedateCount } from './movedate_count.model.js';
+import { MovedatePreviousApiary } from './movedate_previous_apiary.model.js';
 
 export class Movedate extends ExtModel {
   id!: number;
-  date!: Date;
+  date!: string;
   apiary_id!: number;
   hive_id!: number;
   edit_id!: number;
@@ -27,7 +28,7 @@ export class Movedate extends ExtModel {
     required: ['date', 'apiary_id', 'hive_id'],
     properties: {
       id: { type: 'integer' },
-      date: { type: 'string', format: 'date' },
+      date: { type: 'string', format: 'iso-date-time' },
       edit_id: { type: 'integer' },
       apiary_id: { type: 'integer' }, // Apiary FK
       hive_id: { type: 'integer' }, // Hive FK
@@ -57,6 +58,14 @@ export class Movedate extends ExtModel {
       join: {
         from: 'movedates.hive_id',
         to: 'movedates_counts.hive_id',
+      },
+    },
+    movedate_previous_apiary: {
+      relation: Model.BelongsToOneRelation,
+      modelClass: MovedatePreviousApiary,
+      join: {
+        from: 'movedates.id',
+        to: 'movedates_previous_apiary.current_move_id',
       },
     },
     creator: {
