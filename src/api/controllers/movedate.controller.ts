@@ -10,7 +10,7 @@ export default class MovedateController {
     const { order, direction, offset, limit, q, filters } = req.query as any;
     const query = Movedate.query()
       .withGraphJoined(
-        '[hive, apiary, creator(identifier), editor(identifier)]',
+        '[hive, apiary, creator(identifier), editor(identifier), movedate_previous_apiary]',
       )
       .where({
         'apiary.user_id': req.session.user.user_id,
