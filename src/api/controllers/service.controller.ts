@@ -31,7 +31,7 @@ interface Chunk {
 }
 
 export default class ServiceController {
-  static async getTemperature(req: FastifyRequest, reply: FastifyReply) {
+  static async getTemperature(req: FastifyRequest, _reply: FastifyReply) {
     const params = req.params as any;
     const premium = await isPremium(req.session.user.user_id);
     if (!premium) {
@@ -44,7 +44,7 @@ export default class ServiceController {
     return temp;
   }
 
-  static async paypalCreateOrder(req: FastifyRequest, reply: FastifyReply) {
+  static async paypalCreateOrder(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as any;
     const order = await paypalCreateOrder(
       req.session.user.user_id,
@@ -57,7 +57,7 @@ export default class ServiceController {
     return order;
   }
 
-  static async paypalCapturePayment(req: FastifyRequest, reply: FastifyReply) {
+  static async paypalCapturePayment(req: FastifyRequest, _reply: FastifyReply) {
     const params = req.params as any;
     const capture = await capturePayment(params.orderID);
     if (capture.status !== 'COMPLETED' && capture.status !== 'APPROVED') {
@@ -98,7 +98,7 @@ export default class ServiceController {
     return { ...capture, paid };
   }
 
-  static async stripeCreateOrder(req: FastifyRequest, reply: FastifyReply) {
+  static async stripeCreateOrder(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as any;
     const session = await stripeCreateOrder(
       req.session.user.user_id,
@@ -111,7 +111,7 @@ export default class ServiceController {
   /**
    * @deprecated Use askWizBeeStream instead
    */
-  static async askWizBee(req: FastifyRequest, reply: FastifyReply) {
+  static async askWizBee(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as any;
     const premium = await isPremium(req.session.user.user_id);
     if (!premium) {

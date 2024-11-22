@@ -103,7 +103,8 @@ export class MailService {
     htmlMail = htmlMail + htmlFooter;
 
     /** @description Fake <title></title> attribute to set email header */
-    const titleReg = /(?<=<title>)(.*?)(?=<\/title>)/gi;
+    // eslint-disable-next-line regexp/no-unused-capturing-group
+    const titleReg = /(?<=<title>)(.*?)(?=<\/title>)/i;
     const title = titleReg.exec(htmlMail)[0];
     htmlMail = htmlMail.replace(/(<title>)(.*?)(<\/title>)/g, '');
 

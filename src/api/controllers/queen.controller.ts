@@ -8,7 +8,7 @@ import { Queen } from '../models/queen.model.js';
 import { QueenDuration } from '../models/queen_duration.model.js';
 
 export default class QueenController {
-  static async get(req: FastifyRequest, reply: FastifyReply) {
+  static async get(req: FastifyRequest, _reply: FastifyReply) {
     const {
       order,
       direction,
@@ -97,7 +97,7 @@ export default class QueenController {
     return { ...result };
   }
 
-  static async getPedigree(req: FastifyRequest, reply: FastifyReply) {
+  static async getPedigree(req: FastifyRequest, _reply: FastifyReply) {
     const params = req.params as any;
     const queen = await Queen.query()
       .withRecursive('mothers', (qb) => {
@@ -142,7 +142,7 @@ export default class QueenController {
     return queen;
   }
 
-  static async getStats(req: FastifyRequest, reply: FastifyReply) {
+  static async getStats(req: FastifyRequest, _reply: FastifyReply) {
     const { order, direction, offset, limit, q, filters } = req.query as any;
     const query = QueenDuration.query();
     query
@@ -201,7 +201,7 @@ export default class QueenController {
       }
     }
 
-    const result = await query.orderBy('id');
+    const result = await query.orderBy('id') as any;
 
     for (let index = 0; index < result.results.length; index++) {
       const queen = result.results[index];
@@ -233,7 +233,7 @@ export default class QueenController {
     return result;
   }
 
-  static async post(req: FastifyRequest, reply: FastifyReply) {
+  static async post(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as any;
     const start = Number.parseInt(body.start);
     const repeat = Number.parseInt(body.repeat) > 1 ? Number.parseInt(body.repeat) : 1;
@@ -266,7 +266,7 @@ export default class QueenController {
     return result;
   }
 
-  static async patch(req: FastifyRequest, reply: FastifyReply) {
+  static async patch(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as any;
     const ids = body.ids;
     const insert = { ...body.data };
@@ -287,7 +287,7 @@ export default class QueenController {
     return result;
   }
 
-  static async updateStatus(req: FastifyRequest, reply: FastifyReply) {
+  static async updateStatus(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as any;
     const result = await Queen.transaction(async (trx) => {
       return Queen.query(trx)
@@ -302,7 +302,7 @@ export default class QueenController {
     return result;
   }
 
-  static async batchDelete(req: FastifyRequest, reply: FastifyReply) {
+  static async batchDelete(req: FastifyRequest, _reply: FastifyReply) {
     const q = req.query as any;
     const body = req.body as any;
     const hardDelete = !!q.hard;
@@ -344,7 +344,7 @@ export default class QueenController {
     return result;
   }
 
-  static async batchGet(req: FastifyRequest, reply: FastifyReply) {
+  static async batchGet(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as any;
     const result = await Queen.query().findByIds(body.ids).where({
       user_id: req.session.user.user_id,

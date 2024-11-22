@@ -6,7 +6,7 @@ import { HiveLocation } from '../models/hive_location.model.js';
 import { Movedate } from '../models/movedate.model.js';
 
 export default class MovedateController {
-  static async get(req: FastifyRequest, reply: FastifyReply) {
+  static async get(req: FastifyRequest, _reply: FastifyReply) {
     const { order, direction, offset, limit, q, filters } = req.query as any;
     const query = Movedate.query()
       .withGraphJoined(
@@ -61,7 +61,7 @@ export default class MovedateController {
     return { ...result };
   }
 
-  static async patch(req: FastifyRequest, reply: FastifyReply) {
+  static async patch(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as any;
     const ids = body.ids;
     const insert = { ...body.data };
@@ -78,7 +78,7 @@ export default class MovedateController {
     return result;
   }
 
-  static async post(req: FastifyRequest, reply: FastifyReply) {
+  static async post(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as any;
     const hive_ids = body.hive_ids;
     const insert = {
@@ -114,7 +114,7 @@ export default class MovedateController {
     return result;
   }
 
-  static async updateDate(req: FastifyRequest, reply: FastifyReply) {
+  static async updateDate(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as any;
     const result = await Movedate.transaction(async (trx) => {
       // First checking if the movedate ids all belong to the user
@@ -135,7 +135,7 @@ export default class MovedateController {
     return result;
   }
 
-  static async batchGet(req: FastifyRequest, reply: FastifyReply) {
+  static async batchGet(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as any;
     const result = await Movedate.transaction(async (trx) => {
       const res = await Movedate.query(trx)
@@ -148,7 +148,7 @@ export default class MovedateController {
     return result;
   }
 
-  static async batchDelete(req: FastifyRequest, reply: FastifyReply) {
+  static async batchDelete(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as any;
     const result = await Movedate.transaction(async (trx) => {
       return await Movedate.query(trx)

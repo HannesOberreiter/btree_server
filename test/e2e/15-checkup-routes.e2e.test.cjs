@@ -1,4 +1,5 @@
 const { expect } = require('chai');
+const { it, describe, before } = require('mocha');
 const request = require('supertest');
 
 const { doRequest, expectations, doQueryRequest } = require(`${process.cwd()
@@ -39,7 +40,7 @@ describe('checkup routes', () => {
           null,
           accessToken,
           testInsert,
-          (err, res) => {
+          (_err, res) => {
             expect(res.statusCode).to.eqls(200);
             expect(res.body).to.be.a('Array');
             insertId = res.body[0];
@@ -58,7 +59,7 @@ describe('checkup routes', () => {
         null,
         null,
         null,
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
@@ -73,7 +74,7 @@ describe('checkup routes', () => {
         null,
         null,
         testInsert,
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
@@ -88,7 +89,7 @@ describe('checkup routes', () => {
         null,
         null,
         { ids: [insertId], data: {} },
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
@@ -103,7 +104,7 @@ describe('checkup routes', () => {
         null,
         accessToken,
         null,
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(200);
           expect(res.body.results).to.be.a('Array');
           expect(res.body.total).to.be.a('number');
@@ -120,7 +121,7 @@ describe('checkup routes', () => {
         null,
         accessToken,
         null,
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(400);
           done();
         },
@@ -138,7 +139,7 @@ describe('checkup routes', () => {
           ids: [insertId],
           data: {},
         },
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(200);
           expect(res.body).to.equal(1);
           done();
@@ -156,7 +157,7 @@ describe('checkup routes', () => {
         null,
         null,
         { ids: [insertId] },
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
@@ -171,7 +172,7 @@ describe('checkup routes', () => {
         null,
         null,
         null,
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(400);
           expectations(res, 'ids', 'Invalid value');
           done();
@@ -186,7 +187,7 @@ describe('checkup routes', () => {
         null,
         accessToken,
         { ids: [insertId] },
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(200);
           expect(res.body).to.be.a('Array');
           done();
@@ -204,7 +205,7 @@ describe('checkup routes', () => {
         null,
         null,
         { ids: [], status: true },
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
@@ -219,7 +220,7 @@ describe('checkup routes', () => {
         null,
         null,
         null,
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(400);
           expectations(res, 'ids', 'Invalid value');
           done();
@@ -234,7 +235,7 @@ describe('checkup routes', () => {
         null,
         accessToken,
         { ids: [insertId], status: false },
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(200);
           expect(res.body).to.equal(1);
           done();
@@ -252,7 +253,7 @@ describe('checkup routes', () => {
         null,
         null,
         { ids: [], start: testInsert.date, end: testInsert.date },
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
@@ -267,7 +268,7 @@ describe('checkup routes', () => {
         null,
         null,
         null,
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(400);
           expectations(res, 'ids', 'Invalid value');
           done();
@@ -282,7 +283,7 @@ describe('checkup routes', () => {
         null,
         accessToken,
         { ids: [insertId], start: testInsert.date, end: testInsert.date },
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(200);
           expect(res.body).to.equal(1);
           done();
@@ -300,7 +301,7 @@ describe('checkup routes', () => {
         null,
         null,
         { ids: [] },
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
@@ -315,7 +316,7 @@ describe('checkup routes', () => {
         null,
         null,
         null,
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(400);
           expectations(res, 'ids', 'Invalid value');
           done();
@@ -330,7 +331,7 @@ describe('checkup routes', () => {
         null,
         accessToken,
         { ids: [insertId] },
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(200);
           expect(res.body).to.be.a('Array');
           done();

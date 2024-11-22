@@ -1,4 +1,5 @@
 const { expect } = require('chai');
+const { it, describe, before } = require('mocha');
 const request = require('supertest');
 
 const { doRequest, expectations, doQueryRequest } = require(`${process.cwd()
@@ -22,7 +23,7 @@ const options = [
   'treatment_vets',
 ];
 
-options.map((option) => {
+options.forEach((option) => {
   describe(`${option} routes`, () => {
     const route = `/api/v1/option/${option}`;
     let accessToken, insertId;
@@ -48,7 +49,7 @@ options.map((option) => {
             null,
             accessToken,
             testInsert,
-            (err, res) => {
+            (_err, res) => {
               expect(res.statusCode).to.eqls(200);
               expect(res.body).to.be.a('Object');
               insertId = res.body.id;
@@ -67,7 +68,7 @@ options.map((option) => {
           null,
           null,
           null,
-          (err, res) => {
+          (_err, res) => {
             expect(res.statusCode).to.eqls(401);
             expect(res.errors, 'JsonWebTokenError');
             done();
@@ -82,7 +83,7 @@ options.map((option) => {
           null,
           null,
           testInsert,
-          (err, res) => {
+          (_err, res) => {
             expect(res.statusCode).to.eqls(401);
             expect(res.errors, 'JsonWebTokenError');
             done();
@@ -97,7 +98,7 @@ options.map((option) => {
           null,
           null,
           { ids: [insertId], data: {} },
-          (err, res) => {
+          (_err, res) => {
             expect(res.statusCode).to.eqls(401);
             expect(res.errors, 'JsonWebTokenError');
             done();
@@ -112,7 +113,7 @@ options.map((option) => {
           null,
           accessToken,
           null,
-          (err, res) => {
+          (_err, res) => {
             expect(res.statusCode).to.eqls(200);
             expect(res.body).to.be.a('Array');
             done();
@@ -128,7 +129,7 @@ options.map((option) => {
           null,
           accessToken,
           null,
-          (err, res) => {
+          (_err, res) => {
             expect(res.statusCode).to.eqls(400);
             done();
           },
@@ -146,7 +147,7 @@ options.map((option) => {
             ids: [insertId],
             data: {},
           },
-          (err, res) => {
+          (_err, res) => {
             expect(res.statusCode).to.eqls(200);
             expect(res.body).to.equal(1);
             done();
@@ -164,7 +165,7 @@ options.map((option) => {
           null,
           null,
           { ids: [insertId] },
-          (err, res) => {
+          (_err, res) => {
             expect(res.statusCode).to.eqls(401);
             expect(res.errors, 'JsonWebTokenError');
             done();
@@ -179,7 +180,7 @@ options.map((option) => {
           null,
           null,
           null,
-          (err, res) => {
+          (_err, res) => {
             expect(res.statusCode).to.eqls(400);
             expectations(res, 'ids', 'Invalid value');
             done();
@@ -194,7 +195,7 @@ options.map((option) => {
           null,
           accessToken,
           { ids: [insertId] },
-          (err, res) => {
+          (_err, res) => {
             expect(res.statusCode).to.eqls(200);
             expect(res.body).to.be.a('Array');
             done();
@@ -212,7 +213,7 @@ options.map((option) => {
           null,
           null,
           { ids: [], status: true },
-          (err, res) => {
+          (_err, res) => {
             expect(res.statusCode).to.eqls(401);
             expect(res.errors, 'JsonWebTokenError');
             done();
@@ -227,7 +228,7 @@ options.map((option) => {
           null,
           null,
           null,
-          (err, res) => {
+          (_err, res) => {
             expect(res.statusCode).to.eqls(400);
             expectations(res, 'ids', 'Invalid value');
             done();
@@ -242,7 +243,7 @@ options.map((option) => {
           null,
           accessToken,
           { ids: [insertId], status: false },
-          (err, res) => {
+          (_err, res) => {
             expect(res.statusCode).to.eqls(200);
             expect(res.body).to.equal(1);
             done();
@@ -260,7 +261,7 @@ options.map((option) => {
           null,
           null,
           { ids: [] },
-          (err, res) => {
+          (_err, res) => {
             expect(res.statusCode).to.eqls(401);
             expect(res.errors, 'JsonWebTokenError');
             done();
@@ -275,7 +276,7 @@ options.map((option) => {
           null,
           null,
           null,
-          (err, res) => {
+          (_err, res) => {
             expect(res.statusCode).to.eqls(400);
             expectations(res, 'ids', 'Invalid value');
             done();
@@ -290,7 +291,7 @@ options.map((option) => {
           null,
           accessToken,
           { ids: [insertId] },
-          (err, res) => {
+          (_err, res) => {
             expect(res.statusCode).to.eqls(200);
             expect(res.body).to.equal(1);
             done();
@@ -308,7 +309,7 @@ options.map((option) => {
           null,
           null,
           { ids: [] },
-          (err, res) => {
+          (_err, res) => {
             expect(res.statusCode).to.eqls(401);
             expect(res.errors, 'JsonWebTokenError');
             done();
@@ -323,7 +324,7 @@ options.map((option) => {
           null,
           null,
           null,
-          (err, res) => {
+          (_err, res) => {
             expect(res.statusCode).to.eqls(400);
             expectations(res, 'ids', 'Invalid value');
             done();
@@ -338,7 +339,7 @@ options.map((option) => {
           null,
           accessToken,
           { ids: [insertId] },
-          (err, res) => {
+          (_err, res) => {
             expect(res.statusCode).to.eqls(200);
             expect(res.body).to.equal(1);
             done();

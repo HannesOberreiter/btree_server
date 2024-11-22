@@ -9,7 +9,7 @@ import { getCompany } from '../utils/api.util.js';
 import { isPremium } from '../utils/premium.util.js';
 
 export default class ScaleDataController {
-  static async api(req: FastifyRequest, reply: FastifyReply) {
+  static async api(req: FastifyRequest, _reply: FastifyReply) {
     const q = req.query as any;
     const params = req.params as any;
 
@@ -88,7 +88,7 @@ export default class ScaleDataController {
     return { ...result };
   }
 
-  static async get(req: FastifyRequest, reply: FastifyReply) {
+  static async get(req: FastifyRequest, _reply: FastifyReply) {
     const { order, direction, offset, limit, q, filters } = req.query as any;
     const query = ScaleData.query()
       .withGraphJoined('[scale.hive]')
@@ -136,7 +136,7 @@ export default class ScaleDataController {
     return { ...result };
   }
 
-  static async patch(req: FastifyRequest, reply: FastifyReply) {
+  static async patch(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as any;
     const ids = body.ids;
     const insert = { ...body.data };
@@ -150,7 +150,7 @@ export default class ScaleDataController {
     return result;
   }
 
-  static async post(req: FastifyRequest, reply: FastifyReply) {
+  static async post(req: FastifyRequest, _reply: FastifyReply) {
     const insert = req.body as any;
     const result = await ScaleData.transaction(async (trx) => {
       return await ScaleData.query(trx)
@@ -163,7 +163,7 @@ export default class ScaleDataController {
     return { ...result };
   }
 
-  static async batchGet(req: FastifyRequest, reply: FastifyReply) {
+  static async batchGet(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as any;
     const result = await ScaleData.transaction(async (trx) => {
       const res = await ScaleData.query(trx)
@@ -175,7 +175,7 @@ export default class ScaleDataController {
     return result;
   }
 
-  static async batchDelete(req: FastifyRequest, reply: FastifyReply) {
+  static async batchDelete(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as any;
     const result = await ScaleData.transaction(async (trx) => {
       return await ScaleData.query(trx)

@@ -1,7 +1,8 @@
 const { expect } = require('chai');
+const { it, describe, before } = require('mocha');
 const request = require('supertest');
 
-const { doRequest, expectations, doQueryRequest } = require(`${process.cwd()
+const { doRequest, doQueryRequest } = require(`${process.cwd()
 }/test/utils/index.cjs`);
 
 const testInsert = {
@@ -38,7 +39,7 @@ describe('scale routes', () => {
           null,
           accessToken,
           testInsert,
-          (err, res) => {
+          (_err, res) => {
             expect(res.statusCode).to.eqls(200);
             expect(res.body).to.be.a('Object');
             doRequest(
@@ -48,7 +49,7 @@ describe('scale routes', () => {
               null,
               accessToken,
               testInsert2,
-              (err, res) => {
+              (_err, res) => {
                 expect(res.statusCode).to.eqls(200);
                 expect(res.body).to.be.a('Object');
                 insertId = res.body.id;
@@ -69,7 +70,7 @@ describe('scale routes', () => {
         null,
         null,
         null,
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
@@ -84,7 +85,7 @@ describe('scale routes', () => {
         null,
         null,
         testInsert,
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
@@ -99,7 +100,7 @@ describe('scale routes', () => {
         null,
         null,
         { ids: [insertId], data: {} },
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
@@ -114,7 +115,7 @@ describe('scale routes', () => {
         null,
         accessToken,
         null,
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(200);
           expect(res.body).to.be.a('Array');
           done();
@@ -130,7 +131,7 @@ describe('scale routes', () => {
         null,
         accessToken,
         null,
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(400);
           done();
         },
@@ -148,7 +149,7 @@ describe('scale routes', () => {
           ids: [insertId],
           data: { name: 'updatedName' },
         },
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(200);
           expect(res.body).to.equal(1);
           done();
@@ -165,7 +166,7 @@ describe('scale routes', () => {
         insertId,
         null,
         null,
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
@@ -180,7 +181,7 @@ describe('scale routes', () => {
         insertId,
         null,
         testInsert,
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
@@ -195,7 +196,7 @@ describe('scale routes', () => {
         insertId,
         accessToken,
         null,
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(200);
           expect(res.body).to.be.a('Array');
           done();
@@ -211,7 +212,7 @@ describe('scale routes', () => {
         insertId,
         accessToken,
         testInsert,
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(200);
           expect(res.body).to.equal(1);
           done();

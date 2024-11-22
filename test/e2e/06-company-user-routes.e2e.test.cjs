@@ -1,4 +1,5 @@
-const { expect, it, describe, before } = require('mocha');
+const { expect } = require('chai');
+const { it, describe, before } = require('mocha');
 const request = require('supertest');
 
 const { doRequest, expectations, doQueryRequest } = require(`${process.cwd()
@@ -38,7 +39,7 @@ describe('company User routes', () => {
         null,
         null,
         null,
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
@@ -54,7 +55,7 @@ describe('company User routes', () => {
         null,
         null,
         { email: newUser },
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
@@ -69,7 +70,7 @@ describe('company User routes', () => {
         null,
         accessToken,
         null,
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(200);
           expect(res.body).to.be.a('Array');
           done();
@@ -85,7 +86,7 @@ describe('company User routes', () => {
         null,
         accessToken,
         { email: newUser },
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(200);
           expect(res.body.email, newUser);
           expect(res.body).to.has.property('id');
@@ -97,7 +98,7 @@ describe('company User routes', () => {
             newId,
             accessToken,
             {},
-            (err, res) => {
+            (_err, res) => {
               expect(res.statusCode).to.eqls(200);
               expect(res.body).to.equal(1);
               done();
@@ -117,7 +118,7 @@ describe('company User routes', () => {
         null,
         null,
         {},
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
@@ -133,7 +134,7 @@ describe('company User routes', () => {
         null,
         null,
         { rank: 1 },
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
@@ -149,7 +150,7 @@ describe('company User routes', () => {
         null,
         null,
         {},
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(400);
           expectations(res, 'rank', 'requiredField');
           done();
@@ -165,7 +166,7 @@ describe('company User routes', () => {
         1,
         accessToken,
         { rank: 1 },
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(200);
           expect(res.body).to.equal(1);
           done();

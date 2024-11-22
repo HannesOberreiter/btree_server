@@ -1,4 +1,5 @@
 const { expect } = require('chai');
+const { it, describe, before } = require('mocha');
 const request = require('supertest');
 
 const { doRequest, expectations, doQueryRequest } = require(`${process.cwd()
@@ -41,7 +42,7 @@ describe('charge routes', () => {
           null,
           accessToken,
           testInsert,
-          (err, res) => {
+          (_err, res) => {
             expect(res.statusCode).to.eqls(200);
             expect(res.body).to.be.a('Array');
             insertId = res.body[0];
@@ -60,7 +61,7 @@ describe('charge routes', () => {
         null,
         null,
         null,
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
@@ -75,7 +76,7 @@ describe('charge routes', () => {
         null,
         null,
         testInsert,
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
@@ -90,7 +91,7 @@ describe('charge routes', () => {
         null,
         null,
         { ids: [insertId], data: {} },
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
@@ -105,7 +106,7 @@ describe('charge routes', () => {
         null,
         accessToken,
         null,
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(200);
           expect(res.body.results).to.be.a('Array');
           expect(res.body.total).to.be.a('number');
@@ -122,7 +123,7 @@ describe('charge routes', () => {
         null,
         accessToken,
         null,
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(400);
           done();
         },
@@ -140,7 +141,7 @@ describe('charge routes', () => {
           ids: [insertId],
           data: {},
         },
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(200);
           expect(res.body).to.equal(1);
           done();
@@ -157,7 +158,7 @@ describe('charge routes', () => {
         null,
         null,
         null,
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
@@ -171,7 +172,7 @@ describe('charge routes', () => {
         null,
         accessToken,
         null,
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(200);
           expect(res.body.results).to.be.a('Array');
           expect(res.body.total).to.be.a('number');
@@ -190,7 +191,7 @@ describe('charge routes', () => {
         null,
         null,
         { ids: [insertId] },
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
@@ -205,7 +206,7 @@ describe('charge routes', () => {
         null,
         null,
         null,
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(400);
           expectations(res, 'ids', 'Invalid value');
           done();
@@ -220,7 +221,7 @@ describe('charge routes', () => {
         null,
         accessToken,
         { ids: [insertId] },
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(200);
           expect(res.body).to.be.a('Array');
           done();
@@ -238,7 +239,7 @@ describe('charge routes', () => {
         null,
         null,
         { ids: [] },
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
@@ -253,7 +254,7 @@ describe('charge routes', () => {
         null,
         null,
         null,
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(400);
           expectations(res, 'ids', 'Invalid value');
           done();
@@ -268,7 +269,7 @@ describe('charge routes', () => {
         null,
         accessToken,
         { ids: [insertId] },
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(200);
           expect(res.body).to.be.a('Array');
           done();

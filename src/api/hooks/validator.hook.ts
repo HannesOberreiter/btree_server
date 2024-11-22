@@ -29,7 +29,7 @@ export class Validator {
     done();
   };
 
-  static isPremium = async (req: FastifyRequest, reply: FastifyReply) => {
+  static isPremium = async (req: FastifyRequest, _reply: FastifyReply) => {
     if (!req.session.user) {
       throw httpErrors.Unauthorized();
     }

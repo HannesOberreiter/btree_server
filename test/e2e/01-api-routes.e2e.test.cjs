@@ -1,4 +1,5 @@
-const { expect, it, describe } = require('mocha');
+const { expect } = require('chai');
+const { it, describe } = require('mocha');
 const request = require('supertest');
 
 describe('routes resolving', () => {

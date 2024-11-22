@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import { Todo } from '../models/todo.model.js';
 
 export default class TodoController {
-  static async get(req: FastifyRequest, reply: FastifyReply) {
+  static async get(req: FastifyRequest, _reply: FastifyReply) {
     const { order, direction, offset, limit, q, filters, done }
       = req.query as any;
     const query = Todo.query()
@@ -57,7 +57,7 @@ export default class TodoController {
     return { ...result };
   }
 
-  static async post(req: FastifyRequest, reply: FastifyReply) {
+  static async post(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as any;
     const insert = {
       date: body.date,
@@ -95,7 +95,7 @@ export default class TodoController {
     return result;
   }
 
-  static async patch(req: FastifyRequest, reply: FastifyReply) {
+  static async patch(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as any;
     const ids = body.ids;
     const insert = { ...body.data };
@@ -108,7 +108,7 @@ export default class TodoController {
     return result;
   }
 
-  static async batchGet(req: FastifyRequest, reply: FastifyReply) {
+  static async batchGet(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as any;
     const result = await Todo.transaction(async (trx) => {
       const res = await Todo.query(trx)
@@ -119,7 +119,7 @@ export default class TodoController {
     return result;
   }
 
-  static async batchDelete(req: FastifyRequest, reply: FastifyReply) {
+  static async batchDelete(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as any;
     const result = await Todo.transaction(async (trx) => {
       return Todo.query(trx)
@@ -130,7 +130,7 @@ export default class TodoController {
     return result;
   }
 
-  static async updateStatus(req: FastifyRequest, reply: FastifyReply) {
+  static async updateStatus(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as any;
     const result = await Todo.transaction(async (trx) => {
       return Todo.query(trx)
@@ -144,7 +144,7 @@ export default class TodoController {
     return result;
   }
 
-  static async updateDate(req: FastifyRequest, reply: FastifyReply) {
+  static async updateDate(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as any;
     const result = await Todo.transaction(async (trx) => {
       return Todo.query(trx)

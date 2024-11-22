@@ -11,10 +11,6 @@ export const up = function (knex) {
   return knex.raw(sql);
 };
 
-/**
- * @param { import("knex").Knex } knex
- * @returns { Promise<void> }
- */
-export const down = function (knex) {
+export const down = function (_knex) {
   // return knex.raw('drop view movedates_previous_apiary');
 };

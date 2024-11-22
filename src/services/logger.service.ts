@@ -113,6 +113,7 @@ export class Logger {
       this.pino[level](scope, message);
     }
     catch (e) {
+      console.error(e);
       throw new Error('Error in logger service');
     }
   }

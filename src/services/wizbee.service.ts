@@ -1,3 +1,4 @@
+import { Buffer } from 'node:buffer';
 import { encode } from 'gpt-3-encoder';
 import OpenAI from 'openai';
 import { env, openAI } from '../config/environment.config.js';
@@ -142,7 +143,7 @@ export class WizBee {
 
   /**
    * @description search for the most similar documents, based on KNN flat index
-   * @param text the text to search for
+   * @param embedding the text to search for
    * @param k number of results to return
    * @param minScore the minimum matching score required for a document to be considered a match. Defaults to 0.2. Because the similarity calculation algorithm is based on cosine similarity, the smaller the angle, the higher the similarity. (Cosine Distance = 1 — Cosine Similarity)
    */
@@ -223,6 +224,7 @@ export class WizBee {
       return response;
     }
     catch (e) {
+      console.error(e);
       return undefined;
     }
   }
@@ -266,6 +268,7 @@ export class WizBee {
       return response;
     }
     catch (e) {
+      console.error(e);
       return undefined;
     }
   }

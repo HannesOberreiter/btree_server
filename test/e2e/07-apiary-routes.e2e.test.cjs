@@ -1,4 +1,6 @@
 const { expect } = require('chai');
+const { it, describe, before } = require('mocha');
+
 const request = require('supertest');
 
 const { doRequest, expectations, doQueryRequest } = require(`${process.cwd()
@@ -33,7 +35,7 @@ describe('apiary routes', () => {
           null,
           accessToken,
           testInsert,
-          (err, res) => {
+          (_err, res) => {
             expect(res.statusCode).to.eqls(200);
             expect(res.body).to.has.property('id');
             insertId = res.body.id;
@@ -52,7 +54,7 @@ describe('apiary routes', () => {
         null,
         null,
         null,
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
@@ -67,7 +69,7 @@ describe('apiary routes', () => {
         null,
         null,
         testInsert,
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
@@ -82,7 +84,7 @@ describe('apiary routes', () => {
         null,
         null,
         null,
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
@@ -97,7 +99,7 @@ describe('apiary routes', () => {
         null,
         accessToken,
         null,
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(200);
           expect(res.body.results).to.be.a('Array');
           expect(res.body.total).to.be.a('number');
@@ -114,7 +116,7 @@ describe('apiary routes', () => {
         null,
         accessToken,
         null,
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(400);
           expectations(res, 'name', 'Invalid value');
           done();
@@ -130,7 +132,7 @@ describe('apiary routes', () => {
         null,
         accessToken,
         testInsert,
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(409);
           done();
         },
@@ -148,7 +150,7 @@ describe('apiary routes', () => {
           ids: [insertId],
           data: { name: 'test2' },
         },
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(200);
           expect(res.body).to.equal(1);
           done();
@@ -165,7 +167,7 @@ describe('apiary routes', () => {
         insertId,
         null,
         null,
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
@@ -179,7 +181,7 @@ describe('apiary routes', () => {
         insertId,
         accessToken,
         null,
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(200);
           expect(res.body).to.has.property('id');
           expect(res.body).to.has.property('name');
@@ -199,7 +201,7 @@ describe('apiary routes', () => {
         null,
         null,
         { ids: [insertId] },
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
@@ -214,7 +216,7 @@ describe('apiary routes', () => {
         null,
         null,
         null,
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(400);
           expectations(res, 'ids', 'Invalid value');
           done();
@@ -229,7 +231,7 @@ describe('apiary routes', () => {
         null,
         accessToken,
         { ids: [insertId] },
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(200);
           expect(res.body).to.be.a('Array');
           done();
@@ -247,7 +249,7 @@ describe('apiary routes', () => {
         null,
         null,
         { ids: [] },
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
@@ -262,7 +264,7 @@ describe('apiary routes', () => {
         null,
         null,
         null,
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(400);
           expectations(res, 'ids', 'Invalid value');
           done();
@@ -277,7 +279,7 @@ describe('apiary routes', () => {
         null,
         accessToken,
         { ids: [insertId] },
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(200);
           expect(res.body).to.be.a('Array');
           done();
@@ -295,7 +297,7 @@ describe('apiary routes', () => {
         null,
         null,
         { ids: [], status: true },
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
@@ -310,7 +312,7 @@ describe('apiary routes', () => {
         null,
         null,
         null,
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(400);
           expectations(res, 'ids', 'Invalid value');
           done();
@@ -325,7 +327,7 @@ describe('apiary routes', () => {
         null,
         accessToken,
         { ids: [insertId], status: false },
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(200);
           expect(res.body).to.equal(1);
           done();

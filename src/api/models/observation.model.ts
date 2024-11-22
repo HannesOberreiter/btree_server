@@ -2,11 +2,11 @@ import { raw } from 'objection';
 import { z } from 'zod';
 import { ExtModel } from './base.model.js';
 
-export const Taxa = z.union([
+export const taxa = z.union([
   z.literal('Vespa velutina'),
   z.literal('Aethina tumida'),
 ]);
-export type Taxa = z.infer<typeof Taxa>;
+export type Taxa = z.infer<typeof taxa>;
 
 export class Observation extends ExtModel {
   id!: number;

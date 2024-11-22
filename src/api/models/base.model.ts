@@ -12,7 +12,7 @@ export class BaseModel extends Model {
 
   // Fix to change date-time from ISOFormat to MySQL Format
   $beforeValidate(jsonSchema, json, _opt) {
-    Object.keys(jsonSchema.properties).map((key, _index) => {
+    Object.keys(jsonSchema.properties).forEach((key, _index) => {
       const format = jsonSchema.properties[key].format;
       if (
         format
@@ -62,7 +62,7 @@ export class ExtModel extends BaseModel {
   // small helper to prevent error on timestamp if tables are joined
   // eg. ER_NON_UNIQ_ERROR: Column 'updated_at' in field list is ambiguous
   getTablename() {
-    return this.constructor.tableName;
+    return (this.constructor as any).tableName;
   }
 
   constructor() {

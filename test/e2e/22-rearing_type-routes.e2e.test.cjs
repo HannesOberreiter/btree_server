@@ -1,4 +1,5 @@
 const { expect } = require('chai');
+const { it, describe, before } = require('mocha');
 const request = require('supertest');
 
 const { doRequest, expectations, doQueryRequest } = require(`${process.cwd()
@@ -34,7 +35,7 @@ describe('rearing Type routes', () => {
           null,
           accessToken,
           testInsert,
-          (err, res) => {
+          (_err, res) => {
             expect(res.statusCode).to.eqls(200);
             expect(res.body).to.be.a('Object');
             insertId = res.body.id;
@@ -53,7 +54,7 @@ describe('rearing Type routes', () => {
         null,
         null,
         null,
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
@@ -68,7 +69,7 @@ describe('rearing Type routes', () => {
         null,
         null,
         testInsert,
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
@@ -83,7 +84,7 @@ describe('rearing Type routes', () => {
         null,
         null,
         { ids: [insertId], data: {} },
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
@@ -98,7 +99,7 @@ describe('rearing Type routes', () => {
         null,
         accessToken,
         null,
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(200);
           expect(res.body.results).to.be.a('Array');
           expect(res.body.total).to.be.a('number');
@@ -115,7 +116,7 @@ describe('rearing Type routes', () => {
         null,
         accessToken,
         null,
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(400);
           done();
         },
@@ -133,7 +134,7 @@ describe('rearing Type routes', () => {
           ids: [insertId],
           data: { name: 'newTypeName' },
         },
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(200);
           expect(res.body).to.equal(1);
           done();
@@ -151,7 +152,7 @@ describe('rearing Type routes', () => {
         null,
         null,
         { ids: [insertId] },
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
@@ -166,7 +167,7 @@ describe('rearing Type routes', () => {
         null,
         null,
         null,
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(400);
           expectations(res, 'ids', 'Invalid value');
           done();
@@ -181,7 +182,7 @@ describe('rearing Type routes', () => {
         null,
         accessToken,
         { ids: [insertId] },
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(200);
           expect(res.body).to.be.a('Array');
           done();
@@ -199,7 +200,7 @@ describe('rearing Type routes', () => {
         null,
         null,
         { ids: [] },
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
@@ -214,7 +215,7 @@ describe('rearing Type routes', () => {
         null,
         null,
         null,
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(400);
           expectations(res, 'ids', 'Invalid value');
           done();
@@ -229,7 +230,7 @@ describe('rearing Type routes', () => {
         null,
         accessToken,
         { ids: [insertId] },
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(200);
           expect(res.body).to.equal(1);
           done();

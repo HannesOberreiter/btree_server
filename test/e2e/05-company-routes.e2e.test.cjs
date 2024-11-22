@@ -1,4 +1,5 @@
 const { expect } = require('chai');
+const { it, describe, before } = require('mocha');
 const request = require('supertest');
 
 const { doRequest, expectations, doQueryRequest } = require(
@@ -40,7 +41,7 @@ describe('company routes', () => {
         null,
         null,
         null,
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
@@ -55,7 +56,7 @@ describe('company routes', () => {
         null,
         accessToken,
         null,
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(200);
           expect(res.body).to.has.property('api_key');
           done();
@@ -73,7 +74,7 @@ describe('company routes', () => {
         null,
         null,
         { name: 'a' },
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(400);
           expectations(res, 'name', 'Invalid value');
           done();
@@ -89,7 +90,7 @@ describe('company routes', () => {
         null,
         null,
         { name: 'newName' },
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
@@ -105,7 +106,7 @@ describe('company routes', () => {
         null,
         accessToken,
         { name: patchCompanyName, api_change: true },
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(200);
           expect(res.body.name, patchCompanyName);
           done();
@@ -121,7 +122,7 @@ describe('company routes', () => {
         null,
         accessToken,
         { name: newCompanyName + new Date().toISOString() },
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(200);
           expect(res.body).to.has.property('name');
           expect(res.body).to.has.property('id');
@@ -134,7 +135,7 @@ describe('company routes', () => {
             null,
             accessToken,
             { name: responseName },
-            (err, res) => {
+            (_err, res) => {
               expect(res.statusCode).to.eqls(409);
               doRequest(
                 agent,
@@ -143,7 +144,7 @@ describe('company routes', () => {
                 newCompanyId,
                 accessToken,
                 {},
-                (err, res) => {
+                (_err, res) => {
                   expect(res.statusCode).to.eqls(200);
                   expect(res.body.result, 1);
                   expect(res.body.data).to.be.a('Object');

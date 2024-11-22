@@ -4,7 +4,7 @@ import { RearingStep } from '../models/rearing/rearing_step.model.js';
 import { RearingType } from '../models/rearing/rearing_type.model.js';
 
 export default class RearingTypeController {
-  static async get(req: FastifyRequest, reply: FastifyReply) {
+  static async get(req: FastifyRequest, _reply: FastifyReply) {
     const { order, direction, offset, limit, q } = req.query as any;
     const query = RearingType.query()
       .withGraphFetched('step(orderByPosition).detail')
@@ -34,7 +34,7 @@ export default class RearingTypeController {
     return { ...result };
   }
 
-  static async patch(req: FastifyRequest, reply: FastifyReply) {
+  static async patch(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as any;
     const ids = body.ids;
     const insert = { ...body.data };
@@ -47,7 +47,7 @@ export default class RearingTypeController {
     return result;
   }
 
-  static async post(req: FastifyRequest, reply: FastifyReply) {
+  static async post(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as any;
     const result = await RearingType.transaction(async (trx) => {
       return await RearingType.query(trx).insert({
@@ -58,7 +58,7 @@ export default class RearingTypeController {
     return { ...result };
   }
 
-  static async batchGet(req: FastifyRequest, reply: FastifyReply) {
+  static async batchGet(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as any;
     const result = await RearingType.transaction(async (trx) => {
       const res = await RearingType.query(trx)
@@ -70,7 +70,7 @@ export default class RearingTypeController {
     return result;
   }
 
-  static async batchDelete(req: FastifyRequest, reply: FastifyReply) {
+  static async batchDelete(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as any;
     const result = await RearingType.transaction(async (trx) => {
       await RearingStep.query(trx)

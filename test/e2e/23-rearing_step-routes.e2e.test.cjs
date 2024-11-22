@@ -1,7 +1,8 @@
 const { expect } = require('chai');
+const { it, describe, before } = require('mocha');
 const request = require('supertest');
 
-const { doRequest, expectations, doQueryRequest } = require(`${process.cwd()
+const { doRequest, expectations } = require(`${process.cwd()
 }/test/utils/index.cjs`);
 
 const testInsert = {
@@ -35,7 +36,7 @@ describe('rearing Step routes', () => {
           null,
           accessToken,
           testInsert,
-          (err, res) => {
+          (_err, res) => {
             expect(res.statusCode).to.eqls(200);
             expect(res.body).to.be.a('Object');
             insertId = res.body.id;
@@ -55,7 +56,7 @@ describe('rearing Step routes', () => {
         null,
         null,
         testInsert,
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
@@ -70,7 +71,7 @@ describe('rearing Step routes', () => {
         null,
         accessToken,
         null,
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(400);
           done();
         },
@@ -87,7 +88,7 @@ describe('rearing Step routes', () => {
         null,
         null,
         { data: [] },
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
@@ -102,7 +103,7 @@ describe('rearing Step routes', () => {
         null,
         null,
         null,
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(400);
           expectations(res, 'data', 'Invalid value');
           done();
@@ -117,7 +118,7 @@ describe('rearing Step routes', () => {
         null,
         accessToken,
         { data: [{ id: insertId, position: 10, sleep_before: 0 }] },
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(200);
           expect(res.body).to.be.a('Array');
           done();
@@ -135,7 +136,7 @@ describe('rearing Step routes', () => {
         insertId,
         null,
         { ids: [] },
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
@@ -151,7 +152,7 @@ describe('rearing Step routes', () => {
         insertId,
         accessToken,
         {},
-        (err, res) => {
+        (_err, res) => {
           expect(res.statusCode).to.eqls(200);
           expect(res.body).to.equal(1);
           done();

@@ -1,3 +1,5 @@
+import { Buffer } from 'node:buffer';
+import process from 'node:process';
 import dotenv from 'dotenv';
 import { ENVIRONMENT } from './constants.config.js';
 
@@ -142,7 +144,7 @@ const knexConfig = {
         const value = field.string();
         if (value === null)
           return null;
-        return value == '1';
+        return value === '1';
       }
       return next();
     },

@@ -6,25 +6,26 @@ import { Treatment } from '../models/treatment.model.js';
 import { hiveCountApiary, hiveCountTotal } from '../utils/statistic.util.js';
 
 export default class StatisticController {
-  static async getHiveCountTotal(req: FastifyRequest, reply: FastifyReply) {
+  static async getHiveCountTotal(req: FastifyRequest, _reply: FastifyReply) {
     const result = await hiveCountTotal(req.session.user.user_id);
     return result;
   }
 
-  static async getHiveCountApiary(req: FastifyRequest, reply: FastifyReply) {
+  static async getHiveCountApiary(req: FastifyRequest, _reply: FastifyReply) {
     let date = new Date();
     const query = req.query as any;
     try {
       date = new Date(query.date as string);
     }
     catch (e) {
+      console.error(e);
       throw new Error('Invalid date');
     }
     const result = await hiveCountApiary(date, req.session.user.user_id);
     return result;
   }
 
-  static async getHarvestHive(req: FastifyRequest, reply: FastifyReply) {
+  static async getHarvestHive(req: FastifyRequest, _reply: FastifyReply) {
     const { order, direction, offset, limit, q, filters, groupByType }
       = req.query as any;
 
@@ -93,7 +94,7 @@ export default class StatisticController {
     return { ...result };
   }
 
-  static async getHarvestYear(req: FastifyRequest, reply: FastifyReply) {
+  static async getHarvestYear(req: FastifyRequest, _reply: FastifyReply) {
     const { filters } = req.query as any;
     const query = Harvest.query()
       .select(Harvest.raw('YEAR(date) as year'))
@@ -123,7 +124,7 @@ export default class StatisticController {
         if (Array.isArray(filtering)) {
           filtering.forEach((v) => {
             if ('year' in v) {
-
+              // do nothing
             }
             else if ('hive_id_array' in v) {
               query.whereIn('hive_id', v.hive_id_array);
@@ -148,7 +149,7 @@ export default class StatisticController {
     return result;
   }
 
-  static async getHarvestApiary(req: FastifyRequest, reply: FastifyReply) {
+  static async getHarvestApiary(req: FastifyRequest, _reply: FastifyReply) {
     const { filters } = req.query as any;
     const query = Harvest.query()
       .countDistinct('hive_id as hive_count')
@@ -211,7 +212,7 @@ export default class StatisticController {
     return result;
   }
 
-  static async getHarvestType(req: FastifyRequest, reply: FastifyReply) {
+  static async getHarvestType(req: FastifyRequest, _reply: FastifyReply) {
     const { filters } = req.query as any;
     const query = Harvest.query()
       .countDistinct('hive_id as hive_count')
@@ -275,7 +276,7 @@ export default class StatisticController {
     return result;
   }
 
-  static async getFeedHive(req: FastifyRequest, reply: FastifyReply) {
+  static async getFeedHive(req: FastifyRequest, _reply: FastifyReply) {
     const { order, direction, offset, limit, q, filters, groupByType }
       = req.query as any;
 
@@ -342,7 +343,7 @@ export default class StatisticController {
     return { ...result };
   }
 
-  static async getFeedYear(req: FastifyRequest, reply: FastifyReply) {
+  static async getFeedYear(req: FastifyRequest, _reply: FastifyReply) {
     const { filters } = req.query as any;
     const query = Feed.query()
       .select(Feed.raw('YEAR(date) as year'))
@@ -364,7 +365,7 @@ export default class StatisticController {
         if (Array.isArray(filtering)) {
           filtering.forEach((v) => {
             if ('year' in v) {
-
+              // do nothing
             }
             else if ('hive_id_array' in v) {
               query.whereIn('hive_id', v.hive_id_array);
@@ -389,7 +390,7 @@ export default class StatisticController {
     return result;
   }
 
-  static async getFeedApiary(req: FastifyRequest, reply: FastifyReply) {
+  static async getFeedApiary(req: FastifyRequest, _reply: FastifyReply) {
     const { filters } = req.query as any;
     const query = Feed.query()
       .countDistinct('hive_id as hive_count')
@@ -444,7 +445,7 @@ export default class StatisticController {
     return result;
   }
 
-  static async getFeedType(req: FastifyRequest, reply: FastifyReply) {
+  static async getFeedType(req: FastifyRequest, _reply: FastifyReply) {
     const { filters } = req.query as any;
     const query = Feed.query()
       .countDistinct('hive_id as hive_count')
@@ -500,7 +501,7 @@ export default class StatisticController {
     return result;
   }
 
-  static async getTreatmentHive(req: FastifyRequest, reply: FastifyReply) {
+  static async getTreatmentHive(req: FastifyRequest, _reply: FastifyReply) {
     const { order, direction, offset, limit, q, filters } = req.query as any;
 
     const query = Treatment.query()
@@ -562,7 +563,7 @@ export default class StatisticController {
     return { ...result };
   }
 
-  static async getTreatmentYear(req: FastifyRequest, reply: FastifyReply) {
+  static async getTreatmentYear(req: FastifyRequest, _reply: FastifyReply) {
     const { filters } = req.query as any;
     const query = Treatment.query()
       .select(Treatment.raw('YEAR(date) as year'))
@@ -585,7 +586,7 @@ export default class StatisticController {
         if (Array.isArray(filtering)) {
           filtering.forEach((v) => {
             if ('year' in v) {
-
+              // do nothing
             }
             else if ('hive_id_array' in v) {
               query.whereIn('hive_id', v.hive_id_array);
@@ -610,7 +611,7 @@ export default class StatisticController {
     return result;
   }
 
-  static async getTreatmentApiary(req: FastifyRequest, reply: FastifyReply) {
+  static async getTreatmentApiary(req: FastifyRequest, _reply: FastifyReply) {
     const { filters } = req.query as any;
     const query = Treatment.query()
       .countDistinct('hive_id as hive_count')
@@ -667,7 +668,7 @@ export default class StatisticController {
     return result;
   }
 
-  static async getTreatmentType(req: FastifyRequest, reply: FastifyReply) {
+  static async getTreatmentType(req: FastifyRequest, _reply: FastifyReply) {
     const { filters } = req.query as any;
     const query = Treatment.query()
       .countDistinct('hive_id as hive_count')
@@ -725,7 +726,7 @@ export default class StatisticController {
     return result;
   }
 
-  static async getCheckupRatingHive(req: FastifyRequest, reply: FastifyReply) {
+  static async getCheckupRatingHive(req: FastifyRequest, _reply: FastifyReply) {
     const { order, direction, offset, limit, q, filters } = req.query as any;
     const query = Checkup.query()
       .select(
@@ -795,7 +796,7 @@ export default class StatisticController {
     return { ...result };
   }
 
-  static async getVarroa(req: FastifyRequest, reply: FastifyReply) {
+  static async getVarroa(req: FastifyRequest, _reply: FastifyReply) {
     const query = req.query as {
       start_date: string
       end_date: string
@@ -852,7 +853,7 @@ export default class StatisticController {
       };
 
       let averageLength = 0;
-      res.map((v: any) => {
+      res.forEach((v: any) => {
         resultCheckup.push([
           hive_id,
           v.varroa,
@@ -913,7 +914,7 @@ export default class StatisticController {
 
       if (res.length === 0)
         continue;
-      res.map((v: any) => {
+      res.forEach((v: any) => {
         resultTreatment.push([
           hive_id,
           v.amount,

@@ -37,7 +37,7 @@ async function isDuplicateHiveName(
 }
 
 export default class HiveController {
-  static async get(req: FastifyRequest, reply: FastifyReply) {
+  static async get(req: FastifyRequest, _reply: FastifyReply) {
     const {
       order,
       direction,
@@ -106,7 +106,7 @@ export default class HiveController {
     return { ...result };
   }
 
-  static async post(req: FastifyRequest, reply: FastifyReply) {
+  static async post(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as any;
     const start = Number.parseInt(body.start);
     const repeat = Number.parseInt(body.repeat) > 1 ? Number.parseInt(body.repeat) : 1;
@@ -165,7 +165,7 @@ export default class HiveController {
     return result;
   }
 
-  static async getDetail(req: FastifyRequest, reply: FastifyReply) {
+  static async getDetail(req: FastifyRequest, _reply: FastifyReply) {
     const params = req.params as any;
     const id = params.id;
     const query = Hive.query()
@@ -203,7 +203,7 @@ export default class HiveController {
     };
   }
 
-  static async getTasks(req: FastifyRequest, reply: FastifyReply) {
+  static async getTasks(req: FastifyRequest, _reply: FastifyReply) {
     const params = req.params as any;
     const q = req.query as any;
     const id = params.id;
@@ -298,7 +298,7 @@ export default class HiveController {
     return { ...result };
   }
 
-  static async patch(req: FastifyRequest, reply: FastifyReply) {
+  static async patch(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as any;
     const ids = body.ids;
     const insert = { ...body.data };
@@ -327,7 +327,7 @@ export default class HiveController {
     return result;
   }
 
-  static async updateStatus(req: FastifyRequest, reply: FastifyReply) {
+  static async updateStatus(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as any;
     const result = await Hive.transaction(async (trx) => {
       return Hive.query(trx)
@@ -342,7 +342,7 @@ export default class HiveController {
     return result;
   }
 
-  static async batchDelete(req: FastifyRequest, reply: FastifyReply) {
+  static async batchDelete(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as any;
     const q = req.query as any;
     const hardDelete = !!q.hard;
@@ -385,7 +385,7 @@ export default class HiveController {
     return result;
   }
 
-  static async batchGet(req: FastifyRequest, reply: FastifyReply) {
+  static async batchGet(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as any;
     const result = await Hive.query().findByIds(body.ids).where({
       user_id: req.session.user.user_id,
@@ -393,7 +393,7 @@ export default class HiveController {
     return result;
   }
 
-  static async updatePosition(req: FastifyRequest, reply: FastifyReply) {
+  static async updatePosition(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as any;
     const hives = body.data;
     const result = await Hive.transaction(async (trx) => {
