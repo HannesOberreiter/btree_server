@@ -1,7 +1,8 @@
-import * as nodemailer from 'nodemailer';
-import { readFileSync } from 'fs';
+import { readFileSync } from 'node:fs';
 import httpErrors from 'http-errors';
+import * as nodemailer from 'nodemailer';
 
+import { ENVIRONMENT } from '../config/constants.config.js';
 import {
   env,
   frontend,
@@ -9,15 +10,14 @@ import {
   rootDirectory,
   serverLocation,
 } from '../config/environment.config.js';
-import { ENVIRONMENT } from '../config/constants.config.js';
 import { Logger } from './logger.service.js';
 
 interface customMail {
-  to: string;
-  lang: string;
-  subject: string;
-  key?: string;
-  name?: string;
+  to: string
+  lang: string
+  subject: string
+  key?: string
+  name?: string
 }
 
 export class MailService {
@@ -44,7 +44,8 @@ export class MailService {
         mailConfig.secure = false;
         mailConfig.auth.user = account.user;
         mailConfig.auth.pass = account.pass;
-      } catch (e) {
+      }
+      catch (e) {
         console.error(e);
       }
     }
@@ -53,28 +54,28 @@ export class MailService {
   }
 
   private loadHtmlMail(mailName: string) {
-    const mailPath = rootDirectory + `/mails/${mailName}.txt`;
+    const mailPath = `${rootDirectory}/mails/${mailName}.txt`;
     try {
       return readFileSync(mailPath, 'utf-8');
-    } catch (e) {
+    }
+    catch (e) {
       this.logger.log('error', `Could not find E-Mail Template.`, {
         name: mailName,
         error: e,
       });
-      return;
     }
   }
 
   private loadFooter(lang: string) {
-    const mailPath = rootDirectory + `/mails/partials/footer_${lang}.txt`;
+    const mailPath = `${rootDirectory}/mails/partials/footer_${lang}.txt`;
     try {
       return readFileSync(mailPath, 'utf-8');
-    } catch (e) {
+    }
+    catch (e) {
       this.logger.log('error', `Could not find E-Mail Template.`, {
         lang,
         error: e,
       });
-      return;
     }
   }
 
@@ -85,16 +86,17 @@ export class MailService {
     key = 'false',
     name = 'false',
   }: customMail) {
-    if (env === ENVIRONMENT.test || env === ENVIRONMENT.ci) return true;
+    if (env === ENVIRONMENT.test || env === ENVIRONMENT.ci)
+      return true;
 
     // Only use languages which are available (translated), fallback english
     lang = ['de', 'fr', 'it'].includes(lang) ? lang : 'en';
 
-    let htmlMail = this.loadHtmlMail(subject + '_' + lang);
+    let htmlMail = this.loadHtmlMail(`${subject}_${lang}`);
     if (!htmlMail) {
       throw httpErrors.NotFound('Could not find E-Mail Template.');
     }
-    let htmlFooter = this.loadFooter(lang);
+    const htmlFooter = this.loadFooter(lang);
     if (!htmlFooter) {
       throw httpErrors.NotFound('Could not find E-Mail Template.');
     }
@@ -132,11 +134,12 @@ export class MailService {
     // Main page and documentation is only available in german and english
     if (['fr', 'it'].includes(lang)) {
       htmlMail = htmlMail.replace(/%lang%/g, 'en');
-    } else {
+    }
+    else {
       htmlMail = htmlMail.replace(/%lang%/g, lang);
     }
     htmlMail = htmlMail.replace(/%mail%/g, to);
-    htmlMail = htmlMail.replace(/%base_url%/g, this.baseUrl + '/');
+    htmlMail = htmlMail.replace(/%base_url%/g, `${this.baseUrl}/`);
     htmlMail = htmlMail.replace(/%params%/g, this.params);
 
     const options = {
@@ -144,7 +147,7 @@ export class MailService {
         name: 'b.tree - Beekeeping Database',
         address: 'no-reply@btree.at',
       },
-      to: to,
+      to,
       subject: title,
       text: htmlMail,
     };
@@ -154,7 +157,7 @@ export class MailService {
       this._transporter.close();
       if (result.rejected.length > 0) {
         this.logger.log('error', `Could not send E-Mail.`, result);
-        throw httpErrors.InternalServerError('E-Mail could not be sent.');
+        throw new httpErrors.InternalServerError('E-Mail could not be sent.');
       }
       if (env === ENVIRONMENT.development) {
         const testUrl = nodemailer.getTestMessageUrl(result) as string;
@@ -164,7 +167,8 @@ export class MailService {
         subject: title,
       });
       return true;
-    } catch (e) {
+    }
+    catch (e) {
       this.logger.log('error', `Could not send E-Mail.`, { error: e });
       return false;
     }
@@ -176,9 +180,9 @@ export class MailService {
         name: 'b.tree - Beekeeping Database',
         address: 'no-reply@btree.at',
       },
-      to: to,
-      subject: subject,
-      text: text,
+      to,
+      subject,
+      text,
     };
 
     try {
@@ -186,7 +190,7 @@ export class MailService {
         this._transporter.close();
         if (error) {
           console.error(`error: ${error}`);
-          throw httpErrors.InternalServerError('E-Mail could not be sent.');
+          throw new httpErrors.InternalServerError('E-Mail could not be sent.');
         }
         if (env === ENVIRONMENT.development || env === ENVIRONMENT.test) {
           const testUrl = nodemailer.getTestMessageUrl(info) as string;
@@ -194,7 +198,8 @@ export class MailService {
         }
         this.logger.log('info', `Message Sent ${info.response}`, {});
       });
-    } catch (e) {
+    }
+    catch (e) {
       this.logger.log('error', `Could not send E-Mail.`, { error: e });
     }
   }

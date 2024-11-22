@@ -1,3 +1,5 @@
+const { describe, before, after } = require('mocha');
+
 process.env.ENVIROMENT = process.env.ENVIRONMENT
   ? process.env.ENVIRONMENT
   : 'test.cjs';
@@ -18,13 +20,13 @@ global.demoUser = {
   source: '0',
 };
 
-describe('E2E API tests', () => {
+describe('e2E API tests', () => {
   let knexInstance;
 
   before(async function () {
     this.timeout(10000);
     const { knexConfig } = await import(
-      process.cwd() + '/dist/config/environment.config.js'
+      `${process.cwd()}/dist/config/environment.config.js`
     );
     knexInstance = require('knex')(knexConfig);
 
@@ -32,27 +34,27 @@ describe('E2E API tests', () => {
     await knexInstance.migrate.latest();
     if (process.env.ENVIRONMENT !== 'ci') {
       console.log('  knex truncate tables ...');
-      //knexInstance.migrate.rollback({ all: true })
+      // knexInstance.migrate.rollback({ all: true })
       await knexInstance.raw('SET FOREIGN_KEY_CHECKS = 0;');
       const tables = await knexInstance
         .table('information_schema.tables')
         .select('table_name', 'table_schema', 'table_type')
         .where('table_type', 'BASE TABLE')
         .where('table_schema', knexConfig.connection.database);
-      for (t of tables) {
+      for (const t of tables) {
         if (
           !(
-            ['KnexMigrations', 'KnexMigrations_lock'].includes(t.table_name) ||
-            t.table_name.includes('innodb')
+            ['KnexMigrations', 'KnexMigrations_lock'].includes(t.table_name)
+            || t.table_name.includes('innodb')
           )
-        )
+        ) {
           await knexInstance.raw(`TRUNCATE ${t.table_name};`);
+        }
       }
       await knexInstance.raw('SET FOREIGN_KEY_CHECKS = 1;');
     }
-    global.app = await import(process.cwd() + '/dist/app.bootstrap.js');
+    global.app = await import(`${process.cwd()}/dist/app.bootstrap.js`);
     global.server = global.app.server;
-    return;
   });
 
   after(async () => {
@@ -61,10 +63,10 @@ describe('E2E API tests', () => {
       await global.app.gracefulShutdown();
       knexInstance.destroy();
       console.log('Server shut down');
-    } catch (e) {
+    }
+    catch (e) {
       console.error(e);
     }
-    return;
   });
 
   require('./01-api-routes.e2e.test.cjs');

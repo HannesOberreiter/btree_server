@@ -1,6 +1,6 @@
 import { raw } from 'objection';
-import { ExtModel } from './base.model.js';
 import { z } from 'zod';
+import { ExtModel } from './base.model.js';
 
 export const Taxa = z.union([
   z.literal('Vespa velutina'),
@@ -15,9 +15,10 @@ export class Observation extends ExtModel {
   external_id!: number;
   external_uuid!: string;
   location!: {
-    lat: number;
-    lng: number;
+    lat: number
+    lng: number
   };
+
   data!: any;
 
   observed_at!: string;

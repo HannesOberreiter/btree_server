@@ -1,17 +1,18 @@
-const request = require('supertest');
 const { expect } = require('chai');
+const request = require('supertest');
+
 const { doRequest, expectations, doQueryRequest } = require(
-  process.cwd() + '/test/utils/index.cjs',
+  `${process.cwd()}/test/utils/index.cjs`,
 );
 
 const patchCompanyName = 'newName';
 const newCompanyName = 'testCompany';
 
-describe('Company routes', function () {
+describe('company routes', () => {
   const route = '/api/v1/company';
   let accessToken;
 
-  before(function (done) {
+  before((done) => {
     agent = request.agent(global.server);
 
     doRequest(
@@ -21,8 +22,9 @@ describe('Company routes', function () {
       null,
       null,
       global.demoUser,
-      function (err, res) {
-        if (err) throw err;
+      (err, res) => {
+        if (err)
+          throw err;
         expect(res.statusCode).to.eqls(200);
         expect(res.header, 'set-cookie', /connect.sid=.*; Path=\/; HttpOnly/);
         done();
@@ -31,14 +33,14 @@ describe('Company routes', function () {
   });
 
   describe('/api/v1/company/apikey', () => {
-    it(`401 - no header`, function (done) {
+    it(`401 - no header`, (done) => {
       doQueryRequest(
         request.agent(global.server),
-        route + '/apikey',
+        `${route}/apikey`,
         null,
         null,
         null,
-        function (err, res) {
+        (err, res) => {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
@@ -46,14 +48,14 @@ describe('Company routes', function () {
       );
     });
 
-    it(`200 - get`, function (done) {
+    it(`200 - get`, (done) => {
       doQueryRequest(
         agent,
-        route + '/apikey',
+        `${route}/apikey`,
         null,
         accessToken,
         null,
-        function (err, res) {
+        (err, res) => {
           expect(res.statusCode).to.eqls(200);
           expect(res.body).to.has.property('api_key');
           done();
@@ -63,7 +65,7 @@ describe('Company routes', function () {
   });
 
   describe('/api/v1/company/', () => {
-    it(`patch 400 - name too short`, function (done) {
+    it(`patch 400 - name too short`, (done) => {
       doRequest(
         agent,
         'patch',
@@ -71,7 +73,7 @@ describe('Company routes', function () {
         null,
         null,
         { name: 'a' },
-        function (err, res) {
+        (err, res) => {
           expect(res.statusCode).to.eqls(400);
           expectations(res, 'name', 'Invalid value');
           done();
@@ -79,7 +81,7 @@ describe('Company routes', function () {
       );
     });
 
-    it(`patch 401 - no header`, function (done) {
+    it(`patch 401 - no header`, (done) => {
       doRequest(
         request.agent(global.server),
         'patch',
@@ -87,7 +89,7 @@ describe('Company routes', function () {
         null,
         null,
         { name: 'newName' },
-        function (err, res) {
+        (err, res) => {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
@@ -95,7 +97,7 @@ describe('Company routes', function () {
       );
     });
 
-    it(`patch 200 - success`, function (done) {
+    it(`patch 200 - success`, (done) => {
       doRequest(
         agent,
         'patch',
@@ -103,7 +105,7 @@ describe('Company routes', function () {
         null,
         accessToken,
         { name: patchCompanyName, api_change: true },
-        function (err, res) {
+        (err, res) => {
           expect(res.statusCode).to.eqls(200);
           expect(res.body.name, patchCompanyName);
           done();
@@ -111,7 +113,7 @@ describe('Company routes', function () {
       );
     });
 
-    it(`post 200 - success`, function (done) {
+    it(`post 200 - success`, (done) => {
       doRequest(
         agent,
         'post',
@@ -119,7 +121,7 @@ describe('Company routes', function () {
         null,
         accessToken,
         { name: newCompanyName + new Date().toISOString() },
-        function (err, res) {
+        (err, res) => {
           expect(res.statusCode).to.eqls(200);
           expect(res.body).to.has.property('name');
           expect(res.body).to.has.property('id');
@@ -132,7 +134,7 @@ describe('Company routes', function () {
             null,
             accessToken,
             { name: responseName },
-            function (err, res) {
+            (err, res) => {
               expect(res.statusCode).to.eqls(409);
               doRequest(
                 agent,
@@ -141,7 +143,7 @@ describe('Company routes', function () {
                 newCompanyId,
                 accessToken,
                 {},
-                function (err, res) {
+                (err, res) => {
                   expect(res.statusCode).to.eqls(200);
                   expect(res.body.result, 1);
                   expect(res.body.data).to.be.a('Object');

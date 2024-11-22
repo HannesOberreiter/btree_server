@@ -1,19 +1,19 @@
-import { FastifyRequest, FastifyReply } from 'fastify';
-import httpErrors from 'http-errors';
-import { map } from 'lodash-es';
+import type { FastifyReply, FastifyRequest } from 'fastify';
+import type Objection from 'objection';
 import dayjs from 'dayjs';
+import httpErrors from 'http-errors';
 
-import { Hive } from '../models/hive.model.js';
-import { Movedate } from '../models/movedate.model.js';
+import { map } from 'lodash-es';
 import { Apiary } from '../models/apiary.model.js';
-import { deleteHiveConnections } from '../utils/delete.util.js';
-import { HiveLocation } from '../models/hive_location.model.js';
-import { Harvest } from '../models/harvest.model.js';
-import { Feed } from '../models/feed.model.js';
-import { Treatment } from '../models/treatment.model.js';
 import { Checkup } from '../models/checkup.model.js';
+import { Feed } from '../models/feed.model.js';
+import { Harvest } from '../models/harvest.model.js';
+import { Hive } from '../models/hive.model.js';
+import { HiveLocation } from '../models/hive_location.model.js';
+import { Movedate } from '../models/movedate.model.js';
+import { Treatment } from '../models/treatment.model.js';
+import { deleteHiveConnections } from '../utils/delete.util.js';
 import { limitHive } from '../utils/premium.util.js';
-import Objection from 'objection';
 
 async function isDuplicateHiveName(
   user_id: number,
@@ -31,7 +31,8 @@ async function isDuplicateHiveName(
     checkDuplicate.whereNot('id', id);
   }
   const result = await checkDuplicate;
-  if (result?.id) return true;
+  if (result?.id)
+    return true;
   return false;
 }
 
@@ -54,7 +55,7 @@ export default class HiveController {
         'hives.user_id': req.session.user.user_id,
         'hives.deleted': deleted === true,
       })
-      .page(offset ? offset : 0, limit === 0 || !limit ? 10 : limit);
+      .page(offset || 0, limit === 0 || !limit ? 10 : limit);
 
     if (modus !== undefined && modus !== null) {
       query.where('hives.modus', modus === true);
@@ -64,7 +65,8 @@ export default class HiveController {
       query.withGraphJoined(
         '[hive_location.[movedate], queen_location, hive_source, hive_type, creator(identifier), editor(identifier)]',
       );
-    } else {
+    }
+    else {
       query.withGraphJoined('hive_location.[movedate]');
     }
 
@@ -76,19 +78,21 @@ export default class HiveController {
             query.where(v);
           });
         }
-      } catch (e) {
+      }
+      catch (e) {
         req.log.error(e);
       }
     }
     if (order) {
       if (Array.isArray(order)) {
         order.forEach((field, index) => query.orderBy(field, direction[index]));
-      } else {
+      }
+      else {
         query.orderBy(order, direction);
       }
     }
     if (q) {
-      const search = '' + q; // Querystring could be converted be a number
+      const search = `${q}`; // Querystring could be converted be a number
 
       if (search.trim() !== '') {
         query.where((builder) => {
@@ -104,8 +108,8 @@ export default class HiveController {
 
   static async post(req: FastifyRequest, reply: FastifyReply) {
     const body = req.body as any;
-    const start = parseInt(body.start);
-    const repeat = parseInt(body.repeat) > 1 ? parseInt(body.repeat) : 1;
+    const start = Number.parseInt(body.start);
+    const repeat = Number.parseInt(body.repeat) > 1 ? Number.parseInt(body.repeat) : 1;
 
     const insertMovement = {
       apiary_id: body.apiary_id,
@@ -145,7 +149,7 @@ export default class HiveController {
 
         const res = await Hive.query(trx).insert({
           ...insert,
-          name: name,
+          name,
           bee_id: req.session.user.bee_id,
           user_id: req.session.user.user_id,
         });
@@ -220,8 +224,9 @@ export default class HiveController {
             hive_deleted: false,
             hive_modus: true,
           });
-        hives = query_hives.map((hive) => hive.hive_id);
-      } else {
+        hives = query_hives.map(hive => hive.hive_id);
+      }
+      else {
         await Hive.query(trx).findById(id).throwIfNotFound().where({
           'hives.user_id': req.session.user.user_id,
           'hives.deleted': false,
@@ -283,11 +288,11 @@ export default class HiveController {
         .orderBy('date', 'desc');
 
       return {
-        harvest: harvest,
-        feed: feed,
-        treatment: treatment,
-        checkup: checkup,
-        movedate: movedate,
+        harvest,
+        feed,
+        treatment,
+        checkup,
+        movedate,
       };
     });
     return { ...result };
@@ -340,8 +345,8 @@ export default class HiveController {
   static async batchDelete(req: FastifyRequest, reply: FastifyReply) {
     const body = req.body as any;
     const q = req.query as any;
-    const hardDelete = q.hard ? true : false;
-    const restoreDelete = q.restore ? true : false;
+    const hardDelete = !!q.hard;
+    const restoreDelete = !!q.restore;
 
     const result = await Hive.transaction(async (trx) => {
       const res = await Hive.query()
@@ -352,7 +357,8 @@ export default class HiveController {
       const softIds = [];
       const hardIds = [];
       map(res, (obj) => {
-        if ((obj.deleted || hardDelete) && !restoreDelete) hardIds.push(obj.id);
+        if ((obj.deleted || hardDelete) && !restoreDelete)
+          hardIds.push(obj.id);
         else softIds.push(obj.id);
       });
 
@@ -360,10 +366,10 @@ export default class HiveController {
         await Hive.query(trx).delete().whereIn('id', hardIds);
         await deleteHiveConnections(hardIds, trx);
       }
-      if (softIds.length > 0)
+      if (softIds.length > 0) {
         await Hive.query(trx)
           .patch({
-            deleted: restoreDelete ? false : true,
+            deleted: !restoreDelete,
             deleted_at: dayjs()
               .utc()
               .toISOString()
@@ -372,6 +378,7 @@ export default class HiveController {
             edit_id: req.session.user.bee_id,
           })
           .findByIds(softIds);
+      }
 
       return res;
     });

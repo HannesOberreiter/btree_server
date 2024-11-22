@@ -1,12 +1,12 @@
-import { ScaleData } from '../models/scale_data.model.js';
+import type { FastifyReply, FastifyRequest } from 'fastify';
 import dayjs from 'dayjs';
+import httpErrors from 'http-errors';
+import { MailService } from '../../services/mail.service.js';
+import { Scale } from '../models/scale.model.js';
+import { ScaleData } from '../models/scale_data.model.js';
+import { User } from '../models/user.model.js';
 import { getCompany } from '../utils/api.util.js';
 import { isPremium } from '../utils/premium.util.js';
-import { Scale } from '../models/scale.model.js';
-import { User } from '../models/user.model.js';
-import { MailService } from '../../services/mail.service.js';
-import { FastifyReply, FastifyRequest } from 'fastify';
-import httpErrors from 'http-errors';
 
 export default class ScaleDataController {
   static async api(req: FastifyRequest, reply: FastifyReply) {
@@ -36,8 +36,8 @@ export default class ScaleDataController {
       if (lastInsert) {
         if (q.action === 'CREATE') {
           if (
-            dayjs(lastInsert.datetime) >
-            dayjs(insertDate as any).subtract(1, 'hour')
+            dayjs(lastInsert.datetime)
+            > dayjs(insertDate as any).subtract(1, 'hour')
           ) {
             throw httpErrors.TooManyRequests();
           }
@@ -45,7 +45,7 @@ export default class ScaleDataController {
 
         if (q.weight && lastInsert.weight && q.action === 'CREATE') {
           try {
-            const currentWeight = parseFloat(q.weight as any);
+            const currentWeight = Number.parseFloat(q.weight as any);
             const checkWeight = Math.abs(lastInsert.weight - currentWeight);
             if (checkWeight > 5) {
               const user = await User.query(trx)
@@ -64,7 +64,8 @@ export default class ScaleDataController {
                 });
               });
             }
-          } catch (e) {
+          }
+          catch (e) {
             req.log.error(e);
           }
         }
@@ -79,7 +80,8 @@ export default class ScaleDataController {
         note: q.note ? q.note : '',
         scale_id: scale.id,
       } as any;
-      if (q.action === 'CREATE_DEMO') return insert;
+      if (q.action === 'CREATE_DEMO')
+        return insert;
       const query = await ScaleData.query(trx).insert({ ...insert });
       return query;
     });
@@ -93,33 +95,36 @@ export default class ScaleDataController {
       .where({
         'scale.user_id': req.session.user.user_id,
       })
-      .page(offset ? offset : 0, limit === 0 || !limit ? 10 : limit);
+      .page(offset || 0, limit === 0 || !limit ? 10 : limit);
 
     if (filters) {
       try {
         const filtering = JSON.parse(filters);
         if (Array.isArray(filtering)) {
           filtering.forEach((v) => {
-            if ('date' in v && typeof v['date'] === 'object') {
+            if ('date' in v && typeof v.date === 'object') {
               query.whereBetween('datetime', [v.date.from, v.date.to]);
-            } else {
+            }
+            else {
               query.where(v);
             }
           });
         }
-      } catch (e) {
+      }
+      catch (e) {
         req.log.error(e);
       }
     }
     if (order) {
       if (Array.isArray(order)) {
         order.forEach((field, index) => query.orderBy(field, direction[index]));
-      } else {
+      }
+      else {
         query.orderBy(order, direction);
       }
     }
     if (q) {
-      const search = '' + q; // Querystring could be converted be a number
+      const search = `${q}`; // Querystring could be converted be a number
 
       if (search.trim() !== '') {
         query.where((builder) => {

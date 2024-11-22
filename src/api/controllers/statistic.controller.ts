@@ -1,21 +1,23 @@
-import { hiveCountApiary, hiveCountTotal } from '../utils/statistic.util.js';
-import { Harvest } from '../models/harvest.model.js';
-import { Feed } from '../models/feed.model.js';
-import { Treatment } from '../models/treatment.model.js';
+import type { FastifyReply, FastifyRequest } from 'fastify';
 import { Checkup } from '../models/checkup.model.js';
-import { FastifyReply, FastifyRequest } from 'fastify';
+import { Feed } from '../models/feed.model.js';
+import { Harvest } from '../models/harvest.model.js';
+import { Treatment } from '../models/treatment.model.js';
+import { hiveCountApiary, hiveCountTotal } from '../utils/statistic.util.js';
 
 export default class StatisticController {
   static async getHiveCountTotal(req: FastifyRequest, reply: FastifyReply) {
     const result = await hiveCountTotal(req.session.user.user_id);
     return result;
   }
+
   static async getHiveCountApiary(req: FastifyRequest, reply: FastifyReply) {
     let date = new Date();
     const query = req.query as any;
     try {
       date = new Date(query.date as string);
-    } catch (e) {
+    }
+    catch (e) {
       throw new Error('Invalid date');
     }
     const result = await hiveCountApiary(date, req.session.user.user_id);
@@ -23,8 +25,8 @@ export default class StatisticController {
   }
 
   static async getHarvestHive(req: FastifyRequest, reply: FastifyReply) {
-    const { order, direction, offset, limit, q, filters, groupByType } =
-      req.query as any;
+    const { order, direction, offset, limit, q, filters, groupByType }
+      = req.query as any;
 
     const query = Harvest.query()
       .select(Harvest.raw('YEAR(date) as year'), 'hive_id')
@@ -41,16 +43,17 @@ export default class StatisticController {
         'harvests.deleted': false,
         'harvests.user_id': req.session.user.user_id,
       })
-      .page(offset ? offset : 0, limit === 0 || !limit ? 10 : limit);
+      .page(offset || 0, limit === 0 || !limit ? 10 : limit);
     if (order) {
       if (Array.isArray(order)) {
         order.forEach((field, index) => query.orderBy(field, direction[index]));
-      } else {
+      }
+      else {
         query.orderBy(order, direction);
       }
     }
     if (q) {
-      const search = '' + q; // Querystring could be converted be a number
+      const search = `${q}`; // Querystring could be converted be a number
 
       if (search.trim() !== '') {
         query.where((builder) => {
@@ -74,12 +77,14 @@ export default class StatisticController {
                 `${v.year}-01-01`,
                 `${v.year}-12-31`,
               ]);
-            } else {
+            }
+            else {
               query.where(v);
             }
           });
         }
-      } catch (e) {
+      }
+      catch (e) {
         req.log.error(e);
       }
     }
@@ -101,8 +106,8 @@ export default class StatisticController {
       .countDistinct('hive_id as hive_count')
       .sum('amount as amount_sum')
       .sum('frames as frames_sum')
-      //.avg('amount as amount_avg')
-      //.avg('frames as frames_avg')
+      // .avg('amount as amount_avg')
+      // .avg('frames as frames_avg')
       .avg('water as water_avg')
       .withGraphJoined('harvest_apiary as task_apiary')
       .groupBy('year')
@@ -118,19 +123,24 @@ export default class StatisticController {
         if (Array.isArray(filtering)) {
           filtering.forEach((v) => {
             if ('year' in v) {
-              return;
-            } else if ('hive_id_array' in v) {
-              query.whereIn('hive_id', v['hive_id_array']);
-            } else if ('apiary_id_array' in v) {
-              query.whereIn('apiary_id', v['apiary_id_array']);
-            } else if ('hive_id_array_exclude' in v) {
-              query.whereNotIn('hive_id', v['hive_id_array_exclude']);
-            } else {
+
+            }
+            else if ('hive_id_array' in v) {
+              query.whereIn('hive_id', v.hive_id_array);
+            }
+            else if ('apiary_id_array' in v) {
+              query.whereIn('apiary_id', v.apiary_id_array);
+            }
+            else if ('hive_id_array_exclude' in v) {
+              query.whereNotIn('hive_id', v.hive_id_array_exclude);
+            }
+            else {
               query.where(v);
             }
           });
         }
-      } catch (e) {
+      }
+      catch (e) {
         req.log.error(e);
       }
     }
@@ -150,8 +160,8 @@ export default class StatisticController {
       .select(
         Harvest.raw('SUM(frames) / COUNT(DISTINCT hive_id) as frames_avg'),
       )
-      //.avg('amount as amount_avg')
-      //.avg('frames as frames_avg')
+      // .avg('amount as amount_avg')
+      // .avg('frames as frames_avg')
       .avg('water as water_avg')
       .withGraphJoined('harvest_apiary as task_apiary')
       .groupBy('apiary_id')
@@ -171,21 +181,27 @@ export default class StatisticController {
                 `${v.year}-01-01`,
                 `${v.year}-12-31`,
               ]);
-            } else if ('hive_id_array' in v) {
-              query.whereIn('hive_id', v['hive_id_array']);
-            } else if ('apiary_id_array' in v) {
-              query.whereIn('apiary_id', v['apiary_id_array']);
-            } else if ('hive_id_array_exclude' in v) {
-              query.whereNotIn('hive_id', v['hive_id_array_exclude']);
-            } else {
+            }
+            else if ('hive_id_array' in v) {
+              query.whereIn('hive_id', v.hive_id_array);
+            }
+            else if ('apiary_id_array' in v) {
+              query.whereIn('apiary_id', v.apiary_id_array);
+            }
+            else if ('hive_id_array_exclude' in v) {
+              query.whereNotIn('hive_id', v.hive_id_array_exclude);
+            }
+            else {
               query.where(v);
             }
           });
         }
-      } catch (e) {
+      }
+      catch (e) {
         req.log.error(e);
       }
-    } else {
+    }
+    else {
       query.whereBetween('date', [
         `${new Date().getFullYear()}-01-01`,
         `${new Date().getFullYear()}-12-31`,
@@ -207,8 +223,8 @@ export default class StatisticController {
       .select(
         Harvest.raw('SUM(frames) / COUNT(DISTINCT hive_id) as frames_avg'),
       )
-      //.avg('amount as amount_avg')
-      //.avg('frames as frames_avg')
+      // .avg('amount as amount_avg')
+      // .avg('frames as frames_avg')
       .avg('water as water_avg')
       .withGraphJoined('harvest_apiary as task_apiary')
       .withGraphJoined('type')
@@ -229,21 +245,27 @@ export default class StatisticController {
                 `${v.year}-01-01`,
                 `${v.year}-12-31`,
               ]);
-            } else if ('hive_id_array' in v) {
-              query.whereIn('hive_id', v['hive_id_array']);
-            } else if ('apiary_id_array' in v) {
-              query.whereIn('apiary_id', v['apiary_id_array']);
-            } else if ('hive_id_array_exclude' in v) {
-              query.whereNotIn('hive_id', v['hive_id_array_exclude']);
-            } else {
+            }
+            else if ('hive_id_array' in v) {
+              query.whereIn('hive_id', v.hive_id_array);
+            }
+            else if ('apiary_id_array' in v) {
+              query.whereIn('apiary_id', v.apiary_id_array);
+            }
+            else if ('hive_id_array_exclude' in v) {
+              query.whereNotIn('hive_id', v.hive_id_array_exclude);
+            }
+            else {
               query.where(v);
             }
           });
         }
-      } catch (e) {
+      }
+      catch (e) {
         req.log.error(e);
       }
-    } else {
+    }
+    else {
       query.whereBetween('date', [
         `${new Date().getFullYear()}-01-01`,
         `${new Date().getFullYear()}-12-31`,
@@ -254,14 +276,14 @@ export default class StatisticController {
   }
 
   static async getFeedHive(req: FastifyRequest, reply: FastifyReply) {
-    const { order, direction, offset, limit, q, filters, groupByType } =
-      req.query as any;
+    const { order, direction, offset, limit, q, filters, groupByType }
+      = req.query as any;
 
     const query = Feed.query()
       .select(Feed.raw('YEAR(date) as year'), 'hive_id')
       .sum('amount as amount_sum')
       .select(Feed.raw('SUM(amount) / COUNT(DISTINCT hive_id) as amount_avg'))
-      //.avg('amount as amount_avg')
+      // .avg('amount as amount_avg')
       .withGraphJoined('hive')
       .withGraphJoined('feed_apiary as task_apiary')
       .groupBy('hive_id', 'year')
@@ -270,16 +292,17 @@ export default class StatisticController {
         'feeds.deleted': false,
         'feeds.user_id': req.session.user.user_id,
       })
-      .page(offset ? offset : 0, limit === 0 || !limit ? 10 : limit);
+      .page(offset || 0, limit === 0 || !limit ? 10 : limit);
     if (order) {
       if (Array.isArray(order)) {
         order.forEach((field, index) => query.orderBy(field, direction[index]));
-      } else {
+      }
+      else {
         query.orderBy(order, direction);
       }
     }
     if (q) {
-      const search = '' + q; // Querystring could be converted be a number
+      const search = `${q}`; // Querystring could be converted be a number
 
       if (search.trim() !== '') {
         query.where((builder) => {
@@ -303,12 +326,14 @@ export default class StatisticController {
                 `${v.year}-01-01`,
                 `${v.year}-12-31`,
               ]);
-            } else {
+            }
+            else {
               query.where(v);
             }
           });
         }
-      } catch (e) {
+      }
+      catch (e) {
         req.log.error(e);
       }
     }
@@ -324,7 +349,7 @@ export default class StatisticController {
       .countDistinct('hive_id as hive_count')
       .sum('amount as amount_sum')
       .select(Feed.raw('SUM(amount) / COUNT(DISTINCT hive_id) as amount_avg'))
-      //.avg('amount as amount_avg')
+      // .avg('amount as amount_avg')
       .withGraphJoined('feed_apiary as task_apiary')
       .groupBy('year')
       .where({
@@ -339,19 +364,24 @@ export default class StatisticController {
         if (Array.isArray(filtering)) {
           filtering.forEach((v) => {
             if ('year' in v) {
-              return;
-            } else if ('hive_id_array' in v) {
-              query.whereIn('hive_id', v['hive_id_array']);
-            } else if ('apiary_id_array' in v) {
-              query.whereIn('apiary_id', v['apiary_id_array']);
-            } else if ('hive_id_array_exclude' in v) {
-              query.whereNotIn('hive_id', v['hive_id_array_exclude']);
-            } else {
+
+            }
+            else if ('hive_id_array' in v) {
+              query.whereIn('hive_id', v.hive_id_array);
+            }
+            else if ('apiary_id_array' in v) {
+              query.whereIn('apiary_id', v.apiary_id_array);
+            }
+            else if ('hive_id_array_exclude' in v) {
+              query.whereNotIn('hive_id', v.hive_id_array_exclude);
+            }
+            else {
               query.where(v);
             }
           });
         }
-      } catch (e) {
+      }
+      catch (e) {
         req.log.error(e);
       }
     }
@@ -365,7 +395,7 @@ export default class StatisticController {
       .countDistinct('hive_id as hive_count')
       .sum('amount as amount_sum')
       .select(Feed.raw('SUM(amount) / COUNT(DISTINCT hive_id) as amount_avg'))
-      //.avg('amount as amount_avg')
+      // .avg('amount as amount_avg')
       .withGraphJoined('feed_apiary as task_apiary')
       .groupBy('apiary_id')
       .where({
@@ -384,21 +414,27 @@ export default class StatisticController {
                 `${v.year}-01-01`,
                 `${v.year}-12-31`,
               ]);
-            } else if ('hive_id_array' in v) {
-              query.whereIn('hive_id', v['hive_id_array']);
-            } else if ('apiary_id_array' in v) {
-              query.whereIn('apiary_id', v['apiary_id_array']);
-            } else if ('hive_id_array_exclude' in v) {
-              query.whereNotIn('hive_id', v['hive_id_array_exclude']);
-            } else {
+            }
+            else if ('hive_id_array' in v) {
+              query.whereIn('hive_id', v.hive_id_array);
+            }
+            else if ('apiary_id_array' in v) {
+              query.whereIn('apiary_id', v.apiary_id_array);
+            }
+            else if ('hive_id_array_exclude' in v) {
+              query.whereNotIn('hive_id', v.hive_id_array_exclude);
+            }
+            else {
               query.where(v);
             }
           });
         }
-      } catch (e) {
+      }
+      catch (e) {
         req.log.error(e);
       }
-    } else {
+    }
+    else {
       query.whereBetween('date', [
         `${new Date().getFullYear()}-01-01`,
         `${new Date().getFullYear()}-12-31`,
@@ -414,7 +450,7 @@ export default class StatisticController {
       .countDistinct('hive_id as hive_count')
       .sum('amount as amount_sum')
       .select(Feed.raw('SUM(amount) / COUNT(DISTINCT hive_id) as amount_avg'))
-      //.avg('amount as amount_avg')
+      // .avg('amount as amount_avg')
       .withGraphJoined('feed_apiary as task_apiary')
       .withGraphJoined('type')
       .groupBy('type_id')
@@ -434,21 +470,27 @@ export default class StatisticController {
                 `${v.year}-01-01`,
                 `${v.year}-12-31`,
               ]);
-            } else if ('hive_id_array' in v) {
-              query.whereIn('hive_id', v['hive_id_array']);
-            } else if ('apiary_id_array' in v) {
-              query.whereIn('apiary_id', v['apiary_id_array']);
-            } else if ('hive_id_array_exclude' in v) {
-              query.whereNotIn('hive_id', v['hive_id_array_exclude']);
-            } else {
+            }
+            else if ('hive_id_array' in v) {
+              query.whereIn('hive_id', v.hive_id_array);
+            }
+            else if ('apiary_id_array' in v) {
+              query.whereIn('apiary_id', v.apiary_id_array);
+            }
+            else if ('hive_id_array_exclude' in v) {
+              query.whereNotIn('hive_id', v.hive_id_array_exclude);
+            }
+            else {
               query.where(v);
             }
           });
         }
-      } catch (e) {
+      }
+      catch (e) {
         req.log.error(e);
       }
-    } else {
+    }
+    else {
       query.whereBetween('date', [
         `${new Date().getFullYear()}-01-01`,
         `${new Date().getFullYear()}-12-31`,
@@ -467,7 +509,7 @@ export default class StatisticController {
       .select(
         Treatment.raw('SUM(amount) / COUNT(DISTINCT hive_id) as amount_avg'),
       )
-      //.avg('amount as amount_avg')
+      // .avg('amount as amount_avg')
       .withGraphJoined('hive')
       .withGraphJoined('treatment_apiary as task_apiary')
       .groupBy('hive_id', 'year')
@@ -476,16 +518,17 @@ export default class StatisticController {
         'treatments.deleted': false,
         'treatments.user_id': req.session.user.user_id,
       })
-      .page(offset ? offset : 0, limit === 0 || !limit ? 10 : limit);
+      .page(offset || 0, limit === 0 || !limit ? 10 : limit);
     if (order) {
       if (Array.isArray(order)) {
         order.forEach((field, index) => query.orderBy(field, direction[index]));
-      } else {
+      }
+      else {
         query.orderBy(order, direction);
       }
     }
     if (q) {
-      const search = '' + q; // Querystring could be converted be a number
+      const search = `${q}`; // Querystring could be converted be a number
 
       if (search.trim() !== '') {
         query.where((builder) => {
@@ -503,12 +546,14 @@ export default class StatisticController {
                 `${v.year}-01-01`,
                 `${v.year}-12-31`,
               ]);
-            } else {
+            }
+            else {
               query.where(v);
             }
           });
         }
-      } catch (e) {
+      }
+      catch (e) {
         req.log.error(e);
       }
     }
@@ -540,19 +585,24 @@ export default class StatisticController {
         if (Array.isArray(filtering)) {
           filtering.forEach((v) => {
             if ('year' in v) {
-              return;
-            } else if ('hive_id_array' in v) {
-              query.whereIn('hive_id', v['hive_id_array']);
-            } else if ('apiary_id_array' in v) {
-              query.whereIn('apiary_id', v['apiary_id_array']);
-            } else if ('hive_id_array_exclude' in v) {
-              query.whereNotIn('hive_id', v['hive_id_array_exclude']);
-            } else {
+
+            }
+            else if ('hive_id_array' in v) {
+              query.whereIn('hive_id', v.hive_id_array);
+            }
+            else if ('apiary_id_array' in v) {
+              query.whereIn('apiary_id', v.apiary_id_array);
+            }
+            else if ('hive_id_array_exclude' in v) {
+              query.whereNotIn('hive_id', v.hive_id_array_exclude);
+            }
+            else {
               query.where(v);
             }
           });
         }
-      } catch (e) {
+      }
+      catch (e) {
         req.log.error(e);
       }
     }
@@ -568,7 +618,7 @@ export default class StatisticController {
       .select(
         Treatment.raw('SUM(amount) / COUNT(DISTINCT hive_id) as amount_avg'),
       )
-      //.avg('amount as amount_avg')
+      // .avg('amount as amount_avg')
       .withGraphJoined('treatment_apiary as task_apiary')
       .groupBy('apiary_id')
       .where({
@@ -587,21 +637,27 @@ export default class StatisticController {
                 `${v.year}-01-01`,
                 `${v.year}-12-31`,
               ]);
-            } else if ('hive_id_array' in v) {
-              query.whereIn('hive_id', v['hive_id_array']);
-            } else if ('apiary_id_array' in v) {
-              query.whereIn('apiary_id', v['apiary_id_array']);
-            } else if ('hive_id_array_exclude' in v) {
-              query.whereNotIn('hive_id', v['hive_id_array_exclude']);
-            } else {
+            }
+            else if ('hive_id_array' in v) {
+              query.whereIn('hive_id', v.hive_id_array);
+            }
+            else if ('apiary_id_array' in v) {
+              query.whereIn('apiary_id', v.apiary_id_array);
+            }
+            else if ('hive_id_array_exclude' in v) {
+              query.whereNotIn('hive_id', v.hive_id_array_exclude);
+            }
+            else {
               query.where(v);
             }
           });
         }
-      } catch (e) {
+      }
+      catch (e) {
         req.log.error(e);
       }
-    } else {
+    }
+    else {
       query.whereBetween('date', [
         `${new Date().getFullYear()}-01-01`,
         `${new Date().getFullYear()}-12-31`,
@@ -619,7 +675,7 @@ export default class StatisticController {
       .select(
         Treatment.raw('SUM(amount) / COUNT(DISTINCT hive_id) as amount_avg'),
       )
-      //.avg('amount as amount_avg')
+      // .avg('amount as amount_avg')
       .withGraphJoined('treatment_apiary as task_apiary')
       .withGraphJoined('type')
       .groupBy('type_id')
@@ -639,21 +695,27 @@ export default class StatisticController {
                 `${v.year}-01-01`,
                 `${v.year}-12-31`,
               ]);
-            } else if ('hive_id_array' in v) {
-              query.whereIn('hive_id', v['hive_id_array']);
-            } else if ('apiary_id_array' in v) {
-              query.whereIn('apiary_id', v['apiary_id_array']);
-            } else if ('hive_id_array_exclude' in v) {
-              query.whereNotIn('hive_id', v['hive_id_array_exclude']);
-            } else {
+            }
+            else if ('hive_id_array' in v) {
+              query.whereIn('hive_id', v.hive_id_array);
+            }
+            else if ('apiary_id_array' in v) {
+              query.whereIn('apiary_id', v.apiary_id_array);
+            }
+            else if ('hive_id_array_exclude' in v) {
+              query.whereNotIn('hive_id', v.hive_id_array_exclude);
+            }
+            else {
               query.where(v);
             }
           });
         }
-      } catch (e) {
+      }
+      catch (e) {
         req.log.error(e);
       }
-    } else {
+    }
+    else {
       query.whereBetween('date', [
         `${new Date().getFullYear()}-01-01`,
         `${new Date().getFullYear()}-12-31`,
@@ -688,17 +750,18 @@ export default class StatisticController {
       .havingRaw(
         '(SUM(brood) + SUM(pollen) + SUM(comb) + SUM(temper) + SUM(calm_comb) + SUM(swarm) + SUM(varroa) + SUM(strong)) > 0',
       )
-      .page(offset ? offset : 0, limit === 0 || !limit ? 10 : limit);
+      .page(offset || 0, limit === 0 || !limit ? 10 : limit);
 
     if (order) {
       if (Array.isArray(order)) {
         order.forEach((field, index) => query.orderBy(field, direction[index]));
-      } else {
+      }
+      else {
         query.orderBy(order, direction);
       }
     }
     if (q) {
-      const search = '' + q; // Querystring could be converted be a number
+      const search = `${q}`; // Querystring could be converted be a number
 
       if (search.trim() !== '') {
         query.where((builder) => {
@@ -716,12 +779,14 @@ export default class StatisticController {
                 `${v.year}-01-01`,
                 `${v.year}-12-31`,
               ]);
-            } else {
+            }
+            else {
               query.where(v);
             }
           });
         }
-      } catch (e) {
+      }
+      catch (e) {
         req.log.error(e);
       }
     }
@@ -732,19 +797,19 @@ export default class StatisticController {
 
   static async getVarroa(req: FastifyRequest, reply: FastifyReply) {
     const query = req.query as {
-      start_date: string;
-      end_date: string;
-      hive_ids: string[];
+      start_date: string
+      end_date: string
+      hive_ids: string[]
     };
 
-    type ResultStats = {
-      hive_name: string;
+    interface ResultStats {
+      hive_name: string
       varroa: {
-        min: number;
-        max: number;
-        avg: number;
-      };
-    };
+        min: number
+        max: number
+        avg: number
+      }
+    }
 
     const resultDatasetCheckup: any = {};
     const resultDatasetTreatment: any = {};
@@ -752,7 +817,8 @@ export default class StatisticController {
 
     let arrayCount = 0;
     for (let i = 0; i < query.hive_ids.length; i++) {
-      if (i > 20) break;
+      if (i > 20)
+        break;
       const resultCheckup: any[] = [];
       const hive_id = query.hive_ids[i];
       const res = await Checkup.query()
@@ -773,7 +839,8 @@ export default class StatisticController {
         })
         .whereBetween('checkups.date', [query.start_date, query.end_date]);
 
-      if (res.length === 0) continue;
+      if (res.length === 0)
+        continue;
 
       resultStats[arrayCount] = {
         hive_name: (res[0] as any)?.hive_name ?? '',
@@ -810,11 +877,11 @@ export default class StatisticController {
         }
       });
       if (averageLength > 0) {
-        resultStats[arrayCount].varroa.avg =
-          Math.round(
-            (resultStats[arrayCount].varroa.avg / averageLength +
-              Number.EPSILON) *
-              100,
+        resultStats[arrayCount].varroa.avg
+          = Math.round(
+            (resultStats[arrayCount].varroa.avg / averageLength
+              + Number.EPSILON)
+            * 100,
           ) / 100;
       }
       resultDatasetCheckup[hive_id] = resultCheckup;
@@ -822,7 +889,8 @@ export default class StatisticController {
     }
 
     for (let i = 0; i < query.hive_ids.length; i++) {
-      if (i > 20) break;
+      if (i > 20)
+        break;
       const resultTreatment: any[] = [];
       const hive_id = query.hive_ids[i];
       const res = await Treatment.query()
@@ -843,7 +911,8 @@ export default class StatisticController {
         })
         .whereBetween('treatments.date', [query.start_date, query.end_date]);
 
-      if (res.length === 0) continue;
+      if (res.length === 0)
+        continue;
       res.map((v: any) => {
         resultTreatment.push([
           hive_id,

@@ -1,10 +1,10 @@
-import { FastifyInstance } from 'fastify';
-import { ZodTypeProvider } from 'fastify-type-provider-zod';
+import type { FastifyInstance } from 'fastify';
+import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { z } from 'zod';
 
-import { Guard } from '../../hooks/guard.hook.js';
 import { ROLES } from '../../../config/constants.config.js';
 import UserController from '../../controllers/user.controller.js';
+import { Guard } from '../../hooks/guard.hook.js';
 
 export default function routes(
   instance: FastifyInstance,

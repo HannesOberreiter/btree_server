@@ -1,7 +1,8 @@
-const request = require('supertest');
 const { expect } = require('chai');
-const { doRequest, expectations, doQueryRequest } = require(process.cwd() +
-  '/test/utils/index.cjs');
+const request = require('supertest');
+
+const { doRequest, expectations, doQueryRequest } = require(`${process.cwd()
+}/test/utils/index.cjs`);
 
 const testInsert = {
   hive_id: 1,
@@ -12,11 +13,11 @@ const testInsert2 = {
   name: 'testScale2',
 };
 
-describe('Scale routes', function () {
+describe('scale routes', () => {
   const route = '/api/v1/scale';
   let accessToken, insertId;
 
-  before(function (done) {
+  before((done) => {
     agent = request.agent(global.server);
     doRequest(
       agent,
@@ -25,8 +26,9 @@ describe('Scale routes', function () {
       null,
       null,
       global.demoUser,
-      function (err, res) {
-        if (err) throw err;
+      (err, res) => {
+        if (err)
+          throw err;
         expect(res.statusCode).to.eqls(200);
         expect(res.header, 'set-cookie', /connect.sid=.*; Path=\/; HttpOnly/);
         doRequest(
@@ -36,7 +38,7 @@ describe('Scale routes', function () {
           null,
           accessToken,
           testInsert,
-          function (err, res) {
+          (err, res) => {
             expect(res.statusCode).to.eqls(200);
             expect(res.body).to.be.a('Object');
             doRequest(
@@ -46,7 +48,7 @@ describe('Scale routes', function () {
               null,
               accessToken,
               testInsert2,
-              function (err, res) {
+              (err, res) => {
                 expect(res.statusCode).to.eqls(200);
                 expect(res.body).to.be.a('Object');
                 insertId = res.body.id;
@@ -60,21 +62,21 @@ describe('Scale routes', function () {
   });
 
   describe('/api/v1/scale/', () => {
-    it(`get 401 - no header`, function (done) {
+    it(`get 401 - no header`, (done) => {
       doQueryRequest(
         request.agent(global.server),
         route,
         null,
         null,
         null,
-        function (err, res) {
+        (err, res) => {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
         },
       );
     });
-    it(`post 401 - no header`, function (done) {
+    it(`post 401 - no header`, (done) => {
       doRequest(
         request.agent(global.server),
         'post',
@@ -82,14 +84,14 @@ describe('Scale routes', function () {
         null,
         null,
         testInsert,
-        function (err, res) {
+        (err, res) => {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
         },
       );
     });
-    it(`patch 401 - no header`, function (done) {
+    it(`patch 401 - no header`, (done) => {
       doRequest(
         request.agent(global.server),
         'patch',
@@ -97,7 +99,7 @@ describe('Scale routes', function () {
         null,
         null,
         { ids: [insertId], data: {} },
-        function (err, res) {
+        (err, res) => {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
@@ -105,14 +107,14 @@ describe('Scale routes', function () {
       );
     });
 
-    it(`get 200 - success`, function (done) {
+    it(`get 200 - success`, (done) => {
       doQueryRequest(
         agent,
         route,
         null,
         accessToken,
         null,
-        function (err, res) {
+        (err, res) => {
           expect(res.statusCode).to.eqls(200);
           expect(res.body).to.be.a('Array');
           done();
@@ -120,7 +122,7 @@ describe('Scale routes', function () {
       );
     });
 
-    it(`post 400 - no data`, function (done) {
+    it(`post 400 - no data`, (done) => {
       doRequest(
         agent,
         'post',
@@ -128,14 +130,14 @@ describe('Scale routes', function () {
         null,
         accessToken,
         null,
-        function (err, res) {
+        (err, res) => {
           expect(res.statusCode).to.eqls(400);
           done();
         },
       );
     });
 
-    it(`patch 200 - success`, function (done) {
+    it(`patch 200 - success`, (done) => {
       doRequest(
         agent,
         'patch',
@@ -146,7 +148,7 @@ describe('Scale routes', function () {
           ids: [insertId],
           data: { name: 'updatedName' },
         },
-        function (err, res) {
+        (err, res) => {
           expect(res.statusCode).to.eqls(200);
           expect(res.body).to.equal(1);
           done();
@@ -156,21 +158,21 @@ describe('Scale routes', function () {
   });
 
   describe('/api/v1/scale/:id', () => {
-    it(`get 401 - no header`, function (done) {
+    it(`get 401 - no header`, (done) => {
       doQueryRequest(
         request.agent(global.server),
         route,
         insertId,
         null,
         null,
-        function (err, res) {
+        (err, res) => {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
         },
       );
     });
-    it(`delete 401 - no header`, function (done) {
+    it(`delete 401 - no header`, (done) => {
       doRequest(
         request.agent(global.server),
         'delete',
@@ -178,7 +180,7 @@ describe('Scale routes', function () {
         insertId,
         null,
         testInsert,
-        function (err, res) {
+        (err, res) => {
           expect(res.statusCode).to.eqls(401);
           expect(res.errors, 'JsonWebTokenError');
           done();
@@ -186,14 +188,14 @@ describe('Scale routes', function () {
       );
     });
 
-    it(`get 200 - success`, function (done) {
+    it(`get 200 - success`, (done) => {
       doQueryRequest(
         agent,
         route,
         insertId,
         accessToken,
         null,
-        function (err, res) {
+        (err, res) => {
           expect(res.statusCode).to.eqls(200);
           expect(res.body).to.be.a('Array');
           done();
@@ -201,7 +203,7 @@ describe('Scale routes', function () {
       );
     });
 
-    it(`delete 200 - success`, function (done) {
+    it(`delete 200 - success`, (done) => {
       doRequest(
         agent,
         'delete',
@@ -209,7 +211,7 @@ describe('Scale routes', function () {
         insertId,
         accessToken,
         testInsert,
-        function (err, res) {
+        (err, res) => {
           expect(res.statusCode).to.eqls(200);
           expect(res.body).to.equal(1);
           done();

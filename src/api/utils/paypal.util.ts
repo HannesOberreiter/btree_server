@@ -2,6 +2,7 @@
   https://github.com/paypal-examples/docs-examples/tree/main/standard-integration
  */
 
+import { Buffer } from 'node:buffer';
 import {
   paypalAppSecret,
   paypalBase,
@@ -20,7 +21,7 @@ export async function createOrder(
     method: 'post',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${accessToken}`,
+      'Authorization': `Bearer ${accessToken}`,
     },
     body: JSON.stringify({
       intent: 'CAPTURE',
@@ -33,14 +34,14 @@ export async function createOrder(
             {
               name: 'Premium',
               description: 'Premium Subscription',
-              quantity: quantity,
+              quantity,
               unit_amount: {
                 currency_code: 'EUR',
                 value: amount,
               },
             },
           ],
-          custom_id: JSON.stringify({ user_id: user_id, quantity: quantity }),
+          custom_id: JSON.stringify({ user_id, quantity }),
           invoice_id: `ID: ${user_id}, Date: ${new Date().toISOString()}`,
           amount: {
             currency_code: 'EUR',
@@ -69,7 +70,7 @@ export async function capturePayment(orderId: string) {
     method: 'post',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${accessToken}`,
+      'Authorization': `Bearer ${accessToken}`,
     },
   });
   const data = await response.json();
@@ -77,7 +78,7 @@ export async function capturePayment(orderId: string) {
 }
 
 async function generateAccessToken() {
-  const auth = Buffer.from(paypalClientId + ':' + paypalAppSecret).toString(
+  const auth = Buffer.from(`${paypalClientId}:${paypalAppSecret}`).toString(
     'base64',
   );
   const response = await fetch(`${paypalBase}/v1/oauth2/token`, {

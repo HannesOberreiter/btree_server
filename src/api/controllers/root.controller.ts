@@ -1,4 +1,4 @@
-import { FastifyReply, FastifyRequest } from 'fastify';
+import type { FastifyReply, FastifyRequest } from 'fastify';
 
 export default class RootController {
   static status(_req: FastifyRequest, reply: FastifyReply) {
@@ -8,12 +8,12 @@ export default class RootController {
   static report(req: FastifyRequest, reply: FastifyReply) {
     const body = req.body as any;
     const message = body.violation
-      ? 'CSP Violation: ' + body.violation
+      ? `CSP Violation: ${body.violation}`
       : 'CSP Violation';
 
     req.log.warn(message, {
       'csp-report': body,
-      label: 'CSP violation',
+      'label': 'CSP violation',
     });
 
     reply.send({ status: 'ok' });

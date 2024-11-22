@@ -1,7 +1,7 @@
+import type { ModelObject } from 'objection';
 import { ExtModel } from './base.model.js';
 import { Company } from './company.model.js';
 import { CompanyBee } from './company_bee.model.js';
-import { ModelObject } from 'objection';
 
 export class User extends ExtModel {
   id!: number;

@@ -1,6 +1,6 @@
-import { BaseOptionModel } from './baseoption.model.js';
 import { ExtModel } from '../base.model.js';
 import { Company } from '../company.model.js';
+import { BaseOptionModel } from './baseoption.model.js';
 
 export class TreatmentDisease extends BaseOptionModel {
   static tableName = 'treatment_diseases';
@@ -8,6 +8,7 @@ export class TreatmentDisease extends BaseOptionModel {
   constructor() {
     super();
   }
+
   static relationMappings = {
     company: {
       relation: ExtModel.HasOneRelation,

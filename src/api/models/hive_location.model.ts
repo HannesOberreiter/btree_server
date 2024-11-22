@@ -1,5 +1,5 @@
-import { Apiary } from './apiary.model.js';
 import { Model } from 'objection';
+import { Apiary } from './apiary.model.js';
 import { Hive } from './hive.model.js';
 import { Movedate } from './movedate.model.js';
 

@@ -1,12 +1,13 @@
-import { Treatment } from '../models/treatment.model.js';
+import type { FastifyReply, FastifyRequest } from 'fastify';
+import dayjs from 'dayjs';
 import { map } from 'lodash-es';
 import { Hive } from '../models/hive.model.js';
-import dayjs from 'dayjs';
-import { FastifyReply, FastifyRequest } from 'fastify';
+import { Treatment } from '../models/treatment.model.js';
+
 export default class TreatmentController {
   static async get(req: FastifyRequest, reply: FastifyReply) {
-    const { order, direction, offset, limit, q, filters, deleted, done } =
-      req.query as any;
+    const { order, direction, offset, limit, q, filters, deleted, done }
+      = req.query as any;
     const query = Treatment.query()
       .withGraphJoined(
         '[treatment_apiary, type, disease, vet, hive, creator(identifier), editor(identifier)]',
@@ -16,7 +17,7 @@ export default class TreatmentController {
         'treatments.deleted': deleted === true,
         'treatments.user_id': req.session.user.user_id,
       })
-      .page(offset ? offset : 0, limit === 0 || !limit ? 10 : limit);
+      .page(offset || 0, limit === 0 || !limit ? 10 : limit);
 
     if (done) {
       query.where('treatments.done', done === 'true');
@@ -27,26 +28,29 @@ export default class TreatmentController {
         const filtering = JSON.parse(filters);
         if (Array.isArray(filtering)) {
           filtering.forEach((v) => {
-            if ('date' in v && typeof v['date'] === 'object') {
+            if ('date' in v && typeof v.date === 'object') {
               query.whereBetween('date', [v.date.from, v.date.to]);
-            } else {
+            }
+            else {
               query.where(v);
             }
           });
         }
-      } catch (e) {
+      }
+      catch (e) {
         req.log.error(e);
       }
     }
     if (order) {
       if (Array.isArray(order)) {
         order.forEach((field, index) => query.orderBy(field, direction[index]));
-      } else {
+      }
+      else {
         query.orderBy(order, direction);
       }
     }
     if (q) {
-      const search = '' + q; // Querystring could be converted be a number
+      const search = `${q}`; // Querystring could be converted be a number
       if (search.trim() !== '') {
         query.where((builder) => {
           builder
@@ -168,8 +172,8 @@ export default class TreatmentController {
   static async batchDelete(req: FastifyRequest, reply: FastifyReply) {
     const q = req.query as any;
     const body = req.body as any;
-    const hardDelete = q.hard ? true : false;
-    const restoreDelete = q.restore ? true : false;
+    const hardDelete = !!q.hard;
+    const restoreDelete = !!q.restore;
 
     const result = await Treatment.transaction(async (trx) => {
       const res = await Treatment.query(trx)
@@ -180,19 +184,21 @@ export default class TreatmentController {
       const softIds = [];
       const hardIds = [];
       map(res, (obj) => {
-        if ((obj.deleted || hardDelete) && !restoreDelete) hardIds.push(obj.id);
+        if ((obj.deleted || hardDelete) && !restoreDelete)
+          hardIds.push(obj.id);
         else softIds.push(obj.id);
       });
 
       if (hardIds.length > 0)
         await Treatment.query(trx).delete().whereIn('id', hardIds);
-      if (softIds.length > 0)
+      if (softIds.length > 0) {
         await Treatment.query(trx)
           .patch({
-            deleted: restoreDelete ? false : true,
+            deleted: !restoreDelete,
             edit_id: req.session.user.bee_id,
           })
           .findByIds(softIds);
+      }
 
       return res;
     });

@@ -1,9 +1,9 @@
-import { FastifyReply, FastifyRequest } from 'fastify';
+import type { FastifyReply, FastifyRequest } from 'fastify';
 import httpErrors from 'http-errors';
 
-import { Movedate } from '../models/movedate.model.js';
 import { Apiary } from '../models/apiary.model.js';
 import { HiveLocation } from '../models/hive_location.model.js';
+import { Movedate } from '../models/movedate.model.js';
 
 export default class MovedateController {
   static async get(req: FastifyRequest, reply: FastifyReply) {
@@ -18,33 +18,36 @@ export default class MovedateController {
       // Security as we may still have some unclean data in the database were linked apiary or hive does not exist anymore
       .whereNotNull('apiary.id')
       .whereNotNull('hive.id')
-      .page(offset ? offset : 0, limit === 0 || !limit ? 10 : limit);
+      .page(offset || 0, limit === 0 || !limit ? 10 : limit);
 
     if (filters) {
       try {
         const filtering = JSON.parse(filters);
         if (Array.isArray(filtering)) {
           filtering.forEach((v) => {
-            if ('date' in v && typeof v['date'] === 'object') {
+            if ('date' in v && typeof v.date === 'object') {
               query.whereBetween('date', [v.date.from, v.date.to]);
-            } else {
+            }
+            else {
               query.where(v);
             }
           });
         }
-      } catch (e) {
+      }
+      catch (e) {
         req.log.error(e);
       }
     }
     if (order) {
       if (Array.isArray(order)) {
         order.forEach((field, index) => query.orderBy(field, direction[index]));
-      } else {
+      }
+      else {
         query.orderBy(order, direction);
       }
     }
     if (q) {
-      const search = '' + q; // Querystring could be converted be a number
+      const search = `${q}`; // Querystring could be converted be a number
 
       if (search.trim() !== '') {
         query.where((builder) => {
@@ -121,7 +124,7 @@ export default class MovedateController {
         .findByIds(body.ids)
         .leftJoinRelated('apiary')
         .where('user_id', req.session.user.user_id);
-      const ids_array = ids.map((elem) => elem.id);
+      const ids_array = ids.map(elem => elem.id);
       return Movedate.query(trx)
         .patch({
           edit_id: req.session.user.bee_id,

@@ -1,50 +1,53 @@
+import type { FastifyReply, FastifyRequest } from 'fastify';
 import dayjs from 'dayjs';
 import { map } from 'lodash-es';
-import { FastifyReply, FastifyRequest } from 'fastify';
 
 import { Charge } from '../models/charge.model.js';
 import { ChargeStock } from '../models/charge_stock.model.js';
 
 export default class ChargeController {
-  static async get(req: FastifyRequest, reply: FastifyReply) {
-    const { order, direction, offset, limit, q, filters, deleted } =
-      req.query as any;
+  static async get(req: FastifyRequest, _reply: FastifyReply) {
+    const { order, direction, offset, limit, q, filters, deleted }
+      = req.query as any;
     const query = Charge.query()
       .withGraphJoined('[type.stock, creator(identifier), editor(identifier)]')
       .where({
         'charges.user_id': req.session.user.user_id,
         'charges.deleted': deleted === true,
       })
-      .page(offset ? offset : 0, limit === 0 || !limit ? 10 : limit);
+      .page(offset || 0, limit === 0 || !limit ? 10 : limit);
 
     if (filters) {
       try {
         const filtering = JSON.parse(filters);
         if (Array.isArray(filtering)) {
           filtering.forEach((v) => {
-            if ('bestbefore' in v && typeof v['bestbefore'] === 'object') {
+            if ('bestbefore' in v && typeof v.bestbefore === 'object') {
               query.whereBetween('bestbefore', [
                 v.bestbefore.from,
                 v.bestbefore.to,
               ]);
-            } else {
+            }
+            else {
               query.where(v);
             }
           });
         }
-      } catch (e) {
+      }
+      catch (e) {
         req.log.error(e);
       }
     }
     if (order) {
       if (Array.isArray(order)) {
         order.forEach((field, index) => query.orderBy(field, direction[index]));
-      } else {
+      }
+      else {
         query.orderBy(order, direction);
       }
     }
     if (q) {
-      const search = '' + q; // Querystring could be converted be a number
+      const search = `${q}`; // Querystring could be converted be a number
       if (search.trim() !== '') {
         query.where((builder) => {
           builder
@@ -58,7 +61,7 @@ export default class ChargeController {
     return { ...result };
   }
 
-  static async getStock(req: FastifyRequest, reply: FastifyReply) {
+  static async getStock(req: FastifyRequest, _reply: FastifyReply) {
     const { order, direction, offset, limit, q } = req.query as any;
     const query = ChargeStock.query()
       .select('type.id', 'sum', 'type.name', 'type.unit', 'sum_in', 'sum_out')
@@ -67,17 +70,18 @@ export default class ChargeController {
         'charge_stocks.user_id': req.session.user.user_id,
         'type.modus': true,
       })
-      .page(offset ? offset : 0, limit === 0 || !limit ? 10 : limit);
+      .page(offset || 0, limit === 0 || !limit ? 10 : limit);
 
     if (order) {
       if (Array.isArray(order)) {
         order.forEach((field, index) => query.orderBy(field, direction[index]));
-      } else {
+      }
+      else {
         query.orderBy(order, direction);
       }
     }
     if (q) {
-      const search = '' + q; // Querystring could be converted be a number
+      const search = `${q}`; // Querystring could be converted be a number
       if (search.trim() !== '') {
         query.where((builder) => {
           builder.orWhere('type.name', 'like', `%${search}%`);
@@ -88,7 +92,7 @@ export default class ChargeController {
     return { ...result };
   }
 
-  static async post(req: FastifyRequest, reply: FastifyReply) {
+  static async post(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as any;
     const insert = {
       date: body.date,
@@ -116,7 +120,7 @@ export default class ChargeController {
     return result;
   }
 
-  static async patch(req: FastifyRequest, reply: FastifyReply) {
+  static async patch(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as any;
     const ids = body.ids;
     const insert = { ...body.data };
@@ -129,7 +133,7 @@ export default class ChargeController {
     return result;
   }
 
-  static async batchGet(req: FastifyRequest, reply: FastifyReply) {
+  static async batchGet(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as any;
     const result = await Charge.transaction(async (trx) => {
       const res = await Charge.query(trx)
@@ -140,11 +144,11 @@ export default class ChargeController {
     return result;
   }
 
-  static async batchDelete(req: FastifyRequest, reply: FastifyReply) {
+  static async batchDelete(req: FastifyRequest, _reply: FastifyReply) {
     const query = req.query as any;
     const body = req.body as any;
-    const hardDelete = query.hard ? true : false;
-    const restoreDelete = query.restore ? true : false;
+    const hardDelete = !!query.hard;
+    const restoreDelete = !!query.restore;
 
     const result = await Charge.transaction(async (trx) => {
       const res = await Charge.query(trx)
@@ -154,7 +158,8 @@ export default class ChargeController {
       const softIds = [];
       const hardIds = [];
       map(res, (obj) => {
-        if ((obj.deleted || hardDelete) && !restoreDelete) hardIds.push(obj.id);
+        if ((obj.deleted || hardDelete) && !restoreDelete)
+          hardIds.push(obj.id);
         else softIds.push(obj.id);
       });
 
@@ -162,10 +167,10 @@ export default class ChargeController {
         await Charge.query(trx).delete().whereIn('id', hardIds);
       }
 
-      if (softIds.length > 0)
+      if (softIds.length > 0) {
         await Charge.query(trx)
           .patch({
-            deleted: restoreDelete ? false : true,
+            deleted: !restoreDelete,
             deleted_at: dayjs()
               .utc()
               .toISOString()
@@ -174,6 +179,7 @@ export default class ChargeController {
             edit_id: req.session.user.bee_id,
           })
           .findByIds(softIds);
+      }
 
       return res;
     });

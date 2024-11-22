@@ -1,5 +1,5 @@
+import type { FastifyReply, FastifyRequest } from 'fastify';
 import { RearingStep } from '../models/rearing/rearing_step.model.js';
-import { FastifyRequest, FastifyReply } from 'fastify';
 
 export default class RearingStepController {
   static async post(req: FastifyRequest, reply: FastifyReply) {

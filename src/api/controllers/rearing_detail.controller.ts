@@ -1,6 +1,6 @@
+import type { FastifyReply, FastifyRequest } from 'fastify';
 import { RearingDetail } from '../models/rearing/rearing_detail.model.js';
 import { RearingStep } from '../models/rearing/rearing_step.model.js';
-import { FastifyReply, FastifyRequest } from 'fastify';
 
 export default class RearingDetailController {
   static async get(req: FastifyRequest, reply: FastifyReply) {
@@ -9,17 +9,18 @@ export default class RearingDetailController {
       .where({
         user_id: req.session.user.user_id,
       })
-      .page(offset ? offset : 0, limit === 0 || !limit ? 10 : limit);
+      .page(offset || 0, limit === 0 || !limit ? 10 : limit);
 
     if (order) {
       if (Array.isArray(order)) {
         order.forEach((field, index) => query.orderBy(field, direction[index]));
-      } else {
+      }
+      else {
         query.orderBy(order, direction);
       }
     }
     if (q) {
-      const search = '' + q; // Querystring could be converted be a number
+      const search = `${q}`; // Querystring could be converted be a number
 
       if (search.trim() !== '') {
         query.where((builder) => {

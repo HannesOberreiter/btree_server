@@ -1,4 +1,4 @@
-import { FastifyReply, FastifyRequest, HookHandlerDoneFunction } from 'fastify';
+import type { FastifyReply, FastifyRequest, HookHandlerDoneFunction } from 'fastify';
 import httpErrors from 'http-errors';
 
 import { OPTION, SOURCE } from '../../config/constants.config.js';
@@ -16,6 +16,7 @@ export class Validator {
     }
     done();
   };
+
   static handleSource = (
     req: FastifyRequest,
     reply: FastifyReply,
@@ -27,6 +28,7 @@ export class Validator {
     }
     done();
   };
+
   static isPremium = async (req: FastifyRequest, reply: FastifyReply) => {
     if (!req.session.user) {
       throw httpErrors.Unauthorized();
@@ -37,6 +39,5 @@ export class Validator {
     if (!premium) {
       throw httpErrors.PaymentRequired();
     }
-    return;
   };
 }

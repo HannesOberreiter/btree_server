@@ -1,9 +1,9 @@
 import Knex from 'knex';
 import { Model } from 'objection';
 
+import { ENVIRONMENT } from '../config/constants.config.js';
 import { env, knexConfig } from '../config/environment.config.js';
 import { Logger } from '../services/logger.service.js';
-import { ENVIRONMENT } from '../config/constants.config.js';
 
 /**
  * @description Database connection manager for MariaDb server
@@ -36,18 +36,21 @@ export class DatabaseServer {
           { label: 'Database' },
         );
       }
-    } catch (error) {
+    }
+    catch (error) {
       this.logger.log('error', `Database connection error : ${error.message}`, {
         label: 'Database',
       });
     }
   }
+
   async stop(): Promise<void> {
     try {
       this.logger.log('debug', 'Closing database connection', {});
       await this.knex.destroy();
       this.logger.log('debug', 'Closed database connection', {});
-    } catch (error) {
+    }
+    catch (error) {
       this.logger.log('error', 'Database closing error', { error });
     }
   }

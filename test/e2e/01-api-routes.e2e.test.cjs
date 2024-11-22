@@ -1,7 +1,7 @@
+const { expect, it, describe } = require('mocha');
 const request = require('supertest');
-const { expect } = require('chai');
 
-describe('Routes resolving', () => {
+describe('routes resolving', () => {
   describe('/status', () => {
     it('200 - OK', (done) => {
       request(global.server)
@@ -33,7 +33,7 @@ describe('Routes resolving', () => {
         .expect(404, done);
     });
 
-    it('406 - domain not allowed by CORS', function (done) {
+    it('406 - domain not allowed by CORS', (done) => {
       request(global.server)
         .get('/api/v1/status')
         .set('Accept', process.env.CONTENT_TYPE)
@@ -42,11 +42,11 @@ describe('Routes resolving', () => {
         .expect(406, done);
     });
 
-    it('200 - options request', function (done) {
+    it('200 - options request', (done) => {
       request(global.server)
         .options('/api/v1/status')
         .set('Origin', process.env.ORIGIN)
-        .end(function (err, res) {
+        .end((_err, res) => {
           expect(res.headers['access-control-allow-origin']).to.equal(
             process.env.ORIGIN,
           );

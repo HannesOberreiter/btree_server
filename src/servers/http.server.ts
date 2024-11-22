@@ -1,11 +1,11 @@
-import { FastifyInstance } from 'fastify';
-import { Server as HttpServer } from 'http';
-import { Server as HttpsServer } from 'https';
+import type { FastifyInstance } from 'fastify';
+import type { Server as HttpServer } from 'node:http';
+import type { Server as HttpsServer } from 'node:https';
 
+import { ENVIRONMENT } from '../config/constants.config.js';
 import { env, isContainer, port } from '../config/environment.config.js';
 import { Cron } from '../services/cron.service.js';
 import { Logger } from '../services/logger.service.js';
-import { ENVIRONMENT } from '../config/constants.config.js';
 
 /**
  * @description Application server wrapper instance
@@ -32,7 +32,7 @@ export class HTTPServer {
           port,
           host: containerHost,
         },
-        function (err, address) {
+        (err, address) => {
           if (err) {
             logger.log('error', 'Server creation error', { err });
             process.exit(1);
@@ -46,13 +46,15 @@ export class HTTPServer {
           }
         },
       );
-    } catch (error) {
+    }
+    catch (error) {
       this.logger.log('error', 'Failed to create server', error);
     }
 
     try {
       this.cron.start();
-    } catch (error) {
+    }
+    catch (error) {
       this.logger.log('error', 'Failed to start cron jobs', error);
     }
   }
@@ -62,6 +64,5 @@ export class HTTPServer {
     await this.cron.gracefulShutdown();
     await this.app.close();
     this.app.log.debug('HTTP server stopped');
-    return;
   }
 }

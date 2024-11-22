@@ -1,7 +1,7 @@
 import { ExtModel } from './base.model.js';
 import { Company } from './company.model.js';
-import { User } from './user.model.js';
 import { ChargeType } from './option/charge_type.model.js';
+import { User } from './user.model.js';
 
 export class Charge extends ExtModel {
   id!: number;

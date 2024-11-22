@@ -1,7 +1,8 @@
-const request = require('supertest');
 const { expect } = require('chai');
-const { doRequest, expectations, doQueryRequest } = require(process.cwd() +
-  '/test/utils/index.cjs');
+const request = require('supertest');
+
+const { doRequest, expectations, doQueryRequest } = require(`${process.cwd()
+}/test/utils/index.cjs`);
 
 const testInsert = {
   name: 'test',
@@ -22,11 +23,11 @@ const options = [
 ];
 
 options.map((option) => {
-  describe(`${option} routes`, function () {
-    const route = '/api/v1/option/' + option;
+  describe(`${option} routes`, () => {
+    const route = `/api/v1/option/${option}`;
     let accessToken, insertId;
 
-    before(function (done) {
+    before((done) => {
       agent = request.agent(global.server);
       doRequest(
         agent,
@@ -35,8 +36,9 @@ options.map((option) => {
         null,
         null,
         global.demoUser,
-        function (err, res) {
-          if (err) throw err;
+        (err, res) => {
+          if (err)
+            throw err;
           expect(res.statusCode).to.eqls(200);
           expect(res.header, 'set-cookie', /connect.sid=.*; Path=\/; HttpOnly/);
           doRequest(
@@ -46,7 +48,7 @@ options.map((option) => {
             null,
             accessToken,
             testInsert,
-            function (err, res) {
+            (err, res) => {
               expect(res.statusCode).to.eqls(200);
               expect(res.body).to.be.a('Object');
               insertId = res.body.id;
@@ -57,22 +59,22 @@ options.map((option) => {
       );
     });
 
-    describe('/api/v1/option/' + option, () => {
-      it(`get 401 - no header`, function (done) {
+    describe(`/api/v1/option/${option}`, () => {
+      it(`get 401 - no header`, (done) => {
         doQueryRequest(
           request.agent(global.server),
           route,
           null,
           null,
           null,
-          function (err, res) {
+          (err, res) => {
             expect(res.statusCode).to.eqls(401);
             expect(res.errors, 'JsonWebTokenError');
             done();
           },
         );
       });
-      it(`post 401 - no header`, function (done) {
+      it(`post 401 - no header`, (done) => {
         doRequest(
           request.agent(global.server),
           'post',
@@ -80,14 +82,14 @@ options.map((option) => {
           null,
           null,
           testInsert,
-          function (err, res) {
+          (err, res) => {
             expect(res.statusCode).to.eqls(401);
             expect(res.errors, 'JsonWebTokenError');
             done();
           },
         );
       });
-      it(`patch 401 - no header`, function (done) {
+      it(`patch 401 - no header`, (done) => {
         doRequest(
           request.agent(global.server),
           'patch',
@@ -95,7 +97,7 @@ options.map((option) => {
           null,
           null,
           { ids: [insertId], data: {} },
-          function (err, res) {
+          (err, res) => {
             expect(res.statusCode).to.eqls(401);
             expect(res.errors, 'JsonWebTokenError');
             done();
@@ -103,14 +105,14 @@ options.map((option) => {
         );
       });
 
-      it(`get 200 - success`, function (done) {
+      it(`get 200 - success`, (done) => {
         doQueryRequest(
           agent,
           route,
           null,
           accessToken,
           null,
-          function (err, res) {
+          (err, res) => {
             expect(res.statusCode).to.eqls(200);
             expect(res.body).to.be.a('Array');
             done();
@@ -118,7 +120,7 @@ options.map((option) => {
         );
       });
 
-      it(`post 400 - no data`, function (done) {
+      it(`post 400 - no data`, (done) => {
         doRequest(
           agent,
           'post',
@@ -126,14 +128,14 @@ options.map((option) => {
           null,
           accessToken,
           null,
-          function (err, res) {
+          (err, res) => {
             expect(res.statusCode).to.eqls(400);
             done();
           },
         );
       });
 
-      it(`patch 200 - success`, function (done) {
+      it(`patch 200 - success`, (done) => {
         doRequest(
           agent,
           'patch',
@@ -144,7 +146,7 @@ options.map((option) => {
             ids: [insertId],
             data: {},
           },
-          function (err, res) {
+          (err, res) => {
             expect(res.statusCode).to.eqls(200);
             expect(res.body).to.equal(1);
             done();
@@ -154,45 +156,45 @@ options.map((option) => {
     });
 
     describe(`/api/v1/option/${option}/batchGet`, () => {
-      it(`401 - no header`, function (done) {
+      it(`401 - no header`, (done) => {
         doRequest(
           request.agent(global.server),
           'post',
-          route + '/batchGet',
+          `${route}/batchGet`,
           null,
           null,
           { ids: [insertId] },
-          function (err, res) {
+          (err, res) => {
             expect(res.statusCode).to.eqls(401);
             expect(res.errors, 'JsonWebTokenError');
             done();
           },
         );
       });
-      it(`400 - missing ids`, function (done) {
+      it(`400 - missing ids`, (done) => {
         doRequest(
           agent,
           'post',
-          route + '/batchGet',
+          `${route}/batchGet`,
           null,
           null,
           null,
-          function (err, res) {
+          (err, res) => {
             expect(res.statusCode).to.eqls(400);
             expectations(res, 'ids', 'Invalid value');
             done();
           },
         );
       });
-      it(`200 - success`, function (done) {
+      it(`200 - success`, (done) => {
         doRequest(
           agent,
           'post',
-          route + '/batchGet',
+          `${route}/batchGet`,
           null,
           accessToken,
           { ids: [insertId] },
-          function (err, res) {
+          (err, res) => {
             expect(res.statusCode).to.eqls(200);
             expect(res.body).to.be.a('Array');
             done();
@@ -202,45 +204,45 @@ options.map((option) => {
     });
 
     describe(`/api/v1/option/${option}/status`, () => {
-      it(`401 - no header`, function (done) {
+      it(`401 - no header`, (done) => {
         doRequest(
           request.agent(global.server),
           'patch',
-          route + '/status',
+          `${route}/status`,
           null,
           null,
           { ids: [], status: true },
-          function (err, res) {
+          (err, res) => {
             expect(res.statusCode).to.eqls(401);
             expect(res.errors, 'JsonWebTokenError');
             done();
           },
         );
       });
-      it(`400 - missing ids`, function (done) {
+      it(`400 - missing ids`, (done) => {
         doRequest(
           agent,
           'patch',
-          route + '/status',
+          `${route}/status`,
           null,
           null,
           null,
-          function (err, res) {
+          (err, res) => {
             expect(res.statusCode).to.eqls(400);
             expectations(res, 'ids', 'Invalid value');
             done();
           },
         );
       });
-      it(`200 - success`, function (done) {
+      it(`200 - success`, (done) => {
         doRequest(
           agent,
           'patch',
-          route + '/status',
+          `${route}/status`,
           null,
           accessToken,
           { ids: [insertId], status: false },
-          function (err, res) {
+          (err, res) => {
             expect(res.statusCode).to.eqls(200);
             expect(res.body).to.equal(1);
             done();
@@ -250,45 +252,45 @@ options.map((option) => {
     });
 
     describe(`/api/v1/option/${option}/favorite`, () => {
-      it(`401 - no header`, function (done) {
+      it(`401 - no header`, (done) => {
         doRequest(
           request.agent(global.server),
           'patch',
-          route + '/favorite',
+          `${route}/favorite`,
           null,
           null,
           { ids: [] },
-          function (err, res) {
+          (err, res) => {
             expect(res.statusCode).to.eqls(401);
             expect(res.errors, 'JsonWebTokenError');
             done();
           },
         );
       });
-      it(`400 - missing ids`, function (done) {
+      it(`400 - missing ids`, (done) => {
         doRequest(
           agent,
           'patch',
-          route + '/favorite',
+          `${route}/favorite`,
           null,
           null,
           null,
-          function (err, res) {
+          (err, res) => {
             expect(res.statusCode).to.eqls(400);
             expectations(res, 'ids', 'Invalid value');
             done();
           },
         );
       });
-      it(`200 - success`, function (done) {
+      it(`200 - success`, (done) => {
         doRequest(
           agent,
           'patch',
-          route + '/favorite',
+          `${route}/favorite`,
           null,
           accessToken,
           { ids: [insertId] },
-          function (err, res) {
+          (err, res) => {
             expect(res.statusCode).to.eqls(200);
             expect(res.body).to.equal(1);
             done();
@@ -298,45 +300,45 @@ options.map((option) => {
     });
 
     describe(`/api/v1/option/${option}/batchDelete`, () => {
-      it(`401 - no header`, function (done) {
+      it(`401 - no header`, (done) => {
         doRequest(
           request.agent(global.server),
           'patch',
-          route + '/batchDelete',
+          `${route}/batchDelete`,
           null,
           null,
           { ids: [] },
-          function (err, res) {
+          (err, res) => {
             expect(res.statusCode).to.eqls(401);
             expect(res.errors, 'JsonWebTokenError');
             done();
           },
         );
       });
-      it(`400 - missing ids`, function (done) {
+      it(`400 - missing ids`, (done) => {
         doRequest(
           agent,
           'patch',
-          route + '/batchDelete',
+          `${route}/batchDelete`,
           null,
           null,
           null,
-          function (err, res) {
+          (err, res) => {
             expect(res.statusCode).to.eqls(400);
             expectations(res, 'ids', 'Invalid value');
             done();
           },
         );
       });
-      it(`200 - success`, function (done) {
+      it(`200 - success`, (done) => {
         doRequest(
           agent,
           'patch',
-          route + '/batchDelete',
+          `${route}/batchDelete`,
           null,
           accessToken,
           { ids: [insertId] },
-          function (err, res) {
+          (err, res) => {
             expect(res.statusCode).to.eqls(200);
             expect(res.body).to.equal(1);
             done();

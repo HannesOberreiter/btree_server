@@ -1,34 +1,35 @@
+import type { FastifyReply, FastifyRequest } from 'fastify';
+import type { federatedUser } from '../../services/federated.service.js';
+import { randomBytes, randomUUID } from 'node:crypto';
 import dayjs from 'dayjs';
-import httpErrors from 'http-errors';
-import { randomBytes, randomUUID } from 'crypto';
-import { FastifyReply, FastifyRequest } from 'fastify';
 
-import {
-  createHashedPassword,
-  confirmAccount,
-  resetMail,
-  resetPassword,
-  unsubscribeMail,
-  buildUserAgent,
-} from '../utils/auth.util.js';
+import httpErrors from 'http-errors';
+import { ENVIRONMENT } from '../../config/constants.config.js';
 import {
   discourseSecret,
   env,
   frontend,
   serverLocation,
 } from '../../config/environment.config.js';
-import { autoFill } from '../utils/autofill.util.js';
+import { DiscourseSSO } from '../../services/discourse.service.js';
+import { GoogleAuth } from '../../services/federated.service.js';
+import { MailService } from '../../services/mail.service.js';
 import { Company } from '../models/company.model.js';
 import { CompanyBee } from '../models/company_bee.model.js';
-import { loginCheck } from '../utils/login.util.js';
 import { User } from '../models/user.model.js';
-import { DiscourseSSO } from '../../services/discourse.service.js';
-import { ENVIRONMENT } from '../../config/constants.config.js';
-import { GoogleAuth, federatedUser } from '../../services/federated.service.js';
-import { MailService } from '../../services/mail.service.js';
+import {
+  buildUserAgent,
+  confirmAccount,
+  createHashedPassword,
+  resetMail,
+  resetPassword,
+  unsubscribeMail,
+} from '../utils/auth.util.js';
+import { autoFill } from '../utils/autofill.util.js';
+import { loginCheck } from '../utils/login.util.js';
 
 export default class AuthController {
-  static async confirmMail(req: FastifyRequest, reply: FastifyReply) {
+  static async confirmMail(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as any;
     const key = body.confirm;
     const u = await User.query().findOne({
@@ -41,16 +42,16 @@ export default class AuthController {
     return { email: result };
   }
 
-  static async resetRequest(req: FastifyRequest, reply: FastifyReply) {
+  static async resetRequest(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as any;
     const email = body.email;
     const u = await User.query().findOne({
-      email: email,
+      email,
     });
     if (!u) {
       // "Best Practice" don't tell anyone if the user exists
       // return next(badRequest('User not found!'));
-      return { email: email };
+      return { email };
     }
     const result = await resetMail(u.id);
 
@@ -74,22 +75,22 @@ export default class AuthController {
     return { email: result.email };
   }
 
-  static async unsubscribeRequest(req: FastifyRequest, reply: FastifyReply) {
+  static async unsubscribeRequest(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as any;
     const email = body.email;
     const u = await User.query().findOne({
-      email: email,
+      email,
     });
     if (!u) {
       // "Best Practice" don't tell anyone if the user exists
       // return next(badRequest('User not found!'));
-      return { email: email };
+      return { email };
     }
     const result = await unsubscribeMail(u.id);
     return { email: result };
   }
 
-  static async resetPassword(req: FastifyRequest, reply: FastifyReply) {
+  static async resetPassword(req: FastifyRequest, _reply: FastifyReply) {
     const { key, password } = req.body as any;
     const u = await User.query().findOne({
       reset: key,
@@ -110,10 +111,10 @@ export default class AuthController {
     return { email: result.email };
   }
 
-  static async register(req: FastifyRequest, reply: FastifyReply) {
+  static async register(req: FastifyRequest, _reply: FastifyReply) {
     const inputCompany = (req.body as any).name;
-    let inputUser = req.body as any;
-    delete inputUser['name'];
+    const inputUser = req.body as any;
+    delete inputUser.name;
 
     // create hashed password and salt
     const hash = createHashedPassword(inputUser.password);
@@ -124,7 +125,7 @@ export default class AuthController {
     // which will also activate the user
     inputUser.reset = randomBytes(64).toString('hex');
     // we only have german or english available for autofill
-    const autofillLang = inputUser.lang == 'de' ? 'de' : 'en';
+    const autofillLang = inputUser.lang === 'de' ? 'de' : 'en';
     await User.transaction(async (trx) => {
       const uniqueMail = await User.query(trx).findOne({
         email: inputUser.email,
@@ -166,7 +167,7 @@ export default class AuthController {
     });
   }
 
-  static async login(req: FastifyRequest, reply: FastifyReply) {
+  static async login(req: FastifyRequest, _reply: FastifyReply) {
     const { email, password } = req.body as any;
     const userAgent = buildUserAgent(req);
     const { bee_id, user_id, data, paid, rank } = await loginCheck(
@@ -176,13 +177,13 @@ export default class AuthController {
 
     // Add bee_id to req as regenerate will call genid which uses bee_id as prefix to store key
     // see app.config.ts session(genId: function);
-    req['bee_id'] = bee_id;
+    (req as any).bee_id = bee_id;
     try {
       await req.session.regenerate();
       req.session.user = {
-        bee_id: bee_id,
-        user_id: user_id,
-        paid: paid,
+        bee_id,
+        user_id,
+        paid,
         rank: rank as any,
         user_agent: userAgent,
         last_visit: new Date(),
@@ -190,14 +191,15 @@ export default class AuthController {
         ip: req.ip,
       };
       await req.session.save();
-    } catch (e) {
+    }
+    catch (e) {
       req.log.error(e);
       throw httpErrors[500]('Failed to create session');
     }
     return { data };
   }
 
-  static async discourse(req: FastifyRequest, reply: FastifyReply) {
+  static async discourse(req: FastifyRequest, _reply: FastifyReply) {
     const sso = new DiscourseSSO(discourseSecret);
     const { payload, sig } = req.query as any;
     if (payload && sig) {
@@ -209,20 +211,22 @@ export default class AuthController {
 
         const nonce = sso.getNonce(payload);
         const userparams = {
-          nonce: nonce,
+          nonce,
           external_id: user.id,
           email: user.email,
-          username: user.username ? user.username : 'anonymous_' + user.id,
-          name: user.username ? user.username : 'anonymous_' + user.id,
+          username: user.username ? user.username : `anonymous_${user.id}`,
+          name: user.username ? user.username : `anonymous_${user.id}`,
           suppress_welcome_message: true,
           require_activation: false,
         };
         const q = sso.buildLoginString(userparams);
         return { q };
-      } else {
+      }
+      else {
         throw httpErrors.Forbidden('Invalid Signature');
       }
-    } else {
+    }
+    else {
       throw httpErrors.Forbidden('Missing Signature');
     }
   }
@@ -243,21 +247,22 @@ export default class AuthController {
         }
         return reply.redirect(
           encodeURI(
-            frontend +
-              '/visitor/register?name=' +
-              result.name +
-              '&email=' +
-              result.email +
-              '&oauth=google' +
-              '&server=' +
-              serverLocation,
+            `${frontend
+            }/visitor/register?name=${
+              result.name
+            }&email=${
+              result.email
+            }&oauth=google`
+            + `&server=${
+              serverLocation}`,
           ),
         );
       }
-    } catch (e) {
+    }
+    catch (e) {
       req.log.error({ message: 'Error in google callback', error: e });
       return reply.redirect(
-        frontend + '/visitor/login?error=oauth&server=' + serverLocation,
+        `${frontend}/visitor/login?error=oauth&server=${serverLocation}`,
       );
     }
 
@@ -270,12 +275,12 @@ export default class AuthController {
     );
 
     try {
-      req['bee_id'] = bee_id;
+      (req as any).bee_id = bee_id;
       await req.session.regenerate();
       req.session.user = {
-        bee_id: bee_id,
-        user_id: user_id,
-        paid: paid,
+        bee_id,
+        user_id,
+        paid,
         rank: rank as any,
         user_agent: userAgent,
         last_visit: new Date(),
@@ -283,11 +288,12 @@ export default class AuthController {
         ip: req.ip,
       };
       await req.session.save();
-    } catch (e) {
+    }
+    catch (e) {
       req.log.error(e);
       throw httpErrors[500]('Failed to create session');
     }
-    reply.redirect(frontend + '/visitor/login&server=' + serverLocation);
+    reply.redirect(`${frontend}/visitor/login&server=${serverLocation}`);
     return reply;
   }
 }

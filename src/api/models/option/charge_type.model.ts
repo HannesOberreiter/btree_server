@@ -1,6 +1,6 @@
-import { BaseOptionModel } from './baseoption.model.js';
 import { ChargeStock } from '../charge_stock.model.js';
 import { Company } from '../company.model.js';
+import { BaseOptionModel } from './baseoption.model.js';
 
 export class ChargeType extends BaseOptionModel {
   static tableName = 'charge_types';

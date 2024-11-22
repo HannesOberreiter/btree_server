@@ -1,10 +1,10 @@
 import { ExtModel } from './base.model.js';
-import { User } from './user.model.js';
-import { QueenRace } from './option/queen_race.model.js';
-import { QueenMating } from './option/queen_mating.model.js';
 import { Company } from './company.model.js';
-import { QueenLocation } from './queen_location.model.js';
 import { HiveLocation } from './hive_location.model.js';
+import { QueenMating } from './option/queen_mating.model.js';
+import { QueenRace } from './option/queen_race.model.js';
+import { QueenLocation } from './queen_location.model.js';
+import { User } from './user.model.js';
 
 export class Queen extends ExtModel {
   id!: number;

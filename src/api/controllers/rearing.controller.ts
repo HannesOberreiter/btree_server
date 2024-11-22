@@ -1,5 +1,5 @@
+import type { FastifyReply, FastifyRequest } from 'fastify';
 import { Rearing } from '../models/rearing/rearing.model.js';
-import { FastifyReply, FastifyRequest } from 'fastify';
 
 export default class RearingController {
   static async get(req: FastifyRequest, reply: FastifyReply) {
@@ -9,11 +9,12 @@ export default class RearingController {
       .where({
         'rearings.user_id': req.session.user.user_id,
       })
-      .page(offset ? offset : 0, limit === 0 || !limit ? 10 : limit);
+      .page(offset || 0, limit === 0 || !limit ? 10 : limit);
     if (order) {
       if (Array.isArray(order)) {
         order.forEach((field, index) => query.orderBy(field, direction[index]));
-      } else {
+      }
+      else {
         query.orderBy(order, direction);
       }
     }
@@ -23,19 +24,21 @@ export default class RearingController {
         const filtering = JSON.parse(filters);
         if (Array.isArray(filtering)) {
           filtering.forEach((v) => {
-            if ('date' in v && typeof v['date'] === 'object') {
+            if ('date' in v && typeof v.date === 'object') {
               query.whereBetween('date', [v.date.from, v.date.to]);
-            } else {
+            }
+            else {
               query.where(v);
             }
           });
         }
-      } catch (e) {
+      }
+      catch (e) {
         req.log.error(e);
       }
     }
     if (q) {
-      const search = '' + q; // Querystring could be converted be a number
+      const search = `${q}`; // Querystring could be converted be a number
 
       if (search.trim() !== '') {
         query.where((builder) => {

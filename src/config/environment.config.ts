@@ -21,17 +21,18 @@ class EnvironmentConfiguration {
    */
   static set() {
     if (
-      process.argv[2] &&
-      process.argv[2] === '--env' &&
-      process.argv[3] &&
+      process.argv[2]
+      && process.argv[2] === '--env'
+      && process.argv[3]
       // eslint-disable-next-line no-prototype-builtins
-      ENVIRONMENT.hasOwnProperty(process.argv[3])
+      && ENVIRONMENT.hasOwnProperty(process.argv[3])
     ) {
       this.environment = ENVIRONMENT[process.argv[3]];
-    } else if (
-      process.env.ENVIRONMENT &&
+    }
+    else if (
+      process.env.ENVIRONMENT
       // eslint-disable-next-line no-prototype-builtins
-      ENVIRONMENT.hasOwnProperty(process.env.ENVIRONMENT)
+      && ENVIRONMENT.hasOwnProperty(process.env.ENVIRONMENT)
     ) {
       this.environment = process.env.ENVIRONMENT as keyof typeof ENVIRONMENT;
     }
@@ -48,8 +49,8 @@ class EnvironmentConfiguration {
     // https://www.npmjs.com/package/dotenv
     const result = dotenv.config({
       path:
-        rootDirectory +
-        `/env/${this.environment + (this.server === 'eu' ? '' : '-' + this.server)}.env`,
+        `${rootDirectory
+        }/env/${this.environment + (this.server === 'eu' ? '' : `-${this.server}`)}.env`,
     });
     if (result.error) {
       throw result.error;
@@ -60,7 +61,7 @@ class EnvironmentConfiguration {
 EnvironmentConfiguration.load();
 
 const env = EnvironmentConfiguration.environment;
-const port = parseInt(process.env.PORT);
+const port = Number.parseInt(process.env.PORT);
 const url = process.env.URL;
 const frontend = process.env.FRONTEND;
 const authorized = process.env.AUTHORIZED;
@@ -76,8 +77,8 @@ const dropboxClientSecret = process.env.DROPBOX_CLIENT_SECRET;
 
 const paypalClientId = process.env.PAYPAL_CLIENT_ID;
 const paypalAppSecret = process.env.PAYPAL_APP_SECRET;
-const paypalBase =
-  env === ENVIRONMENT.production
+const paypalBase
+  = env === ENVIRONMENT.production
     ? 'https://api-m.paypal.com'
     : 'https://api-m.sandbox.paypal.com';
 
@@ -94,29 +95,29 @@ const googleOAuth = {
 };
 
 const basicLimit = {
-  hive: parseInt(process.env.LIMIT_HIVE),
-  apiary: parseInt(process.env.LIMIT_APIARY),
-  scale: parseInt(process.env.LIMIT_SCALE),
+  hive: Number.parseInt(process.env.LIMIT_HIVE),
+  apiary: Number.parseInt(process.env.LIMIT_APIARY),
+  scale: Number.parseInt(process.env.LIMIT_SCALE),
 };
 
 const totalLimit = {
-  hive: parseInt(process.env.TOTAL_LIMIT_HIVE),
-  apiary: parseInt(process.env.TOTAL_LIMIT_APIARY),
-  scale: parseInt(process.env.TOTAL_LIMIT_SCALE),
+  hive: Number.parseInt(process.env.TOTAL_LIMIT_HIVE),
+  apiary: Number.parseInt(process.env.TOTAL_LIMIT_APIARY),
+  scale: Number.parseInt(process.env.TOTAL_LIMIT_SCALE),
 };
 
 const cronjobTimer = process.env.CRONJOB ? process.env.CRONJOB : '0 11 */1 * *';
 
 const redisConfig = {
   host: process.env.REDIS_HOSTNAME,
-  port: parseInt(process.env.REDIS_PORT),
+  port: Number.parseInt(process.env.REDIS_PORT),
   user: process.env.REDIS_USERNAME,
   password: process.env.REDIS_PASSWORD ?? '',
 };
 
 const vectorConfig = {
   host: process.env.VECTOR_HOSTNAME,
-  port: parseInt(process.env.VECTOR_PORT),
+  port: Number.parseInt(process.env.VECTOR_PORT),
   user: process.env.VECTOR_USERNAME,
   password: process.env.VECTOR_PASSWORD ?? '',
 };
@@ -131,7 +132,7 @@ const knexConfig = {
     database: process.env.DB_NAME,
     user: process.env.DB_USERNAME,
     password: process.env.DB_PASSWORD,
-    port: parseInt(process.env.DB_PORT),
+    port: Number.parseInt(process.env.DB_PORT),
     charset: 'utf8mb4',
     timezone: 'UTC',
     typeCast(field, next) {
@@ -139,19 +140,20 @@ const knexConfig = {
       // Convert 1 to true, 0 to false, and leave null alone
       if (field.type === 'TINY' && field.length === 1) {
         const value = field.string();
-        if (value === null) return null;
+        if (value === null)
+          return null;
         return value == '1';
       }
       return next();
     },
   },
-  debug: env === ENVIRONMENT.development ? true : false,
+  debug: env === ENVIRONMENT.development,
   pool: {
-    min: parseInt(process.env.DB_POOL_MIN),
-    max: parseInt(process.env.DB_POOL_MAX),
-    afterCreate: function (conn, done) {
+    min: Number.parseInt(process.env.DB_POOL_MIN),
+    max: Number.parseInt(process.env.DB_POOL_MAX),
+    afterCreate(conn, done) {
       // Extend max group concant mainly for calendar view if many ids are concated
-      conn.query('SET SESSION group_concat_max_len = 100000;', function (err) {
+      conn.query('SET SESSION group_concat_max_len = 100000;', (err) => {
         done(err, conn);
       });
     },
@@ -168,7 +170,7 @@ const knexConfig = {
 const mailConfig = {
   host: process.env.MAIL_SMTP,
   port: Number(process.env.MAIL_PORT),
-  secure: process.env.MAIL_SECURE === 'true' ? true : false,
+  secure: process.env.MAIL_SECURE === 'true',
   auth: {
     user: process.env.MAIL_FROM,
     pass: process.env.MAIL_PASSWORD,
@@ -180,54 +182,55 @@ const mailConfig = {
       process.env.MAIL_DKIM_PRIVATE === 'false'
         ? ''
         : Buffer.from(process.env.MAIL_DKIM_PRIVATE, 'base64').toString(
-            'ascii',
-          ),
+          'ascii',
+        ),
   },
 };
 
 const openAI = {
   key: process.env.OPEN_AI_KEY ?? '',
-  dailyUserTokenLimit: parseInt(
+  dailyUserTokenLimit: Number.parseInt(
     process.env.OPEN_AI_DAILY_USER_TOKEN_LIMIT ?? '0',
   ),
 };
 
 const serverLocations = ['eu', 'us'];
-const isServerLocationValid = (server: string) =>
-  serverLocations.includes(server);
+function isServerLocationValid(server: string) {
+  return serverLocations.includes(server);
+}
 const serverLocation = isServerLocationValid(process.env.SERVER_LOCATION)
   ? process.env.SERVER_LOCATION
   : 'eu';
 
 export {
-  rootDirectory,
-  redisConfig,
-  knexConfig,
-  vectorConfig,
-  env,
-  port,
-  url,
-  frontend,
-  meteoblueKey,
   authorized,
-  mailConfig,
+  basicLimit,
+  cronjobTimer,
+  discourseSecret,
   dropboxClientId,
   dropboxClientSecret,
-  paypalClientId,
-  paypalAppSecret,
-  stripeSecret,
-  paypalBase,
-  basicLimit,
-  totalLimit,
-  cronjobTimer,
-  sessionSecret,
-  discourseSecret,
+  env,
   foxyOfficeKey,
   foxyOfficeUrl,
+  frontend,
   googleOAuth,
-  openAI,
-  isContainer,
   isChild,
+  isContainer,
   isServerLocationValid,
+  knexConfig,
+  mailConfig,
+  meteoblueKey,
+  openAI,
+  paypalAppSecret,
+  paypalBase,
+  paypalClientId,
+  port,
+  redisConfig,
+  rootDirectory,
   serverLocation,
+  sessionSecret,
+  stripeSecret,
+  totalLimit,
+  url,
+  vectorConfig,
 };

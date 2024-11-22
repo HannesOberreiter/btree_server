@@ -1,4 +1,4 @@
-import { FastifyReply, FastifyRequest } from 'fastify';
+import type { FastifyReply, FastifyRequest } from 'fastify';
 
 import { FieldSetting } from '../models/field_setting.model.js';
 
@@ -8,7 +8,7 @@ export default class FieldSettingController {
       .select('settings')
       .first()
       .where({ bee_id: req.session.user.bee_id });
-    return result ? result : false;
+    return result || false;
   }
 
   static async patch(req: FastifyRequest, reply: FastifyReply) {
@@ -22,16 +22,18 @@ export default class FieldSettingController {
       if (current) {
         await FieldSetting.query(trx)
           .where('bee_id', req.session.user.bee_id)
-          .patch({ settings: settings });
-      } else {
+          .patch({ settings });
+      }
+      else {
         await FieldSetting.query(trx).insert({
           bee_id: req.session.user.bee_id,
-          settings: settings,
+          settings,
         });
       }
       await trx.commit();
       return settings;
-    } catch (e) {
+    }
+    catch (e) {
       await trx.rollback();
       throw e;
     }
