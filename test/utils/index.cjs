@@ -11,7 +11,7 @@ function _doRequest(agent, method, route, id, _token, payload, callback) {
       .set('Origin', process.env.ORIGIN)
       .withCredentials()
       .send(payload || {})
-      .end((_err, res) => {
+      .end((err, res) => {
         callback(err, res);
       })
   );
@@ -27,7 +27,7 @@ exports.login = function (request, done) {
     null,
     null,
     global.demoUser,
-    (_err, res) => {
+    (err, res) => {
       if (err)
         throw err;
       expect(res.statusCode).to.eqls(200);
@@ -49,7 +49,7 @@ function _doQueryRequest(agent, route, id, token, payload, callback) {
       .set('Content-Type', process.env.CONTENT_TYPE)
       .set('Origin', process.env.ORIGIN)
       .query(payload)
-      .end((_err, res) => {
+      .end((err, res) => {
         callback(err, res);
       })
   );
