@@ -1,13 +1,14 @@
-import { ExtModel } from './base.model.js';
-import { User } from './user.model.js';
 import { Apiary } from './apiary.model.js';
-import { Movedate } from './movedate.model.js';
-import { HiveLocation } from './hive_location.model.js';
-import { HiveType } from './option/hive_type.mode.js';
-import { HiveSource } from './option/hive_source.model.js';
-import { QueenLocation } from './queen_location.model.js';
-import { Queen } from './queen.model.js';
+import { ExtModel } from './base.model.js';
 import { Company } from './company.model.js';
+import { HiveLocation } from './hive_location.model.js';
+import { Movedate } from './movedate.model.js';
+import { HiveSource } from './option/hive_source.model.js';
+import { HiveType } from './option/hive_type.mode.js';
+import { Queen } from './queen.model.js';
+import { QueenLocation } from './queen_location.model.js';
+import { User } from './user.model.js';
+
 export class Hive extends ExtModel {
   id!: number;
   name!: string;

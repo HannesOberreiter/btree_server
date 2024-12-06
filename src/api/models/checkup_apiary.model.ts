@@ -1,6 +1,6 @@
-import { Company } from './company.model.js';
-import { Checkup } from './checkup.model.js';
 import { Model } from 'objection';
+import { Checkup } from './checkup.model.js';
+import { Company } from './company.model.js';
 
 export class CheckupApiary extends Model {
   apiary_id!: number;

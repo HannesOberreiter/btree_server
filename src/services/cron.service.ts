@@ -2,13 +2,13 @@ import cron from 'node-schedule';
 
 import {
   cleanupDatabase,
-  reminderPremium,
   reminderDeletion,
+  reminderPremium,
   reminderVIS,
 } from '../api/utils/cron.util.js';
+import { fetchObservations } from '../api/utils/pest.util.js';
 import { cronjobTimer, isChild } from '../config/environment.config.js';
 import { Logger } from './logger.service.js';
-import { fetchObservations } from '../api/utils/pest.util.js';
 
 export class Cron {
   private static instance: Cron;
@@ -52,7 +52,8 @@ export class Cron {
       async () => {
         try {
           await this.run();
-        } catch (e) {
+        }
+        catch (e) {
           this.logger.log('error', e, { label: 'CronJob' });
         }
       },
@@ -70,12 +71,12 @@ export class Cron {
     this.Logging(await reminderPremium());
 
     fetchObservations('Vespa velutina')
-      .then((res) => this.Logging(res))
-      .catch((e) => this.logger.log('error', e, { label: 'CronJob' }))
+      .then(res => this.Logging(res))
+      .catch(e => this.logger.log('error', e, { label: 'CronJob' }))
       .finally(() =>
         fetchObservations('Aethina tumida')
-          .then((res) => this.Logging(res))
-          .catch((e) => this.logger.log('error', e, { label: 'CronJob' })),
+          .then(res => this.Logging(res))
+          .catch(e => this.logger.log('error', e, { label: 'CronJob' })),
       );
   }
 
@@ -100,6 +101,5 @@ export class Cron {
     this.logger.log('debug', 'CronJob is shut down', {
       label: 'CronJob',
     });
-    return;
   }
 }

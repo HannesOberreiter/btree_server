@@ -1,19 +1,19 @@
-import { Transaction } from 'objection';
-import { CheckupType } from '../models/option/checkup_type.model.js';
+import type { Transaction } from 'objection';
 import { Apiary } from '../models/apiary.model.js';
-import { HiveSource } from '../models/option/hive_source.model.js';
-import { HiveType } from '../models/option/hive_type.mode.js';
 import { ChargeType } from '../models/option/charge_type.model.js';
+import { CheckupType } from '../models/option/checkup_type.model.js';
 import { FeedType } from '../models/option/feed_type.model.js';
 import { HarvestType } from '../models/option/harvest_type.model.js';
+import { HiveSource } from '../models/option/hive_source.model.js';
+import { HiveType } from '../models/option/hive_type.mode.js';
+import { QueenMating } from '../models/option/queen_mating.model.js';
+import { QueenRace } from '../models/option/queen_race.model.js';
 import { TreatmentDisease } from '../models/option/treatment_disease.model.js';
 import { TreatmentType } from '../models/option/treatment_type.model.js';
 import { TreatmentVet } from '../models/option/treatment_vet.model.js';
-import { QueenRace } from '../models/option/queen_race.model.js';
-import { QueenMating } from '../models/option/queen_mating.model.js';
 import { RearingDetail } from '../models/rearing/rearing_detail.model.js';
-import { RearingType } from '../models/rearing/rearing_type.model.js';
 import { RearingStep } from '../models/rearing/rearing_step.model.js';
+import { RearingType } from '../models/rearing/rearing_type.model.js';
 
 const standardValues = {
   de: {
@@ -148,7 +148,7 @@ const standardValues = {
   },
 };
 
-const autoFill = async (trx: Transaction, id: number, lang: string) => {
+async function autoFill(trx: Transaction, id: number, lang: string) {
   const val = standardValues[lang];
 
   // We use MySQL we cannot use patch insert
@@ -212,8 +212,6 @@ const autoFill = async (trx: Transaction, id: number, lang: string) => {
     latitude: val.apiary.latitude,
     user_id: id,
   });
-
-  return;
-};
+}
 
 export { autoFill };

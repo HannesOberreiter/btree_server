@@ -3,8 +3,8 @@ import {
   foxyOfficeUrl,
   serverLocation,
 } from '../../config/environment.config.js';
-import { MailService } from '../../services/mail.service.js';
 import { Logger } from '../../services/logger.service.js';
+import { MailService } from '../../services/mail.service.js';
 
 function buildBaseUrl(endpoint: string) {
   return `https://${foxyOfficeUrl}/${endpoint}/${foxyOfficeKey}`;
@@ -25,10 +25,11 @@ async function getLatestInvoice() {
     let newNumberGroupId = 0;
     for (let i = 0; i < result.length; i++) {
       const invoice = result[i];
-      if (invoice['Invoice'].deleted == '1') continue;
-      if (parseInt(invoice['Invoice'].number) > newNumber) {
-        newNumber = parseInt(invoice['Invoice'].number);
-        newNumberGroupId = parseInt(invoice['Invoice'].number_group_id);
+      if (invoice.Invoice.deleted === '1')
+        continue;
+      if (Number.parseInt(invoice.Invoice.number) > newNumber) {
+        newNumber = Number.parseInt(invoice.Invoice.number);
+        newNumberGroupId = Number.parseInt(invoice.Invoice.number_group_id);
       }
     }
     return {
@@ -70,7 +71,7 @@ export async function createInvoice(
       InvoicePosition: [
         {
           text: 'b.tree PREMIUM Mitglied, Abo Time: + 1 Jahr Abo',
-          amount: amount,
+          amount,
           unit: 'x',
           price: price / amount / 1.2,
           tax_percent: 20,
@@ -81,12 +82,12 @@ export async function createInvoice(
 
     const form = new FormData();
 
-    for (let key in data.Invoice) {
+    for (const key in data.Invoice) {
       form.append(`Invoice[${key}]`, data.Invoice[key]);
     }
 
     for (let i = 0; i < data.InvoicePosition.length; i++) {
-      for (let key in data.InvoicePosition[i]) {
+      for (const key in data.InvoicePosition[i]) {
         form.append(
           `InvoicePosition[${i}][${key}]`,
           data.InvoicePosition[i][key],
@@ -105,23 +106,24 @@ export async function createInvoice(
       MailService.getInstance().sendRawMail(
         'office@btree.at',
         'New invoice created',
-        'FoxyOfficeResponse: ' +
-          result +
-          '\n\n' +
-          'InvoiceNumber: ' +
-          JSON.stringify(latestInvoice) +
-          '\n\n' +
-          'CustomerMail: ' +
-          JSON.stringify(mail) +
-          '\n\n' +
-          'Server: ' +
-          serverLocation,
+        `FoxyOfficeResponse: ${
+          result
+        }\n\n`
+        + `InvoiceNumber: ${
+          JSON.stringify(latestInvoice)
+        }\n\n`
+        + `CustomerMail: ${
+          JSON.stringify(mail)
+        }\n\n`
+        + `Server: ${
+          serverLocation}`,
       );
     }
-  } catch (err) {
+  }
+  catch (err) {
     Logger.getInstance().log('error', 'Error creating invoice', {
       label: 'FoxyOffice',
-      err: err,
+      err,
     });
   }
 }

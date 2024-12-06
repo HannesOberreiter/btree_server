@@ -32,6 +32,7 @@ export class ScaleData extends BaseModel {
       scale_id: { type: 'integer' },
     },
   };
+
   static relationMappings = () => ({
     scale: {
       relation: BaseModel.BelongsToOneRelation,

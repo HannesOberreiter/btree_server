@@ -13,7 +13,7 @@ export const up = function (knex) {
  * @returns { Promise<void> }
  */
 export const down = function (knex) {
-  knex.schema.alterTable('hives', (t) => {
+  return knex.schema.alterTable('hives', (t) => {
     t.dropIndex(['user_id', 'modus', 'deleted']);
   });
 };

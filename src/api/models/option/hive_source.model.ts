@@ -1,6 +1,6 @@
-import { BaseOptionModel } from './baseoption.model.js';
 import { ExtModel } from '../base.model.js';
 import { Company } from '../company.model.js';
+import { BaseOptionModel } from './baseoption.model.js';
 
 export class HiveSource extends BaseOptionModel {
   static tableName = 'hive_sources';
@@ -8,6 +8,7 @@ export class HiveSource extends BaseOptionModel {
   constructor() {
     super();
   }
+
   static relationMappings = {
     company: {
       relation: ExtModel.HasOneRelation,

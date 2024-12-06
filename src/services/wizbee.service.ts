@@ -1,25 +1,26 @@
+import { Buffer } from 'node:buffer';
 import { encode } from 'gpt-3-encoder';
 import OpenAI from 'openai';
 import { env, openAI } from '../config/environment.config.js';
 import { VectorServer } from '../servers/vector.server.js';
 // import { Stream } from 'node_modules/openai/streaming.js';
 
-type Metadata = {
-  created: string;
-  file: string;
-  fileType: string;
-  folder: boolean;
-  link: string;
-  reference: string;
-  score?: number;
-};
+interface Metadata {
+  created: string
+  file: string
+  fileType: string
+  folder: boolean
+  link: string
+  reference: string
+  score?: number
+}
 
-type Document = {
-  score: number;
-  metadata: Metadata;
-  content: string;
-  content_vector?: number[];
-};
+interface Document {
+  score: number
+  metadata: Metadata
+  content: string
+  content_vector?: number[]
+}
 
 export class WizBee {
   private openAI: OpenAI;
@@ -68,8 +69,10 @@ export class WizBee {
    * @description Transform the result from redis to a more readable format, as it is in array format of [result count, key, document[key, value, ...] ...]
    */
   private transformResult(input: unknown): Document[] | undefined {
-    if (!input) return undefined;
-    if (!Array.isArray(input)) return undefined;
+    if (!input)
+      return undefined;
+    if (!Array.isArray(input))
+      return undefined;
     // first element is result count
     input.shift();
     const result: any[] = [];
@@ -77,12 +80,16 @@ export class WizBee {
       const obj = {};
       const arr = input[i];
       for (let j = 0; j < arr.length; j += 2) {
-        if (arr[j] === 'content_vector') continue;
+        if (arr[j] === 'content_vector') {
+          continue;
+        }
         else if (arr[j] === 'metadata') {
           obj[arr[j]] = JSON.parse(arr[j + 1]);
-        } else if (arr[j] === 'score') {
-          obj[arr[j]] = parseFloat(arr[j + 1]);
-        } else {
+        }
+        else if (arr[j] === 'score') {
+          obj[arr[j]] = Number.parseFloat(arr[j + 1]);
+        }
+        else {
           obj[arr[j]] = arr[j + 1];
         }
       }
@@ -95,15 +102,15 @@ export class WizBee {
    * @description The minimum matching score required for a document to be considered a match. Defaults to 0.2. Because the similarity calculation algorithm is based on cosine similarity, the smaller the angle, the higher the similarity.
    */
   private filterScore(input: any[], minScore = 0.2) {
-    return input.filter((item) => item.score <= minScore);
+    return input.filter(item => item.score <= minScore);
   }
 
   /**
    * @description combine documents into a single string and filter out possible metadata duplicates
    */
   private concatDocuments(documents: Document[]): {
-    contextText: string;
-    refs: Metadata[];
+    contextText: string
+    refs: Metadata[]
   } {
     let tokenCount = 0;
     let contextText = '';
@@ -130,13 +137,13 @@ export class WizBee {
   private filterDuplicates(obj: Array<any>) {
     return (obj = obj.filter(
       (value, index, self) =>
-        index === self.findIndex((t) => t.file === value.file),
+        index === self.findIndex(t => t.file === value.file),
     ));
   }
 
   /**
    * @description search for the most similar documents, based on KNN flat index
-   * @param text the text to search for
+   * @param embedding the text to search for
    * @param k number of results to return
    * @param minScore the minimum matching score required for a document to be considered a match. Defaults to 0.2. Because the similarity calculation algorithm is based on cosine similarity, the smaller the angle, the higher the similarity. (Cosine Distance = 1 — Cosine Similarity)
    */
@@ -161,9 +168,11 @@ export class WizBee {
       'DIALECT',
       2,
     );
-    if (!queryResult) return undefined;
+    if (!queryResult)
+      return undefined;
     const result = this.transformResult(queryResult);
-    if (!result) return undefined;
+    if (!result)
+      return undefined;
     return this.filterScore(result, minScore);
   }
 
@@ -210,10 +219,12 @@ export class WizBee {
         ],
         max_tokens: 500,
         temperature: 0.1,
-        user: 'WizBee_' + env,
+        user: `WizBee_${env}`,
       });
       return response;
-    } catch (e) {
+    }
+    catch (e) {
+      console.error(e);
       return undefined;
     }
   }
@@ -251,11 +262,13 @@ export class WizBee {
         messages,
         max_tokens: 500,
         temperature: 0.1,
-        user: 'WizBee_' + env,
+        user: `WizBee_${env}`,
         stream: false,
       });
       return response;
-    } catch (e) {
+    }
+    catch (e) {
+      console.error(e);
       return undefined;
     }
   }
@@ -275,14 +288,16 @@ export class WizBee {
       }
     }
 
-    const { embedding, tokens: embeddingTokens } =
-      await this.createEmbedding(input);
+    const { embedding, tokens: embeddingTokens }
+      = await this.createEmbedding(input);
     tokens += embeddingTokens;
 
     const results = await this.searchKNN(embedding, 4, 0.21);
 
-    if (!results) return undefined;
-    if (results.length === 0) return undefined;
+    if (!results)
+      return undefined;
+    if (results.length === 0)
+      return undefined;
 
     const { contextText, refs } = this.concatDocuments(results);
 
@@ -308,14 +323,16 @@ export class WizBee {
       }
     }
 
-    const { embedding, tokens: embeddingTokens } =
-      await this.createEmbedding(input);
+    const { embedding, tokens: embeddingTokens }
+      = await this.createEmbedding(input);
     tokens += embeddingTokens;
 
     const results = await this.searchKNN(embedding, 4, 0.21);
 
-    if (!results) return undefined;
-    if (results.length === 0) return undefined;
+    if (!results)
+      return undefined;
+    if (results.length === 0)
+      return undefined;
 
     const { contextText, refs } = this.concatDocuments(results);
     // const answer = await this.createAnswer(question, contextText);
@@ -350,11 +367,11 @@ export class WizBee {
         messages,
         max_tokens: 500,
         temperature: 0.1,
-        user: 'WizBee_' + env,
+        user: `WizBee_${env}`,
         stream: true,
       },
       {
-        idempotencyKey: 'beekeeping_' + Date.now(),
+        idempotencyKey: `beekeeping_${Date.now()}`,
       },
     );
 

@@ -33,7 +33,7 @@ docker push hannesoberreiter/btree_server:latest
 Hint: To be able to pull from a DockerHub private repo create a api key with read-only access and login once to docker on your server eg. `docker login -u hannesoberreiter` with the api token as password. The token will be saved in your config and you can call `docker compose` on the private repo.
 
 ```bash
-# Pull latest and run 
+# Pull latest and run
 docker compose pull  && docker compose up -d
 # Run container (server) (define file if not the only one in folder)
 docker compose -f docker-compose.server.yml up -d

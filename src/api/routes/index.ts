@@ -1,33 +1,33 @@
-import { FastifyInstance } from 'fastify';
-import v1Auth from './v1/auth.route.js';
+import type { FastifyInstance } from 'fastify';
 import v1Apiary from './v1/apiary.route.js';
+import v1Auth from './v1/auth.route.js';
+import v1Calendar from './v1/calendar.route.js';
 import v1Charge from './v1/charge.route.js';
 import v1Checkup from './v1/checkup.route.js';
-import v1CompanyUser from './v1/company_user.route.js';
-import v1User from './v1/user.route.js';
 import v1Company from './v1/company.route.js';
+import v1CompanyUser from './v1/company_user.route.js';
 import v1Dropbox from './v1/dropbox.route.js';
 import v1External from './v1/external.route.js';
-import v1Scale from './v1/scale.route.js';
-import v1ScaleData from './v1/scale_data.route.js';
-import v1Statistic from './v1/statistic.route.js';
-import v1Hive from './v1/hive.route.js';
-import v1Root from './v1/root.route.js';
-import v1Calendar from './v1/calendar.route.js';
 import v1Feed from './v1/feed.route.js';
-import v1Treatment from './v1/treatment.route.js';
+import v1FieldSetting from './v1/field_setting.route.js';
 import v1Harvest from './v1/harvest.route.js';
-import v1Queen from './v1/queen.route.js';
+import v1Hive from './v1/hive.route.js';
 import v1Movedate from './v1/movedate.route.js';
 import v1Option from './v1/option.route.js';
+import v1Public from './v1/public.route.js';
+import v1Queen from './v1/queen.route.js';
 import v1Rearing from './v1/rearing.route.js';
 import v1RearingDetail from './v1/rearing_detail.route.js';
-import v1RearingType from './v1/rearing_type.route.js';
 import v1RearingStep from './v1/rearing_step.route.js';
-import v1FieldSetting from './v1/field_setting.route.js';
+import v1RearingType from './v1/rearing_type.route.js';
+import v1Root from './v1/root.route.js';
+import v1Scale from './v1/scale.route.js';
+import v1ScaleData from './v1/scale_data.route.js';
 import v1Service from './v1/service.route.js';
+import v1Statistic from './v1/statistic.route.js';
 import v1Todo from './v1/todo.route.js';
-import v1Public from './v1/public.route.js';
+import v1Treatment from './v1/treatment.route.js';
+import v1User from './v1/user.route.js';
 
 export default function routes(app: FastifyInstance, _options: any, done: any) {
   app.register(v1Root, {

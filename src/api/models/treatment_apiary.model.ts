@@ -1,6 +1,6 @@
+import { Model } from 'objection';
 import { Company } from './company.model.js';
 import { Treatment } from './treatment.model.js';
-import { Model } from 'objection';
 
 export class TreatmentApiary extends Model {
   apiary_id!: number;

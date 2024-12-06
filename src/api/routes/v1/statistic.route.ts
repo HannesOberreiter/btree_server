@@ -1,9 +1,9 @@
-import { Guard } from '../../hooks/guard.hook.js';
-import { ROLES } from '../../../config/constants.config.js';
-import { FastifyInstance } from 'fastify';
-import { ZodTypeProvider } from 'fastify-type-provider-zod';
+import type { FastifyInstance } from 'fastify';
+import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { z } from 'zod';
+import { ROLES } from '../../../config/constants.config.js';
 import StatisticController from '../../controllers/statistic.controller.js';
+import { Guard } from '../../hooks/guard.hook.js';
 import { Validator } from '../../hooks/validator.hook.js';
 import { numberSchema } from '../../utils/zod.util.js';
 

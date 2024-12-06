@@ -1,11 +1,17 @@
-import { Stripe } from 'stripe';
-import { FastifyReply, FastifyRequest } from 'fastify';
+import type { FastifyReply, FastifyRequest } from 'fastify';
+import type { Stripe } from 'stripe';
+import dayjs from 'dayjs';
 import httpErrors from 'http-errors';
 import ical, { ICalCalendarMethod } from 'ical-generator';
-import dayjs from 'dayjs';
 
+import { SOURCE } from '../../config/constants.config.js';
+import {
+  isServerLocationValid,
+  serverLocation,
+} from '../../config/environment.config.js';
+import { Logger } from '../../services/logger.service.js';
+import { MailService } from '../../services/mail.service.js';
 import { getCompany } from '../utils/api.util.js';
-import { addPremium, isPremium } from '../utils/premium.util.js';
 import {
   getMovements,
   getRearings,
@@ -14,13 +20,7 @@ import {
   getTodos,
 } from '../utils/calendar.util.js';
 import { createInvoice } from '../utils/foxyoffice.util.js';
-import { SOURCE } from '../../config/constants.config.js';
-import { MailService } from '../../services/mail.service.js';
-import {
-  isServerLocationValid,
-  serverLocation,
-} from '../../config/environment.config.js';
-import { Logger } from '../../services/logger.service.js';
+import { addPremium, isPremium } from '../utils/premium.util.js';
 
 export default class ExternalController {
   static async ical(req: FastifyRequest, reply: FastifyReply) {
@@ -72,13 +72,13 @@ export default class ExternalController {
         id: `${result.table}_${i}`,
         start: result.start,
         end: result.end,
-        allDay: result.allDay ? true : false,
-        summary: `${result.unicode ? result.unicode + ' ' : ''} ${
+        allDay: !!result.allDay,
+        summary: `${result.unicode ? `${result.unicode} ` : ''} ${
           result.title
         }`,
         description: result.description,
-        //floating: true, // floating would mean always an event on 12:00 would be always on 12:00 no matter the timezone
-        //timezone: 'UTC', // standard is UTC no need to define it
+        // floating: true, // floating would mean always an event on 12:00 would be always on 12:00 no matter the timezone
+        // timezone: 'UTC', // standard is UTC no need to define it
         url: 'https://app.btree.at/',
       });
     }
@@ -91,7 +91,7 @@ export default class ExternalController {
   /**
    * @description  Local development use Stripe CLI and redirect webhooks: stripe listen --forward-to localhost:8101/api/v1/external/stripe/webhook
    */
-  static async stripeWebhook(req: FastifyRequest, reply: FastifyReply) {
+  static async stripeWebhook(req: FastifyRequest, _reply: FastifyReply) {
     const event = req.body as Stripe.Event;
     const object = event.data.object as Stripe.Checkout.Session;
     if (event.type === 'checkout.session.completed') {
@@ -106,7 +106,8 @@ export default class ExternalController {
         server = isServerLocationValid(reference.server)
           ? reference.server
           : 'eu';
-      } catch (e) {
+      }
+      catch (e) {
         const mailer = MailService.getInstance();
         mailer.sendRawMail(
           'office@btree.at',
@@ -114,7 +115,7 @@ export default class ExternalController {
           JSON.stringify(event, null, 2),
         );
         req.log.error(e);
-        throw httpErrors.InternalServerError();
+        throw new httpErrors.InternalServerError();
       }
 
       if (serverLocation !== server) {
@@ -122,7 +123,7 @@ export default class ExternalController {
           'info',
           'Stripe Webhook - ignored wrong server',
           {
-            server: server,
+            server,
             current: serverLocation,
           },
         );
@@ -131,8 +132,9 @@ export default class ExternalController {
 
       let amount = 0;
       try {
-        amount = parseFloat(object.amount_total as any) / 100;
-      } catch (e) {
+        amount = Number.parseFloat(object.amount_total as any) / 100;
+      }
+      catch (e) {
         req.log.error(e);
       }
       await addPremium(user_id, 12 * years, amount, 'stripe');
