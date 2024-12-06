@@ -1,25 +1,26 @@
+import type { FastifyReply, FastifyRequest } from 'fastify';
 import { RearingDetail } from '../models/rearing/rearing_detail.model.js';
 import { RearingStep } from '../models/rearing/rearing_step.model.js';
-import { FastifyReply, FastifyRequest } from 'fastify';
 
 export default class RearingDetailController {
-  static async get(req: FastifyRequest, reply: FastifyReply) {
+  static async get(req: FastifyRequest, _reply: FastifyReply) {
     const { order, direction, offset, limit, q } = req.query as any;
     const query = RearingDetail.query()
       .where({
         user_id: req.session.user.user_id,
       })
-      .page(offset ? offset : 0, limit === 0 || !limit ? 10 : limit);
+      .page(offset || 0, limit === 0 || !limit ? 10 : limit);
 
     if (order) {
       if (Array.isArray(order)) {
         order.forEach((field, index) => query.orderBy(field, direction[index]));
-      } else {
+      }
+      else {
         query.orderBy(order, direction);
       }
     }
     if (q) {
-      const search = '' + q; // Querystring could be converted be a number
+      const search = `${q}`; // Querystring could be converted be a number
 
       if (search.trim() !== '') {
         query.where((builder) => {
@@ -31,7 +32,7 @@ export default class RearingDetailController {
     return { ...result };
   }
 
-  static async patch(req: FastifyRequest, reply: FastifyReply) {
+  static async patch(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as any;
     const ids = body.ids;
     const insert = { ...body.data };
@@ -44,7 +45,7 @@ export default class RearingDetailController {
     return result;
   }
 
-  static async post(req: FastifyRequest, reply: FastifyReply) {
+  static async post(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as any;
     const result = await RearingDetail.transaction(async (trx) => {
       return await RearingDetail.query(trx).insert({
@@ -55,7 +56,7 @@ export default class RearingDetailController {
     return { ...result };
   }
 
-  static async batchGet(req: FastifyRequest, reply: FastifyReply) {
+  static async batchGet(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as any;
     const result = await RearingDetail.transaction(async (trx) => {
       const res = await RearingDetail.query(trx)
@@ -66,7 +67,7 @@ export default class RearingDetailController {
     return result;
   }
 
-  static async batchDelete(req: FastifyRequest, reply: FastifyReply) {
+  static async batchDelete(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as any;
     const result = await RearingDetail.transaction(async (trx) => {
       await RearingStep.query(trx)

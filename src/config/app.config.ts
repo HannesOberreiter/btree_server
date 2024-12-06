@@ -1,30 +1,31 @@
-import RedisStore from 'connect-redis';
+import type { FastifyInstance } from 'fastify';
 import { randomUUID } from 'node:crypto';
+import fastifyCompress from '@fastify/compress';
+import fastifyCookie from '@fastify/cookie';
+import fastifyHelmet from '@fastify/helmet';
+
+import fastifyMultipart from '@fastify/multipart';
+import fastifyRateLimit from '@fastify/rate-limit';
+import fastifySession from '@fastify/session';
+import RedisStore from 'connect-redis';
+import fastify from 'fastify';
 import {
   serializerCompiler,
   validatorCompiler,
 } from 'fastify-type-provider-zod';
-import { ZodError } from 'zod';
 import queryString from 'query-string';
 
-import { RedisServer } from '../servers/redis.server.js';
+import { ZodError } from 'zod';
+import routes from '../api/routes/index.js';
+import { checkMySQLError } from '../api/utils/error.util.js';
 import {
   authorized,
   env,
   sessionSecret,
 } from '../config/environment.config.js';
+import { RedisServer } from '../servers/redis.server.js';
 import { Logger } from '../services/logger.service.js';
 import { ENVIRONMENT } from './constants.config.js';
-import routes from '../api/routes/index.js';
-import { checkMySQLError } from '../api/utils/error.util.js';
-
-import fastify, { FastifyInstance } from 'fastify';
-import fastifyRateLimit from '@fastify/rate-limit';
-import fastifyCookie from '@fastify/cookie';
-import fastifySession from '@fastify/session';
-import fastifyCompress from '@fastify/compress';
-import fastifyHelmet from '@fastify/helmet';
-import fastifyMultipart from '@fastify/multipart';
 
 /**
  * @description Instantiate server application.
@@ -48,7 +49,7 @@ export class Application {
       trustProxy: true,
       bodyLimit: 1048576 * 50, // 50 MB
       maxParamLength: 10000,
-      querystringParser: (str) =>
+      querystringParser: str =>
         queryString.parse(str, {
           arrayFormat: 'bracket',
           parseBooleans: true,
@@ -98,26 +99,28 @@ export class Application {
         if (req.headers.referer) {
           const url = new URL(req.headers.referer);
           req.headers.origin = url.origin;
-        } else if (req.headers.host) {
+        }
+        else if (req.headers.host) {
           req.headers.origin = req.headers.host;
         }
       }
 
       const origin = req.headers.origin;
 
-      const isExternal =
-        req.url.indexOf('external') >= 0 ||
-        req.url.indexOf('auth/google/callback') >= 0;
+      const isExternal
+        = req.url.includes('external')
+        || req.url.includes('auth/google/callback');
 
       if (isExternal || env === ENVIRONMENT.development) {
         reply.header('Access-Control-Allow-Origin', '*');
-      } else {
+      }
+      else {
         reply.header('Access-Control-Allow-Origin', origin);
         reply.header('Access-Control-Allow-Credentials', 'true');
       }
 
       if (!isExternal) {
-        if (authorized.indexOf(origin) === -1) {
+        if (!authorized.includes(origin)) {
           reply.status(406).send();
         }
       }
@@ -142,7 +145,7 @@ export class Application {
     this.app.register(fastifyCookie);
 
     this.app.register(fastifySession, {
-      idGenerator: function (req) {
+      idGenerator(req) {
         let id = randomUUID();
         if ('bee_id' in req) {
           id = `${req.bee_id}:${id}`;
@@ -203,7 +206,7 @@ export class Application {
         });
         return;
       }
-      let e = checkMySQLError(error);
+      const e = checkMySQLError(error);
       this.log.error(
         {
           user: request?.session?.user,

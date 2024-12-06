@@ -17,7 +17,7 @@ export const up = function (knex) {
  * @returns { Promise<void> }
  */
 export const down = function (knex) {
-  knex.schema
+  return knex.schema
     .alterTable('observations', (t) => {
       t.dropIndex('observed_at');
     })

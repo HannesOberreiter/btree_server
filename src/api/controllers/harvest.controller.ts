@@ -1,14 +1,14 @@
-import { map } from 'lodash-es';
+import type { FastifyReply, FastifyRequest } from 'fastify';
 import dayjs from 'dayjs';
-import { FastifyRequest, FastifyReply } from 'fastify';
+import { map } from 'lodash-es';
 
 import { Harvest } from '../models/harvest.model.js';
 import { Hive } from '../models/hive.model.js';
 
 export default class HarvestController {
-  static async get(req: FastifyRequest, reply: FastifyReply) {
-    const { order, direction, offset, limit, q, filters, deleted, done } =
-      req.query as any;
+  static async get(req: FastifyRequest, _reply: FastifyReply) {
+    const { order, direction, offset, limit, q, filters, deleted, done }
+      = req.query as any;
     const query = Harvest.query()
       .withGraphJoined(
         '[harvest_apiary, type, hive, creator(identifier), editor(identifier)]',
@@ -18,7 +18,7 @@ export default class HarvestController {
         'harvests.user_id': req.session.user.user_id,
         'harvests.deleted': deleted === true,
       })
-      .page(offset ? offset : 0, limit === 0 || !limit ? 10 : limit);
+      .page(offset || 0, limit === 0 || !limit ? 10 : limit);
 
     if (done) {
       query.where('harvests.done', done === 'true');
@@ -29,26 +29,29 @@ export default class HarvestController {
         const filtering = JSON.parse(filters);
         if (Array.isArray(filtering)) {
           filtering.forEach((v) => {
-            if ('date' in v && typeof v['date'] === 'object') {
+            if ('date' in v && typeof v.date === 'object') {
               query.whereBetween('date', [v.date.from, v.date.to]);
-            } else {
+            }
+            else {
               query.where(v);
             }
           });
         }
-      } catch (e) {
+      }
+      catch (e) {
         req.log.error(e);
       }
     }
     if (order) {
       if (Array.isArray(order)) {
         order.forEach((field, index) => query.orderBy(field, direction[index]));
-      } else {
+      }
+      else {
         query.orderBy(order, direction);
       }
     }
     if (q) {
-      const search = '' + q; // Querystring could be converted be a number
+      const search = `${q}`; // Querystring could be converted be a number
 
       if (search.trim() !== '') {
         query.where((builder) => {
@@ -63,7 +66,7 @@ export default class HarvestController {
     return { ...result };
   }
 
-  static async patch(req: FastifyRequest, reply: FastifyReply) {
+  static async patch(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as any;
     const ids = body.ids;
     const insert = { ...body.data };
@@ -76,7 +79,7 @@ export default class HarvestController {
     return result;
   }
 
-  static async post(req: FastifyRequest, reply: FastifyReply) {
+  static async post(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as any;
     const hive_ids = body.hive_ids;
     const interval = body.interval;
@@ -128,7 +131,7 @@ export default class HarvestController {
     return result;
   }
 
-  static async updateStatus(req: FastifyRequest, reply: FastifyReply) {
+  static async updateStatus(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as any;
     const result = await Harvest.transaction(async (trx) => {
       return Harvest.query(trx)
@@ -142,7 +145,7 @@ export default class HarvestController {
     return result;
   }
 
-  static async updateDate(req: FastifyRequest, reply: FastifyReply) {
+  static async updateDate(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as any;
     const result = await Harvest.transaction(async (trx) => {
       return Harvest.query(trx)
@@ -157,7 +160,7 @@ export default class HarvestController {
     return result;
   }
 
-  static async batchGet(req: FastifyRequest, reply: FastifyReply) {
+  static async batchGet(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as any;
     const result = await Harvest.transaction(async (trx) => {
       const res = await Harvest.query(trx)
@@ -169,11 +172,11 @@ export default class HarvestController {
     return result;
   }
 
-  static async batchDelete(req: FastifyRequest, reply: FastifyReply) {
+  static async batchDelete(req: FastifyRequest, _reply: FastifyReply) {
     const q = req.query as any;
     const body = req.body as any;
-    const hardDelete = q.hard ? true : false;
-    const restoreDelete = q.restore ? true : false;
+    const hardDelete = !!q.hard;
+    const restoreDelete = !!q.restore;
 
     const result = await Harvest.transaction(async (trx) => {
       const res = await Harvest.query(trx)
@@ -184,19 +187,21 @@ export default class HarvestController {
       const softIds = [];
       const hardIds = [];
       map(res, (obj) => {
-        if ((obj.deleted || hardDelete) && !restoreDelete) hardIds.push(obj.id);
+        if ((obj.deleted || hardDelete) && !restoreDelete)
+          hardIds.push(obj.id);
         else softIds.push(obj.id);
       });
 
       if (hardIds.length > 0)
         await Harvest.query(trx).delete().whereIn('id', hardIds);
-      if (softIds.length > 0)
+      if (softIds.length > 0) {
         await Harvest.query(trx)
           .patch({
-            deleted: restoreDelete ? false : true,
+            deleted: !restoreDelete,
             edit_id: req.session.user.bee_id,
           })
           .findByIds(softIds);
+      }
 
       return res;
     });

@@ -1,5 +1,5 @@
-import { fileURLToPath } from 'url';
-import { readFileSync } from 'fs';
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 
 /**
  * @param { import("knex").Knex } knex

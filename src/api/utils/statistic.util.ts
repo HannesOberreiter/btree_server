@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import { BaseModel } from '../models/base.model.js';
 import { checkMySQLError } from './error.util.js';
 
-export const hiveCountApiary = async (date: Date, user_id: number) => {
+export async function hiveCountApiary(date: Date, user_id: number) {
   try {
     const knex = BaseModel.knex();
     const subquery = knex('movedates')
@@ -13,7 +13,7 @@ export const hiveCountApiary = async (date: Date, user_id: number) => {
         knex.raw('IF(hives.grouphive > 0, hives.grouphive, 1) as amount'),
         // https://stackoverflow.com/a/58697900/5316675
         knex.raw(
-          "SUBSTRING(MAX(CONCAT(TO_CHAR(date, 'YYYY-MM-DD HH:mm:ss'), apiary_id)), 20, 31) as apiary_id",
+          'SUBSTRING(MAX(CONCAT(TO_CHAR(date, \'YYYY-MM-DD HH:mm:ss\'), apiary_id)), 20, 31) as apiary_id',
         ),
         'user_id',
       )
@@ -42,12 +42,13 @@ export const hiveCountApiary = async (date: Date, user_id: number) => {
       .groupBy('apiary_id');
 
     return result;
-  } catch (e) {
+  }
+  catch (e) {
     throw checkMySQLError(e);
   }
-};
+}
 
-export const hiveCountTotal = async (user_id: number) => {
+export async function hiveCountTotal(user_id: number) {
   const knex = BaseModel.knex();
   const subquery = knex('movedates')
     .select('hive_id', knex.raw('1 as amount'), 'user_id')
@@ -84,13 +85,13 @@ export const hiveCountTotal = async (user_id: number) => {
     .groupBy('year', 'quarter');
   const minYear = Math.min(
     ...(increase
-      .map((v) => parseInt(v.year))
-      .concat(decrease.map((v) => parseInt(v.year))) as any),
+      .map(v => Number.parseInt(v.year))
+      .concat(decrease.map(v => Number.parseInt(v.year))) as any),
   );
   const maxYear = Math.max(
     ...(increase
-      .map((v) => parseInt(v.year))
-      .concat(decrease.map((v) => parseInt(v.year))) as any),
+      .map(v => Number.parseInt(v.year))
+      .concat(decrease.map(v => Number.parseInt(v.year))) as any),
   );
   let result = [];
   for (let i = 0; i <= maxYear - minYear; i++) {
@@ -98,7 +99,7 @@ export const hiveCountTotal = async (user_id: number) => {
       result.push({
         year: minYear + i,
         quarter: j,
-        ident: minYear + i + '' + j,
+        ident: `${minYear + i}${j}`,
       });
     }
   }
@@ -106,11 +107,11 @@ export const hiveCountTotal = async (user_id: number) => {
   result = result.map((i) => {
     let res = Object.assign(
       i,
-      decrease.find((b) => i.ident === b.ident),
+      decrease.find(b => i.ident === b.ident),
     );
     res = Object.assign(
       res,
-      increase.find((b) => res.ident === b.ident),
+      increase.find(b => res.ident === b.ident),
     );
     res.change = (res.increase || 0) - (res.decrease || 0);
     res.total = total + res.change;
@@ -118,4 +119,4 @@ export const hiveCountTotal = async (user_id: number) => {
     return res;
   });
   return result;
-};
+}

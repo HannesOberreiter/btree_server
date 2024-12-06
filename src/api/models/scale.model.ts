@@ -26,6 +26,7 @@ export class Scale extends Model {
       user_id: { type: 'integer' },
     },
   };
+
   static relationMappings = () => ({
     scale_data: {
       relation: Model.HasManyRelation,

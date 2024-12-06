@@ -1,6 +1,6 @@
-import { CompanyBee } from './company_bee.model.js';
 import { Model } from 'objection';
 import { BaseModel } from './base.model.js';
+import { CompanyBee } from './company_bee.model.js';
 
 export class RefreshToken extends BaseModel {
   token!: string;
@@ -19,14 +19,14 @@ export class RefreshToken extends BaseModel {
   static jsonSchema = {
     type: 'object',
     properties: {
-      id: { type: 'integer' },
+      'id': { type: 'integer' },
 
-      token: { type: 'string', minLength: 10 },
-      expires: { type: 'string', format: 'iso-date-time' },
+      'token': { type: 'string', minLength: 10 },
+      'expires': { type: 'string', format: 'iso-date-time' },
       'user-agent': { type: 'string', minLength: 1, maxLength: 65 },
 
-      user_id: { type: 'integer' }, // Company FK
-      bee_id: { type: 'integer' }, // User FK
+      'user_id': { type: 'integer' }, // Company FK
+      'bee_id': { type: 'integer' }, // User FK
     },
   };
 

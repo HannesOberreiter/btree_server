@@ -1,17 +1,17 @@
-import {
-  ValidationError,
-  NotFoundError,
-  DBError,
-  UniqueViolationError,
-  NotNullViolationError,
-  ForeignKeyViolationError,
-  CheckViolationError,
-  DataError,
-} from 'objection';
-
 import httpErrors from 'http-errors';
 
-export const checkMySQLError = (err: any) => {
+import {
+  CheckViolationError,
+  DataError,
+  DBError,
+  ForeignKeyViolationError,
+  NotFoundError,
+  NotNullViolationError,
+  UniqueViolationError,
+  ValidationError,
+} from 'objection';
+
+export function checkMySQLError(err: any) {
   // https://vincit.github.io/objection.js/recipes/error-handling.html#examples
   let error;
   if (err instanceof ValidationError) {
@@ -52,13 +52,15 @@ export const checkMySQLError = (err: any) => {
         };
         break;
     }
-  } else if (err instanceof NotFoundError) {
+  }
+  else if (err instanceof NotFoundError) {
     error = httpErrors.NotFound(err.message);
     error.cause = {
       type: 'NotFound',
       data: {},
     };
-  } else if (err instanceof UniqueViolationError) {
+  }
+  else if (err instanceof UniqueViolationError) {
     error = httpErrors.Conflict(err.message);
     error.cause = {
       type: 'UniqueViolation',
@@ -68,7 +70,8 @@ export const checkMySQLError = (err: any) => {
         constraint: err.constraint,
       },
     };
-  } else if (err instanceof NotNullViolationError) {
+  }
+  else if (err instanceof NotNullViolationError) {
     error = httpErrors.BadRequest(err.message);
     error.cause = {
       type: 'NotNullViolation',
@@ -77,7 +80,8 @@ export const checkMySQLError = (err: any) => {
         table: err.table,
       },
     };
-  } else if (err instanceof ForeignKeyViolationError) {
+  }
+  else if (err instanceof ForeignKeyViolationError) {
     error = httpErrors.Conflict(err.message);
     error.cause = {
       type: 'ForeignKeyViolation',
@@ -86,7 +90,8 @@ export const checkMySQLError = (err: any) => {
         constraint: err.constraint,
       },
     };
-  } else if (err instanceof CheckViolationError) {
+  }
+  else if (err instanceof CheckViolationError) {
     error = httpErrors.BadRequest(err.message);
     error.cause = {
       type: 'CheckViolation',
@@ -95,21 +100,25 @@ export const checkMySQLError = (err: any) => {
         constraint: err.constraint,
       },
     };
-  } else if (err instanceof DataError) {
+  }
+  else if (err instanceof DataError) {
     error = httpErrors.BadRequest(err.message);
     error.cause = {
       type: 'InvalidData',
       data: {},
     };
-  } else if (err instanceof DBError) {
+  }
+  else if (err instanceof DBError) {
     error = httpErrors[500](err.message);
     error.cause = {
       type: 'UnknownDatabaseError',
       data: {},
     };
-  } else if (err instanceof Error) {
+  }
+  else if (err instanceof Error) {
     return err;
-  } else {
+  }
+  else {
     error = httpErrors[500](err.message);
     error.cause = {
       type: 'UnknownError',
@@ -118,4 +127,4 @@ export const checkMySQLError = (err: any) => {
   }
 
   return error;
-};
+}

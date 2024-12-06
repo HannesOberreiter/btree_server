@@ -1,7 +1,9 @@
+import type { ModelObject } from 'objection';
 import { ExtModel } from './base.model.js';
 import { Company } from './company.model.js';
 import { CompanyBee } from './company_bee.model.js';
-import { ModelObject } from 'objection';
+
+type _UserShape = ModelObject<User>;
 
 export class User extends ExtModel {
   id!: number;
@@ -116,6 +118,3 @@ export class User extends ExtModel {
     },
   });
 }
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-type UserShape = ModelObject<User>;

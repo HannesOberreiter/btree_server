@@ -1,16 +1,17 @@
-import { FastifyRequest, FastifyReply } from 'fastify';
-import { Observation, Taxa } from '../models/observation.model.js';
+import type { FastifyReply, FastifyRequest } from 'fastify';
+import type { Taxa } from '../models/observation.model.js';
+import createHttpError from 'http-errors';
 import { raw } from 'objection';
 import { RedisServer } from '../../servers/redis.server.js';
-import createHttpError from 'http-errors';
+import { Observation } from '../models/observation.model.js';
 
 function mapTaxa(req: FastifyRequest) {
   const paramTaxa = (req.params as any).taxa as any;
   if (!paramTaxa) {
     throw createHttpError(400, 'Taxa is required');
   }
-  const taxa: Taxa =
-    paramTaxa === 'velutina' ? 'Vespa velutina' : 'Aethina tumida';
+  const taxa: Taxa
+    = paramTaxa === 'velutina' ? 'Vespa velutina' : 'Aethina tumida';
   return taxa;
 }
 

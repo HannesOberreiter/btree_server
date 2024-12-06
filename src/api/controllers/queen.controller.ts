@@ -1,14 +1,14 @@
-import { Queen } from '../models/queen.model.js';
-import { map } from 'lodash-es';
+import type { FastifyReply, FastifyRequest } from 'fastify';
+import type Objection from 'objection';
 import dayjs from 'dayjs';
-import { QueenDuration } from '../models/queen_duration.model.js';
+import { map } from 'lodash-es';
 import { Checkup } from '../models/checkup.model.js';
 import { Harvest } from '../models/harvest.model.js';
-import { FastifyReply, FastifyRequest } from 'fastify';
-import Objection from 'objection';
+import { Queen } from '../models/queen.model.js';
+import { QueenDuration } from '../models/queen_duration.model.js';
 
 export default class QueenController {
-  static async get(req: FastifyRequest, reply: FastifyReply) {
+  static async get(req: FastifyRequest, _reply: FastifyReply) {
     const {
       order,
       direction,
@@ -26,7 +26,7 @@ export default class QueenController {
         'queens.user_id': req.session.user.user_id,
         'queens.deleted': deleted === true,
       })
-      .page(offset ? offset : 0, limit === 0 || !limit ? 10 : limit);
+      .page(offset || 0, limit === 0 || !limit ? 10 : limit);
 
     if (modus !== undefined && modus !== null) {
       query.where('queens.modus', modus === true);
@@ -38,17 +38,20 @@ export default class QueenController {
       );
       if (latest === true) {
         query.whereNotNull('queen_location.queen_id');
-      } else if (latest === false) {
+      }
+      else if (latest === false) {
         query.whereNull('queen_location.queen_id');
       }
-    } else {
+    }
+    else {
       query.withGraphJoined('hive_location');
     }
 
     if (order) {
       if (Array.isArray(order)) {
         order.forEach((field, index) => query.orderBy(field, direction[index]));
-      } else {
+      }
+      else {
         query.orderBy(order, direction);
       }
     }
@@ -63,21 +66,24 @@ export default class QueenController {
                 v['queens.date'].from,
                 v['queens.date'].to,
               ]);
-            } else {
+            }
+            else {
               if (v['queens.hive_id'] === 'empty') {
                 query.whereNull('hive_location.hive_id');
-              } else {
+              }
+              else {
                 query.where(v);
               }
             }
           });
         }
-      } catch (e) {
+      }
+      catch (e) {
         req.log.error(e);
       }
     }
     if (q) {
-      const search = '' + q; // Querystring could be converted be a number
+      const search = `${q}`; // Querystring could be converted be a number
 
       if (search.trim() !== '') {
         query.where((builder) => {
@@ -91,7 +97,7 @@ export default class QueenController {
     return { ...result };
   }
 
-  static async getPedigree(req: FastifyRequest, reply: FastifyReply) {
+  static async getPedigree(req: FastifyRequest, _reply: FastifyReply) {
     const params = req.params as any;
     const queen = await Queen.query()
       .withRecursive('mothers', (qb) => {
@@ -136,7 +142,7 @@ export default class QueenController {
     return queen;
   }
 
-  static async getStats(req: FastifyRequest, reply: FastifyReply) {
+  static async getStats(req: FastifyRequest, _reply: FastifyReply) {
     const { order, direction, offset, limit, q, filters } = req.query as any;
     const query = QueenDuration.query();
     query
@@ -144,12 +150,13 @@ export default class QueenController {
       .where({
         'queen_durations.user_id': req.session.user.user_id,
       })
-      .page(offset ? offset : 0, limit === 0 || !limit ? 10 : limit);
+      .page(offset || 0, limit === 0 || !limit ? 10 : limit);
 
     if (order) {
       if (Array.isArray(order)) {
         order.forEach((field, index) => query.orderBy(field, direction[index]));
-      } else {
+      }
+      else {
         query.orderBy(order, direction);
       }
     }
@@ -160,28 +167,31 @@ export default class QueenController {
         if (Array.isArray(filtering)) {
           filtering.forEach((v) => {
             if (
-              'queens.move_date' in v &&
-              typeof v['queens.move_date'] === 'object'
+              'queens.move_date' in v
+              && typeof v['queens.move_date'] === 'object'
             ) {
               query.whereBetween('queens.move_date', [
                 v['queens.move_date'].from,
                 v['queens.move_date'].to,
               ]);
-            } else {
+            }
+            else {
               if (v['queens.hive_id'] === 'empty') {
                 query.whereNull('hive_location.hive_id');
-              } else {
+              }
+              else {
                 query.where(v);
               }
             }
           });
         }
-      } catch (e) {
+      }
+      catch (e) {
         req.log.error(e);
       }
     }
     if (q) {
-      const search = '' + q; // Querystring could be converted be a number
+      const search = `${q}`; // Querystring could be converted be a number
 
       if (search.trim() !== '') {
         query.where((builder) => {
@@ -191,10 +201,10 @@ export default class QueenController {
       }
     }
 
-    const result = await query.orderBy('id');
+    const result = await query.orderBy('id') as any;
 
-    for (let index = 0; index < result['results'].length; index++) {
-      const queen = result['results'][index];
+    for (let index = 0; index < result.results.length; index++) {
+      const queen = result.results[index];
       const query_checkup = await Checkup.query()
         .first()
         .select(
@@ -223,10 +233,10 @@ export default class QueenController {
     return result;
   }
 
-  static async post(req: FastifyRequest, reply: FastifyReply) {
+  static async post(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as any;
-    const start = parseInt(body.start);
-    const repeat = parseInt(body.repeat) > 1 ? parseInt(body.repeat) : 1;
+    const start = Number.parseInt(body.start);
+    const repeat = Number.parseInt(body.repeat) > 1 ? Number.parseInt(body.repeat) : 1;
 
     const insert = { ...body };
     delete insert.start;
@@ -241,8 +251,8 @@ export default class QueenController {
         const hive_id = body.hive_id ? body.hive_id[i] : null;
         const res = await Queen.query(trx).insert({
           ...insert,
-          name: name,
-          hive_id: hive_id,
+          name,
+          hive_id,
           user_id: req.session.user.user_id,
           bee_id: req.session.user.bee_id,
         });
@@ -256,7 +266,7 @@ export default class QueenController {
     return result;
   }
 
-  static async patch(req: FastifyRequest, reply: FastifyReply) {
+  static async patch(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as any;
     const ids = body.ids;
     const insert = { ...body.data };
@@ -277,7 +287,7 @@ export default class QueenController {
     return result;
   }
 
-  static async updateStatus(req: FastifyRequest, reply: FastifyReply) {
+  static async updateStatus(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as any;
     const result = await Queen.transaction(async (trx) => {
       return Queen.query(trx)
@@ -292,11 +302,11 @@ export default class QueenController {
     return result;
   }
 
-  static async batchDelete(req: FastifyRequest, reply: FastifyReply) {
+  static async batchDelete(req: FastifyRequest, _reply: FastifyReply) {
     const q = req.query as any;
     const body = req.body as any;
-    const hardDelete = q.hard ? true : false;
-    const restoreDelete = q.restore ? true : false;
+    const hardDelete = !!q.hard;
+    const restoreDelete = !!q.restore;
 
     const result = await Queen.transaction(async (trx) => {
       const res = await Queen.query()
@@ -307,17 +317,18 @@ export default class QueenController {
       const softIds = [];
       const hardIds = [];
       map(res, (obj) => {
-        if ((obj.deleted || hardDelete) && !restoreDelete) hardIds.push(obj.id);
+        if ((obj.deleted || hardDelete) && !restoreDelete)
+          hardIds.push(obj.id);
         else softIds.push(obj.id);
       });
 
       if (hardIds.length > 0) {
         await Queen.query(trx).delete().whereIn('id', hardIds);
       }
-      if (softIds.length > 0)
+      if (softIds.length > 0) {
         await Queen.query(trx)
           .patch({
-            deleted: restoreDelete ? false : true,
+            deleted: !restoreDelete,
             deleted_at: dayjs()
               .utc()
               .toISOString()
@@ -326,13 +337,14 @@ export default class QueenController {
             edit_id: req.session.user.bee_id,
           })
           .findByIds(softIds);
+      }
 
       return res;
     });
     return result;
   }
 
-  static async batchGet(req: FastifyRequest, reply: FastifyReply) {
+  static async batchGet(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as any;
     const result = await Queen.query().findByIds(body.ids).where({
       user_id: req.session.user.user_id,
@@ -355,7 +367,8 @@ async function inactivateOtherQueens(
     .orderBy('move_date', 'desc');
 
   for (const queen of queens) {
-    if (!queen.move_date) continue;
+    if (!queen.move_date)
+      continue;
     const curMoveDate = new Date(queen.move_date);
     if (queen.modus && curMoveDate < lastMoveDate) {
       await Queen.query(trx)

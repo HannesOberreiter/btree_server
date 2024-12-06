@@ -13,8 +13,8 @@ export const up = function (knex) {
           { column: 'hive_id' },
           { column: 'move_date', order: 'desc' },
         ]);
-      let lastMoveDate = undefined;
-      let hiveId = undefined;
+      let lastMoveDate;
+      let hiveId;
       for (const queen of queens) {
         if (hiveId !== queen.hive_id) {
           hiveId = queen.hive_id;
@@ -36,13 +36,9 @@ export const up = function (knex) {
         }
       }
     })
-    .catch(function (error) {
+    .catch((error) => {
       console.error(error);
     });
 };
 
-/**
- * @param { import("knex").Knex } knex
- * @returns { Promise<void> }
- */
-export const down = function (knex) {};
+export const down = function () {};

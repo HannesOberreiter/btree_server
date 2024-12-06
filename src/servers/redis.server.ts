@@ -1,8 +1,9 @@
-import { RedisOptions, Redis } from 'ioredis';
+import type { RedisOptions } from 'ioredis';
+import { Redis } from 'ioredis';
 
+import { ENVIRONMENT } from '../config/constants.config.js';
 import { env, redisConfig } from '../config/environment.config.js';
 import { Logger } from '../services/logger.service.js';
-import { ENVIRONMENT } from '../config/constants.config.js';
 
 /**
  * @description Connection to redis docker instance
@@ -17,8 +18,8 @@ export class RedisServer {
         enableOfflineQueue: false,
       };
       if (redisConfig.password) {
-        config['username'] = redisConfig.user;
-        config['password'] = redisConfig.password;
+        config.username = redisConfig.user;
+        config.password = redisConfig.password;
       }
       RedisServer.client = new Redis(
         redisConfig.port,
@@ -34,19 +35,22 @@ export class RedisServer {
           );
         }
       });
-    } catch (error) {
+    }
+    catch (error) {
       this.logger.log('error', `Redis connection error : ${error.message}`, {
         label: 'Redis',
       });
     }
   }
+
   async stop(): Promise<void> {
     try {
       this.logger.log('debug', 'Closing redis connection', {});
       await RedisServer.client.save();
       await RedisServer.client.quit();
       this.logger.log('debug', 'Closed redis connection', {});
-    } catch (error) {
+    }
+    catch (error) {
       this.logger.log('error', 'Redis closing error', { error });
     }
   }

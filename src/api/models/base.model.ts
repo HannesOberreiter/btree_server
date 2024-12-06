@@ -1,22 +1,23 @@
-import { Model } from 'objection';
-import { AjvValidator } from 'objection';
 import addFormats from 'ajv-formats';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc.js';
+import { AjvValidator, Model } from 'objection';
+
 dayjs.extend(utc);
 
 export class BaseModel extends Model {
   constructor() {
     super();
   }
+
   // Fix to change date-time from ISOFormat to MySQL Format
   $beforeValidate(jsonSchema, json, _opt) {
-    Object.keys(jsonSchema.properties).map(function (key, _index) {
+    Object.keys(jsonSchema.properties).forEach((key, _index) => {
       const format = jsonSchema.properties[key].format;
       if (
-        format &&
-        typeof format !== 'undefined' &&
-        format === 'iso-date-time'
+        format
+        && typeof format !== 'undefined'
+        && format === 'iso-date-time'
       ) {
         const valueToValidate = json[key];
         if (valueToValidate !== null && valueToValidate instanceof Date) {
@@ -24,7 +25,8 @@ export class BaseModel extends Model {
             .toISOString()
             .slice(0, 19)
             .replace('T', ' ');
-        } else if (valueToValidate) {
+        }
+        else if (valueToValidate) {
           json[key] = new Date(valueToValidate)
             .toISOString()
             .slice(0, 19)
@@ -34,6 +36,7 @@ export class BaseModel extends Model {
     });
     return jsonSchema;
   }
+
   // Using formats package to evaluate json type formats
   // https://ajv.js.org/options.html#usage
   static createValidator() {
@@ -59,7 +62,7 @@ export class ExtModel extends BaseModel {
   // small helper to prevent error on timestamp if tables are joined
   // eg. ER_NON_UNIQ_ERROR: Column 'updated_at' in field list is ambiguous
   getTablename() {
-    return this.constructor['tableName'];
+    return (this.constructor as any).tableName;
   }
 
   constructor() {

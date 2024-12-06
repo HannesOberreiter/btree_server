@@ -1,8 +1,8 @@
-import { Guard } from '../../hooks/guard.hook.js';
+import type { FastifyInstance } from 'fastify';
+import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { ROLES } from '../../../config/constants.config.js';
-import { FastifyInstance } from 'fastify';
-import { ZodTypeProvider } from 'fastify-type-provider-zod';
 import DropboxController from '../../controllers/dropbox.controller.js';
+import { Guard } from '../../hooks/guard.hook.js';
 
 export default function routes(
   instance: FastifyInstance,

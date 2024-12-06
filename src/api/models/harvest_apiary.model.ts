@@ -1,6 +1,6 @@
+import { Model } from 'objection';
 import { Company } from './company.model.js';
 import { Harvest } from './harvest.model.js';
-import { Model } from 'objection';
 
 export class HarvestApiary extends Model {
   apiary_id!: number;

@@ -1,15 +1,16 @@
-import { OAuth2Client, TokenPayload } from 'google-auth-library';
+import type { TokenPayload } from 'google-auth-library';
+import { OAuth2Client } from 'google-auth-library';
 
-import { googleOAuth, url } from '../config/environment.config.js';
 import { FederatedCredential } from '../api/models/federated_credential.js';
 import { User } from '../api/models/user.model.js';
+import { googleOAuth, url } from '../config/environment.config.js';
 import { Logger } from './logger.service.js';
 
-export type federatedUser = {
-  bee_id: number | undefined;
-  name: string | undefined;
-  email: string | undefined;
-};
+export interface federatedUser {
+  bee_id: number | undefined
+  name: string | undefined
+  email: string | undefined
+}
 
 export class GoogleAuth {
   private static instance: GoogleAuth;
@@ -27,7 +28,7 @@ export class GoogleAuth {
     this.client = new OAuth2Client(
       googleOAuth.clientID,
       googleOAuth.clientSecret,
-      url + '/api/v1/auth/google/callback',
+      `${url}/api/v1/auth/google/callback`,
     );
   }
 
@@ -71,26 +72,26 @@ export class GoogleAuth {
         .where({ id: federate.id });
       this.logger.log('info', 'Federated user logged in', {
         bee_id: federate.bee_id,
-        provider: provider,
+        provider,
       });
       return { bee_id: federate.bee_id, name: undefined, email: undefined };
     }
 
     // check if federated is created by user
     const federatedTemp = await FederatedCredential.query().findOne({
-      mail: mail,
+      mail,
     });
     if (federatedTemp) {
       await FederatedCredential.query()
         .patch({
-          provider: provider,
+          provider,
           provider_id: id,
           last_visit: new Date(),
         })
         .where({ id: federatedTemp.id });
       this.logger.log('info', 'New federated user logged in', {
         bee_id: federate.bee_id,
-        provider: provider,
+        provider,
       });
       return {
         bee_id: federatedTemp.bee_id,
@@ -109,22 +110,22 @@ export class GoogleAuth {
     // No user found with verified mail, redirect to register page on frontend with name and mail
     if (!bee_id) {
       this.logger.log('info', 'Federated register redirect', {
-        provider: provider,
+        provider,
       });
-      return { bee_id: undefined, name: name, email: mail };
+      return { bee_id: undefined, name, email: mail };
     }
 
     // user exists but not federated connection
     await FederatedCredential.query().insert({
-      provider: provider,
+      provider,
       provider_id: id,
-      mail: mail,
-      bee_id: bee_id,
+      mail,
+      bee_id,
       last_visit: new Date(),
     });
     this.logger.log('info', 'Federated first login with existing user', {
-      bee_id: bee_id,
-      provider: provider,
+      bee_id,
+      provider,
     });
     return { bee_id, name: undefined, email: undefined };
   }

@@ -1,5 +1,5 @@
-import { fileURLToPath } from 'url';
-import { readFileSync } from 'fs';
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 /**
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
@@ -11,10 +11,6 @@ export const up = function (knex) {
   return knex.raw(sql);
 };
 
-/**
- * @param { import("knex").Knex } knex
- * @returns { Promise<void> }
- */
-export const down = function (knex) {
-  //return knex.raw('drop view movedates_previous_apiary');
+export const down = function (_knex) {
+  // return knex.raw('drop view movedates_previous_apiary');
 };

@@ -1,16 +1,17 @@
-const request = require('supertest');
 const { expect } = require('chai');
+const { it, describe, before } = require('mocha');
+const request = require('supertest');
+
 const {
   doRequest,
   expectations,
   doQueryRequest,
-  login,
-} = require(process.cwd() + '/test/utils/index.cjs');
+} = require(`${process.cwd()}/test/utils/index.cjs`);
 
-describe('Calendar routes', function () {
+describe('calendar routes', () => {
   const route = '/api/v1/calendar';
 
-  before(function (done) {
+  before((done) => {
     agent = request.agent(global.server);
 
     doRequest(
@@ -20,8 +21,9 @@ describe('Calendar routes', function () {
       null,
       null,
       global.demoUser,
-      function (err, res) {
-        if (err) throw err;
+      (err, res) => {
+        if (err)
+          throw err;
         expect(res.statusCode).to.eqls(200);
         expect(res.header, 'set-cookie', /connect.sid=.*; Path=\/; HttpOnly/);
         done();
@@ -39,15 +41,15 @@ describe('Calendar routes', function () {
       '/movedate',
       '/scale_data',
     ];
-    kinds.map((kind) => {
-      it(`${kind} 400 - empty payload`, function (done) {
+    kinds.forEach((kind) => {
+      it(`${kind} 400 - empty payload`, (done) => {
         doQueryRequest(
           agent,
           route + kind,
           null,
           null,
           {},
-          function (err, res) {
+          (_err, res) => {
             expect(res.statusCode).to.eqls(400);
             if (kind !== '/rearing') {
               expectations(res, 'start', 'Invalid value');
@@ -58,14 +60,14 @@ describe('Calendar routes', function () {
         );
       });
 
-      it(`${kind} 401 - no header`, function (done) {
+      it(`${kind} 401 - no header`, (done) => {
         doQueryRequest(
           request.agent(global.server),
           route + kind,
           null,
           null,
           { start: new Date().toISOString(), end: new Date().toISOString() },
-          function (err, res) {
+          (_err, res) => {
             expect(res.statusCode).to.eqls(401);
             expect(res.errors, 'JsonWebTokenError');
             done();
@@ -73,7 +75,7 @@ describe('Calendar routes', function () {
         );
       });
 
-      it(`${kind} 200 - success`, function (done) {
+      it(`${kind} 200 - success`, (done) => {
         doQueryRequest(
           agent,
           route + kind,
@@ -83,7 +85,7 @@ describe('Calendar routes', function () {
             start: new Date('2020-01-01').toISOString(),
             end: new Date('2020-12-30').toISOString(),
           },
-          function (err, res) {
+          (_err, res) => {
             expect(res.statusCode).to.eqls(200);
             expect(res.body).to.be.a('Array');
             done();

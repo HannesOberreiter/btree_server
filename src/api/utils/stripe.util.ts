@@ -1,3 +1,4 @@
+import process from 'node:process';
 import Stripe from 'stripe';
 
 import { frontend, stripeSecret } from '../../config/environment.config.js';
@@ -14,7 +15,7 @@ export async function createOrder(
   const session = await stripe.checkout.sessions.create({
     line_items: [
       {
-        quantity: quantity,
+        quantity,
         price_data: {
           currency: 'EUR',
           product_data: {
@@ -28,8 +29,8 @@ export async function createOrder(
     success_url: `${frontend}/premium?session_id={CHECKOUT_SESSION_ID}&server=${process.env.SERVER}`,
     cancel_url: `${frontend}/premium?server=${process.env.SERVER}`,
     client_reference_id: JSON.stringify({
-      user_id: user_id,
-      quantity: quantity,
+      user_id,
+      quantity,
       server: process.env.SERVER,
     }),
   });
