@@ -233,7 +233,7 @@ export async function reminderVIS() {
     const reportDay1 = `${year}-12-31`;
     const reportDay2 = `${year}-06-30`;
 
-    let mailDate, mailSubject;
+    let mailDate: string, mailSubject: string;
 
     if (dayjs(countDay1).isSame(checkDate, 'day')) {
       mailDate = countDay1;
@@ -281,6 +281,7 @@ export async function reminderVIS() {
           await User.query().findById(user.id).patch({
             reminder_vis: nowDate,
           });
+          await new Promise(resolve => setTimeout(resolve, 1000));
         }
       }
     }
@@ -331,6 +332,7 @@ export async function reminderPremium() {
           await User.query().findById(u.id).patch({
             reminder_premium: nowDate,
           });
+          await new Promise(resolve => setTimeout(resolve, 1000));
         });
       });
     }

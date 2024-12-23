@@ -66,9 +66,18 @@ export class Cron {
       label: 'CronJob',
     });
     this.Logging(await cleanupDatabase());
-    this.Logging(await reminderDeletion());
-    this.Logging(await reminderVIS());
-    this.Logging(await reminderPremium());
+
+    reminderDeletion()
+      .then(res => this.Logging(res))
+      .catch(e => this.logger.log('error', e, { label: 'CronJob' }));
+
+    reminderVIS()
+      .then(res => this.Logging(res))
+      .catch(e => this.logger.log('error', e, { label: 'CronJob' }));
+
+    await reminderPremium()
+      .then(res => this.Logging(res))
+      .catch(e => this.logger.log('error', e, { label: 'CronJob' }));
 
     fetchObservations('Vespa velutina')
       .then(res => this.Logging(res))
