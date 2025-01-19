@@ -1,6 +1,6 @@
 import { compact, isArray, isEmpty, map } from 'lodash-es';
 import { defineStore } from 'pinia';
-import { deepUnref } from '~/helpers/deep-unref';
+import { deepUnref } from '../helpers/deep-unref';
 
 interface State {
   hive: string;
@@ -52,11 +52,14 @@ export const useTableFilterStore = defineStore('tableFilter', {
     field: (state) => {
       return (table: string, key: string) => {
         try {
-          const values = JSON.parse(state[table]);
-          const fil = values.filter((o: any) => key in o);
-          if (fil) return fil[0][key];
+          const stateTable = state[table];
+          if (!stateTable) return null;
+          const values = JSON.parse(stateTable);
+          const filtered = values.filter((o: any) => key in o);
+          if (filtered) return filtered[0][key];
           return null;
-        } catch (e) {
+        } catch (e: any) {
+          console.error(e);
           return null;
         }
       };
@@ -72,7 +75,7 @@ export const useTableFilterStore = defineStore('tableFilter', {
       let values;
       try {
         let found = false;
-        values = JSON.parse(this[table]);
+        values = JSON.parse(this[table]!);
         values = map(values, (o) => {
           if ('year' in o) {
             found = true;
@@ -85,6 +88,7 @@ export const useTableFilterStore = defineStore('tableFilter', {
             year: new Date().getFullYear() + change,
           });
       } catch (e) {
+        console.error(e);
         values = [
           {
             year: new Date().getFullYear() + change,
@@ -118,6 +122,7 @@ export const useTableFilterStore = defineStore('tableFilter', {
             const values = JSON.stringify(clean);
             this[table] = values;
           } catch (e) {
+            console.error(e);
             this.reset(table);
           }
         }

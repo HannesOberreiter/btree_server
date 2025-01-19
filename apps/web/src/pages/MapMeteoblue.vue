@@ -25,8 +25,8 @@
 <script setup lang="ts">
 import { useGeolocation, watchOnce } from '@vueuse/core';
 import { computed, ref } from 'vue';
-import GlobalLoading from '~/components/GlobalLoading.vue';
-import { useAuthUserStore } from '~/stores/auth';
+import GlobalLoading from '../components/GlobalLoading.vue';
+import { useAuthUserStore } from '../stores/auth';
 const storeUser = useAuthUserStore();
 
 const urlPart = computed(() =>
@@ -39,7 +39,7 @@ const { coords, error, pause } = useGeolocation({
   timeout: 1000 * 60 * 10,
 });
 
-const finalCoords = ref<GeolocationCoordinates>(null);
+const finalCoords = ref<GeolocationCoordinates | null>(null);
 
 const referUrl = computed(() => {
   return `https://www.meteoblue.com/${urlPart.value}/maps/index?utm_source=weather_widget&utm_medium=linkus&utm_content=map&utm_campaign=Weather%2BWidget`;

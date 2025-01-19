@@ -2,18 +2,18 @@
 import { useQuasar } from 'quasar';
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useApiFetch } from '~/composables/useApi';
-import { useNotification } from '~/composables/useNotification';
-import BtnBase from '~/components/BtnBase.vue';
+import { useApiFetch } from '../composables/useApi';
+import { useNotification } from '../composables/useNotification';
+import BtnBase from './BtnBase.vue';
 
 const api = useApiFetch();
 const $q = useQuasar();
 const t = useI18n().t;
 const notification = useNotification();
-const items = ref(null);
+const items = ref<any>(null);
 const isAppleStoreWrapper = document.cookie.includes('iOS');
 
-await fetchFederatedCredentials();
+fetchFederatedCredentials();
 
 function fetchFederatedCredentials() {
   api.get('/v1/user/federatedCredentials').then(

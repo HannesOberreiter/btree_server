@@ -1,24 +1,9 @@
-<template>
-  <btn-base
-    flat
-    dense
-    color="white"
-    size="md"
-    data-cy="btn-dark-mode"
-    :icon="status.icon"
-    :aria-label="$t(status.text)"
-    @click="setDarkMode"
-  >
-    <tooltip-base anchor="bottom middle" self="top middle">
-      {{ $t(status.text) }}
-    </tooltip-base>
-  </btn-base>
-</template>
-
-<script lang="ts" setup>
+<script setup lang="ts">
 import { useColorMode } from '@vueuse/core';
 import { useQuasar } from 'quasar';
 import { computed, watch } from 'vue';
+import BtnBase from './BtnBase.vue';
+import TooltipBase from './TooltipBase.vue';
 
 const $q = useQuasar();
 const darkMode = useColorMode({
@@ -74,3 +59,20 @@ watch(
   { immediate: true },
 );
 </script>
+
+<template>
+  <btn-base
+    flat
+    dense
+    color="white"
+    size="md"
+    data-cy="btn-dark-mode"
+    :icon="status.icon"
+    :aria-label="$t(status.text)"
+    @click="setDarkMode"
+  >
+    <tooltip-base anchor="bottom middle" self="top middle">
+      {{ $t(status.text) }}
+    </tooltip-base>
+  </btn-base>
+</template>

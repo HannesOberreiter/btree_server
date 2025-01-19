@@ -26,28 +26,36 @@
         @click="editValues(!disable)"
       ></btn-multiple-values>
     </template>
-    <template #after><slot name="deepAfter"></slot></template>
-    <template v-if="$slots.deepPrepend" #prepend
-      ><slot name="deepPrepend"></slot
-    ></template>
+    <template #after>
+      <slot name="deepAfter"></slot>
+    </template>
+    <template v-if="$slots.deepPrepend" #prepend>
+      <slot name="deepPrepend"></slot>
+    </template>
   </q-input>
 </template>
 
 <script setup lang="ts">
-import { maxLength, requiredField, minLength } from '~/helpers/i18n-validators';
+import {
+  maxLength,
+  requiredField,
+  minLength,
+} from '../helpers/i18n-validators';
 import { useVModels } from '@vueuse/core';
-import { validationErrors, formCheckMultipleValues } from '~/helpers';
+import { validationErrors, formCheckMultipleValues } from '../helpers';
 import useVuelidate from '@vuelidate/core';
-import { PropType, unref, toRefs, computed, watch, ref } from 'vue';
+import type { PropType } from 'vue';
+import { unref, toRefs, computed, watch, ref } from 'vue';
 import { isEmpty } from 'lodash-es';
-import { TextField } from '~/types';
-
+import type { TextField } from '../types';
 import { useI18n } from 'vue-i18n';
+import BtnMultipleValues from './BtnMultipleValues.vue';
 
 const { t } = useI18n();
 
 const props = defineProps({
   modelValue: {
+    type: String as PropType<string | null>,
     default: null,
   },
   reset: {

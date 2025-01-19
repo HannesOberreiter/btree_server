@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import { useApiFetch } from '~/composables/useApi';
-import FormDropdownHive from '~/components/FormDropdownHive.vue';
-import FormInputDates from '~/components/FormInputDates.vue';
+import { useApiFetch } from '../composables/useApi';
+import FormDropdownHive from '../components/FormDropdownHive.vue';
+import FormInputDates from '../components/FormInputDates.vue';
 import dayjs from 'dayjs';
 import { useI18n } from 'vue-i18n';
-import { QTableProps } from 'quasar';
-import { useNotification } from '~/composables/useNotification';
+import type { QTableProps } from 'quasar';
+import { useNotification } from '../composables/useNotification';
 import { watchDebounced } from '@vueuse/core';
 import { use } from 'echarts/core';
 import { CanvasRenderer } from 'echarts/renderers';
@@ -19,9 +19,9 @@ import {
   DatasetComponent,
 } from 'echarts/components';
 import VChart from 'vue-echarts';
-import { deepUnref } from '~/helpers/deep-unref';
-import { EChartsOption } from 'echarts/types/dist/echarts';
-import { DatasetOption } from 'echarts/types/dist/shared';
+import { deepUnref } from '../helpers/deep-unref';
+import type { EChartsOption } from 'echarts/types/dist/echarts';
+import type { DatasetOption } from 'echarts/types/dist/shared';
 
 use([
   CanvasRenderer,
@@ -51,8 +51,8 @@ type Response = {
 const api = useApiFetch();
 const notify = useNotification();
 const { t } = useI18n();
-const hive_id = ref(null);
-const chartTimeseries = ref<EChartsOption>(null);
+const hive_id = ref<any>(null);
+const chartTimeseries = ref<EChartsOption | any>(null);
 const start_date = ref(dayjs().subtract(3, 'M').format('YYYY-MM-DD'));
 const end_date = ref(dayjs().format('YYYY-MM-DD'));
 const response = ref<Response | null>(null);
@@ -95,7 +95,7 @@ watchDebounced(
 
 async function getResponse() {
   try {
-    if (hive_id.value.length > 20) {
+    if (hive_id.value && hive_id.value.length > 20) {
       notify.open('warning', t('maxHivesStatsVarroa', { max: 20 }), true);
     }
     const response = await api.get('/v1/statistic/varroa', queryParams.value);

@@ -10,13 +10,7 @@
     <q-card-section>
       <div class="row q-pa-sm justify-center">
         <div class="col-12 col-md-11 col-lg-6">
-          <q-markup-table
-            dense
-            separator="none"
-            class="text-body1"
-            flat
-            bordered
-          >
+          <q-markup-table dense separator="none" class="text-body1" flat bordered>
             <thead class="bg-info text-right">
               <tr>
                 <th>{{ $t('lifecycleHelper.caste') }}</th>
@@ -95,3 +89,6 @@
     </q-card-section>
   </q-card>
 </template>
+<script setup lang="ts">
+//
+</script>

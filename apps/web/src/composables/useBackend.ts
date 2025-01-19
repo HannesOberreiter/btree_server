@@ -1,6 +1,6 @@
 import { useLocalStorage } from '@vueuse/core';
 import { computed } from 'vue';
-import { API_SERVER } from '~/constants';
+import { API_SERVER } from '../constants';
 
 type Server = 'eu' | 'us';
 
@@ -30,9 +30,10 @@ export const useBackend = () => {
   const params = new URLSearchParams(window.location.search);
   const paramServer = params.get('server');
 
-  const server = validServers.includes(paramServer)
-    ? (paramServer as Server)
-    : null;
+  const server =
+    paramServer && validServers.includes(paramServer)
+      ? (paramServer as Server)
+      : null;
 
   const state = useLocalStorage<Server>(
     'backend-location',

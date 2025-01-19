@@ -15,7 +15,7 @@
 </template>
 
 <script setup lang="ts">
-import { LANGUAGES } from '~/constants';
+import { LANGUAGES } from '../constants';
 import { usePreferredLanguages } from '@vueuse/core';
 import { ref } from 'vue';
 

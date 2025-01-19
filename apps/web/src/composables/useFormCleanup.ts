@@ -1,8 +1,9 @@
-import { MaybeRef } from '@vueuse/core';
+import type { MaybeRef } from '@vueuse/core';
 import dayjs from 'dayjs';
 import { includes, isNil, omitBy } from 'lodash-es';
-import { Ref, unref } from 'vue';
-import {
+import type { Ref } from 'vue';
+import { unref } from 'vue';
+import type {
   FormCharge,
   FormHive,
   FormOption,
@@ -14,7 +15,7 @@ import {
   FormScale,
   FormScaleData,
   FormTodo,
-} from '~/types';
+} from '../types';
 
 export const useFormCleanup = (
   table: MaybeRef<string>,

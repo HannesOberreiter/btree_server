@@ -48,8 +48,9 @@
 
 <script lang="ts">
 import { orderBy } from 'lodash';
-import { Filter, FilterState } from '~/types';
-
+import type { Filter, FilterState } from '../types';
+import GlobalLoading from './GlobalLoading.vue';
+import BtnBase from './BtnBase.vue';
 import ItemTask from './ItemTask.vue';
 
 import { watch, ref, toRefs, computed } from 'vue';
@@ -82,8 +83,8 @@ function buildList(data: any, filter: Filter, filterState: FilterState) {
 </script>
 
 <script setup lang="ts">
-import { useHiveTaskQuery } from '~/composables/useQuery';
-import { PropType } from 'vue';
+import { useHiveTaskQuery } from '../composables/useQuery';
+import type { PropType } from 'vue';
 
 const props = defineProps({
   id: {
@@ -148,7 +149,7 @@ const listData = computed(() => {
 });
 
 const taskNext = () => {
-  if (taskEnd.value > listData.value.length) {
+  if (listData.value && taskEnd.value > listData.value.length) {
     taskStart.value = listData.value.length - 10;
     taskEnd.value = listData.value.length;
   } else {

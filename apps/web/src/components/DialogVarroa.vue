@@ -70,8 +70,9 @@ import { computed, ref, toRef } from 'vue';
 import { useLocalStorage } from '@vueuse/core';
 import BtnCloseDialog from './BtnCloseDialog.vue';
 import FormInputNumeric from './FormInputNumeric.vue';
-import { useTasksQuery } from '~/composables/useQuery';
+import { useTasksQuery } from '../composables/useQuery';
 import { useI18n } from 'vue-i18n';
+import BtnBase from './BtnBase.vue';
 
 const props = defineProps({
   value: {
@@ -90,6 +91,7 @@ const sum = ref(props.value);
 const days = useLocalStorage('varroa-days', 1);
 
 const filters = computed(() => {
+  if (!hive.value) return undefined;
   if (hive.value.length === 0) return undefined;
   return JSON.stringify([{ hive_id: (hive.value[0] as any).id }]);
 });
@@ -111,8 +113,9 @@ const lastCheckup = computed(() => {
   if (diffDays > 365) return undefined;
   return {
     days: diffDays,
-    text: `${t('lastCheckup')}: ${diffDays} ${t('day', diffDays)} (${result.hive
-      ?.name}, ${result.type?.name})`,
+    text: `${t('lastCheckup')}: ${diffDays} ${t('day', diffDays)} (${
+      result.hive?.name
+    }, ${result.type?.name})`,
   };
 });
 

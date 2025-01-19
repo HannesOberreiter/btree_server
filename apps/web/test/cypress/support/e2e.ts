@@ -16,8 +16,8 @@
 import './commands';
 
 afterEach(function () {
-  // https://github.com/cypress-io/cypress/issues/518
-  if (this.currentTest.state === 'failed') {
+  const currentTest = ((cy as any).runnableCtx() as Mocha.Context).currentTest;
+  if (currentTest && currentTest.isFailed()) {
     (Cypress as any).runner.stop();
   }
   //cy.saveLocalStorage();

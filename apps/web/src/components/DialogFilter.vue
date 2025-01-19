@@ -32,13 +32,14 @@
 
 <script setup lang="ts">
 import { useDialogPluginComponent } from 'quasar';
-import { useTableFilterStore } from '~/stores/tableFilter';
+import { useTableFilterStore } from '../stores/tableFilter';
 import FormDropdownType from './FormDropdownOption.vue';
 import FormInputDateRange from './FormInputDateRange.vue';
 import FormDropdownYear from './FormDropdownYear.vue';
 import FormDropdownOptionMultiple from './FormDropdownOptionMultiple.vue';
 import { reactive, watch, computed } from 'vue';
 import BtnCloseDialog from './BtnCloseDialog.vue';
+import BtnBase from './BtnBase.vue';
 
 const storeFilter = useTableFilterStore();
 

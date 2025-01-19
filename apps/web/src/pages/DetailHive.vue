@@ -153,26 +153,27 @@
 </template>
 
 <script lang="ts">
-import { KINDS, STATUS } from '~/constants';
-import { generateArrayOfYears } from '~/helpers';
-import { Filter, FilterState } from '~/types';
+import { KINDS, STATUS } from '../constants';
+import { generateArrayOfYears } from '../helpers';
+import type { Filter, FilterState } from '../types';
 </script>
 
 <script setup lang="ts">
 import { useMeta, useQuasar } from 'quasar';
-import { useHiveQuery } from '~/composables/useQuery';
+import { useHiveQuery } from '../composables/useQuery';
 import dayjs from 'dayjs';
+import BtnBase from '../components/BtnBase.vue';
+import GlobalLoading from '../components/GlobalLoading.vue';
+import HiveInfoMovements from '../components/HiveInfoMovements.vue';
+import HiveInfoQueens from '../components/HiveInfoQueens.vue';
+import HiveInfoTask from '../components/HiveInfoTask.vue';
+import ExpansionQueen from '../components/ExpansionQueen.vue';
+import ExpansionHive from '../components/ExpansionHive.vue';
+import BtnPreviousNext from '../components/BtnPreviousNext.vue';
+import BtnDropdownTask from '../components/BtnDropdownTask.vue';
+import DialogForm from '../components/DialogForm.vue';
 
-import HiveInfoMovements from '~/components/HiveInfoMovements.vue';
-import HiveInfoQueens from '~/components/HiveInfoQueens.vue';
-import HiveInfoTask from '~/components/HiveInfoTask.vue';
-import ExpansionQueen from '~/components/ExpansionQueen.vue';
-import ExpansionHive from '~/components/ExpansionHive.vue';
-import BtnPreviousNext from '~/components/BtnPreviousNext.vue';
-import BtnDropdownTask from '~/components/BtnDropdownTask.vue';
-import DialogForm from '~/components/DialogForm.vue';
-
-import ListTasks from '~/components/ListTasks.vue';
+import ListTasks from '../components/ListTasks.vue';
 import { useI18n } from 'vue-i18n';
 import { ref, computed, toRef } from 'vue';
 
@@ -217,7 +218,7 @@ function onPrint() {
   window.print();
 }
 
-function openForm(title: string, id: number, selected: number) {
+function openForm(title: string, id: number | null, selected: number) {
   $q.dialog({
     component: DialogForm,
     componentProps: {

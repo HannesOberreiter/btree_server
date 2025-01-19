@@ -3,5 +3,5 @@
 </template>
 
 <script setup lang="ts">
-import MainStatisticLayout from '~/layouts/MainStatisticLayout.vue';
+import MainStatisticLayout from '../layouts/MainStatisticLayout.vue';
 </script>

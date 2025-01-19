@@ -26,17 +26,17 @@
 </template>
 
 <script setup lang="ts">
-import { useAuthUserStore } from '~/stores/auth';
-import { useNotification } from '~/composables/useNotification';
-import { User } from '~/types';
+import { useAuthUserStore } from '../stores/auth';
+import { useNotification } from '../composables/useNotification';
+import type { User } from '../types';
 import useVuelidate from '@vuelidate/core';
-import { useApiFetch } from '~/composables/useApi';
+import { useApiFetch } from '../composables/useApi';
 import { useRoute } from 'vue-router';
 import { reactive, ref, onMounted, onUnmounted } from 'vue';
-import FormUserPassword from '~/components/FormUserPassword.vue';
-import FormInputEmail from '~/components/FormInputEmail.vue';
-
-import FormErrorMax from '~/components/FormErrorMax.vue';
+import FormUserPassword from '../components/FormUserPassword.vue';
+import FormInputEmail from '../components/FormInputEmail.vue';
+import BtnBase from '../components/BtnBase.vue';
+import FormErrorMax from '../components/FormErrorMax.vue';
 
 const notification = useNotification();
 const api = useApiFetch();
@@ -78,7 +78,7 @@ function sendForm(user: User) {
       notification.open('positive', '');
       sso();
     },
-    (error) => {
+    (error: any) => {
       isSubmitting.value = false;
       console.error(error);
       notification.open('negative', error);

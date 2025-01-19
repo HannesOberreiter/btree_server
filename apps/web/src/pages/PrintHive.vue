@@ -143,11 +143,11 @@ function buildList(data: any) {
 </script>
 
 <script setup lang="ts">
-import { useHiveQuery } from '~/composables/useQuery';
-import { useHiveTaskQuery } from '~/composables/useQuery';
-import { useDateFormat } from '~/composables/useDate';
+import { useHiveQuery } from '../composables/useQuery';
+import { useHiveTaskQuery } from '../composables/useQuery';
+import { useDateFormat } from '../composables/useDate';
 import { toRefs, computed, watch } from 'vue';
-
+import GlobalLoading from '../components/GlobalLoading.vue';
 const useDate = useDateFormat();
 const props = defineProps({
   id: {

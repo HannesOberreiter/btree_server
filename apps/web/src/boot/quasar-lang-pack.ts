@@ -25,5 +25,7 @@ export default () => {
   } catch (err) {
     // Requested Quasar Language Pack does not exist,
     // let's not break the app, so catching error
+    console.error(err);
+    Quasar.lang.set(langEn);
   }
 };

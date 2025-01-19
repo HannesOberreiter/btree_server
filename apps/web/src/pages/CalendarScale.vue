@@ -13,18 +13,17 @@
   </div>
 </template>
 <script setup lang="ts">
-import { useAuthUserStore } from '~/stores/auth';
-import { useNotification } from '~/composables/useNotification';
-
-import { CalendarOptions, EventClickArg } from '@fullcalendar/core';
+import { useAuthUserStore } from '../stores/auth';
+import { useNotification } from '../composables/useNotification';
+import type { CalendarOptions, EventClickArg } from '@fullcalendar/core';
 import FullCalendar from '@fullcalendar/vue3';
 import allLocales from '@fullcalendar/core/locales-all';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import listPlugin from '@fullcalendar/list';
-import { useCalendarQuery } from '~/composables/useQuery';
-import { useKeyCalendar } from '~/composables/useKey';
-import { useSwipeCalendar } from '~/composables/useSwipe';
+import { useCalendarQuery } from '../composables/useQuery';
+import { useKeyCalendar } from '../composables/useKey';
+import { useSwipeCalendar } from '../composables/useSwipe';
 import { useLocalStorage } from '@vueuse/core';
 import { onMounted, ref, reactive } from 'vue';
 import { useI18n } from 'vue-i18n';

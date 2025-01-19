@@ -41,7 +41,7 @@ const OPENWEATHER_API = process.env.OPENWEATHER_APP_ID;
 </script>
 
 <script setup lang="ts">
-import { useAuthUserStore } from '~/stores/auth';
+import { useAuthUserStore } from '../stores/auth';
 import { LTileLayer, LControlLayers } from '@vue-leaflet/vue-leaflet';
 import { computed } from 'vue';
 

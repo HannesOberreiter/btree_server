@@ -1,5 +1,6 @@
 import { useFetch } from '@vueuse/core';
-import { computed, Ref, ref } from 'vue';
+import type { Ref } from 'vue';
+import { computed, ref } from 'vue';
 
 type News = {
   version: string;
@@ -13,11 +14,10 @@ const {
   isFetching,
   error,
   data,
-}: { isFetching: Ref<boolean>; error: Ref<any>; data: Ref<News[]> } = useFetch(
-  '/news.json?cache=' + Date.now(),
-)
-  .get()
-  .json();
+}: { isFetching: Ref<boolean>; error: Ref<any>; data: Ref<News[] | null> } =
+  useFetch('/news.json?cache=' + Date.now())
+    .get()
+    .json();
 
 export const useNews = () => {
   async function loadCurrentNews() {

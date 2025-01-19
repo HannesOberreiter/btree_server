@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { useStorage } from '@vueuse/core';
-import refreshService from '~/services/refresh.service';
-import { useApiFetch } from '~/composables/useApi';
+import refreshService from '../services/refresh.service';
+import { useApiFetch } from '../composables/useApi';
 import defaultsDeep from 'lodash-es/defaultsDeep';
 
 interface Rating {

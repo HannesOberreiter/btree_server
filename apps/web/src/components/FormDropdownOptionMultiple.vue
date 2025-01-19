@@ -24,8 +24,8 @@
 
 <script setup lang="ts">
 import { filter } from 'lodash-es';
-import { Option } from '~/types';
-import { PropType } from 'vue';
+import type { Option } from '../types';
+import type { PropType } from 'vue';
 import {
   useApiariesQuery,
   useHivesQuery,
@@ -33,9 +33,9 @@ import {
   useQueensQuery,
   useRearingDetailsQuery,
   useScaleQuery,
-} from '~/composables/useQuery';
+} from '../composables/useQuery';
 import { useVModels } from '@vueuse/core';
-import { deepUnref } from '~/helpers/deep-unref';
+import { deepUnref } from '../helpers/deep-unref';
 import { useI18n } from 'vue-i18n';
 import { ref, watch } from 'vue';
 
@@ -43,7 +43,8 @@ const { t } = useI18n();
 const hint = ref('');
 const props = defineProps({
   modelValue: {
-    default: [],
+    type: Array as PropType<any[]>,
+    default: () => [],
   },
   label: {
     default: 'type',
@@ -64,14 +65,14 @@ const { isLoading, data } =
   props.table === 'apiary'
     ? useApiariesQuery({})
     : props.table === 'hive'
-    ? useHivesQuery({})
-    : props.table === 'queen'
-    ? useQueensQuery({ modus: null })
-    : props.table === 'scale'
-    ? useScaleQuery({})
-    : props.table === 'rearing_detail'
-    ? useRearingDetailsQuery({})
-    : useOptionsQuery(props.table, {});
+      ? useHivesQuery({})
+      : props.table === 'queen'
+        ? useQueensQuery({ modus: null })
+        : props.table === 'scale'
+          ? useScaleQuery({})
+          : props.table === 'rearing_detail'
+            ? useRearingDetailsQuery({})
+            : useOptionsQuery(props.table, {});
 
 const emit = defineEmits(['update:modelValue']);
 const { modelValue } = useVModels(props, emit);

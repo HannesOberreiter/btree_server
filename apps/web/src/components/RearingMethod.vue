@@ -49,20 +49,21 @@
 <script setup lang="ts">
 import filter from 'lodash-es/filter';
 import { useQuasar } from 'quasar';
-import { useApiFetch } from '~/composables/useApi';
-import { useNotification } from '~/composables/useNotification';
-import { useRearingTypesQuery } from '~/composables/useQuery';
+import { useApiFetch } from '../composables/useApi';
+import { useNotification } from '../composables/useNotification';
+import { useRearingTypesQuery } from '../composables/useQuery';
 import { ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
-
+import BtnBase from './BtnBase.vue';
+import BtnBaseGroup from './BtnBaseGroup.vue';
 import DialogForm from './DialogForm.vue';
 import ListRearingSteps from './ListRearingSteps.vue';
 
 const notification = useNotification();
 const api = useApiFetch();
 const $q = useQuasar();
-const model = ref(null);
-const options = ref(null);
+const model = ref<any>(null);
+const options = ref<any>(null);
 const { t } = useI18n();
 
 const { isLoading, data, refetch } = useRearingTypesQuery({});
@@ -84,7 +85,7 @@ watch(
 
 const dialogForm = (
   title: string,
-  ids: any[],
+  ids: any[] | null,
   form = 'rearing_type',
   selected = null as any,
 ) => {

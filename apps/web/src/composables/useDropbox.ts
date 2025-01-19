@@ -1,7 +1,8 @@
-import { Dropbox, DropboxResponse, files } from 'dropbox';
+import type { DropboxResponse, files } from 'dropbox';
+import { Dropbox } from 'dropbox';
 import { orderBy } from 'lodash-es';
 import { LoadingBar } from 'quasar';
-import { isImage } from '~/helpers';
+import { isImage } from '../helpers';
 import { useApiFetch } from './useApi';
 import { useNotification } from './useNotification';
 import { useRouter } from 'vue-router';
@@ -14,12 +15,14 @@ const state = reactive({
   refresh: false,
   isLoading: false,
   path: '',
-  accessToken: null as string,
-  folder: null as (
-    | files.FileMetadataReference
-    | files.FolderMetadataReference
-    | files.DeletedMetadataReference
-  )[],
+  accessToken: null as string | null,
+  folder: null as
+    | (
+        | files.FileMetadataReference
+        | files.FolderMetadataReference
+        | files.DeletedMetadataReference
+      )[]
+    | null,
 });
 
 export const useServiceDropbox = () => {
@@ -112,7 +115,7 @@ export const useServiceDropbox = () => {
   async function auth(code: string) {
     await api.get(`/v1/dropbox/auth/${code}`).then(
       (response: any) => {
-        router.replace({ query: null });
+        router.replace({ query: {} });
         setAccessToken(response.token);
       },
       (error) => {

@@ -24,12 +24,13 @@
 </template>
 
 <script setup lang="ts">
-import { useNotification } from '~/composables/useNotification';
-import AuthService from '~/services/auth.service';
+import { useNotification } from '../composables/useNotification';
+import AuthService from '../services/auth.service';
 import useVuelidate from '@vuelidate/core';
-import FormErrorMax from '~/components/FormErrorMax.vue';
-import FormInputEmail from '~/components/FormInputEmail.vue';
-import FormDropdownServer from '~/components/FormDropdownServer.vue';
+import FormErrorMax from '../components/FormErrorMax.vue';
+import FormInputEmail from '../components/FormInputEmail.vue';
+import FormDropdownServer from '../components/FormDropdownServer.vue';
+import BtnBase from '../components/BtnBase.vue';
 
 import { reactive, ref } from 'vue';
 import { useI18n } from 'vue-i18n';

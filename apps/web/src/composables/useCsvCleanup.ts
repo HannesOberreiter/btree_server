@@ -1,6 +1,7 @@
-import { MaybeRef } from '@vueuse/core';
+import type { MaybeRef } from '@vueuse/core';
 import dayjs from 'dayjs';
-import { Ref, unref } from 'vue';
+import type { Ref } from 'vue';
+import { unref } from 'vue';
 
 export const useCsvCleanup = (table: MaybeRef<string>, state: Ref) => {
   function cleanup() {

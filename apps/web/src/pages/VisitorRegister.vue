@@ -3,72 +3,35 @@
     <div class="text-h6 text-center">{{ t('signup.name') }}</div>
     <form-error-max v-if="submitCount >= 15"></form-error-max>
     <q-form v-else class="q-gutter-md" @submit="onSubmit">
-      <form-input-text
-        v-model="state.company"
-        label="company.name"
-        :max-valid="45"
-        :min-valid="5"
-        :required="true"
-      >
-        <template #deepPrepend
-          ><q-icon name="fas fa-warehouse"></q-icon
-        ></template>
+      <form-input-text v-model="state.company" label="company.name" :max-valid="45" :min-valid="5" :required="true">
+        <template #deepPrepend><q-icon name="fas fa-warehouse"></q-icon></template>
       </form-input-text>
       <form-input-email v-model="state.email"></form-input-email>
-      <form-user-password
-        v-if="!isOAuthRedirect"
-        v-model:modelPassword="state.password"
-        :confirm="true"
-      ></form-user-password>
+      <form-user-password v-if="!isOAuthRedirect" v-model:modelPassword="state.password"
+        :confirm="true"></form-user-password>
       <form-user-language v-model="state.lang"></form-user-language>
       <form-user-date-format v-model="state.format"></form-user-date-format>
 
-      <q-select
-        v-model="v$.source.$model"
-        :error="v$.source.$error"
-        :error-messages="validationErrors(v$.source)"
-        :options="SOURCES"
-        option-value="value"
-        option-label="label"
-        hide-details
-        :label="t('signup.source')"
-        filled
-        :dense="true"
-      >
+      <q-select v-model="v$.source.$model" :error="v$.source.$error" :error-messages="validationErrors(v$.source)"
+        :options="SOURCES" option-value="value" option-label="label" hide-details :label="t('signup.source')" filled
+        :dense="true">
         <template #prepend>
           <q-icon name="fas fa-question" />
         </template>
       </q-select>
 
-      <form-dropdown-server
-        class="q-mb-xl"
-        form="register"
-        :overwrite-country="countryCode"
-      ></form-dropdown-server>
-
-      <q-input
-        v-show="state.source.value === SOURCES.at(-1).value"
-        v-model="v$.other.$model"
-        :error="v$.other.$error"
-        :error-message="validationErrors(v$.other)"
-        :no-error-icon="true"
-        :label="t('signup.source')"
-        name="other"
-        filled
-      >
+      <q-input v-show="state.source.value === SOURCES.at(-1)!.value" v-model="v$.other.$model" :error="v$.other.$error"
+        :error-message="validationErrors(v$.other)" :no-error-icon="true" :label="t('signup.source')" name="other"
+        filled>
         <template #prepend>
           <q-icon name="fas fa-question-circle" />
         </template>
       </q-input>
 
-      <q-checkbox
-        v-model="v$.terms.$model"
-        :error="v$.terms.$error"
-        :error-messages="validationErrors(v$.terms)"
-        color="primary"
-        :true-value="true"
-        :false-value="false"
-      >
+      <form-dropdown-server class="q-mb-xl" form="register" :overwrite-country="countryCode"></form-dropdown-server>
+
+      <q-checkbox v-model="v$.terms.$model" :error="v$.terms.$error" :error-messages="validationErrors(v$.terms)"
+        color="primary" :true-value="true" :false-value="false">
         <slot>
           {{ t('signup.agree') }}
           <span data-cy="terms" flat class="show-pointer" @click="terms = true">
@@ -82,15 +45,8 @@
       <form-user-newsletter v-model="state.newsletter"></form-user-newsletter>
 
       <q-card-actions>
-        <btn-base
-          type="submit"
-          size="lg"
-          color="secondary"
-          class="full-width text-white"
-          :label="btnLabel"
-          :disable="isSubmitting || message !== ''"
-          :loading="isSubmitting"
-        />
+        <btn-base type="submit" size="lg" color="secondary" class="full-width text-white" :label="btnLabel"
+          :disable="isSubmitting || message !== ''" :loading="isSubmitting" />
         <div class="text-center text-primary">
           {{ t('signup.hintPremium') }}
         </div>
@@ -106,43 +62,37 @@
         <div class="text-h6">{{ t('signup.terms') }}</div>
       </q-card-section>
       <q-card-section class="q-pt-none">
-        {{ state.lang.value == 'de' ? termsDE : termsEN }}
+        {{ state.lang?.value === 'de' ? termsDE : termsEN }}
       </q-card-section>
       <q-card-actions align="right">
-        <btn-base
-          v-close-popup
-          flat
-          data-cy="btn-terms"
-          :label="$t('ok')"
-          color="primary"
-        />
+        <btn-base v-close-popup flat data-cy="btn-terms" :label="$t('ok')" color="primary" />
       </q-card-actions>
     </q-card>
   </q-dialog>
 </template>
 
 <script setup lang="ts">
-import { LANGUAGES } from '~/constants';
-import { requiredField, maxLength } from '~/helpers/i18n-validators';
-import { useNotification } from '~/composables/useNotification';
+import { LANGUAGES } from '../constants';
+import { requiredField, maxLength } from '../helpers/i18n-validators';
+import { useNotification } from '../composables/useNotification';
 import { usePreferredLanguages } from '@vueuse/core';
-import { validationErrors } from '~/helpers';
-import AuthService from '~/services/auth.service';
-import termsDE from '~/i18n/de/terms.txt?raw';
-import termsEN from '~/i18n/en/terms.txt?raw';
+import { validationErrors } from '../helpers';
+import AuthService from '../services/auth.service';
+import termsDE from '../i18n/de/terms.txt?raw';
+import termsEN from '../i18n/en/terms.txt?raw';
 import useVuelidate from '@vuelidate/core';
 import { ref, reactive } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
-
-import FormUserPassword from '~/components/FormUserPassword.vue';
-import FormUserLanguage from '~/components/FormUserLanguage.vue';
-import FormUserNewsletter from '~/components/FormUserNewsletter.vue';
-import FormInputEmail from '~/components/FormInputEmail.vue';
-import FormInputText from '~/components/FormInputText.vue';
-import FormErrorMax from '~/components/FormErrorMax.vue';
-import FormUserDateFormat from '~/components/FormUserDateFormat.vue';
-import FormDropdownServer from '~/components/FormDropdownServer.vue';
+import BtnBase from '../components/BtnBase.vue';
+import FormUserPassword from '../components/FormUserPassword.vue';
+import FormUserLanguage from '../components/FormUserLanguage.vue';
+import FormUserNewsletter from '../components/FormUserNewsletter.vue';
+import FormInputEmail from '../components/FormInputEmail.vue';
+import FormInputText from '../components/FormInputText.vue';
+import FormErrorMax from '../components/FormErrorMax.vue';
+import FormUserDateFormat from '../components/FormUserDateFormat.vue';
+import FormDropdownServer from '../components/FormDropdownServer.vue';
 
 const notification = useNotification();
 const { t } = useI18n();
@@ -155,13 +105,13 @@ const randPassword = new Array(35)
   .fill(0)
   .map(() =>
     (function (chars) {
-      let umax = Math.pow(2, 32),
+      const umax = Math.pow(2, 32),
         r = new Uint32Array(1),
         max = umax - (umax % chars.length);
       do {
         crypto.getRandomValues(r);
-      } while (r[0] > max);
-      return chars[r[0] % chars.length];
+      } while (r[0]! > max);
+      return chars[r[0]! % chars.length];
     })(pwdChars),
   )
   .join('');
@@ -240,7 +190,7 @@ const rules = reactive({
 });
 const v$ = useVuelidate(rules, state);
 
-async function onSubmit() {
+async function onSubmit () {
   isSubmitting.value = true;
   const isFormCorrect = await v$.value.$validate();
 
@@ -258,16 +208,16 @@ async function onSubmit() {
     company: state.company,
     email: state.email,
     password: state.password,
-    lang: state.lang.value,
+    lang: state.lang?.value,
     format: state.format,
-    source: state.source.value === 0 ? state.other : state.source.value + '',
+    source: state.source?.value === 0 ? state.other : state.source?.value + '',
     newsletter: state.newsletter,
   };
   await sendForm(form);
   return;
 }
 
-async function sendForm(user: any) {
+async function sendForm (user: any) {
   await AuthService.register(user).then(
     (response) => {
       const email = response.email as string;

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { useApiFetch } from '~/composables/useApi';
+import { useApiFetch } from '../composables/useApi';
 
-import BtnBase from '~/components/BtnBase.vue';
+import BtnBase from '../components/BtnBase.vue';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
@@ -24,7 +24,7 @@ const exampleQuestions = [
   t('exampleQuestion.diffDiseases'),
 ];
 
-const currentLanguage = ref(LANGUAGES.find((l) => l.value === locale.value));
+const currentLanguage = ref(LANGUAGES.find((l) => l.value === locale.value))!;
 
 const question = ref('');
 const lang = ref(currentLanguage);
@@ -43,12 +43,12 @@ const result = computed(() => {
   return data.value.text;
 });
 
-function onExampleQuestion(example: string) {
+function onExampleQuestion (example: string) {
   question.value = example;
   onQuestion();
 }
 
-async function onQuestion() {
+async function onQuestion () {
   error.value = undefined;
   if (isStreaming.value) {
     breakStream = true;
@@ -60,18 +60,18 @@ async function onQuestion() {
   data.value.text = '....';
   const stream = api.stream('/v1/service/wizbee/ask/stream', {
     question: question.value,
-    lang: lang.value.value,
+    lang: lang.value?.value,
   });
 
   try {
-    const responseStream = (await stream).body;
+    const responseStream = (await stream).body!;
     isStreaming.value = true;
     isFetching.value = false;
     const reader = responseStream.getReader();
     let chunks = '';
     let accumulated = '';
 
-    reader.read().then(function processStream({ done, value }): any {
+    reader.read().then(function processStream ({ done, value }): any {
       if (breakStream) {
         breakStream = false;
         isStreaming.value = false;
@@ -84,7 +84,7 @@ async function onQuestion() {
       }
       const decoded = new TextDecoder('utf-8').decode(value);
       accumulated += decoded;
-      let responses = accumulated.split(/\}\s*\{/);
+      const responses = accumulated.split(/\}\s*\{/);
       let lastResponse = {} as any;
 
       for (let i = 0; i < responses.length; i++) {
@@ -94,6 +94,9 @@ async function onQuestion() {
         }
         if (i !== responses.length - 1) {
           response = response + '}';
+        }
+        if (!response) {
+          continue;
         }
 
         let json: any;
@@ -117,7 +120,6 @@ async function onQuestion() {
         }
 
         if (json?.text === undefined) {
-          data.value = undefined;
           error.value = t('error.unknown');
           return;
         }
@@ -136,6 +138,7 @@ async function onQuestion() {
       return reader.read().then(processStream);
     });
   } catch (e) {
+    console.error(e);
     isFetching.value = false;
     isStreaming.value = false;
     breakStream = false;
@@ -149,45 +152,19 @@ async function onQuestion() {
     <div class="q-mb-md container-size">
       <div class="row justify-center vertical-middle q-mb-xs items-center">
         <!-- on dark mode inverse the logo color -->
-        <img
-          src="
-      /wizbee/favicon-96x96.png"
-          alt="WizBee Logo"
-          height="50"
-          class="q-mr-sm"
-          :class="{ 'invert-colors': $q.dark.isActive }"
-        />
+        <img src="/wizbee/favicon-96x96.png" alt="WizBee Logo" height="50" class="q-mr-sm"
+          :class="{ 'invert-colors': $q.dark.isActive }" />
         <div class="text-h5">{{ $t('ask') }} WizBee</div>
       </div>
       <q-form class="q-mt-sm" @submit="(e) => e.preventDefault()">
         <div class="row">
-          <q-input
-            v-model="question"
-            :placeholder="$t('askQuestion')"
-            :minlength="3"
-            :maxlength="1000"
-            :clearable="true"
-            class="full-width"
-          >
+          <q-input v-model="question" :placeholder="$t('askQuestion')" :minlength="3" :maxlength="1000"
+            :clearable="true" class="full-width">
             <template #after>
-              <BtnBase
-                icon="fas fa-question"
-                type="submit"
-                color="positive"
-                square
-                size="md"
-                :loading="isFetching"
-                @click="onQuestion()"
-              />
-              <q-select
-                v-model="lang"
-                filled
-                dense
-                square
-                :options="LANGUAGES"
-                option-value="value"
-                option-label="label"
-              />
+              <BtnBase icon="fas fa-question" type="submit" color="positive" square size="md" :loading="isFetching"
+                @click="onQuestion()" />
+              <q-select v-model="lang" filled dense square :options="LANGUAGES" option-value="value"
+                option-label="label" />
             </template>
           </q-input>
         </div>
@@ -204,13 +181,7 @@ async function onQuestion() {
         </div>
       </q-card-section>
       <q-card-section v-else class="text-bold">
-        <q-input
-          v-model="result"
-          :label="$t('answer')"
-          type="textarea"
-          :autogrow="true"
-          :readonly="true"
-        />
+        <q-input v-model="result" :label="$t('answer')" type="textarea" :autogrow="true" :readonly="true" />
       </q-card-section>
       <q-card-section class="bg-grey-8 text-white">
         <div>
@@ -232,15 +203,8 @@ async function onQuestion() {
 
     <div class="q-mb-md container-size">
       <div class="q-gutter-sm">
-        <q-btn
-          v-for="example in exampleQuestions"
-          :key="example"
-          no-caps
-          outline
-          size="sm"
-          :loading="isFetching"
-          @click="onExampleQuestion(example)"
-        >
+        <q-btn v-for="example in exampleQuestions" :key="example" no-caps outline size="sm" :loading="isFetching"
+          @click="onExampleQuestion(example)">
           {{ example }}
         </q-btn>
       </div>

@@ -30,8 +30,9 @@
 
 <script setup lang="ts">
 import { round, sortBy, groupBy } from 'lodash-es';
-import { useStatisticTable } from '~/composables/useQuery';
+import { useStatisticTable } from '../composables/useQuery';
 import { toRef, ref, watch, computed } from 'vue';
+import GlobalLoading from './GlobalLoading.vue';
 
 const props = defineProps({
   id: {
@@ -45,8 +46,8 @@ const props = defineProps({
 
 const id = toRef(props, 'id');
 const filter = computed(() => JSON.stringify([{ hive_id: id.value }]));
-const results = ref(null);
-const years = ref(null);
+const results = ref<any>(null);
+const years = ref<any>(null);
 
 const { isLoading, data } = useStatisticTable(props.kind, {
   order: ['year'],

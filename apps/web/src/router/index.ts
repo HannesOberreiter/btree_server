@@ -1,9 +1,8 @@
 import { Loading, LoadingBar } from 'quasar';
-
 import { route } from 'quasar/wrappers';
-import { useAuthUserStore } from '~/stores/auth';
-import { useRefreshStore } from '~/stores/refresh';
-import { useRouterStore } from '~/stores/router';
+import { useAuthUserStore } from '../stores/auth';
+import { useRefreshStore } from '../stores/refresh';
+import { useRouterStore } from '../stores/router';
 import routes from './routes';
 import {
   createMemoryHistory,

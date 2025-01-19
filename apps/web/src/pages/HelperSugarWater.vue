@@ -182,7 +182,8 @@ const threeToTwo = {
 
 <script setup lang="ts">
 import round from 'lodash-es/round';
-
+import BtnBase from '../components/BtnBase.vue';
+import BtnBaseGroup from '../components/BtnBaseGroup.vue';
 import { ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
@@ -217,7 +218,7 @@ function changeUser(field: string) {
 }
 
 function calculate() {
-  const base = type.value.value === 1 ? oneToOne : threeToTwo;
+  const base = type.value?.value === 1 ? oneToOne : threeToTwo;
   if (sugar.value > 0) {
     water.value = round(sugar.value * base.water, 1);
   } else if (water.value > 0) {

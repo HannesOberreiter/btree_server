@@ -29,16 +29,15 @@ function queenColor(cur: string) {
   const last = cur
     ? cur.slice(3, 4)
     : new Date().getFullYear().toString().slice(-1);
+  let colour = 'green';
   if (last == '0' || last == '5') {
-    var colour = 'blue';
+    colour = 'blue';
   } else if (last == '1' || last == '6') {
-    var colour = 'white';
+    colour = 'white';
   } else if (last == '2' || last == '7') {
-    var colour = 'yellow';
+    colour = 'yellow';
   } else if (last == '3' || last == '8') {
-    var colour = 'red';
-  } else {
-    var colour = 'green';
+    colour = 'red';
   }
   return colour;
 }
@@ -48,8 +47,9 @@ function queenColor(cur: string) {
 import { useVModels } from '@vueuse/core';
 import { useI18n } from 'vue-i18n';
 import { computed, toRef } from 'vue';
-
-import FormInputText from '~/components/FormInputText.vue';
+import TooltipBase from './TooltipBase.vue';
+import BtnBase from './BtnBase.vue';
+import FormInputText from './FormInputText.vue';
 
 const { t } = useI18n();
 const props = defineProps({

@@ -5,7 +5,9 @@
       icon="fas fa-window-maximize"
       class="full-width"
       :label="$t('frames.text')"
-      :class="some(modelValue, (val) => val > 0) ? 'bg-orange' : ''"
+      :class="
+        some(modelValue, (val) => val != null && val > 0) ? 'bg-orange' : ''
+      "
     >
       <q-card>
         <q-card-section>
@@ -63,14 +65,15 @@
 </template>
 
 <script setup lang="ts">
-import { integer, maxValue, minValue } from '~/helpers/i18n-validators';
+import { integer, maxValue, minValue } from '../helpers/i18n-validators';
 import { isEmpty, some } from 'lodash-es';
 import useVuelidate from '@vuelidate/core';
 import { useVModels } from '@vueuse/core';
-import { formCheckMultipleValues } from '~/helpers';
-import { useFieldsettingStore } from '~/stores/fieldsetting';
-
+import { formCheckMultipleValues } from '../helpers';
+import { useFieldsettingStore } from '../stores/fieldsetting';
+import BtnBase from './BtnBase.vue';
 import { ref, computed, unref, toRefs, watch } from 'vue';
+import BtnMultipleValues from './BtnMultipleValues.vue';
 
 const fields = useFieldsettingStore();
 const expanded = ref(false);
@@ -78,10 +81,10 @@ const max = ref(10);
 const props = defineProps({
   modelValue: {
     default: {
-      broodframes: 0,
-      honeyframes: 0,
-      foundation: 0,
-      emptyframes: 0,
+      broodframes: 0 as number | null,
+      honeyframes: 0 as number | null,
+      foundation: 0 as number | null,
+      emptyframes: 0 as number | null,
     },
   },
   reset: {

@@ -27,8 +27,8 @@
 </template>
 
 <script setup lang="ts">
-import { QTableProps } from 'quasar';
-import { PropType } from 'vue';
+import type { QTableProps } from 'quasar';
+import type { PropType } from 'vue';
 import { useVModels } from '@vueuse/core';
 import { toRef, computed } from 'vue';
 
@@ -56,6 +56,6 @@ const emit = defineEmits(['update:modelFilter', 'update:modelVisible']);
 const { modelFilter, modelVisible } = useVModels(props, emit);
 
 const optionColumns = computed(() => {
-  return columns.value.filter((obj) => (!obj.required ? obj : null));
+  return columns.value?.filter((obj) => (!obj.required ? obj : null));
 });
 </script>

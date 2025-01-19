@@ -27,16 +27,15 @@
 <script setup lang="ts">
 import { remove, map, difference, merge } from 'lodash-es';
 import dayjs from 'dayjs';
-import { CALENDAR } from '~/constants';
-import { useAuthUserStore } from '~/stores/auth';
-import { useCalendarStore } from '~/stores/calendar';
-import useCalendarVis from '~/composables/useCalendarVis';
-import { useNotification } from '~/composables/useNotification';
+import { CALENDAR } from '../constants';
+import { useAuthUserStore } from '../stores/auth';
+import { useCalendarStore } from '../stores/calendar';
+import useCalendarVis from '../composables/useCalendarVis';
+import { useNotification } from '../composables/useNotification';
+import DialogEvent from '../components/DialogEvent.vue';
+import DialogForm from '../components/DialogForm.vue';
 
-import DialogEvent from '~/components/DialogEvent.vue';
-import DialogForm from '~/components/DialogForm.vue';
-
-import {
+import type {
   CalendarOptions,
   EventClickArg,
   EventChangeArg,
@@ -45,19 +44,20 @@ import {
 import FullCalendar from '@fullcalendar/vue3';
 import allLocales from '@fullcalendar/core/locales-all';
 import dayGridPlugin from '@fullcalendar/daygrid';
-import interactionPlugin, { DateClickArg } from '@fullcalendar/interaction';
+import type { DateClickArg } from '@fullcalendar/interaction';
+import interactionPlugin from '@fullcalendar/interaction';
 import multiMonthPlugin from '@fullcalendar/multimonth';
 import listPlugin from '@fullcalendar/list';
 
-import { useApiFetch } from '~/composables/useApi';
+import { useApiFetch } from '../composables/useApi';
 import { useQuasar } from 'quasar';
-import { useCalendarQuery } from '~/composables/useQuery';
+import { useCalendarQuery } from '../composables/useQuery';
 import { onBeforeRouteLeave } from 'vue-router';
-import { useKeyCalendar } from '~/composables/useKey';
-import { useSwipeCalendar } from '~/composables/useSwipe';
+import { useKeyCalendar } from '../composables/useKey';
+import { useSwipeCalendar } from '../composables/useSwipe';
 import { useLocalStorage } from '@vueuse/core';
 import { useI18n } from 'vue-i18n';
-import CalendarSetting from '~/components/CalendarSetting.vue';
+import CalendarSetting from '../components/CalendarSetting.vue';
 import { storeToRefs } from 'pinia';
 import { ref, onMounted, reactive, watch } from 'vue';
 
@@ -75,7 +75,7 @@ const eventsSourceList: EventSourceInput[] = [];
 const eventsSourceActive: EventSourceInput[] = [];
 const eventsSourceInactive: EventSourceInput[] = [];
 let eventsSourceActiveWatcher = storeCalendar.calendar;
-const dateClicked = ref(dayjs().format('YYYY-MM-DD'));
+const dateClicked = ref<string | null>(dayjs().format('YYYY-MM-DD'));
 const cal = ref<any | null>(null);
 const container = ref<HTMLElement | null>(null);
 const opacity = ref(1);

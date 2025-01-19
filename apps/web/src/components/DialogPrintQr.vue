@@ -12,18 +12,11 @@
         <q-scroll-area style="height: 50vh; width: 500px; max-width: 80vh">
           <div id="printContainer">
             <div class="row q-col-gutter-xs">
-              <div
-                v-for="(item, index) in items"
-                :key="index"
-                class="col-4 text-center"
-              >
-                <img
-                  :id="`qr-code-${item.id}`"
-                  :src="item.image"
-                  :alt="`b.tree - QR Code - ${item.name}`"
-                />
-
-                <figcaption>{{ item.name }}</figcaption>
+              <div v-for="(item, index) in items" :key="index" class="col-4 text-center">
+                <figure>
+                  <img :id="`qr-code-${item.id}`" :src="item.image" :alt="`b.tree - QR Code - ${item.name}`" />
+                  <figcaption>{{ item.name }}</figcaption>
+                </figure>
                 <tooltip-base>{{ item.url }}</tooltip-base>
               </div>
             </div>
@@ -31,14 +24,7 @@
         </q-scroll-area>
       </q-card-section>
       <q-card-actions align="right">
-        <btn-base
-          flat
-          :loading="loading"
-          :label="$t('print')"
-          color="primary"
-          icon="fas fa-print"
-          @click="onPrint"
-        />
+        <btn-base flat :loading="loading" :label="$t('print')" color="primary" icon="fas fa-print" @click="onPrint" />
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -46,10 +32,10 @@
 
 <script setup lang="ts">
 import QRCode from 'qrcode';
-import { deepUnref } from '~/helpers/deep-unref';
-
+import { deepUnref } from '../helpers/deep-unref';
 import BtnCloseDialog from './BtnCloseDialog.vue';
-
+import BtnBase from './BtnBase.vue';
+import TooltipBase from './TooltipBase.vue';
 import { ref, toRef, watch } from 'vue';
 
 const props = defineProps({
@@ -61,7 +47,7 @@ const props = defineProps({
 
 const selected = toRef(props, 'selected');
 const loading = ref(true);
-const items = ref(null);
+const items = ref<any>(null);
 
 watch(
   selected,
@@ -78,12 +64,12 @@ watch(
   { immediate: true },
 );
 
-function createUrl(id: string) {
+function createUrl (id: string) {
   const baseUrl = window.location.origin;
   return baseUrl + '/detail/hive/' + id;
 }
 
-async function generateQR(url: string) {
+async function generateQR (url: string) {
   try {
     return await QRCode.toDataURL(url);
   } catch (err) {
@@ -91,9 +77,9 @@ async function generateQR(url: string) {
   }
 }
 
-function onPrint() {
+function onPrint () {
   setTimeout(() => {
-    const printWindow = window.open('', '_blank', 'height=200,width=400');
+    const printWindow = window.open('', '_blank', 'height=200,width=400')!;
     printWindow.document.write('<html>');
     printWindow.document.write(
       `
@@ -105,7 +91,7 @@ function onPrint() {
     </head>
     `,
     );
-    const element = document.getElementById('printContainer');
+    const element = document.getElementById('printContainer')!;
     printWindow.document.write(
       `
     <body>

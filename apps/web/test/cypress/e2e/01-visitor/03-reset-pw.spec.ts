@@ -25,9 +25,9 @@ describe('Visitor - Password reset', () => {
     cy.get('form').submit();
 
     cy.wait('@postRequest').then((interception) => {
-      assert.isNotNull(interception.response.body);
-      assert.isNotNull(interception.response.body.token);
-      token = interception.response.body.token;
+      assert.isNotNull(interception.response?.body);
+      assert.isNotNull(interception.response?.body.token);
+      token = interception.response?.body.token;
     });
   });
 
@@ -54,8 +54,8 @@ describe('Visitor - Password reset', () => {
     cy.get('form').submit();
 
     cy.wait('@patchRequest').then((interception) => {
-      assert.isNotNull(interception.response.body.email);
-      assert.equal(interception.response.body.email, mail);
+      assert.isNotNull(interception.response?.body.email);
+      assert.equal(interception.response?.body.email, mail);
     });
 
     cy.dataCy('notification').should('be.visible');

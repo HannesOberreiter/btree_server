@@ -1,6 +1,8 @@
-import { SwipeDirection, useSwipe } from '@vueuse/core';
-import { QNotifyUpdateOptions } from 'quasar';
-import { Ref, computed } from 'vue';
+import type { UseSwipeDirection } from '@vueuse/core';
+import { useSwipe } from '@vueuse/core';
+import type { QNotifyUpdateOptions } from 'quasar';
+import type { Ref } from 'vue';
+import { computed } from 'vue';
 import { useNotification } from './useNotification';
 
 export const useSwipeCalendar = (
@@ -12,7 +14,7 @@ export const useSwipeCalendar = (
   const notification = useNotification();
   let notificationDismiss: null | ((props?: QNotifyUpdateOptions) => void) =
     null;
-  const containerWidth = computed(() => container.value?.offsetWidth);
+  const containerWidth = computed(() => container.value?.offsetWidth || 0);
 
   /*const { distanceX } = usePointerSwipe(cal, {
     threshold: 50,
@@ -29,7 +31,7 @@ export const useSwipeCalendar = (
     onSwipe() {
       onEventStart(lengthX.value, containerWidth.value);
     },
-    onSwipeEnd(_e: TouchEvent, direction: SwipeDirection) {
+    onSwipeEnd(_e: TouchEvent, direction: UseSwipeDirection) {
       onEventEnd(lengthX.value, containerWidth.value, direction);
     },
   });
@@ -48,13 +50,13 @@ export const useSwipeCalendar = (
   function onEventEnd(
     distance: number,
     container: number,
-    direction: SwipeDirection,
+    direction: UseSwipeDirection,
   ) {
     const ratio = Math.abs(distance) / container;
     if (container && !eventDrag.value && ratio >= 0.4) {
       if (cal.value.getApi()) {
         if (typeof notificationDismiss === 'function') notificationDismiss();
-        if (direction === 'RIGHT') {
+        if (direction === 'right') {
           cal.value.getApi().prev();
           notificationDismiss = notification.open(
             'info',

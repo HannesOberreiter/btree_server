@@ -33,10 +33,11 @@
 <script setup lang="ts">
 import { useDialogPluginComponent } from 'quasar';
 import dayjs from 'dayjs';
-import { PropType } from 'vue';
-import { Option } from '~/types';
+import type { PropType } from 'vue';
+import type { Option } from '../types';
 import BtnCloseDialog from './BtnCloseDialog.vue';
 import { defineAsyncComponent, computed } from 'vue';
+import GlobalLoading from './GlobalLoading.vue';
 
 const FormMainApiary = defineAsyncComponent(
   () => import('./FormMainApiary.vue'),

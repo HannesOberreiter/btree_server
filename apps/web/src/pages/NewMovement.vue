@@ -10,5 +10,5 @@
 </template>
 
 <script setup lang="ts">
-import FormMainMovement from '~/components/FormMainMovement.vue';
+import FormMainMovement from '../components/FormMainMovement.vue';
 </script>

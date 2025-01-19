@@ -80,15 +80,15 @@
         modus === true
           ? 'fas fa-eye'
           : modus === false
-          ? 'fas fa-eye-slash'
-          : 'fas fa-eye-low-vision'
+            ? 'fas fa-eye-slash'
+            : 'fas fa-eye-low-vision'
       "
       :label="
         modus === true
           ? $t(labelModusTrue)
           : modus === false
-          ? $t(labelModusFalse)
-          : $t('both')
+            ? $t(labelModusFalse)
+            : $t('both')
       "
       data-cy="btn-table-modus"
       @click="modus = modus === true ? false : modus === false ? null : true"
@@ -324,16 +324,18 @@
 import { useVModels } from '@vueuse/core';
 import { stringify } from 'csv-stringify/browser/esm/sync';
 import { exportFile, useQuasar } from 'quasar';
-import { useApiFetch } from '~/composables/useApi';
-import { useDateFormat } from '~/composables/useDate';
-import { clearCache } from '~/composables/useQuery';
-import { useNotification } from '~/composables/useNotification';
-import { useTableFilterStore } from '~/stores/tableFilter';
-import { useAuthUserStore } from '~/stores/auth';
+import { useApiFetch } from '../composables/useApi';
+import { useDateFormat } from '../composables/useDate';
+import { clearCache } from '../composables/useQuery';
+import { useNotification } from '../composables/useNotification';
+import { useTableFilterStore } from '../stores/tableFilter';
+import { useAuthUserStore } from '../stores/auth';
 import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { toRef, computed } from 'vue';
-
+import BtnBase from './BtnBase.vue';
+import BtnBaseGroup from './BtnBaseGroup.vue';
+import TooltipBase from './TooltipBase.vue';
 import DialogFilter from './DialogFilter.vue';
 import DialogForm from './DialogForm.vue';
 import DialogUpload from './DialogUpload.vue';
@@ -383,7 +385,7 @@ const filter = computed(() => storeFilter.table(props.table) !== '');
 
 const dialogForm = (
   title: string,
-  ids: any[],
+  ids: any[] | null,
   form = props.table,
   selected = null as any,
 ) => {
@@ -515,15 +517,15 @@ function onEmit() {
 
 // https://stackoverflow.com/a/53739792/5316675 CC BY-SA 4.0 Muthukrishnan
 function flattenObject(ob: any) {
-  var toReturn = {} as any;
+  const toReturn = {} as any;
 
-  for (var i in ob) {
-    if (!ob.hasOwnProperty(i)) continue;
+  for (const i in ob) {
+    if (!Object.prototype.hasOwnProperty.call(ob, i)) continue;
 
     if (typeof ob[i] == 'object' && ob[i] !== null) {
-      var flatObject = flattenObject(ob[i]);
-      for (var x in flatObject) {
-        if (!flatObject.hasOwnProperty(x)) continue;
+      const flatObject = flattenObject(ob[i]);
+      for (const x in flatObject) {
+        if (!Object.prototype.hasOwnProperty.call(flatObject, x)) continue;
 
         toReturn[i + '.' + x] = flatObject[x];
       }
@@ -621,7 +623,7 @@ function onPrintQR() {
 
 function onPrint() {
   setTimeout(() => {
-    const printWindow = window.open('', '_blank', 'height=200,width=400');
+    const printWindow = window.open('', '_blank', 'height=200,width=400')!;
     printWindow.document.write('<html>');
     printWindow.document.write(
       `
@@ -638,6 +640,7 @@ function onPrint() {
     `,
     );
     const table = document.getElementsByClassName('q-table')[0];
+    if (!table) return;
     printWindow.document.write(
       `
     <body>

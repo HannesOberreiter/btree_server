@@ -16,9 +16,9 @@
 </template>
 
 <script setup lang="ts">
-import { requiredField } from '~/helpers/i18n-validators';
+import { requiredField } from '../helpers/i18n-validators';
 import { useVModels } from '@vueuse/core';
-import { validationErrors } from '~/helpers';
+import { validationErrors } from '../helpers';
 import useVuelidate from '@vuelidate/core';
 
 const props = defineProps({
@@ -54,6 +54,7 @@ const v = useVuelidate(rules, state);
   max-height: 120px;
   overflow-y: auto;
 }
+
 .q-dialog--modal .q-field__native {
   max-height: 120px;
   overflow-y: auto;

@@ -43,10 +43,12 @@
 <script setup lang="ts">
 import { useVModels } from '@vueuse/core';
 import dayjs from 'dayjs';
-import { useDateFormat } from '~/composables/useDate';
-import BtnDateAutoClose from '~/components/BtnDateAutoClose.vue';
+import { useDateFormat } from '../composables/useDate';
+import BtnDateAutoClose from '../components/BtnDateAutoClose.vue';
+import BtnBase from '../components/BtnBase.vue';
 
 import { useI18n } from 'vue-i18n';
+import type { PropType } from 'vue';
 import { ref, watch } from 'vue';
 
 const { t } = useI18n();
@@ -57,6 +59,7 @@ const useDate = useDateFormat();
 const displayValue = ref('');
 const props = defineProps({
   modelValue: {
+    type: Object as PropType<any | null>,
     default: null,
   },
   mark: {

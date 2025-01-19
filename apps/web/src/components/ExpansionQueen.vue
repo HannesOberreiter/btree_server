@@ -91,11 +91,12 @@
 
 <script setup lang="ts">
 import { useQuasar } from 'quasar';
-import { useDateFormat } from '~/composables/useDate';
-import { useNotification } from '~/composables/useNotification';
-import { useApiFetch } from '~/composables/useApi';
+import { useDateFormat } from '../composables/useDate';
+import { useNotification } from '../composables/useNotification';
+import { useApiFetch } from '../composables/useApi';
 import DialogForm from './DialogForm.vue';
-
+import BtnBase from './BtnBase.vue';
+import BtnBaseGroup from './BtnBaseGroup.vue';
 import { toRef, ref, computed } from 'vue';
 
 const notification = useNotification();
@@ -123,7 +124,7 @@ const queen = computed(() => {
     : null;
 });
 
-function openForm(title: string, id: number, selected: number) {
+function openForm(title: string, id: number | null, selected: number | null) {
   $q.dialog({
     component: DialogForm,
     componentProps: {

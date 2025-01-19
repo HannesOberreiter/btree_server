@@ -39,16 +39,16 @@
 </template>
 
 <script setup lang="ts">
-import { useNotification } from '~/composables/useNotification';
+import { useNotification } from '../composables/useNotification';
 import useVuelidate from '@vuelidate/core';
 import { flatten, map, merge } from 'lodash-es';
-import { FormScale } from '~/types';
-import { useApiFetch } from '~/composables/useApi';
-import FormButtons from '~/components/FormButtons.vue';
+import type { FormScale } from '../types';
+import { useApiFetch } from '../composables/useApi';
+import FormButtons from './FormButtons.vue';
 import { ref, computed, unref } from 'vue';
-import FormDropdownEdit from '~/components/FormDropdownEdit.vue';
-import FormInputText from '~/components/FormInputText.vue';
-import FormDropdownOption from '~/components/FormDropdownOption.vue';
+import FormDropdownEdit from './FormDropdownEdit.vue';
+import FormInputText from './FormInputText.vue';
+import FormDropdownOption from './FormDropdownOption.vue';
 
 const notification = useNotification();
 const values = ref({});

@@ -30,26 +30,30 @@
 </template>
 
 <script setup lang="ts">
-import { PropType } from 'vue';
-import { useApiFetch } from '~/composables/useApi';
-import { useFormCleanup } from '~/composables/useFormCleanup';
-import { useNotification } from '~/composables/useNotification';
-import { useInvalidateQueries } from '~/composables/useQuery';
-import { Option } from '~/types';
+import type { PropType } from 'vue';
+import { useApiFetch } from '../composables/useApi';
+import { useFormCleanup } from '../composables/useFormCleanup';
+import { useNotification } from '../composables/useNotification';
+import { useInvalidateQueries } from '../composables/useQuery';
+import type { Option } from '../types';
 import { ref, toRefs, computed, unref } from 'vue';
+import BtnBase from './BtnBase.vue';
+import BtnBaseGroup from './BtnBaseGroup.vue';
 
 const useInvalidate = useInvalidateQueries();
 const notification = useNotification();
 const isSubmitting = ref(false);
 const api = useApiFetch();
 const lastInsert = ref(null);
-const lastInsertTable = ref(null); // needed on quicktool form to handle multiple "forms"
+const lastInsertTable = ref<string | null>(null); // needed on quicktool form to handle multiple "forms"
 const emit = defineEmits(['change', 'reset']);
 const props = defineProps({
   state: {
+    type: Object,
     default: null,
   },
   v: {
+    type: Object,
     default: null,
   },
   editIds: {
@@ -76,7 +80,7 @@ const numberOfTasks = computed(() => {
   if (
     ['feed', 'harvest', 'treatment', 'checkup', 'movedate'].includes(form.value)
   ) {
-    if (state.value.hive) {
+    if (state.value && state.value.hive) {
       count = state.value.hive.length;
       if (state.value.repeat) {
         count = count * state.value.repeat;
@@ -120,7 +124,7 @@ async function onUpdate() {
   }
 
   const id = editIds.value.map((obj: any) => obj.value);
-  let data = {
+  const data = {
     ids: id,
     data: cleanup.cleanup(),
   };
@@ -164,7 +168,7 @@ async function onUndo() {
 
 async function onSubmit() {
   isSubmitting.value = true;
-  const isFormCorrect = await v.value.$validate();
+  const isFormCorrect = await v.value?.$validate();
   if (!isFormCorrect) {
     notification.open('negative', v.value.$errors[0].$message, true);
     isSubmitting.value = false;

@@ -19,7 +19,7 @@
 
 <script setup lang="ts">
 import { ref, watch } from 'vue';
-import { useBackend } from '~/composables/useBackend';
+import { useBackend } from '../composables/useBackend';
 
 const props = defineProps({
   form: { type: String, default: 'visitor' },
@@ -36,5 +36,7 @@ const overwriteOption =
     : null;
 const modelValue = ref(overwriteOption || backend.getOption());
 
-watch(modelValue, () => backend.setBackend(modelValue.value.id));
+watch(modelValue, () => {
+  if (modelValue.value) backend.setBackend(modelValue.value.id);
+});
 </script>

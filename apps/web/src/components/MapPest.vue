@@ -99,13 +99,14 @@ type Observation = {
 </script>
 
 <script setup lang="ts">
-import L, { LatLngTuple } from 'leaflet';
+import type { LatLngTuple } from 'leaflet';
+import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet.markercluster/dist/MarkerCluster.css';
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 import 'leaflet.markercluster/dist/leaflet.markercluster.js';
-import { useApiariesQuery } from '~/composables/useQuery';
-import { useNotification } from '~/composables/useNotification';
+import { useApiariesQuery } from '../composables/useQuery';
+import { useNotification } from '../composables/useNotification';
 import {
   LMap,
   LPopup,
@@ -114,11 +115,11 @@ import {
   LFeatureGroup,
   LMarker,
 } from '@vue-leaflet/vue-leaflet';
-import { useApiFetch } from '~/composables/useApi';
-import MapButtons from '~/components/MapButtons.vue';
+import { useApiFetch } from '../composables/useApi';
+import MapButtons from './MapButtons.vue';
 import { computed, onBeforeUnmount, ref, toRefs, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
-import PestMapLayers from '~/components/PestMapLayers.vue';
+import PestMapLayers from './PestMapLayers.vue';
 import { useRouter } from 'vue-router';
 
 const { t } = useI18n();
@@ -133,7 +134,7 @@ const props = defineProps({
 });
 const { isPublic } = toRefs(props);
 
-const icon = new L.Icon.Default();
+const icon = new L.Icon.Default() as any;
 icon.options.shadowSize = [0, 0];
 
 const taxa = computed(() => {

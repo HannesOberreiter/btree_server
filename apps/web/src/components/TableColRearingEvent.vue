@@ -7,6 +7,7 @@
 <script setup lang="ts">
 import { useQuasar } from 'quasar';
 import DialogRearingEvent from './DialogRearingEvent.vue';
+import BtnBase from './BtnBase.vue';
 
 const $q = useQuasar();
 defineProps({

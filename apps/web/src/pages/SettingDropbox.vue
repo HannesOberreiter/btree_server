@@ -65,13 +65,16 @@
 </template>
 
 <script setup lang="ts">
-import { useNotification } from '~/composables/useNotification';
+import { useNotification } from '../composables/useNotification';
 import { LoadingBar, useQuasar } from 'quasar';
-import { useServiceDropbox } from '~/composables/useDropbox';
-import DialogFileUpload from '~/components/DialogFileUpload.vue';
-import FilesDropbox from '~/components/FilesDropbox.vue';
+import { useServiceDropbox } from '../composables/useDropbox';
+import DialogFileUpload from '../components/DialogFileUpload.vue';
+import FilesDropbox from '../components/FilesDropbox.vue';
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
+import GlobalLoading from '../components/GlobalLoading.vue';
+import BtnBaseGroup from '../components/BtnBaseGroup.vue';
+import BtnBase from '../components/BtnBase.vue';
 
 const router = useRouter();
 const $q = useQuasar();

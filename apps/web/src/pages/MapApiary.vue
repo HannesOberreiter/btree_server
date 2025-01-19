@@ -93,10 +93,16 @@
 <script setup lang="ts">
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { useApiariesQuery, useInvalidateQueries } from '~/composables/useQuery';
-import { useAuthUserStore } from '~/stores/auth';
-import { useNotification } from '~/composables/useNotification';
-import DialogForm from '~/components/DialogForm.vue';
+import {
+  useApiariesQuery,
+  useInvalidateQueries,
+} from '../composables/useQuery';
+import { useAuthUserStore } from '../stores/auth';
+import { useNotification } from '../composables/useNotification';
+import GlobalLoading from '../components/GlobalLoading.vue';
+import BtnBase from '../components/BtnBase.vue';
+import BtnBaseGroup from '../components/BtnBaseGroup.vue';
+import DialogForm from '../components/DialogForm.vue';
 import {
   LMap,
   LPopup,
@@ -105,16 +111,16 @@ import {
   LFeatureGroup,
   LMarker,
 } from '@vue-leaflet/vue-leaflet';
-import { useApiFetch } from '~/composables/useApi';
+import { useApiFetch } from '../composables/useApi';
 import { useQuasar } from 'quasar';
 
-import MapButtons from '~/components/MapButtons.vue';
-import MapOverlay from '~/components/MapOverlay.vue';
+import MapButtons from '../components/MapButtons.vue';
+import MapOverlay from '../components/MapOverlay.vue';
 
 import { useI18n } from 'vue-i18n';
 import { computed, ref } from 'vue';
 
-const icon = new L.Icon.Default();
+const icon = new L.Icon.Default() as any;
 icon.options.shadowSize = [0, 0];
 
 const api = useApiFetch();

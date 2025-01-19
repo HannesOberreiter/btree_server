@@ -1,5 +1,14 @@
 [
   {
+    "version": "6.5.0",
+    "date": "2024-XX-XX",
+    "news": [
+      "CHORE Upgraded backend and new and more strict linter.",
+      "BUGFIX Better error handling when no temperature can be automatically fetched.",
+      "BUGFIX Added delay for sending reminders, to prevent mail server from locking."
+    ]
+  },
+  {
     "version": "6.4.6",
     "date": "2024-09-14",
     "news": [

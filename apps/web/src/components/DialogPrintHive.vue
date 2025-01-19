@@ -11,35 +11,23 @@
       <q-card-section>
         <q-scroll-area style="height: 50vh; width: 500px; max-width: 80vh">
           <div id="printContainer">
-            <PrintHive
-              v-for="(item, index) in items"
-              :id="item.id + ''"
-              :key="index"
-              :year="parseInt(year)"
-              @loaded="nextItem"
-            ></PrintHive>
+            <PrintHive v-for="(item, index) in items" :id="item.id + ''" :key="index" :year="parseInt(year)"
+              @loaded="nextItem"></PrintHive>
           </div>
         </q-scroll-area>
       </q-card-section>
       <q-card-actions align="right">
-        <btn-base
-          flat
-          :loading="loading"
-          :label="$t('print')"
-          color="primary"
-          icon="fas fa-print"
-          @click="onPrint"
-        />
+        <btn-base flat :loading="loading" :label="$t('print')" color="primary" icon="fas fa-print" @click="onPrint" />
       </q-card-actions>
     </q-card>
   </q-dialog>
 </template>
 
 <script setup lang="ts">
-import { useHivesQuery } from '~/composables/useQuery';
-import { deepUnref } from '~/helpers/deep-unref';
-import PrintHive from '~/pages/PrintHive.vue';
-
+import { useHivesQuery } from '../composables/useQuery';
+import { deepUnref } from '../helpers/deep-unref';
+import PrintHive from '../pages/PrintHive.vue';
+import BtnBase from './BtnBase.vue';
 import BtnCloseDialog from './BtnCloseDialog.vue';
 import { ref, toRef, watch } from 'vue';
 
@@ -58,7 +46,7 @@ const props = defineProps({
 });
 
 const selected = toRef(props, 'selected');
-const apiary_selected_filter = ref(null);
+const apiary_selected_filter = ref<any>(null);
 const { data: hives } = useHivesQuery({
   details: true,
   filters: apiary_selected_filter,
@@ -102,7 +90,7 @@ watch(
   { immediate: true },
 );
 
-function nextItem() {
+function nextItem () {
   loadItem = toLoadItems.shift();
   if (loadItem) {
     items.push(loadItem);
@@ -111,9 +99,9 @@ function nextItem() {
   }
 }
 
-function onPrint() {
+function onPrint () {
   setTimeout(() => {
-    const printWindow = window.open('', '_blank', 'height=200,width=400');
+    const printWindow = window.open('', '_blank', 'height=200,width=400')!;
     printWindow.document.write('<html>');
     printWindow.document.write(
       `
@@ -124,7 +112,7 @@ function onPrint() {
     </head>
     `,
     );
-    const element = document.getElementById('printContainer');
+    const element = document.getElementById('printContainer')!;
     printWindow.document.write(
       `
     <body>

@@ -4,7 +4,7 @@
       <form-input-date
         v-model="startValue"
         label="dateStart"
-        :mark="endValue"
+        :mark="() => (endValue === null ? undefined : endValue)"
         :disable="disable"
         @update:model-value="updateStart"
       ></form-input-date>
@@ -13,7 +13,7 @@
       <form-input-date
         v-model="endValue"
         label="dateEnd"
-        :mark="startValue"
+        :mark="() => (startValue === null ? undefined : startValue)"
         :disable="disable"
         @update:model-value="updateEnd"
       >
@@ -66,20 +66,21 @@
 <script setup lang="ts">
 import dayjs from 'dayjs';
 import { useVModels } from '@vueuse/core';
-import { formCheckMultipleValues } from '~/helpers';
+import { formCheckMultipleValues } from '../helpers';
 import { isEmpty } from 'lodash-es';
-import FormInputNumeric from '~/components/FormInputNumeric.vue';
-import FormInputDate from '~/components/FormInputDate.vue';
-
+import FormInputNumeric from './FormInputNumeric.vue';
+import FormInputDate from './FormInputDate.vue';
+import BtnMultipleValues from './BtnMultipleValues.vue';
+import type { PropType } from 'vue';
 import { unref, toRefs, watch, ref, computed } from 'vue';
 
 const props = defineProps({
   startValue: {
-    type: String,
+    type: String as PropType<string | undefined | null>,
     default: dayjs().format('YYYY-MM-DD'),
   },
   endValue: {
-    type: String,
+    type: String as PropType<string | undefined | null>,
     default: dayjs().format('YYYY-MM-DD'),
   },
   updateOnChange: {

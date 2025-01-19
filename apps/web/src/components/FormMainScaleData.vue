@@ -88,12 +88,12 @@
 </template>
 
 <script setup lang="ts">
-import { useNotification } from '~/composables/useNotification';
+import { useNotification } from '../composables/useNotification';
 import useVuelidate from '@vuelidate/core';
 import { flatten, map, merge } from 'lodash-es';
-import { FormScaleData } from '~/types';
-import { useApiFetch } from '~/composables/useApi';
-import { useDateFormat } from '~/composables/useDate';
+import type { FormScaleData } from '../types';
+import { useApiFetch } from '../composables/useApi';
+import { useDateFormat } from '../composables/useDate';
 import FormButtons from './FormButtons.vue';
 import FormDropdownEdit from './FormDropdownEdit.vue';
 import FormDropdownOption from './FormDropdownOption.vue';

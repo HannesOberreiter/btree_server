@@ -34,8 +34,9 @@
 
 <script setup lang="ts">
 import { useDialogPluginComponent } from 'quasar';
-import { useRearingEventQuery } from '~/composables/useQuery';
-
+import { useRearingEventQuery } from '../composables/useQuery';
+import GlobalLoading from './GlobalLoading.vue';
+import BtnBase from './BtnBase.vue';
 import BtnCloseDialog from './BtnCloseDialog.vue';
 import EventInfoRearing from './EventInfoRearing.vue';
 

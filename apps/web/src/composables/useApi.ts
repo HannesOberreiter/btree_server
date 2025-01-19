@@ -20,15 +20,14 @@ export const useApiFetch = () => {
     };
   };
 
-  const buildUrl = (url: string, param = '' as unknown) => {
+  const buildUrl = (url: string, param = '' as any) => {
     if (param === '') return baseUrl.value + url;
-    else
-      return (
-        baseUrl.value +
-        url +
-        '?' +
-        querystring.stringify(param, { arrayFormat: 'bracket' })
-      );
+    return (
+      baseUrl.value +
+      url +
+      '?' +
+      querystring.stringify(param, { arrayFormat: 'bracket' })
+    );
   };
 
   const ping = async () => {

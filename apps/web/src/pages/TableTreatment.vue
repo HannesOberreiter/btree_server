@@ -1,84 +1,42 @@
 <template>
   <div class="row q-pa-sm justify-center">
     <div class="col-12">
-      <q-table
-        v-model:pagination="pagination"
-        v-model:selected="selected"
-        :rows="rows"
-        :columns="columns"
-        :visible-columns="visibleColumns"
-        :loading="isLoadingTable"
-        :dense="true"
-        :rows-per-page-options="[10, 50, 100, 500, 10000]"
-        separator="vertical"
-        row-key="id"
-        selection="multiple"
-        binary-state-sort
-        flat
-        bordered
-        @request="onRequest"
-      >
+      <q-table v-model:pagination="pagination" v-model:selected="selected" :rows="rows" :columns="columns"
+        :visible-columns="visibleColumns" :loading="isLoadingTable" :dense="true"
+        :rows-per-page-options="[10, 50, 100, 500, 10000]" separator="vertical" row-key="id" selection="multiple"
+        binary-state-sort flat bordered @request="onRequest">
         <template #top-left>
-          <table-buttons
-            v-model:deleted="deleted"
-            v-model:modus="modus"
-            :selected="selected"
-            label-modus-true="done"
-            label-modus-false="open"
-            table="treatment"
-            @change="refetch"
-          ></table-buttons>
+          <table-buttons v-model:deleted="deleted" v-model:modus="modus" :selected="selected" label-modus-true="done"
+            label-modus-false="open" table="treatment" @change="refetch"></table-buttons>
         </template>
         <template #top-right>
-          <table-filter
-            v-model:modelFilter="filter"
-            v-model:modelVisible="visibleColumns"
-            :columns="columns"
-          ></table-filter>
+          <table-filter v-model:modelFilter="filter" v-model:modelVisible="visibleColumns"
+            :columns="columns"></table-filter>
         </template>
         <template #header-cell-amount="props">
-          <table-th-sum
-            :parent-prop="props"
-            :label="props.col.label"
-            :name="props.col.name"
-            :selected="selected"
-          ></table-th-sum>
+          <table-th-sum :parent-prop="props" :label="props.col.label" :name="props.col.name"
+            :selected="selected"></table-th-sum>
         </template>
         <template #body-cell-url="props">
           <table-col-url :value="props.value"></table-col-url>
         </template>
         <template #body-cell-note="props">
-          <table-col-note
-            :value="props.value"
-            :trunc="visibleColumns.length > 4"
-          ></table-col-note>
+          <table-col-note :value="props.value" :trunc="visibleColumns.length > 4"></table-col-note>
         </template>
 
         <template #body-cell-done="props">
-          <table-col-status
-            :id="props.row.id"
-            :value="props.value"
-            table="treatment"
-            @change="refetch"
-          ></table-col-status>
+          <table-col-status :id="props.row.id" :value="props.value" table="treatment"
+            @change="refetch"></table-col-status>
         </template>
         <!-- eslint-disable-next-line vue/valid-v-slot -->
         <template #body-cell-hive.name="props">
-          <table-col-link
-            :id="props.row.hive_id"
-            :label="props.value"
-            link="hive"
-          >
+          <table-col-link :id="props.row.hive_id" :label="props.value" link="hive">
           </table-col-link>
         </template>
         <!-- eslint-disable-next-line vue/valid-v-slot -->
         <template #body-cell-treatment_apiary.apiary_name="props">
-          <table-col-link
-            v-if="props.row.treatment_apiary"
-            :id="props.row.treatment_apiary.apiary_id"
-            :label="props.value"
-            link="apiary"
-          >
+          <table-col-link v-if="props.row.treatment_apiary" :id="props.row.treatment_apiary.apiary_id"
+            :label="props.value" link="apiary">
           </table-col-link>
           <td v-else></td>
         </template>
@@ -99,23 +57,24 @@
 </template>
 
 <script setup lang="ts">
-import { tableCheckSelected, tableMeta } from '~/helpers';
-import { useTasksQuery } from '~/composables/useQuery';
-import { useTablesStore } from '~/stores/tables';
-import { QTableProps } from 'quasar';
-import { useDateFormat } from '~/composables/useDate';
-import { useTableFilterStore } from '~/stores/tableFilter';
-import { useKeyTable } from '~/composables/useKey';
-import TableColLink from '~/components/TableColLink.vue';
-import TableColNote from '~/components/TableColNote.vue';
-import TableColStatus from '~/components/TableColStatus.vue';
-import TableColUrl from '~/components/TableColUrl.vue';
+import { tableCheckSelected, tableMeta } from '../helpers';
+import { useTasksQuery } from '../composables/useQuery';
+import { useTablesStore } from '../stores/tables';
+import type { QTableProps } from 'quasar';
+import { useDateFormat } from '../composables/useDate';
+import { useTableFilterStore } from '../stores/tableFilter';
+import { useKeyTable } from '../composables/useKey';
+import TableColLink from '../components/TableColLink.vue';
+import TableColNote from '../components/TableColNote.vue';
+import TableColStatus from '../components/TableColStatus.vue';
+import TableColUrl from '../components/TableColUrl.vue';
 import { useI18n } from 'vue-i18n';
 import { ref, computed, watch } from 'vue';
 import { storeToRefs } from 'pinia';
-import TableButtons from '~/components/TableButtons.vue';
-import TableFilter from '~/components/TableFilter.vue';
-import TableThSum from '~/components/TableThSum.vue';
+import TableButtons from '../components/TableButtons.vue';
+import TableFilter from '../components/TableFilter.vue';
+import TableThSum from '../components/TableThSum.vue';
+import TooltipBase from '../components/TooltipBase.vue';
 
 const useDate = useDateFormat();
 const { t } = useI18n();
@@ -127,7 +86,7 @@ const { treatment: filters } = storeToRefs(storeFilter);
 
 const visibleColumns = ref(store.value.visible);
 
-const selected = ref([]);
+const selected = ref<any>([]);
 const rows = ref([]);
 const modus = ref(null);
 const deleted = ref(false);
@@ -293,13 +252,13 @@ const {
   offset: computed(() => pagination.value.page - 1),
   limit: computed(() => pagination.value.rowsPerPage),
   q: computed(() => (filter.value ? filter.value : '')),
-  filters: computed(() => (filters.value ? filters.value : '')),
+  filters: computed(() => (filters?.value ? filters.value : '')),
   deleted: deleted,
   done: modus,
 });
 
 watch(visibleColumns, (cur) => {
-  store.value.visible = cur;
+  store.value.visible = cur as any;
 });
 
 watch(
@@ -316,7 +275,7 @@ watch(
   },
 );
 
-function onRequest(props: any) {
+function onRequest (props: any) {
   store.value.length = props.pagination.rowsPerPage;
   store.value.sort = props.pagination.sortBy;
   store.value.direction = props.pagination.descending;

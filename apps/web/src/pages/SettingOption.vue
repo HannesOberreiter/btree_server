@@ -78,28 +78,30 @@
 </template>
 
 <script setup lang="ts">
-import { tableCheckSelected, tableMeta } from '~/helpers';
-import { useOptionsQuery } from '~/composables/useQuery';
-import { QTableProps } from 'quasar';
-import { Option } from '~/types';
-import { ComputedRef, PropType } from 'vue';
+import { tableCheckSelected, tableMeta } from '../helpers';
+import { useOptionsQuery } from '../composables/useQuery';
+import type { QTableProps } from 'quasar';
+import type { Option } from '../types';
+import type { ComputedRef, PropType } from 'vue';
 import { find } from 'lodash-es';
-import TableColNote from '~/components/TableColNote.vue';
-import TableColStatus from '~/components/TableColStatus.vue';
-import TableButtons from '~/components/TableButtons.vue';
-import TableFilter from '~/components/TableFilter.vue';
+import TableColNote from '../components/TableColNote.vue';
+import TableColStatus from '../components/TableColStatus.vue';
+import TableButtons from '../components/TableButtons.vue';
+import TableFilter from '../components/TableFilter.vue';
 import { useI18n } from 'vue-i18n';
 import { ref, watch, computed } from 'vue';
 import { useRouter } from 'vue-router';
+import { useDateFormat } from '../composables/useDate';
 
 const { t } = useI18n();
 const router = useRouter();
-const selected = ref([]);
+const selected = ref<any>([]);
 const rows = ref([]);
 const filter = ref('');
 const visibleColumns = ref(['name', 'favorite', 'modus']);
 const modus = ref(true);
 const deleted = ref(false);
+const useDate = useDateFormat();
 
 const pagination = ref({
   sortBy: 'favorite',
@@ -163,12 +165,12 @@ const urlProps = defineProps({
   },
 });
 const optionSelected = ref(find(options, { value: urlProps.option }));
-const optionValue = computed(() => optionSelected.value.value as Option);
+const optionValue = computed(() => optionSelected.value?.value as Option);
 watch(optionSelected, (cur) => {
   selected.value = [];
   router.replace({
     name: 'setting-option',
-    params: { option: cur.value },
+    params: { option: cur?.value },
   });
 });
 
@@ -232,14 +234,16 @@ const columnsIn = computed(() => {
       label: t('created'),
       align: 'center',
       field: (row: any) => row.created_at,
-      format: (val: string) => tableMeta(val, null),
+      format: (val: string) =>
+        tableMeta(val, null, useDate.formats.value['date-time']),
     },
     {
       name: 'updated_at',
       label: t('updated'),
       align: 'center',
       field: (row: any) => row.updated_at,
-      format: (val: string) => tableMeta(val, null),
+      format: (val: string) =>
+        tableMeta(val, null, useDate.formats.value['date-time']),
     },
   ] as QTableProps['columns'];
 

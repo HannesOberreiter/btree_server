@@ -11,7 +11,7 @@
 
 <script setup lang="ts">
 import { onBeforeUnmount, ref, onMounted } from 'vue';
-import MapPest from '~/components/MapPest.vue';
+import MapPest from '../components/MapPest.vue';
 
 const iframeRef = ref<HTMLIFrameElement | null>(null);
 
