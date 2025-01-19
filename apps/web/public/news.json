@@ -4,6 +4,7 @@
     "date": "2024-XX-XX",
     "news": [
       "CHORE Upgraded backend and new and more strict linter.",
+      "CHORE Upgraded frontend libraries and some minor fixes.",
       "BUGFIX Better error handling when no temperature can be automatically fetched.",
       "BUGFIX Added delay for sending reminders, to prevent mail server from locking."
     ]
