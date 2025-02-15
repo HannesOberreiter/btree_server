@@ -3,6 +3,7 @@
     "version": "6.5.0",
     "date": "2024-XX-XX",
     "news": [
+      "FEATURE Locally save latest calendar view and range for up to 10 minutes. This should prevent the calendar from resetting after a page reload. Thanks Johann.",
       "CHORE Upgraded backend and new and more strict linter.",
       "CHORE Upgraded frontend libraries and some minor fixes.",
       "BUGFIX Better error handling when no temperature can be automatically fetched.",
