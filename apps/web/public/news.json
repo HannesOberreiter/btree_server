@@ -3,6 +3,7 @@
     "version": "6.5.0",
     "date": "2024-XX-XX",
     "news": [
+      "FEATURE activate US server on live version",
       "FEATURE Locally save latest calendar view and range for up to 10 minutes. This should prevent the calendar from resetting after a page reload. Thanks Johann.",
       "FEATURE Added current ping value to the server dropdown list. This should help to identify if the server is reachable.",
       "FEATURE Instantly change language on registration page if a language is selected.",
