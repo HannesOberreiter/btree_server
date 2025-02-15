@@ -81,7 +81,7 @@ import AuthService from '../services/auth.service';
 import termsDE from '../i18n/de/terms.txt?raw';
 import termsEN from '../i18n/en/terms.txt?raw';
 import useVuelidate from '@vuelidate/core';
-import { ref, reactive } from 'vue';
+import { ref, reactive, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 import BtnBase from '../components/BtnBase.vue';
@@ -95,7 +95,7 @@ import FormUserDateFormat from '../components/FormUserDateFormat.vue';
 import FormDropdownServer from '../components/FormDropdownServer.vue';
 
 const notification = useNotification();
-const { t } = useI18n();
+const { t, locale } = useI18n();
 const { currentRoute } = useRouter();
 
 // https://stackoverflow.com/a/43020177/5316675
@@ -189,6 +189,10 @@ const rules = reactive({
   terms: { required: requiredField(t('signup.terms')) },
 });
 const v$ = useVuelidate(rules, state);
+
+watch(state, () => {
+  if (state.lang?.value) locale.value = state.lang.value;
+});
 
 async function onSubmit () {
   isSubmitting.value = true;
