@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import { useAuthUserStore } from '~/stores/auth';
-import { useNotification } from '~/composables/useNotification';
-import { User } from '~/types';
+import { useAuthUserStore } from '../stores/auth';
+import { useNotification } from '../composables/useNotification';
+import type { User } from '../types';
 import useVuelidate from '@vuelidate/core';
 import { truncate } from 'lodash-es';
 import { useRouter } from 'vue-router';
 import { reactive, ref, onMounted, onUnmounted, watch } from 'vue';
 import { storeToRefs } from 'pinia';
-
-import FormUserPassword from '~/components/FormUserPassword.vue';
-import FormInputEmail from '~/components/FormInputEmail.vue';
-import FormErrorMax from '~/components/FormErrorMax.vue';
-import FormDropdownServer from '~/components/FormDropdownServer.vue';
-import { useApiFetch } from '~/composables/useApi';
+import BtnBase from '../components/BtnBase.vue';
+import FormUserPassword from '../components/FormUserPassword.vue';
+import FormInputEmail from '../components/FormInputEmail.vue';
+import FormErrorMax from '../components/FormErrorMax.vue';
+import FormDropdownServer from '../components/FormDropdownServer.vue';
+import { useApiFetch } from '../composables/useApi';
 
 const router = useRouter();
 const notification = useNotification();
@@ -54,7 +54,7 @@ watch(
 
 const v = useVuelidate();
 
-async function onSubmit() {
+async function onSubmit () {
   isSubmitting.value = true;
   const isFormCorrect = await v.value.$validate();
   if (!isFormCorrect) {
@@ -69,20 +69,20 @@ async function onSubmit() {
   sendForm(form);
 }
 
-function sendForm(user: User) {
+function sendForm (user: User) {
   store.login(user).then(
     () => {
       notification.open('positive', '');
       redirect();
     },
-    (error) => {
+    (error: any) => {
       isSubmitting.value = false;
       notification.open('negative', error);
     },
   );
 }
 
-async function onLoginGoogle() {
+async function onLoginGoogle () {
   api.get('/v1/auth/google').then((res) => {
     window.location.href = res.url;
   });
@@ -103,9 +103,10 @@ onMounted(() => {
 
 onUnmounted(() => (isSubmitting.value = false));
 
-async function redirect() {
-  if (validLastUrl() && !forceDashboardRedirect.value) {
-    await router.push(validLastUrl());
+async function redirect () {
+  const lastUrl = validLastUrl();
+  if (lastUrl && !forceDashboardRedirect.value) {
+    await router.push(lastUrl);
     return;
   }
   await router.push({ name: 'calendar' });
@@ -118,42 +119,16 @@ async function redirect() {
     <form-error-max v-if="submitCount >= 15"></form-error-max>
     <q-form v-else class="q-gutter-md" @submit.stop="onSubmit">
       <form-input-email v-model="state.email"></form-input-email>
-      <form-user-password
-        v-model:modelPassword="state.password"
-      ></form-user-password>
+      <form-user-password v-model:modelPassword="state.password"></form-user-password>
       <form-dropdown-server></form-dropdown-server>
       <q-card-actions class="">
-        <btn-base
-          v-if="validLastUrl()"
-          type="submit"
-          size="md"
-          color="orange-6"
-          class="full-width text-white q-mb-xs"
-          :label="$t('lastVisit') + ': ' + truncatedLastUrl"
-          :disable="isSubmitting"
-          :loading="isSubmitting"
-        />
-        <btn-base
-          type="submit"
-          size="lg"
-          color="secondary"
-          class="full-width text-white"
-          :label="$t('login')"
-          :disable="isSubmitting"
-          :loading="isSubmitting"
-          @click="forceDashboardRedirect = true"
-        />
+        <btn-base v-if="validLastUrl()" type="submit" size="md" color="orange-6" class="full-width text-white q-mb-xs"
+          :label="$t('lastVisit') + ': ' + truncatedLastUrl" :disable="isSubmitting" :loading="isSubmitting" />
+        <btn-base type="submit" size="lg" color="secondary" class="full-width text-white" :label="$t('login')"
+          :disable="isSubmitting" :loading="isSubmitting" @click="forceDashboardRedirect = true" />
 
-        <q-btn
-          v-if="!isAppleStoreWrapper"
-          color="primary"
-          label="Google"
-          icon="fab fa-google"
-          class="full-width q-mt-lg"
-          no-caps
-          outline
-          @click="onLoginGoogle()"
-        />
+        <q-btn v-if="!isAppleStoreWrapper" color="primary" label="Google" icon="fab fa-google"
+          class="full-width q-mt-lg" no-caps outline @click="onLoginGoogle()" />
       </q-card-actions>
     </q-form>
   </q-card-section>

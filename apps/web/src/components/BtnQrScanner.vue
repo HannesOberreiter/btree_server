@@ -18,7 +18,8 @@
 <script setup lang="ts">
 import { useQuasar } from 'quasar';
 import DialogQrScanner from './DialogQrScanner.vue';
-import { useScanner } from '~/composables/useScanner';
+import { useScanner } from '../composables/useScanner';
+import TooltipBase from './TooltipBase.vue';
 
 const $q = useQuasar();
 const { isAvailable } = useScanner();

@@ -44,9 +44,10 @@
 </template>
 
 <script setup lang="ts">
-import { QInput, QInputProps, useQuasar } from 'quasar';
+import type { QInputProps } from 'quasar';
+import { QInput, useQuasar } from 'quasar';
 import { useVModels } from '@vueuse/core';
-import { validationErrors } from '~/helpers';
+import { validationErrors } from '../helpers';
 import useVuelidate from '@vuelidate/core';
 import {
   sameAs,
@@ -94,6 +95,7 @@ onMounted(() => {
     Workaround for autofill bug in iOS app, but still does not work
    */
   if ($q.platform.is.ios) {
+    if (!passwordInput.value) return;
     const nativeInput =
       passwordInput.value.getNativeElement() as HTMLInputElement;
     nativeInput.addEventListener('change', (event) => {

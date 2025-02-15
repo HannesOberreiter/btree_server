@@ -53,12 +53,13 @@
 </template>
 
 <script setup lang="ts">
-import { useAuthUserStore } from '~/stores/auth';
-import { useTemperatureQuery } from '~/composables/useQuery';
+import { useAuthUserStore } from '../stores/auth';
+import { useTemperatureQuery } from '../composables/useQuery';
 import { useVModels } from '@vueuse/core';
 import { round, isEmpty } from 'lodash-es';
 import { ref, computed, watch } from 'vue';
-import FormInputNumeric from '~/components/FormInputNumeric.vue';
+import FormInputNumeric from './FormInputNumeric.vue';
+import TooltipBase from './TooltipBase.vue';
 
 const storeUser = useAuthUserStore();
 const loadTemp = ref(false);

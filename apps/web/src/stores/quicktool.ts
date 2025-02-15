@@ -1,6 +1,6 @@
 import { acceptHMRUpdate, defineStore } from 'pinia';
 import { useStorage } from '@vueuse/core';
-import { Task } from '~/types';
+import type { Task } from '../types';
 
 export const useQuicktoolStore = defineStore('quicktool', {
   state: () => ({

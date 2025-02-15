@@ -6,7 +6,7 @@
       </div>
       <form-main-task
         v-if="taskSelect"
-        :task="taskForm as any"
+        :task="taskForm"
         :ids="ids"
       ></form-main-task>
     </div>
@@ -15,9 +15,9 @@
 
 <script setup lang="ts">
 import { find } from 'lodash-es';
-import { PropType } from 'vue';
-import { Task } from '~/types';
-import FormMainTask from '~/components/FormMainTask.vue';
+import type { PropType } from 'vue';
+import type { Task } from '../types';
+import FormMainTask from '../components/FormMainTask.vue';
 import { useI18n } from 'vue-i18n';
 import { ref } from 'vue';
 
@@ -28,6 +28,7 @@ const props = defineProps({
     required: true,
   },
   ids: {
+    type: Array as PropType<number[] | null>,
     default: null,
   },
 });
@@ -52,5 +53,7 @@ const options = [
 ];
 
 const taskSelect = ref(find(options, { value: props.task }));
-const taskForm = ref(taskSelect.value ? taskSelect.value.value : '');
+const taskForm = ref<Task>(
+  taskSelect.value ? (taskSelect.value.value as Task) : 'checkup',
+);
 </script>

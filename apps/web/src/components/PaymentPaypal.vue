@@ -4,15 +4,16 @@
 </template>
 
 <script setup lang="ts">
-import { loadScript, PayPalNamespace } from '@paypal/paypal-js';
-import { useApiFetch } from '~/composables/useApi';
-import { useNotification } from '~/composables/useNotification';
-import { useAuthUserStore } from '~/stores/auth';
+import type { PayPalNamespace } from '@paypal/paypal-js';
+import { loadScript } from '@paypal/paypal-js';
+import { useApiFetch } from '../composables/useApi';
+import { useNotification } from '../composables/useNotification';
+import { useAuthUserStore } from '../stores/auth';
 import { onMounted, toRefs } from 'vue';
 
 const storeUser = useAuthUserStore();
 const notification = useNotification();
-let paypal: PayPalNamespace;
+let paypal: PayPalNamespace | null;
 const PAYPAL_CLIENT_ID = process.env.PAYPAL_CLIENT_ID;
 const ENV = process.env.NODE_ENV;
 
@@ -45,7 +46,7 @@ try {
 }
 
 onMounted(async () => {
-  if (paypal) {
+  if (paypal != null && paypal.Buttons) {
     try {
       await paypal
         .Buttons({

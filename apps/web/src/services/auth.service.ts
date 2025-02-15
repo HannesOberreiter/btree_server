@@ -1,6 +1,6 @@
 import { find } from 'lodash-es';
-import { RegisterUser, User } from '~/types';
-import { useApiFetch } from '~/composables/useApi';
+import type { RegisterUser, User } from '../types';
+import { useApiFetch } from '../composables/useApi';
 
 class AuthService {
   async checkLogin() {

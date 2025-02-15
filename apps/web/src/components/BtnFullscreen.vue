@@ -18,6 +18,8 @@
 
 <script setup lang="ts">
 import { useFullscreen } from '@vueuse/core';
+import TooltipBase from './TooltipBase.vue';
+import BtnBase from './BtnBase.vue';
 
 const { isSupported, isFullscreen, toggle } = useFullscreen();
 </script>

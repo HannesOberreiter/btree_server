@@ -7,7 +7,7 @@ import { computed, unref } from 'vue';
 
 import 'dayjs/locale/de';
 import 'dayjs/locale/en';
-import { useAuthUserStore } from '~/stores/auth';
+import { useAuthUserStore } from '../stores/auth';
 
 dayjs.extend(localizedFormat);
 dayjs.extend(customParseFormat);

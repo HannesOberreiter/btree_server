@@ -1,7 +1,8 @@
 import { reactive } from 'vue';
 import { Notify } from 'quasar';
-import { ComposerTranslation, useI18n } from 'vue-i18n';
-import { sleep } from '~/helpers';
+import type { ComposerTranslation } from 'vue-i18n';
+import { useI18n } from 'vue-i18n';
+import { sleep } from '../helpers';
 
 type Type = 'positive' | 'negative' | 'warning' | 'info' | 'ongoing';
 
@@ -11,16 +12,16 @@ const state = reactive({
 });
 
 const useNotification = (t: undefined | ComposerTranslation = undefined) => {
-  if (!t) t = useI18n().t;
+  const $t = t || useI18n().t;
 
   function useHandleSuccess(value: any) {
-    const displayMessage = value ? t(value) : '';
+    const displayMessage = value ? $t(value) : '';
     return displayMessage;
   }
 
   function useHandleError(error: any) {
     let displayMessage = '';
-    if (typeof error === 'string') return t(error);
+    if (typeof error === 'string') return $t(error);
 
     let errorMessage;
 
@@ -32,7 +33,7 @@ const useNotification = (t: undefined | ComposerTranslation = undefined) => {
       errorMessage = error.error;
     }
     displayMessage = checkStatus(error.statusCode, errorMessage);
-    if (displayMessage === '') displayMessage = t('error.unknown');
+    if (displayMessage === '') displayMessage = $t('error.unknown');
 
     return displayMessage;
   }
@@ -40,29 +41,29 @@ const useNotification = (t: undefined | ComposerTranslation = undefined) => {
   function checkStatus(statusCode: number, errorField = '') {
     let displayMessage = '';
     if (statusCode === 400) {
-      displayMessage = t('error.unknown') + ' ' + errorField;
+      displayMessage = $t('error.unknown') + ' ' + errorField;
     } else if (statusCode === 401) {
       if (errorField === 'mail') {
-        displayMessage = t('error.mailError');
+        displayMessage = $t('error.mailError');
       } else {
-        displayMessage = t('error.access');
+        displayMessage = $t('error.access');
       }
     } else if (statusCode === 402) {
-      displayMessage = t('error.premium');
+      displayMessage = $t('error.premium');
     } else if (statusCode === 403) {
       if (errorField === 'lastMovement') {
-        displayMessage = t('error.lastMovement');
+        displayMessage = $t('error.lastMovement');
       } else {
-        displayMessage = t('error.forbidden');
+        displayMessage = $t('error.forbidden');
       }
     } else if (statusCode === 404) {
-      displayMessage = t('error.notFound');
+      displayMessage = $t('error.notFound');
     } else if (statusCode === 409) {
-      displayMessage = `${t('error.duplicate')} (${t(errorField)})`;
+      displayMessage = `${$t('error.duplicate')} (${$t(errorField)})`;
     } else if (statusCode === 423) {
-      displayMessage = t('error.locked');
+      displayMessage = $t('error.locked');
     } else if (statusCode === 429) {
-      displayMessage = t('error.tooManyRequest');
+      displayMessage = $t('error.tooManyRequest');
     }
 
     return displayMessage;
@@ -79,9 +80,9 @@ const useNotification = (t: undefined | ComposerTranslation = undefined) => {
     } else {
       if (!message) {
         if (type === 'negative') {
-          m = t('error.unknown');
+          m = $t('error.unknown');
         } else if (type === 'positive') {
-          m = t('success');
+          m = $t('success');
         }
       } else {
         if (type === 'negative' && message) {
@@ -89,7 +90,7 @@ const useNotification = (t: undefined | ComposerTranslation = undefined) => {
         } else if (type === 'positive' && message) {
           m = useHandleSuccess(message);
         } else {
-          m = t(message);
+          m = $t(message);
         }
       }
     }
@@ -114,7 +115,10 @@ const useNotification = (t: undefined | ComposerTranslation = undefined) => {
     const elements = document.getElementsByClassName('q-notification');
     sleep(100).then(() => {
       for (let i = 0; i < elements.length; i++) {
-        elements[i].addEventListener(
+        if (!elements[i]) {
+          continue;
+        }
+        elements[i]!.addEventListener(
           'click',
           () => {
             dismiss();

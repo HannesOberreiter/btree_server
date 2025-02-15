@@ -538,6 +538,7 @@
   "serie": "Serie | Serie",
   "server": {
     "hint": {
+      "ping": "Ping: {ping}",
       "register": "Scegli il server più vicino alla tua posizione per ottenere le migliori prestazioni, non puoi modificarlo dopo la registrazione!",
       "visitor": "Scegli il server su cui hai registrato la tua azienda!"
     },

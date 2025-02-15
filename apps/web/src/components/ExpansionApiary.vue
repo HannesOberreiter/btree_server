@@ -81,9 +81,11 @@
 
 <script setup lang="ts">
 import { useQuasar } from 'quasar';
-import { useDateFormat } from '~/composables/useDate';
+import { useDateFormat } from '../composables/useDate';
 import DialogForm from './DialogForm.vue';
 import DialogFileShow from './DialogFileShow.vue';
+import TooltipBase from './TooltipBase.vue';
+import BtnBase from './BtnBase.vue';
 
 const $q = useQuasar();
 const useDate = useDateFormat();

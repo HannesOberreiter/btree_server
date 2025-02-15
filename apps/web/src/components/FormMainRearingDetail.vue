@@ -35,11 +35,11 @@
 </template>
 
 <script setup lang="ts">
-import { useNotification } from '~/composables/useNotification';
+import { useNotification } from '../composables/useNotification';
 import useVuelidate from '@vuelidate/core';
 import { flatten, map, merge } from 'lodash-es';
-import { FormRearingDetail } from '~/types';
-import { useApiFetch } from '~/composables/useApi';
+import type { FormRearingDetail } from '../types';
+import { useApiFetch } from '../composables/useApi';
 import FormDropdownEdit from './FormDropdownEdit.vue';
 import FormInputText from './FormInputText.vue';
 import FormInputNote from './FormInputNote.vue';

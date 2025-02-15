@@ -1,4 +1,3 @@
-<!-- eslint-disable vue/no-v-html -->
 <template>
   <q-card flat>
     <q-card-section>
@@ -7,10 +6,7 @@
           <div class="text-h5 q-pb-sm">
             {{ $t('membership.title') }}
           </div>
-          <div
-            v-if="paid"
-            class="bg-info text-weight-bold text-black q-pa-sm rounded-borders"
-          >
+          <div v-if="paid" class="bg-info text-weight-bold text-black q-pa-sm rounded-borders">
             {{ $t('membership.thankYou') }}
           </div>
           <ul>
@@ -22,122 +18,59 @@
               {{ $t('membership.afterPayment') }}: <b>{{ afterPayment }}</b>
             </li>
           </ul>
-          <q-slider
-            v-model="donation"
-            color="green"
-            :min="currentPrice"
-            :max="maxPrice"
-            :step="10"
-            markers
-            :marker-labels="donationMarker"
-            :label-value="donationLabel"
-            switch-label-side
-            switch-marker-labels-side
-          >
+          <q-slider v-model="donation" color="green" :min="currentPrice" :max="maxPrice" :step="10" markers
+            :marker-labels="donationMarker" :label-value="donationLabel" switch-label-side switch-marker-labels-side>
           </q-slider>
           <div class="row payment">
             <div class="col-12">
-              <q-input
-                v-model.number="donation"
-                class="text-h3"
-                filled
-                min="50"
-                step="1"
-                type="number"
-                :rules="[
-                  (val) =>
-                    parseInt(val) >= currentPrice ||
-                    $t('membership.minimumAmount', { value: currentPrice }),
-                ]"
-                :hint="$t('membership.noSubscription')"
-              >
+              <q-input v-model.number="donation" class="text-h3" filled min="50" step="1" type="number" :rules="[
+                (val) =>
+                  parseInt(val) >= currentPrice ||
+                  $t('membership.minimumAmount', { value: currentPrice }),
+              ]" :hint="$t('membership.noSubscription')">
                 <template #prepend>
-                  <q-icon
-                    v-if="donation < donationMarker[1].value"
-                    name="fas fa-face-smile"
-                    size="lg"
-                    color="primary"
-                  ></q-icon>
-                  <q-icon
-                    v-else-if="donation < donationMarker[2].value"
-                    name="fas fa-face-grin"
-                    size="lg"
-                    color="primary"
-                  ></q-icon>
-                  <q-icon
-                    v-else
-                    name="fas fa-face-grin-hearts"
-                    size="lg"
-                    color="primary"
-                  ></q-icon>
+                  <q-icon v-if="donation < donationMarker[1]!.value" name="fas fa-face-smile" size="lg"
+                    color="primary"></q-icon>
+                  <q-icon v-else-if="donation < donationMarker[2]!.value" name="fas fa-face-grin" size="lg"
+                    color="primary"></q-icon>
+                  <q-icon v-else name="fas fa-face-grin-hearts" size="lg" color="primary"></q-icon>
                 </template>
                 <template #append>
                   {{ years > 1 ? `(${sum})` : '' }} €
                 </template>
                 <template #after>
-                  <q-btn
-                    icon="fas fa-calendar-plus"
-                    flat
-                    round
-                    :disable="days >= 3650"
-                    @click="changeDays(365)"
-                  >
+                  <q-btn icon="fas fa-calendar-plus" flat round :disable="days >= 3650" @click="changeDays(365)">
                     <tooltip-base>
                       {{ $t('membership.increaseDays') }}
                     </tooltip-base>
                   </q-btn>
-                  <q-btn
-                    icon="fas fa-calendar-minus"
-                    flat
-                    round
-                    :disable="days <= 365"
-                    @click="changeDays(-365)"
-                  >
+                  <q-btn icon="fas fa-calendar-minus" flat round :disable="days <= 365" @click="changeDays(-365)">
                     <tooltip-base>
                       {{ $t('membership.decreaseDays') }}
                     </tooltip-base>
                   </q-btn>
                 </template>
               </q-input>
-              <div
-                class="text-h5 q-pt-sm q-pb-sm"
-                v-html="$t('membership.sum', { years: years, sum: sum })"
-              ></div>
+              <div class="text-h5 q-pt-sm q-pb-sm" v-html="$t('membership.sum', { years: years, sum: sum })"></div>
             </div>
           </div>
           <div class="text-center payment q-col-gutter-y-sm">
             <div v-if="!($q.platform.is.ios && $q.platform.is.safari)">
-              <payment-stripe
-                :donation="donation"
-                :years="years"
-                @on-paid="(data: any) => successPayment(data.paid)"
-              ></payment-stripe>
+              <payment-stripe :donation="donation" :years="years"
+                @on-paid="(data: any) => successPayment(data.paid)"></payment-stripe>
               <q-separator></q-separator>
             </div>
             <div>
               <suspense>
-                <payment-paypal
-                  :donation="donation"
-                  :years="years"
-                  @on-paid="(data: any) => successPayment(data.paid)"
-                ></payment-paypal>
+                <payment-paypal :donation="donation" :years="years"
+                  @on-paid="(data: any) => successPayment(data.paid)"></payment-paypal>
               </suspense>
               <q-separator></q-separator>
             </div>
             <div>
-              <btn-base
-                label="office@btree.at"
-                icon="fas fa-envelope"
-                color="info"
-                :href="mailTo"
-              >
+              <btn-base label="office@btree.at" icon="fas fa-envelope" color="info" :href="mailTo">
               </btn-base>
-              <btn-base
-                icon="fas fa-ticket"
-                color="info"
-                :label="$t('coupon')"
-                @click="payCoupon"
-              ></btn-base>
+              <btn-base icon="fas fa-ticket" color="info" :label="$t('coupon')" @click="payCoupon"></btn-base>
             </div>
           </div>
         </div>
@@ -155,9 +88,9 @@
               {{
                 index > 0
                   ? calculatePriceChange(
-                      item.price,
-                      priceHistory[index - 1].price,
-                    )
+                    item.price,
+                    priceHistory[index - 1]?.price,
+                  )
                   : ''
               }}
             </li>
@@ -216,18 +149,19 @@
 <script setup lang="ts">
 import dayjs from 'dayjs';
 import { useQuasar } from 'quasar';
-import { useApiFetch } from '~/composables/useApi';
-import { useDateFormat } from '~/composables/useDate';
-import { useNotification } from '~/composables/useNotification';
-import { useAuthUserStore } from '~/stores/auth';
-import { useRefreshStore } from '~/stores/refresh';
-
-import PaymentPaypal from '~/components/PaymentPaypal.vue';
-import PaymentStripe from '~/components/PaymentStripe.vue';
-import SupporterImages from '~/components/SupporterImages.vue';
+import { useApiFetch } from '../composables/useApi';
+import { useDateFormat } from '../composables/useDate';
+import { useNotification } from '../composables/useNotification';
+import { useAuthUserStore } from '../stores/auth';
+import { useRefreshStore } from '../stores/refresh';
+import BtnBase from '../components/BtnBase.vue';
+import PaymentPaypal from '../components/PaymentPaypal.vue';
+import PaymentStripe from '../components/PaymentStripe.vue';
+import SupporterImages from '../components/SupporterImages.vue';
 import { useI18n } from 'vue-i18n';
 import { computed, ref } from 'vue';
-import { useBackend } from '~/composables/useBackend';
+import { useBackend } from '../composables/useBackend';
+import TooltipBase from '../components/TooltipBase.vue';
 
 const storeRefresh = useRefreshStore();
 const useDate = useDateFormat();
@@ -279,9 +213,9 @@ const priceHistory = [
 
 const year = dayjs().year();
 const currentPrice =
-  priceHistory[priceHistory.length - 1].year > year
-    ? priceHistory[priceHistory.length - 2].price
-    : priceHistory[priceHistory.length - 1].price;
+  priceHistory[priceHistory.length - 1]!.year > year
+    ? priceHistory[priceHistory.length - 2]!.price
+    : priceHistory[priceHistory.length - 1]!.price;
 
 const maxPrice = currentPrice + 100;
 
@@ -299,7 +233,7 @@ const donationMarker = [
   { value: maxPrice, label: maxPrice + '€' },
 ];
 
-function payCoupon() {
+function payCoupon () {
   $q.dialog({
     prompt: {
       model: '',
@@ -327,7 +261,7 @@ function payCoupon() {
   });
 }
 
-function successPayment(newDate: string) {
+function successPayment (newDate: string) {
   paid.value = true;
   if (newDate) {
     notification.open('positive', dayjs(newDate).format('YYYY-MM-DD'), true);
@@ -337,15 +271,16 @@ function successPayment(newDate: string) {
   refreshCompany();
 }
 
-function calculatePriceChange(cur: number, prev: number) {
+function calculatePriceChange (cur: number, prev: number | undefined) {
+  if (!prev) return '';
   return '+ ' + Math.floor((cur * 100) / prev - 100) + '%';
 }
 
-function refreshCompany() {
+function refreshCompany () {
   storeRefresh.refresh();
 }
 
-function changeDays(val: number) {
+function changeDays (val: number) {
   if (days.value === 365 && val < 0) return;
   if (days.value === 3650 && val > 0) return;
   days.value += val;

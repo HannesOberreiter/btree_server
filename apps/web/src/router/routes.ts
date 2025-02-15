@@ -1,6 +1,6 @@
-import { RouteRecordRaw } from 'vue-router';
-import MainLaylout from '~/layouts/MainLayout.vue';
-import VisitorLayout from '~/layouts/VisitorLayout.vue';
+import type { RouteRecordRaw } from 'vue-router';
+import MainLaylout from '../layouts/MainLayout.vue';
+import VisitorLayout from '../layouts/VisitorLayout.vue';
 
 const routes: RouteRecordRaw[] = [
   /***
@@ -19,7 +19,7 @@ const routes: RouteRecordRaw[] = [
         meta: {
           title: 'calendar',
         },
-        component: () => import('~/pages/CalendarMain.vue'),
+        component: () => import('../pages/CalendarMain.vue'),
       },
       {
         path: 'calendar_scale',
@@ -27,7 +27,7 @@ const routes: RouteRecordRaw[] = [
         meta: {
           title: 'scale.name',
         },
-        component: () => import('~/pages/CalendarScale.vue'),
+        component: () => import('../pages/CalendarScale.vue'),
       },
       {
         path: '/news',
@@ -35,7 +35,7 @@ const routes: RouteRecordRaw[] = [
         meta: {
           title: 'news',
         },
-        component: () => import('~/pages/ChangeLog.vue'),
+        component: () => import('../pages/ChangeLog.vue'),
       },
       {
         path: '/premium',
@@ -43,7 +43,7 @@ const routes: RouteRecordRaw[] = [
         meta: {
           title: 'donation',
         },
-        component: () => import('~/pages/PremiumDonation.vue'),
+        component: () => import('../pages/PremiumDonation.vue'),
       },
       {
         path: '/lifecycle',
@@ -51,7 +51,7 @@ const routes: RouteRecordRaw[] = [
         meta: {
           title: 'lifecycle',
         },
-        component: () => import('~/pages/HelperLifecycle.vue'),
+        component: () => import('../pages/HelperLifecycle.vue'),
       },
       {
         path: '/sugar_water_calculator',
@@ -59,7 +59,7 @@ const routes: RouteRecordRaw[] = [
         meta: {
           title: 'calculator',
         },
-        component: () => import('~/pages/HelperSugarWater.vue'),
+        component: () => import('../pages/HelperSugarWater.vue'),
       },
       {
         path: '/beekeeping_news',
@@ -67,7 +67,7 @@ const routes: RouteRecordRaw[] = [
         meta: {
           title: 'beekeepingNews',
         },
-        component: () => import('~/pages/BeekeepingNews.vue'),
+        component: () => import('../pages/BeekeepingNews.vue'),
       },
       {
         path: '/wizbee',
@@ -75,7 +75,7 @@ const routes: RouteRecordRaw[] = [
         meta: {
           title: 'WizBee',
         },
-        component: () => import('~/pages/WizBee.vue'),
+        component: () => import('../pages/WizBee.vue'),
       },
     ],
   },
@@ -95,7 +95,7 @@ const routes: RouteRecordRaw[] = [
         meta: {
           title: 'hive',
         },
-        component: () => import('~/pages/TableHive.vue'),
+        component: () => import('../pages/TableHive.vue'),
       },
       {
         path: 'queen',
@@ -103,7 +103,7 @@ const routes: RouteRecordRaw[] = [
         meta: {
           title: 'queen',
         },
-        component: () => import('~/pages/TableQueen.vue'),
+        component: () => import('../pages/TableQueen.vue'),
       },
       {
         path: 'virgin',
@@ -111,7 +111,7 @@ const routes: RouteRecordRaw[] = [
         meta: {
           title: 'virgin',
         },
-        component: () => import('~/pages/TableVirgin.vue'),
+        component: () => import('../pages/TableVirgin.vue'),
       },
       {
         path: 'apiary',
@@ -119,7 +119,7 @@ const routes: RouteRecordRaw[] = [
         meta: {
           title: 'apiary',
         },
-        component: () => import('~/pages/TableApiary.vue'),
+        component: () => import('../pages/TableApiary.vue'),
       },
       {
         path: 'movement',
@@ -127,7 +127,7 @@ const routes: RouteRecordRaw[] = [
         meta: {
           title: 'movement',
         },
-        component: () => import('~/pages/TableMovement.vue'),
+        component: () => import('../pages/TableMovement.vue'),
       },
       {
         path: 'todo',
@@ -135,7 +135,7 @@ const routes: RouteRecordRaw[] = [
         meta: {
           title: 'todo',
         },
-        component: () => import('~/pages/TableTodo.vue'),
+        component: () => import('../pages/TableTodo.vue'),
       },
       {
         path: 'feed',
@@ -143,7 +143,7 @@ const routes: RouteRecordRaw[] = [
         meta: {
           title: 'feed',
         },
-        component: () => import('~/pages/TableFeed.vue'),
+        component: () => import('../pages/TableFeed.vue'),
       },
       {
         path: 'harvest',
@@ -151,12 +151,12 @@ const routes: RouteRecordRaw[] = [
         meta: {
           title: 'harvest',
         },
-        component: () => import('~/pages/TableHarvest.vue'),
+        component: () => import('../pages/TableHarvest.vue'),
       },
       {
         path: 'treatment',
         name: 'table-treatment',
-        component: () => import('~/pages/TableTreatment.vue'),
+        component: () => import('../pages/TableTreatment.vue'),
       },
       {
         path: 'checkup',
@@ -164,7 +164,7 @@ const routes: RouteRecordRaw[] = [
         meta: {
           title: 'checkup',
         },
-        component: () => import('~/pages/TableCheckup.vue'),
+        component: () => import('../pages/TableCheckup.vue'),
       },
       {
         path: 'charge',
@@ -172,7 +172,7 @@ const routes: RouteRecordRaw[] = [
         meta: {
           title: 'charge',
         },
-        component: () => import('~/pages/TableCharge.vue'),
+        component: () => import('../pages/TableCharge.vue'),
       },
       {
         path: 'charge-stock',
@@ -180,7 +180,7 @@ const routes: RouteRecordRaw[] = [
         meta: {
           title: 'stock',
         },
-        component: () => import('~/pages/TableChargeStock.vue'),
+        component: () => import('../pages/TableChargeStock.vue'),
       },
       {
         path: 'scale_data',
@@ -188,7 +188,7 @@ const routes: RouteRecordRaw[] = [
         meta: {
           title: 'scale.name',
         },
-        component: () => import('~/pages/TableScaleData.vue'),
+        component: () => import('../pages/TableScaleData.vue'),
       },
       {
         path: 'rearing',
@@ -196,7 +196,7 @@ const routes: RouteRecordRaw[] = [
         meta: {
           title: 'rearing',
         },
-        component: () => import('~/pages/TableRearing.vue'),
+        component: () => import('../pages/TableRearing.vue'),
       },
     ],
   },
@@ -217,7 +217,7 @@ const routes: RouteRecordRaw[] = [
         meta: {
           title: 'hive',
         },
-        component: () => import('~/pages/DetailHive.vue'),
+        component: () => import('../pages/DetailHive.vue'),
       },
       {
         path: 'apiary/:id',
@@ -226,7 +226,7 @@ const routes: RouteRecordRaw[] = [
         meta: {
           title: 'apiary',
         },
-        component: () => import('~/pages/DetailApiary.vue'),
+        component: () => import('../pages/DetailApiary.vue'),
       },
     ],
   },
@@ -247,7 +247,7 @@ const routes: RouteRecordRaw[] = [
         meta: {
           title: 'quicktool.name',
         },
-        component: () => import('~/pages/NewQuicktool.vue'),
+        component: () => import('../pages/NewQuicktool.vue'),
       },
       {
         path: 'queen',
@@ -255,7 +255,7 @@ const routes: RouteRecordRaw[] = [
         meta: {
           title: 'queen',
         },
-        component: () => import('~/pages/NewQueen.vue'),
+        component: () => import('../pages/NewQueen.vue'),
       },
       {
         path: 'hive',
@@ -263,7 +263,7 @@ const routes: RouteRecordRaw[] = [
         meta: {
           title: 'hive',
         },
-        component: () => import('~/pages/NewHive.vue'),
+        component: () => import('../pages/NewHive.vue'),
       },
       {
         path: 'todo',
@@ -271,7 +271,7 @@ const routes: RouteRecordRaw[] = [
         meta: {
           title: 'todo',
         },
-        component: () => import('~/pages/NewTodo.vue'),
+        component: () => import('../pages/NewTodo.vue'),
       },
       {
         path: 'movement',
@@ -279,7 +279,7 @@ const routes: RouteRecordRaw[] = [
         meta: {
           title: 'movement',
         },
-        component: () => import('~/pages/NewMovement.vue'),
+        component: () => import('../pages/NewMovement.vue'),
       },
       {
         path: 'charge',
@@ -287,12 +287,12 @@ const routes: RouteRecordRaw[] = [
         meta: {
           title: 'charge',
         },
-        component: () => import('~/pages/NewCharge.vue'),
+        component: () => import('../pages/NewCharge.vue'),
       },
       {
         path: 'rearing',
         name: 'new-rearing',
-        component: () => import('~/pages/NewRearing.vue'),
+        component: () => import('../pages/NewRearing.vue'),
       },
     ],
   },
@@ -313,7 +313,7 @@ const routes: RouteRecordRaw[] = [
         meta: {
           title: 'quicktool.name',
         },
-        component: () => import('~/pages/EditQuicktool.vue'),
+        component: () => import('../pages/EditQuicktool.vue'),
       },
       {
         path: 'queen/:ids*',
@@ -322,7 +322,7 @@ const routes: RouteRecordRaw[] = [
         meta: {
           title: 'queen',
         },
-        component: () => import('~/pages/EditQueen.vue'),
+        component: () => import('../pages/EditQueen.vue'),
       },
       {
         path: 'todo/:ids*',
@@ -331,7 +331,7 @@ const routes: RouteRecordRaw[] = [
         meta: {
           title: 'todo',
         },
-        component: () => import('~/pages/EditTodo.vue'),
+        component: () => import('../pages/EditTodo.vue'),
       },
       {
         path: 'movement/:ids*',
@@ -340,7 +340,7 @@ const routes: RouteRecordRaw[] = [
         meta: {
           title: 'movement',
         },
-        component: () => import('~/pages/EditMovement.vue'),
+        component: () => import('../pages/EditMovement.vue'),
       },
     ],
   },
@@ -358,7 +358,7 @@ const routes: RouteRecordRaw[] = [
         meta: {
           title: 'login',
         },
-        component: () => import('~/pages/VisitorLogin.vue'),
+        component: () => import('../pages/VisitorLogin.vue'),
       },
       {
         path: 'register',
@@ -366,7 +366,7 @@ const routes: RouteRecordRaw[] = [
         meta: {
           title: 'signup.name',
         },
-        component: () => import('~/pages/VisitorRegister.vue'),
+        component: () => import('../pages/VisitorRegister.vue'),
       },
       {
         path: 'recover',
@@ -374,7 +374,7 @@ const routes: RouteRecordRaw[] = [
         meta: {
           title: 'recoverUser.title',
         },
-        component: () => import('~/pages/VisitorRecover.vue'),
+        component: () => import('../pages/VisitorRecover.vue'),
       },
       {
         path: 'reset/:reset',
@@ -383,7 +383,7 @@ const routes: RouteRecordRaw[] = [
         meta: {
           title: 'resetUser.title',
         },
-        component: () => import('~/pages/VisitorReset.vue'),
+        component: () => import('../pages/VisitorReset.vue'),
       },
       {
         path: 'activate/:activate',
@@ -392,7 +392,7 @@ const routes: RouteRecordRaw[] = [
         meta: {
           title: 'activateUser.title',
         },
-        component: () => import('~/pages/VisitorActivate.vue'),
+        component: () => import('../pages/VisitorActivate.vue'),
       },
       {
         path: 'unsubscribe',
@@ -400,7 +400,7 @@ const routes: RouteRecordRaw[] = [
         meta: {
           title: 'unsubscribe.name',
         },
-        component: () => import('~/pages/VisitorUnsubscribe.vue'),
+        component: () => import('../pages/VisitorUnsubscribe.vue'),
       },
       {
         path: 'forum',
@@ -408,7 +408,7 @@ const routes: RouteRecordRaw[] = [
         meta: {
           title: 'forum',
         },
-        component: () => import('~/pages/VisitorForum.vue'),
+        component: () => import('../pages/VisitorForum.vue'),
       },
     ],
   },
@@ -428,7 +428,7 @@ const routes: RouteRecordRaw[] = [
         meta: {
           title: 'apiary',
         },
-        component: () => import('~/pages/MapApiary.vue'),
+        component: () => import('../pages/MapApiary.vue'),
       },
       {
         path: 'meteoblue',
@@ -436,7 +436,7 @@ const routes: RouteRecordRaw[] = [
         meta: {
           title: 'meteoblue',
         },
-        component: () => import('~/pages/MapMeteoblue.vue'),
+        component: () => import('../pages/MapMeteoblue.vue'),
       },
       {
         path: 'vespa_velutina',
@@ -444,7 +444,7 @@ const routes: RouteRecordRaw[] = [
         meta: {
           title: 'Vespa velutina',
         },
-        component: () => import('~/pages/MapPest.vue'),
+        component: () => import('../pages/MapPest.vue'),
       },
       {
         path: 'aethina_tumida',
@@ -452,7 +452,7 @@ const routes: RouteRecordRaw[] = [
         meta: {
           title: 'Aethina tunida',
         },
-        component: () => import('~/pages/MapPest.vue'),
+        component: () => import('../pages/MapPest.vue'),
       },
     ],
   },
@@ -471,35 +471,35 @@ const routes: RouteRecordRaw[] = [
         path: 'profile/:tab?',
         name: 'setting-profile',
         props: true,
-        component: () => import('~/pages/SettingProfile.vue'),
+        component: () => import('../pages/SettingProfile.vue'),
       },
       {
         path: 'company/:tab?',
         name: 'setting-company',
         props: true,
-        component: () => import('~/pages/SettingCompany.vue'),
+        component: () => import('../pages/SettingCompany.vue'),
       },
       {
         path: 'field',
         name: 'setting-field',
-        component: () => import('~/pages/SettingField.vue'),
+        component: () => import('../pages/SettingField.vue'),
       },
       {
         path: 'option/:option',
         name: 'setting-option',
         props: true,
-        component: () => import('~/pages/SettingOption.vue'),
+        component: () => import('../pages/SettingOption.vue'),
       },
       {
         path: 'dropbox/:token?',
         name: 'setting-dropbox',
         props: true,
-        component: () => import('~/pages/SettingDropbox.vue'),
+        component: () => import('../pages/SettingDropbox.vue'),
       },
       {
         path: 'rearing',
         name: 'setting-rearing',
-        component: () => import('~/pages/SettingRearing.vue'),
+        component: () => import('../pages/SettingRearing.vue'),
       },
     ],
   },
@@ -518,57 +518,57 @@ const routes: RouteRecordRaw[] = [
       {
         path: 'hive_count',
         name: 'statistic-hive_count',
-        component: () => import('~/pages/StatisticHiveCount.vue'),
+        component: () => import('../pages/StatisticHiveCount.vue'),
       },
       {
         path: 'table_harvest',
         name: 'statistic-table_harvest',
-        component: () => import('~/pages/StatisticTableHarvest.vue'),
+        component: () => import('../pages/StatisticTableHarvest.vue'),
       },
       {
         path: 'stats_harvest',
         name: 'statistic-stats_harvest',
-        component: () => import('~/pages/StatisticStatsHarvest.vue'),
+        component: () => import('../pages/StatisticStatsHarvest.vue'),
       },
       {
         path: 'table_feed',
         name: 'statistic-table_feed',
-        component: () => import('~/pages/StatisticTableFeed.vue'),
+        component: () => import('../pages/StatisticTableFeed.vue'),
       },
       {
         path: 'stats_feed',
         name: 'statistic-stats_feed',
-        component: () => import('~/pages/StatisticStatsFeed.vue'),
+        component: () => import('../pages/StatisticStatsFeed.vue'),
       },
       {
         path: 'table_treatment',
         name: 'statistic-table_treatment',
-        component: () => import('~/pages/StatisticTableTreatment.vue'),
+        component: () => import('../pages/StatisticTableTreatment.vue'),
       },
       {
         path: 'stats_treatment',
         name: 'statistic-stats_treatment',
-        component: () => import('~/pages/StatisticStatsTreatment.vue'),
+        component: () => import('../pages/StatisticStatsTreatment.vue'),
       },
       {
         path: 'table_rating',
         name: 'statistic-table_rating',
-        component: () => import('~/pages/StatisticTableRating.vue'),
+        component: () => import('../pages/StatisticTableRating.vue'),
       },
       {
         path: 'table_queen',
         name: 'statistic-table_queen',
-        component: () => import('~/pages/StatisticTableQueen.vue'),
+        component: () => import('../pages/StatisticTableQueen.vue'),
       },
       {
         path: 'stats_scale',
         name: 'statistic-scale',
-        component: () => import('~/pages/StatisticScale.vue'),
+        component: () => import('../pages/StatisticScale.vue'),
       },
       {
         path: 'stats_varroa',
         name: 'statistic-varroa',
-        component: () => import('~/pages/StatisticVarroa.vue'),
+        component: () => import('../pages/StatisticVarroa.vue'),
       },
     ],
   },
@@ -580,7 +580,7 @@ const routes: RouteRecordRaw[] = [
     meta: {
       auth: true,
     },
-    component: () => import('~/layouts/PrintLayout.vue'),
+    component: () => import('../layouts/PrintLayout.vue'),
     children: [
       {
         path: 'hive/:id/:year?',
@@ -589,7 +589,7 @@ const routes: RouteRecordRaw[] = [
         meta: {
           title: 'hive',
         },
-        component: () => import('~/pages/PrintHive.vue'),
+        component: () => import('../pages/PrintHive.vue'),
       },
     ],
   },
@@ -599,8 +599,29 @@ const routes: RouteRecordRaw[] = [
     name: 'public-map-velutina',
     meta: {
       auth: false,
+      title: 'Vespa velutina',
     },
-    component: () => import('~/pages/PublicMapVelutina.vue'),
+    component: () => import('../pages/PublicMapPest.vue'),
+  },
+
+  {
+    path: '/pub/aethina-tumida/map/',
+    name: 'public-map-aethina-tumida',
+    meta: {
+      auth: false,
+      title: 'Aethina tumida',
+    },
+    component: () => import('../pages/PublicMapPest.vue'),
+  },
+
+  {
+    path: '/pub/beekeeping-news/',
+    name: 'public-beekeeping-news',
+    meta: {
+      auth: false,
+      title: 'Beekeeping News',
+    },
+    component: () => import('../pages/PublicBeekeepingNews.vue'),
   },
 
   /***
@@ -608,7 +629,7 @@ const routes: RouteRecordRaw[] = [
    */
   {
     path: '/:catchAll(.*)*',
-    component: () => import('~/pages/ErrorNotFound404.vue'),
+    component: () => import('../pages/ErrorNotFound404.vue'),
   },
 ];
 

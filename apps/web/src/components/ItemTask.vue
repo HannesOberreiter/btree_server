@@ -1,19 +1,10 @@
 <template>
-  <q-expansion-item
-    ref="element"
-    v-model="model"
-    expand-separator
-    dense
-    :expand-icon-class="$q.screen.gt.xs ? '' : 'hidden'"
-  >
+  <q-expansion-item ref="element" v-model="model" expand-separator dense
+    :expand-icon-class="$q.screen.gt.xs ? '' : 'hidden'">
     <template #header>
       <q-item-section avatar>
-        <q-avatar
-          :icon="icons[task.kind as keyof typeof icons]"
-          :color="color[task.kind as keyof typeof color]"
-          text-color="white"
-          :size="$q.screen.gt.xs ? 'md' : 'sm'"
-        />
+        <q-avatar :icon="icons[task.kind as keyof typeof icons]" :color="color[task.kind as keyof typeof color]"
+          text-color="white" :size="$q.screen.gt.xs ? 'md' : 'sm'" />
       </q-item-section>
       <q-item-section>
         {{ createLabel(task) }}
@@ -24,22 +15,10 @@
       </q-item-section>
       <q-item-section side>
         <div v-if="task.kind !== 'movedate'" class="row items-right">
-          <btn-base
-            v-if="status"
-            flat
-            icon="fas fa-check-circle"
-            color="positive"
-            :class="$q.screen.gt.xs ? '' : 'q-pa-xs'"
-            @click.stop="updateStatus(task.id)"
-          ></btn-base>
-          <btn-base
-            v-else
-            flat
-            icon="fas fa-times-circle"
-            color="negative"
-            :class="$q.screen.gt.xs ? '' : 'q-pa-xs'"
-            @click.stop="updateStatus(task.id)"
-          ></btn-base>
+          <btn-base v-if="status" flat icon="fas fa-check-circle" color="positive"
+            :class="$q.screen.gt.xs ? '' : 'q-pa-xs'" @click.stop="updateStatus(task.id)"></btn-base>
+          <btn-base v-else flat icon="fas fa-times-circle" color="negative" :class="$q.screen.gt.xs ? '' : 'q-pa-xs'"
+            @click.stop="updateStatus(task.id)"></btn-base>
         </div>
       </q-item-section>
     </template>
@@ -69,45 +48,31 @@
           </div>
           <div v-else-if="task.kind === 'checkup'" class="col-12">
             <div v-if="fields.someCheckboxTrue">
-              <q-chip
-                v-if="fields.settings.checkup.checkboxes.queen"
-                :color="task.queen ? 'positive' : 'negative'"
-                text-color="white"
-              >
+              <q-chip v-if="fields.settings.checkup.checkboxes.queen" :color="task.queen ? 'positive' : 'negative'"
+                text-color="white">
                 {{ t('queen') }}
               </q-chip>
-              <q-chip
-                v-if="fields.settings.checkup.checkboxes.queencells"
-                :color="task.queencells ? 'positive' : 'negative'"
-                text-color="white"
-              >
+              <q-chip v-if="fields.settings.checkup.checkboxes.queencells"
+                :color="task.queencells ? 'positive' : 'negative'" text-color="white">
                 {{ t('queencell', 2) }}
               </q-chip>
-              <q-chip
-                v-if="fields.settings.checkup.checkboxes.capped_brood"
-                :color="task.capped_brood ? 'positive' : 'negative'"
-                text-color="white"
-              >
+              <q-chip v-if="fields.settings.checkup.checkboxes.capped_brood"
+                :color="task.capped_brood ? 'positive' : 'negative'" text-color="white">
                 {{ t('cappedBrood') }}
               </q-chip>
-              <q-chip
-                v-if="fields.settings.checkup.checkboxes.eggs"
-                :color="task.eggs ? 'positive' : 'negative'"
-                text-color="white"
-              >
+              <q-chip v-if="fields.settings.checkup.checkboxes.eggs" :color="task.eggs ? 'positive' : 'negative'"
+                text-color="white">
                 {{ t('egg', 2) }}
               </q-chip>
             </div>
-            <div
-              v-if="
-                task.brood ||
-                task.calm_comb ||
-                task.comb ||
-                task.pollen ||
-                task.swarm ||
-                task.temper
-              "
-            >
+            <div v-if="
+              task.brood ||
+              task.calm_comb ||
+              task.comb ||
+              task.pollen ||
+              task.swarm ||
+              task.temper
+            ">
               <b>{{ $t('rating.name') }}: </b>
               <span v-if="task.brood">
                 {{ $t('rating.brood') }} ({{ task.brood }})
@@ -128,14 +93,12 @@
                 {{ $t('rating.temper') }} ({{ task.temper }})
               </span>
             </div>
-            <div
-              v-if="
-                task.broodframes ||
-                task.honeyframes ||
-                task.foundation ||
-                task.emptyframes
-              "
-            >
+            <div v-if="
+              task.broodframes ||
+              task.honeyframes ||
+              task.foundation ||
+              task.emptyframes
+            ">
               <b>{{ $t('frame', 2) }}: </b>
               <span v-if="task.broodframes">
                 {{ $t('frames.broodframes') }} ({{ task.broodframes }})
@@ -180,27 +143,14 @@
       </q-card-section>
       <q-card-actions align="right">
         <btn-base-group>
-          <btn-base
-            outline
-            color="secondary"
-            icon="fas fa-pen"
-            @click="onEdit(task.id, task.kind)"
-          >
+          <btn-base outline color="secondary" icon="fas fa-pen" @click="onEdit(task.id, task.kind)">
             <tooltip-base>{{ $t('edit') }}</tooltip-base>
           </btn-base>
-          <btn-base
-            outline
-            color="negative"
-            icon="fas fa-trash"
-            @click="onDelete(task.id, task.kind)"
-          >
+          <btn-base outline color="negative" icon="fas fa-trash" @click="onDelete(task.id, task.kind)">
             <tooltip-base>{{ $t('delete') }}</tooltip-base>
           </btn-base>
         </btn-base-group>
-        <span
-          v-if="task.creator || task.editor"
-          class="text-caption absolute-bottom-left"
-        >
+        <span v-if="task.creator || task.editor" class="text-caption absolute-bottom-left">
           {{ createUserInfo(task) }}
         </span>
       </q-card-actions>
@@ -228,15 +178,17 @@ const color = {
 
 <script setup lang="ts">
 import { useQuasar } from 'quasar';
-import { useApiFetch } from '~/composables/useApi';
-import { useDateFormat } from '~/composables/useDate';
-import { useNotification } from '~/composables/useNotification';
+import { useApiFetch } from '../composables/useApi';
+import { useDateFormat } from '../composables/useDate';
+import { useNotification } from '../composables/useNotification';
 import DialogForm from './DialogForm.vue';
 import DialogFileShow from './DialogFileShow.vue';
-import { useFieldsettingStore } from '~/stores/fieldsetting';
-
+import { useFieldsettingStore } from '../stores/fieldsetting';
+import BtnBase from './BtnBase.vue';
+import BtnBaseGroup from './BtnBaseGroup.vue';
 import { ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
+import TooltipBase from './TooltipBase.vue';
 
 const fields = useFieldsettingStore();
 const $q = useQuasar();
@@ -268,7 +220,7 @@ watch(
   },
 );
 
-function updateStatus(id: number) {
+function updateStatus (id: number) {
   const data = JSON.stringify({
     status: !status.value,
     ids: [id],
@@ -285,7 +237,7 @@ function updateStatus(id: number) {
   );
 }
 
-function createLabel(task: any) {
+function createLabel (task: any) {
   let type = task.type ? task.type.name : '-';
   if (task.kind === 'treatment' && task.disease)
     type += ` (${task.disease.name})`;
@@ -301,13 +253,13 @@ function createLabel(task: any) {
     : `${type}: ${amount}`;
 }
 
-function createCaption(task: any) {
+function createCaption (task: any) {
   const date =
     task.date === task.enddate || task.kind === 'movedate'
       ? useDate.displayFormat(task.date)
       : useDate.displayFormat(task.date) +
-        ' - ' +
-        useDate.displayFormat(task.enddate);
+      ' - ' +
+      useDate.displayFormat(task.enddate);
   let apiary = '';
   if (task.apiary || task[`${task.kind}_apiary`])
     apiary =
@@ -321,7 +273,7 @@ function createCaption(task: any) {
   }
 }
 
-function createUserInfo(task: any) {
+function createUserInfo (task: any) {
   const creator = task.creator
     ? task.creator.username
       ? task.creator.username
@@ -342,7 +294,7 @@ function createUserInfo(task: any) {
   }
 }
 
-function onEdit(id: number, kind: string) {
+function onEdit (id: number, kind: string) {
   $q.dialog({
     component: DialogForm,
     componentProps: {
@@ -354,7 +306,7 @@ function onEdit(id: number, kind: string) {
   }).onOk(() => emit('refetch'));
 }
 
-function onDelete(id: number, kind: string) {
+function onDelete (id: number, kind: string) {
   $q.dialog({
     title: t('delete'),
     message: t('deleteConfirm'),
@@ -373,7 +325,7 @@ function onDelete(id: number, kind: string) {
   });
 }
 
-function showFile(value: string) {
+function showFile (value: string) {
   if (value && value !== '') {
     $q.dialog({
       component: DialogFileShow,

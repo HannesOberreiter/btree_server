@@ -50,22 +50,22 @@
 
 <script setup lang="ts">
 import { parse } from 'csv-parse/browser/esm/sync';
-import { QRejectedEntry } from 'quasar';
-import { useApiFetch } from '~/composables/useApi';
-import { useCsvCleanup } from '~/composables/useCsvCleanup';
-import { useNotification } from '~/composables/useNotification';
+import type { QRejectedEntry } from 'quasar';
+import { useApiFetch } from '../composables/useApi';
+import { useCsvCleanup } from '../composables/useCsvCleanup';
+import { useNotification } from '../composables/useNotification';
 import { ref, computed, toRef } from 'vue';
 import { useI18n } from 'vue-i18n';
-
+import BtnBase from './BtnBase.vue';
 const notification = useNotification();
 const api = useApiFetch();
 const { t } = useI18n();
 const upload = ref(null);
 const lines = ref(0);
-const records = ref(null);
+const records = ref<any>(null);
 const state = ref(null);
 const isSubmitting = ref(false);
-const errorMessage = ref(null);
+const errorMessage = ref<any>(null);
 const maxUpload = 100;
 
 const props = defineProps({
@@ -90,8 +90,12 @@ function streamToString(file: File) {
   reader.readAsBinaryString(file);
 }
 
-function parseCSV(input: any) {
+function parseCSV(input: string | ArrayBuffer | null) {
   try {
+    if (!input) return;
+    if (input instanceof ArrayBuffer) {
+      input = new TextDecoder().decode(input);
+    }
     records.value = parse(input, {
       columns: true,
       skip_empty_lines: true,

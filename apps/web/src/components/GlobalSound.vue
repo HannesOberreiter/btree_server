@@ -6,14 +6,13 @@
 </template>
 
 <script setup lang="ts">
-import { useAuthUserStore } from '~/stores/auth';
-import { useNotification } from '~/composables/useNotification';
+import { useAuthUserStore } from '../stores/auth';
+import { useNotification } from '../composables/useNotification';
 import { useVibrate } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { ref, watch } from 'vue';
-
-import ErrorSound from '~/assets/audio/error.mp3';
-import SuccessSound from '~/assets/audio/success.mp3';
+import ErrorSound from '../assets/audio/error.mp3';
+import SuccessSound from '../assets/audio/success.mp3';
 
 const { vibrate, isSupported: isVibrationSupported } = useVibrate({
   pattern: [100],
@@ -34,9 +33,11 @@ watch(notification.state, (currentValue) => {
     if (lastSoundNotification.value)
       if (!preventSoundNotification(lastSoundNotification.value)) {
         if (isVibrationSupported) vibrate(currentValue.error ? 300 : 100);
-        currentValue.error
-          ? errorSound.value.play()
-          : successSound.value.play();
+        if (currentValue.error) {
+          if (errorSound.value) errorSound.value.play();
+        } else {
+          if (successSound.value) successSound.value.play();
+        }
         lastSoundNotification.value = new Date().getTime();
       }
   }

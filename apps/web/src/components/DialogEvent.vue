@@ -22,24 +22,18 @@
           <div class="col-12">
             <div v-if="!isMovement">
               <b>{{ $t('status') }}: </b>
-              <span
-                class="show-pointer"
-                :class="eventInfo.done ? 'text-green-8' : 'text-red-8'"
-                @click="updateStatus()"
-                >{{ eventInfo.done ? $t('done') : $t('open') }}
-                <q-icon name="fas fa-refresh"></q-icon
-              ></span>
+              <span class="show-pointer" :class="eventInfo.done ? 'text-green-8' : 'text-red-8'"
+                @click="updateStatus()">{{ eventInfo.done ? $t('done') : $t('open') }}
+                <q-icon name="fas fa-refresh"></q-icon></span>
             </div>
             <div>
               <b>{{ $t('date') }}:</b>
               {{ useDate.displayFormat(eventInfo.start) }}
             </div>
-            <div
-              v-if="
-                useDate.toDayjs(eventInfo.end).subtract(1, 'day').format('L') !=
-                useDate.toDayjs(eventInfo.start).format('L')
-              "
-            >
+            <div v-if="
+              useDate.toDayjs(eventInfo.end).subtract(1, 'day').format('L') !=
+              useDate.toDayjs(eventInfo.start).format('L')
+            ">
               <b>{{ $t('end') }}:</b>
               {{
                 useDate.displayFormat(
@@ -54,13 +48,10 @@
             <div v-if="!isTodo">
               <div v-if="eventInfo.hive_ids.split(',').length - 1 === 0">
                 <b>{{ t('hive') }}: </b>
-                <router-link
-                  class="text-orange-8"
-                  :to="{
-                    name: 'detail-hive',
-                    params: { id: eventInfo.hive_ids },
-                  }"
-                >
+                <router-link class="text-orange-8" :to="{
+                  name: 'detail-hive',
+                  params: { id: eventInfo.hive_ids },
+                }">
                   {{ eventInfo.hive_names }}
                 </router-link>
               </div>
@@ -77,13 +68,10 @@
               </div>
               <div>
                 <b>{{ t('apiary') }}: </b>
-                <router-link
-                  class="text-orange-8"
-                  :to="{
-                    name: 'detail-apiary',
-                    params: { id: eventInfo.apiary_id },
-                  }"
-                >
+                <router-link class="text-orange-8" :to="{
+                  name: 'detail-apiary',
+                  params: { id: eventInfo.apiary_id },
+                }">
                   {{ eventInfo.apiary_name }}
                 </router-link>
               </div>
@@ -91,11 +79,9 @@
             <div v-if="eventInfo.creators">
               <b>{{ t('created') }}:</b> {{ eventInfo.creators }}
             </div>
-            <div
-              v-if="
-                eventInfo.editors && eventInfo.creators != eventInfo.editors
-              "
-            >
+            <div v-if="
+              eventInfo.editors && eventInfo.creators != eventInfo.editors
+            ">
               <b>{{ t('edited') }}:</b> {{ eventInfo.editors }}
             </div>
           </div>
@@ -105,38 +91,20 @@
       <q-card-actions>
         <div class="col-12">
           <btn-base-group :spread="false">
-            <btn-base
-              v-if="!isMovement && !isVis && !isRearings"
-              color="secondary darken-1"
-              icon="fas fa-refresh"
-              @click="updateStatus()"
-            >
+            <btn-base v-if="!isMovement && !isVis && !isRearings" color="secondary darken-1" icon="fas fa-refresh"
+              @click="updateStatus()">
               <tooltip-base>{{ t('changeStatus') }}</tooltip-base>
             </btn-base>
-            <btn-base
-              v-if="!isVis && !isRearings"
-              color="green darken-1"
-              icon="fas fa-pen"
-              @click="editTask()"
-            >
+            <btn-base v-if="!isVis && !isRearings" color="green darken-1" icon="fas fa-pen" @click="editTask()">
               <tooltip-base>{{ t('edit') }}</tooltip-base>
             </btn-base>
-            <btn-base
-              v-if="!isVis"
-              color="negative darken-1"
-              data-cy="btn-dialog-event-delete"
-              icon="fas fa-trash"
-              @click="deleteEvent"
-            >
+            <btn-base v-if="!isVis" color="negative darken-1" data-cy="btn-dialog-event-delete" icon="fas fa-trash"
+              @click="deleteEvent">
               <tooltip-base>{{ t('delete') }}</tooltip-base>
             </btn-base>
           </btn-base-group>
 
-          <btn-base
-            color="grey darken-1"
-            class="float-right"
-            @click="onDialogHide"
-          >
+          <btn-base color="grey darken-1" class="float-right" @click="onDialogHide">
             {{ t('close') }}
           </btn-base>
         </div>
@@ -147,15 +115,17 @@
 
 <script setup lang="ts">
 import { truncate } from 'lodash-es';
-import { useNotification } from '~/composables/useNotification';
+import { useNotification } from '../composables/useNotification';
 import EventInfoRearing from './EventInfoRearing.vue';
 import EventInfoVis from './EventInfoVis.vue';
-import { useDateFormat } from '~/composables/useDate';
-import { useApiFetch } from '~/composables/useApi';
+import { useDateFormat } from '../composables/useDate';
+import { useApiFetch } from '../composables/useApi';
 import { useDialogPluginComponent, useQuasar } from 'quasar';
-
+import BtnBase from './BtnBase.vue';
+import BtnBaseGroup from './BtnBaseGroup.vue';
+import TooltipBase from './TooltipBase.vue';
 import BtnCloseDialog from './BtnCloseDialog.vue';
-
+import { RouterLink } from 'vue-router';
 import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { computed } from 'vue';
@@ -183,7 +153,7 @@ const isTodo = computed(() => props.eventInfo.table === 'todo' || false);
 const isVis = computed(() => props.eventInfo.table === 'vis' || false);
 const isRearings = computed(() => props.eventInfo.table === 'rearing' || false);
 
-async function updateStatus() {
+async function updateStatus () {
   const data = JSON.stringify({
     status: !props.eventInfo.done,
     ids: props.eventInfo.task_ids.toString().split(','),
@@ -199,7 +169,7 @@ async function updateStatus() {
     },
   );
 }
-async function deleteEvent() {
+async function deleteEvent () {
   const data = JSON.stringify({
     ids: isRearings.value
       ? [props.eventInfo.publicId]
@@ -230,7 +200,7 @@ async function deleteEvent() {
   });
 }
 
-function editTask() {
+function editTask () {
   if (isTodo.value) {
     router.push({
       name: 'edit-todo',

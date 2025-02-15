@@ -1,6 +1,6 @@
 import { useLocalStorage } from '@vueuse/core';
 import { computed } from 'vue';
-import { API_SERVER } from '~/constants';
+import { API_SERVER } from '../constants';
 
 type Server = 'eu' | 'us';
 
@@ -30,9 +30,10 @@ export const useBackend = () => {
   const params = new URLSearchParams(window.location.search);
   const paramServer = params.get('server');
 
-  const server = validServers.includes(paramServer)
-    ? (paramServer as Server)
-    : null;
+  const server =
+    paramServer && validServers.includes(paramServer)
+      ? (paramServer as Server)
+      : null;
 
   const state = useLocalStorage<Server>(
     'backend-location',
@@ -54,6 +55,29 @@ export const useBackend = () => {
   });
   const urlIgnoreProxy = computed(() => backends[state.value] || baseUrl);
 
+  const ping = async () => {
+    // https://api.btree.at/api/v1/status
+    const controller = new AbortController();
+    const { signal } = controller;
+    const id = setTimeout(() => controller.abort(), 15000);
+    const request = new Request(`${url.value}/v1/status`, {
+      signal,
+      method: 'HEAD',
+    });
+    const time1 = performance.now();
+    const response = await fetch(request).catch((e) => {
+      console.error(e);
+      throw 'offline';
+    });
+    clearTimeout(id);
+
+    if (!response.ok) {
+      throw 'offline';
+    }
+    const time2 = performance.now();
+    return Math.floor(time2 - time1);
+  };
+
   return {
     state,
     setBackend: (value: string) => {
@@ -69,5 +93,6 @@ export const useBackend = () => {
     urlIgnoreProxy,
     url,
     options,
+    ping,
   };
 };

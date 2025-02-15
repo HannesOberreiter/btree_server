@@ -36,14 +36,15 @@
 import { useVModels } from '@vueuse/core';
 import { isEmpty } from 'lodash-es';
 import { useQuasar } from 'quasar';
-import { formCheckMultipleValues } from '~/helpers';
-
+import { formCheckMultipleValues } from '../helpers';
+import BtnMultipleValues from './BtnMultipleValues.vue';
+import type { PropType } from 'vue';
 import { unref, toRefs, watch, ref, computed } from 'vue';
 
 const $q = useQuasar();
 const props = defineProps({
   modelValue: {
-    type: String,
+    type: String as PropType<string | null>,
     default: 'in',
   },
   label: {

@@ -38,14 +38,14 @@
 </template>
 
 <script setup lang="ts">
-import { useApiariesQuery, useHivesQuery } from '~/composables/useQuery';
+import { useApiariesQuery, useHivesQuery } from '../composables/useQuery';
 import { useRouter } from 'vue-router';
 import { ref, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 const search = ref(null);
-const searchRef = ref(null);
+const searchRef = ref<any>(null);
 const options = ref([] as any);
 const router = useRouter();
 
@@ -71,7 +71,7 @@ const data = computed(() => {
   ];
   let result = [...active, ...inactive];
   */
-  let result = [...apiaries.value.results, ...hives.value.results];
+  const result = [...apiaries.value.results, ...hives.value.results];
   return result.map((obj) => {
     let label =
       obj.modus === false ? obj.label + ' [' + t('inactive') + ']' : obj.label;
@@ -90,7 +90,6 @@ function filterFn(val: any, update: any, _abort: any) {
   if (data.value !== null) {
     update(
       () => {
-        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
         const needle = new RegExp(`(${val.toLowerCase()})`);
         options.value = data.value.filter((obj) =>
           needle.test(obj.clabel.toLowerCase()),

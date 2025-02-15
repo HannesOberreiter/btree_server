@@ -55,22 +55,22 @@
 </template>
 
 <script setup lang="ts">
-import { tableCheckSelected, tableMeta } from '~/helpers';
-import { useRearingsQuery } from '~/composables/useQuery';
-import { useTablesStore } from '~/stores/tables';
-import { useTableFilterStore } from '~/stores/tableFilter';
-import { QTableProps } from 'quasar';
-import { useDateFormat } from '~/composables/useDate';
-import { useKeyTable } from '~/composables/useKey';
+import { tableCheckSelected, tableMeta } from '../helpers';
+import { useRearingsQuery } from '../composables/useQuery';
+import { useTablesStore } from '../stores/tables';
+import { useTableFilterStore } from '../stores/tableFilter';
+import type { QTableProps } from 'quasar';
+import { useDateFormat } from '../composables/useDate';
+import { useKeyTable } from '../composables/useKey';
 import { useI18n } from 'vue-i18n';
 import { ref, computed, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 
-import TableColNote from '~/components/TableColNote.vue';
-import TableButtons from '~/components/TableButtons.vue';
-import TableFilter from '~/components/TableFilter.vue';
-import TableColRearingEvent from '~/components/TableColRearingEvent.vue';
-import TableColSymbol from '~/components/TableColSymbol.vue';
+import TableColNote from '../components/TableColNote.vue';
+import TableButtons from '../components/TableButtons.vue';
+import TableFilter from '../components/TableFilter.vue';
+import TableColRearingEvent from '../components/TableColRearingEvent.vue';
+import TableColSymbol from '../components/TableColSymbol.vue';
 
 const useDate = useDateFormat();
 const { t } = useI18n();
@@ -81,7 +81,7 @@ const { rearing: filters } = storeToRefs(storeFilter);
 
 const visibleColumns = ref(store.value.visible);
 
-const selected = ref([]);
+const selected = ref<any>([]);
 const rows = ref([]);
 const modus = ref(true);
 const deleted = ref(false);
@@ -206,11 +206,11 @@ const {
   offset: computed(() => pagination.value.page - 1),
   limit: computed(() => pagination.value.rowsPerPage),
   q: computed(() => (filter.value ? filter.value : '')),
-  filters: computed(() => (filters.value ? filters.value : '')),
+  filters: computed(() => (filters?.value ? filters.value : '')),
 });
 
 watch(visibleColumns, (cur) => {
-  store.value.visible = cur;
+  store.value.visible = cur as any;
 });
 
 watch(

@@ -2,18 +2,12 @@
   <div width="100%">
     <q-resize-observer @resize="onResize" />
     <div class="col-12">
-      <div
-        ref="container"
-        class="calendar-container text-body1"
-        :style="{ opacity }"
-      >
+      <div ref="container" class="calendar-container text-body1" :style="{ opacity }">
         <full-calendar ref="cal" :options="calendarOptions">
           <template #eventContent="{ timeText, event }">
-            <i
-              v-if="event.extendedProps.table === 'rearing'"
+            <i v-if="event.extendedProps.table === 'rearing'"
               :style="`background-color: ${event.backgroundColor}; color: black;`"
-              :class="event.extendedProps.icon"
-            ></i>
+              :class="event.extendedProps.icon"></i>
             <i v-else :class="event.extendedProps.icon"></i>
             {{ timeText }}
             {{ event.title }}
@@ -27,16 +21,15 @@
 <script setup lang="ts">
 import { remove, map, difference, merge } from 'lodash-es';
 import dayjs from 'dayjs';
-import { CALENDAR } from '~/constants';
-import { useAuthUserStore } from '~/stores/auth';
-import { useCalendarStore } from '~/stores/calendar';
-import useCalendarVis from '~/composables/useCalendarVis';
-import { useNotification } from '~/composables/useNotification';
+import { CALENDAR } from '../constants';
+import { useAuthUserStore } from '../stores/auth';
+import { useCalendarStore } from '../stores/calendar';
+import useCalendarVis from '../composables/useCalendarVis';
+import { useNotification } from '../composables/useNotification';
+import DialogEvent from '../components/DialogEvent.vue';
+import DialogForm from '../components/DialogForm.vue';
 
-import DialogEvent from '~/components/DialogEvent.vue';
-import DialogForm from '~/components/DialogForm.vue';
-
-import {
+import type {
   CalendarOptions,
   EventClickArg,
   EventChangeArg,
@@ -45,19 +38,20 @@ import {
 import FullCalendar from '@fullcalendar/vue3';
 import allLocales from '@fullcalendar/core/locales-all';
 import dayGridPlugin from '@fullcalendar/daygrid';
-import interactionPlugin, { DateClickArg } from '@fullcalendar/interaction';
+import type { DateClickArg } from '@fullcalendar/interaction';
+import interactionPlugin from '@fullcalendar/interaction';
 import multiMonthPlugin from '@fullcalendar/multimonth';
 import listPlugin from '@fullcalendar/list';
 
-import { useApiFetch } from '~/composables/useApi';
+import { useApiFetch } from '../composables/useApi';
 import { useQuasar } from 'quasar';
-import { useCalendarQuery } from '~/composables/useQuery';
+import { useCalendarQuery } from '../composables/useQuery';
 import { onBeforeRouteLeave } from 'vue-router';
-import { useKeyCalendar } from '~/composables/useKey';
-import { useSwipeCalendar } from '~/composables/useSwipe';
+import { useKeyCalendar } from '../composables/useKey';
+import { useSwipeCalendar } from '../composables/useSwipe';
 import { useLocalStorage } from '@vueuse/core';
 import { useI18n } from 'vue-i18n';
-import CalendarSetting from '~/components/CalendarSetting.vue';
+import CalendarSetting from '../components/CalendarSetting.vue';
 import { storeToRefs } from 'pinia';
 import { ref, onMounted, reactive, watch } from 'vue';
 
@@ -75,7 +69,7 @@ const eventsSourceList: EventSourceInput[] = [];
 const eventsSourceActive: EventSourceInput[] = [];
 const eventsSourceInactive: EventSourceInput[] = [];
 let eventsSourceActiveWatcher = storeCalendar.calendar;
-const dateClicked = ref(dayjs().format('YYYY-MM-DD'));
+const dateClicked = ref<string | null>(dayjs().format('YYYY-MM-DD'));
 const cal = ref<any | null>(null);
 const container = ref<HTMLElement | null>(null);
 const opacity = ref(1);
@@ -87,6 +81,21 @@ useSwipeCalendar(cal, container, opacity, eventDrag);
 const localPerf = useLocalStorage(
   'pref-local',
   { 'calendar-show-weeknumber': true },
+  { mergeDefaults: true },
+);
+
+const VIEWS = ['dayGridMonth', 'months', 'dayGridWeek', 'listWeek'] as const;
+
+const localLastView = useLocalStorage<{
+  view: typeof VIEWS[number];
+  date: string | undefined;
+  dateTimestamp: number;
+}>('calendar-last-view',
+  {
+    view: 'dayGridMonth',
+    date: undefined,
+    dateTimestamp: Date.now(),
+  },
   { mergeDefaults: true },
 );
 
@@ -190,13 +199,13 @@ const refetchSource = (event: string) => {
   source.refetch();
 };
 
-function onResize(_size: any) {
+function onResize (_size: any) {
   if (cal.value?.getApi()) {
     cal.value.getApi().updateSize();
   }
 }
 
-function handleEventsChange(changeInfo: EventChangeArg) {
+function handleEventsChange (changeInfo: EventChangeArg) {
   // Single Day Events no Enddate possible
   if (
     changeInfo.event.extendedProps.table === 'todo' ||
@@ -254,7 +263,7 @@ function handleEventsChange(changeInfo: EventChangeArg) {
   );
   return true;
 }
-function handleDateClick(selectInfo: DateClickArg) {
+function handleDateClick (selectInfo: DateClickArg) {
   const dateInfo = dayjs(selectInfo.date).format('YYYY-MM-DD');
   if (dateClicked.value === dateInfo) {
     dateClicked.value = null;
@@ -264,7 +273,7 @@ function handleDateClick(selectInfo: DateClickArg) {
     setTimeout(() => (dateClicked.value = null), 550); // Timeout to simulate a double click
   }
 }
-function handleEventClick(clickInfo: EventClickArg) {
+function handleEventClick (clickInfo: EventClickArg) {
   clickInfo.jsEvent.preventDefault(); // don't let the browser navigate
 
   const event = {
@@ -276,6 +285,13 @@ function handleEventClick(clickInfo: EventClickArg) {
   };
   eventDialog(event);
 }
+
+let initialDate = undefined;
+if (
+  localLastView.value.date &&
+  Date.now() - localLastView.value.dateTimestamp <= 1000 * 60 * 10) {
+  initialDate = localLastView.value.date;
+};
 
 const calendarOptions = reactive({
   eventSources: eventsSourceActive,
@@ -294,10 +310,10 @@ const calendarOptions = reactive({
   },
   footerToolbar: {
     left: 'sources',
-    right: 'dayGridMonth,months,dayGridWeek,listWeek',
+    right: VIEWS.join(','),
   },
   stickyHeaderDates: true,
-  initialView: 'dayGridMonth',
+  initialView: localLastView.value.view,
   buttonText: {
     dayGridMonth: t('month'),
     months: t('month', 2),
@@ -355,6 +371,17 @@ const calendarOptions = reactive({
   eventDragStop: () => (eventDrag.value = false),
   eventResizeStart: () => (eventDrag.value = true),
   eventResizeStop: () => (eventDrag.value = false),
+  datesSet: function (dateInfo) {
+    localLastView.value.view = dateInfo.view.type as typeof VIEWS[number];
+    localLastView.value.date = dateInfo.startStr;
+    if (dateInfo.endStr) {
+      localLastView.value.date = dayjs(dateInfo.startStr)
+        .add(dayjs(dateInfo.endStr).diff(dayjs(dateInfo.startStr)) / 2, 'milliseconds')
+        .toISOString();
+    }
+    localLastView.value.dateTimestamp = Date.now();
+  },
+  initialDate: initialDate,
 } as CalendarOptions);
 </script>
 

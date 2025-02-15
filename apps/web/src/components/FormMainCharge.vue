@@ -104,22 +104,22 @@
 </template>
 
 <script setup lang="ts">
-import { useNotification } from '~/composables/useNotification';
+import { useNotification } from '../composables/useNotification';
 import useVuelidate from '@vuelidate/core';
 import { flatten, map, merge } from 'lodash-es';
-import { FormCharge } from '~/types';
-import { useApiFetch } from '~/composables/useApi';
-import { useDateFormat } from '~/composables/useDate';
-import { useFieldsettingStore } from '~/stores/fieldsetting';
-import FormButtons from '~/components/FormButtons.vue';
-import FormDropdownEdit from '~/components/FormDropdownEdit.vue';
-import FormDropdownOption from '~/components/FormDropdownOption.vue';
-import FormInputCheckboxString from '~/components/FormInputCheckboxString.vue';
-import FormInputDate from '~/components/FormInputDate.vue';
-import FormInputNumeric from '~/components/FormInputNumeric.vue';
-import FormInputNote from '~/components/FormInputNote.vue';
-import FormInputText from '~/components/FormInputText.vue';
-import FormInputUrl from '~/components/FormInputUrl.vue';
+import type { FormCharge } from '../types';
+import { useApiFetch } from '../composables/useApi';
+import { useDateFormat } from '../composables/useDate';
+import { useFieldsettingStore } from '../stores/fieldsetting';
+import FormButtons from './FormButtons.vue';
+import FormDropdownEdit from './FormDropdownEdit.vue';
+import FormDropdownOption from './FormDropdownOption.vue';
+import FormInputCheckboxString from './FormInputCheckboxString.vue';
+import FormInputDate from './FormInputDate.vue';
+import FormInputNumeric from './FormInputNumeric.vue';
+import FormInputNote from './FormInputNote.vue';
+import FormInputText from './FormInputText.vue';
+import FormInputUrl from './FormInputUrl.vue';
 import { ref, computed, unref } from 'vue';
 import { toRefs } from '@vueuse/core';
 

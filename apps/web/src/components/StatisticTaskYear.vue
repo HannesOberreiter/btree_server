@@ -94,7 +94,7 @@
 </template>
 
 <script setup lang="ts">
-import { useStatisticYear } from '~/composables/useQuery';
+import { useStatisticYear } from '../composables/useQuery';
 import { use } from 'echarts/core';
 import { CanvasRenderer } from 'echarts/renderers';
 import { BarChart } from 'echarts/charts';
@@ -106,10 +106,10 @@ import {
   ToolboxComponent,
 } from 'echarts/components';
 import VChart from 'vue-echarts';
-import { deepUnref } from '~/helpers/deep-unref';
+import { deepUnref } from '../helpers/deep-unref';
 import { round } from 'lodash-es';
-import { useTableFilterStore } from '~/stores/tableFilter';
-
+import { useTableFilterStore } from '../stores/tableFilter';
+import GlobalLoading from './GlobalLoading.vue';
 import { useI18n } from 'vue-i18n';
 import { computed, ref, watch } from 'vue';
 import { storeToRefs } from 'pinia';
@@ -137,15 +137,15 @@ const store = storeToRefs(storeFilter);
 
 const tab = ref('total');
 const { t } = useI18n();
-const chart_total = ref(null);
-const chart_average = ref(null);
-const chart_water = ref(null);
-const chart_frames_total = ref(null);
-const chart_frames_average = ref(null);
+const chart_total = ref<any>(null);
+const chart_average = ref<any>(null);
+const chart_water = ref<any>(null);
+const chart_frames_total = ref<any>(null);
+const chart_frames_average = ref<any>(null);
 
 const { isLoading, data: query } = useStatisticYear(props.kind, {
   filters: computed(() =>
-    store[STATSSTORE].value ? store[STATSSTORE].value : '',
+    store[STATSSTORE]?.value ? store[STATSSTORE].value : '',
   ),
 });
 

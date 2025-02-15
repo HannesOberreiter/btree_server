@@ -538,6 +538,7 @@
   "serie": "Serie | Serien",
   "server": {
     "hint": {
+      "ping": "Ping: {ping}",
       "register": "Wählen Sie den Server aus, der Ihrem Standort am nächsten liegt, um die beste Leistung zu erzielen. Nach der Registrierung können Sie diesen nicht mehr ändern!",
       "visitor": "Wählen Sie den Server aus, auf dem Sie Ihre Imkerei registriert haben!"
     },

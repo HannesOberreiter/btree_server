@@ -1,7 +1,7 @@
-import { boot } from 'quasar/wrappers';
+import { defineBoot } from '#q-app/wrappers';
 import VueMatomo from 'vue-matomo';
 
-export default boot(({ app, router }) => {
+export default defineBoot(({ app, router }) => {
   app.use(VueMatomo, {
     // Configure your matomo server and site by providing
     host: process.env.MATOMO_HOST,

@@ -1,11 +1,11 @@
 import { defineStore } from 'pinia';
-import { i18n, setLocale } from '~/boot/i18n';
+import { i18n, setLocale } from '../boot/i18n';
 import { isEmpty } from 'lodash-es';
-import { Router } from '~/router';
+import { Router } from '../router';
 import { usePreferredLanguages } from '@vueuse/core';
-import { User, Company } from '~/types';
+import type { User, Company } from '../types';
 import { useStorage } from '@vueuse/core';
-import AuthService from '~/services/auth.service';
+import AuthService from '../services/auth.service';
 import dayjs from 'dayjs';
 
 export const useAuthUserStore = defineStore('auth/user', {
@@ -21,6 +21,7 @@ export const useAuthUserStore = defineStore('auth/user', {
     getLanguage: (state) => {
       const languages = usePreferredLanguages();
       let lang = !isEmpty(state.user) ? state.user.lang : languages.value[0];
+      if (!lang) lang = 'en';
       if (!['de', 'fr', 'it'].includes(lang)) lang = 'en';
       return lang;
     },
@@ -80,7 +81,7 @@ export const useAuthUserStore = defineStore('auth/user', {
       return false;
     },
     updateLang() {
-      setLocale(i18n, this.getLanguage);
+      setLocale(i18n, this.getLanguage ?? 'en');
     },
     login(user: User) {
       return AuthService.login(user).then(

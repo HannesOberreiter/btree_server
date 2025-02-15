@@ -2,14 +2,15 @@
 import { useDialogPluginComponent } from 'quasar';
 import { useQRCode } from '@vueuse/integrations/useQRCode';
 import { useClipboard } from '@vueuse/core';
-import { useNotification } from '~/composables/useNotification';
-import { useNFC } from '~/composables/useNFC';
-import { useDateFormat } from '~/composables/useDate';
-
+import { useNotification } from '../composables/useNotification';
+import { useNFC } from '../composables/useNFC';
+import { useDateFormat } from '../composables/useDate';
 import BtnCloseDialog from './BtnCloseDialog.vue';
 import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { ref } from 'vue';
+import BtnBaseGroup from './BtnBaseGroup.vue';
+import BtnBase from './BtnBase.vue';
 
 defineEmits([...useDialogPluginComponent.emits]);
 const { dialogRef, onDialogHide } = useDialogPluginComponent();
@@ -40,7 +41,7 @@ function onHide() {
 
 function printQR() {
   setTimeout(() => {
-    const printWindow = window.open('', '_blank', 'height=200,width=400');
+    const printWindow = window.open('', '_blank', 'height=200,width=400')!;
     printWindow.document.write('<html>');
     printWindow.document.write(
       `
@@ -59,6 +60,10 @@ function printQR() {
     `,
     );
     const elem = document.getElementById('qr-code');
+    if (!elem) {
+      console.error('Element not found');
+      return;
+    }
     elem.style.textAlign = 'center';
     printWindow.document.write(
       `

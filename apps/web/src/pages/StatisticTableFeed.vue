@@ -56,20 +56,20 @@
 
 <script setup lang="ts">
 import { round } from 'lodash';
-import { QTableProps } from 'quasar';
-import { useKeyTable } from '~/composables/useKey';
-import { useStatisticTable } from '~/composables/useQuery';
-import { tableCheckSelected } from '~/helpers';
-import { useTableFilterStore } from '~/stores/tableFilter';
-import TableThSum from '~/components/TableThSum.vue';
-import TableButtons from '~/components/TableButtons.vue';
-import TableFilter from '~/components/TableFilter.vue';
+import type { QTableProps } from 'quasar';
+import { useKeyTable } from '../composables/useKey';
+import { useStatisticTable } from '../composables/useQuery';
+import { tableCheckSelected } from '../helpers';
+import { useTableFilterStore } from '../stores/tableFilter';
+import TableThSum from '../components/TableThSum.vue';
+import TableButtons from '../components/TableButtons.vue';
+import TableFilter from '../components/TableFilter.vue';
 import { storeToRefs } from 'pinia';
 import { useI18n } from 'vue-i18n';
 import { ref, computed, watch } from 'vue';
 
 const { t } = useI18n();
-const selected = ref([]);
+const selected = ref<any>([]);
 const rows = ref([]);
 const modus = ref(true);
 const deleted = ref(false);
@@ -137,7 +137,7 @@ const {
   direction: computed(() => (pagination.value.descending ? ['asc'] : ['desc'])),
   offset: computed(() => pagination.value.page - 1),
   limit: computed(() => pagination.value.rowsPerPage),
-  filters: computed(() => (filters.value ? filters.value : '')),
+  filters: computed(() => (filters?.value ? filters.value : '')),
   q: computed(() => (filter.value ? filter.value : '')),
 });
 

@@ -7,23 +7,11 @@
         </div>
       </div>
       <div class="col-6 text-right">
-        <form-dropdown-option
-          v-model="scale_id"
-          table="scale"
-          allow-empty="filterEmpty"
-        ></form-dropdown-option>
+        <form-dropdown-option v-model="scale_id" table="scale" allow-empty="filterEmpty"></form-dropdown-option>
         <btn-base-group>
-          <btn-base
-            label="-"
-            color="blue-5"
-            @click="year = year - 1"
-          ></btn-base>
-          <btn-base
-            label="+"
-            color="blue-8"
-            :disable="year > new Date().getFullYear()"
-            @click="year = year + 1"
-          ></btn-base>
+          <btn-base label="-" color="blue-5" @click="year = year - 1"></btn-base>
+          <btn-base label="+" color="blue-8" :disable="year > new Date().getFullYear()"
+            @click="year = year + 1"></btn-base>
           <tooltip-base>{{ $t('change') + ' ' + $t('year') }}</tooltip-base>
         </btn-base-group>
       </div>
@@ -32,15 +20,8 @@
       <global-loading v-if="isLoading"></global-loading>
       <div v-else>
         <div v-if="data.results">
-          <v-chart
-            :option="chartTimeseries"
-            :loading="!chartTimeseries"
-            :update-options="{ notMerge: true }"
-            autoresize
-            style="height: 60vh"
-            class="bg-grey-1"
-            :theme="$q.dark.isActive ? 'dark' : ''"
-          />
+          <v-chart :option="chartTimeseries" :loading="!chartTimeseries" :update-options="{ notMerge: true }" autoresize
+            style="height: 60vh" class="bg-grey-1" :theme="$q.dark.isActive ? 'dark' : ''" />
         </div>
         <div v-else>
           {{ $t('error.noData') }}
@@ -51,7 +32,7 @@
 </template>
 
 <script setup lang="ts">
-import { useScaleDataQuery } from '~/composables/useQuery';
+import { useScaleDataQuery } from '../composables/useQuery';
 import { use } from 'echarts/core';
 import { CanvasRenderer } from 'echarts/renderers';
 import { LineChart } from 'echarts/charts';
@@ -64,9 +45,12 @@ import {
 } from 'echarts/components';
 import VChart from 'vue-echarts';
 import round from 'lodash-es/round';
-import { deepUnref } from '~/helpers/deep-unref';
-
-import FormDropdownOption from '~/components/FormDropdownOption.vue';
+import { deepUnref } from '../helpers/deep-unref';
+import BtnBase from '../components/BtnBase.vue';
+import BtnBaseGroup from '../components/BtnBaseGroup.vue';
+import FormDropdownOption from '../components/FormDropdownOption.vue';
+import TooltipBase from '../components/TooltipBase.vue';
+import GlobalLoading from '../components/GlobalLoading.vue';
 
 import { useI18n } from 'vue-i18n';
 import { ref, computed, watch, unref } from 'vue';
@@ -84,7 +68,7 @@ use([
 const { t } = useI18n();
 
 const year = ref(new Date().getFullYear());
-const scale_id = ref(null);
+const scale_id = ref<any>(null);
 const filter = computed(() => {
   const data = [
     {
@@ -103,7 +87,7 @@ const filter = computed(() => {
   }
   return JSON.stringify(data);
 });
-const chartTimeseries = ref(null);
+const chartTimeseries = ref<any>(null);
 
 const { isLoading, data } = useScaleDataQuery({
   order: ['datetime'],
@@ -128,7 +112,7 @@ watch(
   },
 );
 
-function renderChart(data: any, year: number) {
+function renderChart (data: any, year: number) {
   let scales = data.map((o: any) => o.scale.name);
   scales = [...new Set(scales)];
   const axis_data = [];

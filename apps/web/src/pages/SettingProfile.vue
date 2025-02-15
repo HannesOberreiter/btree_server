@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { useAuthUserStore } from '~/stores/auth';
+import { useAuthUserStore } from '../stores/auth';
 import { ref } from 'vue';
-
-import FormMainApi from '~/components/FormMainApi.vue';
-import FormMainCredential from '~/components/FormMainCredential.vue';
-import FormMainUser from '~/components/FormMainUser.vue';
-import ListFederatedCredentials from '~/components/ListFederatedCredentials.vue';
-import ListSessions from '~/components/ListSessions.vue';
+import GlobalLoading from '../components/GlobalLoading.vue';
+import FormMainApi from '../components/FormMainApi.vue';
+import FormMainCredential from '../components/FormMainCredential.vue';
+import FormMainUser from '../components/FormMainUser.vue';
+import ListFederatedCredentials from '../components/ListFederatedCredentials.vue';
+import ListSessions from '../components/ListSessions.vue';
 
 const prop = defineProps({
   tab: {

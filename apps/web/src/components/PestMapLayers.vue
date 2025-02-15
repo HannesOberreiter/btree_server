@@ -39,7 +39,7 @@
 <script setup lang="ts">
 import { ref, toRefs, watch } from 'vue';
 import { LTileLayer, LControlLayers, LControl } from '@vue-leaflet/vue-leaflet';
-import { useApiFetch } from '~/composables/useApi';
+import { useApiFetch } from '../composables/useApi';
 import { useQuasar } from 'quasar';
 import { useI18n } from 'vue-i18n';
 

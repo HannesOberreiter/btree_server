@@ -81,7 +81,21 @@
   ></from-buttons>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
+import { requiredField } from '../helpers/i18n-validators';
+import { useNotification } from '../composables/useNotification';
+import useVuelidate from '@vuelidate/core';
+import { flatten, map, merge } from 'lodash-es';
+import { useApiFetch } from '../composables/useApi';
+import FromButtons from './FormButtons.vue';
+import FormInputText from './FormInputText.vue';
+import FormInputNumeric from './FormInputNumeric.vue';
+import FormInputUrl from './FormInputUrl.vue';
+import FormInputNote from './FormInputNote.vue';
+import FormInputCheckbox from './FormInputCheckbox.vue';
+import { ref, unref, computed, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
+
 const stateDefault = {
   name: '',
   description: '',
@@ -91,22 +105,6 @@ const stateDefault = {
   url: '',
   modus: true,
 };
-</script>
-
-<script setup lang="ts">
-import { requiredField } from '~/helpers/i18n-validators';
-import { useNotification } from '~/composables/useNotification';
-import useVuelidate from '@vuelidate/core';
-import { flatten, map, merge } from 'lodash-es';
-import { useApiFetch } from '~/composables/useApi';
-import FromButtons from './FormButtons.vue';
-import FormInputText from './FormInputText.vue';
-import FormInputNumeric from './FormInputNumeric.vue';
-import FormInputUrl from './FormInputUrl.vue';
-import FormInputNote from './FormInputNote.vue';
-import FormInputCheckbox from './FormInputCheckbox.vue';
-import { ref, unref, computed, watch } from 'vue';
-import { useI18n } from 'vue-i18n';
 
 const api = useApiFetch();
 const notification = useNotification();

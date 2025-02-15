@@ -1,8 +1,9 @@
 import { map, round } from 'lodash-es';
-import { MaybeRef } from '@vueuse/core';
-import { Option, Task } from '~/types';
-import { queryCache } from '~/boot/vue-query';
-import { Ref, unref } from 'vue';
+import type { MaybeRef } from '@vueuse/core';
+import type { Option, Task } from '../types';
+import { queryCache } from '../boot/vue-query';
+import type { ComputedRef, Ref } from 'vue';
+import { unref } from 'vue';
 import {
   QueryClient,
   keepPreviousData,
@@ -69,7 +70,7 @@ export function useApiaryQuery({
 
 export function useTemperatureQuery(
   apiary_id: Ref<number>,
-  { enabled = undefined as MaybeRef<boolean | undefined> },
+  { enabled = true as MaybeRef<boolean> },
 ) {
   const api = useApiFetch();
   return useQuery({
@@ -153,8 +154,8 @@ export function useTasksQuery(
     q = '' as MaybeRef<string>,
     enabled = true as MaybeRef<boolean>,
     details = false,
-    filters = '' as MaybeRef<string>,
-    done = true as MaybeRef<boolean>,
+    filters = '' as MaybeRef<string> | ComputedRef<string | undefined>,
+    done = true as MaybeRef<boolean | null> | null,
   },
 ) {
   const api = useApiFetch();
@@ -197,7 +198,7 @@ export function useApiariesQuery({
   limit = 10000 as MaybeRef<number>,
   order = ['name', 'modus'] as MaybeRef<Array<string>>,
   direction = ['asc', 'asc'] as MaybeRef<Array<string>>,
-  modus = true as MaybeRef<boolean>,
+  modus = true as MaybeRef<boolean> | null,
   deleted = false as MaybeRef<boolean>,
   q = '' as MaybeRef<string>,
   enabled = true as MaybeRef<boolean>,
@@ -258,8 +259,8 @@ export function useQueensQuery({
   limit = 10000 as MaybeRef<number>,
   order = ['name', 'date'] as MaybeRef<Array<string>>,
   direction = ['asc', 'asc'] as MaybeRef<Array<string>>,
-  modus = true as MaybeRef<boolean>,
-  latest = null as MaybeRef<boolean>,
+  modus = true as MaybeRef<boolean | null>,
+  latest = null as MaybeRef<boolean | null>,
   deleted = false as MaybeRef<boolean>,
   filters = '' as MaybeRef<string>,
   q = '' as MaybeRef<string>,
@@ -515,7 +516,7 @@ export function useHivesQuery({
     'name',
   ] as MaybeRef<Array<string>>,
   direction = ['asc', 'asc', 'asc', 'asc'] as MaybeRef<Array<string>>,
-  modus = true as MaybeRef<boolean>,
+  modus = true as MaybeRef<boolean> | null,
   deleted = false as MaybeRef<boolean>,
   q = '' as MaybeRef<string>,
   filters = '' as MaybeRef<string>,
@@ -570,7 +571,7 @@ export function useOptionsQuery(
   {
     order = ['favorite', 'name'] as MaybeRef<Array<string>>,
     direction = ['desc', 'asc'] as MaybeRef<Array<string>>,
-    modus = true as MaybeRef<boolean>,
+    modus = true as MaybeRef<boolean> | null,
     enabled = true as MaybeRef<boolean>,
   },
 ) {

@@ -1,19 +1,13 @@
 <template>
-  <btn-base
-    icon="fab fa-stripe"
-    color="secondary"
-    class="full-width q-pl-lg"
-    size="lg"
-    :label="$t('membership.payWithStripe')"
-    @click="createSession"
-  >
+  <btn-base icon="fab fa-stripe" color="secondary" class="full-width q-pl-lg" size="lg"
+    :label="$t('membership.payWithStripe')" @click="createSession">
   </btn-base>
 </template>
 
 <script setup lang="ts">
-import { useApiFetch } from '~/composables/useApi';
-import { useNotification } from '~/composables/useNotification';
-
+import BtnBase from './BtnBase.vue';
+import { useApiFetch } from '../composables/useApi';
+import { useNotification } from '../composables/useNotification';
 import { useRoute } from 'vue-router';
 import { onMounted, toRefs } from 'vue';
 
@@ -34,7 +28,7 @@ const props = defineProps({
 });
 const { donation, years } = toRefs(props);
 
-function createSession() {
+function createSession () {
   api
     .post('/v1/service/stripe/orders', {
       amount: donation.value,

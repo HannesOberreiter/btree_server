@@ -14,8 +14,8 @@
 </template>
 
 <script setup lang="ts">
-import { useApiFetch } from '~/composables/useApi';
-import { useNotification } from '~/composables/useNotification';
+import { useApiFetch } from '../composables/useApi';
+import { useNotification } from '../composables/useNotification';
 import { use } from 'echarts/core';
 import { CanvasRenderer } from 'echarts/renderers';
 import { BarChart } from 'echarts/charts';
@@ -26,8 +26,8 @@ import {
   ToolboxComponent,
 } from 'echarts/components';
 import VChart from 'vue-echarts';
-import { useDateFormat } from '~/composables/useDate';
-import FormInputDate from '~/components/FormInputDate.vue';
+import { useDateFormat } from '../composables/useDate';
+import FormInputDate from './FormInputDate.vue';
 import { useI18n } from 'vue-i18n';
 import { ref, watch } from 'vue';
 
@@ -43,7 +43,7 @@ use([
 const api = useApiFetch();
 const notification = useNotification();
 const useDate = useDateFormat();
-const data = ref(null);
+const data = ref<any>(null);
 const chart = ref(null);
 const date = ref(useDate.isoFormat(useDate.getCurrent(), 'date'));
 const { t } = useI18n();

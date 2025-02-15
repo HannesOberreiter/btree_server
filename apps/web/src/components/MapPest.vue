@@ -1,38 +1,13 @@
 <template>
-  <l-map
-    ref="mapRef"
-    :zoom="zoom"
-    :center="apiaries?.center ?? [49.4582838, 15.2718234]"
-    loading-control="true"
-    @ready="onMapReady"
-    @locationfound="onLocationFound"
-    @locationerror="onLocationError"
-  >
-    <map-buttons
-      v-model:modelRadius="circleRadius"
-      :user-location-loading="userLocationLoading"
-      :is-public="isPublic"
-      @locate="loadLocation"
-      @toggle="(v) => (showInactive = v)"
-    >
+  <l-map ref="mapRef" :zoom="zoom" :center="apiaries?.center ?? [49.4582838, 15.2718234]" loading-control="true"
+    @ready="onMapReady" @locationfound="onLocationFound" @locationerror="onLocationError">
+    <map-buttons v-model:modelRadius="circleRadius" :user-location-loading="userLocationLoading" :is-public="isPublic"
+      @locate="loadLocation" @toggle="(v) => (showInactive = v)">
     </map-buttons>
 
-    <pest-map-layers
-      :recent-count="recentCount"
-      :taxa="taxa"
-      :is-public="isPublic"
-    >
-      <q-select
-        v-if="!isPublic"
-        v-model="year"
-        :options="yearOptions"
-        :dense="true"
-        :filled-input="true"
-        :label="$t('year')"
-        color="dark"
-        :dark="false"
-        popup-content-class="text-dark"
-      ></q-select>
+    <pest-map-layers :recent-count="recentCount" :taxa="taxa" :is-public="isPublic">
+      <q-select v-if="!isPublic" v-model="year" :options="yearOptions" :dense="true" :filled-input="true"
+        :label="$t('year')" color="dark" :dark="false" popup-content-class="text-dark"></q-select>
       <div v-else>
         <b>
           Service by
@@ -41,30 +16,15 @@
       </div>
     </pest-map-layers>
 
-    <l-circle-marker
-      v-if="location"
-      :lat-lng="location.latlng"
-      color="black"
-      :radius="location.accuracy ? location.accuracy : 50"
-    />
+    <l-circle-marker v-if="location" :lat-lng="location.latlng" color="black"
+      :radius="location.accuracy ? location.accuracy : 50" />
     <l-feature-group v-if="apiaries" :key="updateTimestamp">
       <template v-for="value in apiaries.results" :key="value.id">
-        <l-circle
-          v-if="value.modus || showInactive"
-          :lat-lng="[value.latitude, value.longitude]"
-          :radius="circleRadius"
-          :fill="true"
-          :color="value.modus ? 'green' : 'red'"
-          :fill-opacity="circleOpacity"
-        >
+        <l-circle v-if="value.modus || showInactive" :lat-lng="[value.latitude, value.longitude]" :radius="circleRadius"
+          :fill="true" :color="value.modus ? 'green' : 'red'" :fill-opacity="circleOpacity">
         </l-circle>
-        <l-marker
-          v-if="value.modus || showInactive"
-          :options="{ alt: value.name }"
-          :lat-lng="[value.latitude, value.longitude]"
-          :draggable="false"
-          :icon="icon"
-        >
+        <l-marker v-if="value.modus || showInactive" :options="{ alt: value.name }"
+          :lat-lng="[value.latitude, value.longitude]" :draggable="false" :icon="icon">
           <l-popup>
             <div class="text-h6">
               <b>{{ value.name }}</b> [
@@ -99,13 +59,14 @@ type Observation = {
 </script>
 
 <script setup lang="ts">
-import L, { LatLngTuple } from 'leaflet';
+import type { LatLngTuple } from 'leaflet';
+import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet.markercluster/dist/MarkerCluster.css';
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 import 'leaflet.markercluster/dist/leaflet.markercluster.js';
-import { useApiariesQuery } from '~/composables/useQuery';
-import { useNotification } from '~/composables/useNotification';
+import { useApiariesQuery } from '../composables/useQuery';
+import { useNotification } from '../composables/useNotification';
 import {
   LMap,
   LPopup,
@@ -114,11 +75,11 @@ import {
   LFeatureGroup,
   LMarker,
 } from '@vue-leaflet/vue-leaflet';
-import { useApiFetch } from '~/composables/useApi';
-import MapButtons from '~/components/MapButtons.vue';
+import { useApiFetch } from '../composables/useApi';
+import MapButtons from './MapButtons.vue';
 import { computed, onBeforeUnmount, ref, toRefs, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
-import PestMapLayers from '~/components/PestMapLayers.vue';
+import PestMapLayers from './PestMapLayers.vue';
 import { useRouter } from 'vue-router';
 
 const { t } = useI18n();
@@ -133,14 +94,14 @@ const props = defineProps({
 });
 const { isPublic } = toRefs(props);
 
-const icon = new L.Icon.Default();
+const icon = new L.Icon.Default() as any;
 icon.options.shadowSize = [0, 0];
 
 const taxa = computed(() => {
   const name = router.currentRoute.value.name;
-  if (name === 'map-velutina' || name === 'map-velutina-public') {
+  if (name?.toString().includes('map-velutina')) {
     return 'velutina';
-  } else if (name === 'map-aethina-tumida') {
+  } else if (name?.toString().includes('map-aethina-tumida')) {
     return 'aethina_tumida';
   }
   return 'velutina';
@@ -253,16 +214,16 @@ onBeforeUnmount(() => {
   map.removeLayer(layerRecent);
 });
 
-function loadLocation() {
+function loadLocation () {
   userLocationLoading.value = true;
   map.locate();
 }
-function onLocationFound(e: any) {
+function onLocationFound (e: any) {
   userLocationLoading.value = false;
   location.value = e;
   map.setView(location.value.latlng, 10);
 }
-function onLocationError() {
+function onLocationError () {
   userLocationLoading.value = false;
   notification.open('negative', 'locationError');
 }

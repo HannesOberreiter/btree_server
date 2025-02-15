@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import { Ref, computed, ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { stringify } from 'qs';
 import { useFetch, useStorage, watchOnce } from '@vueuse/core';
 import { truncate } from 'lodash-es';
-import { useDateFormat } from '~/composables/useDate';
-import GlobalLoading from '~/components/GlobalLoading.vue';
-import ChipBeeNews, { Feedsource } from '~/components/ChipBeeNews.vue';
-import { useKeyNews } from '~/composables/useKey';
+import { useDateFormat } from '../composables/useDate';
+import GlobalLoading from '../components/GlobalLoading.vue';
+import type { Feedsource } from '../components/ChipBeeNews.vue';
+import ChipBeeNews from '../components/ChipBeeNews.vue';
+import { useKeyNews } from '../composables/useKey';
 
 type FeedItem = {
   id: number;
@@ -136,21 +137,16 @@ const urlNews = computed(() => {
   })}`;
 });
 
-const {
-  isFetching,
-  error,
-  data,
-}: { isFetching: Ref<boolean>; error: Ref<any>; data: Ref<APIResponse> } =
-  useFetch(urlNews, {
-    refetch: true,
-    beforeFetch: (url) => {
-      url.options.headers = {
-        Authorization: 'Bearer ' + bearer,
-      };
-    },
-  })
-    .get()
-    .json();
+const { isFetching, error, data } = useFetch<APIResponse>(urlNews, {
+  refetch: true,
+  beforeFetch: (url) => {
+    url.options.headers = {
+      Authorization: 'Bearer ' + bearer,
+    };
+  },
+})
+  .get()
+  .json();
 
 watch(data, () => {
   if (data.value) {

@@ -1,4 +1,4 @@
-import { i18n } from '~/boot/i18n';
+import { i18n } from '../boot/i18n';
 import {
   createI18nMessage,
   minLength as vMinLength,

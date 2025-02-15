@@ -16,7 +16,7 @@
 </template>
 
 <script setup lang="ts">
-import { FORMATS } from '~/constants';
+import { FORMATS } from '../constants';
 import { ref } from 'vue';
 const format = ref(FORMATS[1]);
 </script>

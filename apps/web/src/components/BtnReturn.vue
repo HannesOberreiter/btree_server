@@ -23,8 +23,9 @@
 </template>
 
 <script setup lang="ts">
-import { useRouterStore } from '~/stores/router';
-
+import { useRouterStore } from '../stores/router';
+import TooltipBase from './TooltipBase.vue';
+import BtnBase from './BtnBase.vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();

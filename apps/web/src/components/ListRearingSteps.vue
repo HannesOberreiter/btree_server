@@ -136,15 +136,16 @@
 import filter from 'lodash-es/filter';
 import map from 'lodash-es/map';
 import { useQuasar } from 'quasar';
-import { useApiFetch } from '~/composables/useApi';
-import { useNotification } from '~/composables/useNotification';
-import { usePreventNavigation } from '~/composables/usePreventNavgiation';
+import { useApiFetch } from '../composables/useApi';
+import { useNotification } from '../composables/useNotification';
+import { usePreventNavigation } from '../composables/usePreventNavgiation';
 import { useI18n } from 'vue-i18n';
 import { watch, ref, toRefs } from 'vue';
-
+import BtnBase from './BtnBase.vue';
+import BtnBaseGroup from './BtnBaseGroup.vue';
 import DialogSelectOption from './DialogSelectOption.vue';
 import helperDayAndHour from './HelperDayAndHour.vue';
-import { sleep } from '~/helpers';
+import { sleep } from '../helpers';
 
 const usePrevent = usePreventNavigation();
 const api = useApiFetch();
@@ -165,7 +166,7 @@ const props = defineProps({
 });
 const emit = defineEmits(['change']);
 const { methodSteps, methodId } = toRefs(props);
-const steps = ref(null);
+const steps = ref<any>(null);
 watch(
   methodSteps,
   () => (steps.value = methodSteps.value ? methodSteps.value : null),
@@ -179,7 +180,7 @@ function setActiveStep(id: number, set = true, event: any) {
   if (offsetClass) {
     if (
       (offsetClass.includes('ignore-click') ||
-        targetClass.includes('ignore-click')) &&
+        targetClass?.includes('ignore-click')) &&
       set === false
     ) {
       return;

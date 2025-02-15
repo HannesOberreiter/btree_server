@@ -1,9 +1,10 @@
-import { boot } from 'quasar/wrappers';
-import { Composer, createI18n, Locale, VueI18n as VueI18nType } from 'vue-i18n';
-import { useAuthUserStore } from '~/stores/auth';
+import { defineBoot } from '#q-app/wrappers';
+import type { Composer, Locale, VueI18n as VueI18nType } from 'vue-i18n';
+import { createI18n } from 'vue-i18n';
+import { useAuthUserStore } from '../stores/auth';
 
 // using single import of json and not message auto import as it broke my vite HSMR and resulted in full page reloads
-import { languages } from '~/i18n/index';
+import { languages } from '../i18n';
 
 const i18n = createI18n({
   legacy: false, // you must set `false`, to use Composition API
@@ -40,7 +41,7 @@ export function setLocale(i18n: any, locale: Locale): void {
   i18n.locale = locale;
 }
 
-export default boot(({ app }) => {
+export default defineBoot(({ app }) => {
   const storeUser = useAuthUserStore();
   const lang = storeUser.getLanguage;
   setLocale(i18n, lang);

@@ -35,7 +35,6 @@ watch(selected, (cur) => {
     if (cur.length > 0) {
       sum.value = calculateSum(cur, props.name);
     }
-  } else {
   }
 });
 

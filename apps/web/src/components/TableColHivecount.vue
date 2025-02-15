@@ -13,8 +13,10 @@
 </template>
 
 <script setup lang="ts">
+import TooltipBase from './TooltipBase.vue';
 defineProps({
   hivecount: {
+    type: Object,
     default: null,
   },
 });

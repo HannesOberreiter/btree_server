@@ -12,7 +12,7 @@ describe('Visitor - Register', () => {
   it('Assert Register Form', () => {
     cy.get('form', { timeout: 50000 }).should('exist');
     cy.get('[name="company.name"]').clear();
-    cy.get('[name="company.name"]').type('Company');
+    cy.get('[name="company.name"]').type('Com');
 
     cy.get('[role=alert]').should('be.visible');
 
@@ -51,13 +51,14 @@ describe('Visitor - Register', () => {
     cy.get('form').submit();
 
     cy.wait('@postRequest').then((interception) => {
-      assert.isNotNull(interception.response.body);
-      assert.isNotNull(interception.response.body.activate);
-      token = interception.response.body.activate;
+      assert.isNotNull(interception.response?.body);
+      assert.isNotNull(interception.response?.body.activate);
+      token = interception.response?.body.activate;
     });
   });
 
   it('Activate Account', () => {
+    cy.wrap(token).should('not.be.undefined');
     cy.visit('/visitor/activate/' + token);
     cy.get('[name=resetKey]').should('exist');
     cy.get('form').submit();

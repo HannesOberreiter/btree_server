@@ -45,18 +45,18 @@
 </template>
 
 <script setup lang="ts">
-import { useNotification } from '~/composables/useNotification';
+import { useNotification } from '../composables/useNotification';
 import useVuelidate from '@vuelidate/core';
 import { flatten, map, merge } from 'lodash-es';
-import { useDateFormat } from '~/composables/useDate';
-import { useApiFetch } from '~/composables/useApi';
-import FormButtons from '~/components/FormButtons.vue';
+import { useDateFormat } from '../composables/useDate';
+import { useApiFetch } from '../composables/useApi';
+import FormButtons from './FormButtons.vue';
 import { useRouter } from 'vue-router';
 import { ref, computed, unref } from 'vue';
-import FormDropdownEdit from '~/components/FormDropdownEdit.vue';
-import FormDropdownHive from '~/components/FormDropdownHive.vue';
-import FormInputDate from '~/components/FormInputDate.vue';
-import FormDropdownOption from '~/components/FormDropdownOption.vue';
+import FormDropdownEdit from './FormDropdownEdit.vue';
+import FormDropdownHive from './FormDropdownHive.vue';
+import FormInputDate from './FormInputDate.vue';
+import FormDropdownOption from './FormDropdownOption.vue';
 
 const useDate = useDateFormat();
 const notification = useNotification();

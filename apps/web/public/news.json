@@ -1,5 +1,21 @@
 [
   {
+    "version": "6.5.0",
+    "date": "2025-02-15",
+    "news": [
+      "FEATURE Added public page for beekeeping news.",
+      "FEATURE Added public map for aethina tumida.",
+      "FEATURE Activate US server on live version.",
+      "FEATURE Locally save latest calendar view and range for up to 10 minutes. This should prevent the calendar from resetting after a page reload. Thanks Johann.",
+      "FEATURE Added current ping value to the server dropdown list. This should help to identify if the server is reachable.",
+      "FEATURE Instantly change language on registration page if a language is selected.",
+      "CHORE Upgraded backend and new and more strict linter.",
+      "CHORE Upgraded frontend libraries and some minor fixes.",
+      "BUGFIX Better error handling when no temperature can be automatically fetched.",
+      "BUGFIX Added delay for sending reminders, to prevent mail server from locking."
+    ]
+  },
+  {
     "version": "6.4.6",
     "date": "2024-09-14",
     "news": [
