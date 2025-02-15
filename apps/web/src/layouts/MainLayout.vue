@@ -1,35 +1,17 @@
 <template>
   <q-layout view="hhh LpR lff">
     <q-header class="bg-primary text-white print-hide">
-      <q-pull-to-refresh
-        color="yellow-9"
-        icon="fas fa-spinner"
-        @refresh="refresh"
-      >
+      <q-pull-to-refresh color="yellow-9" icon="fas fa-spinner" @refresh="refresh">
         <q-toolbar>
-          <btn-base
-            dense
-            flat
-            round
-            data-cy="btn-drawer"
-            icon="fas fa-bars"
-            aria-label="Toggle Sidebar"
-            @click="toggleLeftDrawer"
-          />
+          <btn-base dense flat round data-cy="btn-drawer" icon="fas fa-bars" aria-label="Toggle Sidebar"
+            @click="toggleLeftDrawer" />
           <main-navbar></main-navbar>
         </q-toolbar>
       </q-pull-to-refresh>
     </q-header>
 
-    <q-drawer
-      v-model="leftDrawerOpen"
-      dark
-      show-if-above
-      side="left"
-      :width="200"
-      class="bg-blue-grey-9 print-hide"
-      data-cy="drawer"
-    >
+    <q-drawer v-model="leftDrawerOpen" dark show-if-above side="left" :width="200" class="bg-blue-grey-9 print-hide"
+      data-cy="drawer">
       <main-drawer></main-drawer>
     </q-drawer>
 
@@ -38,13 +20,7 @@
         <router-view />
       </div>
       <q-page-scroller position="bottom" :scroll-offset="500" :offset="[0, 10]">
-        <q-btn
-          icon="fas fa-arrow-up"
-          color="info"
-          class="print-hide"
-          round
-          style="opacity: 0.6"
-        />
+        <q-btn icon="fas fa-arrow-up" color="info" class="print-hide" round style="opacity: 0.6" />
       </q-page-scroller>
     </q-page-container>
 
@@ -55,18 +31,20 @@
 </template>
 
 <script setup lang="ts">
-import { useAuthUserStore } from '~/stores/auth';
+import { useAuthUserStore } from '../stores/auth';
 import { useQuasar } from 'quasar';
-import { useQuasarLang } from '~/composables/useQuasarLang';
-import MainDrawer from '~/components/MainDrawer.vue';
-import MainNavbar from '~/components/MainNavbar.vue';
-import MainFooter from '~/components/MainFooter.vue';
+import { useQuasarLang } from '../composables/useQuasarLang';
+import MainDrawer from '../components/MainDrawer.vue';
+import MainNavbar from '../components/MainNavbar.vue';
+import MainFooter from '../components/MainFooter.vue';
 import { useMeta } from 'quasar';
 import { onBeforeRouteLeave, onBeforeRouteUpdate } from 'vue-router';
-import { usePreventNavigation } from '~/composables/usePreventNavgiation';
+import { usePreventNavigation } from '../composables/usePreventNavgiation';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 import { onMounted, ref, computed, watch } from 'vue';
+import BtnBase from '../components/BtnBase.vue';
+import { RouterView } from 'vue-router';
 
 const usePrevent = usePreventNavigation();
 const leftDrawerOpen = ref(false);

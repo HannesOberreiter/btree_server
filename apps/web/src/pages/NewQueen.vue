@@ -10,5 +10,5 @@
 </template>
 
 <script setup lang="ts">
-import FormMainQueen from '~/components/FormMainQueen.vue';
+import FormMainQueen from '../components/FormMainQueen.vue';
 </script>

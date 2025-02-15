@@ -3,7 +3,7 @@ import { defineStore } from 'pinia';
 export const useScanningStore = defineStore('scanning', {
   state: () => ({
     hiveDropdownActive: false,
-    scannedId: null as string,
+    scannedId: null as string | null,
   }),
   getters: {},
   actions: {
@@ -11,7 +11,8 @@ export const useScanningStore = defineStore('scanning', {
       if (url.indexOf('detail/hive') !== -1 && this.hiveDropdownActive) {
         try {
           const reg = /(hive\/)(\d+)/g;
-          const hive_id = reg.exec(url)[2];
+          const exec = reg.exec(url);
+          const hive_id = exec ? exec[2] : null;
           if (hive_id) {
             this.scannedId = hive_id;
             return true;

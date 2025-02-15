@@ -50,27 +50,23 @@
   ></form-buttons>
 </template>
 
-<script lang="ts">
-import { flatten, map, merge } from 'lodash-es';
-import dayjs from 'dayjs';
-
-const stateDefault = {
-  move_date: dayjs().format('YYYY-MM-DD'),
-};
-</script>
-
 <script setup lang="ts">
-import { useNotification } from '~/composables/useNotification';
+import { useNotification } from '../composables/useNotification';
 import useVuelidate from '@vuelidate/core';
-import { FormQueenHive } from '~/types';
-import { useApiFetch } from '~/composables/useApi';
+import type { FormQueenHive } from '../types';
+import { useApiFetch } from '../composables/useApi';
 import FormButtons from './FormButtons.vue';
 import { ref, computed, unref } from 'vue';
 import FormDropdownEdit from './FormDropdownEdit.vue';
 import FormDropdownHive from './FormDropdownHive.vue';
 import FormInputDate from './FormInputDate.vue';
 import FormDropdownOption from './FormDropdownOption.vue';
+import { flatten, map, merge } from 'lodash-es';
+import dayjs from 'dayjs';
 
+const stateDefault = {
+  move_date: dayjs().format('YYYY-MM-DD'),
+};
 const notification = useNotification();
 const api = useApiFetch();
 const values = ref({});

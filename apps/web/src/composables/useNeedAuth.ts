@@ -1,7 +1,8 @@
 import { reactive, ref } from 'vue';
-import { Dialog, DialogChainObject } from 'quasar';
-import { i18n } from '~/boot/i18n';
-import { useAuthUserStore } from '~/stores/auth';
+import type { DialogChainObject } from 'quasar';
+import { Dialog } from 'quasar';
+import { i18n } from '../boot/i18n';
+import { useAuthUserStore } from '../stores/auth';
 
 const state = reactive({
   show: false,

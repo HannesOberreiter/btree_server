@@ -17,15 +17,15 @@
 </template>
 
 <script setup lang="ts">
-import { useApiFetch } from '~/composables/useApi';
+import { useApiFetch } from '../composables/useApi';
 import { useIntervalFn, useOnline } from '@vueuse/core';
 import round from 'lodash-es/round';
-import { useBackend } from '~/composables/useBackend';
-
+import { useBackend } from '../composables/useBackend';
+import TooltipBase from './TooltipBase.vue';
 import { computed, ref } from 'vue';
 
 const api = useApiFetch();
-const time = ref(null);
+const time = ref<number>(0);
 const offlineServer = ref(true);
 const onlineUser = useOnline();
 const colorStatus = ref('green');

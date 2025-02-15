@@ -156,20 +156,22 @@
 </template>
 
 <script setup lang="ts">
-import { CALENDAR } from '~/constants';
+import { CALENDAR } from '../constants';
 import { map } from 'lodash-es';
-import { QInputProps } from 'quasar';
-import { useAuthUserStore } from '~/stores/auth';
+import type { QInputProps } from 'quasar';
+import { useAuthUserStore } from '../stores/auth';
 import { useClipboard } from '@vueuse/core';
-import { useNotification } from '~/composables/useNotification';
+import { useNotification } from '../composables/useNotification';
 import useVuelidate from '@vuelidate/core';
-import { useApiFetch } from '~/composables/useApi';
+import { useApiFetch } from '../composables/useApi';
 import { useI18n } from 'vue-i18n';
 import { ref, computed, reactive } from 'vue';
-import { useBackend } from '~/composables/useBackend';
-
-import FormDropdownOption from '~/components/FormDropdownOption.vue';
-import FormUserPassword from '~/components/FormUserPassword.vue';
+import { useBackend } from '../composables/useBackend';
+import BtnBase from './BtnBase.vue';
+import BtnBaseGroup from './BtnBaseGroup.vue';
+import TooltipBase from './TooltipBase.vue';
+import FormDropdownOption from './FormDropdownOption.vue';
+import FormUserPassword from './FormUserPassword.vue';
 
 const storeUser = useAuthUserStore();
 const { t } = useI18n();
@@ -193,19 +195,17 @@ const icalUrl = computed(() => {
   return `${baseUrl.value}/v1/external/ical/${ical.value}/${apiValue.value}`;
 });
 
-const scale = ref(null);
+const scale = ref<any>(null);
 const scaleQuery = `?action=CREATE_DEMO&datetime=${new Date().toISOString()}&weight=10.5&temp1=10.2&temp2=8.9&rain=15&hum=53`;
 const scaleUrl = computed(() => {
-  if (scale.value) {
-  } else {
+  if (!scale.value) {
     return '';
   }
   return `${baseUrl.value}/v1/external/scale/${scale.value.name}/${apiValue.value}${scaleQuery}`;
 });
 
 const scaleUrlShort = computed(() => {
-  if (scale.value) {
-  } else {
+  if (!scale.value) {
     return '';
   }
   return `/v1/external/scale/${scale.value.name}/${apiValue.value}${scaleQuery}`;

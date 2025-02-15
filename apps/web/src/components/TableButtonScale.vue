@@ -27,8 +27,8 @@
 
 <script setup lang="ts">
 import { useQuasar } from 'quasar';
-import { useApiFetch } from '~/composables/useApi';
-import { useNotification } from '~/composables/useNotification';
+import { useApiFetch } from '../composables/useApi';
+import { useNotification } from '../composables/useNotification';
 import DialogForm from './DialogForm.vue';
 import DialogSelectOption from './DialogSelectOption.vue';
 import { useI18n } from 'vue-i18n';
@@ -61,7 +61,7 @@ const dialogSelectScale = (type: 'edit' | 'delete') => {
 
 const dialogForm = (
   title: string,
-  ids: any[],
+  ids: any[] | null,
   form = 'scale',
   selected = null as any,
 ) => {

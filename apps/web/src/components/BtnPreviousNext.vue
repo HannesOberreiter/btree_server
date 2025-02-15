@@ -29,7 +29,9 @@
 import { findIndex } from 'lodash-es';
 import { useRouter } from 'vue-router';
 import { toRef, computed } from 'vue';
-import { useKeyNavDetail } from '~/composables/useKey';
+import { useKeyNavDetail } from '../composables/useKey';
+import TooltipBase from './TooltipBase.vue';
+import BtnBase from './BtnBase.vue';
 
 const router = useRouter();
 const props = defineProps({

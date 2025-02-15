@@ -2,10 +2,6 @@
   <router-view />
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
-
-export default defineComponent({
-  name: 'QuasarVueBtree',
-});
+<script setup lang="ts">
+import { RouterView } from 'vue-router';
 </script>

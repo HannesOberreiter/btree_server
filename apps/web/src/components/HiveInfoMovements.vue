@@ -17,9 +17,9 @@
 </template>
 
 <script setup lang="ts">
-import { useDateFormat } from '~/composables/useDate';
-import { useMovementsQuery } from '~/composables/useQuery';
-
+import { useDateFormat } from '../composables/useDate';
+import { useMovementsQuery } from '../composables/useQuery';
+import GlobalLoading from './GlobalLoading.vue';
 import { toRef, ref, watch } from 'vue';
 
 const useDate = useDateFormat();
@@ -29,7 +29,7 @@ const props = defineProps({
   },
 });
 const id = toRef(props, 'id');
-const filter = ref(null);
+const filter = ref<any>(null);
 
 watch(
   id,

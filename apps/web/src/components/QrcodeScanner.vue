@@ -55,10 +55,11 @@
 </template>
 
 <script setup lang="ts">
-import { useNotification } from '~/composables/useNotification';
-import { useScanningStore } from '~/stores/scanning';
-import { useScanner } from '~/composables/useScanner';
-
+import { useNotification } from '../composables/useNotification';
+import { useScanningStore } from '../stores/scanning';
+import { useScanner } from '../composables/useScanner';
+import BtnBase from './BtnBase.vue';
+import BtnBaseGroup from './BtnBaseGroup.vue';
 import { onMounted, onUnmounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';

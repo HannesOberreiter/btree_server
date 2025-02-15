@@ -58,19 +58,19 @@
 </template>
 
 <script setup lang="ts">
-import { tableCheckSelected, tableMeta } from '~/helpers';
-import { useMovementsQuery } from '~/composables/useQuery';
-import { useTablesStore } from '~/stores/tables';
-import { QTableProps } from 'quasar';
-import { useDateFormat } from '~/composables/useDate';
-import { useTableFilterStore } from '~/stores/tableFilter';
-import { useKeyTable } from '~/composables/useKey';
-import TableColLink from '~/components/TableColLink.vue';
+import { tableCheckSelected, tableMeta } from '../helpers';
+import { useMovementsQuery } from '../composables/useQuery';
+import { useTablesStore } from '../stores/tables';
+import type { QTableProps } from 'quasar';
+import { useDateFormat } from '../composables/useDate';
+import { useTableFilterStore } from '../stores/tableFilter';
+import { useKeyTable } from '../composables/useKey';
+import TableColLink from '../components/TableColLink.vue';
 import { useI18n } from 'vue-i18n';
 import { ref, computed, watch } from 'vue';
 import { storeToRefs } from 'pinia';
-import TableButtons from '~/components/TableButtons.vue';
-import TableFilter from '~/components/TableFilter.vue';
+import TableButtons from '../components/TableButtons.vue';
+import TableFilter from '../components/TableFilter.vue';
 
 const useDate = useDateFormat();
 const { t } = useI18n();
@@ -82,7 +82,7 @@ const { movedate: filters } = storeToRefs(storeFilter);
 
 const visibleColumns = ref(store.value.visible);
 
-const selected = ref([]);
+const selected = ref<any>([]);
 const rows = ref([]);
 const modus = ref(true);
 const deleted = ref(false);
@@ -183,11 +183,11 @@ const {
   offset: computed(() => pagination.value.page - 1),
   limit: computed(() => pagination.value.rowsPerPage),
   q: computed(() => (filter.value ? filter.value : '')),
-  filters: computed(() => (filters.value ? filters.value : '')),
+  filters: computed(() => (filters?.value ? filters.value : '')),
 });
 
 watch(visibleColumns, (cur) => {
-  store.value.visible = cur;
+  store.value.visible = cur as any;
 });
 
 watch(

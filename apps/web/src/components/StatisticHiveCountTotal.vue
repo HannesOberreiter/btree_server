@@ -12,8 +12,8 @@
 </template>
 
 <script setup lang="ts">
-import { useApiFetch } from '~/composables/useApi';
-import { useNotification } from '~/composables/useNotification';
+import { useApiFetch } from '../composables/useApi';
+import { useNotification } from '../composables/useNotification';
 import { use } from 'echarts/core';
 import { CanvasRenderer } from 'echarts/renderers';
 import { BarChart } from 'echarts/charts';
@@ -38,8 +38,8 @@ use([
 
 const api = useApiFetch();
 const notification = useNotification();
-const data = ref(null);
-const chart = ref(null);
+const data = ref<any>(null);
+const chart = ref<any>(null);
 const { t } = useI18n();
 
 await loadStats();

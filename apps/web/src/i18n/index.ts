@@ -9,3 +9,5 @@ export const languages = {
   it: it,
   fr: fr,
 };
+
+export default languages;

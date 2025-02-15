@@ -27,10 +27,10 @@
 
 <script setup lang="ts">
 import { useDialogPluginComponent } from 'quasar';
-import { useServiceDropbox } from '~/composables/useDropbox';
-import { useNotification } from '~/composables/useNotification';
+import { useServiceDropbox } from '../composables/useDropbox';
+import { useNotification } from '../composables/useNotification';
 import FilesDropbox from './FilesDropbox.vue';
-
+import BtnBase from './BtnBase.vue';
 import BtnCloseDialog from './BtnCloseDialog.vue';
 import { ref, watch } from 'vue';
 

@@ -1,9 +1,5 @@
 <template>
-  <q-dialog
-    ref="dialogRef"
-    :maximized="$q.platform.is.mobile"
-    @hide="onDialogHide"
-  >
+  <q-dialog ref="dialogRef" :maximized="$q.platform.is.mobile" @hide="onDialogHide">
     <q-card style="width: 700px">
       <global-loading v-if="!file"></global-loading>
       <div v-else-if="notFound" class="text-center text-h5">
@@ -18,31 +14,17 @@
           <btn-close-dialog></btn-close-dialog>
         </div>
         <div class="row full-width text-center">
-          <div v-if="isImage(file.name)" class="col-12">
-            <q-img
-              :src="display"
-              style="width: 100%; height: 100%; border: none"
-            />
+          <div v-if="isImage(file.name) && display" class="col-12">
+            <q-img :src="display" style="width: 100%; height: 100%; border: none" />
           </div>
           <div v-else class="col-12"><q-icon name="fas fa-file"></q-icon></div>
         </div>
       </q-card-section>
       <q-card-actions align="center">
-        <btn-base
-          size="md"
-          :label="$t('close')"
-          color="primary"
-          @click="onDialogOK"
-        />
-        <btn-base
-          unelevated
-          size="md"
-          :disable="useDropbox.state.isLoading || notFound"
-          :loading="useDropbox.state.isLoading"
-          :label="$t('download')"
-          color="secondary"
-          @click="onDownload(service, file)"
-        >
+        <btn-base size="md" :label="$t('close')" color="primary" @click="onDialogOK" />
+        <btn-base unelevated size="md" :disable="useDropbox.state.isLoading || notFound"
+          :loading="useDropbox.state.isLoading" :label="$t('download')" color="secondary"
+          @click="onDownload(service, file)">
           <tooltip-base v-if="file">
             {{ round(file.size / 1e6, 1) + ' MB' }}
           </tooltip-base>
@@ -54,19 +36,21 @@
 
 <script setup lang="ts">
 import { useDialogPluginComponent } from 'quasar';
-import { useServiceDropbox } from '~/composables/useDropbox';
-import { isImage } from '~/helpers';
+import { useServiceDropbox } from '../composables/useDropbox';
+import { isImage } from '../helpers';
 import round from 'lodash-es/round';
-
+import BtnBase from './BtnBase.vue';
+import TooltipBase from './TooltipBase.vue';
+import GlobalLoading from './GlobalLoading.vue';
 import BtnCloseDialog from './BtnCloseDialog.vue';
 
 import { ref, watch, toRef } from 'vue';
 
 const { dialogRef, onDialogHide, onDialogOK } = useDialogPluginComponent();
 const useDropbox = useServiceDropbox();
-const file = ref(null);
+const file = ref<any>(null);
 const notFound = ref(false);
-const display = ref(null);
+const display = ref<string | null>(null);
 const service = ref('url');
 
 defineEmits([...useDialogPluginComponent.emits]);
@@ -87,11 +71,11 @@ watch(
   { immediate: true },
 );
 
-function getService(value: string) {
+function getService (value: string) {
   const values = value.split(/:(.*)/s);
   switch (values[0]) {
     case 'dropbox': {
-      serviceDropbox(values[1]);
+      serviceDropbox(values[1]!);
       service.value = 'dropbox';
       break;
     }
@@ -102,7 +86,7 @@ function getService(value: string) {
   }
 }
 
-function serviceDropbox(value: string) {
+function serviceDropbox (value: string) {
   useDropbox
     .getThumbnail(value)
     .then((response) => {
@@ -131,7 +115,7 @@ function serviceDropbox(value: string) {
     });
 }
 
-function serviceUrl(value: string) {
+function serviceUrl (value: string) {
   file.value = {
     id: value,
     name: value,
@@ -140,7 +124,7 @@ function serviceUrl(value: string) {
   display.value = value;
 }
 
-function onDownload(service: string, file: any) {
+function onDownload (service: string, file: any) {
   switch (service) {
     case 'dropbox': {
       useDropbox.download(file.id);

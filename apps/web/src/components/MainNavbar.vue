@@ -99,14 +99,16 @@
 </template>
 
 <script setup lang="ts">
-import { DialogChainObject, useQuasar } from 'quasar';
+import type { DialogChainObject } from 'quasar';
+import { useQuasar } from 'quasar';
 import DialogShare from './DialogShare.vue';
-import { useAuthUserStore } from '~/stores/auth';
+import { useAuthUserStore } from '../stores/auth';
 import { storeToRefs } from 'pinia';
 import { useNetwork } from '@vueuse/core';
 import { ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
-
+import BtnBase from './BtnBase.vue';
+import TooltipBase from './TooltipBase.vue';
 import BtnDarkMode from './BtnDarkMode.vue';
 import BtnFullscreen from './BtnFullscreen.vue';
 import BtnQrScanner from './BtnQrScanner.vue';
@@ -121,7 +123,7 @@ const { company } = storeToRefs(storeUser);
 const $q = useQuasar();
 const { isOnline } = useNetwork();
 const { t } = useI18n();
-const offlineDialog = ref<DialogChainObject>(null);
+const offlineDialog = ref<DialogChainObject | null>(null);
 
 watch(isOnline, (online) => {
   if (!online && !offlineDialog.value) {

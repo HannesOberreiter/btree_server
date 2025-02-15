@@ -258,7 +258,7 @@
 <script lang="ts">
 import { flatten, map, merge } from 'lodash-es';
 import dayjs from 'dayjs';
-import { Task } from '~/types';
+import type { Task } from '../types';
 
 const stateDefault = {
   date: dayjs().format('YYYY-MM-DD'),
@@ -305,26 +305,27 @@ const stateDefault = {
 </script>
 
 <script setup lang="ts">
-import { PropType, ref, computed, unref } from 'vue';
+import type { PropType } from 'vue';
+import { ref, computed, unref } from 'vue';
 import useVuelidate from '@vuelidate/core';
-import { useNotification } from '~/composables/useNotification';
-import { useFieldsettingStore } from '~/stores/fieldsetting';
-import { useApiFetch } from '~/composables/useApi';
-import FormButtons from '~/components/FormButtons.vue';
-import FormInputText from '~/components/FormInputText.vue';
-import FormInputNumeric from '~/components/FormInputNumeric.vue';
-import FormInputAmount from '~/components/FormInputAmount.vue';
-import FormInputUrl from '~/components/FormInputUrl.vue';
-import FormInputNote from '~/components/FormInputNote.vue';
-import FormInputCheckbox from '~/components/FormInputCheckbox.vue';
-import FormDropdownOption from '~/components/FormDropdownOption.vue';
-import FormCheckupTemperature from '~/components/FormCheckupTemperature.vue';
-import FormCheckupFrames from '~/components/FormCheckupFrames.vue';
-import FormCheckupRating from '~/components/FormCheckupRating.vue';
-import FormCheckupQueen from '~/components/FormCheckupQueen.vue';
-import FormDropdownHive from '~/components/FormDropdownHive.vue';
-import FormDropdownEdit from '~/components/FormDropdownEdit.vue';
-import FormCheckupWeight from '~/components/FormCheckupWeight.vue';
+import { useNotification } from '../composables/useNotification';
+import { useFieldsettingStore } from '../stores/fieldsetting';
+import { useApiFetch } from '../composables/useApi';
+import FormButtons from './FormButtons.vue';
+import FormInputText from './FormInputText.vue';
+import FormInputNumeric from './FormInputNumeric.vue';
+import FormInputAmount from './FormInputAmount.vue';
+import FormInputUrl from './FormInputUrl.vue';
+import FormInputNote from './FormInputNote.vue';
+import FormInputCheckbox from './FormInputCheckbox.vue';
+import FormDropdownOption from './FormDropdownOption.vue';
+import FormCheckupTemperature from './FormCheckupTemperature.vue';
+import FormCheckupFrames from './FormCheckupFrames.vue';
+import FormCheckupRating from './FormCheckupRating.vue';
+import FormCheckupQueen from './FormCheckupQueen.vue';
+import FormDropdownHive from './FormDropdownHive.vue';
+import FormDropdownEdit from './FormDropdownEdit.vue';
+import FormCheckupWeight from './FormCheckupWeight.vue';
 import FormCheckupVarroa from './FormCheckupVarroa.vue';
 import FormInputDates from './FormInputDates.vue';
 import { useRouter } from 'vue-router';
@@ -346,7 +347,7 @@ const props = defineProps({
     required: true,
   },
   ids: {
-    type: Array,
+    type: Array as PropType<any[] | null>,
     default: null,
   },
 });
@@ -372,7 +373,8 @@ const state = ref({
   ...stateDefault,
 });
 
-async function getEdit(id: unknown[]) {
+async function getEdit(id: any[] | null) {
+  if (!id) return;
   return await api.post(`/v1/${props.task}/batchGet`, { ids: id }).then(
     (response: any) => {
       const editIds = map(response, (row: any) => [

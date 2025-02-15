@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { PropType } from 'vue';
+import type { PropType } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { locale } = useI18n();
@@ -56,7 +56,7 @@ function getLocalization(ob: LocaleAttributes) {
   if (!ob?.localizations) return ob.name;
   if (!ob.localizations?.data) return ob.name;
   if (ob.localizations.data.length === 0) return ob.name;
-  return ob.localizations.data[0].attributes.name;
+  return ob.localizations.data[0]!.attributes.name;
 }
 </script>
 

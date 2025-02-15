@@ -28,9 +28,9 @@
 
 <script setup lang="ts">
 import { useQuasar } from 'quasar';
-import { useNFC } from '~/composables/useNFC';
+import { useNFC } from '../composables/useNFC';
 import DialogShare from './DialogShare.vue';
-
+import TooltipBase from './TooltipBase.vue';
 import { useRouter } from 'vue-router';
 
 const $q = useQuasar();

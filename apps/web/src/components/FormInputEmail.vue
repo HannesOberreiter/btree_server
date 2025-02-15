@@ -28,9 +28,9 @@
 </template>
 
 <script setup lang="ts">
-import { email, requiredField, maxLength } from '~/helpers/i18n-validators';
+import { email, requiredField, maxLength } from '../helpers/i18n-validators';
 import { useVModels } from '@vueuse/core';
-import { validationErrors } from '~/helpers';
+import { validationErrors } from '../helpers';
 import useVuelidate from '@vuelidate/core';
 import { useI18n } from 'vue-i18n';
 import { ref } from 'vue';

@@ -4,7 +4,7 @@ import {
   Html5QrcodeScanType,
   Html5QrcodeSupportedFormats,
 } from 'html5-qrcode';
-import { useNotification } from '~/composables/useNotification';
+import { useNotification } from '../composables/useNotification';
 import { ref, computed } from 'vue';
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -41,7 +41,7 @@ export const useScanner = () => {
       isScanning.value = false;
       isStarting.value = false;
       try {
-        html5QrCode.value.localMediaStream.getVideoTracks()[0].stop();
+        html5QrCode.value.localMediaStream?.getVideoTracks()[0]?.stop();
       } catch (err) {
         console.error(err);
       }
@@ -54,19 +54,19 @@ export const useScanner = () => {
 
     textError.value = '';
     textResult.value = '';
-    const fileinput = document.getElementById('qr-input-file');
+    const fileinput = document.getElementById('qr-input-file')!;
     fileinput.addEventListener('change', (e) => {
       const target = e.target as HTMLInputElement;
 
-      if (target.files.length == 0) {
+      if (target.files?.length == 0) {
         // No file selected, ignore
         return;
       }
       stopScanning();
-      html5QrCode.value.clear();
-      const imageFile = target.files[0];
-      html5QrCode.value
-        .scanFile(imageFile, true)
+      html5QrCode.value!.clear();
+      const imageFile = target.files![0]!;
+      html5QrCode
+        .value!.scanFile(imageFile, true)
         .then((decodedText) => {
           console.log(decodedText);
           textResult.value = decodedText;
@@ -101,7 +101,7 @@ export const useScanner = () => {
     if (html5QrCode.value) {
       try {
         if (html5QrCode.value.localMediaStream?.getVideoTracks)
-          html5QrCode.value.localMediaStream.getVideoTracks()[0].stop();
+          html5QrCode.value.localMediaStream?.getVideoTracks()[0]?.stop();
       } catch (err) {
         console.error(err);
       }

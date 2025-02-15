@@ -13,9 +13,11 @@
   </btn-base>
 </template>
 
-<script lang="ts" setup>
+<script setup lang="ts">
 import { useLocalStorage } from '@vueuse/core';
 import { watch } from 'vue';
+import BtnBase from './BtnBase.vue';
+import TooltipBase from './TooltipBase.vue';
 
 const emit = defineEmits(['change']);
 const state = useLocalStorage(

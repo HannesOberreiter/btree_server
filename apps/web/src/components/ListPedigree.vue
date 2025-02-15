@@ -22,11 +22,11 @@
 </template>
 
 <script setup lang="ts">
-import { useQueenPedigree } from '~/composables/useQuery';
-import { useDateFormat } from '~/composables/useDate';
+import { useQueenPedigree } from '../composables/useQuery';
+import { useDateFormat } from '../composables/useDate';
 import DialogForm from './DialogForm.vue';
 import { useQuasar } from 'quasar';
-
+import GlobalLoading from './GlobalLoading.vue';
 import { toRef } from 'vue';
 
 const $q = useQuasar();

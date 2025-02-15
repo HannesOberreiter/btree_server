@@ -1,66 +1,31 @@
 <template>
-  <q-select
-    ref="apiarySelect"
-    v-model="apiary"
-    :label="$t('quicktool.apiary')"
-    name="apiary"
-    :loading="isLoadingApiary || isLoadingHive"
-    :disable="isLoadingApiary || isLoadingHive"
-    :options="optionsApiary"
-    :clearable="true"
-    multiple
-    options-dense
-    :use-input="!$q.platform.is.mobile || localPerf['hive-use-input']"
-    @filter="filterApiary"
-    @clear="clearApiary"
-    @update:model-value="selectApiary"
-  >
+  <q-select ref="apiarySelect" v-model="apiary" :label="$t('quicktool.apiary')" name="apiary"
+    :loading="isLoadingApiary || isLoadingHive" :disable="isLoadingApiary || isLoadingHive" :options="optionsApiary"
+    :clearable="true" multiple options-dense :use-input="!$q.platform.is.mobile || localPerf['hive-use-input']"
+    @filter="filterApiary" @clear="clearApiary" @update:model-value="selectApiary">
     <template #before>
       <q-icon name="fas fa-location-dot"></q-icon>
     </template>
     <template #after>
-      <q-btn
-        v-if="$q.platform.is.mobile"
-        icon="fas fa-keyboard"
-        flat
-        round
-        dense
+      <q-btn v-if="$q.platform.is.mobile" icon="fas fa-keyboard" flat round dense
         :class="localPerf['hive-use-input'] ? 'text-green-8' : ''"
-        @click="localPerf['hive-use-input'] = !localPerf['hive-use-input']"
-      >
+        @click="localPerf['hive-use-input'] = !localPerf['hive-use-input']">
         <tooltip-base>{{ t('allowKeyboardOnSelection') }}</tooltip-base>
       </q-btn>
     </template>
   </q-select>
-  <q-select
-    v-model="state.hive"
-    :error="v.hive.$error"
-    :error-message="validationErrors(v.hive)"
-    :no-error-icon="true"
-    :label="$t('hive')"
-    :loading="isLoadingApiary && isLoadingHive"
-    :disable="isLoadingApiary && isLoadingHive"
-    :options="optionsHive"
-    :option-label="
-      (val) => {
+  <q-select v-model="state.hive" :error="v.hive.$error" :error-message="validationErrors(v.hive)" :no-error-icon="true"
+    :label="$t('hive')" :loading="isLoadingApiary && isLoadingHive" :disable="isLoadingApiary && isLoadingHive"
+    :options="optionsHive" :option-label="(val) => {
         if (!val.modus) {
           return val.label + ' ' + $t('inactive');
         } else {
           return val.label;
         }
       }
-    "
-    clearable
-    counter
-    multiple
-    :use-chips="!$q.platform.is.mobile"
-    :use-input="!$q.platform.is.mobile || localPerf['hive-use-input']"
-    filled
-    class="hive-select"
-    data-cy="select-hive"
-    @update:model-value="selectHive"
-    @filter="filterHive"
-  >
+      " clearable counter multiple :use-chips="!$q.platform.is.mobile"
+    :use-input="!$q.platform.is.mobile || localPerf['hive-use-input']" filled class="hive-select" data-cy="select-hive"
+    @update:model-value="selectHive" @filter="filterHive">
     <template #before>
       <q-icon name="fas fa-house"></q-icon>
     </template>
@@ -69,18 +34,20 @@
 
 <script setup lang="ts">
 import { filter, map, union, unionBy } from 'lodash-es';
-import { requiredField } from '~/helpers/i18n-validators';
-import { useApiariesQuery, useHivesQuery } from '~/composables/useQuery';
+import { requiredField } from '../helpers/i18n-validators';
+import { useApiariesQuery, useHivesQuery } from '../composables/useQuery';
 import { useLocalStorage, useVModels } from '@vueuse/core';
-import { validationErrors } from '~/helpers';
+import { validationErrors } from '../helpers';
 import useVuelidate from '@vuelidate/core';
-import { useScanningStore } from '~/stores/scanning';
-import { useNotification } from '~/composables/useNotification';
+import { useScanningStore } from '../stores/scanning';
+import { useNotification } from '../composables/useNotification';
 import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
+import type { PropType } from 'vue';
 import { onMounted, onUnmounted, toRef } from 'vue';
 import { storeToRefs } from 'pinia';
 import { ref, computed, reactive, watch } from 'vue';
+import TooltipBase from './TooltipBase.vue';
 
 const storeScanning = useScanningStore();
 const { hiveDropdownActive, scannedId } = storeToRefs(storeScanning);
@@ -111,7 +78,8 @@ onUnmounted(() => {
 
 const props = defineProps({
   modelValue: {
-    default: [],
+    type: Array as PropType<any[] | null>,
+    default: () => [],
   },
   selected: {
     type: Array,
@@ -131,8 +99,8 @@ const emit = defineEmits(['update:modelValue']);
 const { modelValue } = useVModels(props, emit);
 
 const formEvent = toRef(props, 'formEvent');
-const apiary = ref(null);
-const apiarySelect = ref(null);
+const apiary = ref<any>(null);
+const apiarySelect = ref<any>(null);
 const optionsHive = ref([] as any);
 const optionsApiary = ref([] as any);
 
@@ -141,9 +109,11 @@ const clearApiary = () => {
   state.hive = null;
 };
 
-function selectApiary(val: any) {
-  apiarySelect.value.hidePopup();
-  apiarySelect.value.blur();
+function selectApiary (val: any) {
+  if (apiarySelect.value) {
+    apiarySelect.value.hidePopup();
+    apiarySelect.value.blur();
+  }
   map(val, (v) => {
     const res = filter(
       hives.value.results,
@@ -154,11 +124,11 @@ function selectApiary(val: any) {
   });
 }
 
-function selectHive() {
+function selectHive () {
   apiary.value = null;
 }
 
-function filterHive(val: string, update: any, _abort: any) {
+function filterHive (val: string, update: any, _abort: any) {
   if (val === '') {
     update(
       () => {
@@ -203,19 +173,18 @@ function filterHive(val: string, update: any, _abort: any) {
   }
 }
 
-function setSelected() {
+function setSelected () {
   if (props.selected && hives.value)
     state.hive = filter(hives.value.results, (obj) =>
       props.selected.includes(obj.id),
     );
 }
 
-function filterApiary(val: any, update: any, _abort: any) {
+function filterApiary (val: any, update: any, _abort: any) {
   const data = filter(apiaries.value.results, (obj) => obj.hive_count !== null);
 
   if (apiaries.value.results.length > 0 && val) {
     update(() => {
-      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       const needle = new RegExp(`(${val.toLowerCase()})`);
       optionsApiary.value = filter(data, (obj) =>
         needle.test(obj.label.toLowerCase()),
@@ -326,13 +295,13 @@ watch(formEvent, (val) => {
   }
 });
 
-function findHives(hives: any, id: string, selected_hives: any) {
+function findHives (hives: any, id: string, selected_hives: any) {
   const found = filter(hives, (obj) => id === String(obj.id)) as any;
   const double = filter(selected_hives, (obj) => id == obj.id);
   return { found: found, double: double };
 }
 
-function findApiaries(apiaries: any, id: string, selected_apiaries: any) {
+function findApiaries (apiaries: any, id: string, selected_apiaries: any) {
   const found = filter(apiaries, (obj) => id === String(obj.id)) as any;
   const double = filter(selected_apiaries, (obj) => id == obj.id);
   return { found: found, double: double };
@@ -344,6 +313,7 @@ function findApiaries(apiaries: any, id: string, selected_apiaries: any) {
   max-height: 120px;
   overflow-y: auto;
 }
+
 .q-dialog--modal .q-field__native {
   max-height: 120px;
   overflow-y: auto;

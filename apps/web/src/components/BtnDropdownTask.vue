@@ -1,32 +1,13 @@
 <template>
   <btn-base-group v-if="$q.screen.gt.md">
-    <btn-base
-      v-for="(task, index) in TASKS"
-      :key="index"
-      :icon="task.icon"
-      @click="() => openModal(task)"
-    >
+    <btn-base v-for="(task, index) in TASKS" :key="index" :icon="task.icon" @click="() => openModal(task)">
       <tooltip-base>{{ task.label }}</tooltip-base>
     </btn-base>
   </btn-base-group>
-  <q-btn-dropdown
-    v-else
-    split
-    :icon="currentTask.icon"
-    auto-close
-    stretch
-    no-caps
-    flat
-    @click="() => openModal(currentTask)"
-  >
+  <q-btn-dropdown v-else split :icon="currentTask.icon" auto-close stretch no-caps flat
+    @click="() => openModal(currentTask)">
     <q-list>
-      <q-item
-        v-for="(task, index) in TASKS"
-        :key="index"
-        v-close-popup
-        clickable
-        @click="() => openModal(task)"
-      >
+      <q-item v-for="(task, index) in TASKS" :key="index" v-close-popup clickable @click="() => openModal(task)">
         <q-item-section avatar>
           <q-avatar :icon="task.icon"></q-avatar>
         </q-item-section>
@@ -42,7 +23,9 @@
 import { useQuasar } from 'quasar';
 import { useI18n } from 'vue-i18n';
 import DialogForm from './DialogForm.vue';
-
+import BtnBaseGroup from './BtnBaseGroup.vue';
+import BtnBase from './BtnBase.vue';
+import TooltipBase from './TooltipBase.vue';
 import { ref } from 'vue';
 
 const emit = defineEmits(['refetch']);
@@ -56,9 +39,9 @@ const TASKS = [
   { label: t('treatment'), name: 'treatment', icon: 'fas fa-kit-medical' },
   { label: t('movement'), name: 'movedate', icon: 'fas fa-truck' },
 ];
-const currentTask = ref(TASKS[0]);
+const currentTask = ref(TASKS[0]!);
 
-function openModal(task: { label: string; name: string; icon: string }) {
+function openModal (task: { label: string; name: string; icon: string }) {
   currentTask.value = task;
   $q.dialog({
     component: DialogForm,

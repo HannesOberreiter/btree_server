@@ -538,8 +538,9 @@
   "serie": "Serie | Series",
   "server": {
     "hint": {
+      "ping": "Ping: {ping}",
       "register": "Choose the server which is closest to your location for best performance, you cannot change this after registration!",
-      "visitor": "Choose the server which you registered you company!"
+      "visitor": "Choose the server which you registered!"
     },
     "text": {
       "button": "New company from import",

@@ -40,9 +40,10 @@
 
 <script setup lang="ts">
 import { useLocalStorage } from '@vueuse/core';
-import { CALENDAR } from '~/constants';
-import { useCalendarStore } from '~/stores/calendar';
+import { CALENDAR } from '../constants';
+import { useCalendarStore } from '../stores/calendar';
 import BtnCloseDialog from './BtnCloseDialog.vue';
+import BtnBase from './BtnBase.vue';
 
 const storeCalendar = useCalendarStore();
 

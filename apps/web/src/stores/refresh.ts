@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { useStorage } from '@vueuse/core';
 import dayjs from 'dayjs';
-import refreshService from '~/services/refresh.service';
+import refreshService from '../services/refresh.service';
 
 export const useRefreshStore = defineStore('refresh', {
   state: () => ({
@@ -19,13 +19,9 @@ export const useRefreshStore = defineStore('refresh', {
   },
   actions: {
     async refresh(user = true) {
-      try {
-        if (this.lastHour < -1 || isNaN(this.lastHour) || user) {
-          this.last = dayjs();
-          return await refreshService.refresh(user);
-        }
-      } catch (e) {
-        throw e;
+      if (this.lastHour < -1 || isNaN(this.lastHour) || user) {
+        this.last = dayjs();
+        return await refreshService.refresh(user);
       }
     },
   },

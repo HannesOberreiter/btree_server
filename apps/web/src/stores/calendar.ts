@@ -1,4 +1,4 @@
-import { CALENDAR } from '~/constants';
+import { CALENDAR } from '../constants';
 import { defineStore } from 'pinia';
 import { useStorage } from '@vueuse/core';
 

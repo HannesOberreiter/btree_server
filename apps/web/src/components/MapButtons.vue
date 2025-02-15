@@ -51,7 +51,7 @@
 <script setup lang="ts">
 import { useVModels } from '@vueuse/core';
 import { LControl } from '@vue-leaflet/vue-leaflet';
-
+import BtnBase from './BtnBase.vue';
 import { ref, toRef } from 'vue';
 
 const showInactive = ref(false);

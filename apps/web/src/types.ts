@@ -1,4 +1,4 @@
-import { KINDS, STATUS } from '~/constants';
+import type { KINDS, STATUS } from './constants';
 
 export type FilterState = (typeof STATUS)[number];
 export type Filter = (typeof KINDS)[number];

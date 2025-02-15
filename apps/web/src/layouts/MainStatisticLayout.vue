@@ -62,12 +62,14 @@
 
 <script setup lang="ts">
 import { useQuasar } from 'quasar';
-import { useTableFilterStore } from '~/stores/tableFilter';
-import DialogFilter from '~/components/DialogFilter.vue';
-
-import StatisticTaskYear from '~/components/StatisticTaskYear.vue';
-import StatisticTaskApiary from '~/components/StatisticTaskApiary.vue';
-import StatisticTaskType from '~/components/StatisticTaskType.vue';
+import { useTableFilterStore } from '../stores/tableFilter';
+import DialogFilter from '../components/DialogFilter.vue';
+import BtnBase from '../components/BtnBase.vue';
+import BtnBaseGroup from '../components/BtnBaseGroup.vue';
+import TooltipBase from '../components/TooltipBase.vue';
+import StatisticTaskYear from '../components/StatisticTaskYear.vue';
+import StatisticTaskApiary from '../components/StatisticTaskApiary.vue';
+import StatisticTaskType from '../components/StatisticTaskType.vue';
 import { toRef, ref, unref, computed } from 'vue';
 
 const props = defineProps({

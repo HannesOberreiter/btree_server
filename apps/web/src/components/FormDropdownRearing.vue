@@ -64,12 +64,13 @@
 
 <script setup lang="ts">
 import { filter, isEmpty, map } from 'lodash-es';
-import { useRearingTypesQuery } from '~/composables/useQuery';
+import { useRearingTypesQuery } from '../composables/useQuery';
 import { useVModels } from '@vueuse/core';
-import { formCheckMultipleValues } from '~/helpers';
-import { useDateFormat } from '~/composables/useDate';
+import { formCheckMultipleValues } from '../helpers';
+import { useDateFormat } from '../composables/useDate';
 import { useI18n } from 'vue-i18n';
-
+import BtnMultipleValues from './BtnMultipleValues.vue';
+import type { PropType } from 'vue';
 import { ref, watch, toRefs, computed, unref } from 'vue';
 
 const { t } = useI18n();
@@ -77,12 +78,15 @@ const useDate = useDateFormat();
 
 const props = defineProps({
   modelValue: {
+    type: Object as PropType<any>,
     default: null,
   },
   modelDetail: {
+    type: Object as PropType<any>,
     default: null,
   },
   modelDate: {
+    type: String,
     default: null,
   },
   reset: {

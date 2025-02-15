@@ -1,3 +1,7 @@
+<script setup lang="ts">
+import BtnBase from './BtnBase.vue';
+</script>
+
 <template>
   <btn-base
     v-close-popup
@@ -9,5 +13,3 @@
     class="print-hide"
   />
 </template>
-
-<script setup></script>

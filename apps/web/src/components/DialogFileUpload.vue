@@ -66,9 +66,11 @@
 
 <script setup lang="ts">
 import { useDialogPluginComponent } from 'quasar';
-import { useNotification } from '~/composables/useNotification';
-import { useServiceDropbox } from '~/composables/useDropbox';
-
+import { useNotification } from '../composables/useNotification';
+import { useServiceDropbox } from '../composables/useDropbox';
+import BtnBase from './BtnBase.vue';
+import TooltipBase from './TooltipBase.vue';
+import BtnBaseGroup from './BtnBaseGroup.vue';
 import { ref, toRefs, watch } from 'vue';
 
 defineEmits([...useDialogPluginComponent.emits]);
@@ -77,7 +79,7 @@ const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } =
 
 const notification = useNotification();
 const useDropbox = useServiceDropbox();
-const uploader = ref(null);
+const uploader = ref<any>(null);
 const queue = ref(false);
 const service_active = ref(false);
 
@@ -118,7 +120,7 @@ const buildHeader = (files: File[]) => {
     {
       name: 'Dropbox-API-Arg',
       value: JSON.stringify({
-        path: useDropbox.state.path + '/' + files[0].name,
+        path: useDropbox.state.path + '/' + files[0]!.name,
         autorename: true,
         mode: 'overwrite',
       }),

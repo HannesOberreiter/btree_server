@@ -14,20 +14,17 @@
         class="q-mb-sm text-center"
       >
       </q-select>
-      <form-main-task
-        v-if="taskSelect"
-        :task="taskForm as any"
-      ></form-main-task>
+      <form-main-task v-if="taskSelect" :task="taskForm"></form-main-task>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { find } from 'lodash-es';
-import { PropType } from 'vue';
-import { Task } from '~/types';
-import { useQuicktoolStore } from '~/stores/quicktool';
-import FormMainTask from '~/components/FormMainTask.vue';
+import type { PropType } from 'vue';
+import type { Task } from '../types';
+import { useQuicktoolStore } from '../stores/quicktool';
+import FormMainTask from '../components/FormMainTask.vue';
 import { useI18n } from 'vue-i18n';
 import { ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
@@ -62,10 +59,12 @@ const options = [
 ];
 
 const taskSelect = ref(find(options, { value: props.task }));
-const taskForm = ref(taskSelect.value ? taskSelect.value.value : '');
+const taskForm = ref<Task>(
+  taskSelect.value ? (taskSelect.value.value as Task) : 'checkup',
+);
 
 watch(taskSelect, (cur) => {
-  if (cur) taskForm.value = cur.value;
+  if (cur) taskForm.value = cur.value as Task;
   // Helper for sidebar link to use latest quicktool setting and update url
   storeQuicktool.$state.link = cur?.value as Task;
   router.replace({

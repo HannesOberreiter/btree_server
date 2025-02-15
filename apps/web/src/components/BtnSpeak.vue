@@ -18,23 +18,23 @@
   </btn-base>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
+import { useSpeechRecognition } from '@vueuse/core';
+import { useApiariesQuery, useHivesQuery } from '../composables/useQuery';
+import Fuse from 'fuse.js';
+import { useNotification } from '../composables/useNotification';
+import { useQuasar } from 'quasar';
+import { useKeySpeak } from '../composables/useKey';
+import { useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
+import BtnBase from './BtnBase.vue';
+import TooltipBase from './TooltipBase.vue';
+
 interface Haystack {
   id?: number;
   aliases: Array<string>;
   command: string;
 }
-</script>
-
-<script setup lang="ts">
-import { useSpeechRecognition } from '@vueuse/core';
-import { useApiariesQuery, useHivesQuery } from '~/composables/useQuery';
-import Fuse from 'fuse.js';
-import { useNotification } from '~/composables/useNotification';
-import { useQuasar } from 'quasar';
-import { useKeySpeak } from '~/composables/useKey';
-import { useRouter } from 'vue-router';
-import { useI18n } from 'vue-i18n';
 
 import { ref, watch } from 'vue';
 
@@ -53,7 +53,7 @@ const speech = useSpeechRecognition({
 });
 
 const spoken = ref('');
-const haystack = ref([]);
+const haystack = ref<any[]>([]);
 
 useKeySpeak(btn);
 
@@ -139,7 +139,8 @@ if (speech.isSupported) {
       if (SpeechGrammarList) {
         const speechRecognitionList = new SpeechGrammarList();
         speechRecognitionList.addFromString(grammar, 1);
-        speech.recognition.grammars = speechRecognitionList;
+        if (speech.recognition)
+          speech.recognition.grammars = speechRecognitionList;
       }
     } catch (e) {
       console.error(e);

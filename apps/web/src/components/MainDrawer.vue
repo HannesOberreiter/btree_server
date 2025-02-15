@@ -2,19 +2,12 @@
   <q-scroll-area class="fit">
     <q-list>
       <drawer-item :link="calendar"></drawer-item>
-      <q-item
-        v-ripple
-        :to="{
-          name: 'new-quicktool',
-          params: {
-            task: storeQuicktool.getLink,
-          },
-        }"
-        data-cy="route-new-quicktool"
-        clickable
-        exact
-        active-class="text-yellow"
-      >
+      <q-item v-ripple :to="{
+        name: 'new-quicktool',
+        params: {
+          task: storeQuicktool.getLink,
+        },
+      }" data-cy="route-new-quicktool" clickable exact active-class="text-yellow">
         <q-item-section avatar>
           <q-icon name="fas fa-magic" />
         </q-item-section>
@@ -22,34 +15,16 @@
           {{ $t('quicktool.name') }}
         </q-item-section>
       </q-item>
-      <q-expansion-item
-        v-for="(link, index) in links"
-        :key="index"
-        group="sidebar"
-        :content-inset-level="0.3"
-        expand-separator
-        :icon="link.icon"
-        :label="link.label"
-        :disable="link.premium && !storeUser.isPremium"
-        :caption="link.premium && !storeUser.isPremium ? $t('premium') : ''"
-        dark
-      >
+      <q-expansion-item v-for="(link, index) in links" :key="index" group="sidebar" :content-inset-level="0.3"
+        expand-separator :icon="link.icon" :label="link.label" :disable="link.premium && !storeUser.isPremium"
+        :caption="link.premium && !storeUser.isPremium ? $t('premium') : ''" dark>
         <div v-if="Array.isArray(link.menu)">
-          <drawer-item
-            v-for="(sublink, subindex) in link.menu"
-            :key="subindex"
-            :link="sublink"
-            :disable="sublink.premium && !storeUser.isPremium"
-          ></drawer-item>
+          <drawer-item v-for="(sublink, subindex) in link.menu" :key="subindex" :link="sublink"
+            :disable="sublink.premium && !storeUser.isPremium ? true : false"></drawer-item>
         </div>
       </q-expansion-item>
-      <q-item
-        v-ripple
-        clickable
-        data-cy="route - external - forum"
-        href="https://forum.btree.at"
-        @click.prevent="openLink('https://forum.btree.at')"
-      >
+      <q-item v-ripple clickable data-cy="route - external - forum" href="https://forum.btree.at"
+        @click.prevent="openLink('https://forum.btree.at')">
         <q-item-section avatar>
           <q-icon name="fab fa-discourse" />
         </q-item-section>
@@ -84,14 +59,14 @@ export type MenuSection = {
 
 <script setup lang="ts">
 import { useQuasar } from 'quasar';
-import { useCountsQuery } from '~/composables/useQuery';
-import refreshService from '~/services/refresh.service';
-import { useAuthUserStore } from '~/stores/auth';
-import { useQuicktoolStore } from '~/stores/quicktool';
-import DrawerItem from '~/components/DrawerItem.vue';
-import BtnRefresh from '~/components/BtnRefresh.vue';
-import ItemCompany from '~/components/ItemCompany.vue';
-import ItemPing from '~/components/ItemPing.vue';
+import { useCountsQuery } from '../composables/useQuery';
+import refreshService from '../services/refresh.service';
+import { useAuthUserStore } from '../stores/auth';
+import { useQuicktoolStore } from '../stores/quicktool';
+import DrawerItem from './DrawerItem.vue';
+import BtnRefresh from './BtnRefresh.vue';
+import ItemCompany from './ItemCompany.vue';
+import ItemPing from './ItemPing.vue';
 import { useI18n } from 'vue-i18n';
 import { ref, onMounted, watch, computed } from 'vue';
 
@@ -547,7 +522,7 @@ const links = computed(
     ] as MenuSection[],
 );
 
-function openLink(link: string) {
+function openLink (link: string) {
   window.location.href = link;
 }
 </script>

@@ -26,7 +26,7 @@ const { t } = useI18n();
 const range = (start: number, stop: number, step: number) =>
   Array.from({ length: (stop - start) / step + 1 }, (_, i) => start + i * step);
 
-const options = ref(null);
+const options = ref<any>(null);
 
 const props = defineProps({
   modelValue: {

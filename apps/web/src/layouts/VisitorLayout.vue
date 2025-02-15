@@ -5,19 +5,10 @@
         <div class="col-12 col-sm-8 col-md-5 col-lg-4">
           <q-card>
             <q-card-section class="bg-primary text-white">
-              <q-pull-to-refresh
-                color="yellow-9"
-                icon="fas fa-spinner"
-                @refresh="refresh"
-              >
+              <q-pull-to-refresh color="yellow-9" icon="fas fa-spinner" @refresh="refresh">
                 <btn-dark-mode class="float-right"></btn-dark-mode>
-                <q-img
-                  src="~assets/logo_small.png"
-                  alt="b.tree Logo"
-                  spinner-color="white"
-                  class="float-left q-mr-sm"
-                  style="max-width: 55px"
-                />
+                <q-img src="~assets/logo_small.png" alt="b.tree Logo" spinner-color="white" class="float-left q-mr-sm"
+                  style="max-width: 55px" />
                 <div class="text-h6">b.tree</div>
                 <div class="text-subtitle2">
                   {{
@@ -37,38 +28,24 @@
               <router-view />
             </q-page-container>
 
-            <q-card-section
-              class="bg-blue-grey-9 text-center text-white text-h7"
-            >
+            <q-card-section class="bg-blue-grey-9 text-center text-white text-h7">
               <div>
                 <span>{{ $t('signup.text') }}&nbsp;</span>
-                <router-link
-                  :class="
-                    path.name !== 'register' ? 'text-orange-4' : 'text-grey-6'
-                  "
-                  :to="{ name: 'register' }"
-                >
+                <router-link :class="path.name !== 'register' ? 'text-orange-4' : 'text-grey-6'
+                  " :to="{ name: 'register' }">
                   {{ $t('signup.name') }}
                 </router-link>
               </div>
               <div>
                 <span>{{ $t('signup.alreadyRegistered') }}&nbsp;</span>
-                <router-link
-                  :class="
-                    path.name !== 'login' ? 'text-orange-4' : 'text-grey-6'
-                  "
-                  :to="{ name: 'login' }"
-                >
+                <router-link :class="path.name !== 'login' ? 'text-orange-4' : 'text-grey-6'
+                  " :to="{ name: 'login' }">
                   {{ $t('login') }}
                 </router-link>
               </div>
               <div>
-                <router-link
-                  :class="
-                    path.name !== 'recover' ? 'text-orange-4' : 'text-grey-6'
-                  "
-                  :to="{ name: 'recover' }"
-                >
+                <router-link :class="path.name !== 'recover' ? 'text-orange-4' : 'text-grey-6'
+                  " :to="{ name: 'recover' }">
                   {{ $t('forgot') }}
                 </router-link>
               </div>
@@ -77,12 +54,7 @@
           <div class="text-center">
             <small>
               © 2014-{{ new Date().getFullYear() }}
-              <a
-                class="link"
-                href="https://www.btree.at/"
-                target="_blank"
-                rel="noopener"
-              >
+              <a class="link" href="https://www.btree.at/" target="_blank" rel="noopener">
                 b.tree Beekeeping Database
               </a>
               <br />
@@ -108,9 +80,10 @@ import { useMeta } from 'quasar';
 import { useFetch } from '@vueuse/core';
 import { useI18n } from 'vue-i18n';
 import { onMounted, ref } from 'vue';
-
-import SupporterImages from '~/components/SupporterImages.vue';
-import BtnDarkMode from '~/components/BtnDarkMode.vue';
+import { RouterLink } from 'vue-router';
+import SupporterImages from '../components/SupporterImages.vue';
+import BtnDarkMode from '../components/BtnDarkMode.vue';
+import { RouterView } from 'vue-router';
 
 const isBeta = process.env.BACKEND_URL.indexOf('beta') >= 0;
 
@@ -126,18 +99,18 @@ const { t } = useI18n();
 const localStorageAvailable = ref(false);
 
 // https://stackoverflow.com/a/16427747/5316675
-function localStorageTest() {
+function localStorageTest () {
   const test = 'test';
   try {
     localStorage.setItem(test, test);
     localStorage.removeItem(test);
     return true;
-  } catch (e) {
+  } catch (_e) {
     return false;
   }
 }
 
-function testBrowserSupport() {
+function testBrowserSupport () {
   const compatibleBrowser =
     typeof Object['__defineSetter__' as keyof unknown] === 'function' &&
     !!String.prototype.includes;

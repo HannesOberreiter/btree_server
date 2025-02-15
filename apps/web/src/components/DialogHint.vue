@@ -20,6 +20,7 @@
 
 <script setup lang="ts">
 import BtnCloseDialog from './BtnCloseDialog.vue';
+import BtnBase from './BtnBase.vue';
 
 defineProps({
   hint: {

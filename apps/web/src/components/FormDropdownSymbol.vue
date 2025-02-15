@@ -20,7 +20,8 @@
 <script setup lang="ts">
 import { filter, isEmpty } from 'lodash-es';
 import { useVModels } from '@vueuse/core';
-import { formCheckMultipleValues } from '~/helpers';
+import { formCheckMultipleValues } from '../helpers';
+import type { PropType } from 'vue';
 import { ref, computed, watch, toRefs } from 'vue';
 
 const OPTIONS = [
@@ -40,6 +41,7 @@ const OPTIONS = [
 
 const props = defineProps({
   modelValue: {
+    type: String as PropType<string | undefined | null>,
     default: 'venus',
   },
   reset: {

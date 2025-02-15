@@ -60,22 +60,23 @@
 </template>
 
 <script setup lang="ts">
-import { LANGUAGES } from '~/constants';
-import { requiredField } from '~/helpers/i18n-validators';
-import { useAuthUserStore } from '~/stores/auth';
-import { useNotification } from '~/composables/useNotification';
-import { useQuasarLang } from '~/composables/useQuasarLang';
+import { LANGUAGES } from '../constants';
+import { requiredField } from '../helpers/i18n-validators';
+import { useAuthUserStore } from '../stores/auth';
+import { useNotification } from '../composables/useNotification';
+import { useQuasarLang } from '../composables/useQuasarLang';
 import useVuelidate from '@vuelidate/core';
-import { useApiFetch } from '~/composables/useApi';
+import { useApiFetch } from '../composables/useApi';
 import { useQuasar } from 'quasar';
 import { useI18n } from 'vue-i18n';
 import { reactive, ref } from 'vue';
 import { storeToRefs } from 'pinia';
-
-import FormUserNewsletter from '~/components/FormUserNewsletter.vue';
-import FormUserLanguage from '~/components/FormUserLanguage.vue';
-import FormInputText from '~/components/FormInputText.vue';
-import FormUserDateFormat from '~/components/FormUserDateFormat.vue';
+import BtnBaseGroup from './BtnBaseGroup.vue';
+import BtnBase from './BtnBase.vue';
+import FormUserNewsletter from './FormUserNewsletter.vue';
+import FormUserLanguage from './FormUserLanguage.vue';
+import FormInputText from './FormInputText.vue';
+import FormUserDateFormat from './FormUserDateFormat.vue';
 
 const { t } = useI18n();
 const $q = useQuasar();
@@ -88,7 +89,7 @@ const isSubmitting = ref(false);
 const state = reactive({
   username: user.value.username || '',
   format: user.value.format || 'iso',
-  lang: LANGUAGES.filter((e) => e.value === user.value.lang)[0],
+  lang: LANGUAGES.filter((e) => e.value === user.value.lang)[0]!,
   sound: user.value.sound,
   newsletter: user.value.newsletter,
   acdate: user.value.acdate,
@@ -134,7 +135,6 @@ const onDelete = () => {
   isSubmitting.value = true;
 
   $q.dialog({
-    // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
     title: t('delete') + ' ' + user.value.email,
     message: t('profile.userDeleteText'),
     cancel: true,

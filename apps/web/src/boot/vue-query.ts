@@ -1,11 +1,8 @@
 import { boot } from 'quasar/wrappers';
-import {
-  QueryCache,
-  VueQueryPlugin,
-  VueQueryPluginOptions,
-} from '@tanstack/vue-query';
+import type { VueQueryPluginOptions } from '@tanstack/vue-query';
+import { QueryCache, VueQueryPlugin } from '@tanstack/vue-query';
 import { i18n } from './i18n';
-import { useNotification } from '~/composables/useNotification';
+import { useNotification } from '../composables/useNotification';
 
 export const queryCache = new QueryCache({
   onError: (error) => {
@@ -13,7 +10,7 @@ export const queryCache = new QueryCache({
     console.log('queryCache.config.onError', error);
     notification.open('negative', error);
   },
-  onSuccess: (_data) => {
+  onSuccess: () => {
     //console.log(data);
   },
 });

@@ -77,7 +77,6 @@ const { modelValue, modelType, modelCalc } = useVModels(props, emit);
 const OPTIONS = ['single', 'total'];
 
 watch(props, () => {
-  props.tableId;
   if (props.hiveCount > 0 && modelType.value === 'total')
     modelCalc.value = round(modelValue.value / props.hiveCount, 2);
   else modelCalc.value = modelValue.value;

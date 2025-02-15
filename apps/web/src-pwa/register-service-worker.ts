@@ -1,8 +1,8 @@
 import { register } from 'register-service-worker';
-import { i18n } from '~/boot/i18n';
+import { i18n } from '../src/boot/i18n';
 import { Notify, Platform } from 'quasar';
 import { fasArrowsRotate } from '@quasar/extras/fontawesome-v6';
-import { Router } from '~/router';
+import { Router } from '../src/router';
 
 // The ready(), registered(), cached(), updatefound() and updated()
 // events passes a ServiceWorkerRegistration instance in their arguments.

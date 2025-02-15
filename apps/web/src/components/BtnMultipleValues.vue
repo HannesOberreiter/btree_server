@@ -9,6 +9,7 @@
 </template>
 
 <script setup lang="ts">
+import TooltipBase from './TooltipBase.vue';
 defineProps({
   disable: {
     type: Boolean,

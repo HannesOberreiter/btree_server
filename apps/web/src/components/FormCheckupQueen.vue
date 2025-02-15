@@ -31,12 +31,12 @@
 
 <script setup lang="ts">
 import { useVModels } from '@vueuse/core';
-import { formCheckMultipleValues } from '~/helpers';
+import { formCheckMultipleValues } from '../helpers';
 import { isEmpty } from 'lodash-es';
 import { useQuasar } from 'quasar';
-import { useFieldsettingStore } from '~/stores/fieldsetting';
+import { useFieldsettingStore } from '../stores/fieldsetting';
 import { useI18n } from 'vue-i18n';
-
+import BtnMultipleValues from './BtnMultipleValues.vue';
 import { watch, ref, computed, unref, toRefs } from 'vue';
 
 const fields = useFieldsettingStore();
@@ -44,7 +44,8 @@ const $q = useQuasar();
 const { t } = useI18n();
 const props = defineProps({
   modelValue: {
-    default: [],
+    type: Array,
+    default: () => [],
   },
   reset: {
     type: Number,

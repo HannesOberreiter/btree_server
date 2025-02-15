@@ -1,4 +1,4 @@
-import { useScanningStore } from '~/stores/scanning';
+import { useScanningStore } from '../stores/scanning';
 import { useNotification } from './useNotification';
 import { reactive } from 'vue';
 import { useRouter } from 'vue-router';
@@ -166,6 +166,11 @@ const useNFC = () => {
       try {
         state.getContent = true;
         abortSignals.push(new AbortController());
+        if (!ndef) throw new Error('NFC reader not initialized');
+        let signal = {};
+        if (abortSignals[abortSignals.length - 1]) {
+          signal = { signal: abortSignals[abortSignals.length - 1]!.signal };
+        }
         ndef.addEventListener(
           'reading',
           (event: any) => {
@@ -187,7 +192,7 @@ const useNFC = () => {
               console.error(e);
             }
           },
-          { signal: abortSignals[abortSignals.length - 1].signal },
+          signal,
         );
       } catch (error) {
         console.error(error);
@@ -210,6 +215,11 @@ const useNFC = () => {
         state.reading = true;
         notification.open('positive', 'nfc.active');
         abortSignals.push(new AbortController());
+        if (!ndef) throw new Error('NFC reader not initialized');
+        let signal = {};
+        if (abortSignals[abortSignals.length - 1]) {
+          signal = { signal: abortSignals[abortSignals.length - 1]!.signal };
+        }
         ndef.addEventListener(
           'reading',
           (event: any) => {
@@ -257,7 +267,7 @@ const useNFC = () => {
               }
             }
           },
-          { signal: abortSignals[abortSignals.length - 1].signal },
+          signal,
         );
       } catch (error) {
         console.error(error);
@@ -306,19 +316,21 @@ const useNFC = () => {
           }, 10_000),
         );
         abortSignals.push(ctrlWrite);
-
+        if (!ndef) throw new Error('NFC reader not initialized');
+        let signal = {};
+        if (abortSignals[abortSignals.length - 1]) {
+          signal = { signal: abortSignals[abortSignals.length - 1]!.signal };
+        }
         ndef.addEventListener(
           'reading',
           (_event) => {
             console.log('Currently waiting for write to finish...');
           },
-          { signal: abortSignals[abortSignals.length - 1].signal },
+          signal,
         );
 
         await ndef
-          .write(records, {
-            signal: abortSignals[abortSignals.length - 1].signal,
-          })
+          .write(records, signal)
           .then(() => {
             notification.open('positive', '');
             state.writingDone = true;

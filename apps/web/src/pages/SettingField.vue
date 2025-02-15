@@ -144,12 +144,13 @@
 
 <script setup lang="ts">
 import { capitalize } from 'lodash-es';
-import { useFieldsettingStore } from '~/stores/fieldsetting';
-import { useNotification } from '~/composables/useNotification';
-import { useApiFetch } from '~/composables/useApi';
+import { useFieldsettingStore } from '../stores/fieldsetting';
+import { useNotification } from '../composables/useNotification';
+import { useApiFetch } from '../composables/useApi';
 import { useLocalStorage } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { onMounted, ref } from 'vue';
+import BtnBase from '../components/BtnBase.vue';
 
 const notification = useNotification();
 const storeFields = useFieldsettingStore();

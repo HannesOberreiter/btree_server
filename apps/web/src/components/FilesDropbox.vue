@@ -101,13 +101,15 @@
 </template>
 
 <script setup lang="ts">
-import { isImage } from '~/helpers';
+import { isImage } from '../helpers';
 import { round, truncate } from 'lodash-es';
-import { useDateFormat } from '~/composables/useDate';
-import { useServiceDropbox } from '~/composables/useDropbox';
-import DialogFileShow from '~/components/DialogFileShow.vue';
+import { useDateFormat } from '../composables/useDate';
+import { useServiceDropbox } from '../composables/useDropbox';
+import DialogFileShow from './DialogFileShow.vue';
 import { useQuasar } from 'quasar';
-
+import BtnBaseGroup from './BtnBaseGroup.vue';
+import BtnBase from './BtnBase.vue';
+import TooltipBase from './TooltipBase.vue';
 import { useI18n } from 'vue-i18n';
 import { watch } from 'vue';
 

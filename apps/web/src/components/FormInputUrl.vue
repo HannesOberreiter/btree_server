@@ -43,18 +43,16 @@ import { useQuasar } from 'quasar';
 import DialogFileShow from './DialogFileShow.vue';
 import DialogFileUpload from './DialogFileUpload.vue';
 import DialogFileSelect from './DialogFileSelect.vue';
-import { isValidURL } from '~/helpers';
-import { useNotification } from '~/composables/useNotification';
-import { useFieldsettingStore } from '~/stores/fieldsetting';
+import { isValidURL } from '../helpers';
+import { useNotification } from '../composables/useNotification';
+import { useFieldsettingStore } from '../stores/fieldsetting';
 import FormInputText from './FormInputText.vue';
-
-import { ref } from 'vue';
+import TooltipBase from './TooltipBase.vue';
 import { useI18n } from 'vue-i18n';
 
 const fields = useFieldsettingStore();
 const $q = useQuasar();
 const { t } = useI18n();
-const inputModel = ref(null);
 const notification = useNotification();
 
 const props = defineProps({
@@ -103,7 +101,7 @@ const showFile = (value: string) => {
 const inputUrl = () => {
   $q.dialog({
     prompt: {
-      model: inputModel,
+      model: '',
       label: t('url'),
     },
   }).onOk((val) => {

@@ -23,8 +23,8 @@
 
 <script setup lang="ts">
 import { useQuasar } from 'quasar';
-import { PropType } from 'vue';
-import { MenuSection } from './MainDrawer.vue';
+import type { PropType } from 'vue';
+import type { MenuSection } from './MainDrawer.vue';
 
 const $q = useQuasar();
 defineProps({

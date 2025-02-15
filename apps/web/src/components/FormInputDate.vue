@@ -72,22 +72,26 @@
         </q-popup-proxy>
       </q-icon>
     </template>
-    <template #after><slot name="deepAfter"></slot></template>
+    <template #after>
+      <slot name="deepAfter"></slot>
+    </template>
   </q-input>
 </template>
 
 <script setup lang="ts">
-import { requiredField } from '~/helpers/i18n-validators';
+import { requiredField } from '../helpers/i18n-validators';
 import { useVModels } from '@vueuse/core';
-import { formCheckMultipleValues, validationErrors } from '~/helpers';
+import { formCheckMultipleValues, validationErrors } from '../helpers';
 import dayjs from 'dayjs';
 import useVuelidate from '@vuelidate/core';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { isEmpty } from 'lodash-es';
 import { useI18n } from 'vue-i18n';
-import { useDateFormat } from '~/composables/useDate';
-
+import { useDateFormat } from '../composables/useDate';
+import BtnBase from './BtnBase.vue';
+import BtnMultipleValues from './BtnMultipleValues.vue';
 import BtnDateAutoClose from './BtnDateAutoClose.vue';
+import type { PropType } from 'vue';
 import { ref, computed, toRefs, unref, watch } from 'vue';
 
 dayjs.extend(customParseFormat); // Needed to validate if date is even possible
@@ -102,6 +106,7 @@ const props = defineProps({
     default: 'YYYY-MM-DD',
   },
   modelValue: {
+    type: String as PropType<string | null>,
     default: dayjs().format('YYYY-MM-DD'),
   },
   mark: {
@@ -112,6 +117,7 @@ const props = defineProps({
     default: 'date',
   },
   tableId: {
+    type: String as PropType<string | null>,
     default: null,
   },
   reset: {
@@ -171,6 +177,7 @@ const rules = computed(() => {
 const v = useVuelidate(rules, state, { $autoDirty: true });
 
 const maskFormat = computed(() => {
+  if (!modelValue.value) return '';
   switch (dateFormat.value) {
     case 'YYYY-MM-DD':
       return date.displayFormat(modelValue.value, 'date');
@@ -202,7 +209,7 @@ function editValues(val: boolean) {
   disable.value = val;
   modelValue.value = disable.value
     ? null
-    : modelValue.value ?? dayjs().format('YYYY-MM-DD');
+    : (modelValue.value ?? dayjs().format('YYYY-MM-DD'));
 }
 function markDate(date: string) {
   return dayjs(date).isSame(props.mark);

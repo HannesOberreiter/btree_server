@@ -64,17 +64,18 @@
 </template>
 
 <script setup lang="ts">
-import { useNotification } from '~/composables/useNotification';
+import { useNotification } from '../composables/useNotification';
 import useVuelidate from '@vuelidate/core';
 import { flatten, map, merge } from 'lodash-es';
-import { FormOption, Option } from '~/types';
-import { useApiFetch } from '~/composables/useApi';
-import FormButtons from '~/components/FormButtons.vue';
-import { PropType, ref, computed, unref } from 'vue';
-import FormInputCheckbox from '~/components/FormInputCheckbox.vue';
-import FormInputNote from '~/components/FormInputNote.vue';
-import FormInputText from '~/components/FormInputText.vue';
-import FormDropdownEdit from '~/components/FormDropdownEdit.vue';
+import type { FormOption, Option } from '../types';
+import { useApiFetch } from '../composables/useApi';
+import FormButtons from './FormButtons.vue';
+import type { PropType } from 'vue';
+import { ref, computed, unref } from 'vue';
+import FormInputCheckbox from './FormInputCheckbox.vue';
+import FormInputNote from './FormInputNote.vue';
+import FormInputText from './FormInputText.vue';
+import FormDropdownEdit from './FormDropdownEdit.vue';
 
 const notification = useNotification();
 const values = ref({});

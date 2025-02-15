@@ -17,6 +17,8 @@
 
 <script setup lang="ts">
 import { useWakeLock } from '@vueuse/core';
+import TooltipBase from './TooltipBase.vue';
+import BtnBase from './BtnBase.vue';
 
 const { isSupported, isActive, request, release } = useWakeLock();
 </script>

@@ -87,13 +87,13 @@
 </template>
 
 <script setup lang="ts">
-import { useNotification } from '~/composables/useNotification';
+import { useNotification } from '../composables/useNotification';
 import dayjs from 'dayjs';
 import FormButtons from './FormButtons.vue';
 import useVuelidate from '@vuelidate/core';
 import { flatten, map, merge } from 'lodash-es';
-import { FormTodo } from '~/types';
-import { useApiFetch } from '~/composables/useApi';
+import type { FormTodo } from '../types';
+import { useApiFetch } from '../composables/useApi';
 import FormDropdownEdit from './FormDropdownEdit.vue';
 import FormInputDate from './FormInputDate.vue';
 import FormInputNumeric from './FormInputNumeric.vue';
@@ -101,7 +101,7 @@ import FormInputText from './FormInputText.vue';
 import FormInputUrl from './FormInputUrl.vue';
 import FormInputNote from './FormInputNote.vue';
 import FormInputCheckbox from './FormInputCheckbox.vue';
-
+import BtnBase from './BtnBase.vue';
 import { ref, computed, unref } from 'vue';
 
 const notification = useNotification();

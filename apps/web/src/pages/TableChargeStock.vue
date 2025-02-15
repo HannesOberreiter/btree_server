@@ -40,13 +40,13 @@
 </template>
 
 <script setup lang="ts">
-import { tableCheckSelected } from '~/helpers';
-import { useChargeStockQuery } from '~/composables/useQuery';
-import { useTablesStore } from '~/stores/tables';
-import { QTableProps } from 'quasar';
-import { useKeyTable } from '~/composables/useKey';
-import TableFilter from '~/components/TableFilter.vue';
-import TableButtons from '~/components/TableButtons.vue';
+import { tableCheckSelected } from '../helpers';
+import { useChargeStockQuery } from '../composables/useQuery';
+import { useTablesStore } from '../stores/tables';
+import type { QTableProps } from 'quasar';
+import { useKeyTable } from '../composables/useKey';
+import TableFilter from '../components/TableFilter.vue';
+import TableButtons from '../components/TableButtons.vue';
 import { useI18n } from 'vue-i18n';
 import { ref, computed, watch } from 'vue';
 import { storeToRefs } from 'pinia';
@@ -58,7 +58,7 @@ const { chargeStock: store } = storeToRefs(storeTable);
 
 const visibleColumns = ref(store.value.visible);
 
-const selected = ref([]);
+const selected = ref<any>([]);
 const rows = ref([]);
 const modus = ref(true);
 const deleted = ref(false);
@@ -129,7 +129,7 @@ const {
 });
 
 watch(visibleColumns, (cur) => {
-  store.value.visible = cur;
+  store.value.visible = cur as any;
 });
 
 watch(

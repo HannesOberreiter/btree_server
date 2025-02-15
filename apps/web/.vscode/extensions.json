@@ -3,6 +3,7 @@
     "dbaeumer.vscode-eslint",
     "esbenp.prettier-vscode",
     "editorconfig.editorconfig",
+    "vue.volar",
     "gencer.html-slim-scss-css-class-completion"
   ],
   "unwantedRecommendations": [
