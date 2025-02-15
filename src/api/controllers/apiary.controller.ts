@@ -1,13 +1,13 @@
-import { FastifyReply, FastifyRequest } from 'fastify';
-import httpErrors from 'http-errors';
-import { map } from 'lodash-es';
+import type { FastifyReply, FastifyRequest } from 'fastify';
+import type Objection from 'objection';
 import dayjs from 'dayjs';
+import httpErrors from 'http-errors';
 
+import { map } from 'lodash-es';
 import { Apiary } from '../models/apiary.model.js';
 import { HiveLocation } from '../models/hive_location.model.js';
 import { Movedate } from '../models/movedate.model.js';
 import { limitApiary } from '../utils/premium.util.js';
-import Objection from 'objection';
 
 async function isDuplicateApiaryName(
   user_id: number,
@@ -25,12 +25,13 @@ async function isDuplicateApiaryName(
     checkDuplicate.whereNot('id', id);
   }
   const result = await checkDuplicate;
-  if (result?.id) return true;
+  if (result?.id)
+    return true;
   return false;
 }
 
 export default class ApiaryController {
-  static async patch(req: FastifyRequest, reply: FastifyReply) {
+  static async patch(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as any;
     const ids = body.ids;
     const insert = { ...body.data };
@@ -59,16 +60,16 @@ export default class ApiaryController {
     return result;
   }
 
-  static async get(req: FastifyRequest, reply: FastifyReply) {
-    const { order, direction, offset, limit, modus, deleted, q, details } =
-      req.query as any;
+  static async get(req: FastifyRequest, _reply: FastifyReply) {
+    const { order, direction, offset, limit, modus, deleted, q, details }
+      = req.query as any;
 
     const query = Apiary.query()
       .where({
         'apiaries.user_id': req.session.user.user_id,
         'apiaries.deleted': deleted === true,
       })
-      .page(offset ? offset : 0, limit === 0 || !limit ? 10 : limit);
+      .page(offset || 0, limit === 0 || !limit ? 10 : limit);
 
     if (modus !== undefined && modus !== null) {
       query.where('apiaries.modus', modus === true);
@@ -78,19 +79,21 @@ export default class ApiaryController {
       query.withGraphJoined(
         '[hive_count, creator(identifier),editor(identifier)]',
       );
-    } else {
+    }
+    else {
       query.withGraphJoined('[hive_count]');
     }
     if (order) {
       if (Array.isArray(order)) {
         order.forEach((field, index) => query.orderBy(field, direction[index]));
-      } else {
+      }
+      else {
         query.orderBy(order, direction);
       }
     }
 
     if (q) {
-      const search = '' + q; // Querystring could be converted be a number
+      const search = `${q}`; // Querystring could be converted be a number
       if (search.trim() !== '') {
         query.where((builder) => {
           builder.orWhere('name', 'like', `%${search}%`);
@@ -101,7 +104,7 @@ export default class ApiaryController {
     return result;
   }
 
-  static async getDetail(req: FastifyRequest, reply: FastifyReply) {
+  static async getDetail(req: FastifyRequest, _reply: FastifyReply) {
     const id = (req.params as any).id;
 
     const query = Apiary.query()
@@ -154,7 +157,7 @@ export default class ApiaryController {
     };
   }
 
-  static async post(req: FastifyRequest, reply: FastifyReply) {
+  static async post(req: FastifyRequest, _reply: FastifyReply) {
     const limit = await limitApiary(req.session.user.user_id);
     if (limit) {
       throw httpErrors.PaymentRequired('no premium access');
@@ -183,7 +186,7 @@ export default class ApiaryController {
     return { ...result };
   }
 
-  static async updateStatus(req: FastifyRequest, reply: FastifyReply) {
+  static async updateStatus(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as any;
     const result = await Apiary.transaction(async (trx) => {
       return Apiary.query(trx)
@@ -197,12 +200,12 @@ export default class ApiaryController {
     return result;
   }
 
-  static async batchDelete(req: FastifyRequest, reply: FastifyReply) {
+  static async batchDelete(req: FastifyRequest, _reply: FastifyReply) {
     const query = req.query as any;
     const body = req.body as any;
 
-    const hardDelete = query.hard ? true : false;
-    const restoreDelete = query.restore ? true : false;
+    const hardDelete = !!query.hard;
+    const restoreDelete = !!query.restore;
 
     const result = await Apiary.transaction(async (trx) => {
       const res = await Apiary.query(trx)
@@ -217,7 +220,8 @@ export default class ApiaryController {
           throw httpErrors.Forbidden();
         }
 
-        if ((obj.deleted || hardDelete) && !restoreDelete) hardIds.push(obj.id);
+        if ((obj.deleted || hardDelete) && !restoreDelete)
+          hardIds.push(obj.id);
         else softIds.push(obj.id);
       });
 
@@ -225,10 +229,10 @@ export default class ApiaryController {
         await Apiary.query(trx).delete().whereIn('id', hardIds);
       }
 
-      if (softIds.length > 0)
+      if (softIds.length > 0) {
         await Apiary.query(trx)
           .patch({
-            deleted: restoreDelete ? false : true,
+            deleted: !restoreDelete,
             deleted_at: dayjs()
               .utc()
               .toISOString()
@@ -237,13 +241,14 @@ export default class ApiaryController {
             edit_id: req.session.user.bee_id,
           })
           .findByIds(softIds);
+      }
 
       return res;
     });
     return result;
   }
 
-  static async batchGet(req: FastifyRequest, reply: FastifyReply) {
+  static async batchGet(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as any;
     const result = await Apiary.query().findByIds(body.ids).where({
       user_id: req.session.user.user_id,

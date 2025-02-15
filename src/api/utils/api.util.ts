@@ -1,13 +1,14 @@
-import { checkMySQLError } from './error.util.js';
 import { Company } from '../models/company.model.js';
+import { checkMySQLError } from './error.util.js';
 
-export const getCompany = async (api: string) => {
+export async function getCompany(api: string) {
   try {
     return await Company.query().findOne({ api_key: api }).throwIfNotFound();
-  } catch (e) {
+  }
+  catch (e) {
     throw checkMySQLError(e);
   }
-};
+}
 
 /**
  * https://stackoverflow.com/a/44118363/5316675
@@ -22,7 +23,9 @@ export function isValidTimeZone(tz: string) {
   try {
     Intl.DateTimeFormat(undefined, { timeZone: tz });
     return true;
-  } catch (e) {
+  }
+  catch (e) {
+    console.error(e);
     return false;
   }
 }

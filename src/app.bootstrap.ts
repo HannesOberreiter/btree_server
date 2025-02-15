@@ -1,12 +1,12 @@
-import { env } from './config/environment.config.js';
-import { Application } from './config/app.config.js';
-import { Logger } from './services/logger.service.js';
 import closeWithGrace from 'close-with-grace';
-
+import { Application } from './config/app.config.js';
+import { env } from './config/environment.config.js';
 import { DatabaseServer } from './servers/db.server.js';
-import { RedisServer } from './servers/redis.server.js';
+
 import { HTTPServer } from './servers/http.server.js';
+import { RedisServer } from './servers/redis.server.js';
 import { VectorServer } from './servers/vector.server.js';
+import { Logger } from './services/logger.service.js';
 import { MailService } from './services/mail.service.js';
 
 const logger = Logger.getInstance();
@@ -30,7 +30,7 @@ const application = new Application();
 const httpServer = new HTTPServer(application.app);
 httpServer.start();
 
-closeWithGrace({ delay: 5000 }, async function (res) {
+closeWithGrace({ delay: 5000 }, async (res) => {
   if (res.err) {
     console.error(res.err);
   }
@@ -38,8 +38,8 @@ closeWithGrace({ delay: 5000 }, async function (res) {
 });
 
 async function gracefulShutdown() {
-  //process.on('SIGTERM', afterFirstSignal);
-  //process.on('SIGINT', afterFirstSignal);
+  // process.on('SIGTERM', afterFirstSignal);
+  // process.on('SIGINT', afterFirstSignal);
   try {
     if (env === 'ci') {
       await Promise.allSettled([
@@ -47,7 +47,8 @@ async function gracefulShutdown() {
         redisServer.stop(),
         httpServer.stop(),
       ]);
-    } else {
+    }
+    else {
       await Promise.allSettled([
         vectorServer.stop(),
         dbServer.stop(),
@@ -55,7 +56,8 @@ async function gracefulShutdown() {
         httpServer.stop(),
       ]);
     }
-  } catch (error) {
+  }
+  catch (error) {
     console.error('Failed to stop server', error);
   }
 }

@@ -1,22 +1,22 @@
+import type { FastifyReply, FastifyRequest } from 'fastify';
 import { randomUUID } from 'node:crypto';
-import { FastifyReply, FastifyRequest } from 'fastify';
-import { map } from 'lodash-es';
 import httpErrors from 'http-errors';
+import { map } from 'lodash-es';
 
-import { checkMySQLError } from '../utils/error.util.js';
-import { User } from '../models/user.model.js';
-import { CompanyBee } from '../models/company_bee.model.js';
-import { reviewPassword, fetchUser, getPaidRank } from '../utils/login.util.js';
-import { buildUserAgent, createHashedPassword } from '../utils/auth.util.js';
-import { deleteCompany, deleteUser } from '../utils/delete.util.js';
-import { FederatedCredential } from '../models/federated_credential.js';
 import { RedisServer } from '../../servers/redis.server.js';
 import { MailService } from '../../services/mail.service.js';
+import { CompanyBee } from '../models/company_bee.model.js';
+import { FederatedCredential } from '../models/federated_credential.js';
+import { User } from '../models/user.model.js';
+import { buildUserAgent, createHashedPassword } from '../utils/auth.util.js';
+import { deleteCompany, deleteUser } from '../utils/delete.util.js';
+import { checkMySQLError } from '../utils/error.util.js';
+import { fetchUser, getPaidRank, reviewPassword } from '../utils/login.util.js';
 
 export default class UserController {
   static async getFederatedCredentials(
     req: FastifyRequest,
-    reply: FastifyReply,
+    _reply: FastifyReply,
   ) {
     const data = await FederatedCredential.query().where({
       bee_id: req.session.user.bee_id,
@@ -26,7 +26,7 @@ export default class UserController {
 
   static async deleteFederatedCredentials(
     req: FastifyRequest,
-    reply: FastifyReply,
+    _reply: FastifyReply,
   ) {
     const params = req.params as any;
     if (!params.id) {
@@ -41,7 +41,7 @@ export default class UserController {
 
   static async addFederatedCredentials(
     req: FastifyRequest,
-    reply: FastifyReply,
+    _reply: FastifyReply,
   ) {
     const body = req.body as any;
     if (!body.email) {
@@ -55,26 +55,27 @@ export default class UserController {
     return { data };
   }
 
-  static async get(req: FastifyRequest, reply: FastifyReply) {
+  static async get(req: FastifyRequest, _reply: FastifyReply) {
     const data = await fetchUser('', req.session.user.bee_id);
 
     // Check if connected company exists (last visited company)
     // otherwise take the simply the first one
     let company: number;
-    if (data.company.some((el) => el.id === data.saved_company)) {
+    if (data.company.some(el => el.id === data.saved_company)) {
       company = data.saved_company;
-    } else {
+    }
+    else {
       company = data.company[0].id;
     }
     const { rank, paid } = await getPaidRank(data.id, company);
 
-    req['bee_id'] = req.session.user.bee_id;
+    (req as any).bee_id = req.session.user.bee_id;
 
     await req.session.regenerate();
     req.session.user = {
       bee_id: data.id,
       user_id: company,
-      paid: paid,
+      paid,
       rank: rank as any,
       user_agent: buildUserAgent(req),
       last_visit: new Date(),
@@ -87,7 +88,7 @@ export default class UserController {
     return { ...data };
   }
 
-  static async delete(req: FastifyRequest, reply: FastifyReply) {
+  static async delete(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as any;
     await reviewPassword(req.session.user.bee_id, body.password);
     const companies = await CompanyBee.query().where({
@@ -109,7 +110,7 @@ export default class UserController {
     return result;
   }
 
-  static async checkPassword(req: FastifyRequest, reply: FastifyReply) {
+  static async checkPassword(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as any;
     if ('password' in body) {
       const result = await reviewPassword(
@@ -121,25 +122,28 @@ export default class UserController {
     return {};
   }
 
-  static async patch(req: FastifyRequest, reply: FastifyReply) {
+  static async patch(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as any;
     const trx = await User.startTransaction();
     try {
       if ('password' in body) {
         try {
           await reviewPassword(req.session.user.bee_id, body.password, trx);
-        } catch (e) {
+        }
+        catch (e) {
           throw checkMySQLError(e);
         }
 
         delete body.password;
         if ('email' in body) {
-          if (body.email === '') delete body.email;
+          if (body.email === '')
+            delete body.email;
         }
         if ('newPassword' in body) {
           if (body.newPassword === '') {
             delete body.newPassword;
-          } else {
+          }
+          else {
             const password = createHashedPassword(body.newPassword);
             delete body.newPassword;
             body.password = password.password;
@@ -155,23 +159,25 @@ export default class UserController {
       if ('salt' in body) {
         try {
           await MailService.getInstance().sendMail({
-            to: user['email'],
-            lang: user['lang'],
+            to: user.email,
+            lang: user.lang,
             subject: 'pw_reseted',
-            name: user['username'],
+            name: user.username,
           });
-        } catch (e) {
+        }
+        catch (e) {
           throw checkMySQLError(e);
         }
       }
       return user;
-    } catch (e) {
+    }
+    catch (e) {
       await trx.rollback();
       throw e;
     }
   }
 
-  static async changeCompany(req: FastifyRequest, reply: FastifyReply) {
+  static async changeCompany(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as any;
     const trx = await User.startTransaction();
     try {
@@ -191,12 +197,12 @@ export default class UserController {
 
       const { rank, paid } = await getPaidRank(data.id, body.saved_company);
 
-      req['bee_id'] = req.session.user.bee_id;
+      (req as any).bee_id = req.session.user.bee_id;
       await req.session.regenerate();
       req.session.user = {
         bee_id: data.id,
         user_id: body.saved_company,
-        paid: paid,
+        paid,
         rank: rank as any,
         user_agent: buildUserAgent(req),
         last_visit: new Date(),
@@ -205,21 +211,22 @@ export default class UserController {
       };
       await req.session.save();
 
-      return { data: data, result: result };
+      return { data, result };
 
-      //const userAgent = buildUserAgent(req);
-      /*const token = await generateTokenResponse(
+      // const userAgent = buildUserAgent(req);
+      /* const token = await generateTokenResponse(
         req.session.user.bee_id,
         req.body.saved_company,
         userAgent
-      );*/
-    } catch (e) {
+      ); */
+    }
+    catch (e) {
       await trx.rollback();
       throw e;
     }
   }
 
-  static async getRedisSession(req: FastifyRequest, reply: FastifyReply) {
+  static async getRedisSession(req: FastifyRequest, _reply: FastifyReply) {
     const { bee_id } = req.session.user;
     let keys = [];
     let cursor = 0;
@@ -236,8 +243,9 @@ export default class UserController {
       if (result[1].length > 0) {
         keys = keys.concat(result[1]);
       }
-      const nextCursor = parseInt(result[0]);
-      if (nextCursor === 0) break;
+      const nextCursor = Number.parseInt(result[0]);
+      if (nextCursor === 0)
+        break;
       cursor = nextCursor;
     }
 
@@ -248,17 +256,18 @@ export default class UserController {
     const result = content
       .map((el, index) => {
         const o = JSON.parse(el);
-        if (!o.user) return null;
+        if (!o.user)
+          return null;
         o.id = keys[index];
-        o.user['currentSession'] =
-          o.user?.uuid && o.user?.uuid === req.session.user.uuid;
+        o.user.currentSession
+          = o.user?.uuid && o.user?.uuid === req.session.user.uuid;
         return o;
       })
-      .filter((el) => el !== null);
+      .filter(el => el !== null);
     return result;
   }
 
-  static async deleteRedisSession(req: FastifyRequest, reply: FastifyReply) {
+  static async deleteRedisSession(req: FastifyRequest, _reply: FastifyReply) {
     const { bee_id } = req.session.user;
     const { id } = req.params as any;
     const lastPart = id.split(':').at(-1);

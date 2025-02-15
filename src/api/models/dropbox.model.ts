@@ -20,6 +20,7 @@ export class Dropbox extends Model {
       user_id: { type: 'integer' },
     },
   };
+
   static relationMappings = () => ({
     company: {
       relation: Model.BelongsToOneRelation,

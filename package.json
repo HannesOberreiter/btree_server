@@ -1,14 +1,12 @@
 {
   "name": "btree-node",
+  "type": "module",
   "version": "1.0.0",
+  "private": true,
+  "description": "b.tree backend based on nodejs, fastify and knex.js, objections.js",
   "author": "Hannes Oberreiter",
   "license": "AGPL-3.0",
-  "private": true,
-  "keywords": [],
-  "main": "./dist/app.bootstrap.js",
-  "type": "module",
-  "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
-  "description": "b.tree backend based on nodejs, fastify and knex.js, objections.js",
+  "homepage": "https://github.com/HannesOberreiter/btree_server#readme",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/HannesOberreiter/btree_server.git"
@@ -16,7 +14,9 @@
   "bugs": {
     "url": "https://github.com/HannesOberreiter/btree_server/issues"
   },
-  "homepage": "https://github.com/HannesOberreiter/btree_server#readme",
+  "keywords": [],
+  "main": "./dist/app.bootstrap.js",
+  "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
   "scripts": {
     "serve": "nodemon",
     "build": "tsc",
@@ -30,8 +30,8 @@
     "test:e2e": "ENVIRONMENT=test npx mocha ./test/e2e/00-api.e2e.test.cjs  --R spec --ui bdd --env test --timeout 5000",
     "test:watch": "ENVIRONMENT=test npx mocha ./test/e2e/00-api.e2e.test.cjs  --watch dist test --env test",
     "ci:e2e": "ENVIRONMENT=ci npx mocha ./test/e2e/00-api.e2e.test.cjs --timeout 5000",
-    "prettier-format": "prettier --config .prettierrc 'src/**/*.ts' --write",
-    "lint": "eslint . --ext .cjs,.js,.jsx,.ts,.tsx"
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "dependencies": {
     "@fastify/compress": "^7.0.0",
@@ -73,6 +73,7 @@
     "yauzl-promise": "^4.0.0"
   },
   "devDependencies": {
+    "@antfu/eslint-config": "^3.9.2",
     "@types/archiver": "^6.0.2",
     "@types/http-errors": "^2.0.4",
     "@types/lodash": "^4.14.191",
@@ -80,14 +81,10 @@
     "@types/node-schedule": "^2.1.0",
     "@types/nodemailer": "^6.4.7",
     "@types/proj4": "^2.5.2",
-    "@typescript-eslint/eslint-plugin": "^7.3.1",
-    "@typescript-eslint/parser": "^7.3.1",
     "chai": "^4.4.1",
-    "eslint": "^8.30.0",
-    "eslint-config-prettier": "^9.0.0",
+    "eslint": "^9.15.0",
     "mocha": "^10.2.0",
     "nodemon": "^3.0.0",
-    "prettier": "^3.0.0",
     "supertest": "^7.0.0",
     "typescript": "^5.0.4"
   }

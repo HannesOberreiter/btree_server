@@ -1,8 +1,8 @@
-import { Company } from '../company.model.js';
 import { ExtModel } from '../base.model.js';
+import { Company } from '../company.model.js';
 import { RearingDetail } from './rearing_detail.model.js';
-import { RearingType } from './rearing_type.model.js';
 import { RearingStep } from './rearing_step.model.js';
+import { RearingType } from './rearing_type.model.js';
 
 export class Rearing extends ExtModel {
   id!: number;

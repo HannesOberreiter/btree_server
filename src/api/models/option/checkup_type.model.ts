@@ -1,6 +1,6 @@
-import { BaseOptionModel } from './baseoption.model.js';
 import { ExtModel } from '../base.model.js';
 import { Company } from '../company.model.js';
+import { BaseOptionModel } from './baseoption.model.js';
 
 export class CheckupType extends BaseOptionModel {
   static tableName = 'checkup_types';

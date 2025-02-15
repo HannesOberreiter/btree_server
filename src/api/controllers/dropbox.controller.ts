@@ -1,5 +1,5 @@
+import type { FastifyReply, FastifyRequest } from 'fastify';
 import { Dropbox, DropboxAuth } from 'dropbox';
-import { FastifyReply, FastifyRequest } from 'fastify';
 
 import {
   dropboxClientId,
@@ -16,9 +16,10 @@ export default class DropboxController {
     clientId: dropboxClientId,
     clientSecret: dropboxClientSecret,
   };
+
   private static redirect = `${frontend}/setting/dropbox`; // must be exactly the same as in the Dropbox App defined
 
-  static async get(_req: FastifyRequest, reply: FastifyReply) {
+  static async get(_req: FastifyRequest, _reply: FastifyReply) {
     const dbx = new DropboxAuth(DropboxController.config);
     const authUrl = await dbx.getAuthenticationUrl(
       DropboxController.redirect,
@@ -32,7 +33,7 @@ export default class DropboxController {
     return { url: authUrl };
   }
 
-  static async auth(req: FastifyRequest, reply: FastifyReply) {
+  static async auth(req: FastifyRequest, _reply: FastifyReply) {
     const { code } = req.params as any;
     const dbx = new DropboxAuth(DropboxController.config);
     const token = await dbx.getAccessTokenFromCode(
@@ -40,8 +41,8 @@ export default class DropboxController {
       code,
     );
 
-    const refresh_token = token.result['refresh_token'];
-    const access_token = token.result['access_token'];
+    const refresh_token = (token.result as any).refresh_token;
+    const access_token = (token.result as any).access_token;
 
     await DropboxModel.transaction(async (trx) => {
       const exist = await DropboxModel.query(trx)
@@ -49,13 +50,14 @@ export default class DropboxController {
         .findOne('user_id', req.session.user.user_id);
       if (exist) {
         return await DropboxModel.query(trx).findById(exist.id).patch({
-          refresh_token: refresh_token,
-          access_token: access_token,
+          refresh_token,
+          access_token,
         });
-      } else {
+      }
+      else {
         return await DropboxModel.query(trx).insert({
-          refresh_token: refresh_token,
-          access_token: access_token,
+          refresh_token,
+          access_token,
           user_id: req.session.user.user_id,
         });
       }
@@ -63,7 +65,7 @@ export default class DropboxController {
     return { token: access_token };
   }
 
-  static async token(req: FastifyRequest, reply: FastifyReply) {
+  static async token(req: FastifyRequest, _reply: FastifyReply) {
     const token = await DropboxModel.query().findOne(
       'user_id',
       req.session.user.user_id,
@@ -91,7 +93,7 @@ export default class DropboxController {
     return { token: token.access_token };
   }
 
-  static async delete(req: FastifyRequest, reply: FastifyReply) {
+  static async delete(req: FastifyRequest, _reply: FastifyReply) {
     const result = await DropboxModel.transaction(async (trx) => {
       const token = await DropboxModel.query(trx)
         .select('refresh_token')

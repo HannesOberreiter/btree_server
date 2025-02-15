@@ -2,18 +2,18 @@ import dayjs from 'dayjs';
 import { intersection, round } from 'lodash-es';
 
 import { DatabaseServer } from '../../servers/db.server.js';
-import { Todo } from '../models/todo.model.js';
 import { Rearing } from '../models/rearing/rearing.model.js';
 import { RearingStep } from '../models/rearing/rearing_step.model.js';
+import { Todo } from '../models/todo.model.js';
 
-const convertDate = ({ start, end }) => {
+function convertDate({ start, end }) {
   return {
     start: dayjs(start).toISOString().slice(0, 19).replace('T', ' '),
     end: dayjs(end).toISOString().slice(0, 19).replace('T', ' '),
   };
-};
+}
 
-const getRearings = async (params, user) => {
+async function getRearings(params, user) {
   /*
    * Fetching Rearings and corresponding steps
    */
@@ -24,7 +24,8 @@ const getRearings = async (params, user) => {
   if (params.id) {
     // if not used inside calendar and we only want one event
     rearings_query.where('id', params.id);
-  } else {
+  }
+  else {
     // Because Rearings could goes over multiple months we add / substract here to catch them
     const start = dayjs(params.start).subtract(2, 'month').toISOString();
     const end = dayjs(params.end).add(2, 'month').toISOString();
@@ -41,7 +42,7 @@ const getRearings = async (params, user) => {
       .orderBy('position', 'asc');
 
     for (const j in steps) {
-      steps[j]['key'] = j;
+      (steps[j] as any).key = j;
       if (steps[j].detail_id === res.start.id) {
         res.startPosition = steps[j].position;
         res.startKey = j;
@@ -64,15 +65,17 @@ const getRearings = async (params, user) => {
       if (result.startPosition === result.currentStep.position) {
         // Current Step is actual Start Step
         result.start = dayjs(result.date).toISOString();
-      } else {
+      }
+      else {
         if (
-          parseInt(result.currentStep.position) > parseInt(result.startPosition)
+          Number.parseInt(result.currentStep.position) > Number.parseInt(result.startPosition)
         ) {
           // Step comes behind Start Step, we can simply add up the hours
           const hours = result.currentStep.sleep_before ?? 0;
           addDate = addDate.add(hours, 'hour');
           result.start = addDate.toISOString();
-        } else {
+        }
+        else {
           // Step comes before Start Step, this is more complicated as
           // we need to account for the steps which are coming before it
           const steps_before = result.startKey - result.currentStep.key;
@@ -107,9 +110,9 @@ const getRearings = async (params, user) => {
     }
   }
   return results;
-};
+}
 
-const getTodos = async (params, user) => {
+async function getTodos(params, user) {
   const { start, end } = convertDate(params);
 
   const results: any = await Todo.query()
@@ -117,7 +120,7 @@ const getTodos = async (params, user) => {
     .where('date', '>=', start)
     .where('date', '<=', end)
     .withGraphJoined('[creator(identifier), editor(identifier)]');
-  let result = [];
+  const result = [];
   for (const i in results) {
     const res = results[i];
     res.allDay = true;
@@ -130,7 +133,8 @@ const getTodos = async (params, user) => {
     if (res.done) {
       res.unicode = '✏️ ✅';
       res.color = 'green';
-    } else {
+    }
+    else {
       res.unicode = '✏️ ❎';
       res.color = 'red';
     }
@@ -139,23 +143,25 @@ const getTodos = async (params, user) => {
       res.editors = res.editor.username
         ? res.editor.username
         : res.editor.email;
-    } else {
+    }
+    else {
       res.editors = '';
     }
     if (res.creator) {
       res.creators = res.creator.username
         ? res.creator.username
         : res.creator.email;
-    } else {
+    }
+    else {
       res.creators = '';
     }
 
     result.push(res);
   }
   return result;
-};
+}
 
-const getMovements = async (params, user) => {
+async function getMovements(params, user) {
   const { start, end } = convertDate(params);
   const instance = DatabaseServer.getInstance();
   const results = await instance
@@ -163,7 +169,7 @@ const getMovements = async (params, user) => {
     .where('user_id', user.user_id)
     .where('date', '>=', start)
     .where('date', '<=', end);
-  let result = [];
+  const result = [];
   for (const i in results) {
     const res = results[i];
     res.allDay = true;
@@ -173,7 +179,8 @@ const getMovements = async (params, user) => {
     const count = (res.hive_names.match(/,/g) || []).length + 1;
     if (count === 1) {
       res.title = `[${res.hive_names}] - ${res.apiary_name}`;
-    } else {
+    }
+    else {
       res.title = `${count}x ${res.apiary_name}`;
     }
     res.icon = 'fas fa-truck';
@@ -184,20 +191,22 @@ const getMovements = async (params, user) => {
     res.durationEditable = false;
     if (res.editors) {
       res.editors = String(intersection(res.editors.split(',')));
-    } else {
+    }
+    else {
       res.editors = '';
     }
     if (res.creators) {
       res.creators = String(intersection(res.creators.split(',')));
-    } else {
+    }
+    else {
       res.creators = '';
     }
     result.push(res);
   }
   return result;
-};
+}
 
-const getTask = async (params, user, task: string) => {
+async function getTask(params, user, task: string) {
   const { start, end } = convertDate(params);
   const instance = DatabaseServer.getInstance();
   const results = await instance
@@ -205,7 +214,7 @@ const getTask = async (params, user, task: string) => {
     .where('user_id', user.user_id)
     .where('date', '>=', start)
     .where('enddate', '<=', end);
-  let result = [];
+  const result = [];
   for (const i in results) {
     const res = results[i];
     res.id = task;
@@ -216,20 +225,24 @@ const getTask = async (params, user, task: string) => {
     const count = (res.hive_names.match(/,/g) || []).length + 1;
     if (count === 1) {
       res.title = `[${res.hive_names}] ${res.type_name} - ${res.apiary_name}`;
-    } else {
+    }
+    else {
       res.title = `${count}x ${res.type_name} - ${res.apiary_name}`;
     }
     if (task === 'checkup') {
       res.icon = 'fas fa-search';
       res.color = '#067558';
-    } else if (task === 'treatment') {
+    }
+    else if (task === 'treatment') {
       res.icon = 'fas fa-plus';
       res.color = '#cc5b9a';
       res.title += ` (${res.disease_name})`;
-    } else if (task === 'feed') {
+    }
+    else if (task === 'feed') {
       res.icon = 'fas fa-cube';
       res.color = '#d55e00';
-    } else if (task === 'harvest') {
+    }
+    else if (task === 'harvest') {
       res.icon = 'fas fa-tint';
       res.color = 'yellow';
       res.textColor = 'black';
@@ -243,12 +256,14 @@ const getTask = async (params, user, task: string) => {
     res.table = task;
     if (res.editors) {
       res.editors = String(intersection(res.editors.split(',')));
-    } else {
+    }
+    else {
       res.editors = '';
     }
     if (res.creators) {
       res.creators = String(intersection(res.creators.split(',')));
-    } else {
+    }
+    else {
       res.creators = '';
     }
     // Event end Date is exclusive see docu https://fullcalendar.io/docs/event_data/Event_Object/
@@ -256,9 +271,9 @@ const getTask = async (params, user, task: string) => {
     result.push(res);
   }
   return result;
-};
+}
 
-const getScaleData = async (params, user) => {
+async function getScaleData(params, user) {
   const { start, end } = convertDate(params);
 
   const instance = DatabaseServer.getInstance();
@@ -267,7 +282,7 @@ const getScaleData = async (params, user) => {
     .where('user_id', user.user_id)
     .where('date', '>=', start)
     .where('date', '<=', end);
-  let result = [];
+  const result = [];
   let weight_last = 0;
   for (const i in results) {
     const res = results[i];
@@ -288,6 +303,6 @@ const getScaleData = async (params, user) => {
     result.push(res);
   }
   return result;
-};
+}
 
-export { getTask, getMovements, getTodos, getRearings, getScaleData };
+export { getMovements, getRearings, getScaleData, getTask, getTodos };

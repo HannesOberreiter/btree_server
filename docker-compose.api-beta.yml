@@ -10,9 +10,9 @@ services:
     container_name: btree-server-beta
     image: hannesoberreiter/btree_server:latest
     # To run knex commands
-    #entrypoint: [ "/bin/sh", "-c", "npm run prod:knex migrate:latest" ]
+    # entrypoint: [ "/bin/sh", "-c", "npm run prod:knex migrate:latest" ]
     restart: always
-    user: 'node' # connected volume logs must have write access as node user chown -R 1000:1000 logs
+    user: node # connected volume logs must have write access as node user chown -R 1000:1000 logs
     environment:
       ENVIRONMENT: production
       IS_CHILD: false
@@ -23,7 +23,7 @@ services:
     ports:
       - '1339:8101'
     logging:
-      driver: 'local'
+      driver: local
 
 networks:
   default:

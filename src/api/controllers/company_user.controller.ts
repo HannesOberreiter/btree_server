@@ -1,15 +1,15 @@
-import { randomBytes } from 'crypto';
-import { FastifyReply, FastifyRequest } from 'fastify';
+import type { FastifyReply, FastifyRequest } from 'fastify';
+import { randomBytes } from 'node:crypto';
 import httpErrors from 'http-errors';
 
-import { CompanyBee } from '../models/company_bee.model.js';
 import { Company } from '../models/company.model.js';
-import UserController from './user.controller.js';
-import AuthController from './auth.controller.js';
+import { CompanyBee } from '../models/company_bee.model.js';
 import { User } from '../models/user.model.js';
+import AuthController from './auth.controller.js';
+import UserController from './user.controller.js';
 
 export default class CompanyUserController {
-  static async patch(req: FastifyRequest, reply: FastifyReply) {
+  static async patch(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as any;
     const result = await CompanyBee.query()
       .patch({ rank: body.rank })
@@ -20,7 +20,7 @@ export default class CompanyUserController {
     return result;
   }
 
-  static async getUser(req: FastifyRequest, reply: FastifyReply) {
+  static async getUser(req: FastifyRequest, _reply: FastifyReply) {
     const result = await CompanyBee.query()
       .withGraphJoined('[user, company]')
       .where({ user_id: req.session.user.user_id });
@@ -39,7 +39,8 @@ export default class CompanyUserController {
       });
       if (duplicate) {
         return { userExists };
-      } else {
+      }
+      else {
         await CompanyBee.query().insert({
           bee_id: userExists.id,
           user_id: req.session.user.user_id,
@@ -47,7 +48,8 @@ export default class CompanyUserController {
         });
         return { userExists };
       }
-    } else {
+    }
+    else {
       const inviter = await User.query()
         .select('lang')
         .findById(req.session.user.bee_id);
@@ -69,7 +71,7 @@ export default class CompanyUserController {
     }
   }
 
-  static async removeUser(req: FastifyRequest, reply: FastifyReply) {
+  static async removeUser(req: FastifyRequest, _reply: FastifyReply) {
     const params = req.params as any;
     const result = await CompanyBee.query()
       .delete()
@@ -113,7 +115,7 @@ export default class CompanyUserController {
       return;
     }
 
-    req.body['saved_company'] = otherCompanies[0].id;
+    (req.body as any).saved_company = otherCompanies[0].id;
 
     await CompanyBee.query()
       .delete()

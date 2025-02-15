@@ -1,61 +1,61 @@
 import dayjs from 'dayjs';
+import { raw } from 'objection';
+import { ENVIRONMENT } from '../../config/constants.config.js';
+import { env } from '../../config/environment.config.js';
+import { MailService } from '../../services/mail.service.js';
 import { Apiary } from '../models/apiary.model.js';
+import { Checkup } from '../models/checkup.model.js';
 import { Company } from '../models/company.model.js';
 import { CompanyBee } from '../models/company_bee.model.js';
-import { Hive } from '../models/hive.model.js';
-import { Movedate } from '../models/movedate.model.js';
-import { User } from '../models/user.model.js';
-import { checkMySQLError } from './error.util.js';
 import { Dropbox } from '../models/dropbox.model.js';
+import { Feed } from '../models/feed.model.js';
+import { Harvest } from '../models/harvest.model.js';
+import { Hive } from '../models/hive.model.js';
+import { LoginAttemp } from '../models/login_attempt.model.js';
+import { Movedate } from '../models/movedate.model.js';
 import { ChargeType } from '../models/option/charge_type.model.js';
 import { CheckupType } from '../models/option/checkup_type.model.js';
 import { FeedType } from '../models/option/feed_type.model.js';
 import { HarvestType } from '../models/option/harvest_type.model.js';
 import { HiveSource } from '../models/option/hive_source.model.js';
 import { HiveType } from '../models/option/hive_type.mode.js';
-import { LoginAttemp } from '../models/login_attempt.model.js';
 import { QueenMating } from '../models/option/queen_mating.model.js';
 import { QueenRace } from '../models/option/queen_race.model.js';
-import { RearingDetail } from '../models/rearing/rearing_detail.model.js';
-import { RearingType } from '../models/rearing/rearing_type.model.js';
-import { Rearing } from '../models/rearing/rearing.model.js';
-import { RearingStep } from '../models/rearing/rearing_step.model.js';
-import { RefreshToken } from '../models/refresh_token.model.js';
-import { Scale } from '../models/scale.model.js';
-import { ScaleData } from '../models/scale_data.model.js';
 import { TreatmentDisease } from '../models/option/treatment_disease.model.js';
 import { TreatmentType } from '../models/option/treatment_type.model.js';
 import { TreatmentVet } from '../models/option/treatment_vet.model.js';
-import { Feed } from '../models/feed.model.js';
-import { Treatment } from '../models/treatment.model.js';
-import { Checkup } from '../models/checkup.model.js';
-import { Harvest } from '../models/harvest.model.js';
 import { Queen } from '../models/queen.model.js';
-import { raw } from 'objection';
-import { env } from '../../config/environment.config.js';
-import { MailService } from '../../services/mail.service.js';
-import { ENVIRONMENT } from '../../config/constants.config.js';
+import { Rearing } from '../models/rearing/rearing.model.js';
+import { RearingDetail } from '../models/rearing/rearing_detail.model.js';
+import { RearingStep } from '../models/rearing/rearing_step.model.js';
+import { RearingType } from '../models/rearing/rearing_type.model.js';
+import { RefreshToken } from '../models/refresh_token.model.js';
+import { Scale } from '../models/scale.model.js';
+import { ScaleData } from '../models/scale_data.model.js';
+import { Treatment } from '../models/treatment.model.js';
+import { User } from '../models/user.model.js';
+import { checkMySQLError } from './error.util.js';
 
-export const cleanupDatabase = async () => {
+export async function cleanupDatabase() {
   try {
-    const cleanup = { type: 'cleanup' };
+    const cleanup: any = { type: 'cleanup' };
     // Delete data which is marked as "deleted" and older than one month
     const lastMonth = dayjs().subtract(1, 'month').toISOString();
     // Delete user if they did not login in the past 5 years and are the only users in a company
     const timeToBeForgotten = dayjs().subtract(5, 'year').toISOString();
 
     return await Company.transaction(async (trx) => {
-      cleanup['CompanyBee'] = await CompanyBee.query(trx)
+      cleanup.CompanyBee = await CompanyBee.query(trx)
         .delete()
         .leftJoinRelated('company')
         .leftJoinRelated('user')
         .whereNull('company.id')
         .orWhereNull('user.id');
-      cleanup['Company'] = await Company.query(trx)
+      cleanup.Company = await Company.query(trx)
         .delete()
         .leftJoinRelated('user')
         .whereNull('user.id');
-      cleanup['User'] = await User.query(trx)
+      cleanup.User = await User.query(trx)
         .delete()
         .leftJoinRelated('company')
         .whereNull('company.id');
@@ -66,141 +66,141 @@ export const cleanupDatabase = async () => {
         .where('user.last_visit', '<=', timeToBeForgotten)
         .groupBy('company_bee.user_id')
         .having(raw('COUNT(bee_id)'), '=', 1);
-      cleanup['Forgotten'] = forgottenIds.length;
+      cleanup.Forgotten = forgottenIds.length;
       forgottenIds.forEach(async (v) => {
         await User.query(trx).delete().findById(v.bee_id);
       });
 
-      cleanup['LoginAttemp'] = await LoginAttemp.query(trx)
+      cleanup.LoginAttemp = await LoginAttemp.query(trx)
         .delete()
         .andWhere('time', '<=', lastMonth);
 
-      cleanup['Apiary'] = await Apiary.query(trx)
+      cleanup.Apiary = await Apiary.query(trx)
         .delete()
         .leftJoinRelated('company')
         .whereNull('company.id')
         .orWhere('deleted', true)
         .andWhere('deleted_at', '<=', lastMonth);
-      cleanup['Hive'] = await Hive.query(trx)
+      cleanup.Hive = await Hive.query(trx)
         .delete()
         .leftJoinRelated('company')
         .whereNull('company.id')
         .orWhere('deleted', true)
         .andWhere('deleted_at', '<=', lastMonth);
-      cleanup['Movedate'] = await Movedate.query(trx)
+      cleanup.Movedate = await Movedate.query(trx)
         .delete()
         .leftJoinRelated('hive')
         .leftJoinRelated('apiary')
         .whereNull('hive.id')
         .orWhereNull('apiary.id');
 
-      cleanup['Dropbox'] = await Dropbox.query(trx)
+      cleanup.Dropbox = await Dropbox.query(trx)
         .delete()
         .leftJoinRelated('company')
         .whereNull('company.id');
-      cleanup['charge_types'] = await ChargeType.query(trx)
+      cleanup.charge_types = await ChargeType.query(trx)
         .delete()
         .leftJoinRelated('company')
         .whereNull('company.id');
-      cleanup['checkup_types'] = await CheckupType.query(trx)
+      cleanup.checkup_types = await CheckupType.query(trx)
         .delete()
         .leftJoinRelated('company')
         .whereNull('company.id');
-      cleanup['feed_types'] = await FeedType.query(trx)
+      cleanup.feed_types = await FeedType.query(trx)
         .delete()
         .leftJoinRelated('company')
         .whereNull('company.id');
-      cleanup['harvest_types'] = await HarvestType.query(trx)
+      cleanup.harvest_types = await HarvestType.query(trx)
         .delete()
         .leftJoinRelated('company')
         .whereNull('company.id');
-      cleanup['hive_sources'] = await HiveSource.query(trx)
+      cleanup.hive_sources = await HiveSource.query(trx)
         .delete()
         .leftJoinRelated('company')
         .whereNull('company.id');
-      cleanup['hive_types'] = await HiveType.query(trx)
+      cleanup.hive_types = await HiveType.query(trx)
         .delete()
         .leftJoinRelated('company')
         .whereNull('company.id');
-      cleanup['hive_types'] = await HiveType.query(trx)
+      cleanup.hive_types = await HiveType.query(trx)
         .delete()
         .leftJoinRelated('company')
         .whereNull('company.id');
-      cleanup['queen_matings'] = await QueenMating.query(trx)
+      cleanup.queen_matings = await QueenMating.query(trx)
         .delete()
         .leftJoinRelated('company')
         .whereNull('company.id');
-      cleanup['queen_races'] = await QueenRace.query(trx)
+      cleanup.queen_races = await QueenRace.query(trx)
         .delete()
         .leftJoinRelated('company')
         .whereNull('company.id');
-      cleanup['rearing_details'] = await RearingDetail.query(trx)
+      cleanup.rearing_details = await RearingDetail.query(trx)
         .delete()
         .leftJoinRelated('company')
         .whereNull('company.id');
-      cleanup['rearing_types'] = await RearingType.query(trx)
+      cleanup.rearing_types = await RearingType.query(trx)
         .delete()
         .leftJoinRelated('company')
         .whereNull('company.id');
-      cleanup['rearings'] = await Rearing.query(trx)
+      cleanup.rearings = await Rearing.query(trx)
         .delete()
         .leftJoinRelated('company')
         .whereNull('company.id');
-      cleanup['rearing_steps'] = await RearingStep.query(trx)
+      cleanup.rearing_steps = await RearingStep.query(trx)
         .delete()
         .leftJoinRelated('type')
         .leftJoinRelated('detail')
         .whereNull('type.id')
         .orWhereNull('detail.id');
-      cleanup['refresh_tokens'] = await RefreshToken.query(trx)
+      cleanup.refresh_tokens = await RefreshToken.query(trx)
         .delete()
         .leftJoinRelated('company_bee')
         .whereNull('company_bee.id');
-      cleanup['scales'] = await Scale.query(trx)
+      cleanup.scales = await Scale.query(trx)
         .delete()
         .leftJoinRelated('company')
         .whereNull('company.id');
-      cleanup['scale_data'] = await ScaleData.query(trx)
+      cleanup.scale_data = await ScaleData.query(trx)
         .delete()
         .leftJoinRelated('scale')
         .whereNull('scale.id');
-      cleanup['treatment_diseases'] = await TreatmentDisease.query(trx)
+      cleanup.treatment_diseases = await TreatmentDisease.query(trx)
         .delete()
         .leftJoinRelated('company')
         .whereNull('company.id');
-      cleanup['treatment_types'] = await TreatmentType.query(trx)
+      cleanup.treatment_types = await TreatmentType.query(trx)
         .delete()
         .leftJoinRelated('company')
         .whereNull('company.id');
-      cleanup['treatment_vets'] = await TreatmentVet.query(trx)
+      cleanup.treatment_vets = await TreatmentVet.query(trx)
         .delete()
         .leftJoinRelated('company')
         .whereNull('company.id');
-      cleanup['Feed'] = await Feed.query(trx)
+      cleanup.Feed = await Feed.query(trx)
         .delete()
         .leftJoinRelated('hive')
         .whereNull('hive.id')
         .orWhere('feeds.deleted', true)
         .andWhere('feeds.deleted_at', '<=', lastMonth);
-      cleanup['Treatment'] = await Treatment.query(trx)
+      cleanup.Treatment = await Treatment.query(trx)
         .delete()
         .leftJoinRelated('hive')
         .whereNull('hive.id')
         .orWhere('treatments.deleted', true)
         .andWhere('treatments.deleted_at', '<=', lastMonth);
-      cleanup['Checkup'] = await Checkup.query(trx)
+      cleanup.Checkup = await Checkup.query(trx)
         .delete()
         .leftJoinRelated('hive')
         .whereNull('hive.id')
         .orWhere('checkups.deleted', true)
         .andWhere('checkups.deleted_at', '<=', lastMonth);
-      cleanup['Harvest'] = await Harvest.query(trx)
+      cleanup.Harvest = await Harvest.query(trx)
         .delete()
         .leftJoinRelated('hive')
         .whereNull('hive.id')
         .orWhere('harvests.deleted', true)
         .andWhere('harvests.deleted_at', '<=', lastMonth);
-      cleanup['Queen'] = await Queen.query(trx)
+      cleanup.Queen = await Queen.query(trx)
         .delete()
         .leftJoinRelated('company')
         .whereNull('company.id')
@@ -208,16 +208,17 @@ export const cleanupDatabase = async () => {
         .andWhere('deleted_at', '<=', lastMonth);
       return cleanup;
     });
-  } catch (e) {
+  }
+  catch (e) {
     throw checkMySQLError(e);
   }
-};
+}
 
 /**
  * Send reminder five days before VIS action is required
  * @returns Count of mails send as object {type: 'vis_reminder', mails: count}
  */
-export const reminderVIS = async () => {
+export async function reminderVIS() {
   try {
     const result = { type: 'vis_reminder', mails: 0 };
     const checkDate = dayjs().add(5, 'day');
@@ -226,24 +227,27 @@ export const reminderVIS = async () => {
 
     const year = dayjs().year();
     // Stichtag Zählung
-    const countDay1 = year + '-10-31';
-    const countDay2 = year + '-04-30';
+    const countDay1 = `${year}-10-31`;
+    const countDay2 = `${year}-04-30`;
     // VIS Eingabe
-    const reportDay1 = year + '-12-31';
-    const reportDay2 = year + '-06-30';
+    const reportDay1 = `${year}-12-31`;
+    const reportDay2 = `${year}-06-30`;
 
-    let mailDate, mailSubject;
+    let mailDate: string, mailSubject: string;
 
     if (dayjs(countDay1).isSame(checkDate, 'day')) {
       mailDate = countDay1;
       mailSubject = 'vis_count';
-    } else if (dayjs(countDay2).isSame(checkDate, 'day')) {
+    }
+    else if (dayjs(countDay2).isSame(checkDate, 'day')) {
       mailDate = countDay2;
       mailSubject = 'vis_count';
-    } else if (dayjs(reportDay1).isSame(checkDate, 'day')) {
+    }
+    else if (dayjs(reportDay1).isSame(checkDate, 'day')) {
       mailDate = reportDay1;
       mailSubject = 'vis_submit';
-    } else if (dayjs(reportDay2).isSame(checkDate, 'day')) {
+    }
+    else if (dayjs(reportDay2).isSame(checkDate, 'day')) {
       mailDate = reportDay2;
       mailSubject = 'vis_submit';
     }
@@ -255,7 +259,7 @@ export const reminderVIS = async () => {
           lang: 'de',
           acdate: true,
         })
-        .where((builder) =>
+        .where(builder =>
           builder
             .where('reminder_vis', '<', lastDate)
             .orWhereNull('reminder_vis'),
@@ -277,21 +281,23 @@ export const reminderVIS = async () => {
           await User.query().findById(user.id).patch({
             reminder_vis: nowDate,
           });
+          await new Promise(resolve => setTimeout(resolve, 1000));
         }
       }
     }
 
     return result;
-  } catch (e) {
+  }
+  catch (e) {
     throw checkMySQLError(e);
   }
-};
+}
 
 /**
  * Send reminder five days before premium membership runs out
  * @returns Count of mails send as object {type: 'premium_reminder', mails: count}
  */
-export const reminderPremium = async () => {
+export async function reminderPremium() {
   try {
     const result = { type: 'premium_reminder', mails: 0 };
     const startDate = dayjs().format('YYYY-MM-DD');
@@ -304,7 +310,7 @@ export const reminderPremium = async () => {
       .withGraphJoined('user')
       .where('paid', '>=', startDate)
       .where('paid', '<', endDate)
-      .where((builder) =>
+      .where(builder =>
         builder
           .where('reminder_premium', '<', lastDate)
           .orWhereNull('reminder_premium'),
@@ -326,23 +332,25 @@ export const reminderPremium = async () => {
           await User.query().findById(u.id).patch({
             reminder_premium: nowDate,
           });
+          await new Promise(resolve => setTimeout(resolve, 1000));
         });
       });
     }
 
     result.mails = companies.length;
     return result;
-  } catch (e) {
+  }
+  catch (e) {
     throw checkMySQLError(e);
   }
-};
+}
 
 /**
  * Send reminder six days before user account gets deleted (right to be forgotten)
  * if user logs into the app in the next six days the account will not be deleted
  * @returns Count of mails send as object {type: 'deletion_reminder', mails: count}
  */
-export const reminderDeletion = async () => {
+export async function reminderDeletion() {
   try {
     const result = { type: 'deletion_reminder', mails: 0 };
     const timeToBeForgotten = dayjs()
@@ -354,11 +362,11 @@ export const reminderDeletion = async () => {
     const nowDate = new Date();
 
     const forgottenIds = await CompanyBee.query()
-      .select('username', 'email', 'lang', 'user.id', 'last_visit')
+      .select('user.username', 'user.email', 'user.lang', 'user.id', 'last_visit')
       .distinct('bee_id')
       .leftJoinRelated('user')
       .where('user.last_visit', '<=', timeToBeForgotten)
-      .where((builder) =>
+      .where(builder =>
         builder
           .where('reminder_deletion', '<', lastDate)
           .orWhereNull('reminder_deletion'),
@@ -371,10 +379,10 @@ export const reminderDeletion = async () => {
     if (env !== ENVIRONMENT.staging) {
       forgottenIds.forEach(async (u) => {
         await MailService.getInstance().sendMail({
-          to: u['email'],
-          lang: u['lang'],
+          to: u.user.email,
+          lang: u.user.lang,
           subject: 'deletion_reminder',
-          name: u['username'],
+          name: u.user.username,
         });
         await User.query().findById(u.id).patch({
           reminder_deletion: nowDate,
@@ -384,7 +392,8 @@ export const reminderDeletion = async () => {
 
     result.mails = forgottenIds.length;
     return result;
-  } catch (e) {
+  }
+  catch (e) {
     throw checkMySQLError(e);
   }
-};
+}

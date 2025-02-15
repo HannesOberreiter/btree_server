@@ -1,34 +1,35 @@
+import type Objection from 'objection';
+import { createHash } from 'node:crypto';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc.js';
-import { createHash } from 'crypto';
-import httpErrors from 'http-errors';
 
-import { User } from '../models/user.model.js';
-import { LoginAttemp } from '../models/login_attempt.model.js';
-import { checkMySQLError } from './error.util.js';
+import httpErrors from 'http-errors';
 import { MailService } from '../../services/mail.service.js';
 import { CompanyBee } from '../models/company_bee.model.js';
-import Objection from 'objection';
+import { LoginAttemp } from '../models/login_attempt.model.js';
+import { User } from '../models/user.model.js';
+import { checkMySQLError } from './error.util.js';
 
 dayjs.extend(utc);
 
-const insertWrongPasswordTry = async (bee_id: number) => {
+async function insertWrongPasswordTry(bee_id: number) {
   const trx = await LoginAttemp.startTransaction();
   try {
     const now = dayjs().utc().toISOString();
     await LoginAttemp.query(trx).insert({
       time: now,
-      bee_id: bee_id,
+      bee_id,
     });
 
     await trx.commit();
-  } catch (e) {
+  }
+  catch (e) {
     await trx.rollback();
     throw checkMySQLError(e);
   }
-};
+}
 
-const updateLastLogin = async (bee_id: number) => {
+async function updateLastLogin(bee_id: number) {
   const trx = await User.startTransaction();
   try {
     const now = new Date();
@@ -36,13 +37,14 @@ const updateLastLogin = async (bee_id: number) => {
       last_visit: now,
     });
     await trx.commit();
-  } catch (e) {
+  }
+  catch (e) {
     await trx.rollback();
     throw checkMySQLError(e);
   }
-};
+}
 
-const fetchUser = async (email: string, bee_id = 0) => {
+async function fetchUser(email: string, bee_id = 0) {
   try {
     const user = User.query()
       .select(
@@ -78,16 +80,18 @@ const fetchUser = async (email: string, bee_id = 0) => {
       user.findOne({
         'bees.email': email,
       });
-    } else {
+    }
+    else {
       user.findOne({ 'bees.id': bee_id });
     }
     return await user;
-  } catch (e) {
+  }
+  catch (e) {
     throw checkMySQLError(e);
   }
-};
+}
 
-const checkBruteForce = async (bee_id: number) => {
+async function checkBruteForce(bee_id: number) {
   try {
     // All login attempts are counted from the past 2 hours.
     const validAttempts = dayjs().subtract(2, 'hour').utc().toISOString();
@@ -97,13 +101,14 @@ const checkBruteForce = async (bee_id: number) => {
       .where('time', '>', validAttempts)
       .orderBy('time');
     // ToDo send user E-Mail that the account is bruteForced
-    if (bruteForce[0]['count'] < 10) {
+    if ((bruteForce[0] as any).count < 10) {
       return false;
-    } else {
+    }
+    else {
       const lastNotice = dayjs().subtract(1, 'day').format('YYYY-MM-DD');
       const user = await User.query()
         .findById(bee_id)
-        .where((builder) =>
+        .where(builder =>
           builder
             .where('notice_bruteforce', '<', lastNotice)
             .orWhereNull('notice_bruteforce'),
@@ -121,17 +126,13 @@ const checkBruteForce = async (bee_id: number) => {
       }
       return true;
     }
-  } catch (e) {
+  }
+  catch (e) {
     throw checkMySQLError(e);
   }
-};
+}
 
-const checkPassword = (
-  inputPassword: string,
-  dbPassword: string,
-  salt: string,
-  hash = 'sha512',
-) => {
+function checkPassword(inputPassword: string, dbPassword: string, salt: string, hash = 'sha512') {
   // We first need to hash the inputPassword, this is due to an old code
   // in my first app I did hash the password on login page before sending to server
   const hexInputPassword = createHash(hash).update(inputPassword).digest('hex');
@@ -139,18 +140,15 @@ const checkPassword = (
   const saltedPassword = hexInputPassword + salt;
   const hashedPassword = createHash(hash).update(saltedPassword).digest('hex');
 
-  if (hashedPassword == dbPassword) {
+  if (hashedPassword === dbPassword) {
     return true;
-  } else {
+  }
+  else {
     return false;
   }
-};
+}
 
-const reviewPassword = async (
-  bee_id,
-  password: string,
-  trx: Objection.Transaction = null,
-) => {
+async function reviewPassword(bee_id, password: string, trx: Objection.Transaction = null) {
   const user = await User.query(trx)
     .select('salt', 'password')
     .findById(bee_id);
@@ -158,17 +156,14 @@ const reviewPassword = async (
     throw httpErrors.Forbidden('Wrong password');
   }
   return true;
-};
+}
 
-const loginCheck = async (
-  email: string,
-  password: string,
-  bee_id: number = undefined,
-) => {
+async function loginCheck(email: string, password: string, bee_id: number = undefined) {
   let user;
   if (!bee_id) {
     user = await fetchUser(email);
-  } else {
+  }
+  else {
     user = await fetchUser('', bee_id);
   }
 
@@ -195,9 +190,10 @@ const loginCheck = async (
   // Check if connected company exists (last visited company)
   // otherwise take the simply the first one
   let company: number;
-  if (user.company.some((el) => el.id === user.saved_company)) {
+  if (user.company.some(el => el.id === user.saved_company)) {
     company = user.saved_company;
-  } else {
+  }
+  else {
     company = user.company[0].id;
   }
   const { rank, paid } = await getPaidRank(user.id, company);
@@ -215,16 +211,16 @@ const loginCheck = async (
     bee_id: user.id,
     user_id: company,
     data: user,
-    paid: paid,
-    rank: rank,
+    paid,
+    rank,
   };
-};
+}
 
-const getPaidRank = async (bee_id: number, user_id: number) => {
+async function getPaidRank(bee_id: number, user_id: number) {
   const companyBee = await CompanyBee.query()
     .findOne({
-      bee_id: bee_id,
-      user_id: user_id,
+      bee_id,
+      user_id,
     })
     .withGraphJoined('company');
 
@@ -233,6 +229,6 @@ const getPaidRank = async (bee_id: number, user_id: number) => {
     throw httpErrors.Unauthorized('Invalid Company / Bee Connection');
   }
   return { rank: companyBee.rank, paid: companyBee.company.isPaid() };
-};
+}
 
-export { loginCheck, reviewPassword, fetchUser, getPaidRank };
+export { fetchUser, getPaidRank, loginCheck, reviewPassword };

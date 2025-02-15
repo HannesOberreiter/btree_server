@@ -1,5 +1,5 @@
-import { User } from './user.model.js';
 import { BaseModel } from './base.model.js';
+import { User } from './user.model.js';
 
 export class LoginAttemp extends BaseModel {
   id!: number;

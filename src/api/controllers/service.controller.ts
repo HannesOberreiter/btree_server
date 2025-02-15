@@ -1,37 +1,37 @@
+import type { FastifyReply, FastifyRequest } from 'fastify';
+import httpErrors from 'http-errors';
+import { openAI } from '../../config/environment.config.js';
+import { WizBee } from '../../services/wizbee.service.js';
 import { Apiary } from '../models/apiary.model.js';
-import { getTemperature } from '../utils/temperature.util.js';
-import { addPremium, isPremium } from '../utils/premium.util.js';
+import { WizBeeToken } from '../models/wizbee_token.model.js';
+import { createInvoice } from '../utils/foxyoffice.util.js';
 import {
   capturePayment,
   createOrder as paypalCreateOrder,
 } from '../utils/paypal.util.js';
+import { addPremium, isPremium } from '../utils/premium.util.js';
 import { createOrder as stripeCreateOrder } from '../utils/stripe.util.js';
-import { createInvoice } from '../utils/foxyoffice.util.js';
-import { WizBee } from '../../services/wizbee.service.js';
-import { WizBeeToken } from '../models/wizbee_token.model.js';
-import { openAI } from '../../config/environment.config.js';
-import { FastifyRequest, FastifyReply } from 'fastify';
-import httpErrors from 'http-errors';
+import { getTemperature } from '../utils/temperature.util.js';
 
-type Chunk = {
-  id: string;
-  object: string;
-  created: number;
-  model: string;
-  system_fingerprint: string;
+interface Chunk {
+  id: string
+  object: string
+  created: number
+  model: string
+  system_fingerprint: string
   choices: Array<{
-    index: number;
+    index: number
     delta: {
-      role: string;
-      content: string;
-    };
-    logprobs: null;
-    finish_reason: null;
-  }>;
-};
+      role: string
+      content: string
+    }
+    logprobs: null
+    finish_reason: null
+  }>
+}
 
 export default class ServiceController {
-  static async getTemperature(req: FastifyRequest, reply: FastifyReply) {
+  static async getTemperature(req: FastifyRequest, _reply: FastifyReply) {
     const params = req.params as any;
     const premium = await isPremium(req.session.user.user_id);
     if (!premium) {
@@ -44,7 +44,7 @@ export default class ServiceController {
     return temp;
   }
 
-  static async paypalCreateOrder(req: FastifyRequest, reply: FastifyReply) {
+  static async paypalCreateOrder(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as any;
     const order = await paypalCreateOrder(
       req.session.user.user_id,
@@ -52,16 +52,16 @@ export default class ServiceController {
       body.quantity,
     );
     if (order.status !== 'CREATED') {
-      throw httpErrors.InternalServerError('Could not create order');
+      throw new httpErrors.InternalServerError('Could not create order');
     }
     return order;
   }
 
-  static async paypalCapturePayment(req: FastifyRequest, reply: FastifyReply) {
+  static async paypalCapturePayment(req: FastifyRequest, _reply: FastifyReply) {
     const params = req.params as any;
     const capture = await capturePayment(params.orderID);
     if (capture.status !== 'COMPLETED' && capture.status !== 'APPROVED') {
-      throw httpErrors.InternalServerError('Could not capure order');
+      throw new httpErrors.InternalServerError('Could not capure order');
     }
     let value = 0;
     let years = 1;
@@ -69,10 +69,11 @@ export default class ServiceController {
     const mail = capture.payment_source.paypal.email_address;
 
     try {
-      value = parseFloat(
+      value = Number.parseFloat(
         capture.purchase_units[0].payments.captures[0].amount.value,
       );
-    } catch (e) {
+    }
+    catch (e) {
       req.log.error(e);
     }
 
@@ -80,8 +81,9 @@ export default class ServiceController {
       const custom_id = JSON.parse(
         capture.purchase_units[0].payments.captures[0].custom_id,
       );
-      years = parseFloat(custom_id.quantity) ?? 1;
-    } catch (e) {
+      years = Number.parseFloat(custom_id.quantity) ?? 1;
+    }
+    catch (e) {
       req.log.error(e);
     }
 
@@ -96,7 +98,7 @@ export default class ServiceController {
     return { ...capture, paid };
   }
 
-  static async stripeCreateOrder(req: FastifyRequest, reply: FastifyReply) {
+  static async stripeCreateOrder(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as any;
     const session = await stripeCreateOrder(
       req.session.user.user_id,
@@ -109,7 +111,7 @@ export default class ServiceController {
   /**
    * @deprecated Use askWizBeeStream instead
    */
-  static async askWizBee(req: FastifyRequest, reply: FastifyReply) {
+  static async askWizBee(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as any;
     const premium = await isPremium(req.session.user.user_id);
     if (!premium) {
@@ -123,7 +125,7 @@ export default class ServiceController {
 
     const usedTokens = await WizBeeToken.query().findOne({
       bee_id: req.session.user.bee_id,
-      date: date,
+      date,
     });
     if (usedTokens) {
       if (usedTokens.usedTokens <= 0) {
@@ -133,10 +135,11 @@ export default class ServiceController {
       savedTokens = usedTokens.usedTokens;
       savedQuestions = usedTokens.countQuestions;
       id = usedTokens.id;
-    } else {
+    }
+    else {
       const insert = await WizBeeToken.query().insertAndFetch({
         bee_id: req.session.user.bee_id,
-        date: date,
+        date,
         usedTokens: openAI.dailyUserTokenLimit,
         countQuestions: 0,
       });
@@ -188,7 +191,7 @@ export default class ServiceController {
 
     const usedTokens = await WizBeeToken.query().findOne({
       bee_id: req.session.user.bee_id,
-      date: date,
+      date,
     });
     if (usedTokens) {
       if (usedTokens.usedTokens <= 0) {
@@ -198,10 +201,11 @@ export default class ServiceController {
       savedTokens = usedTokens.usedTokens;
       savedQuestions = usedTokens.countQuestions;
       id = usedTokens.id;
-    } else {
+    }
+    else {
       const insert = await WizBeeToken.query().insertAndFetch({
         bee_id: req.session.user.bee_id,
-        date: date,
+        date,
         usedTokens: openAI.dailyUserTokenLimit,
         countQuestions: 0,
       });
@@ -246,7 +250,8 @@ export default class ServiceController {
             if (req.headers.referer) {
               const url = new URL(req.headers.referer);
               req.headers.origin = url.origin;
-            } else if (req.headers.host) {
+            }
+            else if (req.headers.host) {
               req.headers.origin = req.headers.host;
             }
           }
@@ -269,7 +274,8 @@ export default class ServiceController {
           }),
         );
       }
-    } catch (e) {
+    }
+    catch (e) {
       req.log.error(e);
     }
 

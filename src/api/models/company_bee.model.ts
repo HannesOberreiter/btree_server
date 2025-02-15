@@ -1,6 +1,6 @@
-import { User } from './user.model.js';
-import { Company } from './company.model.js';
 import { Model } from 'objection';
+import { Company } from './company.model.js';
+import { User } from './user.model.js';
 
 export class CompanyBee extends Model {
   id!: number;

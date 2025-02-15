@@ -1,5 +1,6 @@
-import fs from 'fs';
-import { map, omit, cloneDeep } from 'lodash-es';
+import fs from 'node:fs';
+import { cloneDeep, map, omit } from 'lodash-es';
+// eslint-disable-next-line antfu/no-import-dist
 import * as env from '../../dist/config/environment.config.js';
 
 const dirname = new URL('./', import.meta.url).pathname;
@@ -9,8 +10,8 @@ export const seed = async function (knex) {
     console.log('No seeding allowed in production environment!');
     return false;
   }
-  let tables = [];
-  fs.readdirSync(dirname + `/data/`).forEach((file) => {
+  const tables = [];
+  fs.readdirSync(`${dirname}/data/`).forEach((file) => {
     file = file.replace('.json', '');
     tables.push(file);
   });
@@ -23,7 +24,7 @@ export const seed = async function (knex) {
   for (let t = 0; t < tables.length; t++) {
     const table = tables[t];
     const jsonData = JSON.parse(
-      fs.readFileSync(dirname + `/data/${table}.json`, 'utf-8'),
+      fs.readFileSync(`${dirname}/data/${table}.json`, 'utf-8'),
     );
     let duplicates = 1;
     if (['checkups', 'feeds', 'treatments', 'queens'].includes(table)) {
@@ -34,7 +35,7 @@ export const seed = async function (knex) {
     if (table === 'checkups') {
       newData = map(newData, (d) => {
         return {
-          varroa: isNaN(d.varroa) ? 0 : Number(d.varroa),
+          varroa: Number.isNaN(d.varroa) ? 0 : Number(d.varroa),
           ...omit(d, 'varroa'),
         };
       });
@@ -42,11 +43,11 @@ export const seed = async function (knex) {
 
     for (let i = 1; i <= duplicates; i++) {
       if (i > 1) {
-        newData = map(cloneDeep(newData), (d) => omit(d, ['id']));
+        newData = map(cloneDeep(newData), d => omit(d, ['id']));
       }
       await transactionMigration(table, newData, knex);
 
-      /*promises.push(
+      /* promises.push(
           knex.transaction(function (trx) {
             knex
               .raw('SET FOREIGN_KEY_CHECKS=0')
@@ -61,7 +62,7 @@ export const seed = async function (knex) {
               })
               .finally(trx.commit);
           })
-        );*/
+        ); */
     }
   }
   return Promise.all(promises);
@@ -70,7 +71,7 @@ export const seed = async function (knex) {
 async function transactionMigration(table, data, knex) {
   console.log(`Insert ${table}: ${data.length} rows`);
   return knex
-    .transaction(async function (trx) {
+    .transaction(async (trx) => {
       await knex.raw('SET FOREIGN_KEY_CHECKS=0').transacting(trx);
       await knex.raw('SET sql_mode=""').transacting(trx);
       await knex(table).transacting(trx).del();
@@ -78,12 +79,12 @@ async function transactionMigration(table, data, knex) {
       await knex
         .batchInsert(table, data, 10000)
         .transacting(trx)
-        .catch(function (error) {
+        .catch((error) => {
           console.error(error);
         });
       await knex.raw('SET FOREIGN_KEY_CHECKS=1').transacting(trx);
     })
-    .catch(function (error) {
+    .catch((error) => {
       console.error(error);
     });
 }
