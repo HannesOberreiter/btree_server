@@ -10,7 +10,11 @@ export async function getTemperature(latitude: number, longitude: number) {
 
   try {
     const response = await fetch(url);
-    return response.json();
+    const result = await response.json();
+    if (result.error) {
+      throw httpErrors.BadRequest(result.error);
+    }
+    return result;
   }
   catch (error) {
     Logger.getInstance().log('error', 'Meteoblue error', {
