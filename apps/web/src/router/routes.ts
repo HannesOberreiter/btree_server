@@ -599,8 +599,29 @@ const routes: RouteRecordRaw[] = [
     name: 'public-map-velutina',
     meta: {
       auth: false,
+      title: 'Vespa velutina',
     },
-    component: () => import('../pages/PublicMapVelutina.vue'),
+    component: () => import('../pages/PublicMapPest.vue'),
+  },
+
+  {
+    path: '/pub/aethina-tumida/map/',
+    name: 'public-map-aethina-tumida',
+    meta: {
+      auth: false,
+      title: 'Aethina tumida',
+    },
+    component: () => import('../pages/PublicMapPest.vue'),
+  },
+
+  {
+    path: '/pub/beekeeping-news/',
+    name: 'public-beekeeping-news',
+    meta: {
+      auth: false,
+      title: 'Beekeeping News',
+    },
+    component: () => import('../pages/PublicBeekeepingNews.vue'),
   },
 
   /***
