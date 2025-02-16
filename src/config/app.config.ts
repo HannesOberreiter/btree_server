@@ -97,8 +97,14 @@ export class Application {
       // https://github.com/expressjs/cors/issues/262
       if (!req.headers.origin) {
         if (req.headers.referer) {
-          const url = new URL(req.headers.referer);
-          req.headers.origin = url.origin;
+          try {
+            const url = new URL(req.headers.referer);
+            req.headers.origin = url.origin;
+          }
+          catch (e) {
+            Logger.getInstance().pino.error(e, 'Error parsing referer');
+            req.headers.origin = req.headers?.host ?? '';
+          }
         }
         else if (req.headers.host) {
           req.headers.origin = req.headers.host;
