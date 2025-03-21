@@ -1,5 +1,12 @@
 [
   {
+    "version": "6.5.1",
+    "date": "2025-03-21",
+    "news": [
+      "BUGFIX Calendar allow more events in week view, as long as they fit onto the column height (thanks Matthias)."
+    ]
+  },
+  {
     "version": "6.5.0",
     "date": "2025-02-15",
     "news": [

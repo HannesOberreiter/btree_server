@@ -327,6 +327,9 @@ const calendarOptions = reactive({
         month: 'short',
       },
     },
+    dayGridWeek: {
+      dayMaxEvents: true
+    },
     month: {
       titleFormat: {
         year: '2-digit',
