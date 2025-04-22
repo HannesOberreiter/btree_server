@@ -18,15 +18,14 @@
               </div>
               <div class="col-2 col-sm-2">
                 <btn-base-group round flat dense>
-                  <btn-base icon="fas fa-plus" :disable="(modelValue[index] != null && modelValue[index] >=
+                  <btn-base icon="fas fa-plus" :disabled="(modelValue[index] != null && modelValue[index] >=
                     fields.settings.checkup.ratings.max) || disable[index]
                     " @click="
                       modelValue[index] = round((modelValue[index] ?? 0) + 0.1, 1)
                       "></btn-base>
-                  <btn-base icon="fas fa-minus"
-                    :disable="(modelValue[index] && modelValue[index] <= 0) || disable[index]" @click="
-                      modelValue[index] = round((modelValue[index] ?? 0) - 0.1, 1)
-                      "></btn-base>
+                  <btn-base icon="fas fa-minus" :disabled="((modelValue[index] ?? 0) <= 0) || disable[index]" @click="
+                    modelValue[index] = round((modelValue[index] ?? 0) - 0.1, 1)
+                    "></btn-base>
                 </btn-base-group>
               </div>
               <div class="col-2 col-sm-1">
