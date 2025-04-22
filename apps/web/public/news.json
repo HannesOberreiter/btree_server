@@ -1,5 +1,12 @@
 [
   {
+    "version": "6.5.2",
+    "date": "2025-04-23",
+    "news": [
+      "BUGFIX Checkup rating fields were not correctly working (thanks Hermann)."
+    ]
+  },
+  {
     "version": "6.5.1",
     "date": "2025-03-21",
     "news": [
