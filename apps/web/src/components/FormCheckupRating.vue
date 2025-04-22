@@ -9,27 +9,27 @@
               fields.settings.checkup.ratings[index] ||
               fields.settings.checkup?.rating
             " class="row q-pb-xs">
-              <div class="col-4">{{ $t('rating.' + index) }}</div>
+              <div class="col-4">{{ $t('rating.' + index) }} <b>{{ round(modelValue[index] ?? 0, 1) }}</b>
+              </div>
               <div class="col-5 col-sm-5 col-lg-3">
-                <div v-if="!modelValue[index]"></div>
-                <q-rating v-else v-model="modelValue[index]" :error="v[index].$error" color-selected="positive"
-                  color="grey" :disable="disable[index]" size="sm" :max="fields.settings.checkup.ratings.max">
+                <q-rating v-model="modelValue[index]!" :error="v[index].$error" color-selected="positive" color="grey"
+                  :disable="disable[index]" size="sm" :max="fields.settings.checkup.ratings.max">
                 </q-rating>
               </div>
               <div class="col-2 col-sm-2">
                 <btn-base-group round flat dense>
                   <btn-base icon="fas fa-plus" :disable="(modelValue[index] != null && modelValue[index] >=
-                      fields.settings.checkup.ratings.max) || disable[index]
+                    fields.settings.checkup.ratings.max) || disable[index]
                     " @click="
-                      modelValue[index] = round(modelValue[index] ?? 0 + 0.1, 1)
+                      modelValue[index] = round((modelValue[index] ?? 0) + 0.1, 1)
                       "></btn-base>
-                  <btn-base icon="fas fa-minus" :disable="modelValue[index] <= 0 || disable[index]" @click="
-                    modelValue[index] = round(modelValue[index] ?? 0 - 0.1, 1)
-                    "></btn-base>
+                  <btn-base icon="fas fa-minus"
+                    :disable="(modelValue[index] && modelValue[index] <= 0) || disable[index]" @click="
+                      modelValue[index] = round((modelValue[index] ?? 0) - 0.1, 1)
+                      "></btn-base>
                 </btn-base-group>
               </div>
               <div class="col-2 col-sm-1">
-                {{ round(modelValue[index] ?? 0, 1) }}
                 <btn-multiple-values v-if="multipleValues[index]" :disable="disable[index]"
                   @click="editValues(!disable[index], index)"></btn-multiple-values>
               </div>
