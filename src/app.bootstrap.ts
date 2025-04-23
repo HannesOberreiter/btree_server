@@ -28,7 +28,8 @@ mailServer.setup();
 
 const application = new Application();
 const httpServer = new HTTPServer(application.app);
-httpServer.start();
+// eslint-disable-next-line antfu/no-top-level-await
+await httpServer.start();
 
 closeWithGrace({ delay: 5000 }, async (res) => {
   if (res.err) {
