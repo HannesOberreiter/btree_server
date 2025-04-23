@@ -35,12 +35,15 @@ watch(modelValue, () => {
 });
 
 updatePing();
-function updatePing () {
-  backend.ping().then((value) => {
+async function updatePing () {
+  ping.value = '...';
+  try {
+    await backend.ping();
+    const value = await backend.ping();
     ping.value = `${value}ms`;
-  }).catch((error) => {
+  } catch (error) {
     ping.value = 'Offline';
-    console.error(error);
-  });
+    console.error('Ping failed:', error);
+  }
 }
 </script>

@@ -1,5 +1,12 @@
 [
   {
+    "version": "6.5.X",
+    "date": "2025-XX-XX",
+    "news": [
+      "IMPROVEMENT Send two ping requests on server change to reflect the real ping time."
+    ]
+  },
+  {
     "version": "6.5.2",
     "date": "2025-04-23",
     "news": [
