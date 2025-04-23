@@ -1,8 +1,8 @@
 <template>
   <q-input v-model.number="modelValue" :error="v[props.label]['$error']"
     :error-message="validationErrors(v[props.label])" :no-error-icon="true" :label="disable
-        ? $t(label, labelPlural) + ' - ' + $t('multipleValues')
-        : $t(label, labelPlural)
+      ? $t(label, labelPlural) + ' - ' + $t('multipleValues')
+      : $t(label, labelPlural)
       " :disable="disable" :name="label" type="number" :min="minValid" :max="maxValid" filled @update:model-value="(val) => $emit('update:modelValue', val === '' ? 0 : val)
       ">
     <template v-if="icon !== ''" #before>
@@ -10,10 +10,10 @@
       <btn-multiple-values v-else :disable="disable" @click="editValues(!disable)"></btn-multiple-values>
     </template>
     <template #append>
-      <btn-base round flat dense icon="fas fa-plus" :disable="modelValue >= maxValid"
-        @click="() => (modelValue ? modelValue++ : '')"></btn-base>
-      <btn-base round flat dense icon="fas fa-minus" :disable="modelValue <= minValid"
-        @click="() => (modelValue ? modelValue-- : '')"></btn-base>
+      <btn-base round flat dense icon="fas fa-plus" :disable="modelValue === null || modelValue >= maxValid"
+        @click="() => { if (modelValue !== null) modelValue++; }"></btn-base>
+      <btn-base round flat dense icon="fas fa-minus" :disable="modelValue === null || modelValue <= minValid"
+        @click="() => { if (modelValue !== null) modelValue--; }"></btn-base>
     </template>
     <template #after>
       <slot name="deepAfter"></slot>
