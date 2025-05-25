@@ -76,110 +76,97 @@
         </div>
       </div>
     </q-card-section>
-    <q-card-section>
-      <div class="row q-pa-sm justify-center">
-        <div class="col-12 col-sm-10 col-md-8">
-          <div class="text-h5 q-pb-sm">
-            {{ $t('membership.paymentHistory') }}:
-          </div>
-          <ul>
-            <li>
-              {{ $t('membership.paymentCount', { count: payments.company.count }) }}x
-            </li>
-            <li>
-              {{ $t('membership.paymentMonths', { count: payments.company.months }) }}
-            </li>
-          </ul>
+    <div class="row justify-center">
+      <div class="col-12 col-sm-10 col-md-8">
+        <div class="text-h5 ">
+          {{ $t('membership.paymentHistory') }}:
+        </div>
+        <div class="text-caption">
+          {{ $t('membership.paymentHistoryNote') }}
+        </div>
+        <ul>
+          <li>
+            {{ $t('membership.paymentCount') }}: {{ payments.company.count }}x
+          </li>
+          <li>
+            {{ $t('membership.paymentMonths') }}: {{ payments.company.months }}
+          </li>
+        </ul>
+      </div>
+    </div>
 
-          <div class="text-caption">
-            {{ $t('membership.paymentHistoryNote') }}
-          </div>
+    <div class="row justify-center">
+      <div class="col-12 col-sm-10 col-md-8">
+        <div class="text-h5">
+          {{ $t('membership.paymentStatistics') }}:
         </div>
+        <ul>
+          <li>
+            {{ $t('membership.paymentCurrentYear') }}: {{ payments.countCurrentYear }}x
+          </li>
+          <li>
+            {{ $t('membership.paymentLastYear') }}: {{ payments.countLastYear }}x
+          </li>
+        </ul>
       </div>
-    </q-card-section>
+    </div>
 
-    <q-card-section>
-      <div class="row q-pa-sm justify-center">
-        <div class="col-12 col-sm-10 col-md-8">
-          <div class="text-h5 q-pb-sm">
-            {{ $t('membership.paymentStatistics') }}:
-          </div>
-          <ul>
-            <li>
-              {{ $t('membership.paymentCurrentYear') }}: {{ payments.countCurrentYear }}x
-            </li>
-            <li>
-              {{ $t('membership.paymentLastYear') }}: {{ payments.countLastYear }}x
-            </li>
-          </ul>
+    <div class="row justify-center">
+      <div class="col-12 col-sm-10 col-md-8">
+        <div class="text-h5">
+          {{ $t('membership.priceHistory') }}:
         </div>
+        <ul>
+          <li v-for="(item, index) in priceHistory" :key="index">
+            {{ item.year }}: {{ item.price }} € / {{ $t('year') }}
+            {{
+              index > 0
+                ? calculatePriceChange(
+                  item.price,
+                  priceHistory[index - 1]?.price,
+                )
+                : ''
+            }}
+          </li>
+        </ul>
       </div>
-    </q-card-section>
+    </div>
 
-    <q-card-section>
-      <div class="row q-pa-sm justify-center">
-        <div class="col-12 col-sm-10 col-md-8">
-          <div class="text-h5 q-pb-sm">
-            {{ $t('membership.priceHistory') }}:
-          </div>
-          <ul>
-            <li v-for="(item, index) in priceHistory" :key="index">
-              {{ item.year }}: {{ item.price }} € / {{ $t('year') }}
-              {{
-                index > 0
-                  ? calculatePriceChange(
-                    item.price,
-                    priceHistory[index - 1]?.price,
-                  )
-                  : ''
-              }}
-            </li>
-          </ul>
+    <div class="row justify-center">
+      <div class="col-12 col-sm-10 col-md-8">
+        <div class="text-h5 q-pb-sm">{{ $t('membership.perks') }}:</div>
+        <div class="text-caption">
+          {{ $t('membership.afterPremium') }}
+        </div>
+        <ul class="text-subtitle1">
+          <li>
+            {{ $t('membership.perksHives') }}
+          </li>
+          <li>
+            {{ $t('membership.perksApiaries') }}
+          </li>
+          <li>
+            {{ $t('membership.perksAPI') }}
+          </li>
+          <li>
+            {{ $t('membership.perksTemperature') }}
+          </li>
+          <li>
+            {{ $t('membership.perksStats') }}
+          </li>
+          <li>
+            {{ $t('membership.perksWizBee') }}
+          </li>
+          <li>
+            {{ $t('membership.perksSupport') }}
+          </li>
+        </ul>
+        <div class="q-pt-sm text-italic">
+          Cheers<br />
+          Hannes Oberreiter <br />
         </div>
       </div>
-    </q-card-section>
-    <q-card-section>
-      <div class="row q-pa-sm justify-center">
-        <div class="col-12 col-sm-10 col-md-8">
-          <div class="text-h5 q-pb-sm">{{ $t('membership.perks') }}:</div>
-          <ul class="text-subtitle1">
-            <li>
-              {{ $t('membership.perksHives') }}
-            </li>
-            <li>
-              {{ $t('membership.perksApiaries') }}
-            </li>
-            <li>
-              {{ $t('membership.perksAPI') }}
-            </li>
-            <li>
-              {{ $t('membership.perksTemperature') }}
-            </li>
-            <li>
-              {{ $t('membership.perksStats') }}
-            </li>
-            <li>
-              {{ $t('membership.perksWizBee') }}
-            </li>
-            <li>
-              {{ $t('membership.perksSupport') }}
-            </li>
-          </ul>
-          <div class="text-caption">
-            {{ $t('membership.afterPremium') }}
-          </div>
-          <div class="text-bold q-pt-sm">
-            Cheers<br />
-            Hannes Oberreiter <br />
-            <ul>
-              <li>Pastime forestry and apiculture</li>
-              <li>Spare time programmer</li>
-              <li>Hobby biologist</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </q-card-section>
+    </div>
     <q-card-section>
       <supporter-images></supporter-images>
     </q-card-section>
