@@ -80,6 +80,46 @@
       <div class="row q-pa-sm justify-center">
         <div class="col-12 col-sm-10 col-md-8">
           <div class="text-h5 q-pb-sm">
+            {{ $t('membership.paymentHistory') }}:
+          </div>
+          <ul>
+            <li>
+              {{ $t('membership.paymentCount', { count: payments.company.count }) }}x
+            </li>
+            <li>
+              {{ $t('membership.paymentMonths', { count: payments.company.months }) }}
+            </li>
+          </ul>
+
+          <div class="text-caption">
+            {{ $t('membership.paymentHistoryNote') }}
+          </div>
+        </div>
+      </div>
+    </q-card-section>
+
+    <q-card-section>
+      <div class="row q-pa-sm justify-center">
+        <div class="col-12 col-sm-10 col-md-8">
+          <div class="text-h5 q-pb-sm">
+            {{ $t('membership.paymentStatistics') }}:
+          </div>
+          <ul>
+            <li>
+              {{ $t('membership.paymentCurrentYear') }}: {{ payments.countCurrentYear }}x
+            </li>
+            <li>
+              {{ $t('membership.paymentLastYear') }}: {{ payments.countLastYear }}x
+            </li>
+          </ul>
+        </div>
+      </div>
+    </q-card-section>
+
+    <q-card-section>
+      <div class="row q-pa-sm justify-center">
+        <div class="col-12 col-sm-10 col-md-8">
+          <div class="text-h5 q-pb-sm">
             {{ $t('membership.priceHistory') }}:
           </div>
           <ul>
@@ -211,6 +251,22 @@ const priceHistory = [
   },
 ];
 
+const payments = ref<{
+  company: {
+    count: number,
+    months: number,
+  },
+  countCurrentYear: number,
+  countLastYear: number,
+}>({
+  company: {
+    count: 0,
+    months: 0,
+  },
+  countCurrentYear: 0,
+  countLastYear: 0,
+});
+
 const year = dayjs().year();
 const currentPrice =
   priceHistory[priceHistory.length - 1]!.year > year
@@ -285,6 +341,11 @@ function changeDays (val: number) {
   if (days.value === 3650 && val > 0) return;
   days.value += val;
 }
+api.get('/v1/company/payments').then((data) => {
+  payments.value = data;
+}).catch((error) => {
+  console.error('Error fetching payments:', error);
+});
 </script>
 
 <style scoped>
