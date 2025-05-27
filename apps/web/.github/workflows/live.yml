@@ -2,7 +2,7 @@ name: live
 
 on:
   push:
-    branches: [master]
+    branches: [main]
   workflow_dispatch:
 
 env:

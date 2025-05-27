@@ -97,7 +97,7 @@ sudo certbot --nginx
 
 #### Deployment & Staging
 
-The beta url and api are our staging and testing url. GitHub action is automatically uploading the latest PWA build version to the servers `var/www` folder with sftp. The [master] branch uploads to <https://beta.btree.at> and is connected to `api-beta.btree.at`. The [live] branch uploads the live version for <https://app.btree.at> and is connected to the live backend `api.btree.at`.
+The beta url and api are our staging and testing url. GitHub action is automatically uploading the latest PWA build version to the servers `var/www` folder with sftp. The [beta] branch uploads to <https://beta.btree.at> and is connected to `api-beta.btree.at`. The [main] branch uploads the live version for <https://app.btree.at> and is connected to the live backend `api.btree.at`.
 
 #### .env
 
