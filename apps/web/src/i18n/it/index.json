@@ -230,7 +230,7 @@
     "new-rearing": "Qui puoi creare la tua serie di regine. \nFacoltativamente è possibile impostare un nome e modificare il simbolo (fare clic sul simbolo prima del campo di immissione del nome), per differenziare meglio se si eseguono più serie. \nL'elenco a discesa della data e del calcolo dal passaggio è collegato poiché inizia a calcolare le serie da questa data e da questo passaggio (indietro e/o avanti). \nI metodi che puoi definire in base alle tue esigenze nella pagina del metodo di allevamento della regina. \nGli allevamenti di regine saranno visibili sul calendario.",
     "new-todo": "Le cose da fare sono pensate per essere utilizzate se non è un compito diretto per una colonia. \nAltrimenti usa un controllo. \nCome esempio di ToDo's ci sono compiti riguardanti l'apiario, ad es. \nportare nuove tavole inferiori, riparare la recinzione. \nPuoi creare cose da fare ripetute se fai clic sul simbolo vicino al campo della data. \nLe cose da fare sono normalmente future e non ancora completate, quindi il valore standard per è impostato su 'Aperto'.",
     "news": "Notizie attuali, quella recente è sul colore arancione. Disponibile solo in lingua inglese.",
-    "premium": "I pagamenti vengono eseguiti automaticamente e dovresti ottenere il tempo premium aggiunto al tuo account. Potrebbe essere necessario aggiornare o disconnettersi e accedere nuovamente. In caso di problemi non esitare a contattarci all'indirizzo {'office@btree.at'}",
+    "premium": "L'accesso Premium viene attivato automaticamente al momento del pagamento. Per i metodi di pagamento immediato, l'attivazione è generalmente istantanea. Potrebbe essere necessario aggiornare la pagina o disconnettersi e accedere nuovamente. In caso di problemi, contattaci all'indirizzo {'office@btree.at'}",
     "setting-company": "Le pagine delle impostazioni dell'azienda hanno due schede.\n \nScheda Azienda, ti consente di cambiare la tua azienda attuale se sei connesso a più operazioni. \nPuoi anche crearne uno nuovo, ma tieni presente che devi pagare un abbonamento premium per ciascuno di essi. \nGli utenti amministratori possono anche scaricare qui tutti i loro dati. \nPuoi rimuovere il tuo accesso alla società attualmente selezionata, ma solo se non sei l'unico utente di quella società. \nSe desideri eliminare l'azienda, è possibile solo se sei l'ultimo utente e hai altre società. \nAltrimenti se vuoi cancellare il tuo account puoi usare la pagina del profilo. \nAttenzione non è possibile il recupero dei dati per motivi di sicurezza dei dati.\n \nNella scheda utente puoi aggiungere utenti che ricevono un invito se al momento non utilizzano l'app. \nL'amministratore può rimuovere gli utenti facendo clic sul simbolo prima dell'indirizzo e-mail o modificare il loro grado facendo clic sul simbolo sul lato destro dell'indirizzo e-mail. \nCome standard è impostata la sola lettura che consente agli utenti solo di vedere tutti i dati ma non di cambiarne nessuno. \nGli utenti normali possono svolgere la maggior parte delle attività ma non possono eliminare nulla, non possono gestire l'accesso alle API e non possono creare o gestire alveari e apiari.",
     "setting-dropbox": "Qui puoi attivare una connessione al tuo account Dropbox. \nQuesto è per operazione, quindi se hai più utenti, tutti hanno accesso alla cartella Dropbox appena creata. \nPer la connessione verrai reindirizzato alla pagina Dropbox. \nDopo la connessione puoi sempre eliminare l'accesso o il tuo account btree e mantenere comunque i dati caricati sul tuo Dropbox.",
     "setting-field": "In questa pagina puoi attivare o disattivare i campi per varie operazioni. \nQuesto è per utente.",
@@ -367,7 +367,7 @@
     "perksWizBee": "Accedi a WizBee la tua conoscenza personale dell'apicoltura AI, alimentata da ChatGPT",
     "priceHistory": "La nostra cronologia dei prezzi e le modifiche imminenti",
     "sum": "Paga per <b>{years}</b> anno/i di abbonamento premium una somma totale di <b>{sum}€</b>.",
-    "thankYou": "Grazie per il tuo contributo. Il tempo premium dovrebbe essere aggiunto automaticamente, altrimenti prova ad accedere o disconnettersi. In caso di problemi, non esitare a contattarci all'indirizzo {'office@btree.at'}",
+    "thankYou": "Grazie per il tuo contributo.<br/>Il tempo premium dovrebbe essere aggiunto automaticamente, altrimenti prova ad accedere o disconnettersi.<br/>In caso di problemi, non esitare a contattarci all'indirizzo {'office@btree.at'}",
     "title": "Supporta b.tree con accesso premium per un anno"
   },
   "method": "Metodo | Metodi",
@@ -426,6 +426,14 @@
   "paid": "Pagato",
   "password": "Parola d'ordine",
   "path": "Sentiero",
+  "payment": {
+    "mollie": "Paga con Mollie",
+    "mollieDescription": "Paga con Mollie un fornitore di pagamenti europei utilizzando vari metodi di pagamento.",
+    "paypal": "",
+    "paypalDescription": "Paga con PayPal utilizzando il tuo account PayPal.",
+    "stripe": "Paga con Stripe",
+    "stripeDescription": "Paga con Stripe usando la tua carta di credito."
+  },
   "pedigree": "Pedigree",
   "pending": "In attesa di",
   "permission": "Autorizzazione",

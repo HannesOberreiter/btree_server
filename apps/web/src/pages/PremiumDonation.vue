@@ -2,15 +2,15 @@
   <q-card flat>
     <q-card-section>
       <div class="row q-pa-sm justify-center">
-        <div class="col-12 col-sm-10 col-md-8">
-          <div class="text-h5 q-pb-sm">
-            {{ $t('membership.title') }}
+        <div v-if="paidLoading" class="col-12 col-sm-10 col-md-8 text-center">
+          <q-spinner-dots color="primary" size="50px"></q-spinner-dots>
+        </div>
+        <div v-else class="col-12 col-sm-10 col-md-8">
+          <div v-if="paid" class="bg-primary text-weight-bold text-white q-pa-sm rounded-borders"
+            v-html="$t('membership.thankYou')">
           </div>
-          <div
-            v-if="paid"
-            class="bg-info text-weight-bold text-black q-pa-sm rounded-borders"
-          >
-            {{ $t('membership.thankYou') }}
+          <div v-else class="text-h5 q-pb-sm">
+            {{ $t('membership.title') }}
           </div>
           <ul>
             <li>
@@ -21,122 +21,78 @@
               {{ $t('membership.afterPayment') }}: <b>{{ afterPayment }}</b>
             </li>
           </ul>
-          <q-slider
-            v-model="donation"
-            color="green"
-            :min="currentPrice"
-            :max="maxPrice"
-            :step="10"
-            markers
-            :marker-labels="donationMarker"
-            :label-value="donationLabel"
-            switch-label-side
-            switch-marker-labels-side
-          >
+          <q-slider v-model="donation" color="green" :min="currentPrice" :max="maxPrice" :step="10" markers
+            :marker-labels="donationMarker" :label-value="donationLabel" switch-label-side switch-marker-labels-side>
           </q-slider>
           <div class="row payment">
             <div class="col-12">
-              <q-input
-                v-model.number="donation"
-                class="text-h3"
-                filled
-                min="50"
-                step="1"
-                type="number"
-                :rules="[
-                  (val) =>
-                    parseInt(val) >= currentPrice ||
-                    $t('membership.minimumAmount', { value: currentPrice }),
-                ]"
-                :hint="$t('membership.noSubscription')"
-              >
+              <q-input v-model.number="donation" class="text-h3" filled min="50" step="1" type="number" :rules="[
+                (val) =>
+                  parseInt(val) >= currentPrice ||
+                  $t('membership.minimumAmount', { value: currentPrice }),
+              ]" :hint="$t('membership.noSubscription')">
                 <template #prepend>
-                  <q-icon
-                    v-if="donation < donationMarker[1]!.value"
-                    name="fas fa-face-smile"
-                    size="lg"
-                    color="primary"
-                  ></q-icon>
-                  <q-icon
-                    v-else-if="donation < donationMarker[2]!.value"
-                    name="fas fa-face-grin"
-                    size="lg"
-                    color="primary"
-                  ></q-icon>
-                  <q-icon
-                    v-else
-                    name="fas fa-face-grin-hearts"
-                    size="lg"
-                    color="primary"
-                  ></q-icon>
+                  <q-icon v-if="donation < donationMarker[1]!.value" name="fas fa-face-smile" size="lg"
+                    color="primary"></q-icon>
+                  <q-icon v-else-if="donation < donationMarker[2]!.value" name="fas fa-face-grin" size="lg"
+                    color="primary"></q-icon>
+                  <q-icon v-else name="fas fa-face-grin-hearts" size="lg" color="primary"></q-icon>
                 </template>
                 <template #append>
                   {{ years > 1 ? `(${sum})` : '' }} €
                 </template>
                 <template #after>
-                  <q-btn
-                    icon="fas fa-calendar-plus"
-                    flat
-                    round
-                    :disable="days >= 3650"
-                    @click="changeDays(365)"
-                  >
+                  <q-btn icon="fas fa-calendar-plus" flat round :disable="days >= 3650" @click="changeDays(365)">
                     <tooltip-base>
                       {{ $t('membership.increaseDays') }}
                     </tooltip-base>
                   </q-btn>
-                  <q-btn
-                    icon="fas fa-calendar-minus"
-                    flat
-                    round
-                    :disable="days <= 365"
-                    @click="changeDays(-365)"
-                  >
+                  <q-btn icon="fas fa-calendar-minus" flat round :disable="days <= 365" @click="changeDays(-365)">
                     <tooltip-base>
                       {{ $t('membership.decreaseDays') }}
                     </tooltip-base>
                   </q-btn>
                 </template>
               </q-input>
-              <div
-                class="text-h5 q-pt-sm q-pb-sm"
-                v-html="$t('membership.sum', { years: years, sum: sum })"
-              ></div>
+              <div class="text-h5 q-pt-sm q-pb-sm" v-html="$t('membership.sum', { years: years, sum: sum })"></div>
             </div>
           </div>
           <div class="text-center payment q-col-gutter-y-sm">
-            <div v-if="!($q.platform.is.ios && $q.platform.is.safari)">
-              <payment-stripe
-                :donation="donation"
-                :years="years"
-                @on-paid="(data: any) => successPayment(data.paid)"
-              ></payment-stripe>
-              <q-separator></q-separator>
-            </div>
+            <q-tabs v-model="paymentTab" dense class="text-grey" active-color="primary" indicator-color="primary"
+              align="justify" narrow-indicator>
+              <q-tab name="mollie" :label="$t('payment.mollie')" />
+              <q-tab v-if="isStripeAvailable" name="stripe" :label="$t('payment.stripe')" />
+              <q-tab name="paypal" :label="$t('payment.paypal')" />
+            </q-tabs>
+
+            <q-separator />
+
+            <q-tab-panels v-model="paymentTab" animated>
+              <q-tab-panel v-if="isStripeAvailable" name="stripe">
+                <div class="text-caption q-pb-sm text-left">{{ $t('payment.stripeDescription') }}</div>
+                <payment-stripe :donation="donation" :years="years"></payment-stripe>
+              </q-tab-panel>
+
+              <q-tab-panel name="mollie">
+                <div class="text-caption q-pb-sm text-left">{{ $t('payment.mollieDescription') }}</div>
+                <payment-mollie :donation="donation" :years="years"></payment-mollie>
+              </q-tab-panel>
+
+              <q-tab-panel name="paypal">
+                <div class="text-caption q-pb-sm text-left">{{ $t('payment.paypalDescription') }}</div>
+                <suspense>
+                  <payment-paypal :donation="donation" :years="years"
+                    @on-paid="(data: any) => successPayment(data.paid)"></payment-paypal>
+                </suspense>
+              </q-tab-panel>
+            </q-tab-panels>
+            <q-separator />
             <div>
-              <suspense>
-                <payment-paypal
-                  :donation="donation"
-                  :years="years"
-                  @on-paid="(data: any) => successPayment(data.paid)"
-                ></payment-paypal>
-              </suspense>
-              <q-separator></q-separator>
-            </div>
-            <div>
-              <btn-base
-                label="office@btree.at"
-                icon="fas fa-envelope"
-                color="info"
-                :href="mailTo"
-              >
-              </btn-base>
-              <btn-base
-                icon="fas fa-ticket"
-                color="info"
-                :label="$t('coupon')"
-                @click="payCoupon"
-              ></btn-base>
+              <btn-base-group>
+                <btn-base label="office@btree.at" icon="fas fa-envelope" color="black" :href="mailTo">
+                </btn-base>
+                <btn-base icon="fas fa-ticket" color="black" :label="$t('coupon')" @click="payCoupon"></btn-base>
+              </btn-base-group>
             </div>
           </div>
         </div>
@@ -184,9 +140,9 @@
             {{
               index > 0
                 ? calculatePriceChange(
-                    item.price,
-                    priceHistory[index - 1]?.price,
-                  )
+                  item.price,
+                  priceHistory[index - 1]?.price,
+                )
                 : ''
             }}
           </li>
@@ -244,11 +200,13 @@ import { useNotification } from '../composables/useNotification';
 import { useAuthUserStore } from '../stores/auth';
 import { useRefreshStore } from '../stores/refresh';
 import BtnBase from '../components/BtnBase.vue';
+import BtnBaseGroup from 'src/components/BtnBaseGroup.vue';
 import PaymentPaypal from '../components/PaymentPaypal.vue';
 import PaymentStripe from '../components/PaymentStripe.vue';
+import PaymentMollie from '../components/PaymentMollie.vue';
 import SupporterImages from '../components/SupporterImages.vue';
 import { useI18n } from 'vue-i18n';
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useBackend } from '../composables/useBackend';
 import TooltipBase from '../components/TooltipBase.vue';
 
@@ -260,6 +218,9 @@ const { t } = useI18n();
 const api = useApiFetch();
 const notification = useNotification();
 const backend = useBackend();
+
+const isStripeAvailable = computed(() => !($q.platform.is.ios && $q.platform.is.safari));
+const paymentTab = ref('mollie');
 
 const mailTo = computed(() => {
   return `mailto:office@btree.at?subject=Invoice Request ${storeUser.company.name} (${storeUser.company.id}) [Server: ${backend.state.value}]&body=Please send me an invoice for the company "${storeUser.company.name}" (id: ${storeUser.company.id}) with a donation of ${donation.value} Euros. Response E-Mail: ${storeUser.user.email}`;
@@ -326,6 +287,7 @@ const maxPrice = currentPrice + 100;
 
 const donation = ref(currentPrice);
 const paid = ref(false);
+const paidLoading = ref(false);
 const days = ref(365);
 const years = computed(() => Math.floor(days.value / 365));
 const sum = computed(() => donation.value * years.value);
@@ -338,7 +300,16 @@ const donationMarker = [
   { value: maxPrice, label: maxPrice + '€' },
 ];
 
-function payCoupon() {
+onMounted(() => {
+  const query = new URLSearchParams(window.location.search);
+  if (query.has('mollie')) successPayment('');
+  if (query.has('session_id')) successPayment('');
+  if (query.has('session_id') || query.has('mollie')) {
+    window.history.replaceState({}, document.title, window.location.pathname);
+  }
+});
+
+function payCoupon () {
   $q.dialog({
     prompt: {
       model: '',
@@ -366,26 +337,29 @@ function payCoupon() {
   });
 }
 
-function successPayment(newDate: string) {
-  paid.value = true;
+async function successPayment (newDate: string) {
+  paidLoading.value = true;
   if (newDate) {
     notification.open('positive', dayjs(newDate).format('YYYY-MM-DD'), true);
   } else {
     notification.open('positive', '');
   }
-  refreshCompany();
+  await new Promise((resolve) => setTimeout(resolve, 10000));
+  await refreshCompany();
+  paidLoading.value = false;
+  paid.value = true;
 }
 
-function calculatePriceChange(cur: number, prev: number | undefined) {
+function calculatePriceChange (cur: number, prev: number | undefined) {
   if (!prev) return '';
   return '+ ' + Math.floor((cur * 100) / prev - 100) + '%';
 }
 
-function refreshCompany() {
-  storeRefresh.refresh();
+function refreshCompany () {
+  return storeRefresh.refresh(true);
 }
 
-function changeDays(val: number) {
+function changeDays (val: number) {
   if (days.value === 365 && val < 0) return;
   if (days.value === 3650 && val > 0) return;
   days.value += val;

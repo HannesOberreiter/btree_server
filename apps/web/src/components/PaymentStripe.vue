@@ -1,10 +1,10 @@
 <template>
   <btn-base
     icon="fab fa-stripe"
-    color="secondary"
+    color="primary"
     class="full-width q-pl-lg"
     size="lg"
-    :label="$t('membership.payWithStripe')"
+    :label="$t('payment.stripe')"
     @click="createSession"
   >
   </btn-base>
@@ -14,13 +14,10 @@
 import BtnBase from './BtnBase.vue';
 import { useApiFetch } from '../composables/useApi';
 import { useNotification } from '../composables/useNotification';
-import { useRoute } from 'vue-router';
-import { onMounted, toRefs } from 'vue';
+import { toRefs } from 'vue';
 
 const notification = useNotification();
 const api = useApiFetch();
-const router = useRoute();
-const emit = defineEmits(['onPaid']);
 const props = defineProps({
   donation: {
     type: Number,
@@ -47,8 +44,4 @@ function createSession() {
       (error) => notification.open('negative', error),
     );
 }
-
-onMounted(() => {
-  if (router.query.session_id) emit('onPaid', { paid: false });
-});
 </script>
