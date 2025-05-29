@@ -184,6 +184,7 @@
   "federatedCredentials": "Fournisseur d'authentification externe",
   "feed": "Alimentation | Tétées",
   "field": "Champ | Des champs",
+  "fields": "Champs",
   "file": "Dossier",
   "filter": "Filtre",
   "filterEmpty": "Pas de filtre",
@@ -291,6 +292,10 @@
   "info": "Info",
   "initiate": "Lancer",
   "inputUrl": "Saisir une URL externe",
+  "pwa": {
+    "install": "Installer b.tree PWA",
+    "notAvailable": "L'installation de PWA n'est pas disponible dans votre navigateur."
+  },
   "interval": "Intervalle",
   "intervalText": "Jours entre les répétitions",
   "invoice": "Facture d'achat",
@@ -591,6 +596,7 @@
     "hintTreatmentTemperature": "@:setting.hintCheckupTemperature",
     "hintTreatmentVet": "Vétérinaire: liste déroulante, dans les options, vous pouvez définir les valeurs de cette liste déroulante",
     "hintTreatmentWait": "Attendre : champ de saisie, pour le temps d'attente après le traitement",
+    "localTitle": "Les paramètres de l'appareil local sont enregistrés dans le stockage local.",
     "name": "Réglage | Réglages",
     "title": "Ici, vous pouvez sélectionner ou désélectionner les champs que vous souhaitez afficher dans votre Quicktool!"
   },

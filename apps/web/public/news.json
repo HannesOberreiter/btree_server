@@ -6,6 +6,7 @@
       "FIX Google login link was not working correctly, now it should work again.",
       "FEATURE Show total amount of payments made on the premium page, for the user and globally.",
       "FEATURE Added Mollie as an alternative payment provider which is from the Netherlands and supports many European countries.",
+      "FEATURE PWA installation can now be triggered on the settings page if supported by the browser.",
       "IMPROVEMENT Send two ping requests on server change to reflect the real ping time.",
       "UPGRADE Updated server to ubuntu 22.04 LTS.",
       "SECURITY Added more script content security policies."

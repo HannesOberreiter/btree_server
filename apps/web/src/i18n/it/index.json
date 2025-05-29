@@ -184,6 +184,7 @@
   "federatedCredentials": "Provider di autenticazione esterno",
   "feed": "Alimentazione | Alimentazione",
   "field": "Campo | Campi",
+  "fields": "Campi",
   "file": "File",
   "filter": "Filtro",
   "filterEmpty": "Senza Filtro",
@@ -291,6 +292,10 @@
   "info": "Informazioni",
   "initiate": "Iniziato",
   "inputUrl": "Inserisci un URL esterno",
+  "pwa": {
+    "install": "Installa b.tree PWA",
+    "notAvailable": "L'applicazione non è disponibile come PWA."
+  },
   "interval": "Intervallo",
   "intervalText": "Giorni tra le ripetizioni",
   "invoice": "Fattura",
@@ -591,6 +596,7 @@
     "hintTreatmentTemperature": "@:setting.hintCheckupTemperatura",
     "hintTreatmentVet": "Vet: Dropdown, nelle Opzioni puoi definire i valori per questo menu a tendina",
     "hintTreatmentWait": "Attendere: campo di immissione, per il tempo di attesa dopo il trattamento",
+    "localTitle": "Le impostazioni del dispositivo locale vengono salvate nella memoria locale.",
     "name": "Impostazione | Impostazioni",
     "title": "Qui puoi selezionare o deselezionare i campi che vuoi mostrare nel tuo Quicktool!"
   },

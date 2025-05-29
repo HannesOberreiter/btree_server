@@ -184,6 +184,7 @@
   "federatedCredentials": "External Auth Provider",
   "feed": "Feeding | Feedings",
   "field": "Field | Fields",
+  "fields": "Fields",
   "file": "File",
   "filter": "Filter",
   "filterEmpty": "No filter",
@@ -291,6 +292,10 @@
   "info": "Info",
   "initiate": "Initiate",
   "inputUrl": "Input an external url",
+  "pwa": {
+    "install": "Install b.tree PWA",
+    "notAvailable": "Your browser does not support PWA installation."
+  },
   "interval": "Interval",
   "intervalText": "Days between repeats",
   "invoice": "Invoice",
@@ -591,6 +596,7 @@
     "hintTreatmentTemperature": "@:setting.hintCheckupTemperature",
     "hintTreatmentVet": "Vet: Dropdown, in the Options you can define the values for this dropdown",
     "hintTreatmentWait": "Wait: Input Field, for waiting time after treatment",
+    "localTitle": "Local device settings, are saved in local storage.",
     "name": "Setting | Settings",
     "title": "Here you can select or deselect fields you want to be shown in your Quicktool!"
   },

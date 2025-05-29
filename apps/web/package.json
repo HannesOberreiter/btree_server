@@ -26,6 +26,7 @@
     "@fullcalendar/list": "^6.1.8",
     "@fullcalendar/multimonth": "^6.1.8",
     "@fullcalendar/vue3": "^6.1.8",
+    "@khmyznikov/pwa-install": "^0.5.5",
     "@paypal/paypal-js": "^8.0.0",
     "@quasar/extras": "^1.17.0",
     "@tanstack/vue-query": "^5.13.4",

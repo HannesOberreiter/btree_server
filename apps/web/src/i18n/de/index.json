@@ -184,6 +184,7 @@
   "federatedCredentials": "Externer Authentifizierungsanbieter",
   "feed": "Fütterung | Fütterungen",
   "field": "Feld | Felder",
+  "fields": "Felder",
   "file": "Datei",
   "filter": "Filter",
   "filterEmpty": "Kein Filter",
@@ -291,6 +292,10 @@
   "info": "Info",
   "initiate": "Einleiten",
   "inputUrl": "Geben Sie eine externe URL ein",
+  "pwa": {
+    "install": "b.tree als PWA installieren",
+    "notAvailable": "Dein Browser unterstützt keine PWA-Installation."
+  },
   "interval": "Intervall",
   "intervalText": "Tage zwischen Wiederholungen",
   "invoice": "Rechnung",
@@ -591,6 +596,7 @@
     "hintTreatmentTemperature": "@:setting.hintCheckupTemperature",
     "hintTreatmentVet": "Tierarzt: Dropdown, in den Optionen können Sie die Werte für dieses Dropdown festlegen",
     "hintTreatmentWait": "Warten: Eingabefeld, für die Wartezeit nach der Behandlung",
+    "localTitle": "Lokale Geräteeinstellungen werden im lokalen Speicher gespeichert.",
     "name": "Einstellung | Einstellungen",
     "title": "Hier können Sie Felder auswählen oder abwählen, die in Ihrem Quicktool angezeigt werden sollen!"
   },
