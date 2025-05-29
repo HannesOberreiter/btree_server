@@ -117,7 +117,7 @@ export class Application {
 
       const isExternal
         = req.url.includes('external')
-        || req.url.includes('auth/google/callback');
+          || req.url.includes('auth/google/callback');
 
       if (isExternal || env === ENVIRONMENT.development) {
         reply.header('Access-Control-Allow-Origin', '*');

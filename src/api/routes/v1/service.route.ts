@@ -57,6 +57,20 @@ export default function routes(
   );
 
   server.post(
+    '/mollie/orders',
+    {
+      preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
+      schema: {
+        body: z.object({
+          amount: z.number().min(50),
+          quantity: z.number().min(1).max(10),
+        }),
+      },
+    },
+    ServiceController.mollieCreateOrder,
+  );
+
+  server.post(
     '/wizbee/ask',
     {
       preHandler: Guard.authorize([ROLES.admin, ROLES.user, ROLES.read]),
