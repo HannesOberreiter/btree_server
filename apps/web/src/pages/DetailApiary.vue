@@ -14,60 +14,99 @@
         <div class="row justify-center">
           <!-- Apiary Header -->
           <div class="col-12 col-md-8 q-pt-sm">
-            <expansion-apiary :data="data" @refetch="refetch()"></expansion-apiary>
+            <expansion-apiary
+              :data="data"
+              @refetch="refetch()"
+            ></expansion-apiary>
           </div>
         </div>
       </q-card-section>
       <q-card-section class="q-pa-xs">
-        <q-tabs v-model="tab" dense class="text-grey" active-color="primary" indicator-color="primary" align="justify"
-          narrow-indicator>
+        <q-tabs
+          v-model="tab"
+          dense
+          class="text-grey"
+          active-color="primary"
+          indicator-color="primary"
+          align="justify"
+          narrow-indicator
+        >
           <q-tab name="hive" :label="$t('hive', 2)" />
           <q-tab name="task" :label="$t('task', 2)" />
           <q-tab name="weather" icon="fas fa-cloud-sun-rain">
             <tooltip-base>{{ $t('weather') }}</tooltip-base>
           </q-tab>
-          <btn-dropdown-task @refetch="() => refetchCounter++"></btn-dropdown-task>
+          <btn-dropdown-task
+            @refetch="() => refetchCounter++"
+          ></btn-dropdown-task>
         </q-tabs>
 
         <q-separator />
 
         <q-tab-panels v-model="tab" animated>
           <q-tab-panel name="hive" class="q-pa-xs">
-            <list-hives v-if="data" :data="data" @change="refetch()"></list-hives>
+            <list-hives
+              v-if="data"
+              :data="data"
+              @change="refetch()"
+            ></list-hives>
           </q-tab-panel>
           <q-tab-panel name="task" class="q-pa-xs">
             <div class="row">
               <div class="col-12 col-md-6">
                 <q-select v-model="year" :options="years" :label="$t('year')">
                   <template #before>
-                    <btn-base icon="fas fa-arrow-left" @click="year--"></btn-base>
-                    <btn-base icon="fas fa-arrow-right" @click="year++"></btn-base>
+                    <btn-base
+                      icon="fas fa-arrow-left"
+                      @click="year--"
+                    ></btn-base>
+                    <btn-base
+                      icon="fas fa-arrow-right"
+                      @click="year++"
+                    ></btn-base>
                   </template>
                 </q-select>
               </div>
               <div class="col-12 col-md-6">
                 <div class="row">
                   <div class="col-6">
-                    <q-select v-model="filter" :options="KINDS" :label="$t('filter') + ' ' + $t('task')"
-                      :option-label="(label) => $t(label)"></q-select>
+                    <q-select
+                      v-model="filter"
+                      :options="KINDS"
+                      :label="$t('filter') + ' ' + $t('task')"
+                      :option-label="(label) => $t(label)"
+                    ></q-select>
                   </div>
                   <div class="col-6">
-                    <q-select v-model="filterState" :options="STATUS" :label="$t('filter') + ' ' + $t('status')"
-                      :option-label="(label) => $t(label)"></q-select>
+                    <q-select
+                      v-model="filterState"
+                      :options="STATUS"
+                      :label="$t('filter') + ' ' + $t('status')"
+                      :option-label="(label) => $t(label)"
+                    ></q-select>
                   </div>
                 </div>
               </div>
             </div>
-            <list-tasks :id="id" :apiary="true" :year="year" :filter="filter" :filter-state="filterState"
-              :opened="opened" :refetch="refetchCounter"></list-tasks>
+            <list-tasks
+              :id="id"
+              :apiary="true"
+              :year="year"
+              :filter="filter"
+              :filter-state="filterState"
+              :opened="opened"
+              :refetch="refetchCounter"
+            ></list-tasks>
           </q-tab-panel>
           <q-tab-panel name="weather" class="q-pa-xs">
             <div class="row">
               <div class="col-12">
-                <iframe-weather :latlng="{
-                  latitude: data.latitude,
-                  longitude: data.longitude,
-                }"></iframe-weather>
+                <iframe-weather
+                  :latlng="{
+                    latitude: data.latitude,
+                    longitude: data.longitude,
+                  }"
+                ></iframe-weather>
               </div>
             </div>
           </q-tab-panel>

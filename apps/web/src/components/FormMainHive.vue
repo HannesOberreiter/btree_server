@@ -1,26 +1,58 @@
 <template>
   <q-form class="full-width" data-cy="form-hive" @submit.prevent.stop="">
     <div class="row">
-      <form-dropdown-edit v-if="isEdit" v-model="editOptions" class="col-12"
-        :options="editOptionsCopy"></form-dropdown-edit>
+      <form-dropdown-edit
+        v-if="isEdit"
+        v-model="editOptions"
+        class="col-12"
+        :options="editOptionsCopy"
+      ></form-dropdown-edit>
 
-      <form-input-text v-model="state.name" :values="values" :reset="reset" :class="isEdit ? 'col-12' : 'col-11'"
-        :required="isEdit ? false : true" label="name" name="hive" icon="fas fa-passport"
-        :hint="isEdit ? '' : $t('lastAdded') + ': ' + lastNames" :max-valid="24"></form-input-text>
+      <form-input-text
+        v-model="state.name"
+        :values="values"
+        :reset="reset"
+        :class="isEdit ? 'col-12' : 'col-11'"
+        :required="isEdit ? false : true"
+        label="name"
+        name="hive"
+        icon="fas fa-passport"
+        :hint="isEdit ? '' : $t('lastAdded') + ': ' + lastNames"
+        :max-valid="24"
+      ></form-input-text>
       <div v-if="!isEdit" class="col-1 text-center">
-        <btn-base flat round icon="fas fa-retweet" :color="showInterval ? 'secondary' : 'grey'" data-cy="btn-repeat"
-          @click="changeInterval"></btn-base>
+        <btn-base
+          flat
+          round
+          icon="fas fa-retweet"
+          :color="showInterval ? 'secondary' : 'grey'"
+          data-cy="btn-repeat"
+          @click="changeInterval"
+        ></btn-base>
       </div>
 
       <div v-if="showInterval && !isEdit" class="col-12">
         <div class="row">
           <div class="col-12 col-md-6">
-            <form-input-numeric v-model.number="state.start" label="start" :hint="$t('startNumberNote')"
-              :max-valid="10000" icon="fas fa-arrow-down-1-9" numeric-valid="integer"></form-input-numeric>
+            <form-input-numeric
+              v-model.number="state.start"
+              label="start"
+              :hint="$t('startNumberNote')"
+              :max-valid="10000"
+              icon="fas fa-arrow-down-1-9"
+              numeric-valid="integer"
+            ></form-input-numeric>
           </div>
           <div class="col-12 col-md-6">
-            <form-input-numeric v-model.number="state.repeat" label="numberHives" :hint="sampleName" shadow-text="x"
-              icon="fas fa-infinity" :max-valid="100" numeric-valid="integer"></form-input-numeric>
+            <form-input-numeric
+              v-model.number="state.repeat"
+              label="numberHives"
+              :hint="sampleName"
+              shadow-text="x"
+              icon="fas fa-infinity"
+              :max-valid="100"
+              numeric-valid="integer"
+            ></form-input-numeric>
           </div>
         </div>
       </div>
@@ -28,47 +60,106 @@
 
     <div v-if="!isEdit" class="row q-pb-md">
       <div class="col-12 col-md-6">
-        <form-dropdown-option v-model="state.apiary" label="apiary" table="apiary"
-          table-id="apiary_id"></form-dropdown-option>
+        <form-dropdown-option
+          v-model="state.apiary"
+          label="apiary"
+          table="apiary"
+          table-id="apiary_id"
+        ></form-dropdown-option>
       </div>
       <div class="col-12 col-md-6">
-        <form-input-date v-model="state.date" label="movedate" :hint="$t('movementInfo')"></form-input-date>
+        <form-input-date
+          v-model="state.date"
+          label="movedate"
+          :hint="$t('movementInfo')"
+        ></form-input-date>
       </div>
     </div>
 
-    <form-dropdown-option v-model="state.type" table="hive_types" label="type" :values="values"
-      :reset="reset"></form-dropdown-option>
+    <form-dropdown-option
+      v-model="state.type"
+      table="hive_types"
+      label="type"
+      :values="values"
+      :reset="reset"
+    ></form-dropdown-option>
     <div class="col-12 q-pb-sm">
-      <form-dropdown-option v-model="state.source" table="hive_sources" table-id="source_id" label="status"
-        :values="values" :reset="reset"></form-dropdown-option>
+      <form-dropdown-option
+        v-model="state.source"
+        table="hive_sources"
+        table-id="source_id"
+        label="status"
+        :values="values"
+        :reset="reset"
+      ></form-dropdown-option>
     </div>
 
     <div class="col-12 col-md-6 q-pt-sm q-pb-sm">
-      <form-input-numeric v-model="state.position" label="position" :hint="$t('positionNote')"
-        icon="fas fa-arrow-down-1-9" numeric-valid="integer" :values="values" :reset="reset" :max-valid="9999">
+      <form-input-numeric
+        v-model="state.position"
+        label="position"
+        :hint="$t('positionNote')"
+        icon="fas fa-arrow-down-1-9"
+        numeric-valid="integer"
+        :values="values"
+        :reset="reset"
+        :max-valid="9999"
+      >
       </form-input-numeric>
     </div>
     <div class="col-12 col-md-6 q-pt-sm q-pb-sm">
-      <form-input-numeric v-model="state.grouphive" label="grouphive" :hint="$t('grouphiveNote')" icon="fas fa-city"
-        numeric-valid="integer" :values="values" :reset="reset" :max-valid="9999"></form-input-numeric>
+      <form-input-numeric
+        v-model="state.grouphive"
+        label="grouphive"
+        :hint="$t('grouphiveNote')"
+        icon="fas fa-city"
+        numeric-valid="integer"
+        :values="values"
+        :reset="reset"
+        :max-valid="9999"
+      ></form-input-numeric>
     </div>
 
-    <form-input-note v-model="state.note" class="q-pt-sm" :values="values" :reset="reset"></form-input-note>
+    <form-input-note
+      v-model="state.note"
+      class="q-pt-sm"
+      :values="values"
+      :reset="reset"
+    ></form-input-note>
     <div class="row q-pt-sm q-pb-md">
       <div class="col-12 col-md-6">
         <tooltip-base>{{ $t('hiveModeTooltip') }}</tooltip-base>
-        <form-input-checkbox v-model="state.modus" label="modus" status-active="active" status-inactive="inactive"
-          :values="values" :reset="reset"></form-input-checkbox>
+        <form-input-checkbox
+          v-model="state.modus"
+          label="modus"
+          status-active="active"
+          status-inactive="inactive"
+          :values="values"
+          :reset="reset"
+        ></form-input-checkbox>
       </div>
       <div class="col-12 col-md-6">
-        <form-input-date v-show="!state.modus" v-model="state.modusDate" :values="values" :reset="reset"
-          label="modusDate" table-id="modus_date"></form-input-date>
+        <form-input-date
+          v-show="!state.modus"
+          v-model="state.modusDate"
+          :values="values"
+          :reset="reset"
+          label="modusDate"
+          table-id="modus_date"
+        ></form-input-date>
       </div>
     </div>
   </q-form>
 
-  <form-buttons :state="state" :is-edit="isEdit" :edit-ids="editOptions" :v="v" form="hive" @reset="onReset"
-    @change="onChange"></form-buttons>
+  <form-buttons
+    :state="state"
+    :is-edit="isEdit"
+    :edit-ids="editOptions"
+    :v="v"
+    form="hive"
+    @reset="onReset"
+    @change="onChange"
+  ></form-buttons>
 </template>
 
 <script setup lang="ts">
@@ -92,7 +183,7 @@ import BtnBase from './BtnBase.vue';
 import { toRefs } from '@vueuse/core';
 import TooltipBase from './TooltipBase.vue';
 
-function getNames (v: any) {
+function getNames(v: any) {
   return v.map((o: any) => o.name).join(', ');
 }
 const stateDefault = {
@@ -174,7 +265,7 @@ const state = ref<FormHive>({
 const rules = {};
 const v = useVuelidate(rules, state, { $autoDirty: true });
 
-async function getEdit (id: unknown[]) {
+async function getEdit(id: unknown[]) {
   return await api.post('/v1/hive/batchGet', { ids: id }).then(
     (response: any) => {
       if (isEdit.value) {
@@ -196,11 +287,11 @@ async function getEdit (id: unknown[]) {
   );
 }
 
-function changeInterval () {
+function changeInterval() {
   showInterval.value = !showInterval.value;
 }
 
-function onReset () {
+function onReset() {
   if (!isEdit.value) {
     merge(state.value, stateDefault);
   }
@@ -209,7 +300,7 @@ function onReset () {
   notification.open('info', 'successReset');
 }
 
-async function onChange () {
+async function onChange() {
   emit('onSuccess', true);
   refetch();
 }

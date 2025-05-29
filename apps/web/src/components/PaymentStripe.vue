@@ -1,6 +1,12 @@
 <template>
-  <btn-base icon="fab fa-stripe" color="secondary" class="full-width q-pl-lg" size="lg"
-    :label="$t('membership.payWithStripe')" @click="createSession">
+  <btn-base
+    icon="fab fa-stripe"
+    color="secondary"
+    class="full-width q-pl-lg"
+    size="lg"
+    :label="$t('membership.payWithStripe')"
+    @click="createSession"
+  >
   </btn-base>
 </template>
 
@@ -28,7 +34,7 @@ const props = defineProps({
 });
 const { donation, years } = toRefs(props);
 
-function createSession () {
+function createSession() {
   api
     .post('/v1/service/stripe/orders', {
       amount: donation.value,

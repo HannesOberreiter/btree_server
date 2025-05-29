@@ -1,5 +1,9 @@
 <template>
-  <q-dialog ref="dialogRef" :maximized="$q.platform.is.mobile" @hide="onDialogHide">
+  <q-dialog
+    ref="dialogRef"
+    :maximized="$q.platform.is.mobile"
+    @hide="onDialogHide"
+  >
     <q-card style="width: 700px">
       <global-loading v-if="!file"></global-loading>
       <div v-else-if="notFound" class="text-center text-h5">
@@ -15,16 +19,30 @@
         </div>
         <div class="row full-width text-center">
           <div v-if="isImage(file.name) && display" class="col-12">
-            <q-img :src="display" style="width: 100%; height: 100%; border: none" />
+            <q-img
+              :src="display"
+              style="width: 100%; height: 100%; border: none"
+            />
           </div>
           <div v-else class="col-12"><q-icon name="fas fa-file"></q-icon></div>
         </div>
       </q-card-section>
       <q-card-actions align="center">
-        <btn-base size="md" :label="$t('close')" color="primary" @click="onDialogOK" />
-        <btn-base unelevated size="md" :disable="useDropbox.state.isLoading || notFound"
-          :loading="useDropbox.state.isLoading" :label="$t('download')" color="secondary"
-          @click="onDownload(service, file)">
+        <btn-base
+          size="md"
+          :label="$t('close')"
+          color="primary"
+          @click="onDialogOK"
+        />
+        <btn-base
+          unelevated
+          size="md"
+          :disable="useDropbox.state.isLoading || notFound"
+          :loading="useDropbox.state.isLoading"
+          :label="$t('download')"
+          color="secondary"
+          @click="onDownload(service, file)"
+        >
           <tooltip-base v-if="file">
             {{ round(file.size / 1e6, 1) + ' MB' }}
           </tooltip-base>
@@ -71,7 +89,7 @@ watch(
   { immediate: true },
 );
 
-function getService (value: string) {
+function getService(value: string) {
   const values = value.split(/:(.*)/s);
   switch (values[0]) {
     case 'dropbox': {
@@ -86,7 +104,7 @@ function getService (value: string) {
   }
 }
 
-function serviceDropbox (value: string) {
+function serviceDropbox(value: string) {
   useDropbox
     .getThumbnail(value)
     .then((response) => {
@@ -115,7 +133,7 @@ function serviceDropbox (value: string) {
     });
 }
 
-function serviceUrl (value: string) {
+function serviceUrl(value: string) {
   file.value = {
     id: value,
     name: value,
@@ -124,7 +142,7 @@ function serviceUrl (value: string) {
   display.value = value;
 }
 
-function onDownload (service: string, file: any) {
+function onDownload(service: string, file: any) {
   switch (service) {
     case 'dropbox': {
       useDropbox.download(file.id);

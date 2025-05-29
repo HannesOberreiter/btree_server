@@ -7,11 +7,23 @@
         </div>
       </div>
       <div class="col-6 text-right">
-        <form-dropdown-option v-model="scale_id" table="scale" allow-empty="filterEmpty"></form-dropdown-option>
+        <form-dropdown-option
+          v-model="scale_id"
+          table="scale"
+          allow-empty="filterEmpty"
+        ></form-dropdown-option>
         <btn-base-group>
-          <btn-base label="-" color="blue-5" @click="year = year - 1"></btn-base>
-          <btn-base label="+" color="blue-8" :disable="year > new Date().getFullYear()"
-            @click="year = year + 1"></btn-base>
+          <btn-base
+            label="-"
+            color="blue-5"
+            @click="year = year - 1"
+          ></btn-base>
+          <btn-base
+            label="+"
+            color="blue-8"
+            :disable="year > new Date().getFullYear()"
+            @click="year = year + 1"
+          ></btn-base>
           <tooltip-base>{{ $t('change') + ' ' + $t('year') }}</tooltip-base>
         </btn-base-group>
       </div>
@@ -20,8 +32,15 @@
       <global-loading v-if="isLoading"></global-loading>
       <div v-else>
         <div v-if="data.results">
-          <v-chart :option="chartTimeseries" :loading="!chartTimeseries" :update-options="{ notMerge: true }" autoresize
-            style="height: 60vh" class="bg-grey-1" :theme="$q.dark.isActive ? 'dark' : ''" />
+          <v-chart
+            :option="chartTimeseries"
+            :loading="!chartTimeseries"
+            :update-options="{ notMerge: true }"
+            autoresize
+            style="height: 60vh"
+            class="bg-grey-1"
+            :theme="$q.dark.isActive ? 'dark' : ''"
+          />
         </div>
         <div v-else>
           {{ $t('error.noData') }}
@@ -112,7 +131,7 @@ watch(
   },
 );
 
-function renderChart (data: any, year: number) {
+function renderChart(data: any, year: number) {
   let scales = data.map((o: any) => o.scale.name);
   scales = [...new Set(scales)];
   const axis_data = [];

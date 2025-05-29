@@ -11,13 +11,25 @@
       <q-card-section>
         <q-scroll-area style="height: 50vh; width: 500px; max-width: 80vh">
           <div id="printContainer">
-            <PrintHive v-for="(item, index) in items" :id="item.id + ''" :key="index" :year="parseInt(year)"
-              @loaded="nextItem"></PrintHive>
+            <PrintHive
+              v-for="(item, index) in items"
+              :id="item.id + ''"
+              :key="index"
+              :year="parseInt(year)"
+              @loaded="nextItem"
+            ></PrintHive>
           </div>
         </q-scroll-area>
       </q-card-section>
       <q-card-actions align="right">
-        <btn-base flat :loading="loading" :label="$t('print')" color="primary" icon="fas fa-print" @click="onPrint" />
+        <btn-base
+          flat
+          :loading="loading"
+          :label="$t('print')"
+          color="primary"
+          icon="fas fa-print"
+          @click="onPrint"
+        />
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -90,7 +102,7 @@ watch(
   { immediate: true },
 );
 
-function nextItem () {
+function nextItem() {
   loadItem = toLoadItems.shift();
   if (loadItem) {
     items.push(loadItem);
@@ -99,7 +111,7 @@ function nextItem () {
   }
 }
 
-function onPrint () {
+function onPrint() {
   setTimeout(() => {
     const printWindow = window.open('', '_blank', 'height=200,width=400')!;
     printWindow.document.write('<html>');

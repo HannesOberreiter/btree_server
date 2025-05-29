@@ -1,36 +1,75 @@
 <template>
   <div class="row q-pb-sm">
-    <q-expansion-item v-model="expanded" icon="fas fa-star" class="full-width" :label="$t('rating.name')" :class="some(modelValue, (val) => val != null && val > 0) ? 'bg-orange' : ''
-      ">
+    <q-expansion-item
+      v-model="expanded"
+      icon="fas fa-star"
+      class="full-width"
+      :label="$t('rating.name')"
+      :class="
+        some(modelValue, (val) => val != null && val > 0) ? 'bg-orange' : ''
+      "
+    >
       <q-card>
         <q-card-section>
           <template v-for="(_value, index) of modelValue" :key="index">
-            <div v-if="
-              fields.settings.checkup.ratings[index] ||
-              fields.settings.checkup?.rating
-            " class="row q-pb-xs">
-              <div class="col-4">{{ $t('rating.' + index) }} <b>{{ round(modelValue[index] ?? 0, 1) }}</b>
+            <div
+              v-if="
+                fields.settings.checkup.ratings[index] ||
+                fields.settings.checkup?.rating
+              "
+              class="row q-pb-xs"
+            >
+              <div class="col-4">
+                {{ $t('rating.' + index) }}
+                <b>{{ round(modelValue[index] ?? 0, 1) }}</b>
               </div>
               <div class="col-5 col-sm-5 col-lg-3">
-                <q-rating v-model="modelValue[index]!" :error="v[index].$error" color-selected="positive" color="grey"
-                  :disable="disable[index]" size="sm" :max="fields.settings.checkup.ratings.max">
+                <q-rating
+                  v-model="modelValue[index]!"
+                  :error="v[index].$error"
+                  color-selected="positive"
+                  color="grey"
+                  :disable="disable[index]"
+                  size="sm"
+                  :max="fields.settings.checkup.ratings.max"
+                >
                 </q-rating>
               </div>
               <div class="col-2 col-sm-2">
                 <btn-base-group round flat dense>
-                  <btn-base icon="fas fa-plus" :disabled="(modelValue[index] != null && modelValue[index] >=
-                    fields.settings.checkup.ratings.max) || disable[index]
-                    " @click="
-                      modelValue[index] = round((modelValue[index] ?? 0) + 0.1, 1)
-                      "></btn-base>
-                  <btn-base icon="fas fa-minus" :disabled="((modelValue[index] ?? 0) <= 0) || disable[index]" @click="
-                    modelValue[index] = round((modelValue[index] ?? 0) - 0.1, 1)
-                    "></btn-base>
+                  <btn-base
+                    icon="fas fa-plus"
+                    :disabled="
+                      (modelValue[index] != null &&
+                        modelValue[index] >=
+                          fields.settings.checkup.ratings.max) ||
+                      disable[index]
+                    "
+                    @click="
+                      modelValue[index] = round(
+                        (modelValue[index] ?? 0) + 0.1,
+                        1,
+                      )
+                    "
+                  ></btn-base>
+                  <btn-base
+                    icon="fas fa-minus"
+                    :disabled="(modelValue[index] ?? 0) <= 0 || disable[index]"
+                    @click="
+                      modelValue[index] = round(
+                        (modelValue[index] ?? 0) - 0.1,
+                        1,
+                      )
+                    "
+                  ></btn-base>
                 </btn-base-group>
               </div>
               <div class="col-2 col-sm-1">
-                <btn-multiple-values v-if="multipleValues[index]" :disable="disable[index]"
-                  @click="editValues(!disable[index], index)"></btn-multiple-values>
+                <btn-multiple-values
+                  v-if="multipleValues[index]"
+                  :disable="disable[index]"
+                  @click="editValues(!disable[index], index)"
+                ></btn-multiple-values>
               </div>
             </div>
           </template>
@@ -138,7 +177,7 @@ watch(reset, () => {
   setValues();
 });
 
-function setValues () {
+function setValues() {
   disable.value = { ...unref(multipleValues.value) };
   for (const [key, value] of Object.entries(multipleValues.value)) {
     if (value) editValues(true, key);
@@ -151,7 +190,7 @@ function setValues () {
   }
 }
 
-function editValues (val: boolean, key: string) {
+function editValues(val: boolean, key: string) {
   disable.value[key as keyof typeof disable.value] = val;
   modelValue.value[key as keyof typeof modelValue.value] = val
     ? null

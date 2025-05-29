@@ -3,35 +3,72 @@
     <div class="text-h6 text-center">{{ t('signup.name') }}</div>
     <form-error-max v-if="submitCount >= 15"></form-error-max>
     <q-form v-else class="q-gutter-md" @submit="onSubmit">
-      <form-input-text v-model="state.company" label="company.name" :max-valid="45" :min-valid="5" :required="true">
-        <template #deepPrepend><q-icon name="fas fa-warehouse"></q-icon></template>
+      <form-input-text
+        v-model="state.company"
+        label="company.name"
+        :max-valid="45"
+        :min-valid="5"
+        :required="true"
+      >
+        <template #deepPrepend
+          ><q-icon name="fas fa-warehouse"></q-icon
+        ></template>
       </form-input-text>
       <form-input-email v-model="state.email"></form-input-email>
-      <form-user-password v-if="!isOAuthRedirect" v-model:modelPassword="state.password"
-        :confirm="true"></form-user-password>
+      <form-user-password
+        v-if="!isOAuthRedirect"
+        v-model:modelPassword="state.password"
+        :confirm="true"
+      ></form-user-password>
       <form-user-language v-model="state.lang"></form-user-language>
       <form-user-date-format v-model="state.format"></form-user-date-format>
 
-      <q-select v-model="v$.source.$model" :error="v$.source.$error" :error-messages="validationErrors(v$.source)"
-        :options="SOURCES" option-value="value" option-label="label" hide-details :label="t('signup.source')" filled
-        :dense="true">
+      <q-select
+        v-model="v$.source.$model"
+        :error="v$.source.$error"
+        :error-messages="validationErrors(v$.source)"
+        :options="SOURCES"
+        option-value="value"
+        option-label="label"
+        hide-details
+        :label="t('signup.source')"
+        filled
+        :dense="true"
+      >
         <template #prepend>
           <q-icon name="fas fa-question" />
         </template>
       </q-select>
 
-      <q-input v-show="state.source.value === SOURCES.at(-1)!.value" v-model="v$.other.$model" :error="v$.other.$error"
-        :error-message="validationErrors(v$.other)" :no-error-icon="true" :label="t('signup.source')" name="other"
-        filled>
+      <q-input
+        v-show="state.source?.value === SOURCES.at(-1)!.value"
+        v-model="v$.other.$model"
+        :error="v$.other.$error"
+        :error-message="validationErrors(v$.other)"
+        :no-error-icon="true"
+        :label="t('signup.source')"
+        name="other"
+        filled
+      >
         <template #prepend>
           <q-icon name="fas fa-question-circle" />
         </template>
       </q-input>
 
-      <form-dropdown-server class="q-mb-xl" form="register" :overwrite-country="countryCode"></form-dropdown-server>
+      <form-dropdown-server
+        class="q-mb-xl"
+        form="register"
+        :overwrite-country="countryCode"
+      ></form-dropdown-server>
 
-      <q-checkbox v-model="v$.terms.$model" :error="v$.terms.$error" :error-messages="validationErrors(v$.terms)"
-        color="primary" :true-value="true" :false-value="false">
+      <q-checkbox
+        v-model="v$.terms.$model"
+        :error="v$.terms.$error"
+        :error-messages="validationErrors(v$.terms)"
+        color="primary"
+        :true-value="true"
+        :false-value="false"
+      >
         <slot>
           {{ t('signup.agree') }}
           <span data-cy="terms" flat class="show-pointer" @click="terms = true">
@@ -45,8 +82,15 @@
       <form-user-newsletter v-model="state.newsletter"></form-user-newsletter>
 
       <q-card-actions>
-        <btn-base type="submit" size="lg" color="secondary" class="full-width text-white" :label="btnLabel"
-          :disable="isSubmitting || message !== ''" :loading="isSubmitting" />
+        <btn-base
+          type="submit"
+          size="lg"
+          color="secondary"
+          class="full-width text-white"
+          :label="btnLabel"
+          :disable="isSubmitting || message !== ''"
+          :loading="isSubmitting"
+        />
         <div class="text-center text-primary">
           {{ t('signup.hintPremium') }}
         </div>
@@ -65,7 +109,13 @@
         {{ state.lang?.value === 'de' ? termsDE : termsEN }}
       </q-card-section>
       <q-card-actions align="right">
-        <btn-base v-close-popup flat data-cy="btn-terms" :label="$t('ok')" color="primary" />
+        <btn-base
+          v-close-popup
+          flat
+          data-cy="btn-terms"
+          :label="$t('ok')"
+          color="primary"
+        />
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -194,7 +244,7 @@ watch(state, () => {
   if (state.lang?.value) locale.value = state.lang.value;
 });
 
-async function onSubmit () {
+async function onSubmit() {
   isSubmitting.value = true;
   const isFormCorrect = await v$.value.$validate();
 
@@ -221,7 +271,7 @@ async function onSubmit () {
   return;
 }
 
-async function sendForm (user: any) {
+async function sendForm(user: any) {
   await AuthService.register(user).then(
     (response) => {
       const email = response.email as string;

@@ -1,8 +1,18 @@
 <template>
-  <q-select v-model="modelValue" :options="options" option-value="id" filled class="q-pb-md" :hint="(props.form === 'register'
-    ? $t('server.hint.register')
-    : $t('server.hint.visitor')) + ' ' + $t('server.hint.ping', { ping })
-    ">
+  <q-select
+    v-model="modelValue"
+    :options="options"
+    option-value="id"
+    filled
+    class="q-pb-md"
+    :hint="
+      (props.form === 'register'
+        ? $t('server.hint.register')
+        : $t('server.hint.visitor')) +
+      ' ' +
+      $t('server.hint.ping', { ping })
+    "
+  >
     <template #prepend>
       <q-icon name="fas fa-server" />
     </template>
@@ -35,7 +45,7 @@ watch(modelValue, () => {
 });
 
 updatePing();
-async function updatePing () {
+async function updatePing() {
   ping.value = '...';
   try {
     await backend.ping();
