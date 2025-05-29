@@ -25,6 +25,12 @@ const env = existsSync('.env')
     } as any);
 
 export default defineConfig((ctx) => {
+  /* Exceptions for local development and CSP */
+  const devContentPolicySrc =
+    process.env.BRANCH === 'dev'
+      ? ['ws://localhost:*', 'http://localhost:*', 'https://localhost:*']
+      : [];
+
   return {
     // https://v2.quasar.dev/quasar-cli-vite/prefetch-feature
     // preFetch: true,
@@ -118,6 +124,59 @@ export default defineConfig((ctx) => {
             },
           },
           { server: false },
+        ],
+
+        [
+          'vite-plugin-csp-guard',
+          {
+            dev: {
+              run: true,
+              outlierSupport: ['vue', 'tailwind', 'scss'],
+            },
+            policy: {
+              'default-src': [
+                "'self'",
+                'https://*.btree.at',
+                ...devContentPolicySrc,
+              ],
+              'connect-src': [
+                "'self'",
+                'https://*.btree.at',
+                'https://*.paypal.com',
+                'https://*.dropboxapi.com',
+                'https://*.beekeeping-news.com',
+                'https://*.openstreetmap.org',
+                'https://*.arcgisonline.com',
+                'https://*.openweathermap.org',
+                ...devContentPolicySrc,
+              ],
+              'script-src-elem': [
+                "'self'",
+                'https://*.btree.at',
+                'https://*.paypal.com',
+                "'unsafe-inline'",
+              ],
+              'img-src': [
+                "'self'",
+                'data:',
+                'blob:',
+                'https://*.btree.at',
+                'https://*.paypalobjects.com',
+                'https://*.openstreetmap.org',
+                'https://*.arcgisonline.com',
+                'https://*.openweathermap.org',
+                'https://*.inaturalist.org',
+              ],
+              'style-src-elem': ["'self'", "'unsafe-inline'"],
+              'style-src': ["'self'", "'unsafe-inline'"],
+              'font-src': ["'self'", 'https://*.btree.at', 'data:'],
+              'frame-src': ['https://*.meteoblue.com'],
+            },
+            build: {
+              sri: false,
+              outlierSupport: ['vue', 'tailwind', 'scss'],
+            },
+          },
         ],
       ],
     },

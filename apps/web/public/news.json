@@ -3,8 +3,11 @@
     "version": "6.5.X",
     "date": "2025-XX-XX",
     "news": [
+      "FIX Google login link was not working correctly, now it should work again.",
       "FEATURE Show total amount of payments made on the premium page, for the user and globally.",
-      "IMPROVEMENT Send two ping requests on server change to reflect the real ping time."
+      "IMPROVEMENT Send two ping requests on server change to reflect the real ping time.",
+      "UPGRADE Updated server to ubuntu 22.04 LTS.",
+      "SECURITY Added more script content security policies."
     ]
   },
   {
