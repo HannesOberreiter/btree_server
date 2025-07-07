@@ -9,7 +9,7 @@ export async function createOrder(
   quantity: number,
 ) {
   const stripe = new Stripe(stripeSecret, {
-    apiVersion: '2024-04-10',
+    apiVersion: '2025-03-31.basil',
     typescript: true,
   });
   const session = await stripe.checkout.sessions.create({

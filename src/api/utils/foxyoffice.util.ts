@@ -1,4 +1,5 @@
 import {
+  env,
   foxyOfficeKey,
   foxyOfficeUrl,
   serverLocation,
@@ -47,7 +48,7 @@ export async function createInvoice(
   mail: string,
   price: number,
   amount: number,
-  type: 'PayPal' | 'Stripe',
+  type: 'PayPal' | 'Stripe' | 'Mollie',
 ) {
   try {
     const latestInvoice = await getLatestInvoice();
@@ -95,29 +96,36 @@ export async function createInvoice(
       }
     }
 
-    const response = await fetch(buildBaseUrl('billing/api/addInvoice'), {
-      method: 'POST',
-      body: form,
-    });
+    if (env === 'production') {
+      const response = await fetch(buildBaseUrl('billing/api/addInvoice'), {
+        method: 'POST',
+        body: form,
+      });
 
-    const result = await response.text();
-
-    if (response.status === 200) {
-      MailService.getInstance().sendRawMail(
-        'office@btree.at',
-        'New invoice created',
-        `FoxyOfficeResponse: ${
-          result
-        }\n\n`
-        + `InvoiceNumber: ${
-          JSON.stringify(latestInvoice)
-        }\n\n`
-        + `CustomerMail: ${
-          JSON.stringify(mail)
-        }\n\n`
-        + `Server: ${
-          serverLocation}`,
-      );
+      const result = await response.text();
+      if (response.status === 200) {
+        MailService.getInstance().sendRawMail(
+          'office@btree.at',
+          'New invoice created',
+          `FoxyOfficeResponse: ${
+            result
+          }\n\n`
+          + `InvoiceNumber: ${
+            JSON.stringify(latestInvoice)
+          }\n\n`
+          + `CustomerMail: ${
+            JSON.stringify(mail)
+          }\n\n`
+          + `Server: ${
+            serverLocation}`,
+        );
+      }
+    }
+    else {
+      Logger.getInstance().log('info', 'FoxyOffice Invoice Data', {
+        label: 'FoxyOffice',
+        data,
+      });
     }
   }
   catch (err) {

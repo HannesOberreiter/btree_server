@@ -81,7 +81,7 @@ export async function limitScale(user_id: number) {
   }
 }
 
-export async function addPremium(user_id: number, months = 12, amount = 0, type: undefined | 'paypal' | 'promo' | 'stripe') {
+export async function addPremium(user_id: number, months = 12, amount = 0, type: undefined | 'paypal' | 'promo' | 'stripe' | 'mollie') {
   return await Company.transaction(async (trx) => {
     const company = await Company.query(trx).select('paid').findById(user_id);
     const newPaid

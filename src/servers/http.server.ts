@@ -23,30 +23,24 @@ export class HTTPServer {
     this.http = this.app.server;
   }
 
-  start(): void {
+  async start(): Promise<void> {
     try {
       const app = this.app;
       const logger = this.logger;
       const containerHost = isContainer ? '0.0.0.0' : 'localhost';
-      app.listen(
+      const address = await app.listen(
         {
           port,
           host: containerHost,
         },
-        (err, address) => {
-          if (err) {
-            logger.log('error', 'Server creation error', { err });
-            process.exit(1);
-          }
-          if (env !== ENVIRONMENT.test) {
-            logger.log(
-              'debug',
-              `HTTP(S) server is now running on ${address} (${env})`,
-              {},
-            );
-          }
-        },
       );
+      if (env !== ENVIRONMENT.test) {
+        logger.log(
+          'debug',
+          `HTTP(S) server is now running on ${address} (${env})`,
+          {},
+        );
+      }
     }
     catch (error) {
       this.logger.log('error', 'Failed to create server', error);

@@ -32,6 +32,7 @@ import { QueenRace } from '../models/option/queen_race.model.js';
 import { TreatmentDisease } from '../models/option/treatment_disease.model.js';
 import { TreatmentType } from '../models/option/treatment_type.model.js';
 import { TreatmentVet } from '../models/option/treatment_vet.model.js';
+import { Payment } from '../models/payment.model.js';
 import { Promo } from '../models/promos.model.js';
 import { Queen } from '../models/queen.model.js';
 import { Rearing } from '../models/rearing/rearing.model.js';
@@ -310,6 +311,34 @@ export default class CompanyController {
     });
 
     return { name };
+  }
+
+  /**
+   * @description Basic payment statistics for the user and global.
+   */
+  static async getPayments(req: FastifyRequest, _reply: FastifyReply) {
+    const user_id = req.session.user.user_id;
+    const paymentsUser = await Payment.query()
+      .select('id', 'date', 'amount', 'months')
+      .where('user_id', user_id)
+      .orderBy('date', 'desc');
+
+    const paymentsCountCurrentYear = await Payment.query()
+      .count('id as count')
+      .whereRaw('YEAR(date) = YEAR(CURDATE())');
+
+    const paymentsCountLastYear = await Payment.query()
+      .count('id as count')
+      .whereRaw('YEAR(date) = YEAR(CURDATE()) - 1');
+
+    return {
+      company: {
+        count: paymentsUser.length,
+        months: paymentsUser.reduce((acc, payment) => acc + payment.months, 0),
+      },
+      countCurrentYear: (paymentsCountCurrentYear[0] as any).count as number,
+      countLastYear: (paymentsCountLastYear[0] as any).count as number,
+    };
   }
 }
 

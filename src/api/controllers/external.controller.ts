@@ -11,6 +11,7 @@ import {
 } from '../../config/environment.config.js';
 import { Logger } from '../../services/logger.service.js';
 import { MailService } from '../../services/mail.service.js';
+import { User } from '../models/user.model.js';
 import { getCompany } from '../utils/api.util.js';
 import {
   getMovements,
@@ -20,6 +21,7 @@ import {
   getTodos,
 } from '../utils/calendar.util.js';
 import { createInvoice } from '../utils/foxyoffice.util.js';
+import { getPayment } from '../utils/mollie.util.js';
 import { addPremium, isPremium } from '../utils/premium.util.js';
 
 export default class ExternalController {
@@ -139,6 +141,60 @@ export default class ExternalController {
       }
       await addPremium(user_id, 12 * years, amount, 'stripe');
       createInvoice(object.customer_details.email, amount, years, 'Stripe');
+    }
+    return {};
+  }
+
+  /**
+   * @see https://docs.mollie.com/reference/webhooks
+   */
+  static async mollieWebhook(req: FastifyRequest, _reply: FastifyReply) {
+    const event = req.body as {
+      id?: string
+    };
+    if (!event || !event.id) {
+      throw new httpErrors.BadRequest('Missing paymentId');
+    }
+
+    const payment = await getPayment(event.id);
+
+    /* @see https://docs.mollie.com/docs/status-change */
+    req.log.info({
+      paymentId: event.id,
+      status: payment.status,
+      payment: payment.statusReason ? payment.statusReason : 'No reason provided',
+      meta: payment.metadata,
+    }, `Mollie Payment ${payment.status}`);
+
+    if (payment.status === 'failed') {
+      // send mail to admin
+      await MailService.getInstance().sendRawMail(
+        'office@btree.at',
+        'Failed Mollie Payment',
+        `Payment ${payment.id} failed with status: ${payment.status} and reason: ${payment.statusReason}`,
+      );
+    }
+    else if (payment.status === 'paid') {
+      const reference = payment.metadata as {
+        user_id: number
+        bee_id: number
+        quantity: number // years
+        server: string
+      };
+      if (reference && reference.user_id) {
+        const user_id = reference.user_id;
+        const years = reference.quantity ?? 1;
+        const price = Number.parseFloat(payment.amount.value);
+        await addPremium(user_id, 12 * years, price, 'mollie');
+        const bee_id = reference.bee_id;
+        const user = await User.query().select('email').findById(bee_id);
+        await createInvoice(
+          user.email,
+          price,
+          years,
+          'Mollie',
+        );
+      }
     }
     return {};
   }
