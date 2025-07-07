@@ -5,6 +5,7 @@ import { WizBee } from '../../services/wizbee.service.js';
 import { Apiary } from '../models/apiary.model.js';
 import { WizBeeToken } from '../models/wizbee_token.model.js';
 import { createInvoice } from '../utils/foxyoffice.util.js';
+import { createOrder as mollieCreateOrder } from '../utils/mollie.util.js';
 import {
   capturePayment,
   createOrder as paypalCreateOrder,
@@ -106,6 +107,20 @@ export default class ServiceController {
       body.quantity,
     );
     return session;
+  }
+
+  static async mollieCreateOrder(req: FastifyRequest, _reply: FastifyReply) {
+    const body = req.body as any;
+    const order = await mollieCreateOrder(
+      req.session.user.user_id,
+      req.session.user.bee_id,
+      body.amount,
+      body.quantity,
+    );
+    if (!order || !order.id) {
+      throw new httpErrors.InternalServerError('Could not create order');
+    }
+    return { url: order._links.checkout.href, id: order.id };
   }
 
   /**

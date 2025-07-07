@@ -7,9 +7,11 @@ import fastifyHelmet from '@fastify/helmet';
 import fastifyMultipart from '@fastify/multipart';
 import fastifyRateLimit from '@fastify/rate-limit';
 import fastifySession from '@fastify/session';
-import RedisStore from 'connect-redis';
+import { RedisStore } from 'connect-redis';
 import fastify from 'fastify';
 import {
+  hasZodFastifySchemaValidationErrors,
+  isResponseSerializationError,
   serializerCompiler,
   validatorCompiler,
 } from 'fastify-type-provider-zod';
@@ -44,7 +46,7 @@ export class Application {
   private init(): void {
     this.logger = Logger.getInstance();
     this.app = fastify({
-      logger: this.logger.pino,
+      loggerInstance: this.logger.pino,
       disableRequestLogging: false,
       trustProxy: true,
       bodyLimit: 1048576 * 50, // 50 MB
@@ -97,8 +99,14 @@ export class Application {
       // https://github.com/expressjs/cors/issues/262
       if (!req.headers.origin) {
         if (req.headers.referer) {
-          const url = new URL(req.headers.referer);
-          req.headers.origin = url.origin;
+          try {
+            const url = new URL(req.headers.referer);
+            req.headers.origin = url.origin;
+          }
+          catch (e) {
+            Logger.getInstance().pino.error(e, 'Error parsing referer');
+            req.headers.origin = req.headers?.host ?? '';
+          }
         }
         else if (req.headers.host) {
           req.headers.origin = req.headers.host;
@@ -109,7 +117,7 @@ export class Application {
 
       const isExternal
         = req.url.includes('external')
-        || req.url.includes('auth/google/callback');
+          || req.url.includes('auth/google/callback');
 
       if (isExternal || env === ENVIRONMENT.development) {
         reply.header('Access-Control-Allow-Origin', '*');
@@ -189,23 +197,53 @@ export class Application {
      * @description Global logger
      */
     this.app.setErrorHandler(function (error, request, reply) {
-      if (error instanceof ZodError) {
+      if (hasZodFastifySchemaValidationErrors(error)) {
         request.log.error(
           {
             user: request?.session?.user,
             req: request,
-            error: error.issues,
+            error: error.validation,
             path: request.url,
           },
           'Zod validation error',
         );
-        reply.status(400).send({
-          statusCode: 400,
+        return reply.code(400).send({
           error: 'Bad Request',
-          issues: error.issues,
+          message: 'Request doesn\'t match the schema',
+          statusCode: 400,
+          issues: error.validation,
+          details: {
+            issues: error.validation,
+            method: request.method,
+            url: request.url,
+          },
         });
-        return;
       }
+
+      if (isResponseSerializationError(error)) {
+        request.log.error(
+          {
+            user: request?.session?.user,
+            req: request,
+            error: error.cause,
+            path: request.url,
+            method: error.method,
+          },
+          'Zod serialization error',
+        );
+        return reply.code(500).send({
+          error: 'Internal Server Error',
+          message: 'Response doesn\'t match the schema',
+          statusCode: 500,
+          issues: error.cause.issues,
+          details: {
+            issues: error.cause.issues,
+            method: error.method,
+            url: error.url,
+          },
+        });
+      }
+
       const e = checkMySQLError(error);
       this.log.error(
         {

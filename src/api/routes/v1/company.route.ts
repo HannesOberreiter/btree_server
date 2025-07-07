@@ -78,5 +78,11 @@ export default function routes(
     CompanyController.import,
   );
 
+  server.get(
+    '/payments',
+    { preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]) },
+    CompanyController.getPayments,
+  );
+
   done();
 }

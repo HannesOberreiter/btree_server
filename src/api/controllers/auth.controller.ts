@@ -293,7 +293,7 @@ export default class AuthController {
       req.log.error(e);
       throw httpErrors[500]('Failed to create session');
     }
-    reply.redirect(`${frontend}/visitor/login&server=${serverLocation}`);
+    reply.redirect(`${frontend}/visitor/login?server=${serverLocation}`);
     return reply;
   }
 }

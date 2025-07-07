@@ -86,6 +86,8 @@ const paypalBase
 
 const stripeSecret = process.env.STRIPE_SECRET_KEY;
 
+const mollieApiKey = process.env.MOLLIE_API_KEY;
+
 const discourseSecret = process.env.DISCOURSE_SSO;
 
 const foxyOfficeKey = process.env.FOXY_OFFICE_KEY;
@@ -184,8 +186,8 @@ const mailConfig = {
       process.env.MAIL_DKIM_PRIVATE === 'false'
         ? ''
         : Buffer.from(process.env.MAIL_DKIM_PRIVATE, 'base64').toString(
-          'ascii',
-        ),
+            'ascii',
+          ),
   },
 };
 
@@ -222,6 +224,7 @@ export {
   knexConfig,
   mailConfig,
   meteoblueKey,
+  mollieApiKey,
   openAI,
   paypalAppSecret,
   paypalBase,
