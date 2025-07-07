@@ -36,7 +36,7 @@
             switch-marker-labels-side
           >
           </q-slider>
-          <div class="row payment">
+          <div class="row">
             <div class="col-12">
               <q-input
                 v-model.number="donation"
@@ -106,7 +106,7 @@
               ></div>
             </div>
           </div>
-          <div class="text-center payment q-col-gutter-y-sm">
+          <div class="text-center q-col-gutter-y-sm">
             <q-tabs
               v-model="paymentTab"
               dense
@@ -167,13 +167,13 @@
                 <btn-base
                   label="office@btree.at"
                   icon="fas fa-envelope"
-                  color="black"
+                  color="grey"
                   :href="mailTo"
                 >
                 </btn-base>
                 <btn-base
                   icon="fas fa-ticket"
-                  color="black"
+                  color="grey"
                   :label="$t('coupon')"
                   @click="payCoupon"
                 ></btn-base>
@@ -460,10 +460,3 @@ api
     console.error('Error fetching payments:', error);
   });
 </script>
-
-<style scoped>
-.payment {
-  max-width: 500px;
-  margin: 0 auto;
-}
-</style>
