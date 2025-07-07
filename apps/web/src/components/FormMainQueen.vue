@@ -19,7 +19,7 @@
         icon="fas fa-passport"
         class="q-mb-sm"
         :hint="isEdit ? '' : $t('lastAdded') + ': ' + lastNames"
-        :max-valid="24"
+        :max-valid="36"
       ></form-input-text>
       <div v-if="!isEdit" class="col-1 text-center">
         <btn-base
@@ -137,7 +137,7 @@
         class="q-mb-sm"
         :values="values"
         :reset="reset"
-        :max-valid="24"
+        :max-valid="36"
         :hint="$t('queenMotherInfo')"
       ></form-input-text>
     </div>

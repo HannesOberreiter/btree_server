@@ -18,7 +18,7 @@
         name="hive"
         icon="fas fa-passport"
         :hint="isEdit ? '' : $t('lastAdded') + ': ' + lastNames"
-        :max-valid="24"
+        :max-valid="36"
       ></form-input-text>
       <div v-if="!isEdit" class="col-1 text-center">
         <btn-base

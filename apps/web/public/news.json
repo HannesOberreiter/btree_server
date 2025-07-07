@@ -9,6 +9,7 @@
       "FEATURE Show total amount of payments made on the premium page, for the user and globally.",
       "FEATURE Added Mollie as an alternative payment provider which is from the Netherlands and supports many European countries.",
       "FEATURE PWA installation can now be triggered on the settings page if supported by the browser.",
+      "FEATURE Queen and Hive name now allow up to 36 characters (from 24).",
       "IMPROVEMENT Send two ping requests on server change to reflect the real ping time.",
       "UPGRADE Updated server to ubuntu 22.04 LTS.",
       "SECURITY Added more script content security policies."
