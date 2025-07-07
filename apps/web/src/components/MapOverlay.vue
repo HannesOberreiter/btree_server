@@ -7,7 +7,7 @@
     :max-zoom="zoomMax"
   ></l-tile-layer>
   <l-tile-layer
-    url="//server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+    url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
     layer-type="base"
     name="Esri"
     attribution="&copy; <a href='http://www.esri.com/'>Esri</a>, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community"
@@ -16,7 +16,7 @@
   ></l-tile-layer>
   <template v-if="paidStatus.status">
     <l-tile-layer
-      :url="`//tile.openweathermap.org/map/precipitation_new/{z}/{x}/{y}.png?appid=${OPENWEATHER_API}`"
+      :url="`https://tile.openweathermap.org/map/precipitation_new/{z}/{x}/{y}.png?appid=${OPENWEATHER_API}`"
       name="Perception"
       attribution="| Weather data &copy; <a href='https://openweathermap.org'>OpenWeatherMap</a>"
       layer-type="overlay"
@@ -24,7 +24,7 @@
       :visible="false"
     ></l-tile-layer>
     <l-tile-layer
-      :url="`//tile.openweathermap.org/map/temp_new/{z}/{x}/{y}.png?appid=${OPENWEATHER_API}`"
+      :url="`https://tile.openweathermap.org/map/temp_new/{z}/{x}/{y}.png?appid=${OPENWEATHER_API}`"
       name="Temperature"
       attribution="| Weather data &copy; <a href='https://openweathermap.org'>OpenWeatherMap</a>"
       layer-type="overlay"

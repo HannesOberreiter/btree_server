@@ -83,12 +83,12 @@ function setValues() {
 
 function setOptions(id = '') {
   if (multipleValues.value) editValues(true);
-  else if (id === '') modelValue.value = OPTIONS[0];
+  else if (id === '') modelValue.value = OPTIONS[0] as string;
   else {
     const res = filter(OPTIONS, (obj) => {
       return obj === id;
     });
-    modelValue.value = res[0];
+    modelValue.value = res[0] as string;
   }
 }
 

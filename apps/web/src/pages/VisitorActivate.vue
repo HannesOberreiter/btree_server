@@ -9,14 +9,30 @@
         Vielen Dank für deine Registrierung, bitte aktiviere noch deinen
         Account.
       </p>
-      <q-input v-model="v.resetKey.$model" :error="v.resetKey.$error" :error-messages="validationErrors(v.resetKey)"
-        name="resetKey" :label="t('activateUser.label')" required disabled readonly append-inner-icon="fas fa-lock">
+      <q-input
+        v-model="v.resetKey.$model"
+        :error="v.resetKey.$error"
+        :error-messages="validationErrors(v.resetKey)"
+        name="resetKey"
+        :label="t('activateUser.label')"
+        required
+        disabled
+        readonly
+        append-inner-icon="fas fa-lock"
+      >
       </q-input>
       <form-dropdown-server></form-dropdown-server>
 
       <q-card-actions class="">
-        <btn-base type="submit" size="lg" color="secondary" class="full-width text-white" :label="t(btnLabel)"
-          :disable="isSubmitting || message !== ''" :loading="isSubmitting" />
+        <btn-base
+          type="submit"
+          size="lg"
+          color="secondary"
+          class="full-width text-white"
+          :label="t(btnLabel)"
+          :disable="isSubmitting || message !== ''"
+          :loading="isSubmitting"
+        />
       </q-card-actions>
     </q-form>
     <p v-if="message" class="text-primary text-center">
@@ -69,7 +85,7 @@ const rules = {
 
 const v = useVuelidate(rules, state);
 
-async function onSubmit () {
+async function onSubmit() {
   isSubmitting.value = true;
   const isFormCorrect = await v.value.$validate();
   if (!isFormCorrect) {
@@ -84,7 +100,7 @@ async function onSubmit () {
   return;
 }
 
-async function sendForm (value: any) {
+async function sendForm(value: any) {
   await AuthService.activate(value).then(
     (response) => {
       btnLabel.value = 'success';

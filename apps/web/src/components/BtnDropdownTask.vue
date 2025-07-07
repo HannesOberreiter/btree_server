@@ -1,13 +1,32 @@
 <template>
   <btn-base-group v-if="$q.screen.gt.md">
-    <btn-base v-for="(task, index) in TASKS" :key="index" :icon="task.icon" @click="() => openModal(task)">
+    <btn-base
+      v-for="(task, index) in TASKS"
+      :key="index"
+      :icon="task.icon"
+      @click="() => openModal(task)"
+    >
       <tooltip-base>{{ task.label }}</tooltip-base>
     </btn-base>
   </btn-base-group>
-  <q-btn-dropdown v-else split :icon="currentTask.icon" auto-close stretch no-caps flat
-    @click="() => openModal(currentTask)">
+  <q-btn-dropdown
+    v-else
+    split
+    :icon="currentTask.icon"
+    auto-close
+    stretch
+    no-caps
+    flat
+    @click="() => openModal(currentTask)"
+  >
     <q-list>
-      <q-item v-for="(task, index) in TASKS" :key="index" v-close-popup clickable @click="() => openModal(task)">
+      <q-item
+        v-for="(task, index) in TASKS"
+        :key="index"
+        v-close-popup
+        clickable
+        @click="() => openModal(task)"
+      >
         <q-item-section avatar>
           <q-avatar :icon="task.icon"></q-avatar>
         </q-item-section>
@@ -41,7 +60,7 @@ const TASKS = [
 ];
 const currentTask = ref(TASKS[0]!);
 
-function openModal (task: { label: string; name: string; icon: string }) {
+function openModal(task: { label: string; name: string; icon: string }) {
   currentTask.value = task;
   $q.dialog({
     component: DialogForm,
