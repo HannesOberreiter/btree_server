@@ -2,12 +2,18 @@
   <div width="100%">
     <q-resize-observer @resize="onResize" />
     <div class="col-12">
-      <div ref="container" class="calendar-container text-body1" :style="{ opacity }">
+      <div
+        ref="container"
+        class="calendar-container text-body1"
+        :style="{ opacity }"
+      >
         <full-calendar ref="cal" :options="calendarOptions">
           <template #eventContent="{ timeText, event }">
-            <i v-if="event.extendedProps.table === 'rearing'"
+            <i
+              v-if="event.extendedProps.table === 'rearing'"
               :style="`background-color: ${event.backgroundColor}; color: black;`"
-              :class="event.extendedProps.icon"></i>
+              :class="event.extendedProps.icon"
+            ></i>
             <i v-else :class="event.extendedProps.icon"></i>
             {{ timeText }}
             {{ event.title }}
@@ -87,10 +93,11 @@ const localPerf = useLocalStorage(
 const VIEWS = ['dayGridMonth', 'months', 'dayGridWeek', 'listWeek'] as const;
 
 const localLastView = useLocalStorage<{
-  view: typeof VIEWS[number];
+  view: (typeof VIEWS)[number];
   date: string | undefined;
   dateTimestamp: number;
-}>('calendar-last-view',
+}>(
+  'calendar-last-view',
   {
     view: 'dayGridMonth',
     date: undefined,
@@ -199,13 +206,13 @@ const refetchSource = (event: string) => {
   source.refetch();
 };
 
-function onResize (_size: any) {
+function onResize(_size: any) {
   if (cal.value?.getApi()) {
     cal.value.getApi().updateSize();
   }
 }
 
-function handleEventsChange (changeInfo: EventChangeArg) {
+function handleEventsChange(changeInfo: EventChangeArg) {
   // Single Day Events no Enddate possible
   if (
     changeInfo.event.extendedProps.table === 'todo' ||
@@ -263,7 +270,7 @@ function handleEventsChange (changeInfo: EventChangeArg) {
   );
   return true;
 }
-function handleDateClick (selectInfo: DateClickArg) {
+function handleDateClick(selectInfo: DateClickArg) {
   const dateInfo = dayjs(selectInfo.date).format('YYYY-MM-DD');
   if (dateClicked.value === dateInfo) {
     dateClicked.value = null;
@@ -273,7 +280,7 @@ function handleDateClick (selectInfo: DateClickArg) {
     setTimeout(() => (dateClicked.value = null), 550); // Timeout to simulate a double click
   }
 }
-function handleEventClick (clickInfo: EventClickArg) {
+function handleEventClick(clickInfo: EventClickArg) {
   clickInfo.jsEvent.preventDefault(); // don't let the browser navigate
 
   const event = {
@@ -289,9 +296,10 @@ function handleEventClick (clickInfo: EventClickArg) {
 let initialDate = undefined;
 if (
   localLastView.value.date &&
-  Date.now() - localLastView.value.dateTimestamp <= 1000 * 60 * 10) {
+  Date.now() - localLastView.value.dateTimestamp <= 1000 * 60 * 10
+) {
   initialDate = localLastView.value.date;
-};
+}
 
 const calendarOptions = reactive({
   eventSources: eventsSourceActive,
@@ -328,7 +336,7 @@ const calendarOptions = reactive({
       },
     },
     dayGridWeek: {
-      dayMaxEvents: true
+      dayMaxEvents: true,
     },
     month: {
       titleFormat: {
@@ -375,11 +383,14 @@ const calendarOptions = reactive({
   eventResizeStart: () => (eventDrag.value = true),
   eventResizeStop: () => (eventDrag.value = false),
   datesSet: function (dateInfo) {
-    localLastView.value.view = dateInfo.view.type as typeof VIEWS[number];
+    localLastView.value.view = dateInfo.view.type as (typeof VIEWS)[number];
     localLastView.value.date = dateInfo.startStr;
     if (dateInfo.endStr) {
       localLastView.value.date = dayjs(dateInfo.startStr)
-        .add(dayjs(dateInfo.endStr).diff(dayjs(dateInfo.startStr)) / 2, 'milliseconds')
+        .add(
+          dayjs(dateInfo.endStr).diff(dayjs(dateInfo.startStr)) / 2,
+          'milliseconds',
+        )
         .toISOString();
     }
     localLastView.value.dateTimestamp = Date.now();

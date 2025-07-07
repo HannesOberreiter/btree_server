@@ -82,11 +82,15 @@ export const useKeyTable = (page: Ref<Pagination>) => {
 };
 
 export const useKeyNavDetail = (fn: (direction: 'prev' | 'next') => void) => {
-  onKeyStroke('ArrowLeft', () => {
+  onKeyStroke('ArrowLeft', (e) => {
+    if (preventKey(e)) return;
+    e.preventDefault();
     fn('prev');
   });
 
-  onKeyStroke('ArrowRight', () => {
+  onKeyStroke('ArrowRight', (e) => {
+    if (preventKey(e)) return;
+    e.preventDefault();
     fn('next');
   });
 };

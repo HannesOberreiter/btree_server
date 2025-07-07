@@ -12,9 +12,17 @@
         <q-scroll-area style="height: 50vh; width: 500px; max-width: 80vh">
           <div id="printContainer">
             <div class="row q-col-gutter-xs">
-              <div v-for="(item, index) in items" :key="index" class="col-4 text-center">
+              <div
+                v-for="(item, index) in items"
+                :key="index"
+                class="col-4 text-center"
+              >
                 <figure>
-                  <img :id="`qr-code-${item.id}`" :src="item.image" :alt="`b.tree - QR Code - ${item.name}`" />
+                  <img
+                    :id="`qr-code-${item.id}`"
+                    :src="item.image"
+                    :alt="`b.tree - QR Code - ${item.name}`"
+                  />
                   <figcaption>{{ item.name }}</figcaption>
                 </figure>
                 <tooltip-base>{{ item.url }}</tooltip-base>
@@ -24,7 +32,14 @@
         </q-scroll-area>
       </q-card-section>
       <q-card-actions align="right">
-        <btn-base flat :loading="loading" :label="$t('print')" color="primary" icon="fas fa-print" @click="onPrint" />
+        <btn-base
+          flat
+          :loading="loading"
+          :label="$t('print')"
+          color="primary"
+          icon="fas fa-print"
+          @click="onPrint"
+        />
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -64,12 +79,12 @@ watch(
   { immediate: true },
 );
 
-function createUrl (id: string) {
+function createUrl(id: string) {
   const baseUrl = window.location.origin;
   return baseUrl + '/detail/hive/' + id;
 }
 
-async function generateQR (url: string) {
+async function generateQR(url: string) {
   try {
     return await QRCode.toDataURL(url);
   } catch (err) {
@@ -77,7 +92,7 @@ async function generateQR (url: string) {
   }
 }
 
-function onPrint () {
+function onPrint() {
   setTimeout(() => {
     const printWindow = window.open('', '_blank', 'height=200,width=400')!;
     printWindow.document.write('<html>');

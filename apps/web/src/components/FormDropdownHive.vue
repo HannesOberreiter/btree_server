@@ -1,31 +1,66 @@
 <template>
-  <q-select ref="apiarySelect" v-model="apiary" :label="$t('quicktool.apiary')" name="apiary"
-    :loading="isLoadingApiary || isLoadingHive" :disable="isLoadingApiary || isLoadingHive" :options="optionsApiary"
-    :clearable="true" multiple options-dense :use-input="!$q.platform.is.mobile || localPerf['hive-use-input']"
-    @filter="filterApiary" @clear="clearApiary" @update:model-value="selectApiary">
+  <q-select
+    ref="apiarySelect"
+    v-model="apiary"
+    :label="$t('quicktool.apiary')"
+    name="apiary"
+    :loading="isLoadingApiary || isLoadingHive"
+    :disable="isLoadingApiary || isLoadingHive"
+    :options="optionsApiary"
+    :clearable="true"
+    multiple
+    options-dense
+    :use-input="!$q.platform.is.mobile || localPerf['hive-use-input']"
+    @filter="filterApiary"
+    @clear="clearApiary"
+    @update:model-value="selectApiary"
+  >
     <template #before>
       <q-icon name="fas fa-location-dot"></q-icon>
     </template>
     <template #after>
-      <q-btn v-if="$q.platform.is.mobile" icon="fas fa-keyboard" flat round dense
+      <q-btn
+        v-if="$q.platform.is.mobile"
+        icon="fas fa-keyboard"
+        flat
+        round
+        dense
         :class="localPerf['hive-use-input'] ? 'text-green-8' : ''"
-        @click="localPerf['hive-use-input'] = !localPerf['hive-use-input']">
+        @click="localPerf['hive-use-input'] = !localPerf['hive-use-input']"
+      >
         <tooltip-base>{{ t('allowKeyboardOnSelection') }}</tooltip-base>
       </q-btn>
     </template>
   </q-select>
-  <q-select v-model="state.hive" :error="v.hive.$error" :error-message="validationErrors(v.hive)" :no-error-icon="true"
-    :label="$t('hive')" :loading="isLoadingApiary && isLoadingHive" :disable="isLoadingApiary && isLoadingHive"
-    :options="optionsHive" :option-label="(val) => {
+  <q-select
+    v-model="state.hive"
+    :error="v.hive.$error"
+    :error-message="validationErrors(v.hive)"
+    :no-error-icon="true"
+    :label="$t('hive')"
+    :loading="isLoadingApiary && isLoadingHive"
+    :disable="isLoadingApiary && isLoadingHive"
+    :options="optionsHive"
+    :option-label="
+      (val) => {
         if (!val.modus) {
           return val.label + ' ' + $t('inactive');
         } else {
           return val.label;
         }
       }
-      " clearable counter multiple :use-chips="!$q.platform.is.mobile"
-    :use-input="!$q.platform.is.mobile || localPerf['hive-use-input']" filled class="hive-select" data-cy="select-hive"
-    @update:model-value="selectHive" @filter="filterHive">
+    "
+    clearable
+    counter
+    multiple
+    :use-chips="!$q.platform.is.mobile"
+    :use-input="!$q.platform.is.mobile || localPerf['hive-use-input']"
+    filled
+    class="hive-select"
+    data-cy="select-hive"
+    @update:model-value="selectHive"
+    @filter="filterHive"
+  >
     <template #before>
       <q-icon name="fas fa-house"></q-icon>
     </template>
@@ -109,7 +144,7 @@ const clearApiary = () => {
   state.hive = null;
 };
 
-function selectApiary (val: any) {
+function selectApiary(val: any) {
   if (apiarySelect.value) {
     apiarySelect.value.hidePopup();
     apiarySelect.value.blur();
@@ -124,11 +159,11 @@ function selectApiary (val: any) {
   });
 }
 
-function selectHive () {
+function selectHive() {
   apiary.value = null;
 }
 
-function filterHive (val: string, update: any, _abort: any) {
+function filterHive(val: string, update: any, _abort: any) {
   if (val === '') {
     update(
       () => {
@@ -173,14 +208,14 @@ function filterHive (val: string, update: any, _abort: any) {
   }
 }
 
-function setSelected () {
+function setSelected() {
   if (props.selected && hives.value)
     state.hive = filter(hives.value.results, (obj) =>
       props.selected.includes(obj.id),
     );
 }
 
-function filterApiary (val: any, update: any, _abort: any) {
+function filterApiary(val: any, update: any, _abort: any) {
   const data = filter(apiaries.value.results, (obj) => obj.hive_count !== null);
 
   if (apiaries.value.results.length > 0 && val) {
@@ -295,13 +330,13 @@ watch(formEvent, (val) => {
   }
 });
 
-function findHives (hives: any, id: string, selected_hives: any) {
+function findHives(hives: any, id: string, selected_hives: any) {
   const found = filter(hives, (obj) => id === String(obj.id)) as any;
   const double = filter(selected_hives, (obj) => id == obj.id);
   return { found: found, double: double };
 }
 
-function findApiaries (apiaries: any, id: string, selected_apiaries: any) {
+function findApiaries(apiaries: any, id: string, selected_apiaries: any) {
   const found = filter(apiaries, (obj) => id === String(obj.id)) as any;
   const double = filter(selected_apiaries, (obj) => id == obj.id);
   return { found: found, double: double };

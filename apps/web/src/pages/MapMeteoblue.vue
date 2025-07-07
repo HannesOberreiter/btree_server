@@ -47,7 +47,7 @@ const referUrl = computed(() => {
 
 watchOnce(coords, (val) => {
   if (val) pause();
-  finalCoords.value = val;
+  finalCoords.value = val as GeolocationCoordinates;
 });
 
 const widgetUrl = computed(() => {

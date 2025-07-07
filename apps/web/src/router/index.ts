@@ -58,6 +58,11 @@ export default route(function ({ store }) {
       console.warn('User not logged in, redirect from', to.path);
       const query = to.query;
       next({ name: 'login', query: { next: to.path, ...query } });
+    } else if (
+      to.matched.some((record) => record.meta.premium && !storeUser.isPremium)
+    ) {
+      console.warn('No premium user redirect');
+      next({ name: 'login' });
     } else {
       if (
         to.matched.some((record) => record.meta.auth) &&
@@ -73,13 +78,6 @@ export default route(function ({ store }) {
       if (!(from.name === 'new-quicktool' && to.name === 'new-quicktool')) {
         routerStore.previous = from.name as any;
         routerStore.params = from.params as any;
-      }
-
-      if (
-        to.matched.some((record) => record.meta.premium && !storeUser.isPremium)
-      ) {
-        console.warn('No premium user redirect');
-        next({ name: 'login' });
       }
       next();
     }

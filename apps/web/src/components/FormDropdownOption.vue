@@ -1,18 +1,39 @@
 <template>
-  <q-select v-model="modelValue" :label="disable ? $t(label) + ' - ' + $t('multipleValues') : $t(label)" :name="label"
-    :loading="isLoading" :disable="isLoading || disable" :options="options" :hint="hint" option-value="id"
-    :use-input="localPerf[`dropdown-${table}-use-input`]" :clearable="localPerf[`dropdown-${table}-use-input`]" filled
-    class="q-pb-sm" @filter="filterSelection">
+  <q-select
+    v-model="modelValue"
+    :label="disable ? $t(label) + ' - ' + $t('multipleValues') : $t(label)"
+    :name="label"
+    :loading="isLoading"
+    :disable="isLoading || disable"
+    :options="options"
+    :hint="hint"
+    option-value="id"
+    :use-input="localPerf[`dropdown-${table}-use-input`]"
+    :clearable="localPerf[`dropdown-${table}-use-input`]"
+    filled
+    class="q-pb-sm"
+    @filter="filterSelection"
+  >
     <template v-if="showBefore" #before>
       <q-icon v-if="!multipleValues" name="far fa-square-caret-down"></q-icon>
-      <btn-multiple-values v-else :disable="disable" @click="editValues(!disable)"></btn-multiple-values>
+      <btn-multiple-values
+        v-else
+        :disable="disable"
+        @click="editValues(!disable)"
+      ></btn-multiple-values>
     </template>
     <template #after>
-      <q-btn icon="fas fa-keyboard" flat round dense
-        :class="localPerf[`dropdown-${table}-use-input`] ? 'text-green-8' : ''" @click="
+      <q-btn
+        icon="fas fa-keyboard"
+        flat
+        round
+        dense
+        :class="localPerf[`dropdown-${table}-use-input`] ? 'text-green-8' : ''"
+        @click="
           localPerf[`dropdown-${table}-use-input`] =
-          !localPerf[`dropdown-${table}-use-input`]
-          ">
+            !localPerf[`dropdown-${table}-use-input`]
+        "
+      >
         <tooltip-base>{{ t('allowKeyboardOnSelection') }}</tooltip-base>
       </q-btn>
     </template>
@@ -128,7 +149,7 @@ watch(modelValue, () => {
   }
 });
 
-function onNewOptionDialog () {
+function onNewOptionDialog() {
   $q.dialog({
     component: DialogForm,
     componentProps: {
@@ -141,7 +162,7 @@ function onNewOptionDialog () {
   });
 }
 
-function filterSelection (val: string, update: any, abort: any) {
+function filterSelection(val: string, update: any, abort: any) {
   if (!localPerf.value[`dropdown-${props.table}-use-input`]) abort();
   if (val === '') {
     update(
@@ -194,7 +215,7 @@ function filterSelection (val: string, update: any, abort: any) {
   }
 }
 
-function setValues () {
+function setValues() {
   disable.value = multipleValues.value;
   if (values.value && !isEmpty(values.value)) {
     setOptions(values.value[0][props.tableId]);
@@ -204,7 +225,7 @@ function setValues () {
   keepOptions.value = options.value;
 }
 
-function setNewOptionPlaceholder () {
+function setNewOptionPlaceholder() {
   if (!OPTIONS.includes(props.table as any)) return;
   options.value = [
     ...options.value,
@@ -212,7 +233,7 @@ function setNewOptionPlaceholder () {
   ];
 }
 
-function setOptions (id: string | number = 0) {
+function setOptions(id: string | number = 0) {
   if (!data.value) return;
   if (props.allowEmpty !== '' && props.filterEmpty !== '') {
     options.value = [
@@ -254,7 +275,7 @@ function setOptions (id: string | number = 0) {
   setNewOptionPlaceholder();
 }
 
-function editValues (val: boolean) {
+function editValues(val: boolean) {
   disable.value = val;
   modelValue.value = disable.value ? null : modelValue.value;
 }

@@ -1,5 +1,4 @@
 <template>
-
   <head>
     <title>b.tree - Professional Beekeeping Database</title>
     <meta charset="UTF-8" />
@@ -19,7 +18,6 @@ import { useRouter } from 'vue-router';
 const iframeRef = ref<HTMLIFrameElement | null>(null);
 const router = useRouter();
 
-
 onMounted(() => {
   resizeIframe();
   window.addEventListener('resize', resizeIframe);
@@ -30,12 +28,14 @@ onBeforeUnmount(() => {
 
 useMeta(() => {
   const meta = {
-    title: "b.tree - Professional Beekeeping Database" + `- ${router.currentRoute.value.meta.title}`,
+    title:
+      'b.tree - Professional Beekeeping Database' +
+      `- ${router.currentRoute.value.meta.title}`,
   };
   return meta;
 });
 
-function resizeIframe () {
+function resizeIframe() {
   if (iframeRef.value) {
     iframeRef.value.style.height = `${iframeRef.value.scrollHeight}px`;
   }
