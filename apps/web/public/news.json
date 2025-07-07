@@ -1,7 +1,7 @@
 [
   {
-    "version": "6.5.X",
-    "date": "2025-XX-XX",
+    "version": "6.5.3",
+    "date": "2025-07-07",
     "news": [
       "FIX Virgin table now also can show the inactive (RIP) queens.",
       "FIX Prevent keyboard navigation on detail pages if a text input is focused.",
