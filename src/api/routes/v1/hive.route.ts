@@ -7,7 +7,7 @@ import { Guard } from '../../hooks/guard.hook.js';
 import { numberSchema } from '../../utils/zod.util.js';
 
 const hiveSchema = z.object({
-  name: z.string().min(1).max(24).trim(),
+  name: z.string().min(1).max(36).trim(),
   grouphive: z.number().int().optional().default(0),
   position: z.number().int().optional().default(0),
   note: z.string().max(2000).optional(),
