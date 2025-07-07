@@ -46,9 +46,9 @@ export class Queen extends ExtModel {
     required: ['name'],
     properties: {
       id: { type: 'integer' },
-      name: { type: 'string', minLength: 1, maxLength: 24 },
+      name: { type: 'string', minLength: 1, maxLength: 36 },
       mark_colour: { type: 'string', maxLength: 24 },
-      mother: { type: 'string', maxLength: 24 },
+      mother: { type: 'string', maxLength: 36 },
       date: { type: 'string', format: 'date' },
       move_date: { type: 'string', format: 'iso-date-time' },
       url: { type: 'string', maxLength: 512 },
