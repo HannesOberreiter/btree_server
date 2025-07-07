@@ -3,6 +3,7 @@
     "version": "6.5.X",
     "date": "2025-XX-XX",
     "news": [
+      "FIX Virgin table now also can show the inactive (RIP) queens.",
       "FIX Prevent keyboard navigation on detail pages if a text input is focused.",
       "FIX Google login link was not working correctly, now it should work again.",
       "FEATURE Show total amount of payments made on the premium page, for the user and globally.",

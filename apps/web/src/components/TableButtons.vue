@@ -71,6 +71,7 @@
           'harvest',
           'checkup',
           'queen',
+          'virgin',
         ].includes(table)
       "
       :color="

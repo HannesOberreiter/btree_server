@@ -116,7 +116,7 @@ const visibleColumns = ref(store.value.visible);
 
 const selected = ref<any>([]);
 const rows = ref([]);
-const modus = ref(null);
+const modus = ref(true);
 const deleted = ref(false);
 const filter = ref('');
 
@@ -294,7 +294,7 @@ const {
   q: computed(() => (filter.value ? filter.value : '')),
   filters: '[{"queens.hive_id":"empty"}]',
   deleted: deleted,
-  modus: true,
+  modus: modus,
   latest: null,
   details: true,
 });
