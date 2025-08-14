@@ -3,7 +3,7 @@ import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { z } from 'zod';
 
 import { ROLES } from '../../../config/constants.config.js';
-import { GoogleAuth } from '../../../services/federated.service.js';
+import { AppleAuth, GoogleAuth } from '../../../services/federated.service.js';
 import AuthController from '../../controllers/auth.controller.js';
 import RootController from '../../controllers/root.controller.js';
 import { Guard } from '../../hooks/guard.hook.js';
@@ -125,6 +125,31 @@ export default function routes(
       },
     },
     AuthController.google,
+  );
+
+  server.get('/apple', {}, async () => {
+    const apple = AppleAuth.getInstance();
+    console.log('Apple login URL:', apple.client);
+    try {
+      console.log('Apple state:', await apple.verify(''));
+    }
+    catch (error) {
+      console.error('Error verifying Apple state:', error);
+    }
+    console.log('Apple client:', apple.client);
+    return { url: apple.generateAuthUrl() };
+  });
+
+  server.get(
+    '/apple/callback',
+    {
+      schema: {
+        querystring: z.object({
+          code: z.string(),
+        }),
+      },
+    },
+    AuthController.apple,
   );
 
   server.get(
