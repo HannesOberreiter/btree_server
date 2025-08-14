@@ -2,8 +2,9 @@ import type { FastifyInstance } from 'fastify';
 import { randomUUID } from 'node:crypto';
 import fastifyCompress from '@fastify/compress';
 import fastifyCookie from '@fastify/cookie';
-import fastifyHelmet from '@fastify/helmet';
+import fastifyFormBody from '@fastify/formbody';
 
+import fastifyHelmet from '@fastify/helmet';
 import fastifyMultipart from '@fastify/multipart';
 import fastifyRateLimit from '@fastify/rate-limit';
 import fastifySession from '@fastify/session';
@@ -17,7 +18,6 @@ import {
 } from 'fastify-type-provider-zod';
 import queryString from 'query-string';
 
-import { ZodError } from 'zod';
 import routes from '../api/routes/index.js';
 import { checkMySQLError } from '../api/utils/error.util.js';
 import {
@@ -117,7 +117,8 @@ export class Application {
 
       const isExternal
         = req.url.includes('external')
-          || req.url.includes('auth/google/callback');
+          || req.url.includes('auth/google/callback')
+          || req.url.includes('auth/apple/callback');
 
       if (isExternal || env === ENVIRONMENT.development) {
         reply.header('Access-Control-Allow-Origin', '*');
@@ -185,6 +186,14 @@ export class Application {
     this.app.register(fastifyRateLimit, {
       timeWindow: 1000 * 60, // 1 minute
       max: 1000,
+    });
+
+    /**
+     * @description Parse form data
+     * @see https://github.com/fastify/fastify-formbody
+     */
+    this.app.register(fastifyFormBody, {
+      bodyLimit: 1048576 * 10, // 10 MB
     });
 
     /**

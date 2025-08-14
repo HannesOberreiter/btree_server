@@ -1,12 +1,22 @@
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
-import { z } from 'zod';
 
+import { z } from 'zod';
 import { ROLES } from '../../../config/constants.config.js';
 import { AppleAuth, GoogleAuth } from '../../../services/federated.service.js';
 import AuthController from '../../controllers/auth.controller.js';
 import RootController from '../../controllers/root.controller.js';
 import { Guard } from '../../hooks/guard.hook.js';
+
+export const AppleCallbackSchema = z.object({
+  code: z.string(),
+  id_token: z.string(),
+  state: z.string(),
+  user: z.object({
+    email: z.string().email(),
+  }),
+  error: z.string().optional(),
+});
 
 export default function routes(
   instance: FastifyInstance,
@@ -129,24 +139,14 @@ export default function routes(
 
   server.get('/apple', {}, async () => {
     const apple = AppleAuth.getInstance();
-    console.log('Apple login URL:', apple.client);
-    try {
-      console.log('Apple state:', await apple.verify(''));
-    }
-    catch (error) {
-      console.error('Error verifying Apple state:', error);
-    }
-    console.log('Apple client:', apple.client);
     return { url: apple.generateAuthUrl() };
   });
 
-  server.get(
+  server.post(
     '/apple/callback',
     {
       schema: {
-        querystring: z.object({
-          code: z.string(),
-        }),
+        body: AppleCallbackSchema,
       },
     },
     AuthController.apple,

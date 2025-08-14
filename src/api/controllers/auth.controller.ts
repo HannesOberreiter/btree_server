@@ -2,7 +2,6 @@ import type { FastifyReply, FastifyRequest } from 'fastify';
 import type { federatedUser } from '../../services/federated.service.js';
 import { randomBytes, randomUUID } from 'node:crypto';
 import dayjs from 'dayjs';
-
 import httpErrors from 'http-errors';
 import { ENVIRONMENT } from '../../config/constants.config.js';
 import {
@@ -17,6 +16,7 @@ import { MailService } from '../../services/mail.service.js';
 import { Company } from '../models/company.model.js';
 import { CompanyBee } from '../models/company_bee.model.js';
 import { User } from '../models/user.model.js';
+import { AppleCallbackSchema } from '../routes/v1/auth.route.js';
 import {
   buildUserAgent,
   confirmAccount,
@@ -300,20 +300,27 @@ export default class AuthController {
   static async apple(req: FastifyRequest, reply: FastifyReply) {
     const apple = AppleAuth.getInstance();
     let result: federatedUser;
-    const { code } = req.query as any;
+    const body = AppleCallbackSchema.safeParse(req.body);
+    if (!body.success) {
+      req.log.error({ message: 'Invalid Apple callback body', body });
+      return reply.redirect(
+        `${frontend}/visitor/login?error=oauth&server=${serverLocation}`,
+      );
+    }
+    if (body.data.error) {
+      req.log.error({ message: 'Apple callback error', error: body.data.error });
+      return reply.redirect(
+        `${frontend}/visitor/login?error=oauth&server=${serverLocation}`,
+      );
+    }
 
     try {
-      result = await apple.verify(code);
+      result = await apple.verify(body.data.code);
       if (!result.bee_id) {
-        if (!result.name && !result.email) {
-          throw new Error('No name or email');
-        }
         return reply.redirect(
           encodeURI(
             `${frontend
-            }/visitor/register?name=${
-              result.name
-            }&email=${
+            }/visitor/register?email=${
               result.email
             }&oauth=apple`
             + `&server=${
