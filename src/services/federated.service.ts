@@ -166,10 +166,45 @@ export class AppleAuth {
   }
 
   async verify(code: string): Promise<federatedUser> {
-    const response = await this.client.accessToken(code);
-    const idToken = jwt.decode(response.id_token);
-    if (!idToken || typeof idToken !== 'object' || !idToken.sub || !idToken.email) {
-      throw new Error('Invalid ID token received from Apple');
+    let response;
+    let idToken;
+
+    try {
+      response = await this.client.accessToken(code);
+    }
+    catch (error) {
+      this.logger.log('error', 'Apple accessToken failed', { error, code });
+      throw new Error(`Apple token exchange failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+
+    if (!response.id_token) {
+      this.logger.log('error', 'No id_token in Apple response', { response });
+      throw new Error('No ID token received from Apple');
+    }
+
+    try {
+      idToken = jwt.decode(response.id_token);
+    }
+    catch (error) {
+      this.logger.log('error', 'JWT decode failed', { error, id_token: response.id_token });
+      throw new Error('Failed to decode Apple ID token');
+    }
+
+    if (!idToken || typeof idToken !== 'object') {
+      this.logger.log('error', 'Invalid JWT token structure', { idToken });
+      throw new Error('Invalid ID token structure received from Apple');
+    }
+
+    const payload = idToken as any;
+
+    if (!payload.sub) {
+      this.logger.log('error', 'Missing sub in Apple token', { payload });
+      throw new Error('Missing subject identifier in Apple ID token');
+    }
+
+    if (!payload.email) {
+      this.logger.log('error', 'Missing email in Apple token', { payload });
+      throw new Error('Missing email in Apple ID token');
     }
     return await this.verifyUser(
       idToken.sub!,

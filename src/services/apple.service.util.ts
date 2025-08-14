@@ -77,28 +77,59 @@ export class AppleAuthentication {
         client_secret: token,
       };
 
+      if (this._customConfig?.debug) {
+        console.log('Apple token request payload:', {
+          ...payload,
+          client_secret: '[REDACTED]',
+          code: `${code.substring(0, 20)}...`,
+        });
+      }
+
       const response = await fetch('https://appleid.apple.com/auth/token', {
         method: 'POST',
         headers: { 'content-type': 'application/x-www-form-urlencoded' },
         body: qs.stringify(payload),
       });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      const responseData = await response.json();
+
+      if (this._customConfig?.debug) {
+        console.log('Apple token response:', {
+          status: response.status,
+          statusText: response.statusText,
+          data: responseData,
+        });
       }
 
-      return await response.json();
+      if (!response.ok) {
+        const errorDetails = responseData?.error_description || responseData?.error || 'Unknown error';
+        const errorCode = responseData?.error || 'unknown_error';
+
+        throw new Error(`Apple token request failed (${response.status}): ${errorCode} - ${errorDetails}`);
+      }
+
+      // Check if Apple returned an error in the response body (sometimes they return 200 with error)
+      if (responseData.error) {
+        throw new Error(`Apple OAuth error: ${responseData.error} - ${responseData.error_description || 'No description'}`);
+      }
+
+      return responseData;
     }
     catch (error: any) {
       if (this._customConfig?.debug) {
-        console.error(error);
-        throw new Error(`AppleAuth Error - An error occurred while getting response from Apple's servers: ${error} - ${error?.response?.data?.error_description}`);
+        console.error('Apple accessToken error details:', {
+          error: error.message,
+          code: code ? `${code.substring(0, 20)}...` : 'undefined',
+          config: {
+            client_id: this._config.client_id,
+            redirect_uri: this._config.redirect_uri,
+            team_id: this._config.team_id,
+            key_id: this._config.key_id,
+          },
+        });
       }
-      const responseData = error.response?.data;
-      throw new Error(
-        `AppleAuth Error - An error occurred while getting response from Apple's servers: 
-                        ${error}${responseData ? (` | ${responseData}`) : ''}`,
-      );
+
+      throw error;
     }
   }
 
