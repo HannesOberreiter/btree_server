@@ -11,9 +11,9 @@ function buildUserAgent(req: FastifyRequest) {
     const agent = UAParser(req.headers['user-agent']);
     const userAgentInsert
       = agent.os.name
-      + agent.browser.name
-      + agent.device.vendor
-      + agent.device.model;
+        + agent.browser.name
+        + agent.device.vendor
+        + agent.device.model;
     return userAgentInsert.length > 65
       ? userAgentInsert.substring(0, 64)
       : userAgentInsert;
