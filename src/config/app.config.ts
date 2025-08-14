@@ -2,7 +2,6 @@ import type { FastifyInstance } from 'fastify';
 import { randomUUID } from 'node:crypto';
 import fastifyCompress from '@fastify/compress';
 import fastifyCookie from '@fastify/cookie';
-import fastifyFormBody from '@fastify/formbody';
 
 import fastifyHelmet from '@fastify/helmet';
 import fastifyMultipart from '@fastify/multipart';
@@ -186,14 +185,6 @@ export class Application {
     this.app.register(fastifyRateLimit, {
       timeWindow: 1000 * 60, // 1 minute
       max: 1000,
-    });
-
-    /**
-     * @description Parse form data
-     * @see https://github.com/fastify/fastify-formbody
-     */
-    this.app.register(fastifyFormBody, {
-      bodyLimit: 1048576 * 10, // 10 MB
     });
 
     /**

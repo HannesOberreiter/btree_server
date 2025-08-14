@@ -66,7 +66,7 @@ async function gracefulShutdown() {
 const wrappedHttpForTesting = httpServer.app.server;
 
 export {
-  gracefulShutdown,
   httpServer as boot,
+  gracefulShutdown,
   wrappedHttpForTesting as server,
 };
