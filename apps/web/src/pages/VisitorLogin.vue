@@ -20,7 +20,7 @@ const notification = useNotification();
 const isSubmitting = ref(true);
 const submitCount = ref(0);
 const forceDashboardRedirect = ref(false);
-const isAppleStoreWrapper = document.cookie.includes('iOS');
+const _isAppleStoreWrapper = document.cookie.includes('iOS');
 
 const store = useAuthUserStore();
 const api = useApiFetch();
@@ -88,6 +88,12 @@ async function onLoginGoogle() {
   });
 }
 
+async function onLoginApple() {
+  api.get('/v1/auth/apple').then((res) => {
+    window.location.href = res.url;
+  });
+}
+
 onMounted(() => {
   store
     .checkLoginStatus()
@@ -145,16 +151,24 @@ async function redirect() {
           @click="forceDashboardRedirect = true"
         />
 
-        <q-btn
-          v-if="!isAppleStoreWrapper"
-          color="primary"
-          label="Google"
-          icon="fab fa-google"
-          class="full-width q-mt-lg"
-          no-caps
-          outline
-          @click="onLoginGoogle()"
-        />
+        <q-btn-group class="full-width q-mt-md" spread flat>
+          <q-btn
+            color="primary"
+            label="Google"
+            icon="fab fa-google"
+            no-caps
+            outline
+            @click="onLoginGoogle()"
+          />
+          <q-btn
+            color="primary"
+            label="Apple"
+            icon="fab fa-apple"
+            no-caps
+            outline
+            @click="onLoginApple()"
+          />
+        </q-btn-group>
       </q-card-actions>
     </q-form>
   </q-card-section>
