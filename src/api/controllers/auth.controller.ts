@@ -12,7 +12,7 @@ import {
   serverLocation,
 } from '../../config/environment.config.js';
 import { DiscourseSSO } from '../../services/discourse.service.js';
-import { GoogleAuth } from '../../services/federated.service.js';
+import { AppleAuth, GoogleAuth } from '../../services/federated.service.js';
 import { MailService } from '../../services/mail.service.js';
 import { Company } from '../models/company.model.js';
 import { CompanyBee } from '../models/company_bee.model.js';
@@ -261,6 +261,69 @@ export default class AuthController {
     }
     catch (e) {
       req.log.error({ message: 'Error in google callback', error: e });
+      return reply.redirect(
+        `${frontend}/visitor/login?error=oauth&server=${serverLocation}`,
+      );
+    }
+
+    const userAgent = buildUserAgent(req);
+
+    const { bee_id, user_id, paid, rank } = await loginCheck(
+      '',
+      '',
+      result.bee_id,
+    );
+
+    try {
+      (req as any).bee_id = bee_id;
+      await req.session.regenerate();
+      req.session.user = {
+        bee_id,
+        user_id,
+        paid,
+        rank: rank as any,
+        user_agent: userAgent,
+        last_visit: new Date(),
+        uuid: randomUUID(),
+        ip: req.ip,
+      };
+      await req.session.save();
+    }
+    catch (e) {
+      req.log.error(e);
+      throw httpErrors[500]('Failed to create session');
+    }
+    reply.redirect(`${frontend}/visitor/login?server=${serverLocation}`);
+    return reply;
+  }
+
+  static async apple(req: FastifyRequest, reply: FastifyReply) {
+    const apple = AppleAuth.getInstance();
+    let result: federatedUser;
+    const { code } = req.query as any;
+
+    try {
+      result = await apple.verify(code);
+      if (!result.bee_id) {
+        if (!result.name && !result.email) {
+          throw new Error('No name or email');
+        }
+        return reply.redirect(
+          encodeURI(
+            `${frontend
+            }/visitor/register?name=${
+              result.name
+            }&email=${
+              result.email
+            }&oauth=apple`
+            + `&server=${
+              serverLocation}`,
+          ),
+        );
+      }
+    }
+    catch (e) {
+      req.log.error({ message: 'Error in apple callback', error: e });
       return reply.redirect(
         `${frontend}/visitor/login?error=oauth&server=${serverLocation}`,
       );

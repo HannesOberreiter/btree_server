@@ -98,6 +98,13 @@ const googleOAuth = {
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
 };
 
+const appleOAuth = {
+  clientID: process.env.APPLE_CLIENT_ID,
+  teamID: process.env.APPLE_TEAM_ID,
+  keyID: process.env.APPLE_KEY_ID,
+  privateKey: process.env.APPLE_PRIVATE_KEY,
+};
+
 const basicLimit = {
   hive: Number.parseInt(process.env.LIMIT_HIVE),
   apiary: Number.parseInt(process.env.LIMIT_APIARY),
@@ -207,6 +214,7 @@ const serverLocation = isServerLocationValid(process.env.SERVER_LOCATION)
   : 'eu';
 
 export {
+  appleOAuth,
   authorized,
   basicLimit,
   cronjobTimer,
