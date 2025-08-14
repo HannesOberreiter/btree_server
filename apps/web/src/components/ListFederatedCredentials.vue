@@ -5,13 +5,14 @@ import { useI18n } from 'vue-i18n';
 import { useApiFetch } from '../composables/useApi';
 import { useNotification } from '../composables/useNotification';
 import BtnBase from './BtnBase.vue';
+import BtnBaseGroup from './BtnBaseGroup.vue';
 
 const api = useApiFetch();
 const $q = useQuasar();
 const t = useI18n().t;
 const notification = useNotification();
 const items = ref<any>(null);
-const isAppleStoreWrapper = document.cookie.includes('iOS');
+const _isAppleStoreWrapper = document.cookie.includes('iOS');
 
 fetchFederatedCredentials();
 
@@ -39,8 +40,8 @@ function deleteFederatedCredential(id: string) {
   );
 }
 
-function addFederatedCredential(email: string) {
-  api.post('/v1/user/federatedCredentials', { email: email }).then(
+function addFederatedCredential(email: string, provider: 'google' | 'apple' = 'google') {
+  api.post('/v1/user/federatedCredentials', { email: email, provider }).then(
     () => {
       fetchFederatedCredentials();
       notification.open('positive', t('federatedCredentialAdded'), true);
@@ -52,7 +53,7 @@ function addFederatedCredential(email: string) {
   );
 }
 
-function addFederatedCredentialDialog() {
+function addFederatedCredentialDialog(provider: 'google' | 'apple' = 'google') {
   $q.dialog({
     title: t('addFederatedCredential'),
     message: t('enterEmail'),
@@ -69,7 +70,7 @@ function addFederatedCredentialDialog() {
     cancel: true,
     persistent: false,
   }).onOk((mail: string) => {
-    addFederatedCredential(mail);
+    addFederatedCredential(mail, provider);
   });
 }
 </script>
@@ -101,12 +102,18 @@ function addFederatedCredentialDialog() {
       </q-item-section>
     </q-item>
   </q-list>
-  <BtnBase
-    v-if="!isAppleStoreWrapper"
-    color="primary"
-    :label="$t('addFederatedCredential')"
-    size="md"
-    class="q-mt-lg"
-    @click="addFederatedCredentialDialog()"
-  />
+  <BtnBaseGroup class="q-mt-lg" size="md">
+    <BtnBase
+      color="primary"
+      :label="$t('addFederatedCredential') + ': Google'"
+      @click="addFederatedCredentialDialog()"
+      outline
+    />
+      <BtnBase
+      color="primary"
+      :label="$t('addFederatedCredential') + ': Apple'"
+      @click="addFederatedCredentialDialog('apple')"
+      outline
+    />
+  </BtnBaseGroup>
 </template>
