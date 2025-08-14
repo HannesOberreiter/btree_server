@@ -1,4 +1,6 @@
 import type { TokenPayload } from 'google-auth-library';
+import type { JwtPayload } from 'jsonwebtoken';
+import type { TokenResponse } from './apple.service.util.js';
 import { OAuth2Client } from 'google-auth-library';
 import jwt from 'jsonwebtoken';
 import { FederatedCredential } from '../api/models/federated_credential.js';
@@ -82,6 +84,7 @@ export class GoogleAuth {
     // check if federated is created by user
     const federatedTemp = await FederatedCredential.query().findOne({
       mail,
+      provider,
     });
     if (federatedTemp) {
       await FederatedCredential.query()
@@ -166,8 +169,8 @@ export class AppleAuth {
   }
 
   async verify(code: string): Promise<federatedUser> {
-    let response;
-    let idToken;
+    let response: TokenResponse;
+    let idToken: ReturnType<typeof jwt.decode> | null;
 
     try {
       response = await this.client.accessToken(code);
@@ -195,15 +198,13 @@ export class AppleAuth {
       throw new Error('Invalid ID token structure received from Apple');
     }
 
-    const payload = idToken as any;
-
-    if (!payload.sub) {
-      this.logger.log('error', 'Missing sub in Apple token', { payload });
+    if (!idToken.sub) {
+      this.logger.log('error', 'Missing sub in Apple token', { idToken });
       throw new Error('Missing subject identifier in Apple ID token');
     }
 
-    if (!payload.email) {
-      this.logger.log('error', 'Missing email in Apple token', { payload });
+    if (!idToken.email) {
+      this.logger.log('error', 'Missing email in Apple token', { idToken });
       throw new Error('Missing email in Apple ID token');
     }
     return await this.verifyUser(
@@ -241,6 +242,7 @@ export class AppleAuth {
     // check if federated is created by user
     const federatedTemp = await FederatedCredential.query().findOne({
       mail,
+      provider,
     });
     if (federatedTemp) {
       await FederatedCredential.query()

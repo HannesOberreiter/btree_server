@@ -49,7 +49,7 @@ export default class UserController {
     }
     const data = await FederatedCredential.query().insert({
       bee_id: req.session.user.bee_id,
-      provider: 'google',
+      provider: body.provider,
       mail: body.email,
     });
     return { data };

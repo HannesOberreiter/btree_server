@@ -14,7 +14,7 @@ interface CustomConfig {
   debug?: boolean
 }
 
-interface TokenResponse {
+export interface TokenResponse {
   access_token: string
   token_type: string
   expires_in: number
