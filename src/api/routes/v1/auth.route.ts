@@ -15,7 +15,7 @@ export const AppleCallbackSchema = z.object({
   state: z.string(),
   user: z.object({
     email: z.string().email(),
-  }),
+  }, { description: 'Will only be available on first ever login call' }).optional(),
   error: z.string().optional(),
 });
 
