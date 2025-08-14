@@ -1,5 +1,6 @@
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
+import fastifyFormbody from '@fastify/formbody';
 
 import { z } from 'zod';
 import { ROLES } from '../../../config/constants.config.js';
@@ -24,6 +25,8 @@ export default function routes(
   done: any,
 ) {
   const server = instance.withTypeProvider<ZodTypeProvider>();
+
+  server.register(fastifyFormbody);
 
   server.post(
     '/register',
