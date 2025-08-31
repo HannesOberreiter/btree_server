@@ -1,7 +1,7 @@
 <template>
   <btn-base
     icon="fab fa-stripe"
-    color="primary"
+    color="secondary"
     class="full-width q-pl-lg"
     size="lg"
     :label="$t('payment.stripe')"

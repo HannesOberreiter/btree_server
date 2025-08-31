@@ -429,8 +429,8 @@
   "path": "Pfad",
   "payment": {
     "mollie": "Bezahlen mit Mollie",
-    "mollieDescription": "Bezahlen Sie mit Mollie einen europäischen Zahlungsanbieter mit verschiedenen Zahlungsmethoden.",
-    "paypal": "PayPal",
+    "mollieDescription": "Europäischer Zahlungsanbieter mit verschiedenen Zahlungsmethoden.",
+    "paypal": "Mit Paypal bezahlen",
     "paypalDescription": "Bezahlen Sie mit PayPal über Ihr PayPal-Konto.",
     "stripe": "Mit Stripe bezahlen",
     "stripeDescription": "Bezahlen Sie mit Stripe über Ihre Kreditkarte."

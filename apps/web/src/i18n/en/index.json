@@ -429,8 +429,8 @@
   "path": "Path",
   "payment": {
     "mollie": "Pay with Mollie",
-    "mollieDescription": "Pay with Mollie an european payment provider using various payment methods.",
-    "paypal": "PayPal",
+    "mollieDescription": "European payment provider using various payment methods.",
+    "paypal": "Pay with PayPal",
     "paypalDescription": "Pay with PayPal using your PayPal account.",
     "stripe": "Pay with Stripe",
     "stripeDescription": "Pay with Stripe using your credit card."

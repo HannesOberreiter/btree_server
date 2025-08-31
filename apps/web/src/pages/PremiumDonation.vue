@@ -106,62 +106,59 @@
               ></div>
             </div>
           </div>
-          <div class="text-center q-col-gutter-y-sm">
-            <q-tabs
-              v-model="paymentTab"
-              dense
-              class="text-grey"
-              active-color="primary"
-              indicator-color="primary"
-              align="justify"
-              narrow-indicator
-            >
-              <q-tab name="mollie" :label="$t('payment.mollie')" />
-              <q-tab
+          <div class="text-center q-col-gutter-y-sm q-pt-sm">
+            <q-list bordered>
+              <q-expansion-item
+                expand-separator
+                icon="fas fa-credit-card"
+                :label="$t('payment.mollie')"
+                :caption="$t('payment.mollieDescription')"
+                default-opened
+              >
+                <q-card>
+                  <q-card-section>
+                    <payment-mollie
+                      :donation="donation"
+                      :years="years"
+                    ></payment-mollie>
+                  </q-card-section>
+                </q-card>
+              </q-expansion-item>
+
+              <q-expansion-item
                 v-if="isStripeAvailable"
-                name="stripe"
+                expand-separator
+                icon="fab fa-stripe"
                 :label="$t('payment.stripe')"
-              />
-              <q-tab name="paypal" :label="$t('payment.paypal')" />
-            </q-tabs>
+              >
+                <q-card>
+                  <q-card-section>
+                    <payment-stripe
+                      :donation="donation"
+                      :years="years"
+                    ></payment-stripe>
+                  </q-card-section>
+                </q-card>
+              </q-expansion-item>
 
-            <q-separator />
-
-            <q-tab-panels v-model="paymentTab" animated>
-              <q-tab-panel v-if="isStripeAvailable" name="stripe">
-                <div class="text-caption q-pb-sm text-left">
-                  {{ $t('payment.stripeDescription') }}
-                </div>
-                <payment-stripe
-                  :donation="donation"
-                  :years="years"
-                ></payment-stripe>
-              </q-tab-panel>
-
-              <q-tab-panel name="mollie">
-                <div class="text-caption q-pb-sm text-left">
-                  {{ $t('payment.mollieDescription') }}
-                </div>
-                <payment-mollie
-                  :donation="donation"
-                  :years="years"
-                ></payment-mollie>
-              </q-tab-panel>
-
-              <q-tab-panel name="paypal">
-                <div class="text-caption q-pb-sm text-left">
-                  {{ $t('payment.paypalDescription') }}
-                </div>
-                <suspense>
-                  <payment-paypal
-                    :donation="donation"
-                    :years="years"
-                    @on-paid="(data: any) => successPayment(data.paid)"
-                  ></payment-paypal>
-                </suspense>
-              </q-tab-panel>
-            </q-tab-panels>
-            <q-separator />
+              <q-expansion-item
+                expand-separator
+                icon="fab fa-paypal"
+                :label="$t('payment.paypal')"
+              >
+                <q-card>
+                  <q-card-section>
+                    <suspense>
+                      <payment-paypal
+                        :donation="donation"
+                        :years="years"
+                        @on-paid="(data: any) => successPayment(data.paid)"
+                      ></payment-paypal>
+                    </suspense>
+                  </q-card-section>
+                </q-card>
+              </q-expansion-item>
+            </q-list>
             <div>
               <btn-base-group>
                 <btn-base
@@ -307,7 +304,6 @@ const backend = useBackend();
 const isStripeAvailable = computed(
   () => !($q.platform.is.ios && $q.platform.is.safari),
 );
-const paymentTab = ref('mollie');
 
 const mailTo = computed(() => {
   return `mailto:office@btree.at?subject=Invoice Request ${storeUser.company.name} (${storeUser.company.id}) [Server: ${backend.state.value}]&body=Please send me an invoice for the company "${storeUser.company.name}" (id: ${storeUser.company.id}) with a donation of ${donation.value} Euros. Response E-Mail: ${storeUser.user.email}`;
