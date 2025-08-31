@@ -292,10 +292,6 @@
   "info": "Info",
   "initiate": "Initiate",
   "inputUrl": "Input an external url",
-  "pwa": {
-    "install": "Install b.tree PWA",
-    "notAvailable": "Your browser does not support PWA installation."
-  },
   "interval": "Interval",
   "intervalText": "Days between repeats",
   "invoice": "Invoice",
@@ -462,6 +458,10 @@
     "userDeleteText": "Are you sure you want to delete your account? This action cannot be undone. Note: If there are another user in the current company the company data wont be deleted otherwise all data will be removed. For security please enter your current password.",
     "userTitle": "Here you can update your user settings."
   },
+  "pwa": {
+    "install": "Install b.tree PWA",
+    "notAvailable": "Your browser does not support PWA installation."
+  },
   "qr": "QR",
   "qrScanner": "QR Scanner",
   "quarter": "Quarter",
@@ -533,6 +533,7 @@
   "repeat": "Repeat",
   "repeatText": "Times the task should be repeated",
   "reset": "Reset",
+  "resetConfirm": "Reset form data?",
   "resetUser": {
     "label": "Reset Key",
     "success": "Your password was successfully changed, we sent a confirmation mail to {msg}.",

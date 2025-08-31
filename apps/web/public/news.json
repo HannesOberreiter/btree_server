@@ -3,7 +3,8 @@
     "version": "6.5.4",
     "date": "2025-08-14",
     "news": [
-      "FEATURE Added option to sign in with Apple, which is now available for all users."
+      "FEATURE Added option to sign in with Apple, which is now available for all users.",
+      "IMPROVEMENT Change order of buttons to have the most used ones on the right side, to make it more common and intuitive."
     ]
   },
   {

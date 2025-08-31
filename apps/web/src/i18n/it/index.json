@@ -292,10 +292,6 @@
   "info": "Informazioni",
   "initiate": "Iniziato",
   "inputUrl": "Inserisci un URL esterno",
-  "pwa": {
-    "install": "Installa b.tree PWA",
-    "notAvailable": "L'applicazione non è disponibile come PWA."
-  },
   "interval": "Intervallo",
   "intervalText": "Giorni tra le ripetizioni",
   "invoice": "Fattura",
@@ -462,6 +458,10 @@
     "userDeleteText": "Sei sicuro di voler eliminare il tuo account? Questa azione non può essere annullata. Nota: se nell'attuale azienda è presente un altro utente, i dati dell'azienda non verranno eliminati, altrimenti tutti i dati verranno rimossi. Per sicurezza, inserisci la tua password attuale.",
     "userTitle": "Qui puoi aggiornare le tue impostazioni utente."
   },
+  "pwa": {
+    "install": "Installa b.tree PWA",
+    "notAvailable": "L'applicazione non è disponibile come PWA."
+  },
   "qr": "QR",
   "qrScanner": "Scanner QR",
   "quarter": "Trimestre",
@@ -533,6 +533,7 @@
   "repeat": "Ripetere",
   "repeatText": "Volte in cui l'attività dovrebbe essere ripetuta",
   "reset": "Ripristina",
+  "resetConfirm": "Ripristina i dati del modulo?",
   "resetUser": {
     "label": "Reimposta chiave",
     "success": "La tua password è stata modificata con successo, abbiamo inviato una mail di conferma a {msg}.",

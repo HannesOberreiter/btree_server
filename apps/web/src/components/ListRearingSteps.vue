@@ -122,11 +122,11 @@
   </div>
   <div class="col-12 q-pt-md">
     <btn-base-group>
-      <btn-base color="primary" @click="onSave(true)">
-        {{ $t('save') }}
-      </btn-base>
       <btn-base color="secondary" @click="onAdd">
         {{ $t('add') }} {{ $t('step') }}
+      </btn-base>
+      <btn-base color="primary" @click="onSave(true)">
+        {{ $t('save') }}
       </btn-base>
     </btn-base-group>
   </div>

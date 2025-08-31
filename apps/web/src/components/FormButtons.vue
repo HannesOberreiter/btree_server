@@ -1,5 +1,20 @@
 <template>
-  <btn-base-group v-if="!isEdit" size="md">
+  <btn-base-group v-if="!isEdit" size="md" class="full-width q-pt-sm">
+    <btn-base
+      :disable="lastInsert === null ? true : false"
+      color="info"
+      :loading="isSubmitting"
+      :label="$t('undo')"
+      tabindex="-1"
+      data-cy="btn-form-undo"
+      @click="onUndo"
+    />
+    <btn-base
+      color="warning"
+      :label="$t('reset')"
+      tabindex="-1"
+      @click="onReset"
+    />
     <btn-base
       color="secondary"
       :loading="isSubmitting"
@@ -7,17 +22,14 @@
       data-cy="btn-form-save"
       @click="onSubmit"
     />
-    <btn-base color="warning" :label="$t('reset')" @click="emit('reset')" />
-    <btn-base
-      v-if="lastInsert"
-      color="info"
-      :loading="isSubmitting"
-      :label="$t('undo')"
-      data-cy="btn-form-undo"
-      @click="onUndo"
-    />
   </btn-base-group>
-  <btn-base-group v-else>
+  <btn-base-group v-else class="full-width q-pt-sm" size="md">
+    <btn-base
+      color="warning"
+      :label="$t('reset')"
+      tabindex="-1"
+      @click="onReset"
+    />
     <btn-base
       color="secondary"
       :loading="isSubmitting"
@@ -25,7 +37,6 @@
       data-cy="btn-form-update"
       @click="onUpdate"
     ></btn-base>
-    <btn-base color="warning" :label="$t('reset')" @click="emit('reset')" />
   </btn-base-group>
 </template>
 
@@ -39,7 +50,12 @@ import type { Option } from '../types';
 import { ref, toRefs, computed, unref } from 'vue';
 import BtnBase from './BtnBase.vue';
 import BtnBaseGroup from './BtnBaseGroup.vue';
+import { useQuasar } from 'quasar';
+import { useI18n } from 'vue-i18n';
 
+
+const { dialog } = useQuasar();
+const { t } = useI18n();
 const useInvalidate = useInvalidateQueries();
 const notification = useNotification();
 const isSubmitting = ref(false);
@@ -197,5 +213,20 @@ function dataChanged(type: 'update' | 'insert' = 'update') {
   useInvalidate.invalidate(form.value);
   notification.open('positive', '');
   emit('change', type);
+}
+
+function onReset() {
+  dialog({
+    title: t('reset'),
+    message: t('resetConfirm'),
+    ok: {
+      label: t('yes'),
+      class: 'btn-confirm',
+    },
+    cancel: true,
+    persistent: false,
+  }).onOk(() => {
+    emit('reset');
+  });
 }
 </script>
