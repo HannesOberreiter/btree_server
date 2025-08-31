@@ -5,8 +5,14 @@ import { buildRedisCacheKeyObservationsRecent } from '../controllers/public.cont
 import { Observation } from '../models/observation.model.js';
 
 export async function fetchObservations(taxa: Taxa = 'Vespa velutina') {
-  const inat = await fetchInat(taxa);
-  const observationOrg = await fetchObservationOrg(taxa);
+  const fInat = fetchInat();
+  const fObservation = fetchObservationOrg();
+
+  const cleanupInat = await fInat.cleanupOldObs();
+  const cleanupObservationOrg = await fObservation.cleanupOldObs();
+
+  const inat = await fInat.fetchNewObs(taxa);
+  const observationOrg = await fObservation.fetchNewObs(taxa);
   const artenfinderNet = await fetchArtenfinderNet(taxa);
   const infoFaunaCh = await fetchInfoFaunaCh(taxa);
 
@@ -24,6 +30,10 @@ export async function fetchObservations(taxa: Taxa = 'Vespa velutina') {
     artenfinderNet,
     observationOrg,
     infoFaunaCh,
+    cleanup: {
+      iNaturalist: cleanupInat,
+      ObservationOrg: cleanupObservationOrg,
+    },
   };
 }
 
@@ -112,63 +122,119 @@ export async function fetchPatriNat() {
   return { newObservations: observations.length };
 }
 
-export async function fetchInat(taxa: Taxa, monthsBefore = 6) {
-  const taxonIds: Record<Taxa, number> = {
-    'Vespa velutina': 119019,
-    'Aethina tumida': 457066,
+export function fetchInat() {
+  const URL = 'https://api.inaturalist.org/v2/observations';
+  const TAXON_IDS: Record<Taxa, number[]> = {
+    'Vespa velutina': [119019, 560197], // Vespa velutina and Vespa velutina nigrithorax
+    'Aethina tumida': [457066],
   };
-
-  const fields
+  const FIELDS
     = '(id:!t,uri:!t,quality_grade:!t,time_observed_at:!t,location:!t,taxon:(id:!t))';
 
-  let idAbove = 1;
-  let newObservations = 0;
-  let createdAtD1: Date | string = new Date();
-  createdAtD1.setMonth(createdAtD1.getMonth() - monthsBefore);
-  createdAtD1 = createdAtD1.toISOString().split('T')[0];
-  const createdAtD2 = new Date().toISOString().split('T')[0];
+  /**
+   * @description Randomly select 200 iNat observation from database and check if they are still present and also the correct taxon
+   */
+  async function cleanupOldObs() {
+    const oldRecords = await Observation.query()
+      .where('external_service', 'iNaturalist')
+      .whereNotNull('external_id')
+      .orderByRaw('RAND()')
+      .limit(200); // must be same as limit of per_page
+    const notFound = [];
+    const wrongTaxon = [];
+    const removedExternalIds = [];
 
-  const oldRecords = await Observation.query()
-    .select('external_id')
-    .where('external_service', 'iNaturalist');
-  const searchArray = oldRecords.map(o => o.external_id);
+    const ids = oldRecords.map(o => o.external_id).join(',');
+    if (ids.length === 0) {
+      return { checked: 0, notFound: 0, wrongTaxon: 0 };
+    }
 
-  while (idAbove > 0) {
-    const url = `https://api.inaturalist.org/v2/observations?taxon_id=${taxonIds[taxa]}&verifiable=true&quality_grade=research&order=asc&order_by=id&per_page=200&fields=${fields}&created_d1=${createdAtD1}&created_d2=${createdAtD2}&id_above=${idAbove}`;
+    const url = `${URL}?id=${ids}&fields=${FIELDS}&per_page=200`;
     const response = await fetch(url);
     const res = await response.json();
-    const observations = [];
-    if (res.results.length === 0)
-      break;
-    idAbove = res.results[res.results.length - 1].id;
-    // newObservations += data.results.length;
-    for (let i = 0; i < res.results.length; i++) {
-      const observation = res.results[i];
-      if (!observation.time_observed_at)
-        continue;
-      if (!observation.location)
-        continue;
-      if (searchArray.includes(observation.id)) {
-        continue;
+
+    const foundIds = res.results.map((o: any) => o.id);
+    for (let i = 0; i < oldRecords.length; i++) {
+      const record = oldRecords[i];
+      if (!foundIds.includes(record.external_id)) {
+        notFound.push(record.id);
+        removedExternalIds.push(record.external_id);
       }
-      newObservations++;
-      const data = { ...observation };
-      delete data.location;
-      observations.push({
-        external_id: Number(observation.id),
-        external_service: 'iNaturalist',
-        observed_at: observation.time_observed_at,
-        location: {
-          lat: Number(observation.location.split(',')[0]),
-          lng: Number(observation.location.split(',')[1]),
-        },
-        taxa,
-        data,
-      });
+      else {
+        const observation = res.results.find((o: any) => o.id === record.external_id);
+        if (TAXON_IDS[record.taxa].includes(observation.taxon.id) === false) {
+          wrongTaxon.push(record.id);
+          removedExternalIds.push(record.external_id);
+        }
+      }
     }
-    await Observation.query().insertGraph(observations);
+
+    const deleteQuery = Observation.query();
+    if (notFound.length > 0) {
+      deleteQuery.whereIn('id', notFound);
+    }
+    if (wrongTaxon.length > 0) {
+      deleteQuery.orWhereIn('id', wrongTaxon);
+    }
+    if (notFound.length > 0 || wrongTaxon.length > 0) {
+      await deleteQuery.delete();
+    }
+
+    return { checked: oldRecords.length, notFound: notFound.length, wrongTaxon: wrongTaxon.length, removedExternalIds };
   }
-  return { newObservations };
+
+  async function fetchNewObs(taxa: Taxa, monthsBefore = 6) {
+    let idAbove = 1;
+    let newObservations = 0;
+    let createdAtD1: Date | string = new Date();
+    createdAtD1.setMonth(createdAtD1.getMonth() - monthsBefore);
+    createdAtD1 = createdAtD1.toISOString().split('T')[0];
+    const createdAtD2 = new Date().toISOString().split('T')[0];
+
+    const oldRecords = await Observation.query()
+      .select('external_id')
+      .where('external_service', 'iNaturalist');
+    const searchArray = oldRecords.map(o => o.external_id);
+
+    while (idAbove > 0) {
+      const url = `${URL}?taxon_id=${TAXON_IDS[taxa].join(',')}&verifiable=true&quality_grade=research&order=asc&order_by=id&per_page=200&fields=${FIELDS}&created_d1=${createdAtD1}&created_d2=${createdAtD2}&id_above=${idAbove}`;
+      const response = await fetch(url);
+      const res = await response.json();
+      const observations = [];
+      if (res.results.length === 0)
+        break;
+      idAbove = res.results[res.results.length - 1].id;
+      // newObservations += data.results.length;
+      for (let i = 0; i < res.results.length; i++) {
+        const observation = res.results[i];
+        if (!observation.time_observed_at)
+          continue;
+        if (!observation.location)
+          continue;
+        if (searchArray.includes(observation.id)) {
+          continue;
+        }
+        newObservations++;
+        const data = { ...observation };
+        delete data.location;
+        observations.push({
+          external_id: Number(observation.id),
+          external_service: 'iNaturalist',
+          observed_at: observation.time_observed_at,
+          location: {
+            lat: Number(observation.location.split(',')[0]),
+            lng: Number(observation.location.split(',')[1]),
+          },
+          taxa,
+          data,
+        });
+      }
+      await Observation.query().insertGraph(observations);
+    }
+    return { newObservations };
+  }
+
+  return { cleanupOldObs, fetchNewObs };
 }
 
 export async function fetchArtenfinderNet(taxa: Taxa) {
@@ -247,67 +313,112 @@ export async function fetchArtenfinderNet(taxa: Taxa) {
   return { newObservations };
 }
 
-export async function fetchObservationOrg(taxa: Taxa) {
-  const taxonKey: Record<Taxa, number> = {
+export function fetchObservationOrg() {
+  const TAXON_KEY: Record<Taxa, number> = {
     'Vespa velutina': 1311477,
     'Aethina tumida': 8254044,
   };
+  const BASE_URL = 'https://api.gbif.org/v1/occurrence/search';
+  const DATASET_KEY = '8a863029-f435-446a-821e-275f4f641165';
 
-  const url = `https://api.gbif.org/v1/occurrence/search?dataset_key=8a863029-f435-446a-821e-275f4f641165&taxon_key=${taxonKey[taxa]}`;
+  /**
+   * @description Randomly select Observation.org records from database and check if they are still present
+   */
+  async function cleanupOldObs() {
+    const oldRecords = await Observation.query()
+      .where('external_service', 'Observation.org')
+      .whereNotNull('external_id')
+      .orderByRaw('RAND()')
+      .limit(50);
+    const notFound = [];
+    const removedExternalIds = [];
 
-  let endOfRecords = false;
-  let offset = 0;
-  let newObservations = 0;
-  const limit = 300;
-  let yearFilter = `&year=${
-    new Date().getFullYear() - 1
-  },${new Date().getFullYear()}`;
-  const oldRecords = await Observation.query()
-    .select('external_id')
-    .where('external_service', 'Observation.org');
-  const searchArray = oldRecords.map(o => o.external_id);
-
-  if (searchArray.length === 0)
-    yearFilter = '';
-
-  while (endOfRecords === false) {
-    const result = await fetch(
-      `${url}&limit=${limit}&offset=${offset}${yearFilter}`,
-    );
-    const data = await result.json();
-    if (data.results.length === 0)
-      break;
-    endOfRecords = data.endOfRecords;
-    offset += limit;
-
-    const observations = [];
-    const results = data.results;
-    for (let i = 0; i < results.length; i++) {
-      if (searchArray.includes(Number(results[i].gbifID))) {
-        continue;
-      }
-      newObservations++;
-      const observation = results[i];
-      observations.push({
-        external_id: Number(observation.gbifID),
-        external_uuid: observation.catalogNumber,
-        external_service: 'Observation.org',
-        observed_at: observation.eventDate,
-        location: {
-          lat: Number(observation.decimalLatitude),
-          lng: Number(observation.decimalLongitude),
-        },
-        taxa,
-        data: {
-          individualCount: observation.individualCount,
-          lifeStage: observation.lifeStage,
-          uri: observation.occurrenceID,
-        },
-      });
+    if (oldRecords.length === 0) {
+      return { checked: 0, notFound: 0 };
     }
-    await Observation.query().insertGraph(observations);
+
+    const gbifIds = oldRecords.map(o => o.data?.uri).join('&occurrenceId=');
+    const url = `${BASE_URL}?dataset_key=${DATASET_KEY}&occurrenceId=${gbifIds}&limit=50`;
+    console.log(url);
+    const response = await fetch(url);
+    const res = await response.json();
+
+    const foundIds = res.results.map((o: any) => Number(o.gbifID));
+    for (const record of oldRecords) {
+      if (!foundIds.includes(record.external_id)) {
+        console.log(`Removing Observation.org record with id ${record.external_id} as it was not found anymore in GBIF. ${record.data?.uri}`);
+        notFound.push(record.id);
+        removedExternalIds.push(record.external_id);
+      }
+    }
+
+    if (notFound.length > 0) {
+      await Observation.query().whereIn('id', notFound).delete();
+    }
+
+    return { checked: oldRecords.length, notFound: notFound.length, removedExternalIds };
   }
-  return { newObservations };
+
+  async function fetchNewObs(taxa: Taxa) {
+    const url = `${BASE_URL}?dataset_key=${DATASET_KEY}&taxon_key=${TAXON_KEY[taxa]}`;
+
+    let endOfRecords = false;
+    let offset = 0;
+    let newObservations = 0;
+    const limit = 300;
+    let yearFilter = `&year=${
+      new Date().getFullYear() - 1
+    },${new Date().getFullYear()}`;
+
+    const oldRecords = await Observation.query()
+      .select('external_id')
+      .where('external_service', 'Observation.org');
+    const searchArray = oldRecords.map(o => o.external_id);
+
+    if (searchArray.length === 0)
+      yearFilter = '';
+
+    while (endOfRecords === false) {
+      const result = await fetch(
+        `${url}&limit=${limit}&offset=${offset}${yearFilter}`,
+      );
+      const data = await result.json();
+      if (data.results.length === 0)
+        break;
+      endOfRecords = data.endOfRecords;
+      offset += limit;
+
+      const observations = [];
+      const results = data.results;
+      for (let i = 0; i < results.length; i++) {
+        if (searchArray.includes(Number(results[i].gbifID))) {
+          continue;
+        }
+        newObservations++;
+        const observation = results[i];
+        observations.push({
+          external_id: Number(observation.gbifID),
+          external_uuid: observation.catalogNumber,
+          external_service: 'Observation.org',
+          observed_at: observation.eventDate,
+          location: {
+            lat: Number(observation.decimalLatitude),
+            lng: Number(observation.decimalLongitude),
+          },
+          taxa,
+          data: {
+            individualCount: observation.individualCount,
+            lifeStage: observation.lifeStage,
+            uri: observation.occurrenceID,
+          },
+        });
+      }
+      await Observation.query().insertGraph(observations);
+    }
+    return { newObservations };
+  }
+
+  return { cleanupOldObs, fetchNewObs };
 }
 
 export async function fetchInfoFaunaCh(taxa: Taxa) {
