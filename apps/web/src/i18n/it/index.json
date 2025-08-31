@@ -292,10 +292,6 @@
   "info": "Informazioni",
   "initiate": "Iniziato",
   "inputUrl": "Inserisci un URL esterno",
-  "pwa": {
-    "install": "Installa b.tree PWA",
-    "notAvailable": "L'applicazione non è disponibile come PWA."
-  },
   "interval": "Intervallo",
   "intervalText": "Giorni tra le ripetizioni",
   "invoice": "Fattura",
@@ -433,8 +429,8 @@
   "path": "Sentiero",
   "payment": {
     "mollie": "Paga con Mollie",
-    "mollieDescription": "Paga con Mollie un fornitore di pagamenti europei utilizzando vari metodi di pagamento.",
-    "paypal": "",
+    "mollieDescription": "Provider di pagamenti europei utilizzando vari metodi di pagamento.",
+    "paypal": "Paga con PayPal",
     "paypalDescription": "Paga con PayPal utilizzando il tuo account PayPal.",
     "stripe": "Paga con Stripe",
     "stripeDescription": "Paga con Stripe usando la tua carta di credito."
@@ -461,6 +457,10 @@
     "session": "Elenco delle sessioni attualmente attive. \nVerranno automaticamente cancellati dopo essere rimasti inattivi per un certo periodo di tempo, ma qui puoi anche eliminare manualmente le sessioni.",
     "userDeleteText": "Sei sicuro di voler eliminare il tuo account? Questa azione non può essere annullata. Nota: se nell'attuale azienda è presente un altro utente, i dati dell'azienda non verranno eliminati, altrimenti tutti i dati verranno rimossi. Per sicurezza, inserisci la tua password attuale.",
     "userTitle": "Qui puoi aggiornare le tue impostazioni utente."
+  },
+  "pwa": {
+    "install": "Installa b.tree PWA",
+    "notAvailable": "L'applicazione non è disponibile come PWA."
   },
   "qr": "QR",
   "qrScanner": "Scanner QR",
@@ -533,6 +533,7 @@
   "repeat": "Ripetere",
   "repeatText": "Volte in cui l'attività dovrebbe essere ripetuta",
   "reset": "Ripristina",
+  "resetConfirm": "Ripristina i dati del modulo?",
   "resetUser": {
     "label": "Reimposta chiave",
     "success": "La tua password è stata modificata con successo, abbiamo inviato una mail di conferma a {msg}.",

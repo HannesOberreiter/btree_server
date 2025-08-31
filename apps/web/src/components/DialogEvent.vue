@@ -104,14 +104,15 @@
 
       <q-card-actions>
         <div class="col-12">
-          <btn-base-group :spread="false">
+          <btn-base-group class="float-right full-width">
             <btn-base
-              v-if="!isMovement && !isVis && !isRearings"
-              color="secondary darken-1"
-              icon="fas fa-refresh"
-              @click="updateStatus()"
+              v-if="!isVis"
+              color="negative darken-1"
+              data-cy="btn-dialog-event-delete"
+              icon="fas fa-trash"
+              @click="deleteEvent"
             >
-              <tooltip-base>{{ t('changeStatus') }}</tooltip-base>
+              <tooltip-base>{{ t('delete') }}</tooltip-base>
             </btn-base>
             <btn-base
               v-if="!isVis && !isRearings"
@@ -122,23 +123,16 @@
               <tooltip-base>{{ t('edit') }}</tooltip-base>
             </btn-base>
             <btn-base
-              v-if="!isVis"
-              color="negative darken-1"
-              data-cy="btn-dialog-event-delete"
-              icon="fas fa-trash"
-              @click="deleteEvent"
+              v-if="!isMovement && !isVis && !isRearings"
+              color="secondary darken-1"
+              icon="fas fa-refresh"
+              @click="updateStatus()"
             >
-              <tooltip-base>{{ t('delete') }}</tooltip-base>
+              <tooltip-base>{{ t('changeStatus') }}</tooltip-base>
             </btn-base>
           </btn-base-group>
 
-          <btn-base
-            color="grey darken-1"
-            class="float-right"
-            @click="onDialogHide"
-          >
-            {{ t('close') }}
-          </btn-base>
+
         </div>
       </q-card-actions>
     </q-card>

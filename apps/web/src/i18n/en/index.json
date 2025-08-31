@@ -292,10 +292,6 @@
   "info": "Info",
   "initiate": "Initiate",
   "inputUrl": "Input an external url",
-  "pwa": {
-    "install": "Install b.tree PWA",
-    "notAvailable": "Your browser does not support PWA installation."
-  },
   "interval": "Interval",
   "intervalText": "Days between repeats",
   "invoice": "Invoice",
@@ -433,8 +429,8 @@
   "path": "Path",
   "payment": {
     "mollie": "Pay with Mollie",
-    "mollieDescription": "Pay with Mollie an european payment provider using various payment methods.",
-    "paypal": "PayPal",
+    "mollieDescription": "European payment provider using various payment methods.",
+    "paypal": "Pay with PayPal",
     "paypalDescription": "Pay with PayPal using your PayPal account.",
     "stripe": "Pay with Stripe",
     "stripeDescription": "Pay with Stripe using your credit card."
@@ -461,6 +457,10 @@
     "session": "List of currently active session. They will be auto deleted after inactive for a certain period of time, but you can also manually delete sessions here. ",
     "userDeleteText": "Are you sure you want to delete your account? This action cannot be undone. Note: If there are another user in the current company the company data wont be deleted otherwise all data will be removed. For security please enter your current password.",
     "userTitle": "Here you can update your user settings."
+  },
+  "pwa": {
+    "install": "Install b.tree PWA",
+    "notAvailable": "Your browser does not support PWA installation."
   },
   "qr": "QR",
   "qrScanner": "QR Scanner",
@@ -533,6 +533,7 @@
   "repeat": "Repeat",
   "repeatText": "Times the task should be repeated",
   "reset": "Reset",
+  "resetConfirm": "Reset form data?",
   "resetUser": {
     "label": "Reset Key",
     "success": "Your password was successfully changed, we sent a confirmation mail to {msg}.",

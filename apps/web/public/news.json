@@ -1,9 +1,13 @@
 [
   {
     "version": "6.5.4",
-    "date": "2025-08-14",
+    "date": "2025-08-31",
     "news": [
-      "FEATURE Added option to sign in with Apple, which is now available for all users."
+      "FEATURE Added option to sign in with Apple, which is now available for all users.",
+      "FEATURE Numeric values in tables now use tabular numbers for better readability.",
+      "FEATURE Pest maps (velutina and aethina) randomly check some observations each day and update if necessary, for example the taxon was wrong and validated later.",
+      "IMPROVEMENT Change order of buttons to have the most used ones on the right side, to make it more common and intuitive.",
+      "STYLE Premium page now uses list and not tabs for different payment providers."
     ]
   },
   {

@@ -292,10 +292,6 @@
   "info": "Info",
   "initiate": "Lancer",
   "inputUrl": "Saisir une URL externe",
-  "pwa": {
-    "install": "Installer b.tree PWA",
-    "notAvailable": "L'installation de PWA n'est pas disponible dans votre navigateur."
-  },
   "interval": "Intervalle",
   "intervalText": "Jours entre les répétitions",
   "invoice": "Facture d'achat",
@@ -433,8 +429,8 @@
   "path": "Chemin",
   "payment": {
     "mollie": "Payer avec mollie",
-    "mollieDescription": "Payer avec Mollie un fournisseur de paiement européen en utilisant divers méthodes de paiement.",
-    "paypal": "PayPal",
+    "mollieDescription": "Fournisseur de paiement européen en utilisant divers méthodes de paiement.",
+    "paypal": "Payer avec paypal",
     "paypalDescription": "Payez avec PayPal en utilisant votre compte PayPal.",
     "stripe": "Payer avec Stripe",
     "stripeDescription": "Payez avec Stripe en utilisant votre carte de crédit."
@@ -461,6 +457,10 @@
     "session": "Liste des sessions actuellement actives. \nIls seront automatiquement supprimés après une certaine période d'inactivité, mais vous pouvez également supprimer manuellement les sessions ici.",
     "userDeleteText": "Êtes-vous sûr de vouloir supprimer votre compte? Cette action ne peut pas être annulée. Remarque : S'il y a un autre utilisateur dans l'entreprise actuelle, les données de l'entreprise ne seront pas supprimées, sinon toutes les données seront supprimées. Pour plus de sécurité, veuillez entrer votre mot de passe actuel.",
     "userTitle": "Ici, vous pouvez mettre à jour vos paramètres d'utilisateur."
+  },
+  "pwa": {
+    "install": "Installer b.tree PWA",
+    "notAvailable": "L'installation de PWA n'est pas disponible dans votre navigateur."
   },
   "qr": "QR",
   "qrScanner": "Lecteur QR",
@@ -533,6 +533,7 @@
   "repeat": "Répéter",
   "repeatText": "Nombre de fois où la tâche doit être répétée",
   "reset": "Réinitialiser",
+  "resetConfirm": "Réinitialiser les données de formulaire?",
   "resetUser": {
     "label": "Touche de réinitialisation",
     "success": "Votre mot de passe a été modifié avec succès, nous avons envoyé un e-mail de confirmation à {msg}.",

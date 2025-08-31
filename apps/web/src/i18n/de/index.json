@@ -292,10 +292,6 @@
   "info": "Info",
   "initiate": "Einleiten",
   "inputUrl": "Geben Sie eine externe URL ein",
-  "pwa": {
-    "install": "b.tree als PWA installieren",
-    "notAvailable": "Dein Browser unterstützt keine PWA-Installation."
-  },
   "interval": "Intervall",
   "intervalText": "Tage zwischen Wiederholungen",
   "invoice": "Rechnung",
@@ -433,8 +429,8 @@
   "path": "Pfad",
   "payment": {
     "mollie": "Bezahlen mit Mollie",
-    "mollieDescription": "Bezahlen Sie mit Mollie einen europäischen Zahlungsanbieter mit verschiedenen Zahlungsmethoden.",
-    "paypal": "PayPal",
+    "mollieDescription": "Europäischer Zahlungsanbieter mit verschiedenen Zahlungsmethoden.",
+    "paypal": "Mit Paypal bezahlen",
     "paypalDescription": "Bezahlen Sie mit PayPal über Ihr PayPal-Konto.",
     "stripe": "Mit Stripe bezahlen",
     "stripeDescription": "Bezahlen Sie mit Stripe über Ihre Kreditkarte."
@@ -461,6 +457,10 @@
     "session": "Liste der derzeit aktiven Sitzung. Sie werden nach Inaktivität für einen bestimmten Zeitraum automatisch gelöscht, aber Sie können Sitzungen hier auch manuell löschen.",
     "userDeleteText": "Möchten Sie Ihr Konto wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden. Hinweis: Wenn es in der aktuellen Imkerei einen anderen Benutzer gibt, werden die Imkereidaten nicht gelöscht, da sonst alle Daten entfernt werden. Bitte geben Sie zur Sicherheit Ihr aktuelles Passwort ein.",
     "userTitle": "Hier können Sie Ihre Benutzereinstellungen aktualisieren."
+  },
+  "pwa": {
+    "install": "b.tree als PWA installieren",
+    "notAvailable": "Dein Browser unterstützt keine PWA-Installation."
   },
   "qr": "QR",
   "qrScanner": "QR Scanner",
@@ -533,6 +533,7 @@
   "repeat": "Wiederholen",
   "repeatText": "Wie oft die Aufgabe wiederholt werden soll",
   "reset": "Zurücksetzen",
+  "resetConfirm": "Formular Daten zurücksetzen?",
   "resetUser": {
     "label": "Schlüssel zurücksetzen",
     "success": "Ihr Passwort wurde erfolgreich geändert, wir haben eine Bestätigungsmail an {msg} gesendet.",
@@ -665,7 +666,7 @@
   "treatment": "Behandlung | Behandlungen",
   "true": "Ja",
   "type": "Typ | Typen",
-  "undo": "Rückgängig machen",
+  "undo": "Rückgängig",
   "unit": "Einheit",
   "unlockAPI": "API-Details freischalten",
   "unsavedChanges": "Willst du diese Seite wirklich verlassen? Du hast nicht gespeicherte Änderungen!",

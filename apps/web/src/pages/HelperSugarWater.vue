@@ -36,14 +36,15 @@
           ></q-input>
           <btn-base-group class="q-pt-lg">
             <btn-base
-              :label="$t('calculate')"
-              color="positive"
-              @click="calculate"
-            ></btn-base>
-            <btn-base
               :label="$t('reset')"
               color="negative"
               @click="resetForm"
+              tabindex="-1"
+            ></btn-base>
+            <btn-base
+              :label="$t('calculate')"
+              color="positive"
+              @click="calculate"
             ></btn-base>
           </btn-base-group>
         </q-form>
