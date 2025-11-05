@@ -1,5 +1,4 @@
 import type { TokenPayload } from 'google-auth-library';
-import type { JwtPayload } from 'jsonwebtoken';
 import type { TokenResponse } from './apple.service.util.js';
 import { OAuth2Client } from 'google-auth-library';
 import jwt from 'jsonwebtoken';

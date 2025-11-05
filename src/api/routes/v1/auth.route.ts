@@ -13,9 +13,28 @@ export const AppleCallbackSchema = z.object({
   code: z.string(),
   id_token: z.string(),
   state: z.string(),
-  user: z.object({
-    email: z.string().email(),
-  }, { description: 'Will only be available on first ever login call' }).optional(),
+  user: z.union([
+    z.string().transform((str, ctx) => {
+      try {
+        const parsed = JSON.parse(str);
+        return z.object({
+          email: z.string().email(),
+        }).parse(parsed);
+      }
+      catch {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Invalid JSON in user field',
+        });
+        return z.NEVER;
+      }
+    }),
+    z.object({
+      email: z.string().email(),
+    }),
+    z.literal(''), // Accept empty string
+    z.null(), // Accept null
+  ]).optional(),
   error: z.string().optional(),
 });
 
