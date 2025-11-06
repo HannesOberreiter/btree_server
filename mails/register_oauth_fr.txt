@@ -1,0 +1,9 @@
+<title>Bienvenue sur b.tree</title>
+Cher apiculteur !
+
+Bienvenue à b.tree, comme petit cadeau de bienvenue, votre compte a reçu un mois d'abonnement premium gratuit.
+
+## Vos identifiants de connexion
+
+- Social login via un fournisseur externe
+- Connexion: %base_url%%params%

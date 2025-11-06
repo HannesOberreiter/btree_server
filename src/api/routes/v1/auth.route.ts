@@ -13,11 +13,41 @@ export const AppleCallbackSchema = z.object({
   code: z.string(),
   id_token: z.string(),
   state: z.string(),
-  user: z.object({
-    email: z.string().email(),
-  }, { description: 'Will only be available on first ever login call' }).optional(),
+  user: z.union([
+    z.string().transform((str, ctx) => {
+      try {
+        const parsed = JSON.parse(str);
+        return z.object({
+          email: z.string().email(),
+        }).parse(parsed);
+      }
+      catch {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Invalid JSON in user field',
+        });
+        return z.NEVER;
+      }
+    }),
+    z.object({
+      email: z.string().email(),
+    }),
+    z.literal(''), // Accept empty string
+    z.null(), // Accept null
+  ]).optional(),
   error: z.string().optional(),
 });
+
+const RegisterBodySchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(6).max(128).trim(),
+  name: z.string().min(3).max(128).trim(),
+  lang: z.string().min(2).max(2),
+  newsletter: z.boolean(),
+  source: z.string(),
+  isOAuth: z.boolean().optional(),
+});
+export type RegisterBody = z.infer<typeof RegisterBodySchema>;
 
 export default function routes(
   instance: FastifyInstance,
@@ -32,14 +62,7 @@ export default function routes(
     '/register',
     {
       schema: {
-        body: z.object({
-          email: z.string().email(),
-          password: z.string().min(6).max(128).trim(),
-          name: z.string().min(3).max(128).trim(),
-          lang: z.string().min(2).max(2),
-          newsletter: z.boolean(),
-          source: z.string(),
-        }),
+        body: RegisterBodySchema,
       },
     },
     AuthController.register,

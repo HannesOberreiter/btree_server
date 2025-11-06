@@ -310,4 +310,53 @@ export default class ServiceController {
 
     return reply;
   }
+
+  /**
+   * @see https://stmk.bienenwanderboerse.at
+   */
+  static async getAFBMapData(req: FastifyRequest, _reply: FastifyReply) {
+    try {
+      const proxy = 'https://stmk.bienenwanderboerse.at/api/v1/quarantine-areas';
+      const res = await fetch(proxy, {
+        method: 'POST',
+        headers: {
+          'User-Agent': 'btree/server (www.btree.at)',
+        },
+      }).then(res => res.json()) as {
+        quarantine_areas: Array<{
+          id: string
+          gps: { lat: number, lng: number }
+          radius: number
+          popup: string
+        }>
+      };
+
+      return res.quarantine_areas.map((area) => {
+        const htmlContent = area.popup;
+
+        // Remove HTML tags and normalize whitespace
+        const textContent = htmlContent
+          .replace(/<[^>]*>/g, '')
+          .replace(/\r\n/g, ' ')
+          .replace(/\s+/g, ' ')
+          .trim();
+
+        const diseaseMatch = textContent.match(/Amerikanische Faulbrut \(AFB\)/);
+        const ordinanceMatch = textContent.match(/Verordnung:\s*(\S+)/);
+        const districtMatch = textContent.match(/Bezirk: ([\s\S]+?)(?=Gemeinde:|$)/);
+        const municipalityMatch = textContent.match(/Gemeinde: ([\s\S]+?)(?=Veterinärbehörde|$)/);
+
+        return {
+          id: area.id,
+          gps: area.gps,
+          radius: area.radius,
+          popup: `${diseaseMatch ? diseaseMatch[0] : ''} \n${ordinanceMatch ? ordinanceMatch[1] : ''}\n${districtMatch ? districtMatch[1].trim() : ''} \n${municipalityMatch ? municipalityMatch[1].trim() : ''}`,
+        };
+      });
+    }
+    catch (e) {
+      req.log.error(e);
+      return [];
+    }
+  }
 }

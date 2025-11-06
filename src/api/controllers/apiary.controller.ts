@@ -97,6 +97,8 @@ export default class ApiaryController {
       if (search.trim() !== '') {
         query.where((builder) => {
           builder.orWhere('name', 'like', `%${search}%`);
+          builder.orWhere('description', 'like', `%${search}%`);
+          builder.orWhere('note', 'like', `%${search}%`);
         });
       }
     }
