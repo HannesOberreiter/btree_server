@@ -1,11 +1,18 @@
 [
   {
     "version": "6.5.4",
-    "date": "2025-08-31",
+    "date": "2025-11-06",
     "news": [
+      "CHANGE premium donation page is disabled for iOS app users",
+      "BUGFIX social logins on register wont need email confirmation any more.",
+      "BUFGIX prevent offline sound notifications",
+      "BUGFIX VIS reminder wont be sent anymore if the user opt-out of the newsletter/notification mails.",
+      "FEATURE Apiary map now shows currently American Foulbrood areas if available in Austria.",
       "FEATURE Added option to sign in with Apple, which is now available for all users.",
       "FEATURE Numeric values in tables now use tabular numbers for better readability.",
-      "FEATURE Pest maps (velutina and aethina) randomly check some observations each day and update if necessary, for example the taxon was wrong and validated later.",
+      "FEATURE Pest maps (Velutina and Aethina) randomly check some observations each day and update if necessary, for example the taxon was wrong and validated later.",
+      "FEATURE Pest maps reduced cache to 1 hour for more frequent updates.",
+      "FEATURE apiary table search now also searches in the description and note field.",
       "IMPROVEMENT Change order of buttons to have the most used ones on the right side, to make it more common and intuitive.",
       "STYLE Premium page now uses list and not tabs for different payment providers."
     ]
