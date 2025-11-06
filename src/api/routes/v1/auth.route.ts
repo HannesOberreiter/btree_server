@@ -38,6 +38,17 @@ export const AppleCallbackSchema = z.object({
   error: z.string().optional(),
 });
 
+const RegisterBodySchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(6).max(128).trim(),
+  name: z.string().min(3).max(128).trim(),
+  lang: z.string().min(2).max(2),
+  newsletter: z.boolean(),
+  source: z.string(),
+  isOAuth: z.boolean().optional(),
+});
+export type RegisterBody = z.infer<typeof RegisterBodySchema>;
+
 export default function routes(
   instance: FastifyInstance,
   _options: any,
@@ -51,14 +62,7 @@ export default function routes(
     '/register',
     {
       schema: {
-        body: z.object({
-          email: z.string().email(),
-          password: z.string().min(6).max(128).trim(),
-          name: z.string().min(3).max(128).trim(),
-          lang: z.string().min(2).max(2),
-          newsletter: z.boolean(),
-          source: z.string(),
-        }),
+        body: RegisterBodySchema,
       },
     },
     AuthController.register,

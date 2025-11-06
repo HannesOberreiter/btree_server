@@ -1,0 +1,9 @@
+<title>Welcome to b.tree</title>
+Dear Beekeeper!
+
+Welcome to b.tree, as small welcome present, your account received one month of premium membership for free.
+
+## Your Login Credentials
+
+- Social login via external provider
+- Login: %base_url%%params%
