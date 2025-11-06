@@ -330,6 +330,8 @@
   "longitude": "Longitudine",
   "lostInternetConnection": "Ops! \nSembra che la tua connessione Internet sia stata persa. \nRiconnettiti per usare b.tree.",
   "map": {
+    "afb": "Zone di Peste Americana",
+    "locateMe": "La tua posizione",
     "move": "Sei sicuro di voler spostare il tuo apiario ({msg}) in una nuova posizione?",
     "name": "Mappa | Mappe",
     "radius": "Raggio"
@@ -343,8 +345,8 @@
   "membership": {
     "afterPayment": "Dopo il pagamento il tuo accesso premium viene esteso a",
     "afterPremium": "Dopo che il tuo premio si esaurisce, puoi ancora lavorare con tutti gli alveari e le colonie che hai creato, ma i limiti si applicano di nuovo",
-    "appleStoreNote": "I pagamenti non sono disponibili nell'app iOS. Si prega di utilizzare un browser web sul telefono o computer per il pagamento dell'abbonamento premium.",
     "appleStoreInvoice": "Se questo non è possibile, vi preghiamo di contattarci utilizzando il pulsante email qui sotto per il pagamento con fattura.",
+    "appleStoreNote": "I pagamenti non sono disponibili nell'app iOS. Si prega di utilizzare un browser web sul telefono o computer per il pagamento dell'abbonamento premium.",
     "currentStatus": "Tempo corrente pagato",
     "decreaseDays": "Rimuovere un anno di pagamento (minimo un anno).",
     "forOneYear": "per 1 anno",

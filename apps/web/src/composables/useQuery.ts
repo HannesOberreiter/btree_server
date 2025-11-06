@@ -863,3 +863,18 @@ export const useInvalidateQueries = () => {
   }
   return { invalidate };
 };
+
+export function useAfbQuery({
+  enabled = true as MaybeRef<boolean>,
+}) {
+  const api = useApiFetch();
+  return useQuery({
+    queryKey: ['map', 'afb'],
+    queryFn: () => {
+      return api.get('/v1/service/map/american_foulbrood');
+    },
+    enabled: enabled,
+    refetchOnMount: true,
+    staleTime: 1000 * 60 * 30,
+  });
+}

@@ -19,6 +19,8 @@
             :user-location-loading="userLocationLoading"
             @locate="loadLocation"
             @toggle="(v) => (showInactive = v)"
+            @toggleAfb="(v) => (showAfb = v)"
+            :is-apiary-map="true"
           >
           </map-buttons>
           <map-overlay></map-overlay>
@@ -84,6 +86,26 @@
               </l-marker>
             </template>
           </l-feature-group>
+
+          <!-- AFB Quarantine Areas -->
+          <l-feature-group v-if="afbData && showAfb" key="afb-areas">
+            <template v-for="area in afbData" :key="area.id">
+              <l-circle
+                :lat-lng="area.gps"
+                :radius="area.radius"
+                :fill="true"
+                color="red"
+                :fill-color="'orange'"
+                :fill-opacity="0.2"
+                :stroke-opacity="0.8"
+                :weight="2"
+              >
+                <l-popup>
+                  <pre style="line-break: strict;" v-text="area.popup"></pre>
+                </l-popup>
+              </l-circle>
+            </template>
+          </l-feature-group>
         </l-map>
       </div>
     </div>
@@ -96,6 +118,7 @@ import 'leaflet/dist/leaflet.css';
 import {
   useApiariesQuery,
   useInvalidateQueries,
+  useAfbQuery,
 } from '../composables/useQuery';
 import { useAuthUserStore } from '../stores/auth';
 import { useNotification } from '../composables/useNotification';
@@ -129,6 +152,9 @@ const {
   data: apiaries,
   refetch,
 } = useApiariesQuery({ modus: null });
+const {
+  data: afbData,
+} = useAfbQuery({ enabled: true });
 const updateTimestamp = ref(Date()); // helper to update layer
 
 const { t } = useI18n();
@@ -144,6 +170,7 @@ const mapRef = ref(null as any);
 const location = ref(null as any);
 const userLocationLoading = ref(false);
 const showInactive = ref(false);
+const showAfb = ref(true); // AFB is enabled by default
 let map = {} as any;
 let dragObject = {} as any;
 

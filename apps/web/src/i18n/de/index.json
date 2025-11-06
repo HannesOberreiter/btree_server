@@ -330,6 +330,8 @@
   "longitude": "Längengrad",
   "lostInternetConnection": "Hoppla! \nAnscheinend wurde Ihre Internetverbindung unterbrochen. \nBitte verbinden Sie sich erneut, um b.tree zu verwenden.",
   "map": {
+    "afb": "Amerikanische Faulbrut Gebiete",
+    "locateMe": "Ihr Standort",
     "move": "Sind Sie sicher, dass Sie Ihren Bienenstand ({msg}) an einen neuen Standort verlegen möchten?",
     "name": "Karte | Karten",
     "radius": "Radius"
@@ -343,8 +345,8 @@
   "membership": {
     "afterPayment": "Nach der Zahlung verlängert sich Ihr Premium-Zugang um",
     "afterPremium": "Nachdem Ihre Prämie abgelaufen ist, können Sie immer noch mit all Ihren erstellten Bienenstöcken und Ständen arbeiten, aber es gelten wieder Einschränkungen.",
-    "appleStoreNote": "Zahlungen sind in der iOS-App nicht verfügbar. Bitte verwenden Sie einen Webbrowser auf Ihrem Telefon oder Computer für die Premium-Mitgliedschaftszahlung.",
     "appleStoreInvoice": "Falls dies nicht möglich ist, kontaktieren Sie uns bitte über die E-Mail-Schaltfläche unten für eine Rechnungszahlung.",
+    "appleStoreNote": "Zahlungen sind in der iOS-App nicht verfügbar. Bitte verwenden Sie einen Webbrowser auf Ihrem Telefon oder Computer für die Premium-Mitgliedschaftszahlung.",
     "currentStatus": "Aktuelle bezahlte Zeit",
     "decreaseDays": "Entfernen Sie ein Zahlungsjahr (mindestens ein Jahr).",
     "forOneYear": "1 Jahr lang",

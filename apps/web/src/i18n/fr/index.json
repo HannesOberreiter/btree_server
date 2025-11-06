@@ -330,6 +330,8 @@
   "longitude": "Longitude",
   "lostInternetConnection": "Oops! \nIl semble que votre connexion Internet ait été perdue. \nVeuillez vous reconnecter pour utiliser b.tree.",
   "map": {
+    "afb": "Zones de Loque Américaine",
+    "locateMe": "Votre emplacement",
     "move": "Êtes-vous sûr de vouloir déplacer votre rucher ({msg}) vers un nouvel emplacement?",
     "name": "Carte | Plans",
     "radius": "Rayon"
@@ -343,8 +345,8 @@
   "membership": {
     "afterPayment": "Après paiement, votre accès premium est étendu à",
     "afterPremium": "Une fois votre prime épuisée, vous pouvez toujours travailler avec toutes vos ruches et colonies créées, mais les limites s'appliquent à nouveau",
-    "appleStoreNote": "Les paiements ne sont pas disponibles dans l'application iOS. Veuillez utiliser un navigateur web sur votre téléphone ou ordinateur pour le paiement de l'adhésion premium.",
     "appleStoreInvoice": "Si cela n'est pas possible, veuillez nous contacter en utilisant le bouton email ci-dessous pour un paiement par facture.",
+    "appleStoreNote": "Les paiements ne sont pas disponibles dans l'application iOS. Veuillez utiliser un navigateur web sur votre téléphone ou ordinateur pour le paiement de l'adhésion premium.",
     "currentStatus": "Temps payé actuel",
     "decreaseDays": "Supprimez une année de paiement (minimum un an).",
     "forOneYear": "pendant 1 an",

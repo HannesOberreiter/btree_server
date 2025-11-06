@@ -330,6 +330,8 @@
   "longitude": "Longitude",
   "lostInternetConnection": "Oops! It looks like your internet connection was lost. Please reconnect to use b.tree.",
   "map": {
+    "afb": "American Foulbrood Areas",
+    "locateMe": "Your location",
     "move": "Are you sure you want to move your apiary ({msg}) to a new location?",
     "name": "Map | Maps",
     "radius": "Radius"
@@ -343,8 +345,8 @@
   "membership": {
     "afterPayment": "After payment your premium access is extended to",
     "afterPremium": "After your premium runs out you can still work with all your created hives and colonies but limits apply again.",
-    "appleStoreNote": "Payments are not available in the iOS app. Please use a web browser on your phone or computer for premium membership payment.",
     "appleStoreInvoice": "If this is not possible, please contact us using the email button below for invoice payment.",
+    "appleStoreNote": "Payments are not available in the iOS app. Please use a web browser on your phone or computer for premium membership payment.",
     "currentStatus": "Current paid time",
     "decreaseDays": "Remove a year of payment (minimum one year).",
     "forOneYear": "for +1 year",
