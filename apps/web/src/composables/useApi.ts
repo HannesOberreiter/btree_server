@@ -1,9 +1,9 @@
 import { useNeedAuth } from './useNeedAuth';
 import querystring from 'query-string';
 import { isString } from 'lodash-es';
-import { LoadingBar } from 'quasar';
 import { useNetwork } from '@vueuse/core';
 import { useBackend } from './useBackend';
+import { useLoadingManager } from './useLoadingManager';
 
 const dev = process.env.NODE_ENV;
 
@@ -11,6 +11,7 @@ export const useApiFetch = () => {
   const backend = useBackend();
   const network = useNetwork();
   const dialog = useNeedAuth();
+  const loadingManager = useLoadingManager();
   const baseUrl = backend.url;
 
   const buildHeader = () => {
@@ -170,25 +171,34 @@ export const useApiFetch = () => {
       throw 'offline';
     }
 
-    if (loadingIndicator) LoadingBar.start();
-    const response = await fetch(request);
-    if (loadingIndicator) LoadingBar.stop();
+    const operationId = `api-${Date.now()}-${Math.random()}`;
 
-    if (!response.ok) {
-      if (
-        request.url.search('/v1/auth/') === -1 &&
-        window.location.href.search('/visitor/') === -1 &&
-        response.status === 401
-      ) {
-        if (!dialog.state.show) dialog.open();
-        throw 'error.forbidden';
+    if (loadingIndicator) loadingManager.startLoading(operationId);
+
+    try {
+      const response = await fetch(request);
+
+      if (loadingIndicator) loadingManager.stopLoading(operationId);
+
+      if (!response.ok) {
+        if (
+          request.url.search('/v1/auth/') === -1 &&
+          window.location.href.search('/visitor/') === -1 &&
+          response.status === 401
+        ) {
+          if (!dialog.state.show) dialog.open();
+          throw 'error.forbidden';
+        }
+        throw await response.json();
       }
-      throw await response.json();
-    }
-    if (file) {
-      return response.blob();
-    } else {
-      return response.json();
+      if (file) {
+        return response.blob();
+      } else {
+        return response.json();
+      }
+    } catch (error) {
+      if (loadingIndicator) loadingManager.stopLoading(operationId);
+      throw error;
     }
   }
 

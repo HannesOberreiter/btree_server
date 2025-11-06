@@ -1,8 +1,8 @@
-import { Loading, LoadingBar } from 'quasar';
 import { route } from 'quasar/wrappers';
 import { useAuthUserStore } from '../stores/auth';
 import { useRefreshStore } from '../stores/refresh';
 import { useRouterStore } from '../stores/router';
+import { useLoadingManager } from '../composables/useLoadingManager';
 import routes from './routes';
 import {
   createMemoryHistory,
@@ -40,46 +40,43 @@ export default route(function ({ store }) {
   const routerStore = useRouterStore(store);
   const storeUser = useAuthUserStore(store);
   const refreshStore = useRefreshStore(store);
+  const loadingManager = useLoadingManager();
 
   Router.beforeEach(async (to, from, next) => {
-    /**
-      Stopping pending loading bars
-      The first command will hide ones which are full but wont get removed
-      does happen sometimes but don't know when this "bug" happens
-     */
-    Array.from(
-      document.getElementsByClassName('q-loading-bar--bottom'),
-    ).forEach((e) => e.setAttribute('style', 'opacity:0;'));
-    if (LoadingBar.isActive) LoadingBar.stop();
-    if (Loading.isActive) Loading.hide();
+    loadingManager.forceStopAll();
+
     if (
       to.matched.some((record) => record.meta.auth && !storeUser.isLoggedIn)
     ) {
       console.warn('User not logged in, redirect from', to.path);
       const query = to.query;
       next({ name: 'login', query: { next: to.path, ...query } });
-    } else if (
+      return;
+    }
+
+    if (
       to.matched.some((record) => record.meta.premium && !storeUser.isPremium)
     ) {
       console.warn('No premium user redirect');
       next({ name: 'login' });
-    } else {
-      if (
-        to.matched.some((record) => record.meta.auth) &&
-        (refreshStore.lastHour < -1 || isNaN(refreshStore.lastHour))
-      ) {
-        console.info('Updating local storage values');
-        try {
-          await refreshStore.refresh();
-        } catch (e) {
-          console.error(e);
-        }
-      }
-      if (!(from.name === 'new-quicktool' && to.name === 'new-quicktool')) {
-        routerStore.previous = from.name as any;
-        routerStore.params = from.params as any;
-      }
-      next();
+      return;
+    }
+
+    if (!(from.name === 'new-quicktool' && to.name === 'new-quicktool')) {
+      routerStore.previous = from.name as any;
+      routerStore.params = from.params as any;
+    }
+
+    next();
+
+    if (
+      to.matched.some((record) => record.meta.auth) &&
+      (refreshStore.lastHour < -1 || isNaN(refreshStore.lastHour))
+    ) {
+      console.info('Updating local storage values');
+      refreshStore.refresh().catch((e) => {
+        console.error('Background refresh failed:', e);
+      });
     }
   });
 

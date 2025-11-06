@@ -277,7 +277,7 @@ function handleDateClick(selectInfo: DateClickArg) {
     formDialog(dateInfo);
   } else {
     dateClicked.value = dateInfo;
-    setTimeout(() => (dateClicked.value = null), 550); // Timeout to simulate a double click
+    setTimeout(() => (dateClicked.value = null), 300); // Reduced timeout for better responsiveness
   }
 }
 function handleEventClick(clickInfo: EventClickArg) {
