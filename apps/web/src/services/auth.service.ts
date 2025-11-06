@@ -42,6 +42,7 @@ class AuthService {
       lang: user.lang,
       format: user.format,
       newsletter: user.newsletter ? true : false,
+      isOAuth: user.isOAuth ? true : false,
     });
     return api.post('/v1/auth/register', data);
   }

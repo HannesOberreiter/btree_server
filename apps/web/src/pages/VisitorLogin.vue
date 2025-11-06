@@ -20,7 +20,6 @@ const notification = useNotification();
 const isSubmitting = ref(true);
 const submitCount = ref(0);
 const forceDashboardRedirect = ref(false);
-const _isAppleStoreWrapper = document.cookie.includes('iOS');
 
 const store = useAuthUserStore();
 const api = useApiFetch();
@@ -44,6 +43,8 @@ const validLastUrl = (): string | undefined => {
 
 const truncatedLastUrl = truncate(validLastUrl(), { length: 20 });
 
+const oauthLogin = ref(router.currentRoute.value.query.oauth);
+
 watch(
   activate,
   () => {
@@ -54,7 +55,7 @@ watch(
 
 const v = useVuelidate();
 
-async function onSubmit() {
+async function onSubmit () {
   isSubmitting.value = true;
   const isFormCorrect = await v.value.$validate();
   if (!isFormCorrect) {
@@ -69,7 +70,7 @@ async function onSubmit() {
   sendForm(form);
 }
 
-function sendForm(user: User) {
+function sendForm (user: User) {
   store.login(user).then(
     () => {
       notification.open('positive', '');
@@ -82,13 +83,13 @@ function sendForm(user: User) {
   );
 }
 
-async function onLoginGoogle() {
+async function onLoginGoogle () {
   api.get('/v1/auth/google').then((res) => {
     window.location.href = res.url;
   });
 }
 
-async function onLoginApple() {
+async function onLoginApple () {
   api.get('/v1/auth/apple').then((res) => {
     window.location.href = res.url;
   });
@@ -109,7 +110,7 @@ onMounted(() => {
 
 onUnmounted(() => (isSubmitting.value = false));
 
-async function redirect() {
+async function redirect () {
   const lastUrl = validLastUrl();
   if (lastUrl && !forceDashboardRedirect.value) {
     await router.push(lastUrl);
@@ -124,50 +125,20 @@ async function redirect() {
     <div class="text-h6 text-center">{{ $t('login') }}</div>
     <form-error-max v-if="submitCount >= 15"></form-error-max>
     <q-form v-else class="q-gutter-md" @submit.stop="onSubmit">
-      <form-input-email v-model="state.email"></form-input-email>
-      <form-user-password
-        v-model:modelPassword="state.password"
-      ></form-user-password>
+      <template v-if="!oauthLogin">
+        <form-input-email v-model="state.email"></form-input-email>
+        <form-user-password v-model:modelPassword="state.password"></form-user-password>
+      </template>
       <form-dropdown-server></form-dropdown-server>
       <q-card-actions class="">
-        <btn-base
-          v-if="validLastUrl()"
-          type="submit"
-          size="md"
-          color="orange-6"
-          class="full-width text-white q-mb-xs"
-          :label="$t('lastVisit') + ': ' + truncatedLastUrl"
-          :disable="isSubmitting"
-          :loading="isSubmitting"
-        />
-        <btn-base
-          type="submit"
-          size="lg"
-          color="secondary"
-          class="full-width text-white"
-          :label="$t('login')"
-          :disable="isSubmitting"
-          :loading="isSubmitting"
-          @click="forceDashboardRedirect = true"
-        />
+        <btn-base v-if="validLastUrl()" type="submit" size="md" color="orange-6" class="full-width text-white q-mb-xs"
+          :label="$t('lastVisit') + ': ' + truncatedLastUrl" :disable="isSubmitting" :loading="isSubmitting" />
+        <btn-base v-if="!oauthLogin" type="submit" size="lg" color="secondary" class="full-width text-white" :label="$t('login')"
+          :disable="isSubmitting" :loading="isSubmitting" @click="forceDashboardRedirect = true" />
 
         <q-btn-group class="full-width q-mt-md" spread flat>
-          <q-btn
-            color="primary"
-            label="Google"
-            icon="fab fa-google"
-            no-caps
-            outline
-            @click="onLoginGoogle()"
-          />
-          <q-btn
-            color="primary"
-            label="Apple"
-            icon="fab fa-apple"
-            no-caps
-            outline
-            @click="onLoginApple()"
-          />
+          <q-btn color="primary" label="Google" icon="fab fa-google" no-caps outline @click="onLoginGoogle()" />
+          <q-btn color="primary" label="Apple" icon="fab fa-apple" no-caps outline @click="onLoginApple()" />
         </q-btn-group>
       </q-card-actions>
     </q-form>

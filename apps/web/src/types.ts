@@ -39,6 +39,7 @@ export declare interface RegisterUser {
   otherSource: string;
   newsletter?: boolean;
   terms?: boolean;
+  isOAuth?: boolean;
 }
 
 export declare interface Status {

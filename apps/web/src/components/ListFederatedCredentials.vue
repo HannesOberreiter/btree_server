@@ -12,7 +12,6 @@ const $q = useQuasar();
 const t = useI18n().t;
 const notification = useNotification();
 const items = ref<any>(null);
-const _isAppleStoreWrapper = document.cookie.includes('iOS');
 
 fetchFederatedCredentials();
 

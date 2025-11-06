@@ -14,7 +14,7 @@
           ><q-icon name="fas fa-warehouse"></q-icon
         ></template>
       </form-input-text>
-      <form-input-email v-model="state.email"></form-input-email>
+      <form-input-email v-model="state.email" :disable-mail="isOAuthRedirect"></form-input-email>
       <form-user-password
         v-if="!isOAuthRedirect"
         v-model:modelPassword="state.password"
@@ -146,7 +146,7 @@ import FormDropdownServer from '../components/FormDropdownServer.vue';
 
 const notification = useNotification();
 const { t, locale } = useI18n();
-const { currentRoute } = useRouter();
+const router = useRouter();
 
 // https://stackoverflow.com/a/43020177/5316675
 const pwdChars =
@@ -166,9 +166,9 @@ const randPassword = new Array(35)
   )
   .join('');
 
-const company = (currentRoute.value.query?.name as string) ?? '';
-const email = (currentRoute.value.query?.email as string) ?? '';
-const isOAuthRedirect = !!currentRoute.value.query?.oauth;
+const company = (router.currentRoute.value.query?.name as string) ?? '';
+const email = (router.currentRoute.value.query?.email as string) ?? '';
+const isOAuthRedirect = !!router.currentRoute.value.query?.oauth;
 const password = isOAuthRedirect ? randPassword : '';
 
 /** For server selection we check if the user timezone is in America */
@@ -266,6 +266,7 @@ async function onSubmit() {
     format: state.format,
     source: state.source?.value === 0 ? state.other : state.source?.value + '',
     newsletter: state.newsletter,
+    isOAuth: isOAuthRedirect || false
   };
   await sendForm(form);
   return;
@@ -275,10 +276,15 @@ async function sendForm(user: any) {
   await AuthService.register(user).then(
     (response) => {
       const email = response.email as string;
-      message.value = t('signup.success', { msg: email });
-
       isSubmitting.value = false;
       btnLabel.value = t('success');
+
+      if(isOAuthRedirect){
+        router.push({ name: 'login', query: { email: email, oauth: '1' } });
+        return;
+      }
+
+      message.value = t('signup.success', { msg: email });
       notification.open('positive', message.value, false);
     },
     (error) => {
