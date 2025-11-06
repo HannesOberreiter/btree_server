@@ -97,5 +97,13 @@ export default function routes(
     ServiceController.askWizBeeStream,
   );
 
+  server.get(
+    '/map/american_foulbrood',
+    {
+      preHandler: Guard.authorize([ROLES.admin, ROLES.user, ROLES.read]),
+    },
+    ServiceController.getAFBMapData,
+  );
+
   done();
 }
