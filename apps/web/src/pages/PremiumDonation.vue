@@ -14,6 +14,15 @@
           <div v-else class="text-h5 q-pb-sm">
             {{ $t('membership.title') }}
           </div>
+          <div
+            v-if="isAppleStoreWrapper"
+            class="bg-warning text-weight-bold text-dark q-pa-md rounded-borders q-mb-md"
+          >
+            <q-icon name="fas fa-exclamation-triangle" class="q-mr-sm"></q-icon>
+            {{ $t('membership.appleStoreNote') }}
+            <br><br>
+            {{ $t('membership.appleStoreInvoice') }}
+          </div>
           <ul>
             <li>
               {{ $t('membership.currentStatus') }}:
@@ -107,7 +116,7 @@
             </div>
           </div>
           <div class="text-center q-col-gutter-y-sm q-pt-sm">
-            <q-list bordered>
+            <q-list v-if="!isAppleStoreWrapper" bordered>
               <q-expansion-item
                 expand-separator
                 icon="fas fa-credit-card"
@@ -126,7 +135,6 @@
               </q-expansion-item>
 
               <q-expansion-item
-                v-if="isStripeAvailable"
                 expand-separator
                 icon="fab fa-stripe"
                 :label="$t('payment.stripe')"
@@ -169,6 +177,7 @@
                 >
                 </btn-base>
                 <btn-base
+                  v-if="!isAppleStoreWrapper"
                   icon="fas fa-ticket"
                   color="grey"
                   :label="$t('coupon')"
@@ -301,9 +310,7 @@ const api = useApiFetch();
 const notification = useNotification();
 const backend = useBackend();
 
-const isStripeAvailable = computed(
-  () => !($q.platform.is.ios && $q.platform.is.safari),
-);
+const isAppleStoreWrapper = computed(() => document.cookie.includes('iOS'));
 
 const mailTo = computed(() => {
   return `mailto:office@btree.at?subject=Invoice Request ${storeUser.company.name} (${storeUser.company.id}) [Server: ${backend.state.value}]&body=Please send me an invoice for the company "${storeUser.company.name}" (id: ${storeUser.company.id}) with a donation of ${donation.value} Euros. Response E-Mail: ${storeUser.user.email}`;

@@ -343,6 +343,8 @@
   "membership": {
     "afterPayment": "After payment your premium access is extended to",
     "afterPremium": "After your premium runs out you can still work with all your created hives and colonies but limits apply again.",
+    "appleStoreNote": "Payments are not available in the iOS app. Please use a web browser on your phone or computer for premium membership payment.",
+    "appleStoreInvoice": "If this is not possible, please contact us using the email button below for invoice payment.",
     "currentStatus": "Current paid time",
     "decreaseDays": "Remove a year of payment (minimum one year).",
     "forOneYear": "for +1 year",
