@@ -13,24 +13,25 @@
 // https://on.cypress.io/configuration
 // ***********************************************************
 
-import './commands';
-
-// Quasar styles
-import 'quasar/src/css/index.sass'; // Or 'quasar/dist/quasar.prod.css' if no CSS preprocessor is installed
-// Change this if you have a different entrypoint for the main scss.
-import 'src/css/app.scss'; // Or 'src/css/app.css' if no CSS preprocessor is installed
-
-// ICON SETS
-// If you use multiple or different icon-sets then the default, be sure to import them here.
-import 'quasar/icon-set/material-icons';
-import '@quasar/extras/material-icons/material-icons.css';
-
 import { installQuasarPlugin } from '@quasar/quasar-app-extension-testing-e2e-cypress';
-import { Dialog } from 'quasar';
 
 // Since Cypress v10 we cannot import `config` directly from VTU as Cypress bundles its own version of it
 // See https://github.com/cypress-io/cypress/issues/22611
 import { VueTestUtils } from 'cypress/vue';
+import { Dialog } from 'quasar';
+
+import './commands';
+// Quasar styles
+import 'quasar/src/css/index.sass'; // Or 'quasar/dist/quasar.prod.css' if no CSS preprocessor is installed
+
+// Change this if you have a different entrypoint for the main scss.
+import 'src/css/app.scss'; // Or 'src/css/app.css' if no CSS preprocessor is installed
+// ICON SETS
+// If you use multiple or different icon-sets then the default, be sure to import them here.
+import 'quasar/icon-set/material-icons';
+
+import '@quasar/extras/material-icons/material-icons.css';
+
 const { config } = VueTestUtils;
 
 // Example to import i18n from boot and use as plugin
@@ -40,7 +41,7 @@ const { config } = VueTestUtils;
 // For example use the actual i18n instance or mock it
 // config.global.plugins.push(i18n);
 config.global.mocks = {
-  $t: () => '',
+	$t: () => '',
 };
 
 // Overwrite the transition and transition-group stubs which are stubbed by test-utils by default.

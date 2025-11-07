@@ -1,135 +1,49 @@
-<template>
-  <q-form class="full-width" data-cy="form-todo" @submit.prevent.stop="">
-    <form-dropdown-edit
-      v-if="isEdit"
-      v-model="editOptions"
-      :options="editOptionsCopy"
-      off-label="name"
-    ></form-dropdown-edit>
-    <div class="row">
-      <div class="col-11">
-        <form-input-date
-          v-model="state.date"
-          :values="values"
-          :reset="reset"
-          :required="isEdit ? false : true"
-        ></form-input-date>
-      </div>
-      <div v-if="!isEdit" class="col-1 text-center items-center">
-        <btn-base
-          flat
-          round
-          icon="fas fa-retweet"
-          :color="showInterval ? 'secondary' : 'grey'"
-          @click="repeatTask"
-        ></btn-base>
-      </div>
-    </div>
-    <div v-if="showInterval" class="row">
-      <div class="col-12 col-md-6">
-        <form-input-numeric
-          v-model.number="state.interval"
-          label="interval"
-          :hint="$t('intervalText')"
-          :shadow-text="$t('day', 2)"
-          :max-valid="365"
-          icon="fas fa-arrow-down-1-9"
-          numeric-valid="integer"
-        ></form-input-numeric>
-      </div>
-      <div class="col-12 col-md-6">
-        <form-input-numeric
-          v-model.number="state.repeat"
-          label="repeat"
-          :hint="$t('repeatText')"
-          shadow-text="x"
-          icon="fas fa-infinity"
-          numeric-valid="integer"
-        ></form-input-numeric>
-      </div>
-    </div>
-    <form-input-text
-      v-model="state.name"
-      label="name"
-      name="todo"
-      icon="fas fa-passport"
-      :values="values"
-      :reset="reset"
-      :required="isEdit ? false : true"
-    ></form-input-text>
-    <form-input-url
-      v-model="state.url"
-      :values="values"
-      :reset="reset"
-    ></form-input-url>
-    <form-input-note
-      v-model="state.note"
-      :values="values"
-      :reset="reset"
-    ></form-input-note>
-    <form-input-checkbox
-      v-model="state.done"
-      :values="values"
-      :reset="reset"
-    ></form-input-checkbox>
-  </q-form>
-  <form-buttons
-    class="q-pt-md"
-    :state="state"
-    :is-edit="isEdit"
-    :edit-ids="editOptions"
-    :v="v"
-    form="todo"
-    @reset="onReset"
-    @change="emit('onSuccess', true)"
-  >
-  </form-buttons>
-</template>
-
 <script setup lang="ts">
-import { useNotification } from '../composables/useNotification';
-import dayjs from 'dayjs';
-import FormButtons from './FormButtons.vue';
-import useVuelidate from '@vuelidate/core';
-import { flatten, map, merge } from 'lodash-es';
 import type { FormTodo } from '../types';
+import useVuelidate from '@vuelidate/core';
+import dayjs from 'dayjs';
+import { flatten, map, merge } from 'lodash-es';
+import { computed, ref, unref } from 'vue';
 import { useApiFetch } from '../composables/useApi';
+import { useNotification } from '../composables/useNotification';
+import BtnBase from './BtnBase.vue';
+import FormButtons from './FormButtons.vue';
 import FormDropdownEdit from './FormDropdownEdit.vue';
+import FormInputCheckbox from './FormInputCheckbox.vue';
 import FormInputDate from './FormInputDate.vue';
+import FormInputNote from './FormInputNote.vue';
 import FormInputNumeric from './FormInputNumeric.vue';
 import FormInputText from './FormInputText.vue';
 import FormInputUrl from './FormInputUrl.vue';
-import FormInputNote from './FormInputNote.vue';
-import FormInputCheckbox from './FormInputCheckbox.vue';
-import BtnBase from './BtnBase.vue';
-import { ref, computed, unref } from 'vue';
 
+const props = defineProps({
+	ids: {
+		type: Array,
+		default: null,
+	},
+	date: {
+		type: String,
+		default: dayjs().format('YYYY-MM-DD'),
+	},
+});
+const emit = defineEmits<{
+	(e: 'onSuccess', value: boolean): void;
+}>();
 const notification = useNotification();
 const showInterval = ref(false);
 const values = ref({});
 const api = useApiFetch();
 const reset = ref(0);
-const props = defineProps({
-  ids: {
-    type: Array,
-    default: null,
-  },
-  date: {
-    type: String,
-    default: dayjs().format('YYYY-MM-DD'),
-  },
-});
-const emit = defineEmits<{
-  (e: 'onSuccess', value: boolean): void;
-}>();
-
 const ids = ref(props.ids);
 const isEdit = computed(() => {
-  if (ids.value === null) return false;
-  if (ids.value.length === 0) return false;
-  return true;
+	if (ids.value === null)
+		return false;
+	if (ids.value.length === 0)
+		return false;
+	return true;
 });
-if (isEdit.value) getEdit(unref(ids.value));
+if (isEdit.value)
+	getEdit(unref(ids.value));
 
 const v = useVuelidate();
 
@@ -137,49 +51,137 @@ const editOptions = ref([]) as any;
 const editOptionsCopy = ref([]) as any;
 
 const stateDefault = {
-  date: props.date,
-  name: '',
-  url: '',
-  note: '',
-  done: false,
-  interval: 0,
-  repeat: 0,
+	date: props.date,
+	name: '',
+	url: '',
+	note: '',
+	done: false,
+	interval: 0,
+	repeat: 0,
 };
 
 const state = ref<FormTodo>({
-  ...stateDefault,
+	...stateDefault,
 });
 
 async function getEdit(id: unknown[]) {
-  return await api.post('/v1/todo/batchGet', { ids: id }).then(
-    (response: any) => {
-      const editIds = map(response, (row: any) => [
-        { value: row.id, label: `ID: ${row.id} / (${row.name})` },
-      ]);
-      editOptions.value = flatten(editIds);
-      editOptionsCopy.value = flatten(editIds);
-      values.value = response;
-    },
-    (error) => {
-      notification.open('negative', error);
-    },
-  );
+	return await api.post('/v1/todo/batchGet', { ids: id }).then(
+		(response: any) => {
+			const editIds = map(response, (row: any) => [
+				{ value: row.id, label: `ID: ${row.id} / (${row.name})` },
+			]);
+			editOptions.value = flatten(editIds);
+			editOptionsCopy.value = flatten(editIds);
+			values.value = response;
+		},
+		(error) => {
+			notification.open('negative', error);
+		},
+	);
 }
 
 function onReset() {
-  if (!isEdit.value) {
-    merge(state.value, stateDefault);
-  }
-  if (showInterval.value) repeatTask();
-  notification.open('positive', 'successReset');
-  reset.value++;
+	if (!isEdit.value) {
+		merge(state.value, stateDefault);
+	}
+	if (showInterval.value)
+		repeatTask();
+	notification.open('positive', 'successReset');
+	reset.value++;
 }
 
 function repeatTask() {
-  showInterval.value = !showInterval.value;
-  if (!showInterval.value) {
-    state.value.interval = 0;
-    state.value.repeat = 0;
-  }
+	showInterval.value = !showInterval.value;
+	if (!showInterval.value) {
+		state.value.interval = 0;
+		state.value.repeat = 0;
+	}
 }
 </script>
+
+<template>
+	<q-form class="full-width" data-cy="form-todo" @submit.prevent.stop="">
+		<FormDropdownEdit
+			v-if="isEdit"
+			v-model="editOptions"
+			:options="editOptionsCopy"
+			off-label="name"
+		/>
+		<div class="row">
+			<div class="col-11">
+				<FormInputDate
+					v-model="state.date"
+					:values="values"
+					:reset="reset"
+					:required="isEdit ? false : true"
+				/>
+			</div>
+			<div v-if="!isEdit" class="col-1 text-center items-center">
+				<BtnBase
+					flat
+					round
+					icon="fas fa-retweet"
+					:color="showInterval ? 'secondary' : 'grey'"
+					@click="repeatTask"
+				/>
+			</div>
+		</div>
+		<div v-if="showInterval" class="row">
+			<div class="col-12 col-md-6">
+				<FormInputNumeric
+					v-model.number="state.interval"
+					label="interval"
+					:hint="$t('intervalText')"
+					:shadow-text="$t('day', 2)"
+					:max-valid="365"
+					icon="fas fa-arrow-down-1-9"
+					numeric-valid="integer"
+				/>
+			</div>
+			<div class="col-12 col-md-6">
+				<FormInputNumeric
+					v-model.number="state.repeat"
+					label="repeat"
+					:hint="$t('repeatText')"
+					shadow-text="x"
+					icon="fas fa-infinity"
+					numeric-valid="integer"
+				/>
+			</div>
+		</div>
+		<FormInputText
+			v-model="state.name"
+			label="name"
+			name="todo"
+			icon="fas fa-passport"
+			:values="values"
+			:reset="reset"
+			:required="isEdit ? false : true"
+		/>
+		<FormInputUrl
+			v-model="state.url"
+			:values="values"
+			:reset="reset"
+		/>
+		<FormInputNote
+			v-model="state.note"
+			:values="values"
+			:reset="reset"
+		/>
+		<FormInputCheckbox
+			v-model="state.done"
+			:values="values"
+			:reset="reset"
+		/>
+	</q-form>
+	<FormButtons
+		class="q-pt-md"
+		:state="state"
+		:is-edit="isEdit"
+		:edit-ids="editOptions"
+		:v="v"
+		form="todo"
+		@reset="onReset"
+		@change="emit('onSuccess', true)"
+	/>
+</template>
