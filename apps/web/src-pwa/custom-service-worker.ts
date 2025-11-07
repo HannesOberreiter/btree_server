@@ -5,16 +5,16 @@
  * quasar.config file > pwa > workboxMode is set to "InjectManifest"
  */
 
-declare const self: ServiceWorkerGlobalScope &
-  typeof globalThis & { skipWaiting: () => void };
-
 import { clientsClaim } from 'workbox-core';
 import {
-  precacheAndRoute,
-  cleanupOutdatedCaches,
-  createHandlerBoundToURL,
+	cleanupOutdatedCaches,
+	createHandlerBoundToURL,
+	precacheAndRoute,
 } from 'workbox-precaching';
-import { registerRoute, NavigationRoute } from 'workbox-routing';
+import { NavigationRoute, registerRoute } from 'workbox-routing';
+
+declare const self: ServiceWorkerGlobalScope
+	& typeof globalThis & { skipWaiting: () => void };
 
 self.skipWaiting();
 clientsClaim();
@@ -27,21 +27,21 @@ cleanupOutdatedCaches();
 // Non-SSR fallbacks to index.html
 // Production SSR fallbacks to offline.html (except for dev)
 if (process.env.MODE !== 'ssr' || process.env.PROD) {
-  registerRoute(
-    new NavigationRoute(
-      createHandlerBoundToURL(process.env.PWA_FALLBACK_HTML),
-      {
-        denylist: [
-          new RegExp(process.env.PWA_SERVICE_WORKER_REGEX),
-          /workbox-(.)*\.js$/,
-        ],
-      },
-    ),
-  );
+	registerRoute(
+		new NavigationRoute(
+			createHandlerBoundToURL(process.env.PWA_FALLBACK_HTML),
+			{
+				denylist: [
+					new RegExp(process.env.PWA_SERVICE_WORKER_REGEX),
+					/workbox-(.)*\.js$/,
+				],
+			},
+		),
+	);
 }
 
 self.addEventListener('fetch', (event: FetchEvent) => {
-  if (event?.request?.url?.endsWith('.pdf')) {
-    event?.respondWith(fetch(event.request));
-  }
+	if (event?.request?.url?.endsWith('.pdf')) {
+		event?.respondWith(fetch(event.request));
+	}
 });

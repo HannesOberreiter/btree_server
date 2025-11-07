@@ -1,13 +1,13 @@
-describe('User - Hive Form', () => {
-  const form = 'form-hive';
+describe('user - Hive Form', () => {
+	const form = 'form-hive';
 
-  beforeEach(() => {
-    cy.login_session('new/hive');
-  });
+	beforeEach(() => {
+		cy.login_session('new/hive');
+	});
 
-  it('Loaded', () => {
-    cy.dataCy(form).should('exist');
-  });
+	it('loaded', () => {
+		cy.dataCy(form).should('exist');
+	});
 });
 
 export {};

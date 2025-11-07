@@ -26,7 +26,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
+          cache: npm
       - name: Install
         run: npm install
       - name: Build PWA
@@ -42,12 +42,12 @@ jobs:
           port: 22
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          localPath: './dist/pwa'
-          remotePath: './btree-vue/beta'
+          localPath: ./dist/pwa
+          remotePath: ./btree-vue/beta
 
       - name: Purge BunnyCDN
         uses: fjogeleit/http-request-action@v1
         with:
           url: 'https://api.bunny.net/pullzone/${{env.ZONE_ID}}/purgeCache'
-          method: 'POST'
+          method: POST
           customHeaders: '{ "AccessKey": "${{ secrets.BUNNY_KEY }}"}'

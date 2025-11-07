@@ -1,1990 +1,1990 @@
 [
-  {
-    "version": "6.5.4",
-    "date": "2025-11-06",
-    "news": [
-      "CHANGE premium donation page is disabled for iOS app users",
-      "BUGFIX social logins on register wont need email confirmation any more.",
-      "BUFGIX prevent offline sound notifications",
-      "BUGFIX VIS reminder wont be sent anymore if the user opt-out of the newsletter/notification mails.",
-      "FEATURE Apiary map now shows currently American Foulbrood areas if available in Austria.",
-      "FEATURE Added option to sign in with Apple, which is now available for all users.",
-      "FEATURE Numeric values in tables now use tabular numbers for better readability.",
-      "FEATURE Pest maps (Velutina and Aethina) randomly check some observations each day and update if necessary, for example the taxon was wrong and validated later.",
-      "FEATURE Pest maps reduced cache to 1 hour for more frequent updates.",
-      "FEATURE apiary table search now also searches in the description and note field.",
-      "IMPROVEMENT Change order of buttons to have the most used ones on the right side, to make it more common and intuitive.",
-      "STYLE Premium page now uses list and not tabs for different payment providers."
-    ]
-  },
-  {
-    "version": "6.5.3",
-    "date": "2025-07-07",
-    "news": [
-      "FIX Virgin table now also can show the inactive (RIP) queens.",
-      "FIX Prevent keyboard navigation on detail pages if a text input is focused.",
-      "FIX Google login link was not working correctly, now it should work again.",
-      "FEATURE Show total amount of payments made on the premium page, for the user and globally.",
-      "FEATURE Added Mollie as an alternative payment provider which is from the Netherlands and supports many European countries.",
-      "FEATURE PWA installation can now be triggered on the settings page if supported by the browser.",
-      "FEATURE Queen and Hive name now allow up to 36 characters (from 24).",
-      "IMPROVEMENT Send two ping requests on server change to reflect the real ping time.",
-      "UPGRADE Updated server to ubuntu 22.04 LTS.",
-      "SECURITY Added more script content security policies."
-    ]
-  },
-  {
-    "version": "6.5.2",
-    "date": "2025-04-23",
-    "news": [
-      "BUGFIX Checkup rating fields were not correctly working (thanks Hermann)."
-    ]
-  },
-  {
-    "version": "6.5.1",
-    "date": "2025-03-21",
-    "news": [
-      "BUGFIX Calendar allow more events in week view, as long as they fit onto the column height (thanks Matthias)."
-    ]
-  },
-  {
-    "version": "6.5.0",
-    "date": "2025-02-15",
-    "news": [
-      "FEATURE Added public page for beekeeping news.",
-      "FEATURE Added public map for aethina tumida.",
-      "FEATURE Activate US server on live version.",
-      "FEATURE Locally save latest calendar view and range for up to 10 minutes. This should prevent the calendar from resetting after a page reload. Thanks Johann.",
-      "FEATURE Added current ping value to the server dropdown list. This should help to identify if the server is reachable.",
-      "FEATURE Instantly change language on registration page if a language is selected.",
-      "CHORE Upgraded backend and new and more strict linter.",
-      "CHORE Upgraded frontend libraries and some minor fixes.",
-      "BUGFIX Better error handling when no temperature can be automatically fetched.",
-      "BUGFIX Added delay for sending reminders, to prevent mail server from locking."
-    ]
-  },
-  {
-    "version": "6.4.6",
-    "date": "2024-09-14",
-    "news": [
-      "BUGFIX Stripe webhook now correctly distinguishes between server locations.",
-      "BUGFIX Inactive queens are now displayed in the hive details list.",
-      "BUGFIX Add current time to queen and hive movement, to prevent problems when date is the same, resulting in no obvious order.",
-      "BUGFIX Add missing server name to premium request mail.",
-      "BUGFIX Fixed a bug with multiple movements on the same day for the same hive.",
-      "IMPROVEMENT Removed shadow of map markers to make them more visible if multiple markers (apiaries) are present.",
-      "FEATURE When adding a new queen to a hive, older queens will automatically be set to inactive based on the insertion date of the new queen. The update will change automatically the status your current queens, but please check your queen data and adjust it if necessary.",
-      "FEATURE New column on movedates table, it now shows the name of the previous apiary (thanks Manu)."
-    ]
-  },
-  {
-    "version": "6.4.5",
-    "date": "2024-08-12",
-    "news": [
-      "BUGFIX clear velutina and hive beetle daily cache on new version",
-      "BUGFIX google oauth was not working correctly with special characters in email",
-      "IMPROVEMENT added company name to premium reminder mail"
-    ]
-  },
-  {
-    "version": "6.4.4",
-    "date": "2024-08-01",
-    "news": [
-      "BUGFIX Resolved an issue where downloading company data was blocked by CORS.",
-      "BUGFIX Corrected Dropbox authentication errors caused by excessively long access tokens.",
-      "IMPROVEMENT Added a 'New Queen' button to the hive detail view.",
-      "IMPROVEMENT Full data export now correctly includes boolean values.",
-      "IMPROVEMENT Velutina map now features smaller clusters and separates recent observations from clusters.",
-      "FEATURE Added an option to import and export data to create a new beekeeping company.",
-      "FEATURE Introduced a hive beetle map in the maps section."
-    ]
-  },
-  {
-    "version": "6.4.3",
-    "date": "2024-07-09",
-    "news": [
-      "BUGFIX add missing translations to velutina map and simplify the text",
-      "UPDATE added new fields to manifest for PWA"
-    ]
-  },
-  {
-    "version": "6.4.2",
-    "date": "2024-05-28",
-    "news": [
-      "BUGFIX WizBee should now also work with broken JSON answers",
-      "UPDATE WizBee now uses ChatGPT-4o",
-      "UPDATE upgrades the forum to the latest version"
-    ]
-  },
-  {
-    "version": "6.4.1",
-    "date": "2024-03-22",
-    "news": [
-      "TRANSLATION changed german translation for temper, thx Clemens",
-      "REMOVED you can no longer pay via SOFORT as the service is discontinued by Klarna"
-    ]
-  },
-  {
-    "version": "6.4.0",
-    "date": "2024-02-18",
-    "news": [
-      "FEATURE you can chose between two date formats in the profile settings (ISO and AT/DE-DIN)",
-      "BUGFIX hive details statistics type names were not displayed",
-      "BUGFIX database, changed scale data to datetime from timestamp to prevent date constraints",
-      "BUGFIX date picker not showing for Firefox, thx Manu",
-      "PERFORMANCE added new database indexes and composition indexes to hives, apiaries and observations"
-    ]
-  },
-  {
-    "version": "6.3.9",
-    "date": "2024-01-22",
-    "news": [
-      "FEATURE WizBee is now streaming answers, which should lead to quicker responses",
-      "BUGFIX statistic graphs did not load correctly",
-      "BUGFIX disable double fetching of user settings",
-      "BUGFIX added a dark mode grayscale image for WizBee",
-      "IMPROVEMENT velutina map code and style",
-      "CHORES updated libraries [SERVER, CLIENT]"
-    ]
-  },
-  {
-    "version": "6.3.8",
-    "date": "2023-12-18",
-    "news": [
-      "BUGFIX changes on type and source for hives were not saved correctly, thx sepp",
-      "BUGFIX dropbox loading state was not stopped in some cases",
-      "BUGFIX on queen edit the connection to the hive was lost",
-      "CHANGE updated urls to btree.at main page for english language",
-      "IMPROVEMENT added infoFauna.ch as vespa velutina source (it lags behind a bit as the data is from GBIF)",
-      "IMPROVEMENT on the velutina map you can now change years to view older data",
-      "IMPROVEMENT ping timer is now lower if status is offline, this should lead to quicker recovery if the internet connection is back",
-      "IMPROVEMENT remove session logout if no internet connection is present",
-      "IMPROVEMENT ICal export now has fewer dependencies",
-      "CHORES upgrade libraries [SERVER, CLIENT]"
-    ]
-  },
-  {
-    "version": "6.3.7",
-    "date": "2023-11-10",
-    "news": [
-      "IMPROVEMENT added more references for WizBee (vespa velutina, aethina tumida, oxymel)",
-      "IMPROVEMENT WizBee now uses ChatGPT4 Turbo Model",
-      "IMPROVEMENT allow left and right cursor for pagination on beekeeping news page",
-      "REMOVED meteoblue as supporter, as we do not receive any discount any more",
-      "FEATURE new varroa count over time statistics [PREMIUM]"
-    ]
-  },
-  {
-    "version": "6.3.6",
-    "date": "2023-11-01",
-    "news": ["FEATURE integrated new page beekeeping news to tools"]
-  },
-  {
-    "version": "6.3.5",
-    "date": "2023-10-02",
-    "news": [
-      "BUGFIX WizBee was showing no error if no answer could be generated",
-      "FEATURE added observation.org observations to Vespa velutina map"
-    ]
-  },
-  {
-    "version": "6.3.4",
-    "date": "2023-09-29",
-    "news": [
-      "BUGFIX the left and right arrow navigation on the detail pages for hives and apiaries did not work",
-      "BUGFIX improve handling of invalid dropbox token",
-      "BUGFIX fix charge description on edit not showing up",
-      "BUGFIX editing multiple harvest with different amount of frames did not work correctly"
-    ]
-  },
-  {
-    "version": "6.3.3",
-    "date": "2023-09-19",
-    "news": [
-      "BUGFIX convert empty string in numeric field to zero number, should fix errors when deleting a number and leaving the input empty",
-      "BUGFIX allow access to external api endpoints for stripe",
-      "FEATURE option to pay multiple years in advance",
-      "BUGFIX add missing transactions to database queries [SERVER]"
-    ]
-  },
-  {
-    "version": "6.3.2",
-    "date": "2023-09-06",
-    "news": [
-      "FEATURE added public available vespa velutina map",
-      "IMPROVEMENT added caching to vespa velutina data for faster loading"
-    ]
-  },
-  {
-    "version": "6.3.1",
-    "date": "2023-09-02",
-    "news": [
-      "FEATURE added Vespa velutina map and identification material",
-      "BUGFIX double brackets in hive dropdown",
-      "BUGFIX wrong header in treatment statistic, thx Benedikt"
-    ]
-  },
-  {
-    "version": "6.3.0",
-    "date": "2023-08-23",
-    "news": [
-      "REFACTOR server changed from express to fastify, for better performance",
-      "REFACTOR queen rearing logic was changed, waiting time is now set on the method and not for each step. This should make it a lot clearer and easier to use. Additionally improved display in calendar to include the weekday in the detail dialog. The update should handle and update the old system but please check your queen rearing methods and adjust them if necessary.",
-      "REFACTOR dropbox integration should now work more stable and reduced number of api calls",
-      "FEATURE notify user if registration email failed to deliver",
-      "FEATURE you can now copy rows in tables (hive, queen, virgin, charge), thx Olli",
-      "IMPROVEMENT added helpful tooltip to hive mode toggle button",
-      "BUGFIX changing the modus of multiple hives did result in invalid inactive date",
-      "BUGFIX increase position and group hive max validation to 9999",
-      "BUGFIX sound notification was only working after reload",
-      "BUGFIX disabled CORS for google auth, which should fix the login problem with google",
-      "BUGFIX rearing form now always shows one on save button, as no name is required",
-      "BUGFIX better error message for coupons",
-      "BUGFIX disable hive scale stats link on navigationbar if only basic user",
-      "BUGFIX wizbee show correct error message for basic user",
-      "BUGFIX don't allow a duplicate name of apiary or hive on edit"
-    ]
-  },
-  {
-    "version": "6.2.6",
-    "date": "2023-07-16",
-    "news": [
-      "BUGFIX disable form temperature waiting spinner (checkup and treatment) on init load",
-      "BUGFIX changelog was not visible on page refresh",
-      "BUGFIX nfc writing / clearing was not showing loading icon and disable if reading is active",
-      "BUGFIX prevent NFC error double notification",
-      "BUGFIX disable caching on service worker",
-      "FEATURE added link to VIS portal on calendar event",
-      "FEATURE added new CDN service bunny.net",
-      "FEATURE updated WizBee to work with ChatGPT version 4",
-      "CHORE updated vue-query to @tanstack",
-      "CHORES upgrade libraries [SERVER, CLIENT]"
-    ]
-  },
-  {
-    "version": "6.2.5",
-    "date": "2023-05-31",
-    "news": ["BUGFIX fix UTC timezone for rearings, thx Olli"]
-  },
-  {
-    "version": "6.2.4",
-    "date": "2023-05-25",
-    "news": ["FEATURE emojis are now allowed in all text fields"]
-  },
-  {
-    "version": "6.2.3",
-    "date": "2023-05-19",
-    "news": [
-      "VISUAL moved settings and scales further down in the navigation menu",
-      "BUGFIX navbar search now selects on enter the first dropdown entry",
-      "FEATURE for each dropdown selection you can now choose to use the keyboard",
-      "FEATURE on mobile there is now a button near the hive dropdown to use it with the keyboard",
-      "CHANGE settings for keyboard selection on charge types and hive selection was removed in favor of new icon near the input field",
-      "CHORES upgrade libraries [SERVER, CLIENT]"
-    ]
-  },
-  {
-    "version": "6.2.2",
-    "date": "2023-04-20",
-    "news": [
-      "BUGFIX added possible fix for NFC occurring for android 13 with chrome 110",
-      "IMPROVEMENT add more references for WizBee"
-    ]
-  },
-  {
-    "version": "6.2.1",
-    "date": "2023-04-18",
-    "news": [
-      "BUGFIX disabled google sign-in for iOS app",
-      "BUGFIX validate max length for rearing methods name"
-    ]
-  },
-  {
-    "version": "6.2.0",
-    "date": "2023-04-15",
-    "news": [
-      "BUGFIX second login button to go to last visited page or dashboard, this may prevent some login issues",
-      "FEATURE WizBee integration, you can find the new feature under tools",
-      "FEATURE add google sign-in option",
-      "FEATURE dropdown fields now have quick option to add new entry",
-      "FEATURE on profile page you can now show and delete sessions for your account",
-      "VISUAL add no warp to buttons to force one line",
-      "VISUAL removed shadow drop from most pages and made style more flatter"
-    ]
-  },
-  {
-    "version": "6.1.15",
-    "date": "2023-04-04",
-    "news": [
-      "VISUAL improve error message when deleting last hive movement",
-      "VISUAL tables, add information if deleted or inactive to name (apiaries, hives, queens), thx Wolfgang",
-      "BUGFIX don't throw duplicate error when the object is in deleting state, thx Olli",
-      "BUGFIX fix wrong queen insert date on queen edit, thx Hermann"
-    ]
-  },
-  {
-    "version": "6.1.14",
-    "date": "2023-03-31",
-    "news": [
-      "BUGFIX disabled new content available popup for iOS devices as it seems to be broken, thx Olli",
-      "FEATURE improvements on geolocation for meteoblue map",
-      "REMOVED no more browser outdated warnings on login screen, as it lead to a lot of confusion",
-      "VISUAL show more prominent in footer if an update is available",
-      "VISUAL show offline notification and add reload button if offline to top navbar"
-    ]
-  },
-  {
-    "version": "6.1.13",
-    "date": "2023-03-21",
-    "news": [
-      "FEATURE export of tables is now flatten and you can choose the delimiter on export, thx Adriana",
-      "BUGFIX added fallback languages for visitors"
-    ]
-  },
-  {
-    "version": "6.1.12",
-    "date": "2023-03-10",
-    "news": [
-      "FEATURE new local option to clear hive selection after a new task was created, thx Manfred",
-      "FEATURE checkup varroa calculator now saves the last entered days in local storage, thx Matthias",
-      "FEATURE checkup varroa calculator now shows the last checkup date difference in days, thx Matthias",
-      "BUGFIX camera was not recognising QR codes",
-      "SERVER removed legacy code pieces",
-      "CHORES updated libraries [SERVER, CLIENT]"
-    ]
-  },
-  {
-    "version": "6.1.11",
-    "date": "2023-02-18",
-    "news": [
-      "BUGFIX it was not possible to select hives for queens without an active hive"
-    ]
-  },
-  {
-    "version": "6.1.10",
-    "date": "2023-02-12",
-    "news": [
-      "FEATURE added multi month view to calendar",
-      "BUGFIX checkup weight time minutes had a wrong time format",
-      "BUGFIX charge description is not mandatory any more",
-      "BUGFIX task detail view, checkup checkboxes and strong field did not show up, thx Dominik",
-      "SERVER changed redis session architecture, this change will lead to a forced logout of users",
-      "CHORES updated libraries [SERVER, CLIENT]"
-    ]
-  },
-  {
-    "version": "6.1.9",
-    "date": "2023-02-04",
-    "news": ["BUGFIX longitude had wrong limits now 180/-180, thx Ron"]
-  },
-  {
-    "version": "6.1.8",
-    "date": "2023-01-14",
-    "news": [
-      "BUGFIX fixed problem for safari that dialog wont close",
-      "BUGFIX options table breaks if sorted by not available column",
-      "BUGFIX on registration allow empty source",
-      "BUGFIX hide pagination on options table, as it is not implemented",
-      "CHORES updated libraries [SERVER, CLIENT]"
-    ]
-  },
-  {
-    "version": "6.1.7",
-    "date": "2023-01-01",
-    "news": [
-      "BUGFIX set a missing limit when creating repeating tasks (15x)",
-      "BUGFIX allow negative frames, thx steffen",
-      "BUGFIX rating and frames did not show up in hive detail task list",
-      "TRANSLATION renamed name field in charges to description as it makes more sense",
-      "TRANSLATION options table changed modus to active, which makes more sense",
-      "FEATURE new local setting to allow text search for charge types",
-      "FEATURE added count of tasks to be created or updated to the corresponding buttons",
-      "FEATURE added apiary filter option to task tables",
-      "IMPROVEMENT added info box when swiping on calendar",
-      "IMPROVEMENT tell browser to not auto translate page, this will hopefully prevent a lot of strange translation errors",
-      "IMPROVEMENT automatic e2e tests upgraded to cypress 11",
-      "IMPROVEMENT reduced warning of outdated browser",
-      "IMPROVEMENT sound notification files are now only loaded if option is active",
-      "CHORES updated calendar, should now render faster if many events are visible",
-      "CHORES updated libraries [SERVER]",
-      "BUGFIX wrong VIS date in december [SERVER]"
-    ]
-  },
-  {
-    "version": "6.1.6",
-    "date": "2022-11-21",
-    "news": [
-      "FEATURE renamed wind map to Meteoblue and added more maps and closer starting zoom to the widget",
-      "FEATURE new local settings on fields page, to allow keyboard input on hive and apiary selection on mobile devices, thx matthias",
-      "FEATURE added new button to force update hive position on apiary detail hive list, thx josef",
-      "FEATURE added option to disable week numbers in calendar, thx josef",
-      "BUGFIX apiary detail window, don't select on movement all hives if using the movement button in the hive list, thx josef",
-      "VISUAL improvement text on premium page",
-      "VISUAL calendar settings renamed to abos and now presented in a cleaner list style",
-      "CHORE updated libs",
-      "CHORE upgraded Stripe API [SERVER]"
-    ]
-  },
-  {
-    "version": "6.1.5",
-    "date": "2022-10-31",
-    "news": ["BUGFIX for charges the charge number was not saved correctly"]
-  },
-  {
-    "version": "6.1.4",
-    "date": "2022-10-28",
-    "news": [
-      "FEATURE added a new forum, sadly the old one and the data was lost in the migration process"
-    ]
-  },
-  {
-    "version": "6.1.3",
-    "date": "2022-10-26",
-    "news": ["BUGFIX possible fix for iOS password autofill not working"]
-  },
-  {
-    "version": "6.1.2",
-    "date": "2022-10-25",
-    "news": [
-      "BUGFIX don't count deleted tasks or hives and apiaries in sidebar count",
-      "BUGFIX username does not need to be unique any more",
-      "BUGFIX on new hive creation, the shown last three names do now include inactive ones",
-      "BUGFIX similar ID for apiaries did result in multiple automatic selection in apiary detail window",
-      "FEATURE it is now possible to more fine tune the fields visible on checkup in the field settings"
-    ]
-  },
-  {
-    "version": "6.1.1",
-    "date": "2022-10-18",
-    "news": ["BUGFIX qr scanner did sometimes break"]
-  },
-  {
-    "version": "6.1.0",
-    "date": "2022-10-17",
-    "news": [
-      "BETA added notice if you are currently on the beta server",
-      "BUGFIX relax data caching and invalidate old cache if new data is generated",
-      "BUGFIX feeding types were missing in options, thx jannis",
-      "BUGFIX resize observer on calendar did try to change calendar size even if not ready",
-      "BUGFIX keep login button disabled till redirected to starting page",
-      "CHANGE navbar hive and apiary search does not include inactive any more",
-      "FEATURE improved QR code scanner and added option to upload image",
-      "FEATURE added mail contact button and FAQs link to footer",
-      "FEATURE for more security the password is now required to show API key",
-      "BREAKING changed session logic from JWT to cookies [SERVER, FRONTEND], this means you will be logged out and your apps must be updated to work again! Sorry for the inconvenience.",
-      "BREAKING (German) die Session Logik wurde von JWT auf Cookies umgestellt [SERVER, FRONTEND], das bedeutet, dass Sie abgemeldet werden und Sie Ihre Anwendungen aktualisieren müssen, dass diese wieder zu funktioniert! Wir entschuldigen uns für die Unannehmlichkeiten."
-    ]
-  },
-  {
-    "version": "6.0.15",
-    "date": "2022-10-14",
-    "news": [
-      "VISUAL table rearing dialog is now only in fullscreen on mobile devices",
-      "BUGFIX wrong day/hour calculation for rearing steps",
-      "BUGFIX wrong calculation of rearing series if last step as starting step was selected [SERVER]",
-      "BUGFIX batch deletion of queen rearing was not working [SERVER]",
-      "BUGFIX rearing events did not use UTC time [SERVER]",
-      "BUGFIX creating new companies was broken [SERVER]",
-      "BUGFIX missing translation for removing user"
-    ]
-  },
+	{
+		"version": "6.5.4",
+		"date": "2025-11-06",
+		"news": [
+			"CHANGE premium donation page is disabled for iOS app users",
+			"BUGFIX social logins on register wont need email confirmation any more.",
+			"BUFGIX prevent offline sound notifications",
+			"BUGFIX VIS reminder wont be sent anymore if the user opt-out of the newsletter/notification mails.",
+			"FEATURE Apiary map now shows currently American Foulbrood areas if available in Austria.",
+			"FEATURE Added option to sign in with Apple, which is now available for all users.",
+			"FEATURE Numeric values in tables now use tabular numbers for better readability.",
+			"FEATURE Pest maps (Velutina and Aethina) randomly check some observations each day and update if necessary, for example the taxon was wrong and validated later.",
+			"FEATURE Pest maps reduced cache to 1 hour for more frequent updates.",
+			"FEATURE apiary table search now also searches in the description and note field.",
+			"IMPROVEMENT Change order of buttons to have the most used ones on the right side, to make it more common and intuitive.",
+			"STYLE Premium page now uses list and not tabs for different payment providers."
+		]
+	},
+	{
+		"version": "6.5.3",
+		"date": "2025-07-07",
+		"news": [
+			"FIX Virgin table now also can show the inactive (RIP) queens.",
+			"FIX Prevent keyboard navigation on detail pages if a text input is focused.",
+			"FIX Google login link was not working correctly, now it should work again.",
+			"FEATURE Show total amount of payments made on the premium page, for the user and globally.",
+			"FEATURE Added Mollie as an alternative payment provider which is from the Netherlands and supports many European countries.",
+			"FEATURE PWA installation can now be triggered on the settings page if supported by the browser.",
+			"FEATURE Queen and Hive name now allow up to 36 characters (from 24).",
+			"IMPROVEMENT Send two ping requests on server change to reflect the real ping time.",
+			"UPGRADE Updated server to ubuntu 22.04 LTS.",
+			"SECURITY Added more script content security policies."
+		]
+	},
+	{
+		"version": "6.5.2",
+		"date": "2025-04-23",
+		"news": [
+			"BUGFIX Checkup rating fields were not correctly working (thanks Hermann)."
+		]
+	},
+	{
+		"version": "6.5.1",
+		"date": "2025-03-21",
+		"news": [
+			"BUGFIX Calendar allow more events in week view, as long as they fit onto the column height (thanks Matthias)."
+		]
+	},
+	{
+		"version": "6.5.0",
+		"date": "2025-02-15",
+		"news": [
+			"FEATURE Added public page for beekeeping news.",
+			"FEATURE Added public map for aethina tumida.",
+			"FEATURE Activate US server on live version.",
+			"FEATURE Locally save latest calendar view and range for up to 10 minutes. This should prevent the calendar from resetting after a page reload. Thanks Johann.",
+			"FEATURE Added current ping value to the server dropdown list. This should help to identify if the server is reachable.",
+			"FEATURE Instantly change language on registration page if a language is selected.",
+			"CHORE Upgraded backend and new and more strict linter.",
+			"CHORE Upgraded frontend libraries and some minor fixes.",
+			"BUGFIX Better error handling when no temperature can be automatically fetched.",
+			"BUGFIX Added delay for sending reminders, to prevent mail server from locking."
+		]
+	},
+	{
+		"version": "6.4.6",
+		"date": "2024-09-14",
+		"news": [
+			"BUGFIX Stripe webhook now correctly distinguishes between server locations.",
+			"BUGFIX Inactive queens are now displayed in the hive details list.",
+			"BUGFIX Add current time to queen and hive movement, to prevent problems when date is the same, resulting in no obvious order.",
+			"BUGFIX Add missing server name to premium request mail.",
+			"BUGFIX Fixed a bug with multiple movements on the same day for the same hive.",
+			"IMPROVEMENT Removed shadow of map markers to make them more visible if multiple markers (apiaries) are present.",
+			"FEATURE When adding a new queen to a hive, older queens will automatically be set to inactive based on the insertion date of the new queen. The update will change automatically the status your current queens, but please check your queen data and adjust it if necessary.",
+			"FEATURE New column on movedates table, it now shows the name of the previous apiary (thanks Manu)."
+		]
+	},
+	{
+		"version": "6.4.5",
+		"date": "2024-08-12",
+		"news": [
+			"BUGFIX clear velutina and hive beetle daily cache on new version",
+			"BUGFIX google oauth was not working correctly with special characters in email",
+			"IMPROVEMENT added company name to premium reminder mail"
+		]
+	},
+	{
+		"version": "6.4.4",
+		"date": "2024-08-01",
+		"news": [
+			"BUGFIX Resolved an issue where downloading company data was blocked by CORS.",
+			"BUGFIX Corrected Dropbox authentication errors caused by excessively long access tokens.",
+			"IMPROVEMENT Added a 'New Queen' button to the hive detail view.",
+			"IMPROVEMENT Full data export now correctly includes boolean values.",
+			"IMPROVEMENT Velutina map now features smaller clusters and separates recent observations from clusters.",
+			"FEATURE Added an option to import and export data to create a new beekeeping company.",
+			"FEATURE Introduced a hive beetle map in the maps section."
+		]
+	},
+	{
+		"version": "6.4.3",
+		"date": "2024-07-09",
+		"news": [
+			"BUGFIX add missing translations to velutina map and simplify the text",
+			"UPDATE added new fields to manifest for PWA"
+		]
+	},
+	{
+		"version": "6.4.2",
+		"date": "2024-05-28",
+		"news": [
+			"BUGFIX WizBee should now also work with broken JSON answers",
+			"UPDATE WizBee now uses ChatGPT-4o",
+			"UPDATE upgrades the forum to the latest version"
+		]
+	},
+	{
+		"version": "6.4.1",
+		"date": "2024-03-22",
+		"news": [
+			"TRANSLATION changed german translation for temper, thx Clemens",
+			"REMOVED you can no longer pay via SOFORT as the service is discontinued by Klarna"
+		]
+	},
+	{
+		"version": "6.4.0",
+		"date": "2024-02-18",
+		"news": [
+			"FEATURE you can chose between two date formats in the profile settings (ISO and AT/DE-DIN)",
+			"BUGFIX hive details statistics type names were not displayed",
+			"BUGFIX database, changed scale data to datetime from timestamp to prevent date constraints",
+			"BUGFIX date picker not showing for Firefox, thx Manu",
+			"PERFORMANCE added new database indexes and composition indexes to hives, apiaries and observations"
+		]
+	},
+	{
+		"version": "6.3.9",
+		"date": "2024-01-22",
+		"news": [
+			"FEATURE WizBee is now streaming answers, which should lead to quicker responses",
+			"BUGFIX statistic graphs did not load correctly",
+			"BUGFIX disable double fetching of user settings",
+			"BUGFIX added a dark mode grayscale image for WizBee",
+			"IMPROVEMENT velutina map code and style",
+			"CHORES updated libraries [SERVER, CLIENT]"
+		]
+	},
+	{
+		"version": "6.3.8",
+		"date": "2023-12-18",
+		"news": [
+			"BUGFIX changes on type and source for hives were not saved correctly, thx sepp",
+			"BUGFIX dropbox loading state was not stopped in some cases",
+			"BUGFIX on queen edit the connection to the hive was lost",
+			"CHANGE updated urls to btree.at main page for english language",
+			"IMPROVEMENT added infoFauna.ch as vespa velutina source (it lags behind a bit as the data is from GBIF)",
+			"IMPROVEMENT on the velutina map you can now change years to view older data",
+			"IMPROVEMENT ping timer is now lower if status is offline, this should lead to quicker recovery if the internet connection is back",
+			"IMPROVEMENT remove session logout if no internet connection is present",
+			"IMPROVEMENT ICal export now has fewer dependencies",
+			"CHORES upgrade libraries [SERVER, CLIENT]"
+		]
+	},
+	{
+		"version": "6.3.7",
+		"date": "2023-11-10",
+		"news": [
+			"IMPROVEMENT added more references for WizBee (vespa velutina, aethina tumida, oxymel)",
+			"IMPROVEMENT WizBee now uses ChatGPT4 Turbo Model",
+			"IMPROVEMENT allow left and right cursor for pagination on beekeeping news page",
+			"REMOVED meteoblue as supporter, as we do not receive any discount any more",
+			"FEATURE new varroa count over time statistics [PREMIUM]"
+		]
+	},
+	{
+		"version": "6.3.6",
+		"date": "2023-11-01",
+		"news": ["FEATURE integrated new page beekeeping news to tools"]
+	},
+	{
+		"version": "6.3.5",
+		"date": "2023-10-02",
+		"news": [
+			"BUGFIX WizBee was showing no error if no answer could be generated",
+			"FEATURE added observation.org observations to Vespa velutina map"
+		]
+	},
+	{
+		"version": "6.3.4",
+		"date": "2023-09-29",
+		"news": [
+			"BUGFIX the left and right arrow navigation on the detail pages for hives and apiaries did not work",
+			"BUGFIX improve handling of invalid dropbox token",
+			"BUGFIX fix charge description on edit not showing up",
+			"BUGFIX editing multiple harvest with different amount of frames did not work correctly"
+		]
+	},
+	{
+		"version": "6.3.3",
+		"date": "2023-09-19",
+		"news": [
+			"BUGFIX convert empty string in numeric field to zero number, should fix errors when deleting a number and leaving the input empty",
+			"BUGFIX allow access to external api endpoints for stripe",
+			"FEATURE option to pay multiple years in advance",
+			"BUGFIX add missing transactions to database queries [SERVER]"
+		]
+	},
+	{
+		"version": "6.3.2",
+		"date": "2023-09-06",
+		"news": [
+			"FEATURE added public available vespa velutina map",
+			"IMPROVEMENT added caching to vespa velutina data for faster loading"
+		]
+	},
+	{
+		"version": "6.3.1",
+		"date": "2023-09-02",
+		"news": [
+			"FEATURE added Vespa velutina map and identification material",
+			"BUGFIX double brackets in hive dropdown",
+			"BUGFIX wrong header in treatment statistic, thx Benedikt"
+		]
+	},
+	{
+		"version": "6.3.0",
+		"date": "2023-08-23",
+		"news": [
+			"REFACTOR server changed from express to fastify, for better performance",
+			"REFACTOR queen rearing logic was changed, waiting time is now set on the method and not for each step. This should make it a lot clearer and easier to use. Additionally improved display in calendar to include the weekday in the detail dialog. The update should handle and update the old system but please check your queen rearing methods and adjust them if necessary.",
+			"REFACTOR dropbox integration should now work more stable and reduced number of api calls",
+			"FEATURE notify user if registration email failed to deliver",
+			"FEATURE you can now copy rows in tables (hive, queen, virgin, charge), thx Olli",
+			"IMPROVEMENT added helpful tooltip to hive mode toggle button",
+			"BUGFIX changing the modus of multiple hives did result in invalid inactive date",
+			"BUGFIX increase position and group hive max validation to 9999",
+			"BUGFIX sound notification was only working after reload",
+			"BUGFIX disabled CORS for google auth, which should fix the login problem with google",
+			"BUGFIX rearing form now always shows one on save button, as no name is required",
+			"BUGFIX better error message for coupons",
+			"BUGFIX disable hive scale stats link on navigationbar if only basic user",
+			"BUGFIX wizbee show correct error message for basic user",
+			"BUGFIX don't allow a duplicate name of apiary or hive on edit"
+		]
+	},
+	{
+		"version": "6.2.6",
+		"date": "2023-07-16",
+		"news": [
+			"BUGFIX disable form temperature waiting spinner (checkup and treatment) on init load",
+			"BUGFIX changelog was not visible on page refresh",
+			"BUGFIX nfc writing / clearing was not showing loading icon and disable if reading is active",
+			"BUGFIX prevent NFC error double notification",
+			"BUGFIX disable caching on service worker",
+			"FEATURE added link to VIS portal on calendar event",
+			"FEATURE added new CDN service bunny.net",
+			"FEATURE updated WizBee to work with ChatGPT version 4",
+			"CHORE updated vue-query to @tanstack",
+			"CHORES upgrade libraries [SERVER, CLIENT]"
+		]
+	},
+	{
+		"version": "6.2.5",
+		"date": "2023-05-31",
+		"news": ["BUGFIX fix UTC timezone for rearings, thx Olli"]
+	},
+	{
+		"version": "6.2.4",
+		"date": "2023-05-25",
+		"news": ["FEATURE emojis are now allowed in all text fields"]
+	},
+	{
+		"version": "6.2.3",
+		"date": "2023-05-19",
+		"news": [
+			"VISUAL moved settings and scales further down in the navigation menu",
+			"BUGFIX navbar search now selects on enter the first dropdown entry",
+			"FEATURE for each dropdown selection you can now choose to use the keyboard",
+			"FEATURE on mobile there is now a button near the hive dropdown to use it with the keyboard",
+			"CHANGE settings for keyboard selection on charge types and hive selection was removed in favor of new icon near the input field",
+			"CHORES upgrade libraries [SERVER, CLIENT]"
+		]
+	},
+	{
+		"version": "6.2.2",
+		"date": "2023-04-20",
+		"news": [
+			"BUGFIX added possible fix for NFC occurring for android 13 with chrome 110",
+			"IMPROVEMENT add more references for WizBee"
+		]
+	},
+	{
+		"version": "6.2.1",
+		"date": "2023-04-18",
+		"news": [
+			"BUGFIX disabled google sign-in for iOS app",
+			"BUGFIX validate max length for rearing methods name"
+		]
+	},
+	{
+		"version": "6.2.0",
+		"date": "2023-04-15",
+		"news": [
+			"BUGFIX second login button to go to last visited page or dashboard, this may prevent some login issues",
+			"FEATURE WizBee integration, you can find the new feature under tools",
+			"FEATURE add google sign-in option",
+			"FEATURE dropdown fields now have quick option to add new entry",
+			"FEATURE on profile page you can now show and delete sessions for your account",
+			"VISUAL add no warp to buttons to force one line",
+			"VISUAL removed shadow drop from most pages and made style more flatter"
+		]
+	},
+	{
+		"version": "6.1.15",
+		"date": "2023-04-04",
+		"news": [
+			"VISUAL improve error message when deleting last hive movement",
+			"VISUAL tables, add information if deleted or inactive to name (apiaries, hives, queens), thx Wolfgang",
+			"BUGFIX don't throw duplicate error when the object is in deleting state, thx Olli",
+			"BUGFIX fix wrong queen insert date on queen edit, thx Hermann"
+		]
+	},
+	{
+		"version": "6.1.14",
+		"date": "2023-03-31",
+		"news": [
+			"BUGFIX disabled new content available popup for iOS devices as it seems to be broken, thx Olli",
+			"FEATURE improvements on geolocation for meteoblue map",
+			"REMOVED no more browser outdated warnings on login screen, as it lead to a lot of confusion",
+			"VISUAL show more prominent in footer if an update is available",
+			"VISUAL show offline notification and add reload button if offline to top navbar"
+		]
+	},
+	{
+		"version": "6.1.13",
+		"date": "2023-03-21",
+		"news": [
+			"FEATURE export of tables is now flatten and you can choose the delimiter on export, thx Adriana",
+			"BUGFIX added fallback languages for visitors"
+		]
+	},
+	{
+		"version": "6.1.12",
+		"date": "2023-03-10",
+		"news": [
+			"FEATURE new local option to clear hive selection after a new task was created, thx Manfred",
+			"FEATURE checkup varroa calculator now saves the last entered days in local storage, thx Matthias",
+			"FEATURE checkup varroa calculator now shows the last checkup date difference in days, thx Matthias",
+			"BUGFIX camera was not recognising QR codes",
+			"SERVER removed legacy code pieces",
+			"CHORES updated libraries [SERVER, CLIENT]"
+		]
+	},
+	{
+		"version": "6.1.11",
+		"date": "2023-02-18",
+		"news": [
+			"BUGFIX it was not possible to select hives for queens without an active hive"
+		]
+	},
+	{
+		"version": "6.1.10",
+		"date": "2023-02-12",
+		"news": [
+			"FEATURE added multi month view to calendar",
+			"BUGFIX checkup weight time minutes had a wrong time format",
+			"BUGFIX charge description is not mandatory any more",
+			"BUGFIX task detail view, checkup checkboxes and strong field did not show up, thx Dominik",
+			"SERVER changed redis session architecture, this change will lead to a forced logout of users",
+			"CHORES updated libraries [SERVER, CLIENT]"
+		]
+	},
+	{
+		"version": "6.1.9",
+		"date": "2023-02-04",
+		"news": ["BUGFIX longitude had wrong limits now 180/-180, thx Ron"]
+	},
+	{
+		"version": "6.1.8",
+		"date": "2023-01-14",
+		"news": [
+			"BUGFIX fixed problem for safari that dialog wont close",
+			"BUGFIX options table breaks if sorted by not available column",
+			"BUGFIX on registration allow empty source",
+			"BUGFIX hide pagination on options table, as it is not implemented",
+			"CHORES updated libraries [SERVER, CLIENT]"
+		]
+	},
+	{
+		"version": "6.1.7",
+		"date": "2023-01-01",
+		"news": [
+			"BUGFIX set a missing limit when creating repeating tasks (15x)",
+			"BUGFIX allow negative frames, thx steffen",
+			"BUGFIX rating and frames did not show up in hive detail task list",
+			"TRANSLATION renamed name field in charges to description as it makes more sense",
+			"TRANSLATION options table changed modus to active, which makes more sense",
+			"FEATURE new local setting to allow text search for charge types",
+			"FEATURE added count of tasks to be created or updated to the corresponding buttons",
+			"FEATURE added apiary filter option to task tables",
+			"IMPROVEMENT added info box when swiping on calendar",
+			"IMPROVEMENT tell browser to not auto translate page, this will hopefully prevent a lot of strange translation errors",
+			"IMPROVEMENT automatic e2e tests upgraded to cypress 11",
+			"IMPROVEMENT reduced warning of outdated browser",
+			"IMPROVEMENT sound notification files are now only loaded if option is active",
+			"CHORES updated calendar, should now render faster if many events are visible",
+			"CHORES updated libraries [SERVER]",
+			"BUGFIX wrong VIS date in december [SERVER]"
+		]
+	},
+	{
+		"version": "6.1.6",
+		"date": "2022-11-21",
+		"news": [
+			"FEATURE renamed wind map to Meteoblue and added more maps and closer starting zoom to the widget",
+			"FEATURE new local settings on fields page, to allow keyboard input on hive and apiary selection on mobile devices, thx matthias",
+			"FEATURE added new button to force update hive position on apiary detail hive list, thx josef",
+			"FEATURE added option to disable week numbers in calendar, thx josef",
+			"BUGFIX apiary detail window, don't select on movement all hives if using the movement button in the hive list, thx josef",
+			"VISUAL improvement text on premium page",
+			"VISUAL calendar settings renamed to abos and now presented in a cleaner list style",
+			"CHORE updated libs",
+			"CHORE upgraded Stripe API [SERVER]"
+		]
+	},
+	{
+		"version": "6.1.5",
+		"date": "2022-10-31",
+		"news": ["BUGFIX for charges the charge number was not saved correctly"]
+	},
+	{
+		"version": "6.1.4",
+		"date": "2022-10-28",
+		"news": [
+			"FEATURE added a new forum, sadly the old one and the data was lost in the migration process"
+		]
+	},
+	{
+		"version": "6.1.3",
+		"date": "2022-10-26",
+		"news": ["BUGFIX possible fix for iOS password autofill not working"]
+	},
+	{
+		"version": "6.1.2",
+		"date": "2022-10-25",
+		"news": [
+			"BUGFIX don't count deleted tasks or hives and apiaries in sidebar count",
+			"BUGFIX username does not need to be unique any more",
+			"BUGFIX on new hive creation, the shown last three names do now include inactive ones",
+			"BUGFIX similar ID for apiaries did result in multiple automatic selection in apiary detail window",
+			"FEATURE it is now possible to more fine tune the fields visible on checkup in the field settings"
+		]
+	},
+	{
+		"version": "6.1.1",
+		"date": "2022-10-18",
+		"news": ["BUGFIX qr scanner did sometimes break"]
+	},
+	{
+		"version": "6.1.0",
+		"date": "2022-10-17",
+		"news": [
+			"BETA added notice if you are currently on the beta server",
+			"BUGFIX relax data caching and invalidate old cache if new data is generated",
+			"BUGFIX feeding types were missing in options, thx jannis",
+			"BUGFIX resize observer on calendar did try to change calendar size even if not ready",
+			"BUGFIX keep login button disabled till redirected to starting page",
+			"CHANGE navbar hive and apiary search does not include inactive any more",
+			"FEATURE improved QR code scanner and added option to upload image",
+			"FEATURE added mail contact button and FAQs link to footer",
+			"FEATURE for more security the password is now required to show API key",
+			"BREAKING changed session logic from JWT to cookies [SERVER, FRONTEND], this means you will be logged out and your apps must be updated to work again! Sorry for the inconvenience.",
+			"BREAKING (German) die Session Logik wurde von JWT auf Cookies umgestellt [SERVER, FRONTEND], das bedeutet, dass Sie abgemeldet werden und Sie Ihre Anwendungen aktualisieren müssen, dass diese wieder zu funktioniert! Wir entschuldigen uns für die Unannehmlichkeiten."
+		]
+	},
+	{
+		"version": "6.0.15",
+		"date": "2022-10-14",
+		"news": [
+			"VISUAL table rearing dialog is now only in fullscreen on mobile devices",
+			"BUGFIX wrong day/hour calculation for rearing steps",
+			"BUGFIX wrong calculation of rearing series if last step as starting step was selected [SERVER]",
+			"BUGFIX batch deletion of queen rearing was not working [SERVER]",
+			"BUGFIX rearing events did not use UTC time [SERVER]",
+			"BUGFIX creating new companies was broken [SERVER]",
+			"BUGFIX missing translation for removing user"
+		]
+	},
 
-  {
-    "version": "6.0.14",
-    "date": "2022-10-12",
-    "news": ["BUGFIX missing option for harvest types in settings"]
-  },
-  {
-    "version": "6.0.13",
-    "date": "2022-10-12",
-    "news": [
-      "BUGFIX wrong CSS in scale calendar",
-      "BUGFIX disable speech recognition if not available (firefox)",
-      "BUGFIX disable swiping on calendar if user is dragging events",
-      "BUGFIX it is now possible to scan NFC tags from the old version to select hives",
-      "BUGFIX scanning hive detail QR codes should now also select hives if hive dropdown is active on page",
-      "BUGFIX hive scale upload was not working for new scales [SERVER]",
-      "BUGFIX rank user is now able to create charges [SERVER]",
-      "VISUAL added share button (print QR and set NFC) to top navbar button dropdown list on mobile devices",
-      "FEATURE on detail pages you can now filter for open tasks",
-      "FEATURE added inactivate queen and hive button to hive detail page, thx hermann",
-      "FEATURE navigation menu now shows again open tasks and counts. Info: Count will only update every five minutes"
-    ]
-  },
-  {
-    "version": "6.0.12",
-    "date": "2022-10-11",
-    "news": [
-      "BUGFIX charge table filtering was not working properly",
-      "BUGFIX queen stats table was not showing the current active queens [SERVER]",
-      "BUGFIX queen stats table, allow ordering of calculated fields, but only on the visible ones!",
-      "BUGFIX hive table queen date was wrong, thx yannik",
-      "BUGFIX wrong activation link on registration email",
-      "BUGFIX some german and english typos",
-      "FEATURE added NFC button to read content, thx hermann",
-      "FEATURE hive and apiary detail page now have custom button to quickly add tasks, thx hermann",
-      "FEATURE queen table added missing move date column",
-      "FEATURE tables support now arrow navigation for pagination (left, right, up and down)",
-      "FEATURE added again machine translated italian and french translation"
-    ]
-  },
-  {
-    "version": "6.0.11",
-    "date": "2022-10-06",
-    "news": [
-      "BUGFIX added missing PayPal user information on payment (Server)",
-      "BUGFIX company dropdown is now ordered alphabetically and added information about payment status",
-      "VISUAL Dropbox upload modal is not fullscreen any more on mobile devices and uses icons now",
-      "FEATURE you can now select .pdf files for upload to Dropbox",
-      "FEATURE added option to date modal to auto close after selection of date"
-    ]
-  },
-  {
-    "version": "6.0.10",
-    "date": "2022-10-06",
-    "news": [
-      "BUGFIX small typo on login screen",
-      "BUGFIX remove stripe payment for iOS app, as it will break the app",
-      "BUGFIX remove payment console logs in production",
-      "FEATURE PayPal allow credit card direct payment",
-      "FEATURE harvest table search now also includes the charge column (Server)",
-      "FEATURE charges table search now also includes the charge column (Server)",
-      "FEATURE hive table has now a specific filter for apiary",
-      "FEATURE apiary table now has an option to export hive cards, thx paul",
-      "FEATURE on touch devices you can now swipe on the calendar to move forward or back in history"
-    ]
-  },
-  {
-    "version": "6.0.9",
-    "date": "2022-10-05",
-    "news": [
-      "Version 6 is live 🚀",
-      "BUGFIX emails with dots did not work, thx hermann",
-      "BUGFIX typos in dropbox and main url"
-    ]
-  },
-  {
-    "version": "6.0.8",
-    "date": "2022-09-15",
-    "news": [
-      "FEATURE pedigree window if you click on the queen name in queen or virgin table",
-      "FEATURE added queen rearing methods separate tab with table for steps for easier management of multiple steps",
-      "BUGFIX temperature field value for checkup, scale data and treatment could not be edited",
-      "BUGFIX time on checkup weight was not able to be left alone",
-      "BUGFIX it was not possible to delete virgin queens",
-      "BUGFIX allow higher values in scale data weight input",
-      "VISUAL small style improvements for small screen sizes"
-    ]
-  },
-  {
-    "version": "6.0.7",
-    "date": "2022-09-11",
-    "news": [
-      "FEATURE added optional temperature field to treatments",
-      "BUGFIX on dark mode autofill input fields were white",
-      "BUGFIX disabled speech recognition button on safari",
-      "BUGFIX german translations"
-    ]
-  },
-  {
-    "version": "6.0.6",
-    "date": "2022-09-10",
-    "news": [
-      "BUGFIX rearing steps were not moveable",
-      "BUGFIX german temperature hint text was broken",
-      "BUGFIX in apiary detail view the hive order was not possible to change",
-      "BUGFIX regrex error on safari browser",
-      "VISUAL removed bullet points on change-log page, for better read ability on mobile devices"
-    ]
-  },
-  {
-    "version": "6.0.5",
-    "date": "2022-09-09",
-    "news": [
-      "FEATURE added QR code generator on hive table",
-      "FEATURE added QR code scanner button on top navbar",
-      "IMPROVEMENT of NFC and QR scanning selection of hives"
-    ]
-  },
-  {
-    "version": "6.0.4",
-    "date": "2022-09-08",
-    "news": [
-      "REMOVED curated links helper, you can now find the links on our info page"
-    ]
-  },
-  {
-    "version": "6.0.3",
-    "date": "2022-09-07",
-    "news": [
-      "FEATURE PWA added maskable icons and shortcuts to manifest",
-      "IMPROVEMENT changelog has now a cleaner style and less code",
-      "BUGFIX colour mode should now load correctly after refresh and on mobile"
-    ]
-  },
-  {
-    "version": "6.0.2",
-    "date": "2022-09-06",
-    "news": [
-      "FEATURE added option to print hive card on hive table",
-      "FEATURE added charge stock table",
-      "FEATURE added hive scale weight charts",
-      "FEATURE added pull to reload page on toolbar header",
-      "FEATURE allow system mode for dark mode and added dark mode button to login page",
-      "FEATURE added button to download statistics graphs as image",
-      "BUGFIX stale cache time reduced, this means changes in data on calendar or tables are quicker shown",
-      "BUGFIX queen mark colour was not loading on edit",
-      "BUGFIX after account activation, redirect to login page and autofill correctly the email"
-    ]
-  },
-  {
-    "version": "6.0.1",
-    "date": "2022-08-25",
-    "news": [
-      "BUGFIX field settings should now be saved correctly per user",
-      "BUGFIX german translations",
-      "VISUAL MOBILE calendar events are not anymore fullscreen",
-      "VISUAL checkup form on small screen size queen checkups in two rows",
-      "VISUAL checkup form more space for rating text",
-      "VISUAL statistic year change buttons are now disabled if all year are shown"
-    ]
-  },
-  {
-    "version": "6.0.0",
-    "date": "2022-08-23",
-    "news": [
-      "FEATURE MAJOR REBUILD new frontend design made with Vue.js and backend now with Node.js"
-    ]
-  },
-  {
-    "date": "2022-07-03",
-    "news": [
-      "BUGFIX table harvest, frames were not visible if checkup frames were disabled"
-    ],
-    "version": "5.0.23"
-  },
-  {
-    "date": "2022-06-14",
-    "news": [
-      "BUGFIX checkup weight statistic had wrong order for time constant, thx anonymous user"
-    ],
-    "version": "5.0.22.1"
-  },
-  {
-    "date": "2022-05-04",
-    "news": [
-      "BUGFIX rearing wrong calculation if more than 10 steps present, thx yannick"
-    ],
-    "version": "5.0.22"
-  },
-  {
-    "date": "2022-05-04",
-    "news": [
-      "VISUAL added creator and editor user information to task list in apiary and hive detail view"
-    ],
-    "version": "5.0.21"
-  },
-  {
-    "date": "2022-04-20",
-    "news": [
-      "BUGFIX external iCal calendar for queen rearing wrong date format description"
-    ],
-    "version": "5.0.20.1"
-  },
-  {
-    "version": "5.0.20",
-    "date": "2022-02-05",
-    "news": ["VISUAL prevent overscrolling in chrome and edge browser"]
-  },
-  {
-    "version": "5.0.19",
-    "date": "2022-01-24",
-    "news": [
-      "FEATURE speak recognition on quicktool note is now possible",
-      "VISUAL added wind animation to sponsored weather map",
-      "BUGFIX spelling mistake in VIS email",
-      "UPDATE datatable backend and frontend libraries",
-      "UPDATE mailer and stripe libraries",
-      "UPDATE calendar and developer libraries"
-    ]
-  },
-  {
-    "version": "5.0.18",
-    "date": "2021-08-12",
-    "news": [
-      "VISUAL apiary map changed sponsored live wind map to live satellite map with clouds and rain"
-    ]
-  },
-  {
-    "version": "5.0.17",
-    "date": "2021-08-09",
-    "news": [
-      "BUGFIX dropbox authentication was not working correctly",
-      "UPDATE third party libraries",
-      "UPDATE developer libraries"
-    ]
-  },
-  {
-    "version": "5.0.16",
-    "date": "2021-05-06",
-    "news": [
-      "BUGFIX fixed and added lots of french translation, thx Claude",
-      "BUGFIX automatically temperature loading was broken because of new meteoblue API",
-      "VISUAL added a weather map underneath 'Apiary Map' without loading limitations, but also without apiary locations"
-    ]
-  },
-  {
-    "version": "5.0.15",
-    "date": "2021-04-12",
-    "news": [
-      "BUGFIX infinite loop on rearing table if dropdown was changed, thx Jannis"
-    ]
-  },
-  {
-    "version": "5.0.14",
-    "date": "2021-02-21",
-    "news": [
-      "BUGFIX added missing dropbox modal to hive details tables, thx Jannis ",
-      "BUGFIX statistics table for hive rating, calm comb and temper were in the wrong order, thx Jannis ",
-      "BUGFIX feed export was missing hive id ",
-      "BUGFIX account deleting did throw errors when trying to delete forum accounts "
-    ]
-  },
-  {
-    "version": "5.0.13",
-    "date": "2021-02-09",
-    "news": [
-      "BUGFIX added missing pointer class to sidebar toggle button ",
-      "BUGFIX top navbar search bar display did throw errors into console ",
-      "UPDATE bootstrap 4.6.0 and some other packages"
-    ]
-  },
-  {
-    "version": "5.0.12",
-    "date": "2020-11-22",
-    "news": [
-      "BUGFIX removed problematic CSS zoom attribute ",
-      "BUGFIX add missing cookie same-site attribute to login remember",
-      "UPDATE delete previous set Matomo Analyzing Cookies ",
-      "UPDATE removed unnecessary CDNs as we use service-worker, may fix Firefox login problem"
-    ]
-  },
-  {
-    "version": "5.0.11",
-    "date": "2020-11-17",
-    "news": [
-      "UPDATED mailer and stripe payment libraries ",
-      "UPDATED datatables library",
-      "UPDATED dropbox connection to work with new API ",
-      "BUGFIX keypress W to open weather widget was not working"
-    ]
-  },
-  {
-    "version": "5.0.10",
-    "date": "2020-10-08",
-    "news": [
-      "UPDATED development libraries ",
-      "UPDATED calendar to load quicker and changed buttons for better handling on small devices ",
-      "UPDATED stripe payment and mailer libraries ",
-      "UPDATED translation libraries ",
-      "BUGFIX top search bar did try to load on login page ",
-      "BUGFIX translation table did not save and update correctly ",
-      "CHANGE task charts now load as standard the last year with data and not all years summarized, thx manfred for the suggestion ",
-      "CHANGE removed pie charts from tasks, now showing a more comprehensive bar chart "
-    ]
-  },
-  {
-    "version": "5.0.9",
-    "date": "2020-09-08",
-    "news": [
-      "TRANSLATIONS improvements on french translations, thx to Carnot ",
-      "UPDATED third party libraries ",
-      "UPDATED CDN for bootstrap and jquery ",
-      "BUGFIX varroa count was not shown in checkup table, thx Andreas and Matthias ",
-      "BUGFIX loading chart library ",
-      "BUGFIX quickqueen did not save creation time and user ",
-      "VISUAL removed white background from quicktool ",
-      "VISUAL added icons to layer menu on apiary map ",
-      "CHANGE apiary map only allow one overlay active to reduce api calls ",
-      "CHANGE lowered temperature loading for quicktool to 30 sec "
-    ]
-  },
-  {
-    "version": "5.0.8",
-    "date": "2020-06-23",
-    "news": [
-      "VISUAL added ID to rearing table and info modal, thx Matthias",
-      "VISUAL added missing line break between note and larvae number in rearing modal",
-      "BUGFIX hive position was not loading in hive detail edit modal, thx Olli",
-      "FEATURE it is now possible to order by inactive date on the hive table",
-      "BUGFIX speak command to load hive or apiary details was not working correctly"
-    ]
-  },
-  {
-    "version": "5.0.7",
-    "date": "2020-04-20",
-    "news": [
-      "BREAKING note fields now only support simple text. Images should now be added with the new URL field. All old notes have been modified, there might be some data loss, if you lost note information you can contact us and we can send you the old notes. We did this change to improve loading times in tables with a lot of data and we saw some abuse of the previous note fields for big images.",
-      "FEATURE added short inactive note to apiary or hive name in task tables when applicable",
-      "FEATURE move table now has links to hives and apiaries and also an inactive note if applicable ",
-      "FEATURE hive scales now can also send a note (please see documentation for new parameter) ",
-      "VISUAL removed membership from profile page and created a separate membership page ",
-      "VISUAL change the order of hive and apiary input fields in editor to be more logical"
-    ]
-  },
-  {
-    "version": "5.0.6",
-    "date": "2020-04-17",
-    "news": [
-      "BUGFIX first movedates for colonies were not summarized in calendar view",
-      "BUGFIX removed unnecessary comma from news in front of each new line",
-      "BUGFIX moving all colonies from a selected apiary did also move inactive ones",
-      "BUGFIX path error in translation table, when an user was editing translations",
-      "BUGFIX random error when generating quick ToDo's in calendar should now be fixed",
-      "BUGFIX fixed link error popup on apiary detail window when using safari for iOS and Mac (thx Georg)"
-    ]
-  },
-  {
-    "version": "5.0.5.2",
-    "date": "2020-03-31",
-    "news": [
-      "BUGFIX selecting multiple hives and generating Quick Tool task was broken (thx Stefan)",
-      "BUGFIX hivesheet printing from tables was not working"
-    ]
-  },
-  {
-    "version": "5.0.5.1",
-    "date": "2020-03-30",
-    "news": [
-      "BUGFIX dropbox filenames are now truncated if they are longer than 21 characters",
-      "BUGFIX ToDo tasks did throw an error if file was empty",
-      "BUGFIX Android App Dropbox API Key was not loading when using token login",
-      "BUGFIX Database Download on Profile Page was broken"
-    ]
-  },
-  {
-    "version": "5.0.5",
-    "date": "2020-03-29",
-    "news": [
-      "FEATURE calendar you now can now double click on a date and have the option to open the quicktool with corresponding date (thx manfred)",
-      "FEATURE top search bar improved it now loads quicker and the hives, apiaries and inactive are now sorted into groups",
-      "FEATURE added a scroll to top button (thx AnnA)",
-      "FEATURE Dropbox integration, you can now connect your Dropbox account and upload directly images to and from your account to tasks",
-      "FEATURE ToDos now also support images",
-      "FEATURE new user rank 'Worker', see documentation (section User) for details",
-      "FEATURE you can now load a bigger font size by clicking the corresponding button on the top bar",
-      "FEATURE two new summary tables, one with summary of harvests and one for average ratings per hive and year,",
-      "VISUAL name change for web app, to better distinguish from native app name",
-      "OTHER tables - if the form is open and you are inside a number or select field you can now press enter to quickly save the entry",
-      "VISUAL task popup in calendar now has a separate button to check the task",
-      "BUGFIX charge table in and out button was not working for translated versions (thx Roland) ",
-      "BUGFIX quicktool and tables stop opening fileupload div if the enter key was pressed",
-      "BUGFIX quicktool did open varroa calculator if pressed enter and not save",
-      "BUGFIX download database did not work for small operations",
-      "BUGFIX queen and virgin table, the queen color dropdown was not updating with change of year",
-      "BUGFIX it was possible for non-admins to generate a new API code"
-    ]
-  },
-  {
-    "version": "5.0.4",
-    "date": "2020-02-16",
-    "news": [
-      "BUGFIX added missing trailing backslash to some table URLs ",
-      "BUGFIX english documentation one link was broken ",
-      "BUGFIX service worker did serve wrong links for calendar ",
-      "BUGFIX hive table - adding tasks from table did not work correctly (thx Stefan) ",
-      "BUGFIX login page cookie should work again ",
-      "BUGFIX calendar did show errors if changing too quick between months ",
-      "FEATURE speak recognition now also works with new Microsoft Edge Browser"
-    ]
-  },
-  {
-    "version": "5.0.3",
-    "date": "2020-01-18",
-    "news": [
-      "BUGFIX seach dropdown was broken ",
-      "BUGFIX iOS table dropdowns did not load ",
-      "BUGFIX added missing sound effect on rearing methods ",
-      "BUGFIX notify messages were not closing ",
-      "BUGFIX it was possible to delete your own company even if it was your last ",
-      "BUGFIX varroa calculator graph was not working after last update ",
-      "VISUAL changed success messages in virgin and queen table"
-    ]
-  },
-  {
-    "version": "5.0.2",
-    "date": "2020-01-17",
-    "news": [
-      "BUGFIX changed drag and drop library for rearing methods and apiary details to work with iOS (thx Leo) ",
-      "BUGFIX generating multiple virgins did result in wrong birth dates (thx Grabowski) ",
-      "BUGFIX login page the remember checkbox was not working as it should, it will now delete cookies if unselected ",
-      "BUGFIX login page added new html5 tags to login fields ",
-      "BUGFIX hive detail - sorting of hives is now with a little bit of delay, otherwise it could happen on accident ",
-      "BUGFIX some libraries urls did use a wrong format, should now be fixed ",
-      "BUGFIX apiary map double click on iOS should work again (thx Leo) ",
-      "BUGFIX weather widget should now close automatically if no location was found ",
-      "BUGFIX added new cookie definer to login cookie to fix warning messages with new google chrome ",
-      "BUGFIX sidebar - quicktool did show not always the active color ",
-      "FEATURE google pay is now supported over stripe ",
-      "FEATURE added android docu for upcoming android app with NFC support ",
-      "VISUAL hive and apiary detail, space between year button and quick access buttons to tasks a little bit smaller to fit better on small devices ",
-      "LIBRARIES updated various third party packages"
-    ]
-  },
-  {
-    "version": "5.0.1.1",
-    "date": "2019-12-20",
-    "news": ["Updated forum to newest version"]
-  },
-  {
-    "version": "5.0.1",
-    "date": "2019-10-30",
-    "news": [
-      "BUGFIX some minor fixes and spelling errors ",
-      "BUGFIX wrong links on 404 page ",
-      "CHANGE weather overlay and satellite map is now only for premium member (usage and, therefore, costs were too high)"
-    ]
-  },
-  {
-    "version": "5.0.0",
-    "date": "2019-10-02",
-    "news": [
-      "FEATURE new sugar solution table on helper page ",
-      "FEATURE you can now create a full data backup on your profile page, this will download all your database entries as json, xml and csv file (premium feature) ",
-      "FEATURE apiary map - has now a print button ",
-      "FEATURE apiary map - satellite images and weather overlay ",
-      "FEATURE apiary map - bee flight radius can now be changed ",
-      "FEATURE quicktool - harvest frames it is now possible to say total or single value as with amount ",
-      "FEATURE quicktool - the link on sidebar will now remember the last used quicktool settings and will open it again ",
-      "FEATURE quicktool checkup - varroa field now offers a button to quickly calculate the daily average dead varroa from screening ",
-      "FEATURE quicktool checkup - weight field has now a button to load connected hivescales if premium member ",
-      "FEATURE calendar - you can now doubleclick on a date to add a TODO task ",
-      "FEATURE calendar - queen rearing events now also shown an ID to better identify them ",
-      "FEATURE calendar - you can now move forward or back in calendar with arrow keys ",
-      "FEATURE upload - new URL field for tasks and charge, easy solution to add images or files (premium user) ",
-      "FEATURE speak - you can now chang the year in hive or apiary detail view with date + yearnumber or year + yearnumber ",
-      "FEATURE filemanager - you can now download all your files as zip file (premium user) ",
-      "FEATURE table virgin - new table, this should be used for queens without production hives and you can add quickly multiple queens with the same settings ",
-      "FEATURE navbar - new history back button, this should help going back to your last visited site especially on mobile devices ",
-      "FEATURE statistics - apiary chart now also shows the number of hives on the apiary ",
-      "FEATURE statistics chart - now also show sum of sales or purchases as values and you can now set single years or all years ",
-      "FEATURE statistics chart - text will show now stock for selected year and total stock value ",
-      "FEATURE statistics - new hive chart which shows hive numbers history beginning with year 2018 ",
-      "FEATURE open source translation table - you can edit here translations if you want to help me out and find some spelling mistakes or wrong translations (only access for premium member with at least 31 days premium left) ",
-      "FEATURE new google translated Italian version, probably a lot of spelling mistakes but wanted to give it a try ",
-      "FEATURE new google translated French version, probably a lot of spelling mistakes but wanted to give it a try ",
-      "REMOVED fullscreen option, did result in more problems than use ",
-      "REMOVED print hive large template, now you can only export and print in compact form, which has the same data but is more print friendly ",
-      "STYLE statistics - improved fonts inside charts and zero values are not anymore printed ",
-      "STYLE font - using native fonts now for optimum text rendering on every device ",
-      "STYLE queen rearing print should now have better format for printing ",
-      "STYLE hive and apiary task detail list, improvements on overview and removed color overflow ",
-      "STYLE sidebar should now color mark the current page ",
-      "STYLE hive print page now has a print and back button, should help on mobile devices ",
-      "STYLE darker sidebar and removed the colors ",
-      "STYLE big update overall moved to bootstrap 4 ",
-      "STYLE filemanager new button styles for quicker access to upload ",
-      "STYLE note fields will now remove styles of pasted text automatically ",
-      "STYLE apiary map higher padding on sides for mobile devices to allow easier page scroll up ",
-      "STYLE apiary map top buttons added tooltips and shorter on mobile devices ",
-      "STYLE calendar improved top bar buttons for mobile devices ",
-      "BUGFIX calendar - added missing sound and notifications if you hide or show events in calendar ",
-      "BUGFIX quicktool speak - improved selection of hives and apiaries with speak commands but you cannot have anymore dots in your names if you want to have working speak recognition ",
-      "BUGFIX apiary map - on apiary creation the map will not fully reload anymore ",
-      "BUGFIX stripe payment is now updated to work with new regulations ",
-      "BUGFIX cdn and local jquery was not working as expected ",
-      "BUGFIX iCAL export and offset of hours ",
-      "BUGFIX tooltips will close on button click ",
-      "BUGFIX beescale weight warning mail did ignore the user profile settings ",
-      "BUGFIX hive print was loading new hives even on old dates ",
-      "BUGFIX mobile if weather widget is open a click on the navigation menu will now close it correctly ",
-      "BUGFIX hive detail - hive inactive date field was not working correctly and not setting an inactive date ",
-      "BUGFIX table queen detail - not all queens were shown on apiary detail view ",
-      "BUGFIX table queen - wrong color on edit ",
-      "BUGFIX table apiary - when switching to hive table it did show some wrong calculated table widths ",
-      "BUGFIX statistic - year dropdown was wrong order ",
-      "BUGFIX statistic treatment - wrong diseases loaded sometimes ",
-      "BUGFIX statistic charge - selecting year was not working ",
-      "BUGFIX statistic beescale - will now load more data entries ",
-      "METEOBLUE quicktool automatic temperature loading on checkup for premium user has now a 2 minutes limit if the same apiary is selected in this time, this should prevent overuse of the api if multiple hives on the same apiary are selected ",
-      "ICONS updated fontawesome version to 5.x ",
-      "METEOBLUE updated API access ",
-      "LIBRARIES updated various third party libraries ",
-      "MAIL new styles (using mjml)"
-    ]
-  },
-  {
-    "version": "4.0.2.4",
-    "date": "2019-06-27",
-    "news": [
-      "BUGFIX API ICAL queen rearing dates were given on ical export with wrong offset of hours"
-    ]
-  },
-  {
-    "version": "4.0.2.3",
-    "date": "2019-06-17",
-    "news": [
-      "BUGFIX API for scale, the header variable name was wrong in the documentation and improved the error message if no api key was given"
-    ]
-  },
-  {
-    "version": "4.0.2.2",
-    "date": "2019-04-23",
-    "news": ["UPDATE forum to latest version and template change"]
-  },
-  {
-    "version": "4.0.2.1",
-    "date": "2019-03-08",
-    "news": [
-      "BUGFIX Queen table did not show current queen if there was still a pending deleted queen in the system"
-    ]
-  },
-  {
-    "version": "4.0.2",
-    "date": "2018-08-11",
-    "news": [
-      "FEATURE Apiary Table - you can now select multiple apiaries and filter the corresponding hive table",
-      "FEATURE Charge Control - added new View Table which just tells you the totals and filters the other table on selecting rows",
-      "BUGFIX Icons - changes some Icons to work with new version",
-      "GENERAL CDN Service is now Amazon for static files",
-      "GENERAL Updated manifest",
-      "GENERAL Removed Google Analytics using AWStats and Report Magic on our own Server without third party access",
-      "BUGFIX Hivecard - print from Hive Table was sometimes not working",
-      "UPDATE Filemanger 9.13.3 security fixes",
-      "UPDATE PHPMailer 6.0.5"
-    ]
-  },
-  {
-    "version": "4.0.0",
-    "date": "2018-08-05",
-    "news": [
-      "FEATURE Hivecard - new compact modus for better overview, you can now also select the amount of latest tasks you want to be shown",
-      "FEATURE ICal - will now show 3 months past and future events, up from 1 month",
-      "FEATURE Hivecard - inactive hives will now be printed on date of inactivated and before it",
-      "FEATURE Hive - now also have an inactivated date field",
-      "FEATURE Hive - new Field - Hive Position - with this field you can sort your hives as on your apiary. Sorting will for Dropdown, Apiary Detail, Print will now be Position and then Hivename",
-      "FEATURE Table - Main Queen Table will now show on - show inactive - all inactive and older Queens, before only seen in hive details queen table",
-      "FEATURE Calendar and ICal - different actions of same types (eg. Checkup - Clean, New Board) will now be split",
-      "FEATURE Rear Modal - Note and Larvae/Hatch will now be shown and added colors",
-      "FEATURE Filemanager - it is now possible to select multiple files inside Filemanager (9.13.0)",
-      "FEATURE Detail Apiary - added more information to the hives on dropdown (note, type and origin)",
-      "FEATURE Stock Management - Charge, added calculated field Sum (Total Out minus In amounts). Quicktool Charge Type dropdown will now show current Stock of Type. BREAKING Change - Moved Unit from Charge to Charge Type, were you define the Unit for the given Type - if you need your old units send me a mail and I can export the old data.",
-      "FEATURE Stock Management - New statistic for Premium User to use with the new Stock management system",
-      "FEATURE Speak Recognition - more commands and reworked the old ones with some minor improvements (see documentation for full list of commands)",
-      "FEATURE General - Note Field added Buttons for Font Size, Copy, Paste and Remove Format",
-      "FEATURE General - Note Field you can now add links from Filemanager directly into note",
-      "FEATURE General - Documentation Page now has an option to print it",
-      "VISUAL Hivecard and Hive Tasks - Checkup fields will only be visible if active (options) and if sum is bigger than zero",
-      "VISUAL Table - Charge Table, added button to quickly Filter for Ins and Outs",
-      "VISUAL Table - inactive / active symbol is now a html checkmark and should be shown in column visibility dropdown",
-      "VISUAL Mobile, moved Logout Button to sidebar from topbar, to prevent logout by failed click",
-      "VISUAL Weather Widget - now closes when you click on navigation button (useful on mobile)",
-      "VISUAL Icons - Updated to Fontawesome 5 with cleaner Icons",
-      "VISUAL Detail Hive and Apiary - check and open symbol should now have same size",
-      "VISUAL General - Hivedropdown ordering is now Apiaryname - Position - Hivename",
-      "VISUAL General - Apiary Map made the buttons bigger and change of button color if inactive or active are shown",
-      "VISUAL General - Queen Table added Bee Hatch Table and made button bigger inside Rearing table",
-      "GENERAL Newsletter removed Mailchimp, we do not send Newsletter anymore because of new privacy rules, we only send app notifications if you select it on registration or on your profile page",
-      "GENERAL Inactive users (user did not login at least 5 years) gets removed from database with all their data (new privacy rules)",
-      "GENERAL Forum names are random generated, only if users wants to show name it uses the app profile settings (new privacy rules)",
-      "BUGFIX Calendar and ICal - movement of deleted hive were shown",
-      "BUGFIX ICal - Queen Rearing had false date format",
-      "BUGFIX ICal - Events with multiple dates were shown with wrong enddate, because enddate is exclusive",
-      "BUGFIX Quicktool - deleted hives were shown in dropdown",
-      "BUGFIX Detail Hive and Apiary - checkup table had wrong labels for apiary and hive",
-      "BUGFIX Detail Hive and Apiary - delete tasks were still shown on detail page",
-      "BUGFIX Stats - wrong ordering of harvest stats, so 3 oldest dates were shown and not the newer harvests",
-      "BUGFIX Table - hive table was using deleted queens",
-      "BUGFIX Table - charge table, you can now search in German - Eingang, Ausgang",
-      "BUGFIX Queen - Mother dropdown now shows all queens and not only active ones",
-      "BUGFIX Queen - Queen Name is now mandatory field",
-      "BUGFIX Rearing - Up and Down Buttons were not working correct",
-      "BUGFIX Forum - Users is on deletion now also removed from the forum",
-      "BUGFIX General - printing of pages was not possible",
-      "BUGFIX General - Dropdown should not jump to top anymore on selection",
-      "BUGFIX General - English users did get on registration german mails and german examples",
-      "BUGFIX General - Mails few spell checking issues",
-      "UPDATE external libraries annyang, chart.js, chosen, html.sortable, screenfull, tinymce"
-    ]
-  },
-  {
-    "version": "3.5.5",
-    "date": "2018-02-25",
-    "news": [
-      "BUGFIX fixed error when input of values is not numbers",
-      "BUGFIX Option Tables could not be loaded correctly",
-      "BUGFIX hive and user table inside tabs will now recalculate every time they are opened to prevent render bugs",
-      "BUGFIX deleted hives are not anymore shown in quicktool ",
-      "BUGFIX deleted hives movement is not anymore shown in calendar ",
-      "VISUAL if you add multiple hives it will now add leading zeros to the automatically generated numbers"
-    ]
-  },
-  {
-    "version": "3.5.4",
-    "date": "2018-02-07",
-    "news": [
-      "BUGFIX new Chrome Version and select fields, should work again",
-      "BUGFIX deleting your profile will now also remove you from our newsletter",
-      "OTHER double-opt in for Newsletter on registration to comply with the legal changes",
-      "UPDATE jquery, moment.js, TinyMCE, sweetAlert"
-    ]
-  },
-  {
-    "version": "3.5.3",
-    "date": "2017-11-27",
-    "news": [
-      "BUGFIX deleted hives were shown in apiary detail and print view",
-      "BUGFIX maillist update to mailchimp was not working ",
-      "BUGFIX quicktool was not loading the right frame values on checkup edit",
-      "UPDATE multiple libraries"
-    ]
-  },
-  {
-    "version": "3.5.2",
-    "date": "2017-09-25",
-    "news": [
-      "BUGFIX quick queen inside hive details should work again ",
-      "VISUAL disabled tooltips on touch devices to prevent double click ",
-      "BUGFIX cleared all user session to prevent old session bugs",
-      "BUGFIX link to forum on sidebar corrected"
-    ]
-  },
-  {
-    "version": "3.5.0",
-    "date": "2017-09-23",
-    "news": ["English: https://goo.gl/324aZb", "Deutsch: https://goo.gl/D3Xmrn"]
-  },
-  {
-    "version": "3.4.8.6",
-    "date": "2017-08-05",
-    "news": [
-      "BUGFIX create new vet information should work again",
-      "BACKGROUND few code changes to prepare for next big update"
-    ]
-  },
-  {
-    "version": "3.4.8.5",
-    "date": "2017-05-13",
-    "news": ["BUGFIX fixed ordering and favourite behaviors in tables"]
-  },
-  {
-    "version": "3.4.8.4",
-    "date": "2017-04-05",
-    "news": [
-      "BUGFIX english language and filemanager did not work correct",
-      "BUGFIX problems with older browser and forum login",
-      "BUGFIX weight table fixes"
-    ]
-  },
-  {
-    "version": "3.4.8",
-    "date": "2017-02-15",
-    "news": [
-      "FEATURE on table search the searched string is now marked inside the table",
-      "FEATURE reworked Charts you can now select multiple hives and compare them",
-      "FEATURE added own Checkup Weight Chart this will show you checkup weights",
-      "FEATURE added Varroa / Treatment Chart, here you can compare varroa between hives and also see your treatments in comparison do your varroa drops",
-      "VISUAL the queen table now shows only the latest queens on your hives and not the old ones, you can see them when you click on the button show inactive/active",
-      "BUGFIX notes on hives should now load correctly inside hive details",
-      "BUGFIX calendar multiple days events were 1 day off, is now fixed",
-      "BUGFIX connected data from hives was not delete when you delete a hive, now all feedings etc. are deleted when you delete a hive",
-      "BUGFIX firefox mobile was not working with calender as expected",
-      "BUGFIX new user could not add task to new created hives",
-      "SECURITY improved security of Fileuploads",
-      "SECURITY made loading limits on Charts",
-      "TRANSLATION small fixes in Docu"
-    ]
-  },
-  {
-    "version": "3.4.7",
-    "date": "2016-12-29",
-    "news": [
-      "FEATURE possibility to hide done ToDos in ICAL Export, user must give paramter show=0",
-      "FEATURE you can now quick and easy add queens to hives and remove them in hive table and hive detail view",
-      "FEATURE user gets now an email when his hivescale did not send any data the last 24-48 hours",
-      "VISUAL added German Translation for Hivescale API",
-      "VISUAL updated Docu that we dont support wolf-waagen at the moment",
-      "VISUAL Forum has now a more visible back to app button",
-      "BUGFIX automatic email behaviour",
-      "BUGFIX it is now possible to enter minus numbers on checkup temperature field",
-      "BUGFIX error when there was no local storage for table to load",
-      "BUGFIX error with logout",
-      "BUGFIX Users can now not add any more task if he has no dropdown selected",
-      "FIX changed date for VIS Reminder to send the mail 2 days before and not 14 days",
-      "FIX lots of code changes and improvement",
-      "UPDATED table libraries",
-      "UPDATED lot of other external libraries",
-      "UPDATED Forum to latest release and stable version"
-    ]
-  },
-  {
-    "version": "3.4.6",
-    "date": "2016-09-26",
-    "news": [
-      "BUGFIX weight scale data error in calendar",
-      "VISUAL on weight scale events in calendar it will now show first the number then the name",
-      "FEATURE you can now choose to hide done ToDos in calendar, you find the option on the profile page",
-      "IMPROVEMENT calendar page should now load quicker, even with a lot of tasks",
-      "BUGFIX added some missing german translations",
-      "BUGFIX selecting all rows in tables is now key A changed from S because S will trigger the search field"
-    ]
-  },
-  {
-    "version": "3.4.5.1",
-    "date": "2016-09-15",
-    "news": [
-      "BUGFIX Internet Explorer 10 and 11 Strict Mode Error",
-      "BUGFIX UTF8 encoding arabic und russian symbols and special latin characters",
-      "BUGFIX iCal wrong event given",
-      "BUGFIX on delete account user data was still in database"
-    ]
-  },
-  {
-    "version": "3.4.5",
-    "date": "2016-09-14",
-    "news": [
-      "Please see Newsletter: Deutsch http://eepurl.com/cfxvMf English http://eepurl.com/cfxPwb"
-    ]
-  },
-  {
-    "version": "3.4.4",
-    "date": "2016-08-31",
-    "news": [
-      "BUGFIX global search should work again",
-      "BUGFIX wrong login check on movement table",
-      "VISUAL calendar weight will now display total weight and inside popup the difference, also it will now show golden color if positive or white if negative",
-      "FEATURE you can now add continuous events on the ToDo page",
-      "BUGFIX weather was not loading if you had selected multiple hives",
-      "VISUAL changed the size of the charts to be more friendly on big displays ",
-      "BUGFIX if you did not had any rearing method it caused an error"
-    ]
-  },
-  {
-    "version": "3.4.3",
-    "date": "2016-08-29",
-    "news": [
-      "BUGFIX you could not add any options",
-      "BUGFIX in charge control table",
-      "BUGFIX if apiarymap cannot find your location it will take the first apiary location"
-    ]
-  },
-  {
-    "version": "3.4.2",
-    "date": "2016-08-25",
-    "news": [
-      "BUGFIX note field on mobile was not working anymore",
-      "VISUAL multiple style changes for mobile phones to be more user friendly"
-    ]
-  },
-  {
-    "version": "3.4.0",
-    "date": "2016-08-24",
-    "news": [
-      "FEATURE small widget that keeps your session alive and you will stay logged in when you keep the page open",
-      "VISUAL reworked a lot of pages to be more user friendly",
-      "VISUAL apiary table now also shows hive table",
-      "VISUAL combined rearing, rearing steps and rearing methods on one page",
-      "VISUAL FAQs removed and changed to news site, please see documentation as alternative to FAQs",
-      "VISUAL changed some table button colors",
-      "VISUAL reworked charts",
-      "VISUAL reworked front page",
-      "FEATURE only admins can now delete apiaries and hives",
-      "FEATURE you can now add apiaries without the map widget on the apiary table",
-      "FEATURE you can now also search for apiaries in search field, but you must click on the search result",
-      "FEATURE SCALE chart now also shows on the same page the table and added another daily average chart",
-      "FEATURE SCALE it is now possible to connect a scale to a hive, this will show the scale table inside the selected hive",
-      "FEATURE SCALE it is now possible to connect a scale to a hive, this will show the scale table inside the selected hive",
-      "FEATURE SCALE you get an email if the scale weight value difference between your last two sends is too big (5,00) this should tell you when something's happens eg. swarm or theft",
-      "BUGFIX if you edit and checkup it wont load anymore the current temperature in it, it will use the one when it was created",
-      "BUGFIX with read-only users rights",
-      "BUGFIX lot of fixes on front page",
-      "BUGFIX quicktool was saving task to selected hives and apiary hives, now it will only save to apiary hives and ignore the selected hives when you select apiary as mode",
-      "BUGFIX print export tables now only show visible columns",
-      "BUGFIX SCALE api you can now save only each hour",
-      "BUGFIX queen charts now tell you when there is no data to be shown",
-      "BUGFIX apiary map removed scroll to zoom on map",
-      "Updated Libraries"
-    ]
-  },
-  {
-    "version": "3.3.3",
-    "date": "2016-07-29",
-    "news": [
-      "BUGFIX deleting tasks in tables did not work correctly",
-      "FEATURE added helper to keep users longer logged in"
-    ]
-  },
-  {
-    "version": "3.3.2",
-    "date": "2016-07-27",
-    "news": [
-      "BUGFIX controller could not get correct language",
-      "VISUAL changed in hive detail view the queen buttons and renamed from quick add queen to add queen for better mobile experience",
-      "FEATURE added button to ToDo-List to hide or show done tasks"
-    ]
-  },
-  {
-    "version": "3.3.1",
-    "date": "2016-07-26",
-    "news": [
-      "VISUAL added apiary location to hive name in task tables, the shown apiary name is the one when the task was done and not the current one! ",
-      "BUGFIX now you cannot add tasks to an apiary without hives ",
-      "BUGFIX ToDo list firefox bug"
-    ]
-  },
-  {
-    "version": "3.3.0",
-    "date": "2016-07-22",
-    "news": [
-      "Please see Newsletter: Deutsch http://eepurl.com/b-E095 English http://eepurl.com/b-Vnvn"
-    ]
-  },
-  {
-    "version": "3.2.1",
-    "date": "2016-05-16",
-    "news": [
-      "VISUAL apiary detail view the hives are now ordered by hive name ",
-      "BUGFIX rearing modal on queen rearing table with correct wrong date format ",
-      "BUGFIX language problem on password reset and send page ",
-      "VISUAL german translation fixes ",
-      "BUGFIX editing tasks in table should now show the given date and not the current date ",
-      "BUGFIX weight statistic and wolf scales should work again ",
-      "VISUAL renamed task tables field ACTIVE to DONE"
-    ]
-  },
-  {
-    "version": "3.2.0",
-    "date": "2016-05-11",
-    "news": [
-      "BUGFIX reset password with firefox",
-      "FEATURE reworked checkups now support type",
-      "FEATURE reworked apiary detail view",
-      "FEATURE added more meteoblue function with weather data",
-      "FEATURE updated chart pages",
-      "updated external libraries",
-      "BUGFIX movement in apiary and hive table did not show current date",
-      "VISUAL emails are now in HTML and prettier",
-      "FEATURE it is now possible to export hive cards, they are ideal for printing and show all important information from your hives with the latest 10 tasks"
-    ]
-  },
-  {
-    "version": "3.1.7",
-    "date": "2016-04-07",
-    "news": [
-      "BUGFIX reworked reset key and reset page",
-      "VISUAL added hive IDs to hive dropdowns",
-      "VISUAL added the current apiary name to the hive detail view",
-      "BUGFIX when you have multiple companies and it wont remember the last"
-    ]
-  },
-  {
-    "version": "3.1.6",
-    "date": "2016-04-03",
-    "news": [
-      "BUGFIX adding new user to company and reset mail should work again"
-    ]
-  },
-  {
-    "version": "3.1.5",
-    "date": "2016-03-31",
-    "news": [
-      "BUGFIX few table fixes",
-      "BUGFIX save state",
-      "FEATURE added queen to hives table"
-    ]
-  },
-  {
-    "version": "3.1.4",
-    "date": "2016-03-27",
-    "news": [
-      "BUGFIX note wont show when editing tasks",
-      "VISUAL nicer numbers in hive details view",
-      "BUGFIX rearing display invalid date fixed"
-    ]
-  },
-  {
-    "version": "3.1.3",
-    "date": "2016-03-26",
-    "news": [
-      "VISUAL smaller weather widget on mobile device ",
-      "BUGFIX sending new password to user in user table ",
-      "Table loading bug ",
-      "BUGFIX IOs window jumping ",
-      "BUGFIX https failure on older browser ",
-      "BUGFIX HTML5 xls export missing library ",
-      "FEATURE added external API for beehive scales (beta!)"
-    ]
-  },
-  {
-    "version": "3.1.2",
-    "date": "2016-03-16",
-    "news": [
-      "VISUAL smaller widget size above calendar",
-      "BUGFIX added HTTPS force",
-      "BUGFIX error when editing apiary table",
-      "BUGFIX fixed redirect issue from index.html",
-      "FEATURE added Invoice Button to Profil Page",
-      "FEATURE updated Filemanager now you can also save and view text and pdf files",
-      "FEATURE table settings are now saved to the Database, now you have on all your devices the same settings",
-      "FEATURE before you move apiarys on the apiary map you now get a security question, to prevent miss placement",
-      "FEATURE added function to quickly add Queens in hive detail view and in the hive table view, just select the hives where you want a new queen and click Quick Queen button - Updated Docu",
-      "FEATURE added field waiting time to treatment",
-      "FEATURE added external weighting system to weight stats, you can now enter your wolf-waagen api key to see your scale inside my app. Deeper integration with wolf-waagen is coming.",
-      "VISUAL decreased the starting zoom level on the apiary map",
-      "FEATURE added weather widget in the topbar also you can now click on apiaries on your apiary map and see the weather forcecast for this location"
-    ]
-  },
-  {
-    "version": "3.1.1",
-    "date": "2016-02-06",
-    "news": [
-      "Improved performance and changed folder structure. Removed old libraries and fixed a lot of small bugs."
-    ]
-  },
-  {
-    "version": "3.0.12",
-    "date": "2016-01-27",
-    "news": [
-      "BUGFIX session drop in calendar fixed",
-      "BUGFIX error when you look at the statistic without a hive created",
-      "VISUAL added german translation for text field editor",
-      "VISUAL text editor image dialog is now more mobile friendly",
-      "BUGFIX grouphives now count on frontpage and apiary map to hive count",
-      "SECURITY added session check to controller",
-      "BUGFIX changed login session to automatic log you in if you still in session",
-      "FEATURE added on profile page a company number and the possibility to show VIS dates in calendar (mandatory for austrian beekeeper only)"
-    ]
-  },
-  {
-    "version": "3.0.11",
-    "date": "2016-01-17",
-    "news": [
-      "BUGFIX changed locale storage key to save the same settings for the same tables",
-      "FEATURE added clear locale storage button on profile page, to reset all local saved table settings",
-      "VISUAL added apiary note to the apiary map",
-      "VISUAL changed standard images size to 150px when you import an image into notes, more user friendly on smaller devices",
-      "VISUAL added and fixed some FAQs"
-    ]
-  },
-  {
-    "version": "3.0.10",
-    "date": "2016-01-16",
-    "news": [
-      "SECURITY added security in backend when adding new tasks",
-      "FEATURE in statistics you can now select a single hive",
-      "BUGFIX updated Filemanager to 9.9.7 should fix a nasty android bug"
-    ]
-  },
-  {
-    "version": "3.0.9",
-    "date": "2016-01-09",
-    "news": [
-      "BUGFIX wrong hive count on apiary map when you moved your hives",
-      "VISUAL updated gadget colour for basic user on calendar dashboard",
-      "BUGFIX changed email activation code to work with gmail online inbox",
-      "FEATURE search field gives you now a autocomplete dropdown",
-      "VISUAL updated notify messages plugin",
-      "FEATURE added filemanager for PREMIUM user now you can add image to note fields and manager your pictures"
-    ]
-  },
-  {
-    "version": "3.0.8",
-    "date": "2016-01-03",
-    "news": [
-      "BUGFIX add new apiary in table view should now relocate to apiary map before form shows",
-      "FEATURE added function to add multiple hives at once",
-      "TRANSLATION few german corrections",
-      "VISUAL added news table to FAQs",
-      "FEATURE added user documentation"
-    ]
-  },
-  {
-    "version": "3.0.7",
-    "date": "2015-12-29",
-    "news": [
-      "BUGFIX register page did not work correctly ",
-      "BUGFIX delete account should now work without error showing",
-      "BUGFIX small fix when you tried to add a task without a hive",
-      "BUGFIX wrong return url after payment with PayPal",
-      "VISUAL fixed b.tree Logo in E-Mails",
-      "BUGFIX reworked e-mail confirmation code and mail",
-      "VISUAL changed favicon from about page",
-      "BUGFIX delete empty apiary was not working",
-      "VISUAL apiarymap now reloads faster when you add a new apiary"
-    ]
-  },
-  {
-    "version": "3.0.6",
-    "date": "2015-12-27",
-    "news": [
-      "BUGFIX datetime field in rearing table was not working",
-      "FEATURE you can now hide/show inactive apiaries on map",
-      "FEATURE added links to gadgets at the startpage",
-      "TRANSLATION German fixes",
-      "BUGFIX calendar now loads only visible tasks and not all"
-    ]
-  },
-  {
-    "version": "3.0.5",
-    "date": "2015-12-22",
-    "news": [
-      "BUGFIX Login should now work with mobile keyboard enter click ",
-      "BUGFIX fixed again IOS webapp links ",
-      "VISUAL topbar, profile symbol now links to profile and added a tooltip",
-      "VISUAL added few tooltips",
-      "VISUAL changed responsive sizes on profile page",
-      "TRANSLATION few german corrections"
-    ]
-  },
-  {
-    "version": "3.0.4",
-    "date": "2015-12-16",
-    "news": [
-      "BUGFIX IOS Webapp fix, links should no longer open in safari browser and stay in webapp"
-    ]
-  },
-  {
-    "version": "3.0.3",
-    "date": "2015-12-15",
-    "news": [
-      "BUGFIX checkup table in apiary and hive detail view was not working",
-      "VISUAL changed table hover colour",
-      "VISUAL smaller table header",
-      "FIX added version number to custom javascript file"
-    ]
-  },
-  {
-    "version": "3.0.2",
-    "date": "2015-12-08",
-    "news": [
-      "MIGRATE old weight table data to new checkup table",
-      "BUGFIX removed password empty error on success on login, register and reset page",
-      "BUGFIX removed possible spaces from remember e-mail cookie on login page",
-      "BUGFIX timepicker was not working in checkup table editor",
-      "BUGFIX removed inactive queens from queen statistics"
-    ]
-  },
-  {
-    "version": "3.0.1",
-    "date": "2015-11-29",
-    "news": [
-      "BUGFIX note from queen would not save correctly",
-      "DB each new user gets automatic 1 month paid",
-      "ADD new queen charts",
-      "BUGFIX problem with apiary dropdown when there where no hives on this apiary",
-      "BUGFIX harvest amount was integer only"
-    ]
-  },
-  {
-    "version": "3.0.0",
-    "date": "2015-11-26",
-    "news": [
-      "Updated 95% of the app code for better performance",
-      "App is now with bootstrap design - means fully responsive",
-      "on demand loading tables, big data ready!",
-      "removed lot of code redundancy ",
-      "combined varroa and treatment data ",
-      "added rearing methods logic",
-      "moved weight to checkup task",
-      "quicktool now allows to select multiple hives",
-      "export data as xls or csv",
-      "moved statistic from google to chartjs and a lot of improvements made",
-      "added FAQs",
-      "reworked user management and it is easier to switch between beekeeper companies",
-      "added type and price field to charge",
-      "added search to quickly access hives",
-      "added hive overview to quickly see the latest 5 tasks and latest queen",
-      "all tables are now state saving (html5), means it remembers your options",
-      "reworked options you can now set a favorit/default, this one will be automatic select when you create a new task",
-      "you can now set options to inactive, this options will still visible in statistics but removed from dropdowns in new tasks",
-      "lot of other small tweaks and translation fixes"
-    ]
-  },
-  {
-    "version": "2.1.5",
-    "date": "2015-06-28",
-    "news": [
-      "BUGFIX select_all / deselect on tables should now work again",
-      "DB removed delete connection between options and hives",
-      "VISUAL changed number format to only show 2 numbers after comma",
-      "BUGFIX edit checkups - hive dropdown should work again",
-      "BUGFIX harvest table function done/not done should work again",
-      "BUGFIX when you swap between your companies, the paid SESSION is also updated",
-      "VISUAL hive dropdown for tasks now shows hive name and actual apiary name",
-      "MOBILE added calendar to index page"
-    ]
-  },
-  {
-    "version": "2.1.4",
-    "date": "2015-05-23",
-    "news": [
-      "INFO moved to new better/quicker server",
-      "DB fixed last_visit in login function",
-      "BUGFIX removed error in hive_table details, when there was no recent task done",
-      "BUGFIX fixed mobile register (changed bruteforce email function name)"
-    ]
-  },
-  {
-    "version": "2.1.3",
-    "date": "2015-05-12",
-    "news": [
-      "BUGFIX dropdown didn't automatically choose right hive for selected task (thx gothmog)",
-      "ADD date field when you add a new hive (on request from Matthias)",
-      "ADD C.S.I. Pollen Button at the bottom of the calendar, it shows the pollen collecting dates for 2015",
-      "ADD function to create checkup for whole apiary",
-      "VISUAL MOBILE added more space at the bottom of tasks, now keyboard should not hide the notes",
-      "SECURITY updated FullCalendar to Version 2.3.1"
-    ]
-  },
-  {
-    "version": "2.1.2",
-    "date": "2015-05-07",
-    "news": ["BUGFIX registration and password reset should work again"]
-  },
-  {
-    "version": "2.1.1",
-    "date": "2015-05-06",
-    "news": [
-      "SECURITY now with full SSL-Certification to greatly improve your data security",
-      "SECURITY updated session cookies to work with SSL-Certification",
-      "SECURITY updated Leaflet to 0.7.3 (apiary map)",
-      "SECURITY updated bruteforce logic, you now get an email by too many failed logins",
-      "ADD DESKTOP added charge_control and tasks column search",
-      "ADD DESKTOP added 'Support / Bug Report' Link to the footer",
-      "ADD MOBILE link to web-app",
-      "ADD task table now shows the data from the last two years, as premium user you can change this in your profile",
-      "BUGFIX beebreed.eu form",
-      "BUGFIX header and session bug (loaded too late after header)",
-      "BUGFIX MOBILE Profile page, should now work again",
-      "BUGFIX MOBILE improved session loading (moved to code start)",
-      "VISUAL MOBILE fixed landscape view for checkup task",
-      "VISUAL state of all tables will now be saved (length, sorting) with html5 storage",
-      "BETA TEST new quick url QR reader"
-    ]
-  },
-  {
-    "version": "2.1.0",
-    "date": "2015-03-25",
-    "news": [
-      "b.tree logo in emails",
-      "fixed few translation errors",
-      "fixed bug with password reset, not working for some email addresses",
-      "changed treatment logo design (red cross on white background is a protected trademark)",
-      "fixed again beebreed.eu form",
-      "replaced deprecated function ereg_replace with preg_replace",
-      "fixed format issue with javascript and session_format",
-      "small bug fixes on mobile version",
-      "fixed problem with inactive queens"
-    ]
-  },
-  {
-    "version": "2.0.3",
-    "date": "2015-02-25",
-    "news": [
-      "small bug fixes",
-      "updated from jquery Version 1.10 to 2.1.3",
-      "updated from jquery mobile Version 1.4.2 to 1.4.3",
-      "removed qtip addon (now quicker loading time from hive/apiary table)",
-      "minified few css",
-      "removed google analytics code (not worth the trouble)"
-    ]
-  },
-  {
-    "version": "2.0.2",
-    "date": "2015-02-06",
-    "news": [
-      "added .csv export for weight control",
-      "removed limit of 5 by checkup for amount of varroa"
-    ]
-  },
-  {
-    "version": "2.0.1",
-    "date": "2015-01-31",
-    "news": [
-      "fixed bug: hive info in apiary detail view should now show the correct information",
-      "fixed bug: time field in weightings are now manual changeable",
-      "fixed bug: charge edit, should now show the correct Out/In as set",
-      "fixed bug: hive info numbers now should format correctly",
-      "fixed view, mobile: charge add and edit, small text part deleted",
-      "fixed bug: edit weight, should now open the correct sidebar dropdown",
-      "ADDED a note field for weightings",
-      "Register for new users is open again!"
-    ]
-  },
-  {
-    "version": "1.2.0",
-    "date": "2015-01-18",
-    "news": [
-      "added user function, one user can now have more companies and one company can now have more users (on wishes from User Matthias) (ADMIN Panel)",
-      "added 3 ranks to user - ADMIN, User, Read-Only",
-      "new logic to check if user is logged in (quicker and lesser random drops)",
-      "added bee flight range in weather map (blue ring, 3km)(on wishes from User Michael)",
-      "DESKTOP added (select all) and (unselect all) button to table tasks and charge control",
-      "PREMIUM DESKTOP added stats graphics for feed, harvest and varroa treatment and weightings (all years summary, one year apiaries compare and for each apiary a all yearly compare)",
-      "fixed a lot of small PHP errors",
-      "added weighting table, now you can add weight stats to your hives!",
-      "DESKTOP added open task count to sidebar",
-      "safety bug fix (thx to user Alexander)",
-      "added Hive Strength to Checkup (Idea from Alexander)",
-      "DESKTOP in Hive-Overview you can now quick access the 2 latest tasks with the info button, inside the table for each hive",
-      "DESKTOP edited form style from desktop version, more compact",
-      "task tables should now be standard sorted by date",
-      "added field frames to harvest, there you can add the amount of collected frames (Idea from Alexander)",
-      "small cosmetic changes",
-      "added news to login screen"
-    ]
-  },
-  {
-    "version": "1.1.12",
-    "date": "2014-09-14",
-    "news": [
-      "added PDF export multiple rows for feed, harvest, varroa and charge control (premium only)"
-    ]
-  },
-  {
-    "version": "1.1.11",
-    "date": "2014-09-13",
-    "news": [
-      "bug fix with pagination and tables",
-      "tasks, queen, move & charge tables now showing 50 rows on load and hive / apiary 25 rows (up from 10 rows)",
-      "added function in profile to set the standard value for your new tasks as done or open",
-      "we got a lot of new free users needed to changed basic user max. amount of hives to 4 (down from 10) and apiaries to 2 (down from 10)"
-    ]
-  },
-  {
-    "version": "1.1.10",
-    "date": "2014-08-25",
-    "news": [
-      "small bug fixes & calender single event links should now work again"
-    ]
-  },
-  {
-    "version": "1.1.9",
-    "date": "2014-06-24",
-    "news": [
-      "charge table, date sorting should now work correctly with german format",
-      "PREMIUM added charge control to export on csv export menu",
-      "removed few function from tasks table",
-      "MOBILE added button on task table view to quick add new task (hive or apiary)",
-      "PREMIUM you can now print PDF from selected rows in feed table and varroa table"
-    ]
-  },
-  {
-    "version": "1.1.8",
-    "date": "2014-06-16",
-    "news": [
-      "fixed bug with dropdown deleting in table view from hives and apiaries",
-      "PREMIUM reworked function charge control",
-      "fixed bug where in mobile image links didnt work on touch click"
-    ]
-  },
-  {
-    "version": "1.1.7",
-    "date": "2014-06-14",
-    "news": [
-      "PREMIUM  added function charge control - own table to save your import and export products",
-      "fixed bug with beebreed.eu, should now work again"
-    ]
-  },
-  {
-    "version": "1.1.6",
-    "date": "2014-06-13",
-    "news": [
-      "PREMIUM USER added function to export all your saved data as .CSV file",
-      "Checkups temperature field is now automated. If the field is empty or by change from selected hive it get the current hive location temperature"
-    ]
-  },
-  {
-    "version": "1.1.5",
-    "date": "2014-06-11",
-    "news": ["MOBILE added calendar for mobile version"]
-  },
-  {
-    "version": "1.1.4",
-    "date": "2014-06-10",
-    "news": [
-      "APP updated calendar plugin version",
-      "APP calendar now shows movements",
-      "APP calendar now group same events on the same day, for better visibility when you have a lot of hives"
-    ]
-  },
-  {
-    "version": "1.1.3",
-    "date": "2014-06-05",
-    "news": [
-      "changed movement logic, now you can make movements in advance and the hives will move on the future date (not instant like it was before)",
-      "added movements overview in panel task (all movements), in apiary details and hive details",
-      "added vet option, for varroa and treatment (mandatory for austria beekeeper)",
-      "APP in hive overview you can now print smaller and multiple QR codes for your hives",
-      "MOBILE redesign of detail view from hives",
-      "new domains for the page app.btree.at for desktop version and m.btree.at for mobile",
-      "small design tweaks and bug fixes"
-    ]
-  },
-  {
-    "version": "1.1.2",
-    "date": "2014-06-01",
-    "news": [
-      "added small page loader on each page (mainly to prevent the user to click too quick on an link and and loosing session)",
-      "small design tweaks"
-    ]
-  },
-  {
-    "version": "1.1.1",
-    "date": "2014-05-30",
-    "news": [
-      "login screen, added remember function",
-      "MOBILE added icon for saving to mobile desktop",
-      "MOBILE background image is now loading faster",
-      "MOBILE QR Code scan, added quick url field as alternative",
-      "pdf export now with quick url",
-      "small bug fixes"
-    ]
-  },
-  {
-    "version": "1.1.0",
-    "date": "2014-05-29",
-    "news": [
-      "MOBILE added header information notranslate to prevent google from auto translate page (this logged the user out)",
-      "MOBILE deactivated swipe commands (left and right)",
-      "MOBILE edited back button, now with history_back(1)",
-      "MOBILE made the size from google AdSense smaller",
-      "added close button to datepicker and made it read only (on mobile version this prevent the keyboard to open)",
-      "added safety that there is atleast one option in the dropdown menu, to prevent fail exports and loadings",
-      "MOBILE registration should now work",
-      "password reset was only working with 7 digits passwords, now it should work with 6 as expected",
-      "PayPal was showing payment without tax, now it shows with 20% tax (24,00 Euro)",
-      "MOBILE fixed bug where you could not move or delete hives in table view",
-      "added 'no mother' to queen, as possible selection",
-      "tables with inactive and active tabs now update correctly",
-      "small bug fixes :)"
-    ]
-  },
-  {
-    "version": "1.0.16",
-    "date": "2014-05-28",
-    "news": ["fixed bug where empty tables wont load", "MOBILE small bug fixes"]
-  },
-  {
-    "version": "1.0.15",
-    "date": "2014-05-26",
-    "news": ["changed size of QR code in export and link"]
-  },
-  {
-    "version": "1.0.14",
-    "date": "2014-05-25",
-    "news": [
-      "fixed bug: hive will now not move, when you edit it and its still on the same apiary"
-    ]
-  },
-  {
-    "version": "1.0.13",
-    "date": "2014-05-19",
-    "news": ["fixed small bug with checkup, hive-dropdown"]
-  },
-  {
-    "version": "1.0.12",
-    "date": "2014-04-15",
-    "news": [
-      "fixed major bug where in firefox 28.0 table hives and table apiary was bit shown anymore (therefore i deleted all hives with the name test_hive or muster_stock). Please send me a message if its still not working for you",
-      "fixed bug where deleting user was not working"
-    ]
-  },
-  {
-    "version": "1.0.11",
-    "date": "2014-04-13",
-    "news": [
-      "small bug fixes with external beebreed.eu link",
-      "fixed 'hopefully' a bug where you randomly session out and need to login again (please report bug if it still exists)",
-      "few german translation",
-      "you can now select rows on hive and apiary table",
-      "there is now a dropdown on hive and apiary overview to move and delete hives and apiaries quicker"
-    ]
-  },
-  {
-    "version": "1.0.10",
-    "date": "2014-04-08",
-    "news": [
-      "added queen support (for existing user, please add under option a bee race and mating place before adding queens)",
-      "bug fix move hive GERMAN version was not working",
-      "added external form for beebreed.eu",
-      "small bug fixes on login page"
-    ]
-  },
-  {
-    "version": "1.0.9",
-    "date": "2014-03-16",
-    "news": [
-      "added password reset routine",
-      "saver registration with hidden post data",
-      "added english number and date format display (change in your profil options)",
-      "added simple apiary / weather map"
-    ]
-  },
-  {
-    "version": "1.0.8",
-    "date": "2014-03-04",
-    "news": [
-      "added account activation via email for new users",
-      "fixed bug that detail view of apiary wont show"
-    ]
-  },
-  {
-    "version": "1.0.7",
-    "date": "2014-03-02",
-    "news": [
-      "added start and end date for tasks, also shows in calendar and editable",
-      "small bug fixes",
-      "added english autofill from option for new english user",
-      "added delete and print button on task edit page",
-      "added map on create new apiary"
-    ]
-  },
-  {
-    "version": "1.0.6",
-    "date": "2014-03-02",
-    "news": [
-      "speed improvement (alls task table now fetching data from json array)",
-      "edited table widths"
-    ]
-  },
-  {
-    "version": "1.0.5",
-    "date": "2014-02-21",
-    "news": [
-      "speed improvement (table apiary now fetching data from json array)",
-      "small bug fixes with apiary map"
-    ]
-  },
-  {
-    "version": "1.0.4",
-    "date": "2014-02-16",
-    "news": [
-      "small bug fixes hive overview table",
-      "map (detail apiary) now show current weather information and you can drag and drop the location"
-    ]
-  },
-  {
-    "version": "1.0.3",
-    "date": "2014-02-04",
-    "news": [
-      "speed improvement  (table function for hive overview is now fetching data from array and not from DOM for better loading speed (I'll edit all other tables too))"
-    ]
-  },
-  {
-    "version": "1.0.2",
-    "date": "2014-02-02",
-    "news": [
-      "added news page",
-      "added print button for hives",
-      "added function for group of hives",
-      "added login safety features",
-      "added map feature in detail apiary (only works with coordinates, can't convert address at the moment)"
-    ]
-  },
-  {
-    "version": "1.0.1",
-    "date": "2014-01-25",
-    "news": ["First version 🚀"]
-  }
+	{
+		"version": "6.0.14",
+		"date": "2022-10-12",
+		"news": ["BUGFIX missing option for harvest types in settings"]
+	},
+	{
+		"version": "6.0.13",
+		"date": "2022-10-12",
+		"news": [
+			"BUGFIX wrong CSS in scale calendar",
+			"BUGFIX disable speech recognition if not available (firefox)",
+			"BUGFIX disable swiping on calendar if user is dragging events",
+			"BUGFIX it is now possible to scan NFC tags from the old version to select hives",
+			"BUGFIX scanning hive detail QR codes should now also select hives if hive dropdown is active on page",
+			"BUGFIX hive scale upload was not working for new scales [SERVER]",
+			"BUGFIX rank user is now able to create charges [SERVER]",
+			"VISUAL added share button (print QR and set NFC) to top navbar button dropdown list on mobile devices",
+			"FEATURE on detail pages you can now filter for open tasks",
+			"FEATURE added inactivate queen and hive button to hive detail page, thx hermann",
+			"FEATURE navigation menu now shows again open tasks and counts. Info: Count will only update every five minutes"
+		]
+	},
+	{
+		"version": "6.0.12",
+		"date": "2022-10-11",
+		"news": [
+			"BUGFIX charge table filtering was not working properly",
+			"BUGFIX queen stats table was not showing the current active queens [SERVER]",
+			"BUGFIX queen stats table, allow ordering of calculated fields, but only on the visible ones!",
+			"BUGFIX hive table queen date was wrong, thx yannik",
+			"BUGFIX wrong activation link on registration email",
+			"BUGFIX some german and english typos",
+			"FEATURE added NFC button to read content, thx hermann",
+			"FEATURE hive and apiary detail page now have custom button to quickly add tasks, thx hermann",
+			"FEATURE queen table added missing move date column",
+			"FEATURE tables support now arrow navigation for pagination (left, right, up and down)",
+			"FEATURE added again machine translated italian and french translation"
+		]
+	},
+	{
+		"version": "6.0.11",
+		"date": "2022-10-06",
+		"news": [
+			"BUGFIX added missing PayPal user information on payment (Server)",
+			"BUGFIX company dropdown is now ordered alphabetically and added information about payment status",
+			"VISUAL Dropbox upload modal is not fullscreen any more on mobile devices and uses icons now",
+			"FEATURE you can now select .pdf files for upload to Dropbox",
+			"FEATURE added option to date modal to auto close after selection of date"
+		]
+	},
+	{
+		"version": "6.0.10",
+		"date": "2022-10-06",
+		"news": [
+			"BUGFIX small typo on login screen",
+			"BUGFIX remove stripe payment for iOS app, as it will break the app",
+			"BUGFIX remove payment console logs in production",
+			"FEATURE PayPal allow credit card direct payment",
+			"FEATURE harvest table search now also includes the charge column (Server)",
+			"FEATURE charges table search now also includes the charge column (Server)",
+			"FEATURE hive table has now a specific filter for apiary",
+			"FEATURE apiary table now has an option to export hive cards, thx paul",
+			"FEATURE on touch devices you can now swipe on the calendar to move forward or back in history"
+		]
+	},
+	{
+		"version": "6.0.9",
+		"date": "2022-10-05",
+		"news": [
+			"Version 6 is live 🚀",
+			"BUGFIX emails with dots did not work, thx hermann",
+			"BUGFIX typos in dropbox and main url"
+		]
+	},
+	{
+		"version": "6.0.8",
+		"date": "2022-09-15",
+		"news": [
+			"FEATURE pedigree window if you click on the queen name in queen or virgin table",
+			"FEATURE added queen rearing methods separate tab with table for steps for easier management of multiple steps",
+			"BUGFIX temperature field value for checkup, scale data and treatment could not be edited",
+			"BUGFIX time on checkup weight was not able to be left alone",
+			"BUGFIX it was not possible to delete virgin queens",
+			"BUGFIX allow higher values in scale data weight input",
+			"VISUAL small style improvements for small screen sizes"
+		]
+	},
+	{
+		"version": "6.0.7",
+		"date": "2022-09-11",
+		"news": [
+			"FEATURE added optional temperature field to treatments",
+			"BUGFIX on dark mode autofill input fields were white",
+			"BUGFIX disabled speech recognition button on safari",
+			"BUGFIX german translations"
+		]
+	},
+	{
+		"version": "6.0.6",
+		"date": "2022-09-10",
+		"news": [
+			"BUGFIX rearing steps were not moveable",
+			"BUGFIX german temperature hint text was broken",
+			"BUGFIX in apiary detail view the hive order was not possible to change",
+			"BUGFIX regrex error on safari browser",
+			"VISUAL removed bullet points on change-log page, for better read ability on mobile devices"
+		]
+	},
+	{
+		"version": "6.0.5",
+		"date": "2022-09-09",
+		"news": [
+			"FEATURE added QR code generator on hive table",
+			"FEATURE added QR code scanner button on top navbar",
+			"IMPROVEMENT of NFC and QR scanning selection of hives"
+		]
+	},
+	{
+		"version": "6.0.4",
+		"date": "2022-09-08",
+		"news": [
+			"REMOVED curated links helper, you can now find the links on our info page"
+		]
+	},
+	{
+		"version": "6.0.3",
+		"date": "2022-09-07",
+		"news": [
+			"FEATURE PWA added maskable icons and shortcuts to manifest",
+			"IMPROVEMENT changelog has now a cleaner style and less code",
+			"BUGFIX colour mode should now load correctly after refresh and on mobile"
+		]
+	},
+	{
+		"version": "6.0.2",
+		"date": "2022-09-06",
+		"news": [
+			"FEATURE added option to print hive card on hive table",
+			"FEATURE added charge stock table",
+			"FEATURE added hive scale weight charts",
+			"FEATURE added pull to reload page on toolbar header",
+			"FEATURE allow system mode for dark mode and added dark mode button to login page",
+			"FEATURE added button to download statistics graphs as image",
+			"BUGFIX stale cache time reduced, this means changes in data on calendar or tables are quicker shown",
+			"BUGFIX queen mark colour was not loading on edit",
+			"BUGFIX after account activation, redirect to login page and autofill correctly the email"
+		]
+	},
+	{
+		"version": "6.0.1",
+		"date": "2022-08-25",
+		"news": [
+			"BUGFIX field settings should now be saved correctly per user",
+			"BUGFIX german translations",
+			"VISUAL MOBILE calendar events are not anymore fullscreen",
+			"VISUAL checkup form on small screen size queen checkups in two rows",
+			"VISUAL checkup form more space for rating text",
+			"VISUAL statistic year change buttons are now disabled if all year are shown"
+		]
+	},
+	{
+		"version": "6.0.0",
+		"date": "2022-08-23",
+		"news": [
+			"FEATURE MAJOR REBUILD new frontend design made with Vue.js and backend now with Node.js"
+		]
+	},
+	{
+		"date": "2022-07-03",
+		"news": [
+			"BUGFIX table harvest, frames were not visible if checkup frames were disabled"
+		],
+		"version": "5.0.23"
+	},
+	{
+		"date": "2022-06-14",
+		"news": [
+			"BUGFIX checkup weight statistic had wrong order for time constant, thx anonymous user"
+		],
+		"version": "5.0.22.1"
+	},
+	{
+		"date": "2022-05-04",
+		"news": [
+			"BUGFIX rearing wrong calculation if more than 10 steps present, thx yannick"
+		],
+		"version": "5.0.22"
+	},
+	{
+		"date": "2022-05-04",
+		"news": [
+			"VISUAL added creator and editor user information to task list in apiary and hive detail view"
+		],
+		"version": "5.0.21"
+	},
+	{
+		"date": "2022-04-20",
+		"news": [
+			"BUGFIX external iCal calendar for queen rearing wrong date format description"
+		],
+		"version": "5.0.20.1"
+	},
+	{
+		"version": "5.0.20",
+		"date": "2022-02-05",
+		"news": ["VISUAL prevent overscrolling in chrome and edge browser"]
+	},
+	{
+		"version": "5.0.19",
+		"date": "2022-01-24",
+		"news": [
+			"FEATURE speak recognition on quicktool note is now possible",
+			"VISUAL added wind animation to sponsored weather map",
+			"BUGFIX spelling mistake in VIS email",
+			"UPDATE datatable backend and frontend libraries",
+			"UPDATE mailer and stripe libraries",
+			"UPDATE calendar and developer libraries"
+		]
+	},
+	{
+		"version": "5.0.18",
+		"date": "2021-08-12",
+		"news": [
+			"VISUAL apiary map changed sponsored live wind map to live satellite map with clouds and rain"
+		]
+	},
+	{
+		"version": "5.0.17",
+		"date": "2021-08-09",
+		"news": [
+			"BUGFIX dropbox authentication was not working correctly",
+			"UPDATE third party libraries",
+			"UPDATE developer libraries"
+		]
+	},
+	{
+		"version": "5.0.16",
+		"date": "2021-05-06",
+		"news": [
+			"BUGFIX fixed and added lots of french translation, thx Claude",
+			"BUGFIX automatically temperature loading was broken because of new meteoblue API",
+			"VISUAL added a weather map underneath 'Apiary Map' without loading limitations, but also without apiary locations"
+		]
+	},
+	{
+		"version": "5.0.15",
+		"date": "2021-04-12",
+		"news": [
+			"BUGFIX infinite loop on rearing table if dropdown was changed, thx Jannis"
+		]
+	},
+	{
+		"version": "5.0.14",
+		"date": "2021-02-21",
+		"news": [
+			"BUGFIX added missing dropbox modal to hive details tables, thx Jannis ",
+			"BUGFIX statistics table for hive rating, calm comb and temper were in the wrong order, thx Jannis ",
+			"BUGFIX feed export was missing hive id ",
+			"BUGFIX account deleting did throw errors when trying to delete forum accounts "
+		]
+	},
+	{
+		"version": "5.0.13",
+		"date": "2021-02-09",
+		"news": [
+			"BUGFIX added missing pointer class to sidebar toggle button ",
+			"BUGFIX top navbar search bar display did throw errors into console ",
+			"UPDATE bootstrap 4.6.0 and some other packages"
+		]
+	},
+	{
+		"version": "5.0.12",
+		"date": "2020-11-22",
+		"news": [
+			"BUGFIX removed problematic CSS zoom attribute ",
+			"BUGFIX add missing cookie same-site attribute to login remember",
+			"UPDATE delete previous set Matomo Analyzing Cookies ",
+			"UPDATE removed unnecessary CDNs as we use service-worker, may fix Firefox login problem"
+		]
+	},
+	{
+		"version": "5.0.11",
+		"date": "2020-11-17",
+		"news": [
+			"UPDATED mailer and stripe payment libraries ",
+			"UPDATED datatables library",
+			"UPDATED dropbox connection to work with new API ",
+			"BUGFIX keypress W to open weather widget was not working"
+		]
+	},
+	{
+		"version": "5.0.10",
+		"date": "2020-10-08",
+		"news": [
+			"UPDATED development libraries ",
+			"UPDATED calendar to load quicker and changed buttons for better handling on small devices ",
+			"UPDATED stripe payment and mailer libraries ",
+			"UPDATED translation libraries ",
+			"BUGFIX top search bar did try to load on login page ",
+			"BUGFIX translation table did not save and update correctly ",
+			"CHANGE task charts now load as standard the last year with data and not all years summarized, thx manfred for the suggestion ",
+			"CHANGE removed pie charts from tasks, now showing a more comprehensive bar chart "
+		]
+	},
+	{
+		"version": "5.0.9",
+		"date": "2020-09-08",
+		"news": [
+			"TRANSLATIONS improvements on french translations, thx to Carnot ",
+			"UPDATED third party libraries ",
+			"UPDATED CDN for bootstrap and jquery ",
+			"BUGFIX varroa count was not shown in checkup table, thx Andreas and Matthias ",
+			"BUGFIX loading chart library ",
+			"BUGFIX quickqueen did not save creation time and user ",
+			"VISUAL removed white background from quicktool ",
+			"VISUAL added icons to layer menu on apiary map ",
+			"CHANGE apiary map only allow one overlay active to reduce api calls ",
+			"CHANGE lowered temperature loading for quicktool to 30 sec "
+		]
+	},
+	{
+		"version": "5.0.8",
+		"date": "2020-06-23",
+		"news": [
+			"VISUAL added ID to rearing table and info modal, thx Matthias",
+			"VISUAL added missing line break between note and larvae number in rearing modal",
+			"BUGFIX hive position was not loading in hive detail edit modal, thx Olli",
+			"FEATURE it is now possible to order by inactive date on the hive table",
+			"BUGFIX speak command to load hive or apiary details was not working correctly"
+		]
+	},
+	{
+		"version": "5.0.7",
+		"date": "2020-04-20",
+		"news": [
+			"BREAKING note fields now only support simple text. Images should now be added with the new URL field. All old notes have been modified, there might be some data loss, if you lost note information you can contact us and we can send you the old notes. We did this change to improve loading times in tables with a lot of data and we saw some abuse of the previous note fields for big images.",
+			"FEATURE added short inactive note to apiary or hive name in task tables when applicable",
+			"FEATURE move table now has links to hives and apiaries and also an inactive note if applicable ",
+			"FEATURE hive scales now can also send a note (please see documentation for new parameter) ",
+			"VISUAL removed membership from profile page and created a separate membership page ",
+			"VISUAL change the order of hive and apiary input fields in editor to be more logical"
+		]
+	},
+	{
+		"version": "5.0.6",
+		"date": "2020-04-17",
+		"news": [
+			"BUGFIX first movedates for colonies were not summarized in calendar view",
+			"BUGFIX removed unnecessary comma from news in front of each new line",
+			"BUGFIX moving all colonies from a selected apiary did also move inactive ones",
+			"BUGFIX path error in translation table, when an user was editing translations",
+			"BUGFIX random error when generating quick ToDo's in calendar should now be fixed",
+			"BUGFIX fixed link error popup on apiary detail window when using safari for iOS and Mac (thx Georg)"
+		]
+	},
+	{
+		"version": "5.0.5.2",
+		"date": "2020-03-31",
+		"news": [
+			"BUGFIX selecting multiple hives and generating Quick Tool task was broken (thx Stefan)",
+			"BUGFIX hivesheet printing from tables was not working"
+		]
+	},
+	{
+		"version": "5.0.5.1",
+		"date": "2020-03-30",
+		"news": [
+			"BUGFIX dropbox filenames are now truncated if they are longer than 21 characters",
+			"BUGFIX ToDo tasks did throw an error if file was empty",
+			"BUGFIX Android App Dropbox API Key was not loading when using token login",
+			"BUGFIX Database Download on Profile Page was broken"
+		]
+	},
+	{
+		"version": "5.0.5",
+		"date": "2020-03-29",
+		"news": [
+			"FEATURE calendar you now can now double click on a date and have the option to open the quicktool with corresponding date (thx manfred)",
+			"FEATURE top search bar improved it now loads quicker and the hives, apiaries and inactive are now sorted into groups",
+			"FEATURE added a scroll to top button (thx AnnA)",
+			"FEATURE Dropbox integration, you can now connect your Dropbox account and upload directly images to and from your account to tasks",
+			"FEATURE ToDos now also support images",
+			"FEATURE new user rank 'Worker', see documentation (section User) for details",
+			"FEATURE you can now load a bigger font size by clicking the corresponding button on the top bar",
+			"FEATURE two new summary tables, one with summary of harvests and one for average ratings per hive and year,",
+			"VISUAL name change for web app, to better distinguish from native app name",
+			"OTHER tables - if the form is open and you are inside a number or select field you can now press enter to quickly save the entry",
+			"VISUAL task popup in calendar now has a separate button to check the task",
+			"BUGFIX charge table in and out button was not working for translated versions (thx Roland) ",
+			"BUGFIX quicktool and tables stop opening fileupload div if the enter key was pressed",
+			"BUGFIX quicktool did open varroa calculator if pressed enter and not save",
+			"BUGFIX download database did not work for small operations",
+			"BUGFIX queen and virgin table, the queen color dropdown was not updating with change of year",
+			"BUGFIX it was possible for non-admins to generate a new API code"
+		]
+	},
+	{
+		"version": "5.0.4",
+		"date": "2020-02-16",
+		"news": [
+			"BUGFIX added missing trailing backslash to some table URLs ",
+			"BUGFIX english documentation one link was broken ",
+			"BUGFIX service worker did serve wrong links for calendar ",
+			"BUGFIX hive table - adding tasks from table did not work correctly (thx Stefan) ",
+			"BUGFIX login page cookie should work again ",
+			"BUGFIX calendar did show errors if changing too quick between months ",
+			"FEATURE speak recognition now also works with new Microsoft Edge Browser"
+		]
+	},
+	{
+		"version": "5.0.3",
+		"date": "2020-01-18",
+		"news": [
+			"BUGFIX seach dropdown was broken ",
+			"BUGFIX iOS table dropdowns did not load ",
+			"BUGFIX added missing sound effect on rearing methods ",
+			"BUGFIX notify messages were not closing ",
+			"BUGFIX it was possible to delete your own company even if it was your last ",
+			"BUGFIX varroa calculator graph was not working after last update ",
+			"VISUAL changed success messages in virgin and queen table"
+		]
+	},
+	{
+		"version": "5.0.2",
+		"date": "2020-01-17",
+		"news": [
+			"BUGFIX changed drag and drop library for rearing methods and apiary details to work with iOS (thx Leo) ",
+			"BUGFIX generating multiple virgins did result in wrong birth dates (thx Grabowski) ",
+			"BUGFIX login page the remember checkbox was not working as it should, it will now delete cookies if unselected ",
+			"BUGFIX login page added new html5 tags to login fields ",
+			"BUGFIX hive detail - sorting of hives is now with a little bit of delay, otherwise it could happen on accident ",
+			"BUGFIX some libraries urls did use a wrong format, should now be fixed ",
+			"BUGFIX apiary map double click on iOS should work again (thx Leo) ",
+			"BUGFIX weather widget should now close automatically if no location was found ",
+			"BUGFIX added new cookie definer to login cookie to fix warning messages with new google chrome ",
+			"BUGFIX sidebar - quicktool did show not always the active color ",
+			"FEATURE google pay is now supported over stripe ",
+			"FEATURE added android docu for upcoming android app with NFC support ",
+			"VISUAL hive and apiary detail, space between year button and quick access buttons to tasks a little bit smaller to fit better on small devices ",
+			"LIBRARIES updated various third party packages"
+		]
+	},
+	{
+		"version": "5.0.1.1",
+		"date": "2019-12-20",
+		"news": ["Updated forum to newest version"]
+	},
+	{
+		"version": "5.0.1",
+		"date": "2019-10-30",
+		"news": [
+			"BUGFIX some minor fixes and spelling errors ",
+			"BUGFIX wrong links on 404 page ",
+			"CHANGE weather overlay and satellite map is now only for premium member (usage and, therefore, costs were too high)"
+		]
+	},
+	{
+		"version": "5.0.0",
+		"date": "2019-10-02",
+		"news": [
+			"FEATURE new sugar solution table on helper page ",
+			"FEATURE you can now create a full data backup on your profile page, this will download all your database entries as json, xml and csv file (premium feature) ",
+			"FEATURE apiary map - has now a print button ",
+			"FEATURE apiary map - satellite images and weather overlay ",
+			"FEATURE apiary map - bee flight radius can now be changed ",
+			"FEATURE quicktool - harvest frames it is now possible to say total or single value as with amount ",
+			"FEATURE quicktool - the link on sidebar will now remember the last used quicktool settings and will open it again ",
+			"FEATURE quicktool checkup - varroa field now offers a button to quickly calculate the daily average dead varroa from screening ",
+			"FEATURE quicktool checkup - weight field has now a button to load connected hivescales if premium member ",
+			"FEATURE calendar - you can now doubleclick on a date to add a TODO task ",
+			"FEATURE calendar - queen rearing events now also shown an ID to better identify them ",
+			"FEATURE calendar - you can now move forward or back in calendar with arrow keys ",
+			"FEATURE upload - new URL field for tasks and charge, easy solution to add images or files (premium user) ",
+			"FEATURE speak - you can now chang the year in hive or apiary detail view with date + yearnumber or year + yearnumber ",
+			"FEATURE filemanager - you can now download all your files as zip file (premium user) ",
+			"FEATURE table virgin - new table, this should be used for queens without production hives and you can add quickly multiple queens with the same settings ",
+			"FEATURE navbar - new history back button, this should help going back to your last visited site especially on mobile devices ",
+			"FEATURE statistics - apiary chart now also shows the number of hives on the apiary ",
+			"FEATURE statistics chart - now also show sum of sales or purchases as values and you can now set single years or all years ",
+			"FEATURE statistics chart - text will show now stock for selected year and total stock value ",
+			"FEATURE statistics - new hive chart which shows hive numbers history beginning with year 2018 ",
+			"FEATURE open source translation table - you can edit here translations if you want to help me out and find some spelling mistakes or wrong translations (only access for premium member with at least 31 days premium left) ",
+			"FEATURE new google translated Italian version, probably a lot of spelling mistakes but wanted to give it a try ",
+			"FEATURE new google translated French version, probably a lot of spelling mistakes but wanted to give it a try ",
+			"REMOVED fullscreen option, did result in more problems than use ",
+			"REMOVED print hive large template, now you can only export and print in compact form, which has the same data but is more print friendly ",
+			"STYLE statistics - improved fonts inside charts and zero values are not anymore printed ",
+			"STYLE font - using native fonts now for optimum text rendering on every device ",
+			"STYLE queen rearing print should now have better format for printing ",
+			"STYLE hive and apiary task detail list, improvements on overview and removed color overflow ",
+			"STYLE sidebar should now color mark the current page ",
+			"STYLE hive print page now has a print and back button, should help on mobile devices ",
+			"STYLE darker sidebar and removed the colors ",
+			"STYLE big update overall moved to bootstrap 4 ",
+			"STYLE filemanager new button styles for quicker access to upload ",
+			"STYLE note fields will now remove styles of pasted text automatically ",
+			"STYLE apiary map higher padding on sides for mobile devices to allow easier page scroll up ",
+			"STYLE apiary map top buttons added tooltips and shorter on mobile devices ",
+			"STYLE calendar improved top bar buttons for mobile devices ",
+			"BUGFIX calendar - added missing sound and notifications if you hide or show events in calendar ",
+			"BUGFIX quicktool speak - improved selection of hives and apiaries with speak commands but you cannot have anymore dots in your names if you want to have working speak recognition ",
+			"BUGFIX apiary map - on apiary creation the map will not fully reload anymore ",
+			"BUGFIX stripe payment is now updated to work with new regulations ",
+			"BUGFIX cdn and local jquery was not working as expected ",
+			"BUGFIX iCAL export and offset of hours ",
+			"BUGFIX tooltips will close on button click ",
+			"BUGFIX beescale weight warning mail did ignore the user profile settings ",
+			"BUGFIX hive print was loading new hives even on old dates ",
+			"BUGFIX mobile if weather widget is open a click on the navigation menu will now close it correctly ",
+			"BUGFIX hive detail - hive inactive date field was not working correctly and not setting an inactive date ",
+			"BUGFIX table queen detail - not all queens were shown on apiary detail view ",
+			"BUGFIX table queen - wrong color on edit ",
+			"BUGFIX table apiary - when switching to hive table it did show some wrong calculated table widths ",
+			"BUGFIX statistic - year dropdown was wrong order ",
+			"BUGFIX statistic treatment - wrong diseases loaded sometimes ",
+			"BUGFIX statistic charge - selecting year was not working ",
+			"BUGFIX statistic beescale - will now load more data entries ",
+			"METEOBLUE quicktool automatic temperature loading on checkup for premium user has now a 2 minutes limit if the same apiary is selected in this time, this should prevent overuse of the api if multiple hives on the same apiary are selected ",
+			"ICONS updated fontawesome version to 5.x ",
+			"METEOBLUE updated API access ",
+			"LIBRARIES updated various third party libraries ",
+			"MAIL new styles (using mjml)"
+		]
+	},
+	{
+		"version": "4.0.2.4",
+		"date": "2019-06-27",
+		"news": [
+			"BUGFIX API ICAL queen rearing dates were given on ical export with wrong offset of hours"
+		]
+	},
+	{
+		"version": "4.0.2.3",
+		"date": "2019-06-17",
+		"news": [
+			"BUGFIX API for scale, the header variable name was wrong in the documentation and improved the error message if no api key was given"
+		]
+	},
+	{
+		"version": "4.0.2.2",
+		"date": "2019-04-23",
+		"news": ["UPDATE forum to latest version and template change"]
+	},
+	{
+		"version": "4.0.2.1",
+		"date": "2019-03-08",
+		"news": [
+			"BUGFIX Queen table did not show current queen if there was still a pending deleted queen in the system"
+		]
+	},
+	{
+		"version": "4.0.2",
+		"date": "2018-08-11",
+		"news": [
+			"FEATURE Apiary Table - you can now select multiple apiaries and filter the corresponding hive table",
+			"FEATURE Charge Control - added new View Table which just tells you the totals and filters the other table on selecting rows",
+			"BUGFIX Icons - changes some Icons to work with new version",
+			"GENERAL CDN Service is now Amazon for static files",
+			"GENERAL Updated manifest",
+			"GENERAL Removed Google Analytics using AWStats and Report Magic on our own Server without third party access",
+			"BUGFIX Hivecard - print from Hive Table was sometimes not working",
+			"UPDATE Filemanger 9.13.3 security fixes",
+			"UPDATE PHPMailer 6.0.5"
+		]
+	},
+	{
+		"version": "4.0.0",
+		"date": "2018-08-05",
+		"news": [
+			"FEATURE Hivecard - new compact modus for better overview, you can now also select the amount of latest tasks you want to be shown",
+			"FEATURE ICal - will now show 3 months past and future events, up from 1 month",
+			"FEATURE Hivecard - inactive hives will now be printed on date of inactivated and before it",
+			"FEATURE Hive - now also have an inactivated date field",
+			"FEATURE Hive - new Field - Hive Position - with this field you can sort your hives as on your apiary. Sorting will for Dropdown, Apiary Detail, Print will now be Position and then Hivename",
+			"FEATURE Table - Main Queen Table will now show on - show inactive - all inactive and older Queens, before only seen in hive details queen table",
+			"FEATURE Calendar and ICal - different actions of same types (eg. Checkup - Clean, New Board) will now be split",
+			"FEATURE Rear Modal - Note and Larvae/Hatch will now be shown and added colors",
+			"FEATURE Filemanager - it is now possible to select multiple files inside Filemanager (9.13.0)",
+			"FEATURE Detail Apiary - added more information to the hives on dropdown (note, type and origin)",
+			"FEATURE Stock Management - Charge, added calculated field Sum (Total Out minus In amounts). Quicktool Charge Type dropdown will now show current Stock of Type. BREAKING Change - Moved Unit from Charge to Charge Type, were you define the Unit for the given Type - if you need your old units send me a mail and I can export the old data.",
+			"FEATURE Stock Management - New statistic for Premium User to use with the new Stock management system",
+			"FEATURE Speak Recognition - more commands and reworked the old ones with some minor improvements (see documentation for full list of commands)",
+			"FEATURE General - Note Field added Buttons for Font Size, Copy, Paste and Remove Format",
+			"FEATURE General - Note Field you can now add links from Filemanager directly into note",
+			"FEATURE General - Documentation Page now has an option to print it",
+			"VISUAL Hivecard and Hive Tasks - Checkup fields will only be visible if active (options) and if sum is bigger than zero",
+			"VISUAL Table - Charge Table, added button to quickly Filter for Ins and Outs",
+			"VISUAL Table - inactive / active symbol is now a html checkmark and should be shown in column visibility dropdown",
+			"VISUAL Mobile, moved Logout Button to sidebar from topbar, to prevent logout by failed click",
+			"VISUAL Weather Widget - now closes when you click on navigation button (useful on mobile)",
+			"VISUAL Icons - Updated to Fontawesome 5 with cleaner Icons",
+			"VISUAL Detail Hive and Apiary - check and open symbol should now have same size",
+			"VISUAL General - Hivedropdown ordering is now Apiaryname - Position - Hivename",
+			"VISUAL General - Apiary Map made the buttons bigger and change of button color if inactive or active are shown",
+			"VISUAL General - Queen Table added Bee Hatch Table and made button bigger inside Rearing table",
+			"GENERAL Newsletter removed Mailchimp, we do not send Newsletter anymore because of new privacy rules, we only send app notifications if you select it on registration or on your profile page",
+			"GENERAL Inactive users (user did not login at least 5 years) gets removed from database with all their data (new privacy rules)",
+			"GENERAL Forum names are random generated, only if users wants to show name it uses the app profile settings (new privacy rules)",
+			"BUGFIX Calendar and ICal - movement of deleted hive were shown",
+			"BUGFIX ICal - Queen Rearing had false date format",
+			"BUGFIX ICal - Events with multiple dates were shown with wrong enddate, because enddate is exclusive",
+			"BUGFIX Quicktool - deleted hives were shown in dropdown",
+			"BUGFIX Detail Hive and Apiary - checkup table had wrong labels for apiary and hive",
+			"BUGFIX Detail Hive and Apiary - delete tasks were still shown on detail page",
+			"BUGFIX Stats - wrong ordering of harvest stats, so 3 oldest dates were shown and not the newer harvests",
+			"BUGFIX Table - hive table was using deleted queens",
+			"BUGFIX Table - charge table, you can now search in German - Eingang, Ausgang",
+			"BUGFIX Queen - Mother dropdown now shows all queens and not only active ones",
+			"BUGFIX Queen - Queen Name is now mandatory field",
+			"BUGFIX Rearing - Up and Down Buttons were not working correct",
+			"BUGFIX Forum - Users is on deletion now also removed from the forum",
+			"BUGFIX General - printing of pages was not possible",
+			"BUGFIX General - Dropdown should not jump to top anymore on selection",
+			"BUGFIX General - English users did get on registration german mails and german examples",
+			"BUGFIX General - Mails few spell checking issues",
+			"UPDATE external libraries annyang, chart.js, chosen, html.sortable, screenfull, tinymce"
+		]
+	},
+	{
+		"version": "3.5.5",
+		"date": "2018-02-25",
+		"news": [
+			"BUGFIX fixed error when input of values is not numbers",
+			"BUGFIX Option Tables could not be loaded correctly",
+			"BUGFIX hive and user table inside tabs will now recalculate every time they are opened to prevent render bugs",
+			"BUGFIX deleted hives are not anymore shown in quicktool ",
+			"BUGFIX deleted hives movement is not anymore shown in calendar ",
+			"VISUAL if you add multiple hives it will now add leading zeros to the automatically generated numbers"
+		]
+	},
+	{
+		"version": "3.5.4",
+		"date": "2018-02-07",
+		"news": [
+			"BUGFIX new Chrome Version and select fields, should work again",
+			"BUGFIX deleting your profile will now also remove you from our newsletter",
+			"OTHER double-opt in for Newsletter on registration to comply with the legal changes",
+			"UPDATE jquery, moment.js, TinyMCE, sweetAlert"
+		]
+	},
+	{
+		"version": "3.5.3",
+		"date": "2017-11-27",
+		"news": [
+			"BUGFIX deleted hives were shown in apiary detail and print view",
+			"BUGFIX maillist update to mailchimp was not working ",
+			"BUGFIX quicktool was not loading the right frame values on checkup edit",
+			"UPDATE multiple libraries"
+		]
+	},
+	{
+		"version": "3.5.2",
+		"date": "2017-09-25",
+		"news": [
+			"BUGFIX quick queen inside hive details should work again ",
+			"VISUAL disabled tooltips on touch devices to prevent double click ",
+			"BUGFIX cleared all user session to prevent old session bugs",
+			"BUGFIX link to forum on sidebar corrected"
+		]
+	},
+	{
+		"version": "3.5.0",
+		"date": "2017-09-23",
+		"news": ["English: https://goo.gl/324aZb", "Deutsch: https://goo.gl/D3Xmrn"]
+	},
+	{
+		"version": "3.4.8.6",
+		"date": "2017-08-05",
+		"news": [
+			"BUGFIX create new vet information should work again",
+			"BACKGROUND few code changes to prepare for next big update"
+		]
+	},
+	{
+		"version": "3.4.8.5",
+		"date": "2017-05-13",
+		"news": ["BUGFIX fixed ordering and favourite behaviors in tables"]
+	},
+	{
+		"version": "3.4.8.4",
+		"date": "2017-04-05",
+		"news": [
+			"BUGFIX english language and filemanager did not work correct",
+			"BUGFIX problems with older browser and forum login",
+			"BUGFIX weight table fixes"
+		]
+	},
+	{
+		"version": "3.4.8",
+		"date": "2017-02-15",
+		"news": [
+			"FEATURE on table search the searched string is now marked inside the table",
+			"FEATURE reworked Charts you can now select multiple hives and compare them",
+			"FEATURE added own Checkup Weight Chart this will show you checkup weights",
+			"FEATURE added Varroa / Treatment Chart, here you can compare varroa between hives and also see your treatments in comparison do your varroa drops",
+			"VISUAL the queen table now shows only the latest queens on your hives and not the old ones, you can see them when you click on the button show inactive/active",
+			"BUGFIX notes on hives should now load correctly inside hive details",
+			"BUGFIX calendar multiple days events were 1 day off, is now fixed",
+			"BUGFIX connected data from hives was not delete when you delete a hive, now all feedings etc. are deleted when you delete a hive",
+			"BUGFIX firefox mobile was not working with calender as expected",
+			"BUGFIX new user could not add task to new created hives",
+			"SECURITY improved security of Fileuploads",
+			"SECURITY made loading limits on Charts",
+			"TRANSLATION small fixes in Docu"
+		]
+	},
+	{
+		"version": "3.4.7",
+		"date": "2016-12-29",
+		"news": [
+			"FEATURE possibility to hide done ToDos in ICAL Export, user must give paramter show=0",
+			"FEATURE you can now quick and easy add queens to hives and remove them in hive table and hive detail view",
+			"FEATURE user gets now an email when his hivescale did not send any data the last 24-48 hours",
+			"VISUAL added German Translation for Hivescale API",
+			"VISUAL updated Docu that we dont support wolf-waagen at the moment",
+			"VISUAL Forum has now a more visible back to app button",
+			"BUGFIX automatic email behaviour",
+			"BUGFIX it is now possible to enter minus numbers on checkup temperature field",
+			"BUGFIX error when there was no local storage for table to load",
+			"BUGFIX error with logout",
+			"BUGFIX Users can now not add any more task if he has no dropdown selected",
+			"FIX changed date for VIS Reminder to send the mail 2 days before and not 14 days",
+			"FIX lots of code changes and improvement",
+			"UPDATED table libraries",
+			"UPDATED lot of other external libraries",
+			"UPDATED Forum to latest release and stable version"
+		]
+	},
+	{
+		"version": "3.4.6",
+		"date": "2016-09-26",
+		"news": [
+			"BUGFIX weight scale data error in calendar",
+			"VISUAL on weight scale events in calendar it will now show first the number then the name",
+			"FEATURE you can now choose to hide done ToDos in calendar, you find the option on the profile page",
+			"IMPROVEMENT calendar page should now load quicker, even with a lot of tasks",
+			"BUGFIX added some missing german translations",
+			"BUGFIX selecting all rows in tables is now key A changed from S because S will trigger the search field"
+		]
+	},
+	{
+		"version": "3.4.5.1",
+		"date": "2016-09-15",
+		"news": [
+			"BUGFIX Internet Explorer 10 and 11 Strict Mode Error",
+			"BUGFIX UTF8 encoding arabic und russian symbols and special latin characters",
+			"BUGFIX iCal wrong event given",
+			"BUGFIX on delete account user data was still in database"
+		]
+	},
+	{
+		"version": "3.4.5",
+		"date": "2016-09-14",
+		"news": [
+			"Please see Newsletter: Deutsch http://eepurl.com/cfxvMf English http://eepurl.com/cfxPwb"
+		]
+	},
+	{
+		"version": "3.4.4",
+		"date": "2016-08-31",
+		"news": [
+			"BUGFIX global search should work again",
+			"BUGFIX wrong login check on movement table",
+			"VISUAL calendar weight will now display total weight and inside popup the difference, also it will now show golden color if positive or white if negative",
+			"FEATURE you can now add continuous events on the ToDo page",
+			"BUGFIX weather was not loading if you had selected multiple hives",
+			"VISUAL changed the size of the charts to be more friendly on big displays ",
+			"BUGFIX if you did not had any rearing method it caused an error"
+		]
+	},
+	{
+		"version": "3.4.3",
+		"date": "2016-08-29",
+		"news": [
+			"BUGFIX you could not add any options",
+			"BUGFIX in charge control table",
+			"BUGFIX if apiarymap cannot find your location it will take the first apiary location"
+		]
+	},
+	{
+		"version": "3.4.2",
+		"date": "2016-08-25",
+		"news": [
+			"BUGFIX note field on mobile was not working anymore",
+			"VISUAL multiple style changes for mobile phones to be more user friendly"
+		]
+	},
+	{
+		"version": "3.4.0",
+		"date": "2016-08-24",
+		"news": [
+			"FEATURE small widget that keeps your session alive and you will stay logged in when you keep the page open",
+			"VISUAL reworked a lot of pages to be more user friendly",
+			"VISUAL apiary table now also shows hive table",
+			"VISUAL combined rearing, rearing steps and rearing methods on one page",
+			"VISUAL FAQs removed and changed to news site, please see documentation as alternative to FAQs",
+			"VISUAL changed some table button colors",
+			"VISUAL reworked charts",
+			"VISUAL reworked front page",
+			"FEATURE only admins can now delete apiaries and hives",
+			"FEATURE you can now add apiaries without the map widget on the apiary table",
+			"FEATURE you can now also search for apiaries in search field, but you must click on the search result",
+			"FEATURE SCALE chart now also shows on the same page the table and added another daily average chart",
+			"FEATURE SCALE it is now possible to connect a scale to a hive, this will show the scale table inside the selected hive",
+			"FEATURE SCALE it is now possible to connect a scale to a hive, this will show the scale table inside the selected hive",
+			"FEATURE SCALE you get an email if the scale weight value difference between your last two sends is too big (5,00) this should tell you when something's happens eg. swarm or theft",
+			"BUGFIX if you edit and checkup it wont load anymore the current temperature in it, it will use the one when it was created",
+			"BUGFIX with read-only users rights",
+			"BUGFIX lot of fixes on front page",
+			"BUGFIX quicktool was saving task to selected hives and apiary hives, now it will only save to apiary hives and ignore the selected hives when you select apiary as mode",
+			"BUGFIX print export tables now only show visible columns",
+			"BUGFIX SCALE api you can now save only each hour",
+			"BUGFIX queen charts now tell you when there is no data to be shown",
+			"BUGFIX apiary map removed scroll to zoom on map",
+			"Updated Libraries"
+		]
+	},
+	{
+		"version": "3.3.3",
+		"date": "2016-07-29",
+		"news": [
+			"BUGFIX deleting tasks in tables did not work correctly",
+			"FEATURE added helper to keep users longer logged in"
+		]
+	},
+	{
+		"version": "3.3.2",
+		"date": "2016-07-27",
+		"news": [
+			"BUGFIX controller could not get correct language",
+			"VISUAL changed in hive detail view the queen buttons and renamed from quick add queen to add queen for better mobile experience",
+			"FEATURE added button to ToDo-List to hide or show done tasks"
+		]
+	},
+	{
+		"version": "3.3.1",
+		"date": "2016-07-26",
+		"news": [
+			"VISUAL added apiary location to hive name in task tables, the shown apiary name is the one when the task was done and not the current one! ",
+			"BUGFIX now you cannot add tasks to an apiary without hives ",
+			"BUGFIX ToDo list firefox bug"
+		]
+	},
+	{
+		"version": "3.3.0",
+		"date": "2016-07-22",
+		"news": [
+			"Please see Newsletter: Deutsch http://eepurl.com/b-E095 English http://eepurl.com/b-Vnvn"
+		]
+	},
+	{
+		"version": "3.2.1",
+		"date": "2016-05-16",
+		"news": [
+			"VISUAL apiary detail view the hives are now ordered by hive name ",
+			"BUGFIX rearing modal on queen rearing table with correct wrong date format ",
+			"BUGFIX language problem on password reset and send page ",
+			"VISUAL german translation fixes ",
+			"BUGFIX editing tasks in table should now show the given date and not the current date ",
+			"BUGFIX weight statistic and wolf scales should work again ",
+			"VISUAL renamed task tables field ACTIVE to DONE"
+		]
+	},
+	{
+		"version": "3.2.0",
+		"date": "2016-05-11",
+		"news": [
+			"BUGFIX reset password with firefox",
+			"FEATURE reworked checkups now support type",
+			"FEATURE reworked apiary detail view",
+			"FEATURE added more meteoblue function with weather data",
+			"FEATURE updated chart pages",
+			"updated external libraries",
+			"BUGFIX movement in apiary and hive table did not show current date",
+			"VISUAL emails are now in HTML and prettier",
+			"FEATURE it is now possible to export hive cards, they are ideal for printing and show all important information from your hives with the latest 10 tasks"
+		]
+	},
+	{
+		"version": "3.1.7",
+		"date": "2016-04-07",
+		"news": [
+			"BUGFIX reworked reset key and reset page",
+			"VISUAL added hive IDs to hive dropdowns",
+			"VISUAL added the current apiary name to the hive detail view",
+			"BUGFIX when you have multiple companies and it wont remember the last"
+		]
+	},
+	{
+		"version": "3.1.6",
+		"date": "2016-04-03",
+		"news": [
+			"BUGFIX adding new user to company and reset mail should work again"
+		]
+	},
+	{
+		"version": "3.1.5",
+		"date": "2016-03-31",
+		"news": [
+			"BUGFIX few table fixes",
+			"BUGFIX save state",
+			"FEATURE added queen to hives table"
+		]
+	},
+	{
+		"version": "3.1.4",
+		"date": "2016-03-27",
+		"news": [
+			"BUGFIX note wont show when editing tasks",
+			"VISUAL nicer numbers in hive details view",
+			"BUGFIX rearing display invalid date fixed"
+		]
+	},
+	{
+		"version": "3.1.3",
+		"date": "2016-03-26",
+		"news": [
+			"VISUAL smaller weather widget on mobile device ",
+			"BUGFIX sending new password to user in user table ",
+			"Table loading bug ",
+			"BUGFIX IOs window jumping ",
+			"BUGFIX https failure on older browser ",
+			"BUGFIX HTML5 xls export missing library ",
+			"FEATURE added external API for beehive scales (beta!)"
+		]
+	},
+	{
+		"version": "3.1.2",
+		"date": "2016-03-16",
+		"news": [
+			"VISUAL smaller widget size above calendar",
+			"BUGFIX added HTTPS force",
+			"BUGFIX error when editing apiary table",
+			"BUGFIX fixed redirect issue from index.html",
+			"FEATURE added Invoice Button to Profil Page",
+			"FEATURE updated Filemanager now you can also save and view text and pdf files",
+			"FEATURE table settings are now saved to the Database, now you have on all your devices the same settings",
+			"FEATURE before you move apiarys on the apiary map you now get a security question, to prevent miss placement",
+			"FEATURE added function to quickly add Queens in hive detail view and in the hive table view, just select the hives where you want a new queen and click Quick Queen button - Updated Docu",
+			"FEATURE added field waiting time to treatment",
+			"FEATURE added external weighting system to weight stats, you can now enter your wolf-waagen api key to see your scale inside my app. Deeper integration with wolf-waagen is coming.",
+			"VISUAL decreased the starting zoom level on the apiary map",
+			"FEATURE added weather widget in the topbar also you can now click on apiaries on your apiary map and see the weather forcecast for this location"
+		]
+	},
+	{
+		"version": "3.1.1",
+		"date": "2016-02-06",
+		"news": [
+			"Improved performance and changed folder structure. Removed old libraries and fixed a lot of small bugs."
+		]
+	},
+	{
+		"version": "3.0.12",
+		"date": "2016-01-27",
+		"news": [
+			"BUGFIX session drop in calendar fixed",
+			"BUGFIX error when you look at the statistic without a hive created",
+			"VISUAL added german translation for text field editor",
+			"VISUAL text editor image dialog is now more mobile friendly",
+			"BUGFIX grouphives now count on frontpage and apiary map to hive count",
+			"SECURITY added session check to controller",
+			"BUGFIX changed login session to automatic log you in if you still in session",
+			"FEATURE added on profile page a company number and the possibility to show VIS dates in calendar (mandatory for austrian beekeeper only)"
+		]
+	},
+	{
+		"version": "3.0.11",
+		"date": "2016-01-17",
+		"news": [
+			"BUGFIX changed locale storage key to save the same settings for the same tables",
+			"FEATURE added clear locale storage button on profile page, to reset all local saved table settings",
+			"VISUAL added apiary note to the apiary map",
+			"VISUAL changed standard images size to 150px when you import an image into notes, more user friendly on smaller devices",
+			"VISUAL added and fixed some FAQs"
+		]
+	},
+	{
+		"version": "3.0.10",
+		"date": "2016-01-16",
+		"news": [
+			"SECURITY added security in backend when adding new tasks",
+			"FEATURE in statistics you can now select a single hive",
+			"BUGFIX updated Filemanager to 9.9.7 should fix a nasty android bug"
+		]
+	},
+	{
+		"version": "3.0.9",
+		"date": "2016-01-09",
+		"news": [
+			"BUGFIX wrong hive count on apiary map when you moved your hives",
+			"VISUAL updated gadget colour for basic user on calendar dashboard",
+			"BUGFIX changed email activation code to work with gmail online inbox",
+			"FEATURE search field gives you now a autocomplete dropdown",
+			"VISUAL updated notify messages plugin",
+			"FEATURE added filemanager for PREMIUM user now you can add image to note fields and manager your pictures"
+		]
+	},
+	{
+		"version": "3.0.8",
+		"date": "2016-01-03",
+		"news": [
+			"BUGFIX add new apiary in table view should now relocate to apiary map before form shows",
+			"FEATURE added function to add multiple hives at once",
+			"TRANSLATION few german corrections",
+			"VISUAL added news table to FAQs",
+			"FEATURE added user documentation"
+		]
+	},
+	{
+		"version": "3.0.7",
+		"date": "2015-12-29",
+		"news": [
+			"BUGFIX register page did not work correctly ",
+			"BUGFIX delete account should now work without error showing",
+			"BUGFIX small fix when you tried to add a task without a hive",
+			"BUGFIX wrong return url after payment with PayPal",
+			"VISUAL fixed b.tree Logo in E-Mails",
+			"BUGFIX reworked e-mail confirmation code and mail",
+			"VISUAL changed favicon from about page",
+			"BUGFIX delete empty apiary was not working",
+			"VISUAL apiarymap now reloads faster when you add a new apiary"
+		]
+	},
+	{
+		"version": "3.0.6",
+		"date": "2015-12-27",
+		"news": [
+			"BUGFIX datetime field in rearing table was not working",
+			"FEATURE you can now hide/show inactive apiaries on map",
+			"FEATURE added links to gadgets at the startpage",
+			"TRANSLATION German fixes",
+			"BUGFIX calendar now loads only visible tasks and not all"
+		]
+	},
+	{
+		"version": "3.0.5",
+		"date": "2015-12-22",
+		"news": [
+			"BUGFIX Login should now work with mobile keyboard enter click ",
+			"BUGFIX fixed again IOS webapp links ",
+			"VISUAL topbar, profile symbol now links to profile and added a tooltip",
+			"VISUAL added few tooltips",
+			"VISUAL changed responsive sizes on profile page",
+			"TRANSLATION few german corrections"
+		]
+	},
+	{
+		"version": "3.0.4",
+		"date": "2015-12-16",
+		"news": [
+			"BUGFIX IOS Webapp fix, links should no longer open in safari browser and stay in webapp"
+		]
+	},
+	{
+		"version": "3.0.3",
+		"date": "2015-12-15",
+		"news": [
+			"BUGFIX checkup table in apiary and hive detail view was not working",
+			"VISUAL changed table hover colour",
+			"VISUAL smaller table header",
+			"FIX added version number to custom javascript file"
+		]
+	},
+	{
+		"version": "3.0.2",
+		"date": "2015-12-08",
+		"news": [
+			"MIGRATE old weight table data to new checkup table",
+			"BUGFIX removed password empty error on success on login, register and reset page",
+			"BUGFIX removed possible spaces from remember e-mail cookie on login page",
+			"BUGFIX timepicker was not working in checkup table editor",
+			"BUGFIX removed inactive queens from queen statistics"
+		]
+	},
+	{
+		"version": "3.0.1",
+		"date": "2015-11-29",
+		"news": [
+			"BUGFIX note from queen would not save correctly",
+			"DB each new user gets automatic 1 month paid",
+			"ADD new queen charts",
+			"BUGFIX problem with apiary dropdown when there where no hives on this apiary",
+			"BUGFIX harvest amount was integer only"
+		]
+	},
+	{
+		"version": "3.0.0",
+		"date": "2015-11-26",
+		"news": [
+			"Updated 95% of the app code for better performance",
+			"App is now with bootstrap design - means fully responsive",
+			"on demand loading tables, big data ready!",
+			"removed lot of code redundancy ",
+			"combined varroa and treatment data ",
+			"added rearing methods logic",
+			"moved weight to checkup task",
+			"quicktool now allows to select multiple hives",
+			"export data as xls or csv",
+			"moved statistic from google to chartjs and a lot of improvements made",
+			"added FAQs",
+			"reworked user management and it is easier to switch between beekeeper companies",
+			"added type and price field to charge",
+			"added search to quickly access hives",
+			"added hive overview to quickly see the latest 5 tasks and latest queen",
+			"all tables are now state saving (html5), means it remembers your options",
+			"reworked options you can now set a favorit/default, this one will be automatic select when you create a new task",
+			"you can now set options to inactive, this options will still visible in statistics but removed from dropdowns in new tasks",
+			"lot of other small tweaks and translation fixes"
+		]
+	},
+	{
+		"version": "2.1.5",
+		"date": "2015-06-28",
+		"news": [
+			"BUGFIX select_all / deselect on tables should now work again",
+			"DB removed delete connection between options and hives",
+			"VISUAL changed number format to only show 2 numbers after comma",
+			"BUGFIX edit checkups - hive dropdown should work again",
+			"BUGFIX harvest table function done/not done should work again",
+			"BUGFIX when you swap between your companies, the paid SESSION is also updated",
+			"VISUAL hive dropdown for tasks now shows hive name and actual apiary name",
+			"MOBILE added calendar to index page"
+		]
+	},
+	{
+		"version": "2.1.4",
+		"date": "2015-05-23",
+		"news": [
+			"INFO moved to new better/quicker server",
+			"DB fixed last_visit in login function",
+			"BUGFIX removed error in hive_table details, when there was no recent task done",
+			"BUGFIX fixed mobile register (changed bruteforce email function name)"
+		]
+	},
+	{
+		"version": "2.1.3",
+		"date": "2015-05-12",
+		"news": [
+			"BUGFIX dropdown didn't automatically choose right hive for selected task (thx gothmog)",
+			"ADD date field when you add a new hive (on request from Matthias)",
+			"ADD C.S.I. Pollen Button at the bottom of the calendar, it shows the pollen collecting dates for 2015",
+			"ADD function to create checkup for whole apiary",
+			"VISUAL MOBILE added more space at the bottom of tasks, now keyboard should not hide the notes",
+			"SECURITY updated FullCalendar to Version 2.3.1"
+		]
+	},
+	{
+		"version": "2.1.2",
+		"date": "2015-05-07",
+		"news": ["BUGFIX registration and password reset should work again"]
+	},
+	{
+		"version": "2.1.1",
+		"date": "2015-05-06",
+		"news": [
+			"SECURITY now with full SSL-Certification to greatly improve your data security",
+			"SECURITY updated session cookies to work with SSL-Certification",
+			"SECURITY updated Leaflet to 0.7.3 (apiary map)",
+			"SECURITY updated bruteforce logic, you now get an email by too many failed logins",
+			"ADD DESKTOP added charge_control and tasks column search",
+			"ADD DESKTOP added 'Support / Bug Report' Link to the footer",
+			"ADD MOBILE link to web-app",
+			"ADD task table now shows the data from the last two years, as premium user you can change this in your profile",
+			"BUGFIX beebreed.eu form",
+			"BUGFIX header and session bug (loaded too late after header)",
+			"BUGFIX MOBILE Profile page, should now work again",
+			"BUGFIX MOBILE improved session loading (moved to code start)",
+			"VISUAL MOBILE fixed landscape view for checkup task",
+			"VISUAL state of all tables will now be saved (length, sorting) with html5 storage",
+			"BETA TEST new quick url QR reader"
+		]
+	},
+	{
+		"version": "2.1.0",
+		"date": "2015-03-25",
+		"news": [
+			"b.tree logo in emails",
+			"fixed few translation errors",
+			"fixed bug with password reset, not working for some email addresses",
+			"changed treatment logo design (red cross on white background is a protected trademark)",
+			"fixed again beebreed.eu form",
+			"replaced deprecated function ereg_replace with preg_replace",
+			"fixed format issue with javascript and session_format",
+			"small bug fixes on mobile version",
+			"fixed problem with inactive queens"
+		]
+	},
+	{
+		"version": "2.0.3",
+		"date": "2015-02-25",
+		"news": [
+			"small bug fixes",
+			"updated from jquery Version 1.10 to 2.1.3",
+			"updated from jquery mobile Version 1.4.2 to 1.4.3",
+			"removed qtip addon (now quicker loading time from hive/apiary table)",
+			"minified few css",
+			"removed google analytics code (not worth the trouble)"
+		]
+	},
+	{
+		"version": "2.0.2",
+		"date": "2015-02-06",
+		"news": [
+			"added .csv export for weight control",
+			"removed limit of 5 by checkup for amount of varroa"
+		]
+	},
+	{
+		"version": "2.0.1",
+		"date": "2015-01-31",
+		"news": [
+			"fixed bug: hive info in apiary detail view should now show the correct information",
+			"fixed bug: time field in weightings are now manual changeable",
+			"fixed bug: charge edit, should now show the correct Out/In as set",
+			"fixed bug: hive info numbers now should format correctly",
+			"fixed view, mobile: charge add and edit, small text part deleted",
+			"fixed bug: edit weight, should now open the correct sidebar dropdown",
+			"ADDED a note field for weightings",
+			"Register for new users is open again!"
+		]
+	},
+	{
+		"version": "1.2.0",
+		"date": "2015-01-18",
+		"news": [
+			"added user function, one user can now have more companies and one company can now have more users (on wishes from User Matthias) (ADMIN Panel)",
+			"added 3 ranks to user - ADMIN, User, Read-Only",
+			"new logic to check if user is logged in (quicker and lesser random drops)",
+			"added bee flight range in weather map (blue ring, 3km)(on wishes from User Michael)",
+			"DESKTOP added (select all) and (unselect all) button to table tasks and charge control",
+			"PREMIUM DESKTOP added stats graphics for feed, harvest and varroa treatment and weightings (all years summary, one year apiaries compare and for each apiary a all yearly compare)",
+			"fixed a lot of small PHP errors",
+			"added weighting table, now you can add weight stats to your hives!",
+			"DESKTOP added open task count to sidebar",
+			"safety bug fix (thx to user Alexander)",
+			"added Hive Strength to Checkup (Idea from Alexander)",
+			"DESKTOP in Hive-Overview you can now quick access the 2 latest tasks with the info button, inside the table for each hive",
+			"DESKTOP edited form style from desktop version, more compact",
+			"task tables should now be standard sorted by date",
+			"added field frames to harvest, there you can add the amount of collected frames (Idea from Alexander)",
+			"small cosmetic changes",
+			"added news to login screen"
+		]
+	},
+	{
+		"version": "1.1.12",
+		"date": "2014-09-14",
+		"news": [
+			"added PDF export multiple rows for feed, harvest, varroa and charge control (premium only)"
+		]
+	},
+	{
+		"version": "1.1.11",
+		"date": "2014-09-13",
+		"news": [
+			"bug fix with pagination and tables",
+			"tasks, queen, move & charge tables now showing 50 rows on load and hive / apiary 25 rows (up from 10 rows)",
+			"added function in profile to set the standard value for your new tasks as done or open",
+			"we got a lot of new free users needed to changed basic user max. amount of hives to 4 (down from 10) and apiaries to 2 (down from 10)"
+		]
+	},
+	{
+		"version": "1.1.10",
+		"date": "2014-08-25",
+		"news": [
+			"small bug fixes & calender single event links should now work again"
+		]
+	},
+	{
+		"version": "1.1.9",
+		"date": "2014-06-24",
+		"news": [
+			"charge table, date sorting should now work correctly with german format",
+			"PREMIUM added charge control to export on csv export menu",
+			"removed few function from tasks table",
+			"MOBILE added button on task table view to quick add new task (hive or apiary)",
+			"PREMIUM you can now print PDF from selected rows in feed table and varroa table"
+		]
+	},
+	{
+		"version": "1.1.8",
+		"date": "2014-06-16",
+		"news": [
+			"fixed bug with dropdown deleting in table view from hives and apiaries",
+			"PREMIUM reworked function charge control",
+			"fixed bug where in mobile image links didnt work on touch click"
+		]
+	},
+	{
+		"version": "1.1.7",
+		"date": "2014-06-14",
+		"news": [
+			"PREMIUM  added function charge control - own table to save your import and export products",
+			"fixed bug with beebreed.eu, should now work again"
+		]
+	},
+	{
+		"version": "1.1.6",
+		"date": "2014-06-13",
+		"news": [
+			"PREMIUM USER added function to export all your saved data as .CSV file",
+			"Checkups temperature field is now automated. If the field is empty or by change from selected hive it get the current hive location temperature"
+		]
+	},
+	{
+		"version": "1.1.5",
+		"date": "2014-06-11",
+		"news": ["MOBILE added calendar for mobile version"]
+	},
+	{
+		"version": "1.1.4",
+		"date": "2014-06-10",
+		"news": [
+			"APP updated calendar plugin version",
+			"APP calendar now shows movements",
+			"APP calendar now group same events on the same day, for better visibility when you have a lot of hives"
+		]
+	},
+	{
+		"version": "1.1.3",
+		"date": "2014-06-05",
+		"news": [
+			"changed movement logic, now you can make movements in advance and the hives will move on the future date (not instant like it was before)",
+			"added movements overview in panel task (all movements), in apiary details and hive details",
+			"added vet option, for varroa and treatment (mandatory for austria beekeeper)",
+			"APP in hive overview you can now print smaller and multiple QR codes for your hives",
+			"MOBILE redesign of detail view from hives",
+			"new domains for the page app.btree.at for desktop version and m.btree.at for mobile",
+			"small design tweaks and bug fixes"
+		]
+	},
+	{
+		"version": "1.1.2",
+		"date": "2014-06-01",
+		"news": [
+			"added small page loader on each page (mainly to prevent the user to click too quick on an link and and loosing session)",
+			"small design tweaks"
+		]
+	},
+	{
+		"version": "1.1.1",
+		"date": "2014-05-30",
+		"news": [
+			"login screen, added remember function",
+			"MOBILE added icon for saving to mobile desktop",
+			"MOBILE background image is now loading faster",
+			"MOBILE QR Code scan, added quick url field as alternative",
+			"pdf export now with quick url",
+			"small bug fixes"
+		]
+	},
+	{
+		"version": "1.1.0",
+		"date": "2014-05-29",
+		"news": [
+			"MOBILE added header information notranslate to prevent google from auto translate page (this logged the user out)",
+			"MOBILE deactivated swipe commands (left and right)",
+			"MOBILE edited back button, now with history_back(1)",
+			"MOBILE made the size from google AdSense smaller",
+			"added close button to datepicker and made it read only (on mobile version this prevent the keyboard to open)",
+			"added safety that there is atleast one option in the dropdown menu, to prevent fail exports and loadings",
+			"MOBILE registration should now work",
+			"password reset was only working with 7 digits passwords, now it should work with 6 as expected",
+			"PayPal was showing payment without tax, now it shows with 20% tax (24,00 Euro)",
+			"MOBILE fixed bug where you could not move or delete hives in table view",
+			"added 'no mother' to queen, as possible selection",
+			"tables with inactive and active tabs now update correctly",
+			"small bug fixes :)"
+		]
+	},
+	{
+		"version": "1.0.16",
+		"date": "2014-05-28",
+		"news": ["fixed bug where empty tables wont load", "MOBILE small bug fixes"]
+	},
+	{
+		"version": "1.0.15",
+		"date": "2014-05-26",
+		"news": ["changed size of QR code in export and link"]
+	},
+	{
+		"version": "1.0.14",
+		"date": "2014-05-25",
+		"news": [
+			"fixed bug: hive will now not move, when you edit it and its still on the same apiary"
+		]
+	},
+	{
+		"version": "1.0.13",
+		"date": "2014-05-19",
+		"news": ["fixed small bug with checkup, hive-dropdown"]
+	},
+	{
+		"version": "1.0.12",
+		"date": "2014-04-15",
+		"news": [
+			"fixed major bug where in firefox 28.0 table hives and table apiary was bit shown anymore (therefore i deleted all hives with the name test_hive or muster_stock). Please send me a message if its still not working for you",
+			"fixed bug where deleting user was not working"
+		]
+	},
+	{
+		"version": "1.0.11",
+		"date": "2014-04-13",
+		"news": [
+			"small bug fixes with external beebreed.eu link",
+			"fixed 'hopefully' a bug where you randomly session out and need to login again (please report bug if it still exists)",
+			"few german translation",
+			"you can now select rows on hive and apiary table",
+			"there is now a dropdown on hive and apiary overview to move and delete hives and apiaries quicker"
+		]
+	},
+	{
+		"version": "1.0.10",
+		"date": "2014-04-08",
+		"news": [
+			"added queen support (for existing user, please add under option a bee race and mating place before adding queens)",
+			"bug fix move hive GERMAN version was not working",
+			"added external form for beebreed.eu",
+			"small bug fixes on login page"
+		]
+	},
+	{
+		"version": "1.0.9",
+		"date": "2014-03-16",
+		"news": [
+			"added password reset routine",
+			"saver registration with hidden post data",
+			"added english number and date format display (change in your profil options)",
+			"added simple apiary / weather map"
+		]
+	},
+	{
+		"version": "1.0.8",
+		"date": "2014-03-04",
+		"news": [
+			"added account activation via email for new users",
+			"fixed bug that detail view of apiary wont show"
+		]
+	},
+	{
+		"version": "1.0.7",
+		"date": "2014-03-02",
+		"news": [
+			"added start and end date for tasks, also shows in calendar and editable",
+			"small bug fixes",
+			"added english autofill from option for new english user",
+			"added delete and print button on task edit page",
+			"added map on create new apiary"
+		]
+	},
+	{
+		"version": "1.0.6",
+		"date": "2014-03-02",
+		"news": [
+			"speed improvement (alls task table now fetching data from json array)",
+			"edited table widths"
+		]
+	},
+	{
+		"version": "1.0.5",
+		"date": "2014-02-21",
+		"news": [
+			"speed improvement (table apiary now fetching data from json array)",
+			"small bug fixes with apiary map"
+		]
+	},
+	{
+		"version": "1.0.4",
+		"date": "2014-02-16",
+		"news": [
+			"small bug fixes hive overview table",
+			"map (detail apiary) now show current weather information and you can drag and drop the location"
+		]
+	},
+	{
+		"version": "1.0.3",
+		"date": "2014-02-04",
+		"news": [
+			"speed improvement  (table function for hive overview is now fetching data from array and not from DOM for better loading speed (I'll edit all other tables too))"
+		]
+	},
+	{
+		"version": "1.0.2",
+		"date": "2014-02-02",
+		"news": [
+			"added news page",
+			"added print button for hives",
+			"added function for group of hives",
+			"added login safety features",
+			"added map feature in detail apiary (only works with coordinates, can't convert address at the moment)"
+		]
+	},
+	{
+		"version": "1.0.1",
+		"date": "2014-01-25",
+		"news": ["First version 🚀"]
+	}
 ]
