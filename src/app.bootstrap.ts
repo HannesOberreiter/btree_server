@@ -31,7 +31,7 @@ const httpServer = new HTTPServer(application.app);
 // eslint-disable-next-line antfu/no-top-level-await
 await httpServer.start();
 
-closeWithGrace({ delay: 5000 }, async (res) => {
+closeWithGrace({ delay: 10000 }, async (res) => {
   if (res.err) {
     console.error(res.err);
   }
@@ -42,21 +42,14 @@ async function gracefulShutdown() {
   // process.on('SIGTERM', afterFirstSignal);
   // process.on('SIGINT', afterFirstSignal);
   try {
-    if (env === 'ci') {
-      await Promise.allSettled([
-        dbServer.stop(),
-        redisServer.stop(),
-        httpServer.stop(),
-      ]);
-    }
-    else {
-      await Promise.allSettled([
-        vectorServer.stop(),
-        dbServer.stop(),
-        redisServer.stop(),
-        httpServer.stop(),
-      ]);
-    }
+    logger.log('debug', 'Starting graceful shutdown...', { label: 'Server' });
+    await Promise.allSettled([
+      vectorServer?.stop(),
+      dbServer.stop(),
+      redisServer.stop(),
+      httpServer.stop(),
+    ].filter(Boolean));
+    logger.log('debug', 'Graceful shutdown completed', { label: 'Server' });
   }
   catch (error) {
     console.error('Failed to stop server', error);
@@ -66,7 +59,7 @@ async function gracefulShutdown() {
 const wrappedHttpForTesting = httpServer.app.server;
 
 export {
-  gracefulShutdown,
   httpServer as boot,
+  gracefulShutdown,
   wrappedHttpForTesting as server,
 };

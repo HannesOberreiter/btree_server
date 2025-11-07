@@ -1,12 +1,53 @@
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
-import { z } from 'zod';
+import fastifyFormbody from '@fastify/formbody';
 
+import { z } from 'zod';
 import { ROLES } from '../../../config/constants.config.js';
-import { GoogleAuth } from '../../../services/federated.service.js';
+import { AppleAuth, GoogleAuth } from '../../../services/federated.service.js';
 import AuthController from '../../controllers/auth.controller.js';
 import RootController from '../../controllers/root.controller.js';
 import { Guard } from '../../hooks/guard.hook.js';
+
+export const AppleCallbackSchema = z.object({
+  code: z.string(),
+  id_token: z.string(),
+  state: z.string(),
+  user: z.union([
+    z.string().transform((str, ctx) => {
+      try {
+        const parsed = JSON.parse(str);
+        return z.object({
+          email: z.string().email(),
+        }).parse(parsed);
+      }
+      catch {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Invalid JSON in user field',
+        });
+        return z.NEVER;
+      }
+    }),
+    z.object({
+      email: z.string().email(),
+    }),
+    z.literal(''), // Accept empty string
+    z.null(), // Accept null
+  ]).optional(),
+  error: z.string().optional(),
+});
+
+const RegisterBodySchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(6).max(128).trim(),
+  name: z.string().min(3).max(128).trim(),
+  lang: z.string().min(2).max(2),
+  newsletter: z.boolean(),
+  source: z.string(),
+  isOAuth: z.boolean().optional(),
+});
+export type RegisterBody = z.infer<typeof RegisterBodySchema>;
 
 export default function routes(
   instance: FastifyInstance,
@@ -15,18 +56,13 @@ export default function routes(
 ) {
   const server = instance.withTypeProvider<ZodTypeProvider>();
 
+  server.register(fastifyFormbody);
+
   server.post(
     '/register',
     {
       schema: {
-        body: z.object({
-          email: z.string().email(),
-          password: z.string().min(6).max(128).trim(),
-          name: z.string().min(3).max(128).trim(),
-          lang: z.string().min(2).max(2),
-          newsletter: z.boolean(),
-          source: z.string(),
-        }),
+        body: RegisterBodySchema,
       },
     },
     AuthController.register,
@@ -125,6 +161,21 @@ export default function routes(
       },
     },
     AuthController.google,
+  );
+
+  server.get('/apple', {}, async () => {
+    const apple = AppleAuth.getInstance();
+    return { url: apple.generateAuthUrl() };
+  });
+
+  server.post(
+    '/apple/callback',
+    {
+      schema: {
+        body: AppleCallbackSchema,
+      },
+    },
+    AuthController.apple,
   );
 
   server.get(

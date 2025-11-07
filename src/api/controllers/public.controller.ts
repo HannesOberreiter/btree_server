@@ -26,7 +26,7 @@ export default class PublicController {
   ) {
     const taxa = mapTaxa(req);
 
-    reply.header('Cache-Control', 'public, max-age=21600');
+    reply.header('Cache-Control', 'public, max-age=3600');
     const cacheKey = buildRedisCacheKeyObservationsRecent(taxa);
 
     const redis = RedisServer.client;
@@ -48,7 +48,7 @@ export default class PublicController {
 
     const result = await query;
 
-    redis.set(cacheKey, JSON.stringify(result), 'EX', 21600);
+    redis.set(cacheKey, JSON.stringify(result), 'EX', 3600);
 
     return result;
   }
@@ -59,7 +59,7 @@ export default class PublicController {
   ) {
     const taxa = mapTaxa(req);
 
-    reply.header('Cache-Control', 'public, max-age=21600');
+    reply.header('Cache-Control', 'public, max-age=3600');
     const params = req.params as any;
     if (!params.year) {
       return [];
@@ -86,7 +86,7 @@ export default class PublicController {
   ) {
     const taxa = mapTaxa(req);
 
-    reply.header('Cache-Control', 'public, max-age=21600');
+    reply.header('Cache-Control', 'public, max-age=3600');
     const res = await Observation.query()
       .count('id as count')
       .where('taxa', taxa);

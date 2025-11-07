@@ -258,6 +258,7 @@ export async function reminderVIS() {
         .where({
           lang: 'de',
           acdate: true,
+          newsletter: true,
         })
         .where(builder =>
           builder

@@ -1,17 +1,16 @@
 # https://community.hetzner.com/tutorials/install-and-configure-docker
 # https://github.com/nodejs/docker-node/blob/main/docs/BestPractices.md
 # etc/nginx/conf.d/upstream.conf
-# docker inspect to get ip adress
+# docker inspect to get ip address
 # pull latest and run
 # docker compose pull  && docker compose up -d
-version: '3.8'
 services:
   btree-server:
     container_name: btree-server-beta
     image: hannesoberreiter/btree_server:latest
     # To run knex commands
     # entrypoint: [ "/bin/sh", "-c", "npm run prod:knex migrate:latest" ]
-    restart: always
+    restart: unless-stopped
     user: node # connected volume logs must have write access as node user chown -R 1000:1000 logs
     environment:
       ENVIRONMENT: production

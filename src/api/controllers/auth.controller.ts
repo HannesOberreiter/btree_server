@@ -1,8 +1,8 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import type { federatedUser } from '../../services/federated.service.js';
+import type { RegisterBody } from '../routes/v1/auth.route.js';
 import { randomBytes, randomUUID } from 'node:crypto';
 import dayjs from 'dayjs';
-
 import httpErrors from 'http-errors';
 import { ENVIRONMENT } from '../../config/constants.config.js';
 import {
@@ -12,11 +12,12 @@ import {
   serverLocation,
 } from '../../config/environment.config.js';
 import { DiscourseSSO } from '../../services/discourse.service.js';
-import { GoogleAuth } from '../../services/federated.service.js';
+import { AppleAuth, GoogleAuth } from '../../services/federated.service.js';
 import { MailService } from '../../services/mail.service.js';
 import { Company } from '../models/company.model.js';
 import { CompanyBee } from '../models/company_bee.model.js';
 import { User } from '../models/user.model.js';
+import { AppleCallbackSchema } from '../routes/v1/auth.route.js';
 import {
   buildUserAgent,
   confirmAccount,
@@ -112,19 +113,27 @@ export default class AuthController {
   }
 
   static async register(req: FastifyRequest, _reply: FastifyReply) {
-    const inputCompany = (req.body as any).name;
-    const inputUser = req.body as any;
+    req.log.debug({ message: 'Register attempt', ip: req.ip, body: req.body });
+    const body = req.body as RegisterBody;
+    const inputCompany = body.name;
+    const inputUser = body;
     delete inputUser.name;
+    const isOAuth = body.isOAuth || false;
+    delete inputUser.isOAuth;
+
+    if (isOAuth) {
+      // for OAuth registrations we reset the temp password
+      inputUser.password = randomBytes(16).toString('hex');
+    }
 
     // create hashed password and salt
     const hash = createHashedPassword(inputUser.password);
-    inputUser.password = hash.password;
-    inputUser.salt = hash.salt;
+    delete inputUser.password;
     // We use the password reset key for email confirmation
     // if the user did not get it is possible to use "forgot password" in addition
     // which will also activate the user
-    inputUser.reset = randomBytes(64).toString('hex');
-    // we only have german or english available for autofill
+    const reset = randomBytes(64).toString('hex');
+    // we only have German or English available for autofill
     const autofillLang = inputUser.lang === 'de' ? 'de' : 'en';
     await User.transaction(async (trx) => {
       const uniqueMail = await User.query(trx).findOne({
@@ -134,7 +143,13 @@ export default class AuthController {
         throw httpErrors.Conflict('email');
       }
 
-      const u = await User.query(trx).insert({ ...inputUser, state: 0 });
+      const u = await User.query(trx).insert({
+        ...inputUser,
+        password: hash.password,
+        salt: hash.salt,
+        reset,
+        state: isOAuth ? 1 : 0, // OAuth users are confirmed by default
+      });
       const c = await Company.query(trx).insert({
         name: inputCompany,
         paid: dayjs().add(31, 'day').format('YYYY-MM-DD'),
@@ -146,15 +161,15 @@ export default class AuthController {
     const mail = await MailService.getInstance().sendMail({
       to: inputUser.email,
       lang: inputUser.lang,
-      subject: 'register',
-      key: inputUser.reset,
+      subject: isOAuth ? 'register_oauth' : 'register',
+      key: reset,
     });
 
     if (!mail) {
       throw httpErrors.Unauthorized('mail');
     }
 
-    return { email: inputUser.email, activate: inputUser.reset };
+    return { email: inputUser.email, activate: reset };
   }
 
   static logout(req: FastifyRequest, reply: FastifyReply) {
@@ -261,6 +276,76 @@ export default class AuthController {
     }
     catch (e) {
       req.log.error({ message: 'Error in google callback', error: e });
+      return reply.redirect(
+        `${frontend}/visitor/login?error=oauth&server=${serverLocation}`,
+      );
+    }
+
+    const userAgent = buildUserAgent(req);
+
+    const { bee_id, user_id, paid, rank } = await loginCheck(
+      '',
+      '',
+      result.bee_id,
+    );
+
+    try {
+      (req as any).bee_id = bee_id;
+      await req.session.regenerate();
+      req.session.user = {
+        bee_id,
+        user_id,
+        paid,
+        rank: rank as any,
+        user_agent: userAgent,
+        last_visit: new Date(),
+        uuid: randomUUID(),
+        ip: req.ip,
+      };
+      await req.session.save();
+    }
+    catch (e) {
+      req.log.error(e);
+      throw httpErrors[500]('Failed to create session');
+    }
+    reply.redirect(`${frontend}/visitor/login?server=${serverLocation}`);
+    return reply;
+  }
+
+  static async apple(req: FastifyRequest, reply: FastifyReply) {
+    const apple = AppleAuth.getInstance();
+    let result: federatedUser;
+    const body = AppleCallbackSchema.safeParse(req.body);
+    if (!body.success) {
+      req.log.error({ message: 'Invalid Apple callback body', body });
+      return reply.redirect(
+        `${frontend}/visitor/login?error=oauth&server=${serverLocation}`,
+      );
+    }
+    if (body.data.error) {
+      req.log.error({ message: 'Apple callback error', error: body.data.error });
+      return reply.redirect(
+        `${frontend}/visitor/login?error=oauth&server=${serverLocation}`,
+      );
+    }
+
+    try {
+      result = await apple.verify(body.data.code);
+      if (!result.bee_id) {
+        return reply.redirect(
+          encodeURI(
+            `${frontend
+            }/visitor/register?email=${
+              result.email
+            }&oauth=apple`
+            + `&server=${
+              serverLocation}`,
+          ),
+        );
+      }
+    }
+    catch (e) {
+      req.log.error({ message: 'Error in apple callback', error: e });
       return reply.redirect(
         `${frontend}/visitor/login?error=oauth&server=${serverLocation}`,
       );

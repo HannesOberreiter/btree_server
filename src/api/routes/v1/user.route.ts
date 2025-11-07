@@ -75,7 +75,7 @@ export default function routes(
       preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
       schema: {
         params: z.object({
-          id: z.number(),
+          id: z.number({ coerce: true }).int().positive(),
         }),
       },
     },
@@ -89,6 +89,7 @@ export default function routes(
       schema: {
         body: z.object({
           email: z.string().email(),
+          provider: z.enum(['google', 'apple']).default('google'),
         }),
       },
     },
