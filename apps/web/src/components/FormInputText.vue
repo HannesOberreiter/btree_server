@@ -143,7 +143,7 @@ function editValues(val: boolean) {
 		filled
 	>
 		<template v-if="icon !== ''" #before>
-			<slot name="deepBefore" />
+			<slot v-if="$slots.deepBefore" name="deepBefore" />
 			<div v-if="icon === 'none' && !multipleValues" />
 			<q-icon v-else-if="!multipleValues" :name="icon" />
 			<BtnMultipleValues
@@ -153,7 +153,7 @@ function editValues(val: boolean) {
 			/>
 		</template>
 		<template #after>
-			<slot name="deepAfter" />
+			<slot v-if="$slots.deepAfter" name="deepAfter" />
 		</template>
 		<template v-if="$slots.deepPrepend" #prepend>
 			<slot name="deepPrepend" />

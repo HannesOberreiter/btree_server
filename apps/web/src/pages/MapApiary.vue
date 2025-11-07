@@ -14,7 +14,6 @@ import { useI18n } from 'vue-i18n';
 import BtnBase from '../components/BtnBase.vue';
 import BtnBaseGroup from '../components/BtnBaseGroup.vue';
 import DialogForm from '../components/DialogForm.vue';
-import GlobalLoading from '../components/GlobalLoading.vue';
 import MapButtons from '../components/MapButtons.vue';
 import MapOverlay from '../components/MapOverlay.vue';
 import { useApiFetch } from '../composables/useApi';
@@ -49,7 +48,14 @@ const userStore = useAuthUserStore();
 const notification = useNotification();
 const useInvalidate = useInvalidateQueries();
 
-const zoom = computed(() => (isLoading.value ? 2 : 9));
+const zoom = computed(() => {
+	return isLoading.value ? 2 : 9;
+});
+
+const mapCenter = computed(() => {
+	return apiaries.value?.center || [47.4751336, 13.5968839, 2];
+});
+
 const circleRadius = ref(1000);
 const circleOpacity = 0.3;
 const mapRef = ref(null as any);
@@ -167,15 +173,12 @@ function moveApiaryEnd(e: any) {
 
 <template>
 	<div class="row justify-center">
-		<div v-if="isLoading" class="col-1">
-			<GlobalLoading />
-		</div>
-		<div v-else class="col-12">
+		<div class="col-12">
 			<div class="map">
 				<LMap
 					ref="mapRef"
 					:zoom="zoom"
-					:center="apiaries.center"
+					:center="mapCenter"
 					loading-control="true"
 					@ready="onMapReady"
 					@locationfound="onLocationFound"

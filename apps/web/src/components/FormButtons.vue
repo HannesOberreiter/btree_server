@@ -192,43 +192,100 @@ function onReset() {
 </script>
 
 <template>
-	<BtnBaseGroup v-if="!isEdit" size="md" class="full-width q-pt-sm">
-		<BtnBase
-			:disable="lastInsert === null ? true : false"
-			color="info"
-			:loading="isSubmitting"
-			:label="$t('undo')"
-			tabindex="-1"
-			data-cy="btn-form-undo"
-			@click="onUndo"
-		/>
-		<BtnBase
-			color="warning"
-			:label="$t('reset')"
-			tabindex="-1"
-			@click="onReset"
-		/>
-		<BtnBase
-			color="secondary"
-			:loading="isSubmitting"
-			:label="`${$t('save')} (${numberOfTasks})`"
-			data-cy="btn-form-save"
-			@click="onSubmit"
-		/>
-	</BtnBaseGroup>
-	<BtnBaseGroup v-else class="full-width q-pt-sm" size="md">
-		<BtnBase
-			color="warning"
-			:label="$t('reset')"
-			tabindex="-1"
-			@click="onReset"
-		/>
-		<BtnBase
-			color="secondary"
-			:loading="isSubmitting"
-			:label="`${$t('update')} (${numberOfEdits})`"
-			data-cy="btn-form-update"
-			@click="onUpdate"
-		/>
-	</BtnBaseGroup>
+	<div v-if="!isEdit" class="q-pt-md full-width">
+		<!-- Save button standalone on small screens -->
+		<div class="lt-md">
+			<BtnBase
+				color="secondary"
+				:loading="isSubmitting"
+				:label="`${$t('save')} (${numberOfTasks})`"
+				data-cy="btn-form-save"
+				class="full-width q-mb-lg"
+				size="md"
+				@click="onSubmit"
+			/>
+			<BtnBaseGroup size="md" class="q-mb-lg">
+				<BtnBase
+					:disable="lastInsert === null ? true : false"
+					color="info"
+					:loading="isSubmitting"
+					:label="$t('undo')"
+					tabindex="-1"
+					data-cy="btn-form-undo"
+					@click="onUndo"
+				/>
+				<BtnBase
+					color="warning"
+					:label="$t('reset')"
+					tabindex="-1"
+					@click="onReset"
+				/>
+			</BtnBaseGroup>
+		</div>
+		<!-- grouped layout for medium and larger screens -->
+		<BtnBaseGroup size="md" class="full-width gt-sm">
+			<BtnBase
+				:disable="lastInsert === null ? true : false"
+				color="info"
+				:loading="isSubmitting"
+				:label="$t('undo')"
+				tabindex="-1"
+				data-cy="btn-form-undo"
+				@click="onUndo"
+			/>
+			<BtnBase
+				class="q-mr-lg"
+				color="warning"
+				:label="$t('reset')"
+				tabindex="-1"
+				@click="onReset"
+			/>
+			<BtnBase
+				color="secondary"
+				:loading="isSubmitting"
+				:label="`${$t('save')} (${numberOfTasks})`"
+				data-cy="btn-form-save"
+				@click="onSubmit"
+			/>
+		</BtnBaseGroup>
+	</div>
+	<div v-else class="q-pt-md full-width">
+		<!-- button standalone on small screens -->
+		<div class="lt-md">
+			<BtnBase
+				color="secondary"
+				:loading="isSubmitting"
+				:label="`${$t('update')} (${numberOfEdits})`"
+				data-cy="btn-form-update"
+				class="full-width q-mb-lg"
+				size="md"
+				@click="onUpdate"
+			/>
+			<BtnBaseGroup size="md" class="q-mb-lg">
+				<BtnBase
+					color="warning"
+					:label="$t('reset')"
+					tabindex="-1"
+					@click="onReset"
+				/>
+			</BtnBaseGroup>
+		</div>
+		<!--  grouped layout for medium and larger screens -->
+		<BtnBaseGroup class="full-width gt-sm" size="md">
+			<BtnBase
+				color="warning"
+				class="q-mr-lg"
+				:label="$t('reset')"
+				tabindex="-1"
+				@click="onReset"
+			/>
+			<BtnBase
+				color="secondary"
+				:loading="isSubmitting"
+				:label="`${$t('update')} (${numberOfEdits})`"
+				data-cy="btn-form-update"
+				@click="onUpdate"
+			/>
+		</BtnBaseGroup>
+	</div>
 </template>

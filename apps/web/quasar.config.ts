@@ -92,7 +92,29 @@ export default defineConfig((ctx) => {
 			// polyfillModulePreload: true,
 			// distDir
 
-			// extendViteConf (viteConf) {},
+			extendViteConf(viteConf) {
+				if (ctx.dev) {
+					viteConf.resolve = viteConf.resolve || {};
+					viteConf.resolve.alias = viteConf.resolve.alias || {};
+					(viteConf.resolve.alias as any).vue$ = fileURLToPath(new URL('./node_modules/vue', import.meta.url));
+					viteConf.optimizeDeps = {
+						...viteConf.optimizeDeps,
+						force: ctx.dev,
+						include: [
+							'@fullcalendar/vue3',
+							'@fullcalendar/core',
+							'@fullcalendar/daygrid',
+							'@fullcalendar/interaction',
+							'@fullcalendar/list',
+							'@fullcalendar/multimonth',
+							'@fullcalendar/core/locales-all',
+							'leaflet',
+						],
+						// Exclude from optimization to avoid cache issues
+						exclude: ['@vue-leaflet/vue-leaflet', 'echarts', 'vue-echarts', '@vueuse/core'],
+					};
+				}
+			},
 			viteVuePluginOptions: {
 				template: {
 					compilerOptions: {
@@ -136,7 +158,7 @@ export default defineConfig((ctx) => {
 					'vite-plugin-csp-guard',
 					{
 						dev: {
-							run: true,
+							run: false,
 							outlierSupport: ['vue', 'tailwind', 'scss'],
 						},
 						policy: {
@@ -204,6 +226,7 @@ export default defineConfig((ctx) => {
 				},
 			},
 			open: false, // opens browser window automatically
+			hmr: true,
 		},
 
 		// https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#framework

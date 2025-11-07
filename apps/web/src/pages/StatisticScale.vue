@@ -10,7 +10,7 @@ import {
 import { use } from 'echarts/core';
 import { CanvasRenderer } from 'echarts/renderers';
 import round from 'lodash-es/round';
-import { computed, ref, unref, watch } from 'vue';
+import { computed, nextTick, ref, unref, watch } from 'vue';
 import VChart from 'vue-echarts';
 import { useI18n } from 'vue-i18n';
 import BtnBase from '../components/BtnBase.vue';
@@ -67,8 +67,9 @@ const { isLoading, data } = useScaleDataQuery({
 
 watch(
 	[data, filter],
-	() => {
+	async () => {
 		if (data.value) {
+			await nextTick();
 			chartTimeseries.value = renderChart(
 				deepUnref(data.value.results),
 				unref(year.value),

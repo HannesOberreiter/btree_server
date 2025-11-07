@@ -11,7 +11,7 @@ import { use } from 'echarts/core';
 import { CanvasRenderer } from 'echarts/renderers';
 import { round } from 'lodash-es';
 import { storeToRefs } from 'pinia';
-import { computed, ref, watch } from 'vue';
+import { computed, nextTick, ref, watch } from 'vue';
 import VChart from 'vue-echarts';
 import { useI18n } from 'vue-i18n';
 import { useStatisticYear } from '../composables/useQuery';
@@ -56,8 +56,9 @@ const { isLoading, data: query } = useStatisticYear(props.kind, {
 
 watch(
 	query,
-	() => {
+	async () => {
 		if (query.value) {
+			await nextTick();
 			chart_total.value = renderChart('amount_sum', t('total'), [
 				...deepUnref(query.value),
 			]);

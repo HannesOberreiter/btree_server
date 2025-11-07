@@ -8,7 +8,7 @@ import {
 } from 'echarts/components';
 import { use } from 'echarts/core';
 import { CanvasRenderer } from 'echarts/renderers';
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import VChart from 'vue-echarts';
 import { useI18n } from 'vue-i18n';
 import { useApiFetch } from '../composables/useApi';
@@ -29,7 +29,9 @@ const data = ref<any>(null);
 const chart = ref<any>(null);
 const { t } = useI18n();
 
-await loadStats();
+onMounted(async () => {
+	await loadStats();
+});
 
 async function loadStats() {
 	await api.get('/v1/statistic/hive_count_total').then(

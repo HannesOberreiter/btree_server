@@ -8,7 +8,7 @@ import {
 } from 'echarts/components';
 import { use } from 'echarts/core';
 import { CanvasRenderer } from 'echarts/renderers';
-import { ref, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import VChart from 'vue-echarts';
 import { useI18n } from 'vue-i18n';
 import { useApiFetch } from '../composables/useApi';
@@ -33,7 +33,9 @@ const chart = ref(null);
 const date = ref(useDate.isoFormat(useDate.getCurrent(), 'date'));
 const { t } = useI18n();
 
-await loadStats();
+onMounted(async () => {
+	await loadStats();
+});
 
 watch(date, () => {
 	loadStats();

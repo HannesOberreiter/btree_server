@@ -1,7 +1,7 @@
 import type { DialogChainObject } from 'quasar';
 import { Dialog } from 'quasar';
+import { i18n } from 'src/boot/i18n';
 import { reactive, ref } from 'vue';
-import { useI18n } from 'vue-i18n';
 import { useAuthUserStore } from '../stores/auth';
 
 const state = reactive({
@@ -10,7 +10,6 @@ const state = reactive({
 const dialog = ref<DialogChainObject | null>(null);
 
 function useNeedAuth() {
-	const { t } = useI18n();
 	const storeUser = useAuthUserStore();
 	function open() {
 		state.show = true;
@@ -19,7 +18,7 @@ function useNeedAuth() {
 			cancel: false,
 			persistent: true,
 			html: true,
-			title: t('sessionTimeOut'),
+			title: i18n.global.t('sessionTimeOut'),
 			message: '<div data-cy="dialog-session-timeout"></div>',
 		})
 			.onOk(() => {

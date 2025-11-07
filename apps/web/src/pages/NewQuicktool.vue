@@ -68,7 +68,7 @@ watch(taskSelect, (cur) => {
 				rounded
 				class="q-mb-sm text-center"
 			/>
-			<FormMainTask v-if="taskSelect" :task="taskForm" />
+			<FormMainTask v-if="taskSelect" :key="taskForm" :task="taskForm" />
 		</div>
 	</div>
 </template>

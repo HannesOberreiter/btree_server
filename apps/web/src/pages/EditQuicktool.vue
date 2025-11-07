@@ -50,6 +50,7 @@ const taskForm = ref<Task>(
 			</div>
 			<FormMainTask
 				v-if="taskSelect"
+				:key="taskForm"
 				:task="taskForm"
 				:ids="ids"
 			/>
