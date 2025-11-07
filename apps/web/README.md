@@ -35,7 +35,7 @@ We use auto-import plugins to import common libraries and components, see defini
 
 The `dev` server is running with a proxy to the backend ([quasar.config.js](quasar.config.js)), this solves the CORS problem on development. You may need to change the localhost port if you have the backend running on a different port.
 
-```javascript
+```text
  devServer: {
       proxy: {
         '/api': {
@@ -127,11 +127,12 @@ PlayStore Link: [https://play.google.com/console/u/0/developers](https://play.go
 Settings:
 
 ```json
+{
   "package": "com.bnative", // needs to be the same as in store otherwise a new app will be created
   "name": "b.tree Beekeeping Database",
   "launcherName": "btree",
-  "version": "6.0.0" // for the enduser
-  "versionsCode": 6X // check PlayStore for latest release
+  "version": "6.0.0", // for the enduser
+  "versionsCode": "6X", // check PlayStore for latest release
   "features": {
     "locationDelegation": {
       "enabled": true
@@ -142,7 +143,8 @@ Settings:
     "path": "android.keystore",
     "alias": "bNative"
   },
-  "enableSiteSettingsShortcut": true,
+  "enableSiteSettingsShortcut": true
+}
 ```
 
 Important that the TWA works in Google PlayStore a the `.well-known/assetlinks.json` must be present on the apps root folder. Fingerprint is from our signed key.

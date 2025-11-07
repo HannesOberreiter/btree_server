@@ -1,13 +1,13 @@
-describe('User - Charge Form', () => {
-  const form = 'form-charge';
+describe('user - Charge Form', () => {
+	const form = 'form-charge';
 
-  beforeEach(() => {
-    cy.login_session('new/charge');
-  });
+	beforeEach(() => {
+		cy.login_session('new/charge');
+	});
 
-  it('Loaded', () => {
-    cy.dataCy(form).should('exist');
-  });
+	it('loaded', () => {
+		cy.dataCy(form).should('exist');
+	});
 });
 
 export {};

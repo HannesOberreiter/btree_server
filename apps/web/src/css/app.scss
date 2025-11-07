@@ -100,3 +100,11 @@ html.dark {
 .border-top-none {
   border-top: none !important;
 }
+
+.q-table td,
+.q-table th {
+  font-variant-numeric: tabular-nums;
+}
+.q-table .text-right {
+  font-variant-numeric: tabular-nums;
+}

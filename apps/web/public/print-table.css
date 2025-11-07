@@ -11,10 +11,11 @@ tfoot {
 }
 th {
   font-weight: bold;
+  font-variant-numeric: tabular-nums;
 }
-
 td {
   padding-left: 10px;
+  font-variant-numeric: tabular-nums;
 }
 
 /* Hide first select column */

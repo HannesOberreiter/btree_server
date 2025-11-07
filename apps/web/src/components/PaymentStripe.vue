@@ -1,47 +1,45 @@
-<template>
-  <btn-base
-    icon="fab fa-stripe"
-    color="primary"
-    class="full-width q-pl-lg"
-    size="lg"
-    :label="$t('payment.stripe')"
-    @click="createSession"
-  >
-  </btn-base>
-</template>
-
 <script setup lang="ts">
-import BtnBase from './BtnBase.vue';
+import { toRefs } from 'vue';
 import { useApiFetch } from '../composables/useApi';
 import { useNotification } from '../composables/useNotification';
-import { toRefs } from 'vue';
+import BtnBase from './BtnBase.vue';
 
+const props = defineProps({
+	donation: {
+		type: Number,
+		required: true,
+	},
+	years: {
+		type: Number,
+		default: 1,
+	},
+});
 const notification = useNotification();
 const api = useApiFetch();
-const props = defineProps({
-  donation: {
-    type: Number,
-    required: true,
-  },
-  years: {
-    type: Number,
-    required: true,
-    default: 1,
-  },
-});
 const { donation, years } = toRefs(props);
 
 function createSession() {
-  api
-    .post('/v1/service/stripe/orders', {
-      amount: donation.value,
-      quantity: years.value,
-    })
-    .then(
-      (session) => {
-        window.location.href = session.url;
-      },
-      (error) => notification.open('negative', error),
-    );
+	api
+		.post('/v1/service/stripe/orders', {
+			amount: donation.value,
+			quantity: years.value,
+		})
+		.then(
+			(session) => {
+				window.location.href = session.url;
+			},
+			error => notification.open('negative', error),
+		);
 }
 </script>
+
+<template>
+	<BtnBase
+		icon="fab fa-stripe"
+		color="secondary"
+		class="full-width q-pl-lg"
+		size="lg"
+		:label="$t('payment.stripe')"
+		@click="createSession"
+	/>
+</template>

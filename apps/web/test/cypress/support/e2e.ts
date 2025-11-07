@@ -15,14 +15,14 @@
 
 import './commands';
 
-afterEach(function () {
-  const currentTest = ((cy as any).runnableCtx() as Mocha.Context).currentTest;
-  if (currentTest && currentTest.isFailed()) {
-    (Cypress as any).runner.stop();
-  }
-  //cy.saveLocalStorage();
+afterEach(() => {
+	const currentTest = ((cy as any).runnableCtx() as Mocha.Context).currentTest;
+	if (currentTest && currentTest.isFailed()) {
+		(Cypress as any).runner.stop();
+	}
+	// cy.saveLocalStorage();
 });
 
 beforeEach(() => {
-  //cy.restoreLocalStorage();
+	// cy.restoreLocalStorage();
 });

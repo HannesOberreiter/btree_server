@@ -1,13 +1,13 @@
-describe('User - Todo Form', () => {
-  const form = 'form-todo';
+describe('user - Todo Form', () => {
+	const form = 'form-todo';
 
-  beforeEach(() => {
-    cy.login_session('new/todo');
-  });
+	beforeEach(() => {
+		cy.login_session('new/todo');
+	});
 
-  it('Loaded', () => {
-    cy.dataCy(form).should('exist');
-  });
+	it('loaded', () => {
+		cy.dataCy(form).should('exist');
+	});
 });
 
 export {};

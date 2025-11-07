@@ -1,11 +1,11 @@
-describe('User - Setting Company', () => {
-  beforeEach(() => {
-    cy.login_session('setting/company');
-  });
+describe('user - Setting Company', () => {
+	beforeEach(() => {
+		cy.login_session('setting/company');
+	});
 
-  it('Loaded', () => {
-    cy.dataCy('page-setting-company').should('exist');
-  });
+	it('loaded', () => {
+		cy.dataCy('page-setting-company').should('exist');
+	});
 });
 
 export {};
