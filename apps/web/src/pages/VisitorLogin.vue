@@ -147,11 +147,10 @@ async function redirect() {
 					v-if="!oauthLogin" type="submit" size="lg" color="secondary" class="full-width text-white" :label="$t('login')"
 					:disable="isSubmitting" :loading="isSubmitting" @click="forceDashboardRedirect = true"
 				/>
-
-				<q-btn-group class="full-width q-mt-md" spread flat>
-					<q-btn color="primary" label="Google" icon="fab fa-google" no-caps outline @click="onLoginGoogle()" />
-					<q-btn color="primary" label="Apple" icon="fab fa-apple" no-caps outline @click="onLoginApple()" />
-				</q-btn-group>
+				<div class="q-mt-md full-width">
+					<q-btn class="full-width" color="primary" label="Sign in with Apple" icon="fab fa-apple" no-caps outline @click="onLoginApple()" />
+					<q-btn class="full-width q-mt-xs" color="primary" label="Sign in with Google" icon="fab fa-google" no-caps outline @click="onLoginGoogle()" />
+				</div>
 			</q-card-actions>
 		</q-form>
 	</q-card-section>
