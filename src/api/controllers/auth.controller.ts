@@ -1,4 +1,5 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
+import type { z } from 'zod';
 import type { federatedUser } from '../../services/federated.service.js';
 import type { RegisterBody } from '../routes/v1/auth.route.js';
 import { randomBytes, randomUUID } from 'node:crypto';
@@ -17,7 +18,7 @@ import { MailService } from '../../services/mail.service.js';
 import { Company } from '../models/company.model.js';
 import { CompanyBee } from '../models/company_bee.model.js';
 import { User } from '../models/user.model.js';
-import { AppleCallbackSchema } from '../routes/v1/auth.route.js';
+import { AppleCallbackGETSchema, AppleCallbackSchema } from '../routes/v1/auth.route.js';
 import {
   buildUserAgent,
   confirmAccount,
@@ -315,22 +316,52 @@ export default class AuthController {
   static async apple(req: FastifyRequest, reply: FastifyReply) {
     const apple = AppleAuth.getInstance();
     let result: federatedUser;
-    const body = AppleCallbackSchema.safeParse(req.body);
-    if (!body.success) {
-      req.log.error({ message: 'Invalid Apple callback body', body });
-      return reply.redirect(
-        `${frontend}/visitor/login?error=oauth&server=${serverLocation}`,
-      );
+    let body: z.infer<typeof AppleCallbackSchema>;
+
+    try {
+      if (req.method === 'GET') {
+        const query = AppleCallbackGETSchema.parse(req.query);
+
+        const transformedQuery: any = {
+          code: query.code,
+          id_token: query.id_token,
+          state: query.state,
+          error: query.error,
+          user: undefined,
+        };
+
+        if (query.user && query.user.trim() !== '') {
+          try {
+            const userObj = JSON.parse(decodeURIComponent(query.user));
+            transformedQuery.user = userObj;
+          }
+          catch (parseError) {
+            req.log.warn({ message: 'Failed to parse user field from Apple callback', error: parseError });
+          }
+        }
+
+        body = AppleCallbackSchema.parse(transformedQuery);
+      }
+      else {
+        body = AppleCallbackSchema.parse(req.body);
+      }
+
+      if (body.error) {
+        req.log.error({ message: 'Apple callback error', error: body.error });
+        return reply.redirect(
+          `${frontend}/visitor/login?error=oauth&server=${serverLocation}`,
+        );
+      }
     }
-    if (body.data.error) {
-      req.log.error({ message: 'Apple callback error', error: body.data.error });
+    catch (error) {
+      req.log.error({ message: 'Invalid Apple callback body', error });
       return reply.redirect(
         `${frontend}/visitor/login?error=oauth&server=${serverLocation}`,
       );
     }
 
     try {
-      result = await apple.verify(body.data.code);
+      result = await apple.verify(body.code);
       if (!result.bee_id) {
         return reply.redirect(
           encodeURI(

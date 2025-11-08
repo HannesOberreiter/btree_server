@@ -38,6 +38,14 @@ export const AppleCallbackSchema = z.object({
   error: z.string().optional(),
 });
 
+export const AppleCallbackGETSchema = z.object({
+  code: z.string(),
+  id_token: z.string().optional(),
+  state: z.string(),
+  user: z.string().optional(), // Will be URL-encoded JSON string
+  error: z.string().optional(),
+});
+
 const RegisterBodySchema = z.object({
   email: z.string().email(),
   password: z.string().min(6).max(128).trim(),
@@ -173,6 +181,16 @@ export default function routes(
     {
       schema: {
         body: AppleCallbackSchema,
+      },
+    },
+    AuthController.apple,
+  );
+
+  server.get(
+    '/apple/callback',
+    {
+      schema: {
+        querystring: AppleCallbackGETSchema,
       },
     },
     AuthController.apple,
