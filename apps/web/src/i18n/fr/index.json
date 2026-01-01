@@ -574,7 +574,6 @@
 			"title": "Importer les données de l'entreprise"
 		}
 	},
-	"serviceProvider": "Notre prestataire",
 	"serviceWorker": {
 		"newContent": "Le contenu mis à jour est disponible. Veuillez actualiser la page.",
 		"refresh": "Mettre à jour b.tree"

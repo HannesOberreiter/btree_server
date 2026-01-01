@@ -574,7 +574,6 @@
 			"title": "Import company data"
 		}
 	},
-	"serviceProvider": "Our service provider",
 	"serviceWorker": {
 		"newContent": "Updated content is available. Please refresh the page.",
 		"refresh": "Upgrade b.tree"

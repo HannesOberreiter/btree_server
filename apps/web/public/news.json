@@ -1,5 +1,12 @@
 [
 	{
+		"version": "6.5.5",
+		"date": "2026-01-01",
+		"news": [
+			"BUGFIX Added missing source to AFB map observations."
+		]
+	},
+	{
 		"version": "6.5.4",
 		"date": "2025-11-06",
 		"news": [
