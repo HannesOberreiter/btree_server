@@ -3,6 +3,7 @@
 		"version": "6.5.5",
 		"date": "2026-01-01",
 		"news": [
+			"CHANGE Removed Hetzner from supporter section as they are not sponsoring us any more.",
 			"BUGFIX Added missing source to AFB map observations."
 		]
 	},
