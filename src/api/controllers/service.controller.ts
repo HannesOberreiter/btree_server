@@ -345,12 +345,13 @@ export default class ServiceController {
         const ordinanceMatch = textContent.match(/Verordnung:\s*(\S+)/);
         const districtMatch = textContent.match(/Bezirk: ([\s\S]+?)(?=Gemeinde:|$)/);
         const municipalityMatch = textContent.match(/Gemeinde: ([\s\S]+?)(?=Veterinärbehörde|$)/);
+        const source = 'Quelle: bienenwanderboerse.at';
 
         return {
           id: area.id,
           gps: area.gps,
           radius: area.radius,
-          popup: `${diseaseMatch ? diseaseMatch[0] : ''} \n${ordinanceMatch ? ordinanceMatch[1] : ''}\n${districtMatch ? districtMatch[1].trim() : ''} \n${municipalityMatch ? municipalityMatch[1].trim() : ''}`,
+          popup: `${diseaseMatch ? diseaseMatch[0] : ''} \n${ordinanceMatch ? ordinanceMatch[1] : ''}\n${districtMatch ? districtMatch[1].trim() : ''} \n${municipalityMatch ? municipalityMatch[1].trim() : ''}\n${source}`,
         };
       });
     }
