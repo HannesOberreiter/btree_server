@@ -127,7 +127,7 @@ export async function getHistoricalTemperatures(
  * - January: factor 0.5
  * - February: factor 0.75
  * - March onwards: factor 1.0
- *
+ * @see https://de.wikipedia.org/wiki/Gr%C3%BCnlandtemperatursumme
  * @param dailyTemperatures - Array of {date, temperature} objects
  * @returns Object with daily cumulative GTS values for graphing
  */
@@ -145,12 +145,10 @@ export function calculateGruenlandtemperatursumme(
   for (const day of dailyTemperatures) {
     let dailyGtsContribution = 0;
 
-    // Calculate daily GTS contribution if temperature is valid and positive
     if (day.temperature != null && day.temperature > 0) {
       const date = new Date(day.date);
       const month = date.getMonth() + 1; // getMonth() is zero-based
 
-      // Apply monthly correction factors
       let factor = 1.0;
       if (month === 1) {
         factor = 0.5; // January
@@ -164,7 +162,6 @@ export function calculateGruenlandtemperatursumme(
       cumulativeGts += dailyGtsContribution;
     }
 
-    // Store daily data point for graphing
     dailyData.push({
       date: day.date,
       temperature: day.temperature,

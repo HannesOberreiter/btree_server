@@ -53,8 +53,14 @@ export default class ServiceController {
 
     const query = req.query as any;
     const year = query?.year ? Number(query.year) : new Date().getFullYear();
+    if (year > new Date().getFullYear()) {
+      throw httpErrors.BadRequest('Year cannot be in the future');
+    }
+
     const startDate = `${year}-01-01`;
-    const endDate = `${year}-12-31`;
+    const endDate = year === new Date().getFullYear()
+      ? new Date().toISOString().split('T')[0]
+      : `${year}-06-31`;
 
     const dailyTemperatures = await getHistoricalTemperatures(
       apiary.latitude,
