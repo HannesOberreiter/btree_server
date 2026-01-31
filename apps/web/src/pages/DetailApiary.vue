@@ -7,6 +7,7 @@ import { generateArrayOfYears } from '../helpers';
 <script setup lang="ts">
 import dayjs from 'dayjs';
 import { useMeta } from 'quasar';
+import ChartGts from 'src/components/ChartGts.vue';
 import { computed, ref, toRef } from 'vue';
 import { useI18n } from 'vue-i18n';
 import BtnBase from '../components/BtnBase.vue';
@@ -94,9 +95,26 @@ useMeta(() => {
 				>
 					<q-tab name="hive" :label="$t('hive', 2)" />
 					<q-tab name="task" :label="$t('task', 2)" />
-					<q-tab name="weather" icon="fas fa-cloud-sun-rain">
+					<q-tab v-show="!$q.platform.is.mobile" name="gts" label="GTS">
+						<TooltipBase>{{ $t('growing_degree_days') }}</TooltipBase>
+					</q-tab>
+					<q-tab v-show="!$q.platform.is.mobile" name="weather" icon="fas fa-cloud-sun-rain">
 						<TooltipBase>{{ $t('weather') }}</TooltipBase>
 					</q-tab>
+					<q-btn-dropdown v-show="$q.platform.is.mobile" flat>
+						<q-list>
+							<q-item v-close-popup clickable @click="tab = 'gts'">
+								<q-item-section>
+									<q-item-label>GTS</q-item-label>
+								</q-item-section>
+							</q-item>
+							<q-item v-close-popup clickable @click="tab = 'weather'">
+								<q-item-section>
+									<q-item-label>Weather</q-item-label>
+								</q-item-section>
+							</q-item>
+						</q-list>
+					</q-btn-dropdown>
 					<BtnDropdownTask
 						@refetch="() => refetchCounter++"
 					/>
@@ -157,6 +175,24 @@ useMeta(() => {
 							:filter-state="filterState"
 							:opened="opened"
 							:refetch="refetchCounter"
+						/>
+					</q-tab-panel>
+					<q-tab-panel name="gts" class="q-pa-xs">
+						<q-select v-model="year" :options="years" :label="$t('year')">
+							<template #before>
+								<BtnBase
+									icon="fas fa-arrow-left"
+									@click="year--"
+								/>
+								<BtnBase
+									icon="fas fa-arrow-right"
+									@click="year++"
+								/>
+							</template>
+						</q-select>
+						<ChartGts
+							:year="year"
+							:apiary-id="data.id"
 						/>
 					</q-tab-panel>
 					<q-tab-panel name="weather" class="q-pa-xs">

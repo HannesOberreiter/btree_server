@@ -1,5 +1,13 @@
 [
 	{
+		"version": "6.5.6",
+		"date": "2026-03-10",
+		"news": [
+			"FEATURE Cumulative Growing Degree Days (GTS) chart added to the apiary detail page (Grünlandtemperatursumme).",
+			"CHANGE current temperature data is now from OpenWeather"
+		]
+	},
+	{
 		"version": "6.5.5",
 		"date": "2026-01-01",
 		"news": [
