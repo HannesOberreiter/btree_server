@@ -14,23 +14,6 @@ import { addPremium, isPremium } from '../utils/premium.util.js';
 import { createOrder as stripeCreateOrder } from '../utils/stripe.util.js';
 import { getTemperature } from '../utils/temperature.util.js';
 
-interface Chunk {
-  id: string
-  object: string
-  created: number
-  model: string
-  system_fingerprint: string
-  choices: Array<{
-    index: number
-    delta: {
-      role: string
-      content: string
-    }
-    logprobs: null
-    finish_reason: null
-  }>
-}
-
 export default class ServiceController {
   static async getTemperature(req: FastifyRequest, _reply: FastifyReply) {
     const params = req.params as any;
@@ -253,12 +236,10 @@ export default class ServiceController {
     }
 
     try {
-      for await (const chunk of stream.toReadableStream()) {
+      for await (const chunk of stream) {
         if (controller.signal.aborted) {
           break;
         }
-        const str = new TextDecoder().decode(chunk);
-        const replyChunk = JSON.parse(str) as Chunk;
 
         if (!reply.raw.getHeader('Access-Control-Allow-Origin')) {
           if (!req.headers.origin) {
@@ -281,7 +262,7 @@ export default class ServiceController {
 
         reply.raw.write(
           JSON.stringify({
-            text: replyChunk?.choices[0]?.delta?.content || '',
+            text: chunk?.choices[0]?.delta?.content || '',
             refs,
             tokens,
             savedTokens,

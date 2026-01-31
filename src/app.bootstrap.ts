@@ -4,6 +4,7 @@ import { env } from './config/environment.config.js';
 import { DatabaseServer } from './servers/db.server.js';
 
 import { HTTPServer } from './servers/http.server.js';
+import { KyselyServer } from './servers/kysely.server.js';
 import { RedisServer } from './servers/redis.server.js';
 import { VectorServer } from './servers/vector.server.js';
 import { Logger } from './services/logger.service.js';
@@ -15,6 +16,7 @@ logger.log('debug', 'Starting server...', { label: 'Server' });
 const dbServer = DatabaseServer.getInstance();
 const redisServer = new RedisServer();
 const mailServer = MailService.getInstance();
+const kyselyServer = KyselyServer.getInstance();
 
 let vectorServer;
 if (env !== 'ci') {
@@ -48,6 +50,7 @@ async function gracefulShutdown() {
       dbServer.stop(),
       redisServer.stop(),
       httpServer.stop(),
+      kyselyServer.stop(),
     ].filter(Boolean));
     logger.log('debug', 'Graceful shutdown completed', { label: 'Server' });
   }

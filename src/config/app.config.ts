@@ -49,13 +49,15 @@ export class Application {
       disableRequestLogging: false,
       trustProxy: true,
       bodyLimit: 1048576 * 50, // 50 MB
-      maxParamLength: 10000,
-      querystringParser: str =>
-        queryString.parse(str, {
-          arrayFormat: 'bracket',
-          parseBooleans: true,
-          parseNumbers: true,
-        }),
+      routerOptions: {
+        maxParamLength: 10000,
+        querystringParser: str =>
+          queryString.parse(str, {
+            arrayFormat: 'bracket',
+            parseBooleans: true,
+            parseNumbers: true,
+          }),
+      },
       ajv: {
         customOptions: {
           removeAdditional: false, // Refer to [ajv options](https://ajv.js.org/options.html#removeadditional)
