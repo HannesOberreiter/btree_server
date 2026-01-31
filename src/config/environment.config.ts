@@ -72,7 +72,7 @@ const isChild = process.env.IS_CHILD ? process.env.IS_CHILD === 'true' : false; 
 
 const sessionSecret = process.env.SESSION_SECRET;
 
-const meteoblueKey = process.env.METEOBLUE_KEY;
+const openweatherKey = process.env.OPENWEATHER_KEY;
 
 const dropboxClientId = process.env.DROPBOX_CLIENT_ID;
 const dropboxClientSecret = process.env.DROPBOX_CLIENT_SECRET;
@@ -232,9 +232,9 @@ export {
   isServerLocationValid,
   knexConfig,
   mailConfig,
-  meteoblueKey,
   mollieApiKey,
   openAI,
+  openweatherKey,
   paypalAppSecret,
   paypalBase,
   paypalClientId,

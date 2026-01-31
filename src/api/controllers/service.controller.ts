@@ -12,7 +12,11 @@ import {
 } from '../utils/paypal.util.js';
 import { addPremium, isPremium } from '../utils/premium.util.js';
 import { createOrder as stripeCreateOrder } from '../utils/stripe.util.js';
-import { getTemperature } from '../utils/temperature.util.js';
+import {
+  calculateGruenlandtemperatursumme,
+  getHistoricalTemperatures,
+  getTemperature,
+} from '../utils/temperature.util.js';
 
 export default class ServiceController {
   static async getTemperature(req: FastifyRequest, _reply: FastifyReply) {
@@ -26,6 +30,50 @@ export default class ServiceController {
       .where({ user_id: req.session.user.user_id });
     const temp = await getTemperature(apiary.latitude, apiary.longitude);
     return temp;
+  }
+
+  static async getGruenlandtemperatursumme(req: FastifyRequest, _reply: FastifyReply) {
+    const params = req.params as any;
+    const premium = await isPremium(req.session.user.user_id);
+    if (!premium) {
+      throw httpErrors.PaymentRequired('Premium access required');
+    }
+
+    const apiary = await Apiary.query()
+      .findById(params.apiary_id)
+      .where({
+        user_id: req.session.user.user_id,
+        deleted: false,
+      })
+      .throwIfNotFound();
+
+    if (!apiary.latitude || !apiary.longitude) {
+      throw httpErrors.BadRequest('Apiary coordinates not set');
+    }
+
+    const query = req.query as any;
+    const year = query?.year ? Number(query.year) : new Date().getFullYear();
+    const startDate = `${year}-01-01`;
+    const endDate = `${year}-12-31`;
+
+    const dailyTemperatures = await getHistoricalTemperatures(
+      apiary.latitude,
+      apiary.longitude,
+      startDate,
+      endDate,
+    );
+
+    const gtsResult = calculateGruenlandtemperatursumme(dailyTemperatures);
+
+    return {
+      ...gtsResult,
+      apiary: {
+        id: apiary.id,
+        name: apiary.name,
+        latitude: apiary.latitude,
+        longitude: apiary.longitude,
+      },
+    };
   }
 
   static async paypalCreateOrder(req: FastifyRequest, _reply: FastifyReply) {
