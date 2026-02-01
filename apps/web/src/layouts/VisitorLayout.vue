@@ -17,8 +17,16 @@ const { isFetching, error, data }: any = useFetch(
 
 const router = useRouter();
 const path = computed(() => router.currentRoute.value);
-const { t } = useI18n();
+const { t, locale } = useI18n();
 const localStorageAvailable = ref(false);
+const privacyPolicyUrl = computed(() =>
+	locale.value === 'de'
+		? 'https://www.btree.at/de/data-privacy/'
+		: 'https://www.btree.at/data-privacy/');
+const imprintUrl = computed(() =>
+	locale.value === 'de'
+		? 'https://www.btree.at/de/imprint/'
+		: 'https://www.btree.at/imprint/');
 
 // https://stackoverflow.com/a/16427747/5316675
 function localStorageTest() {
@@ -166,6 +174,23 @@ function refresh(done: () => void) {
 								rel="noopener"
 							>
 								b.tree Beekeeping Database
+							</a>
+							<br>
+							<a
+								class="link"
+								:href="privacyPolicyUrl"
+								target="_blank"
+								rel="noopener"
+							>
+								{{ $t('privacyPolicy') }}
+							</a> |
+							<a
+								class="link"
+								:href="imprintUrl"
+								target="_blank"
+								rel="noopener"
+							>
+								{{ $t('imprint') }}
 							</a>
 							<br>
 							<span v-if="data && !isFetching && !error">

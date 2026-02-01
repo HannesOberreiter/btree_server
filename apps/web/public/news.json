@@ -4,7 +4,8 @@
 		"date": "2026-03-10",
 		"news": [
 			"FEATURE Cumulative Growing Degree Days (GTS) chart added to the apiary detail page (Grünlandtemperatursumme).",
-			"CHANGE current temperature data is now from OpenWeather"
+			"CHANGE Current temperature data from OpenWeather instead of Meteoblue, as Meteoblue changed their API and pricing model to be too expensive for us.",
+			"BUGFIX Added missing privacy policy and imprint links to footer on login."
 		]
 	},
 	{
