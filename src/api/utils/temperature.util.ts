@@ -92,7 +92,7 @@ export async function getHistoricalTemperatures(
 ): Promise<Array<{ date: string, temperature: number }>> {
   // Open-Meteo Archive API - Free with rate limits (10,000 requests/day)
   // https://open-meteo.com/en/docs/historical-weather-api
-  const url = `https://archive-api.open-meteo.com/v1/archive?latitude=${latitude}&longitude=${longitude}&start_date=${startDate}&end_date=${endDate}&daily=temperature_2m_mean&timezone=auto`;
+  const url = `https://historical-forecast-api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&start_date=${startDate}&end_date=${endDate}&daily=temperature_2m_mean&timezone=auto&models=best_match`;
 
   try {
     const response = await fetch(url);

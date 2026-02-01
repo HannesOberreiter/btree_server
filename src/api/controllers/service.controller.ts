@@ -57,7 +57,7 @@ export default class ServiceController {
       throw httpErrors.BadRequest('Year cannot be in the future');
     }
 
-    const startDate = `${year}-01-01`;
+    const startDate = `${year}-01-01`; // Always get previous year from Jan 1st
     const endDate = year === new Date().getFullYear()
       ? new Date().toISOString().split('T')[0]
       : `${year}-06-31`;
