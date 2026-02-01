@@ -128,51 +128,6 @@ export function useTemperatureQuery(
 	});
 }
 
-/* Grünlandtemperatursumme (Growing Degree Days) API response structure */
-interface GtsResponse {
-	daily: Array<{
-		date: string;
-		temperature: number;
-		dailyGts: number;
-		cumulativeGts: number;
-	}>;
-	totalGts: number;
-	period: {
-		start: string;
-		end: string;
-		days: number;
-	};
-	apiary: {
-		id: number;
-		name: string;
-		latitude: number;
-		longitude: number;
-	};
-}
-
-export function useGtsQuery(
-	apiary_id: Ref<number>,
-	{
-		year = dayjs().year() as MaybeRef<number>,
-		enabled = true as MaybeRef<boolean>,
-	},
-) {
-	const api = useApiFetch();
-	return useQuery({
-		queryKey: ['gts', apiary_id, year],
-		queryFn: () => {
-			const payload = { year: unref(year) };
-			return api.get(
-				`/v1/service/gruenlandtemperatursumme/${apiary_id.value}`,
-				payload,
-			);
-		},
-		enabled,
-		select: response => response as GtsResponse,
-		retry: 2,
-	});
-}
-
 export function useMovementsQuery({
 	offset = 0 as MaybeRef<number>,
 	limit = 10000 as MaybeRef<number>,

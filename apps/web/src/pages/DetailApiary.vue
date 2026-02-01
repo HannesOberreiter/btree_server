@@ -5,7 +5,6 @@ import { generateArrayOfYears } from '../helpers';
 </script>
 
 <script setup lang="ts">
-import dayjs from 'dayjs';
 import { useMeta } from 'quasar';
 import ChartGts from 'src/components/ChartGts.vue';
 import { computed, ref, toRef } from 'vue';
@@ -30,7 +29,9 @@ const props = defineProps({
 });
 const { t } = useI18n();
 const tab = ref('hive');
-const year = ref(dayjs().year());
+const year = ref(new Date().getFullYear());
+const yearGTS = ref<number[]>([new Date().getFullYear()]);
+const yearsGTS = generateArrayOfYears(new Date().getFullYear() - 5);
 const filter = ref<Filter>('filterEmpty');
 const filterState = ref<FilterState>(STATUS[0]);
 const opened = ref(false);
@@ -43,7 +44,7 @@ const years = computed(() =>
 	generateArrayOfYears(
 		data.value
 			? data.value.firstMovedate
-				? dayjs(data.value.firstMovedate.date).year()
+				? new Date(data.value.firstMovedate.date).getFullYear()
 				: 2000
 			: 2000,
 	),
@@ -178,20 +179,15 @@ useMeta(() => {
 						/>
 					</q-tab-panel>
 					<q-tab-panel name="gts" class="q-pa-xs">
-						<q-select v-model="year" :options="years" :label="$t('year')">
-							<template #before>
-								<BtnBase
-									icon="fas fa-arrow-left"
-									@click="year--"
-								/>
-								<BtnBase
-									icon="fas fa-arrow-right"
-									@click="year++"
-								/>
-							</template>
-						</q-select>
+						<q-select
+							v-model="yearGTS"
+							:options="yearsGTS"
+							:label="$t('year')"
+							multiple
+							use-chips
+						/>
 						<ChartGts
-							:year="year"
+							:years="yearGTS"
 							:apiary-id="data.id"
 						/>
 					</q-tab-panel>
