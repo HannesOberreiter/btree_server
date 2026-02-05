@@ -1,9 +1,10 @@
 <script setup lang="ts">
+import type { PropType } from 'vue';
 import FormMainTodo from '../components/FormMainTodo.vue';
 
 defineProps({
 	ids: {
-		type: Array,
+		type: Array as PropType<number[] | null>,
 		required: true,
 	},
 });

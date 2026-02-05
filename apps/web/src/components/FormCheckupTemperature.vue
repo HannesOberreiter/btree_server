@@ -57,8 +57,8 @@ watch(temperature, (cur) => {
 	if (props.hive.length === 0)
 		return;
 	if (cur) {
-		if (cur.data_current) {
-			modelValue.value = round(cur.data_current.temperature, 1);
+		if (cur.main && cur.main.temp) {
+			modelValue.value = round(cur.main.temp, 1);
 		}
 		loadTemp.value = false;
 	}
@@ -74,7 +74,7 @@ function getTemperature(click = false) {
 	select.value
 		= props.hive.length === 0 ? 0 : props.hive[0].hive_location.apiary_id;
 	modelValue.value = temperature.value
-		? round(temperature.value.data_current.temperature, 1)
+		? round(temperature.value.main.temp, 1)
 		: round(modelValue.value, 1);
 
 	loadTemp.value = true;
@@ -100,9 +100,9 @@ function getTemperature(click = false) {
 		:hint="
 			isSuccess && hive.length > 0
 				? $t('temperatureHint', {
-					height: temperature.metadata.height,
-					lat: temperature.metadata.latitude,
-					lon: temperature.metadata.longitude,
+					height: temperature?.main.sea_level,
+					lat: temperature?.coord.lat,
+					lon: temperature?.coord.lon,
 				})
 				: ''
 		"
