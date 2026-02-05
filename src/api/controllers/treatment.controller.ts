@@ -19,8 +19,8 @@ export default class TreatmentController {
       })
       .page(offset || 0, limit === 0 || !limit ? 10 : limit);
 
-    if (done) {
-      query.where('treatments.done', done === 'true');
+    if (done === true || done === false) {
+      query.where('treatments.done', done);
     }
 
     if (filters) {

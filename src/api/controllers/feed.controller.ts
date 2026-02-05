@@ -20,8 +20,8 @@ export default class FeedController {
       })
       .page(offset || 0, limit === 0 || !limit ? 10 : limit);
 
-    if (done) {
-      query.where('feeds.done', done === 'true');
+    if (done === true || done === false) {
+      query.where('feeds.done', done);
     }
 
     if (filters) {
