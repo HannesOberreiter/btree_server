@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { PropType } from 'vue';
 import type { FormTodo } from '../types';
 import useVuelidate from '@vuelidate/core';
 import dayjs from 'dayjs';
@@ -18,7 +19,7 @@ import FormInputUrl from './FormInputUrl.vue';
 
 const props = defineProps({
 	ids: {
-		type: Array,
+		type: Array as PropType<number[] | null>,
 		default: null,
 	},
 	date: {
@@ -64,7 +65,9 @@ const state = ref<FormTodo>({
 	...stateDefault,
 });
 
-async function getEdit(id: unknown[]) {
+async function getEdit(id: number[] | null) {
+	if (!id)
+		return;
 	return await api.post('/v1/todo/batchGet', { ids: id }).then(
 		(response: any) => {
 			const editIds = map(response, (row: any) => [

@@ -1,11 +1,12 @@
 [
 	{
 		"version": "6.5.6",
-		"date": "2026-03-10",
+		"date": "2026-02-05",
 		"news": [
 			"FEATURE Cumulative Growing Degree Days (GTS) chart added to the apiary detail page (Grünlandtemperatursumme).",
 			"CHANGE Current temperature data from OpenWeather instead of Meteoblue, as Meteoblue changed their API and pricing model to be too expensive for us.",
-			"BUGFIX Added missing privacy policy and imprint links to footer on login."
+			"BUGFIX Added missing privacy policy and imprint links to footer on login.",
+			"BUGFIX Fixed state filter on tables, should now again filter for open and closed tasks correctly."
 		]
 	},
 	{

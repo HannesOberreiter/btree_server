@@ -327,7 +327,7 @@ const routes: RouteRecordRaw[] = [
 			{
 				path: 'todo/:ids*',
 				name: 'edit-todo',
-				props: true,
+				props: route => ({ ids: convertIdsToNumbers(route.params.ids) }),
 				meta: {
 					title: 'todo',
 				},
@@ -632,5 +632,17 @@ const routes: RouteRecordRaw[] = [
 		component: () => import('../pages/ErrorNotFound404.vue'),
 	},
 ];
+
+function convertIdsToNumbers(ids: string | string[] | undefined): number[] {
+	if (!ids)
+		return [];
+	if (Array.isArray(ids)) {
+		return ids.map(id => Number.parseInt(id)).filter(id => !Number.isNaN(id));
+	}
+	else {
+		const id = Number.parseInt(ids);
+		return Number.isNaN(id) ? [] : [id];
+	}
+}
 
 export default routes;

@@ -34,7 +34,7 @@ const props = defineProps({
 		required: true,
 	},
 	ids: {
-		type: Array as PropType<any[] | null>,
+		type: Array as PropType<number[] | null>,
 		default: null,
 	},
 });
@@ -119,9 +119,10 @@ const state = ref({
 	...stateDefault,
 });
 
-async function getEdit(id: any[] | null) {
+async function getEdit(id: number[] | null) {
 	if (!id)
 		return;
+	console.log('Getting edit data for ids', id);
 	return await api.post(`/v1/${props.task}/batchGet`, { ids: id }).then(
 		(response: any) => {
 			const editIds = map(response, (row: any) => [
