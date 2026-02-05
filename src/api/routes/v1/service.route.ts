@@ -20,6 +20,14 @@ export default function routes(
     ServiceController.getTemperature,
   );
 
+  server.get(
+    '/gruenlandtemperatursumme/:apiary_id',
+    {
+      preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
+    },
+    ServiceController.getGruenlandtemperatursumme,
+  );
+
   server.post(
     '/paypal/orders',
     {

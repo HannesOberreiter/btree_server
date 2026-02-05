@@ -12,24 +12,11 @@ import {
 } from '../utils/paypal.util.js';
 import { addPremium, isPremium } from '../utils/premium.util.js';
 import { createOrder as stripeCreateOrder } from '../utils/stripe.util.js';
-import { getTemperature } from '../utils/temperature.util.js';
-
-interface Chunk {
-  id: string
-  object: string
-  created: number
-  model: string
-  system_fingerprint: string
-  choices: Array<{
-    index: number
-    delta: {
-      role: string
-      content: string
-    }
-    logprobs: null
-    finish_reason: null
-  }>
-}
+import {
+  calculateGruenlandtemperatursumme,
+  getHistoricalTemperatures,
+  getTemperature,
+} from '../utils/temperature.util.js';
 
 export default class ServiceController {
   static async getTemperature(req: FastifyRequest, _reply: FastifyReply) {
@@ -43,6 +30,56 @@ export default class ServiceController {
       .where({ user_id: req.session.user.user_id });
     const temp = await getTemperature(apiary.latitude, apiary.longitude);
     return temp;
+  }
+
+  static async getGruenlandtemperatursumme(req: FastifyRequest, _reply: FastifyReply) {
+    const params = req.params as any;
+    const premium = await isPremium(req.session.user.user_id);
+    if (!premium) {
+      throw httpErrors.PaymentRequired('Premium access required');
+    }
+
+    const apiary = await Apiary.query()
+      .findById(params.apiary_id)
+      .where({
+        user_id: req.session.user.user_id,
+        deleted: false,
+      })
+      .throwIfNotFound();
+
+    if (!apiary.latitude || !apiary.longitude) {
+      throw httpErrors.BadRequest('Apiary coordinates not set');
+    }
+
+    const query = req.query as any;
+    const year = query?.year ? Number(query.year) : new Date().getFullYear();
+    if (year > new Date().getFullYear()) {
+      throw httpErrors.BadRequest('Year cannot be in the future');
+    }
+
+    const startDate = `${year}-01-01`; // Always get previous year from Jan 1st
+    const endDate = year === new Date().getFullYear()
+      ? new Date().toISOString().split('T')[0]
+      : `${year}-06-31`;
+
+    const dailyTemperatures = await getHistoricalTemperatures(
+      apiary.latitude,
+      apiary.longitude,
+      startDate,
+      endDate,
+    );
+
+    const gtsResult = calculateGruenlandtemperatursumme(dailyTemperatures);
+
+    return {
+      ...gtsResult,
+      apiary: {
+        id: apiary.id,
+        name: apiary.name,
+        latitude: apiary.latitude,
+        longitude: apiary.longitude,
+      },
+    };
   }
 
   static async paypalCreateOrder(req: FastifyRequest, _reply: FastifyReply) {
@@ -253,12 +290,10 @@ export default class ServiceController {
     }
 
     try {
-      for await (const chunk of stream.toReadableStream()) {
+      for await (const chunk of stream) {
         if (controller.signal.aborted) {
           break;
         }
-        const str = new TextDecoder().decode(chunk);
-        const replyChunk = JSON.parse(str) as Chunk;
 
         if (!reply.raw.getHeader('Access-Control-Allow-Origin')) {
           if (!req.headers.origin) {
@@ -281,7 +316,7 @@ export default class ServiceController {
 
         reply.raw.write(
           JSON.stringify({
-            text: replyChunk?.choices[0]?.delta?.content || '',
+            text: chunk?.choices[0]?.delta?.content || '',
             refs,
             tokens,
             savedTokens,

@@ -281,8 +281,9 @@ describe('todo routes', () => {
         `${route}/date`,
         null,
         accessToken,
-        { ids: [insertId], start: testInsert.date },
+        { ids: [String(insertId)], start: testInsert.date },
         (_err, res) => {
+          console.log(res.body);
           expect(res.statusCode).to.eqls(200);
           expect(res.body).to.equal(1);
           done();
