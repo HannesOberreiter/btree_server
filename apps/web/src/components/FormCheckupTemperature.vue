@@ -103,7 +103,7 @@ function getTemperature(click = false) {
 					height: temperature?.main.sea_level,
 					lat: temperature?.coord.lat,
 					lon: temperature?.coord.lon,
-				}) + temperature?.weather[0]?.icon
+				})
 				: ''
 		"
 	>
