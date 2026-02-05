@@ -881,7 +881,7 @@ export interface Todos {
   bee_id: Generated<number | null>
   created_at: Generated<Date | null>
   date: Generated<Date | null>
-  done: Generated<number | null>
+  done: Generated<boolean | null>
   /**
    * Editor
    */

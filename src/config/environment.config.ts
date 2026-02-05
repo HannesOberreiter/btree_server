@@ -157,7 +157,6 @@ const knexConfig = {
       }
       return next();
     },
-    dateStrings: ['DATE'],
   },
   debug: env === ENVIRONMENT.development,
   pool: {

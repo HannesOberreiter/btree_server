@@ -2,11 +2,11 @@ import type { KyselyPlugin, PluginTransformQueryArgs, PluginTransformResultArgs,
 
 import type { DB } from '../types/db.types.js';
 
-import { Kysely, MysqlDialect } from 'kysely';
+import { Kysely, MysqlDialect, ParseJSONResultsPlugin } from 'kysely';
+import { createPool } from 'mysql2';
 import { ENVIRONMENT } from '../config/constants.config.js';
 import { env, knexConfig } from '../config/environment.config.js';
 import { Logger } from '../services/logger.service.js';
-import { DatabaseServer } from './db.server.js';
 
 /**
  * @description Database connection manager for MySQL server with Kysely
@@ -26,14 +26,41 @@ export class KyselyServer {
 
   private constructor() {
     try {
+      const pool = createPool({
+        host: knexConfig.connection.host,
+        port: knexConfig.connection.port,
+        database: knexConfig.connection.database,
+        user: knexConfig.connection.user,
+        password: knexConfig.connection.password,
+        charset: knexConfig.connection.charset,
+        timezone: knexConfig.connection.timezone,
+        typeCast: knexConfig.connection.typeCast,
+        dateStrings: true,
+        connectionLimit: knexConfig.pool.max,
+        waitForConnections: true,
+        queueLimit: 0,
+      });
+
+      pool.on('connection', (connection) => {
+        connection.query('SET SESSION group_concat_max_len = 100000;', (err) => {
+          if (err) {
+            this.logger.log('error', `Error setting group_concat_max_len: ${err.message}`, {
+              label: 'Database',
+            });
+          }
+        });
+      });
+
       const dialect = new MysqlDialect({
-        pool: DatabaseServer.getInstance().knex.client.pool,
+        pool,
       });
 
       this.db = new Kysely<DB>({
+        log: env === ENVIRONMENT.development ? ['query', 'error'] : ['error'],
         dialect,
         plugins: [
           new TimestampPlugin(),
+          new ParseJSONResultsPlugin(),
         ],
       });
 
@@ -93,11 +120,16 @@ class TimestampPlugin implements KyselyPlugin {
     // Add created_at and updated_at to the values being inserted
     if (node.values?.kind === 'ValuesNode') {
       const values = node.values.values.map((valueList: any) => {
+        // Check if valueList is iterable (array-like)
+        if (!valueList || typeof valueList[Symbol.iterator] !== 'function') {
+          return valueList;
+        }
+
         const newValues = [...valueList];
 
         // Check if created_at or updated_at are already set
-        const hasCreatedAt = this.hasColumn(node, valueList, 'created_at');
-        const hasUpdatedAt = this.hasColumn(node, valueList, 'updated_at');
+        const hasCreatedAt = this.hasColumn(node, 'created_at');
+        const hasUpdatedAt = this.hasColumn(node, 'updated_at');
 
         if (!hasCreatedAt) {
           newValues.push({
@@ -167,7 +199,7 @@ class TimestampPlugin implements KyselyPlugin {
     return node;
   }
 
-  private hasColumn(node: any, valueList: any, columnName: string): boolean {
+  private hasColumn(node: any, columnName: string): boolean {
     if (!node.columns)
       return false;
     return node.columns.some((col: any) => col.column?.name === columnName);

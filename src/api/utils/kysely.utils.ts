@@ -1,6 +1,8 @@
-import type { ExpressionBuilder, Kysely, Transaction } from 'kysely';
+import type { Kysely, SelectQueryBuilder, Transaction } from 'kysely';
+
 import type { DB } from '../../types/db.types.js';
-import { jsonObjectFrom } from 'kysely/helpers/postgres';
+
+import { sql } from 'kysely';
 
 /**
  * Execute a function within a database transaction.
@@ -96,15 +98,38 @@ export async function softDelete<TB extends keyof DB>(
 }
 
 /**
- * Build a jsonObjectFrom selection that fetches a single bee (creator/editor) by reference.
- * Keeps controller code DRY and ensures consistent payload shape.
+ * Add creator and editor relations to a query.
+ * Adds LEFT JOINs and JSON_OBJECT selections for bee (user) relations.
  */
-export function selectBeeJson(eb: ExpressionBuilder<DB, any>, options: { alias: string, columnRef: string }) {
-  return jsonObjectFrom(
-    eb
-      .selectFrom('bees')
-      .select(['bees.id as id', 'bees.email as email', 'bees.username as username'])
-      .whereRef('bees.id', '=', options.columnRef)
-      .limit(1),
-  ).as(options.alias);
+export function withCreatorAndEditor<TB extends keyof DB & string, O>(
+  query: SelectQueryBuilder<DB, TB, O>,
+  options: {
+    creatorColumn: string
+    editorColumn: string
+  },
+): SelectQueryBuilder<
+  DB & { creator: DB['bees'] | null, editor: DB['bees'] | null },
+  TB | 'creator' | 'editor',
+  O & {
+    creator: { id: number, email: string, username: string } | null
+    editor: { id: number, email: string, username: string } | null
+  }
+  > {
+  return query
+    // @ts-expect-error - Dynamic column reference requires runtime validation
+    .leftJoin('bees as creator', 'creator.id', sql.ref(options.creatorColumn))
+    // @ts-expect-error - Dynamic column reference requires runtime validation
+    .leftJoin('bees as editor', 'editor.id', sql.ref(options.editorColumn))
+    .select([
+      sql<{ id: number, email: string, username: string } | null>`
+        CASE WHEN creator.id IS NOT NULL THEN
+          JSON_OBJECT('id', creator.id, 'email', creator.email, 'username', creator.username)
+        ELSE NULL END
+      `.as('creator'),
+      sql<{ id: number, email: string, username: string } | null>`
+        CASE WHEN editor.id IS NOT NULL THEN
+          JSON_OBJECT('id', editor.id, 'email', editor.email, 'username', editor.username)
+        ELSE NULL END
+      `.as('editor'),
+    ]) as any;
 }
