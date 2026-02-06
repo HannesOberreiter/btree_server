@@ -5,8 +5,8 @@ import { generateArrayOfYears } from '../helpers';
 </script>
 
 <script setup lang="ts">
-import dayjs from 'dayjs';
 import { useMeta } from 'quasar';
+import ChartGts from 'src/components/ChartGts.vue';
 import { computed, ref, toRef } from 'vue';
 import { useI18n } from 'vue-i18n';
 import BtnBase from '../components/BtnBase.vue';
@@ -29,7 +29,9 @@ const props = defineProps({
 });
 const { t } = useI18n();
 const tab = ref('hive');
-const year = ref(dayjs().year());
+const year = ref(new Date().getFullYear());
+const yearGTS = ref<number[]>([new Date().getFullYear()]);
+const yearsGTS = generateArrayOfYears(new Date().getFullYear() - 5);
 const filter = ref<Filter>('filterEmpty');
 const filterState = ref<FilterState>(STATUS[0]);
 const opened = ref(false);
@@ -42,7 +44,7 @@ const years = computed(() =>
 	generateArrayOfYears(
 		data.value
 			? data.value.firstMovedate
-				? dayjs(data.value.firstMovedate.date).year()
+				? new Date(data.value.firstMovedate.date).getFullYear()
 				: 2000
 			: 2000,
 	),
@@ -94,9 +96,26 @@ useMeta(() => {
 				>
 					<q-tab name="hive" :label="$t('hive', 2)" />
 					<q-tab name="task" :label="$t('task', 2)" />
-					<q-tab name="weather" icon="fas fa-cloud-sun-rain">
+					<q-tab v-show="!$q.platform.is.mobile" name="gts" label="GTS">
+						<TooltipBase>{{ $t('growing_degree_days') }}</TooltipBase>
+					</q-tab>
+					<q-tab v-show="!$q.platform.is.mobile" name="weather" icon="fas fa-cloud-sun-rain">
 						<TooltipBase>{{ $t('weather') }}</TooltipBase>
 					</q-tab>
+					<q-btn-dropdown v-show="$q.platform.is.mobile" flat>
+						<q-list>
+							<q-item v-close-popup clickable @click="tab = 'gts'">
+								<q-item-section>
+									<q-item-label>GTS</q-item-label>
+								</q-item-section>
+							</q-item>
+							<q-item v-close-popup clickable @click="tab = 'weather'">
+								<q-item-section>
+									<q-item-label>Weather</q-item-label>
+								</q-item-section>
+							</q-item>
+						</q-list>
+					</q-btn-dropdown>
 					<BtnDropdownTask
 						@refetch="() => refetchCounter++"
 					/>
@@ -157,6 +176,19 @@ useMeta(() => {
 							:filter-state="filterState"
 							:opened="opened"
 							:refetch="refetchCounter"
+						/>
+					</q-tab-panel>
+					<q-tab-panel name="gts" class="q-pa-xs">
+						<q-select
+							v-model="yearGTS"
+							:options="yearsGTS"
+							:label="$t('year')"
+							multiple
+							use-chips
+						/>
+						<ChartGts
+							:years="yearGTS"
+							:apiary-id="data.id"
 						/>
 					</q-tab-panel>
 					<q-tab-panel name="weather" class="q-pa-xs">

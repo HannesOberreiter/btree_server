@@ -1,4 +1,5 @@
 import type { RouteRecordRaw } from 'vue-router';
+import { convertIdsToNumbers } from 'src/helpers';
 import MainLaylout from '../layouts/MainLayout.vue';
 import VisitorLayout from '../layouts/VisitorLayout.vue';
 
@@ -327,7 +328,7 @@ const routes: RouteRecordRaw[] = [
 			{
 				path: 'todo/:ids*',
 				name: 'edit-todo',
-				props: true,
+				props: route => ({ ids: convertIdsToNumbers(route.params.ids) }),
 				meta: {
 					title: 'todo',
 				},
