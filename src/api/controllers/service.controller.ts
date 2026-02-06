@@ -34,11 +34,6 @@ export default class ServiceController {
 
   static async getGruenlandtemperatursumme(req: FastifyRequest, _reply: FastifyReply) {
     const params = req.params as any;
-    const premium = await isPremium(req.session.user.user_id);
-    if (!premium) {
-      throw httpErrors.PaymentRequired('Premium access required');
-    }
-
     const apiary = await Apiary.query()
       .findById(params.apiary_id)
       .where({
