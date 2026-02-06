@@ -1,4 +1,5 @@
 import type { RouteRecordRaw } from 'vue-router';
+import { convertIdsToNumbers } from 'src/helpers';
 import MainLaylout from '../layouts/MainLayout.vue';
 import VisitorLayout from '../layouts/VisitorLayout.vue';
 
@@ -632,17 +633,5 @@ const routes: RouteRecordRaw[] = [
 		component: () => import('../pages/ErrorNotFound404.vue'),
 	},
 ];
-
-function convertIdsToNumbers(ids: string | string[] | undefined): number[] {
-	if (!ids)
-		return [];
-	if (Array.isArray(ids)) {
-		return ids.map(id => Number.parseInt(id)).filter(id => !Number.isNaN(id));
-	}
-	else {
-		const id = Number.parseInt(ids);
-		return Number.isNaN(id) ? [] : [id];
-	}
-}
 
 export default routes;

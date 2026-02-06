@@ -80,3 +80,18 @@ export function isValidURL(string: string) {
 	}
 	return url.protocol === 'http:' || url.protocol === 'https:';
 }
+
+/**
+ * @description Convert strings to numbers for backend, which expects the ids to be numbers
+ */
+export function convertIdsToNumbers(ids: string | string[] | undefined): number[] {
+	if (!ids)
+		return [];
+	if (Array.isArray(ids)) {
+		return ids.map(id => Number.parseInt(id)).filter(id => !Number.isNaN(id));
+	}
+	else {
+		const id = Number.parseInt(ids);
+		return Number.isNaN(id) ? [] : [id];
+	}
+}
