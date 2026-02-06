@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { truncate } from 'lodash-es';
 import { useDialogPluginComponent, useQuasar } from 'quasar';
+import { convertIdsToNumbers } from 'src/helpers';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { RouterLink, useRouter } from 'vue-router';
@@ -39,7 +40,7 @@ const isRearings = computed(() => props.eventInfo.table === 'rearing' || false);
 async function updateStatus() {
 	const data = JSON.stringify({
 		status: !props.eventInfo.done,
-		ids: props.eventInfo.task_ids.toString().split(','),
+		ids: convertIdsToNumbers(props.eventInfo.task_ids.toString().split(',')),
 	});
 	const nameSource = props.eventInfo.table as string;
 	await api.patch(`/v1/${nameSource}/status`, data).then(
@@ -55,8 +56,8 @@ async function updateStatus() {
 async function deleteEvent() {
 	const data = JSON.stringify({
 		ids: isRearings.value
-			? [props.eventInfo.publicId]
-			: props.eventInfo.task_ids.toString().split(','),
+			? convertIdsToNumbers(props.eventInfo.publicId)
+			: convertIdsToNumbers(props.eventInfo.task_ids.toString().split(',')),
 	});
 	const nameSource = props.eventInfo.table as string;
 	$q.dialog({
@@ -88,12 +89,12 @@ function editTask() {
 	if (isTodo.value) {
 		router.push({
 			name: 'edit-todo',
-			params: { ids: props.eventInfo.publicId.split(',') },
+			params: { ids: convertIdsToNumbers(props.eventInfo.publicId.split(',')) },
 		});
 	}
 	else {
 		const task = props.eventInfo.table;
-		const ids = props.eventInfo.task_ids.toString().split(',');
+		const ids = convertIdsToNumbers(props.eventInfo.task_ids.toString().split(','));
 		if (isMovement.value) {
 			router.push({ name: 'edit-movement', params: { ids } });
 		}
