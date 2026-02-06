@@ -1,7 +1,7 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import dayjs from 'dayjs';
-import { map } from 'lodash-es';
 
+import { map } from 'lodash-es';
 import { Checkup } from '../models/checkup.model.js';
 import { Hive } from '../models/hive.model.js';
 
@@ -9,6 +9,7 @@ export default class CheckupController {
   static async get(req: FastifyRequest, _reply: FastifyReply) {
     const { order, direction, offset, limit, q, filters, deleted, done }
       = req.query as any;
+
     const query = Checkup.query()
       .withGraphJoined(
         '[checkup_apiary, type, hive, creator(identifier), editor(identifier)]',
@@ -20,8 +21,8 @@ export default class CheckupController {
       })
       .page(offset || 0, limit === 0 || !limit ? 10 : limit);
 
-    if (done) {
-      query.where('checkups.done', done === 'true');
+    if (done === true || done === false) {
+      query.where('checkups.done', done);
     }
 
     if (filters) {

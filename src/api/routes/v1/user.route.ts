@@ -75,7 +75,7 @@ export default function routes(
       preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
       schema: {
         params: z.object({
-          id: z.number({ coerce: true }).int().positive(),
+          id: z.coerce.number().int().positive(),
         }),
       },
     },

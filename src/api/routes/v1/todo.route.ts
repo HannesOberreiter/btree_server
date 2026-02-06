@@ -4,15 +4,16 @@ import { z } from 'zod';
 import { ROLES } from '../../../config/constants.config.js';
 import TodoController from '../../controllers/todo.controller.js';
 import { Guard } from '../../hooks/guard.hook.js';
-import { numberSchema } from '../../utils/zod.util.js';
-
-const schemaTodo = z.object({
-  name: z.string().min(1).max(48).trim(),
-  date: z.string(),
-  note: z.string().max(2000).optional(),
-  url: z.string().max(512).optional(),
-  done: z.boolean().optional(),
-});
+import {
+  todoBatchDeleteSchema,
+  todoBatchGetSchema,
+  todoBatchUpdateSchema,
+  todoCreateSchema,
+  todoPaginatedResponseSchema,
+  todoResponseSchema,
+  todoUpdateDateSchema,
+  todoUpdateStatusSchema,
+} from '../../schemas/todo.schema.js';
 
 export default function routes(
   instance: FastifyInstance,
@@ -25,6 +26,11 @@ export default function routes(
     '/',
     {
       preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+      schema: {
+        response: {
+          200: todoPaginatedResponseSchema,
+        },
+      },
     },
     TodoController.get,
   );
@@ -34,12 +40,10 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
-        body: z
-          .object({
-            interval: z.number().min(0).max(365).optional(),
-            repeat: z.number().min(0).max(30).optional(),
-          })
-          .merge(schemaTodo),
+        body: todoCreateSchema,
+        response: {
+          200: z.array(z.number()),
+        },
       },
     },
     TodoController.post,
@@ -50,10 +54,10 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
-        body: z.object({
-          ids: z.array(numberSchema),
-          data: schemaTodo.partial(),
-        }),
+        body: todoBatchUpdateSchema,
+        response: {
+          200: z.number(),
+        },
       },
     },
     TodoController.patch,
@@ -64,10 +68,10 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
-        body: z.object({
-          ids: z.array(numberSchema),
-          status: z.boolean(),
-        }),
+        body: todoUpdateStatusSchema,
+        response: {
+          200: z.number(),
+        },
       },
     },
     TodoController.updateStatus,
@@ -78,10 +82,10 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
-        body: z.object({
-          ids: z.array(numberSchema),
-          start: z.string(),
-        }),
+        body: todoUpdateDateSchema,
+        response: {
+          200: z.number(),
+        },
       },
     },
     TodoController.updateDate,
@@ -92,9 +96,10 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.admin]),
       schema: {
-        body: z.object({
-          ids: z.array(numberSchema),
-        }),
+        body: todoBatchDeleteSchema,
+        response: {
+          200: z.number(),
+        },
       },
     },
     TodoController.batchDelete,
@@ -105,9 +110,10 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
-        body: z.object({
-          ids: z.array(numberSchema),
-        }),
+        body: todoBatchGetSchema,
+        response: {
+          200: z.array(todoResponseSchema),
+        },
       },
     },
     TodoController.batchGet,

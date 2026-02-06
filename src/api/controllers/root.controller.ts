@@ -11,10 +11,13 @@ export default class RootController {
       ? `CSP Violation: ${body.violation}`
       : 'CSP Violation';
 
-    req.log.warn(message, {
-      'csp-report': body,
-      'label': 'CSP violation',
-    });
+    req.log.warn(
+      {
+        'csp-report': body,
+        'label': 'CSP violation',
+      },
+      message,
+    );
 
     reply.send({ status: 'ok' });
   }

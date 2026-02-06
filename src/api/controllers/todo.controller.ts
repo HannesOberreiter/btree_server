@@ -1,160 +1,291 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
+import type {
+  TodoBatchDelete,
+  TodoBatchGet,
+  TodoBatchUpdate,
+  TodoCreate,
+  TodoUpdateDate,
+  TodoUpdateStatus,
+} from '../schemas/todo.schema.js';
 import dayjs from 'dayjs';
-import { Todo } from '../models/todo.model.js';
+import { sql } from 'kysely';
+import { KyselyServer } from '../../servers/kysely.server.js';
+import { transaction, withCreatorAndEditor } from '../utils/kysely.utils.js';
+
+interface GetQuery {
+  order?: string | string[]
+  direction?: 'asc' | 'desc' | ('asc' | 'desc')[]
+  offset?: number | string
+  limit?: number | string
+  q?: string
+  filters?: string
+  done?: boolean
+}
 
 export default class TodoController {
-  static async get(req: FastifyRequest, _reply: FastifyReply) {
+  static async get(req: FastifyRequest<{ Querystring: GetQuery }>, _reply: FastifyReply) {
     const { order, direction, offset, limit, q, filters, done }
-      = req.query as any;
-    const query = Todo.query()
-      .withGraphJoined('[creator(identifier), editor(identifier)]')
-      .where({
-        user_id: req.session.user.user_id,
-      })
-      .page(offset || 0, limit === 0 || !limit ? 10 : limit);
+      = req.query;
 
-    if (done) {
-      query.where('todos.done', done === 'true');
-    }
+    const db = KyselyServer.getInstance().db;
+    const page = Number(offset) || 0;
+    const pageSize = limit === 0 || !limit ? 10 : Number(limit);
+    const skip = page * pageSize;
 
+    let parsedFilters: any[] = [];
     if (filters) {
       try {
         const filtering = JSON.parse(filters);
         if (Array.isArray(filtering)) {
-          filtering.forEach((v) => {
-            if ('date' in v && typeof v.date === 'object') {
-              query.whereBetween('date', [v.date.from, v.date.to]);
-            }
-            else {
-              query.where(v);
-            }
-          });
+          parsedFilters = filtering;
         }
       }
       catch (e) {
         req.log.error(e);
       }
     }
-    if (order) {
-      if (Array.isArray(order)) {
-        order.forEach((field, index) => query.orderBy(field, direction[index]));
-      }
-      else {
-        query.orderBy(order, direction);
-      }
-    }
-    if (q) {
-      const search = `${q}`; // Querystring could be converted be a number
-      if (search.trim() !== '') {
-        query.where((builder) => {
-          builder
-            .orWhere('todos.name', 'like', `%${search}%`)
-            .orWhere('todos.note', 'like', `%${search}%`);
-        });
-      }
-    }
-    const result = await query.orderBy('id');
-    return { ...result };
+
+    const search = q ? `${q}`.trim() : '';
+
+    const query = db
+      .selectFrom('todos')
+      .select([
+        'todos.id',
+        'todos.name',
+        'todos.date',
+        'todos.note',
+        'todos.url',
+        'todos.done',
+        'todos.bee_id',
+        'todos.edit_id',
+        'todos.user_id',
+        'todos.created_at',
+        'todos.updated_at',
+      ])
+      .$call(qb => withCreatorAndEditor(qb, { creatorColumn: 'todos.bee_id', editorColumn: 'todos.edit_id' }))
+      .where('todos.user_id', '=', req.session.user.user_id)
+      .$if(done === true || done === false, qb => qb.where('todos.done', '=', done))
+      .$if(parsedFilters.length > 0, (qb) => {
+        let filterQuery = qb;
+        for (const filter of parsedFilters) {
+          if ('date' in filter && typeof filter.date === 'object') {
+            filterQuery = filterQuery
+              .where('todos.date', '>=', filter.date.from)
+              .where('todos.date', '<=', filter.date.to);
+          }
+          else {
+            for (const [key, value] of Object.entries(filter)) {
+              filterQuery = filterQuery.where(key as any, '=', value as any);
+            }
+          }
+        }
+        return filterQuery;
+      })
+      .$if(!!order, (qb) => {
+        if (Array.isArray(order)) {
+          let orderQuery = qb;
+          order.forEach((field, index) => {
+            const dir = Array.isArray(direction) ? direction[index] : direction;
+            orderQuery = orderQuery.orderBy(field as any, (dir || 'asc') as any);
+          });
+          return orderQuery;
+        }
+        else {
+          return qb.orderBy(order as any, ((direction as string) || 'asc') as any);
+        }
+      })
+      .$if(
+        search !== '',
+        qb => qb.where(eb =>
+          eb.or([
+            eb('todos.name', 'like', `%${search}%`),
+            eb('todos.note', 'like', `%${search}%`),
+          ]),
+        ),
+      );
+
+    const countQuery = query
+      .clearSelect()
+      .select(sql`COUNT(*)`.as('count'));
+
+    const [results, countResult] = await Promise.all([
+      query
+        .orderBy('todos.id', 'asc')
+        .limit(pageSize)
+        .offset(skip)
+        .execute(),
+      countQuery.executeTakeFirst(),
+    ]);
+
+    return {
+      results,
+      total: Number((countResult as any)?.count || 0),
+    };
   }
 
   static async post(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
-    const insert = {
-      date: body.date,
-      name: body.name,
-      note: body.note,
-      done: body.done,
-      url: body.url,
-    };
-    const repeat = body.repeat ? body.repeat : 0;
-    const interval = body.interval ? body.interval : 0;
-    const result = await Todo.transaction(async (trx) => {
-      const result = [];
+    const body = req.body as TodoCreate;
+    const db = KyselyServer.getInstance().db;
 
-      const res = await Todo.query(trx).insert({
-        ...insert,
-        user_id: req.session.user.user_id,
-        bee_id: req.session.user.bee_id,
-      });
-      result.push(res.id);
+    const insert = {
+      date: new Date(body.date),
+      name: body.name,
+      note: body.note || null,
+      done: body.done || false,
+      url: body.url || null,
+      user_id: req.session.user.user_id,
+      bee_id: req.session.user.bee_id,
+    };
+
+    const repeat = body.repeat || 0;
+    const interval = body.interval || 0;
+
+    const result = await transaction(db, async (trx) => {
+      const insertedIds: number[] = [];
+
+      const res = await trx
+        .insertInto('todos')
+        .values(insert)
+        .executeTakeFirst();
+
+      insertedIds.push(Number(res.insertId));
+
       if (repeat > 0) {
+        let currentDate = body.date;
         for (let i = 0; i < repeat; i++) {
-          insert.date = dayjs(insert.date)
+          currentDate = dayjs(currentDate)
             .add(interval, 'days')
             .format('YYYY-MM-DD');
-          const res = await Todo.query(trx).insert({
-            ...insert,
-            user_id: req.session.user.user_id,
-            bee_id: req.session.user.bee_id,
-          });
-          result.push(res.id);
+
+          const res = await trx
+            .insertInto('todos')
+            .values({
+              ...insert,
+              date: new Date(currentDate),
+            })
+            .executeTakeFirst();
+
+          insertedIds.push(Number(res.insertId));
         }
       }
-      return result;
+      return insertedIds;
     });
+
     return result;
   }
 
   static async patch(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
-    const ids = body.ids;
-    const insert = { ...body.data };
-    const result = await Todo.transaction(async (trx) => {
-      return await Todo.query(trx)
-        .patch({ ...insert, bee_id: req.session.user.bee_id })
-        .findByIds(ids)
-        .where('user_id', req.session.user.user_id);
+    const body = req.body as TodoBatchUpdate;
+    const db = KyselyServer.getInstance().db;
+
+    const updateData = {
+      ...body.data as any,
+      edit_id: req.session.user.bee_id,
+    };
+
+    if (updateData.date) {
+      updateData.date = new Date(updateData.date);
+    }
+
+    const result = await transaction(db, async (trx) => {
+      const res = await trx
+        .updateTable('todos')
+        .set(updateData)
+        .where('user_id', '=', req.session.user.user_id)
+        .where('id', 'in', body.ids)
+        .executeTakeFirst();
+
+      return Number(res.numUpdatedRows);
     });
+
     return result;
   }
 
   static async batchGet(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
-    const result = await Todo.transaction(async (trx) => {
-      const res = await Todo.query(trx)
-        .findByIds(body.ids)
-        .where('user_id', req.session.user.user_id);
-      return res;
-    });
+    const body = req.body as TodoBatchGet;
+
+    const db = KyselyServer.getInstance().db;
+
+    const result = db.selectFrom('todos')
+      .select([
+        'todos.id',
+        'todos.name',
+        'todos.date',
+        'todos.note',
+        'todos.url',
+        'todos.done',
+        'todos.bee_id',
+        'todos.edit_id',
+        'todos.user_id',
+        'todos.created_at',
+        'todos.updated_at',
+      ])
+      .$call(qb => withCreatorAndEditor(qb, { creatorColumn: 'todos.bee_id', editorColumn: 'todos.edit_id' }))
+      .where('todos.user_id', '=', req.session.user.user_id)
+      .where('todos.id', 'in', body.ids)
+      .execute();
+
     return result;
   }
 
   static async batchDelete(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
-    const result = await Todo.transaction(async (trx) => {
-      return Todo.query(trx)
-        .delete()
-        .whereIn('id', body.ids)
-        .where('user_id', req.session.user.user_id);
+    const body = req.body as TodoBatchDelete;
+    const db = KyselyServer.getInstance().db;
+
+    const result = await transaction(db, async (trx) => {
+      const res = await trx
+        .deleteFrom('todos')
+        .where('user_id', '=', req.session.user.user_id)
+        .where('id', 'in', body.ids)
+        .executeTakeFirst();
+
+      return Number(res.numDeletedRows);
     });
+
     return result;
   }
 
   static async updateStatus(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
-    const result = await Todo.transaction(async (trx) => {
-      return Todo.query(trx)
-        .patch({
+    const body = req.body as TodoUpdateStatus;
+    const db = KyselyServer.getInstance().db;
+
+    const result = await transaction(db, async (trx) => {
+      const res = await trx
+        .updateTable('todos')
+        .set({
           edit_id: req.session.user.bee_id,
           done: body.status,
         })
-        .findByIds(body.ids)
-        .where('user_id', req.session.user.user_id);
+        .where('user_id', '=', req.session.user.user_id)
+        .where('id', 'in', body.ids)
+        .executeTakeFirst();
+
+      return Number(res.numUpdatedRows);
     });
+
     return result;
   }
 
   static async updateDate(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
-    const result = await Todo.transaction(async (trx) => {
-      return Todo.query(trx)
-        .patch({
+    const body = req.body as TodoUpdateDate;
+    const db = KyselyServer.getInstance().db;
+
+    const ids = body.ids.map(id => Number(id)).filter(id => !Number.isNaN(id));
+
+    const result = await transaction(db, async (trx) => {
+      const res = await trx
+        .updateTable('todos')
+        .set({
           edit_id: req.session.user.bee_id,
-          date: body.start,
+          date: new Date(body.start),
         })
-        .findByIds(body.ids)
-        .where('user_id', req.session.user.user_id);
+        .where('user_id', '=', req.session.user.user_id)
+        .where('id', 'in', ids)
+        .executeTakeFirst();
+
+      return Number(res.numUpdatedRows);
     });
+
     return result;
   }
 }

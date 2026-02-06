@@ -20,8 +20,8 @@ export default class HarvestController {
       })
       .page(offset || 0, limit === 0 || !limit ? 10 : limit);
 
-    if (done) {
-      query.where('harvests.done', done === 'true');
+    if (done === true || done === false) {
+      query.where('harvests.done', done);
     }
 
     if (filters) {
