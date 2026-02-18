@@ -339,4 +339,79 @@ describe('todo routes', () => {
       );
     });
   });
+
+  describe('/api/v1/todo with apiary_id', () => {
+    let todoWithApiaryId;
+
+    it(`post 200 - create todo with apiary_id`, (done) => {
+      const testInsertWithApiary = {
+        ...testInsert,
+        name: 'testTodoWithApiary',
+        apiary_id: 1,
+      };
+      doRequest(
+        agent,
+        'post',
+        route,
+        null,
+        accessToken,
+        testInsertWithApiary,
+        (_err, res) => {
+          expect(res.statusCode).to.eqls(200);
+          expect(res.body).to.be.a('Array');
+          todoWithApiaryId = res.body[0];
+          done();
+        },
+      );
+    });
+
+    it(`get 200 - filter by apiary_id`, (done) => {
+      doQueryRequest(
+        agent,
+        route,
+        { apiary_id: 1 },
+        accessToken,
+        null,
+        (_err, res) => {
+          expect(res.statusCode).to.eqls(200);
+          expect(res.body.results).to.be.a('Array');
+          done();
+        },
+      );
+    });
+
+    it(`batchGet 200 - return apiary data`, (done) => {
+      doRequest(
+        agent,
+        'post',
+        `${route}/batchGet`,
+        null,
+        accessToken,
+        { ids: [todoWithApiaryId] },
+        (_err, res) => {
+          expect(res.statusCode).to.eqls(200);
+          expect(res.body).to.be.a('Array');
+          if (res.body.length > 0 && res.body[0].apiary_id) {
+            expect(res.body[0]).to.have.property('apiary');
+          }
+          done();
+        },
+      );
+    });
+
+    it(`batchDelete 200 - cleanup`, (done) => {
+      doRequest(
+        agent,
+        'patch',
+        `${route}/batchDelete`,
+        null,
+        accessToken,
+        { ids: [todoWithApiaryId] },
+        (_err, res) => {
+          expect(res.statusCode).to.eqls(200);
+          done();
+        },
+      );
+    });
+  });
 });

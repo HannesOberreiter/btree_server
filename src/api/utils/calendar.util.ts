@@ -121,7 +121,7 @@ async function getTodos(params, user) {
     .where('date', '<=', end)
     .leftJoinRelated('apiary')
     .where((qb) => {
-      qb.whereNull('todos.apiary_id').orWhere('apiary.deleted', false);
+      qb.whereNull('todos.apiary_id').orWhere('apiary.deleted', 0);
     })
     .select('todos.*', 'apiary.name as apiary_name')
     .withGraphJoined('[creator(identifier), editor(identifier)]');
