@@ -133,3 +133,35 @@ export function withCreatorAndEditor<TB extends keyof DB & string, O>(
       `.as('editor'),
     ]) as any;
 }
+
+/**
+ * Add apiary relation to a query for todos.
+ * Adds LEFT JOIN with apiaries table and JSON_OBJECT selection for apiary data.
+ * Filters out soft-deleted apiaries.
+ */
+export function withApiary<TB extends keyof DB & string, O>(
+  query: SelectQueryBuilder<DB, TB, O>,
+  options: {
+    apiaryColumn: string
+  },
+): SelectQueryBuilder<
+  DB & { apiaries: DB['apiaries'] | null },
+  TB | 'apiaries',
+  O & {
+    apiary: { name: string, modus: boolean } | null
+  }
+  > {
+  return query
+    // @ts-expect-error - Dynamic column reference requires runtime validation
+    .leftJoin('apiaries', 'apiaries.id', sql.ref(options.apiaryColumn))
+    .select([
+      sql<{ name: string, modus: boolean } | null>`
+        CASE 
+          WHEN apiaries.id IS NOT NULL THEN JSON_OBJECT('name', apiaries.name, 'modus', apiaries.modus)
+          ELSE NULL
+        END
+      `.as('apiary'),
+    ])
+    // @ts-expect-error - Dynamic SQL expression for filtering soft-deleted apiaries
+    .where(sql`${sql.ref(options.apiaryColumn)} IS NULL OR apiaries.deleted = 0`) as any;
+}

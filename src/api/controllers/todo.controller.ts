@@ -10,7 +10,7 @@ import type {
 import dayjs from 'dayjs';
 import { sql } from 'kysely';
 import { KyselyServer } from '../../servers/kysely.server.js';
-import { transaction, withCreatorAndEditor } from '../utils/kysely.utils.js';
+import { transaction, withApiary, withCreatorAndEditor } from '../utils/kysely.utils.js';
 
 interface GetQuery {
   order?: string | string[]
@@ -50,7 +50,6 @@ export default class TodoController {
 
     const query = db
       .selectFrom('todos')
-      .leftJoin('apiaries', 'todos.apiary_id', 'apiaries.id')
       .select([
         'todos.id',
         'todos.name',
@@ -64,21 +63,12 @@ export default class TodoController {
         'todos.apiary_id',
         'todos.created_at',
         'todos.updated_at',
-        sql<{ name: string; modus: boolean } | null>`
-          CASE 
-            WHEN apiaries.id IS NOT NULL THEN JSON_OBJECT('name', apiaries.name, 'modus', apiaries.modus)
-            ELSE NULL
-          END
-        `.as('apiary'),
       ])
       .$call(qb => withCreatorAndEditor(qb, { creatorColumn: 'todos.bee_id', editorColumn: 'todos.edit_id' }))
+      .$call(qb => withApiary(qb as any, { apiaryColumn: 'todos.apiary_id' }))
       .where('todos.user_id', '=', req.session.user.user_id)
       .$if(done === true || done === false, qb => qb.where('todos.done', '=', done))
       .$if(!!apiary_id, qb => qb.where('todos.apiary_id', '=', Number(apiary_id)))
-      .where(eb => eb.or([
-        eb('todos.apiary_id', 'is', null),
-        eb('apiaries.deleted', '=', 0),
-      ]))
       .$if(parsedFilters.length > 0, (qb) => {
         let filterQuery = qb;
         for (const filter of parsedFilters) {
@@ -222,7 +212,6 @@ export default class TodoController {
     const db = KyselyServer.getInstance().db;
 
     const result = db.selectFrom('todos')
-      .leftJoin('apiaries', 'todos.apiary_id', 'apiaries.id')
       .select([
         'todos.id',
         'todos.name',
@@ -236,20 +225,11 @@ export default class TodoController {
         'todos.apiary_id',
         'todos.created_at',
         'todos.updated_at',
-        sql<{ name: string; modus: boolean } | null>`
-          CASE 
-            WHEN apiaries.id IS NOT NULL THEN JSON_OBJECT('name', apiaries.name, 'modus', apiaries.modus)
-            ELSE NULL
-          END
-        `.as('apiary'),
       ])
       .$call(qb => withCreatorAndEditor(qb, { creatorColumn: 'todos.bee_id', editorColumn: 'todos.edit_id' }))
+      .$call(qb => withApiary(qb as any, { apiaryColumn: 'todos.apiary_id' }))
       .where('todos.user_id', '=', req.session.user.user_id)
       .where('todos.id', 'in', body.ids)
-      .where(eb => eb.or([
-        eb('todos.apiary_id', 'is', null),
-        eb('apiaries.deleted', '=', 0),
-      ]))
       .execute();
 
     return result;
