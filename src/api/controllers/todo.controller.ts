@@ -10,7 +10,7 @@ import type {
 import dayjs from 'dayjs';
 import { sql } from 'kysely';
 import { KyselyServer } from '../../servers/kysely.server.js';
-import { transaction, withCreatorAndEditor } from '../utils/kysely.utils.js';
+import { transaction, withApiary, withCreatorAndEditor } from '../utils/kysely.utils.js';
 
 interface GetQuery {
   order?: string | string[]
@@ -20,11 +20,12 @@ interface GetQuery {
   q?: string
   filters?: string
   done?: boolean
+  apiary_id?: number | string
 }
 
 export default class TodoController {
   static async get(req: FastifyRequest<{ Querystring: GetQuery }>, _reply: FastifyReply) {
-    const { order, direction, offset, limit, q, filters, done }
+    const { order, direction, offset, limit, q, filters, done, apiary_id }
       = req.query;
 
     const db = KyselyServer.getInstance().db;
@@ -59,12 +60,15 @@ export default class TodoController {
         'todos.bee_id',
         'todos.edit_id',
         'todos.user_id',
+        'todos.apiary_id',
         'todos.created_at',
         'todos.updated_at',
       ])
       .$call(qb => withCreatorAndEditor(qb, { creatorColumn: 'todos.bee_id', editorColumn: 'todos.edit_id' }))
+      .$call(qb => withApiary(qb as any, { apiaryColumn: 'todos.apiary_id' }))
       .where('todos.user_id', '=', req.session.user.user_id)
       .$if(done === true || done === false, qb => qb.where('todos.done', '=', done))
+      .$if(!!apiary_id, qb => qb.where('todos.apiary_id', '=', Number(apiary_id)))
       .$if(parsedFilters.length > 0, (qb) => {
         let filterQuery = qb;
         for (const filter of parsedFilters) {
@@ -133,6 +137,7 @@ export default class TodoController {
       note: body.note || null,
       done: body.done || false,
       url: body.url || null,
+      apiary_id: body.apiary_id || null,
       user_id: req.session.user.user_id,
       bee_id: req.session.user.bee_id,
     };
@@ -217,10 +222,12 @@ export default class TodoController {
         'todos.bee_id',
         'todos.edit_id',
         'todos.user_id',
+        'todos.apiary_id',
         'todos.created_at',
         'todos.updated_at',
       ])
       .$call(qb => withCreatorAndEditor(qb, { creatorColumn: 'todos.bee_id', editorColumn: 'todos.edit_id' }))
+      .$call(qb => withApiary(qb as any, { apiaryColumn: 'todos.apiary_id' }))
       .where('todos.user_id', '=', req.session.user.user_id)
       .where('todos.id', 'in', body.ids)
       .execute();

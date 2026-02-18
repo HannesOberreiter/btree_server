@@ -892,6 +892,7 @@ export interface Todos {
   updated_at: Generated<Date | null>
   url: Generated<string | null>
   user_id: Generated<number | null>
+  apiary_id: Generated<number | null>
 }
 
 export interface TreatmentDiseases {
