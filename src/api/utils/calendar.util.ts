@@ -116,9 +116,14 @@ async function getTodos(params, user) {
   const { start, end } = convertDate(params);
 
   const results: any = await Todo.query()
-    .where('user_id', user.user_id)
+    .where('todos.user_id', user.user_id)
     .where('date', '>=', start)
     .where('date', '<=', end)
+    .leftJoinRelated('apiary')
+    .where((qb) => {
+      qb.whereNull('todos.apiary_id').orWhere('apiary.deleted', false);
+    })
+    .select('todos.*', 'apiary.name as apiary_name')
     .withGraphJoined('[creator(identifier), editor(identifier)]');
   const result = [];
   for (const i in results) {
@@ -127,7 +132,7 @@ async function getTodos(params, user) {
     res.task_ids = res.id;
     res.description = res.note;
     res.start = dayjs(res.date).format('YYYY-MM-DD');
-    res.title = res.name;
+    res.title = res.apiary_name ? `[${res.apiary_name}] ${res.name}` : res.name;
     res.icon = 'fas fa-clipboard';
     res.durationEditable = false;
     if (res.done) {

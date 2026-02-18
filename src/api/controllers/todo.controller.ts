@@ -20,11 +20,12 @@ interface GetQuery {
   q?: string
   filters?: string
   done?: boolean
+  apiary_id?: number | string
 }
 
 export default class TodoController {
   static async get(req: FastifyRequest<{ Querystring: GetQuery }>, _reply: FastifyReply) {
-    const { order, direction, offset, limit, q, filters, done }
+    const { order, direction, offset, limit, q, filters, done, apiary_id }
       = req.query;
 
     const db = KyselyServer.getInstance().db;
@@ -49,6 +50,7 @@ export default class TodoController {
 
     const query = db
       .selectFrom('todos')
+      .leftJoin('apiaries', 'todos.apiary_id', 'apiaries.id')
       .select([
         'todos.id',
         'todos.name',
@@ -59,12 +61,24 @@ export default class TodoController {
         'todos.bee_id',
         'todos.edit_id',
         'todos.user_id',
+        'todos.apiary_id',
         'todos.created_at',
         'todos.updated_at',
+        sql<{ name: string; modus: boolean } | null>`
+          CASE 
+            WHEN apiaries.id IS NOT NULL THEN JSON_OBJECT('name', apiaries.name, 'modus', apiaries.modus)
+            ELSE NULL
+          END
+        `.as('apiary'),
       ])
       .$call(qb => withCreatorAndEditor(qb, { creatorColumn: 'todos.bee_id', editorColumn: 'todos.edit_id' }))
       .where('todos.user_id', '=', req.session.user.user_id)
       .$if(done === true || done === false, qb => qb.where('todos.done', '=', done))
+      .$if(!!apiary_id, qb => qb.where('todos.apiary_id', '=', Number(apiary_id)))
+      .$if(true, qb => qb.where(eb => eb.or([
+        eb('todos.apiary_id', 'is', null),
+        eb('apiaries.deleted', '=', 0),
+      ])))
       .$if(parsedFilters.length > 0, (qb) => {
         let filterQuery = qb;
         for (const filter of parsedFilters) {
@@ -133,6 +147,7 @@ export default class TodoController {
       note: body.note || null,
       done: body.done || false,
       url: body.url || null,
+      apiary_id: body.apiary_id || null,
       user_id: req.session.user.user_id,
       bee_id: req.session.user.bee_id,
     };
@@ -207,6 +222,7 @@ export default class TodoController {
     const db = KyselyServer.getInstance().db;
 
     const result = db.selectFrom('todos')
+      .leftJoin('apiaries', 'todos.apiary_id', 'apiaries.id')
       .select([
         'todos.id',
         'todos.name',
@@ -217,12 +233,23 @@ export default class TodoController {
         'todos.bee_id',
         'todos.edit_id',
         'todos.user_id',
+        'todos.apiary_id',
         'todos.created_at',
         'todos.updated_at',
+        sql<{ name: string; modus: boolean } | null>`
+          CASE 
+            WHEN apiaries.id IS NOT NULL THEN JSON_OBJECT('name', apiaries.name, 'modus', apiaries.modus)
+            ELSE NULL
+          END
+        `.as('apiary'),
       ])
       .$call(qb => withCreatorAndEditor(qb, { creatorColumn: 'todos.bee_id', editorColumn: 'todos.edit_id' }))
       .where('todos.user_id', '=', req.session.user.user_id)
       .where('todos.id', 'in', body.ids)
+      .where(eb => eb.or([
+        eb('todos.apiary_id', 'is', null),
+        eb('apiaries.deleted', '=', 0),
+      ]))
       .execute();
 
     return result;
