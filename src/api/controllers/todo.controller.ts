@@ -75,10 +75,10 @@ export default class TodoController {
       .where('todos.user_id', '=', req.session.user.user_id)
       .$if(done === true || done === false, qb => qb.where('todos.done', '=', done))
       .$if(!!apiary_id, qb => qb.where('todos.apiary_id', '=', Number(apiary_id)))
-      .$if(true, qb => qb.where(eb => eb.or([
+      .where(eb => eb.or([
         eb('todos.apiary_id', 'is', null),
         eb('apiaries.deleted', '=', 0),
-      ])))
+      ]))
       .$if(parsedFilters.length > 0, (qb) => {
         let filterQuery = qb;
         for (const filter of parsedFilters) {
