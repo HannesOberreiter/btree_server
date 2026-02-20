@@ -104,6 +104,7 @@ export default class TodoController {
           eb.or([
             eb('todos.name', 'like', `%${search}%`),
             eb('todos.note', 'like', `%${search}%`),
+            eb('apiaries.name', 'like', `%${search}%`),
           ]),
         ),
       );
