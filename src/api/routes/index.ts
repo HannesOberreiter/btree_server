@@ -12,6 +12,7 @@ import v1Feed from './v1/feed.route.js';
 import v1FieldSetting from './v1/field_setting.route.js';
 import v1Harvest from './v1/harvest.route.js';
 import v1Hive from './v1/hive.route.js';
+import v1Llm from './v1/llm.route.js';
 import v1Movedate from './v1/movedate.route.js';
 import v1Option from './v1/option.route.js';
 import v1Public from './v1/public.route.js';
@@ -89,6 +90,10 @@ export default function routes(app: FastifyInstance, _options: any, done: any) {
 
   app.register(v1Hive, {
     prefix: '/v1/hive',
+  });
+
+  app.register(v1Llm, {
+    prefix: '/v1/llm',
   });
 
   app.register(v1Queen, {

@@ -1,4 +1,4 @@
-export const up = function (knex) {
+export function up(knex) {
   return knex.schema.alterTable('queens', (t) => {
     t.integer('mother_id').unsigned().nullable();
     t.foreign('mother_id')
@@ -6,10 +6,10 @@ export const up = function (knex) {
       .onDelete('SET NULL')
       .onUpdate('CASCADE');
   });
-};
+}
 
-export const down = function (knex) {
+export function down(knex) {
   return knex.schema.alterTable('queens', (t) => {
     t.dropForeign('mother_id');
   });
-};
+}

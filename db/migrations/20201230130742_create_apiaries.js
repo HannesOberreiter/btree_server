@@ -1,4 +1,4 @@
-export const up = function (knex) {
+export function up(knex) {
   return knex.schema.createTable('apiaries', (t) => {
     t.increments('id').primary().unsigned();
     t.string('name', 45).index();
@@ -35,13 +35,13 @@ export const up = function (knex) {
       .onDelete('SET NULL')
       .onUpdate('CASCADE');
   });
-};
+}
 
-export const down = function (knex) {
+export function down(knex) {
   knex.schema.alterTable('apiaries', (t) => {
     t.dropForeign('bee_id');
     t.dropForeign('edit_id');
     t.dropForeign('user_id');
   });
   return knex.schema.dropTable('apiaries');
-};
+}

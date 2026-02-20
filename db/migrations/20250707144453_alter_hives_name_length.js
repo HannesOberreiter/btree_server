@@ -2,18 +2,18 @@
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
-export const up = function(knex) {
-  return knex.schema.alterTable('hives', function(table) {
+export function up(knex) {
+  return knex.schema.alterTable('hives', (table) => {
     table.string('name', 36).alter();
   });
-};
+}
 
 /**
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
-export const down = function(knex) {
-  return knex.schema.alterTable('hives', function(table) {
+export function down(knex) {
+  return knex.schema.alterTable('hives', (table) => {
     table.string('name', 24).alter();
   });
-};
+}

@@ -2,7 +2,7 @@
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
-export const up = function (knex) {
+export function up(knex) {
   return knex.schema.alterTable('rearings', (t) => {
     t.timestamp('created_at').nullable().defaultTo(knex.fn.now());
     t.timestamp('updated_at').nullable().defaultTo(knex.fn.now());
@@ -18,15 +18,15 @@ export const up = function (knex) {
       .onDelete('SET NULL')
       .onUpdate('CASCADE');
   });
-};
+}
 
 /**
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
-export const down = function (knex) {
+export function down(knex) {
   return knex.schema.alterTable('rearings', (t) => {
     t.dropForeign('bee_id');
     t.dropForeign('edit_id');
   });
-};
+}

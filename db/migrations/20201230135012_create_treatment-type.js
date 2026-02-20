@@ -1,4 +1,4 @@
-export const up = function (knex) {
+export function up(knex) {
   return knex.schema.createTable('treatment_types', (t) => {
     t.increments('id').primary().unsigned();
 
@@ -15,11 +15,11 @@ export const up = function (knex) {
     t.timestamp('created_at').nullable().defaultTo(knex.fn.now());
     t.timestamp('updated_at').nullable().defaultTo(knex.fn.now());
   });
-};
+}
 
-export const down = function (knex) {
+export function down(knex) {
   knex.schema.alterTable('treatment_types', (t) => {
     t.dropForeign('user_id');
   });
   return knex.schema.dropTable('treatment_types');
-};
+}
