@@ -2,10 +2,10 @@ import process from 'node:process';
 import { expect } from 'vitest';
 
 interface TestResponse {
-  statusCode: number;
-  body: any;
-  header: Record<string, string>;
-  headers: Record<string, string>;
+  statusCode: number
+  body: any
+  header: Record<string, string>
+  headers: Record<string, string>
 }
 
 export class TestAgent {

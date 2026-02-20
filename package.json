@@ -27,9 +27,9 @@
     "dev:build": "tsc --watch",
     "dev:knex": "ENVIRONMENT=development knex",
     "dev:knex:us": "ENVIRONMENT=development SERVER=us knex",
-    "test:e2e": "ENVIRONMENT=test npx mocha ./test/e2e/00-api.e2e.test.cjs  --R spec --ui bdd --env test --timeout 5000",
-    "test:watch": "ENVIRONMENT=test npx mocha ./test/e2e/00-api.e2e.test.cjs  --watch dist test --env test",
-    "ci:e2e": "ENVIRONMENT=ci npx mocha ./test/e2e/00-api.e2e.test.cjs --timeout 5000",
+    "test:e2e": "ENVIRONMENT=test npx vitest run",
+    "test:watch": "ENVIRONMENT=test npx vitest",
+    "ci:e2e": "ENVIRONMENT=ci npx vitest run",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },
@@ -87,11 +87,8 @@
     "@types/node-schedule": "^2.1.0",
     "@types/nodemailer": "^6.4.7",
     "@types/proj4": "^2.5.2",
-    "chai": "^4.4.1",
     "eslint": "^9.15.0",
-    "mocha": "^10.2.0",
     "nodemon": "^3.0.0",
-    "supertest": "^7.0.0",
     "typescript": "^5.0.4",
     "vitest": "^4.0.18"
   }

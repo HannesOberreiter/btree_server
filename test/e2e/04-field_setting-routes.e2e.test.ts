@@ -1,5 +1,6 @@
+import type { TestAgent } from '../../utils/index.js';
 import { beforeAll, describe, expect, it } from 'vitest';
-import { createAgent, doRequest, doQueryRequest, type TestAgent } from '../../utils/index.js';
+import { createAgent, doQueryRequest, doRequest } from '../../utils/index.js';
 
 const settings = JSON.stringify({
   checkup: {

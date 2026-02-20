@@ -1,5 +1,6 @@
+import type { TestAgent } from '../../utils/index.js';
 import { beforeAll, describe, expect, it } from 'vitest';
-import { createAgent, doRequest, expectations, type TestAgent } from '../../utils/index.js';
+import { createAgent, doRequest, expectations } from '../../utils/index.js';
 
 const testInsert = {
   type_id: 1,

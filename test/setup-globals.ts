@@ -1,12 +1,12 @@
 declare global {
   // eslint-disable-next-line vars-on-top, no-var
   var demoUser: {
-    email: string;
-    password: string;
-    name: string;
-    lang: string;
-    newsletter: boolean;
-    source: string;
+    email: string
+    password: string
+    name: string
+    lang: string
+    newsletter: boolean
+    source: string
   };
 }
 

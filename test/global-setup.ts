@@ -1,11 +1,11 @@
 import process from 'node:process';
 
+import dotenv from 'dotenv';
+
 process.env.ENVIRONMENT = process.env.ENVIRONMENT || 'ci';
 process.env.NODE_ENV = process.env.ENVIRONMENT;
 process.env.ORIGIN = 'http://localhost:8002';
 process.env.CONTENT_TYPE = 'application/json';
-
-import dotenv from 'dotenv';
 
 dotenv.config({
   path: `./env/${process.env.ENVIRONMENT}.env`,
