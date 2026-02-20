@@ -1,5 +1,5 @@
 // JWT refresh Token Table, user-agent as device identifier
-export const up = function (knex) {
+export function up(knex) {
   return knex.schema.createTable('refresh_tokens', (t) => {
     t.increments('id').primary().unsigned();
 
@@ -19,12 +19,12 @@ export const up = function (knex) {
       .onDelete('CASCADE')
       .onUpdate('CASCADE');
   });
-};
+}
 
-export const down = function (knex) {
+export function down(knex) {
   knex.schema.alterTable('refresh_tokens', (t) => {
     t.dropForeign('user_id');
     t.dropForeign('bee_id');
   });
   return knex.schema.dropTable('refresh_tokens');
-};
+}

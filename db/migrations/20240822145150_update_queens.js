@@ -2,7 +2,7 @@
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
-export const up = function (knex) {
+export function up(knex) {
   return knex
     .transaction()
     .then(async (trx) => {
@@ -39,6 +39,6 @@ export const up = function (knex) {
     .catch((error) => {
       console.error(error);
     });
-};
+}
 
-export const down = function () {};
+export function down() {}

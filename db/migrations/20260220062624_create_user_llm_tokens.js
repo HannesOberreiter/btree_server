@@ -3,17 +3,18 @@
  * @returns { Promise<void> }
  */
 export function up(knex) {
-  return knex.schema.createTable('federated_credentials', (t) => {
+  return knex.schema.createTable('user_llm_tokens', (t) => {
     t.increments('id').primary().unsigned();
-    t.string('provider', 45).notNullable();
-    t.string('provider_id', 45).index();
-    t.string('mail', 100).notNullable();
     t.integer('bee_id').unsigned().nullable();
     t.foreign('bee_id')
       .references('bees.id')
-      .onDelete('SET NULL')
+      .onDelete('CASCADE')
       .onUpdate('CASCADE');
+    t.string('provider', 50).notNullable();
+    t.text('tokens').notNullable();
     t.timestamp('created_at').nullable().defaultTo(knex.fn.now());
+    t.timestamp('updated_at').nullable().defaultTo(knex.fn.now());
+    t.unique(['bee_id', 'provider']);
   });
 }
 
@@ -22,8 +23,5 @@ export function up(knex) {
  * @returns { Promise<void> }
  */
 export function down(knex) {
-  knex.schema.alterTable('federated_credentials', (t) => {
-    t.dropForeign('bee_id');
-  });
-  return knex.schema.dropTable('federated_credentials');
+  return knex.schema.dropTableIfExists('user_llm_tokens');
 }

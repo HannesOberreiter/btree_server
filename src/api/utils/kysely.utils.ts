@@ -114,7 +114,7 @@ export function withCreatorAndEditor<TB extends keyof DB & string, O>(
     creator: { id: number, email: string, username: string } | null
     editor: { id: number, email: string, username: string } | null
   }
-  > {
+> {
   return query
     // @ts-expect-error - Dynamic column reference requires runtime validation
     .leftJoin('bees as creator', 'creator.id', sql.ref(options.creatorColumn))
@@ -150,7 +150,7 @@ export function withApiary<TB extends keyof DB & string, O>(
   O & {
     apiary: { name: string, modus: boolean } | null
   }
-  > {
+> {
   return query
     // @ts-expect-error - Dynamic column reference requires runtime validation
     .leftJoin('apiaries', 'apiaries.id', sql.ref(options.apiaryColumn))

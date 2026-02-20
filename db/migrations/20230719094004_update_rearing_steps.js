@@ -2,7 +2,7 @@
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
-export const up = function (knex) {
+export function up(knex) {
   const query = knex('rearing_steps').select('id', 'detail_id');
   return query.then(async (rows) => {
     await rows.forEach(async (row) => {
@@ -16,6 +16,6 @@ export const up = function (knex) {
         .where('id', row.id);
     });
   });
-};
+}
 
-export const down = function () {};
+export function down() {}

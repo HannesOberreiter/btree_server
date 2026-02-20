@@ -1,7 +1,6 @@
 import type { FastifyInstance } from 'fastify';
 import type { Server as HttpServer } from 'node:http';
 import type { Server as HttpsServer } from 'node:https';
-import process from 'node:process';
 
 import { ENVIRONMENT } from '../config/constants.config.js';
 import { env, isContainer, port } from '../config/environment.config.js';

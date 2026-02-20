@@ -2,7 +2,7 @@
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
-export const up = function (knex) {
+export function up(knex) {
   return knex.schema
     .alterTable('bees', (t) => {
       t.dropColumn('format');
@@ -12,13 +12,13 @@ export const up = function (knex) {
         .defaultTo('YYYY-MM-DD')
         .comment('User Date Format');
     });
-};
+}
 
 /**
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
-export const down = function (knex) {
+export function down(knex) {
   return knex.schema
     .alterTable('bees', (t) => {
       t.dropColumn('format');
@@ -26,4 +26,4 @@ export const down = function (knex) {
     .alterTable('bees', (t) => {
       t.boolean('format').defaultTo(1).comment('User Date Format');
     });
-};
+}

@@ -2,7 +2,7 @@
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
-export const up = function (knex) {
+export function up(knex) {
   return knex.schema
     .alterTable('observations', (t) => {
       t.dateTime('observed_at').alter();
@@ -10,13 +10,13 @@ export const up = function (knex) {
     .alterTable('observations', (t) => {
       t.index('observed_at');
     });
-};
+}
 
 /**
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
-export const down = function (knex) {
+export function down(knex) {
   return knex.schema
     .alterTable('observations', (t) => {
       t.dropIndex('observed_at');
@@ -24,4 +24,4 @@ export const down = function (knex) {
     .alterTable('observations', (t) => {
       t.timestamp('observed_at').alter();
     });
-};
+}

@@ -985,6 +985,15 @@ export interface WizbeeTokens {
   usedTokens: Generated<number | null>
 }
 
+export interface UserLlmTokens {
+  id: Generated<number>
+  bee_id: Generated<number | null>
+  provider: string
+  tokens: string
+  created_at: Generated<Date | null>
+  updated_at: Generated<Date | null>
+}
+
 export interface DB {
   apiaries: Apiaries
   bees: Bees
@@ -1046,5 +1055,6 @@ export interface DB {
   treatment_vets: TreatmentVets
   treatments: Treatments
   treatments_apiaries: TreatmentsApiaries
+  user_llm_tokens: UserLlmTokens
   wizbee_tokens: WizbeeTokens
 }
