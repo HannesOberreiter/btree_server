@@ -14,6 +14,7 @@ import { Movedate } from '../models/movedate.model.js';
 import { Treatment } from '../models/treatment.model.js';
 import { deleteHiveConnections } from '../utils/delete.util.js';
 import { limitHive } from '../utils/premium.util.js';
+import TodoController from './todo.controller.js';
 
 async function isDuplicateHiveName(
   user_id: number,
@@ -287,12 +288,30 @@ export default class HiveController {
         .whereBetween('date', [`${year}-01-01`, `${year}-12-31`])
         .orderBy('date', 'desc');
 
+      const todo = [];
+      if (apiary) {
+        const filters = JSON.stringify([{
+          date: {
+            from: `${year}-01-01`,
+            to: `${year}-12-31`,
+          },
+        }]);
+        const todosQuery = await TodoController.get({
+          ...req,
+          query: {
+            apiary_id: id,
+            filters,
+          },
+        }, _reply);
+        todo.push(...todosQuery.results.map(todo => ({ ...todo, kind: 'todo' })));
+      }
       return {
         harvest,
         feed,
         treatment,
         checkup,
         movedate,
+        todo,
       };
     });
     return { ...result };
