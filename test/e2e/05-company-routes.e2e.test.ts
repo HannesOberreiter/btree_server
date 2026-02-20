@@ -1,6 +1,6 @@
-import type { TestAgent } from '../../utils/index.js';
+import type { TestAgent } from '../utils.js';
 import { beforeAll, describe, expect, it } from 'vitest';
-import { createAgent, doQueryRequest, doRequest, expectations } from '../../utils/index.js';
+import { createAgent, createAuthenticatedAgent, doQueryRequest, doRequest, expectations } from '../utils.js';
 
 const patchCompanyName = 'newName';
 const newCompanyName = 'testCompany';
@@ -11,10 +11,7 @@ describe('company routes', () => {
   let accessToken: any;
 
   beforeAll(async () => {
-    agent = createAgent();
-    const res = await doRequest(agent, 'post', '/api/v1/auth/login', null, null, globalThis.demoUser);
-    expect(res.statusCode).toEqual(200);
-    expect(res.header, 'set-cookie', /connect.sid=.*; Path=\/; HttpOnly/);
+    agent = await createAuthenticatedAgent();
   });
 
   describe('/api/v1/company/apikey', () => {
@@ -61,7 +58,7 @@ describe('company routes', () => {
       expect(res2.statusCode).toEqual(409);
       const res3 = await doRequest(agent, 'delete', route, newCompanyId, accessToken, {});
       expect(res3.statusCode).toEqual(200);
-      expect(res3.body.result, 1);
+      expect(res3.body.result).toBe(1);
       expect(res3.body.data).toBeTypeOf('object');
     });
   });

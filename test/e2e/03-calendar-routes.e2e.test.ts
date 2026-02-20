@@ -1,16 +1,13 @@
-import type { TestAgent } from '../../utils/index.js';
+import type { TestAgent } from '../utils.js';
 import { beforeAll, describe, expect, it } from 'vitest';
-import { createAgent, doQueryRequest, doRequest, expectations } from '../../utils/index.js';
+import { createAgent, createAuthenticatedAgent, doQueryRequest } from '../utils.js';
 
 describe('calendar routes', () => {
   const route = '/api/v1/calendar';
   let agent: TestAgent;
 
   beforeAll(async () => {
-    agent = createAgent();
-    const res = await doRequest(agent, 'post', '/api/v1/auth/login', null, null, globalThis.demoUser);
-    expect(res.statusCode).toEqual(200);
-    expect(res.header, 'set-cookie', /connect.sid=.*; Path=\/; HttpOnly/);
+    agent = await createAuthenticatedAgent();
   });
 
   describe('/api/v1/calendar/<task>', () => {
@@ -62,3 +59,21 @@ describe('calendar routes', () => {
     });
   });
 });
+
+function expectations(
+  res: any,
+  field: string,
+  _err: string,
+): void {
+  expect(res.body.statusCode).toEqual(400);
+  if (res.body.issue) {
+    expect(res.body.issues).toBeInstanceOf(Array);
+    expect(res.body.issues.length).toBeGreaterThan(0);
+    expect(
+      res.body.issues.filter((error: any) => error.path.includes(field)).length,
+    ).toBeGreaterThanOrEqual(1);
+  }
+  if (res.body.cause) {
+    expect(res.body.cause.type).toBe('ModelValidation');
+  }
+}

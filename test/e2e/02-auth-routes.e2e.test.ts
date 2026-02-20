@@ -1,6 +1,6 @@
-import type { TestAgent } from '../../utils/index.js';
+import type { TestAgent } from '../utils.js';
 import { beforeAll, describe, expect, it } from 'vitest';
-import { createAgent, doQueryRequest, doRequest, expectations } from '../../utils/index.js';
+import { createAgent, demoUser, doQueryRequest, doRequest, expectations } from '../utils.js';
 
 const inactiveUser = {
   email: `inactive${Date.now()}@btree.at`,
@@ -17,14 +17,14 @@ describe('authentification routes', () => {
 
   beforeAll(async () => {
     agent = createAgent();
-    const res = await doRequest(agent, 'post', '/api/v1/auth/register', null, null, globalThis.demoUser);
+    const res = await doRequest(agent, 'post', '/api/v1/auth/register', null, null, demoUser);
     expect(res.statusCode).toEqual(200);
-    expect(res.body.email, globalThis.demoUser.email);
+    expect(res.body.email, demoUser.email);
     expect(res.body.activate).toBeTypeOf('string');
     confirmToken = res.body.activate;
     const res2 = await doRequest(agent, 'post', '/api/v1/auth/register', null, null, inactiveUser);
     expect(res2.statusCode).toEqual(200);
-    expect(res2.body.email, globalThis.demoUser.email);
+    expect(res2.body.email, demoUser.email);
     expect(res2.body.activate).toBeTypeOf('string');
   });
 
@@ -44,7 +44,7 @@ describe('authentification routes', () => {
     it('200 - confirm email', async () => {
       const res = await doRequest(agent, 'patch', '/api/v1/auth/confirm', null, null, { confirm: confirmToken });
       expect(res.statusCode).toEqual(200);
-      expect(res.body.email, globalThis.demoUser.email);
+      expect(res.body.email, demoUser.email);
     });
   });
 
@@ -67,7 +67,7 @@ describe('authentification routes', () => {
     });
 
     it('403 - wrong password', async () => {
-      const res = await doRequest(agent, 'post', route, null, null, { email: globalThis.demoUser.email, password: 'testseet22' });
+      const res = await doRequest(agent, 'post', route, null, null, { email: demoUser.email, password: 'testseet22' });
       expect(res.statusCode).toEqual(403);
     });
 
@@ -77,19 +77,20 @@ describe('authentification routes', () => {
     });
 
     it('200 - login', async () => {
-      const res = await doRequest(agent, 'post', route, null, null, globalThis.demoUser);
+      const res = await doRequest(agent, 'post', route, null, null, demoUser);
       expect(res.statusCode).toEqual(200);
       expect(res.body.data).toBeTypeOf('object');
-      expect(res.header, 'set-cookie', /connect.sid=.*; Path=\/; HttpOnly/);
+      expect(res.header).toHaveProperty('set-cookie');
+      expect(res.header['set-cookie'][0]).toMatch(/_auth-btree-session=.*; Path=\/.*HttpOnly/);
     });
   });
 
   describe('/api/v1/auth/unsubscribe', () => {
     const route = '/api/v1/auth/unsubscribe';
     it('200 - success', async () => {
-      const res = await doRequest(agent, 'patch', route, null, null, { email: globalThis.demoUser.email });
+      const res = await doRequest(agent, 'patch', route, null, null, { email: demoUser.email });
       expect(res.statusCode).toEqual(200);
-      expect(res.body.email, globalThis.demoUser.email);
+      expect(res.body.email, demoUser.email);
     });
   });
 
@@ -126,7 +127,7 @@ describe('authentification routes', () => {
     });
 
     it('200 - discourse payload', async () => {
-      const loginRes = await doRequest(agent, 'post', '/api/v1/auth/login', null, null, globalThis.demoUser);
+      const loginRes = await doRequest(agent, 'post', '/api/v1/auth/login', null, null, demoUser);
       expect(loginRes.statusCode).toEqual(200);
       expect(loginRes.body.data).toBeTypeOf('object');
       const res = await doQueryRequest(agent, `${route}?${sso}`, null, null, null);
@@ -139,10 +140,10 @@ describe('authentification routes', () => {
   describe('/api/v1/user/', () => {
     const route = '/api/v1/user/';
     it('200 - checkpassword', async () => {
-      const loginRes = await doRequest(agent, 'post', '/api/v1/auth/login', null, null, globalThis.demoUser);
+      const loginRes = await doRequest(agent, 'post', '/api/v1/auth/login', null, null, demoUser);
       expect(loginRes.statusCode).toEqual(200);
       expect(loginRes.body.data).toBeTypeOf('object');
-      const res = await doRequest(agent, 'post', `${route}checkpassword`, null, null, globalThis.demoUser);
+      const res = await doRequest(agent, 'post', `${route}checkpassword`, null, null, demoUser);
       expect(res.statusCode).toEqual(200);
       expect(res.body).toBe(true);
     });

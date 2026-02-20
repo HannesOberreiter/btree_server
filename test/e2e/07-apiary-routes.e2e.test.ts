@@ -1,6 +1,6 @@
-import type { TestAgent } from '../../utils/index.js';
+import type { TestAgent } from '../utils.js';
 import { beforeAll, describe, expect, it } from 'vitest';
-import { createAgent, doQueryRequest, doRequest, expectations } from '../../utils/index.js';
+import { createAgent, createAuthenticatedAgent, doQueryRequest, doRequest, expectations } from '../utils.js';
 
 const testInsert = {
   name: `TestApiary${new Date().toISOString()}`,
@@ -13,10 +13,7 @@ describe('apiary routes', () => {
   let insertId: any;
 
   beforeAll(async () => {
-    agent = createAgent();
-    const res = await doRequest(agent, 'post', '/api/v1/auth/login', null, null, globalThis.demoUser);
-    expect(res.statusCode).toEqual(200);
-    expect(res.header, 'set-cookie', /connect.sid=.*; Path=\/; HttpOnly/);
+    agent = await createAuthenticatedAgent();
     const res2 = await doRequest(agent, 'post', route, null, accessToken, testInsert);
     expect(res2.statusCode).toEqual(200);
     expect(res2.body).toHaveProperty('id');
@@ -35,7 +32,7 @@ describe('apiary routes', () => {
       expect(res.errors, 'JsonWebTokenError');
     });
     it('patch 401 - no header', async () => {
-      const res = await doRequest(createAgent(), 'patch', route, null, null, null);
+      const res = await doRequest(createAgent(), 'patch', route, null, null, { ids: [insertId], data: {} });
       expect(res.statusCode).toEqual(401);
       expect(res.errors, 'JsonWebTokenError');
     });

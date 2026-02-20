@@ -4,9 +4,19 @@ import { expect } from 'vitest';
 interface TestResponse {
   statusCode: number
   body: any
+  errors: any
   header: Record<string, string>
   headers: Record<string, string>
 }
+
+export const demoUser = {
+  email: 'test@btree.at',
+  password: 'test_btree',
+  name: 'Test Beekeeper',
+  lang: 'en',
+  newsletter: false,
+  source: '0',
+};
 
 export class TestAgent {
   private cookieStore = new Map<string, string>();
@@ -83,9 +93,19 @@ export class TestAgent {
 
     const headerMap = Object.fromEntries(response.headers.entries());
 
+    // Handle set-cookie headers specially (they need to be an array)
+    const getSetCookie = (response.headers as Headers & { getSetCookie?: () => string[] }).getSetCookie;
+    if (getSetCookie) {
+      const setCookies = getSetCookie.call(response.headers);
+      if (setCookies.length > 0) {
+        headerMap['set-cookie'] = setCookies as any;
+      }
+    }
+
     return {
       statusCode: response.status,
       body: responseBody,
+      errors: responseBody?.errors || responseBody || null,
       header: headerMap,
       headers: headerMap,
     };
@@ -94,6 +114,20 @@ export class TestAgent {
 
 export function createAgent(): TestAgent {
   return new TestAgent();
+}
+
+export async function createAuthenticatedAgent(): Promise<TestAgent> {
+  const agent = new TestAgent();
+  const res = await doRequest(agent, 'post', '/api/v1/auth/login', null, null, demoUser);
+  if (res.statusCode !== 200) {
+    console.error('Login failed:', {
+      statusCode: res.statusCode,
+      body: res.body,
+      errors: res.errors,
+    });
+  }
+  expect(res.statusCode).toEqual(200);
+  return agent;
 }
 
 export async function doRequest(

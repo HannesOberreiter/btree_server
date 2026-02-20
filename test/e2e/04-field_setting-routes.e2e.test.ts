@@ -1,6 +1,6 @@
-import type { TestAgent } from '../../utils/index.js';
+import type { TestAgent } from '../utils.js';
 import { beforeAll, describe, expect, it } from 'vitest';
-import { createAgent, doQueryRequest, doRequest } from '../../utils/index.js';
+import { createAgent, createAuthenticatedAgent, doQueryRequest, doRequest } from '../utils.js';
 
 const settings = JSON.stringify({
   checkup: {
@@ -23,10 +23,7 @@ describe('fieldsetting routes', () => {
   let accessToken: any;
 
   beforeAll(async () => {
-    agent = createAgent();
-    const res = await doRequest(agent, 'post', '/api/v1/auth/login', null, null, globalThis.demoUser);
-    expect(res.statusCode).toEqual(200);
-    expect(res.header, 'set-cookie', /connect.sid=.*; Path=\/; HttpOnly/);
+    agent = await createAuthenticatedAgent();
   });
 
   describe('/api/v1/field_setting', () => {

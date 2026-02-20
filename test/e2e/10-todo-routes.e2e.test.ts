@@ -1,6 +1,6 @@
-import type { TestAgent } from '../../utils/index.js';
+import type { TestAgent } from '../utils.js';
 import { beforeAll, describe, expect, it } from 'vitest';
-import { createAgent, doQueryRequest, doRequest, expectations } from '../../utils/index.js';
+import { createAgent, createAuthenticatedAgent, doQueryRequest, doRequest, expectations } from '../utils.js';
 
 const testInsert = {
   date: new Date().toISOString().slice(0, 10),
@@ -18,10 +18,7 @@ describe('todo routes', () => {
   let insertId: any;
 
   beforeAll(async () => {
-    agent = createAgent();
-    const res = await doRequest(agent, 'post', '/api/v1/auth/login', null, null, globalThis.demoUser);
-    expect(res.statusCode).toEqual(200);
-    expect(res.header, 'set-cookie', /connect.sid=.*; Path=\/; HttpOnly/);
+    agent = await createAuthenticatedAgent();
     const res2 = await doRequest(agent, 'post', route, null, accessToken, testInsert);
     expect(res2.statusCode).toEqual(200);
     expect(res2.body).toBeInstanceOf(Array);

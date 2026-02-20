@@ -7,6 +7,8 @@ process.env.NODE_ENV = process.env.ENVIRONMENT;
 process.env.ORIGIN = 'http://localhost:8002';
 process.env.CONTENT_TYPE = 'application/json';
 
+console.log(`Running tests with ENVIRONMENT=${process.env.ENVIRONMENT}`);
+
 dotenv.config({
   path: `./env/${process.env.ENVIRONMENT}.env`,
 });
@@ -50,8 +52,12 @@ export async function setup() {
 export async function teardown() {
   try {
     console.log('Shutting down server ...');
-    await gracefulShutdown();
-    await knexInstance.destroy();
+    if (gracefulShutdown) {
+      await gracefulShutdown();
+    }
+    if (knexInstance) {
+      await knexInstance.destroy();
+    }
     console.log('Server shut down');
   }
   catch (e) {

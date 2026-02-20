@@ -1,6 +1,6 @@
-import type { TestAgent } from '../../utils/index.js';
+import type { TestAgent } from '../utils.js';
 import { describe, expect, it } from 'vitest';
-import { createAgent, doRequest } from '../../utils/index.js';
+import { createAgent, doRequest } from '../utils.js';
 
 describe('routes resolving', () => {
   const agent: TestAgent = createAgent();
