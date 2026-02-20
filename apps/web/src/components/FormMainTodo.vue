@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { PropType } from 'vue';
-import type { FormTodo } from '../types';
+import type { FormTodo, TodoResponse } from '../types';
 import useVuelidate from '@vuelidate/core';
 import dayjs from 'dayjs';
 import { flatten, map, merge } from 'lodash-es';
@@ -10,6 +10,7 @@ import { useNotification } from '../composables/useNotification';
 import BtnBase from './BtnBase.vue';
 import FormButtons from './FormButtons.vue';
 import FormDropdownEdit from './FormDropdownEdit.vue';
+import FormDropdownOption from './FormDropdownOption.vue';
 import FormInputCheckbox from './FormInputCheckbox.vue';
 import FormInputDate from './FormInputDate.vue';
 import FormInputNote from './FormInputNote.vue';
@@ -59,6 +60,7 @@ const stateDefault = {
 	done: false,
 	interval: 0,
 	repeat: 0,
+	apiary: null,
 };
 
 const state = ref<FormTodo>({
@@ -69,8 +71,8 @@ async function getEdit(id: number[] | null) {
 	if (!id)
 		return;
 	return await api.post('/v1/todo/batchGet', { ids: id }).then(
-		(response: any) => {
-			const editIds = map(response, (row: any) => [
+		(response: TodoResponse[]) => {
+			const editIds = map(response, (row: TodoResponse) => [
 				{ value: row.id, label: `ID: ${row.id} / (${row.name})` },
 			]);
 			editOptions.value = flatten(editIds);
@@ -165,6 +167,15 @@ function repeatTask() {
 			v-model="state.url"
 			:values="values"
 			:reset="reset"
+		/>
+		<FormDropdownOption
+			v-model="state.apiary"
+			label="apiary"
+			table="apiary"
+			table-id="apiary_id"
+			:values="values"
+			:reset="reset"
+			allow-empty="placeholder"
 		/>
 		<FormInputNote
 			v-model="state.note"

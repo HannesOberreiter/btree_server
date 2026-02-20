@@ -1,5 +1,5 @@
 <script lang="ts">
-import type { Filter, FilterState } from '../types';
+import type { Filter, FilterApiary, FilterState } from '../types';
 import { orderBy } from 'lodash';
 import { computed, ref, toRefs, watch } from 'vue';
 import BtnBase from './BtnBase.vue';
@@ -25,7 +25,7 @@ const props = defineProps({
 		required: true,
 	},
 	filter: {
-		type: String as PropType<Filter>,
+		type: String as PropType<Filter | FilterApiary>,
 		required: true,
 	},
 	filterState: {
@@ -40,7 +40,7 @@ const props = defineProps({
 	},
 });
 
-function buildList(data: any, filter: Filter, filterState: FilterState) {
+function buildList(data: any, filter: Filter | FilterApiary, filterState: FilterState) {
 	let array: any[]
 		= filter !== 'filterEmpty'
 			? data[filter]
