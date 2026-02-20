@@ -369,9 +369,9 @@ describe('todo routes', () => {
       doQueryRequest(
         agent,
         route,
-        { apiary_id: 1 },
-        accessToken,
         null,
+        accessToken,
+        { apiary_id: 1 },
         (_err, res) => {
           expect(res.statusCode).to.eqls(200);
           expect(res.body.results).to.be.a('Array');

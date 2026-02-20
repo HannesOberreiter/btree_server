@@ -211,7 +211,7 @@ export default class TodoController {
 
     const db = KyselyServer.getInstance().db;
 
-    const result = db.selectFrom('todos')
+    const result = await db.selectFrom('todos')
       .select([
         'todos.id',
         'todos.name',

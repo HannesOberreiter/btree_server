@@ -157,11 +157,11 @@ export function withApiary<TB extends keyof DB & string, O>(
     .select([
       sql<{ name: string, modus: boolean } | null>`
         CASE 
-          WHEN apiaries.id IS NOT NULL THEN JSON_OBJECT('name', apiaries.name, 'modus', apiaries.modus)
+          WHEN apiaries.id IS NOT NULL THEN JSON_OBJECT('name', apiaries.name, 'modus', IF(apiaries.modus = 1, TRUE, FALSE))
           ELSE NULL
         END
       `.as('apiary'),
     ])
     // @ts-expect-error - Dynamic SQL expression for filtering soft-deleted apiaries
-    .where(sql`${sql.ref(options.apiaryColumn)} IS NULL OR apiaries.deleted = 0`) as any;
+    .where(sql`(${sql.ref(options.apiaryColumn)} IS NULL OR apiaries.deleted = 0)`) as any;
 }
