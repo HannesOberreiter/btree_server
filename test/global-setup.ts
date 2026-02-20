@@ -15,7 +15,7 @@ let gracefulShutdown: () => Promise<void>;
 let knexInstance: any;
 
 export async function setup() {
-  const { knexConfig } = await import('./dist/config/environment.config.js');
+  const { knexConfig } = await import(`${process.cwd()}/dist/config/environment.config.js`);
   const { default: knex } = await import('knex');
   knexInstance = knex(knexConfig);
 
@@ -43,7 +43,7 @@ export async function setup() {
     await knexInstance.raw('SET FOREIGN_KEY_CHECKS = 1;');
   }
 
-  const app = await import('./dist/app.bootstrap.js');
+  const app = await import(`${process.cwd()}/dist/app.bootstrap.js`);
   gracefulShutdown = app.gracefulShutdown;
 }
 

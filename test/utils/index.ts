@@ -23,7 +23,8 @@ export class TestAgent {
   }
 
   private storeCookies(headers: Headers) {
-    const setCookies: string[] = (headers as any).getSetCookie?.() ?? [];
+    const getSetCookie = (headers as Headers & { getSetCookie?: () => string[] }).getSetCookie;
+    const setCookies: string[] = getSetCookie ? getSetCookie.call(headers) : [];
     for (const cookie of setCookies) {
       const [nameVal] = cookie.split(';');
       const eqIdx = nameVal.indexOf('=');
