@@ -92,6 +92,7 @@
     "mocha": "^10.2.0",
     "nodemon": "^3.0.0",
     "supertest": "^7.0.0",
-    "typescript": "^5.0.4"
+    "typescript": "^5.0.4",
+    "vitest": "^4.0.18"
   }
 }
