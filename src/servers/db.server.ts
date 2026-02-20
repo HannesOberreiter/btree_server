@@ -22,7 +22,7 @@ export class DatabaseServer {
   }
 
   private constructor() {
-    this.knex = Knex.knex(knexConfig);
+    this.knex = Knex(knexConfig);
   }
 
   start(): void {

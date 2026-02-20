@@ -5,6 +5,7 @@ import type {
 } from 'pino';
 import { stdout } from 'node:process';
 import {
+  multistream,
   pino,
 } from 'pino';
 
@@ -92,7 +93,7 @@ export class Logger {
           },
         },
       },
-      pino.multistream(streams, {
+      multistream(streams, {
         dedupe: false,
       }),
     );

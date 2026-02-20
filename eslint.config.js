@@ -8,7 +8,7 @@ export default antfu({
     'no-console': 'off',
   },
 }, {
-  files: ['test/**/*.cjs'],
+  files: ['test/**/*.ts'],
   rules: {
     'no-restricted-globals': 'off',
     'no-undef': 'off',
