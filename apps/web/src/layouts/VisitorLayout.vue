@@ -25,7 +25,7 @@ const privacyPolicyUrl = computed(() =>
 		: 'https://www.btree.at/data-privacy/');
 const imprintUrl = computed(() =>
 	locale.value === 'de'
-		? 'https://www.btree.at/de/imprint/'
+		? 'https://www.btree.at/de/impressum/'
 		: 'https://www.btree.at/imprint/');
 
 // https://stackoverflow.com/a/16427747/5316675
