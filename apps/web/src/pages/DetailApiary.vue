@@ -1,6 +1,6 @@
 <script lang="ts">
-import type { Filter, FilterState } from '../types';
-import { KINDS, STATUS } from '../constants';
+import type { FilterApiary, FilterState } from '../types';
+import { KINDS_APIARY, STATUS } from '../constants';
 import { generateArrayOfYears } from '../helpers';
 </script>
 
@@ -32,7 +32,7 @@ const tab = ref('hive');
 const year = ref(new Date().getFullYear());
 const yearGTS = ref<number[]>([new Date().getFullYear()]);
 const yearsGTS = generateArrayOfYears(new Date().getFullYear() - 5);
-const filter = ref<Filter>('filterEmpty');
+const filter = ref<FilterApiary>('filterEmpty');
 const filterState = ref<FilterState>(STATUS[0]);
 const opened = ref(false);
 const refetchCounter = ref(0);
@@ -152,7 +152,7 @@ useMeta(() => {
 									<div class="col-6">
 										<q-select
 											v-model="filter"
-											:options="KINDS"
+											:options="KINDS_APIARY"
 											:label="`${$t('filter')} ${$t('task')}`"
 											:option-label="(label) => $t(label)"
 										/>

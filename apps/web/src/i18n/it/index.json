@@ -1,5 +1,6 @@
 {
   "Dropbox": "Dropbox",
+  "WizBee": "WizBee",
   "abo": "Abò | \nAbs",
   "account": "Account",
   "accountActivated": "Il tuo account è stato attivato con successo!",
@@ -47,6 +48,7 @@
   "cancel": "Annulla",
   "cappedBrood": "Covata incappucciata",
   "capped_brood": "@:cappedBrood",
+  "category": "Categoria",
   "change": "modificare",
   "changeStatus": "Cambiare stato",
   "changelog": "Registro delle modifiche",
@@ -79,7 +81,7 @@
   "copiedToClipboard": "Copiato negli appunti.",
   "copy": "copia",
   "count": "Contare",
-  "countTokensLeft": "Gettoni giornalieri rimasti",
+  "countTokensLeft": "Gettoni mensili rimasti",
   "coupon": "Buono",
   "created": "Creato",
   "credentials": "Credenziali",
@@ -153,7 +155,7 @@
     "notFound": "Percorso o server non trovato! (Disconnesso?)",
     "permission": "Impossibile impostare le autorizzazioni.",
     "premium": "Funzionalità solo premium o limite utente di base raggiunto!",
-    "tokenLimit": "Limite giornaliero di token raggiunto, riprova domani.",
+    "tokenLimit": "Limite token mensile raggiunto, riprova il mese prossimo.",
     "tooManyRequest": "Troppe richieste!",
     "unknown": "Si è verificato un errore!",
     "validation": "Errore di convalida!"
@@ -163,8 +165,10 @@
   "event": "Evento | \nEventi",
   "example": "Esempio",
   "exampleQuestion": {
+    "count": "Quante colonie e apiari ho?",
     "diffDiseases": "Come posso distinguere tra AFB e EFB?",
     "eggs": "Quante uova depone un'ape regina?",
+    "harvest": "Qual è stato il mio raccolto l'anno scorso?",
     "offline": "b.tree funziona offline?",
     "option": "Come posso aggiungere un tipo di alimentazione personalizzato?",
     "premium": "Quanto costa il premio?"
@@ -265,7 +269,7 @@
     "table-todo": "Nella tabella ToDo puoi gestire o esportare i tuoi ToDo. \nCome standard vengono mostrate solo le attività aperte. \nPuoi cambiarlo facendo clic sul simbolo dell'occhio. \nNon puoi ripristinare ToDo's dopo l'eliminazione!",
     "table-treatment": "Nella tabella dei trattamenti puoi gestire o esportare il tuo trattamento. \nL'attività eliminata può essere ripristinata fino a 30 giorni dopo l'eliminazione. \nIl campo di ricerca sta cercando le colonne hive, tipo e nomi di malattie.",
     "table-virgin": "Come il tavolo delle regine, ma su questo tavolo puoi trovare solo regine senza alveare. \nQuesto è pensato per essere utilizzato come parcheggio per le regine nelle tue unità di accoppiamento, che possono quindi essere rapidamente aggiunte alle tue colonie o contrassegnate come vendute (puoi abusare di un valore a discesa, ad esempio linea di riproduzione o utilizzare il campo delle note) e impostare inattivo.",
-    "wizbee": "Questo strumento utilizza l'API chatGPT per rispondere a domande relative all'apicoltura da varie fonti referenziate e disponibili al pubblico. \nLa tua domanda verrà inviata a OpenAI, che ha sede negli Stati Uniti, fai riferimento alla loro politica sulla privacy. \nLa risposta generata dovrebbe essere incrociata con i riferimenti, in quanto non sempre sono corretti. \nPer favore, non fidarti di loro al 100%."
+    "wizbee": "WizBee è un wrapper per un LLM (Large Language Model). Le tue domande e i tuoi dati vengono inviati al fornitore LLM (Mistral AI). Utilizzando questa funzione accetti che i tuoi dati vengano trasmessi ed elaborati dal fornitore LLM. Consulta la loro informativa sulla privacy."
   },
   "hint": "Suggerimento",
   "hintApiaryFirstMovedate": "Il valore mostrato è la prima migrazione di un alveare su questo apiario, che può essere visto come data di creazione.",
@@ -446,6 +450,7 @@
   "pedigree": "Pedigree",
   "pending": "In attesa di",
   "permission": "Autorizzazione",
+  "placeholder": "-",
   "position": "Posizione",
   "positionNote": "Posizione di posizionamento della colonia sull'apiario",
   "premium": "Premium",
@@ -541,6 +546,7 @@
   "rename": "Rinominare",
   "repeat": "Ripetere",
   "repeatText": "Volte in cui l'attività dovrebbe essere ripetuta",
+  "requests": "Richieste",
   "reset": "Ripristina",
   "resetConfirm": "Ripristina i dati del modulo?",
   "resetUser": {

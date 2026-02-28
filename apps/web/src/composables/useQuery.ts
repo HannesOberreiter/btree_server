@@ -1,5 +1,5 @@
 import type { ComputedRef, MaybeRef, Ref } from 'vue';
-import type { Option, Task } from '../types';
+import type { Option, Task, TodoPaginatedResponse } from '../types';
 import {
 	keepPreviousData,
 	QueryClient,
@@ -184,7 +184,7 @@ export function useTodosQuery({
 		},
 		enabled,
 		placeholderData: keepPreviousData,
-		select: response => response,
+		select: response => response as TodoPaginatedResponse,
 	});
 }
 

@@ -21,7 +21,6 @@ const env = existsSync('.env')
 			MATOMO_HOST: process.env.MATOMO_HOST,
 			MATOMO_SITE_ID: process.env.MATOMO_SITE_ID,
 			PAYPAL_CLIENT_ID: process.env.PAYPAL_CLIENT_ID,
-			BEEKEEPING_NEWS_BEARER: process.env.BEEKEEPING_NEWS_BEARER,
 		} as any);
 
 export default defineConfig((ctx) => {

@@ -1,157 +1,110 @@
 <script setup lang="ts">
-import type { Feedsource } from '../components/ChipBeeNews.vue';
-import { useFetch, useStorage, watchOnce } from '@vueuse/core';
+import { useFetch, useStorage } from '@vueuse/core';
 import { truncate } from 'lodash-es';
-import { stringify } from 'qs';
 import { computed, ref, watch } from 'vue';
-import ChipBeeNews from '../components/ChipBeeNews.vue';
+import { useI18n } from 'vue-i18n';
 import GlobalLoading from '../components/GlobalLoading.vue';
 import { useDateFormat } from '../composables/useDate';
 import { useKeyNews } from '../composables/useKey';
 
-interface FeedItem {
+interface NewsItem {
 	id: number;
-	attributes: {
-		title: string;
-		preview: string;
-		link: string;
-		creator: string;
-		sponsored: boolean;
-		published: string;
-		createdAt: string;
-		updatedAt: string;
-		feedsource: {
-			data: Feedsource;
-		};
-	};
+	title: string;
+	preview: string;
+	link: string;
+	creator: string;
+	published_at: string;
+	source: string;
+	source_key: string;
+	language: string;
 }
 
-interface Pagination {
-	pagination: {
-		page: number;
-		pageSize: number;
-		pageCount: number;
-		total: number;
-	};
+interface CategoryConfig {
+	slug: string;
+	name_en: string;
+	name_de: string;
 }
 
-interface APIResponse {
-	data: FeedItem[];
-	meta: Pagination;
+interface NewsConfig {
+	categories: CategoryConfig[];
+	languages: string[];
 }
 
-const endpoint = 'https://api.beekeeping-news.com';
-const bearer = process.env.BEEKEEPING_NEWS_BEARER;
+const endpoint = 'https://www.beekeeping-news.com/api';
+const pageSize = 30;
 const searchQuery = ref('');
 const page = ref(1);
 useKeyNews(page);
 const dateFormat = useDateFormat();
-const newsStorage = useStorage('bee-news', {
-	sourceIds: [],
-	langIds: [],
+const { locale } = useI18n();
+
+const newsStorage = useStorage('bee-news-v2', {
+	categories: [] as string[],
+	lang: '' as string,
 });
-const langOptions = ref([
-	{
-		value: '1',
-		label: 'English',
-	},
-	{
-		value: '3',
-		label: 'Deutsch',
-	},
-]);
-const sourceOptions = ref([]);
-const sourceParams = createParams('sources');
-const sourceParamsString = stringify(sourceParams.params, {
-	arrayFormat: 'indices',
-	encode: false,
-});
-const { data: sourceData } = useFetch(
-	`${endpoint}/api/${sourceParams.url}?${sourceParamsString}`,
-	{
-		beforeFetch: (url) => {
-			url.options.headers = {
-				Authorization: `Bearer ${bearer}`,
-			};
-		},
-	},
+
+const { data: configData } = useFetch<NewsConfig>(
+	`${endpoint}/config`,
 )
 	.get()
 	.json();
 
-watchOnce(sourceData, () => {
-	if (sourceData.value) {
-		sourceOptions.value = sourceData.value.data.map((item: any) => {
-			return { value: item.id, label: item.attributes.source };
-		});
-	}
+const langOptions = computed(() => {
+	if (!configData.value)
+		return [];
+	return configData.value.languages.map((lang: string) => ({
+		value: lang,
+		label: lang === 'en' ? 'English' : lang === 'de' ? 'Deutsch' : lang,
+	}));
+});
+
+const categoryOptions = computed(() => {
+	if (!configData.value)
+		return [];
+	return configData.value.categories.map((cat: CategoryConfig) => ({
+		value: cat.slug,
+		label: locale.value === 'de' ? cat.name_de : cat.name_en,
+	}));
 });
 
 const urlNews = computed(() => {
-	const params = {
-		filters: {
-			sponsored: false,
-			$and: [
-				{
-					$or: [
-						{
-							title: {
-								$containsi: searchQuery.value,
-							},
-						},
-						{
-							preview: {
-								$containsi: searchQuery.value,
-							},
-						},
-					],
-					feedsource: {
-						id: {
-							$in: newsStorage.value.sourceIds ?? [],
-						},
-						language: {
-							id: {
-								$in: newsStorage.value.langIds ?? [],
-							},
-						},
-					},
-				},
-			],
-		},
-		sort: ['createdAt:desc'],
-		populate: [
-			'feedsource',
-			'feedsource.categories',
-			'feedsource.categories.localizations',
-			'feedsource.language',
-			'feedsource.language.localizations',
-		],
-		pagination: {
-			page: page.value,
-			pageSize: 10,
-		},
-	};
-	return `${endpoint}/api/newsitems?${stringify(params, {
-		arrayFormat: 'indices',
-		encode: false,
-	})}`;
+	const params = new URLSearchParams();
+	if (newsStorage.value.lang)
+		params.set('lang', newsStorage.value.lang);
+	if (newsStorage.value.categories?.length) {
+		for (const cat of newsStorage.value.categories)
+			params.append('category', cat);
+	}
+	params.set('limit', String(pageSize));
+	params.set('offset', String((page.value - 1) * pageSize));
+	return `${endpoint}/news?${params.toString()}`;
 });
 
-const { isFetching, error, data } = useFetch<APIResponse>(urlNews, {
+const { isFetching, error, data } = useFetch<NewsItem[]>(urlNews, {
 	refetch: true,
-	beforeFetch: (url) => {
-		url.options.headers = {
-			Authorization: `Bearer ${bearer}`,
-		};
-	},
 })
 	.get()
 	.json();
 
-watch(data, () => {
-	if (data.value) {
-		page.value = data.value.meta.pagination.page;
-	}
+const filteredData = computed(() => {
+	if (!data.value)
+		return [];
+	if (!searchQuery.value)
+		return data.value;
+	const q = searchQuery.value.toLowerCase();
+	return data.value.filter(
+		(item: NewsItem) =>
+			item.title?.toLowerCase().includes(q)
+			|| item.preview?.toLowerCase().includes(q),
+	);
+});
+
+const hasMore = computed(() => {
+	return data.value && data.value.length >= pageSize;
+});
+
+watch([() => newsStorage.value.lang, () => newsStorage.value.categories], () => {
+	page.value = 1;
 });
 
 function openLink(link: string) {
@@ -167,37 +120,6 @@ function isToday(date: string) {
 
 function isLatestNews(date: string) {
 	return +new Date(date) > new Date().setDate(new Date().getDate() - 7);
-}
-
-function createParams(name: string) {
-	if (name === 'sources') {
-		return {
-			url: 'feedsources',
-			params: {
-				filters: {
-					enabled: true,
-				},
-				sort: ['source:asc'],
-				pagination: {
-					page: 1,
-					pageSize: 500,
-				},
-			},
-		};
-	}
-	else {
-		return {
-			url: name,
-			params: {
-				populate: ['localizations'],
-				sort: ['name:asc'],
-				pagination: {
-					page: 1,
-					pageSize: 500,
-				},
-			},
-		};
-	}
 }
 </script>
 
@@ -232,18 +154,18 @@ function createParams(name: string) {
 				</q-input>
 				<div class="row justify-between">
 					<q-select
-						v-model="newsStorage.sourceIds"
+						v-model="newsStorage.categories"
 						multiple
-						:options="sourceOptions"
+						:options="categoryOptions"
 						:clearable="true"
 						emit-value
 						map-options
 						style="width: 100%"
-						:label="$t('source')"
+						:label="$t('category')"
 					/>
 
 					<q-select
-						v-model="newsStorage.langIds"
+						v-model="newsStorage.lang"
 						:options="langOptions"
 						:clearable="true"
 						emit-value
@@ -255,60 +177,66 @@ function createParams(name: string) {
 				<div v-if="isFetching" class="text-center">
 					<GlobalLoading />
 				</div>
-				<div v-else-if="data">
-					<div v-for="item in data.data" :key="item.id">
+				<div v-else-if="filteredData.length > 0">
+					<div v-for="item in filteredData" :key="item.id">
 						<q-card flat bordered>
 							<q-card-section>
 								<div
 									class="text-h6 show-pointer"
-									@click="openLink(item.attributes.link)"
+									@click="openLink(item.link)"
 								>
-									<span v-if="isToday(item.attributes.createdAt)"> 🔥 </span>
+									<span v-if="isToday(item.published_at)"> 🔥 </span>
 									<span
-										v-else-if="isLatestNews(item.attributes.createdAt)"
+										v-else-if="isLatestNews(item.published_at)"
 										style="opacity: 0.5"
 									>
 										🔥
 									</span>
-									{{ item.attributes.title }}
+									{{ item.title }}
 								</div>
 								<div class="text-caption">
-									{{ item.attributes.feedsource.data.attributes.source }}
+									{{ item.source }}
 									<span class="text-weight-medium">|</span>
-									{{ dateFormat.displayFormat(item.attributes.createdAt) }}
+									{{ dateFormat.displayFormat(item.published_at) }}
 								</div>
 							</q-card-section>
-							<q-card-section v-if="item.attributes.preview">
+							<q-card-section v-if="item.preview">
 								<div class="text-subtitle2" style="line-break: loose">
-									{{ truncate(item.attributes.preview, { length: 500 }) }}
+									{{ truncate(item.preview, { length: 500 }) }}
 								</div>
 							</q-card-section>
 							<q-card-section>
 								<div class="row justify-between">
-									<ChipBeeNews
-										:data="item.attributes.feedsource.data"
-									/>
-
 									<q-btn
 										flat
 										color="primary"
 										:label="$t('readMore')"
-										@click="openLink(item.attributes.link)"
+										@click="openLink(item.link)"
 									/>
 								</div>
 							</q-card-section>
 						</q-card>
 					</div>
-					<div class="row justify-between q-pb-xl">
-						<div class="col-6">
-							<q-pagination
-								v-model="page"
-								:max="data.meta.pagination.pageCount"
-								input
+					<div class="row justify-between q-pb-xl q-pt-sm">
+						<div>
+							<q-btn
+								v-if="page > 1"
+								flat
+								color="primary"
+								icon="fas fa-chevron-left"
+								:label="$t('previous')"
+								@click="page--"
 							/>
 						</div>
-						<div class="col-6 text-right">
-							{{ $t('total') }}: {{ data.meta.pagination.total }}
+						<div>
+							<q-btn
+								v-if="hasMore"
+								flat
+								color="primary"
+								icon-right="fas fa-chevron-right"
+								:label="$t('next')"
+								@click="page++"
+							/>
 						</div>
 					</div>
 				</div>

@@ -10,6 +10,5 @@ declare namespace NodeJS {
 		MATOMO_HOST: string;
 		MATOMO_SITE_ID: number;
 		PAYPAL_CLIENT_ID: string;
-		BEEKEEPING_NEWS_BEARER: string;
 	}
 }

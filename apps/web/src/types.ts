@@ -1,7 +1,47 @@
-import type { KINDS, STATUS } from './constants';
+import type { KINDS, KINDS_APIARY, STATUS } from './constants';
+import { z } from 'zod';
+
+export const beeSchema = z.object({
+	id: z.number(),
+	email: z.string().nullable(),
+	username: z.string().nullable(),
+}).nullable();
+
+export type Bee = z.infer<typeof beeSchema>;
+
+export const todoResponseSchema = z.object({
+	id: z.number(),
+	name: z.string(),
+	date: z.string(), // Date as ISO string
+	note: z.string().nullable(),
+	url: z.string().nullable(),
+	done: z.boolean(),
+	bee_id: z.number().nullable(),
+	edit_id: z.number().nullable(),
+	user_id: z.number().nullable(),
+	apiary_id: z.number().nullable(),
+	created_at: z.string().nullable(), // Date as ISO string
+	updated_at: z.string().nullable(), // Date as ISO string
+	creator: beeSchema.optional(),
+	editor: beeSchema.optional(),
+	apiary: z.object({
+		name: z.string(),
+		modus: z.boolean(),
+	}).nullable().optional(),
+});
+
+export type TodoResponse = z.infer<typeof todoResponseSchema>;
+
+export const todoPaginatedResponseSchema = z.object({
+	results: z.array(todoResponseSchema),
+	total: z.number(),
+});
+
+export type TodoPaginatedResponse = z.infer<typeof todoPaginatedResponseSchema>;
 
 export type FilterState = (typeof STATUS)[number];
 export type Filter = (typeof KINDS)[number];
+export type FilterApiary = (typeof KINDS_APIARY)[number];
 export declare interface Company {
 	id: number;
 	name: string;
@@ -135,6 +175,7 @@ export declare interface FormTodo {
 	url: string;
 	interval: number;
 	repeat: number;
+	apiary: any;
 }
 
 export declare interface FormOption {
