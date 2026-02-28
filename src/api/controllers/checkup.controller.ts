@@ -2,8 +2,10 @@ import type { FastifyReply, FastifyRequest } from 'fastify';
 import dayjs from 'dayjs';
 
 import { map } from 'lodash-es';
+import { KyselyServer } from '../../servers/kysely.server.js';
 import { Checkup } from '../models/checkup.model.js';
 import { Hive } from '../models/hive.model.js';
+import { checkOwnership } from '../utils/kysely.utils.js';
 
 export default class CheckupController {
   static async get(req: FastifyRequest, _reply: FastifyReply) {
@@ -68,6 +70,25 @@ export default class CheckupController {
     const body = req.body as any;
     const ids = body.ids;
     const insert = { ...body.data };
+
+    if (insert.type_id) {
+      await checkOwnership(
+        KyselyServer.getInstance().db,
+        'checkup_types',
+        Number(insert.type_id),
+        req.session.user.user_id,
+      );
+    }
+
+    if (!insert.enddate && insert.date) {
+      insert.enddate = insert.date;
+    }
+
+    const isLlm = (req.session as any).llm === true;
+    if (isLlm) {
+      insert.ai_updated_at = new Date();
+    }
+
     const result = await Checkup.transaction(async (trx) => {
       return await Checkup.query(trx)
         .patch({ ...insert, edit_id: req.session.user.bee_id })
@@ -87,6 +108,27 @@ export default class CheckupController {
     delete insert.hive_ids;
     delete insert.interval;
     delete insert.repeat;
+
+    if (insert.type_id) {
+      await checkOwnership(
+        KyselyServer.getInstance().db,
+        'checkup_types',
+        Number(insert.type_id),
+        req.session.user.user_id,
+      );
+    }
+
+    if (!insert.enddate) {
+      insert.enddate = insert.date;
+    }
+    if (dayjs(insert.enddate).isBefore(dayjs(insert.date))) {
+      insert.enddate = insert.date;
+    }
+
+    const isLlm = (req.session as any).llm === true;
+    if (isLlm) {
+      insert.ai_created_at = new Date();
+    }
 
     const result = await Checkup.transaction(async (trx) => {
       const hives = await Hive.query(trx)
