@@ -1,5 +1,6 @@
 {
   "Dropbox": "Dropbox",
+  "WizBee": "WizBee",
   "abo": "Abo | Abos",
   "account": "Account",
   "accountActivated": "You account was successfully activated!",
@@ -45,6 +46,7 @@
   "calculator": "Calculator",
   "calendar": "Calendar",
   "cancel": "Cancel",
+  "category": "Category",
   "cappedBrood": "Capped brood",
   "capped_brood": "@:cappedBrood",
   "change": "change",
@@ -79,7 +81,7 @@
   "copiedToClipboard": "Copied to the clipboard.",
   "copy": "Copy",
   "count": "Count",
-  "countTokensLeft": "Daily tokens left",
+  "countTokensLeft": "Monthly tokens left",
   "coupon": "Coupon",
   "created": "Created",
   "credentials": "Credentials",
@@ -153,7 +155,7 @@
     "notFound": "Route or server not found! (Offline?)",
     "permission": "Could not set permissions.",
     "premium": "Premium only feature or basic user limit reached!",
-    "tokenLimit": "Daily token limit reached, try again tomorrow.",
+    "tokenLimit": "Monthly token limit reached, try again next month.",
     "tooManyRequest": "Too many requests!",
     "unknown": "An error occurred!",
     "validation": "Validation error!"
@@ -163,8 +165,10 @@
   "event": "event | events",
   "example": "Example",
   "exampleQuestion": {
+    "count": "How many colonies and apiaries do I have?",
     "diffDiseases": "How can I differentiate between AFB and EFB?",
     "eggs": "How many eggs does a queen bee lay?",
+    "harvest": "What was my harvest last year?",
     "offline": "Does b.tree work offline?",
     "option": "How can I add a custom feeding type?",
     "premium": "How much does premium cost?"
@@ -265,7 +269,7 @@
     "table-todo": "In the ToDo table you can manage or export your ToDo's. As standard only open tasks are shown. You can change this by clicking on the eye symbol. You cannot restore ToDo's after deletion!",
     "table-treatment": "In the treatment table you can manage or export your treatment. Deleted task can be restored up to 30 days after deletion. Search field is searching the columns hive, type and disease names.",
     "table-virgin": "Same as the queen table but on this table you can only find queens without any hive. This is meant to be used as parking spot for queens in your mating units, which can then be quickly added to your colonies or marked as sold (you can misuse a dropdown value, e.g. breeding line or use the note field) and set inactive.",
-    "wizbee": "This tool uses the chatGPT API to answer beekeeping related question from various sources which are referenced and public available. Your question will be send to OpenAI, they are based in the U.S, please refer to their privacy policy.  The generated answer should be cross-checked with the references, as they are not always correct. Please don't trust them 100%."
+    "wizbee": "WizBee is an LLM (Large Language Model) wrapper. Your questions and data are sent to the LLM provider (Mistral AI). By using this feature you agree that your data is transmitted to and processed by the LLM provider. Please refer to their privacy policy."
   },
   "hint": "Hint",
   "hintApiaryFirstMovedate": "Shown value is the first migration of a hive onto this apiary, which can be seen as date of creation.",
@@ -542,6 +546,7 @@
   "rename": "Rename",
   "repeat": "Repeat",
   "repeatText": "Times the task should be repeated",
+  "requests": "Requests",
   "reset": "Reset",
   "resetConfirm": "Reset form data?",
   "resetUser": {

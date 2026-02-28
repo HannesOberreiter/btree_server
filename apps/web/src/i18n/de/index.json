@@ -1,5 +1,6 @@
 {
   "Dropbox": "Dropbox",
+  "WizBee": "WizBee",
   "abo": "Abo | \nAbos",
   "account": "Konto",
   "accountActivated": "Ihr Konto wurde erfolgreich aktiviert!",
@@ -47,6 +48,7 @@
   "cancel": "Abbrechen",
   "cappedBrood": "Gedeckelte Brut",
   "capped_brood": "@:cappedBrood",
+  "category": "Kategorie",
   "change": "ändere",
   "changeStatus": "Status ändern",
   "changelog": "Updates",
@@ -79,7 +81,7 @@
   "copiedToClipboard": "In die Zwischenablage kopiert.",
   "copy": "Kopieren",
   "count": "Zählung",
-  "countTokensLeft": "Tägliche Token übrig",
+  "countTokensLeft": "Monatliche Token übrig",
   "coupon": "Coupon",
   "created": "Erstellt",
   "credentials": "Zugangsdaten",
@@ -153,7 +155,7 @@
     "notFound": "Route oder Server nicht gefunden! (Offline?)",
     "permission": "Berechtigungen konnten nicht festgelegt werden.",
     "premium": "Nur Premium-Funktion oder Basisbenutzerlimit erreicht!",
-    "tokenLimit": "Tägliches Token-Limit erreicht, versuchen Sie es morgen erneut.",
+    "tokenLimit": "Das monatliche Token-Limit ist erreicht. Versuchen Sie es nächsten Monat erneut.",
     "tooManyRequest": "Zu viele Anfragen!",
     "unknown": "Ein Fehler ist aufgetreten!",
     "validation": "Validierungsfehler!"
@@ -163,8 +165,10 @@
   "event": "Termin | Termine",
   "example": "Beispiel",
   "exampleQuestion": {
+    "count": "Wie viele Völker und Bienenstände habe ich?",
     "diffDiseases": "Unterschied zwischen amerikanischer und europäischer Faulbrut?",
     "eggs": "Wie viele Eier legt eine Bienenkönigin?",
+    "harvest": "Wie hoch war meine Ernte letztes Jahr?",
     "offline": "Funktioniert b.tree offline?",
     "option": "Wie kann ich einen eigenen Fütterungstypen definieren?",
     "premium": "Wie viel kostet Premium?"
@@ -265,7 +269,7 @@
     "table-todo": "In der ToDo-Tabelle können Sie Ihre ToDo's verwalten oder exportieren. \nStandardmäßig werden nur offene Aufgaben angezeigt. \nSie können dies ändern, indem Sie auf das Augensymbol klicken. \nAchtung: Sie können ToDo's nach dem Löschen nicht wiederherstellen!",
     "table-treatment": "In der Behandlungstabelle können Sie Ihre Behandlung verwalten oder exportieren. \nGelöschte Aufgaben können bis zu 30 Tage nach dem Löschen wiederhergestellt werden. \nDas Suchfeld durchsucht die Spalten Bienenstock, Art und Krankheitsnamen.",
     "table-virgin": "Dasselbe wie die Königinnentabelle, aber in dieser Tabelle finden Sie nur Königinnen ohne Stock. \nDiese dient als Stellplatz für Königinnen in Ihren Begattungseinheiten, die dann schnell zu Ihren Kolonien hinzugefügt oder als verkauft markiert werden können (Sie können einen Dropdown-Wert missbrauchen, z. B. Zuchtlinie oder das Notizfeld verwenden) und inaktiv setzen.",
-    "wizbee": "Dieses Tool verwendet die chatGPT-API, um Fragen zur Imkerei aus verschiedenen Quellen zu beantworten, auf die verwiesen wird und die öffentlich zugänglich sind. \nIhre Frage wird an OpenAI gesendet, sie haben ihren Sitz in den USA, bitte beachten Sie deren Datenschutzrichtlinie. \nDie generierte Antwort sollte mit den Referenzen abgeglichen werden, da sie nicht immer korrekt sind. \nBitte vertraue ihnen nicht zu 100%."
+    "wizbee": "WizBee ist ein Wrapper für ein LLM (Large Language Model). Deine Fragen und Daten werden an den LLM-Anbieter (Mistral AI) gesendet. Durch die Nutzung dieser Funktion stimmst du zu, dass deine Daten an den LLM-Anbieter übermittelt und dort verarbeitet werden. Bitte beachte deren Datenschutzrichtlinie."
   },
   "hint": "Hinweis",
   "hintApiaryFirstMovedate": "Angezeigter Wert ist die erste Wanderung eines Bienenstocks auf diesen Bienenstand, die als Erstellungsdatum angesehen werden kann.",
@@ -542,6 +546,7 @@
   "rename": "Umbenennen",
   "repeat": "Wiederholen",
   "repeatText": "Wie oft die Aufgabe wiederholt werden soll",
+  "requests": "Anfragen",
   "reset": "Zurücksetzen",
   "resetConfirm": "Formular Daten zurücksetzen?",
   "resetUser": {

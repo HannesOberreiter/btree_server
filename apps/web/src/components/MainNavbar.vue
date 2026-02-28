@@ -15,6 +15,7 @@ import BtnShare from './BtnShare.vue';
 import BtnSpeak from './BtnSpeak.vue';
 import BtnWakeLock from './BtnWakeLock.vue';
 import DialogShare from './DialogShare.vue';
+import DialogWizBee from './DialogWizBee.vue';
 import SearchHiveApiary from './SearchHiveApiary.vue';
 import TooltipBase from './TooltipBase.vue';
 
@@ -58,6 +59,12 @@ function onShare() {
 function onReload() {
 	window.location.reload();
 }
+
+function onWizBee() {
+	$q.dialog({
+		component: DialogWizBee,
+	});
+}
 </script>
 
 <template>
@@ -91,7 +98,23 @@ function onReload() {
 				:class="$q.screen.gt.xs ? 'q-gutter-md' : 'q-gutter-sm'"
 			>
 				<BtnSpeak />
-				<BtnQrScanner />
+				<BtnQrScanner v-if="!$q.platform.is.mobile" />
+				<q-btn
+					flat
+					dense
+					@click="onWizBee"
+				>
+					<q-avatar size="28px">
+						<img
+							src="/wizbee/favicon-96x96.png"
+							alt="WizBee"
+							class="wizbee-icon-bw"
+						>
+					</q-avatar>
+					<TooltipBase anchor="bottom middle" self="top middle">
+						WizBee
+					</TooltipBase>
+				</q-btn>
 				<BtnFullscreen v-if="!$q.platform.is.mobile" />
 				<BtnDarkMode v-show="!$q.platform.is.mobile" />
 				<BtnWakeLock />
@@ -143,6 +166,11 @@ function onReload() {
 						</q-item>
 						<q-item v-close-popup>
 							<q-item-section>
+								<BtnQrScanner />
+							</q-item-section>
+						</q-item>
+						<q-item v-close-popup>
+							<q-item-section>
 								<BtnBase
 									flat
 									dense
@@ -159,3 +187,9 @@ function onReload() {
 		</div>
 	</div>
 </template>
+
+<style scoped>
+.wizbee-icon-bw {
+  filter: grayscale(1) brightness(2);
+}
+</style>

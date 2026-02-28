@@ -1,8 +1,9 @@
 [
 	{
 		"version": "6.5.7",
-		"date": "2026-02-10",
+		"date": "2026-02-28",
 		"news": [
+			"FEATURE WizBee now supports tool calls and has access to app data. Its still early but new tools will be added slowly so nothing breaks. Also WizBee now uses Mistral to support european users better and to have a more transparent and open model.",
 			"FEATURE ToDo's can now be created for apiaries, which can be used for example to note down tasks that need to be done on the apiary level. In the ToDo table you can filter the apiary and on the apiary detail view the ToDo is incorporated in the task list."
 		]
 	},
