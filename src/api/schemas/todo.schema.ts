@@ -18,10 +18,15 @@ export const todoResponseSchema = z.object({
   bee_id: z.number().nullable(),
   edit_id: z.number().nullable(),
   user_id: z.number().nullable(),
+  apiary_id: z.number().nullable(),
   created_at: z.string().nullable(), // Date as ISO string
   updated_at: z.string().nullable(), // Date as ISO string
   creator: beeSchema.optional(),
   editor: beeSchema.optional(),
+  apiary: z.object({
+    name: z.string(),
+    modus: z.boolean(),
+  }).nullable().optional(),
 });
 
 export type TodoResponse = z.infer<typeof todoResponseSchema>;
@@ -41,6 +46,7 @@ export const todoCreateSchema = z.object({
   done: z.boolean().optional(),
   interval: z.number().min(0).max(365).optional(),
   repeat: z.number().min(0).max(30).optional(),
+  apiary_id: z.number().optional(),
 });
 
 export type TodoCreate = z.infer<typeof todoCreateSchema>;
@@ -51,6 +57,7 @@ export const todoUpdateSchema = z.object({
   note: z.string().max(2000).optional(),
   url: z.string().max(512).optional(),
   done: z.boolean().optional(),
+  apiary_id: z.number().optional(),
 });
 
 export type TodoUpdate = z.infer<typeof todoUpdateSchema>;

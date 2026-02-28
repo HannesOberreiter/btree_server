@@ -126,13 +126,6 @@ const redisConfig = {
   password: process.env.REDIS_PASSWORD ?? '',
 };
 
-const vectorConfig = {
-  host: process.env.VECTOR_HOSTNAME,
-  port: Number.parseInt(process.env.VECTOR_PORT),
-  user: process.env.VECTOR_USERNAME,
-  password: process.env.VECTOR_PASSWORD ?? '',
-};
-
 /**
  * @type {Knex}
  */
@@ -205,6 +198,11 @@ const openAI = {
   ),
 };
 
+const mistralAI = {
+  key: process.env.MISTRAL_API_KEY ?? '',
+  monthlyBudgetUSD: Number.parseFloat(process.env.MISTRAL_MONTHLY_BUDGET_USD ?? '5'),
+};
+
 const serverLocations = ['eu', 'us'];
 function isServerLocationValid(server: string) {
   return serverLocations.includes(server);
@@ -231,6 +229,7 @@ export {
   isServerLocationValid,
   knexConfig,
   mailConfig,
+  mistralAI,
   mollieApiKey,
   openAI,
   openweatherKey,
@@ -245,5 +244,4 @@ export {
   stripeSecret,
   totalLimit,
   url,
-  vectorConfig,
 };

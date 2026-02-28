@@ -28,6 +28,7 @@ import v1Statistic from './v1/statistic.route.js';
 import v1Todo from './v1/todo.route.js';
 import v1Treatment from './v1/treatment.route.js';
 import v1User from './v1/user.route.js';
+import v1WizBee from './v1/wizbee.route.js';
 
 export default function routes(app: FastifyInstance, _options: any, done: any) {
   app.register(v1Root, {
@@ -137,6 +138,10 @@ export default function routes(app: FastifyInstance, _options: any, done: any) {
 
   app.register(v1Public, {
     prefix: '/v1/public',
+  });
+
+  app.register(v1WizBee, {
+    prefix: '/v1/wizbee',
   });
 
   done();

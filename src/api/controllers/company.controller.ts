@@ -302,7 +302,7 @@ export default class CompanyController {
       await insert(Movedate.query(trx), data.movedates);
 
       await moveCharges(trx, company.id, data);
-      await moveTodos(trx, company.id, data);
+      await moveTodos(trx, company.id, data, apiaries);
       await moveTreatments(trx, company.id, data, hives);
       await moveHarvests(trx, company.id, data, hives);
       await moveFeeds(trx, company.id, data, hives);
@@ -493,12 +493,16 @@ async function moveTodos(
   trx: Objection.Transaction,
   user_id: number,
   data: Record<string, any>,
+  apiaries: Record<string, number>,
 ) {
   if (data.todos.length === 0)
     return;
   removeKeys(data.todos);
   data.todos.map((todo) => {
     todo.user_id = user_id;
+    if (todo.apiary_id) {
+      todo.apiary_id = apiaries[todo.apiary_id];
+    }
     return todo;
   });
   await insert(Todo.query(trx), data.todos);

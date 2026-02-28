@@ -892,6 +892,7 @@ export interface Todos {
   updated_at: Generated<Date | null>
   url: Generated<string | null>
   user_id: Generated<number | null>
+  apiary_id: Generated<number | null>
 }
 
 export interface TreatmentDiseases {
@@ -974,14 +975,16 @@ export interface TreatmentVets {
   user_id: Generated<number | null>
 }
 
-export interface WizbeeTokens {
-  bee_id: Generated<number | null>
-  countQuestions: Generated<number | null>
-  created_at: Generated<Date | null>
-  date: Generated<Date | null>
+export interface WizbeeRequests {
   id: Generated<number>
+  request_time: Generated<Date>
+  bee_id: Generated<number | null>
+  user_id: Generated<number | null>
+  tokens_input: Generated<number | null>
+  tokens_output: Generated<number | null>
+  user_request: Generated<string | null>
+  created_at: Generated<Date | null>
   updated_at: Generated<Date | null>
-  usedTokens: Generated<number | null>
 }
 
 export interface DB {
@@ -1045,5 +1048,5 @@ export interface DB {
   treatment_vets: TreatmentVets
   treatments: Treatments
   treatments_apiaries: TreatmentsApiaries
-  wizbee_tokens: WizbeeTokens
+  wizbee_requests: WizbeeRequests
 }

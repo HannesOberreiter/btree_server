@@ -1,12 +1,10 @@
 import closeWithGrace from 'close-with-grace';
 import { Application } from './config/app.config.js';
-import { env } from './config/environment.config.js';
 import { DatabaseServer } from './servers/db.server.js';
 
 import { HTTPServer } from './servers/http.server.js';
 import { KyselyServer } from './servers/kysely.server.js';
 import { RedisServer } from './servers/redis.server.js';
-import { VectorServer } from './servers/vector.server.js';
 import { Logger } from './services/logger.service.js';
 import { MailService } from './services/mail.service.js';
 
@@ -17,12 +15,6 @@ const dbServer = DatabaseServer.getInstance();
 const redisServer = new RedisServer();
 const mailServer = MailService.getInstance();
 const kyselyServer = KyselyServer.getInstance();
-
-let vectorServer;
-if (env !== 'ci') {
-  vectorServer = new VectorServer();
-  vectorServer.start();
-}
 
 dbServer.start();
 redisServer.start();
@@ -46,7 +38,6 @@ async function gracefulShutdown() {
   try {
     logger.log('debug', 'Starting graceful shutdown...', { label: 'Server' });
     await Promise.allSettled([
-      vectorServer?.stop(),
       dbServer.stop(),
       redisServer.stop(),
       httpServer.stop(),

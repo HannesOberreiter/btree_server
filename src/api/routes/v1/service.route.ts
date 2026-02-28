@@ -78,33 +78,6 @@ export default function routes(
     ServiceController.mollieCreateOrder,
   );
 
-  server.post(
-    '/wizbee/ask',
-    {
-      preHandler: Guard.authorize([ROLES.admin, ROLES.user, ROLES.read]),
-      schema: {
-        body: z.object({
-          question: z.string().min(1).max(1000),
-          lang: z.string().min(2).max(2),
-        }),
-      },
-    },
-    ServiceController.askWizBee,
-  );
-  server.post(
-    '/wizbee/ask/stream',
-    {
-      preHandler: Guard.authorize([ROLES.admin, ROLES.user, ROLES.read]),
-      schema: {
-        body: z.object({
-          question: z.string().min(1).max(1000),
-          lang: z.string().min(2).max(2),
-        }),
-      },
-    },
-    ServiceController.askWizBeeStream,
-  );
-
   server.get(
     '/map/american_foulbrood',
     {
