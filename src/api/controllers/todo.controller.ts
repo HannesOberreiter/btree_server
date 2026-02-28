@@ -10,7 +10,7 @@ import type {
 import dayjs from 'dayjs';
 import { sql } from 'kysely';
 import { KyselyServer } from '../../servers/kysely.server.js';
-import { transaction, withApiary, withCreatorAndEditor } from '../utils/kysely.utils.js';
+import { checkOwnership, transaction, withApiary, withCreatorAndEditor } from '../utils/kysely.utils.js';
 
 interface GetQuery {
   order?: string | string[]
@@ -133,6 +133,14 @@ export default class TodoController {
     const db = KyselyServer.getInstance().db;
 
     const isLlm = (req.session as any).llm === true;
+    if (body.apiary_id) {
+      await checkOwnership(
+        db,
+        'apiaries',
+        Number(body.apiary_id),
+        req.session.user.user_id,
+      );
+    }
 
     const insert = {
       date: new Date(body.date),
@@ -187,9 +195,20 @@ export default class TodoController {
     const body = req.body as TodoBatchUpdate;
     const db = KyselyServer.getInstance().db;
 
+    const isLlm = (req.session as any).llm === true;
+    if (body.data.apiary_id) {
+      await checkOwnership(
+        db,
+        'apiaries',
+        Number(body.data.apiary_id),
+        req.session.user.user_id,
+      );
+    }
+
     const updateData = {
       ...body.data as any,
       edit_id: req.session.user.bee_id,
+      ...(isLlm && { ai_updated_at: new Date() }),
     };
 
     if (updateData.date) {

@@ -8,6 +8,8 @@ import ChargeController from './charge.controller.js';
 import CheckupController from './checkup.controller.js';
 import FeedController from './feed.controller.js';
 import HarvestController from './harvest.controller.js';
+import HiveController from './hive.controller.js';
+import OptionController from './options.controller.js';
 import ServiceController from './service.controller.js';
 import StatisticController from './statistic.controller.js';
 import TodoController from './todo.controller.js';
@@ -227,6 +229,75 @@ export function createWizBeeTools(context: WizBeeContext): Record<string, Tool> 
     }),
 
     /**
+     * Get Hive Detail Tool
+     * Returns a static summary for a single hive (queen, location, type, source, etc.)
+     */
+    getHiveDetail: tool({
+      description: 'Get a detailed static summary for a single hive including queen info, location, hive type, hive source, move history, and neighbouring hives in the same apiary.',
+      inputSchema: z.object({
+        hiveId: z.number().describe('ID of the hive'),
+      }),
+      execute: async (input) => {
+        const req = createMockRequest(context, {
+          params: { id: input.hiveId },
+        });
+        const result = await HiveController.getDetail(req, createMockReply());
+        return result;
+      },
+    }),
+
+    /**
+     * Get Hive Tasks Tool
+     * Returns all tasks (feed, harvest, treatment, checkup, movedate, todo) for a hive in a given year
+     */
+    getHiveTasks: tool({
+      description: 'Get all tasks (feed, harvest, treatment, checkup, movedate, todo) for a specific hive or apiary for a given year.',
+      inputSchema: z.object({
+        id: z.number().describe('ID of the hive (or apiary when apiary=true)'),
+        year: z.number().optional().describe('Year to fetch tasks for (defaults to current year)'),
+        apiary: z.boolean().optional().default(false).describe('When true, fetch tasks for all hives in the apiary with the given ID'),
+      }),
+      execute: async (input) => {
+        const req = createMockRequest(context, {
+          params: { id: input.id },
+          query: {
+            year: input.year ?? new Date().getFullYear(),
+            apiary: input.apiary ?? false,
+          },
+        });
+        const result = await HiveController.getTasks(req, createMockReply());
+        return result;
+      },
+    }),
+
+    /**
+     * Fetch Options Tool
+     * Retrieves all available option/lookup lists at once (hive types, feed types, etc.)
+     */
+    fetchOptions: tool({
+      description: 'Fetch all available option/lookup lists at once (charge types, hive sources, hive types, feed types, harvest types, checkup types, queen matings, queen races, treatment diseases, treatment types, treatment vets). Use this to know which options are available when creating or updating records.',
+      inputSchema: z.object({
+        activeOnly: z.boolean().optional().default(true).describe('When true, only return active (modus=true) options'),
+      }),
+      execute: async (input) => {
+        const tableNames = OptionController.tableNames;
+
+        const results = await Promise.all(
+          tableNames.map(async (table) => {
+            const req = createMockRequest(context, {
+              params: { table },
+              query: input.activeOnly ? { modus: true } : {},
+            });
+            const data = await OptionController.get(req, createMockReply());
+            return [table, data] as const;
+          }),
+        );
+
+        return Object.fromEntries(results);
+      },
+    }),
+
+    /**
      * Fetch Tasks Tool
      * Retrieves tasks (feeds, treatments, harvests, checkups, todos) within a date range
      */
@@ -275,6 +346,322 @@ export function createWizBeeTools(context: WizBeeContext): Record<string, Tool> 
     }),
 
     /**
+     * Create Task Tool
+     * Creates a new feed, harvest, treatment, or checkup for one or more hives
+     */
+    // ── Feed ────────────────────────────────────────────────────────────────
+
+    createFeed: tool({
+      description: 'Create a new feed record for one or more hives.',
+      inputSchema: z.object({
+        hiveIds: z.array(z.number()).min(1).describe('IDs of the hives to create the feed for'),
+        date: z.string().describe('Date in YYYY-MM-DD format'),
+        enddate: z.string().optional().describe('End date in YYYY-MM-DD format'),
+        typeId: z.number().optional().describe('Feed type ID'),
+        amount: z.number().optional().describe('Feed quantity'),
+        note: z.string().max(2000).optional().describe('Optional notes'),
+        done: z.boolean().optional().describe('Whether the feed is completed'),
+        repeat: z.number().min(0).max(30).optional().describe('Number of times to repeat'),
+        interval: z.number().min(0).max(365).optional().describe('Days between repeated entries'),
+      }),
+      execute: async (input) => {
+        const { hiveIds, typeId, ...rest } = input;
+        const req = createMockRequest(context, {
+          body: { ...rest, hive_ids: hiveIds, ...(typeId !== undefined && { type_id: typeId }) },
+        });
+        const result = await FeedController.post(req, createMockReply());
+        const createdCount = Array.isArray(result) ? result.length : 1;
+        return { success: true, message: `Created ${createdCount} feed record${createdCount !== 1 ? 's' : ''}`, ids: Array.isArray(result) ? result : [result] };
+      },
+    }),
+
+    patchFeed: tool({
+      description: 'Update one or more existing feed records by their IDs.',
+      inputSchema: z.object({
+        ids: z.array(z.number()).min(1).describe('IDs of the feed records to update'),
+        date: z.string().optional().describe('New date in YYYY-MM-DD format'),
+        enddate: z.string().optional().describe('New end date in YYYY-MM-DD format'),
+        typeId: z.number().optional().describe('New feed type ID'),
+        amount: z.number().optional().describe('New feed quantity'),
+        note: z.string().max(2000).optional().describe('New notes'),
+        done: z.boolean().optional().describe('Mark as done or undone'),
+      }),
+      execute: async (input) => {
+        const { ids, typeId, ...fields } = input;
+        const req = createMockRequest(context, {
+          body: { ids, data: { ...fields, ...(typeId !== undefined && { type_id: typeId }) } },
+        });
+        const updatedCount = await FeedController.patch(req, createMockReply());
+        return { success: true, message: `Updated ${updatedCount} feed record${updatedCount !== 1 ? 's' : ''}`, updatedCount };
+      },
+    }),
+
+    softDeleteFeed: tool({
+      description: 'Soft-delete one or more feed records by their IDs. Records are marked as deleted but not permanently removed.',
+      inputSchema: z.object({
+        ids: z.array(z.number()).min(1).describe('IDs of the feed records to soft-delete'),
+      }),
+      execute: async (input) => {
+        const req = createMockRequest(context, { body: { ids: input.ids }, query: {} });
+        await FeedController.batchDelete(req, createMockReply());
+        return { success: true, message: `Soft-deleted ${input.ids.length} feed record${input.ids.length !== 1 ? 's' : ''}`, deletedCount: input.ids.length };
+      },
+    }),
+
+    // ── Harvest ─────────────────────────────────────────────────────────────
+
+    createHarvest: tool({
+      description: 'Create a new harvest record for one or more hives.',
+      inputSchema: z.object({
+        hiveIds: z.array(z.number()).min(1).describe('IDs of the hives to create the harvest for'),
+        date: z.string().describe('Date in YYYY-MM-DD format'),
+        enddate: z.string().optional().describe('End date in YYYY-MM-DD format'),
+        typeId: z.number().optional().describe('Harvest type ID'),
+        amount: z.number().optional().describe('Harvest weight/quantity'),
+        water: z.number().optional().describe('Water content'),
+        frames: z.number().optional().describe('Number of frames harvested'),
+        charge: z.string().max(24).optional().describe('Charge/batch reference'),
+        note: z.string().max(2000).optional().describe('Optional notes'),
+        done: z.boolean().optional().describe('Whether the harvest is completed'),
+        repeat: z.number().min(0).max(30).optional().describe('Number of times to repeat'),
+        interval: z.number().min(0).max(365).optional().describe('Days between repeated entries'),
+      }),
+      execute: async (input) => {
+        const { hiveIds, typeId, ...rest } = input;
+        const req = createMockRequest(context, {
+          body: { ...rest, hive_ids: hiveIds, ...(typeId !== undefined && { type_id: typeId }) },
+        });
+        const result = await HarvestController.post(req, createMockReply());
+        const createdCount = Array.isArray(result) ? result.length : 1;
+        return { success: true, message: `Created ${createdCount} harvest record${createdCount !== 1 ? 's' : ''}`, ids: Array.isArray(result) ? result : [result] };
+      },
+    }),
+
+    patchHarvest: tool({
+      description: 'Update one or more existing harvest records by their IDs.',
+      inputSchema: z.object({
+        ids: z.array(z.number()).min(1).describe('IDs of the harvest records to update'),
+        date: z.string().optional().describe('New date in YYYY-MM-DD format'),
+        enddate: z.string().optional().describe('New end date in YYYY-MM-DD format'),
+        typeId: z.number().optional().describe('New harvest type ID'),
+        amount: z.number().optional().describe('New harvest weight/quantity'),
+        water: z.number().optional().describe('New water content'),
+        frames: z.number().optional().describe('New number of frames'),
+        charge: z.string().max(24).optional().describe('New charge/batch reference'),
+        note: z.string().max(2000).optional().describe('New notes'),
+        done: z.boolean().optional().describe('Mark as done or undone'),
+      }),
+      execute: async (input) => {
+        const { ids, typeId, ...fields } = input;
+        const req = createMockRequest(context, {
+          body: { ids, data: { ...fields, ...(typeId !== undefined && { type_id: typeId }) } },
+        });
+        const updatedCount = await HarvestController.patch(req, createMockReply());
+        return { success: true, message: `Updated ${updatedCount} harvest record${updatedCount !== 1 ? 's' : ''}`, updatedCount };
+      },
+    }),
+
+    softDeleteHarvest: tool({
+      description: 'Soft-delete one or more harvest records by their IDs. Records are marked as deleted but not permanently removed.',
+      inputSchema: z.object({
+        ids: z.array(z.number()).min(1).describe('IDs of the harvest records to soft-delete'),
+      }),
+      execute: async (input) => {
+        const req = createMockRequest(context, { body: { ids: input.ids }, query: {} });
+        await HarvestController.batchDelete(req, createMockReply());
+        return { success: true, message: `Soft-deleted ${input.ids.length} harvest record${input.ids.length !== 1 ? 's' : ''}`, deletedCount: input.ids.length };
+      },
+    }),
+
+    // ── Treatment ────────────────────────────────────────────────────────────
+
+    createTreatment: tool({
+      description: 'Create a new treatment record for one or more hives.',
+      inputSchema: z.object({
+        hiveIds: z.array(z.number()).min(1).describe('IDs of the hives to create the treatment for'),
+        date: z.string().describe('Date in YYYY-MM-DD format'),
+        enddate: z.string().optional().describe('End date in YYYY-MM-DD format'),
+        typeId: z.number().optional().describe('Treatment type ID'),
+        diseaseId: z.number().optional().describe('Disease ID'),
+        vetId: z.number().optional().describe('Vet ID'),
+        amount: z.number().optional().describe('Treatment dose/amount'),
+        wait: z.number().optional().describe('Waiting period in days'),
+        temperature: z.number().optional().describe('Temperature during treatment'),
+        note: z.string().max(2000).optional().describe('Optional notes'),
+        done: z.boolean().optional().describe('Whether the treatment is completed'),
+        repeat: z.number().min(0).max(30).optional().describe('Number of times to repeat'),
+        interval: z.number().min(0).max(365).optional().describe('Days between repeated entries'),
+      }),
+      execute: async (input) => {
+        const { hiveIds, typeId, diseaseId, vetId, ...rest } = input;
+        const req = createMockRequest(context, {
+          body: {
+            ...rest,
+            hive_ids: hiveIds,
+            ...(typeId !== undefined && { type_id: typeId }),
+            ...(diseaseId !== undefined && { disease_id: diseaseId }),
+            ...(vetId !== undefined && { vet_id: vetId }),
+          },
+        });
+        const result = await TreatmentController.post(req, createMockReply());
+        const createdCount = Array.isArray(result) ? result.length : 1;
+        return { success: true, message: `Created ${createdCount} treatment record${createdCount !== 1 ? 's' : ''}`, ids: Array.isArray(result) ? result : [result] };
+      },
+    }),
+
+    patchTreatment: tool({
+      description: 'Update one or more existing treatment records by their IDs.',
+      inputSchema: z.object({
+        ids: z.array(z.number()).min(1).describe('IDs of the treatment records to update'),
+        date: z.string().optional().describe('New date in YYYY-MM-DD format'),
+        enddate: z.string().optional().describe('New end date in YYYY-MM-DD format'),
+        typeId: z.number().optional().describe('New treatment type ID'),
+        diseaseId: z.number().optional().describe('New disease ID'),
+        vetId: z.number().optional().describe('New vet ID'),
+        amount: z.number().optional().describe('New dose/amount'),
+        wait: z.number().optional().describe('New waiting period in days'),
+        temperature: z.number().optional().describe('New temperature'),
+        note: z.string().max(2000).optional().describe('New notes'),
+        done: z.boolean().optional().describe('Mark as done or undone'),
+      }),
+      execute: async (input) => {
+        const { ids, typeId, diseaseId, vetId, ...fields } = input;
+        const req = createMockRequest(context, {
+          body: {
+            ids,
+            data: {
+              ...fields,
+              ...(typeId !== undefined && { type_id: typeId }),
+              ...(diseaseId !== undefined && { disease_id: diseaseId }),
+              ...(vetId !== undefined && { vet_id: vetId }),
+            },
+          },
+        });
+        const updatedCount = await TreatmentController.patch(req, createMockReply());
+        return { success: true, message: `Updated ${updatedCount} treatment record${updatedCount !== 1 ? 's' : ''}`, updatedCount };
+      },
+    }),
+
+    softDeleteTreatment: tool({
+      description: 'Soft-delete one or more treatment records by their IDs. Records are marked as deleted but not permanently removed.',
+      inputSchema: z.object({
+        ids: z.array(z.number()).min(1).describe('IDs of the treatment records to soft-delete'),
+      }),
+      execute: async (input) => {
+        const req = createMockRequest(context, { body: { ids: input.ids }, query: {} });
+        await TreatmentController.batchDelete(req, createMockReply());
+        return { success: true, message: `Soft-deleted ${input.ids.length} treatment record${input.ids.length !== 1 ? 's' : ''}`, deletedCount: input.ids.length };
+      },
+    }),
+
+    // ── Checkup ──────────────────────────────────────────────────────────────
+
+    createCheckup: tool({
+      description: 'Create a new checkup/inspection record for one or more hives.',
+      inputSchema: z.object({
+        hiveIds: z.array(z.number()).min(1).describe('IDs of the hives to create the checkup for'),
+        date: z.string().describe('Date in YYYY-MM-DD format'),
+        enddate: z.string().optional().describe('End date in YYYY-MM-DD format'),
+        typeId: z.number().optional().describe('Checkup type ID'),
+        note: z.string().max(2000).optional().describe('Optional notes'),
+        done: z.boolean().optional().describe('Whether the checkup is completed'),
+        repeat: z.number().min(0).max(30).optional().describe('Number of times to repeat'),
+        interval: z.number().min(0).max(365).optional().describe('Days between repeated entries'),
+        queen: z.boolean().optional().describe('Queen present'),
+        queencells: z.boolean().optional().describe('Queen cells present'),
+        eggs: z.boolean().optional().describe('Eggs present'),
+        cappedBrood: z.boolean().optional().describe('Capped brood present'),
+        brood: z.number().optional().describe('Brood rating'),
+        pollen: z.number().optional().describe('Pollen rating'),
+        comb: z.number().optional().describe('Comb rating'),
+        temper: z.number().optional().describe('Temper rating'),
+        calmComb: z.number().optional().describe('Calm on comb rating'),
+        swarm: z.number().optional().describe('Swarm tendency rating'),
+        varroa: z.number().optional().describe('Varroa count'),
+        strong: z.number().optional().describe('Colony strength'),
+        temperature: z.number().optional().describe('Temperature'),
+        weight: z.number().optional().describe('Hive weight'),
+        broodframes: z.number().optional().describe('Number of brood frames'),
+        honeyframes: z.number().optional().describe('Number of honey frames'),
+        foundation: z.number().optional().describe('Number of foundation frames'),
+        emptyframes: z.number().optional().describe('Number of empty frames'),
+      }),
+      execute: async (input) => {
+        const { hiveIds, typeId, cappedBrood, calmComb, ...rest } = input;
+        const req = createMockRequest(context, {
+          body: {
+            ...rest,
+            hive_ids: hiveIds,
+            ...(typeId !== undefined && { type_id: typeId }),
+            ...(cappedBrood !== undefined && { capped_brood: cappedBrood }),
+            ...(calmComb !== undefined && { calm_comb: calmComb }),
+          },
+        });
+        const result = await CheckupController.post(req, createMockReply());
+        const createdCount = Array.isArray(result) ? result.length : 1;
+        return { success: true, message: `Created ${createdCount} checkup record${createdCount !== 1 ? 's' : ''}`, ids: Array.isArray(result) ? result : [result] };
+      },
+    }),
+
+    patchCheckup: tool({
+      description: 'Update one or more existing checkup/inspection records by their IDs.',
+      inputSchema: z.object({
+        ids: z.array(z.number()).min(1).describe('IDs of the checkup records to update'),
+        date: z.string().optional().describe('New date in YYYY-MM-DD format'),
+        enddate: z.string().optional().describe('New end date in YYYY-MM-DD format'),
+        typeId: z.number().optional().describe('New checkup type ID'),
+        note: z.string().max(2000).optional().describe('New notes'),
+        done: z.boolean().optional().describe('Mark as done or undone'),
+        queen: z.boolean().optional().describe('Queen present'),
+        queencells: z.boolean().optional().describe('Queen cells present'),
+        eggs: z.boolean().optional().describe('Eggs present'),
+        cappedBrood: z.boolean().optional().describe('Capped brood present'),
+        brood: z.number().optional().describe('Brood rating'),
+        pollen: z.number().optional().describe('Pollen rating'),
+        comb: z.number().optional().describe('Comb rating'),
+        temper: z.number().optional().describe('Temper rating'),
+        calmComb: z.number().optional().describe('Calm on comb rating'),
+        swarm: z.number().optional().describe('Swarm tendency rating'),
+        varroa: z.number().optional().describe('Varroa count'),
+        strong: z.number().optional().describe('Colony strength'),
+        temperature: z.number().optional().describe('Temperature'),
+        weight: z.number().optional().describe('Hive weight'),
+        broodframes: z.number().optional().describe('Number of brood frames'),
+        honeyframes: z.number().optional().describe('Number of honey frames'),
+        foundation: z.number().optional().describe('Number of foundation frames'),
+        emptyframes: z.number().optional().describe('Number of empty frames'),
+      }),
+      execute: async (input) => {
+        const { ids, typeId, cappedBrood, calmComb, ...fields } = input;
+        const req = createMockRequest(context, {
+          body: {
+            ids,
+            data: {
+              ...fields,
+              ...(typeId !== undefined && { type_id: typeId }),
+              ...(cappedBrood !== undefined && { capped_brood: cappedBrood }),
+              ...(calmComb !== undefined && { calm_comb: calmComb }),
+            },
+          },
+        });
+        const updatedCount = await CheckupController.patch(req, createMockReply());
+        return { success: true, message: `Updated ${updatedCount} checkup record${updatedCount !== 1 ? 's' : ''}`, updatedCount };
+      },
+    }),
+
+    softDeleteCheckup: tool({
+      description: 'Soft-delete one or more checkup/inspection records by their IDs. Records are marked as deleted but not permanently removed.',
+      inputSchema: z.object({
+        ids: z.array(z.number()).min(1).describe('IDs of the checkup records to soft-delete'),
+      }),
+      execute: async (input) => {
+        const req = createMockRequest(context, { body: { ids: input.ids }, query: {} });
+        await CheckupController.batchDelete(req, createMockReply());
+        return { success: true, message: `Soft-deleted ${input.ids.length} checkup record${input.ids.length !== 1 ? 's' : ''}`, deletedCount: input.ids.length };
+      },
+    }),
+
+    /**
      * Create Todo Tool
      * Creates a new todo item for the user
      */
@@ -314,6 +701,66 @@ export function createWizBeeTools(context: WizBeeContext): Record<string, Tool> 
     }),
 
     /**
+     * Patch Todo Tool
+     * Updates one or more existing todos by their IDs
+     */
+    patchTodo: tool({
+      description: 'Update one or more existing todos/reminders by their IDs. Use this to reschedule, rename, mark as done, or change the apiary of a todo.',
+      inputSchema: z.object({
+        ids: z.array(z.number()).min(1).describe('IDs of the todos to update'),
+        name: z.string().min(1).max(48).optional().describe('New title for the todo (max 48 characters)'),
+        date: z.string().optional().describe('New date in YYYY-MM-DD format'),
+        note: z.string().max(2000).optional().describe('New notes or description'),
+        done: z.boolean().optional().describe('Mark as done (true) or undone (false)'),
+        apiaryId: z.number().optional().describe('New apiary to associate with this todo'),
+      }),
+      execute: async (input) => {
+        const { ids, apiaryId, ...rest } = input;
+        const req = createMockRequest(context, {
+          body: {
+            ids,
+            data: {
+              ...rest,
+              ...(apiaryId !== undefined && { apiary_id: apiaryId }),
+            },
+          },
+        });
+
+        const updatedCount = await TodoController.patch(req, createMockReply());
+
+        return {
+          success: true,
+          message: `Updated ${updatedCount} todo${updatedCount !== 1 ? 's' : ''}`,
+          updatedCount,
+        };
+      },
+    }),
+
+    /**
+     * Batch Delete Todo Tool
+     * Deletes one or more todos by their IDs
+     */
+    batchDeleteTodo: tool({
+      description: 'Delete one or more todos/reminders by their IDs. Use this when the user wants to remove tasks that are no longer needed.',
+      inputSchema: z.object({
+        ids: z.array(z.number()).min(1).describe('IDs of the todos to delete'),
+      }),
+      execute: async (input) => {
+        const req = createMockRequest(context, {
+          body: { ids: input.ids },
+        });
+
+        const deletedCount = await TodoController.batchDelete(req, createMockReply());
+
+        return {
+          success: true,
+          message: `Deleted ${deletedCount} todo${deletedCount !== 1 ? 's' : ''}`,
+          deletedCount,
+        };
+      },
+    }),
+
+    /**
      * Fetch Charges Tool
      * Retrieves charges (stock entries for goods like sugar, treatments, jars etc.)
      */
@@ -321,7 +768,6 @@ export function createWizBeeTools(context: WizBeeContext): Record<string, Tool> 
       description: 'Fetch charges (stock/inventory entries for goods like sugar, treatments, honey jars etc.). Use this to view stock movements and inventory.',
       inputSchema: z.object({
         q: z.string().optional().describe('Search query to filter charges by name, type or charge number'),
-        includeDeleted: z.boolean().optional().default(false).describe('Include deleted charges'),
         limit: z.number().optional().default(100).describe('Maximum number of results'),
       }),
       execute: async (input) => {
@@ -330,7 +776,6 @@ export function createWizBeeTools(context: WizBeeContext): Record<string, Tool> 
             limit: input.limit,
             offset: 0,
             q: input.q,
-            deleted: input.includeDeleted,
           },
         });
 
@@ -354,6 +799,80 @@ export function createWizBeeTools(context: WizBeeContext): Record<string, Tool> 
             count: stockResult.results.length,
             items: stockResult.results,
           },
+        };
+      },
+    }),
+
+    createCharge: tool({
+      description: 'Create a new charge/stock entry (e.g. sugar, hive supplies, honey jars). Use this to record incoming stock or inventory items.',
+      inputSchema: z.object({
+        date: z.string().describe('Date of the charge in YYYY-MM-DD format'),
+        amount: z.number().optional().describe('Quantity/amount'),
+        price: z.number().optional().describe('Price per unit'),
+        typeId: z.number().optional().describe('Charge type ID (from fetchOptions charge_types)'),
+        charge: z.string().max(24).optional().describe('Charge/batch number or reference or invoice number'),
+        bestbefore: z.string().default(new Date().toISOString().split('T')[0]).describe('Best-before date in YYYY-MM-DD format'),
+        kind: z.enum(['in', 'out']).describe('Whether this is an incoming stock (in) or outgoing usage/sale (out)'),
+        name: z.string().max(100).optional().describe('Optional descriptive name like the supplier, product name, or item description'),
+        note: z.string().max(2000).optional().describe('Optional notes'),
+        url: z.string().max(512).optional().describe('Optional URL reference'),
+      }),
+      execute: async (input) => {
+        const { typeId, ...rest } = input;
+        const req = createMockRequest(context, {
+          body: { ...rest, ...(typeId !== undefined && { type_id: typeId }) },
+        });
+        const result = await ChargeController.post(req, createMockReply());
+        const createdCount = Array.isArray(result) ? result.length : 1;
+        return {
+          success: true,
+          message: `Created ${createdCount} charge record${createdCount !== 1 ? 's' : ''}`,
+          ids: Array.isArray(result) ? result : [result],
+        };
+      },
+    }),
+
+    patchCharge: tool({
+      description: 'Update one or more existing charge/stock records by their IDs.',
+      inputSchema: z.object({
+        ids: z.array(z.number()).min(1).describe('IDs of the charge records to update'),
+        name: z.string().min(1).max(100).optional().describe('New name'),
+        date: z.string().optional().describe('New date in YYYY-MM-DD format'),
+        amount: z.number().optional().describe('New quantity/amount'),
+        price: z.number().optional().describe('New price per unit'),
+        typeId: z.number().optional().describe('New charge type ID'),
+        charge: z.string().max(24).optional().describe('New charge/batch reference'),
+        bestbefore: z.string().optional().describe('New best-before date in YYYY-MM-DD format'),
+        kind: z.string().optional().describe('New kind/category'),
+        note: z.string().max(2000).optional().describe('New notes'),
+        url: z.string().max(512).optional().describe('New URL reference'),
+      }),
+      execute: async (input) => {
+        const { ids, typeId, ...fields } = input;
+        const req = createMockRequest(context, {
+          body: { ids, data: { ...fields, ...(typeId !== undefined && { type_id: typeId }) } },
+        });
+        const updatedCount = await ChargeController.patch(req, createMockReply());
+        return {
+          success: true,
+          message: `Updated ${updatedCount} charge record${updatedCount !== 1 ? 's' : ''}`,
+          updatedCount,
+        };
+      },
+    }),
+
+    softDeleteCharge: tool({
+      description: 'Soft-delete one or more charge/stock records by their IDs. Records are marked as deleted but not permanently removed.',
+      inputSchema: z.object({
+        ids: z.array(z.number()).min(1).describe('IDs of the charge records to soft-delete'),
+      }),
+      execute: async (input) => {
+        const req = createMockRequest(context, { body: { ids: input.ids }, query: {} });
+        await ChargeController.batchDelete(req, createMockReply());
+        return {
+          success: true,
+          message: `Soft-deleted ${input.ids.length} charge record${input.ids.length !== 1 ? 's' : ''}`,
+          deletedCount: input.ids.length,
         };
       },
     }),
@@ -616,6 +1135,29 @@ export const wizBeeToolDefinitions = [
     }),
   },
   {
+    name: 'getHiveDetail',
+    description: 'Get a detailed static summary for a single hive (queen, location, type, source, neighbours).',
+    parameters: z.object({
+      hiveId: z.number(),
+    }),
+  },
+  {
+    name: 'getHiveTasks',
+    description: 'Get all tasks (feed, harvest, treatment, checkup, movedate, todo) for a hive or apiary for a given year.',
+    parameters: z.object({
+      id: z.number(),
+      year: z.number().optional(),
+      apiary: z.boolean().optional().default(false),
+    }),
+  },
+  {
+    name: 'fetchOptions',
+    description: 'Fetch all available option/lookup lists at once (hive types, feed types, harvest types, etc.).',
+    parameters: z.object({
+      activeOnly: z.boolean().optional().default(true),
+    }),
+  },
+  {
     name: 'fetchTasks',
     description: 'Fetch tasks (feed, treatment, harvest, checkup, todo) within a date range.',
     parameters: z.object({
@@ -627,6 +1169,18 @@ export const wizBeeToolDefinitions = [
       limit: z.number().optional().default(1000),
     }),
   },
+  { name: 'createFeed', description: 'Create a new feed record for one or more hives.', parameters: z.object({ hiveIds: z.array(z.number()).min(1), date: z.string(), enddate: z.string().optional(), typeId: z.number().optional(), amount: z.number().optional(), note: z.string().max(2000).optional(), done: z.boolean().optional(), repeat: z.number().min(0).max(30).optional(), interval: z.number().min(0).max(365).optional() }) },
+  { name: 'patchFeed', description: 'Update one or more existing feed records by their IDs.', parameters: z.object({ ids: z.array(z.number()).min(1), date: z.string().optional(), enddate: z.string().optional(), typeId: z.number().optional(), amount: z.number().optional(), note: z.string().max(2000).optional(), done: z.boolean().optional() }) },
+  { name: 'softDeleteFeed', description: 'Soft-delete one or more feed records by their IDs.', parameters: z.object({ ids: z.array(z.number()).min(1) }) },
+  { name: 'createHarvest', description: 'Create a new harvest record for one or more hives.', parameters: z.object({ hiveIds: z.array(z.number()).min(1), date: z.string(), enddate: z.string().optional(), typeId: z.number().optional(), amount: z.number().optional(), water: z.number().optional(), frames: z.number().optional(), charge: z.string().max(24).optional(), note: z.string().max(2000).optional(), done: z.boolean().optional(), repeat: z.number().min(0).max(30).optional(), interval: z.number().min(0).max(365).optional() }) },
+  { name: 'patchHarvest', description: 'Update one or more existing harvest records by their IDs.', parameters: z.object({ ids: z.array(z.number()).min(1), date: z.string().optional(), enddate: z.string().optional(), typeId: z.number().optional(), amount: z.number().optional(), water: z.number().optional(), frames: z.number().optional(), charge: z.string().max(24).optional(), note: z.string().max(2000).optional(), done: z.boolean().optional() }) },
+  { name: 'softDeleteHarvest', description: 'Soft-delete one or more harvest records by their IDs.', parameters: z.object({ ids: z.array(z.number()).min(1) }) },
+  { name: 'createTreatment', description: 'Create a new treatment record for one or more hives.', parameters: z.object({ hiveIds: z.array(z.number()).min(1), date: z.string(), enddate: z.string().optional(), typeId: z.number().optional(), diseaseId: z.number().optional(), vetId: z.number().optional(), amount: z.number().optional(), wait: z.number().optional(), temperature: z.number().optional(), note: z.string().max(2000).optional(), done: z.boolean().optional(), repeat: z.number().min(0).max(30).optional(), interval: z.number().min(0).max(365).optional() }) },
+  { name: 'patchTreatment', description: 'Update one or more existing treatment records by their IDs.', parameters: z.object({ ids: z.array(z.number()).min(1), date: z.string().optional(), enddate: z.string().optional(), typeId: z.number().optional(), diseaseId: z.number().optional(), vetId: z.number().optional(), amount: z.number().optional(), wait: z.number().optional(), temperature: z.number().optional(), note: z.string().max(2000).optional(), done: z.boolean().optional() }) },
+  { name: 'softDeleteTreatment', description: 'Soft-delete one or more treatment records by their IDs.', parameters: z.object({ ids: z.array(z.number()).min(1) }) },
+  { name: 'createCheckup', description: 'Create a new checkup/inspection record for one or more hives.', parameters: z.object({ hiveIds: z.array(z.number()).min(1), date: z.string(), enddate: z.string().optional(), typeId: z.number().optional(), note: z.string().max(2000).optional(), done: z.boolean().optional(), repeat: z.number().min(0).max(30).optional(), interval: z.number().min(0).max(365).optional(), queen: z.boolean().optional(), queencells: z.boolean().optional(), eggs: z.boolean().optional(), cappedBrood: z.boolean().optional(), brood: z.number().optional(), pollen: z.number().optional(), comb: z.number().optional(), temper: z.number().optional(), calmComb: z.number().optional(), swarm: z.number().optional(), varroa: z.number().optional(), strong: z.number().optional(), temperature: z.number().optional(), weight: z.number().optional(), broodframes: z.number().optional(), honeyframes: z.number().optional(), foundation: z.number().optional(), emptyframes: z.number().optional() }) },
+  { name: 'patchCheckup', description: 'Update one or more existing checkup/inspection records by their IDs.', parameters: z.object({ ids: z.array(z.number()).min(1), date: z.string().optional(), enddate: z.string().optional(), typeId: z.number().optional(), note: z.string().max(2000).optional(), done: z.boolean().optional(), queen: z.boolean().optional(), queencells: z.boolean().optional(), eggs: z.boolean().optional(), cappedBrood: z.boolean().optional(), brood: z.number().optional(), pollen: z.number().optional(), comb: z.number().optional(), temper: z.number().optional(), calmComb: z.number().optional(), swarm: z.number().optional(), varroa: z.number().optional(), strong: z.number().optional(), temperature: z.number().optional(), weight: z.number().optional(), broodframes: z.number().optional(), honeyframes: z.number().optional(), foundation: z.number().optional(), emptyframes: z.number().optional() }) },
+  { name: 'softDeleteCheckup', description: 'Soft-delete one or more checkup/inspection records by their IDs.', parameters: z.object({ ids: z.array(z.number()).min(1) }) },
   {
     name: 'createTodo',
     description: 'Create a new todo/reminder.',
@@ -640,12 +1194,71 @@ export const wizBeeToolDefinitions = [
     }),
   },
   {
+    name: 'patchTodo',
+    description: 'Update one or more existing todos by their IDs.',
+    parameters: z.object({
+      ids: z.array(z.number()).min(1),
+      name: z.string().min(1).max(48).optional(),
+      date: z.string().optional(),
+      note: z.string().max(2000).optional(),
+      done: z.boolean().optional(),
+      apiaryId: z.number().optional(),
+    }),
+  },
+  {
+    name: 'batchDeleteTodo',
+    description: 'Delete one or more todos by their IDs.',
+    parameters: z.object({
+      ids: z.array(z.number()).min(1),
+    }),
+  },
+  {
     name: 'fetchCharges',
     description: 'Fetch charges (stock/inventory entries).',
     parameters: z.object({
       q: z.string().optional(),
       includeDeleted: z.boolean().optional().default(false),
       limit: z.number().optional().default(100),
+    }),
+  },
+  {
+    name: 'createCharge',
+    description: 'Create a new charge/stock entry (sugar, treatments, honey jars, etc.).',
+    parameters: z.object({
+      name: z.string().min(1).max(100),
+      date: z.string(),
+      amount: z.number().optional(),
+      price: z.number().optional(),
+      typeId: z.number().optional(),
+      charge: z.string().max(24).optional(),
+      bestbefore: z.string().optional(),
+      kind: z.string().optional(),
+      note: z.string().max(2000).optional(),
+      url: z.string().max(512).optional(),
+    }),
+  },
+  {
+    name: 'patchCharge',
+    description: 'Update one or more existing charge/stock records by their IDs.',
+    parameters: z.object({
+      ids: z.array(z.number()).min(1),
+      name: z.string().optional(),
+      date: z.string().optional(),
+      amount: z.number().optional(),
+      price: z.number().optional(),
+      typeId: z.number().optional(),
+      charge: z.string().max(24).optional(),
+      bestbefore: z.string().optional(),
+      kind: z.string().optional(),
+      note: z.string().max(2000).optional(),
+      url: z.string().max(512).optional(),
+    }),
+  },
+  {
+    name: 'softDeleteCharge',
+    description: 'Soft-delete one or more charge/stock records by their IDs.',
+    parameters: z.object({
+      ids: z.array(z.number()).min(1),
     }),
   },
   {
