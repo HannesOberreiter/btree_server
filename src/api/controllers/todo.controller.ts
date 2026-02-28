@@ -132,6 +132,8 @@ export default class TodoController {
     const body = req.body as TodoCreate;
     const db = KyselyServer.getInstance().db;
 
+    const isLlm = (req.session as any).llm === true;
+
     const insert = {
       date: new Date(body.date),
       name: body.name,
@@ -141,6 +143,7 @@ export default class TodoController {
       apiary_id: body.apiary_id || null,
       user_id: req.session.user.user_id,
       bee_id: req.session.user.bee_id,
+      ...(isLlm && { ai_created_at: new Date() }),
     };
 
     const repeat = body.repeat || 0;
