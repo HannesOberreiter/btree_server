@@ -666,7 +666,7 @@
   "table": "tavola | Tabelle",
   "task": "Compito | Compiti",
   "temperature": "Temperatura",
-  "temperatureHint": "Altitudine {height}m, Lat. {lat} Lon. {lon}",
+  "temperatureHint": "lat. \n{lat} lon. \n{lon}",
   "temperatureTooltip": "Carica la temperatura attuale per la posizione dell'apiario.",
   "time": "Volta",
   "timestamp": "Timestamp",

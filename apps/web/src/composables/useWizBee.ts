@@ -18,6 +18,7 @@ export interface ChatMessage {
 	content: string;
 	toolName?: string;
 	toolDone?: boolean;
+	toolOutput?: string;
 }
 
 export function useWizBee() {
@@ -150,6 +151,7 @@ export function useWizBee() {
 							role: 'tool',
 							content: json.toolName || 'tool',
 							toolName: json.toolName,
+							toolOutput: json.toolOutput,
 							toolDone: false,
 						});
 					}

@@ -666,7 +666,7 @@
   "table": "Tableau | les tables",
   "task": "Tâche | Tâches",
   "temperature": "Température",
-  "temperatureHint": "Élévation {height}m, Lat. {lat} Lon. {lon}",
+  "temperatureHint": "Lat. \n{lat} Lon. \n{lon}",
   "temperatureTooltip": "Charger la température actuelle pour l'emplacement du rucher.",
   "time": "Temps",
   "timestamp": "Horodatage",

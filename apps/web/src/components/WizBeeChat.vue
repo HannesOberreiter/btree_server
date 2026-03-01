@@ -5,8 +5,6 @@ import { useI18n } from 'vue-i18n';
 import { useWizBee } from '../composables/useWizBee';
 
 defineProps<{
-	/** Show the usage/budget footer */
-	showUsage?: boolean;
 	/** Show example question chips */
 	showExamples?: boolean;
 }>();
@@ -158,7 +156,7 @@ function onClear() {
 		</div>
 
 		<!-- Usage info (optional) -->
-		<div v-if="showUsage && monthlyUsage && chatHistory.length > 0" class="q-px-sm q-pb-xs">
+		<div v-if="monthlyUsage" class="q-px-sm q-pb-xs">
 			<div class="text-caption text-grey-6 row items-center q-gutter-x-sm">
 				<span>
 					<b>Budget:</b>

@@ -666,7 +666,7 @@
   "table": "Tabelle | Tabellen",
   "task": "Aufgabe | Aufgaben",
   "temperature": "Temperatur",
-  "temperatureHint": "Seehöhe {height}m, Lat. {lat} Lon. {lon}",
+  "temperatureHint": "Lat. \n{lat} Lon. \n{lon}",
   "temperatureTooltip": "Laden Sie die aktuelle Temperatur für den Bienenstand.",
   "time": "Zeit",
   "timestamp": "Zeitstempel",
