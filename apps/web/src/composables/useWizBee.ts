@@ -19,6 +19,7 @@ export interface ChatMessage {
 	toolName?: string;
 	toolDone?: boolean;
 	toolOutput?: string;
+	toolInput?: string;
 }
 
 export function useWizBee() {
@@ -151,7 +152,7 @@ export function useWizBee() {
 							role: 'tool',
 							content: json.toolName || 'tool',
 							toolName: json.toolName,
-							toolOutput: json.toolOutput,
+							toolInput: json.toolInput,
 							toolDone: false,
 						});
 					}
@@ -162,6 +163,7 @@ export function useWizBee() {
 						);
 						if (toolMsg) {
 							toolMsg.toolDone = true;
+							toolMsg.toolOutput = json.toolOutput;
 						}
 						// Reset modelText so the next text chunk starts a new model bubble
 						modelText = '';
