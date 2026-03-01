@@ -200,7 +200,7 @@ const openAI = {
 
 const mistralAI = {
   key: process.env.MISTRAL_API_KEY ?? '',
-  monthlyBudgetUSD: Number.parseFloat(process.env.MISTRAL_MONTHLY_BUDGET_USD ?? '5'),
+  monthlyBudgetEUR: Number.parseFloat(process.env.MISTRAL_MONTHLY_BUDGET_EUR ?? '3'),
 };
 
 const serverLocations = ['eu', 'us'];
