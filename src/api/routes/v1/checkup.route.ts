@@ -27,12 +27,11 @@ export default function routes(
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
         body: z
-          .object({
+          .looseObject({
             hive_ids: z.array(numberSchema),
             interval: z.number().min(0).max(365),
             repeat: z.number().min(0).max(15),
-          })
-          .passthrough(),
+          }),
       },
     },
     CheckupController.post,
@@ -45,7 +44,7 @@ export default function routes(
       schema: {
         body: z.object({
           ids: z.array(numberSchema),
-          data: z.object({}).passthrough(),
+          data: z.looseObject({}),
         }),
       },
     },

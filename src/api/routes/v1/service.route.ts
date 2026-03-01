@@ -17,7 +17,7 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
     },
-    ServiceController.getTemperature,
+    ServiceController.getWeatherData,
   );
 
   server.get(

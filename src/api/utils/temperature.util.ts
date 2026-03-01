@@ -1,74 +1,145 @@
 import httpErrors from 'http-errors';
 
 import { openweatherKey } from '../../config/environment.config.js';
+import { KyselyServer } from '../../servers/kysely.server.js';
+import { RedisServer } from '../../servers/redis.server.js';
 import { Logger } from '../../services/logger.service.js';
 
-interface TemperatureResponse {
-  coord: {
-    lon: number
-    lat: number
-  }
-  weather: Array<{
-    id: number
-    main: string
-    description: string
-    icon: string
-  }>
-  base: string
-  main: {
-    temp: number
-    feels_like: number
-    temp_min: number
-    temp_max: number
-    pressure: number
-    humidity: number
-    sea_level: number
-    grnd_level: number
-  }
-  visibility: number
-  wind: {
-
-    speed: number
-    deg: number
-  }
-  clouds: {
-    all: number
-  }
-  dt: number
-  sys: {
-    type: number
-    id: number
-    country: string
+/**
+ * OpenWeather One Call API 3.0 Response
+ * @see https://openweathermap.org/api/one-call-3
+ */
+export interface OneCallResponse {
+  lat: number
+  lon: number
+  timezone: string
+  timezone_offset: number
+  current: {
+    dt: number
     sunrise: number
     sunset: number
+    temp: number
+    feels_like: number
+    pressure: number
+    humidity: number
+    dew_point: number
+    uvi: number
+    clouds: number
+    visibility: number
+    wind_speed: number
+    wind_deg: number
+    wind_gust?: number
+    weather: Array<{
+      id: number
+      main: string
+      description: string
+      icon: string
+    }>
   }
-  timezone: number
-  id: number
-  name: string
-  cod: number
+  daily: Array<{
+    dt: number
+    sunrise: number
+    sunset: number
+    moonrise: number
+    moonset: number
+    moon_phase: number
+    summary?: string
+    temp: {
+      day: number
+      min: number
+      max: number
+      night: number
+      eve: number
+      morn: number
+    }
+    feels_like: {
+      day: number
+      night: number
+      eve: number
+      morn: number
+    }
+    pressure: number
+    humidity: number
+    dew_point: number
+    wind_speed: number
+    wind_deg: number
+    wind_gust?: number
+    weather: Array<{
+      id: number
+      main: string
+      description: string
+      icon: string
+    }>
+    clouds: number
+    pop: number
+    rain?: number
+    snow?: number
+    uvi: number
+  }>
+  alerts?: Array<{
+    sender_name: string
+    event: string
+    start: number
+    end: number
+    description: string
+    tags: string[]
+  }>
 }
 
 /**
- * Get current weather temperature for a location using OpenWeather API
+ * Get weather data using OpenWeather One Call API 3.0
+ * Provides current weather, daily forecast (8 days), and alerts in a single call
+ * Results are cached in Redis for 1 hour to reduce API calls
  * @param latitude - Location latitude
  * @param longitude - Location longitude
- * @returns Current weather data
+ * @returns Complete weather data including current conditions and forecast
  */
-export async function getTemperature(latitude: number, longitude: number) {
-  // OpenWeather Current Weather API - Free tier: 60 calls/min, 1M calls/month
-  // https://openweathermap.org/current
-  const url = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=metric&appid=${openweatherKey}`;
+export async function getWeatherData(latitude: number, longitude: number): Promise<OneCallResponse> {
+  // Create cache key based on coordinates (rounded to 4 decimal places for ~11m precision)
+  const lat = Number(latitude.toFixed(4));
+  const lon = Number(longitude.toFixed(4));
+  const cacheKey = `weather:${lat}:${lon}`;
+
+  try {
+    const cached = await RedisServer.client.get(cacheKey);
+    if (cached) {
+      return JSON.parse(cached) as OneCallResponse;
+    }
+  }
+  catch (error) {
+    Logger.getInstance().log('warn', 'Redis cache read error', {
+      label: 'Weather Cache',
+      error,
+    });
+  }
+
+  // OpenWeather One Call API 3.0
+  // https://openweathermap.org/api/one-call-3
+  const url = `https://api.openweathermap.org/data/3.0/onecall?lat=${latitude}&lon=${longitude}&exclude=minutely,hourly&units=metric&appid=${openweatherKey}`;
 
   try {
     const response = await fetch(url);
     const result = await response.json();
-    if (result.cod && result.cod !== 200) {
+
+    if (response.status !== 200) {
       throw httpErrors.BadRequest(result.message || 'OpenWeather error');
     }
-    return result as TemperatureResponse;
+
+    // Cache the result for 1 hour (3600 seconds)
+    try {
+      await RedisServer.client.setex(cacheKey, 3600, JSON.stringify(result));
+    }
+    catch (error) {
+      Logger.getInstance().log('warn', 'Redis cache write error', {
+        label: 'Weather Cache',
+        error,
+      });
+    }
+
+    return result as OneCallResponse;
   }
   catch (error) {
-    Logger.getInstance().log('error', 'OpenWeather error', {
+    Logger.getInstance().log('error', 'OpenWeather One Call API error', {
       label: 'OpenWeather',
       error,
     });
@@ -179,4 +250,38 @@ export function calculateGruenlandtemperatursumme(
       days: dailyTemperatures.length,
     },
   };
+}
+
+/**
+ * Get weather data for a specific apiary by ID
+ * Fetches the apiary's coordinates from the database and retrieves weather data
+ * @param apiaryId - The apiary ID
+ * @param userId - The user ID (company ID) for ownership verification
+ * @returns Complete weather data including current conditions and forecast
+ * @throws NotFound if apiary doesn't exist or doesn't belong to the user
+ */
+export async function getWeatherDataForApiary(
+  apiaryId: number,
+  userId: number,
+): Promise<OneCallResponse> {
+  const db = KyselyServer.getInstance().db;
+
+  const apiary = await db
+    .selectFrom('apiaries')
+    .select(['latitude', 'longitude'])
+    .where('id', '=', apiaryId)
+    .where('user_id', '=', userId)
+    .where('deleted', '=', 0)
+    .executeTakeFirst();
+
+  if (!apiary) {
+    throw httpErrors.NotFound('Apiary not found or access denied');
+  }
+
+  // Get weather data using the apiary's coordinates
+  // Convert string coordinates to numbers
+  return await getWeatherData(
+    Number(apiary.latitude),
+    Number(apiary.longitude),
+  );
 }

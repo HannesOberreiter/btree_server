@@ -153,21 +153,21 @@ export function createWizBeeTools(context: WizBeeContext): Record<string, Tool> 
 
     /**
      * Get Apiary Weather Tool
-     * Returns current weather and GTS (Grünlandtemperatursumme) for a specific apiary
+     * Returns current weather, forecast, and GTS (Grünlandtemperatursumme) for a specific apiary
      */
     apiaryWeather: tool({
-      description: 'Get the current weather and Grünlandtemperatursumme (GTS/grassland temperature sum) for a specific apiary. GTS is useful for spring vegetation development monitoring.',
+      description: 'Get the weather and forecast, and Grünlandtemperatursumme (GTS/grassland temperature sum) for a specific apiary. GTS is useful for spring vegetation development monitoring.',
       inputSchema: z.object({
         apiaryId: z.number().describe('The apiary ID to get weather for'),
         year: z.number().optional().describe('Year for GTS calculation (default: current year)'),
       }),
       execute: async (input) => {
-        let currentWeather = null;
+        let weatherData = null;
         try {
-          const tempReq = createMockRequest(context, {
+          const weatherReq = createMockRequest(context, {
             params: { apiary_id: input.apiaryId },
           });
-          currentWeather = await ServiceController.getTemperature(tempReq, createMockReply());
+          weatherData = await ServiceController.getWeatherData(weatherReq, createMockReply());
         }
         catch {
           // Weather service might fail, continue without it
@@ -210,19 +210,8 @@ export function createWizBeeTools(context: WizBeeContext): Record<string, Tool> 
           // GTS calculation might fail, continue without it
         }
 
-        // Format weather response
-        const weather = currentWeather
-          ? {
-              temperature: currentWeather.main?.temp,
-              feelsLike: currentWeather.main?.feels_like,
-              humidity: currentWeather.main?.humidity,
-              description: currentWeather.weather?.[0]?.description ?? '',
-              windSpeed: currentWeather.wind?.speed,
-            }
-          : null;
-
         return {
-          currentWeather: weather,
+          weatherData,
           gts,
         };
       },

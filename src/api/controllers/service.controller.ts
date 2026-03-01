@@ -12,11 +12,11 @@ import { createOrder as stripeCreateOrder } from '../utils/stripe.util.js';
 import {
   calculateGruenlandtemperatursumme,
   getHistoricalTemperatures,
-  getTemperature,
+  getWeatherData,
 } from '../utils/temperature.util.js';
 
 export default class ServiceController {
-  static async getTemperature(req: FastifyRequest, _reply: FastifyReply) {
+  static async getWeatherData(req: FastifyRequest, _reply: FastifyReply) {
     const params = req.params as any;
     const premium = await isPremium(req.session.user.user_id);
     if (!premium) {
@@ -25,8 +25,8 @@ export default class ServiceController {
     const apiary = await Apiary.query()
       .findById(params.apiary_id)
       .where({ user_id: req.session.user.user_id });
-    const temp = await getTemperature(apiary.latitude, apiary.longitude);
-    return temp;
+    const weatherData = await getWeatherData(apiary.latitude, apiary.longitude);
+    return weatherData;
   }
 
   static async getGruenlandtemperatursumme(req: FastifyRequest, _reply: FastifyReply) {
