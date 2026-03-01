@@ -152,7 +152,7 @@ export function useWizBee() {
 							role: 'tool',
 							content: json.toolName || 'tool',
 							toolName: json.toolName,
-							toolInput: json.toolInput,
+							toolInput: JSON.stringify(json.toolInput),
 							toolDone: false,
 						});
 					}
@@ -163,7 +163,7 @@ export function useWizBee() {
 						);
 						if (toolMsg) {
 							toolMsg.toolDone = true;
-							toolMsg.toolOutput = json.toolOutput;
+							toolMsg.toolOutput = JSON.stringify(json.toolOutput);
 						}
 						// Reset modelText so the next text chunk starts a new model bubble
 						modelText = '';
