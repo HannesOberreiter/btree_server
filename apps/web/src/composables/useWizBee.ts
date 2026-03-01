@@ -7,9 +7,9 @@ export interface MonthlyUsage {
 	totalInputTokens: number;
 	totalOutputTokens: number;
 	totalRequests: number;
-	estimatedCostUSD: number;
-	monthlyLimitUSD: number;
-	remainingBudgetUSD: number;
+	estimatedCostEUR: number;
+	monthlyLimitEUR: number;
+	remainingBudgetEUR: number;
 	isOverBudget: boolean;
 }
 

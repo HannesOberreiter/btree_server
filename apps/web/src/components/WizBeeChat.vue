@@ -155,15 +155,15 @@ function onClear() {
 			</template>
 		</div>
 
-		<!-- Usage info (optional) -->
+		<!-- Usage info -->
 		<div v-if="monthlyUsage" class="q-px-sm q-pb-xs">
 			<div class="text-caption text-grey-6 row items-center q-gutter-x-sm">
 				<span>
 					<b>Budget:</b>
-					${{ monthlyUsage.estimatedCostUSD.toFixed(2) }} / ${{ monthlyUsage.monthlyLimitUSD.toFixed(2) }}
+					€{{ monthlyUsage.estimatedCostEUR.toFixed(2) }} / €{{ monthlyUsage.monthlyLimitEUR.toFixed(2) }}
 				</span>
 				<span v-if="monthlyUsage.isOverBudget" class="text-red text-bold">({{ $t('error.tokenLimit') }})</span>
-				<span v-else>({{ $t('countTokensLeft') }}: ${{ monthlyUsage.remainingBudgetUSD.toFixed(2) }})</span>
+				<span v-else>({{ $t('countTokensLeft') }}: €{{ monthlyUsage.remainingBudgetEUR.toFixed(2) }})</span>
 				<span>|</span>
 				<span>{{ monthlyUsage.totalRequests }} {{ $t('requests') }}</span>
 			</div>
