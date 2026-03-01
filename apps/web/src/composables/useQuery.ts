@@ -68,49 +68,81 @@ export function useApiaryQuery({
 }
 
 /* OpenWeatherMap API response structure */
-interface TemperatureResponse {
-	coord: {
-		lon: number;
-		lat: number;
-	};
-	weather: Array<{
-		id: number;
-		main: string;
-		description: string;
-		icon: string;
-	}>;
-	base: string;
-	main: {
-		temp: number;
-		feels_like: number;
-		temp_min: number;
-		temp_max: number;
-		pressure: number;
-		humidity: number;
-		sea_level: number;
-		grnd_level: number;
-	};
-	visibility: number;
-	wind: {
-
-		speed: number;
-		deg: number;
-	};
-	clouds: {
-		all: number;
-	};
-	dt: number;
-	sys: {
-		type: number;
-		id: number;
-		country: string;
+export interface OneCallResponse {
+	lat: number;
+	lon: number;
+	timezone: string;
+	timezone_offset: number;
+	current: {
+		dt: number;
 		sunrise: number;
 		sunset: number;
+		temp: number;
+		feels_like: number;
+		pressure: number;
+		humidity: number;
+		dew_point: number;
+		uvi: number;
+		clouds: number;
+		visibility: number;
+		wind_speed: number;
+		wind_deg: number;
+		wind_gust?: number;
+		weather: Array<{
+			id: number;
+			main: string;
+			description: string;
+			icon: string;
+		}>;
 	};
-	timezone: number;
-	id: number;
-	name: string;
-	cod: number;
+	daily: Array<{
+		dt: number;
+		sunrise: number;
+		sunset: number;
+		moonrise: number;
+		moonset: number;
+		moon_phase: number;
+		summary?: string;
+		temp: {
+			day: number;
+			min: number;
+			max: number;
+			night: number;
+			eve: number;
+			morn: number;
+		};
+		feels_like: {
+			day: number;
+			night: number;
+			eve: number;
+			morn: number;
+		};
+		pressure: number;
+		humidity: number;
+		dew_point: number;
+		wind_speed: number;
+		wind_deg: number;
+		wind_gust?: number;
+		weather: Array<{
+			id: number;
+			main: string;
+			description: string;
+			icon: string;
+		}>;
+		clouds: number;
+		pop: number;
+		rain?: number;
+		snow?: number;
+		uvi: number;
+	}>;
+	alerts?: Array<{
+		sender_name: string;
+		event: string;
+		start: number;
+		end: number;
+		description: string;
+		tags: string[];
+	}>;
 }
 
 export function useTemperatureQuery(
@@ -124,7 +156,7 @@ export function useTemperatureQuery(
 			return api.get(`/v1/service/temperature/${apiary_id.value}`);
 		},
 		enabled,
-		select: response => response as TemperatureResponse,
+		select: response => response as OneCallResponse,
 	});
 }
 

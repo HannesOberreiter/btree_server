@@ -27,7 +27,7 @@ onMounted(() => {
 			</div>
 
 			<q-card class="wizbee-page-chat q-mt-sm">
-				<WizBeeChat :show-usage="true" :show-examples="true" />
+				<WizBeeChat :show-examples="true" />
 			</q-card>
 
 			<!-- Usage overview -->

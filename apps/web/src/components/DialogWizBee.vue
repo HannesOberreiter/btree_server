@@ -4,7 +4,7 @@ import WizBeeChat from './WizBeeChat.vue';
 </script>
 
 <template>
-	<q-dialog>
+	<q-dialog :maximized="$q.screen.lt.md">
 		<q-card class="dialog-wizbee">
 			<q-card-section class="row items-center q-pb-none">
 				<div class="row items-center q-gutter-x-sm">
@@ -22,7 +22,7 @@ import WizBeeChat from './WizBeeChat.vue';
 				<BtnCloseDialog />
 			</q-card-section>
 			<q-card-section class="dialog-wizbee__body q-pa-none">
-				<WizBeeChat :show-usage="false" :show-examples="false" />
+				<WizBeeChat :show-examples="false" />
 			</q-card-section>
 		</q-card>
 	</q-dialog>
@@ -30,12 +30,16 @@ import WizBeeChat from './WizBeeChat.vue';
 
 <style scoped>
 .dialog-wizbee {
-  width: 700px;
-  max-width: 95vw;
-  height: 75vh;
-  max-height: 85vh;
   display: flex;
   flex-direction: column;
+}
+
+@media (min-width: 1024px) {
+  .dialog-wizbee {
+	height: 85vh;
+    min-width: 75vw;
+    min-height: 85vh;
+  }
 }
 
 .dialog-wizbee__body {
