@@ -19,7 +19,6 @@ jobs:
       MATOMO_HOST: ${{ secrets.MATOMO_HOST }}
       MATOMO_SITE_ID: ${{ secrets.MATOMO_SITE_ID }}
       PAYPAL_CLIENT_ID: ${{ secrets.PAYPAL_CLIENT_ID }}
-      BEEKEEPING_NEWS_BEARER: ${{ secrets.BEEKEEPING_NEWS_BEARER }}
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - uses: actions/checkout@v4

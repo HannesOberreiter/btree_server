@@ -36,6 +36,7 @@ const icons = {
 	harvest: 'fas fa-droplet',
 	feed: 'fas fa-cube',
 	movedate: 'fas fa-truck',
+	todo: 'fas fa-list-check',
 };
 
 const color = {
@@ -44,6 +45,7 @@ const color = {
 	harvest: 'orange',
 	feed: 'green',
 	movedate: 'grey',
+	todo: 'primary',
 };
 
 const fields = useFieldsettingStore();
@@ -81,6 +83,10 @@ function updateStatus(id: number) {
 }
 
 function createLabel(task: any) {
+	if (task.kind === 'todo') {
+		return task.name || '-';
+	}
+
 	let type = task.type ? task.type.name : '-';
 	if (task.kind === 'treatment' && task.disease)
 		type += ` (${task.disease.name})`;
@@ -99,20 +105,23 @@ function createLabel(task: any) {
 
 function createCaption(task: any) {
 	const date
-		= task.date === task.enddate || task.kind === 'movedate'
+		= task.date === task.enddate || task.kind === 'movedate' || task.kind === 'todo'
 			? useDate.displayFormat(task.date)
 			: `${useDate.displayFormat(task.date)
 			} - ${
 				useDate.displayFormat(task.enddate)}`;
 	let apiary = '';
-	if (task.apiary || task[`${task.kind}_apiary`]) {
+	if (task.kind === 'todo') {
+		apiary = task.apiary ? task.apiary.name : '';
+	}
+	else if (task.apiary || task[`${task.kind}_apiary`]) {
 		apiary
 			= task.kind === 'movedate'
 				? task.apiary.name
 				: task[`${task.kind}_apiary`].apiary_name;
 	}
 	if (props.apiary) {
-		return `${date} [${t('hive')}: ${task.hive.name}]`;
+		return `${date} [${t('hive')}: ${task.hive ? task.hive.name : '-'}]`;
 	}
 	else {
 		return `${date} [${t('apiary')}: ${apiary}]`;

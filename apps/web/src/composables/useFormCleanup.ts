@@ -237,6 +237,7 @@ function cleanupTodo(state: FormTodo, isEdit: boolean) {
 		name: state.name,
 		note: state.note,
 		url: state.url,
+		apiary_id: state.apiary ? state.apiary.id : null,
 	} as any;
 
 	if (!isEdit) {

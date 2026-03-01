@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { QTableProps } from 'quasar';
+import type { TodoPaginatedResponse, TodoResponse } from '../types';
 import { storeToRefs } from 'pinia';
 import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -26,7 +27,7 @@ const { todo: filters } = storeToRefs(storeFilter);
 const visibleColumns = ref(store.value.visible);
 
 const selected = ref<any>([]);
-const rows = ref([]);
+const rows = ref<TodoPaginatedResponse['results']>([]);
 const modus = ref(false);
 const deleted = ref(false);
 const filter = ref('');
@@ -36,7 +37,7 @@ const columns = [
 		name: 'id',
 		label: t('id'),
 		align: 'right',
-		field: (row: any) => row.id,
+		field: (row: TodoResponse) => row.id,
 		sortable: true,
 	},
 	{
@@ -44,7 +45,7 @@ const columns = [
 		required: true,
 		label: t('date'),
 		align: 'left',
-		field: (row: any) => row.date,
+		field: (row: TodoResponse) => row.date,
 		format: (val: string) => useDate.displayFormat(val),
 		sortable: true,
 	},
@@ -52,36 +53,43 @@ const columns = [
 		name: 'name',
 		label: t('name'),
 		align: 'left',
-		field: (row: any) => row.name,
+		field: (row: TodoResponse) => row.name,
+		sortable: true,
+	},
+	{
+		name: 'apiary',
+		label: t('apiary'),
+		align: 'left',
+		field: (row: TodoResponse) => row.apiary?.name,
 		sortable: true,
 	},
 	{
 		name: 'url',
 		label: t('url'),
 		align: 'left',
-		field: (row: any) => row.url,
+		field: (row: TodoResponse) => row.url,
 		sortable: true,
 	},
 	{
 		name: 'note',
 		label: t('note'),
 		align: 'left',
-		field: (row: any) => row.note,
+		field: (row: TodoResponse) => row.note,
 		sortable: true,
 	},
 	{
 		name: 'done',
 		label: t('status'),
 		align: 'center',
-		field: (row: any) => row.done,
+		field: (row: TodoResponse) => row.done,
 		sortable: true,
 	},
 	{
 		name: 'created_at',
 		label: t('created'),
 		align: 'center',
-		field: (row: any) => row.created_at,
-		format: (val: string, row: any) =>
+		field: (row: TodoResponse) => row.created_at,
+		format: (val: string, row: TodoResponse) =>
 			tableMeta(val, row.creator, useDate.formats.value['date-time']),
 		sortable: true,
 	},
@@ -89,8 +97,8 @@ const columns = [
 		name: 'updated_at',
 		label: t('updated'),
 		align: 'center',
-		field: (row: any) => row.updated_at,
-		format: (val: string, row: any) =>
+		field: (row: TodoResponse) => row.updated_at,
+		format: (val: string, row: TodoResponse) =>
 			tableMeta(val, row.editor, useDate.formats.value['date-time']),
 		sortable: true,
 	},

@@ -17,6 +17,7 @@ export const KINDS = [
 	'harvest',
 	'movedate',
 ] as const;
+export const KINDS_APIARY = [...KINDS, 'todo'] as const;
 
 export const STATUS = ['both', 'open', 'done'] as const;
 

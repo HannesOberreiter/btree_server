@@ -159,6 +159,15 @@ const layouts = {
 	],
 	todo: [
 		{
+			comp: FormDropdownType,
+			model: 'apiary_id',
+			props: {
+				'table': 'apiary',
+				'label': 'apiary',
+				'allow-empty': 'filterEmpty',
+			},
+		},
+		{
 			comp: FormInputDateRange,
 			model: 'date',
 			props: {

@@ -1,5 +1,6 @@
 {
   "Dropbox": "Boîte de dépôt",
+  "WizBee": "WizBee",
   "abo": "Abo | \nAbos",
   "account": "Compte",
   "accountActivated": "Votre compte a été activé avec succès!",
@@ -47,6 +48,7 @@
   "cancel": "Annuler",
   "cappedBrood": "Couvain plafonné",
   "capped_brood": "@:cappedBrood",
+  "category": "Catégorie",
   "change": "Monnaie",
   "changeStatus": "Modifier le statut",
   "changelog": "Journal des modifications",
@@ -79,7 +81,7 @@
   "copiedToClipboard": "Copié dans le presse-papiers.",
   "copy": "Copie",
   "count": "Compter",
-  "countTokensLeft": "Jetons quotidiens restants",
+  "countTokensLeft": "Jetons mensuels restants",
   "coupon": "Coupon",
   "created": "Établi",
   "credentials": "Identifiants",
@@ -153,7 +155,7 @@
     "notFound": "Route ou serveur introuvable! (Hors ligne?)",
     "permission": "Impossible de définir les autorisations.",
     "premium": "Fonction Premium uniquement ou limite d'utilisateurs de base atteinte!",
-    "tokenLimit": "Limite quotidienne de jetons atteinte, réessayez demain.",
+    "tokenLimit": "Limite mensuelle de jetons atteinte, réessayez le mois prochain.",
     "tooManyRequest": "Trop de demandes !",
     "unknown": "Une erreur s'est produite!",
     "validation": "Erreur de validation!"
@@ -163,8 +165,10 @@
   "event": "Réunion | Réunion",
   "example": "Exemple",
   "exampleQuestion": {
+    "count": "Combien de colonies et de ruchers ai-je ?",
     "diffDiseases": "Comment faire la différence entre AFB et EFB ?",
     "eggs": "Combien d'oeufs une reine des abeilles pond-elle ?",
+    "harvest": "Quelle a été ma récolte l’année dernière ?",
     "offline": "b.tree fonctionne-t-il hors ligne ?",
     "option": "Comment puis-je ajouter un type d'alimentation personnalisé ?",
     "premium": "Combien coûte la prime ?"
@@ -265,7 +269,7 @@
     "table-todo": "Dans le tableau ToDo, vous pouvez gérer ou exporter vos ToDo. \nEn standard, seules les tâches ouvertes sont affichées. \nVous pouvez modifier cela en cliquant sur le symbole de l'œil. \nVous ne pouvez pas restaurer les tâches après suppression!",
     "table-treatment": "Dans le tableau de traitement, vous pouvez gérer ou exporter votre traitement. \nLa tâche supprimée peut être restaurée jusqu'à 30 jours après la suppression. \nLe champ de recherche recherche dans les colonnes les noms de ruche, de type et de maladie.",
     "table-virgin": "Identique à la table des reines mais sur cette table vous ne pouvez trouver que des reines sans aucune ruche. \nCeci est destiné à être utilisé comme place de stationnement pour les reines dans vos unités d'accouplement, qui peuvent ensuite être rapidement ajoutées à vos colonies ou marquées comme vendues (vous pouvez utiliser à mauvais escient une valeur déroulante, par exemple une lignée de reproduction ou utiliser le champ de note) et la rendre inactive.",
-    "wizbee": "Cet outil utilise l'API chatGPT pour répondre aux questions liées à l'apiculture à partir de diverses sources référencées et accessibles au public. \nVotre question sera envoyée à OpenAI, ils sont basés aux États-Unis, veuillez vous référer à leur politique de confidentialité. \nLa réponse générée doit être recoupée avec les références, car elles ne sont pas toujours correctes. \nS'il vous plaît ne leur faites pas confiance à 100%."
+    "wizbee": "WizBee est un wrapper pour un LLM (Large Language Model). Vos questions et données sont envoyées au fournisseur LLM (Mistral AI). En utilisant cette fonctionnalité, vous acceptez que vos données soient transmises et traitées par le fournisseur LLM. Veuillez consulter leur politique de confidentialité."
   },
   "hint": "Indice",
   "hintApiaryFirstMovedate": "La valeur indiquée est la première migration d'une ruche sur ce rucher, qui peut être considérée comme la date de création.",
@@ -446,6 +450,7 @@
   "pedigree": "Pedigree",
   "pending": "En attente",
   "permission": "Autorisation",
+  "placeholder": "-",
   "position": "Position",
   "positionNote": "Position de placement de la colonie sur le rucher",
   "premium": "Prime",
@@ -541,6 +546,7 @@
   "rename": "Renommer",
   "repeat": "Répéter",
   "repeatText": "Nombre de fois où la tâche doit être répétée",
+  "requests": "Demandes",
   "reset": "Réinitialiser",
   "resetConfirm": "Réinitialiser les données de formulaire?",
   "resetUser": {
@@ -660,7 +666,7 @@
   "table": "Tableau | les tables",
   "task": "Tâche | Tâches",
   "temperature": "Température",
-  "temperatureHint": "Élévation {height}m, Lat. {lat} Lon. {lon}",
+  "temperatureHint": "Lat. \n{lat} Lon. \n{lon}",
   "temperatureTooltip": "Charger la température actuelle pour l'emplacement du rucher.",
   "time": "Temps",
   "timestamp": "Horodatage",
