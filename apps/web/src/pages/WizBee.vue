@@ -1,13 +1,5 @@
 <script setup lang="ts">
-import { onMounted } from 'vue';
 import WizBeeChat from '../components/WizBeeChat.vue';
-import { useWizBee } from '../composables/useWizBee';
-
-const { monthlyUsage, fetchMonthlyUsage } = useWizBee();
-
-onMounted(() => {
-	fetchMonthlyUsage();
-});
 </script>
 
 <template>
@@ -28,31 +20,6 @@ onMounted(() => {
 
 			<q-card class="wizbee-page-chat q-mt-sm">
 				<WizBeeChat :show-examples="true" />
-			</q-card>
-
-			<!-- Usage overview -->
-			<q-card v-if="monthlyUsage" flat bordered class="q-mt-sm q-pa-sm">
-				<div class="row items-center q-gutter-x-md text-caption text-grey-7">
-					<div>
-						<b>Budget:</b>
-						${{ monthlyUsage.estimatedCostUSD.toFixed(4) }} / ${{ monthlyUsage.monthlyLimitUSD.toFixed(2) }}
-					</div>
-					<div>
-						<b>{{ $t('countTokensLeft') }}:</b>
-						${{ monthlyUsage.remainingBudgetUSD.toFixed(4) }}
-					</div>
-					<div>
-						<b>{{ $t('requests') }}:</b>
-						{{ monthlyUsage.totalRequests }}
-					</div>
-					<div>
-						<b>Tokens:</b>
-						{{ monthlyUsage.totalInputTokens.toLocaleString() }} in / {{ monthlyUsage.totalOutputTokens.toLocaleString() }} out
-					</div>
-					<div v-if="monthlyUsage.isOverBudget" class="text-red text-bold">
-						{{ $t('error.tokenLimit') }}
-					</div>
-				</div>
 			</q-card>
 
 			<small class="text-grey-7 q-mt-sm block">
