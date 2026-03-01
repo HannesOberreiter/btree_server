@@ -17,9 +17,6 @@ jobs:
       REDIS_HOSTNAME: localhost
       REDIS_USERNAME: default
       REDIS_PORT: 6379
-      VECTOR_HOSTNAME: localhost
-      VECTOR_USERNAME: default
-      VECTOR_PORT: 6380
 
     services:
       redis:

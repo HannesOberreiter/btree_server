@@ -2,8 +2,10 @@ import type { FastifyReply, FastifyRequest } from 'fastify';
 import dayjs from 'dayjs';
 import { map } from 'lodash-es';
 
+import { KyselyServer } from '../../servers/kysely.server.js';
 import { Charge } from '../models/charge.model.js';
 import { ChargeStock } from '../models/charge_stock.model.js';
+import { checkOwnership } from '../utils/kysely.utils.js';
 
 export default class ChargeController {
   static async get(req: FastifyRequest, _reply: FastifyReply) {
@@ -94,6 +96,17 @@ export default class ChargeController {
 
   static async post(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as any;
+
+    const isLlm = (req.session as any).llm === true;
+    if (body.type_id) {
+      await checkOwnership(
+        KyselyServer.getInstance().db,
+        'charge_types',
+        Number(body.type_id),
+        req.session.user.user_id,
+      );
+    }
+
     const insert = {
       date: body.date,
       bestbefore: body.bestbefore,
@@ -105,7 +118,9 @@ export default class ChargeController {
       kind: body.kind,
       type_id: body.type_id,
       note: body.note,
+      ...(isLlm && { ai_created_at: new Date() }),
     };
+
     const result = await Charge.transaction(async (trx) => {
       const result = [];
 
@@ -123,7 +138,18 @@ export default class ChargeController {
   static async patch(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as any;
     const ids = body.ids;
-    const insert = { ...body.data };
+
+    const isLlm = (req.session as any).llm === true;
+    if (body.data.type_id) {
+      await checkOwnership(
+        KyselyServer.getInstance().db,
+        'charge_types',
+        Number(body.type_id),
+        req.session.user.user_id,
+      );
+    }
+
+    const insert = { ...body.data, ...(isLlm && { ai_updated_at: new Date() }) };
     const result = await Charge.transaction(async (trx) => {
       return await Charge.query(trx)
         .patch({ ...insert, edit_id: req.session.user.bee_id })

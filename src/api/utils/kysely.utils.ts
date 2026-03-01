@@ -3,6 +3,7 @@ import type { Kysely, SelectQueryBuilder, Transaction } from 'kysely';
 import type { DB } from '../../types/db.types.js';
 
 import { sql } from 'kysely';
+import { KyselyServer } from '../../servers/kysely.server.js';
 
 /**
  * Execute a function within a database transaction.
@@ -108,13 +109,13 @@ export function withCreatorAndEditor<TB extends keyof DB & string, O>(
     editorColumn: string
   },
 ): SelectQueryBuilder<
-  DB & { creator: DB['bees'] | null, editor: DB['bees'] | null },
-  TB | 'creator' | 'editor',
-  O & {
-    creator: { id: number, email: string, username: string } | null
-    editor: { id: number, email: string, username: string } | null
-  }
-  > {
+DB & { creator: DB['bees'] | null, editor: DB['bees'] | null },
+TB | 'creator' | 'editor',
+O & {
+  creator: { id: number, email: string, username: string } | null
+  editor: { id: number, email: string, username: string } | null
+}
+> {
   return query
     // @ts-expect-error - Dynamic column reference requires runtime validation
     .leftJoin('bees as creator', 'creator.id', sql.ref(options.creatorColumn))
@@ -132,4 +133,81 @@ export function withCreatorAndEditor<TB extends keyof DB & string, O>(
         ELSE NULL END
       `.as('editor'),
     ]) as any;
+}
+
+/**
+ * Add apiary relation to a query for todos.
+ * Adds LEFT JOIN with apiaries table and JSON_OBJECT selection for apiary data.
+ * Filters out soft-deleted apiaries.
+ */
+export function withApiary<TB extends keyof DB & string, O>(
+  query: SelectQueryBuilder<DB, TB, O>,
+  options: {
+    apiaryColumn: string
+  },
+): SelectQueryBuilder<
+DB & { apiaries: DB['apiaries'] | null },
+TB | 'apiaries',
+O & {
+  apiary: { name: string, modus: boolean } | null
+}
+> {
+  return query
+    // @ts-expect-error - Dynamic column reference requires runtime validation
+    .leftJoin('apiaries', 'apiaries.id', sql.ref(options.apiaryColumn))
+    .select([
+      sql<{ name: string, modus: boolean } | null>`
+        CASE 
+          WHEN apiaries.id IS NOT NULL THEN JSON_OBJECT('name', apiaries.name, 'modus', IF(apiaries.modus = 1, TRUE, FALSE))
+          ELSE NULL
+        END
+      `.as('apiary'),
+    ])
+    // @ts-expect-error - Dynamic SQL expression for filtering soft-deleted apiaries
+    .where(sql`(${sql.ref(options.apiaryColumn)} IS NULL OR apiaries.deleted = 0)`) as any;
+}
+
+/**
+ * Tables that have a user_id column for ownership checks
+ */
+export type TableWithUserId = {
+  [K in keyof DB]: 'user_id' extends keyof DB[K] ? K : never
+}[keyof DB];
+
+/**
+ * Check if a record in a table belongs to a specific user (company).
+ * Throws an error if the record doesn't exist or doesn't belong to the user.
+ * Useful for validating foreign key references before insert/update operations.
+ *
+ * @example
+ * // Check if apiary belongs to user before creating a todo
+ * await checkOwnership(
+ *   db,
+ *   'apiaries',
+ *   apiaryId,
+ *   req.session.user.user_id
+ * );
+ *
+ * @param db - Kysely database instance or transaction
+ * @param table - Table name to check (must have user_id column)
+ * @param recordId - ID of the record to check
+ * @param userId - User (company) ID to verify ownership against
+ * @throws Error if record doesn't exist or doesn't belong to user
+ */
+export async function checkOwnership(
+  db = KyselyServer.getInstance().db,
+  table: TableWithUserId,
+  recordId: number,
+  userId: number,
+): Promise<void> {
+  const record = await db
+    .selectFrom(table)
+    .select(['id', 'user_id'])
+    .where('id', '=', recordId)
+    .where('user_id', '=', userId)
+    .executeTakeFirst();
+
+  if (!record) {
+    throw new Error(`Record with id ${recordId} not found in table ${table} for user ${userId}`);
+  }
 }

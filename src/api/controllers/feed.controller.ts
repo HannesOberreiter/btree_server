@@ -2,8 +2,10 @@ import type { FastifyReply, FastifyRequest } from 'fastify';
 import dayjs from 'dayjs';
 import { map } from 'lodash-es';
 
+import { KyselyServer } from '../../servers/kysely.server.js';
 import { Feed } from '../models/feed.model.js';
 import { Hive } from '../models/hive.model.js';
+import { checkOwnership } from '../utils/kysely.utils.js';
 
 export default class FeedController {
   static async get(req: FastifyRequest, _reply: FastifyReply) {
@@ -68,7 +70,26 @@ export default class FeedController {
   static async patch(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as any;
     const ids = body.ids;
+
     const insert = { ...body.data };
+
+    if (!insert.enddate && insert.date) {
+      insert.enddate = insert.date;
+    }
+    const isLlm = (req.session as any).llm === true;
+    if (isLlm) {
+      insert.ai_updated_at = new Date();
+    }
+
+    if (insert.type_id) {
+      await checkOwnership(
+        KyselyServer.getInstance().db,
+        'feed_types',
+        Number(insert.type_id),
+        req.session.user.user_id,
+      );
+    }
+
     const result = await Feed.transaction(async (trx) => {
       return await Feed.query(trx)
         .patch({ ...insert, edit_id: req.session.user.bee_id })
@@ -88,6 +109,25 @@ export default class FeedController {
     delete insert.hive_ids;
     delete insert.interval;
     delete insert.repeat;
+
+    if (insert.type_id) {
+      await checkOwnership(
+        KyselyServer.getInstance().db,
+        'feed_types',
+        Number(insert.type_id),
+        req.session.user.user_id,
+      );
+    }
+    if (!insert.enddate) {
+      insert.enddate = insert.date;
+    }
+    if (dayjs(insert.enddate).isBefore(dayjs(insert.date))) {
+      insert.enddate = insert.date;
+    }
+    const isLlm = (req.session as any).llm === true;
+    if (isLlm) {
+      insert.ai_created_at = new Date();
+    }
 
     const result = await Feed.transaction(async (trx) => {
       const hives = await Hive.query(trx)

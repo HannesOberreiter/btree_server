@@ -26,6 +26,8 @@ export default class OptionController {
     treatment_vets: TreatmentVet,
   } as const;
 
+  static tableNames = Object.keys(OptionController.tables);
+
   static async get(req: FastifyRequest, _reply: FastifyReply) {
     const params = (req.params as any).table as keyof typeof OptionController.tables;
     const { order, direction, modus } = req.query as any;
