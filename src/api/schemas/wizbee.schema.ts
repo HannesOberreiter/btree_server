@@ -7,6 +7,7 @@ export const wizBeeStreamBody = z.object({
     content: z.string(),
     toolName: z.string().optional(),
     toolDone: z.boolean().optional(),
+    toolOutput: z.string().optional(),
   })).optional(),
 });
 export type WizBeeStreamBody = z.infer<typeof wizBeeStreamBody>;

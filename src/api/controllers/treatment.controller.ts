@@ -5,6 +5,8 @@ import { KyselyServer } from '../../servers/kysely.server.js';
 import { Hive } from '../models/hive.model.js';
 import { Treatment } from '../models/treatment.model.js';
 import { checkOwnership } from '../utils/kysely.utils.js';
+import { isPremium } from '../utils/premium.util.js';
+import { getWeatherDataForApiary } from '../utils/temperature.util.js';
 
 export default class TreatmentController {
   static async get(req: FastifyRequest, _reply: FastifyReply) {
@@ -157,6 +159,23 @@ export default class TreatmentController {
     const isLlm = (req.session as any).llm === true;
     if (isLlm) {
       insert.ai_created_at = new Date();
+    }
+
+    // if premium and no temperature is set, get current temperature and set it
+    if (!insert.temperature && isPremium(req.session.user.user_id)) {
+      try {
+        const location = await KyselyServer.getInstance().db.selectFrom('hives_locations').select('apiary_id').where('hive_id', '=', hive_ids[0]).where('user_id', '=', req.session.user.user_id).executeTakeFirst();
+        if (!location || !location.apiary_id) {
+          throw new Error('No current location found for hive');
+        }
+        const weatherData = await getWeatherDataForApiary(location.apiary_id, req.session.user.user_id);
+        if (weatherData?.current?.temp) {
+          insert.temperature = weatherData.current.temp;
+        }
+      }
+      catch (e: any) {
+        req.log.error(e);
+      }
     }
 
     const result = await Treatment.transaction(async (trx) => {
