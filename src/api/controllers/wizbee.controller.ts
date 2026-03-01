@@ -10,30 +10,30 @@ import { isPremium } from '../utils/premium.util.js';
 
 /**
  * Mistral pricing (per 1K tokens) - using conservative/higher estimates
- * Actual mistral-medium-latest: ~$2/1M input, ~$6/1M output
+ * Actual mistral-medium-latest: ~€1.80/1M input, ~€5.40/1M output
  * Using inflated estimates for budget safety margin
- * - Input: $0.003 (~50% buffer over actual)
- * - Output: $0.010 (~66% buffer over actual)
+ * - Input: €0.0027 (~50% buffer over actual)
+ * - Output: €0.009 (~66% buffer over actual)
  */
-const PRICE_PER_1K_INPUT_TOKENS = 0.003;
-const PRICE_PER_1K_OUTPUT_TOKENS = 0.010;
+const PRICE_PER_1K_INPUT_TOKENS_EUR = 0.0027;
+const PRICE_PER_1K_OUTPUT_TOKENS_EUR = 0.009;
 
 export interface MonthlyUsage {
   totalInputTokens: number
   totalOutputTokens: number
   totalRequests: number
-  estimatedCostUSD: number
-  monthlyLimitUSD: number
-  remainingBudgetUSD: number
+  estimatedCostEUR: number
+  monthlyLimitEUR: number
+  remainingBudgetEUR: number
   isOverBudget: boolean
 }
 
 /**
- * Calculate estimated cost for tokens
+ * Calculate estimated cost for tokens in EUR
  */
 function calculateTokenCost(inputTokens: number, outputTokens: number): number {
-  return (inputTokens / 1000) * PRICE_PER_1K_INPUT_TOKENS
-    + (outputTokens / 1000) * PRICE_PER_1K_OUTPUT_TOKENS;
+  return (inputTokens / 1000) * PRICE_PER_1K_INPUT_TOKENS_EUR
+    + (outputTokens / 1000) * PRICE_PER_1K_OUTPUT_TOKENS_EUR;
 }
 
 /**
@@ -61,18 +61,18 @@ async function getMonthlyUsage(userId: number): Promise<MonthlyUsage> {
   const totalInputTokens = Number(result?.totalInputTokens ?? 0);
   const totalOutputTokens = Number(result?.totalOutputTokens ?? 0);
   const totalRequests = Number(result?.totalRequests ?? 0);
-  const estimatedCostUSD = calculateTokenCost(totalInputTokens, totalOutputTokens);
-  const monthlyLimitUSD = mistralAI.monthlyBudgetUSD;
-  const remainingBudgetUSD = Math.max(0, monthlyLimitUSD - estimatedCostUSD);
+  const estimatedCostEUR = calculateTokenCost(totalInputTokens, totalOutputTokens);
+  const monthlyLimitEUR = mistralAI.monthlyBudgetEUR;
+  const remainingBudgetEUR = Math.max(0, monthlyLimitEUR - estimatedCostEUR);
 
   return {
     totalInputTokens,
     totalOutputTokens,
     totalRequests,
-    estimatedCostUSD,
-    monthlyLimitUSD,
-    remainingBudgetUSD,
-    isOverBudget: estimatedCostUSD >= monthlyLimitUSD,
+    estimatedCostEUR,
+    monthlyLimitEUR,
+    remainingBudgetEUR,
+    isOverBudget: estimatedCostEUR >= monthlyLimitEUR,
   };
 }
 
