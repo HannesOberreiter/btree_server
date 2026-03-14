@@ -479,6 +479,7 @@
   "qr": "QR",
   "qrScanner": "Scanner QR",
   "quarter": "Trimestre",
+  "queued": "in coda",
   "queen": "Regina | Regine",
   "queenAdd": "Aggiungi regine",
   "queenCol": "Regina (inserita/morta)",
@@ -550,6 +551,7 @@
   "reset": "Ripristina",
   "resetConfirm": "Ripristina i dati del modulo?",
   "resetUser": {
+    "keyNotFound": "La chiave di reimpostazione non è più valida. Si prega di richiedere una nuova reimpostazione della password.",
     "label": "Reimposta chiave",
     "success": "La tua password è stata modificata con successo, abbiamo inviato una mail di conferma a {msg}.",
     "title": "Crea nuova password"
@@ -633,6 +635,8 @@
   "solution": "Soluzione",
   "soundHint": "Riproduci suoni sulle notifiche (su dispositivi mobili ricevi vibrazioni e suoni).",
   "source": "Fonte | Fonti",
+  "speak": "Parla",
+
   "speech": {
     "commandRedirect": "Trovato {text}, reindirizzamento. (originale: {msg})",
     "noCommand": "Nessun comando trovato con {msg}.",
@@ -644,6 +648,7 @@
   "statistic": "Statistica | Statistiche",
   "status": "Stato",
   "step": "Fase di allevamento | Passi di allevamento",
+  "listening": "In ascolto",
   "stock": "Azione",
   "stop": "Fermare",
   "strong": "Forza",

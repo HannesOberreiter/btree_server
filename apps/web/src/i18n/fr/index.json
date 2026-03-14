@@ -479,6 +479,7 @@
   "qr": "QR",
   "qrScanner": "Lecteur QR",
   "quarter": "Trimestre",
+  "queued": "en attente",
   "queen": "Reine | Reines",
   "queenAdd": "Ajouter reine(s)",
   "queenCol": "Reine (insérée / décédée)",
@@ -550,6 +551,7 @@
   "reset": "Réinitialiser",
   "resetConfirm": "Réinitialiser les données de formulaire?",
   "resetUser": {
+    "keyNotFound": "La clé de réinitialisation n'est plus valide. Veuillez demander une nouvelle réinitialisation du mot de passe.",
     "label": "Touche de réinitialisation",
     "success": "Votre mot de passe a été modifié avec succès, nous avons envoyé un e-mail de confirmation à {msg}.",
     "title": "Créer un nouveau mot de passe"
@@ -633,6 +635,8 @@
   "solution": "La solution",
   "soundHint": "Jouez du son sur les notifications (sur mobile, vous obtenez des vibrations et du son).",
   "source": "Source | Sources",
+  "speak": "Parler",
+
   "speech": {
     "commandRedirect": "{text} trouvé, redirection. (d'origine: {msg})",
     "noCommand": "Aucune commande trouvée avec {msg}.",
@@ -644,6 +648,7 @@
   "statistic": "Statistique | Statistiques",
   "status": "Statut",
   "step": "Étape d'élevage | Étapes d'élevage",
+  "listening": "Écoute",
   "stock": "Stocker",
   "stop": "Arrêt",
   "strong": "Force",

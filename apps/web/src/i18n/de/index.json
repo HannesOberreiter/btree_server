@@ -479,6 +479,7 @@
   "qr": "QR",
   "qrScanner": "QR Scanner",
   "quarter": "Quartal",
+  "queued": "in Warteschlange",
   "queen": "Königin | Königinnen",
   "queenAdd": "Königin(en) hinzufügen",
   "queenCol": "Königin (Eingeweiselt/Gestorben)",
@@ -550,6 +551,7 @@
   "reset": "Zurücksetzen",
   "resetConfirm": "Formular Daten zurücksetzen?",
   "resetUser": {
+    "keyNotFound": "Der Schlüssel ist nicht mehr gültig. Bitte fordern Sie einen neuen Passwort-Reset an.",
     "label": "Schlüssel zurücksetzen",
     "success": "Ihr Passwort wurde erfolgreich geändert, wir haben eine Bestätigungsmail an {msg} gesendet.",
     "title": "Neues Passwort erstellen"
@@ -633,6 +635,8 @@
   "solution": "Lösung",
   "soundHint": "Erhalten Sie Feedback aus der App als Ton (Handy mit Vibration verbunden).",
   "source": "Quelle | Quellen",
+  "speak": "Sprechen",
+
   "speech": {
     "commandRedirect": "{text} gefunden, Weiterleitung. (Original: {msg})",
     "noCommand": "Kein Befehl mit {msg} gefunden.",
@@ -644,6 +648,7 @@
   "statistic": "Statistik | Statistiken",
   "status": "Status",
   "step": "Zuchtschritt | Zuchtschritte",
+  "listening": "Hört zu",
   "stock": "Bestand",
   "stop": "Stop",
   "strong": "Stärke",

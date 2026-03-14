@@ -479,6 +479,7 @@
   "qr": "QR",
   "qrScanner": "QR Scanner",
   "quarter": "Quarter",
+  "queued": "queued",
   "queen": "Queen | Queens",
   "queenAdd": "Add queen(s)",
   "queenCol": "Queen (inserted/died)",
@@ -550,6 +551,7 @@
   "reset": "Reset",
   "resetConfirm": "Reset form data?",
   "resetUser": {
+    "keyNotFound": "The reset key is no longer valid. Please request a new password reset.",
     "label": "Reset Key",
     "success": "Your password was successfully changed, we sent a confirmation mail to {msg}.",
     "title": "Create new password"
@@ -633,6 +635,8 @@
   "solution": "Solution",
   "soundHint": "Play sound on notifications (on mobile you get vibration and sound).",
   "source": "Source | Sources",
+  "speak": "Speak",
+
   "speech": {
     "commandRedirect": "Found {text}, redirecting. (original: {msg})",
     "noCommand": "No command found with {msg}.",
@@ -644,6 +648,7 @@
   "statistic": "Statistic | Statistics",
   "status": "Status",
   "step": "Rearing Step | Rearing Steps",
+  "listening": "Listening",
   "stock": "Stock",
   "stop": "Stop",
   "strong": "Strength",
