@@ -19,6 +19,18 @@ jobs:
       REDIS_PORT: 6379
 
     services:
+      mariadb:
+        image: mariadb:lts
+        env:
+          MARIADB_ROOT_PASSWORD: root
+          MARIADB_DATABASE: ci_test
+        options: >-
+          --health-cmd "healthcheck.sh --connect --innodb_initialized"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 3306:3306
       redis:
         image: redis
         # Set health checks to wait until redis has started
@@ -32,12 +44,6 @@ jobs:
           - 6379:6379
 
     steps:
-      - name: Set up MySQL
-        run: |
-          sudo systemctl start mysql
-          mysql -e 'CREATE DATABASE ${{ env.DB_DATABASE }};' -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }}
-          mysql -e "ALTER USER '${{ env.DB_USER }}'@'localhost' IDENTIFIED WITH mysql_native_password BY '${{ env.DB_PASSWORD }}';" -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }}
-          mysql -e "flush privileges;" -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }}
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
         with:
