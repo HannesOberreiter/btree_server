@@ -17,7 +17,8 @@ const mailServer = MailService.getInstance();
 const kyselyServer = KyselyServer.getInstance();
 
 dbServer.start();
-redisServer.start();
+// eslint-disable-next-line antfu/no-top-level-await
+await redisServer.start();
 mailServer.setup();
 
 const application = new Application();
