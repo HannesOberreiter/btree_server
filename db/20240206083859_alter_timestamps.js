@@ -4,7 +4,7 @@ const defaultsWithoutDelete = ['created_at', 'updated_at'];
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
-export const up = function (knex) {
+export function up(knex) {
   return knex.schema
     .alterTable('apiaries', (t) => {
       defaults.forEach((column) => {
@@ -155,13 +155,13 @@ export const up = function (knex) {
         t.dateTime(column).alter();
       });
     });
-};
+}
 
 /**
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
-export const down = function (knex) {
+export function down(knex) {
   return knex.schema
     .alterTable('apiaries', (t) => {
       defaults.forEach((column) => {
@@ -312,4 +312,4 @@ export const down = function (knex) {
         t.timestamp(column).alter();
       });
     });
-};
+}

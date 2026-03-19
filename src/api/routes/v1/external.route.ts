@@ -6,6 +6,8 @@ import ExternalController from '../../controllers/external.controller.js';
 import ScaleDataController from '../../controllers/scale_data.controller.js';
 import { Validator } from '../../hooks/validator.hook.js';
 
+const SCALE_ACTION_REGEX = /^(CREATE|CREATE_DEMO)$/;
+
 export default function routes(
   instance: FastifyInstance,
   _options: any,
@@ -34,7 +36,7 @@ export default function routes(
     {
       schema: {
         querystring: z.object({
-          action: z.string().regex(/^(CREATE|CREATE_DEMO)$/),
+          action: z.string().regex(SCALE_ACTION_REGEX),
           datetime: z.string().datetime().optional(),
           weight: z.number().optional(),
           temp1: z.number().optional(),

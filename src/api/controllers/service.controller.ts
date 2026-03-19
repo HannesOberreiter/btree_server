@@ -15,6 +15,14 @@ import {
   getWeatherData,
 } from '../utils/temperature.util.js';
 
+const HTML_TAG_REGEX = /<[^>]*>/g;
+const CRLF_REGEX = /\r\n/g;
+const MULTI_SPACE_REGEX = /\s+/g;
+const AFB_REGEX = /Amerikanische Faulbrut \(AFB\)/;
+const ORDINANCE_REGEX = /Verordnung:\s*(\S+)/;
+const DISTRICT_REGEX = /Bezirk: ([\s\S]+?)(?=Gemeinde:|$)/;
+const MUNICIPALITY_REGEX = /Gemeinde: ([\s\S]+?)(?=Veterinärbehörde|$)/;
+
 export default class ServiceController {
   static async getWeatherData(req: FastifyRequest, _reply: FastifyReply) {
     const params = req.params as any;
@@ -177,15 +185,15 @@ export default class ServiceController {
 
         // Remove HTML tags and normalize whitespace
         const textContent = htmlContent
-          .replace(/<[^>]*>/g, '')
-          .replace(/\r\n/g, ' ')
-          .replace(/\s+/g, ' ')
+          .replace(HTML_TAG_REGEX, '')
+          .replace(CRLF_REGEX, ' ')
+          .replace(MULTI_SPACE_REGEX, ' ')
           .trim();
 
-        const diseaseMatch = textContent.match(/Amerikanische Faulbrut \(AFB\)/);
-        const ordinanceMatch = textContent.match(/Verordnung:\s*(\S+)/);
-        const districtMatch = textContent.match(/Bezirk: ([\s\S]+?)(?=Gemeinde:|$)/);
-        const municipalityMatch = textContent.match(/Gemeinde: ([\s\S]+?)(?=Veterinärbehörde|$)/);
+        const diseaseMatch = textContent.match(AFB_REGEX);
+        const ordinanceMatch = textContent.match(ORDINANCE_REGEX);
+        const districtMatch = textContent.match(DISTRICT_REGEX);
+        const municipalityMatch = textContent.match(MUNICIPALITY_REGEX);
         const source = 'Quelle: bienenwanderboerse.at';
 
         return {

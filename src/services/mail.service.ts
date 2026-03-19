@@ -12,6 +12,14 @@ import {
 } from '../config/environment.config.js';
 import { Logger } from './logger.service.js';
 
+const TITLE_TAG_REGEX = /(?<=<title>).*?(?=<\/title>)/i;
+const TITLE_FULL_REGEX = /<title>.*?<\/title>/g;
+const KEY_PLACEHOLDER_REGEX = /%key%/g;
+const LANG_PLACEHOLDER_REGEX = /%lang%/g;
+const MAIL_PLACEHOLDER_REGEX = /%mail%/g;
+const BASE_URL_PLACEHOLDER_REGEX = /%base_url%/g;
+const PARAMS_PLACEHOLDER_REGEX = /%params%/g;
+
 interface customMail {
   to: string
   lang: string
@@ -103,10 +111,9 @@ export class MailService {
     htmlMail = htmlMail + htmlFooter;
 
     /** @description Fake <title></title> attribute to set email header */
-    // eslint-disable-next-line regexp/no-unused-capturing-group
-    const titleReg = /(?<=<title>)(.*?)(?=<\/title>)/i;
+    const titleReg = TITLE_TAG_REGEX;
     const title = titleReg.exec(htmlMail)[0];
-    htmlMail = htmlMail.replace(/(<title>)(.*?)(<\/title>)/g, '');
+    htmlMail = htmlMail.replace(TITLE_FULL_REGEX, '');
 
     if (name !== 'false' && name) {
       switch (lang) {
@@ -130,18 +137,18 @@ export class MailService {
     }
 
     if (key !== 'false') {
-      htmlMail = htmlMail.replace(/%key%/g, key);
+      htmlMail = htmlMail.replace(KEY_PLACEHOLDER_REGEX, key);
     }
     // Main page and documentation is only available in german and english
     if (['fr', 'it'].includes(lang)) {
-      htmlMail = htmlMail.replace(/%lang%/g, 'en');
+      htmlMail = htmlMail.replace(LANG_PLACEHOLDER_REGEX, 'en');
     }
     else {
-      htmlMail = htmlMail.replace(/%lang%/g, lang);
+      htmlMail = htmlMail.replace(LANG_PLACEHOLDER_REGEX, lang);
     }
-    htmlMail = htmlMail.replace(/%mail%/g, to);
-    htmlMail = htmlMail.replace(/%base_url%/g, `${this.baseUrl}/`);
-    htmlMail = htmlMail.replace(/%params%/g, this.params);
+    htmlMail = htmlMail.replace(MAIL_PLACEHOLDER_REGEX, to);
+    htmlMail = htmlMail.replace(BASE_URL_PLACEHOLDER_REGEX, `${this.baseUrl}/`);
+    htmlMail = htmlMail.replace(PARAMS_PLACEHOLDER_REGEX, this.params);
 
     const options = {
       from: {

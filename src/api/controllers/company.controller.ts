@@ -47,6 +47,8 @@ import { deleteCompany } from '../utils/delete.util.js';
 import { reviewPassword } from '../utils/login.util.js';
 import { addPremium, isPremium } from '../utils/premium.util.js';
 
+const NEWLINE_QUOTE_REGEX = /(\r\n|[\n\r"])/g;
+
 export default class CompanyController {
   static async postCoupon(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as any;
@@ -770,7 +772,7 @@ async function downloadData(arch: archiver.Archiver, user_id: number) {
         return value.toISOString();
       },
       string(value) {
-        return value.replace(/(\r\n|[\n\r"])/g, ' ');
+        return value.replace(NEWLINE_QUOTE_REGEX, ' ');
       },
       boolean(value) {
         if (value === null)

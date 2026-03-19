@@ -246,7 +246,7 @@ export function calculateGruenlandtemperatursumme(
     totalGts: Math.round(cumulativeGts * 10) / 10,
     period: {
       start: dailyTemperatures[0]?.date,
-      end: dailyTemperatures[dailyTemperatures.length - 1]?.date,
+      end: dailyTemperatures.at(-1)?.date,
       days: dailyTemperatures.length,
     },
   };

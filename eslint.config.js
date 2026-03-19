@@ -13,4 +13,9 @@ export default antfu({
     'no-restricted-globals': 'off',
     'no-undef': 'off',
   },
+}, {
+  files: ['db/**/*.js'],
+  rules: {
+    'e18e/prefer-static-regex': 'off',
+  },
 });

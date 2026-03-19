@@ -2,7 +2,7 @@
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
-export const up = function (knex) {
+export function up(knex) {
   return knex.schema.createTable('federated_credentials', (t) => {
     t.increments('id').primary().unsigned();
     t.string('provider', 45).notNullable();
@@ -15,15 +15,15 @@ export const up = function (knex) {
       .onUpdate('CASCADE');
     t.timestamp('created_at').nullable().defaultTo(knex.fn.now());
   });
-};
+}
 
 /**
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
-export const down = function (knex) {
+export function down(knex) {
   knex.schema.alterTable('federated_credentials', (t) => {
     t.dropForeign('bee_id');
   });
   return knex.schema.dropTable('federated_credentials');
-};
+}

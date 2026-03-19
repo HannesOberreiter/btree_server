@@ -5,7 +5,7 @@ import * as env from '../../dist/config/environment.config.js';
 
 const dirname = new URL('./', import.meta.url).pathname;
 
-export const seed = async function (knex) {
+export async function seed(knex) {
   if (env.env === 'production') {
     console.log('No seeding allowed in production environment!');
     return false;
@@ -66,7 +66,7 @@ export const seed = async function (knex) {
     }
   }
   return Promise.all(promises);
-};
+}
 
 async function transactionMigration(table, data, knex) {
   console.log(`Insert ${table}: ${data.length} rows`);

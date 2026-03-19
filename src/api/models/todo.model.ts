@@ -1,5 +1,5 @@
-import { ExtModel } from './base.model.js';
 import { Apiary } from './apiary.model.js';
+import { ExtModel } from './base.model.js';
 import { Company } from './company.model.js';
 import { User } from './user.model.js';
 

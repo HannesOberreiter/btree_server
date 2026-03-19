@@ -1,4 +1,4 @@
-export const up = function (knex) {
+export function up(knex) {
   return knex.schema.createTable('charges', (t) => {
     t.increments('id').primary().unsigned();
 
@@ -44,9 +44,9 @@ export const up = function (knex) {
       .onDelete('SET NULL')
       .onUpdate('CASCADE');
   });
-};
+}
 
-export const down = function (knex) {
+export function down(knex) {
   knex.schema.alterTable('charges', (t) => {
     t.dropForeign('bee_id');
     t.dropForeign('edit_id');
@@ -54,4 +54,4 @@ export const down = function (knex) {
     t.dropForeign('type_id');
   });
   return knex.schema.dropTable('charges');
-};
+}
