@@ -34,6 +34,7 @@ const {
 	isDisabled,
 	fetchMonthlyUsage,
 	sendQuestion,
+	abortStream,
 	clearChat,
 } = useWizBee();
 
@@ -139,7 +140,7 @@ function onClear() {
 				</div>
 
 				<!-- Streaming indicator -->
-				<div v-if="isStreaming" class="row justify-start q-mb-sm">
+				<div v-if="isStreaming || isFetching" class="row justify-start q-mb-sm">
 					<q-spinner-dots color="grey-6" size="24px" />
 				</div>
 
@@ -225,13 +226,23 @@ function onClear() {
 					</template>
 					<template #after>
 						<q-btn
+							v-if="isStreaming || isFetching"
+							flat
+							round
+							dense
+							icon="fas fa-stop"
+							color="red"
+							:title="$t('stop')"
+							@click="abortStream"
+						/>
+						<q-btn
+							v-else
 							flat
 							round
 							dense
 							icon="fas fa-paper-plane"
 							color="primary"
 							type="submit"
-							:loading="isFetching"
 							:disable="isDisabled || !question?.trim()"
 							@click="onSubmit"
 						/>

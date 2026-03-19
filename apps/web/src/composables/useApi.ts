@@ -214,7 +214,7 @@ export function useApiFetch() {
 	/**
 	 * @description get stream data from server
 	 */
-	const stream = (url: string, payload = '' as unknown) => {
+	const stream = (url: string, payload = '' as unknown, signal: AbortSignal | null = null) => {
 		const urlParam = buildUrl(url, '');
 		const originalRequest = new Request(urlParam, {
 			method: 'POST',
@@ -224,6 +224,7 @@ export function useApiFetch() {
 				'Content-Type': 'application/json;charset=UTF-8',
 			},
 			body: isString(payload) ? (payload as string) : JSON.stringify(payload),
+			signal,
 		});
 
 		return fetch(originalRequest);
