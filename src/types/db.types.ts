@@ -982,6 +982,7 @@ export interface WizbeeRequests {
   user_id: Generated<number | null>
   tokens_input: Generated<number | null>
   tokens_output: Generated<number | null>
+  cost_eur: Generated<number | null>
   user_request: Generated<string | null>
   created_at: Generated<Date | null>
   updated_at: Generated<Date | null>
