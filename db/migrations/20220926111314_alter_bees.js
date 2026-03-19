@@ -2,7 +2,7 @@
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
-export const up = function (knex) {
+export function up(knex) {
   return knex.schema.alterTable('bees', (t) => {
     t.dropColumn('last_reminder');
 
@@ -23,12 +23,12 @@ export const up = function (knex) {
       .defaultTo(null)
       .comment('Send mail to user when bruteforce is detected');
   });
-};
+}
 /**
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
-export const down = function (knex) {
+export function down(knex) {
   return knex.schema.alterTable('bees', (t) => {
     t.timestamp('last_reminder')
       .nullable()
@@ -41,4 +41,4 @@ export const down = function (knex) {
     t.dropColumn('reminder_vis');
     t.dropColumn('notice_bruteforce');
   });
-};
+}

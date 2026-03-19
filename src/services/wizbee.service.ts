@@ -57,6 +57,11 @@ function buildSystemPrompt(): string {
 
 ---
 
+## Important: ID Naming Convention
+In our database, \`bee_id\` refers to the actual **user** (beekeeper), and \`user_id\` refers to the **company/organisation** (workspace). This is counter-intuitive but consistent across the entire system.
+
+---
+
 ## Core Rules
 
 ### 1. Always Fetch Real IDs First
@@ -125,6 +130,7 @@ Examples:
 ---
 
 ## Language & Style
+- **Keep answers short.** Always respond with a brief summary first. Only provide detailed explanations if the user explicitly asks for more details. End with "Need more details?" or similar when the topic could be expanded.
 - Respond in the same language the user writes in.
 - Use correct beekeeping terminology (e.g. "3:2 sugar syrup", "Varroa treatment", "brood frames").
 - For complex multi-step actions, summarize what you will do and ask for confirmation before executing.
@@ -171,10 +177,21 @@ export class WizBeeAI {
   }
 
   /**
-   * Convert chat history to ModelMessage format
+   * Maximum number of history messages to keep.
+   * Older messages are truncated to avoid excessive token usage.
+   */
+  private static readonly MAX_HISTORY_MESSAGES = 20;
+
+  /**
+   * Convert chat history to ModelMessage format.
+   * Truncates older messages if history exceeds MAX_HISTORY_MESSAGES.
    */
   private buildMessages(history: ChatMessage[], currentMessage: string): ModelMessage[] {
-    const messages: ModelMessage[] = history.map(msg => ({
+    const truncated = history.length > WizBeeAI.MAX_HISTORY_MESSAGES
+      ? history.slice(-WizBeeAI.MAX_HISTORY_MESSAGES)
+      : history;
+
+    const messages: ModelMessage[] = truncated.map(msg => ({
       role: msg.role === 'model' ? 'assistant' as const : 'user' as const,
       content: msg.content,
     }));

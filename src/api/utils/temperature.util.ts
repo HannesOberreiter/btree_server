@@ -103,7 +103,7 @@ export async function getWeatherData(latitude: number, longitude: number): Promi
   try {
     const cached = await RedisServer.client.get(cacheKey);
     if (cached) {
-      return JSON.parse(cached) as OneCallResponse;
+      return JSON.parse(cached as string) as OneCallResponse;
     }
   }
   catch (error) {
@@ -127,7 +127,7 @@ export async function getWeatherData(latitude: number, longitude: number): Promi
 
     // Cache the result for 1 hour (3600 seconds)
     try {
-      await RedisServer.client.setex(cacheKey, 3600, JSON.stringify(result));
+      await RedisServer.client.setEx(cacheKey, 3600, JSON.stringify(result));
     }
     catch (error) {
       Logger.getInstance().log('warn', 'Redis cache write error', {
@@ -246,7 +246,7 @@ export function calculateGruenlandtemperatursumme(
     totalGts: Math.round(cumulativeGts * 10) / 10,
     period: {
       start: dailyTemperatures[0]?.date,
-      end: dailyTemperatures[dailyTemperatures.length - 1]?.date,
+      end: dailyTemperatures.at(-1)?.date,
       days: dailyTemperatures.length,
     },
   };

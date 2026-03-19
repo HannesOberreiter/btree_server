@@ -68,15 +68,15 @@ function createMockReply(): FastifyReply {
 
 /**
  * Get the default date range for task queries
- * @returns Start date (6 months ago) and end date (6 months from now)
+ * @returns Start date (2 months ago) and end date (2 months from now)
  */
 function getDefaultDateRange(): { dateStart: string, dateEnd: string } {
   const now = new Date();
   const dateStart = new Date(now);
-  dateStart.setMonth(dateStart.getMonth() - 6);
+  dateStart.setMonth(dateStart.getMonth() - 2);
 
   const dateEnd = new Date(now);
-  dateEnd.setMonth(dateEnd.getMonth() + 6);
+  dateEnd.setMonth(dateEnd.getMonth() + 2);
 
   return {
     dateStart: dateStart.toISOString().split('T')[0],
@@ -294,11 +294,11 @@ export function createWizBeeTools(context: WizBeeContext): Record<string, Tool> 
       description: 'Fetch tasks (feed, treatment, harvest, checkup, todo) for the user within a specified date range. Useful for viewing upcoming and past beekeeping activities.',
       inputSchema: z.object({
         task: z.enum(TASK_TYPES).describe('Type of task to fetch'),
-        dateStart: z.string().optional().describe('Start date in YYYY-MM-DD format (default: 6 months ago)'),
-        dateEnd: z.string().optional().describe('End date in YYYY-MM-DD format (default: 6 months from now)'),
+        dateStart: z.string().optional().describe('Start date in YYYY-MM-DD format (default: 2 months ago)'),
+        dateEnd: z.string().optional().describe('End date in YYYY-MM-DD format (default: 2 months from now)'),
         apiaryId: z.number().optional().describe('Filter by specific apiary ID'),
         includeDone: z.boolean().optional().default(true).describe('Include completed tasks'),
-        limit: z.number().optional().default(1000).describe('Maximum number of results'),
+        limit: z.number().optional().default(200).describe('Maximum number of results'),
       }),
       execute: async (input) => {
         const { dateStart, dateEnd } = getDefaultDateRange();
@@ -350,7 +350,7 @@ export function createWizBeeTools(context: WizBeeContext): Record<string, Tool> 
         amount: z.number().optional().describe('Feed quantity'),
         note: z.string().max(2000).optional().describe('Optional notes'),
         done: z.boolean().optional().describe('Whether the feed is completed'),
-        repeat: z.number().min(0).max(30).optional().describe('Number of times to repeat'),
+        repeat: z.number().min(0).max(10).optional().describe('Number of times to repeat'),
         interval: z.number().min(0).max(365).optional().describe('Days between repeated entries'),
       }),
       execute: async (input) => {
@@ -412,7 +412,7 @@ export function createWizBeeTools(context: WizBeeContext): Record<string, Tool> 
         charge: z.string().max(24).optional().describe('Charge/batch reference'),
         note: z.string().max(2000).optional().describe('Optional notes'),
         done: z.boolean().optional().describe('Whether the harvest is completed'),
-        repeat: z.number().min(0).max(30).optional().describe('Number of times to repeat'),
+        repeat: z.number().min(0).max(10).optional().describe('Number of times to repeat'),
         interval: z.number().min(0).max(365).optional().describe('Days between repeated entries'),
       }),
       execute: async (input) => {
@@ -478,7 +478,7 @@ export function createWizBeeTools(context: WizBeeContext): Record<string, Tool> 
         temperature: z.number().optional().describe('Temperature during treatment'),
         note: z.string().max(2000).optional().describe('Optional notes'),
         done: z.boolean().optional().describe('Whether the treatment is completed'),
-        repeat: z.number().min(0).max(30).optional().describe('Number of times to repeat'),
+        repeat: z.number().min(0).max(10).optional().describe('Number of times to repeat'),
         interval: z.number().min(0).max(365).optional().describe('Days between repeated entries'),
       }),
       execute: async (input) => {
@@ -554,7 +554,7 @@ export function createWizBeeTools(context: WizBeeContext): Record<string, Tool> 
         typeId: z.number().optional().describe('Checkup type ID'),
         note: z.string().max(2000).optional().describe('Optional notes'),
         done: z.boolean().optional().describe('Whether the checkup is completed'),
-        repeat: z.number().min(0).max(30).optional().describe('Number of times to repeat'),
+        repeat: z.number().min(0).max(10).optional().describe('Number of times to repeat'),
         interval: z.number().min(0).max(365).optional().describe('Days between repeated entries'),
         queen: z.boolean().optional().describe('Queen present'),
         queencells: z.boolean().optional().describe('Queen cells present'),
@@ -661,7 +661,7 @@ export function createWizBeeTools(context: WizBeeContext): Record<string, Tool> 
         date: z.string().describe('Date for the todo in YYYY-MM-DD format'),
         note: z.string().max(2000).optional().describe('Optional longer description or notes'),
         apiaryId: z.number().optional().describe('Optional apiary to associate with this todo'),
-        repeat: z.number().min(0).max(30).optional().describe('Number of times to repeat this todo'),
+        repeat: z.number().min(0).max(10).optional().describe('Number of times to repeat this todo'),
         interval: z.number().min(0).max(365).optional().describe('Days between repeated todos'),
       }),
       execute: async (input) => {
@@ -1158,16 +1158,16 @@ export const wizBeeToolDefinitions = [
       limit: z.number().optional().default(1000),
     }),
   },
-  { name: 'createFeed', description: 'Create a new feed record for one or more hives.', parameters: z.object({ hiveIds: z.array(z.number()).min(1), date: z.string(), enddate: z.string().optional(), typeId: z.number().optional(), amount: z.number().optional(), note: z.string().max(2000).optional(), done: z.boolean().optional(), repeat: z.number().min(0).max(30).optional(), interval: z.number().min(0).max(365).optional() }) },
+  { name: 'createFeed', description: 'Create a new feed record for one or more hives.', parameters: z.object({ hiveIds: z.array(z.number()).min(1), date: z.string(), enddate: z.string().optional(), typeId: z.number().optional(), amount: z.number().optional(), note: z.string().max(2000).optional(), done: z.boolean().optional(), repeat: z.number().min(0).max(10).optional(), interval: z.number().min(0).max(365).optional() }) },
   { name: 'patchFeed', description: 'Update one or more existing feed records by their IDs.', parameters: z.object({ ids: z.array(z.number()).min(1), date: z.string().optional(), enddate: z.string().optional(), typeId: z.number().optional(), amount: z.number().optional(), note: z.string().max(2000).optional(), done: z.boolean().optional() }) },
   { name: 'softDeleteFeed', description: 'Soft-delete one or more feed records by their IDs.', parameters: z.object({ ids: z.array(z.number()).min(1) }) },
-  { name: 'createHarvest', description: 'Create a new harvest record for one or more hives.', parameters: z.object({ hiveIds: z.array(z.number()).min(1), date: z.string(), enddate: z.string().optional(), typeId: z.number().optional(), amount: z.number().optional(), water: z.number().optional(), frames: z.number().optional(), charge: z.string().max(24).optional(), note: z.string().max(2000).optional(), done: z.boolean().optional(), repeat: z.number().min(0).max(30).optional(), interval: z.number().min(0).max(365).optional() }) },
+  { name: 'createHarvest', description: 'Create a new harvest record for one or more hives.', parameters: z.object({ hiveIds: z.array(z.number()).min(1), date: z.string(), enddate: z.string().optional(), typeId: z.number().optional(), amount: z.number().optional(), water: z.number().optional(), frames: z.number().optional(), charge: z.string().max(24).optional(), note: z.string().max(2000).optional(), done: z.boolean().optional(), repeat: z.number().min(0).max(10).optional(), interval: z.number().min(0).max(365).optional() }) },
   { name: 'patchHarvest', description: 'Update one or more existing harvest records by their IDs.', parameters: z.object({ ids: z.array(z.number()).min(1), date: z.string().optional(), enddate: z.string().optional(), typeId: z.number().optional(), amount: z.number().optional(), water: z.number().optional(), frames: z.number().optional(), charge: z.string().max(24).optional(), note: z.string().max(2000).optional(), done: z.boolean().optional() }) },
   { name: 'softDeleteHarvest', description: 'Soft-delete one or more harvest records by their IDs.', parameters: z.object({ ids: z.array(z.number()).min(1) }) },
-  { name: 'createTreatment', description: 'Create a new treatment record for one or more hives.', parameters: z.object({ hiveIds: z.array(z.number()).min(1), date: z.string(), enddate: z.string().optional(), typeId: z.number().optional(), diseaseId: z.number().optional(), vetId: z.number().optional(), amount: z.number().optional(), wait: z.number().optional(), temperature: z.number().optional(), note: z.string().max(2000).optional(), done: z.boolean().optional(), repeat: z.number().min(0).max(30).optional(), interval: z.number().min(0).max(365).optional() }) },
+  { name: 'createTreatment', description: 'Create a new treatment record for one or more hives.', parameters: z.object({ hiveIds: z.array(z.number()).min(1), date: z.string(), enddate: z.string().optional(), typeId: z.number().optional(), diseaseId: z.number().optional(), vetId: z.number().optional(), amount: z.number().optional(), wait: z.number().optional(), temperature: z.number().optional(), note: z.string().max(2000).optional(), done: z.boolean().optional(), repeat: z.number().min(0).max(10).optional(), interval: z.number().min(0).max(365).optional() }) },
   { name: 'patchTreatment', description: 'Update one or more existing treatment records by their IDs.', parameters: z.object({ ids: z.array(z.number()).min(1), date: z.string().optional(), enddate: z.string().optional(), typeId: z.number().optional(), diseaseId: z.number().optional(), vetId: z.number().optional(), amount: z.number().optional(), wait: z.number().optional(), temperature: z.number().optional(), note: z.string().max(2000).optional(), done: z.boolean().optional() }) },
   { name: 'softDeleteTreatment', description: 'Soft-delete one or more treatment records by their IDs.', parameters: z.object({ ids: z.array(z.number()).min(1) }) },
-  { name: 'createCheckup', description: 'Create a new checkup/inspection record for one or more hives.', parameters: z.object({ hiveIds: z.array(z.number()).min(1), date: z.string(), enddate: z.string().optional(), typeId: z.number().optional(), note: z.string().max(2000).optional(), done: z.boolean().optional(), repeat: z.number().min(0).max(30).optional(), interval: z.number().min(0).max(365).optional(), queen: z.boolean().optional(), queencells: z.boolean().optional(), eggs: z.boolean().optional(), cappedBrood: z.boolean().optional(), brood: z.number().optional(), pollen: z.number().optional(), comb: z.number().optional(), temper: z.number().optional(), calmComb: z.number().optional(), swarm: z.number().optional(), varroa: z.number().optional(), strong: z.number().optional(), temperature: z.number().optional(), weight: z.number().optional(), broodframes: z.number().optional(), honeyframes: z.number().optional(), foundation: z.number().optional(), emptyframes: z.number().optional() }) },
+  { name: 'createCheckup', description: 'Create a new checkup/inspection record for one or more hives.', parameters: z.object({ hiveIds: z.array(z.number()).min(1), date: z.string(), enddate: z.string().optional(), typeId: z.number().optional(), note: z.string().max(2000).optional(), done: z.boolean().optional(), repeat: z.number().min(0).max(10).optional(), interval: z.number().min(0).max(365).optional(), queen: z.boolean().optional(), queencells: z.boolean().optional(), eggs: z.boolean().optional(), cappedBrood: z.boolean().optional(), brood: z.number().optional(), pollen: z.number().optional(), comb: z.number().optional(), temper: z.number().optional(), calmComb: z.number().optional(), swarm: z.number().optional(), varroa: z.number().optional(), strong: z.number().optional(), temperature: z.number().optional(), weight: z.number().optional(), broodframes: z.number().optional(), honeyframes: z.number().optional(), foundation: z.number().optional(), emptyframes: z.number().optional() }) },
   { name: 'patchCheckup', description: 'Update one or more existing checkup/inspection records by their IDs.', parameters: z.object({ ids: z.array(z.number()).min(1), date: z.string().optional(), enddate: z.string().optional(), typeId: z.number().optional(), note: z.string().max(2000).optional(), done: z.boolean().optional(), queen: z.boolean().optional(), queencells: z.boolean().optional(), eggs: z.boolean().optional(), cappedBrood: z.boolean().optional(), brood: z.number().optional(), pollen: z.number().optional(), comb: z.number().optional(), temper: z.number().optional(), calmComb: z.number().optional(), swarm: z.number().optional(), varroa: z.number().optional(), strong: z.number().optional(), temperature: z.number().optional(), weight: z.number().optional(), broodframes: z.number().optional(), honeyframes: z.number().optional(), foundation: z.number().optional(), emptyframes: z.number().optional() }) },
   { name: 'softDeleteCheckup', description: 'Soft-delete one or more checkup/inspection records by their IDs.', parameters: z.object({ ids: z.array(z.number()).min(1) }) },
   {
@@ -1178,7 +1178,7 @@ export const wizBeeToolDefinitions = [
       date: z.string(),
       note: z.string().max(2000).optional(),
       apiaryId: z.number().optional(),
-      repeat: z.number().min(0).max(30).optional(),
+      repeat: z.number().min(0).max(10).optional(),
       interval: z.number().min(0).max(365).optional(),
     }),
   },

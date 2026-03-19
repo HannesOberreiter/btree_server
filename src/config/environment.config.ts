@@ -26,15 +26,15 @@ class EnvironmentConfiguration {
       process.argv[2]
       && process.argv[2] === '--env'
       && process.argv[3]
-      // eslint-disable-next-line no-prototype-builtins
-      && ENVIRONMENT.hasOwnProperty(process.argv[3])
+
+      && Object.hasOwn(ENVIRONMENT, process.argv[3])
     ) {
       this.environment = ENVIRONMENT[process.argv[3]];
     }
     else if (
       process.env.ENVIRONMENT
-      // eslint-disable-next-line no-prototype-builtins
-      && ENVIRONMENT.hasOwnProperty(process.env.ENVIRONMENT)
+
+      && Object.hasOwn(ENVIRONMENT, process.env.ENVIRONMENT)
     ) {
       this.environment = process.env.ENVIRONMENT as keyof typeof ENVIRONMENT;
     }

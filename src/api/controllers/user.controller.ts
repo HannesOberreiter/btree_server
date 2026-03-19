@@ -228,34 +228,36 @@ export default class UserController {
 
   static async getRedisSession(req: FastifyRequest, _reply: FastifyReply) {
     const { bee_id } = req.session.user;
-    let keys = [];
-    let cursor = 0;
+    let keys: string[] = [];
+    let cursor = '0';
     let safety = 1000;
 
     while (safety-- > 0) {
       const result = await RedisServer.client.scan(
         cursor,
-        'MATCH',
-        `btree_sess:${bee_id}:*`,
-        'COUNT',
-        500,
+        {
+          MATCH: `btree_sess:${bee_id}:*`,
+          COUNT: 500,
+        },
       );
-      if (result[1].length > 0) {
-        keys = keys.concat(result[1]);
+      if (result.keys.length > 0) {
+        keys = keys.concat(result.keys as string[]);
       }
-      const nextCursor = Number.parseInt(result[0]);
-      if (nextCursor === 0)
+      cursor = result.cursor as string;
+      if (cursor === '0')
         break;
-      cursor = nextCursor;
     }
 
     if (keys.length === 0) {
       return [];
     }
-    const content = await RedisServer.client.mget(keys);
+    const content = await RedisServer.client.mGet(keys);
     const result = content
       .map((el, index) => {
-        const o = JSON.parse(el);
+        if (!el) {
+          return null;
+        }
+        const o = JSON.parse(el as string);
         if (!o.user)
           return null;
         o.id = keys[index];

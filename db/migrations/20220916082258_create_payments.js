@@ -2,7 +2,7 @@
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
-export const up = function (knex) {
+export function up(knex) {
   return knex.schema.createTable('payments', (t) => {
     t.increments('id').primary().unsigned();
     t.date('date').index();
@@ -14,15 +14,15 @@ export const up = function (knex) {
       .onDelete('SET NULL')
       .onUpdate('CASCADE');
   });
-};
+}
 
 /**
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
-export const down = function (knex) {
+export function down(knex) {
   knex.schema.alterTable('payments', (t) => {
     t.dropForeign('user_id');
   });
   return knex.schema.dropTable('payments');
-};
+}

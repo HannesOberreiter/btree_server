@@ -203,7 +203,7 @@ export function fetchInat() {
       const observations = [];
       if (res.results.length === 0)
         break;
-      idAbove = res.results[res.results.length - 1].id;
+      idAbove = res.results.at(-1).id;
       // newObservations += data.results.length;
       for (let i = 0; i < res.results.length; i++) {
         const observation = res.results[i];

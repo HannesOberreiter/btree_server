@@ -1,5 +1,5 @@
 /* Promo code table to extend premium membership */
-export const up = function (knex) {
+export function up(knex) {
   return knex.schema.createTable('promos', (t) => {
     t.increments('id').primary().unsigned();
 
@@ -11,8 +11,8 @@ export const up = function (knex) {
       'user_id for which companies the code was used, no FK needed',
     );
   });
-};
+}
 
-export const down = function (knex) {
+export function down(knex) {
   return knex.schema.dropTable('promos');
-};
+}

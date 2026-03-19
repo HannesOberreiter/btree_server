@@ -48,7 +48,7 @@ export default class PublicController {
 
     const result = await query;
 
-    redis.set(cacheKey, JSON.stringify(result), 'EX', 3600);
+    redis.set(cacheKey, JSON.stringify(result), { EX: 3600 });
 
     return result;
   }

@@ -1,4 +1,4 @@
-export const up = function (knex) {
+export function up(knex) {
   return knex.schema.createTable('dropbox', (t) => {
     t.increments('id').primary().unsigned();
 
@@ -11,11 +11,11 @@ export const up = function (knex) {
       .onDelete('SET NULL')
       .onUpdate('CASCADE');
   });
-};
+}
 
-export const down = function (knex) {
+export function down(knex) {
   knex.schema.alterTable('dropbox', (t) => {
     t.dropForeign('user_id');
   });
   return knex.schema.dropTable('dropbox');
-};
+}

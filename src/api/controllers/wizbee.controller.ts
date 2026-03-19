@@ -52,6 +52,7 @@ async function getMonthlyUsage(userId: number): Promise<MonthlyUsage> {
       sql<number>`COALESCE(SUM(tokens_input), 0)`.as('totalInputTokens'),
       sql<number>`COALESCE(SUM(tokens_output), 0)`.as('totalOutputTokens'),
       sql<number>`COUNT(*)`.as('totalRequests'),
+      sql<number>`COALESCE(SUM(cost_eur), 0)`.as('totalCostEUR'),
     ])
     .where('user_id', '=', userId)
     .where('request_time', '>=', startOfMonth)
@@ -61,7 +62,7 @@ async function getMonthlyUsage(userId: number): Promise<MonthlyUsage> {
   const totalInputTokens = Number(result?.totalInputTokens ?? 0);
   const totalOutputTokens = Number(result?.totalOutputTokens ?? 0);
   const totalRequests = Number(result?.totalRequests ?? 0);
-  const estimatedCostEUR = calculateTokenCost(totalInputTokens, totalOutputTokens);
+  const estimatedCostEUR = Number(result?.totalCostEUR ?? 0);
   const monthlyLimitEUR = mistralAI.monthlyBudgetEUR;
   const remainingBudgetEUR = Math.max(0, monthlyLimitEUR - estimatedCostEUR);
 
@@ -85,13 +86,14 @@ async function checkMonthlyBudget(userId: number): Promise<boolean> {
 }
 
 /**
- * Log a WizBee request with token usage
+ * Log a WizBee request with token usage and cost
  */
 async function logWizBeeRequest(params: {
   beeId: number
   userId: number
   tokensInput: number
   tokensOutput: number
+  costEur: number
   userRequest: string
 }): Promise<void> {
   const db = KyselyServer.getInstance().db;
@@ -103,6 +105,7 @@ async function logWizBeeRequest(params: {
       user_id: params.userId,
       tokens_input: params.tokensInput,
       tokens_output: params.tokensOutput,
+      cost_eur: params.costEur,
       user_request: params.userRequest.substring(0, 65535), // Limit to TEXT max
       request_time: new Date(),
     })
@@ -126,6 +129,8 @@ export default class WizBeeController {
   static async askWizBeeStream(req: FastifyRequest, reply: FastifyReply) {
     const body = req.body as WizBeeStreamBody;
 
+    req.log.info('Received WizBee stream request');
+
     /* Safety timeout if stream hangs */
     const controller = new AbortController();
     const timeout = setTimeout(() => {
@@ -144,6 +149,8 @@ export default class WizBeeController {
     if (!withinBudget) {
       throw httpErrors.TooManyRequests('Monthly budget limit reached');
     }
+
+    const question = body.question;
 
     const bot = new WizBeeAI(
       req.session.user.user_id,
@@ -182,7 +189,7 @@ export default class WizBeeController {
     let tokensOutput = 0;
 
     try {
-      for await (const chunk of bot.chatStream(body.question, history, controller.signal)) {
+      for await (const chunk of bot.chatStream(question, history, controller.signal)) {
         if (controller.signal.aborted) {
           break;
         }
@@ -208,12 +215,14 @@ export default class WizBeeController {
     finally {
       // Always log request (even with 0 tokens or on error) for tracking
       try {
+        const costEur = calculateTokenCost(tokensInput, tokensOutput);
         await logWizBeeRequest({
           beeId: req.session.user.bee_id,
           userId: req.session.user.user_id,
           tokensInput,
           tokensOutput,
-          userRequest: body.question,
+          costEur,
+          userRequest: question,
         });
       }
       catch (e) {

@@ -2,7 +2,7 @@
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
-export const up = function (knex) {
+export function up(knex) {
   return knex.schema.createTable('field_settings', (t) => {
     t.increments('id').primary().unsigned();
     t.json('settings').comment(
@@ -15,15 +15,15 @@ export const up = function (knex) {
       .onDelete('SET NULL')
       .onUpdate('CASCADE');
   });
-};
+}
 
 /**
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
-export const down = function (knex) {
+export function down(knex) {
   knex.schema.alterTable('field_settings', (t) => {
     t.dropForeign('bee_id');
   });
   return knex.schema.dropTable('field_settings');
-};
+}
