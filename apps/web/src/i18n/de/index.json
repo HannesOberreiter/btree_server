@@ -377,7 +377,7 @@
 		"perksStats": "Zugang zu Responsive Statistiken",
 		"perksSupport": "Unterstützen Sie die Softwareentwicklung und halten Sie den Dienst am Laufen",
 		"perksTemperature": "Bei Kontrollen wird das Temperaturfeld automatisch ausgefüllt",
-		"perksWizBee": "Greifen Sie auf WizBee zu, Ihre persönliche Imkerei-Wissens-KI, unterstützt von ChatGPT",
+		"perksWizBee": "Greifen Sie auf WizBee zu, Ihre persönliche Imkerei-Wissens-KI, unterstützt von Mistral",
 		"priceHistory": "Unser Preisverlauf und bevorstehende Änderungen",
 		"sum": "Zahlen Sie für <b>{years}</b> Jahr(e) der Premium-Mitgliedschaft einen Gesamtbetrag von <b>{sum}€</b>.",
 		"thankYou": "Danke für Ihren Beitrag.<br/>Die Premium-Zeit sollte automatisch hinzugefügt werden, <b>andernfalls versuchen Sie sich anzumelden oder abzumelden</b>.<br/>Sollten Probleme auftreten, zögern Sie nicht, uns unter {'office@btree.at'} zu kontaktieren.",

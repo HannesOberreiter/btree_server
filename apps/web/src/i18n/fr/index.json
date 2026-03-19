@@ -377,7 +377,7 @@
 		"perksStats": "Accès à des statistiques réactives",
 		"perksSupport": "Soutenir le développement de logiciels et assurer le fonctionnement du service",
 		"perksTemperature": "Lors du contrôle, le champ de température est automatiquement rempli",
-		"perksWizBee": "Accédez à WizBee, votre IA personnelle de connaissances apicoles, optimisée par ChatGPT",
+		"perksWizBee": "Accédez à WizBee, votre IA personnelle de connaissances apicoles, optimisée par Mistral",
 		"priceHistory": "Notre historique de prix et les changements à venir",
 		"sum": "Payez pour <b>{years}</b> année(s) d'abonnement premium une somme totale de <b>{sum} €</b>.",
 		"thankYou": "Nous vous remercions de votre contribution.<br/>Le temps premium doit être ajouté automatiquement, sinon essayez de vous connecter ou de vous déconnecter.<br/>En cas de problème, n'hésitez pas à nous contacter à {'office@btree.at'}",
