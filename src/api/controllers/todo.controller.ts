@@ -86,16 +86,18 @@ export default class TodoController {
         return filterQuery;
       })
       .$if(!!order, (qb) => {
+        const prefixField = (field: string) =>
+          field.includes('.') ? field : `todos.${field}`;
         if (Array.isArray(order)) {
           let orderQuery = qb;
           order.forEach((field, index) => {
             const dir = Array.isArray(direction) ? direction[index] : direction;
-            orderQuery = orderQuery.orderBy(field as any, (dir || 'asc') as any);
+            orderQuery = orderQuery.orderBy(prefixField(field) as any, (dir || 'asc') as any);
           });
           return orderQuery;
         }
         else {
-          return qb.orderBy(order as any, ((direction as string) || 'asc') as any);
+          return qb.orderBy(prefixField(order) as any, ((direction as string) || 'asc') as any);
         }
       })
       .$if(

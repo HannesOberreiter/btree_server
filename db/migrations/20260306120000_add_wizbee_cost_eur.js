@@ -3,8 +3,8 @@
  * @returns { Promise<void> }
  */
 export function up(knex) {
-  return knex.schema.alterTable('queens', (t) => {
-    t.datetime('move_date').alter();
+  return knex.schema.alterTable('wizbee_requests', (t) => {
+    t.decimal('cost_eur', 10, 6).defaultTo(0).after('tokens_output');
   });
 }
 
@@ -13,7 +13,7 @@ export function up(knex) {
  * @returns { Promise<void> }
  */
 export function down(knex) {
-  return knex.schema.alterTable('queens', (t) => {
-    t.date('move_date').alter();
+  return knex.schema.alterTable('wizbee_requests', (t) => {
+    t.dropColumn('cost_eur');
   });
 }

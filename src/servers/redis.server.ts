@@ -1,40 +1,47 @@
-import type { RedisOptions } from 'ioredis';
-import { Redis } from 'ioredis';
+import { createClient } from 'redis';
 
 import { ENVIRONMENT } from '../config/constants.config.js';
 import { env, redisConfig } from '../config/environment.config.js';
 import { Logger } from '../services/logger.service.js';
+
+type RedisClient = ReturnType<typeof createClient>;
 
 /**
  * @description Connection to redis docker instance
  */
 export class RedisServer {
   private logger = Logger.getInstance();
-  static client: Redis;
-  start(): void {
+  static client: RedisClient;
+
+  async start(): Promise<void> {
     try {
-      const config: RedisOptions = {
-        connectionName: 'btreeSession',
-        enableOfflineQueue: false,
-      };
-      if (redisConfig.password) {
-        config.username = redisConfig.user;
-        config.password = redisConfig.password;
-      }
-      RedisServer.client = new Redis(
-        redisConfig.port,
-        redisConfig.host,
-        config,
-      );
-      RedisServer.client.on('connect', () => {
-        if (env !== ENVIRONMENT.test) {
-          this.logger.log(
-            'debug',
-            `Connection to redis (session) server established on port ${redisConfig.port} (${env})`,
-            { label: 'Redis' },
-          );
-        }
+      RedisServer.client = createClient({
+        socket: {
+          port: redisConfig.port,
+          host: redisConfig.host,
+        },
+        name: 'btreeSession',
+        ...(redisConfig.password && {
+          username: redisConfig.user,
+          password: redisConfig.password,
+        }),
       });
+
+      RedisServer.client.on('error', (error) => {
+        this.logger.log('error', `Redis connection error : ${error.message}`, {
+          label: 'Redis',
+        });
+      });
+
+      await RedisServer.client.connect();
+
+      if (env !== ENVIRONMENT.test) {
+        this.logger.log(
+          'debug',
+          `Connection to redis (session) server established on port ${redisConfig.port} (${env})`,
+          { label: 'Redis' },
+        );
+      }
     }
     catch (error) {
       this.logger.log('error', `Redis connection error : ${error.message}`, {

@@ -2,7 +2,7 @@
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
-export const up = function (knex) {
+export function up(knex) {
   return knex.schema.createTable('wizbee_tokens', (t) => {
     t.increments('id').primary().unsigned();
     t.date('date').index();
@@ -16,15 +16,15 @@ export const up = function (knex) {
     t.timestamp('created_at').nullable().defaultTo(knex.fn.now());
     t.timestamp('updated_at').nullable().defaultTo(knex.fn.now());
   });
-};
+}
 
 /**
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
-export const down = function (knex) {
+export function down(knex) {
   knex.schema.alterTable('wizbee_tokens', (t) => {
     t.dropForeign('bee_id');
   });
   return knex.schema.dropTable('wizbee_tokens');
-};
+}

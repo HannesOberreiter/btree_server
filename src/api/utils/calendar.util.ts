@@ -6,6 +6,8 @@ import { Rearing } from '../models/rearing/rearing.model.js';
 import { RearingStep } from '../models/rearing/rearing_step.model.js';
 import { Todo } from '../models/todo.model.js';
 
+const COMMA_REGEX = /,/g;
+
 function convertDate({ start, end }) {
   return {
     start: dayjs(start).toISOString().slice(0, 19).replace('T', ' '),
@@ -181,7 +183,7 @@ async function getMovements(params, user) {
     res.task_ids = res.move_ids;
 
     res.start = dayjs(res.date).format('YYYY-MM-DD');
-    const count = (res.hive_names.match(/,/g) || []).length + 1;
+    const count = (res.hive_names.match(COMMA_REGEX) || []).length + 1;
     if (count === 1) {
       res.title = `[${res.hive_names}] - ${res.apiary_name}`;
     }
@@ -227,7 +229,7 @@ async function getTask(params, user, task: string) {
     res.allDay = true;
     res.start = dayjs(res.date).format('YYYY-MM-DD');
     // https://stackoverflow.com/a/54035812/5316675
-    const count = (res.hive_names.match(/,/g) || []).length + 1;
+    const count = (res.hive_names.match(COMMA_REGEX) || []).length + 1;
     if (count === 1) {
       res.title = `[${res.hive_names}] ${res.type_name} - ${res.apiary_name}`;
     }
