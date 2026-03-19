@@ -32,10 +32,10 @@ const { t } = useI18n();
 const holdingButton = ref(false);
 
 const { methodSteps, methodId } = toRefs(props);
-const steps = ref<any>(null);
+const steps = ref<Array<any>>([]);
 watch(
 	methodSteps,
-	() => (steps.value = methodSteps.value ? methodSteps.value : null),
+	() => (steps.value = methodSteps.value ? methodSteps.value : []),
 	{ immediate: true },
 );
 

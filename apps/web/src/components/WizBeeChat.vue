@@ -58,7 +58,7 @@ function scrollToBottom() {
 
 watch(() => chatHistory.value.length, scrollToBottom);
 watch(
-	() => chatHistory.value[chatHistory.value.length - 1]?.content,
+	() => chatHistory.value.at(-1)?.content,
 	scrollToBottom,
 );
 

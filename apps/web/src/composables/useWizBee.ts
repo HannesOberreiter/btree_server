@@ -55,7 +55,7 @@ export function useWizBee() {
 	}
 
 	function upsertLastModelMessage(content: string) {
-		const last = chatHistory.value[chatHistory.value.length - 1];
+		const last = chatHistory.value.at(-1);
 		if (last && last.role === 'model') {
 			last.content = content;
 		}

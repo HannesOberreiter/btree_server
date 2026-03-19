@@ -8,6 +8,7 @@ import { useNotification } from '../composables/useNotification';
 import { useAuthUserStore } from '../stores/auth';
 
 const { vibrate, isSupported: isVibrationSupported } = useVibrate({
+	interval: 0,
 	pattern: [100],
 });
 const storeUser = useAuthUserStore();
@@ -16,7 +17,7 @@ const notification = useNotification();
 const network = useNetwork();
 const errorSound = ref<null | HTMLAudioElement>(null);
 const successSound = ref<null | HTMLAudioElement>(null);
-const lastSoundNotification = ref(new Date().getTime());
+const lastSoundNotification = ref(Date.now());
 
 function preventSoundNotification(old: number, seconds = 1) {
 	/* Do not play sound notifications when offline */
@@ -24,7 +25,7 @@ function preventSoundNotification(old: number, seconds = 1) {
 		return true;
 	}
 	// if less than 5 seconds ago we stop any new sound notifications
-	return (Math.abs(old - new Date().getTime()) / 1000) % 60 < seconds;
+	return (Math.abs(old - Date.now()) / 1000) % 60 < seconds;
 }
 
 watch(notification.state, (currentValue) => {
@@ -49,7 +50,7 @@ watch(notification.state, (currentValue) => {
 		soundElement.play();
 	}
 
-	lastSoundNotification.value = new Date().getTime();
+	lastSoundNotification.value = Date.now();
 	notification.close();
 });
 </script>

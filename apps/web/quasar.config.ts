@@ -64,8 +64,8 @@ export default defineConfig((ctx) => {
 		// Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#build
 		build: {
 			target: {
-				browser: ['es2022', 'firefox115', 'chrome115', 'safari14'],
-				node: 'node20',
+				browser: 'baseline-widely-available',
+				node: 'node22',
 			},
 
 			typescript: {

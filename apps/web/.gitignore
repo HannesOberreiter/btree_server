@@ -3,6 +3,9 @@
 node_modules
 .env
 
+# Playwright auth state
+test/playwright/.auth
+
 # Quasar core related directories
 .quasar
 /dist
@@ -32,3 +35,7 @@ yarn-error.log*
 
 # local .env files
 .env.local*
+
+# Playwright
+test/playwright/test-results/
+test/playwright/report/

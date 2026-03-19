@@ -61,9 +61,9 @@ const payments = ref<{
 
 const year = dayjs().year();
 const currentPrice
-	= priceHistory[priceHistory.length - 1]!.year > year
+	= priceHistory.at(-1)!.year > year
 		? priceHistory[priceHistory.length - 2]!.price
-		: priceHistory[priceHistory.length - 1]!.price;
+		: priceHistory.at(-1)!.price;
 
 const maxPrice = currentPrice + 100;
 
