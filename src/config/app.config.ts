@@ -129,7 +129,7 @@ export class Application {
         reply.header('Access-Control-Allow-Credentials', 'true');
       }
 
-      if (!isExternal) {
+      if (!isExternal && env !== ENVIRONMENT.development) {
         if (!authorized.includes(origin)) {
           reply.status(406).send();
         }

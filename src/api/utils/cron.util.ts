@@ -1,7 +1,9 @@
 import dayjs from 'dayjs';
+import { sql } from 'kysely';
 import { raw } from 'objection';
 import { ENVIRONMENT } from '../../config/constants.config.js';
 import { env } from '../../config/environment.config.js';
+import { KyselyServer } from '../../servers/kysely.server.js';
 import { MailService } from '../../services/mail.service.js';
 import { Apiary } from '../models/apiary.model.js';
 import { Checkup } from '../models/checkup.model.js';
@@ -347,8 +349,8 @@ export async function reminderPremium() {
 }
 
 /**
- * Send reminder six days before user account gets deleted (right to be forgotten)
- * if user logs into the app in the next six days the account will not be deleted
+ * Send reminder sixty days before user account gets deleted (right to be forgotten)
+ * if user logs into the app in the next sixty days the account will not be deleted
  * @returns Count of mails send as object {type: 'deletion_reminder', mails: count}
  */
 export async function reminderDeletion() {
@@ -356,39 +358,51 @@ export async function reminderDeletion() {
     const result = { type: 'deletion_reminder', mails: 0 };
     const timeToBeForgotten = dayjs()
       .subtract(5, 'year')
-      .subtract(6, 'day')
-      .toISOString();
+      .subtract(60, 'day')
+      .toDate();
 
-    const lastDate = dayjs().subtract(7, 'day').format('YYYY-MM-DD');
+    const lastDate = dayjs().subtract(90, 'day').toDate();
     const nowDate = new Date();
 
-    const forgottenIds = await CompanyBee.query()
-      .select('user.username', 'user.email', 'user.lang', 'user.id', 'last_visit')
-      .distinct('bee_id')
-      .leftJoinRelated('user')
-      .where('user.last_visit', '<=', timeToBeForgotten)
-      .where(builder =>
-        builder
-          .where('reminder_deletion', '<', lastDate)
-          .orWhereNull('reminder_deletion'),
-      )
-      .where('newsletter', true)
-      .groupBy('company_bee.user_id')
-      .having(raw('COUNT(bee_id)'), '=', 1);
+    const db = KyselyServer.getInstance().db;
 
-    // Staging server does have correct mail settings don't send reminders, otherwise user would get double notified
+    const forgottenIds = await db
+      .selectFrom('company_bee')
+      .leftJoin('bees', 'bees.id', 'company_bee.bee_id')
+      .select([
+        'bees.id as beeId',
+        'bees.username',
+        'bees.email',
+        'bees.lang',
+      ])
+      .where('bees.last_visit', '<=', timeToBeForgotten)
+      .where(eb =>
+        eb.or([
+          eb('bees.reminder_deletion', '<', lastDate),
+          eb('bees.reminder_deletion', 'is', null),
+        ]),
+      )
+      .where('bees.newsletter', '=', 1)
+      .groupBy('company_bee.user_id')
+      .having(sql`COUNT(company_bee.bee_id)`, '=', 1)
+      .execute();
+
+    // Staging server does not have correct mail settings — don't send reminders to avoid double notifications
     if (env !== ENVIRONMENT.staging) {
-      forgottenIds.forEach(async (u) => {
+      for (const u of forgottenIds) {
         await MailService.getInstance().sendMail({
-          to: u.user.email,
-          lang: u.user.lang,
+          to: u.email,
+          lang: u.lang,
           subject: 'deletion_reminder',
-          name: u.user.username,
+          name: u.username,
         });
-        await User.query().findById(u.id).patch({
-          reminder_deletion: nowDate,
-        });
-      });
+        await db
+          .updateTable('bees')
+          .set({ reminder_deletion: nowDate })
+          .where('id', '=', u.beeId)
+          .execute();
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
     }
 
     result.mails = forgottenIds.length;
