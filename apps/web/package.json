@@ -7,7 +7,7 @@
 	"productName": "b.tree",
 	"author": "HannesOberreiter <hoberreiter@gmail.com>",
 	"engines": {
-		"node": "^28 || ^26 || ^24 || ^22 || ^20 || ^18",
+		"node": "^28 || ^26 || ^24 || ^22",
 		"npm": ">= 6.13.4",
 		"yarn": ">= 1.21.1"
 	},
@@ -20,7 +20,7 @@
 		"build:pwa": "quasar build -m pwa",
 		"postinstall": "quasar prepare",
 		"test:e2e": "playwright test",
-		"test:e2e:ci": "playwright test",
+		"test:e2e:ci": "playwright test --reporter=line",
 		"test:e2e:ui": "playwright test --ui"
 	},
 	"dependencies": {

@@ -14,6 +14,8 @@ test.describe('user - Checkup Table', () => {
 		await expect(dataCy(form)).toBeAttached();
 		await dataCy('select-hive').click();
 		await page.locator('.q-menu .q-item__section').first().click();
+		await page.keyboard.press('Escape');
+		await page.waitForTimeout(200);
 		await dataCy('btn-form-save').click({ force: true });
 		await expect(dataCy(form)).not.toBeAttached();
 

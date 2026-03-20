@@ -211,7 +211,7 @@ function onReset() {
 					:loading="isSubmitting"
 					:label="$t('undo')"
 					tabindex="-1"
-					data-cy="btn-form-undo"
+					data-cy="btn-form-undo-mobile"
 					@click="onUndo"
 				/>
 				<BtnBase

@@ -14,11 +14,13 @@ test.describe('user - Quicktool', () => {
 
 		await dataCy('select-hive').click();
 		await page.locator('.q-menu .q-item__section').first().click();
+		await page.keyboard.press('Escape');
+		await page.waitForTimeout(200);
 		await dataCy('btn-form-save').click({ force: true });
 		await expect(dataCy('notification')).toBeAttached();
 		await expect(dataCy('notification')).not.toBeAttached();
 
-		await dataCy('btn-form-undo').first().click();
+		await dataCy('btn-form-undo').click({ force: true });
 		await expect(dataCy('notification')).toBeAttached();
 	});
 });
