@@ -353,14 +353,19 @@
 	"membership": {
 		"afterPayment": "Après paiement, votre accès premium est étendu à",
 		"afterPremium": "Une fois votre prime épuisée, vous pouvez toujours travailler avec toutes vos ruches et colonies créées, mais les limites s'appliquent à nouveau",
+		"amountPerYear": "Montant par an",
 		"appleStoreInvoice": "Si cela n'est pas possible, veuillez nous contacter en utilisant le bouton email ci-dessous pour un paiement par facture.",
 		"appleStoreNote": "Les paiements ne sont pas disponibles dans l'application iOS. Veuillez utiliser un navigateur web sur votre téléphone ou ordinateur pour le paiement de l'adhésion premium.",
+		"choosePayment": "Mode de paiement",
 		"currentStatus": "Temps payé actuel",
 		"decreaseDays": "Supprimez une année de paiement (minimum un an).",
+		"duration": "Durée",
+		"featuresLink": "Voir toutes les fonctionnalités premium",
 		"forOneYear": "pendant 1 an",
 		"increaseDays": "Ajoutez une année de paiement (maximum 10 ans d'avance possible).",
 		"minimumAmount": "Un minimum de {value} euros est nécessaire.",
 		"noSubscription": "Paiement unique, pas d'abonnement automatique !",
+		"otherOptions": "Autres options de paiement",
 		"payWithStripe": "Carte de crédit et autres",
 		"paymentAmount": "Montant total {comte}.",
 		"paymentCount": "Paiements",
@@ -378,10 +383,13 @@
 		"perksSupport": "Soutenir le développement de logiciels et assurer le fonctionnement du service",
 		"perksTemperature": "Lors du contrôle, le champ de température est automatiquement rempli",
 		"perksWizBee": "Accédez à WizBee, votre IA personnelle de connaissances apicoles, optimisée par Mistral",
+		"premiumActive": "Actif jusqu'au",
+		"premiumExpired": "Expiré",
 		"priceHistory": "Notre historique de prix et les changements à venir",
 		"sum": "Payez pour <b>{years}</b> année(s) d'abonnement premium une somme totale de <b>{sum} €</b>.",
 		"thankYou": "Nous vous remercions de votre contribution.<br/>Le temps premium doit être ajouté automatiquement, sinon essayez de vous connecter ou de vous déconnecter.<br/>En cas de problème, n'hésitez pas à nous contacter à {'office@btree.at'}",
-		"title": "Soutenez b.tree avec un accès premium pendant un an"
+		"title": "Soutenez b.tree avec un accès premium pendant un an",
+		"totalSummary": "Total: {sum}€ pour {years} an(s) — actif jusqu'au {date}"
 	},
 	"method": "Méthode | Méthodes",
 	"min": "Min.",
@@ -636,7 +644,6 @@
 	"soundHint": "Jouez du son sur les notifications (sur mobile, vous obtenez des vibrations et du son).",
 	"source": "Source | Sources",
 	"speak": "Parler",
-
 	"speech": {
 		"commandRedirect": "{text} trouvé, redirection. (d'origine: {msg})",
 		"noCommand": "Aucune commande trouvée avec {msg}.",
