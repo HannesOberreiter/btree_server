@@ -67,7 +67,12 @@ async function sendForm(values: any) {
 			notification.open('positive', message.value, true);
 		},
 		(error) => {
-			notification.open('negative', error);
+			if (error?.statusCode === 404) {
+				notification.open('negative', t('resetUser.keyNotFound'));
+			}
+			else {
+				notification.open('negative', error);
+			}
 			isSubmitting.value = false;
 		},
 	);

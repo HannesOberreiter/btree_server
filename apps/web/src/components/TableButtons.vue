@@ -195,13 +195,13 @@ function flattenObject(ob: any) {
 	const toReturn = {} as any;
 
 	for (const i in ob) {
-		if (!Object.prototype.hasOwnProperty.call(ob, i))
+		if (!Object.hasOwn(ob, i))
 			continue;
 
 		if (typeof ob[i] == 'object' && ob[i] !== null) {
 			const flatObject = flattenObject(ob[i]);
 			for (const x in flatObject) {
-				if (!Object.prototype.hasOwnProperty.call(flatObject, x))
+				if (!Object.hasOwn(flatObject, x))
 					continue;
 
 				toReturn[`${i}.${x}`] = flatObject[x];

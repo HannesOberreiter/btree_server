@@ -33,7 +33,7 @@ export function useWizBee() {
 	const isFetching = ref(false);
 	const isStreaming = ref(false);
 	const monthlyUsage = ref<MonthlyUsage | null>(null);
-	let breakStream = false;
+	let abortController: AbortController | null = null;
 
 	const isPremium = computed(() => authStore.isPremium);
 	const isDisabled = computed(() => !isPremium.value || (monthlyUsage.value?.isOverBudget ?? false));
@@ -55,7 +55,7 @@ export function useWizBee() {
 	}
 
 	function upsertLastModelMessage(content: string) {
-		const last = chatHistory.value[chatHistory.value.length - 1];
+		const last = chatHistory.value.at(-1);
 		if (last && last.role === 'model') {
 			last.content = content;
 		}
@@ -68,10 +68,8 @@ export function useWizBee() {
 		const raw = input ?? question.value;
 		error.value = undefined;
 
-		if (isStreaming.value) {
-			breakStream = true;
-			isFetching.value = false;
-			isStreaming.value = false;
+		if (isStreaming.value || isFetching.value) {
+			abortStream();
 		}
 
 		const userQuestions = raw
@@ -85,15 +83,16 @@ export function useWizBee() {
 		question.value = '';
 
 		isFetching.value = true;
+		abortController = new AbortController();
 
 		const body = {
 			question: userQuestions.join('\n'),
 			history: chatHistory.value.slice(0, -(userQuestions.length)),
 		};
-		const stream = api.stream('/v1/wizbee/ask/stream', body);
 
 		try {
-			const responseStream = (await stream).body!;
+			const response = await api.stream('/v1/wizbee/ask/stream', body, abortController.signal);
+			const responseStream = response.body!;
 			isStreaming.value = true;
 			isFetching.value = false;
 			const reader = responseStream.getReader();
@@ -102,14 +101,9 @@ export function useWizBee() {
 			let modelText = '';
 
 			reader.read().then(function processStream({ done, value }): any {
-				if (breakStream) {
-					breakStream = false;
-					isStreaming.value = false;
-					reader.cancel();
-					return;
-				}
 				if (done) {
 					isStreaming.value = false;
+					abortController = null;
 					if (modelText) {
 						upsertLastModelMessage(modelText);
 					}
@@ -180,13 +174,29 @@ export function useWizBee() {
 			});
 		}
 		catch (e) {
+			// Abort is expected, not an error
+			if (e instanceof DOMException && e.name === 'AbortError') {
+				isFetching.value = false;
+				isStreaming.value = false;
+				abortController = null;
+				return;
+			}
 			console.error(e);
 			isFetching.value = false;
 			isStreaming.value = false;
-			breakStream = false;
+			abortController = null;
 			error.value = t('error.unknown');
 			fetchMonthlyUsage();
 		}
+	}
+
+	function abortStream() {
+		if (abortController) {
+			abortController.abort();
+			abortController = null;
+		}
+		isFetching.value = false;
+		isStreaming.value = false;
 	}
 
 	return {
@@ -200,6 +210,7 @@ export function useWizBee() {
 		isDisabled,
 		fetchMonthlyUsage,
 		sendQuestion,
+		abortStream,
 		clearChat,
 	};
 }

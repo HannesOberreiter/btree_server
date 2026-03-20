@@ -21,10 +21,10 @@ jobs:
       PAYPAL_CLIENT_ID: ${{ secrets.PAYPAL_CLIENT_ID }}
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
       - name: Install
         run: npm install
