@@ -1,6 +1,1 @@
-{
-	"@quasar/testing-e2e-cypress": {
-		"port": "9200",
-		"options": []
-	}
-}
+{}

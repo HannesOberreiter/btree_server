@@ -199,7 +199,7 @@ function onReset() {
 				color="secondary"
 				:loading="isSubmitting"
 				:label="`${$t('save')} (${numberOfTasks})`"
-				data-cy="btn-form-save"
+				data-cy="btn-form-save-mobile"
 				class="full-width q-mb-lg"
 				size="md"
 				@click="onSubmit"
@@ -211,7 +211,7 @@ function onReset() {
 					:loading="isSubmitting"
 					:label="$t('undo')"
 					tabindex="-1"
-					data-cy="btn-form-undo"
+					data-cy="btn-form-undo-mobile"
 					@click="onUndo"
 				/>
 				<BtnBase
@@ -256,7 +256,7 @@ function onReset() {
 				color="secondary"
 				:loading="isSubmitting"
 				:label="`${$t('update')} (${numberOfEdits})`"
-				data-cy="btn-form-update"
+				data-cy="btn-form-update-mobile"
 				class="full-width q-mb-lg"
 				size="md"
 				@click="onUpdate"

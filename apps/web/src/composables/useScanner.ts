@@ -65,13 +65,16 @@ export function useScanner() {
 			html5QrCode.value!.clear();
 			const imageFile = target.files![0]!;
 			html5QrCode
-				.value!.scanFile(imageFile, true).then((decodedText) => {
-				console.log(decodedText);
-				textResult.value = decodedText;
-			}).catch((err) => {
-				console.error(`Error scanning file. Reason: ${err}`);
-				textError.value = err;
-			});
+				.value!
+				.scanFile(imageFile, true)
+				.then((decodedText) => {
+					console.log(decodedText);
+					textResult.value = decodedText;
+				})
+				.catch((err) => {
+					console.error(`Error scanning file. Reason: ${err}`);
+					textError.value = err;
+				});
 		});
 	}
 

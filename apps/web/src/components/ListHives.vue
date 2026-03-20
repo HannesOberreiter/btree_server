@@ -20,7 +20,7 @@ const props = defineProps({
 const emit = defineEmits(['change']);
 const usePrevent = usePreventNavigation();
 const $q = useQuasar();
-const hives = ref<any>(null);
+const hives = ref<Array<any> | null>(null);
 const api = useApiFetch();
 const router = useRouter();
 const notification = useNotification();
@@ -56,6 +56,8 @@ function showInfo(id: number) {
 }
 
 function onMove(oldIndex: number, newIndex: number) {
+	if (!hives.value)
+		return;
 	const f = hives.value.splice(oldIndex, 1)[0];
 	// insert stored item into position `to`
 	hives.value.splice(newIndex, 0, f);
@@ -63,7 +65,9 @@ function onMove(oldIndex: number, newIndex: number) {
 }
 
 function resetActiveStep() {
-	hives.value.values = map(hives.value.values, (obj) => {
+	if (!hives.value)
+		return;
+	hives.value = map(hives.value, (obj) => {
 		obj.active = false;
 		return obj;
 	});

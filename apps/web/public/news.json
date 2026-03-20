@@ -1,5 +1,15 @@
 [
 	{
+		"version": "6.5.8",
+		"date": "2026-03-20",
+		"news": [
+			"FEAT WizBee add stop button to stop the answer generation, which should be helpful if you ask something by mistake or if the answer is taking too long.",
+			"BUGFIX WizBee tokens were calculated wrong.",
+			"BUGFIX better and more accurate error message if the password reset key is not valid any more (thanks Elisabeth)",
+			"BUGFIX Editing charges was not anymore possible if the charge type was deleted."
+		]
+	},
+	{
 		"version": "6.5.7",
 		"date": "2026-02-28",
 		"news": [

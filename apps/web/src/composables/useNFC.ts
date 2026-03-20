@@ -177,8 +177,8 @@ function useNFC() {
 				if (!ndef)
 					throw new Error('NFC reader not initialized');
 				let signal = {};
-				if (abortSignals[abortSignals.length - 1]) {
-					signal = { signal: abortSignals[abortSignals.length - 1]!.signal };
+				if (abortSignals.at(-1)) {
+					signal = { signal: abortSignals.at(-1)!.signal };
 				}
 				ndef.addEventListener(
 					'reading',
@@ -232,8 +232,8 @@ function useNFC() {
 				if (!ndef)
 					throw new Error('NFC reader not initialized');
 				let signal = {};
-				if (abortSignals[abortSignals.length - 1]) {
-					signal = { signal: abortSignals[abortSignals.length - 1]!.signal };
+				if (abortSignals.at(-1)) {
+					signal = { signal: abortSignals.at(-1)!.signal };
 				}
 				ndef.addEventListener(
 					'reading',
@@ -340,8 +340,8 @@ function useNFC() {
 				if (!ndef)
 					throw new Error('NFC reader not initialized');
 				let signal = {};
-				if (abortSignals[abortSignals.length - 1]) {
-					signal = { signal: abortSignals[abortSignals.length - 1]!.signal };
+				if (abortSignals.at(-1)) {
+					signal = { signal: abortSignals.at(-1)!.signal };
 				}
 				ndef.addEventListener(
 					'reading',

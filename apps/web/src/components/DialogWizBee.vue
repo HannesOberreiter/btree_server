@@ -22,7 +22,7 @@ import WizBeeChat from './WizBeeChat.vue';
 				<BtnCloseDialog />
 			</q-card-section>
 			<q-card-section class="dialog-wizbee__body q-pa-none">
-				<WizBeeChat :show-examples="false" />
+				<WizBeeChat :show-examples="false" :is-dialog="true" />
 			</q-card-section>
 		</q-card>
 	</q-dialog>

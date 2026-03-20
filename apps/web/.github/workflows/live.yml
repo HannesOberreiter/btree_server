@@ -20,10 +20,10 @@ jobs:
       MATOMO_SITE_ID: ${{ secrets.MATOMO_SITE_ID_LIVE }}
       PAYPAL_CLIENT_ID: ${{ secrets.PAYPAL_CLIENT_ID_LIVE }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
       - name: Install
         run: npm install
