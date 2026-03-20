@@ -353,14 +353,19 @@
 	"membership": {
 		"afterPayment": "After payment your premium access is extended to",
 		"afterPremium": "After your premium runs out you can still work with all your created hives and colonies but limits apply again.",
+		"amountPerYear": "Amount per year",
 		"appleStoreInvoice": "If this is not possible, please contact us using the email button below for invoice payment.",
 		"appleStoreNote": "Payments are not available in the iOS app. Please use a web browser on your phone or computer for premium membership payment.",
+		"choosePayment": "Payment method",
 		"currentStatus": "Current paid time",
 		"decreaseDays": "Remove a year of payment (minimum one year).",
+		"duration": "Duration",
+		"featuresLink": "View all premium features",
 		"forOneYear": "for +1 year",
 		"increaseDays": "Add a year of payment (maximum of 10 years in front possible).",
 		"minimumAmount": "A minimum of {value} Euro is needed.",
 		"noSubscription": "Single payment only, no automatic subscription!",
+		"otherOptions": "Other payment options",
 		"payWithStripe": "Creditcard and others",
 		"paymentAmount": "Total amount {count}.",
 		"paymentCount": "Payments",
@@ -378,10 +383,13 @@
 		"perksSupport": "Support software development and keep the service running",
 		"perksTemperature": "On checkup temperature field is automatically filled",
 		"perksWizBee": "Access to WizBee your personal beekeeping knowledge AI, powered by Mistral",
+		"premiumActive": "Active until",
+		"premiumExpired": "Expired",
 		"priceHistory": "Our price history and upcoming changes",
 		"sum": "Pay for <b>{years}</b> year(s) of premium membership a total sum of <b>{sum}€</b>.",
 		"thankYou": "Thank you for your contribution.<br/>The premium time should be added automatically <b>otherwise try to login or logout</b>.<br/>If any problems occured, to not hesitated to contact us at {'office@btree.at'}",
-		"title": "Support b.tree with premium access for one year"
+		"title": "Support b.tree with premium access for one year",
+		"totalSummary": "Total: {sum}€ for {years} year(s) — active until {date}"
 	},
 	"method": "Method | Methods",
 	"min": "Min.",
@@ -636,7 +644,6 @@
 	"soundHint": "Play sound on notifications (on mobile you get vibration and sound).",
 	"source": "Source | Sources",
 	"speak": "Speak",
-
 	"speech": {
 		"commandRedirect": "Found {text}, redirecting. (original: {msg})",
 		"noCommand": "No command found with {msg}.",
