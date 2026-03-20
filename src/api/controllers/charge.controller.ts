@@ -144,7 +144,7 @@ export default class ChargeController {
       await checkOwnership(
         KyselyServer.getInstance().db,
         'charge_types',
-        Number(body.type_id),
+        Number(body.data.type_id),
         req.session.user.user_id,
       );
     }
