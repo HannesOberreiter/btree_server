@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import { marked } from 'marked';
-import { nextTick, onMounted, ref, watch } from 'vue';
+import { useQuasar } from 'quasar';
+import { nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useWizBee } from '../composables/useWizBee';
 
-defineProps<{
+const props = defineProps<{
 	/** Show example question chips */
 	showExamples?: boolean;
+	/** Enable mobile keyboard handling when used inside a dialog */
+	isDialog?: boolean;
 }>();
 
 marked.use({ breaks: true, gfm: true });
@@ -23,6 +26,7 @@ function formatToolName(name: string): string {
 }
 
 const { t } = useI18n();
+const $q = useQuasar();
 const {
 	question,
 	chatHistory,
@@ -64,7 +68,27 @@ watch(
 
 onMounted(() => {
 	fetchMonthlyUsage();
+	if (props.isDialog) {
+		window.visualViewport?.addEventListener('resize', updateKeyboardOffset);
+		window.visualViewport?.addEventListener('scroll', updateKeyboardOffset);
+	}
 });
+
+onUnmounted(() => {
+	window.visualViewport?.removeEventListener('resize', updateKeyboardOffset);
+	window.visualViewport?.removeEventListener('scroll', updateKeyboardOffset);
+});
+
+// On mobile the input is position:fixed — track keyboard height to lift it above the keyboard
+const keyboardBottomOffset = ref(0);
+
+function updateKeyboardOffset() {
+	if (!window.visualViewport)
+		return;
+	const vv = window.visualViewport;
+	keyboardBottomOffset.value = Math.max(0, window.innerHeight - vv.height - vv.offsetTop);
+	scrollToBottom();
+}
 
 function onSubmit() {
 	sendQuestion();
@@ -81,7 +105,7 @@ function onClear() {
 </script>
 
 <template>
-	<div class="wizbee-chat column full-height">
+	<div class="wizbee-chat column full-height" :class="{ 'wizbee-chat--dialog': props.isDialog }">
 		<!-- Chat messages area -->
 		<div ref="chatContainer" class="wizbee-chat__messages col q-pa-sm">
 			<!-- Empty state -->
@@ -199,7 +223,10 @@ function onClear() {
 		</div>
 
 		<!-- Input area at bottom -->
-		<div class="wizbee-chat__input q-pa-sm">
+		<div
+			class="wizbee-chat__input q-pa-sm"
+			:style="props.isDialog && $q.screen.lt.md ? { bottom: `${keyboardBottomOffset}px` } : {}"
+		>
 			<q-form @submit.prevent="onSubmit">
 				<q-input
 					v-model="question"
@@ -364,6 +391,25 @@ function onClear() {
 
 .wizbee-chat__input {
   border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+@media (max-width: 1023px) {
+  .wizbee-chat--dialog .wizbee-chat__input {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0; /* overridden by inline :style when keyboard is open */
+    background-color: #fff;
+    z-index: 1;
+  }
+
+  .body--dark .wizbee-chat--dialog .wizbee-chat__input {
+    background-color: var(--q-dark, #1d1d1d);
+  }
+
+  .wizbee-chat--dialog .wizbee-chat__messages {
+    padding-bottom: 64px; /* prevent messages being hidden behind the fixed input */
+  }
 }
 
 .body--dark .wizbee-chat__input {
