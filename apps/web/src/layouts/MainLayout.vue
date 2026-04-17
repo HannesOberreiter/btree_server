@@ -1,6 +1,7 @@
 <script setup lang="ts">
+import type { MatomoTracker } from '@certible/use-matomo';
 import { useMeta, useQuasar } from 'quasar';
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, inject, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { onBeforeRouteLeave, onBeforeRouteUpdate, RouterView, useRouter } from 'vue-router';
 import BtnBase from '../components/BtnBase.vue';
@@ -17,6 +18,7 @@ const storeUser = useAuthUserStore();
 const $q = useQuasar();
 const router = useRouter();
 const { t } = useI18n();
+const matomo = inject<MatomoTracker>('matomo');
 
 storeUser.updateLang();
 useQuasarLang($q);
@@ -59,8 +61,6 @@ function refresh(done: () => void) {
 	done();
 }
 
-// Matomo User Tracking
-const _paq = ((window as any)._paq = (window as any)._paq || []);
 const uniqueIdentifier = computed(() => {
 	let identifier = '';
 	if (storeUser?.user?.id)
@@ -74,12 +74,12 @@ watch(
 	uniqueIdentifier,
 	() => {
 		if (uniqueIdentifier.value) {
-			_paq.push(['setUserId', uniqueIdentifier.value]);
-			_paq.push(['trackPageView']);
+			matomo?.setUserId(uniqueIdentifier.value);
+			matomo?.trackPageView();
 		}
 		else {
-			_paq.push(['resetUserId']);
-			_paq.push(['trackPageView']);
+			matomo?.setUserId(null);
+			matomo?.trackPageView();
 		}
 	},
 	{ immediate: true },

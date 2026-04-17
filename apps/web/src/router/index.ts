@@ -42,7 +42,7 @@ export default route(({ store }) => {
 	const refreshStore = useRefreshStore(store);
 	const loadingManager = useLoadingManager();
 
-	Router.beforeEach(async (to, from, next) => {
+	Router.beforeEach(async (to, from) => {
 		loadingManager.forceStopAll();
 
 		if (
@@ -50,24 +50,20 @@ export default route(({ store }) => {
 		) {
 			console.warn('User not logged in, redirect from', to.path);
 			const query = to.query;
-			next({ name: 'login', query: { next: to.path, ...query } });
-			return;
+			return { name: 'login', query: { next: to.path, ...query } };
 		}
 
 		if (
 			to.matched.some(record => record.meta.premium && !storeUser.isPremium)
 		) {
 			console.warn('No premium user redirect');
-			next({ name: 'login' });
-			return;
+			return { name: 'login' };
 		}
 
 		if (!(from.name === 'new-quicktool' && to.name === 'new-quicktool')) {
 			routerStore.previous = from.name as any;
 			routerStore.params = from.params as any;
 		}
-
-		next();
 
 		if (
 			to.matched.some(record => record.meta.auth)

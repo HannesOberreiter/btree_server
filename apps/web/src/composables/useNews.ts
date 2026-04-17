@@ -1,43 +1,44 @@
 import type { Ref } from 'vue';
 import { useFetch } from '@vueuse/core';
-import { computed, ref } from 'vue';
+
+interface NewsItem {
+	title: string;
+	description: string;
+}
 
 interface News {
 	version: string;
 	date: string;
-	news: string[];
+	items: NewsItem[];
 }
 
-const currentVersion = ref<News>();
+interface NewsJson {
+	en: News[];
+	de: News[];
+}
+
+const NEWS_URL = 'https://www.btree.at/news.json';
 
 const {
 	isFetching,
 	error,
 	data,
-}: { isFetching: Ref<boolean>; error: Ref<any>; data: Ref<News[] | null> }
-	= useFetch(`/news.json?cache=${Date.now()}`)
+}: { isFetching: Ref<boolean>; error: Ref<any>; data: Ref<NewsJson | null> }
+	= useFetch(`${NEWS_URL}?cache=${Date.now()}`)
 		.get()
 		.json();
 
 export function useNews() {
-	async function loadCurrentNews() {
-		const local = await fetch('/news.json');
-		const file = (await local.json()) as News[];
-		return (currentVersion.value = file[0]);
-	}
-
-	const isOutdated = computed(() => {
+	function getNews(lang: string): News[] {
 		if (!data.value)
-			return false;
-		return data.value[0]?.version !== currentVersion.value?.version;
-	});
+			return [];
+		return lang === 'de' ? data.value.de : data.value.en;
+	}
 
 	return {
 		data,
 		isFetching,
 		error,
-		loadCurrentNews,
-		currentVersion,
-		isOutdated,
+		getNews,
 	};
 }
