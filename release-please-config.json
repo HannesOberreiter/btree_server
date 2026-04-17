@@ -2,8 +2,6 @@
   "packages": {
     ".": {
       "release-type": "node",
-      "tag-prefix": "server/v",
-      "component": "",
       "changelog-sections": [
         { "type": "feat", "section": "Features" },
         { "type": "fix", "section": "Bug Fixes" },

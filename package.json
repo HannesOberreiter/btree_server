@@ -1,5 +1,5 @@
 {
-  "name": "btree-node",
+  "name": "btree-server",
   "type": "module",
   "version": "7.1.0",
   "private": true,
