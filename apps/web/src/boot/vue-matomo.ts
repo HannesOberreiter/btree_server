@@ -1,26 +1,15 @@
 import { defineBoot } from '#q-app/wrappers';
-import VueMatomo from 'vue-matomo';
+import { initMatomo } from '@certible/use-matomo';
 
-export default defineBoot(({ app, router }) => {
-	app.use(VueMatomo, {
-		// Configure your matomo server and site by providing
+export default defineBoot(({ app }) => {
+	const matomo = initMatomo({
 		host: process.env.MATOMO_HOST,
 		siteId: process.env.MATOMO_SITE_ID,
-		router,
-		// Require consent before sending tracking information to matomo
-		// Default: false
-		requireConsent: false,
-		// Whether to track the initial page view
-		// Default: true
-		trackInitialView: true,
-		// Run Matomo without cookies
-		// Default: false
+		requireCookieConsent: false,
 		disableCookies: true,
-		// Whether or not to log debug information
-		// Default: false
-		debug: process.env.NODE_ENV === 'development',
-		// Set this to include crossorigin attribute on the matomo script import
-		// Default: undefined, possible values : 'anonymous', 'use-credentials'
-		crossOrigin: undefined,
+		requireConsent: false,
+		trackRouter: true,
 	});
+
+	app.provide('matomo', matomo);
 });
