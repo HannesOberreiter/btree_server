@@ -1,7 +1,7 @@
 {
   "name": "btree-node",
   "type": "module",
-  "version": "7.1.0",
+  "version": "7.2.0",
   "private": true,
   "description": "b.tree backend based on nodejs, fastify and knex.js, objections.js",
   "author": "Hannes Oberreiter",
