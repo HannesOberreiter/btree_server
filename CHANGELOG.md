@@ -1,6 +1,6 @@
 # Changelog
 
-## [7.1.0](https://github.com/HannesOberreiter/btree_server/compare/btree-node-v7.0.0...btree-node-v7.1.0) (2026-04-17)
+## [7.0.0](https://github.com/HannesOberreiter/btree_server/compare/btree-server-v7.0.0...btree-server-v7.0.0) (2026-04-17)
 
 
 ### Features
