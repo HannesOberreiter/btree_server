@@ -1,11 +1,17 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import TooltipBase from '../components/TooltipBase.vue';
+import { useI18n } from 'vue-i18n';
 import { useNews } from '../composables/useNews';
 
-const { isFetching, error, data, currentVersion } = useNews();
+const { isFetching, error, getNews } = useNews();
+const { locale } = useI18n();
 
-const dataFetched = computed(() => data.value ?? []);
+const lang = computed(() => {
+	const l = locale.value;
+	return l.startsWith('de') ? 'de' : 'en';
+});
+
+const dataFetched = computed(() => getNews(lang.value));
 
 const filter = ref('');
 </script>
@@ -33,26 +39,11 @@ const filter = ref('');
 				<q-card
 					flat
 					:bordered="true"
-					:class="
-						props.row.version === currentVersion?.version
-							? 'bg-orange-3 text-black'
-							: ''
-					"
 				>
 					<q-card-section class="text-left">
-						<q-icon
-							v-if="data != null && props.row.version === data[0]?.version"
-							square
-							color="orange"
-							name="fas fa-star"
-							:size="$q.screen.gt.xs ? 'lg' : 'xs'"
-							class="absolute-top-right q-pa-sm"
-						>
-							<TooltipBase>{{ $t('latest') }}</TooltipBase>
-						</q-icon>
-						<div v-for="(item, index) in props.row.news" :key="index">
-							<b>{{ item.substring(0, item.indexOf(' ')) }}</b>
-							{{ item.substring(item.indexOf(' ') + 1) }}
+						<div v-for="(item, index) in props.row.items" :key="index">
+							<b>{{ item.title }}</b>
+							{{ item.description }}
 						</div>
 					</q-card-section>
 

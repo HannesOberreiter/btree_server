@@ -1,19 +1,15 @@
 <script setup lang="ts">
-import { useFetch } from '@vueuse/core';
 import { useMeta } from 'quasar';
 import { computed, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { RouterLink, RouterView, useRouter } from 'vue-router';
 import BtnDarkMode from '../components/BtnDarkMode.vue';
 import SupporterImages from '../components/SupporterImages.vue';
+import { useNews } from '../composables/useNews';
 
 const isBeta = process.env.BACKEND_URL.includes('beta');
 
-const { isFetching, error, data }: any = useFetch(
-	`/news.json?cache=${Date.now()}`,
-)
-	.get()
-	.json();
+const { data, isFetching } = useNews();
 
 const router = useRouter();
 const path = computed(() => router.currentRoute.value);
@@ -27,6 +23,19 @@ const imprintUrl = computed(() =>
 	locale.value === 'de'
 		? 'https://www.btree.at/de/impressum/'
 		: 'https://www.btree.at/imprint/');
+
+const latestDate = computed(() => {
+	if (!data.value) {
+		return null;
+	}
+	const entries = data.value.en;
+	return entries.length > 0 ? entries[0]!.date : null;
+});
+
+const updatesUrl = computed(() =>
+	locale.value === 'de'
+		? 'https://www.btree.at/de/updates/'
+		: 'https://www.btree.at/updates/');
 
 // https://stackoverflow.com/a/16427747/5316675
 function localStorageTest() {
@@ -192,13 +201,17 @@ function refresh(done: () => void) {
 							>
 								{{ $t('imprint') }}
 							</a>
-							<br>
-							<span v-if="data && !isFetching && !error">
-								{{ $t('version') }}: {{ data[0].version }}
-								<span v-if="!$q.platform.is.mobile">
-									[{{ data[0].date }}]
-								</span>
-							</span>
+							<template v-if="latestDate && !isFetching">
+								| <a
+									class="link"
+									:href="updatesUrl"
+									target="_blank"
+									rel="noopener"
+								>
+									{{ $t('news') }} {{ latestDate }}
+								</a>
+							</template>
+
 						</small>
 					</div>
 					<SupporterImages />

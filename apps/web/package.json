@@ -1,5 +1,5 @@
 {
-	"name": "btree_vue",
+	"name": "btree-client",
 	"type": "module",
 	"version": "6.1.7",
 	"private": true,
