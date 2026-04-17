@@ -1,0 +1,31 @@
+name: Release Please
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: googleapis/release-please-action@v4
+        id: release
+
+      # Notify btree_sites to regenerate news when a release is published
+      - name: Trigger news generation
+        if: ${{ steps.release.outputs['.--release_created'] }}
+        run: |
+          gh api \
+            --method POST \
+            -H "Accept: application/vnd.github+json" \
+            /repos/${{ github.repository_owner }}/btree_sites/dispatches \
+            -f event_type=release-published \
+            -f "client_payload[repo]=btree_server" \
+            -f "client_payload[tag]=${{ steps.release.outputs['.--tag_name'] }}" \
+            -f "client_payload[version]=${{ steps.release.outputs['.--version'] }}"
+        env:
+          GH_TOKEN: ${{ secrets.BTREE_SITES_DISPATCH_TOKEN }}
