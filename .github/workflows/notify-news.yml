@@ -3,6 +3,7 @@ name: Notify news generation
 on:
   release:
     types: [published]
+  workflow_dispatch:
 
 jobs:
   dispatch:
