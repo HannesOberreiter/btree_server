@@ -1,0 +1,22 @@
+name: Notify news generation
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger btree_sites news generation
+        run: |
+          gh api \
+            --method POST \
+            -H "Accept: application/vnd.github+json" \
+            /repos/${{ github.repository_owner }}/btree_sites/dispatches \
+            -f event_type=release-published \
+            -f "client_payload[repo]=btree_server" \
+            -f "client_payload[tag]=${{ github.event.release.tag_name }}" \
+            -f "client_payload[version]=${{ github.event.release.name }}"
+        env:
+          GH_TOKEN: ${{ secrets.BTREE_SITES_DISPATCH_TOKEN }}
