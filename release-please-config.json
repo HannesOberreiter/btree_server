@@ -1,0 +1,20 @@
+{
+  "packages": {
+    ".": {
+      "release-type": "node",
+      "tag-prefix": "server/v",
+      "changelog-sections": [
+        { "type": "feat", "section": "Features" },
+        { "type": "fix", "section": "Bug Fixes" },
+        { "type": "perf", "section": "Performance" },
+        { "type": "chore", "section": "Miscellaneous" },
+        { "type": "refactor", "section": "Miscellaneous" },
+        { "type": "style", "section": "Miscellaneous" },
+        { "type": "docs", "section": "Miscellaneous", "hidden": true },
+        { "type": "test", "section": "Miscellaneous", "hidden": true },
+        { "type": "ci", "section": "Miscellaneous", "hidden": true }
+      ]
+    }
+  },
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json"
+}
