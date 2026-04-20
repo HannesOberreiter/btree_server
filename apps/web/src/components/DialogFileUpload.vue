@@ -96,8 +96,8 @@ function onRejected(rejectedEntries: any) {
 						flat
 						:label="$t('upload')"
 						capture="user"
-						accept="image/*, audio/*, application/pdf"
-						:max-file-size="2e7"
+						accept="image/*, audio/*, video/mp4, video/quicktime, video/webm, application/pdf"
+						:max-file-size="1e8"
 						:url="uploadUrl"
 						:send-raw="true"
 						:factory="factoryFn"

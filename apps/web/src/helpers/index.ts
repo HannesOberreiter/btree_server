@@ -59,6 +59,10 @@ export function isImage(filename: string) {
 	return /\.(?:gif|jpe?g|tiff?|png|webp|bmp|pdf)(?=\?.|$)/i.test(filename);
 }
 
+export function isVideo(filename: string) {
+	return /\.(?:mp4|mov|webm|avi|mkv|m4v|3gp)(?=\?.|$)/i.test(filename);
+}
+
 export function generateArrayOfYears(min = 2000) {
 	const max = new Date().getFullYear();
 	const years = [];
