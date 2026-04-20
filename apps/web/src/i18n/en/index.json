@@ -629,6 +629,8 @@
   "sessionTimeOut": "Session time-out",
   "setting": {
     "hintCalendarWeeknumber": "Show week number on calendar.",
+    "hintShowQrScanner": "Show QR code scanner in top bar.",
+    "hintShowVoiceRecognition": "Show voice recognition in top bar.",
     "hintChargeBestbefore": "Best before: Date Field",
     "hintChargeCalibrate": "Calibrate: Input Field, if you want to keep a calibrate list for you charges",
     "hintChargePrice": "Price: Input Field, for a price",

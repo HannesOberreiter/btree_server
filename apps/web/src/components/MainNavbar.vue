@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { DialogChainObject } from 'quasar';
-import { useNetwork } from '@vueuse/core';
+import { useLocalStorage, useNetwork } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { useQuasar } from 'quasar';
 import { ref, watch } from 'vue';
@@ -18,6 +18,18 @@ import DialogShare from './DialogShare.vue';
 import DialogWizBee from './DialogWizBee.vue';
 import SearchHiveApiary from './SearchHiveApiary.vue';
 import TooltipBase from './TooltipBase.vue';
+
+const localPerf = useLocalStorage(
+	'pref-local',
+	{
+		'date-auto-close': false,
+		'hive-clear-after-saving': false,
+		'calendar-show-weeknumber': true,
+		'show-qr-scanner': false,
+		'show-voice-recognition': false,
+	},
+	{ mergeDefaults: true },
+);
 
 const storeUser = useAuthUserStore();
 const { company } = storeToRefs(storeUser);
@@ -97,8 +109,8 @@ function onWizBee() {
 				class="text-right"
 				:class="$q.screen.gt.xs ? 'q-gutter-md' : 'q-gutter-sm'"
 			>
-				<BtnSpeak />
-				<BtnQrScanner v-if="!$q.platform.is.mobile" />
+				<BtnSpeak v-if="localPerf['show-voice-recognition']" />
+				<BtnQrScanner v-if="localPerf['show-qr-scanner'] && !$q.platform.is.mobile" />
 				<q-btn
 					flat
 					dense
@@ -164,7 +176,7 @@ function onWizBee() {
 								</BtnBase>
 							</q-item-section>
 						</q-item>
-						<q-item v-close-popup>
+						<q-item v-if="localPerf['show-qr-scanner']" v-close-popup>
 							<q-item-section>
 								<BtnQrScanner />
 							</q-item-section>

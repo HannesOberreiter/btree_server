@@ -629,6 +629,8 @@
   "sessionTimeOut": "Expiration de la session",
   "setting": {
     "hintCalendarWeeknumber": "Afficher le numéro de semaine sur le calendrier.",
+    "hintShowQrScanner": "Afficher le scanner QR dans la barre supérieure.",
+    "hintShowVoiceRecognition": "Afficher la reconnaissance vocale dans la barre supérieure.",
     "hintChargeBestbefore": "À consommer de préférence avant: champ de date",
     "hintChargeCalibrate": "Calibrer: champ de saisie, si vous souhaitez conserver une liste de calibrage pour vos charges",
     "hintChargePrice": "Prix: Champ de saisie, pour un prix",

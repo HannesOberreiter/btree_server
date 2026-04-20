@@ -629,6 +629,8 @@
   "sessionTimeOut": "Session-Abgelaufen",
   "setting": {
     "hintCalendarWeeknumber": "Wochennummer im Kalender anzeigen.",
+    "hintShowQrScanner": "QR-Code-Scanner in der oberen Leiste anzeigen.",
+    "hintShowVoiceRecognition": "Spracherkennung in der oberen Leiste anzeigen.",
     "hintChargeBestbefore": "Mindesthaltbarkeitsdatum: Datumsfeld",
     "hintChargeCalibrate": "Kalibrieren: Eingabefeld, wenn Sie eine Kalibrierliste für Ihre Chargen führen möchten",
     "hintChargePrice": "Preis: Eingabefeld, für einen Preis",
