@@ -15,14 +15,6 @@ import {
   getWeatherData,
 } from '../utils/temperature.util.js';
 
-const HTML_TAG_REGEX = /<[^>]*>/g;
-const CRLF_REGEX = /\r\n/g;
-const MULTI_SPACE_REGEX = /\s+/g;
-const AFB_REGEX = /Amerikanische Faulbrut \(AFB\)/;
-const ORDINANCE_REGEX = /Verordnung:\s*(\S+)/;
-const DISTRICT_REGEX = /Bezirk: ([\s\S]+?)(?=Gemeinde:|$)/;
-const MUNICIPALITY_REGEX = /Gemeinde: ([\s\S]+?)(?=Veterinärbehörde|$)/;
-
 export default class ServiceController {
   static async getWeatherData(req: FastifyRequest, _reply: FastifyReply) {
     const params = req.params as any;
@@ -33,6 +25,10 @@ export default class ServiceController {
     const apiary = await Apiary.query()
       .findById(params.apiary_id)
       .where({ user_id: req.session.user.user_id });
+
+    if (!apiary) {
+      throw httpErrors.NotFound('Apiary not found');
+    }
     const weatherData = await getWeatherData(apiary.latitude, apiary.longitude);
     return weatherData;
   }
@@ -161,48 +157,64 @@ export default class ServiceController {
   }
 
   /**
-   * @see https://stmk.bienenwanderboerse.at
+   * @see https://geogis.ages.at/TKH_Zonenkarte
    */
   static async getAFBMapData(req: FastifyRequest, _reply: FastifyReply) {
     try {
-      const proxy = 'https://stmk.bienenwanderboerse.at/api/v1/quarantine-areas';
-      const res = await fetch(proxy, {
-        method: 'POST',
-        headers: {
-          'User-Agent': 'btree/server (www.btree.at)',
-        },
-      }).then(res => res.json()) as {
-        quarantine_areas: Array<{
-          id: string
-          gps: { lat: number, lng: number }
-          radius: number
-          popup: string
+      const res = await fetch('https://geogis.ages.at/TKH_Zonenkarte/zonen.json', {
+        headers: { 'User-Agent': 'btree/server (www.btree.at)' },
+      });
+      const geojson = await res.json() as {
+        features: Array<{
+          properties: {
+            id: string
+            tkh: string
+            tierart: string[]
+            art: string
+            typ: string
+            beginn: string
+            area: number
+          }
+          geometry: {
+            type: string
+            coordinates: number[][][][]
+          }
         }>
       };
 
-      return res.quarantine_areas.map((area) => {
-        const htmlContent = area.popup;
+      // AGES Zonenkarte filter logic (from TKH_Zonenkarte.js):
+      // - typ: 'R' = regulär (shown), 'T' = temporär (hidden on map)
+      // - art: 'V' = Sperrzone, 'S' = Schutzzone, 'U' = Überwachungszone, 'K' = Kernzone, etc.
+      // - Zones with future beginn date are excluded
 
-        // Remove HTML tags and normalize whitespace
-        const textContent = htmlContent
-          .replace(HTML_TAG_REGEX, '')
-          .replace(CRLF_REGEX, ' ')
-          .replace(MULTI_SPACE_REGEX, ' ')
-          .trim();
+      return geojson.features
+        .filter(f => f.properties.tierart.includes('BI') && f.properties.tkh === 'AFB' && f.properties.typ === 'R')
+        .map((f) => {
+          const coords = f.geometry.coordinates[0][0];
+          const xs = coords.map(c => c[0]);
+          const ys = coords.map(c => c[1]);
+          const cx = xs.reduce((a, b) => a + b, 0) / xs.length;
+          const cy = ys.reduce((a, b) => a + b, 0) / ys.length;
 
-        const diseaseMatch = textContent.match(AFB_REGEX);
-        const ordinanceMatch = textContent.match(ORDINANCE_REGEX);
-        const districtMatch = textContent.match(DISTRICT_REGEX);
-        const municipalityMatch = textContent.match(MUNICIPALITY_REGEX);
-        const source = 'Quelle: bienenwanderboerse.at';
+          // EPSG:3857 → WGS84
+          const lng = (cx * 180) / 20037508.34;
+          const lat = (Math.atan(Math.exp((cy * Math.PI) / 20037508.34)) * 360) / Math.PI - 90;
 
-        return {
-          id: area.id,
-          gps: area.gps,
-          radius: area.radius,
-          popup: `${diseaseMatch ? diseaseMatch[0] : ''} \n${ordinanceMatch ? ordinanceMatch[1] : ''}\n${districtMatch ? districtMatch[1].trim() : ''} \n${municipalityMatch ? municipalityMatch[1].trim() : ''}\n${source}`,
-        };
-      });
+          const radius = Math.sqrt(f.properties.area / Math.PI);
+
+          const artLabels: Record<string, string> = { S: 'Schutzzone', V: 'Sperrzone', U: 'Überwachungszone' };
+          console.log(f.properties.art, artLabels[f.properties.art]);
+
+          const typLabel = artLabels[f.properties.art] || f.properties.art;
+          const popup = `Amerikanische Faulbrut (AFB)\n${typLabel}\nID: ${f.properties.id}\nBeginn: ${f.properties.beginn}\nQuelle: AGES (geogis.ages.at)`;
+
+          return {
+            id: f.properties.id,
+            gps: { lat, lng },
+            radius: Math.round(radius),
+            popup,
+          };
+        });
     }
     catch (e) {
       req.log.error(e);
