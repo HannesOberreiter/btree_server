@@ -1,4 +1,6 @@
 import type { FastifyInstance } from 'fastify';
+import v1Agent from './v1/agent.route.js';
+import v1AgentKey from './v1/agent_key.route.js';
 import v1Apiary from './v1/apiary.route.js';
 import v1Auth from './v1/auth.route.js';
 import v1Calendar from './v1/calendar.route.js';
@@ -142,6 +144,14 @@ export default function routes(app: FastifyInstance, _options: any, done: any) {
 
   app.register(v1WizBee, {
     prefix: '/v1/wizbee',
+  });
+
+  app.register(v1Agent, {
+    prefix: '/v1/agent',
+  });
+
+  app.register(v1AgentKey, {
+    prefix: '/v1/agent_key',
   });
 
   done();

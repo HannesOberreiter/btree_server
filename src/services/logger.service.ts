@@ -24,6 +24,7 @@ function logFileNameGenerator(time: number | Date, name: string) {
 
 export class Logger {
   private static instance: Logger;
+  private _streams: (DestinationStream | StreamEntry)[] = [];
   pino: PinoLogger;
 
   static getInstance(): Logger {
@@ -73,6 +74,12 @@ export class Logger {
       });
     }
 
+    this._streams = streams as (DestinationStream | StreamEntry)[];
+
+    const ms = multistream(streams, {
+      dedupe: false,
+    });
+
     this.pino = pino(
       {
         level: 'debug',
@@ -93,9 +100,7 @@ export class Logger {
           },
         },
       },
-      multistream(streams, {
-        dedupe: false,
-      }),
+      ms,
     );
   }
 
@@ -116,6 +121,20 @@ export class Logger {
     catch (e) {
       console.error(e);
       throw new Error('Error in logger service');
+    }
+  }
+
+  /**
+   * Flush and close all log streams (rotating-file-stream file handles).
+   * Call during graceful shutdown to prevent dangling FILEHANDLE leaks.
+   */
+  close(): void {
+    this.pino.flush();
+    for (const entry of this._streams) {
+      const stream = (entry as StreamEntry).stream ?? entry;
+      if (stream && stream !== stdout && typeof (stream as any).end === 'function') {
+        (stream as any).end();
+      }
     }
   }
 }

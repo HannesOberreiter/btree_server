@@ -975,6 +975,19 @@ export interface TreatmentVets {
   user_id: Generated<number | null>
 }
 
+export interface AgentKeys {
+  id: Generated<number>
+  user_id: number
+  bee_id: number
+  key_hash: string
+  salt: string
+  key_prefix: string
+  label: string | null
+  last_used: Date | null
+  created_at: Generated<Date>
+  valid_to: Date | null
+}
+
 export interface WizbeeRequests {
   id: Generated<number>
   request_time: Generated<Date>
@@ -1049,5 +1062,6 @@ export interface DB {
   treatment_vets: TreatmentVets
   treatments: Treatments
   treatments_apiaries: TreatmentsApiaries
+  agent_keys: AgentKeys
   wizbee_requests: WizbeeRequests
 }
