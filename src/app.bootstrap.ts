@@ -26,7 +26,7 @@ const httpServer = new HTTPServer(application.app);
 // eslint-disable-next-line antfu/no-top-level-await
 await httpServer.start();
 
-closeWithGrace({ delay: 10000 }, async (res) => {
+const cwgHandler = closeWithGrace({ delay: 10000 }, async (res) => {
   if (res.err) {
     console.error(res.err);
   }
@@ -34,10 +34,9 @@ closeWithGrace({ delay: 10000 }, async (res) => {
 });
 
 async function gracefulShutdown() {
-  // process.on('SIGTERM', afterFirstSignal);
-  // process.on('SIGINT', afterFirstSignal);
   try {
     logger.log('debug', 'Starting graceful shutdown...', { label: 'Server' });
+    cwgHandler.uninstall();
     await Promise.allSettled([
       dbServer.stop(),
       redisServer.stop(),
@@ -45,6 +44,7 @@ async function gracefulShutdown() {
       kyselyServer.stop(),
     ].filter(Boolean));
     logger.log('debug', 'Graceful shutdown completed', { label: 'Server' });
+    logger.close();
   }
   catch (error) {
     console.error('Failed to stop server', error);
