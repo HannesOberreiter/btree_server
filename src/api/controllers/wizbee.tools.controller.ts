@@ -307,8 +307,8 @@ export function createWizBeeTools(context: WizBeeContext): Record<string, Tool> 
         const endDate = input.dateEnd ?? dateEnd;
 
         const filterArray: any[] = [{ date: { from: startDate, to: endDate } }];
-        if (input.apiaryId) {
-          filterArray.push({ [`${input.task}.apiary_id`]: input.apiaryId });
+        if (input.apiaryId && input.task !== 'todo') {
+          filterArray.push({ [`${input.task}_apiary.apiary_id`]: input.apiaryId });
         }
         const filters = JSON.stringify(filterArray);
 
@@ -317,6 +317,7 @@ export function createWizBeeTools(context: WizBeeContext): Record<string, Tool> 
           query: {
             limit: input.limit,
             offset: 0,
+            ...(input.apiaryId && input.task === 'todo' && { apiary_id: input.apiaryId }),
             filters,
             done: input.includeDone ? undefined : false,
             deleted: false,
