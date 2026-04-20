@@ -43,7 +43,7 @@ export class RedisServer {
         );
       }
     }
-    catch (error) {
+    catch (error: any) {
       this.logger.log('error', `Redis connection error : ${error.message}`, {
         label: 'Redis',
       });
@@ -52,13 +52,15 @@ export class RedisServer {
 
   async stop(): Promise<void> {
     try {
+      if (!RedisServer.client?.isOpen) {
+        return;
+      }
       this.logger.log('debug', 'Closing redis connection', {});
-      await RedisServer.client.save();
       await RedisServer.client.quit();
       this.logger.log('debug', 'Closed redis connection', {});
     }
     catch (error) {
-      this.logger.log('error', 'Redis closing error', { error });
+      this.logger.log('error', `Redis closing error: ${error instanceof Error ? error.message : String(error)}`, {});
     }
   }
 }

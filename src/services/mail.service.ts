@@ -177,7 +177,7 @@ export class MailService {
       return true;
     }
     catch (e) {
-      this.logger.log('error', `Could not send E-Mail.`, { error: e });
+      this.logger.log('error', `Could not send E-Mail: ${e instanceof Error ? e.message : String(e)}`, {});
       return false;
     }
   }
@@ -208,7 +208,7 @@ export class MailService {
       });
     }
     catch (e) {
-      this.logger.log('error', `Could not send E-Mail.`, { error: e });
+      this.logger.log('error', `Could not send E-Mail: ${e instanceof Error ? e.message : String(e)}`, {});
     }
   }
 }
