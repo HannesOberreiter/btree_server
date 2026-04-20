@@ -26,8 +26,8 @@ export default function routes(
             try {
               JSON.parse(data);
             }
-            catch (error) {
-              console.log(error);
+            // eslint-disable-next-line unused-imports/no-unused-vars
+            catch (error: any) {
               return false;
             }
             return true;
