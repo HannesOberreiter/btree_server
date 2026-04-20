@@ -31,13 +31,13 @@ export default function routes(
                 y: z.number(),
               }),
               uri: z.string(),
-              observed_at: z.date(),
+              observed_at: z.union([z.string(), z.date()]),
             }),
           ),
         },
       },
     },
-    PublicController.getPestObservationsRecent,
+    PublicController.getPestObservationsRecent as any,
   );
   server.get(
     '/:taxa/observations/year/:year',
@@ -55,13 +55,13 @@ export default function routes(
                 y: z.number(),
               }),
               uri: z.string(),
-              observed_at: z.date(),
+              observed_at: z.union([z.string(), z.date()]),
             }),
           ),
         },
       },
     },
-    PublicController.getPestObservationsYear,
+    PublicController.getPestObservationsYear as any,
   );
   server.get(
     '/:taxa/observations/stats',

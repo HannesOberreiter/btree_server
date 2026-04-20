@@ -7,7 +7,6 @@
     ],
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "baseUrl": "./",
     "rootDir": "src",
     "module": "nodenext",
     "outDir": "dist",
