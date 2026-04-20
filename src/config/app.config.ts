@@ -37,12 +37,6 @@ export class Application {
   private logger: Logger;
 
   constructor() {
-    this.init();
-    this.createSessionStore();
-    this.plug();
-  }
-
-  private init(): void {
     this.logger = Logger.getInstance();
     this.app = fastify({
       loggerInstance: this.logger.pino,
@@ -65,14 +59,14 @@ export class Application {
         },
       },
     });
-  }
 
-  private createSessionStore(): void {
     const redis = RedisServer.client;
     this.sessionStore = new RedisStore({
       client: redis,
       prefix: 'btree_sess:',
     });
+
+    this.plug();
   }
 
   private plug(): void {
@@ -114,7 +108,7 @@ export class Application {
         }
       }
 
-      const origin = req.headers.origin;
+      const origin = req.headers.origin!;
 
       const isExternal
         = req.url.includes('external')
@@ -157,7 +151,7 @@ export class Application {
     this.app.register(fastifySession, {
       idGenerator(req) {
         let id = randomUUID();
-        if ('bee_id' in req) {
+        if (req && 'bee_id' in req) {
           id = `${req.bee_id}:${id}`;
         }
         return id;
@@ -246,7 +240,7 @@ export class Application {
         });
       }
 
-      const e = checkMySQLError(error);
+      const e = checkMySQLError(error) as any;
       this.log.error(
         {
           user: request?.session?.user,

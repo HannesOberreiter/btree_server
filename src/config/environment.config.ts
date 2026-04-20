@@ -66,7 +66,7 @@ const env = EnvironmentConfiguration.environment;
 const port = Number.parseInt(process.env.PORT!);
 const url = process.env.URL;
 const frontend = process.env.FRONTEND;
-const authorized = process.env.AUTHORIZED;
+const authorized = process.env.AUTHORIZED!;
 const isContainer = !!process.env.CONTAINER; // Docker container, we need to use different ports
 const isChild = process.env.IS_CHILD ? process.env.IS_CHILD === 'true' : false; // Child node application, used for scaling, without cronjobs
 
