@@ -51,6 +51,12 @@
   "apiary": "Rucher | Ruchers",
   "apiaryEdit": "Modifier le rucher | modifier les ruchers",
   "ask": "Demander",
+  "voice": {
+    "start": "Enregistrer une question vocale",
+    "stop": "Arrêter l'enregistrement",
+    "stopIn": "Arrêter l'enregistrement (arrêt automatique dans {seconds} s)",
+    "autoStopped": "L'enregistrement s'est arrêté automatiquement après la durée maximale."
+  },
   "askQuestion": "Saisissez votre question relative à l'apiculture ou à l'application b.tree !",
   "autoCloseDate": "Fermer automatiquement la date lors de la sélection.",
   "autoMode": "Système",
@@ -180,7 +186,10 @@
     "tokenLimit": "Limite mensuelle de jetons atteinte, réessayez le mois prochain.",
     "tooManyRequest": "Trop de demandes !",
     "unknown": "Une erreur s'est produite!",
-    "validation": "Erreur de validation!"
+    "validation": "Erreur de validation!",
+    "voicePermission": "Accès au microphone refusé. Veuillez autoriser l'utilisation du microphone dans les paramètres de votre navigateur.",
+    "voiceUnsupported": "La saisie vocale n'est pas prise en charge par ce navigateur.",
+    "voiceEmpty": "Impossible de comprendre l'enregistrement. Veuillez réessayer."
   },
   "error404": "Oops. Rien ici...",
   "errorNoFile": "Impossible de trouver ou de charger l'image.",

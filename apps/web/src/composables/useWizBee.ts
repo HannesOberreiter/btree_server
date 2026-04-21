@@ -48,6 +48,19 @@ export function useWizBee() {
 		}
 	}
 
+	async function transcribeAudio(params: {
+		blob: Blob;
+		fileName: string;
+		language?: string;
+	}): Promise<{ text: string; language: string | null }> {
+		const res = await api.postMultiPart('/v1/wizbee/transcribe', {
+			audio: new File([params.blob], params.fileName, { type: params.blob.type || 'audio/webm' }),
+			fileName: params.fileName,
+			...(params.language ? { language: params.language } : {}),
+		});
+		return { text: res?.text ?? '', language: res?.language ?? null };
+	}
+
 	function clearChat() {
 		chatHistory.value = [];
 		error.value = undefined;
@@ -115,6 +128,7 @@ export function useWizBee() {
 				accumulated += decoded;
 				const responses = accumulated.split(/\}\s*\{/);
 				let newAccum = '';
+				let aborted = false;
 
 				for (let i = 0; i < responses.length; i++) {
 					let response = responses[i];
@@ -136,9 +150,19 @@ export function useWizBee() {
 
 					if (json.type === 'error') {
 						error.value = json.content || t('error.unknown');
+						// Leave any tool rows that were in-progress visibly "done" so the
+						// UI doesn't keep a spinner forever, and fully reset streaming
+						// state — the server may still send a `done` frame, but we treat
+						// the request as terminated from the client's point of view.
+						chatHistory.value
+							.filter(m => m.role === 'tool' && !m.toolDone)
+							.forEach((m) => { m.toolDone = true; });
+						isFetching.value = false;
 						isStreaming.value = false;
+						abortStream();
 						fetchMonthlyUsage();
-						return;
+						aborted = true;
+						break;
 					}
 
 					if (json.type === 'tool_call') {
@@ -170,6 +194,8 @@ export function useWizBee() {
 				}
 
 				accumulated = newAccum;
+				if (aborted)
+					return;
 				return reader.read().then(processStream);
 			});
 		}
@@ -209,6 +235,7 @@ export function useWizBee() {
 		isPremium,
 		isDisabled,
 		fetchMonthlyUsage,
+		transcribeAudio,
 		sendQuestion,
 		abortStream,
 		clearChat,

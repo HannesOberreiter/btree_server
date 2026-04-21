@@ -51,6 +51,12 @@
   "apiary": "Apiary | Apiaries",
   "apiaryEdit": "Edit apiary | edit apiaries",
   "ask": "Ask",
+  "voice": {
+    "start": "Record voice question",
+    "stop": "Stop recording",
+    "stopIn": "Stop recording (auto-stops in {seconds} s)",
+    "autoStopped": "Recording automatically stopped after the time limit."
+  },
   "askQuestion": "Enter your beekeeping or b.tree app related question!",
   "autoCloseDate": "Automatically close date on selection.",
   "autoMode": "System",
@@ -180,7 +186,10 @@
     "tokenLimit": "Monthly token limit reached, try again next month.",
     "tooManyRequest": "Too many requests!",
     "unknown": "An error occurred!",
-    "validation": "Validation error!"
+    "validation": "Validation error!",
+    "voicePermission": "Microphone access denied. Please allow microphone use in your browser settings.",
+    "voiceUnsupported": "Voice input is not supported by this browser.",
+    "voiceEmpty": "Could not understand the recording. Please try again."
   },
   "error404": "Oops. Nothing here...",
   "errorNoFile": "Could not find or load the image.",

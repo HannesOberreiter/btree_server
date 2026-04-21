@@ -51,6 +51,12 @@
   "apiary": "Stand | Stände",
   "apiaryEdit": "Stand bearbeiten | Stände bearbeiten",
   "ask": "Frage",
+  "voice": {
+    "start": "Frage per Sprache aufnehmen",
+    "stop": "Aufnahme beenden",
+    "stopIn": "Aufnahme beenden (stoppt automatisch in {seconds} s)",
+    "autoStopped": "Aufnahme wurde nach Ablauf des Zeitlimits automatisch beendet."
+  },
   "askQuestion": "Geben Sie Ihre Frage zur Imkerei oder b.tree App ein!",
   "autoCloseDate": "Datum bei Auswahl automatisch schließen.",
   "autoMode": "System",
@@ -180,7 +186,10 @@
     "tokenLimit": "Das monatliche Token-Limit ist erreicht. Versuchen Sie es nächsten Monat erneut.",
     "tooManyRequest": "Zu viele Anfragen!",
     "unknown": "Ein Fehler ist aufgetreten!",
-    "validation": "Validierungsfehler!"
+    "validation": "Validierungsfehler!",
+    "voicePermission": "Mikrofonzugriff verweigert. Bitte erlaube die Mikrofonnutzung in deinen Browser-Einstellungen.",
+    "voiceUnsupported": "Spracheingabe wird von diesem Browser nicht unterstützt.",
+    "voiceEmpty": "Die Aufnahme konnte nicht verstanden werden. Bitte versuche es erneut."
   },
   "error404": "Hoppla. Nichts hier...",
   "errorNoFile": "Das Bild konnte nicht gefunden oder geladen werden.",

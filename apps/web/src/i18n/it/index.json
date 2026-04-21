@@ -51,6 +51,12 @@
   "apiary": "Apiario | Apiari",
   "apiaryEdit": "Modifica apiario | Modificare gli apiari",
   "ask": "Chiedere",
+  "voice": {
+    "start": "Registra una domanda vocale",
+    "stop": "Interrompi registrazione",
+    "stopIn": "Interrompi registrazione (si ferma automaticamente tra {seconds} s)",
+    "autoStopped": "La registrazione si è interrotta automaticamente al termine del tempo consentito."
+  },
   "askQuestion": "Inserisci la tua domanda relativa all'apicoltura o all'app b.tree!",
   "autoCloseDate": "Chiudi automaticamente la data sulla selezione.",
   "autoMode": "Sistema",
@@ -180,7 +186,10 @@
     "tokenLimit": "Limite token mensile raggiunto, riprova il mese prossimo.",
     "tooManyRequest": "Troppe richieste!",
     "unknown": "Si è verificato un errore!",
-    "validation": "Errore di convalida!"
+    "validation": "Errore di convalida!",
+    "voicePermission": "Accesso al microfono negato. Consenti l'uso del microfono nelle impostazioni del browser.",
+    "voiceUnsupported": "L'input vocale non è supportato da questo browser.",
+    "voiceEmpty": "Impossibile comprendere la registrazione. Riprova."
   },
   "error404": "Ops. Niente qui...",
   "errorNoFile": "Impossibile trovare o caricare l'immagine.",
