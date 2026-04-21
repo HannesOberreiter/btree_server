@@ -1,7 +1,6 @@
 {
 	"name": "btree-client",
 	"type": "module",
-	"version": "6.1.7",
 	"private": true,
 	"description": "Beekeeping Database",
 	"productName": "b.tree",
