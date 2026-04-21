@@ -43,7 +43,7 @@ export default class ScaleController {
 
     const limit = await limitScale(req.session.user.user_id);
     if (limit) {
-      throw httpErrors.PaymentRequired('no premium access');
+      throw httpErrors.PaymentRequired('Premium subscription required to connect scales');
     }
 
     const result = await Scale.transaction(async (trx) => {

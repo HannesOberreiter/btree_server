@@ -2,7 +2,7 @@ import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import fastifySwagger from '@fastify/swagger';
 import { jsonSchemaTransform } from 'fastify-type-provider-zod';
-import { z } from 'zod';
+import httpErrors from 'http-errors';
 import { url } from '../../../config/environment.config.js';
 import {
   executeWizBeeTool,
@@ -83,21 +83,39 @@ export default async function routes(
         tags: ['Tools'],
         body: toolDef.parameters,
       },
-      handler: async (request, reply) => {
+      handler: async (request, _reply) => {
         const user = request.session?.user;
         if (!user) {
-          reply.statusCode = 401;
-          return { error: 'Unauthorized' };
+          throw httpErrors.Unauthorized();
         }
         const context = { userId: user.user_id, beeId: user.bee_id };
-        try {
-          const result = await executeWizBeeTool(toolDef.name, request.body, context);
-          return result;
+        const result = await executeWizBeeTool(toolDef.name, request.body, context);
+
+        // The wizbee tool wrapper returns a structured envelope on failure
+        // ({ ok: false, error: {...} }) so the in-process LLM loop can recover.
+        // For the public HTTP agent API we translate it back into a standard
+        // fastify httpError so external consumers get the canonical
+        // { statusCode, error, message } body shape used everywhere else.
+        // Hint + suggested_next_tool are attached as `cause` so they're still
+        // visible to agents but don't change the error envelope shape.
+        if (result && typeof result === 'object' && (result as any).ok === false) {
+          const err = (result as any).error ?? {};
+          const status: number = typeof err.status === 'number' ? err.status : 400;
+          const message: string = typeof err.message === 'string' && err.message.length > 0
+            ? err.message
+            : 'Tool execution failed';
+          const httpErr = (httpErrors as any)[status]
+            ? (httpErrors as any)[status](message)
+            : httpErrors.BadRequest(message);
+          httpErr.cause = {
+            code: err.code,
+            ...(err.hint && { hint: err.hint }),
+            ...(err.suggested_next_tool && { suggested_next_tool: err.suggested_next_tool }),
+          };
+          throw httpErr;
         }
-        catch (err) {
-          reply.statusCode = 400;
-          return { error: err instanceof Error ? err.message : String(err) };
-        }
+
+        return result;
       },
     });
   }

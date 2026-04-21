@@ -19,8 +19,8 @@ import TodoController from './todo.controller.js';
 async function isDuplicateHiveName(
   user_id: number,
   name: string,
-  id?: number,
-  trx: Objection.Transaction = null,
+  id: number | null = null,
+  trx: Objection.Transaction,
 ) {
   const checkDuplicate = Hive.query(trx).select('id').findOne({
     user_id,
@@ -129,7 +129,7 @@ export default class HiveController {
 
     const limit = await limitHive(req.session.user.user_id, repeat);
     if (limit) {
-      throw httpErrors.PaymentRequired('no premium access');
+      throw httpErrors.PaymentRequired('Free plan hive limit reached — premium subscription required to create more hives');
     }
 
     const result = await Hive.transaction(async (trx) => {
@@ -373,8 +373,8 @@ export default class HiveController {
         .where('user_id', req.session.user.user_id)
         .whereIn('id', body.ids);
 
-      const softIds = [];
-      const hardIds = [];
+      const softIds: number[] = [];
+      const hardIds: number[] = [];
       map(res, (obj) => {
         if ((obj.deleted || hardDelete) && !restoreDelete)
           hardIds.push(obj.id);

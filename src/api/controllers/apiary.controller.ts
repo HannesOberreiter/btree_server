@@ -12,8 +12,8 @@ import { limitApiary } from '../utils/premium.util.js';
 async function isDuplicateApiaryName(
   user_id: number,
   name: string,
-  id?: number,
-  trx: Objection.Transaction = null,
+  id: number | null = null,
+  trx: Objection.Transaction,
 ) {
   const checkDuplicate = Apiary.query(trx).select('id').findOne({
     user_id,
@@ -162,7 +162,7 @@ export default class ApiaryController {
   static async post(req: FastifyRequest, _reply: FastifyReply) {
     const limit = await limitApiary(req.session.user.user_id);
     if (limit) {
-      throw httpErrors.PaymentRequired('no premium access');
+      throw httpErrors.PaymentRequired('Free plan apiary limit reached — premium subscription required to create more apiaries');
     }
     const name = (req.body as any).name;
 
@@ -215,11 +215,11 @@ export default class ApiaryController {
         .where('user_id', req.session.user.user_id)
         .whereIn('id', body.ids);
 
-      const softIds = [];
-      const hardIds = [];
+      const softIds: number[] = [];
+      const hardIds: number[] = [];
       map(res, (obj) => {
         if (obj.hive_count) {
-          throw httpErrors.Forbidden();
+          throw httpErrors.Forbidden('Apiary still contains hives — move or delete the hives first before deleting the apiary');
         }
 
         if ((obj.deleted || hardDelete) && !restoreDelete)

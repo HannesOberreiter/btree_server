@@ -119,7 +119,7 @@ export default class WizBeeController {
   static async getWizBeeUsage(req: FastifyRequest, _reply: FastifyReply) {
     const premium = await isPremium(req.session.user.user_id);
     if (!premium) {
-      throw httpErrors.PaymentRequired();
+      throw httpErrors.PaymentRequired('WizBee requires an active premium subscription');
     }
 
     const usage = await getMonthlyUsage(req.session.user.user_id);
@@ -141,13 +141,13 @@ export default class WizBeeController {
 
     const premium = await isPremium(req.session.user.user_id);
     if (!premium) {
-      throw httpErrors.PaymentRequired();
+      throw httpErrors.PaymentRequired('WizBee requires an active premium subscription');
     }
 
     // Check monthly budget
     const withinBudget = await checkMonthlyBudget(req.session.user.user_id);
     if (!withinBudget) {
-      throw httpErrors.TooManyRequests('Monthly budget limit reached');
+      throw httpErrors.TooManyRequests('Monthly WizBee usage budget exceeded — resets at the start of next month');
     }
 
     const question = body.question;
@@ -172,7 +172,7 @@ export default class WizBeeController {
           req.headers.origin = req.headers.host;
         }
       }
-      const origin = req.headers.origin;
+      const origin = req.headers.origin!;
       reply.raw.setHeader('Access-Control-Allow-Origin', origin);
     }
 

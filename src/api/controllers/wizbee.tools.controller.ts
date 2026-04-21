@@ -66,6 +66,309 @@ function createMockReply(): FastifyReply {
   return {} as FastifyReply;
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Structured tool-error envelope
+//
+// Tools NEVER throw. They return either a normal result, or:
+//   { ok: false, error: { code, status, message, hint?, suggested_next_tool? } }
+//
+// Why: LLMs recover far better from a readable result object than from an
+// opaque thrown exception surfaced by the AI SDK. Hints + suggested_next_tool
+// convert multi-step failure loops into single-step corrections.
+//
+// Controllers (shared with the frontend) are NOT modified — their
+// `httpErrors.*` throws are translated here, messages kept as-is because the
+// frontend already shows them to users (so they're safe to surface).
+// ─────────────────────────────────────────────────────────────────────────────
+
+type ToolErrorCode
+  = | 'not_found'
+    | 'forbidden'
+    | 'premium_required'
+    | 'conflict'
+    | 'validation_error'
+    | 'no_records_affected'
+    | 'upstream_unavailable'
+    | 'unknown_error';
+
+export interface ToolErrorEnvelope {
+  ok: false
+  error: {
+    code: ToolErrorCode
+    status: number
+    message: string
+    hint?: string
+    suggested_next_tool?: string
+  }
+}
+
+/**
+ * Per-tool metadata used to craft actionable error hints.
+ * Keep this list tight — only encode the confusions that actually happen.
+ */
+interface ToolHintMeta {
+  /** Tool takes `hiveIds` (array) or `hiveId` (single) — user often passes hive *numbers* instead of real IDs */
+  usesHiveIds?: boolean
+  /** Tool takes `apiaryId` */
+  usesApiaryId?: boolean
+  /** Tool takes `typeId`/`diseaseId`/`vetId` — resolved via fetchOptions */
+  usesTypeId?: boolean
+  /** Tool takes `ids` of existing records (patch/delete) — resolve via fetchTasks/getHiveTasks */
+  usesRecordIds?: boolean
+  /** Category for no_records_affected messages */
+  mutates?: 'create' | 'update' | 'delete'
+  /** Human label for the record kind ("feed", "hive", "todo") */
+  recordLabel?: string
+}
+
+const TOOL_META: Record<string, ToolHintMeta> = {
+  // Reads
+  getHiveDetail: { usesHiveIds: true, recordLabel: 'hive' },
+  getHiveTasks: { usesHiveIds: true, usesApiaryId: true, recordLabel: 'hive/apiary' },
+  apiaryWeather: { usesApiaryId: true, recordLabel: 'apiary' },
+  fetchTasks: { usesApiaryId: true },
+  // Mutations — feeds/harvests/treatments/checkups
+  createFeed: { usesHiveIds: true, usesTypeId: true, mutates: 'create', recordLabel: 'feed' },
+  patchFeed: { usesRecordIds: true, usesTypeId: true, mutates: 'update', recordLabel: 'feed' },
+  softDeleteFeed: { usesRecordIds: true, mutates: 'delete', recordLabel: 'feed' },
+  createHarvest: { usesHiveIds: true, usesTypeId: true, mutates: 'create', recordLabel: 'harvest' },
+  patchHarvest: { usesRecordIds: true, usesTypeId: true, mutates: 'update', recordLabel: 'harvest' },
+  softDeleteHarvest: { usesRecordIds: true, mutates: 'delete', recordLabel: 'harvest' },
+  createTreatment: { usesHiveIds: true, usesTypeId: true, mutates: 'create', recordLabel: 'treatment' },
+  patchTreatment: { usesRecordIds: true, usesTypeId: true, mutates: 'update', recordLabel: 'treatment' },
+  softDeleteTreatment: { usesRecordIds: true, mutates: 'delete', recordLabel: 'treatment' },
+  createCheckup: { usesHiveIds: true, usesTypeId: true, mutates: 'create', recordLabel: 'checkup' },
+  patchCheckup: { usesRecordIds: true, usesTypeId: true, mutates: 'update', recordLabel: 'checkup' },
+  softDeleteCheckup: { usesRecordIds: true, mutates: 'delete', recordLabel: 'checkup' },
+  // Todos
+  createTodo: { usesApiaryId: true, mutates: 'create', recordLabel: 'todo' },
+  patchTodo: { usesRecordIds: true, usesApiaryId: true, mutates: 'update', recordLabel: 'todo' },
+  batchDeleteTodo: { usesRecordIds: true, mutates: 'delete', recordLabel: 'todo' },
+  // Charges
+  createCharge: { usesTypeId: true, mutates: 'create', recordLabel: 'charge' },
+  patchCharge: { usesRecordIds: true, usesTypeId: true, mutates: 'update', recordLabel: 'charge' },
+  softDeleteCharge: { usesRecordIds: true, mutates: 'delete', recordLabel: 'charge' },
+};
+
+/**
+ * Build a hint + suggested_next_tool tailored to the tool and error class.
+ */
+function buildHint(
+  toolName: string,
+  code: ToolErrorCode,
+): { hint?: string, suggested_next_tool?: string } {
+  const meta = TOOL_META[toolName];
+  if (!meta)
+    return {};
+
+  if (code === 'not_found') {
+    // Most common cause: caller passed a user-visible hive NUMBER instead of hiveId,
+    // or used a stale/guessed ID.
+    if (meta.usesHiveIds) {
+      return {
+        hint: 'One or more IDs could not be found for the current user. Hive NUMBERS (e.g. "1608") are NOT hiveIds — always resolve real hiveIds first. Also check the apiaryId.',
+        suggested_next_tool: 'listApiariesHives',
+      };
+    }
+    if (meta.usesApiaryId) {
+      return {
+        hint: 'Apiary not found for the current user. Resolve the real apiaryId first.',
+        suggested_next_tool: 'listApiariesHives',
+      };
+    }
+    if (meta.usesRecordIds) {
+      return {
+        hint: `One or more ${meta.recordLabel ?? 'record'} IDs do not exist (or belong to another user). List current records first to get valid IDs.`,
+        suggested_next_tool: meta.recordLabel === 'todo' ? 'fetchTasks' : 'getHiveTasks',
+      };
+    }
+  }
+
+  if (code === 'validation_error' && meta.usesTypeId) {
+    return {
+      hint: 'A typeId / diseaseId / vetId is likely invalid for this user. Type IDs are user-scoped — fetch the current lookup lists to get valid IDs.',
+      suggested_next_tool: 'fetchOptions',
+    };
+  }
+
+  if (code === 'no_records_affected') {
+    if (meta.mutates === 'create' && meta.usesHiveIds) {
+      return {
+        hint: `The request was accepted but 0 ${meta.recordLabel} records were created. Usually caused by hiveIds that do not belong to the current user. Resolve real hiveIds first.`,
+        suggested_next_tool: 'listApiariesHives',
+      };
+    }
+    if ((meta.mutates === 'update' || meta.mutates === 'delete') && meta.usesRecordIds) {
+      return {
+        hint: `0 ${meta.recordLabel} records matched the provided IDs. IDs may be wrong, already deleted, or belong to another user. List current records first.`,
+        suggested_next_tool: meta.recordLabel === 'todo' ? 'fetchTasks' : 'getHiveTasks',
+      };
+    }
+  }
+
+  if (code === 'premium_required') {
+    return {
+      hint: 'This action requires an active premium subscription on the user\'s account. Tell the user and stop — do not retry.',
+    };
+  }
+
+  return {};
+}
+
+/**
+ * Classify any thrown value (usually a fastify httpErrors.* instance) into a
+ * stable, model-readable error code.
+ */
+function classifyError(err: unknown): { code: ToolErrorCode, status: number, message: string } {
+  const anyErr = err as any;
+  const status: number = typeof anyErr?.statusCode === 'number'
+    ? anyErr.statusCode
+    : typeof anyErr?.status === 'number' ? anyErr.status : 500;
+  // httpErrors messages are already user-safe (shown to frontend users).
+  const rawMessage: string = typeof anyErr?.message === 'string' && anyErr.message.length > 0
+    ? anyErr.message
+    : 'Request failed';
+
+  let code: ToolErrorCode;
+  let message = rawMessage;
+
+  switch (status) {
+    case 400:
+    case 422:
+      code = 'validation_error';
+      break;
+    case 401:
+    case 403:
+      code = 'forbidden';
+      break;
+    case 402:
+      code = 'premium_required';
+      break;
+    case 404:
+      code = 'not_found';
+      break;
+    case 409:
+      code = 'conflict';
+      break;
+    case 502:
+    case 503:
+    case 504:
+      code = 'upstream_unavailable';
+      message = 'An upstream service is temporarily unavailable. Retry later.';
+      break;
+    default:
+      if (status >= 500) {
+        code = 'unknown_error';
+        // Do not leak internal 5xx details.
+        message = 'Internal error while executing this tool.';
+      }
+      else {
+        code = 'validation_error';
+      }
+  }
+
+  return { code, status, message };
+}
+
+/**
+ * Detect "silent no-op" results on mutations (e.g. createFeed returned ids: []).
+ * Returns a ToolErrorEnvelope if suspicious, otherwise null.
+ */
+function detectNoRecordsAffected(toolName: string, result: unknown): ToolErrorEnvelope | null {
+  const meta = TOOL_META[toolName];
+  if (!meta?.mutates)
+    return null;
+  const r = result as any;
+  if (!r || typeof r !== 'object')
+    return null;
+
+  const createdZero = meta.mutates === 'create'
+    && Array.isArray(r.ids) && r.ids.length === 0;
+  const updatedZero = meta.mutates === 'update' && r.updatedCount === 0;
+  const deletedZero = meta.mutates === 'delete' && r.deletedCount === 0;
+
+  if (!createdZero && !updatedZero && !deletedZero)
+    return null;
+
+  const { hint, suggested_next_tool } = buildHint(toolName, 'no_records_affected');
+  return {
+    ok: false,
+    error: {
+      code: 'no_records_affected',
+      status: 404,
+      message: `0 ${meta.recordLabel ?? 'record'}s were affected. The IDs provided likely do not exist for this user.`,
+      hint,
+      suggested_next_tool,
+    },
+  };
+}
+
+const GENERIC_HTTP_MESSAGE_RE = /^(?:not found|forbidden|unauthorized|bad request|conflict|payment required|too many requests)$/i;
+
+/**
+ * Wrap a tool's `execute` so it never throws and returns structured errors.
+ */
+function wrapExecute<TArgs>(
+  toolName: string,
+  exec: (input: TArgs, opts?: any) => Promise<unknown>,
+): (input: TArgs, opts?: any) => Promise<unknown> {
+  return async (input, opts) => {
+    try {
+      const result = await exec(input, opts);
+      const silent = detectNoRecordsAffected(toolName, result);
+      if (silent) {
+        Logger.getInstance().log('warn', `Tool ${toolName} returned no_records_affected`, { input });
+        return silent;
+      }
+      return result;
+    }
+    catch (err) {
+      const { code, status, message } = classifyError(err);
+      const { hint, suggested_next_tool } = buildHint(toolName, code);
+      // Full error goes to server logs; only sanitized fields go to the model.
+      Logger.getInstance().log(
+        status >= 500 ? 'error' : 'warn',
+        `Tool ${toolName} failed: ${status} ${code}`,
+        err,
+      );
+      // If the upstream message is just the generic http-errors default
+      // ("Not Found", "Forbidden", "Unauthorized", "Bad Request") — which carries
+      // zero signal — prefer the tool-specific hint when we have one.
+      const isGenericMessage = !message
+        || GENERIC_HTTP_MESSAGE_RE.test(message.trim());
+      const finalMessage = (isGenericMessage && hint) ? hint : message;
+      const envelope: ToolErrorEnvelope = {
+        ok: false,
+        error: {
+          code,
+          status,
+          message: finalMessage,
+          hint: finalMessage === hint ? undefined : hint,
+          suggested_next_tool,
+        },
+      };
+      return envelope;
+    }
+  };
+}
+
+/**
+ * Wrap every tool in a tools record with the error-handling shim.
+ */
+function wrapTools(tools: Record<string, Tool>): Record<string, Tool> {
+  const out: Record<string, Tool> = {};
+  for (const [name, t] of Object.entries(tools)) {
+    const original = (t as any).execute;
+    if (typeof original === 'function') {
+      out[name] = { ...(t as any), execute: wrapExecute(name, original.bind(t)) } as Tool;
+    }
+    else {
+      out[name] = t;
+    }
+  }
+  return out;
+}
+
 /**
  * Get the default date range for task queries
  * @returns Start date (2 months ago) and end date (2 months from now)
@@ -106,7 +409,7 @@ const taskControllers: Record<TaskType, any> = {
  * Vercel AI SDK tools need the context at runtime, so we create them dynamically
  */
 export function createWizBeeTools(context: WizBeeContext): Record<string, Tool> {
-  return {
+  return wrapTools({
     /**
      * List Apiaries and Hives Tool
      * Returns all apiaries with their associated hives for the current user
@@ -1041,6 +1344,8 @@ export function createWizBeeTools(context: WizBeeContext): Record<string, Tool> 
      * Sugar Water Calculator Tool
      * Calculates sugar water mixture for bee feeding
      */
+    // NOTE: any tool added to this record is automatically wrapped with the
+    // structured-error envelope via wrapTools() at the end of this function.
     calculateSugarWater: tool({
       description: 'Calculate sugar water mixture for bee feeding. Provide either sugar or water amount to calculate the mixture. Returns the required amounts and expected stored value.',
       inputSchema: z.object({
@@ -1100,7 +1405,7 @@ export function createWizBeeTools(context: WizBeeContext): Record<string, Tool> 
         };
       },
     }),
-  };
+  });
 }
 
 /**
