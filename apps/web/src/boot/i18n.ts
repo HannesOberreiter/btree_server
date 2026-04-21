@@ -1,5 +1,5 @@
-import { defineBoot } from '#q-app/wrappers';
 import { createI18n } from 'vue-i18n';
+import { defineBoot } from '#q-app/wrappers';
 // using single import of json and not message auto import as it broke my vite HSMR and resulted in full page reloads
 import { languages } from '../i18n';
 
