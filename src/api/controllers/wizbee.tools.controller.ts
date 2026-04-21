@@ -1,5 +1,6 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import { z } from 'zod';
+import { KyselyServer } from '../../servers/kysely.server.js';
 import { Logger } from '../../services/logger.service.js';
 import ApiaryController from './apiary.controller.js';
 import ChargeController from './charge.controller.js';
@@ -29,6 +30,19 @@ export interface WizBeeContext {
   userId: number
   beeId: number
 }
+
+const GENERIC_HTTP_MESSAGE_RE = /^(?:not found|forbidden|unauthorized|bad request|conflict|payment required|too many requests)$/i;
+
+/**
+ * Error-message patterns that really mean "an ID referenced in the request
+ * doesn't exist / doesn't belong to the current user" but that underlying
+ * controllers throw as plain `Error()` (so they surface as status=500 in
+ * classifyError). We treat them as `not_found` so the model gets the proper
+ * hint ("resolve hiveIds via findHives") instead of an opaque 500.
+ *
+ * Extend this list when new "invisible 500" cases pop up in logs.
+ */
+const NOT_FOUND_MESSAGE_RE = /no (?:current )?location found for hive|hive not found|apiary not found|record not found/i;
 
 /**
  * Creates a mock FastifyRequest object to reuse existing controllers
@@ -278,9 +292,21 @@ function classifyError(err: unknown): { code: ToolErrorCode, status: number, mes
       break;
     default:
       if (status >= 500) {
-        code = 'unknown_error';
-        // Do not leak internal 5xx details.
-        message = 'Internal error while executing this tool.';
+        // Some controllers throw plain `Error`s for missing-ownership cases
+        // (e.g. CheckupController: "No current location found for hive").
+        // These are really not-found, but come through as status=500. Pattern
+        // match on the message so the model gets a useful `findHives` hint
+        // instead of an opaque "Internal error".
+        if (NOT_FOUND_MESSAGE_RE.test(rawMessage)) {
+          code = 'not_found';
+          // keep the original message — it's user-safe and descriptive enough
+          // for the model to correct itself.
+        }
+        else {
+          code = 'unknown_error';
+          // Do not leak internal 5xx details.
+          message = 'Internal error while executing this tool.';
+        }
       }
       else {
         code = 'validation_error';
@@ -323,7 +349,120 @@ function detectNoRecordsAffected(toolName: string, result: unknown): ToolErrorEn
   };
 }
 
-const GENERIC_HTTP_MESSAGE_RE = /^(?:not found|forbidden|unauthorized|bad request|conflict|payment required|too many requests)$/i;
+/**
+ * Pre-validate that all `hiveIds` (or single `hiveId`) in a tool input actually
+ * exist for the current user. This catches the most common model mistake —
+ * passing hive NAMES/numbers (e.g. 1402, 1614) instead of real hiveIds —
+ * before* we invoke the underlying controller, which would otherwise fail
+ * either silently (0 rows affected) or with a confusing 500 ("No current
+ * location found for hive").
+ *
+ * Returns the list of hive IDs that were NOT found; an empty array means OK.
+ */
+async function findUnknownHiveIds(
+  context: WizBeeContext,
+  hiveIds: number[],
+): Promise<number[]> {
+  if (hiveIds.length === 0)
+    return [];
+  const unique = Array.from(new Set(hiveIds.filter(id => Number.isFinite(id))));
+  if (unique.length === 0)
+    return hiveIds;
+
+  const db = KyselyServer.getInstance().db;
+  const rows = await db
+    .selectFrom('hives')
+    .select('id')
+    .where('user_id', '=', context.userId)
+    .where('id', 'in', unique)
+    .execute();
+  const found = new Set(rows.map(r => Number(r.id)));
+  return unique.filter(id => !found.has(id));
+}
+
+/**
+ * Same as above for a single `apiaryId`.
+ */
+async function isUnknownApiaryId(
+  context: WizBeeContext,
+  apiaryId: number,
+): Promise<boolean> {
+  if (!Number.isFinite(apiaryId))
+    return true;
+  const db = KyselyServer.getInstance().db;
+  const row = await db
+    .selectFrom('apiaries')
+    .select('id')
+    .where('user_id', '=', context.userId)
+    .where('id', '=', apiaryId)
+    .executeTakeFirst();
+  return !row;
+}
+
+/**
+ * Run ownership pre-checks for a tool, based on its declared TOOL_META and
+ * the shape of the input. Returns a ToolErrorEnvelope on failure, null on OK.
+ *
+ * We only check fields we can introspect statically (`hiveIds`, `hiveId`,
+ * `apiaryId`). Tools whose meta flags don't line up with the input shape
+ * simply pass through.
+ */
+async function preValidateOwnership(
+  toolName: string,
+  input: any,
+  context: WizBeeContext,
+): Promise<ToolErrorEnvelope | null> {
+  const meta = TOOL_META[toolName];
+  if (!meta || !input || typeof input !== 'object')
+    return null;
+
+  try {
+    if (meta.usesHiveIds) {
+      const raw = Array.isArray(input.hiveIds)
+        ? input.hiveIds
+        : typeof input.hiveId === 'number' ? [input.hiveId] : null;
+      if (raw && raw.length > 0) {
+        const unknown = await findUnknownHiveIds(context, raw.map((n: any) => Number(n)));
+        if (unknown.length > 0) {
+          const { hint, suggested_next_tool } = buildHint(toolName, 'not_found');
+          return {
+            ok: false,
+            error: {
+              code: 'not_found',
+              status: 404,
+              message: `The following hiveIds do not belong to this user: ${unknown.join(', ')}. These look like hive NAMES / numbers, not database hiveIds. Resolve real hiveIds via findHives first.`,
+              hint,
+              suggested_next_tool: suggested_next_tool ?? 'findHives',
+            },
+          };
+        }
+      }
+    }
+
+    if (meta.usesApiaryId && typeof input.apiaryId === 'number') {
+      if (await isUnknownApiaryId(context, input.apiaryId)) {
+        const { hint } = buildHint(toolName, 'not_found');
+        return {
+          ok: false,
+          error: {
+            code: 'not_found',
+            status: 404,
+            message: `apiaryId ${input.apiaryId} does not belong to this user. Resolve the real apiaryId first.`,
+            hint,
+            suggested_next_tool: 'listApiariesHives',
+          },
+        };
+      }
+    }
+  }
+  catch (e) {
+    // A failing pre-check must never block the tool — if the DB lookup errors
+    // for any reason, just skip validation and let the controller decide.
+    Logger.getInstance().log('warn', `preValidateOwnership for ${toolName} failed — skipping`, e);
+  }
+
+  return null;
+}
 
 /**
  * Maximum serialized size of a tool's result, in characters.
@@ -393,9 +532,20 @@ function enforceResultSize(toolName: string, result: unknown): unknown {
  */
 function wrapExecute<TArgs>(
   toolName: string,
+  context: WizBeeContext,
   exec: (input: TArgs, opts?: any) => Promise<unknown>,
 ): (input: TArgs, opts?: any) => Promise<unknown> {
   return async (input, opts) => {
+    // Fail fast on obviously-wrong hive/apiary IDs before we even touch the
+    // real controller. This turns the common "model passed hive NAME as id"
+    // mistake into a clean `not_found` envelope with a findHives suggestion,
+    // instead of a confusing downstream 500.
+    const preError = await preValidateOwnership(toolName, input, context);
+    if (preError) {
+      Logger.getInstance().log('warn', `Tool ${toolName} rejected by preValidateOwnership`, { input });
+      return preError;
+    }
+
     try {
       const raw = await exec(input, opts);
       const result = enforceResultSize(toolName, raw);
@@ -439,12 +589,12 @@ function wrapExecute<TArgs>(
 /**
  * Wrap every tool in a tools record with the error-handling shim.
  */
-function wrapTools(tools: Record<string, WizBeeTool>): Record<string, WizBeeTool> {
+function wrapTools(context: WizBeeContext, tools: Record<string, WizBeeTool>): Record<string, WizBeeTool> {
   const out: Record<string, WizBeeTool> = {};
   for (const [name, t] of Object.entries(tools)) {
     const original = t.execute;
     if (typeof original === 'function') {
-      out[name] = { ...t, execute: wrapExecute(name, original.bind(t)) };
+      out[name] = { ...t, execute: wrapExecute(name, context, original.bind(t)) };
     }
     else {
       out[name] = t;
@@ -493,7 +643,7 @@ const taskControllers: Record<TaskType, any> = {
  * Vercel AI SDK tools need the context at runtime, so we create them dynamically
  */
 export function createWizBeeTools(context: WizBeeContext): Record<string, WizBeeTool> {
-  return wrapTools({
+  return wrapTools(context, {
     /**
      * List Apiaries and Hives Tool
      * Returns all apiaries with their associated hives for the current user

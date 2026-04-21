@@ -28,6 +28,20 @@ const MAX_AGENT_STEPS = 15;
 const MAX_HISTORY_MESSAGES = 20;
 
 /**
+ * Per-iteration inactivity timeout when streaming from Mistral.
+ *
+ * If no stream event arrives within this window, we assume the upstream call
+ * has wedged (network flake, model stuck, provider incident) and abort the
+ * current step. Without this the *whole* request only ever unblocks via the
+ * controller's 120 s hard timeout — which feels stuck to the user.
+ *
+ * 45 s is comfortably above the worst-case time-to-first-token we've seen on
+ * `mistral-medium-2508` for long tool-heavy turns, but well under the 120 s
+ * request cap so the client gets a real error chunk.
+ */
+const MISTRAL_INACTIVITY_TIMEOUT_MS = 45_000;
+
+/**
  * Get the current season based on month (Northern Hemisphere beekeeping context)
  */
 function getCurrentSeason(month: number): string {
@@ -273,6 +287,26 @@ export class WizBeeAI {
         if (signal?.aborted)
           return;
 
+        // Per-step abort controller chained to the outer signal. Lets us bail
+        // out of a wedged upstream call independently of the overall request
+        // timeout, while still honouring a user-initiated abort.
+        const stepController = new AbortController();
+        const onOuterAbort = () => stepController.abort();
+        if (signal) {
+          if (signal.aborted)
+            stepController.abort();
+          else
+            signal.addEventListener('abort', onOuterAbort, { once: true });
+        }
+        let inactivityTimer: ReturnType<typeof setTimeout> | null = null;
+        const armInactivityTimer = () => {
+          if (inactivityTimer)
+            clearTimeout(inactivityTimer);
+          inactivityTimer = setTimeout(() => {
+            stepController.abort();
+          }, MISTRAL_INACTIVITY_TIMEOUT_MS);
+        };
+
         const stream = await mistralClient.chat.stream(
           {
             model: DEFAULT_MODEL,
@@ -281,56 +315,103 @@ export class WizBeeAI {
             toolChoice: 'auto',
             temperature: 0.3,
           },
-          { signal },
+          { signal: stepController.signal },
         );
 
         let assistantText = '';
         const toolCallBuf = new Map<number, AccumulatedToolCall>();
         let finishReason: string | null = null;
+        let timedOut = false;
 
-        for await (const event of stream) {
-          if (signal?.aborted)
-            return;
+        armInactivityTimer();
+        try {
+          for await (const event of stream) {
+            // Reset the idle timer on every event — as long as Mistral keeps
+            // talking, we keep waiting.
+            armInactivityTimer();
+            if (signal?.aborted)
+              return;
+            if (stepController.signal.aborted) {
+              timedOut = !signal?.aborted;
+              break;
+            }
 
-          const choice = event.data?.choices?.[0];
-          if (!choice)
-            continue;
+            const choice = event.data?.choices?.[0];
+            if (!choice)
+              continue;
 
-          const delta = choice.delta;
+            const delta = choice.delta;
 
-          // Text delta
-          if (typeof delta?.content === 'string' && delta.content.length > 0) {
-            assistantText += delta.content;
-            yield { type: 'text', content: delta.content };
-          }
+            // Text delta
+            if (typeof delta?.content === 'string' && delta.content.length > 0) {
+              assistantText += delta.content;
+              yield { type: 'text', content: delta.content };
+            }
 
-          // Tool-call deltas: accumulate by index (Mistral may split args
-          // across multiple events for larger models).
-          if (Array.isArray(delta?.toolCalls)) {
-            for (let i = 0; i < delta.toolCalls.length; i++) {
-              const tc = delta.toolCalls[i];
-              const idx = tc.index ?? i;
-              const existing = toolCallBuf.get(idx) ?? { id: '', name: '', args: '' };
-              if (tc.id)
-                existing.id = tc.id;
-              if (tc.function?.name)
-                existing.name = tc.function.name;
-              if (typeof tc.function?.arguments === 'string' && tc.function.arguments.length > 0) {
-                existing.args += tc.function.arguments;
+            // Tool-call deltas: accumulate by index (Mistral may split args
+            // across multiple events for larger models).
+            if (Array.isArray(delta?.toolCalls)) {
+              for (let i = 0; i < delta.toolCalls.length; i++) {
+                const tc = delta.toolCalls[i];
+                const idx = tc.index ?? i;
+                const existing = toolCallBuf.get(idx) ?? { id: '', name: '', args: '' };
+                if (tc.id)
+                  existing.id = tc.id;
+                if (tc.function?.name)
+                  existing.name = tc.function.name;
+                if (typeof tc.function?.arguments === 'string' && tc.function.arguments.length > 0) {
+                  existing.args += tc.function.arguments;
+                }
+                toolCallBuf.set(idx, existing);
               }
-              toolCallBuf.set(idx, existing);
+            }
+
+            if (choice.finishReason) {
+              finishReason = choice.finishReason as string;
+            }
+
+            // Usage is typically on the final chunk.
+            if (event.data?.usage) {
+              totalInputTokens += event.data.usage.promptTokens ?? 0;
+              totalOutputTokens += event.data.usage.completionTokens ?? 0;
             }
           }
+        }
+        catch (e: any) {
+          // AbortError from our inactivity timer is expected — translate into
+          // a friendly error below. Anything else rethrows so the outer catch
+          // surfaces it.
+          const isAbort = e?.name === 'AbortError' || stepController.signal.aborted;
+          if (!isAbort)
+            throw e;
+          timedOut = !signal?.aborted;
+        }
+        finally {
+          if (inactivityTimer)
+            clearTimeout(inactivityTimer);
+          if (signal)
+            signal.removeEventListener('abort', onOuterAbort);
+        }
 
-          if (choice.finishReason) {
-            finishReason = choice.finishReason as string;
-          }
-
-          // Usage is typically on the final chunk.
-          if (event.data?.usage) {
-            totalInputTokens += event.data.usage.promptTokens ?? 0;
-            totalOutputTokens += event.data.usage.completionTokens ?? 0;
-          }
+        if (timedOut) {
+          Logger.getInstance().log(
+            'warn',
+            `WizBee step ${step + 1}/${MAX_AGENT_STEPS}: upstream inactivity after ${MISTRAL_INACTIVITY_TIMEOUT_MS}ms — aborting stream`,
+            undefined,
+          );
+          yield {
+            type: 'error',
+            content: 'The AI provider did not respond in time. Please try again in a moment.',
+          };
+          yield {
+            type: 'done',
+            usage: {
+              inputTokens: totalInputTokens,
+              outputTokens: totalOutputTokens,
+              totalTokens: totalInputTokens + totalOutputTokens,
+            },
+          };
+          return;
         }
 
         const toolCalls = Array.from(toolCallBuf.values()).filter(tc => tc.name);

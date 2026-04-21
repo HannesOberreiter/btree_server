@@ -1,11 +1,13 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import type { ChatMessage } from '../../services/wizbee.service.js';
 import type { WizBeeStreamBody } from '../schemas/wizbee.schema.js';
+import { Buffer } from 'node:buffer';
 import httpErrors from 'http-errors';
 import { sql } from 'kysely';
 import { mistralAI } from '../../config/environment.config.js';
 import { KyselyServer } from '../../servers/kysely.server.js';
 import { WizBeeAI } from '../../services/wizbee.service.js';
+import { transcribeAudio } from '../../services/wizbee.transcribe.service.js';
 import { isPremium } from '../utils/premium.util.js';
 
 /**
@@ -248,5 +250,75 @@ export default class WizBeeController {
     }
 
     return reply;
+  }
+
+  /**
+   * Transcribe a short voice recording into text using Mistral Voxtral.
+   *
+   * The route is multipart: `audio` is the raw audio file uploaded by the
+   * browser (webm/ogg/mp3/wav), `language` (optional) is the UI language so
+   * we can improve accuracy. Returns `{ text, language }` — the client then
+   * puts `text` into the chat input and sends it as a normal WizBee question.
+   *
+   * Budget: we charge the transcription against the same monthly WizBee
+   * budget using the token usage Mistral returns (roughly equivalent to a
+   * cheap chat call) so users can't bypass the limit by spamming audio.
+   */
+  static async transcribeWizBeeAudio(req: FastifyRequest, _reply: FastifyReply) {
+    const premium = await isPremium(req.session.user.user_id);
+    if (!premium) {
+      throw httpErrors.PaymentRequired('WizBee requires an active premium subscription');
+    }
+
+    const withinBudget = await checkMonthlyBudget(req.session.user.user_id);
+    if (!withinBudget) {
+      throw httpErrors.TooManyRequests('Monthly WizBee usage budget exceeded — resets at the start of next month');
+    }
+
+    // With `attachFieldsToBody: 'keyValues'` the multipart plugin exposes
+    // each file field as a Buffer on req.body. See app.config.ts.
+    const body = (req.body ?? {}) as Record<string, unknown>;
+    const audio = body.audio;
+    const language = typeof body.language === 'string' ? body.language : undefined;
+    const fileName = typeof body.fileName === 'string' && body.fileName.trim().length > 0
+      ? body.fileName
+      : 'voice.webm';
+
+    if (!audio || !Buffer.isBuffer(audio)) {
+      throw httpErrors.BadRequest('Missing or invalid audio upload');
+    }
+    if (audio.length === 0) {
+      throw httpErrors.BadRequest('Empty audio upload');
+    }
+
+    let result: Awaited<ReturnType<typeof transcribeAudio>>;
+    try {
+      result = await transcribeAudio({ audio, fileName, language });
+    }
+    catch (e) {
+      req.log.error(e, 'WizBee transcription failed');
+      throw httpErrors.BadGateway('Voice transcription failed');
+    }
+
+    // Log against the WizBee budget (best-effort).
+    try {
+      const costEur = calculateTokenCost(result.usage.promptTokens, result.usage.completionTokens);
+      await logWizBeeRequest({
+        beeId: req.session.user.bee_id,
+        userId: req.session.user.user_id,
+        tokensInput: result.usage.promptTokens,
+        tokensOutput: result.usage.completionTokens,
+        costEur,
+        userRequest: `[voice] ${result.text}`,
+      });
+    }
+    catch (e) {
+      req.log.error(e, 'Failed to log WizBee transcription request');
+    }
+
+    return {
+      text: result.text,
+      language: result.language,
+    };
   }
 }
