@@ -34,7 +34,6 @@
     "lint:fix": "eslint . --fix"
   },
   "dependencies": {
-    "@ai-sdk/mistral": "^3.0.20",
     "@fastify/compress": "^8.0.1",
     "@fastify/cookie": "^11.0.2",
     "@fastify/formbody": "^8.0.2",
@@ -43,8 +42,8 @@
     "@fastify/rate-limit": "^10.2.2",
     "@fastify/session": "^11.1.0",
     "@fastify/swagger": "^9.7.0",
+    "@mistralai/mistralai": "^2.2.0",
     "@mollie/api-client": "^4.3.2",
-    "ai": "^6.0.103",
     "ajv-formats": "^3.0.1",
     "archiver": "^7.0.1",
     "close-with-grace": "^2.2.0",

@@ -9,14 +9,15 @@ import { WizBeeAI } from '../../services/wizbee.service.js';
 import { isPremium } from '../utils/premium.util.js';
 
 /**
- * Mistral pricing (per 1K tokens) - using conservative/higher estimates
- * Actual mistral-medium-latest: ~€1.80/1M input, ~€5.40/1M output
- * Using inflated estimates for budget safety margin
- * - Input: €0.0027 (~50% buffer over actual)
- * - Output: €0.009 (~66% buffer over actual)
+ * Mistral pricing (per 1K tokens) for `mistral-medium-2508` (pinned in wizbee.service.ts).
+ * Verify against https://mistral.ai/pricing before adjusting.
+ * Include a safety margin to account for potential price increases or tokenization differences.
  */
-const PRICE_PER_1K_INPUT_TOKENS_EUR = 0.0027;
-const PRICE_PER_1K_OUTPUT_TOKENS_EUR = 0.009;
+const SAFETY_MARGIN = 1.5;
+const PRICE_PER_1K_INPUT_TOKENS_EUR = 0.00037 * SAFETY_MARGIN;
+const PRICE_PER_1K_OUTPUT_TOKENS_EUR = 0.00185 * SAFETY_MARGIN;
+
+const CONTEXT_OVERFLOW_RE = /maximum context length|context[_ ]?length|too large|prompt contains \d+ tokens/i;
 
 export interface MonthlyUsage {
   totalInputTokens: number
@@ -198,6 +199,19 @@ export default class WizBeeController {
         if (chunk.type === 'done' && chunk.usage) {
           tokensInput = chunk.usage.inputTokens;
           tokensOutput = chunk.usage.outputTokens;
+        }
+
+        // Translate Mistral's context-overflow error into something a user
+        // (and WizBee on a retry) can act on.
+        if (chunk.type === 'error' && typeof chunk.content === 'string') {
+          const msg = chunk.content;
+          const isContextOverflow = CONTEXT_OVERFLOW_RE.test(msg);
+          if (isContextOverflow) {
+            const friendly = 'Your request returned too much data for me to process in one step. Please narrow it down — e.g. ask about a single year, a single apiary, or use a summary question like "harvest totals per year" instead of "all activities of the last 4 years".';
+            reply.raw.write(`${JSON.stringify({ type: 'error', content: friendly })}\n`);
+            req.log.warn({ originalError: msg }, 'WizBee context overflow — replaced with user-friendly message');
+            continue;
+          }
         }
 
         reply.raw.write(`${JSON.stringify(chunk)}\n`);

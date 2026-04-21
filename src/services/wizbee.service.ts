@@ -1,24 +1,31 @@
-import type { ModelMessage } from 'ai';
-import type { WizBeeContext } from '../api/controllers/wizbee.tools.controller.js';
-import { createMistral } from '@ai-sdk/mistral';
-import { stepCountIs, streamText } from 'ai';
-import { createWizBeeTools } from '../api/controllers/wizbee.tools.controller.js';
+import type { WizBeeContext, WizBeeTool } from '../api/controllers/wizbee.tools.controller.js';
+import { Mistral } from '@mistralai/mistralai';
+import { z } from 'zod';
+import { createWizBeeTools, executeWizBeeTool } from '../api/controllers/wizbee.tools.controller.js';
 import { mistralAI } from '../config/environment.config.js';
+import { Logger } from './logger.service.js';
+
+const mistralClient = new Mistral({ apiKey: mistralAI.key });
 
 /**
- * AI SDK configuration
- * Uses Mistral AI models for chat and tool calling
+ * Default model for chat completions.
+ * When bumping: verify on https://mistral.ai/pricing and the allowed model
+ * IDs published at https://docs.mistral.ai/getting-started/models/.
  */
-const mistral = createMistral({
-  apiKey: mistralAI.key,
-});
+const DEFAULT_MODEL = 'mistral-medium-2508';
 
 /**
- * Default model for chat completions
- * mistral-medium-latest (mistral-medium-2505) is recommended for agents with tool calling
- * Other options: mistral-large-latest (complex reasoning), mistral-small-latest (fast/simple)
+ * Maximum number of agent-loop iterations. Each iteration is ONE Mistral
+ * streaming call plus (optionally) N tool executions. The model is allowed
+ * this many round-trips to converge on a final answer before we bail out.
  */
-const DEFAULT_MODEL = mistral('mistral-medium-latest');
+const MAX_AGENT_STEPS = 15;
+
+/**
+ * Maximum number of history messages to keep (user/assistant pairs). Older
+ * messages are truncated to bound token usage.
+ */
+const MAX_HISTORY_MESSAGES = 20;
 
 /**
  * Get the current season based on month (Northern Hemisphere beekeeping context)
@@ -38,11 +45,10 @@ function getCurrentSeason(month: number): string {
 
 /**
  * Generate system prompt with current date context
- * This ensures the AI always knows the current date for creating todos, scheduling, etc.
  */
 function buildSystemPrompt(): string {
   const now = new Date();
-  const date = now.toISOString().split('T')[0]; // YYYY-MM-DD
+  const date = now.toISOString().split('T')[0];
   const dayOfWeek = now.toLocaleDateString('en-US', { weekday: 'long' });
   const month = now.getMonth() + 1;
   const year = now.getFullYear();
@@ -65,9 +71,11 @@ In our database, \`bee_id\` refers to the actual **user** (beekeeper), and \`use
 ## Core Rules
 
 ### 1. Always Fetch Real IDs First
-Before creating or updating any record (feed, treatment, checkup, harvest, todo), always call **listApiariesHives** to get the current apiaryId and hiveIds.
-- **Never assume** that hive names/numbers (e.g. "1608") match hiveIds — they are different (e.g. hiveId: 117).
-- Example: User says "Create a feed for hive 1608." → First call listApiariesHives to resolve the real hiveId.
+Before creating or updating any record (feed, treatment, checkup, harvest, todo), always resolve the real apiaryId and hiveIds first.
+- **Never assume** that colony / hive names/numbers (e.g. "1608") match hiveIds — they are different (e.g. hiveId: 117).
+- To resolve a **specific colony / hive** that the user mentions by number/name (e.g. "Volk 2402", "colony 1608", "hive 1608", "Stock 12", "Bienenvolk 2402"), call **findHives** with that name/number as \`q\`. It searches the colony / hive name AND apiary name and returns hiveId + apiaryId directly.
+- To enumerate apiaries, get an overview, or resolve an apiary by its name, call **listApiariesHives**. Its \`q\` only filters apiary name/description/note — it does NOT match colony / hive numbers, so never use it to look up a colony / hive.
+- Example: User says "Create a feed for hive 1608." → First call findHives with q="1608" to resolve the real hiveId.
 
 ### 2. Always Verify Type IDs
 Before creating a record, always call **fetchOptions** to get the correct typeId for the user's account.
@@ -98,6 +106,8 @@ If an API call fails (e.g. Created 0 records), debug step-by-step:
 ### 6. Data Fetching Rules
 - Ask for confirmation before fetching large datasets (e.g. "Should I load all ${year} tasks for your hives?").
 - Summarize results clearly, grouped by date or type.
+- **For multi-year or "what did I do last N years" questions, ALWAYS prefer statistics tools** (getHarvestStatistics, getFeedStatistics, getTreatmentStatistics, getHiveStatistics). Do NOT call fetchTasks across multiple years — the raw dataset is too large and will fail. Only use fetchTasks for a short, specific window (one season, one apiary) when the user genuinely needs individual records.
+- Never call the same tool with the same arguments more than once in a single conversation — if a tool returns an error, change the approach (narrower range, different tool) rather than retry identically.
 
 ### 7. Documentation & Support
 - For questions about b.tree features, use the btreeDocumentation tool and provide direct in-app links where possible.
@@ -161,125 +171,258 @@ export interface StreamChunk {
 }
 
 /**
+ * Shape expected by Mistral's `tools` field on a chat request.
+ * https://docs.mistral.ai/capabilities/function_calling/
+ */
+interface MistralToolDef {
+  type: 'function'
+  function: {
+    name: string
+    description: string
+    parameters: Record<string, unknown>
+  }
+}
+
+/**
+ * A tool call as accumulated from a streaming response. Mistral's larger
+ * models stream tool-call arguments incrementally across multiple deltas,
+ * each keyed by `index`; smaller models tend to deliver the whole call in
+ * a single delta. We always accumulate by index to be safe.
+ */
+interface AccumulatedToolCall {
+  id: string
+  name: string
+  args: string
+}
+
+/**
+ * Convert the internal WizBee tool registry to the Mistral tools schema.
+ * Uses zod v4's built-in `toJSONSchema` to convert the tool's input schema.
+ */
+function buildMistralTools(tools: Record<string, WizBeeTool>): MistralToolDef[] {
+  return Object.entries(tools).map(([name, t]) => ({
+    type: 'function',
+    function: {
+      name,
+      description: t.description,
+      parameters: z.toJSONSchema(t.inputSchema, { target: 'draft-7' }) as Record<string, unknown>,
+    },
+  }));
+}
+
+/**
  * WizBee AI Service
  *
- * Handles AI chat with tool calling using Mistral via Vercel AI SDK.
- * Streams responses including tool calls back to the client.
+ * Drives a multi-step tool-calling loop against Mistral's Chat API.
+ * Emits a unified `StreamChunk` stream (text, tool_call, tool_result,
+ * error, done) that the controller can forward to the client as NDJSON.
  */
 export class WizBeeAI {
   private context: WizBeeContext;
 
   constructor(userId: number, beeId: number) {
-    this.context = {
-      userId,
-      beeId,
-    };
+    this.context = { userId, beeId };
   }
 
   /**
-   * Maximum number of history messages to keep.
-   * Older messages are truncated to avoid excessive token usage.
+   * Map our stored conversation history onto Mistral's chat message format.
+   * Truncates if history exceeds MAX_HISTORY_MESSAGES.
    */
-  private static readonly MAX_HISTORY_MESSAGES = 20;
-
-  /**
-   * Convert chat history to ModelMessage format.
-   * Truncates older messages if history exceeds MAX_HISTORY_MESSAGES.
-   */
-  private buildMessages(history: ChatMessage[], currentMessage: string): ModelMessage[] {
-    const truncated = history.length > WizBeeAI.MAX_HISTORY_MESSAGES
-      ? history.slice(-WizBeeAI.MAX_HISTORY_MESSAGES)
+  private buildHistoryMessages(history: ChatMessage[]): Array<any> {
+    const truncated = history.length > MAX_HISTORY_MESSAGES
+      ? history.slice(-MAX_HISTORY_MESSAGES)
       : history;
 
-    const messages: ModelMessage[] = truncated.map(msg => ({
-      role: msg.role === 'model' ? 'assistant' as const : 'user' as const,
+    return truncated.map(msg => ({
+      role: msg.role === 'model' ? 'assistant' : 'user',
       content: msg.content,
     }));
-
-    messages.push({
-      role: 'user' as const,
-      content: currentMessage,
-    });
-
-    return messages;
   }
 
   /**
-   * Create a streaming chat response with tool calling support
-   * @param message User's message
-   * @param history Previous conversation history
-   * @param signal AbortSignal for cancellation
-   * @returns AsyncIterable of stream chunks
+   * Stream a chat response with tool calling.
+   *
+   * Agent loop:
+   *   1. Send `messages` + tool schemas to Mistral with streaming enabled.
+   *   2. As deltas arrive, stream text to the caller and accumulate any
+   *      tool calls (indexed by `tc.index`).
+   *   3. If the completion ends with `finish_reason=tool_calls`, append the
+   *      assistant's tool-call message + run each tool + append tool-result
+   *      messages, then GOTO 1 (up to MAX_AGENT_STEPS iterations).
+   *   4. Otherwise emit `done` with aggregated usage and return.
    */
   async* chatStream(
     message: string,
     history: ChatMessage[] = [],
     signal?: AbortSignal,
   ): AsyncIterable<StreamChunk> {
+    const tools = createWizBeeTools(this.context);
+    const mistralTools = buildMistralTools(tools);
+
+    const messages: any[] = [
+      { role: 'system', content: buildSystemPrompt() },
+      ...this.buildHistoryMessages(history),
+      { role: 'user', content: message },
+    ];
+
+    let totalInputTokens = 0;
+    let totalOutputTokens = 0;
+
     try {
-      const messages = this.buildMessages(history, message);
-      const tools = createWizBeeTools(this.context);
+      for (let step = 0; step < MAX_AGENT_STEPS; step++) {
+        if (signal?.aborted)
+          return;
 
-      const result = streamText({
-        model: DEFAULT_MODEL,
-        system: buildSystemPrompt(),
-        messages,
-        tools,
-        toolChoice: 'auto',
-        temperature: 0.3,
-        stopWhen: stepCountIs(15),
-        abortSignal: signal,
-      });
+        const stream = await mistralClient.chat.stream(
+          {
+            model: DEFAULT_MODEL,
+            messages,
+            tools: mistralTools,
+            toolChoice: 'auto',
+            temperature: 0.3,
+          },
+          { signal },
+        );
 
-      for await (const part of result.fullStream) {
-        if (signal?.aborted) {
-          break;
+        let assistantText = '';
+        const toolCallBuf = new Map<number, AccumulatedToolCall>();
+        let finishReason: string | null = null;
+
+        for await (const event of stream) {
+          if (signal?.aborted)
+            return;
+
+          const choice = event.data?.choices?.[0];
+          if (!choice)
+            continue;
+
+          const delta = choice.delta;
+
+          // Text delta
+          if (typeof delta?.content === 'string' && delta.content.length > 0) {
+            assistantText += delta.content;
+            yield { type: 'text', content: delta.content };
+          }
+
+          // Tool-call deltas: accumulate by index (Mistral may split args
+          // across multiple events for larger models).
+          if (Array.isArray(delta?.toolCalls)) {
+            for (let i = 0; i < delta.toolCalls.length; i++) {
+              const tc = delta.toolCalls[i];
+              const idx = tc.index ?? i;
+              const existing = toolCallBuf.get(idx) ?? { id: '', name: '', args: '' };
+              if (tc.id)
+                existing.id = tc.id;
+              if (tc.function?.name)
+                existing.name = tc.function.name;
+              if (typeof tc.function?.arguments === 'string' && tc.function.arguments.length > 0) {
+                existing.args += tc.function.arguments;
+              }
+              toolCallBuf.set(idx, existing);
+            }
+          }
+
+          if (choice.finishReason) {
+            finishReason = choice.finishReason as string;
+          }
+
+          // Usage is typically on the final chunk.
+          if (event.data?.usage) {
+            totalInputTokens += event.data.usage.promptTokens ?? 0;
+            totalOutputTokens += event.data.usage.completionTokens ?? 0;
+          }
         }
-        switch (part.type) {
-          case 'text-delta':
-            yield {
-              type: 'text',
-              content: part.text,
-            };
-            break;
 
-          case 'tool-call':
-            yield {
-              type: 'tool_call',
-              toolName: part.toolName,
-              toolInput: part.input,
-            };
-            break;
+        const toolCalls = Array.from(toolCallBuf.values()).filter(tc => tc.name);
 
-          case 'tool-result':
-            yield {
-              type: 'tool_result',
-              toolName: part.toolName,
-              toolOutput: part.output,
-            };
-            break;
-
-          case 'error':
-            yield {
-              type: 'error',
-              content: part.error instanceof Error ? part.error.message : String(part.error),
-            };
-            break;
-
-          case 'finish':
-            yield {
-              type: 'done',
-              usage: part.totalUsage
-                ? {
-                    inputTokens: part.totalUsage.inputTokens ?? 0,
-                    outputTokens: part.totalUsage.outputTokens ?? 0,
-                    totalTokens: (part.totalUsage.inputTokens ?? 0) + (part.totalUsage.outputTokens ?? 0),
-                  }
-                : undefined,
-            };
-            break;
+        // No tool calls → conversation complete.
+        if (toolCalls.length === 0) {
+          yield {
+            type: 'done',
+            usage: {
+              inputTokens: totalInputTokens,
+              outputTokens: totalOutputTokens,
+              totalTokens: totalInputTokens + totalOutputTokens,
+            },
+          };
+          return;
         }
+
+        // Push the assistant message (with tool calls) so Mistral can link
+        // subsequent tool messages back to these call IDs.
+        messages.push({
+          role: 'assistant',
+          content: assistantText,
+          toolCalls: toolCalls.map(tc => ({
+            id: tc.id || `call_${Math.random().toString(36).slice(2, 10)}`,
+            type: 'function',
+            function: { name: tc.name, arguments: tc.args || '{}' },
+          })),
+        });
+
+        // Execute tools sequentially. Each result is appended as a
+        // `tool` message so the next streaming call can consume them.
+        for (const tc of toolCalls) {
+          if (signal?.aborted)
+            return;
+
+          let input: unknown;
+          try {
+            input = tc.args ? JSON.parse(tc.args) : {};
+          }
+          catch (e) {
+            Logger.getInstance().log('warn', `Tool ${tc.name} arguments not valid JSON: ${String(e)}`, {
+              args: tc.args,
+            });
+            input = {};
+          }
+
+          yield { type: 'tool_call', toolName: tc.name, toolInput: input };
+
+          let output: unknown;
+          try {
+            output = await executeWizBeeTool(tc.name, input, this.context);
+          }
+          catch (e) {
+            // Defensive — the wrapper should have caught this already, but if
+            // something slips through, surface as a tool-result error envelope
+            // so the model has a fair chance to recover.
+            output = {
+              ok: false,
+              error: {
+                code: 'unknown_error',
+                status: 500,
+                message: e instanceof Error ? e.message : String(e),
+              },
+            };
+          }
+
+          yield { type: 'tool_result', toolName: tc.name, toolOutput: output };
+
+          messages.push({
+            role: 'tool',
+            name: tc.name,
+            toolCallId: tc.id,
+            content: typeof output === 'string' ? output : JSON.stringify(output),
+          });
+        }
+
+        // If the model said it was done but still emitted tool calls (edge
+        // case), we keep looping — the assistant + tool messages have been
+        // pushed and the next iteration will let the model produce the
+        // final answer. `finishReason` is only used for observability.
+        Logger.getInstance().log(
+          'debug',
+          `WizBee step ${step + 1}/${MAX_AGENT_STEPS}: ${toolCalls.length} tool call(s), finishReason=${finishReason}`,
+          undefined,
+        );
       }
+
+      // Fell out of the loop without a natural stop → too many tool steps.
+      yield {
+        type: 'error',
+        content: `Agent exceeded the maximum of ${MAX_AGENT_STEPS} tool-calling steps. Please try a more specific question.`,
+      };
     }
     catch (error) {
       yield {
