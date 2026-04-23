@@ -84,7 +84,7 @@ const paypalBase
     ? 'https://api-m.paypal.com'
     : 'https://api-m.sandbox.paypal.com';
 
-const stripeSecret = process.env.STRIPE_SECRET_KEY;
+const stripeSecret = process.env.STRIPE_SECRET_KEY!;
 
 const mollieApiKey = process.env.MOLLIE_API_KEY;
 
@@ -171,6 +171,17 @@ const knexConfig = {
   },
 };
 
+const dkimSelector = process.env.MAIL_DKIM_SELECTOR;
+const dkimPrivateRaw = process.env.MAIL_DKIM_PRIVATE;
+const dkim
+  = dkimSelector && dkimPrivateRaw && dkimPrivateRaw !== 'false'
+    ? {
+        domainName: 'btree.at',
+        keySelector: dkimSelector,
+        privateKey: Buffer.from(dkimPrivateRaw, 'base64').toString('ascii'),
+      }
+    : undefined;
+
 const mailConfig = {
   host: process.env.MAIL_SMTP,
   port: Number(process.env.MAIL_PORT),
@@ -179,16 +190,7 @@ const mailConfig = {
     user: process.env.MAIL_FROM,
     pass: process.env.MAIL_PASSWORD,
   },
-  dkim: {
-    domainName: process.env.MAIL_DKIM_SELECTOR ? 'btree.at' : '',
-    keySelector: process.env.MAIL_DKIM_SELECTOR,
-    privateKey:
-      process.env.MAIL_DKIM_PRIVATE === 'false'
-        ? ''
-        : Buffer.from(process.env.MAIL_DKIM_PRIVATE!, 'base64').toString(
-            'ascii',
-          ),
-  },
+  ...(dkim ? { dkim } : {}),
 };
 
 const openAI = {

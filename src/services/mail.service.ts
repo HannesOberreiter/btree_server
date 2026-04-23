@@ -1,6 +1,8 @@
+import type { Buffer } from 'node:buffer';
+import type { SendMailOptions, Transporter } from 'nodemailer';
 import { readFileSync } from 'node:fs';
 import httpErrors from 'http-errors';
-import * as nodemailer from 'nodemailer';
+import { createTestAccount, createTransport, getTestMessageUrl } from 'nodemailer';
 
 import { ENVIRONMENT } from '../config/constants.config.js';
 import {
@@ -11,6 +13,9 @@ import {
   serverLocation,
 } from '../config/environment.config.js';
 import { Logger } from './logger.service.js';
+
+export const MailLangs = ['de', 'en', 'fr', 'it'] as const;
+export type MailLang = typeof MailLangs[number];
 
 const TITLE_TAG_REGEX = /(?<=<title>).*?(?=<\/title>)/i;
 const TITLE_FULL_REGEX = /<title>.*?<\/title>/g;
@@ -26,10 +31,21 @@ interface customMail {
   subject: string
   key?: string
   name?: string
+  cc?: string | string[]
+  attachments?: Array<{
+    filename: string
+    content: Buffer | string
+    contentType?: string
+  }>
+  /**
+   * Extra template placeholders to replace, keyed by placeholder name
+   * without the surrounding `%`. E.g. `{ amount: '55,00' }` replaces `%amount%`.
+   */
+  replacements?: Record<string, string>
 }
 
 export class MailService {
-  private _transporter: nodemailer.Transporter;
+  private _transporter!: Transporter;
   private static instance: MailService;
   params = serverLocation === 'eu' ? '?server=eu' : '?server=us';
 
@@ -48,7 +64,7 @@ export class MailService {
   async setup() {
     if (env === ENVIRONMENT.development || env === ENVIRONMENT.test) {
       try {
-        const account = await nodemailer.createTestAccount();
+        const account = await createTestAccount();
         mailConfig.secure = false;
         mailConfig.auth.user = account.user;
         mailConfig.auth.pass = account.pass;
@@ -58,7 +74,7 @@ export class MailService {
       }
     }
     this.logger.log('debug', `Setup mail with host: ${mailConfig.host}`, {});
-    this._transporter = nodemailer.createTransport(mailConfig);
+    this._transporter = createTransport(mailConfig);
   }
 
   private loadHtmlMail(mailName: string) {
@@ -93,12 +109,16 @@ export class MailService {
     subject,
     key = 'false',
     name = 'false',
+    cc,
+    attachments,
+    replacements,
   }: customMail) {
     if (env === ENVIRONMENT.test || env === ENVIRONMENT.ci)
       return true;
 
     // Only use languages which are available (translated), fallback english
-    lang = ['de', 'fr', 'it'].includes(lang) ? lang : 'en';
+    if (!(MailLangs as readonly string[]).includes(lang))
+      lang = 'en';
 
     let htmlMail = this.loadHtmlMail(`${subject}_${lang}`);
     if (!htmlMail) {
@@ -108,11 +128,11 @@ export class MailService {
     if (!htmlFooter) {
       throw httpErrors.NotFound('Could not find E-Mail Template.');
     }
-    htmlMail = htmlMail + htmlFooter;
+    htmlMail = (htmlMail + htmlFooter);
 
     /** @description Fake <title></title> attribute to set email header */
     const titleReg = TITLE_TAG_REGEX;
-    const title = titleReg.exec(htmlMail)[0];
+    const title = titleReg.exec(htmlMail)![0];
     htmlMail = htmlMail.replace(TITLE_FULL_REGEX, '');
 
     if (name !== 'false' && name) {
@@ -150,7 +170,13 @@ export class MailService {
     htmlMail = htmlMail.replace(BASE_URL_PLACEHOLDER_REGEX, `${this.baseUrl}/`);
     htmlMail = htmlMail.replace(PARAMS_PLACEHOLDER_REGEX, this.params);
 
-    const options = {
+    if (replacements) {
+      for (const [k, v] of Object.entries(replacements)) {
+        htmlMail = htmlMail.replaceAll(`%${k}%`, v);
+      }
+    }
+
+    const options: SendMailOptions = {
       from: {
         name: 'b.tree - Beekeeping Database',
         address: 'no-reply@btree.at',
@@ -158,6 +184,8 @@ export class MailService {
       to,
       subject: title,
       text: htmlMail,
+      ...(cc ? { cc } : {}),
+      ...(attachments ? { attachments } : {}),
     };
 
     try {
@@ -168,7 +196,7 @@ export class MailService {
         throw new httpErrors.InternalServerError('E-Mail could not be sent.');
       }
       if (env === ENVIRONMENT.development) {
-        const testUrl = nodemailer.getTestMessageUrl(result) as string;
+        const testUrl = getTestMessageUrl(result) as string;
         this.logger.log('info', `Preview Url: ${testUrl}`, {});
       }
       this.logger.log('info', `Message Sent ${result.response}`, {
@@ -182,8 +210,20 @@ export class MailService {
     }
   }
 
-  async sendRawMail(to: string, subject: string, text: string) {
-    const options = {
+  async sendRawMail(
+    to: string,
+    subject: string,
+    text: string,
+    extra?: {
+      cc?: string | string[]
+      attachments?: Array<{
+        filename: string
+        content: Buffer | string
+        contentType?: string
+      }>
+    },
+  ) {
+    const options: SendMailOptions = {
       from: {
         name: 'b.tree - Beekeeping Database',
         address: 'no-reply@btree.at',
@@ -191,17 +231,19 @@ export class MailService {
       to,
       subject,
       text,
+      ...(extra?.cc ? { cc: extra.cc } : {}),
+      ...(extra?.attachments ? { attachments: extra.attachments } : {}),
     };
 
     try {
-      await this._transporter.sendMail(options, (error, info) => {
+      this._transporter.sendMail(options, (error, info) => {
         this._transporter.close();
         if (error) {
           console.error(`error: ${error}`);
           throw new httpErrors.InternalServerError('E-Mail could not be sent.');
         }
         if (env === ENVIRONMENT.development || env === ENVIRONMENT.test) {
-          const testUrl = nodemailer.getTestMessageUrl(info) as string;
+          const testUrl = getTestMessageUrl(info) as string;
           this.logger.log('info', `Preview Url: ${testUrl}`, {});
         }
         this.logger.log('info', `Message Sent ${info.response}`, {});

@@ -1,0 +1,6 @@
+<title>Your Invoice %invoice_number%</title>
+Dear Beekeeper,
+
+thank you for your support. Attached you find our invoice as PDF file (german). The premium time was added automatically to your account, otherwise please try to logout and login into the application again.
+
+Amount %amount% EUR

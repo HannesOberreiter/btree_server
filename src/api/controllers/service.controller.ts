@@ -1,6 +1,9 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
+import type { MailLang } from '../../services/mail.service.js';
 import httpErrors from 'http-errors';
+import { MailLangs } from '../../services/mail.service.js';
 import { Apiary } from '../models/apiary.model.js';
+import { User } from '../models/user.model.js';
 import { createInvoice } from '../utils/foxyoffice.util.js';
 import { createOrder as mollieCreateOrder } from '../utils/mollie.util.js';
 import {
@@ -82,6 +85,7 @@ export default class ServiceController {
     const body = req.body as any;
     const order = await paypalCreateOrder(
       req.session.user.user_id,
+      req.session.user.bee_id,
       body.amount,
       body.quantity,
     );
@@ -99,8 +103,7 @@ export default class ServiceController {
     }
     let value = 0;
     let years = 1;
-
-    const mail = capture.payment_source.paypal.email_address;
+    let bee_id: number | null = null;
 
     try {
       value = Number.parseFloat(
@@ -116,6 +119,8 @@ export default class ServiceController {
         capture.purchase_units[0].payments.captures[0].custom_id,
       );
       years = Number.parseFloat(custom_id.quantity) ?? 1;
+      if (custom_id.bee_id)
+        bee_id = Number.parseInt(custom_id.bee_id, 10);
     }
     catch (e) {
       req.log.error(e);
@@ -128,7 +133,28 @@ export default class ServiceController {
       'paypal',
     );
 
-    createInvoice(mail, value, years, 'PayPal');
+    let mail: string | null = null;
+    let lang: MailLang = 'en';
+    if (!bee_id) {
+      req.log.error({ capture }, 'PayPal capture missing bee_id in custom_id');
+      return { ...capture, paid };
+    }
+    try {
+      const user = await User.query()
+        .select('email', 'lang')
+        .findById(bee_id);
+      if (user?.email)
+        mail = user.email;
+      if (user?.lang && MailLangs.includes(user.lang as MailLang))
+        lang = user.lang as MailLang;
+    }
+    catch (e) {
+      req.log.error(e);
+    }
+
+    if (mail) {
+      createInvoice(mail, value, years, 'PayPal', lang);
+    }
     return { ...capture, paid };
   }
 
@@ -136,6 +162,7 @@ export default class ServiceController {
     const body = req.body as any;
     const session = await stripeCreateOrder(
       req.session.user.user_id,
+      req.session.user.bee_id,
       body.amount,
       body.quantity,
     );
@@ -151,6 +178,9 @@ export default class ServiceController {
       body.quantity,
     );
     if (!order || !order.id) {
+      throw new httpErrors.InternalServerError('Could not create order');
+    }
+    if (!order._links || !order._links.checkout || !order._links.checkout.href) {
       throw new httpErrors.InternalServerError('Could not create order');
     }
     return { url: order._links.checkout.href, id: order.id };

@@ -5,6 +5,7 @@ import { frontend, stripeSecret } from '../../config/environment.config.js';
 
 export async function createOrder(
   user_id: number,
+  bee_id: number,
   amount: number,
   quantity: number,
 ) {
@@ -30,6 +31,7 @@ export async function createOrder(
     cancel_url: `${frontend}/premium?server=${process.env.SERVER}`,
     client_reference_id: JSON.stringify({
       user_id,
+      bee_id,
       quantity,
       server: process.env.SERVER,
     }),

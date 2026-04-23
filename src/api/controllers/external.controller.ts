@@ -1,16 +1,17 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import type { Stripe } from 'stripe';
+import type { MailLang } from '../../services/mail.service.js';
 import dayjs from 'dayjs';
 import httpErrors from 'http-errors';
-import ical, { ICalCalendarMethod } from 'ical-generator';
 
+import ical, { ICalCalendarMethod } from 'ical-generator';
 import { SOURCE } from '../../config/constants.config.js';
 import {
   isServerLocationValid,
   serverLocation,
 } from '../../config/environment.config.js';
 import { Logger } from '../../services/logger.service.js';
-import { MailService } from '../../services/mail.service.js';
+import { MailLangs, MailService } from '../../services/mail.service.js';
 import { User } from '../models/user.model.js';
 import { getCompany } from '../utils/api.util.js';
 import {
@@ -98,12 +99,14 @@ export default class ExternalController {
     const object = event.data.object as Stripe.Checkout.Session;
     if (event.type === 'checkout.session.completed') {
       let user_id: number;
+      let bee_id: number | null = null;
       let years = 1;
       let server: string = 'eu';
 
       try {
-        const reference = JSON.parse(object.client_reference_id);
+        const reference = JSON.parse(object.client_reference_id!);
         user_id = reference.user_id;
+        bee_id = reference.bee_id ?? null;
         years = reference.quantity ?? 1;
         server = isServerLocationValid(reference.server)
           ? reference.server
@@ -140,7 +143,29 @@ export default class ExternalController {
         req.log.error(e);
       }
       await addPremium(user_id, 12 * years, amount, 'stripe');
-      createInvoice(object.customer_details.email, amount, years, 'Stripe');
+
+      if (!bee_id) {
+        req.log.error({ event }, 'Stripe webhook missing bee_id in client_reference_id');
+        return {};
+      }
+
+      let mail: string | null = null;
+      let lang: MailLang = 'en';
+      try {
+        const user = await User.query()
+          .select('email', 'lang')
+          .findById(bee_id);
+        if (user?.email)
+          mail = user.email;
+        if (user?.lang && MailLangs.includes(user.lang as MailLang))
+          lang = user.lang as MailLang;
+      }
+      catch (e) {
+        req.log.error(e);
+      }
+      if (mail) {
+        createInvoice(mail, amount, years, 'Stripe', lang);
+      }
     }
     return {};
   }
@@ -187,12 +212,17 @@ export default class ExternalController {
         const price = Number.parseFloat(payment.amount.value);
         await addPremium(user_id, 12 * years, price, 'mollie');
         const bee_id = reference.bee_id;
-        const user = await User.query().select('email').findById(bee_id);
+        const user = await User.query().select('email', 'lang').findById(bee_id);
+        let lang = 'en' as MailLang;
+        if (user?.lang && MailLangs.includes(user.lang as MailLang)) {
+          lang = user.lang as MailLang;
+        }
         await createInvoice(
-          user.email,
+          user!.email,
           price,
           years,
           'Mollie',
+          lang,
         );
       }
     }
