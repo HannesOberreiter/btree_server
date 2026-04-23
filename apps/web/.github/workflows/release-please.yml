@@ -13,3 +13,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: googleapis/release-please-action@v4
+        with:
+          token: ${{ secrets.BTREE_SITES_DISPATCH_TOKEN }}
