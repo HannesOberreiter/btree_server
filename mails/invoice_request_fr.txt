@@ -1,0 +1,18 @@
+<title>Votre facture / Ihre Rechnung %invoice_number%</title>
+Cher apiculteur,
+
+merci pour votre soutien. Le temps premium a été automatiquement ajouté à votre compte.
+
+Vous trouverez ci-joint notre facture au format PDF (allemand). Merci de bien vouloir virer le montant sur notre compte avant le %payment_due%.
+
+Montant %amount% EUR
+Échéance de paiement : %payment_due%
+Référence de paiement : Facture %invoice_number%
+
+Coordonnées bancaires :
+Steiermärkische Sparkasse
+IBAN: AT05 2081 5000 4507 3715
+BIC:  STSPAT2GXXX
+
+Cordialement
+Hannes Oberreiter

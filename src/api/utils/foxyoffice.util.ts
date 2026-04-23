@@ -103,6 +103,8 @@ async function sendInvoiceToCustomer(
   fullNumber: string,
   amount: number,
   lang: MailLang,
+  mode: 'paid' | 'invoice' = 'paid',
+  paymentDueDate?: string,
 ) {
   const pdf = await downloadInvoicePdf(invoiceId);
   if (!pdf) {
@@ -118,11 +120,12 @@ async function sendInvoiceToCustomer(
   await MailService.getInstance().sendMail({
     to: mail,
     lang,
-    subject: 'invoice',
+    subject: mode === 'invoice' ? 'invoice_request' : 'invoice',
     cc: 'office@btree.at',
     replacements: {
       invoice_number: fullNumber,
       amount: buildInvoiceAmount(amount),
+      payment_due: paymentDueDate ?? '',
     },
     attachments: [
       {
@@ -134,15 +137,40 @@ async function sendInvoiceToCustomer(
   });
 }
 
+export type CreateInvoicePaymentType = 'PayPal' | 'Stripe' | 'Mollie' | 'Invoice';
+
+export interface CreateInvoiceOptions {
+  /**
+   * `paid` (default): payment already settled via the given provider.
+   * `invoice`: open invoice with 7-day payment target (bank transfer).
+   */
+  mode?: 'paid' | 'invoice'
+  /** Payment target in days (only used for mode=invoice). Default 7. */
+  paymentTargetDays?: number
+}
+
 export async function createInvoice(
   mail: string,
   price: number,
   amount: number,
-  type: 'PayPal' | 'Stripe' | 'Mollie',
+  type: CreateInvoicePaymentType,
   lang: MailLang = 'en',
+  options: CreateInvoiceOptions = {},
 ) {
+  const mode = options.mode ?? 'paid';
+  const paymentTargetDays = options.paymentTargetDays ?? 7;
   try {
     const latestInvoice = await getLatestInvoice();
+
+    const today = new Date();
+    const paymentTargetDate = new Date(today);
+    if (mode === 'invoice')
+      paymentTargetDate.setDate(today.getDate() + paymentTargetDays);
+
+    const info
+      = mode === 'invoice'
+        ? `Lieferdatum: wie Rechnungsdatum\n\nBitte überweisen Sie den Betrag bis spätestens <b>${DateToFormat(paymentTargetDate)}</b> auf folgendes Konto:\n\n<b>Unsere Bankverbindung:</b>\nSteiermärkische Sparkasse\nIBAN: AT05 2081 5000 4507 3715\nBIC: STSPAT2GXXX\n\nVerwendungszweck: <b>Rechnung ${buildFullNumber(latestInvoice.number)}</b>\n\nVielen Dank für Ihre Unterstützung und ein erfolgreiches Imkerjahr!\n\nMit freundlichen Grüßen\nHannes Oberreiter\n<b>btree.at</b>`
+        : `Lieferdatum:  wie Rechnungsdatum\n\nBetrag wurde bereits mit <b>${type}</b> bezahlt!\n\nVielen Dank für Ihre Unterstützung und ein erfolgreiches Imkerjahr!\n\nMit freundlichen Grüßen\nHannes Oberreiter\n<b>btree.at</b>`;
 
     const data = {
       Invoice: {
@@ -152,13 +180,13 @@ export async function createInvoice(
             ? null
             : latestInvoice.number_group_id,
         address: mail,
-        date: DateToFormat(new Date()),
-        paid: 0,
+        date: DateToFormat(today),
+        paid: mode === 'invoice' ? 0 : 1,
         canceled: 0,
-        paymentTarget: DateToFormat(new Date()),
+        paymentTarget: DateToFormat(paymentTargetDate),
         leading_text:
           'Sehr geehrte Damen und Herren,\n\nwir erlauben uns folgende Rechnung auszustellen:',
-        info: `Lieferdatum:  wie Rechnungsdatum\n\nBetrag wurde bereits mit <b>${type}</b> bezahlt!\n\nVielen Dank für Ihre Unterstützung und ein erfolgreiches Imkerjahr!\n\nMit freundlichen Grüßen\nHannes Oberreiter\n<b>btree.at</b>`,
+        info,
       },
       InvoicePosition: [
         {
@@ -223,6 +251,8 @@ export async function createInvoice(
             fullNumber,
             price,
             lang,
+            mode,
+            mode === 'invoice' ? DateToFormat(paymentTargetDate) : undefined,
           );
         }
         else {
@@ -239,6 +269,22 @@ export async function createInvoice(
         label: 'FoxyOffice',
         data,
         lang,
+      });
+      // In dev we skip the real FoxyOffice call (no invoice id, no PDF),
+      // but still deliver the cover mail so the nodemailer preview URL shows
+      // up in the logs.
+      const fullNumber = buildFullNumber(latestInvoice.number);
+      await MailService.getInstance().sendMail({
+        to: mail,
+        lang,
+        subject: mode === 'invoice' ? 'invoice_request' : 'invoice',
+        cc: 'office@btree.at',
+        replacements: {
+          invoice_number: fullNumber,
+          amount: buildInvoiceAmount(price),
+          payment_due:
+            mode === 'invoice' ? DateToFormat(paymentTargetDate) : '',
+        },
       });
     }
   }

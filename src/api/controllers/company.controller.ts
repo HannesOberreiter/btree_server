@@ -1,15 +1,17 @@
 import type { Options } from 'csv-stringify/sync';
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import type Objection from 'objection';
+import type { MailLang } from '../../services/mail.service.js';
 import { Buffer } from 'node:buffer';
 import { randomBytes } from 'node:crypto';
 import { Stream } from 'node:stream';
 import archiver from 'archiver';
 import { parse } from 'csv-parse/sync';
-import { stringify } from 'csv-stringify/sync';
 
+import { stringify } from 'csv-stringify/sync';
 import httpErrors from 'http-errors';
 import yauzl from 'yauzl-promise';
+import { MailLangs } from '../../services/mail.service.js';
 import UserController from '../controllers/user.controller.js';
 import { Apiary } from '../models/apiary.model.js';
 import { Charge } from '../models/charge.model.js';
@@ -44,6 +46,7 @@ import { Treatment } from '../models/treatment.model.js';
 import { User } from '../models/user.model.js';
 import { autoFill } from '../utils/autofill.util.js';
 import { deleteCompany } from '../utils/delete.util.js';
+import { createInvoice } from '../utils/foxyoffice.util.js';
 import { reviewPassword } from '../utils/login.util.js';
 import { addPremium, isPremium } from '../utils/premium.util.js';
 
@@ -70,6 +73,54 @@ export default class CompanyController {
         user_id: req.session.user.user_id,
       })
       .findById(promo.id);
+    return { paid };
+  }
+
+  /**
+   * Create an open (bank-transfer) invoice for the logged-in company.
+   * Guards against repeat requests within 7 days. Premium is granted
+   * immediately; the invoice PDF is emailed to the user with a 7 day
+   * payment target.
+   */
+  static async postInvoice(req: FastifyRequest, _reply: FastifyReply) {
+    const body = req.body as { amount: number, quantity: number };
+    const user_id = req.session.user.user_id;
+    const bee_id = req.session.user.bee_id;
+
+    // Re-request guard: no more than one 'invoice' Payment per 7 days
+    const recent = await Payment.query()
+      .where('user_id', user_id)
+      .where('type', 'invoice')
+      .whereRaw('`date` > DATE_SUB(NOW(), INTERVAL 7 DAY)')
+      .first();
+    if (recent) {
+      throw httpErrors.TooManyRequests(
+        'An invoice request was already created for this company in the last 7 days.',
+      );
+    }
+
+    const user = await User.query()
+      .select('email', 'lang')
+      .findById(bee_id)
+      .throwIfNotFound();
+
+    const years = Math.max(1, Math.floor(body.quantity ?? 1));
+    const price = body.amount * years;
+
+    const lang
+      = user.lang && MailLangs.includes(user.lang as MailLang)
+        ? (user.lang as MailLang)
+        : 'en';
+
+    // Create FoxyOffice invoice + send PDF email (with 7 day payment target)
+    await createInvoice(user.email, price, years, 'Invoice', lang, {
+      mode: 'invoice',
+      paymentTargetDays: 7,
+    });
+
+    // Grant premium immediately (same as other payment flows).
+    const paid = await addPremium(user_id, 12 * years, price, 'invoice');
+
     return { paid };
   }
 

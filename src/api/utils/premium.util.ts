@@ -81,9 +81,11 @@ export async function limitScale(user_id: number) {
   }
 }
 
-export async function addPremium(user_id: number, months = 12, amount = 0, type: undefined | 'paypal' | 'promo' | 'stripe' | 'mollie') {
+export async function addPremium(user_id: number, months = 12, amount = 0, type: undefined | 'paypal' | 'promo' | 'stripe' | 'mollie' | 'invoice') {
   return await Company.transaction(async (trx) => {
     const company = await Company.query(trx).select('paid').findById(user_id);
+    if (!company)
+      throw new Error('Company not found');
     const newPaid
       = dayjs(company.paid) < dayjs()
         ? dayjs().add(months, 'month')

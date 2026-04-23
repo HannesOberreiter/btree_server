@@ -64,6 +64,19 @@ export default function routes(
     },
     CompanyController.postCoupon,
   );
+  server.post(
+    '/invoice',
+    {
+      preHandler: Guard.authorize([ROLES.admin]),
+      schema: {
+        body: z.object({
+          amount: z.number().int().min(55).max(10000),
+          quantity: z.number().int().min(1).max(10),
+        }),
+      },
+    },
+    CompanyController.postInvoice,
+  );
   server.delete(
     '/:id',
     { preHandler: Guard.authorize([ROLES.admin]) },
