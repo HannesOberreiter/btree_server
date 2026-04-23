@@ -1,0 +1,18 @@
+<title>Your Invoice / Ihre Rechnung %invoice_number%</title>
+Dear Beekeeper,
+
+thank you for your support. The premium time was added automatically to your account.
+
+Attached you find our invoice as PDF file (german). Please transfer the amount to our bank account by %payment_due% at the latest.
+
+Amount %amount% EUR
+Payment due: %payment_due%
+Payment reference: Invoice %invoice_number%
+
+Bank details:
+Steiermärkische Sparkasse
+IBAN: AT05 2081 5000 4507 3715
+BIC:  STSPAT2GXXX
+
+With best greetings
+Hannes Oberreiter

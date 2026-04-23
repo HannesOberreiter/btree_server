@@ -1,11 +1,10 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import type { Taxa } from '../models/observation.model.js';
 import createHttpError from 'http-errors';
-import { raw } from 'objection';
 import { RedisServer } from '../../servers/redis.server.js';
-import { Observation } from '../models/observation.model.js';
+import { ObservationModel } from '../models/observation.model.js';
 
-function mapTaxa(req: FastifyRequest) {
+function mapTaxa(req: FastifyRequest): Taxa {
   const paramTaxa = (req.params as any).taxa as any;
   if (!paramTaxa) {
     throw createHttpError(400, 'Taxa is required');
@@ -32,21 +31,11 @@ export default class PublicController {
     const redis = RedisServer.client;
     const cached = await redis.get(cacheKey);
     if (cached) {
-      return cached;
+      reply.header('Content-Type', 'application/json');
+      return reply.send(cached);
     }
 
-    const query = Observation.query().select(
-      'location',
-      raw('JSON_EXTRACT(data, "$.uri") as uri'),
-      'observed_at',
-    );
-
-    const start = new Date(Date.now() - 1000 * 60 * 60 * 24 * 182);
-    const end = new Date(Date.now());
-    query.whereBetween('observed_at', [start, end]);
-    query.where('taxa', taxa);
-
-    const result = await query;
+    const result = await ObservationModel.getRecent(taxa);
 
     redis.set(cacheKey, JSON.stringify(result), { EX: 3600 });
 
@@ -64,18 +53,19 @@ export default class PublicController {
     if (!params.year) {
       return [];
     }
-    const year = params.year;
+    const year = Number(params.year);
 
-    const query = Observation.query()
-      .select(
-        'location',
-        raw('JSON_EXTRACT(data, "$.uri") as uri'),
-        'observed_at',
-      )
-      .whereBetween('observed_at', [`${year}-01-01`, `${year}-12-31`])
-      .where('taxa', taxa);
+    const cacheKey = `cache:${taxa}ObservationsYear:${year}`;
+    const redis = RedisServer.client;
+    const cached = await redis.get(cacheKey);
+    if (cached) {
+      reply.header('Content-Type', 'application/json');
+      return reply.send(cached);
+    }
 
-    const result = await query;
+    const result = await ObservationModel.getByYear(taxa, year);
+
+    redis.set(cacheKey, JSON.stringify(result), { EX: 3600 });
 
     return result;
   }
@@ -87,9 +77,7 @@ export default class PublicController {
     const taxa = mapTaxa(req);
 
     reply.header('Cache-Control', 'public, max-age=3600');
-    const res = await Observation.query()
-      .count('id as count')
-      .where('taxa', taxa);
-    return res[0];
+    const result = await ObservationModel.countByTaxa(taxa);
+    return result;
   }
 }

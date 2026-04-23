@@ -1,8 +1,8 @@
-import type { Taxa } from '../models/observation.model.js';
+import type { ObservationInsert, Taxa } from '../models/observation.model.js';
 import proj4 from 'proj4';
 import { RedisServer } from '../../servers/redis.server.js';
 import { buildRedisCacheKeyObservationsRecent } from '../controllers/public.controller.js';
-import { Observation } from '../models/observation.model.js';
+import { ObservationModel } from '../models/observation.model.js';
 
 export async function fetchObservations(taxa: Taxa = 'Vespa velutina') {
   const fInat = fetchInat();
@@ -16,17 +16,20 @@ export async function fetchObservations(taxa: Taxa = 'Vespa velutina') {
   const artenfinderNet = await fetchArtenfinderNet(taxa);
   const infoFaunaCh = await fetchInfoFaunaCh(taxa);
 
-  const patriNat
-    = taxa === 'Vespa velutina' ? await fetchPatriNat() : { newObservations: 0 };
+  const frelonsAsiatiques
+    = taxa === 'Vespa velutina' ? await fetchFrelonsAsiatiques() : { newObservations: 0 };
 
   /** after fetching new taxa we want to cleanup any possible cached map results */
-  const cacheKey = buildRedisCacheKeyObservationsRecent(taxa);
-  RedisServer.client.del(cacheKey);
+  const redis = RedisServer.client;
+  redis.del(buildRedisCacheKeyObservationsRecent(taxa));
+  const currentYear = new Date().getFullYear();
+  redis.del(`cache:${taxa}ObservationsYear:${currentYear}`);
+  redis.del(`cache:${taxa}ObservationsYear:${currentYear - 1}`);
 
   return {
     taxa,
     iNaturalist: inat,
-    patriNat,
+    frelonsAsiatiques,
     artenfinderNet,
     observationOrg,
     infoFaunaCh,
@@ -37,89 +40,151 @@ export async function fetchObservations(taxa: Taxa = 'Vespa velutina') {
   };
 }
 
-interface ObservationPatriNat {
-  nom_station: string
-  loc_lat: string
-  loc_long: string
-  observateur: string
-  validation: string
-  commentaires_validation: string
-  uri?: string
-}
+/**
+ * Fetch Vespa velutina nest/insect reports from signal.frelonsasiatiques.fr
+ * (Auvergne-Rhône-Alpes region, France).
+ *
+ * The API requires a PHP session. For each department:
+ * 1. Visit the list page with filters → receives a PHPSESSID cookie
+ * 2. Call the markers API with that session → returns filtered JSON
+ */
+export async function fetchFrelonsAsiatiques() {
+  const BASE_URL = 'https://signal.frelonsasiatiques.fr/iceadmin/cartographie';
+  const UA = 'Mozilla/5.0 (compatible; btree.at/pest-map)';
 
-export async function fetchPatriNat() {
-  // Example Input: Rome07072015033744
-  function dateExtract(t: string) {
-    const e = t.substring(t.length - 14);
-    const day = e.substring(0, 2);
-    const month = e.substring(2, 4);
-    const year = e.substring(4, 8);
-    const hour = e.substring(8, 10);
-    const minute = e.substring(10, 12);
-    const second = e.substring(12, 14);
-    return new Date(
-      `${year
-      }-${
-        month
-      }-${
-        day
-      }T${
-        hour
-      }:${
-        minute
-      }:${
-        second
-      }Z`,
-    );
-  }
-  const result = await fetch(
-    'https://frelonasiatique.mnhn.fr/wp-content/plugins/spn_csv_exporter/widgetVisualisateur/visuaMapDisplayController.php',
-    {
-      headers: {
-        Referer: 'https://www.btree.at/',
-      },
-      method: 'GET',
-    },
-  );
-  const data = await result.json();
-  const observations = [];
-  if (!data.records) {
-    return { newObservations: 0 };
-  }
+  // DB ID → French department number
+  const DEPARTMENTS: Record<number, string> = {
+    1: '01', // Ain
+    3: '03', // Allier
+    7: '07', // Ardèche
+    15: '15', // Cantal
+    25: '26', // Drôme
+    39: '38', // Isère
+    43: '42', // Loire
+    44: '43', // Haute-Loire
+    64: '63', // Puy-de-Dôme
+    70: '69', // Rhône
+    74: '73', // Savoie
+    75: '74', // Haute-Savoie
+  };
 
-  const oldRecords = await Observation.query()
-    .select('external_uuid')
-    .where('external_service', 'PatriNat');
-  const searchArray = oldRecords.map(o => o.external_uuid);
+  // Confirmed statuses: 4=Confirmé, 6=En cours de destruction, 7=Non détruit, 8=Détruit
+  const REPORT_STATUSES = [4, 6, 7, 8];
 
-  for (let i = 0; i < data.records.length; i++) {
-    const observation: ObservationPatriNat = data.records[i];
-    if (observation.validation !== 'Validé')
-      continue;
-    if (searchArray.includes(observation.nom_station)) {
-      continue;
+  // Use current season (Feb Y to Jan Y+1) and previous season
+  const now = new Date();
+  const currentSeasonYear = now.getMonth() >= 1 ? now.getFullYear() : now.getFullYear() - 1;
+  const years = [currentSeasonYear];
+
+  let totalNew = 0;
+
+  for (const year of years) {
+    for (const [deptId, deptNum] of Object.entries(DEPARTMENTS)) {
+      try {
+        const records = await fetchDepartment(Number(deptId), year);
+        if (records.length === 0) {
+          continue;
+        }
+
+        const batchIds = records.map((r: any) => Number(r.id));
+        const newIds = await ObservationModel.filterNewExternalIds(batchIds, 'Frelons Asiatiques FR');
+
+        const observations: ObservationInsert[] = [];
+        for (const r of records) {
+          if (!newIds.has(Number(r.id))) {
+            continue;
+          }
+          if (!r.latitude || !r.longitude) {
+            continue;
+          }
+
+          observations.push({
+            external_id: Number(r.id),
+            external_service: 'Frelons Asiatiques FR',
+            observed_at: `${r.date}T00:00:00Z`,
+            location: {
+              lat: Number(r.latitude),
+              lng: Number(r.longitude),
+            },
+            taxa: 'Vespa velutina',
+            data: {
+              reportCategory: r.reportCategory,
+              reportStatus: r.reportStatus,
+              nestSupport: r.nestSupport,
+              nestHeight: r.nestHeight,
+              nestDiameter: r.nestDiameter,
+              city: r.cityLabel,
+              postalCode: r.cityPostalCode,
+              department: deptNum,
+              uri: `https://signal.frelonsasiatiques.fr`,
+            },
+          });
+        }
+
+        if (observations.length > 0) {
+          await ObservationModel.insertBatch(observations);
+          totalNew += observations.length;
+        }
+      }
+      catch {
+        // Skip department on error, continue with others
+      }
     }
-    const date = dateExtract(observation.nom_station);
-    observation.uri = 'https://frelonasiatique.mnhn.fr/visualisateur';
-    observations.push({
-      external_uuid: observation.nom_station,
-      external_service: 'PatriNat',
-      observed_at: date.toISOString(),
-      location: {
-        lat: Number(observation.loc_lat),
-        lng: Number(observation.loc_long),
-      },
-      taxa: 'Vespa velutina',
-      data: observation,
-    });
   }
 
-  if (observations.length === 0)
-    return { newObservations: 0 };
+  return { newObservations: totalNew };
 
-  await Observation.query().insertGraph(observations);
+  async function fetchDepartment(deptId: number, year: number): Promise<any[]> {
+    // Step 1: Visit list page to establish session with filters
+    const listParams = new URLSearchParams({
+      'filter[city__department][value]': String(deptId),
+      'filter[date][value]': String(year),
+      'filter[reportCategory][value]': '',
+    });
+    for (const status of REPORT_STATUSES) {
+      listParams.append('filter[reportStatus][value][]', String(status));
+    }
 
-  return { newObservations: observations.length };
+    const listResponse = await fetch(`${BASE_URL}/list?${listParams}`, {
+      headers: { 'User-Agent': UA },
+      redirect: 'manual',
+    });
+
+    const setCookies = listResponse.headers.getSetCookie?.() || [];
+    const sessionCookie = setCookies.find(c => c.includes('PHPSESSID'))?.split(';')[0];
+    await listResponse.text(); // consume body
+
+    if (!sessionCookie) {
+      return [];
+    }
+
+    // Step 2: Call markers API with the session
+    const apiParams = new URLSearchParams({
+      '_page': '1',
+      '_per_page': '0',
+      'reportCategory[value]': '',
+      'city__department[value]': String(deptId),
+      'date[value]': String(year),
+    });
+    for (let i = 0; i < REPORT_STATUSES.length; i++) {
+      apiParams.append(`reportStatus[value][${i}]`, String(REPORT_STATUSES[i]));
+    }
+
+    const apiResponse = await fetch(`${BASE_URL}/markers_api?${apiParams}`, {
+      headers: {
+        'User-Agent': UA,
+        'X-Requested-With': 'XMLHttpRequest',
+        'Accept': 'application/json',
+        'Cookie': sessionCookie,
+        'Referer': `${BASE_URL}/list`,
+      },
+    });
+
+    if (!apiResponse.ok)
+      return [];
+    const data = await apiResponse.json();
+    return Array.isArray(data) ? data : [];
+  }
 }
 
 export function fetchInat() {
@@ -132,17 +197,13 @@ export function fetchInat() {
     = '(id:!t,uri:!t,quality_grade:!t,time_observed_at:!t,location:!t,taxon:(id:!t))';
 
   /**
-   * @description Randomly select 200 iNat observation from database and check if they are still present and also the correct taxon
+   * @description Randomly select 200 iNat observations from database and check if they are still present and also the correct taxon
    */
   async function cleanupOldObs() {
-    const oldRecords = await Observation.query()
-      .where('external_service', 'iNaturalist')
-      .whereNotNull('external_id')
-      .orderByRaw('RAND()')
-      .limit(200); // must be same as limit of per_page
-    const notFound = [];
-    const wrongTaxon = [];
-    const removedExternalIds = [];
+    const oldRecords = await ObservationModel.getRandomSample('iNaturalist', 200);
+    const notFound: number[] = [];
+    const wrongTaxon: number[] = [];
+    const removedExternalIds: number[] = [];
 
     const ids = oldRecords.map(o => o.external_id).join(',');
     if (ids.length === 0) {
@@ -154,36 +215,27 @@ export function fetchInat() {
     const res = await response.json();
 
     const foundIds = res.results.map((o: any) => o.id);
-    for (let i = 0; i < oldRecords.length; i++) {
-      const record = oldRecords[i];
+    for (const record of oldRecords) {
       if (!foundIds.includes(record.external_id)) {
         notFound.push(record.id);
-        removedExternalIds.push(record.external_id);
+        removedExternalIds.push(record.external_id!);
       }
       else {
         const observation = res.results.find((o: any) => o.id === record.external_id);
-        if (TAXON_IDS[record.taxa].includes(observation.taxon.id) === false) {
+        if (TAXON_IDS[record.taxa as Taxa].includes(observation.taxon.id) === false) {
           wrongTaxon.push(record.id);
-          removedExternalIds.push(record.external_id);
+          removedExternalIds.push(record.external_id!);
         }
       }
     }
 
-    const deleteQuery = Observation.query();
-    if (notFound.length > 0) {
-      deleteQuery.whereIn('id', notFound);
-    }
-    if (wrongTaxon.length > 0) {
-      deleteQuery.orWhereIn('id', wrongTaxon);
-    }
-    if (notFound.length > 0 || wrongTaxon.length > 0) {
-      await deleteQuery.delete();
-    }
+    const toDelete = [...notFound, ...wrongTaxon];
+    await ObservationModel.deleteByIds(toDelete);
 
     return { checked: oldRecords.length, notFound: notFound.length, wrongTaxon: wrongTaxon.length, removedExternalIds };
   }
 
-  async function fetchNewObs(taxa: Taxa, monthsBefore = 6) {
+  async function fetchNewObs(taxa: Taxa, monthsBefore = 1) {
     let idAbove = 1;
     let newObservations = 0;
     let createdAtD1: Date | string = new Date();
@@ -191,29 +243,28 @@ export function fetchInat() {
     createdAtD1 = createdAtD1.toISOString().split('T')[0];
     const createdAtD2 = new Date().toISOString().split('T')[0];
 
-    const oldRecords = await Observation.query()
-      .select('external_id')
-      .where('external_service', 'iNaturalist');
-    const searchArray = oldRecords.map(o => o.external_id);
-
     while (idAbove > 0) {
       const url = `${URL}?taxon_id=${TAXON_IDS[taxa].join(',')}&verifiable=true&quality_grade=research&order=asc&order_by=id&per_page=200&fields=${FIELDS}&created_d1=${createdAtD1}&created_d2=${createdAtD2}&id_above=${idAbove}`;
       const response = await fetch(url);
       const res = await response.json();
-      const observations = [];
-      if (res.results.length === 0)
+      if (!res.results || res.results.length === 0)
         break;
       idAbove = res.results.at(-1).id;
-      // newObservations += data.results.length;
+
+      const batchIds = res.results
+        .filter((o: any) => o.time_observed_at && o.location)
+        .map((o: any) => Number(o.id));
+      const newIds = await ObservationModel.filterNewExternalIds(batchIds, 'iNaturalist');
+
+      const observations: ObservationInsert[] = [];
       for (let i = 0; i < res.results.length; i++) {
         const observation = res.results[i];
         if (!observation.time_observed_at)
           continue;
         if (!observation.location)
           continue;
-        if (searchArray.includes(observation.id)) {
+        if (!newIds.has(Number(observation.id)))
           continue;
-        }
         newObservations++;
         const data = { ...observation };
         delete data.location;
@@ -229,7 +280,9 @@ export function fetchInat() {
           data,
         });
       }
-      await Observation.query().insertGraph(observations);
+      if (observations.length > 0) {
+        await ObservationModel.insertBatch(observations);
+      }
     }
     return { newObservations };
   }
@@ -242,13 +295,13 @@ export async function fetchArtenfinderNet(taxa: Taxa) {
     'Vespa velutina': 'vespa%velutina',
     'Aethina tumida': 'aethina%tumida',
   };
-  let url = `https://www.artenfinder.net/api/v2/sichtbeobachtungen?titel_wissenschaftlich=${taxonName[taxa]}`;
+  const dateFrom = new Date();
+  dateFrom.setDate(dateFrom.getDate() - 30);
+  const dateTo = new Date();
+  const datumVon = `${dateFrom.getDate()}.${dateFrom.getMonth() + 1}.${dateFrom.getFullYear()}`;
+  const datumBis = `${dateTo.getDate()}.${dateTo.getMonth() + 1}.${dateTo.getFullYear()}`;
+  let url: string | undefined = `https://www.artenfinder.net/api/v2/sichtbeobachtungen?titel_wissenschaftlich=${taxonName[taxa]}&datum_von=${datumVon}&datum_bis=${datumBis}`;
   let newObservations = 0;
-
-  const oldRecords = await Observation.query()
-    .select('external_id')
-    .where('external_service', 'Artenfinder.net');
-  const searchArray = oldRecords.map(o => o.external_id);
 
   // Coordination system is ETRS89/UTM 32N (EPSG:25832), but we need WGS84 (EPSG:4326)
   proj4.defs(
@@ -257,19 +310,24 @@ export async function fetchArtenfinderNet(taxa: Taxa) {
   );
 
   while (url) {
-    const response = await fetch(url);
+    const response = await fetch(url) as any;
     const res = await response.json();
     if (res.length === 0)
       break;
     if (res?.result?.length === 0)
       break;
     url = res.next || undefined;
-    const observations = [];
+    const batchIds = res.result
+      .filter((o: any) => o.lat && o.lon)
+      .map((o: any) => Number(o.id));
+    const newIds = await ObservationModel.filterNewExternalIds(batchIds, 'Artenfinder.net');
+
+    const observations: ObservationInsert[] = [];
     for (let i = 0; i < res.result.length; i++) {
       const observation = res.result[i];
       if (!observation.lat || !observation.lon)
         continue;
-      if (searchArray.includes(observation.id))
+      if (!newIds.has(Number(observation.id)))
         continue;
 
       newObservations++;
@@ -304,116 +362,120 @@ export async function fetchArtenfinderNet(taxa: Taxa) {
       });
     }
 
-    await Observation.query().insertGraph(observations);
+    if (observations.length > 0) {
+      await ObservationModel.insertBatch(observations);
+    }
   }
-
-  if (newObservations === 0)
-    return { newObservations: 0 };
 
   return { newObservations };
 }
 
 export function fetchObservationOrg() {
-  const TAXON_KEY: Record<Taxa, number> = {
-    'Vespa velutina': 1311477,
-    'Aethina tumida': 8254044,
+  const SPECIES_ID: Record<Taxa, number> = {
+    'Vespa velutina': 8807,
+    'Aethina tumida': 789087,
   };
-  const BASE_URL = 'https://api.gbif.org/v1/occurrence/search';
-  const DATASET_KEY = '8a863029-f435-446a-821e-275f4f641165';
+  const BASE_URL = 'https://observation.org/api/v1';
 
   /**
-   * @description Randomly select Observation.org records from database and check if they are still present
+   * @description Randomly select Observation.org records from database and check if they are still present or have been invalidated
    */
   async function cleanupOldObs() {
-    const oldRecords = await Observation.query()
-      .where('external_service', 'Observation.org')
-      .whereNotNull('external_id')
-      .orderByRaw('RAND()')
-      .limit(50);
-    const notFound = [];
-    const removedExternalIds = [];
+    const oldRecords = await ObservationModel.getRandomSample('Observation.org', 50);
+    const notFound: number[] = [];
+    const removedExternalIds: number[] = [];
 
     if (oldRecords.length === 0) {
       return { checked: 0, notFound: 0 };
     }
 
-    const gbifIds = oldRecords.map(o => o.data?.uri).join('&occurrenceId=');
-    const url = `${BASE_URL}?dataset_key=${DATASET_KEY}&occurrenceId=${gbifIds}&limit=50`;
-    console.log(url);
-    const response = await fetch(url);
-    const res = await response.json();
-
-    const foundIds = res.results.map((o: any) => Number(o.gbifID));
     for (const record of oldRecords) {
-      if (!foundIds.includes(record.external_id)) {
-        console.log(`Removing Observation.org record with id ${record.external_id} as it was not found anymore in GBIF. ${record.data?.uri}`);
-        notFound.push(record.id);
-        removedExternalIds.push(record.external_id);
+      try {
+        const url = `${BASE_URL}/observations/${record.external_id}/?format=json`;
+        const response = await fetch(url);
+        if (!response.ok) {
+          notFound.push(record.id);
+          removedExternalIds.push(record.external_id!);
+          continue;
+        }
+        const obs: any = await response.json();
+        // Check if the species has been re-identified to something else
+        if (obs.species !== SPECIES_ID[record.taxa as Taxa]) {
+          notFound.push(record.id);
+          removedExternalIds.push(record.external_id!);
+        }
+      }
+      catch {
+        // Skip on network errors, don't remove
       }
     }
 
-    if (notFound.length > 0) {
-      await Observation.query().whereIn('id', notFound).delete();
-    }
+    await ObservationModel.deleteByIds(notFound);
 
     return { checked: oldRecords.length, notFound: notFound.length, removedExternalIds };
   }
 
   async function fetchNewObs(taxa: Taxa) {
-    const url = `${BASE_URL}?dataset_key=${DATASET_KEY}&taxon_key=${TAXON_KEY[taxa]}`;
-
-    let endOfRecords = false;
-    let offset = 0;
+    const speciesId = SPECIES_ID[taxa];
     let newObservations = 0;
     const limit = 300;
-    let yearFilter = `&year=${
-      new Date().getFullYear() - 1
-    },${new Date().getFullYear()}`;
 
-    const oldRecords = await Observation.query()
-      .select('external_id')
-      .where('external_service', 'Observation.org');
-    const searchArray = oldRecords.map(o => o.external_id);
+    const now = new Date();
+    const dateAfter = new Date();
+    dateAfter.setDate(dateAfter.getDate() - 30);
 
-    if (searchArray.length === 0)
-      yearFilter = '';
+    let offset = 0;
+    let hasMore = true;
 
-    while (endOfRecords === false) {
-      const result = await fetch(
-        `${url}&limit=${limit}&offset=${offset}${yearFilter}`,
-      );
-      const data = await result.json();
-      if (data.results.length === 0)
+    while (hasMore) {
+      const url = `${BASE_URL}/species/${speciesId}/observations/?format=json&is_validated=true&limit=${limit}&offset=${offset}&date_after=${dateAfter.toISOString().split('T')[0]}&date_before=${now.toISOString().split('T')[0]}`;
+      const response = await fetch(url);
+      const data = await response.json();
+
+      if (!data.results || data.results.length === 0)
         break;
-      endOfRecords = data.endOfRecords;
-      offset += limit;
 
-      const observations = [];
-      const results = data.results;
-      for (let i = 0; i < results.length; i++) {
-        if (searchArray.includes(Number(results[i].gbifID))) {
+      const batchIds = data.results
+        .filter((o: any) => o.point?.coordinates)
+        .map((o: any) => o.id);
+      const newIds = await ObservationModel.filterNewExternalIds(batchIds, 'Observation.org');
+
+      const observations: ObservationInsert[] = [];
+      for (const obs of data.results) {
+        if (!obs.point?.coordinates)
           continue;
-        }
+        if (!newIds.has(obs.id))
+          continue;
+
         newObservations++;
-        const observation = results[i];
+
         observations.push({
-          external_id: Number(observation.gbifID),
-          external_uuid: observation.catalogNumber,
+          external_id: obs.id,
+          external_uuid: obs.uuid,
           external_service: 'Observation.org',
-          observed_at: observation.eventDate,
+          observed_at: obs.time
+            ? `${obs.date}T${obs.time}:00Z`
+            : `${obs.date}T00:00:00Z`,
           location: {
-            lat: Number(observation.decimalLatitude),
-            lng: Number(observation.decimalLongitude),
+            lat: obs.point.coordinates[1],
+            lng: obs.point.coordinates[0],
           },
           taxa,
           data: {
-            individualCount: observation.individualCount,
-            lifeStage: observation.lifeStage,
-            uri: observation.occurrenceID,
+            individualCount: obs.number,
+            lifeStage: obs.life_stage,
+            validationStatus: obs.validation_status,
+            uri: obs.permalink,
           },
         });
       }
-      await Observation.query().insertGraph(observations);
+
+      if (observations.length > 0) {
+        await ObservationModel.insertBatch(observations);
+      }
+
+      hasMore = data.next !== null;
+      offset += limit;
     }
     return { newObservations };
   }
@@ -432,31 +494,27 @@ export async function fetchInfoFaunaCh(taxa: Taxa) {
   let offset = 0;
   let newObservations = 0;
   const limit = 300;
-  let yearFilter = `&year=${
+  const yearFilter = `&year=${
     new Date().getFullYear() - 1
   },${new Date().getFullYear()}`;
-  const oldRecords = await Observation.query()
-    .select('external_id')
-    .where('external_service', 'Info Fauna (GBIF)');
-  const searchArray = oldRecords.map(o => o.external_id);
-
-  if (searchArray.length === 0)
-    yearFilter = '';
 
   while (endOfRecords === false) {
     const result = await fetch(
       `${url}&limit=${limit}&offset=${offset}${yearFilter}`,
     );
     const data = await result.json();
-    if (data.results.length === 0)
+    if (!data.results || data.results.length === 0)
       break;
     endOfRecords = data.endOfRecords;
     offset += limit;
 
-    const observations = [];
     const results = data.results;
+    const batchIds = results.map((o: any) => Number(o.gbifID));
+    const newIds = await ObservationModel.filterNewExternalIds(batchIds, 'Info Fauna (GBIF)');
+
+    const observations: ObservationInsert[] = [];
     for (let i = 0; i < results.length; i++) {
-      if (searchArray.includes(Number(results[i].gbifID))) {
+      if (!newIds.has(Number(results[i].gbifID))) {
         continue;
       }
       newObservations++;
@@ -478,7 +536,9 @@ export async function fetchInfoFaunaCh(taxa: Taxa) {
         },
       });
     }
-    await Observation.query().insertGraph(observations);
+    if (observations.length > 0) {
+      await ObservationModel.insertBatch(observations);
+    }
   }
   return { newObservations };
 }

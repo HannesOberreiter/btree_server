@@ -1,7 +1,6 @@
-import type { Tool } from 'ai';
 import type { FastifyReply, FastifyRequest } from 'fastify';
-import { tool } from 'ai';
 import { z } from 'zod';
+import { KyselyServer } from '../../servers/kysely.server.js';
 import { Logger } from '../../services/logger.service.js';
 import ApiaryController from './apiary.controller.js';
 import ChargeController from './charge.controller.js';
@@ -22,7 +21,6 @@ import TreatmentController from './treatment.controller.js';
  * Tools reuse existing controllers by creating mock FastifyRequest objects.
  * Tools are reused for a sub API under /wizbee/tools and can be called by the AI with user context.
  *
- * Uses Vercel AI SDK for tool definitions.
  */
 
 /**
@@ -32,6 +30,19 @@ export interface WizBeeContext {
   userId: number
   beeId: number
 }
+
+const GENERIC_HTTP_MESSAGE_RE = /^(?:not found|forbidden|unauthorized|bad request|conflict|payment required|too many requests)$/i;
+
+/**
+ * Error-message patterns that really mean "an ID referenced in the request
+ * doesn't exist / doesn't belong to the current user" but that underlying
+ * controllers throw as plain `Error()` (so they surface as status=500 in
+ * classifyError). We treat them as `not_found` so the model gets the proper
+ * hint ("resolve hiveIds via findHives") instead of an opaque 500.
+ *
+ * Extend this list when new "invisible 500" cases pop up in logs.
+ */
+const NOT_FOUND_MESSAGE_RE = /no (?:current )?location found for hive|hive not found|apiary not found|record not found/i;
 
 /**
  * Creates a mock FastifyRequest object to reuse existing controllers
@@ -64,6 +75,532 @@ function createMockRequest(
  */
 function createMockReply(): FastifyReply {
   return {} as FastifyReply;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Structured tool-error envelope
+//
+// Tools NEVER throw. They return either a normal result, or:
+//   { ok: false, error: { code, status, message, hint?, suggested_next_tool? } }
+//
+// Why: LLMs recover far better from a readable result object than from an
+// opaque thrown exception surfaced by the AI SDK. Hints + suggested_next_tool
+// convert multi-step failure loops into single-step corrections.
+//
+// Controllers (shared with the frontend) are NOT modified — their
+// `httpErrors.*` throws are translated here, messages kept as-is because the
+// frontend already shows them to users (so they're safe to surface).
+// ─────────────────────────────────────────────────────────────────────────────
+
+type ToolErrorCode
+  = | 'not_found'
+    | 'forbidden'
+    | 'premium_required'
+    | 'conflict'
+    | 'validation_error'
+    | 'no_records_affected'
+    | 'upstream_unavailable'
+    | 'unknown_error';
+
+export interface ToolErrorEnvelope {
+  ok: false
+  error: {
+    code: ToolErrorCode
+    status: number
+    message: string
+    hint?: string
+    suggested_next_tool?: string
+  }
+}
+
+/**
+ * Local tool definition type — replaces the `Tool` import from the Vercel AI
+ * SDK. Keeping the same `{ description, inputSchema, execute }` shape so the
+ * 31 tool definitions below need no structural changes.
+ *
+ * `execute` takes the validated tool input and returns any JSON-serializable
+ * result (or a `ToolErrorEnvelope` on failure after going through `wrapTools`).
+ */
+export interface WizBeeTool<TInput = any> {
+  description: string
+  inputSchema: z.ZodType<TInput>
+  execute: (input: TInput, opts?: unknown) => Promise<unknown>
+}
+
+/**
+ * Typed identity helper so the 31 `tool({...})` call sites stay identical to
+ * how they read when using the AI SDK.
+ */
+function tool<T>(def: WizBeeTool<T>): WizBeeTool<T> {
+  return def;
+}
+
+/**
+ * Per-tool metadata used to craft actionable error hints.
+ * Keep this list tight — only encode the confusions that actually happen.
+ */
+interface ToolHintMeta {
+  /** Tool takes `hiveIds` (array) or `hiveId` (single) — user often passes hive *numbers* instead of real IDs */
+  usesHiveIds?: boolean
+  /** Tool takes `apiaryId` */
+  usesApiaryId?: boolean
+  /** Tool takes `typeId`/`diseaseId`/`vetId` — resolved via fetchOptions */
+  usesTypeId?: boolean
+  /** Tool takes `ids` of existing records (patch/delete) — resolve via fetchTasks/getHiveTasks */
+  usesRecordIds?: boolean
+  /** Category for no_records_affected messages */
+  mutates?: 'create' | 'update' | 'delete'
+  /** Human label for the record kind ("feed", "hive", "todo") */
+  recordLabel?: string
+}
+
+const TOOL_META: Record<string, ToolHintMeta> = {
+  // Reads
+  findHives: { recordLabel: 'hive' },
+  getHiveDetail: { usesHiveIds: true, recordLabel: 'hive' },
+  getHiveTasks: { usesHiveIds: true, usesApiaryId: true, recordLabel: 'hive/apiary' },
+  apiaryWeather: { usesApiaryId: true, recordLabel: 'apiary' },
+  fetchTasks: { usesApiaryId: true },
+  // Mutations — feeds/harvests/treatments/checkups
+  createFeed: { usesHiveIds: true, usesTypeId: true, mutates: 'create', recordLabel: 'feed' },
+  patchFeed: { usesRecordIds: true, usesTypeId: true, mutates: 'update', recordLabel: 'feed' },
+  softDeleteFeed: { usesRecordIds: true, mutates: 'delete', recordLabel: 'feed' },
+  createHarvest: { usesHiveIds: true, usesTypeId: true, mutates: 'create', recordLabel: 'harvest' },
+  patchHarvest: { usesRecordIds: true, usesTypeId: true, mutates: 'update', recordLabel: 'harvest' },
+  softDeleteHarvest: { usesRecordIds: true, mutates: 'delete', recordLabel: 'harvest' },
+  createTreatment: { usesHiveIds: true, usesTypeId: true, mutates: 'create', recordLabel: 'treatment' },
+  patchTreatment: { usesRecordIds: true, usesTypeId: true, mutates: 'update', recordLabel: 'treatment' },
+  softDeleteTreatment: { usesRecordIds: true, mutates: 'delete', recordLabel: 'treatment' },
+  createCheckup: { usesHiveIds: true, usesTypeId: true, mutates: 'create', recordLabel: 'checkup' },
+  patchCheckup: { usesRecordIds: true, usesTypeId: true, mutates: 'update', recordLabel: 'checkup' },
+  softDeleteCheckup: { usesRecordIds: true, mutates: 'delete', recordLabel: 'checkup' },
+  // Todos
+  createTodo: { usesApiaryId: true, mutates: 'create', recordLabel: 'todo' },
+  patchTodo: { usesRecordIds: true, usesApiaryId: true, mutates: 'update', recordLabel: 'todo' },
+  batchDeleteTodo: { usesRecordIds: true, mutates: 'delete', recordLabel: 'todo' },
+  // Charges
+  createCharge: { usesTypeId: true, mutates: 'create', recordLabel: 'charge' },
+  patchCharge: { usesRecordIds: true, usesTypeId: true, mutates: 'update', recordLabel: 'charge' },
+  softDeleteCharge: { usesRecordIds: true, mutates: 'delete', recordLabel: 'charge' },
+};
+
+/**
+ * Build a hint + suggested_next_tool tailored to the tool and error class.
+ */
+function buildHint(
+  toolName: string,
+  code: ToolErrorCode,
+): { hint?: string, suggested_next_tool?: string } {
+  const meta = TOOL_META[toolName];
+  if (!meta)
+    return {};
+
+  if (code === 'not_found') {
+    // Most common cause: caller passed a user-visible hive NUMBER instead of hiveId,
+    // or used a stale/guessed ID.
+    if (meta.usesHiveIds) {
+      return {
+        hint: 'One or more IDs could not be found for the current user. Hive NUMBERS (e.g. "1608") are NOT hiveIds — resolve the real hiveId via findHives (q=<hive name/number>) first. Also double-check the apiaryId via listApiariesHives.',
+        suggested_next_tool: 'findHives',
+      };
+    }
+    if (meta.usesApiaryId) {
+      return {
+        hint: 'Apiary not found for the current user. Resolve the real apiaryId first.',
+        suggested_next_tool: 'listApiariesHives',
+      };
+    }
+    if (meta.usesRecordIds) {
+      return {
+        hint: `One or more ${meta.recordLabel ?? 'record'} IDs do not exist (or belong to another user). List current records first to get valid IDs.`,
+        suggested_next_tool: meta.recordLabel === 'todo' ? 'fetchTasks' : 'getHiveTasks',
+      };
+    }
+  }
+
+  if (code === 'validation_error' && meta.usesTypeId) {
+    return {
+      hint: 'A typeId / diseaseId / vetId is likely invalid for this user. Type IDs are user-scoped — fetch the current lookup lists to get valid IDs.',
+      suggested_next_tool: 'fetchOptions',
+    };
+  }
+
+  if (code === 'no_records_affected') {
+    if (meta.mutates === 'create' && meta.usesHiveIds) {
+      return {
+        hint: `The request was accepted but 0 ${meta.recordLabel} records were created. Usually caused by hiveIds that do not belong to the current user. Resolve real hiveIds via findHives first.`,
+        suggested_next_tool: 'findHives',
+      };
+    }
+    if ((meta.mutates === 'update' || meta.mutates === 'delete') && meta.usesRecordIds) {
+      return {
+        hint: `0 ${meta.recordLabel} records matched the provided IDs. IDs may be wrong, already deleted, or belong to another user. List current records first.`,
+        suggested_next_tool: meta.recordLabel === 'todo' ? 'fetchTasks' : 'getHiveTasks',
+      };
+    }
+  }
+
+  if (code === 'premium_required') {
+    return {
+      hint: 'This action requires an active premium subscription on the user\'s account. Tell the user and stop — do not retry.',
+    };
+  }
+
+  return {};
+}
+
+/**
+ * Classify any thrown value (usually a fastify httpErrors.* instance) into a
+ * stable, model-readable error code.
+ */
+function classifyError(err: unknown): { code: ToolErrorCode, status: number, message: string } {
+  const anyErr = err as any;
+  const status: number = typeof anyErr?.statusCode === 'number'
+    ? anyErr.statusCode
+    : typeof anyErr?.status === 'number' ? anyErr.status : 500;
+  // httpErrors messages are already user-safe (shown to frontend users).
+  const rawMessage: string = typeof anyErr?.message === 'string' && anyErr.message.length > 0
+    ? anyErr.message
+    : 'Request failed';
+
+  let code: ToolErrorCode;
+  let message = rawMessage;
+
+  switch (status) {
+    case 400:
+    case 422:
+      code = 'validation_error';
+      break;
+    case 401:
+    case 403:
+      code = 'forbidden';
+      break;
+    case 402:
+      code = 'premium_required';
+      break;
+    case 404:
+      code = 'not_found';
+      break;
+    case 409:
+      code = 'conflict';
+      break;
+    case 502:
+    case 503:
+    case 504:
+      code = 'upstream_unavailable';
+      message = 'An upstream service is temporarily unavailable. Retry later.';
+      break;
+    default:
+      if (status >= 500) {
+        // Some controllers throw plain `Error`s for missing-ownership cases
+        // (e.g. CheckupController: "No current location found for hive").
+        // These are really not-found, but come through as status=500. Pattern
+        // match on the message so the model gets a useful `findHives` hint
+        // instead of an opaque "Internal error".
+        if (NOT_FOUND_MESSAGE_RE.test(rawMessage)) {
+          code = 'not_found';
+          // keep the original message — it's user-safe and descriptive enough
+          // for the model to correct itself.
+        }
+        else {
+          code = 'unknown_error';
+          // Do not leak internal 5xx details.
+          message = 'Internal error while executing this tool.';
+        }
+      }
+      else {
+        code = 'validation_error';
+      }
+  }
+
+  return { code, status, message };
+}
+
+/**
+ * Detect "silent no-op" results on mutations (e.g. createFeed returned ids: []).
+ * Returns a ToolErrorEnvelope if suspicious, otherwise null.
+ */
+function detectNoRecordsAffected(toolName: string, result: unknown): ToolErrorEnvelope | null {
+  const meta = TOOL_META[toolName];
+  if (!meta?.mutates)
+    return null;
+  const r = result as any;
+  if (!r || typeof r !== 'object')
+    return null;
+
+  const createdZero = meta.mutates === 'create'
+    && Array.isArray(r.ids) && r.ids.length === 0;
+  const updatedZero = meta.mutates === 'update' && r.updatedCount === 0;
+  const deletedZero = meta.mutates === 'delete' && r.deletedCount === 0;
+
+  if (!createdZero && !updatedZero && !deletedZero)
+    return null;
+
+  const { hint, suggested_next_tool } = buildHint(toolName, 'no_records_affected');
+  return {
+    ok: false,
+    error: {
+      code: 'no_records_affected',
+      status: 404,
+      message: `0 ${meta.recordLabel ?? 'record'}s were affected. The IDs provided likely do not exist for this user.`,
+      hint,
+      suggested_next_tool,
+    },
+  };
+}
+
+/**
+ * Pre-validate that all `hiveIds` (or single `hiveId`) in a tool input actually
+ * exist for the current user. This catches the most common model mistake —
+ * passing hive NAMES/numbers (e.g. 1402, 1614) instead of real hiveIds —
+ * before* we invoke the underlying controller, which would otherwise fail
+ * either silently (0 rows affected) or with a confusing 500 ("No current
+ * location found for hive").
+ *
+ * Returns the list of hive IDs that were NOT found; an empty array means OK.
+ */
+async function findUnknownHiveIds(
+  context: WizBeeContext,
+  hiveIds: number[],
+): Promise<number[]> {
+  if (hiveIds.length === 0)
+    return [];
+  const unique = Array.from(new Set(hiveIds.filter(id => Number.isFinite(id))));
+  if (unique.length === 0)
+    return hiveIds;
+
+  const db = KyselyServer.getInstance().db;
+  const rows = await db
+    .selectFrom('hives')
+    .select('id')
+    .where('user_id', '=', context.userId)
+    .where('id', 'in', unique)
+    .execute();
+  const found = new Set(rows.map(r => Number(r.id)));
+  return unique.filter(id => !found.has(id));
+}
+
+/**
+ * Same as above for a single `apiaryId`.
+ */
+async function isUnknownApiaryId(
+  context: WizBeeContext,
+  apiaryId: number,
+): Promise<boolean> {
+  if (!Number.isFinite(apiaryId))
+    return true;
+  const db = KyselyServer.getInstance().db;
+  const row = await db
+    .selectFrom('apiaries')
+    .select('id')
+    .where('user_id', '=', context.userId)
+    .where('id', '=', apiaryId)
+    .executeTakeFirst();
+  return !row;
+}
+
+/**
+ * Run ownership pre-checks for a tool, based on its declared TOOL_META and
+ * the shape of the input. Returns a ToolErrorEnvelope on failure, null on OK.
+ *
+ * We only check fields we can introspect statically (`hiveIds`, `hiveId`,
+ * `apiaryId`). Tools whose meta flags don't line up with the input shape
+ * simply pass through.
+ */
+async function preValidateOwnership(
+  toolName: string,
+  input: any,
+  context: WizBeeContext,
+): Promise<ToolErrorEnvelope | null> {
+  const meta = TOOL_META[toolName];
+  if (!meta || !input || typeof input !== 'object')
+    return null;
+
+  try {
+    if (meta.usesHiveIds) {
+      const raw = Array.isArray(input.hiveIds)
+        ? input.hiveIds
+        : typeof input.hiveId === 'number' ? [input.hiveId] : null;
+      if (raw && raw.length > 0) {
+        const unknown = await findUnknownHiveIds(context, raw.map((n: any) => Number(n)));
+        if (unknown.length > 0) {
+          const { hint, suggested_next_tool } = buildHint(toolName, 'not_found');
+          return {
+            ok: false,
+            error: {
+              code: 'not_found',
+              status: 404,
+              message: `The following hiveIds do not belong to this user: ${unknown.join(', ')}. These look like hive NAMES / numbers, not database hiveIds. Resolve real hiveIds via findHives first.`,
+              hint,
+              suggested_next_tool: suggested_next_tool ?? 'findHives',
+            },
+          };
+        }
+      }
+    }
+
+    if (meta.usesApiaryId && typeof input.apiaryId === 'number') {
+      if (await isUnknownApiaryId(context, input.apiaryId)) {
+        const { hint } = buildHint(toolName, 'not_found');
+        return {
+          ok: false,
+          error: {
+            code: 'not_found',
+            status: 404,
+            message: `apiaryId ${input.apiaryId} does not belong to this user. Resolve the real apiaryId first.`,
+            hint,
+            suggested_next_tool: 'listApiariesHives',
+          },
+        };
+      }
+    }
+  }
+  catch (e) {
+    // A failing pre-check must never block the tool — if the DB lookup errors
+    // for any reason, just skip validation and let the controller decide.
+    Logger.getInstance().log('warn', `preValidateOwnership for ${toolName} failed — skipping`, e);
+  }
+
+  return null;
+}
+
+/**
+ * Maximum serialized size of a tool's result, in characters.
+ *
+ * Context budget math for `mistral-medium-2508` (131k tokens):
+ *   - System prompt + tool schemas + history ≈ 15-25k tokens
+ *   - Safe headroom for reasoning + output ≈ 10k tokens
+ *   - That leaves ≥95k tokens for ALL tool results combined.
+ * At ~4 chars/token, a single tool result above ~40 KB risks blowing the
+ * window after 2-3 calls. We cap hard at 40 KB and instruct the model to
+ * narrow its query or use statistics tools instead.
+ */
+const MAX_TOOL_RESULT_CHARS = 40_000;
+
+/**
+ * If the result is too large to safely feed back into the LLM context,
+ * return a structured error envelope telling the model to narrow the query.
+ */
+function enforceResultSize(toolName: string, result: unknown): unknown {
+  if (result && typeof result === 'object' && (result as any).ok === false) {
+    return result;
+  }
+  let size: number;
+  try {
+    size = JSON.stringify(result).length;
+  }
+  catch {
+    return result;
+  }
+  if (size <= MAX_TOOL_RESULT_CHARS) {
+    return result;
+  }
+
+  const hintByTool: Record<string, string> = {
+    fetchTasks: 'The returned dataset is too large (likely a multi-year range). For multi-year summaries use getHarvestStatistics, getFeedStatistics or getTreatmentStatistics. For detail views, narrow the date range to a single year or a specific apiaryId, or reduce limit.',
+    getHiveTasks: 'Tasks for this hive/apiary are too many to return in full. Ask the user which year or which task type they are interested in, or use the statistics tools.',
+    fetchCharges: 'Too many charges to return. Add a search query (q) or reduce limit.',
+    listApiariesHives: 'Apiary/hive list is unexpectedly large. Consider setting includeInactive: false or filtering with q.',
+    btreeDocumentation: 'Documentation payload is too large. Summarize only the section relevant to the user\'s question instead of returning the whole document.',
+  };
+  const hint = hintByTool[toolName]
+    ?? 'The result is too large to process. Ask the user to narrow the request (shorter date range, specific apiary, or a statistics tool instead of a detail fetch).';
+
+  Logger.getInstance().log(
+    'warn',
+    `Tool ${toolName} result oversized: ${size} chars > ${MAX_TOOL_RESULT_CHARS} — replacing with structured error`,
+    undefined,
+  );
+
+  const envelope: ToolErrorEnvelope = {
+    ok: false,
+    error: {
+      code: 'validation_error',
+      status: 413,
+      message: `Result too large (${Math.round(size / 1024)} KB). Narrow the query or use a statistics tool.`,
+      hint,
+      suggested_next_tool: toolName === 'fetchTasks' || toolName === 'getHiveTasks'
+        ? 'getHarvestStatistics'
+        : undefined,
+    },
+  };
+  return envelope;
+}
+
+/**
+ * Wrap a tool's `execute` so it never throws and returns structured errors.
+ */
+function wrapExecute<TArgs>(
+  toolName: string,
+  context: WizBeeContext,
+  exec: (input: TArgs, opts?: any) => Promise<unknown>,
+): (input: TArgs, opts?: any) => Promise<unknown> {
+  return async (input, opts) => {
+    // Fail fast on obviously-wrong hive/apiary IDs before we even touch the
+    // real controller. This turns the common "model passed hive NAME as id"
+    // mistake into a clean `not_found` envelope with a findHives suggestion,
+    // instead of a confusing downstream 500.
+    const preError = await preValidateOwnership(toolName, input, context);
+    if (preError) {
+      Logger.getInstance().log('warn', `Tool ${toolName} rejected by preValidateOwnership`, { input });
+      return preError;
+    }
+
+    try {
+      const raw = await exec(input, opts);
+      const result = enforceResultSize(toolName, raw);
+      const silent = detectNoRecordsAffected(toolName, result);
+      if (silent) {
+        Logger.getInstance().log('warn', `Tool ${toolName} returned no_records_affected`, { input });
+        return silent;
+      }
+      return result;
+    }
+    catch (err) {
+      const { code, status, message } = classifyError(err);
+      const { hint, suggested_next_tool } = buildHint(toolName, code);
+      // Full error goes to server logs; only sanitized fields go to the model.
+      Logger.getInstance().log(
+        status >= 500 ? 'error' : 'warn',
+        `Tool ${toolName} failed: ${status} ${code}`,
+        err,
+      );
+      // If the upstream message is just the generic http-errors default
+      // ("Not Found", "Forbidden", "Unauthorized", "Bad Request") — which carries
+      // zero signal — prefer the tool-specific hint when we have one.
+      const isGenericMessage = !message
+        || GENERIC_HTTP_MESSAGE_RE.test(message.trim());
+      const finalMessage = (isGenericMessage && hint) ? hint : message;
+      const envelope: ToolErrorEnvelope = {
+        ok: false,
+        error: {
+          code,
+          status,
+          message: finalMessage,
+          hint: finalMessage === hint ? undefined : hint,
+          suggested_next_tool,
+        },
+      };
+      return envelope;
+    }
+  };
+}
+
+/**
+ * Wrap every tool in a tools record with the error-handling shim.
+ */
+function wrapTools(context: WizBeeContext, tools: Record<string, WizBeeTool>): Record<string, WizBeeTool> {
+  const out: Record<string, WizBeeTool> = {};
+  for (const [name, t] of Object.entries(tools)) {
+    const original = t.execute;
+    if (typeof original === 'function') {
+      out[name] = { ...t, execute: wrapExecute(name, context, original.bind(t)) };
+    }
+    else {
+      out[name] = t;
+    }
+  }
+  return out;
 }
 
 /**
@@ -105,17 +642,17 @@ const taskControllers: Record<TaskType, any> = {
  * Create WizBee tools with injected context
  * Vercel AI SDK tools need the context at runtime, so we create them dynamically
  */
-export function createWizBeeTools(context: WizBeeContext): Record<string, Tool> {
-  return {
+export function createWizBeeTools(context: WizBeeContext): Record<string, WizBeeTool> {
+  return wrapTools(context, {
     /**
      * List Apiaries and Hives Tool
      * Returns all apiaries with their associated hives for the current user
      */
     listApiariesHives: tool({
-      description: 'List all apiaries and their hives for the current user. Returns a structured JSON with apiary details and associated hives.',
+      description: 'List all apiaries and their colonies / hives for the current user. Returns a structured JSON with apiary details and associated colonies / hives. Use this to enumerate apiaries or to resolve apiaryIds. To look up a specific colony / hive by its number/name (e.g. "Volk 2402"), use findHives instead — the q parameter here does NOT search colony / hive names.',
       inputSchema: z.object({
         includeInactive: z.boolean().optional().default(false).describe('Include inactive apiaries'),
-        q: z.string().optional().describe('Search query to filter apiaries by name'),
+        q: z.string().optional().describe('Search query to filter APIARIES by name / description / note. Does NOT filter by colony / hive name or number — use the findHives tool for that.'),
       }),
       execute: async (input) => {
         const req = createMockRequest(context, {
@@ -148,6 +685,55 @@ export function createWizBeeTools(context: WizBeeContext): Record<string, Tool> 
         );
 
         return result;
+      },
+    }),
+
+    /**
+     * Find Hives Tool
+     * Search hives by name / number (the user-visible "Volk" number) or by apiary name.
+     * This is the correct tool to resolve a hive when the user mentions a hive number
+     * like "Volk 2402" or "hive 1608". The q in listApiariesHives only filters apiaries.
+     */
+    findHives: tool({
+      description: 'Find colonies / hives (Bienenvölker) by their user-visible name/number (e.g. "2402", "1608") or by the apiary name they are located in. Use this whenever the user refers to a specific colony / hive ("Volk X", "colony X", "hive X", "Stock X", "Bienenvolk X") so you can resolve the real hiveId and apiaryId. Returns matching colonies / hives with id, name, apiary_id and apiary name. Prefer this over listApiariesHives for colony / hive lookups.',
+      inputSchema: z.object({
+        q: z.string().describe('Colony / hive name/number (Volk-Nummer) or apiary name substring to search for (case-insensitive).'),
+        includeInactive: z.boolean().optional().default(false).describe('Include inactive colonies / hives (modus=false)'),
+        includeDeleted: z.boolean().optional().default(false).describe('Include soft-deleted colonies / hives'),
+        limit: z.number().optional().default(50).describe('Maximum number of colonies / hives to return (default 50).'),
+      }),
+      execute: async (input) => {
+        const req = createMockRequest(context, {
+          query: {
+            q: input.q,
+            deleted: input.includeDeleted ?? false,
+            modus: input.includeInactive ? undefined : true,
+            limit: input.limit ?? 50,
+            offset: 0,
+            details: false,
+          },
+        });
+
+        const raw = await HiveController.get(req, createMockReply());
+        const results: any[] = Array.isArray(raw?.results) ? raw.results : [];
+
+        // Return a compact, purpose-shaped payload so the model sees the IDs
+        // it actually needs (hiveId + apiaryId) without 20+ unrelated fields.
+        const hives = results.map((h: any) => ({
+          hiveId: h.id,
+          name: h.name,
+          position: h.position,
+          modus: h.modus,
+          apiary_id: h.hive_location?.apiary_id ?? null,
+          apiary_name: h.hive_location?.apiary_name ?? null,
+        }));
+
+        return {
+          query: input.q,
+          total: typeof raw?.total === 'number' ? raw.total : hives.length,
+          returned: hives.length,
+          hives,
+        };
       },
     }),
 
@@ -291,7 +877,7 @@ export function createWizBeeTools(context: WizBeeContext): Record<string, Tool> 
      * Retrieves tasks (feeds, treatments, harvests, checkups, todos) within a date range
      */
     fetchTasks: tool({
-      description: 'Fetch tasks (feed, treatment, harvest, checkup, todo) for the user within a specified date range. Useful for viewing upcoming and past beekeeping activities.',
+      description: 'Fetch individual task records (feed, treatment, harvest, checkup, todo) within a date range. Useful for viewing specific upcoming/recent activities. IMPORTANT: for multi-year summaries or "what did I do last N years" style questions, prefer the statistics tools (getHarvestStatistics, getFeedStatistics, getTreatmentStatistics, getHiveStatistics) which return aggregates in a fraction of the tokens. Only fetch raw tasks when the user needs concrete records.',
       inputSchema: z.object({
         task: z.enum(TASK_TYPES).describe('Type of task to fetch'),
         dateStart: z.string().optional().describe('Start date in YYYY-MM-DD format (default: 2 months ago)'),
@@ -307,8 +893,8 @@ export function createWizBeeTools(context: WizBeeContext): Record<string, Tool> 
         const endDate = input.dateEnd ?? dateEnd;
 
         const filterArray: any[] = [{ date: { from: startDate, to: endDate } }];
-        if (input.apiaryId) {
-          filterArray.push({ [`${input.task}.apiary_id`]: input.apiaryId });
+        if (input.apiaryId && input.task !== 'todo') {
+          filterArray.push({ [`${input.task}_apiary.apiary_id`]: input.apiaryId });
         }
         const filters = JSON.stringify(filterArray);
 
@@ -317,6 +903,7 @@ export function createWizBeeTools(context: WizBeeContext): Record<string, Tool> 
           query: {
             limit: input.limit,
             offset: 0,
+            ...(input.apiaryId && input.task === 'todo' && { apiary_id: input.apiaryId }),
             filters,
             done: input.includeDone ? undefined : false,
             deleted: false,
@@ -325,6 +912,9 @@ export function createWizBeeTools(context: WizBeeContext): Record<string, Tool> 
 
         const result = await Controller.get(req, createMockReply());
 
+        // Return full records as-is. If the payload is too big for the model
+        // context, the wrapper's enforceResultSize() converts it to a
+        // structured "result_too_large" error with a hint to narrow the query.
         return {
           task: input.task,
           count: result.results.length,
@@ -350,13 +940,11 @@ export function createWizBeeTools(context: WizBeeContext): Record<string, Tool> 
         amount: z.number().optional().describe('Feed quantity'),
         note: z.string().max(2000).optional().describe('Optional notes'),
         done: z.boolean().optional().describe('Whether the feed is completed'),
-        repeat: z.number().min(0).max(10).optional().describe('Number of times to repeat'),
-        interval: z.number().min(0).max(365).optional().describe('Days between repeated entries'),
       }),
       execute: async (input) => {
         const { hiveIds, typeId, ...rest } = input;
         const req = createMockRequest(context, {
-          body: { ...rest, hive_ids: hiveIds, ...(typeId !== undefined && { type_id: typeId }) },
+          body: { ...rest, hive_ids: hiveIds, ...(typeId !== undefined && { type_id: typeId }), repeat: 0, interval: 0 },
         });
         const result = await FeedController.post(req, createMockReply());
         const createdCount = Array.isArray(result) ? result.length : 1;
@@ -412,13 +1000,11 @@ export function createWizBeeTools(context: WizBeeContext): Record<string, Tool> 
         charge: z.string().max(24).optional().describe('Charge/batch reference'),
         note: z.string().max(2000).optional().describe('Optional notes'),
         done: z.boolean().optional().describe('Whether the harvest is completed'),
-        repeat: z.number().min(0).max(10).optional().describe('Number of times to repeat'),
-        interval: z.number().min(0).max(365).optional().describe('Days between repeated entries'),
       }),
       execute: async (input) => {
         const { hiveIds, typeId, ...rest } = input;
         const req = createMockRequest(context, {
-          body: { ...rest, hive_ids: hiveIds, ...(typeId !== undefined && { type_id: typeId }) },
+          body: { ...rest, hive_ids: hiveIds, ...(typeId !== undefined && { type_id: typeId }), repeat: 0, interval: 0 },
         });
         const result = await HarvestController.post(req, createMockReply());
         const createdCount = Array.isArray(result) ? result.length : 1;
@@ -478,8 +1064,6 @@ export function createWizBeeTools(context: WizBeeContext): Record<string, Tool> 
         temperature: z.number().optional().describe('Temperature during treatment'),
         note: z.string().max(2000).optional().describe('Optional notes'),
         done: z.boolean().optional().describe('Whether the treatment is completed'),
-        repeat: z.number().min(0).max(10).optional().describe('Number of times to repeat'),
-        interval: z.number().min(0).max(365).optional().describe('Days between repeated entries'),
       }),
       execute: async (input) => {
         const { hiveIds, typeId, diseaseId, vetId, ...rest } = input;
@@ -490,6 +1074,8 @@ export function createWizBeeTools(context: WizBeeContext): Record<string, Tool> 
             ...(typeId !== undefined && { type_id: typeId }),
             ...(diseaseId !== undefined && { disease_id: diseaseId }),
             ...(vetId !== undefined && { vet_id: vetId }),
+            repeat: 0,
+            interval: 0,
           },
         });
         const result = await TreatmentController.post(req, createMockReply());
@@ -554,8 +1140,6 @@ export function createWizBeeTools(context: WizBeeContext): Record<string, Tool> 
         typeId: z.number().optional().describe('Checkup type ID'),
         note: z.string().max(2000).optional().describe('Optional notes'),
         done: z.boolean().optional().describe('Whether the checkup is completed'),
-        repeat: z.number().min(0).max(10).optional().describe('Number of times to repeat'),
-        interval: z.number().min(0).max(365).optional().describe('Days between repeated entries'),
         queen: z.boolean().optional().describe('Queen present'),
         queencells: z.boolean().optional().describe('Queen cells present'),
         eggs: z.boolean().optional().describe('Eggs present'),
@@ -584,6 +1168,8 @@ export function createWizBeeTools(context: WizBeeContext): Record<string, Tool> 
             ...(typeId !== undefined && { type_id: typeId }),
             ...(cappedBrood !== undefined && { capped_brood: cappedBrood }),
             ...(calmComb !== undefined && { calm_comb: calmComb }),
+            repeat: 0,
+            interval: 0,
           },
         });
         const result = await CheckupController.post(req, createMockReply());
@@ -661,8 +1247,6 @@ export function createWizBeeTools(context: WizBeeContext): Record<string, Tool> 
         date: z.string().describe('Date for the todo in YYYY-MM-DD format'),
         note: z.string().max(2000).optional().describe('Optional longer description or notes'),
         apiaryId: z.number().optional().describe('Optional apiary to associate with this todo'),
-        repeat: z.number().min(0).max(10).optional().describe('Number of times to repeat this todo'),
-        interval: z.number().min(0).max(365).optional().describe('Days between repeated todos'),
       }),
       execute: async (input) => {
         const req = createMockRequest(context, {
@@ -671,8 +1255,8 @@ export function createWizBeeTools(context: WizBeeContext): Record<string, Tool> 
             date: input.date,
             note: input.note,
             apiary_id: input.apiaryId,
-            repeat: input.repeat ?? 0,
-            interval: input.interval ?? 0,
+            repeat: 0,
+            interval: 0,
             done: false,
           },
         });
@@ -1040,6 +1624,8 @@ export function createWizBeeTools(context: WizBeeContext): Record<string, Tool> 
      * Sugar Water Calculator Tool
      * Calculates sugar water mixture for bee feeding
      */
+    // NOTE: any tool added to this record is automatically wrapped with the
+    // structured-error envelope via wrapTools() at the end of this function.
     calculateSugarWater: tool({
       description: 'Calculate sugar water mixture for bee feeding. Provide either sugar or water amount to calculate the mixture. Returns the required amounts and expected stored value.',
       inputSchema: z.object({
@@ -1099,7 +1685,7 @@ export function createWizBeeTools(context: WizBeeContext): Record<string, Tool> 
         };
       },
     }),
-  };
+  });
 }
 
 /**
@@ -1148,14 +1734,14 @@ export const wizBeeToolDefinitions = [
   },
   {
     name: 'fetchTasks',
-    description: 'Fetch tasks (feed, treatment, harvest, checkup, todo) within a date range.',
+    description: 'Fetch individual task records (feed, treatment, harvest, checkup, todo) within a date range. For multi-year summaries prefer the statistics tools.',
     parameters: z.object({
       task: z.enum(TASK_TYPES),
       dateStart: z.string().optional(),
       dateEnd: z.string().optional(),
       apiaryId: z.number().optional(),
       includeDone: z.boolean().optional().default(true),
-      limit: z.number().optional().default(1000),
+      limit: z.number().optional().default(200),
     }),
   },
   { name: 'createFeed', description: 'Create a new feed record for one or more hives.', parameters: z.object({ hiveIds: z.array(z.number()).min(1), date: z.string(), enddate: z.string().optional(), typeId: z.number().optional(), amount: z.number().optional(), note: z.string().max(2000).optional(), done: z.boolean().optional(), repeat: z.number().min(0).max(10).optional(), interval: z.number().min(0).max(365).optional() }) },
@@ -1308,13 +1894,9 @@ export async function executeWizBeeTool(
   const tools = createWizBeeTools(context);
   const toolFn = tools[toolName];
 
-  if (!toolFn || !('execute' in toolFn) || typeof toolFn.execute !== 'function') {
+  if (!toolFn || typeof toolFn.execute !== 'function') {
     throw new Error(`Unknown tool: ${toolName}`);
   }
 
-  return toolFn.execute(input, {
-    abortSignal: undefined as any,
-    toolCallId: `api-${Date.now()}`,
-    messages: [],
-  });
+  return toolFn.execute(input);
 }

@@ -35,6 +35,25 @@ export default function routes(
     WizBeeController.getWizBeeUsage,
   );
 
+  /**
+   * Voice-to-text for the WizBee chat input.
+   *
+   * Accepts a multipart upload with fields:
+   *   - `audio`    : audio file (webm/ogg/mp3/wav/m4a), <= 10 MB (global multipart limit)
+   *   - `language` : optional UI language hint ('de', 'en', 'fr', 'it')
+   *   - `fileName` : optional original file name (extension helps Voxtral pick the demuxer)
+   *
+   * Returns `{ text, language }`. Write-level role required because voice
+   * transcriptions are billed to the account's WizBee budget.
+   */
+  server.post(
+    '/transcribe',
+    {
+      preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
+    },
+    WizBeeController.transcribeWizBeeAudio,
+  );
+
   // Register WizBee tools routes
   for (const toolDef of wizBeeToolDefinitions) {
     server.post(`/tools/${toolDef.name}`, {

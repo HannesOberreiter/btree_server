@@ -1,0 +1,6 @@
+<title>Votre facture %invoice_number%</title>
+Cher apiculteur,
+
+merci pour votre soutien. Vous trouverez ci-joint notre facture au format PDF (allemand). Le temps premium a été automatiquement ajouté à votre compte, sinon veuillez vous déconnecter et vous reconnecter à l'application.
+
+Montant %amount% EUR

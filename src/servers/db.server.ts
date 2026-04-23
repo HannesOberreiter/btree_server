@@ -51,7 +51,7 @@ export class DatabaseServer {
       this.logger.log('debug', 'Closed database connection', {});
     }
     catch (error) {
-      this.logger.log('error', 'Database closing error', { error });
+      this.logger.log('error', `Database closing error: ${error instanceof Error ? error.message : String(error)}`, {});
     }
   }
 }

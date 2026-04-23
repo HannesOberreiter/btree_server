@@ -20,5 +20,7 @@ export default defineConfig({
     },
     fileParallelism: false,
     testTimeout: 10000,
+    teardownTimeout: 15000,
+    reporters: ['default'],
   },
 });

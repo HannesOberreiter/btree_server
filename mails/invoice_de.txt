@@ -1,0 +1,8 @@
+<title>Ihre Rechnung %invoice_number%</title>
+Liebe/r Imker/in,
+
+vielen Dank für deine Unterstützung unserer Imker Applikation. Die Premium Zeit sollte bereits automatisch gutgeschrieben worden sein, ansonsten versuchen Sie sich bitte in der Applikation aus- und neu einzuloggen.
+
+Anbei Ihre Rechnung als PDF.
+
+Betrag %amount% EUR

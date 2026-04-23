@@ -1,0 +1,6 @@
+<title>La tua fattura %invoice_number%</title>
+Caro apicoltore,
+
+grazie per il tuo supporto. In allegato trovi la nostra fattura come file PDF (tedesco). Il tempo premium è stato aggiunto automaticamente al tuo account, altrimenti prova a disconnetterti e ad accedere nuovamente all'applicazione.
+
+Importo %amount% EUR

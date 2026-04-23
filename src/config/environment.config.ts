@@ -29,14 +29,14 @@ class EnvironmentConfiguration {
 
       && Object.hasOwn(ENVIRONMENT, process.argv[3])
     ) {
-      this.environment = ENVIRONMENT[process.argv[3]];
+      this.environment = ENVIRONMENT[process.argv[3] as keyof typeof ENVIRONMENT];
     }
     else if (
       process.env.ENVIRONMENT
 
       && Object.hasOwn(ENVIRONMENT, process.env.ENVIRONMENT)
     ) {
-      this.environment = process.env.ENVIRONMENT as keyof typeof ENVIRONMENT;
+      this.environment = ENVIRONMENT[process.env.ENVIRONMENT as keyof typeof ENVIRONMENT];
     }
     if (process.env.SERVER && ['eu', 'us'].includes(process.env.SERVER)) {
       this.server = process.env.SERVER as 'eu' | 'us';
@@ -63,10 +63,10 @@ class EnvironmentConfiguration {
 EnvironmentConfiguration.load();
 
 const env = EnvironmentConfiguration.environment;
-const port = Number.parseInt(process.env.PORT);
+const port = Number.parseInt(process.env.PORT!);
 const url = process.env.URL;
 const frontend = process.env.FRONTEND;
-const authorized = process.env.AUTHORIZED;
+const authorized = process.env.AUTHORIZED!;
 const isContainer = !!process.env.CONTAINER; // Docker container, we need to use different ports
 const isChild = process.env.IS_CHILD ? process.env.IS_CHILD === 'true' : false; // Child node application, used for scaling, without cronjobs
 
@@ -84,7 +84,7 @@ const paypalBase
     ? 'https://api-m.paypal.com'
     : 'https://api-m.sandbox.paypal.com';
 
-const stripeSecret = process.env.STRIPE_SECRET_KEY;
+const stripeSecret = process.env.STRIPE_SECRET_KEY!;
 
 const mollieApiKey = process.env.MOLLIE_API_KEY;
 
@@ -106,22 +106,22 @@ const appleOAuth = {
 };
 
 const basicLimit = {
-  hive: Number.parseInt(process.env.LIMIT_HIVE),
-  apiary: Number.parseInt(process.env.LIMIT_APIARY),
-  scale: Number.parseInt(process.env.LIMIT_SCALE),
+  hive: Number.parseInt(process.env.LIMIT_HIVE!),
+  apiary: Number.parseInt(process.env.LIMIT_APIARY!),
+  scale: Number.parseInt(process.env.LIMIT_SCALE!),
 };
 
 const totalLimit = {
-  hive: Number.parseInt(process.env.TOTAL_LIMIT_HIVE),
-  apiary: Number.parseInt(process.env.TOTAL_LIMIT_APIARY),
-  scale: Number.parseInt(process.env.TOTAL_LIMIT_SCALE),
+  hive: Number.parseInt(process.env.TOTAL_LIMIT_HIVE!),
+  apiary: Number.parseInt(process.env.TOTAL_LIMIT_APIARY!),
+  scale: Number.parseInt(process.env.TOTAL_LIMIT_SCALE!),
 };
 
 const cronjobTimer = process.env.CRONJOB ? process.env.CRONJOB : '0 11 */1 * *';
 
 const redisConfig = {
   host: process.env.REDIS_HOSTNAME,
-  port: Number.parseInt(process.env.REDIS_PORT),
+  port: Number.parseInt(process.env.REDIS_PORT!),
   user: process.env.REDIS_USERNAME,
   password: process.env.REDIS_PASSWORD ?? '',
 };
@@ -136,10 +136,10 @@ const knexConfig = {
     database: process.env.DB_NAME,
     user: process.env.DB_USERNAME,
     password: process.env.DB_PASSWORD,
-    port: Number.parseInt(process.env.DB_PORT),
+    port: Number.parseInt(process.env.DB_PORT!),
     charset: 'utf8mb4',
     timezone: 'UTC',
-    typeCast(field, next) {
+    typeCast(field: any, next: any) {
       // https://github.com/Vincit/objection.js/issues/174#issuecomment-424873063
       // Convert 1 to true, 0 to false, and leave null alone
       if (field.type === 'TINY' && field.length === 1) {
@@ -153,11 +153,11 @@ const knexConfig = {
   },
   debug: env === ENVIRONMENT.development,
   pool: {
-    min: Number.parseInt(process.env.DB_POOL_MIN),
-    max: Number.parseInt(process.env.DB_POOL_MAX),
-    afterCreate(conn, done) {
+    min: Number.parseInt(process.env.DB_POOL_MIN!),
+    max: Number.parseInt(process.env.DB_POOL_MAX!),
+    afterCreate(conn: any, done: any) {
       // Extend max group concant mainly for calendar view if many ids are concated
-      conn.query('SET SESSION group_concat_max_len = 100000;', (err) => {
+      conn.query('SET SESSION group_concat_max_len = 100000;', (err: any) => {
         done(err, conn);
       });
     },
@@ -171,6 +171,17 @@ const knexConfig = {
   },
 };
 
+const dkimSelector = process.env.MAIL_DKIM_SELECTOR;
+const dkimPrivateRaw = process.env.MAIL_DKIM_PRIVATE;
+const dkim
+  = dkimSelector && dkimPrivateRaw && dkimPrivateRaw !== 'false'
+    ? {
+        domainName: 'btree.at',
+        keySelector: dkimSelector,
+        privateKey: Buffer.from(dkimPrivateRaw, 'base64').toString('ascii'),
+      }
+    : undefined;
+
 const mailConfig = {
   host: process.env.MAIL_SMTP,
   port: Number(process.env.MAIL_PORT),
@@ -179,16 +190,7 @@ const mailConfig = {
     user: process.env.MAIL_FROM,
     pass: process.env.MAIL_PASSWORD,
   },
-  dkim: {
-    domainName: process.env.MAIL_DKIM_SELECTOR ? 'btree.at' : '',
-    keySelector: process.env.MAIL_DKIM_SELECTOR,
-    privateKey:
-      process.env.MAIL_DKIM_PRIVATE === 'false'
-        ? ''
-        : Buffer.from(process.env.MAIL_DKIM_PRIVATE, 'base64').toString(
-            'ascii',
-          ),
-  },
+  ...(dkim ? { dkim } : {}),
 };
 
 const openAI = {
@@ -207,8 +209,8 @@ const serverLocations = ['eu', 'us'];
 function isServerLocationValid(server: string) {
   return serverLocations.includes(server);
 }
-const serverLocation = isServerLocationValid(process.env.SERVER_LOCATION)
-  ? process.env.SERVER_LOCATION
+const serverLocation = isServerLocationValid(process.env.SERVER_LOCATION!)
+  ? process.env.SERVER_LOCATION!
   : 'eu';
 
 export {

@@ -54,7 +54,7 @@ export class Cron {
           await this.run();
         }
         catch (e) {
-          this.logger.log('error', e, { label: 'CronJob' });
+          this.logger.log('error', e instanceof Error ? e.message : String(e), { label: 'CronJob' });
         }
       },
     );
@@ -69,23 +69,23 @@ export class Cron {
 
     reminderDeletion()
       .then(res => this.Logging(res))
-      .catch(e => this.logger.log('error', e, { label: 'CronJob' }));
+      .catch(e => this.logger.log('error', e instanceof Error ? e.message : String(e), { label: 'CronJob' }));
 
     reminderVIS()
       .then(res => this.Logging(res))
-      .catch(e => this.logger.log('error', e, { label: 'CronJob' }));
+      .catch(e => this.logger.log('error', e instanceof Error ? e.message : String(e), { label: 'CronJob' }));
 
     await reminderPremium()
       .then(res => this.Logging(res))
-      .catch(e => this.logger.log('error', e, { label: 'CronJob' }));
+      .catch(e => this.logger.log('error', e instanceof Error ? e.message : String(e), { label: 'CronJob' }));
 
     fetchObservations('Vespa velutina')
       .then(res => this.Logging(res))
-      .catch(e => this.logger.log('error', e, { label: 'CronJob' }))
+      .catch(e => this.logger.log('error', e instanceof Error ? e.message : String(e), { label: 'CronJob' }))
       .finally(() =>
         fetchObservations('Aethina tumida')
           .then(res => this.Logging(res))
-          .catch(e => this.logger.log('error', e, { label: 'CronJob' })),
+          .catch(e => this.logger.log('error', e instanceof Error ? e.message : String(e), { label: 'CronJob' })),
       );
   }
 

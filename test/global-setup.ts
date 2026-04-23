@@ -63,4 +63,8 @@ export async function teardown() {
   catch (e) {
     console.error(e);
   }
+  // Third-party libs (pino rotating-file-stream, nodemailer SMTP transport,
+  // @fastify/compress zlib streams, redis reconnect timers) leave handles open
+  // that cannot be cleanly closed. Force exit after a short grace period.
+  setTimeout(() => process.exit(0), 1000).unref();
 }

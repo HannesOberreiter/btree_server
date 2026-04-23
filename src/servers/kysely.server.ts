@@ -86,7 +86,7 @@ export class KyselyServer {
       this.logger.log('debug', 'Closed database connection', {});
     }
     catch (error) {
-      this.logger.log('error', 'Database closing error', { error });
+      this.logger.log('error', `Database closing error: ${error instanceof Error ? error.message : String(error)}`, {});
     }
   }
 }
@@ -96,8 +96,28 @@ export class KyselyServer {
  * for INSERT and UPDATE operations, replicating Objection.js ExtModel behavior.
  */
 class TimestampPlugin implements KyselyPlugin {
+  /**
+   * Tables that do NOT have created_at / updated_at columns.
+   * The plugin will skip timestamp injection for these tables.
+   */
+  private static readonly SKIP_TABLES = new Set<string>([
+    'agent_keys',
+  ]);
+
+  private getTableName(node: any): string | null {
+    // InsertQueryNode → node.into.table.identifier.name
+    // UpdateQueryNode → node.table.table.identifier.name
+    const table = node.into?.table ?? node.table?.table;
+    return table?.identifier?.name ?? null;
+  }
+
   transformQuery(args: PluginTransformQueryArgs): RootOperationNode {
     const { node } = args;
+
+    const table = this.getTableName(node);
+    if (table && TimestampPlugin.SKIP_TABLES.has(table)) {
+      return node;
+    }
 
     if (node.kind === 'InsertQueryNode') {
       return this.handleInsert(node, args);

@@ -175,7 +175,7 @@ export class AppleAuth {
       response = await this.client.accessToken(code);
     }
     catch (error) {
-      this.logger.log('error', 'Apple accessToken failed', { error, code });
+      this.logger.log('error', `Apple accessToken failed: ${error instanceof Error ? error.message : String(error)}`, { code });
       throw new Error(`Apple token exchange failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
 
@@ -188,7 +188,7 @@ export class AppleAuth {
       idToken = jwt.decode(response.id_token);
     }
     catch (error) {
-      this.logger.log('error', 'JWT decode failed', { error, id_token: response.id_token });
+      this.logger.log('error', `JWT decode failed: ${error instanceof Error ? error.message : String(error)}`, { id_token: response.id_token });
       throw new Error('Failed to decode Apple ID token');
     }
 

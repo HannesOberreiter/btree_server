@@ -12,6 +12,7 @@ import {
 // https://developer.paypal.com/docs/api/orders/v2/#orders_create
 export async function createOrder(
   user_id: number,
+  bee_id: number,
   amount: number,
   quantity: number,
 ) {
@@ -41,7 +42,7 @@ export async function createOrder(
               },
             },
           ],
-          custom_id: JSON.stringify({ user_id, quantity }),
+          custom_id: JSON.stringify({ user_id, bee_id, quantity }),
           invoice_id: `ID: ${user_id}, Date: ${new Date().toISOString()}`,
           amount: {
             currency_code: 'EUR',

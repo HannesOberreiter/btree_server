@@ -270,7 +270,6 @@ export default class QueenController {
     const body = req.body as any;
     const ids = body.ids;
     const insert = { ...body.data };
-    console.log(insert);
     if (insert.hive_id) {
       insert.hive_id = insert.hive_id !== 'empty' ? insert.hive_id : null;
     }
