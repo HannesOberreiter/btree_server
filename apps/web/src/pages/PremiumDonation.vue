@@ -9,7 +9,6 @@ import PaymentMollie from '../components/PaymentMollie.vue';
 import PaymentPaypal from '../components/PaymentPaypal.vue';
 import PaymentStripe from '../components/PaymentStripe.vue';
 import { useApiFetch } from '../composables/useApi';
-import { useBackend } from '../composables/useBackend';
 import { useDateFormat } from '../composables/useDate';
 import { useNotification } from '../composables/useNotification';
 import { useAuthUserStore } from '../stores/auth';
@@ -22,9 +21,8 @@ const $q = useQuasar();
 const { t, locale } = useI18n();
 const api = useApiFetch();
 const notification = useNotification();
-const backend = useBackend();
 
-const isAppleStoreWrapper = computed(() => document.cookie.includes('iOS'));
+const isAppleStoreWrapper = computed(() => document.cookie.includes('iOS') === false);
 
 const payments = ref<{
 	company: {
@@ -57,10 +55,6 @@ const pricePageUrl = computed(() =>
 		: 'https://www.btree.at/price/',
 );
 
-const mailTo = computed(() => {
-	return `mailto:office@btree.at?subject=Invoice Request ${storeUser.company.name} (${storeUser.company.id}) [Server: ${backend.state.value}]&body=Please send me an invoice for the company "${storeUser.company.name}" (id: ${storeUser.company.id}) with a donation of ${donation.value} Euros for ${years.value} year(s). Response E-Mail: ${storeUser.user.email}`;
-});
-
 const isPremiumActive = computed(() => dayjs(storeUser.getPaidStatus.date) >= dayjs());
 
 const getPaidStatus = computed(() => {
@@ -77,6 +71,44 @@ const afterPayment = computed(() => {
 });
 
 const sum = computed(() => donation.value * years.value);
+
+function requestInvoice() {
+	$q.dialog({
+		title: t('membership.invoiceRequestTitle'),
+		message: t('membership.invoiceRequestMessage', {
+			sum: sum.value,
+			years: years.value,
+			email: storeUser.user.email,
+		}),
+		html: true,
+		ok: { label: t('confirm'), color: 'primary' },
+		cancel: { label: t('cancel'), flat: true, color: 'grey' },
+		persistent: true,
+	}).onOk(() => {
+		paidLoading.value = true;
+		api.post('/v1/company/invoice', {
+			amount: donation.value,
+			quantity: years.value,
+		}).then(
+			(data: any) => {
+				successPayment(data.paid);
+			},
+			(error: any) => {
+				paidLoading.value = false;
+				if (error.statusCode === 429) {
+					notification.open(
+						'warning',
+						t('membership.invoiceRequestRecent'),
+						true,
+					);
+				}
+				else {
+					notification.open('negative', error);
+				}
+			},
+		);
+	});
+}
 
 const yearOptions = computed(() =>
 	[1, 2, 3, 4, 5].map(n => ({ value: n, label: `${n} ${t('year')}` })),
@@ -170,17 +202,6 @@ api
 						<div class="text-h5 q-mb-md">
 							{{ $t('membership.title') }}
 						</div>
-
-						<!-- iOS warning -->
-						<q-banner
-							v-if="isAppleStoreWrapper"
-							class="bg-warning text-dark q-mb-md rounded-borders"
-							icon="fas fa-exclamation-triangle"
-						>
-							{{ $t('membership.appleStoreNote') }}
-							<br><br>
-							{{ $t('membership.appleStoreInvoice') }}
-						</q-banner>
 
 						<!-- Current status -->
 						<div class="q-mb-sm text-body2">
@@ -356,19 +377,27 @@ api
 										</q-expansion-item>
 									</q-list>
 								</template>
+								<q-banner
+									v-else
+									class="bg-warning text-dark q-mb-md rounded-borders"
+									icon="fas fa-exclamation-triangle"
+								>
+									{{ $t('membership.appleStoreNote') }}
+									<br><br>
+									{{ $t('membership.appleStoreInvoice') }}
+								</q-banner>
 
 								<div class="text-overline text-grey-7 q-mt-md q-mb-xs">
 									{{ $t('membership.otherOptions') }}
 								</div>
 								<BtnBaseGroup>
 									<BtnBase
-										label="office@btree.at"
-										icon="fas fa-envelope"
+										:label="$t('membership.invoiceRequestButton')"
+										icon="fas fa-file-invoice"
 										color="grey"
-										:href="mailTo"
+										@click="requestInvoice"
 									/>
 									<BtnBase
-										v-if="!isAppleStoreWrapper"
 										icon="fas fa-ticket"
 										color="grey"
 										:label="$t('coupon')"
