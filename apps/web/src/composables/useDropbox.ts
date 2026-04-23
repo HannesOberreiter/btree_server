@@ -4,7 +4,7 @@ import { orderBy } from 'lodash-es';
 import { LoadingBar } from 'quasar';
 import { reactive } from 'vue';
 import { useRouter } from 'vue-router';
-import { isImage } from '../helpers';
+import { isImage, isVideo } from '../helpers';
 import { useApiFetch } from './useApi';
 import { useNotification } from './useNotification';
 
@@ -174,7 +174,7 @@ export function useServiceDropbox() {
 
 	async function renameFile(oldName: string, newName: string) {
 		let newNameExt = newName;
-		if (isImage(oldName)) {
+		if (isImage(oldName) || isVideo(oldName)) {
 			const oldFileExt = oldName.split('.').pop();
 			const newFileExt = newName.split('.').pop();
 			newNameExt
@@ -290,6 +290,27 @@ export function useServiceDropbox() {
 			.catch(e => console.error(e));
 	}
 
+	async function downloadBlob(id: string): Promise<{ blob: Blob; name: string } | null> {
+		LoadingBar.start();
+		state.isLoading = true;
+		if (!state.accessToken) {
+			await getAccessToken();
+		}
+		try {
+			const response = await dbx.filesDownload({ path: id });
+			LoadingBar.stop();
+			state.isLoading = false;
+			const data = response.result as any;
+			return { blob: data.fileBlob, name: data.name };
+		}
+		catch (e) {
+			LoadingBar.stop();
+			state.isLoading = false;
+			console.error(e);
+			return null;
+		}
+	}
+
 	return {
 		getThumbnail,
 		addAccount,
@@ -305,5 +326,6 @@ export function useServiceDropbox() {
 		uploadFile,
 		state,
 		download,
+		downloadBlob,
 	};
 }

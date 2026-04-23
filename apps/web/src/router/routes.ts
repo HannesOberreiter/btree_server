@@ -481,8 +481,9 @@ const routes: RouteRecordRaw[] = [
 				component: () => import('../pages/SettingCompany.vue'),
 			},
 			{
-				path: 'field',
+				path: 'field/:tab?',
 				name: 'setting-field',
+				props: true,
 				component: () => import('../pages/SettingField.vue'),
 			},
 			{

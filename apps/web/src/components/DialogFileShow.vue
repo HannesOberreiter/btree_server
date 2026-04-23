@@ -3,7 +3,7 @@ import round from 'lodash-es/round';
 import { useDialogPluginComponent } from 'quasar';
 import { ref, toRef, watch } from 'vue';
 import { useServiceDropbox } from '../composables/useDropbox';
-import { isImage } from '../helpers';
+import { isImage, isVideo } from '../helpers';
 import BtnBase from './BtnBase.vue';
 import BtnCloseDialog from './BtnCloseDialog.vue';
 import GlobalLoading from './GlobalLoading.vue';
@@ -52,33 +52,49 @@ function getService(value: string) {
 
 function serviceDropbox(value: string) {
 	useDropbox
-		.getThumbnail(value)
-		.then((response) => {
-			if (response === undefined) {
-				throw new TypeError('No response from Dropbox');
+		.getMeta(value)
+		.then((metaResponse) => {
+			const meta = metaResponse.result as any;
+			if (isVideo(meta.name)) {
+				// Videos don't support getThumbnail, download the file directly
+				return dbxDownloadForPreview(value, meta);
 			}
-			file.value = response.result;
-			display.value = isImage(file.value.name)
-				? URL.createObjectURL(file.value.fileBlob)
-				: null;
+			// For images, use getThumbnail as before
+			return useDropbox
+				.getThumbnail(value)
+				.then((response) => {
+					if (response === undefined) {
+						throw new TypeError('No response from Dropbox');
+					}
+					file.value = response.result;
+					display.value = isImage(file.value.name)
+						? URL.createObjectURL(file.value.fileBlob)
+						: null;
+				});
 		})
 		.catch((e) => {
-			if (e.status === 409) {
-				useDropbox
-					.getMeta(value)
-					.then(response => (file.value = response.result))
-					.catch((e) => {
-						file.value = true;
-						notFound.value = true;
-						console.error(e);
-					});
-			}
-			else {
-				file.value = true;
-				notFound.value = true;
-			}
+			file.value = true;
+			notFound.value = true;
 			console.error(e);
 		});
+}
+
+async function dbxDownloadForPreview(id: string, meta: any) {
+	try {
+		const response = await useDropbox.downloadBlob(id);
+		if (!response) {
+			file.value = true;
+			notFound.value = true;
+			return;
+		}
+		file.value = { ...meta, fileBlob: response.blob };
+		display.value = URL.createObjectURL(response.blob);
+	}
+	catch (e) {
+		file.value = true;
+		notFound.value = true;
+		console.error(e);
+	}
 }
 
 function serviceUrl(value: string) {
@@ -132,6 +148,13 @@ function onDownload(service: string, file: any) {
 						<q-img
 							:src="display"
 							style="width: 100%; height: 100%; border: none"
+						/>
+					</div>
+					<div v-else-if="isVideo(file.name) && display" class="col-12">
+						<video
+							:src="display"
+							controls
+							style="width: 100%; max-height: 500px"
 						/>
 					</div>
 					<div v-else class="col-12">

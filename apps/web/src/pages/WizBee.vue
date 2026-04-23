@@ -27,6 +27,11 @@ import WizBeeChat from '../components/WizBeeChat.vue';
 				<br>
 				API Service:
 				<a href="https://mistral.ai/" target="_blank">https://mistral.ai/</a>
+				<br>
+				{{ $t('agentKey.wizbeeLink') }}
+				<router-link to="/setting/profile/agent-keys">
+					{{ $t('agentKey.wizbeeLinkAction') }} →
+				</router-link>
 			</small>
 		</div>
 	</div>

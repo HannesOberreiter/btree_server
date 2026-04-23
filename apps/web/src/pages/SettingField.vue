@@ -3,13 +3,39 @@ import { useLocalStorage } from '@vueuse/core';
 import { capitalize } from 'lodash-es';
 import { storeToRefs } from 'pinia';
 import { useInstallPWA } from 'src/composables/useInstallPwa';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import BtnBase from '../components/BtnBase.vue';
 import { useApiFetch } from '../composables/useApi';
 import { useNotification } from '../composables/useNotification';
 import { useFieldsettingStore } from '../stores/fieldsetting';
 
-const tab = ref('fieldSettings');
+const props = defineProps({
+	tab: {
+		type: String,
+		default: 'fieldSettings',
+	},
+});
+
+const route = useRoute();
+const router = useRouter();
+
+const activeTab = ref(props.tab || 'fieldSettings');
+
+watch(
+	() => route.params.tab,
+	(newTab) => {
+		if (newTab && typeof newTab === 'string') {
+			activeTab.value = newTab;
+		}
+	},
+);
+
+watch(activeTab, (newTab) => {
+	if (newTab !== route.params.tab) {
+		router.replace({ name: 'setting-field', params: { tab: newTab } });
+	}
+});
 
 const notification = useNotification();
 const storeFields = useFieldsettingStore();
@@ -23,6 +49,8 @@ const localPerf = useLocalStorage(
 		'date-auto-close': false,
 		'hive-clear-after-saving': false,
 		'calendar-show-weeknumber': true,
+		'show-qr-scanner': false,
+		'show-voice-recognition': false,
 	},
 	{ mergeDefaults: true },
 );
@@ -58,7 +86,7 @@ async function onSubmit() {
 		<div class="row q-pa-sm justify-center">
 			<div class="col-12 col-sm-10 col-md-8">
 				<q-tabs
-					v-model="tab"
+					v-model="activeTab"
 					active-color="primary"
 					indicator-color="primary"
 					align="justify"
@@ -70,7 +98,7 @@ async function onSubmit() {
 
 				<q-separator />
 
-				<q-tab-panels v-model="tab" animated>
+				<q-tab-panels v-model="activeTab" animated>
 					<q-tab-panel name="fieldSettings">
 						<div class="text-body2 q-pb-sm text-center">
 							{{ $t('setting.title') }}
@@ -211,6 +239,18 @@ async function onSubmit() {
 								<q-toggle
 									v-model="localPerf['calendar-show-weeknumber']"
 									:label="$t('setting.hintCalendarWeeknumber')"
+								/>
+							</div>
+							<div>
+								<q-toggle
+									v-model="localPerf['show-qr-scanner']"
+									:label="$t('setting.hintShowQrScanner')"
+								/>
+							</div>
+							<div>
+								<q-toggle
+									v-model="localPerf['show-voice-recognition']"
+									:label="$t('setting.hintShowVoiceRecognition')"
 								/>
 							</div>
 						</div>

@@ -5,7 +5,7 @@ import { watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useDateFormat } from '../composables/useDate';
 import { useServiceDropbox } from '../composables/useDropbox';
-import { isImage } from '../helpers';
+import { isImage, isVideo } from '../helpers';
 import BtnBase from './BtnBase.vue';
 import BtnBaseGroup from './BtnBaseGroup.vue';
 import DialogFileShow from './DialogFileShow.vue';
@@ -136,7 +136,7 @@ function changeFolder(path: string) {
 						<q-card-section class="text-center">
 							<BtnBase
 								flat
-								:icon="isImage(props.row.name) ? 'fas fa-image' : 'fas fa-file'"
+								:icon="isImage(props.row.name) ? 'fas fa-image' : isVideo(props.row.name) ? 'fas fa-video' : 'fas fa-file'"
 								:label="truncate(props.row.name, { length: 30 })"
 								@click="showFile(props.row.id)"
 							>

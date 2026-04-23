@@ -1,21 +1,42 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import FormMainApi from '../components/FormMainApi.vue';
 import FormMainCredential from '../components/FormMainCredential.vue';
 import FormMainUser from '../components/FormMainUser.vue';
 import GlobalLoading from '../components/GlobalLoading.vue';
+import ListAgentKeys from '../components/ListAgentKeys.vue';
 import ListFederatedCredentials from '../components/ListFederatedCredentials.vue';
 import ListSessions from '../components/ListSessions.vue';
 import { useAuthUserStore } from '../stores/auth';
 
-const prop = defineProps({
+const props = defineProps({
 	tab: {
 		type: String,
 		default: 'user',
 	},
 });
-const activeTab = ref(prop.tab ? prop.tab : 'user');
+
+const route = useRoute();
+const router = useRouter();
 const userStore = useAuthUserStore();
+
+const activeTab = ref(props.tab || 'user');
+
+watch(
+	() => route.params.tab,
+	(newTab) => {
+		if (newTab && typeof newTab === 'string') {
+			activeTab.value = newTab;
+		}
+	},
+);
+
+watch(activeTab, (newTab) => {
+	if (newTab !== route.params.tab) {
+		router.replace({ name: 'setting-profile', params: { tab: newTab } });
+	}
+});
 </script>
 
 <template>
@@ -34,8 +55,8 @@ const userStore = useAuthUserStore();
 			<q-tab name="credentials" :label="$t('credentials')" />
 			<q-tab name="federatedCredentials" :label="$t('federatedCredentials')" />
 			<q-tab name="session" :label="$t('session', 2)" />
-
 			<q-tab v-if="userStore.isAdmin" name="api" :label="$t('api')" />
+			<q-tab name="agent-keys" :label="$t('profile.agentKeysTab')" />
 		</q-tabs>
 
 		<q-separator />
@@ -109,6 +130,22 @@ const userStore = useAuthUserStore();
 							{{ $t('profile.apiTitle') }}
 						</div>
 						<FormMainApi />
+					</div>
+				</div>
+			</q-tab-panel>
+
+			<q-tab-panel name="agent-keys">
+				<div class="row justify-center">
+					<div class="col-12 col-sm-10 col-md-8">
+						<div class="text-body2 q-pb-sm text-center">
+							{{ $t('profile.agentKeysTitle') }}
+						</div>
+						<suspense>
+							<ListAgentKeys />
+							<template #fallback>
+								<GlobalLoading />
+							</template>
+						</suspense>
 					</div>
 				</div>
 			</q-tab-panel>

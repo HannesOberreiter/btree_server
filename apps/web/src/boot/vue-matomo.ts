@@ -1,5 +1,5 @@
-import { defineBoot } from '#q-app/wrappers';
 import { initMatomo } from '@certible/use-matomo';
+import { defineBoot } from '#q-app/wrappers';
 
 export default defineBoot(({ app }) => {
 	const matomo = initMatomo({

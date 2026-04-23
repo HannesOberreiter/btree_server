@@ -3,7 +3,10 @@ import { marked } from 'marked';
 import { useQuasar } from 'quasar';
 import { nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useNotification } from '../composables/useNotification';
+import { useVoiceRecording } from '../composables/useVoiceRecording';
 import { useWizBee } from '../composables/useWizBee';
+import { useAuthUserStore } from '../stores/auth';
 
 const props = defineProps<{
 	/** Show example question chips */
@@ -27,6 +30,8 @@ function formatToolName(name: string): string {
 
 const { t } = useI18n();
 const $q = useQuasar();
+const notify = useNotification();
+const authStore = useAuthUserStore();
 const {
 	question,
 	chatHistory,
@@ -37,10 +42,78 @@ const {
 	isPremium,
 	isDisabled,
 	fetchMonthlyUsage,
+	transcribeAudio,
 	sendQuestion,
 	abortStream,
 	clearChat,
 } = useWizBee();
+
+const {
+	isRecording: isVoiceRecording,
+	isSupported: isVoiceSupported,
+	error: voiceError,
+	remainingSeconds: voiceRemainingSeconds,
+	start: startVoice,
+	stop: stopVoice,
+} = useVoiceRecording();
+const isTranscribing = ref(false);
+
+async function onToggleVoice() {
+	if (isTranscribing.value)
+		return;
+
+	if (!isVoiceSupported.value) {
+		notify.open('negative', t('error.voiceUnsupported'));
+		return;
+	}
+
+	if (isVoiceRecording.value) {
+		const recording = await stopVoice();
+		if (!recording) {
+			if (voiceError.value === 'permission')
+				notify.open('negative', t('error.voicePermission'));
+			return;
+		}
+		if (voiceError.value === 'timeout') {
+			notify.open('warning', t('voice.autoStopped'));
+		}
+
+		isTranscribing.value = true;
+		try {
+			const language = authStore.getLanguage ?? 'en';
+			const fileName = `voice.${recording.extension}`;
+			const res = await transcribeAudio({
+				blob: recording.blob,
+				fileName,
+				language,
+			});
+			const text = (res.text ?? '').trim();
+			if (!text) {
+				notify.open('warning', t('error.voiceEmpty'));
+				return;
+			}
+			question.value = text;
+			sendQuestion();
+		}
+		catch (e: any) {
+			notify.open('negative', e);
+		}
+		finally {
+			isTranscribing.value = false;
+		}
+		return;
+	}
+
+	const started = await startVoice();
+	if (!started) {
+		if (voiceError.value === 'permission')
+			notify.open('negative', t('error.voicePermission'));
+		else if (voiceError.value === 'unsupported')
+			notify.open('negative', t('error.voiceUnsupported'));
+		else
+			notify.open('negative', t('error.unknown'));
+	}
+}
 
 const exampleQuestions = [
 	t('exampleQuestion.offline'),
@@ -262,17 +335,46 @@ function onClear() {
 							:title="$t('stop')"
 							@click="abortStream"
 						/>
-						<q-btn
-							v-else
-							flat
-							round
-							dense
-							icon="fas fa-paper-plane"
-							color="primary"
-							type="submit"
-							:disable="isDisabled || !question?.trim()"
-							@click="onSubmit"
-						/>
+						<template v-else>
+							<!-- Voice-to-text button: visible whenever the user isn't actively typing a question. -->
+							<q-btn
+								v-if="isVoiceSupported && !question?.trim()"
+								flat
+								round
+								dense
+								:icon="isVoiceRecording ? 'fas fa-stop' : 'fas fa-microphone'"
+								:color="isVoiceRecording ? 'red' : 'primary'"
+								:loading="isTranscribing"
+								:disable="isDisabled"
+								:title="isVoiceRecording
+									? (voiceRemainingSeconds !== null
+										? $t('voice.stopIn', { seconds: voiceRemainingSeconds })
+										: $t('voice.stop'))
+									: $t('voice.start')"
+								:class="{ 'wizbee-chat__mic--recording': isVoiceRecording }"
+								@click="onToggleVoice"
+							>
+								<!-- Last-30-seconds countdown badge: helps the user notice the auto-stop is imminent. -->
+								<q-badge
+									v-if="isVoiceRecording && voiceRemainingSeconds !== null && voiceRemainingSeconds <= 30"
+									floating
+									color="red"
+									text-color="white"
+									:label="voiceRemainingSeconds"
+								/>
+							</q-btn>
+							<q-btn
+								v-else
+								flat
+								round
+								dense
+								icon="fas fa-paper-plane"
+								color="primary"
+								type="submit"
+								:disable="isDisabled || !question?.trim()"
+								@click="onSubmit"
+							/>
+						</template>
 					</template>
 				</q-input>
 			</q-form>
@@ -391,6 +493,16 @@ function onClear() {
 
 .wizbee-chat__input {
   border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+/* Gentle pulse while the mic is actively recording so the user sees the state at a glance. */
+.wizbee-chat__mic--recording {
+  animation: wizbee-chat-mic-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes wizbee-chat-mic-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.55; transform: scale(1.08); }
 }
 
 @media (max-width: 1023px) {

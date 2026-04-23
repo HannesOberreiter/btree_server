@@ -2,7 +2,6 @@
 	"recommendations": [
 		"dbaeumer.vscode-eslint",
 		"vue.volar",
-		"gencer.html-slim-scss-css-class-completion"
 	],
 	"unwantedRecommendations": [
 		"octref.vetur",
