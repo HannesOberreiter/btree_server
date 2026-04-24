@@ -62,7 +62,7 @@ export class Cron {
   }
 
   async run() {
-    this.logger.log('debug', 'Test Cron-Job', {
+    this.logger.log('info', 'CronJob is running', {
       label: 'CronJob',
     });
     this.Logging(await cleanupDatabase());
