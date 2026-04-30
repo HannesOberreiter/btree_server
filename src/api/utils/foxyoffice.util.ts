@@ -13,8 +13,8 @@ function buildBaseUrl(endpoint: string) {
   return `https://${foxyOfficeUrl}/${endpoint}/${foxyOfficeKey}`;
 }
 
-function DateToFormat(date: Date) {
-  return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+function toISODate(date: Date) {
+  return date.toISOString().split('T')[0];
 }
 
 async function getLatestInvoice() {
@@ -164,12 +164,13 @@ export async function createInvoice(
 
     const today = new Date();
     const paymentTargetDate = new Date(today);
-    if (mode === 'invoice')
+    if (mode === 'invoice') {
       paymentTargetDate.setDate(today.getDate() + paymentTargetDays);
+    }
 
     const info
       = mode === 'invoice'
-        ? `Lieferdatum: wie Rechnungsdatum\n\nBitte überweisen Sie den Betrag bis spätestens <b>${DateToFormat(paymentTargetDate)}</b> auf folgendes Konto:\n\n<b>Unsere Bankverbindung:</b>\nSteiermärkische Sparkasse\nIBAN: AT05 2081 5000 4507 3715\nBIC: STSPAT2GXXX\n\nVerwendungszweck: <b>Rechnung ${buildFullNumber(latestInvoice.number)}</b>\n\nVielen Dank für Ihre Unterstützung und ein erfolgreiches Imkerjahr!\n\nMit freundlichen Grüßen\nHannes Oberreiter\n<b>btree.at</b>`
+        ? `Lieferdatum: wie Rechnungsdatum\n\nBitte überweisen Sie den Betrag bis spätestens <b>${toISODate(paymentTargetDate)}</b> auf folgendes Konto:\n\n<b>Unsere Bankverbindung:</b>\nSteiermärkische Sparkasse\nIBAN: AT05 2081 5000 4507 3715\nBIC: STSPAT2GXXX\n\nVerwendungszweck: <b>Rechnung ${buildFullNumber(latestInvoice.number)}</b>\n\nVielen Dank für Ihre Unterstützung und ein erfolgreiches Imkerjahr!\n\nMit freundlichen Grüßen\nHannes Oberreiter\n<b>btree.at</b>`
         : `Lieferdatum:  wie Rechnungsdatum\n\nBetrag wurde bereits mit <b>${type}</b> bezahlt!\n\nVielen Dank für Ihre Unterstützung und ein erfolgreiches Imkerjahr!\n\nMit freundlichen Grüßen\nHannes Oberreiter\n<b>btree.at</b>`;
 
     const data = {
@@ -180,10 +181,10 @@ export async function createInvoice(
             ? null
             : latestInvoice.number_group_id,
         address: mail,
-        date: DateToFormat(today),
+        date: toISODate(today),
         paid: mode === 'invoice' ? 0 : 1,
         canceled: 0,
-        paymentTarget: DateToFormat(paymentTargetDate),
+        paymentTarget: toISODate(paymentTargetDate),
         leading_text:
           'Sehr geehrte Damen und Herren,\n\nwir erlauben uns folgende Rechnung auszustellen:',
         info,
@@ -252,7 +253,7 @@ export async function createInvoice(
             price,
             lang,
             mode,
-            mode === 'invoice' ? DateToFormat(paymentTargetDate) : undefined,
+            mode === 'invoice' ? toISODate(paymentTargetDate) : undefined,
           );
         }
         else {
@@ -283,7 +284,7 @@ export async function createInvoice(
           invoice_number: fullNumber,
           amount: buildInvoiceAmount(price),
           payment_due:
-            mode === 'invoice' ? DateToFormat(paymentTargetDate) : '',
+            mode === 'invoice' ? toISODate(paymentTargetDate) : '',
         },
       });
     }

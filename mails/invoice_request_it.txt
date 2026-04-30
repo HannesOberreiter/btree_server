@@ -1,4 +1,4 @@
-<title>La tua fattura / Ihre Rechnung %invoice_number%</title>
+<title>La tua fattura %invoice_number%</title>
 Caro apicoltore,
 
 grazie per il tuo supporto. Il tempo premium è stato aggiunto automaticamente al tuo account.
@@ -7,12 +7,5 @@ In allegato trovi la nostra fattura come file PDF (tedesco). Ti preghiamo di tra
 
 Importo %amount% EUR
 Scadenza di pagamento: %payment_due%
-Causale: Fattura %invoice_number%
+Causale: %invoice_number%
 
-Coordinate bancarie:
-Steiermärkische Sparkasse
-IBAN: AT05 2081 5000 4507 3715
-BIC:  STSPAT2GXXX
-
-Cordiali saluti
-Hannes Oberreiter

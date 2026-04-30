@@ -233,7 +233,6 @@ export default class ServiceController {
           const radius = Math.sqrt(f.properties.area / Math.PI);
 
           const artLabels: Record<string, string> = { S: 'Schutzzone', V: 'Sperrzone', U: 'Überwachungszone' };
-          console.log(f.properties.art, artLabels[f.properties.art]);
 
           const typLabel = artLabels[f.properties.art] || f.properties.art;
           const popup = `Amerikanische Faulbrut (AFB)\n${typLabel}\nID: ${f.properties.id}\nBeginn: ${f.properties.beginn}\nQuelle: AGES (geogis.ages.at)`;

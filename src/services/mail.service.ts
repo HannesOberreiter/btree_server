@@ -130,11 +130,6 @@ export class MailService {
     }
     htmlMail = (htmlMail + htmlFooter);
 
-    /** @description Fake <title></title> attribute to set email header */
-    const titleReg = TITLE_TAG_REGEX;
-    const title = titleReg.exec(htmlMail)![0];
-    htmlMail = htmlMail.replace(TITLE_FULL_REGEX, '');
-
     if (name !== 'false' && name) {
       switch (lang) {
         case 'en': {
@@ -175,6 +170,11 @@ export class MailService {
         htmlMail = htmlMail.replaceAll(`%${k}%`, v);
       }
     }
+
+    /** @description Fake <title></title> attribute to set email header */
+    const titleReg = TITLE_TAG_REGEX;
+    const title = titleReg.exec(htmlMail)![0];
+    htmlMail = htmlMail.replace(TITLE_FULL_REGEX, '');
 
     const options: SendMailOptions = {
       from: {
