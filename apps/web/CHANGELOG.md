@@ -1,5 +1,17 @@
 # Changelog
 
+## [7.1.1](https://github.com/HannesOberreiter/btree_vue/compare/btree-client-v7.1.0...btree-client-v7.1.1) (2026-04-30)
+
+
+### Bug Fixes
+
+* :bug: payment via service was mistakenly disabled for all devices ([0351f49](https://github.com/HannesOberreiter/btree_vue/commit/0351f49b870986d77790b73acef4bcec34f86779))
+
+
+### Miscellaneous
+
+* compress agents file ([4a988f0](https://github.com/HannesOberreiter/btree_vue/commit/4a988f06179b04d575cc275bdb3a385c3523a0a7))
+
 ## [7.1.0](https://github.com/HannesOberreiter/btree_vue/compare/v7.0.0...v7.1.0) (2026-04-23)
 
 
