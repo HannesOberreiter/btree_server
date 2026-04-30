@@ -22,7 +22,7 @@ const { t, locale } = useI18n();
 const api = useApiFetch();
 const notification = useNotification();
 
-const isAppleStoreWrapper = computed(() => document.cookie.includes('iOS') === false);
+const isAppleStoreWrapper = computed(() => document.cookie.includes('iOS') === true);
 
 const payments = ref<{
 	company: {
