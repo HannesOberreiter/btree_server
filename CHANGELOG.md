@@ -1,5 +1,20 @@
 # Changelog
 
+## [7.1.1](https://github.com/HannesOberreiter/btree_server/compare/btree-server-v7.1.0...btree-server-v7.1.1) (2026-04-30)
+
+
+### Bug Fixes
+
+* :bug: fix invoice mail title ([dd2d123](https://github.com/HannesOberreiter/btree_server/commit/dd2d123a4109f27b49cb28ec16d39c4011ef909d))
+* :sparkles: reduce tokens for wizbee by trimming system prompt ([6f4acf5](https://github.com/HannesOberreiter/btree_server/commit/6f4acf520af43e233aaadc6116c47a0f44685fa3))
+
+
+### Miscellaneous
+
+* :mute: remove debug logs ([ac4effa](https://github.com/HannesOberreiter/btree_server/commit/ac4effae8b8e3962d5baa2ea739930f5aec71b09))
+* compress intrsuctions ([9a3888c](https://github.com/HannesOberreiter/btree_server/commit/9a3888c7703bf38c2755747dca4caf93255b3dc6))
+* move agents file ([5e523b0](https://github.com/HannesOberreiter/btree_server/commit/5e523b01e814a923086c2c3d4347a0863bb25bf5))
+
 ## [7.1.0](https://github.com/HannesOberreiter/btree_server/compare/v7.0.0...v7.1.0) (2026-04-23)
 
 
