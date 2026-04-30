@@ -1,18 +1,18 @@
 # AGENTS.md
 
-This file provides guidance for AI coding agents working in this repository.
+Guidance for AI coding agents in this repo.
 
 ## Project Overview
 
-**b.tree** is a beekeeping management web application built with [Quasar](https://quasar.dev/) (Vue 3) and distributed as both a **PWA** (Progressive Web App) and **TWA** (Trusted Web Activity for Android). It connects to a separate backend server ([btree_server](https://github.com/HannesOberreiter/btree_server)).
+**b.tree** = beekeeping management web app. Built with [Quasar](https://quasar.dev/) (Vue 3). Ships as **PWA** (Progressive Web App) + **TWA** (Trusted Web Activity for Android). Connects to backend server ([btree_server](https://github.com/HannesOberreiter/btree_server)).
 
-The app supports EU and US backend regions, four languages (German, English, French, Italian), and features hive management, apiary mapping, calendars, scales, treatments, harvests, and more.
+Supports EU + US backend regions, four languages (German, English, French, Italian), hive management, apiary mapping, calendars, scales, treatments, harvests, more.
 
 ---
 
 ## Repository Structure
 
-```
+```txt
 btree_vue/
 ├── src/                    # Main application source
 │   ├── boot/               # Quasar boot files (i18n, analytics, vue-query, etc.)
@@ -49,11 +49,11 @@ btree_vue/
 
 ### Prerequisites
 
-- The **backend server must be running** locally for API calls to work (see below)
+- **backend server must be running** locally for API calls.
 
 ### Environment Variables
 
-Copy `example.env` to `.env` and fill in the values:
+Copy `example.env` to `.env`, fill values:
 
 ```env
 DROPBOX_CLIENT_ID=
@@ -65,27 +65,27 @@ MATOMO_SITE_ID=
 PAYPAL_CLIENT_ID=
 ```
 
-> If a `.env` file is present, Quasar loads it automatically. In CI (no `.env`), environment variables are read from the system.
+> If `.env` exists, Quasar loads it automatically. In CI (no `.env`), env vars read from system.
 
 ### Backend Server (Required for Local Dev)
 
-The dev server proxies all API calls to the backend — **the backend must be running** before starting the frontend dev server.
+Dev server proxies all API calls to backend — **backend must run** before frontend dev server.
 
 - **Remote repo:** https://github.com/HannesOberreiter/btree_server
 - **Expected local path:** `../btree_server` (sibling directory)
 
-Start the backend server first per its own README, then start this frontend.
+Start backend per its README, then start frontend.
 
 ### Proxy Rewrites
 
-The Quasar dev server (`quasar.config.ts`) rewrites API requests:
+Quasar dev server (`quasar.config.ts`) rewrites API requests:
 
 | Frontend path | Proxied to | Rewrite |
 |---|---|---|
 | `/api/*` | `BACKEND_URL` | `/api` prefix stripped |
 | `/us/api/*` | `BACKEND_URL_US` | `/us/api` prefix stripped |
 
-Both proxies use `changeOrigin: true` and `secure: false`. This means a request to `/api/hives` in the browser hits `BACKEND_URL/hives` on the backend.
+Both proxies use `changeOrigin: true` + `secure: false`. Request `/api/hives` in browser hits `BACKEND_URL/hives` on backend.
 
 ### Install & Run
 
@@ -113,13 +113,13 @@ npm run dev        # Dev server at http://localhost:9000 (default Quasar port)
 
 ## Code Style & Conventions
 
-This project uses **Antfu ESLint config** with the Quasar plugin.
+Uses **Antfu ESLint config** + Quasar plugin.
 
-**Always run `npm run lint` before committing.** Fix errors with `npm run lint:fix` where possible, but review auto-fixes manually.
+**Always run `npm run lint` before committing.** Fix with `npm run lint:fix` when safe; review auto-fixes manually.
 
 ### Import Path Aliases
 
-Use these aliases instead of relative paths:
+Use aliases instead of relative paths:
 
 ```ts
 import MyComponent from 'components/MyComponent.vue';
@@ -136,11 +136,11 @@ Available aliases: `src`, `components`, `layouts`, `pages`, `assets`, `boot`, `s
 ### E2E Tests (Playwright)
 
 - **Test directory:** `test/playwright/e2e/`
-- **Base URL:** `http://localhost:9000` (dev server must be running)
-- **Backend:** Also required — tests make real API calls
+- **Base URL:** `http://localhost:9000` (dev server must run)
+- **Backend:** required — tests make real API calls
 - **Workers:** 1 (sequential, not parallel)
 - **Retries:** 1 on failure
-- **Auth setup:** `test/playwright/e2e/auth.setup.ts` — runs first to establish an authenticated session stored in `test/playwright/.auth/`
+- **Auth setup:** `test/playwright/e2e/auth.setup.ts` — runs first, stores auth session in `test/playwright/.auth/`
 
 Test categories:
 
@@ -155,15 +155,15 @@ npm run test:e2e
 npm run test:e2e:ui
 ```
 
-Screenshots on failure and traces are captured to `test/playwright/test-results/`. HTML reports go to `test/playwright/report/`.
+Failure screenshots + traces: `test/playwright/test-results/`. HTML reports: `test/playwright/report/`.
 
 ---
 
 ## PWA / TWA Notes
 
 - **PWA build:** `npm run build:pwa` — outputs to `dist/pwa/`
-- **Service worker:** Uses Workbox `GenerateSW` mode; `skipWaiting` and `clientsClaim` are both enabled (updates activate immediately)
-- **TWA:** The PWA build is used to generate the Android Trusted Web Activity. Do not change the manifest or service worker behaviour without considering TWA compatibility.
+- **Service worker:** Workbox `GenerateSW`; `skipWaiting` + `clientsClaim` enabled (updates activate immediately)
+- **TWA:** PWA build generates Android Trusted Web Activity. Do not change manifest/service worker behaviour without TWA compatibility check.
 - **Manifest:** `src-pwa/manifest.json`
 - **Custom service worker logic:** `src-pwa/custom-service-worker.ts`
 
@@ -190,8 +190,8 @@ Screenshots on failure and traces are captured to `test/playwright/test-results/
 
 ## Architecture Notes
 
-- **API layer:** All API requests go through `src/services/`. In development they are transparently proxied to the backend. Never hard-code backend URLs in components.
-- **Stores:** Pinia stores in `src/stores/` manage global state. Prefer composables for local/shared logic without global state. Prefer in future composables over pinia store.
-- **Translations:** When adding UI text, add keys to all four locale files under `src/i18n/` (`de`, `en`, `fr`, `it`).
-- **Two regions:** The app supports EU (`/api`) and US (`/us/api`) backends. Region-aware API calls route through the correct proxy prefix.
-- **Content Security Policy:** Managed via `vite-plugin-csp-guard` in `quasar.config.ts`. External services allowed include `*.btree.at`, PayPal, Dropbox, OpenWeather, iNaturalist, OpenStreetMap, ArcGIS, and Meteoblue.
+- **API layer:** All API requests via `src/services/`. Dev transparently proxies to backend. Never hard-code backend URLs in components.
+- **Stores:** Pinia stores in `src/stores/` manage global state. Prefer composables for local/shared logic without global state. Prefer future composables over pinia store.
+- **Translations:** Add UI text keys to all four locales under `src/i18n/` (`de`, `en`, `fr`, `it`).
+- **Two regions:** App supports EU (`/api`) + US (`/us/api`) backends. Region-aware API calls route through correct proxy prefix.
+- **Content Security Policy:** Managed via `vite-plugin-csp-guard` in `quasar.config.ts`. Allowed external services include `*.btree.at`, PayPal, Dropbox, OpenWeather, iNaturalist, OpenStreetMap, ArcGIS, Meteoblue.
