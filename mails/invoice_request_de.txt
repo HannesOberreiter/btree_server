@@ -1,4 +1,4 @@
-<title>Ihre Rechnung / Your Invoice %invoice_number%</title>
+<title>Ihre Rechnung %invoice_number%</title>
 Liebe/r Imker/in,
 
 vielen Dank für deine Unterstützung unserer Imker Applikation. Die Premium Zeit wurde bereits automatisch gutgeschrieben.
@@ -7,12 +7,4 @@ Anbei Ihre Rechnung als PDF. Wir bitten Sie, den Betrag bis spätestens %payment
 
 Betrag %amount% EUR
 Zahlungsziel: %payment_due%
-Verwendungszweck: Rechnung %invoice_number%
-
-Bankverbindung:
-Steiermärkische Sparkasse
-IBAN: AT05 2081 5000 4507 3715
-BIC:  STSPAT2GXXX
-
-Mit freundlichen Grüßen
-Hannes Oberreiter
+Verwendungszweck: %invoice_number%
