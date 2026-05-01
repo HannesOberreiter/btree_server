@@ -14,11 +14,28 @@ import { addPremium, isPremium } from '../utils/premium.util.js';
 import { createOrder as stripeCreateOrder } from '../utils/stripe.util.js';
 import {
   calculateGruenlandtemperatursumme,
+  getElevation,
   getHistoricalTemperatures,
   getWeatherData,
 } from '../utils/temperature.util.js';
 
 export default class ServiceController {
+  static async getElevation(req: FastifyRequest, _reply: FastifyReply) {
+    const query = req.query as any;
+    const latitude = Number(query.latitude);
+    const longitude = Number(query.longitude);
+
+    if (!Number.isFinite(latitude) || latitude < -90 || latitude > 90) {
+      throw httpErrors.BadRequest('Invalid latitude');
+    }
+    if (!Number.isFinite(longitude) || longitude < -180 || longitude > 180) {
+      throw httpErrors.BadRequest('Invalid longitude');
+    }
+
+    const elevation = await getElevation(latitude, longitude);
+    return { latitude, longitude, elevation };
+  }
+
   static async getWeatherData(req: FastifyRequest, _reply: FastifyReply) {
     const params = req.params as any;
     const premium = await isPremium(req.session.user.user_id);
@@ -66,6 +83,7 @@ export default class ServiceController {
       apiary.longitude,
       startDate,
       endDate,
+      apiary.elevation,
     );
 
     const gtsResult = calculateGruenlandtemperatursumme(dailyTemperatures);
@@ -77,6 +95,7 @@ export default class ServiceController {
         name: apiary.name,
         latitude: apiary.latitude,
         longitude: apiary.longitude,
+        elevation: apiary.elevation,
       },
     };
   }

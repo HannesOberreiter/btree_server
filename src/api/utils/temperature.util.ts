@@ -87,6 +87,69 @@ export interface OneCallResponse {
 }
 
 /**
+ * Get elevation from Open-Meteo Elevation API.
+ * Results are cached in Redis for 30 days.
+ * @param latitude - Location latitude
+ * @param longitude - Location longitude
+ * @returns Elevation above sea level in meters
+ */
+export async function getElevation(latitude: number, longitude: number): Promise<number> {
+  const lat = Number(latitude.toFixed(4));
+  const lon = Number(longitude.toFixed(4));
+  const cacheKey = `elevation:${lat}:${lon}`;
+
+  try {
+    const cached = await RedisServer.client.get(cacheKey);
+    if (cached !== null) {
+      return Number(cached);
+    }
+  }
+  catch (error) {
+    Logger.getInstance().log('warn', 'Redis cache read error', {
+      label: 'Elevation Cache',
+      error,
+    });
+  }
+
+  const url = `https://api.open-meteo.com/v1/elevation?latitude=${latitude}&longitude=${longitude}`;
+
+  try {
+    const response = await fetch(url);
+    const result = await response.json() as { elevation?: number[], error?: boolean, reason?: string };
+
+    if (!response.ok || result.error) {
+      throw httpErrors.BadRequest(result.reason || 'Open-Meteo elevation error');
+    }
+
+    const elevation = result.elevation?.[0];
+    if (typeof elevation !== 'number') {
+      throw httpErrors.ServiceUnavailable('Invalid response from Open-Meteo elevation');
+    }
+
+    const roundedElevation = Math.round(elevation);
+
+    try {
+      await RedisServer.client.setEx(cacheKey, 60 * 60 * 24 * 30, `${roundedElevation}`);
+    }
+    catch (error) {
+      Logger.getInstance().log('warn', 'Redis cache write error', {
+        label: 'Elevation Cache',
+        error,
+      });
+    }
+
+    return roundedElevation;
+  }
+  catch (error) {
+    Logger.getInstance().log('error', 'Open-Meteo Elevation API error', {
+      label: 'OpenMeteo',
+      error,
+    });
+    throw httpErrors.ServiceUnavailable('Open-Meteo elevation error');
+  }
+}
+
+/**
  * Get weather data using OpenWeather One Call API 3.0
  * Provides current weather, daily forecast (8 days), and alerts in a single call
  * Results are cached in Redis for 1 hour to reduce API calls
@@ -160,10 +223,12 @@ export async function getHistoricalTemperatures(
   longitude: number,
   startDate: string,
   endDate: string,
+  elevation?: number | null,
 ): Promise<Array<{ date: string, temperature: number }>> {
   // Open-Meteo Archive API - Free with rate limits (10,000 requests/day)
   // https://open-meteo.com/en/docs/historical-weather-api
-  const url = `https://historical-forecast-api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&start_date=${startDate}&end_date=${endDate}&daily=temperature_2m_mean&timezone=auto&models=best_match`;
+  const elevationParam = elevation !== undefined && elevation !== null ? `&elevation=${elevation}` : '';
+  const url = `https://historical-forecast-api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&start_date=${startDate}&end_date=${endDate}&daily=temperature_2m_mean&timezone=auto&models=best_match${elevationParam}`;
 
   try {
     const response = await fetch(url);

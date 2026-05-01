@@ -13,6 +13,20 @@ export default function routes(
   const server = instance.withTypeProvider<ZodTypeProvider>();
 
   server.get(
+    '/elevation',
+    {
+      preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
+      schema: {
+        querystring: z.object({
+          latitude: z.coerce.number().min(-90).max(90),
+          longitude: z.coerce.number().min(-180).max(180),
+        }),
+      },
+    },
+    ServiceController.getElevation,
+  );
+
+  server.get(
     '/temperature/:apiary_id',
     {
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
