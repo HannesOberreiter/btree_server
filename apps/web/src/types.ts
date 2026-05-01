@@ -114,6 +114,7 @@ export declare interface Apiary {
 	description: string;
 	latitude: number;
 	longitude: number;
+	elevation: number | null;
 	note: string;
 	url: string;
 	modus: boolean;

@@ -135,6 +135,7 @@
   "deleted": "Deleted",
   "deprecatedField": "Info: deprecated Field",
   "description": "Description",
+  "elevation": "Elevation",
   "dialogSelectOptionAdd": "Select the option you want to add:",
   "dialogSelectOptionSelect": "Select the option you want to edit:",
   "disease": "Disease | Diseases",
@@ -596,6 +597,7 @@
   "requests": "Requests",
   "reset": "Reset",
   "resetConfirm": "Reset form data?",
+  "requestElevation": "Request elevation",
   "resetUser": {
     "keyNotFound": "The reset key is no longer valid. Please request a new password reset.",
     "label": "Reset Key",

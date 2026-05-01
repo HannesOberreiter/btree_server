@@ -135,6 +135,7 @@
   "deleted": "Supprimé",
   "deprecatedField": "Info : champ obsolète",
   "description": "La description",
+  "elevation": "Altitude",
   "dialogSelectOptionAdd": "Sélectionnez l'option que vous souhaitez ajouter:",
   "dialogSelectOptionSelect": "Sélectionnez l'option que vous souhaitez modifier:",
   "disease": "Maladie | \nMaladies",
@@ -596,6 +597,7 @@
   "requests": "Demandes",
   "reset": "Réinitialiser",
   "resetConfirm": "Réinitialiser les données de formulaire?",
+  "requestElevation": "Demander l'altitude",
   "resetUser": {
     "keyNotFound": "La clé de réinitialisation n'est plus valide. Veuillez demander une nouvelle réinitialisation du mot de passe.",
     "label": "Touche de réinitialisation",

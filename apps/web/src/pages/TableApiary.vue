@@ -86,6 +86,14 @@ const columns = [
 		sortable: false,
 	},
 	{
+		name: 'elevation',
+		required: false,
+		label: t('elevation'),
+		align: 'center',
+		field: (row: any) => row.elevation,
+		sortable: false,
+	},
+	{
 		name: 'url',
 		required: false,
 		label: t('url'),

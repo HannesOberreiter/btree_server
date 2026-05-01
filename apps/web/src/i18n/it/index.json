@@ -135,6 +135,7 @@
   "deleted": "Eliminato",
   "deprecatedField": "Informazioni: campo deprecato",
   "description": "Descrizione",
+  "elevation": "Altitudine",
   "dialogSelectOptionAdd": "Seleziona l'opzione che vuoi aggiungere:",
   "dialogSelectOptionSelect": "Seleziona l'opzione che desideri modificare:",
   "disease": "malattia | \nMalattie",
@@ -596,6 +597,7 @@
   "requests": "Richieste",
   "reset": "Ripristina",
   "resetConfirm": "Ripristina i dati del modulo?",
+  "requestElevation": "Richiedi l'altitudine",
   "resetUser": {
     "keyNotFound": "La chiave di reimpostazione non è più valida. Si prega di richiedere una nuova reimpostazione della password.",
     "label": "Reimposta chiave",

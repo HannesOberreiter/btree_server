@@ -135,6 +135,7 @@
   "deleted": "Gelöscht",
   "deprecatedField": "Info: veraltetes Feld",
   "description": "Beschreibung",
+  "elevation": "Seehöhe",
   "dialogSelectOptionAdd": "Wählen Sie die Option aus, die Sie hinzufügen möchten:",
   "dialogSelectOptionSelect": "Wählen Sie die Option aus, die Sie bearbeiten möchten:",
   "disease": "Krankheit | \nKrankheiten",
@@ -596,6 +597,7 @@
   "requests": "Anfragen",
   "reset": "Zurücksetzen",
   "resetConfirm": "Formular Daten zurücksetzen?",
+  "requestElevation": "Seehöhe abfragen",
   "resetUser": {
     "keyNotFound": "Der Schlüssel ist nicht mehr gültig. Bitte fordern Sie einen neuen Passwort-Reset an.",
     "label": "Schlüssel zurücksetzen",

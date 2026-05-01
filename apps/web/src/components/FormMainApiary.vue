@@ -6,6 +6,7 @@ import { useI18n } from 'vue-i18n';
 import { useApiFetch } from '../composables/useApi';
 import { useNotification } from '../composables/useNotification';
 import { requiredField } from '../helpers/i18n-validators';
+import BtnBase from './BtnBase.vue';
 import FromButtons from './FormButtons.vue';
 import FormInputCheckbox from './FormInputCheckbox.vue';
 import FormInputNote from './FormInputNote.vue';
@@ -31,6 +32,7 @@ const stateDefault = {
 	description: '',
 	latitude: 0,
 	longitude: 0,
+	elevation: null as number | null,
 	note: '',
 	url: '',
 	modus: true,
@@ -43,6 +45,7 @@ const values = ref({});
 const reset = ref(0);
 const editOptions = ref([]) as any;
 const editOptionsCopy = ref([]) as any;
+const loadingElevation = ref(false);
 
 const ids = ref(props.ids);
 const isEdit = computed(() => {
@@ -75,12 +78,60 @@ watch(
 		if (cur) {
 			state.value.latitude = props.latlng.lat;
 			state.value.longitude = props.latlng.lng;
+			if (!isEdit.value && state.value.elevation === null)
+				requestElevation(false);
 		}
 	},
 	{
 		immediate: true,
 	},
 );
+
+function validCoordinates() {
+	const latitude = Number(state.value.latitude);
+	const longitude = Number(state.value.longitude);
+	return (
+		Number.isFinite(latitude)
+		&& Number.isFinite(longitude)
+		&& latitude >= -90
+		&& latitude <= 90
+		&& longitude >= -180
+		&& longitude <= 180
+		&& latitude !== 0
+		&& longitude !== 0
+	);
+}
+
+function requestElevationOnBlur() {
+	if (!isEdit.value && state.value.elevation === null && validCoordinates()) {
+		requestElevation(false);
+	}
+}
+
+async function requestElevation(showError = true) {
+	if (!validCoordinates() || loadingElevation.value)
+		return;
+
+	loadingElevation.value = true;
+	await api.get(
+		'/v1/service/elevation',
+		{
+			latitude: state.value.latitude,
+			longitude: state.value.longitude,
+		},
+		false,
+		showError,
+	).then(
+		(response: any) => {
+			state.value.elevation = response.elevation;
+		},
+		(error) => {
+			if (showError)
+				notification.open('negative', error);
+		},
+	);
+	loadingElevation.value = false;
+}
 
 async function getEdit(id: unknown[]) {
 	return await api.post('/v1/apiary/batchGet', { ids: id }).then(
@@ -143,6 +194,7 @@ async function onChange() {
 					:min-valid="-90"
 					:max-valid="90"
 					numeric-valid="decimal"
+					@blur="requestElevationOnBlur"
 				/>
 			</div>
 			<div class="col-6">
@@ -155,7 +207,34 @@ async function onChange() {
 					:min-valid="-180"
 					:max-valid="180"
 					numeric-valid="decimal"
+					@blur="requestElevationOnBlur"
 				/>
+			</div>
+			<div class="col-12">
+				<FormInputNumeric
+					v-model="state.elevation"
+					label="elevation"
+					:values="values"
+					:reset="reset"
+					icon="fas fa-mountain"
+					:min-valid="-500"
+					:max-valid="9000"
+					numeric-valid="integer"
+				>
+					<template #deepAfter>
+						<BtnBase
+							flat
+							round
+							dense
+							icon="fas fa-location-crosshairs"
+							:disable="!validCoordinates()"
+							:loading="loadingElevation"
+							@click="requestElevation(true)"
+						>
+							<q-tooltip>{{ $t('requestElevation') }}</q-tooltip>
+						</BtnBase>
+					</template>
+				</FormInputNumeric>
 			</div>
 			<div class="col-12">
 				<FormInputUrl
