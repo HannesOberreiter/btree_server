@@ -1,5 +1,8 @@
+import type { Knex } from 'knex';
 import type { TestAgent } from '../utils.js';
-import { beforeAll, describe, expect, it } from 'vitest';
+import knex from 'knex';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { knexConfig } from '../../src/config/environment.config.js';
 import { createAgent, createAuthenticatedAgent, doQueryRequest, doRequest, expectations } from '../utils.js';
 
 const patchCompanyName = 'newName';
@@ -9,9 +12,15 @@ describe('company routes', () => {
   const route = '/api/v1/company';
   let agent: TestAgent;
   let accessToken: any;
+  let db: Knex;
 
   beforeAll(async () => {
+    db = knex(knexConfig);
     agent = await createAuthenticatedAgent();
+  });
+
+  afterAll(async () => {
+    await db.destroy();
   });
 
   describe('/api/v1/company/apikey', () => {
@@ -25,6 +34,25 @@ describe('company routes', () => {
       const res = await doQueryRequest(agent, `${route}/apikey`, null, accessToken, null);
       expect(res.statusCode).toEqual(200);
       expect(res.body).toHaveProperty('api_key');
+    });
+  });
+
+  describe('/api/v1/company/coupon', () => {
+    it('429 - promo code cooldown blocks a second coupon within 48 hours', async () => {
+      const couponOne = `COOLDOWN_${Date.now()}_1`;
+      const couponTwo = `COOLDOWN_${Date.now()}_2`;
+      await db('promos').insert([
+        { code: couponOne, months: 1, used: false },
+        { code: couponTwo, months: 1, used: false },
+      ]);
+
+      const first = await doRequest(agent, 'post', `${route}/coupon`, null, accessToken, { coupon: couponOne });
+      expect(first.statusCode).toEqual(200);
+      expect(first.body).toHaveProperty('paid');
+
+      const second = await doRequest(agent, 'post', `${route}/coupon`, null, accessToken, { coupon: couponTwo });
+      expect(second.statusCode).toEqual(429);
+      expect(second.body.message).toEqual('promoCooldown');
     });
   });
 
