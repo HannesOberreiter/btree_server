@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { useQuasar } from 'quasar';
+import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { useDateFormat } from '../composables/useDate';
 import BtnBase from './BtnBase.vue';
 import DialogFileShow from './DialogFileShow.vue';
 import DialogForm from './DialogForm.vue';
 import TooltipBase from './TooltipBase.vue';
 
-defineProps({
+const props = defineProps({
 	data: {
 		type: Object,
 		required: true,
@@ -17,7 +19,22 @@ defineProps({
 });
 const emit = defineEmits(['refetch']);
 const $q = useQuasar();
+const { t } = useI18n();
 const useDate = useDateFormat();
+
+const hasLocation = computed(() => props.data.latitude || props.data.longitude);
+const locationLabel = computed(() => {
+	const parts = [
+		`${t('latitude')}: ${props.data.latitude}`,
+		`${t('longitude')}: ${props.data.longitude}`,
+	];
+
+	if (props.data.elevation !== null && props.data.elevation !== undefined) {
+		parts.push(`${t('elevation')}: ${props.data.elevation} m`);
+	}
+
+	return parts.join(' / ');
+});
 function openForm(title: string, id: number) {
 	$q.dialog({
 		component: DialogForm,
@@ -81,14 +98,11 @@ function showFile(value: string) {
 						:label="data.description"
 					/>
 					<q-chip
-						v-if="data.latitude || data.longitude"
+						v-if="hasLocation"
 						square
 						color="info"
 						text-color="black"
-						:label="`
-            ${$t('latitude')}: ${data.latitude} /
-            ${$t('longitude')}: ${data.longitude}
-            `"
+						:label="locationLabel"
 					/>
 					<q-chip
 						v-if="data.firstMovedate"

@@ -135,6 +135,7 @@
   "deleted": "Supprimé",
   "deprecatedField": "Info : champ obsolète",
   "description": "La description",
+  "elevation": "Altitude",
   "dialogSelectOptionAdd": "Sélectionnez l'option que vous souhaitez ajouter:",
   "dialogSelectOptionSelect": "Sélectionnez l'option que vous souhaitez modifier:",
   "disease": "Maladie | \nMaladies",
@@ -161,6 +162,7 @@
   "end": "Fin",
   "enterEmail": "Veuillez entrer votre adresse e-mail",
   "error": {
+    "CouponCooldown": "Vous ne pouvez utiliser qu'un seul code promo toutes les 48 heures.",
     "CouponNotFound": "Impossible de trouver le coupon {token}.",
     "access": "Accès non autorisé ou mot de passe erroné!",
     "alreadyScanned": "La sélection est déjà scannée!",
@@ -389,6 +391,7 @@
     "appleStoreInvoice": "Veuillez utiliser le bouton ci-dessous pour recevoir une facture par e-mail.",
     "appleStoreNote": "Les paiements en ligne ne sont pas disponibles dans l'application iOS. Veuillez utiliser un navigateur web sur votre téléphone ou ordinateur si vous souhaitez payer en ligne via Mollie, Stripe ou PayPal.",
     "choosePayment": "Mode de paiement",
+    "couponHint": "Vous avez un code promo ? Utilisez-le ici.",
     "currentStatus": "Temps payé actuel",
     "decreaseDays": "Supprimez une année de paiement (minimum un an).",
     "duration": "Durée",
@@ -596,6 +599,7 @@
   "requests": "Demandes",
   "reset": "Réinitialiser",
   "resetConfirm": "Réinitialiser les données de formulaire?",
+  "requestElevation": "Demander l'altitude",
   "resetUser": {
     "keyNotFound": "La clé de réinitialisation n'est plus valide. Veuillez demander une nouvelle réinitialisation du mot de passe.",
     "label": "Touche de réinitialisation",

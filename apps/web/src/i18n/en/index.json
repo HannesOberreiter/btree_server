@@ -135,6 +135,7 @@
   "deleted": "Deleted",
   "deprecatedField": "Info: deprecated Field",
   "description": "Description",
+  "elevation": "Elevation",
   "dialogSelectOptionAdd": "Select the option you want to add:",
   "dialogSelectOptionSelect": "Select the option you want to edit:",
   "disease": "Disease | Diseases",
@@ -161,6 +162,7 @@
   "end": "End",
   "enterEmail": "Please enter your email address",
   "error": {
+    "CouponCooldown": "You can only use one promo code every 48 hours.",
     "CouponNotFound": "Could not find coupon {token}.",
     "access": "Access not allowed or wrong password!",
     "alreadyScanned": "Selection is already scanned!",
@@ -389,6 +391,7 @@
     "appleStoreInvoice": "Please use the invoice request button below to receive an invoice via email.",
     "appleStoreNote": "Online payments are not available in the iOS app. Please use a web browser on your phone or computer if you want to pay online via Mollie, Stripe or PayPal.",
     "choosePayment": "Payment method",
+    "couponHint": "Do you have a coupon code? Redeem it here.",
     "currentStatus": "Current paid time",
     "decreaseDays": "Remove a year of payment (minimum one year).",
     "duration": "Duration",
@@ -596,6 +599,7 @@
   "requests": "Requests",
   "reset": "Reset",
   "resetConfirm": "Reset form data?",
+  "requestElevation": "Request elevation",
   "resetUser": {
     "keyNotFound": "The reset key is no longer valid. Please request a new password reset.",
     "label": "Reset Key",

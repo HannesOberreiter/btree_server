@@ -135,6 +135,7 @@
   "deleted": "Gelöscht",
   "deprecatedField": "Info: veraltetes Feld",
   "description": "Beschreibung",
+  "elevation": "Seehöhe",
   "dialogSelectOptionAdd": "Wählen Sie die Option aus, die Sie hinzufügen möchten:",
   "dialogSelectOptionSelect": "Wählen Sie die Option aus, die Sie bearbeiten möchten:",
   "disease": "Krankheit | \nKrankheiten",
@@ -161,6 +162,7 @@
   "end": "Ende",
   "enterEmail": "Geben Sie bitte Ihre Email-Adresse ein",
   "error": {
+    "CouponCooldown": "Du kannst nur alle 48 Stunden einen Promo-Code verwenden.",
     "CouponNotFound": "Coupon {token} konnte nicht gefunden werden.",
     "access": "Zugriff nicht erlaubt oder falsches Passwort!",
     "alreadyScanned": "Auswahl ist bereits gescannt!",
@@ -389,6 +391,7 @@
     "appleStoreInvoice": "Bitte verwenden Sie die Schaltfläche unten, um eine Rechnung per E-Mail anzufordern.",
     "appleStoreNote": "Online-Zahlungen sind in der iOS-App nicht verfügbar. Bitte verwenden Sie einen Webbrowser auf Ihrem Telefon oder Computer, wenn Sie online mit Mollie, Stripe oder PayPal bezahlen möchten.",
     "choosePayment": "Zahlungsmethode",
+    "couponHint": "Haben Sie einen Gutschein-Code? Lösen Sie ihn hier ein.",
     "currentStatus": "Aktuelle bezahlte Zeit",
     "decreaseDays": "Entfernen Sie ein Zahlungsjahr (mindestens ein Jahr).",
     "duration": "Laufzeit",
@@ -596,6 +599,7 @@
   "requests": "Anfragen",
   "reset": "Zurücksetzen",
   "resetConfirm": "Formular Daten zurücksetzen?",
+  "requestElevation": "Seehöhe abfragen",
   "resetUser": {
     "keyNotFound": "Der Schlüssel ist nicht mehr gültig. Bitte fordern Sie einen neuen Passwort-Reset an.",
     "label": "Schlüssel zurücksetzen",

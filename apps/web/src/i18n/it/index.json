@@ -135,6 +135,7 @@
   "deleted": "Eliminato",
   "deprecatedField": "Informazioni: campo deprecato",
   "description": "Descrizione",
+  "elevation": "Altitudine",
   "dialogSelectOptionAdd": "Seleziona l'opzione che vuoi aggiungere:",
   "dialogSelectOptionSelect": "Seleziona l'opzione che desideri modificare:",
   "disease": "malattia | \nMalattie",
@@ -161,6 +162,7 @@
   "end": "Fine",
   "enterEmail": "Inserisci il tuo indirizzo email",
   "error": {
+    "CouponCooldown": "Puoi utilizzare un solo codice promozionale ogni 48 ore.",
     "CouponNotFound": "Impossibile trovare il coupon {token}.",
     "access": "Accesso non consentito o password errata!",
     "alreadyScanned": "La selezione è già stata scansionata!",
@@ -389,6 +391,7 @@
     "appleStoreInvoice": "Usa il pulsante qui sotto per ricevere una fattura via e-mail.",
     "appleStoreNote": "I pagamenti online non sono disponibili nell'app iOS. Usa un browser web sul telefono o computer se desideri pagare online tramite Mollie, Stripe o PayPal.",
     "choosePayment": "Metodo di pagamento",
+    "couponHint": "Hai un codice promozionale? Usalo qui.",
     "currentStatus": "Tempo corrente pagato",
     "decreaseDays": "Rimuovere un anno di pagamento (minimo un anno).",
     "duration": "Durata",
@@ -596,6 +599,7 @@
   "requests": "Richieste",
   "reset": "Ripristina",
   "resetConfirm": "Ripristina i dati del modulo?",
+  "requestElevation": "Richiedi l'altitudine",
   "resetUser": {
     "keyNotFound": "La chiave di reimpostazione non è più valida. Si prega di richiedere una nuova reimpostazione della password.",
     "label": "Reimposta chiave",
