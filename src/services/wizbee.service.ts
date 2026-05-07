@@ -126,7 +126,8 @@ If API call fails (e.g. Created 0 records):
 - Never call same tool with same args twice in one conversation. If error, narrow range or change tool.
 
 ### 7. Docs & Support
-- b.tree feature questions: use btreeDocumentation and direct in-app links where possible.
+- b.tree feature, pricing, offline-mode, how-to, settings/options, UI, Premium, API or account questions: use btreeDocumentation before answering.
+- Base these answers only on btreeDocumentation. If docs do not contain the answer, say that instead of inventing UI paths or features.
 - Persistent errors: offer support-request draft.
 
 ---
@@ -185,6 +186,12 @@ export interface StreamChunk {
   toolInput?: unknown
   toolOutput?: unknown
   usage?: TokenUsage
+}
+
+const BTREE_DOC_INTENT_RE = /\b(?:b[.\s-]?tree|wizbee|premium|abo|subscription|preis|preise|kosten|kostet|price|pricing|cost|offline|app|ui|einstellung(?:en)?|settings?|option(?:en)?|api|ical|nfc|qr|scanner|karte|map|kalender|calendar|login|account|konto)\b/i;
+
+function shouldPreloadBtreeDocs(message: string): boolean {
+  return BTREE_DOC_INTENT_RE.test(message);
 }
 
 /**
@@ -281,6 +288,16 @@ export class WizBeeAI {
       ...this.buildHistoryMessages(history),
       { role: 'user', content: message },
     ];
+
+    if (shouldPreloadBtreeDocs(message)) {
+      yield { type: 'tool_call', toolName: 'btreeDocumentation', toolInput: { query: message } };
+      const docs = await executeWizBeeTool('btreeDocumentation', { query: message }, this.context);
+      yield { type: 'tool_result', toolName: 'btreeDocumentation', toolOutput: docs };
+      messages.splice(1, 0, {
+        role: 'system',
+        content: `Relevant b.tree documentation for the user's question:\n${JSON.stringify(docs)}\n\nUse this documentation as the source of truth. If it does not answer the question, say so. Do not invent UI paths, offline capabilities, prices, or feature details.`,
+      });
+    }
 
     let totalInputTokens = 0;
     let totalOutputTokens = 0;

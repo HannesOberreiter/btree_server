@@ -24,6 +24,10 @@ export interface Apiaries {
   deleted_at: Generated<Date | null>
   description: Generated<string | null>
   /**
+   * Elevation above sea level in meters
+   */
+  elevation: Generated<number | null>
+  /**
    * Editor
    */
   edit_id: Generated<number | null>

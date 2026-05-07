@@ -9,6 +9,7 @@ export class Apiary extends ExtModel {
   description!: string;
   latitude!: number;
   longitude!: number;
+  elevation!: number | null;
   note!: string;
   url!: string;
   modus!: boolean;
@@ -37,6 +38,7 @@ export class Apiary extends ExtModel {
       description: { type: 'string', maxLength: 512 },
       latitude: { type: 'number', minimum: -90, maximum: 90, default: 0 },
       longitude: { type: 'number', minimum: -180, maximum: 180, default: 0 },
+      elevation: { type: ['integer', 'null'], minimum: -500, maximum: 9000 },
       note: { type: 'string', maxLength: 2000 },
       url: { type: 'string', maxLength: 512 },
 

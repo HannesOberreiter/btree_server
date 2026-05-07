@@ -1,10 +1,10 @@
-import dayjs from 'dayjs';
+import { sql } from 'kysely';
 
 import { basicLimit, totalLimit } from '../../config/environment.config.js';
+import { KyselyServer } from '../../servers/kysely.server.js';
 import { Apiary } from '../models/apiary.model.js';
 import { Company } from '../models/company.model.js';
 import { Hive } from '../models/hive.model.js';
-import { Payment } from '../models/payment.model.js';
 import { Scale } from '../models/scale.model.js';
 import { checkMySQLError } from '../utils/error.util.js';
 
@@ -81,25 +81,41 @@ export async function limitScale(user_id: number) {
   }
 }
 
+export function premiumPaidDate(months: number) {
+  const safeMonths = Math.max(1, Math.floor(months));
+  return sql<Date>`DATE_ADD(IF(paid IS NULL OR paid < CURDATE(), CURDATE(), paid), INTERVAL ${sql.lit(safeMonths)} MONTH)`;
+}
+
 export async function addPremium(user_id: number, months = 12, amount = 0, type: undefined | 'paypal' | 'promo' | 'stripe' | 'mollie' | 'invoice') {
-  return await Company.transaction(async (trx) => {
-    const company = await Company.query(trx).select('paid').findById(user_id);
-    if (!company)
+  const db = KyselyServer.getInstance().db;
+
+  return await db.transaction().execute(async (trx) => {
+    const update = await trx
+      .updateTable('companies')
+      .set({ paid: premiumPaidDate(months) })
+      .where('id', '=', user_id)
+      .executeTakeFirst();
+    if (Number(update.numUpdatedRows) === 0) {
       throw new Error('Company not found');
-    const newPaid
-      = dayjs(company.paid) < dayjs()
-        ? dayjs().add(months, 'month')
-        : dayjs(company.paid).add(months, 'month');
-    const result = await Company.query(trx).patchAndFetchById(user_id, {
-      paid: newPaid.format('YYYY-MM-DD'),
-    });
-    await Payment.query(trx).insert({
-      date: new Date(),
-      user_id,
-      months,
-      amount: amount || 0,
-      type,
-    });
+    }
+
+    await trx
+      .insertInto('payments')
+      .values({
+        date: new Date(),
+        user_id,
+        months,
+        amount: amount || 0,
+        type,
+      })
+      .executeTakeFirst();
+
+    const result = await trx
+      .selectFrom('companies')
+      .select('paid')
+      .where('id', '=', user_id)
+      .executeTakeFirstOrThrow();
+
     return result.paid;
   });
 }

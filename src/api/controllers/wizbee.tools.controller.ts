@@ -1,3 +1,4 @@
+/* eslint-disable e18e/prefer-static-regex */
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import { z } from 'zod';
 import { KyselyServer } from '../../servers/kysely.server.js';
@@ -475,7 +476,7 @@ async function preValidateOwnership(
  * window after 2-3 calls. We cap hard at 40 KB and instruct the model to
  * narrow its query or use statistics tools instead.
  */
-const MAX_TOOL_RESULT_CHARS = 40_000;
+const MAX_TOOL_RESULT_CHARS = 60_000;
 
 /**
  * If the result is too large to safely feed back into the LLM context,
@@ -525,6 +526,52 @@ function enforceResultSize(toolName: string, result: unknown): unknown {
     },
   };
   return envelope;
+}
+
+function extractRelevantDocumentation(documentation: string, query?: string): string {
+  const q = (query ?? '').toLowerCase();
+  if (!q.trim())
+    return documentation;
+
+  const headingMatches = Array.from(documentation.matchAll(/^#{2,3} .+$/gm));
+  const sections = headingMatches.map((match, index) => ({
+    heading: match[0],
+    start: match.index ?? 0,
+    end: index + 1 < headingMatches.length ? (headingMatches[index + 1].index ?? documentation.length) : documentation.length,
+  }));
+
+  const needles = new Set(q.split(/[^\p{L}\p{N}]+/u).filter(part => part.length >= 4));
+  const addNeedles = (values: string[]) => values.forEach(value => needles.add(value));
+
+  if (/premium|abo|preis|kosten|kostet|price|pricing|cost/.test(q))
+    addNeedles(['costs', 'price', 'premium', 'basic']);
+  if (/offline/.test(q))
+    addNeedles(['offline']);
+  if (/fütterungstyp|futtertyp|feeding type|feed type|behandlungstyp|ernte|kontroll|option|einstellung/.test(q))
+    addNeedles(['options', 'feeding', 'treatment', 'selection', 'dropdown', 'types']);
+  if (/api|ical|calendar|kalender/.test(q))
+    addNeedles(['api', 'ical', 'calendar']);
+
+  const scored = sections
+    .map((section) => {
+      const text = documentation.slice(section.start, section.end);
+      const haystack = `${section.heading}\n${text}`.toLowerCase();
+      let score = 0;
+      for (const needle of needles) {
+        if (haystack.includes(needle))
+          score += section.heading.toLowerCase().includes(needle) ? 6 : 1;
+      }
+      return { section, text, score };
+    })
+    .filter(item => item.score > 0)
+    .sort((a, b) => b.score - a.score || a.section.start - b.section.start)
+    .slice(0, 8)
+    .sort((a, b) => a.section.start - b.section.start);
+
+  if (scored.length === 0)
+    return documentation.slice(0, MAX_TOOL_RESULT_CHARS - 2000);
+
+  return scored.map(item => item.text.trim()).join('\n\n---\n\n');
 }
 
 /**
@@ -1590,7 +1637,7 @@ export function createWizBeeTools(context: WizBeeContext): Record<string, WizBee
       inputSchema: z.object({
         query: z.string().optional().describe('Optional search term to filter documentation (for context, the full doc will be fetched)'),
       }),
-      execute: async (_input) => {
+      execute: async (input) => {
         const docUrl = 'https://www.btree.at/llms-full.txt';
 
         try {
@@ -1604,11 +1651,14 @@ export function createWizBeeTools(context: WizBeeContext): Record<string, WizBee
             throw new Error(`Failed to fetch documentation: ${response.statusText}`);
           }
 
-          const documentation = await response.text();
+          const fullDocumentation = await response.text();
+          const documentation = extractRelevantDocumentation(fullDocumentation, input.query);
 
           return {
             documentation,
             source: docUrl,
+            query: input.query,
+            filtered: Boolean(input.query),
           };
         }
         catch {

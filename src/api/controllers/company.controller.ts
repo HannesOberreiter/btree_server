@@ -11,6 +11,7 @@ import { parse } from 'csv-parse/sync';
 import { stringify } from 'csv-stringify/sync';
 import httpErrors from 'http-errors';
 import yauzl from 'yauzl-promise';
+import { KyselyServer } from '../../servers/kysely.server.js';
 import { MailLangs } from '../../services/mail.service.js';
 import UserController from '../controllers/user.controller.js';
 import { Apiary } from '../models/apiary.model.js';
@@ -35,7 +36,6 @@ import { TreatmentDisease } from '../models/option/treatment_disease.model.js';
 import { TreatmentType } from '../models/option/treatment_type.model.js';
 import { TreatmentVet } from '../models/option/treatment_vet.model.js';
 import { Payment } from '../models/payment.model.js';
-import { Promo } from '../models/promos.model.js';
 import { Queen } from '../models/queen.model.js';
 import { Rearing } from '../models/rearing/rearing.model.js';
 import { RearingType } from '../models/rearing/rearing_type.model.js';
@@ -48,31 +48,85 @@ import { autoFill } from '../utils/autofill.util.js';
 import { deleteCompany } from '../utils/delete.util.js';
 import { createInvoice } from '../utils/foxyoffice.util.js';
 import { reviewPassword } from '../utils/login.util.js';
-import { addPremium, isPremium } from '../utils/premium.util.js';
+import { addPremium, isPremium, premiumPaidDate } from '../utils/premium.util.js';
 
 const NEWLINE_QUOTE_REGEX = /(\r\n|[\n\r"])/g;
+const PROMO_COOLDOWN_HOURS = 48;
 
 export default class CompanyController {
   static async postCoupon(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as any;
-    const promo = await Promo.query()
-      .select()
-      .where({ code: body.coupon, used: false })
-      .throwIfNotFound()
-      .first();
-    const paid = await addPremium(
-      req.session.user.user_id,
-      promo.months,
-      0,
-      'promo',
-    );
-    await Promo.query()
-      .patch({
-        used: true,
-        date: new Date(),
-        user_id: req.session.user.user_id,
-      })
-      .findById(promo.id);
+    const user_id = req.session.user.user_id;
+    const db = KyselyServer.getInstance().db;
+
+    const paid = await db.transaction().execute(async (trx) => {
+      await trx
+        .selectFrom('companies')
+        .select('id')
+        .where('id', '=', user_id)
+        .forUpdate()
+        .executeTakeFirstOrThrow();
+
+      const cooldownStarted = new Date(
+        Date.now() - PROMO_COOLDOWN_HOURS * 60 * 60 * 1000,
+      );
+      const recentPromo = await trx
+        .selectFrom('promos')
+        .select('id')
+        .where('user_id', '=', user_id)
+        .where('used', '=', 1)
+        .where('date', '>', cooldownStarted)
+        .executeTakeFirst();
+      if (recentPromo) {
+        throw httpErrors.TooManyRequests('promoCooldown');
+      }
+
+      const promo = await trx
+        .selectFrom('promos')
+        .select(['id', 'months'])
+        .where('code', '=', body.coupon)
+        .where('used', '=', 0)
+        .forUpdate()
+        .executeTakeFirst();
+      if (!promo) {
+        throw httpErrors.NotFound();
+      }
+
+      const months = promo.months ?? 12;
+      await trx
+        .updateTable('companies')
+        .set({ paid: premiumPaidDate(months) })
+        .where('id', '=', user_id)
+        .executeTakeFirst();
+
+      await trx
+        .insertInto('payments')
+        .values({
+          date: new Date(),
+          user_id,
+          months,
+          amount: 0,
+          type: 'promo',
+        })
+        .executeTakeFirst();
+
+      await trx
+        .updateTable('promos')
+        .set({
+          used: 1,
+          date: new Date(),
+          user_id,
+        })
+        .where('id', '=', promo.id)
+        .executeTakeFirst();
+
+      const result = await trx
+        .selectFrom('companies')
+        .select('paid')
+        .where('id', '=', user_id)
+        .executeTakeFirstOrThrow();
+      return result.paid;
+    });
     return { paid };
   }
 

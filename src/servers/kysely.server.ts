@@ -102,6 +102,8 @@ class TimestampPlugin implements KyselyPlugin {
    */
   private static readonly SKIP_TABLES = new Set<string>([
     'agent_keys',
+    'payments',
+    'promos',
   ]);
 
   private getTableName(node: any): string | null {
