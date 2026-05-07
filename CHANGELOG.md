@@ -1,5 +1,18 @@
 # Changelog
 
+## [7.2.0](https://github.com/HannesOberreiter/btree_server/compare/btree-server-v7.1.1...btree-server-v7.2.0) (2026-05-07)
+
+
+### Features
+
+* :sparkles: add elevation endpoint for apiaries ([1036f2d](https://github.com/HannesOberreiter/btree_server/commit/1036f2d4b48369dd4b550a1a0afe276af622d50f))
+
+
+### Bug Fixes
+
+* :bug: improve fetching documentation and answering ([c6d4758](https://github.com/HannesOberreiter/btree_server/commit/c6d47587c982817f768dbf33683c276ee83788b9))
+* :bug: limit coupon usage to 48h per company ([519ce54](https://github.com/HannesOberreiter/btree_server/commit/519ce54dbeb3d2c3caeb2b756e9ef6e4a17e11ef))
+
 ## [7.1.1](https://github.com/HannesOberreiter/btree_server/compare/btree-server-v7.1.0...btree-server-v7.1.1) (2026-04-30)
 
 
