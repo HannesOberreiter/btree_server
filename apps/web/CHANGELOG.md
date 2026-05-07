@@ -1,5 +1,13 @@
 # Changelog
 
+## [7.2.0](https://github.com/HannesOberreiter/btree_vue/compare/btree-client-v7.1.1...btree-client-v7.2.0) (2026-05-07)
+
+
+### Features
+
+* :sparkles: apiaries support now elevation field ([ea869b7](https://github.com/HannesOberreiter/btree_vue/commit/ea869b70d6a8edb58cdcecc17885f595b883911b))
+* :sparkles: cleaner premium payment page on small devices (mobile) ([5ded0d4](https://github.com/HannesOberreiter/btree_vue/commit/5ded0d4511e2732635cb3aaf17f30feaf95c744b))
+
 ## [7.1.1](https://github.com/HannesOberreiter/btree_vue/compare/btree-client-v7.1.0...btree-client-v7.1.1) (2026-04-30)
 
 
