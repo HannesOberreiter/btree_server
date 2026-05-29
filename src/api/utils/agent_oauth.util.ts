@@ -60,7 +60,28 @@ function redisCodeKey(code: string) {
 }
 
 function isRedirectUriAllowed(redirectUri: string) {
-  return oauth.redirectUris.includes(redirectUri);
+  if (oauth.redirectUris.includes(redirectUri)) {
+    return true;
+  }
+
+  let parsed: URL;
+  try {
+    parsed = new URL(redirectUri);
+  } catch {
+    return false;
+  }
+
+  if (parsed.protocol !== 'https:') {
+    return false;
+  }
+  if (parsed.username || parsed.password || parsed.port) {
+    return false;
+  }
+  if (!['chat.openai.com', 'chatgpt.com'].includes(parsed.hostname)) {
+    return false;
+  }
+
+  return /^\/aip\/g-[A-Za-z0-9_-]+\/oauth\/callback$/.test(parsed.pathname);
 }
 
 function validateClient(clientId: string, clientSecret?: string) {
