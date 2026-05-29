@@ -6,6 +6,7 @@ import v1Apiary from './v1/apiary.route.js';
 import v1Auth from './v1/auth.route.js';
 import v1Calendar from './v1/calendar.route.js';
 import v1Charge from './v1/charge.route.js';
+import v1ChatGpt from './v1/chatgpt.route.js';
 import v1Checkup from './v1/checkup.route.js';
 import v1Company from './v1/company.route.js';
 import v1CompanyUser from './v1/company_user.route.js';
@@ -153,6 +154,10 @@ export default function routes(app: FastifyInstance, _options: any, done: any) {
 
   app.register(v1AgentKey, {
     prefix: '/v1/agent_key',
+  });
+
+  app.register(v1ChatGpt, {
+    prefix: '/v1/chatgpt',
   });
 
   done();

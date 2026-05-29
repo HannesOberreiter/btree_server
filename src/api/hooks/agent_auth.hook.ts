@@ -6,7 +6,6 @@ import {
   KEY_PREFIX_LENGTH,
   verifyAgentKey,
 } from '../models/agent_key.model.js';
-import { verifyAgentOAuthAccessToken } from '../utils/agent_oauth.util.js';
 
 /**
  * Fastify preHandler hook that authenticates requests using an Agent API key.
@@ -20,7 +19,7 @@ export async function agentAuthHook(
   _reply: FastifyReply,
 ) {
   const path = new URL(request.url, 'http://localhost').pathname;
-  if (path.endsWith('/openapi.json') || path.includes('/oauth/')) {
+  if (path.endsWith('/openapi.json')) {
     return;
   }
 
@@ -28,31 +27,15 @@ export async function agentAuthHook(
   const [scheme, ...credentialParts] = authHeader?.split(' ') ?? [];
   if (!authHeader || scheme.toLowerCase() !== 'bearer') {
     throw httpErrors.Unauthorized(
-      'Missing or invalid Authorization header. Expected: Bearer token',
+      'Missing or invalid Authorization header. Expected: Bearer btree_ak_...',
     );
   }
 
   const plaintextKey = credentialParts.join(' ').trim();
   if (!plaintextKey.startsWith('btree_ak_')) {
-    if (!plaintextKey.startsWith('btree_oauth_')) {
-      throw httpErrors.Unauthorized(
-        'Invalid API key format. Expected key starting with btree_ak_',
-      );
-    }
-
-    let oauthUser: ReturnType<typeof verifyAgentOAuthAccessToken>;
-    try {
-      oauthUser = verifyAgentOAuthAccessToken(plaintextKey);
-    } catch {
-      throw httpErrors.Unauthorized('Invalid OAuth token');
-    }
-    request.session.user = {
-      user_id: oauthUser.userId,
-      bee_id: oauthUser.beeId,
-      rank: oauthUser.rank,
-    } as FastifyRequest['session']['user'];
-    request.session.agent = true;
-    return;
+    throw httpErrors.Unauthorized(
+      'Invalid API key format. Expected key starting with btree_ak_',
+    );
   }
 
   const prefix = plaintextKey.substring(0, KEY_PREFIX_LENGTH);

@@ -95,9 +95,7 @@ function validateClient(clientId: string, clientSecret?: string) {
 }
 
 function buildLoginRedirect(request: FastifyRequest) {
-  const authorizeUrl = new URL(`${url}/api/v1/agent/oauth/authorize`);
-  const requestUrl = new URL(request.url, `${url}/api/v1/agent`);
-  authorizeUrl.search = requestUrl.search;
+  const authorizeUrl = new URL(request.url, url);
 
   const loginUrl = new URL('/visitor/login', frontend);
   loginUrl.searchParams.set('next', authorizeUrl.toString());

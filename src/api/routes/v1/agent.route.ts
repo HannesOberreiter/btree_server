@@ -1,4 +1,3 @@
-import fastifyFormbody from '@fastify/formbody';
 import fastifySwagger from '@fastify/swagger';
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
@@ -6,7 +5,6 @@ import { jsonSchemaTransform } from 'fastify-type-provider-zod';
 import httpErrors from 'http-errors';
 
 import { url } from '../../../config/environment.config.js';
-import AgentOAuthController from '../../controllers/agent_oauth.controller.js';
 import {
   executeWizBeeTool,
   wizBeeToolDefinitions,
@@ -14,8 +12,6 @@ import {
 import { agentAuthHook } from '../../hooks/agent_auth.hook.js';
 
 export default async function routes(instance: FastifyInstance, _options: any) {
-  await instance.register(fastifyFormbody);
-
   // Register @fastify/swagger scoped to this plugin (prefix: /v1/agent)
   await instance.register(fastifySwagger, {
     openapi: {
@@ -25,8 +21,7 @@ export default async function routes(instance: FastifyInstance, _options: any) {
         description:
           'API for external LLM agents to interact with b.tree beekeeping data. ' +
           'Use b.tree Agent API keys in the Authorization header for custom agents. ' +
-          'Agent API keys start with btree_ak_ and can be managed at https://app.btree.at/setting/profile/agent-keys. ' +
-          'OAuth is reserved for the official b.tree Beekeeping Manager Custom GPT and is not available for user-created ChatGPT Actions.',
+          'Agent API keys start with btree_ak_ and can be managed at https://app.btree.at/setting/profile/agent-keys.',
         version: '1.0.0',
       },
       servers: [{ url: `${url}/api/v1/agent`, description: 'Production' }],
@@ -35,8 +30,7 @@ export default async function routes(instance: FastifyInstance, _options: any) {
           AgentKey: {
             type: 'http',
             scheme: 'bearer',
-            description:
-              'b.tree Agent API key (starts with btree_ak_) or OAuth token for the official b.tree Beekeeping Manager Custom GPT (starts with btree_oauth_)',
+            description: 'b.tree Agent API key (starts with btree_ak_)',
           },
         },
       },
@@ -62,9 +56,6 @@ export default async function routes(instance: FastifyInstance, _options: any) {
   instance.addHook('onRequest', agentRateLimit);
 
   const server = instance.withTypeProvider<ZodTypeProvider>();
-
-  server.get('/oauth/authorize', AgentOAuthController.authorize);
-  server.post('/oauth/token', AgentOAuthController.token);
 
   // GET /openapi.json — serves the auto-generated OpenAPI spec
   server.get(
