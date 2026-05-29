@@ -14,6 +14,71 @@ import {
 } from '../../controllers/wizbee.tools.controller.js';
 import { chatGptAuthHook } from '../../hooks/chatgpt_auth.hook.js';
 
+type OpenApiPathItem = {
+  post: {
+    tags: string[];
+    description: string;
+    requestBody: {
+      required: boolean;
+      content: {
+        'application/json': {
+          schema: Record<string, unknown>;
+        };
+      };
+    };
+    responses: {
+      200: {
+        description: string;
+      };
+    };
+  };
+};
+
+function buildChatGptToolSpec() {
+  const paths = wizBeeToolDefinitions.reduce<Record<string, OpenApiPathItem>>(
+    (toolPaths, toolDef) => {
+      toolPaths[`/tools/${toolDef.name}`] = {
+        post: {
+          tags: ['Tools'],
+          description: toolDef.description,
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: z.toJSONSchema(toolDef.parameters) as Record<
+                  string,
+                  unknown
+                >,
+              },
+            },
+          },
+          responses: {
+            200: {
+              description: 'Tool result',
+            },
+          },
+        },
+      };
+      return toolPaths;
+    },
+    {},
+  );
+
+  return {
+    openapi: '3.1.0',
+    info: {
+      title: 'b.tree Beekeeping Manager Tool Reference',
+      description:
+        'Tool reference for the official b.tree Beekeeping Manager Custom GPT. ' +
+        'This document describes available tool names and payload schemas. ' +
+        'Execute tools through the Custom GPT action callBtreeTool, using the same toolName and request body.',
+      version: '1.0.0',
+    },
+    servers: [{ url: `${url}/api/v1/chatgpt` }],
+    paths,
+  };
+}
+
 export default async function routes(instance: FastifyInstance, _options: any) {
   await instance.register(fastifyFormbody);
 
@@ -70,7 +135,7 @@ export default async function routes(instance: FastifyInstance, _options: any) {
         tags: ['Discovery'],
       },
     },
-    async () => instance.swagger(),
+    async () => buildChatGptToolSpec(),
   );
 
   server.post(
