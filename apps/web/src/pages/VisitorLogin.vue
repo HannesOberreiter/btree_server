@@ -54,7 +54,10 @@ function validLastUrl(): string | undefined {
 		if (!allowedOrigins.includes(parsed.origin))
 			return undefined;
 
-		if (parsed.origin !== window.location.origin && parsed.pathname !== '/api/v1/agent/oauth/authorize')
+		const allowedBackendOAuthPaths = [
+			'/api/v1/chatgpt/oauth/authorize',
+		];
+		if (parsed.origin !== window.location.origin && !allowedBackendOAuthPaths.includes(parsed.pathname))
 			return undefined;
 
 		if (parsed.origin === window.location.origin)
