@@ -21,13 +21,11 @@ jobs:
       PAYPAL_CLIENT_ID: ${{ secrets.PAYPAL_CLIENT_ID_LIVE }}
     steps:
       - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v6
       - uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: pnpm
-      - uses: pnpm/action-setup@v6
-        with:
-          run_install: false
       - name: Install
         run: pnpm install --frozen-lockfile
       - name: Build PWA
