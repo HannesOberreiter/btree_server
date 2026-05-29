@@ -1,6 +1,11 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import httpErrors from 'http-errors';
-import { AgentKeyModel, KEY_PREFIX_LENGTH, verifyAgentKey } from '../models/agent_key.model.js';
+
+import {
+  AgentKeyModel,
+  KEY_PREFIX_LENGTH,
+  verifyAgentKey,
+} from '../models/agent_key.model.js';
 
 /**
  * Fastify preHandler hook that authenticates requests using an Agent API key.
@@ -15,12 +20,16 @@ export async function agentAuthHook(
 ) {
   const authHeader = request.headers.authorization;
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    throw httpErrors.Unauthorized('Missing or invalid Authorization header. Expected: Bearer btree_ak_...');
+    throw httpErrors.Unauthorized(
+      'Missing or invalid Authorization header. Expected: Bearer btree_ak_...',
+    );
   }
 
   const plaintextKey = authHeader.slice(7).trim();
   if (!plaintextKey.startsWith('btree_ak_')) {
-    throw httpErrors.Unauthorized('Invalid API key format. Expected key starting with btree_ak_');
+    throw httpErrors.Unauthorized(
+      'Invalid API key format. Expected key starting with btree_ak_',
+    );
   }
 
   const prefix = plaintextKey.substring(0, KEY_PREFIX_LENGTH);

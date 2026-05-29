@@ -1,8 +1,9 @@
+import fastifySwagger from '@fastify/swagger';
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
-import fastifySwagger from '@fastify/swagger';
 import { jsonSchemaTransform } from 'fastify-type-provider-zod';
 import httpErrors from 'http-errors';
+
 import { url } from '../../../config/environment.config.js';
 import {
   executeWizBeeTool,
@@ -10,10 +11,7 @@ import {
 } from '../../controllers/wizbee.tools.controller.js';
 import { agentAuthHook } from '../../hooks/agent_auth.hook.js';
 
-export default async function routes(
-  instance: FastifyInstance,
-  _options: any,
-) {
+export default async function routes(instance: FastifyInstance, _options: any) {
   // Register @fastify/swagger scoped to this plugin (prefix: /v1/agent)
   await instance.register(fastifySwagger, {
     openapi: {
@@ -21,14 +19,12 @@ export default async function routes(
       info: {
         title: 'b.tree Agent API',
         description:
-          'API for external LLM agents to interact with b.tree beekeeping data. '
-          + 'Authenticate with a Bearer token (Agent Key) in the Authorization header. '
-          + 'Manage your keys at https://app.btree.at/setting/profile/agent-keys',
+          'API for external LLM agents to interact with b.tree beekeeping data. ' +
+          'Authenticate with a Bearer token (Agent Key) in the Authorization header. ' +
+          'Manage your keys at https://app.btree.at/setting/profile/agent-keys',
         version: '1.0.0',
       },
-      servers: [
-        { url: `${url}/api/v1/agent`, description: 'Production' },
-      ],
+      servers: [{ url: `${url}/api/v1/agent`, description: 'Production' }],
       components: {
         securitySchemes: {
           AgentKey: {
@@ -66,7 +62,8 @@ export default async function routes(
     '/openapi.json',
     {
       schema: {
-        description: 'Get the OpenAPI specification for all available agent tool endpoints.',
+        description:
+          'Get the OpenAPI specification for all available agent tool endpoints.',
         tags: ['Discovery'],
       },
     },
@@ -89,7 +86,11 @@ export default async function routes(
           throw httpErrors.Unauthorized();
         }
         const context = { userId: user.user_id, beeId: user.bee_id };
-        const result = await executeWizBeeTool(toolDef.name, request.body, context);
+        const result = await executeWizBeeTool(
+          toolDef.name,
+          request.body,
+          context,
+        );
 
         // The wizbee tool wrapper returns a structured envelope on failure
         // ({ ok: false, error: {...} }) so the in-process LLM loop can recover.
@@ -98,19 +99,27 @@ export default async function routes(
         // { statusCode, error, message } body shape used everywhere else.
         // Hint + suggested_next_tool are attached as `cause` so they're still
         // visible to agents but don't change the error envelope shape.
-        if (result && typeof result === 'object' && (result as any).ok === false) {
+        if (
+          result &&
+          typeof result === 'object' &&
+          (result as any).ok === false
+        ) {
           const err = (result as any).error ?? {};
-          const status: number = typeof err.status === 'number' ? err.status : 400;
-          const message: string = typeof err.message === 'string' && err.message.length > 0
-            ? err.message
-            : 'Tool execution failed';
+          const status: number =
+            typeof err.status === 'number' ? err.status : 400;
+          const message: string =
+            typeof err.message === 'string' && err.message.length > 0
+              ? err.message
+              : 'Tool execution failed';
           const httpErr = (httpErrors as any)[status]
             ? (httpErrors as any)[status](message)
             : httpErrors.BadRequest(message);
           httpErr.cause = {
             code: err.code,
             ...(err.hint && { hint: err.hint }),
-            ...(err.suggested_next_tool && { suggested_next_tool: err.suggested_next_tool }),
+            ...(err.suggested_next_tool && {
+              suggested_next_tool: err.suggested_next_tool,
+            }),
           };
           throw httpErr;
         }

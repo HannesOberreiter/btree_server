@@ -1,5 +1,6 @@
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
+
 import { ROLES } from '../../../config/constants.config.js';
 import WizBeeController from '../../controllers/wizbee.controller.js';
 import {
@@ -72,12 +73,17 @@ export default function routes(
         }
         const context = { userId: user.user_id, beeId: user.bee_id };
         try {
-          const result = await executeWizBeeTool(toolDef.name, request.body, context);
+          const result = await executeWizBeeTool(
+            toolDef.name,
+            request.body,
+            context,
+          );
           return result;
-        }
-        catch (err) {
+        } catch (error) {
           reply.statusCode = 400;
-          return { error: err instanceof Error ? err.message : String(err) };
+          return {
+            error: error instanceof Error ? error.message : String(error),
+          };
         }
       },
     });

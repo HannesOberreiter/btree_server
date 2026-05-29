@@ -1,5 +1,6 @@
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
+
 import { ROLES } from '../../../config/constants.config.js';
 import DropboxController from '../../controllers/dropbox.controller.js';
 import { Guard } from '../../hooks/guard.hook.js';

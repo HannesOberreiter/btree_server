@@ -1,9 +1,8 @@
-import type { Kysely, SelectQueryBuilder, Transaction } from 'kysely';
-
-import type { DB } from '../../types/db.types.js';
-
+import type { Kysely, SelectQueryBuilder, SqlBool, Transaction } from 'kysely';
 import { sql } from 'kysely';
+
 import { KyselyServer } from '../../servers/kysely.server.js';
+import type { DB } from '../../types/db.types.js';
 
 /**
  * Execute a function within a database transaction.
@@ -20,16 +19,16 @@ export async function transaction<T>(
  * Pagination helper that returns paginated results with metadata
  */
 export interface PaginationParams {
-  page?: number
-  limit?: number
+  page?: number;
+  limit?: number;
 }
 
 export interface PaginatedResult<T> {
-  results: T[]
-  total: number
-  page: number
-  limit: number
-  pages: number
+  results: T[];
+  total: number;
+  page: number;
+  limit: number;
+  pages: number;
 }
 
 export async function paginate<T>(
@@ -84,12 +83,10 @@ export async function softDelete<TB extends keyof DB>(
   table: TB,
   where: Partial<DB[TB]>,
 ): Promise<void> {
-  let query = (db
-    .updateTable(table) as any)
-    .set({
-      deleted: 1,
-      deleted_at: new Date(),
-    });
+  let query = (db.updateTable(table) as any).set({
+    deleted: 1,
+    deleted_at: new Date(),
+  });
 
   for (const [key, value] of Object.entries(where)) {
     query = query.where(key as any, '=', value);
@@ -105,34 +102,36 @@ export async function softDelete<TB extends keyof DB>(
 export function withCreatorAndEditor<TB extends keyof DB & string, O>(
   query: SelectQueryBuilder<DB, TB, O>,
   options: {
-    creatorColumn: string
-    editorColumn: string
+    creatorColumn: string;
+    editorColumn: string;
   },
 ): SelectQueryBuilder<
-DB & { creator: DB['bees'] | null, editor: DB['bees'] | null },
-TB | 'creator' | 'editor',
-O & {
-  creator: { id: number, email: string, username: string } | null
-  editor: { id: number, email: string, username: string } | null
-}
+  DB & { creator: DB['bees'] | null; editor: DB['bees'] | null },
+  TB | 'creator' | 'editor',
+  O & {
+    creator: { id: number; email: string; username: string } | null;
+    editor: { id: number; email: string; username: string } | null;
+  }
 > {
-  return query
-    // @ts-expect-error - Dynamic column reference requires runtime validation
-    .leftJoin('bees as creator', 'creator.id', sql.ref(options.creatorColumn))
-    // @ts-expect-error - Dynamic column reference requires runtime validation
-    .leftJoin('bees as editor', 'editor.id', sql.ref(options.editorColumn))
-    .select([
-      sql<{ id: number, email: string, username: string } | null>`
+  return (
+    query
+      // @ts-expect-error - Dynamic column reference requires runtime validation
+      .leftJoin('bees as creator', 'creator.id', sql.ref(options.creatorColumn))
+      // @ts-expect-error - Dynamic column reference requires runtime validation
+      .leftJoin('bees as editor', 'editor.id', sql.ref(options.editorColumn))
+      .select([
+        sql<{ id: number; email: string; username: string } | null>`
         CASE WHEN creator.id IS NOT NULL THEN
           JSON_OBJECT('id', creator.id, 'email', creator.email, 'username', creator.username)
         ELSE NULL END
       `.as('creator'),
-      sql<{ id: number, email: string, username: string } | null>`
+        sql<{ id: number; email: string; username: string } | null>`
         CASE WHEN editor.id IS NOT NULL THEN
           JSON_OBJECT('id', editor.id, 'email', editor.email, 'username', editor.username)
         ELSE NULL END
       `.as('editor'),
-    ]) as any;
+      ]) as any
+  );
 }
 
 /**
@@ -143,35 +142,38 @@ O & {
 export function withApiary<TB extends keyof DB & string, O>(
   query: SelectQueryBuilder<DB, TB, O>,
   options: {
-    apiaryColumn: string
+    apiaryColumn: string;
   },
 ): SelectQueryBuilder<
-DB & { apiaries: DB['apiaries'] | null },
-TB | 'apiaries',
-O & {
-  apiary: { name: string, modus: boolean } | null
-}
+  DB & { apiaries: DB['apiaries'] | null },
+  TB | 'apiaries',
+  O & {
+    apiary: { name: string; modus: boolean } | null;
+  }
 > {
-  return query
-    // @ts-expect-error - Dynamic column reference requires runtime validation
-    .leftJoin('apiaries', 'apiaries.id', sql.ref(options.apiaryColumn))
-    .select([
-      sql<{ name: string, modus: boolean } | null>`
+  return (
+    query
+      // @ts-expect-error - Dynamic column reference requires runtime validation
+      .leftJoin('apiaries', 'apiaries.id', sql.ref(options.apiaryColumn))
+      .select([
+        sql<{ name: string; modus: boolean } | null>`
         CASE 
           WHEN apiaries.id IS NOT NULL THEN JSON_OBJECT('name', apiaries.name, 'modus', IF(apiaries.modus = 1, TRUE, FALSE))
           ELSE NULL
         END
       `.as('apiary'),
-    ])
-    // @ts-expect-error - Dynamic SQL expression for filtering soft-deleted apiaries
-    .where(sql`(${sql.ref(options.apiaryColumn)} IS NULL OR apiaries.deleted = 0)`) as any;
+      ])
+      .where(
+        sql<SqlBool>`(${sql.ref(options.apiaryColumn)} IS NULL OR apiaries.deleted = 0)`,
+      ) as any
+  );
 }
 
 /**
  * Tables that have a user_id column for ownership checks
  */
 export type TableWithUserId = {
-  [K in keyof DB]: 'user_id' extends keyof DB[K] ? K : never
+  [K in keyof DB]: 'user_id' extends keyof DB[K] ? K : never;
 }[keyof DB];
 
 /**
@@ -208,6 +210,8 @@ export async function checkOwnership(
     .executeTakeFirst();
 
   if (!record) {
-    throw new Error(`Record with id ${recordId} not found in table ${table} for user ${userId}`);
+    throw new Error(
+      `Record with id ${recordId} not found in table ${table} for user ${userId}`,
+    );
   }
 }

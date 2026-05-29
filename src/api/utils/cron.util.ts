@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
 import { sql } from 'kysely';
 import { raw } from 'objection';
+
 import { ENVIRONMENT } from '../../config/constants.config.js';
 import { env } from '../../config/environment.config.js';
 import { KyselyServer } from '../../servers/kysely.server.js';
@@ -210,9 +211,8 @@ export async function cleanupDatabase() {
         .andWhere('deleted_at', '<=', lastMonth);
       return cleanup;
     });
-  }
-  catch (e) {
-    throw checkMySQLError(e);
+  } catch (error) {
+    throw checkMySQLError(error);
   }
 }
 
@@ -240,16 +240,13 @@ export async function reminderVIS() {
     if (dayjs(countDay1).isSame(checkDate, 'day')) {
       mailDate = countDay1;
       mailSubject = 'vis_count';
-    }
-    else if (dayjs(countDay2).isSame(checkDate, 'day')) {
+    } else if (dayjs(countDay2).isSame(checkDate, 'day')) {
       mailDate = countDay2;
       mailSubject = 'vis_count';
-    }
-    else if (dayjs(reportDay1).isSame(checkDate, 'day')) {
+    } else if (dayjs(reportDay1).isSame(checkDate, 'day')) {
       mailDate = reportDay1;
       mailSubject = 'vis_submit';
-    }
-    else if (dayjs(reportDay2).isSame(checkDate, 'day')) {
+    } else if (dayjs(reportDay2).isSame(checkDate, 'day')) {
       mailDate = reportDay2;
       mailSubject = 'vis_submit';
     }
@@ -262,7 +259,7 @@ export async function reminderVIS() {
           acdate: true,
           newsletter: true,
         })
-        .where(builder =>
+        .where((builder) =>
           builder
             .where('reminder_vis', '<', lastDate)
             .orWhereNull('reminder_vis'),
@@ -284,15 +281,14 @@ export async function reminderVIS() {
           await User.query().findById(user.id).patch({
             reminder_vis: nowDate,
           });
-          await new Promise(resolve => setTimeout(resolve, 1000));
+          await new Promise((resolve) => setTimeout(resolve, 1000));
         }
       }
     }
 
     return result;
-  }
-  catch (e) {
-    throw checkMySQLError(e);
+  } catch (error) {
+    throw checkMySQLError(error);
   }
 }
 
@@ -313,7 +309,7 @@ export async function reminderPremium() {
       .withGraphJoined('user')
       .where('paid', '>=', startDate)
       .where('paid', '<', endDate)
-      .where(builder =>
+      .where((builder) =>
         builder
           .where('reminder_premium', '<', lastDate)
           .orWhereNull('reminder_premium'),
@@ -335,16 +331,15 @@ export async function reminderPremium() {
           await User.query().findById(u.id).patch({
             reminder_premium: nowDate,
           });
-          await new Promise(resolve => setTimeout(resolve, 1000));
+          await new Promise((resolve) => setTimeout(resolve, 1000));
         });
       });
     }
 
     result.mails = companies.length;
     return result;
-  }
-  catch (e) {
-    throw checkMySQLError(e);
+  } catch (error) {
+    throw checkMySQLError(error);
   }
 }
 
@@ -369,14 +364,9 @@ export async function reminderDeletion() {
     const forgottenIds = await db
       .selectFrom('company_bee')
       .leftJoin('bees', 'bees.id', 'company_bee.bee_id')
-      .select([
-        'bees.id as beeId',
-        'bees.username',
-        'bees.email',
-        'bees.lang',
-      ])
+      .select(['bees.id as beeId', 'bees.username', 'bees.email', 'bees.lang'])
       .where('bees.last_visit', '<=', timeToBeForgotten)
-      .where(eb =>
+      .where((eb) =>
         eb.or([
           eb('bees.reminder_deletion', '<', lastDate),
           eb('bees.reminder_deletion', 'is', null),
@@ -401,14 +391,13 @@ export async function reminderDeletion() {
           .set({ reminder_deletion: nowDate })
           .where('id', '=', u.beeId)
           .execute();
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise((resolve) => setTimeout(resolve, 1000));
       }
     }
 
     result.mails = forgottenIds.length;
     return result;
-  }
-  catch (e) {
-    throw checkMySQLError(e);
+  } catch (error) {
+    throw checkMySQLError(error);
   }
 }

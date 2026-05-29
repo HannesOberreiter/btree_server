@@ -1,6 +1,7 @@
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { z } from 'zod';
+
 import { ROLES } from '../../../config/constants.config.js';
 import CheckupController from '../../controllers/checkup.controller.js';
 import { Guard } from '../../hooks/guard.hook.js';
@@ -26,12 +27,11 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
-        body: z
-          .looseObject({
-            hive_ids: z.array(numberSchema),
-            interval: z.number().min(0).max(365),
-            repeat: z.number().min(0).max(15),
-          }),
+        body: z.looseObject({
+          hive_ids: z.array(numberSchema),
+          interval: z.number().min(0).max(365),
+          repeat: z.number().min(0).max(15),
+        }),
       },
     },
     CheckupController.post,

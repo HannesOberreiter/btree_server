@@ -1,21 +1,20 @@
 {
   "name": "btree-server",
-  "type": "module",
   "private": true,
   "description": "b.tree backend based on nodejs, fastify and knex.js, objections.js",
-  "author": "Hannes Oberreiter",
-  "license": "AGPL-3.0",
+  "keywords": [],
   "homepage": "https://github.com/HannesOberreiter/btree_server#readme",
+  "bugs": {
+    "url": "https://github.com/HannesOberreiter/btree_server/issues"
+  },
+  "license": "AGPL-3.0",
+  "author": "Hannes Oberreiter",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/HannesOberreiter/btree_server.git"
   },
-  "bugs": {
-    "url": "https://github.com/HannesOberreiter/btree_server/issues"
-  },
-  "keywords": [],
+  "type": "module",
   "main": "./dist/app.bootstrap.js",
-  "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
   "scripts": {
     "serve": "nodemon",
     "build": "tsc",
@@ -26,11 +25,11 @@
     "dev:build": "tsc --watch",
     "dev:knex": "ENVIRONMENT=development knex",
     "dev:knex:us": "ENVIRONMENT=development SERVER=us knex",
-    "test:e2e": "ENVIRONMENT=test npx vitest run",
-    "test:watch": "ENVIRONMENT=test npx vitest",
-    "ci:e2e": "ENVIRONMENT=ci npx vitest run",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "test:e2e": "ENVIRONMENT=test vitest run",
+    "test:watch": "ENVIRONMENT=test vitest",
+    "ci:e2e": "ENVIRONMENT=ci vitest run",
+    "lint": "oxlint . && oxfmt --check .",
+    "lint:fix": "oxlint . --fix && oxfmt --write ."
   },
   "dependencies": {
     "@fastify/compress": "^8.0.1",
@@ -78,7 +77,6 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^7.7.3",
     "@types/archiver": "^7.0.0",
     "@types/http-errors": "^2.0.4",
     "@types/jsonwebtoken": "^9.0.10",
@@ -87,10 +85,11 @@
     "@types/node": "^22.19.15",
     "@types/node-schedule": "^2.1.0",
     "@types/nodemailer": "^7.0.11",
-    "@types/proj4": "^2.5.2",
-    "eslint": "^10.0.3",
     "nodemon": "^3.0.0",
+    "oxfmt": "^0.52.0",
+    "oxlint": "^1.67.0",
     "typescript": "^5.0.4",
     "vitest": "^4.0.18"
-  }
+  },
+  "packageManager": "pnpm@11.4.0"
 }

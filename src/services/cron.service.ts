@@ -52,9 +52,14 @@ export class Cron {
       async () => {
         try {
           await this.run();
-        }
-        catch (e) {
-          this.logger.log('error', e instanceof Error ? e.message : String(e), { label: 'CronJob' });
+        } catch (error) {
+          this.logger.log(
+            'error',
+            error instanceof Error ? error.message : String(error),
+            {
+              label: 'CronJob',
+            },
+          );
         }
       },
     );
@@ -68,24 +73,62 @@ export class Cron {
     this.Logging(await cleanupDatabase());
 
     reminderDeletion()
-      .then(res => this.Logging(res))
-      .catch(e => this.logger.log('error', e instanceof Error ? e.message : String(e), { label: 'CronJob' }));
+      .then((res) => this.Logging(res))
+      .catch((error) =>
+        this.logger.log(
+          'error',
+          error instanceof Error ? error.message : String(error),
+          {
+            label: 'CronJob',
+          },
+        ),
+      );
 
     reminderVIS()
-      .then(res => this.Logging(res))
-      .catch(e => this.logger.log('error', e instanceof Error ? e.message : String(e), { label: 'CronJob' }));
+      .then((res) => this.Logging(res))
+      .catch((error) =>
+        this.logger.log(
+          'error',
+          error instanceof Error ? error.message : String(error),
+          {
+            label: 'CronJob',
+          },
+        ),
+      );
 
     await reminderPremium()
-      .then(res => this.Logging(res))
-      .catch(e => this.logger.log('error', e instanceof Error ? e.message : String(e), { label: 'CronJob' }));
+      .then((res) => this.Logging(res))
+      .catch((error) =>
+        this.logger.log(
+          'error',
+          error instanceof Error ? error.message : String(error),
+          {
+            label: 'CronJob',
+          },
+        ),
+      );
 
     fetchObservations('Vespa velutina')
-      .then(res => this.Logging(res))
-      .catch(e => this.logger.log('error', e instanceof Error ? e.message : String(e), { label: 'CronJob' }))
+      .then((res) => this.Logging(res))
+      .catch((error) =>
+        this.logger.log(
+          'error',
+          error instanceof Error ? error.message : String(error),
+          {
+            label: 'CronJob',
+          },
+        ),
+      )
       .finally(() =>
         fetchObservations('Aethina tumida')
-          .then(res => this.Logging(res))
-          .catch(e => this.logger.log('error', e instanceof Error ? e.message : String(e), { label: 'CronJob' })),
+          .then((res) => this.Logging(res))
+          .catch((error) =>
+            this.logger.log(
+              'error',
+              error instanceof Error ? error.message : String(error),
+              { label: 'CronJob' },
+            ),
+          ),
       );
   }
 

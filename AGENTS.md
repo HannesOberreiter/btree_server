@@ -33,19 +33,19 @@ t.foreign('bee_id')
 
 Authenticated session (`req.session.user`):
 
-| Field       | Meaning                          | FK target       |
-|-------------|----------------------------------|-----------------|
-| `bee_id`    | Logged-in user's ID              | `bees.id`       |
-| `user_id`   | Active company/workspace ID      | `companies.id`  |
-| `rank`      | Permission level in that company | —               |
+| Field     | Meaning                          | FK target      |
+| --------- | -------------------------------- | -------------- |
+| `bee_id`  | Logged-in user's ID              | `bees.id`      |
+| `user_id` | Active company/workspace ID      | `companies.id` |
+| `rank`    | Permission level in that company | —              |
 
 ## Permission Ranks (`company_bee.rank`)
 
-| Rank | Role       |
-|------|------------|
-| 1    | Admin      |
-| 2    | User       |
-| 3    | Read-only  |
+| Rank | Role      |
+| ---- | --------- |
+| 1    | Admin     |
+| 2    | User      |
+| 3    | Read-only |
 
 ## Tech Stack
 

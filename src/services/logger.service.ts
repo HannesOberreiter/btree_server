@@ -1,23 +1,19 @@
+import { stdout } from 'node:process';
+
 import type {
   DestinationStream,
   Logger as PinoLogger,
   StreamEntry,
 } from 'pino';
-import { stdout } from 'node:process';
-import {
-  multistream,
-  pino,
-} from 'pino';
-
+import { multistream, pino } from 'pino';
 import * as rfs from 'rotating-file-stream';
+
 import { ENVIRONMENT } from '../config/constants.config.js';
 import { env, rootDirectory } from '../config/environment.config.js';
 
 function logFileNameGenerator(time: number | Date, name: string) {
-  if (!time)
-    return `${name}.log`;
-  if (typeof time === 'number')
-    time = new Date(time);
+  if (!time) return `${name}.log`;
+  if (typeof time === 'number') time = new Date(time);
   const iso = time.toISOString().split('T')[0];
   return `${name}-${iso}.log`;
 }
@@ -39,33 +35,33 @@ export class Logger {
       | DestinationStream
       | StreamEntry
       | (DestinationStream | StreamEntry)[] = [
-        {
-          level: 'debug',
-          stream: rfs.createStream(
-            time => logFileNameGenerator(time, `info-${env}`),
-            {
-              interval: '1d',
-              maxFiles: 90,
-              immutable: true,
-              history: `history-info-${env}.txt`,
-              path: `${rootDirectory}/logs`,
-            },
-          ),
-        },
-        {
-          level: 'error',
-          stream: rfs.createStream(
-            time => logFileNameGenerator(time, `error-${env}`),
-            {
-              interval: '1d',
-              maxFiles: 90,
-              immutable: true,
-              history: `history-error-${env}.txt`,
-              path: `${rootDirectory}/logs`,
-            },
-          ),
-        },
-      ];
+      {
+        level: 'debug',
+        stream: rfs.createStream(
+          (time) => logFileNameGenerator(time, `info-${env}`),
+          {
+            interval: '1d',
+            maxFiles: 90,
+            immutable: true,
+            history: `history-info-${env}.txt`,
+            path: `${rootDirectory}/logs`,
+          },
+        ),
+      },
+      {
+        level: 'error',
+        stream: rfs.createStream(
+          (time) => logFileNameGenerator(time, `error-${env}`),
+          {
+            interval: '1d',
+            maxFiles: 90,
+            immutable: true,
+            history: `history-error-${env}.txt`,
+            path: `${rootDirectory}/logs`,
+          },
+        ),
+      },
+    ];
 
     if (env === ENVIRONMENT.development) {
       streams.push({
@@ -117,9 +113,8 @@ export class Logger {
   ) {
     try {
       this.pino[level](scope, message);
-    }
-    catch (e) {
-      console.error(e);
+    } catch (error) {
+      console.error(error);
       throw new Error('Error in logger service');
     }
   }
@@ -132,7 +127,11 @@ export class Logger {
     this.pino.flush();
     for (const entry of this._streams) {
       const stream = (entry as StreamEntry).stream ?? entry;
-      if (stream && stream !== stdout && typeof (stream as any).end === 'function') {
+      if (
+        stream &&
+        stream !== stdout &&
+        typeof (stream as any).end === 'function'
+      ) {
         (stream as any).end();
       }
     }

@@ -41,9 +41,8 @@ export async function deleteUser(bee_id: number) {
       return true;
     });
     return result;
-  }
-  catch (e) {
-    throw checkMySQLError(e);
+  } catch (error) {
+    throw checkMySQLError(error);
   }
 }
 
@@ -97,9 +96,8 @@ export async function deleteCompany(company_id: number) {
 
       return true;
     });
-  }
-  catch (e) {
-    throw checkMySQLError(e);
+  } catch (error) {
+    throw checkMySQLError(error);
   }
 }
 

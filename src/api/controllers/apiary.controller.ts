@@ -1,9 +1,9 @@
-import type { FastifyReply, FastifyRequest } from 'fastify';
-import type Objection from 'objection';
 import dayjs from 'dayjs';
+import type { FastifyReply, FastifyRequest } from 'fastify';
 import httpErrors from 'http-errors';
-
 import { map } from 'lodash-es';
+import type Objection from 'objection';
+
 import { Apiary } from '../models/apiary.model.js';
 import { HiveLocation } from '../models/hive_location.model.js';
 import { Movedate } from '../models/movedate.model.js';
@@ -25,8 +25,7 @@ async function isDuplicateApiaryName(
     checkDuplicate.whereNot('id', id);
   }
   const result = await checkDuplicate;
-  if (result?.id)
-    return true;
+  if (result?.id) return true;
   return false;
 }
 
@@ -61,8 +60,8 @@ export default class ApiaryController {
   }
 
   static async get(req: FastifyRequest, _reply: FastifyReply) {
-    const { order, direction, offset, limit, modus, deleted, q, details }
-      = req.query as any;
+    const { order, direction, offset, limit, modus, deleted, q, details } =
+      req.query as any;
 
     const query = Apiary.query()
       .where({
@@ -79,15 +78,13 @@ export default class ApiaryController {
       query.withGraphJoined(
         '[hive_count, creator(identifier),editor(identifier)]',
       );
-    }
-    else {
+    } else {
       query.withGraphJoined('[hive_count]');
     }
     if (order) {
       if (Array.isArray(order)) {
         order.forEach((field, index) => query.orderBy(field, direction[index]));
-      }
-      else {
+      } else {
         query.orderBy(order, direction);
       }
     }
@@ -162,7 +159,9 @@ export default class ApiaryController {
   static async post(req: FastifyRequest, _reply: FastifyReply) {
     const limit = await limitApiary(req.session.user.user_id);
     if (limit) {
-      throw httpErrors.PaymentRequired('Free plan apiary limit reached — premium subscription required to create more apiaries');
+      throw httpErrors.PaymentRequired(
+        'Free plan apiary limit reached — premium subscription required to create more apiaries',
+      );
     }
     const name = (req.body as any).name;
 
@@ -219,11 +218,12 @@ export default class ApiaryController {
       const hardIds: number[] = [];
       map(res, (obj) => {
         if (obj.hive_count) {
-          throw httpErrors.Forbidden('Apiary still contains hives — move or delete the hives first before deleting the apiary');
+          throw httpErrors.Forbidden(
+            'Apiary still contains hives — move or delete the hives first before deleting the apiary',
+          );
         }
 
-        if ((obj.deleted || hardDelete) && !restoreDelete)
-          hardIds.push(obj.id);
+        if ((obj.deleted || hardDelete) && !restoreDelete) hardIds.push(obj.id);
         else softIds.push(obj.id);
       });
 

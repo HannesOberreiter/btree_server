@@ -1,4 +1,5 @@
 import process from 'node:process';
+
 import Stripe from 'stripe';
 
 import { frontend, stripeSecret } from '../../config/environment.config.js';

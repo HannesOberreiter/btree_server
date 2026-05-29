@@ -1,4 +1,5 @@
 import { Model } from 'objection';
+
 import { Company } from './company.model.js';
 
 export class Dropbox extends Model {

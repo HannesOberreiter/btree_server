@@ -1,12 +1,18 @@
-import type { KyselyPlugin, PluginTransformQueryArgs, PluginTransformResultArgs, QueryResult, RootOperationNode, UnknownRow } from 'kysely';
-
-import type { DB } from '../types/db.types.js';
-
+import type {
+  KyselyPlugin,
+  PluginTransformQueryArgs,
+  PluginTransformResultArgs,
+  QueryResult,
+  RootOperationNode,
+  UnknownRow,
+} from 'kysely';
 import { Kysely, MysqlDialect, ParseJSONResultsPlugin } from 'kysely';
 import { createPool } from 'mysql2';
+
 import { ENVIRONMENT } from '../config/constants.config.js';
 import { env, knexConfig } from '../config/environment.config.js';
 import { Logger } from '../services/logger.service.js';
+import type { DB } from '../types/db.types.js';
 
 /**
  * @description Database connection manager for MySQL server with Kysely
@@ -42,13 +48,20 @@ export class KyselyServer {
       });
 
       pool.on('connection', (connection) => {
-        connection.query('SET SESSION group_concat_max_len = 100000;', (err) => {
-          if (err) {
-            this.logger.log('error', `Error setting group_concat_max_len: ${err.message}`, {
-              label: 'Database',
-            });
-          }
-        });
+        connection.query(
+          'SET SESSION group_concat_max_len = 100000;',
+          (err) => {
+            if (err) {
+              this.logger.log(
+                'error',
+                `Error setting group_concat_max_len: ${err.message}`,
+                {
+                  label: 'Database',
+                },
+              );
+            }
+          },
+        );
       });
 
       const dialect = new MysqlDialect({
@@ -58,10 +71,7 @@ export class KyselyServer {
       this.db = new Kysely<DB>({
         log: env === ENVIRONMENT.development ? ['query', 'error'] : ['error'],
         dialect,
-        plugins: [
-          new TimestampPlugin(),
-          new ParseJSONResultsPlugin(),
-        ],
+        plugins: [new TimestampPlugin(), new ParseJSONResultsPlugin()],
       });
 
       if (env !== ENVIRONMENT.test) {
@@ -71,11 +81,14 @@ export class KyselyServer {
           { label: 'Database' },
         );
       }
-    }
-    catch (error) {
-      this.logger.log('error', `Database initialization error : ${error.message}`, {
-        label: 'Database',
-      });
+    } catch (error) {
+      this.logger.log(
+        'error',
+        `Database initialization error : ${error.message}`,
+        {
+          label: 'Database',
+        },
+      );
     }
   }
 
@@ -84,9 +97,12 @@ export class KyselyServer {
       this.logger.log('debug', 'Closing database connection', {});
       await this.db.destroy();
       this.logger.log('debug', 'Closed database connection', {});
-    }
-    catch (error) {
-      this.logger.log('error', `Database closing error: ${error instanceof Error ? error.message : String(error)}`, {});
+    } catch (error) {
+      this.logger.log(
+        'error',
+        `Database closing error: ${error instanceof Error ? error.message : String(error)}`,
+        {},
+      );
     }
   }
 }
@@ -132,11 +148,16 @@ class TimestampPlugin implements KyselyPlugin {
     return node;
   }
 
-  transformResult(args: PluginTransformResultArgs): Promise<QueryResult<UnknownRow>> {
+  transformResult(
+    args: PluginTransformResultArgs,
+  ): Promise<QueryResult<UnknownRow>> {
     return Promise.resolve(args.result);
   }
 
-  private handleInsert(node: any, _args: PluginTransformQueryArgs): RootOperationNode {
+  private handleInsert(
+    node: any,
+    _args: PluginTransformQueryArgs,
+  ): RootOperationNode {
     const now = new Date();
 
     // Add created_at and updated_at to the values being inserted
@@ -186,13 +207,16 @@ class TimestampPlugin implements KyselyPlugin {
     return node;
   }
 
-  private handleUpdate(node: any, _args: PluginTransformQueryArgs): RootOperationNode {
+  private handleUpdate(
+    node: any,
+    _args: PluginTransformQueryArgs,
+  ): RootOperationNode {
     const now = new Date();
 
     // Add updated_at to the update assignments
     const updates = node.updates || [];
-    const hasUpdatedAt = updates.some((update: any) =>
-      update.column?.column?.name === 'updated_at',
+    const hasUpdatedAt = updates.some(
+      (update: any) => update.column?.column?.name === 'updated_at',
     );
 
     if (!hasUpdatedAt) {
@@ -222,8 +246,7 @@ class TimestampPlugin implements KyselyPlugin {
   }
 
   private hasColumn(node: any, columnName: string): boolean {
-    if (!node.columns)
-      return false;
+    if (!node.columns) return false;
     return node.columns.some((col: any) => col.column?.name === columnName);
   }
 }

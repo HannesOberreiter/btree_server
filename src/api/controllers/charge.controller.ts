@@ -1,5 +1,5 @@
-import type { FastifyReply, FastifyRequest } from 'fastify';
 import dayjs from 'dayjs';
+import type { FastifyReply, FastifyRequest } from 'fastify';
 import { map } from 'lodash-es';
 
 import { KyselyServer } from '../../servers/kysely.server.js';
@@ -9,8 +9,8 @@ import { checkOwnership } from '../utils/kysely.utils.js';
 
 export default class ChargeController {
   static async get(req: FastifyRequest, _reply: FastifyReply) {
-    const { order, direction, offset, limit, q, filters, deleted }
-      = req.query as any;
+    const { order, direction, offset, limit, q, filters, deleted } =
+      req.query as any;
     const query = Charge.query()
       .withGraphJoined('[type.stock, creator(identifier), editor(identifier)]')
       .where({
@@ -29,22 +29,19 @@ export default class ChargeController {
                 v.bestbefore.from,
                 v.bestbefore.to,
               ]);
-            }
-            else {
+            } else {
               query.where(v);
             }
           });
         }
-      }
-      catch (e) {
-        req.log.error(e);
+      } catch (error) {
+        req.log.error(error);
       }
     }
     if (order) {
       if (Array.isArray(order)) {
         order.forEach((field, index) => query.orderBy(field, direction[index]));
-      }
-      else {
+      } else {
         query.orderBy(order, direction);
       }
     }
@@ -77,8 +74,7 @@ export default class ChargeController {
     if (order) {
       if (Array.isArray(order)) {
         order.forEach((field, index) => query.orderBy(field, direction[index]));
-      }
-      else {
+      } else {
         query.orderBy(order, direction);
       }
     }
@@ -149,7 +145,10 @@ export default class ChargeController {
       );
     }
 
-    const insert = { ...body.data, ...(isLlm && { ai_updated_at: new Date() }) };
+    const insert = {
+      ...body.data,
+      ...(isLlm && { ai_updated_at: new Date() }),
+    };
     const result = await Charge.transaction(async (trx) => {
       return await Charge.query(trx)
         .patch({ ...insert, edit_id: req.session.user.bee_id })
@@ -184,8 +183,7 @@ export default class ChargeController {
       const softIds = [];
       const hardIds = [];
       map(res, (obj) => {
-        if ((obj.deleted || hardDelete) && !restoreDelete)
-          hardIds.push(obj.id);
+        if ((obj.deleted || hardDelete) && !restoreDelete) hardIds.push(obj.id);
         else softIds.push(obj.id);
       });
 

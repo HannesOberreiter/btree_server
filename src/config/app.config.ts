@@ -1,13 +1,13 @@
-import type { FastifyInstance } from 'fastify';
 import { randomUUID } from 'node:crypto';
+
 import fastifyCompress from '@fastify/compress';
 import fastifyCookie from '@fastify/cookie';
-
 import fastifyHelmet from '@fastify/helmet';
 import fastifyMultipart from '@fastify/multipart';
 import fastifyRateLimit from '@fastify/rate-limit';
 import fastifySession from '@fastify/session';
 import { RedisStore } from 'connect-redis';
+import type { FastifyInstance } from 'fastify';
 import fastify from 'fastify';
 import {
   hasZodFastifySchemaValidationErrors,
@@ -45,7 +45,7 @@ export class Application {
       bodyLimit: 1048576 * 50, // 50 MB
       routerOptions: {
         maxParamLength: 10000,
-        querystringParser: str =>
+        querystringParser: (str) =>
           queryString.parse(str, {
             arrayFormat: 'bracket',
             parseBooleans: true,
@@ -97,28 +97,25 @@ export class Application {
           try {
             const url = new URL(req.headers.referer);
             req.headers.origin = url.origin;
-          }
-          catch (e) {
-            Logger.getInstance().pino.error(e, 'Error parsing referer');
+          } catch (error) {
+            Logger.getInstance().pino.error(error, 'Error parsing referer');
             req.headers.origin = req.headers?.host ?? '';
           }
-        }
-        else if (req.headers.host) {
+        } else if (req.headers.host) {
           req.headers.origin = req.headers.host;
         }
       }
 
       const origin = req.headers.origin!;
 
-      const isExternal
-        = req.url.includes('external')
-          || req.url.includes('auth/google/callback')
-          || req.url.includes('auth/apple/callback');
+      const isExternal =
+        req.url.includes('external') ||
+        req.url.includes('auth/google/callback') ||
+        req.url.includes('auth/apple/callback');
 
       if (isExternal || env === ENVIRONMENT.development) {
         reply.header('Access-Control-Allow-Origin', '*');
-      }
-      else {
+      } else {
         reply.header('Access-Control-Allow-Origin', origin);
         reply.header('Access-Control-Allow-Credentials', 'true');
       }
@@ -205,7 +202,7 @@ export class Application {
         );
         return reply.code(400).send({
           error: 'Bad Request',
-          message: 'Request doesn\'t match the schema',
+          message: "Request doesn't match the schema",
           statusCode: 400,
           issues: error.validation,
           details: {
@@ -229,7 +226,7 @@ export class Application {
         );
         return reply.code(500).send({
           error: 'Internal Server Error',
-          message: 'Response doesn\'t match the schema',
+          message: "Response doesn't match the schema",
           statusCode: 500,
           issues: error.cause.issues,
           details: {

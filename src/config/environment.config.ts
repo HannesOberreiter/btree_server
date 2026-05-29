@@ -1,6 +1,8 @@
 import { Buffer } from 'node:buffer';
 import process from 'node:process';
+
 import dotenv from 'dotenv';
+
 import { ENVIRONMENT } from './constants.config.js';
 
 const rootDirectory = new URL('../../', import.meta.url).pathname;
@@ -23,20 +25,19 @@ class EnvironmentConfiguration {
    */
   static set() {
     if (
-      process.argv[2]
-      && process.argv[2] === '--env'
-      && process.argv[3]
-
-      && Object.hasOwn(ENVIRONMENT, process.argv[3])
+      process.argv[2] &&
+      process.argv[2] === '--env' &&
+      process.argv[3] &&
+      Object.hasOwn(ENVIRONMENT, process.argv[3])
     ) {
-      this.environment = ENVIRONMENT[process.argv[3] as keyof typeof ENVIRONMENT];
-    }
-    else if (
-      process.env.ENVIRONMENT
-
-      && Object.hasOwn(ENVIRONMENT, process.env.ENVIRONMENT)
+      this.environment =
+        ENVIRONMENT[process.argv[3] as keyof typeof ENVIRONMENT];
+    } else if (
+      process.env.ENVIRONMENT &&
+      Object.hasOwn(ENVIRONMENT, process.env.ENVIRONMENT)
     ) {
-      this.environment = ENVIRONMENT[process.env.ENVIRONMENT as keyof typeof ENVIRONMENT];
+      this.environment =
+        ENVIRONMENT[process.env.ENVIRONMENT as keyof typeof ENVIRONMENT];
     }
     if (process.env.SERVER && ['eu', 'us'].includes(process.env.SERVER)) {
       this.server = process.env.SERVER as 'eu' | 'us';
@@ -50,9 +51,9 @@ class EnvironmentConfiguration {
     this.set();
     // https://www.npmjs.com/package/dotenv
     const result = dotenv.config({
-      path:
-        `${rootDirectory
-        }/env/${this.environment + (this.server === 'eu' ? '' : `-${this.server}`)}.env`,
+      path: `${
+        rootDirectory
+      }/env/${this.environment + (this.server === 'eu' ? '' : `-${this.server}`)}.env`,
     });
     if (result.error) {
       throw result.error;
@@ -79,8 +80,8 @@ const dropboxClientSecret = process.env.DROPBOX_CLIENT_SECRET;
 
 const paypalClientId = process.env.PAYPAL_CLIENT_ID;
 const paypalAppSecret = process.env.PAYPAL_APP_SECRET;
-const paypalBase
-  = env === ENVIRONMENT.production
+const paypalBase =
+  env === ENVIRONMENT.production
     ? 'https://api-m.paypal.com'
     : 'https://api-m.sandbox.paypal.com';
 
@@ -138,14 +139,13 @@ const knexConfig = {
     password: process.env.DB_PASSWORD,
     port: Number.parseInt(process.env.DB_PORT!),
     charset: 'utf8mb4',
-    timezone: 'UTC',
+    timezone: 'Z',
     typeCast(field: any, next: any) {
       // https://github.com/Vincit/objection.js/issues/174#issuecomment-424873063
       // Convert 1 to true, 0 to false, and leave null alone
       if (field.type === 'TINY' && field.length === 1) {
         const value = field.string();
-        if (value === null)
-          return null;
+        if (value === null) return null;
         return value === '1';
       }
       return next();
@@ -173,8 +173,8 @@ const knexConfig = {
 
 const dkimSelector = process.env.MAIL_DKIM_SELECTOR;
 const dkimPrivateRaw = process.env.MAIL_DKIM_PRIVATE;
-const dkim
-  = dkimSelector && dkimPrivateRaw && dkimPrivateRaw !== 'false'
+const dkim =
+  dkimSelector && dkimPrivateRaw && dkimPrivateRaw !== 'false'
     ? {
         domainName: 'btree.at',
         keySelector: dkimSelector,
@@ -202,12 +202,14 @@ const openAI = {
 
 const mistralAI = {
   key: process.env.MISTRAL_API_KEY ?? '',
-  monthlyBudgetEUR: Number.parseFloat(process.env.MISTRAL_MONTHLY_BUDGET_EUR ?? '3'),
+  monthlyBudgetEUR: Number.parseFloat(
+    process.env.MISTRAL_MONTHLY_BUDGET_EUR ?? '3',
+  ),
 };
 
-const serverLocations = ['eu', 'us'];
+const serverLocations = new Set(['eu', 'us']);
 function isServerLocationValid(server: string) {
-  return serverLocations.includes(server);
+  return serverLocations.has(server);
 }
 const serverLocation = isServerLocationValid(process.env.SERVER_LOCATION!)
   ? process.env.SERVER_LOCATION!

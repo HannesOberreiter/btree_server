@@ -1,5 +1,6 @@
 import { Buffer } from 'node:buffer';
 import crypto from 'node:crypto';
+
 import { KyselyServer } from '../../servers/kysely.server.js';
 
 export const KEY_PREFIX_LENGTH = 16;
@@ -11,10 +12,10 @@ const KEY_LENGTH = 32;
  * Returns the plaintext key (to show once) along with the storable parts.
  */
 export function generateAgentKey(): {
-  plaintextKey: string
-  keyHash: string
-  salt: string
-  keyPrefix: string
+  plaintextKey: string;
+  keyHash: string;
+  salt: string;
+  keyPrefix: string;
 } {
   const rawKey = crypto.randomBytes(KEY_LENGTH);
   const plaintextKey = `btree_ak_${rawKey.toString('base64url')}`;
@@ -45,13 +46,13 @@ export function verifyAgentKey(
 
 export class AgentKeyModel {
   static async create(params: {
-    userId: number
-    beeId: number
-    keyHash: string
-    salt: string
-    keyPrefix: string
-    label?: string | null
-    validTo?: Date | null
+    userId: number;
+    beeId: number;
+    keyHash: string;
+    salt: string;
+    keyPrefix: string;
+    label?: string | null;
+    validTo?: Date | null;
   }) {
     const db = KyselyServer.getInstance().db;
     const result = await db

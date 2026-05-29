@@ -1,5 +1,5 @@
-import type { FastifyReply, FastifyRequest } from 'fastify';
 import { Dropbox, DropboxAuth } from 'dropbox';
+import type { FastifyReply, FastifyRequest } from 'fastify';
 
 import {
   dropboxClientId,
@@ -53,8 +53,7 @@ export default class DropboxController {
           refresh_token,
           access_token,
         });
-      }
-      else {
+      } else {
         return await DropboxModel.query(trx).insert({
           refresh_token,
           access_token,

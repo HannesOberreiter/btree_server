@@ -1,5 +1,6 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import httpErrors from 'http-errors';
+
 import { Hive } from '../models/hive.model.js';
 import { Scale } from '../models/scale.model.js';
 import { ScaleData } from '../models/scale_data.model.js';
@@ -43,7 +44,9 @@ export default class ScaleController {
 
     const limit = await limitScale(req.session.user.user_id);
     if (limit) {
-      throw httpErrors.PaymentRequired('Premium subscription required to connect scales');
+      throw httpErrors.PaymentRequired(
+        'Premium subscription required to connect scales',
+      );
     }
 
     const result = await Scale.transaction(async (trx) => {
@@ -66,7 +69,7 @@ export default class ScaleController {
     const params = req.params as any;
     const result = await Scale.transaction(async (trx) => {
       await ScaleData.query(trx).delete().joinRelated('scale').where({
-        'scale_id': params.id,
+        scale_id: params.id,
         'scale.user_id': req.session.user.user_id,
       });
       return await Scale.query(trx)

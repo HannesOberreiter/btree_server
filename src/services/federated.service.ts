@@ -1,18 +1,24 @@
 import type { TokenPayload } from 'google-auth-library';
-import type { TokenResponse } from './apple.service.util.js';
 import { OAuth2Client } from 'google-auth-library';
 import jwt from 'jsonwebtoken';
+
 import { FederatedCredential } from '../api/models/federated_credential.js';
 import { User } from '../api/models/user.model.js';
 import { ENVIRONMENT } from '../config/constants.config.js';
-import { appleOAuth, env, googleOAuth, url } from '../config/environment.config.js';
+import {
+  appleOAuth,
+  env,
+  googleOAuth,
+  url,
+} from '../config/environment.config.js';
+import type { TokenResponse } from './apple.service.util.js';
 import { AppleAuthentication } from './apple.service.util.js';
 import { Logger } from './logger.service.js';
 
 export interface federatedUser {
-  bee_id: number | undefined
-  name: string | undefined
-  email: string | undefined
+  bee_id: number | undefined;
+  name: string | undefined;
+  email: string | undefined;
 }
 
 export class GoogleAuth {
@@ -173,10 +179,15 @@ export class AppleAuth {
 
     try {
       response = await this.client.accessToken(code);
-    }
-    catch (error) {
-      this.logger.log('error', `Apple accessToken failed: ${error instanceof Error ? error.message : String(error)}`, { code });
-      throw new Error(`Apple token exchange failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    } catch (error) {
+      this.logger.log(
+        'error',
+        `Apple accessToken failed: ${error instanceof Error ? error.message : String(error)}`,
+        { code },
+      );
+      throw new Error(
+        `Apple token exchange failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      );
     }
 
     if (!response.id_token) {
@@ -186,9 +197,12 @@ export class AppleAuth {
 
     try {
       idToken = jwt.decode(response.id_token);
-    }
-    catch (error) {
-      this.logger.log('error', `JWT decode failed: ${error instanceof Error ? error.message : String(error)}`, { id_token: response.id_token });
+    } catch (error) {
+      this.logger.log(
+        'error',
+        `JWT decode failed: ${error instanceof Error ? error.message : String(error)}`,
+        { id_token: response.id_token },
+      );
       throw new Error('Failed to decode Apple ID token');
     }
 

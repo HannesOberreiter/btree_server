@@ -1,4 +1,5 @@
 import { Model } from 'objection';
+
 import { Apiary } from './apiary.model.js';
 
 export class HiveCount extends Model {

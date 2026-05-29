@@ -1,6 +1,7 @@
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { z } from 'zod';
+
 import { ROLES } from '../../../config/constants.config.js';
 import FieldSettingController from '../../controllers/field_setting.controller.js';
 import { Guard } from '../../hooks/guard.hook.js';
@@ -25,9 +26,7 @@ export default function routes(
           settings: z.custom<string>((data: any) => {
             try {
               JSON.parse(data);
-            }
-            // eslint-disable-next-line unused-imports/no-unused-vars
-            catch (error: any) {
+            } catch {
               return false;
             }
             return true;

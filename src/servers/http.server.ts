@@ -1,6 +1,7 @@
-import type { FastifyInstance } from 'fastify';
 import type { Server as HttpServer } from 'node:http';
 import type { Server as HttpsServer } from 'node:https';
+
+import type { FastifyInstance } from 'fastify';
 
 import { ENVIRONMENT } from '../config/constants.config.js';
 import { env, isContainer, port } from '../config/environment.config.js';
@@ -27,12 +28,10 @@ export class HTTPServer {
       const app = this.app;
       const logger = this.logger;
       const containerHost = isContainer ? '0.0.0.0' : 'localhost';
-      const address = await app.listen(
-        {
-          port,
-          host: containerHost,
-        },
-      );
+      const address = await app.listen({
+        port,
+        host: containerHost,
+      });
       if (env !== ENVIRONMENT.test) {
         logger.log(
           'debug',
@@ -40,15 +39,13 @@ export class HTTPServer {
           {},
         );
       }
-    }
-    catch (error) {
+    } catch (error) {
       this.logger.log('error', 'Failed to create server', error);
     }
 
     try {
       this.cron.start();
-    }
-    catch (error) {
+    } catch (error) {
       this.logger.log('error', 'Failed to start cron jobs', error);
     }
   }

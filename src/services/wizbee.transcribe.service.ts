@@ -1,5 +1,7 @@
 import type { Buffer } from 'node:buffer';
+
 import { Mistral } from '@mistralai/mistralai';
+
 import { mistralAI } from '../config/environment.config.js';
 
 /**
@@ -130,26 +132,25 @@ const CONTEXT_BIAS: Record<string, string[]> = {
 };
 
 export interface TranscriptionResult {
-  text: string
-  language: string | null
+  text: string;
+  language: string | null;
   /** Token usage (if reported by the API) so we can charge against the monthly budget. */
   usage: {
-    promptTokens: number
-    completionTokens: number
-  }
+    promptTokens: number;
+    completionTokens: number;
+  };
 }
 
 function normalizeLanguage(lang: unknown): string | undefined {
-  if (typeof lang !== 'string')
-    return undefined;
+  if (typeof lang !== 'string') return undefined;
   const short = lang.trim().toLowerCase().slice(0, 2);
   return SUPPORTED_LANGUAGES.has(short) ? short : undefined;
 }
 
 export async function transcribeAudio(params: {
-  audio: Buffer
-  fileName: string
-  language?: string
+  audio: Buffer;
+  fileName: string;
+  language?: string;
 }): Promise<TranscriptionResult> {
   const language = normalizeLanguage(params.language);
   const contextBias = language ? CONTEXT_BIAS[language] : CONTEXT_BIAS.en;

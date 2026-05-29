@@ -1,18 +1,19 @@
 import type { Kysely } from 'kysely';
-import type { DB } from '../../types/db.types.js';
 import { sql } from 'kysely';
+
 import { KyselyServer } from '../../servers/kysely.server.js';
+import type { DB } from '../../types/db.types.js';
 
 export type Taxa = 'Vespa velutina' | 'Aethina tumida';
 
 export interface ObservationInsert {
-  external_id?: number
-  external_uuid?: string
-  external_service: string
-  observed_at: string
-  location: { lat: number, lng: number }
-  taxa: Taxa
-  data?: Record<string, any>
+  external_id?: number;
+  external_uuid?: string;
+  external_service: string;
+  observed_at: string;
+  location: { lat: number; lng: number };
+  taxa: Taxa;
+  data?: Record<string, any>;
 }
 
 function getDb(): Kysely<DB> {
@@ -24,8 +25,7 @@ export class ObservationModel {
    * Insert multiple observations using raw SQL for POINT conversion.
    */
   static async insertBatch(observations: ObservationInsert[]) {
-    if (observations.length === 0)
-      return;
+    if (observations.length === 0) return;
     const db = getDb();
 
     for (const obs of observations) {
@@ -36,7 +36,8 @@ export class ObservationModel {
           external_uuid: obs.external_uuid ?? null,
           external_service: obs.external_service,
           observed_at: new Date(obs.observed_at),
-          location: sql`PointFromText(${`POINT(${obs.location.lat} ${obs.location.lng})`})` as any,
+          location:
+            sql`PointFromText(${`POINT(${obs.location.lat} ${obs.location.lng})`})` as any,
           taxa: obs.taxa,
           data: JSON.stringify(obs.data ?? null),
         })
@@ -48,9 +49,11 @@ export class ObservationModel {
    * Find which external_ids already exist for a given service.
    * Returns the set of IDs that are new (not in the DB).
    */
-  static async filterNewExternalIds(externalIds: number[], externalService: string): Promise<Set<number>> {
-    if (externalIds.length === 0)
-      return new Set();
+  static async filterNewExternalIds(
+    externalIds: number[],
+    externalService: string,
+  ): Promise<Set<number>> {
+    if (externalIds.length === 0) return new Set();
     const db = getDb();
 
     const existing = await db
@@ -60,16 +63,18 @@ export class ObservationModel {
       .where('external_id', 'in', externalIds)
       .execute();
 
-    const existingSet = new Set(existing.map(o => o.external_id));
-    return new Set(externalIds.filter(id => !existingSet.has(id)));
+    const existingSet = new Set(existing.map((o) => o.external_id));
+    return new Set(externalIds.filter((id) => !existingSet.has(id)));
   }
 
   /**
    * Find which external_uuids already exist for a given service.
    */
-  static async filterNewExternalUuids(uuids: string[], externalService: string): Promise<Set<string>> {
-    if (uuids.length === 0)
-      return new Set();
+  static async filterNewExternalUuids(
+    uuids: string[],
+    externalService: string,
+  ): Promise<Set<string>> {
+    if (uuids.length === 0) return new Set();
     const db = getDb();
 
     const existing = await db
@@ -79,8 +84,8 @@ export class ObservationModel {
       .where('external_uuid', 'in', uuids)
       .execute();
 
-    const existingSet = new Set(existing.map(o => o.external_uuid));
-    return new Set(uuids.filter(uuid => !existingSet.has(uuid)));
+    const existingSet = new Set(existing.map((o) => o.external_uuid));
+    return new Set(uuids.filter((uuid) => !existingSet.has(uuid)));
   }
 
   /**
@@ -152,10 +157,12 @@ export class ObservationModel {
       .executeTakeFirstOrThrow();
 
     const count = Number(countResult.count);
-    if (count === 0)
-      return [];
+    if (count === 0) return [];
 
-    const randomOffset = Math.max(0, Math.floor(Math.random() * (count - limit)));
+    const randomOffset = Math.max(
+      0,
+      Math.floor(Math.random() * (count - limit)),
+    );
 
     return db
       .selectFrom('observations')
@@ -171,20 +178,20 @@ export class ObservationModel {
    * Delete observations by their internal IDs.
    */
   static async deleteByIds(ids: number[]) {
-    if (ids.length === 0)
-      return;
+    if (ids.length === 0) return;
     const db = getDb();
 
-    await db
-      .deleteFrom('observations')
-      .where('id', 'in', ids)
-      .execute();
+    await db.deleteFrom('observations').where('id', 'in', ids).execute();
   }
 
   /**
    * Get external_ids for a service (used by iNat cleanup).
    */
-  static async getExternalIdsSample(externalService: string, offset: number, limit: number) {
+  static async getExternalIdsSample(
+    externalService: string,
+    offset: number,
+    limit: number,
+  ) {
     const db = getDb();
 
     return db

@@ -1,17 +1,18 @@
-import type { Options } from 'csv-stringify/sync';
-import type { FastifyReply, FastifyRequest } from 'fastify';
-import type Objection from 'objection';
-import type { MailLang } from '../../services/mail.service.js';
 import { Buffer } from 'node:buffer';
 import { randomBytes } from 'node:crypto';
 import { Stream } from 'node:stream';
+
 import archiver from 'archiver';
 import { parse } from 'csv-parse/sync';
-
+import type { Options } from 'csv-stringify/sync';
 import { stringify } from 'csv-stringify/sync';
+import type { FastifyReply, FastifyRequest } from 'fastify';
 import httpErrors from 'http-errors';
+import type Objection from 'objection';
 import yauzl from 'yauzl-promise';
+
 import { KyselyServer } from '../../servers/kysely.server.js';
+import type { MailLang } from '../../services/mail.service.js';
 import { MailLangs } from '../../services/mail.service.js';
 import UserController from '../controllers/user.controller.js';
 import { Apiary } from '../models/apiary.model.js';
@@ -48,7 +49,11 @@ import { autoFill } from '../utils/autofill.util.js';
 import { deleteCompany } from '../utils/delete.util.js';
 import { createInvoice } from '../utils/foxyoffice.util.js';
 import { reviewPassword } from '../utils/login.util.js';
-import { addPremium, isPremium, premiumPaidDate } from '../utils/premium.util.js';
+import {
+  addPremium,
+  isPremium,
+  premiumPaidDate,
+} from '../utils/premium.util.js';
 
 const NEWLINE_QUOTE_REGEX = /(\r\n|[\n\r"])/g;
 const PROMO_COOLDOWN_HOURS = 48;
@@ -137,7 +142,7 @@ export default class CompanyController {
    * payment target.
    */
   static async postInvoice(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as { amount: number, quantity: number };
+    const body = req.body as { amount: number; quantity: number };
     const user_id = req.session.user.user_id;
     const bee_id = req.session.user.bee_id;
 
@@ -161,8 +166,8 @@ export default class CompanyController {
     const years = Math.max(1, Math.floor(body.quantity ?? 1));
     const price = body.amount * years;
 
-    const lang
-      = user.lang && MailLangs.includes(user.lang as MailLang)
+    const lang =
+      user.lang && MailLangs.includes(user.lang as MailLang)
         ? (user.lang as MailLang)
         : 'en';
 
@@ -267,7 +272,7 @@ export default class CompanyController {
         .select('companies.id')
         .withGraphJoined('user')
         .where({
-          'name': body.name,
+          name: body.name,
           'user.id': req.session.user.bee_id,
         });
       if (check.length > 0) {
@@ -289,9 +294,9 @@ export default class CompanyController {
 
   static async patch(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as {
-      name: string
-      password?: string
-      api_change?: boolean
+      name: string;
+      password?: string;
+      api_change?: boolean;
     };
     if ('password' in body) {
       await reviewPassword(req.session.user.bee_id, body.password);
@@ -314,8 +319,8 @@ export default class CompanyController {
       const res = await company.$query(trx).patchAndFetch({ ...body });
 
       if (
-        api_change
-        || (res.api_active && (res.api_key === '' || res.api_key === null))
+        api_change ||
+        (res.api_active && (res.api_key === '' || res.api_key === null))
       ) {
         const apiKey = randomBytes(25).toString('hex');
         await company.$query(trx).patch({
@@ -371,8 +376,7 @@ export default class CompanyController {
           data[name] = await parseCSV(content.toString());
         }
       }
-    }
-    finally {
+    } finally {
       await zip.close();
     }
     const name = `${Date.now()}`;
@@ -471,11 +475,9 @@ async function specialTypes() {
       const item = property[key];
       if (item.type === 'boolean') {
         booleanFields.push(key);
-      }
-      else if (item.format === 'date') {
+      } else if (item.format === 'date') {
         dateFields.push(key);
-      }
-      else if (item.format === 'iso-date-time') {
+      } else if (item.format === 'iso-date-time') {
         isoDateFields.push(key);
       }
     }
@@ -502,26 +504,22 @@ async function parseCSV(csv: string) {
       }
       for (const key of Object.keys(record)) {
         if (
-          record[key] === ''
-          || record[key] === null
-          || record[key] === undefined
+          record[key] === '' ||
+          record[key] === null ||
+          record[key] === undefined
         ) {
           delete record[key];
-        }
-        else if (exceptions.booleanFields.includes(key)) {
+        } else if (exceptions.booleanFields.includes(key)) {
           /** convert to boolean, ajv coercing does not work for strings to boolean */
           record[key] = record[key] === '1';
-        }
-        else if (exceptions.isoDateFields.includes(key)) {
+        } else if (exceptions.isoDateFields.includes(key)) {
           /** prepare for direct insert into db */
           if (record[key]) {
             record[key] = record[key].slice(0, 19).replace('T', ' ');
-          }
-          else {
+          } else {
             delete record[key];
           }
-        }
-        else if (exceptions.dateFields.includes(key)) {
+        } else if (exceptions.dateFields.includes(key)) {
           /** convert to short date */
           record[key] = record[key].slice(0, 10);
           if (record[key] === '0000-00-00') {
@@ -535,16 +533,17 @@ async function parseCSV(csv: string) {
   return results;
 }
 
-function removeKeys(records: Record<string, any>[], removeList = ['id', 'bee_id', 'edit_id']) {
+function removeKeys(
+  records: Record<string, any>[],
+  removeList = ['id', 'bee_id', 'edit_id'],
+) {
   records.forEach((record) => {
     Object.keys(record).forEach((key) => {
       if (record[key] === undefined) {
         delete record[key];
-      }
-      else if (typeof record[key] === 'object') {
+      } else if (typeof record[key] === 'object') {
         delete record[key];
-      }
-      else if (removeList.includes(key)) {
+      } else if (removeList.includes(key)) {
         delete record[key];
       }
     });
@@ -574,8 +573,7 @@ async function moveCharges(
   user_id: number,
   data: Record<string, any[]>,
 ) {
-  if (data.charge_types.length === 0)
-    return;
+  if (data.charge_types.length === 0) return;
   const copyTypes = JSON.parse(JSON.stringify(data.charge_types));
   removeKeys(data.charge_types);
   data.charge_types.map((type) => {
@@ -585,8 +583,7 @@ async function moveCharges(
   const insertTypes = await insert(ChargeType.query(trx), data.charge_types);
   const oldMapTypes = oldMap(insertTypes, copyTypes);
 
-  if (data.charges.length === 0)
-    return;
+  if (data.charges.length === 0) return;
   removeKeys(data.charges);
   data.charges.map((charge) => {
     charge.user_id = user_id;
@@ -602,8 +599,7 @@ async function moveTodos(
   data: Record<string, any>,
   apiaries: Record<string, number>,
 ) {
-  if (data.todos.length === 0)
-    return;
+  if (data.todos.length === 0) return;
   removeKeys(data.todos);
   data.todos.map((todo) => {
     todo.user_id = user_id;
@@ -621,8 +617,7 @@ async function moveTreatments(
   data: Record<string, any[]>,
   hives: Record<string, number>,
 ) {
-  if (data.treatment_types.length === 0)
-    return;
+  if (data.treatment_types.length === 0) return;
   const copyTypes = JSON.parse(JSON.stringify(data.treatment_types));
   removeKeys(data.treatment_types);
   data.treatment_types.map((type) => {
@@ -635,8 +630,7 @@ async function moveTreatments(
   );
   const oldMapTypes = oldMap(insertTypes, copyTypes);
 
-  if (data.treatment_diseases.length === 0)
-    return;
+  if (data.treatment_diseases.length === 0) return;
   const copyDiseases = JSON.parse(JSON.stringify(data.treatment_diseases));
   removeKeys(data.treatment_diseases);
   data.treatment_diseases.map((disease) => {
@@ -649,8 +643,7 @@ async function moveTreatments(
   );
   const oldMapDiseases = oldMap(insertDiseases, copyDiseases);
 
-  if (data.treatment_vets.length === 0)
-    return;
+  if (data.treatment_vets.length === 0) return;
   const copyVets = JSON.parse(JSON.stringify(data.treatment_vets));
   removeKeys(data.treatment_vets);
   data.treatment_vets.map((vet) => {
@@ -660,8 +653,7 @@ async function moveTreatments(
   const insertVets = await insert(TreatmentVet.query(trx), data.treatment_vets);
   const oldMapVets = oldMap(insertVets, copyVets);
 
-  if (data.treatments.length === 0)
-    return;
+  if (data.treatments.length === 0) return;
   removeKeys(data.treatments);
   data.treatments.map((treatment) => {
     treatment.user_id = user_id;
@@ -680,8 +672,7 @@ async function moveHarvests(
   data: Record<string, any[]>,
   hives: Record<string, number>,
 ) {
-  if (data.harvest_types.length === 0)
-    return;
+  if (data.harvest_types.length === 0) return;
   const copyTypes = JSON.parse(JSON.stringify(data.harvest_types));
   removeKeys(data.harvest_types);
   data.harvest_types.map((type) => {
@@ -691,8 +682,7 @@ async function moveHarvests(
   const insertTypes = await insert(HarvestType.query(trx), data.harvest_types);
   const oldMapTypes = oldMap(insertTypes, copyTypes);
 
-  if (data.harvests.length === 0)
-    return;
+  if (data.harvests.length === 0) return;
   removeKeys(data.harvests);
   data.harvests.map((harvest) => {
     harvest.user_id = user_id;
@@ -709,8 +699,7 @@ async function moveFeeds(
   data: Record<string, any[]>,
   hives: Record<string, number>,
 ) {
-  if (data.feed_types.length === 0)
-    return;
+  if (data.feed_types.length === 0) return;
   const copyTypes = JSON.parse(JSON.stringify(data.feed_types));
   removeKeys(data.feed_types);
   data.feed_types.map((type) => {
@@ -720,8 +709,7 @@ async function moveFeeds(
   const insertTypes = await insert(FeedType.query(trx), data.feed_types);
   const oldMapTypes = oldMap(insertTypes, copyTypes);
 
-  if (data.feeds.length === 0)
-    return;
+  if (data.feeds.length === 0) return;
   removeKeys(data.feeds);
   data.feeds.map((feed) => {
     feed.user_id = user_id;
@@ -738,8 +726,7 @@ async function moveCheckups(
   data: Record<string, any[]>,
   hives: Record<string, number>,
 ) {
-  if (data.checkup_types.length === 0)
-    return;
+  if (data.checkup_types.length === 0) return;
   const copyTypes = JSON.parse(JSON.stringify(data.checkup_types));
   removeKeys(data.checkup_types);
   data.checkup_types.map((type) => {
@@ -749,8 +736,7 @@ async function moveCheckups(
   const insertTypes = await insert(CheckupType.query(trx), data.checkup_types);
   const oldMapTypes = oldMap(insertTypes, copyTypes);
 
-  if (data.checkups.length === 0)
-    return;
+  if (data.checkups.length === 0) return;
   removeKeys(data.checkups);
   data.checkups.map((checkup) => {
     checkup.user_id = user_id;
@@ -767,8 +753,7 @@ async function moveQueens(
   data: Record<string, any[]>,
   hives: Record<string, number>,
 ) {
-  if (data.queen_races.length === 0)
-    return;
+  if (data.queen_races.length === 0) return;
   const copyRaces = JSON.parse(JSON.stringify(data.queen_races));
   removeKeys(data.queen_races);
   data.queen_races.map((race) => {
@@ -778,8 +763,7 @@ async function moveQueens(
   const insertRaces = await insert(QueenRace.query(trx), data.queen_races);
   const oldMapRaces = oldMap(insertRaces, copyRaces);
 
-  if (data.queen_matings.length === 0)
-    return;
+  if (data.queen_matings.length === 0) return;
   const copyMatings = JSON.parse(JSON.stringify(data.queen_matings));
   removeKeys(data.queen_matings);
   data.queen_matings.map((mating) => {
@@ -792,8 +776,7 @@ async function moveQueens(
   );
   const oldMapMatings = oldMap(insertMatings, copyMatings);
 
-  if (data.queens.length === 0)
-    return;
+  if (data.queens.length === 0) return;
   removeKeys(data.queens);
   data.queens.map((queen) => {
     queen.user_id = user_id;
@@ -811,8 +794,7 @@ async function moveHives(
   user_id: number,
   data: Record<string, any[]>,
 ) {
-  if (data.hive_types.length === 0)
-    return;
+  if (data.hive_types.length === 0) return;
   const copyTypes = JSON.parse(JSON.stringify(data.hive_types));
   removeKeys(data.hive_types);
   data.hive_types.map((hiveType) => {
@@ -823,7 +805,7 @@ async function moveHives(
   const oldMapTypes = oldMap(insertTypes, copyTypes);
 
   if (data.hive_sources.length === 0) {
-    return undefined;
+    return;
   }
   const copySource = JSON.parse(JSON.stringify(data.hive_sources));
   removeKeys(data.hive_sources);
@@ -835,7 +817,7 @@ async function moveHives(
   const oldMapSource = oldMap(insertSource, copySource);
 
   if (data.hives.length === 0) {
-    return undefined;
+    return;
   }
   const copyHives = JSON.parse(JSON.stringify(data.hives));
   removeKeys(data.hives);
@@ -855,8 +837,7 @@ async function moveApiaries(
   user_id: number,
   data: Record<string, any>[],
 ) {
-  if (data.length === 0)
-    return;
+  if (data.length === 0) return;
   const copy = JSON.parse(JSON.stringify(data));
   removeKeys(data);
   data.map((item) => {
@@ -880,8 +861,7 @@ async function downloadData(arch: archiver.Archiver, user_id: number) {
         return value.replace(NEWLINE_QUOTE_REGEX, ' ');
       },
       boolean(value) {
-        if (value === null)
-          return '';
+        if (value === null) return '';
         return value ? '1' : '0';
       },
     },

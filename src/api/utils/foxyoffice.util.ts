@@ -1,5 +1,5 @@
-import type { MailLang } from '../../services/mail.service.js';
 import { Buffer } from 'node:buffer';
+
 import {
   env,
   foxyOfficeKey,
@@ -7,6 +7,7 @@ import {
   serverLocation,
 } from '../../config/environment.config.js';
 import { Logger } from '../../services/logger.service.js';
+import type { MailLang } from '../../services/mail.service.js';
 import { MailService } from '../../services/mail.service.js';
 
 function buildBaseUrl(endpoint: string) {
@@ -28,8 +29,7 @@ async function getLatestInvoice() {
     let newNumberGroupId = 0;
     for (let i = 0; i < result.length; i++) {
       const invoice = result[i];
-      if (invoice.Invoice.deleted === '1')
-        continue;
+      if (invoice.Invoice.deleted === '1') continue;
       if (Number.parseInt(invoice.Invoice.number) > newNumber) {
         newNumber = Number.parseInt(invoice.Invoice.number);
         newNumberGroupId = Number.parseInt(invoice.Invoice.number_group_id);
@@ -63,8 +63,7 @@ function parseInvoiceId(raw: string): number | null {
     const parsed = JSON.parse(raw) as { id?: number | string };
     const id = Number(parsed?.id);
     return Number.isFinite(id) ? id : null;
-  }
-  catch {
+  } catch {
     return null;
   }
 }
@@ -74,21 +73,28 @@ async function downloadInvoicePdf(invoiceId: number): Promise<Buffer | null> {
     const url = `https://${foxyOfficeUrl}/billing/api/downloadInvoice/${invoiceId}/${foxyOfficeKey}`;
     const response = await fetch(url);
     if (!response.ok) {
-      Logger.getInstance().log('error', 'Could not download FoxyOffice invoice PDF', {
-        label: 'FoxyOffice',
-        status: response.status,
-        invoiceId,
-      });
+      Logger.getInstance().log(
+        'error',
+        'Could not download FoxyOffice invoice PDF',
+        {
+          label: 'FoxyOffice',
+          status: response.status,
+          invoiceId,
+        },
+      );
       return null;
     }
     const arrayBuffer = await response.arrayBuffer();
     return Buffer.from(arrayBuffer);
-  }
-  catch (err) {
-    Logger.getInstance().log('error', 'Error downloading FoxyOffice invoice PDF', {
-      label: 'FoxyOffice',
-      err,
-    });
+  } catch (error) {
+    Logger.getInstance().log(
+      'error',
+      'Error downloading FoxyOffice invoice PDF',
+      {
+        label: 'FoxyOffice',
+        error,
+      },
+    );
     return null;
   }
 }
@@ -137,16 +143,20 @@ async function sendInvoiceToCustomer(
   });
 }
 
-export type CreateInvoicePaymentType = 'PayPal' | 'Stripe' | 'Mollie' | 'Invoice';
+export type CreateInvoicePaymentType =
+  | 'PayPal'
+  | 'Stripe'
+  | 'Mollie'
+  | 'Invoice';
 
 export interface CreateInvoiceOptions {
   /**
    * `paid` (default): payment already settled via the given provider.
    * `invoice`: open invoice with 7-day payment target (bank transfer).
    */
-  mode?: 'paid' | 'invoice'
+  mode?: 'paid' | 'invoice';
   /** Payment target in days (only used for mode=invoice). Default 7. */
-  paymentTargetDays?: number
+  paymentTargetDays?: number;
 }
 
 export async function createInvoice(
@@ -168,8 +178,8 @@ export async function createInvoice(
       paymentTargetDate.setDate(today.getDate() + paymentTargetDays);
     }
 
-    const info
-      = mode === 'invoice'
+    const info =
+      mode === 'invoice'
         ? `Lieferdatum: wie Rechnungsdatum\n\nBitte überweisen Sie den Betrag bis spätestens <b>${toISODate(paymentTargetDate)}</b> auf folgendes Konto:\n\n<b>Unsere Bankverbindung:</b>\nSteiermärkische Sparkasse\nIBAN: AT05 2081 5000 4507 3715\nBIC: STSPAT2GXXX\n\nVerwendungszweck: <b>Rechnung ${buildFullNumber(latestInvoice.number)}</b>\n\nVielen Dank für Ihre Unterstützung und ein erfolgreiches Imkerjahr!\n\nMit freundlichen Grüßen\nHannes Oberreiter\n<b>btree.at</b>`
         : `Lieferdatum:  wie Rechnungsdatum\n\nBetrag wurde bereits mit <b>${type}</b> bezahlt!\n\nVielen Dank für Ihre Unterstützung und ein erfolgreiches Imkerjahr!\n\nMit freundlichen Grüßen\nHannes Oberreiter\n<b>btree.at</b>`;
 
@@ -230,17 +240,10 @@ export async function createInvoice(
         MailService.getInstance().sendRawMail(
           'office@btree.at',
           'New invoice created',
-          `FoxyOfficeResponse: ${
-            result
-          }\n\n`
-          + `InvoiceNumber: ${
-            JSON.stringify(latestInvoice)
-          }\n\n`
-          + `CustomerMail: ${
-            JSON.stringify(mail)
-          }\n\n`
-          + `Server: ${
-            serverLocation}`,
+          `FoxyOfficeResponse: ${result}\n\n` +
+            `InvoiceNumber: ${JSON.stringify(latestInvoice)}\n\n` +
+            `CustomerMail: ${JSON.stringify(mail)}\n\n` +
+            `Server: ${serverLocation}`,
         );
 
         const invoiceId = parseInvoiceId(result);
@@ -255,8 +258,7 @@ export async function createInvoice(
             mode,
             mode === 'invoice' ? toISODate(paymentTargetDate) : undefined,
           );
-        }
-        else {
+        } else {
           MailService.getInstance().sendRawMail(
             'office@btree.at',
             `Invoice PDF not sent (${latestInvoice.number})`,
@@ -264,8 +266,7 @@ export async function createInvoice(
           );
         }
       }
-    }
-    else {
+    } else {
       Logger.getInstance().log('info', 'FoxyOffice Invoice Data', {
         label: 'FoxyOffice',
         data,
@@ -283,16 +284,14 @@ export async function createInvoice(
         replacements: {
           invoice_number: fullNumber,
           amount: buildInvoiceAmount(price),
-          payment_due:
-            mode === 'invoice' ? toISODate(paymentTargetDate) : '',
+          payment_due: mode === 'invoice' ? toISODate(paymentTargetDate) : '',
         },
       });
     }
-  }
-  catch (err) {
+  } catch (error) {
     Logger.getInstance().log('error', 'Error creating invoice', {
       label: 'FoxyOffice',
-      err,
+      error,
     });
   }
 }

@@ -1,25 +1,26 @@
 import crypto from 'node:crypto';
+
 import jwt from 'jsonwebtoken';
-import qs from 'qs';
+import queryString from 'query-string';
 
 interface AppleAuthConfig {
-  client_id: string
-  team_id: string
-  redirect_uri: string
-  key_id: string
-  scope: string
+  client_id: string;
+  team_id: string;
+  redirect_uri: string;
+  key_id: string;
+  scope: string;
 }
 
 interface CustomConfig {
-  debug?: boolean
+  debug?: boolean;
 }
 
 export interface TokenResponse {
-  access_token: string
-  token_type: string
-  expires_in: number
-  refresh_token?: string
-  id_token?: string
+  access_token: string;
+  token_type: string;
+  expires_in: number;
+  refresh_token?: string;
+  id_token?: string;
 }
 
 export class AppleAuthentication {
@@ -51,7 +52,7 @@ export class AppleAuthentication {
 
   loginURL(): string {
     this._state = crypto.randomBytes(5).toString('hex');
-    return `https://appleid.apple.com/auth/authorize?${qs.stringify({
+    return `https://appleid.apple.com/auth/authorize?${queryString.stringify({
       response_type: 'code id_token',
       client_id: this._config.client_id,
       redirect_uri: this._config.redirect_uri,
@@ -88,7 +89,7 @@ export class AppleAuthentication {
       const response = await fetch('https://appleid.apple.com/auth/token', {
         method: 'POST',
         headers: { 'content-type': 'application/x-www-form-urlencoded' },
-        body: qs.stringify(payload),
+        body: queryString.stringify(payload),
       });
 
       const responseData = await response.json();
@@ -102,20 +103,26 @@ export class AppleAuthentication {
       }
 
       if (!response.ok) {
-        const errorDetails = responseData?.error_description || responseData?.error || 'Unknown error';
+        const errorDetails =
+          responseData?.error_description ||
+          responseData?.error ||
+          'Unknown error';
         const errorCode = responseData?.error || 'unknown_error';
 
-        throw new Error(`Apple token request failed (${response.status}): ${errorCode} - ${errorDetails}`);
+        throw new Error(
+          `Apple token request failed (${response.status}): ${errorCode} - ${errorDetails}`,
+        );
       }
 
       // Check if Apple returned an error in the response body (sometimes they return 200 with error)
       if (responseData.error) {
-        throw new Error(`Apple OAuth error: ${responseData.error} - ${responseData.error_description || 'No description'}`);
+        throw new Error(
+          `Apple OAuth error: ${responseData.error} - ${responseData.error_description || 'No description'}`,
+        );
       }
 
       return responseData;
-    }
-    catch (error: any) {
+    } catch (error: any) {
       if (this._customConfig?.debug) {
         console.error('Apple accessToken error details:', {
           error: error.message,
@@ -152,7 +159,7 @@ export class AppleAuthentication {
       const response = await fetch('https://appleid.apple.com/auth/token', {
         method: 'POST',
         headers: { 'content-type': 'application/x-www-form-urlencoded' },
-        body: qs.stringify(payload),
+        body: queryString.stringify(payload),
       });
 
       if (!response.ok) {
@@ -160,13 +167,16 @@ export class AppleAuthentication {
       }
 
       return await response.json();
-    }
-    catch (error: any) {
+    } catch (error: any) {
       if (this._customConfig?.debug) {
         console.error(error);
-        throw new Error(`AppleAuth Error - An error occurred while getting response from Apple's servers: ${error} - ${error?.response?.data?.error_description}`);
+        throw new Error(
+          `AppleAuth Error - An error occurred while getting response from Apple's servers: ${error} - ${error?.response?.data?.error_description}`,
+        );
       }
-      throw new Error(`AppleAuth Error - An error occurred while getting response from Apple's servers: ${error}`);
+      throw new Error(
+        `AppleAuth Error - An error occurred while getting response from Apple's servers: ${error}`,
+      );
     }
   }
 
@@ -184,7 +194,7 @@ export class AppleAuthentication {
       const response = await fetch('https://appleid.apple.com/auth/revoke', {
         method: 'POST',
         headers: { 'content-type': 'application/x-www-form-urlencoded' },
-        body: qs.stringify(payload),
+        body: queryString.stringify(payload),
       });
 
       if (!response.ok) {
@@ -192,13 +202,16 @@ export class AppleAuthentication {
       }
 
       return await response.json();
-    }
-    catch (error: any) {
+    } catch (error: any) {
       if (this._customConfig?.debug) {
         console.error(error);
-        throw new Error(`AppleAuth Error - An error occurred while getting response from Apple's servers: ${error} - ${error?.response?.data?.error_description}`);
+        throw new Error(
+          `AppleAuth Error - An error occurred while getting response from Apple's servers: ${error} - ${error?.response?.data?.error_description}`,
+        );
       }
-      throw new Error(`AppleAuth Error - An error occurred while getting response from Apple's servers: ${error}`);
+      throw new Error(
+        `AppleAuth Error - An error occurred while getting response from Apple's servers: ${error}`,
+      );
     }
   }
 }
@@ -237,7 +250,11 @@ export class AppleClientSecret {
         },
         (err, token) => {
           if (err) {
-            reject(new Error(`AppleAuth Error - Error occurred while signing: ${err}`));
+            reject(
+              new Error(
+                `AppleAuth Error - Error occurred while signing: ${err}`,
+              ),
+            );
             return;
           }
           resolve(token!);
@@ -251,7 +268,7 @@ export class AppleClientSecret {
    * @returns The generated client secret
    */
   async generate(): Promise<string> {
-    const exp = Math.floor(Date.now() / 1000) + (86400 * 180); // Make it expire within 6 months
+    const exp = Math.floor(Date.now() / 1000) + 86400 * 180; // Make it expire within 6 months
     return this._generateToken(
       this._config.client_id,
       this._config.team_id,

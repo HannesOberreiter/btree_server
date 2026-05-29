@@ -1,6 +1,7 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
-import type { MailLang } from '../../services/mail.service.js';
 import httpErrors from 'http-errors';
+
+import type { MailLang } from '../../services/mail.service.js';
 import { MailLangs } from '../../services/mail.service.js';
 import { Apiary } from '../models/apiary.model.js';
 import { User } from '../models/user.model.js';
@@ -53,7 +54,10 @@ export default class ServiceController {
     return weatherData;
   }
 
-  static async getGruenlandtemperatursumme(req: FastifyRequest, _reply: FastifyReply) {
+  static async getGruenlandtemperatursumme(
+    req: FastifyRequest,
+    _reply: FastifyReply,
+  ) {
     const params = req.params as any;
     const apiary = await Apiary.query()
       .findById(params.apiary_id)
@@ -74,9 +78,10 @@ export default class ServiceController {
     }
 
     const startDate = `${year}-01-01`; // Always get previous year from Jan 1st
-    const endDate = year === new Date().getFullYear()
-      ? new Date().toISOString().split('T')[0]
-      : `${year}-06-31`;
+    const endDate =
+      year === new Date().getFullYear()
+        ? new Date().toISOString().split('T')[0]
+        : `${year}-06-31`;
 
     const dailyTemperatures = await getHistoricalTemperatures(
       apiary.latitude,
@@ -128,9 +133,8 @@ export default class ServiceController {
       value = Number.parseFloat(
         capture.purchase_units[0].payments.captures[0].amount.value,
       );
-    }
-    catch (e) {
-      req.log.error(e);
+    } catch (error) {
+      req.log.error(error);
     }
 
     try {
@@ -138,11 +142,9 @@ export default class ServiceController {
         capture.purchase_units[0].payments.captures[0].custom_id,
       );
       years = Number.parseFloat(custom_id.quantity) ?? 1;
-      if (custom_id.bee_id)
-        bee_id = Number.parseInt(custom_id.bee_id, 10);
-    }
-    catch (e) {
-      req.log.error(e);
+      if (custom_id.bee_id) bee_id = Number.parseInt(custom_id.bee_id, 10);
+    } catch (error) {
+      req.log.error(error);
     }
 
     const paid = await addPremium(
@@ -159,16 +161,12 @@ export default class ServiceController {
       return { ...capture, paid };
     }
     try {
-      const user = await User.query()
-        .select('email', 'lang')
-        .findById(bee_id);
-      if (user?.email)
-        mail = user.email;
+      const user = await User.query().select('email', 'lang').findById(bee_id);
+      if (user?.email) mail = user.email;
       if (user?.lang && MailLangs.includes(user.lang as MailLang))
         lang = user.lang as MailLang;
-    }
-    catch (e) {
-      req.log.error(e);
+    } catch (error) {
+      req.log.error(error);
     }
 
     if (mail) {
@@ -199,7 +197,11 @@ export default class ServiceController {
     if (!order || !order.id) {
       throw new httpErrors.InternalServerError('Could not create order');
     }
-    if (!order._links || !order._links.checkout || !order._links.checkout.href) {
+    if (
+      !order._links ||
+      !order._links.checkout ||
+      !order._links.checkout.href
+    ) {
       throw new httpErrors.InternalServerError('Could not create order');
     }
     return { url: order._links.checkout.href, id: order.id };
@@ -210,25 +212,28 @@ export default class ServiceController {
    */
   static async getAFBMapData(req: FastifyRequest, _reply: FastifyReply) {
     try {
-      const res = await fetch('https://geogis.ages.at/TKH_Zonenkarte/zonen.json', {
-        headers: { 'User-Agent': 'btree/server (www.btree.at)' },
-      });
-      const geojson = await res.json() as {
+      const res = await fetch(
+        'https://geogis.ages.at/TKH_Zonenkarte/zonen.json',
+        {
+          headers: { 'User-Agent': 'btree/server (www.btree.at)' },
+        },
+      );
+      const geojson = (await res.json()) as {
         features: Array<{
           properties: {
-            id: string
-            tkh: string
-            tierart: string[]
-            art: string
-            typ: string
-            beginn: string
-            area: number
-          }
+            id: string;
+            tkh: string;
+            tierart: string[];
+            art: string;
+            typ: string;
+            beginn: string;
+            area: number;
+          };
           geometry: {
-            type: string
-            coordinates: number[][][][]
-          }
-        }>
+            type: string;
+            coordinates: number[][][][];
+          };
+        }>;
       };
 
       // AGES Zonenkarte filter logic (from TKH_Zonenkarte.js):
@@ -237,21 +242,33 @@ export default class ServiceController {
       // - Zones with future beginn date are excluded
 
       return geojson.features
-        .filter(f => f.properties.tierart.includes('BI') && f.properties.tkh === 'AFB' && f.properties.typ === 'R')
+        .filter(
+          (f) =>
+            f.properties.tierart.includes('BI') &&
+            f.properties.tkh === 'AFB' &&
+            f.properties.typ === 'R',
+        )
         .map((f) => {
           const coords = f.geometry.coordinates[0][0];
-          const xs = coords.map(c => c[0]);
-          const ys = coords.map(c => c[1]);
+          const xs = coords.map((c) => c[0]);
+          const ys = coords.map((c) => c[1]);
           const cx = xs.reduce((a, b) => a + b, 0) / xs.length;
           const cy = ys.reduce((a, b) => a + b, 0) / ys.length;
 
           // EPSG:3857 → WGS84
           const lng = (cx * 180) / 20037508.34;
-          const lat = (Math.atan(Math.exp((cy * Math.PI) / 20037508.34)) * 360) / Math.PI - 90;
+          const lat =
+            (Math.atan(Math.exp((cy * Math.PI) / 20037508.34)) * 360) /
+              Math.PI -
+            90;
 
           const radius = Math.sqrt(f.properties.area / Math.PI);
 
-          const artLabels: Record<string, string> = { S: 'Schutzzone', V: 'Sperrzone', U: 'Überwachungszone' };
+          const artLabels: Record<string, string> = {
+            S: 'Schutzzone',
+            V: 'Sperrzone',
+            U: 'Überwachungszone',
+          };
 
           const typLabel = artLabels[f.properties.art] || f.properties.art;
           const popup = `Amerikanische Faulbrut (AFB)\n${typLabel}\nID: ${f.properties.id}\nBeginn: ${f.properties.beginn}\nQuelle: AGES (geogis.ages.at)`;
@@ -263,9 +280,8 @@ export default class ServiceController {
             popup,
           };
         });
-    }
-    catch (e) {
-      req.log.error(e);
+    } catch (error) {
+      req.log.error(error);
       return [];
     }
   }

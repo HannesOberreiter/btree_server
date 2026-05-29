@@ -23,8 +23,7 @@ export default class FieldSettingController {
         await FieldSetting.query(trx)
           .where('bee_id', req.session.user.bee_id)
           .patch({ settings });
-      }
-      else {
+      } else {
         await FieldSetting.query(trx).insert({
           bee_id: req.session.user.bee_id,
           settings,
@@ -32,10 +31,9 @@ export default class FieldSettingController {
       }
       await trx.commit();
       return settings;
-    }
-    catch (e) {
+    } catch (error) {
       await trx.rollback();
-      throw e;
+      throw error;
     }
   }
 }

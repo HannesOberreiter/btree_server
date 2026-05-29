@@ -1,4 +1,5 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
+
 import { RearingStep } from '../models/rearing/rearing_step.model.js';
 
 export default class RearingStepController {

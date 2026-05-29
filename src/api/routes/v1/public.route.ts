@@ -1,6 +1,7 @@
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { z } from 'zod';
+
 import PublicController from '../../controllers/public.controller.js';
 import { numberSchema } from '../../utils/zod.util.js';
 

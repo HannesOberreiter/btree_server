@@ -1,6 +1,7 @@
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { z } from 'zod';
+
 import { ROLES } from '../../../config/constants.config.js';
 import TodoController from '../../controllers/todo.controller.js';
 import { Guard } from '../../hooks/guard.hook.js';

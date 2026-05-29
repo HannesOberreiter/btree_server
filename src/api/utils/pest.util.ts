@@ -1,7 +1,8 @@
-import type { ObservationInsert, Taxa } from '../models/observation.model.js';
 import proj4 from 'proj4';
+
 import { RedisServer } from '../../servers/redis.server.js';
 import { buildRedisCacheKeyObservationsRecent } from '../controllers/public.controller.js';
+import type { ObservationInsert, Taxa } from '../models/observation.model.js';
 import { ObservationModel } from '../models/observation.model.js';
 
 export async function fetchObservations(taxa: Taxa = 'Vespa velutina') {
@@ -16,8 +17,10 @@ export async function fetchObservations(taxa: Taxa = 'Vespa velutina') {
   const artenfinderNet = await fetchArtenfinderNet(taxa);
   const infoFaunaCh = await fetchInfoFaunaCh(taxa);
 
-  const frelonsAsiatiques
-    = taxa === 'Vespa velutina' ? await fetchFrelonsAsiatiques() : { newObservations: 0 };
+  const frelonsAsiatiques =
+    taxa === 'Vespa velutina'
+      ? await fetchFrelonsAsiatiques()
+      : { newObservations: 0 };
 
   /** after fetching new taxa we want to cleanup any possible cached map results */
   const redis = RedisServer.client;
@@ -73,7 +76,8 @@ export async function fetchFrelonsAsiatiques() {
 
   // Use current season (Feb Y to Jan Y+1) and previous season
   const now = new Date();
-  const currentSeasonYear = now.getMonth() >= 1 ? now.getFullYear() : now.getFullYear() - 1;
+  const currentSeasonYear =
+    now.getMonth() >= 1 ? now.getFullYear() : now.getFullYear() - 1;
   const years = [currentSeasonYear];
 
   let totalNew = 0;
@@ -87,7 +91,10 @@ export async function fetchFrelonsAsiatiques() {
         }
 
         const batchIds = records.map((r: any) => Number(r.id));
-        const newIds = await ObservationModel.filterNewExternalIds(batchIds, 'Frelons Asiatiques FR');
+        const newIds = await ObservationModel.filterNewExternalIds(
+          batchIds,
+          'Frelons Asiatiques FR',
+        );
 
         const observations: ObservationInsert[] = [];
         for (const r of records) {
@@ -125,8 +132,7 @@ export async function fetchFrelonsAsiatiques() {
           await ObservationModel.insertBatch(observations);
           totalNew += observations.length;
         }
-      }
-      catch {
+      } catch {
         // Skip department on error, continue with others
       }
     }
@@ -151,7 +157,9 @@ export async function fetchFrelonsAsiatiques() {
     });
 
     const setCookies = listResponse.headers.getSetCookie?.() || [];
-    const sessionCookie = setCookies.find(c => c.includes('PHPSESSID'))?.split(';')[0];
+    const sessionCookie = setCookies
+      .find((c) => c.includes('PHPSESSID'))
+      ?.split(';')[0];
     await listResponse.text(); // consume body
 
     if (!sessionCookie) {
@@ -160,8 +168,8 @@ export async function fetchFrelonsAsiatiques() {
 
     // Step 2: Call markers API with the session
     const apiParams = new URLSearchParams({
-      '_page': '1',
-      '_per_page': '0',
+      _page: '1',
+      _per_page: '0',
       'reportCategory[value]': '',
       'city__department[value]': String(deptId),
       'date[value]': String(year),
@@ -174,14 +182,13 @@ export async function fetchFrelonsAsiatiques() {
       headers: {
         'User-Agent': UA,
         'X-Requested-With': 'XMLHttpRequest',
-        'Accept': 'application/json',
-        'Cookie': sessionCookie,
-        'Referer': `${BASE_URL}/list`,
+        Accept: 'application/json',
+        Cookie: sessionCookie,
+        Referer: `${BASE_URL}/list`,
       },
     });
 
-    if (!apiResponse.ok)
-      return [];
+    if (!apiResponse.ok) return [];
     const data = await apiResponse.json();
     return Array.isArray(data) ? data : [];
   }
@@ -193,19 +200,22 @@ export function fetchInat() {
     'Vespa velutina': [119019, 560197], // Vespa velutina and Vespa velutina nigrithorax
     'Aethina tumida': [457066],
   };
-  const FIELDS
-    = '(id:!t,uri:!t,quality_grade:!t,time_observed_at:!t,location:!t,taxon:(id:!t))';
+  const FIELDS =
+    '(id:!t,uri:!t,quality_grade:!t,time_observed_at:!t,location:!t,taxon:(id:!t))';
 
   /**
    * @description Randomly select 200 iNat observations from database and check if they are still present and also the correct taxon
    */
   async function cleanupOldObs() {
-    const oldRecords = await ObservationModel.getRandomSample('iNaturalist', 200);
+    const oldRecords = await ObservationModel.getRandomSample(
+      'iNaturalist',
+      200,
+    );
     const notFound: number[] = [];
     const wrongTaxon: number[] = [];
     const removedExternalIds: number[] = [];
 
-    const ids = oldRecords.map(o => o.external_id).join(',');
+    const ids = oldRecords.map((o) => o.external_id).join(',');
     if (ids.length === 0) {
       return { checked: 0, notFound: 0, wrongTaxon: 0 };
     }
@@ -214,15 +224,19 @@ export function fetchInat() {
     const response = await fetch(url);
     const res = await response.json();
 
-    const foundIds = res.results.map((o: any) => o.id);
+    const foundIds = new Set(res.results.map((o: any) => o.id));
     for (const record of oldRecords) {
-      if (!foundIds.includes(record.external_id)) {
+      if (!foundIds.has(record.external_id)) {
         notFound.push(record.id);
         removedExternalIds.push(record.external_id!);
-      }
-      else {
-        const observation = res.results.find((o: any) => o.id === record.external_id);
-        if (TAXON_IDS[record.taxa as Taxa].includes(observation.taxon.id) === false) {
+      } else {
+        const observation = res.results.find(
+          (o: any) => o.id === record.external_id,
+        );
+        if (
+          TAXON_IDS[record.taxa as Taxa].includes(observation.taxon.id) ===
+          false
+        ) {
           wrongTaxon.push(record.id);
           removedExternalIds.push(record.external_id!);
         }
@@ -232,7 +246,12 @@ export function fetchInat() {
     const toDelete = [...notFound, ...wrongTaxon];
     await ObservationModel.deleteByIds(toDelete);
 
-    return { checked: oldRecords.length, notFound: notFound.length, wrongTaxon: wrongTaxon.length, removedExternalIds };
+    return {
+      checked: oldRecords.length,
+      notFound: notFound.length,
+      wrongTaxon: wrongTaxon.length,
+      removedExternalIds,
+    };
   }
 
   async function fetchNewObs(taxa: Taxa, monthsBefore = 1) {
@@ -247,24 +266,23 @@ export function fetchInat() {
       const url = `${URL}?taxon_id=${TAXON_IDS[taxa].join(',')}&verifiable=true&quality_grade=research&order=asc&order_by=id&per_page=200&fields=${FIELDS}&created_d1=${createdAtD1}&created_d2=${createdAtD2}&id_above=${idAbove}`;
       const response = await fetch(url);
       const res = await response.json();
-      if (!res.results || res.results.length === 0)
-        break;
+      if (!res.results || res.results.length === 0) break;
       idAbove = res.results.at(-1).id;
 
       const batchIds = res.results
         .filter((o: any) => o.time_observed_at && o.location)
         .map((o: any) => Number(o.id));
-      const newIds = await ObservationModel.filterNewExternalIds(batchIds, 'iNaturalist');
+      const newIds = await ObservationModel.filterNewExternalIds(
+        batchIds,
+        'iNaturalist',
+      );
 
       const observations: ObservationInsert[] = [];
       for (let i = 0; i < res.results.length; i++) {
         const observation = res.results[i];
-        if (!observation.time_observed_at)
-          continue;
-        if (!observation.location)
-          continue;
-        if (!newIds.has(Number(observation.id)))
-          continue;
+        if (!observation.time_observed_at) continue;
+        if (!observation.location) continue;
+        if (!newIds.has(Number(observation.id))) continue;
         newObservations++;
         const data = { ...observation };
         delete data.location;
@@ -300,7 +318,8 @@ export async function fetchArtenfinderNet(taxa: Taxa) {
   const dateTo = new Date();
   const datumVon = `${dateFrom.getDate()}.${dateFrom.getMonth() + 1}.${dateFrom.getFullYear()}`;
   const datumBis = `${dateTo.getDate()}.${dateTo.getMonth() + 1}.${dateTo.getFullYear()}`;
-  let url: string | undefined = `https://www.artenfinder.net/api/v2/sichtbeobachtungen?titel_wissenschaftlich=${taxonName[taxa]}&datum_von=${datumVon}&datum_bis=${datumBis}`;
+  let url: string | undefined =
+    `https://www.artenfinder.net/api/v2/sichtbeobachtungen?titel_wissenschaftlich=${taxonName[taxa]}&datum_von=${datumVon}&datum_bis=${datumBis}`;
   let newObservations = 0;
 
   // Coordination system is ETRS89/UTM 32N (EPSG:25832), but we need WGS84 (EPSG:4326)
@@ -310,25 +329,24 @@ export async function fetchArtenfinderNet(taxa: Taxa) {
   );
 
   while (url) {
-    const response = await fetch(url) as any;
+    const response = (await fetch(url)) as any;
     const res = await response.json();
-    if (res.length === 0)
-      break;
-    if (res?.result?.length === 0)
-      break;
+    if (res.length === 0) break;
+    if (res?.result?.length === 0) break;
     url = res.next || undefined;
     const batchIds = res.result
       .filter((o: any) => o.lat && o.lon)
       .map((o: any) => Number(o.id));
-    const newIds = await ObservationModel.filterNewExternalIds(batchIds, 'Artenfinder.net');
+    const newIds = await ObservationModel.filterNewExternalIds(
+      batchIds,
+      'Artenfinder.net',
+    );
 
     const observations: ObservationInsert[] = [];
     for (let i = 0; i < res.result.length; i++) {
       const observation = res.result[i];
-      if (!observation.lat || !observation.lon)
-        continue;
-      if (!newIds.has(Number(observation.id)))
-        continue;
+      if (!observation.lat || !observation.lon) continue;
+      if (!newIds.has(Number(observation.id))) continue;
 
       newObservations++;
       const data = { ...observation };
@@ -381,7 +399,10 @@ export function fetchObservationOrg() {
    * @description Randomly select Observation.org records from database and check if they are still present or have been invalidated
    */
   async function cleanupOldObs() {
-    const oldRecords = await ObservationModel.getRandomSample('Observation.org', 50);
+    const oldRecords = await ObservationModel.getRandomSample(
+      'Observation.org',
+      50,
+    );
     const notFound: number[] = [];
     const removedExternalIds: number[] = [];
 
@@ -404,15 +425,18 @@ export function fetchObservationOrg() {
           notFound.push(record.id);
           removedExternalIds.push(record.external_id!);
         }
-      }
-      catch {
+      } catch {
         // Skip on network errors, don't remove
       }
     }
 
     await ObservationModel.deleteByIds(notFound);
 
-    return { checked: oldRecords.length, notFound: notFound.length, removedExternalIds };
+    return {
+      checked: oldRecords.length,
+      notFound: notFound.length,
+      removedExternalIds,
+    };
   }
 
   async function fetchNewObs(taxa: Taxa) {
@@ -432,20 +456,20 @@ export function fetchObservationOrg() {
       const response = await fetch(url);
       const data = await response.json();
 
-      if (!data.results || data.results.length === 0)
-        break;
+      if (!data.results || data.results.length === 0) break;
 
       const batchIds = data.results
         .filter((o: any) => o.point?.coordinates)
         .map((o: any) => o.id);
-      const newIds = await ObservationModel.filterNewExternalIds(batchIds, 'Observation.org');
+      const newIds = await ObservationModel.filterNewExternalIds(
+        batchIds,
+        'Observation.org',
+      );
 
       const observations: ObservationInsert[] = [];
       for (const obs of data.results) {
-        if (!obs.point?.coordinates)
-          continue;
-        if (!newIds.has(obs.id))
-          continue;
+        if (!obs.point?.coordinates) continue;
+        if (!newIds.has(obs.id)) continue;
 
         newObservations++;
 
@@ -503,14 +527,16 @@ export async function fetchInfoFaunaCh(taxa: Taxa) {
       `${url}&limit=${limit}&offset=${offset}${yearFilter}`,
     );
     const data = await result.json();
-    if (!data.results || data.results.length === 0)
-      break;
+    if (!data.results || data.results.length === 0) break;
     endOfRecords = data.endOfRecords;
     offset += limit;
 
     const results = data.results;
     const batchIds = results.map((o: any) => Number(o.gbifID));
-    const newIds = await ObservationModel.filterNewExternalIds(batchIds, 'Info Fauna (GBIF)');
+    const newIds = await ObservationModel.filterNewExternalIds(
+      batchIds,
+      'Info Fauna (GBIF)',
+    );
 
     const observations: ObservationInsert[] = [];
     for (let i = 0; i < results.length; i++) {

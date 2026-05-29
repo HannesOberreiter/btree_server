@@ -1,4 +1,5 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
+
 import { RearingDetail } from '../models/rearing/rearing_detail.model.js';
 import { RearingStep } from '../models/rearing/rearing_step.model.js';
 
@@ -14,8 +15,7 @@ export default class RearingDetailController {
     if (order) {
       if (Array.isArray(order)) {
         order.forEach((field, index) => query.orderBy(field, direction[index]));
-      }
-      else {
+      } else {
         query.orderBy(order, direction);
       }
     }

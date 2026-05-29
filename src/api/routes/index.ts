@@ -1,4 +1,5 @@
 import type { FastifyInstance } from 'fastify';
+
 import v1Agent from './v1/agent.route.js';
 import v1AgentKey from './v1/agent_key.route.js';
 import v1Apiary from './v1/apiary.route.js';

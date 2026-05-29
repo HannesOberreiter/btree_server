@@ -15,9 +15,9 @@ export class BaseModel extends Model {
     Object.keys(jsonSchema.properties).forEach((key, _index) => {
       const format = jsonSchema.properties[key].format;
       if (
-        format
-        && typeof format !== 'undefined'
-        && format === 'iso-date-time'
+        format &&
+        typeof format !== 'undefined' &&
+        format === 'iso-date-time'
       ) {
         const valueToValidate = json[key];
         if (valueToValidate !== null && valueToValidate instanceof Date) {
@@ -25,8 +25,7 @@ export class BaseModel extends Model {
             .toISOString()
             .slice(0, 19)
             .replace('T', ' ');
-        }
-        else if (valueToValidate) {
+        } else if (valueToValidate) {
           json[key] = new Date(valueToValidate)
             .toISOString()
             .slice(0, 19)

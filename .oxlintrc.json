@@ -1,0 +1,48 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["eslint", "typescript", "unicorn", "oxc", "node", "promise"],
+  "categories": {
+    "correctness": "error",
+    "suspicious": "error",
+    "perf": "warn"
+  },
+  "env": {
+    "builtin": true,
+    "node": true
+  },
+  "rules": {
+    "eslint/no-shadow": "off",
+    "eslint/no-unassigned-vars": "off",
+    "eslint/no-underscore-dangle": "off",
+    "eslint/no-useless-constructor": "off",
+    "eslint/preserve-caught-error": "off",
+    "promise/always-return": "off",
+    "typescript/no-extraneous-class": "off",
+    "unicorn/consistent-function-scoping": "off",
+    "unicorn/no-array-sort": "off",
+    "unicorn/no-unnecessary-await": "off",
+    "unicorn/require-module-specifiers": "off",
+    "eslint/no-await-in-loop": "off"
+  },
+  "overrides": [
+    {
+      "files": ["test/**"],
+      "env": {
+        "vitest": true
+      },
+      "plugins": [
+        "eslint",
+        "typescript",
+        "unicorn",
+        "oxc",
+        "node",
+        "promise",
+        "vitest"
+      ],
+      "rules": {
+        "eslint/no-unassigned-vars": "off"
+      }
+    }
+  ],
+  "ignorePatterns": ["dist/**"]
+}

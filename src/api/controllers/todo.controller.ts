@@ -1,4 +1,8 @@
+import dayjs from 'dayjs';
 import type { FastifyReply, FastifyRequest } from 'fastify';
+import { sql } from 'kysely';
+
+import { KyselyServer } from '../../servers/kysely.server.js';
 import type {
   TodoBatchDelete,
   TodoBatchGet,
@@ -7,26 +11,31 @@ import type {
   TodoUpdateDate,
   TodoUpdateStatus,
 } from '../schemas/todo.schema.js';
-import dayjs from 'dayjs';
-import { sql } from 'kysely';
-import { KyselyServer } from '../../servers/kysely.server.js';
-import { checkOwnership, transaction, withApiary, withCreatorAndEditor } from '../utils/kysely.utils.js';
+import {
+  checkOwnership,
+  transaction,
+  withApiary,
+  withCreatorAndEditor,
+} from '../utils/kysely.utils.js';
 
 interface GetQuery {
-  order?: string | string[]
-  direction?: 'asc' | 'desc' | ('asc' | 'desc')[]
-  offset?: number | string
-  limit?: number | string
-  q?: string
-  filters?: string
-  done?: boolean
-  apiary_id?: number | string
+  order?: string | string[];
+  direction?: 'asc' | 'desc' | ('asc' | 'desc')[];
+  offset?: number | string;
+  limit?: number | string;
+  q?: string;
+  filters?: string;
+  done?: boolean;
+  apiary_id?: number | string;
 }
 
 export default class TodoController {
-  static async get(req: FastifyRequest<{ Querystring: GetQuery }>, _reply: FastifyReply) {
-    const { order, direction, offset, limit, q, filters, done, apiary_id }
-      = req.query;
+  static async get(
+    req: FastifyRequest<{ Querystring: GetQuery }>,
+    _reply: FastifyReply,
+  ) {
+    const { order, direction, offset, limit, q, filters, done, apiary_id } =
+      req.query;
 
     const db = KyselyServer.getInstance().db;
     const page = Number(offset) || 0;
@@ -40,9 +49,8 @@ export default class TodoController {
         if (Array.isArray(filtering)) {
           parsedFilters = filtering;
         }
-      }
-      catch (e) {
-        req.log.error(e);
+      } catch (error) {
+        req.log.error(error);
       }
     }
 
@@ -64,11 +72,20 @@ export default class TodoController {
         'todos.created_at',
         'todos.updated_at',
       ])
-      .$call(qb => withCreatorAndEditor(qb, { creatorColumn: 'todos.bee_id', editorColumn: 'todos.edit_id' }))
-      .$call(qb => withApiary(qb as any, { apiaryColumn: 'todos.apiary_id' }))
+      .$call((qb) =>
+        withCreatorAndEditor(qb, {
+          creatorColumn: 'todos.bee_id',
+          editorColumn: 'todos.edit_id',
+        }),
+      )
+      .$call((qb) => withApiary(qb as any, { apiaryColumn: 'todos.apiary_id' }))
       .where('todos.user_id', '=', req.session.user.user_id)
-      .$if(done === true || done === false, qb => qb.where('todos.done', '=', done))
-      .$if(!!apiary_id, qb => qb.where('todos.apiary_id', '=', Number(apiary_id)))
+      .$if(done === true || done === false, (qb) =>
+        qb.where('todos.done', '=', done),
+      )
+      .$if(!!apiary_id, (qb) =>
+        qb.where('todos.apiary_id', '=', Number(apiary_id)),
+      )
       .$if(parsedFilters.length > 0, (qb) => {
         let filterQuery = qb;
         for (const filter of parsedFilters) {
@@ -76,8 +93,7 @@ export default class TodoController {
             filterQuery = filterQuery
               .where('todos.date', '>=', filter.date.from)
               .where('todos.date', '<=', filter.date.to);
-          }
-          else {
+          } else {
             for (const [key, value] of Object.entries(filter)) {
               filterQuery = filterQuery.where(key as any, '=', value as any);
             }
@@ -92,17 +108,21 @@ export default class TodoController {
           let orderQuery = qb;
           order.forEach((field, index) => {
             const dir = Array.isArray(direction) ? direction[index] : direction;
-            orderQuery = orderQuery.orderBy(prefixField(field) as any, (dir || 'asc') as any);
+            orderQuery = orderQuery.orderBy(
+              prefixField(field) as any,
+              (dir || 'asc') as any,
+            );
           });
           return orderQuery;
-        }
-        else {
-          return qb.orderBy(prefixField(order) as any, ((direction as string) || 'asc') as any);
+        } else {
+          return qb.orderBy(
+            prefixField(order) as any,
+            ((direction as string) || 'asc') as any,
+          );
         }
       })
-      .$if(
-        search !== '',
-        qb => qb.where(eb =>
+      .$if(search !== '', (qb) =>
+        qb.where((eb) =>
           eb.or([
             eb('todos.name', 'like', `%${search}%`),
             eb('todos.note', 'like', `%${search}%`),
@@ -111,16 +131,10 @@ export default class TodoController {
         ),
       );
 
-    const countQuery = query
-      .clearSelect()
-      .select(sql`COUNT(*)`.as('count'));
+    const countQuery = query.clearSelect().select(sql`COUNT(*)`.as('count'));
 
     const [results, countResult] = await Promise.all([
-      query
-        .orderBy('todos.id', 'asc')
-        .limit(pageSize)
-        .offset(skip)
-        .execute(),
+      query.orderBy('todos.id', 'asc').limit(pageSize).offset(skip).execute(),
       countQuery.executeTakeFirst(),
     ]);
 
@@ -208,7 +222,7 @@ export default class TodoController {
     }
 
     const updateData = {
-      ...body.data as any,
+      ...(body.data as any),
       edit_id: req.session.user.bee_id,
       ...(isLlm && { ai_updated_at: new Date() }),
     };
@@ -236,7 +250,8 @@ export default class TodoController {
 
     const db = KyselyServer.getInstance().db;
 
-    const result = await db.selectFrom('todos')
+    const result = await db
+      .selectFrom('todos')
       .select([
         'todos.id',
         'todos.name',
@@ -251,8 +266,13 @@ export default class TodoController {
         'todos.created_at',
         'todos.updated_at',
       ])
-      .$call(qb => withCreatorAndEditor(qb, { creatorColumn: 'todos.bee_id', editorColumn: 'todos.edit_id' }))
-      .$call(qb => withApiary(qb as any, { apiaryColumn: 'todos.apiary_id' }))
+      .$call((qb) =>
+        withCreatorAndEditor(qb, {
+          creatorColumn: 'todos.bee_id',
+          editorColumn: 'todos.edit_id',
+        }),
+      )
+      .$call((qb) => withApiary(qb as any, { apiaryColumn: 'todos.apiary_id' }))
       .where('todos.user_id', '=', req.session.user.user_id)
       .where('todos.id', 'in', body.ids)
       .execute();
@@ -302,7 +322,9 @@ export default class TodoController {
     const body = req.body as TodoUpdateDate;
     const db = KyselyServer.getInstance().db;
 
-    const ids = body.ids.map(id => Number(id)).filter(id => !Number.isNaN(id));
+    const ids = body.ids
+      .map((id) => Number(id))
+      .filter((id) => !Number.isNaN(id));
 
     const result = await transaction(db, async (trx) => {
       const res = await trx

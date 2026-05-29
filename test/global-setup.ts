@@ -17,7 +17,9 @@ let gracefulShutdown: () => Promise<void>;
 let knexInstance: any;
 
 export async function setup() {
-  const { knexConfig } = await import(`${process.cwd()}/dist/config/environment.config.js`);
+  const { knexConfig } = await import(
+    `${process.cwd()}/dist/config/environment.config.js`
+  );
   const { default: knex } = await import('knex');
   knexInstance = knex(knexConfig);
 
@@ -35,8 +37,8 @@ export async function setup() {
     for (const t of tables) {
       if (
         !(
-          ['KnexMigrations', 'KnexMigrations_lock'].includes(t.table_name)
-          || t.table_name.includes('innodb')
+          ['KnexMigrations', 'KnexMigrations_lock'].includes(t.table_name) ||
+          t.table_name.includes('innodb')
         )
       ) {
         await knexInstance.raw(`TRUNCATE ${t.table_name};`);
@@ -59,9 +61,8 @@ export async function teardown() {
       await knexInstance.destroy();
     }
     console.log('Server shut down');
-  }
-  catch (e) {
-    console.error(e);
+  } catch (error) {
+    console.error(error);
   }
   // Third-party libs (pino rotating-file-stream, nodemailer SMTP transport,
   // @fastify/compress zlib streams, redis reconnect timers) leave handles open

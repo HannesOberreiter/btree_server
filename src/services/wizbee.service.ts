@@ -1,7 +1,14 @@
-import type { WizBeeContext, WizBeeTool } from '../api/controllers/wizbee.tools.controller.js';
 import { Mistral } from '@mistralai/mistralai';
 import { z } from 'zod';
-import { createWizBeeTools, executeWizBeeTool } from '../api/controllers/wizbee.tools.controller.js';
+
+import type {
+  WizBeeContext,
+  WizBeeTool,
+} from '../api/controllers/wizbee.tools.controller.js';
+import {
+  createWizBeeTools,
+  executeWizBeeTool,
+} from '../api/controllers/wizbee.tools.controller.js';
 import { mistralAI } from '../config/environment.config.js';
 import { Logger } from './logger.service.js';
 
@@ -169,26 +176,27 @@ Wrong: "| Hive | Amount | Date |\n|------|--------|------|"
 }
 
 export interface ChatMessage {
-  role: 'user' | 'model' | 'tool'
-  content: string
+  role: 'user' | 'model' | 'tool';
+  content: string;
 }
 
 export interface TokenUsage {
-  inputTokens: number
-  outputTokens: number
-  totalTokens: number
+  inputTokens: number;
+  outputTokens: number;
+  totalTokens: number;
 }
 
 export interface StreamChunk {
-  type: 'text' | 'tool_call' | 'tool_result' | 'error' | 'done'
-  content?: string
-  toolName?: string
-  toolInput?: unknown
-  toolOutput?: unknown
-  usage?: TokenUsage
+  type: 'text' | 'tool_call' | 'tool_result' | 'error' | 'done';
+  content?: string;
+  toolName?: string;
+  toolInput?: unknown;
+  toolOutput?: unknown;
+  usage?: TokenUsage;
 }
 
-const BTREE_DOC_INTENT_RE = /\b(?:b[.\s-]?tree|wizbee|premium|abo|subscription|preis|preise|kosten|kostet|price|pricing|cost|offline|app|ui|einstellung(?:en)?|settings?|option(?:en)?|api|ical|nfc|qr|scanner|karte|map|kalender|calendar|login|account|konto)\b/i;
+const BTREE_DOC_INTENT_RE =
+  /\b(?:b[.\s-]?tree|wizbee|premium|abo|subscription|preis|preise|kosten|kostet|price|pricing|cost|offline|app|ui|einstellung(?:en)?|settings?|option(?:en)?|api|ical|nfc|qr|scanner|karte|map|kalender|calendar|login|account|konto)\b/i;
 
 function shouldPreloadBtreeDocs(message: string): boolean {
   return BTREE_DOC_INTENT_RE.test(message);
@@ -199,12 +207,12 @@ function shouldPreloadBtreeDocs(message: string): boolean {
  * https://docs.mistral.ai/capabilities/function_calling/
  */
 interface MistralToolDef {
-  type: 'function'
+  type: 'function';
   function: {
-    name: string
-    description: string
-    parameters: Record<string, unknown>
-  }
+    name: string;
+    description: string;
+    parameters: Record<string, unknown>;
+  };
 }
 
 /**
@@ -214,22 +222,26 @@ interface MistralToolDef {
  * a single delta. We always accumulate by index to be safe.
  */
 interface AccumulatedToolCall {
-  id: string
-  name: string
-  args: string
+  id: string;
+  name: string;
+  args: string;
 }
 
 /**
  * Convert the internal WizBee tool registry to the Mistral tools schema.
  * Uses zod v4's built-in `toJSONSchema` to convert the tool's input schema.
  */
-function buildMistralTools(tools: Record<string, WizBeeTool>): MistralToolDef[] {
+function buildMistralTools(
+  tools: Record<string, WizBeeTool>,
+): MistralToolDef[] {
   return Object.entries(tools).map(([name, t]) => ({
     type: 'function',
     function: {
       name,
       description: t.description,
-      parameters: z.toJSONSchema(t.inputSchema, { target: 'draft-7' }) as Record<string, unknown>,
+      parameters: z.toJSONSchema(t.inputSchema, {
+        target: 'draft-7',
+      }) as Record<string, unknown>,
     },
   }));
 }
@@ -253,11 +265,12 @@ export class WizBeeAI {
    * Truncates if history exceeds MAX_HISTORY_MESSAGES.
    */
   private buildHistoryMessages(history: ChatMessage[]): Array<any> {
-    const truncated = history.length > MAX_HISTORY_MESSAGES
-      ? history.slice(-MAX_HISTORY_MESSAGES)
-      : history;
+    const truncated =
+      history.length > MAX_HISTORY_MESSAGES
+        ? history.slice(-MAX_HISTORY_MESSAGES)
+        : history;
 
-    return truncated.map(msg => ({
+    return truncated.map((msg) => ({
       role: msg.role === 'model' ? 'assistant' : 'user',
       content: msg.content,
     }));
@@ -275,7 +288,7 @@ export class WizBeeAI {
    *      messages, then GOTO 1 (up to MAX_AGENT_STEPS iterations).
    *   4. Otherwise emit `done` with aggregated usage and return.
    */
-  async* chatStream(
+  async *chatStream(
     message: string,
     history: ChatMessage[] = [],
     signal?: AbortSignal,
@@ -290,9 +303,21 @@ export class WizBeeAI {
     ];
 
     if (shouldPreloadBtreeDocs(message)) {
-      yield { type: 'tool_call', toolName: 'btreeDocumentation', toolInput: { query: message } };
-      const docs = await executeWizBeeTool('btreeDocumentation', { query: message }, this.context);
-      yield { type: 'tool_result', toolName: 'btreeDocumentation', toolOutput: docs };
+      yield {
+        type: 'tool_call',
+        toolName: 'btreeDocumentation',
+        toolInput: { query: message },
+      };
+      const docs = await executeWizBeeTool(
+        'btreeDocumentation',
+        { query: message },
+        this.context,
+      );
+      yield {
+        type: 'tool_result',
+        toolName: 'btreeDocumentation',
+        toolOutput: docs,
+      };
       messages.splice(1, 0, {
         role: 'system',
         content: `Relevant b.tree documentation for the user's question:\n${JSON.stringify(docs)}\n\nUse this documentation as the source of truth. If it does not answer the question, say so. Do not invent UI paths, offline capabilities, prices, or feature details.`,
@@ -304,8 +329,7 @@ export class WizBeeAI {
 
     try {
       for (let step = 0; step < MAX_AGENT_STEPS; step++) {
-        if (signal?.aborted)
-          return;
+        if (signal?.aborted) return;
 
         // Per-step abort controller chained to the outer signal. Lets us bail
         // out of a wedged upstream call independently of the overall request
@@ -313,15 +337,12 @@ export class WizBeeAI {
         const stepController = new AbortController();
         const onOuterAbort = () => stepController.abort();
         if (signal) {
-          if (signal.aborted)
-            stepController.abort();
-          else
-            signal.addEventListener('abort', onOuterAbort, { once: true });
+          if (signal.aborted) stepController.abort();
+          else signal.addEventListener('abort', onOuterAbort, { once: true });
         }
         let inactivityTimer: ReturnType<typeof setTimeout> | null = null;
         const armInactivityTimer = () => {
-          if (inactivityTimer)
-            clearTimeout(inactivityTimer);
+          if (inactivityTimer) clearTimeout(inactivityTimer);
           inactivityTimer = setTimeout(() => {
             stepController.abort();
           }, MISTRAL_INACTIVITY_TIMEOUT_MS);
@@ -349,21 +370,22 @@ export class WizBeeAI {
             // Reset the idle timer on every event — as long as Mistral keeps
             // talking, we keep waiting.
             armInactivityTimer();
-            if (signal?.aborted)
-              return;
+            if (signal?.aborted) return;
             if (stepController.signal.aborted) {
               timedOut = !signal?.aborted;
               break;
             }
 
             const choice = event.data?.choices?.[0];
-            if (!choice)
-              continue;
+            if (!choice) continue;
 
             const delta = choice.delta;
 
             // Text delta
-            if (typeof delta?.content === 'string' && delta.content.length > 0) {
+            if (
+              typeof delta?.content === 'string' &&
+              delta.content.length > 0
+            ) {
               assistantText += delta.content;
               yield { type: 'text', content: delta.content };
             }
@@ -374,12 +396,17 @@ export class WizBeeAI {
               for (let i = 0; i < delta.toolCalls.length; i++) {
                 const tc = delta.toolCalls[i];
                 const idx = tc.index ?? i;
-                const existing = toolCallBuf.get(idx) ?? { id: '', name: '', args: '' };
-                if (tc.id)
-                  existing.id = tc.id;
-                if (tc.function?.name)
-                  existing.name = tc.function.name;
-                if (typeof tc.function?.arguments === 'string' && tc.function.arguments.length > 0) {
+                const existing = toolCallBuf.get(idx) ?? {
+                  id: '',
+                  name: '',
+                  args: '',
+                };
+                if (tc.id) existing.id = tc.id;
+                if (tc.function?.name) existing.name = tc.function.name;
+                if (
+                  typeof tc.function?.arguments === 'string' &&
+                  tc.function.arguments.length > 0
+                ) {
                   existing.args += tc.function.arguments;
                 }
                 toolCallBuf.set(idx, existing);
@@ -396,21 +423,17 @@ export class WizBeeAI {
               totalOutputTokens += event.data.usage.completionTokens ?? 0;
             }
           }
-        }
-        catch (e: any) {
+        } catch (error: any) {
           // AbortError from our inactivity timer is expected — translate into
           // a friendly error below. Anything else rethrows so the outer catch
           // surfaces it.
-          const isAbort = e?.name === 'AbortError' || stepController.signal.aborted;
-          if (!isAbort)
-            throw e;
+          const isAbort =
+            error?.name === 'AbortError' || stepController.signal.aborted;
+          if (!isAbort) throw error;
           timedOut = !signal?.aborted;
-        }
-        finally {
-          if (inactivityTimer)
-            clearTimeout(inactivityTimer);
-          if (signal)
-            signal.removeEventListener('abort', onOuterAbort);
+        } finally {
+          if (inactivityTimer) clearTimeout(inactivityTimer);
+          if (signal) signal.removeEventListener('abort', onOuterAbort);
         }
 
         if (timedOut) {
@@ -421,7 +444,8 @@ export class WizBeeAI {
           );
           yield {
             type: 'error',
-            content: 'The AI provider did not respond in time. Please try again in a moment.',
+            content:
+              'The AI provider did not respond in time. Please try again in a moment.',
           };
           yield {
             type: 'done',
@@ -434,7 +458,7 @@ export class WizBeeAI {
           return;
         }
 
-        const toolCalls = Array.from(toolCallBuf.values()).filter(tc => tc.name);
+        const toolCalls = [...toolCallBuf.values()].filter((tc) => tc.name);
 
         // No tool calls → conversation complete.
         if (toolCalls.length === 0) {
@@ -454,7 +478,7 @@ export class WizBeeAI {
         messages.push({
           role: 'assistant',
           content: assistantText,
-          toolCalls: toolCalls.map(tc => ({
+          toolCalls: toolCalls.map((tc) => ({
             id: tc.id || `call_${Math.random().toString(36).slice(2, 10)}`,
             type: 'function',
             function: { name: tc.name, arguments: tc.args || '{}' },
@@ -464,17 +488,19 @@ export class WizBeeAI {
         // Execute tools sequentially. Each result is appended as a
         // `tool` message so the next streaming call can consume them.
         for (const tc of toolCalls) {
-          if (signal?.aborted)
-            return;
+          if (signal?.aborted) return;
 
           let input: unknown;
           try {
             input = tc.args ? JSON.parse(tc.args) : {};
-          }
-          catch (e) {
-            Logger.getInstance().log('warn', `Tool ${tc.name} arguments not valid JSON: ${String(e)}`, {
-              args: tc.args,
-            });
+          } catch (error) {
+            Logger.getInstance().log(
+              'warn',
+              `Tool ${tc.name} arguments not valid JSON: ${String(error)}`,
+              {
+                args: tc.args,
+              },
+            );
             input = {};
           }
 
@@ -483,8 +509,7 @@ export class WizBeeAI {
           let output: unknown;
           try {
             output = await executeWizBeeTool(tc.name, input, this.context);
-          }
-          catch (e) {
+          } catch (error) {
             // Defensive — the wrapper should have caught this already, but if
             // something slips through, surface as a tool-result error envelope
             // so the model has a fair chance to recover.
@@ -493,7 +518,7 @@ export class WizBeeAI {
               error: {
                 code: 'unknown_error',
                 status: 500,
-                message: e instanceof Error ? e.message : String(e),
+                message: error instanceof Error ? error.message : String(error),
               },
             };
           }
@@ -504,7 +529,8 @@ export class WizBeeAI {
             role: 'tool',
             name: tc.name,
             toolCallId: tc.id,
-            content: typeof output === 'string' ? output : JSON.stringify(output),
+            content:
+              typeof output === 'string' ? output : JSON.stringify(output),
           });
         }
 
@@ -524,11 +550,13 @@ export class WizBeeAI {
         type: 'error',
         content: `Agent exceeded the maximum of ${MAX_AGENT_STEPS} tool-calling steps. Please try a more specific question.`,
       };
-    }
-    catch (error) {
+    } catch (error) {
       yield {
         type: 'error',
-        content: error instanceof Error ? error.message : 'An unexpected error occurred',
+        content:
+          error instanceof Error
+            ? error.message
+            : 'An unexpected error occurred',
       };
     }
   }

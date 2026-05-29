@@ -3,6 +3,7 @@
  */
 
 import { Buffer } from 'node:buffer';
+
 import {
   paypalAppSecret,
   paypalBase,
@@ -22,7 +23,7 @@ export async function createOrder(
     method: 'post',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${accessToken}`,
+      Authorization: `Bearer ${accessToken}`,
     },
     body: JSON.stringify({
       intent: 'CAPTURE',
@@ -71,7 +72,7 @@ export async function capturePayment(orderId: string) {
     method: 'post',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${accessToken}`,
+      Authorization: `Bearer ${accessToken}`,
     },
   });
   const data = await response.json();

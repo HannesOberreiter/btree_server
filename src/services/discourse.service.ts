@@ -22,8 +22,7 @@ export class DiscourseSSO {
     hmac.update(querystring.unescape(payload));
     if (hmac.digest('hex') === sig) {
       return true;
-    }
-    else {
+    } else {
       return false;
     }
   }
@@ -34,21 +33,20 @@ export class DiscourseSSO {
     );
     if ('nonce' in q) {
       return q.nonce;
-    }
-    else {
+    } else {
       throw new Error('Missing Nonce in payload!');
     }
   }
 
   buildLoginString(params: any) {
     if (!('external_id' in params)) {
-      throw new Error('Missing required parameter \'external_id\'');
+      throw new Error("Missing required parameter 'external_id'");
     }
     if (!('nonce' in params)) {
-      throw new Error('Missing required parameter \'nonce\'');
+      throw new Error("Missing required parameter 'nonce'");
     }
     if (!('email' in params)) {
-      throw new Error('Missing required parameter \'email\'');
+      throw new Error("Missing required parameter 'email'");
     }
 
     const payload = Buffer.from(querystring.stringify(params), 'utf8').toString(

@@ -1,7 +1,8 @@
+import fastifyFormbody from '@fastify/formbody';
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
-import fastifyFormbody from '@fastify/formbody';
 import { z } from 'zod';
+
 import ExternalController from '../../controllers/external.controller.js';
 import ScaleDataController from '../../controllers/scale_data.controller.js';
 import { Validator } from '../../hooks/validator.hook.js';
@@ -23,11 +24,7 @@ export default function routes(
     ExternalController.ical,
   );
 
-  server.post(
-    '/stripe/webhook',
-    {},
-    ExternalController.stripeWebhook,
-  );
+  server.post('/stripe/webhook', {}, ExternalController.stripeWebhook);
 
   server.post('/mollie/webhook', {}, ExternalController.mollieWebhook);
 

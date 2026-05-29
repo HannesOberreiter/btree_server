@@ -1,6 +1,13 @@
-import type { TestAgent } from '../utils.js';
 import { beforeAll, describe, expect, it } from 'vitest';
-import { createAgent, createAuthenticatedAgent, doQueryRequest, doRequest, expectations } from '../utils.js';
+
+import type { TestAgent } from '../utils.js';
+import {
+  createAgent,
+  createAuthenticatedAgent,
+  doQueryRequest,
+  doRequest,
+  expectations,
+} from '../utils.js';
 
 const testInsert = {
   name: 'Hive',
@@ -22,7 +29,14 @@ describe('hive routes', () => {
 
   beforeAll(async () => {
     agent = await createAuthenticatedAgent();
-    const res2 = await doRequest(agent, 'post', route, null, accessToken, testInsert);
+    const res2 = await doRequest(
+      agent,
+      'post',
+      route,
+      null,
+      accessToken,
+      testInsert,
+    );
     expect(res2.statusCode).toEqual(200);
     expect(res2.body).toBeInstanceOf(Array);
     insertId = res2.body[0];
@@ -35,12 +49,22 @@ describe('hive routes', () => {
       expect(res.errors, 'JsonWebTokenError');
     });
     it('post 401 - no header', async () => {
-      const res = await doRequest(createAgent(), 'post', route, null, null, testInsert);
+      const res = await doRequest(
+        createAgent(),
+        'post',
+        route,
+        null,
+        null,
+        testInsert,
+      );
       expect(res.statusCode).toEqual(401);
       expect(res.errors, 'JsonWebTokenError');
     });
     it('patch 401 - no header', async () => {
-      const res = await doRequest(createAgent(), 'patch', route, null, null, { ids: [insertId], data: {} });
+      const res = await doRequest(createAgent(), 'patch', route, null, null, {
+        ids: [insertId],
+        data: {},
+      });
       expect(res.statusCode).toEqual(401);
       expect(res.errors, 'JsonWebTokenError');
     });
@@ -53,23 +77,43 @@ describe('hive routes', () => {
     });
 
     it('post 400 - no data', async () => {
-      const res = await doRequest(agent, 'post', route, null, accessToken, null);
+      const res = await doRequest(
+        agent,
+        'post',
+        route,
+        null,
+        accessToken,
+        null,
+      );
       expect(res.statusCode).toEqual(400);
     });
 
     it('post 409 - duplicate name', async () => {
-      const res = await doRequest(agent, 'post', route, null, accessToken, testInsert);
+      const res = await doRequest(
+        agent,
+        'post',
+        route,
+        null,
+        accessToken,
+        testInsert,
+      );
       expect(res.statusCode).toEqual(409);
     });
 
     it('patch 200 - success', async () => {
-      const res = await doRequest(agent, 'patch', route, null, accessToken, { ids: [insertId], data: { name: patchName } });
+      const res = await doRequest(agent, 'patch', route, null, accessToken, {
+        ids: [insertId],
+        data: { name: patchName },
+      });
       expect(res.statusCode).toEqual(200);
       expect(res.body).toBe(1);
     });
 
     it('patch 200 - success second patch with same name', async () => {
-      const res = await doRequest(agent, 'patch', route, null, accessToken, { ids: [insertId], data: { name: patchName } });
+      const res = await doRequest(agent, 'patch', route, null, accessToken, {
+        ids: [insertId],
+        data: { name: patchName },
+      });
       expect(res.statusCode).toEqual(200);
       expect(res.body).toBe(1);
     });
@@ -77,12 +121,24 @@ describe('hive routes', () => {
 
   describe('/api/v1/hive/:id', () => {
     it('401 - no header', async () => {
-      const res = await doQueryRequest(createAgent(), route, insertId, null, null);
+      const res = await doQueryRequest(
+        createAgent(),
+        route,
+        insertId,
+        null,
+        null,
+      );
       expect(res.statusCode).toEqual(401);
       expect(res.errors, 'JsonWebTokenError');
     });
     it('200 - success', async () => {
-      const res = await doQueryRequest(agent, route, insertId, accessToken, null);
+      const res = await doQueryRequest(
+        agent,
+        route,
+        insertId,
+        accessToken,
+        null,
+      );
       expect(res.statusCode).toEqual(200);
       expect(res.body).toHaveProperty('id');
       expect(res.body).toHaveProperty('name');
@@ -92,12 +148,24 @@ describe('hive routes', () => {
 
   describe('/api/v1/hive/task/:id', () => {
     it('401 - no header', async () => {
-      const res = await doQueryRequest(createAgent(), `${route}/task`, insertId, null, null);
+      const res = await doQueryRequest(
+        createAgent(),
+        `${route}/task`,
+        insertId,
+        null,
+        null,
+      );
       expect(res.statusCode).toEqual(401);
       expect(res.errors, 'JsonWebTokenError');
     });
     it('200 - success', async () => {
-      const res = await doQueryRequest(agent, `${route}/task`, insertId, accessToken, null);
+      const res = await doQueryRequest(
+        agent,
+        `${route}/task`,
+        insertId,
+        accessToken,
+        null,
+      );
       expect(res.statusCode).toEqual(200);
       expect(res.body).toHaveProperty('harvest');
       expect(res.body).toHaveProperty('feed');
@@ -109,17 +177,38 @@ describe('hive routes', () => {
 
   describe('/api/v1/hive/batchGet', () => {
     it('401 - no header', async () => {
-      const res = await doRequest(createAgent(), 'post', `${route}/batchGet`, null, null, { ids: [insertId] });
+      const res = await doRequest(
+        createAgent(),
+        'post',
+        `${route}/batchGet`,
+        null,
+        null,
+        { ids: [insertId] },
+      );
       expect(res.statusCode).toEqual(401);
       expect(res.errors, 'JsonWebTokenError');
     });
     it('400 - missing ids', async () => {
-      const res = await doRequest(agent, 'post', `${route}/batchGet`, null, null, null);
+      const res = await doRequest(
+        agent,
+        'post',
+        `${route}/batchGet`,
+        null,
+        null,
+        null,
+      );
       expect(res.statusCode).toEqual(400);
       expectations(res, 'ids', 'Invalid value');
     });
     it('200 - success', async () => {
-      const res = await doRequest(agent, 'post', `${route}/batchGet`, null, accessToken, { ids: [insertId] });
+      const res = await doRequest(
+        agent,
+        'post',
+        `${route}/batchGet`,
+        null,
+        accessToken,
+        { ids: [insertId] },
+      );
       expect(res.statusCode).toEqual(200);
       expect(res.body).toBeInstanceOf(Array);
     });
@@ -127,17 +216,38 @@ describe('hive routes', () => {
 
   describe('/api/v1/hive/updatePosition', () => {
     it('401 - no header', async () => {
-      const res = await doRequest(createAgent(), 'patch', `${route}/updatePosition`, null, null, { data: [{ position: 0, id: insertId }] });
+      const res = await doRequest(
+        createAgent(),
+        'patch',
+        `${route}/updatePosition`,
+        null,
+        null,
+        { data: [{ position: 0, id: insertId }] },
+      );
       expect(res.statusCode).toEqual(401);
       expect(res.errors, 'JsonWebTokenError');
     });
     it('400 - missing ids', async () => {
-      const res = await doRequest(agent, 'patch', `${route}/updatePosition`, null, null, null);
+      const res = await doRequest(
+        agent,
+        'patch',
+        `${route}/updatePosition`,
+        null,
+        null,
+        null,
+      );
       expect(res.statusCode).toEqual(400);
       expectations(res, 'data', 'Invalid value');
     });
     it('200 - success', async () => {
-      const res = await doRequest(agent, 'patch', `${route}/updatePosition`, null, accessToken, { data: [{ position: 0, id: insertId }] });
+      const res = await doRequest(
+        agent,
+        'patch',
+        `${route}/updatePosition`,
+        null,
+        accessToken,
+        { data: [{ position: 0, id: insertId }] },
+      );
       expect(res.statusCode).toEqual(200);
       expect(res.body[0]).toBe(1);
     });
@@ -145,17 +255,38 @@ describe('hive routes', () => {
 
   describe('/api/v1/hive/batchDelete', () => {
     it('401 - no header', async () => {
-      const res = await doRequest(createAgent(), 'patch', `${route}/batchDelete`, null, null, { ids: [] });
+      const res = await doRequest(
+        createAgent(),
+        'patch',
+        `${route}/batchDelete`,
+        null,
+        null,
+        { ids: [] },
+      );
       expect(res.statusCode).toEqual(401);
       expect(res.errors, 'JsonWebTokenError');
     });
     it('400 - missing ids', async () => {
-      const res = await doRequest(agent, 'patch', `${route}/batchDelete`, null, null, null);
+      const res = await doRequest(
+        agent,
+        'patch',
+        `${route}/batchDelete`,
+        null,
+        null,
+        null,
+      );
       expect(res.statusCode).toEqual(400);
       expectations(res, 'ids', 'Invalid value');
     });
     it('200 - success', async () => {
-      const res = await doRequest(agent, 'patch', `${route}/batchDelete`, null, accessToken, { ids: [insertId] });
+      const res = await doRequest(
+        agent,
+        'patch',
+        `${route}/batchDelete`,
+        null,
+        accessToken,
+        { ids: [insertId] },
+      );
       expect(res.statusCode).toEqual(200);
       expect(res.body).toBeInstanceOf(Array);
     });
@@ -163,17 +294,38 @@ describe('hive routes', () => {
 
   describe('/api/v1/hive/status', () => {
     it('401 - no header', async () => {
-      const res = await doRequest(createAgent(), 'patch', `${route}/status`, null, null, { ids: [], status: true });
+      const res = await doRequest(
+        createAgent(),
+        'patch',
+        `${route}/status`,
+        null,
+        null,
+        { ids: [], status: true },
+      );
       expect(res.statusCode).toEqual(401);
       expect(res.errors, 'JsonWebTokenError');
     });
     it('400 - missing ids', async () => {
-      const res = await doRequest(agent, 'patch', `${route}/status`, null, null, null);
+      const res = await doRequest(
+        agent,
+        'patch',
+        `${route}/status`,
+        null,
+        null,
+        null,
+      );
       expect(res.statusCode).toEqual(400);
       expectations(res, 'ids', 'Invalid value');
     });
     it('200 - success', async () => {
-      const res = await doRequest(agent, 'patch', `${route}/status`, null, accessToken, { ids: [insertId], status: false });
+      const res = await doRequest(
+        agent,
+        'patch',
+        `${route}/status`,
+        null,
+        accessToken,
+        { ids: [insertId], status: false },
+      );
       expect(res.statusCode).toEqual(200);
       expect(res.body).toBe(1);
     });

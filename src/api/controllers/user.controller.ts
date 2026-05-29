@@ -1,5 +1,6 @@
-import type { FastifyReply, FastifyRequest } from 'fastify';
 import { randomUUID } from 'node:crypto';
+
+import type { FastifyReply, FastifyRequest } from 'fastify';
 import httpErrors from 'http-errors';
 import { map } from 'lodash-es';
 
@@ -61,10 +62,9 @@ export default class UserController {
     // Check if connected company exists (last visited company)
     // otherwise take the simply the first one
     let company: number;
-    if (data.company.some(el => el.id === data.saved_company)) {
+    if (data.company.some((el) => el.id === data.saved_company)) {
       company = data.saved_company;
-    }
-    else {
+    } else {
       company = data.company[0].id;
     }
     const { rank, paid } = await getPaidRank(data.id, company);
@@ -129,21 +129,18 @@ export default class UserController {
       if ('password' in body) {
         try {
           await reviewPassword(req.session.user.bee_id, body.password, trx);
-        }
-        catch (e) {
-          throw checkMySQLError(e);
+        } catch (error) {
+          throw checkMySQLError(error);
         }
 
         delete body.password;
         if ('email' in body) {
-          if (body.email === '')
-            delete body.email;
+          if (body.email === '') delete body.email;
         }
         if ('newPassword' in body) {
           if (body.newPassword === '') {
             delete body.newPassword;
-          }
-          else {
+          } else {
             const password = createHashedPassword(body.newPassword);
             delete body.newPassword;
             body.password = password.password;
@@ -164,16 +161,14 @@ export default class UserController {
             subject: 'pw_reseted',
             name: user.username,
           });
-        }
-        catch (e) {
-          throw checkMySQLError(e);
+        } catch (error) {
+          throw checkMySQLError(error);
         }
       }
       return user;
-    }
-    catch (e) {
+    } catch (error) {
       await trx.rollback();
-      throw e;
+      throw error;
     }
   }
 
@@ -219,10 +214,9 @@ export default class UserController {
         req.body.saved_company,
         userAgent
       ); */
-    }
-    catch (e) {
+    } catch (error) {
       await trx.rollback();
-      throw e;
+      throw error;
     }
   }
 
@@ -233,19 +227,15 @@ export default class UserController {
     let safety = 1000;
 
     while (safety-- > 0) {
-      const result = await RedisServer.client.scan(
-        cursor,
-        {
-          MATCH: `btree_sess:${bee_id}:*`,
-          COUNT: 500,
-        },
-      );
+      const result = await RedisServer.client.scan(cursor, {
+        MATCH: `btree_sess:${bee_id}:*`,
+        COUNT: 500,
+      });
       if (result.keys.length > 0) {
-        keys = keys.concat(result.keys as string[]);
+        keys.push(...(result.keys as string[]));
       }
       cursor = result.cursor as string;
-      if (cursor === '0')
-        break;
+      if (cursor === '0') break;
     }
 
     if (keys.length === 0) {
@@ -258,14 +248,13 @@ export default class UserController {
           return null;
         }
         const o = JSON.parse(el as string);
-        if (!o.user)
-          return null;
+        if (!o.user) return null;
         o.id = keys[index];
-        o.user.currentSession
-          = o.user?.uuid && o.user?.uuid === req.session.user.uuid;
+        o.user.currentSession =
+          o.user?.uuid && o.user?.uuid === req.session.user.uuid;
         return o;
       })
-      .filter(el => el !== null);
+      .filter((el) => el !== null);
     return result;
   }
 

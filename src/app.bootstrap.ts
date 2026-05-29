@@ -1,7 +1,7 @@
 import closeWithGrace from 'close-with-grace';
+
 import { Application } from './config/app.config.js';
 import { DatabaseServer } from './servers/db.server.js';
-
 import { HTTPServer } from './servers/http.server.js';
 import { KyselyServer } from './servers/kysely.server.js';
 import { RedisServer } from './servers/redis.server.js';
@@ -37,16 +37,17 @@ async function gracefulShutdown() {
   try {
     logger.log('debug', 'Starting graceful shutdown...', { label: 'Server' });
     cwgHandler.uninstall();
-    await Promise.allSettled([
-      dbServer.stop(),
-      redisServer.stop(),
-      httpServer.stop(),
-      kyselyServer.stop(),
-    ].filter(Boolean));
+    await Promise.allSettled(
+      [
+        dbServer.stop(),
+        redisServer.stop(),
+        httpServer.stop(),
+        kyselyServer.stop(),
+      ].filter(Boolean),
+    );
     logger.log('debug', 'Graceful shutdown completed', { label: 'Server' });
     logger.close();
-  }
-  catch (error) {
+  } catch (error) {
     console.error('Failed to stop server', error);
   }
 }

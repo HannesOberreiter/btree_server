@@ -1,6 +1,7 @@
-import type { FastifyRequest } from 'fastify';
 import { createHash, randomBytes } from 'node:crypto';
+
 import dayjs from 'dayjs';
+import type { FastifyRequest } from 'fastify';
 import { UAParser } from 'ua-parser-js';
 
 import { User } from '../models/user.model.js';
@@ -9,17 +10,16 @@ import { checkMySQLError } from '../utils/error.util.js';
 function buildUserAgent(req: FastifyRequest) {
   try {
     const agent = UAParser(req.headers['user-agent']);
-    const userAgentInsert
-      = agent.os.name
-        + agent.browser.name
-        + agent.device.vendor
-        + agent.device.model;
+    const userAgentInsert =
+      agent.os.name +
+      agent.browser.name +
+      agent.device.vendor +
+      agent.device.model;
     return userAgentInsert.length > 65
       ? userAgentInsert.substring(0, 64)
       : userAgentInsert;
-  }
-  catch (e) {
-    console.error(e);
+  } catch (error) {
+    console.error(error);
     return 'noUserAgent';
   }
 }
@@ -47,9 +47,8 @@ async function confirmAccount(id: number) {
       return u.email;
     });
     return u;
-  }
-  catch (e) {
-    throw checkMySQLError(e);
+  } catch (error) {
+    throw checkMySQLError(error);
   }
 }
 
@@ -62,9 +61,8 @@ async function unsubscribeMail(id: number) {
       return u.email;
     });
     return u;
-  }
-  catch (e) {
-    throw checkMySQLError(e);
+  } catch (error) {
+    throw checkMySQLError(error);
   }
 }
 
@@ -78,9 +76,8 @@ async function resetMail(id: number) {
       return u;
     });
     return u;
-  }
-  catch (e) {
-    throw checkMySQLError(e);
+  } catch (error) {
+    throw checkMySQLError(error);
   }
 }
 
@@ -101,9 +98,8 @@ async function resetPassword(id: number, inputPassword: string) {
       return u;
     });
     return u;
-  }
-  catch (e) {
-    throw checkMySQLError(e);
+  } catch (error) {
+    throw checkMySQLError(error);
   }
 }
 

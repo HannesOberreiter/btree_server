@@ -1,4 +1,5 @@
 import { Model } from 'objection';
+
 import { Company } from './company.model.js';
 import { Hive } from './hive.model.js';
 import { ScaleData } from './scale_data.model.js';

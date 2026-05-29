@@ -1,16 +1,16 @@
-import type { FastifyReply, FastifyRequest } from 'fastify';
-import type { Stripe } from 'stripe';
-import type { MailLang } from '../../services/mail.service.js';
 import dayjs from 'dayjs';
+import type { FastifyReply, FastifyRequest } from 'fastify';
 import httpErrors from 'http-errors';
-
 import ical, { ICalCalendarMethod } from 'ical-generator';
+import type { Stripe } from 'stripe';
+
 import { SOURCE } from '../../config/constants.config.js';
 import {
   isServerLocationValid,
   serverLocation,
 } from '../../config/environment.config.js';
 import { Logger } from '../../services/logger.service.js';
+import type { MailLang } from '../../services/mail.service.js';
 import { MailLangs, MailService } from '../../services/mail.service.js';
 import { User } from '../models/user.model.js';
 import { getCompany } from '../utils/api.util.js';
@@ -53,21 +53,26 @@ export default class ExternalController {
     });
     calendar.method(ICalCalendarMethod.PUBLISH);
     switch (params.source) {
-      case SOURCE.todo:
+      case SOURCE.todo: {
         results = await getTodos(payload.params, payload.user);
         break;
-      case SOURCE.rearing:
+      }
+      case SOURCE.rearing: {
         results = await getRearings(payload.params, payload.user);
         break;
-      case SOURCE.movedate:
+      }
+      case SOURCE.movedate: {
         results = await getMovements(payload.params, payload.user);
         break;
-      case SOURCE.scale_data:
+      }
+      case SOURCE.scale_data: {
         results = await getScaleData(payload.params, payload.user);
         break;
-      default:
+      }
+      default: {
         results = await getTask(payload.params, payload.user, params.source);
         break;
+      }
     }
     for (const i in results) {
       const result = results[i];
@@ -111,15 +116,14 @@ export default class ExternalController {
         server = isServerLocationValid(reference.server)
           ? reference.server
           : 'eu';
-      }
-      catch (e) {
+      } catch (error) {
         const mailer = MailService.getInstance();
         mailer.sendRawMail(
           'office@btree.at',
           'Failed capture of Stripe Payment',
           JSON.stringify(event, null, 2),
         );
-        req.log.error(e);
+        req.log.error(error);
         throw new httpErrors.InternalServerError();
       }
 
@@ -138,14 +142,16 @@ export default class ExternalController {
       let amount = 0;
       try {
         amount = Number.parseFloat(object.amount_total as any) / 100;
-      }
-      catch (e) {
-        req.log.error(e);
+      } catch (error) {
+        req.log.error(error);
       }
       await addPremium(user_id, 12 * years, amount, 'stripe');
 
       if (!bee_id) {
-        req.log.error({ event }, 'Stripe webhook missing bee_id in client_reference_id');
+        req.log.error(
+          { event },
+          'Stripe webhook missing bee_id in client_reference_id',
+        );
         return {};
       }
 
@@ -155,13 +161,11 @@ export default class ExternalController {
         const user = await User.query()
           .select('email', 'lang')
           .findById(bee_id);
-        if (user?.email)
-          mail = user.email;
+        if (user?.email) mail = user.email;
         if (user?.lang && MailLangs.includes(user.lang as MailLang))
           lang = user.lang as MailLang;
-      }
-      catch (e) {
-        req.log.error(e);
+      } catch (error) {
+        req.log.error(error);
       }
       if (mail) {
         createInvoice(mail, amount, years, 'Stripe', lang);
@@ -175,7 +179,7 @@ export default class ExternalController {
    */
   static async mollieWebhook(req: FastifyRequest, _reply: FastifyReply) {
     const event = req.body as {
-      id?: string
+      id?: string;
     };
     if (!event || !event.id) {
       throw new httpErrors.BadRequest('Missing paymentId');
@@ -184,12 +188,17 @@ export default class ExternalController {
     const payment = await getPayment(event.id);
 
     /* @see https://docs.mollie.com/docs/status-change */
-    req.log.info({
-      paymentId: event.id,
-      status: payment.status,
-      payment: payment.statusReason ? payment.statusReason : 'No reason provided',
-      meta: payment.metadata,
-    }, `Mollie Payment ${payment.status}`);
+    req.log.info(
+      {
+        paymentId: event.id,
+        status: payment.status,
+        payment: payment.statusReason
+          ? payment.statusReason
+          : 'No reason provided',
+        meta: payment.metadata,
+      },
+      `Mollie Payment ${payment.status}`,
+    );
 
     if (payment.status === 'failed') {
       // send mail to admin
@@ -198,13 +207,12 @@ export default class ExternalController {
         'Failed Mollie Payment',
         `Payment ${payment.id} failed with status: ${payment.status} and reason: ${payment.statusReason}`,
       );
-    }
-    else if (payment.status === 'paid') {
+    } else if (payment.status === 'paid') {
       const reference = payment.metadata as {
-        user_id: number
-        bee_id: number
-        quantity: number // years
-        server: string
+        user_id: number;
+        bee_id: number;
+        quantity: number; // years
+        server: string;
       };
       if (reference && reference.user_id) {
         const user_id = reference.user_id;
@@ -212,18 +220,14 @@ export default class ExternalController {
         const price = Number.parseFloat(payment.amount.value);
         await addPremium(user_id, 12 * years, price, 'mollie');
         const bee_id = reference.bee_id;
-        const user = await User.query().select('email', 'lang').findById(bee_id);
+        const user = await User.query()
+          .select('email', 'lang')
+          .findById(bee_id);
         let lang = 'en' as MailLang;
         if (user?.lang && MailLangs.includes(user.lang as MailLang)) {
           lang = user.lang as MailLang;
         }
-        await createInvoice(
-          user!.email,
-          price,
-          years,
-          'Mollie',
-          lang,
-        );
+        await createInvoice(user!.email, price, years, 'Mollie', lang);
       }
     }
     return {};

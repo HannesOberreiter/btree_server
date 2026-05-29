@@ -36,8 +36,7 @@ export class DatabaseServer {
           { label: 'Database' },
         );
       }
-    }
-    catch (error) {
+    } catch (error) {
       this.logger.log('error', `Database connection error : ${error.message}`, {
         label: 'Database',
       });
@@ -49,9 +48,12 @@ export class DatabaseServer {
       this.logger.log('debug', 'Closing database connection', {});
       await this.knex.destroy();
       this.logger.log('debug', 'Closed database connection', {});
-    }
-    catch (error) {
-      this.logger.log('error', `Database closing error: ${error instanceof Error ? error.message : String(error)}`, {});
+    } catch (error) {
+      this.logger.log(
+        'error',
+        `Database closing error: ${error instanceof Error ? error.message : String(error)}`,
+        {},
+      );
     }
   }
 }

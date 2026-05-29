@@ -1,4 +1,5 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
+
 import { ChargeType } from '../models/option/charge_type.model.js';
 import { CheckupType } from '../models/option/checkup_type.model.js';
 import { FeedType } from '../models/option/feed_type.model.js';
@@ -29,7 +30,8 @@ export default class OptionController {
   static tableNames = Object.keys(OptionController.tables);
 
   static async get(req: FastifyRequest, _reply: FastifyReply) {
-    const params = (req.params as any).table as keyof typeof OptionController.tables;
+    const params = (req.params as any)
+      .table as keyof typeof OptionController.tables;
     const { order, direction, modus } = req.query as any;
     const table = OptionController.tables[params];
     const query = table
@@ -44,8 +46,7 @@ export default class OptionController {
     if (order) {
       if (Array.isArray(order)) {
         order.forEach((field, index) => query.orderBy(field, direction[index]));
-      }
-      else {
+      } else {
         query.orderBy(order, direction);
       }
     }
@@ -55,7 +56,8 @@ export default class OptionController {
 
   static async patch(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as any;
-    const params = (req.params as any).table as keyof typeof OptionController.tables;
+    const params = (req.params as any)
+      .table as keyof typeof OptionController.tables;
     const ids = body.ids;
     const insert = { ...body.data };
     const table = OptionController.tables[params];
@@ -70,7 +72,8 @@ export default class OptionController {
   }
 
   static async post(req: FastifyRequest, _reply: FastifyReply) {
-    const params = (req.params as any).table as keyof typeof OptionController.tables;
+    const params = (req.params as any)
+      .table as keyof typeof OptionController.tables;
     const body = req.body as any;
     const insert = { ...body };
     const table = OptionController.tables[params];
@@ -90,7 +93,8 @@ export default class OptionController {
   }
 
   static async updateStatus(req: FastifyRequest, _reply: FastifyReply) {
-    const params = (req.params as any).table as keyof typeof OptionController.tables;
+    const params = (req.params as any)
+      .table as keyof typeof OptionController.tables;
     const body = req.body as any;
     const table = OptionController.tables[params];
     const result = await table.transaction(async (trx) => {
@@ -106,7 +110,8 @@ export default class OptionController {
   }
 
   static async updateFavorite(req: FastifyRequest, _reply: FastifyReply) {
-    const params = (req.params as any).table as keyof typeof OptionController.tables;
+    const params = (req.params as any)
+      .table as keyof typeof OptionController.tables;
     const body = req.body as any;
     const table = OptionController.tables[params];
     const result = await table.transaction(async (trx) => {
@@ -125,7 +130,8 @@ export default class OptionController {
   }
 
   static async batchGet(req: FastifyRequest, _reply: FastifyReply) {
-    const params = (req.params as any).table as keyof typeof OptionController.tables;
+    const params = (req.params as any)
+      .table as keyof typeof OptionController.tables;
     const body = req.body as any;
     const table = OptionController.tables[params];
     const result = await table.transaction(async (trx) => {
@@ -139,7 +145,8 @@ export default class OptionController {
   }
 
   static async batchDelete(req: FastifyRequest, _reply: FastifyReply) {
-    const params = (req.params as any).table as keyof typeof OptionController.tables;
+    const params = (req.params as any)
+      .table as keyof typeof OptionController.tables;
     const body = req.body as any;
     const table = OptionController.tables[params];
     const result = await table.transaction(async (trx) => {

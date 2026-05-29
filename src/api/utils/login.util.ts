@@ -1,9 +1,10 @@
-import type Objection from 'objection';
 import { createHash } from 'node:crypto';
+
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc.js';
-
 import httpErrors from 'http-errors';
+import type Objection from 'objection';
+
 import { MailService } from '../../services/mail.service.js';
 import { CompanyBee } from '../models/company_bee.model.js';
 import { LoginAttemp } from '../models/login_attempt.model.js';
@@ -22,10 +23,9 @@ async function insertWrongPasswordTry(bee_id: number) {
     });
 
     await trx.commit();
-  }
-  catch (e) {
+  } catch (error) {
     await trx.rollback();
-    throw checkMySQLError(e);
+    throw checkMySQLError(error);
   }
 }
 
@@ -37,10 +37,9 @@ async function updateLastLogin(bee_id: number) {
       last_visit: now,
     });
     await trx.commit();
-  }
-  catch (e) {
+  } catch (error) {
     await trx.rollback();
-    throw checkMySQLError(e);
+    throw checkMySQLError(error);
   }
 }
 
@@ -80,14 +79,12 @@ async function fetchUser(email: string, bee_id = 0) {
       user.findOne({
         'bees.email': email,
       });
-    }
-    else {
+    } else {
       user.findOne({ 'bees.id': bee_id });
     }
     return await user;
-  }
-  catch (e) {
-    throw checkMySQLError(e);
+  } catch (error) {
+    throw checkMySQLError(error);
   }
 }
 
@@ -103,12 +100,11 @@ async function checkBruteForce(bee_id: number) {
     // ToDo send user E-Mail that the account is bruteForced
     if ((bruteForce[0] as any).count < 10) {
       return false;
-    }
-    else {
+    } else {
       const lastNotice = dayjs().subtract(1, 'day').format('YYYY-MM-DD');
       const user = await User.query()
         .findById(bee_id)
-        .where(builder =>
+        .where((builder) =>
           builder
             .where('notice_bruteforce', '<', lastNotice)
             .orWhereNull('notice_bruteforce'),
@@ -126,13 +122,17 @@ async function checkBruteForce(bee_id: number) {
       }
       return true;
     }
-  }
-  catch (e) {
-    throw checkMySQLError(e);
+  } catch (error) {
+    throw checkMySQLError(error);
   }
 }
 
-function checkPassword(inputPassword: string, dbPassword: string, salt: string, hash = 'sha512') {
+function checkPassword(
+  inputPassword: string,
+  dbPassword: string,
+  salt: string,
+  hash = 'sha512',
+) {
   // We first need to hash the inputPassword, this is due to an old code
   // in my first app I did hash the password on login page before sending to server
   const hexInputPassword = createHash(hash).update(inputPassword).digest('hex');
@@ -142,13 +142,16 @@ function checkPassword(inputPassword: string, dbPassword: string, salt: string, 
 
   if (hashedPassword === dbPassword) {
     return true;
-  }
-  else {
+  } else {
     return false;
   }
 }
 
-async function reviewPassword(bee_id, password: string, trx: Objection.Transaction = null) {
+async function reviewPassword(
+  bee_id,
+  password: string,
+  trx: Objection.Transaction = null,
+) {
   const user = await User.query(trx)
     .select('salt', 'password')
     .findById(bee_id);
@@ -158,12 +161,11 @@ async function reviewPassword(bee_id, password: string, trx: Objection.Transacti
   return true;
 }
 
-async function loginCheck(email: string, password: string, bee_id: number = undefined) {
+async function loginCheck(email: string, password: string, bee_id: number) {
   let user;
   if (!bee_id) {
     user = await fetchUser(email);
-  }
-  else {
+  } else {
     user = await fetchUser('', bee_id);
   }
 
@@ -190,10 +192,9 @@ async function loginCheck(email: string, password: string, bee_id: number = unde
   // Check if connected company exists (last visited company)
   // otherwise take the simply the first one
   let company: number;
-  if (user.company.some(el => el.id === user.saved_company)) {
+  if (user.company.some((el) => el.id === user.saved_company)) {
     company = user.saved_company;
-  }
-  else {
+  } else {
     company = user.company[0].id;
   }
   const { rank, paid } = await getPaidRank(user.id, company);

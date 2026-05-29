@@ -1,9 +1,9 @@
-import type { FastifyReply, FastifyRequest } from 'fastify';
-import type Objection from 'objection';
 import dayjs from 'dayjs';
+import type { FastifyReply, FastifyRequest } from 'fastify';
 import httpErrors from 'http-errors';
-
 import { map } from 'lodash-es';
+import type Objection from 'objection';
+
 import { Apiary } from '../models/apiary.model.js';
 import { Checkup } from '../models/checkup.model.js';
 import { Feed } from '../models/feed.model.js';
@@ -32,8 +32,7 @@ async function isDuplicateHiveName(
     checkDuplicate.whereNot('id', id);
   }
   const result = await checkDuplicate;
-  if (result?.id)
-    return true;
+  if (result?.id) return true;
   return false;
 }
 
@@ -66,8 +65,7 @@ export default class HiveController {
       query.withGraphJoined(
         '[hive_location.[movedate], queen_location, hive_source, hive_type, creator(identifier), editor(identifier)]',
       );
-    }
-    else {
+    } else {
       query.withGraphJoined('hive_location.[movedate]');
     }
 
@@ -79,16 +77,14 @@ export default class HiveController {
             query.where(v);
           });
         }
-      }
-      catch (e) {
-        req.log.error(e);
+      } catch (error) {
+        req.log.error(error);
       }
     }
     if (order) {
       if (Array.isArray(order)) {
         order.forEach((field, index) => query.orderBy(field, direction[index]));
-      }
-      else {
+      } else {
         query.orderBy(order, direction);
       }
     }
@@ -110,7 +106,8 @@ export default class HiveController {
   static async post(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as any;
     const start = Number.parseInt(body.start);
-    const repeat = Number.parseInt(body.repeat) > 1 ? Number.parseInt(body.repeat) : 1;
+    const repeat =
+      Number.parseInt(body.repeat) > 1 ? Number.parseInt(body.repeat) : 1;
 
     const insertMovement = {
       apiary_id: body.apiary_id,
@@ -129,7 +126,9 @@ export default class HiveController {
 
     const limit = await limitHive(req.session.user.user_id, repeat);
     if (limit) {
-      throw httpErrors.PaymentRequired('Free plan hive limit reached — premium subscription required to create more hives');
+      throw httpErrors.PaymentRequired(
+        'Free plan hive limit reached — premium subscription required to create more hives',
+      );
     }
 
     const result = await Hive.transaction(async (trx) => {
@@ -225,9 +224,8 @@ export default class HiveController {
             hive_deleted: false,
             hive_modus: true,
           });
-        hives = query_hives.map(hive => hive.hive_id);
-      }
-      else {
+        hives = query_hives.map((hive) => hive.hive_id);
+      } else {
         await Hive.query(trx).findById(id).throwIfNotFound().where({
           'hives.user_id': req.session.user.user_id,
           'hives.deleted': false,
@@ -290,20 +288,29 @@ export default class HiveController {
 
       const todo = [];
       if (apiary) {
-        const filters = JSON.stringify([{
-          date: {
-            from: `${year}-01-01`,
-            to: `${year}-12-31`,
+        const filters = JSON.stringify([
+          {
+            date: {
+              from: `${year}-01-01`,
+              to: `${year}-12-31`,
+            },
           },
-        }]);
-        const todosQuery = await TodoController.get({
-          ...req,
-          query: {
-            apiary_id: id,
-            filters,
+        ]);
+        const todosQuery = await TodoController.get(
+          {
+            ...req,
+            query: {
+              apiary_id: id,
+              filters,
+            },
           },
-        }, _reply);
-        todo.push(...todosQuery.results.map(todo => ({ ...todo, kind: 'todo' })));
+          _reply,
+        );
+        todo.push(
+          ...todosQuery.results.map((todo) =>
+            Object.assign(todo, { kind: 'todo' }),
+          ),
+        );
       }
       return {
         harvest,
@@ -376,8 +383,7 @@ export default class HiveController {
       const softIds: number[] = [];
       const hardIds: number[] = [];
       map(res, (obj) => {
-        if ((obj.deleted || hardDelete) && !restoreDelete)
-          hardIds.push(obj.id);
+        if ((obj.deleted || hardDelete) && !restoreDelete) hardIds.push(obj.id);
         else softIds.push(obj.id);
       });
 

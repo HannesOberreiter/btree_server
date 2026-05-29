@@ -1,6 +1,7 @@
-import type { FastifyReply, FastifyRequest } from 'fastify';
 import dayjs from 'dayjs';
+import type { FastifyReply, FastifyRequest } from 'fastify';
 import httpErrors from 'http-errors';
+
 import { MailService } from '../../services/mail.service.js';
 import { Scale } from '../models/scale.model.js';
 import { ScaleData } from '../models/scale_data.model.js';
@@ -36,8 +37,8 @@ export default class ScaleDataController {
       if (lastInsert) {
         if (q.action === 'CREATE') {
           if (
-            dayjs(lastInsert.datetime)
-            > dayjs(insertDate as any).subtract(1, 'hour')
+            dayjs(lastInsert.datetime) >
+            dayjs(insertDate as any).subtract(1, 'hour')
           ) {
             throw httpErrors.TooManyRequests();
           }
@@ -64,9 +65,8 @@ export default class ScaleDataController {
                 });
               });
             }
-          }
-          catch (e) {
-            req.log.error(e);
+          } catch (error) {
+            req.log.error(error);
           }
         }
       }
@@ -80,8 +80,7 @@ export default class ScaleDataController {
         note: q.note ? q.note : '',
         scale_id: scale.id,
       } as any;
-      if (q.action === 'CREATE_DEMO')
-        return insert;
+      if (q.action === 'CREATE_DEMO') return insert;
       const query = await ScaleData.query(trx).insert({ ...insert });
       return query;
     });
@@ -104,22 +103,19 @@ export default class ScaleDataController {
           filtering.forEach((v) => {
             if ('date' in v && typeof v.date === 'object') {
               query.whereBetween('datetime', [v.date.from, v.date.to]);
-            }
-            else {
+            } else {
               query.where(v);
             }
           });
         }
-      }
-      catch (e) {
-        req.log.error(e);
+      } catch (error) {
+        req.log.error(error);
       }
     }
     if (order) {
       if (Array.isArray(order)) {
         order.forEach((field, index) => query.orderBy(field, direction[index]));
-      }
-      else {
+      } else {
         query.orderBy(order, direction);
       }
     }
