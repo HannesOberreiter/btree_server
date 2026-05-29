@@ -11,6 +11,7 @@ import FormErrorMax from '../components/FormErrorMax.vue';
 import FormInputEmail from '../components/FormInputEmail.vue';
 import FormUserPassword from '../components/FormUserPassword.vue';
 import { useApiFetch } from '../composables/useApi';
+import { useBackend } from '../composables/useBackend';
 import { useNotification } from '../composables/useNotification';
 import { useAuthUserStore } from '../stores/auth';
 
@@ -23,6 +24,7 @@ const forceDashboardRedirect = ref(false);
 
 const store = useAuthUserStore();
 const api = useApiFetch();
+const backend = useBackend();
 
 const { activate } = storeToRefs(store);
 const state = reactive({
@@ -42,7 +44,27 @@ function validLastUrl(): string | undefined {
 	if (lastUrl.includes('visitor'))
 		return undefined;
 
-	return lastUrl;
+	try {
+		const parsed = new URL(lastUrl, window.location.origin);
+		const allowedOrigins = [
+			window.location.origin,
+			new URL(backend.urlIgnoreProxy.value).origin,
+		];
+
+		if (!allowedOrigins.includes(parsed.origin))
+			return undefined;
+
+		if (parsed.origin !== window.location.origin && parsed.pathname !== '/api/v1/agent/oauth/authorize')
+			return undefined;
+
+		if (parsed.origin === window.location.origin)
+			return `${parsed.pathname}${parsed.search}${parsed.hash}`;
+
+		return parsed.toString();
+	}
+	catch {
+		return undefined;
+	}
 }
 
 const truncatedLastUrl = truncate(validLastUrl(), { length: 20 });
@@ -119,6 +141,10 @@ onUnmounted(() => (isSubmitting.value = false));
 async function redirect() {
 	const lastUrl = validLastUrl();
 	if (lastUrl && !forceDashboardRedirect.value) {
+		if (lastUrl.startsWith('http://') || lastUrl.startsWith('https://')) {
+			window.location.href = lastUrl;
+			return;
+		}
 		await router.push(lastUrl);
 		return;
 	}
