@@ -20,7 +20,7 @@ const props = defineProps({
 	},
 });
 const emit = defineEmits<{
-	(e: 'onSuccess', value: boolean): void;
+	(e: 'success', value: boolean): void;
 }>();
 const notification = useNotification();
 const useDate = useDateFormat();
@@ -167,6 +167,6 @@ function onReset() {
 		:v="v"
 		form="scale_data"
 		@reset="onReset"
-		@change="emit('onSuccess', true)"
+		@change="emit('success', true)"
 	/>
 </template>

@@ -17,7 +17,7 @@ const props = defineProps({
 	},
 });
 const emit = defineEmits<{
-	(e: 'onSuccess', value: boolean): void;
+	(e: 'success', value: boolean): void;
 }>();
 const notification = useNotification();
 const values = ref({});
@@ -104,6 +104,6 @@ function onReset() {
 		:v="v"
 		form="rearing_detail"
 		@reset="onReset"
-		@change="emit('onSuccess', true)"
+		@change="emit('success', true)"
 	/>
 </template>

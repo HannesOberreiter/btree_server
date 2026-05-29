@@ -29,7 +29,7 @@ const props = defineProps({
 	},
 });
 const emit = defineEmits<{
-	(e: 'onSuccess', value: boolean): void;
+	(e: 'success', value: boolean): void;
 }>();
 const notification = useNotification();
 const showInterval = ref(false);
@@ -196,6 +196,6 @@ function repeatTask() {
 		:v="v"
 		form="todo"
 		@reset="onReset"
-		@change="emit('onSuccess', true)"
+		@change="emit('success', true)"
 	/>
 </template>

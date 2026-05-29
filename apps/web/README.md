@@ -17,16 +17,15 @@ Written in typescript build with Vue.js and Quasar. The b.tree application is fo
 ## Install the dependencies
 
 ```bash
-npm install
+pnpm install
 ```
 
-`npm postinstall` is implement because of a TypeScript bug with FullCalendar. It is run automatically, you may need to restart your IDE after running `npm` or updating FullCalendar.
+`pnpm postinstall` is implement because of a TypeScript bug with FullCalendar. It is run automatically, you may need to restart your IDE after running `pnpm` or updating FullCalendar.
 
 ### Start the app in development mode (hot-code reloading, error reporting, etc.)
 
 ```bash
-npm run dev
-npm run dev:pwa
+pnpm dev
 ```
 
 We use auto-import plugins to import common libraries and components, see definitions at [src/auto-\*.d.ts](src/).
@@ -57,18 +56,17 @@ The translation in `.json` format can be found in [src/i18n](src/i18n/). On deve
 
 > You are running the esm-bundler build of vue-i18n. ...
 
-### Lint & Format (eslint & prettier)
+### Lint (eslint)
 
 ```bash
-npm run lint
-npm run format
+pnpm lint
 ```
 
 ### Build the app for production
 
 ```bash
-npm run build
-npm run build:pwa
+pnpm build
+pnpm build:pwa
 ```
 
 #### Server

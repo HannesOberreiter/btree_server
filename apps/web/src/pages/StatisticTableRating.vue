@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { QTableProps } from 'quasar';
-import { round } from 'lodash';
+import { round } from 'lodash-es';
 import { storeToRefs } from 'pinia';
 import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';

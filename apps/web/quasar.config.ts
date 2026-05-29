@@ -3,8 +3,8 @@
 
 import { existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { defineConfig } from '#q-app/wrappers';
 import dotenv from 'dotenv';
+import { defineConfig } from '#q-app/wrappers';
 
 dotenv.config(); // on the dev server we use the .env file therefore I still need dotenv, ToDo remove this if possible
 

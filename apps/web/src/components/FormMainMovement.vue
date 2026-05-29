@@ -22,7 +22,7 @@ const props = defineProps({
 		default: null,
 	},
 });
-const emit = defineEmits(['onSuccess']);
+const emit = defineEmits(['success']);
 const useDate = useDateFormat();
 const notification = useNotification();
 const api = useApiFetch();
@@ -86,7 +86,7 @@ async function getEdit(id: unknown[]) {
 
 function onChange(type: 'update' | 'insert' = 'update') {
 	formEvent.value = type;
-	emit('onSuccess', true);
+	emit('success', true);
 }
 </script>
 

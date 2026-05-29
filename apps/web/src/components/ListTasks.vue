@@ -1,6 +1,6 @@
 <script lang="ts">
 import type { Filter, FilterApiary, FilterState } from '../types';
-import { orderBy } from 'lodash';
+import { orderBy } from 'lodash-es';
 import { computed, ref, toRefs, watch } from 'vue';
 import BtnBase from './BtnBase.vue';
 import GlobalLoading from './GlobalLoading.vue';

@@ -90,8 +90,8 @@ Both proxies use `changeOrigin: true` + `secure: false`. Request `/api/hives` in
 ### Install & Run
 
 ```bash
-npm install
-npm run dev        # Dev server at http://localhost:9000 (default Quasar port)
+pnpm install
+pnpm dev        # Dev server at http://localhost:9000 (default Quasar port)
 ```
 
 ---
@@ -100,14 +100,14 @@ npm run dev        # Dev server at http://localhost:9000 (default Quasar port)
 
 | Command | Description |
 |---|---|
-| `npm run dev` | Start dev server with HMR (requires backend running) |
-| `npm run build` | Build SPA for production |
-| `npm run build:pwa` | Build PWA/TWA for production |
-| `npm run lint` | Check for lint errors |
-| `npm run lint:fix` | Auto-fix lint errors |
-| `npm run test:e2e` | Run all Playwright E2E tests |
-| `npm run test:e2e:ui` | Run E2E tests with interactive Playwright UI |
-| `npm run test:e2e:ci` | Run E2E tests in CI mode |
+| `pnpm dev` | Start dev server with HMR (requires backend running) |
+| `pnpm build` | Build SPA for production |
+| `pnpm build:pwa` | Build PWA/TWA for production |
+| `pnpm lint` | Check for lint errors |
+| `pnpm lint:fix` | Auto-fix lint errors |
+| `pnpm test:e2e` | Run all Playwright E2E tests |
+| `pnpm test:e2e:ui` | Run E2E tests with interactive Playwright UI |
+| `pnpm test:e2e:ci` | Run E2E tests in CI mode |
 
 ---
 
@@ -115,7 +115,7 @@ npm run dev        # Dev server at http://localhost:9000 (default Quasar port)
 
 Uses **Antfu ESLint config** + Quasar plugin.
 
-**Always run `npm run lint` before committing.** Fix with `npm run lint:fix` when safe; review auto-fixes manually.
+**Always run `pnpm lint` before committing.** Fix with `pnpm lint:fix` when safe; review auto-fixes manually.
 
 ### Import Path Aliases
 
@@ -149,10 +149,10 @@ Test categories:
 
 ```bash
 # Run all tests (dev server + backend must be running):
-npm run test:e2e
+pnpm test:e2e
 
 # Debug interactively:
-npm run test:e2e:ui
+pnpm test:e2e:ui
 ```
 
 Failure screenshots + traces: `test/playwright/test-results/`. HTML reports: `test/playwright/report/`.
@@ -161,7 +161,7 @@ Failure screenshots + traces: `test/playwright/test-results/`. HTML reports: `te
 
 ## PWA / TWA Notes
 
-- **PWA build:** `npm run build:pwa` — outputs to `dist/pwa/`
+- **PWA build:** `pnpm build:pwa` — outputs to `dist/pwa/`
 - **Service worker:** Workbox `GenerateSW`; `skipWaiting` + `clientsClaim` enabled (updates activate immediately)
 - **TWA:** PWA build generates Android Trusted Web Activity. Do not change manifest/service worker behaviour without TWA compatibility check.
 - **Manifest:** `src-pwa/manifest.json`

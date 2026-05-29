@@ -39,7 +39,7 @@ const props = defineProps({
 	},
 });
 
-const emit = defineEmits(['onSuccess']);
+const emit = defineEmits(['success']);
 
 const stateDefault = {
 	date: dayjs().format('YYYY-MM-DD'),
@@ -148,7 +148,7 @@ function onReset() {
 
 function onChange(type: 'update' | 'insert' = 'update') {
 	formEvent.value = type;
-	emit('onSuccess', true);
+	emit('success', true);
 }
 </script>
 

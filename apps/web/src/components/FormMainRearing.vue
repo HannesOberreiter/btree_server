@@ -21,7 +21,7 @@ const props = defineProps({
 		default: null,
 	},
 });
-const emit = defineEmits(['onSuccess']);
+const emit = defineEmits(['success']);
 const stateDefault = {
 	name: '',
 	symbol: 'venus',
@@ -176,6 +176,6 @@ function onReset() {
 		:v="v"
 		form="rearing"
 		@reset="onReset"
-		@change="emit('onSuccess', true)"
+		@change="emit('success', true)"
 	/>
 </template>

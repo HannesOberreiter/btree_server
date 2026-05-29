@@ -25,7 +25,7 @@ const props = defineProps({
 	},
 });
 
-const emit = defineEmits(['onSuccess']);
+const emit = defineEmits(['success']);
 
 const stateDefault = {
 	name: '',
@@ -158,7 +158,7 @@ function onReset() {
 }
 
 async function onChange() {
-	emit('onSuccess', true);
+	emit('success', true);
 }
 </script>
 

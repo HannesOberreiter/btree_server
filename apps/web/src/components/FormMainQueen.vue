@@ -36,7 +36,7 @@ const props = defineProps({
 		default: false,
 	},
 });
-const emit = defineEmits(['onSuccess']);
+const emit = defineEmits(['success']);
 function getNames(v: any) {
 	return v.map((o: any) => o.name).join(', ');
 }
@@ -171,7 +171,7 @@ function onReset() {
 }
 
 async function onChange() {
-	emit('onSuccess', true);
+	emit('success', true);
 	refetch();
 }
 </script>

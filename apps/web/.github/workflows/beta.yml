@@ -25,11 +25,14 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: 22
-          cache: npm
+          cache: pnpm
+      - uses: pnpm/action-setup@v6
+        with:
+          run_install: false
       - name: Install
-        run: npm install
+        run: pnpm install --frozen-lockfile
       - name: Build PWA
-        run: npm run build:pwa
+        run: pnpm build:pwa
       - name: List output files
         run: ls
 

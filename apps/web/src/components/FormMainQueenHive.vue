@@ -18,7 +18,7 @@ const props = defineProps({
 		default: null,
 	},
 });
-const emit = defineEmits(['onSuccess']);
+const emit = defineEmits(['success']);
 const stateDefault = {
 	move_date: dayjs().format('YYYY-MM-DD'),
 };
@@ -71,7 +71,7 @@ function onReset() {
 }
 
 async function onChange() {
-	emit('onSuccess', true);
+	emit('success', true);
 }
 </script>
 

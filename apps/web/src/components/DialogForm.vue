@@ -45,7 +45,7 @@ const props = defineProps({
 		default: false,
 	},
 });
-defineEmits([...useDialogPluginComponent.emits, 'onSuccess']);
+defineEmits([...useDialogPluginComponent.emits, 'success']);
 const FormMainApiary = defineAsyncComponent(
 	() => import('./FormMainApiary.vue'),
 );
@@ -211,7 +211,7 @@ const layout = computed(() => layouts[props.form]);
 							:is="layout.comp"
 							:ids="ids"
 							v-bind="layout.props"
-							@on-success="(value: any) => onDialogOK(value)"
+							@success="(value: any) => onDialogOK(value)"
 						/>
 					</suspense>
 				</div>
