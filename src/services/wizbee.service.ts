@@ -19,7 +19,7 @@ const mistralClient = new Mistral({ apiKey: mistralAI.key });
  * When bumping: verify on https://mistral.ai/pricing and the allowed model
  * IDs published at https://docs.mistral.ai/getting-started/models/.
  */
-const DEFAULT_MODEL = 'mistral-medium-2508';
+const DEFAULT_MODEL = 'mistral-medium-3-5';
 
 /**
  * Maximum number of agent-loop iterations. Each iteration is ONE Mistral
@@ -43,7 +43,7 @@ const MAX_HISTORY_MESSAGES = 20;
  * controller's 120 s hard timeout — which feels stuck to the user.
  *
  * 45 s is comfortably above the worst-case time-to-first-token we've seen on
- * `mistral-medium-2508` for long tool-heavy turns, but well under the 120 s
+ * `mistral-medium-3-5` for long tool-heavy turns, but well under the 120 s
  * request cap so the client gets a real error chunk.
  */
 const MISTRAL_INACTIVITY_TIMEOUT_MS = 45_000;
