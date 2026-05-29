@@ -6,6 +6,7 @@ import {
   KEY_PREFIX_LENGTH,
   verifyAgentKey,
 } from '../models/agent_key.model.js';
+import { verifyAgentOAuthAccessToken } from '../utils/agent_oauth.util.js';
 
 /**
  * Fastify preHandler hook that authenticates requests using an Agent API key.
@@ -18,6 +19,11 @@ export async function agentAuthHook(
   request: FastifyRequest,
   _reply: FastifyReply,
 ) {
+  const path = new URL(request.url, 'http://localhost').pathname;
+  if (path.endsWith('/openapi.json') || path.includes('/oauth/')) {
+    return;
+  }
+
   const authHeader = request.headers.authorization;
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     throw httpErrors.Unauthorized(
@@ -27,9 +33,14 @@ export async function agentAuthHook(
 
   const plaintextKey = authHeader.slice(7).trim();
   if (!plaintextKey.startsWith('btree_ak_')) {
-    throw httpErrors.Unauthorized(
-      'Invalid API key format. Expected key starting with btree_ak_',
-    );
+    const oauthUser = verifyAgentOAuthAccessToken(plaintextKey);
+    request.session.user = {
+      user_id: oauthUser.userId,
+      bee_id: oauthUser.beeId,
+      rank: oauthUser.rank,
+    } as FastifyRequest['session']['user'];
+    request.session.agent = true;
+    return;
   }
 
   const prefix = plaintextKey.substring(0, KEY_PREFIX_LENGTH);
@@ -47,14 +58,11 @@ export async function agentAuthHook(
       }
 
       // Populate session
-      if (!request.session) {
-        (request as any).session = {};
-      }
       request.session.user = {
         user_id: candidate.user_id,
         bee_id: candidate.bee_id,
-      } as any;
-      (request.session as any).agent = true;
+      } as FastifyRequest['session']['user'];
+      request.session.agent = true;
 
       // Update last_used async (don't block the request)
       AgentKeyModel.updateLastUsed(candidate.id).catch(() => {});

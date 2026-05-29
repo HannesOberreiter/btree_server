@@ -207,6 +207,24 @@ const mistralAI = {
   ),
 };
 
+const oauth = {
+  clientId: process.env.OAUTH_CLIENT_ID ?? '',
+  clientSecret: process.env.OAUTH_CLIENT_SECRET ?? '',
+  redirectUris: (process.env.OAUTH_REDIRECT_URIS ?? '')
+    .split(',')
+    .map((redirectUri) => redirectUri.trim())
+    .filter(Boolean),
+  scope: process.env.OAUTH_SCOPE ?? 'agent',
+  accessTokenSecret:
+    process.env.OAUTH_ACCESS_TOKEN_SECRET ?? process.env.SESSION_SECRET ?? '',
+  accessTokenExpiresIn: Number.parseInt(
+    process.env.OAUTH_ACCESS_TOKEN_EXPIRES_IN ?? '3600',
+  ),
+  refreshTokenDays: Number.parseInt(
+    process.env.OAUTH_REFRESH_TOKEN_DAYS ?? '30',
+  ),
+};
+
 const serverLocations = new Set(['eu', 'us']);
 function isServerLocationValid(server: string) {
   return serverLocations.has(server);
@@ -235,6 +253,7 @@ export {
   mailConfig,
   mistralAI,
   mollieApiKey,
+  oauth,
   openAI,
   openweatherKey,
   paypalAppSecret,

@@ -993,6 +993,20 @@ export interface AgentKeys {
   valid_to: Date | null;
 }
 
+export interface AgentOauthRefreshTokens {
+  id: Generated<number>;
+  client_id: string;
+  token_hash: string;
+  user_id: number;
+  bee_id: number;
+  scope: string | null;
+  expires_at: Date;
+  revoked_at: Date | null;
+  last_used_at: Date | null;
+  created_at: Generated<Date>;
+  updated_at: Generated<Date>;
+}
+
 export interface WizbeeRequests {
   id: Generated<number>;
   request_time: Generated<Date>;
@@ -1068,5 +1082,6 @@ export interface DB {
   treatments: Treatments;
   treatments_apiaries: TreatmentsApiaries;
   agent_keys: AgentKeys;
+  agent_oauth_refresh_tokens: AgentOauthRefreshTokens;
   wizbee_requests: WizbeeRequests;
 }

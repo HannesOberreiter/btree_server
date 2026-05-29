@@ -1,3 +1,4 @@
+import fastifyFormbody from '@fastify/formbody';
 import fastifySwagger from '@fastify/swagger';
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
@@ -5,6 +6,7 @@ import { jsonSchemaTransform } from 'fastify-type-provider-zod';
 import httpErrors from 'http-errors';
 
 import { url } from '../../../config/environment.config.js';
+import AgentOAuthController from '../../controllers/agent_oauth.controller.js';
 import {
   executeWizBeeTool,
   wizBeeToolDefinitions,
@@ -12,6 +14,8 @@ import {
 import { agentAuthHook } from '../../hooks/agent_auth.hook.js';
 
 export default async function routes(instance: FastifyInstance, _options: any) {
+  await instance.register(fastifyFormbody);
+
   // Register @fastify/swagger scoped to this plugin (prefix: /v1/agent)
   await instance.register(fastifySwagger, {
     openapi: {
@@ -30,7 +34,8 @@ export default async function routes(instance: FastifyInstance, _options: any) {
           AgentKey: {
             type: 'http',
             scheme: 'bearer',
-            description: 'Agent API key (starts with btree_ak_)',
+            description:
+              'Agent API key (starts with btree_ak_) or ChatGPT OAuth access token',
           },
         },
       },
@@ -56,6 +61,9 @@ export default async function routes(instance: FastifyInstance, _options: any) {
   instance.addHook('onRequest', agentRateLimit);
 
   const server = instance.withTypeProvider<ZodTypeProvider>();
+
+  server.get('/oauth/authorize', AgentOAuthController.authorize);
+  server.post('/oauth/token', AgentOAuthController.token);
 
   // GET /openapi.json — serves the auto-generated OpenAPI spec
   server.get(

@@ -53,6 +53,27 @@ async function noAuthFetch(method: string, path: string, body?: unknown) {
   return { statusCode: res.status, body: responseBody };
 }
 
+async function noAuthFetchNoRedirect(method: string, path: string) {
+  const baseUrl = `http://localhost:${process.env.PORT}`;
+  const res = await fetch(`${baseUrl}${path}`, {
+    method,
+    headers: {
+      Accept: 'application/json',
+      Origin: process.env.ORIGIN!,
+    },
+    redirect: 'manual',
+  });
+  const contentType = res.headers.get('content-type') ?? '';
+  const responseBody = contentType.includes('json')
+    ? await res.json()
+    : await res.text();
+  return {
+    statusCode: res.status,
+    body: responseBody,
+    location: res.headers.get('location'),
+  };
+}
+
 describe('agent key & agent API routes', () => {
   let agent: TestAgent;
   let createdKeyId: number;
@@ -157,9 +178,10 @@ describe('agent key & agent API routes', () => {
   // ─── Agent API Endpoint ────────────────────────────────────────
 
   describe('gET /api/v1/agent/openapi.json', () => {
-    it('401 - without auth', async () => {
+    it('200 - without auth', async () => {
       const res = await noAuthFetch('GET', '/api/v1/agent/openapi.json');
-      expect(res.statusCode).toEqual(401);
+      expect(res.statusCode).toEqual(200);
+      expect(res.body.openapi).toBeDefined();
     });
 
     it('200 - with valid key', async () => {
@@ -172,6 +194,61 @@ describe('agent key & agent API routes', () => {
       expect(res.body.openapi).toBeDefined();
       expect(res.body.info.title).toContain('b.tree');
       expect(res.body.paths).toBeDefined();
+    });
+  });
+
+  describe('agent OAuth endpoints', () => {
+    const authorizeQuery = new URLSearchParams({
+      response_type: 'code',
+      client_id: 'test-chatgpt-client',
+      redirect_uri: 'https://chatgpt.com/aip/g-test/oauth/callback',
+      scope: 'agent',
+      state: 'state-123',
+    });
+
+    it('400 - authorize requires state', async () => {
+      const params = new URLSearchParams(authorizeQuery);
+      params.delete('state');
+      const res = await noAuthFetch(
+        'GET',
+        `/api/v1/agent/oauth/authorize?${params.toString()}`,
+      );
+      expect(res.statusCode).toEqual(400);
+      expect(res.body.message).toEqual('Missing state');
+    });
+
+    it('302 - authorize redirects anonymous user to login', async () => {
+      const res = await noAuthFetchNoRedirect(
+        'GET',
+        `/api/v1/agent/oauth/authorize?${authorizeQuery.toString()}`,
+      );
+      expect(res.statusCode).toEqual(302);
+      expect(res.location).toContain('http://localhost:9000/visitor/login');
+      expect(res.location).toContain('oauth=1');
+      expect(res.location).toContain('server=eu');
+      expect(res.location).toContain(encodeURIComponent('state=state-123'));
+    });
+
+    it('400 - token rejects unsupported grant_type', async () => {
+      const res = await noAuthFetch('POST', '/api/v1/agent/oauth/token', {
+        grant_type: 'password',
+        client_id: 'test-chatgpt-client',
+        client_secret: 'test-chatgpt-secret',
+      });
+      expect(res.statusCode).toEqual(400);
+      expect(res.body.message).toEqual('Unsupported grant_type');
+    });
+
+    it('401 - token rejects invalid client secret', async () => {
+      const res = await noAuthFetch('POST', '/api/v1/agent/oauth/token', {
+        grant_type: 'authorization_code',
+        client_id: 'test-chatgpt-client',
+        client_secret: 'wrong-secret',
+        code: 'invalid-code',
+        redirect_uri: 'https://chatgpt.com/aip/g-test/oauth/callback',
+      });
+      expect(res.statusCode).toEqual(401);
+      expect(res.body.message).toEqual('Invalid OAuth client');
     });
   });
 
