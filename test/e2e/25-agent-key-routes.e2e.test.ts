@@ -250,6 +250,19 @@ describe('agent key & agent API routes', () => {
       expect(res.statusCode).toEqual(401);
       expect(res.body.message).toEqual('Invalid OAuth client');
     });
+
+    it('401 - random bearer keeps API key format error', async () => {
+      const res = await agentFetch(
+        'POST',
+        '/api/v1/agent/tools/listApiariesHives',
+        'abc.def.ghi',
+        {},
+      );
+      expect(res.statusCode).toEqual(401);
+      expect(res.body.message).toEqual(
+        'Invalid API key format. Expected key starting with btree_ak_',
+      );
+    });
   });
 
   describe('pOST /api/v1/agent/tools/listApiariesHives', () => {

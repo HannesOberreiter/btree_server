@@ -15,6 +15,7 @@ import { RedisServer } from '../../servers/redis.server.js';
 
 const AUTH_CODE_TTL_SECONDS = 600;
 const TOKEN_TYPE = 'bearer';
+const ACCESS_TOKEN_PREFIX = 'btree_oauth_';
 
 type OAuthCodePayload = {
   clientId: string;
@@ -85,7 +86,7 @@ function buildLoginRedirect(request: FastifyRequest) {
 }
 
 function buildAccessToken(payload: OAuthCodePayload) {
-  return jwt.sign(
+  const token = jwt.sign(
     {
       typ: 'agent_oauth',
       bee_id: payload.beeId,
@@ -100,6 +101,8 @@ function buildAccessToken(payload: OAuthCodePayload) {
       expiresIn: oauth.accessTokenExpiresIn,
     },
   );
+
+  return `${ACCESS_TOKEN_PREFIX}${token}`;
 }
 
 async function createRefreshToken(payload: OAuthCodePayload) {
@@ -136,7 +139,12 @@ async function createTokenPair(payload: OAuthCodePayload): Promise<TokenPair> {
 
 export function verifyAgentOAuthAccessToken(token: string) {
   requireOAuthConfig();
-  const decoded = jwt.verify(token, oauth.accessTokenSecret, {
+  if (!token.startsWith(ACCESS_TOKEN_PREFIX)) {
+    throw httpErrors.Unauthorized('Invalid OAuth token');
+  }
+
+  const jwtToken = token.slice(ACCESS_TOKEN_PREFIX.length);
+  const decoded = jwt.verify(jwtToken, oauth.accessTokenSecret, {
     audience: oauth.clientId,
     issuer: 'btree-agent-oauth',
   });

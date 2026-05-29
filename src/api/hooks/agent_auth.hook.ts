@@ -25,15 +25,27 @@ export async function agentAuthHook(
   }
 
   const authHeader = request.headers.authorization;
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+  const [scheme, ...credentialParts] = authHeader?.split(' ') ?? [];
+  if (!authHeader || scheme.toLowerCase() !== 'bearer') {
     throw httpErrors.Unauthorized(
-      'Missing or invalid Authorization header. Expected: Bearer btree_ak_...',
+      'Missing or invalid Authorization header. Expected: Bearer token',
     );
   }
 
-  const plaintextKey = authHeader.slice(7).trim();
+  const plaintextKey = credentialParts.join(' ').trim();
   if (!plaintextKey.startsWith('btree_ak_')) {
-    const oauthUser = verifyAgentOAuthAccessToken(plaintextKey);
+    if (!plaintextKey.startsWith('btree_oauth_')) {
+      throw httpErrors.Unauthorized(
+        'Invalid API key format. Expected key starting with btree_ak_',
+      );
+    }
+
+    let oauthUser: ReturnType<typeof verifyAgentOAuthAccessToken>;
+    try {
+      oauthUser = verifyAgentOAuthAccessToken(plaintextKey);
+    } catch {
+      throw httpErrors.Unauthorized('Invalid OAuth token');
+    }
     request.session.user = {
       user_id: oauthUser.userId,
       bee_id: oauthUser.beeId,

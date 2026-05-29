@@ -24,8 +24,9 @@ export default async function routes(instance: FastifyInstance, _options: any) {
         title: 'b.tree Agent API',
         description:
           'API for external LLM agents to interact with b.tree beekeeping data. ' +
-          'Authenticate with a Bearer token (Agent Key) in the Authorization header. ' +
-          'Manage your keys at https://app.btree.at/setting/profile/agent-keys',
+          'Use b.tree Agent API keys in the Authorization header for custom agents. ' +
+          'Agent API keys start with btree_ak_ and can be managed at https://app.btree.at/setting/profile/agent-keys. ' +
+          'OAuth is reserved for the official b.tree Beekeeping Manager Custom GPT and is not available for user-created ChatGPT Actions.',
         version: '1.0.0',
       },
       servers: [{ url: `${url}/api/v1/agent`, description: 'Production' }],
@@ -35,7 +36,7 @@ export default async function routes(instance: FastifyInstance, _options: any) {
             type: 'http',
             scheme: 'bearer',
             description:
-              'Agent API key (starts with btree_ak_) or ChatGPT OAuth access token',
+              'b.tree Agent API key (starts with btree_ak_) or OAuth token for the official b.tree Beekeeping Manager Custom GPT (starts with btree_oauth_)',
           },
         },
       },
