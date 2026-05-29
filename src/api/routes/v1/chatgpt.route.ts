@@ -1,6 +1,6 @@
 import fastifyFormbody from '@fastify/formbody';
 import fastifySwagger from '@fastify/swagger';
-import type { FastifyInstance } from 'fastify';
+import type { FastifyInstance, FastifyRequest } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { jsonSchemaTransform } from 'fastify-type-provider-zod';
 import httpErrors from 'http-errors';
@@ -138,6 +138,69 @@ export default async function routes(instance: FastifyInstance, _options: any) {
     async () => buildChatGptToolSpec(),
   );
 
+  async function callTool(toolName: string, body: unknown, request: FastifyRequest) {
+    if (!wizBeeToolDefinitions.some((toolDef) => toolDef.name === toolName)) {
+      throw httpErrors.NotFound('Unknown tool');
+    }
+
+    const user = request.session?.user;
+    if (!user) {
+      throw httpErrors.Unauthorized();
+    }
+
+    const result = await executeWizBeeTool(toolName, body ?? {}, {
+      userId: user.user_id,
+      beeId: user.bee_id,
+    });
+
+    if (
+      result &&
+      typeof result === 'object' &&
+      (result as { ok?: unknown }).ok === false
+    ) {
+      const err = (result as { error?: Record<string, unknown> }).error ?? {};
+      const status = typeof err.status === 'number' ? err.status : 400;
+      const message =
+        typeof err.message === 'string' && err.message.length > 0
+          ? err.message
+          : 'Tool execution failed';
+      if (status === 401) {
+        throw httpErrors.Unauthorized(message);
+      }
+      if (status === 403) {
+        throw httpErrors.Forbidden(message);
+      }
+      if (status === 404) {
+        throw httpErrors.NotFound(message);
+      }
+      if (status >= 500) {
+        throw httpErrors.InternalServerError(message);
+      }
+      throw httpErrors.BadRequest(message);
+    }
+
+    return result;
+  }
+
+  server.post(
+    '/tool',
+    {
+      schema: {
+        description:
+          'Call one b.tree tool by exact name. body must match that tool schema from /openapi.json.',
+        tags: ['Tools'],
+        body: z.object({
+          toolName: z.string().min(1),
+          body: z.record(z.string(), z.unknown()).optional(),
+        }),
+      },
+    },
+    async (request) => {
+      const { toolName, body } = request.body;
+      return callTool(toolName, body ?? {}, request);
+    },
+  );
+
   server.post(
     '/tools/:toolName',
     {
@@ -151,48 +214,7 @@ export default async function routes(instance: FastifyInstance, _options: any) {
     },
     async (request) => {
       const { toolName } = request.params;
-      if (!wizBeeToolDefinitions.some((toolDef) => toolDef.name === toolName)) {
-        throw httpErrors.NotFound('Unknown tool');
-      }
-
-      const user = request.session?.user;
-      if (!user) {
-        throw httpErrors.Unauthorized();
-      }
-
-      const result = await executeWizBeeTool(
-        toolName,
-        request.body ?? {},
-        { userId: user.user_id, beeId: user.bee_id },
-      );
-
-      if (
-        result &&
-        typeof result === 'object' &&
-        (result as { ok?: unknown }).ok === false
-      ) {
-        const err = (result as { error?: Record<string, unknown> }).error ?? {};
-        const status = typeof err.status === 'number' ? err.status : 400;
-        const message =
-          typeof err.message === 'string' && err.message.length > 0
-            ? err.message
-            : 'Tool execution failed';
-        if (status === 401) {
-          throw httpErrors.Unauthorized(message);
-        }
-        if (status === 403) {
-          throw httpErrors.Forbidden(message);
-        }
-        if (status === 404) {
-          throw httpErrors.NotFound(message);
-        }
-        if (status >= 500) {
-          throw httpErrors.InternalServerError(message);
-        }
-        throw httpErrors.BadRequest(message);
-      }
-
-      return result;
+      return callTool(toolName, request.body ?? {}, request);
     },
   );
 }
