@@ -66,7 +66,9 @@ export default defineConfig(ctx => {
       },
 
       typescript: {
-        strict: true
+        strict: true,
+        // Some tools like oxlint need a generated *.vue shim to resolve SFC imports.
+        vueShim: true
         // extendTsConfig (tsConfig) {}
       },
 
