@@ -1,13 +1,13 @@
 [
-	{
-		"relation": ["delegate_permission/common.handle_all_urls"],
-		"target": {
-			"namespace": "android_app",
-			"package_name": "com.bnative",
-			"sha256_cert_fingerprints": [
-				"53:EB:89:D6:22:51:71:D9:04:BB:5B:E1:92:AA:8E:93:28:21:52:2F:B9:CE:68:62:33:38:F9:5B:61:7E:8F:51",
-				"D7:D3:19:42:B8:6D:DF:9E:BC:0A:81:BE:26:B8:2F:44:41:F4:B7:05:E4:78:DF:68:14:99:8B:A7:EA:A6:CF:33"
-			]
-		}
-	}
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.bnative",
+      "sha256_cert_fingerprints": [
+        "53:EB:89:D6:22:51:71:D9:04:BB:5B:E1:92:AA:8E:93:28:21:52:2F:B9:CE:68:62:33:38:F9:5B:61:7E:8F:51",
+        "D7:D3:19:42:B8:6D:DF:9E:BC:0A:81:BE:26:B8:2F:44:41:F4:B7:05:E4:78:DF:68:14:99:8B:A7:EA:A6:CF:33"
+      ]
+    }
+  }
 ]

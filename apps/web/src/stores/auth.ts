@@ -20,8 +20,12 @@ export const useAuthUserStore = defineStore('auth/user', {
     getLanguage: state => {
       const languages = usePreferredLanguages();
       let lang = !isEmpty(state.user) ? state.user.lang : languages.value[0];
-      if (!lang) lang = 'en';
-      if (!['de', 'fr', 'it'].includes(lang)) lang = 'en';
+      if (!lang) {
+        lang = 'en';
+      }
+      if (!['de', 'fr', 'it'].includes(lang)) {
+        lang = 'en';
+      }
       return lang;
     },
     getUser: state => state.user,
@@ -32,8 +36,12 @@ export const useAuthUserStore = defineStore('auth/user', {
     isPremium: state => {
       const company = state.company;
       const date = dayjs(company.paid);
-      if (!date.isValid()) return false;
-      if (date < dayjs()) return false;
+      if (!date.isValid()) {
+        return false;
+      }
+      if (date < dayjs()) {
+        return false;
+      }
       return true;
     },
     /*

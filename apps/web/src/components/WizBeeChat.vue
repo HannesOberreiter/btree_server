@@ -9,23 +9,23 @@ import { useWizBee } from '../composables/useWizBee';
 import { useAuthUserStore } from '../stores/auth';
 
 const props = defineProps<{
-	/** Show example question chips */
-	showExamples?: boolean;
-	/** Enable mobile keyboard handling when used inside a dialog */
-	isDialog?: boolean;
+  /** Show example question chips */
+  showExamples?: boolean;
+  /** Enable mobile keyboard handling when used inside a dialog */
+  isDialog?: boolean;
 }>();
 
 marked.use({ breaks: true, gfm: true });
 
 function renderMarkdown(content: string): string {
-	return marked.parse(content) as string;
+  return marked.parse(content) as string;
 }
 
 function formatToolName(name: string): string {
-	return name
-		.replace(/([A-Z])/g, ' $1')
-		.replace(/^\s/, '')
-		.toLowerCase();
+  return name
+    .replace(/([A-Z])/g, ' $1')
+    .replace(/^\s/, '')
+    .toLowerCase();
 }
 
 const { t } = useI18n();
@@ -33,353 +33,376 @@ const $q = useQuasar();
 const notify = useNotification();
 const authStore = useAuthUserStore();
 const {
-	question,
-	chatHistory,
-	error,
-	isFetching,
-	isStreaming,
-	monthlyUsage,
-	isPremium,
-	isDisabled,
-	fetchMonthlyUsage,
-	transcribeAudio,
-	sendQuestion,
-	abortStream,
-	clearChat,
+  question,
+  chatHistory,
+  error,
+  isFetching,
+  isStreaming,
+  monthlyUsage,
+  isPremium,
+  isDisabled,
+  fetchMonthlyUsage,
+  transcribeAudio,
+  sendQuestion,
+  abortStream,
+  clearChat
 } = useWizBee();
 
 const {
-	isRecording: isVoiceRecording,
-	isSupported: isVoiceSupported,
-	error: voiceError,
-	remainingSeconds: voiceRemainingSeconds,
-	start: startVoice,
-	stop: stopVoice,
+  isRecording: isVoiceRecording,
+  isSupported: isVoiceSupported,
+  error: voiceError,
+  remainingSeconds: voiceRemainingSeconds,
+  start: startVoice,
+  stop: stopVoice
 } = useVoiceRecording();
 const isTranscribing = ref(false);
 
 async function onToggleVoice() {
-	if (isTranscribing.value)
-		return;
+  if (isTranscribing.value) {
+    return;
+  }
 
-	if (!isVoiceSupported.value) {
-		notify.open('negative', t('error.voiceUnsupported'));
-		return;
-	}
+  if (!isVoiceSupported.value) {
+    notify.open('negative', t('error.voiceUnsupported'));
+    return;
+  }
 
-	if (isVoiceRecording.value) {
-		const recording = await stopVoice();
-		if (!recording) {
-			if (voiceError.value === 'permission')
-				notify.open('negative', t('error.voicePermission'));
-			return;
-		}
-		if (voiceError.value === 'timeout') {
-			notify.open('warning', t('voice.autoStopped'));
-		}
+  if (isVoiceRecording.value) {
+    const recording = await stopVoice();
+    if (!recording) {
+      if (voiceError.value === 'permission') {
+        notify.open('negative', t('error.voicePermission'));
+      }
+      return;
+    }
+    if (voiceError.value === 'timeout') {
+      notify.open('warning', t('voice.autoStopped'));
+    }
 
-		isTranscribing.value = true;
-		try {
-			const language = authStore.getLanguage ?? 'en';
-			const fileName = `voice.${recording.extension}`;
-			const res = await transcribeAudio({
-				blob: recording.blob,
-				fileName,
-				language,
-			});
-			const text = (res.text ?? '').trim();
-			if (!text) {
-				notify.open('warning', t('error.voiceEmpty'));
-				return;
-			}
-			question.value = text;
-			sendQuestion();
-		}
-		catch (e: any) {
-			notify.open('negative', e);
-		}
-		finally {
-			isTranscribing.value = false;
-		}
-		return;
-	}
+    isTranscribing.value = true;
+    try {
+      const language = authStore.getLanguage ?? 'en';
+      const fileName = `voice.${recording.extension}`;
+      const res = await transcribeAudio({
+        blob: recording.blob,
+        fileName,
+        language
+      });
+      const text = (res.text ?? '').trim();
+      if (!text) {
+        notify.open('warning', t('error.voiceEmpty'));
+        return;
+      }
+      question.value = text;
+      sendQuestion();
+    } catch (e: any) {
+      notify.open('negative', e);
+    } finally {
+      isTranscribing.value = false;
+    }
+    return;
+  }
 
-	const started = await startVoice();
-	if (!started) {
-		if (voiceError.value === 'permission')
-			notify.open('negative', t('error.voicePermission'));
-		else if (voiceError.value === 'unsupported')
-			notify.open('negative', t('error.voiceUnsupported'));
-		else
-			notify.open('negative', t('error.unknown'));
-	}
+  const started = await startVoice();
+  if (!started) {
+    if (voiceError.value === 'permission') {
+      notify.open('negative', t('error.voicePermission'));
+    } else if (voiceError.value === 'unsupported') {
+      notify.open('negative', t('error.voiceUnsupported'));
+    } else {
+      notify.open('negative', t('error.unknown'));
+    }
+  }
 }
 
 const exampleQuestions = [
-	t('exampleQuestion.offline'),
-	t('exampleQuestion.premium'),
-	t('exampleQuestion.option'),
-	t('exampleQuestion.count'),
-	t('exampleQuestion.harvest'),
+  t('exampleQuestion.offline'),
+  t('exampleQuestion.premium'),
+  t('exampleQuestion.option'),
+  t('exampleQuestion.count'),
+  t('exampleQuestion.harvest')
 ];
 
 const chatContainer = ref<HTMLElement | null>(null);
 
 function scrollToBottom() {
-	nextTick(() => {
-		if (chatContainer.value) {
-			chatContainer.value.scrollTop = chatContainer.value.scrollHeight;
-		}
-	});
+  nextTick(() => {
+    if (chatContainer.value) {
+      chatContainer.value.scrollTop = chatContainer.value.scrollHeight;
+    }
+  });
 }
 
 watch(() => chatHistory.value.length, scrollToBottom);
-watch(
-	() => chatHistory.value.at(-1)?.content,
-	scrollToBottom,
-);
+watch(() => chatHistory.value.at(-1)?.content, scrollToBottom);
 
 onMounted(() => {
-	fetchMonthlyUsage();
-	if (props.isDialog) {
-		window.visualViewport?.addEventListener('resize', updateKeyboardOffset);
-		window.visualViewport?.addEventListener('scroll', updateKeyboardOffset);
-	}
+  fetchMonthlyUsage();
+  if (props.isDialog) {
+    window.visualViewport?.addEventListener('resize', updateKeyboardOffset);
+    window.visualViewport?.addEventListener('scroll', updateKeyboardOffset);
+  }
 });
 
 onUnmounted(() => {
-	window.visualViewport?.removeEventListener('resize', updateKeyboardOffset);
-	window.visualViewport?.removeEventListener('scroll', updateKeyboardOffset);
+  window.visualViewport?.removeEventListener('resize', updateKeyboardOffset);
+  window.visualViewport?.removeEventListener('scroll', updateKeyboardOffset);
 });
 
 // On mobile the input is position:fixed — track keyboard height to lift it above the keyboard
 const keyboardBottomOffset = ref(0);
 
 function updateKeyboardOffset() {
-	if (!window.visualViewport)
-		return;
-	const vv = window.visualViewport;
-	keyboardBottomOffset.value = Math.max(0, window.innerHeight - vv.height - vv.offsetTop);
-	scrollToBottom();
+  if (!window.visualViewport) {
+    return;
+  }
+  const vv = window.visualViewport;
+  keyboardBottomOffset.value = Math.max(
+    0,
+    window.innerHeight - vv.height - vv.offsetTop
+  );
+  scrollToBottom();
 }
 
 function onSubmit() {
-	sendQuestion();
+  sendQuestion();
 }
 
 function onExampleQuestion(example: string) {
-	question.value = example;
-	sendQuestion();
+  question.value = example;
+  sendQuestion();
 }
 
 function onClear() {
-	clearChat();
+  clearChat();
 }
 </script>
 
 <template>
-	<div class="wizbee-chat column full-height" :class="{ 'wizbee-chat--dialog': props.isDialog }">
-		<!-- Chat messages area -->
-		<div ref="chatContainer" class="wizbee-chat__messages col q-pa-sm">
-			<!-- Empty state -->
-			<div
-				v-if="chatHistory.length === 0 && !error"
-				class="column items-center justify-center full-height text-grey-6"
-			>
-				<img
-					src="/wizbee/favicon-96x96.png"
-					alt="WizBee Logo"
-					height="48"
-					class="q-mb-sm"
-					:class="{ 'invert-colors': $q.dark.isActive }"
-				>
-				<div class="text-subtitle1">
-					{{ $t('askQuestion') }}
-				</div>
+  <div
+    class="wizbee-chat column full-height"
+    :class="{ 'wizbee-chat--dialog': props.isDialog }"
+  >
+    <!-- Chat messages area -->
+    <div ref="chatContainer" class="wizbee-chat__messages col q-pa-sm">
+      <!-- Empty state -->
+      <div
+        v-if="chatHistory.length === 0 && !error"
+        class="column items-center justify-center full-height text-grey-6"
+      >
+        <img
+          src="/wizbee/favicon-96x96.png"
+          alt="WizBee Logo"
+          height="48"
+          class="q-mb-sm"
+          :class="{ 'invert-colors': $q.dark.isActive }"
+        />
+        <div class="text-subtitle1">
+          {{ $t('askQuestion') }}
+        </div>
 
-				<!-- Example questions -->
-				<div v-if="showExamples" class="q-mt-md q-gutter-sm row justify-center">
-					<q-btn
-						v-for="example in exampleQuestions"
-						:key="example"
-						no-caps
-						outline
-						size="sm"
-						:loading="isFetching"
-						@click="onExampleQuestion(example)"
-					>
-						{{ example }}
-					</q-btn>
-				</div>
-			</div>
+        <!-- Example questions -->
+        <div v-if="showExamples" class="q-mt-md q-gutter-sm row justify-center">
+          <q-btn
+            v-for="example in exampleQuestions"
+            :key="example"
+            no-caps
+            outline
+            size="sm"
+            :loading="isFetching"
+            @click="onExampleQuestion(example)"
+          >
+            {{ example }}
+          </q-btn>
+        </div>
+      </div>
 
-			<!-- Messages -->
-			<template v-else>
-				<div v-for="(msg, idx) in chatHistory" :key="idx" class="q-mb-sm">
-					<!-- User message -->
-					<div v-if="msg.role === 'user'" class="row justify-end">
-						<div class="wizbee-chat__bubble wizbee-chat__bubble--user q-pa-sm q-px-md rounded-borders">
-							{{ msg.content }}
-						</div>
-					</div>
-					<!-- Tool call (muted, like "thinking") -->
-					<div v-else-if="msg.role === 'tool'" class="row justify-start">
-						<div class="wizbee-chat__tool row items-center q-gutter-x-xs">
-							<q-spinner-dots v-if="!msg.toolDone" size="14px" color="grey-5" />
-							<q-icon v-else name="fas fa-check" size="12px" color="grey-5" />
-							<span>{{ formatToolName(msg.toolName || msg.content) }}</span>
-						</div>
-					</div>
-					<!-- Model message -->
-					<div v-else class="row justify-start">
-						<div class="wizbee-chat__bubble wizbee-chat__bubble--model q-pa-sm q-px-md rounded-borders wizbee-chat__markdown" v-html="renderMarkdown(msg.content)" />
-					</div>
-				</div>
+      <!-- Messages -->
+      <template v-else>
+        <div v-for="(msg, idx) in chatHistory" :key="idx" class="q-mb-sm">
+          <!-- User message -->
+          <div v-if="msg.role === 'user'" class="row justify-end">
+            <div
+              class="wizbee-chat__bubble wizbee-chat__bubble--user q-pa-sm q-px-md rounded-borders"
+            >
+              {{ msg.content }}
+            </div>
+          </div>
+          <!-- Tool call (muted, like "thinking") -->
+          <div v-else-if="msg.role === 'tool'" class="row justify-start">
+            <div class="wizbee-chat__tool row items-center q-gutter-x-xs">
+              <q-spinner-dots v-if="!msg.toolDone" size="14px" color="grey-5" />
+              <q-icon v-else name="fas fa-check" size="12px" color="grey-5" />
+              <span>{{ formatToolName(msg.toolName || msg.content) }}</span>
+            </div>
+          </div>
+          <!-- Model message -->
+          <div v-else class="row justify-start">
+            <div
+              class="wizbee-chat__bubble wizbee-chat__bubble--model q-pa-sm q-px-md rounded-borders wizbee-chat__markdown"
+              v-html="renderMarkdown(msg.content)"
+            />
+          </div>
+        </div>
 
-				<!-- Streaming indicator -->
-				<div v-if="isStreaming || isFetching" class="row justify-start q-mb-sm">
-					<q-spinner-dots color="grey-6" size="24px" />
-				</div>
+        <!-- Streaming indicator -->
+        <div v-if="isStreaming || isFetching" class="row justify-start q-mb-sm">
+          <q-spinner-dots color="grey-6" size="24px" />
+        </div>
 
-				<!-- Error -->
-				<div v-if="error" class="q-mb-sm">
-					<q-banner class="bg-red-8 text-white rounded-borders">
-						<template #avatar>
-							<q-icon name="fas fa-exclamation-triangle" />
-						</template>
-						{{ error }}
-					</q-banner>
-				</div>
-			</template>
-		</div>
+        <!-- Error -->
+        <div v-if="error" class="q-mb-sm">
+          <q-banner class="bg-red-8 text-white rounded-borders">
+            <template #avatar>
+              <q-icon name="fas fa-exclamation-triangle" />
+            </template>
+            {{ error }}
+          </q-banner>
+        </div>
+      </template>
+    </div>
 
-		<!-- Usage info -->
-		<div v-if="monthlyUsage" class="q-px-sm q-pb-xs">
-			<div class="text-caption text-grey-6 row items-center q-gutter-x-sm">
-				<span>
-					<b>Budget:</b>
-					€{{ monthlyUsage.estimatedCostEUR.toFixed(2) }} / €{{ monthlyUsage.monthlyLimitEUR.toFixed(2) }}
-				</span>
-				<span v-if="monthlyUsage.isOverBudget" class="text-red text-bold">({{ $t('error.tokenLimit') }})</span>
-				<span v-else>({{ $t('countTokensLeft') }}: €{{ monthlyUsage.remainingBudgetEUR.toFixed(2) }})</span>
-				<span>|</span>
-				<span>{{ monthlyUsage.totalRequests }} {{ $t('requests') }}</span>
-			</div>
-		</div>
+    <!-- Usage info -->
+    <div v-if="monthlyUsage" class="q-px-sm q-pb-xs">
+      <div class="text-caption text-grey-6 row items-center q-gutter-x-sm">
+        <span>
+          <b>Budget:</b>
+          €{{ monthlyUsage.estimatedCostEUR.toFixed(2) }} / €{{
+            monthlyUsage.monthlyLimitEUR.toFixed(2)
+          }}
+        </span>
+        <span v-if="monthlyUsage.isOverBudget" class="text-red text-bold"
+          >({{ $t('error.tokenLimit') }})</span
+        >
+        <span v-else
+          >({{ $t('countTokensLeft') }}: €{{
+            monthlyUsage.remainingBudgetEUR.toFixed(2)
+          }})</span
+        >
+        <span>|</span>
+        <span>{{ monthlyUsage.totalRequests }} {{ $t('requests') }}</span>
+      </div>
+    </div>
 
-		<!-- Not premium banner -->
-		<div v-if="!isPremium" class="q-pa-sm">
-			<q-banner class="bg-warning text-dark rounded-borders">
-				<template #avatar>
-					<q-icon name="fas fa-lock" />
-				</template>
-				{{ $t('error.premium') }}
-				<template #action>
-					<q-btn
-						flat
-						no-caps
-						:label="$t('premium')"
-						to="/premium"
-					/>
-				</template>
-			</q-banner>
-		</div>
+    <!-- Not premium banner -->
+    <div v-if="!isPremium" class="q-pa-sm">
+      <q-banner class="bg-warning text-dark rounded-borders">
+        <template #avatar>
+          <q-icon name="fas fa-lock" />
+        </template>
+        {{ $t('error.premium') }}
+        <template #action>
+          <q-btn flat no-caps :label="$t('premium')" to="/premium" />
+        </template>
+      </q-banner>
+    </div>
 
-		<!-- Over budget banner -->
-		<div v-else-if="monthlyUsage?.isOverBudget" class="q-pa-sm">
-			<q-banner class="bg-red-8 text-white rounded-borders">
-				<template #avatar>
-					<q-icon name="fas fa-exclamation-triangle" />
-				</template>
-				{{ $t('error.tokenLimit') }}
-			</q-banner>
-		</div>
+    <!-- Over budget banner -->
+    <div v-else-if="monthlyUsage?.isOverBudget" class="q-pa-sm">
+      <q-banner class="bg-red-8 text-white rounded-borders">
+        <template #avatar>
+          <q-icon name="fas fa-exclamation-triangle" />
+        </template>
+        {{ $t('error.tokenLimit') }}
+      </q-banner>
+    </div>
 
-		<!-- Input area at bottom -->
-		<div
-			class="wizbee-chat__input q-pa-sm"
-			:style="props.isDialog && $q.screen.lt.md ? { bottom: `${keyboardBottomOffset}px` } : {}"
-		>
-			<q-form @submit.prevent="onSubmit">
-				<q-input
-					v-model="question"
-					:placeholder="$t('askQuestion')"
-					:maxlength="2000"
-					:clearable="true"
-					outlined
-					rounded
-					dense
-					autofocus
-					:disable="isDisabled"
-				>
-					<template #before>
-						<q-btn
-							v-if="chatHistory.length > 0"
-							flat
-							round
-							dense
-							icon="fas fa-plus"
-							color="grey-6"
-							:title="$t('new')"
-							@click="onClear"
-						/>
-					</template>
-					<template #after>
-						<q-btn
-							v-if="isStreaming || isFetching"
-							flat
-							round
-							dense
-							icon="fas fa-stop"
-							color="red"
-							:title="$t('stop')"
-							@click="abortStream"
-						/>
-						<template v-else>
-							<!-- Voice-to-text button: visible whenever the user isn't actively typing a question. -->
-							<q-btn
-								v-if="isVoiceSupported && !question?.trim()"
-								flat
-								round
-								dense
-								:icon="isVoiceRecording ? 'fas fa-stop' : 'fas fa-microphone'"
-								:color="isVoiceRecording ? 'red' : 'primary'"
-								:loading="isTranscribing"
-								:disable="isDisabled"
-								:title="isVoiceRecording
-									? (voiceRemainingSeconds !== null
-										? $t('voice.stopIn', { seconds: voiceRemainingSeconds })
-										: $t('voice.stop'))
-									: $t('voice.start')"
-								:class="{ 'wizbee-chat__mic--recording': isVoiceRecording }"
-								@click="onToggleVoice"
-							>
-								<!-- Last-30-seconds countdown badge: helps the user notice the auto-stop is imminent. -->
-								<q-badge
-									v-if="isVoiceRecording && voiceRemainingSeconds !== null && voiceRemainingSeconds <= 30"
-									floating
-									color="red"
-									text-color="white"
-									:label="voiceRemainingSeconds"
-								/>
-							</q-btn>
-							<q-btn
-								v-else
-								flat
-								round
-								dense
-								icon="fas fa-paper-plane"
-								color="primary"
-								type="submit"
-								:disable="isDisabled || !question?.trim()"
-								@click="onSubmit"
-							/>
-						</template>
-					</template>
-				</q-input>
-			</q-form>
-		</div>
-	</div>
+    <!-- Input area at bottom -->
+    <div
+      class="wizbee-chat__input q-pa-sm"
+      :style="
+        props.isDialog && $q.screen.lt.md
+          ? { bottom: `${keyboardBottomOffset}px` }
+          : {}
+      "
+    >
+      <q-form @submit.prevent="onSubmit">
+        <q-input
+          v-model="question"
+          :placeholder="$t('askQuestion')"
+          :maxlength="2000"
+          :clearable="true"
+          outlined
+          rounded
+          dense
+          autofocus
+          :disable="isDisabled"
+        >
+          <template #before>
+            <q-btn
+              v-if="chatHistory.length > 0"
+              flat
+              round
+              dense
+              icon="fas fa-plus"
+              color="grey-6"
+              :title="$t('new')"
+              @click="onClear"
+            />
+          </template>
+          <template #after>
+            <q-btn
+              v-if="isStreaming || isFetching"
+              flat
+              round
+              dense
+              icon="fas fa-stop"
+              color="red"
+              :title="$t('stop')"
+              @click="abortStream"
+            />
+            <template v-else>
+              <!-- Voice-to-text button: visible whenever the user isn't actively typing a question. -->
+              <q-btn
+                v-if="isVoiceSupported && !question?.trim()"
+                flat
+                round
+                dense
+                :icon="isVoiceRecording ? 'fas fa-stop' : 'fas fa-microphone'"
+                :color="isVoiceRecording ? 'red' : 'primary'"
+                :loading="isTranscribing"
+                :disable="isDisabled"
+                :title="
+                  isVoiceRecording
+                    ? voiceRemainingSeconds !== null
+                      ? $t('voice.stopIn', { seconds: voiceRemainingSeconds })
+                      : $t('voice.stop')
+                    : $t('voice.start')
+                "
+                :class="{ 'wizbee-chat__mic--recording': isVoiceRecording }"
+                @click="onToggleVoice"
+              >
+                <!-- Last-30-seconds countdown badge: helps the user notice the auto-stop is imminent. -->
+                <q-badge
+                  v-if="
+                    isVoiceRecording &&
+                    voiceRemainingSeconds !== null &&
+                    voiceRemainingSeconds <= 30
+                  "
+                  floating
+                  color="red"
+                  text-color="white"
+                  :label="voiceRemainingSeconds"
+                />
+              </q-btn>
+              <q-btn
+                v-else
+                flat
+                round
+                dense
+                icon="fas fa-paper-plane"
+                color="primary"
+                type="submit"
+                :disable="isDisabled || !question?.trim()"
+                @click="onSubmit"
+              />
+            </template>
+          </template>
+        </q-input>
+      </q-form>
+    </div>
+  </div>
 </template>
 
 <style scoped>
@@ -501,8 +524,15 @@ function onClear() {
 }
 
 @keyframes wizbee-chat-mic-pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.55; transform: scale(1.08); }
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.55;
+    transform: scale(1.08);
+  }
 }
 
 @media (max-width: 1023px) {

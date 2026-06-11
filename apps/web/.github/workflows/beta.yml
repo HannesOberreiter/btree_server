@@ -29,6 +29,12 @@ jobs:
           cache: pnpm
       - name: Install
         run: pnpm install --frozen-lockfile
+      - name: Install PWA dependencies
+        run: pnpm --dir src-pwa install --frozen-lockfile
+      - name: Lint
+        run: pnpm lint:check
+      - name: Typecheck
+        run: pnpm typecheck
       - name: Build PWA
         run: pnpm build:pwa
       - name: List output files

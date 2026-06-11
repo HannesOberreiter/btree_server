@@ -3,7 +3,7 @@
 [![beta](https://github.com/HannesOberreiter/btree_vue/actions/workflows/beta.yml/badge.svg)](https://github.com/HannesOberreiter/btree_vue/actions/workflows/beta.yml)
 [![live](https://github.com/HannesOberreiter/btree_vue/actions/workflows/live.yml/badge.svg)](https://github.com/HannesOberreiter/btree_vue/actions/workflows/live.yml)
 
-Written in typescript build with Vue.js and Quasar. The b.tree application is for managing your honey bee colonies in a modern way. More infos at <https://www.btree.at>.
+Written in TypeScript with Vue 3 and Quasar. The b.tree application is for managing your honey bee colonies in a modern way. More infos at <https://www.btree.at>.
 
 - [Repo - b.tree Server API](https://github.com/HannesOberreiter/btree_server)
   - Live: <https://api.btree.at>
@@ -28,11 +28,11 @@ pnpm install
 pnpm dev
 ```
 
-We use auto-import plugins to import common libraries and components, see definitions at [src/auto-\*.d.ts](src/).
+Quasar app-vite v3 provides the `@/` alias for `src/`. Use `@/components/...`, `@/stores/...`, and `@/helpers/...` imports.
 
 ### API proxy development
 
-The `dev` server is running with a proxy to the backend ([quasar.config.js](quasar.config.js)), this solves the CORS problem on development. You may need to change the localhost port if you have the backend running on a different port.
+The `dev` server is running with a proxy to the backend ([quasar.config.ts](quasar.config.ts)), this solves the CORS problem on development. You may need to change `BACKEND_URL` / `BACKEND_URL_US` in `.env` if you have the backend running on a different port.
 
 ```text
  devServer: {
@@ -56,10 +56,14 @@ The translation in `.json` format can be found in [src/i18n](src/i18n/). On deve
 
 > You are running the esm-bundler build of vue-i18n. ...
 
-### Lint (eslint)
+### Format, lint, and typecheck
+
+We use [oxfmt](https://github.com/oxc-project/oxc/tree/main/crates/oxfmt) for formatting and [oxlint](https://oxc.rs/docs/guide/usage/linter.html) for linting.
 
 ```bash
-pnpm lint
+pnpm lint        # format and auto-fix lint issues
+pnpm lint:check  # check formatting and lint without writing
+pnpm typecheck   # Vue/TypeScript typecheck
 ```
 
 ### Build the app for production
@@ -99,11 +103,15 @@ The beta url and api are our staging and testing url. GitHub action is automatic
 
 #### .env
 
-The example [example.env](example.env) show the needed environmental variables. On production this can be set via `.env` file or as `process.env.*` in build (e.g. GitHub secret on build). Defined types can be found in [src/env.d.ts](src/env.d.ts). In development we use `/api` as backend url, see **API Proxy** section.
+The example [example.env](example.env) shows the needed environment variables. In production these can be set via `.env` or CI environment variables. Defined types can be found in [env.d.ts](env.d.ts). In development we use `/api` as backend url, see **API Proxy** section.
 
 #### Version Number
 
 Changes and version number are documented in [src/assets/news.json](src/assets/news.json). This news are somewhat only for the end-user. This is a legacy thing and may be replaced with GitHub commints in future.
+
+### PWA service worker
+
+PWA uses Quasar Workbox `GenerateSW`. PWA-specific dependencies are isolated in [src-pwa/package.json](src-pwa/package.json); run `pnpm --dir src-pwa install` if they are missing locally.
 
 #### Icons
 

@@ -1,5 +1,4 @@
-<script lang="ts">
-</script>
+<script lang="ts"></script>
 
 <script setup lang="ts">
 import { useQuasar } from 'quasar';
@@ -15,13 +14,13 @@ import ItemCompany from './ItemCompany.vue';
 import ItemPing from './ItemPing.vue';
 
 export interface MenuSection {
-	label: string;
-	route: string;
-	icon: string;
-	count?: number;
-	premium?: boolean;
-	params?: Record<string, string>;
-	menu: MenuSection[] | boolean;
+  label: string;
+  route: string;
+  icon: string;
+  count?: number;
+  premium?: boolean;
+  params?: Record<string, string>;
+  menu: MenuSection[] | boolean;
 }
 
 const { t } = useI18n();
@@ -32,527 +31,525 @@ const $q = useQuasar();
 const { data } = useCountsQuery({ enabled: true });
 
 const countReset = {
-	feed: 0,
-	checkup: 0,
-	harvest: 0,
-	treatment: 0,
-	todo: 0,
-	apiary: 0,
-	queen: 0,
-	virgin: 0,
-	hive: 0,
+  feed: 0,
+  checkup: 0,
+  harvest: 0,
+  treatment: 0,
+  todo: 0,
+  apiary: 0,
+  queen: 0,
+  virgin: 0,
+  hive: 0
 };
 
 const count = ref({ ...countReset }) as any;
 
 onMounted(() => {
-	refreshService.refresh(false);
+  refreshService.refresh(false);
 });
 
 watch(
-	data,
-	() => {
-		if (data.value) {
-			count.value = { ...countReset };
-			data.value.forEach((o: any) => {
-				if (o.kind in count.value) {
-					count.value[o.kind] = o.count;
-				}
-				else if (o.kind === 'hivegroup_sum') {
-					count.value.hive = count.value.hive + o.count;
-				}
-				else if (o.kind === 'hivegroup_count') {
-					count.value.hive = count.value.hive - o.count;
-				}
-			});
-		}
-	},
-	{ immediate: true },
+  data,
+  () => {
+    if (data.value) {
+      count.value = { ...countReset };
+      data.value.forEach((o: any) => {
+        if (o.kind in count.value) {
+          count.value[o.kind] = o.count;
+        } else if (o.kind === 'hivegroup_sum') {
+          count.value.hive = count.value.hive + o.count;
+        } else if (o.kind === 'hivegroup_count') {
+          count.value.hive = count.value.hive - o.count;
+        }
+      });
+    }
+  },
+  { immediate: true }
 );
 
 async function onLogout() {
-	await storeUser.logout();
+  await storeUser.logout();
 }
 
 defineExpose({ $q });
 
 const calendar: MenuSection = {
-	label: t('calendar'),
-	route: 'calendar',
-	icon: 'far fa-calendar-alt',
-	menu: false,
+  label: t('calendar'),
+  route: 'calendar',
+  icon: 'far fa-calendar-alt',
+  menu: false
 };
 
 const links = computed(
-	() =>
-		[
-			{
-				label: t('task', 2),
-				route: '',
-				icon: 'fas fa-table',
-				menu: [
-					{
-						label: t('checkup', 2),
-						route: 'table-checkup',
-						icon: 'fas fa-search-plus',
-						count: count.value.checkup,
-						menu: false,
-					},
-					{
-						label: t('treatment', 2),
-						route: 'table-treatment',
-						icon: 'fas fa-kit-medical',
-						count: count.value.treatment,
-						menu: false,
-					},
-					{
-						label: t('harvest', 2),
-						route: 'table-harvest',
-						icon: 'fas fa-droplet',
-						count: count.value.harvest,
-						menu: false,
-					},
-					{
-						label: t('feed', 2),
-						route: 'table-feed',
-						icon: 'fas fa-cube',
-						count: count.value.feed,
-						menu: false,
-					},
-				],
-			},
-			{
-				label: t('colony', 2),
-				route: '',
-				icon: 'fas fa-house',
-				menu: [
-					{
-						label: `${t('add')} ${t('hive')}`,
-						route: 'new-hive',
-						icon: 'fas fa-house',
-						menu: false,
-					},
+  () =>
+    [
+      {
+        label: t('task', 2),
+        route: '',
+        icon: 'fas fa-table',
+        menu: [
+          {
+            label: t('checkup', 2),
+            route: 'table-checkup',
+            icon: 'fas fa-search-plus',
+            count: count.value.checkup,
+            menu: false
+          },
+          {
+            label: t('treatment', 2),
+            route: 'table-treatment',
+            icon: 'fas fa-kit-medical',
+            count: count.value.treatment,
+            menu: false
+          },
+          {
+            label: t('harvest', 2),
+            route: 'table-harvest',
+            icon: 'fas fa-droplet',
+            count: count.value.harvest,
+            menu: false
+          },
+          {
+            label: t('feed', 2),
+            route: 'table-feed',
+            icon: 'fas fa-cube',
+            count: count.value.feed,
+            menu: false
+          }
+        ]
+      },
+      {
+        label: t('colony', 2),
+        route: '',
+        icon: 'fas fa-house',
+        menu: [
+          {
+            label: `${t('add')} ${t('hive')}`,
+            route: 'new-hive',
+            icon: 'fas fa-house',
+            menu: false
+          },
 
-					{
-						label: t('hive', 2),
-						route: 'table-hive',
-						icon: 'fas fa-table',
-						count: count.value.hive,
-						menu: false,
-					},
+          {
+            label: t('hive', 2),
+            route: 'table-hive',
+            icon: 'fas fa-table',
+            count: count.value.hive,
+            menu: false
+          },
 
-					{
-						label: `${t('new')} ${t('movement')}`,
-						route: 'new-movement',
-						icon: 'fas fa-truck',
-						menu: false,
-					},
+          {
+            label: `${t('new')} ${t('movement')}`,
+            route: 'new-movement',
+            icon: 'fas fa-truck',
+            menu: false
+          },
 
-					{
-						label: t('movement', 2),
-						route: 'table-movement',
-						icon: 'fas fa-table',
-						menu: false,
-					},
+          {
+            label: t('movement', 2),
+            route: 'table-movement',
+            icon: 'fas fa-table',
+            menu: false
+          },
 
-					{
-						label: `${t('apiary')} ${t('map.name')}`,
-						route: 'map-apiary',
-						icon: 'fas fa-map-marker-alt',
-						menu: false,
-					},
+          {
+            label: `${t('apiary')} ${t('map.name')}`,
+            route: 'map-apiary',
+            icon: 'fas fa-map-marker-alt',
+            menu: false
+          },
 
-					{
-						label: t('apiary', 2),
-						route: 'table-apiary',
-						icon: 'fas fa-table',
-						count: count.value.apiary,
-						menu: false,
-					},
-				],
-			},
-			{
-				label: t('queen', 2),
-				route: '',
-				icon: 'fas fa-venus',
-				menu: [
-					{
-						label: t('add'),
-						route: 'new-queen',
-						icon: 'fas fa-circle-plus',
-						menu: false,
-					},
-					{
-						label: t('table'),
-						route: 'table-queen',
-						icon: 'fas fa-table',
-						count: count.value.queen,
-						menu: false,
-					},
-					{
-						label: `${t('without')} ${t('hive')}`,
-						route: 'table-virgin',
-						icon: 'fas fa-table',
-						count: count.value.virgin,
-						menu: false,
-					},
-				],
-			},
-			{
-				label: t('rearing'),
-				route: '',
-				icon: 'fas fa-sitemap',
-				menu: [
-					{
-						label: t('add'),
-						route: 'new-rearing',
-						icon: 'fas fa-circle-plus',
-						menu: false,
-					},
-					{
-						label: t('table'),
-						route: 'table-rearing',
-						icon: 'fas fa-table',
-						menu: false,
-					},
-					{
-						label: t('method'),
-						route: 'setting-rearing',
-						icon: 'fas fa-cog',
-						menu: false,
-					},
-				],
-			},
-			{
-				label: t('todo', 2),
-				route: '',
-				icon: 'fas fa-clipboard-check',
-				menu: [
-					{
-						label: t('add'),
-						route: 'new-todo',
-						icon: 'fas fa-circle-plus',
-						menu: false,
-					},
-					{
-						label: t('table'),
-						route: 'table-todo',
-						icon: 'fas fa-table',
-						count: count.value.todo,
-						menu: false,
-					},
-				],
-			},
-			{
-				label: t('charge', 2),
-				route: '',
-				icon: 'fas fa-database',
-				menu: [
-					{
-						label: t('add'),
-						route: 'new-charge',
-						icon: 'fas fa-circle-plus',
-						menu: false,
-					},
-					{
-						label: t('table'),
-						route: 'table-charge',
-						icon: 'fas fa-table',
-						menu: false,
-					},
-					{
-						label: t('stock'),
-						route: 'table-charge-stock',
-						icon: 'fas fa-arrow-trend-up',
-						menu: false,
-					},
-				],
-			},
-			{
-				label: t('map.name', 2),
-				route: '',
-				icon: 'fas fa-globe',
-				menu: [
-					{
-						label: t('apiary'),
-						route: 'map-apiary',
-						icon: 'fas fa-map-marker-alt',
-						menu: false,
-					},
-					{
-						label: 'Meteoblue',
-						route: 'map-meteoblue',
-						icon: 'fas fa-wind',
-						menu: false,
-					},
-					{
-						label: 'Vespa velutina',
-						route: 'map-velutina',
-						icon: 'fas fa-bug-slash',
-						menu: false,
-					},
-					{
-						label: 'Aethina tumida',
-						route: 'map-aethina-tumida',
-						icon: 'fas fa-bug-slash',
-						menu: false,
-					},
-				],
-			},
+          {
+            label: t('apiary', 2),
+            route: 'table-apiary',
+            icon: 'fas fa-table',
+            count: count.value.apiary,
+            menu: false
+          }
+        ]
+      },
+      {
+        label: t('queen', 2),
+        route: '',
+        icon: 'fas fa-venus',
+        menu: [
+          {
+            label: t('add'),
+            route: 'new-queen',
+            icon: 'fas fa-circle-plus',
+            menu: false
+          },
+          {
+            label: t('table'),
+            route: 'table-queen',
+            icon: 'fas fa-table',
+            count: count.value.queen,
+            menu: false
+          },
+          {
+            label: `${t('without')} ${t('hive')}`,
+            route: 'table-virgin',
+            icon: 'fas fa-table',
+            count: count.value.virgin,
+            menu: false
+          }
+        ]
+      },
+      {
+        label: t('rearing'),
+        route: '',
+        icon: 'fas fa-sitemap',
+        menu: [
+          {
+            label: t('add'),
+            route: 'new-rearing',
+            icon: 'fas fa-circle-plus',
+            menu: false
+          },
+          {
+            label: t('table'),
+            route: 'table-rearing',
+            icon: 'fas fa-table',
+            menu: false
+          },
+          {
+            label: t('method'),
+            route: 'setting-rearing',
+            icon: 'fas fa-cog',
+            menu: false
+          }
+        ]
+      },
+      {
+        label: t('todo', 2),
+        route: '',
+        icon: 'fas fa-clipboard-check',
+        menu: [
+          {
+            label: t('add'),
+            route: 'new-todo',
+            icon: 'fas fa-circle-plus',
+            menu: false
+          },
+          {
+            label: t('table'),
+            route: 'table-todo',
+            icon: 'fas fa-table',
+            count: count.value.todo,
+            menu: false
+          }
+        ]
+      },
+      {
+        label: t('charge', 2),
+        route: '',
+        icon: 'fas fa-database',
+        menu: [
+          {
+            label: t('add'),
+            route: 'new-charge',
+            icon: 'fas fa-circle-plus',
+            menu: false
+          },
+          {
+            label: t('table'),
+            route: 'table-charge',
+            icon: 'fas fa-table',
+            menu: false
+          },
+          {
+            label: t('stock'),
+            route: 'table-charge-stock',
+            icon: 'fas fa-arrow-trend-up',
+            menu: false
+          }
+        ]
+      },
+      {
+        label: t('map.name', 2),
+        route: '',
+        icon: 'fas fa-globe',
+        menu: [
+          {
+            label: t('apiary'),
+            route: 'map-apiary',
+            icon: 'fas fa-map-marker-alt',
+            menu: false
+          },
+          {
+            label: 'Meteoblue',
+            route: 'map-meteoblue',
+            icon: 'fas fa-wind',
+            menu: false
+          },
+          {
+            label: 'Vespa velutina',
+            route: 'map-velutina',
+            icon: 'fas fa-bug-slash',
+            menu: false
+          },
+          {
+            label: 'Aethina tumida',
+            route: 'map-aethina-tumida',
+            icon: 'fas fa-bug-slash',
+            menu: false
+          }
+        ]
+      },
 
-			{
-				label: t('tool', 2),
-				route: '',
-				icon: 'fas fa-screwdriver',
-				menu: [
-					{
-						label: 'WizBee',
-						route: 'wizbee',
-						icon: 'fas fa-person-circle-question',
-						menu: [] as any,
-					},
-					{
-						label: t('lifecycle'),
-						route: 'lifecycle',
-						icon: 'fas fa-arrows-spin',
-						menu: [] as any,
-					},
-					{
-						label: t('sugarwater'),
-						route: 'sugarwater',
-						icon: 'fas fa-calculator',
-						menu: [] as any,
-					},
-					{
-						label: t('beekeepingNews'),
-						route: 'beekeeping_news',
-						icon: 'fas fa-newspaper',
-						menu: [] as any,
-					},
-				],
-			},
-			{
-				label: t('statistic', 2),
-				premium: true,
-				icon: 'fas fa-chart-bar',
-				menu: [
-					{
-						label: t('hiveCount'),
-						route: 'statistic-hive_count',
-						icon: 'fas fa-house',
-						menu: [] as any,
-					},
-					{
-						label: `${t('harvest')} ${t('hive', 1)}`,
-						route: 'statistic-table_harvest',
-						icon: 'fas fa-table',
-						menu: [] as any,
-					},
-					{
-						label: `${t('harvest')} ${t('statistic')}`,
-						route: 'statistic-stats_harvest',
-						icon: 'fas fa-chart-simple',
-						menu: [] as any,
-					},
-					{
-						label: `${t('feed')} ${t('hive', 1)}`,
-						route: 'statistic-table_feed',
-						icon: 'fas fa-table',
-						menu: [] as any,
-					},
-					{
-						label: `${t('feed')} ${t('statistic')}`,
-						route: 'statistic-stats_feed',
-						icon: 'fas fa-chart-simple',
-						menu: [] as any,
-					},
-					{
-						label: `${t('treatment')} ${t('hive', 1)}`,
-						route: 'statistic-table_treatment',
-						icon: 'fas fa-table',
-						menu: [] as any,
-					},
-					{
-						label: `${t('treatment')} ${t('statistic')}`,
-						route: 'statistic-stats_treatment',
-						icon: 'fas fa-chart-simple',
-						menu: [] as any,
-					},
-					{
-						label: `${t('rating.name')} ${t('hive', 1)}`,
-						route: 'statistic-table_rating',
-						icon: 'fas fa-table',
-						menu: [] as any,
-					},
-					{
-						label: `${t('rating.name')} ${t('queen', 1)}`,
-						route: 'statistic-table_queen',
-						icon: 'fas fa-table',
-						menu: [] as any,
-					},
-					{
-						label: t('varroa'),
-						route: 'statistic-varroa',
-						icon: 'fas fa-bug',
-						menu: [] as any,
-					},
-				],
-			},
-			{
-				label: t('scale.name', 2),
-				route: '',
-				icon: 'fas fa-scale-balanced',
-				menu: [
-					{
-						label: t('calendar'),
-						route: 'calendar-scale_data',
-						icon: 'fas fa-calendar-alt',
-						menu: false,
-					},
-					{
-						label: t('table'),
-						route: 'table-scale_data',
-						icon: 'fas fa-table',
-						menu: false,
-					},
-					{
-						label: t('statistic'),
-						route: 'statistic-scale',
-						icon: 'fas fa-chart-bar',
-						premium: true,
-						menu: false,
-					},
-					{
-						label: t('api'),
-						route: 'setting-profile',
-						params: { tab: 'api' },
-						icon: 'fas fa-cogs',
-						menu: [] as any,
-					},
-				],
-			},
-			{
-				label: t('setting.name', 2),
-				route: '',
-				icon: 'fas fa-cogs',
-				menu: [
-					{
-						label: t('profile.name'),
-						route: 'setting-profile',
-						icon: 'far fa-id-card',
-						menu: [] as any,
-					},
-					{
-						label: `${t('field', 2)} & ${t('local')}`,
-						route: 'setting-field',
-						icon: 'fas fa-cog',
-						menu: [] as any,
-					},
-					{
-						label: t('option', 2),
-						route: 'setting-option',
-						icon: 'fas fa-cogs',
-						params: { option: 'checkup_types' },
-						menu: [] as any,
-					},
-					{
-						label: t('company.name'),
-						route: 'setting-company',
-						icon: 'fas fa-warehouse',
-						menu: [] as any,
-					},
-					{
-						label: t('premium'),
-						route: 'premium',
-						icon: 'fas fa-face-smile',
-						menu: [] as any,
-					},
-					{
-						label: 'Dropbox',
-						route: 'setting-dropbox',
-						icon: 'fab fa-dropbox',
-						menu: [] as any,
-					},
-				],
-			},
-		] as MenuSection[],
+      {
+        label: t('tool', 2),
+        route: '',
+        icon: 'fas fa-screwdriver',
+        menu: [
+          {
+            label: 'WizBee',
+            route: 'wizbee',
+            icon: 'fas fa-person-circle-question',
+            menu: [] as any
+          },
+          {
+            label: t('lifecycle'),
+            route: 'lifecycle',
+            icon: 'fas fa-arrows-spin',
+            menu: [] as any
+          },
+          {
+            label: t('sugarwater'),
+            route: 'sugarwater',
+            icon: 'fas fa-calculator',
+            menu: [] as any
+          },
+          {
+            label: t('beekeepingNews'),
+            route: 'beekeeping_news',
+            icon: 'fas fa-newspaper',
+            menu: [] as any
+          }
+        ]
+      },
+      {
+        label: t('statistic', 2),
+        premium: true,
+        icon: 'fas fa-chart-bar',
+        menu: [
+          {
+            label: t('hiveCount'),
+            route: 'statistic-hive_count',
+            icon: 'fas fa-house',
+            menu: [] as any
+          },
+          {
+            label: `${t('harvest')} ${t('hive', 1)}`,
+            route: 'statistic-table_harvest',
+            icon: 'fas fa-table',
+            menu: [] as any
+          },
+          {
+            label: `${t('harvest')} ${t('statistic')}`,
+            route: 'statistic-stats_harvest',
+            icon: 'fas fa-chart-simple',
+            menu: [] as any
+          },
+          {
+            label: `${t('feed')} ${t('hive', 1)}`,
+            route: 'statistic-table_feed',
+            icon: 'fas fa-table',
+            menu: [] as any
+          },
+          {
+            label: `${t('feed')} ${t('statistic')}`,
+            route: 'statistic-stats_feed',
+            icon: 'fas fa-chart-simple',
+            menu: [] as any
+          },
+          {
+            label: `${t('treatment')} ${t('hive', 1)}`,
+            route: 'statistic-table_treatment',
+            icon: 'fas fa-table',
+            menu: [] as any
+          },
+          {
+            label: `${t('treatment')} ${t('statistic')}`,
+            route: 'statistic-stats_treatment',
+            icon: 'fas fa-chart-simple',
+            menu: [] as any
+          },
+          {
+            label: `${t('rating.name')} ${t('hive', 1)}`,
+            route: 'statistic-table_rating',
+            icon: 'fas fa-table',
+            menu: [] as any
+          },
+          {
+            label: `${t('rating.name')} ${t('queen', 1)}`,
+            route: 'statistic-table_queen',
+            icon: 'fas fa-table',
+            menu: [] as any
+          },
+          {
+            label: t('varroa'),
+            route: 'statistic-varroa',
+            icon: 'fas fa-bug',
+            menu: [] as any
+          }
+        ]
+      },
+      {
+        label: t('scale.name', 2),
+        route: '',
+        icon: 'fas fa-scale-balanced',
+        menu: [
+          {
+            label: t('calendar'),
+            route: 'calendar-scale_data',
+            icon: 'fas fa-calendar-alt',
+            menu: false
+          },
+          {
+            label: t('table'),
+            route: 'table-scale_data',
+            icon: 'fas fa-table',
+            menu: false
+          },
+          {
+            label: t('statistic'),
+            route: 'statistic-scale',
+            icon: 'fas fa-chart-bar',
+            premium: true,
+            menu: false
+          },
+          {
+            label: t('api'),
+            route: 'setting-profile',
+            params: { tab: 'api' },
+            icon: 'fas fa-cogs',
+            menu: [] as any
+          }
+        ]
+      },
+      {
+        label: t('setting.name', 2),
+        route: '',
+        icon: 'fas fa-cogs',
+        menu: [
+          {
+            label: t('profile.name'),
+            route: 'setting-profile',
+            icon: 'far fa-id-card',
+            menu: [] as any
+          },
+          {
+            label: `${t('field', 2)} & ${t('local')}`,
+            route: 'setting-field',
+            icon: 'fas fa-cog',
+            menu: [] as any
+          },
+          {
+            label: t('option', 2),
+            route: 'setting-option',
+            icon: 'fas fa-cogs',
+            params: { option: 'checkup_types' },
+            menu: [] as any
+          },
+          {
+            label: t('company.name'),
+            route: 'setting-company',
+            icon: 'fas fa-warehouse',
+            menu: [] as any
+          },
+          {
+            label: t('premium'),
+            route: 'premium',
+            icon: 'fas fa-face-smile',
+            menu: [] as any
+          },
+          {
+            label: 'Dropbox',
+            route: 'setting-dropbox',
+            icon: 'fab fa-dropbox',
+            menu: [] as any
+          }
+        ]
+      }
+    ] as MenuSection[]
 );
 
 function openLink(link: string) {
-	window.location.href = link;
+  window.location.href = link;
 }
 </script>
 
 <template>
-	<q-scroll-area class="fit">
-		<q-list>
-			<DrawerItem :link="calendar" />
-			<q-item
-				v-ripple
-				:to="{
-					name: 'new-quicktool',
-					params: {
-						task: storeQuicktool.getLink,
-					},
-				}"
-				data-cy="route-new-quicktool"
-				clickable
-				exact
-				active-class="text-yellow"
-			>
-				<q-item-section avatar>
-					<q-icon name="fas fa-magic" />
-				</q-item-section>
-				<q-item-section>
-					{{ $t('quicktool.name') }}
-				</q-item-section>
-			</q-item>
-			<q-expansion-item
-				v-for="(link, index) in links"
-				:key="index"
-				group="sidebar"
-				:content-inset-level="0.3"
-				expand-separator
-				:icon="link.icon"
-				:label="link.label"
-				:disable="link.premium && !storeUser.isPremium"
-				:caption="link.premium && !storeUser.isPremium ? $t('premium') : ''"
-				dark
-			>
-				<div v-if="Array.isArray(link.menu)">
-					<DrawerItem
-						v-for="(sublink, subindex) in link.menu"
-						:key="subindex"
-						:link="sublink"
-						:disable="sublink.premium && !storeUser.isPremium ? true : false"
-					/>
-				</div>
-			</q-expansion-item>
-			<q-item
-				v-ripple
-				clickable
-				data-cy="route - external - forum"
-				href="https://forum.btree.at"
-				@click.prevent="openLink('https://forum.btree.at')"
-			>
-				<q-item-section avatar>
-					<q-icon name="fab fa-discourse" />
-				</q-item-section>
-				<q-item-section>
-					{{ $t('forum') }}
-				</q-item-section>
-			</q-item>
-			<BtnRefresh />
-			<ItemCompany />
-			<ItemPing />
-			<q-item v-ripple clickable @click="onLogout">
-				<q-item-section avatar>
-					<q-icon name="fas fa-sign-out-alt" />
-				</q-item-section>
-				<q-item-section> {{ $t('logout') }} </q-item-section>
-			</q-item>
-		</q-list>
-	</q-scroll-area>
+  <q-scroll-area class="fit">
+    <q-list>
+      <DrawerItem :link="calendar" />
+      <q-item
+        v-ripple
+        :to="{
+          name: 'new-quicktool',
+          params: {
+            task: storeQuicktool.getLink
+          }
+        }"
+        data-cy="route-new-quicktool"
+        clickable
+        exact
+        active-class="text-yellow"
+      >
+        <q-item-section avatar>
+          <q-icon name="fas fa-magic" />
+        </q-item-section>
+        <q-item-section>
+          {{ $t('quicktool.name') }}
+        </q-item-section>
+      </q-item>
+      <q-expansion-item
+        v-for="(link, index) in links"
+        :key="index"
+        group="sidebar"
+        :content-inset-level="0.3"
+        expand-separator
+        :icon="link.icon"
+        :label="link.label"
+        :disable="link.premium && !storeUser.isPremium"
+        :caption="link.premium && !storeUser.isPremium ? $t('premium') : ''"
+        dark
+      >
+        <div v-if="Array.isArray(link.menu)">
+          <DrawerItem
+            v-for="(sublink, subindex) in link.menu"
+            :key="subindex"
+            :link="sublink"
+            :disable="sublink.premium && !storeUser.isPremium ? true : false"
+          />
+        </div>
+      </q-expansion-item>
+      <q-item
+        v-ripple
+        clickable
+        data-cy="route - external - forum"
+        href="https://forum.btree.at"
+        @click.prevent="openLink('https://forum.btree.at')"
+      >
+        <q-item-section avatar>
+          <q-icon name="fab fa-discourse" />
+        </q-item-section>
+        <q-item-section>
+          {{ $t('forum') }}
+        </q-item-section>
+      </q-item>
+      <BtnRefresh />
+      <ItemCompany />
+      <ItemPing />
+      <q-item v-ripple clickable @click="onLogout">
+        <q-item-section avatar>
+          <q-icon name="fas fa-sign-out-alt" />
+        </q-item-section>
+        <q-item-section> {{ $t('logout') }} </q-item-section>
+      </q-item>
+    </q-list>
+  </q-scroll-area>
 </template>
 
 <style>

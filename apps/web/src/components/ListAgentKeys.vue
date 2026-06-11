@@ -93,273 +93,269 @@ If an API call fails (e.g. Created 0 records), debug step-by-step:
 Available tool categories: Apiaries & Hives, Feed, Harvest, Treatment, Checkup, Todo, Charges, Statistics, Weather, Options, Documentation.`;
 
 async function fetchKeys() {
-	loading.value = true;
-	try {
-		keys.value = await agentKeyService.list();
-	}
-	catch (e) {
-		console.error(e);
-	}
-	finally {
-		loading.value = false;
-	}
+  loading.value = true;
+  try {
+    keys.value = await agentKeyService.list();
+  } catch (e) {
+    console.error(e);
+  } finally {
+    loading.value = false;
+  }
 }
 
 function openCreateDialog() {
-	newLabel.value = '';
-	newValidTo.value = null;
-	showCreateDialog.value = true;
+  newLabel.value = '';
+  newValidTo.value = null;
+  showCreateDialog.value = true;
 }
 
 async function createKey() {
-	$q.dialog({
-		title: t('agentKey.create'),
-		message: t('agentKey.createWarning'),
-		cancel: true,
-		persistent: true,
-	}).onOk(async () => {
-		try {
-			const result = await agentKeyService.create({
-				label: newLabel.value || undefined,
-				valid_to: newValidTo.value || undefined,
-			});
-			createdKey.value = result.key;
-			showCreateDialog.value = false;
-			showKeyDialog.value = true;
-			notification.open('positive', t('agentKey.keyCreated'), true);
-			await fetchKeys();
-		}
-		catch (e) {
-			console.error(e);
-			notification.open('negative', e);
-		}
-	});
+  $q.dialog({
+    title: t('agentKey.create'),
+    message: t('agentKey.createWarning'),
+    cancel: true,
+    persistent: true
+  }).onOk(async () => {
+    try {
+      const result = await agentKeyService.create({
+        label: newLabel.value || undefined,
+        valid_to: newValidTo.value || undefined
+      });
+      createdKey.value = result.key;
+      showCreateDialog.value = false;
+      showKeyDialog.value = true;
+      notification.open('positive', t('agentKey.keyCreated'), true);
+      await fetchKeys();
+    } catch (e) {
+      console.error(e);
+      notification.open('negative', e);
+    }
+  });
 }
 
 function confirmDelete(id: number) {
-	$q.dialog({
-		title: t('delete'),
-		message: t('agentKey.deleteWarning'),
-		cancel: true,
-		persistent: true,
-		color: 'negative',
-	}).onOk(async () => {
-		try {
-			await agentKeyService.remove(id);
-			notification.open('positive', t('agentKey.keyDeleted'), true);
-			await fetchKeys();
-		}
-		catch (e) {
-			console.error(e);
-			notification.open('negative', e);
-		}
-	});
+  $q.dialog({
+    title: t('delete'),
+    message: t('agentKey.deleteWarning'),
+    cancel: true,
+    persistent: true,
+    color: 'negative'
+  }).onOk(async () => {
+    try {
+      await agentKeyService.remove(id);
+      notification.open('positive', t('agentKey.keyDeleted'), true);
+      await fetchKeys();
+    } catch (e) {
+      console.error(e);
+      notification.open('negative', e);
+    }
+  });
 }
 
 function copyKey() {
-	copyToClipboard(createdKey.value).then(() => {
-		notification.open('positive', t('agentKey.keyCopied'), true);
-	});
+  copyToClipboard(createdKey.value).then(() => {
+    notification.open('positive', t('agentKey.keyCopied'), true);
+  });
 }
 
 function copyPrompt() {
-	copyToClipboard(skillPrompt).then(() => {
-		notification.open('positive', t('agentKey.promptCopied'), true);
-	});
+  copyToClipboard(skillPrompt).then(() => {
+    notification.open('positive', t('agentKey.promptCopied'), true);
+  });
 }
 
 function isExpired(validTo: string | null): boolean {
-	if (!validTo) {
-		return false;
-	}
-	return new Date(validTo) < new Date();
+  if (!validTo) {
+    return false;
+  }
+  return new Date(validTo) < new Date();
 }
 
 onMounted(fetchKeys);
 </script>
 
 <template>
-	<!-- Key List -->
-	<q-list v-if="keys.length > 0" separator>
-		<q-item v-for="item in keys" :key="item.id">
-			<q-item-section>
-				<q-item-label class="text-body2">
-					<b>{{ item.label || `${item.key_prefix}...` }}</b>
-					<q-badge
-						v-if="item.valid_to && isExpired(item.valid_to)"
-						color="negative"
-						class="q-ml-sm"
-					>
-						{{ $t('agentKey.expired') }}
-					</q-badge>
-				</q-item-label>
-				<q-item-label caption>
-					{{ $t('company.name') }}:
-					{{ item.company_name || '—' }}
-					<q-badge
-						v-if="item.user_id === userStore.getCompany.id"
-						color="positive"
-						class="q-ml-xs"
-					>
-						{{ $t('active') }}
-					</q-badge>
-					<br>
-					<code class="text-grey-7">{{ item.key_prefix }}...</code>
-					<br>
-					{{ $t('created') }}:
-					{{ useDate.displayFormat(item.created_at, 'date-time') }}
-					<template v-if="item.last_used">
-						<br>{{ $t('lastVisit') }}:
-						{{ useDate.displayFormat(item.last_used, 'date-time') }}
-					</template>
-					<br>
-					{{ $t('agentKey.validTo') }}:
-					<template v-if="item.valid_to">
-						{{ useDate.displayFormat(item.valid_to, 'date-time') }}
-					</template>
-					<template v-else>
-						{{ $t('agentKey.never') }}
-					</template>
-				</q-item-label>
-			</q-item-section>
-			<q-item-section side>
-				<BtnBase
-					color="negative"
-					:label="$t('delete')"
-					icon="fas fa-trash"
-					size="sm"
-					@click="confirmDelete(item.id)"
-				/>
-			</q-item-section>
-		</q-item>
-	</q-list>
+  <!-- Key List -->
+  <q-list v-if="keys.length > 0" separator>
+    <q-item v-for="item in keys" :key="item.id">
+      <q-item-section>
+        <q-item-label class="text-body2">
+          <b>{{ item.label || `${item.key_prefix}...` }}</b>
+          <q-badge
+            v-if="item.valid_to && isExpired(item.valid_to)"
+            color="negative"
+            class="q-ml-sm"
+          >
+            {{ $t('agentKey.expired') }}
+          </q-badge>
+        </q-item-label>
+        <q-item-label caption>
+          {{ $t('company.name') }}:
+          {{ item.company_name || '—' }}
+          <q-badge
+            v-if="item.user_id === userStore.getCompany.id"
+            color="positive"
+            class="q-ml-xs"
+          >
+            {{ $t('active') }}
+          </q-badge>
+          <br />
+          <code class="text-grey-7">{{ item.key_prefix }}...</code>
+          <br />
+          {{ $t('created') }}:
+          {{ useDate.displayFormat(item.created_at, 'date-time') }}
+          <template v-if="item.last_used">
+            <br />{{ $t('lastVisit') }}:
+            {{ useDate.displayFormat(item.last_used, 'date-time') }}
+          </template>
+          <br />
+          {{ $t('agentKey.validTo') }}:
+          <template v-if="item.valid_to">
+            {{ useDate.displayFormat(item.valid_to, 'date-time') }}
+          </template>
+          <template v-else>
+            {{ $t('agentKey.never') }}
+          </template>
+        </q-item-label>
+      </q-item-section>
+      <q-item-section side>
+        <BtnBase
+          color="negative"
+          :label="$t('delete')"
+          icon="fas fa-trash"
+          size="sm"
+          @click="confirmDelete(item.id)"
+        />
+      </q-item-section>
+    </q-item>
+  </q-list>
 
-	<div v-else-if="!loading" class="text-grey-7 text-center q-pa-md">
-		{{ $t('agentKey.noKeys') }}
-	</div>
+  <div v-else-if="!loading" class="text-grey-7 text-center q-pa-md">
+    {{ $t('agentKey.noKeys') }}
+  </div>
 
-	<div class="q-mt-md text-center">
-		<q-btn
-			color="primary"
-			:label="$t('agentKey.create')"
-			icon="fas fa-plus"
-			no-caps
-			unelevated
-			@click="openCreateDialog"
-		/>
-	</div>
+  <div class="q-mt-md text-center">
+    <q-btn
+      color="primary"
+      :label="$t('agentKey.create')"
+      icon="fas fa-plus"
+      no-caps
+      unelevated
+      @click="openCreateDialog"
+    />
+  </div>
 
-	<!-- Create Dialog -->
-	<q-dialog v-model="showCreateDialog">
-		<q-card style="min-width: 350px">
-			<q-card-section>
-				<div class="text-h6">
-					{{ $t('agentKey.create') }}
-				</div>
-			</q-card-section>
+  <!-- Create Dialog -->
+  <q-dialog v-model="showCreateDialog">
+    <q-card style="min-width: 350px">
+      <q-card-section>
+        <div class="text-h6">
+          {{ $t('agentKey.create') }}
+        </div>
+      </q-card-section>
 
-			<q-card-section>
-				<q-banner class="bg-warning text-white q-mb-md" rounded>
-					{{ $t('agentKey.createWarning') }}
-				</q-banner>
+      <q-card-section>
+        <q-banner class="bg-warning text-white q-mb-md" rounded>
+          {{ $t('agentKey.createWarning') }}
+        </q-banner>
 
-				<q-input
-					v-model="newLabel"
-					:label="$t('agentKey.label')"
-					:hint="$t('agentKey.labelHint')"
-					dense
-					class="q-mb-md"
-				/>
+        <q-input
+          v-model="newLabel"
+          :label="$t('agentKey.label')"
+          :hint="$t('agentKey.labelHint')"
+          dense
+          class="q-mb-md"
+        />
 
-				<q-input
-					v-model="newValidTo"
-					:label="$t('agentKey.validTo')"
-					:hint="$t('agentKey.validToHint')"
-					type="date"
-					dense
-					clearable
-				/>
-			</q-card-section>
+        <q-input
+          v-model="newValidTo"
+          :label="$t('agentKey.validTo')"
+          :hint="$t('agentKey.validToHint')"
+          type="date"
+          dense
+          clearable
+        />
+      </q-card-section>
 
-			<q-card-actions align="right">
-				<q-btn v-close-popup flat :label="$t('cancel')" />
-				<q-btn
-					color="primary"
-					:label="$t('agentKey.create')"
-					unelevated
-					no-caps
-					@click="createKey"
-				/>
-			</q-card-actions>
-		</q-card>
-	</q-dialog>
+      <q-card-actions align="right">
+        <q-btn v-close-popup flat :label="$t('cancel')" />
+        <q-btn
+          color="primary"
+          :label="$t('agentKey.create')"
+          unelevated
+          no-caps
+          @click="createKey"
+        />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
 
-	<!-- Show Created Key Dialog -->
-	<q-dialog v-model="showKeyDialog" persistent>
-		<q-card style="min-width: 400px">
-			<q-card-section>
-				<div class="text-h6">
-					{{ $t('agentKey.keyCreated') }}
-				</div>
-			</q-card-section>
+  <!-- Show Created Key Dialog -->
+  <q-dialog v-model="showKeyDialog" persistent>
+    <q-card style="min-width: 400px">
+      <q-card-section>
+        <div class="text-h6">
+          {{ $t('agentKey.keyCreated') }}
+        </div>
+      </q-card-section>
 
-			<q-card-section>
-				<q-banner class="bg-warning text-white q-mb-md" rounded>
-					{{ $t('agentKey.createWarning') }}
-				</q-banner>
+      <q-card-section>
+        <q-banner class="bg-warning text-white q-mb-md" rounded>
+          {{ $t('agentKey.createWarning') }}
+        </q-banner>
 
-				<q-input
-					:model-value="createdKey"
-					readonly
-					type="textarea"
-					autogrow
-					dense
-					class="q-mb-sm"
-				>
-					<template #append>
-						<q-btn flat icon="fas fa-copy" @click="copyKey">
-							<q-tooltip>{{ $t('agentKey.copyKey') }}</q-tooltip>
-						</q-btn>
-					</template>
-				</q-input>
-			</q-card-section>
+        <q-input
+          :model-value="createdKey"
+          readonly
+          type="textarea"
+          autogrow
+          dense
+          class="q-mb-sm"
+        >
+          <template #append>
+            <q-btn flat icon="fas fa-copy" @click="copyKey">
+              <q-tooltip>{{ $t('agentKey.copyKey') }}</q-tooltip>
+            </q-btn>
+          </template>
+        </q-input>
+      </q-card-section>
 
-			<q-card-actions align="right">
-				<q-btn
-					v-close-popup
-					color="primary"
-					:label="$t('close')"
-					unelevated
-					no-caps
-				/>
-			</q-card-actions>
-		</q-card>
-	</q-dialog>
+      <q-card-actions align="right">
+        <q-btn
+          v-close-popup
+          color="primary"
+          :label="$t('close')"
+          unelevated
+          no-caps
+        />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
 
-	<!-- Skill Prompt Section -->
-	<q-separator class="q-my-lg" />
+  <!-- Skill Prompt Section -->
+  <q-separator class="q-my-lg" />
 
-	<div class="q-px-sm">
-		<div class="text-subtitle1 q-mb-xs">
-			{{ $t('agentKey.skillPromptTitle') }}
-		</div>
-		<div class="text-body2 text-grey-7 q-mb-sm">
-			{{ $t('agentKey.skillPromptDescription') }}
-		</div>
+  <div class="q-px-sm">
+    <div class="text-subtitle1 q-mb-xs">
+      {{ $t('agentKey.skillPromptTitle') }}
+    </div>
+    <div class="text-body2 text-grey-7 q-mb-sm">
+      {{ $t('agentKey.skillPromptDescription') }}
+    </div>
 
-		<q-input
-			:model-value="skillPrompt"
-			readonly
-			type="textarea"
-			autogrow
-			dense
-			outlined
-		>
-			<template #after>
-				<q-btn flat icon="fas fa-copy" @click="copyPrompt">
-					<q-tooltip>{{ $t('agentKey.copyPrompt') }}</q-tooltip>
-				</q-btn>
-			</template>
-		</q-input>
-	</div>
+    <q-input
+      :model-value="skillPrompt"
+      readonly
+      type="textarea"
+      autogrow
+      dense
+      outlined
+    >
+      <template #after>
+        <q-btn flat icon="fas fa-copy" @click="copyPrompt">
+          <q-tooltip>{{ $t('agentKey.copyPrompt') }}</q-tooltip>
+        </q-btn>
+      </template>
+    </q-input>
+  </div>
 </template>

@@ -12,10 +12,10 @@ import BtnBaseGroup from './BtnBaseGroup.vue';
 import DialogForm from './DialogForm.vue';
 
 const props = defineProps({
-	data: {
-		type: Object,
-		required: true,
-	},
+  data: {
+    type: Object,
+    required: true
+  }
 });
 const emit = defineEmits(['change']);
 const usePrevent = usePreventNavigation();
@@ -25,155 +25,157 @@ const api = useApiFetch();
 const router = useRouter();
 const notification = useNotification();
 watch(
-	() => props.data,
-	cur => (hives.value = cur ? cur.hives : null),
-	{
-		immediate: true,
-	},
+  () => props.data,
+  cur => (hives.value = cur ? cur.hives : null),
+  {
+    immediate: true
+  }
 );
 
 function onMovement(id: number) {
-	$q.dialog({
-		component: DialogForm,
-		componentProps: {
-			title: 'movedate',
-			form: 'movedate',
-			selected: [id],
-		},
-	});
+  $q.dialog({
+    component: DialogForm,
+    componentProps: {
+      title: 'movedate',
+      form: 'movedate',
+      selected: [id]
+    }
+  });
 }
 
 function setActiveStep(id: number, set = true) {
-	hives.value = map(hives.value, (obj: any) => {
-		return { ...obj, active: obj.id === id ? set : false };
-	});
-	if (!set)
-		onSave();
+  hives.value = map(hives.value, (obj: any) => {
+    return { ...obj, active: obj.id === id ? set : false };
+  });
+  if (!set) {
+    onSave();
+  }
 }
 
 function showInfo(id: number) {
-	router.push({ name: 'detail-hive', params: { id } });
+  router.push({ name: 'detail-hive', params: { id } });
 }
 
 function onMove(oldIndex: number, newIndex: number) {
-	if (!hives.value)
-		return;
-	const f = hives.value.splice(oldIndex, 1)[0];
-	// insert stored item into position `to`
-	hives.value.splice(newIndex, 0, f);
-	usePrevent.unsavedPosition(hives.value);
+  if (!hives.value) {
+    return;
+  }
+  const f = hives.value.splice(oldIndex, 1)[0];
+  // insert stored item into position `to`
+  hives.value.splice(newIndex, 0, f);
+  usePrevent.unsavedPosition(hives.value);
 }
 
 function resetActiveStep() {
-	if (!hives.value)
-		return;
-	hives.value = map(hives.value, (obj) => {
-		obj.active = false;
-		return obj;
-	});
-	usePrevent.state.value = false;
+  if (!hives.value) {
+    return;
+  }
+  hives.value = map(hives.value, obj => {
+    obj.active = false;
+    return obj;
+  });
+  usePrevent.state.value = false;
 }
 
 function onSave(force = false) {
-	if (!usePrevent.state.value && !force) {
-		resetActiveStep();
-	}
-	else {
-		const patch = map(hives.value, (obj, index) => {
-			return { id: obj.id, position: index + 1 };
-		});
-		api.patch('/v1/hive/updatePosition', { data: patch }).then(
-			() => {
-				notification.open('positive', 'updated');
-				resetActiveStep();
-				clearCache('hive');
-				emit('change');
-			},
-			() => notification.open('negative', ''),
-		);
-	}
+  if (!usePrevent.state.value && !force) {
+    resetActiveStep();
+  } else {
+    const patch = map(hives.value, (obj, index) => {
+      return { id: obj.id, position: index + 1 };
+    });
+    api.patch('/v1/hive/updatePosition', { data: patch }).then(
+      () => {
+        notification.open('positive', 'updated');
+        resetActiveStep();
+        clearCache('hive');
+        emit('change');
+      },
+      () => notification.open('negative', '')
+    );
+  }
 }
 </script>
 
 <template>
-	<div v-if="!hives">
-		{{ $t('error.noData') }}
-	</div>
-	<div v-else-if="hives.length === 0">
-		{{ $t('error.noData') }}
-	</div>
-	<div v-else>
-		<div
-			v-for="(hive, index) in hives"
-			:key="hive.id"
-			:class="hive.active ? 'bg-info' : ''"
-		>
-			<div
-				class="row flex-center q-pa-sm"
-				style="border: 0.01em; border-style: solid"
-				:class="index > 0 ? 'border-top-none' : ''"
-			>
-				<div
-					class="col-12 col-sm-2 col-md-2"
-					:class="$q.platform.is.mobile ? 'text-right' : ''"
-				>
-					<BtnBaseGroup :spread="false">
-						<BtnBase
-							flat
-							color="secondary"
-							icon="fas fa-info"
-							@click.stop="showInfo(hive.id)"
-						/>
-						<BtnBase
-							flat
-							color="grey"
-							icon="fas fa-truck"
-							@click.stop="onMovement(hive.id)"
-						/>
-					</BtnBaseGroup>
-				</div>
-				<div
-					class="col-12 col-sm-10 col-md-8"
-					style="cursor: pointer"
-					@click="setActiveStep(hive.id, hive.active ? false : true)"
-				>
-					<q-item-label class="text-bold">
-						{{ hive.name }}
-						<span v-if="hive.queen_name" class="text-caption">
-							[{{ hive.queen_name }}
-							<span v-if="hive.mark_colour">({{ hive.mark_colour }})</span>]
-							<span v-if="hive.queen_modus === false">RIP</span>
-						</span>
-					</q-item-label>
-					{{ $t('position') }}: {{ hive.position }}
-				</div>
+  <div v-if="!hives">
+    {{ $t('error.noData') }}
+  </div>
+  <div v-else-if="hives.length === 0">
+    {{ $t('error.noData') }}
+  </div>
+  <div v-else>
+    <div
+      v-for="(hive, index) in hives"
+      :key="hive.id"
+      :class="hive.active ? 'bg-info' : ''"
+    >
+      <div
+        class="row flex-center q-pa-sm"
+        style="border: 0.01em; border-style: solid"
+        :class="index > 0 ? 'border-top-none' : ''"
+      >
+        <div
+          class="col-12 col-sm-2 col-md-2"
+          :class="$q.platform.is.mobile ? 'text-right' : ''"
+        >
+          <BtnBaseGroup :spread="false">
+            <BtnBase
+              flat
+              color="secondary"
+              icon="fas fa-info"
+              @click.stop="showInfo(hive.id)"
+            />
+            <BtnBase
+              flat
+              color="grey"
+              icon="fas fa-truck"
+              @click.stop="onMovement(hive.id)"
+            />
+          </BtnBaseGroup>
+        </div>
+        <div
+          class="col-12 col-sm-10 col-md-8"
+          style="cursor: pointer"
+          @click="setActiveStep(hive.id, hive.active ? false : true)"
+        >
+          <q-item-label class="text-bold">
+            {{ hive.name }}
+            <span v-if="hive.queen_name" class="text-caption">
+              [{{ hive.queen_name }}
+              <span v-if="hive.mark_colour">({{ hive.mark_colour }})</span>]
+              <span v-if="hive.queen_modus === false">RIP</span>
+            </span>
+          </q-item-label>
+          {{ $t('position') }}: {{ hive.position }}
+        </div>
 
-				<div class="col-12 col-md-2 text-right">
-					<BtnBaseGroup :spread="false">
-						<BtnBase
-							flat
-							:color="hive.active ? 'primary' : 'grey'"
-							icon="fas fa-arrow-up"
-							:disable="index === 0 || !hive.active"
-							@click="onMove(index, index - 1)"
-						/>
-						<BtnBase
-							flat
-							:color="hive.active ? 'secondary' : 'grey'"
-							icon="fas fa-arrow-down"
-							:disable="index === hives.length - 1 || !hive.active"
-							@click="onMove(index, index + 1)"
-						/>
-					</BtnBaseGroup>
-				</div>
-			</div>
-		</div>
-		<BtnBase
-			size="sm"
-			class="float-right bg-orange-7"
-			@click.stop="onSave(true)"
-		>
-			{{ $t('updatePosition') }}
-		</BtnBase>
-	</div>
+        <div class="col-12 col-md-2 text-right">
+          <BtnBaseGroup :spread="false">
+            <BtnBase
+              flat
+              :color="hive.active ? 'primary' : 'grey'"
+              icon="fas fa-arrow-up"
+              :disable="index === 0 || !hive.active"
+              @click="onMove(index, index - 1)"
+            />
+            <BtnBase
+              flat
+              :color="hive.active ? 'secondary' : 'grey'"
+              icon="fas fa-arrow-down"
+              :disable="index === hives.length - 1 || !hive.active"
+              @click="onMove(index, index + 1)"
+            />
+          </BtnBaseGroup>
+        </div>
+      </div>
+    </div>
+    <BtnBase
+      size="sm"
+      class="float-right bg-orange-7"
+      @click.stop="onSave(true)"
+    >
+      {{ $t('updatePosition') }}
+    </BtnBase>
+  </div>
 </template>

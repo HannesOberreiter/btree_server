@@ -24,17 +24,17 @@ const unrefArray = (arr: any) => arr.map(smartUnref);
  * @return {Mixed}
  */
 export function deepUnref(val: any) {
-	const checkedVal = isRef(val) ? unref(val) : val;
+  const checkedVal = isRef(val) ? unref(val) : val;
 
-	if (!isObject(checkedVal)) {
-		return checkedVal;
-	}
+  if (!isObject(checkedVal)) {
+    return checkedVal;
+  }
 
-	if (isArray(checkedVal)) {
-		return unrefArray(checkedVal);
-	}
+  if (isArray(checkedVal)) {
+    return unrefArray(checkedVal);
+  }
 
-	return unrefObject(checkedVal);
+  return unrefObject(checkedVal);
 }
 
 /**
@@ -45,12 +45,12 @@ export function deepUnref(val: any) {
  * @return {Mixed}
  */
 function smartUnref(val: any) {
-	// Non-ref object?  Go deeper!
-	if (val !== null && !isRef(val) && typeof val === 'object') {
-		return deepUnref(val);
-	}
+  // Non-ref object?  Go deeper!
+  if (val !== null && !isRef(val) && typeof val === 'object') {
+    return deepUnref(val);
+  }
 
-	return unref(val);
+  return unref(val);
 }
 
 /**
@@ -61,12 +61,12 @@ function smartUnref(val: any) {
  * @return {object}
  */
 function unrefObject(obj: any) {
-	const unreffed = {} as any;
+  const unreffed = {} as any;
 
-	// Object? un-ref it!
-	Object.keys(obj).forEach((key) => {
-		unreffed[key as keyof typeof unreffed] = smartUnref(obj[key]);
-	});
+  // Object? un-ref it!
+  Object.keys(obj).forEach(key => {
+    unreffed[key as keyof typeof unreffed] = smartUnref(obj[key]);
+  });
 
-	return unreffed;
+  return unreffed;
 }

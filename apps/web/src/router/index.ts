@@ -1,9 +1,9 @@
-import { route } from 'quasar/wrappers';
+import { defineRouter } from '#q-app';
 import {
-	createMemoryHistory,
-	createRouter,
-	createWebHashHistory,
-	createWebHistory,
+  createMemoryHistory,
+  createRouter,
+  createWebHashHistory,
+  createWebHistory
 } from 'vue-router';
 import { useLoadingManager } from '../composables/useLoadingManager';
 import { useAuthUserStore } from '../stores/auth';
@@ -20,63 +20,58 @@ import routes from './routes';
  * with the Router instance.
  */
 
-const createHistory = process.env.SERVER
-	? createMemoryHistory
-	: process.env.VUE_ROUTER_MODE === 'history'
-		? createWebHistory
-		: createWebHashHistory;
+const createHistory = import.meta.env.QUASAR_SERVER
+  ? createMemoryHistory
+  : import.meta.env.QUASAR_VUE_ROUTER_MODE === 'history'
+    ? createWebHistory
+    : createWebHashHistory;
 
 const Router = createRouter({
-	scrollBehavior: () => ({ left: 0, top: 0 }),
-	routes,
+  scrollBehavior: () => ({ left: 0, top: 0 }),
+  routes,
 
-	// Leave this as is and make changes in quasar.conf.js instead!
-	// quasar.conf.js -> build -> vueRouterMode
-	// quasar.conf.js -> build -> publicPath
-	history: createHistory(process.env.VUE_ROUTER_BASE),
+  history: createHistory(import.meta.env.QUASAR_VUE_ROUTER_BASE)
 });
 
-export default route(({ store }) => {
-	const routerStore = useRouterStore(store);
-	const storeUser = useAuthUserStore(store);
-	const refreshStore = useRefreshStore(store);
-	const loadingManager = useLoadingManager();
+export default defineRouter(({ store }) => {
+  const routerStore = useRouterStore(store);
+  const storeUser = useAuthUserStore(store);
+  const refreshStore = useRefreshStore(store);
+  const loadingManager = useLoadingManager();
 
-	Router.beforeEach(async (to, from) => {
-		loadingManager.forceStopAll();
+  Router.beforeEach(async (to, from) => {
+    loadingManager.forceStopAll();
 
-		if (
-			to.matched.some(record => record.meta.auth && !storeUser.isLoggedIn)
-		) {
-			console.warn('User not logged in, redirect from', to.path);
-			const query = to.query;
-			return { name: 'login', query: { next: to.path, ...query } };
-		}
+    if (to.matched.some(record => record.meta.auth && !storeUser.isLoggedIn)) {
+      console.warn('User not logged in, redirect from', to.path);
+      const query = to.query;
+      return { name: 'login', query: { next: to.path, ...query } };
+    }
 
-		if (
-			to.matched.some(record => record.meta.premium && !storeUser.isPremium)
-		) {
-			console.warn('No premium user redirect');
-			return { name: 'login' };
-		}
+    if (
+      to.matched.some(record => record.meta.premium && !storeUser.isPremium)
+    ) {
+      console.warn('No premium user redirect');
+      return { name: 'login' };
+    }
 
-		if (!(from.name === 'new-quicktool' && to.name === 'new-quicktool')) {
-			routerStore.previous = from.name as any;
-			routerStore.params = from.params as any;
-		}
+    if (!(from.name === 'new-quicktool' && to.name === 'new-quicktool')) {
+      routerStore.previous = from.name as any;
+      routerStore.params = from.params as any;
+    }
 
-		if (
-			to.matched.some(record => record.meta.auth)
-			&& (refreshStore.lastHour < -1 || Number.isNaN(refreshStore.lastHour))
-		) {
-			console.info('Updating local storage values');
-			refreshStore.refresh().catch((e) => {
-				console.error('Background refresh failed:', e);
-			});
-		}
-	});
+    if (
+      to.matched.some(record => record.meta.auth) &&
+      (refreshStore.lastHour < -1 || Number.isNaN(refreshStore.lastHour))
+    ) {
+      console.info('Updating local storage values');
+      refreshStore.refresh().catch(e => {
+        console.error('Background refresh failed:', e);
+      });
+    }
+  });
 
-	return Router;
+  return Router;
 });
 
 export { Router };

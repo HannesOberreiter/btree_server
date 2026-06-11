@@ -8,25 +8,25 @@ const $q = useQuasar();
 const { isAvailable } = useScanner();
 
 function onClick() {
-	$q.dialog({
-		component: DialogQrScanner,
-	});
+  $q.dialog({
+    component: DialogQrScanner
+  });
 }
 </script>
 
 <template>
-	<q-btn
-		v-if="isAvailable"
-		flat
-		dense
-		size="md"
-		class="q-mr-xs"
-		icon="fas fa-qrcode"
-		:aria-label="$t('qrScanner')"
-		@click="onClick"
-	>
-		<TooltipBase anchor="bottom middle" self="top middle">
-			{{ $t('qrScanner') }} (s)
-		</TooltipBase>
-	</q-btn>
+  <q-btn
+    v-if="isAvailable"
+    flat
+    dense
+    size="md"
+    class="q-mr-xs"
+    icon="fas fa-qrcode"
+    :aria-label="$t('qrScanner')"
+    @click="onClick"
+  >
+    <TooltipBase anchor="bottom middle" self="top middle">
+      {{ $t('qrScanner') }} (s)
+    </TooltipBase>
+  </q-btn>
 </template>

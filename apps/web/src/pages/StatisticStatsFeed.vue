@@ -3,5 +3,5 @@ import MainStatisticLayout from '../layouts/MainStatisticLayout.vue';
 </script>
 
 <template>
-	<MainStatisticLayout kind="feed" />
+  <MainStatisticLayout kind="feed" />
 </template>
