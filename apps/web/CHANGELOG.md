@@ -1,5 +1,23 @@
 # Changelog
 
+## [7.2.1](https://github.com/HannesOberreiter/btree_vue/compare/btree-client-v7.2.0...btree-client-v7.2.1) (2026-06-12)
+
+
+### Bug Fixes
+
+* :bug: logout did sometimes fail on the first click ([c21acd5](https://github.com/HannesOberreiter/btree_vue/commit/c21acd57c1947ed8e379d063195d4ed86f5803da))
+* translate table search placeholder ([6ffab86](https://github.com/HannesOberreiter/btree_vue/commit/6ffab8656d8d3bd001d0a4d20bd01afb32441a41))
+
+
+### Miscellaneous
+
+* :arrow_up: upgraded to @quasar/app-vite^3 ([0ce98e4](https://github.com/HannesOberreiter/btree_vue/commit/0ce98e48c533a5892194f47de023a507c0ffb098))
+* add missing shim back in ([4191110](https://github.com/HannesOberreiter/btree_vue/commit/419111003db1a69c11f81c3fa7941767e12834f6))
+* change redirect oauth chatgpt flow ([607a2dc](https://github.com/HannesOberreiter/btree_vue/commit/607a2dc61294edeedea1f29c127d946ada4531b4))
+* ignore changelog fmt ([80f8573](https://github.com/HannesOberreiter/btree_vue/commit/80f857340b14a06b1b06ec38e1ebb05adc72df92))
+* migrate to pnpm and upgrade packages ([eb4285f](https://github.com/HannesOberreiter/btree_vue/commit/eb4285f6f4375d0ea87637ee60587314889a702f))
+* redirect to oauth ([566da0c](https://github.com/HannesOberreiter/btree_vue/commit/566da0cf486a7da6b31258ff1de60db173bb62dd))
+
 ## [7.2.0](https://github.com/HannesOberreiter/btree_vue/compare/btree-client-v7.1.1...btree-client-v7.2.0) (2026-05-07)
 
 
