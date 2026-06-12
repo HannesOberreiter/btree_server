@@ -1,5 +1,31 @@
 # Changelog
 
+## [7.3.0](https://github.com/HannesOberreiter/btree_server/compare/btree-server-v7.2.0...btree-server-v7.3.0) (2026-06-12)
+
+
+### Features
+
+* :sparkles: add oauth endpoint for customGPT btree ([4377268](https://github.com/HannesOberreiter/btree_server/commit/4377268eeca10a58da5373ef9988dae50bd7f8df))
+* wizbee model changed to Mistral Medium 3.5 ([2277be6](https://github.com/HannesOberreiter/btree_server/commit/2277be64566c2c50f7f2a83be4588477bcd5fecb))
+
+
+### Performance
+
+* **weather:** cache historical temperatures ([3319ff3](https://github.com/HannesOberreiter/btree_server/commit/3319ff3cf13b61fd7f8953325829254ad341fde6))
+
+
+### Miscellaneous
+
+* add tools to schema ([7f0668c](https://github.com/HannesOberreiter/btree_server/commit/7f0668c802b10af494b009991d6e2faddd3f1878))
+* allow oauth with other origin ([e74e28f](https://github.com/HannesOberreiter/btree_server/commit/e74e28fef07e1054ad304f9013b23b071e018e79))
+* call tool endpoint ([3946096](https://github.com/HannesOberreiter/btree_server/commit/39460965bfd387ed5a306ead089041f32dcb7076))
+* change to custom chatgpt endpoint ([9153d79](https://github.com/HannesOberreiter/btree_server/commit/9153d79a0b7df9c1b7d1d9fd09e8a2fc5ba6c065))
+* fix oauth tokens ([cee2def](https://github.com/HannesOberreiter/btree_server/commit/cee2def68c2b5c95db58284cd3a3d01be1744d1f))
+* lint and internal fixes ([b35e722](https://github.com/HannesOberreiter/btree_server/commit/b35e722fffa757dd272b3c2261a34d4c77911713))
+* make oauth allow list less strict ([cb2bda2](https://github.com/HannesOberreiter/btree_server/commit/cb2bda243700d7626c6e1b15a18b857c3e052404))
+* migrate to pnpm, oxlint, oxfmt ([8de6127](https://github.com/HannesOberreiter/btree_server/commit/8de6127f3d5e4685afb56f0180d74a85a7d79d29))
+* type checks and test fixes ([01f4265](https://github.com/HannesOberreiter/btree_server/commit/01f4265780b1c4465cad00ab3bbeba7eaca0d8e2))
+
 ## [7.2.0](https://github.com/HannesOberreiter/btree_server/compare/btree-server-v7.1.1...btree-server-v7.2.0) (2026-05-07)
 
 
