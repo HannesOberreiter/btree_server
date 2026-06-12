@@ -1,5 +1,5 @@
-import type { FastifyReply, FastifyRequest } from 'fastify';
 import { Dropbox, DropboxAuth } from 'dropbox';
+import type { FastifyReply, FastifyRequest } from 'fastify';
 
 import {
   dropboxClientId,
@@ -53,8 +53,7 @@ export default class DropboxController {
           refresh_token,
           access_token,
         });
-      }
-      else {
+      } else {
         return await DropboxModel.query(trx).insert({
           refresh_token,
           access_token,
@@ -79,7 +78,7 @@ export default class DropboxController {
       accessToken: token.access_token,
       refreshToken: token.refresh_token,
     });
-    await dbx.checkAndRefreshAccessToken();
+    dbx.checkAndRefreshAccessToken();
     if (token.access_token !== dbx.getAccessToken()) {
       await DropboxModel.transaction(async (trx) => {
         return DropboxModel.query(trx)

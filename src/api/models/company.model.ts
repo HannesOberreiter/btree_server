@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+
 import { ExtModel } from './base.model.js';
 import { CompanyBee } from './company_bee.model.js';
 import { User } from './user.model.js';

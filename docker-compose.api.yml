@@ -9,7 +9,7 @@ services:
     container_name: btree-server
     image: hannesoberreiter/btree_server:latest
     # To run knex commands
-    # entrypoint: [ "/bin/sh", "-c", "npm run prod:knex migrate:latest" ]
+    # entrypoint: [ "/bin/sh", "-c", "pnpm run prod:knex migrate:latest" ]
     restart: unless-stopped
     user: node # connected volume logs must have write access as node user chown -R 1000:1000 logs
     environment:

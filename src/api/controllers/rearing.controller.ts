@@ -1,4 +1,5 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
+
 import { Rearing } from '../models/rearing/rearing.model.js';
 
 export default class RearingController {
@@ -13,8 +14,7 @@ export default class RearingController {
     if (order) {
       if (Array.isArray(order)) {
         order.forEach((field, index) => query.orderBy(field, direction[index]));
-      }
-      else {
+      } else {
         query.orderBy(order, direction);
       }
     }
@@ -26,15 +26,13 @@ export default class RearingController {
           filtering.forEach((v) => {
             if ('date' in v && typeof v.date === 'object') {
               query.whereBetween('date', [v.date.from, v.date.to]);
-            }
-            else {
+            } else {
               query.where(v);
             }
           });
         }
-      }
-      catch (e) {
-        req.log.error(e);
+      } catch (error) {
+        req.log.error(error);
       }
     }
     if (q) {

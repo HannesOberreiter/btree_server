@@ -1,12 +1,13 @@
 import process from 'node:process';
+
 import { expect } from 'vitest';
 
 interface TestResponse {
-  statusCode: number
-  body: any
-  errors: any
-  header: Record<string, string>
-  headers: Record<string, string>
+  statusCode: number;
+  body: any;
+  errors: any;
+  header: Record<string, string>;
+  headers: Record<string, string>;
 }
 
 export const demoUser = {
@@ -27,13 +28,15 @@ export class TestAgent {
   }
 
   private buildCookieHeader(): string {
-    return Array.from(this.cookieStore.entries())
+    return [...this.cookieStore.entries()]
       .map(([k, v]) => `${k}=${v}`)
       .join('; ');
   }
 
   private storeCookies(headers: Headers) {
-    const getSetCookie = (headers as Headers & { getSetCookie?: () => string[] }).getSetCookie;
+    const getSetCookie = (
+      headers as Headers & { getSetCookie?: () => string[] }
+    ).getSetCookie;
     const setCookies: string[] = getSetCookie ? getSetCookie.call(headers) : [];
     for (const cookie of setCookies) {
       const [nameVal] = cookie.split(';');
@@ -62,8 +65,8 @@ export class TestAgent {
 
     const reqHeaders: Record<string, string> = {
       'Content-Type': process.env.CONTENT_TYPE!,
-      'Accept': process.env.CONTENT_TYPE!,
-      'Origin': process.env.ORIGIN!,
+      Accept: process.env.CONTENT_TYPE!,
+      Origin: process.env.ORIGIN!,
     };
 
     const cookieHeader = this.buildCookieHeader();
@@ -86,15 +89,16 @@ export class TestAgent {
     const contentType = response.headers.get('content-type') ?? '';
     if (contentType.includes('application/json')) {
       responseBody = await response.json();
-    }
-    else {
+    } else {
       responseBody = await response.text();
     }
 
     const headerMap = Object.fromEntries(response.headers.entries());
 
     // Handle set-cookie headers specially (they need to be an array)
-    const getSetCookie = (response.headers as Headers & { getSetCookie?: () => string[] }).getSetCookie;
+    const getSetCookie = (
+      response.headers as Headers & { getSetCookie?: () => string[] }
+    ).getSetCookie;
     if (getSetCookie) {
       const setCookies = getSetCookie.call(response.headers);
       if (setCookies.length > 0) {
@@ -118,7 +122,14 @@ export function createAgent(): TestAgent {
 
 export async function createAuthenticatedAgent(): Promise<TestAgent> {
   const agent = new TestAgent();
-  const res = await doRequest(agent, 'post', '/api/v1/auth/login', null, null, demoUser);
+  const res = await doRequest(
+    agent,
+    'post',
+    '/api/v1/auth/login',
+    null,
+    null,
+    demoUser,
+  );
   if (res.statusCode !== 200) {
     console.error('Login failed:', {
       statusCode: res.statusCode,

@@ -1,6 +1,7 @@
-import type { FastifyReply, FastifyRequest } from 'fastify';
 import dayjs from 'dayjs';
+import type { FastifyReply, FastifyRequest } from 'fastify';
 import { map } from 'lodash-es';
+
 import { KyselyServer } from '../../servers/kysely.server.js';
 import { Hive } from '../models/hive.model.js';
 import { Treatment } from '../models/treatment.model.js';
@@ -10,8 +11,8 @@ import { getWeatherDataForApiary } from '../utils/temperature.util.js';
 
 export default class TreatmentController {
   static async get(req: FastifyRequest, _reply: FastifyReply) {
-    const { order, direction, offset, limit, q, filters, deleted, done }
-      = req.query as any;
+    const { order, direction, offset, limit, q, filters, deleted, done } =
+      req.query as any;
     const query = Treatment.query()
       .withGraphJoined(
         '[treatment_apiary, type, disease, vet, hive, creator(identifier), editor(identifier)]',
@@ -34,22 +35,19 @@ export default class TreatmentController {
           filtering.forEach((v) => {
             if ('date' in v && typeof v.date === 'object') {
               query.whereBetween('date', [v.date.from, v.date.to]);
-            }
-            else {
+            } else {
               query.where(v);
             }
           });
         }
-      }
-      catch (e) {
-        req.log.error(e);
+      } catch (error) {
+        req.log.error(error);
       }
     }
     if (order) {
       if (Array.isArray(order)) {
         order.forEach((field, index) => query.orderBy(field, direction[index]));
-      }
-      else {
+      } else {
         query.orderBy(order, direction);
       }
     }
@@ -73,7 +71,9 @@ export default class TreatmentController {
     const ids = body.ids;
     const isLlm = (req.session as any).llm === true;
 
-    const insert = { ...body.data, ...(isLlm && { ai_updated_at: new Date() }),
+    const insert = {
+      ...body.data,
+      ...(isLlm && { ai_updated_at: new Date() }),
     };
 
     if (insert.type_id) {
@@ -164,17 +164,24 @@ export default class TreatmentController {
     // if premium and no temperature is set, get current temperature and set it
     if (!insert.temperature && isPremium(req.session.user.user_id)) {
       try {
-        const location = await KyselyServer.getInstance().db.selectFrom('hives_locations').select('apiary_id').where('hive_id', '=', hive_ids[0]).where('user_id', '=', req.session.user.user_id).executeTakeFirst();
+        const location = await KyselyServer.getInstance()
+          .db.selectFrom('hives_locations')
+          .select('apiary_id')
+          .where('hive_id', '=', hive_ids[0])
+          .where('user_id', '=', req.session.user.user_id)
+          .executeTakeFirst();
         if (!location || !location.apiary_id) {
           throw new Error('No current location found for hive');
         }
-        const weatherData = await getWeatherDataForApiary(location.apiary_id, req.session.user.user_id);
+        const weatherData = await getWeatherDataForApiary(
+          location.apiary_id,
+          req.session.user.user_id,
+        );
         if (weatherData?.current?.temp) {
           insert.temperature = weatherData.current.temp;
         }
-      }
-      catch (e: any) {
-        req.log.error(e);
+      } catch (error: any) {
+        req.log.error(error);
       }
     }
 
@@ -275,8 +282,7 @@ export default class TreatmentController {
       const softIds = [];
       const hardIds = [];
       map(res, (obj) => {
-        if ((obj.deleted || hardDelete) && !restoreDelete)
-          hardIds.push(obj.id);
+        if ((obj.deleted || hardDelete) && !restoreDelete) hardIds.push(obj.id);
         else softIds.push(obj.id);
       });
 

@@ -1,5 +1,7 @@
 import fs from 'node:fs';
+
 import { cloneDeep, map, omit } from 'lodash-es';
+
 // eslint-disable-next-line antfu/no-import-dist
 import * as env from '../../dist/config/environment.config.js';
 
@@ -43,7 +45,7 @@ export async function seed(knex) {
 
     for (let i = 1; i <= duplicates; i++) {
       if (i > 1) {
-        newData = map(cloneDeep(newData), d => omit(d, ['id']));
+        newData = map(cloneDeep(newData), (d) => omit(d, ['id']));
       }
       await transactionMigration(table, newData, knex);
 

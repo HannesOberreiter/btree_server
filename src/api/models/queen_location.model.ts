@@ -1,4 +1,5 @@
 import { Model } from 'objection';
+
 import { Hive } from './hive.model.js';
 import { Queen } from './queen.model.js';
 

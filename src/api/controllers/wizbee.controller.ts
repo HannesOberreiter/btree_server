@@ -1,42 +1,48 @@
-import type { FastifyReply, FastifyRequest } from 'fastify';
-import type { ChatMessage } from '../../services/wizbee.service.js';
-import type { WizBeeStreamBody } from '../schemas/wizbee.schema.js';
 import { Buffer } from 'node:buffer';
+
+import type { FastifyReply, FastifyRequest } from 'fastify';
 import httpErrors from 'http-errors';
 import { sql } from 'kysely';
+
 import { mistralAI } from '../../config/environment.config.js';
 import { KyselyServer } from '../../servers/kysely.server.js';
+import type { ChatMessage } from '../../services/wizbee.service.js';
 import { WizBeeAI } from '../../services/wizbee.service.js';
 import { transcribeAudio } from '../../services/wizbee.transcribe.service.js';
+import type { WizBeeStreamBody } from '../schemas/wizbee.schema.js';
 import { isPremium } from '../utils/premium.util.js';
 
 /**
- * Mistral pricing (per 1K tokens) for `mistral-medium-2508` (pinned in wizbee.service.ts).
+ * Mistral pricing (per 1K tokens) for `mistral-medium-3-5` (pinned in wizbee.service.ts).
+ * Published pricing: €1.25 / €6.40 per 1M input/output tokens.
  * Verify against https://mistral.ai/pricing before adjusting.
  * Include a safety margin to account for potential price increases or tokenization differences.
  */
 const SAFETY_MARGIN = 1.5;
-const PRICE_PER_1K_INPUT_TOKENS_EUR = 0.00037 * SAFETY_MARGIN;
-const PRICE_PER_1K_OUTPUT_TOKENS_EUR = 0.00185 * SAFETY_MARGIN;
+const PRICE_PER_1K_INPUT_TOKENS_EUR = 0.00125 * SAFETY_MARGIN;
+const PRICE_PER_1K_OUTPUT_TOKENS_EUR = 0.0064 * SAFETY_MARGIN;
 
-const CONTEXT_OVERFLOW_RE = /maximum context length|context[_ ]?length|too large|prompt contains \d+ tokens/i;
+const CONTEXT_OVERFLOW_RE =
+  /maximum context length|context[_ ]?length|too large|prompt contains \d+ tokens/i;
 
 export interface MonthlyUsage {
-  totalInputTokens: number
-  totalOutputTokens: number
-  totalRequests: number
-  estimatedCostEUR: number
-  monthlyLimitEUR: number
-  remainingBudgetEUR: number
-  isOverBudget: boolean
+  totalInputTokens: number;
+  totalOutputTokens: number;
+  totalRequests: number;
+  estimatedCostEUR: number;
+  monthlyLimitEUR: number;
+  remainingBudgetEUR: number;
+  isOverBudget: boolean;
 }
 
 /**
  * Calculate estimated cost for tokens in EUR
  */
 function calculateTokenCost(inputTokens: number, outputTokens: number): number {
-  return (inputTokens / 1000) * PRICE_PER_1K_INPUT_TOKENS_EUR
-    + (outputTokens / 1000) * PRICE_PER_1K_OUTPUT_TOKENS_EUR;
+  return (
+    (inputTokens / 1000) * PRICE_PER_1K_INPUT_TOKENS_EUR +
+    (outputTokens / 1000) * PRICE_PER_1K_OUTPUT_TOKENS_EUR
+  );
 }
 
 /**
@@ -47,7 +53,14 @@ async function getMonthlyUsage(userId: number): Promise<MonthlyUsage> {
 
   const now = new Date();
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-  const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
+  const endOfMonth = new Date(
+    now.getFullYear(),
+    now.getMonth() + 1,
+    0,
+    23,
+    59,
+    59,
+  );
 
   const result = await db
     .selectFrom('wizbee_requests')
@@ -62,10 +75,10 @@ async function getMonthlyUsage(userId: number): Promise<MonthlyUsage> {
     .where('request_time', '<=', endOfMonth)
     .executeTakeFirst();
 
-  const totalInputTokens = Number(result?.totalInputTokens ?? 0);
-  const totalOutputTokens = Number(result?.totalOutputTokens ?? 0);
-  const totalRequests = Number(result?.totalRequests ?? 0);
-  const estimatedCostEUR = Number(result?.totalCostEUR ?? 0);
+  const totalInputTokens = result?.totalInputTokens ?? 0;
+  const totalOutputTokens = result?.totalOutputTokens ?? 0;
+  const totalRequests = result?.totalRequests ?? 0;
+  const estimatedCostEUR = result?.totalCostEUR ?? 0;
   const monthlyLimitEUR = mistralAI.monthlyBudgetEUR;
   const remainingBudgetEUR = Math.max(0, monthlyLimitEUR - estimatedCostEUR);
 
@@ -92,12 +105,12 @@ async function checkMonthlyBudget(userId: number): Promise<boolean> {
  * Log a WizBee request with token usage and cost
  */
 async function logWizBeeRequest(params: {
-  beeId: number
-  userId: number
-  tokensInput: number
-  tokensOutput: number
-  costEur: number
-  userRequest: string
+  beeId: number;
+  userId: number;
+  tokensInput: number;
+  tokensOutput: number;
+  costEur: number;
+  userRequest: string;
 }): Promise<void> {
   const db = KyselyServer.getInstance().db;
 
@@ -122,7 +135,9 @@ export default class WizBeeController {
   static async getWizBeeUsage(req: FastifyRequest, _reply: FastifyReply) {
     const premium = await isPremium(req.session.user.user_id);
     if (!premium) {
-      throw httpErrors.PaymentRequired('WizBee requires an active premium subscription');
+      throw httpErrors.PaymentRequired(
+        'WizBee requires an active premium subscription',
+      );
     }
 
     const usage = await getMonthlyUsage(req.session.user.user_id);
@@ -144,21 +159,22 @@ export default class WizBeeController {
 
     const premium = await isPremium(req.session.user.user_id);
     if (!premium) {
-      throw httpErrors.PaymentRequired('WizBee requires an active premium subscription');
+      throw httpErrors.PaymentRequired(
+        'WizBee requires an active premium subscription',
+      );
     }
 
     // Check monthly budget
     const withinBudget = await checkMonthlyBudget(req.session.user.user_id);
     if (!withinBudget) {
-      throw httpErrors.TooManyRequests('Monthly WizBee usage budget exceeded — resets at the start of next month');
+      throw httpErrors.TooManyRequests(
+        'Monthly WizBee usage budget exceeded — resets at the start of next month',
+      );
     }
 
     const question = body.question;
 
-    const bot = new WizBeeAI(
-      req.session.user.user_id,
-      req.session.user.bee_id,
-    );
+    const bot = new WizBeeAI(req.session.user.user_id, req.session.user.bee_id);
 
     if (controller.signal.aborted) {
       return;
@@ -170,8 +186,7 @@ export default class WizBeeController {
         if (req.headers.referer) {
           const url = new URL(req.headers.referer);
           req.headers.origin = url.origin;
-        }
-        else if (req.headers.host) {
+        } else if (req.headers.host) {
           req.headers.origin = req.headers.host;
         }
       }
@@ -192,7 +207,11 @@ export default class WizBeeController {
     let tokensOutput = 0;
 
     try {
-      for await (const chunk of bot.chatStream(question, history, controller.signal)) {
+      for await (const chunk of bot.chatStream(
+        question,
+        history,
+        controller.signal,
+      )) {
         if (controller.signal.aborted) {
           break;
         }
@@ -209,26 +228,30 @@ export default class WizBeeController {
           const msg = chunk.content;
           const isContextOverflow = CONTEXT_OVERFLOW_RE.test(msg);
           if (isContextOverflow) {
-            const friendly = 'Your request returned too much data for me to process in one step. Please narrow it down — e.g. ask about a single year, a single apiary, or use a summary question like "harvest totals per year" instead of "all activities of the last 4 years".';
-            reply.raw.write(`${JSON.stringify({ type: 'error', content: friendly })}\n`);
-            req.log.warn({ originalError: msg }, 'WizBee context overflow — replaced with user-friendly message');
+            const friendly =
+              'Your request returned too much data for me to process in one step. Please narrow it down — e.g. ask about a single year, a single apiary, or use a summary question like "harvest totals per year" instead of "all activities of the last 4 years".';
+            reply.raw.write(
+              `${JSON.stringify({ type: 'error', content: friendly })}\n`,
+            );
+            req.log.warn(
+              { originalError: msg },
+              'WizBee context overflow — replaced with user-friendly message',
+            );
             continue;
           }
         }
 
         reply.raw.write(`${JSON.stringify(chunk)}\n`);
       }
-    }
-    catch (e) {
-      req.log.error(e);
+    } catch (error) {
+      req.log.error(error);
       reply.raw.write(
         `${JSON.stringify({
           type: 'error',
           content: 'An error occurred while processing your request',
         })}\n`,
       );
-    }
-    finally {
+    } finally {
       // Always log request (even with 0 tokens or on error) for tracking
       try {
         const costEur = calculateTokenCost(tokensInput, tokensOutput);
@@ -240,9 +263,8 @@ export default class WizBeeController {
           costEur,
           userRequest: question,
         });
-      }
-      catch (e) {
-        req.log.error(e, 'Failed to log WizBee request');
+      } catch (error) {
+        req.log.error(error, 'Failed to log WizBee request');
       }
 
       clearTimeout(timeout);
@@ -264,25 +286,34 @@ export default class WizBeeController {
    * budget using the token usage Mistral returns (roughly equivalent to a
    * cheap chat call) so users can't bypass the limit by spamming audio.
    */
-  static async transcribeWizBeeAudio(req: FastifyRequest, _reply: FastifyReply) {
+  static async transcribeWizBeeAudio(
+    req: FastifyRequest,
+    _reply: FastifyReply,
+  ) {
     const premium = await isPremium(req.session.user.user_id);
     if (!premium) {
-      throw httpErrors.PaymentRequired('WizBee requires an active premium subscription');
+      throw httpErrors.PaymentRequired(
+        'WizBee requires an active premium subscription',
+      );
     }
 
     const withinBudget = await checkMonthlyBudget(req.session.user.user_id);
     if (!withinBudget) {
-      throw httpErrors.TooManyRequests('Monthly WizBee usage budget exceeded — resets at the start of next month');
+      throw httpErrors.TooManyRequests(
+        'Monthly WizBee usage budget exceeded — resets at the start of next month',
+      );
     }
 
     // With `attachFieldsToBody: 'keyValues'` the multipart plugin exposes
     // each file field as a Buffer on req.body. See app.config.ts.
     const body = (req.body ?? {}) as Record<string, unknown>;
     const audio = body.audio;
-    const language = typeof body.language === 'string' ? body.language : undefined;
-    const fileName = typeof body.fileName === 'string' && body.fileName.trim().length > 0
-      ? body.fileName
-      : 'voice.webm';
+    const language =
+      typeof body.language === 'string' ? body.language : undefined;
+    const fileName =
+      typeof body.fileName === 'string' && body.fileName.trim().length > 0
+        ? body.fileName
+        : 'voice.webm';
 
     if (!audio || !Buffer.isBuffer(audio)) {
       throw httpErrors.BadRequest('Missing or invalid audio upload');
@@ -294,15 +325,17 @@ export default class WizBeeController {
     let result: Awaited<ReturnType<typeof transcribeAudio>>;
     try {
       result = await transcribeAudio({ audio, fileName, language });
-    }
-    catch (e) {
-      req.log.error(e, 'WizBee transcription failed');
+    } catch (error) {
+      req.log.error(error, 'WizBee transcription failed');
       throw httpErrors.BadGateway('Voice transcription failed');
     }
 
     // Log against the WizBee budget (best-effort).
     try {
-      const costEur = calculateTokenCost(result.usage.promptTokens, result.usage.completionTokens);
+      const costEur = calculateTokenCost(
+        result.usage.promptTokens,
+        result.usage.completionTokens,
+      );
       await logWizBeeRequest({
         beeId: req.session.user.bee_id,
         userId: req.session.user.user_id,
@@ -311,9 +344,8 @@ export default class WizBeeController {
         costEur,
         userRequest: `[voice] ${result.text}`,
       });
-    }
-    catch (e) {
-      req.log.error(e, 'Failed to log WizBee transcription request');
+    } catch (error) {
+      req.log.error(error, 'Failed to log WizBee transcription request');
     }
 
     return {

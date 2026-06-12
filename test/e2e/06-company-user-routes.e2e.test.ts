@@ -1,6 +1,13 @@
-import type { TestAgent } from '../utils.js';
 import { beforeAll, describe, expect, it } from 'vitest';
-import { createAgent, createAuthenticatedAgent, doQueryRequest, doRequest, expectations } from '../utils.js';
+
+import type { TestAgent } from '../utils.js';
+import {
+  createAgent,
+  createAuthenticatedAgent,
+  doQueryRequest,
+  doRequest,
+  expectations,
+} from '../utils.js';
 
 const newUser = 'newUser@demo.at';
 
@@ -15,30 +22,63 @@ describe('company User routes', () => {
 
   describe('/api/v1/company_user/user', () => {
     it('401 - no header', async () => {
-      const res = await doQueryRequest(createAgent(), `${route}/user`, null, null, null);
+      const res = await doQueryRequest(
+        createAgent(),
+        `${route}/user`,
+        null,
+        null,
+        null,
+      );
       expect(res.statusCode).toEqual(401);
       expect(res.errors, 'JsonWebTokenError');
     });
 
     it('add_user 401 - no header', async () => {
-      const res = await doRequest(createAgent(), 'post', `${route}/add_user`, null, null, { email: newUser });
+      const res = await doRequest(
+        createAgent(),
+        'post',
+        `${route}/add_user`,
+        null,
+        null,
+        { email: newUser },
+      );
       expect(res.statusCode).toEqual(401);
       expect(res.errors, 'JsonWebTokenError');
     });
 
     it('200 - get', async () => {
-      const res = await doQueryRequest(agent, `${route}/user`, null, accessToken, null);
+      const res = await doQueryRequest(
+        agent,
+        `${route}/user`,
+        null,
+        accessToken,
+        null,
+      );
       expect(res.statusCode).toEqual(200);
       expect(res.body).toBeInstanceOf(Array);
     });
 
     it('add_user 200 - success', async () => {
-      const res = await doRequest(agent, 'post', `${route}/add_user`, null, accessToken, { email: newUser });
+      const res = await doRequest(
+        agent,
+        'post',
+        `${route}/add_user`,
+        null,
+        accessToken,
+        { email: newUser },
+      );
       expect(res.statusCode).toEqual(200);
       expect(res.body.email, newUser);
       expect(res.body).toHaveProperty('id');
       const newId = res.body.id;
-      const res2 = await doRequest(agent, 'delete', `${route}/remove_user`, newId, accessToken, {});
+      const res2 = await doRequest(
+        agent,
+        'delete',
+        `${route}/remove_user`,
+        newId,
+        accessToken,
+        {},
+      );
       expect(res2.statusCode).toEqual(200);
       expect(res2.body).toBe(1);
     });
@@ -46,13 +86,27 @@ describe('company User routes', () => {
 
   describe('/api/v1/company_user/', () => {
     it('delete 401 - no header', async () => {
-      const res = await doRequest(createAgent(), 'delete', `${route}/1`, null, null, {});
+      const res = await doRequest(
+        createAgent(),
+        'delete',
+        `${route}/1`,
+        null,
+        null,
+        {},
+      );
       expect(res.statusCode).toEqual(401);
       expect(res.errors, 'JsonWebTokenError');
     });
 
     it('patch 401 - no header', async () => {
-      const res = await doRequest(createAgent(), 'patch', `${route}/1`, null, null, { rank: 1 });
+      const res = await doRequest(
+        createAgent(),
+        'patch',
+        `${route}/1`,
+        null,
+        null,
+        { rank: 1 },
+      );
       expect(res.statusCode).toEqual(401);
       expect(res.errors, 'JsonWebTokenError');
     });
@@ -64,7 +118,9 @@ describe('company User routes', () => {
     });
 
     it('patch 200 - success', async () => {
-      const res = await doRequest(agent, 'patch', route, 1, accessToken, { rank: 1 });
+      const res = await doRequest(agent, 'patch', route, 1, accessToken, {
+        rank: 1,
+      });
       expect(res.statusCode).toEqual(200);
       expect(res.body).toBe(1);
     });

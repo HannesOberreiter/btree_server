@@ -1,4 +1,5 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
+
 import { Checkup } from '../models/checkup.model.js';
 import { Feed } from '../models/feed.model.js';
 import { Harvest } from '../models/harvest.model.js';
@@ -16,9 +17,8 @@ export default class StatisticController {
     const query = req.query as any;
     try {
       date = new Date(query.date as string);
-    }
-    catch (e) {
-      console.error(e);
+    } catch (error) {
+      console.error(error);
       throw new Error('Invalid date');
     }
     const result = await hiveCountApiary(date, req.session.user.user_id);
@@ -26,8 +26,8 @@ export default class StatisticController {
   }
 
   static async getHarvestHive(req: FastifyRequest, _reply: FastifyReply) {
-    const { order, direction, offset, limit, q, filters, groupByType }
-      = req.query as any;
+    const { order, direction, offset, limit, q, filters, groupByType } =
+      req.query as any;
 
     const query = Harvest.query()
       .select(Harvest.raw('YEAR(date) as year'), 'hive_id')
@@ -48,8 +48,7 @@ export default class StatisticController {
     if (order) {
       if (Array.isArray(order)) {
         order.forEach((field, index) => query.orderBy(field, direction[index]));
-      }
-      else {
+      } else {
         query.orderBy(order, direction);
       }
     }
@@ -78,15 +77,13 @@ export default class StatisticController {
                 `${v.year}-01-01`,
                 `${v.year}-12-31`,
               ]);
-            }
-            else {
+            } else {
               query.where(v);
             }
           });
         }
-      }
-      catch (e) {
-        req.log.error(e);
+      } catch (error) {
+        req.log.error(error);
       }
     }
 
@@ -125,24 +122,19 @@ export default class StatisticController {
           filtering.forEach((v) => {
             if ('year' in v) {
               // do nothing
-            }
-            else if ('hive_id_array' in v) {
+            } else if ('hive_id_array' in v) {
               query.whereIn('hive_id', v.hive_id_array);
-            }
-            else if ('apiary_id_array' in v) {
+            } else if ('apiary_id_array' in v) {
               query.whereIn('apiary_id', v.apiary_id_array);
-            }
-            else if ('hive_id_array_exclude' in v) {
+            } else if ('hive_id_array_exclude' in v) {
               query.whereNotIn('hive_id', v.hive_id_array_exclude);
-            }
-            else {
+            } else {
               query.where(v);
             }
           });
         }
-      }
-      catch (e) {
-        req.log.error(e);
+      } catch (error) {
+        req.log.error(error);
       }
     }
     const result = await query;
@@ -182,27 +174,21 @@ export default class StatisticController {
                 `${v.year}-01-01`,
                 `${v.year}-12-31`,
               ]);
-            }
-            else if ('hive_id_array' in v) {
+            } else if ('hive_id_array' in v) {
               query.whereIn('hive_id', v.hive_id_array);
-            }
-            else if ('apiary_id_array' in v) {
+            } else if ('apiary_id_array' in v) {
               query.whereIn('apiary_id', v.apiary_id_array);
-            }
-            else if ('hive_id_array_exclude' in v) {
+            } else if ('hive_id_array_exclude' in v) {
               query.whereNotIn('hive_id', v.hive_id_array_exclude);
-            }
-            else {
+            } else {
               query.where(v);
             }
           });
         }
+      } catch (error) {
+        req.log.error(error);
       }
-      catch (e) {
-        req.log.error(e);
-      }
-    }
-    else {
+    } else {
       query.whereBetween('date', [
         `${new Date().getFullYear()}-01-01`,
         `${new Date().getFullYear()}-12-31`,
@@ -246,27 +232,21 @@ export default class StatisticController {
                 `${v.year}-01-01`,
                 `${v.year}-12-31`,
               ]);
-            }
-            else if ('hive_id_array' in v) {
+            } else if ('hive_id_array' in v) {
               query.whereIn('hive_id', v.hive_id_array);
-            }
-            else if ('apiary_id_array' in v) {
+            } else if ('apiary_id_array' in v) {
               query.whereIn('apiary_id', v.apiary_id_array);
-            }
-            else if ('hive_id_array_exclude' in v) {
+            } else if ('hive_id_array_exclude' in v) {
               query.whereNotIn('hive_id', v.hive_id_array_exclude);
-            }
-            else {
+            } else {
               query.where(v);
             }
           });
         }
+      } catch (error) {
+        req.log.error(error);
       }
-      catch (e) {
-        req.log.error(e);
-      }
-    }
-    else {
+    } else {
       query.whereBetween('date', [
         `${new Date().getFullYear()}-01-01`,
         `${new Date().getFullYear()}-12-31`,
@@ -277,8 +257,8 @@ export default class StatisticController {
   }
 
   static async getFeedHive(req: FastifyRequest, _reply: FastifyReply) {
-    const { order, direction, offset, limit, q, filters, groupByType }
-      = req.query as any;
+    const { order, direction, offset, limit, q, filters, groupByType } =
+      req.query as any;
 
     const query = Feed.query()
       .select(Feed.raw('YEAR(date) as year'), 'hive_id')
@@ -297,8 +277,7 @@ export default class StatisticController {
     if (order) {
       if (Array.isArray(order)) {
         order.forEach((field, index) => query.orderBy(field, direction[index]));
-      }
-      else {
+      } else {
         query.orderBy(order, direction);
       }
     }
@@ -327,15 +306,13 @@ export default class StatisticController {
                 `${v.year}-01-01`,
                 `${v.year}-12-31`,
               ]);
-            }
-            else {
+            } else {
               query.where(v);
             }
           });
         }
-      }
-      catch (e) {
-        req.log.error(e);
+      } catch (error) {
+        req.log.error(error);
       }
     }
 
@@ -366,24 +343,19 @@ export default class StatisticController {
           filtering.forEach((v) => {
             if ('year' in v) {
               // do nothing
-            }
-            else if ('hive_id_array' in v) {
+            } else if ('hive_id_array' in v) {
               query.whereIn('hive_id', v.hive_id_array);
-            }
-            else if ('apiary_id_array' in v) {
+            } else if ('apiary_id_array' in v) {
               query.whereIn('apiary_id', v.apiary_id_array);
-            }
-            else if ('hive_id_array_exclude' in v) {
+            } else if ('hive_id_array_exclude' in v) {
               query.whereNotIn('hive_id', v.hive_id_array_exclude);
-            }
-            else {
+            } else {
               query.where(v);
             }
           });
         }
-      }
-      catch (e) {
-        req.log.error(e);
+      } catch (error) {
+        req.log.error(error);
       }
     }
     const result = await query;
@@ -415,27 +387,21 @@ export default class StatisticController {
                 `${v.year}-01-01`,
                 `${v.year}-12-31`,
               ]);
-            }
-            else if ('hive_id_array' in v) {
+            } else if ('hive_id_array' in v) {
               query.whereIn('hive_id', v.hive_id_array);
-            }
-            else if ('apiary_id_array' in v) {
+            } else if ('apiary_id_array' in v) {
               query.whereIn('apiary_id', v.apiary_id_array);
-            }
-            else if ('hive_id_array_exclude' in v) {
+            } else if ('hive_id_array_exclude' in v) {
               query.whereNotIn('hive_id', v.hive_id_array_exclude);
-            }
-            else {
+            } else {
               query.where(v);
             }
           });
         }
+      } catch (error) {
+        req.log.error(error);
       }
-      catch (e) {
-        req.log.error(e);
-      }
-    }
-    else {
+    } else {
       query.whereBetween('date', [
         `${new Date().getFullYear()}-01-01`,
         `${new Date().getFullYear()}-12-31`,
@@ -471,27 +437,21 @@ export default class StatisticController {
                 `${v.year}-01-01`,
                 `${v.year}-12-31`,
               ]);
-            }
-            else if ('hive_id_array' in v) {
+            } else if ('hive_id_array' in v) {
               query.whereIn('hive_id', v.hive_id_array);
-            }
-            else if ('apiary_id_array' in v) {
+            } else if ('apiary_id_array' in v) {
               query.whereIn('apiary_id', v.apiary_id_array);
-            }
-            else if ('hive_id_array_exclude' in v) {
+            } else if ('hive_id_array_exclude' in v) {
               query.whereNotIn('hive_id', v.hive_id_array_exclude);
-            }
-            else {
+            } else {
               query.where(v);
             }
           });
         }
+      } catch (error) {
+        req.log.error(error);
       }
-      catch (e) {
-        req.log.error(e);
-      }
-    }
-    else {
+    } else {
       query.whereBetween('date', [
         `${new Date().getFullYear()}-01-01`,
         `${new Date().getFullYear()}-12-31`,
@@ -523,8 +483,7 @@ export default class StatisticController {
     if (order) {
       if (Array.isArray(order)) {
         order.forEach((field, index) => query.orderBy(field, direction[index]));
-      }
-      else {
+      } else {
         query.orderBy(order, direction);
       }
     }
@@ -547,15 +506,13 @@ export default class StatisticController {
                 `${v.year}-01-01`,
                 `${v.year}-12-31`,
               ]);
-            }
-            else {
+            } else {
               query.where(v);
             }
           });
         }
-      }
-      catch (e) {
-        req.log.error(e);
+      } catch (error) {
+        req.log.error(error);
       }
     }
 
@@ -587,24 +544,19 @@ export default class StatisticController {
           filtering.forEach((v) => {
             if ('year' in v) {
               // do nothing
-            }
-            else if ('hive_id_array' in v) {
+            } else if ('hive_id_array' in v) {
               query.whereIn('hive_id', v.hive_id_array);
-            }
-            else if ('apiary_id_array' in v) {
+            } else if ('apiary_id_array' in v) {
               query.whereIn('apiary_id', v.apiary_id_array);
-            }
-            else if ('hive_id_array_exclude' in v) {
+            } else if ('hive_id_array_exclude' in v) {
               query.whereNotIn('hive_id', v.hive_id_array_exclude);
-            }
-            else {
+            } else {
               query.where(v);
             }
           });
         }
-      }
-      catch (e) {
-        req.log.error(e);
+      } catch (error) {
+        req.log.error(error);
       }
     }
     const result = await query;
@@ -638,27 +590,21 @@ export default class StatisticController {
                 `${v.year}-01-01`,
                 `${v.year}-12-31`,
               ]);
-            }
-            else if ('hive_id_array' in v) {
+            } else if ('hive_id_array' in v) {
               query.whereIn('hive_id', v.hive_id_array);
-            }
-            else if ('apiary_id_array' in v) {
+            } else if ('apiary_id_array' in v) {
               query.whereIn('apiary_id', v.apiary_id_array);
-            }
-            else if ('hive_id_array_exclude' in v) {
+            } else if ('hive_id_array_exclude' in v) {
               query.whereNotIn('hive_id', v.hive_id_array_exclude);
-            }
-            else {
+            } else {
               query.where(v);
             }
           });
         }
+      } catch (error) {
+        req.log.error(error);
       }
-      catch (e) {
-        req.log.error(e);
-      }
-    }
-    else {
+    } else {
       query.whereBetween('date', [
         `${new Date().getFullYear()}-01-01`,
         `${new Date().getFullYear()}-12-31`,
@@ -696,27 +642,21 @@ export default class StatisticController {
                 `${v.year}-01-01`,
                 `${v.year}-12-31`,
               ]);
-            }
-            else if ('hive_id_array' in v) {
+            } else if ('hive_id_array' in v) {
               query.whereIn('hive_id', v.hive_id_array);
-            }
-            else if ('apiary_id_array' in v) {
+            } else if ('apiary_id_array' in v) {
               query.whereIn('apiary_id', v.apiary_id_array);
-            }
-            else if ('hive_id_array_exclude' in v) {
+            } else if ('hive_id_array_exclude' in v) {
               query.whereNotIn('hive_id', v.hive_id_array_exclude);
-            }
-            else {
+            } else {
               query.where(v);
             }
           });
         }
+      } catch (error) {
+        req.log.error(error);
       }
-      catch (e) {
-        req.log.error(e);
-      }
-    }
-    else {
+    } else {
       query.whereBetween('date', [
         `${new Date().getFullYear()}-01-01`,
         `${new Date().getFullYear()}-12-31`,
@@ -756,8 +696,7 @@ export default class StatisticController {
     if (order) {
       if (Array.isArray(order)) {
         order.forEach((field, index) => query.orderBy(field, direction[index]));
-      }
-      else {
+      } else {
         query.orderBy(order, direction);
       }
     }
@@ -780,15 +719,13 @@ export default class StatisticController {
                 `${v.year}-01-01`,
                 `${v.year}-12-31`,
               ]);
-            }
-            else {
+            } else {
               query.where(v);
             }
           });
         }
-      }
-      catch (e) {
-        req.log.error(e);
+      } catch (error) {
+        req.log.error(error);
       }
     }
 
@@ -798,18 +735,18 @@ export default class StatisticController {
 
   static async getVarroa(req: FastifyRequest, _reply: FastifyReply) {
     const query = req.query as {
-      start_date: string
-      end_date: string
-      hive_ids: string[]
+      start_date: string;
+      end_date: string;
+      hive_ids: string[];
     };
 
     interface ResultStats {
-      hive_name: string
+      hive_name: string;
       varroa: {
-        min: number
-        max: number
-        avg: number
-      }
+        min: number;
+        max: number;
+        avg: number;
+      };
     }
 
     const resultDatasetCheckup: any = {};
@@ -818,8 +755,7 @@ export default class StatisticController {
 
     let arrayCount = 0;
     for (let i = 0; i < query.hive_ids.length; i++) {
-      if (i > 20)
-        break;
+      if (i > 20) break;
       const resultCheckup: any[] = [];
       const hive_id = query.hive_ids[i];
       const res = await Checkup.query()
@@ -840,8 +776,7 @@ export default class StatisticController {
         })
         .whereBetween('checkups.date', [query.start_date, query.end_date]);
 
-      if (res.length === 0)
-        continue;
+      if (res.length === 0) continue;
 
       resultStats[arrayCount] = {
         hive_name: (res[0] as any)?.hive_name ?? '',
@@ -878,11 +813,11 @@ export default class StatisticController {
         }
       });
       if (averageLength > 0) {
-        resultStats[arrayCount].varroa.avg
-          = Math.round(
-            (resultStats[arrayCount].varroa.avg / averageLength
-              + Number.EPSILON)
-            * 100,
+        resultStats[arrayCount].varroa.avg =
+          Math.round(
+            (resultStats[arrayCount].varroa.avg / averageLength +
+              Number.EPSILON) *
+              100,
           ) / 100;
       }
       resultDatasetCheckup[hive_id] = resultCheckup;
@@ -890,8 +825,7 @@ export default class StatisticController {
     }
 
     for (let i = 0; i < query.hive_ids.length; i++) {
-      if (i > 20)
-        break;
+      if (i > 20) break;
       const resultTreatment: any[] = [];
       const hive_id = query.hive_ids[i];
       const res = await Treatment.query()
@@ -912,8 +846,7 @@ export default class StatisticController {
         })
         .whereBetween('treatments.date', [query.start_date, query.end_date]);
 
-      if (res.length === 0)
-        continue;
+      if (res.length === 0) continue;
       res.forEach((v: any) => {
         resultTreatment.push([
           hive_id,

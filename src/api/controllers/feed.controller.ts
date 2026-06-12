@@ -1,5 +1,5 @@
-import type { FastifyReply, FastifyRequest } from 'fastify';
 import dayjs from 'dayjs';
+import type { FastifyReply, FastifyRequest } from 'fastify';
 import { map } from 'lodash-es';
 
 import { KyselyServer } from '../../servers/kysely.server.js';
@@ -9,8 +9,8 @@ import { checkOwnership } from '../utils/kysely.utils.js';
 
 export default class FeedController {
   static async get(req: FastifyRequest, _reply: FastifyReply) {
-    const { order, direction, offset, limit, q, filters, deleted, done }
-      = req.query as any;
+    const { order, direction, offset, limit, q, filters, deleted, done } =
+      req.query as any;
     const query = Feed.query()
       .withGraphJoined(
         '[feed_apiary, type, hive, creator(identifier), editor(identifier)]',
@@ -33,22 +33,19 @@ export default class FeedController {
           filtering.forEach((v) => {
             if ('date' in v && typeof v.date === 'object') {
               query.whereBetween('date', [v.date.from, v.date.to]);
-            }
-            else {
+            } else {
               query.where(v);
             }
           });
         }
-      }
-      catch (e) {
-        req.log.error(e);
+      } catch (error) {
+        req.log.error(error);
       }
     }
     if (order) {
       if (Array.isArray(order)) {
         order.forEach((field, index) => query.orderBy(field, direction[index]));
-      }
-      else {
+      } else {
         query.orderBy(order, direction);
       }
     }
@@ -226,8 +223,7 @@ export default class FeedController {
       const softIds = [];
       const hardIds = [];
       map(res, (obj) => {
-        if ((obj.deleted || hardDelete) && !restoreDelete)
-          hardIds.push(obj.id);
+        if ((obj.deleted || hardDelete) && !restoreDelete) hardIds.push(obj.id);
         else softIds.push(obj.id);
       });
 

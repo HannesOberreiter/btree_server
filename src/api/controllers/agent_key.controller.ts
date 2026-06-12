@@ -1,11 +1,12 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import httpErrors from 'http-errors';
+
 import { AgentKeyModel, generateAgentKey } from '../models/agent_key.model.js';
 import { isPremium } from '../utils/premium.util.js';
 
 interface CreateKeyBody {
-  label?: string
-  valid_to?: string | null
+  label?: string;
+  valid_to?: string | null;
 }
 
 const AgentKeyController = {
@@ -15,12 +16,13 @@ const AgentKeyController = {
    */
   async create(req: FastifyRequest, reply: FastifyReply) {
     const user = req.session.user;
-    if (!user)
-      throw httpErrors.Unauthorized();
+    if (!user) throw httpErrors.Unauthorized();
 
     const premium = await isPremium(user.user_id);
     if (!premium) {
-      throw httpErrors.Forbidden('Agent API keys require an active premium subscription.');
+      throw httpErrors.Forbidden(
+        'Agent API keys require an active premium subscription.',
+      );
     }
 
     const body = req.body as CreateKeyBody;
@@ -28,7 +30,9 @@ const AgentKeyController = {
 
     const validTo = body.valid_to ? new Date(body.valid_to) : null;
     if (validTo && Number.isNaN(validTo.getTime())) {
-      throw httpErrors.BadRequest('Invalid valid_to date format. Use ISO 8601 (e.g. 2025-12-31T23:59:59Z).');
+      throw httpErrors.BadRequest(
+        'Invalid valid_to date format. Use ISO 8601 (e.g. 2025-12-31T23:59:59Z).',
+      );
     }
 
     const id = await AgentKeyModel.create({
@@ -71,8 +75,7 @@ const AgentKeyController = {
    */
   async remove(req: FastifyRequest, reply: FastifyReply) {
     const user = req.session.user;
-    if (!user)
-      throw httpErrors.Unauthorized();
+    if (!user) throw httpErrors.Unauthorized();
 
     const { id } = req.params as { id: string };
     const deleted = await AgentKeyModel.deleteById(Number(id), user.bee_id);

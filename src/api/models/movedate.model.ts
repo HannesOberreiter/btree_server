@@ -1,4 +1,5 @@
 import { Model } from 'objection';
+
 import { Apiary } from './apiary.model.js';
 import { ExtModel } from './base.model.js';
 import { Hive } from './hive.model.js';

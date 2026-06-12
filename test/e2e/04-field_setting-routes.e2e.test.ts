@@ -1,6 +1,12 @@
-import type { TestAgent } from '../utils.js';
 import { beforeAll, describe, expect, it } from 'vitest';
-import { createAgent, createAuthenticatedAgent, doQueryRequest, doRequest } from '../utils.js';
+
+import type { TestAgent } from '../utils.js';
+import {
+  createAgent,
+  createAuthenticatedAgent,
+  doQueryRequest,
+  doRequest,
+} from '../utils.js';
 
 const settings = JSON.stringify({
   checkup: {
@@ -34,7 +40,9 @@ describe('fieldsetting routes', () => {
     });
 
     it('200 - patch and get', async () => {
-      const res = await doRequest(agent, 'patch', route, null, accessToken, { settings });
+      const res = await doRequest(agent, 'patch', route, null, accessToken, {
+        settings,
+      });
       expect(res.statusCode).toEqual(200);
       expect(res.body).toEqual(JSON.parse(settings));
       const res2 = await doQueryRequest(agent, route, null, accessToken, null);

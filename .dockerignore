@@ -21,6 +21,7 @@ Insomnia.json
 
 # Logs
 **/*.log
+pnpm-debug.log*
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
@@ -31,7 +32,8 @@ pids
 **/*.seed
 **/*.pid.lock
 
-# Optional npm cache directory
+# Optional package manager cache directories
+.pnpm-store
 .npm
 
 # Optional eslint cache

@@ -1,4 +1,5 @@
 import { Model } from 'objection';
+
 import { Checkup } from './checkup.model.js';
 import { Company } from './company.model.js';
 

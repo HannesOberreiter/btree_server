@@ -26,8 +26,7 @@ async function getRearings(params, user) {
   if (params.id) {
     // if not used inside calendar and we only want one event
     rearings_query.where('id', params.id);
-  }
-  else {
+  } else {
     // Because Rearings could goes over multiple months we add / substract here to catch them
     const start = dayjs(params.start).subtract(2, 'month').toISOString();
     const end = dayjs(params.end).add(2, 'month').toISOString();
@@ -67,17 +66,16 @@ async function getRearings(params, user) {
       if (result.startPosition === result.currentStep.position) {
         // Current Step is actual Start Step
         result.start = dayjs(result.date).toISOString();
-      }
-      else {
+      } else {
         if (
-          Number.parseInt(result.currentStep.position) > Number.parseInt(result.startPosition)
+          Number.parseInt(result.currentStep.position) >
+          Number.parseInt(result.startPosition)
         ) {
           // Step comes behind Start Step, we can simply add up the hours
           const hours = result.currentStep.sleep_before ?? 0;
           addDate = addDate.add(hours, 'hour');
           result.start = addDate.toISOString();
-        }
-        else {
+        } else {
           // Step comes before Start Step, this is more complicated as
           // we need to account for the steps which are coming before it
           const steps_before = result.startKey - result.currentStep.key;
@@ -140,8 +138,7 @@ async function getTodos(params, user) {
     if (res.done) {
       res.unicode = '✏️ ✅';
       res.color = 'green';
-    }
-    else {
+    } else {
       res.unicode = '✏️ ❎';
       res.color = 'red';
     }
@@ -150,16 +147,14 @@ async function getTodos(params, user) {
       res.editors = res.editor.username
         ? res.editor.username
         : res.editor.email;
-    }
-    else {
+    } else {
       res.editors = '';
     }
     if (res.creator) {
       res.creators = res.creator.username
         ? res.creator.username
         : res.creator.email;
-    }
-    else {
+    } else {
       res.creators = '';
     }
 
@@ -186,8 +181,7 @@ async function getMovements(params, user) {
     const count = (res.hive_names.match(COMMA_REGEX) || []).length + 1;
     if (count === 1) {
       res.title = `[${res.hive_names}] - ${res.apiary_name}`;
-    }
-    else {
+    } else {
       res.title = `${count}x ${res.apiary_name}`;
     }
     res.icon = 'fas fa-truck';
@@ -198,14 +192,12 @@ async function getMovements(params, user) {
     res.durationEditable = false;
     if (res.editors) {
       res.editors = String(intersection(res.editors.split(',')));
-    }
-    else {
+    } else {
       res.editors = '';
     }
     if (res.creators) {
       res.creators = String(intersection(res.creators.split(',')));
-    }
-    else {
+    } else {
       res.creators = '';
     }
     result.push(res);
@@ -232,24 +224,20 @@ async function getTask(params, user, task: string) {
     const count = (res.hive_names.match(COMMA_REGEX) || []).length + 1;
     if (count === 1) {
       res.title = `[${res.hive_names}] ${res.type_name} - ${res.apiary_name}`;
-    }
-    else {
+    } else {
       res.title = `${count}x ${res.type_name} - ${res.apiary_name}`;
     }
     if (task === 'checkup') {
       res.icon = 'fas fa-search';
       res.color = '#067558';
-    }
-    else if (task === 'treatment') {
+    } else if (task === 'treatment') {
       res.icon = 'fas fa-plus';
       res.color = '#cc5b9a';
       res.title += ` (${res.disease_name})`;
-    }
-    else if (task === 'feed') {
+    } else if (task === 'feed') {
       res.icon = 'fas fa-cube';
       res.color = '#d55e00';
-    }
-    else if (task === 'harvest') {
+    } else if (task === 'harvest') {
       res.icon = 'fas fa-tint';
       res.color = 'yellow';
       res.textColor = 'black';
@@ -263,14 +251,12 @@ async function getTask(params, user, task: string) {
     res.table = task;
     if (res.editors) {
       res.editors = String(intersection(res.editors.split(',')));
-    }
-    else {
+    } else {
       res.editors = '';
     }
     if (res.creators) {
       res.creators = String(intersection(res.creators.split(',')));
-    }
-    else {
+    } else {
       res.creators = '';
     }
     // Event end Date is exclusive see docu https://fullcalendar.io/docs/event_data/Event_Object/

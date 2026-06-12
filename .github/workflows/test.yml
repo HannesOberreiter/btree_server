@@ -45,15 +45,16 @@ jobs:
 
     steps:
       - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v6
       - uses: actions/setup-node@v6
         with:
           node-version: '22'
-          cache: npm
+          cache: pnpm
       - name: Install packages
-        run: npm install
+        run: pnpm install --frozen-lockfile
       - name: Build dist
-        run: npm run build
+        run: pnpm run build
       - name: List output files
         run: ls
       - name: Run e2e tests
-        run: npm run ci:e2e
+        run: pnpm run ci:e2e

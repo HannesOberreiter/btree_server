@@ -4,9 +4,8 @@ import { checkMySQLError } from './error.util.js';
 export async function getCompany(api: string) {
   try {
     return await Company.query().findOne({ api_key: api }).throwIfNotFound();
-  }
-  catch (e) {
-    throw checkMySQLError(e);
+  } catch (error) {
+    throw checkMySQLError(error);
   }
 }
 
@@ -23,9 +22,8 @@ export function isValidTimeZone(tz: string) {
   try {
     Intl.DateTimeFormat(undefined, { timeZone: tz });
     return true;
-  }
-  catch (e) {
-    console.error(e);
+  } catch (error) {
+    console.error(error);
     return false;
   }
 }

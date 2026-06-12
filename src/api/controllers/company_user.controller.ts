@@ -1,5 +1,6 @@
-import type { FastifyReply, FastifyRequest } from 'fastify';
 import { randomBytes } from 'node:crypto';
+
+import type { FastifyReply, FastifyRequest } from 'fastify';
 import httpErrors from 'http-errors';
 
 import { Company } from '../models/company.model.js';
@@ -39,8 +40,7 @@ export default class CompanyUserController {
       });
       if (duplicate) {
         return { userExists };
-      }
-      else {
+      } else {
         await CompanyBee.query().insert({
           bee_id: userExists.id,
           user_id: req.session.user.user_id,
@@ -48,8 +48,7 @@ export default class CompanyUserController {
         });
         return { userExists };
       }
-    }
-    else {
+    } else {
       const inviter = await User.query()
         .select('lang')
         .findById(req.session.user.bee_id);

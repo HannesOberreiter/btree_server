@@ -1,6 +1,11 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import httpErrors from 'http-errors';
-import { AgentKeyModel, KEY_PREFIX_LENGTH, verifyAgentKey } from '../models/agent_key.model.js';
+
+import {
+  AgentKeyModel,
+  KEY_PREFIX_LENGTH,
+  verifyAgentKey,
+} from '../models/agent_key.model.js';
 
 /**
  * Fastify preHandler hook that authenticates requests using an Agent API key.
@@ -13,14 +18,24 @@ export async function agentAuthHook(
   request: FastifyRequest,
   _reply: FastifyReply,
 ) {
-  const authHeader = request.headers.authorization;
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    throw httpErrors.Unauthorized('Missing or invalid Authorization header. Expected: Bearer btree_ak_...');
+  const path = new URL(request.url, 'http://localhost').pathname;
+  if (path.endsWith('/openapi.json')) {
+    return;
   }
 
-  const plaintextKey = authHeader.slice(7).trim();
+  const authHeader = request.headers.authorization;
+  const [scheme, ...credentialParts] = authHeader?.split(' ') ?? [];
+  if (!authHeader || scheme.toLowerCase() !== 'bearer') {
+    throw httpErrors.Unauthorized(
+      'Missing or invalid Authorization header. Expected: Bearer btree_ak_...',
+    );
+  }
+
+  const plaintextKey = credentialParts.join(' ').trim();
   if (!plaintextKey.startsWith('btree_ak_')) {
-    throw httpErrors.Unauthorized('Invalid API key format. Expected key starting with btree_ak_');
+    throw httpErrors.Unauthorized(
+      'Invalid API key format. Expected key starting with btree_ak_',
+    );
   }
 
   const prefix = plaintextKey.substring(0, KEY_PREFIX_LENGTH);
@@ -38,14 +53,11 @@ export async function agentAuthHook(
       }
 
       // Populate session
-      if (!request.session) {
-        (request as any).session = {};
-      }
       request.session.user = {
         user_id: candidate.user_id,
         bee_id: candidate.bee_id,
-      } as any;
-      (request.session as any).agent = true;
+      } as FastifyRequest['session']['user'];
+      request.session.agent = true;
 
       // Update last_used async (don't block the request)
       AgentKeyModel.updateLastUsed(candidate.id).catch(() => {});

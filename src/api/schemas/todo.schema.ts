@@ -1,10 +1,12 @@
 import { z } from 'zod';
 
-export const beeSchema = z.object({
-  id: z.number(),
-  email: z.string().nullable(),
-  username: z.string().nullable(),
-}).nullable();
+export const beeSchema = z
+  .object({
+    id: z.number(),
+    email: z.string().nullable(),
+    username: z.string().nullable(),
+  })
+  .nullable();
 
 export type Bee = z.infer<typeof beeSchema>;
 
@@ -23,10 +25,13 @@ export const todoResponseSchema = z.object({
   updated_at: z.string().nullable(), // Date as ISO string
   creator: beeSchema.optional(),
   editor: beeSchema.optional(),
-  apiary: z.object({
-    name: z.string(),
-    modus: z.boolean(),
-  }).nullable().optional(),
+  apiary: z
+    .object({
+      name: z.string(),
+      modus: z.boolean(),
+    })
+    .nullable()
+    .optional(),
 });
 
 export type TodoResponse = z.infer<typeof todoResponseSchema>;

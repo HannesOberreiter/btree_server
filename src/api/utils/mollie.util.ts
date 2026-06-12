@@ -1,5 +1,12 @@
 import { createMollieClient } from '@mollie/api-client';
-import { env, frontend, mollieApiKey, serverLocation, url } from '../../config/environment.config.js';
+
+import {
+  env,
+  frontend,
+  mollieApiKey,
+  serverLocation,
+  url,
+} from '../../config/environment.config.js';
 
 const mollieClient = createMollieClient({ apiKey: mollieApiKey });
 
@@ -12,7 +19,8 @@ export function createOrder(
   amount: number,
   quantity: number,
 ) {
-  const tunnel = env === 'development' ? 'https://b110-89-144-218-103.ngrok-free.app' : url;
+  const tunnel =
+    env === 'development' ? 'https://b110-89-144-218-103.ngrok-free.app' : url;
   return mollieClient.payments.create({
     amount: {
       currency: 'EUR',

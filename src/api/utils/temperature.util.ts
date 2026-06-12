@@ -10,80 +10,80 @@ import { Logger } from '../../services/logger.service.js';
  * @see https://openweathermap.org/api/one-call-3
  */
 export interface OneCallResponse {
-  lat: number
-  lon: number
-  timezone: string
-  timezone_offset: number
+  lat: number;
+  lon: number;
+  timezone: string;
+  timezone_offset: number;
   current: {
-    dt: number
-    sunrise: number
-    sunset: number
-    temp: number
-    feels_like: number
-    pressure: number
-    humidity: number
-    dew_point: number
-    uvi: number
-    clouds: number
-    visibility: number
-    wind_speed: number
-    wind_deg: number
-    wind_gust?: number
+    dt: number;
+    sunrise: number;
+    sunset: number;
+    temp: number;
+    feels_like: number;
+    pressure: number;
+    humidity: number;
+    dew_point: number;
+    uvi: number;
+    clouds: number;
+    visibility: number;
+    wind_speed: number;
+    wind_deg: number;
+    wind_gust?: number;
     weather: Array<{
-      id: number
-      main: string
-      description: string
-      icon: string
-    }>
-  }
+      id: number;
+      main: string;
+      description: string;
+      icon: string;
+    }>;
+  };
   daily: Array<{
-    dt: number
-    sunrise: number
-    sunset: number
-    moonrise: number
-    moonset: number
-    moon_phase: number
-    summary?: string
+    dt: number;
+    sunrise: number;
+    sunset: number;
+    moonrise: number;
+    moonset: number;
+    moon_phase: number;
+    summary?: string;
     temp: {
-      day: number
-      min: number
-      max: number
-      night: number
-      eve: number
-      morn: number
-    }
+      day: number;
+      min: number;
+      max: number;
+      night: number;
+      eve: number;
+      morn: number;
+    };
     feels_like: {
-      day: number
-      night: number
-      eve: number
-      morn: number
-    }
-    pressure: number
-    humidity: number
-    dew_point: number
-    wind_speed: number
-    wind_deg: number
-    wind_gust?: number
+      day: number;
+      night: number;
+      eve: number;
+      morn: number;
+    };
+    pressure: number;
+    humidity: number;
+    dew_point: number;
+    wind_speed: number;
+    wind_deg: number;
+    wind_gust?: number;
     weather: Array<{
-      id: number
-      main: string
-      description: string
-      icon: string
-    }>
-    clouds: number
-    pop: number
-    rain?: number
-    snow?: number
-    uvi: number
-  }>
+      id: number;
+      main: string;
+      description: string;
+      icon: string;
+    }>;
+    clouds: number;
+    pop: number;
+    rain?: number;
+    snow?: number;
+    uvi: number;
+  }>;
   alerts?: Array<{
-    sender_name: string
-    event: string
-    start: number
-    end: number
-    description: string
-    tags: string[]
-  }>
+    sender_name: string;
+    event: string;
+    start: number;
+    end: number;
+    description: string;
+    tags: string[];
+  }>;
 }
 
 /**
@@ -93,7 +93,10 @@ export interface OneCallResponse {
  * @param longitude - Location longitude
  * @returns Elevation above sea level in meters
  */
-export async function getElevation(latitude: number, longitude: number): Promise<number> {
+export async function getElevation(
+  latitude: number,
+  longitude: number,
+): Promise<number> {
   const lat = Number(latitude.toFixed(4));
   const lon = Number(longitude.toFixed(4));
   const cacheKey = `elevation:${lat}:${lon}`;
@@ -103,8 +106,7 @@ export async function getElevation(latitude: number, longitude: number): Promise
     if (cached !== null) {
       return Number(cached);
     }
-  }
-  catch (error) {
+  } catch (error) {
     Logger.getInstance().log('warn', 'Redis cache read error', {
       label: 'Elevation Cache',
       error,
@@ -115,23 +117,34 @@ export async function getElevation(latitude: number, longitude: number): Promise
 
   try {
     const response = await fetch(url);
-    const result = await response.json() as { elevation?: number[], error?: boolean, reason?: string };
+    const result = (await response.json()) as {
+      elevation?: number[];
+      error?: boolean;
+      reason?: string;
+    };
 
     if (!response.ok || result.error) {
-      throw httpErrors.BadRequest(result.reason || 'Open-Meteo elevation error');
+      throw httpErrors.BadRequest(
+        result.reason || 'Open-Meteo elevation error',
+      );
     }
 
     const elevation = result.elevation?.[0];
     if (typeof elevation !== 'number') {
-      throw httpErrors.ServiceUnavailable('Invalid response from Open-Meteo elevation');
+      throw httpErrors.ServiceUnavailable(
+        'Invalid response from Open-Meteo elevation',
+      );
     }
 
     const roundedElevation = Math.round(elevation);
 
     try {
-      await RedisServer.client.setEx(cacheKey, 60 * 60 * 24 * 30, `${roundedElevation}`);
-    }
-    catch (error) {
+      await RedisServer.client.setEx(
+        cacheKey,
+        60 * 60 * 24 * 30,
+        `${roundedElevation}`,
+      );
+    } catch (error) {
       Logger.getInstance().log('warn', 'Redis cache write error', {
         label: 'Elevation Cache',
         error,
@@ -139,8 +152,7 @@ export async function getElevation(latitude: number, longitude: number): Promise
     }
 
     return roundedElevation;
-  }
-  catch (error) {
+  } catch (error) {
     Logger.getInstance().log('error', 'Open-Meteo Elevation API error', {
       label: 'OpenMeteo',
       error,
@@ -157,19 +169,23 @@ export async function getElevation(latitude: number, longitude: number): Promise
  * @param longitude - Location longitude
  * @returns Complete weather data including current conditions and forecast
  */
-export async function getWeatherData(latitude: number, longitude: number): Promise<OneCallResponse> {
-  // Create cache key based on coordinates (rounded to 4 decimal places for ~11m precision)
-  const lat = Number(latitude.toFixed(4));
-  const lon = Number(longitude.toFixed(4));
+export async function getWeatherData(
+  latitude: number,
+  longitude: number,
+): Promise<OneCallResponse> {
+  // Create cache key based on coordinates (rounded to 2 decimal places for ~1km precision)
+  const lat = Number(latitude.toFixed(2));
+  const lon = Number(longitude.toFixed(2));
   const cacheKey = `weather:${lat}:${lon}`;
 
   try {
     const cached = await RedisServer.client.get(cacheKey);
     if (cached) {
-      return JSON.parse(cached as string) as OneCallResponse;
+      const cachedText =
+        typeof cached === 'string' ? cached : cached.toString();
+      return JSON.parse(cachedText) as OneCallResponse;
     }
-  }
-  catch (error) {
+  } catch (error) {
     Logger.getInstance().log('warn', 'Redis cache read error', {
       label: 'Weather Cache',
       error,
@@ -191,8 +207,7 @@ export async function getWeatherData(latitude: number, longitude: number): Promi
     // Cache the result for 1 hour (3600 seconds)
     try {
       await RedisServer.client.setEx(cacheKey, 3600, JSON.stringify(result));
-    }
-    catch (error) {
+    } catch (error) {
       Logger.getInstance().log('warn', 'Redis cache write error', {
         label: 'Weather Cache',
         error,
@@ -200,8 +215,7 @@ export async function getWeatherData(latitude: number, longitude: number): Promi
     }
 
     return result as OneCallResponse;
-  }
-  catch (error) {
+  } catch (error) {
     Logger.getInstance().log('error', 'OpenWeather One Call API error', {
       label: 'OpenWeather',
       error,
@@ -224,10 +238,36 @@ export async function getHistoricalTemperatures(
   startDate: string,
   endDate: string,
   elevation?: number | null,
-): Promise<Array<{ date: string, temperature: number }>> {
+): Promise<Array<{ date: string; temperature: number }>> {
+  const lat = Number(latitude.toFixed(2));
+  const lon = Number(longitude.toFixed(2));
+  const elevationKey =
+    elevation !== undefined && elevation !== null ? elevation : 'auto';
+  const cacheKey = `historicalTemperatures:${lat}:${lon}:${startDate}:${endDate}:${elevationKey}`;
+
+  try {
+    const cached = await RedisServer.client.get(cacheKey);
+    if (cached) {
+      const cachedText =
+        typeof cached === 'string' ? cached : cached.toString();
+      return JSON.parse(cachedText) as Array<{
+        date: string;
+        temperature: number;
+      }>;
+    }
+  } catch (error) {
+    Logger.getInstance().log('warn', 'Redis cache read error', {
+      label: 'Historical Temperatures Cache',
+      error,
+    });
+  }
+
   // Open-Meteo Archive API - Free with rate limits (10,000 requests/day)
   // https://open-meteo.com/en/docs/historical-weather-api
-  const elevationParam = elevation !== undefined && elevation !== null ? `&elevation=${elevation}` : '';
+  const elevationParam =
+    elevation !== undefined && elevation !== null
+      ? `&elevation=${elevation}`
+      : '';
   const url = `https://historical-forecast-api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&start_date=${startDate}&end_date=${endDate}&daily=temperature_2m_mean&timezone=auto&models=best_match${elevationParam}`;
 
   try {
@@ -238,17 +278,38 @@ export async function getHistoricalTemperatures(
       throw httpErrors.BadRequest(result.reason || result.error);
     }
 
-    if (!result.daily || !result.daily.time || !result.daily.temperature_2m_mean) {
+    if (
+      !result.daily ||
+      !result.daily.time ||
+      !result.daily.temperature_2m_mean
+    ) {
       throw httpErrors.ServiceUnavailable('Invalid response from Open-Meteo');
     }
 
     // Convert parallel arrays to array of objects
-    return result.daily.time.map((date: string, index: number) => ({
-      date,
-      temperature: result.daily.temperature_2m_mean[index],
-    }));
-  }
-  catch (error) {
+    const dailyTemperatures = result.daily.time.map(
+      (date: string, index: number) => ({
+        date,
+        temperature: result.daily.temperature_2m_mean[index],
+      }),
+    ) as Array<{ date: string; temperature: number }>;
+
+    // Cache the result for 1 hour (3600 seconds)
+    try {
+      await RedisServer.client.setEx(
+        cacheKey,
+        3600,
+        JSON.stringify(dailyTemperatures),
+      );
+    } catch (error) {
+      Logger.getInstance().log('warn', 'Redis cache write error', {
+        label: 'Historical Temperatures Cache',
+        error,
+      });
+    }
+
+    return dailyTemperatures;
+  } catch (error) {
     Logger.getInstance().log('error', 'Open-Meteo error', {
       label: 'OpenMeteo',
       error,
@@ -268,14 +329,14 @@ export async function getHistoricalTemperatures(
  * @returns Object with daily cumulative GTS values for graphing
  */
 export function calculateGruenlandtemperatursumme(
-  dailyTemperatures: Array<{ date: string, temperature: number }>,
+  dailyTemperatures: Array<{ date: string; temperature: number }>,
 ) {
   let cumulativeGts = 0;
   const dailyData: Array<{
-    date: string
-    temperature: number
-    dailyGts: number
-    cumulativeGts: number
+    date: string;
+    temperature: number;
+    dailyGts: number;
+    cumulativeGts: number;
   }> = [];
 
   for (const day of dailyTemperatures) {
@@ -288,8 +349,7 @@ export function calculateGruenlandtemperatursumme(
       let factor = 1.0;
       if (month === 1) {
         factor = 0.5; // January
-      }
-      else if (month === 2) {
+      } else if (month === 2) {
         factor = 0.75; // February
       }
       // March onwards: factor = 1.0 (default)

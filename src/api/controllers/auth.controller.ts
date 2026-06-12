@@ -1,10 +1,10 @@
-import type { FastifyReply, FastifyRequest } from 'fastify';
-import type { z } from 'zod';
-import type { federatedUser } from '../../services/federated.service.js';
-import type { RegisterBody } from '../routes/v1/auth.route.js';
 import { randomBytes, randomUUID } from 'node:crypto';
+
 import dayjs from 'dayjs';
+import type { FastifyReply, FastifyRequest } from 'fastify';
 import httpErrors from 'http-errors';
+import type { z } from 'zod';
+
 import { ENVIRONMENT } from '../../config/constants.config.js';
 import {
   discourseSecret,
@@ -13,12 +13,17 @@ import {
   serverLocation,
 } from '../../config/environment.config.js';
 import { DiscourseSSO } from '../../services/discourse.service.js';
+import type { federatedUser } from '../../services/federated.service.js';
 import { AppleAuth, GoogleAuth } from '../../services/federated.service.js';
 import { MailService } from '../../services/mail.service.js';
 import { Company } from '../models/company.model.js';
 import { CompanyBee } from '../models/company_bee.model.js';
 import { User } from '../models/user.model.js';
-import { AppleCallbackGETSchema, AppleCallbackSchema } from '../routes/v1/auth.route.js';
+import type { RegisterBody } from '../routes/v1/auth.route.js';
+import {
+  AppleCallbackGETSchema,
+  AppleCallbackSchema,
+} from '../routes/v1/auth.route.js';
 import {
   buildUserAgent,
   confirmAccount,
@@ -189,6 +194,7 @@ export default class AuthController {
     const { bee_id, user_id, data, paid, rank } = await loginCheck(
       email,
       password,
+      undefined,
     );
 
     // Add bee_id to req as regenerate will call genid which uses bee_id as prefix to store key
@@ -207,9 +213,8 @@ export default class AuthController {
         ip: req.ip,
       };
       await req.session.save();
-    }
-    catch (e) {
-      req.log.error(e);
+    } catch (error) {
+      req.log.error(error);
       throw httpErrors[500]('Failed to create session');
     }
     return { data };
@@ -237,12 +242,10 @@ export default class AuthController {
         };
         const q = sso.buildLoginString(userparams);
         return { q };
-      }
-      else {
+      } else {
         throw httpErrors.Forbidden('Invalid Signature');
       }
-    }
-    else {
+    } else {
       throw httpErrors.Forbidden('Missing Signature');
     }
   }
@@ -263,20 +266,14 @@ export default class AuthController {
         }
         return reply.redirect(
           encodeURI(
-            `${frontend
-            }/visitor/register?name=${
-              result.name
-            }&email=${
+            `${frontend}/visitor/register?name=${result.name}&email=${
               result.email
-            }&oauth=google`
-            + `&server=${
-              serverLocation}`,
+            }&oauth=google&server=${serverLocation}`,
           ),
         );
       }
-    }
-    catch (e) {
-      req.log.error({ message: 'Error in google callback', error: e });
+    } catch (error) {
+      req.log.error({ message: 'Error in google callback', error: error });
       return reply.redirect(
         `${frontend}/visitor/login?error=oauth&server=${serverLocation}`,
       );
@@ -304,9 +301,8 @@ export default class AuthController {
         ip: req.ip,
       };
       await req.session.save();
-    }
-    catch (e) {
-      req.log.error(e);
+    } catch (error) {
+      req.log.error(error);
       throw httpErrors[500]('Failed to create session');
     }
     reply.redirect(`${frontend}/visitor/login?server=${serverLocation}`);
@@ -334,15 +330,16 @@ export default class AuthController {
           try {
             const userObj = JSON.parse(decodeURIComponent(query.user));
             transformedQuery.user = userObj;
-          }
-          catch (parseError) {
-            req.log.warn({ message: 'Failed to parse user field from Apple callback', error: parseError });
+          } catch (parseError) {
+            req.log.warn({
+              message: 'Failed to parse user field from Apple callback',
+              error: parseError,
+            });
           }
         }
 
         body = AppleCallbackSchema.parse(transformedQuery);
-      }
-      else {
+      } else {
         body = AppleCallbackSchema.parse(req.body);
       }
 
@@ -352,8 +349,7 @@ export default class AuthController {
           `${frontend}/visitor/login?error=oauth&server=${serverLocation}`,
         );
       }
-    }
-    catch (error) {
+    } catch (error) {
       req.log.error({ message: 'Invalid Apple callback body', error });
       return reply.redirect(
         `${frontend}/visitor/login?error=oauth&server=${serverLocation}`,
@@ -365,18 +361,13 @@ export default class AuthController {
       if (!result.bee_id) {
         return reply.redirect(
           encodeURI(
-            `${frontend
-            }/visitor/register?email=${
-              result.email
-            }&oauth=apple`
-            + `&server=${
-              serverLocation}`,
+            `${frontend}/visitor/register?email=${result.email}&oauth=apple` +
+              `&server=${serverLocation}`,
           ),
         );
       }
-    }
-    catch (e) {
-      req.log.error({ message: 'Error in apple callback', error: e });
+    } catch (error) {
+      req.log.error({ message: 'Error in apple callback', error: error });
       return reply.redirect(
         `${frontend}/visitor/login?error=oauth&server=${serverLocation}`,
       );
@@ -404,9 +395,8 @@ export default class AuthController {
         ip: req.ip,
       };
       await req.session.save();
-    }
-    catch (e) {
-      req.log.error(e);
+    } catch (error) {
+      req.log.error(error);
       throw httpErrors[500]('Failed to create session');
     }
     reply.redirect(`${frontend}/visitor/login?server=${serverLocation}`);

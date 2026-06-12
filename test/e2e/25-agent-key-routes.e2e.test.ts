@@ -1,6 +1,8 @@
-import type { TestAgent } from '../utils.js';
 import process from 'node:process';
+
 import { beforeAll, describe, expect, it } from 'vitest';
+
+import type { TestAgent } from '../utils.js';
 import { createAgent, demoUser, doRequest } from '../utils.js';
 
 /**
@@ -17,9 +19,9 @@ async function agentFetch(
     method,
     headers: {
       'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      'Origin': process.env.ORIGIN!,
-      'Authorization': `Bearer ${apiKey}`,
+      Accept: 'application/json',
+      Origin: process.env.ORIGIN!,
+      Authorization: `Bearer ${apiKey}`,
     },
     body: body !== undefined ? JSON.stringify(body) : undefined,
   });
@@ -39,8 +41,8 @@ async function noAuthFetch(method: string, path: string, body?: unknown) {
     method,
     headers: {
       'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      'Origin': process.env.ORIGIN!,
+      Accept: 'application/json',
+      Origin: process.env.ORIGIN!,
     },
     body: body !== undefined ? JSON.stringify(body) : undefined,
   });
@@ -51,6 +53,27 @@ async function noAuthFetch(method: string, path: string, body?: unknown) {
   return { statusCode: res.status, body: responseBody };
 }
 
+async function noAuthFetchNoRedirect(method: string, path: string) {
+  const baseUrl = `http://localhost:${process.env.PORT}`;
+  const res = await fetch(`${baseUrl}${path}`, {
+    method,
+    headers: {
+      Accept: 'application/json',
+      Origin: process.env.ORIGIN!,
+    },
+    redirect: 'manual',
+  });
+  const contentType = res.headers.get('content-type') ?? '';
+  const responseBody = contentType.includes('json')
+    ? await res.json()
+    : await res.text();
+  return {
+    statusCode: res.status,
+    body: responseBody,
+    location: res.headers.get('location'),
+  };
+}
+
 describe('agent key & agent API routes', () => {
   let agent: TestAgent;
   let createdKeyId: number;
@@ -59,7 +82,14 @@ describe('agent key & agent API routes', () => {
   beforeAll(async () => {
     agent = createAgent();
     // Login as demo user
-    const loginRes = await doRequest(agent, 'post', '/api/v1/auth/login', null, null, demoUser);
+    const loginRes = await doRequest(
+      agent,
+      'post',
+      '/api/v1/auth/login',
+      null,
+      null,
+      demoUser,
+    );
     expect(loginRes.statusCode).toEqual(200);
   });
 
@@ -67,9 +97,16 @@ describe('agent key & agent API routes', () => {
 
   describe('pOST /api/v1/agent_key', () => {
     it('201 - create agent key', async () => {
-      const res = await doRequest(agent, 'post', '/api/v1/agent_key', null, null, {
-        label: 'E2E Test Key',
-      });
+      const res = await doRequest(
+        agent,
+        'post',
+        '/api/v1/agent_key',
+        null,
+        null,
+        {
+          label: 'E2E Test Key',
+        },
+      );
       expect(res.statusCode).toEqual(201);
       expect(res.body.key).toBeDefined();
       expect(res.body.key).toMatch(/^btree_ak_/);
@@ -82,17 +119,33 @@ describe('agent key & agent API routes', () => {
     });
 
     it('201 - create key with expiry', async () => {
-      const futureDate = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString();
-      const res = await doRequest(agent, 'post', '/api/v1/agent_key', null, null, {
-        label: 'Expiring Key',
-        valid_to: futureDate,
-      });
+      const futureDate = new Date(
+        Date.now() + 365 * 24 * 60 * 60 * 1000,
+      ).toISOString();
+      const res = await doRequest(
+        agent,
+        'post',
+        '/api/v1/agent_key',
+        null,
+        null,
+        {
+          label: 'Expiring Key',
+          valid_to: futureDate,
+        },
+      );
       expect(res.statusCode).toEqual(201);
       expect(res.body.valid_to).toBeDefined();
     });
 
     it('201 - create key without label', async () => {
-      const res = await doRequest(agent, 'post', '/api/v1/agent_key', null, null, {});
+      const res = await doRequest(
+        agent,
+        'post',
+        '/api/v1/agent_key',
+        null,
+        null,
+        {},
+      );
       expect(res.statusCode).toEqual(201);
       expect(res.body.label).toBeNull();
     });
@@ -100,7 +153,14 @@ describe('agent key & agent API routes', () => {
 
   describe('gET /api/v1/agent_key', () => {
     it('200 - list keys (never exposes hash)', async () => {
-      const res = await doRequest(agent, 'get', '/api/v1/agent_key', null, null, null);
+      const res = await doRequest(
+        agent,
+        'get',
+        '/api/v1/agent_key',
+        null,
+        null,
+        null,
+      );
       expect(res.statusCode).toEqual(200);
       expect(Array.isArray(res.body)).toBe(true);
       expect(res.body.length).toBeGreaterThanOrEqual(1);
@@ -118,13 +178,18 @@ describe('agent key & agent API routes', () => {
   // ─── Agent API Endpoint ────────────────────────────────────────
 
   describe('gET /api/v1/agent/openapi.json', () => {
-    it('401 - without auth', async () => {
+    it('200 - without auth', async () => {
       const res = await noAuthFetch('GET', '/api/v1/agent/openapi.json');
-      expect(res.statusCode).toEqual(401);
+      expect(res.statusCode).toEqual(200);
+      expect(res.body.openapi).toBeDefined();
     });
 
     it('200 - with valid key', async () => {
-      const res = await agentFetch('GET', '/api/v1/agent/openapi.json', plaintextKey);
+      const res = await agentFetch(
+        'GET',
+        '/api/v1/agent/openapi.json',
+        plaintextKey,
+      );
       expect(res.statusCode).toEqual(200);
       expect(res.body.openapi).toBeDefined();
       expect(res.body.info.title).toContain('b.tree');
@@ -132,9 +197,81 @@ describe('agent key & agent API routes', () => {
     });
   });
 
+  describe('agent OAuth endpoints', () => {
+    const authorizeQuery = new URLSearchParams({
+      response_type: 'code',
+      client_id: 'test-chatgpt-client',
+      redirect_uri: 'https://chatgpt.com/aip/g-test/oauth/callback',
+      scope: 'agent',
+      state: 'state-123',
+    });
+
+    it('400 - authorize requires state', async () => {
+      const params = new URLSearchParams(authorizeQuery);
+      params.delete('state');
+      const res = await noAuthFetch(
+        'GET',
+        `/api/v1/chatgpt/oauth/authorize?${params.toString()}`,
+      );
+      expect(res.statusCode).toEqual(400);
+      expect(res.body.message).toEqual('Missing state');
+    });
+
+    it('302 - authorize redirects anonymous user to login', async () => {
+      const res = await noAuthFetchNoRedirect(
+        'GET',
+        `/api/v1/chatgpt/oauth/authorize?${authorizeQuery.toString()}`,
+      );
+      expect(res.statusCode).toEqual(302);
+      expect(res.location).toContain('http://localhost:9000/visitor/login');
+      expect(res.location).toContain('oauth=1');
+      expect(res.location).toContain('server=eu');
+      expect(res.location).toContain(encodeURIComponent('state=state-123'));
+    });
+
+    it('400 - token rejects unsupported grant_type', async () => {
+      const res = await noAuthFetch('POST', '/api/v1/chatgpt/oauth/token', {
+        grant_type: 'password',
+        client_id: 'test-chatgpt-client',
+        client_secret: 'test-chatgpt-secret',
+      });
+      expect(res.statusCode).toEqual(400);
+      expect(res.body.message).toEqual('Unsupported grant_type');
+    });
+
+    it('401 - token rejects invalid client secret', async () => {
+      const res = await noAuthFetch('POST', '/api/v1/chatgpt/oauth/token', {
+        grant_type: 'authorization_code',
+        client_id: 'test-chatgpt-client',
+        client_secret: 'wrong-secret',
+        code: 'invalid-code',
+        redirect_uri: 'https://chatgpt.com/aip/g-test/oauth/callback',
+      });
+      expect(res.statusCode).toEqual(401);
+      expect(res.body.message).toEqual('Invalid OAuth client');
+    });
+
+    it('401 - random bearer keeps API key format error', async () => {
+      const res = await agentFetch(
+        'POST',
+        '/api/v1/agent/tools/listApiariesHives',
+        'abc.def.ghi',
+        {},
+      );
+      expect(res.statusCode).toEqual(401);
+      expect(res.body.message).toEqual(
+        'Invalid API key format. Expected key starting with btree_ak_',
+      );
+    });
+  });
+
   describe('pOST /api/v1/agent/tools/listApiariesHives', () => {
     it('401 - without auth', async () => {
-      const res = await noAuthFetch('POST', '/api/v1/agent/tools/listApiariesHives', {});
+      const res = await noAuthFetch(
+        'POST',
+        '/api/v1/agent/tools/listApiariesHives',
+        {},
+      );
       expect(res.statusCode).toEqual(401);
     });
 
@@ -166,10 +303,17 @@ describe('agent key & agent API routes', () => {
 
     it('create an already-expired key', async () => {
       const pastDate = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-      const res = await doRequest(agent, 'post', '/api/v1/agent_key', null, null, {
-        label: 'Expired Key',
-        valid_to: pastDate,
-      });
+      const res = await doRequest(
+        agent,
+        'post',
+        '/api/v1/agent_key',
+        null,
+        null,
+        {
+          label: 'Expired Key',
+          valid_to: pastDate,
+        },
+      );
       expect(res.statusCode).toEqual(201);
       expiredKey = res.body.key;
     });
@@ -189,7 +333,14 @@ describe('agent key & agent API routes', () => {
 
   describe('dELETE /api/v1/agent_key/:id', () => {
     it('200 - delete key', async () => {
-      const res = await doRequest(agent, 'delete', '/api/v1/agent_key', createdKeyId, null, {});
+      const res = await doRequest(
+        agent,
+        'delete',
+        '/api/v1/agent_key',
+        createdKeyId,
+        null,
+        {},
+      );
       expect(res.statusCode).toEqual(200);
       expect(res.body.message).toContain('deleted');
     });
@@ -205,7 +356,14 @@ describe('agent key & agent API routes', () => {
     });
 
     it('404 - delete non-existent key', async () => {
-      const res = await doRequest(agent, 'delete', '/api/v1/agent_key', 999999, null, {});
+      const res = await doRequest(
+        agent,
+        'delete',
+        '/api/v1/agent_key',
+        999999,
+        null,
+        {},
+      );
       expect(res.statusCode).toEqual(404);
     });
   });

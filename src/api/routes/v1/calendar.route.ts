@@ -1,6 +1,7 @@
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { z } from 'zod';
+
 import { ROLES } from '../../../config/constants.config.js';
 import CalendarController from '../../controllers/calendar.controller.js';
 import { Guard } from '../../hooks/guard.hook.js';
@@ -105,10 +106,8 @@ export default function routes(
             id: z.number().optional(),
           })
           .refine((val) => {
-            if (val.start && val.end)
-              return true;
-            if (val.id)
-              return true;
+            if (val.start && val.end) return true;
+            if (val.id) return true;
             return false;
           }),
       },

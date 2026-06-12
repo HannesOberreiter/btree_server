@@ -21,63 +21,57 @@ export async function limitHive(user_id: number, amount: number) {
     const premium = await isPremium(user_id);
     if ((amount > basicLimit.hive && !premium) || amount > totalLimit.hive)
       return true;
-    const result = await Hive.query()
+    const result = (await Hive.query()
       .count('id as count')
-      .where({ user_id, deleted: false }) as Hive[] & { count: number }[];
+      .where({ user_id, deleted: false })) as Hive[] & { count: number }[];
     if (
-      (result[0].count + amount > basicLimit.hive && !premium)
-      || result[0].count + amount > totalLimit.hive
+      (result[0].count + amount > basicLimit.hive && !premium) ||
+      result[0].count + amount > totalLimit.hive
     ) {
       return true;
-    }
-    else {
+    } else {
       return false;
     }
-  }
-  catch (e) {
-    throw checkMySQLError(e);
+  } catch (error) {
+    throw checkMySQLError(error);
   }
 }
 
 export async function limitApiary(user_id: number) {
   try {
     const premium = await isPremium(user_id);
-    const result = await Apiary.query()
+    const result = (await Apiary.query()
       .count('id as count')
-      .where({ user_id, deleted: false }) as Apiary[] & { count: number }[];
+      .where({ user_id, deleted: false })) as Apiary[] & { count: number }[];
     if (
-      (result[0].count + 1 > basicLimit.apiary && !premium)
-      || result[0].count + 1 > totalLimit.apiary
+      (result[0].count + 1 > basicLimit.apiary && !premium) ||
+      result[0].count + 1 > totalLimit.apiary
     ) {
       return true;
-    }
-    else {
+    } else {
       return false;
     }
-  }
-  catch (e) {
-    throw checkMySQLError(e);
+  } catch (error) {
+    throw checkMySQLError(error);
   }
 }
 
 export async function limitScale(user_id: number) {
   try {
     const premium = await isPremium(user_id);
-    const result = await Scale.query()
+    const result = (await Scale.query()
       .count('id as count')
-      .where({ user_id }) as Scale[] & { count: number }[];
+      .where({ user_id })) as Scale[] & { count: number }[];
     if (
-      (result[0].count + 1 > basicLimit.scale && !premium)
-      || result[0].count + 1 > totalLimit.scale
+      (result[0].count + 1 > basicLimit.scale && !premium) ||
+      result[0].count + 1 > totalLimit.scale
     ) {
       return true;
-    }
-    else {
+    } else {
       return false;
     }
-  }
-  catch (e) {
-    throw checkMySQLError(e);
+  } catch (error) {
+    throw checkMySQLError(error);
   }
 }
 
@@ -86,7 +80,12 @@ export function premiumPaidDate(months: number) {
   return sql<Date>`DATE_ADD(IF(paid IS NULL OR paid < CURDATE(), CURDATE(), paid), INTERVAL ${sql.lit(safeMonths)} MONTH)`;
 }
 
-export async function addPremium(user_id: number, months = 12, amount = 0, type: undefined | 'paypal' | 'promo' | 'stripe' | 'mollie' | 'invoice') {
+export async function addPremium(
+  user_id: number,
+  months = 12,
+  amount = 0,
+  type: undefined | 'paypal' | 'promo' | 'stripe' | 'mollie' | 'invoice',
+) {
   const db = KyselyServer.getInstance().db;
 
   return await db.transaction().execute(async (trx) => {

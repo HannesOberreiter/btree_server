@@ -42,8 +42,7 @@ export class RedisServer {
           { label: 'Redis' },
         );
       }
-    }
-    catch (error: any) {
+    } catch (error: any) {
       this.logger.log('error', `Redis connection error : ${error.message}`, {
         label: 'Redis',
       });
@@ -58,9 +57,12 @@ export class RedisServer {
       this.logger.log('debug', 'Closing redis connection', {});
       await RedisServer.client.quit();
       this.logger.log('debug', 'Closed redis connection', {});
-    }
-    catch (error) {
-      this.logger.log('error', `Redis closing error: ${error instanceof Error ? error.message : String(error)}`, {});
+    } catch (error) {
+      this.logger.log(
+        'error',
+        `Redis closing error: ${error instanceof Error ? error.message : String(error)}`,
+        {},
+      );
     }
   }
 }

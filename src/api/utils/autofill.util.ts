@@ -1,4 +1,5 @@
 import type { Transaction } from 'objection';
+
 import { Apiary } from '../models/apiary.model.js';
 import { ChargeType } from '../models/option/charge_type.model.js';
 import { CheckupType } from '../models/option/checkup_type.model.js';

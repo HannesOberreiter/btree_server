@@ -14,7 +14,7 @@ export default class RootController {
     req.log.warn(
       {
         'csp-report': body,
-        'label': 'CSP violation',
+        label: 'CSP violation',
       },
       message,
     );

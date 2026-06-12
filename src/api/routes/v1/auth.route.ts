@@ -1,8 +1,8 @@
+import fastifyFormbody from '@fastify/formbody';
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
-import fastifyFormbody from '@fastify/formbody';
-
 import { z } from 'zod';
+
 import { ROLES } from '../../../config/constants.config.js';
 import { AppleAuth, GoogleAuth } from '../../../services/federated.service.js';
 import AuthController from '../../controllers/auth.controller.js';
@@ -13,28 +13,31 @@ export const AppleCallbackSchema = z.object({
   code: z.string(),
   id_token: z.string(),
   state: z.string(),
-  user: z.union([
-    z.string().transform((str, ctx) => {
-      try {
-        const parsed = JSON.parse(str);
-        return z.object({
-          email: z.string().email(),
-        }).parse(parsed);
-      }
-      catch {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: 'Invalid JSON in user field',
-        });
-        return z.NEVER;
-      }
-    }),
-    z.object({
-      email: z.string().email(),
-    }),
-    z.literal(''), // Accept empty string
-    z.null(), // Accept null
-  ]).optional(),
+  user: z
+    .union([
+      z.string().transform((str, ctx) => {
+        try {
+          const parsed = JSON.parse(str);
+          return z
+            .object({
+              email: z.string().email(),
+            })
+            .parse(parsed);
+        } catch {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'Invalid JSON in user field',
+          });
+          return z.NEVER;
+        }
+      }),
+      z.object({
+        email: z.string().email(),
+      }),
+      z.literal(''), // Accept empty string
+      z.null(), // Accept null
+    ])
+    .optional(),
   error: z.string().optional(),
 });
 

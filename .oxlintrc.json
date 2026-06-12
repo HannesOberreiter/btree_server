@@ -1,0 +1,56 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["eslint", "typescript", "unicorn", "oxc", "node", "promise"],
+  "categories": {
+    "correctness": "error",
+    "suspicious": "error",
+    "perf": "warn"
+  },
+  "options": {
+    "typeAware": true,
+    "typeCheck": false
+  },
+  "env": {
+    "builtin": true,
+    "node": true
+  },
+  "rules": {
+    "eslint/no-shadow": "off",
+    "eslint/no-unassigned-vars": "off",
+    "eslint/no-underscore-dangle": "off",
+    "eslint/no-useless-constructor": "off",
+    "eslint/preserve-caught-error": "off",
+    "typescript/no-extraneous-class": "off",
+    "typescript/no-unsafe-type-assertion": "off",
+    "oxc/no-async-endpoint-handlers": "off",
+    "typescript/unbound-method": "off",
+    "typescript/consistent-return": "off",
+    "typescript/no-for-in-array": "off",
+    "typescript/no-misused-spread": "off",
+    "unicorn/consistent-function-scoping": "off",
+    "unicorn/no-array-sort": "off",
+    "unicorn/require-module-specifiers": "off",
+    "eslint/no-await-in-loop": "off"
+  },
+  "overrides": [
+    {
+      "files": ["test/**"],
+      "env": {
+        "vitest": true
+      },
+      "plugins": [
+        "eslint",
+        "typescript",
+        "unicorn",
+        "oxc",
+        "node",
+        "promise",
+        "vitest"
+      ],
+      "rules": {
+        "eslint/no-unassigned-vars": "off"
+      }
+    }
+  ],
+  "ignorePatterns": ["dist/**"]
+}

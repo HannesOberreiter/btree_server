@@ -1,4 +1,8 @@
-import type { FastifyReply, FastifyRequest, HookHandlerDoneFunction } from 'fastify';
+import type {
+  FastifyReply,
+  FastifyRequest,
+  HookHandlerDoneFunction,
+} from 'fastify';
 import httpErrors from 'http-errors';
 
 import { OPTION, SOURCE } from '../../config/constants.config.js';
@@ -12,7 +16,9 @@ export class Validator {
   ) => {
     const params = req.params as any;
     if (!(params.table in OPTION)) {
-      throw httpErrors.NotFound(`Unknown option table '${params.table}'. Valid tables: ${Object.keys(OPTION).join(', ')}`);
+      throw httpErrors.NotFound(
+        `Unknown option table '${params.table}'. Valid tables: ${Object.keys(OPTION).join(', ')}`,
+      );
     }
     done();
   };
@@ -24,7 +30,9 @@ export class Validator {
   ) => {
     const params = req.params as any;
     if (!(params.source in SOURCE)) {
-      throw httpErrors.NotFound(`Unknown source '${params.source}'. Valid sources: ${Object.keys(SOURCE).join(', ')}`);
+      throw httpErrors.NotFound(
+        `Unknown source '${params.source}'. Valid sources: ${Object.keys(SOURCE).join(', ')}`,
+      );
     }
     done();
   };
@@ -37,7 +45,9 @@ export class Validator {
       throw httpErrors.PaymentRequired('Could not verify premium status');
     });
     if (!premium) {
-      throw httpErrors.PaymentRequired('This endpoint requires an active premium subscription');
+      throw httpErrors.PaymentRequired(
+        'This endpoint requires an active premium subscription',
+      );
     }
   };
 }

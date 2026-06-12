@@ -39,7 +39,7 @@ docker compose pull  && docker compose up -d
 docker compose -f docker-compose.server.yml up -d
 # Stop container  (server)
 docker compose -f docker-compose-server.yml down
-# Access Container Bash for npm run commands
+# Access Container Bash for pnpm run commands
 docker exec -it btree-server /bin/sh
 # Clean Container
 docker compose -f docker-compose-*.yml rm
@@ -67,14 +67,14 @@ The live api server needs to be upgraded manually which can be archived by `dock
 First migrate and seed your database with knex commands, beforehand make sure that your development and testing database is up and running.
 
 ```bash
-npm run dev:init
-npm run test:init
+pnpm run dev:init
+pnpm run test:init
 ```
 
 Next build the html mails with `mjml`
 
 ```bash
-npm run mail
+pnpm run mail
 ```
 
 ## Database: MariaDB
@@ -98,14 +98,14 @@ Common problems when authentication fails on local machine:
 
 ## Library Version Control
 
-Project uses `npm` as management tool for libraries version control, look file is available in the repository.
+Project uses `pnpm` as management tool for library version control. Lock file is available in the repository.
 
 ## Database Migration
 
 We use knex CLI, <http://knexjs.org/#Migrations-API>.
 
 ```bash
-npm run dev:knex <options> # eg. migrate:latest
+pnpm run dev:knex <options> # eg. migrate:latest
 ```
 
 ## Server Ngnix

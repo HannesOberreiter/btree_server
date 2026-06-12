@@ -13,7 +13,7 @@ export async function hiveCountApiary(date: Date, user_id: number) {
         knex.raw('IF(hives.grouphive > 0, hives.grouphive, 1) as amount'),
         // https://stackoverflow.com/a/58697900/5316675
         knex.raw(
-          'SUBSTRING(MAX(CONCAT(TO_CHAR(date, \'YYYY-MM-DD HH:mm:ss\'), apiary_id)), 20, 31) as apiary_id',
+          "SUBSTRING(MAX(CONCAT(TO_CHAR(date, 'YYYY-MM-DD HH:mm:ss'), apiary_id)), 20, 31) as apiary_id",
         ),
         'user_id',
       )
@@ -42,9 +42,8 @@ export async function hiveCountApiary(date: Date, user_id: number) {
       .groupBy('apiary_id');
 
     return result;
-  }
-  catch (e) {
-    throw checkMySQLError(e);
+  } catch (error) {
+    throw checkMySQLError(error);
   }
 }
 
@@ -83,16 +82,12 @@ export async function hiveCountTotal(user_id: number) {
       'user_id',
     )
     .groupBy('year', 'quarter');
-  const minYear = Math.min(
-    ...(increase
-      .map(v => Number.parseInt(v.year))
-      .concat(decrease.map(v => Number.parseInt(v.year))) as any),
-  );
-  const maxYear = Math.max(
-    ...(increase
-      .map(v => Number.parseInt(v.year))
-      .concat(decrease.map(v => Number.parseInt(v.year))) as any),
-  );
+  const years = [
+    ...increase.map((v) => Number.parseInt(v.year)),
+    ...decrease.map((v) => Number.parseInt(v.year)),
+  ] as any;
+  const minYear = Math.min(...years);
+  const maxYear = Math.max(...years);
   let result = [];
   for (let i = 0; i <= maxYear - minYear; i++) {
     for (let j = 1; j <= 4; j++) {
@@ -107,11 +102,11 @@ export async function hiveCountTotal(user_id: number) {
   result = result.map((i) => {
     let res = Object.assign(
       i,
-      decrease.find(b => i.ident === b.ident),
+      decrease.find((b) => i.ident === b.ident),
     );
     res = Object.assign(
       res,
-      increase.find(b => res.ident === b.ident),
+      increase.find((b) => res.ident === b.ident),
     );
     res.change = (res.increase || 0) - (res.decrease || 0);
     res.total = total + res.change;

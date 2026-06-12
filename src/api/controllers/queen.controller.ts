@@ -1,7 +1,8 @@
-import type { FastifyReply, FastifyRequest } from 'fastify';
-import type Objection from 'objection';
 import dayjs from 'dayjs';
+import type { FastifyReply, FastifyRequest } from 'fastify';
 import { map } from 'lodash-es';
+import type Objection from 'objection';
+
 import { Checkup } from '../models/checkup.model.js';
 import { Harvest } from '../models/harvest.model.js';
 import { Queen } from '../models/queen.model.js';
@@ -38,20 +39,17 @@ export default class QueenController {
       );
       if (latest === true) {
         query.whereNotNull('queen_location.queen_id');
-      }
-      else if (latest === false) {
+      } else if (latest === false) {
         query.whereNull('queen_location.queen_id');
       }
-    }
-    else {
+    } else {
       query.withGraphJoined('hive_location');
     }
 
     if (order) {
       if (Array.isArray(order)) {
         order.forEach((field, index) => query.orderBy(field, direction[index]));
-      }
-      else {
+      } else {
         query.orderBy(order, direction);
       }
     }
@@ -66,20 +64,17 @@ export default class QueenController {
                 v['queens.date'].from,
                 v['queens.date'].to,
               ]);
-            }
-            else {
+            } else {
               if (v['queens.hive_id'] === 'empty') {
                 query.whereNull('hive_location.hive_id');
-              }
-              else {
+              } else {
                 query.where(v);
               }
             }
           });
         }
-      }
-      catch (e) {
-        req.log.error(e);
+      } catch (error) {
+        req.log.error(error);
       }
     }
     if (q) {
@@ -155,8 +150,7 @@ export default class QueenController {
     if (order) {
       if (Array.isArray(order)) {
         order.forEach((field, index) => query.orderBy(field, direction[index]));
-      }
-      else {
+      } else {
         query.orderBy(order, direction);
       }
     }
@@ -167,27 +161,24 @@ export default class QueenController {
         if (Array.isArray(filtering)) {
           filtering.forEach((v) => {
             if (
-              'queens.move_date' in v
-              && typeof v['queens.move_date'] === 'object'
+              'queens.move_date' in v &&
+              typeof v['queens.move_date'] === 'object'
             ) {
               query.whereBetween('queens.move_date', [
                 v['queens.move_date'].from,
                 v['queens.move_date'].to,
               ]);
-            }
-            else {
+            } else {
               if (v['queens.hive_id'] === 'empty') {
                 query.whereNull('hive_location.hive_id');
-              }
-              else {
+              } else {
                 query.where(v);
               }
             }
           });
         }
-      }
-      catch (e) {
-        req.log.error(e);
+      } catch (error) {
+        req.log.error(error);
       }
     }
     if (q) {
@@ -201,7 +192,7 @@ export default class QueenController {
       }
     }
 
-    const result = await query.orderBy('id') as any;
+    const result = (await query.orderBy('id')) as any;
 
     for (let index = 0; index < result.results.length; index++) {
       const queen = result.results[index];
@@ -236,7 +227,8 @@ export default class QueenController {
   static async post(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as any;
     const start = Number.parseInt(body.start);
-    const repeat = Number.parseInt(body.repeat) > 1 ? Number.parseInt(body.repeat) : 1;
+    const repeat =
+      Number.parseInt(body.repeat) > 1 ? Number.parseInt(body.repeat) : 1;
 
     const insert = { ...body };
     delete insert.start;
@@ -316,8 +308,7 @@ export default class QueenController {
       const softIds = [];
       const hardIds = [];
       map(res, (obj) => {
-        if ((obj.deleted || hardDelete) && !restoreDelete)
-          hardIds.push(obj.id);
+        if ((obj.deleted || hardDelete) && !restoreDelete) hardIds.push(obj.id);
         else softIds.push(obj.id);
       });
 
@@ -366,8 +357,7 @@ async function inactivateOtherQueens(
     .orderBy('move_date', 'desc');
 
   for (const queen of queens) {
-    if (!queen.move_date)
-      continue;
+    if (!queen.move_date) continue;
     const curMoveDate = new Date(queen.move_date);
     if (queen.modus && curMoveDate < lastMoveDate) {
       await Queen.query(trx)

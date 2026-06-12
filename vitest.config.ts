@@ -1,5 +1,5 @@
-import type { TestSpecification } from 'vitest/node';
 import { defineConfig } from 'vitest/config';
+import type { TestSpecification } from 'vitest/node';
 import { BaseSequencer } from 'vitest/node';
 
 class AlphaSequencer extends BaseSequencer {

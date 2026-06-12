@@ -6,24 +6,24 @@ FROM node:22-alpine
 # Create app directory
 RUN mkdir -p /home/node/app/node_modules && chown -R node:node /home/node/app
 WORKDIR /home/node/app
+RUN corepack enable
 
 # Env and User
 USER node
 COPY --chown=node:node . .
 
-# Install dependencies, in development mode as we need dev depencies
+# Install dependencies, in development mode as we need dev dependencies
 ENV NODE_ENV=development
-RUN npm ci
+RUN pnpm install --frozen-lockfile
 
 # Generate build and migrate to latest database schema
 ENV NODE_ENV=production
 ENV CONTAINER=docker
-RUN npm run build
+RUN pnpm run build
 
-# Remove source code and dev depencies
-# https://joshtronic.com/2021/03/21/uninstalling-dev-dependencies-with-npm/
+# Remove source code and dev dependencies
 RUN rm -r src
-RUN npm prune --production
+RUN pnpm prune --prod
 
 # Exports
 EXPOSE 8101

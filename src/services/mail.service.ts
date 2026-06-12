@@ -1,8 +1,13 @@
 import type { Buffer } from 'node:buffer';
-import type { SendMailOptions, Transporter } from 'nodemailer';
 import { readFileSync } from 'node:fs';
+
 import httpErrors from 'http-errors';
-import { createTestAccount, createTransport, getTestMessageUrl } from 'nodemailer';
+import type { SendMailOptions, Transporter } from 'nodemailer';
+import {
+  createTestAccount,
+  createTransport,
+  getTestMessageUrl,
+} from 'nodemailer';
 
 import { ENVIRONMENT } from '../config/constants.config.js';
 import {
@@ -15,7 +20,7 @@ import {
 import { Logger } from './logger.service.js';
 
 export const MailLangs = ['de', 'en', 'fr', 'it'] as const;
-export type MailLang = typeof MailLangs[number];
+export type MailLang = (typeof MailLangs)[number];
 
 const TITLE_TAG_REGEX = /(?<=<title>).*?(?=<\/title>)/i;
 const TITLE_FULL_REGEX = /<title>.*?<\/title>/g;
@@ -26,22 +31,22 @@ const BASE_URL_PLACEHOLDER_REGEX = /%base_url%/g;
 const PARAMS_PLACEHOLDER_REGEX = /%params%/g;
 
 interface customMail {
-  to: string
-  lang: string
-  subject: string
-  key?: string
-  name?: string
-  cc?: string | string[]
+  to: string;
+  lang: string;
+  subject: string;
+  key?: string;
+  name?: string;
+  cc?: string | string[];
   attachments?: Array<{
-    filename: string
-    content: Buffer | string
-    contentType?: string
-  }>
+    filename: string;
+    content: Buffer | string;
+    contentType?: string;
+  }>;
   /**
    * Extra template placeholders to replace, keyed by placeholder name
    * without the surrounding `%`. E.g. `{ amount: '55,00' }` replaces `%amount%`.
    */
-  replacements?: Record<string, string>
+  replacements?: Record<string, string>;
 }
 
 export class MailService {
@@ -68,9 +73,8 @@ export class MailService {
         mailConfig.secure = false;
         mailConfig.auth.user = account.user;
         mailConfig.auth.pass = account.pass;
-      }
-      catch (e) {
-        console.error(e);
+      } catch (error) {
+        console.error(error);
       }
     }
     this.logger.log('debug', `Setup mail with host: ${mailConfig.host}`, {});
@@ -81,11 +85,10 @@ export class MailService {
     const mailPath = `${rootDirectory}/mails/${mailName}.txt`;
     try {
       return readFileSync(mailPath, 'utf-8');
-    }
-    catch (e) {
+    } catch (error) {
       this.logger.log('error', `Could not find E-Mail Template.`, {
         name: mailName,
-        error: e,
+        error: error,
       });
     }
   }
@@ -94,11 +97,10 @@ export class MailService {
     const mailPath = `${rootDirectory}/mails/partials/footer_${lang}.txt`;
     try {
       return readFileSync(mailPath, 'utf-8');
-    }
-    catch (e) {
+    } catch (error) {
       this.logger.log('error', `Could not find E-Mail Template.`, {
         lang,
-        error: e,
+        error: error,
       });
     }
   }
@@ -113,12 +115,10 @@ export class MailService {
     attachments,
     replacements,
   }: customMail) {
-    if (env === ENVIRONMENT.test || env === ENVIRONMENT.ci)
-      return true;
+    if (env === ENVIRONMENT.test || env === ENVIRONMENT.ci) return true;
 
     // Only use languages which are available (translated), fallback english
-    if (!(MailLangs as readonly string[]).includes(lang))
-      lang = 'en';
+    if (!(MailLangs as readonly string[]).includes(lang)) lang = 'en';
 
     let htmlMail = this.loadHtmlMail(`${subject}_${lang}`);
     if (!htmlMail) {
@@ -128,7 +128,7 @@ export class MailService {
     if (!htmlFooter) {
       throw httpErrors.NotFound('Could not find E-Mail Template.');
     }
-    htmlMail = (htmlMail + htmlFooter);
+    htmlMail = htmlMail + htmlFooter;
 
     if (name !== 'false' && name) {
       switch (lang) {
@@ -157,8 +157,7 @@ export class MailService {
     // Main page and documentation is only available in german and english
     if (['fr', 'it'].includes(lang)) {
       htmlMail = htmlMail.replace(LANG_PLACEHOLDER_REGEX, 'en');
-    }
-    else {
+    } else {
       htmlMail = htmlMail.replace(LANG_PLACEHOLDER_REGEX, lang);
     }
     htmlMail = htmlMail.replace(MAIL_PLACEHOLDER_REGEX, to);
@@ -203,9 +202,12 @@ export class MailService {
         subject: title,
       });
       return true;
-    }
-    catch (e) {
-      this.logger.log('error', `Could not send E-Mail: ${e instanceof Error ? e.message : String(e)}`, {});
+    } catch (error) {
+      this.logger.log(
+        'error',
+        `Could not send E-Mail: ${error instanceof Error ? error.message : String(error)}`,
+        {},
+      );
       return false;
     }
   }
@@ -215,12 +217,12 @@ export class MailService {
     subject: string,
     text: string,
     extra?: {
-      cc?: string | string[]
+      cc?: string | string[];
       attachments?: Array<{
-        filename: string
-        content: Buffer | string
-        contentType?: string
-      }>
+        filename: string;
+        content: Buffer | string;
+        contentType?: string;
+      }>;
     },
   ) {
     const options: SendMailOptions = {
@@ -248,9 +250,12 @@ export class MailService {
         }
         this.logger.log('info', `Message Sent ${info.response}`, {});
       });
-    }
-    catch (e) {
-      this.logger.log('error', `Could not send E-Mail: ${e instanceof Error ? e.message : String(e)}`, {});
+    } catch (error) {
+      this.logger.log(
+        'error',
+        `Could not send E-Mail: ${error instanceof Error ? error.message : String(error)}`,
+        {},
+      );
     }
   }
 }

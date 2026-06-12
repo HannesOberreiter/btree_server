@@ -1,4 +1,5 @@
 import { Model } from 'objection';
+
 import { Movedate } from './movedate.model.js';
 
 export class MovedatePreviousApiary extends Model {

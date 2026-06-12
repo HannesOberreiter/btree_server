@@ -1,6 +1,11 @@
-import type { TestAgent } from '../utils.js';
 import { beforeAll, describe, expect, it } from 'vitest';
-import { createAgent, createAuthenticatedAgent, doQueryRequest } from '../utils.js';
+
+import type { TestAgent } from '../utils.js';
+import {
+  createAgent,
+  createAuthenticatedAgent,
+  doQueryRequest,
+} from '../utils.js';
 
 describe('calendar routes', () => {
   const route = '/api/v1/calendar';
@@ -43,16 +48,10 @@ describe('calendar routes', () => {
       });
 
       it(`${kind} 200 - success`, async () => {
-        const res = await doQueryRequest(
-          agent,
-          route + kind,
-          null,
-          null,
-          {
-            start: new Date('2020-01-01').toISOString(),
-            end: new Date('2020-12-30').toISOString(),
-          },
-        );
+        const res = await doQueryRequest(agent, route + kind, null, null, {
+          start: new Date('2020-01-01').toISOString(),
+          end: new Date('2020-12-30').toISOString(),
+        });
         expect(res.statusCode).toEqual(200);
         expect(res.body).toBeInstanceOf(Array);
       });
@@ -60,11 +59,7 @@ describe('calendar routes', () => {
   });
 });
 
-function expectations(
-  res: any,
-  field: string,
-  _err: string,
-): void {
+function expectations(res: any, field: string, _err: string): void {
   expect(res.body.statusCode).toEqual(400);
   if (res.body.issue) {
     expect(res.body.issues).toBeInstanceOf(Array);
