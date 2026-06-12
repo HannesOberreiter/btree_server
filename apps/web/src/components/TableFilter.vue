@@ -39,7 +39,7 @@ const optionColumns = computed(() => {
     borderless
     dense
     debounce="300"
-    placeholder="Search"
+    :placeholder="$t('search')"
   >
     <template #append>
       <q-icon name="fas fa-magnifier" />
