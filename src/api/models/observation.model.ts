@@ -151,12 +151,12 @@ export class ObservationModel {
 
     const countResult = await db
       .selectFrom('observations')
-      .select(sql<number>`count(id)`.as('count'))
+      .select(sql<string | number>`count(id)`.as('count'))
       .where('external_service', '=', externalService)
       .where('external_id', 'is not', null)
       .executeTakeFirstOrThrow();
 
-    const count = countResult.count;
+    const count = Number(countResult.count);
     if (count === 0) return [];
 
     const randomOffset = Math.max(
