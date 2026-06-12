@@ -9,7 +9,8 @@ export default defineConfig({
     'quasar.config.*.temporary.compiled*',
     '.quasar/',
     'src-cordova/',
-    'src-capacitor/'
+    'src-capacitor/',
+    'CHANGELOG.md'
   ],
 
   printWidth: 80,
