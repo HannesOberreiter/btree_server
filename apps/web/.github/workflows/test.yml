@@ -55,6 +55,9 @@ jobs:
       - name: Install frontend packages
         run: pnpm install --frozen-lockfile
 
+      - name: Install PWA dependencies
+        run: pnpm --dir src-pwa install --frozen-lockfile
+
       - name: Install Playwright browser
         run: pnpm exec playwright install --with-deps chromium
 
