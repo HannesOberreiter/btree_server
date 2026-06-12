@@ -4,22 +4,27 @@ import { expect, test } from '../../support/user-helpers';
 const chance = new Chance();
 
 test.describe('user - Charge Table', () => {
-	const form = 'form-charge';
+  const form = 'form-charge';
 
-	test.beforeEach(async ({ page }) => {
-		await page.goto('/table/charge');
-	});
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/table/charge');
+  });
 
-	test('create & Edit and Delete', async ({ page, dataCy, tableEditRow, tableDeleteRow }) => {
-		await expect(page.locator('.q-table')).toBeAttached();
+  test('create & Edit and Delete', async ({
+    page,
+    dataCy,
+    tableEditRow,
+    tableDeleteRow
+  }) => {
+    await expect(page.locator('.q-table')).toBeAttached();
 
-		await dataCy('btn-table-new').click();
-		await expect(dataCy(form)).toBeAttached();
-		await page.locator('[name=chargeName]').fill(chance.name());
-		await dataCy('btn-form-save').click();
-		await expect(dataCy(form)).not.toBeAttached();
+    await dataCy('btn-table-new').click();
+    await expect(dataCy(form)).toBeAttached();
+    await page.locator('[name=chargeName]').fill(chance.name());
+    await dataCy('btn-form-save').click();
+    await expect(dataCy(form)).not.toBeAttached();
 
-		await tableEditRow(form);
-		await tableDeleteRow();
-	});
+    await tableEditRow(form);
+    await tableDeleteRow();
+  });
 });

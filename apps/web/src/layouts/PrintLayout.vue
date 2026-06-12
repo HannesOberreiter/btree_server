@@ -7,14 +7,14 @@ const { t } = useI18n();
 const router = useRouter();
 
 useMeta(() => {
-	return {
-		title: router.currentRoute.value.meta.title
-			? `${t(router.currentRoute.value.meta.title as string)} - b.tree`
-			: 'b.tree',
-	};
+  return {
+    title: router.currentRoute.value.meta.title
+      ? `${t(router.currentRoute.value.meta.title as string)} - b.tree`
+      : 'b.tree'
+  };
 });
 </script>
 
 <template>
-	<RouterView />
+  <RouterView />
 </template>

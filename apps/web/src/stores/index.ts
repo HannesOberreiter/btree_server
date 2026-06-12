@@ -1,6 +1,6 @@
 import type { Router } from 'vue-router';
 import { createPinia } from 'pinia';
-import { defineStore } from '#q-app/wrappers';
+import { defineStore } from '#q-app';
 
 /*
  * When adding new properties to stores, you should also
@@ -8,9 +8,9 @@ import { defineStore } from '#q-app/wrappers';
  * @see https://pinia.vuejs.org/core-concepts/plugins.html#typing-new-store-properties
  */
 declare module 'pinia' {
-	export interface PiniaCustomProperties {
-		readonly router: Router;
-	}
+  export interface PiniaCustomProperties {
+    readonly router: Router;
+  }
 }
 
 /*
@@ -22,11 +22,11 @@ declare module 'pinia' {
  * with the Store instance.
  */
 
-export default defineStore((/* { ssrContext } */) => {
-	const pinia = createPinia();
+export default defineStore(() => {
+  const pinia = createPinia();
 
-	// You can add Pinia plugins here
-	// pinia.use(SomePiniaPlugin)
+  // You can add Pinia plugins here
+  // pinia.use(SomePiniaPlugin)
 
-	return pinia;
+  return pinia;
 });

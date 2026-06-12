@@ -8,214 +8,214 @@ import BtnCloseDialog from './BtnCloseDialog.vue';
 import GlobalLoading from './GlobalLoading.vue';
 
 const props = defineProps({
-	title: {
-		type: String,
-		required: true,
-	},
-	form: {
-		type: String,
-		required: true,
-	},
-	ids: {
-		type: Array,
-		default: null,
-	},
-	maximized: {
-		type: Boolean,
-		default: false,
-	},
-	selected: {
-		type: Array,
-		default: null,
-	},
-	date: {
-		type: String,
-		default: dayjs().format('YYYY-MM-DD'),
-	},
-	latlng: {
-		type: Object,
-		default: null,
-	},
-	option: {
-		type: String as PropType<Option>,
-		default: '',
-	},
-	copy: {
-		type: Boolean,
-		default: false,
-	},
+  title: {
+    type: String,
+    required: true
+  },
+  form: {
+    type: String,
+    required: true
+  },
+  ids: {
+    type: Array,
+    default: null
+  },
+  maximized: {
+    type: Boolean,
+    default: false
+  },
+  selected: {
+    type: Array,
+    default: null
+  },
+  date: {
+    type: String,
+    default: dayjs().format('YYYY-MM-DD')
+  },
+  latlng: {
+    type: Object,
+    default: null
+  },
+  option: {
+    type: String as PropType<Option>,
+    default: ''
+  },
+  copy: {
+    type: Boolean,
+    default: false
+  }
 });
-defineEmits([...useDialogPluginComponent.emits, 'onSuccess']);
+defineEmits([...useDialogPluginComponent.emits, 'success']);
 const FormMainApiary = defineAsyncComponent(
-	() => import('./FormMainApiary.vue'),
+  () => import('./FormMainApiary.vue')
 );
 const FormMainTodo = defineAsyncComponent(() => import('./FormMainTodo.vue'));
 const FormMainHive = defineAsyncComponent(() => import('./FormMainHive.vue'));
 const FormMainMovement = defineAsyncComponent(
-	() => import('./FormMainMovement.vue'),
+  () => import('./FormMainMovement.vue')
 );
 const FormMainTask = defineAsyncComponent(() => import('./FormMainTask.vue'));
 const FormMainQueen = defineAsyncComponent(() => import('./FormMainQueen.vue'));
 const FormMainQueenHive = defineAsyncComponent(
-	() => import('./FormMainQueenHive.vue'),
+  () => import('./FormMainQueenHive.vue')
 );
 const FormMainScaleData = defineAsyncComponent(
-	() => import('./FormMainScaleData.vue'),
+  () => import('./FormMainScaleData.vue')
 );
 const FormMainOption = defineAsyncComponent(
-	() => import('./FormMainOption.vue'),
+  () => import('./FormMainOption.vue')
 );
 const FormMainCharge = defineAsyncComponent(
-	() => import('./FormMainCharge.vue'),
+  () => import('./FormMainCharge.vue')
 );
 const FormMainScale = defineAsyncComponent(() => import('./FormMainScale.vue'));
 const FormMainRearing = defineAsyncComponent(
-	() => import('./FormMainRearing.vue'),
+  () => import('./FormMainRearing.vue')
 );
 const FormMainRearingMethod = defineAsyncComponent(
-	() => import('./FormMainRearingMethod.vue'),
+  () => import('./FormMainRearingMethod.vue')
 );
 const FormMainRearingDetail = defineAsyncComponent(
-	() => import('./FormMainRearingDetail.vue'),
+  () => import('./FormMainRearingDetail.vue')
 );
 
 const { dialogRef, onDialogHide, onDialogOK } = useDialogPluginComponent();
 
 const layouts = {
-	todo: {
-		comp: FormMainTodo,
-		props: {
-			date: props.date,
-		},
-	},
-	apiary: {
-		comp: FormMainApiary,
-		props: {
-			latlng: props.latlng,
-		},
-	},
-	hive: {
-		comp: FormMainHive,
-		props: {
-			copy: props.copy,
-		},
-	},
-	queen: {
-		comp: FormMainQueen,
-		props: {
-			selected: props.selected,
-			copy: props.copy,
-		},
-	},
-	queen_hive: {
-		comp: FormMainQueenHive,
-		props: {
-			selected: props.selected,
-		},
-	},
-	virgin: {
-		comp: FormMainQueen,
-		props: {
-			selected: props.selected,
-			copy: props.copy,
-		},
-	},
-	movedate: {
-		comp: FormMainMovement,
-		props: {
-			selected: props.selected,
-		},
-	},
-	feed: {
-		comp: FormMainTask,
-		props: {
-			task: props.form,
-		},
-	},
-	harvest: {
-		comp: FormMainTask,
-		props: {
-			task: props.form,
-		},
-	},
-	checkup: {
-		comp: FormMainTask,
-		props: {
-			task: props.form,
-		},
-	},
-	treatment: {
-		comp: FormMainTask,
-		props: {
-			task: props.form,
-		},
-	},
-	charge: {
-		comp: FormMainCharge,
-		props: {
-			copy: props.copy,
-		},
-	},
-	scale_data: {
-		comp: FormMainScaleData,
-		props: {},
-	},
-	scale: {
-		comp: FormMainScale,
-		props: {},
-	},
-	option: {
-		comp: FormMainOption,
-		props: {
-			option: props.option,
-		},
-	},
-	rearing: {
-		comp: FormMainRearing,
-		props: {},
-	},
-	rearing_type: {
-		comp: FormMainRearingMethod,
-		props: {},
-	},
-	rearing_detail: {
-		comp: FormMainRearingDetail,
-		props: {},
-	},
+  todo: {
+    comp: FormMainTodo,
+    props: {
+      date: props.date
+    }
+  },
+  apiary: {
+    comp: FormMainApiary,
+    props: {
+      latlng: props.latlng
+    }
+  },
+  hive: {
+    comp: FormMainHive,
+    props: {
+      copy: props.copy
+    }
+  },
+  queen: {
+    comp: FormMainQueen,
+    props: {
+      selected: props.selected,
+      copy: props.copy
+    }
+  },
+  queen_hive: {
+    comp: FormMainQueenHive,
+    props: {
+      selected: props.selected
+    }
+  },
+  virgin: {
+    comp: FormMainQueen,
+    props: {
+      selected: props.selected,
+      copy: props.copy
+    }
+  },
+  movedate: {
+    comp: FormMainMovement,
+    props: {
+      selected: props.selected
+    }
+  },
+  feed: {
+    comp: FormMainTask,
+    props: {
+      task: props.form
+    }
+  },
+  harvest: {
+    comp: FormMainTask,
+    props: {
+      task: props.form
+    }
+  },
+  checkup: {
+    comp: FormMainTask,
+    props: {
+      task: props.form
+    }
+  },
+  treatment: {
+    comp: FormMainTask,
+    props: {
+      task: props.form
+    }
+  },
+  charge: {
+    comp: FormMainCharge,
+    props: {
+      copy: props.copy
+    }
+  },
+  scale_data: {
+    comp: FormMainScaleData,
+    props: {}
+  },
+  scale: {
+    comp: FormMainScale,
+    props: {}
+  },
+  option: {
+    comp: FormMainOption,
+    props: {
+      option: props.option
+    }
+  },
+  rearing: {
+    comp: FormMainRearing,
+    props: {}
+  },
+  rearing_type: {
+    comp: FormMainRearingMethod,
+    props: {}
+  },
+  rearing_detail: {
+    comp: FormMainRearingDetail,
+    props: {}
+  }
 } as any;
 
 const layout = computed(() => layouts[props.form]);
 </script>
 
 <template>
-	<q-dialog
-		ref="dialogRef"
-		:maximized="maximized || $q.platform.is.mobile"
-		@hide="onDialogHide"
-	>
-		<q-card style="width: 700px">
-			<q-card-section>
-				<div class="row">
-					<div class="text-h6">
-						{{ $t(title) }}
-					</div>
-					<q-space />
-					<BtnCloseDialog />
-				</div>
-				<div class="row full-width">
-					<suspense>
-						<template #fallback>
-							<GlobalLoading />
-						</template>
-						<component
-							:is="layout.comp"
-							:ids="ids"
-							v-bind="layout.props"
-							@on-success="(value: any) => onDialogOK(value)"
-						/>
-					</suspense>
-				</div>
-			</q-card-section>
-		</q-card>
-	</q-dialog>
+  <q-dialog
+    ref="dialogRef"
+    :maximized="maximized || $q.platform.is.mobile"
+    @hide="onDialogHide"
+  >
+    <q-card style="width: 700px">
+      <q-card-section>
+        <div class="row">
+          <div class="text-h6">
+            {{ $t(title) }}
+          </div>
+          <q-space />
+          <BtnCloseDialog />
+        </div>
+        <div class="row full-width">
+          <suspense>
+            <template #fallback>
+              <GlobalLoading />
+            </template>
+            <component
+              :is="layout.comp"
+              :ids="ids"
+              v-bind="layout.props"
+              @success="(value: any) => onDialogOK(value)"
+            />
+          </suspense>
+        </div>
+      </q-card-section>
+    </q-card>
+  </q-dialog>
 </template>

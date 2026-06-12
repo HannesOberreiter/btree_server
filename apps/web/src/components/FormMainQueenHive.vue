@@ -13,14 +13,14 @@ import FormDropdownOption from './FormDropdownOption.vue';
 import FormInputDate from './FormInputDate.vue';
 
 const props = defineProps({
-	ids: {
-		type: Array,
-		default: null,
-	},
+  ids: {
+    type: Array,
+    default: null
+  }
 });
-const emit = defineEmits(['onSuccess']);
+const emit = defineEmits(['success']);
 const stateDefault = {
-	move_date: dayjs().format('YYYY-MM-DD'),
+  move_date: dayjs().format('YYYY-MM-DD')
 };
 const notification = useNotification();
 const api = useApiFetch();
@@ -30,99 +30,98 @@ const editOptions = ref([]) as any;
 const editOptionsCopy = ref([]) as any;
 const ids = ref(props.ids);
 const isEdit = computed(() => {
-	if (ids.value === null)
-		return false;
-	if (ids.value.length === 0)
-		return false;
-	return true;
+  if (ids.value === null) {
+    return false;
+  }
+  if (ids.value.length === 0) {
+    return false;
+  }
+  return true;
 });
-if (isEdit.value)
-	getEdit(unref(ids.value));
+if (isEdit.value) {
+  getEdit(unref(ids.value));
+}
 
 const state = ref<FormQueenHive>({
-	hive: undefined as any,
-	...stateDefault,
+  hive: undefined as any,
+  ...stateDefault
 });
 const rules = {};
 const v = useVuelidate(rules, state, { $autoDirty: true });
 
 async function getEdit(id: unknown[]) {
-	return await api.post('/v1/queen/batchGet', { ids: id }).then(
-		(response: any) => {
-			const editIds = map(response, (row: any) => [
-				{ value: row.id, label: `ID: ${row.id} / (${row.name})` },
-			]);
-			editOptions.value = flatten(editIds);
-			editOptionsCopy.value = [...unref(editOptions.value)];
-			values.value = response;
-		},
-		(error) => {
-			notification.open('negative', error);
-		},
-	);
+  return await api.post('/v1/queen/batchGet', { ids: id }).then(
+    (response: any) => {
+      const editIds = map(response, (row: any) => [
+        { value: row.id, label: `ID: ${row.id} / (${row.name})` }
+      ]);
+      editOptions.value = flatten(editIds);
+      editOptionsCopy.value = [...unref(editOptions.value)];
+      values.value = response;
+    },
+    error => {
+      notification.open('negative', error);
+    }
+  );
 }
 
 function onReset() {
-	if (!isEdit.value) {
-		merge(state.value, stateDefault);
-	}
-	reset.value++;
-	notification.open('info', 'successReset');
+  if (!isEdit.value) {
+    merge(state.value, stateDefault);
+  }
+  reset.value++;
+  notification.open('info', 'successReset');
 }
 
 async function onChange() {
-	emit('onSuccess', true);
+  emit('success', true);
 }
 </script>
 
 <template>
-	<q-form class="full-width" data-cy="form-queen-hive" @submit.prevent.stop="">
-		<div class="row">
-			<FormDropdownEdit
-				v-show="isEdit"
-				v-model="editOptions"
-				:disable="true"
-				class="col-12"
-				:options="editOptionsCopy"
-			/>
+  <q-form class="full-width" data-cy="form-queen-hive" @submit.prevent.stop="">
+    <div class="row">
+      <FormDropdownEdit
+        v-show="isEdit"
+        v-model="editOptions"
+        :disable="true"
+        class="col-12"
+        :options="editOptionsCopy"
+      />
 
-			<div class="col-12 q-pb-sm">
-				<FormDropdownOption
-					v-if="isEdit"
-					v-model="state.hive"
-					label="hive"
-					table="hive"
-					table-id="hive_id"
-					:values="values"
-					:reset="reset"
-					filter-empty="noHive"
-					:hint="$t('queenHiveInfo')"
-				/>
-				<FormDropdownHive
-					v-else
-					v-model="state.hive"
-					:required="false"
-				/>
-			</div>
-			<div class="col-12 col-md-6 q-pt-sm q-mb-sm">
-				<FormInputDate
-					v-model="state.move_date"
-					:values="values"
-					:reset="reset"
-					label="queenMovedate"
-					:hint="$t('queenMovedateInfo')"
-				/>
-			</div>
-		</div>
-	</q-form>
+      <div class="col-12 q-pb-sm">
+        <FormDropdownOption
+          v-if="isEdit"
+          v-model="state.hive"
+          label="hive"
+          table="hive"
+          table-id="hive_id"
+          :values="values"
+          :reset="reset"
+          filter-empty="noHive"
+          :hint="$t('queenHiveInfo')"
+        />
+        <FormDropdownHive v-else v-model="state.hive" :required="false" />
+      </div>
+      <div class="col-12 col-md-6 q-pt-sm q-mb-sm">
+        <FormInputDate
+          v-model="state.move_date"
+          :values="values"
+          :reset="reset"
+          label="queenMovedate"
+          :hint="$t('queenMovedateInfo')"
+        />
+      </div>
+    </div>
+  </q-form>
 
-	<FormButtons
-		:state="state"
-		:is-edit="isEdit"
-		:edit-ids="editOptions"
-		:v="v"
-		form="queen"
-		@reset="onReset"
-		@change="onChange"
-	/>
+  <FormButtons
+    :state="state"
+    :is-edit="isEdit"
+    :edit-ids="editOptions"
+    :v="v"
+    form="queen"
+    @reset="onReset"
+    @change="onChange"
+  />
 </template>

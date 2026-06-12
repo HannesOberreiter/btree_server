@@ -3,5 +3,5 @@ import MainStatisticLayout from '../layouts/MainStatisticLayout.vue';
 </script>
 
 <template>
-	<MainStatisticLayout kind="treatment" />
+  <MainStatisticLayout kind="treatment" />
 </template>

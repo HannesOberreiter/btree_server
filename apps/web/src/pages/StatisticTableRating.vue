@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { QTableProps } from 'quasar';
-import { round } from 'lodash';
+import { round } from 'lodash-es';
 import { storeToRefs } from 'pinia';
 import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -23,191 +23,191 @@ const storeFilter = useTableFilterStore();
 const STATSSTORE = 'statistic_rating_table';
 const { statistic_rating_table: filters } = storeToRefs(storeFilter);
 const visibleColumns = ref([
-	'year',
-	'hive.name',
-	'brood',
-	'pollen',
-	'temper',
-	'comb',
-	'calm_comb',
-	'swarm',
-	'varroa',
-	'strong',
+  'year',
+  'hive.name',
+  'brood',
+  'pollen',
+  'temper',
+  'comb',
+  'calm_comb',
+  'swarm',
+  'varroa',
+  'strong'
 ]);
 
 const columns = [
-	{
-		name: 'hive_id',
-		label: t('id'),
-		align: 'right',
-		field: (row: any) => row.hive_id,
-		sortable: true,
-	},
-	{
-		name: 'year',
-		label: t('year'),
-		align: 'right',
-		field: (row: any) => row.year,
-		sortable: true,
-	},
-	{
-		name: 'hive.name',
-		label: t('hive'),
-		align: 'left',
-		field: (row: any) => (row.hive ? row.hive.name : ''),
-		sortable: true,
-	},
-	{
-		name: 'brood',
-		label: t('rating.brood'),
-		align: 'right',
-		field: (row: any) => row.brood,
-		format: v => round(v, 1),
-		sortable: true,
-	},
-	{
-		name: 'pollen',
-		label: t('rating.pollen'),
-		align: 'right',
-		field: (row: any) => row.pollen,
-		format: v => round(v, 1),
-		sortable: true,
-	},
-	{
-		name: 'temper',
-		label: t('rating.temper'),
-		align: 'right',
-		field: (row: any) => row.temper,
-		format: v => round(v, 1),
-		sortable: true,
-	},
-	{
-		name: 'calm_comb',
-		label: t('rating.calm_comb'),
-		align: 'right',
-		field: (row: any) => row.calm_comb,
-		format: v => round(v, 1),
-		sortable: true,
-	},
-	{
-		name: 'swarm',
-		label: t('rating.swarm'),
-		align: 'right',
-		field: (row: any) => row.swarm,
-		format: v => round(v, 1),
-		sortable: true,
-	},
-	{
-		name: 'varroa',
-		label: t('varroa'),
-		align: 'right',
-		field: (row: any) => row.varroa,
-		format: v => round(v, 1),
-		sortable: true,
-	},
-	{
-		name: 'strong',
-		label: t('strong'),
-		align: 'right',
-		field: (row: any) => row.strong,
-		format: v => round(v, 1),
-		sortable: true,
-	},
+  {
+    name: 'hive_id',
+    label: t('id'),
+    align: 'right',
+    field: (row: any) => row.hive_id,
+    sortable: true
+  },
+  {
+    name: 'year',
+    label: t('year'),
+    align: 'right',
+    field: (row: any) => row.year,
+    sortable: true
+  },
+  {
+    name: 'hive.name',
+    label: t('hive'),
+    align: 'left',
+    field: (row: any) => (row.hive ? row.hive.name : ''),
+    sortable: true
+  },
+  {
+    name: 'brood',
+    label: t('rating.brood'),
+    align: 'right',
+    field: (row: any) => row.brood,
+    format: v => round(v, 1),
+    sortable: true
+  },
+  {
+    name: 'pollen',
+    label: t('rating.pollen'),
+    align: 'right',
+    field: (row: any) => row.pollen,
+    format: v => round(v, 1),
+    sortable: true
+  },
+  {
+    name: 'temper',
+    label: t('rating.temper'),
+    align: 'right',
+    field: (row: any) => row.temper,
+    format: v => round(v, 1),
+    sortable: true
+  },
+  {
+    name: 'calm_comb',
+    label: t('rating.calm_comb'),
+    align: 'right',
+    field: (row: any) => row.calm_comb,
+    format: v => round(v, 1),
+    sortable: true
+  },
+  {
+    name: 'swarm',
+    label: t('rating.swarm'),
+    align: 'right',
+    field: (row: any) => row.swarm,
+    format: v => round(v, 1),
+    sortable: true
+  },
+  {
+    name: 'varroa',
+    label: t('varroa'),
+    align: 'right',
+    field: (row: any) => row.varroa,
+    format: v => round(v, 1),
+    sortable: true
+  },
+  {
+    name: 'strong',
+    label: t('strong'),
+    align: 'right',
+    field: (row: any) => row.strong,
+    format: v => round(v, 1),
+    sortable: true
+  }
 ] as QTableProps['columns'];
 
 const pagination = ref({
-	sortBy: 'year',
-	descending: false,
-	page: 1,
-	rowsPerPage: 10,
-	rowsNumber: 0,
+  sortBy: 'year',
+  descending: false,
+  page: 1,
+  rowsPerPage: 10,
+  rowsNumber: 0
 });
 useKeyTable(pagination);
 
 const {
-	isLoading: isLoadingTable,
-	data,
-	refetch,
+  isLoading: isLoadingTable,
+  data,
+  refetch
 } = useStatisticTable('rating', {
-	order: computed(() => [pagination.value.sortBy]),
-	direction: computed(() => (pagination.value.descending ? ['asc'] : ['desc'])),
-	offset: computed(() => pagination.value.page - 1),
-	limit: computed(() => pagination.value.rowsPerPage),
-	filters: computed(() => (filters?.value ? filters.value : '')),
-	q: computed(() => (filter.value ? filter.value : '')),
+  order: computed(() => [pagination.value.sortBy]),
+  direction: computed(() => (pagination.value.descending ? ['asc'] : ['desc'])),
+  offset: computed(() => pagination.value.page - 1),
+  limit: computed(() => pagination.value.rowsPerPage),
+  filters: computed(() => (filters?.value ? filters.value : '')),
+  q: computed(() => (filter.value ? filter.value : ''))
 });
 
 watch(
-	data,
-	() => {
-		if (data.value) {
-			rows.value = data.value.results;
-			pagination.value.rowsNumber = data.value.total;
-			selected.value = tableCheckSelected(selected.value, rows.value);
-		}
-	},
-	{
-		immediate: true,
-	},
+  data,
+  () => {
+    if (data.value) {
+      rows.value = data.value.results;
+      pagination.value.rowsNumber = data.value.total;
+      selected.value = tableCheckSelected(selected.value, rows.value);
+    }
+  },
+  {
+    immediate: true
+  }
 );
 
 function onRequest(props: any) {
-	pagination.value = props.pagination;
+  pagination.value = props.pagination;
 }
 </script>
 
 <template>
-	<q-card flat>
-		<div class="row q-pa-sm justify-center">
-			<div class="col-12">
-				<div class="text-h5 text-center">
-					{{ $t('statistic') }} {{ $t('rating.name') }}
-				</div>
-			</div>
-		</div>
-		<q-card-section>
-			<q-table
-				v-model:pagination="pagination"
-				v-model:selected="selected"
-				:visible-columns="visibleColumns"
-				:rows="rows"
-				:columns="columns"
-				:loading="isLoadingTable"
-				:dense="true"
-				:rows-per-page-options="[10, 50, 100, 500, 10000]"
-				separator="vertical"
-				:row-key="(row) => `${row.hive_id}-${row.year}`"
-				selection="multiple"
-				binary-state-sort
-				flat
-				bordered
-				@request="onRequest"
-			>
-				<template #top-left>
-					<TableButtons
-						v-model:deleted="deleted"
-						v-model:modus="modus"
-						:selected="selected"
-						:table="STATSSTORE"
-						@change="refetch"
-					/>
-				</template>
-				<template #top-right>
-					<TableFilter
-						v-model:model-filter="filter"
-						v-model:model-visible="visibleColumns"
-						:columns="columns"
-					/>
-				</template>
-				<template #header-cell-amount_sum="props">
-					<TableThSum
-						:parent-prop="props"
-						:label="props.col.label"
-						:name="props.col.name"
-						:selected="selected"
-					/>
-				</template>
-			</q-table>
-		</q-card-section>
-	</q-card>
+  <q-card flat>
+    <div class="row q-pa-sm justify-center">
+      <div class="col-12">
+        <div class="text-h5 text-center">
+          {{ $t('statistic') }} {{ $t('rating.name') }}
+        </div>
+      </div>
+    </div>
+    <q-card-section>
+      <q-table
+        v-model:pagination="pagination"
+        v-model:selected="selected"
+        :visible-columns="visibleColumns"
+        :rows="rows"
+        :columns="columns"
+        :loading="isLoadingTable"
+        :dense="true"
+        :rows-per-page-options="[10, 50, 100, 500, 10000]"
+        separator="vertical"
+        :row-key="row => `${row.hive_id}-${row.year}`"
+        selection="multiple"
+        binary-state-sort
+        flat
+        bordered
+        @request="onRequest"
+      >
+        <template #top-left>
+          <TableButtons
+            v-model:deleted="deleted"
+            v-model:modus="modus"
+            :selected="selected"
+            :table="STATSSTORE"
+            @change="refetch"
+          />
+        </template>
+        <template #top-right>
+          <TableFilter
+            v-model:model-filter="filter"
+            v-model:model-visible="visibleColumns"
+            :columns="columns"
+          />
+        </template>
+        <template #header-cell-amount_sum="props">
+          <TableThSum
+            :parent-prop="props"
+            :label="props.col.label"
+            :name="props.col.name"
+            :selected="selected"
+          />
+        </template>
+      </q-table>
+    </q-card-section>
+  </q-card>
 </template>

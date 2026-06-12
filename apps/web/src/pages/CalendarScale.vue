@@ -28,114 +28,114 @@ const eventDrag = ref(false);
 useSwipeCalendar(cal, container, opacity, eventDrag);
 
 const localPerf = useLocalStorage(
-	'pref-local',
-	{ 'calendar-show-weeknumber': true },
-	{ mergeDefaults: true },
+  'pref-local',
+  { 'calendar-show-weeknumber': true },
+  { mergeDefaults: true }
 );
 
 onMounted(() => {
-	useKeyCalendar(cal);
+  useKeyCalendar(cal);
 });
 
 function onResize(_size: any) {
-	if (cal.value?.getApi()) {
-		cal.value.getApi().updateSize();
-	}
+  if (cal.value?.getApi()) {
+    cal.value.getApi().updateSize();
+  }
 }
 
 function handleEventClick(clickInfo: EventClickArg) {
-	clickInfo.jsEvent.preventDefault(); // don't let the browser navigate
-	const weight_difference = clickInfo.event.extendedProps.difference;
-	notification.open(
-		'info',
-		t('weightDifference', { weight: weight_difference }),
-		true,
-	);
+  clickInfo.jsEvent.preventDefault(); // don't let the browser navigate
+  const weight_difference = clickInfo.event.extendedProps.difference;
+  notification.open(
+    'info',
+    t('weightDifference', { weight: weight_difference }),
+    true
+  );
 }
 
 const calendarOptions = reactive({
-	eventSources: [
-		{
-			events(fetchInfo, successCallback, failureCallback) {
-				useQuery.fetchQuery('scale_data', fetchInfo.start, fetchInfo.end).then(
-					(response: any) => {
-						successCallback(response);
-					},
-					(error) => {
-						notification.open('negative', error);
-						failureCallback(error);
-					},
-				);
-			},
-			id: 'scale',
-		},
-	],
-	plugins: [dayGridPlugin, listPlugin, interactionPlugin],
-	headerToolbar: {
-		left: 'prevYear,prev,next,nextYear today',
-		right: 'title',
-	},
-	footerToolbar: {
-		right: 'dayGridMonth,dayGridWeek,listWeek',
-	},
-	stickyHeaderDates: true,
-	initialView: 'dayGridMonth',
-	views: {
-		dayGrid: {
-			titleFormat: {
-				year: '2-digit',
-				month: 'short',
-			},
-		},
-		month: {
-			titleFormat: {
-				year: '2-digit',
-				month: 'short',
-			},
-		},
-		day: {
-			titleFormat: {
-				year: '2-digit',
-				month: 'short',
-				day: 'numeric',
-			},
-		},
-	},
-	titleFormat: {
-		year: '2-digit',
-		month: 'short',
-	},
-	height: '90vh',
-	locales: allLocales,
-	locale: getUser.value.lang || 'en',
-	weekNumbers: localPerf.value['calendar-show-weeknumber'],
-	weekNumberCalculation: 'ISO',
-	displayEventTime: true,
-	firstDay: 1,
-	selectable: false, // Allows a user to highlight multiple days or timeslots by clicking and dragging.
-	dayMaxEvents: 8,
-	weekends: true,
-	eventClick: handleEventClick,
-	eventDragStart: () => (eventDrag.value = true),
-	eventDragStop: () => (eventDrag.value = false),
-	eventResizeStart: () => (eventDrag.value = true),
-	eventResizeStop: () => (eventDrag.value = false),
+  eventSources: [
+    {
+      events(fetchInfo, successCallback, failureCallback) {
+        useQuery.fetchQuery('scale_data', fetchInfo.start, fetchInfo.end).then(
+          (response: any) => {
+            successCallback(response);
+          },
+          error => {
+            notification.open('negative', error);
+            failureCallback(error);
+          }
+        );
+      },
+      id: 'scale'
+    }
+  ],
+  plugins: [dayGridPlugin, listPlugin, interactionPlugin],
+  headerToolbar: {
+    left: 'prevYear,prev,next,nextYear today',
+    right: 'title'
+  },
+  footerToolbar: {
+    right: 'dayGridMonth,dayGridWeek,listWeek'
+  },
+  stickyHeaderDates: true,
+  initialView: 'dayGridMonth',
+  views: {
+    dayGrid: {
+      titleFormat: {
+        year: '2-digit',
+        month: 'short'
+      }
+    },
+    month: {
+      titleFormat: {
+        year: '2-digit',
+        month: 'short'
+      }
+    },
+    day: {
+      titleFormat: {
+        year: '2-digit',
+        month: 'short',
+        day: 'numeric'
+      }
+    }
+  },
+  titleFormat: {
+    year: '2-digit',
+    month: 'short'
+  },
+  height: '90vh',
+  locales: allLocales,
+  locale: getUser.value.lang || 'en',
+  weekNumbers: localPerf.value['calendar-show-weeknumber'],
+  weekNumberCalculation: 'ISO',
+  displayEventTime: true,
+  firstDay: 1,
+  selectable: false, // Allows a user to highlight multiple days or timeslots by clicking and dragging.
+  dayMaxEvents: 8,
+  weekends: true,
+  eventClick: handleEventClick,
+  eventDragStart: () => (eventDrag.value = true),
+  eventDragStop: () => (eventDrag.value = false),
+  eventResizeStart: () => (eventDrag.value = true),
+  eventResizeStop: () => (eventDrag.value = false)
 } as CalendarOptions);
 </script>
 
 <template>
-	<div width="100%">
-		<q-resize-observer @resize="onResize" />
-		<div class="col-12">
-			<div
-				ref="container"
-				class="calendar-container text-body1"
-				:style="{ opacity }"
-			>
-				<FullCalendar ref="cal" :options="calendarOptions" />
-			</div>
-		</div>
-	</div>
+  <div width="100%">
+    <q-resize-observer @resize="onResize" />
+    <div class="col-12">
+      <div
+        ref="container"
+        class="calendar-container text-body1"
+        :style="{ opacity }"
+      >
+        <FullCalendar ref="cal" :options="calendarOptions" />
+      </div>
+    </div>
+  </div>
 </template>
 
 <style>

@@ -1,64 +1,106 @@
 import find from 'lodash-es/find.js';
 import userDemoFixture from '../fixtures/user_demo.json' with { type: 'json' };
-import { test as base } from './helpers';
+import { expect, test as base } from './helpers';
 
-export const test = base.extend<{ autoAuth: void }>({
-	autoAuth: [
-		async ({ page, request }, use) => {
-			const response = await request.post(
-				'http://localhost:8101/api/v1/auth/login',
-				{
-					headers: { origin: 'http://localhost:8001' },
-					data: {
-						email: userDemoFixture.mail,
-						password: userDemoFixture.password,
-					},
-				},
-			);
+interface UserFixtures {
+  autoAuth: void;
+  createAndUndo: () => Promise<void>;
+  expectSaveRejected: () => Promise<void>;
+  selectFirstHive: () => Promise<void>;
+}
 
-			const body = await response.json();
-			const userData = body.data;
+export const test = base.extend<UserFixtures>({
+  autoAuth: [
+    async ({ page, request }, use) => {
+      const response = await request.post(
+        'http://localhost:8101/api/v1/auth/login',
+        {
+          headers: { origin: 'http://localhost:8001' },
+          data: {
+            email: userDemoFixture.mail,
+            password: userDemoFixture.password
+          }
+        }
+      );
 
-			const curId = userData.saved_company || 0;
-			const companies = userData.company;
-			let currentCompany = companies[0];
-			if (curId !== 0) {
-				currentCompany = find(companies, { id: curId }) || companies[0];
-			}
-			if (!currentCompany)
-				currentCompany = companies[0];
+      const body = await response.json();
+      const userData = body.data;
 
-			await page.context().addInitScript(
-				({ u, c }: { u: unknown; c: unknown }) => {
-					if (window.location.origin === 'null')
-						return;
-					localStorage.setItem('user', JSON.stringify(u));
-					localStorage.setItem('company', JSON.stringify(c));
-				},
-				{ u: userData, c: currentCompany },
-			);
+      const curId = userData.saved_company || 0;
+      const companies = userData.company;
+      let currentCompany = companies[0];
+      if (curId !== 0) {
+        currentCompany = find(companies, { id: curId }) || companies[0];
+      }
+      if (!currentCompany) {
+        currentCompany = companies[0];
+      }
 
-			const rawCookie = response.headers()['set-cookie'];
-			if (rawCookie) {
-				const cookiePart = (
-					Array.isArray(rawCookie) ? rawCookie[0] : rawCookie
-				).split(';')[0]!;
-				const eqIdx = cookiePart.indexOf('=');
-				await page.context().addCookies([
-					{
-						name: cookiePart.substring(0, eqIdx),
-						value: cookiePart.substring(eqIdx + 1),
-						domain: 'localhost',
-						path: '/',
-					},
-				]);
-			}
+      await page.context().addInitScript(
+        ({ u, c }: { u: unknown; c: unknown }) => {
+          if (window.location.origin === 'null') {
+            return;
+          }
+          localStorage.setItem('user', JSON.stringify(u));
+          localStorage.setItem('company', JSON.stringify(c));
+        },
+        { u: userData, c: currentCompany }
+      );
 
-			await use();
-		},
-		{ auto: true },
-	],
+      const rawCookie = response.headers()['set-cookie'];
+      if (rawCookie) {
+        const cookiePart = (
+          Array.isArray(rawCookie) ? rawCookie[0] : rawCookie
+        ).split(';')[0]!;
+        const eqIdx = cookiePart.indexOf('=');
+        await page.context().addCookies([
+          {
+            name: cookiePart.substring(0, eqIdx),
+            value: cookiePart.substring(eqIdx + 1),
+            domain: 'localhost',
+            path: '/'
+          }
+        ]);
+      }
+
+      await use();
+    },
+    { auto: true }
+  ],
+
+  createAndUndo: async ({ page, dataCy }, use) => {
+    await use(async () => {
+      await dataCy('btn-form-save').click({ force: true });
+      await expect(dataCy('notification')).toBeVisible();
+      await page.locator('[data-cy="notification"] button').click();
+      await expect(dataCy('notification')).not.toBeAttached();
+      await expect(dataCy('btn-form-undo')).toBeEnabled();
+      await dataCy('btn-form-undo').click({ force: true });
+      await expect(dataCy('notification')).toBeVisible();
+      await page.locator('[data-cy="notification"] button').click();
+      await expect(dataCy('notification')).not.toBeAttached();
+    });
+  },
+
+  expectSaveRejected: async ({ page, dataCy }, use) => {
+    await use(async () => {
+      await dataCy('btn-form-save').click({ force: true });
+      await expect(dataCy('notification')).toBeVisible();
+      await page.locator('[data-cy="notification"] button').click();
+      await expect(dataCy('notification')).not.toBeAttached();
+      await expect(dataCy('btn-form-undo')).toBeDisabled();
+    });
+  },
+
+  selectFirstHive: async ({ page, dataCy }, use) => {
+    await use(async () => {
+      await dataCy('select-hive').click();
+      await page.locator('.q-menu .q-item__section').first().click();
+      await page.keyboard.press('Escape');
+      await page.waitForTimeout(200);
+    });
+  }
 });
 
-export { expect } from './helpers';
+export { expect };
 export type { Locator, Page } from './helpers';

@@ -4,10 +4,10 @@ import fr from './fr/index.json';
 import it from './it/index.json';
 
 export const languages = {
-	en,
-	de,
-	it,
-	fr,
+  en,
+  de,
+  it,
+  fr
 };
 
 export default languages;

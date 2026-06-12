@@ -26,22 +26,22 @@ const { t, locale } = useI18n();
 const router = useRouter();
 
 // https://stackoverflow.com/a/43020177/5316675
-const pwdChars
-	= '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+const pwdChars =
+  '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
 const randPassword = Array.from({ length: 35 })
-	.fill(0)
-	.map(() =>
-		(function (chars) {
-			const umax = 2 ** 32;
-			const r = new Uint32Array(1);
-			const max = umax - (umax % chars.length);
-			do {
-				crypto.getRandomValues(r);
-			} while (r[0]! > max);
-			return chars[r[0]! % chars.length];
-		})(pwdChars),
-	)
-	.join('');
+  .fill(0)
+  .map(() =>
+    (function (chars) {
+      const umax = 2 ** 32;
+      const r = new Uint32Array(1);
+      const max = umax - (umax % chars.length);
+      do {
+        crypto.getRandomValues(r);
+      } while (r[0]! > max);
+      return chars[r[0]! % chars.length];
+    })(pwdChars)
+  )
+  .join('');
 
 const company = (router.currentRoute.value.query?.name as string) ?? '';
 const email = (router.currentRoute.value.query?.email as string) ?? '';
@@ -53,42 +53,42 @@ const currentTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 const countryCode = currentTimezone.includes('America') ? 'us' : '';
 
 const SOURCES = [
-	{
-		label: '-',
-		value: 1,
-	},
-	{
-		label: t('registerSources.recommended'),
-		value: 2,
-	},
-	{
-		label: t('registerSources.search'),
-		value: 3,
-	},
-	{
-		label: t('registerSources.socialMedia'),
-		value: 4,
-	},
-	{
-		label: t('registerSources.ads'),
-		value: 5,
-	},
-	{
-		label: t('registerSources.journal'),
-		value: 6,
-	},
-	{
-		label: t('registerSources.appStore'),
-		value: 7,
-	},
-	{
-		label: t('registerSources.fair'),
-		value: 8,
-	},
-	{
-		label: t('registerSources.other'),
-		value: 0,
-	},
+  {
+    label: '-',
+    value: 1
+  },
+  {
+    label: t('registerSources.recommended'),
+    value: 2
+  },
+  {
+    label: t('registerSources.search'),
+    value: 3
+  },
+  {
+    label: t('registerSources.socialMedia'),
+    value: 4
+  },
+  {
+    label: t('registerSources.ads'),
+    value: 5
+  },
+  {
+    label: t('registerSources.journal'),
+    value: 6
+  },
+  {
+    label: t('registerSources.appStore'),
+    value: 7
+  },
+  {
+    label: t('registerSources.fair'),
+    value: 8
+  },
+  {
+    label: t('registerSources.other'),
+    value: 0
+  }
 ];
 
 const terms = ref(false);
@@ -99,208 +99,208 @@ const submitCount = ref(0);
 const languages = usePreferredLanguages();
 
 const state = reactive({
-	company,
-	email,
-	password,
-	confirmPassword: password,
-	lang: languages.value[0] === 'de' ? LANGUAGES[1] : LANGUAGES[0],
-	format: 'YYYY-MM-DD',
-	source: SOURCES[0],
-	other: '',
-	terms: false,
-	newsletter: false,
+  company,
+  email,
+  password,
+  confirmPassword: password,
+  lang: languages.value[0] === 'de' ? LANGUAGES[1] : LANGUAGES[0],
+  format: 'YYYY-MM-DD',
+  source: SOURCES[0],
+  other: '',
+  terms: false,
+  newsletter: false
 });
 const rules = reactive({
-	other: { maxLengthValue: maxLength(45) },
-	source: { required: requiredField(t('source')) },
-	terms: { required: requiredField(t('signup.terms')) },
+  other: { maxLengthValue: maxLength(45) },
+  source: { required: requiredField(t('source')) },
+  terms: { required: requiredField(t('signup.terms')) }
 });
 const v$ = useVuelidate(rules, state);
 
 watch(state, () => {
-	if (state.lang?.value)
-		locale.value = state.lang.value;
+  if (state.lang?.value) {
+    locale.value = state.lang.value;
+  }
 });
 
 async function onSubmit() {
-	isSubmitting.value = true;
-	const isFormCorrect = await v$.value.$validate();
+  isSubmitting.value = true;
+  const isFormCorrect = await v$.value.$validate();
 
-	if (!isFormCorrect) {
-		isSubmitting.value = false;
-		return;
-	}
-	if (state.terms === false) {
-		notification.open('negative', 'signup.accept');
-		isSubmitting.value = false;
-		return;
-	}
-	submitCount.value++;
-	const form: any = {
-		company: state.company,
-		email: state.email,
-		password: state.password,
-		lang: state.lang?.value,
-		format: state.format,
-		source: state.source?.value === 0 ? state.other : `${state.source?.value}`,
-		newsletter: state.newsletter,
-		isOAuth: isOAuthRedirect || false,
-	};
-	await sendForm(form);
+  if (!isFormCorrect) {
+    isSubmitting.value = false;
+    return;
+  }
+  if (state.terms === false) {
+    notification.open('negative', 'signup.accept');
+    isSubmitting.value = false;
+    return;
+  }
+  submitCount.value++;
+  const form: any = {
+    company: state.company,
+    email: state.email,
+    password: state.password,
+    lang: state.lang?.value,
+    format: state.format,
+    source: state.source?.value === 0 ? state.other : `${state.source?.value}`,
+    newsletter: state.newsletter,
+    isOAuth: isOAuthRedirect || false
+  };
+  await sendForm(form);
 }
 
 async function sendForm(user: any) {
-	await AuthService.register(user).then(
-		(response) => {
-			const email = response.email as string;
-			isSubmitting.value = false;
-			btnLabel.value = t('success');
+  await AuthService.register(user).then(
+    response => {
+      const email = response.email as string;
+      isSubmitting.value = false;
+      btnLabel.value = t('success');
 
-			if (isOAuthRedirect) {
-				router.push({ name: 'login', query: { email, oauth: '1' } });
-				return;
-			}
+      if (isOAuthRedirect) {
+        router.push({ name: 'login', query: { email, oauth: '1' } });
+        return;
+      }
 
-			message.value = t('signup.success', { msg: email });
-			notification.open('positive', message.value, false);
-		},
-		(error) => {
-			console.error(error);
-			if (error.statusCode === 401) {
-				notification.open('negative', t('error.mailError'));
-			}
-			else {
-				notification.open('negative', error);
-			}
-			isSubmitting.value = false;
-		},
-	);
+      message.value = t('signup.success', { msg: email });
+      notification.open('positive', message.value, false);
+    },
+    error => {
+      console.error(error);
+      if (error.statusCode === 401) {
+        notification.open('negative', t('error.mailError'));
+      } else {
+        notification.open('negative', error);
+      }
+      isSubmitting.value = false;
+    }
+  );
 }
 </script>
 
 <template>
-	<q-card-section>
-		<div class="text-h6 text-center">
-			{{ t('signup.name') }}
-		</div>
-		<FormErrorMax v-if="submitCount >= 15" />
-		<q-form v-else class="q-gutter-md" @submit="onSubmit">
-			<FormInputText
-				v-model="state.company"
-				label="company.name"
-				:max-valid="45"
-				:min-valid="5"
-				:required="true"
-			>
-				<template #deepPrepend>
-					<q-icon name="fas fa-warehouse" />
-				</template>
-			</FormInputText>
-			<FormInputEmail v-model="state.email" :disable-mail="isOAuthRedirect" />
-			<FormUserPassword
-				v-if="!isOAuthRedirect"
-				v-model:model-password="state.password"
-				:confirm="true"
-			/>
-			<FormUserLanguage v-model="state.lang" />
-			<FormUserDateFormat v-model="state.format" />
+  <q-card-section>
+    <div class="text-h6 text-center">
+      {{ t('signup.name') }}
+    </div>
+    <FormErrorMax v-if="submitCount >= 15" />
+    <q-form v-else class="q-gutter-md" @submit="onSubmit">
+      <FormInputText
+        v-model="state.company"
+        label="company.name"
+        :max-valid="45"
+        :min-valid="5"
+        :required="true"
+      >
+        <template #deepPrepend>
+          <q-icon name="fas fa-warehouse" />
+        </template>
+      </FormInputText>
+      <FormInputEmail v-model="state.email" :disable-mail="isOAuthRedirect" />
+      <FormUserPassword
+        v-if="!isOAuthRedirect"
+        v-model:model-password="state.password"
+        :confirm="true"
+      />
+      <FormUserLanguage v-model="state.lang" />
+      <FormUserDateFormat v-model="state.format" />
 
-			<q-select
-				v-model="v$.source.$model"
-				:error="v$.source.$error"
-				:error-messages="validationErrors(v$.source)"
-				:options="SOURCES"
-				option-value="value"
-				option-label="label"
-				hide-details
-				:label="t('signup.source')"
-				filled
-				:dense="true"
-			>
-				<template #prepend>
-					<q-icon name="fas fa-question" />
-				</template>
-			</q-select>
+      <q-select
+        v-model="v$.source.$model"
+        :error="v$.source.$error"
+        :error-messages="validationErrors(v$.source)"
+        :options="SOURCES"
+        option-value="value"
+        option-label="label"
+        hide-details
+        :label="t('signup.source')"
+        filled
+        :dense="true"
+      >
+        <template #prepend>
+          <q-icon name="fas fa-question" />
+        </template>
+      </q-select>
 
-			<q-input
-				v-show="state.source?.value === SOURCES.at(-1)!.value"
-				v-model="v$.other.$model"
-				:error="v$.other.$error"
-				:error-message="validationErrors(v$.other)"
-				:no-error-icon="true"
-				:label="t('signup.source')"
-				name="other"
-				filled
-			>
-				<template #prepend>
-					<q-icon name="fas fa-question-circle" />
-				</template>
-			</q-input>
+      <q-input
+        v-show="state.source?.value === SOURCES.at(-1)!.value"
+        v-model="v$.other.$model"
+        :error="v$.other.$error"
+        :error-message="validationErrors(v$.other)"
+        :no-error-icon="true"
+        :label="t('signup.source')"
+        name="other"
+        filled
+      >
+        <template #prepend>
+          <q-icon name="fas fa-question-circle" />
+        </template>
+      </q-input>
 
-			<FormDropdownServer
-				class="q-mb-xl"
-				form="register"
-				:overwrite-country="countryCode"
-			/>
+      <FormDropdownServer
+        class="q-mb-xl"
+        form="register"
+        :overwrite-country="countryCode"
+      />
 
-			<q-checkbox
-				v-model="v$.terms.$model"
-				:error="v$.terms.$error"
-				:error-messages="validationErrors(v$.terms)"
-				color="primary"
-				:true-value="true"
-				:false-value="false"
-			>
-				<slot>
-					{{ t('signup.agree') }}
-					<span data-cy="terms" flat class="show-pointer" @click="terms = true">
-						<b>
-							{{ t('signup.terms') }}
-						</b>
-					</span>
-				</slot>
-			</q-checkbox>
+      <q-checkbox
+        v-model="v$.terms.$model"
+        :error="v$.terms.$error"
+        :error-messages="validationErrors(v$.terms)"
+        color="primary"
+        :true-value="true"
+        :false-value="false"
+      >
+        <slot>
+          {{ t('signup.agree') }}
+          <span data-cy="terms" flat class="show-pointer" @click="terms = true">
+            <b>
+              {{ t('signup.terms') }}
+            </b>
+          </span>
+        </slot>
+      </q-checkbox>
 
-			<FormUserNewsletter v-model="state.newsletter" />
+      <FormUserNewsletter v-model="state.newsletter" />
 
-			<q-card-actions>
-				<BtnBase
-					type="submit"
-					size="lg"
-					color="secondary"
-					class="full-width text-white"
-					:label="btnLabel"
-					:disable="isSubmitting || message !== ''"
-					:loading="isSubmitting"
-				/>
-				<div class="text-center text-primary">
-					{{ t('signup.hintPremium') }}
-				</div>
-			</q-card-actions>
-		</q-form>
-		<p v-if="message" class="text-primary text-center">
-			{{ message }}
-		</p>
-	</q-card-section>
-	<q-dialog v-model="terms">
-		<q-card>
-			<q-card-section>
-				<div class="text-h6">
-					{{ t('signup.terms') }}
-				</div>
-			</q-card-section>
-			<q-card-section class="q-pt-none">
-				{{ state.lang?.value === 'de' ? termsDE : termsEN }}
-			</q-card-section>
-			<q-card-actions align="right">
-				<BtnBase
-					v-close-popup
-					flat
-					data-cy="btn-terms"
-					:label="$t('ok')"
-					color="primary"
-				/>
-			</q-card-actions>
-		</q-card>
-	</q-dialog>
+      <q-card-actions>
+        <BtnBase
+          type="submit"
+          size="lg"
+          color="secondary"
+          class="full-width text-white"
+          :label="btnLabel"
+          :disable="isSubmitting || message !== ''"
+          :loading="isSubmitting"
+        />
+        <div class="text-center text-primary">
+          {{ t('signup.hintPremium') }}
+        </div>
+      </q-card-actions>
+    </q-form>
+    <p v-if="message" class="text-primary text-center">
+      {{ message }}
+    </p>
+  </q-card-section>
+  <q-dialog v-model="terms">
+    <q-card>
+      <q-card-section>
+        <div class="text-h6">
+          {{ t('signup.terms') }}
+        </div>
+      </q-card-section>
+      <q-card-section class="q-pt-none">
+        {{ state.lang?.value === 'de' ? termsDE : termsEN }}
+      </q-card-section>
+      <q-card-actions align="right">
+        <BtnBase
+          v-close-popup
+          flat
+          data-cy="btn-terms"
+          :label="$t('ok')"
+          color="primary"
+        />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
 </template>

@@ -33,183 +33,183 @@ const deleted = ref(false);
 const filter = ref('');
 
 const columns = [
-	{
-		name: 'id',
-		label: t('id'),
-		align: 'right',
-		field: (row: TodoResponse) => row.id,
-		sortable: true,
-	},
-	{
-		name: 'date',
-		required: true,
-		label: t('date'),
-		align: 'left',
-		field: (row: TodoResponse) => row.date,
-		format: (val: string) => useDate.displayFormat(val),
-		sortable: true,
-	},
-	{
-		name: 'name',
-		label: t('name'),
-		align: 'left',
-		field: (row: TodoResponse) => row.name,
-		sortable: true,
-	},
-	{
-		name: 'apiary',
-		label: t('apiary'),
-		align: 'left',
-		field: (row: TodoResponse) => row.apiary?.name,
-		sortable: true,
-	},
-	{
-		name: 'url',
-		label: t('url'),
-		align: 'left',
-		field: (row: TodoResponse) => row.url,
-		sortable: true,
-	},
-	{
-		name: 'note',
-		label: t('note'),
-		align: 'left',
-		field: (row: TodoResponse) => row.note,
-		sortable: true,
-	},
-	{
-		name: 'done',
-		label: t('status'),
-		align: 'center',
-		field: (row: TodoResponse) => row.done,
-		sortable: true,
-	},
-	{
-		name: 'created_at',
-		label: t('created'),
-		align: 'center',
-		field: (row: TodoResponse) => row.created_at,
-		format: (val: string, row: TodoResponse) =>
-			tableMeta(val, row.creator, useDate.formats.value['date-time']),
-		sortable: true,
-	},
-	{
-		name: 'updated_at',
-		label: t('updated'),
-		align: 'center',
-		field: (row: TodoResponse) => row.updated_at,
-		format: (val: string, row: TodoResponse) =>
-			tableMeta(val, row.editor, useDate.formats.value['date-time']),
-		sortable: true,
-	},
+  {
+    name: 'id',
+    label: t('id'),
+    align: 'right',
+    field: (row: TodoResponse) => row.id,
+    sortable: true
+  },
+  {
+    name: 'date',
+    required: true,
+    label: t('date'),
+    align: 'left',
+    field: (row: TodoResponse) => row.date,
+    format: (val: string) => useDate.displayFormat(val),
+    sortable: true
+  },
+  {
+    name: 'name',
+    label: t('name'),
+    align: 'left',
+    field: (row: TodoResponse) => row.name,
+    sortable: true
+  },
+  {
+    name: 'apiary',
+    label: t('apiary'),
+    align: 'left',
+    field: (row: TodoResponse) => row.apiary?.name,
+    sortable: true
+  },
+  {
+    name: 'url',
+    label: t('url'),
+    align: 'left',
+    field: (row: TodoResponse) => row.url,
+    sortable: true
+  },
+  {
+    name: 'note',
+    label: t('note'),
+    align: 'left',
+    field: (row: TodoResponse) => row.note,
+    sortable: true
+  },
+  {
+    name: 'done',
+    label: t('status'),
+    align: 'center',
+    field: (row: TodoResponse) => row.done,
+    sortable: true
+  },
+  {
+    name: 'created_at',
+    label: t('created'),
+    align: 'center',
+    field: (row: TodoResponse) => row.created_at,
+    format: (val: string, row: TodoResponse) =>
+      tableMeta(val, row.creator, useDate.formats.value['date-time']),
+    sortable: true
+  },
+  {
+    name: 'updated_at',
+    label: t('updated'),
+    align: 'center',
+    field: (row: TodoResponse) => row.updated_at,
+    format: (val: string, row: TodoResponse) =>
+      tableMeta(val, row.editor, useDate.formats.value['date-time']),
+    sortable: true
+  }
 ] as QTableProps['columns'];
 
 const pagination = ref({
-	sortBy: store.value.sort,
-	descending: store.value.direction,
-	page: 1,
-	rowsPerPage: store.value.length,
-	rowsNumber: 0,
+  sortBy: store.value.sort,
+  descending: store.value.direction,
+  page: 1,
+  rowsPerPage: store.value.length,
+  rowsNumber: 0
 });
 useKeyTable(pagination);
 
 const {
-	isLoading: isLoadingTable,
-	data,
-	refetch,
+  isLoading: isLoadingTable,
+  data,
+  refetch
 } = useTodosQuery({
-	order: computed(() => [pagination.value.sortBy]),
-	direction: computed(() => (pagination.value.descending ? ['asc'] : ['desc'])),
-	offset: computed(() => pagination.value.page - 1),
-	limit: computed(() => pagination.value.rowsPerPage),
-	q: computed(() => (filter.value ? filter.value : '')),
-	filters: computed(() => (filters?.value ? filters.value : '')),
-	done: modus,
+  order: computed(() => [pagination.value.sortBy]),
+  direction: computed(() => (pagination.value.descending ? ['asc'] : ['desc'])),
+  offset: computed(() => pagination.value.page - 1),
+  limit: computed(() => pagination.value.rowsPerPage),
+  q: computed(() => (filter.value ? filter.value : '')),
+  filters: computed(() => (filters?.value ? filters.value : '')),
+  done: modus
 });
 
-watch(visibleColumns, (cur) => {
-	store.value.visible = cur as any;
+watch(visibleColumns, cur => {
+  store.value.visible = cur as any;
 });
 
 watch(
-	data,
-	() => {
-		if (data.value) {
-			rows.value = data.value.results;
-			pagination.value.rowsNumber = data.value.total;
-			selected.value = tableCheckSelected(selected.value, rows.value);
-		}
-	},
-	{
-		immediate: true,
-	},
+  data,
+  () => {
+    if (data.value) {
+      rows.value = data.value.results;
+      pagination.value.rowsNumber = data.value.total;
+      selected.value = tableCheckSelected(selected.value, rows.value);
+    }
+  },
+  {
+    immediate: true
+  }
 );
 
 function onRequest(props: any) {
-	store.value.length = props.pagination.rowsPerPage;
-	store.value.sort = props.pagination.sortBy;
-	store.value.direction = props.pagination.descending;
-	pagination.value = props.pagination;
+  store.value.length = props.pagination.rowsPerPage;
+  store.value.sort = props.pagination.sortBy;
+  store.value.direction = props.pagination.descending;
+  pagination.value = props.pagination;
 }
 </script>
 
 <template>
-	<div class="row q-pa-sm justify-center">
-		<div class="col-12">
-			<q-table
-				v-model:pagination="pagination"
-				v-model:selected="selected"
-				:rows="rows"
-				:columns="columns"
-				:visible-columns="visibleColumns"
-				:loading="isLoadingTable"
-				:dense="true"
-				:rows-per-page-options="[10, 50, 100, 500, 10000]"
-				separator="vertical"
-				row-key="id"
-				selection="multiple"
-				binary-state-sort
-				flat
-				bordered
-				@request="onRequest"
-			>
-				<template #top-left>
-					<TableButtons
-						v-model:deleted="deleted"
-						v-model:modus="modus"
-						label-modus-true="done"
-						label-modus-false="open"
-						:selected="selected"
-						table="todo"
-						@change="refetch"
-					/>
-				</template>
-				<template #top-right>
-					<TableFilter
-						v-model:model-filter="filter"
-						v-model:model-visible="visibleColumns"
-						:columns="columns"
-					/>
-				</template>
-				<template #body-cell-url="props">
-					<TableColUrl :value="props.value" />
-				</template>
-				<template #body-cell-note="props">
-					<TableColNote
-						:value="props.value"
-						:trunc="visibleColumns.length > 4"
-					/>
-				</template>
+  <div class="row q-pa-sm justify-center">
+    <div class="col-12">
+      <q-table
+        v-model:pagination="pagination"
+        v-model:selected="selected"
+        :rows="rows"
+        :columns="columns"
+        :visible-columns="visibleColumns"
+        :loading="isLoadingTable"
+        :dense="true"
+        :rows-per-page-options="[10, 50, 100, 500, 10000]"
+        separator="vertical"
+        row-key="id"
+        selection="multiple"
+        binary-state-sort
+        flat
+        bordered
+        @request="onRequest"
+      >
+        <template #top-left>
+          <TableButtons
+            v-model:deleted="deleted"
+            v-model:modus="modus"
+            label-modus-true="done"
+            label-modus-false="open"
+            :selected="selected"
+            table="todo"
+            @change="refetch"
+          />
+        </template>
+        <template #top-right>
+          <TableFilter
+            v-model:model-filter="filter"
+            v-model:model-visible="visibleColumns"
+            :columns="columns"
+          />
+        </template>
+        <template #body-cell-url="props">
+          <TableColUrl :value="props.value" />
+        </template>
+        <template #body-cell-note="props">
+          <TableColNote
+            :value="props.value"
+            :trunc="visibleColumns.length > 4"
+          />
+        </template>
 
-				<template #body-cell-done="props">
-					<TableColStatus
-						:id="props.row.id"
-						:value="props.value"
-						table="todo"
-						@change="refetch"
-					/>
-				</template>
-			</q-table>
-		</div>
-	</div>
+        <template #body-cell-done="props">
+          <TableColStatus
+            :id="props.row.id"
+            :value="props.value"
+            table="todo"
+            @change="refetch"
+          />
+        </template>
+      </q-table>
+    </div>
+  </div>
 </template>
