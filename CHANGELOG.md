@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.3.1](https://github.com/HannesOberreiter/btree_server/compare/btree-server-v7.3.0...btree-server-v7.3.1) (2026-06-12)
+
+
+### Bug Fixes
+
+* :bug: fix number string to number conversion ([c53ebe9](https://github.com/HannesOberreiter/btree_server/commit/c53ebe9143459631413b9dd9fb03432193c8b419))
+
 ## [7.3.0](https://github.com/HannesOberreiter/btree_server/compare/btree-server-v7.2.0...btree-server-v7.3.0) (2026-06-12)
 
 
