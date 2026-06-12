@@ -216,7 +216,8 @@ export async function exchangeAuthorizationCode(
   }
   await RedisServer.client.del(key);
 
-  const payload = JSON.parse(String(raw)) as OAuthCodePayload;
+  const rawText = typeof raw === 'string' ? raw : raw.toString();
+  const payload = JSON.parse(rawText) as OAuthCodePayload;
   if (payload.clientId !== clientId || payload.redirectUri !== redirectUri) {
     throw httpErrors.BadRequest('Invalid authorization code');
   }

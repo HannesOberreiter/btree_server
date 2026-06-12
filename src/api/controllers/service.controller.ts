@@ -170,7 +170,7 @@ export default class ServiceController {
     }
 
     if (mail) {
-      createInvoice(mail, value, years, 'PayPal', lang);
+      void createInvoice(mail, value, years, 'PayPal', lang);
     }
     return { ...capture, paid };
   }

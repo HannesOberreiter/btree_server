@@ -23,7 +23,7 @@ async function getLatestInvoice() {
   const to = `${new Date().getFullYear()}-12-31`;
   const url = buildBaseUrl(`billing/api/searchInvoicesByDate/${from}/${to}`);
   const response = await fetch(url);
-  const result = (await response.json()) as any;
+  const result = await response.json();
   if (result.length > 0) {
     let newNumber = 0;
     let newNumberGroupId = 0;
@@ -115,7 +115,7 @@ async function sendInvoiceToCustomer(
   const pdf = await downloadInvoicePdf(invoiceId);
   if (!pdf) {
     // Fallback: notify admin so PDF can be sent manually
-    MailService.getInstance().sendRawMail(
+    void MailService.getInstance().sendRawMail(
       'office@btree.at',
       `Invoice PDF download failed (${fullNumber})`,
       `Could not download invoice PDF from FoxyOffice.\nInvoiceId: ${invoiceId}\nNumber: ${fullNumber}\nCustomer: ${mail}\n`,
@@ -237,7 +237,7 @@ export async function createInvoice(
 
       const result = await response.text();
       if (response.status === 200) {
-        MailService.getInstance().sendRawMail(
+        void MailService.getInstance().sendRawMail(
           'office@btree.at',
           'New invoice created',
           `FoxyOfficeResponse: ${result}\n\n` +
@@ -259,7 +259,7 @@ export async function createInvoice(
             mode === 'invoice' ? toISODate(paymentTargetDate) : undefined,
           );
         } else {
-          MailService.getInstance().sendRawMail(
+          void MailService.getInstance().sendRawMail(
             'office@btree.at',
             `Invoice PDF not sent (${latestInvoice.number})`,
             `Could not parse invoice id from FoxyOffice response.\nResponse: ${result}\nCustomer: ${mail}\n`,

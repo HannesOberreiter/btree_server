@@ -181,7 +181,9 @@ export async function getWeatherData(
   try {
     const cached = await RedisServer.client.get(cacheKey);
     if (cached) {
-      return JSON.parse(cached as string) as OneCallResponse;
+      const cachedText =
+        typeof cached === 'string' ? cached : cached.toString();
+      return JSON.parse(cachedText) as OneCallResponse;
     }
   } catch (error) {
     Logger.getInstance().log('warn', 'Redis cache read error', {
@@ -246,7 +248,9 @@ export async function getHistoricalTemperatures(
   try {
     const cached = await RedisServer.client.get(cacheKey);
     if (cached) {
-      return JSON.parse(cached as string) as Array<{
+      const cachedText =
+        typeof cached === 'string' ? cached : cached.toString();
+      return JSON.parse(cachedText) as Array<{
         date: string;
         temperature: number;
       }>;

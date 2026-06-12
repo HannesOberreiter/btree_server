@@ -221,10 +221,10 @@ export class AppleAuth {
       throw new Error('Missing email in Apple ID token');
     }
     return await this.verifyUser(
-      idToken.sub!,
+      idToken.sub,
       undefined,
       'apple',
-      idToken.email!,
+      idToken.email,
     );
   }
 

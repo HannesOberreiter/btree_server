@@ -211,7 +211,7 @@ describe('agent key & agent API routes', () => {
       params.delete('state');
       const res = await noAuthFetch(
         'GET',
-        `/api/v1/agent/oauth/authorize?${params.toString()}`,
+        `/api/v1/chatgpt/oauth/authorize?${params.toString()}`,
       );
       expect(res.statusCode).toEqual(400);
       expect(res.body.message).toEqual('Missing state');
@@ -220,7 +220,7 @@ describe('agent key & agent API routes', () => {
     it('302 - authorize redirects anonymous user to login', async () => {
       const res = await noAuthFetchNoRedirect(
         'GET',
-        `/api/v1/agent/oauth/authorize?${authorizeQuery.toString()}`,
+        `/api/v1/chatgpt/oauth/authorize?${authorizeQuery.toString()}`,
       );
       expect(res.statusCode).toEqual(302);
       expect(res.location).toContain('http://localhost:9000/visitor/login');
@@ -230,7 +230,7 @@ describe('agent key & agent API routes', () => {
     });
 
     it('400 - token rejects unsupported grant_type', async () => {
-      const res = await noAuthFetch('POST', '/api/v1/agent/oauth/token', {
+      const res = await noAuthFetch('POST', '/api/v1/chatgpt/oauth/token', {
         grant_type: 'password',
         client_id: 'test-chatgpt-client',
         client_secret: 'test-chatgpt-secret',
@@ -240,7 +240,7 @@ describe('agent key & agent API routes', () => {
     });
 
     it('401 - token rejects invalid client secret', async () => {
-      const res = await noAuthFetch('POST', '/api/v1/agent/oauth/token', {
+      const res = await noAuthFetch('POST', '/api/v1/chatgpt/oauth/token', {
         grant_type: 'authorization_code',
         client_id: 'test-chatgpt-client',
         client_secret: 'wrong-secret',

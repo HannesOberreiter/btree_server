@@ -476,7 +476,7 @@ async function findUnknownHiveIds(
     .where('user_id', '=', context.userId)
     .where('id', 'in', unique)
     .execute();
-  const found = new Set(rows.map((r) => Number(r.id)));
+  const found = new Set(rows.map((r) => r.id));
   return unique.filter((id) => !found.has(id));
 }
 

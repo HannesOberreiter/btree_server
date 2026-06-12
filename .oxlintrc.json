@@ -6,6 +6,10 @@
     "suspicious": "error",
     "perf": "warn"
   },
+  "options": {
+    "typeAware": true,
+    "typeCheck": false
+  },
   "env": {
     "builtin": true,
     "node": true
@@ -18,6 +22,16 @@
     "eslint/preserve-caught-error": "off",
     "promise/always-return": "off",
     "typescript/no-extraneous-class": "off",
+    "typescript/no-unsafe-type-assertion": "off",
+    "oxc/no-async-endpoint-handlers": "off",
+    "typescript/unbound-method": "off",
+    "typescript/consistent-return": "off",
+    "typescript/no-base-to-string": "off",
+    "typescript/no-for-in-array": "off",
+    "typescript/no-misused-spread": "off",
+    "typescript/no-redundant-type-constituents": "off",
+    "typescript/no-unsafe-enum-comparison": "off",
+    "typescript/restrict-template-expressions": "off",
     "unicorn/consistent-function-scoping": "off",
     "unicorn/no-array-sort": "off",
     "unicorn/no-unnecessary-await": "off",

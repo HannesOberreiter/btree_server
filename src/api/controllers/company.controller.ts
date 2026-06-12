@@ -744,7 +744,7 @@ async function moveCheckups(
     checkup.type_id = oldMapTypes[checkup.type_id];
     return checkup;
   });
-  await await insert(Checkup.query(trx), data.checkups);
+  await insert(Checkup.query(trx), data.checkups);
 }
 
 async function moveQueens(

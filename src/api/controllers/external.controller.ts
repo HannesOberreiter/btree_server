@@ -118,7 +118,7 @@ export default class ExternalController {
           : 'eu';
       } catch (error) {
         const mailer = MailService.getInstance();
-        mailer.sendRawMail(
+        void mailer.sendRawMail(
           'office@btree.at',
           'Failed capture of Stripe Payment',
           JSON.stringify(event, null, 2),
@@ -168,7 +168,7 @@ export default class ExternalController {
         req.log.error(error);
       }
       if (mail) {
-        createInvoice(mail, amount, years, 'Stripe', lang);
+        void createInvoice(mail, amount, years, 'Stripe', lang);
       }
     }
     return {};

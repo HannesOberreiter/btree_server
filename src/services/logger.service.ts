@@ -70,7 +70,7 @@ export class Logger {
       });
     }
 
-    this._streams = streams as (DestinationStream | StreamEntry)[];
+    this._streams = streams;
 
     const ms = multistream(streams, {
       dedupe: false,

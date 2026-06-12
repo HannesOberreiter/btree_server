@@ -61,7 +61,7 @@ export async function createOrder(
     }),
   });
   const data = await response.json();
-  return data as any;
+  return data;
 }
 
 // https://developer.paypal.com/docs/api/orders/v2/#orders_capture
@@ -76,7 +76,7 @@ export async function capturePayment(orderId: string) {
     },
   });
   const data = await response.json();
-  return data as any;
+  return data;
 }
 
 async function generateAccessToken() {
@@ -90,6 +90,6 @@ async function generateAccessToken() {
       Authorization: `Basic ${auth}`,
     },
   });
-  const data = (await response.json()) as any;
+  const data = await response.json();
   return data.access_token;
 }

@@ -75,10 +75,10 @@ async function getMonthlyUsage(userId: number): Promise<MonthlyUsage> {
     .where('request_time', '<=', endOfMonth)
     .executeTakeFirst();
 
-  const totalInputTokens = Number(result?.totalInputTokens ?? 0);
-  const totalOutputTokens = Number(result?.totalOutputTokens ?? 0);
-  const totalRequests = Number(result?.totalRequests ?? 0);
-  const estimatedCostEUR = Number(result?.totalCostEUR ?? 0);
+  const totalInputTokens = result?.totalInputTokens ?? 0;
+  const totalOutputTokens = result?.totalOutputTokens ?? 0;
+  const totalRequests = result?.totalRequests ?? 0;
+  const estimatedCostEUR = result?.totalCostEUR ?? 0;
   const monthlyLimitEUR = mistralAI.monthlyBudgetEUR;
   const remainingBudgetEUR = Math.max(0, monthlyLimitEUR - estimatedCostEUR);
 

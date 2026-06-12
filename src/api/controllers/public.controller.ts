@@ -6,7 +6,7 @@ import type { Taxa } from '../models/observation.model.js';
 import { ObservationModel } from '../models/observation.model.js';
 
 function mapTaxa(req: FastifyRequest): Taxa {
-  const paramTaxa = (req.params as any).taxa as any;
+  const paramTaxa = (req.params as any).taxa;
   if (!paramTaxa) {
     throw createHttpError(400, 'Taxa is required');
   }
@@ -38,7 +38,7 @@ export default class PublicController {
 
     const result = await ObservationModel.getRecent(taxa);
 
-    redis.set(cacheKey, JSON.stringify(result), { EX: 3600 });
+    void redis.set(cacheKey, JSON.stringify(result), { EX: 3600 });
 
     return result;
   }
@@ -66,7 +66,7 @@ export default class PublicController {
 
     const result = await ObservationModel.getByYear(taxa, year);
 
-    redis.set(cacheKey, JSON.stringify(result), { EX: 3600 });
+    void redis.set(cacheKey, JSON.stringify(result), { EX: 3600 });
 
     return result;
   }

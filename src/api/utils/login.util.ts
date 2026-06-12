@@ -110,7 +110,7 @@ async function checkBruteForce(bee_id: number) {
             .orWhereNull('notice_bruteforce'),
         );
       if (user) {
-        MailService.getInstance().sendMail({
+        void MailService.getInstance().sendMail({
           to: user.email,
           lang: user.lang,
           subject: 'acc_locked',

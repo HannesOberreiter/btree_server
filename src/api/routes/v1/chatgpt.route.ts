@@ -138,7 +138,11 @@ export default async function routes(instance: FastifyInstance, _options: any) {
     async () => buildChatGptToolSpec(),
   );
 
-  async function callTool(toolName: string, body: unknown, request: FastifyRequest) {
+  async function callTool(
+    toolName: string,
+    body: unknown,
+    request: FastifyRequest,
+  ) {
     if (!wizBeeToolDefinitions.some((toolDef) => toolDef.name === toolName)) {
       throw httpErrors.NotFound('Unknown tool');
     }

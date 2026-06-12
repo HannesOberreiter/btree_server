@@ -44,7 +44,7 @@ export class HTTPServer {
     }
 
     try {
-      this.cron.start();
+      void this.cron.start();
     } catch (error) {
       this.logger.log('error', 'Failed to start cron jobs', error);
     }

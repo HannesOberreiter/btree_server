@@ -34,8 +34,8 @@ export class AppleAuthentication {
     privateKey: string,
     customConfig: CustomConfig,
   ) {
-    this._config = config as AppleAuthConfig;
-    this._customConfig = customConfig as CustomConfig;
+    this._config = config;
+    this._customConfig = customConfig;
 
     this._state = '';
     this._tokenGenerator = new AppleClientSecret(this._config, privateKey);

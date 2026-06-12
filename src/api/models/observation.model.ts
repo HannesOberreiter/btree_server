@@ -156,7 +156,7 @@ export class ObservationModel {
       .where('external_id', 'is not', null)
       .executeTakeFirstOrThrow();
 
-    const count = Number(countResult.count);
+    const count = countResult.count;
     if (count === 0) return [];
 
     const randomOffset = Math.max(

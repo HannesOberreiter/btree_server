@@ -78,7 +78,7 @@ export default class DropboxController {
       accessToken: token.access_token,
       refreshToken: token.refresh_token,
     });
-    await dbx.checkAndRefreshAccessToken();
+    dbx.checkAndRefreshAccessToken();
     if (token.access_token !== dbx.getAccessToken()) {
       await DropboxModel.transaction(async (trx) => {
         return DropboxModel.query(trx)

@@ -19,7 +19,7 @@ const kyselyServer = KyselyServer.getInstance();
 dbServer.start();
 // eslint-disable-next-line antfu/no-top-level-await
 await redisServer.start();
-mailServer.setup();
+void mailServer.setup();
 
 const application = new Application();
 const httpServer = new HTTPServer(application.app);

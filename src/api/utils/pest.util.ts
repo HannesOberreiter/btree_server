@@ -24,10 +24,10 @@ export async function fetchObservations(taxa: Taxa = 'Vespa velutina') {
 
   /** after fetching new taxa we want to cleanup any possible cached map results */
   const redis = RedisServer.client;
-  redis.del(buildRedisCacheKeyObservationsRecent(taxa));
+  void redis.del(buildRedisCacheKeyObservationsRecent(taxa));
   const currentYear = new Date().getFullYear();
-  redis.del(`cache:${taxa}ObservationsYear:${currentYear}`);
-  redis.del(`cache:${taxa}ObservationsYear:${currentYear - 1}`);
+  void redis.del(`cache:${taxa}ObservationsYear:${currentYear}`);
+  void redis.del(`cache:${taxa}ObservationsYear:${currentYear - 1}`);
 
   return {
     taxa,
@@ -233,10 +233,7 @@ export function fetchInat() {
         const observation = res.results.find(
           (o: any) => o.id === record.external_id,
         );
-        if (
-          TAXON_IDS[record.taxa as Taxa].includes(observation.taxon.id) ===
-          false
-        ) {
+        if (!TAXON_IDS[record.taxa as Taxa].includes(observation.taxon.id)) {
           wrongTaxon.push(record.id);
           removedExternalIds.push(record.external_id!);
         }
@@ -522,7 +519,7 @@ export async function fetchInfoFaunaCh(taxa: Taxa) {
     new Date().getFullYear() - 1
   },${new Date().getFullYear()}`;
 
-  while (endOfRecords === false) {
+  while (!endOfRecords) {
     const result = await fetch(
       `${url}&limit=${limit}&offset=${offset}${yearFilter}`,
     );

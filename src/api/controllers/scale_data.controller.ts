@@ -37,8 +37,7 @@ export default class ScaleDataController {
       if (lastInsert) {
         if (q.action === 'CREATE') {
           if (
-            dayjs(lastInsert.datetime) >
-            dayjs(insertDate as any).subtract(1, 'hour')
+            dayjs(lastInsert.datetime) > dayjs(insertDate).subtract(1, 'hour')
           ) {
             throw httpErrors.TooManyRequests();
           }
@@ -46,7 +45,7 @@ export default class ScaleDataController {
 
         if (q.weight && lastInsert.weight && q.action === 'CREATE') {
           try {
-            const currentWeight = Number.parseFloat(q.weight as any);
+            const currentWeight = Number.parseFloat(q.weight);
             const checkWeight = Math.abs(lastInsert.weight - currentWeight);
             if (checkWeight > 5) {
               const user = await User.query(trx)
@@ -56,7 +55,7 @@ export default class ScaleDataController {
                   'company_bee.user_id': company.id,
                 });
               user.forEach((u) => {
-                MailService.getInstance().sendMail({
+                void MailService.getInstance().sendMail({
                   to: u.email,
                   lang: u.lang,
                   subject: 'weight_warning',

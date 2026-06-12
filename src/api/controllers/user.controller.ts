@@ -232,9 +232,16 @@ export default class UserController {
         COUNT: 500,
       });
       if (result.keys.length > 0) {
-        keys.push(...(result.keys as string[]));
+        keys.push(
+          ...result.keys.map((key) =>
+            typeof key === 'string' ? key : key.toString(),
+          ),
+        );
       }
-      cursor = result.cursor as string;
+      cursor =
+        typeof result.cursor === 'string'
+          ? result.cursor
+          : result.cursor.toString();
       if (cursor === '0') break;
     }
 
@@ -247,7 +254,8 @@ export default class UserController {
         if (!el) {
           return null;
         }
-        const o = JSON.parse(el as string);
+        const sessionJson = typeof el === 'string' ? el : el.toString();
+        const o = JSON.parse(sessionJson);
         if (!o.user) return null;
         o.id = keys[index];
         o.user.currentSession =

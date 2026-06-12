@@ -54,7 +54,7 @@ export default class TodoController {
       }
     }
 
-    const search = q ? `${q}`.trim() : '';
+    const search = q ? q.trim() : '';
 
     const query = db
       .selectFrom('todos')
@@ -153,7 +153,7 @@ export default class TodoController {
       await checkOwnership(
         db,
         'apiaries',
-        Number(body.apiary_id),
+        body.apiary_id,
         req.session.user.user_id,
       );
     }
@@ -216,7 +216,7 @@ export default class TodoController {
       await checkOwnership(
         db,
         'apiaries',
-        Number(body.data.apiary_id),
+        body.data.apiary_id,
         req.session.user.user_id,
       );
     }
