@@ -4,6 +4,8 @@ import { sql } from 'kysely';
 import { KyselyServer } from '../../servers/kysely.server.js';
 import type { DB } from '../../types/db.types.js';
 
+type TableName = Extract<keyof DB, string>;
+
 /**
  * Execute a function within a database transaction.
  * Automatically commits on success and rolls back on error.
@@ -99,7 +101,7 @@ export async function softDelete<TB extends keyof DB>(
  * Add creator and editor relations to a query.
  * Adds LEFT JOINs and JSON_OBJECT selections for bee (user) relations.
  */
-export function withCreatorAndEditor<TB extends keyof DB & string, O>(
+export function withCreatorAndEditor<TB extends TableName, O>(
   query: SelectQueryBuilder<DB, TB, O>,
   options: {
     creatorColumn: string;
@@ -139,7 +141,7 @@ export function withCreatorAndEditor<TB extends keyof DB & string, O>(
  * Adds LEFT JOIN with apiaries table and JSON_OBJECT selection for apiary data.
  * Filters out soft-deleted apiaries.
  */
-export function withApiary<TB extends keyof DB & string, O>(
+export function withApiary<TB extends TableName, O>(
   query: SelectQueryBuilder<DB, TB, O>,
   options: {
     apiaryColumn: string;

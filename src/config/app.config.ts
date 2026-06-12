@@ -152,7 +152,7 @@ export class Application {
       idGenerator(req) {
         let id = randomUUID();
         if (req && 'bee_id' in req) {
-          id = `${req.bee_id}:${id}`;
+          id = `${String(req.bee_id)}:${id}`;
         }
         return id;
       },

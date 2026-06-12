@@ -133,9 +133,13 @@ export class Cron {
   }
 
   private nextRun() {
-    this.logger.log('debug', `Next CronJob at: ${this.job.nextInvocation()}`, {
-      label: 'CronJob',
-    });
+    this.logger.log(
+      'debug',
+      `Next CronJob at: ${String(this.job.nextInvocation())}`,
+      {
+        label: 'CronJob',
+      },
+    );
   }
 
   async gracefulShutdown(): Promise<void> {

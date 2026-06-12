@@ -1,3 +1,4 @@
+import { PaymentStatus } from '@mollie/api-client';
 import dayjs from 'dayjs';
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import httpErrors from 'http-errors';
@@ -200,14 +201,14 @@ export default class ExternalController {
       `Mollie Payment ${payment.status}`,
     );
 
-    if (payment.status === 'failed') {
+    if (payment.status === PaymentStatus.failed) {
       // send mail to admin
       await MailService.getInstance().sendRawMail(
         'office@btree.at',
         'Failed Mollie Payment',
-        `Payment ${payment.id} failed with status: ${payment.status} and reason: ${payment.statusReason}`,
+        `Payment ${payment.id} failed with status: ${payment.status} and reason: ${payment.statusReason?.message ?? 'No reason provided'}`,
       );
-    } else if (payment.status === 'paid') {
+    } else if (payment.status === PaymentStatus.paid) {
       const reference = payment.metadata as {
         user_id: number;
         bee_id: number;

@@ -109,7 +109,7 @@ export class Logger {
   log(
     level: 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'fatal',
     message: string,
-    scope: undefined | unknown,
+    scope: unknown,
   ) {
     try {
       this.pino[level](scope, message);
