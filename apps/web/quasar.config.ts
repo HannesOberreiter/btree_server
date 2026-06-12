@@ -89,10 +89,21 @@ export default defineConfig(ctx => {
       extendViteConf(viteConf) {
         if (ctx.dev) {
           viteConf.resolve = viteConf.resolve || {};
-          viteConf.resolve.alias = viteConf.resolve.alias || {};
-          (viteConf.resolve.alias as any).vue$ = fileURLToPath(
-            new URL('./node_modules/vue', import.meta.url)
-          );
+          const alias = viteConf.resolve.alias;
+          if (Array.isArray(alias)) {
+            alias.push({
+              find: 'vue$',
+              replacement: fileURLToPath(
+                new URL('./node_modules/vue', import.meta.url)
+              )
+            });
+          } else {
+            viteConf.resolve.alias = Object.assign({}, alias, {
+              vue$: fileURLToPath(
+                new URL('./node_modules/vue', import.meta.url)
+              )
+            });
+          }
           viteConf.optimizeDeps = {
             ...viteConf.optimizeDeps,
             force: ctx.dev,
