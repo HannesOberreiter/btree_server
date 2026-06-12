@@ -1,4 +1,7 @@
+import Chance from 'chance';
 import { expect, test } from '../../support/user-helpers';
+
+const chance = new Chance();
 
 test.describe('user - Charge Form', () => {
   const form = 'form-charge';
@@ -7,7 +10,10 @@ test.describe('user - Charge Form', () => {
     await page.goto('new/charge');
   });
 
-  test('loaded', async ({ dataCy }) => {
+  test('create and undo', async ({ page, dataCy, createAndUndo }) => {
     await expect(dataCy(form)).toBeAttached();
+
+    await page.locator('[name=chargeName]').fill(chance.word());
+    await createAndUndo();
   });
 });

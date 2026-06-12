@@ -1,8 +1,15 @@
 import find from 'lodash-es/find.js';
 import userDemoFixture from '../fixtures/user_demo.json' with { type: 'json' };
-import { test as base } from './helpers';
+import { expect, test as base } from './helpers';
 
-export const test = base.extend<{ autoAuth: void }>({
+interface UserFixtures {
+  autoAuth: void;
+  createAndUndo: () => Promise<void>;
+  expectSaveRejected: () => Promise<void>;
+  selectFirstHive: () => Promise<void>;
+}
+
+export const test = base.extend<UserFixtures>({
   autoAuth: [
     async ({ page, request }, use) => {
       const response = await request.post(
@@ -59,8 +66,41 @@ export const test = base.extend<{ autoAuth: void }>({
       await use();
     },
     { auto: true }
-  ]
+  ],
+
+  createAndUndo: async ({ page, dataCy }, use) => {
+    await use(async () => {
+      await dataCy('btn-form-save').click({ force: true });
+      await expect(dataCy('notification')).toBeVisible();
+      await page.locator('[data-cy="notification"] button').click();
+      await expect(dataCy('notification')).not.toBeAttached();
+      await expect(dataCy('btn-form-undo')).toBeEnabled();
+      await dataCy('btn-form-undo').click({ force: true });
+      await expect(dataCy('notification')).toBeVisible();
+      await page.locator('[data-cy="notification"] button').click();
+      await expect(dataCy('notification')).not.toBeAttached();
+    });
+  },
+
+  expectSaveRejected: async ({ page, dataCy }, use) => {
+    await use(async () => {
+      await dataCy('btn-form-save').click({ force: true });
+      await expect(dataCy('notification')).toBeVisible();
+      await page.locator('[data-cy="notification"] button').click();
+      await expect(dataCy('notification')).not.toBeAttached();
+      await expect(dataCy('btn-form-undo')).toBeDisabled();
+    });
+  },
+
+  selectFirstHive: async ({ page, dataCy }, use) => {
+    await use(async () => {
+      await dataCy('select-hive').click();
+      await page.locator('.q-menu .q-item__section').first().click();
+      await page.keyboard.press('Escape');
+      await page.waitForTimeout(200);
+    });
+  }
 });
 
-export { expect } from './helpers';
+export { expect };
 export type { Locator, Page } from './helpers';

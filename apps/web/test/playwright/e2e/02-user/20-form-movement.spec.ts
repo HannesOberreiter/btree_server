@@ -7,7 +7,14 @@ test.describe('user - Movement Form', () => {
     await page.goto('new/movement');
   });
 
-  test('loaded', async ({ dataCy }) => {
+  test('create and undo', async ({
+    dataCy,
+    createAndUndo,
+    selectFirstHive
+  }) => {
     await expect(dataCy(form)).toBeAttached();
+
+    await selectFirstHive();
+    await createAndUndo();
   });
 });
