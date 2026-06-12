@@ -173,9 +173,9 @@ export async function getWeatherData(
   latitude: number,
   longitude: number,
 ): Promise<OneCallResponse> {
-  // Create cache key based on coordinates (rounded to 4 decimal places for ~11m precision)
-  const lat = Number(latitude.toFixed(4));
-  const lon = Number(longitude.toFixed(4));
+  // Create cache key based on coordinates (rounded to 2 decimal places for ~1km precision)
+  const lat = Number(latitude.toFixed(2));
+  const lon = Number(longitude.toFixed(2));
   const cacheKey = `weather:${lat}:${lon}`;
 
   try {
@@ -237,6 +237,27 @@ export async function getHistoricalTemperatures(
   endDate: string,
   elevation?: number | null,
 ): Promise<Array<{ date: string; temperature: number }>> {
+  const lat = Number(latitude.toFixed(2));
+  const lon = Number(longitude.toFixed(2));
+  const elevationKey =
+    elevation !== undefined && elevation !== null ? elevation : 'auto';
+  const cacheKey = `historicalTemperatures:${lat}:${lon}:${startDate}:${endDate}:${elevationKey}`;
+
+  try {
+    const cached = await RedisServer.client.get(cacheKey);
+    if (cached) {
+      return JSON.parse(cached as string) as Array<{
+        date: string;
+        temperature: number;
+      }>;
+    }
+  } catch (error) {
+    Logger.getInstance().log('warn', 'Redis cache read error', {
+      label: 'Historical Temperatures Cache',
+      error,
+    });
+  }
+
   // Open-Meteo Archive API - Free with rate limits (10,000 requests/day)
   // https://open-meteo.com/en/docs/historical-weather-api
   const elevationParam =
@@ -262,10 +283,28 @@ export async function getHistoricalTemperatures(
     }
 
     // Convert parallel arrays to array of objects
-    return result.daily.time.map((date: string, index: number) => ({
-      date,
-      temperature: result.daily.temperature_2m_mean[index],
-    }));
+    const dailyTemperatures = result.daily.time.map(
+      (date: string, index: number) => ({
+        date,
+        temperature: result.daily.temperature_2m_mean[index],
+      }),
+    ) as Array<{ date: string; temperature: number }>;
+
+    // Cache the result for 1 hour (3600 seconds)
+    try {
+      await RedisServer.client.setEx(
+        cacheKey,
+        3600,
+        JSON.stringify(dailyTemperatures),
+      );
+    } catch (error) {
+      Logger.getInstance().log('warn', 'Redis cache write error', {
+        label: 'Historical Temperatures Cache',
+        error,
+      });
+    }
+
+    return dailyTemperatures;
   } catch (error) {
     Logger.getInstance().log('error', 'Open-Meteo error', {
       label: 'OpenMeteo',
