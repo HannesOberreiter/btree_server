@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.3.0](https://github.com/HannesOberreiter/btree_vue/compare/btree-client-v7.2.1...btree-client-v7.3.0) (2026-07-18)
+
+
+### Features
+
+* remove unused US server to reduce costs ([ead9ff0](https://github.com/HannesOberreiter/btree_vue/commit/ead9ff099c5051f003486267cec07cb8bd910fd4))
+
 ## [7.2.1](https://github.com/HannesOberreiter/btree_vue/compare/btree-client-v7.2.0...btree-client-v7.2.1) (2026-06-12)
 
 
