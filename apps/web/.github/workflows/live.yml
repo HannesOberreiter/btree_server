@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       BACKEND_URL: https://api.btree.at/api
-      BACKEND_URL_US: https://us.api.btree.at/api
+      #BACKEND_URL_US: https://us.api.btree.at/api
       DROPBOX_CLIENT_ID: ${{ secrets.DROPBOX_CLIENT_ID }}
       OPENWEATHER_APP_ID: ${{ secrets.OPENWEATHER_APP_ID }}
       MATOMO_HOST: ${{ secrets.MATOMO_HOST }}

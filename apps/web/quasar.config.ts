@@ -10,11 +10,11 @@ const env = {
   OPENWEATHER_APP_ID: import.meta.env.OPENWEATHER_APP_ID ?? '',
 
   BACKEND_URL: import.meta.env.BACKEND_URL ?? 'http://localhost:3000/api',
-  BACKEND_URL_US:
+  /*BACKEND_URL_US:
     import.meta.env.BACKEND_URL_US ??
     import.meta.env.BACKEND_URL ??
     'http://localhost:3000/api',
-
+  */
   MATOMO_HOST: import.meta.env.MATOMO_HOST ?? '',
   MATOMO_SITE_ID: import.meta.env.MATOMO_SITE_ID ?? '',
   PAYPAL_CLIENT_ID: import.meta.env.PAYPAL_CLIENT_ID ?? ''
@@ -224,13 +224,13 @@ export default defineConfig(ctx => {
           changeOrigin: true,
           secure: false,
           rewrite: path => path.replace(/^\/api/, '')
-        },
-        '/us/api': {
+        }
+        /*'/us/api': {
           target: env.BACKEND_URL_US,
           changeOrigin: true,
           secure: false,
           rewrite: path => path.replace(/^\/us\/api/, '')
-        }
+        }*/
       },
       open: false, // opens browser window automatically
       hmr: true
