@@ -40,16 +40,41 @@ jobs:
       - name: List output files
         run: ls
 
-      - name: Upload Files
-        id: upload
-        uses: Creepios/sftp-action@v1.0.3
-        with:
-          host: ${{ secrets.FTP_HOST }}
-          port: 22
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          localPath: ./dist/pwa
-          remotePath: ./btree-vue/beta
+      - name: Upload Files to Bunny Storage
+        env:
+          AWS_ACCESS_KEY_ID: beta-btree-at
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.BUNNY_STORAGE_PASSWORD }}
+          AWS_DEFAULT_REGION: de
+          BUNNY_S3_ENDPOINT: https://de-s3.storage.bunnycdn.com
+          BUNNY_STORAGE_ZONE: beta-btree-at
+        run: |
+          aws configure set default.s3.addressing_style path
+
+          aws s3 sync ./dist/pwa "s3://${BUNNY_STORAGE_ZONE}/" \
+            --endpoint-url "${BUNNY_S3_ENDPOINT}" \
+            --delete \
+            --cache-control "no-cache"
+
+          aws s3 cp ./dist/pwa "s3://${BUNNY_STORAGE_ZONE}/" \
+            --endpoint-url "${BUNNY_S3_ENDPOINT}" \
+            --recursive \
+            --exclude "*" \
+            --include "*.css" \
+            --include "*.js" \
+            --include "*.mjs" \
+            --include "*.woff" \
+            --include "*.woff2" \
+            --include "*.ttf" \
+            --include "*.eot" \
+            --include "*.png" \
+            --include "*.jpg" \
+            --include "*.jpeg" \
+            --include "*.gif" \
+            --include "*.svg" \
+            --include "*.webp" \
+            --include "*.avif" \
+            --include "*.ico" \
+            --cache-control "public, max-age=31536000, immutable"
 
       - name: Purge BunnyCDN
         uses: fjogeleit/http-request-action@v1
