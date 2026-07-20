@@ -10,6 +10,7 @@ import CheckupController from './checkup.controller.js';
 import FeedController from './feed.controller.js';
 import HarvestController from './harvest.controller.js';
 import HiveController from './hive.controller.js';
+import MovedateController from './movedate.controller.js';
 import OptionController from './options.controller.js';
 import ServiceController from './service.controller.js';
 import StatisticController from './statistic.controller.js';
@@ -120,7 +121,7 @@ export interface ToolErrorEnvelope {
 /**
  * Local tool definition type — replaces the `Tool` import from the Vercel AI
  * SDK. Keeping the same `{ description, inputSchema, execute }` shape so the
- * 31 tool definitions below need no structural changes.
+ * tool definitions below need no structural changes.
  *
  * `execute` takes the validated tool input and returns any JSON-serializable
  * result (or a `ToolErrorEnvelope` on failure after going through `wrapTools`).
@@ -169,6 +170,48 @@ const TOOL_META: Record<string, ToolHintMeta> = {
   },
   apiaryWeather: { usesApiaryId: true, recordLabel: 'apiary' },
   fetchTasks: { usesApiaryId: true },
+  listMovements: {
+    usesHiveIds: true,
+    usesApiaryId: true,
+    recordLabel: 'movement',
+  },
+  // Apiaries, hives, and movements
+  createApiary: { mutates: 'create', recordLabel: 'apiary' },
+  patchApiary: {
+    usesRecordIds: true,
+    mutates: 'update',
+    recordLabel: 'apiary',
+  },
+  createHive: {
+    usesApiaryId: true,
+    usesTypeId: true,
+    mutates: 'create',
+    recordLabel: 'hive',
+  },
+  patchHive: {
+    usesHiveIds: true,
+    usesTypeId: true,
+    usesRecordIds: true,
+    mutates: 'update',
+    recordLabel: 'hive',
+  },
+  createMovement: {
+    usesHiveIds: true,
+    usesApiaryId: true,
+    mutates: 'create',
+    recordLabel: 'movement',
+  },
+  patchMovement: {
+    usesApiaryId: true,
+    usesRecordIds: true,
+    mutates: 'update',
+    recordLabel: 'movement',
+  },
+  deleteMovement: {
+    usesRecordIds: true,
+    mutates: 'delete',
+    recordLabel: 'movement',
+  },
   // Mutations — feeds/harvests/treatments/checkups
   createFeed: {
     usesHiveIds: true,
@@ -295,9 +338,24 @@ function buildHint(
       return {
         hint: `One or more ${meta.recordLabel ?? 'record'} IDs do not exist (or belong to another user). List current records first to get valid IDs.`,
         suggested_next_tool:
-          meta.recordLabel === 'todo' ? 'fetchTasks' : 'getHiveTasks',
+          meta.recordLabel === 'todo'
+            ? 'fetchTasks'
+            : meta.recordLabel === 'movement'
+              ? 'listMovements'
+              : meta.recordLabel === 'apiary'
+                ? 'listApiariesHives'
+                : meta.recordLabel === 'hive'
+                  ? 'findHives'
+                  : 'getHiveTasks',
       };
     }
+  }
+
+  if (code === 'forbidden' && toolName === 'deleteMovement') {
+    return {
+      hint: "A hive's last movement cannot be deleted. Keep at least one movement for the hive.",
+      suggested_next_tool: 'listMovements',
+    };
   }
 
   if (code === 'validation_error' && meta.usesTypeId) {
@@ -321,7 +379,15 @@ function buildHint(
       return {
         hint: `0 ${meta.recordLabel} records matched the provided IDs. IDs may be wrong, already deleted, or belong to another user. List current records first.`,
         suggested_next_tool:
-          meta.recordLabel === 'todo' ? 'fetchTasks' : 'getHiveTasks',
+          meta.recordLabel === 'todo'
+            ? 'fetchTasks'
+            : meta.recordLabel === 'movement'
+              ? 'listMovements'
+              : meta.recordLabel === 'apiary'
+                ? 'listApiariesHives'
+                : meta.recordLabel === 'hive'
+                  ? 'findHives'
+                  : 'getHiveTasks',
       };
     }
   }
@@ -960,6 +1026,251 @@ export function createWizBeeTools(
           total: typeof raw?.total === 'number' ? raw.total : hives.length,
           returned: hives.length,
           hives,
+        };
+      },
+    }),
+
+    createApiary: tool({
+      description: 'Create a new apiary for the current user.',
+      inputSchema: z.object({
+        name: z.string().min(3).max(45).describe('Apiary name'),
+        description: z.string().max(512).optional(),
+        latitude: z.number().min(-90).max(90).optional(),
+        longitude: z.number().min(-180).max(180).optional(),
+        elevation: z.number().int().min(-500).max(9000).nullable().optional(),
+        note: z.string().max(2000).optional(),
+        url: z.string().max(512).optional(),
+        modus: z.boolean().optional(),
+      }),
+      execute: async (input) => {
+        const result = await ApiaryController.post(
+          createMockRequest(context, { body: input }),
+          createMockReply(),
+        );
+        return {
+          success: true,
+          message: `Created apiary ${result.name}`,
+          ids: [result.id],
+          apiary: result,
+        };
+      },
+    }),
+
+    patchApiary: tool({
+      description: 'Update an existing apiary by its ID.',
+      inputSchema: z.object({
+        id: z.number().describe('Apiary ID'),
+        name: z.string().min(3).max(45).optional(),
+        description: z.string().max(512).optional(),
+        latitude: z.number().min(-90).max(90).optional(),
+        longitude: z.number().min(-180).max(180).optional(),
+        elevation: z.number().int().min(-500).max(9000).nullable().optional(),
+        note: z.string().max(2000).optional(),
+        url: z.string().max(512).optional(),
+        modus: z.boolean().optional(),
+      }),
+      execute: async (input) => {
+        const { id, ...data } = input;
+        const updatedCount = await ApiaryController.patch(
+          createMockRequest(context, { body: { ids: [id], data } }),
+          createMockReply(),
+        );
+        return {
+          success: true,
+          message: `Updated ${updatedCount} apiary record${updatedCount !== 1 ? 's' : ''}`,
+          updatedCount,
+        };
+      },
+    }),
+
+    createHive: tool({
+      description:
+        'Create one hive at an existing apiary. apiaryId and initialMovementDate are required because every hive must have an apiary connection and an initial movement.',
+      inputSchema: z.object({
+        name: z.string().min(1).max(36).trim(),
+        apiaryId: z.number().describe('Initial apiary ID'),
+        initialMovementDate: z
+          .string()
+          .describe('Initial movement date in YYYY-MM-DD format'),
+        groupHive: z.number().int().optional().default(0),
+        position: z.number().int().optional().default(0),
+        note: z.string().max(2000).optional(),
+        modus: z.boolean().optional(),
+        modusDate: z.string().optional(),
+        sourceId: z.number().int().optional(),
+        typeId: z.number().int().optional(),
+      }),
+      execute: async (input) => {
+        const {
+          apiaryId,
+          initialMovementDate,
+          groupHive,
+          modusDate,
+          sourceId,
+          typeId,
+          ...fields
+        } = input;
+        const ids = await HiveController.post(
+          createMockRequest(context, {
+            body: {
+              ...fields,
+              apiary_id: apiaryId,
+              date: initialMovementDate,
+              grouphive: groupHive ?? 0,
+              ...(modusDate !== undefined && { modus_date: modusDate }),
+              ...(sourceId !== undefined && { source_id: sourceId }),
+              ...(typeId !== undefined && { type_id: typeId }),
+              start: 0,
+              repeat: 1,
+            },
+          }),
+          createMockReply(),
+        );
+        return {
+          success: true,
+          message: 'Created hive with initial movement',
+          ids,
+        };
+      },
+    }),
+
+    patchHive: tool({
+      description: 'Update an existing hive by its ID.',
+      inputSchema: z.object({
+        hiveId: z.number().describe('Hive ID'),
+        name: z.string().min(1).max(36).trim().optional(),
+        groupHive: z.number().int().optional(),
+        position: z.number().int().optional(),
+        note: z.string().max(2000).optional(),
+        modus: z.boolean().optional(),
+        modusDate: z.string().optional(),
+        sourceId: z.number().int().optional(),
+        typeId: z.number().int().optional(),
+      }),
+      execute: async (input) => {
+        const { hiveId, groupHive, modusDate, sourceId, typeId, ...fields } =
+          input;
+        const data = {
+          ...fields,
+          ...(groupHive !== undefined && { grouphive: groupHive }),
+          ...(modusDate !== undefined && { modus_date: modusDate }),
+          ...(sourceId !== undefined && { source_id: sourceId }),
+          ...(typeId !== undefined && { type_id: typeId }),
+        };
+        const updatedCount = await HiveController.patch(
+          createMockRequest(context, { body: { ids: [hiveId], data } }),
+          createMockReply(),
+        );
+        return {
+          success: true,
+          message: `Updated ${updatedCount} hive record${updatedCount !== 1 ? 's' : ''}`,
+          updatedCount,
+        };
+      },
+    }),
+
+    listMovements: tool({
+      description:
+        'List hive movements. Optionally filter by hive, apiary, or date range. Returns movement IDs needed for updates or deletion.',
+      inputSchema: z.object({
+        hiveId: z.number().optional(),
+        apiaryId: z.number().optional(),
+        dateStart: z.string().optional(),
+        dateEnd: z.string().optional(),
+        limit: z.number().int().min(1).max(500).optional().default(100),
+      }),
+      execute: async (input) => {
+        const filters: Record<string, unknown>[] = [];
+        if (input.hiveId !== undefined)
+          filters.push({ 'movedates.hive_id': input.hiveId });
+        if (input.apiaryId !== undefined)
+          filters.push({ 'movedates.apiary_id': input.apiaryId });
+        if (input.dateStart !== undefined && input.dateEnd !== undefined) {
+          filters.push({
+            date: { from: input.dateStart, to: input.dateEnd },
+          });
+        }
+        return MovedateController.get(
+          createMockRequest(context, {
+            query: {
+              filters: JSON.stringify(filters),
+              limit: input.limit,
+              offset: 0,
+              order: 'date',
+              direction: 'desc',
+            },
+          }),
+          createMockReply(),
+        );
+      },
+    }),
+
+    createMovement: tool({
+      description: 'Create a movement for one hive to an existing apiary.',
+      inputSchema: z.object({
+        hiveId: z.number(),
+        apiaryId: z.number(),
+        date: z.string().describe('Movement date in YYYY-MM-DD format'),
+      }),
+      execute: async (input) => {
+        const ids = await MovedateController.post(
+          createMockRequest(context, {
+            body: {
+              hive_ids: [input.hiveId],
+              apiary_id: input.apiaryId,
+              date: input.date,
+            },
+          }),
+          createMockReply(),
+        );
+        return {
+          success: true,
+          message: 'Created movement',
+          ids,
+        };
+      },
+    }),
+
+    patchMovement: tool({
+      description:
+        'Update an existing movement date and/or destination apiary by its movement ID.',
+      inputSchema: z.object({
+        id: z.number().describe('Movement ID from listMovements'),
+        apiaryId: z.number().optional(),
+        date: z.string().optional(),
+      }),
+      execute: async (input) => {
+        const data = {
+          ...(input.apiaryId !== undefined && { apiary_id: input.apiaryId }),
+          ...(input.date !== undefined && { date: input.date }),
+        };
+        const updatedCount = await MovedateController.patch(
+          createMockRequest(context, { body: { ids: [input.id], data } }),
+          createMockReply(),
+        );
+        return {
+          success: true,
+          message: `Updated ${updatedCount} movement record${updatedCount !== 1 ? 's' : ''}`,
+          updatedCount,
+        };
+      },
+    }),
+
+    deleteMovement: tool({
+      description:
+        'Delete one movement by its ID. Deletion is rejected when it is the hive’s last movement.',
+      inputSchema: z.object({
+        id: z.number().describe('Movement ID from listMovements'),
+      }),
+      execute: async (input) => {
+        const deletedCount = await MovedateController.batchDelete(
+          createMockRequest(context, { body: { ids: [input.id] } }),
+          createMockReply(),
+        );
+        return {
+          success: true,
+          message: 'Deleted movement',
+          deletedCount,
         };
       },
     }),
@@ -2346,6 +2657,104 @@ export const wizBeeToolDefinitions = [
     parameters: z.object({
       includeInactive: z.boolean().optional().default(false),
       q: z.string().optional(),
+    }),
+  },
+  {
+    name: 'createApiary',
+    description: 'Create a new apiary.',
+    parameters: z.object({
+      name: z.string().min(3).max(45),
+      description: z.string().max(512).optional(),
+      latitude: z.number().min(-90).max(90).optional(),
+      longitude: z.number().min(-180).max(180).optional(),
+      elevation: z.number().int().min(-500).max(9000).nullable().optional(),
+      note: z.string().max(2000).optional(),
+      url: z.string().max(512).optional(),
+      modus: z.boolean().optional(),
+    }),
+  },
+  {
+    name: 'patchApiary',
+    description: 'Update an existing apiary by its ID.',
+    parameters: z.object({
+      id: z.number(),
+      name: z.string().min(3).max(45).optional(),
+      description: z.string().max(512).optional(),
+      latitude: z.number().min(-90).max(90).optional(),
+      longitude: z.number().min(-180).max(180).optional(),
+      elevation: z.number().int().min(-500).max(9000).nullable().optional(),
+      note: z.string().max(2000).optional(),
+      url: z.string().max(512).optional(),
+      modus: z.boolean().optional(),
+    }),
+  },
+  {
+    name: 'createHive',
+    description:
+      'Create one hive with its required apiary connection and initial movement.',
+    parameters: z.object({
+      name: z.string().min(1).max(36).trim(),
+      apiaryId: z.number(),
+      initialMovementDate: z.string(),
+      groupHive: z.number().int().optional().default(0),
+      position: z.number().int().optional().default(0),
+      note: z.string().max(2000).optional(),
+      modus: z.boolean().optional(),
+      modusDate: z.string().optional(),
+      sourceId: z.number().int().optional(),
+      typeId: z.number().int().optional(),
+    }),
+  },
+  {
+    name: 'patchHive',
+    description: 'Update an existing hive by its ID.',
+    parameters: z.object({
+      hiveId: z.number(),
+      name: z.string().min(1).max(36).trim().optional(),
+      groupHive: z.number().int().optional(),
+      position: z.number().int().optional(),
+      note: z.string().max(2000).optional(),
+      modus: z.boolean().optional(),
+      modusDate: z.string().optional(),
+      sourceId: z.number().int().optional(),
+      typeId: z.number().int().optional(),
+    }),
+  },
+  {
+    name: 'listMovements',
+    description: 'List hive movements with optional filters.',
+    parameters: z.object({
+      hiveId: z.number().optional(),
+      apiaryId: z.number().optional(),
+      dateStart: z.string().optional(),
+      dateEnd: z.string().optional(),
+      limit: z.number().int().min(1).max(500).optional().default(100),
+    }),
+  },
+  {
+    name: 'createMovement',
+    description: 'Create a movement for one hive to an existing apiary.',
+    parameters: z.object({
+      hiveId: z.number(),
+      apiaryId: z.number(),
+      date: z.string(),
+    }),
+  },
+  {
+    name: 'patchMovement',
+    description: 'Update an existing movement by its ID.',
+    parameters: z.object({
+      id: z.number(),
+      apiaryId: z.number().optional(),
+      date: z.string().optional(),
+    }),
+  },
+  {
+    name: 'deleteMovement',
+    description:
+      'Delete one movement by its ID. Cannot delete a hive’s last movement.',
+    parameters: z.object({
+      id: z.number(),
     }),
   },
   {

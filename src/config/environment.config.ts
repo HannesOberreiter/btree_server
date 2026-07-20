@@ -54,6 +54,7 @@ class EnvironmentConfiguration {
       path: `${
         rootDirectory
       }/env/${this.environment + (this.server === 'eu' ? '' : `-${this.server}`)}.env`,
+      quiet: true,
     });
     if (result.error) {
       throw result.error;

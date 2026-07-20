@@ -3,6 +3,13 @@
 
 FROM node:22-alpine
 
+ARG SERVICE_VERSION=unknown
+ENV SERVICE_NAME=btree-server
+ENV SERVICE_VERSION=${SERVICE_VERSION}
+LABEL org.opencontainers.image.title="btree-server" \
+      org.opencontainers.image.source="https://github.com/HannesOberreiter/btree_server" \
+      org.opencontainers.image.revision="${SERVICE_VERSION}"
+
 # Create app directory
 RUN mkdir -p /home/node/app/node_modules && chown -R node:node /home/node/app
 WORKDIR /home/node/app

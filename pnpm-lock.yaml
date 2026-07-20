@@ -122,9 +122,6 @@ importers:
       redis:
         specifier: ^5.11.0
         version: 5.12.1
-      rotating-file-stream:
-        specifier: ^3.0.4
-        version: 3.2.9
       stripe:
         specifier: ^18.0.0
         version: 18.5.0(@types/node@22.19.17)
@@ -2042,10 +2039,6 @@ packages:
     resolution: {integrity: sha512-rzi5WqKzEZw3SooTt7cgm4eqIoujPIyGcJNGFL7iPEuajQw7vxMHUkXylu4/vhCkJGXsgRmxqMKXUpT6FEgl0g==}
     engines: {node: ^20.19.0 || >=22.12.0}
     hasBin: true
-
-  rotating-file-stream@3.2.9:
-    resolution: {integrity: sha512-i9i0KkHh12ryl4xtELg+0gyoFre2PJ9RcQQLzquWsiqygyYsrZLckrqqYrthhnJZGZb4g+KUHtcoWYVq34gaug==}
-    engines: {node: '>=14.0'}
 
   ruply@1.0.1:
     resolution: {integrity: sha512-p39LnaaJyuucPGlgaB0KiyifpcuOkn24+Hq5y0ejAD/LlH+mRAbkHn2tckCLgHir+S+nis1WYG+TYEC4zHX0WQ==}
@@ -4121,8 +4114,6 @@ snapshots:
       '@rolldown/binding-wasm32-wasi': 1.0.0-rc.16
       '@rolldown/binding-win32-arm64-msvc': 1.0.0-rc.16
       '@rolldown/binding-win32-x64-msvc': 1.0.0-rc.16
-
-  rotating-file-stream@3.2.9: {}
 
   ruply@1.0.1: {}
 
