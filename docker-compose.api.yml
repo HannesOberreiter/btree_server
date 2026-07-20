@@ -11,18 +11,20 @@ services:
     # To run knex commands
     # entrypoint: [ "/bin/sh", "-c", "pnpm run prod:knex migrate:latest" ]
     restart: unless-stopped
-    user: node # connected volume logs must have write access as node user chown -R 1000:1000 logs
+    user: node
     environment:
       ENVIRONMENT: production
       IS_CHILD: false
     volumes:
       - ./env:/home/node/app/env
-      - ./logs:/home/node/app/logs
       - ./migration:/home/node/app/db/seeds/migration
     ports:
       - '1338:8101'
     logging:
       driver: local
+      options:
+        max-size: 20m
+        max-file: 5
 
 networks:
   default:

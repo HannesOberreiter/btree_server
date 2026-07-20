@@ -1,26 +1,30 @@
-import { stdout } from 'node:process';
+import process from 'node:process';
 
-import type {
-  DestinationStream,
-  Logger as PinoLogger,
-  StreamEntry,
-} from 'pino';
-import { multistream, pino } from 'pino';
-import * as rfs from 'rotating-file-stream';
+import type { Level, Logger as PinoLogger } from 'pino';
+import { pino, stdSerializers } from 'pino';
 
 import { ENVIRONMENT } from '../config/constants.config.js';
-import { env, rootDirectory } from '../config/environment.config.js';
+import { env } from '../config/environment.config.js';
 
-function logFileNameGenerator(time: number | Date, name: string) {
-  if (!time) return `${name}.log`;
-  if (typeof time === 'number') time = new Date(time);
-  const iso = time.toISOString().split('T')[0];
-  return `${name}-${iso}.log`;
+const LOG_LEVELS = new Set<Level>([
+  'fatal',
+  'error',
+  'warn',
+  'info',
+  'debug',
+  'trace',
+]);
+
+function getLogLevel(): Level {
+  const configuredLevel = process.env.LOG_LEVEL;
+  if (configuredLevel && LOG_LEVELS.has(configuredLevel as Level)) {
+    return configuredLevel as Level;
+  }
+  return env === ENVIRONMENT.development ? 'debug' : 'info';
 }
 
 export class Logger {
   private static instance: Logger;
-  private _streams: (DestinationStream | StreamEntry)[] = [];
   pino: PinoLogger;
 
   static getInstance(): Logger {
@@ -31,73 +35,55 @@ export class Logger {
   }
 
   private constructor() {
-    const streams:
-      | DestinationStream
-      | StreamEntry
-      | (DestinationStream | StreamEntry)[] = [
-      {
-        level: 'debug',
-        stream: rfs.createStream(
-          (time) => logFileNameGenerator(time, `info-${env}`),
-          {
-            interval: '1d',
-            maxFiles: 90,
-            immutable: true,
-            history: `history-info-${env}.txt`,
-            path: `${rootDirectory}/logs`,
-          },
-        ),
+    this.pino = pino({
+      level: getLogLevel(),
+      base: {
+        service: process.env.SERVICE_NAME ?? 'btree-server',
+        environment: env,
+        version: process.env.SERVICE_VERSION ?? 'unknown',
       },
-      {
-        level: 'error',
-        stream: rfs.createStream(
-          (time) => logFileNameGenerator(time, `error-${env}`),
-          {
-            interval: '1d',
-            maxFiles: 90,
-            immutable: true,
-            history: `history-error-${env}.txt`,
-            path: `${rootDirectory}/logs`,
-          },
-        ),
+      timestamp: pino.stdTimeFunctions.isoTime,
+      formatters: {
+        level: (label: string) => {
+          return { level: label };
+        },
       },
-    ];
-
-    if (env === ENVIRONMENT.development) {
-      streams.push({
-        level: 'debug',
-        stream: stdout,
-      });
-    }
-
-    this._streams = streams;
-
-    const ms = multistream(streams, {
-      dedupe: false,
+      redact: {
+        paths: [
+          'req.headers.authorization',
+          'req.headers.cookie',
+          'req.headers["set-cookie"]',
+          'res.headers["set-cookie"]',
+          'authorization',
+          'cookie',
+          'password',
+          'token',
+          'accessToken',
+          'refreshToken',
+          'body.password',
+          'body.token',
+          'body.accessToken',
+          'body.refreshToken',
+        ],
+        censor: '[REDACTED]',
+      },
+      serializers: {
+        err: stdSerializers.err,
+        error: stdSerializers.err,
+        req(request) {
+          return {
+            id: request.id,
+            method: request.method,
+            url: request.url,
+          };
+        },
+        res(response) {
+          return {
+            statusCode: response.statusCode,
+          };
+        },
+      },
     });
-
-    this.pino = pino(
-      {
-        level: 'debug',
-        base: undefined,
-        timestamp: pino.stdTimeFunctions.isoTime,
-        formatters: {
-          level: (label: string) => {
-            return { level: label.toUpperCase() };
-          },
-        },
-        redact: ['req.headers.authorization'],
-        serializers: {
-          req(request) {
-            return {
-              method: request.method,
-              url: request.url,
-            };
-          },
-        },
-      },
-      ms,
-    );
   }
 
   /**
@@ -119,21 +105,8 @@ export class Logger {
     }
   }
 
-  /**
-   * Flush and close all log streams (rotating-file-stream file handles).
-   * Call during graceful shutdown to prevent dangling FILEHANDLE leaks.
-   */
+  /** Flush pending logs during graceful shutdown. */
   close(): void {
     this.pino.flush();
-    for (const entry of this._streams) {
-      const stream = (entry as StreamEntry).stream ?? entry;
-      if (
-        stream &&
-        stream !== stdout &&
-        typeof (stream as any).end === 'function'
-      ) {
-        (stream as any).end();
-      }
-    }
   }
 }

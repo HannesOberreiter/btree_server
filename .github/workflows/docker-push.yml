@@ -27,3 +27,5 @@ jobs:
           context: .
           push: true
           tags: hannesoberreiter/btree_server:latest
+          build-args: |
+            SERVICE_VERSION=${{ github.sha }}

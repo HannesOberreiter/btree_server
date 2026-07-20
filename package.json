@@ -70,7 +70,6 @@
     "proj4": "^2.9.0",
     "query-string": "^9.0.0",
     "redis": "^5.11.0",
-    "rotating-file-stream": "^3.0.4",
     "stripe": "^18.0.0",
     "ua-parser-js": "^2.0.3",
     "yauzl-promise": "^4.0.0",
