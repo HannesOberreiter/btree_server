@@ -1,5 +1,18 @@
 # Changelog
 
+## [7.4.0](https://github.com/HannesOberreiter/btree_server/compare/btree-server-v7.3.1...btree-server-v7.4.0) (2026-07-20)
+
+
+### Features
+
+* **logging:** add container-ready logging ([ce45fa8](https://github.com/HannesOberreiter/btree_server/commit/ce45fa856dbdcd3cb0bdbbcf9c70e0f6eaef0b03))
+* **wizbee:** manage apiaries, hives, movements ([e7089d1](https://github.com/HannesOberreiter/btree_server/commit/e7089d1cdbeec76c4d8a024890e829e2c04159b3))
+
+
+### Bug Fixes
+
+* **docker:** skip migrations in child containers ([f857414](https://github.com/HannesOberreiter/btree_server/commit/f857414167422121f2caf531b9a25e4bb809cac1))
+
 ## [7.3.1](https://github.com/HannesOberreiter/btree_server/compare/btree-server-v7.3.0...btree-server-v7.3.1) (2026-06-12)
 
 
