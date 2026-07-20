@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useDialogPluginComponent } from 'quasar';
+import { computed } from 'vue';
 import { useRearingEventQuery } from '../composables/useQuery';
 import BtnBase from './BtnBase.vue';
 import BtnCloseDialog from './BtnCloseDialog.vue';
@@ -16,6 +17,7 @@ defineEmits([...useDialogPluginComponent.emits]);
 const { dialogRef, onDialogHide, onDialogOK } = useDialogPluginComponent();
 
 const { isLoading, data } = useRearingEventQuery({ id: props.id });
+const event = computed(() => data.value?.[0]);
 </script>
 
 <template>
@@ -28,9 +30,9 @@ const { isLoading, data } = useRearingEventQuery({ id: props.id });
       <q-card-section>
         <BtnCloseDialog class="float-right" />
         <div class="row">
-          <span v-if="!isLoading">
-            <q-icon :name="`fas fa-${data[0].symbol}`" />
-            ID: {{ data[0].name ? data[0].name : data[0].id }}
+          <span v-if="!isLoading && event">
+            <q-icon :name="`fas fa-${event.symbol}`" />
+            ID: {{ event.name ? event.name : event.id }}
           </span>
           <q-space />
         </div>
@@ -38,8 +40,8 @@ const { isLoading, data } = useRearingEventQuery({ id: props.id });
           <div v-if="isLoading" class="col-12">
             <GlobalLoading />
           </div>
-          <div v-else class="col-12">
-            <EventInfoRearing :event-info="data[0]" />
+          <div v-else-if="event" class="col-12">
+            <EventInfoRearing :event-info="event" />
           </div>
         </div>
       </q-card-section>

@@ -1,3 +1,10 @@
+import type {
+  AuthEmailResponse,
+  AuthLoginResponse,
+  AuthLogoutResponse,
+  AuthRegisterResponse,
+  AuthResetRequestResponse
+} from '../api/types';
 import type { RegisterUser, User } from '../types';
 import { find } from 'lodash-es';
 import { useApiFetch } from '../composables/useApi';
@@ -18,17 +25,14 @@ class AuthService {
       email: user.email,
       password: user.password
     });
-    return api.post('/v1/auth/login', data).then((response: any) => {
-      return response;
-    });
+    return api.post('/v1/auth/login', data) as Promise<AuthLoginResponse>;
   }
 
   async logout() {
     const api = useApiFetch();
-    return api
-      .get('/v1/auth/logout', '', true, false)
-      .then(data => data)
-      .catch(() => false);
+    return (
+      api.get('/v1/auth/logout', '', true, false) as Promise<AuthLogoutResponse>
+    ).catch(() => false);
   }
 
   register(user: RegisterUser) {
@@ -44,7 +48,7 @@ class AuthService {
       newsletter: !!user.newsletter,
       isOAuth: !!user.isOAuth
     });
-    return api.post('/v1/auth/register', data);
+    return api.post('/v1/auth/register', data) as Promise<AuthRegisterResponse>;
   }
 
   resetMail(mail: any) {
@@ -52,7 +56,10 @@ class AuthService {
     const data = JSON.stringify({
       email: mail.email
     });
-    return api.post('/v1/auth/reset', data);
+    return api.post(
+      '/v1/auth/reset',
+      data
+    ) as Promise<AuthResetRequestResponse>;
   }
 
   resetPassword(values: any) {
@@ -61,7 +68,7 @@ class AuthService {
       key: values.resetKey,
       password: values.password
     });
-    return api.patch('/v1/auth/reset', data);
+    return api.patch('/v1/auth/reset', data) as Promise<AuthEmailResponse>;
   }
 
   activate(value: any) {
@@ -69,7 +76,7 @@ class AuthService {
     const data = JSON.stringify({
       confirm: value.resetKey
     });
-    return api.patch('/v1/auth/confirm', data);
+    return api.patch('/v1/auth/confirm', data) as Promise<AuthEmailResponse>;
   }
 
   unsubscribe(mail: any) {
@@ -77,7 +84,10 @@ class AuthService {
     const data = JSON.stringify({
       email: mail.email
     });
-    return api.patch('/v1/auth/unsubscribe', data);
+    return api.patch(
+      '/v1/auth/unsubscribe',
+      data
+    ) as Promise<AuthEmailResponse>;
   }
 
   getCurrentCompany(user: User) {

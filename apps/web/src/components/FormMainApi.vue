@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { QInputProps } from 'quasar';
+import type { CompanyApiKeyResponse, CompanyPatchResponse } from '../api/types';
 import useVuelidate from '@vuelidate/core';
 import { useClipboard } from '@vueuse/core';
 import { map } from 'lodash-es';
@@ -70,28 +71,28 @@ async function changeApiStatus(value = true, change = false) {
   if (state.password === '') {
     return;
   }
-  await api
-    .patch('/v1/company', {
+  await (
+    api.patch('/v1/company', {
       password: state.password,
       api_active: value,
       api_change: change
-    })
-    .then(
-      async (response: any) => {
-        storeUser.$state.company.api_active = response.api_active;
-        map(storeUser.$state.user.company, value => {
-          if (response.id === value.id) {
-            value.api_active = response.api_active;
-          }
-        });
-        if (change) {
-          await loadApiValue();
+    }) as Promise<CompanyPatchResponse>
+  ).then(
+    async response => {
+      storeUser.$state.company.api_active = response.api_active;
+      map(storeUser.$state.user.company, value => {
+        if (response.id === value.id) {
+          value.api_active = response.api_active;
         }
-      },
-      error => {
-        notification.open('negative', error);
+      });
+      if (change) {
+        await loadApiValue();
       }
-    );
+    },
+    error => {
+      notification.open('negative', error);
+    }
+  );
   isSubmitting.value = false;
 }
 
@@ -133,10 +134,12 @@ async function loadApiValue() {
       return;
     }
 
-    await api.get('/v1/company/apikey').then(
-      (response: any) => {
+    await (
+      api.get('/v1/company/apikey') as Promise<CompanyApiKeyResponse>
+    ).then(
+      response => {
         apiField.value = apiField.value === 'text' ? 'password' : 'text';
-        apiValue.value = response.api_key;
+        apiValue.value = response.api_key ?? '';
         notification.open('positive', '');
       },
       error => {

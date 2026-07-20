@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { QTableProps } from 'quasar';
+import type { ApiaryListItem } from '../api/types';
 import { storeToRefs } from 'pinia';
 import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -24,7 +25,7 @@ const { apiary: store } = storeToRefs(storeTable);
 const visibleColumns = ref(store.value.visible);
 
 const selected = ref<any>([]);
-const rows = ref([]);
+const rows = ref<ApiaryListItem[]>([]);
 const modus = ref(true);
 const deleted = ref(false);
 const filter = ref('');

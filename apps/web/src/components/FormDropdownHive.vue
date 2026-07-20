@@ -161,9 +161,10 @@ function setSelected() {
 }
 
 function filterApiary(val: any, update: any, _abort: any) {
-  const data = filter(apiaries.value.results, obj => obj.hive_count !== null);
+  const results = apiaries.value?.results ?? [];
+  const data = filter(results, obj => obj.hive_count !== null);
 
-  if (apiaries.value.results.length > 0 && val) {
+  if (results.length > 0 && val) {
     update(() => {
       const needle = new RegExp(`(${val.toLowerCase()})`);
       optionsApiary.value = filter(data, obj =>
@@ -196,7 +197,7 @@ onMounted(() => {
       () => {
         if (router.currentRoute.value.params?.id) {
           const { double, found } = findApiaries(
-            apiaries.value.results,
+            apiaries.value?.results ?? [],
             String(router.currentRoute.value.params.id),
             apiary.value
           );

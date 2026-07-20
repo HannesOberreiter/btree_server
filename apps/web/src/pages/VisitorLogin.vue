@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { AuthOauthUrlResponse } from '../api/types';
 import type { User } from '../types';
 import useVuelidate from '@vuelidate/core';
 import { truncate } from 'lodash-es';
@@ -122,13 +123,13 @@ function sendForm(user: User) {
 }
 
 async function onLoginGoogle() {
-  api.get('/v1/auth/google').then(res => {
+  (api.get('/v1/auth/google') as Promise<AuthOauthUrlResponse>).then(res => {
     window.location.href = res.url;
   });
 }
 
 async function onLoginApple() {
-  api.get('/v1/auth/apple').then(res => {
+  (api.get('/v1/auth/apple') as Promise<AuthOauthUrlResponse>).then(res => {
     window.location.href = res.url;
   });
 }

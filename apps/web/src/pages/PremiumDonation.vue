@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import type {
+  CompanyPaidResponse,
+  CompanyPaymentsResponse
+} from '../api/types';
 import dayjs from 'dayjs';
 import { useQuasar } from 'quasar';
 import BtnBaseGroup from '@/components/BtnBaseGroup.vue';
@@ -26,14 +30,7 @@ const isAppleStoreWrapper = computed(
   () => document.cookie.includes('iOS') === true
 );
 
-const payments = ref<{
-  company: {
-    count: number;
-    months: number;
-  };
-  countCurrentYear: number;
-  countLastYear: number;
-}>({
+const payments = ref<CompanyPaymentsResponse>({
   company: {
     count: 0,
     months: 0
@@ -91,28 +88,28 @@ function requestInvoice() {
     persistent: true
   }).onOk(() => {
     paidLoading.value = true;
-    api
-      .post('/v1/company/invoice', {
+    (
+      api.post('/v1/company/invoice', {
         amount: donation.value,
         quantity: years.value
-      })
-      .then(
-        (data: any) => {
-          successPayment(data.paid);
-        },
-        (error: any) => {
-          paidLoading.value = false;
-          if (error.statusCode === 429) {
-            notification.open(
-              'warning',
-              t('membership.invoiceRequestRecent'),
-              true
-            );
-          } else {
-            notification.open('negative', error);
-          }
+      }) as Promise<CompanyPaidResponse>
+    ).then(
+      data => {
+        successPayment(data.paid);
+      },
+      (error: any) => {
+        paidLoading.value = false;
+        if (error.statusCode === 429) {
+          notification.open(
+            'warning',
+            t('membership.invoiceRequestRecent'),
+            true
+          );
+        } else {
+          notification.open('negative', error);
         }
-      );
+      }
+    );
   });
 }
 
@@ -147,7 +144,11 @@ function payCoupon() {
     }
   }).onOk(val => {
     if (val.trim()) {
-      api.post('/v1/company/coupon', { coupon: val }).then(
+      (
+        api.post('/v1/company/coupon', {
+          coupon: val
+        }) as Promise<CompanyPaidResponse>
+      ).then(
         data => {
           successPayment(data.paid);
         },
@@ -185,8 +186,7 @@ async function successPayment(newDate: string) {
   paid.value = true;
 }
 
-api
-  .get('/v1/company/payments')
+(api.get('/v1/company/payments') as Promise<CompanyPaymentsResponse>)
   .then(data => {
     payments.value = data;
   })

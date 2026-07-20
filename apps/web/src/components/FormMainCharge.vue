@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { ChargeResponse } from '../api/types';
 import type { FormCharge } from '../types';
 import useVuelidate from '@vuelidate/core';
 import { toRefs } from '@vueuse/core';
@@ -85,10 +86,12 @@ const state = ref<FormCharge>({
 });
 
 async function getEdit(id: unknown[]) {
-  return await api.post('/v1/charge/batchGet', { ids: id }).then(
-    (response: any) => {
+  return await (
+    api.post('/v1/charge/batchGet', { ids: id }) as Promise<ChargeResponse[]>
+  ).then(
+    response => {
       if (isEdit.value) {
-        const editIds = map(response, (row: any) => [
+        const editIds = map(response, row => [
           { value: row.id, label: `ID: ${row.id} / (${row.name})` }
         ]);
         editOptions.value = flatten(editIds);

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { CompanyPatchResponse, CompanyResponse } from '../api/types';
 import { findIndex, sortBy } from 'lodash-es';
 import { storeToRefs } from 'pinia';
 import { useQuasar } from 'quasar';
@@ -101,8 +102,10 @@ function editCompany() {
     cancel: true,
     persistent: false
   }).onOk(data => {
-    api.patch('/v1/company', { name: data }).then(
-      async (_response: any) => {
+    (
+      api.patch('/v1/company', { name: data }) as Promise<CompanyPatchResponse>
+    ).then(
+      async _response => {
         invalidateQueries.invalidate();
         await storeRefresh.refresh();
         notification.open('positive', '');
@@ -126,8 +129,8 @@ function newCompany() {
     cancel: true,
     persistent: true
   }).onOk(data => {
-    api.post('/v1/company', { name: data }).then(
-      async (_response: any) => {
+    (api.post('/v1/company', { name: data }) as Promise<CompanyResponse>).then(
+      async _response => {
         invalidateQueries.invalidate();
         await storeRefresh.refresh();
         notification.open('positive', '');

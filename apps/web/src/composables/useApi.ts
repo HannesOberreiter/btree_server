@@ -26,7 +26,8 @@ export function useApiFetch() {
       return baseUrl.value + url;
     }
     return `${baseUrl.value + url}?${querystring.stringify(param, {
-      arrayFormat: 'bracket'
+      arrayFormat: 'bracket',
+      skipNull: true
     })}`;
   };
 

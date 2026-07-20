@@ -1,5 +1,15 @@
 import type { ComputedRef, MaybeRef, Ref } from 'vue';
-import type { Option, Task, TodoPaginatedResponse } from '../types';
+import type {
+  ApiaryDetailResponse,
+  ApiaryListItem,
+  ApiaryPaginatedResponse,
+  CalendarResponse,
+  ChargePaginatedResponse,
+  ChargeStockPaginatedResponse,
+  CompanyCountResponse,
+  TodoPaginatedResponse
+} from '../api/types';
+import type { Option, Task } from '../types';
 import {
   keepPreviousData,
   QueryClient,
@@ -33,7 +43,10 @@ export function useCalendarQuery() {
           start: unref(start),
           end: unref(end)
         };
-        return api.get(`/v1/calendar/${unref(source)}`, payload);
+        return api.get(
+          `/v1/calendar/${unref(source)}`,
+          payload
+        ) as Promise<CalendarResponse>;
       }
     });
   }
@@ -57,7 +70,9 @@ export function useApiaryQuery({
   return useQuery({
     queryKey: ['apiary', id],
     queryFn: () => {
-      return api.get(`/v1/apiary/${unref(id)}`);
+      return api.get(
+        `/v1/apiary/${unref(id)}`
+      ) as Promise<ApiaryDetailResponse>;
     },
     enabled,
     placeholderData: keepPreviousData,
@@ -212,11 +227,10 @@ export function useTodosQuery({
         filters: unref(filters),
         done: unref(done)
       };
-      return api.get('/v1/todo', payload);
+      return api.get('/v1/todo', payload) as Promise<TodoPaginatedResponse>;
     },
     enabled,
-    placeholderData: keepPreviousData,
-    select: response => response as TodoPaginatedResponse
+    placeholderData: keepPreviousData
   });
 }
 
@@ -305,7 +319,7 @@ export function useApiariesQuery({
         q: unref(q),
         details: unref(details)
       };
-      return api.get('/v1/apiary', payload);
+      return api.get('/v1/apiary', payload) as Promise<ApiaryPaginatedResponse>;
     },
     enabled,
     placeholderData: keepPreviousData,
@@ -315,18 +329,18 @@ export function useApiariesQuery({
         const hive_count = value.hive_count
           ? `(${value.hive_count.count + value.hive_count.grouphivescount})`
           : '';
-        value.label = `${value.name} ${hive_count}`;
-        value.value = value.id;
-        value.type = 'apiary';
-        return value;
+        return {
+          ...value,
+          label: `${value.name} ${hive_count}`,
+          value: value.id,
+          type: 'apiary'
+        } satisfies ApiaryListItem;
       });
-      const center =
-        result.length > 0
-          ? [result[0].latitude, result[0].longitude, 9]
-          : [47.4751336, 13.5968839, 2];
-      return result
-        ? { results: result, total: response.total, center }
-        : ([] as any);
+      const first = result[0];
+      const center: [number, number] = first
+        ? [first.latitude, first.longitude]
+        : [47.4751336, 13.5968839];
+      return { results: result, total: response.total, center };
     }
   });
 }
@@ -460,11 +474,10 @@ export function useChargeQuery({
         filters: unref(filters),
         q: unref(q)
       };
-      return api.get('/v1/charge', payload);
+      return api.get('/v1/charge', payload) as Promise<ChargePaginatedResponse>;
     },
     enabled,
-    placeholderData: keepPreviousData,
-    select: response => response
+    placeholderData: keepPreviousData
   });
 }
 
@@ -487,11 +500,13 @@ export function useChargeStockQuery({
         direction: unref(direction),
         q: unref(q)
       };
-      return api.get('/v1/charge/stock', payload);
+      return api.get(
+        '/v1/charge/stock',
+        payload
+      ) as Promise<ChargeStockPaginatedResponse>;
     },
     enabled,
-    placeholderData: keepPreviousData,
-    select: response => response
+    placeholderData: keepPreviousData
   });
 }
 
@@ -767,11 +782,13 @@ export function useRearingEventQuery({
       const payload = {
         id: unref(id)
       };
-      return api.get('/v1/calendar/rearing', payload);
+      return api.get(
+        '/v1/calendar/rearing',
+        payload
+      ) as Promise<CalendarResponse>;
     },
     enabled,
-    placeholderData: keepPreviousData,
-    select: response => response
+    placeholderData: keepPreviousData
   });
 }
 
@@ -910,7 +927,11 @@ export function useCountsQuery({ enabled = true as MaybeRef<boolean> }) {
   return useQuery({
     queryKey: ['countsQuery'],
     queryFn: () => {
-      return api.get('/v1/company/count', '', false);
+      return api.get(
+        '/v1/company/count',
+        '',
+        false
+      ) as Promise<CompanyCountResponse>;
     },
     enabled,
     placeholderData: keepPreviousData,

@@ -32,7 +32,7 @@ const data = computed(() => {
   ];
   let result = [...active, ...inactive];
   */
-  const result = [...apiaries.value.results, ...hives.value.results];
+  const result = [...(apiaries.value?.results ?? []), ...hives.value.results];
   return result.map(obj => {
     let label =
       obj.modus === false ? `${obj.label} [${t('inactive')}]` : obj.label;

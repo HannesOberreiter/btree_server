@@ -50,8 +50,8 @@ const zoom = computed(() => {
   return isLoading.value ? 2 : 9;
 });
 
-const mapCenter = computed(() => {
-  return apiaries.value?.center || [47.4751336, 13.5968839, 2];
+const mapCenter = computed<[number, number]>(() => {
+  return apiaries.value?.center ?? [47.4751336, 13.5968839];
 });
 
 const circleRadius = ref(1000);
@@ -121,7 +121,7 @@ function editApiaryForm(e: any) {
     });
   }
 }
-function deleteApiary(value: string) {
+function deleteApiary(value: number) {
   api.patch('/v1/apiary/batchDelete', { ids: [value] }).then(
     async (_response: any) => {
       useInvalidate.invalidate('apiary');

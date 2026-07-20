@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { QTableProps } from 'quasar';
+import type { ChargeResponse } from '../api/types';
 import { round } from 'lodash-es';
 import { storeToRefs } from 'pinia';
 import { computed, ref, watch } from 'vue';
@@ -27,7 +28,7 @@ const { charge: filters } = storeToRefs(storeFilter);
 const visibleColumns = ref(store.value.visible);
 
 const selected = ref<any>([]);
-const rows = ref([]);
+const rows = ref<ChargeResponse[]>([]);
 const modus = ref(true);
 const deleted = ref(false);
 const filter = ref('');

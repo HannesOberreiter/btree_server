@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { AuthDiscourseResponse } from '../api/types';
 import type { User } from '../types';
 import useVuelidate from '@vuelidate/core';
 import { onMounted, onUnmounted, reactive, ref } from 'vue';
@@ -83,8 +84,12 @@ onUnmounted(() => (isSubmitting.value = false));
 
 async function sso() {
   if (sig.value && payload.value) {
-    await api
-      .get('/v1/auth/discourse', { sig: sig.value, payload: payload.value })
+    await (
+      api.get('/v1/auth/discourse', {
+        sig: sig.value,
+        payload: payload.value
+      }) as Promise<AuthDiscourseResponse>
+    )
       .then(data => {
         window.location.href = `https://forum.btree.at/session/sso_login?${data.q}`;
       })

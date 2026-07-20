@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { PropType } from 'vue';
-import type { FormTodo, TodoResponse } from '../types';
+import type { TodoResponse } from '../api/types';
+import type { FormTodo } from '../types';
 import useVuelidate from '@vuelidate/core';
 import dayjs from 'dayjs';
 import { flatten, map, merge } from 'lodash-es';
@@ -74,8 +75,10 @@ async function getEdit(id: number[] | null) {
   if (!id) {
     return;
   }
-  return await api.post('/v1/todo/batchGet', { ids: id }).then(
-    (response: TodoResponse[]) => {
+  return await (
+    api.post('/v1/todo/batchGet', { ids: id }) as Promise<TodoResponse[]>
+  ).then(
+    response => {
       const editIds = map(response, (row: TodoResponse) => [
         { value: row.id, label: `ID: ${row.id} / (${row.name})` }
       ]);
