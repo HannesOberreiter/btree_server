@@ -6,6 +6,10 @@ import { ROLES } from '../../../config/constants.config.js';
 import QueenController from '../../controllers/queen.controller.js';
 import { Guard } from '../../hooks/guard.hook.js';
 import { Validator } from '../../hooks/validator.hook.js';
+import {
+  permissiveJsonResponseSchema,
+  permissiveObjectSchema,
+} from '../../schemas/common.schema.js';
 import { numberSchema } from '../../utils/zod.util.js';
 
 export default function routes(
@@ -18,6 +22,10 @@ export default function routes(
   server.get(
     '/',
     {
+      schema: {
+        querystring: permissiveObjectSchema,
+        response: { 200: permissiveJsonResponseSchema },
+      },
       preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
     },
     QueenController.get,
@@ -26,6 +34,10 @@ export default function routes(
   server.get(
     '/stats',
     {
+      schema: {
+        querystring: permissiveObjectSchema,
+        response: { 200: permissiveJsonResponseSchema },
+      },
       preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
       preValidation: Validator.isPremium,
     },
@@ -35,6 +47,11 @@ export default function routes(
   server.get(
     '/pedigree/:id',
     {
+      schema: {
+        querystring: permissiveObjectSchema,
+        params: permissiveObjectSchema,
+        response: { 200: permissiveJsonResponseSchema },
+      },
       preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
     },
     QueenController.getPedigree,
@@ -45,12 +62,13 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
+        response: { 200: permissiveJsonResponseSchema },
         body: z
           .object({
             start: z.number().int().min(0).max(10000).optional(),
             repeat: z.number().int().min(0).max(100).optional(),
           })
-          .passthrough(),
+          .loose(),
       },
     },
     QueenController.post,
@@ -61,9 +79,10 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
+        response: { 200: permissiveJsonResponseSchema },
         body: z.object({
           ids: z.array(numberSchema),
-          data: z.object({}).passthrough(),
+          data: z.object({}).loose(),
         }),
       },
     },
@@ -75,6 +94,7 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
+        response: { 200: permissiveJsonResponseSchema },
         body: z.object({
           ids: z.array(numberSchema),
           status: z.boolean(),
@@ -89,6 +109,7 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
+        response: { 200: permissiveJsonResponseSchema },
         body: z.object({
           ids: z.array(numberSchema),
         }),
@@ -102,6 +123,7 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
+        response: { 200: permissiveJsonResponseSchema },
         body: z.object({
           ids: z.array(numberSchema),
         }),

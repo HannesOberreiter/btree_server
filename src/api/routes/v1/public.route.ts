@@ -3,6 +3,10 @@ import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { z } from 'zod';
 
 import PublicController from '../../controllers/public.controller.js';
+import {
+  permissiveJsonResponseSchema,
+  permissiveObjectSchema,
+} from '../../schemas/common.schema.js';
 import { numberSchema } from '../../utils/zod.util.js';
 
 const taxaParams = z.union([
@@ -21,6 +25,7 @@ export default function routes(
     '/:taxa/observations/recent',
     {
       schema: {
+        querystring: permissiveObjectSchema,
         params: z.object({
           taxa: taxaParams,
         }),
@@ -44,6 +49,7 @@ export default function routes(
     '/:taxa/observations/year/:year',
     {
       schema: {
+        querystring: permissiveObjectSchema,
         params: z.object({
           year: numberSchema,
           taxa: taxaParams,
@@ -68,6 +74,8 @@ export default function routes(
     '/:taxa/observations/stats',
     {
       schema: {
+        querystring: permissiveObjectSchema,
+        response: { 200: permissiveJsonResponseSchema },
         params: z.object({
           taxa: taxaParams,
         }),

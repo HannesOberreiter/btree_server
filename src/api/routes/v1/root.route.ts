@@ -2,6 +2,11 @@ import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 
 import RootController from '../../controllers/root.controller.js';
+import {
+  permissiveJsonResponseSchema,
+  permissiveObjectSchema,
+  permissiveRequestSchema,
+} from '../../schemas/common.schema.js';
 
 export default function routes(
   instance: FastifyInstance,
@@ -10,9 +15,27 @@ export default function routes(
 ) {
   const server = instance.withTypeProvider<ZodTypeProvider>();
 
-  server.get('/status', {}, RootController.status);
+  server.get(
+    '/status',
+    {
+      schema: {
+        querystring: permissiveObjectSchema,
+        response: { 200: permissiveJsonResponseSchema },
+      },
+    },
+    RootController.status,
+  );
 
-  server.post('/report-violation', {}, RootController.report);
+  server.post(
+    '/report-violation',
+    {
+      schema: {
+        body: permissiveRequestSchema,
+        response: { 200: permissiveJsonResponseSchema },
+      },
+    },
+    RootController.report,
+  );
 
   done();
 }

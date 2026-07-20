@@ -8,6 +8,11 @@ import {
   wizBeeToolDefinitions,
 } from '../../controllers/wizbee.tools.controller.js';
 import { Guard } from '../../hooks/guard.hook.js';
+import {
+  permissiveJsonResponseSchema,
+  permissiveObjectSchema,
+  permissiveRequestSchema,
+} from '../../schemas/common.schema.js';
 import { wizBeeStreamBody } from '../../schemas/wizbee.schema.js';
 
 export default function routes(
@@ -31,6 +36,10 @@ export default function routes(
   server.get(
     '/usage',
     {
+      schema: {
+        querystring: permissiveObjectSchema,
+        response: { 200: permissiveJsonResponseSchema },
+      },
       preHandler: Guard.authorize([ROLES.admin, ROLES.user, ROLES.read]),
     },
     WizBeeController.getWizBeeUsage,
@@ -50,6 +59,10 @@ export default function routes(
   server.post(
     '/transcribe',
     {
+      schema: {
+        body: permissiveRequestSchema,
+        response: { 200: permissiveJsonResponseSchema },
+      },
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
     },
     WizBeeController.transcribeWizBeeAudio,
@@ -61,9 +74,8 @@ export default function routes(
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
         description: toolDef.description,
-        response: {
-          200: { type: 'object' },
-        },
+        body: toolDef.parameters,
+        response: { 200: permissiveJsonResponseSchema },
       },
       handler: async (request, reply) => {
         const user = request.session?.user;

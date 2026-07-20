@@ -3,7 +3,6 @@ import { randomBytes, randomUUID } from 'node:crypto';
 import dayjs from 'dayjs';
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import httpErrors from 'http-errors';
-import type { z } from 'zod';
 
 import { ENVIRONMENT } from '../../config/constants.config.js';
 import {
@@ -19,11 +18,20 @@ import { MailService } from '../../services/mail.service.js';
 import { Company } from '../models/company.model.js';
 import { CompanyBee } from '../models/company_bee.model.js';
 import { User } from '../models/user.model.js';
-import type { RegisterBody } from '../routes/v1/auth.route.js';
 import {
-  AppleCallbackGETSchema,
-  AppleCallbackSchema,
-} from '../routes/v1/auth.route.js';
+  appleCallbackGetSchema,
+  appleCallbackSchema,
+} from '../schemas/auth.schema.js';
+import type {
+  AppleCallback,
+  ConfirmBody,
+  DiscourseQuery,
+  EmailBody,
+  GoogleCallbackQuery,
+  LoginBody,
+  RegisterBody,
+  ResetPasswordBody,
+} from '../schemas/auth.schema.js';
 import {
   buildUserAgent,
   confirmAccount,
@@ -37,7 +45,7 @@ import { loginCheck } from '../utils/login.util.js';
 
 export default class AuthController {
   static async confirmMail(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
+    const body = req.body as ConfirmBody;
     const key = body.confirm;
     const u = await User.query().findOne({
       reset: key,
@@ -50,7 +58,7 @@ export default class AuthController {
   }
 
   static async resetRequest(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
+    const body = req.body as EmailBody;
     const email = body.email;
     const u = await User.query().findOne({
       email,
@@ -83,7 +91,7 @@ export default class AuthController {
   }
 
   static async unsubscribeRequest(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
+    const body = req.body as EmailBody;
     const email = body.email;
     const u = await User.query().findOne({
       email,
@@ -98,7 +106,7 @@ export default class AuthController {
   }
 
   static async resetPassword(req: FastifyRequest, _reply: FastifyReply) {
-    const { key, password } = req.body as any;
+    const { key, password } = req.body as ResetPasswordBody;
     const u = await User.query().findOne({
       reset: key,
     });
@@ -189,7 +197,7 @@ export default class AuthController {
   }
 
   static async login(req: FastifyRequest, _reply: FastifyReply) {
-    const { email, password } = req.body as any;
+    const { email, password } = req.body as LoginBody;
     const userAgent = buildUserAgent(req);
     const { bee_id, user_id, data, paid, rank } = await loginCheck(
       email,
@@ -222,7 +230,7 @@ export default class AuthController {
 
   static async discourse(req: FastifyRequest, _reply: FastifyReply) {
     const sso = new DiscourseSSO(discourseSecret);
-    const { payload, sig } = req.query as any;
+    const { payload, sig } = req.query as DiscourseQuery;
     if (payload && sig) {
       if (sso.validate(payload, sig)) {
         const user = await User.query()
@@ -256,7 +264,7 @@ export default class AuthController {
   static async google(req: FastifyRequest, reply: FastifyReply) {
     const google = GoogleAuth.getInstance();
     let result: federatedUser;
-    const token = (req.query as any).code as string;
+    const { code: token } = req.query as GoogleCallbackQuery;
 
     try {
       result = await google.verify(token);
@@ -312,13 +320,13 @@ export default class AuthController {
   static async apple(req: FastifyRequest, reply: FastifyReply) {
     const apple = AppleAuth.getInstance();
     let result: federatedUser;
-    let body: z.infer<typeof AppleCallbackSchema>;
+    let body: AppleCallback;
 
     try {
       if (req.method === 'GET') {
-        const query = AppleCallbackGETSchema.parse(req.query);
+        const query = appleCallbackGetSchema.parse(req.query);
 
-        const transformedQuery: any = {
+        const transformedQuery: Record<string, unknown> = {
           code: query.code,
           id_token: query.id_token,
           state: query.state,
@@ -338,9 +346,9 @@ export default class AuthController {
           }
         }
 
-        body = AppleCallbackSchema.parse(transformedQuery);
+        body = appleCallbackSchema.parse(transformedQuery);
       } else {
-        body = AppleCallbackSchema.parse(req.body);
+        body = appleCallbackSchema.parse(req.body);
       }
 
       if (body.error) {

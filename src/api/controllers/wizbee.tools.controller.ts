@@ -3131,5 +3131,6 @@ export async function executeWizBeeTool(
     throw new Error(`Unknown tool: ${toolName}`);
   }
 
-  return toolFn.execute(input);
+  const validatedInput = toolFn.inputSchema.parse(input);
+  return toolFn.execute(validatedInput);
 }

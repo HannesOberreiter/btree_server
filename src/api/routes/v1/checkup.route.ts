@@ -5,18 +5,32 @@ import { z } from 'zod';
 import { ROLES } from '../../../config/constants.config.js';
 import CheckupController from '../../controllers/checkup.controller.js';
 import { Guard } from '../../hooks/guard.hook.js';
-import { numberSchema } from '../../utils/zod.util.js';
+import {
+  checkupBatchDeleteQuerySchema,
+  checkupBatchUpdateSchema,
+  checkupCreateSchema,
+  checkupIdsSchema,
+  checkupListQuerySchema,
+  checkupPaginatedResponseSchema,
+  checkupResponseSchema,
+  checkupUpdateDateSchema,
+  checkupUpdateStatusSchema,
+} from '../../schemas/checkup.schema.js';
 
 export default function routes(
   instance: FastifyInstance,
-  _options: any,
-  done: any,
+  _options: unknown,
+  done: () => void,
 ) {
   const server = instance.withTypeProvider<ZodTypeProvider>();
 
   server.get(
     '/',
     {
+      schema: {
+        querystring: checkupListQuerySchema,
+        response: { 200: checkupPaginatedResponseSchema },
+      },
       preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
     },
     CheckupController.get,
@@ -27,11 +41,8 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
-        body: z.looseObject({
-          hive_ids: z.array(numberSchema),
-          interval: z.number().min(0).max(365),
-          repeat: z.number().min(0).max(15),
-        }),
+        body: checkupCreateSchema,
+        response: { 200: z.array(z.number()) },
       },
     },
     CheckupController.post,
@@ -42,10 +53,8 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
-        body: z.object({
-          ids: z.array(numberSchema),
-          data: z.looseObject({}),
-        }),
+        body: checkupBatchUpdateSchema,
+        response: { 200: z.number() },
       },
     },
     CheckupController.patch,
@@ -56,10 +65,8 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
-        body: z.object({
-          ids: z.array(numberSchema),
-          status: z.boolean(),
-        }),
+        body: checkupUpdateStatusSchema,
+        response: { 200: z.number() },
       },
     },
     CheckupController.updateStatus,
@@ -70,11 +77,8 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
-        body: z.object({
-          ids: z.array(numberSchema),
-          start: z.string(),
-          end: z.string(),
-        }),
+        body: checkupUpdateDateSchema,
+        response: { 200: z.number() },
       },
     },
     CheckupController.updateDate,
@@ -85,9 +89,9 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.admin]),
       schema: {
-        body: z.object({
-          ids: z.array(numberSchema),
-        }),
+        querystring: checkupBatchDeleteQuerySchema,
+        body: checkupIdsSchema,
+        response: { 200: z.array(checkupResponseSchema) },
       },
     },
     CheckupController.batchDelete,
@@ -98,9 +102,8 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
-        body: z.object({
-          ids: z.array(numberSchema),
-        }),
+        body: checkupIdsSchema,
+        response: { 200: z.array(checkupResponseSchema) },
       },
     },
     CheckupController.batchGet,

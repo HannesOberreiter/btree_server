@@ -68,6 +68,12 @@ describe('apiary routes', () => {
       expect(res.body.total).toBeTypeOf('number');
     });
 
+    it('get 200 - bare nullable modus query', async () => {
+      const res = await agent.request('get', `${route}?modus`);
+      expect(res.statusCode).toEqual(200);
+      expect(res.body.results).toBeInstanceOf(Array);
+    });
+
     it('post 400 - no name', async () => {
       const res = await doRequest(
         agent,

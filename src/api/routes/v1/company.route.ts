@@ -5,88 +5,121 @@ import { z } from 'zod';
 import { ROLES } from '../../../config/constants.config.js';
 import CompanyController from '../../controllers/company.controller.js';
 import { Guard } from '../../hooks/guard.hook.js';
+import {
+  companyApiKeyResponseSchema,
+  companyChangeResponseSchema,
+  companyCountResponseSchema,
+  companyCouponSchema,
+  companyCreateSchema,
+  companyDeleteParamsSchema,
+  companyImportResponseSchema,
+  companyImportSchema,
+  companyInvoiceSchema,
+  companyPaidResponseSchema,
+  companyPatchResponseSchema,
+  companyPatchSchema,
+  companyPaymentsResponseSchema,
+  companyResponseSchema,
+} from '../../schemas/company.schema.js';
 
 export default function routes(
   instance: FastifyInstance,
-  _options: any,
-  done: any,
+  _options: unknown,
+  done: () => void,
 ) {
   const server = instance.withTypeProvider<ZodTypeProvider>();
+
   server.get(
     '/apikey',
-    { preHandler: Guard.authorize([ROLES.admin]) },
+    {
+      schema: { response: { 200: companyApiKeyResponseSchema } },
+      preHandler: Guard.authorize([ROLES.admin]),
+    },
     CompanyController.getApikey,
   );
+
   server.get(
     '/count',
-    { preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]) },
+    {
+      schema: { response: { 200: z.array(companyCountResponseSchema) } },
+      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+    },
     CompanyController.getCounts,
   );
+
   server.get(
     '/download',
     { preHandler: Guard.authorize([ROLES.admin]) },
     CompanyController.download,
   );
+
   server.patch(
     '',
     {
       preHandler: Guard.authorize([ROLES.admin]),
       schema: {
-        body: z
-          .object({
-            name: z.string().min(3).max(128).trim().optional(),
-          })
-          .passthrough(),
+        body: companyPatchSchema,
+        response: { 200: companyPatchResponseSchema },
       },
     },
     CompanyController.patch,
   );
+
   server.post(
     '',
     {
       preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
       schema: {
-        body: z.object({
-          name: z.string().min(3).max(128).trim(),
-        }),
+        body: companyCreateSchema,
+        response: { 200: companyResponseSchema },
       },
     },
     CompanyController.post,
   );
+
   server.post(
     '/coupon',
     {
       preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
       schema: {
-        body: z.object({
-          coupon: z.string().min(3).max(128).trim(),
-        }),
+        body: companyCouponSchema,
+        response: { 200: companyPaidResponseSchema },
       },
     },
     CompanyController.postCoupon,
   );
+
   server.post(
     '/invoice',
     {
       preHandler: Guard.authorize([ROLES.admin]),
       schema: {
-        body: z.object({
-          amount: z.number().int().min(55).max(10000),
-          quantity: z.number().int().min(1).max(10),
-        }),
+        body: companyInvoiceSchema,
+        response: { 200: companyPaidResponseSchema },
       },
     },
     CompanyController.postInvoice,
   );
+
   server.delete(
     '/:id',
-    { preHandler: Guard.authorize([ROLES.admin]) },
+    {
+      schema: {
+        params: companyDeleteParamsSchema,
+        response: { 200: companyChangeResponseSchema },
+      },
+      preHandler: Guard.authorize([ROLES.admin]),
+    },
     CompanyController.delete,
   );
 
   server.post(
     '/import',
     {
+      schema: {
+        body: companyImportSchema,
+        response: { 200: companyImportResponseSchema },
+      },
       preHandler: Guard.authorize([ROLES.admin]),
     },
     CompanyController.import,
@@ -94,7 +127,10 @@ export default function routes(
 
   server.get(
     '/payments',
-    { preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]) },
+    {
+      schema: { response: { 200: companyPaymentsResponseSchema } },
+      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+    },
     CompanyController.getPayments,
   );
 

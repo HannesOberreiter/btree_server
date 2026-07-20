@@ -6,18 +6,23 @@ import httpErrors from 'http-errors';
 import { Company } from '../models/company.model.js';
 import { CompanyBee } from '../models/company_bee.model.js';
 import { User } from '../models/user.model.js';
+import type {
+  CompanyUserAddBody,
+  CompanyUserCompanyParams,
+  CompanyUserIdParams,
+  CompanyUserRankBody,
+} from '../schemas/company_user.schema.js';
 import AuthController from './auth.controller.js';
 import UserController from './user.controller.js';
 
 export default class CompanyUserController {
   static async patch(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
-    const result = await CompanyBee.query()
-      .patch({ rank: body.rank })
-      .where({
-        bee_id: (req.params as any).id,
-        user_id: req.session.user.user_id,
-      });
+    const body = req.body as CompanyUserRankBody;
+    const params = req.params as CompanyUserIdParams;
+    const result = await CompanyBee.query().patch({ rank: body.rank }).where({
+      bee_id: params.id,
+      user_id: req.session.user.user_id,
+    });
     return result;
   }
 
@@ -29,7 +34,7 @@ export default class CompanyUserController {
   }
 
   static async addUser(req: FastifyRequest, reply: FastifyReply) {
-    const body = req.body as any;
+    const body = req.body as CompanyUserAddBody;
     const userExists = await User.query()
       .select('id')
       .findOne({ email: body.email });
@@ -71,7 +76,7 @@ export default class CompanyUserController {
   }
 
   static async removeUser(req: FastifyRequest, _reply: FastifyReply) {
-    const params = req.params as any;
+    const params = req.params as CompanyUserIdParams;
     const result = await CompanyBee.query()
       .delete()
       .where({ bee_id: params.id, user_id: req.session.user.user_id });
@@ -79,7 +84,7 @@ export default class CompanyUserController {
   }
 
   static async delete(req: FastifyRequest, reply: FastifyReply) {
-    const params = req.params as any;
+    const params = req.params as CompanyUserCompanyParams;
     const otherUser = await Company.query()
       .select('user.id')
       .withGraphJoined('user')
@@ -114,7 +119,8 @@ export default class CompanyUserController {
       return;
     }
 
-    (req.body as any).saved_company = otherCompanies[0].id;
+    const body = req.body as Record<string, unknown>;
+    body.saved_company = otherCompanies[0].id;
 
     await CompanyBee.query()
       .delete()

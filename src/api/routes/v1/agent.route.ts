@@ -10,6 +10,7 @@ import {
   wizBeeToolDefinitions,
 } from '../../controllers/wizbee.tools.controller.js';
 import { agentAuthHook } from '../../hooks/agent_auth.hook.js';
+import { permissiveJsonResponseSchema } from '../../schemas/common.schema.js';
 
 export default async function routes(instance: FastifyInstance, _options: any) {
   // Register @fastify/swagger scoped to this plugin (prefix: /v1/agent)
@@ -65,6 +66,7 @@ export default async function routes(instance: FastifyInstance, _options: any) {
         description:
           'Get the OpenAPI specification for all available agent tool endpoints.',
         tags: ['Discovery'],
+        response: { 200: permissiveJsonResponseSchema },
       },
     },
     async (_request, _reply) => {
@@ -79,6 +81,7 @@ export default async function routes(instance: FastifyInstance, _options: any) {
         description: toolDef.description,
         tags: ['Tools'],
         body: toolDef.parameters,
+        response: { 200: permissiveJsonResponseSchema },
       },
       handler: async (request, _reply) => {
         const user = request.session?.user;

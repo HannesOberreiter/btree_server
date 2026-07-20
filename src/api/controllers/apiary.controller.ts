@@ -7,6 +7,15 @@ import type Objection from 'objection';
 import { Apiary } from '../models/apiary.model.js';
 import { HiveLocation } from '../models/hive_location.model.js';
 import { Movedate } from '../models/movedate.model.js';
+import type {
+  ApiaryBatchDeleteQuery,
+  ApiaryBatchUpdateBody,
+  ApiaryCreateBody,
+  ApiaryIdParams,
+  ApiaryIdsBody,
+  ApiaryListQuery,
+  ApiaryUpdateStatusBody,
+} from '../schemas/apiary.schema.js';
 import { limitApiary } from '../utils/premium.util.js';
 
 async function isDuplicateApiaryName(
@@ -31,18 +40,19 @@ async function isDuplicateApiaryName(
 
 export default class ApiaryController {
   static async patch(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
+    const body = req.body as ApiaryBatchUpdateBody;
     const ids = body.ids;
     const insert = { ...body.data };
     const result = await Apiary.transaction(async (trx) => {
-      if (body.name) {
+      const name = body.data.name;
+      if (typeof name === 'string') {
         if (ids.length > 1) {
           throw httpErrors.Conflict('name');
         }
         if (
           await isDuplicateApiaryName(
             req.session.user.user_id,
-            body.name,
+            name,
             ids[0],
             trx,
           )
@@ -61,7 +71,7 @@ export default class ApiaryController {
 
   static async get(req: FastifyRequest, _reply: FastifyReply) {
     const { order, direction, offset, limit, modus, deleted, q, details } =
-      req.query as any;
+      req.query as ApiaryListQuery;
 
     const query = Apiary.query()
       .where({
@@ -71,10 +81,10 @@ export default class ApiaryController {
       .page(offset || 0, limit === 0 || !limit ? 10 : limit);
 
     if (modus !== undefined && modus !== null) {
-      query.where('apiaries.modus', modus === true);
+      query.where('apiaries.modus', modus);
     }
 
-    if (details === true) {
+    if (details) {
       query.withGraphJoined(
         '[hive_count, creator(identifier),editor(identifier)]',
       );
@@ -83,9 +93,15 @@ export default class ApiaryController {
     }
     if (order) {
       if (Array.isArray(order)) {
-        order.forEach((field, index) => query.orderBy(field, direction[index]));
+        const directions = Array.isArray(direction) ? direction : [direction];
+        order.forEach((field, index) =>
+          query.orderBy(field, directions[index]),
+        );
       } else {
-        query.orderBy(order, direction);
+        const selectedDirection = Array.isArray(direction)
+          ? direction[0]
+          : direction;
+        query.orderBy(order, selectedDirection);
       }
     }
 
@@ -104,7 +120,7 @@ export default class ApiaryController {
   }
 
   static async getDetail(req: FastifyRequest, _reply: FastifyReply) {
-    const id = (req.params as any).id;
+    const { id } = req.params as ApiaryIdParams;
 
     const query = Apiary.query()
       .findById(id)
@@ -157,20 +173,21 @@ export default class ApiaryController {
   }
 
   static async post(req: FastifyRequest, _reply: FastifyReply) {
+    const body = req.body as ApiaryCreateBody;
     const limit = await limitApiary(req.session.user.user_id);
     if (limit) {
       throw httpErrors.PaymentRequired(
         'Free plan apiary limit reached — premium subscription required to create more apiaries',
       );
     }
-    const name = (req.body as any).name;
+    const name = body.name;
 
     const result = await Apiary.transaction(async (trx) => {
       if (name) {
         if (
           await isDuplicateApiaryName(
             req.session.user.user_id,
-            (req.body as any).name,
+            body.name,
             null,
             trx,
           )
@@ -181,14 +198,14 @@ export default class ApiaryController {
       return Apiary.query(trx).insertAndFetch({
         bee_id: req.session.user.bee_id,
         user_id: req.session.user.user_id,
-        ...(req.body as any),
+        ...body,
       });
     });
     return { ...result };
   }
 
   static async updateStatus(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
+    const body = req.body as ApiaryUpdateStatusBody;
     const result = await Apiary.transaction(async (trx) => {
       return Apiary.query(trx)
         .patch({
@@ -202,8 +219,8 @@ export default class ApiaryController {
   }
 
   static async batchDelete(req: FastifyRequest, _reply: FastifyReply) {
-    const query = req.query as any;
-    const body = req.body as any;
+    const query = req.query as ApiaryBatchDeleteQuery;
+    const body = req.body as ApiaryIdsBody;
 
     const hardDelete = !!query.hard;
     const restoreDelete = !!query.restore;
@@ -251,7 +268,7 @@ export default class ApiaryController {
   }
 
   static async batchGet(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
+    const body = req.body as ApiaryIdsBody;
     const result = await Apiary.query().findByIds(body.ids).where({
       user_id: req.session.user.user_id,
     });

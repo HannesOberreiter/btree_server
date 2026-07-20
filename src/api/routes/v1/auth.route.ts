@@ -1,69 +1,36 @@
 import fastifyFormbody from '@fastify/formbody';
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
-import { z } from 'zod';
 
 import { ROLES } from '../../../config/constants.config.js';
 import { AppleAuth, GoogleAuth } from '../../../services/federated.service.js';
 import AuthController from '../../controllers/auth.controller.js';
 import RootController from '../../controllers/root.controller.js';
 import { Guard } from '../../hooks/guard.hook.js';
-
-export const AppleCallbackSchema = z.object({
-  code: z.string(),
-  id_token: z.string(),
-  state: z.string(),
-  user: z
-    .union([
-      z.string().transform((str, ctx) => {
-        try {
-          const parsed = JSON.parse(str);
-          return z
-            .object({
-              email: z.string().email(),
-            })
-            .parse(parsed);
-        } catch {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: 'Invalid JSON in user field',
-          });
-          return z.NEVER;
-        }
-      }),
-      z.object({
-        email: z.string().email(),
-      }),
-      z.literal(''), // Accept empty string
-      z.null(), // Accept null
-    ])
-    .optional(),
-  error: z.string().optional(),
-});
-
-export const AppleCallbackGETSchema = z.object({
-  code: z.string(),
-  id_token: z.string().optional(),
-  state: z.string(),
-  user: z.string().optional(), // Will be URL-encoded JSON string
-  error: z.string().optional(),
-});
-
-const RegisterBodySchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(6).max(128).trim(),
-  name: z.string().min(3).max(128).trim(),
-  lang: z.string().min(2).max(2),
-  newsletter: z.boolean(),
-  source: z.string(),
-  isOAuth: z.boolean().optional(),
-});
-export type RegisterBody = z.infer<typeof RegisterBodySchema>;
+import {
+  appleCallbackGetSchema,
+  appleCallbackSchema,
+  confirmBodySchema,
+  discourseQuerySchema,
+  discourseResponseSchema,
+  emailBodySchema,
+  emailResponseSchema,
+  googleCallbackQuerySchema,
+  loginBodySchema,
+  loginResponseSchema,
+  logoutResponseSchema,
+  oauthUrlResponseSchema,
+  registerBodySchema,
+  registerResponseSchema,
+  resetPasswordBodySchema,
+  resetRequestResponseSchema,
+  statusResponseSchema,
+} from '../../schemas/auth.schema.js';
 
 export default function routes(
   instance: FastifyInstance,
-  _options: any,
-  done: any,
+  _options: unknown,
+  done: () => void,
 ) {
   const server = instance.withTypeProvider<ZodTypeProvider>();
 
@@ -73,7 +40,8 @@ export default function routes(
     '/register',
     {
       schema: {
-        body: RegisterBodySchema,
+        body: registerBodySchema,
+        response: { 200: registerResponseSchema },
       },
     },
     AuthController.register,
@@ -83,24 +51,27 @@ export default function routes(
     '/login',
     {
       schema: {
-        body: z.object({
-          email: z.string().email(),
-          password: z.string().min(6).max(128).trim(),
-        }),
+        body: loginBodySchema,
+        response: { 200: loginResponseSchema },
       },
     },
     AuthController.login,
   );
 
-  server.get('/logout', {}, AuthController.logout);
+  server.get(
+    '/logout',
+    {
+      schema: { response: { 200: logoutResponseSchema } },
+    },
+    AuthController.logout,
+  );
 
   server.patch(
     '/confirm',
     {
       schema: {
-        body: z.object({
-          confirm: z.string().min(100).max(128),
-        }),
+        body: confirmBodySchema,
+        response: { 200: emailResponseSchema },
       },
     },
     AuthController.confirmMail,
@@ -110,9 +81,8 @@ export default function routes(
     '/reset',
     {
       schema: {
-        body: z.object({
-          email: z.string().email(),
-        }),
+        body: emailBodySchema,
+        response: { 200: resetRequestResponseSchema },
       },
     },
     AuthController.resetRequest,
@@ -122,10 +92,8 @@ export default function routes(
     '/reset',
     {
       schema: {
-        body: z.object({
-          key: z.string().min(100).max(128),
-          password: z.string().min(6).max(128).trim(),
-        }),
+        body: resetPasswordBodySchema,
+        response: { 200: emailResponseSchema },
       },
     },
     AuthController.resetPassword,
@@ -135,9 +103,8 @@ export default function routes(
     '/unsubscribe',
     {
       schema: {
-        body: z.object({
-          email: z.string().email(),
-        }),
+        body: emailBodySchema,
+        response: { 200: emailResponseSchema },
       },
     },
     AuthController.unsubscribeRequest,
@@ -148,43 +115,47 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
       schema: {
-        querystring: z.object({
-          payload: z.string(),
-          sig: z.string(),
-        }),
+        querystring: discourseQuerySchema,
+        response: { 200: discourseResponseSchema },
       },
     },
     AuthController.discourse,
   );
 
-  server.get('/google', {}, async () => {
-    const google = GoogleAuth.getInstance();
-    return { url: google.generateAuthUrl() };
-  });
+  server.get(
+    '/google',
+    {
+      schema: { response: { 200: oauthUrlResponseSchema } },
+    },
+    async () => {
+      const google = GoogleAuth.getInstance();
+      return { url: google.generateAuthUrl() };
+    },
+  );
 
   server.get(
     '/google/callback',
     {
-      schema: {
-        querystring: z.object({
-          code: z.string(),
-        }),
-      },
+      schema: { querystring: googleCallbackQuerySchema },
     },
     AuthController.google,
   );
 
-  server.get('/apple', {}, async () => {
-    const apple = AppleAuth.getInstance();
-    return { url: apple.generateAuthUrl() };
-  });
+  server.get(
+    '/apple',
+    {
+      schema: { response: { 200: oauthUrlResponseSchema } },
+    },
+    async () => {
+      const apple = AppleAuth.getInstance();
+      return { url: apple.generateAuthUrl() };
+    },
+  );
 
   server.post(
     '/apple/callback',
     {
-      schema: {
-        body: AppleCallbackSchema,
-      },
+      schema: { body: appleCallbackSchema },
     },
     AuthController.apple,
   );
@@ -192,16 +163,17 @@ export default function routes(
   server.get(
     '/apple/callback',
     {
-      schema: {
-        querystring: AppleCallbackGETSchema,
-      },
+      schema: { querystring: appleCallbackGetSchema },
     },
     AuthController.apple,
   );
 
   server.get(
     '/ping',
-    { preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]) },
+    {
+      schema: { response: { 200: statusResponseSchema } },
+      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+    },
     RootController.status,
   );
 

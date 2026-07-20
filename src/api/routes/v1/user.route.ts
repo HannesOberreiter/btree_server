@@ -5,6 +5,11 @@ import { z } from 'zod';
 import { ROLES } from '../../../config/constants.config.js';
 import UserController from '../../controllers/user.controller.js';
 import { Guard } from '../../hooks/guard.hook.js';
+import {
+  permissiveJsonResponseSchema,
+  permissiveObjectSchema,
+  permissiveRequestSchema,
+} from '../../schemas/common.schema.js';
 
 export default function routes(
   instance: FastifyInstance,
@@ -15,12 +20,24 @@ export default function routes(
 
   server.get(
     '/',
-    { preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]) },
+    {
+      schema: {
+        querystring: permissiveObjectSchema,
+        response: { 200: permissiveJsonResponseSchema },
+      },
+      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+    },
     UserController.get,
   );
   server.patch(
     '/',
-    { preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]) },
+    {
+      schema: {
+        body: permissiveRequestSchema,
+        response: { 200: permissiveJsonResponseSchema },
+      },
+      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+    },
     UserController.patch,
   );
   server.patch(
@@ -28,6 +45,7 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
       schema: {
+        response: { 200: permissiveJsonResponseSchema },
         body: z.object({
           password: z.string().trim(),
         }),
@@ -41,6 +59,7 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
       schema: {
+        response: { 200: permissiveJsonResponseSchema },
         body: z.object({
           password: z.string().trim(),
         }),
@@ -54,11 +73,12 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
       schema: {
+        response: { 200: permissiveJsonResponseSchema },
         body: z
           .object({
             saved_company: z.number(),
           })
-          .passthrough(),
+          .loose(),
       },
     },
     UserController.changeCompany,
@@ -66,7 +86,13 @@ export default function routes(
 
   server.get(
     '/federatedCredentials',
-    { preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]) },
+    {
+      schema: {
+        querystring: permissiveObjectSchema,
+        response: { 200: permissiveJsonResponseSchema },
+      },
+      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+    },
     UserController.getFederatedCredentials,
   );
   server.delete(
@@ -74,6 +100,8 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
       schema: {
+        querystring: permissiveObjectSchema,
+        response: { 200: permissiveJsonResponseSchema },
         params: z.object({
           id: z.coerce.number().int().positive(),
         }),
@@ -87,8 +115,9 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
       schema: {
+        response: { 200: permissiveJsonResponseSchema },
         body: z.object({
-          email: z.string().email(),
+          email: z.email(),
           provider: z.enum(['google', 'apple']).default('google'),
         }),
       },
@@ -98,7 +127,13 @@ export default function routes(
 
   server.get(
     '/session',
-    { preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]) },
+    {
+      schema: {
+        querystring: permissiveObjectSchema,
+        response: { 200: permissiveJsonResponseSchema },
+      },
+      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+    },
     UserController.getRedisSession,
   );
   server.delete(
@@ -106,6 +141,8 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
       schema: {
+        querystring: permissiveObjectSchema,
+        response: { 200: permissiveJsonResponseSchema },
         params: z.object({
           id: z.string(),
         }),

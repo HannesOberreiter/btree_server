@@ -5,6 +5,10 @@ import { z } from 'zod';
 import { ROLES } from '../../../config/constants.config.js';
 import FieldSettingController from '../../controllers/field_setting.controller.js';
 import { Guard } from '../../hooks/guard.hook.js';
+import {
+  permissiveJsonResponseSchema,
+  permissiveObjectSchema,
+} from '../../schemas/common.schema.js';
 
 export default function routes(
   instance: FastifyInstance,
@@ -14,7 +18,13 @@ export default function routes(
   const server = instance.withTypeProvider<ZodTypeProvider>();
   server.get(
     '/',
-    { preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]) },
+    {
+      schema: {
+        querystring: permissiveObjectSchema,
+        response: { 200: permissiveJsonResponseSchema },
+      },
+      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+    },
     FieldSettingController.get,
   );
   server.patch(
@@ -22,6 +32,7 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
       schema: {
+        response: { 200: permissiveJsonResponseSchema },
         body: z.object({
           settings: z.custom<string>((data: any) => {
             try {

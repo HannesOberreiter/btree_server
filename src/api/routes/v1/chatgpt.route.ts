@@ -13,6 +13,11 @@ import {
   wizBeeToolDefinitions,
 } from '../../controllers/wizbee.tools.controller.js';
 import { chatGptAuthHook } from '../../hooks/chatgpt_auth.hook.js';
+import {
+  permissiveJsonResponseSchema,
+  permissiveObjectSchema,
+  permissiveRequestSchema,
+} from '../../schemas/common.schema.js';
 
 type OpenApiPathItem = {
   post: {
@@ -124,15 +129,26 @@ export default async function routes(instance: FastifyInstance, _options: any) {
   const server = instance.withTypeProvider<ZodTypeProvider>();
 
   server.get('/oauth/authorize', AgentOAuthController.authorize);
-  server.post('/oauth/token', AgentOAuthController.token);
+  server.post(
+    '/oauth/token',
+    {
+      schema: {
+        body: permissiveRequestSchema,
+        response: { 200: permissiveJsonResponseSchema },
+      },
+    },
+    AgentOAuthController.token,
+  );
 
   server.get(
     '/openapi.json',
     {
       schema: {
+        querystring: permissiveObjectSchema,
         description:
           'Get the OpenAPI specification for available b.tree Custom GPT tools.',
         tags: ['Discovery'],
+        response: { 200: permissiveJsonResponseSchema },
       },
     },
     async () => buildChatGptToolSpec(),
@@ -197,6 +213,7 @@ export default async function routes(instance: FastifyInstance, _options: any) {
           toolName: z.string().min(1),
           body: z.record(z.string(), z.unknown()).optional(),
         }),
+        response: { 200: permissiveJsonResponseSchema },
       },
     },
     async (request) => {
@@ -214,6 +231,7 @@ export default async function routes(instance: FastifyInstance, _options: any) {
         tags: ['Tools'],
         params: z.object({ toolName: z.string().min(1) }),
         body: z.record(z.string(), z.unknown()).optional(),
+        response: { 200: permissiveJsonResponseSchema },
       },
     },
     async (request) => {

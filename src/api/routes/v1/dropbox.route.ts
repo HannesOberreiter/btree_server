@@ -4,6 +4,10 @@ import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { ROLES } from '../../../config/constants.config.js';
 import DropboxController from '../../controllers/dropbox.controller.js';
 import { Guard } from '../../hooks/guard.hook.js';
+import {
+  permissiveJsonResponseSchema,
+  permissiveObjectSchema,
+} from '../../schemas/common.schema.js';
 
 export default function routes(
   instance: FastifyInstance,
@@ -14,22 +18,48 @@ export default function routes(
 
   server.get(
     '/',
-    { preHandler: Guard.authorize([ROLES.admin]) },
+    {
+      schema: {
+        querystring: permissiveObjectSchema,
+        response: { 200: permissiveJsonResponseSchema },
+      },
+      preHandler: Guard.authorize([ROLES.admin]),
+    },
     DropboxController.get,
   );
   server.delete(
     '/:id?',
-    { preHandler: Guard.authorize([ROLES.admin]) },
+    {
+      schema: {
+        querystring: permissiveObjectSchema,
+        params: permissiveObjectSchema,
+        response: { 200: permissiveJsonResponseSchema },
+      },
+      preHandler: Guard.authorize([ROLES.admin]),
+    },
     DropboxController.delete,
   );
   server.get(
     '/auth/:code',
-    { preHandler: Guard.authorize([ROLES.admin]) },
+    {
+      schema: {
+        querystring: permissiveObjectSchema,
+        params: permissiveObjectSchema,
+        response: { 200: permissiveJsonResponseSchema },
+      },
+      preHandler: Guard.authorize([ROLES.admin]),
+    },
     DropboxController.auth,
   );
   server.get(
     '/token',
-    { preHandler: Guard.authorize([ROLES.admin, ROLES.user]) },
+    {
+      schema: {
+        querystring: permissiveObjectSchema,
+        response: { 200: permissiveJsonResponseSchema },
+      },
+      preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
+    },
     DropboxController.token,
   );
   done();

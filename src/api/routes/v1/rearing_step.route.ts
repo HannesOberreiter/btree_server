@@ -5,6 +5,11 @@ import { z } from 'zod';
 import { ROLES } from '../../../config/constants.config.js';
 import RearingStepController from '../../controllers/rearing_step.controller.js';
 import { Guard } from '../../hooks/guard.hook.js';
+import {
+  permissiveJsonResponseSchema,
+  permissiveObjectSchema,
+  permissiveRequestSchema,
+} from '../../schemas/common.schema.js';
 
 export default function routes(
   instance: FastifyInstance,
@@ -16,6 +21,10 @@ export default function routes(
   server.post(
     '/',
     {
+      schema: {
+        body: permissiveRequestSchema,
+        response: { 200: permissiveJsonResponseSchema },
+      },
       preHandler: Guard.authorize([ROLES.admin]),
     },
     RearingStepController.post,
@@ -26,6 +35,8 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.admin]),
       schema: {
+        querystring: permissiveObjectSchema,
+        response: { 200: permissiveJsonResponseSchema },
         params: z.object({
           id: z.string(),
         }),
@@ -39,6 +50,7 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.admin]),
       schema: {
+        response: { 200: permissiveJsonResponseSchema },
         body: z.object({
           data: z.array(
             z.object({

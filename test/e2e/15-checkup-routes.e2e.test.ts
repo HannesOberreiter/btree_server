@@ -74,6 +74,12 @@ describe('checkup routes', () => {
       expect(res.body.total).toBeTypeOf('number');
     });
 
+    it('get 200 - bare nullable done query', async () => {
+      const res = await agent.request('get', `${route}?done`);
+      expect(res.statusCode).toEqual(200);
+      expect(res.body.results).toBeInstanceOf(Array);
+    });
+
     it('post 400 - no data', async () => {
       const res = await doRequest(
         agent,

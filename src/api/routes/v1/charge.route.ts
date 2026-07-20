@@ -5,18 +5,32 @@ import { z } from 'zod';
 import { ROLES } from '../../../config/constants.config.js';
 import ChargeController from '../../controllers/charge.controller.js';
 import { Guard } from '../../hooks/guard.hook.js';
-import { numberSchema } from '../../utils/zod.util.js';
+import {
+  chargeBatchDeleteQuerySchema,
+  chargeBatchUpdateSchema,
+  chargeCreateSchema,
+  chargeIdsSchema,
+  chargeListQuerySchema,
+  chargePaginatedResponseSchema,
+  chargeResponseSchema,
+  chargeStockPaginatedResponseSchema,
+  chargeStockQuerySchema,
+} from '../../schemas/charge.schema.js';
 
 export default function routes(
   instance: FastifyInstance,
-  _options: any,
-  done: any,
+  _options: unknown,
+  done: () => void,
 ) {
   const server = instance.withTypeProvider<ZodTypeProvider>();
 
   server.get(
     '/',
     {
+      schema: {
+        querystring: chargeListQuerySchema,
+        response: { 200: chargePaginatedResponseSchema },
+      },
       preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
     },
     ChargeController.get,
@@ -25,6 +39,10 @@ export default function routes(
   server.get(
     '/stock',
     {
+      schema: {
+        querystring: chargeStockQuerySchema,
+        response: { 200: chargeStockPaginatedResponseSchema },
+      },
       preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
     },
     ChargeController.getStock,
@@ -35,10 +53,8 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
       schema: {
-        body: z.object({
-          ids: z.array(numberSchema),
-          data: z.object({}).passthrough(),
-        }),
+        body: chargeBatchUpdateSchema,
+        response: { 200: z.number() },
       },
     },
     ChargeController.patch,
@@ -47,6 +63,10 @@ export default function routes(
   server.post(
     '/',
     {
+      schema: {
+        body: chargeCreateSchema,
+        response: { 200: z.array(z.number()) },
+      },
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
     },
     ChargeController.post,
@@ -57,9 +77,9 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
-        body: z.object({
-          ids: z.array(numberSchema),
-        }),
+        querystring: chargeBatchDeleteQuerySchema,
+        body: chargeIdsSchema,
+        response: { 200: z.array(chargeResponseSchema) },
       },
     },
     ChargeController.batchDelete,
@@ -70,9 +90,8 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.admin, ROLES.user, ROLES.read]),
       schema: {
-        body: z.object({
-          ids: z.array(numberSchema),
-        }),
+        body: chargeIdsSchema,
+        response: { 200: z.array(chargeResponseSchema) },
       },
     },
     ChargeController.batchGet,

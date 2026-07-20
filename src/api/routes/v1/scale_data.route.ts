@@ -5,6 +5,10 @@ import { z } from 'zod';
 import { ROLES } from '../../../config/constants.config.js';
 import ScaleDataController from '../../controllers/scale_data.controller.js';
 import { Guard } from '../../hooks/guard.hook.js';
+import {
+  permissiveJsonResponseSchema,
+  permissiveObjectSchema,
+} from '../../schemas/common.schema.js';
 import { numberSchema } from '../../utils/zod.util.js';
 
 export default function routes(
@@ -15,7 +19,13 @@ export default function routes(
   const server = instance.withTypeProvider<ZodTypeProvider>();
   server.get(
     '/',
-    { preHandler: Guard.authorize([ROLES.admin, ROLES.user, ROLES.read]) },
+    {
+      schema: {
+        querystring: permissiveObjectSchema,
+        response: { 200: permissiveJsonResponseSchema },
+      },
+      preHandler: Guard.authorize([ROLES.admin, ROLES.user, ROLES.read]),
+    },
     ScaleDataController.get,
   );
   server.post(
@@ -23,11 +33,12 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
+        response: { 200: permissiveJsonResponseSchema },
         body: z
           .object({
             scale_id: z.number(),
           })
-          .passthrough(),
+          .loose(),
       },
     },
     ScaleDataController.post,
@@ -37,9 +48,10 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
+        response: { 200: permissiveJsonResponseSchema },
         body: z.object({
           ids: z.array(numberSchema),
-          data: z.object({}).passthrough(),
+          data: z.object({}).loose(),
         }),
       },
     },
@@ -51,6 +63,7 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.admin]),
       schema: {
+        response: { 200: permissiveJsonResponseSchema },
         body: z.object({
           ids: z.array(numberSchema),
         }),
@@ -63,6 +76,7 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
+        response: { 200: permissiveJsonResponseSchema },
         body: z.object({
           ids: z.array(numberSchema),
         }),

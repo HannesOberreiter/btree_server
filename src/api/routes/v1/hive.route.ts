@@ -5,6 +5,10 @@ import { z } from 'zod';
 import { ROLES } from '../../../config/constants.config.js';
 import HiveController from '../../controllers/hive.controller.js';
 import { Guard } from '../../hooks/guard.hook.js';
+import {
+  permissiveJsonResponseSchema,
+  permissiveObjectSchema,
+} from '../../schemas/common.schema.js';
 import { numberSchema } from '../../utils/zod.util.js';
 
 const hiveSchema = z.object({
@@ -27,12 +31,25 @@ export default function routes(
   const server = instance.withTypeProvider<ZodTypeProvider>();
   server.get(
     '/',
-    { preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]) },
+    {
+      schema: {
+        querystring: permissiveObjectSchema,
+        response: { 200: permissiveJsonResponseSchema },
+      },
+      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+    },
     HiveController.get,
   );
   server.get(
     '/:id',
-    { preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]) },
+    {
+      schema: {
+        querystring: permissiveObjectSchema,
+        params: permissiveObjectSchema,
+        response: { 200: permissiveJsonResponseSchema },
+      },
+      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+    },
     HiveController.getDetail,
   );
   server.get(
@@ -40,6 +57,7 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
       schema: {
+        response: { 200: permissiveJsonResponseSchema },
         params: z.object({
           id: z.coerce.number(),
         }),
@@ -56,6 +74,7 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
+        response: { 200: permissiveJsonResponseSchema },
         body: z.object({
           ids: z.array(numberSchema),
           data: hiveSchema.partial(),
@@ -70,6 +89,7 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.admin]),
       schema: {
+        response: { 200: permissiveJsonResponseSchema },
         body: z
           .object({
             apiary_id: z.number(),
@@ -88,6 +108,7 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.admin]),
       schema: {
+        response: { 200: permissiveJsonResponseSchema },
         body: z.object({
           ids: z.array(numberSchema),
         }),
@@ -101,6 +122,7 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
+        response: { 200: permissiveJsonResponseSchema },
         body: z.object({
           ids: z.array(numberSchema),
         }),
@@ -114,6 +136,7 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.admin]),
       schema: {
+        response: { 200: permissiveJsonResponseSchema },
         body: z.object({
           ids: z.array(numberSchema),
           status: z.boolean(),
@@ -128,6 +151,7 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
+        response: { 200: permissiveJsonResponseSchema },
         body: z.object({
           data: z
             .object({

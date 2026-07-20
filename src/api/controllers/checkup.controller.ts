@@ -5,14 +5,24 @@ import { map } from 'lodash-es';
 import { KyselyServer } from '../../servers/kysely.server.js';
 import { Checkup } from '../models/checkup.model.js';
 import { Hive } from '../models/hive.model.js';
+import type {
+  CheckupBatchDeleteQuery,
+  CheckupBatchUpdateBody,
+  CheckupCreateBody,
+  CheckupIdsBody,
+  CheckupListQuery,
+  CheckupUpdateDateBody,
+  CheckupUpdateStatusBody,
+} from '../schemas/checkup.schema.js';
 import { checkOwnership } from '../utils/kysely.utils.js';
 import { isPremium } from '../utils/premium.util.js';
 import { getWeatherDataForApiary } from '../utils/temperature.util.js';
+import { numberSchema } from '../utils/zod.util.js';
 
 export default class CheckupController {
   static async get(req: FastifyRequest, _reply: FastifyReply) {
     const { order, direction, offset, limit, q, filters, deleted, done } =
-      req.query as any;
+      req.query as CheckupListQuery;
 
     const query = Checkup.query()
       .withGraphJoined(
@@ -47,9 +57,15 @@ export default class CheckupController {
     }
     if (order) {
       if (Array.isArray(order)) {
-        order.forEach((field, index) => query.orderBy(field, direction[index]));
+        const directions = Array.isArray(direction) ? direction : [direction];
+        order.forEach((field, index) =>
+          query.orderBy(field, directions[index]),
+        );
       } else {
-        query.orderBy(order, direction);
+        const selectedDirection = Array.isArray(direction)
+          ? direction[0]
+          : direction;
+        query.orderBy(order, selectedDirection);
       }
     }
     if (q) {
@@ -66,7 +82,7 @@ export default class CheckupController {
   }
 
   static async patch(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
+    const body = req.body as CheckupBatchUpdateBody;
     const ids = body.ids;
     const insert = { ...body.data };
 
@@ -74,7 +90,7 @@ export default class CheckupController {
       await checkOwnership(
         KyselyServer.getInstance().db,
         'checkup_types',
-        Number(insert.type_id),
+        numberSchema.parse(insert.type_id),
         req.session.user.user_id,
       );
     }
@@ -83,7 +99,8 @@ export default class CheckupController {
       insert.enddate = insert.date;
     }
 
-    const isLlm = (req.session as any).llm === true;
+    const session = req.session as typeof req.session & { llm?: boolean };
+    const isLlm = session.llm === true;
     if (isLlm) {
       insert.ai_updated_at = new Date();
     }
@@ -98,21 +115,14 @@ export default class CheckupController {
   }
 
   static async post(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
-    const hive_ids = body.hive_ids;
-    const interval = body.interval;
-    const repeat = body.repeat;
-
-    const insert = body;
-    delete insert.hive_ids;
-    delete insert.interval;
-    delete insert.repeat;
+    const body = req.body as CheckupCreateBody;
+    const { hive_ids, interval, repeat, ...insert } = body;
 
     if (insert.type_id) {
       await checkOwnership(
         KyselyServer.getInstance().db,
         'checkup_types',
-        Number(insert.type_id),
+        numberSchema.parse(insert.type_id),
         req.session.user.user_id,
       );
     }
@@ -124,7 +134,8 @@ export default class CheckupController {
       insert.enddate = insert.date;
     }
 
-    const isLlm = (req.session as any).llm === true;
+    const session = req.session as typeof req.session & { llm?: boolean };
+    const isLlm = session.llm === true;
     if (isLlm) {
       insert.ai_created_at = new Date();
     }
@@ -195,7 +206,7 @@ export default class CheckupController {
   }
 
   static async updateStatus(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
+    const body = req.body as CheckupUpdateStatusBody;
     const result = await Checkup.transaction(async (trx) => {
       return Checkup.query(trx)
         .patch({
@@ -209,7 +220,7 @@ export default class CheckupController {
   }
 
   static async updateDate(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
+    const body = req.body as CheckupUpdateDateBody;
     const result = await Checkup.transaction(async (trx) => {
       return Checkup.query(trx)
         .patch({
@@ -224,7 +235,7 @@ export default class CheckupController {
   }
 
   static async batchGet(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
+    const body = req.body as CheckupIdsBody;
     const result = await Checkup.transaction(async (trx) => {
       const res = await Checkup.query(trx)
         .findByIds(body.ids)
@@ -236,8 +247,8 @@ export default class CheckupController {
   }
 
   static async batchDelete(req: FastifyRequest, _reply: FastifyReply) {
-    const query = req.query as any;
-    const body = req.body as any;
+    const query = req.query as CheckupBatchDeleteQuery;
+    const body = req.body as CheckupIdsBody;
     const hardDelete = !!query.hard;
     const restoreDelete = !!query.restore;
 

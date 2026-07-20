@@ -20,6 +20,26 @@ describe('routes resolving', () => {
     });
   });
 
+  describe('/openapi.json', () => {
+    it('200 - core specification stays separate from agent specifications', async () => {
+      const res = await doRequest(
+        agent,
+        'get',
+        '/api/v1/openapi.json',
+        null,
+        null,
+        null,
+      );
+
+      expect(res.statusCode).toEqual(200);
+      expect(res.body.openapi).toEqual('3.1.0');
+      const paths = Object.keys(res.body.paths);
+      expect(paths.some((path) => path.endsWith('/v1/status'))).toBe(true);
+      expect(paths.some((path) => path.includes('/v1/agent/'))).toBe(false);
+      expect(paths.some((path) => path.includes('/v1/chatgpt/'))).toBe(false);
+    });
+  });
+
   describe('/report-violation', () => {
     it('200 - OK', async () => {
       const res = await doRequest(

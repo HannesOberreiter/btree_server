@@ -112,6 +112,7 @@ export class Application {
         req.url.includes('external') ||
         req.url.includes('auth/google/callback') ||
         req.url.includes('auth/apple/callback') ||
+        req.url.endsWith('/v1/openapi.json') ||
         req.url.includes('agent/openapi.json') ||
         req.url.includes('chatgpt/oauth/') ||
         req.url.includes('chatgpt/openapi.json');

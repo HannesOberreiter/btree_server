@@ -5,12 +5,21 @@ import { map } from 'lodash-es';
 import { KyselyServer } from '../../servers/kysely.server.js';
 import { Charge } from '../models/charge.model.js';
 import { ChargeStock } from '../models/charge_stock.model.js';
+import type {
+  ChargeBatchDeleteQuery,
+  ChargeBatchUpdateBody,
+  ChargeCreateBody,
+  ChargeIdsBody,
+  ChargeListQuery,
+  ChargeStockQuery,
+} from '../schemas/charge.schema.js';
 import { checkOwnership } from '../utils/kysely.utils.js';
+import { numberSchema } from '../utils/zod.util.js';
 
 export default class ChargeController {
   static async get(req: FastifyRequest, _reply: FastifyReply) {
     const { order, direction, offset, limit, q, filters, deleted } =
-      req.query as any;
+      req.query as ChargeListQuery;
     const query = Charge.query()
       .withGraphJoined('[type.stock, creator(identifier), editor(identifier)]')
       .where({
@@ -40,9 +49,15 @@ export default class ChargeController {
     }
     if (order) {
       if (Array.isArray(order)) {
-        order.forEach((field, index) => query.orderBy(field, direction[index]));
+        const directions = Array.isArray(direction) ? direction : [direction];
+        order.forEach((field, index) =>
+          query.orderBy(field, directions[index]),
+        );
       } else {
-        query.orderBy(order, direction);
+        const selectedDirection = Array.isArray(direction)
+          ? direction[0]
+          : direction;
+        query.orderBy(order, selectedDirection);
       }
     }
     if (q) {
@@ -61,7 +76,8 @@ export default class ChargeController {
   }
 
   static async getStock(req: FastifyRequest, _reply: FastifyReply) {
-    const { order, direction, offset, limit, q } = req.query as any;
+    const { order, direction, offset, limit, q } =
+      req.query as ChargeStockQuery;
     const query = ChargeStock.query()
       .select('type.id', 'sum', 'type.name', 'type.unit', 'sum_in', 'sum_out')
       .leftJoinRelated('type')
@@ -73,9 +89,15 @@ export default class ChargeController {
 
     if (order) {
       if (Array.isArray(order)) {
-        order.forEach((field, index) => query.orderBy(field, direction[index]));
+        const directions = Array.isArray(direction) ? direction : [direction];
+        order.forEach((field, index) =>
+          query.orderBy(field, directions[index]),
+        );
       } else {
-        query.orderBy(order, direction);
+        const selectedDirection = Array.isArray(direction)
+          ? direction[0]
+          : direction;
+        query.orderBy(order, selectedDirection);
       }
     }
     if (q) {
@@ -91,14 +113,15 @@ export default class ChargeController {
   }
 
   static async post(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
+    const body = req.body as ChargeCreateBody;
 
-    const isLlm = (req.session as any).llm === true;
+    const session = req.session as typeof req.session & { llm?: boolean };
+    const isLlm = session.llm === true;
     if (body.type_id) {
       await checkOwnership(
         KyselyServer.getInstance().db,
         'charge_types',
-        Number(body.type_id),
+        numberSchema.parse(body.type_id),
         req.session.user.user_id,
       );
     }
@@ -132,15 +155,16 @@ export default class ChargeController {
   }
 
   static async patch(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
+    const body = req.body as ChargeBatchUpdateBody;
     const ids = body.ids;
 
-    const isLlm = (req.session as any).llm === true;
+    const session = req.session as typeof req.session & { llm?: boolean };
+    const isLlm = session.llm === true;
     if (body.data.type_id) {
       await checkOwnership(
         KyselyServer.getInstance().db,
         'charge_types',
-        Number(body.data.type_id),
+        numberSchema.parse(body.data.type_id),
         req.session.user.user_id,
       );
     }
@@ -159,7 +183,7 @@ export default class ChargeController {
   }
 
   static async batchGet(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
+    const body = req.body as ChargeIdsBody;
     const result = await Charge.transaction(async (trx) => {
       const res = await Charge.query(trx)
         .findByIds(body.ids)
@@ -170,8 +194,8 @@ export default class ChargeController {
   }
 
   static async batchDelete(req: FastifyRequest, _reply: FastifyReply) {
-    const query = req.query as any;
-    const body = req.body as any;
+    const query = req.query as ChargeBatchDeleteQuery;
+    const body = req.body as ChargeIdsBody;
     const hardDelete = !!query.hard;
     const restoreDelete = !!query.restore;
 

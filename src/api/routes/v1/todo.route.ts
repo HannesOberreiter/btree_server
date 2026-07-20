@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { ROLES } from '../../../config/constants.config.js';
 import TodoController from '../../controllers/todo.controller.js';
 import { Guard } from '../../hooks/guard.hook.js';
+import { permissiveObjectSchema } from '../../schemas/common.schema.js';
 import {
   todoBatchDeleteSchema,
   todoBatchGetSchema,
@@ -28,6 +29,7 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
       schema: {
+        querystring: permissiveObjectSchema,
         response: {
           200: todoPaginatedResponseSchema,
         },
