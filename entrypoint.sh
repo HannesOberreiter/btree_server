@@ -1,3 +1,5 @@
 sleep 5
-pnpm run migrate
+if [ "${IS_CHILD:-false}" != "true" ]; then
+  pnpm run migrate
+fi
 node dist/app.bootstrap.js
