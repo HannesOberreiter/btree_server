@@ -59,7 +59,11 @@
   - [x] Tenant isolation covered across all option tables
   - [x] Shallow controller removed
   - [ ] Remove models after task, Company, autofill, delete, and cron callers migrate
-- [ ] Public observations
+- [x] Public observations
+  - [x] Reads, ingestion, deduplication, sampling, and cleanup use typed Kysely operations
+  - [x] Public cache adapter retains Redis behavior and concrete response schemas
+  - [x] Pest import adapters pass an explicit database dependency
+  - [x] Observation model wrapper removed
 - [ ] Calendar views
 - [ ] Statistic views
 

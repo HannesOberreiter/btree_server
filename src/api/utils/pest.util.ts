@@ -1,9 +1,18 @@
 import proj4 from 'proj4';
 
+import { KyselyServer } from '../../servers/kysely.server.js';
 import { RedisServer } from '../../servers/redis.server.js';
-import { buildRedisCacheKeyObservationsRecent } from '../controllers/public.controller.js';
-import type { ObservationInsert, Taxa } from '../models/observation.model.js';
-import { ObservationModel } from '../models/observation.model.js';
+import {
+  deleteObservationsByIds,
+  filterNewObservationExternalIds,
+  getRandomObservationSample,
+  insertObservations,
+  recentObservationsCacheKey,
+  yearlyObservationsCacheKey,
+} from '../modules/observation.module.js';
+import type { ObservationInsert, Taxa } from '../modules/observation.module.js';
+
+const observationDb = KyselyServer.getInstance().db;
 
 export async function fetchObservations(taxa: Taxa = 'Vespa velutina') {
   const fInat = fetchInat();
@@ -24,10 +33,10 @@ export async function fetchObservations(taxa: Taxa = 'Vespa velutina') {
 
   /** after fetching new taxa we want to cleanup any possible cached map results */
   const redis = RedisServer.client;
-  void redis.del(buildRedisCacheKeyObservationsRecent(taxa));
+  void redis.del(recentObservationsCacheKey(taxa));
   const currentYear = new Date().getFullYear();
-  void redis.del(`cache:${taxa}ObservationsYear:${currentYear}`);
-  void redis.del(`cache:${taxa}ObservationsYear:${currentYear - 1}`);
+  void redis.del(yearlyObservationsCacheKey(taxa, currentYear));
+  void redis.del(yearlyObservationsCacheKey(taxa, currentYear - 1));
 
   return {
     taxa,
@@ -91,7 +100,8 @@ export async function fetchFrelonsAsiatiques() {
         }
 
         const batchIds = records.map((r: any) => Number(r.id));
-        const newIds = await ObservationModel.filterNewExternalIds(
+        const newIds = await filterNewObservationExternalIds(
+          observationDb,
           batchIds,
           'Frelons Asiatiques FR',
         );
@@ -129,7 +139,7 @@ export async function fetchFrelonsAsiatiques() {
         }
 
         if (observations.length > 0) {
-          await ObservationModel.insertBatch(observations);
+          await insertObservations(observationDb, observations);
           totalNew += observations.length;
         }
       } catch {
@@ -207,7 +217,8 @@ export function fetchInat() {
    * @description Randomly select 200 iNat observations from database and check if they are still present and also the correct taxon
    */
   async function cleanupOldObs() {
-    const oldRecords = await ObservationModel.getRandomSample(
+    const oldRecords = await getRandomObservationSample(
+      observationDb,
       'iNaturalist',
       200,
     );
@@ -241,7 +252,7 @@ export function fetchInat() {
     }
 
     const toDelete = [...notFound, ...wrongTaxon];
-    await ObservationModel.deleteByIds(toDelete);
+    await deleteObservationsByIds(observationDb, toDelete);
 
     return {
       checked: oldRecords.length,
@@ -269,7 +280,8 @@ export function fetchInat() {
       const batchIds = res.results
         .filter((o: any) => o.time_observed_at && o.location)
         .map((o: any) => Number(o.id));
-      const newIds = await ObservationModel.filterNewExternalIds(
+      const newIds = await filterNewObservationExternalIds(
+        observationDb,
         batchIds,
         'iNaturalist',
       );
@@ -296,7 +308,7 @@ export function fetchInat() {
         });
       }
       if (observations.length > 0) {
-        await ObservationModel.insertBatch(observations);
+        await insertObservations(observationDb, observations);
       }
     }
     return { newObservations };
@@ -334,7 +346,8 @@ export async function fetchArtenfinderNet(taxa: Taxa) {
     const batchIds = res.result
       .filter((o: any) => o.lat && o.lon)
       .map((o: any) => Number(o.id));
-    const newIds = await ObservationModel.filterNewExternalIds(
+    const newIds = await filterNewObservationExternalIds(
+      observationDb,
       batchIds,
       'Artenfinder.net',
     );
@@ -378,7 +391,7 @@ export async function fetchArtenfinderNet(taxa: Taxa) {
     }
 
     if (observations.length > 0) {
-      await ObservationModel.insertBatch(observations);
+      await insertObservations(observationDb, observations);
     }
   }
 
@@ -396,7 +409,8 @@ export function fetchObservationOrg() {
    * @description Randomly select Observation.org records from database and check if they are still present or have been invalidated
    */
   async function cleanupOldObs() {
-    const oldRecords = await ObservationModel.getRandomSample(
+    const oldRecords = await getRandomObservationSample(
+      observationDb,
       'Observation.org',
       50,
     );
@@ -427,7 +441,7 @@ export function fetchObservationOrg() {
       }
     }
 
-    await ObservationModel.deleteByIds(notFound);
+    await deleteObservationsByIds(observationDb, notFound);
 
     return {
       checked: oldRecords.length,
@@ -458,7 +472,8 @@ export function fetchObservationOrg() {
       const batchIds = data.results
         .filter((o: any) => o.point?.coordinates)
         .map((o: any) => o.id);
-      const newIds = await ObservationModel.filterNewExternalIds(
+      const newIds = await filterNewObservationExternalIds(
+        observationDb,
         batchIds,
         'Observation.org',
       );
@@ -492,7 +507,7 @@ export function fetchObservationOrg() {
       }
 
       if (observations.length > 0) {
-        await ObservationModel.insertBatch(observations);
+        await insertObservations(observationDb, observations);
       }
 
       hasMore = data.next !== null;
@@ -530,7 +545,8 @@ export async function fetchInfoFaunaCh(taxa: Taxa) {
 
     const results = data.results;
     const batchIds = results.map((o: any) => Number(o.gbifID));
-    const newIds = await ObservationModel.filterNewExternalIds(
+    const newIds = await filterNewObservationExternalIds(
+      observationDb,
       batchIds,
       'Info Fauna (GBIF)',
     );
@@ -560,7 +576,7 @@ export async function fetchInfoFaunaCh(taxa: Taxa) {
       });
     }
     if (observations.length > 0) {
-      await ObservationModel.insertBatch(observations);
+      await insertObservations(observationDb, observations);
     }
   }
   return { newObservations };
