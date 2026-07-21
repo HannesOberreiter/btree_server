@@ -7066,39 +7066,36 @@ export interface paths {
     get: {
       parameters: {
         query?: {
-          action?: string | null;
-          apiary?: number | null;
-          date?: string | null;
-          datetime?: string | null;
-          deleted?: boolean | null;
-          details?: boolean | null;
-          direction?: (('asc' | 'desc') | ('asc' | 'desc')[]) | null;
-          done?: boolean | null;
-          end?: string | null;
-          end_date?: string | null;
-          filters?: string | null;
-          from?: string | null;
-          hard?: boolean | null;
-          hum?: string | null;
-          latest?: boolean | null;
-          latitude?: string | null;
-          limit?: number | null;
-          longitude?: string | null;
-          modus?: boolean | null;
-          note?: string | null;
-          offset?: number | null;
-          order?: (string | string[]) | null;
-          q?: string | null;
-          rain?: string | null;
-          restore?: boolean | null;
-          start?: string | null;
-          start_date?: string | null;
-          temp1?: string | null;
-          temp2?: string | null;
-          to?: string | null;
-          type?: number | null;
-          weight?: string | null;
-          year?: number | null;
+          direction?: ('asc' | 'desc') | ('asc' | 'desc')[];
+          filters?: string;
+          limit?: number;
+          offset?: number;
+          order?:
+            | (
+                | 'id'
+                | 'scale.name'
+                | 'scale.hive.name'
+                | 'datetime'
+                | 'weight'
+                | 'temp1'
+                | 'temp2'
+                | 'humidity'
+                | 'rain'
+                | 'note'
+              )
+            | (
+                | 'id'
+                | 'scale.name'
+                | 'scale.hive.name'
+                | 'datetime'
+                | 'weight'
+                | 'temp1'
+                | 'temp2'
+                | 'humidity'
+                | 'rain'
+                | 'note'
+              )[];
+          q?: string | number;
         };
         header?: never;
         path?: never;
@@ -7112,7 +7109,44 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'application/json': unknown;
+            'application/json': {
+              results: {
+                datetime: string | null;
+                humidity: (string | number) | null;
+                id: number;
+                note: string | null;
+                rain: (string | number) | null;
+                scale?: {
+                  hive: {
+                    bee_id: number | null;
+                    created_at: string | null;
+                    deleted: boolean | null;
+                    deleted_at: string | null;
+                    edit_id: number | null;
+                    grouphive: number | null;
+                    id: number;
+                    modus: boolean | null;
+                    modus_date: string | null;
+                    name: string | null;
+                    note: string | null;
+                    position: number | null;
+                    source_id: number | null;
+                    type_id: number | null;
+                    updated_at: string | null;
+                    user_id: number | null;
+                  } | null;
+                  hive_id: number | null;
+                  id: number;
+                  name: string | null;
+                  user_id: number | null;
+                };
+                scale_id: number | null;
+                temp1: (string | number) | null;
+                temp2: (string | number) | null;
+                weight: (string | number) | null;
+              }[];
+              total: number;
+            };
           };
         };
       };
@@ -7128,9 +7162,14 @@ export interface paths {
       requestBody: {
         content: {
           'application/json': {
+            datetime: string;
+            humidity?: (number | string) | null;
+            note?: string | null;
+            rain?: (number | string) | null;
             scale_id: number;
-          } & {
-            [key: string]: unknown;
+            temp1?: (number | string) | null;
+            temp2?: (number | string) | null;
+            weight?: (number | string) | null;
           };
         };
       };
@@ -7141,7 +7180,41 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'application/json': unknown;
+            'application/json': {
+              datetime: string | null;
+              humidity: (string | number) | null;
+              id: number;
+              note: string | null;
+              rain: (string | number) | null;
+              scale?: {
+                hive: {
+                  bee_id: number | null;
+                  created_at: string | null;
+                  deleted: boolean | null;
+                  deleted_at: string | null;
+                  edit_id: number | null;
+                  grouphive: number | null;
+                  id: number;
+                  modus: boolean | null;
+                  modus_date: string | null;
+                  name: string | null;
+                  note: string | null;
+                  position: number | null;
+                  source_id: number | null;
+                  type_id: number | null;
+                  updated_at: string | null;
+                  user_id: number | null;
+                } | null;
+                hive_id: number | null;
+                id: number;
+                name: string | null;
+                user_id: number | null;
+              };
+              scale_id: number | null;
+              temp1: (string | number) | null;
+              temp2: (string | number) | null;
+              weight: (string | number) | null;
+            };
           };
         };
       };
@@ -7160,7 +7233,14 @@ export interface paths {
         content: {
           'application/json': {
             data: {
-              [key: string]: unknown;
+              datetime?: string;
+              humidity?: (number | string) | null;
+              note?: string | null;
+              rain?: (number | string) | null;
+              scale_id?: number;
+              temp1?: (number | string) | null;
+              temp2?: (number | string) | null;
+              weight?: (number | string) | null;
             };
             ids: number[];
           };
@@ -7173,7 +7253,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'application/json': unknown;
+            'application/json': number;
           };
         };
       };
@@ -7214,7 +7294,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'application/json': unknown;
+            'application/json': number;
           };
         };
       };
@@ -7251,7 +7331,41 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'application/json': unknown;
+            'application/json': {
+              datetime: string | null;
+              humidity: (string | number) | null;
+              id: number;
+              note: string | null;
+              rain: (string | number) | null;
+              scale?: {
+                hive: {
+                  bee_id: number | null;
+                  created_at: string | null;
+                  deleted: boolean | null;
+                  deleted_at: string | null;
+                  edit_id: number | null;
+                  grouphive: number | null;
+                  id: number;
+                  modus: boolean | null;
+                  modus_date: string | null;
+                  name: string | null;
+                  note: string | null;
+                  position: number | null;
+                  source_id: number | null;
+                  type_id: number | null;
+                  updated_at: string | null;
+                  user_id: number | null;
+                } | null;
+                hive_id: number | null;
+                id: number;
+                name: string | null;
+                user_id: number | null;
+              };
+              scale_id: number | null;
+              temp1: (string | number) | null;
+              temp2: (string | number) | null;
+              weight: (string | number) | null;
+            }[];
           };
         };
       };
