@@ -83,9 +83,17 @@ export const apiaryDetailResponseSchema = apiaryResponseSchema.extend({
 });
 
 const orderDirectionSchema = z.enum(['asc', 'desc', 'ASC', 'DESC']);
+export const apiaryOrderFieldSchema = z.enum([
+  'id',
+  'name',
+  'modus',
+  'hive_count.count',
+]);
 
-export const apiaryListQuerySchema = z.looseObject({
-  order: z.union([z.string(), z.array(z.string())]).optional(),
+export const apiaryListQuerySchema = z.object({
+  order: z
+    .union([apiaryOrderFieldSchema, z.array(apiaryOrderFieldSchema)])
+    .optional(),
   direction: z
     .union([orderDirectionSchema, z.array(orderDirectionSchema)])
     .optional(),
@@ -97,17 +105,37 @@ export const apiaryListQuerySchema = z.looseObject({
   details: z.boolean().optional(),
 });
 
-export const apiaryIdParamsSchema = z.looseObject({
-  id: z.string(),
+export const apiaryIdParamsSchema = z.object({
+  id: numberSchema,
 });
 
-export const apiaryCreateSchema = z.looseObject({
-  name: z.string().min(3).max(255),
+const numericInputSchema = z
+  .union([z.number(), z.string().regex(/^-?(?:\d+\.?\d*|\.\d+)$/)])
+  .transform(Number);
+
+export const apiaryValuesSchema = z.object({
+  name: z.string().min(1).max(45).optional(),
+  description: z.string().max(512).optional(),
+  latitude: numericInputSchema.pipe(z.number().min(-90).max(90)).optional(),
+  longitude: numericInputSchema.pipe(z.number().min(-180).max(180)).optional(),
+  elevation: numericInputSchema
+    .pipe(z.number().int().min(-500).max(9000))
+    .nullable()
+    .optional(),
+  note: z.string().max(2000).optional(),
+  url: z.string().max(512).optional(),
+  modus: z.boolean().optional(),
+  deleted: z.boolean().optional(),
+  deleted_at: z.iso.datetime().nullable().optional(),
 });
 
-export const apiaryBatchUpdateSchema = z.looseObject({
+export const apiaryCreateSchema = apiaryValuesSchema.extend({
+  name: z.string().min(3).max(45),
+});
+
+export const apiaryBatchUpdateSchema = z.object({
   ids: z.array(numberSchema),
-  data: z.looseObject({}),
+  data: apiaryValuesSchema,
 });
 
 export const apiaryIdsSchema = z.object({
@@ -124,6 +152,8 @@ export const apiaryUpdateStatusSchema = z.object({
   status: z.boolean(),
 });
 
+export type ApiaryOrderField = z.infer<typeof apiaryOrderFieldSchema>;
+export type ApiaryValues = z.infer<typeof apiaryValuesSchema>;
 export type ApiaryListQuery = z.infer<typeof apiaryListQuerySchema>;
 export type ApiaryIdParams = z.infer<typeof apiaryIdParamsSchema>;
 export type ApiaryCreateBody = z.infer<typeof apiaryCreateSchema>;

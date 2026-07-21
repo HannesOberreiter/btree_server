@@ -1,5 +1,12 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
+import {
+  getApiariesByIds,
+  getApiaryDetail,
+  listApiaries,
+  updateApiaryStatus,
+} from '../../src/api/modules/apiary.module.js';
+import { KyselyServer } from '../../src/servers/kysely.server.js';
 import type { TestAgent } from '../utils.js';
 import {
   createAgent,
@@ -66,6 +73,58 @@ describe('apiary routes', () => {
       expect(res.statusCode).toEqual(200);
       expect(res.body.results).toBeInstanceOf(Array);
       expect(res.body.total).toBeTypeOf('number');
+      const inserted = res.body.results.find(
+        (apiary: { id: number }) => apiary.id === insertId,
+      );
+      expect(inserted).toEqual(
+        expect.objectContaining({
+          id: insertId,
+          name: testInsert.name,
+          latitude: expect.any(Number),
+          longitude: expect.any(Number),
+          hive_count: null,
+        }),
+      );
+    });
+
+    it('operations enforce company isolation', async () => {
+      const db = KyselyServer.getInstance().db;
+      expect(await listApiaries(db, 999_999, { deleted: false })).toEqual({
+        results: [],
+        total: 0,
+      });
+      expect(await getApiariesByIds(db, 999_999, [insertId])).toEqual([]);
+      expect(await updateApiaryStatus(db, 999_999, 1, [insertId], false)).toBe(
+        0,
+      );
+      await expect(
+        getApiaryDetail(db, 999_999, insertId),
+      ).rejects.toMatchObject({ statusCode: 404 });
+    });
+
+    it('get 200 - includes detailed relations when requested', async () => {
+      const res = await doQueryRequest(agent, route, null, accessToken, {
+        details: true,
+      });
+      expect(res.statusCode).toBe(200);
+      expect(res.body.results).toBeInstanceOf(Array);
+      const inserted = res.body.results.find(
+        (apiary: { id: number }) => apiary.id === insertId,
+      );
+      expect(inserted).toHaveProperty('creator');
+      expect(inserted).toHaveProperty('editor');
+      const withHives = res.body.results.find(
+        (apiary: { hive_count: unknown }) => apiary.hive_count,
+      );
+      if (withHives) {
+        expect(withHives.hive_count).toEqual(
+          expect.objectContaining({
+            id: expect.any(Number),
+            count: expect.any(Number),
+            grouphivescount: expect.any(Number),
+          }),
+        );
+      }
     });
 
     it('get 200 - bare nullable modus query', async () => {
@@ -102,7 +161,7 @@ describe('apiary routes', () => {
     it('patch 200 - success', async () => {
       const res = await doRequest(agent, 'patch', route, null, accessToken, {
         ids: [insertId],
-        data: { name: 'test2' },
+        data: { name: 'test2', latitude: '1.25', longitude: '2.5' },
       });
       expect(res.statusCode).toEqual(200);
       expect(res.body).toBe(1);
@@ -133,6 +192,14 @@ describe('apiary routes', () => {
       expect(res.body).toHaveProperty('id');
       expect(res.body).toHaveProperty('name');
       expect(res.body).toHaveProperty('sameLocation');
+      expect(res.body).toMatchObject({
+        id: insertId,
+        latitude: 1.25,
+        longitude: 2.5,
+        hives: [],
+        hive_count: null,
+      });
+      expect(res.body.sameLocation).toBeInstanceOf(Array);
     });
   });
 
@@ -250,6 +317,42 @@ describe('apiary routes', () => {
       );
       expect(res.statusCode).toEqual(200);
       expect(res.body).toBe(1);
+    });
+  });
+
+  describe('/api/v1/apiary/batchDelete restore and hard delete', () => {
+    it('restores then hard-deletes an empty apiary', async () => {
+      const restored = await doRequest(
+        agent,
+        'patch',
+        `${route}/batchDelete?restore=true`,
+        null,
+        accessToken,
+        { ids: [insertId] },
+      );
+      expect(restored.statusCode).toBe(200);
+      expect(restored.body).toHaveLength(1);
+
+      const hardDeleted = await doRequest(
+        agent,
+        'patch',
+        `${route}/batchDelete?hard=true`,
+        null,
+        accessToken,
+        { ids: [insertId] },
+      );
+      expect(hardDeleted.statusCode).toBe(200);
+      expect(hardDeleted.body).toHaveLength(1);
+
+      const remaining = await doRequest(
+        agent,
+        'post',
+        `${route}/batchGet`,
+        null,
+        accessToken,
+        { ids: [insertId] },
+      );
+      expect(remaining.body).toEqual([]);
     });
   });
 });

@@ -6,9 +6,12 @@ import { basicLimit, totalLimit } from '../../config/environment.config.js';
 import { KyselyServer } from '../../servers/kysely.server.js';
 import type { Database } from '../../types/database.types.js';
 
-export async function isPremium(id: number) {
-  const company = await KyselyServer.getInstance()
-    .db.selectFrom('companies')
+export async function isPremium(
+  id: number,
+  db: Database = KyselyServer.getInstance().db,
+) {
+  const company = await db
+    .selectFrom('companies')
     .select('paid')
     .where('id', '=', id)
     .executeTakeFirst();
@@ -50,14 +53,12 @@ export async function limitHive(companyId: number, amount: number) {
   );
 }
 
-export async function limitApiary(companyId: number) {
-  const premium = await isPremium(companyId);
-  const count = await countRows(
-    KyselyServer.getInstance().db,
-    'apiaries',
-    companyId,
-    true,
-  );
+export async function limitApiary(
+  companyId: number,
+  db: Database = KyselyServer.getInstance().db,
+) {
+  const premium = await isPremium(companyId, db);
+  const count = await countRows(db, 'apiaries', companyId, true);
   return (
     (count + 1 > basicLimit.apiary && !premium) || count + 1 > totalLimit.apiary
   );

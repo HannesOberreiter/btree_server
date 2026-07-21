@@ -79,6 +79,12 @@
 ## Phase 2: core location slices
 
 - [ ] Apiary
+  - [x] HTTP CRUD and detail reads use typed Kysely operations
+  - [x] WizBee Apiary reads and writes use shared operations
+  - [x] Duplicate-name checks and delete decisions remain transactional
+  - [x] Nested counts, detail shape, restore/hard-delete, and tenant isolation covered
+  - [x] Shallow Apiary controller removed
+  - [ ] Remove model after Hive, Movedate, Service, Company, autofill, delete, and cron callers migrate
 - [ ] Hive
 - [ ] Movedate
 
@@ -139,8 +145,9 @@
 - [ ] Keep Knex only for migrations
 - [ ] Update package description and documentation
 - [ ] Regenerate OpenAPI declarations
+- [ ] Improve Vue Playwright E2E coverage for migrated wire shapes, tenant boundaries, filters, nested relations, and regression-prone workflows
 - [ ] Run server lint, build, and E2E
-- [ ] Run Vue lint, typecheck, and Playwright E2E
+- [ ] Run Vue lint, typecheck, and improved Playwright E2E suite
 - [ ] Deploy beta and monitor SQL/error logs
 
 ## Slice definition of done

@@ -4,6 +4,12 @@ import { z } from 'zod';
 
 import { KyselyServer } from '../../servers/kysely.server.js';
 import { Logger } from '../../services/logger.service.js';
+import {
+  createApiary,
+  getApiaryDetail,
+  listApiaries,
+  updateApiaries,
+} from '../modules/apiary.module.js';
 import { listOptions, optionTables } from '../modules/option.module.js';
 import {
   listHiveCountByApiary,
@@ -16,7 +22,6 @@ import {
   listTodos,
   updateTodos,
 } from '../modules/todo.module.js';
-import ApiaryController from './apiary.controller.js';
 import ChargeController from './charge.controller.js';
 import CheckupController from './checkup.controller.js';
 import FeedController from './feed.controller.js';
@@ -932,34 +937,20 @@ export function createWizBeeTools(
           ),
       }),
       execute: async (input) => {
-        const req = createMockRequest(context, {
-          query: {
-            deleted: false,
-            modus: input.includeInactive ? undefined : true,
-            q: input.q,
-            limit: 1000,
-            offset: 0,
-            details: false,
-          },
+        const db = KyselyServer.getInstance().db;
+        const apiariesResult = await listApiaries(db, context.userId, {
+          deleted: false,
+          modus: input.includeInactive ? undefined : true,
+          q: input.q,
+          limit: 1000,
+          offset: 0,
+          details: false,
         });
 
-        const apiariesResult = await ApiaryController.get(
-          req,
-          createMockReply(),
-        );
-
-        // For each apiary, get details including hives
         const result = await Promise.all(
-          (apiariesResult.results || []).map(async (apiary: any) => {
+          apiariesResult.results.map(async (apiary) => {
             try {
-              const detailReq = createMockRequest(context, {
-                params: { id: apiary.id },
-              });
-              const detail = await ApiaryController.getDetail(
-                detailReq,
-                createMockReply(),
-              );
-              return detail;
+              return await getApiaryDetail(db, context.userId, apiary.id);
             } catch {
               return {};
             }
@@ -1051,9 +1042,11 @@ export function createWizBeeTools(
         modus: z.boolean().optional(),
       }),
       execute: async (input) => {
-        const result = await ApiaryController.post(
-          createMockRequest(context, { body: input }),
-          createMockReply(),
+        const result = await createApiary(
+          KyselyServer.getInstance().db,
+          context.userId,
+          context.beeId,
+          input,
         );
         return {
           success: true,
@@ -1079,9 +1072,12 @@ export function createWizBeeTools(
       }),
       execute: async (input) => {
         const { id, ...data } = input;
-        const updatedCount = await ApiaryController.patch(
-          createMockRequest(context, { body: { ids: [id], data } }),
-          createMockReply(),
+        const updatedCount = await updateApiaries(
+          KyselyServer.getInstance().db,
+          context.userId,
+          context.beeId,
+          [id],
+          data,
         );
         return {
           success: true,
