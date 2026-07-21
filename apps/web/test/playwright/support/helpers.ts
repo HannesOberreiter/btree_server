@@ -5,8 +5,8 @@ import userNewFixture from '../fixtures/user_new.json' with { type: 'json' };
 
 export interface Fixtures {
   dataCy: (selector: string) => Locator;
-  tableEditRow: (form: string) => Promise<void>;
-  tableDeleteRow: () => Promise<void>;
+  tableEditRow: (form: string, rowText: string) => Promise<void>;
+  tableDeleteRow: (rowText: string) => Promise<void>;
   addDemoMail: (useNewUser?: boolean) => Promise<void>;
   addDemoPassword: (useNewUser?: boolean) => Promise<void>;
 }
@@ -17,24 +17,30 @@ export const test = base.extend<Fixtures>({
   },
 
   tableEditRow: async ({ page }, use) => {
-    await use(async (form: string) => {
-      await page.locator('tbody > tr > td').first().click();
+    await use(async (form: string, rowText: string) => {
+      const row = page.locator('tbody > tr').filter({ hasText: rowText });
+      await expect(row).toHaveCount(1);
+      await row.locator('.q-checkbox').click();
       await page.locator('[data-cy="btn-table-edit"]').click();
       await expect(page.locator(`[data-cy="${form}"]`)).toBeAttached();
       await page.locator('[data-cy="btn-form-update"]').click();
       await expect(page.locator(`[data-cy="${form}"]`)).not.toBeAttached();
-      await page.locator('tbody > tr > td').first().click();
+      await expect(row).toHaveCount(1);
+      await row.locator('.q-checkbox').click();
     });
   },
 
   tableDeleteRow: async ({ page }, use) => {
-    await use(async () => {
-      await page.locator('tbody > tr > td').first().click();
+    await use(async (rowText: string) => {
+      const row = page.locator('tbody > tr').filter({ hasText: rowText });
+      await expect(row).toHaveCount(1);
+      await row.locator('.q-checkbox').click();
       await page.locator('[data-cy="btn-table-dropdown"]').click();
       await page.locator('[data-cy="btn-table-delete"]').click();
       await expect(page.locator('.q-dialog')).toBeAttached();
       await page.locator('.btn-confirm').click();
       await expect(page.locator('.q-dialog')).not.toBeAttached();
+      await expect(row).toHaveCount(0);
     });
   },
 

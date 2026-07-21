@@ -1,7 +1,7 @@
 import Chance from 'chance';
 import { expect, test } from '../../support/user-helpers';
 
-const chance = new Chance();
+const chance = new Chance(12_345);
 
 test.describe('user - Scale Data Table', () => {
   const form = 'form-scale-data';
@@ -27,13 +27,14 @@ test.describe('user - Scale Data Table', () => {
     tableEditRow,
     tableDeleteRow
   }) => {
+    const weight = '999.99';
     await dataCy('btn-table-new').click();
     await expect(dataCy(form)).toBeAttached();
-    await page.waitForTimeout(1000);
+    await page.locator('[name=weight]').fill(weight);
     await dataCy('btn-form-save').click();
     await expect(dataCy(form)).not.toBeAttached();
 
-    await tableEditRow(form);
-    await tableDeleteRow();
+    await tableEditRow(form, '999');
+    await tableDeleteRow('999');
   });
 });

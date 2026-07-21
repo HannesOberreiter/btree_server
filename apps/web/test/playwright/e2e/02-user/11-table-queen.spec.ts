@@ -1,7 +1,7 @@
 import Chance from 'chance';
 import { expect, test } from '../../support/user-helpers';
 
-const chance = new Chance();
+const chance = new Chance(12_345);
 
 test.describe('user - Queen Table', () => {
   const form = 'form-queen';
@@ -18,18 +18,16 @@ test.describe('user - Queen Table', () => {
   }) => {
     await expect(page.locator('.q-table')).toBeAttached();
 
+    const name = chance.name();
     await dataCy('btn-table-new').click();
     await expect(dataCy(form)).toBeAttached();
-    await page.locator('[name=queen]').fill(chance.name());
-    await dataCy('btn-repeat').click();
-    await page.locator('[name=numberQueens]').fill('2');
+    await page.locator('[name=queen]').fill(name);
     await dataCy('btn-form-save').click();
     await expect(dataCy(form)).not.toBeAttached();
 
     await dataCy('btn-table-modus').click();
-    await page.waitForTimeout(1000);
-    await tableEditRow(form);
-    await tableDeleteRow();
+    await tableEditRow(form, name);
+    await tableDeleteRow(name);
   });
 
   test('open Dialog Pedigree', async ({ dataCy }) => {

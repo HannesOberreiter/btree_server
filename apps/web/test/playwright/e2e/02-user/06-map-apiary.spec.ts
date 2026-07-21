@@ -1,7 +1,7 @@
 import Chance from 'chance';
 import { expect, test } from '../../support/user-helpers';
 
-const chance = new Chance();
+const chance = new Chance(12_345);
 
 test.describe('user - Apiary Map', () => {
   const markerPosition = { x: 300, y: 300 };
