@@ -1,49 +1,57 @@
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
+import { z } from 'zod';
 
 import { ROLES } from '../../../config/constants.config.js';
-import ScaleController from '../../controllers/scale.controller.js';
+import { KyselyServer } from '../../../servers/kysely.server.js';
 import { Guard } from '../../hooks/guard.hook.js';
 import {
-  permissiveJsonResponseSchema,
-  compatibilityQuerySchema,
-} from '../../schemas/common.schema.js';
+  createScale,
+  deleteScale,
+  listScales,
+  updateScales,
+} from '../../modules/scale.module.js';
 import {
+  deleteParamsSchema,
   getParamsSchema,
   patchBodySchema,
   postBodySchema,
-  deleteParamsSchema,
+  scaleCreateResponseSchema,
+  scaleListResponseSchema,
 } from '../../schemas/scale.schema.js';
 
 export default function routes(
   instance: FastifyInstance,
-  _options: any,
-  done: any,
+  _options: unknown,
+  done: () => void,
 ) {
   const server = instance.withTypeProvider<ZodTypeProvider>();
+  const db = KyselyServer.getInstance().db;
 
   server.get(
     '/:id?',
     {
       schema: {
-        querystring: compatibilityQuerySchema,
         params: getParamsSchema,
-        response: { 200: permissiveJsonResponseSchema },
+        response: { 200: scaleListResponseSchema },
       },
       preHandler: Guard.authorize([ROLES.admin, ROLES.user, ROLES.read]),
     },
-    ScaleController.get,
+    async (request) =>
+      listScales(db, request.session.user.user_id, request.params.id),
   );
+
   server.patch(
     '/',
     {
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
-        response: { 200: permissiveJsonResponseSchema },
         body: patchBodySchema,
+        response: { 200: z.number() },
       },
     },
-    ScaleController.patch,
+    async (request) =>
+      updateScales(db, request.session.user.user_id, request.body),
   );
 
   server.post(
@@ -51,11 +59,12 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.admin]),
       schema: {
-        response: { 200: permissiveJsonResponseSchema },
         body: postBodySchema,
+        response: { 200: scaleCreateResponseSchema },
       },
     },
-    ScaleController.post,
+    async (request) =>
+      createScale(db, request.session.user.user_id, request.body),
   );
 
   server.delete(
@@ -63,12 +72,12 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.admin]),
       schema: {
-        querystring: compatibilityQuerySchema,
-        response: { 200: permissiveJsonResponseSchema },
         params: deleteParamsSchema,
+        response: { 200: z.number() },
       },
     },
-    ScaleController.delete,
+    async (request) =>
+      deleteScale(db, request.session.user.user_id, request.params.id),
   );
 
   done();
