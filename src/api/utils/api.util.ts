@@ -1,12 +1,15 @@
-import { Company } from '../models/company.model.js';
-import { checkMySQLError } from './error.util.js';
+import httpErrors from 'http-errors';
+
+import { KyselyServer } from '../../servers/kysely.server.js';
 
 export async function getCompany(api: string) {
-  try {
-    return await Company.query().findOne({ api_key: api }).throwIfNotFound();
-  } catch (error) {
-    throw checkMySQLError(error);
-  }
+  const company = await KyselyServer.getInstance()
+    .db.selectFrom('companies')
+    .selectAll()
+    .where('api_key', '=', api)
+    .executeTakeFirst();
+  if (!company) throw httpErrors.NotFound();
+  return company;
 }
 
 /**

@@ -1,16 +1,18 @@
 import { z } from 'zod';
 
-export const patchBodySchema = z
-  .object({
-    password: z.string().optional(),
-    newPassword: z.string().optional(),
-    email: z.string().optional(),
-    username: z.string().optional(),
-    lang: z.string().optional(),
-    format: z.string().optional(),
-    saved_company: z.number().optional(),
-  })
-  .loose();
+export const patchBodySchema = z.object({
+  password: z.string().optional(),
+  newPassword: z.string().optional(),
+  email: z.string().optional(),
+  username: z.string().optional(),
+  lang: z.string().optional(),
+  format: z.string().optional(),
+  saved_company: z.number().optional(),
+  sound: z.boolean().optional(),
+  todo: z.boolean().optional(),
+  acdate: z.boolean().optional(),
+  newsletter: z.boolean().optional(),
+});
 export type PatchBody = z.infer<typeof patchBodySchema>;
 
 export const deleteBodySchema = z.object({

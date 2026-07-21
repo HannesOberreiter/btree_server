@@ -3,128 +3,114 @@ import { createHash } from 'node:crypto';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc.js';
 import httpErrors from 'http-errors';
-import type Objection from 'objection';
 
+import { KyselyServer } from '../../servers/kysely.server.js';
 import { MailService } from '../../services/mail.service.js';
-import { CompanyBee } from '../models/company_bee.model.js';
-import { LoginAttemp } from '../models/login_attempt.model.js';
-import { User } from '../models/user.model.js';
-import { checkMySQLError } from './error.util.js';
+import type { Database } from '../../types/database.types.js';
 
 dayjs.extend(utc);
 
-async function insertWrongPasswordTry(bee_id: number) {
-  const trx = await LoginAttemp.startTransaction();
-  try {
-    const now = dayjs().utc().toISOString();
-    await LoginAttemp.query(trx).insert({
-      time: now,
-      bee_id,
+async function insertWrongPasswordTry(beeId: number) {
+  await KyselyServer.getInstance()
+    .db.insertInto('login_attempts')
+    .values({ time: new Date(), bee_id: beeId })
+    .execute();
+}
+
+async function updateLastLogin(beeId: number) {
+  await KyselyServer.getInstance()
+    .db.updateTable('bees')
+    .set({ last_visit: new Date() })
+    .where('id', '=', beeId)
+    .execute();
+}
+
+async function fetchUser(email: string, beeId = 0) {
+  const db = KyselyServer.getInstance().db;
+  let query = db
+    .selectFrom('bees')
+    .select([
+      'id',
+      'email',
+      'saved_company',
+      'username',
+      'password',
+      'salt',
+      'state',
+      'lang',
+      'format',
+      'sound',
+      'todo',
+      'acdate',
+      'newsletter',
+    ]);
+  query =
+    beeId === 0
+      ? query.where('email', '=', email)
+      : query.where('id', '=', beeId);
+  const user = await query.executeTakeFirst();
+  if (!user) return undefined;
+  const company = await db
+    .selectFrom('company_bee')
+    .innerJoin('companies', 'companies.id', 'company_bee.user_id')
+    .select([
+      'companies.id',
+      'companies.name',
+      'companies.paid',
+      'companies.api_active',
+      'company_bee.rank',
+    ])
+    .where('company_bee.bee_id', '=', user.id)
+    .execute();
+  const { password, salt, ...safeUser } = user;
+  const result = { ...safeUser, company };
+  Object.defineProperties(result, {
+    password: { value: password, enumerable: false },
+    salt: { value: salt, enumerable: false },
+  });
+  return result as typeof result & {
+    password: string | null;
+    salt: string | null;
+  };
+}
+
+async function checkBruteForce(beeId: number) {
+  const db = KyselyServer.getInstance().db;
+  const validAttempts = dayjs().subtract(2, 'hour').utc().toDate();
+  const result = await db
+    .selectFrom('login_attempts')
+    .select(db.fn.countAll<number>().as('count'))
+    .where('bee_id', '=', beeId)
+    .where('time', '>', validAttempts)
+    .executeTakeFirstOrThrow();
+  if (result.count < 10) return false;
+
+  const lastNotice = dayjs().subtract(1, 'day').startOf('day').toDate();
+  const user = await db
+    .selectFrom('bees')
+    .select(['id', 'email', 'lang', 'username'])
+    .where('id', '=', beeId)
+    .where((eb) =>
+      eb.or([
+        eb('notice_bruteforce', '<', lastNotice),
+        eb('notice_bruteforce', 'is', null),
+      ]),
+    )
+    .executeTakeFirst();
+  if (user) {
+    void MailService.getInstance().sendMail({
+      to: user.email,
+      lang: user.lang,
+      subject: 'acc_locked',
+      name: user.username,
     });
-
-    await trx.commit();
-  } catch (error) {
-    await trx.rollback();
-    throw checkMySQLError(error);
+    await db
+      .updateTable('bees')
+      .set({ notice_bruteforce: new Date() })
+      .where('id', '=', user.id)
+      .execute();
   }
-}
-
-async function updateLastLogin(bee_id: number) {
-  const trx = await User.startTransaction();
-  try {
-    const now = new Date();
-    await User.query(trx).findById(bee_id).patch({
-      last_visit: now,
-    });
-    await trx.commit();
-  } catch (error) {
-    await trx.rollback();
-    throw checkMySQLError(error);
-  }
-}
-
-async function fetchUser(email: string, bee_id = 0) {
-  try {
-    const user = User.query()
-      .select(
-        'id',
-        'email',
-        'saved_company',
-        'username',
-        'password',
-        'salt',
-        'username',
-        'state',
-        'lang',
-        'format',
-        'sound',
-        'todo',
-        'acdate',
-        'newsletter',
-      )
-      .withGraphFetched('company(cm)')
-      .modifiers({
-        cm(builder) {
-          builder.select(
-            'companies.id',
-            'companies.name',
-            'companies.paid',
-            'companies.api_active',
-            'company_bee.rank',
-          );
-        },
-      })
-      .first();
-    if (bee_id === 0) {
-      user.findOne({
-        'bees.email': email,
-      });
-    } else {
-      user.findOne({ 'bees.id': bee_id });
-    }
-    return await user;
-  } catch (error) {
-    throw checkMySQLError(error);
-  }
-}
-
-async function checkBruteForce(bee_id: number) {
-  try {
-    // All login attempts are counted from the past 2 hours.
-    const validAttempts = dayjs().subtract(2, 'hour').utc().toISOString();
-    const bruteForce = await LoginAttemp.query()
-      .count('id as count')
-      .where('bee_id', bee_id)
-      .where('time', '>', validAttempts)
-      .orderBy('time');
-    // ToDo send user E-Mail that the account is bruteForced
-    if ((bruteForce[0] as any).count < 10) {
-      return false;
-    } else {
-      const lastNotice = dayjs().subtract(1, 'day').format('YYYY-MM-DD');
-      const user = await User.query()
-        .findById(bee_id)
-        .where((builder) =>
-          builder
-            .where('notice_bruteforce', '<', lastNotice)
-            .orWhereNull('notice_bruteforce'),
-        );
-      if (user) {
-        void MailService.getInstance().sendMail({
-          to: user.email,
-          lang: user.lang,
-          subject: 'acc_locked',
-          name: user.username,
-        });
-        await User.query()
-          .patch({ notice_bruteforce: new Date() })
-          .findById(user.id);
-      }
-      return true;
-    }
-  } catch (error) {
-    throw checkMySQLError(error);
-  }
+  return true;
 }
 
 function checkPassword(
@@ -133,103 +119,73 @@ function checkPassword(
   salt: string,
   hash = 'sha512',
 ) {
-  // We first need to hash the inputPassword, this is due to an old code
-  // in my first app I did hash the password on login page before sending to server
   const hexInputPassword = createHash(hash).update(inputPassword).digest('hex');
-
   const saltedPassword = hexInputPassword + salt;
-  const hashedPassword = createHash(hash).update(saltedPassword).digest('hex');
-
-  if (hashedPassword === dbPassword) {
-    return true;
-  } else {
-    return false;
-  }
+  return createHash(hash).update(saltedPassword).digest('hex') === dbPassword;
 }
 
 async function reviewPassword(
-  bee_id,
+  beeId: number,
   password: string,
-  trx: Objection.Transaction = null,
+  _transaction?: unknown,
 ) {
-  const user = await User.query(trx)
-    .select('salt', 'password')
-    .findById(bee_id);
-  if (!checkPassword(password, user.password, user.salt)) {
+  const user = await KyselyServer.getInstance()
+    .db.selectFrom('bees')
+    .select(['salt', 'password'])
+    .where('id', '=', beeId)
+    .executeTakeFirst();
+  if (
+    !user?.password ||
+    !user.salt ||
+    !checkPassword(password, user.password, user.salt)
+  ) {
     throw httpErrors.Forbidden('Wrong password');
   }
   return true;
 }
 
-async function loginCheck(email: string, password: string, bee_id: number) {
-  let user;
-  if (!bee_id) {
-    user = await fetchUser(email);
-  } else {
-    user = await fetchUser('', bee_id);
-  }
-
-  if (!user) {
-    throw httpErrors.Forbidden('No User');
-  }
-  if (user.state !== 1) {
-    throw httpErrors.Unauthorized('Inactive account');
-  }
-
-  const bruteForce = await checkBruteForce(user.id);
-  if (bruteForce) {
+async function loginCheck(email: string, password: string, beeId?: number) {
+  const user = beeId ? await fetchUser('', beeId) : await fetchUser(email);
+  if (!user) throw httpErrors.Forbidden('No User');
+  if (user.state !== 1) throw httpErrors.Unauthorized('Inactive account');
+  if (await checkBruteForce(user.id))
     throw httpErrors.Locked('too many login attempts');
-  }
+  if (user.company.length < 1) throw httpErrors.Unauthorized('no company');
 
-  // Safety check if there is any connected company to the given user
-  if (!user.company) {
-    throw httpErrors.Unauthorized('no company');
-  }
-  if (user.company.length < 1) {
-    throw httpErrors.Unauthorized('no company');
-  }
-
-  // Check if connected company exists (last visited company)
-  // otherwise take the simply the first one
-  let company: number;
-  if (user.company.some((el) => el.id === user.saved_company)) {
-    company = user.saved_company;
-  } else {
-    company = user.company[0].id;
-  }
+  const company = user.company.some((item) => item.id === user.saved_company)
+    ? user.saved_company
+    : user.company[0].id;
+  if (company === null) throw httpErrors.Unauthorized('no company');
   const { rank, paid } = await getPaidRank(user.id, company);
-
-  if (!bee_id) {
-    if (!checkPassword(password, user.password, user.salt)) {
+  if (!beeId) {
+    if (
+      !user.password ||
+      !user.salt ||
+      !checkPassword(password, user.password, user.salt)
+    ) {
       await insertWrongPasswordTry(user.id);
       throw httpErrors.Forbidden('Invalid password');
     }
   }
-
   await updateLastLogin(user.id);
-
-  return {
-    bee_id: user.id,
-    user_id: company,
-    data: user,
-    paid,
-    rank,
-  };
+  return { bee_id: user.id, user_id: company, data: user, paid, rank };
 }
 
-async function getPaidRank(bee_id: number, user_id: number) {
-  const companyBee = await CompanyBee.query()
-    .findOne({
-      bee_id,
-      user_id,
-    })
-    .withGraphJoined('company');
-
-  if (!companyBee) {
-    // User could be removed from company
+async function getPaidRank(
+  beeId: number,
+  companyId: number,
+  db: Database = KyselyServer.getInstance().db,
+) {
+  const relation = await db
+    .selectFrom('company_bee')
+    .innerJoin('companies', 'companies.id', 'company_bee.user_id')
+    .select(['company_bee.rank', 'companies.paid'])
+    .where('company_bee.bee_id', '=', beeId)
+    .where('company_bee.user_id', '=', companyId)
+    .executeTakeFirst();
+  if (!relation)
     throw httpErrors.Unauthorized('Invalid Company / Bee Connection');
-  }
-  return { rank: companyBee.rank, paid: companyBee.company.isPaid() };
+  return { rank: relation.rank, paid: dayjs(relation.paid).isAfter(dayjs()) };
 }
 
 export { fetchUser, getPaidRank, loginCheck, reviewPassword };

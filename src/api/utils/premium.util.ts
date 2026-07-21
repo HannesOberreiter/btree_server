@@ -63,14 +63,12 @@ export async function limitApiary(
   );
 }
 
-export async function limitScale(companyId: number) {
-  const premium = await isPremium(companyId);
-  const count = await countRows(
-    KyselyServer.getInstance().db,
-    'scales',
-    companyId,
-    false,
-  );
+export async function limitScale(
+  companyId: number,
+  db: Database = KyselyServer.getInstance().db,
+) {
+  const premium = await isPremium(companyId, db);
+  const count = await countRows(db, 'scales', companyId, false);
   return (
     (count + 1 > basicLimit.scale && !premium) || count + 1 > totalLimit.scale
   );

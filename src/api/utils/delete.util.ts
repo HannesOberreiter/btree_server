@@ -1,20 +1,26 @@
 import { KyselyServer } from '../../servers/kysely.server.js';
-import { CompanyBee } from '../models/company_bee.model.js';
-import { FieldSetting } from '../models/field_setting.model.js';
-import { RefreshToken } from '../models/refresh_token.model.js';
-import { User } from '../models/user.model.js';
 import { checkMySQLError } from './error.util.js';
 
-export async function deleteUser(bee_id: number) {
+export async function deleteUser(beeId: number) {
   try {
-    const result = await User.transaction(async (trx) => {
-      await CompanyBee.query(trx).delete().where({ bee_id });
-      await FieldSetting.query(trx).delete().where({ bee_id });
-      await RefreshToken.query(trx).delete().where({ bee_id });
-      await User.query(trx).deleteById(bee_id);
-      return true;
-    });
-    return result;
+    return await KyselyServer.getInstance()
+      .db.transaction()
+      .execute(async (trx) => {
+        await trx
+          .deleteFrom('company_bee')
+          .where('bee_id', '=', beeId)
+          .execute();
+        await trx
+          .deleteFrom('field_settings')
+          .where('bee_id', '=', beeId)
+          .execute();
+        await trx
+          .deleteFrom('refresh_tokens')
+          .where('bee_id', '=', beeId)
+          .execute();
+        await trx.deleteFrom('bees').where('id', '=', beeId).execute();
+        return true;
+      });
   } catch (error) {
     throw checkMySQLError(error);
   }

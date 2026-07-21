@@ -145,23 +145,28 @@
 
 ## Phase 5: identity and workspace slices
 
-- [ ] Auth
-- [ ] User
-- [ ] Company User
-- [ ] Federated credentials
-- [ ] Login attempts and refresh tokens
-- [ ] Payments and promos
+- [x] Auth
+- [x] User
+- [x] Company User
+- [x] Federated credentials
+- [x] Login attempts and refresh tokens
+- [x] Payments and promos
+  - [x] Registration and workspace autofill share one Kysely transaction
+  - [x] Login, password reset, brute-force tracking, and account deletion use Kysely
+  - [x] Federated providers and credential management use shared Kysely persistence
+  - [x] User and Company User routes preserve session and nested response behavior
+  - [x] Obsolete credential, login-attempt, refresh-token, payment, and promo models removed
 - [ ] Company
 
 ## Phase 6: cross-cutting implementation
 
-- [ ] `calendar.util.ts`
-- [ ] `autofill.util.ts`
-- [ ] `premium.util.ts`
-- [ ] `login.util.ts`
-- [ ] `auth.util.ts`
-- [ ] `delete.util.ts`
-- [ ] `cron.util.ts`
+- [x] `calendar.util.ts`
+- [x] `autofill.util.ts`
+- [x] `premium.util.ts`
+- [x] `login.util.ts`
+- [x] `auth.util.ts`
+- [x] `delete.util.ts`
+- [x] `cron.util.ts`
 - [ ] Company import/export helpers
 
 ## Phase 7: removal

@@ -36,11 +36,11 @@ export const companyUserAddResponseSchema = z.union([
 ]);
 
 export const companyUserIdParamsSchema = z.object({
-  id: z.string(),
+  id: z.coerce.number().int().positive(),
 });
 
 export const companyUserCompanyParamsSchema = z.object({
-  company_id: z.string(),
+  company_id: z.coerce.number().int().positive(),
 });
 
 export const companyUserRankSchema = z.object({

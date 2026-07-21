@@ -5,8 +5,6 @@ import { ENVIRONMENT } from '../../config/constants.config.js';
 import { env } from '../../config/environment.config.js';
 import { KyselyServer } from '../../servers/kysely.server.js';
 import { MailService } from '../../services/mail.service.js';
-import { Company } from '../models/company.model.js';
-import { User } from '../models/user.model.js';
 import { checkMySQLError } from './error.util.js';
 
 export async function cleanupDatabase() {
@@ -251,18 +249,19 @@ export async function reminderVIS() {
     }
 
     if (mailDate && mailSubject) {
-      const users = await User.query()
-        .select('username', 'email', 'id')
-        .where({
-          lang: 'de',
-          acdate: true,
-          newsletter: true,
-        })
-        .where((builder) =>
-          builder
-            .where('reminder_vis', '<', lastDate)
-            .orWhereNull('reminder_vis'),
-        );
+      const users = await KyselyServer.getInstance()
+        .db.selectFrom('bees')
+        .select(['username', 'email', 'id'])
+        .where('lang', '=', 'de')
+        .where('acdate', '=', true)
+        .where('newsletter', '=', true)
+        .where((eb) =>
+          eb.or([
+            eb('reminder_vis', '<', lastDate),
+            eb('reminder_vis', 'is', null),
+          ]),
+        )
+        .execute();
 
       result.mails = users.length;
 
@@ -277,9 +276,11 @@ export async function reminderVIS() {
             name: user.username,
             key: mailDate,
           });
-          await User.query().findById(user.id).patch({
-            reminder_vis: nowDate,
-          });
+          await KyselyServer.getInstance()
+            .db.updateTable('bees')
+            .set({ reminder_vis: nowDate })
+            .where('id', '=', user.id)
+            .execute();
           await new Promise((resolve) => setTimeout(resolve, 1000));
         }
       }
@@ -298,41 +299,52 @@ export async function reminderVIS() {
 export async function reminderPremium() {
   try {
     const result = { type: 'premium_reminder', mails: 0 };
-    const startDate = dayjs().format('YYYY-MM-DD');
-    const endDate = dayjs().add(1, 'day').format('YYYY-MM-DD');
-    const lastDate = dayjs().subtract(7, 'day').format('YYYY-MM-DD');
+    const startDate = dayjs().startOf('day').toDate();
+    const endDate = dayjs().add(1, 'day').startOf('day').toDate();
+    const lastDate = dayjs().subtract(7, 'day').startOf('day').toDate();
     const nowDate = new Date();
 
-    const companies = await Company.query()
-      .select('user_id', 'companies.name', 'paid')
-      .withGraphJoined('user')
-      .where('paid', '>=', startDate)
-      .where('paid', '<', endDate)
-      .where((builder) =>
-        builder
-          .where('reminder_premium', '<', lastDate)
-          .orWhereNull('reminder_premium'),
+    const companies = await KyselyServer.getInstance()
+      .db.selectFrom('companies')
+      .innerJoin('company_bee', 'company_bee.user_id', 'companies.id')
+      .innerJoin('bees', 'bees.id', 'company_bee.bee_id')
+      .select([
+        'companies.name',
+        'companies.paid',
+        'bees.id as bee_id',
+        'bees.email',
+        'bees.lang',
+        'bees.username',
+      ])
+      .where('companies.paid', '>=', startDate)
+      .where('companies.paid', '<', endDate)
+      .where((eb) =>
+        eb.or([
+          eb('bees.reminder_premium', '<', lastDate),
+          eb('bees.reminder_premium', 'is', null),
+        ]),
       )
-      .where('user_join.rank', 1)
-      .where('newsletter', true);
+      .where('company_bee.rank', '=', 1)
+      .where('bees.newsletter', '=', true)
+      .execute();
 
-    // Staging server does have correct mail settings don't send reminders, otherwise user would get double notified
+    // Staging server has production mail settings; avoid duplicate reminders.
     if (env !== ENVIRONMENT.staging) {
-      companies.forEach(async (company) => {
-        company.user.forEach(async (u) => {
-          await MailService.getInstance().sendMail({
-            to: u.email,
-            lang: u.lang,
-            subject: 'premium_reminder',
-            name: u.username,
-            key: company.name,
-          });
-          await User.query().findById(u.id).patch({
-            reminder_premium: nowDate,
-          });
-          await new Promise((resolve) => setTimeout(resolve, 1000));
+      for (const company of companies) {
+        await MailService.getInstance().sendMail({
+          to: company.email,
+          lang: company.lang,
+          subject: 'premium_reminder',
+          name: company.username,
+          key: company.name,
         });
-      });
+        await KyselyServer.getInstance()
+          .db.updateTable('bees')
+          .set({ reminder_premium: nowDate })
+          .where('id', '=', company.bee_id)
+          .execute();
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+      }
     }
 
     result.mails = companies.length;

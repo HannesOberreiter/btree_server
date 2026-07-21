@@ -6,8 +6,10 @@ import archiver from 'archiver';
 import { parse } from 'csv-parse/sync';
 import type { Options } from 'csv-stringify/sync';
 import { stringify } from 'csv-stringify/sync';
+import dayjs from 'dayjs';
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import httpErrors from 'http-errors';
+import { sql } from 'kysely';
 import type Objection from 'objection';
 import yauzl from 'yauzl-promise';
 
@@ -36,7 +38,6 @@ import { QueenRace } from '../models/option/queen_race.model.js';
 import { TreatmentDisease } from '../models/option/treatment_disease.model.js';
 import { TreatmentType } from '../models/option/treatment_type.model.js';
 import { TreatmentVet } from '../models/option/treatment_vet.model.js';
-import { Payment } from '../models/payment.model.js';
 import { Queen } from '../models/queen.model.js';
 import { Rearing } from '../models/rearing/rearing.model.js';
 import { RearingType } from '../models/rearing/rearing_type.model.js';
@@ -44,7 +45,6 @@ import { Scale } from '../models/scale.model.js';
 import { ScaleData } from '../models/scale_data.model.js';
 import { Todo } from '../models/todo.model.js';
 import { Treatment } from '../models/treatment.model.js';
-import { User } from '../models/user.model.js';
 import type {
   CompanyCouponBody,
   CompanyCreateBody,
@@ -155,21 +155,25 @@ export default class CompanyController {
     const bee_id = req.session.user.bee_id;
 
     // Re-request guard: no more than one 'invoice' Payment per 7 days
-    const recent = await Payment.query()
-      .where('user_id', user_id)
-      .where('type', 'invoice')
-      .whereRaw('`date` > DATE_SUB(NOW(), INTERVAL 7 DAY)')
-      .first();
+    const db = KyselyServer.getInstance().db;
+    const recent = await db
+      .selectFrom('payments')
+      .select('id')
+      .where('user_id', '=', user_id)
+      .where('type', '=', 'invoice')
+      .where('date', '>', dayjs().subtract(7, 'day').toDate())
+      .executeTakeFirst();
     if (recent) {
       throw httpErrors.TooManyRequests(
         'An invoice request was already created for this company in the last 7 days.',
       );
     }
 
-    const user = await User.query()
-      .select('email', 'lang')
-      .findById(bee_id)
-      .throwIfNotFound();
+    const user = await db
+      .selectFrom('bees')
+      .select(['email', 'lang'])
+      .where('id', '=', bee_id)
+      .executeTakeFirstOrThrow();
 
     const years = Math.max(1, Math.floor(body.quantity ?? 1));
     const price = body.amount * years;
@@ -276,29 +280,38 @@ export default class CompanyController {
 
   static async post(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as CompanyCreateBody;
-    const result = await Company.transaction(async (trx) => {
-      const check = await Company.query(trx)
+    const db = KyselyServer.getInstance().db;
+    return db.transaction().execute(async (trx) => {
+      const existing = await trx
+        .selectFrom('companies')
+        .innerJoin('company_bee', 'company_bee.user_id', 'companies.id')
         .select('companies.id')
-        .withGraphJoined('user')
-        .where({
-          name: body.name,
-          'user.id': req.session.user.bee_id,
-        });
-      if (check.length > 0) {
-        throw httpErrors.Conflict('Company name already exists');
-      }
-      const c = await Company.query(trx).insert({ name: body.name });
-      const u = await User.query(trx)
+        .where('companies.name', '=', body.name)
+        .where('company_bee.bee_id', '=', req.session.user.bee_id)
+        .executeTakeFirst();
+      if (existing) throw httpErrors.Conflict('Company name already exists');
+
+      const companyInsert = await trx
+        .insertInto('companies')
+        .values({ name: body.name })
+        .executeTakeFirstOrThrow();
+      const companyId = Number(companyInsert.insertId);
+      const user = await trx
+        .selectFrom('bees')
         .select('lang')
-        .findById(req.session.user.bee_id);
-      await CompanyBee.query(trx).insert({
-        bee_id: req.session.user.bee_id,
-        user_id: c.id,
-      });
-      await autoFill(trx, c.id, u.lang);
-      return c;
+        .where('id', '=', req.session.user.bee_id)
+        .executeTakeFirstOrThrow();
+      await trx
+        .insertInto('company_bee')
+        .values({ bee_id: req.session.user.bee_id, user_id: companyId })
+        .execute();
+      await autoFill(trx, companyId, user.lang ?? 'en');
+      return trx
+        .selectFrom('companies')
+        .selectAll()
+        .where('id', '=', companyId)
+        .executeTakeFirstOrThrow();
     });
-    return { ...result };
   }
 
   static async patch(req: FastifyRequest, _reply: FastifyReply) {
@@ -434,26 +447,36 @@ export default class CompanyController {
    */
   static async getPayments(req: FastifyRequest, _reply: FastifyReply) {
     const user_id = req.session.user.user_id;
-    const paymentsUser = await Payment.query()
-      .select('id', 'date', 'amount', 'months')
-      .where('user_id', user_id)
-      .orderBy('date', 'desc');
+    const db = KyselyServer.getInstance().db;
+    const paymentsUser = await db
+      .selectFrom('payments')
+      .select(['id', 'date', 'amount', 'months'])
+      .where('user_id', '=', user_id)
+      .orderBy('date', 'desc')
+      .execute();
 
-    const paymentsCountCurrentYear = await Payment.query()
-      .count('id as count')
-      .whereRaw('YEAR(date) = YEAR(CURDATE())');
+    const paymentsCountCurrentYear = await db
+      .selectFrom('payments')
+      .select(sql<number>`COUNT(id)`.as('count'))
+      .where(sql<boolean>`YEAR(date) = YEAR(CURDATE())`)
+      .executeTakeFirstOrThrow();
 
-    const paymentsCountLastYear = await Payment.query()
-      .count('id as count')
-      .whereRaw('YEAR(date) = YEAR(CURDATE()) - 1');
+    const paymentsCountLastYear = await db
+      .selectFrom('payments')
+      .select(sql<number>`COUNT(id)`.as('count'))
+      .where(sql<boolean>`YEAR(date) = YEAR(CURDATE()) - 1`)
+      .executeTakeFirstOrThrow();
 
     return {
       company: {
         count: paymentsUser.length,
-        months: paymentsUser.reduce((acc, payment) => acc + payment.months, 0),
+        months: paymentsUser.reduce(
+          (acc, payment) => acc + (payment.months ?? 0),
+          0,
+        ),
       },
-      countCurrentYear: (paymentsCountCurrentYear[0] as any).count as number,
-      countLastYear: (paymentsCountLastYear[0] as any).count as number,
+      countCurrentYear: paymentsCountCurrentYear.count,
+      countLastYear: paymentsCountLastYear.count,
     };
   }
 }

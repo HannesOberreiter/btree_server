@@ -75,7 +75,7 @@ export async function createScale(
   companyId: number,
   body: PostBody,
 ) {
-  if (await limitScale(companyId)) {
+  if (await limitScale(companyId, db)) {
     throw httpErrors.PaymentRequired(
       'Premium subscription required to connect scales',
     );

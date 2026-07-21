@@ -2,8 +2,6 @@ import type { TokenPayload } from 'google-auth-library';
 import { OAuth2Client } from 'google-auth-library';
 import jwt from 'jsonwebtoken';
 
-import { FederatedCredential } from '../api/models/federated_credential.js';
-import { User } from '../api/models/user.model.js';
 import { ENVIRONMENT } from '../config/constants.config.js';
 import {
   appleOAuth,
@@ -11,6 +9,7 @@ import {
   googleOAuth,
   url,
 } from '../config/environment.config.js';
+import { KyselyServer } from '../servers/kysely.server.js';
 import type { TokenResponse } from './apple.service.util.js';
 import { AppleAuthentication } from './apple.service.util.js';
 import { Logger } from './logger.service.js';
@@ -19,6 +18,86 @@ export interface federatedUser {
   bee_id: number | undefined;
   name: string | undefined;
   email: string | undefined;
+}
+
+async function verifyFederatedUser(
+  id: string,
+  name: string | undefined,
+  provider: string,
+  mail: string,
+): Promise<federatedUser> {
+  const db = KyselyServer.getInstance().db;
+  const logger = Logger.getInstance();
+  const federated = await db
+    .selectFrom('federated_credentials')
+    .selectAll()
+    .where('provider_id', '=', id)
+    .executeTakeFirst();
+  if (federated) {
+    await db
+      .updateTable('federated_credentials')
+      .set({ last_visit: new Date() })
+      .where('id', '=', federated.id)
+      .execute();
+    logger.log('info', 'Federated user logged in', {
+      bee_id: federated.bee_id,
+      provider,
+    });
+    return {
+      bee_id: federated.bee_id ?? undefined,
+      name: undefined,
+      email: undefined,
+    };
+  }
+
+  const pending = await db
+    .selectFrom('federated_credentials')
+    .selectAll()
+    .where('mail', '=', mail)
+    .where('provider', '=', provider)
+    .executeTakeFirst();
+  if (pending) {
+    await db
+      .updateTable('federated_credentials')
+      .set({ provider_id: id, last_visit: new Date() })
+      .where('id', '=', pending.id)
+      .execute();
+    logger.log('info', 'New federated user logged in', {
+      bee_id: pending.bee_id,
+      provider,
+    });
+    return {
+      bee_id: pending.bee_id ?? undefined,
+      name: undefined,
+      email: undefined,
+    };
+  }
+
+  const user = await db
+    .selectFrom('bees')
+    .select('id')
+    .where('email', '=', mail)
+    .executeTakeFirst();
+  if (!user) {
+    logger.log('info', 'Federated register redirect', { provider });
+    return { bee_id: undefined, name, email: mail };
+  }
+
+  await db
+    .insertInto('federated_credentials')
+    .values({
+      provider,
+      provider_id: id,
+      mail,
+      bee_id: user.id,
+      last_visit: new Date(),
+    })
+    .execute();
+  logger.log('info', 'Federated first login with existing user', {
+    bee_id: user.id,
+    provider,
+  });
+  return { bee_id: user.id, name: undefined, email: undefined };
 }
 
 export class GoogleAuth {
@@ -64,80 +143,11 @@ export class GoogleAuth {
 
   private async verifyUser(
     id: string,
-    name: string,
+    name: string | undefined,
     provider: string,
     mail: string,
   ): Promise<federatedUser> {
-    // best case federated is already in database
-    const federate = await FederatedCredential.query().findOne({
-      provider_id: id,
-    });
-
-    if (federate) {
-      await FederatedCredential.query()
-        .patch({
-          last_visit: new Date(),
-        })
-        .where({ id: federate.id });
-      this.logger.log('info', 'Federated user logged in', {
-        bee_id: federate.bee_id,
-        provider,
-      });
-      return { bee_id: federate.bee_id, name: undefined, email: undefined };
-    }
-
-    // check if federated is created by user
-    const federatedTemp = await FederatedCredential.query().findOne({
-      mail,
-      provider,
-    });
-    if (federatedTemp) {
-      await FederatedCredential.query()
-        .patch({
-          provider,
-          provider_id: id,
-          last_visit: new Date(),
-        })
-        .where({ id: federatedTemp.id });
-      this.logger.log('info', 'New federated user logged in', {
-        bee_id: federate.bee_id,
-        provider,
-      });
-      return {
-        bee_id: federatedTemp.bee_id,
-        name: undefined,
-        email: undefined,
-      };
-    }
-
-    // check if user exists with verified mail
-    let bee_id;
-    const user = await User.query().findOne({ email: mail });
-    if (user) {
-      bee_id = user.id;
-    }
-
-    // No user found with verified mail, redirect to register page on frontend with name and mail
-    if (!bee_id) {
-      this.logger.log('info', 'Federated register redirect', {
-        provider,
-      });
-      return { bee_id: undefined, name, email: mail };
-    }
-
-    // user exists but not federated connection
-    await FederatedCredential.query().insert({
-      provider,
-      provider_id: id,
-      mail,
-      bee_id,
-      last_visit: new Date(),
-    });
-    this.logger.log('info', 'Federated first login with existing user', {
-      bee_id,
-      provider,
-    });
-    return { bee_id, name: undefined, email: undefined };
+    return verifyFederatedUser(id, name, provider, mail);
   }
 }
 
@@ -230,79 +240,10 @@ export class AppleAuth {
 
   private async verifyUser(
     id: string,
-    name: string,
+    name: string | undefined,
     provider: string,
     mail: string,
   ): Promise<federatedUser> {
-    // best case federated is already in database
-    const federate = await FederatedCredential.query().findOne({
-      provider_id: id,
-    });
-
-    if (federate) {
-      await FederatedCredential.query()
-        .patch({
-          last_visit: new Date(),
-        })
-        .where({ id: federate.id });
-      this.logger.log('info', 'Federated user logged in', {
-        bee_id: federate.bee_id,
-        provider,
-      });
-      return { bee_id: federate.bee_id, name: undefined, email: undefined };
-    }
-
-    // check if federated is created by user
-    const federatedTemp = await FederatedCredential.query().findOne({
-      mail,
-      provider,
-    });
-    if (federatedTemp) {
-      await FederatedCredential.query()
-        .patch({
-          provider,
-          provider_id: id,
-          last_visit: new Date(),
-        })
-        .where({ id: federatedTemp.id });
-      this.logger.log('info', 'New federated user logged in', {
-        bee_id: federate.bee_id,
-        provider,
-      });
-      return {
-        bee_id: federatedTemp.bee_id,
-        name: undefined,
-        email: undefined,
-      };
-    }
-
-    // check if user exists with verified mail
-    let bee_id;
-    const user = await User.query().findOne({ email: mail });
-    if (user) {
-      bee_id = user.id;
-    }
-
-    // No user found with verified mail, redirect to register page on frontend with name and mail
-    if (!bee_id) {
-      this.logger.log('info', 'Federated register redirect', {
-        provider,
-      });
-      return { bee_id: undefined, name, email: mail };
-    }
-
-    // user exists but not federated connection
-    await FederatedCredential.query().insert({
-      provider,
-      provider_id: id,
-      mail,
-      bee_id,
-      last_visit: new Date(),
-    });
-    this.logger.log('info', 'Federated first login with existing user', {
-      bee_id,
-      provider,
-    });
-    return { bee_id, name: undefined, email: undefined };
+    return verifyFederatedUser(id, name, provider, mail);
   }
 }

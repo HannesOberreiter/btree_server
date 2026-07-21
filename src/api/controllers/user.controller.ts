@@ -2,13 +2,10 @@ import { randomUUID } from 'node:crypto';
 
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import httpErrors from 'http-errors';
-import { map } from 'lodash-es';
 
+import { KyselyServer } from '../../servers/kysely.server.js';
 import { RedisServer } from '../../servers/redis.server.js';
 import { MailService } from '../../services/mail.service.js';
-import { CompanyBee } from '../models/company_bee.model.js';
-import { FederatedCredential } from '../models/federated_credential.js';
-import { User } from '../models/user.model.js';
 import type {
   PatchBody,
   DeleteBody,
@@ -20,7 +17,6 @@ import type {
 } from '../schemas/user.schema.js';
 import { buildUserAgent, createHashedPassword } from '../utils/auth.util.js';
 import { deleteCompany, deleteUser } from '../utils/delete.util.js';
-import { checkMySQLError } from '../utils/error.util.js';
 import { fetchUser, getPaidRank, reviewPassword } from '../utils/login.util.js';
 
 export default class UserController {
@@ -28,10 +24,11 @@ export default class UserController {
     req: FastifyRequest,
     _reply: FastifyReply,
   ) {
-    const data = await FederatedCredential.query().where({
-      bee_id: req.session.user.bee_id,
-    });
-    return data;
+    return KyselyServer.getInstance()
+      .db.selectFrom('federated_credentials')
+      .selectAll()
+      .where('bee_id', '=', req.session.user.bee_id)
+      .execute();
   }
 
   static async deleteFederatedCredentials(
@@ -42,11 +39,12 @@ export default class UserController {
     if (!params.id) {
       throw httpErrors.BadRequest('Missing id');
     }
-    const data = await FederatedCredential.query().delete().where({
-      bee_id: req.session.user.bee_id,
-      id: params.id,
-    });
-    return data;
+    const result = await KyselyServer.getInstance()
+      .db.deleteFrom('federated_credentials')
+      .where('bee_id', '=', req.session.user.bee_id)
+      .where('id', '=', params.id)
+      .executeTakeFirst();
+    return Number(result.numDeletedRows);
   }
 
   static async addFederatedCredentials(
@@ -57,11 +55,20 @@ export default class UserController {
     if (!body.email) {
       throw httpErrors.BadRequest('Missing mail');
     }
-    const data = await FederatedCredential.query().insert({
-      bee_id: req.session.user.bee_id,
-      provider: body.provider,
-      mail: body.email,
-    });
+    const db = KyselyServer.getInstance().db;
+    const insert = await db
+      .insertInto('federated_credentials')
+      .values({
+        bee_id: req.session.user.bee_id,
+        provider: body.provider,
+        mail: body.email,
+      })
+      .executeTakeFirstOrThrow();
+    const data = await db
+      .selectFrom('federated_credentials')
+      .selectAll()
+      .where('id', '=', Number(insert.insertId))
+      .executeTakeFirstOrThrow();
     return { data };
   }
 
@@ -78,14 +85,15 @@ export default class UserController {
     }
     const { rank, paid } = await getPaidRank(data.id, company);
 
-    (req as any).bee_id = req.session.user.bee_id;
+    (req as FastifyRequest & { bee_id: number }).bee_id =
+      req.session.user.bee_id;
 
     await req.session.regenerate();
     req.session.user = {
       bee_id: data.id,
       user_id: company,
       paid,
-      rank: rank as any,
+      rank: rank as typeof req.session.user.rank,
       user_agent: buildUserAgent(req),
       last_visit: new Date(),
       uuid: randomUUID(),
@@ -100,20 +108,21 @@ export default class UserController {
   static async delete(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as DeleteBody;
     await reviewPassword(req.session.user.bee_id, body.password);
-    const companies = await CompanyBee.query().where({
-      bee_id: req.session.user.bee_id,
-    });
-    await Promise.all(
-      map(companies, async (company) => {
-        const count = await CompanyBee.query().select('id').where({
-          user_id: company.user_id,
-        });
-        if (count.length === 1 && company.user_id) {
-          await deleteCompany(company.user_id);
-        }
-        return true;
-      }),
-    );
+    const db = KyselyServer.getInstance().db;
+    const companies = await db
+      .selectFrom('company_bee')
+      .select('user_id')
+      .where('bee_id', '=', req.session.user.bee_id)
+      .execute();
+    for (const company of companies) {
+      if (!company.user_id) continue;
+      const count = await db
+        .selectFrom('company_bee')
+        .select(db.fn.countAll<number>().as('count'))
+        .where('user_id', '=', company.user_id)
+        .executeTakeFirstOrThrow();
+      if (count.count === 1) await deleteCompany(company.user_id);
+    }
 
     const result = await deleteUser(req.session.user.bee_id);
     return result;
@@ -133,100 +142,87 @@ export default class UserController {
 
   static async patch(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as PatchBody;
-    const trx = await User.startTransaction();
-    try {
-      if ('password' in body) {
-        try {
-          await reviewPassword(req.session.user.bee_id, body.password, trx);
-        } catch (error) {
-          throw checkMySQLError(error);
-        }
-
-        delete body.password;
-        if ('email' in body) {
-          if (body.email === '') delete body.email;
-        }
-        if ('newPassword' in body) {
-          if (body.newPassword === '') {
-            delete body.newPassword;
-          } else {
-            const password = createHashedPassword(body.newPassword);
-            delete body.newPassword;
-            body.password = password.password;
-            body.salt = password.salt;
-          }
-        }
-      }
-
-      await User.query(trx).findById(req.session.user.bee_id).patch(req.body);
-
-      await trx.commit();
-      const user = await fetchUser('', req.session.user.bee_id);
-      if ('salt' in body) {
-        try {
-          await MailService.getInstance().sendMail({
-            to: user.email,
-            lang: user.lang,
-            subject: 'pw_reseted',
-            name: user.username,
-          });
-        } catch (error) {
-          throw checkMySQLError(error);
-        }
-      }
-      return user;
-    } catch (error) {
-      await trx.rollback();
-      throw error;
+    const db = KyselyServer.getInstance().db;
+    let credentials: ReturnType<typeof createHashedPassword> | undefined;
+    if (body.password !== undefined) {
+      await reviewPassword(req.session.user.bee_id, body.password);
+      if (body.newPassword)
+        credentials = createHashedPassword(body.newPassword);
     }
+
+    await db
+      .updateTable('bees')
+      .set({
+        ...(body.email && { email: body.email }),
+        ...(body.username !== undefined && { username: body.username }),
+        ...(body.lang !== undefined && { lang: body.lang }),
+        ...(body.format !== undefined && { format: body.format }),
+        ...(body.saved_company !== undefined && {
+          saved_company: body.saved_company,
+        }),
+        ...(body.sound !== undefined && { sound: body.sound }),
+        ...(body.todo !== undefined && { todo: body.todo }),
+        ...(body.acdate !== undefined && { acdate: body.acdate }),
+        ...(body.newsletter !== undefined && { newsletter: body.newsletter }),
+        ...(credentials && {
+          password: credentials.password,
+          salt: credentials.salt,
+        }),
+      })
+      .where('id', '=', req.session.user.bee_id)
+      .execute();
+
+    const user = await fetchUser('', req.session.user.bee_id);
+    if (!user) throw httpErrors.NotFound();
+    if (credentials) {
+      await MailService.getInstance().sendMail({
+        to: user.email,
+        lang: user.lang,
+        subject: 'pw_reseted',
+        name: user.username,
+      });
+    }
+    return user;
   }
 
   static async changeCompany(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as ChangeCompanyBody;
-    const trx = await User.startTransaction();
-    try {
-      await CompanyBee.query(trx)
-        .where('bee_id', req.session.user.bee_id)
-        .where('user_id', body.saved_company)
-        .throwIfNotFound();
+    const db = KyselyServer.getInstance().db;
+    const result = await db.transaction().execute(async (trx) => {
+      const relation = await trx
+        .selectFrom('company_bee')
+        .select('id')
+        .where('bee_id', '=', req.session.user.bee_id)
+        .where('user_id', '=', body.saved_company)
+        .executeTakeFirst();
+      if (!relation) throw httpErrors.NotFound();
+      const update = await trx
+        .updateTable('bees')
+        .set({ saved_company: body.saved_company })
+        .where('id', '=', req.session.user.bee_id)
+        .executeTakeFirst();
+      return Number(update.numUpdatedRows);
+    });
 
-      const result = await User.query(trx)
-        .findById(req.session.user.bee_id)
-        .patch({
-          saved_company: body.saved_company,
-        });
-      await trx.commit();
+    const data = await fetchUser('', req.session.user.bee_id);
+    if (!data) throw httpErrors.NotFound();
+    const { rank, paid } = await getPaidRank(data.id, body.saved_company);
 
-      const data = await fetchUser('', req.session.user.bee_id);
-
-      const { rank, paid } = await getPaidRank(data.id, body.saved_company);
-
-      (req as any).bee_id = req.session.user.bee_id;
-      await req.session.regenerate();
-      req.session.user = {
-        bee_id: data.id,
-        user_id: body.saved_company,
-        paid,
-        rank: rank as any,
-        user_agent: buildUserAgent(req),
-        last_visit: new Date(),
-        uuid: randomUUID(),
-        ip: req.ip,
-      };
-      await req.session.save();
-
-      return { data, result };
-
-      // const userAgent = buildUserAgent(req);
-      /* const token = await generateTokenResponse(
-        req.session.user.bee_id,
-        req.body.saved_company,
-        userAgent
-      ); */
-    } catch (error) {
-      await trx.rollback();
-      throw error;
-    }
+    (req as FastifyRequest & { bee_id: number }).bee_id =
+      req.session.user.bee_id;
+    await req.session.regenerate();
+    req.session.user = {
+      bee_id: data.id,
+      user_id: body.saved_company,
+      paid,
+      rank: rank as typeof req.session.user.rank,
+      user_agent: buildUserAgent(req),
+      last_visit: new Date(),
+      uuid: randomUUID(),
+      ip: req.ip,
+    };
+    await req.session.save();
+    return { data, result };
   }
 
   static async getRedisSession(req: FastifyRequest, _reply: FastifyReply) {

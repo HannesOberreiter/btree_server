@@ -14,7 +14,6 @@ import { KyselyServer } from '../../servers/kysely.server.js';
 import { Logger } from '../../services/logger.service.js';
 import type { MailLang } from '../../services/mail.service.js';
 import { MailLangs, MailService } from '../../services/mail.service.js';
-import { User } from '../models/user.model.js';
 import {
   listCalendarMovements,
   listCalendarRearings,
@@ -192,9 +191,11 @@ export default class ExternalController {
       let mail: string | null = null;
       let lang: MailLang = 'en';
       try {
-        const user = await User.query()
-          .select('email', 'lang')
-          .findById(bee_id);
+        const user = await KyselyServer.getInstance()
+          .db.selectFrom('bees')
+          .select(['email', 'lang'])
+          .where('id', '=', bee_id)
+          .executeTakeFirst();
         if (user?.email) mail = user.email;
         if (user?.lang && MailLangs.includes(user.lang as MailLang))
           lang = user.lang as MailLang;
@@ -252,9 +253,11 @@ export default class ExternalController {
         const price = Number.parseFloat(payment.amount.value);
         await addPremium(user_id, 12 * years, price, 'mollie');
         const bee_id = reference.bee_id;
-        const user = await User.query()
-          .select('email', 'lang')
-          .findById(bee_id);
+        const user = await KyselyServer.getInstance()
+          .db.selectFrom('bees')
+          .select(['email', 'lang'])
+          .where('id', '=', bee_id)
+          .executeTakeFirst();
         let lang = 'en' as MailLang;
         if (user?.lang && MailLangs.includes(user.lang as MailLang)) {
           lang = user.lang as MailLang;

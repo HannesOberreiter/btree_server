@@ -4,7 +4,6 @@ import httpErrors from 'http-errors';
 import { KyselyServer } from '../../servers/kysely.server.js';
 import type { MailLang } from '../../services/mail.service.js';
 import { MailLangs } from '../../services/mail.service.js';
-import { User } from '../models/user.model.js';
 import type { CompatibilityQuery } from '../schemas/common.schema.js';
 import type {
   GetWeatherDataParams,
@@ -177,7 +176,11 @@ export default class ServiceController {
       return { ...capture, paid };
     }
     try {
-      const user = await User.query().select('email', 'lang').findById(bee_id);
+      const user = await KyselyServer.getInstance()
+        .db.selectFrom('bees')
+        .select(['email', 'lang'])
+        .where('id', '=', bee_id)
+        .executeTakeFirst();
       if (user?.email) mail = user.email;
       if (user?.lang && MailLangs.includes(user.lang as MailLang))
         lang = user.lang as MailLang;

@@ -1,20 +1,4 @@
-import type { Transaction } from 'objection';
-
-import { Apiary } from '../models/apiary.model.js';
-import { ChargeType } from '../models/option/charge_type.model.js';
-import { CheckupType } from '../models/option/checkup_type.model.js';
-import { FeedType } from '../models/option/feed_type.model.js';
-import { HarvestType } from '../models/option/harvest_type.model.js';
-import { HiveSource } from '../models/option/hive_source.model.js';
-import { HiveType } from '../models/option/hive_type.mode.js';
-import { QueenMating } from '../models/option/queen_mating.model.js';
-import { QueenRace } from '../models/option/queen_race.model.js';
-import { TreatmentDisease } from '../models/option/treatment_disease.model.js';
-import { TreatmentType } from '../models/option/treatment_type.model.js';
-import { TreatmentVet } from '../models/option/treatment_vet.model.js';
-import { RearingDetail } from '../models/rearing/rearing_detail.model.js';
-import { RearingStep } from '../models/rearing/rearing_step.model.js';
-import { RearingType } from '../models/rearing/rearing_type.model.js';
+import type { Database } from '../../types/database.types.js';
 
 const standardValues = {
   de: {
@@ -86,11 +70,7 @@ const standardValues = {
     },
   },
   en: {
-    apiary: {
-      name: 'Sample Apiary',
-      latitude: 47.074853,
-      longitude: 12.69527,
-    },
+    apiary: { name: 'Sample Apiary', latitude: 47.074853, longitude: 12.69527 },
     source: ['Artifical Swarm', 'Split', 'Swarm'],
     type: [
       'Active',
@@ -147,72 +127,105 @@ const standardValues = {
       time: [0, 219, 3, 48, 120, 120],
     },
   },
-};
+} as const;
 
-async function autoFill(trx: Transaction, id: number, lang: string) {
-  const val = standardValues[lang];
+export async function autoFill(
+  db: Database,
+  companyId: number,
+  language: string,
+) {
+  const values = standardValues[language === 'de' ? 'de' : 'en'];
+  for (const name of values.source)
+    await db
+      .insertInto('hive_sources')
+      .values({ name, user_id: companyId })
+      .execute();
+  for (const name of values.type)
+    await db
+      .insertInto('hive_types')
+      .values({ name, user_id: companyId })
+      .execute();
+  for (const name of values.charge)
+    await db
+      .insertInto('charge_types')
+      .values({ name, user_id: companyId })
+      .execute();
+  for (const name of values.checkup)
+    await db
+      .insertInto('checkup_types')
+      .values({ name, user_id: companyId })
+      .execute();
+  for (const name of values.feed)
+    await db
+      .insertInto('feed_types')
+      .values({ name, user_id: companyId })
+      .execute();
+  for (const name of values.harvest)
+    await db
+      .insertInto('harvest_types')
+      .values({ name, user_id: companyId })
+      .execute();
+  for (const name of values.disease)
+    await db
+      .insertInto('treatment_diseases')
+      .values({ name, user_id: companyId })
+      .execute();
+  for (const name of values.treatment)
+    await db
+      .insertInto('treatment_types')
+      .values({ name, user_id: companyId })
+      .execute();
+  for (const name of values.vet)
+    await db
+      .insertInto('treatment_vets')
+      .values({ name, user_id: companyId })
+      .execute();
+  for (const name of values.race)
+    await db
+      .insertInto('queen_races')
+      .values({ name, user_id: companyId })
+      .execute();
+  for (const name of values.mating)
+    await db
+      .insertInto('queen_matings')
+      .values({ name, user_id: companyId })
+      .execute();
 
-  // We use MySQL we cannot use patch insert
-  for (const source of val.source) {
-    await HiveSource.query(trx).insert({ name: source, user_id: id });
+  const typeInsert = await db
+    .insertInto('rearing_types')
+    .values({
+      name: values.reartype.name,
+      note: values.reartype.note,
+      user_id: companyId,
+    })
+    .executeTakeFirstOrThrow();
+  const typeId = Number(typeInsert.insertId);
+  for (let index = 0; index < values.reardetail.job.length; index++) {
+    const detailInsert = await db
+      .insertInto('rearing_details')
+      .values({
+        job: values.reardetail.job[index],
+        note: values.reardetail.note[index],
+        user_id: companyId,
+      })
+      .executeTakeFirstOrThrow();
+    await db
+      .insertInto('rearing_steps')
+      .values({
+        position: index,
+        type_id: typeId,
+        detail_id: Number(detailInsert.insertId),
+        sleep_before: values.reardetail.time[index],
+      })
+      .execute();
   }
-  for (const type of val.type) {
-    await HiveType.query(trx).insert({ name: type, user_id: id });
-  }
-  for (const charge of val.charge) {
-    await ChargeType.query(trx).insert({ name: charge, user_id: id });
-  }
-  for (const checkup of val.checkup) {
-    await CheckupType.query(trx).insert({ name: checkup, user_id: id });
-  }
-  for (const feed of val.feed) {
-    await FeedType.query(trx).insert({ name: feed, user_id: id });
-  }
-  for (const harvest of val.harvest) {
-    await HarvestType.query(trx).insert({ name: harvest, user_id: id });
-  }
-  for (const disease of val.disease) {
-    await TreatmentDisease.query(trx).insert({ name: disease, user_id: id });
-  }
-  for (const treatment of val.treatment) {
-    await TreatmentType.query(trx).insert({ name: treatment, user_id: id });
-  }
-  for (const vet of val.vet) {
-    await TreatmentVet.query(trx).insert({ name: vet, user_id: id });
-  }
-  for (const race of val.race) {
-    await QueenRace.query(trx).insert({ name: race, user_id: id });
-  }
-  for (const mating of val.mating) {
-    await QueenMating.query(trx).insert({ name: mating, user_id: id });
-  }
-
-  // Rearing we need to get always the last inserted id
-  const rearType = await RearingType.query(trx).insert({
-    name: val.reartype.name,
-    note: val.reartype.note,
-    user_id: id,
-  });
-  for (let i = 0; i < val.reardetail.job.length; i++) {
-    const rearingDetail = await RearingDetail.query(trx).insert({
-      job: val.reardetail.job[i],
-      note: val.reardetail.note[i],
-      user_id: id,
-    });
-    await RearingStep.query(trx).insert({
-      position: i,
-      type_id: rearType.id,
-      detail_id: rearingDetail.id,
-      sleep_before: val.reardetail.time[i],
-    });
-  }
-
-  await Apiary.query(trx).insert({
-    name: val.apiary.name,
-    longitude: val.apiary.longitude,
-    latitude: val.apiary.latitude,
-    user_id: id,
-  });
+  await db
+    .insertInto('apiaries')
+    .values({
+      name: values.apiary.name,
+      longitude: values.apiary.longitude,
+      latitude: values.apiary.latitude,
+      user_id: companyId,
+    })
+    .execute();
 }
-
-export { autoFill };

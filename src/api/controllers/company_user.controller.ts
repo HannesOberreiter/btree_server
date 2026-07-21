@@ -2,16 +2,16 @@ import { randomBytes } from 'node:crypto';
 
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import httpErrors from 'http-errors';
+import { sql } from 'kysely';
 
-import { Company } from '../models/company.model.js';
-import { CompanyBee } from '../models/company_bee.model.js';
-import { User } from '../models/user.model.js';
+import { KyselyServer } from '../../servers/kysely.server.js';
 import type {
   CompanyUserAddBody,
   CompanyUserCompanyParams,
   CompanyUserIdParams,
   CompanyUserRankBody,
 } from '../schemas/company_user.schema.js';
+import type { ChangeCompanyBody } from '../schemas/user.schema.js';
 import AuthController from './auth.controller.js';
 import UserController from './user.controller.js';
 
@@ -19,98 +19,131 @@ export default class CompanyUserController {
   static async patch(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as CompanyUserRankBody;
     const params = req.params as CompanyUserIdParams;
-    const result = await CompanyBee.query().patch({ rank: body.rank }).where({
-      bee_id: params.id,
-      user_id: req.session.user.user_id,
-    });
-    return result;
+    const result = await KyselyServer.getInstance()
+      .db.updateTable('company_bee')
+      .set({ rank: body.rank })
+      .where('bee_id', '=', params.id)
+      .where('user_id', '=', req.session.user.user_id)
+      .executeTakeFirst();
+    return Number(result.numUpdatedRows);
   }
 
   static async getUser(req: FastifyRequest, _reply: FastifyReply) {
-    const result = await CompanyBee.query()
-      .withGraphJoined('[user, company]')
-      .where({ user_id: req.session.user.user_id });
-    return result;
+    return KyselyServer.getInstance()
+      .db.selectFrom('company_bee')
+      .innerJoin('bees', 'bees.id', 'company_bee.bee_id')
+      .innerJoin('companies', 'companies.id', 'company_bee.user_id')
+      .selectAll('company_bee')
+      .select([
+        sql<{
+          id: number;
+          email: string | null;
+          username: string | null;
+          last_visit: Date | null;
+        }>`JSON_OBJECT('id', bees.id, 'email', bees.email, 'username', bees.username, 'last_visit', bees.last_visit)`.as(
+          'user',
+        ),
+        sql<{
+          id: number;
+          name: string | null;
+          paid: Date | null;
+          api_active: boolean | null;
+        }>`JSON_OBJECT('id', companies.id, 'name', companies.name, 'paid', companies.paid, 'api_active', IF(companies.api_active = 1, TRUE, FALSE))`.as(
+          'company',
+        ),
+      ])
+      .where('company_bee.user_id', '=', req.session.user.user_id)
+      .execute();
   }
 
   static async addUser(req: FastifyRequest, reply: FastifyReply) {
     const body = req.body as CompanyUserAddBody;
-    const userExists = await User.query()
+    const db = KyselyServer.getInstance().db;
+    const userExists = await db
+      .selectFrom('bees')
       .select('id')
-      .findOne({ email: body.email });
+      .where('email', '=', body.email)
+      .executeTakeFirst();
     if (userExists) {
-      const duplicate = await CompanyBee.query().select('id').findOne({
-        bee_id: userExists.id,
-        user_id: req.session.user.user_id,
-      });
-      if (duplicate) {
-        return { userExists };
-      } else {
-        await CompanyBee.query().insert({
-          bee_id: userExists.id,
+      const duplicate = await db
+        .selectFrom('company_bee')
+        .select('id')
+        .where('bee_id', '=', userExists.id)
+        .where('user_id', '=', req.session.user.user_id)
+        .executeTakeFirst();
+      if (!duplicate) {
+        await db
+          .insertInto('company_bee')
+          .values({
+            bee_id: userExists.id,
+            user_id: req.session.user.user_id,
+            rank: 3,
+          })
+          .execute();
+      }
+      return { userExists };
+    }
+
+    await db.transaction().execute(async (trx) => {
+      const inviter = await trx
+        .selectFrom('bees')
+        .select('lang')
+        .where('id', '=', req.session.user.bee_id)
+        .executeTakeFirstOrThrow();
+      const insert = await trx
+        .insertInto('bees')
+        .values({
+          email: body.email,
+          lang: inviter.lang,
+          password: randomBytes(40).toString('hex'),
+          salt: randomBytes(40).toString('hex'),
+          last_visit: new Date('1989-01-05'),
+        })
+        .executeTakeFirstOrThrow();
+      await trx
+        .insertInto('company_bee')
+        .values({
+          bee_id: Number(insert.insertId),
           user_id: req.session.user.user_id,
           rank: 3,
-        });
-        return { userExists };
-      }
-    } else {
-      const inviter = await User.query()
-        .select('lang')
-        .findById(req.session.user.bee_id);
-      const newUser = await User.query().insertAndFetch({
-        email: body.email,
-        lang: inviter.lang,
-        password: randomBytes(40).toString('hex'),
-        salt: randomBytes(40).toString('hex'),
-        last_visit: new Date('1989-01-05'),
-      });
-      await CompanyBee.query().insert({
-        bee_id: newUser.id,
-        user_id: req.session.user.user_id,
-        rank: 3,
-      });
-
-      const result = await AuthController.resetRequest(req, reply);
-      return { ...result };
-    }
+        })
+        .execute();
+    });
+    return { ...(await AuthController.resetRequest(req, reply)) };
   }
 
   static async removeUser(req: FastifyRequest, _reply: FastifyReply) {
     const params = req.params as CompanyUserIdParams;
-    const result = await CompanyBee.query()
-      .delete()
-      .where({ bee_id: params.id, user_id: req.session.user.user_id });
-    return result;
+    const result = await KyselyServer.getInstance()
+      .db.deleteFrom('company_bee')
+      .where('bee_id', '=', params.id)
+      .where('user_id', '=', req.session.user.user_id)
+      .executeTakeFirst();
+    return Number(result.numDeletedRows);
   }
 
   static async delete(req: FastifyRequest, reply: FastifyReply) {
     const params = req.params as CompanyUserCompanyParams;
-    const otherUser = await Company.query()
-      .select('user.id')
-      .withGraphJoined('user')
-      .whereNot({
-        'user.id': req.session.user.bee_id,
-      })
-      .where({
-        'companies.id': params.company_id,
-      });
-    if (otherUser.length === 0) {
+    const db = KyselyServer.getInstance().db;
+    const otherUser = await db
+      .selectFrom('company_bee')
+      .select('bee_id')
+      .where('user_id', '=', params.company_id)
+      .where('bee_id', '!=', req.session.user.bee_id)
+      .executeTakeFirst();
+    if (!otherUser) {
       throw httpErrors.Forbidden(
         'No other users found, cannot remove your access.',
       );
     }
 
-    const otherCompanies = await Company.query()
-      .select('companies.id as id')
-      .withGraphJoined('user')
-      .where({
-        'user.id': req.session.user.bee_id,
-      })
-      .whereNot({
-        'companies.id': params.company_id,
-      });
-
-    if (otherCompanies.length === 0) {
+    const otherCompany = await db
+      .selectFrom('company_bee')
+      .select('user_id')
+      .where('bee_id', '=', req.session.user.bee_id)
+      .where('user_id', '!=', params.company_id)
+      .executeTakeFirst();
+    if (!otherCompany?.user_id) {
       reply.send(
         httpErrors.Forbidden(
           'This is your last company, you cannot remove access to it.',
@@ -119,13 +152,14 @@ export default class CompanyUserController {
       return;
     }
 
-    const body = req.body as Record<string, unknown>;
-    body.saved_company = otherCompanies[0].id;
-
-    await CompanyBee.query()
-      .delete()
-      .where({ user_id: params.company_id, bee_id: req.session.user.bee_id });
-
-    return await UserController.changeCompany(req, reply);
+    await db
+      .deleteFrom('company_bee')
+      .where('user_id', '=', params.company_id)
+      .where('bee_id', '=', req.session.user.bee_id)
+      .execute();
+    (req as FastifyRequest & { body: ChangeCompanyBody }).body = {
+      saved_company: otherCompany.user_id,
+    };
+    return UserController.changeCompany(req, reply);
   }
 }
