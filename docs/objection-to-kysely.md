@@ -157,6 +157,9 @@
   - [x] User and Company User routes preserve session and nested response behavior
   - [x] Obsolete credential, login-attempt, refresh-token, payment, and promo models removed
 - [ ] Company
+  - [x] CRUD, API keys, counts, payments, promo, invoice, and membership operations use Kysely
+  - [x] Company creation and deletion use shared Kysely transactions
+  - [ ] Import/export persistence remains on Objection
 
 ## Phase 6: cross-cutting implementation
 

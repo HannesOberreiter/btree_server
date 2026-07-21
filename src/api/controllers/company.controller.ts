@@ -22,7 +22,6 @@ import { Charge } from '../models/charge.model.js';
 import { Checkup } from '../models/checkup.model.js';
 import { Company } from '../models/company.model.js';
 import { CompanyBee } from '../models/company_bee.model.js';
-import { Counts } from '../models/counts.model.js';
 import { Feed } from '../models/feed.model.js';
 import { Harvest } from '../models/harvest.model.js';
 import { Hive } from '../models/hive.model.js';
@@ -220,48 +219,46 @@ export default class CompanyController {
     if (!premium) {
       throw httpErrors.PaymentRequired();
     }
-    const result = await Company.query()
+    const result = await KyselyServer.getInstance()
+      .db.selectFrom('companies')
       .select('api_key')
-      .findById(req.session.user.user_id);
+      .where('id', '=', req.session.user.user_id)
+      .executeTakeFirst();
     return { ...result };
   }
 
   static async getCounts(req: FastifyRequest, _reply: FastifyReply) {
-    const result = await Counts.query().where(
-      'user_id',
-      req.session.user.user_id,
-    );
-    return result;
+    return KyselyServer.getInstance()
+      .db.selectFrom('counts')
+      .selectAll()
+      .where('user_id', '=', req.session.user.user_id)
+      .execute();
   }
 
   static async delete(req: FastifyRequest, reply: FastifyReply) {
     const params = req.params as CompanyDeleteParams;
-    const otherUser = await Company.query()
-      .select('user.id')
-      .withGraphJoined('user')
-      .whereNot({
-        'user.id': req.session.user.bee_id,
-      })
-      .where({
-        'companies.id': params.id,
-      });
-    if (otherUser.length > 0) {
+    const db = KyselyServer.getInstance().db;
+    const companyId = Number(params.id);
+    const otherUser = await db
+      .selectFrom('company_bee')
+      .select('bee_id')
+      .where('user_id', '=', companyId)
+      .where('bee_id', '!=', req.session.user.bee_id)
+      .executeTakeFirst();
+    if (otherUser) {
       reply.send(
         httpErrors.Forbidden('Other user(s) found, please remove them first.'),
       );
       return;
     }
 
-    const otherCompanies = await Company.query()
-      .select('companies.id as id')
-      .withGraphJoined('user')
-      .where({
-        'user.id': req.session.user.bee_id,
-      })
-      .whereNot({
-        'companies.id': params.id,
-      });
-    if (otherCompanies.length === 0) {
+    const otherCompany = await db
+      .selectFrom('company_bee')
+      .select('user_id')
+      .where('bee_id', '=', req.session.user.bee_id)
+      .where('user_id', '!=', companyId)
+      .executeTakeFirst();
+    if (!otherCompany?.user_id) {
       reply.send(
         httpErrors.Forbidden(
           'This is your last company, you cannot delete it.',
@@ -270,12 +267,11 @@ export default class CompanyController {
       return;
     }
 
-    const body = req.body as Record<string, unknown>;
-    body.saved_company = otherCompanies[0].id;
-
-    await deleteCompany(Number.parseInt(params.id));
-
-    return await UserController.changeCompany(req, reply);
+    (req as FastifyRequest & { body: { saved_company: number } }).body = {
+      saved_company: otherCompany.user_id,
+    };
+    await deleteCompany(companyId);
+    return UserController.changeCompany(req, reply);
   }
 
   static async post(req: FastifyRequest, _reply: FastifyReply) {
@@ -316,39 +312,39 @@ export default class CompanyController {
 
   static async patch(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as CompanyPatchBody;
-    if ('password' in body) {
+    if (body.password !== undefined) {
       await reviewPassword(req.session.user.bee_id, body.password);
-      delete body.password;
     }
-    const result = await Company.transaction(async (trx) => {
-      const company = await Company.query(trx).findById(
-        req.session.user.user_id,
-      );
-      let api_change = false;
-      if ('api_change' in body) {
-        const premium = await isPremium(req.session.user.user_id);
-        if (!premium) {
+    const db = KyselyServer.getInstance().db;
+    return db.transaction().execute(async (trx) => {
+      const company = await trx
+        .selectFrom('companies')
+        .selectAll()
+        .where('id', '=', req.session.user.user_id)
+        .executeTakeFirstOrThrow();
+      if (body.api_change !== undefined) {
+        if (!(await isPremium(req.session.user.user_id, trx))) {
           throw httpErrors.PaymentRequired();
         }
-        api_change = !!body.api_change;
-        delete body.api_change;
       }
-
-      const res = await company.$query(trx).patchAndFetch({ ...body });
-
-      if (
-        api_change ||
-        (res.api_active && (res.api_key === '' || res.api_key === null))
-      ) {
-        const apiKey = randomBytes(25).toString('hex');
-        await company.$query(trx).patch({
-          api_key: apiKey,
-        });
-      }
-      delete res.api_key;
-      return res;
+      const regenerateKey =
+        body.api_change === true || (company.api_active && !company.api_key);
+      await trx
+        .updateTable('companies')
+        .set({
+          ...(body.name !== undefined && { name: body.name }),
+          ...(regenerateKey && { api_key: randomBytes(25).toString('hex') }),
+        })
+        .where('id', '=', req.session.user.user_id)
+        .execute();
+      const result = await trx
+        .selectFrom('companies')
+        .selectAll()
+        .where('id', '=', req.session.user.user_id)
+        .executeTakeFirstOrThrow();
+      const { api_key: _apiKey, image: _image, ...safeResult } = result;
+      return safeResult;
     });
-    return { ...result };
   }
 
   /**
