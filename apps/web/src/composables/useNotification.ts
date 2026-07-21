@@ -6,6 +6,21 @@ import { sleep } from '../helpers';
 
 type Type = 'positive' | 'negative' | 'warning' | 'info' | 'ongoing';
 
+type ApiError = {
+  statusCode: number;
+  code?: string;
+  message?: string;
+};
+
+function isApiError(value: unknown): value is ApiError {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    'statusCode' in value &&
+    typeof value.statusCode === 'number'
+  );
+}
+
 const state = reactive({
   show: false,
   error: false
@@ -19,22 +34,20 @@ function useNotification(t?: ComposerTranslation) {
     return displayMessage;
   }
 
-  function useHandleError(error: any) {
+  function useHandleError(error: unknown) {
     let displayMessage = '';
     if (typeof error === 'string') {
       return $t(error);
     }
-
-    let errorMessage;
-
-    if ('message' in error) {
-      errorMessage = error.message;
-    } else if ('errors' in error) {
-      errorMessage = error.errors;
-    } else if ('error' in error) {
-      errorMessage = error.error;
+    if (!isApiError(error)) {
+      return $t('error.unknown');
     }
-    displayMessage = checkStatus(error.statusCode, errorMessage);
+
+    displayMessage = checkStatus(
+      error.statusCode,
+      error.message ?? '',
+      error.code
+    );
     if (displayMessage === '') {
       displayMessage = $t('error.unknown');
     }
@@ -42,7 +55,11 @@ function useNotification(t?: ComposerTranslation) {
     return displayMessage;
   }
 
-  function checkStatus(statusCode: number, errorField = '') {
+  function checkStatus(
+    statusCode: number,
+    errorField = '',
+    errorCode?: string
+  ) {
     let displayMessage = '';
     if (statusCode === 400) {
       displayMessage = `${$t('error.unknown')} ${errorField}`;
@@ -63,7 +80,13 @@ function useNotification(t?: ComposerTranslation) {
     } else if (statusCode === 404) {
       displayMessage = $t('error.notFound');
     } else if (statusCode === 409) {
-      displayMessage = `${$t('error.duplicate')} (${$t(errorField)})`;
+      if (errorCode === 'FOREIGN_KEY_VIOLATION') {
+        displayMessage = $t('error.unknown');
+      } else if (errorField && errorField !== 'duplicate') {
+        displayMessage = `${$t('error.duplicate')} (${$t(errorField)})`;
+      } else {
+        displayMessage = $t('error.duplicate');
+      }
     } else if (statusCode === 423) {
       displayMessage = $t('error.locked');
     } else if (statusCode === 429) {
