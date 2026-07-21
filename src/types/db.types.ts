@@ -5,7 +5,7 @@
 
 import type { ColumnType } from 'kysely';
 
-export type Decimal = ColumnType<string, number | string>;
+export type Decimal = ColumnType<string, number | string, number | string>;
 
 export type Generated<T> =
   T extends ColumnType<infer S, infer I, infer U>

@@ -77,7 +77,11 @@
   - [x] Scale routes use typed Kysely operations
   - [x] Scale ownership, nested Hive response, and tenant isolation covered
   - [x] Shallow Scale controller removed
-  - [ ] Migrate Scale Data and remaining Scale model callers
+  - [x] Scale Data routes and external ingestion use typed Kysely operations
+  - [x] External scale mail behavior moved to a transport adapter
+  - [x] Scale Data tenant isolation and nested response covered
+  - [x] Shallow Scale Data controller removed
+  - [ ] Remove Scale models after Company, Calendar, and cron callers migrate
 - [ ] Queen
 - [ ] Rearing Detail
 - [ ] Rearing Type

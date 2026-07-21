@@ -1,4 +1,5 @@
 import { spawnSync } from 'node:child_process';
+import { readFileSync, writeFileSync } from 'node:fs';
 import process from 'node:process';
 
 import dotenv from 'dotenv';
@@ -40,6 +41,23 @@ const command = spawnSync(
   },
 );
 if (command.status !== 0) process.exit(command.status ?? 1);
+
+const outputPath = 'src/types/db.types.ts';
+const generated = readFileSync(outputPath, 'utf8');
+const generatedDecimal =
+  'export type Decimal = ColumnType<string, number | string>;';
+if (!generated.includes(generatedDecimal)) {
+  throw new Error(
+    'Generated Decimal alias changed; update codegen normalization',
+  );
+}
+writeFileSync(
+  outputPath,
+  generated.replace(
+    generatedDecimal,
+    'export type Decimal = ColumnType<string, number | string, number | string>;',
+  ),
+);
 
 const format = spawnSync(
   'pnpm',

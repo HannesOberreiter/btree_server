@@ -1,58 +1,73 @@
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
+import { z } from 'zod';
 
 import { ROLES } from '../../../config/constants.config.js';
-import ScaleDataController from '../../controllers/scale_data.controller.js';
+import { KyselyServer } from '../../../servers/kysely.server.js';
 import { Guard } from '../../hooks/guard.hook.js';
 import {
-  permissiveJsonResponseSchema,
-  compatibilityQuerySchema,
-} from '../../schemas/common.schema.js';
+  createScaleData,
+  deleteScaleData,
+  getScaleDataByIds,
+  listScaleData,
+  updateScaleData,
+} from '../../modules/scale_data.module.js';
 import {
-  postBodySchema,
-  patchBodySchema,
   batchDeleteBodySchema,
   batchGetBodySchema,
+  patchBodySchema,
+  postBodySchema,
+  scaleDataBatchResponseSchema,
+  scaleDataListQuerySchema,
+  scaleDataListResponseSchema,
+  scaleDataResponseSchema,
 } from '../../schemas/scale_data.schema.js';
 
 export default function routes(
   instance: FastifyInstance,
-  _options: any,
-  done: any,
+  _options: unknown,
+  done: () => void,
 ) {
   const server = instance.withTypeProvider<ZodTypeProvider>();
+  const db = KyselyServer.getInstance().db;
+
   server.get(
     '/',
     {
       schema: {
-        querystring: compatibilityQuerySchema,
-        response: { 200: permissiveJsonResponseSchema },
+        querystring: scaleDataListQuerySchema,
+        response: { 200: scaleDataListResponseSchema },
       },
       preHandler: Guard.authorize([ROLES.admin, ROLES.user, ROLES.read]),
     },
-    ScaleDataController.get,
+    async (request) =>
+      listScaleData(db, request.session.user.user_id, request.query),
   );
+
   server.post(
     '/',
     {
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
-        response: { 200: permissiveJsonResponseSchema },
         body: postBodySchema,
+        response: { 200: scaleDataResponseSchema },
       },
     },
-    ScaleDataController.post,
+    async (request) =>
+      createScaleData(db, request.session.user.user_id, request.body),
   );
+
   server.patch(
     '/',
     {
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
-        response: { 200: permissiveJsonResponseSchema },
         body: patchBodySchema,
+        response: { 200: z.number() },
       },
     },
-    ScaleDataController.patch,
+    async (request) =>
+      updateScaleData(db, request.session.user.user_id, request.body),
   );
 
   server.patch(
@@ -60,22 +75,25 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.admin]),
       schema: {
-        response: { 200: permissiveJsonResponseSchema },
         body: batchDeleteBodySchema,
+        response: { 200: z.number() },
       },
     },
-    ScaleDataController.batchDelete,
+    async (request) =>
+      deleteScaleData(db, request.session.user.user_id, request.body),
   );
+
   server.post(
     '/batchGet',
     {
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
-        response: { 200: permissiveJsonResponseSchema },
         body: batchGetBodySchema,
+        response: { 200: scaleDataBatchResponseSchema },
       },
     },
-    ScaleDataController.batchGet,
+    async (request) =>
+      getScaleDataByIds(db, request.session.user.user_id, request.body),
   );
 
   done();

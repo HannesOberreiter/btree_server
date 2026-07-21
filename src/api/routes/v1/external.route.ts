@@ -2,8 +2,9 @@ import fastifyFormbody from '@fastify/formbody';
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 
+import { KyselyServer } from '../../../servers/kysely.server.js';
+import { ingestExternalScaleReading } from '../../adapters/scale_data.adapter.js';
 import ExternalController from '../../controllers/external.controller.js';
-import ScaleDataController from '../../controllers/scale_data.controller.js';
 import { Validator } from '../../hooks/validator.hook.js';
 import {
   permissiveJsonResponseSchema,
@@ -23,6 +24,7 @@ export default function routes(
   done: any,
 ) {
   const server = instance.withTypeProvider<ZodTypeProvider>();
+  const db = KyselyServer.getInstance().db;
 
   server.register(fastifyFormbody);
 
@@ -68,7 +70,8 @@ export default function routes(
         querystring: externalScaleQuerySchema,
       },
     },
-    ScaleDataController.api,
+    async (request) =>
+      ingestExternalScaleReading(db, request.params, request.query),
   );
 
   done();
