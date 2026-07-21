@@ -64,7 +64,11 @@
   - [x] Public cache adapter retains Redis behavior and concrete response schemas
   - [x] Pest import adapters pass an explicit database dependency
   - [x] Observation model wrapper removed
-- [ ] Calendar views
+- [x] Calendar views
+  - [x] Task, movement, Todo, Scale Data, and Rearing reads use typed Kysely operations
+  - [x] HTTP and external iCal adapters share calendar operations
+  - [x] Calendar response shapes and tenant isolation covered
+  - [x] Shallow calendar controller and Objection/Knex utility removed
 - [ ] Statistic views
 
 ## Phase 2: core location slices

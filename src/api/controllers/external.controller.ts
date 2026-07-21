@@ -10,22 +10,23 @@ import {
   isServerLocationValid,
   serverLocation,
 } from '../../config/environment.config.js';
+import { KyselyServer } from '../../servers/kysely.server.js';
 import { Logger } from '../../services/logger.service.js';
 import type { MailLang } from '../../services/mail.service.js';
 import { MailLangs, MailService } from '../../services/mail.service.js';
 import { User } from '../models/user.model.js';
+import {
+  listCalendarMovements,
+  listCalendarRearings,
+  listCalendarScaleData,
+  listCalendarTasks,
+  listCalendarTodos,
+} from '../modules/calendar.module.js';
 import type {
   ExternalCalendarParams,
   MollieWebhookBody,
 } from '../schemas/external.schema.js';
 import { getCompany } from '../utils/api.util.js';
-import {
-  getMovements,
-  getRearings,
-  getScaleData,
-  getTask,
-  getTodos,
-} from '../utils/calendar.util.js';
 import { createInvoice } from '../utils/foxyoffice.util.js';
 import { getPayment } from '../utils/mollie.util.js';
 import { addPremium, isPremium } from '../utils/premium.util.js';
@@ -39,13 +40,14 @@ export default class ExternalController {
       throw httpErrors.PaymentRequired();
     }
     let results = [];
+    const db = KyselyServer.getInstance().db;
     const payload = {
       user: {
         user_id: company.id,
       },
       params: {
-        start: dayjs().subtract(6, 'month'),
-        end: dayjs().add(6, 'month'),
+        start: dayjs().subtract(6, 'month').toISOString(),
+        end: dayjs().add(6, 'month').toISOString(),
       },
     };
     const calendar = ical({
@@ -59,24 +61,51 @@ export default class ExternalController {
     calendar.method(ICalCalendarMethod.PUBLISH);
     switch (params.source) {
       case SOURCE.todo: {
-        results = await getTodos(payload.params, payload.user);
+        results = await listCalendarTodos(
+          db,
+          payload.user.user_id,
+          payload.params,
+        );
         break;
       }
       case SOURCE.rearing: {
-        results = await getRearings(payload.params, payload.user);
+        results = await listCalendarRearings(
+          db,
+          payload.user.user_id,
+          payload.params,
+        );
         break;
       }
       case SOURCE.movedate: {
-        results = await getMovements(payload.params, payload.user);
+        results = await listCalendarMovements(
+          db,
+          payload.user.user_id,
+          payload.params,
+        );
         break;
       }
       case SOURCE.scale_data: {
-        results = await getScaleData(payload.params, payload.user);
+        results = await listCalendarScaleData(
+          db,
+          payload.user.user_id,
+          payload.params,
+        );
+        break;
+      }
+      case SOURCE.checkup:
+      case SOURCE.treatment:
+      case SOURCE.harvest:
+      case SOURCE.feed: {
+        results = await listCalendarTasks(
+          db,
+          payload.user.user_id,
+          payload.params,
+          params.source,
+        );
         break;
       }
       default: {
-        results = await getTask(payload.params, payload.user, params.source);
-        break;
+        throw httpErrors.BadRequest('Unsupported calendar source');
       }
     }
     for (const i in results) {
@@ -85,7 +114,7 @@ export default class ExternalController {
         id: `${result.table}_${i}`,
         start: result.start,
         end: result.end,
-        allDay: !!result.allDay,
+        allDay: result.allDay,
         summary: `${result.unicode ? `${result.unicode} ` : ''} ${
           result.title
         }`,

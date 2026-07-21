@@ -1,5 +1,13 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
+import {
+  listCalendarMovements,
+  listCalendarRearings,
+  listCalendarScaleData,
+  listCalendarTasks,
+  listCalendarTodos,
+} from '../../src/api/modules/calendar.module.js';
+import { KyselyServer } from '../../src/servers/kysely.server.js';
 import type { TestAgent } from '../utils.js';
 import {
   createAgent,
@@ -23,6 +31,7 @@ describe('calendar routes', () => {
       '/checkup',
       '/rearing',
       '/movedate',
+      '/todo',
       '/scale_data',
     ];
     kinds.forEach((kind) => {
@@ -54,7 +63,33 @@ describe('calendar routes', () => {
         });
         expect(res.statusCode).toEqual(200);
         expect(res.body).toBeInstanceOf(Array);
+        for (const event of res.body) {
+          expect(event).toEqual(
+            expect.objectContaining({
+              title: expect.any(String),
+              start: expect.any(String),
+              allDay: expect.any(Boolean),
+            }),
+          );
+        }
       });
+    });
+
+    it('operations enforce company isolation', async () => {
+      const db = KyselyServer.getInstance().db;
+      const companyId = 999_999;
+      const range = {
+        start: new Date('2020-01-01').toISOString(),
+        end: new Date('2030-12-31').toISOString(),
+      };
+      const results = await Promise.all([
+        listCalendarTasks(db, companyId, range, 'checkup'),
+        listCalendarMovements(db, companyId, range),
+        listCalendarTodos(db, companyId, range),
+        listCalendarScaleData(db, companyId, range),
+        listCalendarRearings(db, companyId, range),
+      ]);
+      expect(results.every((result) => result.length === 0)).toBe(true);
     });
   });
 });
