@@ -1840,9 +1840,16 @@ export interface paths {
         content: {
           'application/json': {
             data: {
+              amount?: number | null;
+              bestbefore?: string | null;
+              charge?: string | null;
+              date?: string | null;
+              kind?: string;
+              name?: string | null;
+              note?: string | null;
+              price?: number | null;
               type_id?: number | null;
-            } & {
-              [key: string]: unknown;
+              url?: string | null;
             };
             ids: number[];
           };
@@ -7224,7 +7231,55 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'application/json': unknown;
+            'application/json': {
+              results: ({
+                bee_id?: number | null;
+                created_at?: string | null;
+                creator?: {
+                  [key: string]: unknown;
+                } | null;
+                date?: string | null;
+                deleted?: boolean | null;
+                deleted_at?: string | null;
+                edit_id?: number | null;
+                editor?: {
+                  [key: string]: unknown;
+                } | null;
+                hive_id?: number | null;
+                hive_location?: {
+                  [key: string]: unknown;
+                } | null;
+                id: number;
+                mark_colour?: string | null;
+                mating?: {
+                  [key: string]: unknown;
+                } | null;
+                mating_id?: number | null;
+                modus?: boolean | null;
+                modus_date?: string | null;
+                mother?: string | null;
+                mother_id?: number | null;
+                move_date?: string | null;
+                name?: string | null;
+                note?: string | null;
+                own_mother?: {
+                  [key: string]: unknown;
+                } | null;
+                queen_location?: {
+                  [key: string]: unknown;
+                } | null;
+                race?: {
+                  [key: string]: unknown;
+                } | null;
+                race_id?: number | null;
+                updated_at?: string | null;
+                url?: string | null;
+                user_id?: number | null;
+              } & {
+                [key: string]: unknown;
+              })[];
+              total: number;
+            };
           };
         };
       };
@@ -7265,7 +7320,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'application/json': unknown;
+            'application/json': number[];
           };
         };
       };
@@ -7309,7 +7364,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'application/json': unknown;
+            'application/json': number;
           };
         };
       };
@@ -7384,7 +7439,52 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'application/json': unknown;
+            'application/json': ({
+              bee_id?: number | null;
+              created_at?: string | null;
+              creator?: {
+                [key: string]: unknown;
+              } | null;
+              date?: string | null;
+              deleted?: boolean | null;
+              deleted_at?: string | null;
+              edit_id?: number | null;
+              editor?: {
+                [key: string]: unknown;
+              } | null;
+              hive_id?: number | null;
+              hive_location?: {
+                [key: string]: unknown;
+              } | null;
+              id: number;
+              mark_colour?: string | null;
+              mating?: {
+                [key: string]: unknown;
+              } | null;
+              mating_id?: number | null;
+              modus?: boolean | null;
+              modus_date?: string | null;
+              mother?: string | null;
+              mother_id?: number | null;
+              move_date?: string | null;
+              name?: string | null;
+              note?: string | null;
+              own_mother?: {
+                [key: string]: unknown;
+              } | null;
+              queen_location?: {
+                [key: string]: unknown;
+              } | null;
+              race?: {
+                [key: string]: unknown;
+              } | null;
+              race_id?: number | null;
+              updated_at?: string | null;
+              url?: string | null;
+              user_id?: number | null;
+            } & {
+              [key: string]: unknown;
+            })[];
           };
         };
       };
@@ -7421,7 +7521,52 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'application/json': unknown;
+            'application/json': ({
+              bee_id?: number | null;
+              created_at?: string | null;
+              creator?: {
+                [key: string]: unknown;
+              } | null;
+              date?: string | null;
+              deleted?: boolean | null;
+              deleted_at?: string | null;
+              edit_id?: number | null;
+              editor?: {
+                [key: string]: unknown;
+              } | null;
+              hive_id?: number | null;
+              hive_location?: {
+                [key: string]: unknown;
+              } | null;
+              id: number;
+              mark_colour?: string | null;
+              mating?: {
+                [key: string]: unknown;
+              } | null;
+              mating_id?: number | null;
+              modus?: boolean | null;
+              modus_date?: string | null;
+              mother?: string | null;
+              mother_id?: number | null;
+              move_date?: string | null;
+              name?: string | null;
+              note?: string | null;
+              own_mother?: {
+                [key: string]: unknown;
+              } | null;
+              queen_location?: {
+                [key: string]: unknown;
+              } | null;
+              race?: {
+                [key: string]: unknown;
+              } | null;
+              race_id?: number | null;
+              updated_at?: string | null;
+              url?: string | null;
+              user_id?: number | null;
+            } & {
+              [key: string]: unknown;
+            })[];
           };
         };
       };
@@ -7490,7 +7635,12 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'application/json': unknown;
+            'application/json': ({
+              id: number;
+              name?: string | null;
+            } & {
+              [key: string]: unknown;
+            })[];
           };
         };
       };
@@ -7559,7 +7709,14 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'application/json': unknown;
+            'application/json': {
+              results: ({
+                id: number;
+              } & {
+                [key: string]: unknown;
+              })[];
+              total: number;
+            };
           };
         };
       };
@@ -7607,7 +7764,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'application/json': unknown;
+            'application/json': number;
           };
         };
       };
@@ -7686,9 +7843,9 @@ export interface paths {
       requestBody: {
         content: {
           'application/json': {
+            hour?: number | null;
             job: string;
-          } & {
-            [key: string]: unknown;
+            note?: string | null;
           };
         };
       };
@@ -7718,7 +7875,9 @@ export interface paths {
         content: {
           'application/json': {
             data: {
-              [key: string]: unknown;
+              hour?: number | null;
+              job?: string;
+              note?: string | null;
             };
             ids: number[];
           };
@@ -8056,8 +8215,7 @@ export interface paths {
         content: {
           'application/json': {
             name: string;
-          } & {
-            [key: string]: unknown;
+            note?: string | null;
           };
         };
       };
@@ -8087,7 +8245,8 @@ export interface paths {
         content: {
           'application/json': {
             data: {
-              [key: string]: unknown;
+              name?: string;
+              note?: string | null;
             };
             ids: number[];
           };
@@ -8263,9 +8422,13 @@ export interface paths {
           'application/json': {
             date: string;
             detail_id: number;
+            hatch?: number | null;
+            larvae?: number | null;
+            mated?: number | null;
+            name?: string | null;
+            note?: string | null;
+            symbol?: string | null;
             type_id: number;
-          } & {
-            [key: string]: unknown;
           };
         };
       };
@@ -8295,7 +8458,15 @@ export interface paths {
         content: {
           'application/json': {
             data: {
-              [key: string]: unknown;
+              date?: string;
+              detail_id?: number | null;
+              hatch?: number | null;
+              larvae?: number | null;
+              mated?: number | null;
+              name?: string | null;
+              note?: string | null;
+              symbol?: string | null;
+              type_id?: number | null;
             };
             ids: number[];
           };
