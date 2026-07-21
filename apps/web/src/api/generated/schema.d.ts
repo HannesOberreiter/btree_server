@@ -5142,39 +5142,25 @@ export interface paths {
     get: {
       parameters: {
         query?: {
-          action?: string | null;
-          apiary?: number | null;
-          date?: string | null;
-          datetime?: string | null;
-          deleted?: boolean | null;
-          details?: boolean | null;
-          direction?: (('asc' | 'desc') | ('asc' | 'desc')[]) | null;
-          done?: boolean | null;
-          end?: string | null;
-          end_date?: string | null;
-          filters?: string | null;
-          from?: string | null;
-          hard?: boolean | null;
-          hum?: string | null;
-          latest?: boolean | null;
-          latitude?: string | null;
-          limit?: number | null;
-          longitude?: string | null;
+          direction?: ('asc' | 'desc') | ('asc' | 'desc')[];
           modus?: boolean | null;
-          note?: string | null;
-          offset?: number | null;
-          order?: (string | string[]) | null;
-          q?: string | null;
-          rain?: string | null;
-          restore?: boolean | null;
-          start?: string | null;
-          start_date?: string | null;
-          temp1?: string | null;
-          temp2?: string | null;
-          to?: string | null;
-          type?: number | null;
-          weight?: string | null;
-          year?: number | null;
+          order?:
+            | (
+                | 'id'
+                | 'name'
+                | 'favorite'
+                | 'modus'
+                | 'created_at'
+                | 'updated_at'
+              )
+            | (
+                | 'id'
+                | 'name'
+                | 'favorite'
+                | 'modus'
+                | 'created_at'
+                | 'updated_at'
+              )[];
         };
         header?: never;
         path: {
@@ -5201,7 +5187,24 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'application/json': unknown;
+            'application/json': {
+              created_at: string | null;
+              favorite: boolean | null;
+              id: number;
+              modus: boolean | null;
+              name: string | null;
+              note?: string | null;
+              stock?: {
+                sum: (string | number) | null;
+                sum_in: (string | number) | null;
+                sum_out: (string | number) | null;
+                type_id: number | null;
+                user_id: number | null;
+              } | null;
+              unit?: string | null;
+              updated_at: string | null;
+              user_id: number | null;
+            }[];
           };
         };
       };
@@ -5232,9 +5235,9 @@ export interface paths {
           'application/json': {
             favorite?: boolean;
             modus?: boolean;
-            name?: string;
-          } & {
-            [key: string]: unknown;
+            name: string;
+            note?: string | null;
+            unit?: string | null;
           };
         };
       };
@@ -5245,7 +5248,24 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'application/json': unknown;
+            'application/json': {
+              created_at: string | null;
+              favorite: boolean | null;
+              id: number;
+              modus: boolean | null;
+              name: string | null;
+              note?: string | null;
+              stock?: {
+                sum: (string | number) | null;
+                sum_in: (string | number) | null;
+                sum_out: (string | number) | null;
+                type_id: number | null;
+                user_id: number | null;
+              } | null;
+              unit?: string | null;
+              updated_at: string | null;
+              user_id: number | null;
+            };
           };
         };
       };
@@ -5277,7 +5297,11 @@ export interface paths {
         content: {
           'application/json': {
             data: {
-              [key: string]: unknown;
+              favorite?: boolean;
+              modus?: boolean;
+              name?: string;
+              note?: string | null;
+              unit?: string | null;
             };
             ids: number[];
           };
@@ -5290,7 +5314,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'application/json': unknown;
+            'application/json': number;
           };
         };
       };
@@ -5344,7 +5368,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'application/json': unknown;
+            'application/json': number;
           };
         };
       };
@@ -5394,7 +5418,24 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'application/json': unknown;
+            'application/json': {
+              created_at: string | null;
+              favorite: boolean | null;
+              id: number;
+              modus: boolean | null;
+              name: string | null;
+              note?: string | null;
+              stock?: {
+                sum: (string | number) | null;
+                sum_in: (string | number) | null;
+                sum_out: (string | number) | null;
+                type_id: number | null;
+                user_id: number | null;
+              } | null;
+              unit?: string | null;
+              updated_at: string | null;
+              user_id: number | null;
+            }[];
           };
         };
       };
@@ -5452,7 +5493,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'application/json': unknown;
+            'application/json': number;
           };
         };
       };
@@ -5507,7 +5548,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'application/json': unknown;
+            'application/json': number;
           };
         };
       };
