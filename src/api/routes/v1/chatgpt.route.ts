@@ -8,6 +8,7 @@ import { z } from 'zod';
 
 import { url } from '../../../config/environment.config.js';
 import { KyselyServer } from '../../../servers/kysely.server.js';
+import { mapToolError } from '../../adapters/tool_error.adapter.js';
 import AgentOAuthController from '../../controllers/agent_oauth.controller.js';
 import { chatGptAuthHook } from '../../hooks/chatgpt_auth.hook.js';
 import {
@@ -187,25 +188,8 @@ export default async function routes(
       typeof result === 'object' &&
       (result as { ok?: unknown }).ok === false
     ) {
-      const err = (result as { error?: Record<string, unknown> }).error ?? {};
-      const status = typeof err.status === 'number' ? err.status : 400;
-      const message =
-        typeof err.message === 'string' && err.message.length > 0
-          ? err.message
-          : 'Tool execution failed';
-      if (status === 401) {
-        throw httpErrors.Unauthorized(message);
-      }
-      if (status === 403) {
-        throw httpErrors.Forbidden(message);
-      }
-      if (status === 404) {
-        throw httpErrors.NotFound(message);
-      }
-      if (status >= 500) {
-        throw httpErrors.InternalServerError(message);
-      }
-      throw httpErrors.BadRequest(message);
+      const error = (result as { error?: Record<string, unknown> }).error ?? {};
+      throw mapToolError(error);
     }
 
     return result;

@@ -3,6 +3,7 @@ import httpErrors from 'http-errors';
 export type MappedDatabaseError = Error & {
   statusCode?: number;
   code?: string;
+  details?: Record<string, unknown>;
 };
 
 type DatabaseErrorShape = Error & {

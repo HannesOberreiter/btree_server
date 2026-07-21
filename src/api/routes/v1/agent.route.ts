@@ -6,6 +6,7 @@ import httpErrors from 'http-errors';
 
 import { url } from '../../../config/environment.config.js';
 import { KyselyServer } from '../../../servers/kysely.server.js';
+import { mapToolError } from '../../adapters/tool_error.adapter.js';
 import { agentAuthHook } from '../../hooks/agent_auth.hook.js';
 import {
   executeWizBeeTool,
@@ -107,23 +108,7 @@ export default async function routes(
         ) {
           const error =
             (result as { error?: Record<string, unknown> }).error ?? {};
-          const status = typeof error.status === 'number' ? error.status : 400;
-          const message =
-            typeof error.message === 'string' && error.message.length > 0
-              ? error.message
-              : 'Tool execution failed';
-          const httpError =
-            status === 401
-              ? httpErrors.Unauthorized(message)
-              : status === 403
-                ? httpErrors.Forbidden(message)
-                : status === 404
-                  ? httpErrors.NotFound(message)
-                  : status >= 500
-                    ? httpErrors.InternalServerError(message)
-                    : httpErrors.BadRequest(message);
-          if (typeof error.code === 'string') httpError.code = error.code;
-          throw httpError;
+          throw mapToolError(error);
         }
 
         return result;

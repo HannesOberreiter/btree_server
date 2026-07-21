@@ -256,6 +256,7 @@ export class Application {
           statusCode: e.statusCode,
           code: e.code ?? 'HTTP_ERROR',
           message: e.message,
+          ...(e.details && { details: e.details }),
         });
         return;
       }

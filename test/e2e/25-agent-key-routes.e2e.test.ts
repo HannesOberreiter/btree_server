@@ -287,6 +287,25 @@ describe('agent key & agent API routes', () => {
       expect(res.body).toBeDefined();
     });
 
+    it('404 - tool errors preserve recovery details', async () => {
+      const res = await agentFetch(
+        'POST',
+        '/api/v1/agent/tools/getHiveDetail',
+        plaintextKey,
+        { hiveId: 999_999_999 },
+      );
+      expect(res.statusCode).toEqual(404);
+      expect(res.body).toMatchObject({
+        statusCode: 404,
+        code: 'not_found',
+        details: {
+          hint: expect.any(String),
+          suggested_next_tool: 'findHives',
+        },
+      });
+      expect(res.body).not.toHaveProperty('cause');
+    });
+
     it('401 - with invalid key', async () => {
       const res = await agentFetch(
         'POST',
