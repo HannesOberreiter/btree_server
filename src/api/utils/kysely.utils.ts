@@ -199,7 +199,7 @@ export type TableWithUserId = {
  * @throws Error if record doesn't exist or doesn't belong to user
  */
 export async function checkOwnership(
-  db = KyselyServer.getInstance().db,
+  db: Kysely<DB> | Transaction<DB> = KyselyServer.getInstance().db,
   table: TableWithUserId,
   recordId: number,
   userId: number,

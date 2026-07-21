@@ -4,6 +4,12 @@ import { z } from 'zod';
 
 import { KyselyServer } from '../../servers/kysely.server.js';
 import { Logger } from '../../services/logger.service.js';
+import {
+  createTodos,
+  deleteTodos,
+  listTodos,
+  updateTodos,
+} from '../modules/todo.module.js';
 import ApiaryController from './apiary.controller.js';
 import ChargeController from './charge.controller.js';
 import CheckupController from './checkup.controller.js';
@@ -14,7 +20,6 @@ import MovedateController from './movedate.controller.js';
 import OptionController from './options.controller.js';
 import ServiceController from './service.controller.js';
 import StatisticController from './statistic.controller.js';
-import TodoController from './todo.controller.js';
 import TreatmentController from './treatment.controller.js';
 
 /**
@@ -887,12 +892,11 @@ type TaskType = (typeof TASK_TYPES)[number];
 /**
  * Controller mapping for each task type
  */
-const taskControllers: Record<TaskType, any> = {
+const taskControllers: Record<Exclude<TaskType, 'todo'>, any> = {
   feed: FeedController,
   treatment: TreatmentController,
   harvest: HarvestController,
   checkup: CheckupController,
-  todo: TodoController,
 };
 
 /**
@@ -1486,20 +1490,29 @@ export function createWizBeeTools(
         }
         const filters = JSON.stringify(filterArray);
 
-        const Controller = taskControllers[input.task];
-        const req = createMockRequest(context, {
-          query: {
-            limit: input.limit,
-            offset: 0,
-            ...(input.apiaryId &&
-              input.task === 'todo' && { apiary_id: input.apiaryId }),
-            filters,
-            done: input.includeDone ? undefined : false,
-            deleted: false,
-          },
-        });
+        const query = {
+          limit: input.limit,
+          offset: 0,
+          ...(input.apiaryId &&
+            input.task === 'todo' && { apiary_id: input.apiaryId }),
+          filters,
+          done: input.includeDone ? undefined : false,
+          deleted: false,
+        };
+        const req = createMockRequest(context, { query });
 
-        const result = await Controller.get(req, createMockReply());
+        const result =
+          input.task === 'todo'
+            ? await listTodos(
+                KyselyServer.getInstance().db,
+                {
+                  companyId: context.userId,
+                  beeId: context.beeId,
+                  isLlm: true,
+                },
+                query,
+              )
+            : await taskControllers[input.task].get(req, createMockReply());
 
         // Return full records as-is. If the payload is too big for the model
         // context, the wrapper's enforceResultSize() converts it to a
@@ -2036,8 +2049,14 @@ export function createWizBeeTools(
           .describe('Optional apiary to associate with this todo'),
       }),
       execute: async (input) => {
-        const req = createMockRequest(context, {
-          body: {
+        const result = await createTodos(
+          KyselyServer.getInstance().db,
+          {
+            companyId: context.userId,
+            beeId: context.beeId,
+            isLlm: true,
+          },
+          {
             name: input.name,
             date: input.date,
             note: input.note,
@@ -2046,9 +2065,7 @@ export function createWizBeeTools(
             interval: 0,
             done: false,
           },
-        });
-
-        const result = await TodoController.post(req, createMockReply());
+        );
 
         const createdCount = Array.isArray(result) ? result.length : 1;
 
@@ -2092,17 +2109,21 @@ export function createWizBeeTools(
       }),
       execute: async (input) => {
         const { ids, apiaryId, ...rest } = input;
-        const req = createMockRequest(context, {
-          body: {
+        const updatedCount = await updateTodos(
+          KyselyServer.getInstance().db,
+          {
+            companyId: context.userId,
+            beeId: context.beeId,
+            isLlm: true,
+          },
+          {
             ids,
             data: {
               ...rest,
               ...(apiaryId !== undefined && { apiary_id: apiaryId }),
             },
           },
-        });
-
-        const updatedCount = await TodoController.patch(req, createMockReply());
+        );
 
         return {
           success: true,
@@ -2123,13 +2144,14 @@ export function createWizBeeTools(
         ids: z.array(z.number()).min(1).describe('IDs of the todos to delete'),
       }),
       execute: async (input) => {
-        const req = createMockRequest(context, {
-          body: { ids: input.ids },
-        });
-
-        const deletedCount = await TodoController.batchDelete(
-          req,
-          createMockReply(),
+        const deletedCount = await deleteTodos(
+          KyselyServer.getInstance().db,
+          {
+            companyId: context.userId,
+            beeId: context.beeId,
+            isLlm: true,
+          },
+          { ids: input.ids },
         );
 
         return {

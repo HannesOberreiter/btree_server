@@ -4,6 +4,7 @@ import httpErrors from 'http-errors';
 import { map } from 'lodash-es';
 import type Objection from 'objection';
 
+import { KyselyServer } from '../../servers/kysely.server.js';
 import { Apiary } from '../models/apiary.model.js';
 import { Checkup } from '../models/checkup.model.js';
 import { Feed } from '../models/feed.model.js';
@@ -12,6 +13,7 @@ import { Hive } from '../models/hive.model.js';
 import { HiveLocation } from '../models/hive_location.model.js';
 import { Movedate } from '../models/movedate.model.js';
 import { Treatment } from '../models/treatment.model.js';
+import { listTodos } from '../modules/todo.module.js';
 import type {
   HiveCreateBody,
   HiveIdParams,
@@ -24,7 +26,6 @@ import type {
 } from '../schemas/hive.schema.js';
 import { deleteHiveConnections } from '../utils/delete.util.js';
 import { limitHive } from '../utils/premium.util.js';
-import TodoController from './todo.controller.js';
 
 async function isDuplicateHiveName(
   user_id: number,
@@ -313,15 +314,14 @@ export default class HiveController {
             },
           },
         ]);
-        const todosQuery = await TodoController.get(
+        const todosQuery = await listTodos(
+          KyselyServer.getInstance().db,
           {
-            ...req,
-            query: {
-              apiary_id: id,
-              filters,
-            },
+            companyId: req.session.user.user_id,
+            beeId: req.session.user.bee_id,
+            isLlm: req.session.llm === true,
           },
-          _reply,
+          { apiary_id: id, filters },
         );
         todo.push(
           ...todosQuery.results.map((todo) =>

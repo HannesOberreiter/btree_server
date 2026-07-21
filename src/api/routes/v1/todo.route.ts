@@ -1,41 +1,58 @@
-import type { FastifyInstance } from 'fastify';
+import type { FastifyInstance, FastifyRequest } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { z } from 'zod';
 
 import { ROLES } from '../../../config/constants.config.js';
-import TodoController from '../../controllers/todo.controller.js';
+import { KyselyServer } from '../../../servers/kysely.server.js';
 import { Guard } from '../../hooks/guard.hook.js';
-import { compatibilityQuerySchema } from '../../schemas/common.schema.js';
+import {
+  createTodos,
+  deleteTodos,
+  getTodosByIds,
+  listTodos,
+  updateTodoDate,
+  updateTodos,
+  updateTodoStatus,
+} from '../../modules/todo.module.js';
+import type { TodoActor } from '../../modules/todo.module.js';
 import {
   todoBatchDeleteSchema,
   todoBatchGetSchema,
   todoBatchUpdateSchema,
   todoCreateSchema,
+  todoListQuerySchema,
   todoPaginatedResponseSchema,
   todoResponseSchema,
   todoUpdateDateSchema,
   todoUpdateStatusSchema,
 } from '../../schemas/todo.schema.js';
 
+function actorFromRequest(request: FastifyRequest): TodoActor {
+  return {
+    beeId: request.session.user.bee_id,
+    companyId: request.session.user.user_id,
+    isLlm: request.session.llm === true,
+  };
+}
+
 export default function routes(
   instance: FastifyInstance,
-  _options: any,
-  done: any,
+  _options: unknown,
+  done: () => void,
 ) {
   const server = instance.withTypeProvider<ZodTypeProvider>();
+  const db = KyselyServer.getInstance().db;
 
   server.get(
     '/',
     {
       preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
       schema: {
-        querystring: compatibilityQuerySchema,
-        response: {
-          200: todoPaginatedResponseSchema,
-        },
+        querystring: todoListQuerySchema,
+        response: { 200: todoPaginatedResponseSchema },
       },
     },
-    TodoController.get,
+    async (request) => listTodos(db, actorFromRequest(request), request.query),
   );
 
   server.post(
@@ -44,12 +61,10 @@ export default function routes(
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
         body: todoCreateSchema,
-        response: {
-          200: z.array(z.number()),
-        },
+        response: { 200: z.array(z.number()) },
       },
     },
-    TodoController.post,
+    async (request) => createTodos(db, actorFromRequest(request), request.body),
   );
 
   server.patch(
@@ -58,12 +73,10 @@ export default function routes(
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
         body: todoBatchUpdateSchema,
-        response: {
-          200: z.number(),
-        },
+        response: { 200: z.number() },
       },
     },
-    TodoController.patch,
+    async (request) => updateTodos(db, actorFromRequest(request), request.body),
   );
 
   server.patch(
@@ -72,12 +85,11 @@ export default function routes(
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
         body: todoUpdateStatusSchema,
-        response: {
-          200: z.number(),
-        },
+        response: { 200: z.number() },
       },
     },
-    TodoController.updateStatus,
+    async (request) =>
+      updateTodoStatus(db, actorFromRequest(request), request.body),
   );
 
   server.patch(
@@ -86,12 +98,11 @@ export default function routes(
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
         body: todoUpdateDateSchema,
-        response: {
-          200: z.number(),
-        },
+        response: { 200: z.number() },
       },
     },
-    TodoController.updateDate,
+    async (request) =>
+      updateTodoDate(db, actorFromRequest(request), request.body),
   );
 
   server.patch(
@@ -100,12 +111,10 @@ export default function routes(
       preHandler: Guard.authorize([ROLES.admin]),
       schema: {
         body: todoBatchDeleteSchema,
-        response: {
-          200: z.number(),
-        },
+        response: { 200: z.number() },
       },
     },
-    TodoController.batchDelete,
+    async (request) => deleteTodos(db, actorFromRequest(request), request.body),
   );
 
   server.post(
@@ -114,12 +123,11 @@ export default function routes(
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
         body: todoBatchGetSchema,
-        response: {
-          200: z.array(todoResponseSchema),
-        },
+        response: { 200: z.array(todoResponseSchema) },
       },
     },
-    TodoController.batchGet,
+    async (request) =>
+      getTodosByIds(db, actorFromRequest(request), request.body),
   );
 
   done();

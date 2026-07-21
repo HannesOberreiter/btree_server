@@ -1,5 +1,7 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
+import { listTodos, updateTodos } from '../../src/api/modules/todo.module.js';
+import { KyselyServer } from '../../src/servers/kysely.server.js';
 import type { TestAgent } from '../utils.js';
 import {
   createAgent,
@@ -71,6 +73,40 @@ describe('todo routes', () => {
       expect(res.statusCode).toEqual(200);
       expect(res.body.results).toBeInstanceOf(Array);
       expect(res.body.total).toBeTypeOf('number');
+
+      const todo = res.body.results.find(
+        (result: { id: number }) => result.id === insertId,
+      );
+      expect(todo).toMatchObject({
+        id: insertId,
+        name: testInsert.name,
+        done: false,
+        note: testInsert.note,
+        url: testInsert.url,
+      });
+      expect(todo.created_at).toMatch(/^\d{4}-\d{2}-\d{2}/);
+      expect(todo.updated_at).toMatch(/^\d{4}-\d{2}-\d{2}/);
+      expect(todo).toHaveProperty('creator');
+      expect(todo).toHaveProperty('editor');
+      expect(todo).toHaveProperty('apiary');
+    });
+
+    it('operations enforce company isolation', async () => {
+      const db = KyselyServer.getInstance().db;
+      const foreignActor = {
+        companyId: 999_999,
+        beeId: 1,
+        isLlm: false,
+      };
+
+      const listed = await listTodos(db, foreignActor, {});
+      expect(listed.results.some((todo) => todo.id === insertId)).toBe(false);
+
+      const updated = await updateTodos(db, foreignActor, {
+        ids: [insertId],
+        data: { name: 'must-not-change' },
+      });
+      expect(updated).toBe(0);
     });
 
     it('post 400 - no data', async () => {

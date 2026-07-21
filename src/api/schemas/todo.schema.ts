@@ -1,5 +1,40 @@
 import { z } from 'zod';
 
+import { numberSchema } from '../utils/zod.util.js';
+
+export const todoOrderFieldSchema = z.enum([
+  'id',
+  'date',
+  'name',
+  'apiary',
+  'url',
+  'note',
+  'done',
+  'created_at',
+  'updated_at',
+]);
+
+export type TodoOrderField = z.infer<typeof todoOrderFieldSchema>;
+
+export const todoListQuerySchema = z
+  .object({
+    order: z
+      .union([todoOrderFieldSchema, z.array(todoOrderFieldSchema)])
+      .optional(),
+    direction: z
+      .union([z.enum(['asc', 'desc']), z.array(z.enum(['asc', 'desc']))])
+      .optional(),
+    offset: numberSchema.optional(),
+    limit: numberSchema.optional(),
+    q: z.union([z.string(), z.number()]).optional(),
+    filters: z.string().optional(),
+    done: z.boolean().nullable().optional(),
+    apiary_id: numberSchema.optional(),
+  })
+  .loose();
+
+export type TodoListQuery = z.infer<typeof todoListQuerySchema>;
+
 export const beeSchema = z
   .object({
     id: z.number(),
@@ -82,7 +117,7 @@ export const todoUpdateStatusSchema = z.object({
 export type TodoUpdateStatus = z.infer<typeof todoUpdateStatusSchema>;
 
 export const todoUpdateDateSchema = z.object({
-  ids: z.array(z.string()),
+  ids: z.array(numberSchema),
   start: z.string(),
 });
 
