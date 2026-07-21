@@ -1,11 +1,13 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import httpErrors from 'http-errors';
 
+import { KyselyServer } from '../../servers/kysely.server.js';
 import {
-  AgentKeyModel,
+  findAgentKeysByPrefix,
   KEY_PREFIX_LENGTH,
+  updateAgentKeyLastUsed,
   verifyAgentKey,
-} from '../models/agent_key.model.js';
+} from '../modules/agent_key.module.js';
 
 /**
  * Fastify preHandler hook that authenticates requests using an Agent API key.
@@ -39,7 +41,8 @@ export async function agentAuthHook(
   }
 
   const prefix = plaintextKey.substring(0, KEY_PREFIX_LENGTH);
-  const candidates = await AgentKeyModel.findByPrefix(prefix);
+  const db = KyselyServer.getInstance().db;
+  const candidates = await findAgentKeysByPrefix(db, prefix);
 
   if (candidates.length === 0) {
     throw httpErrors.Unauthorized('Invalid API key');
@@ -60,7 +63,7 @@ export async function agentAuthHook(
       request.session.agent = true;
 
       // Update last_used async (don't block the request)
-      AgentKeyModel.updateLastUsed(candidate.id).catch(() => {});
+      updateAgentKeyLastUsed(db, candidate.id).catch(() => {});
 
       return;
     }

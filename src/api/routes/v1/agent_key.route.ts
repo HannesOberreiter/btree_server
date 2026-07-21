@@ -2,46 +2,58 @@ import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 
 import { ROLES } from '../../../config/constants.config.js';
-import AgentKeyController from '../../controllers/agent_key.controller.js';
+import { KyselyServer } from '../../../servers/kysely.server.js';
 import { Guard } from '../../hooks/guard.hook.js';
 import {
+  createAgentKey,
+  listAgentKeys,
+  removeAgentKey,
+} from '../../modules/agent_key.module.js';
+import {
+  agentKeyCreateResponseSchema,
+  agentKeyDeleteResponseSchema,
+  agentKeyListResponseSchema,
   createBodySchema,
   removeParamsSchema,
 } from '../../schemas/agent_key.schema.js';
-import {
-  permissiveJsonResponseSchema,
-  compatibilityQuerySchema,
-} from '../../schemas/common.schema.js';
 
 export default function routes(
   instance: FastifyInstance,
-  _options: any,
-  done: any,
+  _options: unknown,
+  done: () => void,
 ) {
   const server = instance.withTypeProvider<ZodTypeProvider>();
+  const db = KyselyServer.getInstance().db;
 
   server.post(
     '/',
     {
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
-        response: { 200: permissiveJsonResponseSchema },
         body: createBodySchema,
+        response: { 201: agentKeyCreateResponseSchema },
       },
     },
-    AgentKeyController.create,
+    async (request, reply) => {
+      const result = await createAgentKey(
+        db,
+        {
+          companyId: request.session.user.user_id,
+          beeId: request.session.user.bee_id,
+        },
+        request.body,
+      );
+      return reply.code(201).send(result);
+    },
   );
 
   server.get(
     '/',
     {
-      schema: {
-        querystring: compatibilityQuerySchema,
-        response: { 200: permissiveJsonResponseSchema },
-      },
+      schema: { response: { 200: agentKeyListResponseSchema } },
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
     },
-    AgentKeyController.list,
+    async (request) => listAgentKeys(db, request.session.user.bee_id),
   );
 
   server.delete(
@@ -49,12 +61,12 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
-        querystring: compatibilityQuerySchema,
-        response: { 200: permissiveJsonResponseSchema },
         params: removeParamsSchema,
+        response: { 200: agentKeyDeleteResponseSchema },
       },
     },
-    AgentKeyController.remove,
+    async (request) =>
+      removeAgentKey(db, request.params.id, request.session.user.bee_id),
   );
 
   done();
