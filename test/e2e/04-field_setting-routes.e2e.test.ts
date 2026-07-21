@@ -1,5 +1,7 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
+import { getFieldSettings } from '../../src/api/modules/field_setting.module.js';
+import { KyselyServer } from '../../src/servers/kysely.server.js';
 import type { TestAgent } from '../utils.js';
 import {
   createAgent,
@@ -48,6 +50,21 @@ describe('fieldsetting routes', () => {
       const res2 = await doQueryRequest(agent, route, null, accessToken, null);
       expect(res2.statusCode).toEqual(200);
       expect(res2.body).toEqual({ settings: JSON.parse(settings) });
+    });
+
+    it('400 - settings must be a JSON object', async () => {
+      const res = await doRequest(agent, 'patch', route, null, accessToken, {
+        settings: JSON.stringify('not-an-object'),
+      });
+      expect(res.statusCode).toEqual(400);
+    });
+
+    it('operation enforces bee isolation', async () => {
+      const result = await getFieldSettings(
+        KyselyServer.getInstance().db,
+        999_999,
+      );
+      expect(result).toBe(false);
     });
   });
 });
