@@ -142,8 +142,7 @@ const knexConfig = {
     charset: 'utf8mb4',
     timezone: 'Z',
     typeCast(field: any, next: any) {
-      // https://github.com/Vincit/objection.js/issues/174#issuecomment-424873063
-      // Convert 1 to true, 0 to false, and leave null alone
+      // Convert 1 to true, 0 to false, and leave null alone.
       if (field.type === 'TINY' && field.length === 1) {
         const value = field.string();
         if (value === null) return null;

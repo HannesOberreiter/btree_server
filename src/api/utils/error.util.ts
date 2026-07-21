@@ -1,125 +1,51 @@
 import httpErrors from 'http-errors';
-import {
-  CheckViolationError,
-  DataError,
-  DBError,
-  ForeignKeyViolationError,
-  NotFoundError,
-  NotNullViolationError,
-  UniqueViolationError,
-  ValidationError,
-} from 'objection';
 
-export function checkMySQLError(err: any) {
-  // https://vincit.github.io/objection.js/recipes/error-handling.html#examples
-  let error;
-  if (err instanceof ValidationError) {
-    switch (err.type) {
-      case 'ModelValidation': {
-        error = httpErrors.BadRequest(err.message);
-        error.cause = {
-          type: err.type,
-          data: err.data,
-        };
-        break;
-      }
-      case 'RelationExpression': {
-        error = httpErrors.BadRequest(err.message);
-        error.cause = {
-          type: 'RelationExpression',
-          data: {},
-        };
-        break;
-      }
-      case 'UnallowedRelation': {
-        error = httpErrors.BadRequest(err.message);
-        error.cause = {
-          type: err.type,
-          data: {},
-        };
-        break;
-      }
-      case 'InvalidGraph': {
-        error = httpErrors.BadRequest(err.message);
-        error.cause = {
-          type: err.type,
-          data: {},
-        };
-        break;
-      }
-      default: {
-        error = httpErrors.BadRequest(err.message);
-        error.cause = {
-          type: 'UnknownValidationError',
-          data: {},
-        };
-        break;
-      }
-    }
-  } else if (err instanceof NotFoundError) {
-    error = httpErrors.NotFound(err.message);
-    error.cause = {
-      type: 'NotFound',
-      data: {},
-    };
-  } else if (err instanceof UniqueViolationError) {
-    error = httpErrors.Conflict(err.message);
-    error.cause = {
-      type: 'UniqueViolation',
-      data: {
-        columns: err.columns,
-        table: err.table,
-        constraint: err.constraint,
-      },
-    };
-  } else if (err instanceof NotNullViolationError) {
-    error = httpErrors.BadRequest(err.message);
-    error.cause = {
-      type: 'NotNullViolation',
-      data: {
-        columns: err.column,
-        table: err.table,
-      },
-    };
-  } else if (err instanceof ForeignKeyViolationError) {
-    error = httpErrors.Conflict(err.message);
-    error.cause = {
-      type: 'ForeignKeyViolation',
-      data: {
-        table: err.table,
-        constraint: err.constraint,
-      },
-    };
-  } else if (err instanceof CheckViolationError) {
-    error = httpErrors.BadRequest(err.message);
-    error.cause = {
-      type: 'CheckViolation',
-      data: {
-        table: err.table,
-        constraint: err.constraint,
-      },
-    };
-  } else if (err instanceof DataError) {
-    error = httpErrors.BadRequest(err.message);
-    error.cause = {
-      type: 'InvalidData',
-      data: {},
-    };
-  } else if (err instanceof DBError) {
-    error = httpErrors[500](err.message);
-    error.cause = {
-      type: 'UnknownDatabaseError',
-      data: {},
-    };
-  } else if (err instanceof Error) {
-    return err;
-  } else {
-    error = httpErrors[500](err.message);
-    error.cause = {
-      type: 'UnknownError',
-      data: {},
-    };
+export type MappedDatabaseError = Error & {
+  statusCode?: number;
+  code?: string;
+};
+
+type DatabaseErrorShape = Error & {
+  code?: string;
+  errno?: number;
+  sqlState?: string;
+  sqlMessage?: string;
+};
+
+export function checkMySQLError(error: unknown): MappedDatabaseError {
+  if (!(error instanceof Error)) {
+    return httpErrors.InternalServerError(
+      'Unknown error',
+    ) as MappedDatabaseError;
   }
-
-  return error;
+  const databaseError = error as DatabaseErrorShape;
+  if (databaseError.name === 'NoResultError') {
+    const mapped = httpErrors.NotFound(error.message) as MappedDatabaseError;
+    mapped.code = 'NOT_FOUND';
+    return mapped;
+  }
+  if (databaseError.code === 'ER_DUP_ENTRY') {
+    const mapped = httpErrors.Conflict('duplicate') as MappedDatabaseError;
+    mapped.code = 'UNIQUE_VIOLATION';
+    return mapped;
+  }
+  if (
+    databaseError.code === 'ER_NO_REFERENCED_ROW_2' ||
+    databaseError.code === 'ER_ROW_IS_REFERENCED_2'
+  ) {
+    const mapped = httpErrors.Conflict('foreignKey') as MappedDatabaseError;
+    mapped.code = 'FOREIGN_KEY_VIOLATION';
+    return mapped;
+  }
+  if (
+    databaseError.code === 'ER_BAD_NULL_ERROR' ||
+    databaseError.code === 'ER_DATA_TOO_LONG' ||
+    databaseError.code === 'ER_TRUNCATED_WRONG_VALUE' ||
+    databaseError.code === 'WARN_DATA_TRUNCATED'
+  ) {
+    const mapped = httpErrors.BadRequest('invalidData') as MappedDatabaseError;
+    mapped.code = 'INVALID_DATA';
+    return mapped;
+  }
+  return error as MappedDatabaseError;
 }

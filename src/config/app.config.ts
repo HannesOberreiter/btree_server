@@ -241,22 +241,21 @@ export class Application {
         });
       }
 
-      const e = checkMySQLError(error) as any;
+      const e = checkMySQLError(error);
       this.log.error(
         {
           user: request?.session?.user,
           req: request,
-          error: e.cause ? e.cause : e,
+          error: e,
           path: request.url,
         },
-        e.message ? e.message : 'Unhandled error',
+        e.message || 'Unhandled error',
       );
       if (e.statusCode) {
         reply.status(e.statusCode).send({
           statusCode: e.statusCode,
-          error: e.cause ? e.cause.type : e.type ? e.type : 'Unhandled error',
-          cause: e.cause ?? undefined,
-          message: e.message ?? undefined,
+          code: e.code ?? 'HTTP_ERROR',
+          message: e.message,
         });
         return;
       }

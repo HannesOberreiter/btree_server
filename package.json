@@ -1,7 +1,7 @@
 {
   "name": "btree-server",
   "private": true,
-  "description": "b.tree backend based on nodejs, fastify and knex.js, objections.js",
+  "description": "b.tree backend based on Node.js, Fastify, and Kysely",
   "keywords": [],
   "homepage": "https://github.com/HannesOberreiter/btree_server#readme",
   "bugs": {
@@ -65,7 +65,6 @@
     "mysql2": "^3.16.2",
     "node-schedule": "^2.1.0",
     "nodemailer": "^8.0.3",
-    "objection": "^3.0.1",
     "pino": "^10.3.1",
     "pino-abstract-transport": "^3.0.0",
     "proj4": "^2.9.0",

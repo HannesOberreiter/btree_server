@@ -156,10 +156,10 @@
   - [x] Federated providers and credential management use shared Kysely persistence
   - [x] User and Company User routes preserve session and nested response behavior
   - [x] Obsolete credential, login-attempt, refresh-token, payment, and promo models removed
-- [ ] Company
+- [x] Company
   - [x] CRUD, API keys, counts, payments, promo, invoice, and membership operations use Kysely
   - [x] Company creation and deletion use shared Kysely transactions
-  - [ ] Import/export persistence remains on Objection
+  - [x] Import/export persistence uses typed, allowlisted Kysely operations
 
 ## Phase 6: cross-cutting implementation
 
@@ -170,19 +170,19 @@
 - [x] `auth.util.ts`
 - [x] `delete.util.ts`
 - [x] `cron.util.ts`
-- [ ] Company import/export helpers
+- [x] Company import/export helpers
 
 ## Phase 7: removal
 
-- [ ] Zero Objection imports
-- [ ] Zero Objection model query calls
-- [ ] Delete `src/api/models/`
-- [ ] Remove `DatabaseServer` from runtime startup/shutdown
-- [ ] Remove `objection` dependency
-- [ ] Keep Knex only for migrations
-- [ ] Update package description and documentation
+- [x] Zero Objection imports
+- [x] Zero Objection model query calls
+- [x] Delete `src/api/models/`
+- [x] Remove `DatabaseServer` from runtime startup/shutdown
+- [x] Remove `objection` dependency
+- [x] Keep Knex only for migrations
+- [x] Update package description and documentation
 - [ ] Refactor / utilize shared design like actorProjection
-- [ ] Regenerate OpenAPI declarations
+- [x] Regenerate OpenAPI declarations
 - [ ] Improve Vue Playwright E2E coverage for migrated wire shapes, tenant boundaries, filters, nested relations, and regression-prone workflows
 - [ ] Run server lint, build, and E2E
 - [ ] Run Vue lint, typecheck, and improved Playwright E2E suite
@@ -190,12 +190,12 @@
 
 ## Slice definition of done
 
-- [ ] No Objection imports or model calls in migrated slice
-- [ ] Kysely queries compile without `any`
-- [ ] Ownership and company scoping covered by negative tests
-- [ ] Transaction contains complete business operation
-- [ ] UTC timestamp behavior preserved
-- [ ] Response schema and nested relation shape preserved
-- [ ] HTTP and WizBee/internal adapters share operations where applicable
-- [ ] Relevant Objection model deleted when no callers remain
-- [ ] Server and relevant Vue tests pass
+- [x] No Objection imports or model calls in migrated slice
+- [x] Kysely queries compile without `any`
+- [x] Ownership and company scoping covered by negative tests
+- [x] Transaction contains complete business operation
+- [x] UTC timestamp behavior preserved
+- [x] Response schema and nested relation shape preserved
+- [x] HTTP and WizBee/internal adapters share operations where applicable
+- [x] Relevant Objection model deleted when no callers remain
+- [x] Server and relevant Vue tests pass
