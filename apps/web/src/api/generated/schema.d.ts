@@ -9,7 +9,41 @@ export interface paths {
     };
     get: {
       parameters: {
-        query?: never;
+        query?: {
+          action?: string | null;
+          apiary?: number | null;
+          date?: string | null;
+          datetime?: string | null;
+          deleted?: boolean | null;
+          details?: boolean | null;
+          direction?: (('asc' | 'desc') | ('asc' | 'desc')[]) | null;
+          done?: boolean | null;
+          end?: string | null;
+          end_date?: string | null;
+          filters?: string | null;
+          from?: string | null;
+          hard?: boolean | null;
+          hum?: string | null;
+          latest?: boolean | null;
+          latitude?: string | null;
+          limit?: number | null;
+          longitude?: string | null;
+          modus?: boolean | null;
+          note?: string | null;
+          offset?: number | null;
+          order?: (string | string[]) | null;
+          q?: string | null;
+          rain?: string | null;
+          restore?: boolean | null;
+          start?: string | null;
+          start_date?: string | null;
+          temp1?: string | null;
+          temp2?: string | null;
+          to?: string | null;
+          type?: number | null;
+          weight?: string | null;
+          year?: number | null;
+        };
         header?: never;
         path?: never;
         cookie?: never;
@@ -73,7 +107,41 @@ export interface paths {
     post?: never;
     delete: {
       parameters: {
-        query?: never;
+        query?: {
+          action?: string | null;
+          apiary?: number | null;
+          date?: string | null;
+          datetime?: string | null;
+          deleted?: boolean | null;
+          details?: boolean | null;
+          direction?: (('asc' | 'desc') | ('asc' | 'desc')[]) | null;
+          done?: boolean | null;
+          end?: string | null;
+          end_date?: string | null;
+          filters?: string | null;
+          from?: string | null;
+          hard?: boolean | null;
+          hum?: string | null;
+          latest?: boolean | null;
+          latitude?: string | null;
+          limit?: number | null;
+          longitude?: string | null;
+          modus?: boolean | null;
+          note?: string | null;
+          offset?: number | null;
+          order?: (string | string[]) | null;
+          q?: string | null;
+          rain?: string | null;
+          restore?: boolean | null;
+          start?: string | null;
+          start_date?: string | null;
+          temp1?: string | null;
+          temp2?: string | null;
+          to?: string | null;
+          type?: number | null;
+          weight?: string | null;
+          year?: number | null;
+        };
         header?: never;
         path: {
           id: number;
@@ -3180,7 +3248,41 @@ export interface paths {
     };
     get: {
       parameters: {
-        query?: never;
+        query?: {
+          action?: string | null;
+          apiary?: number | null;
+          date?: string | null;
+          datetime?: string | null;
+          deleted?: boolean | null;
+          details?: boolean | null;
+          direction?: (('asc' | 'desc') | ('asc' | 'desc')[]) | null;
+          done?: boolean | null;
+          end?: string | null;
+          end_date?: string | null;
+          filters?: string | null;
+          from?: string | null;
+          hard?: boolean | null;
+          hum?: string | null;
+          latest?: boolean | null;
+          latitude?: string | null;
+          limit?: number | null;
+          longitude?: string | null;
+          modus?: boolean | null;
+          note?: string | null;
+          offset?: number | null;
+          order?: (string | string[]) | null;
+          q?: string | null;
+          rain?: string | null;
+          restore?: boolean | null;
+          start?: string | null;
+          start_date?: string | null;
+          temp1?: string | null;
+          temp2?: string | null;
+          to?: string | null;
+          type?: number | null;
+          weight?: string | null;
+          year?: number | null;
+        };
         header?: never;
         path?: never;
         cookie?: never;
@@ -3218,9 +3320,45 @@ export interface paths {
     post?: never;
     delete: {
       parameters: {
-        query?: never;
+        query?: {
+          action?: string | null;
+          apiary?: number | null;
+          date?: string | null;
+          datetime?: string | null;
+          deleted?: boolean | null;
+          details?: boolean | null;
+          direction?: (('asc' | 'desc') | ('asc' | 'desc')[]) | null;
+          done?: boolean | null;
+          end?: string | null;
+          end_date?: string | null;
+          filters?: string | null;
+          from?: string | null;
+          hard?: boolean | null;
+          hum?: string | null;
+          latest?: boolean | null;
+          latitude?: string | null;
+          limit?: number | null;
+          longitude?: string | null;
+          modus?: boolean | null;
+          note?: string | null;
+          offset?: number | null;
+          order?: (string | string[]) | null;
+          q?: string | null;
+          rain?: string | null;
+          restore?: boolean | null;
+          start?: string | null;
+          start_date?: string | null;
+          temp1?: string | null;
+          temp2?: string | null;
+          to?: string | null;
+          type?: number | null;
+          weight?: string | null;
+          year?: number | null;
+        };
         header?: never;
-        path?: never;
+        path: {
+          id: string;
+        };
         cookie?: never;
       };
       requestBody?: never;
@@ -3250,9 +3388,45 @@ export interface paths {
     };
     get: {
       parameters: {
-        query?: never;
+        query?: {
+          action?: string | null;
+          apiary?: number | null;
+          date?: string | null;
+          datetime?: string | null;
+          deleted?: boolean | null;
+          details?: boolean | null;
+          direction?: (('asc' | 'desc') | ('asc' | 'desc')[]) | null;
+          done?: boolean | null;
+          end?: string | null;
+          end_date?: string | null;
+          filters?: string | null;
+          from?: string | null;
+          hard?: boolean | null;
+          hum?: string | null;
+          latest?: boolean | null;
+          latitude?: string | null;
+          limit?: number | null;
+          longitude?: string | null;
+          modus?: boolean | null;
+          note?: string | null;
+          offset?: number | null;
+          order?: (string | string[]) | null;
+          q?: string | null;
+          rain?: string | null;
+          restore?: boolean | null;
+          start?: string | null;
+          start_date?: string | null;
+          temp1?: string | null;
+          temp2?: string | null;
+          to?: string | null;
+          type?: number | null;
+          weight?: string | null;
+          year?: number | null;
+        };
         header?: never;
-        path?: never;
+        path: {
+          code: string;
+        };
         cookie?: never;
       };
       requestBody?: never;
@@ -3285,7 +3459,41 @@ export interface paths {
     };
     get: {
       parameters: {
-        query?: never;
+        query?: {
+          action?: string | null;
+          apiary?: number | null;
+          date?: string | null;
+          datetime?: string | null;
+          deleted?: boolean | null;
+          details?: boolean | null;
+          direction?: (('asc' | 'desc') | ('asc' | 'desc')[]) | null;
+          done?: boolean | null;
+          end?: string | null;
+          end_date?: string | null;
+          filters?: string | null;
+          from?: string | null;
+          hard?: boolean | null;
+          hum?: string | null;
+          latest?: boolean | null;
+          latitude?: string | null;
+          limit?: number | null;
+          longitude?: string | null;
+          modus?: boolean | null;
+          note?: string | null;
+          offset?: number | null;
+          order?: (string | string[]) | null;
+          q?: string | null;
+          rain?: string | null;
+          restore?: boolean | null;
+          start?: string | null;
+          start_date?: string | null;
+          temp1?: string | null;
+          temp2?: string | null;
+          to?: string | null;
+          type?: number | null;
+          weight?: string | null;
+          year?: number | null;
+        };
         header?: never;
         path?: never;
         cookie?: never;
@@ -3320,9 +3528,46 @@ export interface paths {
     };
     get: {
       parameters: {
-        query?: never;
+        query?: {
+          action?: string | null;
+          apiary?: number | null;
+          date?: string | null;
+          datetime?: string | null;
+          deleted?: boolean | null;
+          details?: boolean | null;
+          direction?: (('asc' | 'desc') | ('asc' | 'desc')[]) | null;
+          done?: boolean | null;
+          end?: string | null;
+          end_date?: string | null;
+          filters?: string | null;
+          from?: string | null;
+          hard?: boolean | null;
+          hum?: string | null;
+          latest?: boolean | null;
+          latitude?: string | null;
+          limit?: number | null;
+          longitude?: string | null;
+          modus?: boolean | null;
+          note?: string | null;
+          offset?: number | null;
+          order?: (string | string[]) | null;
+          q?: string | null;
+          rain?: string | null;
+          restore?: boolean | null;
+          start?: string | null;
+          start_date?: string | null;
+          temp1?: string | null;
+          temp2?: string | null;
+          to?: string | null;
+          type?: number | null;
+          weight?: string | null;
+          year?: number | null;
+        };
         header?: never;
-        path?: never;
+        path: {
+          api: string;
+          source: string;
+        };
         cookie?: never;
       };
       requestBody?: never;
@@ -3362,7 +3607,11 @@ export interface paths {
       };
       requestBody: {
         content: {
-          'application/json': unknown;
+          'application/json': {
+            id: string;
+          } & {
+            [key: string]: unknown;
+          };
         };
       };
       responses: {
@@ -3393,7 +3642,7 @@ export interface paths {
     get: {
       parameters: {
         query: {
-          action: string;
+          action: 'CREATE' | 'CREATE_DEMO';
           datetime?: string;
           hum?: number;
           note?: string;
@@ -3403,7 +3652,10 @@ export interface paths {
           weight?: number;
         };
         header?: never;
-        path?: never;
+        path: {
+          api: string;
+          ident: string;
+        };
         cookie?: never;
       };
       requestBody?: never;
@@ -3473,7 +3725,41 @@ export interface paths {
     };
     get: {
       parameters: {
-        query?: never;
+        query?: {
+          action?: string | null;
+          apiary?: number | null;
+          date?: string | null;
+          datetime?: string | null;
+          deleted?: boolean | null;
+          details?: boolean | null;
+          direction?: (('asc' | 'desc') | ('asc' | 'desc')[]) | null;
+          done?: boolean | null;
+          end?: string | null;
+          end_date?: string | null;
+          filters?: string | null;
+          from?: string | null;
+          hard?: boolean | null;
+          hum?: string | null;
+          latest?: boolean | null;
+          latitude?: string | null;
+          limit?: number | null;
+          longitude?: string | null;
+          modus?: boolean | null;
+          note?: string | null;
+          offset?: number | null;
+          order?: (string | string[]) | null;
+          q?: string | null;
+          rain?: string | null;
+          restore?: boolean | null;
+          start?: string | null;
+          start_date?: string | null;
+          temp1?: string | null;
+          temp2?: string | null;
+          to?: string | null;
+          type?: number | null;
+          weight?: string | null;
+          year?: number | null;
+        };
         header?: never;
         path?: never;
         cookie?: never;
@@ -3502,9 +3788,24 @@ export interface paths {
       requestBody: {
         content: {
           'application/json': {
+            amount?: number | null;
+            charge?: string | null;
+            date?: string;
+            deleted?: boolean;
+            disease_id?: number | null;
+            done?: boolean;
+            enddate?: string;
+            frames?: number | null;
             hive_ids: number[];
             interval?: number;
+            note?: string | null;
             repeat?: number;
+            temperature?: number | null;
+            type_id?: number | null;
+            url?: string | null;
+            vet_id?: number | null;
+            wait?: number | null;
+            water?: number | null;
           } & {
             [key: string]: unknown;
           };
@@ -3536,6 +3837,22 @@ export interface paths {
         content: {
           'application/json': {
             data: {
+              amount?: number | null;
+              charge?: string | null;
+              date?: string;
+              deleted?: boolean;
+              disease_id?: number | null;
+              done?: boolean;
+              enddate?: string;
+              frames?: number | null;
+              note?: string | null;
+              temperature?: number | null;
+              type_id?: number | null;
+              url?: string | null;
+              vet_id?: number | null;
+              wait?: number | null;
+              water?: number | null;
+            } & {
               [key: string]: unknown;
             };
             ids: number[];
@@ -3571,7 +3888,41 @@ export interface paths {
     head?: never;
     patch: {
       parameters: {
-        query?: never;
+        query?: {
+          action?: string | null;
+          apiary?: number | null;
+          date?: string | null;
+          datetime?: string | null;
+          deleted?: boolean | null;
+          details?: boolean | null;
+          direction?: (('asc' | 'desc') | ('asc' | 'desc')[]) | null;
+          done?: boolean | null;
+          end?: string | null;
+          end_date?: string | null;
+          filters?: string | null;
+          from?: string | null;
+          hard?: boolean | null;
+          hum?: string | null;
+          latest?: boolean | null;
+          latitude?: string | null;
+          limit?: number | null;
+          longitude?: string | null;
+          modus?: boolean | null;
+          note?: string | null;
+          offset?: number | null;
+          order?: (string | string[]) | null;
+          q?: string | null;
+          rain?: string | null;
+          restore?: boolean | null;
+          start?: string | null;
+          start_date?: string | null;
+          temp1?: string | null;
+          temp2?: string | null;
+          to?: string | null;
+          type?: number | null;
+          weight?: string | null;
+          year?: number | null;
+        };
         header?: never;
         path?: never;
         cookie?: never;
@@ -3732,7 +4083,41 @@ export interface paths {
     };
     get: {
       parameters: {
-        query?: never;
+        query?: {
+          action?: string | null;
+          apiary?: number | null;
+          date?: string | null;
+          datetime?: string | null;
+          deleted?: boolean | null;
+          details?: boolean | null;
+          direction?: (('asc' | 'desc') | ('asc' | 'desc')[]) | null;
+          done?: boolean | null;
+          end?: string | null;
+          end_date?: string | null;
+          filters?: string | null;
+          from?: string | null;
+          hard?: boolean | null;
+          hum?: string | null;
+          latest?: boolean | null;
+          latitude?: string | null;
+          limit?: number | null;
+          longitude?: string | null;
+          modus?: boolean | null;
+          note?: string | null;
+          offset?: number | null;
+          order?: (string | string[]) | null;
+          q?: string | null;
+          rain?: string | null;
+          restore?: boolean | null;
+          start?: string | null;
+          start_date?: string | null;
+          temp1?: string | null;
+          temp2?: string | null;
+          to?: string | null;
+          type?: number | null;
+          weight?: string | null;
+          year?: number | null;
+        };
         header?: never;
         path?: never;
         cookie?: never;
@@ -3792,7 +4177,41 @@ export interface paths {
     };
     get: {
       parameters: {
-        query?: never;
+        query?: {
+          action?: string | null;
+          apiary?: number | null;
+          date?: string | null;
+          datetime?: string | null;
+          deleted?: boolean | null;
+          details?: boolean | null;
+          direction?: (('asc' | 'desc') | ('asc' | 'desc')[]) | null;
+          done?: boolean | null;
+          end?: string | null;
+          end_date?: string | null;
+          filters?: string | null;
+          from?: string | null;
+          hard?: boolean | null;
+          hum?: string | null;
+          latest?: boolean | null;
+          latitude?: string | null;
+          limit?: number | null;
+          longitude?: string | null;
+          modus?: boolean | null;
+          note?: string | null;
+          offset?: number | null;
+          order?: (string | string[]) | null;
+          q?: string | null;
+          rain?: string | null;
+          restore?: boolean | null;
+          start?: string | null;
+          start_date?: string | null;
+          temp1?: string | null;
+          temp2?: string | null;
+          to?: string | null;
+          type?: number | null;
+          weight?: string | null;
+          year?: number | null;
+        };
         header?: never;
         path?: never;
         cookie?: never;
@@ -3852,7 +4271,41 @@ export interface paths {
     };
     get: {
       parameters: {
-        query?: never;
+        query?: {
+          action?: string | null;
+          apiary?: number | null;
+          date?: string | null;
+          datetime?: string | null;
+          deleted?: boolean | null;
+          details?: boolean | null;
+          direction?: (('asc' | 'desc') | ('asc' | 'desc')[]) | null;
+          done?: boolean | null;
+          end?: string | null;
+          end_date?: string | null;
+          filters?: string | null;
+          from?: string | null;
+          hard?: boolean | null;
+          hum?: string | null;
+          latest?: boolean | null;
+          latitude?: string | null;
+          limit?: number | null;
+          longitude?: string | null;
+          modus?: boolean | null;
+          note?: string | null;
+          offset?: number | null;
+          order?: (string | string[]) | null;
+          q?: string | null;
+          rain?: string | null;
+          restore?: boolean | null;
+          start?: string | null;
+          start_date?: string | null;
+          temp1?: string | null;
+          temp2?: string | null;
+          to?: string | null;
+          type?: number | null;
+          weight?: string | null;
+          year?: number | null;
+        };
         header?: never;
         path?: never;
         cookie?: never;
@@ -3881,9 +4334,24 @@ export interface paths {
       requestBody: {
         content: {
           'application/json': {
+            amount?: number | null;
+            charge?: string | null;
+            date?: string;
+            deleted?: boolean;
+            disease_id?: number | null;
+            done?: boolean;
+            enddate?: string;
+            frames?: number | null;
             hive_ids: number[];
             interval?: number;
+            note?: string | null;
             repeat?: number;
+            temperature?: number | null;
+            type_id?: number | null;
+            url?: string | null;
+            vet_id?: number | null;
+            wait?: number | null;
+            water?: number | null;
           } & {
             [key: string]: unknown;
           };
@@ -3915,6 +4383,22 @@ export interface paths {
         content: {
           'application/json': {
             data: {
+              amount?: number | null;
+              charge?: string | null;
+              date?: string;
+              deleted?: boolean;
+              disease_id?: number | null;
+              done?: boolean;
+              enddate?: string;
+              frames?: number | null;
+              note?: string | null;
+              temperature?: number | null;
+              type_id?: number | null;
+              url?: string | null;
+              vet_id?: number | null;
+              wait?: number | null;
+              water?: number | null;
+            } & {
               [key: string]: unknown;
             };
             ids: number[];
@@ -3950,7 +4434,41 @@ export interface paths {
     head?: never;
     patch: {
       parameters: {
-        query?: never;
+        query?: {
+          action?: string | null;
+          apiary?: number | null;
+          date?: string | null;
+          datetime?: string | null;
+          deleted?: boolean | null;
+          details?: boolean | null;
+          direction?: (('asc' | 'desc') | ('asc' | 'desc')[]) | null;
+          done?: boolean | null;
+          end?: string | null;
+          end_date?: string | null;
+          filters?: string | null;
+          from?: string | null;
+          hard?: boolean | null;
+          hum?: string | null;
+          latest?: boolean | null;
+          latitude?: string | null;
+          limit?: number | null;
+          longitude?: string | null;
+          modus?: boolean | null;
+          note?: string | null;
+          offset?: number | null;
+          order?: (string | string[]) | null;
+          q?: string | null;
+          rain?: string | null;
+          restore?: boolean | null;
+          start?: string | null;
+          start_date?: string | null;
+          temp1?: string | null;
+          temp2?: string | null;
+          to?: string | null;
+          type?: number | null;
+          weight?: string | null;
+          year?: number | null;
+        };
         header?: never;
         path?: never;
         cookie?: never;
@@ -4111,7 +4629,41 @@ export interface paths {
     };
     get: {
       parameters: {
-        query?: never;
+        query?: {
+          action?: string | null;
+          apiary?: number | null;
+          date?: string | null;
+          datetime?: string | null;
+          deleted?: boolean | null;
+          details?: boolean | null;
+          direction?: (('asc' | 'desc') | ('asc' | 'desc')[]) | null;
+          done?: boolean | null;
+          end?: string | null;
+          end_date?: string | null;
+          filters?: string | null;
+          from?: string | null;
+          hard?: boolean | null;
+          hum?: string | null;
+          latest?: boolean | null;
+          latitude?: string | null;
+          limit?: number | null;
+          longitude?: string | null;
+          modus?: boolean | null;
+          note?: string | null;
+          offset?: number | null;
+          order?: (string | string[]) | null;
+          q?: string | null;
+          rain?: string | null;
+          restore?: boolean | null;
+          start?: string | null;
+          start_date?: string | null;
+          temp1?: string | null;
+          temp2?: string | null;
+          to?: string | null;
+          type?: number | null;
+          weight?: string | null;
+          year?: number | null;
+        };
         header?: never;
         path?: never;
         cookie?: never;
@@ -4223,9 +4775,45 @@ export interface paths {
     };
     get: {
       parameters: {
-        query?: never;
+        query?: {
+          action?: string | null;
+          apiary?: number | null;
+          date?: string | null;
+          datetime?: string | null;
+          deleted?: boolean | null;
+          details?: boolean | null;
+          direction?: (('asc' | 'desc') | ('asc' | 'desc')[]) | null;
+          done?: boolean | null;
+          end?: string | null;
+          end_date?: string | null;
+          filters?: string | null;
+          from?: string | null;
+          hard?: boolean | null;
+          hum?: string | null;
+          latest?: boolean | null;
+          latitude?: string | null;
+          limit?: number | null;
+          longitude?: string | null;
+          modus?: boolean | null;
+          note?: string | null;
+          offset?: number | null;
+          order?: (string | string[]) | null;
+          q?: string | null;
+          rain?: string | null;
+          restore?: boolean | null;
+          start?: string | null;
+          start_date?: string | null;
+          temp1?: string | null;
+          temp2?: string | null;
+          to?: string | null;
+          type?: number | null;
+          weight?: string | null;
+          year?: number | null;
+        };
         header?: never;
-        path?: never;
+        path: {
+          id: number;
+        };
         cookie?: never;
       };
       requestBody?: never;
@@ -4264,7 +4852,41 @@ export interface paths {
     head?: never;
     patch: {
       parameters: {
-        query?: never;
+        query?: {
+          action?: string | null;
+          apiary?: number | null;
+          date?: string | null;
+          datetime?: string | null;
+          deleted?: boolean | null;
+          details?: boolean | null;
+          direction?: (('asc' | 'desc') | ('asc' | 'desc')[]) | null;
+          done?: boolean | null;
+          end?: string | null;
+          end_date?: string | null;
+          filters?: string | null;
+          from?: string | null;
+          hard?: boolean | null;
+          hum?: string | null;
+          latest?: boolean | null;
+          latitude?: string | null;
+          limit?: number | null;
+          longitude?: string | null;
+          modus?: boolean | null;
+          note?: string | null;
+          offset?: number | null;
+          order?: (string | string[]) | null;
+          q?: string | null;
+          rain?: string | null;
+          restore?: boolean | null;
+          start?: string | null;
+          start_date?: string | null;
+          temp1?: string | null;
+          temp2?: string | null;
+          to?: string | null;
+          type?: number | null;
+          weight?: string | null;
+          year?: number | null;
+        };
         header?: never;
         path?: never;
         cookie?: never;
@@ -4466,7 +5088,41 @@ export interface paths {
     };
     get: {
       parameters: {
-        query?: never;
+        query?: {
+          action?: string | null;
+          apiary?: number | null;
+          date?: string | null;
+          datetime?: string | null;
+          deleted?: boolean | null;
+          details?: boolean | null;
+          direction?: (('asc' | 'desc') | ('asc' | 'desc')[]) | null;
+          done?: boolean | null;
+          end?: string | null;
+          end_date?: string | null;
+          filters?: string | null;
+          from?: string | null;
+          hard?: boolean | null;
+          hum?: string | null;
+          latest?: boolean | null;
+          latitude?: string | null;
+          limit?: number | null;
+          longitude?: string | null;
+          modus?: boolean | null;
+          note?: string | null;
+          offset?: number | null;
+          order?: (string | string[]) | null;
+          q?: string | null;
+          rain?: string | null;
+          restore?: boolean | null;
+          start?: string | null;
+          start_date?: string | null;
+          temp1?: string | null;
+          temp2?: string | null;
+          to?: string | null;
+          type?: number | null;
+          weight?: string | null;
+          year?: number | null;
+        };
         header?: never;
         path?: never;
         cookie?: never;
@@ -4716,9 +5372,56 @@ export interface paths {
     };
     get: {
       parameters: {
-        query?: never;
+        query?: {
+          action?: string | null;
+          apiary?: number | null;
+          date?: string | null;
+          datetime?: string | null;
+          deleted?: boolean | null;
+          details?: boolean | null;
+          direction?: (('asc' | 'desc') | ('asc' | 'desc')[]) | null;
+          done?: boolean | null;
+          end?: string | null;
+          end_date?: string | null;
+          filters?: string | null;
+          from?: string | null;
+          hard?: boolean | null;
+          hum?: string | null;
+          latest?: boolean | null;
+          latitude?: string | null;
+          limit?: number | null;
+          longitude?: string | null;
+          modus?: boolean | null;
+          note?: string | null;
+          offset?: number | null;
+          order?: (string | string[]) | null;
+          q?: string | null;
+          rain?: string | null;
+          restore?: boolean | null;
+          start?: string | null;
+          start_date?: string | null;
+          temp1?: string | null;
+          temp2?: string | null;
+          to?: string | null;
+          type?: number | null;
+          weight?: string | null;
+          year?: number | null;
+        };
         header?: never;
-        path?: never;
+        path: {
+          table:
+            | 'charge_types'
+            | 'hive_sources'
+            | 'hive_types'
+            | 'feed_types'
+            | 'harvest_types'
+            | 'checkup_types'
+            | 'queen_matings'
+            | 'queen_races'
+            | 'treatment_diseases'
+            | 'treatment_types'
+            | 'treatment_vets';
+        };
         cookie?: never;
       };
       requestBody?: never;
@@ -4739,12 +5442,31 @@ export interface paths {
       parameters: {
         query?: never;
         header?: never;
-        path?: never;
+        path: {
+          table:
+            | 'charge_types'
+            | 'hive_sources'
+            | 'hive_types'
+            | 'feed_types'
+            | 'harvest_types'
+            | 'checkup_types'
+            | 'queen_matings'
+            | 'queen_races'
+            | 'treatment_diseases'
+            | 'treatment_types'
+            | 'treatment_vets';
+        };
         cookie?: never;
       };
       requestBody: {
         content: {
-          'application/json': unknown;
+          'application/json': {
+            favorite?: boolean;
+            modus?: boolean;
+            name?: string;
+          } & {
+            [key: string]: unknown;
+          };
         };
       };
       responses: {
@@ -4766,7 +5488,20 @@ export interface paths {
       parameters: {
         query?: never;
         header?: never;
-        path?: never;
+        path: {
+          table:
+            | 'charge_types'
+            | 'hive_sources'
+            | 'hive_types'
+            | 'feed_types'
+            | 'harvest_types'
+            | 'checkup_types'
+            | 'queen_matings'
+            | 'queen_races'
+            | 'treatment_diseases'
+            | 'treatment_types'
+            | 'treatment_vets';
+        };
         cookie?: never;
       };
       requestBody: {
@@ -4810,7 +5545,20 @@ export interface paths {
       parameters: {
         query?: never;
         header?: never;
-        path?: never;
+        path: {
+          table:
+            | 'charge_types'
+            | 'hive_sources'
+            | 'hive_types'
+            | 'feed_types'
+            | 'harvest_types'
+            | 'checkup_types'
+            | 'queen_matings'
+            | 'queen_races'
+            | 'treatment_diseases'
+            | 'treatment_types'
+            | 'treatment_vets';
+        };
         cookie?: never;
       };
       requestBody: {
@@ -4847,7 +5595,20 @@ export interface paths {
       parameters: {
         query?: never;
         header?: never;
-        path?: never;
+        path: {
+          table:
+            | 'charge_types'
+            | 'hive_sources'
+            | 'hive_types'
+            | 'feed_types'
+            | 'harvest_types'
+            | 'checkup_types'
+            | 'queen_matings'
+            | 'queen_races'
+            | 'treatment_diseases'
+            | 'treatment_types'
+            | 'treatment_vets';
+        };
         cookie?: never;
       };
       requestBody: {
@@ -4892,7 +5653,20 @@ export interface paths {
       parameters: {
         query?: never;
         header?: never;
-        path?: never;
+        path: {
+          table:
+            | 'charge_types'
+            | 'hive_sources'
+            | 'hive_types'
+            | 'feed_types'
+            | 'harvest_types'
+            | 'checkup_types'
+            | 'queen_matings'
+            | 'queen_races'
+            | 'treatment_diseases'
+            | 'treatment_types'
+            | 'treatment_vets';
+        };
         cookie?: never;
       };
       requestBody: {
@@ -4933,7 +5707,20 @@ export interface paths {
       parameters: {
         query?: never;
         header?: never;
-        path?: never;
+        path: {
+          table:
+            | 'charge_types'
+            | 'hive_sources'
+            | 'hive_types'
+            | 'feed_types'
+            | 'harvest_types'
+            | 'checkup_types'
+            | 'queen_matings'
+            | 'queen_races'
+            | 'treatment_diseases'
+            | 'treatment_types'
+            | 'treatment_vets';
+        };
         cookie?: never;
       };
       requestBody: {
@@ -4967,7 +5754,41 @@ export interface paths {
     };
     get: {
       parameters: {
-        query?: never;
+        query?: {
+          action?: string | null;
+          apiary?: number | null;
+          date?: string | null;
+          datetime?: string | null;
+          deleted?: boolean | null;
+          details?: boolean | null;
+          direction?: (('asc' | 'desc') | ('asc' | 'desc')[]) | null;
+          done?: boolean | null;
+          end?: string | null;
+          end_date?: string | null;
+          filters?: string | null;
+          from?: string | null;
+          hard?: boolean | null;
+          hum?: string | null;
+          latest?: boolean | null;
+          latitude?: string | null;
+          limit?: number | null;
+          longitude?: string | null;
+          modus?: boolean | null;
+          note?: string | null;
+          offset?: number | null;
+          order?: (string | string[]) | null;
+          q?: string | null;
+          rain?: string | null;
+          restore?: boolean | null;
+          start?: string | null;
+          start_date?: string | null;
+          temp1?: string | null;
+          temp2?: string | null;
+          to?: string | null;
+          type?: number | null;
+          weight?: string | null;
+          year?: number | null;
+        };
         header?: never;
         path: {
           taxa: 'velutina' | 'aethina_tumida';
@@ -5011,7 +5832,41 @@ export interface paths {
     };
     get: {
       parameters: {
-        query?: never;
+        query?: {
+          action?: string | null;
+          apiary?: number | null;
+          date?: string | null;
+          datetime?: string | null;
+          deleted?: boolean | null;
+          details?: boolean | null;
+          direction?: (('asc' | 'desc') | ('asc' | 'desc')[]) | null;
+          done?: boolean | null;
+          end?: string | null;
+          end_date?: string | null;
+          filters?: string | null;
+          from?: string | null;
+          hard?: boolean | null;
+          hum?: string | null;
+          latest?: boolean | null;
+          latitude?: string | null;
+          limit?: number | null;
+          longitude?: string | null;
+          modus?: boolean | null;
+          note?: string | null;
+          offset?: number | null;
+          order?: (string | string[]) | null;
+          q?: string | null;
+          rain?: string | null;
+          restore?: boolean | null;
+          start?: string | null;
+          start_date?: string | null;
+          temp1?: string | null;
+          temp2?: string | null;
+          to?: string | null;
+          type?: number | null;
+          weight?: string | null;
+          year?: number | null;
+        };
         header?: never;
         path: {
           taxa: 'velutina' | 'aethina_tumida';
@@ -5048,7 +5903,41 @@ export interface paths {
     };
     get: {
       parameters: {
-        query?: never;
+        query?: {
+          action?: string | null;
+          apiary?: number | null;
+          date?: string | null;
+          datetime?: string | null;
+          deleted?: boolean | null;
+          details?: boolean | null;
+          direction?: (('asc' | 'desc') | ('asc' | 'desc')[]) | null;
+          done?: boolean | null;
+          end?: string | null;
+          end_date?: string | null;
+          filters?: string | null;
+          from?: string | null;
+          hard?: boolean | null;
+          hum?: string | null;
+          latest?: boolean | null;
+          latitude?: string | null;
+          limit?: number | null;
+          longitude?: string | null;
+          modus?: boolean | null;
+          note?: string | null;
+          offset?: number | null;
+          order?: (string | string[]) | null;
+          q?: string | null;
+          rain?: string | null;
+          restore?: boolean | null;
+          start?: string | null;
+          start_date?: string | null;
+          temp1?: string | null;
+          temp2?: string | null;
+          to?: string | null;
+          type?: number | null;
+          weight?: string | null;
+          year?: number | null;
+        };
         header?: never;
         path: {
           taxa: 'velutina' | 'aethina_tumida';
@@ -5093,7 +5982,41 @@ export interface paths {
     };
     get: {
       parameters: {
-        query?: never;
+        query?: {
+          action?: string | null;
+          apiary?: number | null;
+          date?: string | null;
+          datetime?: string | null;
+          deleted?: boolean | null;
+          details?: boolean | null;
+          direction?: (('asc' | 'desc') | ('asc' | 'desc')[]) | null;
+          done?: boolean | null;
+          end?: string | null;
+          end_date?: string | null;
+          filters?: string | null;
+          from?: string | null;
+          hard?: boolean | null;
+          hum?: string | null;
+          latest?: boolean | null;
+          latitude?: string | null;
+          limit?: number | null;
+          longitude?: string | null;
+          modus?: boolean | null;
+          note?: string | null;
+          offset?: number | null;
+          order?: (string | string[]) | null;
+          q?: string | null;
+          rain?: string | null;
+          restore?: boolean | null;
+          start?: string | null;
+          start_date?: string | null;
+          temp1?: string | null;
+          temp2?: string | null;
+          to?: string | null;
+          type?: number | null;
+          weight?: string | null;
+          year?: number | null;
+        };
         header?: never;
         path?: never;
         cookie?: never;
@@ -5122,10 +6045,21 @@ export interface paths {
       requestBody: {
         content: {
           'application/json': {
+            date?: string | null;
+            hive_id?: number | number[];
+            mark_colour?: string | null;
+            mating_id?: number | null;
+            modus?: boolean;
+            modus_date?: string | null;
+            mother?: string | null;
+            mother_id?: number | null;
+            move_date?: string | null;
+            name: string;
+            note?: string | null;
+            race_id?: number | null;
             repeat?: number;
             start?: number;
-          } & {
-            [key: string]: unknown;
+            url?: string | null;
           };
         };
       };
@@ -5155,7 +6089,19 @@ export interface paths {
         content: {
           'application/json': {
             data: {
-              [key: string]: unknown;
+              date?: string | null;
+              hive_id?: 'empty' | null;
+              mark_colour?: string | null;
+              mating_id?: number | null;
+              modus?: boolean;
+              modus_date?: string | null;
+              mother?: string | null;
+              mother_id?: number | null;
+              move_date?: string | null;
+              name?: string;
+              note?: string | null;
+              race_id?: number | null;
+              url?: string | null;
             };
             ids: number[];
           };
@@ -5190,7 +6136,41 @@ export interface paths {
     head?: never;
     patch: {
       parameters: {
-        query?: never;
+        query?: {
+          action?: string | null;
+          apiary?: number | null;
+          date?: string | null;
+          datetime?: string | null;
+          deleted?: boolean | null;
+          details?: boolean | null;
+          direction?: (('asc' | 'desc') | ('asc' | 'desc')[]) | null;
+          done?: boolean | null;
+          end?: string | null;
+          end_date?: string | null;
+          filters?: string | null;
+          from?: string | null;
+          hard?: boolean | null;
+          hum?: string | null;
+          latest?: boolean | null;
+          latitude?: string | null;
+          limit?: number | null;
+          longitude?: string | null;
+          modus?: boolean | null;
+          note?: string | null;
+          offset?: number | null;
+          order?: (string | string[]) | null;
+          q?: string | null;
+          rain?: string | null;
+          restore?: boolean | null;
+          start?: string | null;
+          start_date?: string | null;
+          temp1?: string | null;
+          temp2?: string | null;
+          to?: string | null;
+          type?: number | null;
+          weight?: string | null;
+          year?: number | null;
+        };
         header?: never;
         path?: never;
         cookie?: never;
@@ -5266,9 +6246,45 @@ export interface paths {
     };
     get: {
       parameters: {
-        query?: never;
+        query?: {
+          action?: string | null;
+          apiary?: number | null;
+          date?: string | null;
+          datetime?: string | null;
+          deleted?: boolean | null;
+          details?: boolean | null;
+          direction?: (('asc' | 'desc') | ('asc' | 'desc')[]) | null;
+          done?: boolean | null;
+          end?: string | null;
+          end_date?: string | null;
+          filters?: string | null;
+          from?: string | null;
+          hard?: boolean | null;
+          hum?: string | null;
+          latest?: boolean | null;
+          latitude?: string | null;
+          limit?: number | null;
+          longitude?: string | null;
+          modus?: boolean | null;
+          note?: string | null;
+          offset?: number | null;
+          order?: (string | string[]) | null;
+          q?: string | null;
+          rain?: string | null;
+          restore?: boolean | null;
+          start?: string | null;
+          start_date?: string | null;
+          temp1?: string | null;
+          temp2?: string | null;
+          to?: string | null;
+          type?: number | null;
+          weight?: string | null;
+          year?: number | null;
+        };
         header?: never;
-        path?: never;
+        path: {
+          id: number;
+        };
         cookie?: never;
       };
       requestBody?: never;
@@ -5301,7 +6317,41 @@ export interface paths {
     };
     get: {
       parameters: {
-        query?: never;
+        query?: {
+          action?: string | null;
+          apiary?: number | null;
+          date?: string | null;
+          datetime?: string | null;
+          deleted?: boolean | null;
+          details?: boolean | null;
+          direction?: (('asc' | 'desc') | ('asc' | 'desc')[]) | null;
+          done?: boolean | null;
+          end?: string | null;
+          end_date?: string | null;
+          filters?: string | null;
+          from?: string | null;
+          hard?: boolean | null;
+          hum?: string | null;
+          latest?: boolean | null;
+          latitude?: string | null;
+          limit?: number | null;
+          longitude?: string | null;
+          modus?: boolean | null;
+          note?: string | null;
+          offset?: number | null;
+          order?: (string | string[]) | null;
+          q?: string | null;
+          rain?: string | null;
+          restore?: boolean | null;
+          start?: string | null;
+          start_date?: string | null;
+          temp1?: string | null;
+          temp2?: string | null;
+          to?: string | null;
+          type?: number | null;
+          weight?: string | null;
+          year?: number | null;
+        };
         header?: never;
         path?: never;
         cookie?: never;
@@ -5378,7 +6428,41 @@ export interface paths {
     };
     get: {
       parameters: {
-        query?: never;
+        query?: {
+          action?: string | null;
+          apiary?: number | null;
+          date?: string | null;
+          datetime?: string | null;
+          deleted?: boolean | null;
+          details?: boolean | null;
+          direction?: (('asc' | 'desc') | ('asc' | 'desc')[]) | null;
+          done?: boolean | null;
+          end?: string | null;
+          end_date?: string | null;
+          filters?: string | null;
+          from?: string | null;
+          hard?: boolean | null;
+          hum?: string | null;
+          latest?: boolean | null;
+          latitude?: string | null;
+          limit?: number | null;
+          longitude?: string | null;
+          modus?: boolean | null;
+          note?: string | null;
+          offset?: number | null;
+          order?: (string | string[]) | null;
+          q?: string | null;
+          rain?: string | null;
+          restore?: boolean | null;
+          start?: string | null;
+          start_date?: string | null;
+          temp1?: string | null;
+          temp2?: string | null;
+          to?: string | null;
+          type?: number | null;
+          weight?: string | null;
+          year?: number | null;
+        };
         header?: never;
         path?: never;
         cookie?: never;
@@ -5559,7 +6643,15 @@ export interface paths {
       };
       requestBody: {
         content: {
-          'application/json': unknown;
+          'application/json': {
+            detail_id?: number;
+            position: number;
+            sleep_after?: number;
+            sleep_before?: number;
+            type_id?: number;
+          } & {
+            [key: string]: unknown;
+          };
         };
       };
       responses: {
@@ -5592,7 +6684,41 @@ export interface paths {
     post?: never;
     delete: {
       parameters: {
-        query?: never;
+        query?: {
+          action?: string | null;
+          apiary?: number | null;
+          date?: string | null;
+          datetime?: string | null;
+          deleted?: boolean | null;
+          details?: boolean | null;
+          direction?: (('asc' | 'desc') | ('asc' | 'desc')[]) | null;
+          done?: boolean | null;
+          end?: string | null;
+          end_date?: string | null;
+          filters?: string | null;
+          from?: string | null;
+          hard?: boolean | null;
+          hum?: string | null;
+          latest?: boolean | null;
+          latitude?: string | null;
+          limit?: number | null;
+          longitude?: string | null;
+          modus?: boolean | null;
+          note?: string | null;
+          offset?: number | null;
+          order?: (string | string[]) | null;
+          q?: string | null;
+          rain?: string | null;
+          restore?: boolean | null;
+          start?: string | null;
+          start_date?: string | null;
+          temp1?: string | null;
+          temp2?: string | null;
+          to?: string | null;
+          type?: number | null;
+          weight?: string | null;
+          year?: number | null;
+        };
         header?: never;
         path: {
           id: string;
@@ -5671,7 +6797,41 @@ export interface paths {
     };
     get: {
       parameters: {
-        query?: never;
+        query?: {
+          action?: string | null;
+          apiary?: number | null;
+          date?: string | null;
+          datetime?: string | null;
+          deleted?: boolean | null;
+          details?: boolean | null;
+          direction?: (('asc' | 'desc') | ('asc' | 'desc')[]) | null;
+          done?: boolean | null;
+          end?: string | null;
+          end_date?: string | null;
+          filters?: string | null;
+          from?: string | null;
+          hard?: boolean | null;
+          hum?: string | null;
+          latest?: boolean | null;
+          latitude?: string | null;
+          limit?: number | null;
+          longitude?: string | null;
+          modus?: boolean | null;
+          note?: string | null;
+          offset?: number | null;
+          order?: (string | string[]) | null;
+          q?: string | null;
+          rain?: string | null;
+          restore?: boolean | null;
+          start?: string | null;
+          start_date?: string | null;
+          temp1?: string | null;
+          temp2?: string | null;
+          to?: string | null;
+          type?: number | null;
+          weight?: string | null;
+          year?: number | null;
+        };
         header?: never;
         path?: never;
         cookie?: never;
@@ -5843,7 +7003,41 @@ export interface paths {
     };
     get: {
       parameters: {
-        query?: never;
+        query?: {
+          action?: string | null;
+          apiary?: number | null;
+          date?: string | null;
+          datetime?: string | null;
+          deleted?: boolean | null;
+          details?: boolean | null;
+          direction?: (('asc' | 'desc') | ('asc' | 'desc')[]) | null;
+          done?: boolean | null;
+          end?: string | null;
+          end_date?: string | null;
+          filters?: string | null;
+          from?: string | null;
+          hard?: boolean | null;
+          hum?: string | null;
+          latest?: boolean | null;
+          latitude?: string | null;
+          limit?: number | null;
+          longitude?: string | null;
+          modus?: boolean | null;
+          note?: string | null;
+          offset?: number | null;
+          order?: (string | string[]) | null;
+          q?: string | null;
+          rain?: string | null;
+          restore?: boolean | null;
+          start?: string | null;
+          start_date?: string | null;
+          temp1?: string | null;
+          temp2?: string | null;
+          to?: string | null;
+          type?: number | null;
+          weight?: string | null;
+          year?: number | null;
+        };
         header?: never;
         path?: never;
         cookie?: never;
@@ -6068,7 +7262,11 @@ export interface paths {
       };
       requestBody: {
         content: {
-          'application/json': unknown;
+          'application/json': {
+            violation?: unknown;
+          } & {
+            [key: string]: unknown;
+          };
         };
       };
       responses: {
@@ -6098,7 +7296,41 @@ export interface paths {
     };
     get: {
       parameters: {
-        query?: never;
+        query?: {
+          action?: string | null;
+          apiary?: number | null;
+          date?: string | null;
+          datetime?: string | null;
+          deleted?: boolean | null;
+          details?: boolean | null;
+          direction?: (('asc' | 'desc') | ('asc' | 'desc')[]) | null;
+          done?: boolean | null;
+          end?: string | null;
+          end_date?: string | null;
+          filters?: string | null;
+          from?: string | null;
+          hard?: boolean | null;
+          hum?: string | null;
+          latest?: boolean | null;
+          latitude?: string | null;
+          limit?: number | null;
+          longitude?: string | null;
+          modus?: boolean | null;
+          note?: string | null;
+          offset?: number | null;
+          order?: (string | string[]) | null;
+          q?: string | null;
+          rain?: string | null;
+          restore?: boolean | null;
+          start?: string | null;
+          start_date?: string | null;
+          temp1?: string | null;
+          temp2?: string | null;
+          to?: string | null;
+          type?: number | null;
+          weight?: string | null;
+          year?: number | null;
+        };
         header?: never;
         path?: never;
         cookie?: never;
@@ -6345,7 +7577,41 @@ export interface paths {
     post?: never;
     delete: {
       parameters: {
-        query?: never;
+        query?: {
+          action?: string | null;
+          apiary?: number | null;
+          date?: string | null;
+          datetime?: string | null;
+          deleted?: boolean | null;
+          details?: boolean | null;
+          direction?: (('asc' | 'desc') | ('asc' | 'desc')[]) | null;
+          done?: boolean | null;
+          end?: string | null;
+          end_date?: string | null;
+          filters?: string | null;
+          from?: string | null;
+          hard?: boolean | null;
+          hum?: string | null;
+          latest?: boolean | null;
+          latitude?: string | null;
+          limit?: number | null;
+          longitude?: string | null;
+          modus?: boolean | null;
+          note?: string | null;
+          offset?: number | null;
+          order?: (string | string[]) | null;
+          q?: string | null;
+          rain?: string | null;
+          restore?: boolean | null;
+          start?: string | null;
+          start_date?: string | null;
+          temp1?: string | null;
+          temp2?: string | null;
+          to?: string | null;
+          type?: number | null;
+          weight?: string | null;
+          year?: number | null;
+        };
         header?: never;
         path: {
           id: string;
@@ -6379,9 +7645,45 @@ export interface paths {
     };
     get: {
       parameters: {
-        query?: never;
+        query?: {
+          action?: string | null;
+          apiary?: number | null;
+          date?: string | null;
+          datetime?: string | null;
+          deleted?: boolean | null;
+          details?: boolean | null;
+          direction?: (('asc' | 'desc') | ('asc' | 'desc')[]) | null;
+          done?: boolean | null;
+          end?: string | null;
+          end_date?: string | null;
+          filters?: string | null;
+          from?: string | null;
+          hard?: boolean | null;
+          hum?: string | null;
+          latest?: boolean | null;
+          latitude?: string | null;
+          limit?: number | null;
+          longitude?: string | null;
+          modus?: boolean | null;
+          note?: string | null;
+          offset?: number | null;
+          order?: (string | string[]) | null;
+          q?: string | null;
+          rain?: string | null;
+          restore?: boolean | null;
+          start?: string | null;
+          start_date?: string | null;
+          temp1?: string | null;
+          temp2?: string | null;
+          to?: string | null;
+          type?: number | null;
+          weight?: string | null;
+          year?: number | null;
+        };
         header?: never;
-        path?: never;
+        path: {
+          id: number;
+        };
         cookie?: never;
       };
       requestBody?: never;
@@ -6452,9 +7754,45 @@ export interface paths {
     };
     get: {
       parameters: {
-        query?: never;
+        query?: {
+          action?: string | null;
+          apiary?: number | null;
+          date?: string | null;
+          datetime?: string | null;
+          deleted?: boolean | null;
+          details?: boolean | null;
+          direction?: (('asc' | 'desc') | ('asc' | 'desc')[]) | null;
+          done?: boolean | null;
+          end?: string | null;
+          end_date?: string | null;
+          filters?: string | null;
+          from?: string | null;
+          hard?: boolean | null;
+          hum?: string | null;
+          latest?: boolean | null;
+          latitude?: string | null;
+          limit?: number | null;
+          longitude?: string | null;
+          modus?: boolean | null;
+          note?: string | null;
+          offset?: number | null;
+          order?: (string | string[]) | null;
+          q?: string | null;
+          rain?: string | null;
+          restore?: boolean | null;
+          start?: string | null;
+          start_date?: string | null;
+          temp1?: string | null;
+          temp2?: string | null;
+          to?: string | null;
+          type?: number | null;
+          weight?: string | null;
+          year?: number | null;
+        };
         header?: never;
-        path?: never;
+        path: {
+          apiary_id: number;
+        };
         cookie?: never;
       };
       requestBody?: never;
@@ -6487,7 +7825,41 @@ export interface paths {
     };
     get: {
       parameters: {
-        query?: never;
+        query?: {
+          action?: string | null;
+          apiary?: number | null;
+          date?: string | null;
+          datetime?: string | null;
+          deleted?: boolean | null;
+          details?: boolean | null;
+          direction?: (('asc' | 'desc') | ('asc' | 'desc')[]) | null;
+          done?: boolean | null;
+          end?: string | null;
+          end_date?: string | null;
+          filters?: string | null;
+          from?: string | null;
+          hard?: boolean | null;
+          hum?: string | null;
+          latest?: boolean | null;
+          latitude?: string | null;
+          limit?: number | null;
+          longitude?: string | null;
+          modus?: boolean | null;
+          note?: string | null;
+          offset?: number | null;
+          order?: (string | string[]) | null;
+          q?: string | null;
+          rain?: string | null;
+          restore?: boolean | null;
+          start?: string | null;
+          start_date?: string | null;
+          temp1?: string | null;
+          temp2?: string | null;
+          to?: string | null;
+          type?: number | null;
+          weight?: string | null;
+          year?: number | null;
+        };
         header?: never;
         path?: never;
         cookie?: never;
@@ -6610,14 +7982,12 @@ export interface paths {
       parameters: {
         query?: never;
         header?: never;
-        path?: never;
+        path: {
+          orderID: string;
+        };
         cookie?: never;
       };
-      requestBody: {
-        content: {
-          'application/json': unknown;
-        };
-      };
+      requestBody?: never;
       responses: {
         /** @description Default Response */
         200: {
@@ -6687,9 +8057,45 @@ export interface paths {
     };
     get: {
       parameters: {
-        query?: never;
+        query?: {
+          action?: string | null;
+          apiary?: number | null;
+          date?: string | null;
+          datetime?: string | null;
+          deleted?: boolean | null;
+          details?: boolean | null;
+          direction?: (('asc' | 'desc') | ('asc' | 'desc')[]) | null;
+          done?: boolean | null;
+          end?: string | null;
+          end_date?: string | null;
+          filters?: string | null;
+          from?: string | null;
+          hard?: boolean | null;
+          hum?: string | null;
+          latest?: boolean | null;
+          latitude?: string | null;
+          limit?: number | null;
+          longitude?: string | null;
+          modus?: boolean | null;
+          note?: string | null;
+          offset?: number | null;
+          order?: (string | string[]) | null;
+          q?: string | null;
+          rain?: string | null;
+          restore?: boolean | null;
+          start?: string | null;
+          start_date?: string | null;
+          temp1?: string | null;
+          temp2?: string | null;
+          to?: string | null;
+          type?: number | null;
+          weight?: string | null;
+          year?: number | null;
+        };
         header?: never;
-        path?: never;
+        path: {
+          apiary_id: number;
+        };
         cookie?: never;
       };
       requestBody?: never;
@@ -6722,7 +8128,41 @@ export interface paths {
     };
     get: {
       parameters: {
-        query?: never;
+        query?: {
+          action?: string | null;
+          apiary?: number | null;
+          date?: string | null;
+          datetime?: string | null;
+          deleted?: boolean | null;
+          details?: boolean | null;
+          direction?: (('asc' | 'desc') | ('asc' | 'desc')[]) | null;
+          done?: boolean | null;
+          end?: string | null;
+          end_date?: string | null;
+          filters?: string | null;
+          from?: string | null;
+          hard?: boolean | null;
+          hum?: string | null;
+          latest?: boolean | null;
+          latitude?: string | null;
+          limit?: number | null;
+          longitude?: string | null;
+          modus?: boolean | null;
+          note?: string | null;
+          offset?: number | null;
+          order?: (string | string[]) | null;
+          q?: string | null;
+          rain?: string | null;
+          restore?: boolean | null;
+          start?: string | null;
+          start_date?: string | null;
+          temp1?: string | null;
+          temp2?: string | null;
+          to?: string | null;
+          type?: number | null;
+          weight?: string | null;
+          year?: number | null;
+        };
         header?: never;
         path?: never;
         cookie?: never;
@@ -6757,7 +8197,41 @@ export interface paths {
     };
     get: {
       parameters: {
-        query?: never;
+        query?: {
+          action?: string | null;
+          apiary?: number | null;
+          date?: string | null;
+          datetime?: string | null;
+          deleted?: boolean | null;
+          details?: boolean | null;
+          direction?: (('asc' | 'desc') | ('asc' | 'desc')[]) | null;
+          done?: boolean | null;
+          end?: string | null;
+          end_date?: string | null;
+          filters?: string | null;
+          from?: string | null;
+          hard?: boolean | null;
+          hum?: string | null;
+          latest?: boolean | null;
+          latitude?: string | null;
+          limit?: number | null;
+          longitude?: string | null;
+          modus?: boolean | null;
+          note?: string | null;
+          offset?: number | null;
+          order?: (string | string[]) | null;
+          q?: string | null;
+          rain?: string | null;
+          restore?: boolean | null;
+          start?: string | null;
+          start_date?: string | null;
+          temp1?: string | null;
+          temp2?: string | null;
+          to?: string | null;
+          type?: number | null;
+          weight?: string | null;
+          year?: number | null;
+        };
         header?: never;
         path?: never;
         cookie?: never;
@@ -6792,7 +8266,41 @@ export interface paths {
     };
     get: {
       parameters: {
-        query?: never;
+        query?: {
+          action?: string | null;
+          apiary?: number | null;
+          date?: string | null;
+          datetime?: string | null;
+          deleted?: boolean | null;
+          details?: boolean | null;
+          direction?: (('asc' | 'desc') | ('asc' | 'desc')[]) | null;
+          done?: boolean | null;
+          end?: string | null;
+          end_date?: string | null;
+          filters?: string | null;
+          from?: string | null;
+          hard?: boolean | null;
+          hum?: string | null;
+          latest?: boolean | null;
+          latitude?: string | null;
+          limit?: number | null;
+          longitude?: string | null;
+          modus?: boolean | null;
+          note?: string | null;
+          offset?: number | null;
+          order?: (string | string[]) | null;
+          q?: string | null;
+          rain?: string | null;
+          restore?: boolean | null;
+          start?: string | null;
+          start_date?: string | null;
+          temp1?: string | null;
+          temp2?: string | null;
+          to?: string | null;
+          type?: number | null;
+          weight?: string | null;
+          year?: number | null;
+        };
         header?: never;
         path?: never;
         cookie?: never;
@@ -6827,7 +8335,41 @@ export interface paths {
     };
     get: {
       parameters: {
-        query?: never;
+        query?: {
+          action?: string | null;
+          apiary?: number | null;
+          date?: string | null;
+          datetime?: string | null;
+          deleted?: boolean | null;
+          details?: boolean | null;
+          direction?: (('asc' | 'desc') | ('asc' | 'desc')[]) | null;
+          done?: boolean | null;
+          end?: string | null;
+          end_date?: string | null;
+          filters?: string | null;
+          from?: string | null;
+          hard?: boolean | null;
+          hum?: string | null;
+          latest?: boolean | null;
+          latitude?: string | null;
+          limit?: number | null;
+          longitude?: string | null;
+          modus?: boolean | null;
+          note?: string | null;
+          offset?: number | null;
+          order?: (string | string[]) | null;
+          q?: string | null;
+          rain?: string | null;
+          restore?: boolean | null;
+          start?: string | null;
+          start_date?: string | null;
+          temp1?: string | null;
+          temp2?: string | null;
+          to?: string | null;
+          type?: number | null;
+          weight?: string | null;
+          year?: number | null;
+        };
         header?: never;
         path?: never;
         cookie?: never;
@@ -6862,7 +8404,41 @@ export interface paths {
     };
     get: {
       parameters: {
-        query?: never;
+        query?: {
+          action?: string | null;
+          apiary?: number | null;
+          date?: string | null;
+          datetime?: string | null;
+          deleted?: boolean | null;
+          details?: boolean | null;
+          direction?: (('asc' | 'desc') | ('asc' | 'desc')[]) | null;
+          done?: boolean | null;
+          end?: string | null;
+          end_date?: string | null;
+          filters?: string | null;
+          from?: string | null;
+          hard?: boolean | null;
+          hum?: string | null;
+          latest?: boolean | null;
+          latitude?: string | null;
+          limit?: number | null;
+          longitude?: string | null;
+          modus?: boolean | null;
+          note?: string | null;
+          offset?: number | null;
+          order?: (string | string[]) | null;
+          q?: string | null;
+          rain?: string | null;
+          restore?: boolean | null;
+          start?: string | null;
+          start_date?: string | null;
+          temp1?: string | null;
+          temp2?: string | null;
+          to?: string | null;
+          type?: number | null;
+          weight?: string | null;
+          year?: number | null;
+        };
         header?: never;
         path?: never;
         cookie?: never;
@@ -6897,7 +8473,41 @@ export interface paths {
     };
     get: {
       parameters: {
-        query?: never;
+        query?: {
+          action?: string | null;
+          apiary?: number | null;
+          date?: string | null;
+          datetime?: string | null;
+          deleted?: boolean | null;
+          details?: boolean | null;
+          direction?: (('asc' | 'desc') | ('asc' | 'desc')[]) | null;
+          done?: boolean | null;
+          end?: string | null;
+          end_date?: string | null;
+          filters?: string | null;
+          from?: string | null;
+          hard?: boolean | null;
+          hum?: string | null;
+          latest?: boolean | null;
+          latitude?: string | null;
+          limit?: number | null;
+          longitude?: string | null;
+          modus?: boolean | null;
+          note?: string | null;
+          offset?: number | null;
+          order?: (string | string[]) | null;
+          q?: string | null;
+          rain?: string | null;
+          restore?: boolean | null;
+          start?: string | null;
+          start_date?: string | null;
+          temp1?: string | null;
+          temp2?: string | null;
+          to?: string | null;
+          type?: number | null;
+          weight?: string | null;
+          year?: number | null;
+        };
         header?: never;
         path?: never;
         cookie?: never;
@@ -6932,7 +8542,41 @@ export interface paths {
     };
     get: {
       parameters: {
-        query?: never;
+        query?: {
+          action?: string | null;
+          apiary?: number | null;
+          date?: string | null;
+          datetime?: string | null;
+          deleted?: boolean | null;
+          details?: boolean | null;
+          direction?: (('asc' | 'desc') | ('asc' | 'desc')[]) | null;
+          done?: boolean | null;
+          end?: string | null;
+          end_date?: string | null;
+          filters?: string | null;
+          from?: string | null;
+          hard?: boolean | null;
+          hum?: string | null;
+          latest?: boolean | null;
+          latitude?: string | null;
+          limit?: number | null;
+          longitude?: string | null;
+          modus?: boolean | null;
+          note?: string | null;
+          offset?: number | null;
+          order?: (string | string[]) | null;
+          q?: string | null;
+          rain?: string | null;
+          restore?: boolean | null;
+          start?: string | null;
+          start_date?: string | null;
+          temp1?: string | null;
+          temp2?: string | null;
+          to?: string | null;
+          type?: number | null;
+          weight?: string | null;
+          year?: number | null;
+        };
         header?: never;
         path?: never;
         cookie?: never;
@@ -6967,7 +8611,41 @@ export interface paths {
     };
     get: {
       parameters: {
-        query?: never;
+        query?: {
+          action?: string | null;
+          apiary?: number | null;
+          date?: string | null;
+          datetime?: string | null;
+          deleted?: boolean | null;
+          details?: boolean | null;
+          direction?: (('asc' | 'desc') | ('asc' | 'desc')[]) | null;
+          done?: boolean | null;
+          end?: string | null;
+          end_date?: string | null;
+          filters?: string | null;
+          from?: string | null;
+          hard?: boolean | null;
+          hum?: string | null;
+          latest?: boolean | null;
+          latitude?: string | null;
+          limit?: number | null;
+          longitude?: string | null;
+          modus?: boolean | null;
+          note?: string | null;
+          offset?: number | null;
+          order?: (string | string[]) | null;
+          q?: string | null;
+          rain?: string | null;
+          restore?: boolean | null;
+          start?: string | null;
+          start_date?: string | null;
+          temp1?: string | null;
+          temp2?: string | null;
+          to?: string | null;
+          type?: number | null;
+          weight?: string | null;
+          year?: number | null;
+        };
         header?: never;
         path?: never;
         cookie?: never;
@@ -7039,7 +8717,41 @@ export interface paths {
     };
     get: {
       parameters: {
-        query?: never;
+        query?: {
+          action?: string | null;
+          apiary?: number | null;
+          date?: string | null;
+          datetime?: string | null;
+          deleted?: boolean | null;
+          details?: boolean | null;
+          direction?: (('asc' | 'desc') | ('asc' | 'desc')[]) | null;
+          done?: boolean | null;
+          end?: string | null;
+          end_date?: string | null;
+          filters?: string | null;
+          from?: string | null;
+          hard?: boolean | null;
+          hum?: string | null;
+          latest?: boolean | null;
+          latitude?: string | null;
+          limit?: number | null;
+          longitude?: string | null;
+          modus?: boolean | null;
+          note?: string | null;
+          offset?: number | null;
+          order?: (string | string[]) | null;
+          q?: string | null;
+          rain?: string | null;
+          restore?: boolean | null;
+          start?: string | null;
+          start_date?: string | null;
+          temp1?: string | null;
+          temp2?: string | null;
+          to?: string | null;
+          type?: number | null;
+          weight?: string | null;
+          year?: number | null;
+        };
         header?: never;
         path?: never;
         cookie?: never;
@@ -7074,7 +8786,41 @@ export interface paths {
     };
     get: {
       parameters: {
-        query?: never;
+        query?: {
+          action?: string | null;
+          apiary?: number | null;
+          date?: string | null;
+          datetime?: string | null;
+          deleted?: boolean | null;
+          details?: boolean | null;
+          direction?: (('asc' | 'desc') | ('asc' | 'desc')[]) | null;
+          done?: boolean | null;
+          end?: string | null;
+          end_date?: string | null;
+          filters?: string | null;
+          from?: string | null;
+          hard?: boolean | null;
+          hum?: string | null;
+          latest?: boolean | null;
+          latitude?: string | null;
+          limit?: number | null;
+          longitude?: string | null;
+          modus?: boolean | null;
+          note?: string | null;
+          offset?: number | null;
+          order?: (string | string[]) | null;
+          q?: string | null;
+          rain?: string | null;
+          restore?: boolean | null;
+          start?: string | null;
+          start_date?: string | null;
+          temp1?: string | null;
+          temp2?: string | null;
+          to?: string | null;
+          type?: number | null;
+          weight?: string | null;
+          year?: number | null;
+        };
         header?: never;
         path?: never;
         cookie?: never;
@@ -7109,7 +8855,41 @@ export interface paths {
     };
     get: {
       parameters: {
-        query?: never;
+        query?: {
+          action?: string | null;
+          apiary?: number | null;
+          date?: string | null;
+          datetime?: string | null;
+          deleted?: boolean | null;
+          details?: boolean | null;
+          direction?: (('asc' | 'desc') | ('asc' | 'desc')[]) | null;
+          done?: boolean | null;
+          end?: string | null;
+          end_date?: string | null;
+          filters?: string | null;
+          from?: string | null;
+          hard?: boolean | null;
+          hum?: string | null;
+          latest?: boolean | null;
+          latitude?: string | null;
+          limit?: number | null;
+          longitude?: string | null;
+          modus?: boolean | null;
+          note?: string | null;
+          offset?: number | null;
+          order?: (string | string[]) | null;
+          q?: string | null;
+          rain?: string | null;
+          restore?: boolean | null;
+          start?: string | null;
+          start_date?: string | null;
+          temp1?: string | null;
+          temp2?: string | null;
+          to?: string | null;
+          type?: number | null;
+          weight?: string | null;
+          year?: number | null;
+        };
         header?: never;
         path?: never;
         cookie?: never;
@@ -7144,7 +8924,41 @@ export interface paths {
     };
     get: {
       parameters: {
-        query?: never;
+        query?: {
+          action?: string | null;
+          apiary?: number | null;
+          date?: string | null;
+          datetime?: string | null;
+          deleted?: boolean | null;
+          details?: boolean | null;
+          direction?: (('asc' | 'desc') | ('asc' | 'desc')[]) | null;
+          done?: boolean | null;
+          end?: string | null;
+          end_date?: string | null;
+          filters?: string | null;
+          from?: string | null;
+          hard?: boolean | null;
+          hum?: string | null;
+          latest?: boolean | null;
+          latitude?: string | null;
+          limit?: number | null;
+          longitude?: string | null;
+          modus?: boolean | null;
+          note?: string | null;
+          offset?: number | null;
+          order?: (string | string[]) | null;
+          q?: string | null;
+          rain?: string | null;
+          restore?: boolean | null;
+          start?: string | null;
+          start_date?: string | null;
+          temp1?: string | null;
+          temp2?: string | null;
+          to?: string | null;
+          type?: number | null;
+          weight?: string | null;
+          year?: number | null;
+        };
         header?: never;
         path?: never;
         cookie?: never;
@@ -7179,7 +8993,41 @@ export interface paths {
     };
     get: {
       parameters: {
-        query?: never;
+        query?: {
+          action?: string | null;
+          apiary?: number | null;
+          date?: string | null;
+          datetime?: string | null;
+          deleted?: boolean | null;
+          details?: boolean | null;
+          direction?: (('asc' | 'desc') | ('asc' | 'desc')[]) | null;
+          done?: boolean | null;
+          end?: string | null;
+          end_date?: string | null;
+          filters?: string | null;
+          from?: string | null;
+          hard?: boolean | null;
+          hum?: string | null;
+          latest?: boolean | null;
+          latitude?: string | null;
+          limit?: number | null;
+          longitude?: string | null;
+          modus?: boolean | null;
+          note?: string | null;
+          offset?: number | null;
+          order?: (string | string[]) | null;
+          q?: string | null;
+          rain?: string | null;
+          restore?: boolean | null;
+          start?: string | null;
+          start_date?: string | null;
+          temp1?: string | null;
+          temp2?: string | null;
+          to?: string | null;
+          type?: number | null;
+          weight?: string | null;
+          year?: number | null;
+        };
         header?: never;
         path?: never;
         cookie?: never;
@@ -7214,7 +9062,41 @@ export interface paths {
     };
     get: {
       parameters: {
-        query?: never;
+        query?: {
+          action?: string | null;
+          apiary?: number | null;
+          date?: string | null;
+          datetime?: string | null;
+          deleted?: boolean | null;
+          details?: boolean | null;
+          direction?: (('asc' | 'desc') | ('asc' | 'desc')[]) | null;
+          done?: boolean | null;
+          end?: string | null;
+          end_date?: string | null;
+          filters?: string | null;
+          from?: string | null;
+          hard?: boolean | null;
+          hum?: string | null;
+          latest?: boolean | null;
+          latitude?: string | null;
+          limit?: number | null;
+          longitude?: string | null;
+          modus?: boolean | null;
+          note?: string | null;
+          offset?: number | null;
+          order?: (string | string[]) | null;
+          q?: string | null;
+          rain?: string | null;
+          restore?: boolean | null;
+          start?: string | null;
+          start_date?: string | null;
+          temp1?: string | null;
+          temp2?: string | null;
+          to?: string | null;
+          type?: number | null;
+          weight?: string | null;
+          year?: number | null;
+        };
         header?: never;
         path?: never;
         cookie?: never;
@@ -7288,7 +9170,41 @@ export interface paths {
     };
     get: {
       parameters: {
-        query?: never;
+        query?: {
+          action?: string | null;
+          apiary?: number | null;
+          date?: string | null;
+          datetime?: string | null;
+          deleted?: boolean | null;
+          details?: boolean | null;
+          direction?: (('asc' | 'desc') | ('asc' | 'desc')[]) | null;
+          done?: boolean | null;
+          end?: string | null;
+          end_date?: string | null;
+          filters?: string | null;
+          from?: string | null;
+          hard?: boolean | null;
+          hum?: string | null;
+          latest?: boolean | null;
+          latitude?: string | null;
+          limit?: number | null;
+          longitude?: string | null;
+          modus?: boolean | null;
+          note?: string | null;
+          offset?: number | null;
+          order?: (string | string[]) | null;
+          q?: string | null;
+          rain?: string | null;
+          restore?: boolean | null;
+          start?: string | null;
+          start_date?: string | null;
+          temp1?: string | null;
+          temp2?: string | null;
+          to?: string | null;
+          type?: number | null;
+          weight?: string | null;
+          year?: number | null;
+        };
         header?: never;
         path?: never;
         cookie?: never;
@@ -7323,7 +9239,41 @@ export interface paths {
     };
     get: {
       parameters: {
-        query?: never;
+        query?: {
+          action?: string | null;
+          apiary?: number | null;
+          date?: string | null;
+          datetime?: string | null;
+          deleted?: boolean | null;
+          details?: boolean | null;
+          direction?: (('asc' | 'desc') | ('asc' | 'desc')[]) | null;
+          done?: boolean | null;
+          end?: string | null;
+          end_date?: string | null;
+          filters?: string | null;
+          from?: string | null;
+          hard?: boolean | null;
+          hum?: string | null;
+          latest?: boolean | null;
+          latitude?: string | null;
+          limit?: number | null;
+          longitude?: string | null;
+          modus?: boolean | null;
+          note?: string | null;
+          offset?: number | null;
+          order?: (string | string[]) | null;
+          q?: string | null;
+          rain?: string | null;
+          restore?: boolean | null;
+          start?: string | null;
+          start_date?: string | null;
+          temp1?: string | null;
+          temp2?: string | null;
+          to?: string | null;
+          type?: number | null;
+          weight?: string | null;
+          year?: number | null;
+        };
         header?: never;
         path?: never;
         cookie?: never;
@@ -7646,7 +9596,41 @@ export interface paths {
     };
     get: {
       parameters: {
-        query?: never;
+        query?: {
+          action?: string | null;
+          apiary?: number | null;
+          date?: string | null;
+          datetime?: string | null;
+          deleted?: boolean | null;
+          details?: boolean | null;
+          direction?: (('asc' | 'desc') | ('asc' | 'desc')[]) | null;
+          done?: boolean | null;
+          end?: string | null;
+          end_date?: string | null;
+          filters?: string | null;
+          from?: string | null;
+          hard?: boolean | null;
+          hum?: string | null;
+          latest?: boolean | null;
+          latitude?: string | null;
+          limit?: number | null;
+          longitude?: string | null;
+          modus?: boolean | null;
+          note?: string | null;
+          offset?: number | null;
+          order?: (string | string[]) | null;
+          q?: string | null;
+          rain?: string | null;
+          restore?: boolean | null;
+          start?: string | null;
+          start_date?: string | null;
+          temp1?: string | null;
+          temp2?: string | null;
+          to?: string | null;
+          type?: number | null;
+          weight?: string | null;
+          year?: number | null;
+        };
         header?: never;
         path?: never;
         cookie?: never;
@@ -7675,9 +9659,24 @@ export interface paths {
       requestBody: {
         content: {
           'application/json': {
+            amount?: number | null;
+            charge?: string | null;
+            date?: string;
+            deleted?: boolean;
+            disease_id?: number | null;
+            done?: boolean;
+            enddate?: string;
+            frames?: number | null;
             hive_ids: number[];
-            interval: number;
-            repeat: number;
+            interval?: number;
+            note?: string | null;
+            repeat?: number;
+            temperature?: number | null;
+            type_id?: number | null;
+            url?: string | null;
+            vet_id?: number | null;
+            wait?: number | null;
+            water?: number | null;
           } & {
             [key: string]: unknown;
           };
@@ -7709,6 +9708,22 @@ export interface paths {
         content: {
           'application/json': {
             data: {
+              amount?: number | null;
+              charge?: string | null;
+              date?: string;
+              deleted?: boolean;
+              disease_id?: number | null;
+              done?: boolean;
+              enddate?: string;
+              frames?: number | null;
+              note?: string | null;
+              temperature?: number | null;
+              type_id?: number | null;
+              url?: string | null;
+              vet_id?: number | null;
+              wait?: number | null;
+              water?: number | null;
+            } & {
               [key: string]: unknown;
             };
             ids: number[];
@@ -7744,7 +9759,41 @@ export interface paths {
     head?: never;
     patch: {
       parameters: {
-        query?: never;
+        query?: {
+          action?: string | null;
+          apiary?: number | null;
+          date?: string | null;
+          datetime?: string | null;
+          deleted?: boolean | null;
+          details?: boolean | null;
+          direction?: (('asc' | 'desc') | ('asc' | 'desc')[]) | null;
+          done?: boolean | null;
+          end?: string | null;
+          end_date?: string | null;
+          filters?: string | null;
+          from?: string | null;
+          hard?: boolean | null;
+          hum?: string | null;
+          latest?: boolean | null;
+          latitude?: string | null;
+          limit?: number | null;
+          longitude?: string | null;
+          modus?: boolean | null;
+          note?: string | null;
+          offset?: number | null;
+          order?: (string | string[]) | null;
+          q?: string | null;
+          rain?: string | null;
+          restore?: boolean | null;
+          start?: string | null;
+          start_date?: string | null;
+          temp1?: string | null;
+          temp2?: string | null;
+          to?: string | null;
+          type?: number | null;
+          weight?: string | null;
+          year?: number | null;
+        };
         header?: never;
         path?: never;
         cookie?: never;
@@ -7905,7 +9954,41 @@ export interface paths {
     };
     get: {
       parameters: {
-        query?: never;
+        query?: {
+          action?: string | null;
+          apiary?: number | null;
+          date?: string | null;
+          datetime?: string | null;
+          deleted?: boolean | null;
+          details?: boolean | null;
+          direction?: (('asc' | 'desc') | ('asc' | 'desc')[]) | null;
+          done?: boolean | null;
+          end?: string | null;
+          end_date?: string | null;
+          filters?: string | null;
+          from?: string | null;
+          hard?: boolean | null;
+          hum?: string | null;
+          latest?: boolean | null;
+          latitude?: string | null;
+          limit?: number | null;
+          longitude?: string | null;
+          modus?: boolean | null;
+          note?: string | null;
+          offset?: number | null;
+          order?: (string | string[]) | null;
+          q?: string | null;
+          rain?: string | null;
+          restore?: boolean | null;
+          start?: string | null;
+          start_date?: string | null;
+          temp1?: string | null;
+          temp2?: string | null;
+          to?: string | null;
+          type?: number | null;
+          weight?: string | null;
+          year?: number | null;
+        };
         header?: never;
         path?: never;
         cookie?: never;
@@ -7937,7 +10020,17 @@ export interface paths {
       };
       requestBody: {
         content: {
-          'application/json': unknown;
+          'application/json': {
+            email?: string;
+            format?: string;
+            lang?: string;
+            newPassword?: string;
+            password?: string;
+            saved_company?: number;
+            username?: string;
+          } & {
+            [key: string]: unknown;
+          };
         };
       };
       responses: {
@@ -8088,7 +10181,41 @@ export interface paths {
     };
     get: {
       parameters: {
-        query?: never;
+        query?: {
+          action?: string | null;
+          apiary?: number | null;
+          date?: string | null;
+          datetime?: string | null;
+          deleted?: boolean | null;
+          details?: boolean | null;
+          direction?: (('asc' | 'desc') | ('asc' | 'desc')[]) | null;
+          done?: boolean | null;
+          end?: string | null;
+          end_date?: string | null;
+          filters?: string | null;
+          from?: string | null;
+          hard?: boolean | null;
+          hum?: string | null;
+          latest?: boolean | null;
+          latitude?: string | null;
+          limit?: number | null;
+          longitude?: string | null;
+          modus?: boolean | null;
+          note?: string | null;
+          offset?: number | null;
+          order?: (string | string[]) | null;
+          q?: string | null;
+          rain?: string | null;
+          restore?: boolean | null;
+          start?: string | null;
+          start_date?: string | null;
+          temp1?: string | null;
+          temp2?: string | null;
+          to?: string | null;
+          type?: number | null;
+          weight?: string | null;
+          year?: number | null;
+        };
         header?: never;
         path?: never;
         cookie?: never;
@@ -8157,7 +10284,41 @@ export interface paths {
     post?: never;
     delete: {
       parameters: {
-        query?: never;
+        query?: {
+          action?: string | null;
+          apiary?: number | null;
+          date?: string | null;
+          datetime?: string | null;
+          deleted?: boolean | null;
+          details?: boolean | null;
+          direction?: (('asc' | 'desc') | ('asc' | 'desc')[]) | null;
+          done?: boolean | null;
+          end?: string | null;
+          end_date?: string | null;
+          filters?: string | null;
+          from?: string | null;
+          hard?: boolean | null;
+          hum?: string | null;
+          latest?: boolean | null;
+          latitude?: string | null;
+          limit?: number | null;
+          longitude?: string | null;
+          modus?: boolean | null;
+          note?: string | null;
+          offset?: number | null;
+          order?: (string | string[]) | null;
+          q?: string | null;
+          rain?: string | null;
+          restore?: boolean | null;
+          start?: string | null;
+          start_date?: string | null;
+          temp1?: string | null;
+          temp2?: string | null;
+          to?: string | null;
+          type?: number | null;
+          weight?: string | null;
+          year?: number | null;
+        };
         header?: never;
         path: {
           id: number;
@@ -8191,7 +10352,41 @@ export interface paths {
     };
     get: {
       parameters: {
-        query?: never;
+        query?: {
+          action?: string | null;
+          apiary?: number | null;
+          date?: string | null;
+          datetime?: string | null;
+          deleted?: boolean | null;
+          details?: boolean | null;
+          direction?: (('asc' | 'desc') | ('asc' | 'desc')[]) | null;
+          done?: boolean | null;
+          end?: string | null;
+          end_date?: string | null;
+          filters?: string | null;
+          from?: string | null;
+          hard?: boolean | null;
+          hum?: string | null;
+          latest?: boolean | null;
+          latitude?: string | null;
+          limit?: number | null;
+          longitude?: string | null;
+          modus?: boolean | null;
+          note?: string | null;
+          offset?: number | null;
+          order?: (string | string[]) | null;
+          q?: string | null;
+          rain?: string | null;
+          restore?: boolean | null;
+          start?: string | null;
+          start_date?: string | null;
+          temp1?: string | null;
+          temp2?: string | null;
+          to?: string | null;
+          type?: number | null;
+          weight?: string | null;
+          year?: number | null;
+        };
         header?: never;
         path?: never;
         cookie?: never;
@@ -8229,7 +10424,41 @@ export interface paths {
     post?: never;
     delete: {
       parameters: {
-        query?: never;
+        query?: {
+          action?: string | null;
+          apiary?: number | null;
+          date?: string | null;
+          datetime?: string | null;
+          deleted?: boolean | null;
+          details?: boolean | null;
+          direction?: (('asc' | 'desc') | ('asc' | 'desc')[]) | null;
+          done?: boolean | null;
+          end?: string | null;
+          end_date?: string | null;
+          filters?: string | null;
+          from?: string | null;
+          hard?: boolean | null;
+          hum?: string | null;
+          latest?: boolean | null;
+          latitude?: string | null;
+          limit?: number | null;
+          longitude?: string | null;
+          modus?: boolean | null;
+          note?: string | null;
+          offset?: number | null;
+          order?: (string | string[]) | null;
+          q?: string | null;
+          rain?: string | null;
+          restore?: boolean | null;
+          start?: string | null;
+          start_date?: string | null;
+          temp1?: string | null;
+          temp2?: string | null;
+          to?: string | null;
+          type?: number | null;
+          weight?: string | null;
+          year?: number | null;
+        };
         header?: never;
         path: {
           id: string;
@@ -10186,7 +12415,41 @@ export interface paths {
     };
     get: {
       parameters: {
-        query?: never;
+        query?: {
+          action?: string | null;
+          apiary?: number | null;
+          date?: string | null;
+          datetime?: string | null;
+          deleted?: boolean | null;
+          details?: boolean | null;
+          direction?: (('asc' | 'desc') | ('asc' | 'desc')[]) | null;
+          done?: boolean | null;
+          end?: string | null;
+          end_date?: string | null;
+          filters?: string | null;
+          from?: string | null;
+          hard?: boolean | null;
+          hum?: string | null;
+          latest?: boolean | null;
+          latitude?: string | null;
+          limit?: number | null;
+          longitude?: string | null;
+          modus?: boolean | null;
+          note?: string | null;
+          offset?: number | null;
+          order?: (string | string[]) | null;
+          q?: string | null;
+          rain?: string | null;
+          restore?: boolean | null;
+          start?: string | null;
+          start_date?: string | null;
+          temp1?: string | null;
+          temp2?: string | null;
+          to?: string | null;
+          type?: number | null;
+          weight?: string | null;
+          year?: number | null;
+        };
         header?: never;
         path?: never;
         cookie?: never;
