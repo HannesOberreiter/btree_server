@@ -181,13 +181,15 @@ export default class ExternalController {
       } catch (error) {
         req.log.error(error);
       }
-      await addPremium(
+      const premiumGrant = await addPremium(
         KyselyServer.getInstance().db,
         user_id,
         12 * years,
         amount,
         'stripe',
+        object.id,
       );
+      if (!premiumGrant.applied) return {};
 
       if (!bee_id) {
         req.log.error(
@@ -260,13 +262,15 @@ export default class ExternalController {
         const user_id = reference.user_id;
         const years = reference.quantity ?? 1;
         const price = Number.parseFloat(payment.amount.value);
-        await addPremium(
+        const premiumGrant = await addPremium(
           KyselyServer.getInstance().db,
           user_id,
           12 * years,
           price,
           'mollie',
+          payment.id,
         );
+        if (!premiumGrant.applied) return {};
         const bee_id = reference.bee_id;
         const user = await KyselyServer.getInstance()
           .db.selectFrom('bees')

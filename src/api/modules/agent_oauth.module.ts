@@ -214,11 +214,10 @@ export async function exchangeAuthorizationCode(
   }
 
   const key = redisCodeKey(code);
-  const raw = await RedisServer.client.get(key);
+  const raw = await RedisServer.client.getDel(key);
   if (!raw) {
     throw httpErrors.BadRequest('Invalid authorization code');
   }
-  await RedisServer.client.del(key);
 
   const rawText = typeof raw === 'string' ? raw : raw.toString();
   const payload = JSON.parse(rawText) as OAuthCodePayload;

@@ -192,6 +192,14 @@ export async function deleteOwnedCompany(
   beeId: number,
   companyId: number,
 ) {
+  const membership = await db
+    .selectFrom('company_bee')
+    .select('id')
+    .where('bee_id', '=', beeId)
+    .where('user_id', '=', companyId)
+    .executeTakeFirst();
+  if (!membership) throw httpErrors.NotFound('Company not found');
+
   const otherUser = await db
     .selectFrom('company_bee')
     .select('bee_id')

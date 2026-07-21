@@ -176,7 +176,7 @@ export default function routes(
         mode: 'invoice',
         paymentTargetDays: 7,
       });
-      const paid = await addPremium(
+      const { paid } = await addPremium(
         db,
         companyId,
         12 * years,
@@ -219,11 +219,14 @@ export default function routes(
       preHandler: Guard.authorize([ROLES.admin]),
     },
     async (request) => {
+      if (!Buffer.isBuffer(request.body.upload)) {
+        throw httpErrors.BadRequest('Missing company archive');
+      }
       try {
         return await importCompanyArchive(
           db,
           request.session.user.bee_id,
-          request.body.upload as Buffer,
+          request.body.upload,
         );
       } catch (error) {
         if (error instanceof Error && error.message.startsWith('No ')) {

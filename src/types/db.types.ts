@@ -834,7 +834,7 @@ export interface HiveTypes {
 export interface KnexMigrations {
   batch: Generated<number | null>;
   id: Generated<number>;
-  migration_time: Generated<Date>;
+  migration_time: Generated<Date | null>;
   name: Generated<string | null>;
 }
 
@@ -897,6 +897,7 @@ export interface Payments {
   date: Generated<Date | null>;
   id: Generated<number>;
   months: Generated<number | null>;
+  provider_id: Generated<string | null>;
   type: Generated<string | null>;
   /**
    * Company ID
@@ -1092,7 +1093,7 @@ export interface RearingTypes {
 
 export interface RefreshTokens {
   bee_id: Generated<number | null>;
-  expires: Generated<Date>;
+  expires: Generated<Date | null>;
   id: Generated<number>;
   token: Generated<string | null>;
   user_id: Generated<number | null>;

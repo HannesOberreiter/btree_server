@@ -49,7 +49,7 @@ export async function getApiaryTemperatureSum(
   const endDate =
     year === new Date().getFullYear()
       ? new Date().toISOString().split('T')[0]
-      : `${year}-06-31`;
+      : `${year}-06-30`;
   const temperatures = await getHistoricalTemperatures(
     Number(apiary.latitude),
     Number(apiary.longitude),

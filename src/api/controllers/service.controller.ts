@@ -90,32 +90,32 @@ export default class ServiceController {
     let value = 0;
     let years = 1;
     let bee_id: number | null = null;
+    const capturedPayment = capture.purchase_units[0].payments.captures[0];
 
     try {
-      value = Number.parseFloat(
-        capture.purchase_units[0].payments.captures[0].amount.value,
-      );
+      value = Number.parseFloat(capturedPayment.amount.value);
     } catch (error) {
       req.log.error(error);
     }
 
     try {
-      const custom_id = JSON.parse(
-        capture.purchase_units[0].payments.captures[0].custom_id,
-      );
+      const custom_id = JSON.parse(capturedPayment.custom_id);
       years = Number.parseFloat(custom_id.quantity) ?? 1;
       if (custom_id.bee_id) bee_id = Number.parseInt(custom_id.bee_id, 10);
     } catch (error) {
       req.log.error(error);
     }
 
-    const paid = await addPremium(
+    const premiumGrant = await addPremium(
       KyselyServer.getInstance().db,
       req.session.user.user_id,
       12 * years,
       value,
       'paypal',
+      capturedPayment.id,
     );
+    const paid = premiumGrant.paid;
+    if (!premiumGrant.applied) return { ...capture, paid };
 
     let mail: string | null = null;
     let lang: MailLang = 'en';

@@ -4,6 +4,7 @@ import type archiver from 'archiver';
 import { parse } from 'csv-parse/sync';
 import type { Options } from 'csv-stringify/sync';
 import { stringify } from 'csv-stringify/sync';
+import httpErrors from 'http-errors';
 import type { Transaction } from 'kysely';
 import { sql } from 'kysely';
 import yauzl from 'yauzl-promise';
@@ -12,6 +13,9 @@ import type { Database } from '../../types/database.types.js';
 import type { DB } from '../../types/db.types.js';
 
 const NEWLINE_QUOTE_REGEX = /(\r\n|[\n\r"])/g;
+const MAX_ARCHIVE_ENTRIES = 64;
+const MAX_ARCHIVE_ENTRY_BYTES = 25 * 1024 * 1024;
+const MAX_ARCHIVE_TOTAL_BYTES = 100 * 1024 * 1024;
 type CsvRecord = Record<string, string | number | boolean | null | undefined>;
 type TransferKey =
   | 'hives'
@@ -356,7 +360,7 @@ function parseCsv(csv: string): CsvRecord[] {
 function clean(key: TransferKey, record: CsvRecord, extra: CsvRecord = {}) {
   const result: CsvRecord = {};
   for (const column of columns[key]) {
-    const value = extra[column] ?? record[column];
+    const value = Object.hasOwn(extra, column) ? extra[column] : record[column];
     if (value !== undefined && value !== null && typeof value !== 'object')
       result[column] = value;
   }
@@ -422,13 +426,36 @@ export async function importCompanyArchive(
     transferKeys.map((key) => [key, []]),
   ) as TransferData;
   const zip = await yauzl.fromBuffer(upload);
+  let entryCount = 0;
+  let totalBytes = 0;
   try {
     for await (const entry of zip) {
+      entryCount += 1;
+      if (entryCount > MAX_ARCHIVE_ENTRIES) {
+        throw httpErrors.PayloadTooLarge('Archive contains too many files');
+      }
+
       const key = entry.filename.split('.')[0] as TransferKey;
       if (!transferKeys.includes(key)) continue;
+      if (entry.uncompressedSize > MAX_ARCHIVE_ENTRY_BYTES) {
+        throw httpErrors.PayloadTooLarge('Archive file is too large');
+      }
+
       const stream = await entry.openReadStream();
       const chunks: Buffer[] = [];
-      for await (const chunk of stream) chunks.push(Buffer.from(chunk));
+      let entryBytes = 0;
+      for await (const chunk of stream) {
+        const buffer = Buffer.from(chunk);
+        entryBytes += buffer.byteLength;
+        totalBytes += buffer.byteLength;
+        if (
+          entryBytes > MAX_ARCHIVE_ENTRY_BYTES ||
+          totalBytes > MAX_ARCHIVE_TOTAL_BYTES
+        ) {
+          throw httpErrors.PayloadTooLarge('Extracted archive is too large');
+        }
+        chunks.push(buffer);
+      }
       data[key] = parseCsv(Buffer.concat(chunks).toString());
     }
   } finally {

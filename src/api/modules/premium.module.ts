@@ -69,32 +69,47 @@ export function premiumPaidDate(months: number) {
   return sql<Date>`DATE_ADD(IF(paid IS NULL OR paid < CURDATE(), CURDATE(), paid), INTERVAL ${sql.lit(safeMonths)} MONTH)`;
 }
 
+type PaymentType = 'paypal' | 'promo' | 'stripe' | 'mollie' | 'invoice';
+
 export async function addPremium(
   db: Database,
   companyId: number,
   months = 12,
   amount = 0,
-  type: undefined | 'paypal' | 'promo' | 'stripe' | 'mollie' | 'invoice',
+  type: PaymentType | undefined,
+  providerId?: string,
 ) {
+  if (providerId && !type) {
+    throw new Error('Payment provider ID requires a payment type');
+  }
+
   return db.transaction().execute(async (trx) => {
-    const update = await trx
-      .updateTable('companies')
-      .set({ paid: premiumPaidDate(months) })
+    const company = await trx
+      .selectFrom('companies')
+      .select('paid')
       .where('id', '=', companyId)
       .executeTakeFirst();
-    if (Number(update.numUpdatedRows) === 0) {
-      throw httpErrors.NotFound('Company not found');
+    if (!company) throw httpErrors.NotFound('Company not found');
+
+    const payment = trx.insertInto('payments').values({
+      date: new Date(),
+      user_id: companyId,
+      months,
+      amount: amount || 0,
+      type,
+      provider_id: providerId,
+    });
+    const insert = providerId
+      ? await payment.ignore().executeTakeFirst()
+      : await payment.executeTakeFirst();
+    if (providerId && Number(insert.numInsertedOrUpdatedRows) === 0) {
+      return { paid: company.paid, applied: false };
     }
 
     await trx
-      .insertInto('payments')
-      .values({
-        date: new Date(),
-        user_id: companyId,
-        months,
-        amount: amount || 0,
-        type,
-      })
+      .updateTable('companies')
+      .set({ paid: premiumPaidDate(months) })
+      .where('id', '=', companyId)
       .executeTakeFirst();
 
     const result = await trx
@@ -102,6 +117,6 @@ export async function addPremium(
       .select('paid')
       .where('id', '=', companyId)
       .executeTakeFirstOrThrow();
-    return result.paid;
+    return { paid: result.paid, applied: true };
   });
 }

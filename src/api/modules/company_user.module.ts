@@ -48,6 +48,26 @@ export function listCompanyUsers(db: Database, companyId: number) {
     .execute();
 }
 
+function isDuplicateEntry(error: unknown) {
+  return (
+    typeof error === 'object' &&
+    error !== null &&
+    'code' in error &&
+    error.code === 'ER_DUP_ENTRY'
+  );
+}
+
+async function addMembership(db: Database, companyId: number, beeId: number) {
+  try {
+    await db
+      .insertInto('company_bee')
+      .values({ bee_id: beeId, user_id: companyId, rank: 3 })
+      .execute();
+  } catch (error) {
+    if (!isDuplicateEntry(error)) throw error;
+  }
+}
+
 export async function addCompanyUser(
   db: Database,
   companyId: number,
@@ -60,47 +80,49 @@ export async function addCompanyUser(
     .where('email', '=', email)
     .executeTakeFirst();
   if (user) {
-    const duplicate = await db
-      .selectFrom('company_bee')
-      .select('id')
-      .where('bee_id', '=', user.id)
-      .where('user_id', '=', companyId)
-      .executeTakeFirst();
-    if (!duplicate) {
-      await db
-        .insertInto('company_bee')
-        .values({ bee_id: user.id, user_id: companyId, rank: 3 })
-        .execute();
-    }
+    await addMembership(db, companyId, user.id);
     return { userExists: user, created: false };
   }
 
-  await db.transaction().execute(async (transaction) => {
-    const inviter = await transaction
+  try {
+    await db.transaction().execute(async (transaction) => {
+      const inviter = await transaction
+        .selectFrom('bees')
+        .select('lang')
+        .where('id', '=', inviterBeeId)
+        .executeTakeFirstOrThrow();
+      const insert = await transaction
+        .insertInto('bees')
+        .values({
+          email,
+          lang: inviter.lang,
+          password: randomBytes(40).toString('hex'),
+          salt: randomBytes(40).toString('hex'),
+          last_visit: new Date('1989-01-05'),
+        })
+        .executeTakeFirstOrThrow();
+      await transaction
+        .insertInto('company_bee')
+        .values({
+          bee_id: Number(insert.insertId),
+          user_id: companyId,
+          rank: 3,
+        })
+        .execute();
+    });
+    return { userExists: undefined, created: true };
+  } catch (error) {
+    if (!isDuplicateEntry(error)) throw error;
+
+    const concurrentUser = await db
       .selectFrom('bees')
-      .select('lang')
-      .where('id', '=', inviterBeeId)
-      .executeTakeFirstOrThrow();
-    const insert = await transaction
-      .insertInto('bees')
-      .values({
-        email,
-        lang: inviter.lang,
-        password: randomBytes(40).toString('hex'),
-        salt: randomBytes(40).toString('hex'),
-        last_visit: new Date('1989-01-05'),
-      })
-      .executeTakeFirstOrThrow();
-    await transaction
-      .insertInto('company_bee')
-      .values({
-        bee_id: Number(insert.insertId),
-        user_id: companyId,
-        rank: 3,
-      })
-      .execute();
-  });
-  return { userExists: undefined, created: true };
+      .select('id')
+      .where('email', '=', email)
+      .executeTakeFirst();
+    if (!concurrentUser) throw error;
+    await addMembership(db, companyId, concurrentUser.id);
+    return { userExists: concurrentUser, created: false };
+  }
 }
 
 export async function removeCompanyUser(
