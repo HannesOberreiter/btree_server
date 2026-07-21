@@ -4,6 +4,19 @@ import httpErrors from 'http-errors';
 import { KyselyServer } from '../../servers/kysely.server.js';
 import type { MailLang } from '../../services/mail.service.js';
 import { MailLangs } from '../../services/mail.service.js';
+import { createInvoice } from '../adapters/foxyoffice.adapter.js';
+import { createOrder as mollieCreateOrder } from '../adapters/mollie.adapter.js';
+import {
+  capturePayment,
+  createOrder as paypalCreateOrder,
+} from '../adapters/paypal.adapter.js';
+import { createOrder as stripeCreateOrder } from '../adapters/stripe.adapter.js';
+import { getElevation } from '../adapters/weather.adapter.js';
+import { addPremium } from '../modules/premium.module.js';
+import {
+  getApiaryTemperatureSum,
+  getApiaryWeather,
+} from '../modules/weather.module.js';
 import type { CompatibilityQuery } from '../schemas/common.schema.js';
 import type {
   GetWeatherDataParams,
@@ -13,20 +26,6 @@ import type {
   StripeCreateOrderBody,
   MollieCreateOrderBody,
 } from '../schemas/service.schema.js';
-import { createInvoice } from '../utils/foxyoffice.util.js';
-import { createOrder as mollieCreateOrder } from '../utils/mollie.util.js';
-import {
-  capturePayment,
-  createOrder as paypalCreateOrder,
-} from '../utils/paypal.util.js';
-import { addPremium, isPremium } from '../utils/premium.util.js';
-import { createOrder as stripeCreateOrder } from '../utils/stripe.util.js';
-import {
-  calculateGruenlandtemperatursumme,
-  getElevation,
-  getHistoricalTemperatures,
-  getWeatherData,
-} from '../utils/temperature.util.js';
 
 export default class ServiceController {
   static async getElevation(req: FastifyRequest, _reply: FastifyReply) {
@@ -47,25 +46,11 @@ export default class ServiceController {
 
   static async getWeatherData(req: FastifyRequest, _reply: FastifyReply) {
     const params = req.params as GetWeatherDataParams;
-    const premium = await isPremium(req.session.user.user_id);
-    if (!premium) {
-      throw httpErrors.PaymentRequired();
-    }
-    const apiary = await KyselyServer.getInstance()
-      .db.selectFrom('apiaries')
-      .select(['latitude', 'longitude'])
-      .where('id', '=', params.apiary_id)
-      .where('user_id', '=', req.session.user.user_id)
-      .executeTakeFirst();
-
-    if (!apiary) {
-      throw httpErrors.NotFound('Apiary not found');
-    }
-    const weatherData = await getWeatherData(
-      Number(apiary.latitude),
-      Number(apiary.longitude),
+    return getApiaryWeather(
+      KyselyServer.getInstance().db,
+      req.session.user.user_id,
+      params.apiary_id,
     );
-    return weatherData;
   }
 
   static async getGruenlandtemperatursumme(
@@ -73,51 +58,13 @@ export default class ServiceController {
     _reply: FastifyReply,
   ) {
     const params = req.params as GetGruenlandtemperatursummeParams;
-    const apiary = await KyselyServer.getInstance()
-      .db.selectFrom('apiaries')
-      .select(['id', 'name', 'latitude', 'longitude', 'elevation'])
-      .where('id', '=', params.apiary_id)
-      .where('user_id', '=', req.session.user.user_id)
-      .where('deleted', '=', false)
-      .executeTakeFirst();
-    if (!apiary) throw httpErrors.NotFound();
-
-    if (!apiary.latitude || !apiary.longitude) {
-      throw httpErrors.BadRequest('Apiary coordinates not set');
-    }
-
     const query = req.query as CompatibilityQuery;
-    const year = query?.year ?? new Date().getFullYear();
-    if (year > new Date().getFullYear()) {
-      throw httpErrors.BadRequest('Year cannot be in the future');
-    }
-
-    const startDate = `${year}-01-01`; // Always get previous year from Jan 1st
-    const endDate =
-      year === new Date().getFullYear()
-        ? new Date().toISOString().split('T')[0]
-        : `${year}-06-31`;
-
-    const dailyTemperatures = await getHistoricalTemperatures(
-      Number(apiary.latitude),
-      Number(apiary.longitude),
-      startDate,
-      endDate,
-      apiary.elevation,
+    return getApiaryTemperatureSum(
+      KyselyServer.getInstance().db,
+      req.session.user.user_id,
+      params.apiary_id,
+      query.year ?? new Date().getFullYear(),
     );
-
-    const gtsResult = calculateGruenlandtemperatursumme(dailyTemperatures);
-
-    return {
-      ...gtsResult,
-      apiary: {
-        id: apiary.id,
-        name: apiary.name,
-        latitude: Number(apiary.latitude),
-        longitude: Number(apiary.longitude),
-        elevation: apiary.elevation,
-      },
-    };
   }
 
   static async paypalCreateOrder(req: FastifyRequest, _reply: FastifyReply) {
@@ -163,6 +110,7 @@ export default class ServiceController {
     }
 
     const paid = await addPremium(
+      KyselyServer.getInstance().db,
       req.session.user.user_id,
       12 * years,
       value,

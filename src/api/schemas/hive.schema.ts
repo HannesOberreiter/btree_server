@@ -1,7 +1,11 @@
 import { z } from 'zod';
 
 import { numberSchema } from '../utils/zod.util.js';
-import { compatibilityQuerySchema, jsonDateSchema } from './common.schema.js';
+import {
+  actorResponseSchema,
+  compatibilityQuerySchema,
+  jsonDateSchema,
+} from './common.schema.js';
 
 const nullableNumber = z.number().nullable().optional();
 const nullableString = z.string().nullable().optional();
@@ -16,14 +20,6 @@ const hiveOptionResponseSchema = z
     user_id: nullableNumber,
     created_at: nullableDate,
     updated_at: nullableDate,
-  })
-  .nullable()
-  .optional();
-
-const identifierResponseSchema = z
-  .looseObject({
-    email: nullableString,
-    username: nullableString,
   })
   .nullable()
   .optional();
@@ -119,8 +115,8 @@ export const hiveResponseSchema = z.looseObject({
   queen_location: queenLocationResponseSchema,
   hive_source: hiveOptionResponseSchema,
   hive_type: hiveOptionResponseSchema,
-  creator: identifierResponseSchema,
-  editor: identifierResponseSchema,
+  creator: actorResponseSchema.optional(),
+  editor: actorResponseSchema.optional(),
 });
 
 export const hivePaginatedResponseSchema = z.object({

@@ -3,13 +3,9 @@ import httpErrors from 'http-errors';
 import { sql } from 'kysely';
 
 import { basicLimit, totalLimit } from '../../config/environment.config.js';
-import { KyselyServer } from '../../servers/kysely.server.js';
 import type { Database } from '../../types/database.types.js';
 
-export async function isPremium(
-  id: number,
-  db: Database = KyselyServer.getInstance().db,
-) {
+export async function isPremium(id: number, db: Database) {
   const company = await db
     .selectFrom('companies')
     .select('paid')
@@ -39,7 +35,7 @@ async function countRows(
 export async function limitHive(
   companyId: number,
   amount: number,
-  db: Database = KyselyServer.getInstance().db,
+  db: Database,
 ) {
   const premium = await isPremium(companyId, db);
   if ((amount > basicLimit.hive && !premium) || amount > totalLimit.hive) {
@@ -52,10 +48,7 @@ export async function limitHive(
   );
 }
 
-export async function limitApiary(
-  companyId: number,
-  db: Database = KyselyServer.getInstance().db,
-) {
+export async function limitApiary(companyId: number, db: Database) {
   const premium = await isPremium(companyId, db);
   const count = await countRows(db, 'apiaries', companyId, true);
   return (
@@ -63,10 +56,7 @@ export async function limitApiary(
   );
 }
 
-export async function limitScale(
-  companyId: number,
-  db: Database = KyselyServer.getInstance().db,
-) {
+export async function limitScale(companyId: number, db: Database) {
   const premium = await isPremium(companyId, db);
   const count = await countRows(db, 'scales', companyId, false);
   return (
@@ -80,13 +70,12 @@ export function premiumPaidDate(months: number) {
 }
 
 export async function addPremium(
+  db: Database,
   companyId: number,
   months = 12,
   amount = 0,
   type: undefined | 'paypal' | 'promo' | 'stripe' | 'mollie' | 'invoice',
 ) {
-  const db = KyselyServer.getInstance().db;
-
   return db.transaction().execute(async (trx) => {
     const update = await trx
       .updateTable('companies')

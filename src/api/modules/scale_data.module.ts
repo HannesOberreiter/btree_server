@@ -17,7 +17,7 @@ import type {
   ScaleDataListQuery,
   ScaleDataOrderField,
 } from '../schemas/scale_data.schema.js';
-import { checkOwnership } from '../utils/kysely.utils.js';
+import { requireScaleOwnership } from './ownership.module.js';
 
 const orderColumns: Record<
   ScaleDataOrderField,
@@ -240,7 +240,7 @@ export async function createScaleData(
   companyId: number,
   body: PostBody,
 ) {
-  await checkOwnership(db, 'scales', body.scale_id, companyId);
+  await requireScaleOwnership(db, body.scale_id, companyId);
   const insert = await db
     .insertInto('scale_data')
     .values({
@@ -277,7 +277,7 @@ export async function updateScaleData(
   body: PatchBody,
 ) {
   if (body.data.scale_id) {
-    await checkOwnership(db, 'scales', body.data.scale_id, companyId);
+    await requireScaleOwnership(db, body.data.scale_id, companyId);
   }
   const result = await db
     .updateTable('scale_data')

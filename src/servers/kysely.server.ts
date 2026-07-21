@@ -10,7 +10,7 @@ import { Kysely, MysqlDialect, ParseJSONResultsPlugin } from 'kysely';
 import { createPool } from 'mysql2';
 
 import { ENVIRONMENT } from '../config/constants.config.js';
-import { env, knexConfig } from '../config/environment.config.js';
+import { databaseConfig, env } from '../config/environment.config.js';
 import { Logger } from '../services/logger.service.js';
 import type { DB } from '../types/db.types.js';
 
@@ -33,16 +33,16 @@ export class KyselyServer {
   private constructor() {
     try {
       const pool = createPool({
-        host: knexConfig.connection.host,
-        port: knexConfig.connection.port,
-        database: knexConfig.connection.database,
-        user: knexConfig.connection.user,
-        password: knexConfig.connection.password,
-        charset: knexConfig.connection.charset,
-        timezone: knexConfig.connection.timezone,
-        typeCast: knexConfig.connection.typeCast,
+        host: databaseConfig.connection.host,
+        port: databaseConfig.connection.port,
+        database: databaseConfig.connection.database,
+        user: databaseConfig.connection.user,
+        password: databaseConfig.connection.password,
+        charset: databaseConfig.connection.charset,
+        timezone: databaseConfig.connection.timezone,
+        typeCast: databaseConfig.connection.typeCast,
         dateStrings: true,
-        connectionLimit: knexConfig.pool.max,
+        connectionLimit: databaseConfig.pool.max,
         waitForConnections: true,
         queueLimit: 0,
       });
@@ -77,7 +77,7 @@ export class KyselyServer {
       if (env !== ENVIRONMENT.test) {
         this.logger.log(
           'debug',
-          `Connection to database established on port ${knexConfig.connection.port} (${env})`,
+          `Connection to database established on port ${databaseConfig.connection.port} (${env})`,
           { label: 'Database' },
         );
       }

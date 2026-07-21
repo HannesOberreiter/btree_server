@@ -1,18 +1,18 @@
 import dayjs from 'dayjs';
+import type { Kysely } from 'kysely';
 import { sql } from 'kysely';
 
 import { ENVIRONMENT } from '../../config/constants.config.js';
 import { env } from '../../config/environment.config.js';
-import { KyselyServer } from '../../servers/kysely.server.js';
 import { MailService } from '../../services/mail.service.js';
-import { checkMySQLError } from './error.util.js';
+import type { DB } from '../../types/db.types.js';
+import { checkMySQLError } from '../adapters/mysql_error.adapter.js';
 
-export async function cleanupDatabase() {
+export async function cleanupDatabase(db: Kysely<DB>) {
   try {
     const cleanup: Record<string, string | number> = { type: 'cleanup' };
     const lastMonth = dayjs().subtract(1, 'month').toDate();
     const timeToBeForgotten = dayjs().subtract(5, 'year').toDate();
-    const db = KyselyServer.getInstance().db;
 
     return await db.transaction().execute(async (transaction) => {
       const affected = async (query: ReturnType<typeof sql>) => {
@@ -217,7 +217,7 @@ export async function cleanupDatabase() {
  * Send reminder five days before VIS action is required
  * @returns Count of mails send as object {type: 'vis_reminder', mails: count}
  */
-export async function reminderVIS() {
+export async function reminderVIS(db: Kysely<DB>) {
   try {
     const result = { type: 'vis_reminder', mails: 0 };
     const checkDate = dayjs().add(5, 'day');
@@ -249,8 +249,8 @@ export async function reminderVIS() {
     }
 
     if (mailDate && mailSubject) {
-      const users = await KyselyServer.getInstance()
-        .db.selectFrom('bees')
+      const users = await db
+        .selectFrom('bees')
         .select(['username', 'email', 'id'])
         .where('lang', '=', 'de')
         .where('acdate', '=', true)
@@ -276,8 +276,8 @@ export async function reminderVIS() {
             name: user.username,
             key: mailDate,
           });
-          await KyselyServer.getInstance()
-            .db.updateTable('bees')
+          await db
+            .updateTable('bees')
             .set({ reminder_vis: nowDate })
             .where('id', '=', user.id)
             .execute();
@@ -296,7 +296,7 @@ export async function reminderVIS() {
  * Send reminder five days before premium membership runs out
  * @returns Count of mails send as object {type: 'premium_reminder', mails: count}
  */
-export async function reminderPremium() {
+export async function reminderPremium(db: Kysely<DB>) {
   try {
     const result = { type: 'premium_reminder', mails: 0 };
     const startDate = dayjs().startOf('day').toDate();
@@ -304,8 +304,8 @@ export async function reminderPremium() {
     const lastDate = dayjs().subtract(7, 'day').startOf('day').toDate();
     const nowDate = new Date();
 
-    const companies = await KyselyServer.getInstance()
-      .db.selectFrom('companies')
+    const companies = await db
+      .selectFrom('companies')
       .innerJoin('company_bee', 'company_bee.user_id', 'companies.id')
       .innerJoin('bees', 'bees.id', 'company_bee.bee_id')
       .select([
@@ -338,8 +338,8 @@ export async function reminderPremium() {
           name: company.username,
           key: company.name,
         });
-        await KyselyServer.getInstance()
-          .db.updateTable('bees')
+        await db
+          .updateTable('bees')
           .set({ reminder_premium: nowDate })
           .where('id', '=', company.bee_id)
           .execute();
@@ -359,7 +359,7 @@ export async function reminderPremium() {
  * if user logs into the app in the next sixty days the account will not be deleted
  * @returns Count of mails send as object {type: 'deletion_reminder', mails: count}
  */
-export async function reminderDeletion() {
+export async function reminderDeletion(db: Kysely<DB>) {
   try {
     const result = { type: 'deletion_reminder', mails: 0 };
     const timeToBeForgotten = dayjs()
@@ -369,8 +369,6 @@ export async function reminderDeletion() {
 
     const lastDate = dayjs().subtract(90, 'day').toDate();
     const nowDate = new Date();
-
-    const db = KyselyServer.getInstance().db;
 
     const forgottenIds = await db
       .selectFrom('company_bee')

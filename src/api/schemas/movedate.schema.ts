@@ -1,10 +1,9 @@
 import { z } from 'zod';
 
 import { numberSchema } from '../utils/zod.util.js';
-import { jsonDateSchema } from './common.schema.js';
+import { actorResponseSchema, jsonDateSchema } from './common.schema.js';
 
 const nullableNumber = z.number().nullable().optional();
-const nullableString = z.string().nullable().optional();
 const nullableDate = jsonDateSchema.nullable().optional();
 
 export const movedateResponseSchema = z.looseObject({
@@ -24,14 +23,8 @@ export const movedateResponseSchema = z.looseObject({
     .looseObject({ id: z.number(), name: z.string() })
     .nullable()
     .optional(),
-  creator: z
-    .looseObject({ email: nullableString, username: nullableString })
-    .nullable()
-    .optional(),
-  editor: z
-    .looseObject({ email: nullableString, username: nullableString })
-    .nullable()
-    .optional(),
+  creator: actorResponseSchema.optional(),
+  editor: actorResponseSchema.optional(),
   movedate_previous_apiary: z.looseObject({}).nullable().optional(),
 });
 export const movedatePaginatedResponseSchema = z.object({

@@ -5,14 +5,18 @@ import { jsonSchemaTransform } from 'fastify-type-provider-zod';
 import httpErrors from 'http-errors';
 
 import { url } from '../../../config/environment.config.js';
+import { KyselyServer } from '../../../servers/kysely.server.js';
+import { agentAuthHook } from '../../hooks/agent_auth.hook.js';
 import {
   executeWizBeeTool,
   wizBeeToolDefinitions,
-} from '../../controllers/wizbee.tools.controller.js';
-import { agentAuthHook } from '../../hooks/agent_auth.hook.js';
+} from '../../modules/wizbee_tools.module.js';
 import { permissiveJsonResponseSchema } from '../../schemas/common.schema.js';
 
-export default async function routes(instance: FastifyInstance, _options: any) {
+export default async function routes(
+  instance: FastifyInstance,
+  _options: unknown,
+) {
   // Register @fastify/swagger scoped to this plugin (prefix: /v1/agent)
   await instance.register(fastifySwagger, {
     openapi: {
@@ -90,41 +94,36 @@ export default async function routes(instance: FastifyInstance, _options: any) {
         }
         const context = { userId: user.user_id, beeId: user.bee_id };
         const result = await executeWizBeeTool(
+          KyselyServer.getInstance().db,
           toolDef.name,
           request.body,
           context,
         );
 
-        // The wizbee tool wrapper returns a structured envelope on failure
-        // ({ ok: false, error: {...} }) so the in-process LLM loop can recover.
-        // For the public HTTP agent API we translate it back into a standard
-        // fastify httpError so external consumers get the canonical
-        // { statusCode, error, message } body shape used everywhere else.
-        // Hint + suggested_next_tool are attached as `cause` so they're still
-        // visible to agents but don't change the error envelope shape.
         if (
           result &&
           typeof result === 'object' &&
-          (result as any).ok === false
+          (result as { ok?: unknown }).ok === false
         ) {
-          const err = (result as any).error ?? {};
-          const status: number =
-            typeof err.status === 'number' ? err.status : 400;
-          const message: string =
-            typeof err.message === 'string' && err.message.length > 0
-              ? err.message
+          const error =
+            (result as { error?: Record<string, unknown> }).error ?? {};
+          const status = typeof error.status === 'number' ? error.status : 400;
+          const message =
+            typeof error.message === 'string' && error.message.length > 0
+              ? error.message
               : 'Tool execution failed';
-          const httpErr = (httpErrors as any)[status]
-            ? (httpErrors as any)[status](message)
-            : httpErrors.BadRequest(message);
-          httpErr.cause = {
-            code: err.code,
-            ...(err.hint && { hint: err.hint }),
-            ...(err.suggested_next_tool && {
-              suggested_next_tool: err.suggested_next_tool,
-            }),
-          };
-          throw httpErr;
+          const httpError =
+            status === 401
+              ? httpErrors.Unauthorized(message)
+              : status === 403
+                ? httpErrors.Forbidden(message)
+                : status === 404
+                  ? httpErrors.NotFound(message)
+                  : status >= 500
+                    ? httpErrors.InternalServerError(message)
+                    : httpErrors.BadRequest(message);
+          if (typeof error.code === 'string') httpError.code = error.code;
+          throw httpError;
         }
 
         return result;

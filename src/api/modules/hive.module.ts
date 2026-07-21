@@ -11,11 +11,12 @@ import type {
   HivePatchBody,
   HivePositionBody,
 } from '../schemas/hive.schema.js';
-import { limitHive } from '../utils/premium.util.js';
+import { actorProjection } from './actor_projection.module.js';
 import { listCheckups } from './checkup.module.js';
 import { listFeeds } from './feed.module.js';
 import { listHarvests } from './harvest.module.js';
 import { listMovedates } from './movedate.module.js';
+import { limitHive } from './premium.module.js';
 import { listTodos } from './todo.module.js';
 import { listTreatments } from './treatment.module.js';
 
@@ -42,12 +43,6 @@ interface HiveLocationResponse {
   hive_modus: boolean | null;
   hive_deleted: boolean | null;
   movedate: MovedateResponse | null;
-}
-
-interface IdentifierResponse {
-  [key: string]: unknown;
-  email: string | null;
-  username: string | null;
 }
 
 interface OptionResponse {
@@ -145,15 +140,6 @@ function hiveLocationProjection() {
       'movedate', ${movedateProjection()}
     ) ELSE NULL END
   `.as('hive_location');
-}
-
-function identifierProjection(alias: 'creator' | 'editor') {
-  return sql<IdentifierResponse | null>`
-    CASE WHEN ${sql.ref(`${alias}.id`)} IS NOT NULL THEN JSON_OBJECT(
-      'email', ${sql.ref(`${alias}.email`)},
-      'username', ${sql.ref(`${alias}.username`)}
-    ) ELSE NULL END
-  `.as(alias);
 }
 
 function optionProjection(alias: 'hive_sources' | 'hive_types', name: string) {
@@ -344,8 +330,8 @@ export async function listHives(
       queenLocationProjection(),
       optionProjection('hive_sources', 'hive_source'),
       optionProjection('hive_types', 'hive_type'),
-      identifierProjection('creator'),
-      identifierProjection('editor'),
+      actorProjection('creator'),
+      actorProjection('editor'),
     ]);
     for (const ordering of orderings) {
       query = query.orderBy(ordering.column, ordering.direction);
@@ -393,8 +379,8 @@ export async function getHiveDetail(
       queenLocationDetailProjection(),
       optionProjection('hive_sources', 'hive_source'),
       optionProjection('hive_types', 'hive_type'),
-      identifierProjection('creator'),
-      identifierProjection('editor'),
+      actorProjection('creator'),
+      actorProjection('editor'),
     ])
     .where('hives.id', '=', id)
     .where('hives.user_id', '=', companyId)

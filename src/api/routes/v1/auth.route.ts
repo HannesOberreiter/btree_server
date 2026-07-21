@@ -5,7 +5,6 @@ import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { ROLES } from '../../../config/constants.config.js';
 import { AppleAuth, GoogleAuth } from '../../../services/federated.service.js';
 import AuthController from '../../controllers/auth.controller.js';
-import RootController from '../../controllers/root.controller.js';
 import { Guard } from '../../hooks/guard.hook.js';
 import {
   appleCallbackGetSchema,
@@ -174,7 +173,7 @@ export default function routes(
       schema: { response: { 200: statusResponseSchema } },
       preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
     },
-    RootController.status,
+    async () => ({ status: 'ok' }),
   );
 
   done();

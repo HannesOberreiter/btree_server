@@ -9,8 +9,8 @@ import { KyselyServer } from '../../servers/kysely.server.js';
 import type { ChatMessage } from '../../services/wizbee.service.js';
 import { WizBeeAI } from '../../services/wizbee.service.js';
 import { transcribeAudio } from '../../services/wizbee.transcribe.service.js';
+import { isPremium } from '../modules/premium.module.js';
 import type { WizBeeStreamBody } from '../schemas/wizbee.schema.js';
-import { isPremium } from '../utils/premium.util.js';
 
 /**
  * Mistral pricing (per 1K tokens) for `mistral-medium-3-5` (pinned in wizbee.service.ts).
@@ -137,7 +137,10 @@ export default class WizBeeController {
    * Get WizBee monthly usage statistics
    */
   static async getWizBeeUsage(req: FastifyRequest, _reply: FastifyReply) {
-    const premium = await isPremium(req.session.user.user_id);
+    const premium = await isPremium(
+      req.session.user.user_id,
+      KyselyServer.getInstance().db,
+    );
     if (!premium) {
       throw httpErrors.PaymentRequired(
         'WizBee requires an active premium subscription',
@@ -161,7 +164,10 @@ export default class WizBeeController {
     }, 120 * 1000);
     timeout.unref();
 
-    const premium = await isPremium(req.session.user.user_id);
+    const premium = await isPremium(
+      req.session.user.user_id,
+      KyselyServer.getInstance().db,
+    );
     if (!premium) {
       throw httpErrors.PaymentRequired(
         'WizBee requires an active premium subscription',
@@ -294,7 +300,10 @@ export default class WizBeeController {
     req: FastifyRequest,
     _reply: FastifyReply,
   ) {
-    const premium = await isPremium(req.session.user.user_id);
+    const premium = await isPremium(
+      req.session.user.user_id,
+      KyselyServer.getInstance().db,
+    );
     if (!premium) {
       throw httpErrors.PaymentRequired(
         'WizBee requires an active premium subscription',

@@ -1,7 +1,7 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import httpErrors from 'http-errors';
 
-import { verifyAgentOAuthAccessToken } from '../utils/agent_oauth.util.js';
+import { verifyAgentOAuthAccessToken } from '../modules/agent_oauth.module.js';
 
 export async function chatGptAuthHook(
   request: FastifyRequest,

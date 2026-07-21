@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 import { numberSchema } from '../utils/zod.util.js';
-import { jsonDateSchema } from './common.schema.js';
+import { actorResponseSchema, jsonDateSchema } from './common.schema.js';
 
 const nullableString = z.string().nullable().optional();
 const nullableNumber = z.number().nullable().optional();
@@ -33,20 +33,8 @@ export const apiaryResponseSchema = z.looseObject({
     })
     .nullable()
     .optional(),
-  creator: z
-    .looseObject({
-      email: nullableString,
-      username: nullableString,
-    })
-    .nullable()
-    .optional(),
-  editor: z
-    .looseObject({
-      email: nullableString,
-      username: nullableString,
-    })
-    .nullable()
-    .optional(),
+  creator: actorResponseSchema.optional(),
+  editor: actorResponseSchema.optional(),
 });
 
 export const apiaryPaginatedResponseSchema = z.object({

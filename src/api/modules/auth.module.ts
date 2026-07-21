@@ -3,7 +3,7 @@ import { createHash, randomBytes } from 'node:crypto';
 import type { FastifyRequest } from 'fastify';
 import { UAParser } from 'ua-parser-js';
 
-import { KyselyServer } from '../../servers/kysely.server.js';
+import type { Database } from '../../types/database.types.js';
 
 function buildUserAgent(req: FastifyRequest) {
   try {
@@ -31,8 +31,7 @@ function createHashedPassword(password: string, hash = 'sha512') {
   return { salt, password: hashedPassword };
 }
 
-async function confirmAccount(id: number) {
-  const db = KyselyServer.getInstance().db;
+async function confirmAccount(db: Database, id: number) {
   await db
     .updateTable('bees')
     .set({ state: 1, reset: '' })
@@ -46,8 +45,7 @@ async function confirmAccount(id: number) {
   return user.email;
 }
 
-async function unsubscribeMail(id: number) {
-  const db = KyselyServer.getInstance().db;
+async function unsubscribeMail(db: Database, id: number) {
   await db
     .updateTable('bees')
     .set({ newsletter: false })
@@ -61,8 +59,7 @@ async function unsubscribeMail(id: number) {
   return user.email;
 }
 
-async function resetMail(id: number) {
-  const db = KyselyServer.getInstance().db;
+async function resetMail(db: Database, id: number) {
   await db
     .updateTable('bees')
     .set({
@@ -78,9 +75,8 @@ async function resetMail(id: number) {
     .executeTakeFirstOrThrow();
 }
 
-async function resetPassword(id: number, inputPassword: string) {
+async function resetPassword(db: Database, id: number, inputPassword: string) {
   const { salt, password } = createHashedPassword(inputPassword);
-  const db = KyselyServer.getInstance().db;
   // Password reset also confirms accounts for users missing activation mail.
   await db
     .updateTable('bees')

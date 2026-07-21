@@ -158,15 +158,6 @@ export function optionProjection(
   `.as(output);
 }
 
-export function identifierProjection(alias: 'creator' | 'editor') {
-  return sql<Record<string, unknown> | null>`
-    CASE WHEN ${sql.ref(`${alias}.id`)} IS NOT NULL THEN JSON_OBJECT(
-      'email', ${sql.ref(`${alias}.email`)},
-      'username', ${sql.ref(`${alias}.username`)}
-    ) ELSE NULL END
-  `.as(alias);
-}
-
 export function taskApiaryProjection(
   alias:
     | 'feeds_apiaries'

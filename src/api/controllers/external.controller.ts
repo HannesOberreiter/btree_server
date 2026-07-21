@@ -14,6 +14,8 @@ import { KyselyServer } from '../../servers/kysely.server.js';
 import { Logger } from '../../services/logger.service.js';
 import type { MailLang } from '../../services/mail.service.js';
 import { MailLangs, MailService } from '../../services/mail.service.js';
+import { createInvoice } from '../adapters/foxyoffice.adapter.js';
+import { getPayment } from '../adapters/mollie.adapter.js';
 import {
   listCalendarMovements,
   listCalendarRearings,
@@ -21,20 +23,21 @@ import {
   listCalendarTasks,
   listCalendarTodos,
 } from '../modules/calendar.module.js';
+import { findCompanyByApiKey } from '../modules/company.module.js';
+import { addPremium, isPremium } from '../modules/premium.module.js';
 import type {
   ExternalCalendarParams,
   MollieWebhookBody,
 } from '../schemas/external.schema.js';
-import { getCompany } from '../utils/api.util.js';
-import { createInvoice } from '../utils/foxyoffice.util.js';
-import { getPayment } from '../utils/mollie.util.js';
-import { addPremium, isPremium } from '../utils/premium.util.js';
 
 export default class ExternalController {
   static async ical(req: FastifyRequest, reply: FastifyReply) {
     const params = req.params as ExternalCalendarParams;
-    const company = await getCompany(params.api);
-    const premium = await isPremium(company.id);
+    const company = await findCompanyByApiKey(
+      KyselyServer.getInstance().db,
+      params.api,
+    );
+    const premium = await isPremium(company.id, KyselyServer.getInstance().db);
     if (!premium) {
       throw httpErrors.PaymentRequired();
     }
@@ -174,11 +177,17 @@ export default class ExternalController {
 
       let amount = 0;
       try {
-        amount = Number.parseFloat(object.amount_total as any) / 100;
+        amount = (object.amount_total ?? 0) / 100;
       } catch (error) {
         req.log.error(error);
       }
-      await addPremium(user_id, 12 * years, amount, 'stripe');
+      await addPremium(
+        KyselyServer.getInstance().db,
+        user_id,
+        12 * years,
+        amount,
+        'stripe',
+      );
 
       if (!bee_id) {
         req.log.error(
@@ -251,7 +260,13 @@ export default class ExternalController {
         const user_id = reference.user_id;
         const years = reference.quantity ?? 1;
         const price = Number.parseFloat(payment.amount.value);
-        await addPremium(user_id, 12 * years, price, 'mollie');
+        await addPremium(
+          KyselyServer.getInstance().db,
+          user_id,
+          12 * years,
+          price,
+          'mollie',
+        );
         const bee_id = reference.bee_id;
         const user = await KyselyServer.getInstance()
           .db.selectFrom('bees')

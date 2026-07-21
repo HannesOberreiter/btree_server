@@ -1,9 +1,9 @@
 import httpErrors from 'http-errors';
 
 import { openweatherKey } from '../../config/environment.config.js';
-import { KyselyServer } from '../../servers/kysely.server.js';
 import { RedisServer } from '../../servers/redis.server.js';
 import { Logger } from '../../services/logger.service.js';
+import type { Database } from '../../types/database.types.js';
 
 /**
  * OpenWeather One Call API 3.0 Response
@@ -386,11 +386,10 @@ export function calculateGruenlandtemperatursumme(
  * @throws NotFound if apiary doesn't exist or doesn't belong to the user
  */
 export async function getWeatherDataForApiary(
+  db: Database,
   apiaryId: number,
   userId: number,
 ): Promise<OneCallResponse> {
-  const db = KyselyServer.getInstance().db;
-
   const apiary = await db
     .selectFrom('apiaries')
     .select(['latitude', 'longitude'])

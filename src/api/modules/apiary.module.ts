@@ -10,7 +10,8 @@ import type {
   ApiaryOrderField,
   ApiaryValues,
 } from '../schemas/apiary.schema.js';
-import { limitApiary } from '../utils/premium.util.js';
+import { actorProjection } from './actor_projection.module.js';
+import { limitApiary } from './premium.module.js';
 
 interface HiveCountProjection {
   [key: string]: unknown;
@@ -18,12 +19,6 @@ interface HiveCountProjection {
   apiary_name: string;
   count: number;
   grouphivescount: number;
-}
-
-interface UserIdentifierProjection {
-  [key: string]: unknown;
-  email: string | null;
-  username: string | null;
 }
 
 const orderColumns: Record<
@@ -66,15 +61,6 @@ function hiveCountProjection() {
       'grouphivescount', hives_counts.grouphivescount
     ) ELSE NULL END
   `.as('hive_count');
-}
-
-function userIdentifierProjection(alias: 'creator' | 'editor') {
-  return sql<UserIdentifierProjection | null>`
-    CASE WHEN ${sql.ref(`${alias}.id`)} IS NOT NULL THEN JSON_OBJECT(
-      'email', ${sql.ref(`${alias}.email`)},
-      'username', ${sql.ref(`${alias}.username`)}
-    ) ELSE NULL END
-  `.as(alias);
 }
 
 function selectApiaries(db: Database) {
@@ -153,10 +139,7 @@ export async function listApiaries(
     query = query
       .leftJoin('bees as creator', 'creator.id', 'apiaries.bee_id')
       .leftJoin('bees as editor', 'editor.id', 'apiaries.edit_id')
-      .select([
-        userIdentifierProjection('creator'),
-        userIdentifierProjection('editor'),
-      ]);
+      .select([actorProjection('creator'), actorProjection('editor')]);
   }
   if (input.order) {
     const fields = Array.isArray(input.order) ? input.order : [input.order];
@@ -189,10 +172,7 @@ export async function getApiaryDetail(
   const apiary = await selectApiaries(db)
     .leftJoin('bees as creator', 'creator.id', 'apiaries.bee_id')
     .leftJoin('bees as editor', 'editor.id', 'apiaries.edit_id')
-    .select([
-      userIdentifierProjection('creator'),
-      userIdentifierProjection('editor'),
-    ])
+    .select([actorProjection('creator'), actorProjection('editor')])
     .where('apiaries.id', '=', id)
     .where('apiaries.user_id', '=', companyId)
     .where('apiaries.deleted', '=', false)

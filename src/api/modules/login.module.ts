@@ -4,29 +4,27 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc.js';
 import httpErrors from 'http-errors';
 
-import { KyselyServer } from '../../servers/kysely.server.js';
 import { MailService } from '../../services/mail.service.js';
 import type { Database } from '../../types/database.types.js';
 
 dayjs.extend(utc);
 
-async function insertWrongPasswordTry(beeId: number) {
-  await KyselyServer.getInstance()
-    .db.insertInto('login_attempts')
+async function insertWrongPasswordTry(db: Database, beeId: number) {
+  await db
+    .insertInto('login_attempts')
     .values({ time: new Date(), bee_id: beeId })
     .execute();
 }
 
-async function updateLastLogin(beeId: number) {
-  await KyselyServer.getInstance()
-    .db.updateTable('bees')
+async function updateLastLogin(db: Database, beeId: number) {
+  await db
+    .updateTable('bees')
     .set({ last_visit: new Date() })
     .where('id', '=', beeId)
     .execute();
 }
 
-async function fetchUser(email: string, beeId = 0) {
-  const db = KyselyServer.getInstance().db;
+async function fetchUser(db: Database, email: string, beeId = 0) {
   let query = db
     .selectFrom('bees')
     .select([
@@ -74,8 +72,7 @@ async function fetchUser(email: string, beeId = 0) {
   };
 }
 
-async function checkBruteForce(beeId: number) {
-  const db = KyselyServer.getInstance().db;
+async function checkBruteForce(db: Database, beeId: number) {
   const validAttempts = dayjs().subtract(2, 'hour').utc().toDate();
   const result = await db
     .selectFrom('login_attempts')
@@ -124,13 +121,9 @@ function checkPassword(
   return createHash(hash).update(saltedPassword).digest('hex') === dbPassword;
 }
 
-async function reviewPassword(
-  beeId: number,
-  password: string,
-  _transaction?: unknown,
-) {
-  const user = await KyselyServer.getInstance()
-    .db.selectFrom('bees')
+async function reviewPassword(db: Database, beeId: number, password: string) {
+  const user = await db
+    .selectFrom('bees')
     .select(['salt', 'password'])
     .where('id', '=', beeId)
     .executeTakeFirst();
@@ -144,11 +137,18 @@ async function reviewPassword(
   return true;
 }
 
-async function loginCheck(email: string, password: string, beeId?: number) {
-  const user = beeId ? await fetchUser('', beeId) : await fetchUser(email);
+async function loginCheck(
+  db: Database,
+  email: string,
+  password: string,
+  beeId?: number,
+) {
+  const user = beeId
+    ? await fetchUser(db, '', beeId)
+    : await fetchUser(db, email);
   if (!user) throw httpErrors.Forbidden('No User');
   if (user.state !== 1) throw httpErrors.Unauthorized('Inactive account');
-  if (await checkBruteForce(user.id))
+  if (await checkBruteForce(db, user.id))
     throw httpErrors.Locked('too many login attempts');
   if (user.company.length < 1) throw httpErrors.Unauthorized('no company');
 
@@ -156,26 +156,22 @@ async function loginCheck(email: string, password: string, beeId?: number) {
     ? user.saved_company
     : user.company[0].id;
   if (company === null) throw httpErrors.Unauthorized('no company');
-  const { rank, paid } = await getPaidRank(user.id, company);
+  const { rank, paid } = await getPaidRank(db, user.id, company);
   if (!beeId) {
     if (
       !user.password ||
       !user.salt ||
       !checkPassword(password, user.password, user.salt)
     ) {
-      await insertWrongPasswordTry(user.id);
+      await insertWrongPasswordTry(db, user.id);
       throw httpErrors.Forbidden('Invalid password');
     }
   }
-  await updateLastLogin(user.id);
+  await updateLastLogin(db, user.id);
   return { bee_id: user.id, user_id: company, data: user, paid, rank };
 }
 
-async function getPaidRank(
-  beeId: number,
-  companyId: number,
-  db: Database = KyselyServer.getInstance().db,
-) {
+async function getPaidRank(db: Database, beeId: number, companyId: number) {
   const relation = await db
     .selectFrom('company_bee')
     .innerJoin('companies', 'companies.id', 'company_bee.user_id')

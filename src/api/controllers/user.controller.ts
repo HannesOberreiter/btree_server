@@ -6,6 +6,19 @@ import httpErrors from 'http-errors';
 import { KyselyServer } from '../../servers/kysely.server.js';
 import { RedisServer } from '../../servers/redis.server.js';
 import { MailService } from '../../services/mail.service.js';
+import {
+  deleteCompany,
+  deleteUser,
+} from '../modules/account_deletion.module.js';
+import {
+  buildUserAgent,
+  createHashedPassword,
+} from '../modules/auth.module.js';
+import {
+  fetchUser,
+  getPaidRank,
+  reviewPassword,
+} from '../modules/login.module.js';
 import type {
   PatchBody,
   DeleteBody,
@@ -15,9 +28,6 @@ import type {
   AddFederatedCredentialsBody,
   DeleteRedisSessionParams,
 } from '../schemas/user.schema.js';
-import { buildUserAgent, createHashedPassword } from '../utils/auth.util.js';
-import { deleteCompany, deleteUser } from '../utils/delete.util.js';
-import { fetchUser, getPaidRank, reviewPassword } from '../utils/login.util.js';
 
 export default class UserController {
   static async getFederatedCredentials(
@@ -73,7 +83,8 @@ export default class UserController {
   }
 
   static async get(req: FastifyRequest, _reply: FastifyReply) {
-    const data = await fetchUser('', req.session.user.bee_id);
+    const db = KyselyServer.getInstance().db;
+    const data = await fetchUser(db, '', req.session.user.bee_id);
 
     // Check if connected company exists (last visited company)
     // otherwise take the simply the first one
@@ -83,7 +94,7 @@ export default class UserController {
     } else {
       company = data.company[0].id;
     }
-    const { rank, paid } = await getPaidRank(data.id, company);
+    const { rank, paid } = await getPaidRank(db, data.id, company);
 
     (req as FastifyRequest & { bee_id: number }).bee_id =
       req.session.user.bee_id;
@@ -107,8 +118,8 @@ export default class UserController {
 
   static async delete(req: FastifyRequest, _reply: FastifyReply) {
     const body = req.body as DeleteBody;
-    await reviewPassword(req.session.user.bee_id, body.password);
     const db = KyselyServer.getInstance().db;
+    await reviewPassword(db, req.session.user.bee_id, body.password);
     const companies = await db
       .selectFrom('company_bee')
       .select('user_id')
@@ -121,10 +132,10 @@ export default class UserController {
         .select(db.fn.countAll<number>().as('count'))
         .where('user_id', '=', company.user_id)
         .executeTakeFirstOrThrow();
-      if (count.count === 1) await deleteCompany(company.user_id);
+      if (count.count === 1) await deleteCompany(db, company.user_id);
     }
 
-    const result = await deleteUser(req.session.user.bee_id);
+    const result = await deleteUser(db, req.session.user.bee_id);
     return result;
   }
 
@@ -132,6 +143,7 @@ export default class UserController {
     const body = req.body as CheckPasswordBody;
     if ('password' in body) {
       const result = await reviewPassword(
+        KyselyServer.getInstance().db,
         req.session.user.bee_id,
         body.password,
       );
@@ -145,7 +157,7 @@ export default class UserController {
     const db = KyselyServer.getInstance().db;
     let credentials: ReturnType<typeof createHashedPassword> | undefined;
     if (body.password !== undefined) {
-      await reviewPassword(req.session.user.bee_id, body.password);
+      await reviewPassword(db, req.session.user.bee_id, body.password);
       if (body.newPassword)
         credentials = createHashedPassword(body.newPassword);
     }
@@ -172,7 +184,7 @@ export default class UserController {
       .where('id', '=', req.session.user.bee_id)
       .execute();
 
-    const user = await fetchUser('', req.session.user.bee_id);
+    const user = await fetchUser(db, '', req.session.user.bee_id);
     if (!user) throw httpErrors.NotFound();
     if (credentials) {
       await MailService.getInstance().sendMail({
@@ -204,9 +216,9 @@ export default class UserController {
       return Number(update.numUpdatedRows);
     });
 
-    const data = await fetchUser('', req.session.user.bee_id);
+    const data = await fetchUser(db, '', req.session.user.bee_id);
     if (!data) throw httpErrors.NotFound();
-    const { rank, paid } = await getPaidRank(data.id, body.saved_company);
+    const { rank, paid } = await getPaidRank(db, data.id, body.saved_company);
 
     (req as FastifyRequest & { bee_id: number }).bee_id =
       req.session.user.bee_id;

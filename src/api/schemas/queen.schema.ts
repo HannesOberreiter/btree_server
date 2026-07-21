@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 import { numberSchema } from '../utils/zod.util.js';
-import { jsonDateSchema } from './common.schema.js';
+import { actorResponseSchema, jsonDateSchema } from './common.schema.js';
 
 const nullableNumber = z.number().nullable().optional();
 const nullableString = z.string().nullable().optional();
@@ -33,8 +33,8 @@ export const queenResponseSchema = z.looseObject({
   race: z.looseObject({}).nullable().optional(),
   mating: z.looseObject({}).nullable().optional(),
   own_mother: z.looseObject({}).nullable().optional(),
-  creator: z.looseObject({}).nullable().optional(),
-  editor: z.looseObject({}).nullable().optional(),
+  creator: actorResponseSchema.optional(),
+  editor: actorResponseSchema.optional(),
 });
 
 export const queenPaginatedResponseSchema = z.object({

@@ -1,7 +1,11 @@
 import { z } from 'zod';
 
 import { numberSchema } from '../utils/zod.util.js';
-import { compatibilityQuerySchema, jsonDateSchema } from './common.schema.js';
+import {
+  actorResponseSchema,
+  compatibilityQuerySchema,
+  jsonDateSchema,
+} from './common.schema.js';
 
 const nullableNumber = z.number().nullable().optional();
 const nullableString = z.string().nullable().optional();
@@ -66,8 +70,8 @@ export const taskResponseSchema = z.looseObject({
   feed_apiary: taskApiaryResponseSchema.nullable().optional(),
   harvest_apiary: taskApiaryResponseSchema.nullable().optional(),
   treatment_apiary: taskApiaryResponseSchema.nullable().optional(),
-  creator: z.looseObject({}).nullable().optional(),
-  editor: z.looseObject({}).nullable().optional(),
+  creator: actorResponseSchema.optional(),
+  editor: actorResponseSchema.optional(),
 });
 
 export const taskPaginatedResponseSchema = z.object({

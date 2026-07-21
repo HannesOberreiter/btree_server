@@ -84,7 +84,10 @@ describe('movedate routes', () => {
           id: insertId,
           hive: expect.objectContaining({ id: testInsert.hive_ids[0] }),
           apiary: expect.objectContaining({ id: testInsert.apiary_id }),
-          creator: expect.objectContaining({ email: expect.any(String) }),
+          creator: expect.objectContaining({
+            id: expect.any(Number),
+            email: expect.any(String),
+          }),
         }),
       );
     });

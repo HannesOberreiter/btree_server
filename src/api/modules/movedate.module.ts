@@ -6,6 +6,7 @@ import type { Database } from '../../types/database.types.js';
 import type { DB } from '../../types/db.types.js';
 import type { CompatibilityQuery } from '../schemas/common.schema.js';
 import type { PatchBody, PostBody } from '../schemas/movedate.schema.js';
+import { actorProjection } from './actor_projection.module.js';
 
 const orderColumns = {
   id: 'movedates.id',
@@ -20,12 +21,6 @@ interface RelationResponse {
   [key: string]: unknown;
   id: number;
   name: string;
-}
-
-interface IdentifierResponse {
-  [key: string]: unknown;
-  email: string | null;
-  username: string | null;
 }
 
 function apiaryProjection() {
@@ -68,15 +63,6 @@ function hiveProjection() {
     'created_at', hives.created_at,
     'updated_at', hives.updated_at
   )`.as('hive');
-}
-
-function identifierProjection(alias: 'creator' | 'editor') {
-  return sql<IdentifierResponse | null>`
-    CASE WHEN ${sql.ref(`${alias}.id`)} IS NOT NULL THEN JSON_OBJECT(
-      'email', ${sql.ref(`${alias}.email`)},
-      'username', ${sql.ref(`${alias}.username`)}
-    ) ELSE NULL END
-  `.as(alias);
 }
 
 function previousApiaryProjection() {
@@ -189,8 +175,8 @@ export async function listMovedates(
     'movedates.updated_at',
     apiaryProjection(),
     hiveProjection(),
-    identifierProjection('creator'),
-    identifierProjection('editor'),
+    actorProjection('creator'),
+    actorProjection('editor'),
     previousApiaryProjection(),
   ]);
   if (input.order) {

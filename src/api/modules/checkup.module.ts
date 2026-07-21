@@ -2,17 +2,17 @@ import type { Kysely } from 'kysely';
 import { sql } from 'kysely';
 
 import type { DB } from '../../types/db.types.js';
+import { getWeatherDataForApiary } from '../adapters/weather.adapter.js';
 import type {
   CheckupBatchUpdateBody,
   CheckupCreateBody,
   CheckupListQuery,
 } from '../schemas/checkup.schema.js';
-import { checkOwnership } from '../utils/kysely.utils.js';
-import { isPremium } from '../utils/premium.util.js';
-import { getWeatherDataForApiary } from '../utils/temperature.util.js';
+import { actorProjection } from './actor_projection.module.js';
+import { requireCheckupTypeOwnership } from './ownership.module.js';
+import { isPremium } from './premium.module.js';
 import {
   hiveProjection,
-  identifierProjection,
   optionProjection,
   ownedHiveIds,
   parseTaskFilters,
@@ -225,8 +225,8 @@ export async function listCheckups(
       'checkup_date',
       'checkup_apiary',
     ),
-    identifierProjection('creator'),
-    identifierProjection('editor'),
+    actorProjection('creator'),
+    actorProjection('editor'),
   ]);
   for (const ordering of taskOrderings(
     input.order,
@@ -264,6 +264,7 @@ export async function createCheckups(
         .executeTakeFirst();
       if (location?.apiary_id) {
         const weather = await getWeatherDataForApiary(
+          db,
           location.apiary_id,
           actor.companyId,
         );
@@ -277,9 +278,8 @@ export async function createCheckups(
   }
   return db.transaction().execute(async (transaction) => {
     if (input.type_id) {
-      await checkOwnership(
+      await requireCheckupTypeOwnership(
         transaction,
-        'checkup_types',
         input.type_id,
         actor.companyId,
       );
@@ -323,12 +323,7 @@ export async function updateCheckups(
   body: CheckupBatchUpdateBody,
 ) {
   if (body.data.type_id) {
-    await checkOwnership(
-      db,
-      'checkup_types',
-      body.data.type_id,
-      actor.companyId,
-    );
+    await requireCheckupTypeOwnership(db, body.data.type_id, actor.companyId);
   }
   const values = checkupValues(body.data);
   if (body.data.date && body.data.enddate === undefined) {

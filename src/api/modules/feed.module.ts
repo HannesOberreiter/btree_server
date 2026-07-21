@@ -7,10 +7,10 @@ import type {
   TaskListQuery,
   TaskPatchBody,
 } from '../schemas/task.schema.js';
-import { checkOwnership } from '../utils/kysely.utils.js';
+import { actorProjection } from './actor_projection.module.js';
+import { requireFeedTypeOwnership } from './ownership.module.js';
 import {
   hiveProjection,
-  identifierProjection,
   optionProjection,
   ownedHiveIds,
   parseTaskFilters,
@@ -137,8 +137,8 @@ export async function listFeeds(
       'feed_date',
       'feed_apiary',
     ),
-    identifierProjection('creator'),
-    identifierProjection('editor'),
+    actorProjection('creator'),
+    actorProjection('editor'),
   ]);
   for (const ordering of taskOrderings(
     input.order,
@@ -164,9 +164,8 @@ export function createFeeds(
 ) {
   return db.transaction().execute(async (transaction) => {
     if (body.type_id) {
-      await checkOwnership(
+      await requireFeedTypeOwnership(
         transaction,
-        'feed_types',
         body.type_id,
         actor.companyId,
       );
@@ -212,7 +211,7 @@ export async function updateFeeds(
   body: TaskPatchBody,
 ) {
   if (body.data.type_id) {
-    await checkOwnership(db, 'feed_types', body.data.type_id, actor.companyId);
+    await requireFeedTypeOwnership(db, body.data.type_id, actor.companyId);
   }
   const values = feedValues(body.data);
   if (body.data.date && body.data.enddate === undefined) {

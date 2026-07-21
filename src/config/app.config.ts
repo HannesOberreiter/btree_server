@@ -17,8 +17,8 @@ import {
 } from 'fastify-type-provider-zod';
 import queryString from 'query-string';
 
+import { checkMySQLError } from '../api/adapters/mysql_error.adapter.js';
 import routes from '../api/routes/index.js';
-import { checkMySQLError } from '../api/utils/error.util.js';
 import {
   authorized,
   env,

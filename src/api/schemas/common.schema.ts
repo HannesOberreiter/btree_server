@@ -25,6 +25,14 @@ export const permissiveRequestSchema = z.unknown();
 /** Preserve existing query and path keys without coercion or stripping. */
 export const permissiveObjectSchema = z.object({}).loose();
 
+export const actorResponseSchema = z
+  .looseObject({
+    id: z.number(),
+    email: z.string().nullable(),
+    username: z.string().nullable(),
+  })
+  .nullable();
+
 const nullableQueryStringSchema = z.string().nullable().optional();
 const nullableQueryBooleanSchema = z.boolean().nullable().optional();
 const nullableQueryNumberSchema = numberSchema.nullable().optional();

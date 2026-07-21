@@ -6,6 +6,7 @@ import type { Database } from '../../types/database.types.js';
 import type { DB } from '../../types/db.types.js';
 import type { CompatibilityQuery } from '../schemas/common.schema.js';
 import type { PatchBody, PostBody } from '../schemas/queen.schema.js';
+import { actorProjection } from './actor_projection.module.js';
 
 const orderFields = {
   id: 'queens.id',
@@ -87,18 +88,8 @@ function selectQueens(db: Database, companyId: number, details: boolean) {
         > | null>`CASE WHEN own_mother.id IS NULL THEN NULL ELSE JSON_OBJECT('id', own_mother.id, 'name', own_mother.name, 'date', own_mother.date, 'mother', own_mother.mother, 'mark_colour', own_mother.mark_colour) END`.as(
           'own_mother',
         ),
-        sql<Record<
-          string,
-          unknown
-        > | null>`CASE WHEN creator.id IS NULL THEN NULL ELSE JSON_OBJECT('email', creator.email, 'username', creator.username) END`.as(
-          'creator',
-        ),
-        sql<Record<
-          string,
-          unknown
-        > | null>`CASE WHEN editor.id IS NULL THEN NULL ELSE JSON_OBJECT('email', editor.email, 'username', editor.username) END`.as(
-          'editor',
-        ),
+        actorProjection('creator'),
+        actorProjection('editor'),
       ]);
   return query;
 }

@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 import { numberSchema } from '../utils/zod.util.js';
-import { jsonDateSchema } from './common.schema.js';
+import { actorResponseSchema, jsonDateSchema } from './common.schema.js';
 
 const orderDirectionSchema = z.enum(['asc', 'desc', 'ASC', 'DESC']);
 const nullableNumber = z.number().nullable().optional();
@@ -57,8 +57,8 @@ export const checkupResponseSchema = z.looseObject({
     })
     .nullable()
     .optional(),
-  creator: z.looseObject({}).nullable().optional(),
-  editor: z.looseObject({}).nullable().optional(),
+  creator: actorResponseSchema.optional(),
+  editor: actorResponseSchema.optional(),
 });
 
 export const checkupPaginatedResponseSchema = z.object({

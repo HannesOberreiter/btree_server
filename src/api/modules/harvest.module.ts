@@ -7,10 +7,10 @@ import type {
   TaskListQuery,
   TaskPatchBody,
 } from '../schemas/task.schema.js';
-import { checkOwnership } from '../utils/kysely.utils.js';
+import { actorProjection } from './actor_projection.module.js';
+import { requireHarvestTypeOwnership } from './ownership.module.js';
 import {
   hiveProjection,
-  identifierProjection,
   optionProjection,
   ownedHiveIds,
   parseTaskFilters,
@@ -154,8 +154,8 @@ export async function listHarvests(
       'harvest_date',
       'harvest_apiary',
     ),
-    identifierProjection('creator'),
-    identifierProjection('editor'),
+    actorProjection('creator'),
+    actorProjection('editor'),
   ]);
   for (const ordering of taskOrderings(
     input.order,
@@ -181,9 +181,8 @@ export function createHarvests(
 ) {
   return db.transaction().execute(async (transaction) => {
     if (body.type_id) {
-      await checkOwnership(
+      await requireHarvestTypeOwnership(
         transaction,
-        'harvest_types',
         body.type_id,
         actor.companyId,
       );
@@ -229,12 +228,7 @@ export async function updateHarvests(
   body: TaskPatchBody,
 ) {
   if (body.data.type_id) {
-    await checkOwnership(
-      db,
-      'harvest_types',
-      body.data.type_id,
-      actor.companyId,
-    );
+    await requireHarvestTypeOwnership(db, body.data.type_id, actor.companyId);
   }
   const values = harvestValues(body.data);
   if (body.data.date && body.data.enddate === undefined) {

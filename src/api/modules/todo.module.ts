@@ -14,8 +14,8 @@ import type {
   TodoUpdateDate,
   TodoUpdateStatus,
 } from '../schemas/todo.schema.js';
-import { checkOwnership } from '../utils/kysely.utils.js';
-import { insertTimestamps, updateTimestamp } from '../utils/timestamp.util.js';
+import { actorProjection } from './actor_projection.module.js';
+import { requireApiaryOwnership } from './ownership.module.js';
 
 export interface TodoActor {
   beeId: number;
@@ -90,22 +90,6 @@ function parseFilters(value?: string): TodoFilter[] {
   } catch {
     return [];
   }
-}
-
-function actorProjection(alias: 'creator' | 'editor') {
-  return sql<{
-    id: number;
-    email: string | null;
-    username: string | null;
-  } | null>`
-    CASE WHEN ${sql.ref(`${alias}.id`)} IS NOT NULL THEN
-      JSON_OBJECT(
-        'id', ${sql.ref(`${alias}.id`)},
-        'email', ${sql.ref(`${alias}.email`)},
-        'username', ${sql.ref(`${alias}.username`)}
-      )
-    ELSE NULL END
-  `.as(alias);
 }
 
 function todoDateProjection() {
@@ -252,7 +236,7 @@ export async function createTodos(
   body: TodoCreate,
 ): Promise<number[]> {
   if (body.apiary_id) {
-    await checkOwnership(db, 'apiaries', body.apiary_id, actor.companyId);
+    await requireApiaryOwnership(db, body.apiary_id, actor.companyId);
   }
 
   return db.transaction().execute(async (trx) => {
@@ -266,7 +250,8 @@ export async function createTodos(
       user_id: actor.companyId,
       bee_id: actor.beeId,
       ...(actor.isLlm && { ai_created_at: sql<Date>`UTC_TIMESTAMP()` }),
-      ...insertTimestamps(),
+      created_at: sql<Date>`UTC_TIMESTAMP()`,
+      updated_at: sql<Date>`UTC_TIMESTAMP()`,
     };
 
     const repeat = body.repeat ?? 0;
@@ -294,7 +279,7 @@ export async function updateTodos(
   body: TodoBatchUpdate,
 ): Promise<number> {
   if (body.data.apiary_id) {
-    await checkOwnership(db, 'apiaries', body.data.apiary_id, actor.companyId);
+    await requireApiaryOwnership(db, body.data.apiary_id, actor.companyId);
   }
 
   const result = await db
@@ -310,7 +295,7 @@ export async function updateTodos(
       }),
       edit_id: actor.beeId,
       ...(actor.isLlm && { ai_updated_at: sql<Date>`UTC_TIMESTAMP()` }),
-      ...updateTimestamp(),
+      updated_at: sql<Date>`UTC_TIMESTAMP()`,
     })
     .where('user_id', '=', actor.companyId)
     .where('id', 'in', body.ids)
@@ -364,7 +349,11 @@ export async function updateTodoStatus(
 ): Promise<number> {
   const result = await db
     .updateTable('todos')
-    .set({ done: body.status, edit_id: actor.beeId, ...updateTimestamp() })
+    .set({
+      done: body.status,
+      edit_id: actor.beeId,
+      updated_at: sql<Date>`UTC_TIMESTAMP()`,
+    })
     .where('user_id', '=', actor.companyId)
     .where('id', 'in', body.ids)
     .executeTakeFirst();
@@ -381,7 +370,7 @@ export async function updateTodoDate(
     .set({
       date: new Date(body.start),
       edit_id: actor.beeId,
-      ...updateTimestamp(),
+      updated_at: sql<Date>`UTC_TIMESTAMP()`,
     })
     .where('user_id', '=', actor.companyId)
     .where('id', 'in', body.ids)

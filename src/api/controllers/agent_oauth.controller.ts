@@ -1,13 +1,14 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import httpErrors from 'http-errors';
 
+import { KyselyServer } from '../../servers/kysely.server.js';
 import {
   createAuthorizationCode,
   exchangeAuthorizationCode,
   getOAuthAuthorizeData,
   getOAuthLoginRedirect,
   refreshAccessToken,
-} from '../utils/agent_oauth.util.js';
+} from '../modules/agent_oauth.module.js';
 
 type TokenRequestBody = {
   grant_type?: string;
@@ -56,6 +57,7 @@ export default class AgentOAuthController {
         throw httpErrors.BadRequest('Missing code or redirect_uri');
       }
       return exchangeAuthorizationCode(
+        KyselyServer.getInstance().db,
         body.code,
         clientId,
         clientSecret,
@@ -67,7 +69,12 @@ export default class AgentOAuthController {
       if (!body.refresh_token) {
         throw httpErrors.BadRequest('Missing refresh_token');
       }
-      return refreshAccessToken(body.refresh_token, clientId, clientSecret);
+      return refreshAccessToken(
+        KyselyServer.getInstance().db,
+        body.refresh_token,
+        clientId,
+        clientSecret,
+      );
     }
 
     throw httpErrors.BadRequest('Unsupported grant_type');

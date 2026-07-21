@@ -4,7 +4,7 @@
 [![docker-push](https://github.com/HannesOberreiter/btree_server/actions/workflows/docker-push.yml/badge.svg)](https://github.com/HannesOberreiter/btree_server/actions/workflows/docker-push.yml)
 [![docker-push-beta](https://github.com/HannesOberreiter/btree_server/actions/workflows/docker-push-beta.yml/badge.svg)](https://github.com/HannesOberreiter/btree_server/actions/workflows/docker-push-beta.yml)
 
-Written in typescript build with nodejs, fastify, knex.js and objections.js.
+Written in TypeScript with Node.js, Fastify, Kysely, and Knex migration tooling.
 
 - [Repo - b.tree Server API](https://github.com/HannesOberreiter/btree_server)
   - Live: <https://api.btree.at>

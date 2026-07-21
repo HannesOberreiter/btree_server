@@ -8,7 +8,7 @@ import { sql } from 'kysely';
 import type { Database } from '../../types/database.types.js';
 import type { DB } from '../../types/db.types.js';
 import type { CreateBody } from '../schemas/agent_key.schema.js';
-import { isPremium } from '../utils/premium.util.js';
+import { isPremium } from './premium.module.js';
 
 export const KEY_PREFIX_LENGTH = 16;
 const SALT_LENGTH = 32;
@@ -43,7 +43,7 @@ export async function createAgentKey(
   actor: { companyId: number; beeId: number },
   body: CreateBody,
 ) {
-  if (!(await isPremium(actor.companyId))) {
+  if (!(await isPremium(actor.companyId, db))) {
     throw httpErrors.Forbidden(
       'Agent API keys require an active premium subscription.',
     );

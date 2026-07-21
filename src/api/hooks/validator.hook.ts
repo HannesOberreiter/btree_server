@@ -6,15 +6,16 @@ import type {
 import httpErrors from 'http-errors';
 
 import { OPTION, SOURCE } from '../../config/constants.config.js';
-import { isPremium } from '../utils/premium.util.js';
+import { KyselyServer } from '../../servers/kysely.server.js';
+import { isPremium } from '../modules/premium.module.js';
 
 export class Validator {
   static handleOption = (
     req: FastifyRequest,
-    reply: FastifyReply,
+    _reply: FastifyReply,
     done: HookHandlerDoneFunction,
   ) => {
-    const params = req.params as any;
+    const params = req.params as { table: string };
     if (!(params.table in OPTION)) {
       throw httpErrors.NotFound(
         `Unknown option table '${params.table}'. Valid tables: ${Object.keys(OPTION).join(', ')}`,
@@ -25,10 +26,10 @@ export class Validator {
 
   static handleSource = (
     req: FastifyRequest,
-    reply: FastifyReply,
+    _reply: FastifyReply,
     done: HookHandlerDoneFunction,
   ) => {
-    const params = req.params as any;
+    const params = req.params as { source: string };
     if (!(params.source in SOURCE)) {
       throw httpErrors.NotFound(
         `Unknown source '${params.source}'. Valid sources: ${Object.keys(SOURCE).join(', ')}`,
@@ -41,7 +42,10 @@ export class Validator {
     if (!req.session.user) {
       throw httpErrors.Unauthorized('Not authenticated');
     }
-    const premium = await isPremium(req.session.user.user_id).catch((_err) => {
+    const premium = await isPremium(
+      req.session.user.user_id,
+      KyselyServer.getInstance().db,
+    ).catch((_err) => {
       throw httpErrors.PaymentRequired('Could not verify premium status');
     });
     if (!premium) {

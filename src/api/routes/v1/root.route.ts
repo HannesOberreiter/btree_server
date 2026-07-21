@@ -1,7 +1,6 @@
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 
-import RootController from '../../controllers/root.controller.js';
 import {
   permissiveJsonResponseSchema,
   compatibilityQuerySchema,
@@ -10,8 +9,8 @@ import { reportBodySchema } from '../../schemas/root.schema.js';
 
 export default function routes(
   instance: FastifyInstance,
-  _options: any,
-  done: any,
+  _options: unknown,
+  done: () => void,
 ) {
   const server = instance.withTypeProvider<ZodTypeProvider>();
 
@@ -23,7 +22,7 @@ export default function routes(
         response: { 200: permissiveJsonResponseSchema },
       },
     },
-    RootController.status,
+    async () => ({ status: 'ok' }),
   );
 
   server.post(
@@ -34,7 +33,16 @@ export default function routes(
         response: { 200: permissiveJsonResponseSchema },
       },
     },
-    RootController.report,
+    async (request) => {
+      const body = request.body;
+      request.log.warn(
+        { 'csp-report': body, label: 'CSP violation' },
+        body.violation
+          ? `CSP Violation: ${JSON.stringify(body.violation)}`
+          : 'CSP Violation',
+      );
+      return { status: 'ok' };
+    },
   );
 
   done();

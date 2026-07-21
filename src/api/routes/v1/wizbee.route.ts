@@ -2,12 +2,13 @@ import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 
 import { ROLES } from '../../../config/constants.config.js';
+import { KyselyServer } from '../../../servers/kysely.server.js';
 import WizBeeController from '../../controllers/wizbee.controller.js';
+import { Guard } from '../../hooks/guard.hook.js';
 import {
   executeWizBeeTool,
   wizBeeToolDefinitions,
-} from '../../controllers/wizbee.tools.controller.js';
-import { Guard } from '../../hooks/guard.hook.js';
+} from '../../modules/wizbee_tools.module.js';
 import {
   permissiveJsonResponseSchema,
   compatibilityQuerySchema,
@@ -17,8 +18,8 @@ import { wizBeeStreamBody } from '../../schemas/wizbee.schema.js';
 
 export default function routes(
   instance: FastifyInstance,
-  _options: any,
-  done: any,
+  _options: unknown,
+  done: () => void,
 ) {
   const server = instance.withTypeProvider<ZodTypeProvider>();
 
@@ -86,6 +87,7 @@ export default function routes(
         const context = { userId: user.user_id, beeId: user.bee_id };
         try {
           const result = await executeWizBeeTool(
+            KyselyServer.getInstance().db,
             toolDef.name,
             request.body,
             context,

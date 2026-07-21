@@ -128,11 +128,7 @@ const redisConfig = {
   password: process.env.REDIS_PASSWORD ?? '',
 };
 
-/**
- * @type {Knex}
- */
-const knexConfig = {
-  client: process.env.DB_TYPE,
+const databaseConfig = {
   connection: {
     host: process.env.DB_HOSTNAME,
     database: process.env.DB_NAME,
@@ -151,10 +147,19 @@ const knexConfig = {
       return next();
     },
   },
-  debug: env === ENVIRONMENT.development,
   pool: {
     min: Number.parseInt(process.env.DB_POOL_MIN!),
     max: Number.parseInt(process.env.DB_POOL_MAX!),
+  },
+};
+
+/** Knex remains tooling for migrations, seeds, and test database setup. */
+const knexConfig = {
+  client: process.env.DB_TYPE,
+  ...databaseConfig,
+  debug: env === ENVIRONMENT.development,
+  pool: {
+    ...databaseConfig.pool,
     afterCreate(conn: any, done: any) {
       // Extend max group concant mainly for calendar view if many ids are concated
       conn.query('SET SESSION group_concat_max_len = 100000;', (err: any) => {
@@ -249,6 +254,7 @@ export {
   isChild,
   isContainer,
   isServerLocationValid,
+  databaseConfig,
   knexConfig,
   mailConfig,
   mistralAI,

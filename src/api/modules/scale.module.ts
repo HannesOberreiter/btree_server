@@ -5,8 +5,8 @@ import { sql } from 'kysely';
 import type { Database } from '../../types/database.types.js';
 import type { DB } from '../../types/db.types.js';
 import type { PatchBody, PostBody } from '../schemas/scale.schema.js';
-import { checkOwnership } from '../utils/kysely.utils.js';
-import { limitScale } from '../utils/premium.util.js';
+import { requireHiveOwnership } from './ownership.module.js';
+import { limitScale } from './premium.module.js';
 
 function hiveProjection() {
   return sql<Record<string, unknown> | null>`
@@ -53,7 +53,7 @@ export async function updateScales(
   body: PatchBody,
 ) {
   if (body.data.hive_id) {
-    await checkOwnership(db, 'hives', body.data.hive_id, companyId);
+    await requireHiveOwnership(db, body.data.hive_id, companyId);
   }
 
   const result = await db
@@ -80,7 +80,7 @@ export async function createScale(
       'Premium subscription required to connect scales',
     );
   }
-  await checkOwnership(db, 'hives', body.hive_id, companyId);
+  await requireHiveOwnership(db, body.hive_id, companyId);
 
   const insert = await db
     .insertInto('scales')

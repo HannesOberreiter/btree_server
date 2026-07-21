@@ -7,6 +7,7 @@ import type {
   CalendarRangeQuery,
   CalendarRearingQuery,
 } from '../schemas/calendar.schema.js';
+import { actorProjection } from './actor_projection.module.js';
 
 const COMMA_REGEX = /,/g;
 
@@ -235,18 +236,8 @@ export async function listCalendarTodos(
     .selectAll('todos')
     .select([
       'apiaries.name as apiary_name',
-      sql<{ email: string | null; username: string | null } | null>`
-        CASE WHEN creators.id IS NOT NULL THEN JSON_OBJECT(
-          'email', creators.email,
-          'username', creators.username
-        ) ELSE NULL END
-      `.as('creator'),
-      sql<{ email: string | null; username: string | null } | null>`
-        CASE WHEN editors.id IS NOT NULL THEN JSON_OBJECT(
-          'email', editors.email,
-          'username', editors.username
-        ) ELSE NULL END
-      `.as('editor'),
+      actorProjection('creators', 'creator'),
+      actorProjection('editors', 'editor'),
     ])
     .where('todos.user_id', '=', companyId)
     .where('todos.date', '>=', start)

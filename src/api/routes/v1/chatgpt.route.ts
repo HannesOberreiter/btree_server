@@ -7,12 +7,13 @@ import httpErrors from 'http-errors';
 import { z } from 'zod';
 
 import { url } from '../../../config/environment.config.js';
+import { KyselyServer } from '../../../servers/kysely.server.js';
 import AgentOAuthController from '../../controllers/agent_oauth.controller.js';
+import { chatGptAuthHook } from '../../hooks/chatgpt_auth.hook.js';
 import {
   executeWizBeeTool,
   wizBeeToolDefinitions,
-} from '../../controllers/wizbee.tools.controller.js';
-import { chatGptAuthHook } from '../../hooks/chatgpt_auth.hook.js';
+} from '../../modules/wizbee_tools.module.js';
 import {
   permissiveJsonResponseSchema,
   permissiveObjectSchema,
@@ -84,7 +85,10 @@ function buildChatGptToolSpec() {
   };
 }
 
-export default async function routes(instance: FastifyInstance, _options: any) {
+export default async function routes(
+  instance: FastifyInstance,
+  _options: unknown,
+) {
   await instance.register(fastifyFormbody);
 
   await instance.register(fastifySwagger, {
@@ -168,10 +172,15 @@ export default async function routes(instance: FastifyInstance, _options: any) {
       throw httpErrors.Unauthorized();
     }
 
-    const result = await executeWizBeeTool(toolName, body ?? {}, {
-      userId: user.user_id,
-      beeId: user.bee_id,
-    });
+    const result = await executeWizBeeTool(
+      KyselyServer.getInstance().db,
+      toolName,
+      body ?? {},
+      {
+        userId: user.user_id,
+        beeId: user.bee_id,
+      },
+    );
 
     if (
       result &&

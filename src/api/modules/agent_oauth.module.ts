@@ -10,8 +10,8 @@ import {
   serverLocation,
   url,
 } from '../../config/environment.config.js';
-import { KyselyServer } from '../../servers/kysely.server.js';
 import { RedisServer } from '../../servers/redis.server.js';
+import type { Database } from '../../types/database.types.js';
 
 const AUTH_CODE_TTL_SECONDS = 600;
 const TOKEN_TYPE = 'bearer';
@@ -124,14 +124,14 @@ function buildAccessToken(payload: OAuthCodePayload) {
   return `${ACCESS_TOKEN_PREFIX}${token}`;
 }
 
-async function createRefreshToken(payload: OAuthCodePayload) {
+async function createRefreshToken(db: Database, payload: OAuthCodePayload) {
   const token = randomToken(48);
   const tokenHash = hashToken(token);
   const expiresAt = new Date();
   expiresAt.setDate(expiresAt.getDate() + oauth.refreshTokenDays);
 
-  await KyselyServer.getInstance()
-    .db.insertInto('agent_oauth_refresh_tokens')
+  await db
+    .insertInto('agent_oauth_refresh_tokens')
     .values({
       client_id: payload.clientId,
       token_hash: tokenHash,
@@ -145,9 +145,12 @@ async function createRefreshToken(payload: OAuthCodePayload) {
   return token;
 }
 
-async function createTokenPair(payload: OAuthCodePayload): Promise<TokenPair> {
+async function createTokenPair(
+  db: Database,
+  payload: OAuthCodePayload,
+): Promise<TokenPair> {
   const accessToken = buildAccessToken(payload);
-  const refreshToken = await createRefreshToken(payload);
+  const refreshToken = await createRefreshToken(db, payload);
   return {
     access_token: accessToken,
     token_type: TOKEN_TYPE,
@@ -199,6 +202,7 @@ export async function createAuthorizationCode(payload: OAuthCodePayload) {
 }
 
 export async function exchangeAuthorizationCode(
+  db: Database,
   code: string,
   clientId: string,
   clientSecret: string,
@@ -222,17 +226,17 @@ export async function exchangeAuthorizationCode(
     throw httpErrors.BadRequest('Invalid authorization code');
   }
 
-  return createTokenPair(payload);
+  return createTokenPair(db, payload);
 }
 
 export async function refreshAccessToken(
+  db: Database,
   refreshToken: string,
   clientId: string,
   clientSecret: string,
 ) {
   validateClient(clientId, clientSecret);
   const tokenHash = hashToken(refreshToken);
-  const db = KyselyServer.getInstance().db;
   const stored = await db
     .selectFrom('agent_oauth_refresh_tokens')
     .selectAll()

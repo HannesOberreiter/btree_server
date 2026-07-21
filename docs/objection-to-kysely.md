@@ -22,7 +22,7 @@
 - [x] OpenAPI request schemas available for route contracts
 - [x] Make `src/types/db.types.ts` generation reproducible with `pnpm db:types`
 - [x] Add Todo response-shape and tenant-isolation characterization tests
-- [ ] Add response-shape and tenant-isolation characterization tests for each later slice
+- [x] Add response-shape and tenant-isolation characterization tests for each later slice
 
 ## Phase 0: migration foundation
 
@@ -33,32 +33,32 @@
 - [x] Make HTTP, WizBee, and Hive Todo adapters call the same operations
 - [x] Delete the shallow Todo controller and keep its HTTP adapters in the typed route
 - [x] Add typed application-managed UTC timestamp helpers
-- [ ] Replace broad Kysely helpers with narrow typed helpers as slices need them
-- [ ] Define native MySQL/Kysely error mapping before removing Objection errors
+- [x] Replace broad Kysely helpers with narrow typed ownership operations
+- [x] Define native MySQL/Kysely error mapping before removing Objection errors
 
 ## Phase 1: leaf and read-only slices
 
-- [ ] Field Settings
+- [x] Field Settings
   - [x] Route reads/writes use typed Kysely operations
   - [x] Shallow controller removed
-  - [ ] Remove model after `delete.util.ts` migrates
-- [ ] Dropbox
+  - [x] Model removed after account-deletion operations migrated
+- [x] Dropbox
   - [x] Route persistence uses typed Kysely operations
   - [x] OAuth implementation moved to a transport adapter
   - [x] Shallow controller removed
-  - [ ] Remove model after `delete.util.ts` and `cron.util.ts` migrate
+  - [x] Model removed after account-deletion and maintenance operations migrated
 - [x] Agent Key model wrapper
   - [x] Kysely operations accept explicit database dependency
   - [x] HTTP route and authentication hook use shared operations
   - [x] Shallow controller and model wrapper removed
-- [ ] Options
+- [x] Options
   - [x] HTTP CRUD uses typed Kysely operations
   - [x] WizBee option reads use shared operations
   - [x] Favorite resets and inserts remain transactional
   - [x] Charge stock relation and option response shapes covered
   - [x] Tenant isolation covered across all option tables
   - [x] Shallow controller removed
-  - [ ] Remove models after task, Company, autofill, delete, and cron callers migrate
+  - [x] Models removed after all shared callers migrated
 - [x] Public observations
   - [x] Reads, ingestion, deduplication, sampling, and cleanup use typed Kysely operations
   - [x] Public cache adapter retains Redis behavior and concrete response schemas
@@ -78,27 +78,27 @@
 
 ## Phase 2: core location slices
 
-- [ ] Apiary
+- [x] Apiary
   - [x] HTTP CRUD and detail reads use typed Kysely operations
   - [x] WizBee Apiary reads and writes use shared operations
   - [x] Duplicate-name checks and delete decisions remain transactional
   - [x] Nested counts, detail shape, restore/hard-delete, and tenant isolation covered
   - [x] Shallow Apiary controller removed
-  - [ ] Remove model after Hive, Movedate, Service, Company, autofill, delete, and cron callers migrate
-- [ ] Hive
+  - [x] Model removed after all shared callers migrated
+- [x] Hive
   - [x] HTTP CRUD, detail, status, position, and delete operations use typed Kysely
   - [x] WizBee Hive CRUD and detail use shared operations
   - [x] Sorting and filtering use typed domain allowlists
   - [x] Nested response shapes and tenant isolation covered
-  - [x] Shallow controller reduced to the task aggregate pending task-slice migration
-  - [ ] Migrate task aggregate after Feed, Harvest, Treatment, and Checkup operations exist
-  - [ ] Remove model after task aggregate and remaining cross-cutting callers migrate
+  - [x] Shallow controller and task aggregate migrated
+  - [x] Task aggregate uses Feed, Harvest, Treatment, and Checkup operations
+  - [x] Model removed after all shared callers migrated
 - [x] Movedate
   - [x] HTTP and WizBee operations use shared typed Kysely operations
   - [x] Filtering and sorting use typed domain allowlists
   - [x] Last-movement protection, nested responses, and tenant isolation covered
   - [x] Shallow controller removed
-  - [ ] Remove model after Company import/export migrates
+  - [x] Model removed after Company import/export migrated
 
 ## Phase 3: task slices
 
@@ -112,7 +112,7 @@
   - [x] Hive task aggregate uses shared operations
   - [x] Nested response shapes, decimals, filters, and tenant isolation covered
   - [x] Shallow task controllers removed
-  - [ ] Remove task models after Company import/export migrates
+  - [x] Task models removed after Company import/export migrated
 
 ## Phase 4: other business slices
 
@@ -120,7 +120,7 @@
   - [x] HTTP and WizBee operations use shared typed Kysely operations
   - [x] Typed sorting, decimal normalization, nested responses, and tenant isolation covered
   - [x] Shallow controller removed
-  - [ ] Remove models after Company import/export migrates
+  - [x] Models removed after Company import/export migrated
 - [x] Scale and Scale Data
   - [x] Scale routes use typed Kysely operations
   - [x] Scale ownership, nested Hive response, and tenant isolation covered
@@ -129,11 +129,11 @@
   - [x] External scale mail behavior moved to a transport adapter
   - [x] Scale Data tenant isolation and nested response covered
   - [x] Shallow Scale Data controller removed
-  - [ ] Remove Scale models after Company, Calendar, and cron callers migrate
+  - [x] Scale models removed after Company, Calendar, and maintenance callers migrated
 - [x] Queen
   - [x] CRUD, status, pedigree, statistics, nested relations, and ownership use typed Kysely operations
   - [x] Shallow controller removed
-  - [ ] Remove models after Company import/export and autofill migrate
+  - [x] Models removed after Company import/export and defaults migrated
 - [x] Rearing Detail
 - [x] Rearing Type
 - [x] Rearing Step
@@ -141,7 +141,7 @@
   - [x] Shared typed Kysely operations preserve nested workflow steps and destructive cascades
   - [x] Cross-company writes are rejected
   - [x] Shallow controllers removed
-  - [ ] Remove models after Company import/export and autofill migrate
+  - [x] Models removed after Company import/export and defaults migrated
 
 ## Phase 5: identity and workspace slices
 
@@ -164,12 +164,12 @@
 ## Phase 6: cross-cutting implementation
 
 - [x] `calendar.util.ts`
-- [x] `autofill.util.ts`
-- [x] `premium.util.ts`
-- [x] `login.util.ts`
-- [x] `auth.util.ts`
-- [x] `delete.util.ts`
-- [x] `cron.util.ts`
+- [x] Company defaults module
+- [x] Premium module
+- [x] Login module
+- [x] Authentication module
+- [x] Account-deletion module
+- [x] Maintenance module
 - [x] Company import/export helpers
 
 ## Phase 7: removal
@@ -179,13 +179,13 @@
 - [x] Delete `src/api/models/`
 - [x] Remove `DatabaseServer` from runtime startup/shutdown
 - [x] Remove `objection` dependency
-- [x] Keep Knex only for migrations
+- [x] Keep Knex only as database tooling for migrations, seeds, and test setup
 - [x] Update package description and documentation
-- [ ] Refactor / utilize shared design like actorProjection
+- [x] Use one shared actor projection with actor IDs across domain reads
 - [x] Regenerate OpenAPI declarations
-- [ ] Improve Vue Playwright E2E coverage for migrated wire shapes, tenant boundaries, filters, nested relations, and regression-prone workflows
-- [ ] Run server lint, build, and E2E
-- [ ] Run Vue lint, typecheck, and improved Playwright E2E suite
+- [x] Improve Vue Playwright E2E coverage for migrated wire shapes, tenant boundaries, filters, nested relations, and regression-prone workflows
+- [x] Run server lint, build, and E2E
+- [x] Run Vue lint, typecheck, and improved Playwright E2E suite
 - [ ] Deploy beta and monitor SQL/error logs
 
 ## Slice definition of done

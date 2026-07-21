@@ -2,17 +2,21 @@ import type { Kysely } from 'kysely';
 import { sql } from 'kysely';
 
 import type { DB } from '../../types/db.types.js';
+import { getWeatherDataForApiary } from '../adapters/weather.adapter.js';
 import type {
   TaskCreateBody,
   TaskListQuery,
   TaskPatchBody,
 } from '../schemas/task.schema.js';
-import { checkOwnership } from '../utils/kysely.utils.js';
-import { isPremium } from '../utils/premium.util.js';
-import { getWeatherDataForApiary } from '../utils/temperature.util.js';
+import { actorProjection } from './actor_projection.module.js';
+import {
+  requireTreatmentDiseaseOwnership,
+  requireTreatmentTypeOwnership,
+  requireTreatmentVetOwnership,
+} from './ownership.module.js';
+import { isPremium } from './premium.module.js';
 import {
   hiveProjection,
-  identifierProjection,
   optionProjection,
   ownedHiveIds,
   parseTaskFilters,
@@ -178,8 +182,8 @@ export async function listTreatments(
       'treatment_date',
       'treatment_apiary',
     ),
-    identifierProjection('creator'),
-    identifierProjection('editor'),
+    actorProjection('creator'),
+    actorProjection('editor'),
   ]);
   for (const ordering of taskOrderings(
     input.order,
@@ -217,6 +221,7 @@ export async function createTreatments(
         .executeTakeFirst();
       if (location?.apiary_id) {
         const weather = await getWeatherDataForApiary(
+          db,
           location.apiary_id,
           actor.companyId,
         );
@@ -230,25 +235,22 @@ export async function createTreatments(
   }
   return db.transaction().execute(async (transaction) => {
     if (input.type_id) {
-      await checkOwnership(
+      await requireTreatmentTypeOwnership(
         transaction,
-        'treatment_types',
         input.type_id,
         actor.companyId,
       );
     }
     if (input.disease_id) {
-      await checkOwnership(
+      await requireTreatmentDiseaseOwnership(
         transaction,
-        'treatment_diseases',
         input.disease_id,
         actor.companyId,
       );
     }
     if (input.vet_id) {
-      await checkOwnership(
+      await requireTreatmentVetOwnership(
         transaction,
-        'treatment_vets',
         input.vet_id,
         actor.companyId,
       );
@@ -294,28 +296,17 @@ export async function updateTreatments(
   body: TaskPatchBody,
 ) {
   if (body.data.type_id) {
-    await checkOwnership(
-      db,
-      'treatment_types',
-      body.data.type_id,
-      actor.companyId,
-    );
+    await requireTreatmentTypeOwnership(db, body.data.type_id, actor.companyId);
   }
   if (body.data.disease_id) {
-    await checkOwnership(
+    await requireTreatmentDiseaseOwnership(
       db,
-      'treatment_diseases',
       body.data.disease_id,
       actor.companyId,
     );
   }
   if (body.data.vet_id) {
-    await checkOwnership(
-      db,
-      'treatment_vets',
-      body.data.vet_id,
-      actor.companyId,
-    );
+    await requireTreatmentVetOwnership(db, body.data.vet_id, actor.companyId);
   }
   const values = treatmentValues(body.data);
   if (body.data.date && body.data.enddate === undefined) {

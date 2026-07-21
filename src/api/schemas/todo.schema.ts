@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 import { numberSchema } from '../utils/zod.util.js';
+import { actorResponseSchema } from './common.schema.js';
 
 export const todoOrderFieldSchema = z.enum([
   'id',
@@ -35,13 +36,7 @@ export const todoListQuerySchema = z
 
 export type TodoListQuery = z.infer<typeof todoListQuerySchema>;
 
-export const beeSchema = z
-  .object({
-    id: z.number(),
-    email: z.string().nullable(),
-    username: z.string().nullable(),
-  })
-  .nullable();
+export const beeSchema = actorResponseSchema;
 
 export type Bee = z.infer<typeof beeSchema>;
 

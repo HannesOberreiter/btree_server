@@ -9,7 +9,8 @@ import type {
   ChargeListQuery,
   ChargeStockQuery,
 } from '../schemas/charge.schema.js';
-import { checkOwnership } from '../utils/kysely.utils.js';
+import { actorProjection } from './actor_projection.module.js';
+import { requireChargeTypeOwnership } from './ownership.module.js';
 
 const chargeOrder = {
   id: 'charges.id',
@@ -68,18 +69,8 @@ function chargeProjection() {
     } | null>`CASE WHEN charge_types.id IS NULL THEN NULL ELSE JSON_OBJECT('id', charge_types.id, 'name', charge_types.name, 'unit', charge_types.unit, 'modus', IF(charge_types.modus = 1, TRUE, FALSE), 'favorite', IF(charge_types.favorite = 1, TRUE, FALSE), 'stock', CASE WHEN charge_stocks.type_id IS NULL THEN NULL ELSE JSON_OBJECT('sum', charge_stocks.sum, 'sum_in', charge_stocks.sum_in, 'sum_out', charge_stocks.sum_out) END) END`.as(
       'type',
     ),
-    sql<Record<
-      string,
-      unknown
-    > | null>`CASE WHEN creator.id IS NULL THEN NULL ELSE JSON_OBJECT('email', creator.email, 'username', creator.username) END`.as(
-      'creator',
-    ),
-    sql<Record<
-      string,
-      unknown
-    > | null>`CASE WHEN editor.id IS NULL THEN NULL ELSE JSON_OBJECT('email', editor.email, 'username', editor.username) END`.as(
-      'editor',
-    ),
+    actorProjection('creator'),
+    actorProjection('editor'),
   ] as const;
 }
 
@@ -232,7 +223,7 @@ export async function createCharge(
   isLlm: boolean,
 ) {
   if (body.type_id)
-    await checkOwnership(db, 'charge_types', body.type_id, companyId);
+    await requireChargeTypeOwnership(db, body.type_id, companyId);
   const result = await db
     .insertInto('charges')
     .values({
@@ -267,7 +258,7 @@ export async function updateCharges(
   isLlm: boolean,
 ) {
   if (body.data.type_id)
-    await checkOwnership(db, 'charge_types', body.data.type_id, companyId);
+    await requireChargeTypeOwnership(db, body.data.type_id, companyId);
   const result = await db
     .updateTable('charges')
     .set({

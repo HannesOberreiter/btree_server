@@ -1,9 +1,8 @@
 /* eslint-disable e18e/prefer-static-regex */
-import type { FastifyReply, FastifyRequest } from 'fastify';
 import { z } from 'zod';
 
-import { KyselyServer } from '../../servers/kysely.server.js';
 import { Logger } from '../../services/logger.service.js';
+import type { Database } from '../../types/database.types.js';
 import {
   createApiary,
   getApiaryDetail,
@@ -59,16 +58,9 @@ import {
   listTreatments,
   updateTreatments,
 } from '../modules/treatment.module.js';
-import ServiceController from './service.controller.js';
+import { getApiaryTemperatureSum, getApiaryWeather } from './weather.module.js';
 
-/**
- * WizBee Tools Controller
- *
- * This controller defines all tools available to the WizBee AI assistant.
- * Tools reuse existing controllers by creating mock FastifyRequest objects.
- * Tools are reused for a sub API under /wizbee/tools and can be called by the AI with user context.
- *
- */
+/** WizBee tool definitions shared by chat and HTTP adapters. */
 
 /**
  * Context type for user authentication
@@ -93,39 +85,6 @@ const GENERIC_HTTP_MESSAGE_RE =
 const NOT_FOUND_MESSAGE_RE =
   /no (?:current )?location found for hive|hive not found|apiary not found|record not found/i;
 
-/**
- * Creates a mock FastifyRequest object to reuse existing controllers
- */
-function createMockRequest(
-  context: WizBeeContext,
-  options: {
-    params?: Record<string, unknown>;
-    query?: Record<string, unknown>;
-    body?: Record<string, unknown>;
-  } = {},
-): FastifyRequest {
-  return {
-    session: {
-      user: {
-        user_id: context.userId,
-        bee_id: context.beeId,
-      },
-      llm: true,
-    },
-    params: options.params ?? {},
-    query: options.query ?? {},
-    body: options.body ?? {},
-    log: Logger.getInstance().pino,
-  } as unknown as FastifyRequest;
-}
-
-/**
- * Creates a mock FastifyReply object
- */
-function createMockReply(): FastifyReply {
-  return {} as FastifyReply;
-}
-
 // ─────────────────────────────────────────────────────────────────────────────
 // Structured tool-error envelope
 //
@@ -136,9 +95,7 @@ function createMockReply(): FastifyReply {
 // opaque thrown exception surfaced by the AI SDK. Hints + suggested_next_tool
 // convert multi-step failure loops into single-step corrections.
 //
-// Controllers (shared with the frontend) are NOT modified — their
-// `httpErrors.*` throws are translated here, messages kept as-is because the
-// frontend already shows them to users (so they're safe to surface).
+// Domain-operation errors are translated here; messages stay safe for users.
 // ─────────────────────────────────────────────────────────────────────────────
 
 type ToolErrorCode =
@@ -572,6 +529,7 @@ function detectNoRecordsAffected(
  * Returns the list of hive IDs that were NOT found; an empty array means OK.
  */
 async function findUnknownHiveIds(
+  db: Database,
   context: WizBeeContext,
   hiveIds: number[],
 ): Promise<number[]> {
@@ -579,7 +537,6 @@ async function findUnknownHiveIds(
   const unique = [...new Set(hiveIds.filter((id) => Number.isFinite(id)))];
   if (unique.length === 0) return hiveIds;
 
-  const db = KyselyServer.getInstance().db;
   const rows = await db
     .selectFrom('hives')
     .select('id')
@@ -594,11 +551,11 @@ async function findUnknownHiveIds(
  * Same as above for a single `apiaryId`.
  */
 async function isUnknownApiaryId(
+  db: Database,
   context: WizBeeContext,
   apiaryId: number,
 ): Promise<boolean> {
   if (!Number.isFinite(apiaryId)) return true;
-  const db = KyselyServer.getInstance().db;
   const row = await db
     .selectFrom('apiaries')
     .select('id')
@@ -617,6 +574,7 @@ async function isUnknownApiaryId(
  * simply pass through.
  */
 async function preValidateOwnership(
+  db: Database,
   toolName: string,
   input: any,
   context: WizBeeContext,
@@ -633,6 +591,7 @@ async function preValidateOwnership(
           : null;
       if (raw && raw.length > 0) {
         const unknown = await findUnknownHiveIds(
+          db,
           context,
           raw.map((n: any) => Number(n)),
         );
@@ -656,7 +615,7 @@ async function preValidateOwnership(
     }
 
     if (meta.usesApiaryId && typeof input.apiaryId === 'number') {
-      if (await isUnknownApiaryId(context, input.apiaryId)) {
+      if (await isUnknownApiaryId(db, context, input.apiaryId)) {
         const { hint } = buildHint(toolName, 'not_found');
         return {
           ok: false,
@@ -820,6 +779,7 @@ function extractRelevantDocumentation(
  * Wrap a tool's `execute` so it never throws and returns structured errors.
  */
 function wrapExecute<TArgs>(
+  db: Database,
   toolName: string,
   context: WizBeeContext,
   exec: (input: TArgs, opts?: any) => Promise<unknown>,
@@ -829,7 +789,7 @@ function wrapExecute<TArgs>(
     // real controller. This turns the common "model passed hive NAME as id"
     // mistake into a clean `not_found` envelope with a findHives suggestion,
     // instead of a confusing downstream 500.
-    const preError = await preValidateOwnership(toolName, input, context);
+    const preError = await preValidateOwnership(db, toolName, input, context);
     if (preError) {
       Logger.getInstance().log(
         'warn',
@@ -886,6 +846,7 @@ function wrapExecute<TArgs>(
  * Wrap every tool in a tools record with the error-handling shim.
  */
 function wrapTools(
+  db: Database,
   context: WizBeeContext,
   tools: Record<string, WizBeeTool>,
 ): Record<string, WizBeeTool> {
@@ -895,7 +856,7 @@ function wrapTools(
     if (typeof original === 'function') {
       out[name] = {
         ...t,
-        execute: wrapExecute(name, context, original.bind(t)),
+        execute: wrapExecute(db, name, context, original.bind(t)),
       };
     } else {
       out[name] = t;
@@ -931,9 +892,10 @@ const TASK_TYPES = ['feed', 'treatment', 'harvest', 'checkup', 'todo'] as const;
  * Vercel AI SDK tools need the context at runtime, so we create them dynamically
  */
 export function createWizBeeTools(
+  db: Database,
   context: WizBeeContext,
 ): Record<string, WizBeeTool> {
-  return wrapTools(context, {
+  return wrapTools(db, context, {
     /**
      * List Apiaries and Hives Tool
      * Returns all apiaries with their associated hives for the current user
@@ -955,7 +917,6 @@ export function createWizBeeTools(
           ),
       }),
       execute: async (input) => {
-        const db = KyselyServer.getInstance().db;
         const apiariesResult = await listApiaries(db, context.userId, {
           deleted: false,
           modus: input.includeInactive ? undefined : true,
@@ -1013,18 +974,14 @@ export function createWizBeeTools(
           ),
       }),
       execute: async (input) => {
-        const raw = await listHives(
-          KyselyServer.getInstance().db,
-          context.userId,
-          {
-            q: input.q,
-            deleted: input.includeDeleted ?? false,
-            modus: input.includeInactive ? undefined : true,
-            limit: input.limit ?? 50,
-            offset: 0,
-            details: false,
-          },
-        );
+        const raw = await listHives(db, context.userId, {
+          q: input.q,
+          deleted: input.includeDeleted ?? false,
+          modus: input.includeInactive ? undefined : true,
+          limit: input.limit ?? 50,
+          offset: 0,
+          details: false,
+        });
         const results = raw.results;
 
         // Return a compact, purpose-shaped payload so the model sees the IDs
@@ -1061,7 +1018,7 @@ export function createWizBeeTools(
       }),
       execute: async (input) => {
         const result = await createApiary(
-          KyselyServer.getInstance().db,
+          db,
           context.userId,
           context.beeId,
           input,
@@ -1091,7 +1048,7 @@ export function createWizBeeTools(
       execute: async (input) => {
         const { id, ...data } = input;
         const updatedCount = await updateApiaries(
-          KyselyServer.getInstance().db,
+          db,
           context.userId,
           context.beeId,
           [id],
@@ -1132,22 +1089,17 @@ export function createWizBeeTools(
           typeId,
           ...fields
         } = input;
-        const ids = await createHives(
-          KyselyServer.getInstance().db,
-          context.userId,
-          context.beeId,
-          {
-            ...fields,
-            apiary_id: apiaryId,
-            date: initialMovementDate,
-            grouphive: groupHive ?? 0,
-            ...(modusDate !== undefined && { modus_date: modusDate }),
-            ...(sourceId !== undefined && { source_id: sourceId }),
-            ...(typeId !== undefined && { type_id: typeId }),
-            start: 0,
-            repeat: 1,
-          },
-        );
+        const ids = await createHives(db, context.userId, context.beeId, {
+          ...fields,
+          apiary_id: apiaryId,
+          date: initialMovementDate,
+          grouphive: groupHive ?? 0,
+          ...(modusDate !== undefined && { modus_date: modusDate }),
+          ...(sourceId !== undefined && { source_id: sourceId }),
+          ...(typeId !== undefined && { type_id: typeId }),
+          start: 0,
+          repeat: 1,
+        });
         return {
           success: true,
           message: 'Created hive with initial movement',
@@ -1180,7 +1132,7 @@ export function createWizBeeTools(
           ...(typeId !== undefined && { type_id: typeId }),
         };
         const updatedCount = await updateHives(
-          KyselyServer.getInstance().db,
+          db,
           context.userId,
           context.beeId,
           { ids: [hiveId], data },
@@ -1214,7 +1166,7 @@ export function createWizBeeTools(
             date: { from: input.dateStart, to: input.dateEnd },
           });
         }
-        return listMovedates(KyselyServer.getInstance().db, context.userId, {
+        return listMovedates(db, context.userId, {
           filters: JSON.stringify(filters),
           limit: input.limit,
           offset: 0,
@@ -1232,16 +1184,11 @@ export function createWizBeeTools(
         date: z.string().describe('Movement date in YYYY-MM-DD format'),
       }),
       execute: async (input) => {
-        const ids = await createMovedates(
-          KyselyServer.getInstance().db,
-          context.userId,
-          context.beeId,
-          {
-            hive_ids: [input.hiveId],
-            apiary_id: input.apiaryId,
-            date: input.date,
-          },
-        );
+        const ids = await createMovedates(db, context.userId, context.beeId, {
+          hive_ids: [input.hiveId],
+          apiary_id: input.apiaryId,
+          date: input.date,
+        });
         return {
           success: true,
           message: 'Created movement',
@@ -1264,7 +1211,7 @@ export function createWizBeeTools(
           ...(input.date !== undefined && { date: input.date }),
         };
         const updatedCount = await updateMovedates(
-          KyselyServer.getInstance().db,
+          db,
           context.userId,
           context.beeId,
           { ids: [input.id], data },
@@ -1284,11 +1231,9 @@ export function createWizBeeTools(
         id: z.number().describe('Movement ID from listMovements'),
       }),
       execute: async (input) => {
-        const deletedCount = await deleteMovedates(
-          KyselyServer.getInstance().db,
-          context.userId,
-          [input.id],
-        );
+        const deletedCount = await deleteMovedates(db, context.userId, [
+          input.id,
+        ]);
         return {
           success: true,
           message: 'Deleted movement',
@@ -1314,12 +1259,10 @@ export function createWizBeeTools(
       execute: async (input) => {
         let weatherData = null;
         try {
-          const weatherReq = createMockRequest(context, {
-            params: { apiary_id: input.apiaryId },
-          });
-          weatherData = await ServiceController.getWeatherData(
-            weatherReq,
-            createMockReply(),
+          weatherData = await getApiaryWeather(
+            db,
+            context.userId,
+            input.apiaryId,
           );
         } catch {
           // Weather service might fail, continue without it
@@ -1330,26 +1273,18 @@ export function createWizBeeTools(
           const requestedYear = input.year ?? new Date().getFullYear();
           const previousYear = requestedYear - 1;
 
-          // Fetch GTS for requested year
-          const gtsReq = createMockRequest(context, {
-            params: { apiary_id: input.apiaryId },
-            query: { year: requestedYear },
-          });
-          const gtsResult = await ServiceController.getGruenlandtemperatursumme(
-            gtsReq,
-            createMockReply(),
+          const gtsResult = await getApiaryTemperatureSum(
+            db,
+            context.userId,
+            input.apiaryId,
+            requestedYear,
           );
-
-          // Fetch GTS for previous year
-          const gtsPrevReq = createMockRequest(context, {
-            params: { apiary_id: input.apiaryId },
-            query: { year: previousYear },
-          });
-          const gtsPrevResult =
-            await ServiceController.getGruenlandtemperatursumme(
-              gtsPrevReq,
-              createMockReply(),
-            );
+          const gtsPrevResult = await getApiaryTemperatureSum(
+            db,
+            context.userId,
+            input.apiaryId,
+            previousYear,
+          );
 
           gts = {
             currentYear: {
@@ -1386,11 +1321,7 @@ export function createWizBeeTools(
         hiveId: z.number().describe('ID of the hive'),
       }),
       execute: async (input) => {
-        return getHiveDetail(
-          KyselyServer.getInstance().db,
-          context.userId,
-          input.hiveId,
-        );
+        return getHiveDetail(db, context.userId, input.hiveId);
       },
     }),
 
@@ -1417,7 +1348,7 @@ export function createWizBeeTools(
       }),
       execute: async (input) => {
         return getHiveTasks(
-          KyselyServer.getInstance().db,
+          db,
           { companyId: context.userId, beeId: context.beeId, isLlm: true },
           input.id,
           input.year ?? new Date().getFullYear(),
@@ -1443,14 +1374,9 @@ export function createWizBeeTools(
       execute: async (input) => {
         const results = await Promise.all(
           optionTables.map(async (table) => {
-            const data = await listOptions(
-              KyselyServer.getInstance().db,
-              table,
-              context.userId,
-              {
-                modus: input.activeOnly ? true : undefined,
-              },
-            );
+            const data = await listOptions(db, table, context.userId, {
+              modus: input.activeOnly ? true : undefined,
+            });
             return [table, data] as const;
           }),
         );
@@ -1518,7 +1444,6 @@ export function createWizBeeTools(
           done: input.includeDone ? undefined : false,
           deleted: false,
         };
-        const db = KyselyServer.getInstance().db;
         let items;
         if (input.task === 'todo') {
           items = (
@@ -1580,7 +1505,7 @@ export function createWizBeeTools(
       execute: async (input) => {
         const { hiveIds, typeId, ...rest } = input;
         const result = await createFeeds(
-          KyselyServer.getInstance().db,
+          db,
           { companyId: context.userId, beeId: context.beeId, isLlm: true },
           {
             ...rest,
@@ -1619,7 +1544,7 @@ export function createWizBeeTools(
       execute: async (input) => {
         const { ids, typeId, ...fields } = input;
         const updatedCount = await updateFeeds(
-          KyselyServer.getInstance().db,
+          db,
           { companyId: context.userId, beeId: context.beeId, isLlm: true },
           {
             ids,
@@ -1648,7 +1573,7 @@ export function createWizBeeTools(
       }),
       execute: async (input) => {
         await deleteTasks(
-          KyselyServer.getInstance().db,
+          db,
           'feeds',
           { companyId: context.userId, beeId: context.beeId, isLlm: true },
           input.ids,
@@ -1694,7 +1619,7 @@ export function createWizBeeTools(
       execute: async (input) => {
         const { hiveIds, typeId, ...rest } = input;
         const result = await createHarvests(
-          KyselyServer.getInstance().db,
+          db,
           { companyId: context.userId, beeId: context.beeId, isLlm: true },
           {
             ...rest,
@@ -1740,7 +1665,7 @@ export function createWizBeeTools(
       execute: async (input) => {
         const { ids, typeId, ...fields } = input;
         const updatedCount = await updateHarvests(
-          KyselyServer.getInstance().db,
+          db,
           { companyId: context.userId, beeId: context.beeId, isLlm: true },
           {
             ids,
@@ -1769,7 +1694,7 @@ export function createWizBeeTools(
       }),
       execute: async (input) => {
         await deleteTasks(
-          KyselyServer.getInstance().db,
+          db,
           'harvests',
           { companyId: context.userId, beeId: context.beeId, isLlm: true },
           input.ids,
@@ -1815,7 +1740,7 @@ export function createWizBeeTools(
       execute: async (input) => {
         const { hiveIds, typeId, diseaseId, vetId, ...rest } = input;
         const result = await createTreatments(
-          KyselyServer.getInstance().db,
+          db,
           { companyId: context.userId, beeId: context.beeId, isLlm: true },
           {
             ...rest,
@@ -1861,7 +1786,7 @@ export function createWizBeeTools(
       execute: async (input) => {
         const { ids, typeId, diseaseId, vetId, ...fields } = input;
         const updatedCount = await updateTreatments(
-          KyselyServer.getInstance().db,
+          db,
           { companyId: context.userId, beeId: context.beeId, isLlm: true },
           {
             ids,
@@ -1892,7 +1817,7 @@ export function createWizBeeTools(
       }),
       execute: async (input) => {
         await deleteTasks(
-          KyselyServer.getInstance().db,
+          db,
           'treatments',
           { companyId: context.userId, beeId: context.beeId, isLlm: true },
           input.ids,
@@ -1952,7 +1877,7 @@ export function createWizBeeTools(
       execute: async (input) => {
         const { hiveIds, typeId, cappedBrood, calmComb, ...rest } = input;
         const result = await createCheckups(
-          KyselyServer.getInstance().db,
+          db,
           { companyId: context.userId, beeId: context.beeId, isLlm: true },
           {
             ...rest,
@@ -2014,7 +1939,7 @@ export function createWizBeeTools(
       execute: async (input) => {
         const { ids, typeId, cappedBrood, calmComb, ...fields } = input;
         const updatedCount = await updateCheckups(
-          KyselyServer.getInstance().db,
+          db,
           { companyId: context.userId, beeId: context.beeId, isLlm: true },
           {
             ids,
@@ -2045,7 +1970,7 @@ export function createWizBeeTools(
       }),
       execute: async (input) => {
         await deleteTasks(
-          KyselyServer.getInstance().db,
+          db,
           'checkups',
           { companyId: context.userId, beeId: context.beeId, isLlm: true },
           input.ids,
@@ -2085,7 +2010,7 @@ export function createWizBeeTools(
       }),
       execute: async (input) => {
         const result = await createTodos(
-          KyselyServer.getInstance().db,
+          db,
           {
             companyId: context.userId,
             beeId: context.beeId,
@@ -2145,7 +2070,7 @@ export function createWizBeeTools(
       execute: async (input) => {
         const { ids, apiaryId, ...rest } = input;
         const updatedCount = await updateTodos(
-          KyselyServer.getInstance().db,
+          db,
           {
             companyId: context.userId,
             beeId: context.beeId,
@@ -2180,7 +2105,7 @@ export function createWizBeeTools(
       }),
       execute: async (input) => {
         const deletedCount = await deleteTodos(
-          KyselyServer.getInstance().db,
+          db,
           {
             companyId: context.userId,
             beeId: context.beeId,
@@ -2218,7 +2143,6 @@ export function createWizBeeTools(
           .describe('Maximum number of results'),
       }),
       execute: async (input) => {
-        const db = KyselyServer.getInstance().db;
         const result = await listCharges(db, context.userId, {
           limit: input.limit,
           offset: 0,
@@ -2282,7 +2206,7 @@ export function createWizBeeTools(
       execute: async (input) => {
         const { typeId, ...rest } = input;
         const result = await createCharge(
-          KyselyServer.getInstance().db,
+          db,
           context.userId,
           context.beeId,
           { ...rest, ...(typeId !== undefined && { type_id: typeId }) },
@@ -2326,7 +2250,7 @@ export function createWizBeeTools(
       execute: async (input) => {
         const { ids, typeId, ...fields } = input;
         const updatedCount = await updateCharges(
-          KyselyServer.getInstance().db,
+          db,
           context.userId,
           context.beeId,
           {
@@ -2357,7 +2281,7 @@ export function createWizBeeTools(
       }),
       execute: async (input) => {
         await deleteCharges(
-          KyselyServer.getInstance().db,
+          db,
           context.userId,
           context.beeId,
           input.ids,
@@ -2388,7 +2312,6 @@ export function createWizBeeTools(
           ),
       }),
       execute: async (input) => {
-        const db = KyselyServer.getInstance().db;
         const totalResult = await listHiveCountTotal(db, context.userId);
         const apiaryResult = await listHiveCountByApiary(
           db,
@@ -2422,7 +2345,6 @@ export function createWizBeeTools(
         const currentYear = input.year ?? new Date().getFullYear();
         const filters = JSON.stringify([{ year: currentYear }]);
 
-        const db = KyselyServer.getInstance().db;
         const [yearResult, apiaryResult, typeResult] = await Promise.all([
           listTaskStatisticsSummary(db, context.userId, 'harvest', 'year', {}),
           listTaskStatisticsSummary(db, context.userId, 'harvest', 'apiary', {
@@ -2461,7 +2383,6 @@ export function createWizBeeTools(
         const currentYear = input.year ?? new Date().getFullYear();
         const filters = JSON.stringify([{ year: currentYear }]);
 
-        const db = KyselyServer.getInstance().db;
         const [yearResult, apiaryResult, typeResult] = await Promise.all([
           listTaskStatisticsSummary(db, context.userId, 'feed', 'year', {}),
           listTaskStatisticsSummary(db, context.userId, 'feed', 'apiary', {
@@ -2500,7 +2421,6 @@ export function createWizBeeTools(
         const currentYear = input.year ?? new Date().getFullYear();
         const filters = JSON.stringify([{ year: currentYear }]);
 
-        const db = KyselyServer.getInstance().db;
         const [yearResult, apiaryResult, typeResult] = await Promise.all([
           listTaskStatisticsSummary(
             db,
@@ -3140,11 +3060,12 @@ export const wizBeeToolDefinitions = [
  * Used by the /wizbee/tools API endpoints
  */
 export async function executeWizBeeTool(
+  db: Database,
   toolName: string,
   input: unknown,
   context: WizBeeContext,
 ): Promise<unknown> {
-  const tools = createWizBeeTools(context);
+  const tools = createWizBeeTools(db, context);
   const toolFn = tools[toolName];
 
   if (!toolFn || typeof toolFn.execute !== 'function') {
