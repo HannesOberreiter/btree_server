@@ -158,8 +158,9 @@ export interface paths {
                 created_at?: string | null;
                 creator?:
                   | ({
-                      email?: string | null;
-                      username?: string | null;
+                      email: string | null;
+                      id: number;
+                      username: string | null;
                     } & {
                       [key: string]: unknown;
                     })
@@ -170,8 +171,9 @@ export interface paths {
                 edit_id?: number | null;
                 editor?:
                   | ({
-                      email?: string | null;
-                      username?: string | null;
+                      email: string | null;
+                      id: number;
+                      username: string | null;
                     } & {
                       [key: string]: unknown;
                     })
@@ -241,8 +243,9 @@ export interface paths {
               created_at?: string | null;
               creator?:
                 | ({
-                    email?: string | null;
-                    username?: string | null;
+                    email: string | null;
+                    id: number;
+                    username: string | null;
                   } & {
                     [key: string]: unknown;
                   })
@@ -253,8 +256,9 @@ export interface paths {
               edit_id?: number | null;
               editor?:
                 | ({
-                    email?: string | null;
-                    username?: string | null;
+                    email: string | null;
+                    id: number;
+                    username: string | null;
                   } & {
                     [key: string]: unknown;
                   })
@@ -358,8 +362,9 @@ export interface paths {
               created_at?: string | null;
               creator?:
                 | ({
-                    email?: string | null;
-                    username?: string | null;
+                    email: string | null;
+                    id: number;
+                    username: string | null;
                   } & {
                     [key: string]: unknown;
                   })
@@ -370,8 +375,9 @@ export interface paths {
               edit_id?: number | null;
               editor?:
                 | ({
-                    email?: string | null;
-                    username?: string | null;
+                    email: string | null;
+                    id: number;
+                    username: string | null;
                   } & {
                     [key: string]: unknown;
                   })
@@ -479,8 +485,9 @@ export interface paths {
               created_at?: string | null;
               creator?:
                 | ({
-                    email?: string | null;
-                    username?: string | null;
+                    email: string | null;
+                    id: number;
+                    username: string | null;
                   } & {
                     [key: string]: unknown;
                   })
@@ -491,8 +498,9 @@ export interface paths {
               edit_id?: number | null;
               editor?:
                 | ({
-                    email?: string | null;
-                    username?: string | null;
+                    email: string | null;
+                    id: number;
+                    username: string | null;
                   } & {
                     [key: string]: unknown;
                   })
@@ -561,8 +569,9 @@ export interface paths {
               created_at?: string | null;
               creator?:
                 | ({
-                    email?: string | null;
-                    username?: string | null;
+                    email: string | null;
+                    id: number;
+                    username: string | null;
                   } & {
                     [key: string]: unknown;
                   })
@@ -573,8 +582,9 @@ export interface paths {
               edit_id?: number | null;
               editor?:
                 | ({
-                    email?: string | null;
-                    username?: string | null;
+                    email: string | null;
+                    id: number;
+                    username: string | null;
                   } & {
                     [key: string]: unknown;
                   })
@@ -1749,16 +1759,28 @@ export interface paths {
                 calibrate?: string | null;
                 charge?: string | null;
                 created_at?: string | null;
-                creator?: {
-                  [key: string]: unknown;
-                } | null;
+                creator?:
+                  | ({
+                      email: string | null;
+                      id: number;
+                      username: string | null;
+                    } & {
+                      [key: string]: unknown;
+                    })
+                  | null;
                 date?: string | null;
                 deleted?: boolean;
                 deleted_at?: string | null;
                 edit_id?: number | null;
-                editor?: {
-                  [key: string]: unknown;
-                } | null;
+                editor?:
+                  | ({
+                      email: string | null;
+                      id: number;
+                      username: string | null;
+                    } & {
+                      [key: string]: unknown;
+                    })
+                  | null;
                 id: number;
                 kind: string;
                 name?: string | null;
@@ -1913,16 +1935,28 @@ export interface paths {
               calibrate?: string | null;
               charge?: string | null;
               created_at?: string | null;
-              creator?: {
-                [key: string]: unknown;
-              } | null;
+              creator?:
+                | ({
+                    email: string | null;
+                    id: number;
+                    username: string | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
               date?: string | null;
               deleted?: boolean;
               deleted_at?: string | null;
               edit_id?: number | null;
-              editor?: {
-                [key: string]: unknown;
-              } | null;
+              editor?:
+                | ({
+                    email: string | null;
+                    id: number;
+                    username: string | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
               id: number;
               kind: string;
               name?: string | null;
@@ -1989,16 +2023,28 @@ export interface paths {
               calibrate?: string | null;
               charge?: string | null;
               created_at?: string | null;
-              creator?: {
-                [key: string]: unknown;
-              } | null;
+              creator?:
+                | ({
+                    email: string | null;
+                    id: number;
+                    username: string | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
               date?: string | null;
               deleted?: boolean;
               deleted_at?: string | null;
               edit_id?: number | null;
-              editor?: {
-                [key: string]: unknown;
-              } | null;
+              editor?:
+                | ({
+                    email: string | null;
+                    id: number;
+                    username: string | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
               id: number;
               kind: string;
               name?: string | null;
@@ -2137,17 +2183,29 @@ export interface paths {
                   | null;
                 comb?: number | null;
                 created_at?: string | null;
-                creator?: {
-                  [key: string]: unknown;
-                } | null;
+                creator?:
+                  | ({
+                      email: string | null;
+                      id: number;
+                      username: string | null;
+                    } & {
+                      [key: string]: unknown;
+                    })
+                  | null;
                 date?: string | null;
                 deleted?: boolean;
                 deleted_at?: string | null;
                 done?: boolean;
                 edit_id?: number | null;
-                editor?: {
-                  [key: string]: unknown;
-                } | null;
+                editor?:
+                  | ({
+                      email: string | null;
+                      id: number;
+                      username: string | null;
+                    } & {
+                      [key: string]: unknown;
+                    })
+                  | null;
                 eggs?: boolean | null;
                 emptyframes?: number | null;
                 enddate?: string | null;
@@ -2357,17 +2415,29 @@ export interface paths {
                 | null;
               comb?: number | null;
               created_at?: string | null;
-              creator?: {
-                [key: string]: unknown;
-              } | null;
+              creator?:
+                | ({
+                    email: string | null;
+                    id: number;
+                    username: string | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
               date?: string | null;
               deleted?: boolean;
               deleted_at?: string | null;
               done?: boolean;
               edit_id?: number | null;
-              editor?: {
-                [key: string]: unknown;
-              } | null;
+              editor?:
+                | ({
+                    email: string | null;
+                    id: number;
+                    username: string | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
               eggs?: boolean | null;
               emptyframes?: number | null;
               enddate?: string | null;
@@ -2456,17 +2526,29 @@ export interface paths {
                 | null;
               comb?: number | null;
               created_at?: string | null;
-              creator?: {
-                [key: string]: unknown;
-              } | null;
+              creator?:
+                | ({
+                    email: string | null;
+                    id: number;
+                    username: string | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
               date?: string | null;
               deleted?: boolean;
               deleted_at?: string | null;
               done?: boolean;
               edit_id?: number | null;
-              editor?: {
-                [key: string]: unknown;
-              } | null;
+              editor?:
+                | ({
+                    email: string | null;
+                    id: number;
+                    username: string | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
               eggs?: boolean | null;
               emptyframes?: number | null;
               enddate?: string | null;
@@ -2703,7 +2785,7 @@ export interface paths {
         query?: never;
         header?: never;
         path: {
-          company_id: string;
+          company_id: number;
         };
         cookie?: never;
       };
@@ -2750,7 +2832,7 @@ export interface paths {
         query?: never;
         header?: never;
         path: {
-          id: string;
+          id: number;
         };
         cookie?: never;
       };
@@ -2846,7 +2928,7 @@ export interface paths {
         query?: never;
         header?: never;
         path: {
-          id: string;
+          id: number;
         };
         cookie?: never;
       };
@@ -3665,9 +3747,15 @@ export interface paths {
                 bee_id?: number | null;
                 charge?: string | null;
                 created_at?: string | null;
-                creator?: {
-                  [key: string]: unknown;
-                } | null;
+                creator?:
+                  | ({
+                      email: string | null;
+                      id: number;
+                      username: string | null;
+                    } & {
+                      [key: string]: unknown;
+                    })
+                  | null;
                 date?: string | null;
                 deleted?: boolean | null;
                 deleted_at?: string | null;
@@ -3687,9 +3775,15 @@ export interface paths {
                 disease_id?: number | null;
                 done?: boolean | null;
                 edit_id?: number | null;
-                editor?: {
-                  [key: string]: unknown;
-                } | null;
+                editor?:
+                  | ({
+                      email: string | null;
+                      id: number;
+                      username: string | null;
+                    } & {
+                      [key: string]: unknown;
+                    })
+                  | null;
                 enddate?: string | null;
                 feed_apiary?:
                   | ({
@@ -3949,9 +4043,15 @@ export interface paths {
               bee_id?: number | null;
               charge?: string | null;
               created_at?: string | null;
-              creator?: {
-                [key: string]: unknown;
-              } | null;
+              creator?:
+                | ({
+                    email: string | null;
+                    id: number;
+                    username: string | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
               date?: string | null;
               deleted?: boolean | null;
               deleted_at?: string | null;
@@ -3971,9 +4071,15 @@ export interface paths {
               disease_id?: number | null;
               done?: boolean | null;
               edit_id?: number | null;
-              editor?: {
-                [key: string]: unknown;
-              } | null;
+              editor?:
+                | ({
+                    email: string | null;
+                    id: number;
+                    username: string | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
               enddate?: string | null;
               feed_apiary?:
                 | ({
@@ -4099,9 +4205,15 @@ export interface paths {
               bee_id?: number | null;
               charge?: string | null;
               created_at?: string | null;
-              creator?: {
-                [key: string]: unknown;
-              } | null;
+              creator?:
+                | ({
+                    email: string | null;
+                    id: number;
+                    username: string | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
               date?: string | null;
               deleted?: boolean | null;
               deleted_at?: string | null;
@@ -4121,9 +4233,15 @@ export interface paths {
               disease_id?: number | null;
               done?: boolean | null;
               edit_id?: number | null;
-              editor?: {
-                [key: string]: unknown;
-              } | null;
+              editor?:
+                | ({
+                    email: string | null;
+                    id: number;
+                    username: string | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
               enddate?: string | null;
               feed_apiary?:
                 | ({
@@ -4501,9 +4619,15 @@ export interface paths {
                 bee_id?: number | null;
                 charge?: string | null;
                 created_at?: string | null;
-                creator?: {
-                  [key: string]: unknown;
-                } | null;
+                creator?:
+                  | ({
+                      email: string | null;
+                      id: number;
+                      username: string | null;
+                    } & {
+                      [key: string]: unknown;
+                    })
+                  | null;
                 date?: string | null;
                 deleted?: boolean | null;
                 deleted_at?: string | null;
@@ -4523,9 +4647,15 @@ export interface paths {
                 disease_id?: number | null;
                 done?: boolean | null;
                 edit_id?: number | null;
-                editor?: {
-                  [key: string]: unknown;
-                } | null;
+                editor?:
+                  | ({
+                      email: string | null;
+                      id: number;
+                      username: string | null;
+                    } & {
+                      [key: string]: unknown;
+                    })
+                  | null;
                 enddate?: string | null;
                 feed_apiary?:
                   | ({
@@ -4785,9 +4915,15 @@ export interface paths {
               bee_id?: number | null;
               charge?: string | null;
               created_at?: string | null;
-              creator?: {
-                [key: string]: unknown;
-              } | null;
+              creator?:
+                | ({
+                    email: string | null;
+                    id: number;
+                    username: string | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
               date?: string | null;
               deleted?: boolean | null;
               deleted_at?: string | null;
@@ -4807,9 +4943,15 @@ export interface paths {
               disease_id?: number | null;
               done?: boolean | null;
               edit_id?: number | null;
-              editor?: {
-                [key: string]: unknown;
-              } | null;
+              editor?:
+                | ({
+                    email: string | null;
+                    id: number;
+                    username: string | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
               enddate?: string | null;
               feed_apiary?:
                 | ({
@@ -4935,9 +5077,15 @@ export interface paths {
               bee_id?: number | null;
               charge?: string | null;
               created_at?: string | null;
-              creator?: {
-                [key: string]: unknown;
-              } | null;
+              creator?:
+                | ({
+                    email: string | null;
+                    id: number;
+                    username: string | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
               date?: string | null;
               deleted?: boolean | null;
               deleted_at?: string | null;
@@ -4957,9 +5105,15 @@ export interface paths {
               disease_id?: number | null;
               done?: boolean | null;
               edit_id?: number | null;
-              editor?: {
-                [key: string]: unknown;
-              } | null;
+              editor?:
+                | ({
+                    email: string | null;
+                    id: number;
+                    username: string | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
               enddate?: string | null;
               feed_apiary?:
                 | ({
@@ -5198,8 +5352,9 @@ export interface paths {
                 created_at?: string | null;
                 creator?:
                   | ({
-                      email?: string | null;
-                      username?: string | null;
+                      email: string | null;
+                      id: number;
+                      username: string | null;
                     } & {
                       [key: string]: unknown;
                     })
@@ -5209,8 +5364,9 @@ export interface paths {
                 edit_id?: number | null;
                 editor?:
                   | ({
-                      email?: string | null;
-                      username?: string | null;
+                      email: string | null;
+                      id: number;
+                      username: string | null;
                     } & {
                       [key: string]: unknown;
                     })
@@ -5504,8 +5660,9 @@ export interface paths {
               created_at?: string | null;
               creator?:
                 | ({
-                    email?: string | null;
-                    username?: string | null;
+                    email: string | null;
+                    id: number;
+                    username: string | null;
                   } & {
                     [key: string]: unknown;
                   })
@@ -5515,8 +5672,9 @@ export interface paths {
               edit_id?: number | null;
               editor?:
                 | ({
-                    email?: string | null;
-                    username?: string | null;
+                    email: string | null;
+                    id: number;
+                    username: string | null;
                   } & {
                     [key: string]: unknown;
                   })
@@ -5762,8 +5920,9 @@ export interface paths {
               created_at?: string | null;
               creator?:
                 | ({
-                    email?: string | null;
-                    username?: string | null;
+                    email: string | null;
+                    id: number;
+                    username: string | null;
                   } & {
                     [key: string]: unknown;
                   })
@@ -5773,8 +5932,9 @@ export interface paths {
               edit_id?: number | null;
               editor?:
                 | ({
-                    email?: string | null;
-                    username?: string | null;
+                    email: string | null;
+                    id: number;
+                    username: string | null;
                   } & {
                     [key: string]: unknown;
                   })
@@ -5955,8 +6115,9 @@ export interface paths {
               created_at?: string | null;
               creator?:
                 | ({
-                    email?: string | null;
-                    username?: string | null;
+                    email: string | null;
+                    id: number;
+                    username: string | null;
                   } & {
                     [key: string]: unknown;
                   })
@@ -5966,8 +6127,9 @@ export interface paths {
               edit_id?: number | null;
               editor?:
                 | ({
-                    email?: string | null;
-                    username?: string | null;
+                    email: string | null;
+                    id: number;
+                    username: string | null;
                   } & {
                     [key: string]: unknown;
                   })
@@ -6314,8 +6476,9 @@ export interface paths {
                 created_at?: string | null;
                 creator?:
                   | ({
-                      email?: string | null;
-                      username?: string | null;
+                      email: string | null;
+                      id: number;
+                      username: string | null;
                     } & {
                       [key: string]: unknown;
                     })
@@ -6324,8 +6487,9 @@ export interface paths {
                 edit_id?: number | null;
                 editor?:
                   | ({
-                      email?: string | null;
-                      username?: string | null;
+                      email: string | null;
+                      id: number;
+                      username: string | null;
                     } & {
                       [key: string]: unknown;
                     })
@@ -6503,8 +6667,9 @@ export interface paths {
               created_at?: string | null;
               creator?:
                 | ({
-                    email?: string | null;
-                    username?: string | null;
+                    email: string | null;
+                    id: number;
+                    username: string | null;
                   } & {
                     [key: string]: unknown;
                   })
@@ -6513,8 +6678,9 @@ export interface paths {
               edit_id?: number | null;
               editor?:
                 | ({
-                    email?: string | null;
-                    username?: string | null;
+                    email: string | null;
+                    id: number;
+                    username: string | null;
                   } & {
                     [key: string]: unknown;
                   })
@@ -7235,16 +7401,28 @@ export interface paths {
               results: ({
                 bee_id?: number | null;
                 created_at?: string | null;
-                creator?: {
-                  [key: string]: unknown;
-                } | null;
+                creator?:
+                  | ({
+                      email: string | null;
+                      id: number;
+                      username: string | null;
+                    } & {
+                      [key: string]: unknown;
+                    })
+                  | null;
                 date?: string | null;
                 deleted?: boolean | null;
                 deleted_at?: string | null;
                 edit_id?: number | null;
-                editor?: {
-                  [key: string]: unknown;
-                } | null;
+                editor?:
+                  | ({
+                      email: string | null;
+                      id: number;
+                      username: string | null;
+                    } & {
+                      [key: string]: unknown;
+                    })
+                  | null;
                 hive_id?: number | null;
                 hive_location?: {
                   [key: string]: unknown;
@@ -7442,16 +7620,28 @@ export interface paths {
             'application/json': ({
               bee_id?: number | null;
               created_at?: string | null;
-              creator?: {
-                [key: string]: unknown;
-              } | null;
+              creator?:
+                | ({
+                    email: string | null;
+                    id: number;
+                    username: string | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
               date?: string | null;
               deleted?: boolean | null;
               deleted_at?: string | null;
               edit_id?: number | null;
-              editor?: {
-                [key: string]: unknown;
-              } | null;
+              editor?:
+                | ({
+                    email: string | null;
+                    id: number;
+                    username: string | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
               hive_id?: number | null;
               hive_location?: {
                 [key: string]: unknown;
@@ -7524,16 +7714,28 @@ export interface paths {
             'application/json': ({
               bee_id?: number | null;
               created_at?: string | null;
-              creator?: {
-                [key: string]: unknown;
-              } | null;
+              creator?:
+                | ({
+                    email: string | null;
+                    id: number;
+                    username: string | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
               date?: string | null;
               deleted?: boolean | null;
               deleted_at?: string | null;
               edit_id?: number | null;
-              editor?: {
-                [key: string]: unknown;
-              } | null;
+              editor?:
+                | ({
+                    email: string | null;
+                    id: number;
+                    username: string | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
               hive_id?: number | null;
               hive_location?: {
                 [key: string]: unknown;
@@ -11021,19 +11223,27 @@ export interface paths {
                 apiary_id: number | null;
                 bee_id: number | null;
                 created_at: string | null;
-                creator?: {
-                  email: string | null;
-                  id: number;
-                  username: string | null;
-                } | null;
+                creator?:
+                  | ({
+                      email: string | null;
+                      id: number;
+                      username: string | null;
+                    } & {
+                      [key: string]: unknown;
+                    })
+                  | null;
                 date: string;
                 done: boolean;
                 edit_id: number | null;
-                editor?: {
-                  email: string | null;
-                  id: number;
-                  username: string | null;
-                } | null;
+                editor?:
+                  | ({
+                      email: string | null;
+                      id: number;
+                      username: string | null;
+                    } & {
+                      [key: string]: unknown;
+                    })
+                  | null;
                 id: number;
                 name: string;
                 note: string | null;
@@ -11199,19 +11409,27 @@ export interface paths {
               apiary_id: number | null;
               bee_id: number | null;
               created_at: string | null;
-              creator?: {
-                email: string | null;
-                id: number;
-                username: string | null;
-              } | null;
+              creator?:
+                | ({
+                    email: string | null;
+                    id: number;
+                    username: string | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
               date: string;
               done: boolean;
               edit_id: number | null;
-              editor?: {
-                email: string | null;
-                id: number;
-                username: string | null;
-              } | null;
+              editor?:
+                | ({
+                    email: string | null;
+                    id: number;
+                    username: string | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
               id: number;
               name: string;
               note: string | null;
@@ -11378,9 +11596,15 @@ export interface paths {
                 bee_id?: number | null;
                 charge?: string | null;
                 created_at?: string | null;
-                creator?: {
-                  [key: string]: unknown;
-                } | null;
+                creator?:
+                  | ({
+                      email: string | null;
+                      id: number;
+                      username: string | null;
+                    } & {
+                      [key: string]: unknown;
+                    })
+                  | null;
                 date?: string | null;
                 deleted?: boolean | null;
                 deleted_at?: string | null;
@@ -11400,9 +11624,15 @@ export interface paths {
                 disease_id?: number | null;
                 done?: boolean | null;
                 edit_id?: number | null;
-                editor?: {
-                  [key: string]: unknown;
-                } | null;
+                editor?:
+                  | ({
+                      email: string | null;
+                      id: number;
+                      username: string | null;
+                    } & {
+                      [key: string]: unknown;
+                    })
+                  | null;
                 enddate?: string | null;
                 feed_apiary?:
                   | ({
@@ -11662,9 +11892,15 @@ export interface paths {
               bee_id?: number | null;
               charge?: string | null;
               created_at?: string | null;
-              creator?: {
-                [key: string]: unknown;
-              } | null;
+              creator?:
+                | ({
+                    email: string | null;
+                    id: number;
+                    username: string | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
               date?: string | null;
               deleted?: boolean | null;
               deleted_at?: string | null;
@@ -11684,9 +11920,15 @@ export interface paths {
               disease_id?: number | null;
               done?: boolean | null;
               edit_id?: number | null;
-              editor?: {
-                [key: string]: unknown;
-              } | null;
+              editor?:
+                | ({
+                    email: string | null;
+                    id: number;
+                    username: string | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
               enddate?: string | null;
               feed_apiary?:
                 | ({
@@ -11812,9 +12054,15 @@ export interface paths {
               bee_id?: number | null;
               charge?: string | null;
               created_at?: string | null;
-              creator?: {
-                [key: string]: unknown;
-              } | null;
+              creator?:
+                | ({
+                    email: string | null;
+                    id: number;
+                    username: string | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
               date?: string | null;
               deleted?: boolean | null;
               deleted_at?: string | null;
@@ -11834,9 +12082,15 @@ export interface paths {
               disease_id?: number | null;
               done?: boolean | null;
               edit_id?: number | null;
-              editor?: {
-                [key: string]: unknown;
-              } | null;
+              editor?:
+                | ({
+                    email: string | null;
+                    id: number;
+                    username: string | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
               enddate?: string | null;
               feed_apiary?:
                 | ({
@@ -12089,15 +12343,17 @@ export interface paths {
       requestBody: {
         content: {
           'application/json': {
+            acdate?: boolean;
             email?: string;
             format?: string;
             lang?: string;
             newPassword?: string;
+            newsletter?: boolean;
             password?: string;
             saved_company?: number;
+            sound?: boolean;
+            todo?: boolean;
             username?: string;
-          } & {
-            [key: string]: unknown;
           };
         };
       };
