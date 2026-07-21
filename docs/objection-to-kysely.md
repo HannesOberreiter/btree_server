@@ -173,6 +173,7 @@
 - [ ] Remove `objection` dependency
 - [ ] Keep Knex only for migrations
 - [ ] Update package description and documentation
+- [ ] Refactor / utilize shared design like actorProjection
 - [ ] Regenerate OpenAPI declarations
 - [ ] Improve Vue Playwright E2E coverage for migrated wire shapes, tenant boundaries, filters, nested relations, and regression-prone workflows
 - [ ] Run server lint, build, and E2E
