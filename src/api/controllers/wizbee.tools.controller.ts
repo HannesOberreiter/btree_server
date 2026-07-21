@@ -6,6 +6,11 @@ import { KyselyServer } from '../../servers/kysely.server.js';
 import { Logger } from '../../services/logger.service.js';
 import { listOptions, optionTables } from '../modules/option.module.js';
 import {
+  listHiveCountByApiary,
+  listHiveCountTotal,
+  listTaskStatisticsSummary,
+} from '../modules/statistic.module.js';
+import {
   createTodos,
   deleteTodos,
   listTodos,
@@ -19,7 +24,6 @@ import HarvestController from './harvest.controller.js';
 import HiveController from './hive.controller.js';
 import MovedateController from './movedate.controller.js';
 import ServiceController from './service.controller.js';
-import StatisticController from './statistic.controller.js';
 import TreatmentController from './treatment.controller.js';
 
 /**
@@ -2357,22 +2361,12 @@ export function createWizBeeTools(
           ),
       }),
       execute: async (input) => {
-        // Get total hive count
-        const totalReq = createMockRequest(context);
-        const totalResult = await StatisticController.getHiveCountTotal(
-          totalReq,
-          createMockReply(),
-        );
-
-        // Get apiary counts
-        const apiaryReq = createMockRequest(context, {
-          query: {
-            date: input.date ?? new Date().toISOString().split('T')[0],
-          },
-        });
-        const apiaryResult = await StatisticController.getHiveCountApiary(
-          apiaryReq,
-          createMockReply(),
+        const db = KyselyServer.getInstance().db;
+        const totalResult = await listHiveCountTotal(db, context.userId);
+        const apiaryResult = await listHiveCountByApiary(
+          db,
+          context.userId,
+          new Date(input.date ?? new Date()),
         );
 
         return {
@@ -2401,26 +2395,16 @@ export function createWizBeeTools(
         const currentYear = input.year ?? new Date().getFullYear();
         const filters = JSON.stringify([{ year: currentYear }]);
 
-        // Get yearly stats (all years)
-        const yearReq = createMockRequest(context, { query: {} });
-        const yearResult = await StatisticController.getHarvestYear(
-          yearReq,
-          createMockReply(),
-        );
-
-        // Get apiary stats for specified year
-        const apiaryReq = createMockRequest(context, { query: { filters } });
-        const apiaryResult = await StatisticController.getHarvestApiary(
-          apiaryReq,
-          createMockReply(),
-        );
-
-        // Get type stats for specified year
-        const typeReq = createMockRequest(context, { query: { filters } });
-        const typeResult = await StatisticController.getHarvestType(
-          typeReq,
-          createMockReply(),
-        );
+        const db = KyselyServer.getInstance().db;
+        const [yearResult, apiaryResult, typeResult] = await Promise.all([
+          listTaskStatisticsSummary(db, context.userId, 'harvest', 'year', {}),
+          listTaskStatisticsSummary(db, context.userId, 'harvest', 'apiary', {
+            filters,
+          }),
+          listTaskStatisticsSummary(db, context.userId, 'harvest', 'type', {
+            filters,
+          }),
+        ]);
 
         return {
           year: currentYear,
@@ -2450,26 +2434,16 @@ export function createWizBeeTools(
         const currentYear = input.year ?? new Date().getFullYear();
         const filters = JSON.stringify([{ year: currentYear }]);
 
-        // Get yearly stats (all years)
-        const yearReq = createMockRequest(context, { query: {} });
-        const yearResult = await StatisticController.getFeedYear(
-          yearReq,
-          createMockReply(),
-        );
-
-        // Get apiary stats for specified year
-        const apiaryReq = createMockRequest(context, { query: { filters } });
-        const apiaryResult = await StatisticController.getFeedApiary(
-          apiaryReq,
-          createMockReply(),
-        );
-
-        // Get type stats for specified year
-        const typeReq = createMockRequest(context, { query: { filters } });
-        const typeResult = await StatisticController.getFeedType(
-          typeReq,
-          createMockReply(),
-        );
+        const db = KyselyServer.getInstance().db;
+        const [yearResult, apiaryResult, typeResult] = await Promise.all([
+          listTaskStatisticsSummary(db, context.userId, 'feed', 'year', {}),
+          listTaskStatisticsSummary(db, context.userId, 'feed', 'apiary', {
+            filters,
+          }),
+          listTaskStatisticsSummary(db, context.userId, 'feed', 'type', {
+            filters,
+          }),
+        ]);
 
         return {
           year: currentYear,
@@ -2499,26 +2473,22 @@ export function createWizBeeTools(
         const currentYear = input.year ?? new Date().getFullYear();
         const filters = JSON.stringify([{ year: currentYear }]);
 
-        // Get yearly stats (all years)
-        const yearReq = createMockRequest(context, { query: {} });
-        const yearResult = await StatisticController.getTreatmentYear(
-          yearReq,
-          createMockReply(),
-        );
-
-        // Get apiary stats for specified year
-        const apiaryReq = createMockRequest(context, { query: { filters } });
-        const apiaryResult = await StatisticController.getTreatmentApiary(
-          apiaryReq,
-          createMockReply(),
-        );
-
-        // Get type stats for specified year
-        const typeReq = createMockRequest(context, { query: { filters } });
-        const typeResult = await StatisticController.getTreatmentType(
-          typeReq,
-          createMockReply(),
-        );
+        const db = KyselyServer.getInstance().db;
+        const [yearResult, apiaryResult, typeResult] = await Promise.all([
+          listTaskStatisticsSummary(
+            db,
+            context.userId,
+            'treatment',
+            'year',
+            {},
+          ),
+          listTaskStatisticsSummary(db, context.userId, 'treatment', 'apiary', {
+            filters,
+          }),
+          listTaskStatisticsSummary(db, context.userId, 'treatment', 'type', {
+            filters,
+          }),
+        ]);
 
         return {
           year: currentYear,

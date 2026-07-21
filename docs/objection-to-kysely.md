@@ -69,7 +69,12 @@
   - [x] HTTP and external iCal adapters share calendar operations
   - [x] Calendar response shapes and tenant isolation covered
   - [x] Shallow calendar controller and Objection/Knex utility removed
-- [ ] Statistic views
+- [x] Statistic views
+  - [x] Hive counts, task aggregates, ratings, and Varroa reads use typed Kysely operations
+  - [x] HTTP and WizBee adapters share statistic operations
+  - [x] Dynamic filters and sorting use typed allowlists
+  - [x] Statistic response shapes and tenant isolation covered
+  - [x] Shallow statistic controller and Knex utility removed
 
 ## Phase 2: core location slices
 
