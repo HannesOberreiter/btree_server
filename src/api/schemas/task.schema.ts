@@ -1,7 +1,82 @@
 import { z } from 'zod';
 
 import { numberSchema } from '../utils/zod.util.js';
-import { compatibilityQuerySchema } from './common.schema.js';
+import { compatibilityQuerySchema, jsonDateSchema } from './common.schema.js';
+
+const nullableNumber = z.number().nullable().optional();
+const nullableString = z.string().nullable().optional();
+const nullableDate = jsonDateSchema.nullable().optional();
+
+const taskOptionResponseSchema = z.looseObject({
+  id: z.number(),
+  name: nullableString,
+  favorite: z.boolean().nullable().optional(),
+  modus: z.boolean().nullable().optional(),
+  user_id: nullableNumber,
+  created_at: nullableDate,
+  updated_at: nullableDate,
+});
+
+const taskHiveResponseSchema = z.looseObject({
+  id: z.number(),
+  name: z.string(),
+  position: nullableNumber,
+  grouphive: nullableNumber,
+  modus: z.boolean().nullable().optional(),
+  deleted: z.boolean().nullable().optional(),
+});
+
+const taskApiaryResponseSchema = z.looseObject({
+  apiary_id: z.number(),
+  apiary_name: z.string(),
+  user_id: nullableNumber,
+});
+
+export const taskResponseSchema = z.looseObject({
+  id: z.number(),
+  date: nullableDate,
+  enddate: nullableDate,
+  amount: nullableNumber,
+  frames: nullableNumber,
+  water: nullableNumber,
+  charge: nullableString,
+  wait: nullableNumber,
+  temperature: nullableNumber,
+  note: nullableString,
+  url: nullableString,
+  done: z.boolean().nullable().optional(),
+  deleted: z.boolean().nullable().optional(),
+  deleted_at: nullableDate,
+  user_id: nullableNumber,
+  hive_id: nullableNumber,
+  type_id: nullableNumber,
+  disease_id: nullableNumber,
+  vet_id: nullableNumber,
+  bee_id: nullableNumber,
+  edit_id: nullableNumber,
+  ai_created_at: nullableDate,
+  ai_updated_at: nullableDate,
+  ai_deleted_at: nullableDate,
+  created_at: nullableDate,
+  updated_at: nullableDate,
+  hive: taskHiveResponseSchema.nullable().optional(),
+  type: taskOptionResponseSchema.nullable().optional(),
+  disease: taskOptionResponseSchema.nullable().optional(),
+  vet: taskOptionResponseSchema.nullable().optional(),
+  feed_apiary: taskApiaryResponseSchema.nullable().optional(),
+  harvest_apiary: taskApiaryResponseSchema.nullable().optional(),
+  treatment_apiary: taskApiaryResponseSchema.nullable().optional(),
+  creator: z.looseObject({}).nullable().optional(),
+  editor: z.looseObject({}).nullable().optional(),
+});
+
+export const taskPaginatedResponseSchema = z.object({
+  results: z.array(taskResponseSchema),
+  total: z.number(),
+});
+export const taskRowsResponseSchema = z.array(taskResponseSchema);
+export const taskIdsResponseSchema = z.array(z.number());
+export const taskMutationCountResponseSchema = z.number();
 
 export const taskListQuerySchema = compatibilityQuerySchema;
 

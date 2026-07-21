@@ -1,214 +1,213 @@
 import dayjs from 'dayjs';
 import { sql } from 'kysely';
-import { raw } from 'objection';
 
 import { ENVIRONMENT } from '../../config/constants.config.js';
 import { env } from '../../config/environment.config.js';
 import { KyselyServer } from '../../servers/kysely.server.js';
 import { MailService } from '../../services/mail.service.js';
-import { Apiary } from '../models/apiary.model.js';
-import { Checkup } from '../models/checkup.model.js';
 import { Company } from '../models/company.model.js';
-import { CompanyBee } from '../models/company_bee.model.js';
-import { Dropbox } from '../models/dropbox.model.js';
-import { Feed } from '../models/feed.model.js';
-import { Harvest } from '../models/harvest.model.js';
-import { Hive } from '../models/hive.model.js';
-import { LoginAttemp } from '../models/login_attempt.model.js';
-import { Movedate } from '../models/movedate.model.js';
-import { ChargeType } from '../models/option/charge_type.model.js';
-import { CheckupType } from '../models/option/checkup_type.model.js';
-import { FeedType } from '../models/option/feed_type.model.js';
-import { HarvestType } from '../models/option/harvest_type.model.js';
-import { HiveSource } from '../models/option/hive_source.model.js';
-import { HiveType } from '../models/option/hive_type.mode.js';
-import { QueenMating } from '../models/option/queen_mating.model.js';
-import { QueenRace } from '../models/option/queen_race.model.js';
-import { TreatmentDisease } from '../models/option/treatment_disease.model.js';
-import { TreatmentType } from '../models/option/treatment_type.model.js';
-import { TreatmentVet } from '../models/option/treatment_vet.model.js';
-import { Queen } from '../models/queen.model.js';
-import { Rearing } from '../models/rearing/rearing.model.js';
-import { RearingDetail } from '../models/rearing/rearing_detail.model.js';
-import { RearingStep } from '../models/rearing/rearing_step.model.js';
-import { RearingType } from '../models/rearing/rearing_type.model.js';
-import { RefreshToken } from '../models/refresh_token.model.js';
-import { Scale } from '../models/scale.model.js';
-import { ScaleData } from '../models/scale_data.model.js';
-import { Treatment } from '../models/treatment.model.js';
 import { User } from '../models/user.model.js';
 import { checkMySQLError } from './error.util.js';
 
 export async function cleanupDatabase() {
   try {
-    const cleanup: any = { type: 'cleanup' };
-    // Delete data which is marked as "deleted" and older than one month
-    const lastMonth = dayjs().subtract(1, 'month').toISOString();
-    // Delete user if they did not login in the past 5 years and are the only users in a company
-    const timeToBeForgotten = dayjs().subtract(5, 'year').toISOString();
+    const cleanup: Record<string, string | number> = { type: 'cleanup' };
+    const lastMonth = dayjs().subtract(1, 'month').toDate();
+    const timeToBeForgotten = dayjs().subtract(5, 'year').toDate();
+    const db = KyselyServer.getInstance().db;
 
-    return await Company.transaction(async (trx) => {
-      cleanup.CompanyBee = await CompanyBee.query(trx)
-        .delete()
-        .leftJoinRelated('company')
-        .leftJoinRelated('user')
-        .whereNull('company.id')
-        .orWhereNull('user.id');
-      cleanup.Company = await Company.query(trx)
-        .delete()
-        .leftJoinRelated('user')
-        .whereNull('user.id');
-      cleanup.User = await User.query(trx)
-        .delete()
-        .leftJoinRelated('company')
-        .whereNull('company.id');
+    return await db.transaction().execute(async (transaction) => {
+      const affected = async (query: ReturnType<typeof sql>) => {
+        const result = await query.execute(transaction);
+        return Number(result.numAffectedRows ?? 0);
+      };
 
-      const forgottenIds = await CompanyBee.query(trx)
-        .distinct('bee_id')
-        .leftJoinRelated('user')
-        .where('user.last_visit', '<=', timeToBeForgotten)
+      cleanup.CompanyBee = await affected(sql`
+        DELETE company_bee FROM company_bee
+        LEFT JOIN companies ON companies.id = company_bee.user_id
+        LEFT JOIN bees ON bees.id = company_bee.bee_id
+        WHERE companies.id IS NULL OR bees.id IS NULL
+      `);
+      cleanup.Company = await affected(sql`
+        DELETE companies FROM companies
+        LEFT JOIN company_bee ON company_bee.user_id = companies.id
+        WHERE company_bee.id IS NULL
+      `);
+      cleanup.User = await affected(sql`
+        DELETE bees FROM bees
+        LEFT JOIN company_bee ON company_bee.bee_id = bees.id
+        WHERE company_bee.id IS NULL
+      `);
+
+      const forgottenIds = await transaction
+        .selectFrom('company_bee')
+        .innerJoin('bees', 'bees.id', 'company_bee.bee_id')
+        .select('company_bee.bee_id')
+        .where('bees.last_visit', '<=', timeToBeForgotten)
         .groupBy('company_bee.user_id')
-        .having(raw('COUNT(bee_id)'), '=', 1);
+        .having(sql<boolean>`COUNT(company_bee.bee_id) = 1`)
+        .execute();
       cleanup.Forgotten = forgottenIds.length;
-      forgottenIds.forEach(async (v) => {
-        await User.query(trx).delete().findById(v.bee_id);
-      });
+      if (forgottenIds.length > 0) {
+        await transaction
+          .deleteFrom('bees')
+          .where(
+            'id',
+            'in',
+            forgottenIds.map((row) => row.bee_id),
+          )
+          .execute();
+      }
 
-      cleanup.LoginAttemp = await LoginAttemp.query(trx)
-        .delete()
-        .andWhere('time', '<=', lastMonth);
-
-      cleanup.Apiary = await Apiary.query(trx)
-        .delete()
-        .leftJoinRelated('company')
-        .whereNull('company.id')
-        .orWhere('deleted', true)
-        .andWhere('deleted_at', '<=', lastMonth);
-      cleanup.Hive = await Hive.query(trx)
-        .delete()
-        .leftJoinRelated('company')
-        .whereNull('company.id')
-        .orWhere('deleted', true)
-        .andWhere('deleted_at', '<=', lastMonth);
-      cleanup.Movedate = await Movedate.query(trx)
-        .delete()
-        .leftJoinRelated('hive')
-        .leftJoinRelated('apiary')
-        .whereNull('hive.id')
-        .orWhereNull('apiary.id');
-
-      cleanup.Dropbox = await Dropbox.query(trx)
-        .delete()
-        .leftJoinRelated('company')
-        .whereNull('company.id');
-      cleanup.charge_types = await ChargeType.query(trx)
-        .delete()
-        .leftJoinRelated('company')
-        .whereNull('company.id');
-      cleanup.checkup_types = await CheckupType.query(trx)
-        .delete()
-        .leftJoinRelated('company')
-        .whereNull('company.id');
-      cleanup.feed_types = await FeedType.query(trx)
-        .delete()
-        .leftJoinRelated('company')
-        .whereNull('company.id');
-      cleanup.harvest_types = await HarvestType.query(trx)
-        .delete()
-        .leftJoinRelated('company')
-        .whereNull('company.id');
-      cleanup.hive_sources = await HiveSource.query(trx)
-        .delete()
-        .leftJoinRelated('company')
-        .whereNull('company.id');
-      cleanup.hive_types = await HiveType.query(trx)
-        .delete()
-        .leftJoinRelated('company')
-        .whereNull('company.id');
-      cleanup.hive_types = await HiveType.query(trx)
-        .delete()
-        .leftJoinRelated('company')
-        .whereNull('company.id');
-      cleanup.queen_matings = await QueenMating.query(trx)
-        .delete()
-        .leftJoinRelated('company')
-        .whereNull('company.id');
-      cleanup.queen_races = await QueenRace.query(trx)
-        .delete()
-        .leftJoinRelated('company')
-        .whereNull('company.id');
-      cleanup.rearing_details = await RearingDetail.query(trx)
-        .delete()
-        .leftJoinRelated('company')
-        .whereNull('company.id');
-      cleanup.rearing_types = await RearingType.query(trx)
-        .delete()
-        .leftJoinRelated('company')
-        .whereNull('company.id');
-      cleanup.rearings = await Rearing.query(trx)
-        .delete()
-        .leftJoinRelated('company')
-        .whereNull('company.id');
-      cleanup.rearing_steps = await RearingStep.query(trx)
-        .delete()
-        .leftJoinRelated('type')
-        .leftJoinRelated('detail')
-        .whereNull('type.id')
-        .orWhereNull('detail.id');
-      cleanup.refresh_tokens = await RefreshToken.query(trx)
-        .delete()
-        .leftJoinRelated('company_bee')
-        .whereNull('company_bee.id');
-      cleanup.scales = await Scale.query(trx)
-        .delete()
-        .leftJoinRelated('company')
-        .whereNull('company.id');
-      cleanup.scale_data = await ScaleData.query(trx)
-        .delete()
-        .leftJoinRelated('scale')
-        .whereNull('scale.id');
-      cleanup.treatment_diseases = await TreatmentDisease.query(trx)
-        .delete()
-        .leftJoinRelated('company')
-        .whereNull('company.id');
-      cleanup.treatment_types = await TreatmentType.query(trx)
-        .delete()
-        .leftJoinRelated('company')
-        .whereNull('company.id');
-      cleanup.treatment_vets = await TreatmentVet.query(trx)
-        .delete()
-        .leftJoinRelated('company')
-        .whereNull('company.id');
-      cleanup.Feed = await Feed.query(trx)
-        .delete()
-        .leftJoinRelated('hive')
-        .whereNull('hive.id')
-        .orWhere('feeds.deleted', true)
-        .andWhere('feeds.deleted_at', '<=', lastMonth);
-      cleanup.Treatment = await Treatment.query(trx)
-        .delete()
-        .leftJoinRelated('hive')
-        .whereNull('hive.id')
-        .orWhere('treatments.deleted', true)
-        .andWhere('treatments.deleted_at', '<=', lastMonth);
-      cleanup.Checkup = await Checkup.query(trx)
-        .delete()
-        .leftJoinRelated('hive')
-        .whereNull('hive.id')
-        .orWhere('checkups.deleted', true)
-        .andWhere('checkups.deleted_at', '<=', lastMonth);
-      cleanup.Harvest = await Harvest.query(trx)
-        .delete()
-        .leftJoinRelated('hive')
-        .whereNull('hive.id')
-        .orWhere('harvests.deleted', true)
-        .andWhere('harvests.deleted_at', '<=', lastMonth);
-      cleanup.Queen = await Queen.query(trx)
-        .delete()
-        .leftJoinRelated('company')
-        .whereNull('company.id')
-        .orWhere('deleted', true)
-        .andWhere('deleted_at', '<=', lastMonth);
+      cleanup.LoginAttemp = await affected(sql`
+        DELETE FROM login_attempts WHERE time <= ${lastMonth}
+      `);
+      cleanup.Apiary = await affected(sql`
+        DELETE apiaries FROM apiaries
+        LEFT JOIN companies ON companies.id = apiaries.user_id
+        WHERE companies.id IS NULL
+           OR (apiaries.deleted = 1 AND apiaries.deleted_at <= ${lastMonth})
+      `);
+      cleanup.Hive = await affected(sql`
+        DELETE hives FROM hives
+        LEFT JOIN companies ON companies.id = hives.user_id
+        WHERE companies.id IS NULL
+           OR (hives.deleted = 1 AND hives.deleted_at <= ${lastMonth})
+      `);
+      cleanup.Movedate = await affected(sql`
+        DELETE movedates FROM movedates
+        LEFT JOIN hives ON hives.id = movedates.hive_id
+        LEFT JOIN apiaries ON apiaries.id = movedates.apiary_id
+        WHERE hives.id IS NULL OR apiaries.id IS NULL
+      `);
+      cleanup.Dropbox = await affected(sql`
+        DELETE dropbox FROM dropbox
+        LEFT JOIN companies ON companies.id = dropbox.user_id
+        WHERE companies.id IS NULL
+      `);
+      cleanup.charge_types = await affected(sql`
+        DELETE charge_types FROM charge_types
+        LEFT JOIN companies ON companies.id = charge_types.user_id
+        WHERE companies.id IS NULL
+      `);
+      cleanup.checkup_types = await affected(sql`
+        DELETE checkup_types FROM checkup_types
+        LEFT JOIN companies ON companies.id = checkup_types.user_id
+        WHERE companies.id IS NULL
+      `);
+      cleanup.feed_types = await affected(sql`
+        DELETE feed_types FROM feed_types
+        LEFT JOIN companies ON companies.id = feed_types.user_id
+        WHERE companies.id IS NULL
+      `);
+      cleanup.harvest_types = await affected(sql`
+        DELETE harvest_types FROM harvest_types
+        LEFT JOIN companies ON companies.id = harvest_types.user_id
+        WHERE companies.id IS NULL
+      `);
+      cleanup.hive_sources = await affected(sql`
+        DELETE hive_sources FROM hive_sources
+        LEFT JOIN companies ON companies.id = hive_sources.user_id
+        WHERE companies.id IS NULL
+      `);
+      cleanup.hive_types = await affected(sql`
+        DELETE hive_types FROM hive_types
+        LEFT JOIN companies ON companies.id = hive_types.user_id
+        WHERE companies.id IS NULL
+      `);
+      cleanup.queen_matings = await affected(sql`
+        DELETE queen_matings FROM queen_matings
+        LEFT JOIN companies ON companies.id = queen_matings.user_id
+        WHERE companies.id IS NULL
+      `);
+      cleanup.queen_races = await affected(sql`
+        DELETE queen_races FROM queen_races
+        LEFT JOIN companies ON companies.id = queen_races.user_id
+        WHERE companies.id IS NULL
+      `);
+      cleanup.rearing_details = await affected(sql`
+        DELETE rearing_details FROM rearing_details
+        LEFT JOIN companies ON companies.id = rearing_details.user_id
+        WHERE companies.id IS NULL
+      `);
+      cleanup.rearing_types = await affected(sql`
+        DELETE rearing_types FROM rearing_types
+        LEFT JOIN companies ON companies.id = rearing_types.user_id
+        WHERE companies.id IS NULL
+      `);
+      cleanup.rearings = await affected(sql`
+        DELETE rearings FROM rearings
+        LEFT JOIN companies ON companies.id = rearings.user_id
+        WHERE companies.id IS NULL
+      `);
+      cleanup.rearing_steps = await affected(sql`
+        DELETE rearing_steps FROM rearing_steps
+        LEFT JOIN rearing_types ON rearing_types.id = rearing_steps.type_id
+        LEFT JOIN rearing_details ON rearing_details.id = rearing_steps.detail_id
+        WHERE rearing_types.id IS NULL OR rearing_details.id IS NULL
+      `);
+      cleanup.refresh_tokens = await affected(sql`
+        DELETE refresh_tokens FROM refresh_tokens
+        LEFT JOIN company_bee
+          ON company_bee.bee_id = refresh_tokens.bee_id
+         AND company_bee.user_id = refresh_tokens.user_id
+        WHERE company_bee.id IS NULL
+      `);
+      cleanup.scales = await affected(sql`
+        DELETE scales FROM scales
+        LEFT JOIN companies ON companies.id = scales.user_id
+        WHERE companies.id IS NULL
+      `);
+      cleanup.scale_data = await affected(sql`
+        DELETE scale_data FROM scale_data
+        LEFT JOIN scales ON scales.id = scale_data.scale_id
+        WHERE scales.id IS NULL
+      `);
+      cleanup.treatment_diseases = await affected(sql`
+        DELETE treatment_diseases FROM treatment_diseases
+        LEFT JOIN companies ON companies.id = treatment_diseases.user_id
+        WHERE companies.id IS NULL
+      `);
+      cleanup.treatment_types = await affected(sql`
+        DELETE treatment_types FROM treatment_types
+        LEFT JOIN companies ON companies.id = treatment_types.user_id
+        WHERE companies.id IS NULL
+      `);
+      cleanup.treatment_vets = await affected(sql`
+        DELETE treatment_vets FROM treatment_vets
+        LEFT JOIN companies ON companies.id = treatment_vets.user_id
+        WHERE companies.id IS NULL
+      `);
+      cleanup.Feed = await affected(sql`
+        DELETE feeds FROM feeds
+        LEFT JOIN hives ON hives.id = feeds.hive_id
+        WHERE hives.id IS NULL
+           OR (feeds.deleted = 1 AND feeds.deleted_at <= ${lastMonth})
+      `);
+      cleanup.Treatment = await affected(sql`
+        DELETE treatments FROM treatments
+        LEFT JOIN hives ON hives.id = treatments.hive_id
+        WHERE hives.id IS NULL
+           OR (treatments.deleted = 1 AND treatments.deleted_at <= ${lastMonth})
+      `);
+      cleanup.Checkup = await affected(sql`
+        DELETE checkups FROM checkups
+        LEFT JOIN hives ON hives.id = checkups.hive_id
+        WHERE hives.id IS NULL
+           OR (checkups.deleted = 1 AND checkups.deleted_at <= ${lastMonth})
+      `);
+      cleanup.Harvest = await affected(sql`
+        DELETE harvests FROM harvests
+        LEFT JOIN hives ON hives.id = harvests.hive_id
+        WHERE hives.id IS NULL
+           OR (harvests.deleted = 1 AND harvests.deleted_at <= ${lastMonth})
+      `);
+      cleanup.Queen = await affected(sql`
+        DELETE queens FROM queens
+        LEFT JOIN companies ON companies.id = queens.user_id
+        WHERE companies.id IS NULL
+           OR (queens.deleted = 1 AND queens.deleted_at <= ${lastMonth})
+      `);
       return cleanup;
     });
   } catch (error) {

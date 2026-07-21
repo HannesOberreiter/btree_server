@@ -2,15 +2,29 @@ import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 
 import { ROLES } from '../../../config/constants.config.js';
-import TreatmentController from '../../controllers/treatment.controller.js';
+import { KyselyServer } from '../../../servers/kysely.server.js';
 import { Guard } from '../../hooks/guard.hook.js';
-import { permissiveJsonResponseSchema } from '../../schemas/common.schema.js';
+import {
+  deleteTasks,
+  updateTaskDates,
+  updateTaskStatus,
+} from '../../modules/task.module.js';
+import {
+  createTreatments,
+  getTreatmentsByIds,
+  listTreatments,
+  updateTreatments,
+} from '../../modules/treatment.module.js';
 import {
   taskCreateBodySchema,
+  taskIdsResponseSchema,
   taskDateBodySchema,
   taskIdsBodySchema,
   taskListQuerySchema,
+  taskMutationCountResponseSchema,
+  taskPaginatedResponseSchema,
   taskPatchBodySchema,
+  taskRowsResponseSchema,
   taskStatusBodySchema,
 } from '../../schemas/task.schema.js';
 
@@ -20,60 +34,103 @@ export default function routes(
   done: () => void,
 ) {
   const server = instance.withTypeProvider<ZodTypeProvider>();
+  const db = KyselyServer.getInstance().db;
   server.get(
     '/',
     {
       schema: {
         querystring: taskListQuerySchema,
-        response: { 200: permissiveJsonResponseSchema },
+        response: { 200: taskPaginatedResponseSchema },
       },
       preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
     },
-    TreatmentController.get,
+    async (request) =>
+      listTreatments(db, request.session.user.user_id, request.query),
   );
   server.post(
     '/',
     {
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
-        response: { 200: permissiveJsonResponseSchema },
+        response: { 200: taskIdsResponseSchema },
         body: taskCreateBodySchema,
       },
     },
-    TreatmentController.post,
+    async (request) =>
+      createTreatments(
+        db,
+        {
+          companyId: request.session.user.user_id,
+          beeId: request.session.user.bee_id,
+          isLlm: request.session.llm === true,
+        },
+        request.body,
+      ),
   );
   server.patch(
     '/',
     {
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
-        response: { 200: permissiveJsonResponseSchema },
+        response: { 200: taskMutationCountResponseSchema },
         body: taskPatchBodySchema,
       },
     },
-    TreatmentController.patch,
+    async (request) =>
+      updateTreatments(
+        db,
+        {
+          companyId: request.session.user.user_id,
+          beeId: request.session.user.bee_id,
+          isLlm: request.session.llm === true,
+        },
+        request.body,
+      ),
   );
   server.patch(
     '/status',
     {
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
-        response: { 200: permissiveJsonResponseSchema },
+        response: { 200: taskMutationCountResponseSchema },
         body: taskStatusBodySchema,
       },
     },
-    TreatmentController.updateStatus,
+    async (request) =>
+      updateTaskStatus(
+        db,
+        'treatments',
+        {
+          companyId: request.session.user.user_id,
+          beeId: request.session.user.bee_id,
+          isLlm: request.session.llm === true,
+        },
+        request.body.ids,
+        request.body.status,
+      ),
   );
   server.patch(
     '/date',
     {
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
-        response: { 200: permissiveJsonResponseSchema },
+        response: { 200: taskMutationCountResponseSchema },
         body: taskDateBodySchema,
       },
     },
-    TreatmentController.updateDate,
+    async (request) =>
+      updateTaskDates(
+        db,
+        'treatments',
+        {
+          companyId: request.session.user.user_id,
+          beeId: request.session.user.bee_id,
+          isLlm: request.session.llm === true,
+        },
+        request.body.ids,
+        request.body.start,
+        request.body.end,
+      ),
   );
   server.patch(
     '/batchDelete',
@@ -81,22 +138,37 @@ export default function routes(
       preHandler: Guard.authorize([ROLES.admin]),
       schema: {
         querystring: taskListQuerySchema,
-        response: { 200: permissiveJsonResponseSchema },
+        response: { 200: taskRowsResponseSchema },
         body: taskIdsBodySchema,
       },
     },
-    TreatmentController.batchDelete,
+    async (request) =>
+      deleteTasks(
+        db,
+        'treatments',
+        {
+          companyId: request.session.user.user_id,
+          beeId: request.session.user.bee_id,
+          isLlm: request.session.llm === true,
+        },
+        request.body.ids,
+        {
+          hard: Boolean(request.query.hard),
+          restore: Boolean(request.query.restore),
+        },
+      ),
   );
   server.post(
     '/batchGet',
     {
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
-        response: { 200: permissiveJsonResponseSchema },
+        response: { 200: taskRowsResponseSchema },
         body: taskIdsBodySchema,
       },
     },
-    TreatmentController.batchGet,
+    async (request) =>
+      getTreatmentsByIds(db, request.session.user.user_id, request.body.ids),
   );
   done();
 }

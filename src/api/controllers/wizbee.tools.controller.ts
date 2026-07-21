@@ -11,31 +11,49 @@ import {
   updateApiaries,
 } from '../modules/apiary.module.js';
 import {
+  createCheckups,
+  listCheckups,
+  updateCheckups,
+} from '../modules/checkup.module.js';
+import { createFeeds, listFeeds, updateFeeds } from '../modules/feed.module.js';
+import {
+  createHarvests,
+  listHarvests,
+  updateHarvests,
+} from '../modules/harvest.module.js';
+import {
   createHives,
   getHiveDetail,
+  getHiveTasks,
   listHives,
   updateHives,
 } from '../modules/hive.module.js';
+import {
+  createMovedates,
+  deleteMovedates,
+  listMovedates,
+  updateMovedates,
+} from '../modules/movedate.module.js';
 import { listOptions, optionTables } from '../modules/option.module.js';
 import {
   listHiveCountByApiary,
   listHiveCountTotal,
   listTaskStatisticsSummary,
 } from '../modules/statistic.module.js';
+import { deleteTasks } from '../modules/task.module.js';
 import {
   createTodos,
   deleteTodos,
   listTodos,
   updateTodos,
 } from '../modules/todo.module.js';
+import {
+  createTreatments,
+  listTreatments,
+  updateTreatments,
+} from '../modules/treatment.module.js';
 import ChargeController from './charge.controller.js';
-import CheckupController from './checkup.controller.js';
-import FeedController from './feed.controller.js';
-import HarvestController from './harvest.controller.js';
-import HiveController from './hive.controller.js';
-import MovedateController from './movedate.controller.js';
 import ServiceController from './service.controller.js';
-import TreatmentController from './treatment.controller.js';
 
 /**
  * WizBee Tools Controller
@@ -902,18 +920,6 @@ function getDefaultDateRange(): { dateStart: string; dateEnd: string } {
  * Task types supported by the fetchTasks tool
  */
 const TASK_TYPES = ['feed', 'treatment', 'harvest', 'checkup', 'todo'] as const;
-type TaskType = (typeof TASK_TYPES)[number];
-
-/**
- * Controller mapping for each task type
- */
-const taskControllers: Record<Exclude<TaskType, 'todo'>, any> = {
-  feed: FeedController,
-  treatment: TreatmentController,
-  harvest: HarvestController,
-  checkup: CheckupController,
-};
-
 /**
  * Create WizBee tools with injected context
  * Vercel AI SDK tools need the context at runtime, so we create them dynamically
@@ -1202,18 +1208,13 @@ export function createWizBeeTools(
             date: { from: input.dateStart, to: input.dateEnd },
           });
         }
-        return MovedateController.get(
-          createMockRequest(context, {
-            query: {
-              filters: JSON.stringify(filters),
-              limit: input.limit,
-              offset: 0,
-              order: 'date',
-              direction: 'desc',
-            },
-          }),
-          createMockReply(),
-        );
+        return listMovedates(KyselyServer.getInstance().db, context.userId, {
+          filters: JSON.stringify(filters),
+          limit: input.limit,
+          offset: 0,
+          order: 'date',
+          direction: 'desc',
+        });
       },
     }),
 
@@ -1225,15 +1226,15 @@ export function createWizBeeTools(
         date: z.string().describe('Movement date in YYYY-MM-DD format'),
       }),
       execute: async (input) => {
-        const ids = await MovedateController.post(
-          createMockRequest(context, {
-            body: {
-              hive_ids: [input.hiveId],
-              apiary_id: input.apiaryId,
-              date: input.date,
-            },
-          }),
-          createMockReply(),
+        const ids = await createMovedates(
+          KyselyServer.getInstance().db,
+          context.userId,
+          context.beeId,
+          {
+            hive_ids: [input.hiveId],
+            apiary_id: input.apiaryId,
+            date: input.date,
+          },
         );
         return {
           success: true,
@@ -1256,9 +1257,11 @@ export function createWizBeeTools(
           ...(input.apiaryId !== undefined && { apiary_id: input.apiaryId }),
           ...(input.date !== undefined && { date: input.date }),
         };
-        const updatedCount = await MovedateController.patch(
-          createMockRequest(context, { body: { ids: [input.id], data } }),
-          createMockReply(),
+        const updatedCount = await updateMovedates(
+          KyselyServer.getInstance().db,
+          context.userId,
+          context.beeId,
+          { ids: [input.id], data },
         );
         return {
           success: true,
@@ -1275,9 +1278,10 @@ export function createWizBeeTools(
         id: z.number().describe('Movement ID from listMovements'),
       }),
       execute: async (input) => {
-        const deletedCount = await MovedateController.batchDelete(
-          createMockRequest(context, { body: { ids: [input.id] } }),
-          createMockReply(),
+        const deletedCount = await deleteMovedates(
+          KyselyServer.getInstance().db,
+          context.userId,
+          [input.id],
         );
         return {
           success: true,
@@ -1406,15 +1410,13 @@ export function createWizBeeTools(
           ),
       }),
       execute: async (input) => {
-        const req = createMockRequest(context, {
-          params: { id: input.id },
-          query: {
-            year: input.year ?? new Date().getFullYear(),
-            apiary: input.apiary ?? false,
-          },
-        });
-        const result = await HiveController.getTasks(req, createMockReply());
-        return result;
+        return getHiveTasks(
+          KyselyServer.getInstance().db,
+          { companyId: context.userId, beeId: context.beeId, isLlm: true },
+          input.id,
+          input.year ?? new Date().getFullYear(),
+          input.apiary ?? false,
+        );
       },
     }),
 
@@ -1491,7 +1493,9 @@ export function createWizBeeTools(
         const startDate = input.dateStart ?? dateStart;
         const endDate = input.dateEnd ?? dateEnd;
 
-        const filterArray: any[] = [{ date: { from: startDate, to: endDate } }];
+        const filterArray: Record<string, unknown>[] = [
+          { date: { from: startDate, to: endDate } },
+        ];
         if (input.apiaryId && input.task !== 'todo') {
           filterArray.push({
             [`${input.task}_apiary.apiary_id`]: input.apiaryId,
@@ -1508,29 +1512,38 @@ export function createWizBeeTools(
           done: input.includeDone ? undefined : false,
           deleted: false,
         };
-        const req = createMockRequest(context, { query });
-
-        const result =
-          input.task === 'todo'
-            ? await listTodos(
-                KyselyServer.getInstance().db,
-                {
-                  companyId: context.userId,
-                  beeId: context.beeId,
-                  isLlm: true,
-                },
-                query,
-              )
-            : await taskControllers[input.task].get(req, createMockReply());
+        const db = KyselyServer.getInstance().db;
+        let items;
+        if (input.task === 'todo') {
+          items = (
+            await listTodos(
+              db,
+              {
+                companyId: context.userId,
+                beeId: context.beeId,
+                isLlm: true,
+              },
+              query,
+            )
+          ).results;
+        } else if (input.task === 'feed') {
+          items = (await listFeeds(db, context.userId, query)).results;
+        } else if (input.task === 'harvest') {
+          items = (await listHarvests(db, context.userId, query)).results;
+        } else if (input.task === 'treatment') {
+          items = (await listTreatments(db, context.userId, query)).results;
+        } else {
+          items = (await listCheckups(db, context.userId, query)).results;
+        }
 
         // Return full records as-is. If the payload is too big for the model
         // context, the wrapper's enforceResultSize() converts it to a
         // structured "result_too_large" error with a hint to narrow the query.
         return {
           task: input.task,
-          count: result.results.length,
+          count: items.length,
           dateRange: { start: startDate, end: endDate },
-          items: result.results,
+          items,
         };
       },
     }),
@@ -1560,16 +1573,17 @@ export function createWizBeeTools(
       }),
       execute: async (input) => {
         const { hiveIds, typeId, ...rest } = input;
-        const req = createMockRequest(context, {
-          body: {
+        const result = await createFeeds(
+          KyselyServer.getInstance().db,
+          { companyId: context.userId, beeId: context.beeId, isLlm: true },
+          {
             ...rest,
             hive_ids: hiveIds,
             ...(typeId !== undefined && { type_id: typeId }),
             repeat: 0,
             interval: 0,
           },
-        });
-        const result = await FeedController.post(req, createMockReply());
+        );
         const createdCount = Array.isArray(result) ? result.length : 1;
         return {
           success: true,
@@ -1598,16 +1612,17 @@ export function createWizBeeTools(
       }),
       execute: async (input) => {
         const { ids, typeId, ...fields } = input;
-        const req = createMockRequest(context, {
-          body: {
+        const updatedCount = await updateFeeds(
+          KyselyServer.getInstance().db,
+          { companyId: context.userId, beeId: context.beeId, isLlm: true },
+          {
             ids,
             data: {
               ...fields,
               ...(typeId !== undefined && { type_id: typeId }),
             },
           },
-        });
-        const updatedCount = await FeedController.patch(req, createMockReply());
+        );
         return {
           success: true,
           message: `Updated ${updatedCount} feed record${updatedCount !== 1 ? 's' : ''}`,
@@ -1626,11 +1641,13 @@ export function createWizBeeTools(
           .describe('IDs of the feed records to soft-delete'),
       }),
       execute: async (input) => {
-        const req = createMockRequest(context, {
-          body: { ids: input.ids },
-          query: {},
-        });
-        await FeedController.batchDelete(req, createMockReply());
+        await deleteTasks(
+          KyselyServer.getInstance().db,
+          'feeds',
+          { companyId: context.userId, beeId: context.beeId, isLlm: true },
+          input.ids,
+          { hard: false, restore: false },
+        );
         return {
           success: true,
           message: `Soft-deleted ${input.ids.length} feed record${input.ids.length !== 1 ? 's' : ''}`,
@@ -1670,16 +1687,17 @@ export function createWizBeeTools(
       }),
       execute: async (input) => {
         const { hiveIds, typeId, ...rest } = input;
-        const req = createMockRequest(context, {
-          body: {
+        const result = await createHarvests(
+          KyselyServer.getInstance().db,
+          { companyId: context.userId, beeId: context.beeId, isLlm: true },
+          {
             ...rest,
             hive_ids: hiveIds,
             ...(typeId !== undefined && { type_id: typeId }),
             repeat: 0,
             interval: 0,
           },
-        });
-        const result = await HarvestController.post(req, createMockReply());
+        );
         const createdCount = Array.isArray(result) ? result.length : 1;
         return {
           success: true,
@@ -1715,18 +1733,16 @@ export function createWizBeeTools(
       }),
       execute: async (input) => {
         const { ids, typeId, ...fields } = input;
-        const req = createMockRequest(context, {
-          body: {
+        const updatedCount = await updateHarvests(
+          KyselyServer.getInstance().db,
+          { companyId: context.userId, beeId: context.beeId, isLlm: true },
+          {
             ids,
             data: {
               ...fields,
               ...(typeId !== undefined && { type_id: typeId }),
             },
           },
-        });
-        const updatedCount = await HarvestController.patch(
-          req,
-          createMockReply(),
         );
         return {
           success: true,
@@ -1746,11 +1762,13 @@ export function createWizBeeTools(
           .describe('IDs of the harvest records to soft-delete'),
       }),
       execute: async (input) => {
-        const req = createMockRequest(context, {
-          body: { ids: input.ids },
-          query: {},
-        });
-        await HarvestController.batchDelete(req, createMockReply());
+        await deleteTasks(
+          KyselyServer.getInstance().db,
+          'harvests',
+          { companyId: context.userId, beeId: context.beeId, isLlm: true },
+          input.ids,
+          { hard: false, restore: false },
+        );
         return {
           success: true,
           message: `Soft-deleted ${input.ids.length} harvest record${input.ids.length !== 1 ? 's' : ''}`,
@@ -1790,8 +1808,10 @@ export function createWizBeeTools(
       }),
       execute: async (input) => {
         const { hiveIds, typeId, diseaseId, vetId, ...rest } = input;
-        const req = createMockRequest(context, {
-          body: {
+        const result = await createTreatments(
+          KyselyServer.getInstance().db,
+          { companyId: context.userId, beeId: context.beeId, isLlm: true },
+          {
             ...rest,
             hive_ids: hiveIds,
             ...(typeId !== undefined && { type_id: typeId }),
@@ -1800,8 +1820,7 @@ export function createWizBeeTools(
             repeat: 0,
             interval: 0,
           },
-        });
-        const result = await TreatmentController.post(req, createMockReply());
+        );
         const createdCount = Array.isArray(result) ? result.length : 1;
         return {
           success: true,
@@ -1835,8 +1854,10 @@ export function createWizBeeTools(
       }),
       execute: async (input) => {
         const { ids, typeId, diseaseId, vetId, ...fields } = input;
-        const req = createMockRequest(context, {
-          body: {
+        const updatedCount = await updateTreatments(
+          KyselyServer.getInstance().db,
+          { companyId: context.userId, beeId: context.beeId, isLlm: true },
+          {
             ids,
             data: {
               ...fields,
@@ -1845,10 +1866,6 @@ export function createWizBeeTools(
               ...(vetId !== undefined && { vet_id: vetId }),
             },
           },
-        });
-        const updatedCount = await TreatmentController.patch(
-          req,
-          createMockReply(),
         );
         return {
           success: true,
@@ -1868,11 +1885,13 @@ export function createWizBeeTools(
           .describe('IDs of the treatment records to soft-delete'),
       }),
       execute: async (input) => {
-        const req = createMockRequest(context, {
-          body: { ids: input.ids },
-          query: {},
-        });
-        await TreatmentController.batchDelete(req, createMockReply());
+        await deleteTasks(
+          KyselyServer.getInstance().db,
+          'treatments',
+          { companyId: context.userId, beeId: context.beeId, isLlm: true },
+          input.ids,
+          { hard: false, restore: false },
+        );
         return {
           success: true,
           message: `Soft-deleted ${input.ids.length} treatment record${input.ids.length !== 1 ? 's' : ''}`,
@@ -1926,8 +1945,10 @@ export function createWizBeeTools(
       }),
       execute: async (input) => {
         const { hiveIds, typeId, cappedBrood, calmComb, ...rest } = input;
-        const req = createMockRequest(context, {
-          body: {
+        const result = await createCheckups(
+          KyselyServer.getInstance().db,
+          { companyId: context.userId, beeId: context.beeId, isLlm: true },
+          {
             ...rest,
             hive_ids: hiveIds,
             ...(typeId !== undefined && { type_id: typeId }),
@@ -1936,8 +1957,7 @@ export function createWizBeeTools(
             repeat: 0,
             interval: 0,
           },
-        });
-        const result = await CheckupController.post(req, createMockReply());
+        );
         const createdCount = Array.isArray(result) ? result.length : 1;
         return {
           success: true,
@@ -1987,8 +2007,10 @@ export function createWizBeeTools(
       }),
       execute: async (input) => {
         const { ids, typeId, cappedBrood, calmComb, ...fields } = input;
-        const req = createMockRequest(context, {
-          body: {
+        const updatedCount = await updateCheckups(
+          KyselyServer.getInstance().db,
+          { companyId: context.userId, beeId: context.beeId, isLlm: true },
+          {
             ids,
             data: {
               ...fields,
@@ -1997,10 +2019,6 @@ export function createWizBeeTools(
               ...(calmComb !== undefined && { calm_comb: calmComb }),
             },
           },
-        });
-        const updatedCount = await CheckupController.patch(
-          req,
-          createMockReply(),
         );
         return {
           success: true,
@@ -2020,11 +2038,13 @@ export function createWizBeeTools(
           .describe('IDs of the checkup records to soft-delete'),
       }),
       execute: async (input) => {
-        const req = createMockRequest(context, {
-          body: { ids: input.ids },
-          query: {},
-        });
-        await CheckupController.batchDelete(req, createMockReply());
+        await deleteTasks(
+          KyselyServer.getInstance().db,
+          'checkups',
+          { companyId: context.userId, beeId: context.beeId, isLlm: true },
+          input.ids,
+          { hard: false, restore: false },
+        );
         return {
           success: true,
           message: `Soft-deleted ${input.ids.length} checkup record${input.ids.length !== 1 ? 's' : ''}`,

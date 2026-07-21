@@ -79,22 +79,43 @@ export const checkupListQuerySchema = z.looseObject({
   done: z.boolean().nullable().optional(),
 });
 
-export const checkupCreateSchema = z.looseObject({
-  hive_ids: z.array(numberSchema),
-  date: z.string(),
-  enddate: z.string().optional(),
-  temperature: z.number().nullable().optional(),
-  interval: z.number().min(0).max(365),
-  repeat: z.number().min(0).max(15),
+export const checkupDataSchema = z.object({
+  date: z.string().optional(),
+  enddate: z.string().nullable().optional(),
+  queen: z.boolean().nullable().optional(),
+  queencells: z.boolean().nullable().optional(),
+  eggs: z.boolean().nullable().optional(),
+  capped_brood: z.boolean().nullable().optional(),
+  brood: nullableNumber,
+  pollen: nullableNumber,
+  comb: nullableNumber,
+  temper: nullableNumber,
+  calm_comb: nullableNumber,
+  swarm: nullableNumber,
+  varroa: nullableNumber,
+  strong: nullableNumber,
+  temperature: nullableNumber,
+  weight: nullableNumber,
+  time: nullableString,
+  broodframes: nullableNumber,
+  honeyframes: nullableNumber,
+  foundation: nullableNumber,
+  emptyframes: nullableNumber,
+  note: nullableString,
+  url: nullableString,
+  done: z.boolean().optional(),
+  deleted: z.boolean().optional(),
   type_id: numberSchema.nullable().optional(),
 });
 
-export const checkupUpdateDataSchema = z.looseObject({
-  date: z.string().optional(),
-  enddate: z.string().nullable().optional(),
-  type_id: numberSchema.nullable().optional(),
-  temperature: z.number().nullable().optional(),
+export const checkupCreateSchema = checkupDataSchema.extend({
+  hive_ids: z.array(numberSchema),
+  date: z.string(),
+  interval: z.number().min(0).max(365),
+  repeat: z.number().min(0).max(15),
 });
+
+export const checkupUpdateDataSchema = checkupDataSchema.partial();
 
 export const checkupBatchUpdateSchema = z.object({
   ids: z.array(numberSchema),

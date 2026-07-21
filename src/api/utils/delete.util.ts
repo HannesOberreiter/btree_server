@@ -1,33 +1,7 @@
-import { Apiary } from '../models/apiary.model.js';
-import { Charge } from '../models/charge.model.js';
-import { Checkup } from '../models/checkup.model.js';
-import { Company } from '../models/company.model.js';
+import { KyselyServer } from '../../servers/kysely.server.js';
 import { CompanyBee } from '../models/company_bee.model.js';
-import { Dropbox } from '../models/dropbox.model.js';
-import { Feed } from '../models/feed.model.js';
 import { FieldSetting } from '../models/field_setting.model.js';
-import { Harvest } from '../models/harvest.model.js';
-import { Hive } from '../models/hive.model.js';
-import { Movedate } from '../models/movedate.model.js';
-import { ChargeType } from '../models/option/charge_type.model.js';
-import { CheckupType } from '../models/option/checkup_type.model.js';
-import { FeedType } from '../models/option/feed_type.model.js';
-import { HarvestType } from '../models/option/harvest_type.model.js';
-import { HiveSource } from '../models/option/hive_source.model.js';
-import { HiveType } from '../models/option/hive_type.mode.js';
-import { QueenMating } from '../models/option/queen_mating.model.js';
-import { QueenRace } from '../models/option/queen_race.model.js';
-import { TreatmentDisease } from '../models/option/treatment_disease.model.js';
-import { TreatmentType } from '../models/option/treatment_type.model.js';
-import { TreatmentVet } from '../models/option/treatment_vet.model.js';
-import { Queen } from '../models/queen.model.js';
-import { Rearing } from '../models/rearing/rearing.model.js';
-import { RearingDetail } from '../models/rearing/rearing_detail.model.js';
-import { RearingStep } from '../models/rearing/rearing_step.model.js';
-import { RearingType } from '../models/rearing/rearing_type.model.js';
 import { RefreshToken } from '../models/refresh_token.model.js';
-import { Todo } from '../models/todo.model.js';
-import { Treatment } from '../models/treatment.model.js';
 import { User } from '../models/user.model.js';
 import { checkMySQLError } from './error.util.js';
 
@@ -48,66 +22,127 @@ export async function deleteUser(bee_id: number) {
 
 export async function deleteCompany(company_id: number) {
   try {
-    await Company.transaction(async (trx) => {
-      await Promise.all([
-        Rearing.query(trx).delete().where({ user_id: company_id }),
-        RearingDetail.query(trx).delete().where({ user_id: company_id }),
-        RearingStep.query(trx)
-          .delete()
-          .withGraphJoined('type')
-          .where({ user_id: company_id }),
-        RearingType.query(trx).delete().where({ user_id: company_id }),
-        Queen.query(trx).delete().where({ user_id: company_id }),
-      ]);
-
-      await Promise.all([
-        Charge.query(trx).delete().where({ user_id: company_id }),
-        Checkup.query(trx).delete().where({ user_id: company_id }),
-        Harvest.query(trx).delete().where({ user_id: company_id }),
-        Feed.query(trx).delete().where({ user_id: company_id }),
-        Treatment.query(trx).delete().where({ user_id: company_id }),
-        Todo.query(trx).delete().where({ user_id: company_id }),
-      ]);
-
-      await Promise.all([
-        ChargeType.query(trx).delete().where({ user_id: company_id }),
-        CheckupType.query(trx).delete().where({ user_id: company_id }),
-        FeedType.query(trx).delete().where({ user_id: company_id }),
-        HarvestType.query(trx).delete().where({ user_id: company_id }),
-        HiveSource.query(trx).delete().where({ user_id: company_id }),
-        HiveType.query(trx).delete().where({ user_id: company_id }),
-        QueenMating.query(trx).delete().where({ user_id: company_id }),
-        QueenRace.query(trx).delete().where({ user_id: company_id }),
-        TreatmentDisease.query(trx).delete().where({ user_id: company_id }),
-        TreatmentType.query(trx).delete().where({ user_id: company_id }),
-        TreatmentVet.query(trx).delete().where({ user_id: company_id }),
-      ]);
-
-      await Hive.query(trx).delete().where({ user_id: company_id });
-      await Dropbox.query(trx).delete().where({ user_id: company_id });
-
-      await Movedate.query(trx)
-        .delete()
-        .withGraphJoined('apiary')
-        .where({ 'apiary.user_id': company_id });
-      await Apiary.query(trx).delete().where({ user_id: company_id });
-      await CompanyBee.query(trx).delete().where({ user_id: company_id });
-      await Company.query(trx).deleteById(company_id);
-
-      return true;
-    });
+    await KyselyServer.getInstance()
+      .db.transaction()
+      .execute(async (trx) => {
+        await trx
+          .deleteFrom('rearing_steps')
+          .where('type_id', 'in', (query) =>
+            query
+              .selectFrom('rearing_types')
+              .select('id')
+              .where('user_id', '=', company_id),
+          )
+          .execute();
+        await Promise.all([
+          trx
+            .deleteFrom('rearings')
+            .where('user_id', '=', company_id)
+            .execute(),
+          trx
+            .deleteFrom('rearing_details')
+            .where('user_id', '=', company_id)
+            .execute(),
+          trx
+            .deleteFrom('rearing_types')
+            .where('user_id', '=', company_id)
+            .execute(),
+          trx.deleteFrom('queens').where('user_id', '=', company_id).execute(),
+        ]);
+        await Promise.all([
+          trx.deleteFrom('charges').where('user_id', '=', company_id).execute(),
+          trx
+            .deleteFrom('checkups')
+            .where('user_id', '=', company_id)
+            .execute(),
+          trx
+            .deleteFrom('harvests')
+            .where('user_id', '=', company_id)
+            .execute(),
+          trx.deleteFrom('feeds').where('user_id', '=', company_id).execute(),
+          trx
+            .deleteFrom('treatments')
+            .where('user_id', '=', company_id)
+            .execute(),
+          trx.deleteFrom('todos').where('user_id', '=', company_id).execute(),
+        ]);
+        await Promise.all([
+          trx
+            .deleteFrom('charge_types')
+            .where('user_id', '=', company_id)
+            .execute(),
+          trx
+            .deleteFrom('checkup_types')
+            .where('user_id', '=', company_id)
+            .execute(),
+          trx
+            .deleteFrom('feed_types')
+            .where('user_id', '=', company_id)
+            .execute(),
+          trx
+            .deleteFrom('harvest_types')
+            .where('user_id', '=', company_id)
+            .execute(),
+          trx
+            .deleteFrom('hive_sources')
+            .where('user_id', '=', company_id)
+            .execute(),
+          trx
+            .deleteFrom('hive_types')
+            .where('user_id', '=', company_id)
+            .execute(),
+          trx
+            .deleteFrom('queen_matings')
+            .where('user_id', '=', company_id)
+            .execute(),
+          trx
+            .deleteFrom('queen_races')
+            .where('user_id', '=', company_id)
+            .execute(),
+          trx
+            .deleteFrom('treatment_diseases')
+            .where('user_id', '=', company_id)
+            .execute(),
+          trx
+            .deleteFrom('treatment_types')
+            .where('user_id', '=', company_id)
+            .execute(),
+          trx
+            .deleteFrom('treatment_vets')
+            .where('user_id', '=', company_id)
+            .execute(),
+        ]);
+        await trx
+          .deleteFrom('hives')
+          .where('user_id', '=', company_id)
+          .execute();
+        await trx
+          .deleteFrom('dropbox')
+          .where('user_id', '=', company_id)
+          .execute();
+        await trx
+          .deleteFrom('movedates')
+          .where('apiary_id', 'in', (query) =>
+            query
+              .selectFrom('apiaries')
+              .select('id')
+              .where('user_id', '=', company_id),
+          )
+          .execute();
+        await trx
+          .deleteFrom('apiaries')
+          .where('user_id', '=', company_id)
+          .execute();
+        await trx
+          .deleteFrom('company_bee')
+          .where('user_id', '=', company_id)
+          .execute();
+        await trx
+          .deleteFrom('companies')
+          .where('id', '=', company_id)
+          .execute();
+      });
   } catch (error) {
     throw checkMySQLError(error);
   }
-}
-
-export async function deleteHiveConnections(hive_ids: Array<number>, trx) {
-  await Promise.all([
-    Movedate.query(trx).delete().whereIn('hive_id', hive_ids),
-    Feed.query(trx).delete().whereIn('hive_id', hive_ids),
-    Treatment.query(trx).delete().whereIn('hive_id', hive_ids),
-    Checkup.query(trx).delete().whereIn('hive_id', hive_ids),
-    Harvest.query(trx).delete().whereIn('hive_id', hive_ids),
-    Queen.query(trx).delete().whereIn('hive_id', hive_ids),
-  ]);
 }

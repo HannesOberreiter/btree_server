@@ -12,6 +12,12 @@ import type {
   HivePositionBody,
 } from '../schemas/hive.schema.js';
 import { limitHive } from '../utils/premium.util.js';
+import { listCheckups } from './checkup.module.js';
+import { listFeeds } from './feed.module.js';
+import { listHarvests } from './harvest.module.js';
+import { listMovedates } from './movedate.module.js';
+import { listTodos } from './todo.module.js';
+import { listTreatments } from './treatment.module.js';
 
 interface MovedateResponse {
   [key: string]: unknown;
@@ -423,6 +429,103 @@ export async function getHiveDetail(
       .execute(),
   ]);
   return { ...hive, sameLocation, firstMovedate };
+}
+
+export async function getHiveTasks(
+  db: Kysely<DB>,
+  actor: { companyId: number; beeId: number; isLlm: boolean },
+  id: number,
+  year: number,
+  apiary: boolean,
+) {
+  let hiveIds: number[];
+  if (apiary) {
+    const ownedApiary = await db
+      .selectFrom('apiaries')
+      .select('id')
+      .where('id', '=', id)
+      .where('user_id', '=', actor.companyId)
+      .where('deleted', '=', false)
+      .executeTakeFirst();
+    if (!ownedApiary) throw httpErrors.NotFound();
+    const locations = await db
+      .selectFrom('hives_locations')
+      .select('hive_id')
+      .where('apiary_id', '=', id)
+      .where('hive_deleted', '=', false)
+      .where('hive_modus', '=', true)
+      .execute();
+    hiveIds = locations.map((location) => location.hive_id);
+  } else {
+    const hive = await db
+      .selectFrom('hives')
+      .select('id')
+      .where('id', '=', id)
+      .where('user_id', '=', actor.companyId)
+      .where('deleted', '=', false)
+      .executeTakeFirst();
+    if (!hive) throw httpErrors.NotFound();
+    hiveIds = [hive.id];
+  }
+
+  const filters = JSON.stringify([
+    { hive_id_array: hiveIds },
+    { date: { from: `${year}-01-01`, to: `${year}-12-31` } },
+  ]);
+  const query = { filters, deleted: false, limit: 100_000, offset: 0 };
+  const [harvest, feed, treatment, checkup, movedateGroups, todos] =
+    await Promise.all([
+      listHarvests(db, actor.companyId, query),
+      listFeeds(db, actor.companyId, query),
+      listTreatments(db, actor.companyId, query),
+      listCheckups(db, actor.companyId, query),
+      Promise.all(
+        hiveIds.map((hiveId) =>
+          listMovedates(db, actor.companyId, {
+            filters: JSON.stringify([
+              { 'movedates.hive_id': hiveId },
+              { date: { from: `${year}-01-01`, to: `${year}-12-31` } },
+            ]),
+            limit: 100_000,
+            offset: 0,
+            order: 'date',
+            direction: 'desc',
+          }),
+        ),
+      ),
+      apiary
+        ? listTodos(db, actor, {
+            apiary_id: id,
+            filters: JSON.stringify([
+              { date: { from: `${year}-01-01`, to: `${year}-12-31` } },
+            ]),
+            limit: 100_000,
+            offset: 0,
+          })
+        : Promise.resolve({ results: [] }),
+    ]);
+
+  const withKind = <T extends object>(rows: T[], kind: string) =>
+    rows.map((row) => ({ ...row, kind }));
+  const byDateDescending = <T extends { date: unknown }>(rows: T[]) =>
+    rows.sort(
+      (left, right) =>
+        new Date(String(right.date)).getTime() -
+        new Date(String(left.date)).getTime(),
+    );
+  return {
+    harvest: byDateDescending(withKind(harvest.results, 'harvest')),
+    feed: byDateDescending(withKind(feed.results, 'feed')),
+    treatment: byDateDescending(withKind(treatment.results, 'treatment')),
+    checkup: byDateDescending(withKind(checkup.results, 'checkup')),
+    movedate: byDateDescending(
+      withKind(
+        movedateGroups.flatMap((group) => group.results),
+        'movedate',
+      ),
+    ),
+    todo: withKind(todos.results, 'todo'),
+  };
 }
 
 async function duplicateName(

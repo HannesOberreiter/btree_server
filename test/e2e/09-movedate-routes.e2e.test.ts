@@ -1,5 +1,11 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
+import {
+  getMovedatesByIds,
+  listMovedates,
+  updateMovedateDates,
+} from '../../src/api/modules/movedate.module.js';
+import { KyselyServer } from '../../src/servers/kysely.server.js';
 import type { TestAgent } from '../utils.js';
 import {
   createAgent,
@@ -64,10 +70,35 @@ describe('movedate routes', () => {
     });
 
     it('get 200 - success', async () => {
-      const res = await doQueryRequest(agent, route, null, accessToken, null);
+      const res = await doQueryRequest(agent, route, null, accessToken, {
+        limit: 1000,
+      });
       expect(res.statusCode).toEqual(200);
       expect(res.body.results).toBeInstanceOf(Array);
       expect(res.body.total).toBeTypeOf('number');
+      const inserted = res.body.results.find(
+        (movedate: { id: number }) => movedate.id === insertId,
+      );
+      expect(inserted).toEqual(
+        expect.objectContaining({
+          id: insertId,
+          hive: expect.objectContaining({ id: testInsert.hive_ids[0] }),
+          apiary: expect.objectContaining({ id: testInsert.apiary_id }),
+          creator: expect.objectContaining({ email: expect.any(String) }),
+        }),
+      );
+    });
+
+    it('operations enforce company isolation', async () => {
+      const db = KyselyServer.getInstance().db;
+      expect(await listMovedates(db, 999_999, {})).toEqual({
+        results: [],
+        total: 0,
+      });
+      expect(await getMovedatesByIds(db, 999_999, [insertId])).toEqual([]);
+      expect(
+        await updateMovedateDates(db, 999_999, 1, [insertId], testInsert.date),
+      ).toBe(0);
     });
 
     it('post 400 - no data', async () => {

@@ -93,15 +93,26 @@
   - [x] Shallow controller reduced to the task aggregate pending task-slice migration
   - [ ] Migrate task aggregate after Feed, Harvest, Treatment, and Checkup operations exist
   - [ ] Remove model after task aggregate and remaining cross-cutting callers migrate
-- [ ] Movedate
+- [x] Movedate
+  - [x] HTTP and WizBee operations use shared typed Kysely operations
+  - [x] Filtering and sorting use typed domain allowlists
+  - [x] Last-movement protection, nested responses, and tenant isolation covered
+  - [x] Shallow controller removed
+  - [ ] Remove model after Company import/export migrates
 
 ## Phase 3: task slices
 
-- [ ] Feed
-- [ ] Harvest
-- [ ] Extract shared task implementation only after Feed and Harvest prove the seam
-- [ ] Treatment
-- [ ] Checkup
+- [x] Feed
+- [x] Harvest
+- [x] Extract shared task implementation only after Feed and Harvest prove the seam
+- [x] Treatment
+- [x] Checkup
+  - [x] HTTP and WizBee operations share typed Kysely modules
+  - [x] Shared scheduling, status, date, ownership, and delete behavior extracted
+  - [x] Hive task aggregate uses shared operations
+  - [x] Nested response shapes, decimals, filters, and tenant isolation covered
+  - [x] Shallow task controllers removed
+  - [ ] Remove task models after Company import/export migrates
 
 ## Phase 4: other business slices
 

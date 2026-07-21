@@ -3,13 +3,13 @@ import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 
 import { ROLES } from '../../../config/constants.config.js';
 import { KyselyServer } from '../../../servers/kysely.server.js';
-import HiveController from '../../controllers/hive.controller.js';
 import { Guard } from '../../hooks/guard.hook.js';
 import {
   createHives,
   deleteHives,
   getHiveDetail,
   getHivesByIds,
+  getHiveTasks,
   listHives,
   updateHivePositions,
   updateHives,
@@ -75,7 +75,18 @@ export default function routes(
         querystring: hiveTaskQuerySchema,
       },
     },
-    HiveController.getTasks,
+    async (request) =>
+      getHiveTasks(
+        db,
+        {
+          companyId: request.session.user.user_id,
+          beeId: request.session.user.bee_id,
+          isLlm: request.session.llm === true,
+        },
+        request.params.id,
+        request.query.year ?? new Date().getFullYear(),
+        request.query.apiary ?? false,
+      ),
   );
   server.patch(
     '/',

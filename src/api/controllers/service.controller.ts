@@ -1,9 +1,9 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import httpErrors from 'http-errors';
 
+import { KyselyServer } from '../../servers/kysely.server.js';
 import type { MailLang } from '../../services/mail.service.js';
 import { MailLangs } from '../../services/mail.service.js';
-import { Apiary } from '../models/apiary.model.js';
 import { User } from '../models/user.model.js';
 import type { CompatibilityQuery } from '../schemas/common.schema.js';
 import type {
@@ -52,14 +52,20 @@ export default class ServiceController {
     if (!premium) {
       throw httpErrors.PaymentRequired();
     }
-    const apiary = await Apiary.query()
-      .findById(params.apiary_id)
-      .where({ user_id: req.session.user.user_id });
+    const apiary = await KyselyServer.getInstance()
+      .db.selectFrom('apiaries')
+      .select(['latitude', 'longitude'])
+      .where('id', '=', params.apiary_id)
+      .where('user_id', '=', req.session.user.user_id)
+      .executeTakeFirst();
 
     if (!apiary) {
       throw httpErrors.NotFound('Apiary not found');
     }
-    const weatherData = await getWeatherData(apiary.latitude, apiary.longitude);
+    const weatherData = await getWeatherData(
+      Number(apiary.latitude),
+      Number(apiary.longitude),
+    );
     return weatherData;
   }
 
@@ -68,13 +74,14 @@ export default class ServiceController {
     _reply: FastifyReply,
   ) {
     const params = req.params as GetGruenlandtemperatursummeParams;
-    const apiary = await Apiary.query()
-      .findById(params.apiary_id)
-      .where({
-        user_id: req.session.user.user_id,
-        deleted: false,
-      })
-      .throwIfNotFound();
+    const apiary = await KyselyServer.getInstance()
+      .db.selectFrom('apiaries')
+      .select(['id', 'name', 'latitude', 'longitude', 'elevation'])
+      .where('id', '=', params.apiary_id)
+      .where('user_id', '=', req.session.user.user_id)
+      .where('deleted', '=', false)
+      .executeTakeFirst();
+    if (!apiary) throw httpErrors.NotFound();
 
     if (!apiary.latitude || !apiary.longitude) {
       throw httpErrors.BadRequest('Apiary coordinates not set');
@@ -93,8 +100,8 @@ export default class ServiceController {
         : `${year}-06-31`;
 
     const dailyTemperatures = await getHistoricalTemperatures(
-      apiary.latitude,
-      apiary.longitude,
+      Number(apiary.latitude),
+      Number(apiary.longitude),
       startDate,
       endDate,
       apiary.elevation,
@@ -107,8 +114,8 @@ export default class ServiceController {
       apiary: {
         id: apiary.id,
         name: apiary.name,
-        latitude: apiary.latitude,
-        longitude: apiary.longitude,
+        latitude: Number(apiary.latitude),
+        longitude: Number(apiary.longitude),
         elevation: apiary.elevation,
       },
     };

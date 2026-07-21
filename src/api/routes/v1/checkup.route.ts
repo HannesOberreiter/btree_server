@@ -3,8 +3,19 @@ import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { z } from 'zod';
 
 import { ROLES } from '../../../config/constants.config.js';
-import CheckupController from '../../controllers/checkup.controller.js';
+import { KyselyServer } from '../../../servers/kysely.server.js';
 import { Guard } from '../../hooks/guard.hook.js';
+import {
+  createCheckups,
+  getCheckupsByIds,
+  listCheckups,
+  updateCheckups,
+} from '../../modules/checkup.module.js';
+import {
+  deleteTasks,
+  updateTaskDates,
+  updateTaskStatus,
+} from '../../modules/task.module.js';
 import {
   checkupBatchDeleteQuerySchema,
   checkupBatchUpdateSchema,
@@ -23,6 +34,7 @@ export default function routes(
   done: () => void,
 ) {
   const server = instance.withTypeProvider<ZodTypeProvider>();
+  const db = KyselyServer.getInstance().db;
 
   server.get(
     '/',
@@ -33,7 +45,8 @@ export default function routes(
       },
       preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
     },
-    CheckupController.get,
+    async (request) =>
+      listCheckups(db, request.session.user.user_id, request.query),
   );
 
   server.post(
@@ -45,7 +58,16 @@ export default function routes(
         response: { 200: z.array(z.number()) },
       },
     },
-    CheckupController.post,
+    async (request) =>
+      createCheckups(
+        db,
+        {
+          companyId: request.session.user.user_id,
+          beeId: request.session.user.bee_id,
+          isLlm: request.session.llm === true,
+        },
+        request.body,
+      ),
   );
 
   server.patch(
@@ -57,7 +79,16 @@ export default function routes(
         response: { 200: z.number() },
       },
     },
-    CheckupController.patch,
+    async (request) =>
+      updateCheckups(
+        db,
+        {
+          companyId: request.session.user.user_id,
+          beeId: request.session.user.bee_id,
+          isLlm: request.session.llm === true,
+        },
+        request.body,
+      ),
   );
 
   server.patch(
@@ -69,7 +100,18 @@ export default function routes(
         response: { 200: z.number() },
       },
     },
-    CheckupController.updateStatus,
+    async (request) =>
+      updateTaskStatus(
+        db,
+        'checkups',
+        {
+          companyId: request.session.user.user_id,
+          beeId: request.session.user.bee_id,
+          isLlm: request.session.llm === true,
+        },
+        request.body.ids,
+        request.body.status,
+      ),
   );
 
   server.patch(
@@ -81,7 +123,19 @@ export default function routes(
         response: { 200: z.number() },
       },
     },
-    CheckupController.updateDate,
+    async (request) =>
+      updateTaskDates(
+        db,
+        'checkups',
+        {
+          companyId: request.session.user.user_id,
+          beeId: request.session.user.bee_id,
+          isLlm: request.session.llm === true,
+        },
+        request.body.ids,
+        request.body.start,
+        request.body.end,
+      ),
   );
 
   server.patch(
@@ -94,7 +148,21 @@ export default function routes(
         response: { 200: z.array(checkupResponseSchema) },
       },
     },
-    CheckupController.batchDelete,
+    async (request) =>
+      deleteTasks(
+        db,
+        'checkups',
+        {
+          companyId: request.session.user.user_id,
+          beeId: request.session.user.bee_id,
+          isLlm: request.session.llm === true,
+        },
+        request.body.ids,
+        {
+          hard: Boolean(request.query.hard),
+          restore: Boolean(request.query.restore),
+        },
+      ),
   );
 
   server.post(
@@ -106,7 +174,8 @@ export default function routes(
         response: { 200: z.array(checkupResponseSchema) },
       },
     },
-    CheckupController.batchGet,
+    async (request) =>
+      getCheckupsByIds(db, request.session.user.user_id, request.body.ids),
   );
 
   done();

@@ -1,10 +1,10 @@
 import dayjs from 'dayjs';
 import type { FastifyReply, FastifyRequest } from 'fastify';
+import { sql } from 'kysely';
 import { map } from 'lodash-es';
 import type Objection from 'objection';
 
-import { Checkup } from '../models/checkup.model.js';
-import { Harvest } from '../models/harvest.model.js';
+import { KyselyServer } from '../../servers/kysely.server.js';
 import { Queen } from '../models/queen.model.js';
 import { QueenDuration } from '../models/queen_duration.model.js';
 import type { CompatibilityQuery } from '../schemas/common.schema.js';
@@ -222,27 +222,34 @@ export default class QueenController {
 
     for (let index = 0; index < result.results.length; index++) {
       const queen = result.results[index];
-      const query_checkup = await Checkup.query()
-        .first()
-        .select(
-          Checkup.raw('AVG(NULLIF(brood, 0)) as brood'),
-          Checkup.raw('AVG(NULLIF(pollen, 0)) as pollen'),
-          Checkup.raw('AVG(NULLIF(comb, 0)) as comb'),
-          Checkup.raw('AVG(NULLIF(temper, 0)) as temper'),
-          Checkup.raw('AVG(NULLIF(calm_comb, 0)) as calm_comb'),
-          Checkup.raw('AVG(NULLIF(swarm, 0)) as swarm'),
-          Checkup.raw('AVG(NULLIF(varroa, 0)) as varroa'),
-          Checkup.raw('AVG(NULLIF(strong, 0)) as strong'),
-        )
-        .where('hive_id', queen.hive_id)
-        .whereBetween('date', [queen.move_date, queen.last_date]);
+      const db = KyselyServer.getInstance().db;
+      const query_checkup = await db
+        .selectFrom('checkups')
+        .select([
+          sql<string | null>`AVG(NULLIF(brood, 0))`.as('brood'),
+          sql<string | null>`AVG(NULLIF(pollen, 0))`.as('pollen'),
+          sql<string | null>`AVG(NULLIF(comb, 0))`.as('comb'),
+          sql<string | null>`AVG(NULLIF(temper, 0))`.as('temper'),
+          sql<string | null>`AVG(NULLIF(calm_comb, 0))`.as('calm_comb'),
+          sql<string | null>`AVG(NULLIF(swarm, 0))`.as('swarm'),
+          sql<string | null>`AVG(NULLIF(varroa, 0))`.as('varroa'),
+          sql<string | null>`AVG(NULLIF(strong, 0))`.as('strong'),
+        ])
+        .where('hive_id', '=', queen.hive_id)
+        .where('date', '>=', new Date(queen.move_date))
+        .where('date', '<=', new Date(queen.last_date))
+        .executeTakeFirst();
 
-      const query_harvest = await Harvest.query()
-        .first()
-        .sum('frames as frames')
-        .sum('amount as amount')
-        .where('hive_id', queen.hive_id)
-        .whereBetween('date', [queen.move_date, queen.last_date]);
+      const query_harvest = await db
+        .selectFrom('harvests')
+        .select([
+          db.fn.sum('frames').as('frames'),
+          db.fn.sum('amount').as('amount'),
+        ])
+        .where('hive_id', '=', queen.hive_id)
+        .where('date', '>=', new Date(queen.move_date))
+        .where('date', '<=', new Date(queen.last_date))
+        .executeTakeFirst();
 
       queen.checkup = query_checkup;
       queen.harvest = query_harvest;
