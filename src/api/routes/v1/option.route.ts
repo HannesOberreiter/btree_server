@@ -1,43 +1,61 @@
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
+import { z } from 'zod';
 
 import { ROLES } from '../../../config/constants.config.js';
-import OptionsController from '../../controllers/options.controller.js';
+import { KyselyServer } from '../../../servers/kysely.server.js';
 import { Guard } from '../../hooks/guard.hook.js';
 import { Validator } from '../../hooks/validator.hook.js';
 import {
-  permissiveJsonResponseSchema,
-  compatibilityQuerySchema,
-} from '../../schemas/common.schema.js';
+  createOption,
+  deleteOptions,
+  getOptionsByIds,
+  listOptions,
+  updateFavoriteOption,
+  updateOptions,
+  updateOptionStatus,
+} from '../../modules/option.module.js';
 import {
+  batchDeleteBodySchema,
+  batchGetBodySchema,
+  optionListQuerySchema,
+  optionListResponseSchema,
+  optionResponseSchema,
   optionTableParamsSchema,
   patchBodySchema,
   postBodySchema,
-  updateStatusBodySchema,
   updateFavoriteBodySchema,
-  batchDeleteBodySchema,
-  batchGetBodySchema,
+  updateStatusBodySchema,
 } from '../../schemas/option.schema.js';
 
 export default function routes(
   instance: FastifyInstance,
-  _options: any,
-  done: any,
+  _options: unknown,
+  done: () => void,
 ) {
   const server = instance.withTypeProvider<ZodTypeProvider>();
+  const db = KyselyServer.getInstance().db;
+
   server.get(
     '/:table',
     {
       schema: {
-        querystring: compatibilityQuerySchema,
+        querystring: optionListQuerySchema,
         params: optionTableParamsSchema,
-        response: { 200: permissiveJsonResponseSchema },
+        response: { 200: optionListResponseSchema },
       },
       preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
       preValidation: Validator.handleOption,
     },
-    OptionsController.get,
+    async (request) =>
+      listOptions(
+        db,
+        request.params.table,
+        request.session.user.user_id,
+        request.query,
+      ),
   );
+
   server.patch(
     '/:table',
     {
@@ -45,11 +63,18 @@ export default function routes(
       preValidation: Validator.handleOption,
       schema: {
         params: optionTableParamsSchema,
-        response: { 200: permissiveJsonResponseSchema },
+        response: { 200: z.number() },
         body: patchBodySchema,
       },
     },
-    OptionsController.patch,
+    async (request) =>
+      updateOptions(
+        db,
+        request.params.table,
+        request.session.user.user_id,
+        request.body.ids,
+        request.body.data,
+      ),
   );
 
   server.post(
@@ -58,12 +83,18 @@ export default function routes(
       schema: {
         body: postBodySchema,
         params: optionTableParamsSchema,
-        response: { 200: permissiveJsonResponseSchema },
+        response: { 200: optionResponseSchema },
       },
       preHandler: Guard.authorize([ROLES.admin]),
       preValidation: Validator.handleOption,
     },
-    OptionsController.post,
+    async (request) =>
+      createOption(
+        db,
+        request.params.table,
+        request.session.user.user_id,
+        request.body,
+      ),
   );
 
   server.patch(
@@ -73,11 +104,18 @@ export default function routes(
       preValidation: Validator.handleOption,
       schema: {
         params: optionTableParamsSchema,
-        response: { 200: permissiveJsonResponseSchema },
+        response: { 200: z.number() },
         body: updateStatusBodySchema,
       },
     },
-    OptionsController.updateStatus,
+    async (request) =>
+      updateOptionStatus(
+        db,
+        request.params.table,
+        request.session.user.user_id,
+        request.body.ids,
+        request.body.status,
+      ),
   );
 
   server.patch(
@@ -87,11 +125,17 @@ export default function routes(
       preValidation: Validator.handleOption,
       schema: {
         params: optionTableParamsSchema,
-        response: { 200: permissiveJsonResponseSchema },
+        response: { 200: z.number() },
         body: updateFavoriteBodySchema,
       },
     },
-    OptionsController.updateFavorite,
+    async (request) =>
+      updateFavoriteOption(
+        db,
+        request.params.table,
+        request.session.user.user_id,
+        request.body.ids,
+      ),
   );
 
   server.patch(
@@ -101,11 +145,17 @@ export default function routes(
       preValidation: Validator.handleOption,
       schema: {
         params: optionTableParamsSchema,
-        response: { 200: permissiveJsonResponseSchema },
+        response: { 200: z.number() },
         body: batchDeleteBodySchema,
       },
     },
-    OptionsController.batchDelete,
+    async (request) =>
+      deleteOptions(
+        db,
+        request.params.table,
+        request.session.user.user_id,
+        request.body.ids,
+      ),
   );
 
   server.post(
@@ -115,11 +165,17 @@ export default function routes(
       preValidation: Validator.handleOption,
       schema: {
         params: optionTableParamsSchema,
-        response: { 200: permissiveJsonResponseSchema },
+        response: { 200: optionListResponseSchema },
         body: batchGetBodySchema,
       },
     },
-    OptionsController.batchGet,
+    async (request) =>
+      getOptionsByIds(
+        db,
+        request.params.table,
+        request.session.user.user_id,
+        request.body.ids,
+      ),
   );
 
   done();

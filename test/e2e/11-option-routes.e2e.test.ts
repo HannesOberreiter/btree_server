@@ -1,5 +1,11 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
+import {
+  getOptionsByIds,
+  updateOptionStatus,
+} from '../../src/api/modules/option.module.js';
+import type { OptionTable } from '../../src/api/schemas/option.schema.js';
+import { KyselyServer } from '../../src/servers/kysely.server.js';
 import type { TestAgent } from '../utils.js';
 import {
   createAgent,
@@ -25,7 +31,7 @@ const options = [
   'treatment_diseases',
   'treatment_types',
   'treatment_vets',
-];
+] as const satisfies readonly OptionTable[];
 
 options.forEach((option) => {
   describe(`${option} routes`, () => {
@@ -86,6 +92,33 @@ options.forEach((option) => {
         const res = await doQueryRequest(agent, route, null, accessToken, null);
         expect(res.statusCode).toEqual(200);
         expect(res.body).toBeInstanceOf(Array);
+        const inserted = res.body.find(
+          (item: { id: number }) => item.id === insertId,
+        );
+        expect(inserted).toMatchObject({
+          id: insertId,
+          name: testInsert.name,
+          user_id: 1,
+        });
+        expect(inserted).toHaveProperty('created_at');
+        expect(inserted).toHaveProperty('updated_at');
+        if (option === 'charge_types') {
+          expect(inserted).toHaveProperty('unit');
+          expect(inserted).toHaveProperty('stock');
+        }
+        if (option === 'treatment_vets') {
+          expect(inserted).toHaveProperty('note');
+        }
+      });
+
+      it('operations enforce company isolation', async () => {
+        const db = KyselyServer.getInstance().db;
+        expect(await getOptionsByIds(db, option, 999_999, [insertId])).toEqual(
+          [],
+        );
+        expect(
+          await updateOptionStatus(db, option, 999_999, [insertId], false),
+        ).toBe(0);
       });
 
       it('post 400 - no data', async () => {

@@ -4,6 +4,7 @@ import { z } from 'zod';
 
 import { KyselyServer } from '../../servers/kysely.server.js';
 import { Logger } from '../../services/logger.service.js';
+import { listOptions, optionTables } from '../modules/option.module.js';
 import {
   createTodos,
   deleteTodos,
@@ -17,7 +18,6 @@ import FeedController from './feed.controller.js';
 import HarvestController from './harvest.controller.js';
 import HiveController from './hive.controller.js';
 import MovedateController from './movedate.controller.js';
-import OptionController from './options.controller.js';
 import ServiceController from './service.controller.js';
 import StatisticController from './statistic.controller.js';
 import TreatmentController from './treatment.controller.js';
@@ -1425,15 +1425,16 @@ export function createWizBeeTools(
           .describe('When true, only return active (modus=true) options'),
       }),
       execute: async (input) => {
-        const tableNames = OptionController.tableNames;
-
         const results = await Promise.all(
-          tableNames.map(async (table) => {
-            const req = createMockRequest(context, {
-              params: { table },
-              query: input.activeOnly ? { modus: true } : {},
-            });
-            const data = await OptionController.get(req, createMockReply());
+          optionTables.map(async (table) => {
+            const data = await listOptions(
+              KyselyServer.getInstance().db,
+              table,
+              context.userId,
+              {
+                modus: input.activeOnly ? true : undefined,
+              },
+            );
             return [table, data] as const;
           }),
         );

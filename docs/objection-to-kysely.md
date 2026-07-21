@@ -52,6 +52,13 @@
   - [x] HTTP route and authentication hook use shared operations
   - [x] Shallow controller and model wrapper removed
 - [ ] Options
+  - [x] HTTP CRUD uses typed Kysely operations
+  - [x] WizBee option reads use shared operations
+  - [x] Favorite resets and inserts remain transactional
+  - [x] Charge stock relation and option response shapes covered
+  - [x] Tenant isolation covered across all option tables
+  - [x] Shallow controller removed
+  - [ ] Remove models after task, Company, autofill, delete, and cron callers migrate
 - [ ] Public observations
 - [ ] Calendar views
 - [ ] Statistic views
