@@ -87,7 +87,7 @@ export default class CompanyController {
         .selectFrom('promos')
         .select('id')
         .where('user_id', '=', user_id)
-        .where('used', '=', 1)
+        .where('used', '=', true)
         .where('date', '>', cooldownStarted)
         .executeTakeFirst();
       if (recentPromo) {
@@ -98,7 +98,7 @@ export default class CompanyController {
         .selectFrom('promos')
         .select(['id', 'months'])
         .where('code', '=', body.coupon)
-        .where('used', '=', 0)
+        .where('used', '=', false)
         .forUpdate()
         .executeTakeFirst();
       if (!promo) {
@@ -126,7 +126,7 @@ export default class CompanyController {
       await trx
         .updateTable('promos')
         .set({
-          used: 1,
+          used: true,
           date: new Date(),
           user_id,
         })

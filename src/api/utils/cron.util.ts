@@ -372,7 +372,7 @@ export async function reminderDeletion() {
           eb('bees.reminder_deletion', 'is', null),
         ]),
       )
-      .where('bees.newsletter', '=', 1)
+      .where('bees.newsletter', '=', true)
       .groupBy('company_bee.user_id')
       .having(sql`COUNT(company_bee.bee_id)`, '=', 1)
       .execute();

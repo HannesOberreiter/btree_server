@@ -396,7 +396,7 @@ export async function getWeatherDataForApiary(
     .select(['latitude', 'longitude'])
     .where('id', '=', apiaryId)
     .where('user_id', '=', userId)
-    .where('deleted', '=', 0)
+    .where('deleted', '=', false)
     .executeTakeFirst();
 
   if (!apiary) {
