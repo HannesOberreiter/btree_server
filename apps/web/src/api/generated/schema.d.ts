@@ -5564,41 +5564,7 @@ export interface paths {
     };
     get: {
       parameters: {
-        query?: {
-          action?: string | null;
-          apiary?: number | null;
-          date?: string | null;
-          datetime?: string | null;
-          deleted?: boolean | null;
-          details?: boolean | null;
-          direction?: (('asc' | 'desc') | ('asc' | 'desc')[]) | null;
-          done?: boolean | null;
-          end?: string | null;
-          end_date?: string | null;
-          filters?: string | null;
-          from?: string | null;
-          hard?: boolean | null;
-          hum?: string | null;
-          latest?: boolean | null;
-          latitude?: string | null;
-          limit?: number | null;
-          longitude?: string | null;
-          modus?: boolean | null;
-          note?: string | null;
-          offset?: number | null;
-          order?: (string | string[]) | null;
-          q?: string | null;
-          rain?: string | null;
-          restore?: boolean | null;
-          start?: string | null;
-          start_date?: string | null;
-          temp1?: string | null;
-          temp2?: string | null;
-          to?: string | null;
-          type?: number | null;
-          weight?: string | null;
-          year?: number | null;
-        };
+        query?: never;
         header?: never;
         path: {
           taxa: 'velutina' | 'aethina_tumida';
@@ -5642,41 +5608,7 @@ export interface paths {
     };
     get: {
       parameters: {
-        query?: {
-          action?: string | null;
-          apiary?: number | null;
-          date?: string | null;
-          datetime?: string | null;
-          deleted?: boolean | null;
-          details?: boolean | null;
-          direction?: (('asc' | 'desc') | ('asc' | 'desc')[]) | null;
-          done?: boolean | null;
-          end?: string | null;
-          end_date?: string | null;
-          filters?: string | null;
-          from?: string | null;
-          hard?: boolean | null;
-          hum?: string | null;
-          latest?: boolean | null;
-          latitude?: string | null;
-          limit?: number | null;
-          longitude?: string | null;
-          modus?: boolean | null;
-          note?: string | null;
-          offset?: number | null;
-          order?: (string | string[]) | null;
-          q?: string | null;
-          rain?: string | null;
-          restore?: boolean | null;
-          start?: string | null;
-          start_date?: string | null;
-          temp1?: string | null;
-          temp2?: string | null;
-          to?: string | null;
-          type?: number | null;
-          weight?: string | null;
-          year?: number | null;
-        };
+        query?: never;
         header?: never;
         path: {
           taxa: 'velutina' | 'aethina_tumida';
@@ -5691,7 +5623,9 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'application/json': unknown;
+            'application/json': {
+              count: number;
+            };
           };
         };
       };
@@ -5713,41 +5647,7 @@ export interface paths {
     };
     get: {
       parameters: {
-        query?: {
-          action?: string | null;
-          apiary?: number | null;
-          date?: string | null;
-          datetime?: string | null;
-          deleted?: boolean | null;
-          details?: boolean | null;
-          direction?: (('asc' | 'desc') | ('asc' | 'desc')[]) | null;
-          done?: boolean | null;
-          end?: string | null;
-          end_date?: string | null;
-          filters?: string | null;
-          from?: string | null;
-          hard?: boolean | null;
-          hum?: string | null;
-          latest?: boolean | null;
-          latitude?: string | null;
-          limit?: number | null;
-          longitude?: string | null;
-          modus?: boolean | null;
-          note?: string | null;
-          offset?: number | null;
-          order?: (string | string[]) | null;
-          q?: string | null;
-          rain?: string | null;
-          restore?: boolean | null;
-          start?: string | null;
-          start_date?: string | null;
-          temp1?: string | null;
-          temp2?: string | null;
-          to?: string | null;
-          type?: number | null;
-          weight?: string | null;
-          year?: number | null;
-        };
+        query?: never;
         header?: never;
         path: {
           taxa: 'velutina' | 'aethina_tumida';
