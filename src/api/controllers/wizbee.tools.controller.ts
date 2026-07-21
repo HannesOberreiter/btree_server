@@ -10,6 +10,12 @@ import {
   listApiaries,
   updateApiaries,
 } from '../modules/apiary.module.js';
+import {
+  createHives,
+  getHiveDetail,
+  listHives,
+  updateHives,
+} from '../modules/hive.module.js';
 import { listOptions, optionTables } from '../modules/option.module.js';
 import {
   listHiveCountByApiary,
@@ -995,8 +1001,10 @@ export function createWizBeeTools(
           ),
       }),
       execute: async (input) => {
-        const req = createMockRequest(context, {
-          query: {
+        const raw = await listHives(
+          KyselyServer.getInstance().db,
+          context.userId,
+          {
             q: input.q,
             deleted: input.includeDeleted ?? false,
             modus: input.includeInactive ? undefined : true,
@@ -1004,14 +1012,12 @@ export function createWizBeeTools(
             offset: 0,
             details: false,
           },
-        });
-
-        const raw = await HiveController.get(req, createMockReply());
-        const results: any[] = Array.isArray(raw?.results) ? raw.results : [];
+        );
+        const results = raw.results;
 
         // Return a compact, purpose-shaped payload so the model sees the IDs
         // it actually needs (hiveId + apiaryId) without 20+ unrelated fields.
-        const hives = results.map((h: any) => ({
+        const hives = results.map((h) => ({
           hiveId: h.id,
           name: h.name,
           position: h.position,
@@ -1114,21 +1120,21 @@ export function createWizBeeTools(
           typeId,
           ...fields
         } = input;
-        const ids = await HiveController.post(
-          createMockRequest(context, {
-            body: {
-              ...fields,
-              apiary_id: apiaryId,
-              date: initialMovementDate,
-              grouphive: groupHive ?? 0,
-              ...(modusDate !== undefined && { modus_date: modusDate }),
-              ...(sourceId !== undefined && { source_id: sourceId }),
-              ...(typeId !== undefined && { type_id: typeId }),
-              start: 0,
-              repeat: 1,
-            },
-          }),
-          createMockReply(),
+        const ids = await createHives(
+          KyselyServer.getInstance().db,
+          context.userId,
+          context.beeId,
+          {
+            ...fields,
+            apiary_id: apiaryId,
+            date: initialMovementDate,
+            grouphive: groupHive ?? 0,
+            ...(modusDate !== undefined && { modus_date: modusDate }),
+            ...(sourceId !== undefined && { source_id: sourceId }),
+            ...(typeId !== undefined && { type_id: typeId }),
+            start: 0,
+            repeat: 1,
+          },
         );
         return {
           success: true,
@@ -1161,9 +1167,11 @@ export function createWizBeeTools(
           ...(sourceId !== undefined && { source_id: sourceId }),
           ...(typeId !== undefined && { type_id: typeId }),
         };
-        const updatedCount = await HiveController.patch(
-          createMockRequest(context, { body: { ids: [hiveId], data } }),
-          createMockReply(),
+        const updatedCount = await updateHives(
+          KyselyServer.getInstance().db,
+          context.userId,
+          context.beeId,
+          { ids: [hiveId], data },
         );
         return {
           success: true,
@@ -1368,11 +1376,11 @@ export function createWizBeeTools(
         hiveId: z.number().describe('ID of the hive'),
       }),
       execute: async (input) => {
-        const req = createMockRequest(context, {
-          params: { id: input.hiveId },
-        });
-        const result = await HiveController.getDetail(req, createMockReply());
-        return result;
+        return getHiveDetail(
+          KyselyServer.getInstance().db,
+          context.userId,
+          input.hiveId,
+        );
       },
     }),
 

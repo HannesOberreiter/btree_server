@@ -86,6 +86,13 @@
   - [x] Shallow Apiary controller removed
   - [ ] Remove model after Hive, Movedate, Service, Company, autofill, delete, and cron callers migrate
 - [ ] Hive
+  - [x] HTTP CRUD, detail, status, position, and delete operations use typed Kysely
+  - [x] WizBee Hive CRUD and detail use shared operations
+  - [x] Sorting and filtering use typed domain allowlists
+  - [x] Nested response shapes and tenant isolation covered
+  - [x] Shallow controller reduced to the task aggregate pending task-slice migration
+  - [ ] Migrate task aggregate after Feed, Harvest, Treatment, and Checkup operations exist
+  - [ ] Remove model after task aggregate and remaining cross-cutting callers migrate
 - [ ] Movedate
 
 ## Phase 3: task slices

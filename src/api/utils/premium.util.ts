@@ -36,17 +36,16 @@ async function countRows(
   return Number(result.count);
 }
 
-export async function limitHive(companyId: number, amount: number) {
-  const premium = await isPremium(companyId);
+export async function limitHive(
+  companyId: number,
+  amount: number,
+  db: Database = KyselyServer.getInstance().db,
+) {
+  const premium = await isPremium(companyId, db);
   if ((amount > basicLimit.hive && !premium) || amount > totalLimit.hive) {
     return true;
   }
-  const count = await countRows(
-    KyselyServer.getInstance().db,
-    'hives',
-    companyId,
-    true,
-  );
+  const count = await countRows(db, 'hives', companyId, true);
   return (
     (count + amount > basicLimit.hive && !premium) ||
     count + amount > totalLimit.hive
