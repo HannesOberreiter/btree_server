@@ -1,10 +1,19 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
 
 import { Rearing } from '../models/rearing/rearing.model.js';
+import type { CompatibilityQuery } from '../schemas/common.schema.js';
+import type {
+  PatchBody,
+  PostBody,
+  UpdateDateBody,
+  BatchDeleteBody,
+  BatchGetBody,
+} from '../schemas/rearing.schema.js';
 
 export default class RearingController {
   static async get(req: FastifyRequest, _reply: FastifyReply) {
-    const { order, direction, offset, limit, q, filters } = req.query as any;
+    const { order, direction, offset, limit, q, filters } =
+      req.query as CompatibilityQuery;
     const query = Rearing.query()
       .withGraphJoined('[type, start]')
       .where({
@@ -13,9 +22,17 @@ export default class RearingController {
       .page(offset || 0, limit === 0 || !limit ? 10 : limit);
     if (order) {
       if (Array.isArray(order)) {
-        order.forEach((field, index) => query.orderBy(field, direction[index]));
+        order.forEach((field, index) =>
+          query.orderBy(
+            field,
+            (Array.isArray(direction) ? direction[index] : direction) ?? 'asc',
+          ),
+        );
       } else {
-        query.orderBy(order, direction);
+        query.orderBy(
+          order,
+          (Array.isArray(direction) ? direction[0] : direction) ?? 'asc',
+        );
       }
     }
 
@@ -36,7 +53,7 @@ export default class RearingController {
       }
     }
     if (q) {
-      const search = `${q}`; // Querystring could be converted be a number
+      const search = q; // Querystring could be converted be a number
 
       if (search.trim() !== '') {
         query.where((builder) => {
@@ -50,7 +67,7 @@ export default class RearingController {
   }
 
   static async patch(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
+    const body = req.body as PatchBody;
     const ids = body.ids;
     const insert = { ...body.data };
     const result = await Rearing.transaction(async (trx) => {
@@ -63,7 +80,7 @@ export default class RearingController {
   }
 
   static async post(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
+    const body = req.body as PostBody;
     const result = await Rearing.query().insert({
       ...body,
       user_id: req.session.user.user_id,
@@ -73,7 +90,7 @@ export default class RearingController {
   }
 
   static async updateDate(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
+    const body = req.body as UpdateDateBody;
     const result = await Rearing.transaction(async (trx) => {
       return Rearing.query(trx)
         .patch({
@@ -87,7 +104,7 @@ export default class RearingController {
   }
 
   static async batchDelete(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
+    const body = req.body as BatchDeleteBody;
     const result = await Rearing.transaction(async (trx) => {
       return Rearing.query(trx)
         .delete()
@@ -98,7 +115,7 @@ export default class RearingController {
   }
 
   static async batchGet(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
+    const body = req.body as BatchGetBody;
     const result = await Rearing.transaction(async (trx) => {
       const res = await Rearing.query(trx)
         .findByIds(body.ids)

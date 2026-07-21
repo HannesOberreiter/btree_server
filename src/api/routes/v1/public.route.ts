@@ -5,14 +5,12 @@ import { z } from 'zod';
 import PublicController from '../../controllers/public.controller.js';
 import {
   permissiveJsonResponseSchema,
-  permissiveObjectSchema,
+  compatibilityQuerySchema,
 } from '../../schemas/common.schema.js';
-import { numberSchema } from '../../utils/zod.util.js';
-
-const taxaParams = z.union([
-  z.literal('velutina'),
-  z.literal('aethina_tumida'),
-]);
+import {
+  publicTaxaParamsSchema,
+  publicTaxaYearParamsSchema,
+} from '../../schemas/public.schema.js';
 
 export default function routes(
   instance: FastifyInstance,
@@ -25,10 +23,8 @@ export default function routes(
     '/:taxa/observations/recent',
     {
       schema: {
-        querystring: permissiveObjectSchema,
-        params: z.object({
-          taxa: taxaParams,
-        }),
+        querystring: compatibilityQuerySchema,
+        params: publicTaxaParamsSchema,
         response: {
           200: z.array(
             z.object({
@@ -49,11 +45,8 @@ export default function routes(
     '/:taxa/observations/year/:year',
     {
       schema: {
-        querystring: permissiveObjectSchema,
-        params: z.object({
-          year: numberSchema,
-          taxa: taxaParams,
-        }),
+        querystring: compatibilityQuerySchema,
+        params: publicTaxaYearParamsSchema,
         response: {
           200: z.array(
             z.object({
@@ -74,11 +67,9 @@ export default function routes(
     '/:taxa/observations/stats',
     {
       schema: {
-        querystring: permissiveObjectSchema,
+        querystring: compatibilityQuerySchema,
         response: { 200: permissiveJsonResponseSchema },
-        params: z.object({
-          taxa: taxaParams,
-        }),
+        params: publicTaxaParamsSchema,
       },
     },
     PublicController.getPestObservationsStats,

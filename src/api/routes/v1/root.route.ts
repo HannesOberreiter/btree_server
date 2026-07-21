@@ -4,9 +4,9 @@ import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import RootController from '../../controllers/root.controller.js';
 import {
   permissiveJsonResponseSchema,
-  permissiveObjectSchema,
-  permissiveRequestSchema,
+  compatibilityQuerySchema,
 } from '../../schemas/common.schema.js';
+import { reportBodySchema } from '../../schemas/root.schema.js';
 
 export default function routes(
   instance: FastifyInstance,
@@ -19,7 +19,7 @@ export default function routes(
     '/status',
     {
       schema: {
-        querystring: permissiveObjectSchema,
+        querystring: compatibilityQuerySchema,
         response: { 200: permissiveJsonResponseSchema },
       },
     },
@@ -30,7 +30,7 @@ export default function routes(
     '/report-violation',
     {
       schema: {
-        body: permissiveRequestSchema,
+        body: reportBodySchema,
         response: { 200: permissiveJsonResponseSchema },
       },
     },

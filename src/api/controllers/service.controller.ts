@@ -5,6 +5,15 @@ import type { MailLang } from '../../services/mail.service.js';
 import { MailLangs } from '../../services/mail.service.js';
 import { Apiary } from '../models/apiary.model.js';
 import { User } from '../models/user.model.js';
+import type { CompatibilityQuery } from '../schemas/common.schema.js';
+import type {
+  GetWeatherDataParams,
+  GetGruenlandtemperatursummeParams,
+  PaypalCreateOrderBody,
+  PaypalCapturePaymentParams,
+  StripeCreateOrderBody,
+  MollieCreateOrderBody,
+} from '../schemas/service.schema.js';
 import { createInvoice } from '../utils/foxyoffice.util.js';
 import { createOrder as mollieCreateOrder } from '../utils/mollie.util.js';
 import {
@@ -22,7 +31,7 @@ import {
 
 export default class ServiceController {
   static async getElevation(req: FastifyRequest, _reply: FastifyReply) {
-    const query = req.query as any;
+    const query = req.query as CompatibilityQuery;
     const latitude = Number(query.latitude);
     const longitude = Number(query.longitude);
 
@@ -38,7 +47,7 @@ export default class ServiceController {
   }
 
   static async getWeatherData(req: FastifyRequest, _reply: FastifyReply) {
-    const params = req.params as any;
+    const params = req.params as GetWeatherDataParams;
     const premium = await isPremium(req.session.user.user_id);
     if (!premium) {
       throw httpErrors.PaymentRequired();
@@ -58,7 +67,7 @@ export default class ServiceController {
     req: FastifyRequest,
     _reply: FastifyReply,
   ) {
-    const params = req.params as any;
+    const params = req.params as GetGruenlandtemperatursummeParams;
     const apiary = await Apiary.query()
       .findById(params.apiary_id)
       .where({
@@ -71,8 +80,8 @@ export default class ServiceController {
       throw httpErrors.BadRequest('Apiary coordinates not set');
     }
 
-    const query = req.query as any;
-    const year = query?.year ? Number(query.year) : new Date().getFullYear();
+    const query = req.query as CompatibilityQuery;
+    const year = query?.year ?? new Date().getFullYear();
     if (year > new Date().getFullYear()) {
       throw httpErrors.BadRequest('Year cannot be in the future');
     }
@@ -106,7 +115,7 @@ export default class ServiceController {
   }
 
   static async paypalCreateOrder(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
+    const body = req.body as PaypalCreateOrderBody;
     const order = await paypalCreateOrder(
       req.session.user.user_id,
       req.session.user.bee_id,
@@ -120,7 +129,7 @@ export default class ServiceController {
   }
 
   static async paypalCapturePayment(req: FastifyRequest, _reply: FastifyReply) {
-    const params = req.params as any;
+    const params = req.params as PaypalCapturePaymentParams;
     const capture = await capturePayment(params.orderID);
     if (capture.status !== 'COMPLETED' && capture.status !== 'APPROVED') {
       throw new httpErrors.InternalServerError('Could not capure order');
@@ -176,7 +185,7 @@ export default class ServiceController {
   }
 
   static async stripeCreateOrder(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
+    const body = req.body as StripeCreateOrderBody;
     const session = await stripeCreateOrder(
       req.session.user.user_id,
       req.session.user.bee_id,
@@ -187,7 +196,7 @@ export default class ServiceController {
   }
 
   static async mollieCreateOrder(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
+    const body = req.body as MollieCreateOrderBody;
     const order = await mollieCreateOrder(
       req.session.user.user_id,
       req.session.user.bee_id,

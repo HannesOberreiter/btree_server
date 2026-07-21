@@ -1,126 +1,102 @@
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
-import { z } from 'zod';
 
 import { ROLES } from '../../../config/constants.config.js';
 import TreatmentController from '../../controllers/treatment.controller.js';
 import { Guard } from '../../hooks/guard.hook.js';
+import { permissiveJsonResponseSchema } from '../../schemas/common.schema.js';
 import {
-  permissiveJsonResponseSchema,
-  permissiveObjectSchema,
-} from '../../schemas/common.schema.js';
-import { numberSchema } from '../../utils/zod.util.js';
+  taskCreateBodySchema,
+  taskDateBodySchema,
+  taskIdsBodySchema,
+  taskListQuerySchema,
+  taskPatchBodySchema,
+  taskStatusBodySchema,
+} from '../../schemas/task.schema.js';
 
 export default function routes(
   instance: FastifyInstance,
-  _options: any,
-  done: any,
+  _options: unknown,
+  done: () => void,
 ) {
   const server = instance.withTypeProvider<ZodTypeProvider>();
-
   server.get(
     '/',
     {
       schema: {
-        querystring: permissiveObjectSchema,
+        querystring: taskListQuerySchema,
         response: { 200: permissiveJsonResponseSchema },
       },
       preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
     },
     TreatmentController.get,
   );
-
   server.post(
     '/',
     {
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
         response: { 200: permissiveJsonResponseSchema },
-        body: z
-          .object({
-            hive_ids: z.array(numberSchema),
-            interval: z.number().min(0).max(365),
-            repeat: z.number().min(0).max(15),
-          })
-          .loose(),
+        body: taskCreateBodySchema,
       },
     },
     TreatmentController.post,
   );
-
   server.patch(
     '/',
     {
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
         response: { 200: permissiveJsonResponseSchema },
-        body: z.object({
-          ids: z.array(numberSchema),
-          data: z.object({}).loose(),
-        }),
+        body: taskPatchBodySchema,
       },
     },
     TreatmentController.patch,
   );
-
   server.patch(
     '/status',
     {
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
         response: { 200: permissiveJsonResponseSchema },
-        body: z.object({
-          ids: z.array(numberSchema),
-          status: z.boolean(),
-        }),
+        body: taskStatusBodySchema,
       },
     },
     TreatmentController.updateStatus,
   );
-
   server.patch(
     '/date',
     {
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
         response: { 200: permissiveJsonResponseSchema },
-        body: z.object({
-          ids: z.array(numberSchema),
-          start: z.string(),
-          end: z.string(),
-        }),
+        body: taskDateBodySchema,
       },
     },
     TreatmentController.updateDate,
   );
-
   server.patch(
     '/batchDelete',
     {
       preHandler: Guard.authorize([ROLES.admin]),
       schema: {
+        querystring: taskListQuerySchema,
         response: { 200: permissiveJsonResponseSchema },
-        body: z.object({
-          ids: z.array(numberSchema),
-        }),
+        body: taskIdsBodySchema,
       },
     },
     TreatmentController.batchDelete,
   );
-
   server.post(
     '/batchGet',
     {
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
         response: { 200: permissiveJsonResponseSchema },
-        body: z.object({
-          ids: z.array(numberSchema),
-        }),
+        body: taskIdsBodySchema,
       },
     },
     TreatmentController.batchGet,
   );
-
   done();
 }

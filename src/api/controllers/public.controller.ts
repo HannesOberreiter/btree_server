@@ -4,9 +4,13 @@ import createHttpError from 'http-errors';
 import { RedisServer } from '../../servers/redis.server.js';
 import type { Taxa } from '../models/observation.model.js';
 import { ObservationModel } from '../models/observation.model.js';
+import type {
+  PublicTaxaParams,
+  PublicTaxaYearParams,
+} from '../schemas/public.schema.js';
 
 function mapTaxa(req: FastifyRequest): Taxa {
-  const paramTaxa = (req.params as any).taxa;
+  const paramTaxa = (req.params as PublicTaxaParams).taxa;
   if (!paramTaxa) {
     throw createHttpError(400, 'Taxa is required');
   }
@@ -50,11 +54,11 @@ export default class PublicController {
     const taxa = mapTaxa(req);
 
     reply.header('Cache-Control', 'public, max-age=3600');
-    const params = req.params as any;
+    const params = req.params as PublicTaxaYearParams;
     if (!params.year) {
       return [];
     }
-    const year = Number(params.year);
+    const year = params.year;
 
     const cacheKey = `cache:${taxa}ObservationsYear:${year}`;
     const redis = RedisServer.client;

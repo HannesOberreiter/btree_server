@@ -9,6 +9,15 @@ import { MailService } from '../../services/mail.service.js';
 import { CompanyBee } from '../models/company_bee.model.js';
 import { FederatedCredential } from '../models/federated_credential.js';
 import { User } from '../models/user.model.js';
+import type {
+  PatchBody,
+  DeleteBody,
+  CheckPasswordBody,
+  ChangeCompanyBody,
+  DeleteFederatedCredentialsParams,
+  AddFederatedCredentialsBody,
+  DeleteRedisSessionParams,
+} from '../schemas/user.schema.js';
 import { buildUserAgent, createHashedPassword } from '../utils/auth.util.js';
 import { deleteCompany, deleteUser } from '../utils/delete.util.js';
 import { checkMySQLError } from '../utils/error.util.js';
@@ -29,7 +38,7 @@ export default class UserController {
     req: FastifyRequest,
     _reply: FastifyReply,
   ) {
-    const params = req.params as any;
+    const params = req.params as DeleteFederatedCredentialsParams;
     if (!params.id) {
       throw httpErrors.BadRequest('Missing id');
     }
@@ -44,7 +53,7 @@ export default class UserController {
     req: FastifyRequest,
     _reply: FastifyReply,
   ) {
-    const body = req.body as any;
+    const body = req.body as AddFederatedCredentialsBody;
     if (!body.email) {
       throw httpErrors.BadRequest('Missing mail');
     }
@@ -89,7 +98,7 @@ export default class UserController {
   }
 
   static async delete(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
+    const body = req.body as DeleteBody;
     await reviewPassword(req.session.user.bee_id, body.password);
     const companies = await CompanyBee.query().where({
       bee_id: req.session.user.bee_id,
@@ -111,7 +120,7 @@ export default class UserController {
   }
 
   static async checkPassword(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
+    const body = req.body as CheckPasswordBody;
     if ('password' in body) {
       const result = await reviewPassword(
         req.session.user.bee_id,
@@ -123,7 +132,7 @@ export default class UserController {
   }
 
   static async patch(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
+    const body = req.body as PatchBody;
     const trx = await User.startTransaction();
     try {
       if ('password' in body) {
@@ -173,7 +182,7 @@ export default class UserController {
   }
 
   static async changeCompany(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
+    const body = req.body as ChangeCompanyBody;
     const trx = await User.startTransaction();
     try {
       await CompanyBee.query(trx)
@@ -268,7 +277,7 @@ export default class UserController {
 
   static async deleteRedisSession(req: FastifyRequest, _reply: FastifyReply) {
     const { bee_id } = req.session.user;
-    const { id } = req.params as any;
+    const { id } = req.params as DeleteRedisSessionParams;
     const lastPart = id.split(':').at(-1);
     const result = await RedisServer.client.del(
       `btree_sess:${bee_id}:${lastPart}`,

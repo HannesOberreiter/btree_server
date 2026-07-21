@@ -7,6 +7,15 @@ import { Checkup } from '../models/checkup.model.js';
 import { Harvest } from '../models/harvest.model.js';
 import { Queen } from '../models/queen.model.js';
 import { QueenDuration } from '../models/queen_duration.model.js';
+import type { CompatibilityQuery } from '../schemas/common.schema.js';
+import type {
+  GetPedigreeParams,
+  PostBody,
+  PatchBody,
+  UpdateStatusBody,
+  BatchDeleteBody,
+  BatchGetBody,
+} from '../schemas/queen.schema.js';
 
 export default class QueenController {
   static async get(req: FastifyRequest, _reply: FastifyReply) {
@@ -21,7 +30,7 @@ export default class QueenController {
       details,
       filters,
       latest,
-    } = req.query as any;
+    } = req.query as CompatibilityQuery;
     const query = Queen.query()
       .where({
         'queens.user_id': req.session.user.user_id,
@@ -30,7 +39,7 @@ export default class QueenController {
       .page(offset || 0, limit === 0 || !limit ? 10 : limit);
 
     if (modus !== undefined && modus !== null) {
-      query.where('queens.modus', modus === true);
+      query.where('queens.modus', modus);
     }
 
     if (details === true) {
@@ -48,9 +57,17 @@ export default class QueenController {
 
     if (order) {
       if (Array.isArray(order)) {
-        order.forEach((field, index) => query.orderBy(field, direction[index]));
+        order.forEach((field, index) =>
+          query.orderBy(
+            field,
+            (Array.isArray(direction) ? direction[index] : direction) ?? 'asc',
+          ),
+        );
       } else {
-        query.orderBy(order, direction);
+        query.orderBy(
+          order,
+          (Array.isArray(direction) ? direction[0] : direction) ?? 'asc',
+        );
       }
     }
 
@@ -78,7 +95,7 @@ export default class QueenController {
       }
     }
     if (q) {
-      const search = `${q}`; // Querystring could be converted be a number
+      const search = q; // Querystring could be converted be a number
 
       if (search.trim() !== '') {
         query.where((builder) => {
@@ -93,7 +110,7 @@ export default class QueenController {
   }
 
   static async getPedigree(req: FastifyRequest, _reply: FastifyReply) {
-    const params = req.params as any;
+    const params = req.params as GetPedigreeParams;
     const queen = await Queen.query()
       .withRecursive('mothers', (qb) => {
         qb.from('queens')
@@ -138,7 +155,8 @@ export default class QueenController {
   }
 
   static async getStats(req: FastifyRequest, _reply: FastifyReply) {
-    const { order, direction, offset, limit, q, filters } = req.query as any;
+    const { order, direction, offset, limit, q, filters } =
+      req.query as CompatibilityQuery;
     const query = QueenDuration.query();
     query
       .withGraphJoined('[queen as queens, hive_location]')
@@ -149,9 +167,17 @@ export default class QueenController {
 
     if (order) {
       if (Array.isArray(order)) {
-        order.forEach((field, index) => query.orderBy(field, direction[index]));
+        order.forEach((field, index) =>
+          query.orderBy(
+            field,
+            (Array.isArray(direction) ? direction[index] : direction) ?? 'asc',
+          ),
+        );
       } else {
-        query.orderBy(order, direction);
+        query.orderBy(
+          order,
+          (Array.isArray(direction) ? direction[0] : direction) ?? 'asc',
+        );
       }
     }
 
@@ -182,7 +208,7 @@ export default class QueenController {
       }
     }
     if (q) {
-      const search = `${q}`; // Querystring could be converted be a number
+      const search = q; // Querystring could be converted be a number
 
       if (search.trim() !== '') {
         query.where((builder) => {
@@ -225,22 +251,25 @@ export default class QueenController {
   }
 
   static async post(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
-    const start = Number.parseInt(body.start);
-    const repeat =
-      Number.parseInt(body.repeat) > 1 ? Number.parseInt(body.repeat) : 1;
+    const body = req.body as PostBody;
+    const start = body.start ?? 0;
+    const repeat = body.repeat && body.repeat > 1 ? body.repeat : 1;
 
-    const insert = { ...body };
-    delete insert.start;
-    delete insert.repeat;
-    delete insert.name;
-    delete insert.hive_id;
+    const {
+      start: _start,
+      repeat: _repeat,
+      name: _name,
+      hive_id: _hiveId,
+      ...insert
+    } = body;
 
     const result = await Queen.transaction(async (trx) => {
       const result = [];
       for (let i = 0; i < repeat; i++) {
         const name = repeat > 1 ? body.name + (start + i) : body.name;
-        const hive_id = body.hive_id ? body.hive_id[i] : null;
+        const hive_id = Array.isArray(body.hive_id)
+          ? (body.hive_id[i] ?? null)
+          : (body.hive_id ?? null);
         const res = await Queen.query(trx).insert({
           ...insert,
           name,
@@ -259,12 +288,13 @@ export default class QueenController {
   }
 
   static async patch(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
+    const body = req.body as PatchBody;
     const ids = body.ids;
-    const insert = { ...body.data };
-    if (insert.hive_id) {
-      insert.hive_id = insert.hive_id !== 'empty' ? insert.hive_id : null;
-    }
+    const rawHiveId = body.data.hive_id;
+    const insert = {
+      ...body.data,
+      hive_id: rawHiveId === 'empty' ? null : rawHiveId,
+    };
     const result = await Queen.transaction(async (trx) => {
       const res = await Queen.query(trx)
         .patch({ ...insert, edit_id: req.session.user.bee_id })
@@ -279,7 +309,7 @@ export default class QueenController {
   }
 
   static async updateStatus(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
+    const body = req.body as UpdateStatusBody;
     const result = await Queen.transaction(async (trx) => {
       return Queen.query(trx)
         .patch({
@@ -294,8 +324,8 @@ export default class QueenController {
   }
 
   static async batchDelete(req: FastifyRequest, _reply: FastifyReply) {
-    const q = req.query as any;
-    const body = req.body as any;
+    const q = req.query as CompatibilityQuery;
+    const body = req.body as BatchDeleteBody;
     const hardDelete = !!q.hard;
     const restoreDelete = !!q.restore;
 
@@ -335,7 +365,7 @@ export default class QueenController {
   }
 
   static async batchGet(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
+    const body = req.body as BatchGetBody;
     const result = await Queen.query().findByIds(body.ids).where({
       user_id: req.session.user.user_id,
     });

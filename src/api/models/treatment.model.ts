@@ -8,8 +8,8 @@ import { User } from './user.model.js';
 
 export class Treatment extends ExtModel {
   id!: number;
-  date!: Date;
-  enddate!: Date;
+  date!: Date | string;
+  enddate!: Date | string;
   amount!: number;
   wait!: number;
   temperature!: number;

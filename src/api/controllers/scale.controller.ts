@@ -4,11 +4,17 @@ import httpErrors from 'http-errors';
 import { Hive } from '../models/hive.model.js';
 import { Scale } from '../models/scale.model.js';
 import { ScaleData } from '../models/scale_data.model.js';
+import type {
+  GetParams,
+  PatchBody,
+  PostBody,
+  DeleteParams,
+} from '../schemas/scale.schema.js';
 import { limitScale } from '../utils/premium.util.js';
 
 export default class ScaleController {
   static async get(req: FastifyRequest, _reply: FastifyReply) {
-    const params = req.params as any;
+    const params = req.params as GetParams;
     const query = Scale.query()
       .withGraphFetched('hive')
       .where('user_id', req.session.user.user_id);
@@ -20,7 +26,7 @@ export default class ScaleController {
   }
 
   static async patch(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
+    const body = req.body as PatchBody;
     const ids = body.ids;
     const insert = { ...body.data };
 
@@ -40,7 +46,7 @@ export default class ScaleController {
   }
 
   static async post(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
+    const body = req.body as PostBody;
 
     const limit = await limitScale(req.session.user.user_id);
     if (limit) {
@@ -66,7 +72,7 @@ export default class ScaleController {
   }
 
   static async delete(req: FastifyRequest, _reply: FastifyReply) {
-    const params = req.params as any;
+    const params = req.params as DeleteParams;
     const result = await Scale.transaction(async (trx) => {
       await ScaleData.query(trx).delete().joinRelated('scale').where({
         scale_id: params.id,

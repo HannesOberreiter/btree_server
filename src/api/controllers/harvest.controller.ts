@@ -5,12 +5,20 @@ import { map } from 'lodash-es';
 import { KyselyServer } from '../../servers/kysely.server.js';
 import { Harvest } from '../models/harvest.model.js';
 import { Hive } from '../models/hive.model.js';
+import type {
+  TaskCreateBody,
+  TaskDateBody,
+  TaskIdsBody,
+  TaskListQuery,
+  TaskPatchBody,
+  TaskStatusBody,
+} from '../schemas/task.schema.js';
 import { checkOwnership } from '../utils/kysely.utils.js';
 
 export default class HarvestController {
   static async get(req: FastifyRequest, _reply: FastifyReply) {
     const { order, direction, offset, limit, q, filters, deleted, done } =
-      req.query as any;
+      req.query as TaskListQuery;
     const query = Harvest.query()
       .withGraphJoined(
         '[harvest_apiary, type, hive, creator(identifier), editor(identifier)]',
@@ -44,13 +52,21 @@ export default class HarvestController {
     }
     if (order) {
       if (Array.isArray(order)) {
-        order.forEach((field, index) => query.orderBy(field, direction[index]));
+        order.forEach((field, index) =>
+          query.orderBy(
+            field,
+            (Array.isArray(direction) ? direction[index] : direction) ?? 'asc',
+          ),
+        );
       } else {
-        query.orderBy(order, direction);
+        query.orderBy(
+          order,
+          (Array.isArray(direction) ? direction[0] : direction) ?? 'asc',
+        );
       }
     }
     if (q) {
-      const search = `${q}`; // Querystring could be converted be a number
+      const search = q; // Querystring could be converted be a number
 
       if (search.trim() !== '') {
         query.where((builder) => {
@@ -66,7 +82,7 @@ export default class HarvestController {
   }
 
   static async patch(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
+    const body = req.body as TaskPatchBody;
     const ids = body.ids;
     const insert = { ...body.data };
 
@@ -83,7 +99,7 @@ export default class HarvestController {
       await checkOwnership(
         KyselyServer.getInstance().db,
         'harvest_types',
-        Number(insert.type_id),
+        insert.type_id,
         req.session.user.user_id,
       );
     }
@@ -98,21 +114,14 @@ export default class HarvestController {
   }
 
   static async post(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
-    const hive_ids = body.hive_ids;
-    const interval = body.interval;
-    const repeat = body.repeat;
-
-    const insert = body;
-    delete insert.hive_ids;
-    delete insert.interval;
-    delete insert.repeat;
+    const body = req.body as TaskCreateBody;
+    const { hive_ids, interval = 0, repeat = 0, ...insert } = body;
 
     if (insert.type_id) {
       await checkOwnership(
         KyselyServer.getInstance().db,
         'harvest_types',
-        Number(insert.type_id),
+        insert.type_id,
         req.session.user.user_id,
       );
     }
@@ -171,7 +180,7 @@ export default class HarvestController {
   }
 
   static async updateStatus(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
+    const body = req.body as TaskStatusBody;
     const result = await Harvest.transaction(async (trx) => {
       return Harvest.query(trx)
         .patch({
@@ -185,7 +194,7 @@ export default class HarvestController {
   }
 
   static async updateDate(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
+    const body = req.body as TaskDateBody;
     const result = await Harvest.transaction(async (trx) => {
       return Harvest.query(trx)
         .patch({
@@ -200,7 +209,7 @@ export default class HarvestController {
   }
 
   static async batchGet(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
+    const body = req.body as TaskIdsBody;
     const result = await Harvest.transaction(async (trx) => {
       const res = await Harvest.query(trx)
         .findByIds(body.ids)
@@ -212,8 +221,8 @@ export default class HarvestController {
   }
 
   static async batchDelete(req: FastifyRequest, _reply: FastifyReply) {
-    const q = req.query as any;
-    const body = req.body as any;
+    const q = req.query as TaskListQuery;
+    const body = req.body as TaskIdsBody;
     const hardDelete = !!q.hard;
     const restoreDelete = !!q.restore;
 

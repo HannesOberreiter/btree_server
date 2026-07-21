@@ -1,15 +1,19 @@
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
-import { z } from 'zod';
 
 import { ROLES } from '../../../config/constants.config.js';
 import RearingTypeController from '../../controllers/rearing_type.controller.js';
 import { Guard } from '../../hooks/guard.hook.js';
 import {
   permissiveJsonResponseSchema,
-  permissiveObjectSchema,
+  compatibilityQuerySchema,
 } from '../../schemas/common.schema.js';
-import { numberSchema } from '../../utils/zod.util.js';
+import {
+  patchBodySchema,
+  postBodySchema,
+  batchDeleteBodySchema,
+  batchGetBodySchema,
+} from '../../schemas/rearing_type.schema.js';
 
 export default function routes(
   instance: FastifyInstance,
@@ -22,7 +26,7 @@ export default function routes(
     '/',
     {
       schema: {
-        querystring: permissiveObjectSchema,
+        querystring: compatibilityQuerySchema,
         response: { 200: permissiveJsonResponseSchema },
       },
       preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
@@ -36,10 +40,7 @@ export default function routes(
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
         response: { 200: permissiveJsonResponseSchema },
-        body: z.object({
-          ids: z.array(numberSchema),
-          data: z.object({}).loose(),
-        }),
+        body: patchBodySchema,
       },
     },
     RearingTypeController.patch,
@@ -51,11 +52,7 @@ export default function routes(
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
         response: { 200: permissiveJsonResponseSchema },
-        body: z
-          .object({
-            name: z.string(),
-          })
-          .loose(),
+        body: postBodySchema,
       },
     },
     RearingTypeController.post,
@@ -67,9 +64,7 @@ export default function routes(
       preHandler: Guard.authorize([ROLES.admin]),
       schema: {
         response: { 200: permissiveJsonResponseSchema },
-        body: z.object({
-          ids: z.array(numberSchema),
-        }),
+        body: batchDeleteBodySchema,
       },
     },
     RearingTypeController.batchDelete,
@@ -81,9 +76,7 @@ export default function routes(
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
         response: { 200: permissiveJsonResponseSchema },
-        body: z.object({
-          ids: z.array(numberSchema),
-        }),
+        body: batchGetBodySchema,
       },
     },
     RearingTypeController.batchGet,

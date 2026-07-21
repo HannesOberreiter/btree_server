@@ -6,8 +6,12 @@ import DropboxController from '../../controllers/dropbox.controller.js';
 import { Guard } from '../../hooks/guard.hook.js';
 import {
   permissiveJsonResponseSchema,
-  permissiveObjectSchema,
+  compatibilityQuerySchema,
 } from '../../schemas/common.schema.js';
+import {
+  deleteParamsSchema,
+  authParamsSchema,
+} from '../../schemas/dropbox.schema.js';
 
 export default function routes(
   instance: FastifyInstance,
@@ -20,7 +24,7 @@ export default function routes(
     '/',
     {
       schema: {
-        querystring: permissiveObjectSchema,
+        querystring: compatibilityQuerySchema,
         response: { 200: permissiveJsonResponseSchema },
       },
       preHandler: Guard.authorize([ROLES.admin]),
@@ -31,8 +35,8 @@ export default function routes(
     '/:id?',
     {
       schema: {
-        querystring: permissiveObjectSchema,
-        params: permissiveObjectSchema,
+        querystring: compatibilityQuerySchema,
+        params: deleteParamsSchema,
         response: { 200: permissiveJsonResponseSchema },
       },
       preHandler: Guard.authorize([ROLES.admin]),
@@ -43,8 +47,8 @@ export default function routes(
     '/auth/:code',
     {
       schema: {
-        querystring: permissiveObjectSchema,
-        params: permissiveObjectSchema,
+        querystring: compatibilityQuerySchema,
+        params: authParamsSchema,
         response: { 200: permissiveJsonResponseSchema },
       },
       preHandler: Guard.authorize([ROLES.admin]),
@@ -55,7 +59,7 @@ export default function routes(
     '/token',
     {
       schema: {
-        querystring: permissiveObjectSchema,
+        querystring: compatibilityQuerySchema,
         response: { 200: permissiveJsonResponseSchema },
       },
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),

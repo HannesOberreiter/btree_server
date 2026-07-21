@@ -1,14 +1,16 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
 
+import type { ReportBody } from '../schemas/root.schema.js';
+
 export default class RootController {
   static status(_req: FastifyRequest, reply: FastifyReply) {
     reply.send({ status: 'ok' });
   }
 
   static report(req: FastifyRequest, reply: FastifyReply) {
-    const body = req.body as any;
+    const body = req.body as ReportBody;
     const message = body.violation
-      ? `CSP Violation: ${body.violation}`
+      ? `CSP Violation: ${JSON.stringify(body.violation)}`
       : 'CSP Violation';
 
     req.log.warn(

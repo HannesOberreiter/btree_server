@@ -4,10 +4,19 @@ import httpErrors from 'http-errors';
 import { Apiary } from '../models/apiary.model.js';
 import { HiveLocation } from '../models/hive_location.model.js';
 import { Movedate } from '../models/movedate.model.js';
+import type { CompatibilityQuery } from '../schemas/common.schema.js';
+import type {
+  PostBody,
+  PatchBody,
+  UpdateDateBody,
+  BatchDeleteBody,
+  BatchGetBody,
+} from '../schemas/movedate.schema.js';
 
 export default class MovedateController {
   static async get(req: FastifyRequest, _reply: FastifyReply) {
-    const { order, direction, offset, limit, q, filters } = req.query as any;
+    const { order, direction, offset, limit, q, filters } =
+      req.query as CompatibilityQuery;
     const query = Movedate.query()
       .withGraphJoined(
         '[hive, apiary, creator(identifier), editor(identifier), movedate_previous_apiary]',
@@ -38,13 +47,21 @@ export default class MovedateController {
     }
     if (order) {
       if (Array.isArray(order)) {
-        order.forEach((field, index) => query.orderBy(field, direction[index]));
+        order.forEach((field, index) =>
+          query.orderBy(
+            field,
+            (Array.isArray(direction) ? direction[index] : direction) ?? 'asc',
+          ),
+        );
       } else {
-        query.orderBy(order, direction);
+        query.orderBy(
+          order,
+          (Array.isArray(direction) ? direction[0] : direction) ?? 'asc',
+        );
       }
     }
     if (q) {
-      const search = `${q}`; // Querystring could be converted be a number
+      const search = q; // Querystring could be converted be a number
 
       if (search.trim() !== '') {
         query.where((builder) => {
@@ -59,14 +76,14 @@ export default class MovedateController {
   }
 
   static async patch(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
+    const body = req.body as PatchBody;
     const ids = body.ids;
     const insert = { ...body.data };
     const result = await Movedate.transaction(async (trx) => {
       return await Movedate.query(trx)
         .patch({
           ...insert,
-          'movedates.edit_id': req.session.user.bee_id,
+          ['movedates.edit_id' as 'edit_id']: req.session.user.bee_id,
         })
         .findByIds(ids)
         .leftJoinRelated('apiary')
@@ -76,7 +93,7 @@ export default class MovedateController {
   }
 
   static async post(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
+    const body = req.body as PostBody;
     const hive_ids = body.hive_ids;
     const insert = {
       apiary_id: body.apiary_id,
@@ -84,7 +101,7 @@ export default class MovedateController {
     };
     const result = await Movedate.transaction(async (trx) => {
       await Apiary.query(trx)
-        .findByIds(insert.apiary_id)
+        .findById(insert.apiary_id)
         .throwIfNotFound()
         .where('user_id', req.session.user.user_id);
 
@@ -112,7 +129,7 @@ export default class MovedateController {
   }
 
   static async updateDate(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
+    const body = req.body as UpdateDateBody;
     const result = await Movedate.transaction(async (trx) => {
       // First checking if the movedate ids all belong to the user
       // we dont use a left join because of some hassle with ambigious fields
@@ -133,7 +150,7 @@ export default class MovedateController {
   }
 
   static async batchGet(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
+    const body = req.body as BatchGetBody;
     const result = await Movedate.transaction(async (trx) => {
       const res = await Movedate.query(trx)
         .findByIds(body.ids)
@@ -146,7 +163,7 @@ export default class MovedateController {
   }
 
   static async batchDelete(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
+    const body = req.body as BatchDeleteBody;
     const result = await Movedate.transaction(async (trx) => {
       return await Movedate.query(trx)
         .delete()

@@ -5,6 +5,14 @@ import { map } from 'lodash-es';
 import { KyselyServer } from '../../servers/kysely.server.js';
 import { Hive } from '../models/hive.model.js';
 import { Treatment } from '../models/treatment.model.js';
+import type {
+  TaskCreateBody,
+  TaskDateBody,
+  TaskIdsBody,
+  TaskListQuery,
+  TaskPatchBody,
+  TaskStatusBody,
+} from '../schemas/task.schema.js';
 import { checkOwnership } from '../utils/kysely.utils.js';
 import { isPremium } from '../utils/premium.util.js';
 import { getWeatherDataForApiary } from '../utils/temperature.util.js';
@@ -12,7 +20,7 @@ import { getWeatherDataForApiary } from '../utils/temperature.util.js';
 export default class TreatmentController {
   static async get(req: FastifyRequest, _reply: FastifyReply) {
     const { order, direction, offset, limit, q, filters, deleted, done } =
-      req.query as any;
+      req.query as TaskListQuery;
     const query = Treatment.query()
       .withGraphJoined(
         '[treatment_apiary, type, disease, vet, hive, creator(identifier), editor(identifier)]',
@@ -46,13 +54,21 @@ export default class TreatmentController {
     }
     if (order) {
       if (Array.isArray(order)) {
-        order.forEach((field, index) => query.orderBy(field, direction[index]));
+        order.forEach((field, index) =>
+          query.orderBy(
+            field,
+            (Array.isArray(direction) ? direction[index] : direction) ?? 'asc',
+          ),
+        );
       } else {
-        query.orderBy(order, direction);
+        query.orderBy(
+          order,
+          (Array.isArray(direction) ? direction[0] : direction) ?? 'asc',
+        );
       }
     }
     if (q) {
-      const search = `${q}`; // Querystring could be converted be a number
+      const search = q; // Querystring could be converted be a number
       if (search.trim() !== '') {
         query.where((builder) => {
           builder
@@ -67,7 +83,7 @@ export default class TreatmentController {
   }
 
   static async patch(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
+    const body = req.body as TaskPatchBody;
     const ids = body.ids;
     const isLlm = (req.session as any).llm === true;
 
@@ -80,7 +96,7 @@ export default class TreatmentController {
       await checkOwnership(
         KyselyServer.getInstance().db,
         'treatment_types',
-        Number(insert.type_id),
+        insert.type_id,
         req.session.user.user_id,
       );
     }
@@ -88,7 +104,7 @@ export default class TreatmentController {
       await checkOwnership(
         KyselyServer.getInstance().db,
         'treatment_diseases',
-        Number(insert.disease_id),
+        insert.disease_id,
         req.session.user.user_id,
       );
     }
@@ -96,7 +112,7 @@ export default class TreatmentController {
       await checkOwnership(
         KyselyServer.getInstance().db,
         'treatment_vets',
-        Number(insert.vet_id),
+        insert.vet_id,
         req.session.user.user_id,
       );
     }
@@ -115,7 +131,7 @@ export default class TreatmentController {
   }
 
   static async post(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
+    const body = req.body as TaskCreateBody;
     const hive_ids = body.hive_ids;
     const interval = body.interval;
     const repeat = body.repeat;
@@ -128,7 +144,7 @@ export default class TreatmentController {
       await checkOwnership(
         KyselyServer.getInstance().db,
         'treatment_types',
-        Number(insert.type_id),
+        insert.type_id,
         req.session.user.user_id,
       );
     }
@@ -136,7 +152,7 @@ export default class TreatmentController {
       await checkOwnership(
         KyselyServer.getInstance().db,
         'treatment_diseases',
-        Number(insert.disease_id),
+        insert.disease_id,
         req.session.user.user_id,
       );
     }
@@ -144,7 +160,7 @@ export default class TreatmentController {
       await checkOwnership(
         KyselyServer.getInstance().db,
         'treatment_vets',
-        Number(insert.vet_id),
+        insert.vet_id,
         req.session.user.user_id,
       );
     }
@@ -227,7 +243,7 @@ export default class TreatmentController {
   }
 
   static async updateStatus(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
+    const body = req.body as TaskStatusBody;
     const result = await Treatment.transaction(async (trx) => {
       return Treatment.query(trx)
         .patch({
@@ -241,7 +257,7 @@ export default class TreatmentController {
   }
 
   static async updateDate(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
+    const body = req.body as TaskDateBody;
     const result = await Treatment.transaction(async (trx) => {
       return Treatment.query(trx)
         .patch({
@@ -256,7 +272,7 @@ export default class TreatmentController {
   }
 
   static async batchGet(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
+    const body = req.body as TaskIdsBody;
     const result = await Treatment.transaction(async (trx) => {
       const res = await Treatment.query(trx)
         .findByIds(body.ids)
@@ -268,8 +284,8 @@ export default class TreatmentController {
   }
 
   static async batchDelete(req: FastifyRequest, _reply: FastifyReply) {
-    const q = req.query as any;
-    const body = req.body as any;
+    const q = req.query as TaskListQuery;
+    const body = req.body as TaskIdsBody;
     const hardDelete = !!q.hard;
     const restoreDelete = !!q.restore;
 

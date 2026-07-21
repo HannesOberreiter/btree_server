@@ -14,6 +14,10 @@ import { Logger } from '../../services/logger.service.js';
 import type { MailLang } from '../../services/mail.service.js';
 import { MailLangs, MailService } from '../../services/mail.service.js';
 import { User } from '../models/user.model.js';
+import type {
+  ExternalCalendarParams,
+  MollieWebhookBody,
+} from '../schemas/external.schema.js';
 import { getCompany } from '../utils/api.util.js';
 import {
   getMovements,
@@ -28,7 +32,7 @@ import { addPremium, isPremium } from '../utils/premium.util.js';
 
 export default class ExternalController {
   static async ical(req: FastifyRequest, reply: FastifyReply) {
-    const params = req.params as any;
+    const params = req.params as ExternalCalendarParams;
     const company = await getCompany(params.api);
     const premium = await isPremium(company.id);
     if (!premium) {
@@ -179,9 +183,7 @@ export default class ExternalController {
    * @see https://docs.mollie.com/reference/webhooks
    */
   static async mollieWebhook(req: FastifyRequest, _reply: FastifyReply) {
-    const event = req.body as {
-      id?: string;
-    };
+    const event = req.body as MollieWebhookBody;
     if (!event || !event.id) {
       throw new httpErrors.BadRequest('Missing paymentId');
     }

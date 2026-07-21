@@ -1,6 +1,5 @@
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
-import { z } from 'zod';
 
 import { ROLES } from '../../../config/constants.config.js';
 import QueenController from '../../controllers/queen.controller.js';
@@ -8,9 +7,16 @@ import { Guard } from '../../hooks/guard.hook.js';
 import { Validator } from '../../hooks/validator.hook.js';
 import {
   permissiveJsonResponseSchema,
-  permissiveObjectSchema,
+  compatibilityQuerySchema,
 } from '../../schemas/common.schema.js';
-import { numberSchema } from '../../utils/zod.util.js';
+import {
+  getPedigreeParamsSchema,
+  postBodySchema,
+  patchBodySchema,
+  updateStatusBodySchema,
+  batchDeleteBodySchema,
+  batchGetBodySchema,
+} from '../../schemas/queen.schema.js';
 
 export default function routes(
   instance: FastifyInstance,
@@ -23,7 +29,7 @@ export default function routes(
     '/',
     {
       schema: {
-        querystring: permissiveObjectSchema,
+        querystring: compatibilityQuerySchema,
         response: { 200: permissiveJsonResponseSchema },
       },
       preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
@@ -35,7 +41,7 @@ export default function routes(
     '/stats',
     {
       schema: {
-        querystring: permissiveObjectSchema,
+        querystring: compatibilityQuerySchema,
         response: { 200: permissiveJsonResponseSchema },
       },
       preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
@@ -48,8 +54,8 @@ export default function routes(
     '/pedigree/:id',
     {
       schema: {
-        querystring: permissiveObjectSchema,
-        params: permissiveObjectSchema,
+        querystring: compatibilityQuerySchema,
+        params: getPedigreeParamsSchema,
         response: { 200: permissiveJsonResponseSchema },
       },
       preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
@@ -63,12 +69,7 @@ export default function routes(
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
         response: { 200: permissiveJsonResponseSchema },
-        body: z
-          .object({
-            start: z.number().int().min(0).max(10000).optional(),
-            repeat: z.number().int().min(0).max(100).optional(),
-          })
-          .loose(),
+        body: postBodySchema,
       },
     },
     QueenController.post,
@@ -80,10 +81,7 @@ export default function routes(
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
         response: { 200: permissiveJsonResponseSchema },
-        body: z.object({
-          ids: z.array(numberSchema),
-          data: z.object({}).loose(),
-        }),
+        body: patchBodySchema,
       },
     },
     QueenController.patch,
@@ -95,10 +93,7 @@ export default function routes(
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
         response: { 200: permissiveJsonResponseSchema },
-        body: z.object({
-          ids: z.array(numberSchema),
-          status: z.boolean(),
-        }),
+        body: updateStatusBodySchema,
       },
     },
     QueenController.updateStatus,
@@ -109,10 +104,9 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
+        querystring: compatibilityQuerySchema,
         response: { 200: permissiveJsonResponseSchema },
-        body: z.object({
-          ids: z.array(numberSchema),
-        }),
+        body: batchDeleteBodySchema,
       },
     },
     QueenController.batchDelete,
@@ -124,9 +118,7 @@ export default function routes(
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
         response: { 200: permissiveJsonResponseSchema },
-        body: z.object({
-          ids: z.array(numberSchema),
-        }),
+        body: batchGetBodySchema,
       },
     },
     QueenController.batchGet,

@@ -7,9 +7,16 @@ import ServiceController from '../../controllers/service.controller.js';
 import { Guard } from '../../hooks/guard.hook.js';
 import {
   permissiveJsonResponseSchema,
-  permissiveObjectSchema,
-  permissiveRequestSchema,
+  compatibilityQuerySchema,
 } from '../../schemas/common.schema.js';
+import {
+  getWeatherDataParamsSchema,
+  getGruenlandtemperatursummeParamsSchema,
+  paypalCreateOrderBodySchema,
+  paypalCapturePaymentParamsSchema,
+  stripeCreateOrderBodySchema,
+  mollieCreateOrderBodySchema,
+} from '../../schemas/service.schema.js';
 
 export default function routes(
   instance: FastifyInstance,
@@ -37,8 +44,8 @@ export default function routes(
     '/temperature/:apiary_id',
     {
       schema: {
-        querystring: permissiveObjectSchema,
-        params: permissiveObjectSchema,
+        querystring: compatibilityQuerySchema,
+        params: getWeatherDataParamsSchema,
         response: { 200: permissiveJsonResponseSchema },
       },
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
@@ -50,8 +57,8 @@ export default function routes(
     '/gruenlandtemperatursumme/:apiary_id',
     {
       schema: {
-        querystring: permissiveObjectSchema,
-        params: permissiveObjectSchema,
+        querystring: compatibilityQuerySchema,
+        params: getGruenlandtemperatursummeParamsSchema,
         response: { 200: permissiveJsonResponseSchema },
       },
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
@@ -65,10 +72,7 @@ export default function routes(
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
         response: { 200: permissiveJsonResponseSchema },
-        body: z.object({
-          amount: z.number().min(50),
-          quantity: z.number().min(1).max(10),
-        }),
+        body: paypalCreateOrderBodySchema,
       },
     },
     ServiceController.paypalCreateOrder,
@@ -78,8 +82,7 @@ export default function routes(
     '/paypal/orders/:orderID/capture',
     {
       schema: {
-        body: permissiveRequestSchema,
-        params: permissiveObjectSchema,
+        params: paypalCapturePaymentParamsSchema,
         response: { 200: permissiveJsonResponseSchema },
       },
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
@@ -93,10 +96,7 @@ export default function routes(
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
         response: { 200: permissiveJsonResponseSchema },
-        body: z.object({
-          amount: z.number().min(50),
-          quantity: z.number().min(1).max(10),
-        }),
+        body: stripeCreateOrderBodySchema,
       },
     },
     ServiceController.stripeCreateOrder,
@@ -108,10 +108,7 @@ export default function routes(
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
         response: { 200: permissiveJsonResponseSchema },
-        body: z.object({
-          amount: z.number().min(50),
-          quantity: z.number().min(1).max(10),
-        }),
+        body: mollieCreateOrderBodySchema,
       },
     },
     ServiceController.mollieCreateOrder,
@@ -121,7 +118,7 @@ export default function routes(
     '/map/american_foulbrood',
     {
       schema: {
-        querystring: permissiveObjectSchema,
+        querystring: compatibilityQuerySchema,
         response: { 200: permissiveJsonResponseSchema },
       },
       preHandler: Guard.authorize([ROLES.admin, ROLES.user, ROLES.read]),

@@ -1,39 +1,32 @@
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
-import { z } from 'zod';
 
 import { ROLES } from '../../../config/constants.config.js';
 import HiveController from '../../controllers/hive.controller.js';
 import { Guard } from '../../hooks/guard.hook.js';
+import { permissiveJsonResponseSchema } from '../../schemas/common.schema.js';
 import {
-  permissiveJsonResponseSchema,
-  permissiveObjectSchema,
-} from '../../schemas/common.schema.js';
-import { numberSchema } from '../../utils/zod.util.js';
-
-const hiveSchema = z.object({
-  name: z.string().min(1).max(36).trim(),
-  grouphive: z.number().int().optional().default(0),
-  position: z.number().int().optional().default(0),
-  note: z.string().max(2000).optional(),
-  modus: z.boolean().optional(),
-  modus_date: z.string().optional(),
-  deleted: z.boolean().optional(),
-  source_id: z.number().int().optional(),
-  type_id: z.number().int().optional(),
-});
+  hiveCreateBodySchema,
+  hiveIdParamsSchema,
+  hiveIdsBodySchema,
+  hiveListQuerySchema,
+  hivePatchBodySchema,
+  hivePositionBodySchema,
+  hiveStatusBodySchema,
+  hiveTaskQuerySchema,
+} from '../../schemas/hive.schema.js';
 
 export default function routes(
   instance: FastifyInstance,
-  _options: any,
-  done: any,
+  _options: unknown,
+  done: () => void,
 ) {
   const server = instance.withTypeProvider<ZodTypeProvider>();
   server.get(
     '/',
     {
       schema: {
-        querystring: permissiveObjectSchema,
+        querystring: hiveListQuerySchema,
         response: { 200: permissiveJsonResponseSchema },
       },
       preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
@@ -44,8 +37,8 @@ export default function routes(
     '/:id',
     {
       schema: {
-        querystring: permissiveObjectSchema,
-        params: permissiveObjectSchema,
+        querystring: hiveListQuerySchema,
+        params: hiveIdParamsSchema,
         response: { 200: permissiveJsonResponseSchema },
       },
       preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
@@ -58,13 +51,8 @@ export default function routes(
       preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
       schema: {
         response: { 200: permissiveJsonResponseSchema },
-        params: z.object({
-          id: z.coerce.number(),
-        }),
-        querystring: z.object({
-          apiary: z.boolean().optional(),
-          year: z.number().optional(),
-        }),
+        params: hiveIdParamsSchema,
+        querystring: hiveTaskQuerySchema,
       },
     },
     HiveController.getTasks,
@@ -75,95 +63,66 @@ export default function routes(
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
         response: { 200: permissiveJsonResponseSchema },
-        body: z.object({
-          ids: z.array(numberSchema),
-          data: hiveSchema.partial(),
-        }),
+        body: hivePatchBodySchema,
       },
     },
     HiveController.patch,
   );
-
   server.post(
     '/',
     {
       preHandler: Guard.authorize([ROLES.admin]),
       schema: {
         response: { 200: permissiveJsonResponseSchema },
-        body: z
-          .object({
-            apiary_id: z.number(),
-            start: z.number().min(0).max(10000),
-            repeat: z.number().min(0).max(100),
-            date: z.string(),
-          })
-          .merge(hiveSchema),
+        body: hiveCreateBodySchema,
       },
     },
     HiveController.post,
   );
-
   server.patch(
     '/batchDelete',
     {
       preHandler: Guard.authorize([ROLES.admin]),
       schema: {
+        querystring: hiveListQuerySchema,
         response: { 200: permissiveJsonResponseSchema },
-        body: z.object({
-          ids: z.array(numberSchema),
-        }),
+        body: hiveIdsBodySchema,
       },
     },
     HiveController.batchDelete,
   );
-
   server.post(
     '/batchGet',
     {
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
         response: { 200: permissiveJsonResponseSchema },
-        body: z.object({
-          ids: z.array(numberSchema),
-        }),
+        body: hiveIdsBodySchema,
       },
     },
     HiveController.batchGet,
   );
-
   server.patch(
     '/status',
     {
       preHandler: Guard.authorize([ROLES.admin]),
       schema: {
         response: { 200: permissiveJsonResponseSchema },
-        body: z.object({
-          ids: z.array(numberSchema),
-          status: z.boolean(),
-        }),
+        body: hiveStatusBodySchema,
       },
     },
     HiveController.updateStatus,
   );
-
   server.patch(
     '/updatePosition',
     {
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
         response: { 200: permissiveJsonResponseSchema },
-        body: z.object({
-          data: z
-            .object({
-              id: z.number(),
-              position: z.number(),
-            })
-            .array(),
-        }),
+        body: hivePositionBodySchema,
       },
     },
     HiveController.updatePosition,
   );
-
   done();
 }

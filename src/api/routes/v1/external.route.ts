@@ -1,18 +1,21 @@
 import fastifyFormbody from '@fastify/formbody';
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
-import { z } from 'zod';
 
 import ExternalController from '../../controllers/external.controller.js';
 import ScaleDataController from '../../controllers/scale_data.controller.js';
 import { Validator } from '../../hooks/validator.hook.js';
 import {
   permissiveJsonResponseSchema,
-  permissiveObjectSchema,
+  compatibilityQuerySchema,
   permissiveRequestSchema,
 } from '../../schemas/common.schema.js';
-
-const SCALE_ACTION_REGEX = /^(CREATE|CREATE_DEMO)$/;
+import {
+  externalCalendarParamsSchema,
+  externalScaleParamsSchema,
+  externalScaleQuerySchema,
+  mollieWebhookBodySchema,
+} from '../../schemas/external.schema.js';
 
 export default function routes(
   instance: FastifyInstance,
@@ -27,8 +30,8 @@ export default function routes(
     '/ical/:source/:api',
     {
       schema: {
-        querystring: permissiveObjectSchema,
-        params: permissiveObjectSchema,
+        querystring: compatibilityQuerySchema,
+        params: externalCalendarParamsSchema,
       },
       preHandler: Validator.handleSource,
     },
@@ -50,7 +53,7 @@ export default function routes(
     '/mollie/webhook',
     {
       schema: {
-        body: permissiveRequestSchema,
+        body: mollieWebhookBodySchema,
         response: { 200: permissiveJsonResponseSchema },
       },
     },
@@ -61,17 +64,8 @@ export default function routes(
     '/scale/:ident/:api',
     {
       schema: {
-        params: permissiveObjectSchema,
-        querystring: z.object({
-          action: z.string().regex(SCALE_ACTION_REGEX),
-          datetime: z.string().datetime().optional(),
-          weight: z.number().optional(),
-          temp1: z.number().optional(),
-          temp2: z.number().optional(),
-          hum: z.number().optional(),
-          rain: z.number().optional(),
-          note: z.string().max(300).optional(),
-        }),
+        params: externalScaleParamsSchema,
+        querystring: externalScaleQuerySchema,
       },
     },
     ScaleDataController.api,

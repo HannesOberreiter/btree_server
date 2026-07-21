@@ -7,10 +7,11 @@ import {
   frontend,
 } from '../../config/environment.config.js';
 import { Dropbox as DropboxModel } from '../models/dropbox.model.js';
-
+import type { AuthParams } from '../schemas/dropbox.schema.js';
 /**
  * @see https://www.dropbox.com/developers/apps?_tk=pilot_lp&_ad=topbar4&_camp=myapps
  */
+
 export default class DropboxController {
   private static config = {
     clientId: dropboxClientId,
@@ -34,7 +35,7 @@ export default class DropboxController {
   }
 
   static async auth(req: FastifyRequest, _reply: FastifyReply) {
-    const { code } = req.params as any;
+    const { code } = req.params as AuthParams;
     const dbx = new DropboxAuth(DropboxController.config);
     const token = await dbx.getAccessTokenFromCode(
       DropboxController.redirect,

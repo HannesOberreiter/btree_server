@@ -3,10 +3,18 @@ import type { FastifyReply, FastifyRequest } from 'fastify';
 import { Rearing } from '../models/rearing/rearing.model.js';
 import { RearingStep } from '../models/rearing/rearing_step.model.js';
 import { RearingType } from '../models/rearing/rearing_type.model.js';
+import type { CompatibilityQuery } from '../schemas/common.schema.js';
+import type {
+  PatchBody,
+  PostBody,
+  BatchDeleteBody,
+  BatchGetBody,
+} from '../schemas/rearing_type.schema.js';
 
 export default class RearingTypeController {
   static async get(req: FastifyRequest, _reply: FastifyReply) {
-    const { order, direction, offset, limit, q } = req.query as any;
+    const { order, direction, offset, limit, q } =
+      req.query as CompatibilityQuery;
     const query = RearingType.query()
       .withGraphFetched('step(orderByPosition).detail')
       .where({
@@ -16,13 +24,21 @@ export default class RearingTypeController {
 
     if (order) {
       if (Array.isArray(order)) {
-        order.forEach((field, index) => query.orderBy(field, direction[index]));
+        order.forEach((field, index) =>
+          query.orderBy(
+            field,
+            (Array.isArray(direction) ? direction[index] : direction) ?? 'asc',
+          ),
+        );
       } else {
-        query.orderBy(order, direction);
+        query.orderBy(
+          order,
+          (Array.isArray(direction) ? direction[0] : direction) ?? 'asc',
+        );
       }
     }
     if (q) {
-      const search = `${q}`; // Querystring could be converted be a number
+      const search = q; // Querystring could be converted be a number
 
       if (search.trim() !== '') {
         query.where((builder) => {
@@ -35,7 +51,7 @@ export default class RearingTypeController {
   }
 
   static async patch(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
+    const body = req.body as PatchBody;
     const ids = body.ids;
     const insert = { ...body.data };
     const result = await RearingType.transaction(async (trx) => {
@@ -48,7 +64,7 @@ export default class RearingTypeController {
   }
 
   static async post(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
+    const body = req.body as PostBody;
     const result = await RearingType.transaction(async (trx) => {
       return await RearingType.query(trx).insert({
         ...body,
@@ -59,7 +75,7 @@ export default class RearingTypeController {
   }
 
   static async batchGet(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
+    const body = req.body as BatchGetBody;
     const result = await RearingType.transaction(async (trx) => {
       const res = await RearingType.query(trx)
         .withGraphFetched('detail')
@@ -71,7 +87,7 @@ export default class RearingTypeController {
   }
 
   static async batchDelete(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
+    const body = req.body as BatchDeleteBody;
     const result = await RearingType.transaction(async (trx) => {
       await RearingStep.query(trx)
         .withGraphJoined('type')

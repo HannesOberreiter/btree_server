@@ -1,6 +1,5 @@
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
-import { z } from 'zod';
 
 import { ROLES } from '../../../config/constants.config.js';
 import OptionsController from '../../controllers/options.controller.js';
@@ -8,10 +7,17 @@ import { Guard } from '../../hooks/guard.hook.js';
 import { Validator } from '../../hooks/validator.hook.js';
 import {
   permissiveJsonResponseSchema,
-  permissiveObjectSchema,
-  permissiveRequestSchema,
+  compatibilityQuerySchema,
 } from '../../schemas/common.schema.js';
-import { numberSchema } from '../../utils/zod.util.js';
+import {
+  optionTableParamsSchema,
+  patchBodySchema,
+  postBodySchema,
+  updateStatusBodySchema,
+  updateFavoriteBodySchema,
+  batchDeleteBodySchema,
+  batchGetBodySchema,
+} from '../../schemas/option.schema.js';
 
 export default function routes(
   instance: FastifyInstance,
@@ -23,8 +29,8 @@ export default function routes(
     '/:table',
     {
       schema: {
-        querystring: permissiveObjectSchema,
-        params: permissiveObjectSchema,
+        querystring: compatibilityQuerySchema,
+        params: optionTableParamsSchema,
         response: { 200: permissiveJsonResponseSchema },
       },
       preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
@@ -38,12 +44,9 @@ export default function routes(
       preHandler: Guard.authorize([ROLES.admin]),
       preValidation: Validator.handleOption,
       schema: {
-        params: permissiveObjectSchema,
+        params: optionTableParamsSchema,
         response: { 200: permissiveJsonResponseSchema },
-        body: z.object({
-          ids: z.array(numberSchema),
-          data: z.object({}).loose(),
-        }),
+        body: patchBodySchema,
       },
     },
     OptionsController.patch,
@@ -53,8 +56,8 @@ export default function routes(
     '/:table',
     {
       schema: {
-        body: permissiveRequestSchema,
-        params: permissiveObjectSchema,
+        body: postBodySchema,
+        params: optionTableParamsSchema,
         response: { 200: permissiveJsonResponseSchema },
       },
       preHandler: Guard.authorize([ROLES.admin]),
@@ -69,12 +72,9 @@ export default function routes(
       preHandler: Guard.authorize([ROLES.admin]),
       preValidation: Validator.handleOption,
       schema: {
-        params: permissiveObjectSchema,
+        params: optionTableParamsSchema,
         response: { 200: permissiveJsonResponseSchema },
-        body: z.object({
-          ids: z.array(numberSchema),
-          status: z.boolean(),
-        }),
+        body: updateStatusBodySchema,
       },
     },
     OptionsController.updateStatus,
@@ -86,11 +86,9 @@ export default function routes(
       preHandler: Guard.authorize([ROLES.admin]),
       preValidation: Validator.handleOption,
       schema: {
-        params: permissiveObjectSchema,
+        params: optionTableParamsSchema,
         response: { 200: permissiveJsonResponseSchema },
-        body: z.object({
-          ids: z.array(numberSchema),
-        }),
+        body: updateFavoriteBodySchema,
       },
     },
     OptionsController.updateFavorite,
@@ -102,11 +100,9 @@ export default function routes(
       preHandler: Guard.authorize([ROLES.admin]),
       preValidation: Validator.handleOption,
       schema: {
-        params: permissiveObjectSchema,
+        params: optionTableParamsSchema,
         response: { 200: permissiveJsonResponseSchema },
-        body: z.object({
-          ids: z.array(numberSchema),
-        }),
+        body: batchDeleteBodySchema,
       },
     },
     OptionsController.batchDelete,
@@ -118,11 +114,9 @@ export default function routes(
       preHandler: Guard.authorize([ROLES.admin, ROLES.user, ROLES.read]),
       preValidation: Validator.handleOption,
       schema: {
-        params: permissiveObjectSchema,
+        params: optionTableParamsSchema,
         response: { 200: permissiveJsonResponseSchema },
-        body: z.object({
-          ids: z.array(numberSchema),
-        }),
+        body: batchGetBodySchema,
       },
     },
     OptionsController.batchGet,

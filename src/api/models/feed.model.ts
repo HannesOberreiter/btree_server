@@ -6,8 +6,8 @@ import { User } from './user.model.js';
 
 export class Feed extends ExtModel {
   id!: number;
-  date!: Date;
-  enddate!: Date;
+  date!: Date | string;
+  enddate!: Date | string;
   amount!: number;
   note!: string;
   url!: string;

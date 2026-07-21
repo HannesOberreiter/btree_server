@@ -1,13 +1,16 @@
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
-import { z } from 'zod';
 
 import { ROLES } from '../../../config/constants.config.js';
 import AgentKeyController from '../../controllers/agent_key.controller.js';
 import { Guard } from '../../hooks/guard.hook.js';
 import {
+  createBodySchema,
+  removeParamsSchema,
+} from '../../schemas/agent_key.schema.js';
+import {
   permissiveJsonResponseSchema,
-  permissiveObjectSchema,
+  compatibilityQuerySchema,
 } from '../../schemas/common.schema.js';
 
 export default function routes(
@@ -23,10 +26,7 @@ export default function routes(
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
         response: { 200: permissiveJsonResponseSchema },
-        body: z.object({
-          label: z.string().max(100).optional(),
-          valid_to: z.string().nullable().optional(),
-        }),
+        body: createBodySchema,
       },
     },
     AgentKeyController.create,
@@ -36,7 +36,7 @@ export default function routes(
     '/',
     {
       schema: {
-        querystring: permissiveObjectSchema,
+        querystring: compatibilityQuerySchema,
         response: { 200: permissiveJsonResponseSchema },
       },
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
@@ -49,11 +49,9 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
-        querystring: permissiveObjectSchema,
+        querystring: compatibilityQuerySchema,
         response: { 200: permissiveJsonResponseSchema },
-        params: z.object({
-          id: z.coerce.number().int().positive(),
-        }),
+        params: removeParamsSchema,
       },
     },
     AgentKeyController.remove,

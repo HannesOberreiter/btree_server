@@ -12,7 +12,7 @@ export class Rearing extends ExtModel {
   hatch!: number;
   mated!: number;
   note!: string;
-  date!: Date;
+  date!: Date | string;
   type_id!: number;
   detail_id!: number;
   user_id!: number;

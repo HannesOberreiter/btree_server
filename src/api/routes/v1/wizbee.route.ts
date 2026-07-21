@@ -10,7 +10,7 @@ import {
 import { Guard } from '../../hooks/guard.hook.js';
 import {
   permissiveJsonResponseSchema,
-  permissiveObjectSchema,
+  compatibilityQuerySchema,
   permissiveRequestSchema,
 } from '../../schemas/common.schema.js';
 import { wizBeeStreamBody } from '../../schemas/wizbee.schema.js';
@@ -37,7 +37,7 @@ export default function routes(
     '/usage',
     {
       schema: {
-        querystring: permissiveObjectSchema,
+        querystring: compatibilityQuerySchema,
         response: { 200: permissiveJsonResponseSchema },
       },
       preHandler: Guard.authorize([ROLES.admin, ROLES.user, ROLES.read]),

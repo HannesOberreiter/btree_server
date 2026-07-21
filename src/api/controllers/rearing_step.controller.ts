@@ -1,10 +1,15 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
 
 import { RearingStep } from '../models/rearing/rearing_step.model.js';
+import type {
+  PostBody,
+  DeleteParams,
+  UpdatePositionBody,
+} from '../schemas/rearing_step.schema.js';
 
 export default class RearingStepController {
   static async post(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
+    const body = req.body as PostBody;
     const result = await RearingStep.transaction(async (trx) => {
       return await RearingStep.query(trx).insert({
         ...body,
@@ -14,7 +19,7 @@ export default class RearingStepController {
   }
 
   static async delete(req: FastifyRequest, _reply: FastifyReply) {
-    const params = req.params as any;
+    const params = req.params as DeleteParams;
     const result = await RearingStep.transaction(async (trx) => {
       const result = await RearingStep.query(trx)
         .delete()
@@ -27,7 +32,7 @@ export default class RearingStepController {
   }
 
   static async updatePosition(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
+    const body = req.body as UpdatePositionBody;
     const steps = body.data;
     const result = await RearingStep.transaction(async (trx) => {
       const res = [];

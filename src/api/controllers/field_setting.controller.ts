@@ -1,6 +1,7 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
 
 import { FieldSetting } from '../models/field_setting.model.js';
+import type { PatchBody } from '../schemas/field_setting.schema.js';
 
 export default class FieldSettingController {
   static async get(req: FastifyRequest, _reply: FastifyReply) {
@@ -12,7 +13,7 @@ export default class FieldSettingController {
   }
 
   static async patch(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
+    const body = req.body as PatchBody;
     const trx = await FieldSetting.startTransaction();
     try {
       const settings = JSON.parse(body.settings);

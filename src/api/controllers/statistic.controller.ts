@@ -4,6 +4,7 @@ import { Checkup } from '../models/checkup.model.js';
 import { Feed } from '../models/feed.model.js';
 import { Harvest } from '../models/harvest.model.js';
 import { Treatment } from '../models/treatment.model.js';
+import type { CompatibilityQuery } from '../schemas/common.schema.js';
 import { hiveCountApiary, hiveCountTotal } from '../utils/statistic.util.js';
 
 export default class StatisticController {
@@ -14,7 +15,7 @@ export default class StatisticController {
 
   static async getHiveCountApiary(req: FastifyRequest, _reply: FastifyReply) {
     let date = new Date();
-    const query = req.query as any;
+    const query = req.query as CompatibilityQuery;
     try {
       date = new Date(query.date as string);
     } catch (error) {
@@ -27,7 +28,7 @@ export default class StatisticController {
 
   static async getHarvestHive(req: FastifyRequest, _reply: FastifyReply) {
     const { order, direction, offset, limit, q, filters, groupByType } =
-      req.query as any;
+      req.query as CompatibilityQuery;
 
     const query = Harvest.query()
       .select(Harvest.raw('YEAR(date) as year'), 'hive_id')
@@ -47,13 +48,21 @@ export default class StatisticController {
       .page(offset || 0, limit === 0 || !limit ? 10 : limit);
     if (order) {
       if (Array.isArray(order)) {
-        order.forEach((field, index) => query.orderBy(field, direction[index]));
+        order.forEach((field, index) =>
+          query.orderBy(
+            field,
+            (Array.isArray(direction) ? direction[index] : direction) ?? 'asc',
+          ),
+        );
       } else {
-        query.orderBy(order, direction);
+        query.orderBy(
+          order,
+          (Array.isArray(direction) ? direction[0] : direction) ?? 'asc',
+        );
       }
     }
     if (q) {
-      const search = `${q}`; // Querystring could be converted be a number
+      const search = q; // Querystring could be converted be a number
 
       if (search.trim() !== '') {
         query.where((builder) => {
@@ -92,7 +101,7 @@ export default class StatisticController {
   }
 
   static async getHarvestYear(req: FastifyRequest, _reply: FastifyReply) {
-    const { filters } = req.query as any;
+    const { filters } = req.query as CompatibilityQuery;
     const query = Harvest.query()
       .select(Harvest.raw('YEAR(date) as year'))
       .select(
@@ -142,7 +151,7 @@ export default class StatisticController {
   }
 
   static async getHarvestApiary(req: FastifyRequest, _reply: FastifyReply) {
-    const { filters } = req.query as any;
+    const { filters } = req.query as CompatibilityQuery;
     const query = Harvest.query()
       .countDistinct('hive_id as hive_count')
       .sum('amount as amount_sum')
@@ -199,7 +208,7 @@ export default class StatisticController {
   }
 
   static async getHarvestType(req: FastifyRequest, _reply: FastifyReply) {
-    const { filters } = req.query as any;
+    const { filters } = req.query as CompatibilityQuery;
     const query = Harvest.query()
       .countDistinct('hive_id as hive_count')
       .sum('amount as amount_sum')
@@ -258,7 +267,7 @@ export default class StatisticController {
 
   static async getFeedHive(req: FastifyRequest, _reply: FastifyReply) {
     const { order, direction, offset, limit, q, filters, groupByType } =
-      req.query as any;
+      req.query as CompatibilityQuery;
 
     const query = Feed.query()
       .select(Feed.raw('YEAR(date) as year'), 'hive_id')
@@ -276,13 +285,21 @@ export default class StatisticController {
       .page(offset || 0, limit === 0 || !limit ? 10 : limit);
     if (order) {
       if (Array.isArray(order)) {
-        order.forEach((field, index) => query.orderBy(field, direction[index]));
+        order.forEach((field, index) =>
+          query.orderBy(
+            field,
+            (Array.isArray(direction) ? direction[index] : direction) ?? 'asc',
+          ),
+        );
       } else {
-        query.orderBy(order, direction);
+        query.orderBy(
+          order,
+          (Array.isArray(direction) ? direction[0] : direction) ?? 'asc',
+        );
       }
     }
     if (q) {
-      const search = `${q}`; // Querystring could be converted be a number
+      const search = q; // Querystring could be converted be a number
 
       if (search.trim() !== '') {
         query.where((builder) => {
@@ -321,7 +338,7 @@ export default class StatisticController {
   }
 
   static async getFeedYear(req: FastifyRequest, _reply: FastifyReply) {
-    const { filters } = req.query as any;
+    const { filters } = req.query as CompatibilityQuery;
     const query = Feed.query()
       .select(Feed.raw('YEAR(date) as year'))
       .countDistinct('hive_id as hive_count')
@@ -363,7 +380,7 @@ export default class StatisticController {
   }
 
   static async getFeedApiary(req: FastifyRequest, _reply: FastifyReply) {
-    const { filters } = req.query as any;
+    const { filters } = req.query as CompatibilityQuery;
     const query = Feed.query()
       .countDistinct('hive_id as hive_count')
       .sum('amount as amount_sum')
@@ -412,7 +429,7 @@ export default class StatisticController {
   }
 
   static async getFeedType(req: FastifyRequest, _reply: FastifyReply) {
-    const { filters } = req.query as any;
+    const { filters } = req.query as CompatibilityQuery;
     const query = Feed.query()
       .countDistinct('hive_id as hive_count')
       .sum('amount as amount_sum')
@@ -462,7 +479,8 @@ export default class StatisticController {
   }
 
   static async getTreatmentHive(req: FastifyRequest, _reply: FastifyReply) {
-    const { order, direction, offset, limit, q, filters } = req.query as any;
+    const { order, direction, offset, limit, q, filters } =
+      req.query as CompatibilityQuery;
 
     const query = Treatment.query()
       .select(Treatment.raw('YEAR(date) as year'), 'hive_id')
@@ -482,13 +500,21 @@ export default class StatisticController {
       .page(offset || 0, limit === 0 || !limit ? 10 : limit);
     if (order) {
       if (Array.isArray(order)) {
-        order.forEach((field, index) => query.orderBy(field, direction[index]));
+        order.forEach((field, index) =>
+          query.orderBy(
+            field,
+            (Array.isArray(direction) ? direction[index] : direction) ?? 'asc',
+          ),
+        );
       } else {
-        query.orderBy(order, direction);
+        query.orderBy(
+          order,
+          (Array.isArray(direction) ? direction[0] : direction) ?? 'asc',
+        );
       }
     }
     if (q) {
-      const search = `${q}`; // Querystring could be converted be a number
+      const search = q; // Querystring could be converted be a number
 
       if (search.trim() !== '') {
         query.where((builder) => {
@@ -521,7 +547,7 @@ export default class StatisticController {
   }
 
   static async getTreatmentYear(req: FastifyRequest, _reply: FastifyReply) {
-    const { filters } = req.query as any;
+    const { filters } = req.query as CompatibilityQuery;
     const query = Treatment.query()
       .select(Treatment.raw('YEAR(date) as year'))
       .countDistinct('hive_id as hive_count')
@@ -564,7 +590,7 @@ export default class StatisticController {
   }
 
   static async getTreatmentApiary(req: FastifyRequest, _reply: FastifyReply) {
-    const { filters } = req.query as any;
+    const { filters } = req.query as CompatibilityQuery;
     const query = Treatment.query()
       .countDistinct('hive_id as hive_count')
       .sum('amount as amount_sum')
@@ -615,7 +641,7 @@ export default class StatisticController {
   }
 
   static async getTreatmentType(req: FastifyRequest, _reply: FastifyReply) {
-    const { filters } = req.query as any;
+    const { filters } = req.query as CompatibilityQuery;
     const query = Treatment.query()
       .countDistinct('hive_id as hive_count')
       .sum('amount as amount_sum')
@@ -667,7 +693,8 @@ export default class StatisticController {
   }
 
   static async getCheckupRatingHive(req: FastifyRequest, _reply: FastifyReply) {
-    const { order, direction, offset, limit, q, filters } = req.query as any;
+    const { order, direction, offset, limit, q, filters } =
+      req.query as CompatibilityQuery;
     const query = Checkup.query()
       .select(
         'hive_id',
@@ -695,13 +722,21 @@ export default class StatisticController {
 
     if (order) {
       if (Array.isArray(order)) {
-        order.forEach((field, index) => query.orderBy(field, direction[index]));
+        order.forEach((field, index) =>
+          query.orderBy(
+            field,
+            (Array.isArray(direction) ? direction[index] : direction) ?? 'asc',
+          ),
+        );
       } else {
-        query.orderBy(order, direction);
+        query.orderBy(
+          order,
+          (Array.isArray(direction) ? direction[0] : direction) ?? 'asc',
+        );
       }
     }
     if (q) {
-      const search = `${q}`; // Querystring could be converted be a number
+      const search = q; // Querystring could be converted be a number
 
       if (search.trim() !== '') {
         query.where((builder) => {

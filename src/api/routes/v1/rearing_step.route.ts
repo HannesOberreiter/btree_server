@@ -1,15 +1,18 @@
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
-import { z } from 'zod';
 
 import { ROLES } from '../../../config/constants.config.js';
 import RearingStepController from '../../controllers/rearing_step.controller.js';
 import { Guard } from '../../hooks/guard.hook.js';
 import {
   permissiveJsonResponseSchema,
-  permissiveObjectSchema,
-  permissiveRequestSchema,
+  compatibilityQuerySchema,
 } from '../../schemas/common.schema.js';
+import {
+  postBodySchema,
+  deleteParamsSchema,
+  updatePositionBodySchema,
+} from '../../schemas/rearing_step.schema.js';
 
 export default function routes(
   instance: FastifyInstance,
@@ -22,7 +25,7 @@ export default function routes(
     '/',
     {
       schema: {
-        body: permissiveRequestSchema,
+        body: postBodySchema,
         response: { 200: permissiveJsonResponseSchema },
       },
       preHandler: Guard.authorize([ROLES.admin]),
@@ -35,11 +38,9 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.admin]),
       schema: {
-        querystring: permissiveObjectSchema,
+        querystring: compatibilityQuerySchema,
         response: { 200: permissiveJsonResponseSchema },
-        params: z.object({
-          id: z.string(),
-        }),
+        params: deleteParamsSchema,
       },
     },
     RearingStepController.delete,
@@ -51,15 +52,7 @@ export default function routes(
       preHandler: Guard.authorize([ROLES.admin]),
       schema: {
         response: { 200: permissiveJsonResponseSchema },
-        body: z.object({
-          data: z.array(
-            z.object({
-              id: z.number(),
-              position: z.number(),
-              sleep_before: z.number(),
-            }),
-          ),
-        }),
+        body: updatePositionBodySchema,
       },
     },
     RearingStepController.updatePosition,

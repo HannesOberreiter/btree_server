@@ -12,6 +12,16 @@ import { Hive } from '../models/hive.model.js';
 import { HiveLocation } from '../models/hive_location.model.js';
 import { Movedate } from '../models/movedate.model.js';
 import { Treatment } from '../models/treatment.model.js';
+import type {
+  HiveCreateBody,
+  HiveIdParams,
+  HiveIdsBody,
+  HiveListQuery,
+  HivePatchBody,
+  HivePositionBody,
+  HiveStatusBody,
+  HiveTaskQuery,
+} from '../schemas/hive.schema.js';
 import { deleteHiveConnections } from '../utils/delete.util.js';
 import { limitHive } from '../utils/premium.util.js';
 import TodoController from './todo.controller.js';
@@ -48,7 +58,7 @@ export default class HiveController {
       q,
       details,
       filters,
-    } = req.query as any;
+    } = req.query as HiveListQuery;
 
     const query = Hive.query()
       .where({
@@ -58,7 +68,7 @@ export default class HiveController {
       .page(offset || 0, limit === 0 || !limit ? 10 : limit);
 
     if (modus !== undefined && modus !== null) {
-      query.where('hives.modus', modus === true);
+      query.where('hives.modus', modus);
     }
 
     if (details === true) {
@@ -83,13 +93,21 @@ export default class HiveController {
     }
     if (order) {
       if (Array.isArray(order)) {
-        order.forEach((field, index) => query.orderBy(field, direction[index]));
+        order.forEach((field, index) =>
+          query.orderBy(
+            field,
+            (Array.isArray(direction) ? direction[index] : direction) ?? 'asc',
+          ),
+        );
       } else {
-        query.orderBy(order, direction);
+        query.orderBy(
+          order,
+          (Array.isArray(direction) ? direction[0] : direction) ?? 'asc',
+        );
       }
     }
     if (q) {
-      const search = `${q}`; // Querystring could be converted be a number
+      const search = q; // Querystring could be converted be a number
 
       if (search.trim() !== '') {
         query.where((builder) => {
@@ -104,10 +122,9 @@ export default class HiveController {
   }
 
   static async post(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
-    const start = Number.parseInt(body.start);
-    const repeat =
-      Number.parseInt(body.repeat) > 1 ? Number.parseInt(body.repeat) : 1;
+    const body = req.body as HiveCreateBody;
+    const start = body.start;
+    const repeat = body.repeat > 1 ? body.repeat : 1;
 
     const insertMovement = {
       apiary_id: body.apiary_id,
@@ -133,7 +150,7 @@ export default class HiveController {
 
     const result = await Hive.transaction(async (trx) => {
       await Apiary.query(trx)
-        .findByIds(insertMovement.apiary_id)
+        .findById(insertMovement.apiary_id)
         .throwIfNotFound()
         .where('user_id', req.session.user.user_id);
 
@@ -166,7 +183,7 @@ export default class HiveController {
   }
 
   static async getDetail(req: FastifyRequest, _reply: FastifyReply) {
-    const params = req.params as any;
+    const params = req.params as HiveIdParams;
     const id = params.id;
     const query = Hive.query()
       .findById(id)
@@ -204,8 +221,8 @@ export default class HiveController {
   }
 
   static async getTasks(req: FastifyRequest, _reply: FastifyReply) {
-    const params = req.params as any;
-    const q = req.query as any;
+    const params = req.params as HiveIdParams;
+    const q = req.query as HiveTaskQuery;
     const id = params.id;
     const year = q.year ? q.year : new Date().getFullYear();
     const apiary = q.apiary ? q.apiary : false;
@@ -325,7 +342,7 @@ export default class HiveController {
   }
 
   static async patch(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
+    const body = req.body as HivePatchBody;
     const ids = body.ids;
     const insert = { ...body.data };
     const result = await Hive.transaction(async (trx) => {
@@ -354,7 +371,7 @@ export default class HiveController {
   }
 
   static async updateStatus(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
+    const body = req.body as HiveStatusBody;
     const result = await Hive.transaction(async (trx) => {
       return Hive.query(trx)
         .patch({
@@ -369,8 +386,8 @@ export default class HiveController {
   }
 
   static async batchDelete(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
-    const q = req.query as any;
+    const body = req.body as HiveIdsBody;
+    const q = req.query as HiveListQuery;
     const hardDelete = !!q.hard;
     const restoreDelete = !!q.restore;
 
@@ -411,7 +428,7 @@ export default class HiveController {
   }
 
   static async batchGet(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
+    const body = req.body as HiveIdsBody;
     const result = await Hive.query().findByIds(body.ids).where({
       user_id: req.session.user.user_id,
     });
@@ -419,7 +436,7 @@ export default class HiveController {
   }
 
   static async updatePosition(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
+    const body = req.body as HivePositionBody;
     const hives = body.data;
     const result = await Hive.transaction(async (trx) => {
       const res = [];

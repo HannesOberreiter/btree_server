@@ -9,7 +9,7 @@ import { User } from './user.model.js';
 export class Queen extends ExtModel {
   id!: number;
   name!: string;
-  mark_colour!: number;
+  mark_colour!: string;
   mother!: string;
   date!: string;
   move_date!: string;

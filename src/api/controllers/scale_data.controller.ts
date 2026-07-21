@@ -6,13 +6,24 @@ import { MailService } from '../../services/mail.service.js';
 import { Scale } from '../models/scale.model.js';
 import { ScaleData } from '../models/scale_data.model.js';
 import { User } from '../models/user.model.js';
+import type { CompatibilityQuery } from '../schemas/common.schema.js';
+import type {
+  ExternalScaleParams,
+  ExternalScaleQuery,
+} from '../schemas/external.schema.js';
+import type {
+  PostBody,
+  PatchBody,
+  BatchDeleteBody,
+  BatchGetBody,
+} from '../schemas/scale_data.schema.js';
 import { getCompany } from '../utils/api.util.js';
 import { isPremium } from '../utils/premium.util.js';
 
 export default class ScaleDataController {
   static async api(req: FastifyRequest, _reply: FastifyReply) {
-    const q = req.query as any;
-    const params = req.params as any;
+    const q = req.query as ExternalScaleQuery;
+    const params = req.params as ExternalScaleParams;
 
     const insertDate = q.datetime ? q.datetime : new Date();
 
@@ -45,7 +56,7 @@ export default class ScaleDataController {
 
         if (q.weight && lastInsert.weight && q.action === 'CREATE') {
           try {
-            const currentWeight = Number.parseFloat(q.weight);
+            const currentWeight = q.weight;
             const checkWeight = Math.abs(lastInsert.weight - currentWeight);
             if (checkWeight > 5) {
               const user = await User.query(trx)
@@ -87,7 +98,8 @@ export default class ScaleDataController {
   }
 
   static async get(req: FastifyRequest, _reply: FastifyReply) {
-    const { order, direction, offset, limit, q, filters } = req.query as any;
+    const { order, direction, offset, limit, q, filters } =
+      req.query as CompatibilityQuery;
     const query = ScaleData.query()
       .withGraphJoined('[scale.hive]')
       .where({
@@ -113,13 +125,21 @@ export default class ScaleDataController {
     }
     if (order) {
       if (Array.isArray(order)) {
-        order.forEach((field, index) => query.orderBy(field, direction[index]));
+        order.forEach((field, index) =>
+          query.orderBy(
+            field,
+            (Array.isArray(direction) ? direction[index] : direction) ?? 'asc',
+          ),
+        );
       } else {
-        query.orderBy(order, direction);
+        query.orderBy(
+          order,
+          (Array.isArray(direction) ? direction[0] : direction) ?? 'asc',
+        );
       }
     }
     if (q) {
-      const search = `${q}`; // Querystring could be converted be a number
+      const search = q; // Querystring could be converted be a number
 
       if (search.trim() !== '') {
         query.where((builder) => {
@@ -132,7 +152,7 @@ export default class ScaleDataController {
   }
 
   static async patch(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
+    const body = req.body as PatchBody;
     const ids = body.ids;
     const insert = { ...body.data };
     const result = await ScaleData.transaction(async (trx) => {
@@ -146,7 +166,7 @@ export default class ScaleDataController {
   }
 
   static async post(req: FastifyRequest, _reply: FastifyReply) {
-    const insert = req.body as any;
+    const insert = req.body as PostBody;
     const result = await ScaleData.transaction(async (trx) => {
       return await ScaleData.query(trx)
         .withGraphJoined('scale')
@@ -159,7 +179,7 @@ export default class ScaleDataController {
   }
 
   static async batchGet(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
+    const body = req.body as BatchGetBody;
     const result = await ScaleData.transaction(async (trx) => {
       const res = await ScaleData.query(trx)
         .findByIds(body.ids)
@@ -171,7 +191,7 @@ export default class ScaleDataController {
   }
 
   static async batchDelete(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
+    const body = req.body as BatchDeleteBody;
     const result = await ScaleData.transaction(async (trx) => {
       return await ScaleData.query(trx)
         .delete()
