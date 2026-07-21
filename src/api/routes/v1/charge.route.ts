@@ -3,8 +3,16 @@ import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { z } from 'zod';
 
 import { ROLES } from '../../../config/constants.config.js';
-import ChargeController from '../../controllers/charge.controller.js';
+import { KyselyServer } from '../../../servers/kysely.server.js';
 import { Guard } from '../../hooks/guard.hook.js';
+import {
+  createCharge,
+  deleteCharges,
+  getChargesByIds,
+  listCharges,
+  listChargeStock,
+  updateCharges,
+} from '../../modules/charge.module.js';
 import {
   chargeBatchDeleteQuerySchema,
   chargeBatchUpdateSchema,
@@ -23,7 +31,7 @@ export default function routes(
   done: () => void,
 ) {
   const server = instance.withTypeProvider<ZodTypeProvider>();
-
+  const db = KyselyServer.getInstance().db;
   server.get(
     '/',
     {
@@ -33,9 +41,8 @@ export default function routes(
       },
       preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
     },
-    ChargeController.get,
+    (req) => listCharges(db, req.session.user.user_id, req.query),
   );
-
   server.get(
     '/stock',
     {
@@ -45,21 +52,23 @@ export default function routes(
       },
       preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
     },
-    ChargeController.getStock,
+    (req) => listChargeStock(db, req.session.user.user_id, req.query),
   );
-
   server.patch(
     '/',
     {
       preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-      schema: {
-        body: chargeBatchUpdateSchema,
-        response: { 200: z.number() },
-      },
+      schema: { body: chargeBatchUpdateSchema, response: { 200: z.number() } },
     },
-    ChargeController.patch,
+    (req) =>
+      updateCharges(
+        db,
+        req.session.user.user_id,
+        req.session.user.bee_id,
+        req.body,
+        (req.session as typeof req.session & { llm?: boolean }).llm === true,
+      ),
   );
-
   server.post(
     '/',
     {
@@ -69,9 +78,15 @@ export default function routes(
       },
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
     },
-    ChargeController.post,
+    (req) =>
+      createCharge(
+        db,
+        req.session.user.user_id,
+        req.session.user.bee_id,
+        req.body,
+        (req.session as typeof req.session & { llm?: boolean }).llm === true,
+      ),
   );
-
   server.patch(
     '/batchDelete',
     {
@@ -82,9 +97,16 @@ export default function routes(
         response: { 200: z.array(chargeResponseSchema) },
       },
     },
-    ChargeController.batchDelete,
+    (req) =>
+      deleteCharges(
+        db,
+        req.session.user.user_id,
+        req.session.user.bee_id,
+        req.body.ids,
+        Boolean(req.query.hard),
+        Boolean(req.query.restore),
+      ),
   );
-
   server.post(
     '/batchGet',
     {
@@ -94,8 +116,7 @@ export default function routes(
         response: { 200: z.array(chargeResponseSchema) },
       },
     },
-    ChargeController.batchGet,
+    (req) => getChargesByIds(db, req.session.user.user_id, req.body.ids),
   );
-
   done();
 }

@@ -2,25 +2,29 @@ import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 
 import { ROLES } from '../../../config/constants.config.js';
-import RearingStepController from '../../controllers/rearing_step.controller.js';
+import { KyselyServer } from '../../../servers/kysely.server.js';
 import { Guard } from '../../hooks/guard.hook.js';
 import {
-  permissiveJsonResponseSchema,
+  createRearingStep,
+  deleteRearingStep,
+  updateRearingStepPositions,
+} from '../../modules/rearing.module.js';
+import {
   compatibilityQuerySchema,
+  permissiveJsonResponseSchema,
 } from '../../schemas/common.schema.js';
 import {
-  postBodySchema,
   deleteParamsSchema,
+  postBodySchema,
   updatePositionBodySchema,
 } from '../../schemas/rearing_step.schema.js';
-
 export default function routes(
   instance: FastifyInstance,
-  _options: any,
-  done: any,
+  _options: unknown,
+  done: () => void,
 ) {
   const server = instance.withTypeProvider<ZodTypeProvider>();
-
+  const db = KyselyServer.getInstance().db;
   server.post(
     '/',
     {
@@ -30,9 +34,8 @@ export default function routes(
       },
       preHandler: Guard.authorize([ROLES.admin]),
     },
-    RearingStepController.post,
+    (req) => createRearingStep(db, req.session.user.user_id, req.body),
   );
-
   server.delete(
     '/:id',
     {
@@ -43,9 +46,9 @@ export default function routes(
         params: deleteParamsSchema,
       },
     },
-    RearingStepController.delete,
+    (req) =>
+      deleteRearingStep(db, req.session.user.user_id, Number(req.params.id)),
   );
-
   server.patch(
     '/updatePosition',
     {
@@ -55,8 +58,7 @@ export default function routes(
         body: updatePositionBodySchema,
       },
     },
-    RearingStepController.updatePosition,
+    (req) => updateRearingStepPositions(db, req.session.user.user_id, req.body),
   );
-
   done();
 }

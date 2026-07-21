@@ -92,8 +92,17 @@ export const chargeCreateSchema = z.looseObject({
   note: z.string().nullable().optional(),
 });
 
-export const chargeUpdateDataSchema = z.looseObject({
+export const chargeUpdateDataSchema = z.object({
+  kind: z.string().optional(),
+  date: z.string().nullable().optional(),
+  bestbefore: z.string().nullable().optional(),
+  name: z.string().nullable().optional(),
+  charge: z.string().nullable().optional(),
+  price: z.number().nullable().optional(),
+  amount: z.number().nullable().optional(),
+  url: z.string().nullable().optional(),
   type_id: numberSchema.nullable().optional(),
+  note: z.string().nullable().optional(),
 });
 
 export const chargeBatchUpdateSchema = z.object({

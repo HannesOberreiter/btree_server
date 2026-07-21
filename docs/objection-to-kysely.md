@@ -116,8 +116,12 @@
 
 ## Phase 4: other business slices
 
-- [ ] Charge and Charge Stock
-- [ ] Scale and Scale Data
+- [x] Charge and Charge Stock
+  - [x] HTTP and WizBee operations use shared typed Kysely operations
+  - [x] Typed sorting, decimal normalization, nested responses, and tenant isolation covered
+  - [x] Shallow controller removed
+  - [ ] Remove models after Company import/export migrates
+- [x] Scale and Scale Data
   - [x] Scale routes use typed Kysely operations
   - [x] Scale ownership, nested Hive response, and tenant isolation covered
   - [x] Shallow Scale controller removed
@@ -126,11 +130,18 @@
   - [x] Scale Data tenant isolation and nested response covered
   - [x] Shallow Scale Data controller removed
   - [ ] Remove Scale models after Company, Calendar, and cron callers migrate
-- [ ] Queen
-- [ ] Rearing Detail
-- [ ] Rearing Type
-- [ ] Rearing Step
-- [ ] Rearing
+- [x] Queen
+  - [x] CRUD, status, pedigree, statistics, nested relations, and ownership use typed Kysely operations
+  - [x] Shallow controller removed
+  - [ ] Remove models after Company import/export and autofill migrate
+- [x] Rearing Detail
+- [x] Rearing Type
+- [x] Rearing Step
+- [x] Rearing
+  - [x] Shared typed Kysely operations preserve nested workflow steps and destructive cascades
+  - [x] Cross-company writes are rejected
+  - [x] Shallow controllers removed
+  - [ ] Remove models after Company import/export and autofill migrate
 
 ## Phase 5: identity and workspace slices
 

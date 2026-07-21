@@ -1,5 +1,10 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
+import {
+  getQueensByIds,
+  updateQueenStatus,
+} from '../../src/api/modules/queen.module.js';
+import { KyselyServer } from '../../src/servers/kysely.server.js';
 import type { TestAgent } from '../utils.js';
 import {
   createAgent,
@@ -72,6 +77,14 @@ describe('queen routes', () => {
       expect(res.statusCode).toEqual(200);
       expect(res.body.results).toBeInstanceOf(Array);
       expect(res.body.total).toBeTypeOf('number');
+    });
+
+    it('operations enforce company isolation', async () => {
+      const db = KyselyServer.getInstance().db;
+      expect(await getQueensByIds(db, 999_999, [insertId])).toEqual([]);
+      expect(await updateQueenStatus(db, 999_999, 1, [insertId], false)).toBe(
+        0,
+      );
     });
 
     it('post 400 - no data', async () => {

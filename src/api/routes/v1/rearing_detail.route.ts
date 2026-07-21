@@ -2,26 +2,32 @@ import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 
 import { ROLES } from '../../../config/constants.config.js';
-import RearingDetailController from '../../controllers/rearing_detail.controller.js';
+import { KyselyServer } from '../../../servers/kysely.server.js';
 import { Guard } from '../../hooks/guard.hook.js';
 import {
-  permissiveJsonResponseSchema,
+  createRearingDetail,
+  deleteRearingDetails,
+  getRearingDetailsByIds,
+  listRearingDetails,
+  updateRearingDetails,
+} from '../../modules/rearing.module.js';
+import {
   compatibilityQuerySchema,
+  permissiveJsonResponseSchema,
 } from '../../schemas/common.schema.js';
 import {
-  patchBodySchema,
-  postBodySchema,
   batchDeleteBodySchema,
   batchGetBodySchema,
+  patchBodySchema,
+  postBodySchema,
 } from '../../schemas/rearing_detail.schema.js';
-
 export default function routes(
   instance: FastifyInstance,
-  _options: any,
-  done: any,
+  _options: unknown,
+  done: () => void,
 ) {
   const server = instance.withTypeProvider<ZodTypeProvider>();
-
+  const db = KyselyServer.getInstance().db;
   server.get(
     '/',
     {
@@ -31,9 +37,8 @@ export default function routes(
       },
       preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
     },
-    RearingDetailController.get,
+    (req) => listRearingDetails(db, req.session.user.user_id, req.query),
   );
-
   server.patch(
     '/',
     {
@@ -43,9 +48,8 @@ export default function routes(
         body: patchBodySchema,
       },
     },
-    RearingDetailController.patch,
+    (req) => updateRearingDetails(db, req.session.user.user_id, req.body),
   );
-
   server.post(
     '/',
     {
@@ -55,9 +59,8 @@ export default function routes(
         body: postBodySchema,
       },
     },
-    RearingDetailController.post,
+    (req) => createRearingDetail(db, req.session.user.user_id, req.body),
   );
-
   server.patch(
     '/batchDelete',
     {
@@ -67,9 +70,8 @@ export default function routes(
         body: batchDeleteBodySchema,
       },
     },
-    RearingDetailController.batchDelete,
+    (req) => deleteRearingDetails(db, req.session.user.user_id, req.body.ids),
   );
-
   server.post(
     '/batchGet',
     {
@@ -79,7 +81,7 @@ export default function routes(
         body: batchGetBodySchema,
       },
     },
-    RearingDetailController.batchGet,
+    (req) => getRearingDetailsByIds(db, req.session.user.user_id, req.body.ids),
   );
   done();
 }

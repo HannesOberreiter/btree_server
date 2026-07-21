@@ -2,19 +2,29 @@ import { z } from 'zod';
 
 import { numberSchema } from '../utils/zod.util.js';
 
+const rearingDataSchema = z.object({
+  name: z.string().max(24).nullable().optional(),
+  symbol: z.string().max(24).nullable().optional(),
+  larvae: z.number().int().nullable().optional(),
+  hatch: z.number().int().nullable().optional(),
+  mated: z.number().int().nullable().optional(),
+  note: z.string().max(2000).nullable().optional(),
+  date: z.string().optional(),
+  type_id: numberSchema.nullable().optional(),
+  detail_id: numberSchema.nullable().optional(),
+});
+
 export const patchBodySchema = z.object({
   ids: z.array(numberSchema),
-  data: z.object({}).loose(),
+  data: rearingDataSchema,
 });
 export type PatchBody = z.infer<typeof patchBodySchema>;
 
-export const postBodySchema = z
-  .object({
-    detail_id: z.number(),
-    type_id: z.number(),
-    date: z.string(),
-  })
-  .loose();
+export const postBodySchema = rearingDataSchema.extend({
+  detail_id: numberSchema,
+  type_id: numberSchema,
+  date: z.string(),
+});
 export type PostBody = z.infer<typeof postBodySchema>;
 
 export const updateDateBodySchema = z.object({

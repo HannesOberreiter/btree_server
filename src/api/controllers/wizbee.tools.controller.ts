@@ -11,6 +11,13 @@ import {
   updateApiaries,
 } from '../modules/apiary.module.js';
 import {
+  createCharge,
+  deleteCharges,
+  listCharges,
+  listChargeStock,
+  updateCharges,
+} from '../modules/charge.module.js';
+import {
   createCheckups,
   listCheckups,
   updateCheckups,
@@ -52,7 +59,6 @@ import {
   listTreatments,
   updateTreatments,
 } from '../modules/treatment.module.js';
-import ChargeController from './charge.controller.js';
 import ServiceController from './service.controller.js';
 
 /**
@@ -2212,27 +2218,18 @@ export function createWizBeeTools(
           .describe('Maximum number of results'),
       }),
       execute: async (input) => {
-        const req = createMockRequest(context, {
-          query: {
-            limit: input.limit,
-            offset: 0,
-            q: input.q,
-          },
+        const db = KyselyServer.getInstance().db;
+        const result = await listCharges(db, context.userId, {
+          limit: input.limit,
+          offset: 0,
+          q: input.q,
         });
-
-        const result = await ChargeController.get(req, createMockReply());
 
         // Also get stock summary
-        const stockReq = createMockRequest(context, {
-          query: {
-            limit: 1000,
-            offset: 0,
-          },
+        const stockResult = await listChargeStock(db, context.userId, {
+          limit: 1000,
+          offset: 0,
         });
-        const stockResult = await ChargeController.getStock(
-          stockReq,
-          createMockReply(),
-        );
 
         return {
           charges: {
@@ -2284,10 +2281,13 @@ export function createWizBeeTools(
       }),
       execute: async (input) => {
         const { typeId, ...rest } = input;
-        const req = createMockRequest(context, {
-          body: { ...rest, ...(typeId !== undefined && { type_id: typeId }) },
-        });
-        const result = await ChargeController.post(req, createMockReply());
+        const result = await createCharge(
+          KyselyServer.getInstance().db,
+          context.userId,
+          context.beeId,
+          { ...rest, ...(typeId !== undefined && { type_id: typeId }) },
+          true,
+        );
         const createdCount = Array.isArray(result) ? result.length : 1;
         return {
           success: true,
@@ -2325,18 +2325,18 @@ export function createWizBeeTools(
       }),
       execute: async (input) => {
         const { ids, typeId, ...fields } = input;
-        const req = createMockRequest(context, {
-          body: {
+        const updatedCount = await updateCharges(
+          KyselyServer.getInstance().db,
+          context.userId,
+          context.beeId,
+          {
             ids,
             data: {
               ...fields,
               ...(typeId !== undefined && { type_id: typeId }),
             },
           },
-        });
-        const updatedCount = await ChargeController.patch(
-          req,
-          createMockReply(),
+          true,
         );
         return {
           success: true,
@@ -2356,11 +2356,14 @@ export function createWizBeeTools(
           .describe('IDs of the charge records to soft-delete'),
       }),
       execute: async (input) => {
-        const req = createMockRequest(context, {
-          body: { ids: input.ids },
-          query: {},
-        });
-        await ChargeController.batchDelete(req, createMockReply());
+        await deleteCharges(
+          KyselyServer.getInstance().db,
+          context.userId,
+          context.beeId,
+          input.ids,
+          false,
+          false,
+        );
         return {
           success: true,
           message: `Soft-deleted ${input.ids.length} charge record${input.ids.length !== 1 ? 's' : ''}`,

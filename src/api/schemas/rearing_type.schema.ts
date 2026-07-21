@@ -2,17 +2,20 @@ import { z } from 'zod';
 
 import { numberSchema } from '../utils/zod.util.js';
 
+const typeDataSchema = z.object({
+  name: z.string().min(1).max(45).optional(),
+  note: z.string().max(2000).nullable().optional(),
+});
+
 export const patchBodySchema = z.object({
   ids: z.array(numberSchema),
-  data: z.object({}).loose(),
+  data: typeDataSchema,
 });
 export type PatchBody = z.infer<typeof patchBodySchema>;
 
-export const postBodySchema = z
-  .object({
-    name: z.string(),
-  })
-  .loose();
+export const postBodySchema = typeDataSchema.extend({
+  name: z.string().min(1).max(45),
+});
 export type PostBody = z.infer<typeof postBodySchema>;
 
 export const batchDeleteBodySchema = z.object({

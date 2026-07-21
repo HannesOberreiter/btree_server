@@ -2,27 +2,34 @@ import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 
 import { ROLES } from '../../../config/constants.config.js';
-import RearingController from '../../controllers/rearing.controller.js';
+import { KyselyServer } from '../../../servers/kysely.server.js';
 import { Guard } from '../../hooks/guard.hook.js';
 import {
-  permissiveJsonResponseSchema,
+  createRearing,
+  deleteRearings,
+  getRearingsByIds,
+  listRearings,
+  updateRearingDates,
+  updateRearings,
+} from '../../modules/rearing.module.js';
+import {
   compatibilityQuerySchema,
+  permissiveJsonResponseSchema,
 } from '../../schemas/common.schema.js';
 import {
+  batchDeleteBodySchema,
+  batchGetBodySchema,
   patchBodySchema,
   postBodySchema,
   updateDateBodySchema,
-  batchDeleteBodySchema,
-  batchGetBodySchema,
 } from '../../schemas/rearing.schema.js';
-
 export default function routes(
   instance: FastifyInstance,
-  _options: any,
-  done: any,
+  _options: unknown,
+  done: () => void,
 ) {
   const server = instance.withTypeProvider<ZodTypeProvider>();
-
+  const db = KyselyServer.getInstance().db;
   server.get(
     '/',
     {
@@ -32,9 +39,8 @@ export default function routes(
       },
       preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
     },
-    RearingController.get,
+    (req) => listRearings(db, req.session.user.user_id, req.query),
   );
-
   server.patch(
     '/',
     {
@@ -44,9 +50,14 @@ export default function routes(
         body: patchBodySchema,
       },
     },
-    RearingController.patch,
+    (req) =>
+      updateRearings(
+        db,
+        req.session.user.user_id,
+        req.session.user.bee_id,
+        req.body,
+      ),
   );
-
   server.post(
     '/',
     {
@@ -56,9 +67,14 @@ export default function routes(
         body: postBodySchema,
       },
     },
-    RearingController.post,
+    (req) =>
+      createRearing(
+        db,
+        req.session.user.user_id,
+        req.session.user.bee_id,
+        req.body,
+      ),
   );
-
   server.patch(
     '/date',
     {
@@ -68,9 +84,15 @@ export default function routes(
         body: updateDateBodySchema,
       },
     },
-    RearingController.updateDate,
+    (req) =>
+      updateRearingDates(
+        db,
+        req.session.user.user_id,
+        req.session.user.bee_id,
+        req.body.ids,
+        req.body.start,
+      ),
   );
-
   server.patch(
     '/batchDelete',
     {
@@ -80,9 +102,8 @@ export default function routes(
         body: batchDeleteBodySchema,
       },
     },
-    RearingController.batchDelete,
+    (req) => deleteRearings(db, req.session.user.user_id, req.body.ids),
   );
-
   server.post(
     '/batchGet',
     {
@@ -92,8 +113,7 @@ export default function routes(
         body: batchGetBodySchema,
       },
     },
-    RearingController.batchGet,
+    (req) => getRearingsByIds(db, req.session.user.user_id, req.body.ids),
   );
-
   done();
 }
