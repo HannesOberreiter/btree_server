@@ -2194,15 +2194,35 @@ export interface paths {
       requestBody: {
         content: {
           'application/json': {
+            brood?: number | null;
+            broodframes?: number | null;
+            calm_comb?: number | null;
+            capped_brood?: boolean | null;
+            comb?: number | null;
             date: string;
-            enddate?: string;
+            deleted?: boolean;
+            done?: boolean;
+            eggs?: boolean | null;
+            emptyframes?: number | null;
+            enddate?: string | null;
+            foundation?: number | null;
             hive_ids: number[];
+            honeyframes?: number | null;
             interval: number;
+            note?: string | null;
+            pollen?: number | null;
+            queen?: boolean | null;
+            queencells?: boolean | null;
             repeat: number;
+            strong?: number | null;
+            swarm?: number | null;
+            temper?: number | null;
             temperature?: number | null;
+            time?: string | null;
             type_id?: number | null;
-          } & {
-            [key: string]: unknown;
+            url?: string | null;
+            varroa?: number | null;
+            weight?: number | null;
           };
         };
       };
@@ -2232,12 +2252,32 @@ export interface paths {
         content: {
           'application/json': {
             data: {
+              brood?: number | null;
+              broodframes?: number | null;
+              calm_comb?: number | null;
+              capped_brood?: boolean | null;
+              comb?: number | null;
               date?: string;
+              deleted?: boolean;
+              done?: boolean;
+              eggs?: boolean | null;
+              emptyframes?: number | null;
               enddate?: string | null;
+              foundation?: number | null;
+              honeyframes?: number | null;
+              note?: string | null;
+              pollen?: number | null;
+              queen?: boolean | null;
+              queencells?: boolean | null;
+              strong?: number | null;
+              swarm?: number | null;
+              temper?: number | null;
               temperature?: number | null;
+              time?: string | null;
               type_id?: number | null;
-            } & {
-              [key: string]: unknown;
+              url?: string | null;
+              varroa?: number | null;
+              weight?: number | null;
             };
             ids: number[];
           };
@@ -3609,7 +3649,123 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'application/json': unknown;
+            'application/json': {
+              results: ({
+                ai_created_at?: string | null;
+                ai_deleted_at?: string | null;
+                ai_updated_at?: string | null;
+                amount?: number | null;
+                bee_id?: number | null;
+                charge?: string | null;
+                created_at?: string | null;
+                creator?: {
+                  [key: string]: unknown;
+                } | null;
+                date?: string | null;
+                deleted?: boolean | null;
+                deleted_at?: string | null;
+                disease?:
+                  | ({
+                      created_at?: string | null;
+                      favorite?: boolean | null;
+                      id: number;
+                      modus?: boolean | null;
+                      name?: string | null;
+                      updated_at?: string | null;
+                      user_id?: number | null;
+                    } & {
+                      [key: string]: unknown;
+                    })
+                  | null;
+                disease_id?: number | null;
+                done?: boolean | null;
+                edit_id?: number | null;
+                editor?: {
+                  [key: string]: unknown;
+                } | null;
+                enddate?: string | null;
+                feed_apiary?:
+                  | ({
+                      apiary_id: number;
+                      apiary_name: string;
+                      user_id?: number | null;
+                    } & {
+                      [key: string]: unknown;
+                    })
+                  | null;
+                frames?: number | null;
+                harvest_apiary?:
+                  | ({
+                      apiary_id: number;
+                      apiary_name: string;
+                      user_id?: number | null;
+                    } & {
+                      [key: string]: unknown;
+                    })
+                  | null;
+                hive?:
+                  | ({
+                      deleted?: boolean | null;
+                      grouphive?: number | null;
+                      id: number;
+                      modus?: boolean | null;
+                      name: string;
+                      position?: number | null;
+                    } & {
+                      [key: string]: unknown;
+                    })
+                  | null;
+                hive_id?: number | null;
+                id: number;
+                note?: string | null;
+                temperature?: number | null;
+                treatment_apiary?:
+                  | ({
+                      apiary_id: number;
+                      apiary_name: string;
+                      user_id?: number | null;
+                    } & {
+                      [key: string]: unknown;
+                    })
+                  | null;
+                type?:
+                  | ({
+                      created_at?: string | null;
+                      favorite?: boolean | null;
+                      id: number;
+                      modus?: boolean | null;
+                      name?: string | null;
+                      updated_at?: string | null;
+                      user_id?: number | null;
+                    } & {
+                      [key: string]: unknown;
+                    })
+                  | null;
+                type_id?: number | null;
+                updated_at?: string | null;
+                url?: string | null;
+                user_id?: number | null;
+                vet?:
+                  | ({
+                      created_at?: string | null;
+                      favorite?: boolean | null;
+                      id: number;
+                      modus?: boolean | null;
+                      name?: string | null;
+                      updated_at?: string | null;
+                      user_id?: number | null;
+                    } & {
+                      [key: string]: unknown;
+                    })
+                  | null;
+                vet_id?: number | null;
+                wait?: number | null;
+                water?: number | null;
+              } & {
+                [key: string]: unknown;
+              })[];
+              total: number;
+            };
           };
         };
       };
@@ -3655,7 +3811,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'application/json': unknown;
+            'application/json': number[];
           };
         };
       };
@@ -3703,7 +3859,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'application/json': unknown;
+            'application/json': number;
           };
         };
       };
@@ -3778,7 +3934,120 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'application/json': unknown;
+            'application/json': ({
+              ai_created_at?: string | null;
+              ai_deleted_at?: string | null;
+              ai_updated_at?: string | null;
+              amount?: number | null;
+              bee_id?: number | null;
+              charge?: string | null;
+              created_at?: string | null;
+              creator?: {
+                [key: string]: unknown;
+              } | null;
+              date?: string | null;
+              deleted?: boolean | null;
+              deleted_at?: string | null;
+              disease?:
+                | ({
+                    created_at?: string | null;
+                    favorite?: boolean | null;
+                    id: number;
+                    modus?: boolean | null;
+                    name?: string | null;
+                    updated_at?: string | null;
+                    user_id?: number | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
+              disease_id?: number | null;
+              done?: boolean | null;
+              edit_id?: number | null;
+              editor?: {
+                [key: string]: unknown;
+              } | null;
+              enddate?: string | null;
+              feed_apiary?:
+                | ({
+                    apiary_id: number;
+                    apiary_name: string;
+                    user_id?: number | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
+              frames?: number | null;
+              harvest_apiary?:
+                | ({
+                    apiary_id: number;
+                    apiary_name: string;
+                    user_id?: number | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
+              hive?:
+                | ({
+                    deleted?: boolean | null;
+                    grouphive?: number | null;
+                    id: number;
+                    modus?: boolean | null;
+                    name: string;
+                    position?: number | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
+              hive_id?: number | null;
+              id: number;
+              note?: string | null;
+              temperature?: number | null;
+              treatment_apiary?:
+                | ({
+                    apiary_id: number;
+                    apiary_name: string;
+                    user_id?: number | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
+              type?:
+                | ({
+                    created_at?: string | null;
+                    favorite?: boolean | null;
+                    id: number;
+                    modus?: boolean | null;
+                    name?: string | null;
+                    updated_at?: string | null;
+                    user_id?: number | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
+              type_id?: number | null;
+              updated_at?: string | null;
+              url?: string | null;
+              user_id?: number | null;
+              vet?:
+                | ({
+                    created_at?: string | null;
+                    favorite?: boolean | null;
+                    id: number;
+                    modus?: boolean | null;
+                    name?: string | null;
+                    updated_at?: string | null;
+                    user_id?: number | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
+              vet_id?: number | null;
+              wait?: number | null;
+              water?: number | null;
+            } & {
+              [key: string]: unknown;
+            })[];
           };
         };
       };
@@ -3815,7 +4084,120 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'application/json': unknown;
+            'application/json': ({
+              ai_created_at?: string | null;
+              ai_deleted_at?: string | null;
+              ai_updated_at?: string | null;
+              amount?: number | null;
+              bee_id?: number | null;
+              charge?: string | null;
+              created_at?: string | null;
+              creator?: {
+                [key: string]: unknown;
+              } | null;
+              date?: string | null;
+              deleted?: boolean | null;
+              deleted_at?: string | null;
+              disease?:
+                | ({
+                    created_at?: string | null;
+                    favorite?: boolean | null;
+                    id: number;
+                    modus?: boolean | null;
+                    name?: string | null;
+                    updated_at?: string | null;
+                    user_id?: number | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
+              disease_id?: number | null;
+              done?: boolean | null;
+              edit_id?: number | null;
+              editor?: {
+                [key: string]: unknown;
+              } | null;
+              enddate?: string | null;
+              feed_apiary?:
+                | ({
+                    apiary_id: number;
+                    apiary_name: string;
+                    user_id?: number | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
+              frames?: number | null;
+              harvest_apiary?:
+                | ({
+                    apiary_id: number;
+                    apiary_name: string;
+                    user_id?: number | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
+              hive?:
+                | ({
+                    deleted?: boolean | null;
+                    grouphive?: number | null;
+                    id: number;
+                    modus?: boolean | null;
+                    name: string;
+                    position?: number | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
+              hive_id?: number | null;
+              id: number;
+              note?: string | null;
+              temperature?: number | null;
+              treatment_apiary?:
+                | ({
+                    apiary_id: number;
+                    apiary_name: string;
+                    user_id?: number | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
+              type?:
+                | ({
+                    created_at?: string | null;
+                    favorite?: boolean | null;
+                    id: number;
+                    modus?: boolean | null;
+                    name?: string | null;
+                    updated_at?: string | null;
+                    user_id?: number | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
+              type_id?: number | null;
+              updated_at?: string | null;
+              url?: string | null;
+              user_id?: number | null;
+              vet?:
+                | ({
+                    created_at?: string | null;
+                    favorite?: boolean | null;
+                    id: number;
+                    modus?: boolean | null;
+                    name?: string | null;
+                    updated_at?: string | null;
+                    user_id?: number | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
+              vet_id?: number | null;
+              wait?: number | null;
+              water?: number | null;
+            } & {
+              [key: string]: unknown;
+            })[];
           };
         };
       };
@@ -3862,7 +4244,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'application/json': unknown;
+            'application/json': number;
           };
         };
       };
@@ -3904,7 +4286,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'application/json': unknown;
+            'application/json': number;
           };
         };
       };
@@ -4103,7 +4485,123 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'application/json': unknown;
+            'application/json': {
+              results: ({
+                ai_created_at?: string | null;
+                ai_deleted_at?: string | null;
+                ai_updated_at?: string | null;
+                amount?: number | null;
+                bee_id?: number | null;
+                charge?: string | null;
+                created_at?: string | null;
+                creator?: {
+                  [key: string]: unknown;
+                } | null;
+                date?: string | null;
+                deleted?: boolean | null;
+                deleted_at?: string | null;
+                disease?:
+                  | ({
+                      created_at?: string | null;
+                      favorite?: boolean | null;
+                      id: number;
+                      modus?: boolean | null;
+                      name?: string | null;
+                      updated_at?: string | null;
+                      user_id?: number | null;
+                    } & {
+                      [key: string]: unknown;
+                    })
+                  | null;
+                disease_id?: number | null;
+                done?: boolean | null;
+                edit_id?: number | null;
+                editor?: {
+                  [key: string]: unknown;
+                } | null;
+                enddate?: string | null;
+                feed_apiary?:
+                  | ({
+                      apiary_id: number;
+                      apiary_name: string;
+                      user_id?: number | null;
+                    } & {
+                      [key: string]: unknown;
+                    })
+                  | null;
+                frames?: number | null;
+                harvest_apiary?:
+                  | ({
+                      apiary_id: number;
+                      apiary_name: string;
+                      user_id?: number | null;
+                    } & {
+                      [key: string]: unknown;
+                    })
+                  | null;
+                hive?:
+                  | ({
+                      deleted?: boolean | null;
+                      grouphive?: number | null;
+                      id: number;
+                      modus?: boolean | null;
+                      name: string;
+                      position?: number | null;
+                    } & {
+                      [key: string]: unknown;
+                    })
+                  | null;
+                hive_id?: number | null;
+                id: number;
+                note?: string | null;
+                temperature?: number | null;
+                treatment_apiary?:
+                  | ({
+                      apiary_id: number;
+                      apiary_name: string;
+                      user_id?: number | null;
+                    } & {
+                      [key: string]: unknown;
+                    })
+                  | null;
+                type?:
+                  | ({
+                      created_at?: string | null;
+                      favorite?: boolean | null;
+                      id: number;
+                      modus?: boolean | null;
+                      name?: string | null;
+                      updated_at?: string | null;
+                      user_id?: number | null;
+                    } & {
+                      [key: string]: unknown;
+                    })
+                  | null;
+                type_id?: number | null;
+                updated_at?: string | null;
+                url?: string | null;
+                user_id?: number | null;
+                vet?:
+                  | ({
+                      created_at?: string | null;
+                      favorite?: boolean | null;
+                      id: number;
+                      modus?: boolean | null;
+                      name?: string | null;
+                      updated_at?: string | null;
+                      user_id?: number | null;
+                    } & {
+                      [key: string]: unknown;
+                    })
+                  | null;
+                vet_id?: number | null;
+                wait?: number | null;
+                water?: number | null;
+              } & {
+                [key: string]: unknown;
+              })[];
+              total: number;
+            };
           };
         };
       };
@@ -4149,7 +4647,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'application/json': unknown;
+            'application/json': number[];
           };
         };
       };
@@ -4197,7 +4695,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'application/json': unknown;
+            'application/json': number;
           };
         };
       };
@@ -4272,7 +4770,120 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'application/json': unknown;
+            'application/json': ({
+              ai_created_at?: string | null;
+              ai_deleted_at?: string | null;
+              ai_updated_at?: string | null;
+              amount?: number | null;
+              bee_id?: number | null;
+              charge?: string | null;
+              created_at?: string | null;
+              creator?: {
+                [key: string]: unknown;
+              } | null;
+              date?: string | null;
+              deleted?: boolean | null;
+              deleted_at?: string | null;
+              disease?:
+                | ({
+                    created_at?: string | null;
+                    favorite?: boolean | null;
+                    id: number;
+                    modus?: boolean | null;
+                    name?: string | null;
+                    updated_at?: string | null;
+                    user_id?: number | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
+              disease_id?: number | null;
+              done?: boolean | null;
+              edit_id?: number | null;
+              editor?: {
+                [key: string]: unknown;
+              } | null;
+              enddate?: string | null;
+              feed_apiary?:
+                | ({
+                    apiary_id: number;
+                    apiary_name: string;
+                    user_id?: number | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
+              frames?: number | null;
+              harvest_apiary?:
+                | ({
+                    apiary_id: number;
+                    apiary_name: string;
+                    user_id?: number | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
+              hive?:
+                | ({
+                    deleted?: boolean | null;
+                    grouphive?: number | null;
+                    id: number;
+                    modus?: boolean | null;
+                    name: string;
+                    position?: number | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
+              hive_id?: number | null;
+              id: number;
+              note?: string | null;
+              temperature?: number | null;
+              treatment_apiary?:
+                | ({
+                    apiary_id: number;
+                    apiary_name: string;
+                    user_id?: number | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
+              type?:
+                | ({
+                    created_at?: string | null;
+                    favorite?: boolean | null;
+                    id: number;
+                    modus?: boolean | null;
+                    name?: string | null;
+                    updated_at?: string | null;
+                    user_id?: number | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
+              type_id?: number | null;
+              updated_at?: string | null;
+              url?: string | null;
+              user_id?: number | null;
+              vet?:
+                | ({
+                    created_at?: string | null;
+                    favorite?: boolean | null;
+                    id: number;
+                    modus?: boolean | null;
+                    name?: string | null;
+                    updated_at?: string | null;
+                    user_id?: number | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
+              vet_id?: number | null;
+              wait?: number | null;
+              water?: number | null;
+            } & {
+              [key: string]: unknown;
+            })[];
           };
         };
       };
@@ -4309,7 +4920,120 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'application/json': unknown;
+            'application/json': ({
+              ai_created_at?: string | null;
+              ai_deleted_at?: string | null;
+              ai_updated_at?: string | null;
+              amount?: number | null;
+              bee_id?: number | null;
+              charge?: string | null;
+              created_at?: string | null;
+              creator?: {
+                [key: string]: unknown;
+              } | null;
+              date?: string | null;
+              deleted?: boolean | null;
+              deleted_at?: string | null;
+              disease?:
+                | ({
+                    created_at?: string | null;
+                    favorite?: boolean | null;
+                    id: number;
+                    modus?: boolean | null;
+                    name?: string | null;
+                    updated_at?: string | null;
+                    user_id?: number | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
+              disease_id?: number | null;
+              done?: boolean | null;
+              edit_id?: number | null;
+              editor?: {
+                [key: string]: unknown;
+              } | null;
+              enddate?: string | null;
+              feed_apiary?:
+                | ({
+                    apiary_id: number;
+                    apiary_name: string;
+                    user_id?: number | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
+              frames?: number | null;
+              harvest_apiary?:
+                | ({
+                    apiary_id: number;
+                    apiary_name: string;
+                    user_id?: number | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
+              hive?:
+                | ({
+                    deleted?: boolean | null;
+                    grouphive?: number | null;
+                    id: number;
+                    modus?: boolean | null;
+                    name: string;
+                    position?: number | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
+              hive_id?: number | null;
+              id: number;
+              note?: string | null;
+              temperature?: number | null;
+              treatment_apiary?:
+                | ({
+                    apiary_id: number;
+                    apiary_name: string;
+                    user_id?: number | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
+              type?:
+                | ({
+                    created_at?: string | null;
+                    favorite?: boolean | null;
+                    id: number;
+                    modus?: boolean | null;
+                    name?: string | null;
+                    updated_at?: string | null;
+                    user_id?: number | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
+              type_id?: number | null;
+              updated_at?: string | null;
+              url?: string | null;
+              user_id?: number | null;
+              vet?:
+                | ({
+                    created_at?: string | null;
+                    favorite?: boolean | null;
+                    id: number;
+                    modus?: boolean | null;
+                    name?: string | null;
+                    updated_at?: string | null;
+                    user_id?: number | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
+              vet_id?: number | null;
+              wait?: number | null;
+              water?: number | null;
+            } & {
+              [key: string]: unknown;
+            })[];
           };
         };
       };
@@ -4356,7 +5080,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'application/json': unknown;
+            'application/json': number;
           };
         };
       };
@@ -4398,7 +5122,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'application/json': unknown;
+            'application/json': number;
           };
         };
       };
@@ -5568,7 +6292,56 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'application/json': unknown;
+            'application/json': {
+              results: ({
+                apiary?:
+                  | ({
+                      id: number;
+                      name: string;
+                    } & {
+                      [key: string]: unknown;
+                    })
+                  | null;
+                apiary_id?: number | null;
+                bee_id?: number | null;
+                created_at?: string | null;
+                creator?:
+                  | ({
+                      email?: string | null;
+                      username?: string | null;
+                    } & {
+                      [key: string]: unknown;
+                    })
+                  | null;
+                date?: string | null;
+                edit_id?: number | null;
+                editor?:
+                  | ({
+                      email?: string | null;
+                      username?: string | null;
+                    } & {
+                      [key: string]: unknown;
+                    })
+                  | null;
+                hive?:
+                  | ({
+                      id: number;
+                      name: string;
+                    } & {
+                      [key: string]: unknown;
+                    })
+                  | null;
+                hive_id?: number | null;
+                id: number;
+                movedate_previous_apiary?: {
+                  [key: string]: unknown;
+                } | null;
+                updated_at?: string | null;
+              } & {
+                [key: string]: unknown;
+              })[];
+              total: number;
+            };
           };
         };
       };
@@ -5597,7 +6370,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'application/json': unknown;
+            'application/json': number[];
           };
         };
       };
@@ -5616,7 +6389,9 @@ export interface paths {
         content: {
           'application/json': {
             data: {
-              [key: string]: unknown;
+              apiary_id?: number;
+              date?: string;
+              hive_id?: number;
             };
             ids: number[];
           };
@@ -5629,7 +6404,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'application/json': unknown;
+            'application/json': number;
           };
         };
       };
@@ -5670,7 +6445,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'application/json': unknown;
+            'application/json': number;
           };
         };
       };
@@ -5707,7 +6482,53 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'application/json': unknown;
+            'application/json': ({
+              apiary?:
+                | ({
+                    id: number;
+                    name: string;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
+              apiary_id?: number | null;
+              bee_id?: number | null;
+              created_at?: string | null;
+              creator?:
+                | ({
+                    email?: string | null;
+                    username?: string | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
+              date?: string | null;
+              edit_id?: number | null;
+              editor?:
+                | ({
+                    email?: string | null;
+                    username?: string | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
+              hive?:
+                | ({
+                    id: number;
+                    name: string;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
+              hive_id?: number | null;
+              id: number;
+              movedate_previous_apiary?: {
+                [key: string]: unknown;
+              } | null;
+              updated_at?: string | null;
+            } & {
+              [key: string]: unknown;
+            })[];
           };
         };
       };
@@ -5753,7 +6574,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'application/json': unknown;
+            'application/json': number;
           };
         };
       };
@@ -10377,7 +11198,123 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'application/json': unknown;
+            'application/json': {
+              results: ({
+                ai_created_at?: string | null;
+                ai_deleted_at?: string | null;
+                ai_updated_at?: string | null;
+                amount?: number | null;
+                bee_id?: number | null;
+                charge?: string | null;
+                created_at?: string | null;
+                creator?: {
+                  [key: string]: unknown;
+                } | null;
+                date?: string | null;
+                deleted?: boolean | null;
+                deleted_at?: string | null;
+                disease?:
+                  | ({
+                      created_at?: string | null;
+                      favorite?: boolean | null;
+                      id: number;
+                      modus?: boolean | null;
+                      name?: string | null;
+                      updated_at?: string | null;
+                      user_id?: number | null;
+                    } & {
+                      [key: string]: unknown;
+                    })
+                  | null;
+                disease_id?: number | null;
+                done?: boolean | null;
+                edit_id?: number | null;
+                editor?: {
+                  [key: string]: unknown;
+                } | null;
+                enddate?: string | null;
+                feed_apiary?:
+                  | ({
+                      apiary_id: number;
+                      apiary_name: string;
+                      user_id?: number | null;
+                    } & {
+                      [key: string]: unknown;
+                    })
+                  | null;
+                frames?: number | null;
+                harvest_apiary?:
+                  | ({
+                      apiary_id: number;
+                      apiary_name: string;
+                      user_id?: number | null;
+                    } & {
+                      [key: string]: unknown;
+                    })
+                  | null;
+                hive?:
+                  | ({
+                      deleted?: boolean | null;
+                      grouphive?: number | null;
+                      id: number;
+                      modus?: boolean | null;
+                      name: string;
+                      position?: number | null;
+                    } & {
+                      [key: string]: unknown;
+                    })
+                  | null;
+                hive_id?: number | null;
+                id: number;
+                note?: string | null;
+                temperature?: number | null;
+                treatment_apiary?:
+                  | ({
+                      apiary_id: number;
+                      apiary_name: string;
+                      user_id?: number | null;
+                    } & {
+                      [key: string]: unknown;
+                    })
+                  | null;
+                type?:
+                  | ({
+                      created_at?: string | null;
+                      favorite?: boolean | null;
+                      id: number;
+                      modus?: boolean | null;
+                      name?: string | null;
+                      updated_at?: string | null;
+                      user_id?: number | null;
+                    } & {
+                      [key: string]: unknown;
+                    })
+                  | null;
+                type_id?: number | null;
+                updated_at?: string | null;
+                url?: string | null;
+                user_id?: number | null;
+                vet?:
+                  | ({
+                      created_at?: string | null;
+                      favorite?: boolean | null;
+                      id: number;
+                      modus?: boolean | null;
+                      name?: string | null;
+                      updated_at?: string | null;
+                      user_id?: number | null;
+                    } & {
+                      [key: string]: unknown;
+                    })
+                  | null;
+                vet_id?: number | null;
+                wait?: number | null;
+                water?: number | null;
+              } & {
+                [key: string]: unknown;
+              })[];
+              total: number;
+            };
           };
         };
       };
@@ -10423,7 +11360,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'application/json': unknown;
+            'application/json': number[];
           };
         };
       };
@@ -10471,7 +11408,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'application/json': unknown;
+            'application/json': number;
           };
         };
       };
@@ -10546,7 +11483,120 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'application/json': unknown;
+            'application/json': ({
+              ai_created_at?: string | null;
+              ai_deleted_at?: string | null;
+              ai_updated_at?: string | null;
+              amount?: number | null;
+              bee_id?: number | null;
+              charge?: string | null;
+              created_at?: string | null;
+              creator?: {
+                [key: string]: unknown;
+              } | null;
+              date?: string | null;
+              deleted?: boolean | null;
+              deleted_at?: string | null;
+              disease?:
+                | ({
+                    created_at?: string | null;
+                    favorite?: boolean | null;
+                    id: number;
+                    modus?: boolean | null;
+                    name?: string | null;
+                    updated_at?: string | null;
+                    user_id?: number | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
+              disease_id?: number | null;
+              done?: boolean | null;
+              edit_id?: number | null;
+              editor?: {
+                [key: string]: unknown;
+              } | null;
+              enddate?: string | null;
+              feed_apiary?:
+                | ({
+                    apiary_id: number;
+                    apiary_name: string;
+                    user_id?: number | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
+              frames?: number | null;
+              harvest_apiary?:
+                | ({
+                    apiary_id: number;
+                    apiary_name: string;
+                    user_id?: number | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
+              hive?:
+                | ({
+                    deleted?: boolean | null;
+                    grouphive?: number | null;
+                    id: number;
+                    modus?: boolean | null;
+                    name: string;
+                    position?: number | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
+              hive_id?: number | null;
+              id: number;
+              note?: string | null;
+              temperature?: number | null;
+              treatment_apiary?:
+                | ({
+                    apiary_id: number;
+                    apiary_name: string;
+                    user_id?: number | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
+              type?:
+                | ({
+                    created_at?: string | null;
+                    favorite?: boolean | null;
+                    id: number;
+                    modus?: boolean | null;
+                    name?: string | null;
+                    updated_at?: string | null;
+                    user_id?: number | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
+              type_id?: number | null;
+              updated_at?: string | null;
+              url?: string | null;
+              user_id?: number | null;
+              vet?:
+                | ({
+                    created_at?: string | null;
+                    favorite?: boolean | null;
+                    id: number;
+                    modus?: boolean | null;
+                    name?: string | null;
+                    updated_at?: string | null;
+                    user_id?: number | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
+              vet_id?: number | null;
+              wait?: number | null;
+              water?: number | null;
+            } & {
+              [key: string]: unknown;
+            })[];
           };
         };
       };
@@ -10583,7 +11633,120 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'application/json': unknown;
+            'application/json': ({
+              ai_created_at?: string | null;
+              ai_deleted_at?: string | null;
+              ai_updated_at?: string | null;
+              amount?: number | null;
+              bee_id?: number | null;
+              charge?: string | null;
+              created_at?: string | null;
+              creator?: {
+                [key: string]: unknown;
+              } | null;
+              date?: string | null;
+              deleted?: boolean | null;
+              deleted_at?: string | null;
+              disease?:
+                | ({
+                    created_at?: string | null;
+                    favorite?: boolean | null;
+                    id: number;
+                    modus?: boolean | null;
+                    name?: string | null;
+                    updated_at?: string | null;
+                    user_id?: number | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
+              disease_id?: number | null;
+              done?: boolean | null;
+              edit_id?: number | null;
+              editor?: {
+                [key: string]: unknown;
+              } | null;
+              enddate?: string | null;
+              feed_apiary?:
+                | ({
+                    apiary_id: number;
+                    apiary_name: string;
+                    user_id?: number | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
+              frames?: number | null;
+              harvest_apiary?:
+                | ({
+                    apiary_id: number;
+                    apiary_name: string;
+                    user_id?: number | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
+              hive?:
+                | ({
+                    deleted?: boolean | null;
+                    grouphive?: number | null;
+                    id: number;
+                    modus?: boolean | null;
+                    name: string;
+                    position?: number | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
+              hive_id?: number | null;
+              id: number;
+              note?: string | null;
+              temperature?: number | null;
+              treatment_apiary?:
+                | ({
+                    apiary_id: number;
+                    apiary_name: string;
+                    user_id?: number | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
+              type?:
+                | ({
+                    created_at?: string | null;
+                    favorite?: boolean | null;
+                    id: number;
+                    modus?: boolean | null;
+                    name?: string | null;
+                    updated_at?: string | null;
+                    user_id?: number | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
+              type_id?: number | null;
+              updated_at?: string | null;
+              url?: string | null;
+              user_id?: number | null;
+              vet?:
+                | ({
+                    created_at?: string | null;
+                    favorite?: boolean | null;
+                    id: number;
+                    modus?: boolean | null;
+                    name?: string | null;
+                    updated_at?: string | null;
+                    user_id?: number | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
+              vet_id?: number | null;
+              wait?: number | null;
+              water?: number | null;
+            } & {
+              [key: string]: unknown;
+            })[];
           };
         };
       };
@@ -10630,7 +11793,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'application/json': unknown;
+            'application/json': number;
           };
         };
       };
@@ -10672,7 +11835,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'application/json': unknown;
+            'application/json': number;
           };
         };
       };
