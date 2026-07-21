@@ -4461,7 +4461,166 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'application/json': unknown;
+            'application/json': {
+              results: ({
+                bee_id?: number | null;
+                created_at?: string | null;
+                creator?:
+                  | ({
+                      email?: string | null;
+                      username?: string | null;
+                    } & {
+                      [key: string]: unknown;
+                    })
+                  | null;
+                deleted?: boolean | null;
+                deleted_at?: string | null;
+                edit_id?: number | null;
+                editor?:
+                  | ({
+                      email?: string | null;
+                      username?: string | null;
+                    } & {
+                      [key: string]: unknown;
+                    })
+                  | null;
+                grouphive?: number | null;
+                hive_location?:
+                  | ({
+                      apiary_id: number;
+                      apiary_name?: string | null;
+                      hive_deleted?: boolean | null;
+                      hive_id: number;
+                      hive_modus?: boolean | null;
+                      hive_name?: string | null;
+                      move_id: number;
+                      movedate?:
+                        | ({
+                            apiary_id?: number | null;
+                            bee_id?: number | null;
+                            created_at?: string | null;
+                            date?: string | null;
+                            edit_id?: number | null;
+                            hive_id?: number | null;
+                            id: number;
+                            updated_at?: string | null;
+                          } & {
+                            [key: string]: unknown;
+                          })
+                        | null;
+                      user_id?: number | null;
+                    } & {
+                      [key: string]: unknown;
+                    })
+                  | null;
+                hive_source?:
+                  | ({
+                      created_at?: string | null;
+                      favorite?: boolean | null;
+                      id: number;
+                      modus?: boolean | null;
+                      name?: string | null;
+                      updated_at?: string | null;
+                      user_id?: number | null;
+                    } & {
+                      [key: string]: unknown;
+                    })
+                  | null;
+                hive_type?:
+                  | ({
+                      created_at?: string | null;
+                      favorite?: boolean | null;
+                      id: number;
+                      modus?: boolean | null;
+                      name?: string | null;
+                      updated_at?: string | null;
+                      user_id?: number | null;
+                    } & {
+                      [key: string]: unknown;
+                    })
+                  | null;
+                id: number;
+                modus?: boolean | null;
+                modus_date?: string | null;
+                name: string;
+                note?: string | null;
+                position?: number | null;
+                queen_location?:
+                  | ({
+                      hive_id: number;
+                      hive_name?: string | null;
+                      queen?:
+                        | ({
+                            bee_id?: number | null;
+                            created_at?: string | null;
+                            date?: string | null;
+                            deleted?: boolean | null;
+                            deleted_at?: string | null;
+                            edit_id?: number | null;
+                            hive_id?: number | null;
+                            id: number;
+                            mark_colour?: string | null;
+                            mating?:
+                              | ({
+                                  created_at?: string | null;
+                                  favorite?: boolean | null;
+                                  id: number;
+                                  modus?: boolean | null;
+                                  name?: string | null;
+                                  updated_at?: string | null;
+                                  user_id?: number | null;
+                                } & {
+                                  [key: string]: unknown;
+                                })
+                              | null;
+                            mating_id?: number | null;
+                            modus?: boolean | null;
+                            modus_date?: string | null;
+                            mother?: string | null;
+                            mother_id?: number | null;
+                            move_date?: string | null;
+                            name: string;
+                            note?: string | null;
+                            race?:
+                              | ({
+                                  created_at?: string | null;
+                                  favorite?: boolean | null;
+                                  id: number;
+                                  modus?: boolean | null;
+                                  name?: string | null;
+                                  updated_at?: string | null;
+                                  user_id?: number | null;
+                                } & {
+                                  [key: string]: unknown;
+                                })
+                              | null;
+                            race_id?: number | null;
+                            updated_at?: string | null;
+                            url?: string | null;
+                            user_id?: number | null;
+                          } & {
+                            [key: string]: unknown;
+                          })
+                        | null;
+                      queen_id?: number | null;
+                      queen_mark_colour?: string | null;
+                      queen_modus?: boolean | null;
+                      queen_modus_date?: string | null;
+                      queen_move_date?: string | null;
+                      queen_name?: string | null;
+                    } & {
+                      [key: string]: unknown;
+                    })
+                  | null;
+                source_id?: number | null;
+                type_id?: number | null;
+                updated_at?: string | null;
+                user_id?: number | null;
+              } & {
+                [key: string]: unknown;
+              })[];
+              total: number;
+            };
           };
         };
       };
@@ -4502,7 +4661,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'application/json': unknown;
+            'application/json': number[];
           };
         };
       };
@@ -4544,7 +4703,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'application/json': unknown;
+            'application/json': number;
           };
         };
       };
@@ -4609,7 +4768,184 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'application/json': unknown;
+            'application/json': {
+              bee_id?: number | null;
+              created_at?: string | null;
+              creator?:
+                | ({
+                    email?: string | null;
+                    username?: string | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
+              deleted?: boolean | null;
+              deleted_at?: string | null;
+              edit_id?: number | null;
+              editor?:
+                | ({
+                    email?: string | null;
+                    username?: string | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
+              firstMovedate?:
+                | ({
+                    apiary_id?: number | null;
+                    bee_id?: number | null;
+                    created_at?: string | null;
+                    date?: string | null;
+                    edit_id?: number | null;
+                    hive_id?: number | null;
+                    id: number;
+                    updated_at?: string | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
+              grouphive?: number | null;
+              hive_location?:
+                | ({
+                    apiary_id: number;
+                    apiary_name?: string | null;
+                    hive_deleted?: boolean | null;
+                    hive_id: number;
+                    hive_modus?: boolean | null;
+                    hive_name?: string | null;
+                    move_id: number;
+                    movedate?:
+                      | ({
+                          apiary_id?: number | null;
+                          bee_id?: number | null;
+                          created_at?: string | null;
+                          date?: string | null;
+                          edit_id?: number | null;
+                          hive_id?: number | null;
+                          id: number;
+                          updated_at?: string | null;
+                        } & {
+                          [key: string]: unknown;
+                        })
+                      | null;
+                    user_id?: number | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
+              hive_source?:
+                | ({
+                    created_at?: string | null;
+                    favorite?: boolean | null;
+                    id: number;
+                    modus?: boolean | null;
+                    name?: string | null;
+                    updated_at?: string | null;
+                    user_id?: number | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
+              hive_type?:
+                | ({
+                    created_at?: string | null;
+                    favorite?: boolean | null;
+                    id: number;
+                    modus?: boolean | null;
+                    name?: string | null;
+                    updated_at?: string | null;
+                    user_id?: number | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
+              id: number;
+              modus?: boolean | null;
+              modus_date?: string | null;
+              name: string;
+              note?: string | null;
+              position?: number | null;
+              queen_location?:
+                | ({
+                    hive_id: number;
+                    hive_name?: string | null;
+                    queen?:
+                      | ({
+                          bee_id?: number | null;
+                          created_at?: string | null;
+                          date?: string | null;
+                          deleted?: boolean | null;
+                          deleted_at?: string | null;
+                          edit_id?: number | null;
+                          hive_id?: number | null;
+                          id: number;
+                          mark_colour?: string | null;
+                          mating?:
+                            | ({
+                                created_at?: string | null;
+                                favorite?: boolean | null;
+                                id: number;
+                                modus?: boolean | null;
+                                name?: string | null;
+                                updated_at?: string | null;
+                                user_id?: number | null;
+                              } & {
+                                [key: string]: unknown;
+                              })
+                            | null;
+                          mating_id?: number | null;
+                          modus?: boolean | null;
+                          modus_date?: string | null;
+                          mother?: string | null;
+                          mother_id?: number | null;
+                          move_date?: string | null;
+                          name: string;
+                          note?: string | null;
+                          race?:
+                            | ({
+                                created_at?: string | null;
+                                favorite?: boolean | null;
+                                id: number;
+                                modus?: boolean | null;
+                                name?: string | null;
+                                updated_at?: string | null;
+                                user_id?: number | null;
+                              } & {
+                                [key: string]: unknown;
+                              })
+                            | null;
+                          race_id?: number | null;
+                          updated_at?: string | null;
+                          url?: string | null;
+                          user_id?: number | null;
+                        } & {
+                          [key: string]: unknown;
+                        })
+                      | null;
+                    queen_id?: number | null;
+                    queen_mark_colour?: string | null;
+                    queen_modus?: boolean | null;
+                    queen_modus_date?: string | null;
+                    queen_move_date?: string | null;
+                    queen_name?: string | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
+              sameLocation: ({
+                id: number;
+                name: string;
+                position?: number | null;
+              } & {
+                [key: string]: unknown;
+              })[];
+              source_id?: number | null;
+              type_id?: number | null;
+              updated_at?: string | null;
+              user_id?: number | null;
+            } & {
+              [key: string]: unknown;
+            };
           };
         };
       };
@@ -4690,7 +5026,163 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'application/json': unknown;
+            'application/json': ({
+              bee_id?: number | null;
+              created_at?: string | null;
+              creator?:
+                | ({
+                    email?: string | null;
+                    username?: string | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
+              deleted?: boolean | null;
+              deleted_at?: string | null;
+              edit_id?: number | null;
+              editor?:
+                | ({
+                    email?: string | null;
+                    username?: string | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
+              grouphive?: number | null;
+              hive_location?:
+                | ({
+                    apiary_id: number;
+                    apiary_name?: string | null;
+                    hive_deleted?: boolean | null;
+                    hive_id: number;
+                    hive_modus?: boolean | null;
+                    hive_name?: string | null;
+                    move_id: number;
+                    movedate?:
+                      | ({
+                          apiary_id?: number | null;
+                          bee_id?: number | null;
+                          created_at?: string | null;
+                          date?: string | null;
+                          edit_id?: number | null;
+                          hive_id?: number | null;
+                          id: number;
+                          updated_at?: string | null;
+                        } & {
+                          [key: string]: unknown;
+                        })
+                      | null;
+                    user_id?: number | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
+              hive_source?:
+                | ({
+                    created_at?: string | null;
+                    favorite?: boolean | null;
+                    id: number;
+                    modus?: boolean | null;
+                    name?: string | null;
+                    updated_at?: string | null;
+                    user_id?: number | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
+              hive_type?:
+                | ({
+                    created_at?: string | null;
+                    favorite?: boolean | null;
+                    id: number;
+                    modus?: boolean | null;
+                    name?: string | null;
+                    updated_at?: string | null;
+                    user_id?: number | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
+              id: number;
+              modus?: boolean | null;
+              modus_date?: string | null;
+              name: string;
+              note?: string | null;
+              position?: number | null;
+              queen_location?:
+                | ({
+                    hive_id: number;
+                    hive_name?: string | null;
+                    queen?:
+                      | ({
+                          bee_id?: number | null;
+                          created_at?: string | null;
+                          date?: string | null;
+                          deleted?: boolean | null;
+                          deleted_at?: string | null;
+                          edit_id?: number | null;
+                          hive_id?: number | null;
+                          id: number;
+                          mark_colour?: string | null;
+                          mating?:
+                            | ({
+                                created_at?: string | null;
+                                favorite?: boolean | null;
+                                id: number;
+                                modus?: boolean | null;
+                                name?: string | null;
+                                updated_at?: string | null;
+                                user_id?: number | null;
+                              } & {
+                                [key: string]: unknown;
+                              })
+                            | null;
+                          mating_id?: number | null;
+                          modus?: boolean | null;
+                          modus_date?: string | null;
+                          mother?: string | null;
+                          mother_id?: number | null;
+                          move_date?: string | null;
+                          name: string;
+                          note?: string | null;
+                          race?:
+                            | ({
+                                created_at?: string | null;
+                                favorite?: boolean | null;
+                                id: number;
+                                modus?: boolean | null;
+                                name?: string | null;
+                                updated_at?: string | null;
+                                user_id?: number | null;
+                              } & {
+                                [key: string]: unknown;
+                              })
+                            | null;
+                          race_id?: number | null;
+                          updated_at?: string | null;
+                          url?: string | null;
+                          user_id?: number | null;
+                        } & {
+                          [key: string]: unknown;
+                        })
+                      | null;
+                    queen_id?: number | null;
+                    queen_mark_colour?: string | null;
+                    queen_modus?: boolean | null;
+                    queen_modus_date?: string | null;
+                    queen_move_date?: string | null;
+                    queen_name?: string | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
+              source_id?: number | null;
+              type_id?: number | null;
+              updated_at?: string | null;
+              user_id?: number | null;
+            } & {
+              [key: string]: unknown;
+            })[];
           };
         };
       };
@@ -4727,7 +5219,163 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'application/json': unknown;
+            'application/json': ({
+              bee_id?: number | null;
+              created_at?: string | null;
+              creator?:
+                | ({
+                    email?: string | null;
+                    username?: string | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
+              deleted?: boolean | null;
+              deleted_at?: string | null;
+              edit_id?: number | null;
+              editor?:
+                | ({
+                    email?: string | null;
+                    username?: string | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
+              grouphive?: number | null;
+              hive_location?:
+                | ({
+                    apiary_id: number;
+                    apiary_name?: string | null;
+                    hive_deleted?: boolean | null;
+                    hive_id: number;
+                    hive_modus?: boolean | null;
+                    hive_name?: string | null;
+                    move_id: number;
+                    movedate?:
+                      | ({
+                          apiary_id?: number | null;
+                          bee_id?: number | null;
+                          created_at?: string | null;
+                          date?: string | null;
+                          edit_id?: number | null;
+                          hive_id?: number | null;
+                          id: number;
+                          updated_at?: string | null;
+                        } & {
+                          [key: string]: unknown;
+                        })
+                      | null;
+                    user_id?: number | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
+              hive_source?:
+                | ({
+                    created_at?: string | null;
+                    favorite?: boolean | null;
+                    id: number;
+                    modus?: boolean | null;
+                    name?: string | null;
+                    updated_at?: string | null;
+                    user_id?: number | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
+              hive_type?:
+                | ({
+                    created_at?: string | null;
+                    favorite?: boolean | null;
+                    id: number;
+                    modus?: boolean | null;
+                    name?: string | null;
+                    updated_at?: string | null;
+                    user_id?: number | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
+              id: number;
+              modus?: boolean | null;
+              modus_date?: string | null;
+              name: string;
+              note?: string | null;
+              position?: number | null;
+              queen_location?:
+                | ({
+                    hive_id: number;
+                    hive_name?: string | null;
+                    queen?:
+                      | ({
+                          bee_id?: number | null;
+                          created_at?: string | null;
+                          date?: string | null;
+                          deleted?: boolean | null;
+                          deleted_at?: string | null;
+                          edit_id?: number | null;
+                          hive_id?: number | null;
+                          id: number;
+                          mark_colour?: string | null;
+                          mating?:
+                            | ({
+                                created_at?: string | null;
+                                favorite?: boolean | null;
+                                id: number;
+                                modus?: boolean | null;
+                                name?: string | null;
+                                updated_at?: string | null;
+                                user_id?: number | null;
+                              } & {
+                                [key: string]: unknown;
+                              })
+                            | null;
+                          mating_id?: number | null;
+                          modus?: boolean | null;
+                          modus_date?: string | null;
+                          mother?: string | null;
+                          mother_id?: number | null;
+                          move_date?: string | null;
+                          name: string;
+                          note?: string | null;
+                          race?:
+                            | ({
+                                created_at?: string | null;
+                                favorite?: boolean | null;
+                                id: number;
+                                modus?: boolean | null;
+                                name?: string | null;
+                                updated_at?: string | null;
+                                user_id?: number | null;
+                              } & {
+                                [key: string]: unknown;
+                              })
+                            | null;
+                          race_id?: number | null;
+                          updated_at?: string | null;
+                          url?: string | null;
+                          user_id?: number | null;
+                        } & {
+                          [key: string]: unknown;
+                        })
+                      | null;
+                    queen_id?: number | null;
+                    queen_mark_colour?: string | null;
+                    queen_modus?: boolean | null;
+                    queen_modus_date?: string | null;
+                    queen_move_date?: string | null;
+                    queen_name?: string | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
+              source_id?: number | null;
+              type_id?: number | null;
+              updated_at?: string | null;
+              user_id?: number | null;
+            } & {
+              [key: string]: unknown;
+            })[];
           };
         };
       };
@@ -4773,7 +5421,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'application/json': unknown;
+            'application/json': number;
           };
         };
       };
@@ -4857,7 +5505,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'application/json': unknown;
+            'application/json': number[];
           };
         };
       };
