@@ -135,7 +135,9 @@ export interface paths {
           limit?: number;
           modus?: boolean | null;
           offset?: number;
-          order?: string | string[];
+          order?:
+            | ('id' | 'name' | 'modus' | 'hive_count.count')
+            | ('id' | 'name' | 'modus' | 'hive_count.count')[];
           q?: string | number;
         };
         header?: never;
@@ -214,9 +216,16 @@ export interface paths {
       requestBody: {
         content: {
           'application/json': {
+            deleted?: boolean;
+            deleted_at?: string | null;
+            description?: string;
+            elevation?: (number | string) | null;
+            latitude?: number | string;
+            longitude?: number | string;
+            modus?: boolean;
             name: string;
-          } & {
-            [key: string]: unknown;
+            note?: string;
+            url?: string;
           };
         };
       };
@@ -291,11 +300,18 @@ export interface paths {
         content: {
           'application/json': {
             data: {
-              [key: string]: unknown;
+              deleted?: boolean;
+              deleted_at?: string | null;
+              description?: string;
+              elevation?: (number | string) | null;
+              latitude?: number | string;
+              longitude?: number | string;
+              modus?: boolean;
+              name?: string;
+              note?: string;
+              url?: string;
             };
             ids: number[];
-          } & {
-            [key: string]: unknown;
           };
         };
       };
@@ -325,7 +341,7 @@ export interface paths {
         query?: never;
         header?: never;
         path: {
-          id: string;
+          id: number;
         };
         cookie?: never;
       };
