@@ -390,7 +390,7 @@
     "afterPremium": "Nachdem Ihre Prämie abgelaufen ist, können Sie immer noch mit all Ihren erstellten Bienenstöcken und Ständen arbeiten, aber es gelten wieder Einschränkungen.",
     "amountPerYear": "Betrag pro Jahr",
     "appleStoreInvoice": "Bitte verwenden Sie die Schaltfläche unten, um eine Rechnung per E-Mail anzufordern.",
-    "appleStoreNote": "Online-Zahlungen sind in der iOS-App nicht verfügbar. Bitte verwenden Sie einen Webbrowser auf Ihrem Telefon oder Computer, wenn Sie online mit Mollie, Stripe oder PayPal bezahlen möchten.",
+    "appleStoreNote": "Online-Zahlungen sind in der iOS-App nicht verfügbar. Bitte verwenden Sie einen Webbrowser auf Ihrem Telefon oder Computer, wenn Sie online mit Mollie oder PayPal bezahlen möchten.",
     "choosePayment": "Zahlungsmethode",
     "couponHint": "Haben Sie einen Gutschein-Code? Lösen Sie ihn hier ein.",
     "currentStatus": "Aktuelle bezahlte Zeit",
@@ -406,7 +406,6 @@
     "minimumAmount": "Es ist ein Mindestbetrag von {value} Euro erforderlich.",
     "noSubscription": "Nur einmalige Zahlung, kein automatisches Abo!",
     "otherOptions": "Weitere Zahlungsoptionen",
-    "payWithStripe": "Kreditkarte und andere",
     "paymentAmount": "Gesamtbetrag {count}.",
     "paymentCount": "Zahlungen",
     "paymentCurrentYear": "Gesamtzahlungen Aktuelles Jahr",
@@ -491,9 +490,7 @@
     "mollie": "Bezahlen mit Mollie",
     "mollieDescription": "Europäischer Zahlungsanbieter mit verschiedenen Zahlungsmethoden.",
     "paypal": "Mit Paypal bezahlen",
-    "paypalDescription": "Bezahlen Sie mit PayPal über Ihr PayPal-Konto.",
-    "stripe": "Mit Stripe bezahlen",
-    "stripeDescription": "Bezahlen Sie mit Stripe über Ihre Kreditkarte."
+    "paypalDescription": "Bezahlen Sie mit PayPal über Ihr PayPal-Konto."
   },
   "pedigree": "Stammbaum",
   "pending": "Ausstehend",

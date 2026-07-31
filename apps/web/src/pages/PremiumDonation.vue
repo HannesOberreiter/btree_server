@@ -11,7 +11,6 @@ import { useI18n } from 'vue-i18n';
 import BtnBase from '../components/BtnBase.vue';
 import PaymentMollie from '../components/PaymentMollie.vue';
 import PaymentPaypal from '../components/PaymentPaypal.vue';
-import PaymentStripe from '../components/PaymentStripe.vue';
 import { useApiFetch } from '../composables/useApi';
 import { useDateFormat } from '../composables/useDate';
 import { useNotification } from '../composables/useNotification';
@@ -128,11 +127,6 @@ const donationMarker = [
 const query = new URLSearchParams(window.location.search);
 if (query.has('mollie')) {
   successPayment('');
-}
-if (query.has('session_id')) {
-  successPayment('');
-}
-if (query.has('session_id') || query.has('mollie')) {
   window.history.replaceState({}, document.title, window.location.pathname);
 }
 
@@ -346,18 +340,6 @@ async function successPayment(newDate: string) {
                   <q-card>
                     <q-card-section>
                       <PaymentMollie :donation="donation" :years="years" />
-                    </q-card-section>
-                  </q-card>
-                </q-expansion-item>
-                <q-expansion-item
-                  expand-separator
-                  icon="fab fa-stripe"
-                  :label="$t('payment.stripe')"
-                  :caption="$t('payment.stripeDescription')"
-                >
-                  <q-card>
-                    <q-card-section>
-                      <PaymentStripe :donation="donation" :years="years" />
                     </q-card-section>
                   </q-card>
                 </q-expansion-item>

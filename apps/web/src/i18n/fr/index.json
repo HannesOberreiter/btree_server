@@ -390,7 +390,7 @@
     "afterPremium": "Une fois votre prime épuisée, vous pouvez toujours travailler avec toutes vos ruches et colonies créées, mais les limites s'appliquent à nouveau",
     "amountPerYear": "Montant par an",
     "appleStoreInvoice": "Veuillez utiliser le bouton ci-dessous pour recevoir une facture par e-mail.",
-    "appleStoreNote": "Les paiements en ligne ne sont pas disponibles dans l'application iOS. Veuillez utiliser un navigateur web sur votre téléphone ou ordinateur si vous souhaitez payer en ligne via Mollie, Stripe ou PayPal.",
+    "appleStoreNote": "Les paiements en ligne ne sont pas disponibles dans l'application iOS. Veuillez utiliser un navigateur web sur votre téléphone ou ordinateur si vous souhaitez payer en ligne via Mollie ou PayPal.",
     "choosePayment": "Mode de paiement",
     "couponHint": "Vous avez un code promo ? Utilisez-le ici.",
     "currentStatus": "Temps payé actuel",
@@ -406,7 +406,6 @@
     "minimumAmount": "Un minimum de {value} euros est nécessaire.",
     "noSubscription": "Paiement unique, pas d'abonnement automatique !",
     "otherOptions": "Autres options de paiement",
-    "payWithStripe": "Carte de crédit et autres",
     "paymentAmount": "Montant total {comte}.",
     "paymentCount": "Paiements",
     "paymentCurrentYear": "Paiements totaux l'année en cours",
@@ -491,9 +490,7 @@
     "mollie": "Payer avec mollie",
     "mollieDescription": "Fournisseur de paiement européen en utilisant divers méthodes de paiement.",
     "paypal": "Payer avec paypal",
-    "paypalDescription": "Payez avec PayPal en utilisant votre compte PayPal.",
-    "stripe": "Payer avec Stripe",
-    "stripeDescription": "Payez avec Stripe en utilisant votre carte de crédit."
+    "paypalDescription": "Payez avec PayPal en utilisant votre compte PayPal."
   },
   "pedigree": "Pedigree",
   "pending": "En attente",

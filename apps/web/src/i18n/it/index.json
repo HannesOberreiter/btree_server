@@ -390,7 +390,7 @@
     "afterPremium": "Dopo che il tuo premio si esaurisce, puoi ancora lavorare con tutti gli alveari e le colonie che hai creato, ma i limiti si applicano di nuovo",
     "amountPerYear": "Importo per anno",
     "appleStoreInvoice": "Usa il pulsante qui sotto per ricevere una fattura via e-mail.",
-    "appleStoreNote": "I pagamenti online non sono disponibili nell'app iOS. Usa un browser web sul telefono o computer se desideri pagare online tramite Mollie, Stripe o PayPal.",
+    "appleStoreNote": "I pagamenti online non sono disponibili nell'app iOS. Usa un browser web sul telefono o computer se desideri pagare online tramite Mollie o PayPal.",
     "choosePayment": "Metodo di pagamento",
     "couponHint": "Hai un codice promozionale? Usalo qui.",
     "currentStatus": "Tempo corrente pagato",
@@ -406,7 +406,6 @@
     "minimumAmount": "È necessario un minimo di {value} Euro.",
     "noSubscription": "Solo pagamento unico, nessun abbonamento automatico!",
     "otherOptions": "Altre opzioni di pagamento",
-    "payWithStripe": "Carta di credito e altri",
     "paymentAmount": "Importo totale {conteggio}.",
     "paymentCount": "Pagamenti",
     "paymentCurrentYear": "Pagamenti totali in corso",
@@ -491,9 +490,7 @@
     "mollie": "Paga con Mollie",
     "mollieDescription": "Provider di pagamenti europei utilizzando vari metodi di pagamento.",
     "paypal": "Paga con PayPal",
-    "paypalDescription": "Paga con PayPal utilizzando il tuo account PayPal.",
-    "stripe": "Paga con Stripe",
-    "stripeDescription": "Paga con Stripe usando la tua carta di credito."
+    "paypalDescription": "Paga con PayPal utilizzando il tuo account PayPal."
   },
   "pedigree": "Pedigree",
   "pending": "In attesa di",

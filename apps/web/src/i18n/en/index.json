@@ -390,7 +390,7 @@
     "afterPremium": "After your premium runs out you can still work with all your created hives and colonies but limits apply again.",
     "amountPerYear": "Amount per year",
     "appleStoreInvoice": "Please use the invoice request button below to receive an invoice via email.",
-    "appleStoreNote": "Online payments are not available in the iOS app. Please use a web browser on your phone or computer if you want to pay online via Mollie, Stripe or PayPal.",
+    "appleStoreNote": "Online payments are not available in the iOS app. Please use a web browser on your phone or computer if you want to pay online via Mollie or PayPal.",
     "choosePayment": "Payment method",
     "couponHint": "Do you have a coupon code? Redeem it here.",
     "currentStatus": "Current paid time",
@@ -406,7 +406,6 @@
     "minimumAmount": "A minimum of {value} Euro is needed.",
     "noSubscription": "Single payment only, no automatic subscription!",
     "otherOptions": "Other payment options",
-    "payWithStripe": "Creditcard and others",
     "paymentAmount": "Total amount {count}.",
     "paymentCount": "Payments",
     "paymentCurrentYear": "Payments current year",
@@ -491,9 +490,7 @@
     "mollie": "Pay with Mollie",
     "mollieDescription": "European payment provider using various payment methods.",
     "paypal": "Pay with PayPal",
-    "paypalDescription": "Pay with PayPal using your PayPal account.",
-    "stripe": "Pay with Stripe",
-    "stripeDescription": "Pay with Stripe using your credit card."
+    "paypalDescription": "Pay with PayPal using your PayPal account."
   },
   "pedigree": "Pedigree",
   "pending": "Pending",
