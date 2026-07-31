@@ -9,7 +9,6 @@ import { Validator } from '../../hooks/validator.hook.js';
 import {
   permissiveJsonResponseSchema,
   compatibilityQuerySchema,
-  permissiveRequestSchema,
 } from '../../schemas/common.schema.js';
 import {
   externalCalendarParamsSchema,
@@ -38,17 +37,6 @@ export default function routes(
       preHandler: Validator.handleSource,
     },
     ExternalController.ical,
-  );
-
-  server.post(
-    '/stripe/webhook',
-    {
-      schema: {
-        body: permissiveRequestSchema,
-        response: { 200: permissiveJsonResponseSchema },
-      },
-    },
-    ExternalController.stripeWebhook,
   );
 
   server.post(

@@ -14,7 +14,6 @@ import {
   getGruenlandtemperatursummeParamsSchema,
   paypalCreateOrderBodySchema,
   paypalCapturePaymentParamsSchema,
-  stripeCreateOrderBodySchema,
   mollieCreateOrderBodySchema,
 } from '../../schemas/service.schema.js';
 
@@ -88,18 +87,6 @@ export default function routes(
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
     },
     ServiceController.paypalCapturePayment,
-  );
-
-  server.post(
-    '/stripe/orders',
-    {
-      preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
-      schema: {
-        response: { 200: permissiveJsonResponseSchema },
-        body: stripeCreateOrderBodySchema,
-      },
-    },
-    ServiceController.stripeCreateOrder,
   );
 
   server.post(

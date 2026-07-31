@@ -69,7 +69,7 @@ export function premiumPaidDate(months: number) {
   return sql<Date>`DATE_ADD(IF(paid IS NULL OR paid < CURDATE(), CURDATE(), paid), INTERVAL ${sql.lit(safeMonths)} MONTH)`;
 }
 
-type PaymentType = 'paypal' | 'promo' | 'stripe' | 'mollie' | 'invoice';
+type PaymentType = 'paypal' | 'promo' | 'mollie' | 'invoice';
 
 export async function addPremium(
   db: Database,

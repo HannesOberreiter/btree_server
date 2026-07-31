@@ -3,15 +3,9 @@ import dayjs from 'dayjs';
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import httpErrors from 'http-errors';
 import ical, { ICalCalendarMethod } from 'ical-generator';
-import type { Stripe } from 'stripe';
 
 import { SOURCE } from '../../config/constants.config.js';
-import {
-  isServerLocationValid,
-  serverLocation,
-} from '../../config/environment.config.js';
 import { KyselyServer } from '../../servers/kysely.server.js';
-import { Logger } from '../../services/logger.service.js';
 import type { MailLang } from '../../services/mail.service.js';
 import { MailLangs, MailService } from '../../services/mail.service.js';
 import { createInvoice } from '../adapters/foxyoffice.adapter.js';
@@ -130,94 +124,6 @@ export default class ExternalController {
     reply.header('Content-Disposition', `attachment; filename=${filename}`);
     reply.header('Content-Type', 'text/calendar; charset=utf-8');
     return calendar.toString();
-  }
-
-  /**
-   * @description  Local development use Stripe CLI and redirect webhooks: stripe listen --forward-to localhost:8101/api/v1/external/stripe/webhook
-   */
-  static async stripeWebhook(req: FastifyRequest, _reply: FastifyReply) {
-    const event = req.body as Stripe.Event;
-    const object = event.data.object as Stripe.Checkout.Session;
-    if (event.type === 'checkout.session.completed') {
-      let user_id: number;
-      let bee_id: number | null = null;
-      let years = 1;
-      let server: string = 'eu';
-
-      try {
-        const reference = JSON.parse(object.client_reference_id!);
-        user_id = reference.user_id;
-        bee_id = reference.bee_id ?? null;
-        years = reference.quantity ?? 1;
-        server = isServerLocationValid(reference.server)
-          ? reference.server
-          : 'eu';
-      } catch (error) {
-        const mailer = MailService.getInstance();
-        void mailer.sendRawMail(
-          'office@btree.at',
-          'Failed capture of Stripe Payment',
-          JSON.stringify(event, null, 2),
-        );
-        req.log.error(error);
-        throw new httpErrors.InternalServerError();
-      }
-
-      if (serverLocation !== server) {
-        Logger.getInstance().log(
-          'info',
-          'Stripe Webhook - ignored wrong server',
-          {
-            server,
-            current: serverLocation,
-          },
-        );
-        return {};
-      }
-
-      let amount = 0;
-      try {
-        amount = (object.amount_total ?? 0) / 100;
-      } catch (error) {
-        req.log.error(error);
-      }
-      const premiumGrant = await addPremium(
-        KyselyServer.getInstance().db,
-        user_id,
-        12 * years,
-        amount,
-        'stripe',
-        object.id,
-      );
-      if (!premiumGrant.applied) return {};
-
-      if (!bee_id) {
-        req.log.error(
-          { event },
-          'Stripe webhook missing bee_id in client_reference_id',
-        );
-        return {};
-      }
-
-      let mail: string | null = null;
-      let lang: MailLang = 'en';
-      try {
-        const user = await KyselyServer.getInstance()
-          .db.selectFrom('bees')
-          .select(['email', 'lang'])
-          .where('id', '=', bee_id)
-          .executeTakeFirst();
-        if (user?.email) mail = user.email;
-        if (user?.lang && MailLangs.includes(user.lang as MailLang))
-          lang = user.lang as MailLang;
-      } catch (error) {
-        req.log.error(error);
-      }
-      if (mail) {
-        void createInvoice(mail, amount, years, 'Stripe', lang);
-      }
-    }
-    return {};
   }
 
   /**

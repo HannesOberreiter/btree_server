@@ -86,8 +86,6 @@ const paypalBase =
     ? 'https://api-m.paypal.com'
     : 'https://api-m.sandbox.paypal.com';
 
-const stripeSecret = process.env.STRIPE_SECRET_KEY!;
-
 const mollieApiKey = process.env.MOLLIE_API_KEY;
 
 const discourseSecret = process.env.DISCOURSE_SSO;
@@ -253,7 +251,6 @@ export {
   googleOAuth,
   isChild,
   isContainer,
-  isServerLocationValid,
   databaseConfig,
   knexConfig,
   mailConfig,
@@ -270,7 +267,6 @@ export {
   rootDirectory,
   serverLocation,
   sessionSecret,
-  stripeSecret,
   totalLimit,
   url,
 };

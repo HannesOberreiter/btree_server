@@ -143,11 +143,7 @@ async function sendInvoiceToCustomer(
   });
 }
 
-export type CreateInvoicePaymentType =
-  | 'PayPal'
-  | 'Stripe'
-  | 'Mollie'
-  | 'Invoice';
+export type CreateInvoicePaymentType = 'PayPal' | 'Mollie' | 'Invoice';
 
 export interface CreateInvoiceOptions {
   /**

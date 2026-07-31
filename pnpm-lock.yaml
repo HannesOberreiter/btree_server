@@ -119,9 +119,6 @@ importers:
       redis:
         specifier: ^5.11.0
         version: 5.12.1
-      stripe:
-        specifier: ^18.0.0
-        version: 18.5.0(@types/node@22.19.17)
       ua-parser-js:
         specifier: ^2.0.3
         version: 2.0.9
@@ -2289,15 +2286,6 @@ packages:
     resolution: {integrity: sha512-yDPMNjp4WyfYBkHnjIRLfca1i6KMyGCtsVgoKe/z1+6vukgaENdgGBZt+ZmKPc4gavvEZ5OgHfHdrazhgNyG7w==}
     engines: {node: '>=12'}
 
-  stripe@18.5.0:
-    resolution: {integrity: sha512-Hp+wFiEQtCB0LlNgcFh5uVyKznpDjzyUZ+CNVEf+I3fhlYvh7rZruIg+jOwzJRCpy0ZTPMjlzm7J2/M2N6d+DA==}
-    engines: {node: '>=12.*'}
-    peerDependencies:
-      '@types/node': '>=12.x.x'
-    peerDependenciesMeta:
-      '@types/node':
-        optional: true
-
   supports-color@5.5.0:
     resolution: {integrity: sha512-QjVjwdXIt408MIiAqCX4oUKsgU2EqAGzs2Ppkm4aQYbjm+ZEWEcW4SfFNTr4uMNZma0ey4f5lgLrkB0aX0QMow==}
     engines: {node: '>=4'}
@@ -4443,12 +4431,6 @@ snapshots:
   strip-ansi@7.2.0:
     dependencies:
       ansi-regex: 6.2.2
-
-  stripe@18.5.0(@types/node@22.19.17):
-    dependencies:
-      qs: 6.15.1
-    optionalDependencies:
-      '@types/node': 22.19.17
 
   supports-color@5.5.0:
     dependencies:

@@ -10,7 +10,6 @@ import {
   capturePayment,
   createOrder as paypalCreateOrder,
 } from '../adapters/paypal.adapter.js';
-import { createOrder as stripeCreateOrder } from '../adapters/stripe.adapter.js';
 import { getElevation } from '../adapters/weather.adapter.js';
 import { addPremium } from '../modules/premium.module.js';
 import {
@@ -23,7 +22,6 @@ import type {
   GetGruenlandtemperatursummeParams,
   PaypalCreateOrderBody,
   PaypalCapturePaymentParams,
-  StripeCreateOrderBody,
   MollieCreateOrderBody,
 } from '../schemas/service.schema.js';
 
@@ -140,17 +138,6 @@ export default class ServiceController {
       void createInvoice(mail, value, years, 'PayPal', lang);
     }
     return { ...capture, paid };
-  }
-
-  static async stripeCreateOrder(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as StripeCreateOrderBody;
-    const session = await stripeCreateOrder(
-      req.session.user.user_id,
-      req.session.user.bee_id,
-      body.amount,
-      body.quantity,
-    );
-    return session;
   }
 
   static async mollieCreateOrder(req: FastifyRequest, _reply: FastifyReply) {

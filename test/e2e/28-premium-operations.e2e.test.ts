@@ -20,20 +20,20 @@ describe('premium payment operations', () => {
   afterAll(async () => {
     await db
       .deleteFrom('payments')
-      .where('type', '=', 'stripe')
+      .where('type', '=', 'mollie')
       .where('provider_id', '=', providerId)
       .execute();
     await db.deleteFrom('companies').where('id', '=', companyId).execute();
   });
 
   it('applies a provider payment only once', async () => {
-    const first = await addPremium(db, companyId, 1, 10, 'stripe', providerId);
-    const second = await addPremium(db, companyId, 1, 10, 'stripe', providerId);
+    const first = await addPremium(db, companyId, 1, 10, 'mollie', providerId);
+    const second = await addPremium(db, companyId, 1, 10, 'mollie', providerId);
 
     const payments = await db
       .selectFrom('payments')
       .select('id')
-      .where('type', '=', 'stripe')
+      .where('type', '=', 'mollie')
       .where('provider_id', '=', providerId)
       .execute();
 

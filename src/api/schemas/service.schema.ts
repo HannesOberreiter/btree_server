@@ -25,12 +25,6 @@ export type PaypalCapturePaymentParams = z.infer<
   typeof paypalCapturePaymentParamsSchema
 >;
 
-export const stripeCreateOrderBodySchema = z.object({
-  amount: z.number().min(50),
-  quantity: z.number().min(1).max(10),
-});
-export type StripeCreateOrderBody = z.infer<typeof stripeCreateOrderBodySchema>;
-
 export const mollieCreateOrderBodySchema = z.object({
   amount: z.number().min(50),
   quantity: z.number().min(1).max(10),
