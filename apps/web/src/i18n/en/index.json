@@ -308,6 +308,7 @@
   "hintApiaryFirstMovedate": "Shown value is the first migration of a hive onto this apiary, which can be seen as date of creation.",
   "hintHiveFirstMovedate": "Shown value is the first migration, which can be seen as date of creation.",
   "hintStatisticTable": "Sum and average per year per hive.",
+  "hideColonyCount": "Hide number of colonies",
   "hintStatisticTableQueen": "Important information, ordering of calculated values eg. brood, harvest is only applied to the visible local data!",
   "hive": "Hive | Hives",
   "hiveCard": "Hivecard",

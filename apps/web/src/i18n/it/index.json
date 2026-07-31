@@ -308,6 +308,7 @@
   "hintApiaryFirstMovedate": "Il valore mostrato è la prima migrazione di un alveare su questo apiario, che può essere visto come data di creazione.",
   "hintHiveFirstMovedate": "Il valore mostrato è la prima migrazione, che può essere vista come data di creazione.",
   "hintStatisticTable": "Somma e media all'anno per alveare.",
+  "hideColonyCount": "Nascondi il numero di colonie",
   "hintStatisticTableQueen": "Informazioni importanti, ordinamento dei valori calcolati ad es. covata, il raccolto viene applicato solo ai dati locali visibili!",
   "hive": "Alveare | Orticaria",
   "hiveCard": "Hivecard",

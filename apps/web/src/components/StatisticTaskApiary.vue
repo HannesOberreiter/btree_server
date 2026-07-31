@@ -23,6 +23,10 @@ const props = defineProps({
   kind: {
     type: String,
     required: true
+  },
+  hideColonyCount: {
+    type: Boolean,
+    default: false
   }
 });
 
@@ -65,7 +69,7 @@ const yearText = computed(() => {
 });
 
 watch(
-  query,
+  [query, () => props.hideColonyCount],
   async () => {
     if (query.value) {
       await nextTick();
@@ -105,12 +109,10 @@ function renderChart(
   data: any
 ) {
   const title = `${t('apiary', 2)} ${titleText} (${yearText.value})`;
-  const x = data.map(
-    (o: any) =>
-      `${o.task_apiary ? o.task_apiary.apiary_name : t('deleted')} (${
-        o.hive_count
-      })`
-  );
+  const x = data.map((o: any) => {
+    const name = o.task_apiary ? o.task_apiary.apiary_name : t('deleted');
+    return `${name}${props.hideColonyCount ? '' : ` (${o.hive_count})`}`;
+  });
   const y = data.map((o: any) => {
     return {
       value: round(o[col], 1),

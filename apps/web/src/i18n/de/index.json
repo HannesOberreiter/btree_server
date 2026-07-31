@@ -308,6 +308,7 @@
   "hintApiaryFirstMovedate": "Angezeigter Wert ist die erste Wanderung eines Bienenstocks auf diesen Bienenstand, die als Erstellungsdatum angesehen werden kann.",
   "hintHiveFirstMovedate": "Angezeigter Wert ist die erste Wanderung, die als Erstellungsdatum angesehen werden kann.",
   "hintStatisticTable": "Summe und Durchschnitt pro Jahr und Stock.",
+  "hideColonyCount": "Anzahl der Völker ausblenden",
   "hintStatisticTableQueen": "Wichtige Informationen, Sortierung berechneter Werte zB. \nBrut, Ernte wird nur auf die sichtbaren lokalen Daten angewendet!",
   "hive": "Stock | Stöcke",
   "hiveCard": "Stockkarte",

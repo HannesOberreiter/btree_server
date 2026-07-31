@@ -308,6 +308,7 @@
   "hintApiaryFirstMovedate": "La valeur indiquée est la première migration d'une ruche sur ce rucher, qui peut être considérée comme la date de création.",
   "hintHiveFirstMovedate": "La valeur affichée est la première migration, qui peut être considérée comme la date de création.",
   "hintStatisticTable": "Somme et moyenne par an et par ruche.",
+  "hideColonyCount": "Masquer le nombre de colonies",
   "hintStatisticTableQueen": "Informations importantes, ordre des valeurs calculées, par ex. du couvain, la récolte ne s'applique qu'aux données locales visibles !",
   "hive": "Ruche | Urticaire",
   "hiveCard": "Carte de la ruche",
