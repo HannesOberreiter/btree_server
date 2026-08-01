@@ -93,7 +93,11 @@ export default async function routes(
         if (!user) {
           throw httpErrors.Unauthorized();
         }
-        const context = { userId: user.user_id, beeId: user.bee_id };
+        const context = {
+          userId: user.user_id,
+          beeId: user.bee_id,
+          rank: user.rank,
+        };
         const result = await executeWizBeeTool(
           KyselyServer.getInstance().db,
           toolDef.name,

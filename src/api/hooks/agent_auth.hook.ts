@@ -55,10 +55,22 @@ export async function agentAuthHook(
         throw httpErrors.Unauthorized('API key has expired');
       }
 
-      // Populate session
+      const companyBee = await db
+        .selectFrom('company_bee')
+        .select('rank')
+        .where('bee_id', '=', candidate.bee_id)
+        .where('user_id', '=', candidate.user_id)
+        .executeTakeFirst();
+      if (!companyBee?.rank) {
+        throw httpErrors.Unauthorized('User no longer has company access');
+      }
+
+      // Populate session with current company role so every tool can enforce
+      // the same authorization policy as its REST endpoint.
       request.session.user = {
         user_id: candidate.user_id,
         bee_id: candidate.bee_id,
+        rank: companyBee.rank as 1 | 2 | 3 | 4,
       } as FastifyRequest['session']['user'];
       request.session.agent = true;
 

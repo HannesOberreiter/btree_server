@@ -264,8 +264,8 @@ function buildMistralTools(
 export class WizBeeAI {
   private context: WizBeeContext;
 
-  constructor(userId: number, beeId: number) {
-    this.context = { userId, beeId };
+  constructor(userId: number, beeId: number, rank: 1 | 2 | 3 | 4) {
+    this.context = { userId, beeId, rank };
   }
 
   /**

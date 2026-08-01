@@ -184,7 +184,11 @@ export default class WizBeeController {
 
     const question = body.question;
 
-    const bot = new WizBeeAI(req.session.user.user_id, req.session.user.bee_id);
+    const bot = new WizBeeAI(
+      req.session.user.user_id,
+      req.session.user.bee_id,
+      req.session.user.rank,
+    );
 
     if (controller.signal.aborted) {
       return;

@@ -3,6 +3,7 @@ import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 
 import { ROLES } from '../../../config/constants.config.js';
 import { KyselyServer } from '../../../servers/kysely.server.js';
+import { mapToolError } from '../../adapters/tool_error.adapter.js';
 import WizBeeController from '../../controllers/wizbee.controller.js';
 import { Guard } from '../../hooks/guard.hook.js';
 import {
@@ -84,21 +85,29 @@ export default function routes(
           reply.statusCode = 401;
           return { error: 'Unauthorized' };
         }
-        const context = { userId: user.user_id, beeId: user.bee_id };
-        try {
-          const result = await executeWizBeeTool(
-            KyselyServer.getInstance().db,
-            toolDef.name,
-            request.body,
-            context,
-          );
-          return result;
-        } catch (error) {
-          reply.statusCode = 400;
-          return {
-            error: error instanceof Error ? error.message : String(error),
-          };
+        const context = {
+          userId: user.user_id,
+          beeId: user.bee_id,
+          rank: user.rank,
+        };
+        const result = await executeWizBeeTool(
+          KyselyServer.getInstance().db,
+          toolDef.name,
+          request.body,
+          context,
+        );
+
+        if (
+          result &&
+          typeof result === 'object' &&
+          (result as { ok?: unknown }).ok === false
+        ) {
+          const error =
+            (result as { error?: Record<string, unknown> }).error ?? {};
+          throw mapToolError(error);
         }
+
+        return result;
       },
     });
   }

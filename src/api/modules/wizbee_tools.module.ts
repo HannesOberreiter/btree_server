@@ -1,6 +1,7 @@
 /* eslint-disable e18e/prefer-static-regex */
 import { z } from 'zod';
 
+import { ROLES } from '../../config/constants.config.js';
 import { Logger } from '../../services/logger.service.js';
 import type { Database } from '../../types/database.types.js';
 import {
@@ -68,7 +69,51 @@ import { getApiaryTemperatureSum, getApiaryWeather } from './weather.module.js';
 export interface WizBeeContext {
   userId: number;
   beeId: number;
+  rank: 1 | 2 | 3 | 4;
 }
+
+const TOOL_MAX_RANK = {
+  listApiariesHives: ROLES.read,
+  findHives: ROLES.read,
+  createApiary: ROLES.admin,
+  patchApiary: ROLES.admin,
+  createHive: ROLES.admin,
+  patchHive: ROLES.admin,
+  listMovements: ROLES.read,
+  createMovement: ROLES.user,
+  patchMovement: ROLES.user,
+  deleteMovement: ROLES.user,
+  apiaryWeather: ROLES.read,
+  getHiveDetail: ROLES.read,
+  getHiveTasks: ROLES.read,
+  fetchOptions: ROLES.read,
+  fetchTasks: ROLES.read,
+  createFeed: ROLES.user,
+  patchFeed: ROLES.user,
+  softDeleteFeed: ROLES.user,
+  createHarvest: ROLES.user,
+  patchHarvest: ROLES.user,
+  softDeleteHarvest: ROLES.user,
+  createTreatment: ROLES.user,
+  patchTreatment: ROLES.user,
+  softDeleteTreatment: ROLES.user,
+  createCheckup: ROLES.user,
+  patchCheckup: ROLES.user,
+  softDeleteCheckup: ROLES.user,
+  createTodo: ROLES.user,
+  patchTodo: ROLES.user,
+  batchDeleteTodo: ROLES.user,
+  fetchCharges: ROLES.read,
+  createCharge: ROLES.user,
+  patchCharge: ROLES.user,
+  softDeleteCharge: ROLES.user,
+  getHiveStatistics: ROLES.read,
+  getHarvestStatistics: ROLES.read,
+  getFeedStatistics: ROLES.read,
+  getTreatmentStatistics: ROLES.read,
+  btreeDocumentation: ROLES.read,
+  calculateSugarWater: ROLES.read,
+} as const;
 
 const GENERIC_HTTP_MESSAGE_RE =
   /^(?:not found|forbidden|unauthorized|bad request|conflict|payment required|too many requests)$/i;
@@ -101,6 +146,7 @@ const NOT_FOUND_MESSAGE_RE =
 type ToolErrorCode =
   | 'not_found'
   | 'forbidden'
+  | 'authorization_policy_missing'
   | 'premium_required'
   | 'conflict'
   | 'validation_error'
@@ -785,6 +831,38 @@ function wrapExecute<TArgs>(
   exec: (input: TArgs, opts?: any) => Promise<unknown>,
 ): (input: TArgs, opts?: any) => Promise<unknown> {
   return async (input, opts) => {
+    const maxRank = TOOL_MAX_RANK[toolName as keyof typeof TOOL_MAX_RANK];
+    if (maxRank === undefined) {
+      Logger.getInstance().log(
+        'error',
+        `Tool ${toolName} has no authorization policy`,
+        { toolName },
+      );
+      return {
+        ok: false,
+        error: {
+          code: 'authorization_policy_missing',
+          status: 500,
+          message: 'Tool authorization policy is missing',
+        },
+      } satisfies ToolErrorEnvelope;
+    }
+    if (context.rank < ROLES.admin || context.rank > maxRank) {
+      Logger.getInstance().log(
+        'warn',
+        `Tool ${toolName} rejected for rank ${context.rank}`,
+        { toolName, rank: context.rank },
+      );
+      return {
+        ok: false,
+        error: {
+          code: 'forbidden',
+          status: 403,
+          message: 'You do not have permission to use this tool',
+        },
+      } satisfies ToolErrorEnvelope;
+    }
+
     // Fail fast on obviously-wrong hive/apiary IDs before we even touch the
     // real controller. This turns the common "model passed hive NAME as id"
     // mistake into a clean `not_found` envelope with a findHives suggestion,

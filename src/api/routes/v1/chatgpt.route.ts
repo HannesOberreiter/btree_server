@@ -180,6 +180,7 @@ export default async function routes(
       {
         userId: user.user_id,
         beeId: user.bee_id,
+        rank: user.rank,
       },
     );
 
