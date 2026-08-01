@@ -4,6 +4,7 @@ import type { FastifyRequest } from 'fastify';
 import httpErrors from 'http-errors';
 import jwt from 'jsonwebtoken';
 
+import { ROLES } from '../../config/constants.config.js';
 import {
   frontend,
   oauth,
@@ -12,6 +13,7 @@ import {
 } from '../../config/environment.config.js';
 import { RedisServer } from '../../servers/redis.server.js';
 import type { Database } from '../../types/database.types.js';
+import { isPremium } from './premium.module.js';
 
 const AUTH_CODE_TTL_SECONDS = 600;
 const TOKEN_TYPE = 'bearer';
@@ -191,6 +193,33 @@ export function verifyAgentOAuthAccessToken(token: string) {
   };
 }
 
+export async function requireAgentOAuthAccess(
+  db: Database,
+  userId: number,
+  beeId: number,
+) {
+  const companyBee = await db
+    .selectFrom('company_bee')
+    .select('rank')
+    .where('bee_id', '=', beeId)
+    .where('user_id', '=', userId)
+    .executeTakeFirst();
+
+  if (companyBee?.rank !== ROLES.admin && companyBee?.rank !== ROLES.user) {
+    throw httpErrors.Forbidden(
+      'ChatGPT access requires write permission for this company.',
+    );
+  }
+
+  if (!(await isPremium(userId, db))) {
+    throw httpErrors.Forbidden(
+      'ChatGPT access requires an active premium subscription.',
+    );
+  }
+
+  return companyBee.rank;
+}
+
 export async function createAuthorizationCode(payload: OAuthCodePayload) {
   const code = randomToken();
   await RedisServer.client.setEx(
@@ -225,7 +254,8 @@ export async function exchangeAuthorizationCode(
     throw httpErrors.BadRequest('Invalid authorization code');
   }
 
-  return createTokenPair(db, payload);
+  const rank = await requireAgentOAuthAccess(db, payload.userId, payload.beeId);
+  return createTokenPair(db, { ...payload, rank });
 }
 
 export async function refreshAccessToken(
@@ -248,16 +278,7 @@ export async function refreshAccessToken(
     throw httpErrors.Unauthorized('Invalid refresh token');
   }
 
-  const companyBee = await db
-    .selectFrom('company_bee')
-    .select(['rank'])
-    .where('bee_id', '=', stored.bee_id)
-    .where('user_id', '=', stored.user_id)
-    .executeTakeFirst();
-
-  if (!companyBee?.rank) {
-    throw httpErrors.Unauthorized('User no longer has company access');
-  }
+  const rank = await requireAgentOAuthAccess(db, stored.user_id, stored.bee_id);
 
   await db
     .updateTable('agent_oauth_refresh_tokens')
@@ -269,7 +290,7 @@ export async function refreshAccessToken(
     clientId,
     beeId: stored.bee_id,
     userId: stored.user_id,
-    rank: companyBee.rank as 1 | 2 | 3 | 4,
+    rank,
     scope: stored.scope ?? oauth.scope,
     redirectUri: '',
   });

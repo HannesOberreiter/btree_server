@@ -2,6 +2,8 @@ import process from 'node:process';
 
 import { beforeAll, describe, expect, it } from 'vitest';
 
+import { ROLES } from '../../src/config/constants.config.js';
+import { KyselyServer } from '../../src/servers/kysely.server.js';
 import type { TestAgent } from '../utils.js';
 import { createAgent, demoUser, doRequest } from '../utils.js';
 
@@ -75,9 +77,14 @@ async function noAuthFetchNoRedirect(method: string, path: string) {
 }
 
 describe('agent key & agent API routes', () => {
+  const db = KyselyServer.getInstance().db;
   let agent: TestAgent;
   let createdKeyId: number;
   let plaintextKey: string;
+  let companyId: number;
+  let beeId: number;
+  let originalRank: number;
+  let originalPaid: Date | null;
 
   beforeAll(async () => {
     agent = createAgent();
@@ -91,6 +98,23 @@ describe('agent key & agent API routes', () => {
       demoUser,
     );
     expect(loginRes.statusCode).toEqual(200);
+
+    const membership = await db
+      .selectFrom('company_bee')
+      .innerJoin('bees', 'bees.id', 'company_bee.bee_id')
+      .innerJoin('companies', 'companies.id', 'company_bee.user_id')
+      .select([
+        'company_bee.user_id as companyId',
+        'company_bee.bee_id as beeId',
+        'company_bee.rank',
+        'companies.paid',
+      ])
+      .where('bees.email', '=', demoUser.email)
+      .executeTakeFirstOrThrow();
+    companyId = membership.companyId;
+    beeId = membership.beeId;
+    originalRank = membership.rank ?? ROLES.admin;
+    originalPaid = membership.paid;
   });
 
   // ─── Agent Key CRUD ────────────────────────────────────────────
@@ -198,13 +222,43 @@ describe('agent key & agent API routes', () => {
   });
 
   describe('agent OAuth endpoints', () => {
+    const redirectUri = 'https://chatgpt.com/aip/g-test/oauth/callback';
     const authorizeQuery = new URLSearchParams({
       response_type: 'code',
       client_id: 'test-chatgpt-client',
-      redirect_uri: 'https://chatgpt.com/aip/g-test/oauth/callback',
+      redirect_uri: redirectUri,
       scope: 'agent',
       state: 'state-123',
     });
+
+    async function getAuthorizationCode() {
+      const authorization = await agent.request(
+        'GET',
+        `/api/v1/chatgpt/oauth/authorize?${authorizeQuery.toString()}`,
+        undefined,
+        undefined,
+        'manual',
+      );
+      expect(authorization.statusCode).toEqual(302);
+      const location = authorization.headers.location;
+      expect(location).toBeDefined();
+      const code = new URL(location).searchParams.get('code');
+      expect(code).toBeTruthy();
+      return code!;
+    }
+
+    async function exchangeCode(code: string) {
+      const token = await noAuthFetch('POST', '/api/v1/chatgpt/oauth/token', {
+        grant_type: 'authorization_code',
+        client_id: 'test-chatgpt-client',
+        client_secret: 'test-chatgpt-secret',
+        code,
+        redirect_uri: redirectUri,
+      });
+      expect(token.statusCode).toEqual(200);
+      expect(token.body.access_token).toMatch(/^btree_oauth_/);
+      return token.body.access_token as string;
+    }
 
     it('400 - authorize requires state', async () => {
       const params = new URLSearchParams(authorizeQuery);
@@ -227,6 +281,108 @@ describe('agent key & agent API routes', () => {
       expect(res.location).toContain('oauth=1');
       expect(res.location).toContain('server=eu');
       expect(res.location).toContain(encodeURIComponent('state=state-123'));
+    });
+
+    it('403 - authorize rejects read-only members', async () => {
+      try {
+        await db
+          .updateTable('company_bee')
+          .set({ rank: ROLES.read })
+          .where('user_id', '=', companyId)
+          .where('bee_id', '=', beeId)
+          .executeTakeFirst();
+
+        const res = await agent.request(
+          'GET',
+          `/api/v1/chatgpt/oauth/authorize?${authorizeQuery.toString()}`,
+        );
+        expect(res.statusCode).toEqual(403);
+        expect(res.body.message).toContain('write permission');
+      } finally {
+        await db
+          .updateTable('company_bee')
+          .set({ rank: originalRank })
+          .where('user_id', '=', companyId)
+          .where('bee_id', '=', beeId)
+          .executeTakeFirst();
+      }
+    });
+
+    it('403 - authorize rejects companies without premium', async () => {
+      try {
+        await db
+          .updateTable('companies')
+          .set({ paid: new Date('2000-01-01T00:00:00Z') })
+          .where('id', '=', companyId)
+          .executeTakeFirst();
+
+        const res = await agent.request(
+          'GET',
+          `/api/v1/chatgpt/oauth/authorize?${authorizeQuery.toString()}`,
+        );
+        expect(res.statusCode).toEqual(403);
+        expect(res.body.message).toContain('premium subscription');
+      } finally {
+        await db
+          .updateTable('companies')
+          .set({ paid: originalPaid })
+          .where('id', '=', companyId)
+          .executeTakeFirst();
+      }
+    });
+
+    it('403 - existing token follows current member role', async () => {
+      const accessToken = await exchangeCode(await getAuthorizationCode());
+      try {
+        await db
+          .updateTable('company_bee')
+          .set({ rank: ROLES.read })
+          .where('user_id', '=', companyId)
+          .where('bee_id', '=', beeId)
+          .executeTakeFirst();
+
+        const res = await agentFetch(
+          'POST',
+          '/api/v1/chatgpt/tools/listApiariesHives',
+          accessToken,
+          {},
+        );
+        expect(res.statusCode).toEqual(403);
+        expect(res.body.message).toContain('write permission');
+      } finally {
+        await db
+          .updateTable('company_bee')
+          .set({ rank: originalRank })
+          .where('user_id', '=', companyId)
+          .where('bee_id', '=', beeId)
+          .executeTakeFirst();
+      }
+    });
+
+    it('403 - existing token follows current premium status', async () => {
+      const accessToken = await exchangeCode(await getAuthorizationCode());
+      try {
+        await db
+          .updateTable('companies')
+          .set({ paid: new Date('2000-01-01T00:00:00Z') })
+          .where('id', '=', companyId)
+          .executeTakeFirst();
+
+        const res = await agentFetch(
+          'POST',
+          '/api/v1/chatgpt/tools/listApiariesHives',
+          accessToken,
+          {},
+        );
+        expect(res.statusCode).toEqual(403);
+        expect(res.body.message).toContain('premium subscription');
+      } finally {
+        await db
+          .updateTable('companies')
+          .set({ paid: originalPaid })
+          .where('id', '=', companyId)
+          .executeTakeFirst();
+      }
     });
 
     it('400 - token rejects unsupported grant_type', async () => {

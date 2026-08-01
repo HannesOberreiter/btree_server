@@ -54,6 +54,7 @@ export class TestAgent {
     path: string,
     body?: unknown,
     query?: Record<string, unknown> | null,
+    redirect: RequestRedirect = 'follow',
   ): Promise<TestResponse> {
     let url = `${this.baseUrl}${path}`;
     if (query) {
@@ -77,6 +78,7 @@ export class TestAgent {
     const response = await fetch(url, {
       method: method.toUpperCase(),
       headers: reqHeaders,
+      redirect,
       body:
         body !== null && body !== undefined && method.toUpperCase() !== 'GET'
           ? JSON.stringify(body)

@@ -8,6 +8,7 @@ import {
   getOAuthAuthorizeData,
   getOAuthLoginRedirect,
   refreshAccessToken,
+  requireAgentOAuthAccess,
 } from '../modules/agent_oauth.module.js';
 
 type TokenRequestBody = {
@@ -28,13 +29,18 @@ export default class AgentOAuthController {
       return reply.redirect(getOAuthLoginRedirect(req));
     }
 
+    const rank = await requireAgentOAuthAccess(
+      KyselyServer.getInstance().db,
+      sessionUser.user_id,
+      sessionUser.bee_id,
+    );
     const code = await createAuthorizationCode({
       clientId: authorizeData.clientId,
       redirectUri: authorizeData.redirectUri,
       scope: authorizeData.scope,
       beeId: sessionUser.bee_id,
       userId: sessionUser.user_id,
-      rank: sessionUser.rank,
+      rank,
     });
 
     const redirectUrl = new URL(authorizeData.redirectUri);
