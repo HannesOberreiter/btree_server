@@ -234,7 +234,9 @@ function invalid() {
   <q-dialog v-model="model" :maximized="$q.platform.is.mobile" persistent>
     <q-card
       data-cy="wax-operation-dialog"
-      style="width: 700px; max-width: 80vw"
+      :style="
+        $q.platform.is.mobile ? 'width: 700px; max-width: 80vw' : undefined
+      "
     >
       <q-card-section class="row items-center">
         <div class="text-h6">{{ $t('wax.bookOperation') }}</div>
