@@ -28,6 +28,8 @@ const standardValues = {
     charge: ['Futter - Zucker', 'kg', 'Material - Zargen', 'Stk.'],
     feed: ['3:2 Zuckerwasser', '1:1 Zuckerwasser', 'Futterteig'],
     harvest: ['Mischhonig', 'Raps', 'Akazien', 'Waldhonig'],
+    waxProducts: ['Wachsblock', 'Mittelwände', 'Verkaufsprodukte', 'Restwachs'],
+    waxOrigins: ['Deckelwachs', 'Altwaben', 'Brutwaben', 'Mischung'],
     disease: [
       'amerikanische Faulbrut',
       'Schimmel-Pilze',
@@ -92,6 +94,13 @@ const standardValues = {
     charge: ['Feed-Sugar', 'kg', 'Production-Glasses', 'Pcs.'],
     feed: ['3:2 Sugarwater', '1:1 Sugarwater', 'Sugarfond'],
     harvest: ['Mix Honey', 'Rapeseed', 'Acacia', 'Honeydew'],
+    waxProducts: [
+      'Wax block',
+      'Foundation',
+      'Products for sale',
+      'Residual wax',
+    ],
+    waxOrigins: ['Cappings wax', 'Old combs', 'Brood combs', 'Mixture'],
     disease: ['AFB', 'Mold Fungi', 'Dysentery', 'Chalk Brood', 'Varroa'],
     treatment: [
       'Comb Removal',
@@ -163,6 +172,16 @@ export async function autoFill(
   for (const name of values.harvest)
     await db
       .insertInto('harvest_types')
+      .values({ name, user_id: companyId })
+      .execute();
+  for (const name of values.waxProducts)
+    await db
+      .insertInto('wax_products')
+      .values({ name, user_id: companyId })
+      .execute();
+  for (const name of values.waxOrigins)
+    await db
+      .insertInto('wax_origin_types')
       .values({ name, user_id: companyId })
       .execute();
   for (const name of values.disease)

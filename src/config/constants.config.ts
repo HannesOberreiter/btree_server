@@ -38,6 +38,8 @@ export const OPTION = {
   treatment_diseases: 'treatment_diseases',
   treatment_types: 'treatment_types',
   treatment_vets: 'treatment_vets',
+  wax_products: 'wax_products',
+  wax_origin_types: 'wax_origin_types',
 } as const;
 
 /**

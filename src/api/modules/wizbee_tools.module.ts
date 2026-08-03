@@ -59,6 +59,12 @@ import {
   listTreatments,
   updateTreatments,
 } from '../modules/treatment.module.js';
+import {
+  createWaxOperation,
+  listWaxLots,
+  listWaxOperations,
+  reverseWaxOperation,
+} from '../modules/wax.module.js';
 import { getApiaryTemperatureSum, getApiaryWeather } from './weather.module.js';
 
 /** WizBee tool definitions shared by chat and HTTP adapters. */
@@ -107,6 +113,9 @@ const TOOL_MAX_RANK = {
   createCharge: ROLES.user,
   patchCharge: ROLES.user,
   softDeleteCharge: ROLES.user,
+  fetchWaxLedger: ROLES.read,
+  createWaxOperation: ROLES.user,
+  reverseWaxOperation: ROLES.user,
   getHiveStatistics: ROLES.read,
   getHarvestStatistics: ROLES.read,
   getFeedStatistics: ROLES.read,
@@ -354,6 +363,18 @@ const TOOL_META: Record<string, ToolHintMeta> = {
     mutates: 'delete',
     recordLabel: 'charge',
   },
+  // Wax ledger
+  createWaxOperation: {
+    usesHiveIds: true,
+    usesTypeId: true,
+    mutates: 'create',
+    recordLabel: 'wax operation',
+  },
+  reverseWaxOperation: {
+    usesRecordIds: true,
+    mutates: 'create',
+    recordLabel: 'wax operation',
+  },
 };
 
 /**
@@ -393,7 +414,9 @@ function buildHint(
                 ? 'listApiariesHives'
                 : meta.recordLabel === 'hive'
                   ? 'findHives'
-                  : 'getHiveTasks',
+                  : meta.recordLabel === 'wax operation'
+                    ? 'fetchWaxLedger'
+                    : 'getHiveTasks',
       };
     }
   }
@@ -434,7 +457,9 @@ function buildHint(
                 ? 'listApiariesHives'
                 : meta.recordLabel === 'hive'
                   ? 'findHives'
-                  : 'getHiveTasks',
+                  : meta.recordLabel === 'wax operation'
+                    ? 'fetchWaxLedger'
+                    : 'getHiveTasks',
       };
     }
   }
@@ -726,6 +751,8 @@ function enforceResultSize(toolName: string, result: unknown): unknown {
       'Tasks for this hive/apiary are too many to return in full. Ask the user which year or which task type they are interested in, or use the statistics tools.',
     fetchCharges:
       'Too many charges to return. Add a search query (q) or reduce limit.',
+    fetchWaxLedger:
+      'Too much wax ledger data to return. Add a search query, date range or operation type, or reduce limit.',
     listApiariesHives:
       'Apiary/hive list is unexpectedly large. Consider setting includeInactive: false or filtering with q.',
     btreeDocumentation:
@@ -965,6 +992,123 @@ function getDefaultDateRange(): { dateStart: string; dateEnd: string } {
  * Task types supported by the fetchTasks tool
  */
 const TASK_TYPES = ['feed', 'treatment', 'harvest', 'checkup', 'todo'] as const;
+const WAX_OPERATION_TYPES = [
+  'production',
+  'purchase',
+  'processing',
+  'contract_processing',
+  'use',
+  'sale',
+  'correction',
+] as const;
+const waxQuantitySchema = z.number().min(0.01).max(1_000_000).multipleOf(0.01);
+const waxInputLineToolSchema = z.object({
+  lotId: z
+    .number()
+    .int()
+    .positive()
+    .describe('Existing input lot ID from fetchWaxLedger'),
+  quantityKg: waxQuantitySchema.describe('Input quantity in kg'),
+});
+const waxOutputLineToolSchema = z
+  .object({
+    lotId: z
+      .number()
+      .int()
+      .positive()
+      .optional()
+      .describe('Existing output lot ID; omit when creating a new lot'),
+    code: z
+      .string()
+      .trim()
+      .min(1)
+      .max(100)
+      .optional()
+      .describe('New lot code; generated automatically when omitted'),
+    productId: z
+      .number()
+      .int()
+      .positive()
+      .optional()
+      .describe('Wax product ID from fetchOptions for a new lot'),
+    note: z.string().trim().max(2000).nullable().optional(),
+    quantityKg: waxQuantitySchema.describe('Output quantity in kg'),
+  })
+  .refine((line) => line.lotId || line.productId, {
+    message: 'Existing lotId or productId is required',
+    path: ['lotId'],
+  });
+const fetchWaxLedgerToolSchema = z.object({
+  q: z.string().trim().optional().describe('Search text'),
+  dateStart: z.iso.date().optional().describe('First operation date'),
+  dateEnd: z.iso.date().optional().describe('Last operation date'),
+  operationType: z
+    .enum(WAX_OPERATION_TYPES)
+    .optional()
+    .describe('Operation type filter'),
+  includeEmpty: z
+    .boolean()
+    .optional()
+    .default(false)
+    .describe('Include lots whose current stock is zero'),
+  limit: z
+    .number()
+    .int()
+    .min(1)
+    .max(500)
+    .optional()
+    .default(100)
+    .describe('Maximum lots and operations to return'),
+});
+const createWaxOperationToolSchema = z.object({
+  date: z.iso.date().describe('Booking date'),
+  type: z.enum(WAX_OPERATION_TYPES).describe('Wax operation type'),
+  counterparty: z
+    .string()
+    .trim()
+    .max(255)
+    .nullable()
+    .optional()
+    .describe('Supplier or processor'),
+  reference: z
+    .string()
+    .trim()
+    .max(255)
+    .nullable()
+    .optional()
+    .describe('Document, invoice or order number'),
+  url: z.string().trim().max(512).nullable().optional(),
+  note: z.string().trim().max(2000).nullable().optional(),
+  originTypeId: z
+    .number()
+    .int()
+    .positive()
+    .nullable()
+    .optional()
+    .describe('Wax origin type ID from fetchOptions; required for production'),
+  hiveIds: z
+    .array(z.number().int().positive())
+    .max(1000)
+    .default([])
+    .describe('Optional source hive IDs from findHives'),
+  inputs: z
+    .array(waxInputLineToolSchema)
+    .max(100)
+    .default([])
+    .describe('Consumed wax lot quantities'),
+  outputs: z
+    .array(waxOutputLineToolSchema)
+    .max(100)
+    .default([])
+    .describe('Produced or purchased wax lot quantities'),
+});
+const reverseWaxOperationToolSchema = z.object({
+  operationId: z
+    .number()
+    .int()
+    .positive()
+    .describe('Wax operation ID from fetchWaxLedger'),
+});
 /**
  * Create WizBee tools with injected context
  * Vercel AI SDK tools need the context at runtime, so we create them dynamically
@@ -1441,7 +1585,7 @@ export function createWizBeeTools(
      */
     fetchOptions: tool({
       description:
-        'Fetch all available option/lookup lists at once (charge types, hive sources, hive types, feed types, harvest types, checkup types, queen matings, queen races, treatment diseases, treatment types, treatment vets). Use this to know which options are available when creating or updating records.',
+        'Fetch all available option/lookup lists at once (charge types, hive sources, hive types, feed types, harvest types, checkup types, queen matings, queen races, treatment diseases, treatment types, treatment vets, wax products, wax origin types). Use this to know which options are available when creating or updating records.',
       inputSchema: z.object({
         activeOnly: z
           .boolean()
@@ -2375,6 +2519,145 @@ export function createWizBeeTools(
     }),
 
     /**
+     * Fetch Wax Ledger Tool
+     * Returns wax lots, stock summaries and operations
+     */
+    fetchWaxLedger: tool({
+      description:
+        'Fetch the separate wax ledger: wax lots with current stock, a product summary, and wax operations. Empty lots are hidden by default. Use returned lot IDs for later processing, use or sale operations.',
+      inputSchema: fetchWaxLedgerToolSchema,
+      execute: async (input) => {
+        const [lotResult, operationResult] = await Promise.all([
+          listWaxLots(db, context.userId, {
+            q: input.q,
+            limit: input.limit,
+            offset: 0,
+          }),
+          listWaxOperations(db, context.userId, {
+            q: input.q,
+            from: input.dateStart,
+            to: input.dateEnd,
+            type: input.operationType,
+            limit: input.limit,
+            offset: 0,
+          }),
+        ]);
+        const lots = input.includeEmpty
+          ? lotResult.results
+          : lotResult.results.filter((lot) => Math.abs(lot.stock_kg) >= 0.005);
+        const grouped = new Map<
+          string,
+          {
+            productId: number | null;
+            productName: string | null;
+            stockKg: number;
+            lotCount: number;
+          }
+        >();
+        for (const lot of lots) {
+          const key = String(lot.product_id ?? 'none');
+          const summary = grouped.get(key) ?? {
+            productId: lot.product_id,
+            productName: lot.product_name,
+            stockKg: 0,
+            lotCount: 0,
+          };
+          summary.stockKg += lot.stock_kg;
+          summary.lotCount += 1;
+          grouped.set(key, summary);
+        }
+
+        return {
+          lots: {
+            total: lotResult.total,
+            returned: lots.length,
+            items: lots,
+          },
+          productSummary: {
+            scope: 'returnedLots',
+            items: [...grouped.values()].map((summary) => ({
+              productId: summary.productId,
+              productName: summary.productName,
+              stockKg: Math.round(summary.stockKg * 100) / 100,
+              lotCount: summary.lotCount,
+            })),
+          },
+          operations: {
+            total: operationResult.total,
+            returned: operationResult.results.length,
+            items: operationResult.results,
+          },
+        };
+      },
+    }),
+
+    /**
+     * Create Wax Operation Tool
+     * Records a stock movement in the wax ledger
+     */
+    createWaxOperation: tool({
+      description:
+        'Create a wax ledger operation in kg with 0.01 kg precision. Production and purchase require outputs only; production also requires originTypeId. Processing and contract processing require inputs and outputs. Use and sale require inputs only. Purchase and contract processing require counterparty. New output lots need productId; code is generated automatically when omitted. Resolve product/origin IDs via fetchOptions and lot IDs via fetchWaxLedger.',
+      inputSchema: createWaxOperationToolSchema,
+      execute: async (input) => {
+        const operation = await createWaxOperation(
+          db,
+          { companyId: context.userId, beeId: context.beeId },
+          {
+            date: input.date,
+            type: input.type,
+            counterparty: input.counterparty,
+            reference: input.reference,
+            url: input.url,
+            note: input.note,
+            origin_type_id: input.originTypeId,
+            hive_ids: input.hiveIds,
+            inputs: input.inputs.map((line) => ({
+              lot_id: line.lotId,
+              quantity_kg: line.quantityKg,
+            })),
+            outputs: input.outputs.map((line) => ({
+              lot_id: line.lotId,
+              code: line.code,
+              product_id: line.productId,
+              note: line.note,
+              quantity_kg: line.quantityKg,
+            })),
+          },
+        );
+        return {
+          success: true,
+          message: `Created wax operation ${operation.id}`,
+          ids: [operation.id],
+          operation,
+        };
+      },
+    }),
+
+    /**
+     * Reverse Wax Operation Tool
+     * Creates an auditable counter-entry instead of deleting data
+     */
+    reverseWaxOperation: tool({
+      description:
+        'Reverse one wax operation by creating an auditable correction with opposite booking lines. Use this instead of deleting wax ledger data. An operation can only be reversed once, and reversal operations cannot themselves be reversed.',
+      inputSchema: reverseWaxOperationToolSchema,
+      execute: async (input) => {
+        const operation = await reverseWaxOperation(
+          db,
+          { companyId: context.userId, beeId: context.beeId },
+          input.operationId,
+        );
+        return {
+          success: true,
+          message: `Reversed wax operation ${input.operationId}`,
+          ids: [operation.id],
+          operation,
+        };
+      },
+    }),
+
+    /**
      * Get Hive Statistics Tool
      * Returns hive count totals and per apiary
      */
@@ -2804,7 +3087,7 @@ export const wizBeeToolDefinitions = [
   {
     name: 'fetchOptions',
     description:
-      'Fetch all available option/lookup lists at once (hive types, feed types, harvest types, etc.).',
+      'Fetch all available option/lookup lists at once (hive types, task types, wax products, wax origin types, etc.).',
     parameters: z.object({
       activeOnly: z.boolean().optional().default(true),
     }),
@@ -3086,6 +3369,23 @@ export const wizBeeToolDefinitions = [
     parameters: z.object({
       ids: z.array(z.number()).min(1),
     }),
+  },
+  {
+    name: 'fetchWaxLedger',
+    description:
+      'Fetch wax lots, current stock, product summary and wax operations.',
+    parameters: fetchWaxLedgerToolSchema,
+  },
+  {
+    name: 'createWaxOperation',
+    description: 'Create a wax ledger operation.',
+    parameters: createWaxOperationToolSchema,
+  },
+  {
+    name: 'reverseWaxOperation',
+    description:
+      'Reverse a wax operation through an auditable correction entry.',
+    parameters: reverseWaxOperationToolSchema,
   },
   {
     name: 'getHiveStatistics',

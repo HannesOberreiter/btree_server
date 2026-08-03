@@ -153,6 +153,8 @@ class TimestampPlugin implements KyselyPlugin {
     'stats_hives_feeds',
     'stats_hives_harvests',
     'treatments_apiaries',
+    'wax_operation_hives',
+    'wax_operation_lines',
   ]);
 
   private getTableName(node: any): string | null {

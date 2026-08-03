@@ -37,6 +37,7 @@ import v1Statistic from './v1/statistic.route.js';
 import v1Todo from './v1/todo.route.js';
 import v1Treatment from './v1/treatment.route.js';
 import v1User from './v1/user.route.js';
+import v1Wax from './v1/wax.route.js';
 import v1WizBee from './v1/wizbee.route.js';
 
 async function coreRoutes(instance: FastifyInstance) {
@@ -83,6 +84,7 @@ async function coreRoutes(instance: FastifyInstance) {
   instance.register(v1Treatment, { prefix: '/v1/treatment' });
   instance.register(v1Statistic, { prefix: '/v1/statistic' });
   instance.register(v1Public, { prefix: '/v1/public' });
+  instance.register(v1Wax, { prefix: '/v1/wax' });
   instance.register(v1WizBee, { prefix: '/v1/wizbee' });
   instance.register(v1AgentKey, { prefix: '/v1/agent_key' });
 

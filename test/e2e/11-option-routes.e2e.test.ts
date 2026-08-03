@@ -31,6 +31,8 @@ const options = [
   'treatment_diseases',
   'treatment_types',
   'treatment_vets',
+  'wax_products',
+  'wax_origin_types',
 ] as const satisfies readonly OptionTable[];
 
 options.forEach((option) => {
@@ -108,6 +110,27 @@ options.forEach((option) => {
         }
         if (option === 'treatment_vets') {
           expect(inserted).toHaveProperty('note');
+        }
+        const names = res.body.map((item: { name: string }) => item.name);
+        if (option === 'wax_products') {
+          expect(names).toEqual(
+            expect.arrayContaining([
+              'Wax block',
+              'Foundation',
+              'Products for sale',
+              'Residual wax',
+            ]),
+          );
+        }
+        if (option === 'wax_origin_types') {
+          expect(names).toEqual(
+            expect.arrayContaining([
+              'Cappings wax',
+              'Old combs',
+              'Brood combs',
+              'Mixture',
+            ]),
+          );
         }
       });
 

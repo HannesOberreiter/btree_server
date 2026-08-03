@@ -834,7 +834,7 @@ export interface HiveTypes {
 export interface KnexMigrations {
   batch: Generated<number | null>;
   id: Generated<number>;
-  migration_time: Generated<Date | null>;
+  migration_time: Generated<Date>;
   name: Generated<string | null>;
 }
 
@@ -1093,7 +1093,7 @@ export interface RearingTypes {
 
 export interface RefreshTokens {
   bee_id: Generated<number | null>;
-  expires: Generated<Date | null>;
+  expires: Generated<Date>;
   id: Generated<number>;
   token: Generated<string | null>;
   user_id: Generated<number | null>;
@@ -1309,6 +1309,88 @@ export interface TreatmentVets {
   user_id: Generated<number | null>;
 }
 
+export interface WaxLots {
+  /**
+   * Creator
+   */
+  bee_id: Generated<number | null>;
+  code: string;
+  created_at: Generated<Date>;
+  created_by_operation_id: Generated<number | null>;
+  /**
+   * Editor
+   */
+  edit_id: Generated<number | null>;
+  id: Generated<number>;
+  note: Generated<string | null>;
+  product_id: Generated<number | null>;
+  updated_at: Generated<Date>;
+  /**
+   * Company
+   */
+  user_id: Generated<number | null>;
+}
+
+export interface WaxOperationHives {
+  hive_id: Generated<number | null>;
+  id: Generated<number>;
+  operation_id: number;
+}
+
+export interface WaxOperationLines {
+  direction: string;
+  id: Generated<number>;
+  lot_id: number;
+  operation_id: number;
+  quantity_kg: Decimal;
+}
+
+export interface WaxOperations {
+  /**
+   * Creator
+   */
+  bee_id: Generated<number | null>;
+  counterparty: Generated<string | null>;
+  created_at: Generated<Date>;
+  date: Date;
+  /**
+   * Editor
+   */
+  edit_id: Generated<number | null>;
+  id: Generated<number>;
+  note: Generated<string | null>;
+  origin_type_id: Generated<number | null>;
+  reference: Generated<string | null>;
+  reversal_of_id: Generated<number | null>;
+  type: string;
+  updated_at: Generated<Date>;
+  url: Generated<string | null>;
+  /**
+   * Company
+   */
+  user_id: Generated<number | null>;
+}
+
+export interface WaxOriginTypes {
+  created_at: Generated<Date>;
+  favorite: Generated<ColumnType<boolean, boolean | number, boolean | number>>;
+  id: Generated<number>;
+  modus: Generated<ColumnType<boolean, boolean | number, boolean | number>>;
+  name: string;
+  updated_at: Generated<Date>;
+  user_id: Generated<number | null>;
+}
+
+export interface WaxProducts {
+  created_at: Generated<Date>;
+  favorite: Generated<ColumnType<boolean, boolean | number, boolean | number>>;
+  id: Generated<number>;
+  modus: Generated<ColumnType<boolean, boolean | number, boolean | number>>;
+  name: string;
+  updated_at: Generated<Date>;
+  user_id: Generated<number | null>;
+}
+
 export interface WizbeeRequests {
   bee_id: Generated<number | null>;
   cost_eur: Generated<Decimal | null>;
@@ -1395,6 +1477,12 @@ export interface DB {
   treatment_vets: TreatmentVets;
   treatments: Treatments;
   treatments_apiaries: TreatmentsApiaries;
+  wax_lots: WaxLots;
+  wax_operation_hives: WaxOperationHives;
+  wax_operation_lines: WaxOperationLines;
+  wax_operations: WaxOperations;
+  wax_origin_types: WaxOriginTypes;
+  wax_products: WaxProducts;
   wizbee_requests: WizbeeRequests;
   wizbee_tokens: WizbeeTokens;
 }

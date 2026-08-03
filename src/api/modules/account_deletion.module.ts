@@ -47,6 +47,28 @@ export async function deleteCompany(db: Kysely<DB>, company_id: number) {
           .execute(),
         trx.deleteFrom('queens').where('user_id', '=', company_id).execute(),
       ]);
+      const waxOperationIds = trx
+        .selectFrom('wax_operations')
+        .select('id')
+        .where('user_id', '=', company_id);
+      await Promise.all([
+        trx
+          .deleteFrom('wax_operation_lines')
+          .where('operation_id', 'in', waxOperationIds)
+          .execute(),
+        trx
+          .deleteFrom('wax_operation_hives')
+          .where('operation_id', 'in', waxOperationIds)
+          .execute(),
+      ]);
+      await trx
+        .deleteFrom('wax_lots')
+        .where('user_id', '=', company_id)
+        .execute();
+      await trx
+        .deleteFrom('wax_operations')
+        .where('user_id', '=', company_id)
+        .execute();
       await Promise.all([
         trx.deleteFrom('charges').where('user_id', '=', company_id).execute(),
         trx.deleteFrom('checkups').where('user_id', '=', company_id).execute(),
@@ -59,6 +81,14 @@ export async function deleteCompany(db: Kysely<DB>, company_id: number) {
         trx.deleteFrom('todos').where('user_id', '=', company_id).execute(),
       ]);
       await Promise.all([
+        trx
+          .deleteFrom('wax_products')
+          .where('user_id', '=', company_id)
+          .execute(),
+        trx
+          .deleteFrom('wax_origin_types')
+          .where('user_id', '=', company_id)
+          .execute(),
         trx
           .deleteFrom('charge_types')
           .where('user_id', '=', company_id)

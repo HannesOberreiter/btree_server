@@ -15,6 +15,8 @@ export const optionTableSchema = z.enum([
   'treatment_diseases',
   'treatment_types',
   'treatment_vets',
+  'wax_products',
+  'wax_origin_types',
 ]);
 export const optionTableParamsSchema = z.object({ table: optionTableSchema });
 

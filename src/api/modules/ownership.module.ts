@@ -13,6 +13,8 @@ const ownedReferenceTables = {
   treatmentDisease: 'treatment_diseases',
   treatmentType: 'treatment_types',
   treatmentVet: 'treatment_vets',
+  waxOriginType: 'wax_origin_types',
+  waxProduct: 'wax_products',
 } as const;
 
 type OwnedReference = keyof typeof ownedReferenceTables;
@@ -110,4 +112,20 @@ export function requireTreatmentVetOwnership(
   companyId: number,
 ) {
   return requireOwnership(db, 'treatmentVet', id, companyId);
+}
+
+export function requireWaxOriginTypeOwnership(
+  db: Database,
+  id: number,
+  companyId: number,
+) {
+  return requireOwnership(db, 'waxOriginType', id, companyId);
+}
+
+export function requireWaxProductOwnership(
+  db: Database,
+  id: number,
+  companyId: number,
+) {
+  return requireOwnership(db, 'waxProduct', id, companyId);
 }

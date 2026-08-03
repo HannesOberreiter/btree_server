@@ -35,11 +35,21 @@ type TransferKey =
   | 'harvest_types'
   | 'charges'
   | 'charge_types'
+  | 'wax_products'
+  | 'wax_origin_types'
+  | 'wax_lots'
+  | 'wax_operations'
+  | 'wax_operation_hives'
+  | 'wax_operation_lines'
   | 'queens'
   | 'queen_matings'
   | 'queen_races'
   | 'todos';
 type TransferData = Record<TransferKey, CsvRecord[]>;
+type CompanyTransferKey = Exclude<
+  TransferKey,
+  'movedates' | 'wax_operation_hives' | 'wax_operation_lines'
+>;
 
 const transferKeys: TransferKey[] = [
   'hives',
@@ -59,6 +69,12 @@ const transferKeys: TransferKey[] = [
   'harvest_types',
   'charges',
   'charge_types',
+  'wax_products',
+  'wax_origin_types',
+  'wax_lots',
+  'wax_operations',
+  'wax_operation_hives',
+  'wax_operation_lines',
   'queens',
   'queen_matings',
   'queen_races',
@@ -279,6 +295,50 @@ const columns: Record<TransferKey, readonly string[]> = {
     'updated_at',
     'user_id',
   ],
+  wax_products: [
+    'name',
+    'modus',
+    'favorite',
+    'created_at',
+    'updated_at',
+    'user_id',
+  ],
+  wax_origin_types: [
+    'name',
+    'modus',
+    'favorite',
+    'created_at',
+    'updated_at',
+    'user_id',
+  ],
+  wax_lots: [
+    'code',
+    'note',
+    'product_id',
+    'created_by_operation_id',
+    'user_id',
+    'bee_id',
+    'edit_id',
+    'created_at',
+    'updated_at',
+  ],
+  wax_operations: [
+    'date',
+    'type',
+    'counterparty',
+    'reference',
+    'url',
+    'note',
+    'origin_type_id',
+    'reversal_of_id',
+    'user_id',
+    'bee_id',
+    'edit_id',
+    'created_at',
+    'updated_at',
+  ],
+  wax_operation_hives: ['operation_id', 'hive_id'],
+  wax_operation_lines: ['direction', 'quantity_kg', 'operation_id', 'lot_id'],
   queens: [
     'name',
     'mark_colour',
@@ -417,6 +477,124 @@ async function optionRows(
   return idMap(rows, ids);
 }
 
+const waxOperationTypes = new Set([
+  'production',
+  'purchase',
+  'processing',
+  'contract_processing',
+  'use',
+  'sale',
+  'correction',
+]);
+
+function validateWaxArchive(data: TransferData) {
+  const operations = new Map(
+    data.wax_operations.map((row) => [String(row.id), row]),
+  );
+  const lots = new Set(data.wax_lots.map((row) => String(row.id)));
+  const linesByOperation = new Map<string, CsvRecord[]>();
+  for (const line of data.wax_operation_lines) {
+    const operationId = String(line.operation_id);
+    const quantity = Number(line.quantity_kg);
+    if (!operations.has(operationId) || !lots.has(String(line.lot_id)))
+      throw new Error('Wax archive contains an invalid line reference');
+    if (!['input', 'output'].includes(String(line.direction)))
+      throw new Error('Wax archive contains an invalid line direction');
+    if (
+      !Number.isFinite(quantity) ||
+      quantity < 0.01 ||
+      Math.abs(quantity * 100 - Math.round(quantity * 100)) > 0.000_001
+    )
+      throw new Error('Wax archive contains an invalid quantity');
+    const current = linesByOperation.get(operationId) ?? [];
+    current.push(line);
+    linesByOperation.set(operationId, current);
+  }
+  for (const link of data.wax_operation_hives) {
+    if (
+      !operations.has(String(link.operation_id)) ||
+      !data.hives.some((hive) => String(hive.id) === String(link.hive_id))
+    )
+      throw new Error('Wax archive contains an invalid hive reference');
+  }
+  for (const lot of data.wax_lots) {
+    if (
+      lot.created_by_operation_id !== undefined &&
+      lot.created_by_operation_id !== null &&
+      (!operations.has(String(lot.created_by_operation_id)) ||
+        !data.wax_operation_lines.some(
+          (line) =>
+            line.direction === 'output' &&
+            String(line.lot_id) === String(lot.id) &&
+            String(line.operation_id) === String(lot.created_by_operation_id),
+        ))
+    )
+      throw new Error('Wax archive contains an invalid lot creator reference');
+  }
+  for (const operation of data.wax_operations) {
+    const type = String(operation.type);
+    if (
+      !waxOperationTypes.has(type) ||
+      Number.isNaN(Date.parse(String(operation.date))) ||
+      (type === 'production' && !operation.origin_type_id)
+    )
+      throw new Error('Wax archive contains an invalid operation');
+    if (
+      operation.reversal_of_id !== undefined &&
+      operation.reversal_of_id !== null &&
+      !operations.has(String(operation.reversal_of_id))
+    )
+      throw new Error('Wax archive contains an invalid reversal reference');
+    const lines = linesByOperation.get(String(operation.id)) ?? [];
+    const hasInputs = lines.some((line) => line.direction === 'input');
+    const hasOutputs = lines.some((line) => line.direction === 'output');
+    if (
+      (['production', 'purchase'].includes(type) &&
+        (!hasOutputs || hasInputs)) ||
+      (['processing', 'contract_processing'].includes(type) &&
+        (!hasInputs || !hasOutputs)) ||
+      (['use', 'sale'].includes(type) && (!hasInputs || hasOutputs)) ||
+      (type === 'correction' && !hasInputs && !hasOutputs)
+    )
+      throw new Error('Wax archive contains an invalid operation shape');
+    const input = lines
+      .filter((line) => line.direction === 'input')
+      .reduce((sum, line) => sum + Number(line.quantity_kg), 0);
+    const output = lines
+      .filter((line) => line.direction === 'output')
+      .reduce((sum, line) => sum + Number(line.quantity_kg), 0);
+    if (
+      ['processing', 'contract_processing'].includes(type) &&
+      output > input + 0.000_001 &&
+      !String(operation.note ?? '').trim()
+    )
+      throw new Error('Wax archive mass gain has no explanation');
+  }
+  const balances = new Map<string, number>();
+  const sorted = [...data.wax_operations].sort((left, right) => {
+    const dateOrder = String(left.date).localeCompare(String(right.date));
+    return dateOrder || Number(left.id) - Number(right.id);
+  });
+  for (const operation of sorted) {
+    const deltas = new Map<string, number>();
+    for (const line of linesByOperation.get(String(operation.id)) ?? []) {
+      const lotId = String(line.lot_id);
+      const quantity = Number(line.quantity_kg);
+      deltas.set(
+        lotId,
+        (deltas.get(lotId) ?? 0) +
+          (line.direction === 'output' ? quantity : -quantity),
+      );
+    }
+    for (const [lotId, delta] of deltas) {
+      const balance = (balances.get(lotId) ?? 0) + delta;
+      if (balance < -0.000_001)
+        throw new Error('Wax archive contains negative historical stock');
+      balances.set(lotId, balance);
+    }
+  }
+}
+
 export async function importCompanyArchive(
   db: Database,
   beeId: number,
@@ -461,9 +639,9 @@ export async function importCompanyArchive(
   } finally {
     await zip.close();
   }
-  if (!data.apiaries.length) throw new Error('No apiaries to move');
-  if (!data.hives.length) throw new Error('No hives to move');
-  if (!data.movedates.length) throw new Error('No moves to move');
+  if (!data.apiaries.length && !data.hives.length && !data.wax_lots.length)
+    throw new Error('Archive contains no supported company data');
+  validateWaxArchive(data);
 
   const name = `${Date.now()}`;
   const paid = new Date();
@@ -521,6 +699,99 @@ export async function importCompanyArchive(
         clean('movedates', row, {
           apiary_id: mapped(apiaries, row.apiary_id),
           hive_id: mapped(hives, row.hive_id),
+        }),
+      ),
+    );
+
+    const waxProducts = await optionRows(
+      trx,
+      'wax_products',
+      data.wax_products,
+      companyId,
+    );
+    const waxOrigins = await optionRows(
+      trx,
+      'wax_origin_types',
+      data.wax_origin_types,
+      companyId,
+    );
+    const waxLotIds = await insertRows(
+      trx,
+      'wax_lots',
+      data.wax_lots.map((row) =>
+        clean('wax_lots', row, {
+          user_id: companyId,
+          bee_id: beeId,
+          edit_id: null,
+          product_id: mapped(waxProducts, row.product_id),
+          created_by_operation_id: null,
+        }),
+      ),
+    );
+    const waxLots = idMap(data.wax_lots, waxLotIds);
+    const waxOperationIds = await insertRows(
+      trx,
+      'wax_operations',
+      data.wax_operations.map((row) =>
+        clean('wax_operations', row, {
+          user_id: companyId,
+          bee_id: beeId,
+          edit_id: null,
+          origin_type_id: mapped(waxOrigins, row.origin_type_id),
+          reversal_of_id: null,
+        }),
+      ),
+    );
+    const waxOperations = idMap(data.wax_operations, waxOperationIds);
+    for (const row of data.wax_lots) {
+      const lotId = mapped(waxLots, row.id);
+      const creatorReference =
+        row.created_by_operation_id ??
+        data.wax_operation_lines.find(
+          (line) =>
+            line.direction === 'output' &&
+            String(line.lot_id) === String(row.id),
+        )?.operation_id;
+      const creatorId = mapped(waxOperations, creatorReference);
+      if (lotId && creatorId)
+        await trx
+          .updateTable('wax_lots')
+          .set({ created_by_operation_id: creatorId })
+          .where('id', '=', lotId)
+          .execute();
+    }
+    for (const row of data.wax_operations) {
+      const operationId = mapped(waxOperations, row.id);
+      const reversalOfId = mapped(waxOperations, row.reversal_of_id);
+      if (operationId && reversalOfId)
+        await trx
+          .updateTable('wax_operations')
+          .set({
+            reversal_of_id: reversalOfId,
+            ...(row.updated_at && {
+              updated_at: new Date(String(row.updated_at)),
+            }),
+          })
+          .where('id', '=', operationId)
+          .execute();
+    }
+    await insertRows(
+      trx,
+      'wax_operation_hives',
+      data.wax_operation_hives.map((row) =>
+        clean('wax_operation_hives', row, {
+          operation_id: mapped(waxOperations, row.operation_id),
+          hive_id: mapped(hives, row.hive_id),
+        }),
+      ),
+    );
+    await insertRows(
+      trx,
+      'wax_operation_lines',
+      data.wax_operation_lines.map((row) =>
+        clean('wax_operation_lines', row, {
+          operation_id: mapped(waxOperations, row.operation_id),
+          lot_id: mapped(waxLots, row.lot_id),
         }),
       ),
     );
@@ -665,7 +936,7 @@ export async function importCompanyArchive(
 async function appendTable(
   db: Database,
   arch: archiver.Archiver,
-  table: TransferKey,
+  table: CompanyTransferKey,
   companyId: number,
   options: Options,
 ) {
@@ -696,8 +967,40 @@ export async function downloadCompanyData(
     .where('id', '=', companyId)
     .execute();
   arch.append(stringify(company, options), { name: 'company.csv' });
-  for (const table of transferKeys.filter((key) => key !== 'movedates'))
+  const companyTables = transferKeys.filter(
+    (key): key is CompanyTransferKey =>
+      !['movedates', 'wax_operation_hives', 'wax_operation_lines'].includes(
+        key,
+      ),
+  );
+  for (const table of companyTables)
     await appendTable(db, arch, table, companyId, options);
+  const waxOperationHives = await db
+    .selectFrom('wax_operation_hives')
+    .innerJoin(
+      'wax_operations',
+      'wax_operations.id',
+      'wax_operation_hives.operation_id',
+    )
+    .selectAll('wax_operation_hives')
+    .where('wax_operations.user_id', '=', companyId)
+    .execute();
+  arch.append(stringify(waxOperationHives, options), {
+    name: 'wax_operation_hives.csv',
+  });
+  const waxOperationLines = await db
+    .selectFrom('wax_operation_lines')
+    .innerJoin(
+      'wax_operations',
+      'wax_operations.id',
+      'wax_operation_lines.operation_id',
+    )
+    .selectAll('wax_operation_lines')
+    .where('wax_operations.user_id', '=', companyId)
+    .execute();
+  arch.append(stringify(waxOperationLines, options), {
+    name: 'wax_operation_lines.csv',
+  });
   const movedates = await db
     .selectFrom('movedates')
     .innerJoin('apiaries', 'apiaries.id', 'movedates.apiary_id')
