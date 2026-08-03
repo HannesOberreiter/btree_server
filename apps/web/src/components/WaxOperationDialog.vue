@@ -235,7 +235,7 @@ function invalid() {
     <q-card
       data-cy="wax-operation-dialog"
       :style="
-        $q.platform.is.mobile ? 'width: 700px; max-width: 80vw' : undefined
+        $q.platform.is.mobile ? undefined : `width: 700px; max-width: 80vw;`
       "
     >
       <q-card-section class="row items-center">
