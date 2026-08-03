@@ -53,6 +53,22 @@ const props = defineProps({
   },
   showBefore: {
     default: true
+  },
+  showKeyboard: {
+    type: Boolean,
+    default: true
+  },
+  required: {
+    type: Boolean,
+    default: false
+  },
+  error: {
+    type: Boolean,
+    default: false
+  },
+  errorMessage: {
+    type: String,
+    default: ''
   }
 });
 
@@ -257,12 +273,15 @@ function editValues(val: boolean) {
 <template>
   <q-select
     v-model="modelValue"
-    :label="disable ? `${$t(label)} - ${$t('multipleValues')}` : $t(label)"
+    :label="`${disable ? `${$t(label)} - ${$t('multipleValues')}` : $t(label)}${required ? ' *' : ''}`"
     :name="label"
     :loading="isLoading"
     :disable="isLoading || disable"
     :options="options"
     :hint="hint"
+    :error="error"
+    :error-message="errorMessage"
+    no-error-icon
     option-value="id"
     :use-input="localPerf[`dropdown-${table}-use-input`]"
     :clearable="localPerf[`dropdown-${table}-use-input`]"
@@ -278,8 +297,9 @@ function editValues(val: boolean) {
         @click="editValues(!disable)"
       />
     </template>
-    <template #after>
+    <template v-if="showKeyboard" #after>
       <q-btn
+        data-cy="dropdown-keyboard"
         icon="fas fa-keyboard"
         flat
         round

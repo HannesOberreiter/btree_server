@@ -241,18 +241,18 @@ const links = computed(
         ]
       },
       {
-        label: t('charge', 2),
+        label: t('storage'),
         route: '',
-        icon: 'fas fa-database',
+        icon: 'fas fa-warehouse',
         menu: [
           {
-            label: t('add'),
+            label: `${t('add')} ${t('charge')}`,
             route: 'new-charge',
             icon: 'fas fa-circle-plus',
             menu: false
           },
           {
-            label: t('table'),
+            label: t('charge', 2),
             route: 'table-charge',
             icon: 'fas fa-table',
             menu: false
@@ -261,6 +261,12 @@ const links = computed(
             label: t('stock'),
             route: 'table-charge-stock',
             icon: 'fas fa-arrow-trend-up',
+            menu: false
+          },
+          {
+            label: t('wax.title'),
+            route: 'table-wax',
+            icon: 'fas fa-cubes-stacked',
             menu: false
           }
         ]

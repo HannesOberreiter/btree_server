@@ -93,6 +93,8 @@ export type Option =
   | 'treatment_diseases'
   | 'treatment_types'
   | 'treatment_vets'
+  | 'wax_products'
+  | 'wax_origin_types'
   | 'rearing_detail'
   | 'apiary'
   | 'hive'

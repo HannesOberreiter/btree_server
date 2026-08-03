@@ -6794,7 +6794,9 @@ export interface paths {
             | 'queen_races'
             | 'treatment_diseases'
             | 'treatment_types'
-            | 'treatment_vets';
+            | 'treatment_vets'
+            | 'wax_products'
+            | 'wax_origin_types';
         };
         cookie?: never;
       };
@@ -6845,7 +6847,9 @@ export interface paths {
             | 'queen_races'
             | 'treatment_diseases'
             | 'treatment_types'
-            | 'treatment_vets';
+            | 'treatment_vets'
+            | 'wax_products'
+            | 'wax_origin_types';
         };
         cookie?: never;
       };
@@ -6908,7 +6912,9 @@ export interface paths {
             | 'queen_races'
             | 'treatment_diseases'
             | 'treatment_types'
-            | 'treatment_vets';
+            | 'treatment_vets'
+            | 'wax_products'
+            | 'wax_origin_types';
         };
         cookie?: never;
       };
@@ -6969,7 +6975,9 @@ export interface paths {
             | 'queen_races'
             | 'treatment_diseases'
             | 'treatment_types'
-            | 'treatment_vets';
+            | 'treatment_vets'
+            | 'wax_products'
+            | 'wax_origin_types';
         };
         cookie?: never;
       };
@@ -7019,7 +7027,9 @@ export interface paths {
             | 'queen_races'
             | 'treatment_diseases'
             | 'treatment_types'
-            | 'treatment_vets';
+            | 'treatment_vets'
+            | 'wax_products'
+            | 'wax_origin_types';
         };
         cookie?: never;
       };
@@ -7094,7 +7104,9 @@ export interface paths {
             | 'queen_races'
             | 'treatment_diseases'
             | 'treatment_types'
-            | 'treatment_vets';
+            | 'treatment_vets'
+            | 'wax_products'
+            | 'wax_origin_types';
         };
         cookie?: never;
       };
@@ -7148,7 +7160,9 @@ export interface paths {
             | 'queen_races'
             | 'treatment_diseases'
             | 'treatment_types'
-            | 'treatment_vets';
+            | 'treatment_vets'
+            | 'wax_products'
+            | 'wax_origin_types';
         };
         cookie?: never;
       };
@@ -12721,6 +12735,448 @@ export interface paths {
         };
       };
     };
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/wax/lots': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: {
+      parameters: {
+        query?: {
+          limit?: number;
+          offset?: number;
+          q?: string;
+        };
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Default Response */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': {
+              results: {
+                code: string;
+                created_at: string | null;
+                created_by_operation_id: number | null;
+                id: number;
+                note: string | null;
+                product_id: number | null;
+                product_name: string | null;
+                reference: string | null;
+                stock_kg: number;
+                updated_at: string | null;
+              }[];
+              total: number;
+            };
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/wax/lots/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    delete: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          id: number;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Default Response */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': boolean;
+          };
+        };
+      };
+    };
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/wax/operations': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: {
+      parameters: {
+        query?: {
+          from?: string;
+          limit?: number;
+          offset?: number;
+          q?: string;
+          to?: string;
+          type?:
+            | 'production'
+            | 'purchase'
+            | 'processing'
+            | 'contract_processing'
+            | 'use'
+            | 'sale'
+            | 'correction';
+        };
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Default Response */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': {
+              results: {
+                counterparty: string | null;
+                created_at: string | null;
+                creator?:
+                  | ({
+                      email: string | null;
+                      id: number;
+                      username: string | null;
+                    } & {
+                      [key: string]: unknown;
+                    })
+                  | null;
+                date: string;
+                difference_kg: number;
+                editor?:
+                  | ({
+                      email: string | null;
+                      id: number;
+                      username: string | null;
+                    } & {
+                      [key: string]: unknown;
+                    })
+                  | null;
+                hives: {
+                  apiary_id: number | null;
+                  apiary_name: string | null;
+                  id: number;
+                  name: string;
+                }[];
+                id: number;
+                input_kg: number;
+                lines: {
+                  /** @enum {string} */
+                  direction: 'input' | 'output';
+                  id: number;
+                  lot_code: string;
+                  lot_id: number;
+                  product_id: number | null;
+                  product_name: string | null;
+                  quantity_kg: number;
+                }[];
+                note: string | null;
+                origin_type_id: number | null;
+                origin_type_name: string | null;
+                output_kg: number;
+                reference: string | null;
+                reversal_of_id: number | null;
+                /** @enum {string} */
+                type:
+                  | 'production'
+                  | 'purchase'
+                  | 'processing'
+                  | 'contract_processing'
+                  | 'use'
+                  | 'sale'
+                  | 'correction';
+                updated_at: string | null;
+                url: string | null;
+              }[];
+              total: number;
+            };
+          };
+        };
+      };
+    };
+    put?: never;
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': {
+            counterparty?: string | null;
+            /** Format: date */
+            date: string;
+            hive_ids?: number[];
+            inputs?: {
+              lot_id: number;
+              quantity_kg: number;
+            }[];
+            note?: string | null;
+            origin_type_id?: number | null;
+            outputs?: {
+              code?: string;
+              lot_id?: number;
+              note?: string | null;
+              product_id?: number;
+              quantity_kg: number;
+            }[];
+            reference?: string | null;
+            /** @enum {string} */
+            type:
+              | 'production'
+              | 'purchase'
+              | 'processing'
+              | 'contract_processing'
+              | 'use'
+              | 'sale'
+              | 'correction';
+            url?: string | null;
+          };
+        };
+      };
+      responses: {
+        /** @description Default Response */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': {
+              counterparty: string | null;
+              created_at: string | null;
+              creator?:
+                | ({
+                    email: string | null;
+                    id: number;
+                    username: string | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
+              date: string;
+              difference_kg: number;
+              editor?:
+                | ({
+                    email: string | null;
+                    id: number;
+                    username: string | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
+              hives: {
+                apiary_id: number | null;
+                apiary_name: string | null;
+                id: number;
+                name: string;
+              }[];
+              id: number;
+              input_kg: number;
+              lines: {
+                /** @enum {string} */
+                direction: 'input' | 'output';
+                id: number;
+                lot_code: string;
+                lot_id: number;
+                product_id: number | null;
+                product_name: string | null;
+                quantity_kg: number;
+              }[];
+              note: string | null;
+              origin_type_id: number | null;
+              origin_type_name: string | null;
+              output_kg: number;
+              reference: string | null;
+              reversal_of_id: number | null;
+              /** @enum {string} */
+              type:
+                | 'production'
+                | 'purchase'
+                | 'processing'
+                | 'contract_processing'
+                | 'use'
+                | 'sale'
+                | 'correction';
+              updated_at: string | null;
+              url: string | null;
+            };
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/wax/operations/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    delete: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          id: number;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Default Response */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': boolean;
+          };
+        };
+      };
+    };
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/wax/operations/{id}/reverse': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          id: number;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Default Response */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': {
+              counterparty: string | null;
+              created_at: string | null;
+              creator?:
+                | ({
+                    email: string | null;
+                    id: number;
+                    username: string | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
+              date: string;
+              difference_kg: number;
+              editor?:
+                | ({
+                    email: string | null;
+                    id: number;
+                    username: string | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
+              hives: {
+                apiary_id: number | null;
+                apiary_name: string | null;
+                id: number;
+                name: string;
+              }[];
+              id: number;
+              input_kg: number;
+              lines: {
+                /** @enum {string} */
+                direction: 'input' | 'output';
+                id: number;
+                lot_code: string;
+                lot_id: number;
+                product_id: number | null;
+                product_name: string | null;
+                quantity_kg: number;
+              }[];
+              note: string | null;
+              origin_type_id: number | null;
+              origin_type_name: string | null;
+              output_kg: number;
+              reference: string | null;
+              reversal_of_id: number | null;
+              /** @enum {string} */
+              type:
+                | 'production'
+                | 'purchase'
+                | 'processing'
+                | 'contract_processing'
+                | 'use'
+                | 'sale'
+                | 'correction';
+              updated_at: string | null;
+              url: string | null;
+            };
+          };
+        };
+      };
+    };
+    delete?: never;
     options?: never;
     head?: never;
     patch?: never;

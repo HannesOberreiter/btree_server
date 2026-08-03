@@ -113,6 +113,21 @@ export const useTablesStore = defineStore('tables', {
       sort: useStorage('table-sort-col-charge-stock', 'name'),
       direction: useStorage('table-sort-direction-charge-stock', false)
     },
+    waxSummary: {
+      length: useStorage('table-length-wax-summary', 10),
+      sort: useStorage('table-sort-col-wax-summary', 'product_name'),
+      direction: useStorage('table-sort-direction-wax-summary', false)
+    },
+    waxLots: {
+      length: useStorage('table-length-wax-lots', 10),
+      sort: useStorage('table-sort-col-wax-lots', 'code'),
+      direction: useStorage('table-sort-direction-wax-lots', true)
+    },
+    waxOperations: {
+      length: useStorage('table-length-wax-operations', 10),
+      sort: useStorage('table-sort-col-wax-operations', 'date'),
+      direction: useStorage('table-sort-direction-wax-operations', true)
+    },
     scale_data: {
       visible: useStorage('table-visible-scale_data', [
         'datetime',

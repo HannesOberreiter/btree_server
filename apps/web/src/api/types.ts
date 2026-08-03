@@ -47,6 +47,14 @@ export type AuthLogoutResponse =
   paths['/v1/auth/logout']['get']['responses'][200]['content']['application/json'];
 export type AuthOauthUrlResponse =
   paths['/v1/auth/google']['get']['responses'][200]['content']['application/json'];
+export type WaxLotListResponse =
+  paths['/v1/wax/lots']['get']['responses'][200]['content']['application/json'];
+export type WaxLotResponse = WaxLotListResponse['results'][number];
+export type WaxOperationListResponse =
+  paths['/v1/wax/operations']['get']['responses'][200]['content']['application/json'];
+export type WaxOperationResponse = WaxOperationListResponse['results'][number];
+export type WaxOperationLineResponse = WaxOperationResponse['lines'][number];
+
 export type AuthDiscourseResponse =
   paths['/v1/auth/discourse']['get']['responses'][200]['content']['application/json'];
 export type AuthRegisterResponse =

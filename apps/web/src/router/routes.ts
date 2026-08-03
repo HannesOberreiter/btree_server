@@ -184,6 +184,14 @@ const routes: RouteRecordRaw[] = [
         component: () => import('../pages/TableChargeStock.vue')
       },
       {
+        path: 'wax',
+        name: 'table-wax',
+        meta: {
+          title: 'wax.title'
+        },
+        component: () => import('../pages/TableWax.vue')
+      },
+      {
         path: 'scale_data',
         name: 'table-scale_data',
         meta: {

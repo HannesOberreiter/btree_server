@@ -44,6 +44,8 @@ export const OPTIONS = [
   'treatment_diseases',
   'treatment_types',
   'treatment_vets',
+  'wax_products',
+  'wax_origin_types',
   'rearing_detail'
 ] as const;
 

@@ -82,6 +82,14 @@ const options = [
   {
     label: `${t('treatment')} ${t('vet')}`,
     value: 'treatment_vets'
+  },
+  {
+    label: t('wax.products'),
+    value: 'wax_products'
+  },
+  {
+    label: t('wax.originTypes'),
+    value: 'wax_origin_types'
   }
 ];
 
