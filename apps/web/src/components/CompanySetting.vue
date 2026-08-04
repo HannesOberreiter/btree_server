@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { CompanyPatchResponse, CompanyResponse } from '../api/types';
 import { findIndex, sortBy } from 'lodash-es';
 import { storeToRefs } from 'pinia';
 import { useQuasar } from 'quasar';
@@ -101,8 +102,10 @@ function editCompany() {
     cancel: true,
     persistent: false
   }).onOk(data => {
-    api.patch('/v1/company', { name: data }).then(
-      async (_response: any) => {
+    (
+      api.patch('/v1/company', { name: data }) as Promise<CompanyPatchResponse>
+    ).then(
+      async _response => {
         invalidateQueries.invalidate();
         await storeRefresh.refresh();
         notification.open('positive', '');
@@ -126,8 +129,8 @@ function newCompany() {
     cancel: true,
     persistent: true
   }).onOk(data => {
-    api.post('/v1/company', { name: data }).then(
-      async (_response: any) => {
+    (api.post('/v1/company', { name: data }) as Promise<CompanyResponse>).then(
+      async _response => {
         invalidateQueries.invalidate();
         await storeRefresh.refresh();
         notification.open('positive', '');
@@ -223,6 +226,7 @@ async function importData() {
     "
     :label="t('company.active')"
     standout="bg-blue text-white"
+    data-cy="select-company"
     @update:model-value="changeCompany"
   >
     <template #prepend>
@@ -237,6 +241,7 @@ async function importData() {
       color="primary"
       :loading="isSubmitting"
       :label="t('new')"
+      data-cy="btn-company-new"
       @click="newCompany"
     />
     <BtnBase
@@ -244,6 +249,7 @@ async function importData() {
       color="info"
       :loading="downloadLoading"
       :label="t('download')"
+      data-cy="btn-company-download"
       @click="downloadContent"
     />
     <BtnBase
@@ -251,6 +257,7 @@ async function importData() {
       color="secondary"
       :loading="isSubmitting"
       :label="t('edit')"
+      data-cy="btn-company-edit"
       @click="editCompany"
     />
   </BtnBaseGroup>
@@ -260,12 +267,14 @@ async function importData() {
       color="primary"
       :loading="isSubmitting"
       :label="t('server.text.button')"
+      data-cy="btn-company-import"
       @click="importData"
     />
     <BtnBase
       color="red-10"
       :loading="isSubmitting"
       :label="t('removeAccess')"
+      data-cy="btn-company-leave"
       @click="removeAccess"
     />
     <BtnBase
@@ -273,6 +282,7 @@ async function importData() {
       color="negative"
       :loading="isSubmitting"
       :label="t('delete')"
+      data-cy="btn-company-delete"
       @click="deleteCompany"
     />
   </BtnBaseGroup>

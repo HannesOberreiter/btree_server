@@ -1,6 +1,11 @@
+import process from 'node:process';
 import find from 'lodash-es/find.js';
 import userDemoFixture from '../fixtures/user_demo.json' with { type: 'json' };
 import { expect, test as base } from './helpers';
+
+const backendURL =
+  process.env.PLAYWRIGHT_BACKEND_URL ?? 'http://localhost:8101';
+const apiOrigin = process.env.PLAYWRIGHT_API_ORIGIN ?? 'http://localhost:8001';
 
 interface UserFixtures {
   autoAuth: void;
@@ -12,17 +17,15 @@ interface UserFixtures {
 export const test = base.extend<UserFixtures>({
   autoAuth: [
     async ({ page, request }, use) => {
-      const response = await request.post(
-        'http://localhost:8101/api/v1/auth/login',
-        {
-          headers: { origin: 'http://localhost:8001' },
-          data: {
-            email: userDemoFixture.mail,
-            password: userDemoFixture.password
-          }
+      const response = await request.post(`${backendURL}/api/v1/auth/login`, {
+        headers: { origin: apiOrigin },
+        data: {
+          email: userDemoFixture.mail,
+          password: userDemoFixture.password
         }
-      );
+      });
 
+      expect(response.ok()).toBe(true);
       const body = await response.json();
       const userData = body.data;
 
@@ -41,8 +44,12 @@ export const test = base.extend<UserFixtures>({
           if (window.location.origin === 'null') {
             return;
           }
-          localStorage.setItem('user', JSON.stringify(u));
-          localStorage.setItem('company', JSON.stringify(c));
+          if (!localStorage.getItem('user')) {
+            localStorage.setItem('user', JSON.stringify(u));
+          }
+          if (!localStorage.getItem('company')) {
+            localStorage.setItem('company', JSON.stringify(c));
+          }
         },
         { u: userData, c: currentCompany }
       );

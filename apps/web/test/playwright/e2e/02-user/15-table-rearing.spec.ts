@@ -15,13 +15,14 @@ test.describe('user - Rearing Table', () => {
   }) => {
     await expect(page.locator('.q-table')).toBeAttached();
 
+    const note = `E2E rearing ${Date.now()}`;
     await dataCy('btn-table-new').click();
     await expect(dataCy(form)).toBeAttached();
-    await page.waitForTimeout(1000);
+    await page.locator('[name=note]').fill(note);
     await dataCy('btn-form-save').click();
     await expect(dataCy(form)).not.toBeAttached();
 
-    await tableEditRow(form);
-    await tableDeleteRow();
+    await tableEditRow(form, note);
+    await tableDeleteRow(note);
   });
 });

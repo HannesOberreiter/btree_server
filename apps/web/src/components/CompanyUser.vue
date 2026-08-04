@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { CompanyUserResponse } from '../api/types';
 import { findIndex } from 'lodash-es';
 import { storeToRefs } from 'pinia';
 import { useQuasar } from 'quasar';
@@ -23,15 +24,13 @@ const newUser = ref('');
 const { user } = storeToRefs(storeUser);
 const isSubmitting = ref(false);
 
-async function usersPromise() {
-  return api.get('/v1/company_user/user').then(
-    (response: any) => {
-      return response;
-    },
-    error => {
-      notification.open('negative', error);
-    }
-  );
+async function usersPromise(): Promise<CompanyUserResponse> {
+  return (
+    api.get('/v1/company_user/user') as Promise<CompanyUserResponse>
+  ).catch(error => {
+    notification.open('negative', error);
+    return [];
+  });
 }
 
 const usersData = ref(await usersPromise());

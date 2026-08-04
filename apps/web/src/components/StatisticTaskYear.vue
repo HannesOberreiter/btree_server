@@ -23,6 +23,10 @@ const props = defineProps({
   kind: {
     type: String,
     required: true
+  },
+  hideColonyCount: {
+    type: Boolean,
+    default: false
   }
 });
 
@@ -55,7 +59,7 @@ const { isLoading, data: query } = useStatisticYear(props.kind, {
 });
 
 watch(
-  query,
+  [query, () => props.hideColonyCount],
   async () => {
     if (query.value) {
       await nextTick();
@@ -94,7 +98,9 @@ function renderChart(
   titleText: string,
   data: any
 ) {
-  const x = data.map((o: any) => `${o.year} (${o.hive_count})`);
+  const x = data.map(
+    (o: any) => `${o.year}${props.hideColonyCount ? '' : ` (${o.hive_count})`}`
+  );
   const y = data.map((o: any) => {
     return {
       value: round(o[col], 1),

@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import type {
+  CompanyPaidResponse,
+  CompanyPaymentsResponse
+} from '../api/types';
 import dayjs from 'dayjs';
 import { useQuasar } from 'quasar';
 import BtnBaseGroup from '@/components/BtnBaseGroup.vue';
@@ -7,7 +11,6 @@ import { useI18n } from 'vue-i18n';
 import BtnBase from '../components/BtnBase.vue';
 import PaymentMollie from '../components/PaymentMollie.vue';
 import PaymentPaypal from '../components/PaymentPaypal.vue';
-import PaymentStripe from '../components/PaymentStripe.vue';
 import { useApiFetch } from '../composables/useApi';
 import { useDateFormat } from '../composables/useDate';
 import { useNotification } from '../composables/useNotification';
@@ -26,14 +29,7 @@ const isAppleStoreWrapper = computed(
   () => document.cookie.includes('iOS') === true
 );
 
-const payments = ref<{
-  company: {
-    count: number;
-    months: number;
-  };
-  countCurrentYear: number;
-  countLastYear: number;
-}>({
+const payments = ref<CompanyPaymentsResponse>({
   company: {
     count: 0,
     months: 0
@@ -91,28 +87,28 @@ function requestInvoice() {
     persistent: true
   }).onOk(() => {
     paidLoading.value = true;
-    api
-      .post('/v1/company/invoice', {
+    (
+      api.post('/v1/company/invoice', {
         amount: donation.value,
         quantity: years.value
-      })
-      .then(
-        (data: any) => {
-          successPayment(data.paid);
-        },
-        (error: any) => {
-          paidLoading.value = false;
-          if (error.statusCode === 429) {
-            notification.open(
-              'warning',
-              t('membership.invoiceRequestRecent'),
-              true
-            );
-          } else {
-            notification.open('negative', error);
-          }
+      }) as Promise<CompanyPaidResponse>
+    ).then(
+      data => {
+        successPayment(data.paid);
+      },
+      (error: any) => {
+        paidLoading.value = false;
+        if (error.statusCode === 429) {
+          notification.open(
+            'warning',
+            t('membership.invoiceRequestRecent'),
+            true
+          );
+        } else {
+          notification.open('negative', error);
         }
-      );
+      }
+    );
   });
 }
 
@@ -131,11 +127,6 @@ const donationMarker = [
 const query = new URLSearchParams(window.location.search);
 if (query.has('mollie')) {
   successPayment('');
-}
-if (query.has('session_id')) {
-  successPayment('');
-}
-if (query.has('session_id') || query.has('mollie')) {
   window.history.replaceState({}, document.title, window.location.pathname);
 }
 
@@ -147,7 +138,11 @@ function payCoupon() {
     }
   }).onOk(val => {
     if (val.trim()) {
-      api.post('/v1/company/coupon', { coupon: val }).then(
+      (
+        api.post('/v1/company/coupon', {
+          coupon: val
+        }) as Promise<CompanyPaidResponse>
+      ).then(
         data => {
           successPayment(data.paid);
         },
@@ -185,8 +180,7 @@ async function successPayment(newDate: string) {
   paid.value = true;
 }
 
-api
-  .get('/v1/company/payments')
+(api.get('/v1/company/payments') as Promise<CompanyPaymentsResponse>)
   .then(data => {
     payments.value = data;
   })
@@ -346,18 +340,6 @@ api
                   <q-card>
                     <q-card-section>
                       <PaymentMollie :donation="donation" :years="years" />
-                    </q-card-section>
-                  </q-card>
-                </q-expansion-item>
-                <q-expansion-item
-                  expand-separator
-                  icon="fab fa-stripe"
-                  :label="$t('payment.stripe')"
-                  :caption="$t('payment.stripeDescription')"
-                >
-                  <q-card>
-                    <q-card-section>
-                      <PaymentStripe :donation="donation" :years="years" />
                     </q-card-section>
                   </q-card>
                 </q-expansion-item>

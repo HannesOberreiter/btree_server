@@ -21,6 +21,7 @@ const kind = toRef(props, 'kind');
 
 const $q = useQuasar();
 const tab = ref('year');
+const hideColonyCount = ref(false);
 const storeFilter = useTableFilterStore();
 const STATSSTORE = `statistic_${unref(kind)}`;
 storeFilter.reset(STATSSTORE);
@@ -50,6 +51,7 @@ function openFilter() {
         </div>
       </div>
       <div class="col-6 text-right">
+        <q-toggle v-model="hideColonyCount" :label="$t('hideColonyCount')" />
         <BtnBaseGroup>
           <BtnBase
             :color="filter ? 'negative' : 'warning'"
@@ -90,13 +92,16 @@ function openFilter() {
     </q-tabs>
     <q-tab-panels v-model="tab" animated>
       <q-tab-panel name="year" class="no-padding">
-        <StatisticTaskYear :kind="kind" />
+        <StatisticTaskYear :kind="kind" :hide-colony-count="hideColonyCount" />
       </q-tab-panel>
       <q-tab-panel name="apiary" class="no-padding">
-        <StatisticTaskApiary :kind="kind" />
+        <StatisticTaskApiary
+          :kind="kind"
+          :hide-colony-count="hideColonyCount"
+        />
       </q-tab-panel>
       <q-tab-panel name="type" class="no-padding">
-        <StatisticTaskType :kind="kind" />
+        <StatisticTaskType :kind="kind" :hide-colony-count="hideColonyCount" />
       </q-tab-panel>
     </q-tab-panels>
   </q-card>
