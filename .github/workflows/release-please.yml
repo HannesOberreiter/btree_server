@@ -24,8 +24,13 @@ jobs:
         env:
           GH_REPO: ${{ github.repository }}
           GH_TOKEN: ${{ secrets.BTREE_SITES_DISPATCH_TOKEN }}
-          PR_NUMBER: ${{ fromJSON(steps.release.outputs.pr).number }}
-        run: gh pr merge "$PR_NUMBER" --squash --auto
+          PR_JSON: ${{ steps.release.outputs.pr }}
+        run: |
+          if ! PR_NUMBER=$(jq -r '.number // empty' <<< "$PR_JSON") || [ -z "$PR_NUMBER" ]; then
+            echo "Could not determine PR number from release-please output: $PR_JSON" >&2
+            exit 1
+          fi
+          gh pr merge "$PR_NUMBER" --squash --auto
 
   deploy:
     needs: release-please
