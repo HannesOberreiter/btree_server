@@ -1,3 +1,11 @@
+import type {
+  KyselyPlugin,
+  PluginTransformQueryArgs,
+  PluginTransformResultArgs,
+  QueryResult,
+  RootOperationNode,
+  UnknownRow,
+} from 'kysely';
 import { beforeAll, describe, expect, it } from 'vitest';
 
 import {
@@ -16,6 +24,21 @@ import {
   createAuthenticatedAgent,
   doQueryRequest,
 } from '../utils.js';
+
+class QueryCapturePlugin implements KyselyPlugin {
+  constructor(private readonly queries: string[]) {}
+
+  transformQuery(args: PluginTransformQueryArgs): RootOperationNode {
+    this.queries.push(JSON.stringify(args.node));
+    return args.node;
+  }
+
+  transformResult(
+    args: PluginTransformResultArgs,
+  ): Promise<QueryResult<UnknownRow>> {
+    return Promise.resolve(args.result);
+  }
+}
 
 describe('statistic routes', () => {
   const route = '/api/v1/statistic';
@@ -127,6 +150,38 @@ describe('statistic routes', () => {
         stats: expect.any(Array),
       }),
     );
+  });
+
+  it('queries only tables for the requested task statistics', async () => {
+    const db = KyselyServer.getInstance().db;
+    const tableNames = {
+      feed: ['feeds', 'feeds_apiaries', 'feed_types'],
+      harvest: ['harvests', 'harvests_apiaries', 'harvest_types'],
+      treatment: ['treatments', 'treatments_apiaries', 'treatment_types'],
+    } as const;
+
+    for (const task of ['feed', 'harvest', 'treatment'] as const) {
+      const queries: string[] = [];
+      const instrumentedDb = db.withPlugin(new QueryCapturePlugin(queries));
+      await listTaskStatisticsSummary(
+        instrumentedDb,
+        999_999,
+        task,
+        'year',
+        {},
+      );
+
+      const queryNodes = queries.join('\n');
+      for (const selectedTable of tableNames[task]) {
+        expect(queryNodes).toContain(`"name":"${selectedTable}"`);
+      }
+      for (const otherTask of ['feed', 'harvest', 'treatment'] as const) {
+        if (otherTask === task) continue;
+        for (const unrelatedTable of tableNames[otherTask]) {
+          expect(queryNodes).not.toContain(`"name":"${unrelatedTable}"`);
+        }
+      }
+    }
   });
 
   it('operations enforce company isolation', async () => {

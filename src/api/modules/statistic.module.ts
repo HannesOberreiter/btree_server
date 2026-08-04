@@ -125,6 +125,40 @@ interface TaskTypeProjection {
   [key: string]: unknown;
 }
 
+interface TaskSourceRow {
+  kind: StatisticTask;
+  id: number;
+  date: Date | null;
+  amount: string | null;
+  hive_id: number | null;
+  type_id: number | null;
+  user_id: number | null;
+  deleted: boolean | null;
+  frames: number | null;
+  water: string | null;
+  disease_id: number | null;
+}
+
+interface TaskApiarySourceRow {
+  kind: StatisticTask;
+  task_id: number | null;
+  task_date: Date | null;
+  apiary_id: number;
+  apiary_name: string | null;
+  user_id: number | null;
+}
+
+interface TaskTypeSourceRow {
+  kind: StatisticTask;
+  id: number;
+  name: string | null;
+  favorite: boolean | null;
+  modus: boolean | null;
+  created_at: Date | null;
+  updated_at: Date | null;
+  user_id: number | null;
+}
+
 function hiveProjection() {
   return sql<HiveProjection>`
     JSON_OBJECT(
@@ -175,136 +209,119 @@ function taskApiaryProjection(task: StatisticTask) {
   `.as('task_apiary');
 }
 
-function taskSource(db: Database) {
-  return db
-    .selectFrom('feeds')
-    .select([
-      sql<StatisticTask>`'feed'`.as('kind'),
-      'id',
-      'date',
-      'amount',
-      'hive_id',
-      'type_id',
-      'user_id',
-      'deleted',
-      sql<string | null>`NULL`.as('frames'),
-      sql<string | null>`NULL`.as('water'),
-      sql<number | null>`NULL`.as('disease_id'),
-    ])
-    .unionAll(
-      db
+function taskSource(db: Database, task: StatisticTask) {
+  const commonSelections = [
+    'id',
+    'date',
+    'amount',
+    'hive_id',
+    'type_id',
+    'user_id',
+    'deleted',
+  ] as const;
+
+  switch (task) {
+    case 'feed':
+      return db
+        .selectFrom('feeds')
+        .select([
+          sql<StatisticTask>`'feed'`.as('kind'),
+          ...commonSelections,
+          sql<number | null>`NULL`.as('frames'),
+          sql<string | null>`NULL`.as('water'),
+          sql<number | null>`NULL`.as('disease_id'),
+        ])
+        .$castTo<TaskSourceRow>();
+    case 'harvest':
+      return db
         .selectFrom('harvests')
         .select([
           sql<StatisticTask>`'harvest'`.as('kind'),
-          'id',
-          'date',
-          'amount',
-          'hive_id',
-          'type_id',
-          'user_id',
-          'deleted',
+          ...commonSelections,
           'frames',
           'water',
           sql<number | null>`NULL`.as('disease_id'),
-        ]),
-    )
-    .unionAll(
-      db
+        ])
+        .$castTo<TaskSourceRow>();
+    case 'treatment':
+      return db
         .selectFrom('treatments')
         .select([
           sql<StatisticTask>`'treatment'`.as('kind'),
-          'id',
-          'date',
-          'amount',
-          'hive_id',
-          'type_id',
-          'user_id',
-          'deleted',
-          sql<string | null>`NULL`.as('frames'),
+          ...commonSelections,
+          sql<number | null>`NULL`.as('frames'),
           sql<string | null>`NULL`.as('water'),
           'disease_id',
-        ]),
-    );
+        ])
+        .$castTo<TaskSourceRow>();
+  }
 }
 
-function taskApiarySource(db: Database) {
-  return db
-    .selectFrom('feeds_apiaries')
-    .select([
-      sql<StatisticTask>`'feed'`.as('kind'),
-      'feed_id as task_id',
-      'feed_date as task_date',
-      'apiary_id',
-      'apiary_name',
-      'user_id',
-    ])
-    .unionAll(
-      db
+function taskApiarySource(db: Database, task: StatisticTask) {
+  const commonSelections = ['apiary_id', 'apiary_name', 'user_id'] as const;
+
+  switch (task) {
+    case 'feed':
+      return db
+        .selectFrom('feeds_apiaries')
+        .select([
+          sql<StatisticTask>`'feed'`.as('kind'),
+          'feed_id as task_id',
+          'feed_date as task_date',
+          ...commonSelections,
+        ])
+        .$castTo<TaskApiarySourceRow>();
+    case 'harvest':
+      return db
         .selectFrom('harvests_apiaries')
         .select([
           sql<StatisticTask>`'harvest'`.as('kind'),
           'harvest_id as task_id',
           'harvest_date as task_date',
-          'apiary_id',
-          'apiary_name',
-          'user_id',
-        ]),
-    )
-    .unionAll(
-      db
+          ...commonSelections,
+        ])
+        .$castTo<TaskApiarySourceRow>();
+    case 'treatment':
+      return db
         .selectFrom('treatments_apiaries')
         .select([
           sql<StatisticTask>`'treatment'`.as('kind'),
           'treatment_id as task_id',
           'treatment_date as task_date',
-          'apiary_id',
-          'apiary_name',
-          'user_id',
-        ]),
-    );
+          ...commonSelections,
+        ])
+        .$castTo<TaskApiarySourceRow>();
+  }
 }
 
-function taskTypeSource(db: Database) {
-  return db
-    .selectFrom('feed_types')
-    .select([
-      sql<StatisticTask>`'feed'`.as('kind'),
-      'id',
-      'name',
-      'favorite',
-      'modus',
-      'created_at',
-      'updated_at',
-      'user_id',
-    ])
-    .unionAll(
-      db
+function taskTypeSource(db: Database, task: StatisticTask) {
+  const selections = [
+    'id',
+    'name',
+    'favorite',
+    'modus',
+    'created_at',
+    'updated_at',
+    'user_id',
+  ] as const;
+
+  switch (task) {
+    case 'feed':
+      return db
+        .selectFrom('feed_types')
+        .select([sql<StatisticTask>`'feed'`.as('kind'), ...selections])
+        .$castTo<TaskTypeSourceRow>();
+    case 'harvest':
+      return db
         .selectFrom('harvest_types')
-        .select([
-          sql<StatisticTask>`'harvest'`.as('kind'),
-          'id',
-          'name',
-          'favorite',
-          'modus',
-          'created_at',
-          'updated_at',
-          'user_id',
-        ]),
-    )
-    .unionAll(
-      db
+        .select([sql<StatisticTask>`'harvest'`.as('kind'), ...selections])
+        .$castTo<TaskTypeSourceRow>();
+    case 'treatment':
+      return db
         .selectFrom('treatment_types')
-        .select([
-          sql<StatisticTask>`'treatment'`.as('kind'),
-          'id',
-          'name',
-          'favorite',
-          'modus',
-          'created_at',
-          'updated_at',
-          'user_id',
-        ]),
-    );
+        .select([sql<StatisticTask>`'treatment'`.as('kind'), ...selections])
+        .$castTo<TaskTypeSourceRow>();
+  }
 }
 
 function buildTaskQuery(
@@ -316,14 +333,14 @@ function buildTaskQuery(
   defaultCurrentYear: boolean,
 ) {
   let query = db
-    .selectFrom(taskSource(db).as('task'))
+    .selectFrom(taskSource(db, task).as('task'))
     .innerJoin('hives as hive', 'hive.id', 'task.hive_id')
-    .leftJoin(taskApiarySource(db).as('task_apiary'), (join) =>
+    .leftJoin(taskApiarySource(db, task).as('task_apiary'), (join) =>
       join
         .onRef('task_apiary.task_id', '=', 'task.id')
         .onRef('task_apiary.kind', '=', 'task.kind'),
     )
-    .leftJoin(taskTypeSource(db).as('task_type'), (join) =>
+    .leftJoin(taskTypeSource(db, task).as('task_type'), (join) =>
       join
         .onRef('task_type.id', '=', 'task.type_id')
         .onRef('task_type.kind', '=', 'task.kind'),
