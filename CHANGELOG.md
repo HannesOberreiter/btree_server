@@ -1,5 +1,48 @@
 # Changelog
 
+## [7.5.0](https://github.com/HannesOberreiter/btree_server/compare/btree-server-v7.4.0...btree-server-v7.5.0) (2026-08-04)
+
+
+### Features
+
+* **api:** add schemas for remaining routes ([3f2e5e4](https://github.com/HannesOberreiter/btree_server/commit/3f2e5e4600405dc1033b2648fdede400fe39d942))
+* **api:** publish Zod OpenAPI contracts ([6a19d6d](https://github.com/HannesOberreiter/btree_server/commit/6a19d6d433bf5e3c4649ea7295fe8aa1c8f67515))
+* **wax:** add traceable wax ledger ([b8b2515](https://github.com/HannesOberreiter/btree_server/commit/b8b25159aa0cfd451a4301c01427bb6376e7465d))
+
+
+### Bug Fixes
+
+* **agent:** preserve tool recovery details ([b45ea3f](https://github.com/HannesOberreiter/btree_server/commit/b45ea3f01b012d2d76ac8e0debedb40cf3a67d18))
+* **audit:** misc errors in payment and membership ([dd7a6db](https://github.com/HannesOberreiter/btree_server/commit/dd7a6dbcad6bb71619a9d4b026b355133a76cdbc))
+* **auth:** enforce OAuth access policy ([83bdda8](https://github.com/HannesOberreiter/btree_server/commit/83bdda87a56d06212f4470f622e0e60a285f20b5))
+* **auth:** enforce WizBee tool roles ([5a26bd7](https://github.com/HannesOberreiter/btree_server/commit/5a26bd7425910c84cd81bdea918bd1d7b8625dda))
+* **security:** enforce location ownership ([33df903](https://github.com/HannesOberreiter/btree_server/commit/33df9037105c15257d34ba47a2dde19a02ef6667))
+
+
+### Miscellaneous
+
+* **agent-key:** replace model wrapper ([f399c72](https://github.com/HannesOberreiter/btree_server/commit/f399c725b1713c4bdfbb9392e27382f8dca2430a))
+* **apiary:** migrate routes to Kysely ([c32552d](https://github.com/HannesOberreiter/btree_server/commit/c32552d3b356faaf41fd21adbd7f1ccbec09df5e))
+* **api:** deepen domain modules ([b7c62b1](https://github.com/HannesOberreiter/btree_server/commit/b7c62b148b733e21045c17362e1ae1f0f1c343e5))
+* **calendar:** migrate reads to Kysely ([3619b73](https://github.com/HannesOberreiter/btree_server/commit/3619b73c0d3d98365f3619d56c1c771bd9f1cf1d))
+* **company:** migrate archive persistence ([3191232](https://github.com/HannesOberreiter/btree_server/commit/3191232bce155ebe168f84b8adfa64e718ba542b))
+* **company:** migrate workspace operations ([0a32c04](https://github.com/HannesOberreiter/btree_server/commit/0a32c04444549360c2957a23c225307e850ee0ae))
+* **db:** make Kysely types reproducible ([c05636f](https://github.com/HannesOberreiter/btree_server/commit/c05636f697b1c07438a13aea66cc46fdaf97b4e2))
+* **db:** remove Objection runtime ([5a324b5](https://github.com/HannesOberreiter/btree_server/commit/5a324b56ba71a2276e8111453a65b0091d96aff5))
+* **dropbox:** migrate persistence to Kysely ([c7fd328](https://github.com/HannesOberreiter/btree_server/commit/c7fd328a3cbf765ecfc74c9eab9d6c817ada7b46))
+* **field-setting:** migrate routes to Kysely ([ee3ebf3](https://github.com/HannesOberreiter/btree_server/commit/ee3ebf369c81e51d0ff119dbca928da43a9d5064))
+* **hive:** migrate CRUD to Kysely ([5f9244d](https://github.com/HannesOberreiter/btree_server/commit/5f9244d571771e4c3becaa3455c96d66f5109726))
+* **identity:** migrate persistence to Kysely ([18cafc7](https://github.com/HannesOberreiter/btree_server/commit/18cafc715d5b51805205d841db57d8fcbb95e01c))
+* **observations:** deepen Kysely operations ([ff93466](https://github.com/HannesOberreiter/btree_server/commit/ff9346699e1efceab0f9acb6043bb554f28ffcdb))
+* **options:** migrate routes to Kysely ([96c1b5d](https://github.com/HannesOberreiter/btree_server/commit/96c1b5d3fdaa309c3b8c910db8199799f0d521a0))
+* **payments:** remove Stripe integration ([d4a05e2](https://github.com/HannesOberreiter/btree_server/commit/d4a05e2697e42c9753a1b96dd4a53f132f342a42))
+* **phase4:** migrate business slices to Kysely ([e52fdf1](https://github.com/HannesOberreiter/btree_server/commit/e52fdf152e25d0e6d65de522ce3a7da8f7d5de31))
+* **scale-data:** migrate routes to Kysely ([ab4fe2a](https://github.com/HannesOberreiter/btree_server/commit/ab4fe2a8e77a389d011eba9c0c614615606cdfdd))
+* **scale:** migrate routes to Kysely ([4d54a44](https://github.com/HannesOberreiter/btree_server/commit/4d54a44662f834b94813f6c9038f51373da299f8))
+* **statistics:** migrate reads to Kysely ([738cf94](https://github.com/HannesOberreiter/btree_server/commit/738cf94daad2eae569b275352aeb383648d61f19))
+* **tasks:** migrate routes to Kysely ([c9fd1bf](https://github.com/HannesOberreiter/btree_server/commit/c9fd1bffaa810d88f537c1462f6cbc0b5a2dc30d))
+* **todo:** deepen Kysely operations ([b7e60fe](https://github.com/HannesOberreiter/btree_server/commit/b7e60fe49685b48feb99910c06161d5713e2547d))
+
 ## [7.4.0](https://github.com/HannesOberreiter/btree_server/compare/btree-server-v7.3.1...btree-server-v7.4.0) (2026-07-20)
 
 
