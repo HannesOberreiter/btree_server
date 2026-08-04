@@ -1,5 +1,37 @@
 # Changelog
 
+## [7.4.0](https://github.com/HannesOberreiter/btree_vue/compare/btree-client-v7.3.0...btree-client-v7.4.0) (2026-08-04)
+
+
+### Features
+
+* **api:** consume generated OpenAPI types ([6e9aa34](https://github.com/HannesOberreiter/btree_vue/commit/6e9aa347959b119a8707594df0339aab0a44bbfe))
+* **statistics:** add colony count toggle ([b6e87d1](https://github.com/HannesOberreiter/btree_vue/commit/b6e87d1b7aa9a769437cd109b54837e4c8e19916))
+* **wax:** add wax ledger interface ([7c96229](https://github.com/HannesOberreiter/btree_vue/commit/7c962292783d3d9afb03565bda2f72cfd3827687))
+
+
+### Bug Fixes
+
+* **dialog:** platform mobile style improvements ([72bb086](https://github.com/HannesOberreiter/btree_vue/commit/72bb0861f92e272c46bd3cb80bf9452c81dc28f1))
+* **notify:** parse native error contract ([c385ae9](https://github.com/HannesOberreiter/btree_vue/commit/c385ae916f5b6b1509218801162051279ad45a1a))
+* **wax:** correct sizing of form ([0a11be4](https://github.com/HannesOberreiter/btree_vue/commit/0a11be459ce285295c5c425ed525c1b2dcee381f))
+
+
+### Miscellaneous
+
+* **api:** refresh actor types ([a176440](https://github.com/HannesOberreiter/btree_vue/commit/a176440f9572f84465dc40d111db4437a9b68c08))
+* **api:** refresh generated OpenAPI types ([938fc36](https://github.com/HannesOberreiter/btree_vue/commit/938fc3686a0cca36c0bb0bf740173c65ae75cc08))
+* **api:** refresh generated types ([0d7f44a](https://github.com/HannesOberreiter/btree_vue/commit/0d7f44a0f1eb705ea6fd961c94554c97d10c7b4a))
+* **api:** refresh generated types ([03e95c6](https://github.com/HannesOberreiter/btree_vue/commit/03e95c6765cfaeac6f5d27fcb8be990bda00696b))
+* **api:** refresh generated types ([1165750](https://github.com/HannesOberreiter/btree_vue/commit/1165750f1e2b249e4e4600f4cf26d3f714968c9f))
+* **api:** refresh generated types ([25d42f0](https://github.com/HannesOberreiter/btree_vue/commit/25d42f0f6574e3dded66bf79829dcef78fa28972))
+* **api:** refresh generated types ([0280cb5](https://github.com/HannesOberreiter/btree_vue/commit/0280cb5eeb35c3a73fce3126d1c4644bcb3c5a78))
+* **api:** refresh generated types ([7c08c31](https://github.com/HannesOberreiter/btree_vue/commit/7c08c3167d82f4b5bea8dd2e10f6fc6b73eaf14d))
+* **api:** refresh generated types ([aaebf0d](https://github.com/HannesOberreiter/btree_vue/commit/aaebf0d34194d5190a94ce9330056e2d5b992aa7))
+* **api:** refresh generated types ([01d7ee7](https://github.com/HannesOberreiter/btree_vue/commit/01d7ee7ffccee20cf71e803da4078f7ae2cee257))
+* **api:** refresh generated types ([f730c01](https://github.com/HannesOberreiter/btree_vue/commit/f730c010e16fc144931cb5431677979b2d1e38b1))
+* **payments:** remove Stripe checkout ([a062eb5](https://github.com/HannesOberreiter/btree_vue/commit/a062eb5754fdd922ea0f5171e7311d152aab735b))
+
 ## [7.3.0](https://github.com/HannesOberreiter/btree_vue/compare/btree-client-v7.2.1...btree-client-v7.3.0) (2026-07-18)
 
 
