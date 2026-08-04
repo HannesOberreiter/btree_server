@@ -1,5 +1,13 @@
 # Changelog
 
+## [7.5.1](https://github.com/HannesOberreiter/btree_server/compare/btree-server-v7.5.0...btree-server-v7.5.1) (2026-08-04)
+
+
+### Performance
+
+* **statistics:** query task-specific tables ([b94ec15](https://github.com/HannesOberreiter/btree_server/commit/b94ec15ec3e03101cd6ec6b4cb03867d3f93fec4))
+* **statistics:** query task-specific tables ([559d80d](https://github.com/HannesOberreiter/btree_server/commit/559d80de16585c76ebf5030617fc3a0832b09749))
+
 ## [7.5.0](https://github.com/HannesOberreiter/btree_server/compare/btree-server-v7.4.0...btree-server-v7.5.0) (2026-08-04)
 
 
