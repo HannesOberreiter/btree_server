@@ -1,7 +1,11 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import httpErrors from 'http-errors';
 
-import { verifyAgentOAuthAccessToken } from '../utils/agent_oauth.util.js';
+import { KyselyServer } from '../../servers/kysely.server.js';
+import {
+  requireAgentOAuthAccess,
+  verifyAgentOAuthAccessToken,
+} from '../modules/agent_oauth.module.js';
 
 export async function chatGptAuthHook(
   request: FastifyRequest,
@@ -36,10 +40,16 @@ export async function chatGptAuthHook(
     );
   }
 
+  const rank = await requireAgentOAuthAccess(
+    KyselyServer.getInstance().db,
+    oauthUser.userId,
+    oauthUser.beeId,
+  );
+
   request.session.user = {
     user_id: oauthUser.userId,
     bee_id: oauthUser.beeId,
-    rank: oauthUser.rank,
+    rank,
   } as FastifyRequest['session']['user'];
   request.session.agent = true;
 }

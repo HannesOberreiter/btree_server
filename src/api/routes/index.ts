@@ -1,5 +1,10 @@
+import fastifySwagger from '@fastify/swagger';
 import type { FastifyInstance } from 'fastify';
+import type { ZodTypeProvider } from 'fastify-type-provider-zod';
+import { jsonSchemaTransform } from 'fastify-type-provider-zod';
 
+import { url } from '../../config/environment.config.js';
+import { permissiveJsonResponseSchema } from '../schemas/common.schema.js';
 import v1Agent from './v1/agent.route.js';
 import v1AgentKey from './v1/agent_key.route.js';
 import v1Apiary from './v1/apiary.route.js';
@@ -32,133 +37,76 @@ import v1Statistic from './v1/statistic.route.js';
 import v1Todo from './v1/todo.route.js';
 import v1Treatment from './v1/treatment.route.js';
 import v1User from './v1/user.route.js';
+import v1Wax from './v1/wax.route.js';
 import v1WizBee from './v1/wizbee.route.js';
 
-export default function routes(app: FastifyInstance, _options: any, done: any) {
-  app.register(v1Root, {
-    prefix: '/v1/',
+async function coreRoutes(instance: FastifyInstance) {
+  await instance.register(fastifySwagger, {
+    openapi: {
+      openapi: '3.1.0',
+      info: {
+        title: 'b.tree API',
+        description: 'API used by official b.tree clients.',
+        version: '1.0.0',
+      },
+      servers: [{ url: `${url}/api`, description: 'Production' }],
+    },
+    transform: jsonSchemaTransform,
   });
 
-  app.register(v1Auth, {
-    prefix: '/v1/auth',
-  });
-  app.register(v1Apiary, {
-    prefix: '/v1/apiary',
-  });
-  app.register(v1Calendar, {
-    prefix: '/v1/calendar',
-  });
-  app.register(v1Charge, {
-    prefix: '/v1/charge',
-  });
-  app.register(v1Checkup, {
-    prefix: '/v1/checkup',
-  });
-  app.register(v1CompanyUser, {
-    prefix: '/v1/company_user',
-  });
-  app.register(v1User, {
-    prefix: '/v1/user',
-  });
-  app.register(v1Company, {
-    prefix: '/v1/company',
-  });
-  app.register(v1Dropbox, {
-    prefix: '/v1/dropbox',
-  });
-  app.register(v1External, {
-    prefix: '/v1/external',
-  });
-  app.register(v1Scale, {
-    prefix: '/v1/scale',
-  });
-  app.register(v1ScaleData, {
-    prefix: '/v1/scale_data',
-  });
+  instance.register(v1Root, { prefix: '/v1/' });
+  instance.register(v1Auth, { prefix: '/v1/auth' });
+  instance.register(v1Apiary, { prefix: '/v1/apiary' });
+  instance.register(v1Calendar, { prefix: '/v1/calendar' });
+  instance.register(v1Charge, { prefix: '/v1/charge' });
+  instance.register(v1Checkup, { prefix: '/v1/checkup' });
+  instance.register(v1CompanyUser, { prefix: '/v1/company_user' });
+  instance.register(v1User, { prefix: '/v1/user' });
+  instance.register(v1Company, { prefix: '/v1/company' });
+  instance.register(v1Dropbox, { prefix: '/v1/dropbox' });
+  instance.register(v1External, { prefix: '/v1/external' });
+  instance.register(v1Scale, { prefix: '/v1/scale' });
+  instance.register(v1ScaleData, { prefix: '/v1/scale_data' });
+  instance.register(v1Feed, { prefix: '/v1/feed' });
+  instance.register(v1FieldSetting, { prefix: '/v1/fieldsetting' });
+  instance.register(v1FieldSetting, { prefix: '/v1/field_setting' });
+  instance.register(v1Harvest, { prefix: '/v1/harvest' });
+  instance.register(v1Hive, { prefix: '/v1/hive' });
+  instance.register(v1Queen, { prefix: '/v1/queen' });
+  instance.register(v1Movedate, { prefix: '/v1/movedate' });
+  instance.register(v1Option, { prefix: '/v1/option' });
+  instance.register(v1Rearing, { prefix: '/v1/rearing' });
+  instance.register(v1RearingDetail, { prefix: '/v1/rearing_detail' });
+  instance.register(v1RearingType, { prefix: '/v1/rearing_type' });
+  instance.register(v1RearingStep, { prefix: '/v1/rearing_step' });
+  instance.register(v1Service, { prefix: '/v1/service' });
+  instance.register(v1Todo, { prefix: '/v1/todo' });
+  instance.register(v1Treatment, { prefix: '/v1/treatment' });
+  instance.register(v1Statistic, { prefix: '/v1/statistic' });
+  instance.register(v1Public, { prefix: '/v1/public' });
+  instance.register(v1Wax, { prefix: '/v1/wax' });
+  instance.register(v1WizBee, { prefix: '/v1/wizbee' });
+  instance.register(v1AgentKey, { prefix: '/v1/agent_key' });
 
-  app.register(v1Feed, {
-    prefix: '/v1/feed',
-  });
+  const server = instance.withTypeProvider<ZodTypeProvider>();
+  server.get(
+    '/v1/openapi.json',
+    {
+      schema: {
+        description: 'Get OpenAPI specification for official b.tree clients.',
+        tags: ['Discovery'],
+        response: { 200: permissiveJsonResponseSchema },
+      },
+    },
+    async () => instance.swagger(),
+  );
+}
 
-  app.register(v1FieldSetting, {
-    prefix: '/v1/fieldsetting',
-  });
+export default async function routes(instance: FastifyInstance) {
+  await instance.register(coreRoutes);
 
-  app.register(v1FieldSetting, {
-    prefix: '/v1/field_setting',
-  });
-
-  app.register(v1Harvest, {
-    prefix: '/v1/harvest',
-  });
-
-  app.register(v1Hive, {
-    prefix: '/v1/hive',
-  });
-
-  app.register(v1Queen, {
-    prefix: '/v1/queen',
-  });
-
-  app.register(v1Movedate, {
-    prefix: '/v1/movedate',
-  });
-
-  app.register(v1Option, {
-    prefix: '/v1/option',
-  });
-
-  app.register(v1Rearing, {
-    prefix: '/v1/rearing',
-  });
-
-  app.register(v1RearingDetail, {
-    prefix: '/v1/rearing_detail',
-  });
-
-  app.register(v1RearingType, {
-    prefix: '/v1/rearing_type',
-  });
-
-  app.register(v1RearingStep, {
-    prefix: '/v1/rearing_step',
-  });
-
-  app.register(v1Service, {
-    prefix: '/v1/service',
-  });
-
-  app.register(v1Todo, {
-    prefix: '/v1/todo',
-  });
-
-  app.register(v1Treatment, {
-    prefix: '/v1/treatment',
-  });
-
-  app.register(v1Statistic, {
-    prefix: '/v1/statistic',
-  });
-
-  app.register(v1Public, {
-    prefix: '/v1/public',
-  });
-
-  app.register(v1WizBee, {
-    prefix: '/v1/wizbee',
-  });
-
-  app.register(v1Agent, {
-    prefix: '/v1/agent',
-  });
-
-  app.register(v1AgentKey, {
-    prefix: '/v1/agent_key',
-  });
-
-  app.register(v1ChatGpt, {
-    prefix: '/v1/chatgpt',
-  });
-
-  done();
+  // Keep agent specifications isolated: each plugin registers its own scoped
+  // Swagger instance and exposes only its supported tool interface.
+  await instance.register(v1Agent, { prefix: '/v1/agent' });
+  await instance.register(v1ChatGpt, { prefix: '/v1/chatgpt' });
 }

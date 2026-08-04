@@ -4,12 +4,13 @@ import { z } from 'zod';
 import type {
   WizBeeContext,
   WizBeeTool,
-} from '../api/controllers/wizbee.tools.controller.js';
+} from '../api/modules/wizbee_tools.module.js';
 import {
   createWizBeeTools,
   executeWizBeeTool,
-} from '../api/controllers/wizbee.tools.controller.js';
+} from '../api/modules/wizbee_tools.module.js';
 import { mistralAI } from '../config/environment.config.js';
+import { KyselyServer } from '../servers/kysely.server.js';
 import { Logger } from './logger.service.js';
 
 const mistralClient = new Mistral({ apiKey: mistralAI.key });
@@ -263,8 +264,8 @@ function buildMistralTools(
 export class WizBeeAI {
   private context: WizBeeContext;
 
-  constructor(userId: number, beeId: number) {
-    this.context = { userId, beeId };
+  constructor(userId: number, beeId: number, rank: 1 | 2 | 3 | 4) {
+    this.context = { userId, beeId, rank };
   }
 
   /**
@@ -300,7 +301,8 @@ export class WizBeeAI {
     history: ChatMessage[] = [],
     signal?: AbortSignal,
   ): AsyncIterable<StreamChunk> {
-    const tools = createWizBeeTools(this.context);
+    const db = KyselyServer.getInstance().db;
+    const tools = createWizBeeTools(db, this.context);
     const mistralTools = buildMistralTools(tools);
 
     const messages: any[] = [
@@ -316,6 +318,7 @@ export class WizBeeAI {
         toolInput: { query: message },
       };
       const docs = await executeWizBeeTool(
+        db,
         'btreeDocumentation',
         { query: message },
         this.context,
@@ -515,7 +518,7 @@ export class WizBeeAI {
 
           let output: unknown;
           try {
-            output = await executeWizBeeTool(tc.name, input, this.context);
+            output = await executeWizBeeTool(db, tc.name, input, this.context);
           } catch (error) {
             // Defensive — the wrapper should have caught this already, but if
             // something slips through, surface as a tool-result error envelope

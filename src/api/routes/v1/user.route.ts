@@ -1,10 +1,22 @@
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
-import { z } from 'zod';
 
 import { ROLES } from '../../../config/constants.config.js';
 import UserController from '../../controllers/user.controller.js';
 import { Guard } from '../../hooks/guard.hook.js';
+import {
+  permissiveJsonResponseSchema,
+  compatibilityQuerySchema,
+} from '../../schemas/common.schema.js';
+import {
+  patchBodySchema,
+  deleteBodySchema,
+  checkPasswordBodySchema,
+  changeCompanyBodySchema,
+  deleteFederatedCredentialsParamsSchema,
+  addFederatedCredentialsBodySchema,
+  deleteRedisSessionParamsSchema,
+} from '../../schemas/user.schema.js';
 
 export default function routes(
   instance: FastifyInstance,
@@ -15,12 +27,24 @@ export default function routes(
 
   server.get(
     '/',
-    { preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]) },
+    {
+      schema: {
+        querystring: compatibilityQuerySchema,
+        response: { 200: permissiveJsonResponseSchema },
+      },
+      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+    },
     UserController.get,
   );
   server.patch(
     '/',
-    { preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]) },
+    {
+      schema: {
+        body: patchBodySchema,
+        response: { 200: permissiveJsonResponseSchema },
+      },
+      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+    },
     UserController.patch,
   );
   server.patch(
@@ -28,9 +52,8 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
       schema: {
-        body: z.object({
-          password: z.string().trim(),
-        }),
+        response: { 200: permissiveJsonResponseSchema },
+        body: deleteBodySchema,
       },
     },
     UserController.delete,
@@ -41,9 +64,8 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
       schema: {
-        body: z.object({
-          password: z.string().trim(),
-        }),
+        response: { 200: permissiveJsonResponseSchema },
+        body: checkPasswordBodySchema,
       },
     },
     UserController.checkPassword,
@@ -54,11 +76,8 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
       schema: {
-        body: z
-          .object({
-            saved_company: z.number(),
-          })
-          .passthrough(),
+        response: { 200: permissiveJsonResponseSchema },
+        body: changeCompanyBodySchema,
       },
     },
     UserController.changeCompany,
@@ -66,7 +85,13 @@ export default function routes(
 
   server.get(
     '/federatedCredentials',
-    { preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]) },
+    {
+      schema: {
+        querystring: compatibilityQuerySchema,
+        response: { 200: permissiveJsonResponseSchema },
+      },
+      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+    },
     UserController.getFederatedCredentials,
   );
   server.delete(
@@ -74,9 +99,9 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
       schema: {
-        params: z.object({
-          id: z.coerce.number().int().positive(),
-        }),
+        querystring: compatibilityQuerySchema,
+        response: { 200: permissiveJsonResponseSchema },
+        params: deleteFederatedCredentialsParamsSchema,
       },
     },
     UserController.deleteFederatedCredentials,
@@ -87,10 +112,8 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
       schema: {
-        body: z.object({
-          email: z.string().email(),
-          provider: z.enum(['google', 'apple']).default('google'),
-        }),
+        response: { 200: permissiveJsonResponseSchema },
+        body: addFederatedCredentialsBodySchema,
       },
     },
     UserController.addFederatedCredentials,
@@ -98,7 +121,13 @@ export default function routes(
 
   server.get(
     '/session',
-    { preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]) },
+    {
+      schema: {
+        querystring: compatibilityQuerySchema,
+        response: { 200: permissiveJsonResponseSchema },
+      },
+      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+    },
     UserController.getRedisSession,
   );
   server.delete(
@@ -106,9 +135,9 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
       schema: {
-        params: z.object({
-          id: z.string(),
-        }),
+        querystring: compatibilityQuerySchema,
+        response: { 200: permissiveJsonResponseSchema },
+        params: deleteRedisSessionParamsSchema,
       },
     },
     UserController.deleteRedisSession,

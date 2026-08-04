@@ -3,45 +3,47 @@ import dayjs from 'dayjs';
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import httpErrors from 'http-errors';
 import ical, { ICalCalendarMethod } from 'ical-generator';
-import type { Stripe } from 'stripe';
 
 import { SOURCE } from '../../config/constants.config.js';
-import {
-  isServerLocationValid,
-  serverLocation,
-} from '../../config/environment.config.js';
-import { Logger } from '../../services/logger.service.js';
+import { KyselyServer } from '../../servers/kysely.server.js';
 import type { MailLang } from '../../services/mail.service.js';
 import { MailLangs, MailService } from '../../services/mail.service.js';
-import { User } from '../models/user.model.js';
-import { getCompany } from '../utils/api.util.js';
+import { createInvoice } from '../adapters/foxyoffice.adapter.js';
+import { getPayment } from '../adapters/mollie.adapter.js';
 import {
-  getMovements,
-  getRearings,
-  getScaleData,
-  getTask,
-  getTodos,
-} from '../utils/calendar.util.js';
-import { createInvoice } from '../utils/foxyoffice.util.js';
-import { getPayment } from '../utils/mollie.util.js';
-import { addPremium, isPremium } from '../utils/premium.util.js';
+  listCalendarMovements,
+  listCalendarRearings,
+  listCalendarScaleData,
+  listCalendarTasks,
+  listCalendarTodos,
+} from '../modules/calendar.module.js';
+import { findCompanyByApiKey } from '../modules/company.module.js';
+import { addPremium, isPremium } from '../modules/premium.module.js';
+import type {
+  ExternalCalendarParams,
+  MollieWebhookBody,
+} from '../schemas/external.schema.js';
 
 export default class ExternalController {
   static async ical(req: FastifyRequest, reply: FastifyReply) {
-    const params = req.params as any;
-    const company = await getCompany(params.api);
-    const premium = await isPremium(company.id);
+    const params = req.params as ExternalCalendarParams;
+    const company = await findCompanyByApiKey(
+      KyselyServer.getInstance().db,
+      params.api,
+    );
+    const premium = await isPremium(company.id, KyselyServer.getInstance().db);
     if (!premium) {
       throw httpErrors.PaymentRequired();
     }
     let results = [];
+    const db = KyselyServer.getInstance().db;
     const payload = {
       user: {
         user_id: company.id,
       },
       params: {
-        start: dayjs().subtract(6, 'month'),
-        end: dayjs().add(6, 'month'),
+        start: dayjs().subtract(6, 'month').toISOString(),
+        end: dayjs().add(6, 'month').toISOString(),
       },
     };
     const calendar = ical({
@@ -55,24 +57,51 @@ export default class ExternalController {
     calendar.method(ICalCalendarMethod.PUBLISH);
     switch (params.source) {
       case SOURCE.todo: {
-        results = await getTodos(payload.params, payload.user);
+        results = await listCalendarTodos(
+          db,
+          payload.user.user_id,
+          payload.params,
+        );
         break;
       }
       case SOURCE.rearing: {
-        results = await getRearings(payload.params, payload.user);
+        results = await listCalendarRearings(
+          db,
+          payload.user.user_id,
+          payload.params,
+        );
         break;
       }
       case SOURCE.movedate: {
-        results = await getMovements(payload.params, payload.user);
+        results = await listCalendarMovements(
+          db,
+          payload.user.user_id,
+          payload.params,
+        );
         break;
       }
       case SOURCE.scale_data: {
-        results = await getScaleData(payload.params, payload.user);
+        results = await listCalendarScaleData(
+          db,
+          payload.user.user_id,
+          payload.params,
+        );
+        break;
+      }
+      case SOURCE.checkup:
+      case SOURCE.treatment:
+      case SOURCE.harvest:
+      case SOURCE.feed: {
+        results = await listCalendarTasks(
+          db,
+          payload.user.user_id,
+          payload.params,
+          params.source,
+        );
         break;
       }
       default: {
-        results = await getTask(payload.params, payload.user, params.source);
-        break;
+        throw httpErrors.BadRequest('Unsupported calendar source');
       }
     }
     for (const i in results) {
@@ -81,7 +110,7 @@ export default class ExternalController {
         id: `${result.table}_${i}`,
         start: result.start,
         end: result.end,
-        allDay: !!result.allDay,
+        allDay: result.allDay,
         summary: `${result.unicode ? `${result.unicode} ` : ''} ${
           result.title
         }`,
@@ -98,90 +127,10 @@ export default class ExternalController {
   }
 
   /**
-   * @description  Local development use Stripe CLI and redirect webhooks: stripe listen --forward-to localhost:8101/api/v1/external/stripe/webhook
-   */
-  static async stripeWebhook(req: FastifyRequest, _reply: FastifyReply) {
-    const event = req.body as Stripe.Event;
-    const object = event.data.object as Stripe.Checkout.Session;
-    if (event.type === 'checkout.session.completed') {
-      let user_id: number;
-      let bee_id: number | null = null;
-      let years = 1;
-      let server: string = 'eu';
-
-      try {
-        const reference = JSON.parse(object.client_reference_id!);
-        user_id = reference.user_id;
-        bee_id = reference.bee_id ?? null;
-        years = reference.quantity ?? 1;
-        server = isServerLocationValid(reference.server)
-          ? reference.server
-          : 'eu';
-      } catch (error) {
-        const mailer = MailService.getInstance();
-        void mailer.sendRawMail(
-          'office@btree.at',
-          'Failed capture of Stripe Payment',
-          JSON.stringify(event, null, 2),
-        );
-        req.log.error(error);
-        throw new httpErrors.InternalServerError();
-      }
-
-      if (serverLocation !== server) {
-        Logger.getInstance().log(
-          'info',
-          'Stripe Webhook - ignored wrong server',
-          {
-            server,
-            current: serverLocation,
-          },
-        );
-        return {};
-      }
-
-      let amount = 0;
-      try {
-        amount = Number.parseFloat(object.amount_total as any) / 100;
-      } catch (error) {
-        req.log.error(error);
-      }
-      await addPremium(user_id, 12 * years, amount, 'stripe');
-
-      if (!bee_id) {
-        req.log.error(
-          { event },
-          'Stripe webhook missing bee_id in client_reference_id',
-        );
-        return {};
-      }
-
-      let mail: string | null = null;
-      let lang: MailLang = 'en';
-      try {
-        const user = await User.query()
-          .select('email', 'lang')
-          .findById(bee_id);
-        if (user?.email) mail = user.email;
-        if (user?.lang && MailLangs.includes(user.lang as MailLang))
-          lang = user.lang as MailLang;
-      } catch (error) {
-        req.log.error(error);
-      }
-      if (mail) {
-        void createInvoice(mail, amount, years, 'Stripe', lang);
-      }
-    }
-    return {};
-  }
-
-  /**
    * @see https://docs.mollie.com/reference/webhooks
    */
   static async mollieWebhook(req: FastifyRequest, _reply: FastifyReply) {
-    const event = req.body as {
-      id?: string;
-    };
+    const event = req.body as MollieWebhookBody;
     if (!event || !event.id) {
       throw new httpErrors.BadRequest('Missing paymentId');
     }
@@ -219,11 +168,21 @@ export default class ExternalController {
         const user_id = reference.user_id;
         const years = reference.quantity ?? 1;
         const price = Number.parseFloat(payment.amount.value);
-        await addPremium(user_id, 12 * years, price, 'mollie');
+        const premiumGrant = await addPremium(
+          KyselyServer.getInstance().db,
+          user_id,
+          12 * years,
+          price,
+          'mollie',
+          payment.id,
+        );
+        if (!premiumGrant.applied) return {};
         const bee_id = reference.bee_id;
-        const user = await User.query()
-          .select('email', 'lang')
-          .findById(bee_id);
+        const user = await KyselyServer.getInstance()
+          .db.selectFrom('bees')
+          .select(['email', 'lang'])
+          .where('id', '=', bee_id)
+          .executeTakeFirst();
         let lang = 'en' as MailLang;
         if (user?.lang && MailLangs.includes(user.lang as MailLang)) {
           lang = user.lang as MailLang;

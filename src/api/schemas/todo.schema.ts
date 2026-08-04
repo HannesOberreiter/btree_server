@@ -1,12 +1,42 @@
 import { z } from 'zod';
 
-export const beeSchema = z
+import { numberSchema } from '../utils/zod.util.js';
+import { actorResponseSchema } from './common.schema.js';
+
+export const todoOrderFieldSchema = z.enum([
+  'id',
+  'date',
+  'name',
+  'apiary',
+  'url',
+  'note',
+  'done',
+  'created_at',
+  'updated_at',
+]);
+
+export type TodoOrderField = z.infer<typeof todoOrderFieldSchema>;
+
+export const todoListQuerySchema = z
   .object({
-    id: z.number(),
-    email: z.string().nullable(),
-    username: z.string().nullable(),
+    order: z
+      .union([todoOrderFieldSchema, z.array(todoOrderFieldSchema)])
+      .optional(),
+    direction: z
+      .union([z.enum(['asc', 'desc']), z.array(z.enum(['asc', 'desc']))])
+      .optional(),
+    offset: numberSchema.optional(),
+    limit: numberSchema.optional(),
+    q: z.union([z.string(), z.number()]).optional(),
+    filters: z.string().optional(),
+    done: z.boolean().nullable().optional(),
+    apiary_id: numberSchema.optional(),
   })
-  .nullable();
+  .loose();
+
+export type TodoListQuery = z.infer<typeof todoListQuerySchema>;
+
+export const beeSchema = actorResponseSchema;
 
 export type Bee = z.infer<typeof beeSchema>;
 
@@ -82,7 +112,7 @@ export const todoUpdateStatusSchema = z.object({
 export type TodoUpdateStatus = z.infer<typeof todoUpdateStatusSchema>;
 
 export const todoUpdateDateSchema = z.object({
-  ids: z.array(z.string()),
+  ids: z.array(numberSchema),
   start: z.string(),
 });
 

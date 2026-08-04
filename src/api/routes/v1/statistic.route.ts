@@ -1,164 +1,138 @@
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
-import { z } from 'zod';
 
 import { ROLES } from '../../../config/constants.config.js';
-import StatisticController from '../../controllers/statistic.controller.js';
+import { KyselyServer } from '../../../servers/kysely.server.js';
 import { Guard } from '../../hooks/guard.hook.js';
 import { Validator } from '../../hooks/validator.hook.js';
-import { numberSchema } from '../../utils/zod.util.js';
+import {
+  getVarroaStatistics,
+  listHiveCountByApiary,
+  listHiveCountTotal,
+  listHiveRatingStatistics,
+  listTaskStatisticsByHive,
+  listTaskStatisticsSummary,
+} from '../../modules/statistic.module.js';
+import {
+  hiveCountApiaryQuerySchema,
+  hiveCountApiaryResponseSchema,
+  hiveCountTotalResponseSchema,
+  statisticListQuerySchema,
+  statisticSummaryQuerySchema,
+  taskStatisticListResponseSchema,
+  taskStatisticPageResponseSchema,
+  varroaStatisticQuerySchema,
+  varroaStatisticResponseSchema,
+} from '../../schemas/statistic.schema.js';
+import type { StatisticTask } from '../../schemas/statistic.schema.js';
 
 export default function routes(
   instance: FastifyInstance,
-  _options: any,
-  done: any,
+  _options: unknown,
+  done: () => void,
 ) {
   const server = instance.withTypeProvider<ZodTypeProvider>();
+  const db = KyselyServer.getInstance().db;
+  const guard = {
+    preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+    preValidation: Validator.isPremium,
+  };
+
   server.get(
     '/hive_count_total',
     {
-      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-      preValidation: Validator.isPremium,
+      ...guard,
+      schema: { response: { 200: hiveCountTotalResponseSchema } },
     },
-    StatisticController.getHiveCountTotal,
+    async (request) => listHiveCountTotal(db, request.session.user.user_id),
   );
 
   server.get(
     '/hive_count_apiary',
     {
-      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-      preValidation: Validator.isPremium,
+      ...guard,
       schema: {
-        querystring: z.object({
-          date: z.string(),
-        }),
+        querystring: hiveCountApiaryQuerySchema,
+        response: { 200: hiveCountApiaryResponseSchema },
       },
     },
-    StatisticController.getHiveCountApiary,
+    async (request) =>
+      listHiveCountByApiary(
+        db,
+        request.session.user.user_id,
+        new Date(request.query.date),
+      ),
   );
 
-  server.get(
-    '/harvest/hive',
-    {
-      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-      preValidation: Validator.isPremium,
-    },
-    StatisticController.getHarvestHive,
-  );
-  server.get(
-    '/harvest/year',
-    {
-      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-      preValidation: Validator.isPremium,
-    },
-    StatisticController.getHarvestYear,
-  );
-  server.get(
-    '/harvest/apiary',
-    {
-      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-      preValidation: Validator.isPremium,
-    },
-    StatisticController.getHarvestApiary,
-  );
-  server.get(
-    '/harvest/type',
-    {
-      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-      preValidation: Validator.isPremium,
-    },
-    StatisticController.getHarvestType,
-  );
+  const registerTaskRoutes = (task: StatisticTask) => {
+    server.get(
+      `/${task}/hive`,
+      {
+        ...guard,
+        schema: {
+          querystring: statisticListQuerySchema,
+          response: { 200: taskStatisticPageResponseSchema },
+        },
+      },
+      async (request) =>
+        listTaskStatisticsByHive(
+          db,
+          request.session.user.user_id,
+          task,
+          request.query,
+        ),
+    );
 
-  server.get(
-    '/feed/hive',
-    {
-      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-      preValidation: Validator.isPremium,
-    },
-    StatisticController.getFeedHive,
-  );
-  server.get(
-    '/feed/year',
-    {
-      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-      preValidation: Validator.isPremium,
-    },
-    StatisticController.getFeedYear,
-  );
-  server.get(
-    '/feed/apiary',
-    {
-      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-      preValidation: Validator.isPremium,
-    },
-    StatisticController.getFeedApiary,
-  );
-  server.get(
-    '/feed/type',
-    {
-      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-      preValidation: Validator.isPremium,
-    },
-    StatisticController.getFeedType,
-  );
+    for (const mode of ['year', 'apiary', 'type'] as const) {
+      server.get(
+        `/${task}/${mode}`,
+        {
+          ...guard,
+          schema: {
+            querystring: statisticSummaryQuerySchema,
+            response: { 200: taskStatisticListResponseSchema },
+          },
+        },
+        async (request) =>
+          listTaskStatisticsSummary(
+            db,
+            request.session.user.user_id,
+            task,
+            mode,
+            request.query,
+          ),
+      );
+    }
+  };
 
-  server.get(
-    '/treatment/hive',
-    {
-      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-      preValidation: Validator.isPremium,
-    },
-    StatisticController.getTreatmentHive,
-  );
-  server.get(
-    '/treatment/year',
-    {
-      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-      preValidation: Validator.isPremium,
-    },
-    StatisticController.getTreatmentYear,
-  );
-  server.get(
-    '/treatment/apiary',
-    {
-      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-      preValidation: Validator.isPremium,
-    },
-    StatisticController.getTreatmentApiary,
-  );
-  server.get(
-    '/treatment/type',
-    {
-      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-      preValidation: Validator.isPremium,
-    },
-    StatisticController.getTreatmentType,
-  );
+  registerTaskRoutes('harvest');
+  registerTaskRoutes('feed');
+  registerTaskRoutes('treatment');
 
   server.get(
     '/rating/hive',
     {
-      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-      preValidation: Validator.isPremium,
+      ...guard,
+      schema: {
+        querystring: statisticListQuerySchema,
+        response: { 200: taskStatisticPageResponseSchema },
+      },
     },
-    StatisticController.getCheckupRatingHive,
+    async (request) =>
+      listHiveRatingStatistics(db, request.session.user.user_id, request.query),
   );
 
   server.get(
     '/varroa',
     {
-      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
-      preValidation: Validator.isPremium,
+      ...guard,
       schema: {
-        querystring: z.object({
-          start_date: z.string(),
-          end_date: z.string(),
-          hive_ids: z.array(numberSchema),
-        }),
+        querystring: varroaStatisticQuerySchema,
+        response: { 200: varroaStatisticResponseSchema },
       },
     },
-    StatisticController.getVarroa,
+    async (request) =>
+      getVarroaStatistics(db, request.session.user.user_id, request.query),
   );
 
   done();

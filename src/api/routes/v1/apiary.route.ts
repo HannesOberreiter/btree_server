@@ -3,31 +3,62 @@ import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { z } from 'zod';
 
 import { ROLES } from '../../../config/constants.config.js';
-import ApiaryController from '../../controllers/apiary.controller.js';
+import { KyselyServer } from '../../../servers/kysely.server.js';
 import { Guard } from '../../hooks/guard.hook.js';
-import { numberSchema } from '../../utils/zod.util.js';
+import {
+  createApiary,
+  deleteApiaries,
+  getApiariesByIds,
+  getApiaryDetail,
+  listApiaries,
+  updateApiaries,
+  updateApiaryStatus,
+} from '../../modules/apiary.module.js';
+import {
+  apiaryBatchDeleteQuerySchema,
+  apiaryBatchUpdateSchema,
+  apiaryCreateSchema,
+  apiaryDetailResponseSchema,
+  apiaryIdParamsSchema,
+  apiaryIdsSchema,
+  apiaryListQuerySchema,
+  apiaryPaginatedResponseSchema,
+  apiaryResponseSchema,
+  apiaryUpdateStatusSchema,
+} from '../../schemas/apiary.schema.js';
 
 export default function routes(
   instance: FastifyInstance,
-  _options: any,
-  done: any,
+  _options: unknown,
+  done: () => void,
 ) {
   const server = instance.withTypeProvider<ZodTypeProvider>();
+  const db = KyselyServer.getInstance().db;
 
   server.get(
     '/',
     {
+      schema: {
+        querystring: apiaryListQuerySchema,
+        response: { 200: apiaryPaginatedResponseSchema },
+      },
       preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
     },
-    ApiaryController.get,
+    async (request) =>
+      listApiaries(db, request.session.user.user_id, request.query),
   );
 
   server.get(
     '/:id',
     {
+      schema: {
+        params: apiaryIdParamsSchema,
+        response: { 200: apiaryDetailResponseSchema },
+      },
       preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
     },
-    ApiaryController.getDetail,
+    async (request) =>
+      getApiaryDetail(db, request.session.user.user_id, request.params.id),
   );
 
   server.post(
@@ -35,22 +66,36 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.admin]),
       schema: {
-        body: z
-          .object({
-            name: z.string().min(3).max(255),
-          })
-          .passthrough(),
+        body: apiaryCreateSchema,
+        response: { 200: apiaryResponseSchema },
       },
     },
-    ApiaryController.post,
+    async (request) =>
+      createApiary(
+        db,
+        request.session.user.user_id,
+        request.session.user.bee_id,
+        request.body,
+      ),
   );
 
   server.patch(
     '/',
     {
+      schema: {
+        body: apiaryBatchUpdateSchema,
+        response: { 200: z.number() },
+      },
       preHandler: Guard.authorize([ROLES.admin]),
     },
-    ApiaryController.patch,
+    async (request) =>
+      updateApiaries(
+        db,
+        request.session.user.user_id,
+        request.session.user.bee_id,
+        request.body.ids,
+        request.body.data,
+      ),
   );
 
   server.patch(
@@ -58,26 +103,35 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.admin]),
       schema: {
-        body: z.object({
-          ids: z.array(numberSchema),
-        }),
+        querystring: apiaryBatchDeleteQuerySchema,
+        body: apiaryIdsSchema,
+        response: { 200: z.array(apiaryResponseSchema) },
       },
     },
-    ApiaryController.batchDelete,
+    async (request) =>
+      deleteApiaries(
+        db,
+        request.session.user.user_id,
+        request.session.user.bee_id,
+        request.body.ids,
+        {
+          hard: Boolean(request.query.hard),
+          restore: Boolean(request.query.restore),
+        },
+      ),
   );
 
   server.post(
     '/batchGet',
     {
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
-
       schema: {
-        body: z.object({
-          ids: z.array(numberSchema),
-        }),
+        body: apiaryIdsSchema,
+        response: { 200: z.array(apiaryResponseSchema) },
       },
     },
-    ApiaryController.batchGet,
+    async (request) =>
+      getApiariesByIds(db, request.session.user.user_id, request.body.ids),
   );
 
   server.patch(
@@ -85,13 +139,18 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.admin]),
       schema: {
-        body: z.object({
-          ids: z.array(numberSchema),
-          status: z.boolean(),
-        }),
+        body: apiaryUpdateStatusSchema,
+        response: { 200: z.number() },
       },
     },
-    ApiaryController.updateStatus,
+    async (request) =>
+      updateApiaryStatus(
+        db,
+        request.session.user.user_id,
+        request.session.user.bee_id,
+        request.body.ids,
+        request.body.status,
+      ),
   );
 
   done();

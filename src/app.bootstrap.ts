@@ -1,7 +1,6 @@
 import closeWithGrace from 'close-with-grace';
 
 import { Application } from './config/app.config.js';
-import { DatabaseServer } from './servers/db.server.js';
 import { HTTPServer } from './servers/http.server.js';
 import { KyselyServer } from './servers/kysely.server.js';
 import { RedisServer } from './servers/redis.server.js';
@@ -11,12 +10,10 @@ import { MailService } from './services/mail.service.js';
 const logger = Logger.getInstance();
 logger.log('debug', 'Starting server...', { label: 'Server' });
 
-const dbServer = DatabaseServer.getInstance();
 const redisServer = new RedisServer();
 const mailServer = MailService.getInstance();
 const kyselyServer = KyselyServer.getInstance();
 
-dbServer.start();
 // eslint-disable-next-line antfu/no-top-level-await
 await redisServer.start();
 void mailServer.setup();
@@ -38,12 +35,9 @@ async function gracefulShutdown() {
     logger.log('debug', 'Starting graceful shutdown...', { label: 'Server' });
     cwgHandler.uninstall();
     await Promise.allSettled(
-      [
-        dbServer.stop(),
-        redisServer.stop(),
-        httpServer.stop(),
-        kyselyServer.stop(),
-      ].filter(Boolean),
+      [redisServer.stop(), httpServer.stop(), kyselyServer.stop()].filter(
+        Boolean,
+      ),
     );
     logger.log('debug', 'Graceful shutdown completed', { label: 'Server' });
     logger.close();

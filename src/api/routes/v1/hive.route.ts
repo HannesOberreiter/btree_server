@@ -1,145 +1,190 @@
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
-import { z } from 'zod';
 
 import { ROLES } from '../../../config/constants.config.js';
-import HiveController from '../../controllers/hive.controller.js';
+import { KyselyServer } from '../../../servers/kysely.server.js';
 import { Guard } from '../../hooks/guard.hook.js';
-import { numberSchema } from '../../utils/zod.util.js';
-
-const hiveSchema = z.object({
-  name: z.string().min(1).max(36).trim(),
-  grouphive: z.number().int().optional().default(0),
-  position: z.number().int().optional().default(0),
-  note: z.string().max(2000).optional(),
-  modus: z.boolean().optional(),
-  modus_date: z.string().optional(),
-  deleted: z.boolean().optional(),
-  source_id: z.number().int().optional(),
-  type_id: z.number().int().optional(),
-});
+import {
+  createHives,
+  deleteHives,
+  getHiveDetail,
+  getHivesByIds,
+  getHiveTasks,
+  listHives,
+  updateHivePositions,
+  updateHives,
+  updateHiveStatus,
+} from '../../modules/hive.module.js';
+import { permissiveJsonResponseSchema } from '../../schemas/common.schema.js';
+import {
+  hiveCreateBodySchema,
+  hiveDetailResponseSchema,
+  hiveIdParamsSchema,
+  hiveIdsBodySchema,
+  hiveIdsResponseSchema,
+  hiveListQuerySchema,
+  hiveMutationCountResponseSchema,
+  hiveMutationCountsResponseSchema,
+  hivePaginatedResponseSchema,
+  hivePatchBodySchema,
+  hivePositionBodySchema,
+  hiveStatusBodySchema,
+  hiveTaskQuerySchema,
+  hivesResponseSchema,
+} from '../../schemas/hive.schema.js';
 
 export default function routes(
   instance: FastifyInstance,
-  _options: any,
-  done: any,
+  _options: unknown,
+  done: () => void,
 ) {
   const server = instance.withTypeProvider<ZodTypeProvider>();
+  const db = KyselyServer.getInstance().db;
   server.get(
     '/',
-    { preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]) },
-    HiveController.get,
+    {
+      schema: {
+        querystring: hiveListQuerySchema,
+        response: { 200: hivePaginatedResponseSchema },
+      },
+      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+    },
+    async (request) =>
+      listHives(db, request.session.user.user_id, request.query),
   );
   server.get(
     '/:id',
-    { preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]) },
-    HiveController.getDetail,
+    {
+      schema: {
+        querystring: hiveListQuerySchema,
+        params: hiveIdParamsSchema,
+        response: { 200: hiveDetailResponseSchema },
+      },
+      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+    },
+    async (request) =>
+      getHiveDetail(db, request.session.user.user_id, request.params.id),
   );
   server.get(
     '/task/:id',
     {
       preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
       schema: {
-        params: z.object({
-          id: z.coerce.number(),
-        }),
-        querystring: z.object({
-          apiary: z.boolean().optional(),
-          year: z.number().optional(),
-        }),
+        response: { 200: permissiveJsonResponseSchema },
+        params: hiveIdParamsSchema,
+        querystring: hiveTaskQuerySchema,
       },
     },
-    HiveController.getTasks,
+    async (request) =>
+      getHiveTasks(
+        db,
+        {
+          companyId: request.session.user.user_id,
+          beeId: request.session.user.bee_id,
+          isLlm: request.session.llm === true,
+        },
+        request.params.id,
+        request.query.year ?? new Date().getFullYear(),
+        request.query.apiary ?? false,
+      ),
   );
   server.patch(
     '/',
     {
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
-        body: z.object({
-          ids: z.array(numberSchema),
-          data: hiveSchema.partial(),
-        }),
+        response: { 200: hiveMutationCountResponseSchema },
+        body: hivePatchBodySchema,
       },
     },
-    HiveController.patch,
+    async (request) =>
+      updateHives(
+        db,
+        request.session.user.user_id,
+        request.session.user.bee_id,
+        request.body,
+      ),
   );
-
   server.post(
     '/',
     {
       preHandler: Guard.authorize([ROLES.admin]),
       schema: {
-        body: z
-          .object({
-            apiary_id: z.number(),
-            start: z.number().min(0).max(10000),
-            repeat: z.number().min(0).max(100),
-            date: z.string(),
-          })
-          .merge(hiveSchema),
+        response: { 200: hiveIdsResponseSchema },
+        body: hiveCreateBodySchema,
       },
     },
-    HiveController.post,
+    async (request) =>
+      createHives(
+        db,
+        request.session.user.user_id,
+        request.session.user.bee_id,
+        request.body,
+      ),
   );
-
   server.patch(
     '/batchDelete',
     {
       preHandler: Guard.authorize([ROLES.admin]),
       schema: {
-        body: z.object({
-          ids: z.array(numberSchema),
-        }),
+        querystring: hiveListQuerySchema,
+        response: { 200: hivesResponseSchema },
+        body: hiveIdsBodySchema,
       },
     },
-    HiveController.batchDelete,
+    async (request) =>
+      deleteHives(
+        db,
+        request.session.user.user_id,
+        request.session.user.bee_id,
+        request.body.ids,
+        {
+          hard: Boolean(request.query.hard),
+          restore: Boolean(request.query.restore),
+        },
+      ),
   );
-
   server.post(
     '/batchGet',
     {
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
-        body: z.object({
-          ids: z.array(numberSchema),
-        }),
+        response: { 200: hivesResponseSchema },
+        body: hiveIdsBodySchema,
       },
     },
-    HiveController.batchGet,
+    async (request) =>
+      getHivesByIds(db, request.session.user.user_id, request.body.ids),
   );
-
   server.patch(
     '/status',
     {
       preHandler: Guard.authorize([ROLES.admin]),
       schema: {
-        body: z.object({
-          ids: z.array(numberSchema),
-          status: z.boolean(),
-        }),
+        response: { 200: hiveMutationCountResponseSchema },
+        body: hiveStatusBodySchema,
       },
     },
-    HiveController.updateStatus,
+    async (request) =>
+      updateHiveStatus(
+        db,
+        request.session.user.user_id,
+        request.session.user.bee_id,
+        request.body.ids,
+        request.body.status,
+      ),
   );
-
   server.patch(
     '/updatePosition',
     {
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
-        body: z.object({
-          data: z
-            .object({
-              id: z.number(),
-              position: z.number(),
-            })
-            .array(),
-        }),
+        response: { 200: hiveMutationCountsResponseSchema },
+        body: hivePositionBodySchema,
       },
     },
-    HiveController.updatePosition,
+    async (request) =>
+      updateHivePositions(db, request.session.user.user_id, request.body),
   );
-
   done();
 }

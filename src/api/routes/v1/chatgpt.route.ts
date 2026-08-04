@@ -7,12 +7,19 @@ import httpErrors from 'http-errors';
 import { z } from 'zod';
 
 import { url } from '../../../config/environment.config.js';
+import { KyselyServer } from '../../../servers/kysely.server.js';
+import { mapToolError } from '../../adapters/tool_error.adapter.js';
 import AgentOAuthController from '../../controllers/agent_oauth.controller.js';
+import { chatGptAuthHook } from '../../hooks/chatgpt_auth.hook.js';
 import {
   executeWizBeeTool,
   wizBeeToolDefinitions,
-} from '../../controllers/wizbee.tools.controller.js';
-import { chatGptAuthHook } from '../../hooks/chatgpt_auth.hook.js';
+} from '../../modules/wizbee_tools.module.js';
+import {
+  permissiveJsonResponseSchema,
+  permissiveObjectSchema,
+  permissiveRequestSchema,
+} from '../../schemas/common.schema.js';
 
 type OpenApiPathItem = {
   post: {
@@ -79,7 +86,10 @@ function buildChatGptToolSpec() {
   };
 }
 
-export default async function routes(instance: FastifyInstance, _options: any) {
+export default async function routes(
+  instance: FastifyInstance,
+  _options: unknown,
+) {
   await instance.register(fastifyFormbody);
 
   await instance.register(fastifySwagger, {
@@ -124,15 +134,26 @@ export default async function routes(instance: FastifyInstance, _options: any) {
   const server = instance.withTypeProvider<ZodTypeProvider>();
 
   server.get('/oauth/authorize', AgentOAuthController.authorize);
-  server.post('/oauth/token', AgentOAuthController.token);
+  server.post(
+    '/oauth/token',
+    {
+      schema: {
+        body: permissiveRequestSchema,
+        response: { 200: permissiveJsonResponseSchema },
+      },
+    },
+    AgentOAuthController.token,
+  );
 
   server.get(
     '/openapi.json',
     {
       schema: {
+        querystring: permissiveObjectSchema,
         description:
           'Get the OpenAPI specification for available b.tree Custom GPT tools.',
         tags: ['Discovery'],
+        response: { 200: permissiveJsonResponseSchema },
       },
     },
     async () => buildChatGptToolSpec(),
@@ -152,35 +173,24 @@ export default async function routes(instance: FastifyInstance, _options: any) {
       throw httpErrors.Unauthorized();
     }
 
-    const result = await executeWizBeeTool(toolName, body ?? {}, {
-      userId: user.user_id,
-      beeId: user.bee_id,
-    });
+    const result = await executeWizBeeTool(
+      KyselyServer.getInstance().db,
+      toolName,
+      body ?? {},
+      {
+        userId: user.user_id,
+        beeId: user.bee_id,
+        rank: user.rank,
+      },
+    );
 
     if (
       result &&
       typeof result === 'object' &&
       (result as { ok?: unknown }).ok === false
     ) {
-      const err = (result as { error?: Record<string, unknown> }).error ?? {};
-      const status = typeof err.status === 'number' ? err.status : 400;
-      const message =
-        typeof err.message === 'string' && err.message.length > 0
-          ? err.message
-          : 'Tool execution failed';
-      if (status === 401) {
-        throw httpErrors.Unauthorized(message);
-      }
-      if (status === 403) {
-        throw httpErrors.Forbidden(message);
-      }
-      if (status === 404) {
-        throw httpErrors.NotFound(message);
-      }
-      if (status >= 500) {
-        throw httpErrors.InternalServerError(message);
-      }
-      throw httpErrors.BadRequest(message);
+      const error = (result as { error?: Record<string, unknown> }).error ?? {};
+      throw mapToolError(error);
     }
 
     return result;
@@ -197,6 +207,7 @@ export default async function routes(instance: FastifyInstance, _options: any) {
           toolName: z.string().min(1),
           body: z.record(z.string(), z.unknown()).optional(),
         }),
+        response: { 200: permissiveJsonResponseSchema },
       },
     },
     async (request) => {
@@ -214,6 +225,7 @@ export default async function routes(instance: FastifyInstance, _options: any) {
         tags: ['Tools'],
         params: z.object({ toolName: z.string().min(1) }),
         body: z.record(z.string(), z.unknown()).optional(),
+        response: { 200: permissiveJsonResponseSchema },
       },
     },
     async (request) => {

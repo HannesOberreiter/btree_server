@@ -1,5 +1,10 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
+import {
+  getChargesByIds,
+  updateCharges,
+} from '../../src/api/modules/charge.module.js';
+import { KyselyServer } from '../../src/servers/kysely.server.js';
 import type { TestAgent } from '../utils.js';
 import {
   createAgent,
@@ -74,6 +79,20 @@ describe('charge routes', () => {
       expect(res.statusCode).toEqual(200);
       expect(res.body.results).toBeInstanceOf(Array);
       expect(res.body.total).toBeTypeOf('number');
+    });
+
+    it('operations enforce company isolation', async () => {
+      const db = KyselyServer.getInstance().db;
+      expect(await getChargesByIds(db, 999_999, [insertId])).toEqual([]);
+      expect(
+        await updateCharges(
+          db,
+          999_999,
+          1,
+          { ids: [insertId], data: { name: 'must-not-change' } },
+          false,
+        ),
+      ).toBe(0);
     });
 
     it('post 400 - no data', async () => {

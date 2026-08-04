@@ -20,6 +20,90 @@ describe('routes resolving', () => {
     });
   });
 
+  describe('/openapi.json', () => {
+    it('200 - core specification stays separate from agent specifications', async () => {
+      const res = await doRequest(
+        agent,
+        'get',
+        '/api/v1/openapi.json',
+        null,
+        null,
+        null,
+      );
+
+      expect(res.statusCode).toEqual(200);
+      expect(res.body.openapi).toEqual('3.1.0');
+      const paths = Object.keys(res.body.paths);
+      expect(paths.some((path) => path.endsWith('/v1/status'))).toBe(true);
+      expect(paths.some((path) => path.includes('/v1/agent/'))).toBe(false);
+      expect(paths.some((path) => path.includes('/v1/chatgpt/'))).toBe(false);
+    });
+  });
+
+  describe('/public/:taxa/observations', () => {
+    it('200 - returns recent observation shape', async () => {
+      const res = await doRequest(
+        agent,
+        'get',
+        '/api/v1/public/velutina/observations/recent',
+        null,
+        null,
+        null,
+      );
+      expect(res.statusCode).toBe(200);
+      expect(res.body).toBeInstanceOf(Array);
+      expect(res.headers['cache-control']).toBe('public, max-age=3600');
+      if (res.body.length > 0) {
+        expect(res.body[0]).toEqual(
+          expect.objectContaining({
+            location: expect.objectContaining({
+              x: expect.any(Number),
+              y: expect.any(Number),
+            }),
+            uri: expect.any(String),
+            observed_at: expect.any(String),
+          }),
+        );
+      }
+    });
+
+    it('200 - returns yearly observations and stats', async () => {
+      const year = new Date().getFullYear();
+      const yearly = await doRequest(
+        agent,
+        'get',
+        `/api/v1/public/aethina_tumida/observations/year/${year}`,
+        null,
+        null,
+        null,
+      );
+      const stats = await doRequest(
+        agent,
+        'get',
+        '/api/v1/public/aethina_tumida/observations/stats',
+        null,
+        null,
+        null,
+      );
+      expect(yearly.statusCode).toBe(200);
+      expect(yearly.body).toBeInstanceOf(Array);
+      expect(stats.statusCode).toBe(200);
+      expect(stats.body.count).toBeTypeOf('number');
+    });
+
+    it('400 - rejects unknown taxa', async () => {
+      const res = await doRequest(
+        agent,
+        'get',
+        '/api/v1/public/unknown/observations/stats',
+        null,
+        null,
+        null,
+      );
+      expect(res.statusCode).toBe(400);
+    });
+  });
+
   describe('/report-violation', () => {
     it('200 - OK', async () => {
       const res = await doRequest(

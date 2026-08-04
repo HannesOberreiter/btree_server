@@ -1,13 +1,14 @@
 import cron from 'node-schedule';
 
+import { fetchObservations } from '../api/adapters/pest.adapter.js';
 import {
   cleanupDatabase,
   reminderDeletion,
   reminderPremium,
   reminderVIS,
-} from '../api/utils/cron.util.js';
-import { fetchObservations } from '../api/utils/pest.util.js';
+} from '../api/modules/maintenance.module.js';
 import { cronjobTimer, isChild } from '../config/environment.config.js';
+import { KyselyServer } from '../servers/kysely.server.js';
 import { Logger } from './logger.service.js';
 
 export class Cron {
@@ -22,7 +23,7 @@ export class Cron {
     return this.instance;
   }
 
-  private Logging(input: any) {
+  private Logging(input: unknown) {
     this.logger.log('debug', JSON.stringify(input), {
       label: 'CronJob',
     });
@@ -70,9 +71,10 @@ export class Cron {
     this.logger.log('info', 'CronJob is running', {
       label: 'CronJob',
     });
-    this.Logging(await cleanupDatabase());
+    const db = KyselyServer.getInstance().db;
+    this.Logging(await cleanupDatabase(db));
 
-    reminderDeletion()
+    reminderDeletion(db)
       .then((res) => this.Logging(res))
       .catch((error) =>
         this.logger.log(
@@ -84,7 +86,7 @@ export class Cron {
         ),
       );
 
-    reminderVIS()
+    reminderVIS(db)
       .then((res) => this.Logging(res))
       .catch((error) =>
         this.logger.log(
@@ -96,7 +98,7 @@ export class Cron {
         ),
       );
 
-    await reminderPremium()
+    await reminderPremium(db)
       .then((res) => this.Logging(res))
       .catch((error) =>
         this.logger.log(

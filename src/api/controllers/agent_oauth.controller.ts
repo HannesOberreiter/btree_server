@@ -1,13 +1,15 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import httpErrors from 'http-errors';
 
+import { KyselyServer } from '../../servers/kysely.server.js';
 import {
   createAuthorizationCode,
   exchangeAuthorizationCode,
   getOAuthAuthorizeData,
   getOAuthLoginRedirect,
   refreshAccessToken,
-} from '../utils/agent_oauth.util.js';
+  requireAgentOAuthAccess,
+} from '../modules/agent_oauth.module.js';
 
 type TokenRequestBody = {
   grant_type?: string;
@@ -27,13 +29,18 @@ export default class AgentOAuthController {
       return reply.redirect(getOAuthLoginRedirect(req));
     }
 
+    const rank = await requireAgentOAuthAccess(
+      KyselyServer.getInstance().db,
+      sessionUser.user_id,
+      sessionUser.bee_id,
+    );
     const code = await createAuthorizationCode({
       clientId: authorizeData.clientId,
       redirectUri: authorizeData.redirectUri,
       scope: authorizeData.scope,
       beeId: sessionUser.bee_id,
       userId: sessionUser.user_id,
-      rank: sessionUser.rank,
+      rank,
     });
 
     const redirectUrl = new URL(authorizeData.redirectUri);
@@ -56,6 +63,7 @@ export default class AgentOAuthController {
         throw httpErrors.BadRequest('Missing code or redirect_uri');
       }
       return exchangeAuthorizationCode(
+        KyselyServer.getInstance().db,
         body.code,
         clientId,
         clientSecret,
@@ -67,7 +75,12 @@ export default class AgentOAuthController {
       if (!body.refresh_token) {
         throw httpErrors.BadRequest('Missing refresh_token');
       }
-      return refreshAccessToken(body.refresh_token, clientId, clientSecret);
+      return refreshAccessToken(
+        KyselyServer.getInstance().db,
+        body.refresh_token,
+        clientId,
+        clientSecret,
+      );
     }
 
     throw httpErrors.BadRequest('Unsupported grant_type');

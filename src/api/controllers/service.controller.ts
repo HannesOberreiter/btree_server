@@ -1,28 +1,33 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import httpErrors from 'http-errors';
 
+import { KyselyServer } from '../../servers/kysely.server.js';
 import type { MailLang } from '../../services/mail.service.js';
 import { MailLangs } from '../../services/mail.service.js';
-import { Apiary } from '../models/apiary.model.js';
-import { User } from '../models/user.model.js';
-import { createInvoice } from '../utils/foxyoffice.util.js';
-import { createOrder as mollieCreateOrder } from '../utils/mollie.util.js';
+import { createInvoice } from '../adapters/foxyoffice.adapter.js';
+import { createOrder as mollieCreateOrder } from '../adapters/mollie.adapter.js';
 import {
   capturePayment,
   createOrder as paypalCreateOrder,
-} from '../utils/paypal.util.js';
-import { addPremium, isPremium } from '../utils/premium.util.js';
-import { createOrder as stripeCreateOrder } from '../utils/stripe.util.js';
+} from '../adapters/paypal.adapter.js';
+import { getElevation } from '../adapters/weather.adapter.js';
+import { addPremium } from '../modules/premium.module.js';
 import {
-  calculateGruenlandtemperatursumme,
-  getElevation,
-  getHistoricalTemperatures,
-  getWeatherData,
-} from '../utils/temperature.util.js';
+  getApiaryTemperatureSum,
+  getApiaryWeather,
+} from '../modules/weather.module.js';
+import type { CompatibilityQuery } from '../schemas/common.schema.js';
+import type {
+  GetWeatherDataParams,
+  GetGruenlandtemperatursummeParams,
+  PaypalCreateOrderBody,
+  PaypalCapturePaymentParams,
+  MollieCreateOrderBody,
+} from '../schemas/service.schema.js';
 
 export default class ServiceController {
   static async getElevation(req: FastifyRequest, _reply: FastifyReply) {
-    const query = req.query as any;
+    const query = req.query as CompatibilityQuery;
     const latitude = Number(query.latitude);
     const longitude = Number(query.longitude);
 
@@ -38,75 +43,30 @@ export default class ServiceController {
   }
 
   static async getWeatherData(req: FastifyRequest, _reply: FastifyReply) {
-    const params = req.params as any;
-    const premium = await isPremium(req.session.user.user_id);
-    if (!premium) {
-      throw httpErrors.PaymentRequired();
-    }
-    const apiary = await Apiary.query()
-      .findById(params.apiary_id)
-      .where({ user_id: req.session.user.user_id });
-
-    if (!apiary) {
-      throw httpErrors.NotFound('Apiary not found');
-    }
-    const weatherData = await getWeatherData(apiary.latitude, apiary.longitude);
-    return weatherData;
+    const params = req.params as GetWeatherDataParams;
+    return getApiaryWeather(
+      KyselyServer.getInstance().db,
+      req.session.user.user_id,
+      params.apiary_id,
+    );
   }
 
   static async getGruenlandtemperatursumme(
     req: FastifyRequest,
     _reply: FastifyReply,
   ) {
-    const params = req.params as any;
-    const apiary = await Apiary.query()
-      .findById(params.apiary_id)
-      .where({
-        user_id: req.session.user.user_id,
-        deleted: false,
-      })
-      .throwIfNotFound();
-
-    if (!apiary.latitude || !apiary.longitude) {
-      throw httpErrors.BadRequest('Apiary coordinates not set');
-    }
-
-    const query = req.query as any;
-    const year = query?.year ? Number(query.year) : new Date().getFullYear();
-    if (year > new Date().getFullYear()) {
-      throw httpErrors.BadRequest('Year cannot be in the future');
-    }
-
-    const startDate = `${year}-01-01`; // Always get previous year from Jan 1st
-    const endDate =
-      year === new Date().getFullYear()
-        ? new Date().toISOString().split('T')[0]
-        : `${year}-06-31`;
-
-    const dailyTemperatures = await getHistoricalTemperatures(
-      apiary.latitude,
-      apiary.longitude,
-      startDate,
-      endDate,
-      apiary.elevation,
+    const params = req.params as GetGruenlandtemperatursummeParams;
+    const query = req.query as CompatibilityQuery;
+    return getApiaryTemperatureSum(
+      KyselyServer.getInstance().db,
+      req.session.user.user_id,
+      params.apiary_id,
+      query.year ?? new Date().getFullYear(),
     );
-
-    const gtsResult = calculateGruenlandtemperatursumme(dailyTemperatures);
-
-    return {
-      ...gtsResult,
-      apiary: {
-        id: apiary.id,
-        name: apiary.name,
-        latitude: apiary.latitude,
-        longitude: apiary.longitude,
-        elevation: apiary.elevation,
-      },
-    };
   }
 
   static async paypalCreateOrder(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
+    const body = req.body as PaypalCreateOrderBody;
     const order = await paypalCreateOrder(
       req.session.user.user_id,
       req.session.user.bee_id,
@@ -120,7 +80,7 @@ export default class ServiceController {
   }
 
   static async paypalCapturePayment(req: FastifyRequest, _reply: FastifyReply) {
-    const params = req.params as any;
+    const params = req.params as PaypalCapturePaymentParams;
     const capture = await capturePayment(params.orderID);
     if (capture.status !== 'COMPLETED' && capture.status !== 'APPROVED') {
       throw new httpErrors.InternalServerError('Could not capure order');
@@ -128,31 +88,32 @@ export default class ServiceController {
     let value = 0;
     let years = 1;
     let bee_id: number | null = null;
+    const capturedPayment = capture.purchase_units[0].payments.captures[0];
 
     try {
-      value = Number.parseFloat(
-        capture.purchase_units[0].payments.captures[0].amount.value,
-      );
+      value = Number.parseFloat(capturedPayment.amount.value);
     } catch (error) {
       req.log.error(error);
     }
 
     try {
-      const custom_id = JSON.parse(
-        capture.purchase_units[0].payments.captures[0].custom_id,
-      );
+      const custom_id = JSON.parse(capturedPayment.custom_id);
       years = Number.parseFloat(custom_id.quantity) ?? 1;
       if (custom_id.bee_id) bee_id = Number.parseInt(custom_id.bee_id, 10);
     } catch (error) {
       req.log.error(error);
     }
 
-    const paid = await addPremium(
+    const premiumGrant = await addPremium(
+      KyselyServer.getInstance().db,
       req.session.user.user_id,
       12 * years,
       value,
       'paypal',
+      capturedPayment.id,
     );
+    const paid = premiumGrant.paid;
+    if (!premiumGrant.applied) return { ...capture, paid };
 
     let mail: string | null = null;
     let lang: MailLang = 'en';
@@ -161,7 +122,11 @@ export default class ServiceController {
       return { ...capture, paid };
     }
     try {
-      const user = await User.query().select('email', 'lang').findById(bee_id);
+      const user = await KyselyServer.getInstance()
+        .db.selectFrom('bees')
+        .select(['email', 'lang'])
+        .where('id', '=', bee_id)
+        .executeTakeFirst();
       if (user?.email) mail = user.email;
       if (user?.lang && MailLangs.includes(user.lang as MailLang))
         lang = user.lang as MailLang;
@@ -175,19 +140,8 @@ export default class ServiceController {
     return { ...capture, paid };
   }
 
-  static async stripeCreateOrder(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
-    const session = await stripeCreateOrder(
-      req.session.user.user_id,
-      req.session.user.bee_id,
-      body.amount,
-      body.quantity,
-    );
-    return session;
-  }
-
   static async mollieCreateOrder(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
+    const body = req.body as MollieCreateOrderBody;
     const order = await mollieCreateOrder(
       req.session.user.user_id,
       req.session.user.bee_id,

@@ -86,8 +86,6 @@ const paypalBase =
     ? 'https://api-m.paypal.com'
     : 'https://api-m.sandbox.paypal.com';
 
-const stripeSecret = process.env.STRIPE_SECRET_KEY!;
-
 const mollieApiKey = process.env.MOLLIE_API_KEY;
 
 const discourseSecret = process.env.DISCOURSE_SSO;
@@ -128,11 +126,7 @@ const redisConfig = {
   password: process.env.REDIS_PASSWORD ?? '',
 };
 
-/**
- * @type {Knex}
- */
-const knexConfig = {
-  client: process.env.DB_TYPE,
+const databaseConfig = {
   connection: {
     host: process.env.DB_HOSTNAME,
     database: process.env.DB_NAME,
@@ -142,8 +136,7 @@ const knexConfig = {
     charset: 'utf8mb4',
     timezone: 'Z',
     typeCast(field: any, next: any) {
-      // https://github.com/Vincit/objection.js/issues/174#issuecomment-424873063
-      // Convert 1 to true, 0 to false, and leave null alone
+      // Convert 1 to true, 0 to false, and leave null alone.
       if (field.type === 'TINY' && field.length === 1) {
         const value = field.string();
         if (value === null) return null;
@@ -152,10 +145,19 @@ const knexConfig = {
       return next();
     },
   },
-  debug: env === ENVIRONMENT.development,
   pool: {
     min: Number.parseInt(process.env.DB_POOL_MIN!),
     max: Number.parseInt(process.env.DB_POOL_MAX!),
+  },
+};
+
+/** Knex remains tooling for migrations, seeds, and test database setup. */
+const knexConfig = {
+  client: process.env.DB_TYPE,
+  ...databaseConfig,
+  debug: env === ENVIRONMENT.development,
+  pool: {
+    ...databaseConfig.pool,
     afterCreate(conn: any, done: any) {
       // Extend max group concant mainly for calendar view if many ids are concated
       conn.query('SET SESSION group_concat_max_len = 100000;', (err: any) => {
@@ -249,7 +251,7 @@ export {
   googleOAuth,
   isChild,
   isContainer,
-  isServerLocationValid,
+  databaseConfig,
   knexConfig,
   mailConfig,
   mistralAI,
@@ -265,7 +267,6 @@ export {
   rootDirectory,
   serverLocation,
   sessionSecret,
-  stripeSecret,
   totalLimit,
   url,
 };

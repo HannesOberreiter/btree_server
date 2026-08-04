@@ -1,80 +1,87 @@
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
-import { z } from 'zod';
 
 import { ROLES } from '../../../config/constants.config.js';
-import RearingDetailController from '../../controllers/rearing_detail.controller.js';
+import { KyselyServer } from '../../../servers/kysely.server.js';
 import { Guard } from '../../hooks/guard.hook.js';
-import { numberSchema } from '../../utils/zod.util.js';
-
+import {
+  createRearingDetail,
+  deleteRearingDetails,
+  getRearingDetailsByIds,
+  listRearingDetails,
+  updateRearingDetails,
+} from '../../modules/rearing.module.js';
+import {
+  compatibilityQuerySchema,
+  permissiveJsonResponseSchema,
+} from '../../schemas/common.schema.js';
+import {
+  batchDeleteBodySchema,
+  batchGetBodySchema,
+  patchBodySchema,
+  postBodySchema,
+} from '../../schemas/rearing_detail.schema.js';
 export default function routes(
   instance: FastifyInstance,
-  _options: any,
-  done: any,
+  _options: unknown,
+  done: () => void,
 ) {
   const server = instance.withTypeProvider<ZodTypeProvider>();
-
+  const db = KyselyServer.getInstance().db;
   server.get(
     '/',
     {
+      schema: {
+        querystring: compatibilityQuerySchema,
+        response: { 200: permissiveJsonResponseSchema },
+      },
       preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
     },
-    RearingDetailController.get,
+    (req) => listRearingDetails(db, req.session.user.user_id, req.query),
   );
-
   server.patch(
     '/',
     {
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
-        body: z.object({
-          ids: z.array(numberSchema),
-          data: z.object({}).passthrough(),
-        }),
+        response: { 200: permissiveJsonResponseSchema },
+        body: patchBodySchema,
       },
     },
-    RearingDetailController.patch,
+    (req) => updateRearingDetails(db, req.session.user.user_id, req.body),
   );
-
   server.post(
     '/',
     {
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
-        body: z
-          .object({
-            job: z.string(),
-          })
-          .passthrough(),
+        response: { 200: permissiveJsonResponseSchema },
+        body: postBodySchema,
       },
     },
-    RearingDetailController.post,
+    (req) => createRearingDetail(db, req.session.user.user_id, req.body),
   );
-
   server.patch(
     '/batchDelete',
     {
       preHandler: Guard.authorize([ROLES.admin]),
       schema: {
-        body: z.object({
-          ids: z.array(numberSchema),
-        }),
+        response: { 200: permissiveJsonResponseSchema },
+        body: batchDeleteBodySchema,
       },
     },
-    RearingDetailController.batchDelete,
+    (req) => deleteRearingDetails(db, req.session.user.user_id, req.body.ids),
   );
-
   server.post(
     '/batchGet',
     {
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
-        body: z.object({
-          ids: z.array(numberSchema),
-        }),
+        response: { 200: permissiveJsonResponseSchema },
+        body: batchGetBodySchema,
       },
     },
-    RearingDetailController.batchGet,
+    (req) => getRearingDetailsByIds(db, req.session.user.user_id, req.body.ids),
   );
   done();
 }

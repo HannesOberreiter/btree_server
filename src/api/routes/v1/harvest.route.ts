@@ -1,112 +1,174 @@
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
-import { z } from 'zod';
 
 import { ROLES } from '../../../config/constants.config.js';
-import HarvestController from '../../controllers/harvest.controller.js';
+import { KyselyServer } from '../../../servers/kysely.server.js';
 import { Guard } from '../../hooks/guard.hook.js';
-import { numberSchema } from '../../utils/zod.util.js';
+import {
+  createHarvests,
+  getHarvestsByIds,
+  listHarvests,
+  updateHarvests,
+} from '../../modules/harvest.module.js';
+import {
+  deleteTasks,
+  updateTaskDates,
+  updateTaskStatus,
+} from '../../modules/task.module.js';
+import {
+  taskCreateBodySchema,
+  taskIdsResponseSchema,
+  taskDateBodySchema,
+  taskIdsBodySchema,
+  taskListQuerySchema,
+  taskMutationCountResponseSchema,
+  taskPaginatedResponseSchema,
+  taskPatchBodySchema,
+  taskRowsResponseSchema,
+  taskStatusBodySchema,
+} from '../../schemas/task.schema.js';
 
 export default function routes(
   instance: FastifyInstance,
-  _options: any,
-  done: any,
+  _options: unknown,
+  done: () => void,
 ) {
   const server = instance.withTypeProvider<ZodTypeProvider>();
-
+  const db = KyselyServer.getInstance().db;
   server.get(
     '/',
     {
+      schema: {
+        querystring: taskListQuerySchema,
+        response: { 200: taskPaginatedResponseSchema },
+      },
       preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
     },
-    HarvestController.get,
+    async (request) =>
+      listHarvests(db, request.session.user.user_id, request.query),
   );
-
   server.post(
     '/',
     {
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
-        body: z
-          .object({
-            hive_ids: z.array(numberSchema),
-            interval: z.number().min(0).max(365).optional(),
-            repeat: z.number().min(0).max(15).optional(),
-          })
-          .passthrough(),
+        response: { 200: taskIdsResponseSchema },
+        body: taskCreateBodySchema,
       },
     },
-    HarvestController.post,
+    async (request) =>
+      createHarvests(
+        db,
+        {
+          companyId: request.session.user.user_id,
+          beeId: request.session.user.bee_id,
+          isLlm: request.session.llm === true,
+        },
+        request.body,
+      ),
   );
-
   server.patch(
     '/',
     {
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
-        body: z.object({
-          ids: z.array(numberSchema),
-          data: z.object({}).passthrough(),
-        }),
+        response: { 200: taskMutationCountResponseSchema },
+        body: taskPatchBodySchema,
       },
     },
-    HarvestController.patch,
+    async (request) =>
+      updateHarvests(
+        db,
+        {
+          companyId: request.session.user.user_id,
+          beeId: request.session.user.bee_id,
+          isLlm: request.session.llm === true,
+        },
+        request.body,
+      ),
   );
-
   server.patch(
     '/status',
     {
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
-        body: z.object({
-          ids: z.array(numberSchema),
-          status: z.boolean(),
-        }),
+        response: { 200: taskMutationCountResponseSchema },
+        body: taskStatusBodySchema,
       },
     },
-    HarvestController.updateStatus,
+    async (request) =>
+      updateTaskStatus(
+        db,
+        'harvests',
+        {
+          companyId: request.session.user.user_id,
+          beeId: request.session.user.bee_id,
+          isLlm: request.session.llm === true,
+        },
+        request.body.ids,
+        request.body.status,
+      ),
   );
-
   server.patch(
     '/date',
     {
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
-        body: z.object({
-          ids: z.array(numberSchema),
-          start: z.string(),
-          end: z.string(),
-        }),
+        response: { 200: taskMutationCountResponseSchema },
+        body: taskDateBodySchema,
       },
     },
-    HarvestController.updateDate,
+    async (request) =>
+      updateTaskDates(
+        db,
+        'harvests',
+        {
+          companyId: request.session.user.user_id,
+          beeId: request.session.user.bee_id,
+          isLlm: request.session.llm === true,
+        },
+        request.body.ids,
+        request.body.start,
+        request.body.end,
+      ),
   );
-
   server.patch(
     '/batchDelete',
     {
       preHandler: Guard.authorize([ROLES.admin]),
       schema: {
-        body: z.object({
-          ids: z.array(numberSchema),
-        }),
+        querystring: taskListQuerySchema,
+        response: { 200: taskRowsResponseSchema },
+        body: taskIdsBodySchema,
       },
     },
-    HarvestController.batchDelete,
+    async (request) =>
+      deleteTasks(
+        db,
+        'harvests',
+        {
+          companyId: request.session.user.user_id,
+          beeId: request.session.user.bee_id,
+          isLlm: request.session.llm === true,
+        },
+        request.body.ids,
+        {
+          hard: Boolean(request.query.hard),
+          restore: Boolean(request.query.restore),
+        },
+      ),
   );
-
   server.post(
     '/batchGet',
     {
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
-        body: z.object({
-          ids: z.array(numberSchema),
-        }),
+        response: { 200: taskRowsResponseSchema },
+        body: taskIdsBodySchema,
       },
     },
-    HarvestController.batchGet,
+    async (request) =>
+      getHarvestsByIds(db, request.session.user.user_id, request.body.ids),
   );
-
   done();
 }

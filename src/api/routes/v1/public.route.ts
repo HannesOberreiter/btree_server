@@ -1,19 +1,18 @@
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
-import { z } from 'zod';
 
 import PublicController from '../../controllers/public.controller.js';
-import { numberSchema } from '../../utils/zod.util.js';
-
-const taxaParams = z.union([
-  z.literal('velutina'),
-  z.literal('aethina_tumida'),
-]);
+import {
+  publicObservationListResponseSchema,
+  publicObservationStatsResponseSchema,
+  publicTaxaParamsSchema,
+  publicTaxaYearParamsSchema,
+} from '../../schemas/public.schema.js';
 
 export default function routes(
   instance: FastifyInstance,
-  _options: any,
-  done: any,
+  _options: unknown,
+  done: () => void,
 ) {
   const server = instance.withTypeProvider<ZodTypeProvider>();
 
@@ -21,56 +20,30 @@ export default function routes(
     '/:taxa/observations/recent',
     {
       schema: {
-        params: z.object({
-          taxa: taxaParams,
-        }),
-        response: {
-          200: z.array(
-            z.object({
-              location: z.object({
-                x: z.number(),
-                y: z.number(),
-              }),
-              uri: z.string(),
-              observed_at: z.union([z.string(), z.date()]),
-            }),
-          ),
-        },
+        params: publicTaxaParamsSchema,
+        response: { 200: publicObservationListResponseSchema },
       },
     },
-    PublicController.getPestObservationsRecent as any,
+    PublicController.getPestObservationsRecent,
   );
+
   server.get(
     '/:taxa/observations/year/:year',
     {
       schema: {
-        params: z.object({
-          year: numberSchema,
-          taxa: taxaParams,
-        }),
-        response: {
-          200: z.array(
-            z.object({
-              location: z.object({
-                x: z.number(),
-                y: z.number(),
-              }),
-              uri: z.string(),
-              observed_at: z.union([z.string(), z.date()]),
-            }),
-          ),
-        },
+        params: publicTaxaYearParamsSchema,
+        response: { 200: publicObservationListResponseSchema },
       },
     },
-    PublicController.getPestObservationsYear as any,
+    PublicController.getPestObservationsYear,
   );
+
   server.get(
     '/:taxa/observations/stats',
     {
       schema: {
-        params: z.object({
-          taxa: taxaParams,
-        }),
+        response: { 200: publicObservationStatsResponseSchema },
+        params: publicTaxaParamsSchema,
       },
     },
     PublicController.getPestObservationsStats,

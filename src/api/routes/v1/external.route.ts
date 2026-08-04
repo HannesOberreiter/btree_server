@@ -1,13 +1,21 @@
 import fastifyFormbody from '@fastify/formbody';
 import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
-import { z } from 'zod';
 
+import { KyselyServer } from '../../../servers/kysely.server.js';
+import { ingestExternalScaleReading } from '../../adapters/scale_data.adapter.js';
 import ExternalController from '../../controllers/external.controller.js';
-import ScaleDataController from '../../controllers/scale_data.controller.js';
 import { Validator } from '../../hooks/validator.hook.js';
-
-const SCALE_ACTION_REGEX = /^(CREATE|CREATE_DEMO)$/;
+import {
+  permissiveJsonResponseSchema,
+  compatibilityQuerySchema,
+} from '../../schemas/common.schema.js';
+import {
+  externalCalendarParamsSchema,
+  externalScaleParamsSchema,
+  externalScaleQuerySchema,
+  mollieWebhookBodySchema,
+} from '../../schemas/external.schema.js';
 
 export default function routes(
   instance: FastifyInstance,
@@ -15,36 +23,43 @@ export default function routes(
   done: any,
 ) {
   const server = instance.withTypeProvider<ZodTypeProvider>();
+  const db = KyselyServer.getInstance().db;
 
   server.register(fastifyFormbody);
 
   server.get(
     '/ical/:source/:api',
-    { preHandler: Validator.handleSource },
+    {
+      schema: {
+        querystring: compatibilityQuerySchema,
+        params: externalCalendarParamsSchema,
+      },
+      preHandler: Validator.handleSource,
+    },
     ExternalController.ical,
   );
 
-  server.post('/stripe/webhook', {}, ExternalController.stripeWebhook);
-
-  server.post('/mollie/webhook', {}, ExternalController.mollieWebhook);
+  server.post(
+    '/mollie/webhook',
+    {
+      schema: {
+        body: mollieWebhookBodySchema,
+        response: { 200: permissiveJsonResponseSchema },
+      },
+    },
+    ExternalController.mollieWebhook,
+  );
 
   server.get(
     '/scale/:ident/:api',
     {
       schema: {
-        querystring: z.object({
-          action: z.string().regex(SCALE_ACTION_REGEX),
-          datetime: z.string().datetime().optional(),
-          weight: z.number().optional(),
-          temp1: z.number().optional(),
-          temp2: z.number().optional(),
-          hum: z.number().optional(),
-          rain: z.number().optional(),
-          note: z.string().max(300).optional(),
-        }),
+        params: externalScaleParamsSchema,
+        querystring: externalScaleQuerySchema,
       },
     },
-    ScaleDataController.api,
+    async (request) =>
+      ingestExternalScaleReading(db, request.params, request.query),
   );
 
   done();

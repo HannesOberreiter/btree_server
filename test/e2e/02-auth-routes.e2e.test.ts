@@ -113,6 +113,13 @@ describe('authentification routes', () => {
         password: 'testseet22',
       });
       expect(res.statusCode).toEqual(403);
+      expect(res.body).toMatchObject({
+        statusCode: 403,
+        code: 'HTTP_ERROR',
+        message: 'Invalid password',
+      });
+      expect(res.body).not.toHaveProperty('cause');
+      expect(res.body).not.toHaveProperty('error');
     });
 
     it('403 - wrong email', async () => {

@@ -3,34 +3,55 @@ import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { z } from 'zod';
 
 import { ROLES } from '../../../config/constants.config.js';
-import ScaleController from '../../controllers/scale.controller.js';
+import { KyselyServer } from '../../../servers/kysely.server.js';
 import { Guard } from '../../hooks/guard.hook.js';
-import { numberSchema } from '../../utils/zod.util.js';
+import {
+  createScale,
+  deleteScale,
+  listScales,
+  updateScales,
+} from '../../modules/scale.module.js';
+import {
+  deleteParamsSchema,
+  getParamsSchema,
+  patchBodySchema,
+  postBodySchema,
+  scaleCreateResponseSchema,
+  scaleListResponseSchema,
+} from '../../schemas/scale.schema.js';
 
 export default function routes(
   instance: FastifyInstance,
-  _options: any,
-  done: any,
+  _options: unknown,
+  done: () => void,
 ) {
   const server = instance.withTypeProvider<ZodTypeProvider>();
+  const db = KyselyServer.getInstance().db;
 
   server.get(
     '/:id?',
-    { preHandler: Guard.authorize([ROLES.admin, ROLES.user, ROLES.read]) },
-    ScaleController.get,
+    {
+      schema: {
+        params: getParamsSchema,
+        response: { 200: scaleListResponseSchema },
+      },
+      preHandler: Guard.authorize([ROLES.admin, ROLES.user, ROLES.read]),
+    },
+    async (request) =>
+      listScales(db, request.session.user.user_id, request.params.id),
   );
+
   server.patch(
     '/',
     {
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
-        body: z.object({
-          ids: z.array(numberSchema),
-          data: z.object({}).passthrough(),
-        }),
+        body: patchBodySchema,
+        response: { 200: z.number() },
       },
     },
-    ScaleController.patch,
+    async (request) =>
+      updateScales(db, request.session.user.user_id, request.body),
   );
 
   server.post(
@@ -38,15 +59,12 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.admin]),
       schema: {
-        body: z
-          .object({
-            name: z.string().min(1).max(45).trim(),
-            hive_id: z.number(),
-          })
-          .passthrough(),
+        body: postBodySchema,
+        response: { 200: scaleCreateResponseSchema },
       },
     },
-    ScaleController.post,
+    async (request) =>
+      createScale(db, request.session.user.user_id, request.body),
   );
 
   server.delete(
@@ -54,12 +72,12 @@ export default function routes(
     {
       preHandler: Guard.authorize([ROLES.admin]),
       schema: {
-        params: z.object({
-          id: z.string(),
-        }),
+        params: deleteParamsSchema,
+        response: { 200: z.number() },
       },
     },
-    ScaleController.delete,
+    async (request) =>
+      deleteScale(db, request.session.user.user_id, request.params.id),
   );
 
   done();

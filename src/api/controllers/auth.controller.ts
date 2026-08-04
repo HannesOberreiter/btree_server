@@ -3,7 +3,6 @@ import { randomBytes, randomUUID } from 'node:crypto';
 import dayjs from 'dayjs';
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import httpErrors from 'http-errors';
-import type { z } from 'zod';
 
 import { ENVIRONMENT } from '../../config/constants.config.js';
 import {
@@ -12,18 +11,11 @@ import {
   frontend,
   serverLocation,
 } from '../../config/environment.config.js';
+import { KyselyServer } from '../../servers/kysely.server.js';
 import { DiscourseSSO } from '../../services/discourse.service.js';
 import type { federatedUser } from '../../services/federated.service.js';
 import { AppleAuth, GoogleAuth } from '../../services/federated.service.js';
 import { MailService } from '../../services/mail.service.js';
-import { Company } from '../models/company.model.js';
-import { CompanyBee } from '../models/company_bee.model.js';
-import { User } from '../models/user.model.js';
-import type { RegisterBody } from '../routes/v1/auth.route.js';
-import {
-  AppleCallbackGETSchema,
-  AppleCallbackSchema,
-} from '../routes/v1/auth.route.js';
 import {
   buildUserAgent,
   confirmAccount,
@@ -31,36 +23,54 @@ import {
   resetMail,
   resetPassword,
   unsubscribeMail,
-} from '../utils/auth.util.js';
-import { autoFill } from '../utils/autofill.util.js';
-import { loginCheck } from '../utils/login.util.js';
+} from '../modules/auth.module.js';
+import { autoFill } from '../modules/company_defaults.module.js';
+import { loginCheck } from '../modules/login.module.js';
+import {
+  appleCallbackGetSchema,
+  appleCallbackSchema,
+} from '../schemas/auth.schema.js';
+import type {
+  AppleCallback,
+  ConfirmBody,
+  DiscourseQuery,
+  EmailBody,
+  GoogleCallbackQuery,
+  LoginBody,
+  RegisterBody,
+  ResetPasswordBody,
+} from '../schemas/auth.schema.js';
 
 export default class AuthController {
   static async confirmMail(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
+    const body = req.body as ConfirmBody;
     const key = body.confirm;
-    const u = await User.query().findOne({
-      reset: key,
-    });
+    const u = await KyselyServer.getInstance()
+      .db.selectFrom('bees')
+      .select('id')
+      .where('reset', '=', key)
+      .executeTakeFirst();
     if (!u) {
       return httpErrors.Forbidden('Confirm Key not found');
     }
-    const result = await confirmAccount(u.id);
+    const result = await confirmAccount(KyselyServer.getInstance().db, u.id);
     return { email: result };
   }
 
   static async resetRequest(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
+    const body = req.body as EmailBody;
     const email = body.email;
-    const u = await User.query().findOne({
-      email,
-    });
+    const u = await KyselyServer.getInstance()
+      .db.selectFrom('bees')
+      .select('id')
+      .where('email', '=', email)
+      .executeTakeFirst();
     if (!u) {
       // "Best Practice" don't tell anyone if the user exists
       // return next(badRequest('User not found!'));
       return { email };
     }
-    const result = await resetMail(u.id);
+    const result = await resetMail(KyselyServer.getInstance().db, u.id);
 
     const mail = await MailService.getInstance().sendMail({
       to: result.email,
@@ -83,32 +93,40 @@ export default class AuthController {
   }
 
   static async unsubscribeRequest(req: FastifyRequest, _reply: FastifyReply) {
-    const body = req.body as any;
+    const body = req.body as EmailBody;
     const email = body.email;
-    const u = await User.query().findOne({
-      email,
-    });
+    const u = await KyselyServer.getInstance()
+      .db.selectFrom('bees')
+      .select('id')
+      .where('email', '=', email)
+      .executeTakeFirst();
     if (!u) {
       // "Best Practice" don't tell anyone if the user exists
       // return next(badRequest('User not found!'));
       return { email };
     }
-    const result = await unsubscribeMail(u.id);
+    const result = await unsubscribeMail(KyselyServer.getInstance().db, u.id);
     return { email: result };
   }
 
   static async resetPassword(req: FastifyRequest, _reply: FastifyReply) {
-    const { key, password } = req.body as any;
-    const u = await User.query().findOne({
-      reset: key,
-    });
+    const { key, password } = req.body as ResetPasswordBody;
+    const u = await KyselyServer.getInstance()
+      .db.selectFrom('bees')
+      .select(['id', 'reset_timestamp'])
+      .where('reset', '=', key)
+      .executeTakeFirst();
     if (!u) {
       return httpErrors.NotFound('Reset key not found!');
     }
     if (dayjs().diff(u.reset_timestamp, 'hours') > 24) {
       return httpErrors.Forbidden('Reset key too old!');
     }
-    const result = await resetPassword(u.id, password);
+    const result = await resetPassword(
+      KyselyServer.getInstance().db,
+      u.id,
+      password,
+    );
     await MailService.getInstance().sendMail({
       to: result.email,
       lang: result.lang,
@@ -121,48 +139,54 @@ export default class AuthController {
   static async register(req: FastifyRequest, _reply: FastifyReply) {
     req.log.debug({ message: 'Register attempt', ip: req.ip, body: req.body });
     const body = req.body as RegisterBody;
-    const inputCompany = body.name;
-    const inputUser = body;
-    delete inputUser.name;
-    const isOAuth = body.isOAuth || false;
-    delete inputUser.isOAuth;
-
-    if (isOAuth) {
-      // for OAuth registrations we reset the temp password
-      inputUser.password = randomBytes(16).toString('hex');
-    }
+    const {
+      name: inputCompany,
+      isOAuth = false,
+      password,
+      ...inputUser
+    } = body;
+    const inputPassword = isOAuth ? randomBytes(16).toString('hex') : password;
 
     // create hashed password and salt
-    const hash = createHashedPassword(inputUser.password);
-    delete inputUser.password;
+    const hash = createHashedPassword(inputPassword);
     // We use the password reset key for email confirmation
     // if the user did not get it is possible to use "forgot password" in addition
     // which will also activate the user
     const reset = randomBytes(64).toString('hex');
     // we only have German or English available for autofill
     const autofillLang = inputUser.lang === 'de' ? 'de' : 'en';
-    await User.transaction(async (trx) => {
-      const uniqueMail = await User.query(trx).findOne({
-        email: inputUser.email,
-      });
-      if (uniqueMail) {
-        throw httpErrors.Conflict('email');
-      }
+    await KyselyServer.getInstance()
+      .db.transaction()
+      .execute(async (trx) => {
+        const uniqueMail = await trx
+          .selectFrom('bees')
+          .select('id')
+          .where('email', '=', inputUser.email)
+          .executeTakeFirst();
+        if (uniqueMail) throw httpErrors.Conflict('email');
 
-      const u = await User.query(trx).insert({
-        ...inputUser,
-        password: hash.password,
-        salt: hash.salt,
-        reset,
-        state: isOAuth ? 1 : 0, // OAuth users are confirmed by default
+        const userInsert = await trx
+          .insertInto('bees')
+          .values({
+            ...inputUser,
+            password: hash.password,
+            salt: hash.salt,
+            reset,
+            state: isOAuth ? 1 : 0,
+          })
+          .executeTakeFirstOrThrow();
+        const beeId = Number(userInsert.insertId);
+        const companyInsert = await trx
+          .insertInto('companies')
+          .values({ name: inputCompany, paid: dayjs().add(31, 'day').toDate() })
+          .executeTakeFirstOrThrow();
+        const companyId = Number(companyInsert.insertId);
+        await trx
+          .insertInto('company_bee')
+          .values({ bee_id: beeId, user_id: companyId })
+          .execute();
+        await autoFill(trx, companyId, autofillLang);
       });
-      const c = await Company.query(trx).insert({
-        name: inputCompany,
-        paid: dayjs().add(31, 'day').format('YYYY-MM-DD'),
-      });
-      await CompanyBee.query(trx).insert({ bee_id: u.id, user_id: c.id });
-      await autoFill(trx, c.id, autofillLang);
-    });
 
     const mail = await MailService.getInstance().sendMail({
       to: inputUser.email,
@@ -189,9 +213,10 @@ export default class AuthController {
   }
 
   static async login(req: FastifyRequest, _reply: FastifyReply) {
-    const { email, password } = req.body as any;
+    const { email, password } = req.body as LoginBody;
     const userAgent = buildUserAgent(req);
     const { bee_id, user_id, data, paid, rank } = await loginCheck(
+      KyselyServer.getInstance().db,
       email,
       password,
       undefined,
@@ -199,14 +224,14 @@ export default class AuthController {
 
     // Add bee_id to req as regenerate will call genid which uses bee_id as prefix to store key
     // see app.config.ts session(genId: function);
-    (req as any).bee_id = bee_id;
+    (req as FastifyRequest & { bee_id: number }).bee_id = bee_id;
     try {
       await req.session.regenerate();
       req.session.user = {
         bee_id,
         user_id,
         paid,
-        rank: rank as any,
+        rank: rank as typeof req.session.user.rank,
         user_agent: userAgent,
         last_visit: new Date(),
         uuid: randomUUID(),
@@ -222,13 +247,14 @@ export default class AuthController {
 
   static async discourse(req: FastifyRequest, _reply: FastifyReply) {
     const sso = new DiscourseSSO(discourseSecret);
-    const { payload, sig } = req.query as any;
+    const { payload, sig } = req.query as DiscourseQuery;
     if (payload && sig) {
       if (sso.validate(payload, sig)) {
-        const user = await User.query()
-          .select('id', 'username', 'email')
-          .findById(req.session.user.bee_id)
-          .throwIfNotFound();
+        const user = await KyselyServer.getInstance()
+          .db.selectFrom('bees')
+          .select(['id', 'username', 'email'])
+          .where('id', '=', req.session.user.bee_id)
+          .executeTakeFirstOrThrow();
 
         const nonce = sso.getNonce(payload);
         const userparams = {
@@ -256,7 +282,7 @@ export default class AuthController {
   static async google(req: FastifyRequest, reply: FastifyReply) {
     const google = GoogleAuth.getInstance();
     let result: federatedUser;
-    const token = (req.query as any).code as string;
+    const { code: token } = req.query as GoogleCallbackQuery;
 
     try {
       result = await google.verify(token);
@@ -282,19 +308,20 @@ export default class AuthController {
     const userAgent = buildUserAgent(req);
 
     const { bee_id, user_id, paid, rank } = await loginCheck(
+      KyselyServer.getInstance().db,
       '',
       '',
       result.bee_id,
     );
 
     try {
-      (req as any).bee_id = bee_id;
+      (req as FastifyRequest & { bee_id: number }).bee_id = bee_id;
       await req.session.regenerate();
       req.session.user = {
         bee_id,
         user_id,
         paid,
-        rank: rank as any,
+        rank: rank as typeof req.session.user.rank,
         user_agent: userAgent,
         last_visit: new Date(),
         uuid: randomUUID(),
@@ -312,13 +339,13 @@ export default class AuthController {
   static async apple(req: FastifyRequest, reply: FastifyReply) {
     const apple = AppleAuth.getInstance();
     let result: federatedUser;
-    let body: z.infer<typeof AppleCallbackSchema>;
+    let body: AppleCallback;
 
     try {
       if (req.method === 'GET') {
-        const query = AppleCallbackGETSchema.parse(req.query);
+        const query = appleCallbackGetSchema.parse(req.query);
 
-        const transformedQuery: any = {
+        const transformedQuery: Record<string, unknown> = {
           code: query.code,
           id_token: query.id_token,
           state: query.state,
@@ -338,9 +365,9 @@ export default class AuthController {
           }
         }
 
-        body = AppleCallbackSchema.parse(transformedQuery);
+        body = appleCallbackSchema.parse(transformedQuery);
       } else {
-        body = AppleCallbackSchema.parse(req.body);
+        body = appleCallbackSchema.parse(req.body);
       }
 
       if (body.error) {
@@ -376,19 +403,20 @@ export default class AuthController {
     const userAgent = buildUserAgent(req);
 
     const { bee_id, user_id, paid, rank } = await loginCheck(
+      KyselyServer.getInstance().db,
       '',
       '',
       result.bee_id,
     );
 
     try {
-      (req as any).bee_id = bee_id;
+      (req as FastifyRequest & { bee_id: number }).bee_id = bee_id;
       await req.session.regenerate();
       req.session.user = {
         bee_id,
         user_id,
         paid,
-        rank: rank as any,
+        rank: rank as typeof req.session.user.rank,
         user_agent: userAgent,
         last_visit: new Date(),
         uuid: randomUUID(),

@@ -3,112 +3,157 @@ import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { z } from 'zod';
 
 import { ROLES } from '../../../config/constants.config.js';
-import QueenController from '../../controllers/queen.controller.js';
+import { KyselyServer } from '../../../servers/kysely.server.js';
 import { Guard } from '../../hooks/guard.hook.js';
 import { Validator } from '../../hooks/validator.hook.js';
-import { numberSchema } from '../../utils/zod.util.js';
+import {
+  createQueens,
+  deleteQueens,
+  getQueenPedigree,
+  getQueensByIds,
+  listQueens,
+  listQueenStats,
+  updateQueens,
+  updateQueenStatus,
+} from '../../modules/queen.module.js';
+import { compatibilityQuerySchema } from '../../schemas/common.schema.js';
+import {
+  batchDeleteBodySchema,
+  batchGetBodySchema,
+  getPedigreeParamsSchema,
+  patchBodySchema,
+  postBodySchema,
+  updateStatusBodySchema,
+  queenPaginatedResponseSchema,
+  queenPedigreeResponseSchema,
+  queenResponseSchema,
+  queenStatsResponseSchema,
+} from '../../schemas/queen.schema.js';
 
 export default function routes(
   instance: FastifyInstance,
-  _options: any,
-  done: any,
+  _options: unknown,
+  done: () => void,
 ) {
   const server = instance.withTypeProvider<ZodTypeProvider>();
-
+  const db = KyselyServer.getInstance().db;
   server.get(
     '/',
     {
+      schema: {
+        querystring: compatibilityQuerySchema,
+        response: { 200: queenPaginatedResponseSchema },
+      },
       preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
     },
-    QueenController.get,
+    (req) => listQueens(db, req.session.user.user_id, req.query),
   );
-
   server.get(
     '/stats',
     {
+      schema: {
+        querystring: compatibilityQuerySchema,
+        response: { 200: queenStatsResponseSchema },
+      },
       preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
       preValidation: Validator.isPremium,
     },
-    QueenController.getStats,
+    (req) => listQueenStats(db, req.session.user.user_id, req.query),
   );
-
   server.get(
     '/pedigree/:id',
     {
+      schema: {
+        querystring: compatibilityQuerySchema,
+        params: getPedigreeParamsSchema,
+        response: { 200: queenPedigreeResponseSchema },
+      },
       preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
     },
-    QueenController.getPedigree,
+    (req) => getQueenPedigree(db, req.session.user.user_id, req.params.id),
   );
-
   server.post(
     '/',
     {
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
-        body: z
-          .object({
-            start: z.number().int().min(0).max(10000).optional(),
-            repeat: z.number().int().min(0).max(100).optional(),
-          })
-          .passthrough(),
+        response: { 200: z.array(z.number()) },
+        body: postBodySchema,
       },
     },
-    QueenController.post,
+    (req) =>
+      createQueens(
+        db,
+        req.session.user.user_id,
+        req.session.user.bee_id,
+        req.body,
+      ),
   );
-
   server.patch(
     '/',
     {
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
-        body: z.object({
-          ids: z.array(numberSchema),
-          data: z.object({}).passthrough(),
-        }),
+        response: { 200: z.number() },
+        body: patchBodySchema,
       },
     },
-    QueenController.patch,
+    (req) =>
+      updateQueens(
+        db,
+        req.session.user.user_id,
+        req.session.user.bee_id,
+        req.body,
+      ),
   );
-
   server.patch(
     '/status',
     {
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
-        body: z.object({
-          ids: z.array(numberSchema),
-          status: z.boolean(),
-        }),
+        response: { 200: z.number() },
+        body: updateStatusBodySchema,
       },
     },
-    QueenController.updateStatus,
+    (req) =>
+      updateQueenStatus(
+        db,
+        req.session.user.user_id,
+        req.session.user.bee_id,
+        req.body.ids,
+        req.body.status,
+      ),
   );
-
   server.patch(
     '/batchDelete',
     {
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
-        body: z.object({
-          ids: z.array(numberSchema),
-        }),
+        querystring: compatibilityQuerySchema,
+        response: { 200: z.array(queenResponseSchema) },
+        body: batchDeleteBodySchema,
       },
     },
-    QueenController.batchDelete,
+    (req) =>
+      deleteQueens(
+        db,
+        req.session.user.user_id,
+        req.session.user.bee_id,
+        req.body.ids,
+        Boolean(req.query.hard),
+        Boolean(req.query.restore),
+      ),
   );
-
   server.post(
     '/batchGet',
     {
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
-        body: z.object({
-          ids: z.array(numberSchema),
-        }),
+        response: { 200: z.array(queenResponseSchema) },
+        body: batchGetBodySchema,
       },
     },
-    QueenController.batchGet,
+    (req) => getQueensByIds(db, req.session.user.user_id, req.body.ids),
   );
-
   done();
 }

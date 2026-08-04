@@ -2,6 +2,7 @@ declare module 'fastify' {
   interface Session {
     id?: number;
     agent?: boolean;
+    llm?: boolean;
     user: {
       bee_id: number;
       user_id: number;

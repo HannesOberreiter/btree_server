@@ -51,22 +51,20 @@ Authenticated session (`req.session.user`):
 
 - **Server**: Fastify v5
 - **Database**: MariaDB (mysql2)
-- **Query builders**: Knex (migrations/seeds) + Kysely (app queries)
-- **ORM**: Objection.js (legacy; phase out)
+- **Database tooling**: Knex (migrations, seeds, test setup) + Kysely (application persistence)
 - **Validation**: Zod + fastify-type-provider-zod
 - **Session**: @fastify/session + Redis
 - **Testing**: Vitest
 - **Language**: TypeScript (ES2022 modules)
 
-## Migration: Objection.js → Kysely
+## Persistence
 
-Slow transition Objection.js → Kysely. Rules:
-
-- New queries: **Kysely only**, never Objection.js models.
-- No new Objection.js models (`src/api/models/`). Existing models = legacy only.
-- New schemas: **Zod schemas** in `src/api/schemas/`. Use for request validation + response typing.
-- New API endpoints: Zod schemas for body, params, query, response via `fastify-type-provider-zod`.
-- DB column types: `src/types/db.types.ts` for Kysely type system.
+- Application queries use **Kysely only**.
+- Pass explicit `Database` dependencies into shared domain operations.
+- Knex remains tooling for migrations, seeds, and test database setup.
+- Schemas use **Zod** in `src/api/schemas/` for request validation and response typing.
+- HTTP endpoints define Zod body, params, query, and response schemas through `fastify-type-provider-zod`.
+- Generated database column types live in `src/types/db.types.ts`.
 
 ## Code Patterns
 

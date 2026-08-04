@@ -1,5 +1,14 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
+import {
+  deleteHives,
+  getHiveDetail,
+  getHivesByIds,
+  listHives,
+  updateHives,
+  updateHiveStatus,
+} from '../../src/api/modules/hive.module.js';
+import { KyselyServer } from '../../src/servers/kysely.server.js';
 import type { TestAgent } from '../utils.js';
 import {
   createAgent,
@@ -74,6 +83,67 @@ describe('hive routes', () => {
       expect(res.statusCode).toEqual(200);
       expect(res.body.results).toBeInstanceOf(Array);
       expect(res.body.total).toBeTypeOf('number');
+      const inserted = res.body.results.find(
+        (hive: { id: number }) => hive.id === insertId,
+      );
+      expect(inserted).toEqual(
+        expect.objectContaining({
+          id: insertId,
+          name: expect.any(String),
+          modus: expect.any(Boolean),
+          deleted: false,
+          hive_location: expect.objectContaining({
+            apiary_id: testInsert.apiary_id,
+            movedate: expect.objectContaining({
+              hive_id: insertId,
+              apiary_id: testInsert.apiary_id,
+            }),
+          }),
+        }),
+      );
+    });
+
+    it('operations enforce company isolation', async () => {
+      const db = KyselyServer.getInstance().db;
+      expect(await listHives(db, 999_999, { deleted: false })).toEqual({
+        results: [],
+        total: 0,
+      });
+      expect(await getHivesByIds(db, 999_999, [insertId])).toEqual([]);
+      expect(
+        await updateHives(db, 999_999, 1, {
+          ids: [insertId],
+          data: { note: 'not allowed' },
+        }),
+      ).toBe(0);
+      expect(await updateHiveStatus(db, 999_999, 1, [insertId], false)).toBe(0);
+      expect(
+        await deleteHives(db, 999_999, 1, [insertId], {
+          hard: true,
+          restore: false,
+        }),
+      ).toEqual([]);
+      await expect(getHiveDetail(db, 999_999, insertId)).rejects.toMatchObject({
+        statusCode: 404,
+      });
+    });
+
+    it('get 200 - includes detailed relations when requested', async () => {
+      const res = await doQueryRequest(agent, route, null, accessToken, {
+        details: true,
+      });
+      expect(res.statusCode).toBe(200);
+      const inserted = res.body.results.find(
+        (hive: { id: number }) => hive.id === insertId,
+      );
+      expect(inserted).toEqual(
+        expect.objectContaining({
+          hive_source: expect.objectContaining({ id: testInsert.source_id }),
+          hive_type: expect.objectContaining({ id: testInsert.type_id }),
+          creator: expect.objectContaining({ email: expect.any(String) }),
+          queen_location: null,
+        }),
+      );
     });
 
     it('post 400 - no data', async () => {
@@ -140,9 +210,28 @@ describe('hive routes', () => {
         null,
       );
       expect(res.statusCode).toEqual(200);
-      expect(res.body).toHaveProperty('id');
-      expect(res.body).toHaveProperty('name');
-      expect(res.body).toHaveProperty('sameLocation');
+      expect(res.body).toEqual(
+        expect.objectContaining({
+          id: insertId,
+          name: expect.any(String),
+          sameLocation: expect.arrayContaining([
+            expect.objectContaining({
+              id: expect.any(Number),
+              name: expect.any(String),
+              position: expect.any(Number),
+            }),
+          ]),
+          firstMovedate: expect.objectContaining({
+            hive_id: insertId,
+            apiary_id: testInsert.apiary_id,
+          }),
+          hive_location: expect.objectContaining({
+            apiary_id: testInsert.apiary_id,
+          }),
+          hive_source: expect.objectContaining({ id: testInsert.source_id }),
+          hive_type: expect.objectContaining({ id: testInsert.type_id }),
+        }),
+      );
     });
   });
 

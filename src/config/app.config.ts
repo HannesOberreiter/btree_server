@@ -17,8 +17,8 @@ import {
 } from 'fastify-type-provider-zod';
 import queryString from 'query-string';
 
+import { checkMySQLError } from '../api/adapters/mysql_error.adapter.js';
 import routes from '../api/routes/index.js';
-import { checkMySQLError } from '../api/utils/error.util.js';
 import {
   authorized,
   env,
@@ -112,6 +112,7 @@ export class Application {
         req.url.includes('external') ||
         req.url.includes('auth/google/callback') ||
         req.url.includes('auth/apple/callback') ||
+        req.url.endsWith('/v1/openapi.json') ||
         req.url.includes('agent/openapi.json') ||
         req.url.includes('chatgpt/oauth/') ||
         req.url.includes('chatgpt/openapi.json');
@@ -240,22 +241,22 @@ export class Application {
         });
       }
 
-      const e = checkMySQLError(error) as any;
+      const e = checkMySQLError(error);
       this.log.error(
         {
           user: request?.session?.user,
           req: request,
-          error: e.cause ? e.cause : e,
+          error: e,
           path: request.url,
         },
-        e.message ? e.message : 'Unhandled error',
+        e.message || 'Unhandled error',
       );
       if (e.statusCode) {
         reply.status(e.statusCode).send({
           statusCode: e.statusCode,
-          error: e.cause ? e.cause.type : e.type ? e.type : 'Unhandled error',
-          cause: e.cause ?? undefined,
-          message: e.message ?? undefined,
+          code: e.code ?? 'HTTP_ERROR',
+          message: e.message,
+          ...(e.details && { details: e.details }),
         });
         return;
       }

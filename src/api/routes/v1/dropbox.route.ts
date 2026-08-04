@@ -2,35 +2,72 @@ import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 
 import { ROLES } from '../../../config/constants.config.js';
-import DropboxController from '../../controllers/dropbox.controller.js';
+import { KyselyServer } from '../../../servers/kysely.server.js';
+import {
+  authorizeDropbox,
+  disconnectDropbox,
+  getDropboxAuthorizationUrl,
+  getDropboxToken,
+} from '../../adapters/dropbox.adapter.js';
 import { Guard } from '../../hooks/guard.hook.js';
+import {
+  authParamsSchema,
+  deleteParamsSchema,
+  dropboxAuthorizationResponseSchema,
+  dropboxDeleteResponseSchema,
+  dropboxTokenResponseSchema,
+} from '../../schemas/dropbox.schema.js';
 
 export default function routes(
   instance: FastifyInstance,
-  _options: any,
-  done: any,
+  _options: unknown,
+  done: () => void,
 ) {
   const server = instance.withTypeProvider<ZodTypeProvider>();
+  const db = KyselyServer.getInstance().db;
 
   server.get(
     '/',
-    { preHandler: Guard.authorize([ROLES.admin]) },
-    DropboxController.get,
+    {
+      schema: { response: { 200: dropboxAuthorizationResponseSchema } },
+      preHandler: Guard.authorize([ROLES.admin]),
+    },
+    getDropboxAuthorizationUrl,
   );
+
   server.delete(
     '/:id?',
-    { preHandler: Guard.authorize([ROLES.admin]) },
-    DropboxController.delete,
+    {
+      schema: {
+        params: deleteParamsSchema,
+        response: { 200: dropboxDeleteResponseSchema },
+      },
+      preHandler: Guard.authorize([ROLES.admin]),
+    },
+    async (request) => disconnectDropbox(db, request.session.user.user_id),
   );
+
   server.get(
     '/auth/:code',
-    { preHandler: Guard.authorize([ROLES.admin]) },
-    DropboxController.auth,
+    {
+      schema: {
+        params: authParamsSchema,
+        response: { 200: dropboxTokenResponseSchema },
+      },
+      preHandler: Guard.authorize([ROLES.admin]),
+    },
+    async (request) =>
+      authorizeDropbox(db, request.session.user.user_id, request.params.code),
   );
+
   server.get(
     '/token',
-    { preHandler: Guard.authorize([ROLES.admin, ROLES.user]) },
-    DropboxController.token,
+    {
+      schema: { response: { 200: dropboxTokenResponseSchema } },
+      preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
+    },
+    async (request) => getDropboxToken(db, request.session.user.user_id),
   );
+
   done();
 }

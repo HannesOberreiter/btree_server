@@ -2,18 +2,25 @@ import type { FastifyInstance } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
 
 import { ROLES } from '../../../config/constants.config.js';
+import { KyselyServer } from '../../../servers/kysely.server.js';
+import { mapToolError } from '../../adapters/tool_error.adapter.js';
 import WizBeeController from '../../controllers/wizbee.controller.js';
+import { Guard } from '../../hooks/guard.hook.js';
 import {
   executeWizBeeTool,
   wizBeeToolDefinitions,
-} from '../../controllers/wizbee.tools.controller.js';
-import { Guard } from '../../hooks/guard.hook.js';
+} from '../../modules/wizbee_tools.module.js';
+import {
+  permissiveJsonResponseSchema,
+  compatibilityQuerySchema,
+  permissiveRequestSchema,
+} from '../../schemas/common.schema.js';
 import { wizBeeStreamBody } from '../../schemas/wizbee.schema.js';
 
 export default function routes(
   instance: FastifyInstance,
-  _options: any,
-  done: any,
+  _options: unknown,
+  done: () => void,
 ) {
   const server = instance.withTypeProvider<ZodTypeProvider>();
 
@@ -31,6 +38,10 @@ export default function routes(
   server.get(
     '/usage',
     {
+      schema: {
+        querystring: compatibilityQuerySchema,
+        response: { 200: permissiveJsonResponseSchema },
+      },
       preHandler: Guard.authorize([ROLES.admin, ROLES.user, ROLES.read]),
     },
     WizBeeController.getWizBeeUsage,
@@ -50,6 +61,10 @@ export default function routes(
   server.post(
     '/transcribe',
     {
+      schema: {
+        body: permissiveRequestSchema,
+        response: { 200: permissiveJsonResponseSchema },
+      },
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
     },
     WizBeeController.transcribeWizBeeAudio,
@@ -61,9 +76,8 @@ export default function routes(
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: {
         description: toolDef.description,
-        response: {
-          200: { type: 'object' },
-        },
+        body: toolDef.parameters,
+        response: { 200: permissiveJsonResponseSchema },
       },
       handler: async (request, reply) => {
         const user = request.session?.user;
@@ -71,20 +85,29 @@ export default function routes(
           reply.statusCode = 401;
           return { error: 'Unauthorized' };
         }
-        const context = { userId: user.user_id, beeId: user.bee_id };
-        try {
-          const result = await executeWizBeeTool(
-            toolDef.name,
-            request.body,
-            context,
-          );
-          return result;
-        } catch (error) {
-          reply.statusCode = 400;
-          return {
-            error: error instanceof Error ? error.message : String(error),
-          };
+        const context = {
+          userId: user.user_id,
+          beeId: user.bee_id,
+          rank: user.rank,
+        };
+        const result = await executeWizBeeTool(
+          KyselyServer.getInstance().db,
+          toolDef.name,
+          request.body,
+          context,
+        );
+
+        if (
+          result &&
+          typeof result === 'object' &&
+          (result as { ok?: unknown }).ok === false
+        ) {
+          const error =
+            (result as { error?: Record<string, unknown> }).error ?? {};
+          throw mapToolError(error);
         }
+
+        return result;
       },
     });
   }
