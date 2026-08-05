@@ -81,6 +81,15 @@ describe('charge routes', () => {
       expect(res.body.total).toBeTypeOf('number');
     });
 
+    it('filters charges by type', async () => {
+      const res = await doQueryRequest(agent, route, null, accessToken, {
+        filters: JSON.stringify([{ 'charges.type_id': 999_999 }]),
+      });
+      expect(res.statusCode).toBe(200);
+      expect(res.body.results).toEqual([]);
+      expect(res.body.total).toBe(0);
+    });
+
     it('operations enforce company isolation', async () => {
       const db = KyselyServer.getInstance().db;
       expect(await getChargesByIds(db, 999_999, [insertId])).toEqual([]);

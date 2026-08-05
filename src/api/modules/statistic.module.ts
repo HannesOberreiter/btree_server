@@ -76,6 +76,13 @@ function parseStatisticFilters(
       ) {
         return [{ kind: 'year', value: Number(candidate.year) }];
       }
+      // Deprecated compatibility for legacy clients. Use hive_id_array instead.
+      if (
+        candidate.hive_id !== undefined &&
+        Number.isFinite(Number(candidate.hive_id))
+      ) {
+        return [{ kind: 'hiveInclude', value: [Number(candidate.hive_id)] }];
+      }
       const typeValue = task ? candidate[`${task}s.type_id`] : undefined;
       if (typeValue !== undefined && Number.isFinite(Number(typeValue))) {
         return [{ kind: 'type', value: Number(typeValue) }];
@@ -641,6 +648,10 @@ export async function listHiveRatingStatistics(
       base = base
         .where('checkup.date', '>=', new Date(`${filter.value}-01-01`))
         .where('checkup.date', '<=', new Date(`${filter.value}-12-31`));
+    } else if (filter.kind === 'hiveInclude') {
+      base = base.where('checkup.hive_id', 'in', filter.value);
+    } else if (filter.kind === 'hiveExclude') {
+      base = base.where('checkup.hive_id', 'not in', filter.value);
     }
   }
   const search = input.q === undefined ? '' : String(input.q).trim();

@@ -79,6 +79,22 @@ describe('queen routes', () => {
       expect(res.body.total).toBeTypeOf('number');
     });
 
+    it('applies all queen table filters', async () => {
+      for (const filter of [
+        { 'queens.mating_id': 999_999 },
+        { 'queens.race_id': 999_999 },
+        { 'queens.hive_id': '999999' },
+        { 'hive_location.apiary_id': 999_999 },
+      ]) {
+        const res = await doQueryRequest(agent, route, null, accessToken, {
+          filters: JSON.stringify([filter]),
+        });
+        expect(res.statusCode).toBe(200);
+        expect(res.body.results).toEqual([]);
+        expect(res.body.total).toBe(0);
+      }
+    });
+
     it('operations enforce company isolation', async () => {
       const db = KyselyServer.getInstance().db;
       expect(await getQueensByIds(db, 999_999, [insertId])).toEqual([]);
@@ -133,6 +149,26 @@ describe('queen routes', () => {
       expect(res.statusCode).toEqual(200);
       expect(res.body.results).toBeInstanceOf(Array);
       expect(res.body.total).toBeTypeOf('number');
+    });
+
+    it('applies all queen statistic filters', async () => {
+      for (const filter of [
+        { 'queens.mating_id': 999_999 },
+        { 'queens.race_id': 999_999 },
+        { 'queens.hive_id': '999999' },
+        { 'hive_location.apiary_id': 999_999 },
+      ]) {
+        const res = await doQueryRequest(
+          agent,
+          `${route}/stats`,
+          null,
+          accessToken,
+          { filters: JSON.stringify([filter]) },
+        );
+        expect(res.statusCode).toBe(200);
+        expect(res.body.results).toEqual([]);
+        expect(res.body.total).toBe(0);
+      }
     });
   });
 

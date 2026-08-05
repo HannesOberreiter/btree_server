@@ -133,6 +133,11 @@ export async function listCharges(
         for (const filter of filters) {
           if (typeof filter !== 'object' || filter === null) continue;
           const value = filter as Record<string, unknown>;
+          const typeId = Number(value['charges.type_id'] ?? value.type_id);
+          if (Number.isFinite(typeId)) {
+            query = query.where('charges.type_id', '=', typeId);
+            count = count.where('charges.type_id', '=', typeId);
+          }
           if (
             typeof value.bestbefore === 'object' &&
             value.bestbefore !== null

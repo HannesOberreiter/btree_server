@@ -75,7 +75,7 @@ const typeResponseSchema = z
   })
   .nullable();
 
-export const taskStatisticResponseSchema = z.looseObject({
+export const taskStatisticResponseSchema = z.object({
   year: z.number().nullable().optional(),
   hive_id: z.number().nullable().optional(),
   hive_count: numericResultSchema.optional(),
