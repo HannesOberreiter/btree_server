@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { StatisticTaskKind } from '../api/types';
+import type { PropType } from 'vue';
 import { BarChart } from 'echarts/charts';
 import {
   DataZoomComponent,
@@ -21,7 +23,7 @@ import GlobalLoading from './GlobalLoading.vue';
 
 const props = defineProps({
   kind: {
-    type: String,
+    type: String as PropType<StatisticTaskKind>,
     required: true
   },
   hideColonyCount: {

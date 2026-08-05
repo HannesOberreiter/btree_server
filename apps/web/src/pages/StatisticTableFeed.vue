@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { StatisticResponse } from '../api/types';
 import type { QTableProps } from 'quasar';
 import { round } from 'lodash-es';
 import { storeToRefs } from 'pinia';
@@ -14,7 +15,7 @@ import { useTableFilterStore } from '../stores/tableFilter';
 
 const { t } = useI18n();
 const selected = ref<any>([]);
-const rows = ref([]);
+const rows = ref<StatisticResponse[]>([]);
 const modus = ref(true);
 const deleted = ref(false);
 const filter = ref('');

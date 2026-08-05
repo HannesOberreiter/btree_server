@@ -22,6 +22,14 @@ export type ChargeStockPaginatedResponse =
 export type ChargeStockResponse =
   ChargeStockPaginatedResponse['results'][number];
 
+export type StatisticKind = 'feed' | 'harvest' | 'rating' | 'treatment';
+export type StatisticTaskKind = Exclude<StatisticKind, 'rating'>;
+export type StatisticPaginatedResponse =
+  paths['/v1/statistic/harvest/hive']['get']['responses'][200]['content']['application/json'];
+export type StatisticResponse = StatisticPaginatedResponse['results'][number];
+export type StatisticListResponse =
+  paths['/v1/statistic/harvest/year']['get']['responses'][200]['content']['application/json'];
+
 export type CheckupPaginatedResponse =
   paths['/v1/checkup/']['get']['responses'][200]['content']['application/json'];
 export type CheckupResponse = CheckupPaginatedResponse['results'][number];
