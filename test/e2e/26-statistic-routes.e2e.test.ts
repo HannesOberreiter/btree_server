@@ -127,6 +127,100 @@ describe('statistic routes', () => {
     });
   }
 
+  it('filters hive statistics by scalar and array hive IDs', async () => {
+    const db = KyselyServer.getInstance().db;
+    const firstHive = await db
+      .insertInto('hives')
+      .values({ name: 'stat-filter-a', user_id: 1, deleted: false })
+      .executeTakeFirstOrThrow();
+    const secondHive = await db
+      .insertInto('hives')
+      .values({ name: 'stat-filter-b', user_id: 1, deleted: false })
+      .executeTakeFirstOrThrow();
+    const firstHiveId = Number(firstHive.insertId);
+    const secondHiveId = Number(secondHive.insertId);
+    const taskRows = [
+      {
+        amount: '10',
+        date: new Date('2025-07-01'),
+        deleted: false,
+        hive_id: firstHiveId,
+        user_id: 1,
+      },
+      {
+        amount: '20',
+        date: new Date('2025-07-01'),
+        deleted: false,
+        hive_id: secondHiveId,
+        user_id: 1,
+      },
+    ];
+    await db.insertInto('harvests').values(taskRows).execute();
+    await db.insertInto('feeds').values(taskRows).execute();
+    await db.insertInto('treatments').values(taskRows).execute();
+    await db
+      .insertInto('checkups')
+      .values(
+        taskRows.map(({ date, deleted, hive_id, user_id }) => ({
+          brood: 1,
+          calm_comb: 1,
+          comb: 1,
+          pollen: 1,
+          strong: 1,
+          swarm: 1,
+          temper: 1,
+          varroa: 1,
+          date,
+          deleted,
+          hive_id,
+          user_id,
+        })),
+      )
+      .execute();
+
+    try {
+      for (const task of ['harvest', 'feed', 'treatment', 'rating']) {
+        for (const filter of [
+          { hive_id: String(firstHiveId) },
+          { hive_id_array: [firstHiveId] },
+          { hive_id_array_exclude: [secondHiveId] },
+        ]) {
+          const filtered = await doQueryRequest(
+            agent,
+            `${route}/${task}/hive`,
+            null,
+            null,
+            {
+              filters: JSON.stringify([filter]),
+              limit: 10_000,
+              groupByType: true,
+            },
+          );
+          expect(filtered.statusCode).toBe(200);
+          expect(filtered.body.results).toHaveLength(1);
+          expect(filtered.body.results[0].hive_id).toBe(firstHiveId);
+          expect(filtered.body.total).toBe(1);
+        }
+      }
+    } finally {
+      for (const table of [
+        'harvests',
+        'feeds',
+        'treatments',
+        'checkups',
+      ] as const) {
+        await db
+          .deleteFrom(table)
+          .where('hive_id', 'in', [firstHiveId, secondHiveId])
+          .execute();
+      }
+      await db
+        .deleteFrom('hives')
+        .where('id', 'in', [firstHiveId, secondHiveId])
+        .execute();
+    }
+  });
+
   it('returns rating and Varroa statistics', async () => {
     const rating = await doQueryRequest(
       agent,

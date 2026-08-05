@@ -138,13 +138,28 @@ export async function listQueens(
               .where('queens.date', '>=', new Date(range.from))
               .where('queens.date', '<=', new Date(range.to));
           }
+          const matingId = Number(value['queens.mating_id']);
+          if (Number.isFinite(matingId)) {
+            query = query.where('queens.mating_id', '=', matingId);
+            count = count.where('queens.mating_id', '=', matingId);
+          }
+          const raceId = Number(value['queens.race_id']);
+          if (Number.isFinite(raceId)) {
+            query = query.where('queens.race_id', '=', raceId);
+            count = count.where('queens.race_id', '=', raceId);
+          }
+          const apiaryId = Number(value['hive_location.apiary_id']);
+          if (Number.isFinite(apiaryId)) {
+            query = query.where('hives_locations.apiary_id', '=', apiaryId);
+            count = count.where('hives_locations.apiary_id', '=', apiaryId);
+          }
           const hive = value['queens.hive_id'];
           if (hive === 'empty') {
             query = query.where('hives_locations.hive_id', 'is', null);
             count = count.where('hives_locations.hive_id', 'is', null);
-          } else if (typeof hive === 'number') {
-            query = query.where('queens.hive_id', '=', hive);
-            count = count.where('queens.hive_id', '=', hive);
+          } else if (Number.isFinite(Number(hive))) {
+            query = query.where('queens.hive_id', '=', Number(hive));
+            count = count.where('queens.hive_id', '=', Number(hive));
           }
         }
       }
@@ -251,13 +266,28 @@ export async function listQueenStats(
               .where('queen_durations.move_date', '>=', new Date(range.from))
               .where('queen_durations.move_date', '<=', new Date(range.to));
           }
+          const matingId = Number(value['queens.mating_id']);
+          if (Number.isFinite(matingId)) {
+            query = query.where('queens.mating_id', '=', matingId);
+            count = count.where('queens.mating_id', '=', matingId);
+          }
+          const raceId = Number(value['queens.race_id']);
+          if (Number.isFinite(raceId)) {
+            query = query.where('queens.race_id', '=', raceId);
+            count = count.where('queens.race_id', '=', raceId);
+          }
+          const apiaryId = Number(value['hive_location.apiary_id']);
+          if (Number.isFinite(apiaryId)) {
+            query = query.where('hives_locations.apiary_id', '=', apiaryId);
+            count = count.where('hives_locations.apiary_id', '=', apiaryId);
+          }
           const hive = value['queens.hive_id'];
           if (hive === 'empty') {
             query = query.where('hives_locations.hive_id', 'is', null);
             count = count.where('hives_locations.hive_id', 'is', null);
-          } else if (typeof hive === 'number') {
-            query = query.where('queen_durations.hive_id', '=', hive);
-            count = count.where('queen_durations.hive_id', '=', hive);
+          } else if (Number.isFinite(Number(hive))) {
+            query = query.where('queen_durations.hive_id', '=', Number(hive));
+            count = count.where('queen_durations.hive_id', '=', Number(hive));
           }
         }
       }
