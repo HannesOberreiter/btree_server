@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.5.2](https://github.com/HannesOberreiter/btree_server/compare/btree-server-v7.5.1...btree-server-v7.5.2) (2026-08-05)
+
+
+### Bug Fixes
+
+* **api:** restore migrated filters ([5e94440](https://github.com/HannesOberreiter/btree_server/commit/5e94440a3665be6022f8a2268e8752b0e9333279))
+
 ## [7.5.1](https://github.com/HannesOberreiter/btree_server/compare/btree-server-v7.5.0...btree-server-v7.5.1) (2026-08-04)
 
 
