@@ -7,6 +7,10 @@ import type {
   ChargePaginatedResponse,
   ChargeStockPaginatedResponse,
   CompanyCountResponse,
+  StatisticKind,
+  StatisticListResponse,
+  StatisticPaginatedResponse,
+  StatisticTaskKind,
   TodoPaginatedResponse
 } from '../api/types';
 import type { Option, Task } from '../types';
@@ -822,7 +826,7 @@ export function useRearingsQuery({
 }
 
 export function useStatisticTable(
-  kind: string,
+  kind: StatisticKind,
   {
     offset = 0 as MaybeRef<number>,
     limit = 10000 as MaybeRef<number>,
@@ -857,7 +861,10 @@ export function useStatisticTable(
         groupByType: unref(groupByType),
         q: unref(q)
       };
-      return api.get(`/v1/statistic/${kind}/hive`, payload);
+      return api.get(
+        `/v1/statistic/${kind}/hive`,
+        payload
+      ) as Promise<StatisticPaginatedResponse>;
     },
     enabled,
     placeholderData: keepPreviousData,
@@ -866,7 +873,7 @@ export function useStatisticTable(
 }
 
 export function useStatisticYear(
-  kind: string,
+  kind: StatisticTaskKind,
   { filters = '' as MaybeRef<string>, enabled = true as MaybeRef<boolean> }
 ) {
   const api = useApiFetch();
@@ -876,7 +883,10 @@ export function useStatisticYear(
       const payload = {
         filters: unref(filters)
       };
-      return api.get(`/v1/statistic/${kind}/year`, payload);
+      return api.get(
+        `/v1/statistic/${kind}/year`,
+        payload
+      ) as Promise<StatisticListResponse>;
     },
     enabled,
     placeholderData: keepPreviousData,
@@ -885,7 +895,7 @@ export function useStatisticYear(
 }
 
 export function useStatisticApiary(
-  kind: string,
+  kind: StatisticTaskKind,
   { filters = '' as MaybeRef<string>, enabled = true as MaybeRef<boolean> }
 ) {
   const api = useApiFetch();
@@ -895,7 +905,10 @@ export function useStatisticApiary(
       const payload = {
         filters: unref(filters)
       };
-      return api.get(`/v1/statistic/${kind}/apiary`, payload);
+      return api.get(
+        `/v1/statistic/${kind}/apiary`,
+        payload
+      ) as Promise<StatisticListResponse>;
     },
     enabled,
     placeholderData: keepPreviousData,
@@ -904,7 +917,7 @@ export function useStatisticApiary(
 }
 
 export function useStatisticType(
-  kind: string,
+  kind: StatisticTaskKind,
   { filters = '' as MaybeRef<string>, enabled = true as MaybeRef<boolean> }
 ) {
   const api = useApiFetch();
@@ -914,7 +927,10 @@ export function useStatisticType(
       const payload = {
         filters: unref(filters)
       };
-      return api.get(`/v1/statistic/${kind}/type`, payload);
+      return api.get(
+        `/v1/statistic/${kind}/type`,
+        payload
+      ) as Promise<StatisticListResponse>;
     },
     enabled,
     placeholderData: keepPreviousData,

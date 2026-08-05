@@ -9702,7 +9702,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'application/json': ({
+            'application/json': {
               amount_avg?: (string | number) | null;
               amount_sum?: (string | number) | null;
               brood?: (string | number) | null;
@@ -9742,9 +9742,7 @@ export interface paths {
               varroa?: (string | number) | null;
               water_avg?: (string | number) | null;
               year?: number | null;
-            } & {
-              [key: string]: unknown;
-            })[];
+            }[];
           };
         };
       };
@@ -9824,7 +9822,7 @@ export interface paths {
           };
           content: {
             'application/json': {
-              results: ({
+              results: {
                 amount_avg?: (string | number) | null;
                 amount_sum?: (string | number) | null;
                 brood?: (string | number) | null;
@@ -9864,9 +9862,7 @@ export interface paths {
                 varroa?: (string | number) | null;
                 water_avg?: (string | number) | null;
                 year?: number | null;
-              } & {
-                [key: string]: unknown;
-              })[];
+              }[];
               total: number;
             };
           };
@@ -9905,7 +9901,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'application/json': ({
+            'application/json': {
               amount_avg?: (string | number) | null;
               amount_sum?: (string | number) | null;
               brood?: (string | number) | null;
@@ -9945,9 +9941,7 @@ export interface paths {
               varroa?: (string | number) | null;
               water_avg?: (string | number) | null;
               year?: number | null;
-            } & {
-              [key: string]: unknown;
-            })[];
+            }[];
           };
         };
       };
@@ -9984,7 +9978,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'application/json': ({
+            'application/json': {
               amount_avg?: (string | number) | null;
               amount_sum?: (string | number) | null;
               brood?: (string | number) | null;
@@ -10024,9 +10018,7 @@ export interface paths {
               varroa?: (string | number) | null;
               water_avg?: (string | number) | null;
               year?: number | null;
-            } & {
-              [key: string]: unknown;
-            })[];
+            }[];
           };
         };
       };
@@ -10063,7 +10055,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'application/json': ({
+            'application/json': {
               amount_avg?: (string | number) | null;
               amount_sum?: (string | number) | null;
               brood?: (string | number) | null;
@@ -10103,9 +10095,7 @@ export interface paths {
               varroa?: (string | number) | null;
               water_avg?: (string | number) | null;
               year?: number | null;
-            } & {
-              [key: string]: unknown;
-            })[];
+            }[];
           };
         };
       };
@@ -10185,7 +10175,7 @@ export interface paths {
           };
           content: {
             'application/json': {
-              results: ({
+              results: {
                 amount_avg?: (string | number) | null;
                 amount_sum?: (string | number) | null;
                 brood?: (string | number) | null;
@@ -10225,9 +10215,7 @@ export interface paths {
                 varroa?: (string | number) | null;
                 water_avg?: (string | number) | null;
                 year?: number | null;
-              } & {
-                [key: string]: unknown;
-              })[];
+              }[];
               total: number;
             };
           };
@@ -10266,7 +10254,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'application/json': ({
+            'application/json': {
               amount_avg?: (string | number) | null;
               amount_sum?: (string | number) | null;
               brood?: (string | number) | null;
@@ -10306,9 +10294,7 @@ export interface paths {
               varroa?: (string | number) | null;
               water_avg?: (string | number) | null;
               year?: number | null;
-            } & {
-              [key: string]: unknown;
-            })[];
+            }[];
           };
         };
       };
@@ -10345,7 +10331,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'application/json': ({
+            'application/json': {
               amount_avg?: (string | number) | null;
               amount_sum?: (string | number) | null;
               brood?: (string | number) | null;
@@ -10385,9 +10371,7 @@ export interface paths {
               varroa?: (string | number) | null;
               water_avg?: (string | number) | null;
               year?: number | null;
-            } & {
-              [key: string]: unknown;
-            })[];
+            }[];
           };
         };
       };
@@ -10553,7 +10537,7 @@ export interface paths {
           };
           content: {
             'application/json': {
-              results: ({
+              results: {
                 amount_avg?: (string | number) | null;
                 amount_sum?: (string | number) | null;
                 brood?: (string | number) | null;
@@ -10593,9 +10577,7 @@ export interface paths {
                 varroa?: (string | number) | null;
                 water_avg?: (string | number) | null;
                 year?: number | null;
-              } & {
-                [key: string]: unknown;
-              })[];
+              }[];
               total: number;
             };
           };
@@ -10634,7 +10616,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'application/json': ({
+            'application/json': {
               amount_avg?: (string | number) | null;
               amount_sum?: (string | number) | null;
               brood?: (string | number) | null;
@@ -10674,9 +10656,7 @@ export interface paths {
               varroa?: (string | number) | null;
               water_avg?: (string | number) | null;
               year?: number | null;
-            } & {
-              [key: string]: unknown;
-            })[];
+            }[];
           };
         };
       };
@@ -10756,7 +10736,7 @@ export interface paths {
           };
           content: {
             'application/json': {
-              results: ({
+              results: {
                 amount_avg?: (string | number) | null;
                 amount_sum?: (string | number) | null;
                 brood?: (string | number) | null;
@@ -10796,9 +10776,7 @@ export interface paths {
                 varroa?: (string | number) | null;
                 water_avg?: (string | number) | null;
                 year?: number | null;
-              } & {
-                [key: string]: unknown;
-              })[];
+              }[];
               total: number;
             };
           };
@@ -10837,7 +10815,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'application/json': ({
+            'application/json': {
               amount_avg?: (string | number) | null;
               amount_sum?: (string | number) | null;
               brood?: (string | number) | null;
@@ -10877,9 +10855,7 @@ export interface paths {
               varroa?: (string | number) | null;
               water_avg?: (string | number) | null;
               year?: number | null;
-            } & {
-              [key: string]: unknown;
-            })[];
+            }[];
           };
         };
       };
@@ -10916,7 +10892,7 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            'application/json': ({
+            'application/json': {
               amount_avg?: (string | number) | null;
               amount_sum?: (string | number) | null;
               brood?: (string | number) | null;
@@ -10956,9 +10932,7 @@ export interface paths {
               varroa?: (string | number) | null;
               water_avg?: (string | number) | null;
               year?: number | null;
-            } & {
-              [key: string]: unknown;
-            })[];
+            }[];
           };
         };
       };

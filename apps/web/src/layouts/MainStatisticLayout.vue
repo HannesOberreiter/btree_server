@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { StatisticTaskKind } from '../api/types';
+import type { PropType } from 'vue';
 import { useQuasar } from 'quasar';
 import { computed, ref, toRef, unref } from 'vue';
 import BtnBase from '../components/BtnBase.vue';
@@ -12,7 +14,7 @@ import { useTableFilterStore } from '../stores/tableFilter';
 
 const props = defineProps({
   kind: {
-    type: String,
+    type: String as PropType<StatisticTaskKind>,
     required: true
   }
 });
