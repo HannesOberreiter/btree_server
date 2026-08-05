@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.4.1](https://github.com/HannesOberreiter/btree_vue/compare/btree-client-v7.4.0...btree-client-v7.4.1) (2026-08-05)
+
+
+### Bug Fixes
+
+* **statistics:** type API responses ([f911087](https://github.com/HannesOberreiter/btree_vue/commit/f91108718c555ebad9f9be74486ad6572b344396))
+
 ## [7.4.0](https://github.com/HannesOberreiter/btree_vue/compare/btree-client-v7.3.0...btree-client-v7.4.0) (2026-08-04)
 
 
