@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import process from 'node:process';
 
 import type { Level, Logger as PinoLogger } from 'pino';
@@ -21,6 +22,21 @@ function getLogLevel(): Level {
     return configuredLevel as Level;
   }
   return env === ENVIRONMENT.development ? 'debug' : 'info';
+}
+
+const ICAL_API_KEY_URL_PATTERN = /(\/external\/ical\/[^/?#]+\/)([^/?#]+)/;
+
+export function redactIcalApiKeyFromUrl(url: string): string {
+  return url.replace(
+    ICAL_API_KEY_URL_PATTERN,
+    (_match: string, prefix: string, apiKey: string) => {
+      const fingerprint = createHash('sha256')
+        .update(apiKey)
+        .digest('hex')
+        .slice(0, 12);
+      return `${prefix}[key:${fingerprint}]`;
+    },
+  );
 }
 
 export class Logger {
@@ -74,7 +90,7 @@ export class Logger {
           return {
             id: request.id,
             method: request.method,
-            url: request.url,
+            url: redactIcalApiKeyFromUrl(request.url),
           };
         },
         res(response) {

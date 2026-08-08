@@ -25,7 +25,7 @@ import {
   sessionSecret,
 } from '../config/environment.config.js';
 import { RedisServer } from '../servers/redis.server.js';
-import { Logger } from '../services/logger.service.js';
+import { Logger, redactIcalApiKeyFromUrl } from '../services/logger.service.js';
 import { ENVIRONMENT } from './constants.config.js';
 
 /**
@@ -200,7 +200,7 @@ export class Application {
             user: request?.session?.user,
             req: request,
             error: error.validation,
-            path: request.url,
+            path: redactIcalApiKeyFromUrl(request.url),
           },
           'Zod validation error',
         );
@@ -223,7 +223,7 @@ export class Application {
             user: request?.session?.user,
             req: request,
             error: error.cause,
-            path: request.url,
+            path: redactIcalApiKeyFromUrl(request.url),
             method: error.method,
           },
           'Zod serialization error',
@@ -246,7 +246,7 @@ export class Application {
         user: request?.session?.user,
         req: request,
         error: e,
-        path: request.url,
+        path: redactIcalApiKeyFromUrl(request.url),
       };
       const isExpectedExternalCalendarNotFound =
         e.statusCode === 404 &&
