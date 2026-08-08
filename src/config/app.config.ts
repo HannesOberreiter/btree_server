@@ -242,15 +242,20 @@ export class Application {
       }
 
       const e = checkMySQLError(error);
-      this.log.error(
-        {
-          user: request?.session?.user,
-          req: request,
-          error: e,
-          path: request.url,
-        },
-        e.message || 'Unhandled error',
-      );
+      const logContext = {
+        user: request?.session?.user,
+        req: request,
+        error: e,
+        path: request.url,
+      };
+      const isExpectedExternalCalendarNotFound =
+        e.statusCode === 404 &&
+        request.routeOptions.url?.endsWith('/external/ical/:source/:api');
+      if (isExpectedExternalCalendarNotFound) {
+        this.log.info(logContext, e.message || 'HTTP error');
+      } else {
+        this.log.error(logContext, e.message || 'Unhandled error');
+      }
       if (e.statusCode) {
         reply.status(e.statusCode).send({
           statusCode: e.statusCode,
