@@ -246,6 +246,218 @@ describe('wax routes', () => {
     expect(secondOutput.stock_kg).toBe(1);
   });
 
+  it('creates opening stock and adjusts it from an inventory count', async () => {
+    const opening = await doRequest(
+      agent,
+      'post',
+      `${route}/operations/inventory`,
+      null,
+      null,
+      {
+        date: operationDate,
+        reference: 'TEST-INVENTORY-OPENING',
+        note: 'Opening balance',
+        counts: [
+          { lot_id: sourceLotId, counted_quantity_kg: 0.5 },
+          { lot_id: secondSourceLotId, counted_quantity_kg: 0.5 },
+        ],
+        opening_stocks: [
+          {
+            code: 'TEST-WAX-FOUNDATIONS',
+            product_id: productId,
+            counted_quantity_kg: 4,
+          },
+          {
+            code: 'TEST-WAX-FOUNDATIONS-2',
+            product_id: productId,
+            counted_quantity_kg: 1,
+          },
+        ],
+      },
+    );
+    expect(opening.statusCode).toBe(200);
+    expect(opening.body.type).toBe('correction');
+    expect(opening.body.output_kg).toBe(5);
+    expect(opening.body.inventory_counts).toHaveLength(4);
+    const inventoryLotId = opening.body.lines.find(
+      (line: { lot_code: string }) => line.lot_code === 'TEST-WAX-FOUNDATIONS',
+    ).lot_id;
+    const secondInventoryLotId = opening.body.lines.find(
+      (line: { lot_code: string }) =>
+        line.lot_code === 'TEST-WAX-FOUNDATIONS-2',
+    ).lot_id;
+
+    const beforeOpening = await doQueryRequest(
+      agent,
+      `${route}/lots`,
+      null,
+      null,
+      { as_of: previousDate },
+    );
+    expect(beforeOpening.statusCode).toBe(200);
+    expect(
+      beforeOpening.body.results.some(
+        (lot: { id: number }) => lot.id === inventoryLotId,
+      ),
+    ).toBe(false);
+
+    const useBeforeInventory = await doRequest(
+      agent,
+      'post',
+      `${route}/operations`,
+      null,
+      null,
+      {
+        date: operationDate,
+        type: 'use',
+        hive_ids: [],
+        inputs: [{ lot_id: secondInventoryLotId, quantity_kg: 0.1 }],
+        outputs: [],
+      },
+    );
+    expect(useBeforeInventory.statusCode).toBe(200);
+
+    const inventory = await doRequest(
+      agent,
+      'post',
+      `${route}/operations/inventory`,
+      null,
+      null,
+      {
+        date: operationDate,
+        note: 'Annual inventory',
+        counts: [
+          { lot_id: inventoryLotId, counted_quantity_kg: 3.25 },
+          { lot_id: secondInventoryLotId, counted_quantity_kg: 0.9 },
+        ],
+        opening_stocks: [],
+      },
+    );
+    expect(inventory.statusCode).toBe(200);
+    expect(inventory.body.input_kg).toBe(0.75);
+    expect(inventory.body.output_kg).toBe(0);
+    expect(inventory.body.inventory_counts).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          lot_id: inventoryLotId,
+          ledger_quantity_kg: 4,
+          counted_quantity_kg: 3.25,
+          adjustment_kg: -0.75,
+        }),
+        expect.objectContaining({
+          lot_id: secondInventoryLotId,
+          ledger_quantity_kg: 0.9,
+          counted_quantity_kg: 0.9,
+          adjustment_kg: 0,
+        }),
+      ]),
+    );
+
+    const lots = await doQueryRequest(agent, `${route}/lots`, null, null, null);
+    expect(
+      lots.body.results.find((lot: { id: number }) => lot.id === inventoryLotId)
+        .stock_kg,
+    ).toBe(3.25);
+
+    const blockedHistoricalDelete = await doRequest(
+      agent,
+      'delete',
+      `${route}/operations/${useBeforeInventory.body.id}`,
+      null,
+      null,
+      {},
+    );
+    expect(blockedHistoricalDelete.statusCode).toBe(409);
+  });
+
+  it('rejects inventory before lot creation and backdating across inventory', async () => {
+    const lots = await doQueryRequest(agent, `${route}/lots`, null, null, {
+      q: 'TEST-WAX-FOUNDATIONS',
+    });
+    const inventoryLotId = lots.body.results.find(
+      (lot: { code: string }) => lot.code === 'TEST-WAX-FOUNDATIONS',
+    ).id;
+    const beforeCreation = await doRequest(
+      agent,
+      'post',
+      `${route}/operations/inventory`,
+      null,
+      null,
+      {
+        date: previousDate,
+        note: 'Invalid backdated inventory',
+        counts: [{ lot_id: inventoryLotId, counted_quantity_kg: 1 }],
+        opening_stocks: [],
+      },
+    );
+    expect(beforeCreation.statusCode).toBe(409);
+
+    const crossingInventory = await doRequest(
+      agent,
+      'post',
+      `${route}/operations`,
+      null,
+      null,
+      {
+        date: previousDate,
+        type: 'use',
+        hive_ids: [],
+        inputs: [{ lot_id: inventoryLotId, quantity_kg: 0.1 }],
+        outputs: [],
+      },
+    );
+    expect(crossingInventory.statusCode).toBe(409);
+  });
+
+  it('requires an inventory reason and records unchanged counts', async () => {
+    const missingReason = await doRequest(
+      agent,
+      'post',
+      `${route}/operations/inventory`,
+      null,
+      null,
+      {
+        date: operationDate,
+        counts: [{ lot_id: sourceLotId, counted_quantity_kg: 0.5 }],
+        opening_stocks: [],
+      },
+    );
+    expect(missingReason.statusCode).toBe(400);
+
+    const unchanged = await doRequest(
+      agent,
+      'post',
+      `${route}/operations/inventory`,
+      null,
+      null,
+      {
+        date: operationDate,
+        note: 'Annual inventory',
+        counts: [{ lot_id: sourceLotId, counted_quantity_kg: 0.5 }],
+        opening_stocks: [],
+      },
+    );
+    expect(unchanged.statusCode).toBe(200);
+    expect(unchanged.body.lines).toEqual([]);
+    expect(unchanged.body.inventory_counts).toEqual([
+      expect.objectContaining({
+        lot_id: sourceLotId,
+        ledger_quantity_kg: 0.5,
+        counted_quantity_kg: 0.5,
+        adjustment_kg: 0,
+      }),
+    ]);
+    const blockedDelete = await doRequest(
+      agent,
+      'delete',
+      `${route}/operations/${unchanged.body.id}`,
+      null,
+      null,
+      {},
+    );
+    expect(blockedDelete.statusCode).toBe(409);
+  });
+
   it('rejects negative stock', async () => {
     const response = await doRequest(
       agent,
