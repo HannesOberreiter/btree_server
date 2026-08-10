@@ -95,7 +95,8 @@ test.describe('user - Wax Cycle', () => {
       .locator('.q-menu:visible .q-item')
       .filter({ hasText: lotCode })
       .click();
-    await dataCy('wax-note').fill('Annual inventory');
+    const inventoryNote = `Annual inventory ${lotCode}`;
+    await dataCy('wax-note').fill(inventoryNote);
     await dataCy('wax-save').click();
     await expect(
       dataCy('wax-counted-quantity').locator(
@@ -106,6 +107,8 @@ test.describe('user - Wax Cycle', () => {
     await expect(dataCy('wax-operation-dialog')).toContainText('-0.50 kg');
     await dataCy('wax-save').click();
     await expect(dataCy('wax-operation-dialog')).not.toBeVisible();
+    await dataCy('wax-operations-tab').click();
+    await expect(dataCy('wax-operations-table')).toContainText(inventoryNote);
   });
 
   test('books wax and reloads new lots when reopened', async ({

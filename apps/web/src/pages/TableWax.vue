@@ -200,6 +200,7 @@ const operationColumns: QTableProps['columns'] = [
     align: 'left',
     sortable: true
   },
+  { name: 'note', label: t('note'), field: 'note', align: 'left' },
   { name: 'actions', label: '', field: 'id', align: 'center' }
 ];
 const reversedIds = computed(
