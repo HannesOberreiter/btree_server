@@ -1820,20 +1820,37 @@ export interface paths {
       };
       requestBody: {
         content: {
-          'application/json': {
-            amount?: number | null;
-            bestbefore?: string | null;
-            charge?: string | null;
-            date?: string;
-            kind: string;
-            name?: string | null;
-            note?: string | null;
-            price?: number | null;
-            type_id?: number | null;
-            url?: string | null;
-          } & {
-            [key: string]: unknown;
-          };
+          'application/json':
+            | ({
+                amount?: number | null;
+                bestbefore?: string | null;
+                charge?: string | null;
+                date?: string;
+                /** @enum {string} */
+                kind: 'in' | 'out';
+                name?: string | null;
+                note?: string | null;
+                price?: number | null;
+                type_id?: number | null;
+                url?: string | null;
+              } & {
+                [key: string]: unknown;
+              })
+            | ({
+                amount: number;
+                bestbefore?: string | null;
+                charge?: string | null;
+                date?: string;
+                /** @enum {string} */
+                kind: 'inventory';
+                name?: string | null;
+                note?: string | null;
+                price?: number | null;
+                type_id: number;
+                url?: string | null;
+              } & {
+                [key: string]: unknown;
+              });
         };
       };
       responses: {
@@ -1866,7 +1883,8 @@ export interface paths {
               bestbefore?: string | null;
               charge?: string | null;
               date?: string | null;
-              kind?: string;
+              /** @enum {string} */
+              kind?: 'in' | 'out';
               name?: string | null;
               note?: string | null;
               price?: number | null;

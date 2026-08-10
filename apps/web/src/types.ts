@@ -181,7 +181,7 @@ export declare interface FormCharge {
   amount: number;
   note: string;
   url: string;
-  kind: 'in' | 'out';
+  kind: 'in' | 'out' | 'inventory';
   type: any;
 }
 
