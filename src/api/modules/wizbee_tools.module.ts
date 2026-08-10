@@ -2479,7 +2479,7 @@ export function createWizBeeTools(
           .string()
           .optional()
           .describe('New best-before date in YYYY-MM-DD format'),
-        kind: z.string().optional().describe('New kind/category'),
+        kind: z.enum(['in', 'out']).optional().describe('New stock direction'),
         note: z.string().max(2000).optional().describe('New notes'),
         url: z.string().max(512).optional().describe('New URL reference'),
       }),

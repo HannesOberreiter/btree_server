@@ -126,6 +126,177 @@ describe('charge routes', () => {
     });
   });
 
+  describe('/api/v1/charge inventory mode', () => {
+    it('creates only the adjustment needed to match counted stock', async () => {
+      const typeResponse = await doRequest(
+        agent,
+        'post',
+        '/api/v1/option/charge_types',
+        null,
+        accessToken,
+        { name: 'inventory test', unit: 'kg', modus: true },
+      );
+      expect(typeResponse.statusCode).toBe(200);
+      const typeId = typeResponse.body.id;
+
+      const receipt = await doRequest(agent, 'post', route, null, accessToken, {
+        kind: 'in',
+        amount: 10,
+        type_id: typeId,
+      });
+      expect(receipt.statusCode).toBe(200);
+
+      const increase = await doRequest(
+        agent,
+        'post',
+        route,
+        null,
+        accessToken,
+        {
+          kind: 'inventory',
+          amount: 14,
+          type_id: typeId,
+          name: 'physical count',
+          note: 'annual inventory',
+        },
+      );
+      expect(increase.statusCode).toBe(200);
+      expect(increase.body).toHaveLength(1);
+      const increasedEntry = await getChargesByIds(
+        KyselyServer.getInstance().db,
+        1,
+        increase.body,
+      );
+      expect(increasedEntry[0]).toMatchObject({
+        kind: 'in',
+        amount: 4,
+        type_id: typeId,
+        name: 'physical count',
+        note: 'annual inventory',
+      });
+
+      const decrease = await doRequest(
+        agent,
+        'post',
+        route,
+        null,
+        accessToken,
+        { kind: 'inventory', amount: 3, type_id: typeId },
+      );
+      expect(decrease.statusCode).toBe(200);
+      expect(decrease.body).toHaveLength(1);
+      const decreasedEntry = await getChargesByIds(
+        KyselyServer.getInstance().db,
+        1,
+        decrease.body,
+      );
+      expect(decreasedEntry[0]).toMatchObject({
+        kind: 'out',
+        amount: 11,
+        type_id: typeId,
+      });
+
+      const unchanged = await doRequest(
+        agent,
+        'post',
+        route,
+        null,
+        accessToken,
+        { kind: 'inventory', amount: 3, type_id: typeId },
+      );
+      expect(unchanged.statusCode).toBe(200);
+      expect(unchanged.body).toEqual([]);
+
+      const stock = await doQueryRequest(
+        agent,
+        `${route}/stock`,
+        null,
+        accessToken,
+        { q: 'inventory test' },
+      );
+      expect(stock.statusCode).toBe(200);
+      expect(Number(stock.body.results[0].sum)).toBe(3);
+    });
+
+    it('serializes concurrent inventory counts', async () => {
+      const typeResponse = await doRequest(
+        agent,
+        'post',
+        '/api/v1/option/charge_types',
+        null,
+        accessToken,
+        { name: 'concurrent inventory test', unit: 'kg', modus: true },
+      );
+      expect(typeResponse.statusCode).toBe(200);
+      const typeId = typeResponse.body.id;
+      const receipt = await doRequest(agent, 'post', route, null, accessToken, {
+        kind: 'in',
+        amount: 10,
+        type_id: typeId,
+      });
+      expect(receipt.statusCode).toBe(200);
+
+      const counts = await Promise.all(
+        [12, 14].map(async (amount) => ({
+          amount,
+          response: await doRequest(agent, 'post', route, null, accessToken, {
+            kind: 'inventory',
+            amount,
+            type_id: typeId,
+          }),
+        })),
+      );
+      expect(counts.every(({ response }) => response.statusCode === 200)).toBe(
+        true,
+      );
+      const lastCount = counts.reduce((latest, count) =>
+        count.response.body[0] > latest.response.body[0] ? count : latest,
+      );
+
+      const stock = await doQueryRequest(
+        agent,
+        `${route}/stock`,
+        null,
+        accessToken,
+        { q: 'concurrent inventory test' },
+      );
+      expect(stock.statusCode).toBe(200);
+      expect(Number(stock.body.results[0].sum)).toBe(lastCount.amount);
+    });
+
+    it('requires a valid type and non-negative counted amount', async () => {
+      const missingType = await doRequest(
+        agent,
+        'post',
+        route,
+        null,
+        accessToken,
+        { kind: 'inventory', amount: 3 },
+      );
+      expect(missingType.statusCode).toBe(400);
+
+      const invalidAmount = await doRequest(
+        agent,
+        'post',
+        route,
+        null,
+        accessToken,
+        { kind: 'inventory', amount: -1, type_id: 1 },
+      );
+      expect(invalidAmount.statusCode).toBe(400);
+
+      const unknownType = await doRequest(
+        agent,
+        'post',
+        route,
+        null,
+        accessToken,
+        { kind: 'inventory', amount: 3, type_id: 999_999 },
+      );
+      expect(unknownType.statusCode).toBe(404);
+    });
+  });
+
   describe('/api/v1/charge/stock', () => {
     it('get 401 - no header', async () => {
       const res = await doQueryRequest(

@@ -74,6 +74,15 @@ function chargeProjection() {
   ] as const;
 }
 
+async function lockChargeLedger(db: Database, companyId: number) {
+  await db
+    .selectFrom('companies')
+    .select('id')
+    .where('id', '=', companyId)
+    .forUpdate()
+    .executeTakeFirst();
+}
+
 function selectCharges(db: Database, companyId: number) {
   return db
     .selectFrom('charges')
@@ -220,19 +229,19 @@ export async function listChargeStock(
   return { results, total: total.total };
 }
 
-export async function createCharge(
-  db: Kysely<DB>,
+async function insertCharge(
+  db: Database,
   companyId: number,
   beeId: number,
   body: ChargeCreateBody,
+  kind: 'in' | 'out',
+  amount: number | null | undefined,
   isLlm: boolean,
 ) {
-  if (body.type_id)
-    await requireChargeTypeOwnership(db, body.type_id, companyId);
   const result = await db
     .insertInto('charges')
     .values({
-      kind: body.kind,
+      kind,
       date: body.date ? new Date(body.date) : undefined,
       bestbefore:
         body.bestbefore === null
@@ -243,7 +252,7 @@ export async function createCharge(
       name: body.name,
       charge: body.charge,
       price: body.price,
-      amount: body.amount,
+      amount,
       url: body.url,
       type_id: body.type_id,
       note: body.note,
@@ -252,44 +261,103 @@ export async function createCharge(
       ...(isLlm && { ai_created_at: new Date() }),
     })
     .executeTakeFirstOrThrow();
-  return [Number(result.insertId)];
+  return Number(result.insertId);
+}
+
+export async function createCharge(
+  db: Kysely<DB>,
+  companyId: number,
+  beeId: number,
+  body: ChargeCreateBody,
+  isLlm: boolean,
+) {
+  return db.transaction().execute(async (trx) => {
+    await lockChargeLedger(trx, companyId);
+    if (body.type_id)
+      await requireChargeTypeOwnership(trx, body.type_id, companyId);
+    if (body.kind !== 'inventory') {
+      return [
+        await insertCharge(
+          trx,
+          companyId,
+          beeId,
+          body,
+          body.kind,
+          body.amount,
+          isLlm,
+        ),
+      ];
+    }
+
+    const currentStock = await trx
+      .selectFrom('charges')
+      .select(
+        sql<
+          string | number
+        >`COALESCE(SUM(CASE WHEN kind = 'in' THEN amount WHEN kind = 'out' THEN -amount ELSE 0 END), 0)`.as(
+          'amount',
+        ),
+      )
+      .where('user_id', '=', companyId)
+      .where('type_id', '=', body.type_id)
+      .where('deleted', '=', false)
+      .executeTakeFirstOrThrow();
+    const adjustment =
+      Math.round((body.amount - Number(currentStock.amount)) * 100) / 100;
+    if (adjustment === 0) return [];
+
+    return [
+      await insertCharge(
+        trx,
+        companyId,
+        beeId,
+        body,
+        adjustment > 0 ? 'in' : 'out',
+        Math.abs(adjustment),
+        isLlm,
+      ),
+    ];
+  });
 }
 
 export async function updateCharges(
-  db: Database,
+  db: Kysely<DB>,
   companyId: number,
   beeId: number,
   body: ChargeBatchUpdateBody,
   isLlm: boolean,
 ) {
-  if (body.data.type_id)
-    await requireChargeTypeOwnership(db, body.data.type_id, companyId);
-  const result = await db
-    .updateTable('charges')
-    .set({
-      ...(body.data.kind !== undefined && { kind: body.data.kind }),
-      ...(body.data.date !== undefined && {
-        date: body.data.date ? new Date(body.data.date) : null,
-      }),
-      ...(body.data.bestbefore !== undefined && {
-        bestbefore: body.data.bestbefore
-          ? new Date(body.data.bestbefore)
-          : null,
-      }),
-      ...(body.data.name !== undefined && { name: body.data.name }),
-      ...(body.data.charge !== undefined && { charge: body.data.charge }),
-      ...(body.data.price !== undefined && { price: body.data.price }),
-      ...(body.data.amount !== undefined && { amount: body.data.amount }),
-      ...(body.data.url !== undefined && { url: body.data.url }),
-      ...(body.data.type_id !== undefined && { type_id: body.data.type_id }),
-      ...(body.data.note !== undefined && { note: body.data.note }),
-      edit_id: beeId,
-      ...(isLlm && { ai_updated_at: new Date() }),
-    })
-    .where('user_id', '=', companyId)
-    .where('id', 'in', body.ids)
-    .executeTakeFirst();
-  return Number(result.numUpdatedRows);
+  return db.transaction().execute(async (trx) => {
+    await lockChargeLedger(trx, companyId);
+    if (body.data.type_id)
+      await requireChargeTypeOwnership(trx, body.data.type_id, companyId);
+    const result = await trx
+      .updateTable('charges')
+      .set({
+        ...(body.data.kind !== undefined && { kind: body.data.kind }),
+        ...(body.data.date !== undefined && {
+          date: body.data.date ? new Date(body.data.date) : null,
+        }),
+        ...(body.data.bestbefore !== undefined && {
+          bestbefore: body.data.bestbefore
+            ? new Date(body.data.bestbefore)
+            : null,
+        }),
+        ...(body.data.name !== undefined && { name: body.data.name }),
+        ...(body.data.charge !== undefined && { charge: body.data.charge }),
+        ...(body.data.price !== undefined && { price: body.data.price }),
+        ...(body.data.amount !== undefined && { amount: body.data.amount }),
+        ...(body.data.url !== undefined && { url: body.data.url }),
+        ...(body.data.type_id !== undefined && { type_id: body.data.type_id }),
+        ...(body.data.note !== undefined && { note: body.data.note }),
+        edit_id: beeId,
+        ...(isLlm && { ai_updated_at: new Date() }),
+      })
+      .where('user_id', '=', companyId)
+      .where('id', 'in', body.ids)
+      .executeTakeFirst();
+    return Number(result.numUpdatedRows);
+  });
 }
 
 export async function getChargesByIds(
@@ -320,6 +388,7 @@ export async function deleteCharges(
   restore: boolean,
 ) {
   return db.transaction().execute(async (trx) => {
+    await lockChargeLedger(trx, companyId);
     const rows = await trx
       .selectFrom('charges')
       .selectAll()

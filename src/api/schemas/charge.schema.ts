@@ -79,8 +79,7 @@ export const chargeStockQuerySchema = chargeListQuerySchema.omit({
   deleted: true,
 });
 
-export const chargeCreateSchema = z.looseObject({
-  kind: z.string(),
+const chargeCreateBaseSchema = z.looseObject({
   date: z.string().optional(),
   bestbefore: z.string().nullable().optional(),
   name: z.string().nullable().optional(),
@@ -92,8 +91,17 @@ export const chargeCreateSchema = z.looseObject({
   note: z.string().nullable().optional(),
 });
 
+export const chargeCreateSchema = z.union([
+  chargeCreateBaseSchema.extend({ kind: z.enum(['in', 'out']) }),
+  chargeCreateBaseSchema.extend({
+    kind: z.literal('inventory'),
+    amount: z.number().min(0).max(99_999.99).multipleOf(0.01),
+    type_id: numberSchema,
+  }),
+]);
+
 export const chargeUpdateDataSchema = z.object({
-  kind: z.string().optional(),
+  kind: z.enum(['in', 'out']).optional(),
   date: z.string().nullable().optional(),
   bestbefore: z.string().nullable().optional(),
   name: z.string().nullable().optional(),
