@@ -287,6 +287,19 @@ describe('wax routes', () => {
         line.lot_code === 'TEST-WAX-FOUNDATIONS-2',
     ).lot_id;
 
+    const openingLots = await doQueryRequest(
+      agent,
+      `${route}/lots`,
+      null,
+      null,
+      null,
+    );
+    expect(
+      openingLots.body.results.find(
+        (lot: { id: number }) => lot.id === inventoryLotId,
+      ).note,
+    ).toBe('Opening balance');
+
     const beforeOpening = await doQueryRequest(
       agent,
       `${route}/lots`,

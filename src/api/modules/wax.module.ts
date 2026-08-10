@@ -641,6 +641,7 @@ export async function createWaxInventory(
       (line) => ({
         code: line.code,
         product_id: line.product_id,
+        note: body.note,
         quantity_kg: line.counted_quantity_kg,
       }),
     );
