@@ -1,5 +1,18 @@
 # Changelog
 
+## [7.5.0](https://github.com/HannesOberreiter/btree_vue/compare/btree-client-v7.4.1...btree-client-v7.5.0) (2026-08-11)
+
+
+### Features
+
+* **charge:** add inventory total mode ([e80ee30](https://github.com/HannesOberreiter/btree_vue/commit/e80ee30fb138e05b9bea3f5fe62935ffb5f89256))
+* **wax:** add inventory correction form ([8c8656f](https://github.com/HannesOberreiter/btree_vue/commit/8c8656fbe3ff1bb5a62a445062635878db929aea))
+
+
+### Bug Fixes
+
+* **wax:** show inventory notes ([82f1fe1](https://github.com/HannesOberreiter/btree_vue/commit/82f1fe1b823714d4df1bc2fe87401f70bbc76e42))
+
 ## [7.4.1](https://github.com/HannesOberreiter/btree_vue/compare/btree-client-v7.4.0...btree-client-v7.4.1) (2026-08-05)
 
 
