@@ -1,5 +1,20 @@
 # Changelog
 
+## [7.6.0](https://github.com/HannesOberreiter/btree_server/compare/btree-server-v7.5.2...btree-server-v7.6.0) (2026-08-11)
+
+
+### Features
+
+* **charge:** add inventory adjustments ([21f10fd](https://github.com/HannesOberreiter/btree_server/commit/21f10fd53327e105933d63adf6e08a00862e8ee0))
+* **wax:** add inventory corrections ([866bdaf](https://github.com/HannesOberreiter/btree_server/commit/866bdafd75d003f12e2a64f29b71db68b00065af))
+
+
+### Bug Fixes
+
+* **logging:** fingerprint iCal API keys ([526e999](https://github.com/HannesOberreiter/btree_server/commit/526e999c38c9f873dd81114898cfc5a3d92f0700))
+* **logging:** log iCal 404s as info ([512acd8](https://github.com/HannesOberreiter/btree_server/commit/512acd81cba7534a2dcd979debb9330d6513f89b))
+* **wax:** copy inventory notes to lots ([035ef8b](https://github.com/HannesOberreiter/btree_server/commit/035ef8b47dde058a45d3c71fc631e3a250b2bb52))
+
 ## [7.5.2](https://github.com/HannesOberreiter/btree_server/compare/btree-server-v7.5.1...btree-server-v7.5.2) (2026-08-05)
 
 
