@@ -1820,20 +1820,37 @@ export interface paths {
       };
       requestBody: {
         content: {
-          'application/json': {
-            amount?: number | null;
-            bestbefore?: string | null;
-            charge?: string | null;
-            date?: string;
-            kind: string;
-            name?: string | null;
-            note?: string | null;
-            price?: number | null;
-            type_id?: number | null;
-            url?: string | null;
-          } & {
-            [key: string]: unknown;
-          };
+          'application/json':
+            | ({
+                amount?: number | null;
+                bestbefore?: string | null;
+                charge?: string | null;
+                date?: string;
+                /** @enum {string} */
+                kind: 'in' | 'out';
+                name?: string | null;
+                note?: string | null;
+                price?: number | null;
+                type_id?: number | null;
+                url?: string | null;
+              } & {
+                [key: string]: unknown;
+              })
+            | ({
+                amount: number;
+                bestbefore?: string | null;
+                charge?: string | null;
+                date?: string;
+                /** @enum {string} */
+                kind: 'inventory';
+                name?: string | null;
+                note?: string | null;
+                price?: number | null;
+                type_id: number;
+                url?: string | null;
+              } & {
+                [key: string]: unknown;
+              });
         };
       };
       responses: {
@@ -1866,7 +1883,8 @@ export interface paths {
               bestbefore?: string | null;
               charge?: string | null;
               date?: string | null;
-              kind?: string;
+              /** @enum {string} */
+              kind?: 'in' | 'out';
               name?: string | null;
               note?: string | null;
               price?: number | null;
@@ -12724,6 +12742,7 @@ export interface paths {
     get: {
       parameters: {
         query?: {
+          as_of?: string;
           limit?: number;
           offset?: number;
           q?: string;
@@ -12872,6 +12891,16 @@ export interface paths {
                 }[];
                 id: number;
                 input_kg: number;
+                inventory_counts: {
+                  adjustment_kg: number;
+                  counted_quantity_kg: number;
+                  id: number;
+                  ledger_quantity_kg: number;
+                  lot_code: string;
+                  lot_id: number;
+                  product_id: number | null;
+                  product_name: string | null;
+                }[];
                 lines: {
                   /** @enum {string} */
                   direction: 'input' | 'output';
@@ -12942,8 +12971,7 @@ export interface paths {
               | 'processing'
               | 'contract_processing'
               | 'use'
-              | 'sale'
-              | 'correction';
+              | 'sale';
             url?: string | null;
           };
         };
@@ -12986,6 +13014,16 @@ export interface paths {
               }[];
               id: number;
               input_kg: number;
+              inventory_counts: {
+                adjustment_kg: number;
+                counted_quantity_kg: number;
+                id: number;
+                ledger_quantity_kg: number;
+                lot_code: string;
+                lot_id: number;
+                product_id: number | null;
+                product_name: string | null;
+              }[];
               lines: {
                 /** @enum {string} */
                 direction: 'input' | 'output';
@@ -13118,6 +13156,137 @@ export interface paths {
               }[];
               id: number;
               input_kg: number;
+              inventory_counts: {
+                adjustment_kg: number;
+                counted_quantity_kg: number;
+                id: number;
+                ledger_quantity_kg: number;
+                lot_code: string;
+                lot_id: number;
+                product_id: number | null;
+                product_name: string | null;
+              }[];
+              lines: {
+                /** @enum {string} */
+                direction: 'input' | 'output';
+                id: number;
+                lot_code: string;
+                lot_id: number;
+                product_id: number | null;
+                product_name: string | null;
+                quantity_kg: number;
+              }[];
+              note: string | null;
+              origin_type_id: number | null;
+              origin_type_name: string | null;
+              output_kg: number;
+              reference: string | null;
+              reversal_of_id: number | null;
+              /** @enum {string} */
+              type:
+                | 'production'
+                | 'purchase'
+                | 'processing'
+                | 'contract_processing'
+                | 'use'
+                | 'sale'
+                | 'correction';
+              updated_at: string | null;
+              url: string | null;
+            };
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/wax/operations/inventory': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': {
+            counts?: {
+              counted_quantity_kg: number;
+              lot_id: number;
+            }[];
+            /** Format: date */
+            date: string;
+            note: string;
+            opening_stocks?: {
+              code?: string;
+              counted_quantity_kg: number;
+              product_id: number;
+            }[];
+            reference?: string | null;
+          };
+        };
+      };
+      responses: {
+        /** @description Default Response */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': {
+              counterparty: string | null;
+              created_at: string | null;
+              creator?:
+                | ({
+                    email: string | null;
+                    id: number;
+                    username: string | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
+              date: string;
+              difference_kg: number;
+              editor?:
+                | ({
+                    email: string | null;
+                    id: number;
+                    username: string | null;
+                  } & {
+                    [key: string]: unknown;
+                  })
+                | null;
+              hives: {
+                apiary_id: number | null;
+                apiary_name: string | null;
+                id: number;
+                name: string;
+              }[];
+              id: number;
+              input_kg: number;
+              inventory_counts: {
+                adjustment_kg: number;
+                counted_quantity_kg: number;
+                id: number;
+                ledger_quantity_kg: number;
+                lot_code: string;
+                lot_id: number;
+                product_id: number | null;
+                product_name: string | null;
+              }[];
               lines: {
                 /** @enum {string} */
                 direction: 'input' | 'output';
@@ -13844,6 +14013,102 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/v1/wizbee/tools/createWaxOperation': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** @description Create a wax ledger operation. */
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': {
+            /** @description Supplier or processor */
+            counterparty?: string | null;
+            /**
+             * Format: date
+             * @description Booking date
+             */
+            date: string;
+            /**
+             * @description Optional source hive IDs from findHives
+             * @default []
+             */
+            hiveIds?: number[];
+            /**
+             * @description Consumed wax lot quantities
+             * @default []
+             */
+            inputs?: {
+              /** @description Existing input lot ID from fetchWaxLedger */
+              lotId: number;
+              /** @description Input quantity in kg */
+              quantityKg: number;
+            }[];
+            /** @description Reason or explanation */
+            note?: string | null;
+            /** @description Wax origin type ID from fetchOptions; required for production */
+            originTypeId?: number | null;
+            /**
+             * @description Produced or purchased wax lot quantities
+             * @default []
+             */
+            outputs?: {
+              /** @description New lot code; generated automatically when omitted */
+              code?: string;
+              /** @description Existing output lot ID; omit when creating a new lot */
+              lotId?: number;
+              note?: string | null;
+              /** @description Wax product ID from fetchOptions for a new lot */
+              productId?: number;
+              /** @description Output quantity in kg */
+              quantityKg: number;
+            }[];
+            /** @description Document, invoice or order number */
+            reference?: string | null;
+            /**
+             * @description Wax operation type
+             * @enum {string}
+             */
+            type:
+              | 'production'
+              | 'purchase'
+              | 'processing'
+              | 'contract_processing'
+              | 'use'
+              | 'sale';
+            url?: string | null;
+          };
+        };
+      };
+      responses: {
+        /** @description Default Response */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': unknown;
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/v1/wizbee/tools/deleteMovement': {
     parameters: {
       query?: never;
@@ -13941,7 +14206,7 @@ export interface paths {
     };
     get?: never;
     put?: never;
-    /** @description Fetch all available option/lookup lists at once (hive types, feed types, harvest types, etc.). */
+    /** @description Fetch all available option/lookup lists at once (hive types, task types, wax products, wax origin types, etc.). */
     post: {
       parameters: {
         query?: never;
@@ -14004,6 +14269,81 @@ export interface paths {
             limit?: number;
             /** @enum {string} */
             task: 'feed' | 'treatment' | 'harvest' | 'checkup' | 'todo';
+          };
+        };
+      };
+      responses: {
+        /** @description Default Response */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': unknown;
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/wizbee/tools/fetchWaxLedger': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** @description Fetch wax lots, current stock, product summary and wax operations. */
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': {
+            /**
+             * Format: date
+             * @description Last operation date
+             */
+            dateEnd?: string;
+            /**
+             * Format: date
+             * @description First operation date
+             */
+            dateStart?: string;
+            /**
+             * @description Include lots whose current stock is zero
+             * @default false
+             */
+            includeEmpty?: boolean;
+            /**
+             * @description Maximum lots and operations to return
+             * @default 100
+             */
+            limit?: number;
+            /**
+             * @description Operation type filter
+             * @enum {string}
+             */
+            operationType?:
+              | 'production'
+              | 'purchase'
+              | 'processing'
+              | 'contract_processing'
+              | 'use'
+              | 'sale'
+              | 'correction';
+            /** @description Search text */
+            q?: string;
           };
         };
       };
@@ -14809,6 +15149,49 @@ export interface paths {
             typeId?: number;
             vetId?: number;
             wait?: number;
+          };
+        };
+      };
+      responses: {
+        /** @description Default Response */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': unknown;
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/wizbee/tools/reverseWaxOperation': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** @description Reverse a wax operation through an auditable correction entry. */
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': {
+            /** @description Wax operation ID from fetchWaxLedger */
+            operationId: number;
           };
         };
       };

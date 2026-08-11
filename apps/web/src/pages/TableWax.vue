@@ -152,7 +152,7 @@ const operationColumns: QTableProps['columns'] = [
     label: t('wax.operationType'),
     field: 'type',
     align: 'left',
-    format: value => t(`wax.operationTypes.${value}`),
+    format: (_value, row) => operationTypeLabel(row as WaxOperationResponse),
     sortable: true
   },
   {
@@ -200,6 +200,7 @@ const operationColumns: QTableProps['columns'] = [
     align: 'left',
     sortable: true
   },
+  { name: 'note', label: t('note'), field: 'note', align: 'left' },
   { name: 'actions', label: '', field: 'id', align: 'center' }
 ];
 const reversedIds = computed(
@@ -361,6 +362,15 @@ function showHives(hives: WaxOperationResponse['hives']) {
   selectedHives.value = hives;
   hiveDialog.value = true;
 }
+function operationTypeLabel(operation: WaxOperationResponse) {
+  if (operation.reversal_of_id) {
+    return t('wax.reversal');
+  }
+  if (operation.type === 'correction' && !operation.inventory_counts.length) {
+    return t('wax.genericCorrection');
+  }
+  return t(`wax.operationTypes.${operation.type}`);
+}
 function exportOperations() {
   const escape = (value: unknown) => {
     let text = String(value ?? '');
@@ -381,11 +391,12 @@ function exportOperations() {
     'counterparty',
     'reference',
     'lines',
+    'inventory_counts',
     'note'
   ];
   const rows = operations.value.map(operation => [
     operation.date,
-    t(`wax.operationTypes.${operation.type}`),
+    operationTypeLabel(operation),
     operation.input_kg.toFixed(2),
     operation.output_kg.toFixed(2),
     operation.difference_kg.toFixed(2),
@@ -400,6 +411,12 @@ function exportOperations() {
       .map(
         line =>
           `${line.direction}: ${line.lot_code} ${line.quantity_kg.toFixed(2)} kg`
+      )
+      .join('; '),
+    operation.inventory_counts
+      .map(
+        count =>
+          `${count.lot_code}: ${count.ledger_quantity_kg.toFixed(2)} kg -> ${count.counted_quantity_kg.toFixed(2)} kg (${count.adjustment_kg >= 0 ? '+' : ''}${count.adjustment_kg.toFixed(2)} kg)`
       )
       .join('; '),
     operation.note
@@ -566,13 +583,32 @@ function exportOperations() {
               </q-td>
             </q-tr>
             <q-tr
-              v-if="props.row.lines.length"
+              v-if="
+                props.row.inventory_counts.length ||
+                props.row.lines.length ||
+                props.row.hives.length
+              "
               :props="props"
               class="bg-grey-1"
             >
               <q-td colspan="100%">
                 <span
-                  v-for="line in props.row.lines"
+                  v-for="count in props.row.inventory_counts"
+                  :key="`inventory-${count.id}`"
+                  class="q-mr-md"
+                >
+                  {{ count.lot_code }}: {{ $t('wax.ledgerStock') }}
+                  {{ count.ledger_quantity_kg.toFixed(2) }} kg,
+                  {{ $t('wax.countedStock').toLowerCase() }}
+                  {{ count.counted_quantity_kg.toFixed(2) }} kg,
+                  {{ $t('wax.adjustment').toLowerCase() }}
+                  {{ count.adjustment_kg >= 0 ? '+' : ''
+                  }}{{ count.adjustment_kg.toFixed(2) }} kg
+                </span>
+                <span
+                  v-for="line in props.row.inventory_counts.length
+                    ? []
+                    : props.row.lines"
                   :key="line.id"
                   class="q-mr-md"
                 >

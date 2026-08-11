@@ -50,6 +50,67 @@ test.describe('user - Wax Cycle', () => {
     await expect(dataCy('form-option')).toBeVisible();
   });
 
+  test('records opening stock and inventory loss', async ({
+    page,
+    request,
+    dataCy
+  }) => {
+    const options = await request.get(
+      `${backendURL}/api/v1/option/wax_products`,
+      { headers: { origin: apiOrigin } }
+    );
+    expect(options.ok()).toBe(true);
+    if ((await options.json()).length === 0) {
+      const created = await request.post(
+        `${backendURL}/api/v1/option/wax_products`,
+        {
+          headers: { origin: apiOrigin },
+          data: { name: 'Foundations', modus: true }
+        }
+      );
+      expect(created.ok()).toBe(true);
+    }
+    const lotCode = `E2E-FOUNDATIONS-${Date.now()}`;
+
+    await page.goto('/table/wax');
+    await dataCy('wax-book-operation').click();
+    await dataCy('wax-operation-type').click();
+    await page.locator('.q-menu:visible .q-item').last().click();
+    await expect(dataCy('wax-add-opening-stock')).toBeVisible();
+    await dataCy('wax-add-opening-stock').click();
+    await dataCy('wax-opening-product').click();
+    await page.locator('.q-menu:visible .q-item').first().click();
+    await dataCy('wax-opening-lot-code').fill(lotCode);
+    await dataCy('wax-opening-quantity').fill('2.00');
+    await dataCy('wax-note').fill('Opening balance');
+    await dataCy('wax-save').click();
+    await expect(dataCy('wax-operation-dialog')).not.toBeVisible();
+
+    await dataCy('wax-book-operation').click();
+    await dataCy('wax-operation-type').click();
+    await page.locator('.q-menu:visible .q-item').last().click();
+    await dataCy('wax-add-inventory-count').click();
+    await dataCy('wax-inventory-lot').click();
+    await page
+      .locator('.q-menu:visible .q-item')
+      .filter({ hasText: lotCode })
+      .click();
+    const inventoryNote = `Annual inventory ${lotCode}`;
+    await dataCy('wax-note').fill(inventoryNote);
+    await dataCy('wax-save').click();
+    await expect(
+      dataCy('wax-counted-quantity').locator(
+        'xpath=ancestor::*[contains(concat(" ", normalize-space(@class), " "), " q-field ")][1]'
+      )
+    ).toHaveClass(/q-field--error/);
+    await dataCy('wax-counted-quantity').fill('1.50');
+    await expect(dataCy('wax-operation-dialog')).toContainText('-0.50 kg');
+    await dataCy('wax-save').click();
+    await expect(dataCy('wax-operation-dialog')).not.toBeVisible();
+    await dataCy('wax-operations-tab').click();
+    await expect(dataCy('wax-operations-table')).toContainText(inventoryNote);
+  });
+
   test('books wax and reloads new lots when reopened', async ({
     page,
     request,

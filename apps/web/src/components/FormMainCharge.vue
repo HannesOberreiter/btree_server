@@ -5,6 +5,7 @@ import useVuelidate from '@vuelidate/core';
 import { toRefs } from '@vueuse/core';
 import { flatten, map, merge } from 'lodash-es';
 import { computed, ref, unref } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { useApiFetch } from '../composables/useApi';
 import { useDateFormat } from '../composables/useDate';
 import { useNotification } from '../composables/useNotification';
@@ -33,6 +34,7 @@ const emit = defineEmits<{
   (e: 'success', value: boolean): void;
 }>();
 const useDate = useDateFormat();
+const { t } = useI18n();
 const fields = useFieldsettingStore();
 const notification = useNotification();
 const values = ref({});
@@ -59,10 +61,6 @@ const isCopy = computed(() => {
   return false;
 });
 
-if (isEdit.value || isCopy.value) {
-  getEdit(unref(ids.value));
-}
-
 const v = useVuelidate();
 
 const editOptions = ref([]) as any;
@@ -76,14 +74,24 @@ const stateDefault = {
   amount: 0,
   price: 0,
   url: '',
-  note: ''
+  note: '',
+  kind: 'in' as const
 };
 
 const state = ref<FormCharge>({
   ...stateDefault,
-  type: undefined as any,
-  kind: 'in'
+  type: undefined as any
 });
+
+const kindOptions = computed(() => [
+  { label: t('out'), value: 'out' },
+  { label: t('in'), value: 'in' },
+  { label: t('inventory'), value: 'inventory' }
+]);
+
+if (isEdit.value || isCopy.value) {
+  getEdit(unref(ids.value));
+}
 
 async function getEdit(id: unknown[]) {
   return await (
@@ -98,6 +106,9 @@ async function getEdit(id: unknown[]) {
         editOptionsCopy.value = flatten(editIds);
       }
       values.value = response;
+      if (isCopy.value && response[0]?.kind) {
+        state.value.kind = response[0].kind === 'out' ? 'out' : 'in';
+      }
     },
     error => {
       notification.open('negative', error);
@@ -160,6 +171,30 @@ function onReset() {
       :values="values"
       :reset="reset"
     />
+    <FormInputCheckboxString
+      v-if="isEdit"
+      v-model="state.kind"
+      label="kind"
+      icon="fas fa-passport"
+      :values="values"
+      :reset="reset"
+      :required="true"
+      status-active="in"
+      status-inactive="out"
+      true-value="in"
+      false-value="out"
+    />
+    <q-option-group
+      v-else
+      v-model="state.kind"
+      :options="kindOptions"
+      type="radio"
+      color="primary"
+      name="chargeKind"
+      inline
+      data-cy="charge-kind-options"
+      class="q-mb-sm"
+    />
     <FormInputNumeric
       v-model="state.amount"
       :values="values"
@@ -167,11 +202,18 @@ function onReset() {
       :shadow-text="
         !state.type ? '' : state.type.unit ? ` ${state.type.unit}` : ''
       "
-      label="amount"
+      :label="state.kind === 'inventory' ? 'inventoryTotal' : 'amount'"
       icon="fas fa-database"
       numeric-valid="decimal"
-      :max-valid="100000"
+      :max-valid="99999.99"
     />
+    <div
+      v-if="state.kind === 'inventory' && !isEdit"
+      class="text-caption text-grey-7 q-mb-md"
+      data-cy="charge-inventory-hint"
+    >
+      {{ $t('chargeInventoryHint') }}
+    </div>
     <FormInputNumeric
       v-if="fields.settings.charge.price"
       v-model="state.price"
@@ -185,18 +227,6 @@ function onReset() {
 
     <FormInputUrl v-model="state.url" :values="values" :reset="reset" />
     <FormInputNote v-model="state.note" :values="values" :reset="reset" />
-    <FormInputCheckboxString
-      v-model="state.kind"
-      label="kind"
-      icon="fas fa-passport"
-      :values="values"
-      :reset="reset"
-      :required="true"
-      status-active="in"
-      status-inactive="out"
-      true-value="in"
-      false-value="out"
-    />
   </q-form>
   <FormButtons
     class="q-pt-md"

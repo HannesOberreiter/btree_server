@@ -153,7 +153,8 @@ async function onSubmit() {
       : `/v1/${form.value}`;
   await api.post(url, JSON.stringify(data)).then(
     async (response: any) => {
-      lastInsert.value = response;
+      lastInsert.value =
+        Array.isArray(response) && response.length === 0 ? null : response;
       lastInsertTable.value = unref(form.value);
 
       dataChanged('insert');
