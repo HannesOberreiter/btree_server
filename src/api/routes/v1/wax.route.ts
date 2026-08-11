@@ -6,6 +6,7 @@ import { ROLES } from '../../../config/constants.config.js';
 import { KyselyServer } from '../../../servers/kysely.server.js';
 import { Guard } from '../../hooks/guard.hook.js';
 import {
+  createWaxInventory,
   createWaxOperation,
   deleteWaxLot,
   deleteWaxOperation,
@@ -14,6 +15,7 @@ import {
   reverseWaxOperation,
 } from '../../modules/wax.module.js';
 import {
+  waxInventoryCreateSchema,
   waxListQuerySchema,
   waxLotListResponseSchema,
   waxOperationCreateSchema,
@@ -64,6 +66,25 @@ export default function routes(
     },
     (request) =>
       createWaxOperation(
+        db,
+        {
+          companyId: request.session.user.user_id,
+          beeId: request.session.user.bee_id,
+        },
+        request.body,
+      ),
+  );
+  server.post(
+    '/operations/inventory',
+    {
+      schema: {
+        body: waxInventoryCreateSchema,
+        response: { 200: waxOperationResponseSchema },
+      },
+      preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
+    },
+    (request) =>
+      createWaxInventory(
         db,
         {
           companyId: request.session.user.user_id,

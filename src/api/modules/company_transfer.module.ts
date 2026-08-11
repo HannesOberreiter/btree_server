@@ -41,6 +41,7 @@ type TransferKey =
   | 'wax_operations'
   | 'wax_operation_hives'
   | 'wax_operation_lines'
+  | 'wax_inventory_counts'
   | 'queens'
   | 'queen_matings'
   | 'queen_races'
@@ -48,7 +49,10 @@ type TransferKey =
 type TransferData = Record<TransferKey, CsvRecord[]>;
 type CompanyTransferKey = Exclude<
   TransferKey,
-  'movedates' | 'wax_operation_hives' | 'wax_operation_lines'
+  | 'movedates'
+  | 'wax_operation_hives'
+  | 'wax_operation_lines'
+  | 'wax_inventory_counts'
 >;
 
 const transferKeys: TransferKey[] = [
@@ -75,6 +79,7 @@ const transferKeys: TransferKey[] = [
   'wax_operations',
   'wax_operation_hives',
   'wax_operation_lines',
+  'wax_inventory_counts',
   'queens',
   'queen_matings',
   'queen_races',
@@ -339,6 +344,13 @@ const columns: Record<TransferKey, readonly string[]> = {
   ],
   wax_operation_hives: ['operation_id', 'hive_id'],
   wax_operation_lines: ['direction', 'quantity_kg', 'operation_id', 'lot_id'],
+  wax_inventory_counts: [
+    'operation_id',
+    'lot_id',
+    'ledger_quantity_kg',
+    'counted_quantity_kg',
+    'adjustment_kg',
+  ],
   queens: [
     'name',
     'mark_colour',
@@ -487,12 +499,18 @@ const waxOperationTypes = new Set([
   'correction',
 ]);
 
+function hasWaxPrecision(value: number) {
+  return Math.abs(value * 100 - Math.round(value * 100)) <= 0.000_001;
+}
+
 function validateWaxArchive(data: TransferData) {
   const operations = new Map(
     data.wax_operations.map((row) => [String(row.id), row]),
   );
-  const lots = new Set(data.wax_lots.map((row) => String(row.id)));
+  const lotsById = new Map(data.wax_lots.map((row) => [String(row.id), row]));
+  const lots = new Set(lotsById.keys());
   const linesByOperation = new Map<string, CsvRecord[]>();
+  const countsByOperation = new Map<string, CsvRecord[]>();
   for (const line of data.wax_operation_lines) {
     const operationId = String(line.operation_id);
     const quantity = Number(line.quantity_kg);
@@ -503,12 +521,40 @@ function validateWaxArchive(data: TransferData) {
     if (
       !Number.isFinite(quantity) ||
       quantity < 0.01 ||
-      Math.abs(quantity * 100 - Math.round(quantity * 100)) > 0.000_001
+      !hasWaxPrecision(quantity)
     )
       throw new Error('Wax archive contains an invalid quantity');
     const current = linesByOperation.get(operationId) ?? [];
     current.push(line);
     linesByOperation.set(operationId, current);
+  }
+  for (const count of data.wax_inventory_counts) {
+    const ledgerQuantity = Number(count.ledger_quantity_kg);
+    const countedQuantity = Number(count.counted_quantity_kg);
+    const adjustment = Number(count.adjustment_kg);
+    const operation = operations.get(String(count.operation_id));
+    if (
+      !operation ||
+      operation.type !== 'correction' ||
+      !lots.has(String(count.lot_id))
+    )
+      throw new Error('Wax archive contains an invalid inventory reference');
+    if (
+      ![ledgerQuantity, countedQuantity, adjustment].every(Number.isFinite) ||
+      ![ledgerQuantity, countedQuantity, Math.abs(adjustment)].every(
+        hasWaxPrecision,
+      ) ||
+      ledgerQuantity < 0 ||
+      countedQuantity < 0 ||
+      Math.abs(countedQuantity - ledgerQuantity - adjustment) > 0.000_001
+    )
+      throw new Error('Wax archive contains an invalid inventory quantity');
+    const operationId = String(count.operation_id);
+    const current = countsByOperation.get(operationId) ?? [];
+    if (current.some((row) => String(row.lot_id) === String(count.lot_id)))
+      throw new Error('Wax archive contains a duplicate inventory count');
+    current.push(count);
+    countsByOperation.set(operationId, current);
   }
   for (const link of data.wax_operation_hives) {
     if (
@@ -554,7 +600,10 @@ function validateWaxArchive(data: TransferData) {
       (['processing', 'contract_processing'].includes(type) &&
         (!hasInputs || !hasOutputs)) ||
       (['use', 'sale'].includes(type) && (!hasInputs || hasOutputs)) ||
-      (type === 'correction' && !hasInputs && !hasOutputs)
+      (type === 'correction' &&
+        !hasInputs &&
+        !hasOutputs &&
+        !(countsByOperation.get(String(operation.id))?.length ?? 0))
     )
       throw new Error('Wax archive contains an invalid operation shape');
     const input = lines
@@ -575,9 +624,13 @@ function validateWaxArchive(data: TransferData) {
     const dateOrder = String(left.date).localeCompare(String(right.date));
     return dateOrder || Number(left.id) - Number(right.id);
   });
-  for (const operation of sorted) {
+  const operationOrder = new Map(
+    sorted.map((operation, index) => [String(operation.id), index]),
+  );
+  for (const [operationIndex, operation] of sorted.entries()) {
+    const operationId = String(operation.id);
     const deltas = new Map<string, number>();
-    for (const line of linesByOperation.get(String(operation.id)) ?? []) {
+    for (const line of linesByOperation.get(operationId) ?? []) {
       const lotId = String(line.lot_id);
       const quantity = Number(line.quantity_kg);
       deltas.set(
@@ -585,6 +638,35 @@ function validateWaxArchive(data: TransferData) {
         (deltas.get(lotId) ?? 0) +
           (line.direction === 'output' ? quantity : -quantity),
       );
+    }
+    const inventoryCounts = countsByOperation.get(operationId) ?? [];
+    if (inventoryCounts.length) {
+      if (!String(operation.note ?? '').trim())
+        throw new Error('Wax archive inventory has no explanation');
+      const countedLotIds = new Set(
+        inventoryCounts.map((count) => String(count.lot_id)),
+      );
+      if ([...deltas.keys()].some((lotId) => !countedLotIds.has(lotId)))
+        throw new Error('Wax archive inventory has an uncounted adjustment');
+      for (const count of inventoryCounts) {
+        const lotId = String(count.lot_id);
+        const lot = lotsById.get(lotId);
+        if (!lot)
+          throw new Error('Wax archive contains an invalid inventory lot');
+        const creatorId = lot.created_by_operation_id;
+        const creatorOrder =
+          creatorId === undefined || creatorId === null
+            ? undefined
+            : operationOrder.get(String(creatorId));
+        if (creatorOrder !== undefined && creatorOrder > operationIndex)
+          throw new Error('Wax archive counts a lot before its creation');
+        const ledgerQuantity = Number(count.ledger_quantity_kg);
+        const adjustment = Number(count.adjustment_kg);
+        if (Math.abs((balances.get(lotId) ?? 0) - ledgerQuantity) > 0.000_001)
+          throw new Error('Wax archive inventory ledger quantity is invalid');
+        if (Math.abs((deltas.get(lotId) ?? 0) - adjustment) > 0.000_001)
+          throw new Error('Wax archive inventory adjustment is invalid');
+      }
     }
     for (const [lotId, delta] of deltas) {
       const balance = (balances.get(lotId) ?? 0) + delta;
@@ -795,6 +877,16 @@ export async function importCompanyArchive(
         }),
       ),
     );
+    await insertRows(
+      trx,
+      'wax_inventory_counts',
+      data.wax_inventory_counts.map((row) =>
+        clean('wax_inventory_counts', row, {
+          operation_id: mapped(waxOperations, row.operation_id),
+          lot_id: mapped(waxLots, row.lot_id),
+        }),
+      ),
+    );
 
     const chargeTypes = await optionRows(
       trx,
@@ -969,9 +1061,12 @@ export async function downloadCompanyData(
   arch.append(stringify(company, options), { name: 'company.csv' });
   const companyTables = transferKeys.filter(
     (key): key is CompanyTransferKey =>
-      !['movedates', 'wax_operation_hives', 'wax_operation_lines'].includes(
-        key,
-      ),
+      ![
+        'movedates',
+        'wax_operation_hives',
+        'wax_operation_lines',
+        'wax_inventory_counts',
+      ].includes(key),
   );
   for (const table of companyTables)
     await appendTable(db, arch, table, companyId, options);
@@ -1000,6 +1095,19 @@ export async function downloadCompanyData(
     .execute();
   arch.append(stringify(waxOperationLines, options), {
     name: 'wax_operation_lines.csv',
+  });
+  const waxInventoryCounts = await db
+    .selectFrom('wax_inventory_counts')
+    .innerJoin(
+      'wax_operations',
+      'wax_operations.id',
+      'wax_inventory_counts.operation_id',
+    )
+    .selectAll('wax_inventory_counts')
+    .where('wax_operations.user_id', '=', companyId)
+    .execute();
+  arch.append(stringify(waxInventoryCounts, options), {
+    name: 'wax_inventory_counts.csv',
   });
   const movedates = await db
     .selectFrom('movedates')

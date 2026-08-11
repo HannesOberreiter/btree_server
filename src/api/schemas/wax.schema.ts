@@ -29,6 +29,16 @@ const waxHiveResponseSchema = z.object({
   apiary_id: z.number().nullable(),
   apiary_name: z.string().nullable(),
 });
+const waxInventoryCountResponseSchema = z.object({
+  id: z.number(),
+  lot_id: z.number(),
+  lot_code: z.string(),
+  product_id: z.number().nullable(),
+  product_name: z.string().nullable(),
+  ledger_quantity_kg: z.number(),
+  counted_quantity_kg: z.number(),
+  adjustment_kg: z.number(),
+});
 
 export const waxOperationResponseSchema = z.object({
   id: z.number(),
@@ -47,6 +57,7 @@ export const waxOperationResponseSchema = z.object({
   output_kg: z.number(),
   difference_kg: z.number(),
   lines: z.array(waxLineResponseSchema),
+  inventory_counts: z.array(waxInventoryCountResponseSchema),
   hives: z.array(waxHiveResponseSchema),
   creator: actorResponseSchema.optional(),
   editor: actorResponseSchema.optional(),
@@ -67,14 +78,17 @@ export const waxLotResponseSchema = z.object({
 
 export const waxListQuerySchema = z.object({
   q: z.string().trim().optional(),
+  as_of: z.iso.date().optional(),
   offset: z.number().int().min(0).optional(),
   limit: z.number().int().min(1).max(500).optional(),
 });
-export const waxOperationListQuerySchema = waxListQuerySchema.extend({
-  from: z.iso.date().optional(),
-  to: z.iso.date().optional(),
-  type: waxOperationTypeSchema.optional(),
-});
+export const waxOperationListQuerySchema = waxListQuerySchema
+  .omit({ as_of: true })
+  .extend({
+    from: z.iso.date().optional(),
+    to: z.iso.date().optional(),
+    type: waxOperationTypeSchema.optional(),
+  });
 export const waxOperationListResponseSchema = z.object({
   results: z.array(waxOperationResponseSchema),
   total: z.number(),
@@ -101,9 +115,17 @@ const outputLineSchema = z
     path: ['lot_id'],
   });
 
+const waxOperationCreateTypeSchema = z.enum([
+  'production',
+  'purchase',
+  'processing',
+  'contract_processing',
+  'use',
+  'sale',
+]);
 export const waxOperationCreateSchema = z.object({
   date: z.iso.date(),
-  type: waxOperationTypeSchema,
+  type: waxOperationCreateTypeSchema,
   counterparty: z.string().trim().max(255).nullable().optional(),
   reference: z.string().trim().max(255).nullable().optional(),
   url: z.string().trim().max(512).nullable().optional(),
@@ -113,8 +135,42 @@ export const waxOperationCreateSchema = z.object({
   inputs: z.array(inputLineSchema).max(100).default([]),
   outputs: z.array(outputLineSchema).max(100).default([]),
 });
+
+const countedQuantitySchema = z.number().min(0).max(1_000_000).multipleOf(0.01);
+export const waxInventoryCreateSchema = z
+  .object({
+    date: z.iso.date(),
+    reference: z.string().trim().max(255).nullable().optional(),
+    note: z.string().trim().min(1).max(2000),
+    counts: z
+      .array(
+        z.object({
+          lot_id: numberSchema,
+          counted_quantity_kg: countedQuantitySchema,
+        }),
+      )
+      .max(100)
+      .default([]),
+    opening_stocks: z
+      .array(
+        z.object({
+          code: z.string().trim().min(1).max(100).optional(),
+          product_id: numberSchema,
+          counted_quantity_kg: countedQuantitySchema.min(0.01),
+        }),
+      )
+      .max(100)
+      .default([]),
+  })
+  .refine((body) => body.counts.length + body.opening_stocks.length > 0, {
+    message: 'At least one inventory count is required',
+  });
 export const waxOperationParamsSchema = z.object({ id: numberSchema });
 
 export type WaxListQuery = z.infer<typeof waxListQuerySchema>;
 export type WaxOperationListQuery = z.infer<typeof waxOperationListQuerySchema>;
 export type WaxOperationCreateBody = z.infer<typeof waxOperationCreateSchema>;
+export type WaxOperationWriteBody = Omit<WaxOperationCreateBody, 'type'> & {
+  type: WaxOperationCreateBody['type'] | 'correction';
+};
+export type WaxInventoryCreateBody = z.infer<typeof waxInventoryCreateSchema>;

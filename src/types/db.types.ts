@@ -1309,6 +1309,15 @@ export interface TreatmentVets {
   user_id: Generated<number | null>;
 }
 
+export interface WaxInventoryCounts {
+  adjustment_kg: Decimal;
+  counted_quantity_kg: Decimal;
+  id: Generated<number>;
+  ledger_quantity_kg: Decimal;
+  lot_id: number;
+  operation_id: number;
+}
+
 export interface WaxLots {
   /**
    * Creator
@@ -1477,6 +1486,7 @@ export interface DB {
   treatment_vets: TreatmentVets;
   treatments: Treatments;
   treatments_apiaries: TreatmentsApiaries;
+  wax_inventory_counts: WaxInventoryCounts;
   wax_lots: WaxLots;
   wax_operation_hives: WaxOperationHives;
   wax_operation_lines: WaxOperationLines;

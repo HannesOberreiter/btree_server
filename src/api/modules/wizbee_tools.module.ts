@@ -1001,6 +1001,14 @@ const WAX_OPERATION_TYPES = [
   'sale',
   'correction',
 ] as const;
+const WAX_CREATE_OPERATION_TYPES = [
+  'production',
+  'purchase',
+  'processing',
+  'contract_processing',
+  'use',
+  'sale',
+] as const;
 const waxQuantitySchema = z.number().min(0.01).max(1_000_000).multipleOf(0.01);
 const waxInputLineToolSchema = z.object({
   lotId: z
@@ -1062,7 +1070,7 @@ const fetchWaxLedgerToolSchema = z.object({
 });
 const createWaxOperationToolSchema = z.object({
   date: z.iso.date().describe('Booking date'),
-  type: z.enum(WAX_OPERATION_TYPES).describe('Wax operation type'),
+  type: z.enum(WAX_CREATE_OPERATION_TYPES).describe('Wax operation type'),
   counterparty: z
     .string()
     .trim()
@@ -1078,7 +1086,13 @@ const createWaxOperationToolSchema = z.object({
     .optional()
     .describe('Document, invoice or order number'),
   url: z.string().trim().max(512).nullable().optional(),
-  note: z.string().trim().max(2000).nullable().optional(),
+  note: z
+    .string()
+    .trim()
+    .max(2000)
+    .nullable()
+    .optional()
+    .describe('Reason or explanation'),
   originTypeId: z
     .number()
     .int()
@@ -2465,7 +2479,7 @@ export function createWizBeeTools(
           .string()
           .optional()
           .describe('New best-before date in YYYY-MM-DD format'),
-        kind: z.string().optional().describe('New kind/category'),
+        kind: z.enum(['in', 'out']).optional().describe('New stock direction'),
         note: z.string().max(2000).optional().describe('New notes'),
         url: z.string().max(512).optional().describe('New URL reference'),
       }),
@@ -2597,7 +2611,7 @@ export function createWizBeeTools(
      */
     createWaxOperation: tool({
       description:
-        'Create a wax ledger operation in kg with 0.01 kg precision. Production and purchase require outputs only; production also requires originTypeId. Processing and contract processing require inputs and outputs. Use and sale require inputs only. Purchase and contract processing require counterparty. New output lots need productId; code is generated automatically when omitted. Resolve product/origin IDs via fetchOptions and lot IDs via fetchWaxLedger.',
+        'Create a wax ledger operation in kg with 0.01 kg precision. Production and purchase require outputs only; production also requires originTypeId. Processing and contract processing require inputs and outputs. Use and sale require inputs only. Purchase and contract processing require counterparty. Use the wax inventory interface for stock corrections. New output lots need productId; code is generated automatically when omitted. Resolve product/origin IDs via fetchOptions and lot IDs via fetchWaxLedger.',
       inputSchema: createWaxOperationToolSchema,
       execute: async (input) => {
         const operation = await createWaxOperation(

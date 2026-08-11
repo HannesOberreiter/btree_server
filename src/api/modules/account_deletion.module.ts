@@ -53,6 +53,10 @@ export async function deleteCompany(db: Kysely<DB>, company_id: number) {
         .where('user_id', '=', company_id);
       await Promise.all([
         trx
+          .deleteFrom('wax_inventory_counts')
+          .where('operation_id', 'in', waxOperationIds)
+          .execute(),
+        trx
           .deleteFrom('wax_operation_lines')
           .where('operation_id', 'in', waxOperationIds)
           .execute(),
