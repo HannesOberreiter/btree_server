@@ -63,6 +63,13 @@ describe('wax routes', () => {
     expect(response.statusCode).toBe(401);
   });
 
+  it.each([2603, true])('accepts search text %s', async (q) => {
+    const response = await doQueryRequest(agent, `${route}/lots`, null, null, {
+      q,
+    });
+    expect(response.statusCode).toBe(200);
+  });
+
   it('requires an origin type for production', async () => {
     const response = await doRequest(
       agent,

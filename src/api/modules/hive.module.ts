@@ -85,7 +85,9 @@ const orderColumns = {
   created_at: 'hives.created_at',
   updated_at: 'hives.updated_at',
   deleted_at: 'hives.deleted_at',
+  apiary_name: 'hives_locations.apiary_name',
   'hive_location.apiary_name': 'hives_locations.apiary_name',
+  'queen_location.queen_name': 'queens_locations.queen_name',
   'hive_source.name': 'hive_sources.name',
   'hive_type.name': 'hive_types.name',
 } as const;

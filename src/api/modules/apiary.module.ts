@@ -23,12 +23,21 @@ interface HiveCountProjection {
 
 const orderColumns: Record<
   ApiaryOrderField,
-  'apiaries.id' | 'apiaries.name' | 'apiaries.modus' | 'hives_counts.count'
+  | 'apiaries.id'
+  | 'apiaries.name'
+  | 'apiaries.modus'
+  | 'hives_counts.count'
+  | 'apiaries.created_at'
+  | 'apiaries.updated_at'
+  | 'apiaries.deleted_at'
 > = {
   id: 'apiaries.id',
   name: 'apiaries.name',
   modus: 'apiaries.modus',
   'hive_count.count': 'hives_counts.count',
+  created_at: 'apiaries.created_at',
+  updated_at: 'apiaries.updated_at',
+  deleted_at: 'apiaries.deleted_at',
 };
 
 function apiarySelections() {
