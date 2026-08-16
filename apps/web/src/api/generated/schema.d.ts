@@ -136,8 +136,24 @@ export interface paths {
           modus?: boolean | null;
           offset?: number;
           order?:
-            | ('id' | 'name' | 'modus' | 'hive_count.count')
-            | ('id' | 'name' | 'modus' | 'hive_count.count')[];
+            | (
+                | 'id'
+                | 'name'
+                | 'modus'
+                | 'hive_count.count'
+                | 'created_at'
+                | 'updated_at'
+                | 'deleted_at'
+              )
+            | (
+                | 'id'
+                | 'name'
+                | 'modus'
+                | 'hive_count.count'
+                | 'created_at'
+                | 'updated_at'
+                | 'deleted_at'
+              )[];
           q?: string | number;
         };
         header?: never;

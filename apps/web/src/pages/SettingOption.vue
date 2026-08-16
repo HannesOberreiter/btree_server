@@ -185,7 +185,7 @@ const {
   refetch
 } = useOptionsQuery(optionValue, {
   order: computed(() => [pagination.value.sortBy]),
-  direction: computed(() => (pagination.value.descending ? ['asc'] : ['desc'])),
+  direction: computed(() => (pagination.value.descending ? ['desc'] : ['asc'])),
   modus: null
 });
 

@@ -68,14 +68,14 @@ const columns = [
     label: t('url'),
     align: 'left',
     field: (row: TodoResponse) => row.url,
-    sortable: true
+    sortable: false
   },
   {
     name: 'note',
     label: t('note'),
     align: 'left',
     field: (row: TodoResponse) => row.note,
-    sortable: true
+    sortable: false
   },
   {
     name: 'done',
@@ -119,7 +119,7 @@ const {
   refetch
 } = useTodosQuery({
   order: computed(() => [pagination.value.sortBy]),
-  direction: computed(() => (pagination.value.descending ? ['asc'] : ['desc'])),
+  direction: computed(() => (pagination.value.descending ? ['desc'] : ['asc'])),
   offset: computed(() => pagination.value.page - 1),
   limit: computed(() => pagination.value.rowsPerPage),
   q: computed(() => (filter.value ? filter.value : '')),

@@ -79,7 +79,7 @@ const {
   refetch
 } = useStatisticTable('feed', {
   order: computed(() => [pagination.value.sortBy]),
-  direction: computed(() => (pagination.value.descending ? ['asc'] : ['desc'])),
+  direction: computed(() => (pagination.value.descending ? ['desc'] : ['asc'])),
   offset: computed(() => pagination.value.page - 1),
   limit: computed(() => pagination.value.rowsPerPage),
   filters: computed(() => (filters?.value ? filters.value : '')),

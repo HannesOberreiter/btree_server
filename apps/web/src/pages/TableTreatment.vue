@@ -135,14 +135,14 @@ const columns = [
     label: t('url'),
     align: 'left',
     field: (row: any) => row.url,
-    sortable: true
+    sortable: false
   },
   {
     name: 'note',
     label: t('note'),
     align: 'left',
     field: (row: any) => row.note,
-    sortable: true
+    sortable: false
   },
   {
     name: 'created_at',
@@ -190,7 +190,7 @@ const {
   refetch
 } = useTasksQuery('treatment', {
   order: computed(() => [pagination.value.sortBy]),
-  direction: computed(() => (pagination.value.descending ? ['asc'] : ['desc'])),
+  direction: computed(() => (pagination.value.descending ? ['desc'] : ['asc'])),
   offset: computed(() => pagination.value.page - 1),
   limit: computed(() => pagination.value.rowsPerPage),
   q: computed(() => (filter.value ? filter.value : '')),
