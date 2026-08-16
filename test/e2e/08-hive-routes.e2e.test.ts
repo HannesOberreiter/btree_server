@@ -128,6 +128,23 @@ describe('hive routes', () => {
       });
     });
 
+    it('get 200 - accepts numeric search text', async () => {
+      const hive = await doRequest(agent, 'post', route, null, accessToken, {
+        ...testInsert,
+        name: '2603',
+        repeat: 1,
+      });
+      expect(hive.statusCode).toBe(200);
+
+      const res = await doQueryRequest(agent, route, null, accessToken, {
+        q: 2603,
+      });
+      expect(res.statusCode).toBe(200);
+      expect(res.body.results).toEqual(
+        expect.arrayContaining([expect.objectContaining({ id: hive.body[0] })]),
+      );
+    });
+
     it('get 200 - includes detailed relations when requested', async () => {
       const res = await doQueryRequest(agent, route, null, accessToken, {
         details: true,

@@ -175,14 +175,12 @@ export async function listQueens(
         eb('hives_locations.hive_name', 'like', search),
       ]),
     );
-    count = count
-      .leftJoin('hives_locations', 'hives_locations.hive_id', 'queens.hive_id')
-      .where((eb) =>
-        eb.or([
-          eb('queens.name', 'like', search),
-          eb('hives_locations.hive_name', 'like', search),
-        ]),
-      );
+    count = count.where((eb) =>
+      eb.or([
+        eb('queens.name', 'like', search),
+        eb('hives_locations.hive_name', 'like', search),
+      ]),
+    );
   }
   query = applyOrder(query, input.order, input.direction).orderBy('queens.id');
   const [results, total] = await Promise.all([

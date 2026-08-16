@@ -79,6 +79,13 @@ describe('queen routes', () => {
       expect(res.body.total).toBeTypeOf('number');
     });
 
+    it('get 200 - accepts numeric search text', async () => {
+      const res = await doQueryRequest(agent, route, null, accessToken, {
+        q: 2603,
+      });
+      expect(res.statusCode).toBe(200);
+    });
+
     it('applies all queen table filters', async () => {
       for (const filter of [
         { 'queens.mating_id': 999_999 },
