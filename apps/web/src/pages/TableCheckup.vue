@@ -244,7 +244,7 @@ const columns = [
     align: 'right',
     field: (row: any) => row.time,
     format: (val: string) => useDate.displayFormat(val, 'time', 'HH:mm:ss'),
-    sortable: true
+    sortable: false
   },
   {
     name: 'done',
@@ -258,14 +258,14 @@ const columns = [
     label: t('url'),
     align: 'left',
     field: (row: any) => row.url,
-    sortable: true
+    sortable: false
   },
   {
     name: 'note',
     label: t('note'),
     align: 'left',
     field: (row: any) => row.note,
-    sortable: true
+    sortable: false
   },
   {
     name: 'created_at',

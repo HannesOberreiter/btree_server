@@ -129,7 +129,7 @@ const columns = [
     label: t('url'),
     align: 'left',
     field: (row: any) => row.url,
-    sortable: true
+    sortable: false
   },
   {
     name: 'note',

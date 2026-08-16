@@ -44,14 +44,14 @@ const columns = [
     label: `${t('deprecatedField')} (${t('waitTime')} [h]` + `)`,
     align: 'right',
     field: (row: any) => row.hour,
-    sortable: true
+    sortable: false
   },
   {
     name: 'note',
     label: t('note'),
     align: 'left',
     field: (row: any) => row.note,
-    sortable: true
+    sortable: false
   }
 ] as QTableProps['columns'];
 

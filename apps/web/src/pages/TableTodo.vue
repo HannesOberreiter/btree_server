@@ -68,14 +68,14 @@ const columns = [
     label: t('url'),
     align: 'left',
     field: (row: TodoResponse) => row.url,
-    sortable: true
+    sortable: false
   },
   {
     name: 'note',
     label: t('note'),
     align: 'left',
     field: (row: TodoResponse) => row.note,
-    sortable: true
+    sortable: false
   },
   {
     name: 'done',
