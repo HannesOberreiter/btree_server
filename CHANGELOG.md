@@ -1,5 +1,13 @@
 # Changelog
 
+## [7.6.1](https://github.com/HannesOberreiter/btree_server/compare/btree-server-v7.6.0...btree-server-v7.6.1) (2026-08-16)
+
+
+### Bug Fixes
+
+* **query:** preserve table search text ([afc6c2f](https://github.com/HannesOberreiter/btree_server/commit/afc6c2f3ba777a6325af3d96b4ab96de694d68e8))
+* **tables:** support sortable columns ([499d8c2](https://github.com/HannesOberreiter/btree_server/commit/499d8c20d8256ffbd21bb3cd876995f0e896dd74))
+
 ## [7.6.0](https://github.com/HannesOberreiter/btree_server/compare/btree-server-v7.5.2...btree-server-v7.6.0) (2026-08-11)
 
 
