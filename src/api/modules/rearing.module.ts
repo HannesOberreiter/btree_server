@@ -133,12 +133,29 @@ export async function listRearings(
     : [input.direction];
   const allowed: Record<
     string,
-    'rearings.id' | 'rearings.name' | 'rearings.date' | 'rearings.created_at'
+    | 'rearings.id'
+    | 'rearings.symbol'
+    | 'rearings.name'
+    | 'rearings.date'
+    | 'rearing_types.name'
+    | 'rearing_details.job'
+    | 'rearings.larvae'
+    | 'rearings.hatch'
+    | 'rearings.mated'
+    | 'rearings.created_at'
+    | 'rearings.updated_at'
   > = {
     id: 'rearings.id',
+    symbol: 'rearings.symbol',
     name: 'rearings.name',
     date: 'rearings.date',
+    'type.name': 'rearing_types.name',
+    'start.job': 'rearing_details.job',
+    larvae: 'rearings.larvae',
+    hatch: 'rearings.hatch',
+    mated: 'rearings.mated',
     created_at: 'rearings.created_at',
+    updated_at: 'rearings.updated_at',
   };
   orders.forEach((field, index) => {
     const column = allowed[field];

@@ -8,28 +8,51 @@ import type { CompatibilityQuery } from '../schemas/common.schema.js';
 import type { PatchBody, PostBody } from '../schemas/queen.schema.js';
 import { actorProjection } from './actor_projection.module.js';
 
-const orderFields = {
+const queenBaseOrderFields: Record<string, string> = {
   id: 'queens.id',
   name: 'queens.name',
   date: 'queens.date',
+  mark_colour: 'queens.mark_colour',
   move_date: 'queens.move_date',
+  mother: 'queens.mother',
   modus: 'queens.modus',
+  modus_date: 'queens.modus_date',
   created_at: 'queens.created_at',
   updated_at: 'queens.updated_at',
+  deleted_at: 'queens.deleted_at',
   'queens.id': 'queens.id',
   'queens.name': 'queens.name',
   'queens.date': 'queens.date',
   'hive_location.hive_name': 'hives_locations.hive_name',
-} as const;
+  'hive_location.apiary_name': 'hives_locations.apiary_name',
+};
+const queenDetailOrderFields: Record<string, string> = {
+  ...queenBaseOrderFields,
+  'queen_location.queen_id': 'queens_locations.queen_id',
+  'own_mother.name': 'own_mother.name',
+  'mating.name': 'queen_matings.name',
+  'race.name': 'queen_races.name',
+};
+const queenStatsOrderFields: Record<string, string> = {
+  id: 'queen_durations.id',
+  'queens.name': 'queens.name',
+  'hive_location.hive_name': 'hives_locations.hive_name',
+  move_date: 'queen_durations.move_date',
+};
 function direction(value: unknown): 'asc' | 'desc' {
   return String(value).toLowerCase() === 'desc' ? 'desc' : 'asc';
 }
-function applyOrder<Q>(query: Q, order: unknown, directions: unknown): Q {
+function applyOrder<Q>(
+  query: Q,
+  order: unknown,
+  directions: unknown,
+  allowed: Record<string, string>,
+): Q {
   const fields = Array.isArray(order) ? order : order ? [order] : [];
   const dirs = Array.isArray(directions) ? directions : [directions];
   let result = query;
   fields.forEach((field, index) => {
-    const column = orderFields[String(field) as keyof typeof orderFields];
+    const column = allowed[String(field)];
     if (column)
       result = (
         result as Q & {
@@ -182,7 +205,12 @@ export async function listQueens(
       ]),
     );
   }
-  query = applyOrder(query, input.order, input.direction).orderBy('queens.id');
+  query = applyOrder(
+    query,
+    input.order,
+    input.direction,
+    details ? queenDetailOrderFields : queenBaseOrderFields,
+  ).orderBy('queens.id');
   const [results, total] = await Promise.all([
     query
       .limit(limit)
@@ -308,7 +336,12 @@ export async function listQueenStats(
       ]),
     );
   }
-  query = applyOrder(query, input.order, input.direction);
+  query = applyOrder(
+    query,
+    input.order,
+    input.direction,
+    queenStatsOrderFields,
+  );
   const [rows, total] = await Promise.all([
     query
       .orderBy('queen_durations.id')

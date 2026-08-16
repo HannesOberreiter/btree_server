@@ -86,6 +86,25 @@ describe('queen routes', () => {
       expect(res.statusCode).toBe(200);
     });
 
+    it.each([
+      'mark_colour',
+      'hive_location.apiary_name',
+      'queen_location.queen_id',
+      'mother',
+      'own_mother.name',
+      'mating.name',
+      'race.name',
+      'modus_date',
+      'deleted_at',
+    ])('get 200 - orders by %s', async (order) => {
+      const res = await doQueryRequest(agent, route, null, accessToken, {
+        order,
+        direction: 'desc',
+        details: true,
+      });
+      expect(res.statusCode).toBe(200);
+    });
+
     it('applies all queen table filters', async () => {
       for (const filter of [
         { 'queens.mating_id': 999_999 },
@@ -156,6 +175,17 @@ describe('queen routes', () => {
       expect(res.statusCode).toEqual(200);
       expect(res.body.results).toBeInstanceOf(Array);
       expect(res.body.total).toBeTypeOf('number');
+    });
+
+    it('orders queen statistics by movement date', async () => {
+      const res = await doQueryRequest(
+        agent,
+        `${route}/stats`,
+        null,
+        accessToken,
+        { order: 'move_date', direction: 'desc' },
+      );
+      expect(res.statusCode).toBe(200);
     });
 
     it('applies all queen statistic filters', async () => {

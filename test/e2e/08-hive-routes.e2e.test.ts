@@ -145,6 +145,53 @@ describe('hive routes', () => {
       );
     });
 
+    it('get 200 - orders by apiary name', async () => {
+      const hiveIds: number[] = [];
+      for (const apiaryName of ['AAA ordering apiary', 'ZZZ ordering apiary']) {
+        const apiary = await doRequest(
+          agent,
+          'post',
+          '/api/v1/apiary',
+          null,
+          accessToken,
+          { name: apiaryName },
+        );
+        expect(apiary.statusCode).toBe(200);
+
+        const hive = await doRequest(agent, 'post', route, null, accessToken, {
+          ...testInsert,
+          name: `${apiaryName} hive`,
+          apiary_id: apiary.body.id,
+          repeat: 1,
+        });
+        expect(hive.statusCode).toBe(200);
+        hiveIds.push(hive.body[0]);
+      }
+
+      const res = await doQueryRequest(agent, route, null, accessToken, {
+        order: 'apiary_name',
+        direction: 'desc',
+        details: true,
+        limit: 500,
+      });
+      expect(res.statusCode).toBe(200);
+      const orderedIds = res.body.results.map(
+        (hive: { id: number }) => hive.id,
+      );
+      expect(orderedIds.indexOf(hiveIds[1])).toBeLessThan(
+        orderedIds.indexOf(hiveIds[0]),
+      );
+    });
+
+    it('get 200 - orders by queen name', async () => {
+      const res = await doQueryRequest(agent, route, null, accessToken, {
+        order: 'queen_location.queen_name',
+        direction: 'asc',
+        details: true,
+      });
+      expect(res.statusCode).toBe(200);
+    });
+
     it('get 200 - includes detailed relations when requested', async () => {
       const res = await doQueryRequest(agent, route, null, accessToken, {
         details: true,

@@ -75,6 +75,22 @@ describe('rearing routes', () => {
       expect(res.body.total).toBeTypeOf('number');
     });
 
+    it.each([
+      'symbol',
+      'type.name',
+      'start.job',
+      'larvae',
+      'hatch',
+      'mated',
+      'updated_at',
+    ])('get 200 - orders by %s', async (order) => {
+      const res = await doQueryRequest(agent, route, null, accessToken, {
+        order,
+        direction: 'desc',
+      });
+      expect(res.statusCode).toBe(200);
+    });
+
     it('operations enforce company isolation', async () => {
       const db = KyselyServer.getInstance().db;
       expect(await getRearingsByIds(db, 999_999, [insertId])).toEqual([]);

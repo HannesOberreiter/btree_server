@@ -17,11 +17,14 @@ const chargeOrder = {
   date: 'charges.date',
   bestbefore: 'charges.bestbefore',
   name: 'charges.name',
+  'type.name': 'charge_types.name',
   charge: 'charges.charge',
   amount: 'charges.amount',
   price: 'charges.price',
+  kind: 'charges.kind',
   created_at: 'charges.created_at',
   updated_at: 'charges.updated_at',
+  deleted_at: 'charges.deleted_at',
 } as const;
 const stockOrder = {
   id: 'charge_stocks.type_id',

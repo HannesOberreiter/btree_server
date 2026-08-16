@@ -81,6 +81,17 @@ describe('charge routes', () => {
       expect(res.body.total).toBeTypeOf('number');
     });
 
+    it.each(['type.name', 'kind', 'deleted_at'])(
+      'get 200 - orders by %s',
+      async (order) => {
+        const res = await doQueryRequest(agent, route, null, accessToken, {
+          order,
+          direction: 'desc',
+        });
+        expect(res.statusCode).toBe(200);
+      },
+    );
+
     it('filters charges by type', async () => {
       const res = await doQueryRequest(agent, route, null, accessToken, {
         filters: JSON.stringify([{ 'charges.type_id': 999_999 }]),
