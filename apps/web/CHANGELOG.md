@@ -1,5 +1,13 @@
 # Changelog
 
+## [7.5.1](https://github.com/HannesOberreiter/btree_vue/compare/btree-client-v7.5.0...btree-client-v7.5.1) (2026-08-16)
+
+
+### Bug Fixes
+
+* **tables:** align sortable columns ([1b1ce7f](https://github.com/HannesOberreiter/btree_vue/commit/1b1ce7f2d08a08c4ab38720ab369ab1cc34f07a3))
+* **tables:** honor requested sort direction ([2eb7e45](https://github.com/HannesOberreiter/btree_vue/commit/2eb7e457b2493e53a83cad33bc03b003719eca9e))
+
 ## [7.5.0](https://github.com/HannesOberreiter/btree_vue/compare/btree-client-v7.4.1...btree-client-v7.5.0) (2026-08-11)
 
 
