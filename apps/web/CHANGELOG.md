@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.6.0](https://github.com/HannesOberreiter/btree_vue/compare/btree-client-v7.5.1...btree-client-v7.6.0) (2026-08-27)
+
+
+### Features
+
+* **map:** credit bienengesundheit.at ([e394c91](https://github.com/HannesOberreiter/btree_vue/commit/e394c913acad5f0c88c5cb46a064b9335951675e))
+
 ## [7.5.1](https://github.com/HannesOberreiter/btree_vue/compare/btree-client-v7.5.0...btree-client-v7.5.1) (2026-08-16)
 
 
