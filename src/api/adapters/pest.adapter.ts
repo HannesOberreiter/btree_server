@@ -11,6 +11,7 @@ import {
   yearlyObservationsCacheKey,
 } from '../modules/observation.module.js';
 import type { ObservationInsert, Taxa } from '../modules/observation.module.js';
+import { parseBienengesundheitObservations } from './bienengesundheit.parser.js';
 
 const observationDb = KyselyServer.getInstance().db;
 
@@ -30,6 +31,10 @@ export async function fetchObservations(taxa: Taxa = 'Vespa velutina') {
     taxa === 'Vespa velutina'
       ? await fetchFrelonsAsiatiques()
       : { newObservations: 0 };
+  const bienengesundheitAt =
+    taxa === 'Vespa velutina'
+      ? await fetchBienengesundheitAt()
+      : { newObservations: 0 };
 
   /** after fetching new taxa we want to cleanup any possible cached map results */
   const redis = RedisServer.client;
@@ -42,6 +47,7 @@ export async function fetchObservations(taxa: Taxa = 'Vespa velutina') {
     taxa,
     iNaturalist: inat,
     frelonsAsiatiques,
+    bienengesundheitAt,
     artenfinderNet,
     observationOrg,
     infoFaunaCh,
@@ -50,6 +56,49 @@ export async function fetchObservations(taxa: Taxa = 'Vespa velutina') {
       ObservationOrg: cleanupObservationOrg,
     },
   };
+}
+
+export async function fetchBienengesundheitAt() {
+  const url = 'https://www.bienengesundheit.at/vespa-velutina';
+  const response = await fetch(url, {
+    headers: {
+      Accept: 'text/html',
+      'User-Agent': 'btree.at/pest-map',
+    },
+    signal: AbortSignal.timeout(20_000),
+  });
+  if (!response.ok) {
+    throw new Error(`Bienengesundheit.at returned HTTP ${response.status}`);
+  }
+
+  const records = parseBienengesundheitObservations(await response.text());
+  if (records.length === 0) {
+    throw new Error('Bienengesundheit.at returned no parseable observations');
+  }
+
+  const newIds = await filterNewObservationExternalIds(
+    observationDb,
+    records.map((record) => record.externalId),
+    'Bienengesundheit.at',
+  );
+  const observations: ObservationInsert[] = records
+    .filter((record) => newIds.has(record.externalId))
+    .map((record) => ({
+      external_id: record.externalId,
+      external_service: 'Bienengesundheit.at',
+      observed_at: record.observedAt,
+      location: record.location,
+      taxa: 'Vespa velutina',
+      data: {
+        region: record.region,
+        regionId: record.regionId,
+        reportType: record.reportType,
+        uri: url,
+      },
+    }));
+
+  await insertObservations(observationDb, observations);
+  return { newObservations: observations.length };
 }
 
 /**
