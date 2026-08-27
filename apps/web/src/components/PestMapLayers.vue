@@ -57,10 +57,16 @@ function onShowSources() {
   ];
 
   if (taxa.value === 'velutina') {
-    sources.push({
-      name: 'PatriNat',
-      url: 'https://frelonasiatique.mnhn.fr/visualisateur'
-    });
+    sources.push(
+      {
+        name: 'PatriNat',
+        url: 'https://frelonasiatique.mnhn.fr/visualisateur'
+      },
+      {
+        name: 'bienengesundheit.at',
+        url: 'https://www.bienengesundheit.at/vespa-velutina'
+      }
+    );
   }
 
   const sourcesHtml = sources
