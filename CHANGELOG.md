@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.7.0](https://github.com/HannesOberreiter/btree_server/compare/btree-server-v7.6.1...btree-server-v7.7.0) (2026-08-27)
+
+
+### Features
+
+* **pest:** import Austrian Velutina reports ([ac9c983](https://github.com/HannesOberreiter/btree_server/commit/ac9c9837c429f67133c025563ad56bfd5000e161))
+
 ## [7.6.1](https://github.com/HannesOberreiter/btree_server/compare/btree-server-v7.6.0...btree-server-v7.6.1) (2026-08-16)
 
 
