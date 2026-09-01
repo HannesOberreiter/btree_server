@@ -271,6 +271,7 @@ export async function refreshAccessToken(
     .selectAll()
     .where('token_hash', '=', tokenHash)
     .where('client_id', '=', clientId)
+    .where('resource', 'is', null)
     .where('revoked_at', 'is', null)
     .executeTakeFirst();
 

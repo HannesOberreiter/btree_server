@@ -30,6 +30,17 @@ export interface AgentKeys {
   valid_to: Generated<Date | null>;
 }
 
+export interface AgentOauthClients {
+  client_id: string;
+  client_name: string;
+  client_secret_hash: string | null;
+  created_at: Generated<Date>;
+  last_used_at: Generated<Date | null>;
+  redirect_uris: string;
+  token_endpoint_auth_method: string;
+  updated_at: Generated<Date>;
+}
+
 export interface AgentOauthRefreshTokens {
   bee_id: number;
   client_id: string;
@@ -37,8 +48,10 @@ export interface AgentOauthRefreshTokens {
   expires_at: Date;
   id: Generated<number>;
   last_used_at: Generated<Date | null>;
+  resource: Generated<string | null>;
   revoked_at: Generated<Date | null>;
   scope: Generated<string | null>;
+  token_family: Generated<string | null>;
   token_hash: string;
   updated_at: Generated<Date>;
   user_id: number;
@@ -1425,6 +1438,7 @@ export interface WizbeeTokens {
 
 export interface DB {
   agent_keys: AgentKeys;
+  agent_oauth_clients: AgentOauthClients;
   agent_oauth_refresh_tokens: AgentOauthRefreshTokens;
   apiaries: Apiaries;
   bees: Bees;

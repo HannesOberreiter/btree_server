@@ -228,6 +228,44 @@ const oauth = {
   ),
 };
 
+function hostname(value: string | undefined) {
+  if (!value) return undefined;
+  try {
+    return new URL(value).hostname;
+  } catch {
+    return undefined;
+  }
+}
+
+const mcpOrigin = new URL(url!).origin;
+const mcpResourceUrl = `${mcpOrigin}/api/v1/mcp`;
+const mcpAccessTokenSecret = process.env.MCP_ACCESS_TOKEN_SECRET?.trim();
+if (!mcpAccessTokenSecret) {
+  throw new Error('MCP_ACCESS_TOKEN_SECRET must be configured');
+}
+const mcp = {
+  issuer: mcpOrigin,
+  resourceUrl: mcpResourceUrl,
+  scope: 'mcp',
+  accessTokenSecret: mcpAccessTokenSecret,
+  accessTokenExpiresIn: oauth.accessTokenExpiresIn,
+  refreshTokenDays: oauth.refreshTokenDays,
+  allowedHosts: [
+    hostname(mcpOrigin),
+    ...(process.env.MCP_ALLOWED_HOSTS ?? '')
+      .split(',')
+      .map((value) => value.trim()),
+  ].filter((value): value is string => Boolean(value)),
+  allowedOrigins: [
+    hostname(mcpOrigin),
+    hostname(frontend),
+    ...(authorized ?? '').split(',').map((value) => hostname(value.trim())),
+    ...(process.env.MCP_ALLOWED_ORIGINS ?? '')
+      .split(',')
+      .map((value) => hostname(value.trim())),
+  ].filter((value): value is string => Boolean(value)),
+};
+
 const serverLocations = new Set(['eu', 'us']);
 function isServerLocationValid(server: string) {
   return serverLocations.has(server);
@@ -254,6 +292,7 @@ export {
   databaseConfig,
   knexConfig,
   mailConfig,
+  mcp,
   mistralAI,
   mollieApiKey,
   oauth,
