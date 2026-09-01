@@ -191,14 +191,15 @@ function normalizeScope(scope: string | undefined) {
   return mcp.scope;
 }
 
-function requireMcpResource(resource: string | undefined) {
-  if (resource !== mcp.resourceUrl) {
+function resolveMcpResource(resource: string | undefined) {
+  const resolved = resource ?? mcp.resourceUrl;
+  if (resolved !== mcp.resourceUrl) {
     throw new McpOAuthError(
       'invalid_target',
       'OAuth resource must match the MCP server',
     );
   }
-  return resource;
+  return resolved;
 }
 
 function configuredClient(): McpOAuthClient | undefined {
@@ -414,7 +415,10 @@ export async function listMcpConnections(
   for (const row of rows) {
     if (!row.token_family) continue;
     const existing = connections.get(row.token_family);
-    const active = !row.revoked_at && new Date(row.expires_at).getTime() >= now;
+    const createdAt = new Date(row.created_at);
+    const lastUsedAt = row.last_used_at ? new Date(row.last_used_at) : null;
+    const expiresAt = new Date(row.expires_at);
+    const active = !row.revoked_at && expiresAt.getTime() >= now;
     if (!existing) {
       connections.set(row.token_family, {
         token_family: row.token_family,
@@ -422,22 +426,22 @@ export async function listMcpConnections(
         client_name:
           row.registered_client_name ??
           (row.client_id === oauth.clientId ? 'b.tree ChatGPT' : row.client_id),
-        created_at: row.created_at,
-        last_used_at: row.last_used_at,
-        expires_at: row.expires_at,
+        created_at: createdAt,
+        last_used_at: lastUsedAt,
+        expires_at: expiresAt,
         active,
       });
       continue;
     }
     if (
-      row.last_used_at &&
-      (!existing.last_used_at || row.last_used_at > existing.last_used_at)
+      lastUsedAt &&
+      (!existing.last_used_at || lastUsedAt > existing.last_used_at)
     ) {
-      existing.last_used_at = row.last_used_at;
+      existing.last_used_at = lastUsedAt;
     }
     if (active) {
       existing.active = true;
-      existing.expires_at = row.expires_at;
+      existing.expires_at = expiresAt;
     }
   }
 
@@ -542,7 +546,7 @@ export async function getMcpAuthorizationRequest(
     redirectUri,
     scope: normalizeScope(request.scope),
     state: request.state,
-    resource: requireMcpResource(request.resource),
+    resource: resolveMcpResource(request.resource),
     codeChallenge: request.code_challenge,
   };
 }
@@ -680,7 +684,7 @@ export async function exchangeMcpAuthorizationCode(
   }
 
   const client = await authenticateClient(db, credentials);
-  requireMcpResource(request.resource);
+  const resource = resolveMcpResource(request.resource);
   const raw = await RedisServer.client.getDel(
     authorizationCodeKey(request.code),
   );
@@ -698,7 +702,7 @@ export async function exchangeMcpAuthorizationCode(
   if (
     grant.clientId !== client.clientId ||
     grant.redirectUri !== redirectUri ||
-    grant.resource !== request.resource ||
+    grant.resource !== resource ||
     challenge !== grant.codeChallenge
   ) {
     throw new McpOAuthError('invalid_grant', 'Invalid authorization code');
@@ -737,7 +741,7 @@ export async function refreshMcpAccessToken(
   }
 
   const client = await authenticateClient(db, credentials);
-  const resource = requireMcpResource(request.resource);
+  const resource = resolveMcpResource(request.resource);
   const stored = await db
     .selectFrom('agent_oauth_refresh_tokens')
     .selectAll()

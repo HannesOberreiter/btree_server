@@ -193,18 +193,95 @@ describe('remote MCP routes', () => {
     });
   });
 
+  it('defaults an omitted OAuth resource to the MCP endpoint', async () => {
+    const authorizeQuery = new URLSearchParams({
+      response_type: 'code',
+      client_id: clientId,
+      redirect_uri: redirectUri,
+      scope: 'mcp',
+      state: 'legacy-client-state',
+      code_challenge: codeChallenge,
+      code_challenge_method: 'S256',
+    });
+    const authorization = await agent.request(
+      'GET',
+      `/api/v1/mcp/oauth/authorize?${authorizeQuery.toString()}`,
+      undefined,
+      undefined,
+      'manual',
+    );
+    expect(authorization.statusCode).toBe(200);
+    const consentToken = String(authorization.body).match(
+      /name="consent_token" value="([A-Za-z0-9_-]+)"/,
+    )?.[1];
+    expect(consentToken).toBeTruthy();
+
+    const consent = await agent.request(
+      'POST',
+      '/api/v1/mcp/oauth/authorize',
+      { consent_token: consentToken, decision: 'approve' },
+      undefined,
+      'manual',
+    );
+    expect(consent.statusCode).toBe(302);
+    const code = new URL(consent.headers.location).searchParams.get('code');
+    expect(code).toBeTruthy();
+
+    const token = await jsonRequest('POST', '/api/v1/mcp/oauth/token', {
+      grant_type: 'authorization_code',
+      client_id: clientId,
+      code,
+      redirect_uri: redirectUri,
+      code_verifier: codeVerifier,
+    });
+    expect(token.status).toBe(200);
+    const claims = JSON.parse(
+      Buffer.from(
+        String(objectBody(token).access_token).split('.')[1],
+        'base64url',
+      ).toString('utf8'),
+    ) as Record<string, unknown>;
+    expect(claims.aud).toBe(mcpResource);
+  });
+
+  it('rejects a mismatched OAuth resource', async () => {
+    const authorizeQuery = new URLSearchParams({
+      response_type: 'code',
+      client_id: clientId,
+      redirect_uri: redirectUri,
+      scope: 'mcp',
+      state: 'wrong-resource-state',
+      resource: 'https://example.com/api/v1/mcp',
+      code_challenge: codeChallenge,
+      code_challenge_method: 'S256',
+    });
+    const authorization = await agent.request(
+      'GET',
+      `/api/v1/mcp/oauth/authorize?${authorizeQuery.toString()}`,
+      undefined,
+      undefined,
+      'manual',
+    );
+    expect(authorization.statusCode).toBe(302);
+    const callback = new URL(authorization.headers.location);
+    expect(callback.searchParams.get('error')).toBe('invalid_target');
+    expect(callback.searchParams.get('state')).toBe('wrong-resource-state');
+  });
+
   it('lists active MCP connections only for the signed-in user', async () => {
     const unauthorized = await jsonRequest('GET', '/api/v1/mcp/connections');
     expect(unauthorized.status).toBe(401);
 
     const response = await agent.request('GET', '/api/v1/mcp/connections');
     expect(response.statusCode).toBe(200);
-    expect(response.body).toEqual([
-      expect.objectContaining({
-        client_id: clientId,
-        client_name: 'b.tree MCP E2E',
-      }),
-    ]);
+    expect(response.body).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          client_id: clientId,
+          client_name: 'b.tree MCP E2E',
+        }),
+      ]),
+    );
   });
 
   it('challenges unauthenticated MCP requests with resource metadata', async () => {

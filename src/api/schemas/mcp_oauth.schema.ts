@@ -22,7 +22,7 @@ export const mcpOAuthAuthorizeQuerySchema = z
     response_type: z.literal('code'),
     scope: z.string().optional(),
     state: z.string().min(1).max(1024),
-    resource: z.string().min(1).max(2048),
+    resource: z.string().min(1).max(2048).optional(),
     code_challenge: z.string().min(43).max(128),
     code_challenge_method: z.literal('S256'),
   })
