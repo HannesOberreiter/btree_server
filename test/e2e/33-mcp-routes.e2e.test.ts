@@ -193,6 +193,55 @@ describe('remote MCP routes', () => {
     });
   });
 
+  it('allows opaque browser origins to enter OAuth authorization', async () => {
+    const authorizeQuery = new URLSearchParams({
+      response_type: 'code',
+      client_id: clientId,
+      redirect_uri: redirectUri,
+      scope: 'mcp',
+      state: 'opaque-origin-state',
+      code_challenge: codeChallenge,
+      code_challenge_method: 'S256',
+    });
+    const authorization = await jsonRequest(
+      'GET',
+      `/api/v1/mcp/oauth/authorize?${authorizeQuery.toString()}`,
+      undefined,
+      { Origin: 'null' },
+    );
+    expect(authorization.status).toBe(302);
+    expect(authorization.body).not.toEqual(
+      expect.objectContaining({
+        error: expect.objectContaining({
+          message: 'Invalid Origin header: null',
+        }),
+      }),
+    );
+  });
+
+  it('rejects opaque origins on the MCP transport', async () => {
+    const response = await jsonRequest(
+      'POST',
+      '/api/v1/mcp',
+      {
+        jsonrpc: '2.0',
+        id: 1,
+        method: 'initialize',
+        params: modernParams(),
+      },
+      { Origin: 'null' },
+    );
+    expect(response.status).toBe(403);
+    expect(response.body).toEqual({
+      jsonrpc: '2.0',
+      error: {
+        code: -32000,
+        message: 'Invalid Origin header: null',
+      },
+      id: null,
+    });
+  });
+
   it('defaults an omitted OAuth resource to the MCP endpoint', async () => {
     const authorizeQuery = new URLSearchParams({
       response_type: 'code',

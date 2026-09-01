@@ -83,7 +83,6 @@ export default async function mcpRoutes(instance: FastifyInstance) {
   await instance.register(fastifyFormbody);
 
   instance.addHook('onRequest', hostHeaderValidation(mcp.allowedHosts));
-  instance.addHook('onRequest', originValidation(mcp.allowedOrigins));
 
   const mcpRateLimit = instance.rateLimit({
     max: 120,
@@ -189,7 +188,10 @@ export default async function mcpRoutes(instance: FastifyInstance) {
 
   instance.all(
     '/api/v1/mcp',
-    { onRequest: mcpRateLimit, bodyLimit: 1024 * 1024 },
+    {
+      onRequest: [originValidation(mcp.allowedOrigins), mcpRateLimit],
+      bodyLimit: 1024 * 1024,
+    },
     async (request, reply) => {
       if (!(await authenticateMcpRequest(request, reply))) return;
       reply.hijack();
