@@ -7,6 +7,7 @@ import FormMainUser from '../components/FormMainUser.vue';
 import GlobalLoading from '../components/GlobalLoading.vue';
 import ListAgentKeys from '../components/ListAgentKeys.vue';
 import ListFederatedCredentials from '../components/ListFederatedCredentials.vue';
+import ListMcpConnections from '../components/ListMcpConnections.vue';
 import ListSessions from '../components/ListSessions.vue';
 import { useAuthUserStore } from '../stores/auth';
 
@@ -57,6 +58,7 @@ watch(activeTab, newTab => {
       <q-tab name="session" :label="$t('session', 2)" />
       <q-tab v-if="userStore.isAdmin" name="api" :label="$t('api')" />
       <q-tab name="agent-keys" :label="$t('profile.agentKeysTab')" />
+      <q-tab name="mcp" :label="$t('profile.mcpTab')" />
     </q-tabs>
 
     <q-separator />
@@ -142,6 +144,22 @@ watch(activeTab, newTab => {
             </div>
             <suspense>
               <ListAgentKeys />
+              <template #fallback>
+                <GlobalLoading />
+              </template>
+            </suspense>
+          </div>
+        </div>
+      </q-tab-panel>
+
+      <q-tab-panel name="mcp">
+        <div class="row justify-center">
+          <div class="col-12 col-sm-10 col-md-8">
+            <div class="text-body2 q-pb-sm text-center">
+              {{ $t('profile.mcpTitle') }}
+            </div>
+            <suspense>
+              <ListMcpConnections />
               <template #fallback>
                 <GlobalLoading />
               </template>

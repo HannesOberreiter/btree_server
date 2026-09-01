@@ -5,6 +5,19 @@ test.describe('user - Setting Profile', () => {
     await page.goto('setting/profile');
   });
 
+  test('shows MCP setup and connection management', async ({
+    page,
+    dataCy
+  }) => {
+    const connectionsResponse = page.waitForResponse(response =>
+      response.url().endsWith('/api/v1/mcp/connections')
+    );
+    await page.goto('setting/profile/mcp');
+    expect((await connectionsResponse).status()).toBe(200);
+    await expect(dataCy('mcp-settings')).toBeVisible();
+    await expect(dataCy('mcp-server-url')).toHaveValue(/\/v1\/mcp$/);
+  });
+
   test('save current profile values', async ({ page, dataCy }) => {
     await expect(dataCy('form-user')).toBeAttached();
 
