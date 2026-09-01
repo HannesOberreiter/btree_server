@@ -159,13 +159,6 @@ export default async function mcpRoutes(instance: FastifyInstance) {
     '/api/v1/mcp/oauth/authorize',
     {
       attachValidation: true,
-      helmet: {
-        contentSecurityPolicy: {
-          directives: {
-            'form-action': ["'self'", mcp.issuer],
-          },
-        },
-      },
       schema: { querystring: mcpOAuthAuthorizeQuerySchema },
     },
     McpOAuthController.authorize,

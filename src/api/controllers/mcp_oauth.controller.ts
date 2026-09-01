@@ -3,6 +3,7 @@ import { Buffer } from 'node:buffer';
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import httpErrors from 'http-errors';
 
+import { mcp } from '../../config/environment.config.js';
 import { KyselyServer } from '../../servers/kysely.server.js';
 import {
   createMcpConsentRequest,
@@ -57,6 +58,16 @@ function consentPage(
   </main>
 </body>
 </html>`;
+}
+
+function consentPageContentSecurityPolicy(redirectUri: string) {
+  const redirectOrigin = new URL(redirectUri).origin;
+  return [
+    "default-src 'none'",
+    "base-uri 'none'",
+    `form-action ${mcp.issuer} ${redirectOrigin}`,
+    "frame-ancestors 'self'",
+  ].join(';');
 }
 
 function requireValidOAuthRequest(request: FastifyRequest) {
@@ -200,6 +211,10 @@ export default class McpOAuthController {
         sessionUser,
       );
       return reply
+        .header(
+          'Content-Security-Policy',
+          consentPageContentSecurityPolicy(consent.pending.redirectUri),
+        )
         .type('text/html; charset=utf-8')
         .send(
           consentPage(
