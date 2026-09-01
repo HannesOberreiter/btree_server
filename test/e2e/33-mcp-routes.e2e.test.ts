@@ -260,6 +260,9 @@ describe('remote MCP routes', () => {
       'manual',
     );
     expect(authorization.statusCode).toBe(200);
+    expect(authorization.headers['content-security-policy']).toContain(
+      `form-action 'self' ${new URL(mcpResource).origin}`,
+    );
     const consentToken = String(authorization.body).match(
       /name="consent_token" value="([A-Za-z0-9_-]+)"/,
     )?.[1];
