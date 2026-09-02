@@ -663,6 +663,58 @@ describe('remote MCP routes', () => {
     );
   });
 
+  it('lists guided beekeeping prompts', async () => {
+    const response = await jsonRequest(
+      'POST',
+      '/api/v1/mcp',
+      {
+        jsonrpc: '2.0',
+        id: 3,
+        method: 'prompts/list',
+        params: {},
+      },
+      {
+        Authorization: `Bearer ${accessToken}`,
+        'MCP-Protocol-Version': '2025-11-25',
+      },
+    );
+    expect(response.status).toBe(200);
+    const result = objectBody(response).result as Record<string, unknown>;
+    const prompts = result.prompts as Array<Record<string, unknown>>;
+    expect(prompts.map((prompt) => prompt.name)).toEqual([
+      'apiary-overview',
+      'prepare-inspection',
+      'seasonal-review',
+    ]);
+  });
+
+  it('renders a guided inspection prompt', async () => {
+    const response = await jsonRequest(
+      'POST',
+      '/api/v1/mcp',
+      {
+        jsonrpc: '2.0',
+        id: 4,
+        method: 'prompts/get',
+        params: {
+          name: 'prepare-inspection',
+          arguments: { hive: '1608', date: '2026-09-01' },
+        },
+      },
+      {
+        Authorization: `Bearer ${accessToken}`,
+        'MCP-Protocol-Version': '2025-11-25',
+      },
+    );
+    expect(response.status).toBe(200);
+    const result = objectBody(response).result as Record<string, unknown>;
+    const messages = result.messages as Array<Record<string, unknown>>;
+    expect(messages).toHaveLength(1);
+    expect(JSON.stringify(messages[0])).toContain('1608');
+    expect(JSON.stringify(messages[0])).toContain('2026-09-01');
+    expect(JSON.stringify(messages[0])).toContain('listApiariesHives');
+  });
+
   it('executes an existing tool through MCP', async () => {
     const response = await jsonRequest(
       'POST',
@@ -709,6 +761,9 @@ describe('remote MCP routes', () => {
     expect(response.status).toBe(200);
     const result = objectBody(response).result as Record<string, unknown>;
     expect(result.protocolVersion).toBe('2025-11-25');
+    expect(result.instructions).toContain('professional beekeeping assistant');
+    expect(result.instructions).toContain('Never assume that hive names');
+    expect(result.instructions).toContain('Respond in the same language');
   });
 
   it('keeps MCP refresh tokens out of the legacy OAuth flow', async () => {
