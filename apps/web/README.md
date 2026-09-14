@@ -11,7 +11,8 @@ Written in TypeScript with Vue 3 and Quasar. The b.tree application is for manag
 - [Private Repo - b.tree Frontend](https://github.com/HannesOberreiter/btree_vue)
   - Live: <https://app.btree.at>
   - Beta: <https://beta.btree.at>
-- [Repo - b.tree Database](https://github.com/HannesOberreiter/btree_database)
+- [Repo - b.tree Documentation](https://github.com/HannesOberreiter/btree_sites)
+- [Repo - b.tree Database Infrastructure](https://github.com/HannesOberreiter/btree_database)
 - [Repo - b.tree iOS](https://github.com/HannesOberreiter/btree_ios)
 
 ## Install the dependencies
@@ -20,7 +21,7 @@ Written in TypeScript with Vue 3 and Quasar. The b.tree application is for manag
 pnpm install
 ```
 
-`pnpm postinstall` is implement because of a TypeScript bug with FullCalendar. It is run automatically, you may need to restart your IDE after running `pnpm` or updating FullCalendar.
+`pnpm postinstall` runs `quasar prepare` automatically to generate Quasar's TypeScript configuration and declarations under `.quasar/`. Run `pnpm exec quasar prepare` if these generated files are missing.
 
 ### Start the app in development mode (hot-code reloading, error reporting, etc.)
 
@@ -32,19 +33,9 @@ Quasar app-vite v3 provides the `@/` alias for `src/`. Use `@/components/...`, `
 
 ### API proxy development
 
-The `dev` server is running with a proxy to the backend ([quasar.config.ts](quasar.config.ts)), this solves the CORS problem on development. You may need to change `BACKEND_URL` / `BACKEND_URL_US` in `.env` if you have the backend running on a different port.
+The development server proxies `/api` requests to the backend through [quasar.config.ts](quasar.config.ts), avoiding cross-origin browser requests. Set `BACKEND_URL` in `.env` to an absolute URL ending in `/api`, such as `http://localhost:3000/api`, using the actual backend port. The client derives `/api` from this URL; the proxy strips that prefix before forwarding to the configured target, which already includes `/api`.
 
-```text
- devServer: {
-      proxy: {
-        '/api': {
-          target: 'http://localhost:8101',
-          changeOrigin: true,
-          secure: false,
-        },
-      },
-    },
-```
+The US backend environment exposure and `/us/api` proxy are currently disabled. If enabling US support, update both together.
 
 ### PWA service worker development
 
@@ -99,6 +90,8 @@ sudo certbot --nginx
 
 #### Deployment & Staging
 
+Work on `beta` and promote changes to `main` through pull requests from `beta`. The existing automated release-please PRs are the exception; do not commit directly or merge locally into `main`.
+
 Both environments upload PWA builds to Bunny S3 Storage in Frankfurt and purge their existing Bunny CDN pull zones. The APIs remain hosted separately.
 
 - Beta: pushes to `beta` deploy to storage zone `beta-btree-at`, served at <https://beta.btree.at>, using `api-beta.btree.at`. The workflow uses `BUNNY_STORAGE_PASSWORD` and pull zone `1496328`.
@@ -110,11 +103,11 @@ Bunny infrastructure, SPA fallback, production edge caching rules, and the stage
 
 #### .env
 
-The example [example.env](example.env) shows the needed environment variables. In production these can be set via `.env` or CI environment variables. Defined types can be found in [env.d.ts](env.d.ts). In development we use `/api` as backend url, see **API Proxy** section.
+The template [example.env](example.env) lists the environment variables. Quasar loads `.env`, and values can also be supplied through the process environment in CI. [quasar.config.ts](quasar.config.ts) selects which values are exposed to the browser. In development, configure an absolute `BACKEND_URL` ending in `/api`; browser requests use the same-origin proxy path described under **API proxy development**.
 
 #### Version Number
 
-Changes and version number are documented in [src/assets/news.json](src/assets/news.json). This news are somewhat only for the end-user. This is a legacy thing and may be replaced with GitHub commints in future.
+Release-please manages the release version in [.release-please-manifest.json](.release-please-manifest.json) and release notes in [CHANGELOG.md](CHANGELOG.md), using [release-please-config.json](release-please-config.json).
 
 ### PWA service worker
 

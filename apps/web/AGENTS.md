@@ -1,200 +1,44 @@
-# AGENTS.md
+<!-- bmad:context -->
+<!-- Verified 2026-09-14 against 44299599e3f7249556cf9edf9049ee41619f2164. Managed by bmad-project-context; refreshes reconcile existing instructions before replacing this block. -->
 
-Guidance for AI coding agents in this repo.
+## b.tree
 
-## Project Overview
+b.tree is a beekeeping management application built with Vue and Quasar.
+It ships as a PWA, with separate Android TWA packaging.
+Deployment and Android packaging documentation lives in `README.md`.
 
-**b.tree** = beekeeping management web app. Built with [Quasar](https://quasar.dev/) (Vue 3). Ships as **PWA** (Progressive Web App) + **TWA** (Trusted Web Activity for Android). Connects to backend server ([btree_server](https://github.com/HannesOberreiter/btree_server)).
+## Policy
 
-Supports EU + US backend regions, four languages (German, English, French, Italian), hive management, apiary mapping, calendars, scales, treatments, harvests, more.
+- Work with `beta` checked out. Update `main` only through pull requests from `beta`, except for the existing automated release-please PRs. Never commit directly or merge locally into `main`.
+- Run `pnpm lint:check` and `pnpm typecheck` before committing. Use `pnpm lint` for formatting and lint fixes, and review all automatic changes manually.
+- Before changing the manifest or service-worker behavior, agree on TWA compatibility checks with the maintainer. A successful PWA build alone does not validate Android compatibility.
 
----
+## Where things are
 
-## Repository Structure
+- For cross-repository changes, coordinate with `HannesOberreiter/btree_server` for the backend, `HannesOberreiter/btree_sites` for documentation, and `HannesOberreiter/btree_database` for database infrastructure.
+- For backend requests, start with `src/composables/useApi.ts` and `src/composables/useBackend.ts`; query integration lives in `src/composables/useQuery.ts`.
+- For API contract changes, use `src/api/types.ts` and regenerate `src/api/generated/schema.d.ts` with `pnpm api:update`; do not hand-edit the generated schema.
+- For authenticated E2E tests, use `test/playwright/support/user-helpers.ts`; authentication runs per test, not through a shared setup project.
+- For Android packaging changes, read the TWA section of `README.md` and check `public/.well-known/assetlinks.json`.
 
-```txt
-btree_vue/
-├── src/                    # Main application source
-│   ├── boot/               # Quasar boot files (i18n, analytics, vue-query, etc.)
-│   ├── components/         # Reusable Vue components
-│   ├── composables/        # Vue composables (reusable logic)
-│   ├── helpers/            # Utility functions
-│   ├── i18n/               # Translations: de, en, fr, it
-│   ├── layouts/            # Page layout components
-│   ├── pages/              # Route-level page components
-│   ├── router/             # Vue Router configuration
-│   ├── services/           # API/service layer
-│   ├── stores/             # Pinia stores
-│   ├── constants.ts
-│   └── types.ts
-├── src-pwa/                # PWA-specific files (register SW, manifest, SW package)
-├── env.d.ts                # Root import.meta.env typings
-├── test/playwright/        # Playwright E2E tests
-│   ├── e2e/
-│   │   ├── 01-visitor/     # Tests for unauthenticated users
-│   │   └── 02-user/        # Tests for authenticated users
-│   ├── fixtures/
-│   └── support/
-├── public/                 # Static assets
-├── quasar.config.ts        # Quasar + Vite build/dev configuration
-├── oxfmt.config.ts         # oxfmt formatting config
-├── oxlint.config.ts        # oxlint lint config
-├── playwright.config.ts    # Playwright E2E test configuration
-├── example.env             # Template for local .env
-└── tsconfig.json           # TypeScript config (extends .quasar/tsconfig.json)
-```
+## Running and verifying
 
----
+- Use the declared Node range `^28 || ^26 || ^24 || ^22` and pinned pnpm `11.5.3` from `package.json`; CI uses Node 22.
+- For local setup, copy `example.env` to `.env`, but set `BACKEND_URL` to an absolute backend URL ending in `/api`, using the actual backend port.
+- Make the backend available before exercising API flows or E2E tests. For local backend setup, follow the README in `HannesOberreiter/btree_server`.
+- Use `pnpm test:e2e`, not `pnpm test`, which exits successfully without testing. Start the frontend and backend yourself; Playwright starts neither.
+- For E2E runs, export matching `BACKEND_URL`, `PLAYWRIGHT_BACKEND_URL`, and `PLAYWRIGHT_API_ORIGIN` values in the shell; Playwright does not load `.env`. `BACKEND_URL` includes `/api`; `PLAYWRIGHT_BACKEND_URL` is the backend origin. Keep the frontend on `localhost` for the authenticated fixture's cookie; the default frontend URL is `http://localhost:9000`.
+- When PWA dependencies are missing, run `pnpm --dir src-pwa install`; the root install does not include that separate package.
+- For API regeneration against a different backend, set `BTREE_OPENAPI_URL`; the generator defaults to `http://localhost:8101/api/v1/openapi.json`.
 
-## Development Setup
+## Conventions that differ from defaults
 
-### Prerequisites
+- Use `useApiFetch` for ordinary backend requests so credentials, loading, and error handling remain centralized. Keep backend URL selection in `useBackend`; never hard-code backend URLs in components.
+- Treat US backend support as disabled in the current configuration. If enabling it, update backend environment exposure and the matching development proxy together.
+- Prefer composables for new shared logic and state; keep existing Pinia-managed authentication and company state integrated with their stores.
+- Add UI translation keys to all four locales under `src/i18n/`: `de`, `en`, `fr`, and `it`.
+- Prefer `@/` imports for `src/` and `~@/assets/...` for Vue template asset URLs.
+- Use `#q-app` wrappers such as `defineBoot` and `defineRouter`. Use `import.meta.env.QUASAR_*` for Quasar constants rather than `process.env`.
+- When adding external requests, images, scripts, or frames, check the matching CSP directive in `quasar.config.ts`; CSP enforcement is disabled during development.
 
-- **backend server must be running** locally for API calls.
-
-### Environment Variables
-
-Copy `example.env` to `.env`, fill values:
-
-```env
-DROPBOX_CLIENT_ID=
-OPENWEATHER_APP_ID=
-BACKEND_URL=http://localhost:3000   # Local backend URL (EU)
-BACKEND_URL_US=http://localhost:3000 # Local backend URL (US, can be same)
-MATOMO_HOST=https://your-matomo
-MATOMO_SITE_ID=
-PAYPAL_CLIENT_ID=
-```
-
-> If `.env` exists, Quasar loads it automatically. In CI (no `.env`), env vars read from system.
-
-### Backend Server (Required for Local Dev)
-
-Dev server proxies all API calls to backend — **backend must run** before frontend dev server.
-
-- **Remote repo:** https://github.com/HannesOberreiter/btree_server
-- **Expected local path:** `../btree_server` (sibling directory)
-
-Start backend per its README, then start frontend.
-
-### Proxy Rewrites
-
-Quasar dev server (`quasar.config.ts`) rewrites API requests:
-
-| Frontend path | Proxied to       | Rewrite                   |
-| ------------- | ---------------- | ------------------------- |
-| `/api/*`      | `BACKEND_URL`    | `/api` prefix stripped    |
-| `/us/api/*`   | `BACKEND_URL_US` | `/us/api` prefix stripped |
-
-Both proxies use `changeOrigin: true` + `secure: false`. Request `/api/hives` in browser hits `BACKEND_URL/hives` on backend.
-
-### Install & Run
-
-```bash
-pnpm install
-pnpm dev        # Dev server at http://localhost:9000 (default Quasar port)
-```
-
----
-
-## Common Commands
-
-| Command            | Description                                          |
-| ------------------ | ---------------------------------------------------- |
-| `pnpm dev`         | Start dev server with HMR (requires backend running) |
-| `pnpm build`       | Build SPA for production                             |
-| `pnpm build:pwa`   | Build PWA/TWA for production                         |
-| `pnpm lint`        | Format with oxfmt and auto-fix with oxlint           |
-| `pnpm lint:check`  | Check oxfmt formatting and oxlint without writing    |
-| `pnpm typecheck`   | Run Vue/TypeScript checks                            |
-| `pnpm test:e2e`    | Run all Playwright E2E tests                         |
-| `pnpm test:e2e:ui` | Run E2E tests with interactive Playwright UI         |
-| `pnpm test:e2e:ci` | Run E2E tests in CI mode                             |
-
----
-
-## Code Style & Conventions
-
-Uses **oxfmt** for formatting and **oxlint** for linting.
-
-**Always run `pnpm lint:check` and `pnpm typecheck` before committing.** Use `pnpm lint` to apply formatting and safe lint fixes; review auto-fixes manually.
-
-### Import Path Aliases
-
-Quasar app-vite v3 injects `@/` for `src/`. Prefer `@/` imports over removed legacy aliases:
-
-```ts
-import MyComponent from '@/components/MyComponent.vue';
-import { useMyStore } from '@/stores/myStore';
-import { helper } from '@/helpers/helper';
-```
-
-Use `~@/assets/...` for asset URLs in Vue templates.
-
----
-
-## Testing
-
-### E2E Tests (Playwright)
-
-- **Test directory:** `test/playwright/e2e/`
-- **Base URL:** `http://localhost:9000` (dev server must run)
-- **Backend:** required — tests make real API calls
-- **Workers:** 1 (sequential, not parallel)
-- **Retries:** 1 on failure
-- **Auth setup:** `test/playwright/e2e/auth.setup.ts` — runs first, stores auth session in `test/playwright/.auth/`
-
-Test categories:
-
-- `01-visitor/` — unauthenticated flow tests
-- `02-user/` — authenticated user flow tests (depends on auth setup)
-
-```bash
-# Run all tests (dev server + backend must be running):
-pnpm test:e2e
-
-# Debug interactively:
-pnpm test:e2e:ui
-```
-
-Failure screenshots + traces: `test/playwright/test-results/`. HTML reports: `test/playwright/report/`.
-
----
-
-## PWA / TWA Notes
-
-- **PWA build:** `pnpm build:pwa` — outputs to `dist/pwa/`
-- **Service worker:** Workbox `GenerateSW`; `skipWaiting` + `clientsClaim` enabled (updates activate immediately)
-- **TWA:** PWA build generates Android Trusted Web Activity. Do not change manifest/service worker behaviour without TWA compatibility check.
-- **Manifest:** `src-pwa/manifest.json`
-- **PWA deps:** isolated in `src-pwa/package.json`; install with `pnpm --dir src-pwa install` when needed.
-
----
-
-## Key Dependencies
-
-| Package               | Purpose                               |
-| --------------------- | ------------------------------------- |
-| Quasar 2.x            | UI framework + PWA/TWA support        |
-| Vue 3                 | Frontend framework (Composition API)  |
-| Pinia                 | State management                      |
-| TanStack Query        | Server state / data fetching          |
-| Vue Router 5          | Client-side routing (history mode)    |
-| Vue I18n 11           | Internationalisation (de, en, fr, it) |
-| Vuelidate             | Form validation                       |
-| FullCalendar 6        | Event calendar                        |
-| Leaflet + Vue-Leaflet | Interactive maps                      |
-| ECharts               | Data visualisation / charts           |
-| Day.js                | Date/time handling                    |
-| Axios                 | HTTP client for API calls             |
-
----
-
-## Architecture Notes
-
-- **API layer:** All API requests via `src/services/` or composables wrapping them. Dev transparently proxies to backend. Never hard-code backend URLs in components.
-- **Stores:** Pinia stores in `src/stores/` manage global state. Prefer composables for local/shared logic without global state. Prefer future composables over pinia store.
-- **Translations:** Add UI text keys to all four locales under `src/i18n/` (`de`, `en`, `fr`, `it`).
-- **Two regions:** App supports EU (`/api`) + US (`/us/api`) backends. Region-aware API calls route through correct proxy prefix.
-- **Content Security Policy:** Managed via `vite-plugin-csp-guard` in `quasar.config.ts`. Allowed external services include `*.btree.at`, PayPal, Dropbox, OpenWeather, iNaturalist, OpenStreetMap, ArcGIS, Meteoblue.
-- **Quasar app-vite v3:** use `#q-app` wrappers like `defineBoot`/`defineRouter`; use `import.meta.env.QUASAR_*` for Quasar constants instead of `process.env`.
+<!-- /bmad:context -->
