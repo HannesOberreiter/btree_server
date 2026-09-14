@@ -1,5 +1,13 @@
 # Changelog
 
+## [7.7.0](https://github.com/HannesOberreiter/btree_vue/compare/btree-client-v7.6.0...btree-client-v7.7.0) (2026-09-14)
+
+
+### Features
+
+* **mcp:** add connection settings ([4c57b84](https://github.com/HannesOberreiter/btree_vue/commit/4c57b8448f4b51da18f77562d4be2a48a16e9b17))
+* promote beta and Bunny production deployment ([#313](https://github.com/HannesOberreiter/btree_vue/issues/313)) ([473745b](https://github.com/HannesOberreiter/btree_vue/commit/473745b28ccff3c8d2fcc0abd432d73d9ec86f6b))
+
 ## [7.6.0](https://github.com/HannesOberreiter/btree_vue/compare/btree-client-v7.5.1...btree-client-v7.6.0) (2026-08-27)
 
 
