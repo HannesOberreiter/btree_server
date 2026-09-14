@@ -60,7 +60,10 @@ function validLastUrl(): string | undefined {
       return undefined;
     }
 
-    const allowedBackendOAuthPaths = ['/api/v1/chatgpt/oauth/authorize'];
+    const allowedBackendOAuthPaths = [
+      '/api/v1/chatgpt/oauth/authorize',
+      '/api/v1/mcp/oauth/authorize'
+    ];
     if (
       parsed.origin !== window.location.origin &&
       !allowedBackendOAuthPaths.includes(parsed.pathname)
