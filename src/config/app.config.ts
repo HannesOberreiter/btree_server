@@ -19,6 +19,7 @@ import queryString from 'query-string';
 
 import { checkMySQLError } from '../api/adapters/mysql_error.adapter.js';
 import routes from '../api/routes/index.js';
+import mcpRoutes from '../api/routes/mcp.route.js';
 import {
   authorized,
   env,
@@ -91,9 +92,16 @@ export class Application {
      * @description Enable CORS - Cross Origin Resource Sharing
      */
     this.app.addHook('onRequest', (req, reply, done) => {
-      // Set undefined CORS header
+      const path = req.url.split('?', 1)[0];
+      const isMcp =
+        path === '/api/v1/mcp' ||
+        path.startsWith('/api/v1/mcp/oauth/') ||
+        path.startsWith('/.well-known/oauth-');
+
+      // Set undefined CORS header for browser-facing application routes.
+      // MCP clients commonly omit Origin; keep it absent for MCP Origin checks.
       // https://github.com/expressjs/cors/issues/262
-      if (!req.headers.origin) {
+      if (!req.headers.origin && !isMcp) {
         if (req.headers.referer) {
           try {
             const url = new URL(req.headers.referer);
@@ -107,9 +115,10 @@ export class Application {
         }
       }
 
-      const origin = req.headers.origin!;
+      const origin = req.headers.origin ?? '';
 
       const isExternal =
+        isMcp ||
         req.url.includes('external') ||
         req.url.includes('auth/google/callback') ||
         req.url.includes('auth/apple/callback') ||
@@ -133,12 +142,15 @@ export class Application {
 
       reply.header(
         'Access-Control-Allow-Headers',
-        'Origin, Content-Type, Accept, Authorization',
+        'Origin, Content-Type, Accept, Authorization, MCP-Protocol-Version, Mcp-Method, Mcp-Name, Mcp-Session-Id, Last-Event-ID',
       );
-      reply.header('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE');
+      reply.header(
+        'Access-Control-Allow-Methods',
+        'GET, POST, PATCH, DELETE, OPTIONS',
+      );
       reply.header(
         'Access-Control-Expose-Headers',
-        'Access-Control-Allow-Origin, Access-Control-Allow-Methods, Access-Control-Allow-Headers',
+        'Access-Control-Allow-Origin, Access-Control-Allow-Methods, Access-Control-Allow-Headers, WWW-Authenticate, MCP-Protocol-Version, Mcp-Session-Id',
       );
 
       if (req.method.toLowerCase() === 'options') {
@@ -280,6 +292,7 @@ export class Application {
       attachFieldsToBody: 'keyValues',
     });
 
+    this.app.register(mcpRoutes);
     this.app.register(routes, {
       prefix: '/api/',
     });

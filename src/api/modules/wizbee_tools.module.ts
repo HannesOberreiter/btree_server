@@ -377,6 +377,10 @@ const TOOL_META: Record<string, ToolHintMeta> = {
   },
 };
 
+export function getWizBeeToolMutation(toolName: string) {
+  return TOOL_META[toolName]?.mutates;
+}
+
 /**
  * Build a hint + suggested_next_tool tailored to the tool and error class.
  */
