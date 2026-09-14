@@ -13,13 +13,16 @@ Written in TypeScript with Node.js, Fastify, Kysely, and Knex migration tooling.
   - Live: <https://app.btree.at>
   - Beta: <https://beta.btree.at>
 - [Repo - b.tree Database](https://github.com/HannesOberreiter/btree_database)
+- [Repo - b.tree Documentation](https://github.com/HannesOberreiter/btree_sites)
 - [Repo - b.tree iOS](https://github.com/HannesOberreiter/btree_ios)
 
 ## Docker Container
 
 ### Building image
 
-Currently images are build automatically on 'main' branch merge with GitHub actions and pushed to a private DockerHub repo. If you want to build the image locally use following commands:
+Work on `beta` and promote changes to `main` through pull requests from `beta`, except for the existing automated release-please PRs. Do not commit directly or merge locally into `main`.
+
+The beta image is published on pushes to `beta`. Pushes to `main` run release-please; when a release is created, it calls the production image workflow. The image workflows also support manual dispatch. Images are pushed to a private DockerHub repository. To build an image locally:
 
 ```bash
 # Build image
@@ -33,16 +36,17 @@ docker push hannesoberreiter/btree_server:latest
 Hint: To be able to pull from a DockerHub private repo create a api key with read-only access and login once to docker on your server eg. `docker login -u hannesoberreiter` with the api token as password. The token will be saved in your config and you can call `docker compose` on the private repo.
 
 ```bash
+# Live API examples; use docker-compose.api-beta.yml for beta.
+# Preserve the existing deployment's Compose project name.
 # Pull latest and run
-docker compose pull  && docker compose up -d
-# Run container (server) (define file if not the only one in folder)
-docker compose -f docker-compose.server.yml up -d
-# Stop container  (server)
-docker compose -f docker-compose-server.yml down
-# Access Container Bash for pnpm run commands
+docker compose -f docker-compose.api.yml pull
+docker compose -f docker-compose.api.yml up -d
+# Stop container
+docker compose -f docker-compose.api.yml down
+# Access the container shell for pnpm commands
 docker exec -it btree-server /bin/sh
-# Clean Container
-docker compose -f docker-compose-*.yml rm
+# Remove stopped service containers
+docker compose -f docker-compose.api.yml rm
 ```
 
 ### Docker Compose Files
@@ -64,26 +68,32 @@ The live api server needs to be upgraded manually which can be archived by `dock
 
 ## Development
 
-First migrate and seed your database with knex commands, beforehand make sure that your development and testing database is up and running.
+Use Node 22 and the pnpm version pinned in `package.json`. Configure `env/development.env` and `env/test.env` using `env/example.env`, and provide MariaDB and Redis before running the server or E2E tests.
+
+Knex, development serving, and E2E use compiled files from `dist`, so build first:
 
 ```bash
+pnpm install
+pnpm run build
+# Development database only: migrations and seeds modify existing data.
 pnpm run dev:init
-pnpm run test:init
 ```
 
-Next build the html mails with `mjml`
+Use disposable databases for development seeding and E2E. The E2E global setup runs migrations, truncates non-CI tables, and starts the compiled server itself; there is no separate `test:init` command. Do not start another backend on the test server's port.
 
 ```bash
-pnpm run mail
+pnpm run test:e2e
 ```
+
+For development, run `pnpm run dev:build` and `pnpm run dev:serve` in separate terminals. Run `pnpm run lint` separately; CI runs build and E2E, but not lint. Use `pnpm run lint:fix` only when you intend to apply formatting and lint fixes.
 
 ## Database: MariaDB
 
-We use Docker with MariaDB and network to connect multiple docker instances, see GitHub Repo: <https://github.com/HannesOberreiter/btree-docker-mysql>
+We use Docker with MariaDB and a shared network to connect the API and database containers. Infrastructure definitions live in [HannesOberreiter/btree_database](https://github.com/HannesOberreiter/btree_database); application migrations and seeds remain in this repository.
 
 ### Local Installation
 
-Alternative you can also install MySQL on your computer and run it locally. On Mac best to install it with Homebrew, you can use the latest or specify the version with `@5.7`.
+Prefer the MariaDB containers from `HannesOberreiter/btree_database` for consistency with the application's database setup. The following generic MySQL installation example does not establish compatibility with arbitrary MySQL versions; validate compatibility before using MySQL instead of MariaDB.
 
 ```bash
 brew install mysql
@@ -102,11 +112,14 @@ Project uses `pnpm` as management tool for library version control. Lock file is
 
 ## Database Migration
 
-We use knex CLI, <http://knexjs.org/#Migrations-API>.
+Use the Knex CLI for migrations, seeds, and test setup; application queries use Kysely. See <http://knexjs.org/#Migrations-API>. Build `dist` before invoking Knex:
 
 ```bash
-pnpm run dev:knex <options> # eg. migrate:latest
+pnpm run build
+pnpm run dev:knex <options> # e.g. migrate:latest
 ```
+
+After schema changes, regenerate `src/types/db.types.ts` with `pnpm run db:types` against the intended migrated database. The wrapper defaults to `env/development.env` and normalizes tinyint and Decimal types; do not replace it with bare codegen.
 
 ## Server Ngnix
 
