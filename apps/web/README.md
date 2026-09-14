@@ -75,7 +75,7 @@ pnpm build:pwa
 
 #### Server
 
-Currently running with Ngnix service, demo config files for `etc/nginx/sites-available/btree_at_app.conf`.
+The frontend is hosted on Bunny Storage behind Bunny CDN. The Nginx instructions below describe the former origin and are retained for rollback reference; they are not required for Bunny hosting.
 
 - Live Server: [btree_at_app.conf](btree_at_app.conf)
 - Beta Server: [btree_at_beta.conf](btree_at_beta.conf)
@@ -99,7 +99,14 @@ sudo certbot --nginx
 
 #### Deployment & Staging
 
-The beta url and api are our staging and testing url. GitHub action is automatically uploading the latest PWA build version to the servers `var/www` folder with sftp. The [beta] branch uploads to <https://beta.btree.at> and is connected to `api-beta.btree.at`. The [main] branch uploads the live version for <https://app.btree.at> and is connected to the live backend `api.btree.at`.
+Both environments upload PWA builds to Bunny S3 Storage in Frankfurt and purge their existing Bunny CDN pull zones. The APIs remain hosted separately.
+
+- Beta: pushes to `beta` deploy to storage zone `beta-btree-at`, served at <https://beta.btree.at>, using `api-beta.btree.at`. The workflow uses `BUNNY_STORAGE_PASSWORD` and pull zone `1496328`.
+- Production: releases on `main` call `live.yml`, which also supports manual dispatch. It deploys to storage zone `app-btree-at`, served at <https://app.btree.at>, using `api.btree.at`. The workflow uses the separate secret `BUNNY_STORAGE_PASSWORD_LIVE` and pull zone `1513251`.
+
+Both workflows use `BUNNY_KEY` for CDN purges. Production deployments are serialized. They upload assets before `sw.js` and `index.html` and retain older assets for open clients. Only content-hashed files under `assets/` receive immutable caching; other files use `no-cache`.
+
+Bunny infrastructure, SPA fallback, production edge caching rules, and the staged cutover/rollback procedure are managed in the separate `infra` repository under `bunny/btree/`. Do not switch the production origin until the storage zone has a verified production build. SFTP credentials are no longer used by `live.yml`; retain the old origin during the rollback window.
 
 #### .env
 

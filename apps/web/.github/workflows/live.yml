@@ -4,6 +4,10 @@ on:
   workflow_call:
   workflow_dispatch:
 
+concurrency:
+  group: production-deploy
+  cancel-in-progress: false
+
 env:
   ZONE_ID: 1513251
 
@@ -38,16 +42,39 @@ jobs:
       - name: List output files
         run: ls
 
-      - name: Upload Files
-        id: upload
-        uses: Creepios/sftp-action@v1.0.3
-        with:
-          host: ${{ secrets.FTP_HOST }}
-          port: 22
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          localPath: ./dist/pwa
-          remotePath: ./btree-vue/dist
+      - name: Upload Files to Bunny Storage
+        env:
+          AWS_ACCESS_KEY_ID: app-btree-at
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.BUNNY_STORAGE_PASSWORD_LIVE }}
+          AWS_DEFAULT_REGION: de
+          BUNNY_S3_ENDPOINT: https://de-s3.storage.bunnycdn.com
+          BUNNY_STORAGE_ZONE: app-btree-at
+        run: |
+          set -euo pipefail
+          test -s ./dist/pwa/index.html
+          test -s ./dist/pwa/sw.js
+          aws configure set default.s3.addressing_style path
+
+          # Keep previous assets so open clients survive a deployment.
+          aws s3 cp ./dist/pwa/assets "s3://${BUNNY_STORAGE_ZONE}/assets/" \
+            --endpoint-url "${BUNNY_S3_ENDPOINT}" \
+            --recursive \
+            --cache-control "public, max-age=31536000, immutable"
+
+          aws s3 cp ./dist/pwa "s3://${BUNNY_STORAGE_ZONE}/" \
+            --endpoint-url "${BUNNY_S3_ENDPOINT}" \
+            --recursive \
+            --exclude "assets/*" \
+            --exclude "sw.js" \
+            --exclude "index.html" \
+            --cache-control "no-cache"
+
+          # Publish entry points only after all referenced files exist.
+          for file in sw.js index.html; do
+            aws s3 cp "./dist/pwa/${file}" "s3://${BUNNY_STORAGE_ZONE}/${file}" \
+              --endpoint-url "${BUNNY_S3_ENDPOINT}" \
+              --cache-control "no-cache"
+          done
 
       - name: Purge BunnyCDN
         uses: fjogeleit/http-request-action@v1
