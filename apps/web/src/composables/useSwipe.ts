@@ -1,3 +1,4 @@
+import type { CalendarApi } from '@fullcalendar/vue3';
 import type { UseSwipeDirection } from '@vueuse/core';
 import type { QNotifyUpdateOptions } from 'quasar';
 import type { Ref } from 'vue';
@@ -5,16 +6,8 @@ import { useSwipe } from '@vueuse/core';
 import { computed } from 'vue';
 import { useNotification } from './useNotification';
 
-interface CalendarSwipeTarget extends HTMLElement {
-  calendar: {
-    currentData: {
-      viewTitle: string;
-    };
-  };
-  getApi: () => {
-    next: () => void;
-    prev: () => void;
-  };
+interface CalendarSwipeTarget {
+  getApi: () => CalendarApi;
 }
 
 export function useSwipeCalendar(
@@ -39,7 +32,7 @@ export function useSwipeCalendar(
     },
   }); */
 
-  const { lengthX } = useSwipe(cal, {
+  const { lengthX } = useSwipe(container, {
     onSwipe() {
       onEventStart(lengthX.value, containerWidth.value);
     },
@@ -76,14 +69,14 @@ export function useSwipeCalendar(
           calendarApi.prev();
           notificationDismiss = notification.open(
             'info',
-            calendar.calendar.currentData.viewTitle,
+            calendarApi.view.title,
             true
           );
         } else {
           calendarApi.next();
           notificationDismiss = notification.open(
             'info',
-            calendar.calendar.currentData.viewTitle,
+            calendarApi.view.title,
             true
           );
         }

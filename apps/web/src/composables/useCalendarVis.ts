@@ -44,7 +44,7 @@ function useCalendarVis() {
         res.title = value.title;
         res.editable = false;
         res.color = 'red';
-        res.textColor = 'white';
+        res.contrastColor = 'white';
         res.icon = 'fas fa-bookmark';
         res.info = visDates;
         res.table = 'vis';

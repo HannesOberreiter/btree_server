@@ -109,12 +109,12 @@ export default defineConfig(ctx => {
             force: ctx.dev,
             include: [
               '@fullcalendar/vue3',
-              '@fullcalendar/core',
-              '@fullcalendar/daygrid',
-              '@fullcalendar/interaction',
-              '@fullcalendar/list',
-              '@fullcalendar/multimonth',
-              '@fullcalendar/core/locales-all',
+              '@fullcalendar/vue3/daygrid',
+              '@fullcalendar/vue3/interaction',
+              '@fullcalendar/vue3/list',
+              '@fullcalendar/vue3/multimonth',
+              '@fullcalendar/vue3/locales-all',
+              '@fullcalendar/vue3/themes/classic',
               'leaflet'
             ],
             // Exclude from optimization to avoid cache issues

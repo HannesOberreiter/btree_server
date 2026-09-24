@@ -1,10 +1,14 @@
 <script setup lang="ts">
-import type { CalendarOptions, EventClickArg } from '@fullcalendar/core';
-import allLocales from '@fullcalendar/core/locales-all';
-import dayGridPlugin from '@fullcalendar/daygrid';
-import interactionPlugin from '@fullcalendar/interaction';
-import listPlugin from '@fullcalendar/list';
+import type { CalendarOptions, EventClickInfo } from '@fullcalendar/vue3';
 import FullCalendar from '@fullcalendar/vue3';
+import dayGridPlugin from '@fullcalendar/vue3/daygrid';
+import interactionPlugin from '@fullcalendar/vue3/interaction';
+import listPlugin from '@fullcalendar/vue3/list';
+import allLocales from '@fullcalendar/vue3/locales-all';
+import themePlugin from '@fullcalendar/vue3/themes/classic';
+import '@fullcalendar/vue3/skeleton.css';
+import '@fullcalendar/vue3/themes/classic/theme.css';
+import '@fullcalendar/vue3/themes/classic/palette.css';
 import { useLocalStorage } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { onMounted, reactive, ref } from 'vue';
@@ -13,6 +17,7 @@ import { useKeyCalendar } from '../composables/useKey';
 import { useNotification } from '../composables/useNotification';
 import { useCalendarQuery } from '../composables/useQuery';
 import { useSwipeCalendar } from '../composables/useSwipe';
+import { toCalendarEvent } from '../helpers/calendar';
 import { useAuthUserStore } from '../stores/auth';
 
 const useQuery = useCalendarQuery();
@@ -37,13 +42,7 @@ onMounted(() => {
   useKeyCalendar(cal);
 });
 
-function onResize(_size: any) {
-  if (cal.value?.getApi()) {
-    cal.value.getApi().updateSize();
-  }
-}
-
-function handleEventClick(clickInfo: EventClickArg) {
+function handleEventClick(clickInfo: EventClickInfo) {
   clickInfo.jsEvent.preventDefault(); // don't let the browser navigate
   const weight_difference = clickInfo.event.extendedProps.difference;
   notification.open(
@@ -58,8 +57,8 @@ const calendarOptions = reactive({
     {
       events(fetchInfo, successCallback, failureCallback) {
         useQuery.fetchQuery('scale_data', fetchInfo.start, fetchInfo.end).then(
-          (response: any) => {
-            successCallback(response);
+          response => {
+            successCallback(response.map(toCalendarEvent));
           },
           error => {
             notification.open('negative', error);
@@ -70,7 +69,11 @@ const calendarOptions = reactive({
       id: 'scale'
     }
   ],
-  plugins: [dayGridPlugin, listPlugin, interactionPlugin],
+  plugins: [themePlugin, dayGridPlugin, listPlugin, interactionPlugin],
+  toolbarTitleClass: 'calendar-toolbar-title',
+  footerToolbarClass: 'calendar-footer-toolbar',
+  buttonClass: 'calendar-toolbar-button',
+  eventInnerClass: 'calendar-event-content',
   headerToolbar: {
     left: 'prevYear,prev,next,nextYear today',
     right: 'title'
@@ -78,10 +81,12 @@ const calendarOptions = reactive({
   footerToolbar: {
     right: 'dayGridMonth,dayGridWeek,listWeek'
   },
-  stickyHeaderDates: true,
+  tableHeaderSticky: true,
   initialView: 'dayGridMonth',
   views: {
     dayGrid: {
+      eventClass: 'calendar-daygrid-event',
+      tableHeaderClass: 'calendar-daygrid-header',
       titleFormat: {
         year: '2-digit',
         month: 'short'
@@ -125,11 +130,11 @@ const calendarOptions = reactive({
 
 <template>
   <div width="100%">
-    <q-resize-observer @resize="onResize" />
     <div class="col-12">
       <div
         ref="container"
         class="calendar-container text-body1"
+        :data-color-scheme="$q.dark.isActive ? 'dark' : 'light'"
         :style="{ opacity }"
       >
         <FullCalendar ref="cal" :options="calendarOptions" />
@@ -139,26 +144,28 @@ const calendarOptions = reactive({
 </template>
 
 <style>
+.calendar-event-content {
+  letter-spacing: -0.2px;
+}
+
 /* Hide Overflown long titles in daygrid view */
-.fc .fc-daygrid-event {
+.calendar-daygrid-event {
   overflow: hidden;
+  white-space: nowrap;
 }
 
-.fc .fc-daygrid-event-harness {
-  overflow: hidden;
-}
-
-body.screen--xs .fc-toolbar-title {
+body.screen--xs .calendar-toolbar-title {
   font-size: 1.3rem !important;
   line-height: normal;
   display: inline !important;
 }
 
-.fc-col-header {
+.calendar-daygrid-header {
   background-color: rgb(218, 154, 37);
 }
 
-.fc-footer-toolbar {
-  font-size: 0.8em !important;
+.calendar-footer-toolbar .calendar-toolbar-button {
+  font-size: 12px;
+  padding: 4px 8px;
 }
 </style>
