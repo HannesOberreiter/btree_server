@@ -18,8 +18,8 @@ importers:
         specifier: ^0.6.4
         version: 0.6.4(@lit/react@1.0.8(@types/react@19.2.15))(@types/dom-chromium-installation-events@101.0.4)(@types/web-app-manifest@1.0.9)(lit@3.3.3)
       '@paypal/paypal-js':
-        specifier: ^10.1.0
-        version: 10.1.0
+        specifier: ^11.1.0
+        version: 11.1.0
       '@quasar/extras':
         specifier: ^2.1.0
         version: 2.1.0
@@ -904,8 +904,8 @@ packages:
     resolution: {integrity: sha512-7FNeNl8NCE7aINx7WXiKQrPYZWC/hvrTsmk6zmxbI7LTXE7hVek/n8AfVgpe2y82zl3w0HvCHN0bVKMBoJcC0w==}
     engines: {node: '>= 10.0.0'}
 
-  '@paypal/paypal-js@10.1.0':
-    resolution: {integrity: sha512-OolzHD7lu2K03HApg+YyMtBsPnrVc+ASj1MzuH/mz7feHj5OnxYyLWQiCcCm4douJFJ6P19JW8+LzsAN4x3jHw==}
+  '@paypal/paypal-js@11.1.0':
+    resolution: {integrity: sha512-Nq8i7p/aIVmwBb9h00YFvbvrZOcQUs37FKlhx6gDiV6O/h0K5Zto2qRtZBLdfD1o7pK9CVlbPqb2iApS0O4aiA==}
 
   '@peculiar/asn1-cms@2.9.5':
     resolution: {integrity: sha512-4Ivz0fsyFofe0bslNsYcGN9+iETdHX4v+BFwIPr+K/BAt61sHXECP63ff9FntU9zcfVQELJFdUG9so44OjUlBQ==}
@@ -3723,7 +3723,7 @@ snapshots:
       '@parcel/watcher-win32-x64': 2.6.0
     optional: true
 
-  '@paypal/paypal-js@10.1.0':
+  '@paypal/paypal-js@11.1.0':
     dependencies:
       promise-polyfill: 8.3.0
 
