@@ -47,7 +47,7 @@
     "@modelcontextprotocol/server": "^2.0.0",
     "@mollie/api-client": "^4.6.0",
     "ajv-formats": "^3.0.1",
-    "archiver": "^7.0.1",
+    "archiver": "^8.0.0",
     "close-with-grace": "^2.2.0",
     "connect-redis": "^10.0.0",
     "csv-parse": "^7.0.2",
@@ -78,7 +78,7 @@
     "zod": "4.4.3"
   },
   "devDependencies": {
-    "@types/archiver": "^7.0.0",
+    "@types/archiver": "^8.0.0",
     "@types/http-errors": "^2.0.4",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/lodash": "^4.17.25",

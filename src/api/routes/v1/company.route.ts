@@ -1,7 +1,7 @@
 import { Buffer } from 'node:buffer';
 import { Stream } from 'node:stream';
 
-import archiver from 'archiver';
+import { ZipArchive } from 'archiver';
 import dayjs from 'dayjs';
 import type { FastifyInstance, FastifyRequest } from 'fastify';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
@@ -83,7 +83,7 @@ export default function routes(
         'Content-Disposition',
         `attachment; filename="btree_data_${Date.now()}.zip"`,
       );
-      const archive = archiver('zip');
+      const archive = new ZipArchive();
       archive.on('error', (error) => {
         throw error;
       });
