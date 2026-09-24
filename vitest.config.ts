@@ -11,6 +11,7 @@ class AlphaSequencer extends BaseSequencer {
 export default defineConfig({
   test: {
     globals: true,
+    clearMocks: false,
     environment: 'node',
     globalSetup: './test/global-setup.ts',
     include: ['test/e2e/**/*.e2e.test.ts'],
