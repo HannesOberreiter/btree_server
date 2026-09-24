@@ -98,8 +98,8 @@ importers:
         specifier: ^3.3.0
         version: 3.3.0(mysql2@3.24.4(@types/node@22.20.4))(mysql@2.18.1)
       kysely:
-        specifier: ^0.28.17
-        version: 0.28.17
+        specifier: ^0.29.6
+        version: 0.29.6
       lodash-es:
         specifier: ^4.17.21
         version: 4.18.1
@@ -166,7 +166,7 @@ importers:
         version: 8.0.2
       kysely-codegen:
         specifier: ^0.20.0
-        version: 0.20.0(kysely@0.28.17)(mysql2@3.24.4(@types/node@22.20.4))(tarn@3.1.2)
+        version: 0.20.0(kysely@0.29.6)(mysql2@3.24.4(@types/node@22.20.4))(tarn@3.1.2)
       nodemon:
         specifier: ^3.0.0
         version: 3.1.14
@@ -1797,9 +1797,9 @@ packages:
       tedious:
         optional: true
 
-  kysely@0.28.17:
-    resolution: {integrity: sha512-nbD8lB9EB3wNdMhOCdx5Li8DxnLbvKByylRLcJ1h+4SkrowVeECAyZlyiKMThF7xFdRz0jSQ2MoJr+wXux2y0Q==}
-    engines: {node: '>=20.0.0'}
+  kysely@0.29.6:
+    resolution: {integrity: sha512-hHaB8C/rfzDDtr/t8YZwxAuPJTT0zHyaPoVzcXwDYhYNAgH/4sIfVhi/XLLIY+bL/FqaIJnjATDbi8ObSELmxg==}
+    engines: {node: '>=22.0.0'}
 
   lazystream@1.0.1:
     resolution: {integrity: sha512-b94GiNHQNy6JNTrt5w6zNyffMrNkXZb3KTkCZJb2V1xaEGCk093vkZ2jk3tpaeP33/OiXC+WvK9AxUebnf5nbw==}
@@ -3814,14 +3814,14 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  kysely-codegen@0.20.0(kysely@0.28.17)(mysql2@3.24.4(@types/node@22.20.4))(tarn@3.1.2):
+  kysely-codegen@0.20.0(kysely@0.29.6)(mysql2@3.24.4(@types/node@22.20.4))(tarn@3.1.2):
     dependencies:
       chalk: 4.1.2
       cosmiconfig: 9.0.2(@typescript/typescript6@6.0.2)
       diff: 8.0.4
       dotenv: 17.4.2
       dotenv-expand: 12.0.3
-      kysely: 0.28.17
+      kysely: 0.29.6
       micromatch: 4.0.8
       minimist: 1.2.8
       pluralize: 8.0.0
@@ -3831,7 +3831,7 @@ snapshots:
       mysql2: 3.24.4(@types/node@22.20.4)
       tarn: 3.1.2
 
-  kysely@0.28.17: {}
+  kysely@0.29.6: {}
 
   lazystream@1.0.1:
     dependencies:
