@@ -42,3 +42,9 @@ Deployment and Android packaging documentation lives in `README.md`.
 - When adding external requests, images, scripts, or frames, check the matching CSP directive in `quasar.config.ts`; CSP enforcement is disabled during development.
 
 <!-- /bmad:context -->
+
+## Quasar MCP
+
+- For Quasar documentation and component APIs, prefer the `quasar` MCP server configured in `.mcp.json`; it reads version-matched documentation from the installed packages. Use `search_docs` and `get_page` for documentation, and `get_api` for component APIs.
+- Start the agent from this directory to load the project-local MCP configuration. The first server download requires internet; cached startup and bundled documentation work offline.
+- The pinned `@quasar/app-vite` release does not bundle documentation. Quasar UI documentation and component APIs are available; app-vite documentation requires a separately approved upgrade.
