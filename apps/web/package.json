@@ -30,7 +30,7 @@
     "@vuelidate/validators": "^2.0.4",
     "@vueuse/core": "^15.0.0",
     "@vueuse/integrations": "^15.0.0",
-    "csv-parse": "^6.2.1",
+    "csv-parse": "^7.0.2",
     "csv-stringify": "^6.8.3",
     "d3-array": "^3.2.4",
     "dayjs": "^1.11.23",
