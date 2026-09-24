@@ -1,6 +1,9 @@
 import cron from 'node-schedule';
 
-import { fetchObservations } from '../api/adapters/pest.adapter.js';
+import {
+  fetchAsiatischeHornisseCh,
+  fetchObservations,
+} from '../api/adapters/pest.adapter.js';
 import {
   cleanupDatabase,
   reminderDeletion,
@@ -64,6 +67,17 @@ export class Cron {
         }
       },
     );
+    cron.scheduleJob({ rule: '0 10 1 * *', tz: 'Europe/Vienna' }, async () => {
+      try {
+        this.Logging(await fetchAsiatischeHornisseCh(true));
+      } catch (error) {
+        this.logger.log(
+          'error',
+          error instanceof Error ? error.message : String(error),
+          { label: 'CronJob' },
+        );
+      }
+    });
     this.nextRun();
   }
 

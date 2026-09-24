@@ -13,6 +13,7 @@ export const publicObservationResponseSchema = z.object({
   location: z.object({ x: z.number(), y: z.number() }),
   uri: z.string(),
   observed_at: jsonDateSchema,
+  observation_type: z.enum(['hornet', 'nest', 'hornet_and_nest']).nullable(),
 });
 export const publicObservationListResponseSchema = z.array(
   publicObservationResponseSchema,

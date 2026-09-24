@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
+import { insertObservations } from '../../src/api/modules/observation.module.js';
+import { KyselyServer } from '../../src/servers/kysely.server.js';
 import type { TestAgent } from '../utils.js';
 import { createAgent, doRequest } from '../utils.js';
 
@@ -54,6 +56,7 @@ describe('routes resolving', () => {
       expect(res.body).toBeInstanceOf(Array);
       expect(res.headers['cache-control']).toBe('public, max-age=3600');
       if (res.body.length > 0) {
+        expect(res.body[0]).toHaveProperty('observation_type');
         expect(res.body[0]).toEqual(
           expect.objectContaining({
             location: expect.objectContaining({
@@ -64,6 +67,71 @@ describe('routes resolving', () => {
             observed_at: expect.any(String),
           }),
         );
+      }
+    });
+
+    it('200 - exposes normalized Swiss and Austrian observation types', async () => {
+      const db = KyselyServer.getInstance().db;
+      const externalService = 'Pest map observation type test';
+      const observedAt = new Date().toISOString();
+      await insertObservations(db, [
+        {
+          external_id: 1,
+          external_service: externalService,
+          observed_at: observedAt,
+          location: { lat: 47.1, lng: 8.1 },
+          taxa: 'Vespa velutina',
+          data: {
+            observationType: 'hornet_and_nest',
+            uri: 'https://asiatischehornisse.ch/karte',
+          },
+        },
+        {
+          external_id: 2,
+          external_service: externalService,
+          observed_at: observedAt,
+          location: { lat: 47.2, lng: 13.1 },
+          taxa: 'Vespa velutina',
+          data: {
+            reportType: 'Einzeltier',
+            uri: 'https://www.bienengesundheit.at/vespa-velutina',
+          },
+        },
+        {
+          external_id: 3,
+          external_service: externalService,
+          observed_at: observedAt,
+          location: { lat: 47.3, lng: 14.1 },
+          taxa: 'Vespa velutina',
+          data: {
+            reportType: 'Nest',
+            uri: 'https://www.bienengesundheit.at/vespa-velutina',
+          },
+        },
+      ]);
+
+      try {
+        const res = await doRequest(
+          agent,
+          'get',
+          `/api/v1/public/velutina/observations/year/${new Date().getFullYear()}`,
+          null,
+          null,
+          null,
+        );
+        expect(res.statusCode).toBe(200);
+        expect(res.body).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({ observation_type: 'hornet_and_nest' }),
+            expect.objectContaining({ observation_type: 'hornet' }),
+            expect.objectContaining({ observation_type: 'nest' }),
+          ]),
+        );
+      } finally {
+        await db
+          .deleteFrom('observations')
+          .where('external_service', '=', externalService)
+          .execute();
       }
     });
 
