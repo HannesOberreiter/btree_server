@@ -7251,6 +7251,7 @@ export interface paths {
                 x: number;
                 y: number;
               };
+              observation_type: ('hornet' | 'nest' | 'hornet_and_nest') | null;
               observed_at: string;
               uri: string;
             }[];
@@ -7335,6 +7336,7 @@ export interface paths {
                 x: number;
                 y: number;
               };
+              observation_type: ('hornet' | 'nest' | 'hornet_and_nest') | null;
               observed_at: string;
               uri: string;
             }[];
