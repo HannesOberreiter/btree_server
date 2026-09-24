@@ -424,7 +424,7 @@ export class WizBeeAI {
             }
 
             if (choice.finishReason) {
-              finishReason = choice.finishReason as string;
+              finishReason = choice.finishReason;
             }
 
             // Usage is typically on the final chunk.

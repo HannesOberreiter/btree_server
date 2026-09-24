@@ -89,8 +89,8 @@
     "kysely-codegen": "^0.20.0",
     "nodemon": "^3.0.0",
     "oxfmt": "^0.70.0",
-    "oxlint": "^1.67.0",
-    "oxlint-tsgolint": "^0.23.0",
+    "oxlint": "^1.85.0",
+    "oxlint-tsgolint": "^7.0.2002",
     "typescript": "^5.0.4",
     "vite": "^8.3.0",
     "vitest": "^4.1.11"
