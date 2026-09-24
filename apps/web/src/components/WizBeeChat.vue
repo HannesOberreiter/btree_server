@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { marked } from 'marked';
 import { useQuasar } from 'quasar';
-import { nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
+import { nextTick, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useNotification } from '../composables/useNotification';
 import { useVoiceRecording } from '../composables/useVoiceRecording';
@@ -11,7 +11,7 @@ import { useAuthUserStore } from '../stores/auth';
 const props = defineProps<{
   /** Show example question chips */
   showExamples?: boolean;
-  /** Enable mobile keyboard handling when used inside a dialog */
+  /** Allow the chat to shrink with the dialog's visible viewport */
   isDialog?: boolean;
 }>();
 
@@ -139,31 +139,7 @@ watch(() => chatHistory.value.at(-1)?.content, scrollToBottom);
 
 onMounted(() => {
   fetchMonthlyUsage();
-  if (props.isDialog) {
-    window.visualViewport?.addEventListener('resize', updateKeyboardOffset);
-    window.visualViewport?.addEventListener('scroll', updateKeyboardOffset);
-  }
 });
-
-onUnmounted(() => {
-  window.visualViewport?.removeEventListener('resize', updateKeyboardOffset);
-  window.visualViewport?.removeEventListener('scroll', updateKeyboardOffset);
-});
-
-// On mobile the input is position:fixed — track keyboard height to lift it above the keyboard
-const keyboardBottomOffset = ref(0);
-
-function updateKeyboardOffset() {
-  if (!window.visualViewport) {
-    return;
-  }
-  const vv = window.visualViewport;
-  keyboardBottomOffset.value = Math.max(
-    0,
-    window.innerHeight - vv.height - vv.offsetTop
-  );
-  scrollToBottom();
-}
 
 function onSubmit() {
   sendQuestion();
@@ -186,6 +162,7 @@ function onClear() {
   >
     <!-- Chat messages area -->
     <div ref="chatContainer" class="wizbee-chat__messages col q-pa-sm">
+      <q-resize-observer v-if="props.isDialog" @resize="scrollToBottom" />
       <!-- Empty state -->
       <div
         v-if="chatHistory.length === 0 && !error"
@@ -263,60 +240,55 @@ function onClear() {
       </template>
     </div>
 
-    <!-- Usage info -->
-    <div v-if="monthlyUsage" class="q-px-sm q-pb-xs">
-      <div class="text-caption text-grey-6 row items-center q-gutter-x-sm">
-        <span>
-          <b>Budget:</b>
-          €{{ monthlyUsage.estimatedCostEUR.toFixed(2) }} / €{{
-            monthlyUsage.monthlyLimitEUR.toFixed(2)
-          }}
-        </span>
-        <span v-if="monthlyUsage.isOverBudget" class="text-red text-bold"
-          >({{ $t('error.tokenLimit') }})</span
-        >
-        <span v-else
-          >({{ $t('countTokensLeft') }}: €{{
-            monthlyUsage.remainingBudgetEUR.toFixed(2)
-          }})</span
-        >
-        <span>|</span>
-        <span>{{ monthlyUsage.totalRequests }} {{ $t('requests') }}</span>
+    <div class="wizbee-chat__status">
+      <!-- Usage info -->
+      <div v-if="monthlyUsage" class="q-px-sm q-pb-xs">
+        <div class="text-caption text-grey-6 row items-center q-gutter-x-sm">
+          <span>
+            <b>Budget:</b>
+            €{{ monthlyUsage.estimatedCostEUR.toFixed(2) }} / €{{
+              monthlyUsage.monthlyLimitEUR.toFixed(2)
+            }}
+          </span>
+          <span v-if="monthlyUsage.isOverBudget" class="text-red text-bold"
+            >({{ $t('error.tokenLimit') }})</span
+          >
+          <span v-else
+            >({{ $t('countTokensLeft') }}: €{{
+              monthlyUsage.remainingBudgetEUR.toFixed(2)
+            }})</span
+          >
+          <span>|</span>
+          <span>{{ monthlyUsage.totalRequests }} {{ $t('requests') }}</span>
+        </div>
+      </div>
+
+      <!-- Not premium banner -->
+      <div v-if="!isPremium" class="q-pa-sm">
+        <q-banner class="bg-warning text-dark rounded-borders">
+          <template #avatar>
+            <q-icon name="fas fa-lock" />
+          </template>
+          {{ $t('error.premium') }}
+          <template #action>
+            <q-btn flat no-caps :label="$t('premium')" to="/premium" />
+          </template>
+        </q-banner>
+      </div>
+
+      <!-- Over budget banner -->
+      <div v-else-if="monthlyUsage?.isOverBudget" class="q-pa-sm">
+        <q-banner class="bg-red-8 text-white rounded-borders">
+          <template #avatar>
+            <q-icon name="fas fa-exclamation-triangle" />
+          </template>
+          {{ $t('error.tokenLimit') }}
+        </q-banner>
       </div>
     </div>
 
-    <!-- Not premium banner -->
-    <div v-if="!isPremium" class="q-pa-sm">
-      <q-banner class="bg-warning text-dark rounded-borders">
-        <template #avatar>
-          <q-icon name="fas fa-lock" />
-        </template>
-        {{ $t('error.premium') }}
-        <template #action>
-          <q-btn flat no-caps :label="$t('premium')" to="/premium" />
-        </template>
-      </q-banner>
-    </div>
-
-    <!-- Over budget banner -->
-    <div v-else-if="monthlyUsage?.isOverBudget" class="q-pa-sm">
-      <q-banner class="bg-red-8 text-white rounded-borders">
-        <template #avatar>
-          <q-icon name="fas fa-exclamation-triangle" />
-        </template>
-        {{ $t('error.tokenLimit') }}
-      </q-banner>
-    </div>
-
     <!-- Input area at bottom -->
-    <div
-      class="wizbee-chat__input q-pa-sm"
-      :style="
-        props.isDialog && $q.screen.lt.md
-          ? { bottom: `${keyboardBottomOffset}px` }
-          : {}
-      "
-    >
+    <div class="wizbee-chat__input q-pa-sm">
       <q-form @submit.prevent="onSubmit">
         <q-input
           v-model="question"
@@ -535,23 +507,24 @@ function onClear() {
   }
 }
 
-@media (max-width: 1023px) {
-  .wizbee-chat--dialog .wizbee-chat__input {
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0; /* overridden by inline :style when keyboard is open */
-    background-color: #fff;
-    z-index: 1;
-  }
+.wizbee-chat--dialog {
+  min-height: 0;
+  flex-wrap: nowrap;
+}
 
-  .body--dark .wizbee-chat--dialog .wizbee-chat__input {
-    background-color: var(--q-dark, #1d1d1d);
-  }
+.wizbee-chat__status {
+  display: contents;
+}
 
-  .wizbee-chat--dialog .wizbee-chat__messages {
-    padding-bottom: 64px; /* prevent messages being hidden behind the fixed input */
-  }
+/* Let long notices scroll rather than push the composer out of a short dialog. */
+.wizbee-chat--dialog .wizbee-chat__status {
+  display: block;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.wizbee-chat--dialog .wizbee-chat__input {
+  flex-shrink: 0;
 }
 
 .body--dark .wizbee-chat__input {
