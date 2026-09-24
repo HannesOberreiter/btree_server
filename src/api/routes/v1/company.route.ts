@@ -46,6 +46,7 @@ import {
   companyResponseSchema,
 } from '../../schemas/company.schema.js';
 import type { ChangeCompanyBody } from '../../schemas/user.schema.js';
+import { parseResponse } from '../../utils/response.util.js';
 
 export default function routes(
   instance: FastifyInstance,
@@ -54,6 +55,7 @@ export default function routes(
 ) {
   const server = instance.withTypeProvider<ZodTypeProvider>();
   const db = KyselyServer.getInstance().db;
+  const companyCountsResponseSchema = z.array(companyCountResponseSchema);
 
   server.get(
     '/apikey',
@@ -61,16 +63,26 @@ export default function routes(
       schema: { response: { 200: companyApiKeyResponseSchema } },
       preHandler: Guard.authorize([ROLES.admin]),
     },
-    async (request) => getCompanyApiKey(db, request.session.user.user_id),
+    async (request) =>
+      parseResponse(
+        companyApiKeyResponseSchema,
+        await getCompanyApiKey(db, request.session.user.user_id),
+        request,
+      ),
   );
 
   server.get(
     '/count',
     {
-      schema: { response: { 200: z.array(companyCountResponseSchema) } },
+      schema: { response: { 200: companyCountsResponseSchema } },
       preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
     },
-    async (request) => listCompanyCounts(db, request.session.user.user_id),
+    async (request) =>
+      parseResponse(
+        companyCountsResponseSchema,
+        await listCompanyCounts(db, request.session.user.user_id),
+        request,
+      ),
   );
 
   server.get(
@@ -104,11 +116,15 @@ export default function routes(
       },
     },
     async (request) =>
-      updateCompany(
-        db,
-        request.session.user.bee_id,
-        request.session.user.user_id,
-        request.body,
+      parseResponse(
+        companyPatchResponseSchema,
+        await updateCompany(
+          db,
+          request.session.user.bee_id,
+          request.session.user.user_id,
+          request.body,
+        ),
+        request,
       ),
   );
 
@@ -122,7 +138,11 @@ export default function routes(
       },
     },
     async (request) =>
-      createCompany(db, request.session.user.bee_id, request.body),
+      parseResponse(
+        companyResponseSchema,
+        await createCompany(db, request.session.user.bee_id, request.body),
+        request,
+      ),
   );
 
   server.post(
@@ -135,7 +155,15 @@ export default function routes(
       },
     },
     async (request) =>
-      redeemCompanyCoupon(db, request.session.user.user_id, request.body),
+      parseResponse(
+        companyPaidResponseSchema,
+        await redeemCompanyCoupon(
+          db,
+          request.session.user.user_id,
+          request.body,
+        ),
+        request,
+      ),
   );
 
   server.post(
@@ -166,6 +194,10 @@ export default function routes(
         .select(['email', 'lang'])
         .where('id', '=', request.session.user.bee_id)
         .executeTakeFirstOrThrow();
+      if (!user.email)
+        throw httpErrors.InternalServerError(
+          'Invoice recipient email is missing',
+        );
       const years = Math.max(1, Math.floor(request.body.quantity ?? 1));
       const price = request.body.amount * years;
       const lang =
@@ -183,7 +215,7 @@ export default function routes(
         price,
         'invoice',
       );
-      return { paid };
+      return parseResponse(companyPaidResponseSchema, { paid }, request);
     },
   );
 

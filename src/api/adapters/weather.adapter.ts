@@ -4,6 +4,7 @@ import { openweatherKey } from '../../config/environment.config.js';
 import { RedisServer } from '../../servers/redis.server.js';
 import { Logger } from '../../services/logger.service.js';
 import type { Database } from '../../types/database.types.js';
+import { redisValueToString } from '../utils/redis.util.js';
 
 /**
  * OpenWeather One Call API 3.0 Response
@@ -181,9 +182,7 @@ export async function getWeatherData(
   try {
     const cached = await RedisServer.client.get(cacheKey);
     if (cached) {
-      const cachedText =
-        typeof cached === 'string' ? cached : cached.toString();
-      return JSON.parse(cachedText) as OneCallResponse;
+      return JSON.parse(redisValueToString(cached)) as OneCallResponse;
     }
   } catch (error) {
     Logger.getInstance().log('warn', 'Redis cache read error', {
@@ -248,9 +247,7 @@ export async function getHistoricalTemperatures(
   try {
     const cached = await RedisServer.client.get(cacheKey);
     if (cached) {
-      const cachedText =
-        typeof cached === 'string' ? cached : cached.toString();
-      return JSON.parse(cachedText) as Array<{
+      return JSON.parse(redisValueToString(cached)) as Array<{
         date: string;
         temperature: number;
       }>;

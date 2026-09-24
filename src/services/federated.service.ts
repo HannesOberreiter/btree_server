@@ -113,6 +113,8 @@ export class GoogleAuth {
   }
 
   private constructor() {
+    if (!googleOAuth.clientID || !googleOAuth.clientSecret)
+      throw new Error('Google OAuth must be configured');
     this.client = new OAuth2Client(
       googleOAuth.clientID,
       googleOAuth.clientSecret,
@@ -128,11 +130,14 @@ export class GoogleAuth {
 
   async verify(code: string): Promise<federatedUser> {
     const token = await this.client.getToken(code);
+    if (!token.tokens.id_token)
+      throw new Error('No ID token received from Google');
     const ticket = await this.client.verifyIdToken({
       idToken: token.tokens.id_token,
       audience: googleOAuth.clientID,
     });
-    const payload: TokenPayload = ticket.getPayload();
+    const payload: TokenPayload | undefined = ticket.getPayload();
+    if (!payload?.email) throw new Error('Missing email in Google ID token');
     return await this.verifyUser(
       payload.sub,
       payload.name,
@@ -164,6 +169,14 @@ export class AppleAuth {
   }
 
   private constructor() {
+    if (
+      !appleOAuth.clientID ||
+      !appleOAuth.teamID ||
+      !appleOAuth.keyID ||
+      !appleOAuth.privateKey
+    ) {
+      throw new Error('Apple OAuth must be configured');
+    }
     this.client = new AppleAuthentication(
       {
         client_id: appleOAuth.clientID,

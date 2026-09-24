@@ -1,0 +1,6 @@
+# Codegen 0.20.0 requires the legacy compiler API, which TypeScript 7 removed.
+# Keep this dependency local to codegen; the application still compiles with TS 7.
+packageExtensions:
+  kysely-codegen@0.20.0:
+    dependencies:
+      typescript: npm:@typescript/typescript6@6.0.2

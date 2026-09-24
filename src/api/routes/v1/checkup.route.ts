@@ -27,6 +27,7 @@ import {
   checkupUpdateDateSchema,
   checkupUpdateStatusSchema,
 } from '../../schemas/checkup.schema.js';
+import { parseResponse } from '../../utils/response.util.js';
 
 export default function routes(
   instance: FastifyInstance,
@@ -45,8 +46,14 @@ export default function routes(
       },
       preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
     },
-    async (request) =>
-      listCheckups(db, request.session.user.user_id, request.query),
+    async (request) => {
+      const result = await listCheckups(
+        db,
+        request.session.user.user_id,
+        request.query,
+      );
+      return parseResponse(checkupPaginatedResponseSchema, result, request);
+    },
   );
 
   server.post(
@@ -148,8 +155,8 @@ export default function routes(
         response: { 200: z.array(checkupResponseSchema) },
       },
     },
-    async (request) =>
-      deleteTasks(
+    async (request) => {
+      const result = await deleteTasks(
         db,
         'checkups',
         {
@@ -162,7 +169,9 @@ export default function routes(
           hard: Boolean(request.query.hard),
           restore: Boolean(request.query.restore),
         },
-      ),
+      );
+      return parseResponse(z.array(checkupResponseSchema), result, request);
+    },
   );
 
   server.post(
@@ -174,8 +183,14 @@ export default function routes(
         response: { 200: z.array(checkupResponseSchema) },
       },
     },
-    async (request) =>
-      getCheckupsByIds(db, request.session.user.user_id, request.body.ids),
+    async (request) => {
+      const result = await getCheckupsByIds(
+        db,
+        request.session.user.user_id,
+        request.body.ids,
+      );
+      return parseResponse(z.array(checkupResponseSchema), result, request);
+    },
   );
 
   done();

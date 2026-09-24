@@ -262,7 +262,7 @@ describe('STOPvespa synchronization', () => {
     );
   });
 
-  it('serializes UTC timestamps through the public response schema for non-UTC clients', async () => {
+  it('preserves JSON-encoded URLs and UTC timestamps through the public response schema for non-UTC clients', async () => {
     const payload = structuredClone(confirmed);
     payload.features[0].attributes.data_observ = Date.parse(
       '2026-09-13T23:30:00Z',
@@ -289,6 +289,9 @@ describe('STOPvespa synchronization', () => {
           response.json<unknown>(),
         );
         expect(observations).toHaveLength(1);
+        expect(observations[0].uri).toBe(
+          JSON.stringify('https://stopvespa.icnf.pt/geovisualizador/'),
+        );
         expect(observations[0].observed_at).toBe('2026-09-13T23:30:00Z');
         expect(
           new Intl.DateTimeFormat('en-GB', {

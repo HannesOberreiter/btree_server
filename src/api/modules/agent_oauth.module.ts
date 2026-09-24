@@ -13,6 +13,7 @@ import {
 } from '../../config/environment.config.js';
 import { RedisServer } from '../../servers/redis.server.js';
 import type { Database } from '../../types/database.types.js';
+import { redisValueToString } from '../utils/redis.util.js';
 import { isPremium } from './premium.module.js';
 
 const AUTH_CODE_TTL_SECONDS = 600;
@@ -248,7 +249,7 @@ export async function exchangeAuthorizationCode(
     throw httpErrors.BadRequest('Invalid authorization code');
   }
 
-  const rawText = typeof raw === 'string' ? raw : raw.toString();
+  const rawText = redisValueToString(raw);
   const payload = JSON.parse(rawText) as OAuthCodePayload;
   if (payload.clientId !== clientId || payload.redirectUri !== redirectUri) {
     throw httpErrors.BadRequest('Invalid authorization code');

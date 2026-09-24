@@ -132,12 +132,6 @@ function buildListQuery(db: Database, actor: TodoActor, input: TodoListInput) {
         eb('apiaries.deleted', '=', false),
       ]),
     )
-    .$if(input.done !== undefined && input.done !== null, (qb) =>
-      qb.where('todos.done', '=', input.done),
-    )
-    .$if(input.apiary_id !== undefined, (qb) =>
-      qb.where('todos.apiary_id', '=', input.apiary_id),
-    )
     .$if(input.ids !== undefined, (qb) =>
       qb.where('todos.id', 'in', input.ids ?? []),
     )
@@ -150,6 +144,13 @@ function buildListQuery(db: Database, actor: TodoActor, input: TodoListInput) {
         ]),
       ),
     );
+
+  if (input.done !== undefined && input.done !== null) {
+    query = query.where('todos.done', '=', input.done);
+  }
+  if (input.apiary_id !== undefined) {
+    query = query.where('todos.apiary_id', '=', input.apiary_id);
+  }
 
   for (const filter of filters) {
     if ('date' in filter) {

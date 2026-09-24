@@ -26,10 +26,10 @@ export async function getDropboxAuthorizationUrl() {
   const dbx = new DropboxAuth(config);
   const url = await dbx.getAuthenticationUrl(
     redirect,
-    null,
+    undefined,
     'code',
     'offline',
-    null,
+    undefined,
     'none',
     false,
   );

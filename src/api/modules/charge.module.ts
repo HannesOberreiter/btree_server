@@ -117,10 +117,13 @@ export async function listCharges(
   let count = db
     .selectFrom('charges')
     .select(db.fn.countAll<number>().as('total'))
-    .where('user_id', '=', companyId)
-    .where('deleted', '=', input.deleted === true);
-  if (input.q !== undefined && String(input.q).trim()) {
-    const search = `%${String(input.q)}%`;
+    .where('charges.user_id', '=', companyId)
+    .where('charges.deleted', '=', input.deleted === true);
+  const search =
+    input.q !== undefined && String(input.q).trim()
+      ? `%${String(input.q)}%`
+      : undefined;
+  if (search) {
     query = query.where((eb) =>
       eb.or([
         eb('charge_types.name', 'like', search),
@@ -128,15 +131,6 @@ export async function listCharges(
         eb('charges.charge', 'like', search),
       ]),
     );
-    count = count
-      .leftJoin('charge_types', 'charge_types.id', 'charges.type_id')
-      .where((eb) =>
-        eb.or([
-          eb('charge_types.name', 'like', search),
-          eb('charges.name', 'like', search),
-          eb('charges.charge', 'like', search),
-        ]),
-      );
   }
   if (input.filters) {
     try {
@@ -175,7 +169,18 @@ export async function listCharges(
       .limit(limit)
       .offset(offset * limit)
       .execute(),
-    count.executeTakeFirstOrThrow(),
+    search
+      ? count
+          .leftJoin('charge_types', 'charge_types.id', 'charges.type_id')
+          .where((eb) =>
+            eb.or([
+              eb('charge_types.name', 'like', search),
+              eb('charges.name', 'like', search),
+              eb('charges.charge', 'like', search),
+            ]),
+          )
+          .executeTakeFirstOrThrow()
+      : count.executeTakeFirstOrThrow(),
   ]);
   return {
     results: results.map((row) => ({

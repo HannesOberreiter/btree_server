@@ -19,6 +19,7 @@ import {
   scaleCreateResponseSchema,
   scaleListResponseSchema,
 } from '../../schemas/scale.schema.js';
+import { parseResponse } from '../../utils/response.util.js';
 
 export default function routes(
   instance: FastifyInstance,
@@ -37,8 +38,14 @@ export default function routes(
       },
       preHandler: Guard.authorize([ROLES.admin, ROLES.user, ROLES.read]),
     },
-    async (request) =>
-      listScales(db, request.session.user.user_id, request.params.id),
+    async (request) => {
+      const result = await listScales(
+        db,
+        request.session.user.user_id,
+        request.params.id,
+      );
+      return parseResponse(scaleListResponseSchema, result, request);
+    },
   );
 
   server.patch(
@@ -63,8 +70,14 @@ export default function routes(
         response: { 200: scaleCreateResponseSchema },
       },
     },
-    async (request) =>
-      createScale(db, request.session.user.user_id, request.body),
+    async (request) => {
+      const result = await createScale(
+        db,
+        request.session.user.user_id,
+        request.body,
+      );
+      return parseResponse(scaleCreateResponseSchema, result, request);
+    },
   );
 
   server.delete(

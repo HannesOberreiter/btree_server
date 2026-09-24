@@ -24,6 +24,7 @@ import {
   waxOperationParamsSchema,
   waxOperationResponseSchema,
 } from '../../schemas/wax.schema.js';
+import { parseResponse } from '../../utils/response.util.js';
 
 export default function routes(
   instance: FastifyInstance,
@@ -52,8 +53,14 @@ export default function routes(
       },
       preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
     },
-    (request) =>
-      listWaxOperations(db, request.session.user.user_id, request.query),
+    async (request) => {
+      const result = await listWaxOperations(
+        db,
+        request.session.user.user_id,
+        request.query,
+      );
+      return parseResponse(waxOperationListResponseSchema, result, request);
+    },
   );
   server.post(
     '/operations',
@@ -64,15 +71,17 @@ export default function routes(
       },
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
     },
-    (request) =>
-      createWaxOperation(
+    async (request) => {
+      const result = await createWaxOperation(
         db,
         {
           companyId: request.session.user.user_id,
           beeId: request.session.user.bee_id,
         },
         request.body,
-      ),
+      );
+      return parseResponse(waxOperationResponseSchema, result, request);
+    },
   );
   server.post(
     '/operations/inventory',
@@ -83,15 +92,17 @@ export default function routes(
       },
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
     },
-    (request) =>
-      createWaxInventory(
+    async (request) => {
+      const result = await createWaxInventory(
         db,
         {
           companyId: request.session.user.user_id,
           beeId: request.session.user.bee_id,
         },
         request.body,
-      ),
+      );
+      return parseResponse(waxOperationResponseSchema, result, request);
+    },
   );
   server.delete(
     '/lots/:id',
@@ -126,15 +137,17 @@ export default function routes(
       },
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
     },
-    (request) =>
-      reverseWaxOperation(
+    async (request) => {
+      const result = await reverseWaxOperation(
         db,
         {
           companyId: request.session.user.user_id,
           beeId: request.session.user.bee_id,
         },
         request.params.id,
-      ),
+      );
+      return parseResponse(waxOperationResponseSchema, result, request);
+    },
   );
   done();
 }

@@ -28,6 +28,7 @@ import type {
   AddFederatedCredentialsBody,
   DeleteRedisSessionParams,
 } from '../schemas/user.schema.js';
+import { redisValueToString } from '../utils/redis.util.js';
 
 export default class UserController {
   static async getFederatedCredentials(
@@ -85,15 +86,14 @@ export default class UserController {
   static async get(req: FastifyRequest, _reply: FastifyReply) {
     const db = KyselyServer.getInstance().db;
     const data = await fetchUser(db, '', req.session.user.bee_id);
+    if (!data) throw httpErrors.NotFound();
 
-    // Check if connected company exists (last visited company)
-    // otherwise take the simply the first one
-    let company: number;
-    if (data.company.some((el) => el.id === data.saved_company)) {
-      company = data.saved_company;
-    } else {
-      company = data.company[0].id;
-    }
+    // Use the last visited company if membership still exists, otherwise the first.
+    const selectedCompany =
+      data.company.find((el) => el.id === data.saved_company) ??
+      data.company[0];
+    if (!selectedCompany) throw httpErrors.Unauthorized('no company');
+    const company = selectedCompany.id;
     const { rank, paid } = await getPaidRank(db, data.id, company);
 
     (req as FastifyRequest & { bee_id: number }).bee_id =
@@ -249,16 +249,9 @@ export default class UserController {
         COUNT: 500,
       });
       if (result.keys.length > 0) {
-        keys.push(
-          ...result.keys.map((key) =>
-            typeof key === 'string' ? key : key.toString(),
-          ),
-        );
+        keys.push(...result.keys.map((key) => redisValueToString(key)));
       }
-      cursor =
-        typeof result.cursor === 'string'
-          ? result.cursor
-          : result.cursor.toString();
+      cursor = redisValueToString(result.cursor);
       if (cursor === '0') break;
     }
 
@@ -271,7 +264,7 @@ export default class UserController {
         if (!el) {
           return null;
         }
-        const sessionJson = typeof el === 'string' ? el : el.toString();
+        const sessionJson = redisValueToString(el);
         const o = JSON.parse(sessionJson);
         if (!o.user) return null;
         o.id = keys[index];

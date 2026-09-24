@@ -24,6 +24,7 @@ import {
   companyUserResponseSchema,
 } from '../../schemas/company_user.schema.js';
 import type { ChangeCompanyBody } from '../../schemas/user.schema.js';
+import { parseResponse } from '../../utils/response.util.js';
 
 export default function routes(
   instance: FastifyInstance,
@@ -39,7 +40,10 @@ export default function routes(
       schema: { response: { 200: z.array(companyUserResponseSchema) } },
       preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
     },
-    async (request) => listCompanyUsers(db, request.session.user.user_id),
+    async (request) => {
+      const result = await listCompanyUsers(db, request.session.user.user_id);
+      return parseResponse(z.array(companyUserResponseSchema), result, request);
+    },
   );
 
   server.post(
@@ -58,8 +62,17 @@ export default function routes(
         request.session.user.bee_id,
         request.body.email,
       );
-      if (!result.created) return { userExists: result.userExists };
-      return { ...(await AuthController.resetRequest(request, reply)) };
+      if (!result.created) {
+        return parseResponse(
+          companyUserAddResponseSchema,
+          { userExists: result.userExists },
+          request,
+        );
+      }
+      const response = {
+        ...(await AuthController.resetRequest(request, reply)),
+      };
+      return parseResponse(companyUserAddResponseSchema, response, request);
     },
   );
 

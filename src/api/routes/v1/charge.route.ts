@@ -24,6 +24,7 @@ import {
   chargeStockPaginatedResponseSchema,
   chargeStockQuerySchema,
 } from '../../schemas/charge.schema.js';
+import { parseResponse } from '../../utils/response.util.js';
 
 export default function routes(
   instance: FastifyInstance,
@@ -41,7 +42,10 @@ export default function routes(
       },
       preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
     },
-    (req) => listCharges(db, req.session.user.user_id, req.query),
+    async (req) => {
+      const result = await listCharges(db, req.session.user.user_id, req.query);
+      return parseResponse(chargePaginatedResponseSchema, result, req);
+    },
   );
   server.get(
     '/stock',
@@ -52,7 +56,14 @@ export default function routes(
       },
       preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
     },
-    (req) => listChargeStock(db, req.session.user.user_id, req.query),
+    async (req) => {
+      const result = await listChargeStock(
+        db,
+        req.session.user.user_id,
+        req.query,
+      );
+      return parseResponse(chargeStockPaginatedResponseSchema, result, req);
+    },
   );
   server.patch(
     '/',
@@ -97,15 +108,17 @@ export default function routes(
         response: { 200: z.array(chargeResponseSchema) },
       },
     },
-    (req) =>
-      deleteCharges(
+    async (req) => {
+      const result = await deleteCharges(
         db,
         req.session.user.user_id,
         req.session.user.bee_id,
         req.body.ids,
         Boolean(req.query.hard),
         Boolean(req.query.restore),
-      ),
+      );
+      return parseResponse(z.array(chargeResponseSchema), result, req);
+    },
   );
   server.post(
     '/batchGet',
@@ -116,7 +129,14 @@ export default function routes(
         response: { 200: z.array(chargeResponseSchema) },
       },
     },
-    (req) => getChargesByIds(db, req.session.user.user_id, req.body.ids),
+    async (req) => {
+      const result = await getChargesByIds(
+        db,
+        req.session.user.user_id,
+        req.body.ids,
+      );
+      return parseResponse(z.array(chargeResponseSchema), result, req);
+    },
   );
   done();
 }

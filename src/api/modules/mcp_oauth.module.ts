@@ -20,6 +20,7 @@ import {
   mcpOAuthRegistrationRequestSchema,
   mcpOAuthTokenRequestSchema,
 } from '../schemas/mcp_oauth.schema.js';
+import { redisValueToString } from '../utils/redis.util.js';
 import { isPremium } from './premium.module.js';
 
 const AUTH_CODE_TTL_SECONDS = 600;
@@ -617,9 +618,7 @@ export async function finishMcpConsent(
     throw new McpOAuthError('invalid_request', 'Invalid or expired consent');
   }
 
-  const pending = JSON.parse(
-    typeof raw === 'string' ? raw : raw.toString(),
-  ) as McpGrantPayload;
+  const pending = JSON.parse(redisValueToString(raw)) as McpGrantPayload;
   if (pending.userId !== user.user_id || pending.beeId !== user.bee_id) {
     throw new McpOAuthError('access_denied', 'Consent belongs to another user');
   }
@@ -692,9 +691,7 @@ export async function exchangeMcpAuthorizationCode(
     throw new McpOAuthError('invalid_grant', 'Invalid authorization code');
   }
 
-  const grant = JSON.parse(
-    typeof raw === 'string' ? raw : raw.toString(),
-  ) as McpGrantPayload;
+  const grant = JSON.parse(redisValueToString(raw)) as McpGrantPayload;
   const redirectUri = validateRedirectUri(request.redirect_uri);
   const challenge = createHash('sha256')
     .update(request.code_verifier)

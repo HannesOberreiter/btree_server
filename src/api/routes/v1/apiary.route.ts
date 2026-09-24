@@ -26,6 +26,7 @@ import {
   apiaryResponseSchema,
   apiaryUpdateStatusSchema,
 } from '../../schemas/apiary.schema.js';
+import { parseResponse } from '../../utils/response.util.js';
 
 export default function routes(
   instance: FastifyInstance,
@@ -44,8 +45,14 @@ export default function routes(
       },
       preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
     },
-    async (request) =>
-      listApiaries(db, request.session.user.user_id, request.query),
+    async (request) => {
+      const result = await listApiaries(
+        db,
+        request.session.user.user_id,
+        request.query,
+      );
+      return parseResponse(apiaryPaginatedResponseSchema, result, request);
+    },
   );
 
   server.get(
@@ -57,8 +64,14 @@ export default function routes(
       },
       preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
     },
-    async (request) =>
-      getApiaryDetail(db, request.session.user.user_id, request.params.id),
+    async (request) => {
+      const result = await getApiaryDetail(
+        db,
+        request.session.user.user_id,
+        request.params.id,
+      );
+      return parseResponse(apiaryDetailResponseSchema, result, request);
+    },
   );
 
   server.post(
@@ -70,13 +83,15 @@ export default function routes(
         response: { 200: apiaryResponseSchema },
       },
     },
-    async (request) =>
-      createApiary(
+    async (request) => {
+      const result = await createApiary(
         db,
         request.session.user.user_id,
         request.session.user.bee_id,
         request.body,
-      ),
+      );
+      return parseResponse(apiaryResponseSchema, result, request);
+    },
   );
 
   server.patch(
@@ -108,8 +123,8 @@ export default function routes(
         response: { 200: z.array(apiaryResponseSchema) },
       },
     },
-    async (request) =>
-      deleteApiaries(
+    async (request) => {
+      const result = await deleteApiaries(
         db,
         request.session.user.user_id,
         request.session.user.bee_id,
@@ -118,7 +133,9 @@ export default function routes(
           hard: Boolean(request.query.hard),
           restore: Boolean(request.query.restore),
         },
-      ),
+      );
+      return parseResponse(z.array(apiaryResponseSchema), result, request);
+    },
   );
 
   server.post(
@@ -130,8 +147,14 @@ export default function routes(
         response: { 200: z.array(apiaryResponseSchema) },
       },
     },
-    async (request) =>
-      getApiariesByIds(db, request.session.user.user_id, request.body.ids),
+    async (request) => {
+      const result = await getApiariesByIds(
+        db,
+        request.session.user.user_id,
+        request.body.ids,
+      );
+      return parseResponse(z.array(apiaryResponseSchema), result, request);
+    },
   );
 
   server.patch(

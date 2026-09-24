@@ -1497,7 +1497,8 @@ export function createWizBeeTools(
           .describe('Year for GTS calculation (default: current year)'),
       }),
       execute: async (input) => {
-        let weatherData = null;
+        let weatherData: Awaited<ReturnType<typeof getApiaryWeather>> | null =
+          null;
         try {
           weatherData = await getApiaryWeather(
             db,
@@ -1508,7 +1509,22 @@ export function createWizBeeTools(
           // Weather service might fail, continue without it
         }
 
-        let gts = null;
+        type TemperatureSum = Awaited<
+          ReturnType<typeof getApiaryTemperatureSum>
+        >;
+        let gts: {
+          currentYear: {
+            year: number;
+            totalGts: TemperatureSum['totalGts'];
+            period: TemperatureSum['period'];
+          };
+          previousYear: {
+            year: number;
+            totalGts: TemperatureSum['totalGts'];
+            period: TemperatureSum['period'];
+          };
+          apiary: TemperatureSum['apiary'];
+        } | null = null;
         try {
           const requestedYear = input.year ?? new Date().getFullYear();
           const previousYear = requestedYear - 1;

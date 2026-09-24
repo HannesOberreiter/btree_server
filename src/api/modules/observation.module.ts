@@ -107,23 +107,23 @@ export async function filterNewObservationExternalUuids(
 }
 
 function selectPublicObservations(db: Database) {
-  return db
-    .selectFrom('observations')
-    .select([
-      sql<Point>`location`.as('location'),
-      sql<string>`JSON_EXTRACT(data, '$.uri')`.as('uri'),
-      sql<string>`DATE_FORMAT(observed_at, '%Y-%m-%dT%H:%i:%sZ')`.as(
-        'observed_at',
-      ),
-      sql<
-        string | null
-      >`JSON_UNQUOTE(JSON_EXTRACT(data, '$.observationType'))`.as(
-        'source_observation_type',
-      ),
-      sql<string | null>`JSON_UNQUOTE(JSON_EXTRACT(data, '$.reportType'))`.as(
-        'source_report_type',
-      ),
-    ]);
+  return db.selectFrom('observations').select([
+    sql<Point>`location`.as('location'),
+    // Preserve the JSON-encoded URL expected by public API consumers.
+    // mysql2 otherwise decodes MariaDB JSON expressions into plain strings.
+    sql<string>`CAST(JSON_EXTRACT(data, '$.uri') AS CHAR)`.as('uri'),
+    sql<string>`DATE_FORMAT(observed_at, '%Y-%m-%dT%H:%i:%sZ')`.as(
+      'observed_at',
+    ),
+    sql<
+      string | null
+    >`JSON_UNQUOTE(JSON_EXTRACT(data, '$.observationType'))`.as(
+      'source_observation_type',
+    ),
+    sql<string | null>`JSON_UNQUOTE(JSON_EXTRACT(data, '$.reportType'))`.as(
+      'source_report_type',
+    ),
+  ]);
 }
 
 function normalizePublicObservationType(

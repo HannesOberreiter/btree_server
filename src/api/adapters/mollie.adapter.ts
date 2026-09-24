@@ -8,6 +8,7 @@ import {
   url,
 } from '../../config/environment.config.js';
 
+if (!mollieApiKey) throw new Error('MOLLIE_API_KEY must be configured');
 const mollieClient = createMollieClient({ apiKey: mollieApiKey });
 
 /**
