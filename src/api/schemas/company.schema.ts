@@ -27,13 +27,13 @@ export const companyCountResponseSchema = z.looseObject({
 });
 
 export const companyPatchSchema = z.looseObject({
-  name: z.string().min(3).max(128).trim().optional(),
+  name: z.string().min(3).max(45).trim().optional(),
   password: z.string().optional(),
   api_change: z.boolean().optional(),
 });
 
 export const companyCreateSchema = z.object({
-  name: z.string().min(3).max(128).trim(),
+  name: z.string().min(3).max(45).trim(),
 });
 
 export const companyCouponSchema = z.object({
