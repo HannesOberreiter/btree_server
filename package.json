@@ -75,7 +75,7 @@
     "redis": "^6.2.1",
     "ua-parser-js": "^2.0.10",
     "yauzl-promise": "^4.0.0",
-    "zod": "4.4.3"
+    "zod": "4.6.5"
   },
   "devDependencies": {
     "@types/archiver": "^8.0.0",
