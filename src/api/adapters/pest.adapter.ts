@@ -5,6 +5,7 @@ import proj4 from 'proj4';
 
 import { KyselyServer } from '../../servers/kysely.server.js';
 import { RedisServer } from '../../servers/redis.server.js';
+import { Logger } from '../../services/logger.service.js';
 import type { Point } from '../../types/db.types.js';
 import {
   deleteObservationsByIds,
@@ -66,10 +67,23 @@ export async function fetchObservations(taxa: Taxa = 'Vespa velutina') {
 
   /** after fetching new taxa we want to cleanup any possible cached map results */
   const redis = RedisServer.client;
-  void redis.del(recentObservationsCacheKey(taxa));
   const currentYear = new Date().getFullYear();
-  void redis.del(yearlyObservationsCacheKey(taxa, currentYear));
-  void redis.del(yearlyObservationsCacheKey(taxa, currentYear - 1));
+  for (const cacheKey of [
+    recentObservationsCacheKey(taxa),
+    yearlyObservationsCacheKey(taxa, currentYear),
+    yearlyObservationsCacheKey(taxa, currentYear - 1),
+  ]) {
+    void redis.del(cacheKey).catch((error: unknown) => {
+      Logger.getInstance().log(
+        'warn',
+        'Failed to invalidate observation cache',
+        {
+          error,
+          cacheKey,
+        },
+      );
+    });
+  }
 
   return {
     taxa,

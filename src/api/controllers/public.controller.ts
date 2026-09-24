@@ -2,6 +2,7 @@ import type { FastifyReply, FastifyRequest } from 'fastify';
 
 import { KyselyServer } from '../../servers/kysely.server.js';
 import { RedisServer } from '../../servers/redis.server.js';
+import { Logger } from '../../services/logger.service.js';
 import {
   countObservationsByTaxa,
   listObservationsByYear,
@@ -40,7 +41,18 @@ export default class PublicController {
       KyselyServer.getInstance().db,
       taxa,
     );
-    void redis.set(cacheKey, JSON.stringify(result), { EX: 3600 });
+    void redis
+      .set(cacheKey, JSON.stringify(result), { EX: 3600 })
+      .catch((error: unknown) => {
+        Logger.getInstance().log(
+          'warn',
+          'Failed to cache public observations',
+          {
+            error,
+            cacheKey,
+          },
+        );
+      });
     return result;
   }
 
@@ -65,7 +77,18 @@ export default class PublicController {
       taxa,
       year,
     );
-    void redis.set(cacheKey, JSON.stringify(result), { EX: 3600 });
+    void redis
+      .set(cacheKey, JSON.stringify(result), { EX: 3600 })
+      .catch((error: unknown) => {
+        Logger.getInstance().log(
+          'warn',
+          'Failed to cache public observations',
+          {
+            error,
+            cacheKey,
+          },
+        );
+      });
     return result;
   }
 
