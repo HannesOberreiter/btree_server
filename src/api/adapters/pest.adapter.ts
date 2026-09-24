@@ -1,7 +1,11 @@
+import { isDeepStrictEqual } from 'node:util';
+
+import { sql } from 'kysely';
 import proj4 from 'proj4';
 
 import { KyselyServer } from '../../servers/kysely.server.js';
 import { RedisServer } from '../../servers/redis.server.js';
+import type { Point } from '../../types/db.types.js';
 import {
   deleteObservationsByIds,
   filterNewObservationExternalIds,
@@ -12,6 +16,9 @@ import {
 } from '../modules/observation.module.js';
 import type { ObservationInsert, Taxa } from '../modules/observation.module.js';
 import { parseBienengesundheitObservations } from './bienengesundheit.parser.js';
+import { parseFrelonasiatiqueObservations } from './frelonasiatique.parser.js';
+import { fetchStopVelutina } from './stopvelutina.adapter.js';
+import { fetchStopVespa } from './stopvespa.adapter.js';
 
 const observationDb = KyselyServer.getInstance().db;
 
@@ -25,7 +32,14 @@ export async function fetchObservations(taxa: Taxa = 'Vespa velutina') {
   const inat = await fInat.fetchNewObs(taxa);
   const observationOrg = await fObservation.fetchNewObs(taxa);
   const artenfinderNet = await fetchArtenfinderNet(taxa);
-  const infoFaunaCh = await fetchInfoFaunaCh(taxa);
+  const infoFaunaCh =
+    taxa === 'Aethina tumida'
+      ? await fetchInfoFaunaCh(taxa)
+      : { newObservations: 0 };
+  const asiatischeHornisseCh =
+    taxa === 'Vespa velutina'
+      ? await fetchAsiatischeHornisseCh()
+      : { newObservations: 0 };
 
   const frelonsAsiatiques =
     taxa === 'Vespa velutina'
@@ -36,6 +50,20 @@ export async function fetchObservations(taxa: Taxa = 'Vespa velutina') {
       ? await fetchBienengesundheitAt()
       : { newObservations: 0 };
 
+  // Each new provider reports its own failure without suppressing the other or cache cleanup.
+  const stopVelutina =
+    taxa === 'Vespa velutina'
+      ? await fetchStopVelutina().catch((error: unknown) => ({
+          error: error instanceof Error ? error.message : String(error),
+        }))
+      : undefined;
+  const stopVespa =
+    taxa === 'Vespa velutina'
+      ? await fetchStopVespa().catch((error: unknown) => ({
+          error: error instanceof Error ? error.message : String(error),
+        }))
+      : undefined;
+
   /** after fetching new taxa we want to cleanup any possible cached map results */
   const redis = RedisServer.client;
   void redis.del(recentObservationsCacheKey(taxa));
@@ -45,17 +73,136 @@ export async function fetchObservations(taxa: Taxa = 'Vespa velutina') {
 
   return {
     taxa,
+    ...(taxa === 'Vespa velutina' ? { stopVelutina, stopVespa } : {}),
     iNaturalist: inat,
     frelonsAsiatiques,
     bienengesundheitAt,
     artenfinderNet,
     observationOrg,
     infoFaunaCh,
+    asiatischeHornisseCh,
     cleanup: {
       iNaturalist: cleanupInat,
       ObservationOrg: cleanupObservationOrg,
     },
   };
+}
+
+// Serialize monthly and regular imports so they cannot insert the same IDs twice.
+let swissImportQueue: Promise<unknown> = Promise.resolve();
+
+export function fetchAsiatischeHornisseCh(fullSync = false) {
+  const result = swissImportQueue.then(() =>
+    importAsiatischeHornisseCh(fullSync),
+  );
+  swissImportQueue = result.catch(() => undefined);
+  return result;
+}
+
+async function importAsiatischeHornisseCh(fullSync: boolean) {
+  const externalService = 'asiatischehornisse.ch';
+  const existing = await observationDb
+    .selectFrom('observations')
+    .select(['id', 'external_id', 'location'])
+    .select(
+      sql<string | null>`DATE_FORMAT(observed_at, '%Y-%m-%dT%H:%i:%sZ')`.as(
+        'observed_at',
+      ),
+    )
+    .select(sql<Record<string, unknown> | null>`data`.as('source_data'))
+    .where('external_service', '=', externalService)
+    .execute();
+  const existingById = new Map(existing.map((row) => [row.external_id, row]));
+  const url = new URL('https://frelonasiatique.ch/api/v1/observations/map');
+  url.searchParams.set('srsname', 'EPSG:4326');
+  url.searchParams.set('validated_only', 'true');
+  if (!fullSync && existing.length > 0) {
+    const now = new Date();
+    const year = now.getFullYear();
+    // Include late reports from the previous year throughout January.
+    url.searchParams.set(
+      'date_from',
+      `${now.getMonth() === 0 ? year - 1 : year}-01-01`,
+    );
+    url.searchParams.set('date_to', `${year}-12-31`);
+  }
+  const response = await fetch(url, {
+    headers: {
+      Accept: 'application/geo+json, application/json',
+      'User-Agent': 'btree.at/pest-map',
+    },
+    signal: AbortSignal.timeout(60_000),
+  });
+  if (!response.ok) {
+    throw new Error(`frelonasiatique.ch returned HTTP ${response.status}`);
+  }
+
+  const records = parseFrelonasiatiqueObservations(await response.json());
+  if (!url.searchParams.has('date_from') && records.length === 0) {
+    throw new Error('Empty frelonasiatique.ch full response');
+  }
+  const observations: ObservationInsert[] = records.map((record) => ({
+    external_id: record.externalId,
+    external_service: externalService,
+    observed_at: record.observedAt,
+    location: record.location,
+    taxa: 'Vespa velutina',
+    data: {
+      observationType: record.observationType,
+      canton: record.canton,
+      municipality: record.municipality,
+      nestState: record.nestState,
+      uri: 'https://asiatischehornisse.ch/karte',
+    },
+  }));
+
+  const newObservations: ObservationInsert[] = [];
+  const changedYears = new Set<number>();
+  let updatedObservations = 0;
+  await observationDb.transaction().execute(async (db) => {
+    for (const observation of observations) {
+      const previous = existingById.get(observation.external_id!);
+      const observedAt = new Date(observation.observed_at);
+      if (!previous) {
+        newObservations.push(observation);
+        changedYears.add(observedAt.getUTCFullYear());
+        continue;
+      }
+      const previousDate = previous.observed_at
+        ? new Date(previous.observed_at)
+        : null;
+      if (
+        previousDate?.getTime() === observedAt.getTime() &&
+        previous.location?.x === observation.location.lat &&
+        previous.location?.y === observation.location.lng &&
+        isDeepStrictEqual(previous.source_data, observation.data)
+      )
+        continue;
+
+      await db
+        .updateTable('observations')
+        .set({
+          observed_at: observedAt,
+          location: sql<Point>`PointFromText(${`POINT(${observation.location.lat} ${observation.location.lng})`})`,
+          data: JSON.stringify(observation.data),
+        })
+        .where('id', '=', previous.id)
+        .execute();
+      updatedObservations++;
+      changedYears.add(observedAt.getUTCFullYear());
+      if (previousDate) changedYears.add(previousDate.getUTCFullYear());
+    }
+    await insertObservations(db, newObservations);
+  });
+  if (changedYears.size > 0) {
+    await RedisServer.client.del([
+      recentObservationsCacheKey('Vespa velutina'),
+      ...[...changedYears].map((year) =>
+        yearlyObservationsCacheKey('Vespa velutina', year),
+      ),
+    ]);
+  }
+  return { newObservations: newObservations.length, updatedObservations };
 }
 
 export async function fetchBienengesundheitAt() {
@@ -569,11 +716,13 @@ export function fetchObservationOrg() {
 }
 
 export async function fetchInfoFaunaCh(taxa: Taxa) {
-  const taxonKey: Record<Taxa, number> = {
-    'Vespa velutina': 1311477,
-    'Aethina tumida': 8254044,
-  };
-  const url = `https://api.gbif.org/v1/occurrence/search?dataset_key=81981d98-e27f-4155-9a94-9eae9bbad2be&taxon_key=${taxonKey[taxa]}`;
+  if (taxa !== 'Aethina tumida') {
+    throw new Error(
+      'Info Fauna GBIF import is only supported for Aethina tumida',
+    );
+  }
+  const url =
+    'https://api.gbif.org/v1/occurrence/search?dataset_key=81981d98-e27f-4155-9a94-9eae9bbad2be&taxon_key=8254044';
 
   let endOfRecords = false;
   let offset = 0;
