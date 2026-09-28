@@ -53,34 +53,59 @@ function createServer(value: unknown, guarded: boolean, fallbackUrl = false) {
 const url = '/apiaries/7?details=true';
 
 describe('HTTP response boundary', () => {
-  it('preserves valid output through both parsing passes, including the real Date codec', async () => {
-    const value = { results: [apiary], total: 1 };
-    const baseline = createServer(value, false);
-    const guarded = createServer(value, true);
-    try {
-      const before = await baseline.server.inject({ method: 'GET', url });
-      const after = await guarded.server.inject({ method: 'GET', url });
-
-      expect(before.statusCode).toBe(200);
-      expect(after.statusCode).toBe(200);
-      expect(after.body).toBe(before.body);
-      expect(after.json()).toEqual({
-        results: [{ ...apiary, created_at: apiary.created_at.toISOString() }],
-        total: 1,
-      });
-      expect(apiary.created_at).toBeInstanceOf(Date);
-      expect(baseline.errors).toEqual([]);
-      expect(guarded.errors).toEqual([]);
-    } finally {
-      await Promise.all([baseline.server.close(), guarded.server.close()]);
-    }
-  });
-
-  it.each(['name', 'modus', 'latitude'] as const)(
-    'keeps null %s failures classified as response serialization errors without dropping rows',
-    async (field) => {
+  it.each([
+    {
+      label: 'Date',
+      createdAt: apiary.created_at,
+      expected: apiary.created_at.toISOString(),
+    },
+    { label: 'date string', createdAt: '2026-09-14', expected: '2026-09-14' },
+    {
+      label: 'timestamp string',
+      createdAt: '2026-09-14T14:00:00+02:00',
+      expected: '2026-09-14T14:00:00+02:00',
+    },
+    { label: 'null', createdAt: null, expected: null },
+    { label: 'undefined', createdAt: undefined, expected: undefined },
+  ])(
+    'preserves $label through both encoding passes',
+    async ({ createdAt, expected }) => {
       const value = {
-        results: [apiary, { ...apiary, [field]: null }],
+        results: [{ ...apiary, created_at: createdAt }],
+        total: 1,
+      };
+      const baseline = createServer(value, false);
+      const guarded = createServer(value, true);
+      try {
+        const before = await baseline.server.inject({ method: 'GET', url });
+        const after = await guarded.server.inject({ method: 'GET', url });
+
+        expect(before.statusCode).toBe(200);
+        expect(after.statusCode).toBe(200);
+        expect(after.body).toBe(before.body);
+        expect(after.json()).toEqual({
+          results: [{ ...apiary, created_at: expected }],
+          total: 1,
+        });
+        expect(apiary.created_at).toBeInstanceOf(Date);
+        expect(baseline.errors).toEqual([]);
+        expect(guarded.errors).toEqual([]);
+      } finally {
+        await Promise.all([baseline.server.close(), guarded.server.close()]);
+      }
+    },
+  );
+
+  it.each([
+    { field: 'name', invalid: null },
+    { field: 'modus', invalid: null },
+    { field: 'latitude', invalid: null },
+    { field: 'created_at', invalid: new Date('invalid') },
+  ])(
+    'keeps invalid $field failures classified as response serialization errors without dropping rows',
+    async ({ field, invalid }) => {
+      const value = {
+        results: [apiary, { ...apiary, [field]: invalid }],
         total: 2,
       };
       const baseline = createServer(value, false);
