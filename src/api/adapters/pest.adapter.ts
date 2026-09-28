@@ -4,16 +4,13 @@ import { sql } from 'kysely';
 import proj4 from 'proj4';
 
 import { KyselyServer } from '../../servers/kysely.server.js';
-import { RedisServer } from '../../servers/redis.server.js';
-import { Logger } from '../../services/logger.service.js';
 import type { Point } from '../../types/db.types.js';
+import { invalidateObservationCache } from '../modules/observation-cache.module.js';
 import {
   deleteObservationsByIds,
   filterNewObservationExternalIds,
   getRandomObservationSample,
   insertObservations,
-  recentObservationsCacheKey,
-  yearlyObservationsCacheKey,
 } from '../modules/observation.module.js';
 import type { ObservationInsert, Taxa } from '../modules/observation.module.js';
 import { parseBienengesundheitObservations } from './bienengesundheit.parser.js';
@@ -24,6 +21,19 @@ import { fetchStopVespa } from './stopvespa.adapter.js';
 const observationDb = KyselyServer.getInstance().db;
 
 export async function fetchObservations(taxa: Taxa = 'Vespa velutina') {
+  try {
+    return await importObservations(taxa);
+  } finally {
+    // Legacy providers can commit partial batches before failing. Cleanup also
+    // spans both taxa, so invalidate every period for both even on failure.
+    await Promise.all([
+      invalidateObservationCache('Vespa velutina'),
+      invalidateObservationCache('Aethina tumida'),
+    ]);
+  }
+}
+
+async function importObservations(taxa: Taxa) {
   const fInat = fetchInat();
   const fObservation = fetchObservationOrg();
 
@@ -64,26 +74,6 @@ export async function fetchObservations(taxa: Taxa = 'Vespa velutina') {
           error: error instanceof Error ? error.message : String(error),
         }))
       : undefined;
-
-  /** after fetching new taxa we want to cleanup any possible cached map results */
-  const redis = RedisServer.client;
-  const currentYear = new Date().getFullYear();
-  for (const cacheKey of [
-    recentObservationsCacheKey(taxa),
-    yearlyObservationsCacheKey(taxa, currentYear),
-    yearlyObservationsCacheKey(taxa, currentYear - 1),
-  ]) {
-    void redis.del(cacheKey).catch((error: unknown) => {
-      Logger.getInstance().log(
-        'warn',
-        'Failed to invalidate observation cache',
-        {
-          error,
-          cacheKey,
-        },
-      );
-    });
-  }
 
   return {
     taxa,
@@ -171,7 +161,6 @@ async function importAsiatischeHornisseCh(fullSync: boolean) {
   }));
 
   const newObservations: ObservationInsert[] = [];
-  const changedYears = new Set<number>();
   let updatedObservations = 0;
   await observationDb.transaction().execute(async (db) => {
     for (const observation of observations) {
@@ -179,7 +168,6 @@ async function importAsiatischeHornisseCh(fullSync: boolean) {
       const observedAt = new Date(observation.observed_at);
       if (!previous) {
         newObservations.push(observation);
-        changedYears.add(observedAt.getUTCFullYear());
         continue;
       }
       const previousDate = previous.observed_at
@@ -203,18 +191,11 @@ async function importAsiatischeHornisseCh(fullSync: boolean) {
         .where('id', '=', previous.id)
         .execute();
       updatedObservations++;
-      changedYears.add(observedAt.getUTCFullYear());
-      if (previousDate) changedYears.add(previousDate.getUTCFullYear());
     }
     await insertObservations(db, newObservations);
   });
-  if (changedYears.size > 0) {
-    await RedisServer.client.del([
-      recentObservationsCacheKey('Vespa velutina'),
-      ...[...changedYears].map((year) =>
-        yearlyObservationsCacheKey('Vespa velutina', year),
-      ),
-    ]);
+  if (newObservations.length > 0 || updatedObservations > 0) {
+    await invalidateObservationCache('Vespa velutina');
   }
   return { newObservations: newObservations.length, updatedObservations };
 }

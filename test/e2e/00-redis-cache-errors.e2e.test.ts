@@ -9,16 +9,26 @@ import PublicController from '../../src/api/controllers/public.controller.js';
 import * as observations from '../../src/api/modules/observation.module.js';
 
 const mocks = vi.hoisted(() => ({
+  isReady: true,
+  withCommandOptions: vi.fn(),
+  insertExecute: vi.fn<() => Promise<unknown>>(),
   get: vi.fn<(key: string) => Promise<string | null>>(),
   set: vi.fn<
     (key: string, value: string, options: unknown) => Promise<string>
   >(),
-  del: vi.fn<(key: string) => Promise<number>>(),
   log: vi.fn(),
 }));
 
 vi.mock('../../src/servers/kysely.server.js', () => ({
-  KyselyServer: { getInstance: () => ({ db: {} }) },
+  KyselyServer: {
+    getInstance: () => ({
+      db: {
+        insertInto: () => ({
+          values: () => ({ execute: mocks.insertExecute }),
+        }),
+      },
+    }),
+  },
 }));
 vi.mock('../../src/servers/redis.server.js', () => ({
   RedisServer: { client: mocks },
@@ -29,9 +39,12 @@ vi.mock('../../src/services/logger.service.js', () => ({
 
 beforeEach(() => {
   vi.clearAllMocks();
-  mocks.get.mockResolvedValue(null);
+  mocks.withCommandOptions.mockReturnValue(mocks);
+  mocks.get.mockImplementation(async (key) =>
+    key.includes('Generation:') ? 'test-generation' : null,
+  );
   mocks.set.mockResolvedValue('OK');
-  mocks.del.mockResolvedValue(1);
+  mocks.insertExecute.mockReset().mockResolvedValue({});
   vi.spyOn(observations, 'listRecentObservations').mockResolvedValue([]);
   vi.spyOn(observations, 'listObservationsByYear').mockResolvedValue([]);
   vi.spyOn(observations, 'getRandomObservationSample').mockResolvedValue([]);
@@ -45,7 +58,7 @@ afterEach(() => {
   vi.useRealTimers();
 });
 
-describe('detached Redis cache command failures', () => {
+describe('Redis cache command failures', () => {
   it.each(['recent', 'year'] as const)(
     'logs a timed-out %s cache write without rejecting the response',
     async (period) => {
@@ -67,7 +80,11 @@ describe('detached Redis cache command failures', () => {
           period === 'recent'
             ? observations.recentObservationsCacheKey('Vespa velutina')
             : observations.yearlyObservationsCacheKey('Vespa velutina', 2026);
-        expect(mocks.set).toHaveBeenCalledWith(cacheKey, '[]', { EX: 3600 });
+        expect(mocks.set).toHaveBeenCalledWith(
+          cacheKey,
+          JSON.stringify({ generation: 'test-generation', value: [] }),
+          { EX: 3600 },
+        );
         expect(mocks.log).toHaveBeenCalledExactlyOnceWith(
           'warn',
           'Failed to cache public observations',
@@ -79,9 +96,70 @@ describe('detached Redis cache command failures', () => {
     },
   );
 
+  it.each([false, true])(
+    'invalidates both taxa after a partially committed historical batch (Redis failure: %s)',
+    async (redisFails) => {
+      const records = Array.from({ length: 501 }, (_, index) => ({
+        id: index + 1,
+        time_observed_at: '2010-06-01T00:00:00Z',
+        location: '47,8',
+      }));
+      vi.spyOn(
+        observations,
+        'filterNewObservationExternalIds',
+      ).mockResolvedValue(new Set(records.map((record) => record.id)));
+      mocks.insertExecute
+        .mockResolvedValueOnce({})
+        .mockRejectedValueOnce(new Error('second batch failed'));
+      if (redisFails) mocks.set.mockRejectedValue(new Error('Redis failed'));
+      vi.stubGlobal(
+        'fetch',
+        vi
+          .fn<typeof fetch>()
+          .mockResolvedValue(
+            new Response(JSON.stringify({ results: records })),
+          ),
+      );
+
+      await expect(fetchObservations('Vespa velutina')).rejects.toThrow(
+        'second batch failed',
+      );
+      expect(mocks.insertExecute).toHaveBeenCalledTimes(2);
+      expect(mocks.set.mock.calls.map(([key]) => key)).toEqual([
+        'cache:Vespa velutinaObservationsGeneration:v1',
+        'cache:Aethina tumidaObservationsGeneration:v1',
+      ]);
+    },
+  );
+
+  it('awaits invalidation before propagating a provider failure', async () => {
+    const completions: Array<(value: string) => void> = [];
+    mocks.set.mockImplementation(
+      () =>
+        new Promise<string>((resolve) => {
+          completions.push(resolve);
+        }),
+    );
+    vi.stubGlobal(
+      'fetch',
+      vi.fn<typeof fetch>().mockRejectedValue(new Error('provider failed')),
+    );
+    let completed = false;
+    const result = fetchObservations('Vespa velutina').catch(
+      (error: unknown) => {
+        completed = true;
+        return error;
+      },
+    );
+    await vi.waitFor(() => expect(completions).toHaveLength(2));
+    expect(completed).toBe(false);
+    for (const finish of completions) finish('OK');
+    expect(await result).toEqual(new Error('provider failed'));
+  });
+
   it('handles every failed invalidation without losing the import result', async () => {
     const error = new TimeoutError();
-    mocks.del.mockRejectedValue(error);
+    mocks.set.mockRejectedValue(error);
     vi.stubGlobal(
       'fetch',
       vi.fn<typeof fetch>().mockImplementation(async (input) => {
@@ -110,18 +188,16 @@ describe('detached Redis cache command failures', () => {
       taxa: 'Aethina tumida',
       infoFaunaCh: { newObservations: 0 },
     });
-    const keys = [
-      observations.recentObservationsCacheKey('Aethina tumida'),
-      observations.yearlyObservationsCacheKey('Aethina tumida', 2026),
-      observations.yearlyObservationsCacheKey('Aethina tumida', 2025),
-    ];
-    expect(mocks.del.mock.calls.map(([key]) => key)).toEqual(keys);
-    expect(mocks.log).toHaveBeenCalledTimes(3);
-    for (const cacheKey of keys) {
+    const taxa = ['Vespa velutina', 'Aethina tumida'];
+    expect(mocks.set.mock.calls.map(([key]) => key)).toEqual(
+      taxa.map((name) => `cache:${name}ObservationsGeneration:v1`),
+    );
+    expect(mocks.log).toHaveBeenCalledTimes(2);
+    for (const name of taxa) {
       expect(mocks.log).toHaveBeenCalledWith(
         'warn',
         'Failed to invalidate observation cache',
-        { error, cacheKey },
+        { error, taxa: name },
       );
     }
   });

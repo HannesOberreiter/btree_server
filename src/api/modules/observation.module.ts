@@ -24,11 +24,15 @@ export function mapPublicTaxa(taxa: 'velutina' | 'aethina_tumida'): Taxa {
 }
 
 export function recentObservationsCacheKey(taxa: Taxa) {
-  return `cache:${taxa}ObservationsRecent:v2`;
+  return `cache:${taxa}ObservationsRecent:v3`;
 }
 
 export function yearlyObservationsCacheKey(taxa: Taxa, year: number) {
-  return `cache:${taxa}ObservationsYear:${year}:v2`;
+  return `cache:${taxa}ObservationsYear:${year}:v3`;
+}
+
+export function observationStatsCacheKey(taxa: Taxa) {
+  return `cache:${taxa}ObservationsStats:v3`;
 }
 
 export async function insertObservations(

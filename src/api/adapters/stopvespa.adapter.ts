@@ -3,13 +3,9 @@ import { isDeepStrictEqual } from 'node:util';
 import { sql } from 'kysely';
 
 import { KyselyServer } from '../../servers/kysely.server.js';
-import { RedisServer } from '../../servers/redis.server.js';
 import type { Point } from '../../types/db.types.js';
-import {
-  insertObservations,
-  recentObservationsCacheKey,
-  yearlyObservationsCacheKey,
-} from '../modules/observation.module.js';
+import { invalidateObservationCache } from '../modules/observation-cache.module.js';
+import { insertObservations } from '../modules/observation.module.js';
 import type { ObservationInsert } from '../modules/observation.module.js';
 import { parseStopVespaPage } from './stopvespa.parser.js';
 import type { StopVespaObservation } from './stopvespa.parser.js';
@@ -79,7 +75,6 @@ async function importStopVespa() {
   }
 
   const db = KyselyServer.getInstance().db;
-  const changedYears = new Set<number>();
   let newObservations = 0;
   let updatedObservations = 0;
   // No writes until the entire response has passed pagination/schema/identity validation.
@@ -112,7 +107,6 @@ async function importStopVespa() {
           taxa: 'Vespa velutina',
           data: record.data,
         });
-        changedYears.add(observedAt.getUTCFullYear());
         continue;
       }
       const previousDate = previous.observed_at
@@ -137,18 +131,12 @@ async function importStopVespa() {
         .where('id', '=', previous.id)
         .execute();
       updatedObservations++;
-      changedYears.add(observedAt.getUTCFullYear());
-      if (previousDate) changedYears.add(previousDate.getUTCFullYear());
     }
     await insertObservations(transaction, inserts);
     newObservations = inserts.length;
   });
-  if (changedYears.size > 0)
-    await RedisServer.client.del([
-      recentObservationsCacheKey('Vespa velutina'),
-      ...[...changedYears].map((year) =>
-        yearlyObservationsCacheKey('Vespa velutina', year),
-      ),
-    ]);
+  if (newObservations > 0 || updatedObservations > 0) {
+    await invalidateObservationCache('Vespa velutina');
+  }
   return { newObservations, updatedObservations, skippedRecords };
 }

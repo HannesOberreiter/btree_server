@@ -1,10 +1,8 @@
 import { KyselyServer } from '../../servers/kysely.server.js';
-import { RedisServer } from '../../servers/redis.server.js';
+import { invalidateObservationCache } from '../modules/observation-cache.module.js';
 import {
   filterNewObservationExternalIds,
   insertObservations,
-  recentObservationsCacheKey,
-  yearlyObservationsCacheKey,
 } from '../modules/observation.module.js';
 import type { ObservationInsert } from '../modules/observation.module.js';
 import {
@@ -86,17 +84,7 @@ async function importStopVelutina() {
     .transaction()
     .execute((transaction) => insertObservations(transaction, observations));
   if (observations.length > 0) {
-    const years = new Set(
-      observations.map((record) =>
-        new Date(record.observed_at).getUTCFullYear(),
-      ),
-    );
-    await RedisServer.client.del([
-      recentObservationsCacheKey('Vespa velutina'),
-      ...[...years].map((year) =>
-        yearlyObservationsCacheKey('Vespa velutina', year),
-      ),
-    ]);
+    await invalidateObservationCache('Vespa velutina');
   }
   return { newObservations: observations.length, skippedRecords };
 }

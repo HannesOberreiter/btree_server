@@ -3,30 +3,29 @@ import { readFileSync } from 'node:fs';
 import Fastify from 'fastify';
 import { serializerCompiler } from 'fastify-type-provider-zod';
 import type { ZodTypeProvider } from 'fastify-type-provider-zod';
-import { createClient } from 'redis';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { fetchObservations } from '../../src/api/adapters/pest.adapter.js';
 import { fetchStopVelutina } from '../../src/api/adapters/stopvelutina.adapter.js';
 import { fetchStopVespa } from '../../src/api/adapters/stopvespa.adapter.js';
+import { invalidateObservationCache } from '../../src/api/modules/observation-cache.module.js';
 import * as observationModule from '../../src/api/modules/observation.module.js';
 import {
   insertObservations,
   listObservationsByYear,
   listRecentObservations,
-  recentObservationsCacheKey,
-  yearlyObservationsCacheKey,
 } from '../../src/api/modules/observation.module.js';
 import { publicObservationListResponseSchema } from '../../src/api/schemas/public.schema.js';
 import { KyselyServer } from '../../src/servers/kysely.server.js';
-import { RedisServer } from '../../src/servers/redis.server.js';
 import confirmed from '../fixtures/stopvespa-confirmed.json';
+
+vi.mock('../../src/api/modules/observation-cache.module.js', () => ({
+  invalidateObservationCache: vi.fn().mockResolvedValue(undefined),
+}));
 
 const db = KyselyServer.getInstance().db;
 const sources = ['stopvelutina.it', 'stopvespa.icnf.pt', 'european-sync-test'];
 const fetchMock = vi.fn<typeof fetch>();
-const redisClient = createClient();
-const originalRedisClient = RedisServer.client;
 const mapHtml = readFileSync(
   new URL('../fixtures/stopvelutina-map.html', import.meta.url),
   'utf8',
@@ -69,8 +68,7 @@ beforeEach(async () => {
     .deleteFrom('observations')
     .where('external_service', 'in', sources)
     .execute();
-  RedisServer.client = redisClient;
-  vi.spyOn(redisClient, 'del').mockResolvedValue(1);
+  vi.mocked(invalidateObservationCache).mockClear();
   fetchMock.mockReset();
   vi.stubGlobal('fetch', fetchMock);
   vi.useFakeTimers({ toFake: ['Date'] });
@@ -80,7 +78,6 @@ afterEach(async () => {
   vi.useRealTimers();
   vi.unstubAllGlobals();
   vi.restoreAllMocks();
-  RedisServer.client = originalRedisClient;
   await db
     .deleteFrom('observations')
     .where('external_service', 'in', sources)
@@ -127,19 +124,17 @@ describe('Stop Velutina synchronization', () => {
         (row) => row.observation_type === 'hornet',
       ),
     ).toBe(true);
-    expect(redisClient.del).toHaveBeenCalledWith(
-      expect.arrayContaining([
-        recentObservationsCacheKey('Vespa velutina'),
-        yearlyObservationsCacheKey('Vespa velutina', 2023),
-        yearlyObservationsCacheKey('Vespa velutina', 2026),
-      ]),
+    expect(invalidateObservationCache).toHaveBeenCalledExactlyOnceWith(
+      'Vespa velutina',
     );
+    vi.mocked(invalidateObservationCache).mockClear();
     fetchMock.mockClear();
     expect(await fetchStopVelutina()).toEqual({
       newObservations: 0,
       skippedRecords: 1,
     });
     expect(fetchMock).toHaveBeenCalledOnce();
+    expect(invalidateObservationCache).not.toHaveBeenCalled();
     expect(
       urlOf(fetchMock.mock.calls[0][0]).searchParams.get('filtro_tipo_vespa'),
     ).toBe('vespa_velutina');
@@ -171,6 +166,9 @@ describe('Stop Velutina synchronization', () => {
     ]);
     expect(maximum).toBe(4);
     expect(await rows(sources[0])).toHaveLength(9);
+    expect(invalidateObservationCache).toHaveBeenCalledExactlyOnceWith(
+      'Vespa velutina',
+    );
   });
 
   it('skips bad detail dates without substituting marker years', async () => {
@@ -187,12 +185,13 @@ describe('Stop Velutina synchronization', () => {
       skippedRecords: 3,
     });
     expect(await rows(sources[0])).toHaveLength(0);
-    expect(redisClient.del).not.toHaveBeenCalled();
+    expect(invalidateObservationCache).not.toHaveBeenCalled();
   });
 
   it('preserves existing data after HTTP/schema failures and recovers its queue', async () => {
     italyFeed();
     await fetchStopVelutina();
+    vi.mocked(invalidateObservationCache).mockClear();
     fetchMock.mockImplementation(async () => new Response('', { status: 503 }));
     await expect(fetchStopVelutina()).rejects.toThrow('HTTP 503');
     fetchMock.mockImplementation(async () => new Response('Maintenance'));
@@ -200,6 +199,7 @@ describe('Stop Velutina synchronization', () => {
     italyFeed();
     expect((await fetchStopVelutina()).newObservations).toBe(0);
     expect(await rows(sources[0])).toHaveLength(2);
+    expect(invalidateObservationCache).not.toHaveBeenCalled();
   });
 
   it('does not partially write when a detail request fails', async () => {
@@ -212,6 +212,7 @@ describe('Stop Velutina synchronization', () => {
     });
     await expect(fetchStopVelutina()).rejects.toThrow('HTTP 504');
     expect(await rows(sources[0])).toHaveLength(0);
+    expect(invalidateObservationCache).not.toHaveBeenCalled();
   });
 });
 
@@ -230,6 +231,9 @@ describe('STOPvespa synchronization', () => {
       skippedRecords: 0,
     });
     expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(invalidateObservationCache).toHaveBeenCalledExactlyOnceWith(
+      'Vespa velutina',
+    );
     for (const [input, init] of fetchMock.mock.calls) {
       const url = urlOf(input);
       expect(url.pathname).toContain(
@@ -332,7 +336,7 @@ describe('STOPvespa synchronization', () => {
     ).toEqual(['2025-12-31T00:00:00.000Z', '2025-12-31T23:59:59.000Z']);
   });
 
-  it('updates UUIDs across joined-ID changes, invalidates old/new years and preserves absent records', async () => {
+  it('updates UUIDs across joined-ID changes, invalidates the taxa cache and preserves absent records', async () => {
     portugalFeed();
     await fetchStopVespa();
     const [before] = await rows(sources[1]);
@@ -347,7 +351,7 @@ describe('STOPvespa synchronization', () => {
     });
     corrected.features[0].geometry = { x: -9, y: 40 };
     portugalFeed(corrected);
-    vi.mocked(redisClient.del).mockClear();
+    vi.mocked(invalidateObservationCache).mockClear();
     expect(await fetchStopVespa()).toEqual({
       newObservations: 0,
       updatedObservations: 1,
@@ -358,17 +362,15 @@ describe('STOPvespa synchronization', () => {
       location: { x: 40, y: -9 },
       data: { observationType: 'hornet', destroyed: null },
     });
-    expect(redisClient.del).toHaveBeenCalledWith(
-      expect.arrayContaining([
-        yearlyObservationsCacheKey('Vespa velutina', 2025),
-        yearlyObservationsCacheKey('Vespa velutina', 2026),
-      ]),
+    expect(invalidateObservationCache).toHaveBeenCalledExactlyOnceWith(
+      'Vespa velutina',
     );
-    vi.mocked(redisClient.del).mockClear();
+    vi.mocked(invalidateObservationCache).mockClear();
     expect((await fetchStopVespa()).updatedObservations).toBe(0);
-    expect(redisClient.del).not.toHaveBeenCalled();
+    expect(invalidateObservationCache).not.toHaveBeenCalled();
     portugalFeed({ ...confirmed, features: [] });
     await fetchStopVespa();
+    expect(invalidateObservationCache).not.toHaveBeenCalled();
     expect(await rows(sources[1])).toHaveLength(1);
     expect(
       (await listObservationsByYear(db, 'Vespa velutina', 2025))[0]
@@ -392,6 +394,9 @@ describe('STOPvespa synchronization', () => {
       { newObservations: 0, updatedObservations: 0, skippedRecords: 0 },
     ]);
     expect(await rows(sources[2])).toHaveLength(1);
+    expect(invalidateObservationCache).toHaveBeenCalledExactlyOnceWith(
+      'Vespa velutina',
+    );
   });
 
   it.each(['http', 'arcgis', 'schema', 'repeat', 'empty-limit', 'conflict'])(
@@ -400,6 +405,7 @@ describe('STOPvespa synchronization', () => {
       portugalFeed();
       await fetchStopVespa();
       const before = await rows(sources[1]);
+      vi.mocked(invalidateObservationCache).mockClear();
       const changed = structuredClone(confirmed);
       changed.features[0].geometry.x = -9;
       fetchMock
@@ -426,6 +432,7 @@ describe('STOPvespa synchronization', () => {
       expect(await rows(sources[1])).toEqual(before);
       portugalFeed();
       expect((await fetchStopVespa()).newObservations).toBe(0);
+      expect(invalidateObservationCache).not.toHaveBeenCalled();
     },
   );
 
@@ -439,10 +446,10 @@ describe('STOPvespa synchronization', () => {
     vi.spyOn(observationModule, 'insertObservations').mockRejectedValueOnce(
       new Error('database unavailable'),
     );
-    vi.mocked(redisClient.del).mockClear();
+    vi.mocked(invalidateObservationCache).mockClear();
     await expect(fetchStopVespa()).rejects.toThrow('database unavailable');
     expect(await rows(sources[1])).toEqual(before);
-    expect(redisClient.del).not.toHaveBeenCalled();
+    expect(invalidateObservationCache).not.toHaveBeenCalled();
   });
 
   it('compares dates at the existing database second precision', async () => {
@@ -451,7 +458,9 @@ describe('STOPvespa synchronization', () => {
     payload.features[0].attributes.data_exter += 123;
     portugalFeed(payload);
     await fetchStopVespa();
+    vi.mocked(invalidateObservationCache).mockClear();
     expect((await fetchStopVespa()).updatedObservations).toBe(0);
+    expect(invalidateObservationCache).not.toHaveBeenCalled();
   });
 
   it('checks the next page when a full page omits the transfer-limit flag', async () => {
@@ -478,12 +487,14 @@ describe('STOPvespa synchronization', () => {
     portugalFeed({ ...confirmed, features });
     await expect(fetchStopVespa()).rejects.toThrow('transfer limit');
     expect(await rows(sources[1])).toHaveLength(0);
+    expect(invalidateObservationCache).not.toHaveBeenCalled();
   });
 
   it('skips invalid records while preserving their existing rows', async () => {
     portugalFeed();
     await fetchStopVespa();
     const before = await rows(sources[1]);
+    vi.mocked(invalidateObservationCache).mockClear();
     const invalid = structuredClone(confirmed);
     invalid.features[0].attributes.data_observ = 4702017600000;
     portugalFeed(invalid);
@@ -493,6 +504,7 @@ describe('STOPvespa synchronization', () => {
       skippedRecords: 1,
     });
     expect(await rows(sources[1])).toEqual(before);
+    expect(invalidateObservationCache).not.toHaveBeenCalled();
   });
 });
 
@@ -580,12 +592,19 @@ describe('regular provider orchestration', () => {
       expect(
         source === 'italy' ? result.stopVespa : result.stopVelutina,
       ).toHaveProperty('newObservations', 1);
-      expect(redisClient.del).toHaveBeenCalledWith(
-        recentObservationsCacheKey('Vespa velutina'),
-      );
-      expect(redisClient.del).toHaveBeenCalledWith(
-        yearlyObservationsCacheKey('Vespa velutina', 2025),
-      );
+      // Swiss and the successful European provider invalidate once each;
+      // final cleanup invalidates both taxa regardless of the failed provider.
+      expect(
+        vi
+          .mocked(invalidateObservationCache)
+          .mock.calls.map(([taxa]) => taxa)
+          .sort(),
+      ).toEqual([
+        'Aethina tumida',
+        'Vespa velutina',
+        'Vespa velutina',
+        'Vespa velutina',
+      ]);
     },
   );
   it('never requests or includes the new sources for Aethina', async () => {
@@ -593,6 +612,12 @@ describe('regular provider orchestration', () => {
     const result = await fetchObservations('Aethina tumida');
     expect(result).not.toHaveProperty('stopVelutina');
     expect(result).not.toHaveProperty('stopVespa');
+    expect(
+      vi
+        .mocked(invalidateObservationCache)
+        .mock.calls.map(([taxa]) => taxa)
+        .sort(),
+    ).toEqual(['Aethina tumida', 'Vespa velutina']);
     expect(
       fetchMock.mock.calls.some(([input]) =>
         /beewatching|services9\.arcgis/.test(urlOf(input).hostname),
