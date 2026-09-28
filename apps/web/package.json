@@ -21,7 +21,7 @@
   "dependencies": {
     "@certible/use-matomo": "^1.2.1",
     "@fullcalendar/vue3": "^7.1.0",
-    "@khmyznikov/pwa-install": "^0.6.4",
+    "@khmyznikov/pwa-install": "^0.7.0",
     "@paypal/paypal-js": "^11.1.0",
     "@quasar/extras": "^2.1.0",
     "@tanstack/vue-query": "^5.103.2",
