@@ -13,7 +13,9 @@ services:
     restart: unless-stopped
     user: node
     environment:
-      ENVIRONMENT: production
+      ENVIRONMENT: staging
+      NODE_ENV: staging
+      CRONJOB: 'off'
       IS_CHILD: false
     volumes:
       - ./env:/home/node/app/env

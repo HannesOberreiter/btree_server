@@ -18,6 +18,7 @@
   "scripts": {
     "serve": "nodemon",
     "build": "tsc",
+    "cron:run": "node dist/cron.bootstrap.js",
     "migrate": "knex migrate:latest",
     "db:types": "node scripts/update-db-types.mjs",
     "dev:init": "ENVIRONMENT=development knex migrate:latest && ENVIRONMENT=development knex seed:run",

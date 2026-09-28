@@ -66,6 +66,47 @@ The beta api automatically pulls with a Cron-Job the latest version von DockerHu
 
 The live api server needs to be upgraded manually which can be archived by `docker compose pull  && docker compose up -d`.
 
+### Manual cron runs on beta and development
+
+The beta container must use `ENVIRONMENT: staging` and its own beta database.
+Set `CRONJOB: "off"` in its Compose environment to disable both automatic
+schedules (the main job and the monthly Swiss full sync). Recreate the container
+after changing its environment; an empty or unset `CRONJOB` restores the default
+main schedule of 11:00 daily in Europe/Vienna.
+
+After deploying an image containing the manual runner, run the main job once:
+
+```bash
+docker exec -e LOG_LEVEL=debug btree-server-beta pnpm run cron:run
+```
+
+The command inherits the container's environment and refuses to run unless the
+resolved application environment is `staging` or `development`. Do not override the environment
+to bypass this guard on a production container. No HTTP server or schedules are
+started. The command works with `CRONJOB=off`, waits for all main-job tasks, then
+closes its database and Redis connections. Run only one manual job at a time.
+
+This is a real run, not a dry run: it performs database cleanup and both pest
+imports. All three reminder functions skip sending emails in staging. The
+separate monthly all-years Swiss sync is not included. Existing per-task error
+handling is unchanged, so inspect the debug summaries and error logs even if the
+command exits successfully; a finished run does not guarantee every provider
+succeeded. Output appears in the invoking terminal.
+
+For local debugging, configure `env/development.env` with a disposable database,
+Redis, and test SMTP settings, then run:
+
+```bash
+pnpm run build
+ENVIRONMENT=development pnpm run cron:run
+```
+
+Unlike staging, development executes reminder email paths. Mail setup requests
+Ethereal test credentials, but it keeps the configured SMTP host and can fall
+back to the configured credentials if test-account creation fails. Do not use
+production SMTP credentials or a production database. The existing `SERVER=us`
+environment selection also applies.
+
 ## Development
 
 Use Node 22 and the pnpm version pinned in `package.json`. Configure `env/development.env` and `env/test.env` using `env/example.env`, and provide MariaDB and Redis before running the server or E2E tests.
