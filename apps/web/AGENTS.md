@@ -23,7 +23,7 @@ Deployment and Android packaging documentation lives in `README.md`.
 
 ## Running and verifying
 
-- Use the declared Node range `^28 || ^26 || ^24 || ^22` and pinned pnpm `11.5.3` from `package.json`; CI uses Node 22.
+- Use the declared Node range `^28 || ^26 || ^24 || ^22.22.0` and pinned pnpm `11.5.3` from `package.json`; CI uses Node 22.
 - For local setup, copy `example.env` to `.env`, but set `BACKEND_URL` to an absolute backend URL ending in `/api`, using the actual backend port.
 - Make the backend available before exercising API flows or E2E tests. For local backend setup, follow the README in `HannesOberreiter/btree_server`.
 - Use `pnpm test:e2e`, not `pnpm test`, which exits successfully without testing. Start the frontend and backend yourself; Playwright starts neither.
@@ -47,4 +47,4 @@ Deployment and Android packaging documentation lives in `README.md`.
 
 - For Quasar documentation and component APIs, prefer the `quasar` MCP server configured in `.mcp.json`; it reads version-matched documentation from the installed packages. Use `search_docs` and `get_page` for documentation, and `get_api` for component APIs.
 - Start the agent from this directory to load the project-local MCP configuration. The first server download requires internet; cached startup and bundled documentation work offline.
-- The pinned `@quasar/app-vite` release does not bundle documentation. Quasar UI documentation and component APIs are available; app-vite documentation requires a separately approved upgrade.
+- Both `quasar` and `@quasar/app-vite` bundle version-matched documentation. Use app-vite documentation for CLI, build configuration, routing, and PWA topics.
