@@ -41,7 +41,6 @@ export class Application {
     this.logger = Logger.getInstance();
     this.app = fastify({
       loggerInstance: this.logger.pino,
-      disableRequestLogging: false,
       trustProxy: true,
       bodyLimit: 1048576 * 50, // 50 MB
       routerOptions: {
