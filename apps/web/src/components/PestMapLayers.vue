@@ -29,9 +29,12 @@ const totalCount = ref(0);
 watch(
   taxa,
   taxa => {
-    api.get(`/v1/public/${taxa}/observations/stats`).then(response => {
-      totalCount.value = response.count;
-    });
+    // Public datasets deliberately exclude session credentials, even for signed-in viewers.
+    api
+      .get(`/v1/public/${taxa}/observations/stats`, '', true, true, false)
+      .then(response => {
+        totalCount.value = response.count;
+      });
   },
   { immediate: true }
 );

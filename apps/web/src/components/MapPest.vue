@@ -139,7 +139,8 @@ function onMapReady() {
   if (year.value.value) {
     url = `/v1/public/${taxa.value}/observations/year/${year.value.value}`;
   }
-  api.get(url).then(response => {
+  // Public datasets deliberately exclude session credentials, even for signed-in viewers.
+  api.get(url, '', true, true, false).then(response => {
     map.removeLayer(cluster);
     map.removeLayer(layerRecent);
 

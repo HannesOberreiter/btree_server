@@ -2,6 +2,161 @@ import { expect, test } from '../../support/helpers';
 
 const observationUrl = 'https://asiatischehornisse.ch/karte';
 
+test.describe('visitor - credential-free public pest datasets', () => {
+  test.use({ serviceWorkers: 'block' });
+
+  for (const [taxa, path, signedIn] of [
+    ['velutina', '/pub/vespa-velutina/map/', false],
+    ['aethina_tumida', '/pub/aethina-tumida/map/', false],
+    ['velutina', '/map/vespa_velutina', true],
+    ['aethina_tumida', '/map/aethina_tumida', true]
+  ] as const) {
+    test(`${taxa} ${signedIn ? 'signed-in' : 'public'} map datasets omit credentials with a session cookie present`, async ({
+      page,
+      context,
+      baseURL
+    }) => {
+      const frontendOrigin = new URL(baseURL!).origin;
+      const cookie = { name: 'session', value: 'fake-session-for-public-map' };
+      await context.addCookies([
+        { ...cookie, url: frontendOrigin, httpOnly: true, sameSite: 'Lax' }
+      ]);
+
+      await page.clock.setFixedTime(new Date('2026-09-29T10:00:00Z'));
+      if (signedIn) {
+        // Exercise the signed-in UI without real accounts or a backend login.
+        await page.addInitScript(() => {
+          localStorage.setItem(
+            'user',
+            JSON.stringify({
+              id: 101,
+              name: 'Synthetic viewer',
+              lang: 'en',
+              format: 'YYYY-MM-DD'
+            })
+          );
+          localStorage.setItem(
+            'company',
+            JSON.stringify({
+              id: 202,
+              name: 'Synthetic company',
+              rank: 1,
+              paid: '2099-01-01'
+            })
+          );
+          localStorage.setItem(
+            'refresh',
+            JSON.stringify(new Date().toISOString())
+          );
+        });
+      }
+
+      // Keep assets local and prevent unmocked API or external requests.
+      await page.route('**/*', route => {
+        const url = new URL(route.request().url());
+        return url.origin === frontendOrigin && !url.pathname.includes('/v1/')
+          ? route.continue()
+          : route.abort();
+      });
+      await page.route(`**/v1/public/${taxa}/observations/recent`, route =>
+        route.fulfill({ json: [] })
+      );
+      await page.route(`**/v1/public/${taxa}/observations/stats`, route =>
+        route.fulfill({ json: { count: 0 } })
+      );
+
+      await page.route(`**/v1/public/${taxa}/observations/year/2025`, route =>
+        route.fulfill({ json: [] })
+      );
+      if (signedIn) {
+        await page.route('**/v1/apiary?*', route =>
+          route.fulfill({ json: { results: [], total: 0 } })
+        );
+      }
+
+      const fetches: Array<{ url: string; credentials: string }> = [];
+      await page.exposeFunction(
+        'recordPublicMapFetch',
+        (url: string, credentials: string) => {
+          fetches.push({ url, credentials });
+        }
+      );
+      await page.addInitScript(() => {
+        const originalFetch = window.fetch;
+        const record = (
+          window as typeof window & {
+            recordPublicMapFetch: (
+              url: string,
+              credentials: RequestCredentials
+            ) => Promise<void>;
+          }
+        ).recordPublicMapFetch;
+        window.fetch = async (input, init) => {
+          const request = new Request(input, init);
+          if (
+            /\/v1\/public\/[^/]+\/observations\/|\/v1\/apiary(?:\?|$)/.test(
+              request.url
+            )
+          ) {
+            await record(request.url, request.credentials);
+          }
+          return originalFetch(input, init);
+        };
+      });
+
+      const recentRequest = page.waitForRequest(
+        `**/v1/public/${taxa}/observations/recent`
+      );
+      const statsRequest = page.waitForRequest(
+        `**/v1/public/${taxa}/observations/stats`
+      );
+      const apiaryRequest = signedIn
+        ? page.waitForRequest('**/v1/apiary?*')
+        : undefined;
+      await page.goto(path);
+      for (const request of await Promise.all([recentRequest, statsRequest])) {
+        // Prove the cookie applies to this URL, not merely an unrelated origin.
+        expect(await context.cookies(request.url())).toEqual(
+          expect.arrayContaining([expect.objectContaining(cookie)])
+        );
+        expect(await request.headerValue('cookie')).toBeNull();
+        expect(fetches).toContainEqual({
+          url: request.url(),
+          credentials: 'omit'
+        });
+      }
+      if (apiaryRequest) {
+        const request = await apiaryRequest;
+        expect(await request.headerValue('cookie')).toContain(
+          `${cookie.name}=${cookie.value}`
+        );
+        expect(fetches).toContainEqual({
+          url: request.url(),
+          credentials: 'include'
+        });
+
+        const yearlyRequest = page.waitForRequest(
+          `**/v1/public/${taxa}/observations/year/2025`
+        );
+        await page.locator('.leaflet-control-attribution .q-select').click();
+        await page.getByRole('option', { name: '2025', exact: true }).click();
+        const yearly = await yearlyRequest;
+        expect(await context.cookies(yearly.url())).toEqual(
+          expect.arrayContaining([expect.objectContaining(cookie)])
+        );
+        expect(await yearly.headerValue('cookie')).toBeNull();
+        expect(fetches).toContainEqual({
+          url: yearly.url(),
+          credentials: 'omit'
+        });
+      }
+      await expect(page.locator('.leaflet-control-attribution')).toContainText([
+        'Recent observations: 0'
+      ]);
+    });
+  }
+});
+
 test.describe('visitor - pest map UTC timestamps', () => {
   test.use({ timezoneId: 'Europe/Lisbon', locale: 'en-GB' });
 
