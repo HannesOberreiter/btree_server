@@ -5,7 +5,6 @@ import proj4 from 'proj4';
 
 import { KyselyServer } from '../../servers/kysely.server.js';
 import type { Point } from '../../types/db.types.js';
-import { invalidateObservationCache } from '../modules/observation-cache.module.js';
 import {
   deleteObservationsByIds,
   filterNewObservationExternalIds,
@@ -21,19 +20,6 @@ import { fetchStopVespa } from './stopvespa.adapter.js';
 const observationDb = KyselyServer.getInstance().db;
 
 export async function fetchObservations(taxa: Taxa = 'Vespa velutina') {
-  try {
-    return await importObservations(taxa);
-  } finally {
-    // Legacy providers can commit partial batches before failing. Cleanup also
-    // spans both taxa, so invalidate every period for both even on failure.
-    await Promise.all([
-      invalidateObservationCache('Vespa velutina'),
-      invalidateObservationCache('Aethina tumida'),
-    ]);
-  }
-}
-
-async function importObservations(taxa: Taxa) {
   const fInat = fetchInat();
   const fObservation = fetchObservationOrg();
 
@@ -61,7 +47,7 @@ async function importObservations(taxa: Taxa) {
       ? await fetchBienengesundheitAt()
       : { newObservations: 0 };
 
-  // Each new provider reports its own failure without suppressing the other or cache cleanup.
+  // Each new provider reports its own failure without suppressing the other.
   const stopVelutina =
     taxa === 'Vespa velutina'
       ? await fetchStopVelutina().catch((error: unknown) => ({
@@ -194,9 +180,6 @@ async function importAsiatischeHornisseCh(fullSync: boolean) {
     }
     await insertObservations(db, newObservations);
   });
-  if (newObservations.length > 0 || updatedObservations > 0) {
-    await invalidateObservationCache('Vespa velutina');
-  }
   return { newObservations: newObservations.length, updatedObservations };
 }
 

@@ -1,5 +1,4 @@
 import { KyselyServer } from '../../servers/kysely.server.js';
-import { invalidateObservationCache } from '../modules/observation-cache.module.js';
 import {
   filterNewObservationExternalIds,
   insertObservations,
@@ -83,8 +82,5 @@ async function importStopVelutina() {
   await db
     .transaction()
     .execute((transaction) => insertObservations(transaction, observations));
-  if (observations.length > 0) {
-    await invalidateObservationCache('Vespa velutina');
-  }
   return { newObservations: observations.length, skippedRecords };
 }

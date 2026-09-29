@@ -4,7 +4,6 @@ import { sql } from 'kysely';
 
 import { KyselyServer } from '../../servers/kysely.server.js';
 import type { Point } from '../../types/db.types.js';
-import { invalidateObservationCache } from '../modules/observation-cache.module.js';
 import { insertObservations } from '../modules/observation.module.js';
 import type { ObservationInsert } from '../modules/observation.module.js';
 import { parseStopVespaPage } from './stopvespa.parser.js';
@@ -135,8 +134,5 @@ async function importStopVespa() {
     await insertObservations(transaction, inserts);
     newObservations = inserts.length;
   });
-  if (newObservations > 0 || updatedObservations > 0) {
-    await invalidateObservationCache('Vespa velutina');
-  }
   return { newObservations, updatedObservations, skippedRecords };
 }

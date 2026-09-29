@@ -54,7 +54,8 @@ describe('routes resolving', () => {
       );
       expect(res.statusCode).toBe(200);
       expect(res.body).toBeInstanceOf(Array);
-      expect(res.headers['cache-control']).toBe('public, max-age=3600');
+      expect(res.headers['cache-control']).toBe('public, max-age=0');
+      expect(res.headers['x-btree-public-cache']).toBe('eligible');
       if (res.body.length > 0) {
         expect(res.body[0]).toHaveProperty('observation_type');
         expect(res.body[0]).toEqual(
