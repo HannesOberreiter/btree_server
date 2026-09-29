@@ -164,7 +164,7 @@ function mapPublicObservationRows<
 
 export async function listRecentObservations(db: Database, taxa: Taxa) {
   const end = new Date();
-  const start = new Date(end.getTime() - 1000 * 60 * 60 * 24 * 182);
+  const start = new Date(end.getTime() - 1000 * 60 * 60 * 24 * 60);
   const rows = await selectPublicObservations(db)
     .where('taxa', '=', taxa)
     .where('observed_at', '>=', start)
