@@ -118,9 +118,17 @@ function sendForm(user: User) {
       notification.open('positive', '');
       redirect();
     },
-    (error: any) => {
+    (error: unknown) => {
       isSubmitting.value = false;
-      notification.open('negative', error);
+      const invalidCredentials =
+        typeof error === 'object' &&
+        error !== null &&
+        'statusCode' in error &&
+        error.statusCode === 403;
+      notification.open(
+        'negative',
+        invalidCredentials ? 'error.invalidCredentials' : error
+      );
     }
   );
 }

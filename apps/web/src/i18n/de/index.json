@@ -183,6 +183,7 @@
     "duplicate": "Konflikt, Eintrag mit angegebenem Wert existiert bereits.",
     "emailRequired": "Email ist erforderlich.",
     "forbidden": "Zutritt verboten oder nicht erlaubt!",
+    "invalidCredentials": "E-Mail-Adresse oder Passwort ist falsch.",
     "lastMovement": "Jeder Bienenstock braucht mindestens eine Wanderung! Die letzte Wanderung kannst du nicht löschen.",
     "localStorage": "Warnung: Diese Anwendung benötigt Zugriff auf den lokalen Speicher Ihres Webbrowsers, um ordnungsgemäß zu funktionieren.",
     "locked": "Konto gesperrt! (zu viele Anmeldeversuche?)",

@@ -183,6 +183,7 @@
     "duplicate": "Conflit, l'entrée avec la valeur donnée existe déjà.",
     "emailRequired": "Le courrier est requis.",
     "forbidden": "Accès interdit ou non autorisé !",
+    "invalidCredentials": "Adresse e-mail ou mot de passe incorrect.",
     "lastMovement": "Chaque ruche a besoin d'au moins un mouvement ! \nVous ne pouvez pas supprimer le dernier.",
     "localStorage": "Avertissement : Cette application a besoin d'accéder au stockage local de votre navigateur Web pour fonctionner correctement.",
     "locked": "Compte bloqué! (trop de tentatives de connexion?)",

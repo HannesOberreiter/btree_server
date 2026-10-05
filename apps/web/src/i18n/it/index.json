@@ -183,6 +183,7 @@
     "duplicate": "Conflitto, la voce con un determinato valore esiste già.",
     "emailRequired": "La posta è obbligatoria.",
     "forbidden": "Accesso vietato o non consentito!",
+    "invalidCredentials": "Indirizzo e-mail o password errati.",
     "lastMovement": "Ogni alveare ha bisogno di almeno un movimento! \nNon puoi eliminare l'ultimo.",
     "localStorage": "Avvertenza: questa applicazione necessita dell'accesso alla memoria locale del browser Web per funzionare correttamente.",
     "locked": "Account bloccato! (troppi tentativi di accesso?)",
