@@ -1,5 +1,34 @@
 # Changelog
 
+## [7.8.0](https://github.com/HannesOberreiter/btree_vue/compare/btree-client-v7.7.0...btree-client-v7.8.0) (2026-10-06)
+
+
+### Features
+
+* **calendar:** migrate to FullCalendar 7 ([db882ef](https://github.com/HannesOberreiter/btree_vue/commit/db882ef9b0762f8ac7b5a9048603bc8e19019ab8))
+* **map:** show Vespa velutina report types ([#315](https://github.com/HannesOberreiter/btree_vue/issues/315)) ([0ca2227](https://github.com/HannesOberreiter/btree_vue/commit/0ca222710f2acd85ef00c7d7282fbfc53a15e79e))
+* upgrade VueUse to v15 ([d8dcaf8](https://github.com/HannesOberreiter/btree_vue/commit/d8dcaf884c4b5cafe5e0ca2330595313a6f05e85))
+
+
+### Bug Fixes
+
+* **auth:** clarify login errors and locale handling ([d595105](https://github.com/HannesOberreiter/btree_vue/commit/d5951054d73b5d65e6f756aebb0c95bd8504c339))
+* **map:** label recent window as two months ([fce74ab](https://github.com/HannesOberreiter/btree_vue/commit/fce74ab5afc93ad0ffa0b135dafc7944824e9ad5))
+* **map:** omit credentials for public datasets ([64041a5](https://github.com/HannesOberreiter/btree_vue/commit/64041a5e3aaf8ea9f1b22ae98463aa3bb5995381))
+* **wizbee:** keep dialog input above keyboard ([94c1b45](https://github.com/HannesOberreiter/btree_vue/commit/94c1b45449f8362b282dc9850994f4e9ae976d48))
+
+
+### Miscellaneous
+
+* update dependencies and add Quasar MCP ([b7e72b4](https://github.com/HannesOberreiter/btree_vue/commit/b7e72b48688c979c1048a760401c046c0bf2ae58))
+* update patch and minor dependencies ([708228c](https://github.com/HannesOberreiter/btree_vue/commit/708228c594c840f179d37e0a405f5a5d6c15820d))
+* upgrade csv-parse to v7 ([97165f6](https://github.com/HannesOberreiter/btree_vue/commit/97165f67a2480f98db4aea35dd3d1b03d2121313))
+* upgrade Oxfmt to 0.70 ([e9cdcc1](https://github.com/HannesOberreiter/btree_vue/commit/e9cdcc13fe9c05f1bb632fc53ac5953dbd86ee11))
+* upgrade Oxlint and type-aware companion ([e886b9f](https://github.com/HannesOberreiter/btree_vue/commit/e886b9f2271f671543fa7debb4a3b4e4e188dd2c))
+* upgrade PayPal JS to v11 ([762bd49](https://github.com/HannesOberreiter/btree_vue/commit/762bd496fd9abc6f1cb8d697e66980723112a999))
+* upgrade Pinia and Quasar build tooling ([1015f35](https://github.com/HannesOberreiter/btree_vue/commit/1015f355d9170e21873501442856979da38a99b3))
+* upgrade PWA install to 0.7 ([38f6430](https://github.com/HannesOberreiter/btree_vue/commit/38f64306c87a7249f0dbb7ff6c9ffb044466492e))
+
 ## [7.7.0](https://github.com/HannesOberreiter/btree_vue/compare/btree-client-v7.6.0...btree-client-v7.7.0) (2026-09-14)
 
 
