@@ -1,5 +1,38 @@
 # Changelog
 
+## [7.9.0](https://github.com/HannesOberreiter/btree_server/compare/btree-server-v7.8.0...btree-server-v7.9.0) (2026-10-06)
+
+
+### Features
+
+* **cache:** prepare public data for CDN caching ([0d8cac0](https://github.com/HannesOberreiter/btree_server/commit/0d8cac033a5aecc2fafc5f21bd1d43307e003b02))
+* **cron:** add guarded manual runs and off switch ([1d1bdf5](https://github.com/HannesOberreiter/btree_server/commit/1d1bdf560995df874cf2ab3a21e2e76b55e4bfee))
+* **pest:** expand Vespa velutina sources ([#251](https://github.com/HannesOberreiter/btree_server/issues/251)) ([a158031](https://github.com/HannesOberreiter/btree_server/commit/a15803109e43ecbf2f8a72a93a4e4dd6aab4dd3e))
+
+
+### Bug Fixes
+
+* **cache:** harden public observation caching ([6c4a4cc](https://github.com/HannesOberreiter/btree_server/commit/6c4a4ccd875007cb96c1302a901698a3078f2b5c))
+* **company:** match name limit to database ([ab50750](https://github.com/HannesOberreiter/btree_server/commit/ab50750a8b20f624c81cf36720c75f4648a53eb3))
+* **dropbox:** await refresh and return fresh token ([c59e9b1](https://github.com/HannesOberreiter/btree_server/commit/c59e9b18f9322fe06814a545b31b8d2524919f07))
+* **map:** limit recent observations to 60 days ([2fc6111](https://github.com/HannesOberreiter/btree_server/commit/2fc6111f9e13789797e96e6d27d930f3ba224464))
+* remove deprecated Fastify logging option ([034a6be](https://github.com/HannesOberreiter/btree_server/commit/034a6befc5a0df7d5f9c72d009b9c6454e2f2382))
+
+
+### Miscellaneous
+
+* **deps:** migrate to Archiver 8 ([b87ca09](https://github.com/HannesOberreiter/btree_server/commit/b87ca09b5b7e5fa136112e61ad3247bc163c8e91))
+* **deps:** migrate to TypeScript 7 ([86ea0f2](https://github.com/HannesOberreiter/btree_server/commit/86ea0f2e4f9fac2c6bff596fa53b05ca216468d4))
+* **deps:** migrate Zod provider to 7 ([6154aac](https://github.com/HannesOberreiter/btree_server/commit/6154aac533eab495b09dad3dc5b9a79c1d10d2f6))
+* **deps:** update compatible minor packages ([0a2c9f5](https://github.com/HannesOberreiter/btree_server/commit/0a2c9f50546b9533a93f37a00a051ae9b3ab7888))
+* **deps:** update compatible packages ([f8280a3](https://github.com/HannesOberreiter/btree_server/commit/f8280a35428fe00b06f035c389e560d99b0a1c6b))
+* **deps:** upgrade Kysely to 0.29.6 ([50c3fb6](https://github.com/HannesOberreiter/btree_server/commit/50c3fb65dec23d70bea68ccef0c3208ee14c7f5e))
+* **deps:** upgrade rate-limit to 11 ([9685a14](https://github.com/HannesOberreiter/btree_server/commit/9685a144190d20a3a1eda182b37c98308167549a))
+* **deps:** upgrade to Redis 6 ([8d8dde7](https://github.com/HannesOberreiter/btree_server/commit/8d8dde707ece6b2944e54eac40fa1eac11de4f81))
+* **deps:** upgrade to Vitest 5 ([42dd74c](https://github.com/HannesOberreiter/btree_server/commit/42dd74c693205b4554a9c1d43245fa208995f4cf))
+* **deps:** upgrade type-aware lint tooling ([a03ca10](https://github.com/HannesOberreiter/btree_server/commit/a03ca107f13070ace7592ec410be08ae633bd0d6))
+* **deps:** upgrade Zod to 4.6.5 ([1575a72](https://github.com/HannesOberreiter/btree_server/commit/1575a72362183392c4278b397350beea226f6725))
+
 ## [7.8.0](https://github.com/HannesOberreiter/btree_server/compare/btree-server-v7.7.0...btree-server-v7.8.0) (2026-09-14)
 
 
