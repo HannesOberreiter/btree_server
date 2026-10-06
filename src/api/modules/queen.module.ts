@@ -554,7 +554,7 @@ export async function deleteQueens(
         .updateTable('queens')
         .set({
           deleted: !restore,
-          deleted_at: sql<Date>`UTC_TIMESTAMP()`,
+          deleted_at: restore ? null : sql<Date>`UTC_TIMESTAMP()`,
           edit_id: beeId,
         })
         .where('id', 'in', softIds)

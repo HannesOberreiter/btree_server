@@ -416,7 +416,7 @@ export async function deleteCharges(
         .updateTable('charges')
         .set({
           deleted: !restore,
-          deleted_at: sql<Date>`UTC_TIMESTAMP()`,
+          deleted_at: restore ? null : sql<Date>`UTC_TIMESTAMP()`,
           edit_id: beeId,
         })
         .where('id', 'in', softIds)

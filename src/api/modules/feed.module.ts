@@ -49,7 +49,10 @@ function feedValues(data: TaskCreateBody | TaskPatchBody['data']) {
     ...(data.note !== undefined && { note: data.note }),
     ...(data.url !== undefined && { url: data.url }),
     ...(data.done !== undefined && { done: data.done }),
-    ...(data.deleted !== undefined && { deleted: data.deleted }),
+    ...(data.deleted !== undefined && {
+      deleted: data.deleted,
+      deleted_at: data.deleted ? new Date() : null,
+    }),
     ...(data.type_id !== undefined && { type_id: data.type_id }),
   };
 }

@@ -543,7 +543,10 @@ function hiveValues(input: HivePatchBody['data']) {
     ...(input.modus_date !== undefined && {
       modus_date: new Date(input.modus_date),
     }),
-    ...(input.deleted !== undefined && { deleted: input.deleted }),
+    ...(input.deleted !== undefined && {
+      deleted: input.deleted,
+      deleted_at: input.deleted ? new Date() : null,
+    }),
     ...(input.source_id !== undefined && { source_id: input.source_id }),
     ...(input.type_id !== undefined && { type_id: input.type_id }),
   };
@@ -719,7 +722,7 @@ export function deleteHives(
         .updateTable('hives')
         .set({
           deleted: !options.restore,
-          deleted_at: new Date(),
+          deleted_at: options.restore ? null : new Date(),
           edit_id: beeId,
         })
         .where('user_id', '=', companyId)

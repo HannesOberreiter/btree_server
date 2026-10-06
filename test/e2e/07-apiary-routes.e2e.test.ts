@@ -344,6 +344,17 @@ describe('apiary routes', () => {
       expect(restored.statusCode).toBe(200);
       expect(restored.body).toHaveLength(1);
 
+      const restoredApiary = await doRequest(
+        agent,
+        'post',
+        `${route}/batchGet`,
+        null,
+        accessToken,
+        { ids: [insertId] },
+      );
+      expect(restoredApiary.body[0].deleted).toBe(false);
+      expect(restoredApiary.body[0].deleted_at).toBeNull();
+
       const hardDeleted = await doRequest(
         agent,
         'patch',
