@@ -16,6 +16,7 @@ import {
   calendarRearingQuerySchema,
   calendarResponseSchema,
 } from '../../schemas/calendar.schema.js';
+import { parseResponse } from '../../utils/response.util.js';
 
 export default function routes(
   instance: FastifyInstance,
@@ -32,42 +33,61 @@ export default function routes(
     },
   });
 
-  server.get('/checkup', guardedRoute(), async (request) =>
-    listCalendarTasks(
+  server.get('/checkup', guardedRoute(), async (request) => {
+    const result = await listCalendarTasks(
       db,
       request.session.user.user_id,
       request.query,
       'checkup',
-    ),
-  );
-  server.get('/treatment', guardedRoute(), async (request) =>
-    listCalendarTasks(
+    );
+    return parseResponse(calendarResponseSchema, result, request);
+  });
+  server.get('/treatment', guardedRoute(), async (request) => {
+    const result = await listCalendarTasks(
       db,
       request.session.user.user_id,
       request.query,
       'treatment',
-    ),
-  );
-  server.get('/harvest', guardedRoute(), async (request) =>
-    listCalendarTasks(
+    );
+    return parseResponse(calendarResponseSchema, result, request);
+  });
+  server.get('/harvest', guardedRoute(), async (request) => {
+    const result = await listCalendarTasks(
       db,
       request.session.user.user_id,
       request.query,
       'harvest',
-    ),
-  );
-  server.get('/feed', guardedRoute(), async (request) =>
-    listCalendarTasks(db, request.session.user.user_id, request.query, 'feed'),
-  );
-  server.get('/movedate', guardedRoute(), async (request) =>
-    listCalendarMovements(db, request.session.user.user_id, request.query),
-  );
+    );
+    return parseResponse(calendarResponseSchema, result, request);
+  });
+  server.get('/feed', guardedRoute(), async (request) => {
+    const result = await listCalendarTasks(
+      db,
+      request.session.user.user_id,
+      request.query,
+      'feed',
+    );
+    return parseResponse(calendarResponseSchema, result, request);
+  });
+  server.get('/movedate', guardedRoute(), async (request) => {
+    const result = await listCalendarMovements(
+      db,
+      request.session.user.user_id,
+      request.query,
+    );
+    return parseResponse(calendarResponseSchema, result, request);
+  });
   server.get('/todo', guardedRoute(), async (request) =>
     listCalendarTodos(db, request.session.user.user_id, request.query),
   );
-  server.get('/scale_data', guardedRoute(), async (request) =>
-    listCalendarScaleData(db, request.session.user.user_id, request.query),
-  );
+  server.get('/scale_data', guardedRoute(), async (request) => {
+    const result = await listCalendarScaleData(
+      db,
+      request.session.user.user_id,
+      request.query,
+    );
+    return parseResponse(calendarResponseSchema, result, request);
+  });
 
   server.get(
     '/rearing',
@@ -78,8 +98,14 @@ export default function routes(
         response: { 200: calendarResponseSchema },
       },
     },
-    async (request) =>
-      listCalendarRearings(db, request.session.user.user_id, request.query),
+    async (request) => {
+      const result = await listCalendarRearings(
+        db,
+        request.session.user.user_id,
+        request.query,
+      );
+      return parseResponse(calendarResponseSchema, result, request);
+    },
   );
 
   done();

@@ -41,7 +41,6 @@ export class Application {
     this.logger = Logger.getInstance();
     this.app = fastify({
       loggerInstance: this.logger.pino,
-      disableRequestLogging: false,
       trustProxy: true,
       bodyLimit: 1048576 * 50, // 50 MB
       routerOptions: {
@@ -92,13 +91,15 @@ export class Application {
      * @description Enable CORS - Cross Origin Resource Sharing
      */
     this.app.addHook('onRequest', (req, reply, done) => {
+      const requestOrigin = req.headers.origin;
       const path = req.url.split('?', 1)[0];
       const isMcp =
         path === '/api/v1/mcp' ||
         path.startsWith('/api/v1/mcp/oauth/') ||
         path.startsWith('/.well-known/oauth-');
 
-      // Set undefined CORS header for browser-facing application routes.
+      // Preserve the existing Referer/Host fallback for origin authorization,
+      // but only reflect a real Origin header in the CORS response.
       // MCP clients commonly omit Origin; keep it absent for MCP Origin checks.
       // https://github.com/expressjs/cors/issues/262
       if (!req.headers.origin && !isMcp) {
@@ -127,17 +128,26 @@ export class Application {
         req.url.includes('chatgpt/oauth/') ||
         req.url.includes('chatgpt/openapi.json');
 
-      if (isExternal || env === ENVIRONMENT.development) {
-        reply.header('Access-Control-Allow-Origin', '*');
-      } else {
-        reply.header('Access-Control-Allow-Origin', origin);
-        reply.header('Access-Control-Allow-Credentials', 'true');
+      if (!isExternal) {
+        // Both headers can affect the response, including its rejection status.
+        // A CDN must also explicitly include them in its cache key.
+        reply.header('Vary', 'Origin, Referer');
       }
 
-      if (!isExternal && env !== ENVIRONMENT.development) {
-        if (!authorized.includes(origin)) {
-          reply.status(406).send();
-        }
+      if (
+        !isExternal &&
+        env !== ENVIRONMENT.development &&
+        !authorized.includes(origin)
+      ) {
+        reply.status(406).send();
+        return;
+      }
+
+      if (isExternal || env === ENVIRONMENT.development) {
+        reply.header('Access-Control-Allow-Origin', '*');
+      } else if (requestOrigin) {
+        reply.header('Access-Control-Allow-Origin', requestOrigin);
+        reply.header('Access-Control-Allow-Credentials', 'true');
       }
 
       reply.header(
@@ -155,6 +165,7 @@ export class Application {
 
       if (req.method.toLowerCase() === 'options') {
         reply.send();
+        return;
       }
 
       done();

@@ -4,11 +4,11 @@ import { numberSchema } from '../utils/zod.util.js';
 
 /** Serialize database Date instances exactly as JSON.stringify did before. */
 export const jsonDateSchema = z.codec(
-  z.union([z.string(), z.date()]),
   z.string(),
+  z.union([z.string(), z.date()]),
   {
-    decode: (value) => (value instanceof Date ? value.toISOString() : value),
-    encode: (value) => value,
+    decode: (value) => value,
+    encode: (value) => (value instanceof Date ? value.toISOString() : value),
   },
 );
 

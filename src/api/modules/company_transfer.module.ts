@@ -1,6 +1,6 @@
 import { Buffer } from 'node:buffer';
 
-import type archiver from 'archiver';
+import type { Archiver } from 'archiver';
 import { parse } from 'csv-parse/sync';
 import type { Options } from 'csv-stringify/sync';
 import { stringify } from 'csv-stringify/sync';
@@ -682,9 +682,36 @@ export async function importCompanyArchive(
   beeId: number,
   upload: Buffer,
 ) {
-  const data = Object.fromEntries(
-    transferKeys.map((key) => [key, []]),
-  ) as TransferData;
+  const data: TransferData = {
+    hives: [],
+    hive_types: [],
+    hive_sources: [],
+    apiaries: [],
+    movedates: [],
+    checkups: [],
+    checkup_types: [],
+    feeds: [],
+    feed_types: [],
+    treatments: [],
+    treatment_types: [],
+    treatment_diseases: [],
+    treatment_vets: [],
+    harvests: [],
+    harvest_types: [],
+    charges: [],
+    charge_types: [],
+    wax_products: [],
+    wax_origin_types: [],
+    wax_lots: [],
+    wax_operations: [],
+    wax_operation_hives: [],
+    wax_operation_lines: [],
+    wax_inventory_counts: [],
+    queens: [],
+    queen_matings: [],
+    queen_races: [],
+    todos: [],
+  };
   const zip = await yauzl.fromBuffer(upload);
   let entryCount = 0;
   let totalBytes = 0;
@@ -1027,7 +1054,7 @@ export async function importCompanyArchive(
 
 async function appendTable(
   db: Database,
-  arch: archiver.Archiver,
+  arch: Archiver,
   table: CompanyTransferKey,
   companyId: number,
   options: Options,
@@ -1041,7 +1068,7 @@ async function appendTable(
 }
 export async function downloadCompanyData(
   db: Database,
-  arch: archiver.Archiver,
+  arch: Archiver,
   companyId: number,
 ) {
   const options: Options = {

@@ -26,14 +26,14 @@ export async function getDropboxAuthorizationUrl() {
   const dbx = new DropboxAuth(config);
   const url = await dbx.getAuthenticationUrl(
     redirect,
-    null,
+    undefined,
     'code',
     'offline',
-    null,
+    undefined,
     'none',
     false,
   );
-  return { url: String(url) };
+  return { url };
 }
 
 export async function authorizeDropbox(
@@ -61,15 +61,16 @@ export async function getDropboxToken(db: Kysely<DB>, companyId: number) {
     accessToken: tokens.accessToken,
     refreshToken: tokens.refreshToken,
   });
-  dbx.checkAndRefreshAccessToken();
+  await dbx.checkAndRefreshAccessToken();
+  const accessToken = dbx.getAccessToken();
 
-  if (tokens.accessToken !== dbx.getAccessToken()) {
+  if (tokens.accessToken !== accessToken) {
     await updateDropboxTokens(db, companyId, {
-      accessToken: dbx.getAccessToken(),
+      accessToken,
       refreshToken: dbx.getRefreshToken(),
     });
   }
-  return { token: tokens.accessToken };
+  return { token: accessToken };
 }
 
 export async function disconnectDropbox(db: Kysely<DB>, companyId: number) {

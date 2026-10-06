@@ -35,7 +35,15 @@ export default class ExternalController {
     if (!premium) {
       throw httpErrors.PaymentRequired();
     }
-    let results = [];
+    let results: Array<{
+      table?: string;
+      start: string;
+      end?: string;
+      allDay: boolean;
+      unicode?: string;
+      title: string;
+      description?: string | number | null;
+    }> = [];
     const db = KyselyServer.getInstance().db;
     const payload = {
       user: {
@@ -114,7 +122,10 @@ export default class ExternalController {
         summary: `${result.unicode ? `${result.unicode} ` : ''} ${
           result.title
         }`,
-        description: result.description,
+        description:
+          typeof result.description === 'number'
+            ? String(result.description)
+            : result.description,
         // floating: true, // floating would mean always an event on 12:00 would be always on 12:00 no matter the timezone
         // timezone: 'UTC', // standard is UTC no need to define it
         url: 'https://app.btree.at/',
@@ -183,11 +194,15 @@ export default class ExternalController {
           .select(['email', 'lang'])
           .where('id', '=', bee_id)
           .executeTakeFirst();
+        if (!user?.email)
+          throw httpErrors.InternalServerError(
+            'Invoice recipient email is missing',
+          );
         let lang = 'en' as MailLang;
-        if (user?.lang && MailLangs.includes(user.lang as MailLang)) {
+        if (user.lang && MailLangs.includes(user.lang as MailLang)) {
           lang = user.lang as MailLang;
         }
-        await createInvoice(user!.email, price, years, 'Mollie', lang);
+        await createInvoice(user.email, price, years, 'Mollie', lang);
       }
     }
     return {};

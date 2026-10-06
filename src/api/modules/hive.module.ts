@@ -341,7 +341,7 @@ export async function listHives(
     const results = await query
       .orderBy('hives.id', 'asc')
       .limit(limit)
-      .offset(page * limit)
+      .offset(page * (limit ?? 0))
       .execute();
     return { results, total: Number(count.count) };
   }
@@ -353,7 +353,7 @@ export async function listHives(
   const results = await query
     .orderBy('hives.id', 'asc')
     .limit(limit)
-    .offset(page * limit)
+    .offset(page * (limit ?? 0))
     .execute();
   return { results, total: Number(count.count) };
 }
@@ -426,7 +426,7 @@ export async function getHiveTasks(
   year: number,
   apiary: boolean,
 ) {
-  let hiveIds: number[];
+  let hiveIds: Array<number | null>;
   if (apiary) {
     const ownedApiary = await db
       .selectFrom('apiaries')

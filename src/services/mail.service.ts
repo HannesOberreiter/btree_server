@@ -31,11 +31,11 @@ const BASE_URL_PLACEHOLDER_REGEX = /%base_url%/g;
 const PARAMS_PLACEHOLDER_REGEX = /%params%/g;
 
 interface customMail {
-  to: string;
-  lang: string;
+  to: string | null;
+  lang: string | null;
   subject: string;
-  key?: string;
-  name?: string;
+  key?: string | null;
+  name?: string | null;
   cc?: string | string[];
   attachments?: Array<{
     filename: string;
@@ -116,9 +116,12 @@ export class MailService {
     replacements,
   }: customMail) {
     if (env === ENVIRONMENT.test || env === ENVIRONMENT.ci) return true;
+    if (to === null) return false;
 
     // Only use languages which are available (translated), fallback english
-    if (!(MailLangs as readonly string[]).includes(lang)) lang = 'en';
+    if (lang === null || !(MailLangs as readonly string[]).includes(lang)) {
+      lang = 'en';
+    }
 
     let htmlMail = this.loadHtmlMail(`${subject}_${lang}`);
     if (!htmlMail) {
@@ -151,7 +154,7 @@ export class MailService {
       }
     }
 
-    if (key !== 'false') {
+    if (key !== null && key !== 'false') {
       htmlMail = htmlMail.replace(KEY_PLACEHOLDER_REGEX, key);
     }
     // Main page and documentation is only available in german and english
@@ -190,7 +193,7 @@ export class MailService {
     try {
       const result = await this._transporter.sendMail(options);
       this._transporter.close();
-      if (result.rejected.length > 0) {
+      if (result.rejected?.length) {
         this.logger.log('error', `Could not send E-Mail.`, result);
         throw new httpErrors.InternalServerError('E-Mail could not be sent.');
       }

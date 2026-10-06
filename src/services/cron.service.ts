@@ -1,6 +1,9 @@
 import cron from 'node-schedule';
 
-import { fetchObservations } from '../api/adapters/pest.adapter.js';
+import {
+  fetchAsiatischeHornisseCh,
+  fetchObservations,
+} from '../api/adapters/pest.adapter.js';
 import {
   cleanupDatabase,
   reminderDeletion,
@@ -37,6 +40,13 @@ export class Cron {
       return;
     }
 
+    if (cronjobTimer === 'off') {
+      this.logger.log('info', 'CronJob schedules are disabled (CRONJOB=off)', {
+        label: 'CronJob',
+      });
+      return;
+    }
+
     this.logger.log(
       'debug',
       `Test Cron-Job is starting with rule: ${cronjobTimer}`,
@@ -64,6 +74,17 @@ export class Cron {
         }
       },
     );
+    cron.scheduleJob({ rule: '0 10 1 * *', tz: 'Europe/Vienna' }, async () => {
+      try {
+        this.Logging(await fetchAsiatischeHornisseCh(true));
+      } catch (error) {
+        this.logger.log(
+          'error',
+          error instanceof Error ? error.message : String(error),
+          { label: 'CronJob' },
+        );
+      }
+    });
     this.nextRun();
   }
 
@@ -74,7 +95,7 @@ export class Cron {
     const db = KyselyServer.getInstance().db;
     this.Logging(await cleanupDatabase(db));
 
-    reminderDeletion(db)
+    const deletionReminder = reminderDeletion(db)
       .then((res) => this.Logging(res))
       .catch((error) =>
         this.logger.log(
@@ -86,7 +107,7 @@ export class Cron {
         ),
       );
 
-    reminderVIS(db)
+    const visReminder = reminderVIS(db)
       .then((res) => this.Logging(res))
       .catch((error) =>
         this.logger.log(
@@ -110,7 +131,7 @@ export class Cron {
         ),
       );
 
-    fetchObservations('Vespa velutina')
+    const observations = fetchObservations('Vespa velutina')
       .then((res) => this.Logging(res))
       .catch((error) =>
         this.logger.log(
@@ -132,6 +153,8 @@ export class Cron {
             ),
           ),
       );
+
+    await Promise.all([deletionReminder, visReminder, observations]);
   }
 
   private nextRun() {

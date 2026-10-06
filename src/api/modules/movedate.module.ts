@@ -198,7 +198,7 @@ export async function listMovedates(
   const results = await query
     .orderBy('movedates.id', 'asc')
     .limit(limit)
-    .offset(page * limit)
+    .offset(page * (limit ?? 0))
     .execute();
   return { results, total: Number(count.count) };
 }

@@ -15,9 +15,7 @@ type DatabaseErrorShape = Error & {
 
 export function checkMySQLError(error: unknown): MappedDatabaseError {
   if (!(error instanceof Error)) {
-    return httpErrors.InternalServerError(
-      'Unknown error',
-    ) as MappedDatabaseError;
+    return httpErrors.InternalServerError('Unknown error');
   }
   const databaseError = error as DatabaseErrorShape;
   if (databaseError.name === 'NoResultError') {
@@ -48,5 +46,5 @@ export function checkMySQLError(error: unknown): MappedDatabaseError {
     mapped.code = 'INVALID_DATA';
     return mapped;
   }
-  return error as MappedDatabaseError;
+  return error;
 }

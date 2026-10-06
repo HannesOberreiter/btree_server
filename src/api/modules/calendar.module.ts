@@ -191,16 +191,14 @@ export async function listCalendarRearings(
       ]),
     );
 
-    const events = [];
-    for (const [index, step] of steps.entries()) {
+    return steps.map((step, index) => {
       const start = dates[index];
       const currentStep = Object.assign({}, step, {
         key: String(index),
         date: start,
       });
       const { start_detail: _startDetail, ...rearingFields } = rearing;
-      events.push({
-        ...rearingFields,
+      return Object.assign({}, rearingFields, {
         startPosition,
         startKey: String(startKey),
         steps: calendarSteps,
@@ -217,8 +215,7 @@ export async function listCalendarRearings(
         displayEventTime: true,
         durationEditable: false,
       });
-    }
-    return events;
+    });
   });
 }
 

@@ -26,6 +26,7 @@ import {
   todoUpdateDateSchema,
   todoUpdateStatusSchema,
 } from '../../schemas/todo.schema.js';
+import { parseResponse } from '../../utils/response.util.js';
 
 function actorFromRequest(request: FastifyRequest): TodoActor {
   return {
@@ -52,7 +53,14 @@ export default function routes(
         response: { 200: todoPaginatedResponseSchema },
       },
     },
-    async (request) => listTodos(db, actorFromRequest(request), request.query),
+    async (request) => {
+      const result = await listTodos(
+        db,
+        actorFromRequest(request),
+        request.query,
+      );
+      return parseResponse(todoPaginatedResponseSchema, result, request);
+    },
   );
 
   server.post(
@@ -126,8 +134,14 @@ export default function routes(
         response: { 200: z.array(todoResponseSchema) },
       },
     },
-    async (request) =>
-      getTodosByIds(db, actorFromRequest(request), request.body),
+    async (request) => {
+      const result = await getTodosByIds(
+        db,
+        actorFromRequest(request),
+        request.body,
+      );
+      return parseResponse(z.array(todoResponseSchema), result, request);
+    },
   );
 
   done();

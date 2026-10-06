@@ -548,7 +548,16 @@ export async function listHiveCountTotal(db: Database, companyId: number) {
   const minYear = Math.min(...years);
   const maxYear = Math.max(...years);
   let total = 0;
-  const result = [];
+  const result: {
+    year: number;
+    quarter: number;
+    ident: string;
+    increase?: string;
+    decrease?: string;
+    user_id?: number;
+    change: number;
+    total: number;
+  }[] = [];
   for (let year = minYear; year <= maxYear; year++) {
     for (let quarter = 1; quarter <= 4; quarter++) {
       const ident = `${year}${quarter}`;

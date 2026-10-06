@@ -217,7 +217,7 @@ export async function createOption(
     }
     const inserted = await trx
       .insertInto(table)
-      .values({ ...commonValues(input), user_id: companyId })
+      .values({ ...commonValues(input), name: input.name, user_id: companyId })
       .executeTakeFirstOrThrow();
     return trx
       .selectFrom(table)

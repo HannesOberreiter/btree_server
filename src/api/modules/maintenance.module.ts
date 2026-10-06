@@ -232,7 +232,7 @@ export async function reminderVIS(db: Kysely<DB>) {
     const reportDay1 = `${year}-12-31`;
     const reportDay2 = `${year}-06-30`;
 
-    let mailDate: string, mailSubject: string;
+    let mailDate: string | undefined, mailSubject: string | undefined;
 
     if (dayjs(countDay1).isSame(checkDate, 'day')) {
       mailDate = countDay1;

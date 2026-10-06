@@ -246,6 +246,8 @@ export default class AuthController {
   }
 
   static async discourse(req: FastifyRequest, _reply: FastifyReply) {
+    if (!discourseSecret)
+      throw httpErrors.ServiceUnavailable('Discourse SSO is not configured');
     const sso = new DiscourseSSO(discourseSecret);
     const { payload, sig } = req.query as DiscourseQuery;
     if (payload && sig) {

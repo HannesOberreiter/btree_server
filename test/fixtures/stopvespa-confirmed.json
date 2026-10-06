@@ -1,0 +1,19 @@
+{
+  "spatialReference": { "wkid": 4326, "latestWkid": 4326 },
+  "geometryType": "esriGeometryPoint",
+  "exceededTransferLimit": false,
+  "features": [
+    {
+      "attributes": {
+        "ObjectId": 195497,
+        "globalid": "469fa0ad-2966-4804-8bcd-e63a16ddd075",
+        "data_observ": 1789297200000,
+        "tipo_observ": "ninho",
+        "tipo": "definitivo",
+        "exterminad": "sim",
+        "data_exter": 1789297200000
+      },
+      "geometry": { "x": -8.422755, "y": 41.595138 }
+    }
+  ]
+}

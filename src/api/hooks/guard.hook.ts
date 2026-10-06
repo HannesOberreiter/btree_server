@@ -14,7 +14,7 @@ export class Guard {
       Guard.handleSession(req, res, done, roles);
 
   private static listNumber(en: any): number[] {
-    const list = [];
+    const list: number[] = [];
     for (const item in en) {
       list.push(en[item]);
     }

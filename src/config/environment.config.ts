@@ -72,7 +72,8 @@ const authorized = process.env.AUTHORIZED!;
 const isContainer = !!process.env.CONTAINER; // Docker container, we need to use different ports
 const isChild = process.env.IS_CHILD ? process.env.IS_CHILD === 'true' : false; // Child node application, used for scaling, without cronjobs
 
-const sessionSecret = process.env.SESSION_SECRET;
+const sessionSecret = process.env.SESSION_SECRET ?? '';
+if (!sessionSecret) throw new Error('SESSION_SECRET must be configured');
 
 const openweatherKey = process.env.OPENWEATHER_KEY;
 

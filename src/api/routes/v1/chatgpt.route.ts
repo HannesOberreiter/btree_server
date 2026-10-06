@@ -52,10 +52,7 @@ function buildChatGptToolSpec() {
             required: true,
             content: {
               'application/json': {
-                schema: z.toJSONSchema(toolDef.parameters) as Record<
-                  string,
-                  unknown
-                >,
+                schema: z.toJSONSchema(toolDef.parameters),
               },
             },
           },

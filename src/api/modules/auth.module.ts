@@ -8,11 +8,15 @@ import type { Database } from '../../types/database.types.js';
 function buildUserAgent(req: FastifyRequest) {
   try {
     const agent = UAParser(req.headers['user-agent']);
-    const userAgentInsert =
-      agent.os.name +
-      agent.browser.name +
-      agent.device.vendor +
-      agent.device.model;
+    const userAgentInsert = [
+      agent.os.name,
+      agent.browser.name,
+      agent.device.vendor,
+      agent.device.model,
+    ]
+      .filter(Boolean)
+      .join('');
+    if (!userAgentInsert) return 'noUserAgent';
     return userAgentInsert.length > 65
       ? userAgentInsert.substring(0, 64)
       : userAgentInsert;
