@@ -160,6 +160,32 @@ describe('task Kysely operations', () => {
     );
   });
 
+  it('stamps deleted_at on soft delete and clears it on restore', async () => {
+    for (const [table, id] of Object.entries(ids)) {
+      const taskTable = table as keyof typeof ids;
+      const deletedAt = async () =>
+        (
+          await db
+            .selectFrom(taskTable)
+            .select('deleted_at')
+            .where('id', '=', id)
+            .executeTakeFirstOrThrow()
+        ).deleted_at;
+
+      expect(await deletedAt()).toBeNull();
+      await deleteTasks(db, taskTable, actor, [id], {
+        hard: false,
+        restore: false,
+      });
+      expect(await deletedAt()).not.toBeNull();
+      await deleteTasks(db, taskTable, actor, [id], {
+        hard: false,
+        restore: true,
+      });
+      expect(await deletedAt()).toBeNull();
+    }
+  });
+
   it('enforces company isolation for every task table', async () => {
     expect(await listFeeds(db, 999_999, { deleted: false })).toEqual({
       results: [],

@@ -283,7 +283,11 @@ export function deleteTasks(
     if (softIds.length > 0) {
       await transaction
         .updateTable(table)
-        .set({ deleted: !options.restore, edit_id: actor.beeId })
+        .set({
+          deleted: !options.restore,
+          deleted_at: options.restore ? null : new Date(),
+          edit_id: actor.beeId,
+        })
         .where('id', 'in', softIds)
         .execute();
     }

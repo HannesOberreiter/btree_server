@@ -91,7 +91,10 @@ function inputValues(input: ApiaryValues) {
     ...(input.note !== undefined && { note: input.note }),
     ...(input.url !== undefined && { url: input.url }),
     ...(input.modus !== undefined && { modus: input.modus }),
-    ...(input.deleted !== undefined && { deleted: input.deleted }),
+    ...(input.deleted !== undefined && {
+      deleted: input.deleted,
+      deleted_at: input.deleted ? new Date() : null,
+    }),
     ...(input.deleted_at !== undefined && {
       deleted_at: input.deleted_at === null ? null : new Date(input.deleted_at),
     }),
@@ -347,7 +350,7 @@ export function deleteApiaries(
         .updateTable('apiaries')
         .set({
           deleted: !options.restore,
-          deleted_at: new Date(),
+          deleted_at: options.restore ? null : new Date(),
           edit_id: beeId,
         })
         .where('user_id', '=', companyId)
