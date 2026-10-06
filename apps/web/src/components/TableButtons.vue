@@ -317,10 +317,10 @@ function onPrint() {
     <head>
       <title>
         btree_${
-                router.currentRoute.value.meta.title
-                  ? t(router.currentRoute.value.meta.title as string)
-                  : ''
-              }_${useDate.isoFormat(useDate.getCurrent())}
+          router.currentRoute.value.meta.title
+            ? t(router.currentRoute.value.meta.title as string)
+            : ''
+        }_${useDate.isoFormat(useDate.getCurrent())}
       </title>
       <link rel="stylesheet" type="text/css" href="/print-table.css?timestamp=${Date.now()}" />
     </head>

@@ -22,6 +22,8 @@ import 'leaflet.markercluster/dist/MarkerCluster.css';
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 import 'leaflet.markercluster/dist/leaflet.markercluster.js';
 
+type ObservationType = 'hornet' | 'nest' | 'hornet_and_nest';
+
 interface Observation {
   location: {
     x: number;
@@ -29,6 +31,7 @@ interface Observation {
   };
   uri: string;
   observed_at: string;
+  observation_type?: ObservationType | null;
   localDate: string;
   isRecentObservation: boolean;
 }
@@ -111,6 +114,19 @@ const daysRecent = 7;
 
 const recentCount = ref(0);
 
+function observationTypeLabel(type: ObservationType | null | undefined) {
+  switch (type) {
+    case 'hornet':
+      return t('observationTypeHornet');
+    case 'nest':
+      return t('observationTypeNest');
+    case 'hornet_and_nest':
+      return t('observationTypeHornetAndNest');
+    default:
+      return undefined;
+  }
+}
+
 function onMapReady() {
   cluster.clearLayers();
   layerRecent.clearLayers();
@@ -123,7 +139,8 @@ function onMapReady() {
   if (year.value.value) {
     url = `/v1/public/${taxa.value}/observations/year/${year.value.value}`;
   }
-  api.get(url).then(response => {
+  // Public datasets deliberately exclude session credentials, even for signed-in viewers.
+  api.get(url, '', true, true, false).then(response => {
     map.removeLayer(cluster);
     map.removeLayer(layerRecent);
 
@@ -151,8 +168,12 @@ function onMapReady() {
       );
 
       const uri = JSON.parse(obs.uri);
+      const typeLabel = observationTypeLabel(obs.observation_type);
+      const typeInformation = typeLabel
+        ? `<br/>${t('observationType')}: ${typeLabel}`
+        : '';
       circleMarker.bindPopup(
-        `${obs.localDate}<br/><a href="${uri}" target="_blank">${uri}</a>`
+        `${obs.localDate}${typeInformation}<br/><a href="${uri}" target="_blank" rel="noopener noreferrer">${uri}</a>`
       );
       if (obs.isRecentObservation) {
         layerRecent.addLayer(circleMarker);

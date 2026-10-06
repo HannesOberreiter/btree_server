@@ -41,7 +41,6 @@ function onStart() {
   if (!speech.isListening.value) {
     notification.open('info', t('speech.start'), true);
   }
-  speech.result.value = '';
   speech.toggle();
 }
 
@@ -129,7 +128,12 @@ if (speech.isSupported) {
     }
   }
 
-  watch(speech.result, cur => {
+  // Finality resets each session, including when the transcript repeats unchanged.
+  watch(speech.isFinal, isFinal => {
+    if (!isFinal) {
+      return;
+    }
+    const cur = speech.result.value;
     console.log(cur);
     if (cur.trim()) {
       spoken.value = cur.toLowerCase();

@@ -9,10 +9,17 @@ test.describe('user - Calendar', () => {
   });
 
   test('fullcalendar', async ({ page, dataCy }) => {
-    await expect(page.locator('.calendar-container .fc')).toBeAttached();
+    const calendar = page.locator('.calendar-container');
+    await expect(calendar.getByRole('grid')).toBeAttached();
 
-    const btnToday = page.locator('.fc-today-button');
-    const btnNext = page.locator('.fc-next-button');
+    const btnToday = calendar.getByRole('button', {
+      name: 'This Month',
+      exact: true
+    });
+    const btnNext = calendar.getByRole('button', {
+      name: 'Next Month',
+      exact: true
+    });
 
     await expect(btnToday).toBeDisabled();
     await btnNext.click();
@@ -20,7 +27,11 @@ test.describe('user - Calendar', () => {
     await btnToday.click();
 
     // FullCalendar uses a custom "soft double-click" via dateClick (two clicks within 300ms)
-    const element = page.locator('.fc-day-today .fc-daygrid-day-top');
+    const today = await page.evaluate(() => {
+      const date = new Date();
+      return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+    });
+    const element = calendar.locator(`[role="gridcell"][data-date="${today}"]`);
     await element.scrollIntoViewIfNeeded();
     const box = await element.boundingBox();
     if (!box) {
@@ -36,25 +47,37 @@ test.describe('user - Calendar', () => {
     await dataCy('btn-form-save').click();
     await expect(dataCy('form-todo')).not.toBeAttached();
 
-    await page.locator('.fc-dayGridWeek-button').click();
-    await expect(page.locator('.fc-dayGridWeek-view')).toBeAttached();
+    const weekTab = calendar.getByRole('tab', {
+      name: 'Week view',
+      exact: true
+    });
+    const listTab = calendar.getByRole('tab', {
+      name: 'events view',
+      exact: true
+    });
+    const monthTab = calendar.getByRole('tab', {
+      name: 'month view',
+      exact: true
+    });
+    await weekTab.click();
+    await expect(weekTab).toHaveAttribute('aria-selected', 'true');
 
-    await page.locator('.fc-listWeek-button').click();
-    await expect(page.locator('.fc-listWeek-view')).toBeAttached();
+    await listTab.click();
+    await expect(listTab).toHaveAttribute('aria-selected', 'true');
 
-    await page.locator('.fc-dayGridMonth-button').click();
-    await expect(page.locator('.fc-dayGridMonth-view')).toBeAttached();
+    await monthTab.click();
+    await expect(monthTab).toHaveAttribute('aria-selected', 'true');
 
     await page
-      .locator('.fc-day-today .fc-daygrid-day-events .fa-clipboard')
+      .locator(`[role="gridcell"][data-date="${today}"] .fa-clipboard`)
       .first()
       .click({ force: true });
     await expect(dataCy('dialog-event')).toBeAttached();
     await dataCy('btn-dialog-event-delete').click();
     await page.locator('.btn-confirm').click();
-    await expect(dataCy('form-todo')).not.toBeAttached();
+    await expect(dataCy('dialog-event')).not.toBeAttached();
 
-    await page.locator('.fc-sources-button').click();
+    await calendar.getByRole('button', { name: 'Abos', exact: true }).click();
     await expect(dataCy('dialog-calendar-setting')).toBeAttached();
     await dataCy('btn-close-dialog').click();
     await expect(dataCy('dialog-calendar-setting')).not.toBeAttached();

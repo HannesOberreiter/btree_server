@@ -8,7 +8,6 @@ import { useNotification } from '../composables/useNotification';
 import { useAuthUserStore } from '../stores/auth';
 
 const { vibrate, isSupported: isVibrationSupported } = useVibrate({
-  interval: 0,
   pattern: [100]
 });
 const storeUser = useAuthUserStore();

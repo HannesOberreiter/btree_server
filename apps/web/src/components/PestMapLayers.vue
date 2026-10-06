@@ -29,9 +29,12 @@ const totalCount = ref(0);
 watch(
   taxa,
   taxa => {
-    api.get(`/v1/public/${taxa}/observations/stats`).then(response => {
-      totalCount.value = response.count;
-    });
+    // Public datasets deliberately exclude session credentials, even for signed-in viewers.
+    api
+      .get(`/v1/public/${taxa}/observations/stats`, '', true, true, false)
+      .then(response => {
+        totalCount.value = response.count;
+      });
   },
   { immediate: true }
 );
@@ -49,15 +52,15 @@ function onShowSources() {
     {
       name: 'observation.org',
       url: 'https://wwww.observation.org'
-    },
-    {
-      name: 'infofauna.ch',
-      url: 'https://lepus.infofauna.ch/carto/'
     }
   ];
 
   if (taxa.value === 'velutina') {
     sources.push(
+      {
+        name: 'asiatischehornisse.ch / info fauna',
+        url: 'https://asiatischehornisse.ch/karte'
+      },
       {
         name: 'PatriNat',
         url: 'https://frelonasiatique.mnhn.fr/visualisateur'
@@ -65,8 +68,29 @@ function onShowSources() {
       {
         name: 'bienengesundheit.at',
         url: 'https://www.bienengesundheit.at/vespa-velutina'
+      },
+      {
+        name: 'Stop Velutina / CREA',
+        url: 'https://www.stopvelutina.it/dove/'
+      },
+      {
+        name: 'Beewatching',
+        url: 'https://www.beewatching.it/sito-stopvelutina-mappa-segnalazioni-embedded/'
+      },
+      {
+        name: 'Beewatching — CC BY-NC-ND 4.0',
+        url: 'https://creativecommons.org/licenses/by-nc-nd/4.0/'
+      },
+      {
+        name: 'ICNF STOPvespa',
+        url: 'https://stopvespa.icnf.pt/geovisualizador/'
       }
     );
+  } else {
+    sources.push({
+      name: 'infofauna.ch',
+      url: 'https://lepus.infofauna.ch/carto/'
+    });
   }
 
   const sourcesHtml = sources
