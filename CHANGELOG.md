@@ -1,5 +1,19 @@
 # Changelog
 
+## [7.9.1](https://github.com/HannesOberreiter/btree_server/compare/btree-server-v7.9.0...btree-server-v7.9.1) (2026-10-06)
+
+
+### Bug Fixes
+
+* **db:** only stamp deleted_at on real deletions ([058b9ee](https://github.com/HannesOberreiter/btree_server/commit/058b9ee0d0670e55d87e943c56da2926d78163ea))
+
+
+### Miscellaneous
+
+* **db:** regenerate database types ([90423ad](https://github.com/HannesOberreiter/btree_server/commit/90423ad67d9a730af3fd56d6a86e582a81d3984f))
+* **db:** remove unused timestamp migration draft ([0a13f6f](https://github.com/HannesOberreiter/btree_server/commit/0a13f6ff30ea15063bd0cf2d480a02f769308e34))
+* **nginx:** replace direct API vhosts with Bunny origin templates ([8214464](https://github.com/HannesOberreiter/btree_server/commit/8214464432c90b738e0c78af21569085d76dabb8))
+
 ## [7.9.0](https://github.com/HannesOberreiter/btree_server/compare/btree-server-v7.8.0...btree-server-v7.9.0) (2026-10-06)
 
 
