@@ -1,11 +1,13 @@
 import type { onSendHookHandler } from 'fastify';
 
 /**
- * Opt reviewed public JSON routes into shared caching after parent onSend hooks
- * (including session cookies) have run. Attach explicitly; never register globally.
- * Bunny must allowlist each route, match this response header and vary its cache
- * by Origin, Referer, Cookie and Authorization. The CDN configuration owns the
- * shared-cache TTL; browsers revalidate. Public map misses query the DB directly.
+ * Mark reviewed public JSON routes after parent onSend hooks (including session
+ * cookies) have run. Attach explicitly; never register globally.
+ * Bunny caches each allowlisted route by request (GET without Cookie or
+ * Authorization), not by this marker; the marker only selects the public browser
+ * policy. Rate headers are stripped because Bunny may store these responses.
+ * The CDN configuration owns the shared-cache TTL; browsers revalidate. Public
+ * map misses query the DB directly.
  */
 export const publicCache: onSendHookHandler = (
   request,
@@ -35,7 +37,8 @@ export const publicCache: onSendHookHandler = (
 
   if (eligible) {
     // A cached response must not expose another viewer's origin rate counter.
-    // Private and otherwise non-cacheable responses retain their rate headers.
+    // Bunny may also cache credential-free query-string variants marked bypass;
+    // those keep the first requester's rate headers, which is accepted.
     reply.removeHeader('X-RateLimit-Limit');
     reply.removeHeader('X-RateLimit-Remaining');
     reply.removeHeader('X-RateLimit-Reset');
