@@ -164,7 +164,11 @@ After schema changes, regenerate `src/types/db.types.ts` with `pnpm run db:types
 
 ## Server Ngnix
 
-Proxy redirecting inside `upstream.conf`. Important the redirect IP address is not localhost it is the container IP address: `docker inspect <container-id>` (get the gateway IP address + Port). Demo files for Ngnix are in the root folder of this repository, which are also used on our live server.
+Proxy redirecting inside `upstream.conf`. Important the redirect IP address is not localhost it is the container IP address: `docker inspect <container-id>` (get the gateway IP address + Port). The API is served through Bunny CDN, configured in a private infrastructure repository. `btree_at_api-origin.conf` and `btree_at_api-beta-origin.conf` in the root folder are the live origin virtual hosts. They only accept requests carrying the CDN's origin secret header:
+
+- Set `map_hash_bucket_size 128;` in the `http` block of `nginx.conf`.
+- Store the secret in `/etc/nginx/private/btree-origin-keys.map` (or `btree-beta-origin-keys.map`) as `"<secret>" 1;`, owned by root with mode 0600.
+- Obtain the origin certificate with the webroot from the HTTP block: `certbot certonly --webroot -w /var/www/letsencrypt -d origin-api.btree.at`.
 
 ```bash
 # path: /etc/nginx/conf.d/upstream.conf
