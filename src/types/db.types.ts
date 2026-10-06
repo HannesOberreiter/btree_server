@@ -33,7 +33,7 @@ export interface AgentKeys {
 export interface AgentOauthClients {
   client_id: string;
   client_name: string;
-  client_secret_hash: string | null;
+  client_secret_hash: Generated<string | null>;
   created_at: Generated<Date>;
   last_used_at: Generated<Date | null>;
   redirect_uris: string;
@@ -477,9 +477,9 @@ export interface CheckupsApiaries {
   apiary_id: Generated<number>;
   apiary_name: Generated<string | null>;
   checkup_date: Generated<Date | null>;
-  checkup_id: Generated<number | null>;
+  checkup_id: Generated<number>;
   /**
-   * Company ID
+   * Company
    */
   user_id: Generated<number | null>;
 }
@@ -617,9 +617,9 @@ export interface FeedsApiaries {
   apiary_id: Generated<number>;
   apiary_name: Generated<string | null>;
   feed_date: Generated<Date | null>;
-  feed_id: Generated<number | null>;
+  feed_id: Generated<number>;
   /**
-   * Company ID
+   * Company
    */
   user_id: Generated<number | null>;
 }
@@ -709,9 +709,9 @@ export interface HarvestsApiaries {
   apiary_id: Generated<number>;
   apiary_name: Generated<string | null>;
   harvest_date: Generated<Date | null>;
-  harvest_id: Generated<number | null>;
+  harvest_id: Generated<number>;
   /**
-   * Company ID
+   * Company
    */
   user_id: Generated<number | null>;
 }
@@ -1278,9 +1278,9 @@ export interface TreatmentsApiaries {
   apiary_id: Generated<number>;
   apiary_name: Generated<string | null>;
   treatment_date: Generated<Date | null>;
-  treatment_id: Generated<number | null>;
+  treatment_id: Generated<number>;
   /**
-   * Company ID
+   * Company
    */
   user_id: Generated<number | null>;
 }
