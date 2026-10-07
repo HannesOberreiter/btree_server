@@ -1,5 +1,13 @@
 # Changelog
 
+## [7.9.2](https://github.com/HannesOberreiter/btree_server/compare/btree-server-v7.9.1...btree-server-v7.9.2) (2026-10-07)
+
+
+### Bug Fixes
+
+* **session:** don't restore destroyed session on refresh ([5ea0aa2](https://github.com/HannesOberreiter/btree_server/commit/5ea0aa24dee4f5e0ddb1fd964157f82b3f4e4444))
+* **session:** refresh user without regenerating session ([53819ce](https://github.com/HannesOberreiter/btree_server/commit/53819ce938c057284e85c26293fc8dd88f43cd9d))
+
 ## [7.9.1](https://github.com/HannesOberreiter/btree_server/compare/btree-server-v7.9.0...btree-server-v7.9.1) (2026-10-06)
 
 
