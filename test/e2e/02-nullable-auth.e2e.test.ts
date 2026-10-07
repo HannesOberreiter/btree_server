@@ -4,12 +4,13 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import UserController from '../../src/api/controllers/user.controller.js';
 import { buildUserAgent } from '../../src/api/modules/auth.module.js';
 import { fetchUser, getPaidRank } from '../../src/api/modules/login.module.js';
+import { RedisServer } from '../../src/servers/redis.server.js';
 
 vi.mock('../../src/servers/kysely.server.js', () => ({
   KyselyServer: { getInstance: () => ({ db: {} }) },
 }));
 vi.mock('../../src/servers/redis.server.js', () => ({
-  RedisServer: { client: {} },
+  RedisServer: { client: { exists: vi.fn() } },
 }));
 vi.mock('../../src/services/mail.service.js', () => ({
   MailService: { getInstance: vi.fn() },
@@ -29,6 +30,7 @@ function request() {
     headers: { 'user-agent': 'unrecognized-test-agent' },
     ip: '127.0.0.1',
     session: {
+      sessionId: '7:session-id',
       user: { bee_id: 7 },
       regenerate: vi.fn().mockResolvedValue(undefined),
       save: vi.fn().mockResolvedValue(undefined),
@@ -63,6 +65,7 @@ beforeEach(() => {
   vi.resetAllMocks();
   vi.mocked(fetchUser).mockResolvedValue(account());
   vi.mocked(getPaidRank).mockResolvedValue({ rank: 1, paid: false });
+  vi.mocked(RedisServer.client.exists).mockResolvedValue(1);
 });
 
 describe('nullable authenticated account data', () => {
@@ -110,6 +113,20 @@ describe('nullable authenticated account data', () => {
       expect(req.session.save).toHaveBeenCalledOnce();
     },
   );
+
+  it('does not resurrect a session destroyed during the refresh', async () => {
+    vi.mocked(RedisServer.client.exists).mockResolvedValue(0);
+    const req = request();
+
+    await expect(UserController.get(req, reply)).rejects.toMatchObject({
+      statusCode: 401,
+    });
+    expect(RedisServer.client.exists).toHaveBeenCalledWith(
+      'btree_sess:7:session-id',
+    );
+    expect(req.session.user).toEqual({ bee_id: 7 });
+    expect(req.session.save).not.toHaveBeenCalled();
+  });
 
   it('uses a stable fallback for an unrecognized user agent', () => {
     expect(buildUserAgent(request())).toBe('noUserAgent');
