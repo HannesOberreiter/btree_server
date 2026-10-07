@@ -96,6 +96,14 @@ export default class UserController {
     const company = selectedCompany.id;
     const { rank, paid } = await getPaidRank(db, data.id, company);
 
+    // Do not resurrect a session destroyed (logout, revocation) while the
+    // queries above were running. Check before modifying, as the session
+    // plugin saves modified sessions on send.
+    const exists = await RedisServer.client.exists(
+      `btree_sess:${req.session.sessionId}`,
+    );
+    if (!exists) throw httpErrors.Unauthorized('Unauthorized');
+
     // Refresh in place: regenerating here would invalidate concurrent
     // requests that still carry the current session cookie.
     req.session.user = {
