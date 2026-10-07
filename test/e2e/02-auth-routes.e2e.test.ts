@@ -1,3 +1,5 @@
+import process from 'node:process';
+
 import { beforeAll, describe, expect, it } from 'vitest';
 
 import type { TestAgent } from '../utils.js';
@@ -250,6 +252,33 @@ describe('authentification routes', () => {
       );
       expect(res.statusCode).toEqual(200);
       expect(res.body).toBe(true);
+    });
+
+    it('200 - refresh keeps session valid for concurrent requests', async () => {
+      const baseUrl = `http://localhost:${process.env.PORT}`;
+      const headers = {
+        'Content-Type': process.env.CONTENT_TYPE!,
+        Accept: process.env.CONTENT_TYPE!,
+        Origin: process.env.ORIGIN!,
+      };
+      const login = await fetch(`${baseUrl}/api/v1/auth/login`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(demoUser),
+      });
+      expect(login.status).toEqual(200);
+      const cookie = login.headers.getSetCookie()[0].split(';')[0];
+
+      const refresh = await fetch(`${baseUrl}${route}`, {
+        headers: { ...headers, Cookie: cookie },
+      });
+      expect(refresh.status).toEqual(200);
+
+      // A request still holding the pre-refresh cookie must stay authorized.
+      const ping = await fetch(`${baseUrl}/api/v1/auth/ping`, {
+        headers: { ...headers, Cookie: cookie },
+      });
+      expect(ping.status).toEqual(200);
     });
   });
 });

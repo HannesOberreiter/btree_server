@@ -96,18 +96,15 @@ export default class UserController {
     const company = selectedCompany.id;
     const { rank, paid } = await getPaidRank(db, data.id, company);
 
-    (req as FastifyRequest & { bee_id: number }).bee_id =
-      req.session.user.bee_id;
-
-    await req.session.regenerate();
+    // Refresh in place: regenerating here would invalidate concurrent
+    // requests that still carry the current session cookie.
     req.session.user = {
-      bee_id: data.id,
+      ...req.session.user,
       user_id: company,
       paid,
       rank: rank as typeof req.session.user.rank,
       user_agent: buildUserAgent(req),
       last_visit: new Date(),
-      uuid: randomUUID(),
       ip: req.ip,
     };
 
