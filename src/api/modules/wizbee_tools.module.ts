@@ -42,6 +42,7 @@ import {
   updateMovedates,
 } from '../modules/movedate.module.js';
 import { listOptions, optionTables } from '../modules/option.module.js';
+import { listQueens } from '../modules/queen.module.js';
 import {
   listHiveCountByApiary,
   listHiveCountTotal,
@@ -91,6 +92,7 @@ const TOOL_MAX_RANK = {
   deleteMovement: ROLES.user,
   apiaryWeather: ROLES.read,
   getHiveDetail: ROLES.read,
+  listQueens: ROLES.read,
   getHiveTasks: ROLES.read,
   fetchOptions: ROLES.read,
   fetchTasks: ROLES.read,
@@ -123,6 +125,50 @@ const TOOL_MAX_RANK = {
   btreeDocumentation: ROLES.read,
   calculateSugarWater: ROLES.read,
 } as const;
+
+/** Rows returned by listQueens; keeps the result below MAX_TOOL_RESULT_CHARS. */
+const QUEEN_RESULT_LIMIT = 250;
+
+const listQueensInputSchema = z.object({
+  location: z
+    .enum(['inHive', 'notInHive', 'noHive', 'all'])
+    .optional()
+    .default('inHive')
+    .describe(
+      'inHive (default): current queen of each active colony / hive. notInHive: queens that are not the current queen of an active colony / hive, i.e. replaced queens, queens of inactive or deleted colonies / hives, and queens without a hive; hive and apiary fields then show the hive the queen was last assigned to. noHive: only queens without a hive, e.g. virgin or reserve queens. all: every queen.',
+    ),
+  bornFrom: z.iso
+    .date()
+    .optional()
+    .describe('Earliest queen birth date (YYYY-MM-DD), inclusive'),
+  bornTo: z.iso
+    .date()
+    .optional()
+    .describe('Latest queen birth date (YYYY-MM-DD), inclusive'),
+  apiaryId: z
+    .number()
+    .optional()
+    .describe('Only queens in colonies / hives of this apiary'),
+  hiveId: z
+    .number()
+    .optional()
+    .describe('Only queens assigned to this colony / hive'),
+  raceId: z.number().optional().describe('Queen race ID from fetchOptions'),
+  matingId: z.number().optional().describe('Queen mating ID from fetchOptions'),
+  q: z
+    .string()
+    .optional()
+    .describe('Search text for queen name or colony / hive name'),
+});
+
+/** Read race and mating names from a listQueens detail row. */
+function optionNames(row: Record<string, unknown>) {
+  const name = (value: unknown) =>
+    typeof value === 'object' && value !== null && 'name' in value
+      ? value.name
+      : null;
+  return { race: name(row.race), mating: name(row.mating) };
+}
 
 const GENERIC_HTTP_MESSAGE_RE =
   /^(?:not found|forbidden|unauthorized|bad request|conflict|payment required|too many requests)$/i;
@@ -219,6 +265,7 @@ const TOOL_META: Record<string, ToolHintMeta> = {
   // Reads
   findHives: { recordLabel: 'hive' },
   getHiveDetail: { usesHiveIds: true, recordLabel: 'hive' },
+  listQueens: { usesHiveIds: true, usesApiaryId: true, recordLabel: 'queen' },
   getHiveTasks: {
     usesHiveIds: true,
     usesApiaryId: true,
@@ -1578,6 +1625,88 @@ export function createWizBeeTools(
       }),
       execute: async (input) => {
         return getHiveDetail(db, context.userId, input.hiveId);
+      },
+    }),
+
+    /**
+     * List Queens Tool
+     * Returns active queens that currently sit in a hive, with birth date
+     */
+    listQueens: tool({
+      description:
+        'List queens with birth date (`date`), mark colour, race, mating, status, hive and apiary. Use this for questions about queen age or birth year instead of reading the year from queen names or calling getHiveDetail per hive. By default (`location: "inHive"`) it returns the current queen of each active colony / hive. Inactive queens are included: `active: false` means the queen is recorded as dead or lost since `inactiveDate`. If the current queen of a colony / hive is inactive, the colony has no living queen recorded (queenless); do not count it as having that queen. Filter by birth date range (`bornFrom`, `bornTo`), `apiaryId`, `hiveId`, `raceId`, `matingId` (IDs from fetchOptions) and `q`.',
+      inputSchema: listQueensInputSchema,
+      execute: async (input) => {
+        const filters: Record<string, unknown>[] = [];
+        if (input.bornFrom || input.bornTo) {
+          filters.push({
+            'queens.date': {
+              from: input.bornFrom ?? '1900-01-01',
+              to: input.bornTo ?? '9999-12-31',
+            },
+          });
+        }
+        if (input.apiaryId !== undefined) {
+          filters.push({ 'hive_location.apiary_id': input.apiaryId });
+        }
+        if (input.hiveId !== undefined) {
+          filters.push({ 'queens.hive_id': input.hiveId });
+        }
+        if (input.location === 'noHive') {
+          filters.push({ 'queens.hive_id': 'empty' });
+        }
+        if (input.raceId !== undefined) {
+          filters.push({ 'queens.race_id': input.raceId });
+        }
+        if (input.matingId !== undefined) {
+          filters.push({ 'queens.mating_id': input.matingId });
+        }
+        const location = input.location ?? 'inHive';
+        const raw = await listQueens(db, context.userId, {
+          deleted: false,
+          details: true,
+          latest:
+            location === 'inHive'
+              ? true
+              : location === 'notInHive'
+                ? false
+                : undefined,
+          q: input.q,
+          filters: JSON.stringify(filters),
+          order: ['queens.date'],
+          direction: ['asc'],
+          limit: QUEEN_RESULT_LIMIT,
+          offset: 0,
+        });
+        const queens = raw.results.map((q) => {
+          // The module return type omits the detail projections.
+          const { race, mating } = optionNames(q);
+          return {
+            queenId: q.id,
+            name: q.name,
+            // The pool uses dateStrings, so dates are YYYY-MM-DD at runtime.
+            date: q.date,
+            markColour: q.mark_colour,
+            race,
+            mating,
+            active: q.modus,
+            inactiveDate: q.modus ? null : q.modus_date,
+            hiveId: q.hive_location?.hive_id ?? null,
+            hiveName: q.hive_location?.hive_name ?? null,
+            apiaryId: q.hive_location?.apiary_id ?? null,
+            apiaryName: q.hive_location?.apiary_name ?? null,
+          };
+        });
+        const truncated = raw.total > queens.length;
+        return {
+          total: raw.total,
+          returned: queens.length,
+          truncated,
+          ...(truncated && {
+            hint: 'Narrow the request with bornFrom/bornTo, apiaryId, hiveId, raceId, matingId or q to get all matching queens.',
+          }),
+          queens,
+        };
       },
     }),
 
@@ -3107,6 +3236,12 @@ export const wizBeeToolDefinitions = [
     parameters: z.object({
       hiveId: z.number(),
     }),
+  },
+  {
+    name: 'listQueens',
+    description:
+      'List queens with birth date, mark colour, race, mating, status, hive and apiary. Defaults to the current queen of each active hive; inactive (dead or lost) queens are included with active=false. Use this for questions about queen age or birth year.',
+    parameters: listQueensInputSchema,
   },
   {
     name: 'getHiveTasks',

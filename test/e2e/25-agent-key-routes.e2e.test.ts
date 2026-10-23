@@ -1,6 +1,6 @@
 import process from 'node:process';
 
-import { beforeAll, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 import { ROLES } from '../../src/config/constants.config.js';
 import { KyselyServer } from '../../src/servers/kysely.server.js';
@@ -470,6 +470,287 @@ describe('agent key & agent API routes', () => {
         {},
       );
       expect(res.statusCode).toEqual(401);
+    });
+  });
+
+  describe('pOST /api/v1/agent/tools/listQueens', () => {
+    let otherCompanyId: number;
+    let apiaryId: number;
+    let otherApiaryId: number;
+    const hiveIds: number[] = [];
+    const movedateIds: number[] = [];
+    const queenIds: Record<string, number> = {};
+
+    async function insertHive(name: string, userId: number, apiary: number) {
+      const hive = await db
+        .insertInto('hives')
+        .values({ name, user_id: userId, modus: true })
+        .executeTakeFirstOrThrow();
+      const hiveId = Number(hive.insertId);
+      hiveIds.push(hiveId);
+      const movedate = await db
+        .insertInto('movedates')
+        .values({
+          apiary_id: apiary,
+          hive_id: hiveId,
+          date: new Date('2024-01-01'),
+        })
+        .executeTakeFirstOrThrow();
+      movedateIds.push(Number(movedate.insertId));
+      return hiveId;
+    }
+
+    async function insertQueen(
+      key: string,
+      values: {
+        userId: number;
+        hiveId: number | null;
+        date: string;
+        modus?: boolean;
+        moveDate?: string;
+      },
+    ) {
+      const queen = await db
+        .insertInto('queens')
+        .values({
+          name: `E2E queen ${key}`,
+          user_id: values.userId,
+          hive_id: values.hiveId,
+          date: new Date(values.date),
+          move_date: new Date(values.moveDate ?? values.date),
+          modus: values.modus ?? true,
+          modus_date: values.modus === false ? new Date('2025-03-01') : null,
+          mark_colour: '#0000ff',
+        })
+        .executeTakeFirstOrThrow();
+      queenIds[key] = Number(queen.insertId);
+    }
+
+    beforeAll(async () => {
+      const otherCompany = await db
+        .insertInto('companies')
+        .values({ name: `Queen other ${Date.now()}` })
+        .executeTakeFirstOrThrow();
+      otherCompanyId = Number(otherCompany.insertId);
+
+      const apiary = await db
+        .insertInto('apiaries')
+        .values({
+          name: 'E2E queen apiary',
+          latitude: 0,
+          longitude: 0,
+          user_id: companyId,
+        })
+        .executeTakeFirstOrThrow();
+      apiaryId = Number(apiary.insertId);
+      const otherApiary = await db
+        .insertInto('apiaries')
+        .values({
+          name: 'E2E other queen apiary',
+          latitude: 0,
+          longitude: 0,
+          user_id: otherCompanyId,
+        })
+        .executeTakeFirstOrThrow();
+      otherApiaryId = Number(otherApiary.insertId);
+
+      const inRange = await insertHive('E2E queen 1', companyId, apiaryId);
+      const outOfRange = await insertHive('E2E queen 2', companyId, apiaryId);
+      const inactive = await insertHive('E2E queen 3', companyId, apiaryId);
+      const replaced = await insertHive('E2E queen 4', companyId, apiaryId);
+      const other = await insertHive(
+        'E2E queen 5',
+        otherCompanyId,
+        otherApiaryId,
+      );
+
+      await insertQueen('inRange', {
+        userId: companyId,
+        hiveId: inRange,
+        date: '2024-12-31',
+      });
+      await insertQueen('outOfRange', {
+        userId: companyId,
+        hiveId: outOfRange,
+        date: '2023-06-01',
+      });
+      await insertQueen('inactive', {
+        userId: companyId,
+        hiveId: inactive,
+        date: '2024-06-01',
+        modus: false,
+      });
+      await insertQueen('noHive', {
+        userId: companyId,
+        hiveId: null,
+        date: '2024-03-01',
+      });
+      await insertQueen('replaced', {
+        userId: companyId,
+        hiveId: replaced,
+        date: '2024-04-01',
+      });
+      await insertQueen('successor', {
+        userId: companyId,
+        hiveId: replaced,
+        date: '2025-04-01',
+        moveDate: '2025-05-01',
+      });
+      await insertQueen('otherCompany', {
+        userId: otherCompanyId,
+        hiveId: other,
+        date: '2024-05-01',
+      });
+    });
+
+    afterAll(async () => {
+      await db
+        .deleteFrom('queens')
+        .where('id', 'in', Object.values(queenIds))
+        .execute();
+      await db.deleteFrom('movedates').where('id', 'in', movedateIds).execute();
+      await db.deleteFrom('hives').where('id', 'in', hiveIds).execute();
+      await db
+        .deleteFrom('apiaries')
+        .where('id', 'in', [apiaryId, otherApiaryId])
+        .execute();
+      await db
+        .deleteFrom('companies')
+        .where('id', '=', otherCompanyId)
+        .execute();
+    });
+
+    async function callListQueens(body: Record<string, unknown>) {
+      const res = await agentFetch(
+        'POST',
+        '/api/v1/agent/tools/listQueens',
+        plaintextKey,
+        body,
+      );
+      expect(res.statusCode).toEqual(200);
+      expect(res.body.truncated).toBe(false);
+      expect(res.body.total).toEqual(res.body.queens.length);
+      return {
+        queens: res.body.queens,
+        ids: res.body.queens.map((q: any) => q.queenId) as number[],
+      };
+    }
+
+    function seededIds(ids: number[]) {
+      const seeded = new Set(Object.values(queenIds));
+      return ids.filter((id) => seeded.has(id));
+    }
+
+    function expectedIds(...keys: string[]) {
+      return keys.map((key) => queenIds[key]).sort((a, b) => a - b);
+    }
+
+    it('200 - lists current queens within the birth date range', async () => {
+      const { queens, ids } = await callListQueens({
+        bornFrom: '2024-01-01',
+        bornTo: '2024-12-31',
+      });
+      expect(seededIds(ids).sort((a, b) => a - b)).toEqual(
+        expectedIds('inRange', 'inactive'),
+      );
+      for (const queen of queens) {
+        expect(queen.date >= '2024-01-01' && queen.date <= '2024-12-31').toBe(
+          true,
+        );
+      }
+      expect(queens.find((q: any) => q.queenId === queenIds.inRange)).toEqual({
+        queenId: queenIds.inRange,
+        name: 'E2E queen inRange',
+        date: '2024-12-31',
+        markColour: '#0000ff',
+        race: null,
+        mating: null,
+        active: true,
+        inactiveDate: null,
+        hiveId: hiveIds[0],
+        hiveName: 'E2E queen 1',
+        apiaryId,
+        apiaryName: 'E2E queen apiary',
+      });
+      expect(
+        queens.find((q: any) => q.queenId === queenIds.inactive),
+      ).toMatchObject({
+        active: false,
+        inactiveDate: expect.stringContaining('2025-03-01'),
+      });
+    });
+
+    it('200 - filters by apiaryId', async () => {
+      const { ids } = await callListQueens({ apiaryId });
+      expect(ids.sort((a, b) => a - b)).toEqual(
+        expectedIds('inRange', 'outOfRange', 'inactive', 'successor'),
+      );
+    });
+
+    it('200 - notInHive lists replaced queens and queens without a hive', async () => {
+      const { ids } = await callListQueens({
+        location: 'notInHive',
+        bornFrom: '2024-01-01',
+        bornTo: '2024-12-31',
+      });
+      expect(seededIds(ids).sort((a, b) => a - b)).toEqual(
+        expectedIds('noHive', 'replaced'),
+      );
+    });
+
+    it('200 - noHive lists only queens without a hive', async () => {
+      const { ids } = await callListQueens({
+        location: 'noHive',
+        bornFrom: '2024-01-01',
+        bornTo: '2024-12-31',
+      });
+      expect(seededIds(ids)).toEqual(expectedIds('noHive'));
+    });
+
+    it('200 - filters by hiveId and q', async () => {
+      const byHive = await callListQueens({
+        location: 'all',
+        hiveId: hiveIds[3],
+      });
+      expect(byHive.ids.sort((a, b) => a - b)).toEqual(
+        expectedIds('replaced', 'successor'),
+      );
+
+      const bySearch = await callListQueens({
+        location: 'all',
+        q: 'E2E queen inRange',
+      });
+      expect(bySearch.ids).toEqual(expectedIds('inRange'));
+    });
+
+    it('404 - rejects a hive of another company', async () => {
+      const res = await agentFetch(
+        'POST',
+        '/api/v1/agent/tools/listQueens',
+        plaintextKey,
+        { hiveId: hiveIds[4] },
+      );
+      expect(res.statusCode).toEqual(404);
+    });
+
+    it('400 - rejects a malformed birth date', async () => {
+      const res = await agentFetch(
+        'POST',
+        '/api/v1/agent/tools/listQueens',
+        plaintextKey,
+        { bornFrom: '2024' },
+      );
+      expect(res.statusCode).toEqual(400);
+    });
+
+    it('lists the tool in the agent OpenAPI spec', async () => {
+      const res = await noAuthFetch('GET', '/api/v1/agent/openapi.json');
+      expect(res.statusCode).toEqual(200);
+      expect(
+        Object.keys(res.body.paths).some((path) =>
+          path.endsWith('/tools/listQueens'),
+        ),
+      ).toBe(true);
     });
   });
 
