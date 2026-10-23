@@ -1,5 +1,17 @@
 # Changelog
 
+## [7.10.0](https://github.com/HannesOberreiter/btree_server/compare/btree-server-v7.9.2...btree-server-v7.10.0) (2026-10-23)
+
+
+### Features
+
+* **wizbee:** add listQueens tool ([bd22c8f](https://github.com/HannesOberreiter/btree_server/commit/bd22c8f49a165f17c73b4ee6dcb6d82e668bc50e))
+
+
+### Bug Fixes
+
+* **queen:** apply latest filter to list total ([bd22c8f](https://github.com/HannesOberreiter/btree_server/commit/bd22c8f49a165f17c73b4ee6dcb6d82e668bc50e))
+
 ## [7.9.2](https://github.com/HannesOberreiter/btree_server/compare/btree-server-v7.9.1...btree-server-v7.9.2) (2026-10-07)
 
 
