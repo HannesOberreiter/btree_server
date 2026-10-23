@@ -4,6 +4,7 @@ import {
   executeWizBeeTool,
   wizBeeToolDefinitions,
 } from '../../src/api/modules/wizbee_tools.module.js';
+import { KyselyServer } from '../../src/servers/kysely.server.js';
 import type { Database } from '../../src/types/database.types.js';
 
 const unusedDb = {} as Database;
@@ -56,6 +57,22 @@ describe('WizBee tool authorization', () => {
     expect(result).toMatchObject({
       ok: false,
       error: { code: 'forbidden', status: 403 },
+    });
+  });
+
+  it('allows listQueens to read-only users', async () => {
+    const result = await executeWizBeeTool(
+      KyselyServer.getInstance().db,
+      'listQueens',
+      { bornFrom: '2024-01-01', bornTo: '2024-12-31' },
+      { userId: 0, beeId: 1, rank: 3 },
+    );
+
+    expect(result).toEqual({
+      total: 0,
+      returned: 0,
+      truncated: false,
+      queens: [],
     });
   });
 

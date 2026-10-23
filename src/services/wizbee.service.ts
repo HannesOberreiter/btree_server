@@ -136,6 +136,7 @@ If API call fails (e.g. Created 0 records):
 - Ask before large datasets: "Should I load all ${year} tasks for your hives?"
 - Summarize by date or type.
 - Multi-year / "what did I do last N years": ALWAYS prefer statistics tools (getHarvestStatistics, getFeedStatistics, getTreatmentStatistics, getHiveStatistics). Do NOT call fetchTasks across multiple years; raw dataset too large. Use fetchTasks only for short specific window (one season, one apiary) when individual records needed.
+- Queen age / birth year ("Which colonies still have a queen from 2024?"): call **listQueens** once with bornFrom/bornTo. Do NOT read the year from queen names or call getHiveDetail per hive. A colony whose current queen has active=false has no living queen recorded.
 - Never call same tool with same args twice in one conversation. If error, narrow range or change tool.
 
 ### 8. Docs & Support
