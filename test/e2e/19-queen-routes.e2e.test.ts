@@ -121,6 +121,19 @@ describe('queen routes', () => {
       }
     });
 
+    it.each([true, false])(
+      'get 200 - total respects latest=%s',
+      async (latest) => {
+        const res = await doQueryRequest(agent, route, null, accessToken, {
+          details: true,
+          latest,
+          limit: 1000,
+        });
+        expect(res.statusCode).toBe(200);
+        expect(res.body.total).toBe(res.body.results.length);
+      },
+    );
+
     it('operations enforce company isolation', async () => {
       const db = KyselyServer.getInstance().db;
       expect(await getQueensByIds(db, 999_999, [insertId])).toEqual([]);

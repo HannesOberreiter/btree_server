@@ -143,6 +143,9 @@ export async function listQueens(
     query = input.latest
       ? query.where(sql<boolean>`queens_locations.queen_id IS NOT NULL`)
       : query.where(sql<boolean>`queens_locations.queen_id IS NULL`);
+    count = count
+      .leftJoin('queens_locations', 'queens_locations.queen_id', 'queens.id')
+      .where('queens_locations.queen_id', input.latest ? 'is not' : 'is', null);
   }
   if (input.filters) {
     try {
