@@ -32,6 +32,20 @@ export class Cron {
     });
   }
 
+  /** Run a cron task and log its duration, also when the task fails. */
+  private async timed<T>(name: string, task: () => Promise<T>): Promise<T> {
+    const start = performance.now();
+    try {
+      return await task();
+    } finally {
+      this.logger.log(
+        'info',
+        `${name} took ${Math.round(performance.now() - start)} ms`,
+        { label: 'CronJob' },
+      );
+    }
+  }
+
   async start() {
     if (isChild) {
       this.logger.log('debug', 'CronJob is not running in child mode', {
@@ -62,7 +76,7 @@ export class Cron {
       },
       async () => {
         try {
-          await this.run();
+          await this.timed('run', () => this.run());
         } catch (error) {
           this.logger.log(
             'error',
@@ -76,7 +90,11 @@ export class Cron {
     );
     cron.scheduleJob({ rule: '0 10 1 * *', tz: 'Europe/Vienna' }, async () => {
       try {
-        this.Logging(await fetchAsiatischeHornisseCh(true));
+        this.Logging(
+          await this.timed('fetchAsiatischeHornisseCh full sync', () =>
+            fetchAsiatischeHornisseCh(true),
+          ),
+        );
       } catch (error) {
         this.logger.log(
           'error',
@@ -93,9 +111,13 @@ export class Cron {
       label: 'CronJob',
     });
     const db = KyselyServer.getInstance().db;
-    this.Logging(await cleanupDatabase(db));
+    this.Logging(
+      await this.timed('cleanupDatabase', () => cleanupDatabase(db)),
+    );
 
-    const deletionReminder = reminderDeletion(db)
+    const deletionReminder = this.timed('reminderDeletion', () =>
+      reminderDeletion(db),
+    )
       .then((res) => this.Logging(res))
       .catch((error) =>
         this.logger.log(
@@ -107,7 +129,7 @@ export class Cron {
         ),
       );
 
-    const visReminder = reminderVIS(db)
+    const visReminder = this.timed('reminderVIS', () => reminderVIS(db))
       .then((res) => this.Logging(res))
       .catch((error) =>
         this.logger.log(
@@ -119,7 +141,7 @@ export class Cron {
         ),
       );
 
-    await reminderPremium(db)
+    await this.timed('reminderPremium', () => reminderPremium(db))
       .then((res) => this.Logging(res))
       .catch((error) =>
         this.logger.log(
@@ -131,7 +153,9 @@ export class Cron {
         ),
       );
 
-    const observations = fetchObservations('Vespa velutina')
+    const observations = this.timed('fetchObservations Vespa velutina', () =>
+      fetchObservations('Vespa velutina'),
+    )
       .then((res) => this.Logging(res))
       .catch((error) =>
         this.logger.log(
@@ -143,7 +167,9 @@ export class Cron {
         ),
       )
       .finally(() =>
-        fetchObservations('Aethina tumida')
+        this.timed('fetchObservations Aethina tumida', () =>
+          fetchObservations('Aethina tumida'),
+        )
           .then((res) => this.Logging(res))
           .catch((error) =>
             this.logger.log(
