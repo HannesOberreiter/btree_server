@@ -30,7 +30,7 @@ jobs:
             echo "Could not determine PR number from release-please output: $PR_JSON" >&2
             exit 1
           fi
-          gh pr merge "$PR_NUMBER" --squash --auto
+          gh pr merge "$PR_NUMBER" --merge --auto
 
   deploy:
     needs: release-please
