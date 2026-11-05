@@ -40,31 +40,38 @@ const sugar = ref(0);
 const water = ref(0);
 const solution = ref(0);
 const calculatedTheoretical = ref(0);
+const source = ref<'sugar' | 'water' | 'solution'>('sugar');
 
 watch(type, () => calculate());
 
-function changeUser(field: string) {
-  if (field === 'water') {
-    sugar.value = 0;
-    calculate();
-  } else if (field === 'sugar') {
-    water.value = 0;
-    calculate();
-  }
+function changeUser(field: 'sugar' | 'water' | 'solution') {
+  source.value = field;
+  calculate();
 }
 
 function calculate() {
   const base = type.value?.value === 1 ? oneToOne : threeToTwo;
-  if (sugar.value > 0) {
-    water.value = round(sugar.value * base.water, 1);
-  } else if (water.value > 0) {
-    sugar.value = round(water.value / base.water, 1);
+  const solutionPerSugar = (1 + base.water) * base.solution;
+  let sugarKg = sugar.value;
+  if (source.value === 'water') {
+    sugarKg = water.value / base.water;
+  } else if (source.value === 'solution') {
+    sugarKg = solution.value / solutionPerSugar;
   }
-  solution.value = round((sugar.value + water.value) * base.solution, 1);
-  calculatedTheoretical.value = round(sugar.value * theoretical, 1);
+  if (source.value !== 'sugar') {
+    sugar.value = round(sugarKg, 1);
+  }
+  if (source.value !== 'water') {
+    water.value = round(sugarKg * base.water, 1);
+  }
+  if (source.value !== 'solution') {
+    solution.value = round(sugarKg * solutionPerSugar, 1);
+  }
+  calculatedTheoretical.value = round(sugarKg * theoretical, 1);
 }
 
 function resetForm() {
+  source.value = 'sugar';
   sugar.value = 0;
   water.value = 0;
   solution.value = 0;
@@ -85,6 +92,7 @@ function resetForm() {
           <q-select v-model="type" :options="options" />
           <q-input
             v-model.number="sugar"
+            name="sugar"
             :label="$t('sugarHelper.sugar')"
             type="number"
             min="0"
@@ -92,6 +100,7 @@ function resetForm() {
           />
           <q-input
             v-model.number="water"
+            name="water"
             type="number"
             min="0"
             :label="$t('sugarHelper.water')"
@@ -99,11 +108,15 @@ function resetForm() {
           />
           <q-input
             v-model.number="solution"
-            :readonly="true"
+            name="solution"
+            type="number"
+            min="0"
             :label="$t('sugarHelper.solution')"
+            @change="changeUser('solution')"
           />
           <q-input
             v-model.number="calculatedTheoretical"
+            name="theoretical"
             :label="$t('sugarHelper.theoretical')"
             :readonly="true"
             :hint="$t('sugarHelper.hintStored')"

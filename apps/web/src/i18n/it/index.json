@@ -42,6 +42,32 @@
     "wizbeeLink": "",
     "wizbeeLinkAction": ""
   },
+  "forecast": {
+    "now": "Adesso",
+    "flight": "Tempo di volo",
+    "noFlight": "Nessun tempo di volo",
+    "flightHint": "Le api volano da {temperature} °C, con una probabilità di pioggia inferiore al {precipitation} %, vento sotto {wind} km/h e con la luce del giorno.",
+    "flightHours": "nessuna ora di volo | {n} ora di volo | {n} ore di volo",
+    "flightDay": "Buona giornata di volo",
+    "frost": "Gelo",
+    "heat": "Caldo",
+    "feelsLike": "Percepita",
+    "wind": "Vento",
+    "error": "Impossibile caricare le previsioni meteo.",
+    "premium": "Le previsioni meteo per apicoltori sono una funzione premium.",
+    "source": "Dati meteo da OpenWeather",
+    "conditions": {
+      "thunderstorm": "Temporale",
+      "drizzle": "Pioviggine",
+      "rain": "Pioggia",
+      "heavyRain": "Pioggia forte",
+      "snow": "Neve",
+      "fog": "Nebbia",
+      "clear": "Sereno",
+      "partlyCloudy": "Parzialmente nuvoloso",
+      "cloudy": "Nuvoloso"
+    }
+  },
   "mcp": {
     "connections": "Client MCP connessi",
     "copyUrl": "Copia URL del server MCP",

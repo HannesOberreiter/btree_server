@@ -67,16 +67,14 @@ function onReset() {
 
 async function onSubmit() {
   isSubmitting.value = true;
-  await api
-    .patch('/v1/fieldsetting', { settings: JSON.stringify(settings.value) })
-    .then(
-      () => {
-        notification.open('positive', '');
-      },
-      error => {
-        notification.open('negative', error);
-      }
-    );
+  await api.patch('/v1/fieldsetting', { settings: settings.value }).then(
+    () => {
+      notification.open('positive', '');
+    },
+    error => {
+      notification.open('negative', error);
+    }
+  );
   isSubmitting.value = false;
 }
 </script>
@@ -205,7 +203,12 @@ async function onSubmit() {
               </div>
             </template>
             <div class="q-pa-md q-gutter-sm">
-              <BtnBase :label="$t('save')" color="primary" @click="onSubmit" />
+              <BtnBase
+                data-cy="setting-field-save"
+                :label="$t('save')"
+                color="primary"
+                @click="onSubmit"
+              />
               <BtnBase
                 :label="$t('reset')"
                 color="negative"
@@ -215,7 +218,7 @@ async function onSubmit() {
             </div>
           </q-tab-panel>
 
-          <q-tab-panel name="localSettings">
+          <q-tab-panel name="localSettings" data-cy="setting-field-local">
             <div class="text-body2 q-pb-sm text-center">
               {{ $t('setting.localTitle') }}
             </div>

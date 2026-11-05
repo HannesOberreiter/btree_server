@@ -42,6 +42,32 @@
     "wizbeeLink": "Möchten Sie Ihren eigenen KI-Agenten verbinden?",
     "wizbeeLinkAction": "Agent Keys einrichten"
   },
+  "forecast": {
+    "now": "Jetzt",
+    "flight": "Flugwetter",
+    "noFlight": "Kein Flugwetter",
+    "flightHint": "Bienen fliegen ab {temperature} °C, bei einer Regenwahrscheinlichkeit unter {precipitation} %, Wind unter {wind} km/h und bei Tageslicht.",
+    "flightHours": "keine Flugstunden | {n} Flugstunde | {n} Flugstunden",
+    "flightDay": "Guter Flugtag",
+    "frost": "Frost",
+    "heat": "Hitze",
+    "feelsLike": "Gefühlt",
+    "wind": "Wind",
+    "error": "Die Wettervorhersage konnte nicht geladen werden.",
+    "premium": "Die Imker-Wettervorhersage ist eine Premium-Funktion.",
+    "source": "Wetterdaten von OpenWeather",
+    "conditions": {
+      "thunderstorm": "Gewitter",
+      "drizzle": "Nieselregen",
+      "rain": "Regen",
+      "heavyRain": "Starkregen",
+      "snow": "Schnee",
+      "fog": "Nebel",
+      "clear": "Klar",
+      "partlyCloudy": "Teilweise bewölkt",
+      "cloudy": "Bewölkt"
+    }
+  },
   "mcp": {
     "connections": "Verbundene MCP-Clients",
     "copyUrl": "MCP-Server-URL kopieren",

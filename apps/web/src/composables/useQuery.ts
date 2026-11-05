@@ -1,6 +1,7 @@
 import type { ComputedRef, MaybeRef, Ref } from 'vue';
 import type {
   ApiaryDetailResponse,
+  ApiaryForecastResponse,
   ApiaryListItem,
   ApiaryPaginatedResponse,
   CalendarResponse,
@@ -176,6 +177,24 @@ export function useTemperatureQuery(
     },
     enabled,
     select: response => response as OneCallResponse
+  });
+}
+
+export function useApiaryForecastQuery(
+  apiary_id: Ref<number>,
+  { enabled = true as MaybeRef<boolean> }
+) {
+  const api = useApiFetch();
+  return useQuery({
+    queryKey: ['forecast', apiary_id],
+    queryFn: () =>
+      api.get(
+        `/v1/service/weather/${apiary_id.value}`,
+        '',
+        false,
+        false
+      ) as Promise<ApiaryForecastResponse>,
+    enabled
   });
 }
 

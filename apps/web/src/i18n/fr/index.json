@@ -42,6 +42,32 @@
     "wizbeeLink": "",
     "wizbeeLinkAction": ""
   },
+  "forecast": {
+    "now": "Maintenant",
+    "flight": "Temps de vol",
+    "noFlight": "Pas de temps de vol",
+    "flightHint": "Les abeilles volent à partir de {temperature} °C, avec une probabilité de pluie inférieure à {precipitation} %, un vent inférieur à {wind} km/h et de jour.",
+    "flightHours": "aucune heure de vol | {n} heure de vol | {n} heures de vol",
+    "flightDay": "Bonne journée de vol",
+    "frost": "Gel",
+    "heat": "Chaleur",
+    "feelsLike": "Ressenti",
+    "wind": "Vent",
+    "error": "Impossible de charger les prévisions météo.",
+    "premium": "Les prévisions météo apicoles sont une fonction premium.",
+    "source": "Données météo par OpenWeather",
+    "conditions": {
+      "thunderstorm": "Orage",
+      "drizzle": "Bruine",
+      "rain": "Pluie",
+      "heavyRain": "Forte pluie",
+      "snow": "Neige",
+      "fog": "Brouillard",
+      "clear": "Dégagé",
+      "partlyCloudy": "Partiellement nuageux",
+      "cloudy": "Nuageux"
+    }
+  },
   "mcp": {
     "connections": "Clients MCP connectés",
     "copyUrl": "Copier l’URL du serveur MCP",
