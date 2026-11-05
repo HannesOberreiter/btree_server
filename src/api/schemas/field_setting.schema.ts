@@ -2,6 +2,7 @@ import { z } from 'zod';
 
 export const fieldSettingsSchema = z.record(z.string(), z.unknown());
 
+// Deprecated: cached PWA clients send settings as a JSON string. Remove after the transition period.
 const settingsStringSchema = z.string().transform((value, context) => {
   try {
     const result = fieldSettingsSchema.safeParse(JSON.parse(value));
@@ -14,7 +15,9 @@ const settingsStringSchema = z.string().transform((value, context) => {
   return z.NEVER;
 });
 
-export const patchBodySchema = z.object({ settings: settingsStringSchema });
+export const patchBodySchema = z.object({
+  settings: z.union([fieldSettingsSchema, settingsStringSchema]),
+});
 export type PatchBody = z.infer<typeof patchBodySchema>;
 
 export const fieldSettingResponseSchema = z.union([
