@@ -22,13 +22,29 @@ function toKmh(metersPerSecond: number) {
   return Math.round(metersPerSecond * 3.6);
 }
 
-/** Local time of the location as `YYYY-MM-DDTHH:mm`, without offset. */
-function localTime(dt: number, offset: number) {
-  return new Date((dt + offset) * 1000).toISOString().slice(0, 16);
-}
-
-function localDate(dt: number, offset: number) {
-  return localTime(dt, offset).slice(0, 10);
+/**
+ * Format Unix seconds as local time of the time zone, `YYYY-MM-DDTHH:mm`
+ * without offset. The time zone name handles daylight saving time changes
+ * inside the forecast.
+ */
+function localTimeFormatter(timezone: string) {
+  const format = new Intl.DateTimeFormat('en-US', {
+    timeZone: timezone,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hourCycle: 'h23',
+  });
+  return (dt: number) => {
+    const parts = Object.fromEntries(
+      format
+        .formatToParts(new Date(dt * 1000))
+        .map((part) => [part.type, part.value]),
+    );
+    return `${parts.year}-${parts.month}-${parts.day}T${parts.hour}:${parts.minute}`;
+  };
 }
 
 function precipitation(entry: {
@@ -61,18 +77,19 @@ function isDaylight(dt: number, day?: Pick<Daily, 'sunrise' | 'sunset'>) {
  * signals. Units are °C, km/h, mm, and %. Times are local to the location.
  */
 export function buildApiaryForecast(weather: OneCallResponse): ApiaryForecast {
-  const offset = weather.timezone_offset;
+  const localTime = localTimeFormatter(weather.timezone);
+  const localDate = (dt: number) => localTime(dt).slice(0, 10);
   const dailyByDate = new Map(
-    weather.daily.map((day) => [localDate(day.dt, offset), day]),
+    weather.daily.map((day) => [localDate(day.dt), day]),
   );
 
   const hourly = weather.hourly.map((hour) => {
-    const date = localDate(hour.dt, offset);
+    const date = localDate(hour.dt);
     const windSpeed = toKmh(hour.wind_speed);
     const precipitationProbability = Math.round(hour.pop * 100);
     const isDay = isDaylight(hour.dt, dailyByDate.get(date));
     return {
-      time: localTime(hour.dt, offset),
+      time: localTime(hour.dt),
       temperature: round1(hour.temp),
       precipitation: precipitation(hour),
       precipitation_probability: precipitationProbability,
@@ -100,7 +117,7 @@ export function buildApiaryForecast(weather: OneCallResponse): ApiaryForecast {
       heat_temperature: HEAT_TEMPERATURE,
     },
     current: {
-      time: localTime(current.dt, offset),
+      time: localTime(current.dt),
       temperature: round1(current.temp),
       feels_like: round1(current.feels_like),
       humidity: current.humidity,
@@ -120,7 +137,7 @@ export function buildApiaryForecast(weather: OneCallResponse): ApiaryForecast {
     },
     hourly,
     daily: weather.daily.map((day) => {
-      const date = localDate(day.dt, offset);
+      const date = localDate(day.dt);
       const windSpeed = toKmh(day.wind_speed);
       const precipitationProbability = Math.round(day.pop * 100);
       const hours = hourly.filter((hour) => hour.time.startsWith(date));
@@ -134,8 +151,8 @@ export function buildApiaryForecast(weather: OneCallResponse): ApiaryForecast {
         precipitation_probability: precipitationProbability,
         wind_speed: windSpeed,
         condition: day.weather[0]?.id ?? 0,
-        sunrise: localTime(day.sunrise, offset),
-        sunset: localTime(day.sunset, offset),
+        sunrise: localTime(day.sunrise),
+        sunset: localTime(day.sunset),
         flight_day: isFlightWeather(
           day.temp.max,
           precipitationProbability,
@@ -151,8 +168,8 @@ export function buildApiaryForecast(weather: OneCallResponse): ApiaryForecast {
     alerts: (weather.alerts ?? []).map((alert) => ({
       sender: alert.sender_name,
       event: alert.event,
-      start: localTime(alert.start, offset),
-      end: localTime(alert.end, offset),
+      start: localTime(alert.start),
+      end: localTime(alert.end),
       description: alert.description,
     })),
   };

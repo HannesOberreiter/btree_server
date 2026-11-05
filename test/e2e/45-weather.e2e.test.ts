@@ -13,7 +13,7 @@ import {
 
 const HOUR = 3600;
 const DAY = 24 * HOUR;
-// 2026-06-01T10:00:00Z, local time 11:00 at UTC+1
+// 2026-06-01T10:00:00Z, local time 11:00 in Africa/Lagos (UTC+1, no DST)
 const NOW = Date.UTC(2026, 5, 1, 10) / 1000;
 const MIDNIGHT = Date.UTC(2026, 5, 1) / 1000;
 
@@ -65,7 +65,7 @@ function oneCall(): OneCallResponse {
   return {
     lat: 47,
     lon: 15,
-    timezone: 'Europe/Vienna',
+    timezone: 'Africa/Lagos',
     timezone_offset: HOUR,
     current: {
       dt: NOW,
@@ -110,7 +110,7 @@ describe('apiary forecast parser', () => {
   it('converts units and uses the local time of the apiary', () => {
     const forecast = buildApiaryForecast(oneCall());
 
-    expect(forecast.timezone).toBe('Europe/Vienna');
+    expect(forecast.timezone).toBe('Africa/Lagos');
     expect(forecast.thresholds).toEqual({
       flight_min_temperature: 12,
       flight_max_precipitation_probability: 30,
@@ -157,6 +157,28 @@ describe('apiary forecast parser', () => {
       is_day: false,
       flight: false,
     });
+  });
+
+  it('uses the time zone name across a daylight saving time change', () => {
+    // Europe/Vienna changes from UTC+2 to UTC+1 at 2026-10-25T01:00:00Z.
+    const start = Date.UTC(2026, 9, 24, 22) / 1000;
+    const weather = oneCall();
+    weather.timezone = 'Europe/Vienna';
+    weather.timezone_offset = 2 * HOUR;
+    weather.hourly = Array.from({ length: 48 }, (_, index) =>
+      hour(start + index * HOUR, {}),
+    );
+
+    const { hourly } = buildApiaryForecast(weather);
+
+    expect(hourly.slice(0, 5).map((entry) => entry.time)).toEqual([
+      '2026-10-25T00:00',
+      '2026-10-25T01:00',
+      '2026-10-25T02:00',
+      '2026-10-25T02:00',
+      '2026-10-25T03:00',
+    ]);
+    expect(hourly[14].time).toBe('2026-10-25T13:00');
   });
 
   it('calculates daily flight hours, frost, and heat', () => {
