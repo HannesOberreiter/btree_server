@@ -1,5 +1,19 @@
 # Changelog
 
+## [7.9.0](https://github.com/HannesOberreiter/btree_vue/compare/btree-client-v7.8.0...btree-client-v7.9.0) (2026-11-05)
+
+
+### Features
+
+* **sugarwater:** allow solution input ([9b2aeb3](https://github.com/HannesOberreiter/btree_vue/commit/9b2aeb3a8022c32b5a6e43d83ca0b9fc1f92a9ff))
+* **weather:** replace meteoblue iframe with forecast panel ([cedba28](https://github.com/HannesOberreiter/btree_vue/commit/cedba28b3ec7e269923be6e2ad77b3fad434b7ab))
+
+
+### Bug Fixes
+
+* **settings:** send field settings as object ([fab31cd](https://github.com/HannesOberreiter/btree_vue/commit/fab31cdbffb2d80a57b98453a6fdafd2bd2b63ab))
+* **weather:** keep apiary clock time across DST ([9b91d0d](https://github.com/HannesOberreiter/btree_vue/commit/9b91d0d27dc9f7798b53a11c4dbf367dc834f163))
+
 ## [7.8.0](https://github.com/HannesOberreiter/btree_vue/compare/btree-client-v7.7.0...btree-client-v7.8.0) (2026-10-06)
 
 
