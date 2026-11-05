@@ -326,6 +326,7 @@ export interface Charges {
   bestbefore: Generated<Date | null>;
   calibrate: Generated<string | null>;
   charge: Generated<string | null>;
+  checkup_id: Generated<number | null>;
   created_at: Generated<Date | null>;
   date: Generated<Date | null>;
   /**
@@ -341,6 +342,8 @@ export interface Charges {
    * Editor
    */
   edit_id: Generated<number | null>;
+  feed_id: Generated<number | null>;
+  harvest_id: Generated<number | null>;
   id: Generated<number>;
   /**
    * out or in, for outgoing or incoming
@@ -349,6 +352,7 @@ export interface Charges {
   name: Generated<string | null>;
   note: Generated<string | null>;
   price: Generated<Decimal | null>;
+  treatment_id: Generated<number | null>;
   type_id: Generated<number | null>;
   updated_at: Generated<Date | null>;
   url: Generated<string | null>;
@@ -638,6 +642,7 @@ export interface FeedTypes {
     boolean | number
   > | null>;
   name: Generated<string | null>;
+  unit: Generated<string | null>;
   updated_at: Generated<Date | null>;
   user_id: Generated<number | null>;
 }
@@ -730,6 +735,7 @@ export interface HarvestTypes {
     boolean | number
   > | null>;
   name: Generated<string | null>;
+  unit: Generated<string | null>;
   updated_at: Generated<Date | null>;
   user_id: Generated<number | null>;
 }
@@ -1161,6 +1167,24 @@ export interface StatsHivesHarvests {
   year: Generated<number | null>;
 }
 
+export interface TaskTypeStockLines {
+  charge_type_id: number;
+  checkup_type_id: Generated<number | null>;
+  created_at: Generated<Date>;
+  factor: Decimal;
+  feed_type_id: Generated<number | null>;
+  harvest_type_id: Generated<number | null>;
+  id: Generated<number>;
+  kind: string;
+  mode: string;
+  treatment_type_id: Generated<number | null>;
+  updated_at: Generated<Date>;
+  /**
+   * Company
+   */
+  user_id: number;
+}
+
 export interface Todos {
   /**
    * Timestamp when record was created via AI/WizBee
@@ -1299,6 +1323,7 @@ export interface TreatmentTypes {
     boolean | number
   > | null>;
   name: Generated<string | null>;
+  unit: Generated<string | null>;
   updated_at: Generated<Date | null>;
   user_id: Generated<number | null>;
 }
@@ -1484,6 +1509,7 @@ export interface DB {
   scales: Scales;
   stats_hives_feeds: StatsHivesFeeds;
   stats_hives_harvests: StatsHivesHarvests;
+  task_type_stock_lines: TaskTypeStockLines;
   todos: Todos;
   treatment_diseases: TreatmentDiseases;
   treatment_types: TreatmentTypes;
