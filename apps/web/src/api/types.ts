@@ -10,6 +10,8 @@ export type ApiaryListItem = ApiaryResponse & {
 };
 export type ApiaryDetailResponse =
   paths['/v1/apiary/{id}']['get']['responses'][200]['content']['application/json'];
+export type ApiaryForecastResponse =
+  paths['/v1/service/weather/{apiary_id}']['get']['responses'][200]['content']['application/json'];
 
 export type CalendarResponse =
   paths['/v1/calendar/checkup']['get']['responses'][200]['content']['application/json'];

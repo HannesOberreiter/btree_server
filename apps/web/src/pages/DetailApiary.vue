@@ -6,6 +6,7 @@ import { generateArrayOfYears } from '../helpers';
 
 <script setup lang="ts">
 import { useMeta } from 'quasar';
+import ApiaryWeather from '@/components/ApiaryWeather.vue';
 import ChartGts from '@/components/ChartGts.vue';
 import { computed, ref, toRef } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -14,7 +15,6 @@ import BtnDropdownTask from '../components/BtnDropdownTask.vue';
 import BtnPreviousNext from '../components/BtnPreviousNext.vue';
 import ExpansionApiary from '../components/ExpansionApiary.vue';
 import GlobalLoading from '../components/GlobalLoading.vue';
-import IframeWeather from '../components/IframeWeather.vue';
 import ListHives from '../components/ListHives.vue';
 import ListTasks from '../components/ListTasks.vue';
 
@@ -178,16 +178,7 @@ useMeta(() => {
             <ChartGts :years="yearGTS" :apiary-id="data.id" />
           </q-tab-panel>
           <q-tab-panel name="weather" class="q-pa-xs">
-            <div class="row">
-              <div class="col-12">
-                <IframeWeather
-                  :latlng="{
-                    latitude: data.latitude,
-                    longitude: data.longitude
-                  }"
-                />
-              </div>
-            </div>
+            <ApiaryWeather :apiary-id="data.id" />
           </q-tab-panel>
         </q-tab-panels>
       </q-card-section>

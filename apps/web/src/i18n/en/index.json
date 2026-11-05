@@ -42,6 +42,32 @@
     "wizbeeLink": "Want to connect your own AI agent?",
     "wizbeeLinkAction": "Set up Agent Keys"
   },
+  "forecast": {
+    "now": "Now",
+    "flight": "Flight weather",
+    "noFlight": "No flight weather",
+    "flightHint": "Bees fly at {temperature} °C or more, with a rain probability below {precipitation} %, wind below {wind} km/h, and in daylight.",
+    "flightHours": "no flight hours | {n} flight hour | {n} flight hours",
+    "flightDay": "Good flight day",
+    "frost": "Frost",
+    "heat": "Heat",
+    "feelsLike": "Feels like",
+    "wind": "Wind",
+    "error": "Could not load the weather forecast.",
+    "premium": "The beekeeping weather forecast is a premium feature.",
+    "source": "Weather data by OpenWeather",
+    "conditions": {
+      "thunderstorm": "Thunderstorm",
+      "drizzle": "Drizzle",
+      "rain": "Rain",
+      "heavyRain": "Heavy rain",
+      "snow": "Snow",
+      "fog": "Fog",
+      "clear": "Clear",
+      "partlyCloudy": "Partly cloudy",
+      "cloudy": "Cloudy"
+    }
+  },
   "mcp": {
     "connections": "Connected MCP clients",
     "copyUrl": "Copy MCP server URL",

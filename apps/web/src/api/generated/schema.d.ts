@@ -1283,7 +1283,7 @@ export interface paths {
               allDay: boolean;
               color?: string;
               creators?: string;
-              description?: (string | number) | null;
+              description?: string | number | null;
               displayEventTime?: boolean;
               durationEditable?: boolean;
               editable?: boolean;
@@ -1343,7 +1343,7 @@ export interface paths {
               allDay: boolean;
               color?: string;
               creators?: string;
-              description?: (string | number) | null;
+              description?: string | number | null;
               displayEventTime?: boolean;
               durationEditable?: boolean;
               editable?: boolean;
@@ -1403,7 +1403,7 @@ export interface paths {
               allDay: boolean;
               color?: string;
               creators?: string;
-              description?: (string | number) | null;
+              description?: string | number | null;
               displayEventTime?: boolean;
               durationEditable?: boolean;
               editable?: boolean;
@@ -1463,7 +1463,7 @@ export interface paths {
               allDay: boolean;
               color?: string;
               creators?: string;
-              description?: (string | number) | null;
+              description?: string | number | null;
               displayEventTime?: boolean;
               durationEditable?: boolean;
               editable?: boolean;
@@ -1524,7 +1524,7 @@ export interface paths {
               allDay: boolean;
               color?: string;
               creators?: string;
-              description?: (string | number) | null;
+              description?: string | number | null;
               displayEventTime?: boolean;
               durationEditable?: boolean;
               editable?: boolean;
@@ -1584,7 +1584,7 @@ export interface paths {
               allDay: boolean;
               color?: string;
               creators?: string;
-              description?: (string | number) | null;
+              description?: string | number | null;
               displayEventTime?: boolean;
               durationEditable?: boolean;
               editable?: boolean;
@@ -1644,7 +1644,7 @@ export interface paths {
               allDay: boolean;
               color?: string;
               creators?: string;
-              description?: (string | number) | null;
+              description?: string | number | null;
               displayEventTime?: boolean;
               durationEditable?: boolean;
               editable?: boolean;
@@ -1704,7 +1704,7 @@ export interface paths {
               allDay: boolean;
               color?: string;
               creators?: string;
-              description?: (string | number) | null;
+              description?: string | number | null;
               displayEventTime?: boolean;
               durationEditable?: boolean;
               editable?: boolean;
@@ -2146,9 +2146,9 @@ export interface paths {
               results: ({
                 id: number;
                 name: string;
-                sum?: (number | string) | null;
-                sum_in?: (number | string) | null;
-                sum_out?: (number | string) | null;
+                sum?: number | string | null;
+                sum_in?: number | string | null;
+                sum_out?: number | string | null;
                 unit?: string | null;
               } & {
                 [key: string]: unknown;
@@ -6858,9 +6858,9 @@ export interface paths {
               name: string | null;
               note?: string | null;
               stock?: {
-                sum: (string | number) | null;
-                sum_in: (string | number) | null;
-                sum_out: (string | number) | null;
+                sum: string | number | null;
+                sum_in: string | number | null;
+                sum_out: string | number | null;
                 type_id: number | null;
                 user_id: number | null;
               } | null;
@@ -6921,9 +6921,9 @@ export interface paths {
               name: string | null;
               note?: string | null;
               stock?: {
-                sum: (string | number) | null;
-                sum_in: (string | number) | null;
-                sum_out: (string | number) | null;
+                sum: string | number | null;
+                sum_in: string | number | null;
+                sum_out: string | number | null;
                 type_id: number | null;
                 user_id: number | null;
               } | null;
@@ -7097,9 +7097,9 @@ export interface paths {
               name: string | null;
               note?: string | null;
               stock?: {
-                sum: (string | number) | null;
-                sum_in: (string | number) | null;
-                sum_out: (string | number) | null;
+                sum: string | number | null;
+                sum_in: string | number | null;
+                sum_out: string | number | null;
                 type_id: number | null;
                 user_id: number | null;
               } | null;
@@ -8930,10 +8930,10 @@ export interface paths {
             'application/json': {
               results: {
                 datetime: string | null;
-                humidity: (string | number) | null;
+                humidity: string | number | null;
                 id: number;
                 note: string | null;
-                rain: (string | number) | null;
+                rain: string | number | null;
                 scale?: {
                   hive: {
                     bee_id: number | null;
@@ -8959,9 +8959,9 @@ export interface paths {
                   user_id: number | null;
                 };
                 scale_id: number | null;
-                temp1: (string | number) | null;
-                temp2: (string | number) | null;
-                weight: (string | number) | null;
+                temp1: string | number | null;
+                temp2: string | number | null;
+                weight: string | number | null;
               }[];
               total: number;
             };
@@ -9000,10 +9000,10 @@ export interface paths {
           content: {
             'application/json': {
               datetime: string | null;
-              humidity: (string | number) | null;
+              humidity: string | number | null;
               id: number;
               note: string | null;
-              rain: (string | number) | null;
+              rain: string | number | null;
               scale?: {
                 hive: {
                   bee_id: number | null;
@@ -9029,9 +9029,9 @@ export interface paths {
                 user_id: number | null;
               };
               scale_id: number | null;
-              temp1: (string | number) | null;
-              temp2: (string | number) | null;
-              weight: (string | number) | null;
+              temp1: string | number | null;
+              temp2: string | number | null;
+              weight: string | number | null;
             };
           };
         };
@@ -9151,10 +9151,10 @@ export interface paths {
           content: {
             'application/json': {
               datetime: string | null;
-              humidity: (string | number) | null;
+              humidity: string | number | null;
               id: number;
               note: string | null;
-              rain: (string | number) | null;
+              rain: string | number | null;
               scale?: {
                 hive: {
                   bee_id: number | null;
@@ -9180,9 +9180,9 @@ export interface paths {
                 user_id: number | null;
               };
               scale_id: number | null;
-              temp1: (string | number) | null;
-              temp2: (string | number) | null;
-              weight: (string | number) | null;
+              temp1: string | number | null;
+              temp2: string | number | null;
+              weight: string | number | null;
             }[];
           };
         };
@@ -9722,6 +9722,96 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/v1/service/weather/{apiary_id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          apiary_id: number;
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Default Response */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': {
+              alerts: {
+                description: string;
+                end: string;
+                event: string;
+                sender: string;
+                start: string;
+              }[];
+              current: {
+                condition: number;
+                feels_like: number;
+                flight: boolean;
+                humidity: number;
+                is_day: boolean;
+                precipitation: number;
+                temperature: number;
+                time: string;
+                wind_gust: number | null;
+                wind_speed: number;
+              };
+              daily: {
+                condition: number;
+                date: string;
+                flight_day: boolean;
+                flight_hours: number | null;
+                frost: boolean;
+                heat: boolean;
+                precipitation: number;
+                precipitation_probability: number;
+                sunrise: string;
+                sunset: string;
+                temperature_max: number;
+                temperature_min: number;
+                wind_speed: number;
+              }[];
+              hourly: {
+                condition: number;
+                flight: boolean;
+                is_day: boolean;
+                precipitation: number;
+                precipitation_probability: number;
+                temperature: number;
+                time: string;
+                wind_speed: number;
+              }[];
+              thresholds: {
+                flight_max_precipitation_probability: number;
+                flight_max_wind_speed: number;
+                flight_min_temperature: number;
+                frost_temperature: number;
+                heat_temperature: number;
+              };
+              timezone: string;
+            };
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/v1/statistic/feed/apiary': {
     parameters: {
       query?: never;
@@ -9747,24 +9837,24 @@ export interface paths {
           };
           content: {
             'application/json': {
-              amount_avg?: (string | number) | null;
-              amount_sum?: (string | number) | null;
-              brood?: (string | number) | null;
-              calm_comb?: (string | number) | null;
-              comb?: (string | number) | null;
-              frames_avg?: (string | number) | null;
-              frames_sum?: (string | number) | null;
+              amount_avg?: string | number | null;
+              amount_sum?: string | number | null;
+              brood?: string | number | null;
+              calm_comb?: string | number | null;
+              comb?: string | number | null;
+              frames_avg?: string | number | null;
+              frames_sum?: string | number | null;
               hive?: {
                 id: number;
                 name: string | null;
               } & {
                 [key: string]: unknown;
               };
-              hive_count?: (string | number) | null;
+              hive_count?: string | number | null;
               hive_id?: number | null;
-              pollen?: (string | number) | null;
-              strong?: (string | number) | null;
-              swarm?: (string | number) | null;
+              pollen?: string | number | null;
+              strong?: string | number | null;
+              swarm?: string | number | null;
               task_apiary?:
                 | ({
                     apiary_id: number | null;
@@ -9774,7 +9864,7 @@ export interface paths {
                     [key: string]: unknown;
                   })
                 | null;
-              temper?: (string | number) | null;
+              temper?: string | number | null;
               type?:
                 | ({
                     id: number;
@@ -9783,8 +9873,8 @@ export interface paths {
                     [key: string]: unknown;
                   })
                 | null;
-              varroa?: (string | number) | null;
-              water_avg?: (string | number) | null;
+              varroa?: string | number | null;
+              water_avg?: string | number | null;
               year?: number | null;
             }[];
           };
@@ -9867,24 +9957,24 @@ export interface paths {
           content: {
             'application/json': {
               results: {
-                amount_avg?: (string | number) | null;
-                amount_sum?: (string | number) | null;
-                brood?: (string | number) | null;
-                calm_comb?: (string | number) | null;
-                comb?: (string | number) | null;
-                frames_avg?: (string | number) | null;
-                frames_sum?: (string | number) | null;
+                amount_avg?: string | number | null;
+                amount_sum?: string | number | null;
+                brood?: string | number | null;
+                calm_comb?: string | number | null;
+                comb?: string | number | null;
+                frames_avg?: string | number | null;
+                frames_sum?: string | number | null;
                 hive?: {
                   id: number;
                   name: string | null;
                 } & {
                   [key: string]: unknown;
                 };
-                hive_count?: (string | number) | null;
+                hive_count?: string | number | null;
                 hive_id?: number | null;
-                pollen?: (string | number) | null;
-                strong?: (string | number) | null;
-                swarm?: (string | number) | null;
+                pollen?: string | number | null;
+                strong?: string | number | null;
+                swarm?: string | number | null;
                 task_apiary?:
                   | ({
                       apiary_id: number | null;
@@ -9894,7 +9984,7 @@ export interface paths {
                       [key: string]: unknown;
                     })
                   | null;
-                temper?: (string | number) | null;
+                temper?: string | number | null;
                 type?:
                   | ({
                       id: number;
@@ -9903,8 +9993,8 @@ export interface paths {
                       [key: string]: unknown;
                     })
                   | null;
-                varroa?: (string | number) | null;
-                water_avg?: (string | number) | null;
+                varroa?: string | number | null;
+                water_avg?: string | number | null;
                 year?: number | null;
               }[];
               total: number;
@@ -9946,24 +10036,24 @@ export interface paths {
           };
           content: {
             'application/json': {
-              amount_avg?: (string | number) | null;
-              amount_sum?: (string | number) | null;
-              brood?: (string | number) | null;
-              calm_comb?: (string | number) | null;
-              comb?: (string | number) | null;
-              frames_avg?: (string | number) | null;
-              frames_sum?: (string | number) | null;
+              amount_avg?: string | number | null;
+              amount_sum?: string | number | null;
+              brood?: string | number | null;
+              calm_comb?: string | number | null;
+              comb?: string | number | null;
+              frames_avg?: string | number | null;
+              frames_sum?: string | number | null;
               hive?: {
                 id: number;
                 name: string | null;
               } & {
                 [key: string]: unknown;
               };
-              hive_count?: (string | number) | null;
+              hive_count?: string | number | null;
               hive_id?: number | null;
-              pollen?: (string | number) | null;
-              strong?: (string | number) | null;
-              swarm?: (string | number) | null;
+              pollen?: string | number | null;
+              strong?: string | number | null;
+              swarm?: string | number | null;
               task_apiary?:
                 | ({
                     apiary_id: number | null;
@@ -9973,7 +10063,7 @@ export interface paths {
                     [key: string]: unknown;
                   })
                 | null;
-              temper?: (string | number) | null;
+              temper?: string | number | null;
               type?:
                 | ({
                     id: number;
@@ -9982,8 +10072,8 @@ export interface paths {
                     [key: string]: unknown;
                   })
                 | null;
-              varroa?: (string | number) | null;
-              water_avg?: (string | number) | null;
+              varroa?: string | number | null;
+              water_avg?: string | number | null;
               year?: number | null;
             }[];
           };
@@ -10023,24 +10113,24 @@ export interface paths {
           };
           content: {
             'application/json': {
-              amount_avg?: (string | number) | null;
-              amount_sum?: (string | number) | null;
-              brood?: (string | number) | null;
-              calm_comb?: (string | number) | null;
-              comb?: (string | number) | null;
-              frames_avg?: (string | number) | null;
-              frames_sum?: (string | number) | null;
+              amount_avg?: string | number | null;
+              amount_sum?: string | number | null;
+              brood?: string | number | null;
+              calm_comb?: string | number | null;
+              comb?: string | number | null;
+              frames_avg?: string | number | null;
+              frames_sum?: string | number | null;
               hive?: {
                 id: number;
                 name: string | null;
               } & {
                 [key: string]: unknown;
               };
-              hive_count?: (string | number) | null;
+              hive_count?: string | number | null;
               hive_id?: number | null;
-              pollen?: (string | number) | null;
-              strong?: (string | number) | null;
-              swarm?: (string | number) | null;
+              pollen?: string | number | null;
+              strong?: string | number | null;
+              swarm?: string | number | null;
               task_apiary?:
                 | ({
                     apiary_id: number | null;
@@ -10050,7 +10140,7 @@ export interface paths {
                     [key: string]: unknown;
                   })
                 | null;
-              temper?: (string | number) | null;
+              temper?: string | number | null;
               type?:
                 | ({
                     id: number;
@@ -10059,8 +10149,8 @@ export interface paths {
                     [key: string]: unknown;
                   })
                 | null;
-              varroa?: (string | number) | null;
-              water_avg?: (string | number) | null;
+              varroa?: string | number | null;
+              water_avg?: string | number | null;
               year?: number | null;
             }[];
           };
@@ -10100,24 +10190,24 @@ export interface paths {
           };
           content: {
             'application/json': {
-              amount_avg?: (string | number) | null;
-              amount_sum?: (string | number) | null;
-              brood?: (string | number) | null;
-              calm_comb?: (string | number) | null;
-              comb?: (string | number) | null;
-              frames_avg?: (string | number) | null;
-              frames_sum?: (string | number) | null;
+              amount_avg?: string | number | null;
+              amount_sum?: string | number | null;
+              brood?: string | number | null;
+              calm_comb?: string | number | null;
+              comb?: string | number | null;
+              frames_avg?: string | number | null;
+              frames_sum?: string | number | null;
               hive?: {
                 id: number;
                 name: string | null;
               } & {
                 [key: string]: unknown;
               };
-              hive_count?: (string | number) | null;
+              hive_count?: string | number | null;
               hive_id?: number | null;
-              pollen?: (string | number) | null;
-              strong?: (string | number) | null;
-              swarm?: (string | number) | null;
+              pollen?: string | number | null;
+              strong?: string | number | null;
+              swarm?: string | number | null;
               task_apiary?:
                 | ({
                     apiary_id: number | null;
@@ -10127,7 +10217,7 @@ export interface paths {
                     [key: string]: unknown;
                   })
                 | null;
-              temper?: (string | number) | null;
+              temper?: string | number | null;
               type?:
                 | ({
                     id: number;
@@ -10136,8 +10226,8 @@ export interface paths {
                     [key: string]: unknown;
                   })
                 | null;
-              varroa?: (string | number) | null;
-              water_avg?: (string | number) | null;
+              varroa?: string | number | null;
+              water_avg?: string | number | null;
               year?: number | null;
             }[];
           };
@@ -10220,24 +10310,24 @@ export interface paths {
           content: {
             'application/json': {
               results: {
-                amount_avg?: (string | number) | null;
-                amount_sum?: (string | number) | null;
-                brood?: (string | number) | null;
-                calm_comb?: (string | number) | null;
-                comb?: (string | number) | null;
-                frames_avg?: (string | number) | null;
-                frames_sum?: (string | number) | null;
+                amount_avg?: string | number | null;
+                amount_sum?: string | number | null;
+                brood?: string | number | null;
+                calm_comb?: string | number | null;
+                comb?: string | number | null;
+                frames_avg?: string | number | null;
+                frames_sum?: string | number | null;
                 hive?: {
                   id: number;
                   name: string | null;
                 } & {
                   [key: string]: unknown;
                 };
-                hive_count?: (string | number) | null;
+                hive_count?: string | number | null;
                 hive_id?: number | null;
-                pollen?: (string | number) | null;
-                strong?: (string | number) | null;
-                swarm?: (string | number) | null;
+                pollen?: string | number | null;
+                strong?: string | number | null;
+                swarm?: string | number | null;
                 task_apiary?:
                   | ({
                       apiary_id: number | null;
@@ -10247,7 +10337,7 @@ export interface paths {
                       [key: string]: unknown;
                     })
                   | null;
-                temper?: (string | number) | null;
+                temper?: string | number | null;
                 type?:
                   | ({
                       id: number;
@@ -10256,8 +10346,8 @@ export interface paths {
                       [key: string]: unknown;
                     })
                   | null;
-                varroa?: (string | number) | null;
-                water_avg?: (string | number) | null;
+                varroa?: string | number | null;
+                water_avg?: string | number | null;
                 year?: number | null;
               }[];
               total: number;
@@ -10299,24 +10389,24 @@ export interface paths {
           };
           content: {
             'application/json': {
-              amount_avg?: (string | number) | null;
-              amount_sum?: (string | number) | null;
-              brood?: (string | number) | null;
-              calm_comb?: (string | number) | null;
-              comb?: (string | number) | null;
-              frames_avg?: (string | number) | null;
-              frames_sum?: (string | number) | null;
+              amount_avg?: string | number | null;
+              amount_sum?: string | number | null;
+              brood?: string | number | null;
+              calm_comb?: string | number | null;
+              comb?: string | number | null;
+              frames_avg?: string | number | null;
+              frames_sum?: string | number | null;
               hive?: {
                 id: number;
                 name: string | null;
               } & {
                 [key: string]: unknown;
               };
-              hive_count?: (string | number) | null;
+              hive_count?: string | number | null;
               hive_id?: number | null;
-              pollen?: (string | number) | null;
-              strong?: (string | number) | null;
-              swarm?: (string | number) | null;
+              pollen?: string | number | null;
+              strong?: string | number | null;
+              swarm?: string | number | null;
               task_apiary?:
                 | ({
                     apiary_id: number | null;
@@ -10326,7 +10416,7 @@ export interface paths {
                     [key: string]: unknown;
                   })
                 | null;
-              temper?: (string | number) | null;
+              temper?: string | number | null;
               type?:
                 | ({
                     id: number;
@@ -10335,8 +10425,8 @@ export interface paths {
                     [key: string]: unknown;
                   })
                 | null;
-              varroa?: (string | number) | null;
-              water_avg?: (string | number) | null;
+              varroa?: string | number | null;
+              water_avg?: string | number | null;
               year?: number | null;
             }[];
           };
@@ -10376,24 +10466,24 @@ export interface paths {
           };
           content: {
             'application/json': {
-              amount_avg?: (string | number) | null;
-              amount_sum?: (string | number) | null;
-              brood?: (string | number) | null;
-              calm_comb?: (string | number) | null;
-              comb?: (string | number) | null;
-              frames_avg?: (string | number) | null;
-              frames_sum?: (string | number) | null;
+              amount_avg?: string | number | null;
+              amount_sum?: string | number | null;
+              brood?: string | number | null;
+              calm_comb?: string | number | null;
+              comb?: string | number | null;
+              frames_avg?: string | number | null;
+              frames_sum?: string | number | null;
               hive?: {
                 id: number;
                 name: string | null;
               } & {
                 [key: string]: unknown;
               };
-              hive_count?: (string | number) | null;
+              hive_count?: string | number | null;
               hive_id?: number | null;
-              pollen?: (string | number) | null;
-              strong?: (string | number) | null;
-              swarm?: (string | number) | null;
+              pollen?: string | number | null;
+              strong?: string | number | null;
+              swarm?: string | number | null;
               task_apiary?:
                 | ({
                     apiary_id: number | null;
@@ -10403,7 +10493,7 @@ export interface paths {
                     [key: string]: unknown;
                   })
                 | null;
-              temper?: (string | number) | null;
+              temper?: string | number | null;
               type?:
                 | ({
                     id: number;
@@ -10412,8 +10502,8 @@ export interface paths {
                     [key: string]: unknown;
                   })
                 | null;
-              varroa?: (string | number) | null;
-              water_avg?: (string | number) | null;
+              varroa?: string | number | null;
+              water_avg?: string | number | null;
               year?: number | null;
             }[];
           };
@@ -10455,7 +10545,7 @@ export interface paths {
             'application/json': {
               apiary_id: number | null;
               name: string | null;
-              total: (string | number) | null;
+              total: string | number | null;
               user_id: number | null;
             }[];
           };
@@ -10494,9 +10584,9 @@ export interface paths {
           content: {
             'application/json': {
               change: number;
-              decrease?: (string | number) | null;
+              decrease?: string | number | null;
               ident: string;
-              increase?: (string | number) | null;
+              increase?: string | number | null;
               quarter: number;
               total: number;
               user_id?: number | null;
@@ -10582,24 +10672,24 @@ export interface paths {
           content: {
             'application/json': {
               results: {
-                amount_avg?: (string | number) | null;
-                amount_sum?: (string | number) | null;
-                brood?: (string | number) | null;
-                calm_comb?: (string | number) | null;
-                comb?: (string | number) | null;
-                frames_avg?: (string | number) | null;
-                frames_sum?: (string | number) | null;
+                amount_avg?: string | number | null;
+                amount_sum?: string | number | null;
+                brood?: string | number | null;
+                calm_comb?: string | number | null;
+                comb?: string | number | null;
+                frames_avg?: string | number | null;
+                frames_sum?: string | number | null;
                 hive?: {
                   id: number;
                   name: string | null;
                 } & {
                   [key: string]: unknown;
                 };
-                hive_count?: (string | number) | null;
+                hive_count?: string | number | null;
                 hive_id?: number | null;
-                pollen?: (string | number) | null;
-                strong?: (string | number) | null;
-                swarm?: (string | number) | null;
+                pollen?: string | number | null;
+                strong?: string | number | null;
+                swarm?: string | number | null;
                 task_apiary?:
                   | ({
                       apiary_id: number | null;
@@ -10609,7 +10699,7 @@ export interface paths {
                       [key: string]: unknown;
                     })
                   | null;
-                temper?: (string | number) | null;
+                temper?: string | number | null;
                 type?:
                   | ({
                       id: number;
@@ -10618,8 +10708,8 @@ export interface paths {
                       [key: string]: unknown;
                     })
                   | null;
-                varroa?: (string | number) | null;
-                water_avg?: (string | number) | null;
+                varroa?: string | number | null;
+                water_avg?: string | number | null;
                 year?: number | null;
               }[];
               total: number;
@@ -10661,24 +10751,24 @@ export interface paths {
           };
           content: {
             'application/json': {
-              amount_avg?: (string | number) | null;
-              amount_sum?: (string | number) | null;
-              brood?: (string | number) | null;
-              calm_comb?: (string | number) | null;
-              comb?: (string | number) | null;
-              frames_avg?: (string | number) | null;
-              frames_sum?: (string | number) | null;
+              amount_avg?: string | number | null;
+              amount_sum?: string | number | null;
+              brood?: string | number | null;
+              calm_comb?: string | number | null;
+              comb?: string | number | null;
+              frames_avg?: string | number | null;
+              frames_sum?: string | number | null;
               hive?: {
                 id: number;
                 name: string | null;
               } & {
                 [key: string]: unknown;
               };
-              hive_count?: (string | number) | null;
+              hive_count?: string | number | null;
               hive_id?: number | null;
-              pollen?: (string | number) | null;
-              strong?: (string | number) | null;
-              swarm?: (string | number) | null;
+              pollen?: string | number | null;
+              strong?: string | number | null;
+              swarm?: string | number | null;
               task_apiary?:
                 | ({
                     apiary_id: number | null;
@@ -10688,7 +10778,7 @@ export interface paths {
                     [key: string]: unknown;
                   })
                 | null;
-              temper?: (string | number) | null;
+              temper?: string | number | null;
               type?:
                 | ({
                     id: number;
@@ -10697,8 +10787,8 @@ export interface paths {
                     [key: string]: unknown;
                   })
                 | null;
-              varroa?: (string | number) | null;
-              water_avg?: (string | number) | null;
+              varroa?: string | number | null;
+              water_avg?: string | number | null;
               year?: number | null;
             }[];
           };
@@ -10781,24 +10871,24 @@ export interface paths {
           content: {
             'application/json': {
               results: {
-                amount_avg?: (string | number) | null;
-                amount_sum?: (string | number) | null;
-                brood?: (string | number) | null;
-                calm_comb?: (string | number) | null;
-                comb?: (string | number) | null;
-                frames_avg?: (string | number) | null;
-                frames_sum?: (string | number) | null;
+                amount_avg?: string | number | null;
+                amount_sum?: string | number | null;
+                brood?: string | number | null;
+                calm_comb?: string | number | null;
+                comb?: string | number | null;
+                frames_avg?: string | number | null;
+                frames_sum?: string | number | null;
                 hive?: {
                   id: number;
                   name: string | null;
                 } & {
                   [key: string]: unknown;
                 };
-                hive_count?: (string | number) | null;
+                hive_count?: string | number | null;
                 hive_id?: number | null;
-                pollen?: (string | number) | null;
-                strong?: (string | number) | null;
-                swarm?: (string | number) | null;
+                pollen?: string | number | null;
+                strong?: string | number | null;
+                swarm?: string | number | null;
                 task_apiary?:
                   | ({
                       apiary_id: number | null;
@@ -10808,7 +10898,7 @@ export interface paths {
                       [key: string]: unknown;
                     })
                   | null;
-                temper?: (string | number) | null;
+                temper?: string | number | null;
                 type?:
                   | ({
                       id: number;
@@ -10817,8 +10907,8 @@ export interface paths {
                       [key: string]: unknown;
                     })
                   | null;
-                varroa?: (string | number) | null;
-                water_avg?: (string | number) | null;
+                varroa?: string | number | null;
+                water_avg?: string | number | null;
                 year?: number | null;
               }[];
               total: number;
@@ -10860,24 +10950,24 @@ export interface paths {
           };
           content: {
             'application/json': {
-              amount_avg?: (string | number) | null;
-              amount_sum?: (string | number) | null;
-              brood?: (string | number) | null;
-              calm_comb?: (string | number) | null;
-              comb?: (string | number) | null;
-              frames_avg?: (string | number) | null;
-              frames_sum?: (string | number) | null;
+              amount_avg?: string | number | null;
+              amount_sum?: string | number | null;
+              brood?: string | number | null;
+              calm_comb?: string | number | null;
+              comb?: string | number | null;
+              frames_avg?: string | number | null;
+              frames_sum?: string | number | null;
               hive?: {
                 id: number;
                 name: string | null;
               } & {
                 [key: string]: unknown;
               };
-              hive_count?: (string | number) | null;
+              hive_count?: string | number | null;
               hive_id?: number | null;
-              pollen?: (string | number) | null;
-              strong?: (string | number) | null;
-              swarm?: (string | number) | null;
+              pollen?: string | number | null;
+              strong?: string | number | null;
+              swarm?: string | number | null;
               task_apiary?:
                 | ({
                     apiary_id: number | null;
@@ -10887,7 +10977,7 @@ export interface paths {
                     [key: string]: unknown;
                   })
                 | null;
-              temper?: (string | number) | null;
+              temper?: string | number | null;
               type?:
                 | ({
                     id: number;
@@ -10896,8 +10986,8 @@ export interface paths {
                     [key: string]: unknown;
                   })
                 | null;
-              varroa?: (string | number) | null;
-              water_avg?: (string | number) | null;
+              varroa?: string | number | null;
+              water_avg?: string | number | null;
               year?: number | null;
             }[];
           };
@@ -10937,24 +11027,24 @@ export interface paths {
           };
           content: {
             'application/json': {
-              amount_avg?: (string | number) | null;
-              amount_sum?: (string | number) | null;
-              brood?: (string | number) | null;
-              calm_comb?: (string | number) | null;
-              comb?: (string | number) | null;
-              frames_avg?: (string | number) | null;
-              frames_sum?: (string | number) | null;
+              amount_avg?: string | number | null;
+              amount_sum?: string | number | null;
+              brood?: string | number | null;
+              calm_comb?: string | number | null;
+              comb?: string | number | null;
+              frames_avg?: string | number | null;
+              frames_sum?: string | number | null;
               hive?: {
                 id: number;
                 name: string | null;
               } & {
                 [key: string]: unknown;
               };
-              hive_count?: (string | number) | null;
+              hive_count?: string | number | null;
               hive_id?: number | null;
-              pollen?: (string | number) | null;
-              strong?: (string | number) | null;
-              swarm?: (string | number) | null;
+              pollen?: string | number | null;
+              strong?: string | number | null;
+              swarm?: string | number | null;
               task_apiary?:
                 | ({
                     apiary_id: number | null;
@@ -10964,7 +11054,7 @@ export interface paths {
                     [key: string]: unknown;
                   })
                 | null;
-              temper?: (string | number) | null;
+              temper?: string | number | null;
               type?:
                 | ({
                     id: number;
@@ -10973,8 +11063,8 @@ export interface paths {
                     [key: string]: unknown;
                   })
                 | null;
-              varroa?: (string | number) | null;
-              water_avg?: (string | number) | null;
+              varroa?: string | number | null;
+              water_avg?: string | number | null;
               year?: number | null;
             }[];
           };
@@ -11000,7 +11090,7 @@ export interface paths {
       parameters: {
         query: {
           end_date: string;
-          hive_ids: number | number[];
+          hive_ids?: number | number[];
           start_date: string;
         };
         header?: never;
@@ -14716,6 +14806,73 @@ export interface paths {
             hiveId?: number;
             /** @default 100 */
             limit?: number;
+          };
+        };
+      };
+      responses: {
+        /** @description Default Response */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': unknown;
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/v1/wizbee/tools/listQueens': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** @description List queens with birth date, mark colour, race, mating, status, hive and apiary. Defaults to the current queen of each active hive; inactive (dead or lost) queens are included with active=false. Use this for questions about queen age or birth year. */
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': {
+            /** @description Only queens in colonies / hives of this apiary */
+            apiaryId?: number;
+            /**
+             * Format: date
+             * @description Earliest queen birth date (YYYY-MM-DD), inclusive
+             */
+            bornFrom?: string;
+            /**
+             * Format: date
+             * @description Latest queen birth date (YYYY-MM-DD), inclusive
+             */
+            bornTo?: string;
+            /** @description Only queens assigned to this colony / hive */
+            hiveId?: number;
+            /**
+             * @description inHive (default): current queen of each active colony / hive. notInHive: queens that are not the current queen of an active colony / hive, i.e. replaced queens, queens of inactive or deleted colonies / hives, and queens without a hive; hive and apiary fields then show the hive the queen was last assigned to. noHive: only queens without a hive, e.g. virgin or reserve queens. all: every queen.
+             * @default inHive
+             * @enum {string}
+             */
+            location?: 'inHive' | 'notInHive' | 'noHive' | 'all';
+            /** @description Queen mating ID from fetchOptions */
+            matingId?: number;
+            /** @description Search text for queen name or colony / hive name */
+            q?: string;
+            /** @description Queen race ID from fetchOptions */
+            raceId?: number;
           };
         };
       };
