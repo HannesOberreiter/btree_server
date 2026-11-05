@@ -10,7 +10,7 @@ import {
   doRequest,
 } from '../utils.js';
 
-const settings = JSON.stringify({
+const settings = {
   checkup: {
     rating: false,
     queen: false,
@@ -23,7 +23,7 @@ const settings = JSON.stringify({
   harvest: { water: false, frames: false },
   treatment: { wait: false, vet: false },
   charge: { price: false, bestbefore: false },
-});
+};
 
 describe('fieldsetting routes', () => {
   const route = '/api/v1/field_setting';
@@ -46,13 +46,31 @@ describe('fieldsetting routes', () => {
         settings,
       });
       expect(res.statusCode).toEqual(200);
-      expect(res.body).toEqual(JSON.parse(settings));
+      expect(res.body).toEqual(settings);
       const res2 = await doQueryRequest(agent, route, null, accessToken, null);
       expect(res2.statusCode).toEqual(200);
-      expect(res2.body).toEqual({ settings: JSON.parse(settings) });
+      expect(res2.body).toEqual({ settings });
     });
 
-    it('400 - settings must be a JSON object', async () => {
+    it('200 - patch accepts legacy JSON string', async () => {
+      const legacy = { ...settings, harvest: { water: true, frames: false } };
+      const res = await doRequest(agent, 'patch', route, null, accessToken, {
+        settings: JSON.stringify(legacy),
+      });
+      expect(res.statusCode).toEqual(200);
+      expect(res.body).toEqual(legacy);
+      const res2 = await doQueryRequest(agent, route, null, accessToken, null);
+      expect(res2.body).toEqual({ settings: legacy });
+    });
+
+    it('400 - settings must be an object', async () => {
+      const res = await doRequest(agent, 'patch', route, null, accessToken, {
+        settings: ['not-an-object'],
+      });
+      expect(res.statusCode).toEqual(400);
+    });
+
+    it('400 - legacy settings string must be a JSON object', async () => {
       const res = await doRequest(agent, 'patch', route, null, accessToken, {
         settings: JSON.stringify('not-an-object'),
       });

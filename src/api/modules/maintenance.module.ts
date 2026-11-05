@@ -176,6 +176,12 @@ export async function cleanupDatabase(db: Kysely<DB>) {
         LEFT JOIN companies ON companies.id = treatment_vets.user_id
         WHERE companies.id IS NULL
       `);
+      cleanup.wizbee_requests = await affected(sql`
+        DELETE wizbee_requests FROM wizbee_requests
+        LEFT JOIN companies ON companies.id = wizbee_requests.user_id
+        LEFT JOIN bees ON bees.id = wizbee_requests.bee_id
+        WHERE companies.id IS NULL OR bees.id IS NULL
+      `);
       cleanup.Feed = await affected(sql`
         DELETE feeds FROM feeds
         LEFT JOIN hives ON hives.id = feeds.hive_id

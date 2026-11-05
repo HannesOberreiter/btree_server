@@ -13,6 +13,7 @@ import {
 import { getElevation } from '../adapters/weather.adapter.js';
 import { addPremium } from '../modules/premium.module.js';
 import {
+  getApiaryForecast,
   getApiaryTemperatureSum,
   getApiaryWeather,
 } from '../modules/weather.module.js';
@@ -45,6 +46,15 @@ export default class ServiceController {
   static async getWeatherData(req: FastifyRequest, _reply: FastifyReply) {
     const params = req.params as GetWeatherDataParams;
     return getApiaryWeather(
+      KyselyServer.getInstance().db,
+      req.session.user.user_id,
+      params.apiary_id,
+    );
+  }
+
+  static async getForecast(req: FastifyRequest, _reply: FastifyReply) {
+    const params = req.params as GetWeatherDataParams;
+    return getApiaryForecast(
       KyselyServer.getInstance().db,
       req.session.user.user_id,
       params.apiary_id,

@@ -1426,16 +1426,6 @@ export interface WizbeeRequests {
   user_request: Generated<string | null>;
 }
 
-export interface WizbeeTokens {
-  bee_id: Generated<number | null>;
-  countQuestions: Generated<number | null>;
-  created_at: Generated<Date | null>;
-  date: Generated<Date | null>;
-  id: Generated<number>;
-  updated_at: Generated<Date | null>;
-  usedTokens: Generated<number | null>;
-}
-
 export interface DB {
   agent_keys: AgentKeys;
   agent_oauth_clients: AgentOauthClients;
@@ -1508,5 +1498,4 @@ export interface DB {
   wax_origin_types: WaxOriginTypes;
   wax_products: WaxProducts;
   wizbee_requests: WizbeeRequests;
-  wizbee_tokens: WizbeeTokens;
 }
