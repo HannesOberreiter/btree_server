@@ -49,20 +49,23 @@ function condition(code: number, isDay = true) {
   return { icon: 'fas fa-cloud', label: 'cloudy' };
 }
 
-// The backend sends local times of the apiary without offset. The browser
-// parses them as local time, so formatting keeps the apiary wall clock.
+// The backend sends local times of the apiary without offset. Parse and
+// format them as UTC, so the browser time zone and its daylight saving time
+// changes do not move the apiary wall clock.
 function formatHour(time: string) {
-  return new Date(time).toLocaleTimeString(locale.value, {
+  return new Date(`${time}Z`).toLocaleTimeString(locale.value, {
     hour: '2-digit',
-    minute: '2-digit'
+    minute: '2-digit',
+    timeZone: 'UTC'
   });
 }
 
 function formatDay(date: string) {
-  return new Date(`${date}T00:00`).toLocaleDateString(locale.value, {
+  return new Date(`${date}T00:00Z`).toLocaleDateString(locale.value, {
     weekday: 'short',
     day: 'numeric',
-    month: 'numeric'
+    month: 'numeric',
+    timeZone: 'UTC'
   });
 }
 
@@ -197,7 +200,7 @@ const current = computed(() =>
             gridTemplateColumns: `repeat(${data.hourly.length}, ${HOUR_WIDTH}px)`
           }"
         >
-          <template v-for="(hour, index) in data.hourly" :key="hour.time">
+          <template v-for="(hour, index) in data.hourly" :key="index">
             <div
               v-if="hour.flight"
               class="hourly-flight"
