@@ -161,4 +161,129 @@ test.describe('user - Task stock booking', () => {
       }
     }
   });
+
+  test('multi-edit sums the bookings and warns before it removes them', async ({
+    page,
+    dataCy
+  }) => {
+    test.setTimeout(60_000);
+    const suffix = Date.now();
+    const chargeName = `E2E sugar ${suffix}`;
+    const feedName = `E2E syrup ${suffix}`;
+    await page.goto('/setting/option/feed_types');
+    await expect(page.locator('.q-table')).toBeAttached();
+    const request = page.context().request;
+    const headers = { origin: new URL(page.url()).origin };
+    let chargeTypeId = 0;
+    let feedTypeId = 0;
+    const feedIds: number[] = [];
+
+    try {
+      const chargeResponse = await request.post('/api/v1/option/charge_types', {
+        headers,
+        data: { name: chargeName, unit: 'kg' }
+      });
+      expect(chargeResponse.ok()).toBe(true);
+      chargeTypeId = ((await chargeResponse.json()) as { id: number }).id;
+      const feedTypeResponse = await request.post('/api/v1/option/feed_types', {
+        headers,
+        data: { name: feedName, unit: 'l' }
+      });
+      expect(feedTypeResponse.ok()).toBe(true);
+      feedTypeId = ((await feedTypeResponse.json()) as { id: number }).id;
+      const recipeResponse = await request.patch(
+        `/api/v1/option/feed_types/${feedTypeId}/recipe`,
+        {
+          headers,
+          data: {
+            lines: [
+              {
+                charge_type_id: chargeTypeId,
+                kind: 'out',
+                mode: 'per_amount',
+                factor: 0.79
+              }
+            ]
+          }
+        }
+      );
+      expect(recipeResponse.ok()).toBe(true);
+      const hiveResponse = await request.get('/api/v1/hive?limit=2', {
+        headers
+      });
+      const hives = (
+        (await hiveResponse.json()) as { results: { id: number }[] }
+      ).results;
+      expect(hives).toHaveLength(2);
+      // Two booked feedings with different amounts: 7.9 kg and 15.8 kg.
+      for (const [index, amount] of [10, 20].entries()) {
+        const feedResponse = await request.post('/api/v1/feed', {
+          headers,
+          data: {
+            hive_ids: [hives[index]!.id],
+            date: new Date().toISOString().slice(0, 10),
+            type_id: feedTypeId,
+            amount,
+            done: true
+          }
+        });
+        expect(feedResponse.ok()).toBe(true);
+        feedIds.push(...((await feedResponse.json()) as number[]));
+      }
+
+      await page.goto(`/edit/feed/${feedIds.join('/')}`);
+      // A short timeout leaves time for the cleanup.
+      await dataCy('btn-task-stock').click({ timeout: 10_000 });
+      const chip = dataCy('chip-task-stock');
+      await expect(chip).toContainText(new RegExp(`23[.,]7 kg ${chargeName}`));
+      await expect(dataCy('task-stock-remove-warning')).not.toBeAttached();
+      await expect(page.locator('.q-menu')).toContainText(
+        /(Bereits gebucht|Already booked)/
+      );
+
+      await chip.click();
+      await expect(chip).toHaveAttribute('aria-pressed', 'false');
+      await expect(dataCy('task-stock-remove-warning')).toContainText('2');
+
+      const savedPromise = page.waitForResponse(
+        response =>
+          response.request().method() === 'PATCH' &&
+          new URL(response.url()).pathname.endsWith('/feed'),
+        { timeout: 10_000 }
+      );
+      await page.keyboard.press('Escape');
+      await dataCy('btn-form-update').click();
+      const saved = await savedPromise;
+      expect(saved.ok()).toBe(true);
+      expect(saved.request().postDataJSON()).toMatchObject({
+        data: { charges: [] }
+      });
+      const rows = (await (
+        await request.post('/api/v1/feed/batchGet', {
+          headers,
+          data: { ids: feedIds }
+        })
+      ).json()) as { charges: unknown[] }[];
+      expect(rows.map(row => row.charges)).toEqual([[], []]);
+    } finally {
+      if (feedIds.length > 0) {
+        await request.patch('/api/v1/feed/batchDelete?hard=true', {
+          headers,
+          data: { ids: feedIds }
+        });
+      }
+      if (feedTypeId > 0) {
+        await request.patch('/api/v1/option/feed_types/batchDelete', {
+          headers,
+          data: { ids: [feedTypeId] }
+        });
+      }
+      if (chargeTypeId > 0) {
+        await request.patch('/api/v1/option/charge_types/batchDelete', {
+          headers,
+          data: { ids: [chargeTypeId] }
+        });
+      }
+    }
+  });
 });

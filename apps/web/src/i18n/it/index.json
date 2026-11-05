@@ -749,6 +749,7 @@
   "stockUse": {
     "addLine": "Aggiungi prodotto",
     "book": "Lo stock viene registrato. Tocca per disattivare.",
+    "booked": "Già registrato. Una modifica di quantità, tipo o data aggiorna la registrazione. Tocca per disattivare.",
     "factorInvalid": "Ogni quantità deve essere maggiore di 0.",
     "forAmount": "Per 1 {unit} {name}, usa",
     "forEachHive": "Per ogni alveare, usa",
@@ -757,6 +758,7 @@
     "noChargeTypes": "Aggiungi prima un tipo di lotto. I tipi di lotto sono i prodotti del tuo magazzino.",
     "out": "Uscita",
     "recipeHint": "Quando un'attività di questo tipo è completata, l'app registra questo stock.",
+    "removeWarning": "Questo rimuove lo stock già registrato per questa attività. Modifiche successive di quantità o data non lo registrano di nuovo. | Questo rimuove lo stock già registrato per {count} attività. Modifiche successive di quantità o data non lo registrano di nuovo.",
     "skipped": "Nessuno stock viene registrato. Tocca per attivare.",
     "sugarKg": "Zucchero, quantità in kg (1)",
     "sugarOneToOne": "Sciroppo 1:1, quantità in litri di soluzione",

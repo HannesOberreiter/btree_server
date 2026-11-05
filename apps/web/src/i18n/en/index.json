@@ -749,6 +749,7 @@
   "stockUse": {
     "addLine": "Add product",
     "book": "Stock is booked. Tap to turn off.",
+    "booked": "Already booked. A change of amount, type or date updates the booking. Tap to turn off.",
     "factorInvalid": "Each amount must be greater than 0.",
     "forAmount": "For 1 {unit} {name}, use",
     "forEachHive": "For each hive, use",
@@ -757,6 +758,7 @@
     "noChargeTypes": "Add a charge type first. Charge types are the products in your stock.",
     "out": "Out",
     "recipeHint": "When a task of this type is done, the app books this stock from the charge stock.",
+    "removeWarning": "This removes the stock already booked for this task. Later changes of amount or date do not book it again. | This removes the stock already booked for {count} tasks. Later changes of amount or date do not book it again.",
     "skipped": "No stock is booked. Tap to turn on.",
     "sugarKg": "Sugar, amount in kg (1)",
     "sugarOneToOne": "Sugar water 1:1, amount in liters of solution",

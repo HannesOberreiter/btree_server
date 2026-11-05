@@ -4,7 +4,7 @@ import type { TaskBatchGetResponse, TaskStockLine } from '../api/types';
 import type { Task } from '../types';
 import useVuelidate from '@vuelidate/core';
 import dayjs from 'dayjs';
-import { flatten, map, merge } from 'lodash-es';
+import { flatten, isNil, map, merge } from 'lodash-es';
 import { computed, ref, unref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useApiFetch } from '../composables/useApi';
@@ -126,17 +126,21 @@ const state = ref({
   ...stateDefault
 });
 
-// Stock booking can be turned off only when one task is edited.
-const showStock = computed(() => !isEdit.value || values.value.length === 1);
+// In an edit, wait for the task rows.
+const showStock = computed(() => !isEdit.value || values.value.length > 0);
+// A multi-edit sets a field to `null` when the tasks have different values.
 const stockProps = computed(() => ({
   task: props.task,
   typeId: state.value.type?.id ?? null,
-  amount: props.task === 'checkup' ? 0 : Number(state.value.amount_calc),
-  rows: isEdit.value
-    ? 1
-    : state.value.hive.length * Math.max(1, state.value.repeat),
+  amount:
+    props.task === 'checkup'
+      ? 0
+      : isNil(state.value.amount_calc)
+        ? null
+        : Number(state.value.amount_calc),
+  rows: state.value.hive.length * Math.max(1, state.value.repeat),
   done: state.value.done,
-  current: isEdit.value ? (values.value[0] ?? null) : null,
+  current: isEdit.value ? values.value : [],
   reset: reset.value
 }));
 

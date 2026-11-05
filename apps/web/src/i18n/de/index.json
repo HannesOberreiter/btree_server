@@ -749,6 +749,7 @@
   "stockUse": {
     "addLine": "Produkt hinzufügen",
     "book": "Lager wird gebucht. Tippen zum Ausschalten.",
+    "booked": "Bereits gebucht. Eine Änderung von Menge, Typ oder Datum ändert die Buchung mit. Tippen zum Ausschalten.",
     "factorInvalid": "Jede Menge muss größer als 0 sein.",
     "forAmount": "Für 1 {unit} {name} verwende",
     "forEachHive": "Für jedes Volk verwende",
@@ -757,6 +758,7 @@
     "noChargeTypes": "Lege zuerst einen Chargen-Typ an. Chargen-Typen sind die Produkte in deinem Lager.",
     "out": "Abgang",
     "recipeHint": "Wenn eine Aufgabe dieses Typs erledigt ist, bucht die App diesen Bestand im Chargen Bestand.",
+    "removeWarning": "Damit wird der bereits gebuchte Bestand dieser Aufgabe entfernt. Spätere Änderungen von Menge oder Datum buchen nicht erneut. | Damit wird der bereits gebuchte Bestand von {count} Aufgaben entfernt. Spätere Änderungen von Menge oder Datum buchen nicht erneut.",
     "skipped": "Kein Lager wird gebucht. Tippen zum Einschalten.",
     "sugarKg": "Zucker, Menge in kg (1)",
     "sugarOneToOne": "Zuckerwasser 1:1, Menge in Liter Lösung",

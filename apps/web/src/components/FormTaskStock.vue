@@ -17,28 +17,29 @@ const props = defineProps({
     type: String as PropType<Task>,
     required: true
   },
+  // `null` in an edit: each task keeps its own value.
   typeId: {
     type: Number as PropType<number | null>,
     default: null
   },
   // Amount per hive.
   amount: {
-    type: Number,
+    type: Number as PropType<number | null>,
     default: 0
   },
-  // Number of task rows the save creates or changes.
+  // Number of task rows the save creates.
   rows: {
     type: Number,
     default: 0
   },
   done: {
-    type: Boolean,
+    type: Boolean as PropType<boolean | null>,
     default: true
   },
-  // Task row before the edit (single edit only).
+  // Task rows before the edit, empty on create.
   current: {
-    type: Object as PropType<TaskStockRow | null>,
-    default: null
+    type: Array as PropType<TaskStockRow[]>,
+    default: () => []
   },
   reset: {
     type: Number,
@@ -65,8 +66,8 @@ watch(
   }
 );
 
-const currentLines = computed<TaskStockLine[]>(() =>
-  (props.current?.charges ?? []).flatMap(charge =>
+function bookedLines(row: TaskStockRow): TaskStockLine[] {
+  return (row.charges ?? []).flatMap(charge =>
     charge.charge_type_id === null || charge.amount === null
       ? []
       : [
@@ -76,42 +77,87 @@ const currentLines = computed<TaskStockLine[]>(() =>
             amount: charge.amount
           }
         ]
-  )
-);
+  );
+}
 
-const recipeLines = computed<TaskStockLine[]>(() =>
-  (recipe.value ?? [])
-    .filter(line => line.type_id === props.typeId)
+function recipeLines(typeId: number | null, amount: number): TaskStockLine[] {
+  return (recipe.value ?? [])
+    .filter(line => line.type_id === typeId)
     .map(line => ({
       charge_type_id: line.charge_type_id,
       kind: line.kind,
       amount: round(
-        line.mode === 'per_hive' ? line.factor : line.factor * props.amount,
+        line.mode === 'per_hive' ? line.factor : line.factor * amount,
         2
       )
     }))
-    .filter(line => line.amount > 0)
-);
+    .filter(line => line.amount > 0);
+}
 
 // Same rules as the server when the request has no `charges` field.
-const preview = computed<TaskStockLine[]>(() => {
-  if (!props.done) {
+function taskPreview(row: TaskStockRow): TaskStockLine[] {
+  const typeId = props.typeId ?? row.type_id ?? null;
+  const amount = props.amount ?? Number(row.amount ?? 0);
+  if (!(props.done ?? row.done)) {
     return [];
   }
-  const current = props.current;
-  if (!current || !current.done) {
-    return recipeLines.value;
+  if (!row.done) {
+    return recipeLines(typeId, amount);
   }
-  const changed =
-    props.typeId !== current.type_id ||
-    props.amount !== Number(current.amount ?? 0);
-  if (changed && currentLines.value.length > 0) {
-    return recipeLines.value;
+  // A type change books from the new recipe, also without bookings.
+  if (typeId !== row.type_id) {
+    return recipeLines(typeId, amount);
   }
-  return currentLines.value;
+  const booked = bookedLines(row);
+  const changed = amount !== Number(row.amount ?? 0);
+  return changed && booked.length > 0 ? recipeLines(typeId, amount) : booked;
+}
+
+const isCreate = computed(() => props.current.length === 0);
+
+// The icon shows only when all tasks have the same type.
+const sameType = computed(
+  () =>
+    new Set(props.current.map(row => props.typeId ?? row.type_id ?? null))
+      .size <= 1
+);
+
+const currentLines = computed(() => props.current.flatMap(bookedLines));
+
+const bookedTasks = computed(
+  () => props.current.filter(row => bookedLines(row).length > 0).length
+);
+
+// Lines of all tasks, summed per charge type and kind.
+const preview = computed<TaskStockLine[]>(() => {
+  if (isCreate.value) {
+    return props.done
+      ? recipeLines(props.typeId, props.amount ?? 0).map(line => ({
+          ...line,
+          amount: line.amount * props.rows
+        }))
+      : [];
+  }
+  const totals = new Map<string, TaskStockLine>();
+  for (const line of props.current.flatMap(taskPreview)) {
+    const key = `${line.charge_type_id}-${line.kind}`;
+    const total = totals.get(key);
+    totals.set(key, {
+      ...line,
+      amount: round((total?.amount ?? 0) + line.amount, 2)
+    });
+  }
+  return [...totals.values()];
 });
 
 const isSkipped = computed(() => model.value !== undefined);
+
+const statusKey = computed(() => {
+  if (isSkipped.value) {
+    return 'stockUse.skipped';
+  }
+  return bookedTasks.value > 0 ? 'stockUse.booked' : 'stockUse.book';
+});
 
 function toggle() {
   model.value = isSkipped.value ? undefined : [];
@@ -128,8 +174,8 @@ const chips = computed(() =>
     const type = find(chargeTypes.value, { id: line.charge_type_id });
     const unit = type?.unit ?? '';
     const sign = line.kind === 'out' ? 1 : -1;
-    const total = line.amount * props.rows;
-    // The bookings of the edited task are already in the stock.
+    const total = line.amount;
+    // The bookings of the edited tasks are already in the stock.
     const change =
       sign * total -
       sumBy(currentLines.value, row =>
@@ -158,7 +204,7 @@ const iconColor = computed(() => {
 <template>
   <!-- A plain icon keeps the size of the dropdown icon it replaces. -->
   <q-icon
-    v-if="chips.length > 0"
+    v-if="sameType && chips.length > 0"
     name="fas fa-warehouse"
     :color="iconColor"
     class="cursor-pointer"
@@ -185,7 +231,14 @@ const iconColor = computed(() => {
           {{ chip.label }}
         </q-chip>
         <div class="text-grey-7 q-px-xs">
-          {{ $t(isSkipped ? 'stockUse.skipped' : 'stockUse.book') }}
+          {{ $t(statusKey) }}
+        </div>
+        <div
+          v-if="isSkipped && bookedTasks > 0"
+          class="text-warning q-px-xs"
+          data-cy="task-stock-remove-warning"
+        >
+          {{ $t('stockUse.removeWarning', bookedTasks) }}
         </div>
         <template v-for="chip in chips" :key="chip.key">
           <div v-if="chip.negative && !isSkipped" class="text-negative q-px-xs">
