@@ -6,22 +6,16 @@ import { ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import BtnBase from '../components/BtnBase.vue';
 import BtnBaseGroup from '../components/BtnBaseGroup.vue';
+import {
+  SUGAR_THEORETICAL,
+  SUGAR_WATER,
+  solutionPerSugar
+} from '../helpers/sugarWater';
 
-const oneToOne = {
-  water: 1,
-  solution: 0.8
-};
-
-const theoretical = 1.2;
 const practical = [
   1.0, 1.9, 2.9, 3.8, 4.8, 5.8, 6.7, 7.7, 8.6, 9.6, 10.6, 11.5, 12.5, 13.4,
   14.4, 15.4, 16.3, 17.3, 18.2, 19.2
 ];
-
-const threeToTwo = {
-  water: 0.667,
-  solution: 0.76
-};
 
 const { t } = useI18n();
 const options = [
@@ -50,13 +44,14 @@ function changeUser(field: 'sugar' | 'water' | 'solution') {
 }
 
 function calculate() {
-  const base = type.value?.value === 1 ? oneToOne : threeToTwo;
-  const solutionPerSugar = (1 + base.water) * base.solution;
+  const mix = type.value?.value === 1 ? 'oneToOne' : 'threeToTwo';
+  const base = SUGAR_WATER[mix];
+  const solutionPerKg = solutionPerSugar(mix);
   let sugarKg = sugar.value;
   if (source.value === 'water') {
     sugarKg = water.value / base.water;
   } else if (source.value === 'solution') {
-    sugarKg = solution.value / solutionPerSugar;
+    sugarKg = solution.value / solutionPerKg;
   }
   if (source.value !== 'sugar') {
     sugar.value = round(sugarKg, 1);
@@ -65,9 +60,9 @@ function calculate() {
     water.value = round(sugarKg * base.water, 1);
   }
   if (source.value !== 'solution') {
-    solution.value = round(sugarKg * solutionPerSugar, 1);
+    solution.value = round(sugarKg * solutionPerKg, 1);
   }
-  calculatedTheoretical.value = round(sugarKg * theoretical, 1);
+  calculatedTheoretical.value = round(sugarKg * SUGAR_THEORETICAL, 1);
 }
 
 function resetForm() {
@@ -176,17 +171,12 @@ function resetForm() {
                   <tbody class="text-right">
                     <tr v-for="(n, index) in 20" :key="n">
                       <td>{{ n }}</td>
-                      <td>{{ n * oneToOne.water }}</td>
+                      <td>{{ n * SUGAR_WATER.oneToOne.water }}</td>
                       <td>
-                        {{
-                          (
-                            (n + n * oneToOne.water) *
-                            oneToOne.solution
-                          ).toFixed(1)
-                        }}
+                        {{ (n * solutionPerSugar('oneToOne')).toFixed(1) }}
                       </td>
                       <td>
-                        {{ (n * theoretical).toFixed(1) }}
+                        {{ (n * SUGAR_THEORETICAL).toFixed(1) }}
                       </td>
                       <td>{{ practical[index] }}</td>
                     </tr>
@@ -216,17 +206,14 @@ function resetForm() {
                   <tbody class="text-right">
                     <tr v-for="(n, index) in 20" :key="n">
                       <td>{{ n }}</td>
-                      <td>{{ (n * threeToTwo.water).toFixed(1) }}</td>
+                      <td>{{
+                        (n * SUGAR_WATER.threeToTwo.water).toFixed(1)
+                      }}</td>
                       <td>
-                        {{
-                          (
-                            (n + n * threeToTwo.water) *
-                            threeToTwo.solution
-                          ).toFixed(1)
-                        }}
+                        {{ (n * solutionPerSugar('threeToTwo')).toFixed(1) }}
                       </td>
                       <td>
-                        {{ (n * theoretical).toFixed(1) }}
+                        {{ (n * SUGAR_THEORETICAL).toFixed(1) }}
                       </td>
                       <td>{{ practical[index] }}</td>
                     </tr>
