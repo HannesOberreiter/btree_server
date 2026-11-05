@@ -317,11 +317,16 @@ export function updateWithTaskStock<T>(
     for (const [id, now] of after) {
       const old = before.get(id);
       if (!old) continue;
-      if (lines !== undefined || old.done !== now.done) {
+      // A type change books from the new recipe, also without bookings.
+      if (
+        lines !== undefined ||
+        old.done !== now.done ||
+        old.type_id !== now.type_id
+      ) {
         recalculate.push(id);
       } else if (!linked.has(id)) {
         continue;
-      } else if (old.amount !== now.amount || old.type_id !== now.type_id) {
+      } else if (old.amount !== now.amount) {
         recalculate.push(id);
       } else if (
         String(old.date) !== String(now.date) ||

@@ -332,6 +332,51 @@ describe('task stock bookings', () => {
       expect(charges.map((row) => row.value)).toEqual([15.8, 15.8]);
     });
 
+    it('rebooks from the new recipe when the type changes', async () => {
+      const fondantId = await createOption('feed_types', 'Stock test fondant');
+      const recipe = await patch(`/option/feed_types/${fondantId}/recipe`, {
+        lines: [
+          {
+            charge_type_id: sugarId,
+            kind: 'out',
+            mode: 'per_amount',
+            factor: 1,
+          },
+        ],
+      });
+      expect(recipe.statusCode).toEqual(200);
+      const ids = await createFeed({});
+
+      const res = await patch('/feed', { ids, data: { type_id: fondantId } });
+      expect(res.statusCode).toEqual(200);
+      const charges = await feedCharges(ids);
+      expect(charges.map((row) => row.value)).toEqual([10, 10]);
+      const names = await db
+        .selectFrom('charges')
+        .select('name')
+        .where('feed_id', 'in', ids)
+        .execute();
+      expect(names.map((row) => row.name)).toEqual([
+        'Stock test fondant',
+        'Stock test fondant',
+      ]);
+
+      // The export test expects only syrup bookings.
+      const removed = await patch('/feed/batchDelete', { ids }, { hard: true });
+      expect(removed.statusCode).toEqual(200);
+    });
+
+    it('removes bookings when the type changes to a type without recipe', async () => {
+      const before = await stock(sugarId);
+      const ids = await createFeed({});
+      expect(await stock(sugarId)).toBeCloseTo(before - 15.8);
+
+      const res = await patch('/feed', { ids, data: { type_id: plainFeedId } });
+      expect(res.statusCode).toEqual(200);
+      expect(await feedCharges(ids)).toEqual([]);
+      expect(await stock(sugarId)).toBeCloseTo(before);
+    });
+
     it('uses a given charges list and an empty list', async () => {
       const ids = await createFeed({
         charges: [{ charge_type_id: sugarId, kind: 'out', amount: 3 }],
@@ -348,6 +393,26 @@ describe('task stock bookings', () => {
       const res = await patch('/feed', { ids, data: { amount: 30 } });
       expect(res.statusCode).toEqual(200);
       expect(await feedCharges(ids)).toEqual([]);
+    });
+
+    it('books on a type change when the task has no bookings', async () => {
+      const ids = await createFeed({ type_id: plainFeedId });
+      expect(await feedCharges(ids)).toEqual([]);
+
+      let res = await patch('/feed', { ids, data: { type_id: syrupId } });
+      expect(res.statusCode).toEqual(200);
+      expect((await feedCharges(ids)).map((row) => row.value)).toEqual([
+        7.9, 7.9,
+      ]);
+
+      // A task with booking turned off books again on a type change.
+      res = await patch('/feed', { ids, data: { charges: [] } });
+      expect(res.statusCode).toEqual(200);
+      res = await patch('/feed', { ids, data: { type_id: plainFeedId } });
+      expect(res.statusCode).toEqual(200);
+      res = await patch('/feed', { ids, data: { type_id: syrupId } });
+      expect(res.statusCode).toEqual(200);
+      expect(await feedCharges(ids)).toHaveLength(2);
     });
 
     it('404 - foreign charge type in the charges list', async () => {
