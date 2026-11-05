@@ -54,7 +54,8 @@ const columns = [
     label: t('bestbefore'),
     align: 'left',
     field: (row: any) => row.bestbefore,
-    format: (val: string) => useDate.displayFormat(val),
+    // The best before date is optional.
+    format: (val: string | null) => (val ? useDate.displayFormat(val) : ''),
     sortable: true
   },
   {

@@ -11,7 +11,8 @@ test.describe('user - Task stock booking', () => {
   test('saves a recipe with the type and books stock from a feeding', async ({
     page,
     dataCy,
-    selectFirstHive
+    selectFirstHive,
+    tableEditRow
   }) => {
     test.setTimeout(60_000);
     const suffix = Date.now();
@@ -24,6 +25,7 @@ test.describe('user - Task stock booking', () => {
     let chargeTypeId = 0;
     let feedTypeId = 0;
     const feedIds: number[] = [];
+    const chargeIds: number[] = [];
 
     try {
       const chargeResponse = await request.post('/api/v1/option/charge_types', {
@@ -96,6 +98,15 @@ test.describe('user - Task stock booking', () => {
       expect(booked.ok()).toBe(true);
       expect(booked.request().postDataJSON()).not.toHaveProperty('charges');
       feedIds.push(...((await booked.json()) as number[]));
+      const bookedGet = await request.post('/api/v1/feed/batchGet', {
+        headers,
+        data: { ids: feedIds }
+      });
+      const bookedRows = (await bookedGet.json()) as {
+        charges: { id: number }[];
+      }[];
+      chargeIds.push(...bookedRows.flatMap(row => row.charges.map(c => c.id)));
+      expect(chargeIds).toHaveLength(1);
 
       // Booking is off: the request sends an empty `charges` list.
       await dataCy('btn-task-stock').click();
@@ -109,7 +120,27 @@ test.describe('user - Task stock booking', () => {
       expect(skipped.ok()).toBe(true);
       expect(skipped.request().postDataJSON()).toMatchObject({ charges: [] });
       feedIds.push(...((await skipped.json()) as number[]));
+
+      // A booked row has no best before date: it shows empty and saves.
+      await page.evaluate(() =>
+        localStorage.setItem(
+          'table-visible-charge',
+          JSON.stringify(['date', 'bestbefore', 'name', 'amount', 'source'])
+        )
+      );
+      await page.goto('/table/charge');
+      await page.locator('.q-table__top input').first().fill(feedName);
+      const row = page.locator('tbody > tr').filter({ hasText: feedName });
+      await expect(row).toHaveCount(1);
+      await expect(row).not.toContainText(/invalid/i);
+      await tableEditRow('form-charge', feedName);
     } finally {
+      if (chargeIds.length > 0) {
+        await request.patch('/api/v1/charge/batchDelete?hard=true', {
+          headers,
+          data: { ids: chargeIds }
+        });
+      }
       if (feedIds.length > 0) {
         await request.patch('/api/v1/feed/batchDelete?hard=true', {
           headers,

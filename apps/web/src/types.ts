@@ -174,7 +174,7 @@ export declare interface FormRearing {
 }
 
 export declare interface FormCharge {
-  bestbefore: string;
+  bestbefore: string | null;
   date: string;
   name: string;
   charge: string;
