@@ -34,6 +34,19 @@ const orderColumns: Record<OptionOrderField, OptionOrderColumn> = {
   updated_at: 'updated_at',
 };
 
+const unitTables = new Set<OptionTable>([
+  'charge_types',
+  'feed_types',
+  'treatment_types',
+  'harvest_types',
+]);
+
+function unitValues(table: OptionTable, input: OptionValues) {
+  return unitTables.has(table) && input.unit !== undefined
+    ? { unit: input.unit }
+    : {};
+}
+
 function commonValues(input: OptionValues) {
   return {
     ...(input.name !== undefined && { name: input.name }),
@@ -137,13 +150,15 @@ export async function updateOptions(
   ids: number[],
   input: OptionValues,
 ) {
-  if (table === 'charge_types') {
+  if (
+    table === 'charge_types' ||
+    table === 'feed_types' ||
+    table === 'treatment_types' ||
+    table === 'harvest_types'
+  ) {
     const result = await db
       .updateTable(table)
-      .set({
-        ...commonValues(input),
-        ...(input.unit !== undefined && { unit: input.unit }),
-      })
+      .set({ ...commonValues(input), ...unitValues(table, input) })
       .where('id', 'in', ids)
       .where('user_id', '=', companyId)
       .executeTakeFirst();
@@ -217,7 +232,12 @@ export async function createOption(
     }
     const inserted = await trx
       .insertInto(table)
-      .values({ ...commonValues(input), name: input.name, user_id: companyId })
+      .values({
+        ...commonValues(input),
+        ...unitValues(table, input),
+        name: input.name,
+        user_id: companyId,
+      })
       .executeTakeFirstOrThrow();
     return trx
       .selectFrom(table)

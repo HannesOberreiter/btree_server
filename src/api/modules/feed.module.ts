@@ -20,6 +20,12 @@ import {
   taskSchedule,
   type TaskActor,
 } from './task.module.js';
+import {
+  lockTaskStock,
+  syncTaskStock,
+  updateWithTaskStock,
+  withTaskStock,
+} from './task_stock.module.js';
 
 const orderColumns = {
   id: 'feeds.id',
@@ -166,6 +172,7 @@ export function createFeeds(
   body: TaskCreateBody,
 ) {
   return db.transaction().execute(async (transaction) => {
+    await lockTaskStock(transaction, actor);
     if (body.type_id) {
       await requireFeedTypeOwnership(
         transaction,
@@ -204,41 +211,55 @@ export function createFeeds(
         ids.push(Number(result.insertId));
       }
     }
+    await syncTaskStock(transaction, 'feeds', actor, ids, body.charges);
     return ids;
   });
 }
 
-export async function updateFeeds(
+export function updateFeeds(
   db: Kysely<DB>,
   actor: TaskActor,
   body: TaskPatchBody,
 ) {
-  if (body.data.type_id) {
-    await requireFeedTypeOwnership(db, body.data.type_id, actor.companyId);
-  }
-  const values = feedValues(body.data);
-  if (body.data.date && body.data.enddate === undefined) {
-    values.enddate = new Date(body.data.date);
-  }
-  const result = await db
-    .updateTable('feeds')
-    .set({
-      ...values,
-      edit_id: actor.beeId,
-      ...(actor.isLlm && { ai_updated_at: new Date() }),
-    })
-    .where('id', 'in', body.ids)
-    .where('user_id', '=', actor.companyId)
-    .executeTakeFirst();
-  return Number(result.numUpdatedRows);
+  return updateWithTaskStock(
+    db,
+    'feeds',
+    actor,
+    body.ids,
+    body.data.charges,
+    async (transaction) => {
+      if (body.data.type_id) {
+        await requireFeedTypeOwnership(
+          transaction,
+          body.data.type_id,
+          actor.companyId,
+        );
+      }
+      const values = feedValues(body.data);
+      if (body.data.date && body.data.enddate === undefined) {
+        values.enddate = new Date(body.data.date);
+      }
+      const result = await transaction
+        .updateTable('feeds')
+        .set({
+          ...values,
+          edit_id: actor.beeId,
+          ...(actor.isLlm && { ai_updated_at: new Date() }),
+        })
+        .where('id', 'in', body.ids)
+        .where('user_id', '=', actor.companyId)
+        .executeTakeFirst();
+      return Number(result.numUpdatedRows);
+    },
+  );
 }
 
-export function getFeedsByIds(
+export async function getFeedsByIds(
   db: Kysely<DB>,
   companyId: number,
   ids: number[],
 ) {
-  return db
+  const rows = await db
     .selectFrom('feeds')
     .leftJoin('hives', 'hives.id', 'feeds.hive_id')
     .leftJoin('feed_types', 'feed_types.id', 'feeds.type_id')
@@ -251,4 +272,5 @@ export function getFeedsByIds(
     .where('feeds.id', 'in', ids)
     .where('feeds.user_id', '=', companyId)
     .execute();
+  return withTaskStock(db, companyId, 'feeds', rows);
 }

@@ -38,7 +38,20 @@ export const chargeResponseSchema = z.looseObject({
   user_id: nullableNumber,
   bee_id: nullableNumber,
   edit_id: nullableNumber,
+  feed_id: nullableNumber,
+  treatment_id: nullableNumber,
+  harvest_id: nullableNumber,
+  checkup_id: nullableNumber,
   type: optionResponseSchema,
+  source: z
+    .object({
+      task: z.enum(['feed', 'treatment', 'harvest', 'checkup']),
+      id: z.number(),
+      hive_id: z.number().nullable(),
+      hive_name: z.string().nullable(),
+    })
+    .nullable()
+    .optional(),
   creator: actorResponseSchema.optional(),
   editor: actorResponseSchema.optional(),
 });

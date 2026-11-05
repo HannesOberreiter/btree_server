@@ -97,6 +97,35 @@ export const optionResponseSchema = z.object({
 });
 export const optionListResponseSchema = z.array(optionResponseSchema);
 
+export const recipeTableSchema = z.enum([
+  'feed_types',
+  'treatment_types',
+  'harvest_types',
+  'checkup_types',
+]);
+export const recipeTableParamsSchema = z.object({ table: recipeTableSchema });
+export const recipeTypeParamsSchema = z.object({
+  table: recipeTableSchema,
+  id: numberSchema,
+});
+
+const recipeLineFields = {
+  charge_type_id: numberSchema,
+  kind: z.enum(['in', 'out']),
+  mode: z.enum(['per_amount', 'per_hive']),
+  factor: z.number().positive().max(999_999),
+};
+export const recipeBodySchema = z.object({
+  lines: z.array(z.object(recipeLineFields)).max(20),
+});
+export const recipeLineResponseSchema = z.object({
+  ...recipeLineFields,
+  charge_type_id: z.number(),
+  id: z.number(),
+  type_id: z.number(),
+});
+export const recipeListResponseSchema = z.array(recipeLineResponseSchema);
+
 export type OptionTableParams = z.infer<typeof optionTableParamsSchema>;
 export type OptionTable = z.infer<typeof optionTableSchema>;
 export type OptionOrderField = z.infer<typeof optionOrderFieldSchema>;
@@ -108,3 +137,5 @@ export type UpdateStatusBody = z.infer<typeof updateStatusBodySchema>;
 export type UpdateFavoriteBody = z.infer<typeof updateFavoriteBodySchema>;
 export type BatchDeleteBody = z.infer<typeof batchDeleteBodySchema>;
 export type BatchGetBody = z.infer<typeof batchGetBodySchema>;
+export type RecipeTable = z.infer<typeof recipeTableSchema>;
+export type RecipeBody = z.infer<typeof recipeBodySchema>;

@@ -36,6 +36,19 @@ const taskApiaryResponseSchema = z.looseObject({
   user_id: nullableNumber,
 });
 
+export const taskStockLineSchema = z.object({
+  charge_type_id: numberSchema,
+  kind: z.enum(['in', 'out']),
+  amount: z.number().min(0).max(99_999.99),
+});
+
+export const taskChargeResponseSchema = z.object({
+  id: z.number(),
+  charge_type_id: z.number().nullable(),
+  kind: z.string().nullable(),
+  amount: z.number().nullable(),
+});
+
 export const taskResponseSchema = z.looseObject({
   id: z.number(),
   date: nullableDate,
@@ -72,6 +85,7 @@ export const taskResponseSchema = z.looseObject({
   treatment_apiary: taskApiaryResponseSchema.nullable().optional(),
   creator: actorResponseSchema.optional(),
   editor: actorResponseSchema.optional(),
+  charges: z.array(taskChargeResponseSchema).optional(),
 });
 
 export const taskPaginatedResponseSchema = z.object({
@@ -101,6 +115,7 @@ export const taskDataSchema = z
     type_id: numberSchema.nullable().optional(),
     vet_id: numberSchema.nullable().optional(),
     disease_id: numberSchema.nullable().optional(),
+    charges: z.array(taskStockLineSchema).max(50).optional(),
   })
   .loose();
 
@@ -134,3 +149,4 @@ export type TaskPatchBody = z.infer<typeof taskPatchBodySchema>;
 export type TaskStatusBody = z.infer<typeof taskStatusBodySchema>;
 export type TaskDateBody = z.infer<typeof taskDateBodySchema>;
 export type TaskIdsBody = z.infer<typeof taskIdsBodySchema>;
+export type TaskStockLine = z.infer<typeof taskStockLineSchema>;

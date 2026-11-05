@@ -49,6 +49,7 @@ import {
   listTaskStatisticsSummary,
 } from '../modules/statistic.module.js';
 import { deleteTasks } from '../modules/task.module.js';
+import { summarizeTaskStock } from '../modules/task_stock.module.js';
 import {
   createTodos,
   deleteTodos,
@@ -1905,6 +1906,12 @@ export function createWizBeeTools(
           success: true,
           message: `Created ${createdCount} feed record${createdCount !== 1 ? 's' : ''}`,
           ids: Array.isArray(result) ? result : [result],
+          stockBookings: await summarizeTaskStock(
+            db,
+            context.userId,
+            'feeds',
+            Array.isArray(result) ? result : [result],
+          ),
         };
       },
     }),
@@ -1943,6 +1950,12 @@ export function createWizBeeTools(
           success: true,
           message: `Updated ${updatedCount} feed record${updatedCount !== 1 ? 's' : ''}`,
           updatedCount,
+          stockBookings: await summarizeTaskStock(
+            db,
+            context.userId,
+            'feeds',
+            ids,
+          ),
         };
       },
     }),
@@ -2019,6 +2032,12 @@ export function createWizBeeTools(
           success: true,
           message: `Created ${createdCount} harvest record${createdCount !== 1 ? 's' : ''}`,
           ids: Array.isArray(result) ? result : [result],
+          stockBookings: await summarizeTaskStock(
+            db,
+            context.userId,
+            'harvests',
+            Array.isArray(result) ? result : [result],
+          ),
         };
       },
     }),
@@ -2064,6 +2083,12 @@ export function createWizBeeTools(
           success: true,
           message: `Updated ${updatedCount} harvest record${updatedCount !== 1 ? 's' : ''}`,
           updatedCount,
+          stockBookings: await summarizeTaskStock(
+            db,
+            context.userId,
+            'harvests',
+            ids,
+          ),
         };
       },
     }),
@@ -2142,6 +2167,12 @@ export function createWizBeeTools(
           success: true,
           message: `Created ${createdCount} treatment record${createdCount !== 1 ? 's' : ''}`,
           ids: Array.isArray(result) ? result : [result],
+          stockBookings: await summarizeTaskStock(
+            db,
+            context.userId,
+            'treatments',
+            Array.isArray(result) ? result : [result],
+          ),
         };
       },
     }),
@@ -2187,6 +2218,12 @@ export function createWizBeeTools(
           success: true,
           message: `Updated ${updatedCount} treatment record${updatedCount !== 1 ? 's' : ''}`,
           updatedCount,
+          stockBookings: await summarizeTaskStock(
+            db,
+            context.userId,
+            'treatments',
+            ids,
+          ),
         };
       },
     }),
@@ -2279,6 +2316,12 @@ export function createWizBeeTools(
           success: true,
           message: `Created ${createdCount} checkup record${createdCount !== 1 ? 's' : ''}`,
           ids: Array.isArray(result) ? result : [result],
+          stockBookings: await summarizeTaskStock(
+            db,
+            context.userId,
+            'checkups',
+            Array.isArray(result) ? result : [result],
+          ),
         };
       },
     }),
@@ -2340,6 +2383,12 @@ export function createWizBeeTools(
           success: true,
           message: `Updated ${updatedCount} checkup record${updatedCount !== 1 ? 's' : ''}`,
           updatedCount,
+          stockBookings: await summarizeTaskStock(
+            db,
+            context.userId,
+            'checkups',
+            ids,
+          ),
         };
       },
     }),

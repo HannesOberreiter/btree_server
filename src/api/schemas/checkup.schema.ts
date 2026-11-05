@@ -2,6 +2,10 @@ import { z } from 'zod';
 
 import { numberSchema } from '../utils/zod.util.js';
 import { actorResponseSchema, jsonDateSchema } from './common.schema.js';
+import {
+  taskChargeResponseSchema,
+  taskStockLineSchema,
+} from './task.schema.js';
 
 const orderDirectionSchema = z.enum(['asc', 'desc', 'ASC', 'DESC']);
 const nullableNumber = z.number().nullable().optional();
@@ -59,6 +63,7 @@ export const checkupResponseSchema = z.looseObject({
     .optional(),
   creator: actorResponseSchema.optional(),
   editor: actorResponseSchema.optional(),
+  charges: z.array(taskChargeResponseSchema).optional(),
 });
 
 export const checkupPaginatedResponseSchema = z.object({
@@ -106,6 +111,7 @@ export const checkupDataSchema = z.object({
   done: z.boolean().optional(),
   deleted: z.boolean().optional(),
   type_id: numberSchema.nullable().optional(),
+  charges: z.array(taskStockLineSchema).max(50).optional(),
 });
 
 export const checkupCreateSchema = checkupDataSchema.extend({

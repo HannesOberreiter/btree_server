@@ -29,6 +29,7 @@ const expectedFiles = [
   'harvest_types',
   'charges',
   'charge_types',
+  'task_type_stock_lines',
   'wax_products',
   'wax_origin_types',
   'wax_lots',

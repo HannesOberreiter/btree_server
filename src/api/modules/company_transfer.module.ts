@@ -35,6 +35,7 @@ type TransferKey =
   | 'harvest_types'
   | 'charges'
   | 'charge_types'
+  | 'task_type_stock_lines'
   | 'wax_products'
   | 'wax_origin_types'
   | 'wax_lots'
@@ -73,6 +74,7 @@ const transferKeys: TransferKey[] = [
   'harvest_types',
   'charges',
   'charge_types',
+  'task_type_stock_lines',
   'wax_products',
   'wax_origin_types',
   'wax_lots',
@@ -198,6 +200,7 @@ const columns: Record<TransferKey, readonly string[]> = {
   ],
   feed_types: [
     'name',
+    'unit',
     'modus',
     'favorite',
     'created_at',
@@ -225,6 +228,7 @@ const columns: Record<TransferKey, readonly string[]> = {
   ],
   treatment_types: [
     'name',
+    'unit',
     'modus',
     'favorite',
     'created_at',
@@ -267,6 +271,7 @@ const columns: Record<TransferKey, readonly string[]> = {
   ],
   harvest_types: [
     'name',
+    'unit',
     'modus',
     'favorite',
     'created_at',
@@ -287,6 +292,10 @@ const columns: Record<TransferKey, readonly string[]> = {
     'deleted',
     'deleted_at',
     'type_id',
+    'feed_id',
+    'treatment_id',
+    'harvest_id',
+    'checkup_id',
     'user_id',
     'created_at',
     'updated_at',
@@ -299,6 +308,19 @@ const columns: Record<TransferKey, readonly string[]> = {
     'created_at',
     'updated_at',
     'user_id',
+  ],
+  task_type_stock_lines: [
+    'feed_type_id',
+    'treatment_type_id',
+    'harvest_type_id',
+    'checkup_type_id',
+    'charge_type_id',
+    'kind',
+    'mode',
+    'factor',
+    'user_id',
+    'created_at',
+    'updated_at',
   ],
   wax_products: [
     'name',
@@ -700,6 +722,7 @@ export async function importCompanyArchive(
     harvest_types: [],
     charges: [],
     charge_types: [],
+    task_type_stock_lines: [],
     wax_products: [],
     wax_origin_types: [],
     wax_lots: [],
@@ -923,16 +946,6 @@ export async function importCompanyArchive(
     );
     await insertRows(
       trx,
-      'charges',
-      data.charges.map((row) =>
-        clean('charges', row, {
-          user_id: companyId,
-          type_id: mapped(chargeTypes, row.type_id),
-        }),
-      ),
-    );
-    await insertRows(
-      trx,
       'todos',
       data.todos.map((row) =>
         clean('todos', row, {
@@ -959,7 +972,7 @@ export async function importCompanyArchive(
       data.treatment_vets,
       companyId,
     );
-    await insertRows(
+    const treatmentIds = await insertRows(
       trx,
       'treatments',
       data.treatments.map((row) =>
@@ -978,7 +991,7 @@ export async function importCompanyArchive(
       data.harvest_types,
       companyId,
     );
-    await insertRows(
+    const harvestIds = await insertRows(
       trx,
       'harvests',
       data.harvests.map((row) =>
@@ -995,7 +1008,7 @@ export async function importCompanyArchive(
       data.feed_types,
       companyId,
     );
-    await insertRows(
+    const feedIds = await insertRows(
       trx,
       'feeds',
       data.feeds.map((row) =>
@@ -1012,7 +1025,7 @@ export async function importCompanyArchive(
       data.checkup_types,
       companyId,
     );
-    await insertRows(
+    const checkupIds = await insertRows(
       trx,
       'checkups',
       data.checkups.map((row) =>
@@ -1021,6 +1034,48 @@ export async function importCompanyArchive(
           hive_id: mapped(hives, row.hive_id),
           type_id: mapped(checkupTypes, row.type_id),
         }),
+      ),
+    );
+    const feeds = idMap(data.feeds, feedIds);
+    const treatments = idMap(data.treatments, treatmentIds);
+    const harvests = idMap(data.harvests, harvestIds);
+    const checkups = idMap(data.checkups, checkupIds);
+    await insertRows(
+      trx,
+      'charges',
+      data.charges.map((row) =>
+        clean('charges', row, {
+          user_id: companyId,
+          type_id: mapped(chargeTypes, row.type_id),
+          feed_id: mapped(feeds, row.feed_id),
+          treatment_id: mapped(treatments, row.treatment_id),
+          harvest_id: mapped(harvests, row.harvest_id),
+          checkup_id: mapped(checkups, row.checkup_id),
+        }),
+      ),
+    );
+    const stockLines = data.task_type_stock_lines.map((row) =>
+      clean('task_type_stock_lines', row, {
+        user_id: companyId,
+        feed_type_id: mapped(feedTypes, row.feed_type_id),
+        treatment_type_id: mapped(treatmentTypes, row.treatment_type_id),
+        harvest_type_id: mapped(harvestTypes, row.harvest_type_id),
+        checkup_type_id: mapped(checkupTypes, row.checkup_type_id),
+        charge_type_id: mapped(chargeTypes, row.charge_type_id),
+      }),
+    );
+    await insertRows(
+      trx,
+      'task_type_stock_lines',
+      stockLines.filter(
+        (row) =>
+          row.charge_type_id !== undefined &&
+          [
+            row.feed_type_id,
+            row.treatment_type_id,
+            row.harvest_type_id,
+            row.checkup_type_id,
+          ].filter((value) => value !== undefined).length === 1,
       ),
     );
     const races = await optionRows(

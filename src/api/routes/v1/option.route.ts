@@ -16,6 +16,10 @@ import {
   updateOptionStatus,
 } from '../../modules/option.module.js';
 import {
+  listRecipeLines,
+  replaceRecipeLines,
+} from '../../modules/task_stock.module.js';
+import {
   batchDeleteBodySchema,
   batchGetBodySchema,
   optionListQuerySchema,
@@ -24,6 +28,10 @@ import {
   optionTableParamsSchema,
   patchBodySchema,
   postBodySchema,
+  recipeBodySchema,
+  recipeListResponseSchema,
+  recipeTableParamsSchema,
+  recipeTypeParamsSchema,
   updateFavoriteBodySchema,
   updateStatusBodySchema,
 } from '../../schemas/option.schema.js';
@@ -175,6 +183,39 @@ export default function routes(
         request.params.table,
         request.session.user.user_id,
         request.body.ids,
+      ),
+  );
+
+  server.get(
+    '/:table/recipe',
+    {
+      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+      schema: {
+        params: recipeTableParamsSchema,
+        response: { 200: recipeListResponseSchema },
+      },
+    },
+    async (request) =>
+      listRecipeLines(db, request.session.user.user_id, request.params.table),
+  );
+
+  server.patch(
+    '/:table/:id/recipe',
+    {
+      preHandler: Guard.authorize([ROLES.admin]),
+      schema: {
+        params: recipeTypeParamsSchema,
+        body: recipeBodySchema,
+        response: { 200: recipeListResponseSchema },
+      },
+    },
+    async (request) =>
+      replaceRecipeLines(
+        db,
+        request.session.user.user_id,
+        request.params.table,
+        request.params.id,
+        request.body,
       ),
   );
 
