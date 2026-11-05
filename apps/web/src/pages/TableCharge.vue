@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { QTableProps } from 'quasar';
-import type { ChargeResponse } from '../api/types';
+import type { ChargeResponse, ChargeSourceResponse } from '../api/types';
 import { round } from 'lodash-es';
 import { storeToRefs } from 'pinia';
 import { computed, ref, watch } from 'vue';
@@ -115,6 +115,15 @@ const columns = [
     field: (row: any) => row.kind,
     format: (val: string) => t(val),
     sortable: true
+  },
+  {
+    name: 'source',
+    label: t('source'),
+    align: 'left',
+    field: (row: ChargeResponse) => row.source,
+    format: (val: ChargeSourceResponse | null) =>
+      val ? `${t(val.task)} ${val.hive_name ?? ''}`.trim() : '',
+    sortable: false
   },
   {
     name: 'url',
@@ -253,6 +262,22 @@ function onRequest(props: any) {
             :name="props.col.name"
             :selected="selected"
           />
+        </template>
+        <template #body-cell-source="props">
+          <q-td :props="props">
+            <router-link
+              v-if="props.row.source"
+              :to="{
+                name: 'edit-quicktool',
+                params: {
+                  task: props.row.source.task,
+                  ids: [props.row.source.id]
+                }
+              }"
+            >
+              {{ props.value }}
+            </router-link>
+          </q-td>
         </template>
         <template #body-cell-url="props">
           <TableColUrl :value="props.value" />

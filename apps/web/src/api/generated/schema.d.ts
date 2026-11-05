@@ -1774,6 +1774,7 @@ export interface paths {
                 bestbefore?: string | null;
                 calibrate?: string | null;
                 charge?: string | null;
+                checkup_id?: number | null;
                 created_at?: string | null;
                 creator?:
                   | ({
@@ -1797,11 +1798,21 @@ export interface paths {
                       [key: string]: unknown;
                     })
                   | null;
+                feed_id?: number | null;
+                harvest_id?: number | null;
                 id: number;
                 kind: string;
                 name?: string | null;
                 note?: string | null;
                 price?: number | null;
+                source?: {
+                  hive_id: number | null;
+                  hive_name: string | null;
+                  id: number;
+                  /** @enum {string} */
+                  task: 'feed' | 'treatment' | 'harvest' | 'checkup';
+                } | null;
+                treatment_id?: number | null;
                 type?:
                   | ({
                       favorite?: boolean;
@@ -1968,6 +1979,7 @@ export interface paths {
               bestbefore?: string | null;
               calibrate?: string | null;
               charge?: string | null;
+              checkup_id?: number | null;
               created_at?: string | null;
               creator?:
                 | ({
@@ -1991,11 +2003,21 @@ export interface paths {
                     [key: string]: unknown;
                   })
                 | null;
+              feed_id?: number | null;
+              harvest_id?: number | null;
               id: number;
               kind: string;
               name?: string | null;
               note?: string | null;
               price?: number | null;
+              source?: {
+                hive_id: number | null;
+                hive_name: string | null;
+                id: number;
+                /** @enum {string} */
+                task: 'feed' | 'treatment' | 'harvest' | 'checkup';
+              } | null;
+              treatment_id?: number | null;
               type?:
                 | ({
                     favorite?: boolean;
@@ -2056,6 +2078,7 @@ export interface paths {
               bestbefore?: string | null;
               calibrate?: string | null;
               charge?: string | null;
+              checkup_id?: number | null;
               created_at?: string | null;
               creator?:
                 | ({
@@ -2079,11 +2102,21 @@ export interface paths {
                     [key: string]: unknown;
                   })
                 | null;
+              feed_id?: number | null;
+              harvest_id?: number | null;
               id: number;
               kind: string;
               name?: string | null;
               note?: string | null;
               price?: number | null;
+              source?: {
+                hive_id: number | null;
+                hive_name: string | null;
+                id: number;
+                /** @enum {string} */
+                task: 'feed' | 'treatment' | 'harvest' | 'checkup';
+              } | null;
+              treatment_id?: number | null;
               type?:
                 | ({
                     favorite?: boolean;
@@ -2207,6 +2240,12 @@ export interface paths {
                 broodframes?: number | null;
                 calm_comb?: number | null;
                 capped_brood?: boolean | null;
+                charges?: {
+                  amount: number | null;
+                  charge_type_id: number | null;
+                  id: number;
+                  kind: string | null;
+                }[];
                 checkup_apiary?:
                   | ({
                       apiary_id: number;
@@ -2297,6 +2336,12 @@ export interface paths {
             broodframes?: number | null;
             calm_comb?: number | null;
             capped_brood?: boolean | null;
+            charges?: {
+              amount: number;
+              charge_type_id: number;
+              /** @enum {string} */
+              kind: 'in' | 'out';
+            }[];
             comb?: number | null;
             date: string;
             deleted?: boolean;
@@ -2355,6 +2400,12 @@ export interface paths {
               broodframes?: number | null;
               calm_comb?: number | null;
               capped_brood?: boolean | null;
+              charges?: {
+                amount: number;
+                charge_type_id: number;
+                /** @enum {string} */
+                kind: 'in' | 'out';
+              }[];
               comb?: number | null;
               date?: string;
               deleted?: boolean;
@@ -2439,6 +2490,12 @@ export interface paths {
               broodframes?: number | null;
               calm_comb?: number | null;
               capped_brood?: boolean | null;
+              charges?: {
+                amount: number | null;
+                charge_type_id: number | null;
+                id: number;
+                kind: string | null;
+              }[];
               checkup_apiary?:
                 | ({
                     apiary_id: number;
@@ -2550,6 +2607,12 @@ export interface paths {
               broodframes?: number | null;
               calm_comb?: number | null;
               capped_brood?: boolean | null;
+              charges?: {
+                amount: number | null;
+                charge_type_id: number | null;
+                id: number;
+                kind: string | null;
+              }[];
               checkup_apiary?:
                 | ({
                     apiary_id: number;
@@ -3741,6 +3804,12 @@ export interface paths {
                 amount?: number | null;
                 bee_id?: number | null;
                 charge?: string | null;
+                charges?: {
+                  amount: number | null;
+                  charge_type_id: number | null;
+                  id: number;
+                  kind: string | null;
+                }[];
                 created_at?: string | null;
                 creator?:
                   | ({
@@ -3879,6 +3948,12 @@ export interface paths {
           'application/json': {
             amount?: number | null;
             charge?: string | null;
+            charges?: {
+              amount: number;
+              charge_type_id: number;
+              /** @enum {string} */
+              kind: 'in' | 'out';
+            }[];
             date?: string;
             deleted?: boolean;
             disease_id?: number | null;
@@ -3928,6 +4003,12 @@ export interface paths {
             data: {
               amount?: number | null;
               charge?: string | null;
+              charges?: {
+                amount: number;
+                charge_type_id: number;
+                /** @enum {string} */
+                kind: 'in' | 'out';
+              }[];
               date?: string;
               deleted?: boolean;
               disease_id?: number | null;
@@ -4037,6 +4118,12 @@ export interface paths {
               amount?: number | null;
               bee_id?: number | null;
               charge?: string | null;
+              charges?: {
+                amount: number | null;
+                charge_type_id: number | null;
+                id: number;
+                kind: string | null;
+              }[];
               created_at?: string | null;
               creator?:
                 | ({
@@ -4199,6 +4286,12 @@ export interface paths {
               amount?: number | null;
               bee_id?: number | null;
               charge?: string | null;
+              charges?: {
+                amount: number | null;
+                charge_type_id: number | null;
+                id: number;
+                kind: string | null;
+              }[];
               created_at?: string | null;
               creator?:
                 | ({
@@ -4621,6 +4714,12 @@ export interface paths {
                 amount?: number | null;
                 bee_id?: number | null;
                 charge?: string | null;
+                charges?: {
+                  amount: number | null;
+                  charge_type_id: number | null;
+                  id: number;
+                  kind: string | null;
+                }[];
                 created_at?: string | null;
                 creator?:
                   | ({
@@ -4759,6 +4858,12 @@ export interface paths {
           'application/json': {
             amount?: number | null;
             charge?: string | null;
+            charges?: {
+              amount: number;
+              charge_type_id: number;
+              /** @enum {string} */
+              kind: 'in' | 'out';
+            }[];
             date?: string;
             deleted?: boolean;
             disease_id?: number | null;
@@ -4808,6 +4913,12 @@ export interface paths {
             data: {
               amount?: number | null;
               charge?: string | null;
+              charges?: {
+                amount: number;
+                charge_type_id: number;
+                /** @enum {string} */
+                kind: 'in' | 'out';
+              }[];
               date?: string;
               deleted?: boolean;
               disease_id?: number | null;
@@ -4917,6 +5028,12 @@ export interface paths {
               amount?: number | null;
               bee_id?: number | null;
               charge?: string | null;
+              charges?: {
+                amount: number | null;
+                charge_type_id: number | null;
+                id: number;
+                kind: string | null;
+              }[];
               created_at?: string | null;
               creator?:
                 | ({
@@ -5079,6 +5196,12 @@ export interface paths {
               amount?: number | null;
               bee_id?: number | null;
               charge?: string | null;
+              charges?: {
+                amount: number | null;
+                charge_type_id: number | null;
+                id: number;
+                kind: string | null;
+              }[];
               created_at?: string | null;
               creator?:
                 | ({
@@ -6988,6 +7111,70 @@ export interface paths {
     };
     trace?: never;
   };
+  '/v1/option/{table}/{id}/recipe': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          id: number;
+          table:
+            | 'feed_types'
+            | 'treatment_types'
+            | 'harvest_types'
+            | 'checkup_types';
+        };
+        cookie?: never;
+      };
+      requestBody: {
+        content: {
+          'application/json': {
+            lines: {
+              charge_type_id: number;
+              factor: number;
+              /** @enum {string} */
+              kind: 'in' | 'out';
+              /** @enum {string} */
+              mode: 'per_amount' | 'per_hive';
+            }[];
+          };
+        };
+      };
+      responses: {
+        /** @description Default Response */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': {
+              charge_type_id: number;
+              factor: number;
+              id: number;
+              /** @enum {string} */
+              kind: 'in' | 'out';
+              /** @enum {string} */
+              mode: 'per_amount' | 'per_hive';
+              type_id: number;
+            }[];
+          };
+        };
+      };
+    };
+    trace?: never;
+  };
   '/v1/option/{table}/batchDelete': {
     parameters: {
       query?: never;
@@ -7171,6 +7358,56 @@ export interface paths {
         };
       };
     };
+    trace?: never;
+  };
+  '/v1/option/{table}/recipe': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          table:
+            | 'feed_types'
+            | 'treatment_types'
+            | 'harvest_types'
+            | 'checkup_types';
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Default Response */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            'application/json': {
+              charge_type_id: number;
+              factor: number;
+              id: number;
+              /** @enum {string} */
+              kind: 'in' | 'out';
+              /** @enum {string} */
+              mode: 'per_amount' | 'per_hive';
+              type_id: number;
+            }[];
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
     trace?: never;
   };
   '/v1/option/{table}/status': {
@@ -11636,6 +11873,12 @@ export interface paths {
                 amount?: number | null;
                 bee_id?: number | null;
                 charge?: string | null;
+                charges?: {
+                  amount: number | null;
+                  charge_type_id: number | null;
+                  id: number;
+                  kind: string | null;
+                }[];
                 created_at?: string | null;
                 creator?:
                   | ({
@@ -11774,6 +12017,12 @@ export interface paths {
           'application/json': {
             amount?: number | null;
             charge?: string | null;
+            charges?: {
+              amount: number;
+              charge_type_id: number;
+              /** @enum {string} */
+              kind: 'in' | 'out';
+            }[];
             date?: string;
             deleted?: boolean;
             disease_id?: number | null;
@@ -11823,6 +12072,12 @@ export interface paths {
             data: {
               amount?: number | null;
               charge?: string | null;
+              charges?: {
+                amount: number;
+                charge_type_id: number;
+                /** @enum {string} */
+                kind: 'in' | 'out';
+              }[];
               date?: string;
               deleted?: boolean;
               disease_id?: number | null;
@@ -11932,6 +12187,12 @@ export interface paths {
               amount?: number | null;
               bee_id?: number | null;
               charge?: string | null;
+              charges?: {
+                amount: number | null;
+                charge_type_id: number | null;
+                id: number;
+                kind: string | null;
+              }[];
               created_at?: string | null;
               creator?:
                 | ({
@@ -12094,6 +12355,12 @@ export interface paths {
               amount?: number | null;
               bee_id?: number | null;
               charge?: string | null;
+              charges?: {
+                amount: number | null;
+                charge_type_id: number | null;
+                id: number;
+                kind: string | null;
+              }[];
               created_at?: string | null;
               creator?:
                 | ({

@@ -8,6 +8,8 @@ import type {
   ChargePaginatedResponse,
   ChargeStockPaginatedResponse,
   CompanyCountResponse,
+  RecipeLineResponse,
+  RecipeTable,
   StatisticKind,
   StatisticListResponse,
   StatisticPaginatedResponse,
@@ -194,6 +196,21 @@ export function useApiaryForecastQuery(
         false,
         false
       ) as Promise<ApiaryForecastResponse>,
+    enabled
+  });
+}
+
+export function useRecipeQuery(
+  table: MaybeRef<RecipeTable>,
+  { enabled = true as MaybeRef<boolean> } = {}
+) {
+  const api = useApiFetch();
+  return useQuery({
+    queryKey: ['option', table, 'recipe'],
+    queryFn: () =>
+      api.get(`/v1/option/${unref(table)}/recipe`) as Promise<
+        RecipeLineResponse[]
+      >,
     enabled
   });
 }
@@ -978,12 +995,25 @@ export function useCountsQuery({ enabled = true as MaybeRef<boolean> }) {
   });
 }
 
+// Tasks book stock, so a task change also changes the stock queries.
+const STOCK_TASKS = ['feed', 'treatment', 'harvest', 'checkup'];
+const STOCK_QUERY_KEYS = [
+  ['charge'],
+  ['chargeStock'],
+  ['option', 'charge_types']
+];
+
+function relatedQueryKeys(q: string) {
+  return STOCK_TASKS.includes(q) ? [[q], ...STOCK_QUERY_KEYS] : [[q]];
+}
+
 export function clearCache(q = '') {
   if (q.trim() === '') {
     queryCache.clear();
   } else {
-    const queries = queryCache.findAll({ queryKey: [q] });
-    queries.forEach(query => query.invalidate());
+    relatedQueryKeys(q).forEach(queryKey => {
+      queryCache.findAll({ queryKey }).forEach(query => query.invalidate());
+    });
   }
 }
 
@@ -994,7 +1024,9 @@ export function useInvalidateQueries() {
     if (q.trim() === '') {
       void queryClient.invalidateQueries();
     } else {
-      void queryClient.invalidateQueries({ queryKey: [q] });
+      relatedQueryKeys(q).forEach(queryKey => {
+        void queryClient.invalidateQueries({ queryKey });
+      });
     }
   }
   return { invalidate };

@@ -157,7 +157,7 @@ async function onSubmit() {
         Array.isArray(response) && response.length === 0 ? null : response;
       lastInsertTable.value = unref(form.value);
 
-      dataChanged('insert');
+      dataChanged('insert', response);
     },
     error => {
       notification.open('negative', error);
@@ -166,10 +166,13 @@ async function onSubmit() {
   isSubmitting.value = false;
 }
 
-function dataChanged(type: 'update' | 'insert' = 'update') {
+function dataChanged(
+  type: 'update' | 'insert' = 'update',
+  response: unknown = null
+) {
   useInvalidate.invalidate(form.value);
   notification.open('positive', '');
-  emit('change', type);
+  emit('change', type, response);
 }
 
 function onReset() {
