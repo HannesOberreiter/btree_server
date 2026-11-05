@@ -4461,7 +4461,11 @@ export interface paths {
       requestBody: {
         content: {
           'application/json': {
-            settings: string;
+            settings:
+              | {
+                  [key: string]: unknown;
+                }
+              | string;
           };
         };
       };
@@ -4529,7 +4533,11 @@ export interface paths {
       requestBody: {
         content: {
           'application/json': {
-            settings: string;
+            settings:
+              | {
+                  [key: string]: unknown;
+                }
+              | string;
           };
         };
       };

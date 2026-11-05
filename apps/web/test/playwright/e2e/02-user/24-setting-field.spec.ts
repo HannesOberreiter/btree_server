@@ -22,4 +22,22 @@ test.describe('user - Setting Fields', () => {
 
     expect(after['date-auto-close']).not.toBe(before['date-auto-close']);
   });
+
+  test('save sends field settings as an object', async ({ page, dataCy }) => {
+    const isPatch = (url: string, method: string) =>
+      method === 'PATCH' && url.includes('/v1/fieldsetting');
+    const requestPromise = page.waitForRequest(request =>
+      isPatch(request.url(), request.method())
+    );
+    const responsePromise = page.waitForResponse(response =>
+      isPatch(response.url(), response.request().method())
+    );
+
+    await dataCy('setting-field-save').click();
+
+    const body = (await requestPromise).postDataJSON();
+    expect(typeof body.settings).toBe('object');
+    expect(body.settings).toHaveProperty('checkup');
+    expect((await responsePromise).ok()).toBe(true);
+  });
 });
