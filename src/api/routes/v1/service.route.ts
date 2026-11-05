@@ -10,6 +10,7 @@ import {
   compatibilityQuerySchema,
 } from '../../schemas/common.schema.js';
 import {
+  apiaryForecastResponseSchema,
   getWeatherDataParamsSchema,
   getGruenlandtemperatursummeParamsSchema,
   paypalCreateOrderBodySchema,
@@ -50,6 +51,18 @@ export default function routes(
       preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
     },
     ServiceController.getWeatherData,
+  );
+
+  server.get(
+    '/weather/:apiary_id',
+    {
+      schema: {
+        params: getWeatherDataParamsSchema,
+        response: { 200: apiaryForecastResponseSchema },
+      },
+      preHandler: Guard.authorize([ROLES.admin, ROLES.user, ROLES.read]),
+    },
+    ServiceController.getForecast,
   );
 
   server.get(

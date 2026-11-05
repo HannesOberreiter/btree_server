@@ -1,6 +1,7 @@
 import httpErrors from 'http-errors';
 
 import type { Database } from '../../types/database.types.js';
+import { buildApiaryForecast } from '../adapters/forecast.parser.js';
 import {
   calculateGruenlandtemperatursumme,
   getHistoricalTemperatures,
@@ -19,9 +20,18 @@ export async function getApiaryWeather(
     .select(['latitude', 'longitude'])
     .where('id', '=', apiaryId)
     .where('user_id', '=', companyId)
+    .where('deleted', '=', false)
     .executeTakeFirst();
   if (!apiary) throw httpErrors.NotFound('Apiary not found');
   return getWeatherData(Number(apiary.latitude), Number(apiary.longitude));
+}
+
+export async function getApiaryForecast(
+  db: Database,
+  companyId: number,
+  apiaryId: number,
+) {
+  return buildApiaryForecast(await getApiaryWeather(db, companyId, apiaryId));
 }
 
 export async function getApiaryTemperatureSum(

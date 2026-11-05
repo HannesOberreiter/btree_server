@@ -30,6 +30,8 @@ export interface OneCallResponse {
     wind_speed: number;
     wind_deg: number;
     wind_gust?: number;
+    rain?: { '1h': number };
+    snow?: { '1h': number };
     weather: Array<{
       id: number;
       main: string;
@@ -37,6 +39,29 @@ export interface OneCallResponse {
       icon: string;
     }>;
   };
+  hourly: Array<{
+    dt: number;
+    temp: number;
+    feels_like: number;
+    pressure: number;
+    humidity: number;
+    dew_point: number;
+    uvi: number;
+    clouds: number;
+    visibility?: number;
+    wind_speed: number;
+    wind_deg: number;
+    wind_gust?: number;
+    pop: number;
+    rain?: { '1h': number };
+    snow?: { '1h': number };
+    weather: Array<{
+      id: number;
+      main: string;
+      description: string;
+      icon: string;
+    }>;
+  }>;
   daily: Array<{
     dt: number;
     sunrise: number;
@@ -164,7 +189,7 @@ export async function getElevation(
 
 /**
  * Get weather data using OpenWeather One Call API 3.0
- * Provides current weather, daily forecast (8 days), and alerts in a single call
+ * Provides current weather, hourly forecast (48 hours), daily forecast (8 days), and alerts in a single call
  * Results are cached in Redis for 1 hour to reduce API calls
  * @param latitude - Location latitude
  * @param longitude - Location longitude
@@ -177,7 +202,7 @@ export async function getWeatherData(
   // Create cache key based on coordinates (rounded to 2 decimal places for ~1km precision)
   const lat = Number(latitude.toFixed(2));
   const lon = Number(longitude.toFixed(2));
-  const cacheKey = `weather:${lat}:${lon}`;
+  const cacheKey = `weather:v2:${lat}:${lon}`;
 
   try {
     const cached = await RedisServer.client.get(cacheKey);
@@ -193,7 +218,7 @@ export async function getWeatherData(
 
   // OpenWeather One Call API 3.0
   // https://openweathermap.org/api/one-call-3
-  const url = `https://api.openweathermap.org/data/3.0/onecall?lat=${latitude}&lon=${longitude}&exclude=minutely,hourly&units=metric&appid=${openweatherKey}`;
+  const url = `https://api.openweathermap.org/data/3.0/onecall?lat=${latitude}&lon=${longitude}&exclude=minutely&units=metric&appid=${openweatherKey}`;
 
   try {
     const response = await fetch(url);
