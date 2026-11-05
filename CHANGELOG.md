@@ -1,5 +1,25 @@
 # Changelog
 
+## [7.11.0](https://github.com/HannesOberreiter/btree_server/compare/btree-server-v7.10.0...btree-server-v7.11.0) (2026-11-05)
+
+
+### Features
+
+* **weather:** add apiary forecast endpoint ([d8c87ea](https://github.com/HannesOberreiter/btree_server/commit/d8c87eacd585fefd1cea5c9f41c2b09014a0b32b))
+
+
+### Bug Fixes
+
+* **fieldsetting:** accept settings object in PATCH ([35a7800](https://github.com/HannesOberreiter/btree_server/commit/35a7800b4b327e6373734c251c159c149a39eaf0))
+* **weather:** format local times with time zone name ([a75c643](https://github.com/HannesOberreiter/btree_server/commit/a75c6435e1f0be9b0dd825eea65459b967d40966))
+* **wizbee:** delete orphan requests in daily cleanup ([4139d21](https://github.com/HannesOberreiter/btree_server/commit/4139d21ae6708ed82522c88e32387abbab4ff8de))
+
+
+### Miscellaneous
+
+* **cron:** log duration of each cron task ([298cc05](https://github.com/HannesOberreiter/btree_server/commit/298cc051cad07e3df37ce559dd99cbf3a7bb412b))
+* **db:** drop legacy wizbee_tokens table ([43989a9](https://github.com/HannesOberreiter/btree_server/commit/43989a9730f3339972dda607fedce4d4472f087c))
+
 ## [7.10.0](https://github.com/HannesOberreiter/btree_server/compare/btree-server-v7.9.2...btree-server-v7.10.0) (2026-10-23)
 
 
