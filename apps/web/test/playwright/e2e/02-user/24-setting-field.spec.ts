@@ -14,7 +14,8 @@ test.describe('user - Setting Fields', () => {
     const before = await page.evaluate(() =>
       JSON.parse(localStorage.getItem('pref-local') || '{}')
     );
-    await dataCy('page-setting-field').locator('.q-toggle').first().click();
+    // The outgoing tab panel stays in the DOM during the tab animation.
+    await dataCy('setting-field-local').locator('.q-toggle').first().click();
     const after = await page.evaluate(() =>
       JSON.parse(localStorage.getItem('pref-local') || '{}')
     );

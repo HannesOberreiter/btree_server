@@ -215,7 +215,7 @@ async function onSubmit() {
             </div>
           </q-tab-panel>
 
-          <q-tab-panel name="localSettings">
+          <q-tab-panel name="localSettings" data-cy="setting-field-local">
             <div class="text-body2 q-pb-sm text-center">
               {{ $t('setting.localTitle') }}
             </div>
