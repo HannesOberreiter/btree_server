@@ -167,7 +167,8 @@ const iconColor = computed(() => {
     :aria-label="$t('stockUse.title')"
     data-cy="btn-task-stock"
   >
-    <q-menu>
+    <!-- Open below the type field, not over it. -->
+    <q-menu anchor="bottom left" self="top left" :offset="[0, 16]">
       <div class="q-pa-sm text-caption" style="max-width: 300px">
         <q-chip
           v-for="chip in chips"
