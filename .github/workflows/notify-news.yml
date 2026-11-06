@@ -16,7 +16,7 @@ jobs:
             -H "Accept: application/vnd.github+json" \
             /repos/${{ github.repository_owner }}/btree_sites/dispatches \
             -f event_type=release-published \
-            -f "client_payload[repo]=btree_server" \
+            -f "client_payload[repo]=${{ github.event.repository.name }}" \
             -f "client_payload[tag]=${{ github.event.release.tag_name }}" \
             -f "client_payload[version]=${{ github.event.release.name }}"
         env:

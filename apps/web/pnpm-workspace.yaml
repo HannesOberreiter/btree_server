@@ -1,0 +1,11 @@
+allowBuilds:
+  '@parcel/watcher': true
+  core-js: true
+  electron-winstaller: true
+  esbuild: true
+  lightningcss: true
+  rolldown: true
+  unrs-resolver: true
+  vue-demi: true
+minimumReleaseAgeExclude:
+  - '@quasar/app-vite@3.0.0-rc.1'

@@ -1,19 +1,95 @@
 {
   "packages": {
-    ".": {
+    "apps/server": {
       "release-type": "simple",
       "component": "btree-server",
       "include-component-in-tag": true,
       "changelog-sections": [
-        { "type": "feat", "section": "Features" },
-        { "type": "fix", "section": "Bug Fixes" },
-        { "type": "perf", "section": "Performance" },
-        { "type": "chore", "section": "Miscellaneous" },
-        { "type": "refactor", "section": "Miscellaneous" },
-        { "type": "style", "section": "Miscellaneous" },
-        { "type": "docs", "section": "Miscellaneous", "hidden": true },
-        { "type": "test", "section": "Miscellaneous", "hidden": true },
-        { "type": "ci", "section": "Miscellaneous", "hidden": true }
+        {
+          "type": "feat",
+          "section": "Features"
+        },
+        {
+          "type": "fix",
+          "section": "Bug Fixes"
+        },
+        {
+          "type": "perf",
+          "section": "Performance"
+        },
+        {
+          "type": "chore",
+          "section": "Miscellaneous"
+        },
+        {
+          "type": "refactor",
+          "section": "Miscellaneous"
+        },
+        {
+          "type": "style",
+          "section": "Miscellaneous"
+        },
+        {
+          "type": "docs",
+          "section": "Miscellaneous",
+          "hidden": true
+        },
+        {
+          "type": "test",
+          "section": "Miscellaneous",
+          "hidden": true
+        },
+        {
+          "type": "ci",
+          "section": "Miscellaneous",
+          "hidden": true
+        }
+      ]
+    },
+    "apps/web": {
+      "release-type": "simple",
+      "component": "btree-client",
+      "include-component-in-tag": true,
+      "changelog-sections": [
+        {
+          "type": "feat",
+          "section": "Features"
+        },
+        {
+          "type": "fix",
+          "section": "Bug Fixes"
+        },
+        {
+          "type": "perf",
+          "section": "Performance"
+        },
+        {
+          "type": "chore",
+          "section": "Miscellaneous"
+        },
+        {
+          "type": "refactor",
+          "section": "Miscellaneous"
+        },
+        {
+          "type": "style",
+          "section": "Miscellaneous"
+        },
+        {
+          "type": "docs",
+          "section": "Miscellaneous",
+          "hidden": true
+        },
+        {
+          "type": "test",
+          "section": "Miscellaneous",
+          "hidden": true
+        },
+        {
+          "type": "ci",
+          "section": "Miscellaneous",
+          "hidden": true
+        }
       ]
     }
   },

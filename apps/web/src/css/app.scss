@@ -1,0 +1,110 @@
+$font-fallback:
+  '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Helvetica', Arial,
+  'sans-serif', 'Apple Color Emoji', 'Segoe UI Emoji';
+$font-body: 'Roboto', 'system-ui', $font-fallback;
+$font-mono: Courier, Monaco, 'Courier New', monospace, $font-fallback;
+
+body {
+  /* Prevent Overscrolling https://stackoverflow.com/a/47686467/5316675 */
+  overscroll-behavior-y: none;
+  font-family: $font-body;
+  font-size: 1rem;
+}
+
+.body--light .link {
+  color: $blue-9;
+}
+
+.body--dark .link {
+  color: $blue-6;
+}
+
+footer {
+  font-size: 0.8rem;
+}
+
+aside {
+  font-size: 0.8rem;
+}
+
+select,
+textarea,
+input {
+  font-size: 1rem;
+}
+.q-field {
+  font-size: 1rem;
+}
+
+.no-padding {
+  padding: 0px;
+}
+
+.show-pointer {
+  cursor: pointer;
+}
+
+.q-field__messages {
+  font-size: 0.8em;
+}
+
+@media print {
+  .q-drawer {
+    display: none;
+  }
+  .q-page-container {
+    padding-left: 0em !important;
+    padding-top: 0em !important;
+  }
+
+  .q-card {
+    box-shadow: none !important;
+    border-radius: 0 !important;
+  }
+  .q-field {
+    display: none;
+  }
+  .q-tabs {
+    display: none;
+  }
+}
+
+html > .dark > input:-internal-autofill-selected {
+  appearance: menulist-button;
+  background-image: none !important;
+  background-color: -internal-light-dark(
+    rgb(232, 240, 254),
+    rgba(69, 70, 73, 1)
+  ) !important;
+  color: fieldtext !important;
+}
+
+/*
+  input autofill prevent standard browser style on dark mode
+  https://stackoverflow.com/questions/2781549/removing-input-background-colour-for-chrome-autocomplete
+*/
+html.dark {
+  input:-webkit-autofill {
+    -webkit-text-fill-color: white;
+  }
+
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px rgba(0, 0, 0, 0.7) inset !important;
+  }
+}
+
+/* Remove top border */
+.border-top-none {
+  border-top: none !important;
+}
+
+.q-table td,
+.q-table th {
+  font-variant-numeric: tabular-nums;
+}
+.q-table .text-right {
+  font-variant-numeric: tabular-nums;
+}
