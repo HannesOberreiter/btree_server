@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.12.2](https://github.com/HannesOberreiter/btree/compare/btree-server-v7.12.1...btree-server-v7.12.2) (2026-11-06)
+
+
+### Bug Fixes
+
+* **server:** accept only PayPal order IDs in the capture route ([#290](https://github.com/HannesOberreiter/btree/issues/290)) ([48eae84](https://github.com/HannesOberreiter/btree/commit/48eae84e0d7b1bb9587657be0e92a3bbf57dc7b2))
+
 ## [7.12.1](https://github.com/HannesOberreiter/btree/compare/btree-server-v7.12.0...btree-server-v7.12.1) (2026-11-06)
 
 
