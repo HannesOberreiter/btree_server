@@ -1,0 +1,67 @@
+version: 2
+
+# Security updates always target the default branch (beta) and use these
+# commit messages. Production dependencies get fix(deps), which releases the
+# app; development dependencies get build(deps-dev), which does not.
+updates:
+  - package-ecosystem: npm
+    directory: /apps/server
+    target-branch: beta
+    schedule:
+      interval: monthly
+    cooldown:
+      default-days: 7
+    commit-message:
+      prefix: fix
+      prefix-development: build
+      include: scope
+    groups:
+      production:
+        dependency-type: production
+      development:
+        dependency-type: development
+
+  - package-ecosystem: npm
+    directory: /apps/web
+    target-branch: beta
+    schedule:
+      interval: monthly
+    cooldown:
+      default-days: 7
+    commit-message:
+      prefix: fix
+      prefix-development: build
+      include: scope
+    groups:
+      production:
+        dependency-type: production
+      development:
+        dependency-type: development
+
+  - package-ecosystem: npm
+    directory: /apps/web/src-pwa
+    target-branch: beta
+    schedule:
+      interval: monthly
+    cooldown:
+      default-days: 7
+    commit-message:
+      prefix: fix
+      prefix-development: build
+      include: scope
+    groups:
+      pwa:
+        patterns: ["*"]
+
+  - package-ecosystem: github-actions
+    directory: /
+    target-branch: beta
+    schedule:
+      interval: monthly
+    cooldown:
+      default-days: 7
+    commit-message:
+      prefix: ci
+    groups:
+      actions:
+        patterns: ["*"]

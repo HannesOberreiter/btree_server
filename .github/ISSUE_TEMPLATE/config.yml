@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security vulnerability
+    url: https://github.com/HannesOberreiter/btree/security/advisories/new
+    about: Report security problems privately. Do not open a public issue.
+  - name: Help with the app
+    url: https://www.btree.at/doc-faqs/
+    about: Read the FAQ. For questions about your account, write to office📧btree.at.

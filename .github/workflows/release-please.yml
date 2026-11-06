@@ -19,6 +19,7 @@ jobs:
         uses: googleapis/release-please-action@v4
         with:
           token: ${{ secrets.BTREE_SITES_DISPATCH_TOKEN }}
+          target-branch: main
 
       - name: Enable auto-merge for release PR
         if: steps.release.outputs.prs_created == 'true'
