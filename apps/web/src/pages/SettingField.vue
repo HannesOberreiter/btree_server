@@ -102,7 +102,10 @@ async function onSubmit() {
               {{ $t('setting.title') }}
             </div>
             <template v-for="(setting, index) in settings" :key="setting">
-              <span class="text-h6">{{ $t(index) }}</span>
+              <!-- The charge settings belong to stock movements. -->
+              <span class="text-h6">{{
+                $t(index === 'charge' ? 'stockEntry' : index)
+              }}</span>
               <q-separator color="secondary" inset />
               <div class="q-pa-md">
                 <template v-for="(subsetting, i) in setting" :key="i">

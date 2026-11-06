@@ -204,7 +204,7 @@ defineExpose({ save });
           map-options
           dense
           filled
-          :label="$t('charge')"
+          :label="$t('stockItem')"
         />
       </div>
       <div class="col-10 col-sm-3">

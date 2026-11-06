@@ -41,7 +41,7 @@ const pagination = ref({
 
 const options = [
   {
-    label: `${t('charge')} ${t('type', 2)}`,
+    label: t('stockItem', 2),
     value: 'charge_types'
   },
   {
