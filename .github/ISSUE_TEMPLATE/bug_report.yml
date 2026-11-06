@@ -1,0 +1,47 @@
+name: Bug report
+description: Something in b.tree does not work as expected.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: Do not report security problems here. Read SECURITY.md instead. Do not put passwords or personal data in this issue.
+  - type: dropdown
+    id: app
+    attributes:
+      label: Where does the problem occur?
+      options:
+        - Web app (app.btree.at)
+        - Beta web app (beta.btree.at)
+        - Android or iOS app
+        - API, MCP or WizBee
+        - Self-hosted server
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: Describe the problem. Add screenshots if they help.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open the hive list.
+        2. Click ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Browser, device and app version
+      description: The app version is in the settings.
+      placeholder: Firefox 140 on Windows 11, version 7.10.2
