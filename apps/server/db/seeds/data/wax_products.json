@@ -1,0 +1,30 @@
+[
+  {
+    "id": 1,
+    "name": "Wax block",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 2,
+    "name": "Foundation",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 3,
+    "name": "Products for sale",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 4,
+    "name": "Residual wax",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  }
+]

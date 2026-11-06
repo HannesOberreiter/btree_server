@@ -43,7 +43,8 @@ test.describe('user - Calendar', () => {
     await page.mouse.click(x, y);
 
     await expect(dataCy('form-todo')).toBeAttached();
-    await page.locator('[name=todo]').fill(chance.animal());
+    const todo = chance.animal();
+    await page.locator('[name=todo]').fill(todo);
     await dataCy('btn-form-save').click();
     await expect(dataCy('form-todo')).not.toBeAttached();
 
@@ -68,10 +69,10 @@ test.describe('user - Calendar', () => {
     await monthTab.click();
     await expect(monthTab).toHaveAttribute('aria-selected', 'true');
 
-    await page
-      .locator(`[role="gridcell"][data-date="${today}"] .fa-clipboard`)
-      .first()
-      .click({ force: true });
+    await calendar
+      .locator(`[role="gridcell"][data-date="${today}"]`)
+      .getByRole('button', { name: todo, exact: true })
+      .click();
     await expect(dataCy('dialog-event')).toBeAttached();
     await dataCy('btn-dialog-event-delete').click();
     await page.locator('.btn-confirm').click();

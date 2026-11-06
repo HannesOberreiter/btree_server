@@ -13986,7 +13986,7 @@ export interface paths {
     };
     get?: never;
     put?: never;
-    /** @description Create a new charge/stock entry (sugar, treatments, honey jars, etc.). */
+    /** @description Create a new charge: a stock movement in the warehouse (German: Lagerbuchung) for sugar, treatments, honey jars, etc. */
     post: {
       parameters: {
         query?: never;
@@ -14115,6 +14115,7 @@ export interface paths {
       requestBody: {
         content: {
           'application/json': {
+            /** @description Feed quantity per hive. Each hive in hiveIds gets this amount. */
             amount?: number;
             date: string;
             done?: boolean;
@@ -14165,6 +14166,7 @@ export interface paths {
       requestBody: {
         content: {
           'application/json': {
+            /** @description Harvest weight/quantity per hive. Each hive in hiveIds gets this amount. */
             amount?: number;
             charge?: string;
             date: string;
@@ -14362,6 +14364,7 @@ export interface paths {
       requestBody: {
         content: {
           'application/json': {
+            /** @description Treatment dose/amount per hive. Each hive in hiveIds gets this amount. */
             amount?: number;
             date: string;
             diseaseId?: number;
@@ -14543,7 +14546,7 @@ export interface paths {
     };
     get?: never;
     put?: never;
-    /** @description Fetch charges (stock/inventory entries). */
+    /** @description Fetch charges: stock movements of the warehouse (German: Lager, Lagerbuchungen), stock levels (Lagerbestand) and inventory. */
     post: {
       parameters: {
         query?: never;
@@ -15220,7 +15223,7 @@ export interface paths {
     };
     get?: never;
     put?: never;
-    /** @description Update one or more existing charge/stock records by their IDs. */
+    /** @description Update one or more existing charges (stock movements, German: Lagerbuchungen) by their IDs. */
     post: {
       parameters: {
         query?: never;
@@ -15348,6 +15351,7 @@ export interface paths {
       requestBody: {
         content: {
           'application/json': {
+            /** @description New feed quantity per hive */
             amount?: number;
             date?: string;
             done?: boolean;
@@ -15396,6 +15400,7 @@ export interface paths {
       requestBody: {
         content: {
           'application/json': {
+            /** @description New harvest weight/quantity per hive */
             amount?: number;
             charge?: string;
             date?: string;
@@ -15588,6 +15593,7 @@ export interface paths {
       requestBody: {
         content: {
           'application/json': {
+            /** @description New dose/amount per hive */
             amount?: number;
             date?: string;
             diseaseId?: number;
@@ -15672,7 +15678,7 @@ export interface paths {
     };
     get?: never;
     put?: never;
-    /** @description Soft-delete one or more charge/stock records by their IDs. */
+    /** @description Soft-delete one or more charges (stock movements, German: Lagerbuchungen) by their IDs. */
     post: {
       parameters: {
         query?: never;

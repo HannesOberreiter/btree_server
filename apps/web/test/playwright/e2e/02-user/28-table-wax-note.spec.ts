@@ -1,19 +1,8 @@
-import { expect, test } from '../../support/helpers';
+import { expect, test } from '../../support/user-helpers';
 
 test('shows wax inventory note in operations table', async ({ page }) => {
   const inventoryNote = 'Annual inventory note';
 
-  await page.addInitScript(() => {
-    localStorage.setItem(
-      'user',
-      JSON.stringify({ lang: 'en', format: 'YYYY-MM-DD' })
-    );
-    localStorage.setItem(
-      'company',
-      JSON.stringify({ rank: 1, paid: '2999-01-01' })
-    );
-    localStorage.setItem('refresh', JSON.stringify(new Date().toISOString()));
-  });
   await page.route('**/api/v1/wax/lots**', route =>
     route.fulfill({ json: { results: [], total: 0 } })
   );

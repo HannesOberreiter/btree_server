@@ -9,16 +9,16 @@ This repository owns application schema migrations and the HTTP and agent-facing
 
 ## Policy
 
-- Work with `beta` checked out. Update `main` only through pull requests from `beta`, except for the existing automated release-please PRs. Never commit directly or merge locally into `main`.
+- Follow the branch and PR rules in the root `AGENTS.md`.
 - Regenerate `src/types/db.types.ts` with `pnpm run db:types`; do not hand-edit it.
 - Run E2E and `dev:init` only against disposable databases; test setup migrates and truncates non-CI tables, and seeding deletes existing fixture data.
 
 ## Where things are
 
-- Coordinate frontend changes with `HannesOberreiter/btree_vue`, documentation with `HannesOberreiter/btree_sites`, and database infrastructure with `HannesOberreiter/btree_database`.
+- The frontend is in `apps/web`. Coordinate documentation with `HannesOberreiter/btree_sites`, and database infrastructure with `HannesOberreiter/btree_database`.
 - Start at `src/app.bootstrap.ts`; HTTP contracts live in `src/api/routes/` and `src/api/schemas/`, and shared domain operations live in `src/api/modules/`.
 - Keep application migrations in `db/migrations/`, using Knex ES module `up`/`down` exports.
-- For HTTP contract changes, coordinate frontend declarations in `HannesOberreiter/btree_vue` using `pnpm api:update` against this server's `/api/v1/openapi.json`, not an agent-specific specification.
+- For HTTP contract changes, regenerate the frontend declarations in the same PR: run `pnpm api:update` in `apps/web` against this server's `/api/v1/openapi.json`, not an agent-specific specification.
 
 ## Running and verifying
 

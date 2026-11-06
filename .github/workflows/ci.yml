@@ -1,0 +1,362 @@
+name: ci
+
+on:
+  pull_request:
+    branches: [main, beta]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+# All jobs run on every PR, so they can be required status checks. A job that
+# a PR does not need is skipped, and a skipped job counts as passed.
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      server: ${{ steps.filter.outputs.server }}
+      web: ${{ steps.filter.outputs.web }}
+      api: ${{ steps.filter.outputs.api }}
+      deps: ${{ steps.filter.outputs.deps }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d # v4.0.3
+        id: filter
+        with:
+          filters: |
+            server:
+              - 'apps/server/**'
+              - '.github/workflows/ci.yml'
+            web:
+              - 'apps/web/**'
+              - '.github/workflows/ci.yml'
+            api:
+              - 'apps/web/src/api/generated/**'
+              - 'apps/web/scripts/update-api.mjs'
+            deps:
+              - 'apps/*/package.json'
+              - 'apps/*/pnpm-lock.yaml'
+              - 'apps/*/pnpm-workspace.yaml'
+              - '.github/workflows/ci.yml'
+
+  web:
+    needs: changes
+    if: needs.changes.outputs.web == 'true'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/web
+    env:
+      BACKEND_URL: https://api-beta.btree.at/api
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+        with:
+          package_json_file: apps/web/package.json
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: apps/web/pnpm-lock.yaml
+      - name: Install
+        run: pnpm install --frozen-lockfile
+      - name: Install PWA dependencies
+        run: pnpm --dir src-pwa install --frozen-lockfile
+      - name: Lint
+        run: pnpm lint:check
+      - name: Typecheck
+        run: pnpm typecheck
+      - name: Build PWA
+        run: pnpm build:pwa
+
+  server:
+    needs: changes
+    if: needs.changes.outputs.server == 'true' || needs.changes.outputs.api == 'true'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/server
+    env:
+      ENVIRONMENT: ci
+      NODE_ENV: ci
+      DB_DATABASE: ci_test
+      DB_USER: root
+      DB_PASSWORD: root
+      REDIS_HOSTNAME: localhost
+      REDIS_USERNAME: default
+      REDIS_PORT: 6379
+
+    services:
+      mariadb:
+        image: mariadb:lts
+        env:
+          MARIADB_ROOT_PASSWORD: root
+          MARIADB_DATABASE: ci_test
+        options: >-
+          --health-cmd "healthcheck.sh --connect --innodb_initialized"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 3306:3306
+      redis:
+        image: redis
+        # Set health checks to wait until redis has started
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          # Maps port 6379 on service container to the host
+          - 6379:6379
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+        with:
+          package_json_file: apps/server/package.json
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '22'
+          cache: pnpm
+          cache-dependency-path: |
+            apps/server/pnpm-lock.yaml
+            apps/web/pnpm-lock.yaml
+      - name: Install packages
+        run: pnpm install --frozen-lockfile
+      - name: Lint
+        run: pnpm run lint
+      - name: Build dist
+        run: pnpm run build
+      - name: Run e2e tests
+        run: pnpm run ci:e2e
+
+      # The web app types come from the OpenAPI specification of the server.
+      # Generate them again and fail when the committed file is different.
+      - name: Install web packages for the OpenAPI types
+        working-directory: apps/web
+        run: pnpm install --frozen-lockfile --ignore-scripts
+      - name: Check the generated OpenAPI types
+        run: |
+          pnpm run migrate
+          node dist/app.bootstrap.js > "$RUNNER_TEMP/server.log" 2>&1 &
+          for i in $(seq 1 30); do
+            curl -sf -o /dev/null http://localhost:8102/api/v1/openapi.json && break
+            sleep 1
+          done
+          cd ../web
+          BTREE_OPENAPI_URL=http://localhost:8102/api/v1/openapi.json pnpm run api:update
+          if ! git diff --exit-code -- src/api/generated/schema.d.ts; then
+            echo "::error::apps/web/src/api/generated/schema.d.ts is not up to date. Run 'pnpm api:update' in apps/web against the server of this branch and commit the result."
+            exit 1
+          fi
+
+  # Rulesets cannot restrict the source branch of a PR. PRs to main must come
+  # from beta or from the release-please branch of this repository.
+  pull-protection:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check the source branch of PRs to main
+        if: >-
+          github.event_name == 'pull_request' &&
+          github.base_ref == 'main' &&
+          (
+            github.event.pull_request.head.repo.full_name != github.repository ||
+            (github.head_ref != 'beta' && github.head_ref != 'release-please--branches--main')
+          )
+        env:
+          HEAD: ${{ github.event.pull_request.head.label }}
+        run: |
+          echo "::error::PRs to main must come from beta or release-please--branches--main of this repository, not from $HEAD."
+          exit 1
+
+  gitleaks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      # Scan only the commits of the PR. The older history has known test
+      # credentials, for example the demo user in the seed data.
+      - name: Run gitleaks on the PR commits
+        if: github.event_name == 'pull_request'
+        env:
+          BASE: ${{ github.event.pull_request.base.sha }}
+          HEAD: ${{ github.event.pull_request.head.sha }}
+        run: |
+          docker run --rm -v "$PWD:/repo" \
+            zricethezav/gitleaks:v8.30.1@sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f \
+            git /repo --log-opts="$BASE..$HEAD" --redact --verbose
+
+  # A skipped matrix job reports one check "licenses", not one check per app.
+  # So this job always runs, and its steps check the deps filter.
+  licenses:
+    needs: changes
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        app: [server, web]
+    defaults:
+      run:
+        working-directory: apps/${{ matrix.app }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        if: needs.changes.outputs.deps == 'true'
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+        if: needs.changes.outputs.deps == 'true'
+        with:
+          package_json_file: apps/${{ matrix.app }}/package.json
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        if: needs.changes.outputs.deps == 'true'
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: apps/${{ matrix.app }}/pnpm-lock.yaml
+      - name: Install packages
+        if: needs.changes.outputs.deps == 'true'
+        run: pnpm install --frozen-lockfile --ignore-scripts
+      # license-report checks the direct dependencies in package.json. Each
+      # license must match one line of the allowlist exactly.
+      - name: Check the licenses
+        if: needs.changes.outputs.deps == 'true'
+        run: |
+          npm install -g license-report@6 --registry=https://registry.npmjs.org
+          cat > "$RUNNER_TEMP/allowed.txt" <<'LIST'
+          MIT
+          MIT-0
+          Apache-2.0
+          BSD-2-Clause
+          BSD-3-Clause
+          0BSD
+          ISC
+          MPL-2.0
+          (MPL-2.0 OR Apache-2.0)
+          (MIT OR GPL-3.0-or-later)
+          LGPL-3.0-only
+          LGPL-3.0-or-later
+          GPL-3.0-only
+          GPL-3.0-or-later
+          AGPL-3.0-only
+          AGPL-3.0-or-later
+          LIST
+          sed -i 's/^ *//' "$RUNNER_TEMP/allowed.txt"
+          license-report --output=csv --fields=name --fields=licenseType > "$RUNNER_TEMP/licenses.csv"
+          cat "$RUNNER_TEMP/licenses.csv"
+          if cut -d, -f2- "$RUNNER_TEMP/licenses.csv" | grep -vxF -f "$RUNNER_TEMP/allowed.txt"; then
+            echo "::error::The dependencies above have a license that is not in the allowlist."
+            exit 1
+          fi
+
+  # Playwright e2e tests of the web app against the server of the same commit.
+  # Not a required check until the suite is stable in CI.
+  e2e:
+    needs: changes
+    if: needs.changes.outputs.server == 'true' || needs.changes.outputs.web == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      ENVIRONMENT: ci
+      NODE_ENV: ci
+      # env/ci.env allows only http://localhost:8002.
+      AUTHORIZED: http://localhost:9000
+
+    services:
+      mariadb:
+        image: mariadb:lts
+        env:
+          MARIADB_ROOT_PASSWORD: root
+          MARIADB_DATABASE: ci_test
+        options: >-
+          --health-cmd "healthcheck.sh --connect --innodb_initialized"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 3306:3306
+      redis:
+        image: redis
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+        with:
+          package_json_file: apps/web/package.json
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: |
+            apps/server/pnpm-lock.yaml
+            apps/web/pnpm-lock.yaml
+
+      - name: Start the server
+        working-directory: apps/server
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm run build
+          pnpm run migrate
+          pnpm exec knex seed:run
+          node dist/app.bootstrap.js > "$RUNNER_TEMP/server.log" 2>&1 &
+          for i in $(seq 1 30); do
+            curl -sf -o /dev/null http://localhost:8102/api/v1/openapi.json && exit 0
+            sleep 1
+          done
+          cat "$RUNNER_TEMP/server.log"
+          exit 1
+
+      # BRANCH=dev adds localhost to the Content Security Policy. The Matomo
+      # boot file fails without a host and a site ID, so the build gets dummies.
+      - name: Build and serve the web app
+        working-directory: apps/web
+        env:
+          BRANCH: dev
+          BACKEND_URL: http://localhost:8102/api
+          MATOMO_HOST: http://localhost:9999
+          MATOMO_SITE_ID: '1'
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm --dir src-pwa install --frozen-lockfile
+          pnpm build
+          pnpm exec vite preview --outDir dist/spa --port 9000 --strictPort > "$RUNNER_TEMP/web.log" 2>&1 &
+          for i in $(seq 1 30); do
+            curl -sf -o /dev/null http://localhost:9000/ && exit 0
+            sleep 1
+          done
+          cat "$RUNNER_TEMP/web.log"
+          exit 1
+
+      - name: Run the e2e tests
+        working-directory: apps/web
+        env:
+          BACKEND_URL: http://localhost:8102/api
+          PLAYWRIGHT_BACKEND_URL: http://localhost:8102
+          PLAYWRIGHT_API_ORIGIN: http://localhost:9000
+        run: |
+          pnpm exec playwright install --with-deps chromium
+          pnpm test:e2e:ci
+
+      # test-results holds the traces and screenshots of the failed tests. They
+      # show only seed data and the public demo login.
+      - name: Upload the report
+        if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: e2e-report
+          path: |
+            apps/web/test/playwright/test-results
+            ${{ runner.temp }}/server.log
+          retention-days: 7

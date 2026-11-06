@@ -75,9 +75,7 @@ test.describe('user - Setting Company', () => {
       companyId = ((await createResponse.json()) as { id: number }).id;
 
       await selectCompany(page, name);
-      await expect(dataCy('select-company').locator('input')).toHaveValue(
-        new RegExp(name)
-      );
+      await expect(dataCy('select-company')).toHaveValue(new RegExp(name));
 
       await dataCy('btn-company-edit').click();
       const updateResponsePromise = waitForApi(
@@ -87,15 +85,13 @@ test.describe('user - Setting Company', () => {
       );
       await submitPrompt(page, editedName);
       expect((await updateResponsePromise).ok()).toBe(true);
-      await expect(dataCy('select-company').locator('input')).toHaveValue(
+      await expect(dataCy('select-company')).toHaveValue(
         new RegExp(editedName)
       );
 
       await deleteCompany(page, companyId, editedName);
       companyId = 0;
-      await expect(dataCy('select-company').locator('input')).not.toHaveValue(
-        editedName
-      );
+      await expect(dataCy('select-company')).not.toHaveValue(editedName);
     } finally {
       await cleanupCompany(page, companyId);
     }

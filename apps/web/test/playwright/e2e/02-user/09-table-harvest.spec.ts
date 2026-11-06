@@ -3,7 +3,8 @@ import { expect, test } from '../../support/user-helpers';
 test.describe('user - Harvest Table', () => {
   const form = 'form-quicktool';
 
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({ page, showNewestFirst }) => {
+    await showNewestFirst('harvest');
     await page.goto('/table/harvest');
   });
 

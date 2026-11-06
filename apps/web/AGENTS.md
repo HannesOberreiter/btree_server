@@ -9,13 +9,13 @@ Deployment and Android packaging documentation lives in `README.md`.
 
 ## Policy
 
-- Work with `beta` checked out. Update `main` only through pull requests from `beta`, except for the existing automated release-please PRs. Never commit directly or merge locally into `main`.
+- Follow the branch and PR rules in the root `AGENTS.md`.
 - Run `pnpm lint:check` and `pnpm typecheck` before committing. Use `pnpm lint` for formatting and lint fixes, and review all automatic changes manually.
 - Before changing the manifest or service-worker behavior, agree on TWA compatibility checks with the maintainer. A successful PWA build alone does not validate Android compatibility.
 
 ## Where things are
 
-- For cross-repository changes, coordinate with `HannesOberreiter/btree_server` for the backend, `HannesOberreiter/btree_sites` for documentation, and `HannesOberreiter/btree_database` for database infrastructure.
+- The backend is in `apps/server`. For cross-repository changes, coordinate with `HannesOberreiter/btree_sites` for documentation and `HannesOberreiter/btree_database` for database infrastructure.
 - For backend requests, start with `src/composables/useApi.ts` and `src/composables/useBackend.ts`; query integration lives in `src/composables/useQuery.ts`.
 - For API contract changes, use `src/api/types.ts` and regenerate `src/api/generated/schema.d.ts` with `pnpm api:update`; do not hand-edit the generated schema.
 - For authenticated E2E tests, use `test/playwright/support/user-helpers.ts`; authentication runs per test, not through a shared setup project.
@@ -25,7 +25,7 @@ Deployment and Android packaging documentation lives in `README.md`.
 
 - Use the declared Node range `^28 || ^26 || ^24 || ^22.22.0` and pinned pnpm `11.5.3` from `package.json`; CI uses Node 22.
 - For local setup, copy `example.env` to `.env`, but set `BACKEND_URL` to an absolute backend URL ending in `/api`, using the actual backend port.
-- Make the backend available before exercising API flows or E2E tests. For local backend setup, follow the README in `HannesOberreiter/btree_server`.
+- Make the backend available before exercising API flows or E2E tests. For local backend setup, follow `apps/server/readme.md`.
 - Use `pnpm test:e2e`, not `pnpm test`, which exits successfully without testing. Start the frontend and backend yourself; Playwright starts neither.
 - For E2E runs, export matching `BACKEND_URL`, `PLAYWRIGHT_BACKEND_URL`, and `PLAYWRIGHT_API_ORIGIN` values in the shell; Playwright does not load `.env`. `BACKEND_URL` includes `/api`; `PLAYWRIGHT_BACKEND_URL` is the backend origin. Keep the frontend on `localhost` for the authenticated fixture's cookie; the default frontend URL is `http://localhost:9000`.
 - When PWA dependencies are missing, run `pnpm --dir src-pwa install`; the root install does not include that separate package.
@@ -45,6 +45,6 @@ Deployment and Android packaging documentation lives in `README.md`.
 
 ## Quasar MCP
 
-- For Quasar documentation and component APIs, prefer the `quasar` MCP server configured in `.mcp.json`; it reads version-matched documentation from the installed packages. Use `search_docs` and `get_page` for documentation, and `get_api` for component APIs.
-- Start the agent from this directory to load the project-local MCP configuration. The first server download requires internet; cached startup and bundled documentation work offline.
+- For Quasar documentation and component APIs, prefer the `quasar` MCP server configured in the root `.mcp.json`; it reads version-matched documentation from the installed packages. Use `search_docs` and `get_page` for documentation, and `get_api` for component APIs.
+- Start the agent from the repository root to load the MCP configuration. The first server download requires internet; cached startup and bundled documentation work offline.
 - Both `quasar` and `@quasar/app-vite` bundle version-matched documentation. Use app-vite documentation for CLI, build configuration, routing, and PWA topics.

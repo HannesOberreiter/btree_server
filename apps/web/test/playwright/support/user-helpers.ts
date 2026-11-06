@@ -12,6 +12,7 @@ interface UserFixtures {
   createAndUndo: () => Promise<void>;
   expectSaveRejected: () => Promise<void>;
   selectFirstHive: () => Promise<void>;
+  showNewestFirst: (table: string) => Promise<void>;
 }
 
 export const test = base.extend<UserFixtures>({
@@ -105,6 +106,18 @@ export const test = base.extend<UserFixtures>({
       await page.locator('.q-menu .q-item__section').first().click();
       await page.keyboard.press('Escape');
       await page.waitForTimeout(200);
+    });
+  },
+
+  // The tables sort by date ascending and show 10 rows. The seed data has
+  // hundreds of older rows, so a row that a test creates is on page 1 only
+  // when the table sorts newest first. Call this before page.goto.
+  showNewestFirst: async ({ page }, use) => {
+    await use(async (table: string) => {
+      await page.addInitScript(
+        key => localStorage.setItem(key, 'true'),
+        `table-sort-direction-${table}`
+      );
     });
   }
 });
