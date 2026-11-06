@@ -1,5 +1,26 @@
 # Changelog
 
+## [7.10.0](https://github.com/HannesOberreiter/btree_vue/compare/btree-client-v7.9.0...btree-client-v7.10.0) (2026-11-06)
+
+
+### Features
+
+* **stock:** book stock from tasks ([72cf306](https://github.com/HannesOberreiter/btree_vue/commit/72cf3062151606950309d615b6a29be9538d1b26))
+* **stock:** rename charges to stock movements in the interface ([426150b](https://github.com/HannesOberreiter/btree_vue/commit/426150bd9fbb5bf750f615de178bb40ebf0b0e49))
+* **stock:** show stock booking in multi-edit ([a94ddce](https://github.com/HannesOberreiter/btree_vue/commit/a94ddcea2a623c65976eadc35ccba8d18b190845))
+* **stock:** show the stock change in the save message ([589a7e2](https://github.com/HannesOberreiter/btree_vue/commit/589a7e2d170196021de7580b03a9b96d7c5f1256))
+
+
+### Bug Fixes
+
+* **charge:** make best before date optional ([93532a6](https://github.com/HannesOberreiter/btree_vue/commit/93532a61cf33a8c5baa4992db50fda2c7e690776))
+* **stock:** open stock menu below the type field ([107d3e1](https://github.com/HannesOberreiter/btree_vue/commit/107d3e17d1a951d0329fd838dbba61d41b7aef86))
+
+
+### Miscellaneous
+
+* **sugarwater:** share sugar water constants ([882b710](https://github.com/HannesOberreiter/btree_vue/commit/882b71092772d351bf6ee9b5037a4727ca702e97))
+
 ## [7.9.0](https://github.com/HannesOberreiter/btree_vue/compare/btree-client-v7.8.0...btree-client-v7.9.0) (2026-11-05)
 
 
