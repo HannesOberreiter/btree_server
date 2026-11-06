@@ -349,14 +349,14 @@ jobs:
           pnpm exec playwright install --with-deps chromium
           pnpm test:e2e:ci
 
-      # The report holds only seed data and the public demo login.
+      # test-results holds the traces and screenshots of the failed tests. They
+      # show only seed data and the public demo login.
       - name: Upload the report
         if: failure()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: e2e-report
           path: |
-            apps/web/test/playwright/report
             apps/web/test/playwright/test-results
             ${{ runner.temp }}/server.log
           retention-days: 7
