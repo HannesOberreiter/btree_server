@@ -710,7 +710,9 @@ export function useOptionsQuery(
 ) {
   const api = useApiFetch();
   return useQuery({
-    queryKey: ['option', table, order, direction],
+    // The modus filter is part of the key, so lists with and without
+    // inactive types do not share a cache entry.
+    queryKey: ['option', table, order, direction, modus],
     queryFn: () => {
       const payload = {
         order: unref(order),
