@@ -921,6 +921,10 @@ function extractRelevantDocumentation(
     size += item.text.length;
   }
 
+  // A single matching section above the limit is cut, not skipped.
+  if (selected.length === 0 && scored.length > 0)
+    return scored[0].text.trim().slice(0, MAX_DOCUMENTATION_CHARS);
+
   if (selected.length === 0)
     return documentationOverview(
       documentation,

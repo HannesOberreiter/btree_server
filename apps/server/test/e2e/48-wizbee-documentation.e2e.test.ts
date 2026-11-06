@@ -72,6 +72,15 @@ describe('WizBee documentation tool', () => {
     expect(documentation).toContain('### Wax Cycle');
   });
 
+  it('cuts a single matching section above the limit', async () => {
+    stubDocs(`## Other\nshort\n### Hive Scales\n${'scale '.repeat(10_000)}`);
+
+    const { documentation } = await fetchDocs({ query: 'scales' });
+
+    expect(documentation.startsWith('### Hive Scales')).toBe(true);
+    expect(documentation.length).toBeLessThanOrEqual(40_000);
+  });
+
   it('keeps large documentation below the tool result limit', async () => {
     const sections = Array.from(
       { length: 20 },
