@@ -157,6 +157,25 @@ jobs:
             exit 1
           fi
 
+  # Rulesets cannot restrict the source branch of a PR. PRs to main must come
+  # from beta or from the release-please branch of this repository.
+  pull-protection:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check the source branch of PRs to main
+        if: >-
+          github.event_name == 'pull_request' &&
+          github.base_ref == 'main' &&
+          (
+            github.event.pull_request.head.repo.full_name != github.repository ||
+            (github.head_ref != 'beta' && github.head_ref != 'release-please--branches--main')
+          )
+        env:
+          HEAD: ${{ github.event.pull_request.head.label }}
+        run: |
+          echo "::error::PRs to main must come from beta or release-please--branches--main of this repository, not from $HEAD."
+          exit 1
+
   gitleaks:
     runs-on: ubuntu-latest
     steps:
