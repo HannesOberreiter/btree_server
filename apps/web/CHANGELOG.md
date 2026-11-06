@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.10.4](https://github.com/HannesOberreiter/btree/compare/btree-client-v7.10.3...btree-client-v7.10.4) (2026-11-06)
+
+
+### Bug Fixes
+
+* **web:** open the calendar form only on a double click ([#289](https://github.com/HannesOberreiter/btree/issues/289)) ([9d02c0b](https://github.com/HannesOberreiter/btree/commit/9d02c0b7b9da89e9ca3d4cfa724680b88c04cd2a))
+
 ## [7.10.3](https://github.com/HannesOberreiter/btree/compare/btree-client-v7.10.2...btree-client-v7.10.3) (2026-11-06)
 
 
