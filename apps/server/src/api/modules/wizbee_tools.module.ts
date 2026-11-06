@@ -840,12 +840,27 @@ function enforceResultSize(toolName: string, result: unknown): unknown {
   return envelope;
 }
 
+/** Upper limit for the matched sections, well below MAX_TOOL_RESULT_CHARS. */
+const MAX_DOCUMENTATION_CHARS = 40_000;
+
+/** The section headings with a hint to ask again with a query. */
+function documentationOverview(documentation: string, note: string): string {
+  const headings = [...documentation.matchAll(/^#{2,3} .+$/gm)].map(
+    (match) => match[0],
+  );
+  return `${note} Call btreeDocumentation again with a query, for example a feature name from these sections, to get the matching sections.\n\n${headings.join('\n')}`;
+}
+
 function extractRelevantDocumentation(
   documentation: string,
   query?: string,
 ): string {
   const q = (query ?? '').toLowerCase();
-  if (!q.trim()) return documentation;
+  if (!q.trim())
+    return documentationOverview(
+      documentation,
+      'No query given. These are the sections of the b.tree documentation.',
+    );
 
   const headingMatches = [...documentation.matchAll(/^#{2,3} .+$/gm)];
   const sections = headingMatches.map((match, index) => ({
@@ -894,14 +909,32 @@ function extractRelevantDocumentation(
       return { section, text, score };
     })
     .filter((item) => item.score > 0)
-    .sort((a, b) => b.score - a.score || a.section.start - b.section.start)
-    .slice(0, 8)
-    .sort((a, b) => a.section.start - b.section.start);
+    .sort((a, b) => b.score - a.score || a.section.start - b.section.start);
 
-  if (scored.length === 0)
-    return documentation.slice(0, MAX_TOOL_RESULT_CHARS - 2000);
+  // Keep the best sections, at most 8, inside the size limit.
+  const selected: typeof scored = [];
+  let size = 0;
+  for (const item of scored) {
+    if (selected.length === 8) break;
+    if (size + item.text.length > MAX_DOCUMENTATION_CHARS) continue;
+    selected.push(item);
+    size += item.text.length;
+  }
 
-  return scored.map((item) => item.text.trim()).join('\n\n---\n\n');
+  // A single matching section above the limit is cut, not skipped.
+  if (selected.length === 0 && scored.length > 0)
+    return scored[0].text.trim().slice(0, MAX_DOCUMENTATION_CHARS);
+
+  if (selected.length === 0)
+    return documentationOverview(
+      documentation,
+      `No section matches the query "${query}".`,
+    );
+
+  return selected
+    .sort((a, b) => a.section.start - b.section.start)
+    .map((item) => item.text.trim())
+    .join('\n\n---\n\n');
 }
 
 /**
@@ -3073,13 +3106,13 @@ export function createWizBeeTools(
      */
     btreeDocumentation: tool({
       description:
-        'Fetch the b.tree beekeeping software documentation. Use this to answer questions about how to use the b.tree app, features, and functionality.',
+        'Fetch sections of the b.tree beekeeping software documentation. Use this to answer questions about how to use the b.tree app, features, and functionality.',
       inputSchema: z.object({
         query: z
           .string()
           .optional()
           .describe(
-            'Optional search term to filter documentation (for context, the full doc will be fetched)',
+            'Topic to look up, for example "stock", "offline" or "premium price". Without a query, the tool returns only the list of sections.',
           ),
       }),
       execute: async (input) => {
@@ -3703,7 +3736,8 @@ export const wizBeeToolDefinitions = [
   },
   {
     name: 'btreeDocumentation',
-    description: 'Fetch b.tree software documentation.',
+    description:
+      'Fetch b.tree software documentation sections for a query. Without a query, returns only the list of sections.',
     parameters: z.object({
       query: z.string().optional(),
     }),

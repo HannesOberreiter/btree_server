@@ -13850,7 +13850,7 @@ export interface paths {
     };
     get?: never;
     put?: never;
-    /** @description Fetch b.tree software documentation. */
+    /** @description Fetch b.tree software documentation sections for a query. Without a query, returns only the list of sections. */
     post: {
       parameters: {
         query?: never;
