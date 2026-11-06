@@ -20,6 +20,12 @@ import {
   taskSchedule,
   type TaskActor,
 } from './task.module.js';
+import {
+  lockTaskStock,
+  syncTaskStock,
+  updateWithTaskStock,
+  withTaskStock,
+} from './task_stock.module.js';
 
 const orderColumns = {
   id: 'harvests.id',
@@ -183,6 +189,7 @@ export function createHarvests(
   body: TaskCreateBody,
 ) {
   return db.transaction().execute(async (transaction) => {
+    await lockTaskStock(transaction, actor);
     if (body.type_id) {
       await requireHarvestTypeOwnership(
         transaction,
@@ -221,41 +228,55 @@ export function createHarvests(
         ids.push(Number(result.insertId));
       }
     }
+    await syncTaskStock(transaction, 'harvests', actor, ids, body.charges);
     return ids;
   });
 }
 
-export async function updateHarvests(
+export function updateHarvests(
   db: Kysely<DB>,
   actor: TaskActor,
   body: TaskPatchBody,
 ) {
-  if (body.data.type_id) {
-    await requireHarvestTypeOwnership(db, body.data.type_id, actor.companyId);
-  }
-  const values = harvestValues(body.data);
-  if (body.data.date && body.data.enddate === undefined) {
-    values.enddate = new Date(body.data.date);
-  }
-  const result = await db
-    .updateTable('harvests')
-    .set({
-      ...values,
-      edit_id: actor.beeId,
-      ...(actor.isLlm && { ai_updated_at: new Date() }),
-    })
-    .where('id', 'in', body.ids)
-    .where('user_id', '=', actor.companyId)
-    .executeTakeFirst();
-  return Number(result.numUpdatedRows);
+  return updateWithTaskStock(
+    db,
+    'harvests',
+    actor,
+    body.ids,
+    body.data.charges,
+    async (transaction) => {
+      if (body.data.type_id) {
+        await requireHarvestTypeOwnership(
+          transaction,
+          body.data.type_id,
+          actor.companyId,
+        );
+      }
+      const values = harvestValues(body.data);
+      if (body.data.date && body.data.enddate === undefined) {
+        values.enddate = new Date(body.data.date);
+      }
+      const result = await transaction
+        .updateTable('harvests')
+        .set({
+          ...values,
+          edit_id: actor.beeId,
+          ...(actor.isLlm && { ai_updated_at: new Date() }),
+        })
+        .where('id', 'in', body.ids)
+        .where('user_id', '=', actor.companyId)
+        .executeTakeFirst();
+      return Number(result.numUpdatedRows);
+    },
+  );
 }
 
-export function getHarvestsByIds(
+export async function getHarvestsByIds(
   db: Kysely<DB>,
   companyId: number,
   ids: number[],
 ) {
-  return db
+  const rows = await db
     .selectFrom('harvests')
     .leftJoin('hives', 'hives.id', 'harvests.hive_id')
     .leftJoin('harvest_types', 'harvest_types.id', 'harvests.type_id')
@@ -270,4 +291,5 @@ export function getHarvestsByIds(
     .where('harvests.id', 'in', ids)
     .where('harvests.user_id', '=', companyId)
     .execute();
+  return withTaskStock(db, companyId, 'harvests', rows);
 }

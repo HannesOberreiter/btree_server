@@ -77,7 +77,29 @@ function chargeProjection() {
   ] as const;
 }
 
-async function lockChargeLedger(db: Database, companyId: number) {
+/** A manual change of a booked charge row ends its link to the task. */
+const unlinkTask = {
+  feed_id: null,
+  treatment_id: null,
+  harvest_id: null,
+  checkup_id: null,
+};
+
+function sourceProjection() {
+  return sql<{
+    task: 'feed' | 'treatment' | 'harvest' | 'checkup';
+    id: number;
+    hive_id: number | null;
+    hive_name: string | null;
+  } | null>`CASE
+    WHEN charges.feed_id IS NOT NULL THEN JSON_OBJECT('task', 'feed', 'id', charges.feed_id, 'hive_id', source_hive.id, 'hive_name', source_hive.name)
+    WHEN charges.treatment_id IS NOT NULL THEN JSON_OBJECT('task', 'treatment', 'id', charges.treatment_id, 'hive_id', source_hive.id, 'hive_name', source_hive.name)
+    WHEN charges.harvest_id IS NOT NULL THEN JSON_OBJECT('task', 'harvest', 'id', charges.harvest_id, 'hive_id', source_hive.id, 'hive_name', source_hive.name)
+    WHEN charges.checkup_id IS NOT NULL THEN JSON_OBJECT('task', 'checkup', 'id', charges.checkup_id, 'hive_id', source_hive.id, 'hive_name', source_hive.name)
+    ELSE NULL END`.as('source');
+}
+
+export async function lockChargeLedger(db: Database, companyId: number) {
   await db
     .selectFrom('companies')
     .select('id')
@@ -97,8 +119,17 @@ function selectCharges(db: Database, companyId: number) {
     )
     .leftJoin('bees as creator', 'creator.id', 'charges.bee_id')
     .leftJoin('bees as editor', 'editor.id', 'charges.edit_id')
+    .leftJoin('feeds', 'feeds.id', 'charges.feed_id')
+    .leftJoin('treatments', 'treatments.id', 'charges.treatment_id')
+    .leftJoin('harvests', 'harvests.id', 'charges.harvest_id')
+    .leftJoin('checkups', 'checkups.id', 'charges.checkup_id')
+    .leftJoin('hives as source_hive', (join) =>
+      join.on(
+        sql<boolean>`source_hive.id = COALESCE(feeds.hive_id, treatments.hive_id, harvests.hive_id, checkups.hive_id)`,
+      ),
+    )
     .selectAll('charges')
-    .select(chargeProjection())
+    .select([...chargeProjection(), sourceProjection()])
     .where('charges.user_id', '=', companyId);
 }
 
@@ -358,6 +389,7 @@ export async function updateCharges(
         ...(body.data.url !== undefined && { url: body.data.url }),
         ...(body.data.type_id !== undefined && { type_id: body.data.type_id }),
         ...(body.data.note !== undefined && { note: body.data.note }),
+        ...unlinkTask,
         edit_id: beeId,
         ...(isLlm && { ai_updated_at: new Date() }),
       })
@@ -417,6 +449,7 @@ export async function deleteCharges(
         .set({
           deleted: !restore,
           deleted_at: restore ? null : sql<Date>`UTC_TIMESTAMP()`,
+          ...unlinkTask,
           edit_id: beeId,
         })
         .where('id', 'in', softIds)

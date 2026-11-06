@@ -68,7 +68,7 @@ export default function routes(
   server.patch(
     '/',
     {
-      preHandler: Guard.authorize([ROLES.read, ROLES.admin, ROLES.user]),
+      preHandler: Guard.authorize([ROLES.admin, ROLES.user]),
       schema: { body: chargeBatchUpdateSchema, response: { 200: z.number() } },
     },
     (req) =>

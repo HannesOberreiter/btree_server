@@ -1,4 +1,5 @@
 import { Mistral } from '@mistralai/mistralai';
+import type { DeltaMessage } from '@mistralai/mistralai/models/components';
 import { z } from 'zod';
 
 import type {
@@ -20,7 +21,7 @@ const mistralClient = new Mistral({ apiKey: mistralAI.key });
  * When bumping: verify on https://mistral.ai/pricing and the allowed model
  * IDs published at https://docs.mistral.ai/getting-started/models/.
  */
-const DEFAULT_MODEL = 'mistral-medium-3-5';
+const DEFAULT_MODEL = 'mistral-large-4-0';
 
 /**
  * Maximum number of agent-loop iterations. Each iteration is ONE Mistral
@@ -44,7 +45,7 @@ const MAX_HISTORY_MESSAGES = 20;
  * controller's 120 s hard timeout — which feels stuck to the user.
  *
  * 45 s is comfortably above the worst-case time-to-first-token we've seen on
- * `mistral-medium-3-5` for long tool-heavy turns, but well under the 120 s
+ * `mistral-medium-3-5` and `mistral-large-4-0` for long tool-heavy turns, but well under the 120 s
  * request cap so the client gets a real error chunk.
  */
 const MISTRAL_INACTIVITY_TIMEOUT_MS = 45_000;
@@ -212,6 +213,19 @@ function shouldPreloadBtreeDocs(message: string): boolean {
 }
 
 /**
+ * Get the answer text of a stream delta. Reasoning models send content as
+ * chunks: thinking chunks first, then text chunks. One event can hold the last
+ * thinking chunk and the first text chunk. The thinking is not shown.
+ */
+export function deltaText(content: DeltaMessage['content']): string {
+  if (typeof content === 'string') return content;
+  if (!Array.isArray(content)) return '';
+  return content
+    .map((chunk) => (chunk.type === 'text' ? chunk.text : ''))
+    .join('');
+}
+
+/**
  * Shape expected by Mistral's `tools` field on a chat request.
  * https://docs.mistral.ai/capabilities/function_calling/
  */
@@ -366,6 +380,8 @@ export class WizBeeAI {
             tools: mistralTools,
             toolChoice: 'auto',
             temperature: 0.3,
+            // The model always reasons; 'none' is not supported.
+            reasoningEffort: 'low',
           },
           { signal: stepController.signal },
         );
@@ -393,12 +409,10 @@ export class WizBeeAI {
             const delta = choice.delta;
 
             // Text delta
-            if (
-              typeof delta?.content === 'string' &&
-              delta.content.length > 0
-            ) {
-              assistantText += delta.content;
-              yield { type: 'text', content: delta.content };
+            const text = deltaText(delta?.content);
+            if (text.length > 0) {
+              assistantText += text;
+              yield { type: 'text', content: text };
             }
 
             // Tool-call deltas: accumulate by index (Mistral may split args

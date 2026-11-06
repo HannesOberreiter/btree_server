@@ -50,6 +50,10 @@ import {
 } from '../modules/statistic.module.js';
 import { deleteTasks } from '../modules/task.module.js';
 import {
+  summarizeTaskAmounts,
+  summarizeTaskStock,
+} from '../modules/task_stock.module.js';
+import {
   createTodos,
   deleteTodos,
   listTodos,
@@ -767,7 +771,8 @@ async function preValidateOwnership(
 /**
  * Maximum serialized size of a tool's result, in characters.
  *
- * Context budget math for `mistral-medium-2508` (131k tokens):
+ * Context budget math, kept at 131k tokens although the pinned model in
+ * wizbee.service.ts has a larger window:
  *   - System prompt + tool schemas + history ≈ 15-25k tokens
  *   - Safe headroom for reasoning + output ≈ 10k tokens
  *   - That leaves ≥95k tokens for ALL tool results combined.
@@ -1883,7 +1888,12 @@ export function createWizBeeTools(
           .optional()
           .describe('End date in YYYY-MM-DD format'),
         typeId: z.number().optional().describe('Feed type ID'),
-        amount: z.number().optional().describe('Feed quantity'),
+        amount: z
+          .number()
+          .optional()
+          .describe(
+            'Feed quantity per hive. Each hive in hiveIds gets this amount.',
+          ),
         note: z.string().max(2000).optional().describe('Optional notes'),
         done: z.boolean().optional().describe('Whether the feed is completed'),
       }),
@@ -1905,6 +1915,18 @@ export function createWizBeeTools(
           success: true,
           message: `Created ${createdCount} feed record${createdCount !== 1 ? 's' : ''}`,
           ids: Array.isArray(result) ? result : [result],
+          ...(await summarizeTaskAmounts(
+            db,
+            context.userId,
+            'feeds',
+            Array.isArray(result) ? result : [result],
+          )),
+          stockBookings: await summarizeTaskStock(
+            db,
+            context.userId,
+            'feeds',
+            Array.isArray(result) ? result : [result],
+          ),
         };
       },
     }),
@@ -1922,7 +1944,7 @@ export function createWizBeeTools(
           .optional()
           .describe('New end date in YYYY-MM-DD format'),
         typeId: z.number().optional().describe('New feed type ID'),
-        amount: z.number().optional().describe('New feed quantity'),
+        amount: z.number().optional().describe('New feed quantity per hive'),
         note: z.string().max(2000).optional().describe('New notes'),
         done: z.boolean().optional().describe('Mark as done or undone'),
       }),
@@ -1943,6 +1965,13 @@ export function createWizBeeTools(
           success: true,
           message: `Updated ${updatedCount} feed record${updatedCount !== 1 ? 's' : ''}`,
           updatedCount,
+          ...(await summarizeTaskAmounts(db, context.userId, 'feeds', ids)),
+          stockBookings: await summarizeTaskStock(
+            db,
+            context.userId,
+            'feeds',
+            ids,
+          ),
         };
       },
     }),
@@ -1987,7 +2016,12 @@ export function createWizBeeTools(
           .optional()
           .describe('End date in YYYY-MM-DD format'),
         typeId: z.number().optional().describe('Harvest type ID'),
-        amount: z.number().optional().describe('Harvest weight/quantity'),
+        amount: z
+          .number()
+          .optional()
+          .describe(
+            'Harvest weight/quantity per hive. Each hive in hiveIds gets this amount.',
+          ),
         water: z.number().optional().describe('Water content'),
         frames: z.number().optional().describe('Number of frames harvested'),
         charge: z
@@ -2019,6 +2053,18 @@ export function createWizBeeTools(
           success: true,
           message: `Created ${createdCount} harvest record${createdCount !== 1 ? 's' : ''}`,
           ids: Array.isArray(result) ? result : [result],
+          ...(await summarizeTaskAmounts(
+            db,
+            context.userId,
+            'harvests',
+            Array.isArray(result) ? result : [result],
+          )),
+          stockBookings: await summarizeTaskStock(
+            db,
+            context.userId,
+            'harvests',
+            Array.isArray(result) ? result : [result],
+          ),
         };
       },
     }),
@@ -2036,7 +2082,10 @@ export function createWizBeeTools(
           .optional()
           .describe('New end date in YYYY-MM-DD format'),
         typeId: z.number().optional().describe('New harvest type ID'),
-        amount: z.number().optional().describe('New harvest weight/quantity'),
+        amount: z
+          .number()
+          .optional()
+          .describe('New harvest weight/quantity per hive'),
         water: z.number().optional().describe('New water content'),
         frames: z.number().optional().describe('New number of frames'),
         charge: z
@@ -2064,6 +2113,13 @@ export function createWizBeeTools(
           success: true,
           message: `Updated ${updatedCount} harvest record${updatedCount !== 1 ? 's' : ''}`,
           updatedCount,
+          ...(await summarizeTaskAmounts(db, context.userId, 'harvests', ids)),
+          stockBookings: await summarizeTaskStock(
+            db,
+            context.userId,
+            'harvests',
+            ids,
+          ),
         };
       },
     }),
@@ -2110,7 +2166,12 @@ export function createWizBeeTools(
         typeId: z.number().optional().describe('Treatment type ID'),
         diseaseId: z.number().optional().describe('Disease ID'),
         vetId: z.number().optional().describe('Vet ID'),
-        amount: z.number().optional().describe('Treatment dose/amount'),
+        amount: z
+          .number()
+          .optional()
+          .describe(
+            'Treatment dose/amount per hive. Each hive in hiveIds gets this amount.',
+          ),
         wait: z.number().optional().describe('Waiting period in days'),
         temperature: z
           .number()
@@ -2142,6 +2203,18 @@ export function createWizBeeTools(
           success: true,
           message: `Created ${createdCount} treatment record${createdCount !== 1 ? 's' : ''}`,
           ids: Array.isArray(result) ? result : [result],
+          ...(await summarizeTaskAmounts(
+            db,
+            context.userId,
+            'treatments',
+            Array.isArray(result) ? result : [result],
+          )),
+          stockBookings: await summarizeTaskStock(
+            db,
+            context.userId,
+            'treatments',
+            Array.isArray(result) ? result : [result],
+          ),
         };
       },
     }),
@@ -2162,7 +2235,7 @@ export function createWizBeeTools(
         typeId: z.number().optional().describe('New treatment type ID'),
         diseaseId: z.number().optional().describe('New disease ID'),
         vetId: z.number().optional().describe('New vet ID'),
-        amount: z.number().optional().describe('New dose/amount'),
+        amount: z.number().optional().describe('New dose/amount per hive'),
         wait: z.number().optional().describe('New waiting period in days'),
         temperature: z.number().optional().describe('New temperature'),
         note: z.string().max(2000).optional().describe('New notes'),
@@ -2187,6 +2260,18 @@ export function createWizBeeTools(
           success: true,
           message: `Updated ${updatedCount} treatment record${updatedCount !== 1 ? 's' : ''}`,
           updatedCount,
+          ...(await summarizeTaskAmounts(
+            db,
+            context.userId,
+            'treatments',
+            ids,
+          )),
+          stockBookings: await summarizeTaskStock(
+            db,
+            context.userId,
+            'treatments',
+            ids,
+          ),
         };
       },
     }),
@@ -2279,6 +2364,12 @@ export function createWizBeeTools(
           success: true,
           message: `Created ${createdCount} checkup record${createdCount !== 1 ? 's' : ''}`,
           ids: Array.isArray(result) ? result : [result],
+          stockBookings: await summarizeTaskStock(
+            db,
+            context.userId,
+            'checkups',
+            Array.isArray(result) ? result : [result],
+          ),
         };
       },
     }),
@@ -2340,6 +2431,12 @@ export function createWizBeeTools(
           success: true,
           message: `Updated ${updatedCount} checkup record${updatedCount !== 1 ? 's' : ''}`,
           updatedCount,
+          stockBookings: await summarizeTaskStock(
+            db,
+            context.userId,
+            'checkups',
+            ids,
+          ),
         };
       },
     }),
@@ -2513,7 +2610,7 @@ export function createWizBeeTools(
      */
     fetchCharges: tool({
       description:
-        'Fetch charges (stock/inventory entries for goods like sugar, treatments, honey jars etc.). Use this to view stock movements and inventory.',
+        'Fetch charges: the stock movements of the warehouse (German: Lager, Lagerbuchungen) for stock items like sugar, treatments, honey jars etc. Use this to view stock movements, current stock levels (Lagerbestand) and inventory. Charge types are the stock items (Lagerartikel).',
       inputSchema: z.object({
         q: z
           .string()
@@ -2555,7 +2652,7 @@ export function createWizBeeTools(
 
     createCharge: tool({
       description:
-        'Create a new charge/stock entry (e.g. sugar, hive supplies, honey jars). Use this to record incoming stock or inventory items.',
+        'Create a new charge: a stock movement in the warehouse (German: Lagerbuchung) for a stock item (e.g. sugar, hive supplies, honey jars). Use this to record incoming or outgoing stock or inventory items.',
       inputSchema: z.object({
         date: z.string().describe('Date of the charge in YYYY-MM-DD format'),
         amount: z.number().optional().describe('Quantity/amount'),
@@ -2608,7 +2705,7 @@ export function createWizBeeTools(
 
     patchCharge: tool({
       description:
-        'Update one or more existing charge/stock records by their IDs.',
+        'Update one or more existing charges (stock movements, German: Lagerbuchungen) by their IDs.',
       inputSchema: z.object({
         ids: z
           .array(z.number())
@@ -2657,7 +2754,7 @@ export function createWizBeeTools(
 
     softDeleteCharge: tool({
       description:
-        'Soft-delete one or more charge/stock records by their IDs. Records are marked as deleted but not permanently removed.',
+        'Soft-delete one or more charges (stock movements, German: Lagerbuchungen) by their IDs. Records are marked as deleted but not permanently removed.',
       inputSchema: z.object({
         ids: z
           .array(z.number())
@@ -3282,7 +3379,12 @@ export const wizBeeToolDefinitions = [
       date: z.string(),
       enddate: z.string().optional(),
       typeId: z.number().optional(),
-      amount: z.number().optional(),
+      amount: z
+        .number()
+        .optional()
+        .describe(
+          'Feed quantity per hive. Each hive in hiveIds gets this amount.',
+        ),
       note: z.string().max(2000).optional(),
       done: z.boolean().optional(),
       repeat: z.number().min(0).max(10).optional(),
@@ -3297,7 +3399,7 @@ export const wizBeeToolDefinitions = [
       date: z.string().optional(),
       enddate: z.string().optional(),
       typeId: z.number().optional(),
-      amount: z.number().optional(),
+      amount: z.number().optional().describe('New feed quantity per hive'),
       note: z.string().max(2000).optional(),
       done: z.boolean().optional(),
     }),
@@ -3315,7 +3417,12 @@ export const wizBeeToolDefinitions = [
       date: z.string(),
       enddate: z.string().optional(),
       typeId: z.number().optional(),
-      amount: z.number().optional(),
+      amount: z
+        .number()
+        .optional()
+        .describe(
+          'Harvest weight/quantity per hive. Each hive in hiveIds gets this amount.',
+        ),
       water: z.number().optional(),
       frames: z.number().optional(),
       charge: z.string().max(24).optional(),
@@ -3333,7 +3440,10 @@ export const wizBeeToolDefinitions = [
       date: z.string().optional(),
       enddate: z.string().optional(),
       typeId: z.number().optional(),
-      amount: z.number().optional(),
+      amount: z
+        .number()
+        .optional()
+        .describe('New harvest weight/quantity per hive'),
       water: z.number().optional(),
       frames: z.number().optional(),
       charge: z.string().max(24).optional(),
@@ -3356,7 +3466,12 @@ export const wizBeeToolDefinitions = [
       typeId: z.number().optional(),
       diseaseId: z.number().optional(),
       vetId: z.number().optional(),
-      amount: z.number().optional(),
+      amount: z
+        .number()
+        .optional()
+        .describe(
+          'Treatment dose/amount per hive. Each hive in hiveIds gets this amount.',
+        ),
       wait: z.number().optional(),
       temperature: z.number().optional(),
       note: z.string().max(2000).optional(),
@@ -3375,7 +3490,7 @@ export const wizBeeToolDefinitions = [
       typeId: z.number().optional(),
       diseaseId: z.number().optional(),
       vetId: z.number().optional(),
-      amount: z.number().optional(),
+      amount: z.number().optional().describe('New dose/amount per hive'),
       wait: z.number().optional(),
       temperature: z.number().optional(),
       note: z.string().max(2000).optional(),
@@ -3490,7 +3605,8 @@ export const wizBeeToolDefinitions = [
   },
   {
     name: 'fetchCharges',
-    description: 'Fetch charges (stock/inventory entries).',
+    description:
+      'Fetch charges: stock movements of the warehouse (German: Lager, Lagerbuchungen), stock levels (Lagerbestand) and inventory.',
     parameters: z.object({
       q: z.string().optional(),
       includeDeleted: z.boolean().optional().default(false),
@@ -3500,7 +3616,7 @@ export const wizBeeToolDefinitions = [
   {
     name: 'createCharge',
     description:
-      'Create a new charge/stock entry (sugar, treatments, honey jars, etc.).',
+      'Create a new charge: a stock movement in the warehouse (German: Lagerbuchung) for sugar, treatments, honey jars, etc.',
     parameters: z.object({
       name: z.string().min(1).max(100),
       date: z.string(),
@@ -3517,7 +3633,7 @@ export const wizBeeToolDefinitions = [
   {
     name: 'patchCharge',
     description:
-      'Update one or more existing charge/stock records by their IDs.',
+      'Update one or more existing charges (stock movements, German: Lagerbuchungen) by their IDs.',
     parameters: z.object({
       ids: z.array(z.number()).min(1),
       name: z.string().optional(),
@@ -3534,7 +3650,8 @@ export const wizBeeToolDefinitions = [
   },
   {
     name: 'softDeleteCharge',
-    description: 'Soft-delete one or more charge/stock records by their IDs.',
+    description:
+      'Soft-delete one or more charges (stock movements, German: Lagerbuchungen) by their IDs.',
     parameters: z.object({
       ids: z.array(z.number()).min(1),
     }),

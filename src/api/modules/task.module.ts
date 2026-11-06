@@ -4,6 +4,7 @@ import { sql } from 'kysely';
 
 import type { Database } from '../../types/database.types.js';
 import type { DB } from '../../types/db.types.js';
+import { updateWithTaskStock } from './task_stock.module.js';
 
 export type TaskTable = 'feeds' | 'harvests' | 'treatments' | 'checkups';
 
@@ -219,23 +220,32 @@ export function taskSchedule(
   }));
 }
 
-export async function updateTaskStatus(
+export function updateTaskStatus(
   db: Database,
   table: TaskTable,
   actor: TaskActor,
   ids: number[],
   status: boolean,
 ) {
-  const result = await db
-    .updateTable(table)
-    .set({ edit_id: actor.beeId, done: status })
-    .where('id', 'in', ids)
-    .where('user_id', '=', actor.companyId)
-    .executeTakeFirst();
-  return Number(result.numUpdatedRows);
+  return updateWithTaskStock(
+    db,
+    table,
+    actor,
+    ids,
+    undefined,
+    async (transaction) => {
+      const result = await transaction
+        .updateTable(table)
+        .set({ edit_id: actor.beeId, done: status })
+        .where('id', 'in', ids)
+        .where('user_id', '=', actor.companyId)
+        .executeTakeFirst();
+      return Number(result.numUpdatedRows);
+    },
+  );
 }
 
-export async function updateTaskDates(
+export function updateTaskDates(
   db: Database,
   table: TaskTable,
   actor: TaskActor,
@@ -243,17 +253,26 @@ export async function updateTaskDates(
   start: string,
   end: string,
 ) {
-  const result = await db
-    .updateTable(table)
-    .set({
-      edit_id: actor.beeId,
-      date: new Date(start),
-      enddate: new Date(end),
-    })
-    .where('id', 'in', ids)
-    .where('user_id', '=', actor.companyId)
-    .executeTakeFirst();
-  return Number(result.numUpdatedRows);
+  return updateWithTaskStock(
+    db,
+    table,
+    actor,
+    ids,
+    undefined,
+    async (transaction) => {
+      const result = await transaction
+        .updateTable(table)
+        .set({
+          edit_id: actor.beeId,
+          date: new Date(start),
+          enddate: new Date(end),
+        })
+        .where('id', 'in', ids)
+        .where('user_id', '=', actor.companyId)
+        .executeTakeFirst();
+      return Number(result.numUpdatedRows);
+    },
+  );
 }
 
 export function deleteTasks(
@@ -263,34 +282,44 @@ export function deleteTasks(
   ids: number[],
   options: { hard: boolean; restore: boolean },
 ) {
-  return db.transaction().execute(async (transaction) => {
-    const rows = await transaction
-      .selectFrom(table)
-      .select(['id', 'deleted'])
-      .where('id', 'in', ids)
-      .where('user_id', '=', actor.companyId)
-      .execute();
-    const softIds: number[] = [];
-    const hardIds: number[] = [];
-    for (const row of rows) {
-      if ((row.deleted || options.hard) && !options.restore)
-        hardIds.push(row.id);
-      else softIds.push(row.id);
-    }
-    if (hardIds.length > 0) {
-      await transaction.deleteFrom(table).where('id', 'in', hardIds).execute();
-    }
-    if (softIds.length > 0) {
-      await transaction
-        .updateTable(table)
-        .set({
-          deleted: !options.restore,
-          deleted_at: options.restore ? null : new Date(),
-          edit_id: actor.beeId,
-        })
-        .where('id', 'in', softIds)
+  return updateWithTaskStock(
+    db,
+    table,
+    actor,
+    ids,
+    undefined,
+    async (transaction) => {
+      const rows = await transaction
+        .selectFrom(table)
+        .select(['id', 'deleted'])
+        .where('id', 'in', ids)
+        .where('user_id', '=', actor.companyId)
         .execute();
-    }
-    return rows;
-  });
+      const softIds: number[] = [];
+      const hardIds: number[] = [];
+      for (const row of rows) {
+        if ((row.deleted || options.hard) && !options.restore)
+          hardIds.push(row.id);
+        else softIds.push(row.id);
+      }
+      if (hardIds.length > 0) {
+        await transaction
+          .deleteFrom(table)
+          .where('id', 'in', hardIds)
+          .execute();
+      }
+      if (softIds.length > 0) {
+        await transaction
+          .updateTable(table)
+          .set({
+            deleted: !options.restore,
+            deleted_at: options.restore ? null : new Date(),
+            edit_id: actor.beeId,
+          })
+          .where('id', 'in', softIds)
+          .execute();
+      }
+      return rows;
+    },
+  );
 }

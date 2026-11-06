@@ -22,6 +22,12 @@ import {
   taskSchedule,
   type TaskActor,
 } from './task.module.js';
+import {
+  lockTaskStock,
+  syncTaskStock,
+  updateWithTaskStock,
+  withTaskStock,
+} from './task_stock.module.js';
 
 const orderColumns = {
   id: 'checkups.id',
@@ -280,6 +286,7 @@ export async function createCheckups(
     }
   }
   return db.transaction().execute(async (transaction) => {
+    await lockTaskStock(transaction, actor);
     if (input.type_id) {
       await requireCheckupTypeOwnership(
         transaction,
@@ -316,41 +323,55 @@ export async function createCheckups(
         ids.push(Number(result.insertId));
       }
     }
+    await syncTaskStock(transaction, 'checkups', actor, ids, input.charges);
     return ids;
   });
 }
 
-export async function updateCheckups(
+export function updateCheckups(
   db: Kysely<DB>,
   actor: TaskActor,
   body: CheckupBatchUpdateBody,
 ) {
-  if (body.data.type_id) {
-    await requireCheckupTypeOwnership(db, body.data.type_id, actor.companyId);
-  }
-  const values = checkupValues(body.data);
-  if (body.data.date && body.data.enddate === undefined) {
-    values.enddate = new Date(body.data.date);
-  }
-  const result = await db
-    .updateTable('checkups')
-    .set({
-      ...values,
-      edit_id: actor.beeId,
-      ...(actor.isLlm && { ai_updated_at: new Date() }),
-    })
-    .where('id', 'in', body.ids)
-    .where('user_id', '=', actor.companyId)
-    .executeTakeFirst();
-  return Number(result.numUpdatedRows);
+  return updateWithTaskStock(
+    db,
+    'checkups',
+    actor,
+    body.ids,
+    body.data.charges,
+    async (transaction) => {
+      if (body.data.type_id) {
+        await requireCheckupTypeOwnership(
+          transaction,
+          body.data.type_id,
+          actor.companyId,
+        );
+      }
+      const values = checkupValues(body.data);
+      if (body.data.date && body.data.enddate === undefined) {
+        values.enddate = new Date(body.data.date);
+      }
+      const result = await transaction
+        .updateTable('checkups')
+        .set({
+          ...values,
+          edit_id: actor.beeId,
+          ...(actor.isLlm && { ai_updated_at: new Date() }),
+        })
+        .where('id', 'in', body.ids)
+        .where('user_id', '=', actor.companyId)
+        .executeTakeFirst();
+      return Number(result.numUpdatedRows);
+    },
+  );
 }
 
-export function getCheckupsByIds(
+export async function getCheckupsByIds(
   db: Kysely<DB>,
   companyId: number,
   ids: number[],
 ) {
-  return db
+  const rows = await db
     .selectFrom('checkups')
     .leftJoin('hives', 'hives.id', 'checkups.hive_id')
     .leftJoin('checkup_types', 'checkup_types.id', 'checkups.type_id')
@@ -359,4 +380,5 @@ export function getCheckupsByIds(
     .where('checkups.id', 'in', ids)
     .where('checkups.user_id', '=', companyId)
     .execute();
+  return withTaskStock(db, companyId, 'checkups', rows);
 }

@@ -13,14 +13,17 @@ import { isPremium } from '../modules/premium.module.js';
 import type { WizBeeStreamBody } from '../schemas/wizbee.schema.js';
 
 /**
- * Mistral pricing (per 1K tokens) for `mistral-medium-3-5` (pinned in wizbee.service.ts).
- * Published pricing: €1.25 / €6.40 per 1M input/output tokens.
+ * Mistral pricing (per 1K tokens) for `mistral-large-4-0` (pinned in wizbee.service.ts).
+ * Published pricing: $0.70 / $2.10 per 1M input/output tokens. The USD values
+ * are used as EUR, which is a little higher than the real EUR price.
  * Verify against https://mistral.ai/pricing before adjusting.
  * Include a safety margin to account for potential price increases or tokenization differences.
  */
 const SAFETY_MARGIN = 1.5;
-const PRICE_PER_1K_INPUT_TOKENS_EUR = 0.00125 * SAFETY_MARGIN;
-const PRICE_PER_1K_OUTPUT_TOKENS_EUR = 0.0064 * SAFETY_MARGIN;
+const PRICE_PER_1K_INPUT_TOKENS_EUR = 0.0007 * SAFETY_MARGIN;
+const PRICE_PER_1K_OUTPUT_TOKENS_EUR = 0.0021 * SAFETY_MARGIN;
+/** `voxtral-mini-transcribe-3-0`: $0.0035 per audio minute, used as EUR. */
+const PRICE_PER_AUDIO_MINUTE_EUR = 0.0035 * SAFETY_MARGIN;
 
 const CONTEXT_OVERFLOW_RE =
   /maximum context length|context[_ ]?length|too large|prompt contains \d+ tokens/i;
@@ -43,6 +46,21 @@ function calculateTokenCost(inputTokens: number, outputTokens: number): number {
     (inputTokens / 1000) * PRICE_PER_1K_INPUT_TOKENS_EUR +
     (outputTokens / 1000) * PRICE_PER_1K_OUTPUT_TOKENS_EUR
   );
+}
+
+/**
+ * Calculate estimated cost of a transcription in EUR. Mistral bills
+ * transcriptions per audio minute, so the token cost is only a fallback.
+ */
+export function calculateTranscriptionCost(usage: {
+  promptTokens: number;
+  completionTokens: number;
+  audioSeconds: number | null;
+}): number {
+  if (usage.audioSeconds === null) {
+    return calculateTokenCost(usage.promptTokens, usage.completionTokens);
+  }
+  return (usage.audioSeconds / 60) * PRICE_PER_AUDIO_MINUTE_EUR;
 }
 
 /**
@@ -297,8 +315,8 @@ export default class WizBeeController {
    * puts `text` into the chat input and sends it as a normal WizBee question.
    *
    * Budget: we charge the transcription against the same monthly WizBee
-   * budget using the token usage Mistral returns (roughly equivalent to a
-   * cheap chat call) so users can't bypass the limit by spamming audio.
+   * budget using the audio length Mistral returns, so users can't bypass the
+   * limit by spamming audio.
    */
   static async transcribeWizBeeAudio(
     req: FastifyRequest,
@@ -349,10 +367,7 @@ export default class WizBeeController {
 
     // Log against the WizBee budget (best-effort).
     try {
-      const costEur = calculateTokenCost(
-        result.usage.promptTokens,
-        result.usage.completionTokens,
-      );
+      const costEur = calculateTranscriptionCost(result.usage);
       await logWizBeeRequest({
         beeId: req.session.user.bee_id,
         userId: req.session.user.user_id,

@@ -26,6 +26,12 @@ import {
   taskSchedule,
   type TaskActor,
 } from './task.module.js';
+import {
+  lockTaskStock,
+  syncTaskStock,
+  updateWithTaskStock,
+  withTaskStock,
+} from './task_stock.module.js';
 
 const orderColumns = {
   id: 'treatments.id',
@@ -237,6 +243,7 @@ export async function createTreatments(
     }
   }
   return db.transaction().execute(async (transaction) => {
+    await lockTaskStock(transaction, actor);
     if (input.type_id) {
       await requireTreatmentTypeOwnership(
         transaction,
@@ -289,51 +296,69 @@ export async function createTreatments(
         ids.push(Number(result.insertId));
       }
     }
+    await syncTaskStock(transaction, 'treatments', actor, ids, input.charges);
     return ids;
   });
 }
 
-export async function updateTreatments(
+export function updateTreatments(
   db: Kysely<DB>,
   actor: TaskActor,
   body: TaskPatchBody,
 ) {
-  if (body.data.type_id) {
-    await requireTreatmentTypeOwnership(db, body.data.type_id, actor.companyId);
-  }
-  if (body.data.disease_id) {
-    await requireTreatmentDiseaseOwnership(
-      db,
-      body.data.disease_id,
-      actor.companyId,
-    );
-  }
-  if (body.data.vet_id) {
-    await requireTreatmentVetOwnership(db, body.data.vet_id, actor.companyId);
-  }
-  const values = treatmentValues(body.data);
-  if (body.data.date && body.data.enddate === undefined) {
-    values.enddate = new Date(body.data.date);
-  }
-  const result = await db
-    .updateTable('treatments')
-    .set({
-      ...values,
-      edit_id: actor.beeId,
-      ...(actor.isLlm && { ai_updated_at: new Date() }),
-    })
-    .where('id', 'in', body.ids)
-    .where('user_id', '=', actor.companyId)
-    .executeTakeFirst();
-  return Number(result.numUpdatedRows);
+  return updateWithTaskStock(
+    db,
+    'treatments',
+    actor,
+    body.ids,
+    body.data.charges,
+    async (transaction) => {
+      if (body.data.type_id) {
+        await requireTreatmentTypeOwnership(
+          transaction,
+          body.data.type_id,
+          actor.companyId,
+        );
+      }
+      if (body.data.disease_id) {
+        await requireTreatmentDiseaseOwnership(
+          transaction,
+          body.data.disease_id,
+          actor.companyId,
+        );
+      }
+      if (body.data.vet_id) {
+        await requireTreatmentVetOwnership(
+          transaction,
+          body.data.vet_id,
+          actor.companyId,
+        );
+      }
+      const values = treatmentValues(body.data);
+      if (body.data.date && body.data.enddate === undefined) {
+        values.enddate = new Date(body.data.date);
+      }
+      const result = await transaction
+        .updateTable('treatments')
+        .set({
+          ...values,
+          edit_id: actor.beeId,
+          ...(actor.isLlm && { ai_updated_at: new Date() }),
+        })
+        .where('id', 'in', body.ids)
+        .where('user_id', '=', actor.companyId)
+        .executeTakeFirst();
+      return Number(result.numUpdatedRows);
+    },
+  );
 }
 
-export function getTreatmentsByIds(
+export async function getTreatmentsByIds(
   db: Kysely<DB>,
   companyId: number,
   ids: number[],
 ) {
-  return db
+  const rows = await db
     .selectFrom('treatments')
     .leftJoin('hives', 'hives.id', 'treatments.hive_id')
     .leftJoin('treatment_types', 'treatment_types.id', 'treatments.type_id')
@@ -355,4 +380,5 @@ export function getTreatmentsByIds(
     .where('treatments.id', 'in', ids)
     .where('treatments.user_id', '=', companyId)
     .execute();
+  return withTaskStock(db, companyId, 'treatments', rows);
 }
