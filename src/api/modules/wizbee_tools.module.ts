@@ -2609,7 +2609,7 @@ export function createWizBeeTools(
      */
     fetchCharges: tool({
       description:
-        'Fetch charges (stock/inventory entries for goods like sugar, treatments, honey jars etc.). Use this to view stock movements and inventory.',
+        'Fetch charges: the stock movements of the warehouse (German: Lager, Lagerbuchungen) for stock items like sugar, treatments, honey jars etc. Use this to view stock movements, current stock levels (Lagerbestand) and inventory. Charge types are the stock items (Lagerartikel).',
       inputSchema: z.object({
         q: z
           .string()
@@ -2651,7 +2651,7 @@ export function createWizBeeTools(
 
     createCharge: tool({
       description:
-        'Create a new charge/stock entry (e.g. sugar, hive supplies, honey jars). Use this to record incoming stock or inventory items.',
+        'Create a new charge: a stock movement in the warehouse (German: Lagerbuchung) for a stock item (e.g. sugar, hive supplies, honey jars). Use this to record incoming or outgoing stock or inventory items.',
       inputSchema: z.object({
         date: z.string().describe('Date of the charge in YYYY-MM-DD format'),
         amount: z.number().optional().describe('Quantity/amount'),
@@ -2704,7 +2704,7 @@ export function createWizBeeTools(
 
     patchCharge: tool({
       description:
-        'Update one or more existing charge/stock records by their IDs.',
+        'Update one or more existing charges (stock movements, German: Lagerbuchungen) by their IDs.',
       inputSchema: z.object({
         ids: z
           .array(z.number())
@@ -2753,7 +2753,7 @@ export function createWizBeeTools(
 
     softDeleteCharge: tool({
       description:
-        'Soft-delete one or more charge/stock records by their IDs. Records are marked as deleted but not permanently removed.',
+        'Soft-delete one or more charges (stock movements, German: Lagerbuchungen) by their IDs. Records are marked as deleted but not permanently removed.',
       inputSchema: z.object({
         ids: z
           .array(z.number())
@@ -3378,7 +3378,12 @@ export const wizBeeToolDefinitions = [
       date: z.string(),
       enddate: z.string().optional(),
       typeId: z.number().optional(),
-      amount: z.number().optional(),
+      amount: z
+        .number()
+        .optional()
+        .describe(
+          'Feed quantity per hive. Each hive in hiveIds gets this amount.',
+        ),
       note: z.string().max(2000).optional(),
       done: z.boolean().optional(),
       repeat: z.number().min(0).max(10).optional(),
@@ -3393,7 +3398,7 @@ export const wizBeeToolDefinitions = [
       date: z.string().optional(),
       enddate: z.string().optional(),
       typeId: z.number().optional(),
-      amount: z.number().optional(),
+      amount: z.number().optional().describe('New feed quantity per hive'),
       note: z.string().max(2000).optional(),
       done: z.boolean().optional(),
     }),
@@ -3411,7 +3416,12 @@ export const wizBeeToolDefinitions = [
       date: z.string(),
       enddate: z.string().optional(),
       typeId: z.number().optional(),
-      amount: z.number().optional(),
+      amount: z
+        .number()
+        .optional()
+        .describe(
+          'Harvest weight/quantity per hive. Each hive in hiveIds gets this amount.',
+        ),
       water: z.number().optional(),
       frames: z.number().optional(),
       charge: z.string().max(24).optional(),
@@ -3429,7 +3439,10 @@ export const wizBeeToolDefinitions = [
       date: z.string().optional(),
       enddate: z.string().optional(),
       typeId: z.number().optional(),
-      amount: z.number().optional(),
+      amount: z
+        .number()
+        .optional()
+        .describe('New harvest weight/quantity per hive'),
       water: z.number().optional(),
       frames: z.number().optional(),
       charge: z.string().max(24).optional(),
@@ -3452,7 +3465,12 @@ export const wizBeeToolDefinitions = [
       typeId: z.number().optional(),
       diseaseId: z.number().optional(),
       vetId: z.number().optional(),
-      amount: z.number().optional(),
+      amount: z
+        .number()
+        .optional()
+        .describe(
+          'Treatment dose/amount per hive. Each hive in hiveIds gets this amount.',
+        ),
       wait: z.number().optional(),
       temperature: z.number().optional(),
       note: z.string().max(2000).optional(),
@@ -3471,7 +3489,7 @@ export const wizBeeToolDefinitions = [
       typeId: z.number().optional(),
       diseaseId: z.number().optional(),
       vetId: z.number().optional(),
-      amount: z.number().optional(),
+      amount: z.number().optional().describe('New dose/amount per hive'),
       wait: z.number().optional(),
       temperature: z.number().optional(),
       note: z.string().max(2000).optional(),
@@ -3586,7 +3604,8 @@ export const wizBeeToolDefinitions = [
   },
   {
     name: 'fetchCharges',
-    description: 'Fetch charges (stock/inventory entries).',
+    description:
+      'Fetch charges: stock movements of the warehouse (German: Lager, Lagerbuchungen), stock levels (Lagerbestand) and inventory.',
     parameters: z.object({
       q: z.string().optional(),
       includeDeleted: z.boolean().optional().default(false),
@@ -3596,7 +3615,7 @@ export const wizBeeToolDefinitions = [
   {
     name: 'createCharge',
     description:
-      'Create a new charge/stock entry (sugar, treatments, honey jars, etc.).',
+      'Create a new charge: a stock movement in the warehouse (German: Lagerbuchung) for sugar, treatments, honey jars, etc.',
     parameters: z.object({
       name: z.string().min(1).max(100),
       date: z.string(),
@@ -3613,7 +3632,7 @@ export const wizBeeToolDefinitions = [
   {
     name: 'patchCharge',
     description:
-      'Update one or more existing charge/stock records by their IDs.',
+      'Update one or more existing charges (stock movements, German: Lagerbuchungen) by their IDs.',
     parameters: z.object({
       ids: z.array(z.number()).min(1),
       name: z.string().optional(),
@@ -3630,7 +3649,8 @@ export const wizBeeToolDefinitions = [
   },
   {
     name: 'softDeleteCharge',
-    description: 'Soft-delete one or more charge/stock records by their IDs.',
+    description:
+      'Soft-delete one or more charges (stock movements, German: Lagerbuchungen) by their IDs.',
     parameters: z.object({
       ids: z.array(z.number()).min(1),
     }),
