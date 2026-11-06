@@ -16,6 +16,9 @@ concurrency:
 env:
   ZONE_ID: 1496328
 
+permissions:
+  contents: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
