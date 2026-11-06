@@ -1,5 +1,14 @@
 # Changelog
 
+## [7.10.1](https://github.com/HannesOberreiter/btree_vue/compare/btree-client-v7.10.0...btree-client-v7.10.1) (2026-11-06)
+
+
+### Bug Fixes
+
+* **option:** active status and inactive types in option lists ([#323](https://github.com/HannesOberreiter/btree_vue/issues/323)) ([20d41b7](https://github.com/HannesOberreiter/btree_vue/commit/20d41b7d3ebe44443e280fcc90ff48418cbbc8f3))
+* **option:** hide inactive types in option lists ([d23bb93](https://github.com/HannesOberreiter/btree_vue/commit/d23bb933218c87db5cab1bfb5c92e9ba969fd72a))
+* **option:** show the active status in the edit form ([4350a84](https://github.com/HannesOberreiter/btree_vue/commit/4350a84d457748e0945aa6b35f775f45670974f2))
+
 ## [7.10.0](https://github.com/HannesOberreiter/btree_vue/compare/btree-client-v7.9.0...btree-client-v7.10.0) (2026-11-06)
 
 
