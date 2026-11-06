@@ -11,11 +11,11 @@ import { mistralAI } from '../config/environment.config.js';
 const mistralClient = new Mistral({ apiKey: mistralAI.key });
 
 /**
- * Pinned transcription model. Voxtral Mini is cheap, fast and sufficient for
+ * Pinned transcription model. Voxtral Mini Transcribe 3 is cheap, fast and sufficient for
  * short voice notes (≤ a few minutes). Bump after re-checking pricing and
  * availability at https://docs.mistral.ai/getting-started/models/.
  */
-const TRANSCRIPTION_MODEL = 'voxtral-mini-latest';
+const TRANSCRIPTION_MODEL = 'voxtral-mini-transcribe-3-0';
 const SUPPORTED_LANGUAGES = new Set(['en', 'de', 'fr', 'it']);
 
 const CONTEXT_BIAS: Record<string, string[]> = {

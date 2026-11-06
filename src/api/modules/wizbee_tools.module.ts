@@ -771,7 +771,8 @@ async function preValidateOwnership(
 /**
  * Maximum serialized size of a tool's result, in characters.
  *
- * Context budget math for `mistral-medium-2508` (131k tokens):
+ * Context budget math, kept at 131k tokens although the pinned model in
+ * wizbee.service.ts has a larger window:
  *   - System prompt + tool schemas + history ≈ 15-25k tokens
  *   - Safe headroom for reasoning + output ≈ 10k tokens
  *   - That leaves ≥95k tokens for ALL tool results combined.

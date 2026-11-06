@@ -13,14 +13,15 @@ import { isPremium } from '../modules/premium.module.js';
 import type { WizBeeStreamBody } from '../schemas/wizbee.schema.js';
 
 /**
- * Mistral pricing (per 1K tokens) for `mistral-medium-3-5` (pinned in wizbee.service.ts).
- * Published pricing: €1.25 / €6.40 per 1M input/output tokens.
+ * Mistral pricing (per 1K tokens) for `mistral-large-4-0` (pinned in wizbee.service.ts).
+ * Published pricing: $0.70 / $2.10 per 1M input/output tokens. The USD values
+ * are used as EUR, which is a little higher than the real EUR price.
  * Verify against https://mistral.ai/pricing before adjusting.
  * Include a safety margin to account for potential price increases or tokenization differences.
  */
 const SAFETY_MARGIN = 1.5;
-const PRICE_PER_1K_INPUT_TOKENS_EUR = 0.00125 * SAFETY_MARGIN;
-const PRICE_PER_1K_OUTPUT_TOKENS_EUR = 0.0064 * SAFETY_MARGIN;
+const PRICE_PER_1K_INPUT_TOKENS_EUR = 0.0007 * SAFETY_MARGIN;
+const PRICE_PER_1K_OUTPUT_TOKENS_EUR = 0.0021 * SAFETY_MARGIN;
 
 const CONTEXT_OVERFLOW_RE =
   /maximum context length|context[_ ]?length|too large|prompt contains \d+ tokens/i;
