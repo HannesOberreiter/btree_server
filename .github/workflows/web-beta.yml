@@ -9,6 +9,10 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
+concurrency:
+  group: beta-deploy
+  cancel-in-progress: false
+
 env:
   ZONE_ID: 1496328
 
@@ -50,41 +54,14 @@ jobs:
       - name: List output files
         run: ls
 
-      - name: Upload Files to Bunny Storage
+      - name: Upload files to Bunny Storage
         env:
           AWS_ACCESS_KEY_ID: beta-btree-at
           AWS_SECRET_ACCESS_KEY: ${{ secrets.BUNNY_STORAGE_PASSWORD }}
           AWS_DEFAULT_REGION: de
           BUNNY_S3_ENDPOINT: https://de-s3.storage.bunnycdn.com
           BUNNY_STORAGE_ZONE: beta-btree-at
-        run: |
-          aws configure set default.s3.addressing_style path
-
-          aws s3 sync ./dist/pwa "s3://${BUNNY_STORAGE_ZONE}/" \
-            --endpoint-url "${BUNNY_S3_ENDPOINT}" \
-            --delete \
-            --cache-control "no-cache"
-
-          aws s3 cp ./dist/pwa "s3://${BUNNY_STORAGE_ZONE}/" \
-            --endpoint-url "${BUNNY_S3_ENDPOINT}" \
-            --recursive \
-            --exclude "*" \
-            --include "*.css" \
-            --include "*.js" \
-            --include "*.mjs" \
-            --include "*.woff" \
-            --include "*.woff2" \
-            --include "*.ttf" \
-            --include "*.eot" \
-            --include "*.png" \
-            --include "*.jpg" \
-            --include "*.jpeg" \
-            --include "*.gif" \
-            --include "*.svg" \
-            --include "*.webp" \
-            --include "*.avif" \
-            --include "*.ico" \
-            --cache-control "public, max-age=31536000, immutable"
+        run: bash scripts/upload-bunny.sh dist/pwa
 
       - name: Purge BunnyCDN
         uses: fjogeleit/http-request-action@v1
