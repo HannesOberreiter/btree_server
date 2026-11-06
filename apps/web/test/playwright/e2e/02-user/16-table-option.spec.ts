@@ -1,6 +1,9 @@
 import Chance from 'chance';
 import { expect, test } from '../../support/user-helpers';
 
+const backendURL =
+  process.env.PLAYWRIGHT_BACKEND_URL ?? 'http://localhost:8101';
+
 const chance = new Chance(12_345);
 
 test.describe('user - Option Table', () => {
@@ -32,10 +35,13 @@ test.describe('user - Option Table', () => {
     let typeId = 0;
 
     try {
-      const created = await request.post('/api/v1/option/checkup_types', {
-        headers,
-        data: { name }
-      });
+      const created = await request.post(
+        `${backendURL}/api/v1/option/checkup_types`,
+        {
+          headers,
+          data: { name }
+        }
+      );
       expect(created.ok()).toBe(true);
       typeId = ((await created.json()) as { id: number }).id;
       await page.reload();
@@ -64,10 +70,13 @@ test.describe('user - Option Table', () => {
       await saveEdit();
     } finally {
       if (typeId > 0) {
-        await request.patch('/api/v1/option/checkup_types/batchDelete', {
-          headers,
-          data: { ids: [typeId] }
-        });
+        await request.patch(
+          `${backendURL}/api/v1/option/checkup_types/batchDelete`,
+          {
+            headers,
+            data: { ids: [typeId] }
+          }
+        );
       }
     }
   });

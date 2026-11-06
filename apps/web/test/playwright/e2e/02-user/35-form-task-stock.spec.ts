@@ -1,6 +1,9 @@
 import type { Response } from '@playwright/test';
 import { expect, test } from '../../support/user-helpers';
 
+const backendURL =
+  process.env.PLAYWRIGHT_BACKEND_URL ?? 'http://localhost:8101';
+
 function isPost(path: string) {
   return (response: Response) =>
     response.request().method() === 'POST' &&
@@ -26,10 +29,13 @@ test.describe('user - Task stock booking', () => {
         [activeName, true],
         [inactiveName, false]
       ] as const) {
-        const response = await request.post('/api/v1/option/charge_types', {
-          headers,
-          data: { name, modus }
-        });
+        const response = await request.post(
+          `${backendURL}/api/v1/option/charge_types`,
+          {
+            headers,
+            data: { name, modus }
+          }
+        );
         expect(response.ok()).toBe(true);
         chargeTypeIds.push(((await response.json()) as { id: number }).id);
       }
@@ -46,10 +52,13 @@ test.describe('user - Task stock booking', () => {
       await expect(items.filter({ hasText: inactiveName })).toHaveCount(0);
     } finally {
       if (chargeTypeIds.length > 0) {
-        await request.patch('/api/v1/option/charge_types/batchDelete', {
-          headers,
-          data: { ids: chargeTypeIds }
-        });
+        await request.patch(
+          `${backendURL}/api/v1/option/charge_types/batchDelete`,
+          {
+            headers,
+            data: { ids: chargeTypeIds }
+          }
+        );
       }
     }
   });
@@ -74,10 +83,13 @@ test.describe('user - Task stock booking', () => {
     const chargeIds: number[] = [];
 
     try {
-      const chargeResponse = await request.post('/api/v1/option/charge_types', {
-        headers,
-        data: { name: chargeName, unit: 'kg' }
-      });
+      const chargeResponse = await request.post(
+        `${backendURL}/api/v1/option/charge_types`,
+        {
+          headers,
+          data: { name: chargeName, unit: 'kg' }
+        }
+      );
       expect(chargeResponse.ok()).toBe(true);
       chargeTypeId = ((await chargeResponse.json()) as { id: number }).id;
 
@@ -149,10 +161,13 @@ test.describe('user - Task stock booking', () => {
           .filter({ hasText: new RegExp(`−7[.,]9 kg ${chargeName}`) })
       ).toBeVisible();
       feedIds.push(...((await booked.json()) as number[]));
-      const bookedGet = await request.post('/api/v1/feed/batchGet', {
-        headers,
-        data: { ids: feedIds }
-      });
+      const bookedGet = await request.post(
+        `${backendURL}/api/v1/feed/batchGet`,
+        {
+          headers,
+          data: { ids: feedIds }
+        }
+      );
       const bookedRows = (await bookedGet.json()) as {
         charges: { id: number }[];
       }[];
@@ -193,28 +208,37 @@ test.describe('user - Task stock booking', () => {
       await tableEditRow('form-charge', feedName);
     } finally {
       if (chargeIds.length > 0) {
-        await request.patch('/api/v1/charge/batchDelete?hard=true', {
-          headers,
-          data: { ids: chargeIds }
-        });
+        await request.patch(
+          `${backendURL}/api/v1/charge/batchDelete?hard=true`,
+          {
+            headers,
+            data: { ids: chargeIds }
+          }
+        );
       }
       if (feedIds.length > 0) {
-        await request.patch('/api/v1/feed/batchDelete?hard=true', {
+        await request.patch(`${backendURL}/api/v1/feed/batchDelete?hard=true`, {
           headers,
           data: { ids: feedIds }
         });
       }
       if (feedTypeId > 0) {
-        await request.patch('/api/v1/option/feed_types/batchDelete', {
-          headers,
-          data: { ids: [feedTypeId] }
-        });
+        await request.patch(
+          `${backendURL}/api/v1/option/feed_types/batchDelete`,
+          {
+            headers,
+            data: { ids: [feedTypeId] }
+          }
+        );
       }
       if (chargeTypeId > 0) {
-        await request.patch('/api/v1/option/charge_types/batchDelete', {
-          headers,
-          data: { ids: [chargeTypeId] }
-        });
+        await request.patch(
+          `${backendURL}/api/v1/option/charge_types/batchDelete`,
+          {
+            headers,
+            data: { ids: [chargeTypeId] }
+          }
+        );
       }
     }
   });
@@ -236,20 +260,26 @@ test.describe('user - Task stock booking', () => {
     const feedIds: number[] = [];
 
     try {
-      const chargeResponse = await request.post('/api/v1/option/charge_types', {
-        headers,
-        data: { name: chargeName, unit: 'kg' }
-      });
+      const chargeResponse = await request.post(
+        `${backendURL}/api/v1/option/charge_types`,
+        {
+          headers,
+          data: { name: chargeName, unit: 'kg' }
+        }
+      );
       expect(chargeResponse.ok()).toBe(true);
       chargeTypeId = ((await chargeResponse.json()) as { id: number }).id;
-      const feedTypeResponse = await request.post('/api/v1/option/feed_types', {
-        headers,
-        data: { name: feedName, unit: 'l' }
-      });
+      const feedTypeResponse = await request.post(
+        `${backendURL}/api/v1/option/feed_types`,
+        {
+          headers,
+          data: { name: feedName, unit: 'l' }
+        }
+      );
       expect(feedTypeResponse.ok()).toBe(true);
       feedTypeId = ((await feedTypeResponse.json()) as { id: number }).id;
       const recipeResponse = await request.patch(
-        `/api/v1/option/feed_types/${feedTypeId}/recipe`,
+        `${backendURL}/api/v1/option/feed_types/${feedTypeId}/recipe`,
         {
           headers,
           data: {
@@ -265,16 +295,19 @@ test.describe('user - Task stock booking', () => {
         }
       );
       expect(recipeResponse.ok()).toBe(true);
-      const hiveResponse = await request.get('/api/v1/hive?limit=2', {
-        headers
-      });
+      const hiveResponse = await request.get(
+        `${backendURL}/api/v1/hive?limit=2`,
+        {
+          headers
+        }
+      );
       const hives = (
         (await hiveResponse.json()) as { results: { id: number }[] }
       ).results;
       expect(hives).toHaveLength(2);
       // Two booked feedings: 7.9 kg and 15.8 kg.
       for (const [index, amount] of [10, 20].entries()) {
-        const feedResponse = await request.post('/api/v1/feed', {
+        const feedResponse = await request.post(`${backendURL}/api/v1/feed`, {
           headers,
           data: {
             hive_ids: [hives[index]!.id],
@@ -340,7 +373,7 @@ test.describe('user - Task stock booking', () => {
           .filter({ hasText: new RegExp(`\\+27[.,]65 kg ${chargeName}`) })
       ).toBeVisible();
       const rows = (await (
-        await request.post('/api/v1/feed/batchGet', {
+        await request.post(`${backendURL}/api/v1/feed/batchGet`, {
           headers,
           data: { ids: feedIds }
         })
@@ -348,22 +381,28 @@ test.describe('user - Task stock booking', () => {
       expect(rows.map(row => row.charges)).toEqual([[], []]);
     } finally {
       if (feedIds.length > 0) {
-        await request.patch('/api/v1/feed/batchDelete?hard=true', {
+        await request.patch(`${backendURL}/api/v1/feed/batchDelete?hard=true`, {
           headers,
           data: { ids: feedIds }
         });
       }
       if (feedTypeId > 0) {
-        await request.patch('/api/v1/option/feed_types/batchDelete', {
-          headers,
-          data: { ids: [feedTypeId] }
-        });
+        await request.patch(
+          `${backendURL}/api/v1/option/feed_types/batchDelete`,
+          {
+            headers,
+            data: { ids: [feedTypeId] }
+          }
+        );
       }
       if (chargeTypeId > 0) {
-        await request.patch('/api/v1/option/charge_types/batchDelete', {
-          headers,
-          data: { ids: [chargeTypeId] }
-        });
+        await request.patch(
+          `${backendURL}/api/v1/option/charge_types/batchDelete`,
+          {
+            headers,
+            data: { ids: [chargeTypeId] }
+          }
+        );
       }
     }
   });

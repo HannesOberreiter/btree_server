@@ -1,0 +1,30 @@
+[
+  {
+    "id": 1,
+    "name": "Cappings wax",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 2,
+    "name": "Old combs",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 3,
+    "name": "Brood combs",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  },
+  {
+    "id": 4,
+    "name": "Mixture",
+    "favorite": 0,
+    "modus": 1,
+    "user_id": 1
+  }
+]
