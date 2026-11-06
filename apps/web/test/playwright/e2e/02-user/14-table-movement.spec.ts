@@ -1,9 +1,13 @@
 import { expect, test } from '../../support/user-helpers';
 
+const backendURL =
+  process.env.PLAYWRIGHT_BACKEND_URL ?? 'http://localhost:8101';
+
 test.describe('user - Movement Table', () => {
   const form = 'form-movement';
 
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({ page, showNewestFirst }) => {
+    await showNewestFirst('movedate');
     await page.goto('/table/movement');
   });
 
@@ -22,7 +26,7 @@ test.describe('user - Movement Table', () => {
       await expect(page.locator('.q-table')).toBeAttached();
       const apiaryResponse = await page
         .context()
-        .request.post('/api/v1/apiary', {
+        .request.post(`${backendURL}/api/v1/apiary`, {
           headers,
           data: { name: apiaryName }
         });
@@ -63,15 +67,18 @@ test.describe('user - Movement Table', () => {
       if (movementIds.length > 0) {
         await page
           .context()
-          .request.patch('/api/v1/movedate/batchDelete?hard=true', {
-            headers,
-            data: { ids: movementIds }
-          });
+          .request.patch(
+            `${backendURL}/api/v1/movedate/batchDelete?hard=true`,
+            {
+              headers,
+              data: { ids: movementIds }
+            }
+          );
       }
       if (apiaryIds.length > 0) {
         await page
           .context()
-          .request.patch('/api/v1/apiary/batchDelete?hard=true', {
+          .request.patch(`${backendURL}/api/v1/apiary/batchDelete?hard=true`, {
             headers,
             data: { ids: apiaryIds }
           });

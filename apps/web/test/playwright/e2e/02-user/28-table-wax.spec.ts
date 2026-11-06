@@ -1,8 +1,14 @@
-import { expect, test } from '../../support/user-helpers';
+import { expect, test, type Locator } from '../../support/user-helpers';
 
 const backendURL =
   process.env.PLAYWRIGHT_BACKEND_URL ?? 'http://localhost:8101';
 const apiOrigin = process.env.PLAYWRIGHT_API_ORIGIN ?? 'http://localhost:8001';
+
+function field(input: Locator) {
+  return input.locator(
+    'xpath=ancestor::*[contains(concat(" ", normalize-space(@class), " "), " q-field ")][1]'
+  );
+}
 
 test.describe('user - Wax Cycle', () => {
   test('offers inline creation for origin types and products', async ({
@@ -13,30 +19,25 @@ test.describe('user - Wax Cycle', () => {
     await dataCy('wax-book-operation').click();
     await expect(dataCy('wax-required-hint')).toBeAttached();
     await expect(dataCy('wax-operation-date')).toHaveAccessibleName(/\*$/);
-    await expect(
-      dataCy('wax-origin-type').locator('input')
-    ).toHaveAccessibleName(/\*$/);
-    await expect(
-      dataCy('wax-output-product').locator('input')
-    ).toHaveAccessibleName(/\*$/);
+    // q-select puts data-cy on its input, not on the q-field.
+    await expect(dataCy('wax-origin-type')).toHaveAccessibleName(/\*$/);
+    await expect(dataCy('wax-output-product')).toHaveAccessibleName(/\*$/);
     await expect(dataCy('wax-output-quantity')).toHaveAccessibleName(/\*$/);
     await expect(dataCy('wax-reference')).not.toHaveAccessibleName(/\*$/);
     await expect(dataCy('wax-hives-optional')).toBeVisible();
 
     await dataCy('wax-save').click();
-    await expect(
-      dataCy('wax-output-quantity').locator(
-        'xpath=ancestor::*[contains(concat(" ", normalize-space(@class), " "), " q-field ")][1]'
-      )
-    ).toHaveClass(/q-field--error/);
-    await expect(dataCy('wax-origin-type').locator('input')).not.toHaveValue(
-      ''
+    await expect(field(dataCy('wax-output-quantity'))).toHaveClass(
+      /q-field--error/
     );
+    await expect(dataCy('wax-origin-type')).not.toHaveValue('');
     await expect(
-      dataCy('wax-origin-type').locator('[data-cy="dropdown-keyboard"]')
+      field(dataCy('wax-origin-type')).locator('[data-cy="dropdown-keyboard"]')
     ).toHaveCount(0);
     await expect(
-      dataCy('wax-output-product').locator('[data-cy="dropdown-keyboard"]')
+      field(dataCy('wax-output-product')).locator(
+        '[data-cy="dropdown-keyboard"]'
+      )
     ).toHaveCount(0);
 
     await dataCy('wax-origin-type').click();
