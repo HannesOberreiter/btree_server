@@ -1,5 +1,22 @@
 # Changelog
 
+## [7.12.0](https://github.com/HannesOberreiter/btree_server/compare/btree-server-v7.11.0...btree-server-v7.12.0) (2026-11-06)
+
+
+### Features
+
+* **db:** add stock recipe and task link tables ([5acdda6](https://github.com/HannesOberreiter/btree_server/commit/5acdda60675847a2a597d987197b0bbe6309c3be))
+* **stock:** book from the new recipe on a type change ([cd62fee](https://github.com/HannesOberreiter/btree_server/commit/cd62feedafe4af9f9eec1f83168bcc4f7fc7439f))
+* **stock:** book stock from tasks ([8e2bf1e](https://github.com/HannesOberreiter/btree_server/commit/8e2bf1e73e9c90afe1832ab150f72b83c4b4563d))
+* **wizbee:** move to Mistral Large 4 and Voxtral Transcribe 3 ([cf1b204](https://github.com/HannesOberreiter/btree_server/commit/cf1b204785894b9d3be6b88f725f5150c4bd82ff))
+* **wizbee:** report stored task amounts in tool results ([88705fd](https://github.com/HannesOberreiter/btree_server/commit/88705fd8303f99661f54afc011f4d7a5bce5e395))
+
+
+### Bug Fixes
+
+* **charge:** deny read-only role on charge update ([d8fc615](https://github.com/HannesOberreiter/btree_server/commit/d8fc61554913a68eef5b1e09c9359777bcb1b9db))
+* **wizbee:** charge voice notes per audio minute ([eed5e05](https://github.com/HannesOberreiter/btree_server/commit/eed5e05b98b8c91c133fd6411284bd2a767c57f1))
+
 ## [7.11.0](https://github.com/HannesOberreiter/btree_server/compare/btree-server-v7.10.0...btree-server-v7.11.0) (2026-11-05)
 
 
