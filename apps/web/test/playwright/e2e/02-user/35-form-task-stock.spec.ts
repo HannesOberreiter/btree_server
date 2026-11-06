@@ -8,6 +8,52 @@ function isPost(path: string) {
 }
 
 test.describe('user - Task stock booking', () => {
+  test('lists only active stock items in the recipe', async ({
+    page,
+    dataCy
+  }) => {
+    const suffix = Date.now();
+    const activeName = `E2E sugar ${suffix}`;
+    const inactiveName = `E2E old sugar ${suffix}`;
+    await page.goto('/setting/option/feed_types');
+    await expect(page.locator('.q-table')).toBeAttached();
+    const request = page.context().request;
+    const headers = { origin: new URL(page.url()).origin };
+    const chargeTypeIds: number[] = [];
+
+    try {
+      for (const [name, modus] of [
+        [activeName, true],
+        [inactiveName, false]
+      ] as const) {
+        const response = await request.post('/api/v1/option/charge_types', {
+          headers,
+          data: { name, modus }
+        });
+        expect(response.ok()).toBe(true);
+        chargeTypeIds.push(((await response.json()) as { id: number }).id);
+      }
+
+      // The type table also loads all stock items, inactive ones included.
+      await page.reload();
+      await expect(page.locator('.q-table')).toBeAttached();
+      await dataCy('btn-table-new').click();
+      const recipe = dataCy('form-stock-recipe');
+      await recipe.getByRole('button').last().click();
+      await recipe.getByRole('combobox').first().click();
+      const items = page.locator('.q-menu .q-item');
+      await expect(items.filter({ hasText: activeName })).toHaveCount(1);
+      await expect(items.filter({ hasText: inactiveName })).toHaveCount(0);
+    } finally {
+      if (chargeTypeIds.length > 0) {
+        await request.patch('/api/v1/option/charge_types/batchDelete', {
+          headers,
+          data: { ids: chargeTypeIds }
+        });
+      }
+    }
+  });
+
   test('saves a recipe with the type and books stock from a feeding', async ({
     page,
     dataCy,

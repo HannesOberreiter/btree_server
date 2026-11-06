@@ -157,6 +157,7 @@ function onReset() {
     <FormInputCheckbox
       v-model="state.modus"
       label="active"
+      table-id="modus"
       :values="values"
       :reset="reset"
       status-active="yes"

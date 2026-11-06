@@ -15,6 +15,11 @@ const props = defineProps({
   label: {
     default: 'status'
   },
+  // Column of the value, when it differs from the label.
+  tableId: {
+    type: String,
+    default: null
+  },
   falseValue: {
     type: Boolean,
     default: false
@@ -44,7 +49,7 @@ const { modelValue } = useVModels(props, emit);
 const resetValue = unref(modelValue.value);
 const { values, reset } = toRefs(props);
 const multipleValues = computed(() =>
-  formCheckMultipleValues(values.value, props.label)
+  formCheckMultipleValues(values.value, props.tableId ?? props.label)
 );
 const disable = ref(multipleValues.value);
 
@@ -62,7 +67,9 @@ function setValues() {
     editValues(true);
   } else if (values.value && !isEmpty(values.value)) {
     modelValue.value =
-      values.value[0][props.label === 'status' ? 'done' : props.label];
+      values.value[0][
+        props.tableId ?? (props.label === 'status' ? 'done' : props.label)
+      ];
   } else {
     modelValue.value = resetValue;
   }
