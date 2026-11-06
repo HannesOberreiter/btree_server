@@ -1,6 +1,6 @@
 # b.tree Beekeeping Webapplication
 
-[![server-test](https://github.com/HannesOberreiter/btree/actions/workflows/server-test.yml/badge.svg)](https://github.com/HannesOberreiter/btree/actions/workflows/server-test.yml)
+[![ci](https://github.com/HannesOberreiter/btree/actions/workflows/ci.yml/badge.svg)](https://github.com/HannesOberreiter/btree/actions/workflows/ci.yml)
 [![release-please](https://github.com/HannesOberreiter/btree/actions/workflows/release-please.yml/badge.svg)](https://github.com/HannesOberreiter/btree/actions/workflows/release-please.yml)
 
 The b.tree application is for managing your honey bee colonies in a modern way. More infos at <https://www.btree.at>.
