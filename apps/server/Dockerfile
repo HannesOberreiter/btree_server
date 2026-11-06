@@ -7,7 +7,7 @@ ARG SERVICE_VERSION=unknown
 ENV SERVICE_NAME=btree-server
 ENV SERVICE_VERSION=${SERVICE_VERSION}
 LABEL org.opencontainers.image.title="btree-server" \
-      org.opencontainers.image.source="https://github.com/HannesOberreiter/btree_server" \
+      org.opencontainers.image.source="https://github.com/HannesOberreiter/btree" \
       org.opencontainers.image.revision="${SERVICE_VERSION}"
 
 # Create app directory

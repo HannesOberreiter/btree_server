@@ -3,15 +3,15 @@
   "private": true,
   "description": "b.tree backend based on Node.js, Fastify, and Kysely",
   "keywords": [],
-  "homepage": "https://github.com/HannesOberreiter/btree_server#readme",
+  "homepage": "https://github.com/HannesOberreiter/btree#readme",
   "bugs": {
-    "url": "https://github.com/HannesOberreiter/btree_server/issues"
+    "url": "https://github.com/HannesOberreiter/btree/issues"
   },
   "license": "AGPL-3.0",
   "author": "Hannes Oberreiter",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/HannesOberreiter/btree_server.git"
+    "url": "git+https://github.com/HannesOberreiter/btree.git"
   },
   "type": "module",
   "main": "./dist/app.bootstrap.js",

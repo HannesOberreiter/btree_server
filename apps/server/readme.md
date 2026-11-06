@@ -1,20 +1,6 @@
 # Backend API for b.tree Beekeeping Webapplication
 
-[![test](https://github.com/HannesOberreiter/btree_server/actions/workflows/test.yml/badge.svg)](https://github.com/HannesOberreiter/btree_server/actions/workflows/test.yml)
-[![docker-push](https://github.com/HannesOberreiter/btree_server/actions/workflows/docker-push.yml/badge.svg)](https://github.com/HannesOberreiter/btree_server/actions/workflows/docker-push.yml)
-[![docker-push-beta](https://github.com/HannesOberreiter/btree_server/actions/workflows/docker-push-beta.yml/badge.svg)](https://github.com/HannesOberreiter/btree_server/actions/workflows/docker-push-beta.yml)
-
-Written in TypeScript with Node.js, Fastify, Kysely, and Knex migration tooling.
-
-- [Repo - b.tree Server API](https://github.com/HannesOberreiter/btree_server)
-  - Live: <https://api.btree.at>
-  - Beta: <https://api-beta.btree.at>
-- [Private Repo - b.tree Frontend](https://github.com/HannesOberreiter/btree_vue)
-  - Live: <https://app.btree.at>
-  - Beta: <https://beta.btree.at>
-- [Repo - b.tree Database](https://github.com/HannesOberreiter/btree_database)
-- [Repo - b.tree Documentation](https://github.com/HannesOberreiter/btree_sites)
-- [Repo - b.tree iOS](https://github.com/HannesOberreiter/btree_ios)
+Written in TypeScript with Node.js, Fastify, Kysely, and Knex migration tooling. See the [repository README](../../README.md) for the other parts of b.tree.
 
 ## Docker Container
 

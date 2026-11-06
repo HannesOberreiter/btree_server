@@ -12,7 +12,8 @@ jobs:
   release-please:
     runs-on: ubuntu-latest
     outputs:
-      release_created: ${{ steps.release.outputs.release_created }}
+      server_release_created: ${{ steps.release.outputs['apps/server--release_created'] }}
+      web_release_created: ${{ steps.release.outputs['apps/web--release_created'] }}
     steps:
       - id: release
         uses: googleapis/release-please-action@v4
@@ -32,8 +33,14 @@ jobs:
           fi
           gh pr merge "$PR_NUMBER" --merge --auto
 
-  deploy:
+  deploy-server:
     needs: release-please
-    if: needs.release-please.outputs.release_created == 'true'
-    uses: ./.github/workflows/docker-push.yml
+    if: needs.release-please.outputs.server_release_created == 'true'
+    uses: ./.github/workflows/server-live.yml
+    secrets: inherit
+
+  deploy-web:
+    needs: release-please
+    if: needs.release-please.outputs.web_release_created == 'true'
+    uses: ./.github/workflows/web-live.yml
     secrets: inherit

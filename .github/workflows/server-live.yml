@@ -1,9 +1,7 @@
-name: docker-push-beta
+name: server-live
 
 on:
-  push:
-    branches:
-      - beta
+  workflow_call:
   workflow_dispatch:
 
 jobs:
@@ -24,8 +22,8 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v7
         with:
-          context: .
+          context: apps/server
           push: true
-          tags: hannesoberreiter/btree_server:beta
+          tags: hannesoberreiter/btree_server:latest
           build-args: |
             SERVICE_VERSION=${{ github.sha }}

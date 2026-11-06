@@ -1,19 +1,6 @@
 # Frontend for b.tree Beekeeping Webapplication
 
-[![beta](https://github.com/HannesOberreiter/btree_vue/actions/workflows/beta.yml/badge.svg)](https://github.com/HannesOberreiter/btree_vue/actions/workflows/beta.yml)
-[![live](https://github.com/HannesOberreiter/btree_vue/actions/workflows/live.yml/badge.svg)](https://github.com/HannesOberreiter/btree_vue/actions/workflows/live.yml)
-
-Written in TypeScript with Vue 3 and Quasar. The b.tree application is for managing your honey bee colonies in a modern way. More infos at <https://www.btree.at>.
-
-- [Repo - b.tree Server API](https://github.com/HannesOberreiter/btree_server)
-  - Live: <https://api.btree.at>
-  - Beta: <https://api-beta.btree.at>
-- [Private Repo - b.tree Frontend](https://github.com/HannesOberreiter/btree_vue)
-  - Live: <https://app.btree.at>
-  - Beta: <https://beta.btree.at>
-- [Repo - b.tree Documentation](https://github.com/HannesOberreiter/btree_sites)
-- [Repo - b.tree Database Infrastructure](https://github.com/HannesOberreiter/btree_database)
-- [Repo - b.tree iOS](https://github.com/HannesOberreiter/btree_ios)
+Written in TypeScript with Vue 3 and Quasar. The b.tree application is for managing your honey bee colonies in a modern way. More infos at <https://www.btree.at>. See the [repository README](../../README.md) for the other parts of b.tree.
 
 ## Install the dependencies
 

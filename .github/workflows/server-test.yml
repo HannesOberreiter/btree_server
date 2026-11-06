@@ -1,13 +1,19 @@
-name: test
+name: server-test
 
 on:
   pull_request:
     branches: [main, beta]
+    paths:
+      - 'apps/server/**'
+      - '.github/workflows/server-test.yml'
   workflow_dispatch:
 
 jobs:
   test:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/server
     env:
       ENVIRONMENT: ci
       NODE_ENV: ci
@@ -46,10 +52,13 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - uses: pnpm/action-setup@v6
+        with:
+          package_json_file: apps/server/package.json
       - uses: actions/setup-node@v6
         with:
           node-version: '22'
           cache: pnpm
+          cache-dependency-path: apps/server/pnpm-lock.yaml
       - name: Install packages
         run: pnpm install --frozen-lockfile
       - name: Build dist
