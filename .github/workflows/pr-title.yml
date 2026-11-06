@@ -1,0 +1,33 @@
+name: PR title
+
+# The squash commit on beta takes the PR title, and release-please reads it.
+# A separate workflow, so that a title edit does not run the full CI again.
+on:
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
+
+permissions: {}
+
+jobs:
+  pr-title:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Conventional Commit title
+        env:
+          TITLE: ${{ github.event.pull_request.title }}
+          BASE: ${{ github.event.pull_request.base.ref }}
+        run: |
+          # PRs to main use merge commits, so their title is not a commit.
+          if [ "$BASE" != "beta" ]; then
+            echo "Base is $BASE, no title check."
+            exit 0
+          fi
+          pattern='^(feat|fix|perf|chore|refactor|style|build|ci|docs|test|revert)(\([a-z0-9._/-]+\))?!?: [^ ].*$'
+          if ! grep -qE "$pattern" <<< "$TITLE"; then
+            echo "::error::PR title is not a Conventional Commit: $TITLE"
+            echo "Example: fix(web): show the hive name in the calendar"
+            echo "Types that release an app: feat, fix, perf, chore, refactor, style."
+            echo "Types that do not: build, ci, docs, test."
+            exit 1
+          fi
+          echo "PR title is valid: $TITLE"

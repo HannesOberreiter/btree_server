@@ -1,0 +1,21 @@
+name: Feature request
+description: Suggest a new feature or an improvement.
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem do you want to solve?
+      description: Describe the task in your beekeeping work that the app does not support well.
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: What solution do you suggest?
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: What do you do now instead?
