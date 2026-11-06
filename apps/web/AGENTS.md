@@ -25,7 +25,7 @@ Deployment and Android packaging documentation lives in `README.md`.
 
 - Use the declared Node range `^28 || ^26 || ^24 || ^22.22.0` and pinned pnpm `11.5.3` from `package.json`; CI uses Node 22.
 - For local setup, copy `example.env` to `.env`, but set `BACKEND_URL` to an absolute backend URL ending in `/api`, using the actual backend port.
-- Make the backend available before exercising API flows or E2E tests. For local backend setup, follow `apps/server/README.md`.
+- Make the backend available before exercising API flows or E2E tests. For local backend setup, follow `apps/server/readme.md`.
 - Use `pnpm test:e2e`, not `pnpm test`, which exits successfully without testing. Start the frontend and backend yourself; Playwright starts neither.
 - For E2E runs, export matching `BACKEND_URL`, `PLAYWRIGHT_BACKEND_URL`, and `PLAYWRIGHT_API_ORIGIN` values in the shell; Playwright does not load `.env`. `BACKEND_URL` includes `/api`; `PLAYWRIGHT_BACKEND_URL` is the backend origin. Keep the frontend on `localhost` for the authenticated fixture's cookie; the default frontend URL is `http://localhost:9000`.
 - When PWA dependencies are missing, run `pnpm --dir src-pwa install`; the root install does not include that separate package.
