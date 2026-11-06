@@ -39,7 +39,15 @@ test.describe('user - Calendar', () => {
     }
     const x = box.x + box.width / 2;
     const y = box.y + box.height / 2;
+
+    // A single click must not open the form, also not on today's cell.
     await page.mouse.click(x, y);
+    await page.waitForTimeout(400);
+    await expect(dataCy('form-todo')).not.toBeAttached();
+
+    // FullCalendar ignores a second click that follows at once, so wait like a human double click.
+    await page.mouse.click(x, y);
+    await page.waitForTimeout(100);
     await page.mouse.click(x, y);
 
     await expect(dataCy('form-todo')).toBeAttached();
