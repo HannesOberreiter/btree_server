@@ -253,3 +253,110 @@ jobs:
             echo "::error::The dependencies above have a license that is not in the allowlist."
             exit 1
           fi
+
+  # Playwright e2e tests of the web app against the server of the same commit.
+  # Not a required check until the suite is stable in CI.
+  e2e:
+    needs: changes
+    if: needs.changes.outputs.server == 'true' || needs.changes.outputs.web == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      ENVIRONMENT: ci
+      NODE_ENV: ci
+      # env/ci.env allows only http://localhost:8002.
+      AUTHORIZED: http://localhost:9000
+
+    services:
+      mariadb:
+        image: mariadb:lts
+        env:
+          MARIADB_ROOT_PASSWORD: root
+          MARIADB_DATABASE: ci_test
+        options: >-
+          --health-cmd "healthcheck.sh --connect --innodb_initialized"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 3306:3306
+      redis:
+        image: redis
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+        with:
+          package_json_file: apps/web/package.json
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: |
+            apps/server/pnpm-lock.yaml
+            apps/web/pnpm-lock.yaml
+
+      - name: Start the server
+        working-directory: apps/server
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm run build
+          pnpm run migrate
+          pnpm exec knex seed:run
+          node dist/app.bootstrap.js > "$RUNNER_TEMP/server.log" 2>&1 &
+          for i in $(seq 1 30); do
+            curl -sf -o /dev/null http://localhost:8102/api/v1/openapi.json && exit 0
+            sleep 1
+          done
+          cat "$RUNNER_TEMP/server.log"
+          exit 1
+
+      # BRANCH=dev adds localhost to the Content Security Policy. The Matomo
+      # boot file fails without a host and a site ID, so the build gets dummies.
+      - name: Build and serve the web app
+        working-directory: apps/web
+        env:
+          BRANCH: dev
+          BACKEND_URL: http://localhost:8102/api
+          MATOMO_HOST: http://localhost:9999
+          MATOMO_SITE_ID: '1'
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm --dir src-pwa install --frozen-lockfile
+          pnpm build
+          pnpm exec vite preview --outDir dist/spa --port 9000 --strictPort > "$RUNNER_TEMP/web.log" 2>&1 &
+          for i in $(seq 1 30); do
+            curl -sf -o /dev/null http://localhost:9000/ && exit 0
+            sleep 1
+          done
+          cat "$RUNNER_TEMP/web.log"
+          exit 1
+
+      - name: Run the e2e tests
+        working-directory: apps/web
+        env:
+          BACKEND_URL: http://localhost:8102/api
+          PLAYWRIGHT_BACKEND_URL: http://localhost:8102
+          PLAYWRIGHT_API_ORIGIN: http://localhost:9000
+        run: |
+          pnpm exec playwright install --with-deps chromium
+          pnpm test:e2e:ci
+
+      # test-results holds the traces and screenshots of the failed tests. They
+      # show only seed data and the public demo login.
+      - name: Upload the report
+        if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: e2e-report
+          path: |
+            apps/web/test/playwright/test-results
+            ${{ runner.temp }}/server.log
+          retention-days: 7
