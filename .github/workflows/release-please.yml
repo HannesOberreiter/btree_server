@@ -16,7 +16,7 @@ jobs:
       web_release_created: ${{ steps.release.outputs['apps/web--release_created'] }}
     steps:
       - id: release
-        uses: googleapis/release-please-action@v4
+        uses: googleapis/release-please-action@v5
         with:
           token: ${{ secrets.BTREE_SITES_DISPATCH_TOKEN }}
           target-branch: main
