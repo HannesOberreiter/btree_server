@@ -1,9 +1,19 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
+import { paypalCapturePaymentParamsSchema } from '../../src/api/schemas/service.schema.js';
 import type { TestAgent } from '../utils.js';
 import { createAuthenticatedAgent, doRequest } from '../utils.js';
 
 describe('PayPal capture order ID', () => {
+  it.each(['5O190127TN364715T', 'A'.repeat(36)])(
+    'accepts the PayPal order ID %s',
+    (orderID) => {
+      expect(
+        paypalCapturePaymentParamsSchema.safeParse({ orderID }).success,
+      ).toBe(true);
+    },
+  );
+
   let agent: TestAgent;
 
   beforeAll(async () => {
