@@ -1,0 +1,84 @@
+name: beta
+
+on:
+  push:
+    branches: [beta]
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+env:
+  ZONE_ID: 1496328
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      BACKEND_URL: https://api-beta.btree.at/api
+      DROPBOX_CLIENT_ID: ${{ secrets.DROPBOX_CLIENT_ID }}
+      OPENWEATHER_APP_ID: ${{ secrets.OPENWEATHER_APP_ID }}
+      MATOMO_HOST: ${{ secrets.MATOMO_HOST }}
+      MATOMO_SITE_ID: ${{ secrets.MATOMO_SITE_ID }}
+      PAYPAL_CLIENT_ID: ${{ secrets.PAYPAL_CLIENT_ID }}
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: Install
+        run: pnpm install --frozen-lockfile
+      - name: Install PWA dependencies
+        run: pnpm --dir src-pwa install --frozen-lockfile
+      - name: Lint
+        run: pnpm lint:check
+      - name: Typecheck
+        run: pnpm typecheck
+      - name: Build PWA
+        run: pnpm build:pwa
+      - name: List output files
+        run: ls
+
+      - name: Upload Files to Bunny Storage
+        env:
+          AWS_ACCESS_KEY_ID: beta-btree-at
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.BUNNY_STORAGE_PASSWORD }}
+          AWS_DEFAULT_REGION: de
+          BUNNY_S3_ENDPOINT: https://de-s3.storage.bunnycdn.com
+          BUNNY_STORAGE_ZONE: beta-btree-at
+        run: |
+          aws configure set default.s3.addressing_style path
+
+          aws s3 sync ./dist/pwa "s3://${BUNNY_STORAGE_ZONE}/" \
+            --endpoint-url "${BUNNY_S3_ENDPOINT}" \
+            --delete \
+            --cache-control "no-cache"
+
+          aws s3 cp ./dist/pwa "s3://${BUNNY_STORAGE_ZONE}/" \
+            --endpoint-url "${BUNNY_S3_ENDPOINT}" \
+            --recursive \
+            --exclude "*" \
+            --include "*.css" \
+            --include "*.js" \
+            --include "*.mjs" \
+            --include "*.woff" \
+            --include "*.woff2" \
+            --include "*.ttf" \
+            --include "*.eot" \
+            --include "*.png" \
+            --include "*.jpg" \
+            --include "*.jpeg" \
+            --include "*.gif" \
+            --include "*.svg" \
+            --include "*.webp" \
+            --include "*.avif" \
+            --include "*.ico" \
+            --cache-control "public, max-age=31536000, immutable"
+
+      - name: Purge BunnyCDN
+        uses: fjogeleit/http-request-action@v1
+        with:
+          url: 'https://api.bunny.net/pullzone/${{env.ZONE_ID}}/purgeCache'
+          method: POST
+          customHeaders: '{ "AccessKey": "${{ secrets.BUNNY_KEY }}"}'

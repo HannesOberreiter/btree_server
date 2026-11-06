@@ -1,0 +1,57 @@
+<script setup lang="ts">
+import { useVModels } from '@vueuse/core';
+import { useQuasar } from 'quasar';
+import DialogVarroa from './DialogVarroa.vue';
+import FormInputNumeric from './FormInputNumeric.vue';
+
+const props = defineProps({
+  modelValue: {
+    default: 0
+  },
+  reset: {
+    type: Number,
+    default: 0
+  },
+  values: {
+    type: Object,
+    default: null
+  },
+  hive: {
+    type: Array,
+    default: [] as any
+  }
+});
+const emit = defineEmits(['update:modelValue']);
+const $q = useQuasar();
+const { modelValue } = useVModels(props, emit);
+
+function openCalculator() {
+  $q.dialog({
+    component: DialogVarroa,
+    componentProps: {
+      value: modelValue.value,
+      hive: props.hive
+    }
+  }).onOk(e => {
+    modelValue.value = e;
+  });
+}
+</script>
+
+<template>
+  <FormInputNumeric
+    v-model="modelValue"
+    :values="values"
+    :reset="reset"
+    icon="fas fa-bug"
+    label="varroa"
+  >
+    <template #deepAfter>
+      <q-icon
+        name="fas fa-calculator"
+        style="cursor: pointer"
+        @click="openCalculator"
+      />
+    </template>
+  </FormInputNumeric>
+</template>

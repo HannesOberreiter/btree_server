@@ -1,0 +1,151 @@
+{
+  "name": "b.tree Beekeeping Database",
+  "short_name": "btree",
+  "description": "Designed to cater to both hobbyists and professionals, our app offers a quick and easy overview of your apiaries and colonies. With b.tree, you can keep track of your feedings, harvests, treatments, checkups, and more. Our beekeeping web app is perfect for organic beekeepers who need to keep accurate records, as well as anyone who wants to manage their beekeeping tasks in the cloud. With our app, you can work simultaneously with multiple users and easily access your data in the field or at home without any syncing needs.",
+  "orientation": "portrait",
+  "theme_color": "#2b957a",
+  "background_color": "#f5f7fa",
+  "scope": "/",
+  "iarc_rating_id": "02a8f185-5a3d-4186-a787-f6a27bb6739a",
+  "dir": "ltr",
+  "display": "standalone",
+  "categories": ["software", "beekeeping", "utilities"],
+  "launch_handler": {
+    "client_mode": ["navigate-existing", "auto"]
+  },
+  "screenshots": [
+    {
+      "src": "screenshots/calendar.png",
+      "sizes": "640x516",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Calendar Dashboard"
+    },
+    {
+      "src": "screenshots/table.png",
+      "sizes": "640x516",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Tables"
+    },
+    {
+      "src": "screenshots/mobile.png",
+      "sizes": "320x655",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Tables"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Checkup - QuickTool",
+      "description": "Create a new checkup",
+      "url": "/new/quicktool/checkup",
+      "icons": [
+        { "src": "/mask_icons/maskable_icon_x96.png", "sizes": "96x96" }
+      ]
+    },
+    {
+      "name": "Feeding - QuickTool",
+      "description": "Create a new feeding",
+      "url": "/new/quicktool/feed",
+      "icons": [
+        { "src": "/mask_icons/maskable_icon_x96.png", "sizes": "96x96" }
+      ]
+    },
+    {
+      "name": "QuickTool - Harvest",
+      "description": "Create a new harvest",
+      "url": "/new/quicktool/harvest",
+      "icons": [
+        { "src": "/mask_icons/maskable_icon_x96.png", "sizes": "96x96" }
+      ]
+    },
+    {
+      "name": "Treatment - QuickTool",
+      "description": "Create a new treatment",
+      "url": "/new/quicktool/treatment",
+      "icons": [
+        { "src": "/mask_icons/maskable_icon_x96.png", "sizes": "96x96" }
+      ]
+    },
+    {
+      "name": "ToDo",
+      "description": "Create a new ToDo",
+      "url": "/new/todo",
+      "icons": [
+        { "src": "/mask_icons/maskable_icon_x96.png", "sizes": "96x96" }
+      ]
+    }
+  ],
+  "icons": [
+    {
+      "src": "icons/icon-128x128.png",
+      "sizes": "128x128",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-256x256.png",
+      "sizes": "256x256",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-384x384.png",
+      "sizes": "384x384",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "mask_icons/maskable_icon_x48.png",
+      "sizes": "48x48",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "mask_icons/maskable_icon_x72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "mask_icons/maskable_icon_x96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "mask_icons/maskable_icon_x128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "mask_icons/maskable_icon_x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "mask_icons/maskable_icon_x384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "mask_icons/maskable_icon_x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
