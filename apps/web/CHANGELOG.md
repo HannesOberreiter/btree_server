@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.10.2](https://github.com/HannesOberreiter/btree/compare/btree-client-v7.10.1...btree-client-v7.10.2) (2026-11-06)
+
+
+### Bug Fixes
+
+* **web:** reload once when a chunk fails to load ([#275](https://github.com/HannesOberreiter/btree/issues/275)) ([d153008](https://github.com/HannesOberreiter/btree/commit/d1530080be517f26e415b12b640f8b773aa77734))
+
 ## [7.10.1](https://github.com/HannesOberreiter/btree_vue/compare/btree-client-v7.10.0...btree-client-v7.10.1) (2026-11-06)
 
 
