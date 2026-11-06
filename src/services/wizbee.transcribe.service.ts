@@ -138,6 +138,8 @@ export interface TranscriptionResult {
   usage: {
     promptTokens: number;
     completionTokens: number;
+    /** Billed audio length; null when the API does not report it. */
+    audioSeconds: number | null;
   };
 }
 
@@ -172,6 +174,7 @@ export async function transcribeAudio(params: {
     usage: {
       promptTokens: response.usage?.promptTokens ?? 0,
       completionTokens: response.usage?.completionTokens ?? 0,
+      audioSeconds: response.usage?.promptAudioSeconds ?? null,
     },
   };
 }
