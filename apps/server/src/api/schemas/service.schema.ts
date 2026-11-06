@@ -84,7 +84,11 @@ export const paypalCreateOrderBodySchema = z.object({
 export type PaypalCreateOrderBody = z.infer<typeof paypalCreateOrderBodySchema>;
 
 export const paypalCapturePaymentParamsSchema = z.object({
-  orderID: z.string().min(1),
+  // Format of the PayPal Orders v2 order ID, so the ID cannot change the PayPal URL path.
+  orderID: z
+    .string()
+    .max(36)
+    .regex(/^[A-Z0-9]+$/),
 });
 export type PaypalCapturePaymentParams = z.infer<
   typeof paypalCapturePaymentParamsSchema
