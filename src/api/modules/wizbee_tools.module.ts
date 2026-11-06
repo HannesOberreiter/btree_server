@@ -49,7 +49,10 @@ import {
   listTaskStatisticsSummary,
 } from '../modules/statistic.module.js';
 import { deleteTasks } from '../modules/task.module.js';
-import { summarizeTaskStock } from '../modules/task_stock.module.js';
+import {
+  summarizeTaskAmounts,
+  summarizeTaskStock,
+} from '../modules/task_stock.module.js';
 import {
   createTodos,
   deleteTodos,
@@ -1884,7 +1887,12 @@ export function createWizBeeTools(
           .optional()
           .describe('End date in YYYY-MM-DD format'),
         typeId: z.number().optional().describe('Feed type ID'),
-        amount: z.number().optional().describe('Feed quantity'),
+        amount: z
+          .number()
+          .optional()
+          .describe(
+            'Feed quantity per hive. Each hive in hiveIds gets this amount.',
+          ),
         note: z.string().max(2000).optional().describe('Optional notes'),
         done: z.boolean().optional().describe('Whether the feed is completed'),
       }),
@@ -1906,6 +1914,12 @@ export function createWizBeeTools(
           success: true,
           message: `Created ${createdCount} feed record${createdCount !== 1 ? 's' : ''}`,
           ids: Array.isArray(result) ? result : [result],
+          ...(await summarizeTaskAmounts(
+            db,
+            context.userId,
+            'feeds',
+            Array.isArray(result) ? result : [result],
+          )),
           stockBookings: await summarizeTaskStock(
             db,
             context.userId,
@@ -1929,7 +1943,7 @@ export function createWizBeeTools(
           .optional()
           .describe('New end date in YYYY-MM-DD format'),
         typeId: z.number().optional().describe('New feed type ID'),
-        amount: z.number().optional().describe('New feed quantity'),
+        amount: z.number().optional().describe('New feed quantity per hive'),
         note: z.string().max(2000).optional().describe('New notes'),
         done: z.boolean().optional().describe('Mark as done or undone'),
       }),
@@ -1950,6 +1964,7 @@ export function createWizBeeTools(
           success: true,
           message: `Updated ${updatedCount} feed record${updatedCount !== 1 ? 's' : ''}`,
           updatedCount,
+          ...(await summarizeTaskAmounts(db, context.userId, 'feeds', ids)),
           stockBookings: await summarizeTaskStock(
             db,
             context.userId,
@@ -2000,7 +2015,12 @@ export function createWizBeeTools(
           .optional()
           .describe('End date in YYYY-MM-DD format'),
         typeId: z.number().optional().describe('Harvest type ID'),
-        amount: z.number().optional().describe('Harvest weight/quantity'),
+        amount: z
+          .number()
+          .optional()
+          .describe(
+            'Harvest weight/quantity per hive. Each hive in hiveIds gets this amount.',
+          ),
         water: z.number().optional().describe('Water content'),
         frames: z.number().optional().describe('Number of frames harvested'),
         charge: z
@@ -2032,6 +2052,12 @@ export function createWizBeeTools(
           success: true,
           message: `Created ${createdCount} harvest record${createdCount !== 1 ? 's' : ''}`,
           ids: Array.isArray(result) ? result : [result],
+          ...(await summarizeTaskAmounts(
+            db,
+            context.userId,
+            'harvests',
+            Array.isArray(result) ? result : [result],
+          )),
           stockBookings: await summarizeTaskStock(
             db,
             context.userId,
@@ -2055,7 +2081,10 @@ export function createWizBeeTools(
           .optional()
           .describe('New end date in YYYY-MM-DD format'),
         typeId: z.number().optional().describe('New harvest type ID'),
-        amount: z.number().optional().describe('New harvest weight/quantity'),
+        amount: z
+          .number()
+          .optional()
+          .describe('New harvest weight/quantity per hive'),
         water: z.number().optional().describe('New water content'),
         frames: z.number().optional().describe('New number of frames'),
         charge: z
@@ -2083,6 +2112,7 @@ export function createWizBeeTools(
           success: true,
           message: `Updated ${updatedCount} harvest record${updatedCount !== 1 ? 's' : ''}`,
           updatedCount,
+          ...(await summarizeTaskAmounts(db, context.userId, 'harvests', ids)),
           stockBookings: await summarizeTaskStock(
             db,
             context.userId,
@@ -2135,7 +2165,12 @@ export function createWizBeeTools(
         typeId: z.number().optional().describe('Treatment type ID'),
         diseaseId: z.number().optional().describe('Disease ID'),
         vetId: z.number().optional().describe('Vet ID'),
-        amount: z.number().optional().describe('Treatment dose/amount'),
+        amount: z
+          .number()
+          .optional()
+          .describe(
+            'Treatment dose/amount per hive. Each hive in hiveIds gets this amount.',
+          ),
         wait: z.number().optional().describe('Waiting period in days'),
         temperature: z
           .number()
@@ -2167,6 +2202,12 @@ export function createWizBeeTools(
           success: true,
           message: `Created ${createdCount} treatment record${createdCount !== 1 ? 's' : ''}`,
           ids: Array.isArray(result) ? result : [result],
+          ...(await summarizeTaskAmounts(
+            db,
+            context.userId,
+            'treatments',
+            Array.isArray(result) ? result : [result],
+          )),
           stockBookings: await summarizeTaskStock(
             db,
             context.userId,
@@ -2193,7 +2234,7 @@ export function createWizBeeTools(
         typeId: z.number().optional().describe('New treatment type ID'),
         diseaseId: z.number().optional().describe('New disease ID'),
         vetId: z.number().optional().describe('New vet ID'),
-        amount: z.number().optional().describe('New dose/amount'),
+        amount: z.number().optional().describe('New dose/amount per hive'),
         wait: z.number().optional().describe('New waiting period in days'),
         temperature: z.number().optional().describe('New temperature'),
         note: z.string().max(2000).optional().describe('New notes'),
@@ -2218,6 +2259,12 @@ export function createWizBeeTools(
           success: true,
           message: `Updated ${updatedCount} treatment record${updatedCount !== 1 ? 's' : ''}`,
           updatedCount,
+          ...(await summarizeTaskAmounts(
+            db,
+            context.userId,
+            'treatments',
+            ids,
+          )),
           stockBookings: await summarizeTaskStock(
             db,
             context.userId,

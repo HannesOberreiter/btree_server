@@ -394,6 +394,37 @@ export async function withTaskStock<R extends { id: number }>(
   return rows.map((row) => ({ ...row, charges: stock.get(row.id) ?? [] }));
 }
 
+/**
+ * Stored amount of the tasks for tool results. One task row is one hive, so
+ * `amountPerHive` is `null` when the rows have different amounts.
+ */
+export async function summarizeTaskAmounts(
+  db: Database,
+  companyId: number,
+  table: Exclude<TaskTable, 'checkups'>,
+  ids: number[],
+) {
+  if (ids.length === 0) {
+    return { amountPerHive: null, totalAmount: 0, unit: null };
+  }
+  const { rows } = await sql<{ amount: number | null; unit: string | null }>`
+    SELECT CAST(task.amount AS DOUBLE) AS amount, task_type.unit AS unit
+    FROM ${sql.table(table)} AS task
+    LEFT JOIN ${sql.table(taskTypeTables[table])} AS task_type
+      ON task_type.id = task.type_id
+    WHERE task.id IN (${sql.join(ids)}) AND task.user_id = ${companyId}
+  `.execute(db);
+  const amounts = new Set(rows.map((row) => row.amount ?? 0));
+  const units = new Set(rows.map((row) => row.unit || null));
+  return {
+    amountPerHive: amounts.size === 1 ? [...amounts][0] : null,
+    totalAmount:
+      Math.round(rows.reduce((sum, row) => sum + (row.amount ?? 0), 0) * 100) /
+      100,
+    unit: units.size === 1 ? [...units][0] : null,
+  };
+}
+
 /** Booked stock of the tasks, summed per charge type and direction. */
 export function summarizeTaskStock(
   db: Database,

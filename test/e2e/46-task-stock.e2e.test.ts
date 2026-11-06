@@ -674,6 +674,9 @@ describe('task stock bookings', () => {
       );
       expect(result).toMatchObject({
         success: true,
+        amountPerHive: 10,
+        totalAmount: 20,
+        unit: 'l',
         stockBookings: [
           {
             charge_type_id: sugarId,
@@ -684,6 +687,90 @@ describe('task stock bookings', () => {
             rows: 2,
           },
         ],
+      });
+
+      // Different amounts per hive give no single amount per hive.
+      const ids = (result as { ids: number[] }).ids;
+      const patched = await executeWizBeeTool(
+        db,
+        'patchFeed',
+        { ids: [ids[0]], amount: 5 },
+        { userId: companyId, beeId, rank: ROLES.admin },
+      );
+      expect(patched).toMatchObject({ amountPerHive: 5, totalAmount: 5 });
+      const all = await executeWizBeeTool(
+        db,
+        'patchFeed',
+        { ids, note: 'checked' },
+        { userId: companyId, beeId, rank: ROLES.admin },
+      );
+      expect(all).toMatchObject({
+        amountPerHive: null,
+        totalAmount: 15,
+        unit: 'l',
+      });
+    });
+
+    it('reports stored amounts for treatments and harvests', async () => {
+      const actor = { userId: companyId, beeId, rank: ROLES.admin };
+      const treatment = await executeWizBeeTool(
+        db,
+        'createTreatment',
+        { hiveIds, date: today, typeId: oxalicId, amount: 3.5, done: true },
+        actor,
+      );
+      expect(treatment).toMatchObject({
+        amountPerHive: 3.5,
+        totalAmount: 7,
+        unit: 'g',
+      });
+      const treatmentIds = (treatment as { ids: number[] }).ids;
+      await executeWizBeeTool(
+        db,
+        'patchTreatment',
+        { ids: [treatmentIds[0]], amount: 2 },
+        actor,
+      );
+      const treatments = await executeWizBeeTool(
+        db,
+        'patchTreatment',
+        { ids: treatmentIds, note: 'checked' },
+        actor,
+      );
+      expect(treatments).toMatchObject({
+        amountPerHive: null,
+        totalAmount: 5.5,
+        unit: 'g',
+      });
+
+      const harvest = await executeWizBeeTool(
+        db,
+        'createHarvest',
+        {
+          hiveIds: [hiveIds[0]],
+          date: today,
+          typeId: acaciaId,
+          amount: 12.5,
+          done: true,
+        },
+        actor,
+      );
+      // 'stores the unit of task types' set the acacia unit to g.
+      expect(harvest).toMatchObject({
+        amountPerHive: 12.5,
+        totalAmount: 12.5,
+        unit: 'g',
+      });
+      const harvests = await executeWizBeeTool(
+        db,
+        'patchHarvest',
+        { ids: (harvest as { ids: number[] }).ids, amount: 10 },
+        actor,
+      );
+      expect(harvests).toMatchObject({
+        amountPerHive: 10,
+        totalAmount: 10,
+        unit: 'g',
       });
     });
 
