@@ -67,7 +67,7 @@ export async function createOrder(
 // https://developer.paypal.com/docs/api/orders/v2/#orders_capture
 export async function capturePayment(orderId: string) {
   const accessToken = await generateAccessToken();
-  const url = `${paypalBase}/v2/checkout/orders/${orderId}/capture`;
+  const url = `${paypalBase}/v2/checkout/orders/${encodeURIComponent(orderId)}/capture`;
   const response = await fetch(url, {
     method: 'post',
     headers: {
