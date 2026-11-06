@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.10.3](https://github.com/HannesOberreiter/btree/compare/btree-client-v7.10.2...btree-client-v7.10.3) (2026-11-06)
+
+
+### Bug Fixes
+
+* **wizbee:** keep documentation results below the size limit ([#278](https://github.com/HannesOberreiter/btree/issues/278)) ([22b208c](https://github.com/HannesOberreiter/btree/commit/22b208c16146f60bdcf151801a1b44a5f6be2bcc))
+
 ## [7.10.2](https://github.com/HannesOberreiter/btree/compare/btree-client-v7.10.1...btree-client-v7.10.2) (2026-11-06)
 
 

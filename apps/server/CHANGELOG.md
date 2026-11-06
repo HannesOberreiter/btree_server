@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.12.1](https://github.com/HannesOberreiter/btree/compare/btree-server-v7.12.0...btree-server-v7.12.1) (2026-11-06)
+
+
+### Bug Fixes
+
+* **wizbee:** keep documentation results below the size limit ([#278](https://github.com/HannesOberreiter/btree/issues/278)) ([22b208c](https://github.com/HannesOberreiter/btree/commit/22b208c16146f60bdcf151801a1b44a5f6be2bcc))
+
 ## [7.12.0](https://github.com/HannesOberreiter/btree_server/compare/btree-server-v7.11.0...btree-server-v7.12.0) (2026-11-06)
 
 
