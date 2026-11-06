@@ -8,7 +8,7 @@ import type {
 } from '@/api/types';
 import type { Task } from '@/types';
 import { find, round, sumBy } from 'lodash-es';
-import { computed, watch } from 'vue';
+import { computed, onUnmounted, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useOptionsQuery, useRecipeQuery } from '@/composables/useQuery';
 
@@ -49,6 +49,8 @@ const props = defineProps({
 
 // `undefined`: the server books from the recipe. `[]`: no booking.
 const model = defineModel<TaskStockLine[] | undefined>();
+// Stock change of the save as text for the success message.
+const summary = defineModel<string>('summary', { default: '' });
 
 const { t, locale } = useI18n();
 
@@ -193,6 +195,44 @@ const chips = computed(() =>
     };
   })
 );
+// New bookings minus current bookings, as consumption per charge type.
+const changes = computed(() => {
+  const totals = new Map<number, number>();
+  function add(lines: TaskStockLine[], factor: number) {
+    for (const line of lines) {
+      const value = (line.kind === 'out' ? 1 : -1) * line.amount * factor;
+      totals.set(
+        line.charge_type_id,
+        (totals.get(line.charge_type_id) ?? 0) + value
+      );
+    }
+  }
+  if (!isSkipped.value) {
+    add(preview.value, 1);
+  }
+  add(currentLines.value, -1);
+  return [...totals]
+    .filter(([, value]) => Math.abs(value) >= 0.005)
+    .map(([id, value]) => {
+      const type = find(chargeTypes.value, { id });
+      const amount = `${value > 0 ? '−' : '+'}${format(Math.abs(value))}`;
+      return [amount, type?.unit, type?.name].filter(Boolean).join(' ');
+    });
+});
+watch(
+  changes,
+  value => {
+    summary.value =
+      value.length > 0
+        ? t('stockUse.saved', { changes: value.join(', ') })
+        : '';
+  },
+  { immediate: true }
+);
+onUnmounted(() => {
+  summary.value = '';
+});
+
 const iconColor = computed(() => {
   if (isSkipped.value) {
     return 'grey-5';

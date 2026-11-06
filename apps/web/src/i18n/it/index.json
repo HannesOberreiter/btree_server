@@ -759,6 +759,7 @@
     "out": "Uscita",
     "recipeHint": "Quando un'attività di questo tipo è completata, l'app registra questo stock.",
     "removeWarning": "Questo rimuove lo stock già registrato per questa attività. Modifiche successive di quantità o data non lo registrano di nuovo. | Questo rimuove lo stock già registrato per {count} attività. Modifiche successive di quantità o data non lo registrano di nuovo.",
+    "saved": "Salvato. Stock: {changes}",
     "skipped": "Nessuno stock viene registrato. Tocca per attivare.",
     "sugarKg": "Zucchero, quantità in kg (1)",
     "sugarOneToOne": "Sciroppo 1:1, quantità in litri di soluzione",

@@ -759,6 +759,7 @@
     "out": "Sortie",
     "recipeHint": "Lorsqu'une tâche de ce type est terminée, l'application comptabilise ce stock.",
     "removeWarning": "Cela supprime le stock déjà comptabilisé pour cette tâche. Les modifications ultérieures de la quantité ou de la date ne le comptabilisent pas à nouveau. | Cela supprime le stock déjà comptabilisé pour {count} tâches. Les modifications ultérieures de la quantité ou de la date ne le comptabilisent pas à nouveau.",
+    "saved": "Enregistré. Stock : {changes}",
     "skipped": "Aucun stock n'est comptabilisé. Touchez pour activer.",
     "sugarKg": "Sucre, quantité en kg (1)",
     "sugarOneToOne": "Sirop 1:1, quantité en litres de solution",

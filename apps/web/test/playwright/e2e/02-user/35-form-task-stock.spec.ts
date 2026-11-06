@@ -97,6 +97,11 @@ test.describe('user - Task stock booking', () => {
       const booked = await bookedPromise;
       expect(booked.ok()).toBe(true);
       expect(booked.request().postDataJSON()).not.toHaveProperty('charges');
+      await expect(
+        page
+          .locator('[data-cy=notification]')
+          .filter({ hasText: new RegExp(`−7[.,]9 kg ${chargeName}`) })
+      ).toBeVisible();
       feedIds.push(...((await booked.json()) as number[]));
       const bookedGet = await request.post('/api/v1/feed/batchGet', {
         headers,
@@ -119,6 +124,12 @@ test.describe('user - Task stock booking', () => {
       const skipped = await skippedPromise;
       expect(skipped.ok()).toBe(true);
       expect(skipped.request().postDataJSON()).toMatchObject({ charges: [] });
+      // No stock change: the normal success message.
+      await expect(
+        page
+          .locator('[data-cy=notification]')
+          .filter({ hasText: /^(Erfolg|Success)!/ })
+      ).toBeVisible();
       feedIds.push(...((await skipped.json()) as number[]));
 
       // A booked row has no best before date: it shows empty and saves.
@@ -215,7 +226,7 @@ test.describe('user - Task stock booking', () => {
         (await hiveResponse.json()) as { results: { id: number }[] }
       ).results;
       expect(hives).toHaveLength(2);
-      // Two booked feedings with different amounts: 7.9 kg and 15.8 kg.
+      // Two booked feedings: 7.9 kg and 15.8 kg.
       for (const [index, amount] of [10, 20].entries()) {
         const feedResponse = await request.post('/api/v1/feed', {
           headers,
@@ -231,11 +242,30 @@ test.describe('user - Task stock booking', () => {
         feedIds.push(...((await feedResponse.json()) as number[]));
       }
 
+      // An amount edit shows only the difference: 11.85 kg - 7.9 kg.
+      await page.goto(`/edit/feed/${feedIds[0]}`);
+      await page
+        .getByRole('spinbutton', { name: /^(Menge|Amount)$/ })
+        .fill('15');
+      const editPromise = page.waitForResponse(
+        response =>
+          response.request().method() === 'PATCH' &&
+          new URL(response.url()).pathname.endsWith('/feed'),
+        { timeout: 10_000 }
+      );
+      await dataCy('btn-form-update').click({ timeout: 10_000 });
+      expect((await editPromise).ok()).toBe(true);
+      await expect(
+        page
+          .locator('[data-cy=notification]')
+          .filter({ hasText: new RegExp(`−3[.,]95 kg ${chargeName}`) })
+      ).toBeVisible();
+
       await page.goto(`/edit/feed/${feedIds.join('/')}`);
       // A short timeout leaves time for the cleanup.
       await dataCy('btn-task-stock').click({ timeout: 10_000 });
       const chip = dataCy('chip-task-stock');
-      await expect(chip).toContainText(new RegExp(`23[.,]7 kg ${chargeName}`));
+      await expect(chip).toContainText(new RegExp(`27[.,]65 kg ${chargeName}`));
       await expect(dataCy('task-stock-remove-warning')).not.toBeAttached();
       await expect(page.locator('.q-menu')).toContainText(
         /(Bereits gebucht|Already booked)/
@@ -258,6 +288,11 @@ test.describe('user - Task stock booking', () => {
       expect(saved.request().postDataJSON()).toMatchObject({
         data: { charges: [] }
       });
+      await expect(
+        page
+          .locator('[data-cy=notification]')
+          .filter({ hasText: new RegExp(`\\+27[.,]65 kg ${chargeName}`) })
+      ).toBeVisible();
       const rows = (await (
         await request.post('/api/v1/feed/batchGet', {
           headers,

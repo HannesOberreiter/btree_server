@@ -759,6 +759,7 @@
     "out": "Out",
     "recipeHint": "When a task of this type is done, the app books this stock from the charge stock.",
     "removeWarning": "This removes the stock already booked for this task. Later changes of amount or date do not book it again. | This removes the stock already booked for {count} tasks. Later changes of amount or date do not book it again.",
+    "saved": "Saved. Stock: {changes}",
     "skipped": "No stock is booked. Tap to turn on.",
     "sugarKg": "Sugar, amount in kg (1)",
     "sugarOneToOne": "Sugar water 1:1, amount in liters of solution",

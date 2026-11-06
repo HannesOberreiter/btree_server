@@ -759,6 +759,7 @@
     "out": "Abgang",
     "recipeHint": "Wenn eine Aufgabe dieses Typs erledigt ist, bucht die App diesen Bestand im Chargen Bestand.",
     "removeWarning": "Damit wird der bereits gebuchte Bestand dieser Aufgabe entfernt. Spätere Änderungen von Menge oder Datum buchen nicht erneut. | Damit wird der bereits gebuchte Bestand von {count} Aufgaben entfernt. Spätere Änderungen von Menge oder Datum buchen nicht erneut.",
+    "saved": "Gespeichert. Lager: {changes}",
     "skipped": "Kein Lager wird gebucht. Tippen zum Einschalten.",
     "sugarKg": "Zucker, Menge in kg (1)",
     "sugarOneToOne": "Zuckerwasser 1:1, Menge in Liter Lösung",

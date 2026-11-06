@@ -126,6 +126,7 @@ const state = ref({
   ...stateDefault
 });
 
+const stockSummary = ref('');
 // In an edit, wait for the task rows.
 const showStock = computed(() => !isEdit.value || values.value.length > 0);
 // A multi-edit sets a field to `null` when the tasks have different values.
@@ -208,7 +209,11 @@ function onChange(type: 'update' | 'insert' = 'update') {
           table="checkup_types"
         >
           <template v-if="showStock" #icon>
-            <FormTaskStock v-model="state.charges" v-bind="stockProps" />
+            <FormTaskStock
+              v-model="state.charges"
+              v-model:summary="stockSummary"
+              v-bind="stockProps"
+            />
           </template>
         </FormDropdownOption>
       </div>
@@ -221,7 +226,11 @@ function onChange(type: 'update' | 'insert' = 'update') {
             table="harvest_types"
           >
             <template v-if="showStock" #icon>
-              <FormTaskStock v-model="state.charges" v-bind="stockProps" />
+              <FormTaskStock
+                v-model="state.charges"
+                v-model:summary="stockSummary"
+                v-bind="stockProps"
+              />
             </template>
           </FormDropdownOption>
         </div>
@@ -235,7 +244,11 @@ function onChange(type: 'update' | 'insert' = 'update') {
             table="treatment_types"
           >
             <template v-if="showStock" #icon>
-              <FormTaskStock v-model="state.charges" v-bind="stockProps" />
+              <FormTaskStock
+                v-model="state.charges"
+                v-model:summary="stockSummary"
+                v-bind="stockProps"
+              />
             </template>
           </FormDropdownOption>
         </div>
@@ -259,7 +272,11 @@ function onChange(type: 'update' | 'insert' = 'update') {
             table="feed_types"
           >
             <template v-if="showStock" #icon>
-              <FormTaskStock v-model="state.charges" v-bind="stockProps" />
+              <FormTaskStock
+                v-model="state.charges"
+                v-model:summary="stockSummary"
+                v-bind="stockProps"
+              />
             </template>
           </FormDropdownOption>
         </div>
@@ -430,6 +447,7 @@ function onChange(type: 'update' | 'insert' = 'update') {
     :edit-ids="editOptions"
     :v="v"
     :form="props.task"
+    :success-message="stockSummary"
     @reset="onReset"
     @change="(val: 'update' | 'insert') => onChange(val)"
   />
