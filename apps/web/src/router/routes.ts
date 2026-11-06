@@ -171,7 +171,7 @@ const routes: RouteRecordRaw[] = [
         path: 'charge',
         name: 'table-charge',
         meta: {
-          title: 'charge'
+          title: 'stockEntry'
         },
         component: () => import('../pages/TableCharge.vue')
       },
@@ -294,7 +294,7 @@ const routes: RouteRecordRaw[] = [
         path: 'charge',
         name: 'new-charge',
         meta: {
-          title: 'charge'
+          title: 'stockEntry'
         },
         component: () => import('../pages/NewCharge.vue')
       },

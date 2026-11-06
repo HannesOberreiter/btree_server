@@ -1,3 +1,4 @@
+import type { TaskStockLine } from './api/types';
 import type { KINDS, KINDS_APIARY, STATUS } from './constants';
 
 export type FilterState = (typeof STATUS)[number];
@@ -173,7 +174,7 @@ export declare interface FormRearing {
 }
 
 export declare interface FormCharge {
-  bestbefore: string;
+  bestbefore: string | null;
   date: string;
   name: string;
   charge: string;
@@ -267,4 +268,5 @@ export declare interface FormQuicktool {
   disease: any;
   treatment_vet: any;
   treatment_disease: any;
+  charges?: TaskStockLine[];
 }

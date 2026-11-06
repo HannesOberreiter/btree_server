@@ -68,7 +68,7 @@ const editOptionsCopy = ref([]) as any;
 
 const stateDefault = {
   date: useDate.isoFormat(useDate.getCurrent(), 'date'),
-  bestbefore: useDate.isoFormat(useDate.getCurrent(), 'date'),
+  bestbefore: null as string | null,
   name: '',
   charge: '',
   amount: 0,

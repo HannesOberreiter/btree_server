@@ -35,6 +35,11 @@ const props = defineProps({
   formOption: {
     type: String as PropType<Option>,
     default: ''
+  },
+  // Translated text that replaces the default success message.
+  successMessage: {
+    type: String,
+    default: ''
   }
 });
 // needed on quicktool form to handle multiple "forms"
@@ -97,6 +102,8 @@ async function onUpdate() {
     return;
   }
 
+  // Read before the request, the form can change after the save.
+  const message = props.successMessage;
   const id = editIds.value.map((obj: any) => obj.value);
   const data = {
     ids: id,
@@ -109,7 +116,7 @@ async function onUpdate() {
   await api.patch(url, JSON.stringify(data)).then(
     async (response: any) => {
       lastInsert.value = response;
-      dataChanged();
+      dataChanged('update', null, message);
     },
     error => {
       notification.open('negative', error);
@@ -147,6 +154,7 @@ async function onSubmit() {
     return;
   }
   const data = cleanup.cleanup();
+  const message = props.successMessage;
   const url =
     form.value === 'option'
       ? `/v1/${form.value}/${props.formOption}`
@@ -157,7 +165,7 @@ async function onSubmit() {
         Array.isArray(response) && response.length === 0 ? null : response;
       lastInsertTable.value = unref(form.value);
 
-      dataChanged('insert');
+      dataChanged('insert', response, message);
     },
     error => {
       notification.open('negative', error);
@@ -166,10 +174,18 @@ async function onSubmit() {
   isSubmitting.value = false;
 }
 
-function dataChanged(type: 'update' | 'insert' = 'update') {
+function dataChanged(
+  type: 'update' | 'insert' = 'update',
+  response: unknown = null,
+  message = ''
+) {
   useInvalidate.invalidate(form.value);
-  notification.open('positive', '');
-  emit('change', type);
+  if (message) {
+    notification.open('positive', message, true);
+  } else {
+    notification.open('positive', '');
+  }
+  emit('change', type, response);
 }
 
 function onReset() {

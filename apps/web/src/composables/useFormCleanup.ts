@@ -85,7 +85,8 @@ function cleanupQuicktool(state: FormQuicktool, isEdit: boolean, task: string) {
     type_id: state.type ? state.type.id : null,
     url: state.url,
     note: state.note,
-    done: state.done
+    done: state.done,
+    charges: state.charges
   } as any;
 
   if (!isEdit) {

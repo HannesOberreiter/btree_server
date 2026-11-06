@@ -246,13 +246,13 @@ const links = computed(
         icon: 'fas fa-warehouse',
         menu: [
           {
-            label: `${t('add')} ${t('charge')}`,
+            label: `${t('add')} ${t('stockEntry')}`,
             route: 'new-charge',
             icon: 'fas fa-circle-plus',
             menu: false
           },
           {
-            label: t('charge', 2),
+            label: t('stockEntry', 2),
             route: 'table-charge',
             icon: 'fas fa-table',
             menu: false

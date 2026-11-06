@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import type { PropType } from 'vue';
+import type { TaskBatchGetResponse, TaskStockLine } from '../api/types';
 import type { Task } from '../types';
 import useVuelidate from '@vuelidate/core';
 import dayjs from 'dayjs';
-import { flatten, map, merge } from 'lodash-es';
+import { flatten, isNil, map, merge } from 'lodash-es';
 import { computed, ref, unref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useApiFetch } from '../composables/useApi';
@@ -27,6 +28,7 @@ import FormInputNote from './FormInputNote.vue';
 import FormInputNumeric from './FormInputNumeric.vue';
 import FormInputText from './FormInputText.vue';
 import FormInputUrl from './FormInputUrl.vue';
+import FormTaskStock from './FormTaskStock.vue';
 
 const props = defineProps({
   task: {
@@ -90,7 +92,7 @@ const notification = useNotification();
 const v = useVuelidate();
 const api = useApiFetch();
 const router = useRouter();
-const values = ref({});
+const values = ref<TaskBatchGetResponse[]>([]);
 const reset = ref(0);
 const formEvent = ref<string>('');
 
@@ -120,8 +122,28 @@ const state = ref({
   type: null as any,
   treatment_disease: null as any,
   treatment_vet: null as any,
+  charges: undefined as TaskStockLine[] | undefined,
   ...stateDefault
 });
+
+const stockSummary = ref('');
+// In an edit, wait for the task rows.
+const showStock = computed(() => !isEdit.value || values.value.length > 0);
+// A multi-edit sets a field to `null` when the tasks have different values.
+const stockProps = computed(() => ({
+  task: props.task,
+  typeId: state.value.type?.id ?? null,
+  amount:
+    props.task === 'checkup'
+      ? 0
+      : isNil(state.value.amount_calc)
+        ? null
+        : Number(state.value.amount_calc),
+  rows: state.value.hive.length * Math.max(1, state.value.repeat),
+  done: state.value.done,
+  current: isEdit.value ? values.value : [],
+  reset: reset.value
+}));
 
 async function getEdit(id: number[] | null) {
   if (!id) {
@@ -185,7 +207,15 @@ function onChange(type: 'update' | 'insert' = 'update') {
           :values="values"
           :reset="reset"
           table="checkup_types"
-        />
+        >
+          <template v-if="showStock" #icon>
+            <FormTaskStock
+              v-model="state.charges"
+              v-model:summary="stockSummary"
+              v-bind="stockProps"
+            />
+          </template>
+        </FormDropdownOption>
       </div>
       <div v-else-if="task === 'harvest'" class="row">
         <div class="col-12 q-pb-sm">
@@ -194,7 +224,15 @@ function onChange(type: 'update' | 'insert' = 'update') {
             :values="values"
             :reset="reset"
             table="harvest_types"
-          />
+          >
+            <template v-if="showStock" #icon>
+              <FormTaskStock
+                v-model="state.charges"
+                v-model:summary="stockSummary"
+                v-bind="stockProps"
+              />
+            </template>
+          </FormDropdownOption>
         </div>
       </div>
       <div v-else-if="task === 'treatment'" class="row">
@@ -204,7 +242,15 @@ function onChange(type: 'update' | 'insert' = 'update') {
             :values="values"
             :reset="reset"
             table="treatment_types"
-          />
+          >
+            <template v-if="showStock" #icon>
+              <FormTaskStock
+                v-model="state.charges"
+                v-model:summary="stockSummary"
+                v-bind="stockProps"
+              />
+            </template>
+          </FormDropdownOption>
         </div>
         <div class="col-12 q-pb-sm">
           <FormDropdownOption
@@ -224,7 +270,15 @@ function onChange(type: 'update' | 'insert' = 'update') {
             :values="values"
             :reset="reset"
             table="feed_types"
-          />
+          >
+            <template v-if="showStock" #icon>
+              <FormTaskStock
+                v-model="state.charges"
+                v-model:summary="stockSummary"
+                v-bind="stockProps"
+              />
+            </template>
+          </FormDropdownOption>
         </div>
       </div>
       <!-- Main Amount Field -->
@@ -237,6 +291,7 @@ function onChange(type: 'update' | 'insert' = 'update') {
             :hive-count="state.hive.length"
             :reset="reset"
             :values="values"
+            :unit="state.type?.unit"
           />
         </div>
       </div>
@@ -392,6 +447,7 @@ function onChange(type: 'update' | 'insert' = 'update') {
     :edit-ids="editOptions"
     :v="v"
     :form="props.task"
+    :success-message="stockSummary"
     @reset="onReset"
     @change="(val: 'update' | 'insert') => onChange(val)"
   />

@@ -123,9 +123,10 @@ function setValues() {
   if (multipleValues.value) {
     editValues(true);
   } else if (values.value && !isEmpty(values.value)) {
-    modelValue.value = dayjs(
-      values.value[0][props.tableId ? props.tableId : props.label]
-    ).format(props.dateFormat);
+    const value = values.value[0][props.tableId ? props.tableId : props.label];
+    // An empty stored date stays empty, dayjs(null) is an invalid date.
+    modelValue.value =
+      value === null ? null : dayjs(value).format(props.dateFormat);
   } else {
     modelValue.value = resetValue;
   }

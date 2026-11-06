@@ -290,7 +290,9 @@ function editValues(val: boolean) {
     @filter="filterSelection"
   >
     <template v-if="showBefore" #before>
-      <q-icon v-if="!multipleValues" name="far fa-square-caret-down" />
+      <slot v-if="!multipleValues" name="icon">
+        <q-icon name="far fa-square-caret-down" />
+      </slot>
       <BtnMultipleValues
         v-else
         :disable="disable"

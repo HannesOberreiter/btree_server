@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { PropType } from 'vue';
+import type { OptionResponse, RecipeTable } from '../api/types';
 import type { FormOption, Option } from '../types';
 import useVuelidate from '@vuelidate/core';
 import { flatten, map, merge } from 'lodash-es';
@@ -11,6 +12,7 @@ import FormDropdownEdit from './FormDropdownEdit.vue';
 import FormInputCheckbox from './FormInputCheckbox.vue';
 import FormInputNote from './FormInputNote.vue';
 import FormInputText from './FormInputText.vue';
+import FormStockRecipe from './FormStockRecipe.vue';
 
 const props = defineProps({
   ids: {
@@ -26,7 +28,7 @@ const emit = defineEmits<{
   (e: 'success', value: boolean): void;
 }>();
 const notification = useNotification();
-const values = ref({});
+const values = ref<OptionResponse[]>([]);
 const api = useApiFetch();
 const reset = ref(0);
 const ids = ref(props.ids);
@@ -44,6 +46,37 @@ if (isEdit.value) {
 }
 
 const v = useVuelidate();
+
+const UNIT_TABLES: Option[] = [
+  'charge_types',
+  'feed_types',
+  'treatment_types',
+  'harvest_types'
+];
+const RECIPE_TABLES: Option[] = [
+  'feed_types',
+  'treatment_types',
+  'harvest_types',
+  'checkup_types'
+];
+// One type at a time: a new one or a single edited one.
+const recipeType = computed(() => (isEdit.value ? values.value[0] : null));
+const showRecipe = computed(
+  () =>
+    RECIPE_TABLES.includes(props.option) &&
+    (!isEdit.value || values.value.length === 1)
+);
+const recipeForm = ref<InstanceType<typeof FormStockRecipe> | null>(null);
+
+// The recipe is saved with the type, so it needs the id of the saved type.
+async function onChange(_type: string, response: unknown) {
+  const created = response as Partial<OptionResponse> | null;
+  const typeId = recipeType.value?.id ?? created?.id;
+  if (recipeForm.value && typeId) {
+    await recipeForm.value.save(typeId);
+  }
+  emit('success', true);
+}
 
 const editOptions = ref([]) as any;
 const editOptionsCopy = ref([]) as any;
@@ -106,13 +139,13 @@ function onReset() {
       :max-valid="45"
     />
     <FormInputText
-      v-if="option === 'charge_types'"
+      v-if="UNIT_TABLES.includes(option)"
       v-model="state.unit"
       label="unit"
       icon="fas fa-wine-bottle"
       :values="values"
       :reset="reset"
-      :required="isEdit ? false : true"
+      :required="option === 'charge_types' && !isEdit"
       :max-valid="45"
     />
     <FormInputNote
@@ -137,6 +170,14 @@ function onReset() {
       status-active="yes"
       status-inactive="no"
     />
+    <FormStockRecipe
+      v-if="showRecipe"
+      ref="recipeForm"
+      :table="option as RecipeTable"
+      :type-id="recipeType?.id ?? null"
+      :type-name="state.name || recipeType?.name || ''"
+      :unit="state.unit || recipeType?.unit || null"
+    />
   </q-form>
   <FormButtons
     class="q-pt-md"
@@ -147,6 +188,6 @@ function onReset() {
     form="option"
     :form-option="props.option"
     @reset="onReset"
-    @change="emit('success', true)"
+    @change="onChange"
   />
 </template>

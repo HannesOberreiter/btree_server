@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import type { QTableProps } from 'quasar';
 import type { ComputedRef, PropType } from 'vue';
+import type { RecipeTable } from '@/api/types';
 import type { Option } from '../types';
-import { find } from 'lodash-es';
+import { find, uniq } from 'lodash-es';
 import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
@@ -11,7 +12,7 @@ import TableColNote from '../components/TableColNote.vue';
 import TableColStatus from '../components/TableColStatus.vue';
 import TableFilter from '../components/TableFilter.vue';
 import { useDateFormat } from '../composables/useDate';
-import { useOptionsQuery } from '../composables/useQuery';
+import { useOptionsQuery, useRecipeQuery } from '../composables/useQuery';
 import { tableCheckSelected, tableMeta } from '../helpers';
 
 const urlProps = defineProps({
@@ -25,7 +26,7 @@ const router = useRouter();
 const selected = ref<any>([]);
 const rows = ref([]);
 const filter = ref('');
-const visibleColumns = ref(['name', 'favorite', 'modus']);
+const visibleColumns = ref(['name', 'stock', 'favorite', 'modus']);
 const modus = ref(true);
 const deleted = ref(false);
 const useDate = useDateFormat();
@@ -40,7 +41,7 @@ const pagination = ref({
 
 const options = [
   {
-    label: `${t('charge')} ${t('type', 2)}`,
+    label: t('stockItem', 2),
     value: 'charge_types'
   },
   {
@@ -103,10 +104,40 @@ watch(optionSelected, cur => {
   });
 });
 
+const RECIPE_TABLES: Option[] = [
+  'feed_types',
+  'treatment_types',
+  'harvest_types',
+  'checkup_types'
+];
+const hasRecipe = computed(() => RECIPE_TABLES.includes(optionValue.value));
+const { data: recipe } = useRecipeQuery(
+  computed(() => optionValue.value as RecipeTable),
+  { enabled: hasRecipe }
+);
+const { data: chargeTypeData } = useOptionsQuery('charge_types', {
+  modus: null,
+  enabled: hasRecipe
+});
+
+// Names of the stock products that a type books.
+function stockNames(typeId: number) {
+  return uniq(
+    (recipe.value ?? [])
+      .filter(line => line.type_id === typeId)
+      .map(line => line.charge_type_id)
+  )
+    .map(id => find(chargeTypeData.value?.results, { id })?.name ?? '')
+    .filter(Boolean);
+}
+
 const columnsIn = computed(() => {
   const addOn = [];
   switch (optionValue.value) {
     case 'charge_types':
+    case 'feed_types':
+    case 'treatment_types':
+    case 'harvest_types':
       addOn.push({
         name: 'unit',
         label: t('unit'),
@@ -126,6 +157,15 @@ const columnsIn = computed(() => {
       break;
     default:
       break;
+  }
+  if (hasRecipe.value) {
+    addOn.push({
+      name: 'stock',
+      label: t('stockUse.title'),
+      align: 'left',
+      field: (row: any) => stockNames(row.id),
+      sortable: false
+    });
   }
 
   const columns = [
@@ -274,6 +314,19 @@ function onRequest(props: any) {
             type="favorite"
             @change="refetch"
           />
+        </template>
+        <template #body-cell-stock="props">
+          <q-td :props="props">
+            <div
+              v-for="name in props.value"
+              :key="name"
+              class="ellipsis"
+              style="max-width: 200px"
+              :title="name"
+            >
+              {{ name }}
+            </div>
+          </q-td>
         </template>
         <template #body-cell-note="props">
           <TableColNote

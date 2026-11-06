@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { PropType } from 'vue';
 import { useVModels } from '@vueuse/core';
 import { isEmpty, round } from 'lodash-es';
 import { watch } from 'vue';
@@ -34,6 +35,10 @@ const props = defineProps({
   tableId: {
     type: String,
     default: null
+  },
+  unit: {
+    type: String as PropType<string | null>,
+    default: null
   }
 });
 const emit = defineEmits([
@@ -66,6 +71,7 @@ watch(props, () => {
         :max-valid="10000"
         :table-id="tableId"
         icon="fas fa-bucket"
+        :suffix="unit ?? undefined"
         :hint="
           hiveCount > 0 && modelType === 'total'
             ? $t('totalAmount', { msg: modelCalc })
