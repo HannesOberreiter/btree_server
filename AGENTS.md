@@ -15,7 +15,7 @@ Monorepo of the b.tree beekeeping app. Each app is a separate pnpm project with 
 
 ## CI
 
-- `.github/workflows/ci.yml` runs on every PR. Jobs that the changed paths do not need are skipped and count as passed. All jobs are required checks, also `e2e`.
+- `.github/workflows/ci.yml` runs on every PR. Jobs that the changed paths do not need are skipped and count as passed. All jobs are required checks, also `e2e`. `pull-protection` is required only for PRs to `main`.
 - After an HTTP contract change in `apps/server`, run `pnpm api:update` in `apps/web` against the server of the branch, and commit `apps/web/src/api/generated/schema.d.ts` in the same PR. The `server` job fails when the file differs.
 - `ai-review` reviews a PR against `beta` once when it opens. Add the label `ai-review` for another review. The workflow reads `.github/ai-review/` from the PR base, so a change to it takes effect after the merge.
 
