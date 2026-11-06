@@ -1,0 +1,183 @@
+name: ai-review
+
+# Reviews a PR once when it is opened against beta or marked ready for review.
+# Add the "ai-review" label to any PR to request a review.
+#
+# The review runs in pi (https://pi.dev). Prompts, agents and scripts are in
+# .github/ai-review/. They come from the base commit of the PR, so a PR cannot
+# change its own reviewers. Based on the ai-review workflow of certible/.github.
+
+on:
+  pull_request:
+    types: [opened, ready_for_review, labeled]
+
+permissions: {}
+
+env:
+  REVIEW_MODEL: claude-sonnet-5-5 # coordinator: runs the reviewers, verifies findings
+  REVIEWER_MODEL: claude-haiku-5-5 # review-privacy, review-tests, review-standards, review-compat
+  REVIEWER_DEEP_MODEL: claude-sonnet-5-5 # review-bugs, review-spec: they trace code outside the diff
+  PI_VERSION: 1.4.0
+  PI_SUBAGENTS_VERSION: 0.22.0
+
+jobs:
+  review:
+    # Skip drafts, bot PRs and fork PRs (fork PRs get no secrets). Run
+    # automatically only for PRs against beta; run on any PR when
+    # the "ai-review" label is added.
+    if: >-
+      github.event.pull_request.draft == false &&
+      github.event.pull_request.user.type != 'Bot' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      (
+        (github.event.action == 'labeled' && github.event.label.name == 'ai-review') ||
+        (github.event.action != 'labeled' && github.event.pull_request.base.ref == 'beta')
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    # One review per PR at a time; a new run cancels the in-flight run.
+    concurrency:
+      group: ai-review-${{ github.event.pull_request.number }}
+      cancel-in-progress: true
+
+    # Comments are posted with GITHUB_TOKEN, so pull-requests needs write.
+    # It also allows removing the label.
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: read
+
+    env:
+      PR: ${{ github.event.pull_request.number }}
+      REPO: ${{ github.repository }}
+      HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+      RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+    # Only the steps that need a secret get it. The pi step gets the API key
+    # but no GitHub token; the gh steps get the GitHub token but no API key.
+    steps:
+      # Remove the label so it can be added again for the next re-review.
+      - name: Remove ai-review label
+        if: github.event.action == 'labeled'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh api -X DELETE "repos/$REPO/issues/$PR/labels/ai-review"
+
+      # The reviewers read files at the PR head. persist-credentials: false keeps
+      # the token out of .git/config, where the read tool could reach it.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          path: .ai-review-harness
+          sparse-checkout: .github/ai-review
+          persist-credentials: false
+
+      - name: Move harness out of the workspace
+        run: |
+          mv .ai-review-harness/.github/ai-review "$RUNNER_TEMP/harness"
+          rm -rf .ai-review-harness
+          mkdir -p "$RUNNER_TEMP/ctx" "$RUNNER_TEMP/out"
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+
+      # Fetch all GitHub context in advance, so the agents need no gh, no bash
+      # and no token. gh pr diff is the diff that GitHub shows, so the inline
+      # comment lines match it.
+      - name: Fetch PR context
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          ctx="$RUNNER_TEMP/ctx"
+          gh pr view "$PR" -R "$REPO" --json title,body,labels,author,baseRefName,headRefName > "$ctx/pr.json"
+          gh pr view "$PR" -R "$REPO" --json closingIssuesReferences --jq '.closingIssuesReferences[].url' \
+            | while read -r url; do gh issue view "$url" --json number,title,body,url; done \
+            | jq -s . > "$ctx/issues.json"
+          gh api --paginate "repos/$REPO/pulls/$PR/comments" \
+            --jq '.[] | select(.user.login == "github-actions[bot]" and (.body | contains("<!-- ai-review -->"))) | {path, line, body}' \
+            | jq -s . > "$ctx/previous-review.json"
+          gh api --paginate "repos/$REPO/pulls/$PR/comments" \
+            --jq '.[] | select(.body | contains("<!-- ai-review -->") | not) | {id, in_reply_to_id, user: .user.login, path, line: (.line // .original_line), body}' \
+            | jq -s . > "$ctx/review-threads.json"
+          gh pr diff "$PR" -R "$REPO" > "$ctx/raw.diff"
+          awk -f "$RUNNER_TEMP/harness/number-diff.awk" "$ctx/raw.diff" > "$ctx/pr.diff"
+          echo "diff: $(wc -l < "$ctx/raw.diff") lines, issues: $(jq length "$ctx/issues.json"), earlier AI comments: $(jq length "$ctx/previous-review.json"), comments of people: $(jq length "$ctx/review-threads.json")"
+
+      # Packages and agents go to the agent dir, not to the repo's .pi/.
+      # pi runs with --no-approve, so a .pi/ directory in the PR is ignored.
+      - name: Install pi
+        env:
+          PI_CODING_AGENT_DIR: ${{ runner.temp }}/pi-agent
+        run: |
+          npm install -g --ignore-scripts "@earendil-works/pi-coding-agent@$PI_VERSION"
+          pi install "npm:@tintinweb/pi-subagents@$PI_SUBAGENTS_VERSION"
+          mkdir -p "$PI_CODING_AGENT_DIR/agents"
+          for f in "$RUNNER_TEMP"/harness/agents/*.md; do
+            sed -e "s|__REVIEWER_MODEL__|anthropic/$REVIEWER_MODEL|" -e "s|__REVIEWER_DEEP_MODEL__|anthropic/$REVIEWER_DEEP_MODEL|" -e "s|__CTX__|$RUNNER_TEMP/ctx|g" "$f" \
+              > "$PI_CODING_AGENT_DIR/agents/$(basename "$f")"
+          done
+          sed "s|__CTX__|$RUNNER_TEMP/ctx|g" "$RUNNER_TEMP/harness/review.md" > "$RUNNER_TEMP/prompt.md"
+
+      # pi exits 0 also when the API call fails (for example a billing error),
+      # so the step checks stopReason of the last message.
+      - name: Run review
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          PI_CODING_AGENT_DIR: ${{ runner.temp }}/pi-agent
+          PI_SKIP_VERSION_CHECK: "1"
+          NODE_NO_WARNINGS: "1"
+        run: |
+          out="$RUNNER_TEMP/out"
+          pi --mode json --no-approve --no-session --no-mcp \
+            --model "anthropic/$REVIEW_MODEL" \
+            --tools read,grep,find,ls,Agent \
+            "$(cat "$RUNNER_TEMP/prompt.md")" > "$out/events.jsonl" 2> "$out/stderr.log" \
+            || { cat "$out/stderr.log"; exit 1; }
+          cat "$out/stderr.log"
+          # pi-subagents skips an agent file with invalid frontmatter and only warns.
+          if grep -q "Skipping agent file" "$out/stderr.log"; then
+            echo "::error::pi-subagents skipped a reviewer agent file"
+            exit 1
+          fi
+          jq -c 'select(.type == "message_end" and .message.role == "assistant") | .message' "$out/events.jsonl" | tail -n 1 > "$out/last.json"
+          if [ "$(jq -r .stopReason "$out/last.json")" != "stop" ]; then
+            echo "::error::pi stopped with $(jq -r '.stopReason + ": " + (.errorMessage // "")' "$out/last.json")"
+            exit 1
+          fi
+          jq -r '[.content[] | select(.type == "text") | .text] | join("")' "$out/last.json" > "$out/result.txt"
+          cost=$(jq -s '[.[] | select(.type == "message_end" and .message.role == "assistant") | .message.usage.cost.total // 0] | add // 0' "$out/events.jsonl")
+          echo "coordinator cost: \$$cost (reviewers not included)"
+
+      - name: Build review
+        env:
+          MODEL: ${{ env.REVIEW_MODEL }} + ${{ env.REVIEWER_DEEP_MODEL }} + ${{ env.REVIEWER_MODEL }}
+        run: |
+          node "$RUNNER_TEMP/harness/post-review.mjs" "$RUNNER_TEMP/out/result.txt" "$RUNNER_TEMP/ctx/raw.diff" "$RUNNER_TEMP/out"
+
+      # GitHub rejects the whole review when one inline comment is invalid.
+      # Then post everything as one PR comment.
+      - name: Post review
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh api -X POST "repos/$REPO/pulls/$PR/reviews" --input "$RUNNER_TEMP/out/review.json" > /dev/null \
+            || gh pr comment "$PR" -R "$REPO" --body-file "$RUNNER_TEMP/out/fallback.md"
+
+      - name: Report failure on the PR
+        if: failure()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr comment "$PR" -R "$REPO" --body "<!-- ai-review -->
+          AI review failed. See the [run log]($RUN_URL). Add the \`ai-review\` label to retry."
+
+      # No transcript upload: this repo is public, and anyone signed in to
+      # GitHub can download artifacts.
