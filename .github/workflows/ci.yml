@@ -194,9 +194,10 @@ jobs:
             zricethezav/gitleaks:v8.30.1@sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f \
             git /repo --log-opts="$BASE..$HEAD" --redact --verbose
 
+  # A skipped matrix job reports one check "licenses", not one check per app.
+  # So this job always runs, and its steps check the deps filter.
   licenses:
     needs: changes
-    if: needs.changes.outputs.deps == 'true'
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -207,19 +208,24 @@ jobs:
         working-directory: apps/${{ matrix.app }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        if: needs.changes.outputs.deps == 'true'
       - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+        if: needs.changes.outputs.deps == 'true'
         with:
           package_json_file: apps/${{ matrix.app }}/package.json
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        if: needs.changes.outputs.deps == 'true'
         with:
           node-version: 22
           cache: pnpm
           cache-dependency-path: apps/${{ matrix.app }}/pnpm-lock.yaml
       - name: Install packages
+        if: needs.changes.outputs.deps == 'true'
         run: pnpm install --frozen-lockfile --ignore-scripts
       # license-report checks the direct dependencies in package.json. Each
       # license must match one line of the allowlist exactly.
       - name: Check the licenses
+        if: needs.changes.outputs.deps == 'true'
         run: |
           npm install -g license-report@6 --registry=https://registry.npmjs.org
           cat > "$RUNNER_TEMP/allowed.txt" <<'LIST'
